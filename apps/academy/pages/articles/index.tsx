@@ -67,11 +67,11 @@ const Articles: FC = () => {
 
   const sortOptions: SortBy[] = ['relevance', 'dateAsc', 'dateDesc', 'author']
   const SearchInput = () => (
-    <div className="flex items-center w-full gap-2 pl-3 rounded-lg md:w-auto bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
+    <div className="flex items-center w-full h-12 gap-2 pl-3 rounded-lg md:h-14 md:w-auto bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
       <SearchIcon width={24} height={24} className="text-slate-500" />
       <input
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full h-14 font-medium placeholder:text-sm text-slate-300 bg-transparent text-base !ring-0 !outline-0"
+        className="font-medium w-full placeholder:text-sm text-slate-300 bg-transparent text-base !ring-0 !outline-0"
         placeholder="Search Topic"
       />
     </div>
@@ -81,7 +81,7 @@ const Articles: FC = () => {
     <>
       <Container maxWidth="6xl" className={classNames('mx-auto sm:py-24 py-11', defaultSidePadding)}>
         <Container maxWidth="full" className="flex items-center justify-between">
-          <div className="flex flex-col items-center justify-between w-full gap-2 sm:flex-row">
+          <div className="flex flex-col items-center justify-between w-full gap-8 md:gap-2 sm:flex-row">
             <div className="flex flex-col items-center w-full gap-2 sm:items-start">
               <span className="font-medium font-base sm:text-lg">Articles</span>
               <span className="text-3xl font-medium text-center sm:text-left sm:text-5xl">Tutorials & Explainers</span>
@@ -90,6 +90,7 @@ const Articles: FC = () => {
               <div className="w-full sm:hidden">
                 <SearchInput />
               </div>
+
               <div className="flex w-full gap-5">
                 <Select
                   className="w-1/2 sm:w-auto"
@@ -100,7 +101,7 @@ const Articles: FC = () => {
                     >
                       <span className="text-xs sm:text-sm">
                         {selectedLevel
-                          ? levels?.find(({ id }) => id === selectedLevel).attributes?.name ?? 'Select Level'
+                          ? levels?.find(({ id }) => id === selectedLevel)?.attributes?.name ?? 'Select Level'
                           : 'Select Level'}
                       </span>
                       <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
@@ -125,7 +126,7 @@ const Articles: FC = () => {
                     >
                       <span className="text-xs sm:text-sm">
                         {selectedLevel
-                          ? levels?.find(({ id }) => id === selectedLevel).attributes.name ?? 'Select Level'
+                          ? levels?.find(({ id }) => id === selectedLevel)?.attributes.name ?? 'Select Level'
                           : 'Select Level'}
                       </span>
                       <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
