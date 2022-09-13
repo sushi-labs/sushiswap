@@ -2,6 +2,7 @@ import { Signature } from '@ethersproject/bytes'
 import { Chain } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Button, createToast, Dots } from '@sushiswap/ui'
@@ -18,7 +19,6 @@ import {
 import { FC, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
-import { Pair } from '../../.graphclient'
 import {
   approveMasterContractAction,
   batchAction,

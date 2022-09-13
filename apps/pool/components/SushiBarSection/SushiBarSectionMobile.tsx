@@ -2,6 +2,7 @@ import { ExternalLinkIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { formatNumber } from '@sushiswap/format'
+import { XSushi } from '@sushiswap/graph-client/.graphclient'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, createToast, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
@@ -11,9 +12,7 @@ import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
-import { BarTypes } from '../../.graphclient'
 import { SushiBarInput } from './SushiBarInput'
-import XSushi = BarTypes.XSushi
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]
@@ -74,7 +73,7 @@ export const SushiBarSectionMobile: FC = () => {
   return (
     <section className="flex md:hidden">
       <div className="flex flex-col w-full gap-6 rounded-2xl bg-white bg-opacity-[0.02] p-6">
-        <div className="flex flex gap-3">
+        <div className="flex gap-3">
           <div className="min-w-[44px] min-h-[44px] mt-1">
             <UICurrency.Icon currency={XSUSHI_TOKEN} width={44} height={44} />
           </div>
@@ -82,7 +81,7 @@ export const SushiBarSectionMobile: FC = () => {
             <Typography variant="lg" weight={600} className="text-slate-100">
               Sushi Bar
             </Typography>
-            <Typography variant="sm" weight={400} className="text-slate-400 -mt-1">
+            <Typography variant="sm" weight={400} className="-mt-1 text-slate-400">
               Stake to earn trading fee from all pools on Sushi!
             </Typography>
           </div>
@@ -91,24 +90,24 @@ export const SushiBarSectionMobile: FC = () => {
         <Dialog open={open} onClose={handleClose}>
           <Dialog.Content className="pb-[84px]">
             <Dialog.Header title="Sushi Bar" onClose={handleClose} />
-            <div className="py-3 flex flex-col gap-3">
+            <div className="flex flex-col gap-3 py-3">
               <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
                 <Tab.List>
                   <Tab size="default">Stake</Tab>
                   <Tab size="default">Unstake</Tab>
                 </Tab.List>
-                <div className="flex flex-col justify-center p-3 gap-10">
+                <div className="flex flex-col justify-center gap-10 p-3">
                   <div className="flex flex-col items-center">
                     <Typography variant="sm" weight={400} className="text-center text-slate-300">
                       Stake to earn trading fee from all pools on Sushi!
                     </Typography>
-                    <div className="flex gap-2 items-center mt-1">
-                      <Typography variant="xs" className="text-slate-400 text-center">
+                    <div className="flex items-center gap-2 mt-1">
+                      <Typography variant="xs" className="text-center text-slate-400">
                         APR (1m)
                       </Typography>
                       <Typography
                         variant="xs"
-                        className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent"
+                        className="flex items-center gap-1 text-transparent bg-gradient-to-r from-red to-yellow bg-clip-text"
                       >
                         {formatNumber(stats?.apr12m)}
                         <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
@@ -184,7 +183,7 @@ export const SushiBarSectionMobile: FC = () => {
                     />
                   </Dialog.Actions>
                   {error && (
-                    <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
+                    <Typography variant="xs" className="mt-4 text-center text-red" weight={500}>
                       {error}
                     </Typography>
                   )}

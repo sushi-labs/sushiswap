@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
           args: {
             sorting: [
               {
-                id: 'liquidityNative',
+                id: 'liquidityUSD',
                 desc: true,
               },
             ],

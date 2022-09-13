@@ -1,10 +1,10 @@
 import { Amount, Token, Type } from '@sushiswap/currency'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource } from '@sushiswap/hooks'
 import { useBalance } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { Pair } from '../.graphclient'
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../lib/hooks'
 
 interface PoolPositionContext {

@@ -1,7 +1,7 @@
+import { Pair, Token } from '@sushiswap/graph-client/.graphclient'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { Pair, Token } from '../../.graphclient'
 import { NetworkCell } from './NetworkCell'
 import { PairAPRCell } from './PairAPRCell'
 import { PairFees7dCell } from './PairFees7dCell'

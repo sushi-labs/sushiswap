@@ -1,7 +1,6 @@
 import { Token } from '@sushiswap/currency'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { Chef, Incentive } from '@sushiswap/wagmi'
-
-import { Pair } from '.graphclient'
 
 export interface PairWithFarmRewards extends Pair {
   incentives: Incentive<Token>[]

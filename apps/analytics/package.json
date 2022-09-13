@@ -5,8 +5,6 @@
   "scripts": {
     "build": "next build && next-sitemap --config next-sitemap.config.mjs",
     "dev": "next dev --port 3001",
-    "dev:gql": "graphclient serve-dev",
-    "generate": "graphclient build",
     "lint": "eslint --fix . && next lint",
     "start": "next start"
   },
@@ -18,6 +16,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
+    "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "8.5.0",
     "date-fns": "^2.29.1",
@@ -32,10 +31,6 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "2.2.1",
-    "@graphql-mesh/transform-prefix": "^0.11.65",
-    "@graphql-mesh/transform-rename": "^0.12.66",
-    "@graphql-mesh/transform-type-merging": "^0.4.20",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

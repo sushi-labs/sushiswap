@@ -1,8 +1,8 @@
 import { formatPercent } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { classNames, Currency as UICurrency, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
-import { Pair } from '../../../.graphclient'
 import { incentiveRewardToToken } from '../../../lib/functions'
 import { AddSectionMyPositionStaked } from './AddSectionMyPositionStaked'
 import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
@@ -10,12 +10,12 @@ import { AddSectionMyPositionUnstaked } from './AddSectionMyPositionUnstaked'
 export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
   return (
     <div className="flex flex-col bg-white bg-opacity-[0.04] rounded-2xl">
-      <div className="p-5 flex flex-col gap-4">
-        <div className="grid grid-cols-2 items-center gap-2">
+      <div className="flex flex-col gap-4 p-5">
+        <div className="grid items-center grid-cols-2 gap-2">
           <Typography variant="xs" weight={500} className="text-slate-300">
             Total APR:
           </Typography>
-          <Typography variant="xs" weight={500} className="text-slate-300 text-right">
+          <Typography variant="xs" weight={500} className="text-right text-slate-300">
             {formatPercent(pair.apr)}
           </Typography>
           {pair.farm && (
@@ -23,13 +23,13 @@ export const AddSectionMyPosition: FC<{ pair: Pair }> = ({ pair }) => {
               <Typography variant="xs" weight={500} className="text-slate-300">
                 Fee APR:
               </Typography>
-              <Typography variant="xs" weight={500} className="text-slate-300 text-right">
+              <Typography variant="xs" weight={500} className="text-right text-slate-300">
                 {formatPercent(pair.feeApr)}
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-300">
                 Reward APR:
               </Typography>
-              <Typography variant="xs" weight={500} className="text-slate-300 text-right">
+              <Typography variant="xs" weight={500} className="text-right text-slate-300">
                 {formatPercent(pair.incentiveApr)}
               </Typography>
               <Typography variant="xs" weight={500} className="text-slate-300">

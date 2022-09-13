@@ -3,6 +3,7 @@ import { ChevronRightIcon } from '@heroicons/react/solid'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { formatNumber } from '@sushiswap/format'
+import { XSushi } from '@sushiswap/graph-client/.graphclient'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, createToast, Dots, Link, Typography } from '@sushiswap/ui'
@@ -12,7 +13,6 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
-import { XSushi } from '../../.graphclient'
 import { SushiBarInput } from './SushiBarInput'
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]

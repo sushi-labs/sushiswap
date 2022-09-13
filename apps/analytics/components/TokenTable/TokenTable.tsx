@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/graph-client/.graphclient'
 import { Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-import { Token } from '../../.graphclient'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   GenericTable,

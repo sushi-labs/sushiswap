@@ -1,6 +1,6 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['@sushiswap/ui'])
+const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/graph-client'])
 
 // @ts-check
 /** @type {import('next').NextConfig} */

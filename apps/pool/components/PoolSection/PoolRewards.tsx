@@ -1,8 +1,8 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { Currency, Table, Typography } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
-import { Pair } from '../../.graphclient'
 import { incentiveRewardToToken } from '../../lib/functions'
 
 export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
@@ -10,8 +10,8 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 w-full">
-        <div className="flex justify-between items-center px-2">
+      <div className="flex flex-col w-full gap-4">
+        <div className="flex items-center justify-between px-2">
           <Typography weight={600} className="text-slate-50">
             Rewards
           </Typography>
@@ -39,7 +39,7 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
                 pair.farm.incentives.map((incentive, idx) => (
                   <Table.tr key={idx}>
                     <Table.td>
-                      <div className="flex gap-3 items-center">
+                      <div className="flex items-center gap-3">
                         <Currency.Icon
                           currency={incentiveRewardToToken(pair.chainId, incentive)}
                           width={24}
@@ -60,7 +60,7 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
               ) : (
                 <Table.tr>
                   <Table.td colSpan={2}>
-                    <Typography variant="xs" className="text-slate-400 italic w-full text-center">
+                    <Typography variant="xs" className="w-full italic text-center text-slate-400">
                       No rewards found
                     </Typography>
                   </Table.td>

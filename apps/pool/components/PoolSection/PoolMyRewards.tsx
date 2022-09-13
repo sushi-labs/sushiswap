@@ -1,9 +1,9 @@
 import { formatUSD } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { Button, Currency, Typography, useBreakpoint } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
-import { Pair } from '../../.graphclient'
 import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
 
 interface PoolMyRewardsProps {
@@ -18,30 +18,30 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex bg-slate-800 flex flex-col rounded-2xl shadow-md shadow-black/30">
-        <div className="flex justify-between items-center px-5 py-4 border-b border-slate-200/5">
+      <div className="flex flex-col shadow-md bg-slate-800 rounded-2xl shadow-black/30">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200/5">
           <Typography weight={600} className="text-slate-50">
             My Rewards
           </Typography>
           <div className="flex flex-col">
-            <Typography variant="sm" weight={600} className="text-slate-50 text-right">
+            <Typography variant="sm" weight={600} className="text-right text-slate-50">
               {formatUSD(values.reduce((sum, value) => sum + value, 0))}
             </Typography>
           </div>
         </div>
-        <div className="flex flex-col px-5 py-4 gap-3">
+        <div className="flex flex-col gap-3 px-5 py-4">
           {pendingRewards?.map((reward, index) => {
             if (!reward && isLoading && !isError)
               return (
-                <div className="justify-between grid gap-2 grid-cols-10" key={index}>
+                <div className="grid justify-between grid-cols-10 gap-2" key={index}>
                   <div className="h-[20px] bg-slate-700 animate-pulse col-span-8 rounded-full" />
                   <div className="h-[20px] bg-slate-700 animate-pulse col-span-2 rounded-full" />
                 </div>
               )
 
             return (
-              <div className="flex justify-between items-center" key={index}>
-                <div className="flex gap-2 items-center">
+              <div className="flex items-center justify-between" key={index}>
+                <div className="flex items-center gap-2">
                   <Currency.Icon currency={rewardTokens[index]} width={20} height={20} />
                   <Typography variant="sm" weight={600} className="text-slate-300">
                     {reward?.toSignificant(6)} {rewardTokens[index].symbol}
@@ -63,7 +63,7 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
         </Checker.Network>
       </Checker.Connected>
       {error && (
-        <Typography variant="xs" className="text-center text-red mt-2" weight={500}>
+        <Typography variant="xs" className="mt-2 text-center text-red" weight={500}>
           {error}
         </Typography>
       )}

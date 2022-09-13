@@ -1,10 +1,10 @@
 import { tryParseAmount } from '@sushiswap/currency'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
 import { Checker, PairState, usePair } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 
-import { Pair } from '../../.graphclient'
 import { useTokensFromPair } from '../../lib/hooks'
 import { AddSectionReviewModalLegacy } from './AddSectionReviewModalLegacy'
 import { AddSectionWidget } from './AddSectionWidget'

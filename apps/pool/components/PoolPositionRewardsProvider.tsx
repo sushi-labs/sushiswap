@@ -1,10 +1,10 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { Incentive, Pair } from '@sushiswap/graph-client/.graphclient'
 import { Chef, RewarderType, useMasterChef } from '@sushiswap/wagmi'
 import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
 import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
-import { Incentive, Pair } from '../.graphclient'
 import { CHEF_TYPE_MAP } from '../lib/constants'
 import { incentiveRewardToToken } from '../lib/functions'
 import { useTokenAmountDollarValues, useTokensFromPair } from '../lib/hooks'

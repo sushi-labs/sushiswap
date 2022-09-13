@@ -1,8 +1,6 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { useMemo } from 'react'
-
-import { Pair } from '../../.graphclient'
-
 export const useTokensFromPair = (pair: Pair) => {
   return useMemo(() => {
     const [token0, token1, liquidityToken] = [

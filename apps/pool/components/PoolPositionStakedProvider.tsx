@@ -1,8 +1,8 @@
 import { Amount, Token } from '@sushiswap/currency'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { Chef, useMasterChef } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
-import { Pair } from '../.graphclient'
 import { CHEF_TYPE_MAP } from '../lib/constants'
 import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../lib/hooks'
 

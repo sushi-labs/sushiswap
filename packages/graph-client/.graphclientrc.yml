@@ -36,12 +36,20 @@ additionalTypeDefs: |
   extend type Factory {
     chainId: Int!
   }
+  extend type FactoryDaySnapshot {
+    chainId: Int!
+    chainName: String!
+    chainShortName: String!
+  }
   extend type Pair {
     chainId: Int!
     chainName: String!
     chainShortName: String!
     volume1d: BigDecimal!
+    volume1w: BigDecimal!
     volume7d: BigDecimal!
+    fees1d: BigDecimal!
+    fees1w: BigDecimal!
     farm: Farm
     incentiveApr: BigDecimal!
     feeApr: BigDecimal!
@@ -49,6 +57,11 @@ additionalTypeDefs: |
   extend type User {
     chainId: Int!
     chainName: String!
+  }
+  extend type Token {
+    chainId: Int!
+    chainName: String!
+    chainShortName: String!
   }
   extend type Query {
     # BLOCKS
@@ -72,6 +85,15 @@ additionalTypeDefs: |
     crossChainFactories(
       chainIds: [Int!]!
     ): [Factory!]!
+    crossChainFactoryDaySnapshots(
+      first: Int, 
+      skip: Int, 
+      where: FactoryDaySnapshot_filter, 
+      orderBy: FactoryDaySnapshot_orderBy, 
+      orderDirection: OrderDirection, 
+      block: Block_height, 
+      chainIds: [Int!]!
+    ): [FactoryDaySnapshot!]!
     crossChainPairs(
       first: Int,
       skip: Int, 
@@ -81,15 +103,36 @@ additionalTypeDefs: |
       block: Block_height,
       pagination: Pagination,
       chainIds: [Int!]!,
-      oneDayBlockNumbers: [Int!]!
+      oneDayBlockNumbers: [Int!]!,
+      oneWeekBlockNumbers: [Int!]!
     ): [Pair!]!
     crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair!
     crossChainUser(
-      id: ID!, 
-      chainIds: [Int!]!, 
+      id: ID!,
+      block: Block_height,
       now: Int!, 
-      block: Block_height
+      chainIds: [Int!]!,
     ): User!
+    crossChainTokens(
+      first: Int,
+      skip: Int,
+      where: Token_filter,
+      orderBy: Token_orderBy,
+      orderDirection: OrderDirection,
+      block: Block_height,
+      pagination: Pagination,
+      chainIds: [Int!]! 
+    ): [Token!]!
+    crossChainStats(
+      first: Int,
+      skip: Int,
+      where: Pair_filter,
+      orderBy: Pair_orderBy, 
+      orderDirection: OrderDirection,
+      block: Block_height,
+      chainIds: [Int!]!, 
+      now: Int!
+    ): [Pair!]!
   }
 
 additionalResolvers:

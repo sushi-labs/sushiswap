@@ -1,4 +1,5 @@
-import { Pair } from '../../../.graphclient'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
+
 import { PairWithBalance } from '../../../types'
 
 export interface CellProps {

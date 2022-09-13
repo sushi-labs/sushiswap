@@ -4,17 +4,17 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [ChainId.OPTIMISM, ChainId.PO
 
 export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   ChainId.ETHEREUM,
-  // ChainId.AVALANCHE,
-  // ChainId.ARBITRUM,
-  // ChainId.BSC,
-  // ChainId.CELO,
-  // ChainId.FANTOM,
-  // ChainId.FUSE,
-  // ChainId.GNOSIS,
-  // ChainId.MOONBEAM,
-  // ChainId.MOONRIVER,
+  ChainId.AVALANCHE,
+  ChainId.ARBITRUM,
+  ChainId.BSC,
+  ChainId.CELO,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
   // ChainId.ARBITRUM_NOVA,
-  // ChainId.HARMONY,
+  ChainId.HARMONY,
 ]
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
@@ -103,6 +103,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'kybernetwork/optimism-blocks',
   [ChainId.KAVA]: 'sushiswap/blocks-kava',
   [ChainId.METIS]: 'sushiswap/blocks-metis',
+  // [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {

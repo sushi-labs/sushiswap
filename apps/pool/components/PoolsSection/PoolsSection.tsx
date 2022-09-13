@@ -1,10 +1,10 @@
 import { Tab } from '@headlessui/react'
+import { User } from '@sushiswap/graph-client/.graphclient'
 import { Chip, classNames, Network } from '@sushiswap/ui'
 import { FC } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import { User } from '../../.graphclient'
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import { PoolsTable, PositionsTable } from './Tables'

@@ -1,10 +1,10 @@
+import { Pair, User } from '@sushiswap/graph-client/.graphclient'
 import { useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import { Pair, User } from '../../../../.graphclient'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'

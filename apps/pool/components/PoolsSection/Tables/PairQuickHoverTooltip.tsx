@@ -1,11 +1,11 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { incentiveRewardToToken } from '../../../lib/functions'
 import { useTokensFromPair } from '../../../lib/hooks'
 import { ICON_SIZE } from './contants'
-import { Pair } from '.graphclient'
 
 interface PairQuickHoverTooltipProps {
   row: Pair
@@ -40,10 +40,10 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
           <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
             <span className="text-slate-400">APR:</span> {formatPercent(row.apr)}
           </Typography>
-          <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
+          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
             <span className="text-slate-400">Rewards:</span> {formatPercent(row.incentiveApr)}
           </Typography>
-          <Typography variant="xxs" weight={600} className="flex gap-1 text-slate-50 justify-end">
+          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
             <span className="text-slate-400">Fees:</span> {formatPercent(row.feeApr)}
           </Typography>
         </div>
