@@ -7,7 +7,7 @@ import {
   JsonRpcProvider,
   WebSocketProvider,
 } from '@ethersproject/providers'
-import { ChainId } from '@sushiswap/chain'
+import chains, { ChainId } from '@sushiswap/chain'
 
 const providerCache: Partial<Record<ChainId, BaseProvider>> = {}
 const websocketProviderCache: Partial<Record<ChainId, WebSocketProvider>> = {}
@@ -74,6 +74,8 @@ export function getProvider(chainId: ChainId) {
     // providerCache[chainId] = new AnkrProvider(name, ankrKey)
   } else if (chainId in PUBLIC_RPC) {
     providerCache[chainId] = new JsonRpcProvider(PUBLIC_RPC[chainId])
+  } else if (chainId in chains) {
+    providerCache[chainId] = new JsonRpcProvider(chains[chainId].rpc[0])
   }
 
   return providerCache[chainId]!

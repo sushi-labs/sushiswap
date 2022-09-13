@@ -3,14 +3,18 @@ import '@sushiswap/ui/index.css'
 import { App, AppType, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import type { AppProps } from 'next/app'
+import { DefaultSeo } from 'next-seo'
 import { FC } from 'react'
 import { WagmiConfig } from 'wagmi'
+
+import SEO from '../next-seo.config.mjs'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <WagmiConfig client={client}>
       <ThemeProvider>
         <App.Shell>
+          <DefaultSeo {...SEO} />
           <App.Header appType={AppType.Partner} withScrollBackground />
           <Component {...pageProps} />
           <App.Footer />

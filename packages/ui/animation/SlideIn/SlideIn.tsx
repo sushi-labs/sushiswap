@@ -1,4 +1,4 @@
-import { createContext, FC, ReactElement, useContext, useRef } from 'react'
+import { createContext, FC, ReactElement, useContext, useEffect, useRef, useState } from 'react'
 
 import { FromBottom } from './FromBottom'
 import { FromLeft } from './FromLeft'
@@ -13,10 +13,15 @@ const SlideInContext = createContext<HTMLElement | null | undefined>(undefined)
 
 export const Root: FC<RootProps> = ({ children }) => {
   const ref = useRef<HTMLDivElement>(null)
+  const [render, setRender] = useState(false)
+
+  useEffect(() => {
+    if (ref.current) setRender(true)
+  }, [])
 
   return (
     <SlideInContext.Provider value={ref?.current}>
-      {children}
+      {render && children}
       <div ref={ref} />
     </SlideInContext.Provider>
   )

@@ -16,14 +16,14 @@ export type TokenSelectorProps = {
   tokenMap: Record<string, Token>
   customTokenMap: Record<string, Token>
   onClose(): void
-  onSelect(currency: Type): void
+  onSelect?(currency: Type): void
   onAddToken(token: Token): void
   onRemoveToken({ chainId, address }: { chainId: ChainId; address: string }): void
   fundSource?: FundSource
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = memo(
-  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, ...props }) => {
+  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, onSelect, ...props }) => {
     const { address } = useAccount()
     const isMounted = useIsMounted()
 
@@ -38,37 +38,42 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       account: address,
       chainId,
       currencies: _tokenMapValues,
+      loadBentobox: false,
     })
 
     const { data: pricesMap } = usePrices({ chainId })
 
-    if (!isMounted) return <></>
+    return useMemo(() => {
+      if (!isMounted) return <></>
 
-    if (variant === 'overlay') {
+      if (variant === 'overlay') {
+        return (
+          <TokenSelectorOverlay
+            account={address}
+            balancesMap={balances}
+            tokenMap={_tokenMap}
+            pricesMap={pricesMap}
+            chainId={chainId}
+            fundSource={fundSource}
+            onSelect={onSelect}
+            {...props}
+          />
+        )
+      }
+
       return (
-        <TokenSelectorOverlay
+        <TokenSelectorDialog
           account={address}
           balancesMap={balances}
           tokenMap={_tokenMap}
           pricesMap={pricesMap}
           chainId={chainId}
           fundSource={fundSource}
+          onSelect={onSelect}
           {...props}
         />
       )
-    }
-
-    return (
-      <TokenSelectorDialog
-        account={address}
-        balancesMap={balances}
-        tokenMap={_tokenMap}
-        pricesMap={pricesMap}
-        chainId={chainId}
-        fundSource={fundSource}
-        {...props}
-      />
-    )
+    }, [_tokenMap, address, balances, chainId, fundSource, isMounted, onSelect, pricesMap, props, variant])
   },
   (prevProps, nextProps) => {
     return (

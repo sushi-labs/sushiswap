@@ -1,23 +1,28 @@
-import { tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
-import { FC, useMemo } from 'react'
+import { FC } from 'react'
 
-import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../../lib/hooks'
-import { CellWithBalanceProps } from './types'
+import { PoolPositionProvider, usePoolPosition } from '../../PoolPositionProvider'
+import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../PoolPositionStakedProvider'
+import { CellProps } from './types'
 
-export const PairPositionCell: FC<CellWithBalanceProps> = ({ row }) => {
-  const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(row)
-  const balance = useMemo(
-    () => tryParseAmount(row.liquidityTokenBalance, liquidityToken),
-    [row.liquidityTokenBalance, liquidityToken]
+export const PairPositionCell: FC<CellProps> = ({ row }) => {
+  return (
+    <PoolPositionProvider pair={row}>
+      <PoolPositionStakedProvider pair={row}>
+        <_PairPositionCell row={row} />
+      </PoolPositionStakedProvider>
+    </PoolPositionProvider>
   )
-  const underlying = useUnderlyingTokenBalanceFromPair({ reserve0, reserve1, totalSupply, balance })
-  const [value0, value1] = useTokenAmountDollarValues({ chainId: row.chainId, amounts: underlying })
+}
+
+const _PairPositionCell: FC<CellProps> = () => {
+  const { value1, value0 } = usePoolPosition()
+  const { value0: stakedValue0, value1: stakedValue1 } = usePoolPositionStaked()
 
   return (
-    <Typography variant="sm" weight={600} className="text-slate-50">
-      {formatUSD(Number(value0) + Number(value1))}
+    <Typography variant="sm" weight={600} className="text-slate-50 text-right">
+      {formatUSD(value0 + value1 + stakedValue0 + stakedValue1)}
     </Typography>
   )
 }

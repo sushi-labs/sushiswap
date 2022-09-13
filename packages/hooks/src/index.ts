@@ -1,5 +1,6 @@
 export { useCopyClipboard } from './useCopyClipboard'
 export { useDebounce } from './useDebounce'
+export * from './useEffectDebugger'
 export * from './useFundSourceToggler'
 export { useInterval } from './useInterval'
 export { useIsMounted } from './useIsMounted'

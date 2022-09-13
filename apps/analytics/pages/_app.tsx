@@ -1,6 +1,6 @@
 import '@sushiswap/ui/index.css'
 
-import { App, AppType } from '@sushiswap/ui'
+import { App, AppType, ToastContainer } from '@sushiswap/ui'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router.js'
 import Script from 'next/script'
@@ -51,6 +51,8 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <App.Nav />
         </App.Header>
         <Component {...pageProps} />
+        <App.Footer />
+        <ToastContainer className="mt-[50px]" />
       </App.Shell>
     </>
   )

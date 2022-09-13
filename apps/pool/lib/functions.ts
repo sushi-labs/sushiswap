@@ -1,36 +1,22 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
+import { ConstantProductPool, Pair } from '@sushiswap/exchange'
 
-export const keepPreviousDataMiddleware = (useSWRNext) => {
-  return (key, fetcher, config) => {
-    // Use a ref to store previous returned data.
-    const laggyDataRef = useRef()
+import { Incentive } from '../.graphclient'
 
-    // Actual SWR hook.
-    const swr = useSWRNext(key, fetcher, config)
+export const isConstantProductPool = (pool: Pair | ConstantProductPool | null): pool is ConstantProductPool => {
+  return pool instanceof ConstantProductPool
+}
 
-    useEffect(() => {
-      // Update ref if data is not undefined.
-      if (swr.data !== undefined) {
-        laggyDataRef.current = swr.data
-      }
-    }, [swr.data])
+export const isLegacyPool = (pool: Pair | ConstantProductPool | null): pool is Pair => {
+  return pool instanceof Pair
+}
 
-    // Expose a method to clear the laggy data, if any.
-    const resetLaggy = useCallback(() => {
-      laggyDataRef.current = undefined
-    }, [])
-
-    // Fallback to previous data if the current data is undefined.
-    const dataOrLaggyData = swr.data === undefined ? laggyDataRef.current : swr.data
-
-    // Is it showing previous data?
-    const isLagging = swr.data === undefined && laggyDataRef.current !== undefined
-
-    // Also add a `isLagging` field to SWR.
-    return Object.assign({}, swr, {
-      data: dataOrLaggyData,
-      isLagging,
-      resetLaggy,
-    })
-  }
+export const incentiveRewardToToken = (chainId: ChainId, incentive: Incentive): Token => {
+  return new Token({
+    chainId,
+    address: incentive.rewardToken.address,
+    symbol: incentive.rewardToken.symbol,
+    decimals: incentive.rewardToken.decimals,
+  })
 }

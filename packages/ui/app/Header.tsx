@@ -13,7 +13,7 @@ export enum AppType {
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
   Analytics = 'Analytics',
-  Pool = 'Pool',
+  Pool = 'Earn',
   Partner = 'Partner',
 }
 
@@ -64,7 +64,7 @@ export function Header({
     >
       <Transition
         as={Fragment}
-        show={showBackground}
+        show={showBackground || !withScrollBackground}
         enter="transform transition ease-in-out duration-100"
         enterFrom="translate-y-[-100%]"
         enterTo="translate-y-0"
@@ -74,7 +74,10 @@ export function Header({
       >
         <div className="absolute inset-0 border-b pointer-events-none bg-slate-900 border-slate-200/10" />
       </Transition>
-      <Container maxWidth={maxWidth} className="grid grid-cols-3 items-center w-full mx-auto z-[101] px-4">
+      <Container
+        maxWidth={maxWidth}
+        className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}
+      >
         <div className="flex items-center gap-3">
           <a className="flex flex-row items-center gap-1.5" href={LINK[appType]}>
             <div className="w-6 h-6">
@@ -96,9 +99,9 @@ export function Header({
             }
           >
             <Select.Options className="w-[max-content] !bg-slate-700 -ml-5 mt-5 max-h-[unset]">
-              <div className="grid grid-cols-1 gap-1 px-2 py-3 md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-1 px-2 py-3 pt-4 md:grid-cols-3">
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-2 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
                     Core
                   </Typography>
                   <Select.Option
@@ -127,7 +130,7 @@ export function Header({
                   </Select.Option> */}
                 </div>
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-2 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
                     Products
                   </Typography>
                   {/* <Select.Option
@@ -168,7 +171,7 @@ export function Header({
                   </Select.Option> */}
                 </div>
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-2 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
                     Links
                   </Typography>
                   <Select.Option

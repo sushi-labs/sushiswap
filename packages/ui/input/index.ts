@@ -7,8 +7,8 @@ import { Input as Numeric } from './Numeric'
 
 // Base classes
 export const DEFAULT_INPUT_FONT = 'text-left text-base md:text-sm placeholder:font-normal font-medium'
-export const DEFAULT_INPUT_BG = 'bg-white bg-opacity-[0.12]'
-export const DEFAULT_INPUT_HOVER_BG = 'hover:bg-white hover:bg-opacity-[0.12]'
+export const DEFAULT_INPUT_BG = 'bg-white bg-opacity-[0.06]'
+export const DEFAULT_INPUT_HOVER_BG = 'hover:bg-white hover:bg-opacity-[0.06]'
 export const DEFAULT_INPUT_RING =
   'focus-within:ring-2 focus:outline-none border-none focus:ring-2 focus:ring-offset-2 focus-within:ring-offset-2 ring-blue focus:ring-blue focus-within:ring-blue'
 export const DEFAULT_INPUT_PADDING = 'py-3 px-4'

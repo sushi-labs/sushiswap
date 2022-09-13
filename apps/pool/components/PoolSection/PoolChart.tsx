@@ -7,10 +7,9 @@ import { FC, useCallback, useMemo, useState } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import tailwindConfig from '../../tailwind.config.js'
+import { PairWithAlias } from '../../types'
 
 const tailwind = resolveConfig(tailwindConfig)
-
-import { PairWithAlias } from '../../types'
 
 interface PoolChartProps {
   pair: PairWithAlias
@@ -30,9 +29,6 @@ enum PoolChartPeriod {
   All,
 }
 
-// TODO MAKE DYNAMIC
-const FEE_BPS = 0.0005
-
 const chartTimespans: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.Day]: 86400 * 1000,
   [PoolChartPeriod.Week]: 604800 * 1000,
@@ -43,7 +39,7 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
 
 export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
-  const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.All)
+  const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Week)
 
   const [xData, yData] = useMemo(() => {
     const data =
@@ -56,7 +52,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           acc[1].push(
             Number(
               chartType === PoolChartType.Fees
-                ? cur.volumeUSD * FEE_BPS
+                ? cur.volumeUSD * (pair.swapFee / 10000)
                 : chartType === PoolChartType.Volume
                 ? cur.volumeUSD
                 : cur.liquidityUSD
@@ -69,7 +65,22 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
     )
 
     return [x.reverse(), y.reverse()]
-  }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, chartType])
+  }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, pair.swapFee, chartType])
+
+  // Transient update for performance
+  const onMouseOver = useCallback(
+    ({ name, value }) => {
+      const valueNodes = document.getElementsByClassName('hoveredItemValue')
+      const nameNodes = document.getElementsByClassName('hoveredItemName')
+
+      valueNodes[0].innerHTML = formatUSD(value)
+      if (chartType === PoolChartType.Volume) {
+        valueNodes[1].innerHTML = formatUSD(value * (pair.swapFee / 10000))
+      }
+      nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
+    },
+    [chartType, pair.swapFee]
+  )
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({
@@ -84,9 +95,11 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           fontWeight: 600,
         },
         formatter: (params) => {
+          onMouseOver({ name: params[0].name, value: params[0].value })
+
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5">
-            <span class="text-sm text-slate-50 font-bold">${formatUSD(params[0].value)}</span>
+            <span class="text-sm text-slate-50 font-semibold">${formatUSD(params[0].value)}</span>
             <span class="text-xs text-slate-400 font-medium">${
               date instanceof Date && !isNaN(date?.getTime()) ? format(date, 'dd MMM yyyy HH:mm') : ''
             }</span>
@@ -153,33 +166,12 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
         },
       ],
     }),
-    [chartType, xData, yData]
+    [onMouseOver, chartType, xData, yData]
   )
-
-  // Transient update for performance
-  const onMouseOver = useCallback(
-    ({ name, value }) => {
-      const valueNodes = document.getElementsByClassName('hoveredItemValue')
-      const nameNodes = document.getElementsByClassName('hoveredItemName')
-
-      valueNodes[0].innerHTML = formatUSD(value)
-      if (chartType === PoolChartType.Volume) {
-        valueNodes[1].innerHTML = formatUSD(value * FEE_BPS)
-      }
-      nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
-    },
-    [chartType]
-  )
-
-  const onEvents = useMemo(() => {
-    return {
-      mouseover: onMouseOver,
-    }
-  }, [onMouseOver])
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-between">
+      <div className="flex flex-col justify-between gap-5 md:flex-row">
         <div className="flex gap-6">
           <button
             onClick={() => setChartType(PoolChartType.Volume)}
@@ -263,7 +255,8 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           {chartType === PoolChartType.Volume && (
             <span className="text-sm font-medium text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * FEE_BPS)}</span> earned
+              <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * (pair.swapFee / 10000))}</span>{' '}
+              earned
             </span>
           )}
         </Typography>
@@ -271,7 +264,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
         </Typography>
       </div>
-      <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} onEvents={onEvents} />
+      <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
     </div>
   )
 }

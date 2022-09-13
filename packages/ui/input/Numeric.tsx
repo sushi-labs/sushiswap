@@ -49,7 +49,6 @@ export const Input = forwardRef<HTMLInputElement, NumericProps>(
 
     return (
       <input
-        {...rest}
         ref={ref}
         value={value}
         onChange={(event) => {
@@ -74,6 +73,7 @@ export const Input = forwardRef<HTMLInputElement, NumericProps>(
             ? classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)
             : className
         }
+        {...rest}
       />
     )
   }

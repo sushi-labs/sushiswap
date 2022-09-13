@@ -1,16 +1,19 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
+import { formatNumber } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, createToast, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
-import { Approve, useBalances, Wallet } from '@sushiswap/wagmi'
+import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
+import { BarTypes } from '../../.graphclient'
 import { SushiBarInput } from './SushiBarInput'
+import XSushi = BarTypes.XSushi
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]
@@ -22,12 +25,11 @@ export const SushiBarSectionMobile: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
+  const [error, setError] = useState<string>()
 
-  const { data: stats } = useSWR<{ apr: { '1m': string } }>(`pool/api/bar`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: stats } = useSWR<XSushi>(`pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
-  const { writeAsync } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: selectedIndex === 0 ? 'enter' : 'leave',
   })
@@ -43,18 +45,26 @@ export const SushiBarSectionMobile: FC = () => {
   const execute = useCallback(async () => {
     if (!activeChain?.id || !amount?.greaterThan(ZERO)) return
 
-    const data = await writeAsync({ args: [amount.quotient.toString()] })
+    try {
+      const data = await writeAsync({ args: [amount.quotient.toString()] })
 
-    createToast({
-      txHash: data.hash,
-      href: Chain.from(activeChain.id).getTxUrl(data.hash),
-      promise: data.wait(),
-      summary: {
-        pending: <Dots>{selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar</Dots>,
-        completed: `Successfully ${selectedIndex === 0 ? 'entered' : 'exited'} the Bar`,
-        failed: `Something went wrong ${selectedIndex === 0 ? 'entering' : 'exiting'} the Bar`,
-      },
-    })
+      createToast({
+        txHash: data.hash,
+        href: Chain.from(activeChain.id).getTxUrl(data.hash),
+        promise: data.wait(),
+        summary: {
+          pending: <Dots>{selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar</Dots>,
+          completed: `Successfully ${selectedIndex === 0 ? 'entered' : 'exited'} the Bar`,
+          failed: `Something went wrong ${selectedIndex === 0 ? 'entering' : 'exiting'} the Bar`,
+        },
+      })
+    } catch (e: unknown) {
+      if (!(e instanceof UserRejectedRequestError)) {
+        setError((e as ProviderRpcError).message)
+      }
+
+      console.log(e)
+    }
   }, [activeChain?.id, amount, writeAsync, selectedIndex])
 
   const handleClose = useCallback(() => {
@@ -69,7 +79,7 @@ export const SushiBarSectionMobile: FC = () => {
             <UICurrency.Icon currency={XSUSHI_TOKEN} width={44} height={44} />
           </div>
           <div className="flex flex-col">
-            <Typography variant="lg" weight={700} className="text-slate-100">
+            <Typography variant="lg" weight={600} className="text-slate-100">
               Sushi Bar
             </Typography>
             <Typography variant="sm" weight={400} className="text-slate-400 -mt-1">
@@ -100,7 +110,7 @@ export const SushiBarSectionMobile: FC = () => {
                         variant="xs"
                         className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent"
                       >
-                        {stats?.apr?.['1m']}
+                        {formatNumber(stats?.apr12m)}
                         <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
                           <ExternalLinkIcon width={12} height={12} className="text-slate-200 hover:text-blue" />
                         </Link.External>
@@ -132,7 +142,9 @@ export const SushiBarSectionMobile: FC = () => {
                         <Approve.Components>
                           <Approve.Token
                             hideIcon
-                            className="whitespace-nowrap w-[130px] min-h-[48px]"
+                            fullWidth
+                            size="md"
+                            className="whitespace-nowrap min-h-[48px]"
                             amount={amount}
                             address={getSushiBarContractConfig(ChainId.ETHEREUM).addressOrName}
                           />
@@ -140,19 +152,42 @@ export const SushiBarSectionMobile: FC = () => {
                       }
                       render={({ approved }) => {
                         return (
-                          <Wallet.Button
-                            onClick={execute}
-                            disabled={!approved}
-                            size="md"
-                            fullWidth
-                            appearOnMount={false}
-                          >
-                            {selectedIndex === 0 ? 'Stake' : 'Unstake'}
-                          </Wallet.Button>
+                          <Checker.Connected size="md" fullWidth className="whitespace-nowrap">
+                            <Checker.Network
+                              size="md"
+                              fullWidth
+                              className="whitespace-nowrap"
+                              chainId={ChainId.ETHEREUM}
+                            >
+                              <Checker.Amounts
+                                size="md"
+                                fullWidth
+                                className="whitespace-nowrap"
+                                chainId={ChainId.ETHEREUM}
+                                fundSource={FundSource.WALLET}
+                                amounts={[amount]}
+                              >
+                                <Button size="md" fullWidth onClick={execute} disabled={!approved || isWritePending}>
+                                  {isWritePending ? (
+                                    <Dots>Confirm transaction</Dots>
+                                  ) : selectedIndex === 0 ? (
+                                    'Stake'
+                                  ) : (
+                                    'Unstake'
+                                  )}
+                                </Button>
+                              </Checker.Amounts>
+                            </Checker.Network>
+                          </Checker.Connected>
                         )
                       }}
                     />
                   </Dialog.Actions>
+                  {error && (
+                    <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
+                      {error}
+                    </Typography>
+                  )}
                 </Tab.Panels>
               </Tab.Group>
             </div>

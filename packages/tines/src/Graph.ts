@@ -41,6 +41,14 @@ export interface MultiRoute {
   totalAmountOutBN: BigNumber
 }
 
+// Tines input info about blockchains
+export interface NetworkInfo {
+  chainId?: number | string
+  baseToken: RToken // native coin of the blockchain, or its wrapper, for example: WETH, MATIC
+  //baseTokenPrice: number // price of baseToke, in $ for example
+  gasPrice: number // current gas price, in baseToken. For example, if gas costs 17Gwei then gasPrice is 17*1e9
+}
+
 export class Edge {
   pool: RPool
   vert0: Vertice
@@ -195,7 +203,6 @@ export class Edge {
       const outInc = from === this.vert0 ? amountOut : -amountIn
       const inNew = inPrev + inInc
       const outNew = outPrev + outInc
-      if (inNew * outNew < 0) console.log('333')
       console.assert(inNew * outNew >= 0)
       if (inNew >= 0) {
         directionNew = true
@@ -328,8 +335,27 @@ export class Graph {
   edges: Edge[]
   private tokens: Map<string, Vertice>
 
-  constructor(pools: RPool[], baseToken: RToken, gasPrice: number) {
-    setTokenId(baseToken)
+  // Single network usage: (pools, baseToken, gasPrice)
+  // Multiple Network usage: (pools, networks)
+  constructor(
+    pools: RPool[],
+    start: RToken,
+    baseTokenOrNetworks: RToken | NetworkInfo[],
+    gasPriceSingleNetwork?: number
+  ) {
+    const networks: NetworkInfo[] =
+      baseTokenOrNetworks instanceof Array
+        ? baseTokenOrNetworks
+        : [
+            {
+              chainId: baseTokenOrNetworks.chainId,
+              baseToken: baseTokenOrNetworks,
+              //baseTokenPrice: 1,
+              gasPrice: gasPriceSingleNetwork || 0,
+            },
+          ]
+
+    setTokenId(...networks.map((n) => n.baseToken))
     this.vertices = []
     this.edges = []
     this.tokens = new Map()
@@ -341,10 +367,14 @@ export class Graph {
       v1.edges.push(edge)
       this.edges.push(edge)
     })
-    const baseVert = this.getVert(baseToken)
-    if (baseVert) {
-      this.setPricesStable(baseVert, 1, gasPrice)
-    }
+    // networks.forEach((n) => {
+    //   const baseVert = this.getVert(n.baseToken)
+    //   if (baseVert) {
+    //     this.setPricesStable(baseVert, n.baseTokenPrice, n.gasPrice, true)
+    //   }
+    // })
+    const startV = this.getVert(start)
+    if (startV !== undefined) this.setPricesStable(startV, 1, networks)
   }
 
   getVert(t: RToken): Vertice | undefined {
@@ -357,17 +387,16 @@ export class Graph {
   }
 
   // Set prices using greedy algorithm
-  setPricesStable(from: Vertice, price: number, gasPrice: number) {
-    this.vertices.forEach((v) => (v.price = 0)) // initialization
-    from.price = price
-    from.gasPrice = gasPrice
-
+  setPricesStable(from: Vertice, price: number, networks: NetworkInfo[]) {
+    const processedVert = new Set<Vertice>()
+    let nextEdges: Edge[] = []
     const edgeValues = new Map<Edge, number>()
     const value = (e: Edge): number => edgeValues.get(e) as number
 
-    function addVertice(v: Vertice) {
-      const newEdges = v.edges.filter((e) => v.getNeibour(e)?.price == 0)
-      newEdges.forEach((e) => edgeValues.set(e, v.price * parseInt(e.reserve(v).toString())))
+    function addVertice(v: Vertice, price: number) {
+      v.price = price
+      const newEdges = v.edges.filter((e) => !processedVert.has(v.getNeibour(e) as Vertice))
+      newEdges.forEach((e) => edgeValues.set(e, price * parseInt(e.reserve(v).toString())))
       newEdges.sort((e1, e2) => value(e1) - value(e2))
       const res: Edge[] = []
       while (nextEdges.length && newEdges.length) {
@@ -375,19 +404,67 @@ export class Graph {
         else res.push(newEdges.shift() as Edge)
       }
       nextEdges = [...res, ...nextEdges, ...newEdges]
+      processedVert.add(v)
     }
 
-    let nextEdges: Edge[] = []
-    addVertice(from)
+    addVertice(from, price)
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge
-      const [vFrom, vTo] =
-        bestEdge.vert1.price !== 0 ? [bestEdge.vert1, bestEdge.vert0] : [bestEdge.vert0, bestEdge.vert1]
-      if (vTo.price !== 0) continue
+      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
+        ? [bestEdge.vert1, bestEdge.vert0]
+        : [bestEdge.vert0, bestEdge.vert1]
+      if (processedVert.has(vTo)) continue
       const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
-      vTo.price = vFrom.price * p
-      vTo.gasPrice = vFrom.gasPrice / p
-      addVertice(vTo)
+      addVertice(vTo, vFrom.price * p) //, vFrom.gasPrice / p)
+    }
+
+    const gasPrice = new Map<number | string | undefined, number>()
+    networks.forEach((n) => {
+      const vPrice = this.getVert(n.baseToken)?.price || 0
+      gasPrice.set(n.chainId, n.gasPrice * vPrice)
+    })
+    processedVert.forEach((v) => {
+      const gasPriceChainId = gasPrice.get(v.token.chainId) as number
+      console.assert(gasPriceChainId !== undefined, 'Error 427')
+      console.assert(v.price !== 0, 'Error 428')
+      v.gasPrice = gasPriceChainId / v.price
+    })
+  }
+
+  // Set prices using greedy algorithm
+  setPricesStableInsideChain(from: Vertice, price: number, gasPrice: number) {
+    const processedVert = new Set()
+    let nextEdges: Edge[] = []
+    const edgeValues = new Map<Edge, number>()
+    const value = (e: Edge): number => edgeValues.get(e) as number
+
+    function addVertice(v: Vertice, price: number, gasPrice: number) {
+      v.price = price
+      v.gasPrice = gasPrice
+      const newEdges = v.edges.filter((e) => {
+        const newV = v.getNeibour(e)
+        return newV?.token.chainId === v.token.chainId && !processedVert.has(v.getNeibour(e) as Vertice)
+      })
+      newEdges.forEach((e) => edgeValues.set(e, price * parseInt(e.reserve(v).toString())))
+      newEdges.sort((e1, e2) => value(e1) - value(e2))
+      const res: Edge[] = []
+      while (nextEdges.length && newEdges.length) {
+        if (value(nextEdges[0]) < value(newEdges[0])) res.push(nextEdges.shift() as Edge)
+        else res.push(newEdges.shift() as Edge)
+      }
+      nextEdges = [...res, ...nextEdges, ...newEdges]
+      processedVert.add(v)
+    }
+
+    addVertice(from, price, gasPrice)
+    while (nextEdges.length > 0) {
+      const bestEdge = nextEdges.pop() as Edge
+      const [vFrom, vTo] = processedVert.has(bestEdge.vert1)
+        ? [bestEdge.vert1, bestEdge.vert0]
+        : [bestEdge.vert0, bestEdge.vert1]
+      if (processedVert.has(vTo)) continue
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1)
+      addVertice(vTo, vFrom.price * p, vFrom.gasPrice / p)
     }
   }
 
@@ -491,8 +568,7 @@ export class Graph {
   findBestPathExactIn(
     from: RToken,
     to: RToken,
-    amountIn: number,
-    _gasPrice?: number
+    amountIn: number
   ):
     | {
         path: Edge[]
@@ -504,8 +580,6 @@ export class Graph {
     const start = this.getVert(from)
     const finish = this.getVert(to)
     if (!start || !finish) return
-
-    const gasPrice = _gasPrice !== undefined ? _gasPrice : finish.gasPrice
 
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
@@ -547,6 +621,9 @@ export class Graph {
           bestPath.unshift(v.bestSource)
         }
         DEBUG(() => console.log(debug_info))
+        if (Number.isNaN(finish.bestTotal)) {
+          debugger
+        }
         return {
           path: bestPath,
           output: finish.bestIncome,
@@ -568,16 +645,18 @@ export class Graph {
 
           newIncome = out
           gas = gasSpent
-        } catch (e) {
+        } catch (err) {
           // Any arithmetic error or out-of-liquidity
-          return
-        }
-        if (e.checkMinimalLiquidityExceededAfterSwap(closestVert as Vertice, newIncome)) {
           e.bestEdgeIncome = -1
           return
         }
+        // if (e.checkMinimalLiquidityExceededAfterSwap(closestVert as Vertice, newIncome)) {
+        //   e.bestEdgeIncome = -1
+        //   return
+        // }
         const newGasSpent = (closestVert as Vertice).gasSpent + gas
         const price = v2.price / finish.price
+        const gasPrice = v2.gasPrice * price
         const newTotal = newIncome * price - newGasSpent * gasPrice
 
         console.assert(e.bestEdgeIncome === 0, 'Error 373')
@@ -604,8 +683,7 @@ export class Graph {
   findBestPathExactOut(
     from: RToken,
     to: RToken,
-    amountOut: number,
-    _gasPrice?: number
+    amountOut: number
   ):
     | {
         path: Edge[]
@@ -617,8 +695,6 @@ export class Graph {
     const start = this.getVert(to)
     const finish = this.getVert(from)
     if (!start || !finish) return
-
-    const gasPrice = _gasPrice !== undefined ? _gasPrice : finish.gasPrice
 
     this.edges.forEach((e) => {
       e.bestEdgeIncome = 0
@@ -687,6 +763,7 @@ export class Graph {
         }
         const newGasSpent = (closestVert as Vertice).gasSpent + gas
         const price = v2.price / finish.price
+        const gasPrice = v2.gasPrice * price
         const newTotal = newIncome * price + newGasSpent * gasPrice
 
         console.assert(e.bestEdgeIncome === 0, 'Error 373')
@@ -787,7 +864,7 @@ export class Graph {
     })
     let output = 0
     let gasSpentInit = 0
-    //let totalOutput = 0
+    let totalOutput = 0
     let totalrouted = 0
     let primaryPrice
     let step
@@ -798,7 +875,7 @@ export class Graph {
       } else {
         output += p.output
         gasSpentInit += p.gasSpent
-        //totalOutput += p.totalOutput
+        totalOutput += p.totalOutput
         this.addPath(this.getVert(from), this.getVert(to), p.path)
         totalrouted += routeValues[step]
         // if (step === 0) {
@@ -806,7 +883,7 @@ export class Graph {
         // }
       }
     }
-    if (step == 0)
+    if (step == 0 || output == 0)
       return {
         status: RouteStatus.NoWay,
         fromToken: from,
@@ -857,8 +934,8 @@ export class Graph {
       amountOutBN: getBigNumber(output),
       legs,
       gasSpent,
-      totalAmountOut: output - gasSpent * toVert.gasPrice,
-      totalAmountOutBN: getBigNumber(output - gasSpent * toVert.gasPrice),
+      totalAmountOut: totalOutput, // TODO: should be recalculated if topologyWasChanged
+      totalAmountOutBN: getBigNumber(totalOutput),
     }
   }
 
@@ -878,7 +955,7 @@ export class Graph {
     })
     let input = 0
     let gasSpentInit = 0
-    //let totalOutput = 0
+    //let totalInput = 0
     let totalrouted = 0
     let primaryPrice
     let step
@@ -889,7 +966,7 @@ export class Graph {
       } else {
         input += p.input
         gasSpentInit += p.gasSpent
-        //totalOutput += p.totalOutput
+        //totalInput += p.totalInput
         this.addPath(this.getVert(from), this.getVert(to), p.path)
         totalrouted += routeValues[step]
         // if (step === 0) {
@@ -948,8 +1025,8 @@ export class Graph {
       amountOutBN: getBigNumber(amountOut * totalrouted),
       legs,
       gasSpent,
-      totalAmountOut: amountOut - gasSpent * toVert.gasPrice,
-      totalAmountOutBN: getBigNumber(amountOut - gasSpent * toVert.gasPrice),
+      totalAmountOut: amountOut - gasSpent * toVert.gasPrice, // TODO: should be totalAmountIn instead !!!!
+      totalAmountOutBN: getBigNumber(amountOut - gasSpent * toVert.gasPrice), // TODO: should be totalAmountInBN instead !!!!
     }
   }
 

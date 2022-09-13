@@ -1,11 +1,12 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Token, Type } from '@sushiswap/currency'
+import { ZERO } from '@sushiswap/math'
 import { useMemo } from 'react'
 
 interface Params {
   totalSupply: Amount<Token> | undefined
-  reserve0: Amount<Token> | undefined
-  reserve1: Amount<Token> | undefined
-  balance: Amount<Token> | undefined
+  reserve0: Amount<Type> | undefined
+  reserve1: Amount<Type> | undefined
+  balance: Amount<Type> | undefined
 }
 
 type UseUnderlyingTokenBalanceFromPairParams = (
@@ -23,6 +24,16 @@ export const useUnderlyingTokenBalanceFromPair: UseUnderlyingTokenBalanceFromPai
       return [undefined, undefined]
     }
 
-    return [reserve0.multiply(balance.divide(totalSupply)), reserve1.multiply(balance.divide(totalSupply))]
+    if (totalSupply.equalTo(ZERO)) {
+      return [
+        Amount.fromRawAmount(reserve0.wrapped.currency, '0'),
+        Amount.fromRawAmount(reserve1.wrapped.currency, '0'),
+      ]
+    }
+
+    return [
+      reserve0.wrapped.multiply(balance.wrapped.divide(totalSupply)),
+      reserve1.wrapped.multiply(balance.wrapped.divide(totalSupply)),
+    ]
   }, [balance, reserve0, reserve1, totalSupply])
 }

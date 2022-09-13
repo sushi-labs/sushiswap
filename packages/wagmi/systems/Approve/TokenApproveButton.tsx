@@ -98,32 +98,37 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
       >
         <DefaultButton as="div" {...props}>
           <Tooltip
+            mouseEnterDelay={0.3}
             button={
-              <Badge
-                badgeContent={
-                  <div
-                    className={classNames(
-                      approvalState === ApprovalState.PENDING
-                        ? 'bg-yellow'
-                        : approvalState === ApprovalState.APPROVED
-                        ? 'bg-green'
-                        : 'bg-red',
-                      'w-2 h-2 rounded-full shadow-md'
-                    )}
-                  />
-                }
-              >
-                <IconButton
-                  as="div"
-                  className={classNames(
-                    disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
-                    'flex items-center justify-center'
-                  )}
-                  onClick={onApprove}
+              <div>
+                <Badge
+                  badgeContent={
+                    <div
+                      className={classNames(
+                        approvalState === ApprovalState.PENDING
+                          ? 'bg-yellow'
+                          : approvalState === ApprovalState.APPROVED
+                          ? 'bg-green'
+                          : 'bg-red',
+                        'w-2 h-2 rounded-full shadow-md'
+                      )}
+                    />
+                  }
                 >
-                  {amount && <CurrencyFromUi.Icon disableLink currency={amount?.currency} width="100%" height="100%" />}
-                </IconButton>
-              </Badge>
+                  <IconButton
+                    as="div"
+                    className={classNames(
+                      disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
+                      'flex items-center justify-center hover:scale-[1.10] transition-all'
+                    )}
+                    onClick={onApprove}
+                  >
+                    {amount && (
+                      <CurrencyFromUi.Icon disableLink currency={amount?.currency} width="100%" height="100%" />
+                    )}
+                  </IconButton>
+                </Badge>
+              </div>
             }
             panel={
               <div className="flex flex-col gap-2 max-w-[200px]">

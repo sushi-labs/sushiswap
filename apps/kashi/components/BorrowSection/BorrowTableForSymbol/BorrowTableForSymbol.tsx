@@ -23,6 +23,7 @@ import {
   TOTAL_ASSET_COLUMN,
 } from '../../Table'
 
+// @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, BORROW_ASSET_COLUMN, TOTAL_APR_COLUMN, TOTAL_ASSET_COLUMN, AVAILABLE_FOR_BORROW_COLUMN]
 
 const fetcher = ({
@@ -107,8 +108,8 @@ export const BorrowTableForSymbol: FC = () => {
 
   return (
     <>
-      <div className="flex w-full flex-col gap-6">
-        <Typography variant="h3" weight={500} className="flex gap-2 items-center text-slate-50 font-semibold">
+      <div className="flex flex-col w-full gap-6">
+        <Typography variant="h3" weight={500} className="flex items-center gap-2 font-semibold text-slate-50">
           Borrow Markets <Chip label={pairs?.length} color="blue" />
         </Typography>
       </div>

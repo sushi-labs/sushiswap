@@ -26,7 +26,7 @@ export const SushiBarInput: FC<SushiBarInputProps> = ({ currency, balance, onCha
         <Input.Numeric
           className={classNames(
             disabled ? 'pointer-events-none' : '',
-            'flex flex-grow text-right font-bold text-slate-50',
+            'flex flex-grow text-right font-semibold text-slate-50',
             DEFAULT_INPUT_UNSTYLED
           )}
           variant="unstyled"

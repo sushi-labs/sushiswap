@@ -18,11 +18,10 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           <App.Shell>
             <App.Header
               appType={AppType.Pool}
-              withScrollBackground
               nav={
                 <App.NavItemList>
                   <App.NavItem href="/swap" label="Swap" />
-                  <App.NavItem href="/pool" label="Liquidity" />
+                  <App.NavItem href="/pool" label="Earn" />
                 </App.NavItemList>
               }
             >

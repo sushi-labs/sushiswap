@@ -10,17 +10,14 @@ interface PoolStats {
   pair: PairWithAlias
 }
 
-// TODO MAKE DYNAMIC
-const FEE_BPS = 0.0005
-
 export const PoolStats: FC<PoolStats> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
-
   const [totals1d, totals2d] = pair.dayChangeData
   const reserveChange = ((totals1d.liquidityUSD - totals2d.liquidityUSD) / totals2d.liquidityUSD) * 100
   const volChange = ((totals1d.volumeUSD - totals2d.volumeUSD) / totals2d.volumeUSD) * 100
-  const txCountChange = ((totals1d.txCount - totals2d.txCount) / totals2d.txCount) * 100
+  const transactionCountChange =
+    ((totals1d.transactionCount - totals2d.transactionCount) / totals2d.transactionCount) * 100
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -38,7 +35,7 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
-          Volume (1d)
+          Volume (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
           {formatUSD(totals1d.volumeUSD)}
@@ -50,10 +47,10 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
-          Fees (1d)
+          Fees (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(totals1d.volumeUSD * FEE_BPS)}
+          {formatUSD(totals1d.volumeUSD * (pair.swapFee / 10000))}
         </Typography>
         <Typography variant="xs" weight={500} className={volChange > 0 ? 'text-green' : 'text-red'}>
           {volChange > 0 ? '+' : '-'}
@@ -62,14 +59,14 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
-          Transactions (1d)
+          Transactions (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatNumber(totals1d.txCount)}
+          {formatNumber(totals1d.transactionCount)}
         </Typography>
-        <Typography variant="xs" weight={500} className={txCountChange > 0 ? 'text-green' : 'text-red'}>
-          {txCountChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(txCountChange))}%
+        <Typography variant="xs" weight={500} className={transactionCountChange > 0 ? 'text-green' : 'text-red'}>
+          {transactionCountChange > 0 ? '+' : '-'}
+          {formatNumber(Math.abs(transactionCountChange))}%
         </Typography>
       </div>
     </div>

@@ -42,8 +42,7 @@
     },
     "generate": {
       "dependsOn": [
-        "^build",
-        "$REDIS_URL"
+        "^build"
       ],
       "outputs": [
         "^build",
@@ -88,7 +87,12 @@
         "deployments/**"
       ],
       "cache": true
+    },
+    "server": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": true
     }
-  },
-  "baseBranch": "origin/master"
+  }
 }

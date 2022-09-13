@@ -5,6 +5,7 @@ import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/image'
 import { FC, useMemo, useState } from 'react'
 
+import { NetworkIcon } from '../icons'
 import { Link } from '../link'
 
 const BLOCKCHAIN: Record<number, string> = {
@@ -85,11 +86,8 @@ export interface IconProps extends Omit<ImageProps, 'src'> {
 
 export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   const [error, setError] = useState(false)
-  const src = useMemo(() => {
-    if (currency.isNative) {
-      return LOGO[currency.chainId]
-    }
 
+  const src = useMemo(() => {
     if (currency instanceof WrappedTokenInfo && currency.logoURI) {
       return currency.logoURI
     }
@@ -103,20 +101,6 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
       BLOCKCHAIN[currency.chainId]
     }/${currency.wrapped.address}.jpg`
   }, [currency])
-
-  if (!src) {
-    return (
-      <QuestionMarkCircleIcon
-        width={rest.width}
-        height={rest.height}
-        className="rounded-full bg-white bg-opacity-[0.12]"
-      />
-    )
-  }
-
-  if (disableLink) {
-    return <Image src={src} alt={currency.name} className="rounded-full" {...rest} />
-  }
 
   if (error) {
     return (
@@ -137,6 +121,24 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         </defs>
       </svg>
     )
+  }
+
+  if (currency.isNative) {
+    return <NetworkIcon chainId={currency.chainId} width={rest.width} height={rest.height} />
+  }
+
+  if (!src) {
+    return (
+      <QuestionMarkCircleIcon
+        width={rest.width}
+        height={rest.height}
+        className="rounded-full bg-white bg-opacity-[0.12]"
+      />
+    )
+  }
+
+  if (disableLink) {
+    return <Image onError={() => setError(true)} src={src} alt={currency.name} className="rounded-full" {...rest} />
   }
 
   return (

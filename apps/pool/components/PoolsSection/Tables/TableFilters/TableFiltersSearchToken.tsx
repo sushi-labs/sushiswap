@@ -4,7 +4,7 @@ import { useDebounce } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 
-import { usePoolFilters } from '../../../PoolsProvider'
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
 
 export const TableFiltersSearchToken: FC = () => {
   const { setFilters } = usePoolFilters()
@@ -27,7 +27,7 @@ export const TableFiltersSearchToken: FC = () => {
   useEffect(() => {
     if (!extra) {
       setTimeout(() => {
-        setFilters({ extraQuery: '' })
+        setExtraQuery('')
       }, 750)
     }
   }, [extra, setFilters])
@@ -86,6 +86,7 @@ export const TableFiltersSearchToken: FC = () => {
         leaveTo="transform max-w-0"
       >
         <input
+          value={_extraQuery}
           placeholder="... other token"
           className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-[200px] !text-base placeholder:text-sm')}
           type="text"

@@ -1,3 +1,45 @@
+query Bar($id: ID! = "xSushi") {
+  xsushi(id: $id) {
+    sushiXsushiRatio
+    apr1m
+    apr3m
+    apr6m
+    apr12m
+  }
+}
+
+query EthereumBlocks($where: Block_filter) {
+  blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
+    id
+    number
+    timestamp
+  }
+}
+
+query CrossChainBlocks(
+  $first: Int = 1
+  $skip: Int = 0
+  $where: Block_filter
+  $orderBy: Block_orderBy = "timestamp"
+  $orderDirection: OrderDirection = "desc",
+  $chainIds: [BigInt!]!
+) {
+  crossChainBlocks(
+    first: $first,
+    skip: $skip,
+    where: $where,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    chainIds: $chainIds
+  ) {
+    id
+    chainId
+    chainName
+    number
+    timestamp
+  }
+}
+
 query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
   crossChainBundles(first: $first, chainIds: $chainIds) {
     id
@@ -7,13 +49,39 @@ query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
   }
 }
 
-query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
-  crossChainPairs(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection, block: $block, chainIds: $chainIds) {
+query CrossChainPairs(
+  $first: Int = 20
+  $skip: Int = 0
+  $pagination: Pagination
+  $where: Pair_filter
+  $orderBy: Pair_orderBy = apr
+  $orderDirection: OrderDirection = desc
+  $block: Block_height
+  $chainIds: [BigInt!]!
+  $oneDayBlockNumbers: [BigInt!]!
+) {
+  crossChainPairs(
+    first: $first, 
+    skip: $skip,
+    pagination: $pagination,
+    where: $where, 
+    orderBy: $orderBy, 
+    orderDirection: $orderDirection,
+    block: $block, 
+    chainIds: $chainIds, 
+    oneDayBlockNumbers: $oneDayBlockNumbers
+  ) {
     id
     chainId
     chainName
     chainShortName
     name
+    reserve0
+    reserve1
+    liquidity
+    swapFee
+    twapEnabled
+    source
     token0 {
       name
       id
@@ -28,36 +96,88 @@ query CrossChainPairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $
     }
     liquidityNative
     liquidityUSD
+    volumeUSD
+    volume1d
+    aprUpdatedAtTimestamp
     apr
+    feeApr
+    incentiveApr
+    farm {
+      id
+      feeApy
+      incentives {
+        apr
+        rewardPerDay
+        rewardToken {
+          address
+          symbol
+          decimals
+        }
+        rewarderAddress
+        rewarderType
+      }
+      chefType
+      poolType
+    }
   }
 }
 
-query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
-  crossChainUser(id: $id, block: $block, chainIds: $chainIds) {
+query CrossChainUser($id: ID!, $chainIds: [BigInt!]!, $now: Int!, $block: Block_height) {
+  crossChainUser(id: $id, chainIds: $chainIds, now: $now, block: $block) {
     liquidityPositions {
       balance
       pair {
         id
         chainId
         chainName
+        chainShortName
         name
         reserve0
         reserve1
         liquidity
+        swapFee
+        twapEnabled
+        volume7d
+        source
         token0 {
-          id
           name
+          id
           decimals
           symbol
         }
         token1 {
-          id
           name
+          id
           decimals
           symbol
         }
         liquidityNative
         liquidityUSD
+        apr
+        feeApr
+        incentiveApr
+        daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+          id
+          date
+          volumeUSD
+        }
+        farm {
+          id
+          feeApy
+          incentives {
+            apr
+            rewardPerDay
+            rewardToken {
+              address
+              symbol
+              decimals
+            }
+            rewarderAddress
+            rewarderType
+          }
+          chefType
+          poolType
+        }
       }
     }
   }
@@ -65,7 +185,7 @@ query CrossChainUser($block: Block_height, $id: String, $chainIds: [BigInt!]!) {
 
 
 
-query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
+query CrossChainPair($id: ID!, $now: Int!, $chainId: BigInt!) {
   crossChainPair(id: $id, now: $now, chainId: $chainId) {
     id
     chainId
@@ -75,6 +195,10 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
     reserve0
     reserve1
     liquidity
+    swapFee
+    twapEnabled
+    volume7d
+    source
     token0 {
       name
       id
@@ -89,8 +213,26 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
     }
     liquidityNative
     liquidityUSD
-    volumeUSD
     apr
+    feeApr
+    incentiveApr
+    farm {
+      id
+      feeApy
+      incentives {
+        apr
+        rewardPerDay
+        rewardToken {
+          address
+          symbol
+          decimals
+        }
+        rewarderAddress
+        rewarderType
+      }
+      chefType
+      poolType
+    }
     hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date
@@ -118,7 +260,7 @@ query CrossChainPair($id: String!, $now: Int!, $chainId: BigInt!) {
   }
 }
 
-query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
+query Pair($id: ID!, $now: Int!, $chainId: BigInt!) {
   pair(id: $id) {
     id
     chainId
@@ -144,6 +286,8 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
     liquidityUSD
     volumeUSD
     apr
+    swapFee
+    twapEnabled
     hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
       id
       date
@@ -170,73 +314,62 @@ query Pair($id: String!, $now: Int!, $chainId: BigInt!) {
   }
 }
 
-query EthereumBlocks($where: Block_filter) {
-  blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
-    id
-    number
-    timestamp
-  }
-}
 
-query Bar($block: Block_height, $id: String = "0x8798249c2e607446efb7ad49ec89dd1865ff4272") {
-  bar(block: $block, id: $id) {
-    id
-    decimals
-    sushi
-    totalSupply
-    ratio
-    xSushiMinted
-    xSushiBurned
-    sushiStaked
-    sushiHarvested
-  }
-}
 
-query CrossChainFarms($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
-  farms {
+# query CrossChainFarms($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $orderBy: Pair_orderBy, $orderDirection: OrderDirection $block: Block_height, $chainIds: [BigInt!]!) {
+#   farms {
+#     id
+#     chainId
+#     chainName
+#     stakeToken {
+#       id
+#       name
+#       symbol
+#       decimals
+#       type
+#       assets
+#     }
+#     incentives {
+#       id
+#       rewardsAccrued
+#       rewardsRemaining
+#       liquidityStaked
+#       stakeToken {
+#         id
+#         name
+#         symbol
+#         decimals
+#         type
+#         assets
+#       }
+#       rewardToken {
+#         id
+#         name
+#         symbol
+#         decimals
+#         type
+#       }
+#       createdBy {
+#         id
+#       }
+#       startTime
+#       endTime
+#       createdAtBlock
+#       createdAtTimestamp
+#       modifiedAtBlock
+#       modifiedAtTimestamp
+#       rewardsUpdatedAtBlock
+#       rewardsUpdatedAtTimestamp
+#     }
+#   }
+# }
+#
+query CrossChainFactories($chainIds: [BigInt!]!) {
+  crossChainFactories(chainIds: $chainIds) {
     id
     chainId
     chainName
-    stakeToken {
-      id
-      name
-      symbol
-      decimals
-      type
-      assets
-    }
-    incentives {
-      id
-      rewardsAccrued
-      rewardsRemaining
-      liquidityStaked
-      stakeToken {
-        id
-        name
-        symbol
-        decimals
-        type
-        assets
-      }
-      rewardToken {
-        id
-        name
-        symbol
-        decimals
-        type
-      }
-      createdBy {
-        id
-      }
-      startTime
-      endTime
-      createdAtBlock
-      createdAtTimestamp
-      modifiedAtBlock
-      modifiedAtTimestamp
-      rewardsUpdatedAtBlock
-      rewardsUpdatedAtTimestamp
-    }
+    pairCount
   }
 }
 

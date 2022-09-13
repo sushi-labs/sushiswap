@@ -1,20 +1,21 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Button, Link, OnsenIcon } from '@sushiswap/ui'
-import { AMM_ENABLED_NETWORKS } from 'config'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
-import { Layout, PoolsProvider, PoolsSection, SushiBarSection } from '../components'
-import { getBundles, getFarms, getPools, GetPoolsQuery } from '../lib/api'
+import { Layout, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
+import { getBundles, getPoolCount, getPools, GetPoolsQuery } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pairs, bundles, farms] = await Promise.all([
+  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
+  const [pairs, bundles, poolCount] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),
     getBundles(),
-    getFarms(),
+    getPoolCount(),
   ])
+
   return {
     props: {
       fallback: {
@@ -27,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
                 desc: true,
               },
             ],
-            selectedNetworks: AMM_ENABLED_NETWORKS,
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
             pagination: {
               pageIndex: 0,
               pageSize: 20,
@@ -37,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           },
         })]: pairs,
         [`/pool/api/bundles`]: bundles,
-        [`/pool/api/farms`]: farms,
+        [`/pool/api/pools/count`]: poolCount,
       },
     },
   }
@@ -57,7 +58,7 @@ const _Pools = () => {
       <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md space-y-4">
-            <h2 className="text-2xl font-bold text-slate-50">Sushi Yield</h2>
+            <h2 className="text-2xl font-semibold text-slate-50">Sushi Yield</h2>
             <p className="text-slate-300">
               Onsen is back with a new contract, allowing for more yield opportunities and functionalities.{' '}
             </p>
@@ -69,16 +70,18 @@ const _Pools = () => {
                   New Position
                 </Button>
               </Link.Internal>
-              <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
-                Join Onsen
-              </Button>
+              <Link.External href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
+                <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
+                  Join Onsen
+                </Button>
+              </Link.External>
             </div>
           </div>
         </section>
         <SushiBarSection />
-        <PoolsProvider>
+        <PoolsFiltersProvider>
           <PoolsSection />
-        </PoolsProvider>
+        </PoolsFiltersProvider>
       </div>
     </Layout>
   )

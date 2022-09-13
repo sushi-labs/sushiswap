@@ -14,12 +14,12 @@ export type FooterProps = React.HTMLProps<HTMLDivElement>
 const config: Record<string, Record<string, { href: string; rel?: string; target?: string }>> = {
   Services: {
     Swap: { href: 'https://sushi.com/swap' },
-    'Liquidity Providing': { href: 'https://app.sushi.com/pools', target: '_blank', rel: 'noopener noreferrer' },
+    Pool: { href: 'https://app.sushi.com/pools', target: '_blank', rel: 'noopener noreferrer' },
     'Lending & Borrowing': { href: 'https://app.sushi.com/kashi', target: '_blank', rel: 'noopener noreferrer' },
     'Miso Launchpad': { href: 'https://app.sushi.com/miso', target: '_blank', rel: 'noopener noreferrer' },
     'Shoyu NFT': { href: 'https://shoyunft.com', target: '_blank', rel: 'noopener noreferrer' },
-    'Furo Streaming': { href: 'https://sushi.com/furo' },
-    Analytics: { href: 'https://analytics.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
+    Streaming: { href: 'https://sushi.com/furo' },
+    Analytics: { href: 'https://sushi.com/analytics', target: '_blank', rel: 'noopener noreferrer' },
   },
   Help: {
     'About Us': { href: 'https://docs.sushi.com', target: '_blank', rel: 'noopener noreferrer' },

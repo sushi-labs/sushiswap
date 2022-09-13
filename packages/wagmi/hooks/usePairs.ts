@@ -4,6 +4,7 @@ import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/exchange'
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
+import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
 
 const PAIR_INTERFACE = new Interface(IUniswapV2PairArtifact.abi)
 
@@ -16,7 +17,8 @@ export enum PairState {
 
 export function usePairs(
   chainId: number,
-  currencies: [Currency | undefined, Currency | undefined][]
+  currencies: [Currency | undefined, Currency | undefined][],
+  config?: Omit<UseContractReadsConfig, 'contracts'>
 ): [PairState, Pair | null][] {
   const tokens = useMemo(
     () =>
@@ -50,7 +52,13 @@ export function usePairs(
       contractInterface: PAIR_INTERFACE,
       functionName: 'getReserves',
     })),
-    enabled: pairAddresses.length > 0,
+    ...{
+      ...config,
+      enabled: config?.enabled !== undefined ? config.enabled && pairAddresses.length > 0 : pairAddresses.length > 0,
+      cacheOnBlock: true,
+      watch: true,
+      keepPreviousData: true,
+    },
   })
 
   return useMemo(() => {
@@ -71,7 +79,12 @@ export function usePairs(
   }, [data, pairAddresses, tokens])
 }
 
-export function usePair(chainId: number, tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
+export function usePair(
+  chainId: number,
+  tokenA?: Currency,
+  tokenB?: Currency,
+  config?: Omit<UseContractReadsConfig, 'contracts'>
+): [PairState, Pair | null] {
   const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(() => [[tokenA, tokenB]], [tokenA, tokenB])
-  return usePairs(chainId, inputs)[0]
+  return usePairs(chainId, inputs, config)[0]
 }

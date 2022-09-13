@@ -1,17 +1,17 @@
 import { ChainId } from '@sushiswap/chain'
-import { useBreakpoint } from '@sushiswap/ui'
+import { Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { Pair } from '../../../../.graphclient'
-import { usePoolFilters } from '../../../PoolsProvider'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, REWARDS_COLUMN, TVL_COLUMN } from '../contants'
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
+import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
 
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, APR_COLUMN, REWARDS_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, APR_COLUMN]
 
 const fetcher = ({
   url,
@@ -34,8 +34,7 @@ const fetcher = ({
   }
 
   if (args.pagination) {
-    _url.searchParams.set('first', args.pagination.pageSize.toString())
-    _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
+    _url.searchParams.set('pagination', JSON.stringify(args.pagination))
   }
 
   if (args.selectedNetworks) {
@@ -46,7 +45,6 @@ const fetcher = ({
   if (args.query) {
     where = {
       token0_: { symbol_contains_nocase: args.query },
-      token1_: { symbol_contains_nocase: args.query },
     }
 
     _url.searchParams.set('where', JSON.stringify(where))
@@ -55,7 +53,6 @@ const fetcher = ({
   if (args.extraQuery) {
     where = {
       ...where,
-      token0_: { symbol_contains_nocase: args.extraQuery },
       token1_: { symbol_contains_nocase: args.extraQuery },
     }
 
@@ -70,6 +67,7 @@ const fetcher = ({
 export const PoolsTable: FC = () => {
   const { query, extraQuery, selectedNetworks } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
+  const { isMd } = useBreakpoint('md')
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'apr', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
@@ -83,15 +81,22 @@ export const PoolsTable: FC = () => {
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
 
-  const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
+  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/pool/api/pools', args }, fetcher, {})
 
-  const table = useReactTable({
-    data: pools ?? [],
+  const { data: poolCount } = useSWR<number>(
+    `/pool/api/pools/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+    (url) => fetch(url).then((response) => response.json()),
+    {}
+  )
+
+  const table = useReactTable<Pair>({
+    data: pools || [],
     columns: COLUMNS,
     state: {
       sorting,
       columnVisibility,
     },
+    pageCount: Math.ceil((poolCount || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -101,20 +106,35 @@ export const PoolsTable: FC = () => {
   })
 
   useEffect(() => {
-    if (isSm) {
+    if (isSm && !isMd) {
+      setColumnVisibility({ volume: false, network: false, rewards: false })
+    } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ network: false, rewards: false })
+      setColumnVisibility({ volume: false, network: false, rewards: false, liquidityUSD: false })
     }
-  }, [isSm])
+  }, [isMd, isSm])
 
   return (
-    <GenericTable<Pair>
-      table={table}
-      columns={COLUMNS}
-      loading={isValidating && !error && !pools}
-      HoverElement={PairQuickHoverTooltip}
-      placeholder="No pools found"
-    />
+    <>
+      <GenericTable<Pair>
+        table={table}
+        columns={COLUMNS}
+        loading={!pools && isValidating}
+        HoverElement={isMd ? PairQuickHoverTooltip : undefined}
+        placeholder="No pools found"
+        pageSize={PAGE_SIZE}
+      />
+      <Table.Paginator
+        hasPrev={pagination.pageIndex > 0}
+        hasNext={pagination.pageIndex < table.getPageCount()}
+        onPrev={table.previousPage}
+        onNext={table.nextPage}
+        page={pagination.pageIndex}
+        onPage={table.setPageIndex}
+        pages={table.getPageCount()}
+        pageSize={PAGE_SIZE}
+      />
+    </>
   )
 }
