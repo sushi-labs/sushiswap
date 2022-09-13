@@ -10,7 +10,8 @@
         "$FURO_URL",
         "$LANDING_URL",
         "$SWAP_URL",
-        "$LEGACY_URL"
+        "$LEGACY_URL",
+        "$ACADEMY_URL"
       ],
       "outputs": [".next/**"],
       "cache": true
