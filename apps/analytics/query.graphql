@@ -1,54 +1,75 @@
 query CrossChainPairs(
   $first: Int = 20
   $skip: Int = 0
+  $pagination: Pagination
   $where: Pair_filter
-  $orderBy: Pair_orderBy = liquidityUSD
+  $orderBy: Pair_orderBy = apr
   $orderDirection: OrderDirection = desc
   $block: Block_height
   $chainIds: [BigInt!]!
   $now: Int!
 ) {
   crossChainPairs(
-    first: $first, 
-    skip: $skip, 
-    where: $where, 
-    orderBy: $orderBy, 
+    first: $first,
+    skip: $skip,
+    pagination: $pagination,
+    where: $where,
+    orderBy: $orderBy,
     orderDirection: $orderDirection,
-    block: $block, 
-    chainIds: $chainIds, 
+    block: $block,
+    chainIds: $chainIds,
     now: $now
   ) {
-    volume7d
-    volume24h
-    fees7d
-    fees24h
     id
     chainId
     chainName
     chainShortName
+    volume7d
+    volume24h
+    fees7d
+    fees24h
     name
     reserve0
     reserve1
     liquidity
+    swapFee
+    twapEnabled
+    volume7d
+    source
     token0 {
       name
       id
       decimals
       symbol
-      price {
-        lastUsdPrice
-      }
     }
     token1 {
       name
       id
       decimals
       symbol
-      price {
-        lastUsdPrice
-      }
     }
-    volumeUSD
+    liquidityNative
+    liquidityUSD
+    apr
+    feeApr
+    incentiveApr
+    farm {
+      id
+      feeApy
+      incentives {
+        apr
+        rewardPerDay
+        rewardToken {
+          address
+          symbol
+          decimals
+        }
+        rewarderAddress
+        rewarderType
+      }
+      chefType
+      poolType
+    }
     hourSnapshots(skip: 1, first: 24, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
       id
       date
@@ -61,9 +82,42 @@ query CrossChainPairs(
       volumeUSD
       feesUSD
     }
+  }
+}
+
+query CrossChainTokens(
+  $first: Int = 20
+  $skip: Int = 0
+  $pagination: Pagination
+  $where: Token_filter
+  $orderBy: Token_orderBy = liquidityUSD
+  $orderDirection: OrderDirection = desc
+  $block: Block_height
+  $chainIds: [BigInt!]!
+) {
+  crossChainTokens(
+    first: $first,
+    skip: $skip,
+    pagination: $pagination,
+    where: $where,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    block: $block,
+    chainIds: $chainIds,
+  ) {
+    chainId
+    chainName
+    chainShortName
+    id
+    name
     liquidityUSD
+    symbol
+    decimals
+    volumeUSD
     feesUSD
-    apr
+    price {
+      derivedNative
+    }
   }
 }
 
@@ -132,6 +186,25 @@ query CrossChainFactoryDaySnapshots(
     untrackedVolumeUSD
     liquidityUSD
     feesUSD
+  }
+}
+
+query CrossChainFactories($chainIds: [BigInt!]!) {
+  crossChainFactories(chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    pairCount
+    tokenCount
+  }
+}
+
+query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
+  crossChainBundles(first: $first, chainIds: $chainIds) {
+    id
+    chainId
+    chainName
+    nativePrice
   }
 }
 

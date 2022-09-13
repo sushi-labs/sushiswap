@@ -1,13 +1,18 @@
 import { ChainId } from '@sushiswap/chain'
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
 
-import { ENABLED_NETWORKS } from '../config'
+import { SUPPORTED_CHAIN_IDS } from '../config'
 
 enum Filters {
   myTokensOnly = 'myTokensOnly',
   singleSidedStakingOnly = 'singleSidedStakingOnly',
   stablePairsOnly = 'stablePairsOnly',
   selectedNetworks = 'selectedNetworks',
+}
+
+export enum SelectedTable {
+  Markets = 'Markets',
+  Tokens = 'Tokens',
 }
 
 interface FilterContext {
@@ -17,23 +22,25 @@ interface FilterContext {
   [Filters.singleSidedStakingOnly]: boolean
   [Filters.stablePairsOnly]: boolean
   [Filters.selectedNetworks]: ChainId[]
+  selectedTable: SelectedTable
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
 const FilterContext = createContext<FilterContext | undefined>(undefined)
 
-interface PairsProvider {
+interface PoolsFiltersProvider {
   children?: ReactNode
 }
 
-export const PairsProvider: FC<PairsProvider> = ({ children }) => {
+export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
   const [filters, _setFilters] = useState({
     query: '',
     extraQuery: '',
     [Filters.myTokensOnly]: false,
     [Filters.singleSidedStakingOnly]: false,
     [Filters.stablePairsOnly]: false,
-    [Filters.selectedNetworks]: ENABLED_NETWORKS,
+    [Filters.selectedNetworks]: SUPPORTED_CHAIN_IDS,
+    selectedTable: SelectedTable.Markets,
   })
 
   const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {

@@ -1,6 +1,7 @@
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
+import { useIsMounted } from '@sushiswap/hooks'
 import React, { Fragment } from 'react'
 
 import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '../index'
@@ -45,6 +46,7 @@ export function Header({
   maxWidth = '5xl',
   ...props
 }: HeaderProps): JSX.Element {
+  const isMounted = useIsMounted()
   const scrollY = useScrollPosition()
   const { isMd } = useBreakpoint('md')
 
@@ -52,7 +54,7 @@ export function Header({
   // 1. We scroll down for 45px
   // 2. When body has a negative top set for body lock for Dialogs on small screens
   const showBackground =
-    (scrollY > 45 && withScrollBackground) ||
+    (scrollY > 45 && withScrollBackground && isMounted) ||
     (typeof window !== 'undefined' && !isMd
       ? Number(document.body.style.top.slice(0, -2)) < 0 && withScrollBackground
       : false)

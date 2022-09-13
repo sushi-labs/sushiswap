@@ -1,21 +1,36 @@
-import { ENABLED_NETWORKS } from 'config'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
-import { Layout, PairsProvider, PairTable, PairTableSection } from '../components'
-import { ChartSection } from '../components/ChartSection'
-import { getCharts, getPairs, GetPairsQuery } from '../lib/api'
+import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
+import {
+  getBundles,
+  getCharts,
+  getPoolCount,
+  getPools,
+  GetPoolsQuery,
+  getTokenCount,
+  getTokens,
+  GetTokensQuery,
+} from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  // console.log('SSR query', query)
-  const [pairs, charts] = await Promise.all([getPairs(query as unknown as GetPairsQuery), getCharts()])
+  const [pairs, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
+    getPools(query as unknown as GetPoolsQuery),
+    getTokens(query as unknown as GetTokensQuery),
+    getCharts(),
+    getPoolCount(),
+    getTokenCount(),
+    getBundles(),
+  ])
+
   return {
     props: {
       fallback: {
         [unstable_serialize({
-          url: '/analytics/api/pairs',
+          url: '/analytics/api/pools',
           args: {
             sorting: [
               {
@@ -23,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
                 desc: true,
               },
             ],
-            selectedNetworks: ENABLED_NETWORKS,
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
             pagination: {
               pageIndex: 0,
               pageSize: 20,
@@ -32,7 +47,28 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
             extraQuery: '',
           },
         })]: pairs,
+        [unstable_serialize({
+          url: '/analytics/api/tokens',
+          args: {
+            sorting: [
+              {
+                id: 'liquidityNative',
+                desc: true,
+              },
+            ],
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
+            pagination: {
+              pageIndex: 0,
+              pageSize: 20,
+            },
+            query: '',
+            extraQuery: '',
+          },
+        })]: tokens,
         [`/analytics/api/charts`]: charts,
+        [`/analytics/api/pools/count`]: poolCount,
+        [`/analytics/api/tokens/count`]: tokenCount,
+        [`/analytics/api/bundles`]: bundles,
       },
     },
   }
@@ -49,13 +85,19 @@ const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fal
 const _Index = () => {
   return (
     <Layout>
-      <div className="flex flex-col gap-4">
-        <PairsProvider>
+      <div className="flex flex-col gap-10">
+        <section className="flex flex-col gap-6 lg:flex-row">
+          <div className="max-w-md space-y-4">
+            <h2 className="text-2xl font-semibold text-slate-50">Sushi Analytics</h2>
+            <p className="text-slate-300">
+              Dive deeper in the analytics of Sushi Bar, BentoBox, Pools, Farms and Tokens.
+            </p>
+          </div>
+        </section>
+        <PoolsFiltersProvider>
           <ChartSection />
-          <PairTableSection>
-            <PairTable />
-          </PairTableSection>
-        </PairsProvider>
+          <TableSection />
+        </PoolsFiltersProvider>
       </div>
     </Layout>
   )

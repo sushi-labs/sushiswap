@@ -4,33 +4,20 @@ import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useR
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-import { Pair } from '../../.graphclient'
+import { Token } from '../../.graphclient'
 import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
-  APR_COLUMN,
-  FEES_7_COLUMN,
-  FEES_24_COLUMN,
   GenericTable,
-  NAME_COLUMN,
-  NETWORK_COLUMN,
   PAGE_SIZE,
-  TVL_COLUMN,
-  VOLUME_7_COLUMN,
-  VOLUME_24_COLUMN,
+  TOKEN_CHAIN_COLUMN,
+  TOKEN_LIQUIDITY_COLUMN,
+  TOKEN_NAME_COLUMN,
+  TOKEN_PRICE_COLUMN,
+  TOKEN_VOLUME_COLUMN,
 } from '../Table'
-import { PairQuickHoverTooltip } from './PairTableQuickHoverTooltip'
 
 // @ts-ignore
-const COLUMNS = [
-  NETWORK_COLUMN,
-  NAME_COLUMN,
-  TVL_COLUMN,
-  VOLUME_24_COLUMN,
-  VOLUME_7_COLUMN,
-  FEES_24_COLUMN,
-  FEES_7_COLUMN,
-  APR_COLUMN,
-]
+const COLUMNS = [TOKEN_CHAIN_COLUMN, TOKEN_NAME_COLUMN, TOKEN_PRICE_COLUMN, TOKEN_LIQUIDITY_COLUMN, TOKEN_VOLUME_COLUMN]
 
 const fetcher = ({
   url,
@@ -63,16 +50,7 @@ const fetcher = ({
   let where = {}
   if (args.query) {
     where = {
-      token0_: { symbol_contains_nocase: args.query },
-    }
-
-    _url.searchParams.set('where', JSON.stringify(where))
-  }
-
-  if (args.extraQuery) {
-    where = {
-      ...where,
-      token1_: { symbol_contains_nocase: args.extraQuery },
+      symbol_contains_nocase: args.query,
     }
 
     _url.searchParams.set('where', JSON.stringify(where))
@@ -83,8 +61,8 @@ const fetcher = ({
     .catch((e) => console.log(JSON.stringify(e)))
 }
 
-export const PairTable: FC = () => {
-  const { query, extraQuery, selectedNetworks } = usePoolFilters()
+export const TokenTable: FC = () => {
+  const { query, selectedNetworks } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
@@ -97,25 +75,25 @@ export const PairTable: FC = () => {
   })
 
   const args = useMemo(
-    () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
-    [sorting, pagination, selectedNetworks, query, extraQuery]
+    () => ({ sorting, pagination, selectedNetworks, query }),
+    [sorting, pagination, selectedNetworks, query]
   )
 
-  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/analytics/api/pools', args }, fetcher, {})
-  const { data: poolCount } = useSWR<number>(
-    `/analytics/api/pools/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+  const { data: tokens, isValidating } = useSWR<Token[]>({ url: '/analytics/api/tokens', args }, fetcher, {})
+  const { data: tokenCount } = useSWR<number>(
+    `/analytics/api/tokens/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
     (url) => fetch(url).then((response) => response.json()),
     {}
   )
 
-  const table = useReactTable<Pair>({
-    data: pools || [],
+  const table = useReactTable<Token>({
+    data: tokens || [],
     columns: COLUMNS,
     state: {
       sorting,
       columnVisibility,
     },
-    pageCount: Math.ceil((poolCount || 0) / PAGE_SIZE),
+    pageCount: Math.ceil((tokenCount || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -126,24 +104,21 @@ export const PairTable: FC = () => {
 
   useEffect(() => {
     if (isSm && !isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, fees7d: false, network: false })
-    } else if (isSm && isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false })
+      setColumnVisibility({ price: false })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false, fees7d: false, tvl: false, apr: false })
+      setColumnVisibility({ price: false, volume: false })
     }
   }, [isLg, isMd, isSm])
 
   return (
     <div>
-      <GenericTable<Pair>
+      <GenericTable<Token>
         table={table}
         columns={COLUMNS}
-        loading={!pools && isValidating}
-        HoverElement={isMd ? PairQuickHoverTooltip : undefined}
-        placeholder="No pools found"
+        loading={!tokens && isValidating}
+        placeholder="No tokens found"
         pageSize={PAGE_SIZE}
       />
       <Table.Paginator

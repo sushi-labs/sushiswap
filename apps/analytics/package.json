@@ -17,6 +17,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
+    "@sushiswap/hooks": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "8.5.0",
     "date-fns": "^2.29.1",

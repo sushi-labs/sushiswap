@@ -28,6 +28,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       router.events.off('routeChangeComplete', handler)
     }
   }, [router.events])
+
   return (
     <>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
