@@ -107,7 +107,7 @@ const Articles: FC = () => {
                     </Listbox.Button>
                   }
                 >
-                  <Select.Options className="w-32 !bg-slate-700 p-6 gap-6 flex flex-col">
+                  <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
                     {levels?.map(({ id, attributes }, i) => (
                       <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectLevel(id)}>
                         {attributes.name}
@@ -132,7 +132,7 @@ const Articles: FC = () => {
                     </Listbox.Button>
                   }
                 >
-                  <Select.Options className="w-32 !bg-slate-700 p-6 gap-6 flex flex-col">
+                  <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
                     {levels?.map(({ id, attributes }, i) => (
                       <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectLevel(id)}>
                         {attributes.name}
@@ -145,8 +145,8 @@ const Articles: FC = () => {
           </div>
         </Container>
 
-        <Container maxWidth="full" className="flex gap-12 mx-auto mt-6 sm:mt-24">
-          <aside className="flex-col hidden w-64 gap-8 md:flex">
+        <Container maxWidth="full" className="flex gap-8 mx-auto mt-6 lg:gap-12 sm:mt-24">
+          <aside className="flex-col hidden gap-8 lg:min-w-[250px] min-w-[160px] md:flex">
             <SearchInput />
             <div className="flex flex-col gap-6 pl-3">
               {products.map((product) => (
@@ -185,7 +185,7 @@ const Articles: FC = () => {
                       </Listbox.Button>
                     }
                   >
-                    <Select.Options className="w-32 !bg-slate-700 p-6 gap-6 flex flex-col">
+                    <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
                       {sortOptions?.map((key) => (
                         <Typography weight={500} variant="sm" key={key} onClick={() => setSortBy(key)}>
                           {key}
