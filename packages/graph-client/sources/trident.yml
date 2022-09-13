@@ -1,0 +1,7 @@
+name: Trident
+handler:
+  graphql:
+    endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/trident-optimism}
+transforms:
+  - autoPagination:
+      validateSchema: true

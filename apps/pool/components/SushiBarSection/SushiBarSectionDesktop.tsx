@@ -26,7 +26,7 @@ export const SushiBarSectionDesktop: FC = () => {
   const [, setOtherValue] = useState<string>('')
   const [error, setError] = useState<string>()
 
-  const { data: stats } = useSWR<XSushi>(`pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
+  const { data: stats } = useSWR<XSushi>(`/pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
@@ -72,21 +72,21 @@ export const SushiBarSectionDesktop: FC = () => {
 
   return (
     <section className="hidden md:flex">
-      <div className="flex w-full flex-col gap-6">
-        <h4 className="text-slate-50 font-semibold">Earn trading fees from all pools on Sushi!</h4>
+      <div className="flex flex-col w-full gap-6">
+        <h4 className="font-semibold text-slate-50">Earn trading fees from all pools on Sushi!</h4>
         <div className="p-5 flex flex-col rounded-2xl bg-white bg-opacity-[0.02]">
           <div className="flex flex-col lg:flex-row">
-            <div className="flex flex-col px-5 justify-center">
-              <h4 className="font-semibold text-slate-50 mb-1 whitespace-nowrap">Sushi Bar</h4>
+            <div className="flex flex-col justify-center px-5">
+              <h4 className="mb-1 font-semibold text-slate-50 whitespace-nowrap">Sushi Bar</h4>
               <p className="text-sm text-slate-400">APR (1y)</p>
-              <p className="flex gap-1 items-center bg-gradient-to-r from-red to-yellow bg-clip-text text-transparent">
+              <p className="flex items-center gap-1 text-transparent bg-gradient-to-r from-red to-yellow bg-clip-text">
                 {formatNumber(stats?.apr12m * 100)}
                 <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
                   <ExternalLinkIcon width={16} height={16} className="text-slate-200 hover:text-blue" />
                 </Link.External>
               </p>
             </div>
-            <div className="p-5 flex flex-grow gap-3 items-start">
+            <div className="flex items-start flex-grow gap-3 p-5">
               <div className={classNames(stake ? 'order-1 flex-grow' : 'order-3 max-w-[213px]')}>
                 <SushiBarInput
                   currency={SUSHI_TOKEN}
@@ -114,7 +114,7 @@ export const SushiBarSectionDesktop: FC = () => {
                   disabled={stake}
                 />
               </div>
-              <div className="flex gap-1 order-4">
+              <div className="flex order-4 gap-1">
                 <Approve
                   className="flex !flex-row !justify-center"
                   components={
@@ -155,7 +155,7 @@ export const SushiBarSectionDesktop: FC = () => {
             </div>
           </div>
           {error && (
-            <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
+            <Typography variant="xs" className="mt-4 text-center text-red" weight={500}>
               {error}
             </Typography>
           )}

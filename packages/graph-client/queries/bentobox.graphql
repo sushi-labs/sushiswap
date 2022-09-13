@@ -13,7 +13,7 @@ query Rebases($where: Rebase_filter) {
   }
 }
 
-query CrossChainRebases($first: Int = 1000, $chainIds: [BigInt!]!) {
+query CrossChainRebases($first: Int = 1000, $chainIds: [Int!]!) {
   crossChainRebases(first: $first, chainIds: $chainIds) {
     id
     base

@@ -1,8 +1,276 @@
-query CrossChainBundles($first: Int = 1000, $chainIds: [BigInt!]!) {
-  crossChainBundles(first: $first, chainIds: $chainIds) {
+fragment PairFull on Pair {
+  id
+  chainId
+  chainName
+  chainShortName
+  name
+  reserve0
+  reserve1
+  liquidity
+  swapFee
+  twapEnabled
+  source
+  token0 {
+    name
+    id
+    decimals
+    symbol
+  }     
+  token1 {
+    name
+    id
+    decimals
+    symbol
+  }
+  liquidityNative
+  liquidityUSD
+  volumeNative
+  volumeUSD
+  apr
+  aprUpdatedAtTimestamp
+}
+
+query Factory($id: ID!) {
+  factory(id: $id) {
     id
     chainId
-    chainName
+    pairCount
+  }
+}
+
+query CrossChainBundles($chainIds: [Int!]!) {
+  crossChainBundles(chainIds: $chainIds) {
+    id
+    chainId
     nativePrice
   }
 }
+
+query CrossChainFactories($chainIds: [Int!]!) {
+  crossChainFactories(chainIds: $chainIds) {
+    id
+    chainId
+    pairCount
+  }
+}
+
+query CrossChainPairs(
+  $first: Int
+  $skip: Int
+  $where: Pair_filter
+  $orderBy: Pair_orderBy
+  $orderDirection: OrderDirection,
+  $block: Block_height
+  $pagination: Pagination
+  $chainIds: [Int!]!
+  $oneDayBlockNumbers: [Int!]!
+) {
+  crossChainPairs(
+    first: $first, 
+    skip: $skip,
+    where: $where, 
+    orderBy: $orderBy, 
+    orderDirection: $orderDirection,
+    block: $block, 
+    pagination: $pagination,
+    chainIds: $chainIds,
+    oneDayBlockNumbers: $oneDayBlockNumbers
+  ) {
+    id
+    chainId
+    chainName
+    chainShortName
+    name
+    reserve0
+    reserve1
+    liquidity
+    swapFee
+    twapEnabled
+    source
+    token0 {
+      name
+      id
+      decimals
+      symbol
+    }     
+    token1 {
+      name
+      id
+      decimals
+      symbol
+    }
+    liquidityNative
+    liquidityUSD
+    volumeUSD
+    volume1d
+    aprUpdatedAtTimestamp
+    apr
+    feeApr
+    incentiveApr
+    farm {
+      id
+      feeApy
+      incentives {
+        apr
+        rewardPerDay
+        rewardToken {
+          address
+          symbol
+          decimals
+        }
+        rewarderAddress
+        rewarderType
+      }
+      chefType
+      poolType
+    }
+  }
+}
+
+query CrossChainUser($id: ID!, $chainIds: [Int!]!, $now: Int!, $block: Block_height) {
+  crossChainUser(id: $id, chainIds: $chainIds, now: $now, block: $block) {
+    liquidityPositions {
+      balance
+      pair {
+        id
+        chainId
+        chainName
+        chainShortName
+        name
+        reserve0
+        reserve1
+        liquidity
+        swapFee
+        twapEnabled
+        volume7d
+        source
+        token0 {
+          name
+          id
+          decimals
+          symbol
+        }
+        token1 {
+          name
+          id
+          decimals
+          symbol
+        }
+        liquidityNative
+        liquidityUSD
+        apr
+        feeApr
+        incentiveApr
+        daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+          id
+          date
+          volumeUSD
+        }
+        farm {
+          id
+          feeApy
+          incentives {
+            apr
+            rewardPerDay
+            rewardToken {
+              address
+              symbol
+              decimals
+            }
+            rewarderAddress
+            rewarderType
+          }
+          chefType
+          poolType
+        }
+      }
+    }
+  }
+}
+
+
+
+query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
+  crossChainPair(id: $id, now: $now, chainId: $chainId) {
+    id
+    chainId
+    chainName
+    chainShortName
+    name
+    reserve0
+    reserve1
+    liquidity
+    swapFee
+    twapEnabled
+    volume7d
+    source
+    token0 {
+      name
+      id
+      decimals
+      symbol
+    }
+    token1 {
+      name
+      id
+      decimals
+      symbol
+    }
+    liquidityNative
+    liquidityUSD
+    apr
+    feeApr
+    incentiveApr
+    farm {
+      id
+      feeApy
+      incentives {
+        apr
+        rewardPerDay
+        rewardToken {
+          address
+          symbol
+          decimals
+        }
+        rewarderAddress
+        rewarderType
+      }
+      chefType
+      poolType
+    }
+    hourSnapshots(first: 168, orderBy: date, orderDirection: desc) {
+      id
+      date
+      volumeUSD
+      liquidityNative
+      liquidityUSD
+      transactionCount
+    }
+    daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
+      id
+      date
+      volumeUSD
+      liquidityNative
+      liquidityUSD
+      transactionCount
+    }
+    dayChangeData: daySnapshots(first: 2, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+      id
+      date
+      volumeUSD
+      liquidityNative
+      liquidityUSD
+      transactionCount
+    }
+  }
+}
+
+# query CrossChainLiquidityPositions(
+#   $first: Int
+#   $skip: Int
+#   $where: LiquidityPosition_filter
+#   $orderBy: LiquidityPosition_orderBy
+#   $orderDirection: OrderDirection,
+#   $block: Block_height  
+#   $chainIds: [Int!]!
+# ) {}

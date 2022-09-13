@@ -5,7 +5,6 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev -p 3011",
-    "generate": "graphclient build",
     "lint": "eslint --fix . && next lint",
     "start": "next start"
   },
@@ -34,7 +33,7 @@
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
-    "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/graph-client": "workspace:*",
     "@tanstack/react-table": "8.5.0",
     "date-fns": "^2.29.1",
     "echarts": "^5.3.3",
@@ -51,8 +50,6 @@
     "wagmi": "^0.5.12"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "1.0.5",
-    "@graphprotocol/client-cli": "2.2.1",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

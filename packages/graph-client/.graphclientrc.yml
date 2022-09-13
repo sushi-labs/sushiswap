@@ -1,26 +1,104 @@
 sources: !includes sources
 
 additionalTypeDefs: |
+  input Pagination {
+    pageIndex: Int! = 0
+    pageSize: Int! = 20
+  }
+  type RewardToken {
+    address: String!
+    symbol: String!
+    decimals: Int!
+  }
+  type Incentive {
+    apr: BigDecimal!
+    rewardPerDay: BigDecimal!
+    rewardToken: RewardToken!
+    rewarderAddress: String!
+    rewarderType: String!
+  }
+  type Farm {
+    id: ID!
+    feeApy: BigDecimal!
+    incentives: [Incentive!]!
+    chefType: String!
+    poolType: String!
+  }
   extend type Block {
-    chainId: BigInt!
-    chainName: String!
+    chainId: Int!
   }
   extend type Rebase {
-    chainId: BigInt!
+    chainId: Int!
+  }
+  extend type Bundle {
+    chainId: Int!
+  }
+  extend type Factory {
+    chainId: Int!
+  }
+  extend type Pair {
+    chainId: Int!
+    chainName: String!
+    chainShortName: String!
+    volume1d: BigDecimal!
+    volume7d: BigDecimal!
+    farm: Farm
+    incentiveApr: BigDecimal!
+    feeApr: BigDecimal!
+  }
+  extend type User {
+    chainId: Int!
     chainName: String!
   }
   extend type Query {
-    crossChainBlocks(first: Int!, chainIds: [BigInt!]!): [Block!]!
-    crossChainRebases(first: Int!, chainIds: [BigInt!]!): [Rebase!]!
+    # BLOCKS
+    crossChainBlocks(
+      first: Int,
+      skip: Int,
+      where: Block_filter,
+      orderBy: Block_orderBy,
+      orderDirection: OrderDirection,
+      chainIds: [Int!]!
+    ): [Block!]!
+    # BENTOBOX
+    crossChainRebases(
+      first: Int!,
+      chainIds: [Int!]!
+    ): [Rebase!]!
+    # EXCHANGE
+    crossChainBundles(
+      chainIds: [Int!]!
+    ): [Bundle!]!
+    crossChainFactories(
+      chainIds: [Int!]!
+    ): [Factory!]!
+    crossChainPairs(
+      first: Int,
+      skip: Int, 
+      where: Pair_filter, 
+      orderBy: Pair_orderBy, 
+      orderDirection: OrderDirection, 
+      block: Block_height,
+      pagination: Pagination,
+      chainIds: [Int!]!,
+      oneDayBlockNumbers: [Int!]!
+    ): [Pair!]!
+    crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair!
+    crossChainUser(
+      id: ID!, 
+      chainIds: [Int!]!, 
+      now: Int!, 
+      block: Block_height
+    ): User!
   }
 
 additionalResolvers:
   - ./resolvers/bentobox.ts
   - ./resolvers/blocks.ts
-  # - ./resolvers/sushiswap.ts
+  - ./resolvers/sushiswap.ts
 
 documents:
   - './queries/*.graphql'
 
 codegen:
-  contextType: 'MeshContext & { chainId: string; chainName: string; subgraphName: string; subgraphHost: string }'
+  contextType: 'MeshContext & { chainId: string; chainName: string; chainShortName: string; subgraphName: string; subgraphHost: string }'

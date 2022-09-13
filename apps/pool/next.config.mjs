@@ -6,6 +6,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/chain',
   '@sushiswap/wagmi',
   '@sushiswap/ui',
+  '@sushiswap/graph-client',
 ])
 
 // @ts-check

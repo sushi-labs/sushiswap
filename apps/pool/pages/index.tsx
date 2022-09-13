@@ -6,14 +6,15 @@ import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
-import { getBundles, getPoolCount, getPools, GetPoolsQuery } from '../lib/api'
+import { getBundles, getPoolCount, getPools, GetPoolsQuery, getSushiBar } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  const [pairs, bundles, poolCount] = await Promise.all([
+  const [pairs, bundles, poolCount, bar] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),
     getBundles(),
     getPoolCount(),
+    getSushiBar(),
   ])
 
   return {
@@ -39,6 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
         })]: pairs,
         [`/pool/api/bundles`]: bundles,
         [`/pool/api/pools/count`]: poolCount,
+        [`/pool/api/bar`]: bar,
       },
     },
   }

@@ -1,5 +1,22 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS]
+
+export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
+  ChainId.ETHEREUM,
+  // ChainId.AVALANCHE,
+  // ChainId.ARBITRUM,
+  // ChainId.BSC,
+  // ChainId.CELO,
+  // ChainId.FANTOM,
+  // ChainId.FUSE,
+  // ChainId.GNOSIS,
+  // ChainId.MOONBEAM,
+  // ChainId.MOONRIVER,
+  // ChainId.ARBITRUM_NOVA,
+  // ChainId.HARMONY,
+]
+
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
 
@@ -34,23 +51,22 @@ export const CHAIN_NAME: Record<number | string, string> = {
 
 export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
+  [ChainId.ARBITRUM_NOVA]: '34.148.218.47:8000/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
   [ChainId.CELO]: GRAPH_HOST,
   [ChainId.ETHEREUM]: GRAPH_HOST,
   [ChainId.FANTOM]: GRAPH_HOST,
+  [ChainId.FUSE]: GRAPH_HOST,
   [ChainId.GNOSIS]: GRAPH_HOST,
   [ChainId.GÖRLI]: GRAPH_HOST,
   [ChainId.HARMONY]: GRAPH_HOST,
+  [ChainId.KAVA]: KAVA_HOST,
+  [ChainId.METIS]: METIS_HOST,
   [ChainId.MOONBEAM]: GRAPH_HOST,
   [ChainId.MOONRIVER]: GRAPH_HOST,
   [ChainId.OPTIMISM]: GRAPH_HOST,
   [ChainId.POLYGON]: GRAPH_HOST,
-  [ChainId.METIS]: METIS_HOST,
-  [ChainId.KAVA]: KAVA_HOST,
-  [ChainId.HARMONY]: GRAPH_HOST,
-  [ChainId.FUSE]: GRAPH_HOST,
-  [ChainId.ARBITRUM_NOVA]: '34.148.218.47:8000/subgraphs/name',
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {

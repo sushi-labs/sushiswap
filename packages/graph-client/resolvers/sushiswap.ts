@@ -1,14 +1,15 @@
 import { chainName, chainShortName } from '@sushiswap/chain'
 import {
-  BLOCKS_SUBGRAPH_NAME,
   SUBGRAPH_HOST,
+  SUSHISWAP_ENABLED_NETWORKS,
   SUSHISWAP_SUBGRAPH_NAME,
+  TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
-import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from 'config'
 
-import { InputMaybe, Pagination, Pair, Resolvers } from '.graphclient'
+import { InputMaybe, Pagination, Pair, Resolvers } from '../.graphclient'
 
+// TODO: MOVE
 const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Pagination | undefined>): T => {
   if (!pagination || pagination.pageIndex === undefined || pagination.pageSize === undefined) return data
 
@@ -21,123 +22,115 @@ const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Paginati
 }
 
 export const resolvers: Resolvers = {
+  Bundle: {
+    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
+  },
   Factory: {
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
-    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
-    chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
+    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
   },
   Pair: {
-    volume1d: (root, args, context, info) => root.volume1d || '0',
-    // volume2d: (root, args, context, info) => root.volume2d || '0',
-    volume7d: (root, args, context, info) => root.volume7d || '0',
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
+    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
     chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
+    volume1d: (root, args, context, info) => root.volume1d || '0',
+    volume7d: (root, args, context, info) => root.volume7d || '0',
   },
-  Bundle: {
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
-    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
-  },
-  Block: {
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
-    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
-  },
-  // Farm: {
-  //   chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
-  //   chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
-  // },
   Query: {
-    crossChainBlocks: async (root, args, context, info) => {
-      // console.log('CROSS CHAIN BLOCKS ARGS', args)
-      return Promise.all(
-        args.chainIds.map((chainId) => {
-          return context.Blocks.Query.blocks({
-            root,
-            args,
-            context: {
-              ...context,
-              chainId,
-              chainName: chainName[chainId],
-              chainShortName: chainShortName[chainId],
-              subgraphName: BLOCKS_SUBGRAPH_NAME[chainId],
-              subgraphHost: SUBGRAPH_HOST[chainId],
-            },
-            info,
-          })
-        })
-      ).then((blocks) => blocks.flat())
+    crossChainBundles: async (root, args, context, info) => {
+      return Promise.all([
+        ...args.chainIds
+          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Trident.Query.bundles({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
+              },
+              info,
+            }).then((bundles) =>
+              bundles?.length > 0
+                ? bundles.map((bundle) => ({
+                    ...bundle,
+                    chainId,
+                  }))
+                : []
+            )
+          ),
+        ...args.chainIds
+          .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.SushiSwap.Query.bundles({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
+              },
+              info,
+            }).then((bundles) =>
+              bundles?.length > 0
+                ? bundles.map((bundle) => ({
+                    ...bundle,
+                    chainId,
+                  }))
+                : []
+            )
+          ),
+      ]).then((bundles) => bundles.flat())
     },
-    crossChainPair: async (root, args, context, info) => {
-      const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
-
-      const pool = AMM_ENABLED_NETWORKS.includes(args.chainId)
-        ? await context.Exchange.Query.pair({
-            root,
-            args,
-            context: {
-              ...context,
-              now: args.now,
-              chainId: args.chainId,
-              chainName: chainName[args.chainId],
-              chainShortName: chainShortName[args.chainId],
-              subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: SUBGRAPH_HOST[args.chainId],
-            },
-            info,
-          })
-        : await context.Trident.Query.pair({
-            root,
-            args,
-            context: {
-              ...context,
-              now: args.now,
-              chainId: args.chainId,
-              chainName: chainName[args.chainId],
-              chainShortName: chainShortName[args.chainId],
-              subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: SUBGRAPH_HOST[args.chainId],
-            },
-            info,
-          })
-
-      const volume7d = pool.daySnapshots
-        ?.slice(0, 6)
-        ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
-      const farm = farms?.[args.chainId]?.farms?.[pool.id]
-      const feeApr = pool?.apr
-      const incentiveApr =
-        farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
-      const apr = Number(feeApr) + Number(incentiveApr)
-      return {
-        ...pool,
-        id: `${chainShortName[args.chainId]}:${pool.id}`,
-        chainId: args.chainId,
-        chainName: chainName[args.chainId],
-        chainShortName: chainShortName[args.chainId],
-        volume7d,
-        apr: String(apr),
-        feeApr: String(feeApr),
-        incentiveApr: String(incentiveApr),
-        farm: farm
-          ? {
-              id: farm.id,
-              feeApy: String(farm.feeApy),
-              incentives: farm.incentives.map((incentive) => ({
-                apr: String(incentive.apr),
-                rewardPerDay: String(incentive.rewardPerDay),
-                rewardToken: {
-                  address: incentive.rewardToken.address,
-                  symbol: incentive.rewardToken.symbol,
-                  decimals: Number(incentive.rewardToken.decimals),
-                },
-                rewarderAddress: incentive.rewarder.address,
-                rewarderType: incentive.rewarder.type,
-              })),
-              chefType: String(farm.chefType),
-              poolType: String(farm.poolType),
-            }
-          : null,
-      }
+    crossChainFactories: async (root, args, context, info) => {
+      return Promise.all([
+        ...args.chainIds
+          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Trident.Query.factories({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
+              },
+              info,
+            }).then((factories) => {
+              return factories?.length > 0
+                ? factories.map((factory) => ({
+                    ...factory,
+                    chainId,
+                  }))
+                : []
+            })
+          ),
+        ...args.chainIds
+          .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.SushiSwap.Query.factories({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
+              },
+              info,
+            }).then((factories) => {
+              return factories?.length > 0
+                ? factories.map((factory) => ({
+                    ...factory,
+                    chainId,
+                  }))
+                : []
+            })
+          ),
+      ]).then((snapshots) => snapshots.flat())
     },
     crossChainPairs: async (root, args, context, info) => {
       const transformer = (pools: Pair[], oneDayPools: Pair[], farms: any, chainId) => {
@@ -231,9 +224,9 @@ export const resolvers: Resolvers = {
                 )
               }),
             ...args.chainIds
-              .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+              .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
               .map((chainId) => {
-                return context.Exchange.Query.pairs({
+                return context.SushiSwap.Query.pairs({
                   root,
                   args,
                   context: {
@@ -251,7 +244,7 @@ export const resolvers: Resolvers = {
                     if (!farms?.[chainId]?.farms) {
                       return Promise.all([
                         Promise.resolve(pools),
-                        context.Exchange.Query.pairs({
+                        context.SushiSwap.Query.pairs({
                           root,
                           args: {
                             ...args,
@@ -275,7 +268,7 @@ export const resolvers: Resolvers = {
                       new Set([...pools.map((pool) => pool.id), ...Object.keys(farms?.[chainId]?.farms)])
                     )
                     return Promise.all([
-                      context.Exchange.Query.pairs({
+                      context.SushiSwap.Query.pairs({
                         root,
                         args: {
                           ...args,
@@ -292,7 +285,7 @@ export const resolvers: Resolvers = {
                         },
                         info,
                       }),
-                      context.Exchange.Query.pairs({
+                      context.SushiSwap.Query.pairs({
                         root,
                         args: {
                           ...args,
@@ -328,57 +321,77 @@ export const resolvers: Resolvers = {
         )
         .then((pools) => page(pools, args.pagination))
     },
-    crossChainBundles: async (root, args, context, info) => {
-      return Promise.all([
-        ...args.chainIds
-          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-          .map((chainId) =>
-            context.Trident.Query.bundles({
-              root,
-              args,
-              context: {
-                ...context,
-                chainId,
-                chainName: chainName[chainId],
-                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-                subgraphHost: SUBGRAPH_HOST[chainId],
-              },
-              info,
-            }).then((bundles) =>
-              bundles?.length > 0
-                ? bundles.map((bundle) => ({
-                    ...bundle,
-                    chainId,
-                    chainName: chainName[chainId],
-                  }))
-                : []
-            )
-          ),
-        ...args.chainIds
-          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
-          .map((chainId) =>
-            context.Exchange.Query.bundles({
-              root,
-              args,
-              context: {
-                ...context,
-                chainId,
-                chainName: chainName[chainId],
-                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-                subgraphHost: SUBGRAPH_HOST[chainId],
-              },
-              info,
-            }).then((bundles) =>
-              bundles?.length > 0
-                ? bundles.map((bundle) => ({
-                    ...bundle,
-                    chainId,
-                    chainName: chainName[chainId],
-                  }))
-                : []
-            )
-          ),
-      ]).then((bundles) => bundles.flat())
+    crossChainPair: async (root, args, context, info) => {
+      const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
+
+      const pool = SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
+        ? await context.Exchange.Query.pair({
+            root,
+            args,
+            context: {
+              ...context,
+              now: args.now,
+              chainId: args.chainId,
+              chainName: chainName[args.chainId],
+              chainShortName: chainShortName[args.chainId],
+              subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
+              subgraphHost: SUBGRAPH_HOST[args.chainId],
+            },
+            info,
+          })
+        : await context.Trident.Query.pair({
+            root,
+            args,
+            context: {
+              ...context,
+              now: args.now,
+              chainId: args.chainId,
+              chainName: chainName[args.chainId],
+              chainShortName: chainShortName[args.chainId],
+              subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
+              subgraphHost: SUBGRAPH_HOST[args.chainId],
+            },
+            info,
+          })
+
+      const volume7d = pool.daySnapshots
+        ?.slice(0, 6)
+        ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
+      const farm = farms?.[args.chainId]?.farms?.[pool.id]
+      const feeApr = pool?.apr
+      const incentiveApr =
+        farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
+      const apr = Number(feeApr) + Number(incentiveApr)
+      return {
+        ...pool,
+        id: `${chainShortName[args.chainId]}:${pool.id}`,
+        chainId: args.chainId,
+        chainName: chainName[args.chainId],
+        chainShortName: chainShortName[args.chainId],
+        volume7d,
+        apr: String(apr),
+        feeApr: String(feeApr),
+        incentiveApr: String(incentiveApr),
+        farm: farm
+          ? {
+              id: farm.id,
+              feeApy: String(farm.feeApy),
+              incentives: farm.incentives.map((incentive) => ({
+                apr: String(incentive.apr),
+                rewardPerDay: String(incentive.rewardPerDay),
+                rewardToken: {
+                  address: incentive.rewardToken.address,
+                  symbol: incentive.rewardToken.symbol,
+                  decimals: Number(incentive.rewardToken.decimals),
+                },
+                rewarderAddress: incentive.rewarder.address,
+                rewarderType: incentive.rewarder.type,
+              })),
+              chefType: String(farm.chefType),
+              poolType: String(farm.poolType),
+            }
+          : null,
+      }
     },
     crossChainUser: async (root, args, context, info) => {
       const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
@@ -451,9 +464,9 @@ export const resolvers: Resolvers = {
 
       return Promise.all([
         ...args.chainIds
-          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
+          .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
           .map((chainId) =>
-            context.Exchange.Query.user({
+            context.SushiSwap.Query.user({
               root,
               args,
               context: {
@@ -493,62 +506,6 @@ export const resolvers: Resolvers = {
           { liquidityPositions: [] }
         )
       })
-    },
-    crossChainFactories: async (root, args, context, info) => {
-      return Promise.all([
-        ...args.chainIds
-          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-          .map((chainId) =>
-            context.Trident.Query.factories({
-              root,
-              args,
-              context: {
-                ...context,
-                chainId,
-                chainName: chainName[chainId],
-                chainShortName: chainShortName[chainId],
-                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-                subgraphHost: SUBGRAPH_HOST[chainId],
-              },
-              info,
-            }).then((factories) => {
-              return factories?.length > 0
-                ? factories.map((factory) => ({
-                    ...factory,
-                    chainId,
-                    chainName: chainName[chainId],
-                    chainShortName: chainShortName[chainId],
-                  }))
-                : []
-            })
-          ),
-        ...args.chainIds
-          .filter((el) => AMM_ENABLED_NETWORKS.includes(el))
-          .map((chainId) =>
-            context.Exchange.Query.factories({
-              root,
-              args,
-              context: {
-                ...context,
-                chainId,
-                chainName: chainName[chainId],
-                chainShortName: chainShortName[chainId],
-                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-                subgraphHost: SUBGRAPH_HOST[chainId],
-              },
-              info,
-            }).then((factories) => {
-              return factories?.length > 0
-                ? factories.map((factory) => ({
-                    ...factory,
-                    chainId,
-                    chainName: chainName[chainId],
-                    chainShortName: chainShortName[chainId],
-                  }))
-                : []
-            })
-          ),
-      ]).then((snapshots) => snapshots.flat())
     },
   },
 }
