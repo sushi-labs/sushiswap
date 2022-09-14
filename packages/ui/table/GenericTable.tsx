@@ -32,6 +32,7 @@ export const GenericTable = <T extends { id: string }>({
   pageSize,
 }: GenericTableProps<T>) => {
   const [showOverlay, setShowOverlay] = useState(false)
+  const headers = table.getFlatHeaders()
 
   return (
     <>
@@ -88,9 +89,12 @@ export const GenericTable = <T extends { id: string }>({
                           }}
                           className="cursor-pointer"
                         >
-                          {row.getVisibleCells().map((cell) => {
+                          {row.getVisibleCells().map((cell, i) => {
                             return (
-                              <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                              <Table.td
+                                style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
+                                key={cell.id}
+                              >
                                 <Link.Internal href={`/${row.original.id}`} passHref={true}>
                                   <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
                                 </Link.Internal>
@@ -114,9 +118,9 @@ export const GenericTable = <T extends { id: string }>({
                     }}
                     className="cursor-pointer"
                   >
-                    {row.getVisibleCells().map((cell) => {
+                    {row.getVisibleCells().map((cell, i) => {
                       return (
-                        <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                        <Table.td style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }} key={cell.id}>
                           <Link.Internal href={`/${row.original.id}`} passHref={true}>
                             <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
                           </Link.Internal>
@@ -130,8 +134,8 @@ export const GenericTable = <T extends { id: string }>({
               table.getRowModel().rows.length !== 0 &&
               Array.from(Array(Math.max(pageSize - table.getRowModel().rows.length, 0))).map((el, index) => (
                 <Table.tr key={index}>
-                  {columns.map((column) => (
-                    <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }} />
+                  {table.getVisibleFlatColumns().map((column) => (
+                    <Table.td key={column.id} style={{ maxWidth: column.getSize(), width: column.getSize() }} />
                   ))}
                 </Table.tr>
               ))}
@@ -140,10 +144,7 @@ export const GenericTable = <T extends { id: string }>({
                 <Table.tr key={index}>
                   {table.getVisibleFlatColumns().map((column) => {
                     return (
-                      <Table.td
-                        key={column.id}
-                        style={{ maxWidth: column.columnDef.size, width: column.columnDef.size }}
-                      >
+                      <Table.td key={column.id} style={{ maxWidth: column.getSize(), width: column.getSize() }}>
                         {column.columnDef.meta?.skeleton}
                       </Table.td>
                     )

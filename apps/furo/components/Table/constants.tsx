@@ -24,7 +24,6 @@ export const AMOUNT_COLUMN: ColumnDef<Stream | Vesting, unknown> = {
   id: 'amount',
   header: 'Amount',
   cell: (props) => <AmountCell row={props.row.original} />,
-  size: 200,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
     className: 'justify-end',
