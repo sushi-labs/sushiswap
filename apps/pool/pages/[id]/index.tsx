@@ -1,25 +1,10 @@
 import { shortenAddress } from '@sushiswap/format'
-import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
+import { BreadcrumbLink } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import {
-  Layout,
-  PoolActionBar,
-  PoolButtons,
-  PoolChart,
-  PoolComposition,
-  PoolHeader,
-  PoolMyRewards,
-  PoolPosition,
-  PoolPositionProvider,
-  PoolPositionRewardsProvider,
-  PoolPositionStakedProvider,
-  PoolRewards,
-  PoolStats,
-} from '../../components'
 import { getPool } from '../../lib/api'
 import { PairWithAlias } from '../../types'
 
@@ -59,45 +44,45 @@ const _Pool = () => {
 
   return <>TEST</>
 
-  if (!data) return <></>
+  // if (!data) return <></>
 
-  const { pair } = data
+  // const { pair } = data
 
-  return (
-    <PoolPositionProvider pair={pair}>
-      <PoolPositionStakedProvider pair={pair}>
-        <PoolPositionRewardsProvider pair={pair}>
-          <Layout breadcrumbs={LINKS(router.query.id as string)}>
-            <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
-              <div className="flex flex-col order-1 gap-9">
-                <PoolHeader pair={pair} />
-                <hr className="my-3 border-t border-slate-200/5" />
-                <PoolChart pair={pair} />
-                <AppearOnMount>
-                  <PoolStats pair={pair} />
-                </AppearOnMount>
-                <PoolComposition pair={pair} />
-                <PoolRewards pair={pair} />
-              </div>
+  // return (
+  //   <PoolPositionProvider pair={pair}>
+  //     <PoolPositionStakedProvider pair={pair}>
+  //       <PoolPositionRewardsProvider pair={pair}>
+  //         <Layout breadcrumbs={LINKS(router.query.id as string)}>
+  //           <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
+  //             <div className="flex flex-col order-1 gap-9">
+  //               <PoolHeader pair={pair} />
+  //               <hr className="my-3 border-t border-slate-200/5" />
+  //               <PoolChart pair={pair} />
+  //               <AppearOnMount>
+  //                 <PoolStats pair={pair} />
+  //               </AppearOnMount>
+  //               <PoolComposition pair={pair} />
+  //               <PoolRewards pair={pair} />
+  //             </div>
 
-              <div className="flex flex-col order-2 gap-4">
-                <AppearOnMount>
-                  <div className="flex flex-col gap-10">
-                    <PoolMyRewards pair={pair} />
-                    <PoolPosition pair={pair} />
-                  </div>
-                </AppearOnMount>
-                <div className="hidden lg:flex">
-                  <PoolButtons pair={pair} />
-                </div>
-              </div>
-            </div>
-          </Layout>
-          <PoolActionBar pair={pair} />
-        </PoolPositionRewardsProvider>
-      </PoolPositionStakedProvider>
-    </PoolPositionProvider>
-  )
+  //             <div className="flex flex-col order-2 gap-4">
+  //               <AppearOnMount>
+  //                 <div className="flex flex-col gap-10">
+  //                   <PoolMyRewards pair={pair} />
+  //                   <PoolPosition pair={pair} />
+  //                 </div>
+  //               </AppearOnMount>
+  //               <div className="hidden lg:flex">
+  //                 <PoolButtons pair={pair} />
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </Layout>
+  //         <PoolActionBar pair={pair} />
+  //       </PoolPositionRewardsProvider>
+  //     </PoolPositionStakedProvider>
+  //   </PoolPositionProvider>
+  // )
 }
 
 export default Pool
