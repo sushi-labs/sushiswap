@@ -13,7 +13,7 @@ import { TableFilters } from './Tables/TableFilters'
 export const PoolsSection: FC = () => {
   const { selectedNetworks, setFilters } = usePoolFilters()
   const { address } = useAccount()
-  const { data: user } = useSWR<User>(`/pool/api/user/${address}`, (url) =>
+  const { data: user } = useSWR<User>(address ? `/pool/api/user/${address}` : null, (url) =>
     fetch(url).then((response) => response.json())
   )
 
