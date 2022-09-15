@@ -51,10 +51,7 @@ const Pool: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fall
   )
 }
 
-const fetcher = (url) =>
-  fetch(url)
-    .then((response) => response.json())
-    .catch((error) => console.log('fetcher error', error))
+const fetcher = (url) => fetch(url).then((response) => response.json())
 
 const _Pool = () => {
   const router = useRouter()
