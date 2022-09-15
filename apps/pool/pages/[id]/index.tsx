@@ -32,12 +32,12 @@ const LINKS = (id: string): BreadcrumbLink[] => [
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pair] = await Promise.all([getPool(query.id as string)])
-
+  const id = query.id as string
+  const pair = await getPool(id)
   return {
     props: {
       fallback: {
-        [`/pool/api/pool/${query.id}`]: { pair },
+        [`/pool/api/pool/${id}`]: { pair },
       },
     },
   }
@@ -58,6 +58,7 @@ const _Pool = () => {
   )
 
   if (!data) return <></>
+
   const { pair } = data
 
   return (
