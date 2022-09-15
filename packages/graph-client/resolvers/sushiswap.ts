@@ -133,33 +133,62 @@ export const resolvers: Resolvers = {
                 : []
             })
           ),
-      ]).then((snapshots) => snapshots.flat())
+      ]).then((factories) => factories.flat())
     },
     crossChainFactoryDaySnapshots: async (root, args, context, info) =>
-      Promise.all(
-        args.chainIds.map((chainId) =>
-          context.SushiSwap.Query.factoryDaySnapshots({
-            root,
-            args,
-            context: {
-              ...context,
-              chainId,
-              chainName: chainName[chainId],
-              chainShortName: chainShortName[chainId],
-              subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
-              subgraphHost: SUBGRAPH_HOST[chainId],
-            },
-            info,
-          }).then((snapshots) => {
-            return snapshots.map((snapshot) => ({
-              ...snapshot,
-              chainId,
-              chainName: chainName[chainId],
-              chainShortName: chainShortName[chainId],
-            }))
-          })
-        )
-      ).then((snapshots) => snapshots.flat()),
+      Promise.all([
+        ...args.chainIds
+          .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.Trident.Query.factoryDaySnapshots({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+                subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
+              },
+              info,
+            }).then((snapshots) => {
+              return snapshots.map((snapshot) => ({
+                ...snapshot,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+              }))
+            })
+          ),
+        ...args.chainIds
+          .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+          .map((chainId) =>
+            context.SushiSwap.Query.factoryDaySnapshots({
+              root,
+              args,
+              context: {
+                ...context,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+                subgraphHost: SUBGRAPH_HOST[chainId],
+              },
+              info,
+            }).then((snapshots) => {
+              if (!Array.isArray(snapshots)) {
+                console.log({ snapshots })
+              }
+              return snapshots.map((snapshot) => ({
+                ...snapshot,
+                chainId,
+                chainName: chainName[chainId],
+                chainShortName: chainShortName[chainId],
+              }))
+            })
+          ),
+      ]).then((snapshots) => snapshots.flat()),
     crossChainPairs: async (root, args, context, info) => {
       const transformer = (pools: Pair[], oneDayPools: Pair[], oneWeekPools: Pair[], farms: any, chainId) => {
         return pools?.length > 0

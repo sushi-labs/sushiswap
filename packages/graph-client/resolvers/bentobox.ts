@@ -4,13 +4,13 @@ import { Resolvers } from '../.graphclient'
 
 export const resolvers: Resolvers = {
   Rebase: {
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
+    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
   },
   Query: {
     crossChainRebases: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>
-          context.Rebase.Query.rebases({
+          context.BentoBox.Query.rebases({
             root,
             args,
             context: {

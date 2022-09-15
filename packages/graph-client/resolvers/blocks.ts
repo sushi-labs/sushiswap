@@ -10,7 +10,6 @@ export const resolvers: Resolvers = {
     crossChainBlocks: async (root, args, context, info) => {
       return Promise.all(
         args.chainIds.map((chainId) => {
-          console.log('GET BLOCKS FOR CHAIN', chainId)
           return context.Blocks.Query.blocks({
             root,
             args,

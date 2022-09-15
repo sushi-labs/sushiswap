@@ -13,7 +13,7 @@ export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  // ChainId.ARBITRUM_NOVA,
+  ChainId.ARBITRUM_NOVA,
   ChainId.HARMONY,
 ]
 
@@ -128,9 +128,9 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',
   [ChainId.CELO]: 'subgraph-qa/sushiswap-celo',
   [ChainId.FANTOM]: 'subgraph-qa/sushiswap-fantom',
-  [ChainId.FUSE]: 'subgraph-qa/sushiswap-fuse',
-  [ChainId.GNOSIS]: 'subgraph-qa/sushiswap-gnosis',
-  [ChainId.MOONBEAM]: 'subgraph-qa/sushiswap-moonbeam',
+  [ChainId.FUSE]: 'sushi-0m/sushiswap-fuse',
+  [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
+  [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'subgraph-qa/sushiswap-moonriver',
   [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
   [ChainId.ARBITRUM_NOVA]: 'subgraph-qa/sushiswap-arbitrum-nova',

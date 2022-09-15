@@ -134,7 +134,6 @@ export const getTokens = async (query?: GetTokensQuery) => {
     const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-
     const { crossChainTokens } = await sdk.CrossChainTokens({
       first,
       skip,
@@ -144,7 +143,6 @@ export const getTokens = async (query?: GetTokensQuery) => {
       orderDirection,
       chainIds,
     })
-
     return crossChainTokens
   } catch (error) {
     console.log(error)

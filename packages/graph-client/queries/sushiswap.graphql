@@ -79,7 +79,6 @@ query CrossChainFactoryDaySnapshots(
     id
     date
     volumeUSD
-    untrackedVolumeUSD
     liquidityUSD
     feesUSD
   }
