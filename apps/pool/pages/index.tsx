@@ -16,7 +16,6 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     getPoolCount(),
     getSushiBar(),
   ])
-
   return {
     props: {
       fallback: {

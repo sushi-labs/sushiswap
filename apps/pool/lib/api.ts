@@ -121,7 +121,6 @@ export const getPool = async (id: string) => {
     chainId: chainShortNameToChainId[id.split(':')[0]],
     now: Math.round(new Date().getTime() / 1000),
   })
-
   return pair
 }
 
