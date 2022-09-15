@@ -88,7 +88,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
       query && query.where
         ? { ...JSON.parse(query.where), aprUpdatedAtTimestamp_gt: start }
         : { aprUpdatedAtTimestamp_gt: start }
-    const orderBy = query?.orderBy || 'apr'
+    const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
 
