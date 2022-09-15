@@ -116,18 +116,12 @@ export const getPools = async (query?: GetPoolsQuery) => {
 }
 
 export const getPool = async (id: string) => {
-  try {
-    console.log('getPool', id)
-    const { crossChainPair: pair } = await sdk.CrossChainPair({
-      id: id.includes(':') ? id.split(':')[1] : id,
-      chainId: chainShortNameToChainId[id.split(':')[0]],
-      now: Math.round(new Date().getTime() / 1000),
-    })
-    console.log('getPool return', pair)
-    return pair
-  } catch (error) {
-    console.error('getPool error', error)
-  }
+  const { crossChainPair: pair } = await sdk.CrossChainPair({
+    id: id.includes(':') ? id.split(':')[1] : id,
+    chainId: chainShortNameToChainId[id.split(':')[0]],
+    now: Math.round(new Date().getTime() / 1000),
+  })
+  return pair
 }
 
 export const getOneYearBlock = async () => {
@@ -157,5 +151,6 @@ export const getUser = async (query: GetUserQuery) => {
     id: query.id.toLowerCase(),
     now: Math.round(new Date().getTime() / 1000),
   })
+
   return user
 }

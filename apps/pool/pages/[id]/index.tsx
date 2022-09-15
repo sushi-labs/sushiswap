@@ -31,13 +31,12 @@ const LINKS = (id: string): BreadcrumbLink[] => [
 ]
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  const pair = await getPool(query.id as string)
-
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  const [pair] = await Promise.all([getPool(query.id as string)])
   return {
     props: {
       fallback: {
-        [`/pool/api/pool/${query.id}`]: pair,
+        [`/pool/api/pool/${query.id}`]: { pair },
       },
     },
   }
@@ -55,9 +54,10 @@ const fetcher = (url) => fetch(url).then((response) => response.json())
 
 const _Pool = () => {
   const router = useRouter()
-  const { data: pair } = useSWR<PairWithAlias>(`/pool/api/pool/${router.query.id}`, fetcher)
+  const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, fetcher)
 
-  if (!pair) return <></>
+  if (!data) return <></>
+  const { pair } = data
 
   return (
     <PoolPositionProvider pair={pair}>
