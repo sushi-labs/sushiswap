@@ -57,6 +57,8 @@ const _Pool = () => {
     fetch(url).then((response) => response.json())
   )
 
+  return <>TEST</>
+
   if (!data) return <></>
 
   const { pair } = data
