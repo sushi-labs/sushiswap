@@ -21,7 +21,9 @@ export const PositionsTable: FC = () => {
   const [columnVisibility, setColumnVisibility] = useState({})
 
   const { data: user, isValidating } = useSWR<User>(
-    `/pool/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+    address
+      ? `/pool/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`
+      : null,
     (url) => fetch(url).then((response) => response.json())
   )
 
