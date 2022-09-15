@@ -13,7 +13,7 @@ export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  ChainId.ARBITRUM_NOVA,
+  // ChainId.ARBITRUM_NOVA,
   ChainId.HARMONY,
 ]
 
@@ -103,7 +103,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'kybernetwork/optimism-blocks',
   [ChainId.KAVA]: 'sushiswap/blocks-kava',
   [ChainId.METIS]: 'sushiswap/blocks-metis',
-  // [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
+  [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {

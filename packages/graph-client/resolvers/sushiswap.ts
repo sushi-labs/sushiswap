@@ -428,8 +428,28 @@ export const resolvers: Resolvers = {
     crossChainPair: async (root, args, context, info) => {
       const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
+      // TODO: Optimise...
+      // return fetch('https://farm.sushi.com/v0').then((res) => res.json()).then(farms => {
+      //   return Promise.all([
+      //     context.SushiSwap.Query.pair({
+      //       root,
+      //       args,
+      //       context: {
+      //         ...context,
+      //         now: args.now,
+      //         chainId: args.chainId,
+      //         chainName: chainName[args.chainId],
+      //         chainShortName: chainShortName[args.chainId],
+      //         subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
+      //         subgraphHost: SUBGRAPH_HOST[args.chainId],
+      //       },
+      //       info,
+      //     }),
+      //   ])
+      // })
+
       const pool = SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
-        ? await context.Exchange.Query.pair({
+        ? await context.SushiSwap.Query.pair({
             root,
             args,
             context: {

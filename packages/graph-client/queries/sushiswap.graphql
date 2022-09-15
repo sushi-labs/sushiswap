@@ -226,7 +226,6 @@ query CrossChainUser($id: ID!, $chainIds: [Int!]!, $now: Int!, $block: Block_hei
 }
 
 
-
 query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
   crossChainPair(id: $id, now: $now, chainId: $chainId) {
     id
@@ -236,7 +235,6 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
     name
     reserve0
     reserve1
-    liquidity
     swapFee
     twapEnabled
     volume7d
@@ -253,6 +251,7 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
       decimals
       symbol
     }
+    liquidity
     liquidityNative
     liquidityUSD
     apr
