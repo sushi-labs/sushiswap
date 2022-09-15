@@ -191,7 +191,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/analytics:
@@ -199,6 +199,7 @@ importers:
       '@ethersproject/address': ^5.0.0
       '@headlessui/react': ^1.6.6
       '@heroicons/react': ^1.0.0
+      '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -207,8 +208,10 @@ importers:
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
       '@tanstack/react-table': 8.5.0
       '@types/node': ^17.0.31
       '@types/react': ^18.0.0
@@ -227,19 +230,24 @@ importers:
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
+      react-redux: ^8.0.1
       swr: ^1.3.0
       tailwindcss: ^3.1.0
       typescript: ^4.0.0
+      wagmi: ^0.5.12
     dependencies:
       '@ethersproject/address': 5.6.1
       '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
+      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       date-fns: 2.29.1
       echarts: 5.3.3
@@ -251,6 +259,8 @@ importers:
       next-sitemap: 3.1.21_next@12.2.3
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
+      wagmi: 0.5.12_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -264,7 +274,7 @@ importers:
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       swr: 1.3.0_react@18.2.0
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/blog:
@@ -333,7 +343,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/furo:
@@ -485,7 +495,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typechain: 8.1.0_typescript@4.7.4
       typescript: 4.7.4
 
@@ -533,7 +543,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/kashi:
@@ -640,7 +650,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/partner:
@@ -739,7 +749,7 @@ importers:
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       react-hook-form: 7.33.1_react@18.2.0
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/pool:
@@ -852,7 +862,7 @@ importers:
       graphql: 16.6.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/swap:
@@ -963,7 +973,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   examples/multicall:
@@ -1140,7 +1150,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   packages/chain:
@@ -3685,7 +3695,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_oai42fke67omxp5i2g4vu7ymuy
+      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.6.9
@@ -9155,7 +9165,7 @@ packages:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
     dev: false
 
   /@tanstack/react-table/8.0.0-alpha.87_biqbaboplfbrettd7655fr4n2y:
@@ -9290,14 +9300,16 @@ packages:
       typescript: 4.7.4
     dev: false
 
-  /@typechain/ethers-v5/2.0.0_oai42fke67omxp5i2g4vu7ymuy:
+  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
-      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.6.9
       typechain: 3.0.0_typescript@4.7.4
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@typechain/hardhat/6.1.2_nzvn3pcr2zogolee74b45246su:
@@ -10278,6 +10290,27 @@ packages:
       - react
     dev: false
 
+  /@wagmi/core/0.4.9_hipd4y7tuzeuqz2enwwtu7prbq:
+    resolution: {integrity: sha512-V/1PgetbA0PcIT6FJxDnCwRU/MZhecHVu1/7+QMncdxUQykyDd8MGlx0b8EjitMLLqzuD9kcx7sQpfS0gk5rZg==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.3.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      '@coinbase/wallet-sdk': 3.4.0
+      '@walletconnect/ethereum-provider': 1.7.8
+      eventemitter3: 4.0.7
+      zustand: 4.0.0_react@18.2.0
+    transitivePeerDependencies:
+      - immer
+      - react
+    dev: false
+
   /@wagmi/core/0.4.9_mrjqywl7zbaqq6hcega5ku3yee:
     resolution: {integrity: sha512-V/1PgetbA0PcIT6FJxDnCwRU/MZhecHVu1/7+QMncdxUQykyDd8MGlx0b8EjitMLLqzuD9kcx7sQpfS0gk5rZg==}
     peerDependencies:
@@ -11077,7 +11110,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.1
+      follow-redirects: 1.15.1_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -12789,8 +12822,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       is-text-path: 1.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -15564,15 +15597,6 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
-
-  /follow-redirects/1.15.1:
-    resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.1_debug@4.3.4:
     resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
@@ -20513,17 +20537,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /postcss-import/14.1.0:
-    resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      postcss: ^8.0.0
-    dependencies:
-      postcss-value-parser: 4.2.0
-      read-cache: 1.0.0
-      resolve: 1.22.1
-    dev: true
-
   /postcss-import/14.1.0_postcss@8.4.14:
     resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
     engines: {node: '>=10.0.0'}
@@ -20534,15 +20547,6 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
-
-  /postcss-js/4.0.0:
-    resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
-    engines: {node: ^12 || ^14 || >= 16}
-    peerDependencies:
-      postcss: ^8.3.3
-    dependencies:
-      camelcase-css: 2.0.1
-    dev: true
 
   /postcss-js/4.0.0_postcss@8.4.14:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -20600,15 +20604,6 @@ packages:
       lilconfig: 2.0.5
       ts-node: 10.9.1_k4qxsht45wbzfon3zk4qmpvs7q
       yaml: 1.10.2
-    dev: true
-
-  /postcss-nested/5.0.6:
-    resolution: {integrity: sha512-rKqm2Fk0KbA8Vt3AdGN0FB9OBOMDVajMG6ZCf/GoHgdxUJ4sBFp0A/uMIRm+MJUdo33YXEtjqIz8u7DAp8B7DA==}
-    engines: {node: '>=12.0'}
-    peerDependencies:
-      postcss: ^8.2.14
-    dependencies:
-      postcss-selector-parser: 6.0.10
     dev: true
 
   /postcss-nested/5.0.6_postcss@8.4.14:
@@ -22262,7 +22257,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.1
+      follow-redirects: 1.15.1_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -22895,41 +22890,6 @@ packages:
     resolution: {integrity: sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
-    dependencies:
-      arg: 5.0.2
-      chokidar: 3.5.3
-      color-name: 1.1.4
-      detective: 5.2.1
-      didyoumean: 1.2.2
-      dlv: 1.1.3
-      fast-glob: 3.2.11
-      glob-parent: 6.0.2
-      is-glob: 4.0.3
-      lilconfig: 2.0.5
-      normalize-path: 3.0.0
-      object-hash: 3.0.0
-      picocolors: 1.0.0
-      postcss: 8.4.14
-      postcss-import: 14.1.0
-      postcss-js: 4.0.0
-      postcss-load-config: 3.1.4
-      postcss-nested: 5.0.6
-      postcss-selector-parser: 6.0.10
-      postcss-value-parser: 4.2.0
-      quick-lru: 5.1.1
-      resolve: 1.22.1
-    transitivePeerDependencies:
-      - ts-node
-    dev: true
-
-  /tailwindcss/3.1.6_postcss@8.4.14:
-    resolution: {integrity: sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==}
-    engines: {node: '>=12.13.0'}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -24339,6 +24299,30 @@ packages:
       is-buffer: 2.0.5
       unist-util-stringify-position: 3.0.2
       vfile-message: 3.1.2
+    dev: false
+
+  /wagmi/0.5.12_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-Y7eGKYhgNw6fohiXBE4uak/lotfgB+KaANqok16ORqwBFV+zaByMYWCrOIYlk1/6ngSyW1dcSVCU8djjh+RNtg==}
+    peerDependencies:
+      ethers: '>=5.5.1'
+      react: '>=17.0.0'
+    dependencies:
+      '@coinbase/wallet-sdk': 3.4.0
+      '@wagmi/core': 0.4.9_hipd4y7tuzeuqz2enwwtu7prbq
+      '@walletconnect/ethereum-provider': 1.7.8
+      react: 18.2.0
+      react-query: 4.0.0-beta.23_biqbaboplfbrettd7655fr4n2y
+      use-sync-external-store: 1.2.0_react@18.2.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - bufferutil
+      - debug
+      - encoding
+      - immer
+      - react-dom
+      - react-native
+      - supports-color
+      - utf-8-validate
     dev: false
 
   /wagmi/0.5.12_um4cugg2i3ywhvigsmvsir7hgy:

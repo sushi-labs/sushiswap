@@ -113,6 +113,7 @@ additionalTypeDefs: |
       now: Int!, 
       chainIds: [Int!]!,
     ): User!
+    crossChainToken(id: ID!, now: Int!, chainId: Int!): Token!
     crossChainTokens(
       first: Int,
       skip: Int,

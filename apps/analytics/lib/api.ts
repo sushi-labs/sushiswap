@@ -1,3 +1,4 @@
+import { chainShortNameToChainId } from '@sushiswap/chain'
 import {
   getBuiltGraphSDK,
   QuerycrossChainPairsArgs,
@@ -148,6 +149,16 @@ export const getTokens = async (query?: GetTokensQuery) => {
     console.log(error)
     throw new Error(error)
   }
+}
+
+export const getToken = async (id: string) => {
+  const { crossChainToken: token } = await sdk.CrossChainToken({
+    id: id.includes(':') ? id.split(':')[1] : id,
+    chainId: chainShortNameToChainId[id.split(':')[0]],
+    now: Math.round(new Date().getTime() / 1000),
+  })
+
+  return token
 }
 
 export type GetTokenCountQuery = Partial<{

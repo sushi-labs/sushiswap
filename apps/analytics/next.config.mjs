@@ -1,6 +1,11 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/graph-client'])
+const withTranspileModules = transpileModules([
+  '@sushiswap/redux-localstorage',
+  '@sushiswap/wagmi',
+  '@sushiswap/ui',
+  '@sushiswap/graph-client'
+])
 
 // @ts-check
 /** @type {import('next').NextConfig} */
