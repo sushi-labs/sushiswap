@@ -101,7 +101,7 @@ query articleAndMoreArticles(
 
   moreArticles: articles(
     sort: "publishedAt:desc"
-    pagination: { limit: 2 }
+    pagination: { limit: 3 }
     filters: $filters_ne
     publicationState: $publicationState
   ) {

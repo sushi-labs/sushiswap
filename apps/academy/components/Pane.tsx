@@ -32,7 +32,6 @@ export const Pane: FC<Pane> = ({ article, isBig }) => {
         {article?.attributes?.cover?.data && (
           <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
             <Image
-              height={isBig ? 340 : 240}
               quality={100}
               image={article?.attributes.cover.data}
               className={classNames(
@@ -86,7 +85,7 @@ export const Pane: FC<Pane> = ({ article, isBig }) => {
                   className="relative overflow-hidden rounded-full w-9 h-9 lg:h-12 lg:w-12 ring-2 ring-white"
                   style={{ zIndex: (a.length - i) * 10 }}
                 >
-                  <Image image={author?.attributes.avatar.data} width={64} height={64} />
+                  <Image image={author?.attributes.avatar.data} />
                 </div>
               ))}
             </div>

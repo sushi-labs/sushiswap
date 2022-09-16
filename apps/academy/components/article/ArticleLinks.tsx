@@ -11,9 +11,9 @@ interface ArticleLinks {
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
   return (
     <section>
-      <hr className="my-12 border border-slate-200/5" />
-      <h2 className="mb-6 text-base font-semibold text-slate-200">Share article</h2>
-      <div className="flex gap-5">
+      {/* <hr className="my-12 border border-slate-200/5" /> */}
+      {/* <h2 className="mb-6 text-base font-semibold text-slate-200">Share article</h2> */}
+      <div className="flex gap-6">
         <a
           target="_blank"
           title="Share on Twitter"

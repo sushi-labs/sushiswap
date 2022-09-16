@@ -1,6 +1,7 @@
 import { PlusCircleIcon } from '@heroicons/react/solid'
 import { useDebounce } from '@sushiswap/hooks'
 import { Button, classNames, Container, Tab, Typography } from '@sushiswap/ui'
+import { AdditionalArticles } from 'components/AdditionalArticles'
 import { LevelCard } from 'components/LevelCard'
 import { BlogSeo } from 'components/Seo/BlogSeo'
 import { InferGetServerSidePropsType } from 'next'
@@ -128,13 +129,13 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
         <div className={classNames('flex flex-col', defaultSidePadding)}>
           <Typography variant="h3" weight={700}>
-            Choose Topic:
+            Choose Topic
           </Typography>
           <div className="flex flex-wrap mt-6 sm:mt-8 gap-y-3 gap-x-4 sm:gap-x-8 sm:gap-y-6">
             <Categories selected={selectedCategory} onSelect={handleSelectCategory} categories={categories || []} />
           </div>
           <div className="items-baseline hidden gap-8 mt-16 md:flex">
-            <Typography variant="h3" weight={700}>
+            <Typography variant="xl" weight={700}>
               Difficulty:
             </Typography>
             <div className="flex flex-wrap gap-6">
@@ -182,23 +183,16 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           </div>
         </div>
 
-        <div>
-          <Typography variant="h3" weight={700} className={defaultSidePadding}>
-            Latest Releases
-          </Typography>
+        <AdditionalArticles title="Latest Releases">
           {latestReleases && (
-            <div className={classNames('overflow-x-auto pb-4', defaultSidePadding)}>
-              <div className="flex gap-6 mt-6 sm:mt-12 transition-all sm:gap-4 md:grid md:grid-cols-3 w-[798px] md:w-full">
-                <ArticleList
-                  articles={latestReleases as ArticleEntity[]}
-                  loading={loading}
-                  render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
-                  skeletonAmount={latestReleases.length}
-                />
-              </div>
-            </div>
+            <ArticleList
+              articles={latestReleases as ArticleEntity[]}
+              loading={loading}
+              render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+              skeletonAmount={latestReleases.length}
+            />
           )}
-        </div>
+        </AdditionalArticles>
       </Container>
     </>
   )

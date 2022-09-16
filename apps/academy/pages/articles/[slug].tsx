@@ -1,6 +1,9 @@
-import { Container } from '@sushiswap/ui'
+import { Listbox } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/outline'
+import { classNames, Container, Select } from '@sushiswap/ui'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
+import { defaultSidePadding } from 'pages'
 import { FC } from 'react'
 
 import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../../.mesh'
@@ -15,6 +18,7 @@ import {
   PreviewBanner,
   RichTextBlock,
 } from '../../components'
+import { Image } from '../../components/Image'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
 
 export async function getStaticPaths() {
@@ -46,7 +50,7 @@ export async function getStaticProps({
       // @ts-ignore
       article: data?.articles?.data?.[0],
       // @ts-ignore
-      latestArticles: data?.moreArticles?.data,
+      latestArticles: data?.moreArticles?.data, // TODO: similar articles
       preview: !!preview,
     },
     revalidate: 1,
@@ -70,12 +74,62 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
       <ArticleSeo article={article?.attributes} />
       <PreviewBanner show={preview} />
       <Breadcrumb />
-      <Container maxWidth="2xl" className="px-4 mx-auto my-16">
-        <main>
-          <article className="relative pt-10">
-            <ArticleHeader article={article} />
-            <ArticleAuthors article={article} />
-            <div className="mt-12 prose !prose-invert prose-slate">
+      <Container maxWidth="3xl" className="px-4 mx-auto mt-8 md:mt-0">
+        <ArticleHeader article={article} />
+        <ArticleAuthors article={article} />
+      </Container>
+      {article?.attributes?.cover.data && (
+        <div className="relative w-screen h-[calc(100vw/3)] min-h-[300px] mt-6 md:mt-12">
+          <Image image={article?.attributes.cover.data} />
+        </div>
+      )}
+
+      <Container maxWidth="6xl" className="mx-auto pb-36">
+        <div>
+          <div className="sticky top-[94px] md:hidden bg-slate-900 z-20 px-6 border-b border-slate-200/5">
+            <Select
+              button={
+                <Listbox.Button
+                  type="button"
+                  className="flex items-center justify-between w-full h-12 gap-1 px-6 font-medium hover:text-slate-200 text-slate-300"
+                >
+                  <span className="text-sm">Intro</span>
+                  <ChevronDownIcon className="w-3 h-3" aria-hidden="true" />
+                </Listbox.Button>
+              }
+            >
+              <Select.Options className="p-6 !bg-slate-800 -mt-1">
+                <option>1</option>
+                <option>2</option>
+              </Select.Options>
+            </Select>
+          </div>
+
+          <div className={classNames('flex justify-center gap-16 md:pt-14', defaultSidePadding)}>
+            <aside className="flex-col hidden w-full gap-8 min-w-[180px] max-w-[280px] md:flex">
+              <ArticleLinks article={article} />
+              <hr className="border border-slate-200/5" />
+              <div className="space-y-8">
+                Article headers here
+                {/* {article?.attributes?.blocks?.map((block, i) => {
+                // @ts-ignore
+                if (block?.__typename === 'ComponentSharedRichText') {
+                  // checks for markdown headers, any text that starts with '#'
+                  const headerRegex = new RegExp('(#{1,6} .*)\r?\n')
+                  // @ts-ignore
+                  const hit = headerRegex.exec(block.body)
+                  const header = hit?.[0].replaceAll('#', '')
+                  console.log(i, header)
+                  return (
+                    <a key={i} href={`#${header}`}>
+                      {header}
+                    </a>
+                  )
+                }
+              })} */}
+              </div>
+            </aside>
+            <article className="prose !prose-invert prose-slate">
               {article?.attributes?.blocks?.map((block, i) => {
                 // @ts-ignore
                 if (block?.__typename === 'ComponentSharedRichText') {
@@ -92,11 +146,11 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
                   return <hr key={i} className="my-12 border border-slate-200/5" />
                 }
               })}
-            </div>
-            <ArticleLinks article={article} />
-            <ArticleFooter articles={latestArticles} />
-          </article>
-        </main>
+            </article>
+          </div>
+        </div>
+
+        <ArticleFooter articles={latestArticles} />
       </Container>
     </>
   )
