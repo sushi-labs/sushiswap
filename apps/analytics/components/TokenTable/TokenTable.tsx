@@ -120,6 +120,7 @@ export const TokenTable: FC = () => {
         loading={!tokens && isValidating}
         placeholder="No tokens found"
         pageSize={PAGE_SIZE}
+        linkFormatter={(id: string) => `/analytics/token/${id}`}
       />
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}
