@@ -15,4 +15,4 @@ export * from './provider'
 export * from './systems'
 
 // Re-export wagmi
-export * from '@wagmi/core'
+// export * from '@wagmi/core'
