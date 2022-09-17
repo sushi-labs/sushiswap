@@ -14,7 +14,7 @@ import {
   Approve,
   BENTOBOX_ADDRESS,
   getSushiXSwapContractConfig,
-  useBalances,
+  useBalance,
   useBentoBoxTotal,
   usePrices,
   useSushiXSwapContract,
@@ -593,15 +593,13 @@ const Widget: FC<Swap> = ({
     return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
   }, [sameChainSwap, srcTrade, transfer, crossChainSwap, dstTrade, transferSwap, swapTransfer, bridgeImpact])
 
-  const currencies = useMemo(() => [Native.onChain(srcChainId), srcToken], [srcChainId, srcToken])
-  const { data: balances } = useBalances({
+  const { data: nativeBalance } = useBalance({
     chainId: srcChainId,
     account: address,
-    currencies,
+    currency: Native.onChain(srcChainId),
   })
 
-  const srcBalance = balances?.[srcToken.wrapped.address]?.[FundSource.WALLET]
-  const nativeBalance = balances?.[AddressZero]?.[FundSource.WALLET]
+  const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
