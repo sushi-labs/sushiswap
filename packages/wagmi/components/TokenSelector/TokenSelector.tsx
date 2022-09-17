@@ -76,7 +76,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
           {...props}
         />
       )
-    }, [_tokenMap, address, balances, chainId, fundSource, isMounted, onSelect, pricesMap, props, variant])
+    }, [_tokenMap, address, balances, chainId, fundSource, isMounted, onSelect, open, pricesMap, props, variant])
   },
   (prevProps, nextProps) => {
     return (

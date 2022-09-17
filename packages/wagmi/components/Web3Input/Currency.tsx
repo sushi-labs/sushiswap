@@ -167,7 +167,13 @@ const BalancePanel: FC<BalancePanel> = ({
   fundSource = FundSource.WALLET,
 }) => {
   const isMounted = useIsMounted()
-  const { data: balance } = useBalance({ chainId, currency, account, loadBentobox: false, enabled: false })
+  const { data: balance } = useBalance({
+    chainId,
+    currency,
+    account,
+    loadBentobox: fundSource !== FundSource.WALLET,
+    enabled: false,
+  })
 
   return useMemo(
     () => (
