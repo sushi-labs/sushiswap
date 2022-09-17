@@ -87,6 +87,10 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   const [error, setError] = useState(false)
 
   const src = useMemo(() => {
+    if (currency.isNative) {
+      return LOGO[currency.chainId]
+    }
+
     if (currency instanceof WrappedTokenInfo && currency.logoURI) {
       return currency.logoURI
     }
