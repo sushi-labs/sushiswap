@@ -66,7 +66,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const [sushiSwapRouter, tridentRouter] = useRouters(chainId)
 
-  const deadline = useTransactionDeadline(chainId)
+  const deadline = useTransactionDeadline(chainId, open)
 
   const inputCurrencyRebase = useBentoBoxTotal(chainId, trade?.inputAmount.currency)
   const outputCurrencyRebase = useBentoBoxTotal(chainId, trade?.outputAmount.currency)

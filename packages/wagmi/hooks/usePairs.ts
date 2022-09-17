@@ -61,12 +61,9 @@ export function usePairs(
   const [tokensA, tokensB, contracts] = useMemo(() => getPairs(chainId, currencies), [chainId, currencies])
   const { data, isLoading, isError } = useContractReads({
     contracts: contracts,
-    ...{
-      ...config,
-      enabled: config?.enabled !== undefined ? config.enabled && contracts.length > 0 : contracts.length > 0,
-      watch: true,
-      keepPreviousData: true,
-    },
+    enabled: config?.enabled !== undefined ? config.enabled && contracts.length > 0 : contracts.length > 0,
+    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
+    keepPreviousData: true,
   })
 
   return useMemo(() => {

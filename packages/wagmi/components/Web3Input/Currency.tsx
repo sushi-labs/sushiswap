@@ -167,12 +167,11 @@ const BalancePanel: FC<BalancePanel> = ({
   fundSource = FundSource.WALLET,
 }) => {
   const isMounted = useIsMounted()
-  const { address } = useAccount()
   const { data: balance } = useBalance({
-    chainId: currency?.chainId,
+    chainId,
     currency,
-    account: address,
-    enabled: Boolean(currency),
+    account,
+    enabled: false,
   })
 
   return useMemo(
