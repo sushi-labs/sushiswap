@@ -82,7 +82,6 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
   const { data, isLoading, isError } = useContractReads({
     contracts,
     watch: true,
-    cacheOnBlock: true,
     keepPreviousData: true,
     enabled: contracts.length > 0 && enabled,
   })
