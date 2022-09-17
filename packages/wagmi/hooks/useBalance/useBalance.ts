@@ -34,7 +34,7 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
     addressOrName: account,
     chainId,
     enabled,
-    watch: true,
+    watch: !(typeof enabled !== undefined && !enabled),
     keepPreviousData: true,
   })
 
@@ -89,8 +89,7 @@ export const useBalances: UseBalances = ({ enabled, chainId, account, currencies
   const { data, isError, isLoading } = useContractReads({
     contracts: contracts,
     enabled,
-    watch: true,
-    cacheOnBlock: true,
+    watch: !(typeof enabled !== undefined && !enabled),
     keepPreviousData: true,
   })
 
