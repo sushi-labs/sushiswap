@@ -64,7 +64,6 @@ export function usePairs(
     ...{
       ...config,
       enabled: config?.enabled !== undefined ? config.enabled && contracts.length > 0 : contracts.length > 0,
-      cacheOnBlock: true,
       watch: true,
       keepPreviousData: true,
     },

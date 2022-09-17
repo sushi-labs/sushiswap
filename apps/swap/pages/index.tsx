@@ -31,12 +31,12 @@ const Index: FC = () => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
   }, [input0, input1, token0, token1])
 
-  const onInput0 = useCallback((val) => {
+  const onInput0 = useCallback((val: string) => {
     setTradeType(TradeType.EXACT_INPUT)
     setInput0(val)
   }, [])
 
-  const onInput1 = useCallback((val) => {
+  const onInput1 = useCallback((val: string) => {
     setTradeType(TradeType.EXACT_OUTPUT)
     setInput1(val)
   }, [])
