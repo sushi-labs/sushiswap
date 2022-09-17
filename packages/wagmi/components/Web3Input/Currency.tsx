@@ -171,7 +171,7 @@ const BalancePanel: FC<BalancePanel> = ({
     chainId,
     currency,
     account,
-    enabled: false,
+    enabled: Boolean(currency),
   })
 
   return useMemo(

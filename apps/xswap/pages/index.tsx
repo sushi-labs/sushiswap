@@ -1315,6 +1315,7 @@ const Widget: FC<Swap> = ({
       address,
       caption,
       chain,
+      createNotification,
       crossChain,
       dstAmountOut,
       dstBridgeToken,

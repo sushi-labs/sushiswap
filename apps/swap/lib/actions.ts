@@ -66,7 +66,7 @@ export const batchAction = ({ contract, actions = [] }: Batch): string => {
   const validated = actions.filter(Boolean)
 
   // Call action directly to save gas
-  if (validated.length === 1) {
+  if (validated.length === 1 && validated[0]) {
     return validated[0]
   }
 
@@ -74,6 +74,8 @@ export const batchAction = ({ contract, actions = [] }: Batch): string => {
   if (validated.length > 1) {
     return contract.interface.encodeFunctionData('multicall', [validated])
   }
+
+  throw new Error('Invalid actions')
 }
 
 interface UnwrapETHAction {

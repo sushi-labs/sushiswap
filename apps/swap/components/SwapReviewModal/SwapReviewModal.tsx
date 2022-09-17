@@ -3,7 +3,8 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { SushiSwapRouter } from '@sushiswap/exchange'
+import { Currency } from '@sushiswap/currency'
+import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
@@ -86,13 +87,16 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       let value = '0x0'
 
       if (sushiSwapRouter && trade.isV1()) {
-        const swapCallParameters = SushiSwapRouter.swapCallParameters(trade, {
-          feeOnTransfer: false,
-          allowedSlippage,
-          // TODO: custom recipient
-          recipient: account,
-          deadline: deadline.toNumber(),
-        })
+        const swapCallParameters = SushiSwapRouter.swapCallParameters(
+          trade as Trade<Currency, Currency, TradeType, Version.V1>,
+          {
+            feeOnTransfer: false,
+            allowedSlippage,
+            // TODO: custom recipient
+            recipient: account,
+            deadline: deadline.toNumber(),
+          }
+        )
 
         const { methodName, args } = swapCallParameters
 

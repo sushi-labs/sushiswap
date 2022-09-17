@@ -1,7 +1,8 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { Native, tryParseAmount, Type, USDC } from '@sushiswap/currency'
+import { tryParseAmount, Type } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
+import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
@@ -18,9 +19,9 @@ const Index: FC = () => {
   const { chain } = useNetwork()
   const chainId = chain?.id || ChainId.ETHEREUM
   const [input0, setInput0] = useState<string>('')
-  const [token0, setToken0] = useState<Type | undefined>(Native.onChain(ChainId.ARBITRUM))
+  const [token0, setToken0] = useState<Type | undefined>()
   const [input1, setInput1] = useState<string>('')
-  const [token1, setToken1] = useState<Type | undefined>(USDC[ChainId.ARBITRUM])
+  const [token1, setToken1] = useState<Type | undefined>()
   const [tradeType, setTradeType] = useState<TradeType>(TradeType.EXACT_INPUT)
 
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
@@ -47,6 +48,8 @@ const Index: FC = () => {
     setToken0(srcToken)
     setToken1(dstToken)
   }, [token0, token1])
+
+  const amounts = useMemo(() => [parsedInput0], [parsedInput0])
 
   return (
     <>
@@ -105,27 +108,27 @@ const Index: FC = () => {
                 />
                 <SwapStatsDisclosure />
                 <div className="p-3 pt-0">
-                  <SwapReviewModalLegacy chainId={chainId}>
-                    {({ isWritePending, setOpen }) => {
-                      return (
-                        // <Checker.Amounts
-                        //   fullWidth
-                        //   size="md"
-                        //   chainId={chainId}
-                        //   fundSource={FundSource.WALLET}
-                        //   amounts={[parsedInput0]}
-                        // >
-                        <Checker.Connected fullWidth size="md">
-                          <Checker.Network fullWidth size="md" chainId={chainId}>
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                              {isWritePending ? <Dots>Executing Swap</Dots> : 'Confirm Swap'}
-                            </Button>
-                          </Checker.Network>
-                        </Checker.Connected>
-                        // </Checker.Amounts>
-                      )
-                    }}
-                  </SwapReviewModalLegacy>
+                  <Checker.Amounts
+                    fullWidth
+                    size="md"
+                    chainId={chainId}
+                    fundSource={FundSource.WALLET}
+                    amounts={amounts}
+                  >
+                    <Checker.Connected fullWidth size="md">
+                      <Checker.Network fullWidth size="md" chainId={chainId}>
+                        <SwapReviewModalLegacy chainId={chainId}>
+                          {({ isWritePending, setOpen }) => {
+                            return (
+                              <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                {isWritePending ? <Dots>Executing Swap</Dots> : 'Confirm Swap'}
+                              </Button>
+                            )
+                          }}
+                        </SwapReviewModalLegacy>
+                      </Checker.Network>
+                    </Checker.Connected>
+                  </Checker.Amounts>
                 </div>
               </div>
             </Widget.Content>
