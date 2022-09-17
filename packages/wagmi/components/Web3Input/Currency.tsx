@@ -172,7 +172,6 @@ const BalancePanel: FC<BalancePanel> = ({
     currency,
     account,
     loadBentobox: fundSource !== FundSource.WALLET,
-    enabled: false,
   })
 
   return useMemo(

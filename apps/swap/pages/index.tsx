@@ -600,8 +600,8 @@ const Widget: FC<Swap> = ({
     currencies,
   })
 
-  const srcBalance = balances?.[srcToken.wrapped.address]
-  const nativeBalance = balances?.[AddressZero]
+  const srcBalance = balances?.[srcToken.wrapped.address][FundSource.WALLET]
+  const nativeBalance = balances?.[AddressZero][FundSource.WALLET]
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
