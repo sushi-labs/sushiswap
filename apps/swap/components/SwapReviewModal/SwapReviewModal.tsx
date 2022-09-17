@@ -52,6 +52,8 @@ interface FailedCall extends SwapCallEstimate {
   error: Error
 }
 
+const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
+
 export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children }) => {
   const { trade } = useTrade()
   const { address: account } = useAccount()
@@ -74,9 +76,10 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const [{ slippageTolerance }] = useSettings()
 
-  const allowedSlippage = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
+  const allowedSlippage = useMemo(
+    () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
+    [slippageTolerance]
+  )
 
   const execute = useCallback(async () => {
     try {
@@ -195,7 +198,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                               )
                             )
                           : getBigNumber(trade.route.amountIn * leg.absolutePortion),
-                      native: false,
+                      native: true,
                       data: defaultAbiCoder.encode(
                         ['address', 'address', 'bool'],
                         [
@@ -238,7 +241,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
               [
                 {
                   token: trade.outputAmount.currency.wrapped.address,
-                  to: account,
+                  to: trade.outputAmount.currency.isNative ? tridentRouter.address : account,
                   unwrapBento: true,
                   minAmount: trade
                     ?.minimumAmountOut(allowedSlippage)
@@ -330,11 +333,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       if (e instanceof ProviderRpcError) {
         setError(e.message)
       }
-
-      // if (!(e instanceof UserRejectedRequestError)) {
-      //   setError((e as ProviderRpcError).message)
-      // }
-
       console.log(e)
     }
   }, [
@@ -364,7 +362,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       return BENTOBOX_ADDRESS[chainId]
     }
   }, [trade, sushiSwapRouter, chainId])
-
+  console.log({ input0, approveTokenTo })
   return (
     <>
       {children({ isWritePending, setOpen })}
