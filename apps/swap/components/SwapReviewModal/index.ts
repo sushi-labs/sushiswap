@@ -1,2 +1,2 @@
 export * from './SwapReviewModalBase'
-export * from './SwapReviewModalLegacy'
+export * from './SwapReviewModal'

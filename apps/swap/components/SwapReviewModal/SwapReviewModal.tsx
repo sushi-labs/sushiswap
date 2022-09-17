@@ -1,28 +1,28 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
+import { AddressZero, Zero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { SushiSwapRouter } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
+import { getBigNumber } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
 import { isZero } from '@sushiswap/validate'
 import {
   Approve,
+  BENTOBOX_ADDRESS,
   calculateGasMargin,
-  getSushiSwapRouterContractConfig,
   getTridentRouterContractConfig,
   useBentoBoxTotal,
-  useSushiSwapRouterContract,
-  useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { approveMasterContractAction, batchAction, unwrapWETHAction } from 'lib/actions'
 import { toHex } from 'lib/functions'
 import { useTransactionDeadline } from 'lib/hooks'
+import { useRouters } from 'lib/hooks/useRouters'
+import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, useProvider, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
-import { useNotifications, useSettings } from '../../lib/state/storage'
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
 
@@ -63,8 +63,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     onSuccess: () => setOpen(false),
   })
   const [signature, setSignature] = useState<Signature>()
-  const sushiSwapRouter = useSushiSwapRouterContract(chainId)
-  const tridentRouter = useTridentRouterContract(chainId)
+
+  const [sushiSwapRouter, tridentRouter] = useRouters(chainId)
+
   const deadline = useTransactionDeadline(chainId)
 
   const inputCurrencyRebase = useBentoBoxTotal(chainId, trade?.inputAmount.currency)
@@ -78,12 +79,13 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const execute = useCallback(async () => {
     try {
+      console.log([!trade, !account, !inputCurrencyRebase, !outputCurrencyRebase, sushiSwapRouter, trade?.isV1()])
       if (!trade || !account || !inputCurrencyRebase || !outputCurrencyRebase) return
 
       let call: SwapCall | null = null
       let value = '0x0'
 
-      if (trade.isV1()) {
+      if (sushiSwapRouter && trade.isV1()) {
         const swapCallParameters = SushiSwapRouter.swapCallParameters(trade, {
           feeOnTransfer: false,
           allowedSlippage,
@@ -101,7 +103,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           calldata: sushiSwapRouter.interface.encodeFunctionData(methodName, args),
           value,
         }
-      } else if (trade.isV2()) {
+      } else if (tridentRouter && trade.isV2()) {
         const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
 
         if (trade.isSinglePool()) {
@@ -145,6 +147,106 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           )
         } else if (trade.isComplex()) {
           // complex trade
+          const initialPathCount = trade.route.legs.filter(
+            (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
+          ).length
+          const [initialPath, percentagePath, output] = trade.route.legs.reduce<
+            [
+              {
+                tokenIn: string
+                pool: string
+                native: boolean
+                amount: BigNumberish
+                data: string
+              }[],
+              {
+                tokenIn: string
+                pool: string
+                balancePercentage: BigNumberish
+                data: string
+              }[],
+              {
+                token: string
+                to: string
+                unwrapBento: boolean
+                minAmount: BigNumberish
+              }[]
+            ]
+          >(
+            ([initialPath, percentagePath, output], leg, i) => {
+              const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
+              if (isInitialPath) {
+                return [
+                  [
+                    ...initialPath,
+                    {
+                      tokenIn: leg.tokenFrom.address,
+                      pool: leg.poolAddress,
+                      amount:
+                        initialPathCount > 1 && i === initialPathCount - 1
+                          ? trade.route.amountInBN.sub(
+                              initialPath.reduce(
+                                (previousValue, currentValue) => previousValue.add(currentValue.amount),
+                                Zero
+                              )
+                            )
+                          : getBigNumber(trade.route.amountIn * leg.absolutePortion),
+                      native: false,
+                      data: defaultAbiCoder.encode(
+                        ['address', 'address', 'bool'],
+                        [
+                          leg.tokenFrom.address,
+                          getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                          false,
+                        ]
+                      ),
+                    },
+                  ],
+                  percentagePath,
+                  output,
+                ]
+              } else {
+                return [
+                  initialPath,
+                  [
+                    ...percentagePath,
+                    {
+                      tokenIn: leg.tokenFrom.address,
+                      pool: leg.poolAddress,
+                      balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
+                      data: defaultAbiCoder.encode(
+                        ['address', 'address', 'bool'],
+                        [
+                          leg.tokenFrom.address,
+                          getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                          false,
+                        ]
+                      ),
+                    },
+                  ],
+                  output,
+                ]
+              }
+            },
+            [
+              [],
+              [],
+              [
+                {
+                  token: trade.outputAmount.currency.wrapped.address,
+                  to: account,
+                  unwrapBento: true,
+                  minAmount: trade
+                    ?.minimumAmountOut(allowedSlippage)
+                    ?.toShare(outputCurrencyRebase)
+                    .quotient.toString(),
+                },
+              ],
+            ]
+          )
+          actions.push(
+            tridentRouter.interface.encodeFunctionData('complexPath', [{ initialPath, percentagePath, output }])
+          )
         }
 
         if (trade.inputAmount.currency.isNative) {
@@ -171,7 +273,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           value,
         }
       }
-
       if (call) {
         const tx =
           !value || isZero(value)
@@ -235,8 +336,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     outputCurrencyRebase,
     allowedSlippage,
     deadline,
-    sushiSwapRouter.address,
-    sushiSwapRouter.interface,
+    sushiSwapRouter,
     provider,
     sendTransactionAsync,
     chainId,
@@ -248,6 +348,14 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     () => [trade?.inputAmount, trade?.outputAmount],
     [trade?.inputAmount, trade?.outputAmount]
   )
+
+  const approveTokenTo = useMemo(() => {
+    if (trade?.isV1()) {
+      return sushiSwapRouter?.address
+    } else if (trade?.isV2()) {
+      return BENTOBOX_ADDRESS[chainId]
+    }
+  }, [trade, sushiSwapRouter, chainId])
 
   return (
     <>
@@ -265,23 +373,19 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           className="flex-grow !justify-end"
           components={
             <Approve.Components>
-              {trade && trade.isV2() ? (
-                <Approve.Bentobox
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  address={getTridentRouterContractConfig(chainId).addressOrName}
-                  onSignature={setSignature}
-                />
-              ) : (
-                <></>
-              )}
+              <Approve.Bentobox
+                size="md"
+                className="whitespace-nowrap"
+                fullWidth
+                address={getTridentRouterContractConfig(chainId).addressOrName}
+                onSignature={setSignature}
+              />
               <Approve.Token
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
                 amount={input0}
-                address={getSushiSwapRouterContractConfig(chainId).addressOrName}
+                address={approveTokenTo}
               />
             </Approve.Components>
           }
