@@ -6,11 +6,11 @@ import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
+import { CurrencyInput } from 'components/CurrencyInput'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider } from '../components'
-import { CurrencyInput } from '../components/CurrencyInput'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
@@ -41,90 +41,101 @@ const Index: FC = () => {
     setInput1(val)
   }, [])
 
+  const switchCurrencies = useCallback(() => {
+    const srcToken = token0
+    const dstToken = token1
+
+    setToken0(srcToken)
+    setToken1(dstToken)
+  }, [token0, token1])
+
+  const amounts = useMemo(() => [parsedInput0], [parsedInput0])
+
   return (
-    <TradeProvider
-      chainId={chainId}
-      tradeType={tradeType}
-      amountSpecified={tradeType === TradeType.EXACT_INPUT ? parsedInput0 : parsedInput1}
-      mainCurrency={token0}
-      otherCurrency={token1}
-    >
-      <Layout>
-        <Widget id="swap" maxWidth={400}>
-          <Widget.Content>
-            <Widget.Header title="Swap">
-              <SettingsOverlay chainId={chainId} />
-            </Widget.Header>
-            <CurrencyInput
-              className="p-3"
-              value={input0}
-              onChange={onInput0}
-              currency={token0}
-              onSelect={setToken0}
-              customTokenMap={customTokensMap}
-              onAddToken={addCustomToken}
-              onRemoveToken={removeCustomToken}
-              chainId={chainId}
-              tokenMap={tokenMap}
-              inputType={TradeType.EXACT_INPUT}
-              tradeType={tradeType}
-            />
-            <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-              <button
-                type="button"
-                // TODO
-                onClick={() => {}}
-                className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full hover:ring-2 hover:ring-slate-500 cursor-pointer"
-              >
-                <div className="transition-all rotate-0 group-hover:rotate-180 group-hover:delay-200">
-                  <ChevronDownIcon width={16} height={16} />
-                </div>
-              </button>
-            </div>
-            <div className="bg-slate-800">
+    <>
+      <TradeProvider
+        chainId={chainId}
+        tradeType={tradeType}
+        amountSpecified={tradeType === TradeType.EXACT_INPUT ? parsedInput0 : parsedInput1}
+        mainCurrency={token0}
+        otherCurrency={token1}
+      >
+        <Layout>
+          <Widget id="swap" maxWidth={400}>
+            <Widget.Content>
+              <Widget.Header title="Swap">
+                <SettingsOverlay chainId={chainId} />
+              </Widget.Header>
               <CurrencyInput
                 className="p-3"
-                value={input1}
-                onChange={onInput1}
-                currency={token1}
-                onSelect={setToken1}
+                value={input0}
+                onChange={onInput0}
+                currency={token0}
+                onSelect={setToken0}
                 customTokenMap={customTokensMap}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}
                 chainId={chainId}
                 tokenMap={tokenMap}
-                inputType={TradeType.EXACT_OUTPUT}
+                inputType={TradeType.EXACT_INPUT}
                 tradeType={tradeType}
               />
-              <SwapStatsDisclosure />
-              <div className="p-3 pt-0">
-                <Checker.Connected fullWidth size="md">
-                  <Checker.Network fullWidth size="md" chainId={chainId}>
-                    <Checker.Amounts
-                      fullWidth
-                      size="md"
-                      chainId={chainId}
-                      fundSource={FundSource.WALLET}
-                      amounts={[parsedInput0]}
-                    >
-                      <SwapReviewModalLegacy chainId={chainId}>
-                        {({ isWritePending, setOpen }) => {
-                          return (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                              {isWritePending ? <Dots>Executing Swap</Dots> : 'Confirm Swap'}
-                            </Button>
-                          )
-                        }}
-                      </SwapReviewModalLegacy>
-                    </Checker.Amounts>
-                  </Checker.Network>
-                </Checker.Connected>
+              <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
+                <button
+                  type="button"
+                  onClick={switchCurrencies}
+                  className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full hover:ring-2 hover:ring-slate-500 cursor-pointer"
+                >
+                  <div className="transition-all rotate-0 group-hover:rotate-180 group-hover:delay-200">
+                    <ChevronDownIcon width={16} height={16} />
+                  </div>
+                </button>
               </div>
-            </div>
-          </Widget.Content>
-        </Widget>
-      </Layout>
-    </TradeProvider>
+              <div className="bg-slate-800">
+                <CurrencyInput
+                  className="p-3"
+                  value={input1}
+                  onChange={onInput1}
+                  currency={token1}
+                  onSelect={setToken1}
+                  customTokenMap={customTokensMap}
+                  onAddToken={addCustomToken}
+                  onRemoveToken={removeCustomToken}
+                  chainId={chainId}
+                  tokenMap={tokenMap}
+                  inputType={TradeType.EXACT_OUTPUT}
+                  tradeType={tradeType}
+                />
+                <SwapStatsDisclosure />
+                <div className="p-3 pt-0">
+                  <Checker.Amounts
+                    fullWidth
+                    size="md"
+                    chainId={chainId}
+                    fundSource={FundSource.WALLET}
+                    amounts={amounts}
+                  >
+                    <Checker.Connected fullWidth size="md">
+                      <Checker.Network fullWidth size="md" chainId={chainId}>
+                        <SwapReviewModalLegacy chainId={chainId}>
+                          {({ isWritePending, setOpen }) => {
+                            return (
+                              <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                {isWritePending ? <Dots>Executing Swap</Dots> : 'Confirm Swap'}
+                              </Button>
+                            )
+                          }}
+                        </SwapReviewModalLegacy>
+                      </Checker.Network>
+                    </Checker.Connected>
+                  </Checker.Amounts>
+                </div>
+              </div>
+            </Widget.Content>
+          </Widget>
+        </Layout>
+      </TradeProvider>
+    </>
   )
 }
 

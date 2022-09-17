@@ -13,7 +13,7 @@ const withTranspileModules = transpileModules([
 // @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/swap',
+  basePath: '/xswap',
   reactStrictMode: true,
   swcMinify: true,
   // typescript: {

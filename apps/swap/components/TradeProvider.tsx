@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
-import { TradeOutput, useTrade as useFindTrade } from '@sushiswap/wagmi'
+import { TradeOutput } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
-import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
+import { useTrade as useFindTrade } from '../lib/hooks/useTrade'
 
 interface TradeContext {
   trade: TradeOutput
@@ -31,22 +31,10 @@ export const TradeProvider: FC<_TradeProviderProps> = ({
   otherCurrency,
   children,
 }) => {
-  const {
-    data: trade,
-    isError,
-    isLoading,
-  } = useFindTrade({
-    chainId,
-    tradeType,
-    mainCurrency,
-    otherCurrency,
-    amountSpecified,
-    ammEnabled: AMM_ENABLED_NETWORKS.includes(chainId),
-    tridentEnabled: TRIDENT_ENABLED_NETWORKS.includes(chainId),
-  })
+  const trade = useFindTrade(chainId, tradeType, amountSpecified, mainCurrency, otherCurrency)
 
   return (
-    <Context.Provider value={useMemo(() => ({ trade, isError, isLoading }), [isError, isLoading, trade])}>
+    <Context.Provider value={useMemo(() => ({ trade, isError: false, isLoading: false }), [trade])}>
       {children}
     </Context.Provider>
   )

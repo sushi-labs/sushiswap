@@ -69,6 +69,7 @@ export function useGetAllConstantProductPools(
       args: el,
     })),
     enabled: pairsUniqueAddr.length > 0 && config?.enabled,
+    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
   })
 
   const callStatePoolsCountProcessed = useMemo(() => {
@@ -99,6 +100,7 @@ export function useGetAllConstantProductPools(
         args: el,
       })) || [],
     enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
+    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
   })
 
   const pools = useMemo(() => {
@@ -138,6 +140,7 @@ export function useGetAllConstantProductPools(
       })),
     ],
     enabled: poolsAddresses.length > 0 && config?.enabled,
+    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
   })
 
   return useMemo(() => {

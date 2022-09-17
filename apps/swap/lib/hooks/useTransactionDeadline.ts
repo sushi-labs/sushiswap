@@ -5,8 +5,8 @@ import { useMemo } from 'react'
 import { L2_DEADLINE_FROM_NOW } from '../constants'
 import { useSettings } from '../state/storage'
 
-export const useTransactionDeadline = (chainId: number) => {
-  const { data: blockTimestamp } = useCurrentBlockTimestamp(chainId)
+export const useTransactionDeadline = (chainId: number, enabled = true) => {
+  const { data: blockTimestamp } = useCurrentBlockTimestamp(chainId, enabled)
   const [{ transactionDeadline: ttl }] = useSettings()
 
   return useMemo(() => {
