@@ -40,6 +40,14 @@ const Index: FC = () => {
     setInput1(val)
   }, [])
 
+  const switchCurrencies = useCallback(() => {
+    const srcToken = token0
+    const dstToken = token1
+
+    setToken0(srcToken)
+    setToken1(dstToken)
+  }, [token0, token1])
+
   return (
     <>
       <TradeProvider
@@ -72,8 +80,7 @@ const Index: FC = () => {
               <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
                 <button
                   type="button"
-                  // TODO
-                  onClick={() => {}}
+                  onClick={switchCurrencies}
                   className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full hover:ring-2 hover:ring-slate-500 cursor-pointer"
                 >
                   <div className="transition-all rotate-0 group-hover:rotate-180 group-hover:delay-200">
