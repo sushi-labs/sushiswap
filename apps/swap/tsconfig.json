@@ -1,6 +1,6 @@
 {
   "extends": "@sushiswap/typescript-config/nextjs.json",
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../../packages/exchange/src/SushiSwapRouter.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
