@@ -8,11 +8,11 @@ import {
   Approve,
   calculateGasMargin,
   Checker,
-  getV2RouterContractConfig,
+  getSushiSwapRouterContractConfig,
   PairState,
   usePair,
+  useSushiSwapRouterContract,
   useTotalSupply,
-  useV2RouterContract,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
@@ -33,7 +33,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const deadline = useTransactionDeadline(pair.chainId)
-  const contract = useV2RouterContract(pair.chainId)
+  const contract = useSushiSwapRouterContract(pair.chainId)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
   const [{ slippageTolerance }] = useSettings()
   const [error, setError] = useState<string>()
@@ -243,7 +243,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                           className="whitespace-nowrap"
                           fullWidth
                           amount={balance?.[FundSource.WALLET].multiply(percentageEntity)}
-                          address={getV2RouterContractConfig(pair.chainId).addressOrName}
+                          address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
                         />
                       </Approve.Components>
                     }

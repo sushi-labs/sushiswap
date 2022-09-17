@@ -28,6 +28,7 @@
     "@sushiswap/format": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
+    "@sushiswap/validate": "workspace:*",
     "@sushiswap/redux-localstorage": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",

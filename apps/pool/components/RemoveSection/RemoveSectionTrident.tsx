@@ -7,12 +7,12 @@ import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   Checker,
-  getV3RouterContractConfig,
+  getTridentRouterContractConfig,
   PoolState,
   useBentoBoxTotals,
   useConstantProductPool,
   useTotalSupply,
-  useV3RouterContract,
+  useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
@@ -40,7 +40,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   const { chain } = useNetwork()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const isMounted = useIsMounted()
-  const contract = useV3RouterContract(pair.chainId)
+  const contract = useTridentRouterContract(pair.chainId)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
   const [{ slippageTolerance }] = useSettings()
   const [error, setError] = useState<string>()
@@ -235,7 +235,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                           size="md"
                           className="whitespace-nowrap"
                           fullWidth
-                          address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                          address={getTridentRouterContractConfig(pair.chainId).addressOrName}
                           onSignature={setPermit}
                         />
                         <Approve.Token
@@ -243,7 +243,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                           className="whitespace-nowrap"
                           fullWidth
                           amount={slpAmountToRemove}
-                          address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                          address={getTridentRouterContractConfig(pair.chainId).addressOrName}
                         />
                       </Approve.Components>
                     }

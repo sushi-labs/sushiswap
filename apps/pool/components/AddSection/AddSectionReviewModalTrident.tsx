@@ -9,11 +9,11 @@ import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
-  getV3RouterContractConfig,
+  getTridentRouterContractConfig,
   PoolState,
   useBentoBoxTotals,
   useTotalSupply,
-  useV3RouterContract,
+  useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
@@ -64,7 +64,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const [, { createNotification }] = useNotifications(address)
   const totalSupply = useTotalSupply(liquidityToken)
   const rebases = useBentoBoxTotals(chainId, [token0, token1])
-  const contract = useV3RouterContract(chainId)
+  const contract = useTridentRouterContract(chainId)
   const [{ slippageTolerance }] = useSettings()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
     chainId,
@@ -256,7 +256,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
-                  address={getV3RouterContractConfig(chainId).addressOrName}
+                  address={getTridentRouterContractConfig(chainId).addressOrName}
                   onSignature={setPermit}
                 />
                 <Approve.Token

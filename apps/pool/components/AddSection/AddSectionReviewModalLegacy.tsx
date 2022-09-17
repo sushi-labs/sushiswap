@@ -6,9 +6,9 @@ import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   calculateGasMargin,
-  getV2RouterContractConfig,
+  getSushiSwapRouterContractConfig,
   PairState,
-  useV2RouterContract,
+  useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
@@ -42,7 +42,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const { chain } = useNetwork()
 
   const [, { createNotification }] = useNotifications(address)
-  const contract = useV2RouterContract(chainId)
+  const contract = useSushiSwapRouterContract(chainId)
   const [{ slippageTolerance }] = useSettings()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
     chainId,
@@ -179,14 +179,14 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input0}
-                  address={getV2RouterContractConfig(chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
                 />
                 <Approve.Token
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input1}
-                  address={getV2RouterContractConfig(chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
                 />
               </Approve.Components>
             }

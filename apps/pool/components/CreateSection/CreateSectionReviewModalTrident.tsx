@@ -8,9 +8,9 @@ import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
-  getV3RouterContractConfig,
+  getTridentRouterContractConfig,
   useConstantProductPoolFactoryContract,
-  useV3RouterContract,
+  useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
@@ -49,7 +49,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const [error, setError] = useState<string>()
   const [permit, setPermit] = useState<Signature>()
   const { chain } = useNetwork()
-  const contract = useV3RouterContract(chainId)
+  const contract = useTridentRouterContract(chainId)
   const factory = useConstantProductPoolFactoryContract(chainId)
   const [, { createNotification }] = useNotifications(address)
 
@@ -185,7 +185,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
-                address={getV3RouterContractConfig(chainId).addressOrName}
+                address={getTridentRouterContractConfig(chainId).addressOrName}
                 onSignature={setPermit}
               />
               <Approve.Token

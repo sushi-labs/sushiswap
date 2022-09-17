@@ -4,7 +4,7 @@ import sushiswapExports from '@sushiswap/sushiswap/exports.json'
 import { useContract, useSigner } from 'wagmi'
 
 // TODO CELO NOT FOUND?
-export const getV2RouterContractConfig = (chainId: number | undefined) => ({
+export const getSushiSwapRouterContractConfig = (chainId: number | undefined) => ({
   addressOrName:
     sushiswapExports[chainId as unknown as keyof Omit<typeof sushiswapExports, '31337' | '42220'>]?.[0]?.contracts
       ?.UniswapV2Router02?.address ?? AddressZero,
@@ -13,10 +13,10 @@ export const getV2RouterContractConfig = (chainId: number | undefined) => ({
       ?.UniswapV2Router02?.abi ?? sushiswapArtifact.abi,
 })
 
-export function useV2RouterContract(chainId: number | undefined) {
+export function useSushiSwapRouterContract(chainId: number | undefined) {
   const { data: signerOrProvider } = useSigner()
   return useContract({
-    ...getV2RouterContractConfig(chainId),
+    ...getSushiSwapRouterContractConfig(chainId),
     signerOrProvider,
   })
 }
