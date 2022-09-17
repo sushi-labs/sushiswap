@@ -14,7 +14,7 @@ import {
   Approve,
   BENTOBOX_ADDRESS,
   getSushiXSwapContractConfig,
-  useBalance,
+  useBalances,
   useBentoBoxTotal,
   usePrices,
   useSushiXSwapContract,
@@ -301,9 +301,7 @@ const Widget: FC<Swap> = ({
     crossChainSwap || swapTransfer ? srcBridgeToken : dstToken
   )
 
-  const srcOutputAmount = srcTrade?.outputAmount
-
-  const srcMinimumAmountOut = srcTrade?.minimumAmountOut(swapSlippage)
+  const srcMinimumAmountOut = useMemo(() => srcTrade?.minimumAmountOut(swapSlippage), [srcTrade, swapSlippage])
 
   const [eqFee, eqReward, lpFee, protocolFee] = useBridgeFees({
     srcChainId,
@@ -320,10 +318,15 @@ const Widget: FC<Swap> = ({
     return eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
   }, [eqFee, eqReward, lpFee, protocolFee])
 
-  const srcAmountMinusStargateFee = (transfer || transferSwap) && bridgeFee ? srcAmount?.subtract(bridgeFee) : undefined
+  const srcAmountMinusStargateFee = useMemo(
+    () => ((transfer || transferSwap) && bridgeFee ? srcAmount?.subtract(bridgeFee) : undefined),
+    [bridgeFee, srcAmount, transfer, transferSwap]
+  )
 
-  const srcMinimumAmountOutMinusStargateFee =
-    (crossChainSwap || swapTransfer) && bridgeFee ? srcMinimumAmountOut?.subtract(bridgeFee) : undefined
+  const srcMinimumAmountOutMinusStargateFee = useMemo(
+    () => ((crossChainSwap || swapTransfer) && bridgeFee ? srcMinimumAmountOut?.subtract(bridgeFee) : undefined),
+    [bridgeFee, crossChainSwap, srcMinimumAmountOut, swapTransfer]
+  )
 
   const srcAmountOut = useMemo(() => {
     if (sameChainSwap) {
@@ -418,7 +421,10 @@ const Widget: FC<Swap> = ({
 
   useEffect(() => setDstTypedAmount(dstAmountOut?.toFixed() ?? ''), [dstAmountOut])
 
-  const price = srcAmount && dstAmountOut ? new Price({ baseAmount: srcAmount, quoteAmount: dstAmountOut }) : undefined
+  const price = useMemo(
+    () => (srcAmount && dstAmountOut ? new Price({ baseAmount: srcAmount, quoteAmount: dstAmountOut }) : undefined),
+    [dstAmountOut, srcAmount]
+  )
 
   const switchCurrencies = useCallback(() => {
     const _srcChainId = srcChainId
@@ -587,14 +593,15 @@ const Widget: FC<Swap> = ({
     return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
   }, [sameChainSwap, srcTrade, transfer, crossChainSwap, dstTrade, transferSwap, swapTransfer, bridgeImpact])
 
-  const { data: nativeBalance } = useBalance({
+  const currencies = useMemo(() => [Native.onChain(srcChainId), srcToken], [srcChainId, srcToken])
+  const { data: balances } = useBalances({
     chainId: srcChainId,
     account: address,
-    currency: Native.onChain(srcChainId),
+    currencies,
   })
 
-  const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
-  const { data: dstBalance } = useBalance({ chainId: dstChainId, account: address, currency: dstToken })
+  const srcBalance = balances?.[srcToken.wrapped.address]
+  const nativeBalance = balances?.[AddressZero]
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
@@ -908,398 +915,452 @@ const Widget: FC<Swap> = ({
   //     srcTrade,
   //   ])
 
-  return (
-    <>
-      <article
-        id="sushixswap"
-        className={classNames(
-          theme.background.primary,
-          'flex flex-col mx-auto rounded-2xl relative overflow-hidden min-w-[320px] shadow shadow-slate-900'
-        )}
-        style={{ maxWidth }}
-      >
-        <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
-          <Typography
-            weight={500}
-            className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
-          >
-            Swap
-          </Typography>
-          <div className="flex justify-end">
-            <SettingsOverlay chainId={srcChainId} />
-          </div>
-        </div>
-        <CurrencyInputWithNetworkSelector
-          onNetworkSelect={onSrcNetworkSelect}
-          value={srcTypedAmount}
-          onChange={setSrcTypedAmount}
-          onSelect={setSrcToken}
-          currency={srcToken}
-          chainId={srcChainId}
-          tokenMap={srcTokens}
-          customTokenMap={srcCustomTokenMap}
-          onAddToken={onAddSrcCustomToken}
-          onRemoveToken={onRemoveSrcCustomToken}
-        />
-        <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-          <SwitchCurrenciesButton onClick={switchCurrencies} />
-        </div>
-        <div className="bg-slate-800">
-          <CurrencyInputWithNetworkSelector
-            className="!pb-1"
-            disabled
-            disableMaxButton
-            onNetworkSelect={onDstNetworkSelect}
-            value={dstTypedAmount}
-            onChange={setDstTypedAmount}
-            onSelect={setDstToken}
-            currency={dstToken}
-            chainId={dstChainId}
-            tokenMap={dstTokens}
-            customTokenMap={dstCustomTokenMap}
-            usdPctChange={usdPctChange}
-            onAddToken={onAddDstCustomToken}
-            onRemoveToken={onRemoveDstCustomToken}
-          />
-
-          <div className="p-3">
-            <Transition
-              show={!!price}
-              unmount={false}
-              className="transition-[max-height] overflow-hidden"
-              enter="duration-300 ease-in-out"
-              enterFrom="transform max-h-0"
-              enterTo="transform max-h-[380px]"
-              leave="transition-[max-height] duration-250 ease-in-out"
-              leaveFrom="transform max-h-[380px]"
-              leaveTo="transform max-h-0"
+  return useMemo(
+    () => (
+      <>
+        <article
+          id="sushixswap"
+          className={classNames(
+            theme.background.primary,
+            'flex flex-col mx-auto rounded-2xl relative overflow-hidden min-w-[320px] shadow shadow-slate-900'
+          )}
+          style={{ maxWidth }}
+        >
+          <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
+            <Typography
+              weight={500}
+              className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
             >
-              <Disclosure>
-                {({ open }) => (
-                  <>
-                    <Rate price={price} theme={theme}>
-                      {({ content, usdPrice, toggleInvert }) => (
-                        <div className="flex justify-between bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-1 gap-2">
-                          <div
-                            className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center truncate"
-                            onClick={toggleInvert}
-                          >
-                            <Tooltip
-                              panel={<div className="grid grid-cols-2 gap-1">{stats}</div>}
-                              button={<InformationCircleIcon width={16} height={16} />}
-                            />{' '}
-                            <>
-                              {content} {usdPrice && <span className="font-medium text-slate-500">(${usdPrice})</span>}
-                            </>
+              Swap
+            </Typography>
+            <div className="flex justify-end">
+              <SettingsOverlay chainId={srcChainId} />
+            </div>
+          </div>
+          <CurrencyInputWithNetworkSelector
+            onNetworkSelect={onSrcNetworkSelect}
+            value={srcTypedAmount}
+            onChange={setSrcTypedAmount}
+            onSelect={setSrcToken}
+            currency={srcToken}
+            chainId={srcChainId}
+            tokenMap={srcTokens}
+            customTokenMap={srcCustomTokenMap}
+            onAddToken={onAddSrcCustomToken}
+            onRemoveToken={onRemoveSrcCustomToken}
+          />
+          <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
+            <SwitchCurrenciesButton onClick={switchCurrencies} />
+          </div>
+          <div className="bg-slate-800">
+            <CurrencyInputWithNetworkSelector
+              className="!pb-1"
+              disabled
+              disableMaxButton
+              onNetworkSelect={onDstNetworkSelect}
+              value={dstTypedAmount}
+              onChange={setDstTypedAmount}
+              onSelect={setDstToken}
+              currency={dstToken}
+              chainId={dstChainId}
+              tokenMap={dstTokens}
+              customTokenMap={dstCustomTokenMap}
+              usdPctChange={usdPctChange}
+              onAddToken={onAddDstCustomToken}
+              onRemoveToken={onRemoveDstCustomToken}
+            />
+
+            <div className="p-3">
+              <Transition
+                show={!!price}
+                unmount={false}
+                className="transition-[max-height] overflow-hidden"
+                enter="duration-300 ease-in-out"
+                enterFrom="transform max-h-0"
+                enterTo="transform max-h-[380px]"
+                leave="transition-[max-height] duration-250 ease-in-out"
+                leaveFrom="transform max-h-[380px]"
+                leaveTo="transform max-h-0"
+              >
+                <Disclosure>
+                  {({ open }) => (
+                    <>
+                      <Rate price={price} theme={theme}>
+                        {({ content, usdPrice, toggleInvert }) => (
+                          <div className="flex justify-between bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-1 gap-2">
+                            <div
+                              className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center truncate"
+                              onClick={toggleInvert}
+                            >
+                              <Tooltip
+                                panel={<div className="grid grid-cols-2 gap-1">{stats}</div>}
+                                button={<InformationCircleIcon width={16} height={16} />}
+                              />{' '}
+                              <>
+                                {content}{' '}
+                                {usdPrice && <span className="font-medium text-slate-500">(${usdPrice})</span>}
+                              </>
+                            </div>
+                            <Disclosure.Button className="flex items-center justify-end flex-grow cursor-pointer">
+                              <ChevronDownIcon
+                                width={24}
+                                height={24}
+                                className={classNames(
+                                  open ? '!rotate-180' : '',
+                                  'rotate-0 transition-[transform] duration-300 ease-in-out delay-200'
+                                )}
+                              />
+                            </Disclosure.Button>
                           </div>
-                          <Disclosure.Button className="flex items-center justify-end flex-grow cursor-pointer">
-                            <ChevronDownIcon
-                              width={24}
-                              height={24}
-                              className={classNames(
-                                open ? '!rotate-180' : '',
-                                'rotate-0 transition-[transform] duration-300 ease-in-out delay-200'
-                              )}
-                            />
-                          </Disclosure.Button>
-                        </div>
-                      )}
-                    </Rate>
-                    <Transition
-                      show={open}
-                      unmount={false}
-                      className="transition-[max-height] overflow-hidden"
-                      enter="duration-300 ease-in-out"
-                      enterFrom="transform max-h-0"
-                      enterTo="transform max-h-[380px]"
-                      leave="transition-[max-height] duration-250 ease-in-out"
-                      leaveFrom="transform max-h-[380px]"
-                      leaveTo="transform max-h-0"
-                    >
-                      <Disclosure.Panel
-                        as="div"
-                        className="grid grid-cols-2 gap-1 px-4 py-2 mb-4 border border-slate-200/5 rounded-2xl"
+                        )}
+                      </Rate>
+                      <Transition
+                        show={open}
+                        unmount={false}
+                        className="transition-[max-height] overflow-hidden"
+                        enter="duration-300 ease-in-out"
+                        enterFrom="transform max-h-0"
+                        enterTo="transform max-h-[380px]"
+                        leave="transition-[max-height] duration-250 ease-in-out"
+                        leaveFrom="transform max-h-[380px]"
+                        leaveTo="transform max-h-0"
                       >
-                        {stats}
-                        {crossChain ? (
-                          <CrossChainRoute
-                            srcTrade={srcTrade}
-                            dstTrade={dstTrade}
+                        <Disclosure.Panel
+                          as="div"
+                          className="grid grid-cols-2 gap-1 px-4 py-2 mb-4 border border-slate-200/5 rounded-2xl"
+                        >
+                          {stats}
+                          {crossChain ? (
+                            <CrossChainRoute
+                              srcTrade={srcTrade}
+                              dstTrade={dstTrade}
+                              inputAmount={srcAmount}
+                              outputAmount={dstMinimumAmountOut}
+                              dstBridgeToken={dstBridgeToken}
+                              srcBridgeToken={srcBridgeToken}
+                            />
+                          ) : (
+                            <SameChainRoute trade={srcTrade} />
+                          )}
+                        </Disclosure.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Disclosure>
+              </Transition>
+
+              {isMounted && !address ? (
+                <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
+                  Connect Wallet
+                </Wallet.Button>
+              ) : isMounted && chain && chain.id !== srcChainId ? (
+                <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
+                  Switch to {Chain.from(srcChainId).name}
+                </Button>
+              ) : showWrap ? (
+                <Button size="md" fullWidth>
+                  Wrap
+                </Button>
+              ) : !transfer && srcAmount?.greaterThan(0) && routeNotFound ? (
+                <Button size="md" fullWidth disabled>
+                  Insufficient liquidity for this trade.
+                </Button>
+              ) : isMounted &&
+                ((srcAmount?.greaterThan(0) &&
+                  feeRef.current &&
+                  nativeBalance &&
+                  feeRef.current.greaterThan(nativeBalance[FundSource.WALLET])) ||
+                  (srcBalance && srcAmount?.greaterThan(srcBalance[FundSource.WALLET]))) ? (
+                <Button size="md" fullWidth disabled>
+                  Insufficient Balance
+                </Button>
+              ) : isMounted && chain && chain.id == srcChainId ? (
+                <>
+                  <ConfirmationComponentController
+                    variant="dialog"
+                    onClose={() => setTimeout(() => setSrcTxHash(undefined), 1000)}
+                    trigger={({ setOpen }) => (
+                      <Button
+                        fullWidth
+                        size="md"
+                        variant="filled"
+                        color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
+                        {...(Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode) && {
+                          title: 'Enable expert mode to swap with high price impact',
+                        })}
+                        disabled={
+                          isWritePending ||
+                          !srcAmount ||
+                          !srcAmount.greaterThan(ZERO) ||
+                          priceImpactTooHigh ||
+                          !dstMinimumAmountOut ||
+                          dstMinimumAmountOut?.equalTo(ZERO) ||
+                          Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode)
+                        }
+                        onClick={() => setOpen(true)}
+                      >
+                        {isWritePending ? (
+                          <Dots>Confirm transaction</Dots>
+                        ) : priceImpactTooHigh ? (
+                          'High Price Impact'
+                        ) : !routeNotFound && priceImpactSeverity > 2 ? (
+                          'Swap Anyway'
+                        ) : (
+                          'Swap'
+                        )}
+                      </Button>
+                    )}
+                  >
+                    {({ setOpen }) => (
+                      <Dialog.Content className="max-w-sm !bg-slate-800 px-4 !pb-4 overflow-hidden">
+                        {srcTxHash ? (
+                          <TransactionProgressOverlay
+                            onClose={() => setOpen(false)}
+                            id={nanoId}
+                            srcTxHash={srcTxHash}
                             inputAmount={srcAmount}
                             outputAmount={dstMinimumAmountOut}
-                            dstBridgeToken={dstBridgeToken}
                             srcBridgeToken={srcBridgeToken}
+                            dstBridgeToken={dstBridgeToken}
+                            crossChain={crossChain}
                           />
                         ) : (
-                          <SameChainRoute trade={srcTrade} />
-                        )}
-                      </Disclosure.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Disclosure>
-            </Transition>
-
-            {isMounted && !address ? (
-              <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
-                Connect Wallet
-              </Wallet.Button>
-            ) : isMounted && chain && chain.id !== srcChainId ? (
-              <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-                Switch to {Chain.from(srcChainId).name}
-              </Button>
-            ) : showWrap ? (
-              <Button size="md" fullWidth>
-                Wrap
-              </Button>
-            ) : !transfer && srcAmount?.greaterThan(0) && routeNotFound ? (
-              <Button size="md" fullWidth disabled>
-                Insufficient liquidity for this trade.
-              </Button>
-            ) : isMounted &&
-              ((srcAmount?.greaterThan(0) &&
-                feeRef.current &&
-                nativeBalance &&
-                feeRef.current.greaterThan(nativeBalance[FundSource.WALLET])) ||
-                (srcBalance && srcAmount?.greaterThan(srcBalance[FundSource.WALLET]))) ? (
-              <Button size="md" fullWidth disabled>
-                Insufficient Balance
-              </Button>
-            ) : isMounted && chain && chain.id == srcChainId ? (
-              <>
-                <ConfirmationComponentController
-                  variant="dialog"
-                  onClose={() => setTimeout(() => setSrcTxHash(undefined), 1000)}
-                  trigger={({ setOpen }) => (
-                    <Button
-                      fullWidth
-                      size="md"
-                      variant="filled"
-                      color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
-                      {...(Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode) && {
-                        title: 'Enable expert mode to swap with high price impact',
-                      })}
-                      disabled={
-                        isWritePending ||
-                        !srcAmount ||
-                        !srcAmount.greaterThan(ZERO) ||
-                        priceImpactTooHigh ||
-                        !dstMinimumAmountOut ||
-                        dstMinimumAmountOut?.equalTo(ZERO) ||
-                        Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode)
-                      }
-                      onClick={() => setOpen(true)}
-                    >
-                      {isWritePending ? (
-                        <Dots>Confirm transaction</Dots>
-                      ) : priceImpactTooHigh ? (
-                        'High Price Impact'
-                      ) : !routeNotFound && priceImpactSeverity > 2 ? (
-                        'Swap Anyway'
-                      ) : (
-                        'Swap'
-                      )}
-                    </Button>
-                  )}
-                >
-                  {({ setOpen }) => (
-                    <Dialog.Content className="max-w-sm !bg-slate-800 px-4 !pb-4 overflow-hidden">
-                      {srcTxHash ? (
-                        <TransactionProgressOverlay
-                          onClose={() => setOpen(false)}
-                          id={nanoId}
-                          srcTxHash={srcTxHash}
-                          inputAmount={srcAmount}
-                          outputAmount={dstMinimumAmountOut}
-                          srcBridgeToken={srcBridgeToken}
-                          dstBridgeToken={dstBridgeToken}
-                          crossChain={crossChain}
-                        />
-                      ) : (
-                        <SlideIn>
-                          <>
-                            <Dialog.Header border={false} title="Confirm Swap" onClose={() => setOpen(false)} />
-                            <div className="!my-0 grid grid-cols-12 items-center">
-                              <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
-                                <div className="flex items-center gap-2">
-                                  <div className="flex items-center justify-between w-full gap-2">
-                                    <Typography variant="h3" weight={500} className="truncate text-slate-50">
-                                      {srcAmount?.toSignificant(6)}{' '}
-                                    </Typography>
-                                    <div className="flex items-center justify-end gap-2 text-right">
-                                      {srcAmount && (
-                                        <div className="w-5 h-5">
-                                          <Icon currency={srcAmount.currency} width={20} height={20} />
-                                        </div>
-                                      )}
-                                      <Typography variant="h3" weight={500} className="text-right text-slate-50">
-                                        {srcAmount?.currency.symbol}
+                          <SlideIn>
+                            <>
+                              <Dialog.Header border={false} title="Confirm Swap" onClose={() => setOpen(false)} />
+                              <div className="!my-0 grid grid-cols-12 items-center">
+                                <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-between w-full gap-2">
+                                      <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                                        {srcAmount?.toSignificant(6)}{' '}
                                       </Typography>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="flex justify-between gap-2">
-                                  <Typography variant="sm" weight={500} className="text-slate-500">
-                                    {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
-                                  </Typography>
-                                  {srcAmount && (
-                                    <Typography
-                                      variant="xs"
-                                      weight={500}
-                                      className="flex items-center gap-1 text-slate-400"
-                                    >
-                                      <NetworkIcon
-                                        type="naked"
-                                        chainId={srcAmount.currency.chainId}
-                                        width={16}
-                                        height={16}
-                                      />
-                                      <span>{chains[srcAmount.currency.chainId].name}</span>
-                                    </Typography>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
-                                <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
-                                  <ChevronDownIcon width={18} height={18} className="text-slate-200" />
-                                </div>
-                              </div>
-                              <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
-                                <div className="flex items-center gap-2">
-                                  <div className="flex items-center justify-between w-full gap-2">
-                                    <Typography variant="h3" weight={500} className="truncate text-slate-50">
-                                      {dstAmountOut?.toSignificant(6)}{' '}
-                                    </Typography>
-                                    <div className="flex items-center justify-end gap-2 text-right">
-                                      {dstAmountOut && (
-                                        <div className="w-5 h-5">
-                                          <Icon currency={dstAmountOut.currency} width={20} height={20} />
-                                        </div>
-                                      )}
-                                      <Typography variant="h3" weight={500} className="text-right text-slate-50">
-                                        {dstAmountOut?.currency.symbol}
-                                      </Typography>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="flex justify-between gap-2">
-                                  <Typography variant="sm" weight={500} className="text-slate-500">
-                                    {outputUsd ? `$${outputUsd.toFixed(2)}` : ''}
-                                    {usdPctChange && (
-                                      <span
-                                        className={classNames(
-                                          usdPctChange === 0
-                                            ? ''
-                                            : usdPctChange > 0
-                                            ? 'text-green'
-                                            : usdPctChange < -3
-                                            ? 'text-red'
-                                            : usdPctChange < -2
-                                            ? 'text-yellow'
-                                            : 'text-slate-500'
+                                      <div className="flex items-center justify-end gap-2 text-right">
+                                        {srcAmount && (
+                                          <div className="w-5 h-5">
+                                            <Icon currency={srcAmount.currency} width={20} height={20} />
+                                          </div>
                                         )}
-                                      >
-                                        {' '}
-                                        {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
-                                          usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
-                                        }%)`}
-                                      </span>
-                                    )}
-                                  </Typography>
-                                  {dstAmountOut && (
-                                    <Typography
-                                      variant="xs"
-                                      weight={500}
-                                      className="flex items-center gap-1 text-slate-400"
-                                    >
-                                      <NetworkIcon
-                                        type="naked"
-                                        chainId={dstAmountOut.currency.chainId}
-                                        width={16}
-                                        height={16}
-                                      />
-                                      <span>{chains[dstAmountOut.currency.chainId].name}</span>
+                                        <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                                          {srcAmount?.currency.symbol}
+                                        </Typography>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-between gap-2">
+                                    <Typography variant="sm" weight={500} className="text-slate-500">
+                                      {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
                                     </Typography>
-                                  )}
+                                    {srcAmount && (
+                                      <Typography
+                                        variant="xs"
+                                        weight={500}
+                                        className="flex items-center gap-1 text-slate-400"
+                                      >
+                                        <NetworkIcon
+                                          type="naked"
+                                          chainId={srcAmount.currency.chainId}
+                                          width={16}
+                                          height={16}
+                                        />
+                                        <span>{chains[srcAmount.currency.chainId].name}</span>
+                                      </Typography>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
+                                  <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
+                                    <ChevronDownIcon width={18} height={18} className="text-slate-200" />
+                                  </div>
+                                </div>
+                                <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-between w-full gap-2">
+                                      <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                                        {dstAmountOut?.toSignificant(6)}{' '}
+                                      </Typography>
+                                      <div className="flex items-center justify-end gap-2 text-right">
+                                        {dstAmountOut && (
+                                          <div className="w-5 h-5">
+                                            <Icon currency={dstAmountOut.currency} width={20} height={20} />
+                                          </div>
+                                        )}
+                                        <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                                          {dstAmountOut?.currency.symbol}
+                                        </Typography>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex justify-between gap-2">
+                                    <Typography variant="sm" weight={500} className="text-slate-500">
+                                      {outputUsd ? `$${outputUsd.toFixed(2)}` : ''}
+                                      {usdPctChange && (
+                                        <span
+                                          className={classNames(
+                                            usdPctChange === 0
+                                              ? ''
+                                              : usdPctChange > 0
+                                              ? 'text-green'
+                                              : usdPctChange < -3
+                                              ? 'text-red'
+                                              : usdPctChange < -2
+                                              ? 'text-yellow'
+                                              : 'text-slate-500'
+                                          )}
+                                        >
+                                          {' '}
+                                          {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+                                            usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
+                                          }%)`}
+                                        </span>
+                                      )}
+                                    </Typography>
+                                    {dstAmountOut && (
+                                      <Typography
+                                        variant="xs"
+                                        weight={500}
+                                        className="flex items-center gap-1 text-slate-400"
+                                      >
+                                        <NetworkIcon
+                                          type="naked"
+                                          chainId={dstAmountOut.currency.chainId}
+                                          width={16}
+                                          height={16}
+                                        />
+                                        <span>{chains[dstAmountOut.currency.chainId].name}</span>
+                                      </Typography>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="px-4 py-3">
-                              <Rate price={price} theme={theme}>
-                                {({ toggleInvert, content, usdPrice }) => (
-                                  <Typography
-                                    as="button"
-                                    onClick={() => toggleInvert()}
-                                    variant="sm"
-                                    weight={600}
-                                    className="flex items-center gap-1 text-slate-100"
-                                  >
-                                    {content}{' '}
-                                    {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
-                                  </Typography>
+                              <div className="px-4 py-3">
+                                <Rate price={price} theme={theme}>
+                                  {({ toggleInvert, content, usdPrice }) => (
+                                    <Typography
+                                      as="button"
+                                      onClick={() => toggleInvert()}
+                                      variant="sm"
+                                      weight={600}
+                                      className="flex items-center gap-1 text-slate-100"
+                                    >
+                                      {content}{' '}
+                                      {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
+                                    </Typography>
+                                  )}
+                                </Rate>
+                              </div>
+                              <div className="grid grid-cols-2 gap-1 p-2 border rounded-2xl sm:p-4 border-slate-200/5 bg-slate-700/40">
+                                {stats}
+                                {crossChain ? (
+                                  <CrossChainRoute
+                                    srcTrade={srcTrade}
+                                    dstTrade={dstTrade}
+                                    inputAmount={srcAmount}
+                                    outputAmount={dstMinimumAmountOut}
+                                    dstBridgeToken={dstBridgeToken}
+                                    srcBridgeToken={srcBridgeToken}
+                                  />
+                                ) : (
+                                  <SameChainRoute trade={srcTrade} />
                                 )}
-                              </Rate>
-                            </div>
-                            <div className="grid grid-cols-2 gap-1 p-2 border rounded-2xl sm:p-4 border-slate-200/5 bg-slate-700/40">
-                              {stats}
-                              {crossChain ? (
-                                <CrossChainRoute
-                                  srcTrade={srcTrade}
-                                  dstTrade={dstTrade}
-                                  inputAmount={srcAmount}
-                                  outputAmount={dstMinimumAmountOut}
-                                  dstBridgeToken={dstBridgeToken}
-                                  srcBridgeToken={srcBridgeToken}
-                                />
-                              ) : (
-                                <SameChainRoute trade={srcTrade} />
-                              )}
-                            </div>
-                            <Approve
-                              className="flex-grow !justify-end pt-4"
-                              components={
-                                <Approve.Components>
-                                  <Approve.Bentobox
-                                    size="md"
-                                    className="whitespace-nowrap"
-                                    fullWidth
-                                    address={getSushiXSwapContractConfig(srcChainId).addressOrName}
-                                    onSignature={setSignature}
-                                  />
-                                  <Approve.Token
-                                    size="md"
-                                    className="whitespace-nowrap"
-                                    fullWidth
-                                    amount={srcAmount}
-                                    address={BENTOBOX_ADDRESS[srcChainId]}
-                                  />
-                                </Approve.Components>
-                              }
-                              render={({ approved }) => {
-                                return (
-                                  <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
-                                    Confirm Swap
-                                  </Button>
-                                )
-                              }}
-                            />
-                          </>
-                        </SlideIn>
-                      )}
-                    </Dialog.Content>
-                  )}
-                </ConfirmationComponentController>
-              </>
-            ) : (
-              // Placeholder
-              <Button fullWidth color="blue" size="md">
-                Connect Wallet
-              </Button>
-            )}
-            {caption && <Caption theme={theme} />}
+                              </div>
+                              <Approve
+                                className="flex-grow !justify-end pt-4"
+                                components={
+                                  <Approve.Components>
+                                    <Approve.Bentobox
+                                      size="md"
+                                      className="whitespace-nowrap"
+                                      fullWidth
+                                      address={getSushiXSwapContractConfig(srcChainId).addressOrName}
+                                      onSignature={setSignature}
+                                    />
+                                    <Approve.Token
+                                      size="md"
+                                      className="whitespace-nowrap"
+                                      fullWidth
+                                      amount={srcAmount}
+                                      address={BENTOBOX_ADDRESS[srcChainId]}
+                                    />
+                                  </Approve.Components>
+                                }
+                                render={({ approved }) => {
+                                  return (
+                                    <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
+                                      Confirm Swap
+                                    </Button>
+                                  )
+                                }}
+                              />
+                            </>
+                          </SlideIn>
+                        )}
+                      </Dialog.Content>
+                    )}
+                  </ConfirmationComponentController>
+                </>
+              ) : (
+                // Placeholder
+                <Button fullWidth color="blue" size="md">
+                  Connect Wallet
+                </Button>
+              )}
+              {caption && <Caption theme={theme} />}
+            </div>
           </div>
-        </div>
-      </article>
-    </>
+        </article>
+      </>
+    ),
+    [
+      address,
+      caption,
+      chain,
+      crossChain,
+      dstAmountOut,
+      dstBridgeToken,
+      dstChainId,
+      dstCustomTokenMap,
+      dstMinimumAmountOut,
+      dstToken,
+      dstTokens,
+      dstTrade,
+      dstTypedAmount,
+      execute,
+      expertMode,
+      inputUsd,
+      isMounted,
+      isWritePending,
+      maxWidth,
+      nanoId,
+      nativeBalance,
+      onAddDstCustomToken,
+      onAddSrcCustomToken,
+      onDstNetworkSelect,
+      onRemoveDstCustomToken,
+      onRemoveSrcCustomToken,
+      onSrcNetworkSelect,
+      outputUsd,
+      price,
+      priceImpactSeverity,
+      priceImpactTooHigh,
+      routeNotFound,
+      showWrap,
+      srcAmount,
+      srcBalance,
+      srcBridgeToken,
+      srcChainId,
+      srcCustomTokenMap,
+      srcToken,
+      srcTokens,
+      srcTrade,
+      srcTxHash,
+      srcTypedAmount,
+      stats,
+      switchCurrencies,
+      switchNetwork,
+      theme,
+      transfer,
+      usdPctChange,
+    ]
   )
 }

@@ -5,7 +5,6 @@ import { WrappedTokenInfo } from '@sushiswap/token-lists'
 import Image, { ImageProps } from 'next/image'
 import { FC, useMemo, useState } from 'react'
 
-import { NetworkIcon } from '../icons'
 import { Link } from '../link'
 
 const BLOCKCHAIN: Record<number, string> = {
@@ -121,10 +120,6 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
         </defs>
       </svg>
     )
-  }
-
-  if (currency.isNative) {
-    return <NetworkIcon chainId={currency.chainId} width={rest.width} height={rest.height} />
   }
 
   if (!src) {
