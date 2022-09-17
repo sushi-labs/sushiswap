@@ -49,6 +49,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   fundSource = FundSource.WALLET,
   loading,
 }) => {
+  const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
   const [tokenSelectorOpen, setTokenSelectorOpen] = useState(false)
 
@@ -98,7 +99,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           )}
         >
           {loading ? (
-            <div className="pr-12 pl-1">
+            <div className="pl-1 pr-12">
               <Loader />
             </div>
           ) : currency ? (
@@ -122,6 +123,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         <PricePanel value={value} currency={currency} usdPctChange={usdPctChange} />
         <div className="h-6">
           <BalancePanel
+            chainId={chainId}
+            account={address}
             onChange={onChange}
             currency={currency}
             fundSource={fundSource}
@@ -148,9 +151,21 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   )
 }
 
-type BalancePanel = Pick<CurrencyInputProps, 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource'>
+type BalancePanel = Pick<
+  CurrencyInputProps,
+  'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource'
+> & {
+  account: string | undefined
+}
 
-const BalancePanel: FC<BalancePanel> = ({ onChange, currency, disableMaxButton, fundSource = FundSource.WALLET }) => {
+const BalancePanel: FC<BalancePanel> = ({
+  chainId,
+  account,
+  onChange,
+  currency,
+  disableMaxButton,
+  fundSource = FundSource.WALLET,
+}) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
   const { data: balance } = useBalance({
@@ -166,7 +181,7 @@ const BalancePanel: FC<BalancePanel> = ({ onChange, currency, disableMaxButton, 
         <button
           type="button"
           onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
-          className="text-slate-400 hover:text-slate-300 py-1 text-xs"
+          className="py-1 text-xs text-slate-400 hover:text-slate-300"
           disabled={disableMaxButton}
         >
           {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : ''}

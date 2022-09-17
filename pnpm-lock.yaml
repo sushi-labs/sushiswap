@@ -83,7 +83,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^32.1.0
+      '@sushiswap/default-token-list': ^32.2.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -91,7 +91,22 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 32.1.0
+      '@sushiswap/default-token-list': 32.2.0
+      '@vercel/node': 2.5.0
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+
+  apis/token-logo:
+    specifiers:
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@vercel/node': ^2.2.0
+    dependencies:
       '@vercel/node': 2.5.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -8640,8 +8655,8 @@ packages:
     resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
     dev: false
 
-  /@sushiswap/default-token-list/32.1.0:
-    resolution: {integrity: sha512-KRVQiMsCv1rL1LA/yBPUqpJI2m2d9v7u33XOLZAclb16/wpaAus2fnw94CLEp+ULuXP9fzgoms+6P9jl/qHAzA==}
+  /@sushiswap/default-token-list/32.2.0:
+    resolution: {integrity: sha512-C8MahlVkdC3gvWY6c9lsqk007Qh/vHi36LwQ8gkFY2GJ4mfxYHWwe84EuX3lYF6VLfsBAO7hCDsPtg5pXDd9Jg==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:

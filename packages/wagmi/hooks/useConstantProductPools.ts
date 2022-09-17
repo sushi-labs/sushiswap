@@ -227,7 +227,6 @@ export function useConstantProductPools(
     enabled: poolsAddresses.length > 0 && getConstantProductPoolFactoryContract(chainId).addressOrName,
     watch: true,
     keepPreviousData: true,
-    cacheOnBlock: true,
   })
 
   return useMemo(() => {
