@@ -55,7 +55,7 @@ export const TableFiltersSearchToken: FC = () => {
           type="text"
           onInput={(e) => setQuery(e.currentTarget.value)}
         />
-        <Transition
+        {/* <Transition
           appear
           show={_query?.length > 0}
           className="absolute top-0 bottom-0 right-0 flex items-center"
@@ -69,9 +69,9 @@ export const TableFiltersSearchToken: FC = () => {
           <IconButton onClick={() => setQuery('')}>
             <XCircleIcon width={20} height={20} className="cursor-pointer text-slate-500 hover:text-slate-300" />
           </IconButton>
-        </Transition>
+        </Transition> */}
       </div>
-      <div className="h-full py-3">
+      {/* <div className="h-full py-3">
         <div className="w-px h-full bg-slate-200/20" />
       </div>
       <Transition
@@ -92,8 +92,8 @@ export const TableFiltersSearchToken: FC = () => {
           type="text"
           onInput={(e) => setExtraQuery(e.currentTarget.value)}
         />
-      </Transition>
-      <IconButton onClick={() => setExtra((prev) => !prev)}>
+      </Transition> */}
+      {/* <IconButton onClick={() => setExtra((prev) => !prev)}>
         <PlusIcon
           width={20}
           height={20}
@@ -102,7 +102,7 @@ export const TableFiltersSearchToken: FC = () => {
             'transition-[transform] ease-in-out rotate-0 text-slate-400 group-hover:text-slate-200 delay-[400ms]'
           )}
         />
-      </IconButton>
+      </IconButton> */}
     </div>
   )
 }
