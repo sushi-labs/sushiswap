@@ -10,7 +10,6 @@ import { CellProps } from './types'
 export const PairPositionCell: FC<CellProps> = ({ row }) => {
   const ref = useRef<HTMLDivElement>(null)
   const inViewport = useInViewport(ref)
-
   return (
     <div ref={ref}>
       {inViewport && (
@@ -29,7 +28,7 @@ const _PairPositionCell: FC<CellProps> = () => {
   const { value0: stakedValue0, value1: stakedValue1 } = usePoolPositionStaked()
 
   return (
-    <Typography variant="sm" weight={600} className="text-slate-50 text-right">
+    <Typography variant="sm" weight={600} className="text-right text-slate-50">
       {formatUSD(value0 + value1 + stakedValue0 + stakedValue1)}
     </Typography>
   )

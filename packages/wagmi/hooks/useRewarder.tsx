@@ -76,7 +76,7 @@ export const useRewarder: UseRewarder = ({
         isError,
       }
 
-    const _data = data.reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
+    const _data = data.filter(Boolean).reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
       if (types[index] === RewarderType.Primary) {
         acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result.toString()) : undefined)
       } else {
