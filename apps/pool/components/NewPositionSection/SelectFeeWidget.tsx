@@ -17,7 +17,7 @@ export const FEE_MAP = [Fee.LOW, Fee.MEDIUM, Fee.DEFAULT, Fee.HIGH]
 
 export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork, fee, setFee }) => {
   return (
-    <Widget id="selectFee" maxWidth={400} className="bg-slate-800">
+    <Widget id="selectFee" maxWidth={400} className="!bg-slate-800">
       <Widget.Content>
         <Disclosure>
           {() => (
