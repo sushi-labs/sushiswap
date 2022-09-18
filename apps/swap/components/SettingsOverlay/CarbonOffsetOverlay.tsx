@@ -53,7 +53,7 @@ export const CarbonOffsetOverlay: FC = () => {
       <SlideIn.FromLeft show={open} onClose={() => setOpen(false)} className="!mt-0">
         <Overlay.Content className="!bg-slate-800">
           <Overlay.Header onClose={() => setOpen(false)} title="Carbon Offset" />
-          <div className="flex flex-col gap-2 py-3 px-1 border-b border-slate-200/5">
+          <div className="flex flex-col gap-2 py-3 mx-1 border-b border-slate-200/5">
             <div className="flex justify-between items-center gap-3 mb-1">
               <Typography variant="sm" className="text-slate-50" weight={500}>
                 Carbon Offset
@@ -69,7 +69,7 @@ export const CarbonOffsetOverlay: FC = () => {
           </div>
           <Disclosure>
             {({ open }) => (
-              <div>
+              <div className="mx-1">
                 <Disclosure.Button className="relative flex items-center justify-between w-full gap-3 group rounded-xl">
                   <div className="flex items-center justify-between w-full gap-1 py-4">
                     <Typography variant="sm" weight={500}>
