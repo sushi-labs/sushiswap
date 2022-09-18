@@ -22,7 +22,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
         <Disclosure>
           {() => (
             <>
-              {TRIDENT_ENABLED_NETWORKS.some((network) => network === selectedNetwork) ? (
+              {!TRIDENT_ENABLED_NETWORKS.includes(selectedNetwork) ? (
                 <Tooltip
                   mouseEnterDelay={0.3}
                   button={

@@ -210,7 +210,7 @@ const _Add: FC<AddProps> = ({
   console.log(poolState === PoolState.LOADING)
   return (
     <>
-      <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
+      <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
         <SelectNetworkWidget selectedNetwork={chainId} onSelect={setChainId} />
         <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
           <SelectFeeWidget selectedNetwork={chainId} fee={fee} setFee={setFee} />

@@ -26,8 +26,8 @@ interface RemoveSectionWidgetProps {
   percentage: string
   token0: Type
   token1: Type
-  token0Minimum: Amount<Type>
-  token1Minimum: Amount<Type>
+  token0Minimum?: Amount<Type>
+  token1Minimum?: Amount<Type>
 
   setPercentage(percentage: string): void
   error?: string
