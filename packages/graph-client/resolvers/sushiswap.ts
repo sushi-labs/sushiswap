@@ -333,7 +333,9 @@ export const resolvers: Resolvers = {
                           args: {
                             ...args,
                             first: pools.length,
-                            where: { id_in: pools.map((pool) => pool.id) },
+                            where: {
+                              id_in: pools.map((pool) => pool.id),
+                            },
                             block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
                           },
                           context: {
@@ -357,7 +359,8 @@ export const resolvers: Resolvers = {
                         args: {
                           ...args,
                           first: poolIds.length,
-                          where: { id_in: poolIds },
+                          // need the name_contains for filtering, since we're adding farms to the query
+                          where: { id_in: poolIds, name_contains_nocase: args.where?.name_contains_nocase },
                         },
                         context: {
                           ...context,
@@ -374,7 +377,7 @@ export const resolvers: Resolvers = {
                         args: {
                           ...args,
                           first: poolIds.length,
-                          where: { id_in: poolIds },
+                          where: { id_in: poolIds, name_contains_nocase: args.where?.name_contains_nocase },
                           block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
                         },
                         context: {
@@ -392,7 +395,7 @@ export const resolvers: Resolvers = {
                         args: {
                           ...args,
                           first: poolIds.length,
-                          where: { id_in: poolIds },
+                          where: { id_in: poolIds, name_contains_nocase: args.where?.name_contains_nocase },
                           block: { number: Number(args.oneWeekBlockNumbers[args.chainIds.indexOf(chainId)]) },
                         },
                         context: {

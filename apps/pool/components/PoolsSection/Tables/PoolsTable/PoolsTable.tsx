@@ -44,20 +44,20 @@ const fetcher = ({
   let where = {}
   if (args.query) {
     where = {
-      token0_: { symbol_contains_nocase: args.query },
+      name_contains_nocase: args.query,
     }
 
     _url.searchParams.set('where', JSON.stringify(where))
   }
 
-  if (args.extraQuery) {
-    where = {
-      ...where,
-      token1_: { symbol_contains_nocase: args.extraQuery },
-    }
+  // if (args.extraQuery) {
+  //   where = {
+  //     ...where,
+  //     token1_: { symbol_contains_nocase: args.extraQuery },
+  //   }
 
-    _url.searchParams.set('where', JSON.stringify(where))
-  }
+  //   _url.searchParams.set('where', JSON.stringify(where))
+  // }
 
   return fetch(_url.href)
     .then((res) => res.json())
