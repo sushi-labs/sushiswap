@@ -1,7 +1,12 @@
 body {
-    font-size: 14px;
+  font-size: 14px;
+}
+
+.scroll-lock {
+  height: 100vh;
+  overflow: hidden;
 }
 
 ::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+  filter: invert(1);
 }

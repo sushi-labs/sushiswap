@@ -1,15 +1,17 @@
 import { Listbox } from '@headlessui/react'
-import { ChevronDownIcon, SearchIcon } from '@heroicons/react/outline'
+import { ArrowsUpDownIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Container, Select, Typography } from '@sushiswap/ui'
-import { Pane } from 'components/Pane'
+import { Drawer } from 'common/components/Drawer'
+import { Pane } from 'common/components/Pane'
+import { useDisclosure } from 'common/hooks'
 import { useRouter } from 'next/router'
 import { defaultSidePadding } from 'pages'
 import { FC, useState } from 'react'
 import useSWR from 'swr'
 
 import { ArticleEntity } from '../../.mesh'
-import { ArticleList, Pagination } from '../../components'
+import { ArticleList, Pagination } from '../../common/components'
 import { getArticles, getCategories, getLevels } from '../../lib/api'
 
 type SortBy = 'relevance' | 'dateAsc' | 'dateDesc' | 'author'
@@ -57,7 +59,7 @@ const Articles: FC = () => {
   const articleList = articles ? articles : undefined
 
   const articlesMeta = articlesData?.meta ? articlesData.meta : undefined
-
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const handleSelectLevel = (id: string) => setSelectedLevel((currentLevel) => (currentLevel === id ? undefined : id))
   const handleSelectCategory = (id: string) =>
     setSelectedCategory((currentCategory) => (currentCategory === id ? undefined : id))
@@ -66,20 +68,24 @@ const Articles: FC = () => {
   const products = ['Bentobox', 'Furo', 'Kashi', 'etc']
 
   const sortOptions: SortBy[] = ['relevance', 'dateAsc', 'dateDesc', 'author']
-  const SearchInput = () => (
+  const SearchInput = ({ isSmallScreen }: { isSmallScreen?: boolean }) => (
     <div className="flex items-center w-full h-12 gap-2 pl-3 rounded-lg md:h-14 md:w-auto bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
-      <SearchIcon width={24} height={24} className="text-slate-500" />
+      <MagnifyingGlassIcon width={24} height={24} className="text-slate-500" />
       <input
         onChange={(e) => setQuery(e.target.value)}
         className="font-medium w-full placeholder:text-sm text-slate-300 bg-transparent text-base !ring-0 !outline-0"
         placeholder="Search Topic"
+        onClick={() => isSmallScreen && onOpen()}
       />
     </div>
   )
 
   return (
     <>
-      <Container maxWidth="6xl" className={classNames('mx-auto sm:py-24 py-11', defaultSidePadding)}>
+      <Container
+        maxWidth="6xl"
+        className={classNames('mx-auto sm:py-24 py-11', defaultSidePadding, isOpen && 'overflow-hidden')}
+      >
         <Container maxWidth="full" className="flex items-center justify-between">
           <div className="flex flex-col items-center justify-between w-full gap-8 md:gap-2 sm:flex-row">
             <div className="flex flex-col items-center w-full gap-2 sm:items-start">
@@ -88,7 +94,7 @@ const Articles: FC = () => {
             </div>
             <div className="flex flex-col items-center w-full gap-3 sm:w-auto">
               <div className="w-full sm:hidden">
-                <SearchInput />
+                <SearchInput isSmallScreen />
               </div>
 
               <div className="flex w-full gap-5">
@@ -222,6 +228,53 @@ const Articles: FC = () => {
           </div>
         </Container>
       </Container>
+      <Drawer isOpen={isOpen} onClose={onClose} header="Search for Article">
+        <SearchInput />
+        <Select
+          className="mt-3"
+          button={
+            // TODO: sortby
+            <Listbox.Button
+              type="button"
+              className="flex items-center w-48 gap-2 pl-2 font-medium rounded h-8 hover:text-slate-200 text-slate-300 bg-[#EAEAEA] relative"
+            >
+              <ArrowsUpDownIcon stroke="black" width={14} height={14} />
+              <Typography weight={500} className="text-sm text-gray-500">
+                Sortby:
+              </Typography>
+              <Typography weight={500} className="text-sm text-black">
+                {sortBy}
+              </Typography>
+              <ChevronDownIcon width={10} height={10} className="absolute text-black right-2" aria-hidden="true" />
+            </Listbox.Button>
+          }
+        >
+          <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col w-48">
+            {sortOptions?.map((key) => (
+              <Typography weight={500} variant="sm" key={key} onClick={() => setSortBy(key)}>
+                {key}
+              </Typography>
+            ))}
+          </Select.Options>
+        </Select>
+        <div className="flex flex-col gap-6 mt-8">
+          {products.map(
+            (
+              product // TODO: topics here
+            ) => (
+              <Typography
+                key={product}
+                onClick={() => {
+                  // TODO: apply filter
+                  onClose()
+                }}
+              >
+                {product}
+              </Typography>
+            )
+          )}
+        </div>
+      </Drawer>
     </>
   )
 }
