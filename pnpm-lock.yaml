@@ -1555,13 +1555,13 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.0-canary.38
-      '@sushiswap/trident-preview': npm:@sushiswap/trident@1.0.0-canary.36
+      '@sushiswap/trident': 1.0.0-canary.40
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^17.0.33
       eslint: ^8.20.0
       tiny-invariant: ^1.2.0
       tiny-warning: ^1.0.3
+      trident-preview: npm:@sushiswap/trident@1.0.0-canary.36
       tsup: ^6.2.0
       typescript: ^4.7.0
     dependencies:
@@ -1573,10 +1573,10 @@ importers:
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': 1.0.0-canary.38
-      '@sushiswap/trident-preview': /@sushiswap/trident/1.0.0-canary.36
+      '@sushiswap/trident': 1.0.0-canary.40
       tiny-invariant: 1.2.0
       tiny-warning: 1.0.3
+      trident-preview: /@sushiswap/trident/1.0.0-canary.36
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
@@ -2121,7 +2121,7 @@ importers:
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': ^1.0.0-canary.41
+      '@sushiswap/trident': 1.0.0-canary.40
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -2158,7 +2158,7 @@ importers:
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': 1.0.0-canary.41
+      '@sushiswap/trident': 1.0.0-canary.40
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../config/wagmi
       '@uniswap/v2-core': 1.0.1
@@ -9223,12 +9223,8 @@ packages:
     resolution: {integrity: sha512-PWka8EzA7vxdaEFI8/1833nVgagnEsP59+A4tuKuzTmnIdgZb+t9qeZ8ZajooLa2aePDOPpthORCe4owgSM84w==}
     dev: false
 
-  /@sushiswap/trident/1.0.0-canary.38:
-    resolution: {integrity: sha512-TnhOhKGevcMmGfj5rbABmmOmus7j0kHmDu2lNbPvnq+z7RB9mEsLG6DiyzEM9t+5SMm3ckTwt1GXhRgYPmy7mQ==}
-    dev: false
-
-  /@sushiswap/trident/1.0.0-canary.41:
-    resolution: {integrity: sha512-8HXM5qTWHKp5Otc8iFdimBzK+0FZVMbEm11+nikpY97PdmXP4ZyOEZfEQPUbmlujzrQUsYhTX/ih9QosagH+xA==}
+  /@sushiswap/trident/1.0.0-canary.40:
+    resolution: {integrity: sha512-DL+OtlDnMcbWh95qT4hcqMOQtYZxRH69XEjKKkM4HaPjN6XtR0SaT9WLHA7k8huQDuweDZ94aKilSrp1WgcKZQ==}
     dev: false
 
   /@swc/core-android-arm-eabi/1.2.249:

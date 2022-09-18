@@ -50,16 +50,17 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   }, [slippageTolerance])
 
   const [percentage, setPercentage] = useState<string>('')
-  const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
+  const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
   const tokens = useMemo(() => [token0, token1], [token0, token1])
   const rebases = useBentoBoxTotals(pair.chainId, tokens)
   const { balance } = usePoolPosition()
 
   const slpAmountToRemove = useMemo(() => {
-    return balance?.[FundSource.WALLET].multiply(percentageEntity)
-  }, [balance, percentageEntity])
+    return balance?.[FundSource.WALLET].multiply(percentToRemove)
+  }, [balance, percentToRemove])
 
   const [poolState, pool] = useConstantProductPool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+
   const totalSupply = useTotalSupply(liquidityToken)
 
   const [, { createNotification }] = useNotifications(address)
@@ -72,16 +73,34 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
 
   const [underlying0, underlying1] = underlying
 
+  const currencyAToRemove = token0
+    ? percentToRemove && percentToRemove.greaterThan('0') && underlying0
+      ? Amount.fromRawAmount(token0, percentToRemove.multiply(underlying0.quotient).quotient || '0')
+      : Amount.fromRawAmount(token0, '0')
+    : undefined
+
+  const currencyBToRemove = token1
+    ? percentToRemove && percentToRemove.greaterThan('0') && underlying1
+      ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
+      : Amount.fromRawAmount(token1, '0')
+    : undefined
+
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
-      underlying0
-        ? Amount.fromRawAmount(underlying0.currency, calculateSlippageAmount(underlying0, slippagePercent)[0])
+      currencyAToRemove
+        ? Amount.fromRawAmount(
+            currencyAToRemove.currency,
+            calculateSlippageAmount(currencyAToRemove, slippagePercent)[0]
+          )
         : undefined,
-      underlying1
-        ? Amount.fromRawAmount(underlying1.currency, calculateSlippageAmount(underlying1, slippagePercent)[0])
+      currencyBToRemove
+        ? Amount.fromRawAmount(
+            currencyBToRemove.currency,
+            calculateSlippageAmount(currencyBToRemove, slippagePercent)[0]
+          )
         : undefined,
     ]
-  }, [slippagePercent, underlying0, underlying1])
+  }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 
   const execute = useCallback(async () => {
     if (
@@ -205,6 +224,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
           percentage={percentage}
           token0={token0}
           token1={token1}
+          token0Minimum={minAmount0}
+          token1Minimum={minAmount1}
           setPercentage={setPercentage}
           error={error}
         >
@@ -274,6 +295,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       execute,
       isMounted,
       isWritePending,
+      minAmount0,
+      minAmount1,
       pair.chainId,
       pair.farm,
       percentage,

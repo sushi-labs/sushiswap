@@ -266,6 +266,6 @@ export function useConstantProductPool(
   fee: Fee,
   twap: boolean
 ): [PoolState, ConstantProductPool | null] {
-  const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, fee, twap]], [tokenA, tokenB, fee, twap])
+  const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, Number(fee), Boolean(twap)]], [tokenA, tokenB, fee, twap])
   return useConstantProductPools(chainId, inputs)[0]
 }
