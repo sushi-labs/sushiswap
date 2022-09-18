@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { ConstantProductPool, Fee, Pair } from '@sushiswap/exchange'
+import { ConstantProductPool, Pair } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
@@ -54,7 +54,7 @@ const Add = () => {
     }
   }, [chainId])
 
-  const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId) && FEE_MAP[fee] !== Fee.DEFAULT
+  const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId)
 
   return (
     <SWRConfig>

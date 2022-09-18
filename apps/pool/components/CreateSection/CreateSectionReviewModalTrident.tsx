@@ -13,7 +13,7 @@ import {
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useDeprecatedSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useNetwork, UserRejectedRequestError } from 'wagmi'
 
 import {
   approveMasterContractAction,
@@ -194,6 +194,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 fullWidth
                 amount={input0}
                 address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+                enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
               />
               <Approve.Token
                 size="md"
@@ -201,6 +202,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 fullWidth
                 amount={input1}
                 address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+                enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
               />
             </Approve.Components>
           }

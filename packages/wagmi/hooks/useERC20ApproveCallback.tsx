@@ -7,9 +7,9 @@ import {
   erc20ABI,
   useAccount,
   useContract,
+  useDeprecatedSendTransaction,
   useNetwork,
   UserRejectedRequestError,
-  useDeprecatedSendTransaction,
   useSigner,
 } from 'wagmi'
 
