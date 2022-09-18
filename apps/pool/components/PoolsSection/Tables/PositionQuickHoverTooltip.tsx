@@ -15,8 +15,8 @@ interface PositionQuickHoverTooltipProps {
 
 export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
   return (
-    <PoolPositionProvider pair={row}>
-      <PoolPositionStakedProvider pair={row}>
+    <PoolPositionProvider watch={false} pair={row}>
+      <PoolPositionStakedProvider watch={false} pair={row}>
         <PoolPositionRewardsProvider pair={row}>
           <_PositionQuickHoverTooltip row={row} />
         </PoolPositionRewardsProvider>

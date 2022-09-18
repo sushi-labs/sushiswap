@@ -19,11 +19,20 @@ interface PoolPositionContext {
 
 const Context = createContext<PoolPositionContext | undefined>(undefined)
 
-export const PoolPositionProvider: FC<{ pair: Pair; children: ReactNode }> = ({ pair, children }) => {
+export const PoolPositionProvider: FC<{ pair: Pair; children: ReactNode; watch?: boolean }> = ({
+  pair,
+  children,
+  watch = true,
+}) => {
   const { address: account } = useAccount()
   const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
 
-  const { data: balance, isLoading, isError } = useBalance({ chainId: pair.chainId, currency: liquidityToken, account })
+  const {
+    data: balance,
+    isLoading,
+    isError,
+  } = useBalance({ chainId: pair.chainId, currency: liquidityToken, account, watch })
+
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0,
     reserve1,

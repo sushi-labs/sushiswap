@@ -16,6 +16,7 @@ type UseBalancesParams = {
   chainId?: ChainId
   enabled?: boolean
   loadBentobox?: boolean
+  watch?: boolean
 }
 
 type UseBalances = (params: UseBalancesParams) => (
@@ -25,7 +26,14 @@ type UseBalances = (params: UseBalancesParams) => (
   data: BalanceMap
 }
 
-export const useBalances: UseBalances = ({ enabled = true, chainId, account, currencies, loadBentobox = false }) => {
+export const useBalances: UseBalances = ({
+  watch = true,
+  enabled = true,
+  chainId,
+  account,
+  currencies,
+  loadBentobox = false,
+}) => {
   const {
     data: nativeBalance,
     isLoading: isNativeLoading,
@@ -34,7 +42,7 @@ export const useBalances: UseBalances = ({ enabled = true, chainId, account, cur
     addressOrName: account,
     chainId,
     enabled,
-    watch: !(typeof enabled !== undefined && !enabled),
+    watch: !(typeof enabled !== undefined && !enabled) && watch,
     keepPreviousData: true,
   })
 
@@ -89,7 +97,7 @@ export const useBalances: UseBalances = ({ enabled = true, chainId, account, cur
   const { data, isError, isLoading } = useContractReads({
     contracts: contracts,
     enabled,
-    watch: !(typeof enabled !== undefined && !enabled),
+    watch: !(typeof enabled !== undefined && !enabled) && watch,
     keepPreviousData: true,
   })
 
@@ -163,15 +171,23 @@ type UseBalanceParams = {
   chainId?: ChainId
   enabled?: boolean
   loadBentobox?: boolean
+  watch?: boolean
 }
 
 type UseBalance = (params: UseBalanceParams) => Pick<ReturnType<typeof useBalances>, 'isError' | 'isLoading'> & {
   data: Record<FundSource, Amount<Type>> | undefined
 }
 
-export const useBalance: UseBalance = ({ chainId, account, currency, enabled = true, loadBentobox = false }) => {
+export const useBalance: UseBalance = ({
+  watch = true,
+  chainId,
+  account,
+  currency,
+  enabled = true,
+  loadBentobox = false,
+}) => {
   const currencies = useMemo(() => [currency], [currency])
-  const { data, isLoading, isError } = useBalances({ chainId, currencies, account, enabled, loadBentobox })
+  const { data, isLoading, isError } = useBalances({ watch, chainId, currencies, account, enabled, loadBentobox })
 
   return useMemo(() => {
     const walletBalance = currency

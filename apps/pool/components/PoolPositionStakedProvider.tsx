@@ -30,9 +30,10 @@ const Context = createContext<PoolPositionStakedContext | undefined>(undefined)
 interface PoolPositionStakedProviderProps {
   pair: Pair
   children: ReactNode
+  watch?: boolean
 }
 
-export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children }) => {
+export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children, watch = true }) => {
   if (pair?.farm?.id === undefined || !pair?.farm?.chefType)
     return (
       <Context.Provider
@@ -55,7 +56,12 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
     )
 
   return (
-    <_PoolPositionStakedProvider pair={pair} farmId={Number(pair.farm.id)} chefType={CHEF_TYPE_MAP[pair.farm.chefType]}>
+    <_PoolPositionStakedProvider
+      watch={watch}
+      pair={pair}
+      farmId={Number(pair.farm.id)}
+      chefType={CHEF_TYPE_MAP[pair.farm.chefType]}
+    >
       {children}
     </_PoolPositionStakedProvider>
   )
@@ -66,9 +72,16 @@ interface _PoolPositionStakedProviderProps {
   children: ReactNode
   farmId: number
   chefType: Chef
+  watch: boolean
 }
 
-const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({ pair, farmId, chefType, children }) => {
+const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
+  watch,
+  pair,
+  farmId,
+  chefType,
+  children,
+}) => {
   const createNotification = useCreateNotification()
   const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
   const { balance, isLoading, isError, withdraw, deposit, isWritePending, isWriteError } = useMasterChef({
@@ -77,6 +90,7 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({ pai
     pid: farmId,
     token: liquidityToken,
     onSuccess: createNotification,
+    watch,
   })
 
   const stakedUnderlying = useUnderlyingTokenBalanceFromPair({

@@ -1,18 +1,26 @@
 import { formatUSD } from '@sushiswap/format'
+import { useInViewport } from '@sushiswap/hooks'
 import { Typography } from '@sushiswap/ui'
-import { FC } from 'react'
+import { FC, useRef } from 'react'
 
 import { PoolPositionProvider, usePoolPosition } from '../../PoolPositionProvider'
 import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 import { CellProps } from './types'
 
 export const PairPositionCell: FC<CellProps> = ({ row }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const inViewport = useInViewport(ref)
+
   return (
-    <PoolPositionProvider pair={row}>
-      <PoolPositionStakedProvider pair={row}>
-        <_PairPositionCell row={row} />
-      </PoolPositionStakedProvider>
-    </PoolPositionProvider>
+    <div ref={ref}>
+      {inViewport && (
+        <PoolPositionProvider watch={false} pair={row}>
+          <PoolPositionStakedProvider watch={false} pair={row}>
+            <_PairPositionCell row={row} />
+          </PoolPositionStakedProvider>
+        </PoolPositionProvider>
+      )}
+    </div>
   )
 }
 

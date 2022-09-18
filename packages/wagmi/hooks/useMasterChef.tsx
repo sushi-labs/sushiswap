@@ -34,11 +34,20 @@ interface UseMasterChefParams {
   token: Token
   enabled?: boolean
   onSuccess?(data: NotificationData): void
+  watch?: boolean
 }
 
 type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 
-export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enabled = true, onSuccess }) => {
+export const useMasterChef: UseMasterChef = ({
+  watch = true,
+  chainId,
+  chef,
+  pid,
+  token,
+  enabled = true,
+  onSuccess,
+}) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
   const {
@@ -85,7 +94,7 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
 
   const { data, isLoading, isError } = useContractReads({
     contracts,
-    watch: true,
+    watch,
     keepPreviousData: true,
     enabled: contracts.length > 0 && enabled,
   })
