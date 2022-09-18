@@ -1,4 +1,5 @@
 import { Amount, Type } from '@sushiswap/currency'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui'
 import { FC, useCallback } from 'react'
 
@@ -11,6 +12,7 @@ interface SushiBarInputProps {
 }
 
 export const SushiBarInput: FC<SushiBarInputProps> = ({ currency, balance, onChange, value, disabled }) => {
+  const isMounted = useIsMounted()
   const onMaxInput = useCallback(
     (amount?: Amount<Type>) => {
       onChange(amount ? amount.toExact() : '')
@@ -35,28 +37,30 @@ export const SushiBarInput: FC<SushiBarInputProps> = ({ currency, balance, onCha
           value={value}
         />
       </div>
-      <div className="flex justify-between">
-        <button
-          onClick={() => onMaxInput(balance)}
-          className={classNames(
-            disabled ? 'pointer-events-none text-slate-400' : '',
-            'px-2 text-xs cursor-pointer hover:text-slate-50'
-          )}
-        >
-          Balance: {balance ? balance.toSignificant(6) : '0.000000'}
-        </button>
-        {!disabled && (
-          <Button
+      {isMounted && (
+        <div className="flex justify-between">
+          <button
             onClick={() => onMaxInput(balance)}
-            className={classNames('!h-[unset]')}
-            color="blue"
-            variant="empty"
-            size="xs"
+            className={classNames(
+              disabled ? 'pointer-events-none text-slate-400' : '',
+              'px-2 text-xs cursor-pointer hover:text-slate-50'
+            )}
           >
-            Max
-          </Button>
-        )}
-      </div>
+            Balance: {balance ? balance.toSignificant(6) : '0.000000'}
+          </button>
+          {!disabled && (
+            <Button
+              onClick={() => onMaxInput(balance)}
+              className={classNames('!h-[unset]')}
+              color="blue"
+              variant="empty"
+              size="xs"
+            >
+              Max
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

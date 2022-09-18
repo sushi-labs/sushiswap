@@ -207,7 +207,6 @@ const _Add: FC<AddProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onChangeToken0TypedAmount])
 
-  console.log(poolState === PoolState.LOADING)
   return (
     <>
       <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
