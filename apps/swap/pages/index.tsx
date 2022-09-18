@@ -7,7 +7,7 @@ import { Button, Dots } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider } from '../components'
@@ -17,7 +17,11 @@ import { useTokens } from '../lib/state/token-lists'
 
 const Index: FC = () => {
   const { chain } = useNetwork()
-  const chainId = chain?.id || ChainId.ETHEREUM
+
+  // Add query param fetching here
+  const chainId = chain?.id
+  const chainIdWithDefault = chainId || ChainId.ETHEREUM
+
   const [input0, setInput0] = useState<string>('')
   const [token0, setToken0] = useState<Type | undefined>()
   const [input1, setInput1] = useState<string>('')
@@ -51,10 +55,17 @@ const Index: FC = () => {
 
   const amounts = useMemo(() => [parsedInput0], [parsedInput0])
 
+  useEffect(() => {
+    setToken0(undefined)
+    setToken1(undefined)
+    setInput0('')
+    setInput1('')
+  }, [chain?.id])
+
   return (
     <>
       <TradeProvider
-        chainId={chainId}
+        chainId={chainIdWithDefault}
         tradeType={tradeType}
         amountSpecified={tradeType === TradeType.EXACT_INPUT ? parsedInput0 : parsedInput1}
         mainCurrency={token0}
@@ -64,7 +75,7 @@ const Index: FC = () => {
           <Widget id="swap" maxWidth={400}>
             <Widget.Content>
               <Widget.Header title="Swap">
-                <SettingsOverlay chainId={chainId} />
+                <SettingsOverlay chainId={chainIdWithDefault} />
               </Widget.Header>
               <CurrencyInput
                 className="p-3"
@@ -75,7 +86,7 @@ const Index: FC = () => {
                 customTokenMap={customTokensMap}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}
-                chainId={chainId}
+                chainId={chainIdWithDefault}
                 tokenMap={tokenMap}
                 inputType={TradeType.EXACT_INPUT}
                 tradeType={tradeType}
@@ -101,7 +112,7 @@ const Index: FC = () => {
                   customTokenMap={customTokensMap}
                   onAddToken={addCustomToken}
                   onRemoveToken={removeCustomToken}
-                  chainId={chainId}
+                  chainId={chainIdWithDefault}
                   tokenMap={tokenMap}
                   inputType={TradeType.EXACT_OUTPUT}
                   tradeType={tradeType}
@@ -111,13 +122,13 @@ const Index: FC = () => {
                   <Checker.Amounts
                     fullWidth
                     size="md"
-                    chainId={chainId}
+                    chainId={chainIdWithDefault}
                     fundSource={FundSource.WALLET}
                     amounts={amounts}
                   >
                     <Checker.Connected fullWidth size="md">
-                      <Checker.Network fullWidth size="md" chainId={chainId}>
-                        <SwapReviewModalLegacy chainId={chainId}>
+                      <Checker.Network fullWidth size="md" chainId={chainIdWithDefault}>
+                        <SwapReviewModalLegacy chainId={chainIdWithDefault}>
                           {({ isWritePending, setOpen }) => {
                             return (
                               <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
