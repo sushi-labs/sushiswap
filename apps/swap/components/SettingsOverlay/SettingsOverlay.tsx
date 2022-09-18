@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { IconButton, Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
+import { CarbonOffsetOverlay } from './CarbonOffsetOverlay'
 import { CustomTokensOverlay } from './CustomTokensOverlay'
 import { ExpertMode } from './ExpertMode'
 import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
@@ -28,6 +29,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
                 <SlippageToleranceDisclosure />
                 <CustomTokensOverlay />
                 <ExpertMode />
+                <CarbonOffsetOverlay />
                 {/* <DustAmount /> */}
               </div>
             </div>
