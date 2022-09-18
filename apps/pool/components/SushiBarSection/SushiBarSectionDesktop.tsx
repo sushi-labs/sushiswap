@@ -13,7 +13,6 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, useDeprecatedContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
-import { XSushi } from '../../.graphclient'
 import { useNotifications } from '../../lib/state/storage'
 import { SushiBarInput } from './SushiBarInput'
 

@@ -24,7 +24,7 @@ const { chains, provider, webSocketProvider }: CreateClientConfig & { chains: Ch
 
 export const client: Client = createClient({
   provider,
-  // webSocketProvider,
+  webSocketProvider,
   autoConnect: false,
   connectors: [
     new InjectedConnector({
