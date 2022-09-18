@@ -63,7 +63,7 @@ const fetcher = ({
   let where = {}
   if (args.query) {
     where = {
-      token0_: { symbol_contains_nocase: args.query },
+      name_contains_nocase: args.query,
     }
 
     _url.searchParams.set('where', JSON.stringify(where))
