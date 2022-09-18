@@ -1,7 +1,7 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import { Native, Type } from '@sushiswap/currency'
+import { Amount, Native, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
@@ -26,6 +26,9 @@ interface RemoveSectionWidgetProps {
   percentage: string
   token0: Type
   token1: Type
+  token0Minimum: Amount<Type>
+  token1Minimum: Amount<Type>
+
   setPercentage(percentage: string): void
   error?: string
   children: ReactNode
@@ -38,14 +41,15 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   setPercentage,
   token0,
   token1,
+  token0Minimum,
+  token1Minimum,
   children,
   error,
 }) => {
   const isMounted = useIsMounted()
   const [hover, setHover] = useState(false)
   const { address } = useAccount()
-  const { balance, underlying0, underlying1, value0, value1 } = usePoolPosition()
-
+  const { balance, value0, value1 } = usePoolPosition()
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
@@ -71,7 +75,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
               <>
                 {isFarm && isMounted ? (
                   <Disclosure.Button className="w-full pr-4">
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <Widget.Header title="Remove Liquidity" className="!pb-3 " />
                       <div
                         className={classNames(
@@ -99,7 +103,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                   <Disclosure.Panel unmount={false}>
                     <div className="flex flex-col gap-3 p-3">
                       <div className="flex items-center gap-4">
-                        <div className="flex flex-grow justify-between items-center">
+                        <div className="flex items-center justify-between flex-grow">
                           <Input.Numeric
                             onUserInput={(val) => setPercentage(val ? Math.min(+val, 100).toString() : '')}
                             value={percentage}
@@ -129,14 +133,14 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           </Button>
                         </div>
                       </div>
-                      <div className="grid grid-cols-3 pb-2 justify-between items-center">
+                      <div className="grid items-center justify-between grid-cols-3 pb-2">
                         <AppearOnMount show={Boolean(balance?.[FundSource.WALLET])}>
                           <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
                             {formatUSD((value0 + value1) * (+percentage / 100))}
                           </Typography>
                         </AppearOnMount>
                         <AppearOnMount
-                          className="col-span-2 flex justify-end"
+                          className="flex justify-end col-span-2"
                           show={Boolean(balance?.[FundSource.WALLET])}
                         >
                           <Typography
@@ -144,14 +148,14 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             as="button"
                             variant="sm"
                             weight={500}
-                            className="text-slate-300 hover:text-slate-200 truncate"
+                            className="truncate text-slate-300 hover:text-slate-200"
                           >
                             Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
                           </Typography>
                         </AppearOnMount>
                       </div>
                       <Transition
-                        show={Boolean(+percentage > 0 && underlying0 && underlying1)}
+                        show={Boolean(+percentage > 0 && token0Minimum && token1Minimum)}
                         unmount={false}
                         className="transition-[max-height] overflow-hidden"
                         enter="duration-300 ease-in-out"
@@ -161,44 +165,44 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         leaveFrom="transform max-h-[380px]"
                         leaveTo="transform max-h-0"
                       >
-                        <div className="py-3 pt-5 flex flex-col gap-3 border-t border-slate-200/5">
-                          <Typography variant="sm" weight={400} className="text-slate-400 pb-1">
+                        <div className="flex flex-col gap-3 py-3 pt-5 border-t border-slate-200/5">
+                          <Typography variant="sm" weight={400} className="pb-1 text-slate-400">
                             You&apos;ll receive
                           </Typography>
 
                           <div className="flex items-center justify-between">
-                            <Typography variant="sm" weight={500} className="flex gap-2 items-center text-slate-50">
+                            <Typography variant="sm" weight={500} className="flex items-center gap-2 text-slate-50">
                               {token0 && <UICurrency.Icon currency={token0} width={20} height={20} />}
                               <span className="text-slate-400">
-                                <span className="text-slate-50">{underlying0?.toSignificant(6)}</span>{' '}
+                                <span className="text-slate-50">{token0Minimum?.toSignificant(6)}</span>{' '}
                                 {Native.onChain(chainId).wrapped.address === token0.wrapped.address
                                   ? Native.onChain(chainId).symbol
-                                  : underlying0?.currency.symbol}
+                                  : token0Minimum?.currency.symbol}
                               </span>
                             </Typography>
                             <Typography variant="xs" className="text-slate-400">
-                              {formatUSD(value0)}
+                              {formatUSD(value0 * (+percentage / 100))}
                             </Typography>
                           </div>
                           <div className="flex items-center justify-between">
-                            <Typography variant="sm" weight={500} className="flex gap-2 items-center text-slate-50">
+                            <Typography variant="sm" weight={500} className="flex items-center gap-2 text-slate-50">
                               {token1 && <UICurrency.Icon currency={token1} width={20} height={20} />}
                               <span className="text-slate-400">
-                                <span className="text-slate-50">{underlying1?.toSignificant(6)}</span>{' '}
+                                <span className="text-slate-50">{token1Minimum?.toSignificant(6)}</span>{' '}
                                 {Native.onChain(chainId).wrapped.address === token1.wrapped.address
                                   ? Native.onChain(chainId).symbol
-                                  : underlying1?.currency.symbol}
+                                  : token1Minimum?.currency.symbol}
                               </span>
                             </Typography>
                             <Typography variant="xs" className="text-slate-400">
-                              {formatUSD(value1)}
+                              {formatUSD(value1 * (+percentage / 100))}
                             </Typography>
                           </div>
                         </div>
                       </Transition>
                       {children}
                       {error && (
-                        <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
+                        <Typography variant="xs" className="mt-4 text-center text-red" weight={500}>
                           {error}
                         </Typography>
                       )}

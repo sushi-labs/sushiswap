@@ -27,6 +27,8 @@ interface RemoveSectionLegacyProps {
   pair: Pair
 }
 
+const DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE = new Percent(5, 100)
+
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const { chain } = useNetwork()
@@ -39,12 +41,18 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   const [error, setError] = useState<string>()
   const [, { createNotification }] = useNotifications(address)
 
-  const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
+  // const slippagePercent = useMemo(() => {
+  //   return new Percent(Math.floor(slippageTolerance * 100), 10_000)
+  // }, [slippageTolerance])
+
+  const slippagePercent = useMemo(
+    () =>
+      slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : DEFAULT_REMOVE_LIQUIDITY_SLIPPAGE_TOLERANCE,
+    [slippageTolerance]
+  )
 
   const [percentage, setPercentage] = useState<string>('')
-  const percentageEntity = useMemo(() => new Percent(percentage, 100), [percentage])
+  const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
 
   const {
     data: [poolState, pool],
@@ -65,16 +73,34 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
 
   const [underlying0, underlying1] = underlying
 
+  const currencyAToRemove = token0
+    ? percentToRemove && percentToRemove.greaterThan('0') && underlying0
+      ? Amount.fromRawAmount(token0, percentToRemove.multiply(underlying0.quotient).quotient || '0')
+      : Amount.fromRawAmount(token0, '0')
+    : undefined
+
+  const currencyBToRemove = token1
+    ? percentToRemove && percentToRemove.greaterThan('0') && underlying1
+      ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
+      : Amount.fromRawAmount(token1, '0')
+    : undefined
+
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
-      underlying0
-        ? Amount.fromRawAmount(underlying0.currency, calculateSlippageAmount(underlying0, slippagePercent)[0])
+      currencyAToRemove
+        ? Amount.fromRawAmount(
+            currencyAToRemove.currency,
+            calculateSlippageAmount(currencyAToRemove, slippagePercent)[0]
+          )
         : undefined,
-      underlying1
-        ? Amount.fromRawAmount(underlying1.currency, calculateSlippageAmount(underlying1, slippagePercent)[0])
+      currencyBToRemove
+        ? Amount.fromRawAmount(
+            currencyBToRemove.currency,
+            calculateSlippageAmount(currencyBToRemove, slippagePercent)[0]
+          )
         : undefined,
     ]
-  }, [slippagePercent, underlying0, underlying1])
+  }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 
   const execute = useCallback(async () => {
     if (
@@ -96,6 +122,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     const withNative =
       Native.onChain(pair.chainId).wrapped.address === pool.token0.address ||
       Native.onChain(pair.chainId).wrapped.address === pool.token1.address
+
     let methodNames
     let args
 
@@ -105,7 +132,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
         args = [
           token1IsNative ? pool.token0.wrapped.address : pool.token1.wrapped.address,
-          balance[FundSource.WALLET].multiply(percentageEntity).quotient.toString(),
+          balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
           token1IsNative ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
           token1IsNative ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
           address,
@@ -116,7 +143,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         args = [
           pool.token0.wrapped.address,
           pool.token1.wrapped.address,
-          balance[FundSource.WALLET].multiply(percentageEntity).quotient.toString(),
+          balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
           minAmount0.quotient.toString(),
           minAmount1.quotient.toString(),
           address,
@@ -128,7 +155,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         Native.onChain(pair.chainId).wrapped === pool.token1
           ? pool.token0.wrapped.address
           : pool.token1.wrapped.address,
-        balance[FundSource.WALLET].multiply(percentageEntity).quotient.toString(),
+        balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
         minAmount0.quotient.toString(),
         minAmount1.quotient.toString(),
         address,
@@ -158,10 +185,9 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
             from: address,
             to: contract.address,
             data: contract.interface.encodeFunctionData(methodName, args),
-            gasLimit: calculateGasMargin(safeGasEstimate),
+            gasLimit: safeGasEstimate,
           },
         })
-
         const ts = new Date().getTime()
         createNotification({
           type: 'burn',
@@ -197,7 +223,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     minAmount0,
     minAmount1,
     pair.chainId,
-    percentageEntity,
+    percentToRemove,
     deadline,
     sendTransactionAsync,
     createNotification,
@@ -212,6 +238,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
           percentage={percentage}
           token0={token0}
           token1={token1}
+          token0Minimum={minAmount0}
+          token1Minimum={minAmount1}
           setPercentage={setPercentage}
           error={error}
         >
@@ -242,7 +270,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                           size="md"
                           className="whitespace-nowrap"
                           fullWidth
-                          amount={balance?.[FundSource.WALLET].multiply(percentageEntity)}
+                          amount={balance?.[FundSource.WALLET].multiply(percentToRemove)}
                           address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
                         />
                       </Approve.Components>
@@ -278,7 +306,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     pair.chainId,
     pair.farm,
     percentage,
-    percentageEntity,
+    percentToRemove,
     poolState,
     token0,
     token1,
