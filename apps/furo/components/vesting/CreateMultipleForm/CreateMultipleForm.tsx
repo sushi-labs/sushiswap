@@ -31,7 +31,7 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+import { useAccount, useNetwork, useDeprecatedSendTransaction } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from '../../../lib'
 import {
@@ -51,7 +51,7 @@ export const CreateMultipleForm = () => {
   const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
   const contract = useFuroVestingRouterContract(activeChain?.id)
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
   const [signature, setSignature] = useState<Signature>()
   const [errors, setErrors] = useState<string[]>([])
   const [review, setReview] = useState(false)

@@ -12,7 +12,7 @@ import { Approve } from '@sushiswap/wagmi/systems'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'lib'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+import { useAccount, useNetwork, useDeprecatedSendTransaction } from 'wagmi'
 
 import { CreateStreamFormData, CreateStreamFormDataValidated } from '../types'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
@@ -24,7 +24,7 @@ export const CreateForm: FC = () => {
   const { chain: activeChain } = useNetwork()
   const [error, setError] = useState<string>()
   const contract = useFuroStreamRouterContract(activeChain?.id)
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
   const [signature, setSignature] = useState<Signature>()
 
   const methods = useForm<CreateStreamFormData>({

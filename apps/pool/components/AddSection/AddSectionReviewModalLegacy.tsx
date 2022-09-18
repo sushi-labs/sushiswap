@@ -11,7 +11,7 @@ import {
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useDeprecatedSendTransaction } from 'wagmi'
 
 import { useTransactionDeadline } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
@@ -44,7 +44,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const [, { createNotification }] = useNotifications(address)
   const contract = useSushiSwapRouterContract(chainId)
   const [{ slippageTolerance }] = useSettings()
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
     chainId,
     onSuccess: () => setOpen(false),
   })

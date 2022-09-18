@@ -9,7 +9,7 @@ import {
   useContract,
   useNetwork,
   UserRejectedRequestError,
-  useSendTransaction,
+  useDeprecatedSendTransaction,
   useSigner,
 } from 'wagmi'
 
@@ -36,7 +36,7 @@ export function useERC20ApproveCallback(
   const { chain } = useNetwork()
   const { address } = useAccount()
   const { data: signer } = useSigner()
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useERC20Allowance(watch, token, address ?? undefined, spender)

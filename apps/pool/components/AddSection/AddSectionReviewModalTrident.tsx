@@ -16,7 +16,7 @@ import {
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useDeprecatedSendTransaction } from 'wagmi'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
 import { useNotifications, useSettings } from '../../lib/state/storage'
@@ -66,7 +66,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const rebases = useBentoBoxTotals(chainId, [token0, token1])
   const contract = useTridentRouterContract(chainId)
   const [{ slippageTolerance }] = useSettings()
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
     chainId,
     onSuccess: () => setOpen(false),
   })

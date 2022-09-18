@@ -19,7 +19,7 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(({ selecte
           {() => (
             <>
               <Disclosure.Button className="w-full pr-3">
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <Widget.Header title="1. Select Network" className="!pb-3" />
                   <div className={classNames('w-6 h-6')}>
                     <NetworkIcon chainId={selectedNetwork} width={24} height={24} />

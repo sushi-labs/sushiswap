@@ -3,7 +3,7 @@ import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { NotificationData } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
-import { erc20ABI, useAccount, useContractReads, useSendTransaction } from 'wagmi'
+import { erc20ABI, useAccount, useContractReads, useDeprecatedSendTransaction } from 'wagmi'
 
 import {
   getMasterChefContractConfig,
@@ -17,7 +17,7 @@ export enum Chef {
   MINICHEF,
 }
 
-interface UseMasterChefReturn extends Pick<ReturnType<typeof useSendTransaction>, 'isLoading' | 'isError'> {
+interface UseMasterChefReturn extends Pick<ReturnType<typeof useDeprecatedSendTransaction>, 'isLoading' | 'isError'> {
   deposit(amount: Amount<Token> | undefined): void
   withdraw(amount: Amount<Token> | undefined): void
   balance: Amount<Token> | undefined
@@ -41,7 +41,11 @@ type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enabled = true, onSuccess }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
-  const { sendTransactionAsync, isLoading: isWritePending, isError: isWriteError } = useSendTransaction({ chainId })
+  const {
+    sendTransactionAsync,
+    isLoading: isWritePending,
+    isError: isWriteError,
+  } = useDeprecatedSendTransaction({ chainId })
   const config = useMemo(() => getMasterChefContractConfig(chainId, chef), [chainId, chef])
   const v2Config = useMemo(() => getMasterChefContractV2Config(chainId), [chainId])
 

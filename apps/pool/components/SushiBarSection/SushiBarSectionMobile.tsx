@@ -10,7 +10,7 @@ import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
-import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
+import { ProviderRpcError, useAccount, useDeprecatedContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
 import { SushiBarInput } from './SushiBarInput'
 
@@ -31,7 +31,7 @@ export const SushiBarSectionMobile: FC = () => {
 
   const { data: stats } = useSWR<XSushi>(`pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: selectedIndex === 0 ? 'enter' : 'leave',
   })

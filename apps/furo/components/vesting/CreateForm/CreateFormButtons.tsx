@@ -9,7 +9,7 @@ import { Approve } from '@sushiswap/wagmi/systems'
 import { CreateVestingFormDataTransformedAndValidated } from 'components/vesting'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+import { useAccount, useNetwork, useDeprecatedSendTransaction } from 'wagmi'
 
 interface CreateFormButtons {
   onDismiss(): void
@@ -35,7 +35,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   const [signature, setSignature] = useState<Signature>()
 
   const contract = useFuroVestingRouterContract(activeChain?.id)
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
 
   const [totalAmountAsEntity, stepPercentage] = useMemo(() => {
     if (!currency || !stepPayouts) return [undefined, undefined]

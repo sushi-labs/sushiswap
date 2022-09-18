@@ -22,7 +22,7 @@ import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useProvider, useSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useProvider, useDeprecatedSendTransaction } from 'wagmi'
 
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
@@ -61,7 +61,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const [, { createNotification }] = useNotifications(account)
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
     chainId,
     onSuccess: () => setOpen(false),
   })

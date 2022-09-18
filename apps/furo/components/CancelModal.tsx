@@ -6,7 +6,7 @@ import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, createToast, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Stream } from 'lib'
 import { FC, useCallback, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { useAccount, useDeprecatedContractWrite, useNetwork } from 'wagmi'
 
 interface CancelModalProps {
   title: string
@@ -22,7 +22,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { address } = useAccount()
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     addressOrName: contractAddress,
     contractInterface: abi,
     functionName: fn,

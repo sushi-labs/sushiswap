@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react'
 import {
   useAccount,
   useContractRead,
-  useContractWrite,
+  useDeprecatedContractWrite,
   useNetwork,
   UserRejectedRequestError,
   useSignTypedData,
@@ -29,7 +29,7 @@ export function useBentoBoxApproveCallback({
   const { address } = useAccount()
   const { chain } = useNetwork()
 
-  const { writeAsync } = useContractWrite({
+  const { writeAsync } = useDeprecatedContractWrite({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'setMasterContractApproval',
     args: [address || AddressZero, masterContract, true, 0, HashZero, HashZero],

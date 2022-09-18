@@ -13,7 +13,7 @@ import {
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useDeprecatedSendTransaction } from 'wagmi'
 
 import {
   approveMasterContractAction,
@@ -53,7 +53,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const factory = useConstantProductPoolFactoryContract(chainId)
   const [, { createNotification }] = useNotifications(address)
 
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
     chainId,
     onSuccess: () => setOpen(false),
   })

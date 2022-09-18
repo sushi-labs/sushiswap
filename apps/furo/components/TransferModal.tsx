@@ -7,7 +7,7 @@ import { Button, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/
 import { Web3Input } from '@sushiswap/wagmi'
 import { Stream } from 'lib'
 import { FC, useCallback, useState } from 'react'
-import { useAccount, useContractWrite, useEnsAddress, useNetwork } from 'wagmi'
+import { useAccount, useDeprecatedContractWrite, useEnsAddress, useNetwork } from 'wagmi'
 
 interface TransferModalProps {
   stream?: Stream
@@ -32,7 +32,7 @@ export const TransferModal: FC<TransferModalProps> = ({
     chainId: ChainId.ETHEREUM,
   })
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     addressOrName: contractAddress,
     contractInterface: abi,
     functionName: fn,

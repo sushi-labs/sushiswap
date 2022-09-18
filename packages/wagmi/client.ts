@@ -15,40 +15,40 @@ const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 const { chains, provider, webSocketProvider }: CreateClientConfig & { chains: Chain[] } = configureChains(
   [...allChains, ...otherChains],
   [
-    alchemyProvider({ alchemyId }),
+    alchemyProvider({ apiKey: alchemyId }),
     publicProvider(),
     // infuraProvider({ infuraId }),
-  ]
+  ],
+  { pollingInterval: 15_000 }
 )
 
 export const client: Client = createClient({
   provider,
-  webSocketProvider,
+  // webSocketProvider,
   autoConnect: false,
-  connectors() {
-    return [
-      new InjectedConnector({
-        chains,
-        options: {
-          shimDisconnect: true,
-        },
-      }),
-      new WalletConnectConnector({
-        chains,
-        // TODO: Flesh out wallet connect options?
-        options: {
-          qrcode: true,
-        },
-      }),
-      new CoinbaseWalletConnector({
-        // TODO: Flesh out coinbase wallet connect options?
-        chains,
-        options: {
-          appName: 'Sushi 2.0',
-          appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
-        },
-      }),
-      new SafeConnector({ chains }),
-    ]
-  },
+  connectors: [
+    new InjectedConnector({
+      chains,
+      options: {
+        shimDisconnect: true,
+      },
+    }),
+    new WalletConnectConnector({
+      chains,
+      // TODO: Flesh out wallet connect options?
+      options: {
+        qrcode: true,
+      },
+    }),
+    new CoinbaseWalletConnector({
+      // TODO: Flesh out coinbase wallet connect options?
+      chains,
+      options: {
+        appName: 'Sushi 2.0',
+        appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
+      },
+    }),
+    // @ts-ignore
+    new SafeConnector({ chains }),
+  ],
 })
