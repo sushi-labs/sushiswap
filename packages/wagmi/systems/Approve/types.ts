@@ -17,4 +17,5 @@ export interface ApproveButton<T> extends Omit<ButtonProps<'button'>, 'onClick'>
   allApproved?: boolean
   hideIcon?: boolean
   onSuccess?(data: NotificationData): void
+  enabled?: boolean
 }

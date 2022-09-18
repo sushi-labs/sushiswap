@@ -31,6 +31,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     initialized,
     hideIcon,
     onSuccess,
+    enabled = true,
     ...props
   }) => {
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
@@ -39,6 +40,12 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
       onSignature,
       onSuccess,
     })
+
+    useEffect(() => {
+      if (!enabled && dispatch && index !== undefined) {
+        dispatch({ type: 'update', payload: { state: [ApprovalState.APPROVED, undefined, true], index } })
+      }
+    }, [dispatch, enabled, index])
 
     // Set to undefined on unmount
     useEffect(() => {
@@ -49,7 +56,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     }, [])
 
     useEffect(() => {
-      if (!dispatch || index === undefined) return
+      if (!dispatch || index === undefined || !enabled) return
 
       dispatch({
         type: 'update',

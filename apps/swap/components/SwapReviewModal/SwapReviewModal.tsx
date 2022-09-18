@@ -22,7 +22,7 @@ import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useProvider, useDeprecatedSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useProvider } from 'wagmi'
 
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
@@ -362,7 +362,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       return BENTOBOX_ADDRESS[chainId]
     }
   }, [trade, sushiSwapRouter, chainId])
-  console.log({ input0, approveTokenTo })
+
   return (
     <>
       {children({ isWritePending, setOpen })}
@@ -385,6 +385,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 fullWidth
                 address={getTridentRouterContractConfig(chainId).addressOrName}
                 onSignature={setSignature}
+                enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
               />
               <Approve.Token
                 size="md"
