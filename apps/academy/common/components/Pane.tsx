@@ -1,10 +1,10 @@
 import { Chip, classNames, Typography } from '@sushiswap/ui'
-import { CircleLabyrinthIcon } from 'components/icons/CircleLabyrinthIcon'
+import { CircleLabyrinthIcon } from 'common/components/icons/CircleLabyrinthIcon'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
-import { ArticleEntity, AuthorEntity } from '../.mesh'
-import { isMediaVideo } from '../lib/media'
+import { ArticleEntity, AuthorEntity } from '../../.mesh'
+import { isMediaVideo } from '../../lib/media'
 import { Image } from './Image'
 
 interface Pane {

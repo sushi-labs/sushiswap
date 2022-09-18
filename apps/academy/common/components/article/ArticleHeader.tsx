@@ -1,9 +1,9 @@
 import { Chip, Typography } from '@sushiswap/ui'
-import { CircleLabyrinthIcon } from 'components/icons/CircleLabyrinthIcon'
+import { CircleLabyrinthIcon } from 'common/components/icons/CircleLabyrinthIcon'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../../.mesh'
+import { ArticleEntity } from '../../../.mesh'
 
 interface ArticleHeader {
   article?: ArticleEntity

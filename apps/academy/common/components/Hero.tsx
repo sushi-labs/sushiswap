@@ -2,7 +2,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/solid'
 import { Button, Container, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../.mesh'
+import { ArticleEntity } from '../../.mesh'
 
 export const Hero: FC = () => {
   return (

@@ -2,7 +2,7 @@ import { LinkIcon, MailIcon } from '@heroicons/react/outline'
 import { TwitterIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../../.mesh'
+import { ArticleEntity } from '../../../.mesh'
 
 interface ArticleLinks {
   article?: ArticleEntity

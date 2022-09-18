@@ -2,7 +2,7 @@ import { Chip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../.mesh'
+import { ArticleEntity } from '../../.mesh'
 import { Image } from './Image'
 
 interface ArticleListItem {

@@ -1,8 +1,8 @@
-import { AdditionalArticles } from 'components/AdditionalArticles'
-import { Pane } from 'components/Pane'
+import { AdditionalArticles } from 'common/components/AdditionalArticles'
+import { Pane } from 'common/components/Pane'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../../.mesh'
+import { ArticleEntity } from '../../../.mesh'
 interface ArticleFooter {
   articles?: ArticleEntity[]
 }

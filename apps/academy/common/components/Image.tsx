@@ -2,8 +2,8 @@ import { classNames } from '@sushiswap/ui'
 import NextImage from 'next/image'
 import { FC } from 'react'
 
-import { UploadFileEntity } from '../.mesh'
-import { getOptimizedMedia, isMediaVideo } from '../lib/media'
+import { UploadFileEntity } from '../../.mesh'
+import { getOptimizedMedia, isMediaVideo } from '../../lib/media'
 
 interface ImageProps {
   quality?: number

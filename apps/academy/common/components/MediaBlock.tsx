@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import { ComponentSharedMedia } from '../.mesh'
+import { ComponentSharedMedia } from '../../.mesh'
 import { Image } from './Image'
 
 interface MediaBlock {

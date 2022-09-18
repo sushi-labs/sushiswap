@@ -1,7 +1,7 @@
 import { Button } from '@sushiswap/ui'
 import { Dispatch, FC, SetStateAction } from 'react'
 
-import { CategoryEntity } from '../.mesh'
+import { CategoryEntity } from '../../.mesh'
 
 interface Categories {
   selected: string

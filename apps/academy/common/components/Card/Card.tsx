@@ -3,8 +3,8 @@ import { CircleIcon, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
-import { ArticleEntity } from '../../.mesh'
-import { isMediaVideo } from '../../lib/media'
+import { ArticleEntity } from '../../../.mesh'
+import { isMediaVideo } from '../../../lib/media'
 import { Image } from '../Image'
 
 interface Card {

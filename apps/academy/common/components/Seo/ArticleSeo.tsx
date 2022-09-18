@@ -1,8 +1,8 @@
 import { ArticleJsonLd, NextSeo } from 'next-seo'
 import { FC } from 'react'
 
-import { Article } from '../../.mesh'
-import { getOptimizedMedia, isMediaVideo } from '../../lib/media'
+import { Article } from '../../../.mesh'
+import { getOptimizedMedia, isMediaVideo } from '../../../lib/media'
 
 interface ArticleSeo {
   article?: Article
