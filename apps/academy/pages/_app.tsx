@@ -3,14 +3,14 @@ import '../index.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
 import { App, ThemeProvider } from '@sushiswap/ui'
-import { SubscribePanel } from 'components/SubscribePanel'
+import { SubscribePanel } from 'common/components/SubscribePanel'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { useEffect } from 'react'
 
-import { DefaultSeo, Header } from '../components'
+import { DefaultSeo, Header } from '../common/components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
 export const cld = new Cloudinary({

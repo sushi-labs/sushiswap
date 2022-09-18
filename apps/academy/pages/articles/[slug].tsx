@@ -17,8 +17,8 @@ import {
   MediaBlock,
   PreviewBanner,
   RichTextBlock,
-} from '../../components'
-import { Image } from '../../components/Image'
+} from '../../common/components'
+import { Image } from '../../common/components/Image'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
 
 export async function getStaticPaths() {
@@ -84,7 +84,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
         </div>
       )}
 
-      <Container maxWidth="6xl" className="mx-auto pb-36">
+      <Container maxWidth="6xl" className="pb-20 mx-auto md:pb-36">
         <div>
           <div className="sticky top-[94px] md:hidden bg-slate-900 z-20 px-6 border-b border-slate-200/5">
             <Select
