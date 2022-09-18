@@ -30,7 +30,7 @@
   "devDependencies": {
     "@graphql-mesh/cli": "^0.75.3",
     "@graphql-mesh/graphql": "^0.29.5",
-    "@heroicons/react": "^1.0.0",
+    "@heroicons/react": "^2.0.11",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

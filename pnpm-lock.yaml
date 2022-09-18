@@ -36,7 +36,7 @@ importers:
       prettier: 2.7.1
       sort-package-json: 1.57.0
       ts-jest: 28.0.7_jest@28.1.3
-      turbo: 1.4.6
+      turbo: 1.4.7
 
   apis/farm:
     specifiers:
@@ -191,7 +191,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/academy:
@@ -200,7 +200,7 @@ importers:
       '@graphql-mesh/cli': ^0.75.3
       '@graphql-mesh/graphql': ^0.29.5
       '@headlessui/react': ^1.6.6
-      '@heroicons/react': ^1.0.0
+      '@heroicons/react': ^2.0.11
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -241,7 +241,7 @@ importers:
       graphql: 16.6.0
       next: 12.2.3_biqbaboplfbrettd7655fr4n2y
       next-seo: 5.5.0_53oqlnqnxhbetdy4ljlkkvmoby
-      next-sitemap: 3.1.20_next@12.2.3
+      next-sitemap: 3.1.21_next@12.2.3
       qs: 6.11.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -250,7 +250,7 @@ importers:
     devDependencies:
       '@graphql-mesh/cli': 0.75.11_jelggnc5b4b3hu7o6odhvrmlsa
       '@graphql-mesh/graphql': 0.29.10_jelggnc5b4b3hu7o6odhvrmlsa
-      '@heroicons/react': 1.0.6_react@18.2.0
+      '@heroicons/react': 2.0.11_react@18.2.0
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
@@ -341,7 +341,7 @@ importers:
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       swr: 1.3.0_react@18.2.0
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/blog:
@@ -410,7 +410,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/furo:
@@ -562,7 +562,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typechain: 8.1.0_typescript@4.7.4
       typescript: 4.7.4
 
@@ -610,7 +610,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/kashi:
@@ -717,7 +717,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/partner:
@@ -816,7 +816,7 @@ importers:
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       react-hook-form: 7.33.1_react@18.2.0
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/pool:
@@ -931,7 +931,7 @@ importers:
       graphql: 16.6.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   apps/swap:
@@ -1042,7 +1042,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   examples/multicall:
@@ -1219,7 +1219,7 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
+      tailwindcss: 3.1.6
       typescript: 4.7.4
 
   packages/chain:
@@ -3727,7 +3727,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_oai42fke67omxp5i2g4vu7ymuy
+      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.6.9
@@ -7259,6 +7259,14 @@ packages:
     dependencies:
       react: 18.2.0
 
+  /@heroicons/react/2.0.11_react@18.2.0:
+    resolution: {integrity: sha512-bASjOgSSaYj8HqXWsOqaBiB6ZLalE/g90WYGgZ5lPm4KCCG7wPXntY4kzHf5NrLh6UBAcnPwvbiw1Ne9GYfJtw==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
+    dev: true
+
   /@hookform/resolvers/2.9.7_react-hook-form@7.33.1:
     resolution: {integrity: sha512-BloehX3MOLwuFEwT4yZnmolPjVmqyn8VsSuodLfazbCIqxBHsQ4qUZsi+bvNNCduRli1AGWFrkDLGD5QoNzsoA==}
     peerDependencies:
@@ -8990,14 +8998,16 @@ packages:
       typescript: 4.7.4
     dev: false
 
-  /@typechain/ethers-v5/2.0.0_oai42fke67omxp5i2g4vu7ymuy:
+  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
-      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.6.9
       typechain: 3.0.0_typescript@4.7.4
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@typechain/hardhat/6.1.2_nzvn3pcr2zogolee74b45246su:
@@ -10777,7 +10787,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.1
+      follow-redirects: 1.15.1_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -15264,15 +15274,6 @@ packages:
     resolution: {integrity: sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==}
     dependencies:
       imul: 1.0.1
-
-  /follow-redirects/1.15.1:
-    resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.1_debug@4.3.4:
     resolution: {integrity: sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==}
@@ -21933,7 +21934,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.1
+      follow-redirects: 1.15.1_debug@4.3.4
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -22591,39 +22592,6 @@ packages:
       resolve: 1.22.1
     transitivePeerDependencies:
       - ts-node
-
-  /tailwindcss/3.1.6_postcss@8.4.14:
-    resolution: {integrity: sha512-7skAOY56erZAFQssT1xkpk+kWt2NrO45kORlxFPXUt3CiGsVPhH1smuH5XoDH6sGPXLyBv+zgCKA2HWBsgCytg==}
-    engines: {node: '>=12.13.0'}
-    hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
-    dependencies:
-      arg: 5.0.2
-      chokidar: 3.5.3
-      color-name: 1.1.4
-      detective: 5.2.1
-      didyoumean: 1.2.2
-      dlv: 1.1.3
-      fast-glob: 3.2.11
-      glob-parent: 6.0.2
-      is-glob: 4.0.3
-      lilconfig: 2.0.5
-      normalize-path: 3.0.0
-      object-hash: 3.0.0
-      picocolors: 1.0.0
-      postcss: 8.4.14
-      postcss-import: 14.1.0_postcss@8.4.14
-      postcss-js: 4.0.0_postcss@8.4.14
-      postcss-load-config: 3.1.4_postcss@8.4.14
-      postcss-nested: 5.0.6_postcss@8.4.14
-      postcss-selector-parser: 6.0.10
-      postcss-value-parser: 4.2.0
-      quick-lru: 5.1.1
-      resolve: 1.22.1
-    transitivePeerDependencies:
-      - ts-node
-    dev: true
 
   /tapable/2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
@@ -23315,137 +23283,137 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /turbo-android-arm64/1.4.6:
-    resolution: {integrity: sha512-YxSlHc64CF5J7yNUMiLBHkeLyzrpe75Oy7tivWb3z7ySG44BXPikk4HDJZPh0T1ELvukDwuPKkvDukJ2oCLJpA==}
+  /turbo-android-arm64/1.4.7:
+    resolution: {integrity: sha512-BtWtH8e8w1GhtYpGQmkcDS/AUzVZhQ4ZZN+qtUFei1wZD7VAdtJ9Wcsfi3WD+mXA6vtpIpRJVfQMcShr8l8ErA==}
     cpu: [arm64]
     os: [android]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-64/1.4.6:
-    resolution: {integrity: sha512-f6uto7LLpjwZ6iZSF+8uaDpuiTji6xmnWDxNuW23DBE8iv5mxehHd+6Ys851uKDRrPb3QdCu9ctyigKTAla5Vg==}
+  /turbo-darwin-64/1.4.7:
+    resolution: {integrity: sha512-bMvZaAz5diec9feZ0XpQosYI8U0kiOQM2tj2sv0Y2WZbe227wodVMCQMyUowmcotO8nr6NF76Xo5E+H+dnY6LQ==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.4.6:
-    resolution: {integrity: sha512-o9C6e5XyuMHQwE0fEhUxfpXxvNr2QXXWX8nxIjygxeF19AqKbk/s08vZBOEmXV6/gx/pRhZ1S2nf0PIUjKBD/Q==}
+  /turbo-darwin-arm64/1.4.7:
+    resolution: {integrity: sha512-AyfxYfKgh1EigQKjypbnDoMLuy4e/n/go+KYiWKKIpOaWXWLBokrBWzYN/aI3NMDRUJWK5ExdlWI9Nleelq8uQ==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.4.6:
-    resolution: {integrity: sha512-Gg9VOUo6McXYKGevcYjGUSmMryZyZggvpdPh7Dw3QTcT8Tsy6OBtq6WnJ2O4kFDsMigyKtEOJPceD9vDMZt3yQ==}
+  /turbo-freebsd-64/1.4.7:
+    resolution: {integrity: sha512-T5/osfbCh0rL53MFS5byFFfsR3vPMHIKIJ4fMMCNkoHsmFj2R0Pv53nqhEItogt0FJwCDHPyt7oBqO83H/AWQQ==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.4.6:
-    resolution: {integrity: sha512-W7VrcneWFN1QENKt5cpAPSsf9ArYBBAm3VtPBZEO5tX8kuahGlah1SKdKJXrRxYOY82wyNxDagS/rHpBlrAAzw==}
+  /turbo-freebsd-arm64/1.4.7:
+    resolution: {integrity: sha512-PL+SaO78AUCas+YKj01UiS2rpmGcxz8XPmLdFWmq6PYjPX6GL5UBAc3pkBphIm0aTLZtsikoEul+JrwAuAy6UA==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.4.6:
-    resolution: {integrity: sha512-76j/zsui6mWPX8pZVMGgF8eiKHPmKuGa2lo0A/Ja0HUvdYCOGUfHsWJGVVIeYbuEp3jsKyVt7OnMDeH9CqO6bg==}
+  /turbo-linux-32/1.4.7:
+    resolution: {integrity: sha512-dK94UwDzySMALoQtjBVVPbWJZP6xw3yHGuytM3q5p4kfMZPSA+rgNBn5T5Af2Rc7jxlLAsu5ODJ0SgIbWSF5Hg==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.4.6:
-    resolution: {integrity: sha512-z4A37Xm7lZyO9ddtGnvQHWMrsAKX6vFBxdbtb9MY76VRblo7lWSuk4LwCeM+T+ZDJ9LBFiF7aD/diRShlLx9jA==}
+  /turbo-linux-64/1.4.7:
+    resolution: {integrity: sha512-F6IM23zgTYo9gYJaNp17gVvQBt0hMIvz52OF91DpPYSLpV2h9OSlzPJ3j5TGaWueS/bc/YCV23+VojXX/MauGQ==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.4.6:
-    resolution: {integrity: sha512-Uh/V3oaAdhyZW6FKPpKihAxQo3EbvLaVNnzzkBmBnvHRkqoDJHhpuG72V7nn8pzxVbJ1++NEVjvbc2kmKFvGjg==}
+  /turbo-linux-arm/1.4.7:
+    resolution: {integrity: sha512-FTh4itdMNZ7IxGKknFnQ6iPO9vGGKqyySkCYLR01lnw6BTnKL9KuM9XUCBRyn7dNmHhAnqu1ZtVsBkH7CE7DEw==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.4.6:
-    resolution: {integrity: sha512-FW1jmOpZfOoVVvml338N0MPnYjiMyYWTaMb4T+IosgGYymcUE3xJjfXJcqfU/9/uKTyY8zG0qr9/5rw2kpMS2Q==}
+  /turbo-linux-arm64/1.4.7:
+    resolution: {integrity: sha512-kFe5jzj3FoY6jAEwyNEswndj1t/fPl0qyxfcQv6aNPz7Nb2Lh7mY/EEse+CG3ydIo5RZKba7ppQoBSDmHx7JsA==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.4.6:
-    resolution: {integrity: sha512-iWaL3Pwj52BH3T2M8nXScmbSnq4+x47MYK7lJMG7FsZGAIoT5ToO1Wt1iX3GRHTcnIZYm/kCfJ1ptK/NCossLA==}
+  /turbo-linux-mips64le/1.4.7:
+    resolution: {integrity: sha512-756nG8dnPQVcnl9s70S4NQ43aJjpsnc2h0toktPO+9u2ayv9XTbIPvZLFsS55bDeYhodDGvxoB96W6Xnx01hyQ==}
     cpu: [mipsel]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.4.6:
-    resolution: {integrity: sha512-Af/KlUmpiORDyELxT7byXNWl3fefErGQMJfeqXEtAdhs8OCKQWuU+lchcZbiBZYNpL+lZoa3PAmP9Fpx7R4plA==}
+  /turbo-linux-ppc64le/1.4.7:
+    resolution: {integrity: sha512-VS2ofGN/XsafNGJdZ21UguURHb7KRG879yWLj59hO1d+0xXXQbx7ljsmEPOhiE4UjEdx4Ur6P44BhztTgDx9Og==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.4.6:
-    resolution: {integrity: sha512-NBd+XPlRSaR//lVN13Q9DOqK3CbowSvafIyGsO4jfvMsGTdyNDL6AYtFsvTKW91/G7ZhATmSEkPn2pZRuhP/DA==}
+  /turbo-windows-32/1.4.7:
+    resolution: {integrity: sha512-M5GkZdA0CbJAOcR8SScM63CBV+NtX7qjhoNNOl0F99nGJ+rO3dH71CcM/rbhlz9SQzKQoX8rcuwZHe4r2HZAug==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.4.6:
-    resolution: {integrity: sha512-86AbmG+CjzVTpn4RGtwU2CYy4zSyAc9bIQ4pDGLIpCJg6JlD11duaiMJh0SCU/HCqWLJjWDI4qD+f9WNbgPsyQ==}
+  /turbo-windows-64/1.4.7:
+    resolution: {integrity: sha512-ftZUtZ1BX1vi8MbxKr+a7riIkhwvGnNTtWGprVu+aDJ8PnV+lNqbkrLJGvKP7Cn22hGTfzcjNNPcJ5PBZpQEQw==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-arm64/1.4.6:
-    resolution: {integrity: sha512-V+pWcqhTtmQQ3ew8qEjYtUwzyW6tO1RgvP+6OKzItYzTnMTr1Fe42Q21V+tqRNxuNfFDKsgVJdk2p5wB87bvyQ==}
+  /turbo-windows-arm64/1.4.7:
+    resolution: {integrity: sha512-mZ79XeJFfaeVKdBV3w0eoGaqAxFnwxrme0jZtSWemAbeDSCF/13wcbLGwtq0+Lu0LxEGweeQ5AqsCIc9t9i6sA==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.4.6:
-    resolution: {integrity: sha512-FKtBXlOJ7YjSK22yj4sJLCtDcHFElypt7xw9cZN7Wyv9x4XBrTmh5KP6RmcGnRR1/GJlTNwD2AY2T9QTPnHh+g==}
+  /turbo/1.4.7:
+    resolution: {integrity: sha512-oIk7PAISPidDOkTM5M+ydEe5GDQ/+TahDgIbaYKeAAy2Qpmur4s0HybSDWHIdxLqI96OPD/mOKymRLrjh3Mdhg==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-android-arm64: 1.4.6
-      turbo-darwin-64: 1.4.6
-      turbo-darwin-arm64: 1.4.6
-      turbo-freebsd-64: 1.4.6
-      turbo-freebsd-arm64: 1.4.6
-      turbo-linux-32: 1.4.6
-      turbo-linux-64: 1.4.6
-      turbo-linux-arm: 1.4.6
-      turbo-linux-arm64: 1.4.6
-      turbo-linux-mips64le: 1.4.6
-      turbo-linux-ppc64le: 1.4.6
-      turbo-windows-32: 1.4.6
-      turbo-windows-64: 1.4.6
-      turbo-windows-arm64: 1.4.6
+      turbo-android-arm64: 1.4.7
+      turbo-darwin-64: 1.4.7
+      turbo-darwin-arm64: 1.4.7
+      turbo-freebsd-64: 1.4.7
+      turbo-freebsd-arm64: 1.4.7
+      turbo-linux-32: 1.4.7
+      turbo-linux-64: 1.4.7
+      turbo-linux-arm: 1.4.7
+      turbo-linux-arm64: 1.4.7
+      turbo-linux-mips64le: 1.4.7
+      turbo-linux-ppc64le: 1.4.7
+      turbo-windows-32: 1.4.7
+      turbo-windows-64: 1.4.7
+      turbo-windows-arm64: 1.4.7
     dev: true
 
   /tweetnacl-util/0.15.1:
