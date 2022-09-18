@@ -4,8 +4,12 @@ import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@su
 import ConstantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
+import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
 
-import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
+import {
+  getConstantProductPoolFactoryContract,
+  useConstantProductPoolFactoryContract,
+} from './useConstantProductPoolFactoryContract'
 
 export enum PoolState {
   LOADING,
@@ -24,10 +28,17 @@ interface PoolData {
   token1: Token
 }
 
-export function useGetAllExistedPools(
+interface UseGetAllConstantProductPoolsReturn {
+  isLoading: boolean
+  isError: boolean
+  data: [PoolState, ConstantProductPool | null][]
+}
+
+export function useGetAllConstantProductPools(
   chainId: number,
-  currencies: [Type | undefined, Type | undefined][]
-): [PoolState, ConstantProductPool | null][] {
+  currencies: [Type | undefined, Type | undefined][],
+  config?: Omit<UseContractReadsConfig, 'contracts'>
+): UseGetAllConstantProductPoolsReturn {
   const contract = useConstantProductPoolFactoryContract(chainId)
   const pairsUnique = useMemo(() => {
     const pairsMap = new Map<string, [Token, Token]>()
@@ -45,7 +56,11 @@ export function useGetAllExistedPools(
   }, [currencies])
   const pairsUniqueAddr = useMemo(() => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]), [pairsUnique])
 
-  const { data: callStatePoolsCount } = useContractReads({
+  const {
+    data: callStatePoolsCount,
+    isLoading: callStatePoolsCountLoading,
+    isError: callStatePoolsCountError,
+  } = useContractReads({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
       addressOrName: contract.address,
@@ -53,47 +68,50 @@ export function useGetAllExistedPools(
       functionName: 'poolsCount',
       args: el,
     })),
-    enabled: pairsUniqueAddr.length > 0,
+    enabled: pairsUniqueAddr.length > 0 && config?.enabled,
+    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
   })
 
   const callStatePoolsCountProcessed = useMemo(() => {
-    return (
-      callStatePoolsCount
-        ?.map((s, i) => [i, s.result ? parseInt(s.result.count.toString()) : 0] as [number, number])
-        .filter(([, length]) => length)
-        .map(([i, length]) => [pairsUniqueAddr[i][0], pairsUniqueAddr[i][1], 0, length]) || []
-    )
+    return callStatePoolsCount
+      ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+      .filter(([, length]) => length)
+      .map(([i, length]) => [pairsUniqueAddr[i][0], pairsUniqueAddr[i][1], 0, length])
   }, [callStatePoolsCount, pairsUniqueAddr])
 
   const pairsUniqueProcessed = useMemo(() => {
-    return (
-      callStatePoolsCount
-        ?.map((s, i) => [i, s.result ? parseInt(s.result.count.toString()) : 0] as [number, number])
-        .filter(([, length]) => length)
-        .map(([i]) => [pairsUnique[i][0], pairsUnique[i][1]]) || []
-    )
+    return callStatePoolsCount
+      ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+      .filter(([, length]) => length)
+      .map(([i]) => [pairsUnique[i][0], pairsUnique[i][1]])
   }, [callStatePoolsCount, pairsUnique])
 
-  const { data: callStatePools } = useContractReads({
-    contracts: callStatePoolsCountProcessed.map((el) => ({
-      chainId,
-      addressOrName: contract.address,
-      contractInterface: contract.interface,
-      functionName: 'getPools',
-      args: el,
-    })),
-    enabled: callStatePoolsCountProcessed.length > 0,
+  const {
+    data: callStatePools,
+    isLoading: callStatePoolsLoading,
+    isError: callStatePoolsError,
+  } = useContractReads({
+    contracts:
+      callStatePoolsCountProcessed?.map((el) => ({
+        chainId,
+        addressOrName: contract.address,
+        contractInterface: contract.interface,
+        functionName: 'getPools',
+        args: el,
+      })) || [],
+    enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
+    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
   })
 
   const pools = useMemo(() => {
     const pools: PoolData[] = []
     callStatePools?.forEach((s, i) => {
-      if (s.result !== undefined)
-        s.result.pairPools.forEach((address: string) =>
+      if (s !== undefined)
+        s.forEach((address: string) =>
           pools.push({
             address,
-            token0: pairsUniqueProcessed[i][0] as Token,
-            token1: pairsUniqueProcessed[i][1] as Token,
+            token0: pairsUniqueProcessed?.[i][0] as Token,
+            token1: pairsUniqueProcessed?.[i][1] as Token,
           })
         )
     })
@@ -102,43 +120,57 @@ export function useGetAllExistedPools(
 
   const poolsAddresses = useMemo(() => pools.map((p) => p.address), [pools])
 
-  const { data: resultsReserves } = useContractReads({
-    contracts: poolsAddresses.map((addressOrName) => ({
-      chainId,
-      addressOrName,
-      contractInterface: POOL_INTERFACE,
-      functionName: 'getReserves',
-    })),
-    enabled: poolsAddresses.length > 0,
+  const {
+    data: reservesAndFees,
+    isLoading: reservesAndFeesLoading,
+    isError: reservesAndFeesError,
+  } = useContractReads({
+    contracts: [
+      ...poolsAddresses.map((addressOrName) => ({
+        chainId,
+        addressOrName,
+        contractInterface: POOL_INTERFACE,
+        functionName: 'getReserves',
+      })),
+      ...poolsAddresses.map((addressOrName) => ({
+        chainId,
+        addressOrName,
+        contractInterface: POOL_INTERFACE,
+        functionName: 'swapFee',
+      })),
+    ],
+    enabled: poolsAddresses.length > 0 && config?.enabled,
+    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
   })
 
-  const { data: resultsFee } = useContractReads({
-    contracts: poolsAddresses.map((addressOrName) => ({
-      chainId,
-      addressOrName,
-      contractInterface: POOL_INTERFACE,
-      functionName: 'swapFee',
-    })),
-    enabled: poolsAddresses.length > 0,
-  })
-
-  return useMemo(
-    () =>
-      pools.map((p, i) => {
-        if (!resultsReserves?.[i].valid || !resultsReserves?.[i].result) return [PoolState.LOADING, null]
-        if (!resultsFee?.[i].valid || !resultsFee?.[i].result) return [PoolState.LOADING, null]
+  return useMemo(() => {
+    return {
+      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesAndFeesLoading,
+      isError: callStatePoolsCountError || callStatePoolsError || reservesAndFeesError,
+      data: pools.map((p, i) => {
+        if (!reservesAndFees?.[i] || !reservesAndFees?.[i + poolsAddresses.length]) return [PoolState.LOADING, null]
         return [
           PoolState.EXISTS,
           new ConstantProductPool(
-            Amount.fromRawAmount(p.token0, resultsReserves[i].result._reserve0.toString()),
-            Amount.fromRawAmount(p.token1, resultsReserves[i].result._reserve1.toString()),
-            parseInt(resultsFee[i].result?.[0].toString()),
-            resultsReserves[i].result?._blockTimestampLast !== 0
+            Amount.fromRawAmount(p.token0, reservesAndFees[i]._reserve0.toString()),
+            Amount.fromRawAmount(p.token1, reservesAndFees[i]._reserve1.toString()),
+            parseInt(reservesAndFees[i + poolsAddresses.length].toString()),
+            reservesAndFees[i]._blockTimestampLast !== 0
           ),
         ]
       }),
-    [pools, resultsReserves, resultsFee]
-  )
+    }
+  }, [
+    callStatePoolsCountLoading,
+    callStatePoolsLoading,
+    reservesAndFeesLoading,
+    callStatePoolsCountError,
+    callStatePoolsError,
+    reservesAndFeesError,
+    pools,
+    reservesAndFees,
+    poolsAddresses.length,
+  ])
 }
 
 export function useConstantProductPools(
@@ -195,10 +227,9 @@ export function useConstantProductPools(
       contractInterface: POOL_INTERFACE,
       functionName: 'getReserves',
     })),
-    enabled: poolsAddresses.length > 0,
+    enabled: poolsAddresses.length > 0 && getConstantProductPoolFactoryContract(chainId).addressOrName,
     watch: true,
     keepPreviousData: true,
-    cacheOnBlock: true,
   })
 
   return useMemo(() => {

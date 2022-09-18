@@ -1,5 +1,6 @@
 export * from './AddSection'
 export * from './FarmRewardsAvailableTooltip'
+export * from './Header'
 export * from './Layout'
 export * from './NewPositionSection'
 export * from './PoolPositionProvider'

@@ -43,7 +43,8 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident": "1.0.0-canary.38",
     "@sushiswap/trident-preview": "npm:@sushiswap/trident@1.0.0-canary.36",
-    "tiny-invariant": "^1.2.0"
+    "tiny-invariant": "^1.2.0",
+    "tiny-warning": "^1.0.3"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

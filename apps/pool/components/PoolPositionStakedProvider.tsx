@@ -4,7 +4,12 @@ import { Chef, useMasterChef } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 import { CHEF_TYPE_MAP } from '../lib/constants'
-import { useTokenAmountDollarValues, useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../lib/hooks'
+import {
+  useCreateNotification,
+  useTokenAmountDollarValues,
+  useTokensFromPair,
+  useUnderlyingTokenBalanceFromPair,
+} from '../lib/hooks'
 
 interface PoolPositionStakedContext {
   balance: Amount<Token> | undefined
@@ -64,13 +69,14 @@ interface _PoolPositionStakedProviderProps {
 }
 
 const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({ pair, farmId, chefType, children }) => {
+  const createNotification = useCreateNotification()
   const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
-
   const { balance, isLoading, isError, withdraw, deposit, isWritePending, isWriteError } = useMasterChef({
     chainId: pair.chainId,
     chef: chefType,
     pid: farmId,
     token: liquidityToken,
+    onSuccess: createNotification,
   })
 
   const stakedUnderlying = useUnderlyingTokenBalanceFromPair({

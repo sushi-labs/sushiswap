@@ -1,7 +1,6 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero, HashZero } from '@ethersproject/constants'
-import { Chain } from '@sushiswap/chain'
-import { createToast, Dots } from '@sushiswap/ui'
+import { NotificationData } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 import {
   useAccount,
@@ -20,10 +19,12 @@ export function useBentoBoxApproveCallback({
   masterContract,
   watch,
   onSignature,
+  onSuccess,
 }: {
   masterContract?: string
   watch: boolean
   onSignature?(payload: Signature): void
+  onSuccess?(data: NotificationData): void
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { address } = useAccount()
   const { chain } = useNetwork()
@@ -120,19 +121,25 @@ export function useBentoBoxApproveCallback({
       // Regular approval as fallback
       if (!(e instanceof UserRejectedRequestError)) {
         const data = await writeAsync()
-        createToast({
-          txHash: data.hash,
-          href: Chain.from(chain.id).getTxUrl(data.hash),
-          promise: data.wait(),
-          summary: {
-            pending: <Dots>Approving BentoBox Master Contract</Dots>,
-            completed: `Successfully approved the master contract`,
-            failed: 'Something went wrong approving the master contract',
-          },
-        })
+        if (onSuccess) {
+          const ts = new Date().getTime()
+          onSuccess({
+            type: 'approval',
+            chainId: chain?.id,
+            txHash: data.hash,
+            promise: data.wait(),
+            summary: {
+              pending: `Approving BentoBox Master Contract`,
+              completed: `Successfully approved the master contract`,
+              failed: 'Something went wrong approving the master contract',
+            },
+            groupTimestamp: ts,
+            timestamp: ts,
+          })
+        }
       }
     }
-  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, onSignature, writeAsync])
+  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, onSignature, writeAsync, onSuccess])
 
   return useMemo(() => [approvalState, signature, approveBentoBox], [approvalState, approveBentoBox, signature])
 }

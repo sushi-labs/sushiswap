@@ -63,7 +63,6 @@ export const useRewarder: UseRewarder = ({
   const { data, isLoading, isError } = useContractReads({
     contracts,
     watch: true,
-    cacheOnBlock: true,
     keepPreviousData: true,
     allowFailure: true,
     enabled: !!account,

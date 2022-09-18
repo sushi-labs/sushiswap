@@ -1,23 +1,22 @@
 import { Signature } from '@ethersproject/bytes'
-import { Chain } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
-import { Button, createToast, Dots } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   Checker,
-  getV3RouterContractConfig,
+  getTridentRouterContractConfig,
   PoolState,
   useBentoBoxTotals,
   useConstantProductPool,
   useTotalSupply,
-  useV3RouterContract,
+  useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, UserRejectedRequestError, useSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
 import {
   approveMasterContractAction,
@@ -28,7 +27,7 @@ import {
   unwrapWETHAction,
 } from '../../lib/actions'
 import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
-import { useSettings } from '../../lib/state/storage'
+import { useNotifications, useSettings } from '../../lib/state/storage'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { RemoveSectionWidget } from './RemoveSectionWidget'
 
@@ -38,9 +37,10 @@ interface RemoveSectionTridentProps {
 
 export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
   const { address } = useAccount()
+  const { chain } = useNetwork()
   const { token0, token1, liquidityToken } = useTokensFromPair(pair)
   const isMounted = useIsMounted()
-  const contract = useV3RouterContract(pair.chainId)
+  const contract = useTridentRouterContract(pair.chainId)
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({ chainId: pair.chainId })
   const [{ slippageTolerance }] = useSettings()
   const [error, setError] = useState<string>()
@@ -62,6 +62,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   const [poolState, pool] = useConstantProductPool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
   const totalSupply = useTotalSupply(liquidityToken)
 
+  const [, { createNotification }] = useNotifications(address)
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: pool?.reserve0,
     reserve1: pool?.reserve1,
@@ -84,6 +85,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
 
   const execute = useCallback(async () => {
     if (
+      !chain?.id ||
       !pool ||
       !token0 ||
       !token1 ||
@@ -156,19 +158,19 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
         },
       })
 
-      createToast({
+      const ts = new Date().getTime()
+      createNotification({
+        type: 'burn',
+        chainId: chain.id,
         txHash: data.hash,
-        href: Chain.from(pool.chainId).getTxUrl(data.hash),
         promise: data.wait(),
         summary: {
-          pending: (
-            <Dots>
-              Removing liquidity from the {token0.symbol}/{token1.symbol} pair
-            </Dots>
-          ),
+          pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
           failed: 'Something went wrong when removing liquidity',
         },
+        timestamp: ts,
+        groupTimestamp: ts,
       })
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {
@@ -178,6 +180,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       console.log(e)
     }
   }, [
+    chain?.id,
     pool,
     token0,
     token1,
@@ -187,9 +190,10 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     minAmount1,
     address,
     rebases,
-    permit,
     slpAmountToRemove,
+    permit,
     sendTransactionAsync,
+    createNotification,
   ])
 
   return useMemo(
@@ -223,6 +227,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                   }
                 >
                   <Approve
+                    onSuccess={createNotification}
                     className="flex-grow !justify-end"
                     components={
                       <Approve.Components>
@@ -230,7 +235,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                           size="md"
                           className="whitespace-nowrap"
                           fullWidth
-                          address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                          address={getTridentRouterContractConfig(pair.chainId).addressOrName}
                           onSignature={setPermit}
                         />
                         <Approve.Token
@@ -238,7 +243,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                           className="whitespace-nowrap"
                           fullWidth
                           amount={slpAmountToRemove}
-                          address={getV3RouterContractConfig(pair.chainId).addressOrName}
+                          address={getTridentRouterContractConfig(pair.chainId).addressOrName}
                         />
                       </Approve.Components>
                     }
@@ -264,6 +269,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       </div>
     ),
     [
+      createNotification,
       error,
       execute,
       isMounted,

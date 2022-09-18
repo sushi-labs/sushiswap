@@ -11,6 +11,7 @@ import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
 
 import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useTokensFromPair } from '../../lib/hooks'
+import { useNotifications } from '../../lib/state/storage'
 import { PairWithAlias } from '../../types'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
@@ -52,6 +53,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title }) =
   const [hover, setHover] = useState(false)
   const [error, setError] = useState<string>()
   const { address } = useAccount()
+  const [, { createNotification }] = useNotifications(address)
   const [value, setValue] = useState('')
   const { reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const { balance } = usePoolPosition()
@@ -110,6 +112,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title }) =
             <Checker.Network size="md" chainId={pair.chainId}>
               <Checker.Amounts size="md" chainId={pair.chainId} amounts={[amount]} fundSource={FundSource.WALLET}>
                 <Approve
+                  onSuccess={createNotification}
                   className="flex-grow !justify-end"
                   components={
                     <Approve.Components>

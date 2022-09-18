@@ -36,7 +36,7 @@ importers:
       prettier: 2.7.1
       sort-package-json: 1.57.0
       ts-jest: 28.0.7_jest@28.1.3
-      turbo: 1.4.6
+      turbo: 1.4.7
 
   apis/farm:
     specifiers:
@@ -83,7 +83,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^32.1.0
+      '@sushiswap/default-token-list': ^32.2.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -91,7 +91,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 32.1.0
+      '@sushiswap/default-token-list': 32.2.0
       '@vercel/node': 2.5.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -867,6 +867,119 @@ importers:
 
   apps/swap:
     specifiers:
+      '@builder.io/partytown': ^0.6.0
+      '@ethersproject/abi': ^5.0.0
+      '@ethersproject/address': ^5.0.0
+      '@ethersproject/bignumber': ^5.0.0
+      '@ethersproject/bytes': ^5.0.0
+      '@ethersproject/constants': ^5.0.0
+      '@ethersproject/contracts': ^5.0.0
+      '@ethersproject/experimental': ^5.0.0
+      '@ethersproject/providers': ^5.0.0
+      '@ethersproject/solidity': ^5.0.0
+      '@headlessui/react': ^1.6.6
+      '@heroicons/react': ^1.0.0
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-localstorage': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/token-lists': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/validate': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@types/node': ^17.0.30
+      '@types/numeral': ^2.0.2
+      '@types/react': ^18.0.0
+      '@types/react-dom': ^18.0.0
+      '@uniswap/redux-multicall': ^1.1.1
+      '@uniswap/v2-core': ^1.0.1
+      '@wagmi/core': ^0.4.9
+      autoprefixer: ^10.4.0
+      date-fns: ^2.29.1
+      eslint: ^8.20.0
+      ethers: ^5.0.0
+      next: ^12.2.0
+      next-seo: ^5.5.0
+      next-sitemap: ^3.1.16
+      next-transpile-modules: 9.0.0
+      numeral: ^2.0.6
+      postcss: ^8.4.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-redux: ^8.0.1
+      swr: ^1.3.0
+      tailwindcss: ^3.1.0
+      typescript: ^4.0.0
+      wagmi: ^0.5.12
+    dependencies:
+      '@builder.io/partytown': 0.6.4
+      '@ethersproject/abi': 5.6.4
+      '@ethersproject/address': 5.6.1
+      '@ethersproject/bignumber': 5.6.2
+      '@ethersproject/bytes': 5.6.1
+      '@ethersproject/constants': 5.6.1
+      '@ethersproject/contracts': 5.6.2
+      '@ethersproject/experimental': 5.6.3
+      '@ethersproject/providers': 5.6.8
+      '@ethersproject/solidity': 5.6.1
+      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/exchange': link:../../packages/exchange
+      '@sushiswap/format': link:../../packages/format
+      '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/math': link:../../packages/math
+      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/tines': link:../../packages/tines
+      '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/validate': link:../../packages/validate
+      '@sushiswap/wagmi': link:../../packages/wagmi
+      '@uniswap/redux-multicall': 1.1.5_qkky4j2mmnw7h56t7omltv4kju
+      '@uniswap/v2-core': 1.0.1
+      '@wagmi/core': 0.4.9_ethers@5.6.9+react@18.2.0
+      date-fns: 2.29.1
+      ethers: 5.6.9
+      next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_53oqlnqnxhbetdy4ljlkkvmoby
+      next-sitemap: 3.1.21_next@12.2.3
+      numeral: 2.0.6
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
+      swr: 1.3.0_react@18.2.0
+      wagmi: 0.5.12_um4cugg2i3ywhvigsmvsir7hgy
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+      '@types/node': 17.0.45
+      '@types/numeral': 2.0.2
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
+      autoprefixer: 10.4.7_postcss@8.4.14
+      eslint: 8.20.0
+      next-transpile-modules: 9.0.0
+      postcss: 8.4.14
+      tailwindcss: 3.1.6_postcss@8.4.14
+      typescript: 4.7.4
+
+  apps/xswap:
+    specifiers:
       '@builder.io/partytown': ^0.6.1
       '@ethersproject/abi': ^5.0.0
       '@ethersproject/address': ^5.0.0
@@ -954,7 +1067,7 @@ importers:
       '@uniswap/v2-core': 1.0.1
       ethers: 5.6.9
       nanoid: 4.0.0
-      next: 12.2.3_biqbaboplfbrettd7655fr4n2y
+      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -1363,6 +1476,29 @@ importers:
       tsup: 6.2.0_typescript@4.7.4
       typescript: 4.7.4
 
+  packages/convert:
+    specifiers:
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^27.5.1
+      jest: ^28.1.0
+      tsup: ^6.2.0
+      typescript: ^4.7.0
+    dependencies:
+      '@sushiswap/currency': link:../currency
+    devDependencies:
+      '@sushiswap/eslint-config': link:../config/eslint
+      '@sushiswap/jest-config': link:../config/jest
+      '@sushiswap/prettier-config': link:../config/prettier
+      '@sushiswap/typescript-config': link:../config/typescript
+      '@types/jest': 27.5.2
+      jest: 28.1.3
+      tsup: 6.2.0_typescript@4.7.4
+      typescript: 4.7.4
+
   packages/currency:
     specifiers:
       '@ethersproject/address': ^5.0.0
@@ -1425,6 +1561,7 @@ importers:
       '@types/node': ^17.0.33
       eslint: ^8.20.0
       tiny-invariant: ^1.2.0
+      tiny-warning: ^1.0.3
       tsup: ^6.2.0
       typescript: ^4.7.0
     dependencies:
@@ -1439,6 +1576,7 @@ importers:
       '@sushiswap/trident': 1.0.0-canary.38
       '@sushiswap/trident-preview': /@sushiswap/trident/1.0.0-canary.36
       tiny-invariant: 1.2.0
+      tiny-warning: 1.0.3
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
@@ -1657,6 +1795,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
       '@types/node': ^17.0.30
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
@@ -1673,6 +1812,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
+      '@sushiswap/ui': link:../../ui
       '@types/node': 17.0.45
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
@@ -1880,6 +2020,7 @@ importers:
       '@types/react-window': ^1.8.5
       autoprefixer: ^10.4.0
       classnames: ^2.3.1
+      date-fns: ^2.29.1
       next: ^12.2.0
       postcss: ^8.4.0
       rc-tooltip: ^5.2.2
@@ -1909,6 +2050,7 @@ importers:
       '@tailwindcss/line-clamp': 0.4.0
       '@tailwindcss/typography': 0.5.4
       classnames: 2.3.1
+      date-fns: 2.29.1
       rc-tooltip: 5.2.2_biqbaboplfbrettd7655fr4n2y
       react-dropzone: 14.2.2_react@18.2.0
       react-popper: 2.3.0_ili5ylfne7i3hkfpsanzgkfu6m
@@ -1935,6 +2077,26 @@ importers:
       tsup: 6.2.0_m3gf5jmpd2aiwepqhoxxcqgnwi
       typescript: 4.7.4
 
+  packages/validate:
+    specifiers:
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^27.5.1
+      jest: ^28.1.0
+      tsup: ^6.2.0
+      typescript: ^4.7.0
+    devDependencies:
+      '@sushiswap/eslint-config': link:../config/eslint
+      '@sushiswap/jest-config': link:../config/jest
+      '@sushiswap/prettier-config': link:../config/prettier
+      '@sushiswap/typescript-config': link:../config/typescript
+      '@types/jest': 27.5.2
+      jest: 28.1.3
+      tsup: 6.2.0_typescript@4.7.4
+      typescript: 4.7.4
+
   packages/wagmi:
     specifiers:
       '@ethersproject/abi': ^5.0.0
@@ -1958,6 +2120,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/tines': workspace:*
       '@sushiswap/trident': ^1.0.0-canary.41
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -1994,6 +2157,7 @@ importers:
       '@sushiswap/math': link:../math
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/tines': link:../tines
       '@sushiswap/trident': 1.0.0-canary.41
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../config/wagmi
@@ -9024,8 +9188,8 @@ packages:
     resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
     dev: false
 
-  /@sushiswap/default-token-list/32.1.0:
-    resolution: {integrity: sha512-KRVQiMsCv1rL1LA/yBPUqpJI2m2d9v7u33XOLZAclb16/wpaAus2fnw94CLEp+ULuXP9fzgoms+6P9jl/qHAzA==}
+  /@sushiswap/default-token-list/32.2.0:
+    resolution: {integrity: sha512-C8MahlVkdC3gvWY6c9lsqk007Qh/vHi36LwQ8gkFY2GJ4mfxYHWwe84EuX3lYF6VLfsBAO7hCDsPtg5pXDd9Jg==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -10404,6 +10568,26 @@ packages:
       ethers: 5.6.9
       eventemitter3: 4.0.7
       zustand: 4.0.0
+    transitivePeerDependencies:
+      - immer
+      - react
+    dev: false
+
+  /@wagmi/core/0.4.9_ethers@5.6.9+react@18.2.0:
+    resolution: {integrity: sha512-V/1PgetbA0PcIT6FJxDnCwRU/MZhecHVu1/7+QMncdxUQykyDd8MGlx0b8EjitMLLqzuD9kcx7sQpfS0gk5rZg==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.3.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      ethers: 5.6.9
+      eventemitter3: 4.0.7
+      zustand: 4.0.0_react@18.2.0
     transitivePeerDependencies:
       - immer
       - react
@@ -23884,137 +24068,137 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /turbo-android-arm64/1.4.6:
-    resolution: {integrity: sha512-YxSlHc64CF5J7yNUMiLBHkeLyzrpe75Oy7tivWb3z7ySG44BXPikk4HDJZPh0T1ELvukDwuPKkvDukJ2oCLJpA==}
+  /turbo-android-arm64/1.4.7:
+    resolution: {integrity: sha512-BtWtH8e8w1GhtYpGQmkcDS/AUzVZhQ4ZZN+qtUFei1wZD7VAdtJ9Wcsfi3WD+mXA6vtpIpRJVfQMcShr8l8ErA==}
     cpu: [arm64]
     os: [android]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-64/1.4.6:
-    resolution: {integrity: sha512-f6uto7LLpjwZ6iZSF+8uaDpuiTji6xmnWDxNuW23DBE8iv5mxehHd+6Ys851uKDRrPb3QdCu9ctyigKTAla5Vg==}
+  /turbo-darwin-64/1.4.7:
+    resolution: {integrity: sha512-bMvZaAz5diec9feZ0XpQosYI8U0kiOQM2tj2sv0Y2WZbe227wodVMCQMyUowmcotO8nr6NF76Xo5E+H+dnY6LQ==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.4.6:
-    resolution: {integrity: sha512-o9C6e5XyuMHQwE0fEhUxfpXxvNr2QXXWX8nxIjygxeF19AqKbk/s08vZBOEmXV6/gx/pRhZ1S2nf0PIUjKBD/Q==}
+  /turbo-darwin-arm64/1.4.7:
+    resolution: {integrity: sha512-AyfxYfKgh1EigQKjypbnDoMLuy4e/n/go+KYiWKKIpOaWXWLBokrBWzYN/aI3NMDRUJWK5ExdlWI9Nleelq8uQ==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.4.6:
-    resolution: {integrity: sha512-Gg9VOUo6McXYKGevcYjGUSmMryZyZggvpdPh7Dw3QTcT8Tsy6OBtq6WnJ2O4kFDsMigyKtEOJPceD9vDMZt3yQ==}
+  /turbo-freebsd-64/1.4.7:
+    resolution: {integrity: sha512-T5/osfbCh0rL53MFS5byFFfsR3vPMHIKIJ4fMMCNkoHsmFj2R0Pv53nqhEItogt0FJwCDHPyt7oBqO83H/AWQQ==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.4.6:
-    resolution: {integrity: sha512-W7VrcneWFN1QENKt5cpAPSsf9ArYBBAm3VtPBZEO5tX8kuahGlah1SKdKJXrRxYOY82wyNxDagS/rHpBlrAAzw==}
+  /turbo-freebsd-arm64/1.4.7:
+    resolution: {integrity: sha512-PL+SaO78AUCas+YKj01UiS2rpmGcxz8XPmLdFWmq6PYjPX6GL5UBAc3pkBphIm0aTLZtsikoEul+JrwAuAy6UA==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.4.6:
-    resolution: {integrity: sha512-76j/zsui6mWPX8pZVMGgF8eiKHPmKuGa2lo0A/Ja0HUvdYCOGUfHsWJGVVIeYbuEp3jsKyVt7OnMDeH9CqO6bg==}
+  /turbo-linux-32/1.4.7:
+    resolution: {integrity: sha512-dK94UwDzySMALoQtjBVVPbWJZP6xw3yHGuytM3q5p4kfMZPSA+rgNBn5T5Af2Rc7jxlLAsu5ODJ0SgIbWSF5Hg==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.4.6:
-    resolution: {integrity: sha512-z4A37Xm7lZyO9ddtGnvQHWMrsAKX6vFBxdbtb9MY76VRblo7lWSuk4LwCeM+T+ZDJ9LBFiF7aD/diRShlLx9jA==}
+  /turbo-linux-64/1.4.7:
+    resolution: {integrity: sha512-F6IM23zgTYo9gYJaNp17gVvQBt0hMIvz52OF91DpPYSLpV2h9OSlzPJ3j5TGaWueS/bc/YCV23+VojXX/MauGQ==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.4.6:
-    resolution: {integrity: sha512-Uh/V3oaAdhyZW6FKPpKihAxQo3EbvLaVNnzzkBmBnvHRkqoDJHhpuG72V7nn8pzxVbJ1++NEVjvbc2kmKFvGjg==}
+  /turbo-linux-arm/1.4.7:
+    resolution: {integrity: sha512-FTh4itdMNZ7IxGKknFnQ6iPO9vGGKqyySkCYLR01lnw6BTnKL9KuM9XUCBRyn7dNmHhAnqu1ZtVsBkH7CE7DEw==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.4.6:
-    resolution: {integrity: sha512-FW1jmOpZfOoVVvml338N0MPnYjiMyYWTaMb4T+IosgGYymcUE3xJjfXJcqfU/9/uKTyY8zG0qr9/5rw2kpMS2Q==}
+  /turbo-linux-arm64/1.4.7:
+    resolution: {integrity: sha512-kFe5jzj3FoY6jAEwyNEswndj1t/fPl0qyxfcQv6aNPz7Nb2Lh7mY/EEse+CG3ydIo5RZKba7ppQoBSDmHx7JsA==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.4.6:
-    resolution: {integrity: sha512-iWaL3Pwj52BH3T2M8nXScmbSnq4+x47MYK7lJMG7FsZGAIoT5ToO1Wt1iX3GRHTcnIZYm/kCfJ1ptK/NCossLA==}
+  /turbo-linux-mips64le/1.4.7:
+    resolution: {integrity: sha512-756nG8dnPQVcnl9s70S4NQ43aJjpsnc2h0toktPO+9u2ayv9XTbIPvZLFsS55bDeYhodDGvxoB96W6Xnx01hyQ==}
     cpu: [mipsel]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.4.6:
-    resolution: {integrity: sha512-Af/KlUmpiORDyELxT7byXNWl3fefErGQMJfeqXEtAdhs8OCKQWuU+lchcZbiBZYNpL+lZoa3PAmP9Fpx7R4plA==}
+  /turbo-linux-ppc64le/1.4.7:
+    resolution: {integrity: sha512-VS2ofGN/XsafNGJdZ21UguURHb7KRG879yWLj59hO1d+0xXXQbx7ljsmEPOhiE4UjEdx4Ur6P44BhztTgDx9Og==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.4.6:
-    resolution: {integrity: sha512-NBd+XPlRSaR//lVN13Q9DOqK3CbowSvafIyGsO4jfvMsGTdyNDL6AYtFsvTKW91/G7ZhATmSEkPn2pZRuhP/DA==}
+  /turbo-windows-32/1.4.7:
+    resolution: {integrity: sha512-M5GkZdA0CbJAOcR8SScM63CBV+NtX7qjhoNNOl0F99nGJ+rO3dH71CcM/rbhlz9SQzKQoX8rcuwZHe4r2HZAug==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.4.6:
-    resolution: {integrity: sha512-86AbmG+CjzVTpn4RGtwU2CYy4zSyAc9bIQ4pDGLIpCJg6JlD11duaiMJh0SCU/HCqWLJjWDI4qD+f9WNbgPsyQ==}
+  /turbo-windows-64/1.4.7:
+    resolution: {integrity: sha512-ftZUtZ1BX1vi8MbxKr+a7riIkhwvGnNTtWGprVu+aDJ8PnV+lNqbkrLJGvKP7Cn22hGTfzcjNNPcJ5PBZpQEQw==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-arm64/1.4.6:
-    resolution: {integrity: sha512-V+pWcqhTtmQQ3ew8qEjYtUwzyW6tO1RgvP+6OKzItYzTnMTr1Fe42Q21V+tqRNxuNfFDKsgVJdk2p5wB87bvyQ==}
+  /turbo-windows-arm64/1.4.7:
+    resolution: {integrity: sha512-mZ79XeJFfaeVKdBV3w0eoGaqAxFnwxrme0jZtSWemAbeDSCF/13wcbLGwtq0+Lu0LxEGweeQ5AqsCIc9t9i6sA==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.4.6:
-    resolution: {integrity: sha512-FKtBXlOJ7YjSK22yj4sJLCtDcHFElypt7xw9cZN7Wyv9x4XBrTmh5KP6RmcGnRR1/GJlTNwD2AY2T9QTPnHh+g==}
+  /turbo/1.4.7:
+    resolution: {integrity: sha512-oIk7PAISPidDOkTM5M+ydEe5GDQ/+TahDgIbaYKeAAy2Qpmur4s0HybSDWHIdxLqI96OPD/mOKymRLrjh3Mdhg==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-android-arm64: 1.4.6
-      turbo-darwin-64: 1.4.6
-      turbo-darwin-arm64: 1.4.6
-      turbo-freebsd-64: 1.4.6
-      turbo-freebsd-arm64: 1.4.6
-      turbo-linux-32: 1.4.6
-      turbo-linux-64: 1.4.6
-      turbo-linux-arm: 1.4.6
-      turbo-linux-arm64: 1.4.6
-      turbo-linux-mips64le: 1.4.6
-      turbo-linux-ppc64le: 1.4.6
-      turbo-windows-32: 1.4.6
-      turbo-windows-64: 1.4.6
-      turbo-windows-arm64: 1.4.6
+      turbo-android-arm64: 1.4.7
+      turbo-darwin-64: 1.4.7
+      turbo-darwin-arm64: 1.4.7
+      turbo-freebsd-64: 1.4.7
+      turbo-freebsd-arm64: 1.4.7
+      turbo-linux-32: 1.4.7
+      turbo-linux-64: 1.4.7
+      turbo-linux-arm: 1.4.7
+      turbo-linux-arm64: 1.4.7
+      turbo-linux-mips64le: 1.4.7
+      turbo-linux-ppc64le: 1.4.7
+      turbo-windows-32: 1.4.7
+      turbo-windows-64: 1.4.7
+      turbo-windows-arm64: 1.4.7
     dev: true
 
   /tweetnacl-util/0.15.1:

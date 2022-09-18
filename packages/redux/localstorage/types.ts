@@ -23,6 +23,7 @@ export type StorageState = {
   gasType: 'custom' | 'preset'
   customTokens: Record<number, Record<string, TokenAsObject>>
   transactionDeadline: number
+  notifications: Record<string, Record<string, string[]>>
 }
 
 export interface UpdateSlippageTolerancePayload {
@@ -55,6 +56,16 @@ export interface UpdateGasType {
 
 export interface UpdateTransactionDeadline {
   transactionDeadline: number
+}
+
+export interface createNotification {
+  account: string
+  notification: string
+  timestamp: number
+}
+
+export interface ClearNotifications {
+  account: string
 }
 
 export type AddCustomToken = TokenAsObject

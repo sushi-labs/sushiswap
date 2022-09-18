@@ -17,7 +17,9 @@ export const TokenSelectorSettingsOverlay: FC<TokenSelectorSettingsOverlayProps>
     <>
       <IconButton
         className="hover:animate-spin-slow w-[24px] h-[24px] flex items-center justify-center"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true)
+        }}
       >
         <CogIcon width={20} height={20} className="hover:text-slate-50 text-slate-100" />
       </IconButton>

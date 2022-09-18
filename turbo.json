@@ -93,6 +93,5 @@
       ],
       "cache": true
     }
-  },
-  "baseBranch": "origin/master"
+  }
 }

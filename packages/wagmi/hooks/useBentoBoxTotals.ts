@@ -1,16 +1,19 @@
+import { AddressZero } from '@ethersproject/constants'
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
+import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
 
 import { getBentoBoxContractConfig } from './useBentoBoxContract'
 
 type UseBentoBoxTotals = (
   chainId: number,
-  currencies: (Currency | undefined)[]
+  currencies: (Currency | undefined)[],
+  config?: Omit<UseContractReadsConfig, 'contracts'>
 ) => Record<string, { base: JSBI; elastic: JSBI }> | undefined
 
-export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies) => {
+export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config) => {
   const addresses = useMemo(
     () =>
       currencies
@@ -31,6 +34,9 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies) => {
 
   const { data: totals } = useContractReads({
     contracts,
+    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
+    keepPreviousData: true,
+    enabled: Boolean(getBentoBoxContractConfig(chainId).addressOrName !== AddressZero),
   })
 
   return useMemo(() => {
@@ -46,11 +52,13 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies) => {
 
 export const useBentoBoxTotal = (
   chainId: number,
-  currency: Currency | undefined
+  currency: Currency | undefined,
+  config?: Omit<UseContractReadsConfig, 'contracts'>
 ): { base: JSBI; elastic: JSBI } | undefined => {
   const totals = useBentoBoxTotals(
     chainId,
-    useMemo(() => [currency], [currency])
+    useMemo(() => [currency], [currency]),
+    config
   )
   return useMemo(() => {
     if (!totals || !currency) {

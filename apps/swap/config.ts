@@ -1,33 +1,22 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { Theme } from './types'
+export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON]
 
-export const defaultTheme: Theme = {
-  accent: '#0993EC',
-  primary: {
-    default: 'text-slate-200',
-    hover: 'hover:text-slate-100',
-  },
-  secondary: {
-    default: 'text-slate-400',
-    hover: 'hover:text-slate-300',
-  },
-  borderRadius: 12,
-  background: {
-    primary: 'bg-slate-700',
-    secondary: 'bg-slate-800',
-  },
-}
-
-export const SUPPORTED_CHAIN_IDS = [
+export const AMM_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
   ChainId.POLYGON,
-  ChainId.FANTOM,
+  ChainId.AVALANCHE,
+  ChainId.ARBITRUM,
   ChainId.BSC,
-  ChainId.OPTIMISM,
+  ChainId.CELO,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
 ]
+
+export const SUPPORTED_CHAIN_IDS = [...TRIDENT_ENABLED_NETWORKS, ...AMM_ENABLED_NETWORKS]
 
 export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {
   [ChainId.OPTIMISM]: '0x93395129bd3fcf49d95730D3C2737c17990fF328',

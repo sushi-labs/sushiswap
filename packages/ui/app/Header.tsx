@@ -4,10 +4,21 @@ import useScrollPosition from '@react-hook/window-scroll'
 import { useIsMounted } from '@sushiswap/hooks'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '../index'
+import {
+  classNames,
+  Container,
+  Link,
+  MaxWidth,
+  Select,
+  SushiIcon,
+  Typography,
+  useBreakpoint,
+  useDrawer,
+} from '../index'
 
 export enum AppType {
   Swap = 'Swap',
+  xSwap = 'xSwap',
   Furo = 'Streaming',
   Blog = 'Blog',
   Legacy = 'Sushi 1.0',
@@ -20,6 +31,7 @@ export enum AppType {
 
 const LINK = {
   [AppType.Swap]: '/swap',
+  [AppType.xSwap]: '/xswap',
   [AppType.Furo]: '/furo',
   [AppType.Blog]: '/blog',
   [AppType.Legacy]: '/',
@@ -94,7 +106,7 @@ export function Header({
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
                 <span className="text-sm capitalize truncate">
-                  {appType === AppType.Swap ? 'Explore Apps' : appType}
+                  {[AppType.xSwap, AppType.Swap].includes(appType) ? 'Explore Apps' : appType}
                 </span>
                 <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
               </Listbox.Button>
@@ -118,6 +130,18 @@ export function Header({
                       The easiest way to trade
                     </Typography>
                   </Select.Option>
+                  {/* <Select.Option
+                    as="a"
+                    href="https://sushi.com/swap"
+                    key={AppType.xSwap}
+                    value={AppType.xSwap}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.xSwap}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Cross-chain swapping made easy
+                    </Typography>
+                  </Select.Option>
                   <Select.Option
                     as="a"
                     href="https://sushi.com/pool"
@@ -129,7 +153,7 @@ export function Header({
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Earn fees by providing liquidity
                     </Typography>
-                  </Select.Option>
+                  </Select.Option> */}
                 </div>
                 <div>
                   <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">

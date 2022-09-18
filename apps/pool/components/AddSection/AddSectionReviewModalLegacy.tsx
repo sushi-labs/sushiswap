@@ -1,20 +1,20 @@
-import { Chain, ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
-import { Button, createToast, Dots } from '@sushiswap/ui'
+import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   calculateGasMargin,
-  getV2RouterContractConfig,
+  getSushiSwapRouterContractConfig,
   PairState,
-  useV2RouterContract,
+  useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useSendTransaction } from 'wagmi'
 
 import { useTransactionDeadline } from '../../lib/hooks'
-import { useSettings } from '../../lib/state/storage'
+import { useNotifications, useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalLegacyProps {
@@ -41,7 +41,8 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const { address } = useAccount()
   const { chain } = useNetwork()
 
-  const contract = useV2RouterContract(chainId)
+  const [, { createNotification }] = useNotifications(address)
+  const contract = useSushiSwapRouterContract(chainId)
   const [{ slippageTolerance }] = useSettings()
   const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction({
     chainId,
@@ -120,19 +121,19 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         })
       }
 
-      createToast({
+      const ts = new Date().getTime()
+      createNotification({
+        type: 'mint',
+        chainId: chain.id,
         txHash: data.hash,
-        href: Chain.from(chain.id).getTxUrl(data.hash),
         promise: data.wait(),
         summary: {
-          pending: (
-            <Dots>
-              Adding liquidity to the {token0.symbol}/{token1.symbol} pair
-            </Dots>
-          ),
+          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           failed: 'Something went wrong when adding liquidity',
         },
+        timestamp: ts,
+        groupTimestamp: ts,
       })
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {
@@ -142,17 +143,18 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
       console.log(e)
     }
   }, [
+    token0,
+    token1,
     chain?.id,
     contract,
     input0,
     input1,
     address,
-    token0,
-    token1,
-    sendTransactionAsync,
     minAmount0,
     minAmount1,
+    createNotification,
     deadline,
+    sendTransactionAsync,
   ])
 
   return useMemo(
@@ -168,6 +170,7 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
           error={error}
         >
           <Approve
+            onSuccess={createNotification}
             className="flex-grow !justify-end"
             components={
               <Approve.Components>
@@ -176,14 +179,14 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input0}
-                  address={getV2RouterContractConfig(chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
                 />
                 <Approve.Token
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input1}
-                  address={getV2RouterContractConfig(chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
                 />
               </Approve.Components>
             }
@@ -198,6 +201,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         </AddSectionReviewModal>
       </>
     ),
-    [chainId, children, error, execute, input0, input1, isWritePending, open]
+    [chainId, children, createNotification, error, execute, input0, input1, isWritePending, open]
   )
 }

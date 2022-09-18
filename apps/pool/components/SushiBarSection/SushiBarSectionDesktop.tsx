@@ -1,18 +1,20 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import chains, { Chain, ChainId } from '@sushiswap/chain'
+import chains, { ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { formatNumber } from '@sushiswap/format'
 import { XSushi } from '@sushiswap/graph-client/.graphclient'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button, classNames, createToast, Dots, Link, Typography } from '@sushiswap/ui'
+import { Button, classNames, Dots, Link, Typography } from '@sushiswap/ui'
 import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
+import { XSushi } from '../../.graphclient'
+import { useNotifications } from '../../lib/state/storage'
 import { SushiBarInput } from './SushiBarInput'
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
@@ -25,6 +27,7 @@ export const SushiBarSectionDesktop: FC = () => {
   const [value, setValue] = useState<string>('')
   const [, setOtherValue] = useState<string>('')
   const [error, setError] = useState<string>()
+  const [, { createNotification }] = useNotifications(address)
 
   const { data: stats } = useSWR<XSushi>(`/pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
@@ -47,15 +50,19 @@ export const SushiBarSectionDesktop: FC = () => {
     try {
       const data = await writeAsync({ args: [amount.quotient.toString()] })
 
-      createToast({
+      const ts = new Date().getTime()
+      createNotification({
+        type: stake ? 'enterBar' : 'leaveBar',
+        chainId: chain.id,
         txHash: data.hash,
-        href: Chain.from(chain.id).getTxUrl(data.hash),
         promise: data.wait(),
         summary: {
-          pending: <Dots>{stake ? 'Entering' : 'Exiting'} the Bar</Dots>,
+          pending: `${stake ? 'Entering' : 'Exiting'} the Bar`,
           completed: `Successfully ${stake ? 'entered' : 'exited'} the Bar`,
           failed: `Something went wrong ${stake ? 'entering' : 'exiting'} the Bar`,
         },
+        timestamp: ts,
+        groupTimestamp: ts,
       })
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {
@@ -64,7 +71,7 @@ export const SushiBarSectionDesktop: FC = () => {
 
       console.log(e)
     }
-  }, [chain?.id, amount, writeAsync, stake])
+  }, [chain?.id, amount, writeAsync, createNotification, stake])
 
   useEffect(() => {
     setValue('')
@@ -116,6 +123,7 @@ export const SushiBarSectionDesktop: FC = () => {
               </div>
               <div className="flex order-4 gap-1">
                 <Approve
+                  onSuccess={createNotification}
                   className="flex !flex-row !justify-center"
                   components={
                     <Approve.Components>

@@ -5,9 +5,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/redux-localstorage',
   '@sushiswap/chain',
   '@sushiswap/wagmi',
-  '@sushiswap/stargate',
   '@sushiswap/ui',
-  '@sushiswap/swap-widget',
 ])
 
 // @ts-check
@@ -16,25 +14,12 @@ const nextConfig = {
   basePath: '/swap',
   reactStrictMode: true,
   swcMinify: true,
-  // typescript: {
-  //   ignoreBuildErrors: true,
-  // },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
   experimental: {
     nextScriptWorkers: true,
-  },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/swap',
-        permanent: true,
-        basePath: false,
-      },
-    ]
   },
 }
 

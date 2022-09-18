@@ -26,7 +26,11 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                 </App.NavItemList>
               }
             >
-              <Wallet.Button size="sm" className="border-none shadow-md whitespace-nowrap" />
+              <Wallet.Button
+                size="sm"
+                className="border-none shadow-md whitespace-nowrap"
+                supportedNetworks={SUPPORTED_CHAIN_IDS}
+              />
             </App.Header>
             <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
             <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />

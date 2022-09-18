@@ -9,7 +9,7 @@ import useSWR from 'swr'
 import { ProviderRpcError, UserRejectedRequestError } from 'wagmi'
 
 import { CHEF_TYPE_MAP } from '../../lib/constants'
-import { useTokensFromPair } from '../../lib/hooks'
+import { useCreateNotification, useTokensFromPair } from '../../lib/hooks'
 import { PairWithAlias } from '../../types'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
@@ -46,6 +46,7 @@ export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress 
 }
 
 export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType }) => {
+  const createNotification = useCreateNotification()
   const [value, setValue] = useState('')
   const [error, setError] = useState<string>()
   const { reserve0, reserve1, liquidityToken } = useTokensFromPair(pair)
@@ -88,6 +89,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
             guard={<Button size="md">Insufficient Balance</Button>}
           >
             <Approve
+              onSuccess={createNotification}
               className="flex-grow !justify-end"
               components={
                 <Approve.Components>

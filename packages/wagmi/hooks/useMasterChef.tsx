@@ -1,8 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
-import { Chain } from '@sushiswap/chain'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
-import { createToast, Dots } from '@sushiswap/ui'
+import { NotificationData } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContractReads, useSendTransaction } from 'wagmi'
 
@@ -34,11 +33,12 @@ interface UseMasterChefParams {
   pid: number
   token: Token
   enabled?: boolean
+  onSuccess?(data: NotificationData): void
 }
 
 type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 
-export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enabled = true }) => {
+export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enabled = true, onSuccess }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
   const { sendTransactionAsync, isLoading: isWritePending, isError: isWriteError } = useSendTransaction({ chainId })
@@ -82,7 +82,6 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
   const { data, isLoading, isError } = useContractReads({
     contracts,
     watch: true,
-    cacheOnBlock: true,
     keepPreviousData: true,
     enabled: contracts.length > 0 && enabled,
   })
@@ -122,22 +121,24 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
         },
       })
 
-      createToast({
-        txHash: data.hash,
-        href: Chain.from(chainId).getTxUrl(data.hash),
-        promise: data.wait(),
-        summary: {
-          pending: (
-            <Dots>
-              Staking {amount.toSignificant(6)} {amount.currency.symbol} tokens
-            </Dots>
-          ),
-          completed: `Successfully staked ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
-          failed: `Something went wrong when staking ${amount.currency.symbol} tokens`,
-        },
-      })
+      if (onSuccess) {
+        const ts = new Date().getTime()
+        onSuccess({
+          type: 'mint',
+          chainId,
+          txHash: data.hash,
+          promise: data.wait(),
+          summary: {
+            pending: `Staking ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
+            completed: `Successfully staked ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
+            failed: `Something went wrong when staking ${amount.currency.symbol} tokens`,
+          },
+          groupTimestamp: ts,
+          timestamp: ts,
+        })
+      }
     },
-    [address, chainId, chef, contract.address, contract.interface, pid, sendTransactionAsync]
+    [address, chainId, chef, contract.address, contract.interface, onSuccess, pid, sendTransactionAsync]
   )
 
   /**
@@ -159,22 +160,24 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
         },
       })
 
-      createToast({
-        txHash: data.hash,
-        href: Chain.from(chainId).getTxUrl(data.hash),
-        promise: data.wait(),
-        summary: {
-          pending: (
-            <Dots>
-              Unstaking {amount.toSignificant(6)} {amount.currency.symbol} tokens
-            </Dots>
-          ),
-          completed: `Successfully unstaked ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
-          failed: `Something went wrong when unstaking ${amount.currency.symbol} tokens`,
-        },
-      })
+      if (onSuccess) {
+        const ts = new Date().getTime()
+        onSuccess({
+          type: 'burn',
+          chainId,
+          txHash: data.hash,
+          promise: data.wait(),
+          summary: {
+            pending: `Unstaking ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
+            completed: `Successfully unstaked ${amount.toSignificant(6)} ${amount.currency.symbol} tokens`,
+            failed: `Something went wrong when unstaking ${amount.currency.symbol} tokens`,
+          },
+          groupTimestamp: ts,
+          timestamp: ts,
+        })
+      }
     },
-    [address, chainId, chef, contract.address, contract.interface, pid, sendTransactionAsync]
+    [address, chainId, chef, contract.address, contract.interface, onSuccess, pid, sendTransactionAsync]
   )
 
   /**
@@ -224,20 +227,27 @@ export const useMasterChef: UseMasterChef = ({ chainId, chef, pid, token, enable
       }
     }
 
-    createToast({
-      txHash: tx.hash,
-      href: Chain.from(chainId).getTxUrl(tx.hash),
-      promise: tx.wait(),
-      summary: {
-        pending: <Dots>Claiming rewards</Dots>,
-        completed: `Successfully claimed rewards`,
-        failed: `Something went wrong when claiming rewards`,
-      },
-    })
+    if (onSuccess) {
+      const ts = new Date().getTime()
+      onSuccess({
+        type: 'claimRewards',
+        chainId,
+        txHash: tx.hash,
+        promise: tx.wait(),
+        summary: {
+          pending: `Claiming rewards`,
+          completed: `Successfully claimed rewards`,
+          failed: `Something went wrong when claiming rewards`,
+        },
+        groupTimestamp: ts,
+        timestamp: ts,
+      })
+    }
   }, [
     chainId,
     data,
     chef,
+    onSuccess,
     sendTransactionAsync,
     address,
     contract.address,

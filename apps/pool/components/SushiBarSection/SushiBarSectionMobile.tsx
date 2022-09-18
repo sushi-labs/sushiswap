@@ -1,11 +1,11 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
-import chains, { Chain, ChainId } from '@sushiswap/chain'
+import chains, { ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { formatNumber } from '@sushiswap/format'
 import { XSushi } from '@sushiswap/graph-client/.graphclient'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button, createToast, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
+import { Button, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
 import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
 import { FC, useCallback, useState } from 'react'
@@ -14,12 +14,15 @@ import { ProviderRpcError, useAccount, useContractWrite, useNetwork, UserRejecte
 
 import { SushiBarInput } from './SushiBarInput'
 
+import { useNotifications } from '../../lib/state/storage'
+
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]
 
 export const SushiBarSectionMobile: FC = () => {
   const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
+  const [, { createNotification }] = useNotifications(address)
 
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [open, setOpen] = useState(false)
@@ -47,15 +50,19 @@ export const SushiBarSectionMobile: FC = () => {
     try {
       const data = await writeAsync({ args: [amount.quotient.toString()] })
 
-      createToast({
+      const ts = new Date().getTime()
+      createNotification({
+        type: selectedIndex === 0 ? 'enterBar' : 'leaveBar',
+        chainId: activeChain.id,
         txHash: data.hash,
-        href: Chain.from(activeChain.id).getTxUrl(data.hash),
         promise: data.wait(),
         summary: {
-          pending: <Dots>{selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar</Dots>,
+          pending: `${selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar`,
           completed: `Successfully ${selectedIndex === 0 ? 'entered' : 'exited'} the Bar`,
           failed: `Something went wrong ${selectedIndex === 0 ? 'entering' : 'exiting'} the Bar`,
         },
+        timestamp: ts,
+        groupTimestamp: ts,
       })
     } catch (e: unknown) {
       if (!(e instanceof UserRejectedRequestError)) {
@@ -64,7 +71,7 @@ export const SushiBarSectionMobile: FC = () => {
 
       console.log(e)
     }
-  }, [activeChain?.id, amount, writeAsync, selectedIndex])
+  }, [activeChain?.id, amount, writeAsync, createNotification, selectedIndex])
 
   const handleClose = useCallback(() => {
     setOpen(false)
@@ -136,6 +143,7 @@ export const SushiBarSectionMobile: FC = () => {
                   </Tab.Panel>
                   <Dialog.Actions className="h-[84px]">
                     <Approve
+                      onSuccess={createNotification}
                       className="flex !flex-row !justify-center"
                       components={
                         <Approve.Components>

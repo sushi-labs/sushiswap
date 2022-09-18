@@ -23,7 +23,7 @@ export type TokenSelectorProps = {
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = memo(
-  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, onSelect, ...props }) => {
+  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, onSelect, open, ...props }) => {
     const { address } = useAccount()
     const isMounted = useIsMounted()
 
@@ -39,6 +39,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       chainId,
       currencies: _tokenMapValues,
       loadBentobox: false,
+      enabled: open,
     })
 
     const { data: pricesMap } = usePrices({ chainId })
@@ -49,6 +50,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       if (variant === 'overlay') {
         return (
           <TokenSelectorOverlay
+            open={open}
             account={address}
             balancesMap={balances}
             tokenMap={_tokenMap}
@@ -63,6 +65,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
 
       return (
         <TokenSelectorDialog
+          open={open}
           account={address}
           balancesMap={balances}
           tokenMap={_tokenMap}
@@ -73,7 +76,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
           {...props}
         />
       )
-    }, [_tokenMap, address, balances, chainId, fundSource, isMounted, onSelect, pricesMap, props, variant])
+    }, [_tokenMap, address, balances, chainId, fundSource, isMounted, onSelect, open, pricesMap, props, variant])
   },
   (prevProps, nextProps) => {
     return (
