@@ -1,5 +1,5 @@
 import { Listbox } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { classNames, Container, Select } from '@sushiswap/ui'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'

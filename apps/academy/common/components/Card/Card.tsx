@@ -1,4 +1,4 @@
-import { ClockIcon } from '@heroicons/react/outline'
+import { ClockIcon } from '@heroicons/react/24/outline'
 import { CircleIcon, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'

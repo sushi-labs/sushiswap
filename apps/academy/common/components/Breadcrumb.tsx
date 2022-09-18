@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ShareIcon } from '@heroicons/react/solid'
+import { ChevronLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
 import { Container, IconButton, Typography } from '@sushiswap/ui'
 import Link from 'next/link'
 import { FC } from 'react'

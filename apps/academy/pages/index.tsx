@@ -1,9 +1,9 @@
-import { PlusCircleIcon } from '@heroicons/react/solid'
+import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import { useDebounce } from '@sushiswap/hooks'
 import { Button, classNames, Container, Tab, Typography } from '@sushiswap/ui'
 import { AdditionalArticles } from 'common/components/AdditionalArticles'
 import { LevelCard } from 'common/components/LevelCard'
-import { BlogSeo } from 'common/components/Seo/BlogSeo'
+import { AcademySeo } from 'common/components/Seo/AcademySeo'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -89,7 +89,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
   return (
     <>
-      <BlogSeo seo={seo} />
+      <AcademySeo seo={seo} />
       <Hero />
       <Container maxWidth="6xl" className="flex flex-col gap-12 pt-20 pb-16 mx-auto sm:gap-24 sm:pb-24 sm:pt-40">
         <div className="sticky z-10 overflow-x-auto top-[54px] md:hidden px-6 sm:pl-4 sm:pr-4">

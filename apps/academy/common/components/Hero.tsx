@@ -1,4 +1,4 @@
-import { PaperAirplaneIcon } from '@heroicons/react/solid'
+import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 import { Button, Container, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -26,9 +26,9 @@ export const Hero: FC = () => {
             // href={`/blog/${article?.attributes?.slug}`}
             href={`/academy`}
             color="blue"
-            className="mt-11 inline-flex transition-all hover:ring-4 focus:ring-4 text-sm text-slate-50 h-[40px] sm:!h-[40px] rounded-full px-6"
+            className="inline-flex h-12 text-base font-bold transition-all rounded-full px-7 md:px-10 mt-11 hover:ring-4 focus:ring-4 text-slate-50"
           >
-            <PaperAirplaneIcon className="rotate-45 -translate-y-0.5 text-slate-50" width={20} height={20} />
+            <PaperAirplaneIcon className="-rotate-45 -translate-y-0.5 text-slate-50" width={20} height={20} />
             Get started with Sushi
           </Button>
         </div>

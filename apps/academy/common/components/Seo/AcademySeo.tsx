@@ -7,10 +7,10 @@ interface BlogSeo {
   seo: Global
 }
 
-export const BlogSeo: FC<BlogSeo> = ({ seo }) => (
+export const AcademySeo: FC<BlogSeo> = ({ seo }) => (
   <ArticleJsonLd
     type="Blog"
-    url="https://sushi.com/blog"
+    url="https://sushi.com/academy"
     title={seo.siteName}
     description={seo.siteDescription}
     authorName="Sushi"

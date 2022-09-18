@@ -1,4 +1,4 @@
-import { LinkIcon, MailIcon } from '@heroicons/react/outline'
+import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
 import { TwitterIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -30,7 +30,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
             `https://sushi.com/academy/articles/${article?.attributes?.slug}`
           )}`}
         >
-          <MailIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
+          <EnvelopeIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
         </a>
         <LinkIcon
           width={20}

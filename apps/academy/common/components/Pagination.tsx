@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { classNames } from '@sushiswap/ui'
 import { FC } from 'react'
 

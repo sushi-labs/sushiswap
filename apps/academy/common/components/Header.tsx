@@ -1,5 +1,5 @@
 import { Listbox } from '@headlessui/react'
-import { ChevronDownIcon, MenuIcon } from '@heroicons/react/outline'
+import { Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { App, classNames, Link, Select, Typography } from '@sushiswap/ui'
 import { AppType } from '@sushiswap/ui/app/Header'
 import { FC } from 'react'
@@ -35,7 +35,7 @@ export const Header: FC = () => {
     },
   ]
   return (
-    <App.Header appType={AppType.Blog} className="border-b bg-slate-900 border-slate-200/5" maxWidth="5xl">
+    <App.Header appType={AppType.Academy} className="border-b bg-slate-900 border-slate-200/5" maxWidth="5xl">
       <nav className="hidden md:flex gap-14">
         {headerLinks.map(({ title, options }, i) => (
           <Select
@@ -71,7 +71,7 @@ export const Header: FC = () => {
         <Select
           button={
             <Listbox.Button type="button" className="p-1.5 bg-[#A6AAB54D] rounded">
-              <MenuIcon className="w-4 h-4" aria-hidden="true" />
+              <Bars3Icon className="w-4 h-4" aria-hidden="true" />
             </Listbox.Button>
           }
         >

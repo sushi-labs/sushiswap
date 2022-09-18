@@ -1,4 +1,4 @@
-import { XIcon } from '@heroicons/react/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { IconButton } from '@sushiswap/ui'
 import classNames from 'classnames'
 import React from 'react'
@@ -14,7 +14,7 @@ export const Drawer = ({ children, isOpen, onClose, header }) => {
       <div className="flex items-center justify-between">
         <header className="text-2xl font-bold">{header}</header>
         <IconButton className="w-6 h-6" onClick={onClose}>
-          <XIcon />
+          <XMarkIcon />
         </IconButton>
       </div>
       <div className="mt-5">{children}</div>
