@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, tryParseAmount, Type } from '@sushiswap/currency'
+import { Native, SUSHI, tryParseAmount, Type, USDC } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
@@ -25,7 +25,9 @@ const Index: FC = () => {
   const [input0, setInput0] = useState<string>('')
   const [token0, setToken0] = useState<Type | undefined>(Native.onChain(chainIdWithDefault))
   const [input1, setInput1] = useState<string>('')
-  const [token1, setToken1] = useState<Type | undefined>(SUSHI[chainIdWithDefault])
+  const [token1, setToken1] = useState<Type | undefined>(() =>
+    chainIdWithDefault in SUSHI ? SUSHI[chainIdWithDefault] : USDC[chainIdWithDefault]
+  )
   const [tradeType, setTradeType] = useState<TradeType>(TradeType.EXACT_INPUT)
 
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
@@ -56,8 +58,9 @@ const Index: FC = () => {
   const amounts = useMemo(() => [parsedInput0], [parsedInput0])
 
   useEffect(() => {
-    setToken0(Native.onChain(chain ? chain.id : chainIdWithDefault))
-    setToken1(SUSHI[chain ? chain.id : chainIdWithDefault])
+    const chainId = chain ? chain.id : chainIdWithDefault
+    setToken0(Native.onChain(chainId))
+    setToken1(chainId in SUSHI ? SUSHI[chainId] : USDC[chainId])
     setInput0('')
     setInput1('')
   }, [chain, chainIdWithDefault])
