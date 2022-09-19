@@ -1,6 +1,7 @@
 export * from './ArrowFlatLinesUp'
 export * from './BentoboxIcon'
 export * from './CalendarIcon'
+export * from './CarbonIcon'
 export * from './CheckIcon'
 export * from './CircleIcon'
 export * from './CircleWithText'
