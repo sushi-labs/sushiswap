@@ -16,7 +16,7 @@ export const Header = () => {
       nav={
         <App.NavItemList>
           <App.NavItem href="/swap" label="Swap" />
-          <App.NavItem href="/pool" label="Earn" />
+          <App.NavItem href="/pool" label="Invest" />
         </App.NavItemList>
       }
     >
