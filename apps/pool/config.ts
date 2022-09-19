@@ -4,17 +4,17 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [ChainId.OPTIMISM, ChainId.PO
 
 export const AMM_ENABLED_NETWORKS: ChainId[] = [
   ChainId.ETHEREUM,
-  ChainId.AVALANCHE,
   ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.MOONRIVER,
+  ChainId.GNOSIS,
+  ChainId.FANTOM,
   ChainId.BSC,
   ChainId.CELO,
-  ChainId.FANTOM,
-  //   ChainId.FUSE,
-  //   ChainId.GNOSIS,
-  //   ChainId.MOONBEAM,
-  //   ChainId.MOONRIVER,
+  ChainId.FUSE,
+  // ChainId.MOONBEAM,
   // ChainId.ARBITRUM_NOVA,
   // ChainId.HARMONY,
 ]
 
-export const SUPPORTED_CHAIN_IDS: ChainId[] = [...TRIDENT_ENABLED_NETWORKS, ...AMM_ENABLED_NETWORKS]
+export const SUPPORTED_CHAIN_IDS: ChainId[] = [...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]
