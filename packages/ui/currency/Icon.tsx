@@ -26,6 +26,7 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.AVALANCHE]: 'avalanche',
   [ChainId.MOONBEAM]: 'moonbeam',
   [ChainId.OPTIMISM]: 'optimism',
+  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova',
 }
 
 const AvalancheLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/avax.jpg'
@@ -78,6 +79,7 @@ const LOGO: Record<number, string> = {
   [ChainId.MOONBEAM]: MoonbeamLogo,
   [ChainId.OPTIMISM]: EthereumLogo,
   [ChainId.KAVA]: KavaLogo,
+  [ChainId.ARBITRUM_NOVA]: EthereumLogo,
 }
 
 export interface IconProps extends Omit<ImageProps, 'src'> {
