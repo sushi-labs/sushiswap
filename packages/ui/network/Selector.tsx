@@ -22,7 +22,7 @@ export const Selector: FC<SelectorProps> = ({
   exclusive,
   renderer = false,
 }) => {
-  const networks = useMemo(() => [...new Set(_networks)], [_networks])
+  const networks = useMemo(() => Array.from(new Set(_networks)), [_networks])
   const handleClick = useCallback(
     (chainId: ChainId) => {
       if (exclusive) {
@@ -45,7 +45,7 @@ export const Selector: FC<SelectorProps> = ({
   )
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex flex-wrap gap-2">
       {networks.map((chainId) => {
         const button = (
           <div
