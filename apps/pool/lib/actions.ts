@@ -163,11 +163,30 @@ export const unwrapWETHAction = ({ chainId, router, recipient, amountMinimum }: 
   return router.interface.encodeFunctionData('unwrapWETH', [recipient])
 }
 
+interface Sweep {
+  router: Contract
+  token: string
+  amount: string
+  recipient: string
+  fromBento: boolean
+}
+
 interface SweepNativeToken {
   router: Contract
   token: string
   amount: string
   recipient: string
+}
+
+/**
+ * Recover mistakenly sent ERC-20 tokens
+ * @param router Router contract
+ * @param token address of token
+ * @param amount amount to recover
+ * @param recipient address to sent funds to
+ */
+export const sweep = ({ router, token, amount, recipient, fromBento = false }: Sweep) => {
+  return router.interface.encodeFunctionData('sweep', [token, amount, recipient, fromBento])
 }
 
 /**

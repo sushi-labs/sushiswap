@@ -1,4 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
+import { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
@@ -23,6 +24,7 @@ import {
   batchAction,
   burnLiquidityAction,
   LiquidityOutput,
+  sweep,
   sweepNativeTokenAction,
   unwrapWETHAction,
 } from '../../lib/actions'
@@ -136,6 +138,8 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     indexOfWETH = minAmount0.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 0 : indexOfWETH
     indexOfWETH = minAmount1.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 1 : indexOfWETH
 
+    console.log({ indexOfWETH })
+
     const actions = [
       approveMasterContractAction({ router: contract, signature: permit }),
       burnLiquidityAction({
@@ -156,12 +160,20 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
           amountMinimum: liquidityOutput[indexOfWETH].amount,
           recipient: address,
         }),
-        sweepNativeTokenAction({
-          router: contract,
-          token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
-          recipient: address,
-          amount: liquidityOutput[indexOfWETH === 0 ? 1 : 0].amount,
-        })
+        chain.id === ChainId.POLYGON
+          ? sweepNativeTokenAction({
+              router: contract,
+              token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
+              recipient: address,
+              amount: liquidityOutput[indexOfWETH === 0 ? 1 : 0].amount,
+            })
+          : sweep({
+              router: contract,
+              token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
+              recipient: address,
+              amount: liquidityOutput[indexOfWETH === 0 ? 1 : 0].amount,
+              fromBento: false,
+            })
       )
     }
 
