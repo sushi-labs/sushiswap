@@ -123,10 +123,10 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
 
 export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
-  [ChainId.AVALANCHE]: 'subgraph-qa/sushiswap-avalanche',
-  [ChainId.ARBITRUM]: 'subgraph-qa/sushiswap-arbitrum',
+  [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
+  [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
   [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',
-  [ChainId.CELO]: 'subgraph-qa/sushiswap-celo',
+  [ChainId.CELO]: 'sushi-0m/sushiswap-celo',
   [ChainId.FANTOM]: 'subgraph-qa/sushiswap-fantom',
   [ChainId.FUSE]: 'sushi-0m/sushiswap-fuse',
   [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
@@ -137,10 +137,10 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.POLYGON]: 'subgraph-qa/trident-polygon',
-  [ChainId.OPTIMISM]: 'subgraph-qa/trident-optimism',
-  [ChainId.KAVA]: 'subgraph-qa/trident-kava',
-  [ChainId.METIS]: 'subgraph-qa/trident-metis',
+  [ChainId.POLYGON]: 'sushi-0m/trident-polygon',
+  [ChainId.OPTIMISM]: 'sushi-0m/trident-optimism',
+  [ChainId.KAVA]: 'sushi-0m/trident-kava',
+  [ChainId.METIS]: 'sushi-0m/trident-metis',
 }
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
