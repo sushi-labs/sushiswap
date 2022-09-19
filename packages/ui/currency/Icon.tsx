@@ -43,6 +43,7 @@ const PalmLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/p
 const MovrLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/movr.jpg'
 const FuseLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/fuse.jpg'
 const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/telos.jpg'
+const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/icons/master/token/kava.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -76,6 +77,7 @@ const LOGO: Record<number, string> = {
   [ChainId.HARDHAT]: EthereumLogo,
   [ChainId.MOONBEAM]: MoonbeamLogo,
   [ChainId.OPTIMISM]: EthereumLogo,
+  [ChainId.KAVA]: KavaLogo,
 }
 
 export interface IconProps extends Omit<ImageProps, 'src'> {
