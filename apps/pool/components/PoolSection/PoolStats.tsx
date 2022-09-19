@@ -14,10 +14,10 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
   const [totals1d, totals2d] = pair.dayChangeData
-  const reserveChange = ((totals1d.liquidityUSD - totals2d.liquidityUSD) / totals2d.liquidityUSD) * 100
-  const volChange = ((totals1d.volumeUSD - totals2d.volumeUSD) / totals2d.volumeUSD) * 100
+  const reserveChange = ((totals1d.liquidityUSD - totals2d?.liquidityUSD) / totals2d?.liquidityUSD) * 100
+  const volChange = ((totals1d.volumeUSD - totals2d?.volumeUSD) / totals2d?.volumeUSD) * 100
   const transactionCountChange =
-    ((totals1d.transactionCount - totals2d.transactionCount) / totals2d.transactionCount) * 100
+    ((totals1d.transactionCount - totals2d?.transactionCount) / totals2d?.transactionCount) * 100
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
