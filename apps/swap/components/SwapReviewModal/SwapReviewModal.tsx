@@ -30,6 +30,7 @@ import { SwapReviewModalBase } from './SwapReviewModalBase'
 interface SwapReviewModalLegacy {
   chainId: ChainId
   children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
+  onSuccess(): void
 }
 
 interface SwapCall {
@@ -54,7 +55,7 @@ interface FailedCall extends SwapCallEstimate {
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
-export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children }) => {
+export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children, onSuccess }) => {
   const { trade } = useTrade()
   const { address: account } = useAccount()
   const provider = useProvider({ chainId })
@@ -63,7 +64,10 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const [error, setError] = useState<string>()
   const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
     chainId,
-    onSuccess: () => setOpen(false),
+    onSuccess: () => {
+      setOpen(false)
+      onSuccess()
+    },
   })
   const [signature, setSignature] = useState<Signature>()
 
@@ -321,12 +325,31 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
               })
           })
 
-        await sendTransactionAsync({
+        const data = await sendTransactionAsync({
           chainId,
           request: {
             ...tx,
             ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
           },
+        })
+
+        const ts = new Date().getTime()
+        createNotification({
+          type: 'swap',
+          chainId,
+          txHash: data.hash,
+          promise: data.wait(),
+          summary: {
+            pending: `Swapping ${trade.inputAmount.toSignificant(6)} ${
+              trade.inputAmount.currency.symbol
+            } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
+            completed: `Successfully swapped ${trade.inputAmount.toSignificant(6)} ${
+              trade.inputAmount.currency.symbol
+            } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
+            failed: `Something went wrong when trying to swap ${trade.inputAmount.currency.symbol} for ${trade.outputAmount.currency.symbol}`,
+          },
+          timestamp: ts,
+          groupTimestamp: ts,
         })
       }
     } catch (e: unknown) {

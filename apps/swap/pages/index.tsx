@@ -49,8 +49,8 @@ const Index: FC = () => {
     const srcToken = token0
     const dstToken = token1
 
-    setToken0(srcToken)
-    setToken1(dstToken)
+    setToken0(dstToken)
+    setToken1(srcToken)
   }, [token0, token1])
 
   const amounts = useMemo(() => [parsedInput0], [parsedInput0])
@@ -61,6 +61,11 @@ const Index: FC = () => {
     setInput0('')
     setInput1('')
   }, [chain?.id])
+
+  const onSuccess = useCallback(() => {
+    setInput0('')
+    setInput1('')
+  }, [])
 
   return (
     <>
@@ -104,6 +109,7 @@ const Index: FC = () => {
               </div>
               <div className="bg-slate-800">
                 <CurrencyInput
+                  disabled={true}
                   className="p-3"
                   value={input1}
                   onChange={onInput1}
@@ -128,7 +134,7 @@ const Index: FC = () => {
                   >
                     <Checker.Connected fullWidth size="md">
                       <Checker.Network fullWidth size="md" chainId={chainIdWithDefault}>
-                        <SwapReviewModalLegacy chainId={chainIdWithDefault}>
+                        <SwapReviewModalLegacy chainId={chainIdWithDefault} onSuccess={onSuccess}>
                           {({ isWritePending, setOpen }) => {
                             return (
                               <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">

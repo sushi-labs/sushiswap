@@ -6,6 +6,7 @@ import {
   FireIcon,
   LockOpenIcon,
   PlusIcon,
+  SwitchVerticalIcon,
   UploadIcon,
   XIcon,
 } from '@heroicons/react/solid'
@@ -86,6 +87,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
                 ) : (
                   <></>
                 ))}
+              {status === 'success' && notification.type === 'swap' && <SwitchVerticalIcon width={20} height={20} />}
               {status === 'success' && notification.type === 'approval' && <LockOpenIcon width={20} height={20} />}
               {status === 'success' && notification.type === 'mint' && <PlusIcon width={20} height={20} />}
               {status === 'success' && notification.type === 'burn' && <FireIcon width={20} height={20} />}
