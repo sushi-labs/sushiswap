@@ -4,17 +4,7 @@ import useScrollPosition from '@react-hook/window-scroll'
 import { useIsMounted } from '@sushiswap/hooks'
 import React, { Fragment } from 'react'
 
-import {
-  classNames,
-  Container,
-  Link,
-  MaxWidth,
-  Select,
-  SushiIcon,
-  Typography,
-  useBreakpoint,
-  useDrawer,
-} from '../index'
+import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
 
 export enum AppType {
   Swap = 'Swap',
@@ -25,7 +15,7 @@ export enum AppType {
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
   Analytics = 'Analytics',
-  Pool = 'Earn',
+  Pool = 'Invest',
   Partner = 'Partner',
 }
 
