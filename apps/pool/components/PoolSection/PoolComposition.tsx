@@ -27,7 +27,7 @@ export const PoolComposition: FC<PoolCompositionProps> = ({ pair }) => {
             <span className="font-semibold text-slate-50">
               {' '}
               {formatUSD(
-                pair.liquidityNative * Number(prices?.[Native.onChain(pair.chainId).wrapped.address].toFixed(10))
+                pair.liquidityNative * Number(prices?.[Native.onChain(pair.chainId).wrapped.address]?.toFixed(10))
               )}
             </span>
           </Typography>

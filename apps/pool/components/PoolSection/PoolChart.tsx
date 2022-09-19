@@ -260,9 +260,11 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             </span>
           )}
         </Typography>
-        <Typography variant="sm" className="text-slate-500 hoveredItemName">
-          {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
-        </Typography>
+        {xData.length && (
+          <Typography variant="sm" className="text-slate-500 hoveredItemName">
+            {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
+          </Typography>
+        )}
       </div>
       <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
     </div>
