@@ -14,7 +14,7 @@ export const OPTIMISM_LIST = 'https://static.optimism.io/optimism.tokenlist.json
 export const DEFAULT_TOKEN_LIST_OF_TOKEN_LISTS_TO_DISPLAY: string[] = [
   SUSHI_DEFAULT_TOKEN_LIST,
   SUSHI_CHAINLINK_TOKEN_LIST,
-  OPTIMISM_LIST,
+  // OPTIMISM_LIST,
 ]
 
 export const DEFAULT_LIST_OF_LISTS: string[] = [
@@ -23,4 +23,8 @@ export const DEFAULT_LIST_OF_LISTS: string[] = [
 ]
 
 // default lists to be 'active' aka searched across
-export const DEFAULT_ACTIVE_LIST_URLS: string[] = [SUSHI_DEFAULT_TOKEN_LIST, SUSHI_CHAINLINK_TOKEN_LIST, OPTIMISM_LIST]
+export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
+  SUSHI_DEFAULT_TOKEN_LIST,
+  SUSHI_CHAINLINK_TOKEN_LIST,
+  // OPTIMISM_LIST
+]
