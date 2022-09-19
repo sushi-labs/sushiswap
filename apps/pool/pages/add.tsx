@@ -36,7 +36,7 @@ const LINKS: BreadcrumbLink[] = [
 ]
 
 const Add = () => {
-  const [chainId, setChainId] = useState(ChainId.OPTIMISM)
+  const [chainId, setChainId] = useState(ChainId.ETHEREUM)
   const [fee, setFee] = useState(2)
 
   const [token0, setToken0] = useState<Type | undefined>()
