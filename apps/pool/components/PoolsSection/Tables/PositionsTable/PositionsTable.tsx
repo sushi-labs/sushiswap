@@ -54,7 +54,6 @@ export const PositionsTable: FC = () => {
   return (
     <GenericTable<Pair>
       table={table}
-      columns={COLUMNS}
       HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
       loading={!user || isValidating}
       placeholder="No positions found"

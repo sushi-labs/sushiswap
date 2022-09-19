@@ -1,11 +1,10 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
-import { ColumnDef, flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
+import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
 import React, { ReactNode, useState } from 'react'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
-  columns: ColumnDef<C>[]
   HoverElement?: React.FunctionComponent<{ row: C }>
   loading?: boolean
   placeholder: ReactNode
@@ -21,13 +20,13 @@ declare module '@tanstack/react-table' {
 
 export const GenericTable = <T extends { id: string }>({
   table,
-  columns,
   HoverElement,
   loading,
   placeholder,
   pageSize,
 }: GenericTableProps<T>) => {
   const [showOverlay, setShowOverlay] = useState(false)
+  const headers = table.getFlatHeaders()
 
   return (
     <>
@@ -86,7 +85,10 @@ export const GenericTable = <T extends { id: string }>({
                         >
                           {row.getVisibleCells().map((cell, i) => {
                             return (
-                              <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                              <Table.td
+                                style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
+                                key={cell.id}
+                              >
                                 <Link.Internal href={`/${row.original.id}`} passHref={true}>
                                   <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
                                 </Link.Internal>
@@ -112,7 +114,7 @@ export const GenericTable = <T extends { id: string }>({
                   >
                     {row.getVisibleCells().map((cell, i) => {
                       return (
-                        <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                        <Table.td style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }} key={cell.id}>
                           <Link.Internal href={`/${row.original.id}`} passHref={true}>
                             <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
                           </Link.Internal>
@@ -126,8 +128,8 @@ export const GenericTable = <T extends { id: string }>({
               table.getRowModel().rows.length !== 0 &&
               Array.from(Array(Math.max(pageSize - table.getRowModel().rows.length, 0))).map((el, index) => (
                 <Table.tr key={index}>
-                  {columns.map((column) => (
-                    <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }} />
+                  {table.getVisibleFlatColumns().map((column) => (
+                    <Table.td key={column.id} style={{ maxWidth: column.getSize(), width: column.getSize() }} />
                   ))}
                 </Table.tr>
               ))}
@@ -136,10 +138,7 @@ export const GenericTable = <T extends { id: string }>({
                 <Table.tr key={index}>
                   {table.getVisibleFlatColumns().map((column) => {
                     return (
-                      <Table.td
-                        key={column.id}
-                        style={{ maxWidth: column.columnDef.size, width: column.columnDef.size }}
-                      >
+                      <Table.td key={column.id} style={{ maxWidth: column.getSize(), width: column.getSize() }}>
                         {column.columnDef.meta?.skeleton}
                       </Table.td>
                     )
@@ -149,7 +148,7 @@ export const GenericTable = <T extends { id: string }>({
             {!loading && table.getRowModel().rows.length === 0 && (
               <Table.tr className="!h-[260px]">
                 <Table.td colSpan={table.getAllColumns().length} className="!h-[260px]">
-                  <Typography variant="xs" className="w-full italic text-center text-slate-400">
+                  <Typography variant="xs" className="text-slate-400 italic w-full text-center">
                     {placeholder}
                   </Typography>
                 </Table.td>
