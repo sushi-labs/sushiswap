@@ -34,7 +34,8 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/chain": "workspace:*"
+    "@sushiswap/chain": "workspace:*",
+    "date-fns": "^2.29.3"
   },
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "1.0.5",

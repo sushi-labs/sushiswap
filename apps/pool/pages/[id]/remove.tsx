@@ -57,6 +57,7 @@ const _Remove = () => {
   )
 
   if (!data) return <></>
+
   const { pair } = data
 
   return (
@@ -65,7 +66,7 @@ const _Remove = () => {
         <Layout breadcrumbs={LINKS(router.query.id as string)}>
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
-            <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
+            <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
               <RemoveSectionUnstake poolAddress={pair.id} />
               {pair.source === 'TRIDENT' ? <RemoveSectionTrident pair={pair} /> : <RemoveSectionLegacy pair={pair} />}
               <Container className="flex justify-center">

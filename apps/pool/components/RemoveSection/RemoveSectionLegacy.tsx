@@ -16,7 +16,7 @@ import {
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useDeprecatedSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useNetwork, UserRejectedRequestError } from 'wagmi'
 
 import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
@@ -297,18 +297,20 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
       </div>
     )
   }, [
-    balance,
-    createNotification,
-    error,
-    execute,
-    isMounted,
-    isWritePending,
-    pair.chainId,
     pair.farm,
+    pair.chainId,
     percentage,
-    percentToRemove,
-    poolState,
     token0,
     token1,
+    minAmount0,
+    minAmount1,
+    error,
+    isMounted,
+    poolState,
+    createNotification,
+    balance,
+    percentToRemove,
+    execute,
+    isWritePending,
   ])
 }
