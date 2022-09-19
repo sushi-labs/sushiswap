@@ -13,7 +13,7 @@ export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  // ChainId.ARBITRUM_NOVA,
+  ChainId.ARBITRUM_NOVA,
   ChainId.HARMONY,
 ]
 
@@ -51,7 +51,7 @@ export const CHAIN_NAME: Record<number | string, string> = {
 
 export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
-  [ChainId.ARBITRUM_NOVA]: '34.148.218.47:8000/subgraphs/name',
+  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
   [ChainId.CELO]: GRAPH_HOST,
@@ -133,7 +133,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'subgraph-qa/sushiswap-moonriver',
   [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
-  [ChainId.ARBITRUM_NOVA]: 'subgraph-qa/sushiswap-arbitrum-nova',
+  [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {

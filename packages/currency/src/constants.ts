@@ -11,6 +11,7 @@ export const WBTC_ADDRESS: AddressMap = {
   [ChainId.FANTOM]: '0x321162Cd933E2Be498Cd2267a90534A804051b11',
   [ChainId.POLYGON]: '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
   [ChainId.OPTIMISM]: '0x68f180fcCe6836688e9084f035309E29Bf0A2095',
+  [ChainId.ARBITRUM_NOVA]: '0x1d05e4e72cD994cdF976181CfB0707345763564d',
 }
 
 export const WBTC: Record<keyof typeof WBTC_ADDRESS, Token> = addressMapToTokenMap(
@@ -58,6 +59,7 @@ export const WETH9_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0x30D2a9F5FDf90ACe8c17952cbb4eE48a55D916A7',
   [ChainId.OPTIMISM]: '0x4200000000000000000000000000000000000006',
   [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
+  [ChainId.ARBITRUM_NOVA]: '0x722E8BdD2ce80A4422E880164f2079488e115365',
 }
 
 export const WETH9: Record<keyof typeof WETH9_ADDRESS, Token> = addressMapToTokenMap(
@@ -95,6 +97,7 @@ export const WNATIVE_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0xAcc15dC74880C9944775448304B263D191c6077F',
   [ChainId.KAVA]: '0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b',
   [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
+  [ChainId.ARBITRUM_NOVA]: WETH9_ADDRESS[ChainId.ARBITRUM_NOVA],
 }
 
 export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
@@ -140,6 +143,7 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     name: 'Wrapped BNB',
   }),
   [ChainId.ARBITRUM]: WETH9[ChainId.ARBITRUM],
+  [ChainId.ARBITRUM_NOVA]: WETH9[ChainId.ARBITRUM_NOVA],
   [ChainId.AVALANCHE]: new Token({
     chainId: ChainId.AVALANCHE,
     address: WNATIVE_ADDRESS[ChainId.AVALANCHE],
@@ -293,6 +297,7 @@ export const USDC_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0x620fd5fa44BE6af63715Ef4E65DDFA0387aD13F5',
   [ChainId.MOONBEAM]: '0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9',
   [ChainId.OPTIMISM]: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
+  [ChainId.ARBITRUM_NOVA]: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
 }
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
@@ -332,6 +337,7 @@ export const USDT_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0xFaDbBF8Ce7D5b7041bE672561bbA99f79c532e10',
   [ChainId.MOONBEAM]: '0x8e70cd5b4ff3f62659049e74b6649c6603a0e594',
   [ChainId.OPTIMISM]: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
+  [ChainId.ARBITRUM_NOVA]: '0xeD9d63a96c27f87B07115b56b2e3572827f21646',
 }
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
@@ -371,6 +377,7 @@ export const DAI_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0x94Ba7A27c7A95863d1bdC7645AC2951E0cca06bA',
   [ChainId.MOONBEAM]: '0xc234A67a4F840E61adE794be47de455361b52413',
   [ChainId.OPTIMISM]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+  [ChainId.ARBITRUM_NOVA]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
 }
 
 export const DAI: Record<keyof typeof DAI_ADDRESS, Token> = addressMapToTokenMap(

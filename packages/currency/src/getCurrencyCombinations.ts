@@ -35,6 +35,13 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     MIM[ChainId.ARBITRUM],
     FRAX[ChainId.ARBITRUM],
   ],
+  [ChainId.ARBITRUM_NOVA]: [
+    WNATIVE[ChainId.ARBITRUM_NOVA],
+    WBTC[ChainId.ARBITRUM_NOVA],
+    USDC[ChainId.ARBITRUM_NOVA],
+    USDT[ChainId.ARBITRUM_NOVA],
+    DAI[ChainId.ARBITRUM_NOVA],
+  ],
   [ChainId.OPTIMISM]: [
     WNATIVE[ChainId.OPTIMISM],
     WBTC[ChainId.OPTIMISM],
@@ -154,6 +161,13 @@ export const COMMON_BASES: { readonly [chainId: number]: Token[] } = {
     DAI[ChainId.AVALANCHE],
     MIM[ChainId.AVALANCHE],
     FRAX[ChainId.AVALANCHE],
+  ],
+  [ChainId.ARBITRUM_NOVA]: [
+    WNATIVE[ChainId.ARBITRUM_NOVA],
+    WBTC[ChainId.ARBITRUM_NOVA],
+    USDC[ChainId.ARBITRUM_NOVA],
+    USDT[ChainId.ARBITRUM_NOVA],
+    DAI[ChainId.ARBITRUM_NOVA],
   ],
 }
 

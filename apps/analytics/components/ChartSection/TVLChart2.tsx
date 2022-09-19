@@ -187,9 +187,11 @@ export const TVLChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
         <Typography variant="xl" weight={500} className="text-slate-50">
           <span className="hoveredItemValueTVL">{formatUSD(yData[yData.length - 1])}</span>{' '}
         </Typography>
-        <Typography variant="sm" className="text-slate-500 hoveredItemNameTVL">
-          {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
-        </Typography>
+        {xData.length && (
+          <Typography variant="sm" className="text-slate-500 hoveredItemNameTVL">
+            {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
+          </Typography>
+        )}
       </div>
       <ReactECharts option={DEFAULT_OPTION} style={{ height: 320 }} />
     </div>
