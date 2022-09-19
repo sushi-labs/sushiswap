@@ -16,7 +16,7 @@ import {
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useDeprecatedSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useNetwork, UserRejectedRequestError } from 'wagmi'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
 import { useNotifications, useSettings } from '../../lib/state/storage'
@@ -203,7 +203,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         txHash: data.hash,
         promise: data.wait(),
         summary: {
-          pending: `Adding liquidity to the {token0.symbol}/{token1.symbol} pair`,
+          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
           failed: 'Something went wrong when adding liquidity',
         },
