@@ -363,14 +363,15 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     account,
     inputCurrencyRebase,
     outputCurrencyRebase,
+    sushiSwapRouter,
+    tridentRouter,
     allowedSlippage,
     deadline,
-    sushiSwapRouter,
+    signature,
+    chainId,
     provider,
     sendTransactionAsync,
-    chainId,
-    tridentRouter,
-    signature,
+    createNotification,
   ])
 
   const [input0, input1] = useMemo(
