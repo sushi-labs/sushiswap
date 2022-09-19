@@ -4,6 +4,7 @@ import { allChains, Chain, configureChains, createClient, CreateClientConfig } f
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+// import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 export type Client = ReturnType<typeof createClient>
 
@@ -17,7 +18,7 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configure
     publicProvider(),
     // infuraProvider({ infuraId }),
   ],
-  { pollingInterval: 15_000 }
+  { pollingInterval: 8_000 }
 )
 
 export const client: Client = createClient({
