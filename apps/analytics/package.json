@@ -33,7 +33,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
-    "wagmi": "^0.6.0"
+    "wagmi": "0.0.0-20220919063148"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
