@@ -23,6 +23,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   chainId,
   inputType,
   tradeType,
+  disabled,
 }) => {
   const { trade, isLoading } = useTrade()
   const value = inputType === tradeType ? _value : trade ? trade?.outputAmount?.toExact() : ''
@@ -39,6 +40,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
       chainId={chainId}
       tokenMap={tokenMap}
       loading={inputType !== tradeType ? isLoading : false}
+      disabled={disabled}
     />
   )
 }
