@@ -1,7 +1,7 @@
 import { Listbox } from '@headlessui/react'
 import chains, { ChainId } from '@sushiswap/chain'
 import { classNames, NetworkIcon, Select, Typography } from '@sushiswap/ui'
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useMemo } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 interface NetworkSelectorProps {
@@ -12,7 +12,10 @@ interface NetworkSelectorProps {
 export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedNetworks }) => {
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
-  if (!supportedNetworks) return <>{children}</>
+
+  const networks = useMemo(() => Array.from(new Set(supportedNetworks)), [supportedNetworks])
+
+  if (!networks.length) return <>{children}</>
 
   return (
     <Select
@@ -23,8 +26,8 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedN
       }
     >
       <Select.Options className="!w-[max-content] right-0 !mt-[16px] !fixed !bg-slate-700">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 px-2 py-2">
-          {supportedNetworks.map((el) => (
+        <div className="grid grid-cols-1 px-2 py-2 md:grid-cols-2 gap-x-4">
+          {networks.map((el) => (
             <div
               onClick={() => switchNetwork && switchNetwork(el)}
               key={el}
@@ -33,13 +36,13 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedN
                 'px-2 flex rounded-xl justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
               )}
             >
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <NetworkIcon type="naked" chainId={el} width={22} height={22} />
                 <Typography variant="sm" weight={500} className="text-slate-50">
                   {chains[el].name}
                 </Typography>
               </div>
-              {chain?.id === el && <div className="rounded-full bg-green w-2 h-2 mr-1" />}
+              {chain?.id === el && <div className="w-2 h-2 mr-1 rounded-full bg-green" />}
             </div>
           ))}
         </div>
