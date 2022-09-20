@@ -26,25 +26,27 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.AVALANCHE]: 'avalanche',
   [ChainId.MOONBEAM]: 'moonbeam',
   [ChainId.OPTIMISM]: 'optimism',
+  [ChainId.METIS]: 'metis',
   [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova',
 }
 
-const AvalancheLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/avax.jpg'
-const BinanceCoinLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/bnb.jpg'
-const EthereumLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/eth.jpg'
-const FantomLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/ftm.jpg'
-const HarmonyLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/one.jpg'
-const HecoLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/heco.jpg'
-const MaticLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/polygon.jpg'
-const MoonbeamLogo = 'https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg'
-const OKExLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/okt.jpg'
-const xDaiLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/xdai.jpg'
-const CeloLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/celo.jpg'
-const PalmLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/palm.jpg'
-const MovrLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/movr.jpg'
-const FuseLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/fuse.jpg'
-const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/logos/main/token/telos.jpg'
-const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/icons/master/token/kava.svg'
+const AvalancheLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/avalanche.jpg'
+const BinanceCoinLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/bsc.jpg'
+const EthereumLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/ethereum.jpg'
+const FantomLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/fantom.jpg'
+const HarmonyLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/harmonyone.jpg'
+const HecoLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/heco.jpg'
+const MaticLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/polygon.jpg'
+const MoonbeamLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/moonbeam.jpg'
+const OKExLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/okt.jpg'
+const xDaiLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/xdai.jpg'
+const CeloLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/celo.jpg'
+const PalmLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/palm.jpg'
+const MovrLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/movr.jpg'
+const FuseLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/fuse.jpg'
+const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/telos.jpg'
+const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/kava.svg'
+const MetisLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/metis.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -80,6 +82,7 @@ const LOGO: Record<number, string> = {
   [ChainId.OPTIMISM]: EthereumLogo,
   [ChainId.KAVA]: KavaLogo,
   [ChainId.ARBITRUM_NOVA]: EthereumLogo,
+  [ChainId.METIS]: MetisLogo,
 }
 
 export interface IconProps extends Omit<ImageProps, 'src'> {
