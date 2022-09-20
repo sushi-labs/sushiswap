@@ -198,7 +198,6 @@ export function useConstantProductPools(
     enabled: poolsAddresses.length > 0,
     watch: true,
     keepPreviousData: true,
-    cacheOnBlock: true,
   })
 
   return useMemo(() => {

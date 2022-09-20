@@ -55,7 +55,6 @@ export function usePairs(
     ...{
       ...config,
       enabled: config?.enabled !== undefined ? config.enabled && pairAddresses.length > 0 : pairAddresses.length > 0,
-      cacheOnBlock: true,
       watch: true,
       keepPreviousData: true,
     },
