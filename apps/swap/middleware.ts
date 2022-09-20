@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const allowedParams = ['srcToken', 'dstToken', 'srcChainId', 'dstChainId', 'srcTypedAmount']
+const allowedParams = ['chainId']
 
 export const config = {
   matcher: '/swap',

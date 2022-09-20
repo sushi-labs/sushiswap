@@ -7,7 +7,9 @@ import { Button, Dots } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
 import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider } from '../components'
@@ -15,19 +17,30 @@ import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 
-const Index: FC = () => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const { chainId, inputToken, outputToken, inputTypedAmount } = query
+  return {
+    props: {
+      chainId: chainId ?? null,
+      inputToken: inputToken ?? null,
+      outputToken: outputToken ?? null,
+      inputTypedAmount: !isNaN(Number(inputTypedAmount)) ? inputTypedAmount : '',
+    },
+  }
+}
+
+function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { chain } = useNetwork()
+  const router = useRouter()
 
-  // Add query param fetching here
-  const chainId = chain?.id
-  const chainIdWithDefault = chainId || ChainId.ETHEREUM
+  const chainId = initialState.chainId ? Number(initialState.chainId) : chain ? chain.id : ChainId.ETHEREUM
+  const inputToken = initialState.inputToken ?? Native.onChain(chainId)
+  const outputToken = initialState.outputToken ?? (chainId in SUSHI ? SUSHI[chainId] : USDC[chainId])
 
-  const [input0, setInput0] = useState<string>('')
-  const [token0, setToken0] = useState<Type | undefined>(Native.onChain(chainIdWithDefault))
+  const [input0, setInput0] = useState<string>(initialState.inputTypedAmount)
+  const [token0, setToken0] = useState<Type | undefined>(inputToken)
   const [input1, setInput1] = useState<string>('')
-  const [token1, setToken1] = useState<Type | undefined>(() =>
-    chainIdWithDefault in SUSHI ? SUSHI[chainIdWithDefault] : USDC[chainIdWithDefault]
-  )
+  const [token1, setToken1] = useState<Type | undefined>(outputToken)
   const [tradeType, setTradeType] = useState<TradeType>(TradeType.EXACT_INPUT)
 
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
@@ -58,22 +71,40 @@ const Index: FC = () => {
   const amounts = useMemo(() => [parsedInput0], [parsedInput0])
 
   useEffect(() => {
-    const chainId = chain ? chain.id : chainIdWithDefault
     setToken0(Native.onChain(chainId))
     setToken1(chainId in SUSHI ? SUSHI[chainId] : USDC[chainId])
     setInput0('')
     setInput1('')
-  }, [chain, chainIdWithDefault])
+  }, [chainId])
 
   const onSuccess = useCallback(() => {
     setInput0('')
     setInput1('')
   }, [])
 
+  // TODO: WIP
+  // This effect is responsible for encoding the swap state into the URL, to add statefullness
+  // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
+  // useEffect(() => {
+  //   if (chainId === Number(router.query.chainId)) return
+
+  //   void router.replace(
+  //     {
+  //       pathname: router.pathname,
+  //       query: {
+  //         ...router.query,
+  //         chainId,
+  //       },
+  //     },
+  //     undefined,
+  //     { shallow: true }
+  //   )
+  // }, [chainId, router])
+
   return (
     <>
       <TradeProvider
-        chainId={chainIdWithDefault}
+        chainId={chainId}
         tradeType={tradeType}
         amountSpecified={tradeType === TradeType.EXACT_INPUT ? parsedInput0 : parsedInput1}
         mainCurrency={token0}
@@ -83,7 +114,7 @@ const Index: FC = () => {
           <Widget id="swap" maxWidth={400}>
             <Widget.Content>
               <Widget.Header title="Swap">
-                <SettingsOverlay chainId={chainIdWithDefault} />
+                <SettingsOverlay chainId={chainId} />
               </Widget.Header>
               <CurrencyInput
                 className="p-3"
@@ -94,7 +125,7 @@ const Index: FC = () => {
                 customTokenMap={customTokensMap}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}
-                chainId={chainIdWithDefault}
+                chainId={chainId}
                 tokenMap={tokenMap}
                 inputType={TradeType.EXACT_INPUT}
                 tradeType={tradeType}
@@ -121,7 +152,7 @@ const Index: FC = () => {
                   customTokenMap={customTokensMap}
                   onAddToken={addCustomToken}
                   onRemoveToken={removeCustomToken}
-                  chainId={chainIdWithDefault}
+                  chainId={chainId}
                   tokenMap={tokenMap}
                   inputType={TradeType.EXACT_OUTPUT}
                   tradeType={tradeType}
@@ -131,13 +162,25 @@ const Index: FC = () => {
                   <Checker.Amounts
                     fullWidth
                     size="md"
-                    chainId={chainIdWithDefault}
+                    chainId={chainId}
                     fundSource={FundSource.WALLET}
                     amounts={amounts}
                   >
                     <Checker.Connected fullWidth size="md">
-                      <Checker.Network fullWidth size="md" chainId={chainIdWithDefault}>
-                        <SwapReviewModalLegacy chainId={chainIdWithDefault} onSuccess={onSuccess}>
+                      <Checker.Network
+                        fullWidth
+                        size="md"
+                        chainId={chainId}
+                        // onSuccess={(chain) => {
+                        //   console.log('switch network success', chain)
+                        //   delete router.query['chainId']
+                        //   void router.replace({
+                        //     pathname: router.pathname,
+                        //     query: router.query,
+                        //   })
+                        // }}
+                      >
+                        <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
                           {({ isWritePending, setOpen }) => {
                             return (
                               <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
@@ -159,4 +202,4 @@ const Index: FC = () => {
   )
 }
 
-export default Index
+export default Swap
