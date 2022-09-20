@@ -122,7 +122,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
             tridentRouter.interface.encodeFunctionData('exactInputSingleWithNativeToken', [
               {
                 tokenIn: trade.inputAmount.currency.isNative ? AddressZero : trade.inputAmount.currency.wrapped.address,
-                amountIn: BigNumber.from(trade.inputAmount.toShare(inputCurrencyRebase).quotient.toString()),
+                amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
                 amountOutMinimum: BigNumber.from(
                   trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
                 ),
@@ -139,7 +139,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
             tridentRouter.interface.encodeFunctionData('exactInputWithNativeToken', [
               {
                 tokenIn: trade.inputAmount.currency.isNative ? AddressZero : trade.inputAmount.currency.wrapped.address,
-                amountIn: BigNumber.from(trade.inputAmount.toShare(inputCurrencyRebase).quotient.toString()),
+                amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
                 amountOutMinimum: BigNumber.from(
                   trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
                 ),
@@ -191,17 +191,19 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                   [
                     ...initialPath,
                     {
-                      tokenIn: leg.tokenFrom.address,
+                      tokenIn: trade.inputAmount.currency.isNative ? AddressZero : leg.tokenFrom.address,
                       pool: leg.poolAddress,
                       amount:
                         initialPathCount > 1 && i === initialPathCount - 1
-                          ? trade.route.amountInBN.sub(
+                          ? BigNumber.from(trade.inputAmount.quotient.toString()).sub(
                               initialPath.reduce(
                                 (previousValue, currentValue) => previousValue.add(currentValue.amount),
                                 Zero
                               )
                             )
-                          : getBigNumber(trade.route.amountIn * leg.absolutePortion),
+                          : BigNumber.from(trade.inputAmount.quotient.toString())
+                              .mul(Math.round(leg.absolutePortion * 1e6))
+                              .div(1e6),
                       native: true,
                       data: defaultAbiCoder.encode(
                         ['address', 'address', 'bool'],
@@ -386,6 +388,8 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       return BENTOBOX_ADDRESS[chainId]
     }
   }, [trade, sushiSwapRouter, chainId])
+
+  console.log([approveTokenTo, input0?.quotient.toString()])
 
   return (
     <>
