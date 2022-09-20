@@ -3,7 +3,6 @@ import '../index.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
 import { App, ThemeProvider } from '@sushiswap/ui'
-import { SubscribePanel } from 'common/components/SubscribePanel'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import { useRouter } from 'next/router'
@@ -13,6 +12,7 @@ import { useEffect } from 'react'
 import { DefaultSeo, Header } from '../common/components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
+
 export const cld = new Cloudinary({
   cloud: {
     cloudName: 'sushi-cdn',
@@ -61,7 +61,6 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
           <DefaultSeo seo={seo} />
           <Header />
           <Component {...pageProps} seo={seo} />
-          <SubscribePanel />
           <App.Footer />
         </App.Shell>
       </ThemeProvider>
