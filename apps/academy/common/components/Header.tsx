@@ -35,7 +35,7 @@ export const Header: FC = () => {
     },
   ]
   return (
-    <App.Header appType={AppType.Academy} className="border-b bg-slate-900 border-slate-200/5" maxWidth="5xl">
+    <App.Header appType={AppType.Academy} maxWidth="5xl" withScrollBackground>
       <nav className="hidden md:flex gap-14">
         {headerLinks.map(({ title, options }, i) => (
           <Select
