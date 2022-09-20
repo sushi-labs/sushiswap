@@ -31,7 +31,6 @@ export const Card: FC<Card> = ({ article, isBig }) => {
         {article?.attributes?.cover?.data && (
           <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
             <Image
-              height={isBig ? 500 : 300}
               quality={100}
               image={article?.attributes.cover.data}
               className={classNames(

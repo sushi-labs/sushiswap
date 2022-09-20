@@ -13,7 +13,9 @@ export const ProductCard: FC<ProductCard> = ({ title, subtitle, img, gradientBor
     <div
       className="p-[1px] h-[415px] rounded-3xl"
       style={{
-        background: `linear-gradient(218.8deg, ${gradientBorderColor} 2.35%, rgba(0, 0, 0, 0) 97.65%)`,
+        background: gradientBorderColor
+          ? `linear-gradient(218.8deg, ${gradientBorderColor} 2.35%, rgba(0, 0, 0, 0) 97.65%)`
+          : 'unset',
       }}
     >
       <div className="p-12 h-full bg-[#212939] rounded-3xl">
