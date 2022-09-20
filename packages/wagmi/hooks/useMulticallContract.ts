@@ -26,6 +26,7 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.HECO]: '0x64e1E895866B3126f8f2E2912B475FDB35b2F315',
   [ChainId.PALM]: '0x4d4A0D45a98AE8EC25b359D93A088A87BC9eF70b',
   [ChainId.OPTIMISM]: '0x1F98415757620B543A52E61c46B32eB19261F984',
+  [ChainId.ARBITRUM_NOVA]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
 }
 
 export const getMulticallContractConfig = (chainId: number | undefined) => ({

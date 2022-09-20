@@ -30,23 +30,23 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova',
 }
 
-const AvalancheLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/avalanche.jpg'
-const BinanceCoinLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/bsc.jpg'
-const EthereumLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/ethereum.jpg'
-const FantomLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/fantom.jpg'
-const HarmonyLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/harmonyone.jpg'
-const HecoLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/heco.jpg'
-const MaticLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/polygon.jpg'
-const MoonbeamLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/moonbeam.jpg'
-const OKExLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/okt.jpg'
-const xDaiLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/xdai.jpg'
-const CeloLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/celo.jpg'
-const PalmLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/palm.jpg'
-const MovrLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/movr.jpg'
-const FuseLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/fuse.jpg'
-const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/telos.jpg'
-const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/kava.svg'
-const MetisLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/network-logos/metis.svg'
+const AvaxLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/avax.svg'
+const BnbLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/bnb.svg'
+const EthereumLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/ethereum.svg'
+const FtmLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/ftm.svg'
+const OneLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/one.svg'
+const HtLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/ht.svg'
+const MaticLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/matic.svg'
+const GlmrLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/glmr.svg'
+const OktLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/okt.svg'
+const xDaiLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/xdai.svg'
+const CeloLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/celo.svg'
+const PalmLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/plam.svg'
+const MovrLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/movr.svg'
+const FuseLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/fuse.svg'
+const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/telos.svg'
+const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/kava.svg'
+const MetisLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/metis.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -54,21 +54,21 @@ const LOGO: Record<number, string> = {
   [ChainId.RINKEBY]: EthereumLogo,
   [ChainId.ROPSTEN]: EthereumLogo,
   [ChainId.GÖRLI]: EthereumLogo,
-  [ChainId.FANTOM]: FantomLogo,
-  [ChainId.FANTOM_TESTNET]: FantomLogo,
+  [ChainId.FANTOM]: FtmLogo,
+  [ChainId.FANTOM_TESTNET]: FtmLogo,
   [ChainId.POLYGON]: MaticLogo,
   [ChainId.POLYGON_TESTNET]: MaticLogo,
   [ChainId.GNOSIS]: xDaiLogo,
-  [ChainId.BSC]: BinanceCoinLogo,
-  [ChainId.BSC_TESTNET]: BinanceCoinLogo,
-  [ChainId.AVALANCHE]: AvalancheLogo,
-  [ChainId.AVALANCHE_TESTNET]: AvalancheLogo,
-  [ChainId.HECO]: HecoLogo,
-  [ChainId.HECO_TESTNET]: HecoLogo,
-  [ChainId.HARMONY]: HarmonyLogo,
-  [ChainId.HARMONY_TESTNET]: HarmonyLogo,
-  [ChainId.OKEX]: OKExLogo,
-  [ChainId.OKEX_TESTNET]: OKExLogo,
+  [ChainId.BSC]: BnbLogo,
+  [ChainId.BSC_TESTNET]: BnbLogo,
+  [ChainId.AVALANCHE]: AvaxLogo,
+  [ChainId.AVALANCHE_TESTNET]: AvaxLogo,
+  [ChainId.HECO]: HtLogo,
+  [ChainId.HECO_TESTNET]: HtLogo,
+  [ChainId.HARMONY]: OneLogo,
+  [ChainId.HARMONY_TESTNET]: OneLogo,
+  [ChainId.OKEX]: OktLogo,
+  [ChainId.OKEX_TESTNET]: OktLogo,
   [ChainId.ARBITRUM]: EthereumLogo,
   [ChainId.ARBITRUM_TESTNET]: EthereumLogo,
   [ChainId.CELO]: CeloLogo,
@@ -78,7 +78,7 @@ const LOGO: Record<number, string> = {
   [ChainId.FUSE]: FuseLogo,
   [ChainId.TELOS]: TelosLogo,
   [ChainId.HARDHAT]: EthereumLogo,
-  [ChainId.MOONBEAM]: MoonbeamLogo,
+  [ChainId.MOONBEAM]: GlmrLogo,
   [ChainId.OPTIMISM]: EthereumLogo,
   [ChainId.KAVA]: KavaLogo,
   [ChainId.ARBITRUM_NOVA]: EthereumLogo,

@@ -8,13 +8,16 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.AVALANCHE,
   ChainId.POLYGON,
   ChainId.FANTOM,
-  ChainId.GNOSIS,
   ChainId.BSC,
-  ChainId.CELO,
-  ChainId.FUSE,
-  ChainId.MOONBEAM,
+  ChainId.GNOSIS,
   ChainId.MOONRIVER,
-  // ChainId.ARBITRUM_NOVA,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.FUSE,
+  ChainId.CELO,
+  ChainId.MOONBEAM,
+  ChainId.HECO,
+  ChainId.PALM,
+  ChainId.OKEX,
 ]
 
 export const SUPPORTED_CHAIN_IDS = [...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]

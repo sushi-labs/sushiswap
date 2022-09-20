@@ -11,11 +11,14 @@ import { FantomNaked } from './FantomNaked'
 import { FuseNaked } from './FuseNaked'
 import { GnosisNaked } from './GnosisNaked'
 import { HarmonyNaked } from './HarmonyNaked'
+import { HecoNaked } from './HecoNaked'
 import { KavaNaked } from './KavaNaked'
 import { MetisNaked } from './MetisNaked'
 import { MoonbeamNaked } from './MoonbeamNaked'
 import { MoonriverNaked } from './MoonriverNaked'
+import { OkexNaked } from './OkexNaked'
 import { OptimismNaked } from './OptimismNaked'
+import { PalmNaked } from './PalmNaked'
 import { PolygonNaked } from './PolygonNaked'
 import { TelosNaked } from './TelosNaked'
 
@@ -29,11 +32,14 @@ export * from './FantomNaked'
 export * from './FuseNaked'
 export * from './GnosisNaked'
 export * from './HarmonyNaked'
+export * from './HecoNaked'
 export * from './KavaNaked'
 export * from './MetisNaked'
 export * from './MoonbeamNaked'
 export * from './MoonriverNaked'
+export * from './OkexNaked'
 export * from './OptimismNaked'
+export * from './PalmNaked'
 export * from './PolygonNaked'
 export * from './TelosNaked'
 
@@ -55,4 +61,7 @@ export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'sv
   [ChainId.KAVA]: KavaNaked,
   [ChainId.METIS]: MetisNaked,
   [ChainId.ARBITRUM_NOVA]: ArbitrumNovaNaked,
+  [ChainId.HECO]: HecoNaked,
+  [ChainId.OKEX]: OkexNaked,
+  [ChainId.PALM]: PalmNaked,
 }

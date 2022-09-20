@@ -254,4 +254,96 @@ export const otherChains = [
       blockCreated: 16146628,
     },
   },
+  {
+    id: ChainId.ARBITRUM_NOVA,
+    name: 'Arbitrum Nova',
+    network: 'arbitrumnova',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: {
+      default: 'https://nova.arbitrum.io/rpc',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Arbitrum Nova Chain Explorer',
+        url: 'https://nova-explorer.arbitrum.io/',
+      },
+      default: {
+        name: 'Arbitrum Nova Chain Explorer',
+        url: 'https://nova-explorer.arbitrum.io/',
+      },
+    },
+    multicall: {
+      address: '0x4d81f45fcde2B1C9A93Bde5495dc3553bbEC8EFa',
+      blockCreated: 400008,
+    },
+  },
+  {
+    id: ChainId.OKEX,
+    name: 'OKXChain',
+    network: 'okxchain',
+    nativeCurrency: { name: 'OKC Token', symbol: 'OKT', decimals: 18 },
+    rpcUrls: {
+      default: 'https://exchainrpc.okex.org',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'OKC Explorer',
+        url: 'https://www.oklink.com/en/okc/',
+      },
+      default: {
+        name: 'OKC Explorer',
+        url: 'https://www.oklink.com/en/okc/',
+      },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 10364792,
+    },
+  },
+  {
+    id: ChainId.HECO,
+    name: 'Huobi ECO Chain',
+    network: 'huobieco',
+    nativeCurrency: { name: 'Huobi Token', symbol: 'HT', decimals: 18 },
+    rpcUrls: {
+      default: 'https://http-mainnet.hecochain.com',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'HecoInfo',
+        url: 'https://www.hecoinfo.com/',
+      },
+      default: {
+        name: 'Heco Explorer',
+        url: 'https://www.hecoinfo.com/',
+      },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 14413501,
+    },
+  },
+  {
+    id: ChainId.PALM,
+    name: 'Palm',
+    network: 'palm',
+    nativeCurrency: { name: 'Palm', symbol: 'PALM', decimals: 18 },
+    rpcUrls: {
+      default: 'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Palm Explorer',
+        url: 'https://explorer.palm.io/',
+      },
+      default: {
+        name: 'Palm Explorer',
+        url: 'https://explorer.palm.io/',
+      },
+    },
+    multicall: {
+      address: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
+      blockCreated: 8005532,
+    },
+  },
 ]
