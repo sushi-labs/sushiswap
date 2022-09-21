@@ -254,4 +254,27 @@ export const otherChains = [
       blockCreated: 16146628,
     },
   },
+  {
+    id: ChainId.BOBA_AVAX,
+    name: 'Boba Avex',
+    network: 'boba-avax',
+    nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
+    rpcUrls: {
+      default: 'https://avax.boba.network',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Boba Avax Explorer',
+        url: 'https://blockexplorer.avax.boba.network/',
+      },
+      default: {
+        name: 'Boba Avax Explorer',
+        url: 'https://blockexplorer.avax.boba.network/',
+      },
+    },
+    multicall: {
+      address: '0x2c46217Fae90D302d1Fb5467ADA504bC2A84f448',
+      blockCreated: 3652,
+    },
+  },
 ]
