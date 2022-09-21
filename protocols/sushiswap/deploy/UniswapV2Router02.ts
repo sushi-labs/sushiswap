@@ -17,15 +17,18 @@ const func: DeployFunction = async function ({
 
   const wnative = await ethers.getContractOrNull('WETH9')
 
-  if (!wnative && !(chainId in WNATIVE_ADDRESS)) {
-    throw Error(`No BENTOBOX_ADDRESS for chain #${chainId}!`)
+  if (!wnative && !(chainId in WNATIVE_ADDRESS) && !process.env.WNATIVE_ADDRESS) {
+    throw Error(`No WNATIVE_ADDRESS for chain #${chainId}!`)
   }
 
   const factory = await ethers.getContract('UniswapV2Factory')
 
   await deploy('UniswapV2Router02', {
     from: deployer,
-    args: [factory.address, wnative ? wnative.address : WNATIVE_ADDRESS[chainId]],
+    args: [
+      factory.address,
+      wnative ? wnative.address : chainId in WNATIVE_ADDRESS ? WNATIVE_ADDRESS[chainId] : process.env.WNATIVE_ADDRESS,
+    ],
     log: true,
     deterministicDeployment: false,
   })

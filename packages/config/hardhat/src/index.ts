@@ -57,6 +57,7 @@ export const defaultConfig: HardhatUserConfig = {
       sokol: 'api-key',
       aurora: 'api-key',
       auroraTestnet: 'api-key',
+      bobaAvax: 'api-key',
     },
   },
   tenderly: {
@@ -347,6 +348,13 @@ export const defaultConfig: HardhatUserConfig = {
       url: 'https://nova.arbitrum.io/rpc',
       accounts,
       chainId: 42170,
+      live: true,
+      saveDeployments: true,
+    },
+    'boba-avax': {
+      url: 'https://avax.boba.network',
+      accounts,
+      chainId: 43288,
       live: true,
       saveDeployments: true,
     },
