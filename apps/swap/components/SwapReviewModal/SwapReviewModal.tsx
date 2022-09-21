@@ -87,7 +87,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const execute = useCallback(async () => {
     try {
-      console.log([!trade, !account, !inputCurrencyRebase, !outputCurrencyRebase, sushiSwapRouter, trade?.isV1()])
       if (!trade || !account || !inputCurrencyRebase || !outputCurrencyRebase) return
 
       let call: SwapCall | null = null
@@ -129,7 +128,11 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 pool: trade.route.legs[0].poolAddress,
                 data: defaultAbiCoder.encode(
                   ['address', 'address', 'bool'],
-                  [trade.route.legs[0].tokenFrom.address, account, true]
+                  [
+                    trade.route.legs[0].tokenFrom.address,
+                    trade.outputAmount.currency.isNative ? tridentRouter.address : account,
+                    true,
+                  ]
                 ),
               },
             ])
@@ -149,7 +152,15 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                     pool: leg.poolAddress,
                     data: defaultAbiCoder.encode(
                       ['address', 'address', 'bool'],
-                      [leg.tokenFrom.address, isLastLeg ? account : trade.route.legs[i + 1].poolAddress, isLastLeg]
+                      [
+                        leg.tokenFrom.address,
+                        isLastLeg
+                          ? trade.outputAmount.currency.isNative
+                            ? tridentRouter.address
+                            : account
+                          : trade.route.legs[i + 1].poolAddress,
+                        isLastLeg,
+                      ]
                     ),
                   }
                 }),
@@ -388,8 +399,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       return BENTOBOX_ADDRESS[chainId]
     }
   }, [trade, sushiSwapRouter, chainId])
-
-  console.log([approveTokenTo, input0?.quotient.toString()])
 
   return (
     <>
