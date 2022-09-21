@@ -1,30 +1,31 @@
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import { useDebounce } from '@sushiswap/hooks'
-import { Button, classNames, Container, Tab, Typography } from '@sushiswap/ui'
+import { Button, CheckIcon, CircleIcon, classNames, Container, Typography } from '@sushiswap/ui'
 import { AdditionalArticles } from 'common/components/AdditionalArticles'
-import { LevelCard } from 'common/components/LevelCard'
+import { DifficultyCard } from 'common/components/DifficultyCard'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
+import { AdvancedUserIcon, BeginnerUserIcon, TechnicalUserIcon } from 'common/icons'
 import { InferGetServerSidePropsType } from 'next'
-import { FC, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
-import { ArticleList, Card, Categories, Hero } from '../common/components'
-import { getArticles, getCategories, getLevels } from '../lib/api'
+import { ArticleList, Card, Categories, Hero, SearchInput } from '../common/components'
+import { getArticles, getCategories, getDifficulties } from '../lib/api'
 
 export const defaultSidePadding = 'px-6 sm:px-4'
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 5 } })
   const categories = await getCategories()
-  const levels = await getLevels()
+  const difficulties = await getDifficulties()
 
   return {
     props: {
       fallback: {
         ['/articles']: articles?.articles,
         ['/categories']: categories?.categories,
-        ['/levels']: levels?.categories,
+        ['/difficulties']: difficulties?.categories,
       },
     },
     revalidate: 1,
@@ -40,27 +41,47 @@ const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Globa
 }
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
+  // const appHeaderHeight = 54
   const [selectedCategory, setSelectedCategory] = useState<string>()
-  const [selectedLevel, setSelectedLevel] = useState<string>()
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>()
+  // const [isSticky, setIsSticky] = useState(false)
+  // const { isSm } = useBreakpoint('sm')
+  // const isMobileStickySearchBar = !isSm && isSticky
+  const heroRef = useRef<HTMLDivElement>(null)
+
+  // useEffect(() => {
+  //   const cachedRef = heroRef.current
+  //   if (cachedRef) {
+  //     const observer = new IntersectionObserver(([e]) => setIsSticky(!e.isIntersecting), {
+  //       threshold: appHeaderHeight / cachedRef.clientHeight,
+  //     })
+  //     observer.observe(cachedRef)
+
+  //     return () => {
+  //       observer.unobserve(cachedRef)
+  //     }
+  //   }
+  // }, [])
+
   const queryParams = new URLSearchParams({
-    ...(selectedLevel && { level: selectedLevel }),
+    ...(selectedDifficulty && { difficulty: selectedDifficulty }),
     ...(selectedCategory && { category: selectedCategory }),
   }).toString()
 
   const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
   const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
-  const { data: levelsData } = useSWR<CategoryEntityResponseCollection>('/levels')
+  const { data: difficultiesData } = useSWR<CategoryEntityResponseCollection>('/difficulties')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selectedCategory, selectedLevel],
-    async (_url, categoryFilter, levelFilter) => {
+    [`/articles`, selectedCategory, selectedDifficulty],
+    async (_url, categoryFilter, difficultyFilter) => {
       return (
         await getArticles({
           pagination: { limit: 5 },
           filters: {
-            ...((categoryFilter || levelFilter) && {
+            ...((categoryFilter || difficultyFilter) && {
               categories: {
                 id: {
-                  in: [categoryFilter, levelFilter].filter(Boolean),
+                  in: [categoryFilter, difficultyFilter].filter(Boolean),
                 },
               },
             }),
@@ -74,88 +95,97 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
   const categories = categoriesData?.data || []
-  const levels = levelsData?.data || []
+  const difficulties = difficultiesData?.data || []
   const articleList =
-    (selectedCategory || selectedLevel) && filterData?.data ? filterData?.data : articles ? articles : undefined
+    (selectedCategory || selectedDifficulty) && filterData?.data ? filterData?.data : articles ? articles : undefined
   const latestReleases = articles?.slice(0, 3)
-
+  const difficultyColors = ['#F338C3', '#FFD166', '#7CFF6B']
+  const [beginnerColor, advancedColor, technicalColor] = difficultyColors
   /**
    * const initialArticleList = special tag
    */
 
-  const handleSelectLevel = (id: string) => setSelectedLevel((currentLevel) => (currentLevel === id ? undefined : id))
+  const handleSelectDifficulty = (id: string) => setSelectedDifficulty((current) => (current === id ? undefined : id))
   const handleSelectCategory = (id: string) =>
     setSelectedCategory((currentCategory) => (currentCategory === id ? undefined : id))
 
   return (
     <>
       <AcademySeo seo={seo} />
-      <Hero />
-      <Container maxWidth="6xl" className="flex flex-col gap-12 pt-20 pb-16 mx-auto sm:gap-24 sm:pb-24 sm:pt-40">
-        <div className="sticky z-10 overflow-x-auto top-[54px] md:hidden px-6 sm:pl-4 sm:pr-4">
-          <Tab.Group className="p-1 rounded-full bg-slate-500 h-[34px] min-w-max border-0">
-            <Tab.List>
-              {levels.map(({ id, attributes }) => (
-                <Tab className="h-auto rounded-full min-w-max" key={id} onClick={() => handleSelectLevel(id)}>
-                  <Typography variant="xs" weight={500}>
-                    {attributes.description}
-                  </Typography>
-                </Tab>
-              ))}
-            </Tab.List>
-          </Tab.Group>
+      <Container maxWidth="6xl" className="flex flex-col pb-16 mx-auto sm:pb-24">
+        <div ref={heroRef}>
+          <Hero />
         </div>
+        <SearchInput ref={heroRef} />
 
-        <div className="flex min-w-full gap-6 px-6 -mt-6 overflow-x-auto md:mt-0 sm:pl-4 sm:pr-4">
-          <LevelCard
+        <div className="flex min-w-full gap-5 px-6 py-6 mt-8 overflow-x-auto sm:mt-24 sm:gap-6 sm:px-4">
+          <DifficultyCard
             name="Beginner"
+            icon={<BeginnerUserIcon />}
+            chipLabel="For Beginners"
             title="Getting started with Sushi: Tutorials & Product Explainers"
-            chipLabel="For Beginner users"
-            imgSrc=""
+            color={beginnerColor}
           />
-          <LevelCard
+          <DifficultyCard
             name="Advanced"
-            title="Deepdive into Sushi: Strategies & Product Features"
+            icon={<AdvancedUserIcon />}
             chipLabel="For Advanced users"
-            imgSrc=""
+            title="Deepdive into Sushi: Strategies & Product Features"
+            color={advancedColor}
           />
-          <LevelCard
+          <DifficultyCard
             name="Builders"
-            title="Building on Sushi: Technical Documentation"
+            icon={<TechnicalUserIcon />}
             chipLabel="For Builders"
-            imgSrc=""
+            title="Building on Sushi: Technical Documentation"
+            color={technicalColor}
           />
         </div>
 
-        <div className={classNames('flex flex-col', defaultSidePadding)}>
-          <Typography variant="h3" weight={700}>
-            Choose Topic
-          </Typography>
-          <div className="flex flex-wrap mt-6 sm:mt-8 gap-y-3 gap-x-4 sm:gap-x-8 sm:gap-y-6">
+        <div className={classNames('flex flex-col mt-[46px] sm:mt-[124px]', defaultSidePadding)}>
+          <div className="flex justify-between">
+            <span className="text-xl font-bold sm:text-2xl">Choose Topic</span>
+            <Button
+              color="gray"
+              className="h-8 font-normal !bg-slate-800 rounded-full pr-1 sm:hidden"
+              endIcon={<PlusCircleIcon fill="#3B7EF6" height={24} width={24} />}
+            >
+              View All
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-3 md:gap-4 mt-9 sm:mt-8">
             <Categories selected={selectedCategory} onSelect={handleSelectCategory} categories={categories || []} />
           </div>
-          <div className="items-baseline hidden gap-8 mt-16 md:flex">
+
+          <div className="items-center gap-8 mt-[42px] sm:flex hidden">
             <Typography variant="xl" weight={700}>
               Difficulty:
             </Typography>
             <div className="flex flex-wrap gap-6">
-              {levels.map(({ id, attributes }) => (
-                <Button
-                  size="sm"
-                  color={selectedLevel === id ? 'blue' : 'gray'}
-                  onClick={() => handleSelectLevel(id)}
-                  variant="outlined"
-                  key={attributes.name}
-                  className="!text-xs rounded-lg"
+              {difficulties.map(({ id, attributes }, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleSelectDifficulty(id)}
+                  className={classNames(
+                    'text-sm pl-3 pr-4 font-bold h-[38px] rounded-lg border flex items-center gap-2'
+                  )}
+                  style={{ borderColor: difficultyColors[i] }}
                 >
+                  <span className="w-[18px] h-[18px] flex items-center justify-center">
+                    {selectedDifficulty === id ? (
+                      <CheckIcon stroke={difficultyColors[i]} width={18} height={18} />
+                    ) : (
+                      <CircleIcon fill={difficultyColors[i]} stroke={difficultyColors[i]} width={8} height={8} />
+                    )}
+                  </span>
                   {attributes.name}
-                </Button>
+                </button>
               ))}
             </div>
           </div>
         </div>
 
-        <div className={defaultSidePadding}>
+        <div className={classNames('mt-9 sm:mt-[70px]', defaultSidePadding)}>
           {articleList && (
             <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
               <ArticleList
@@ -182,18 +212,18 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             </Button>
           </div>
         </div>
-
-        <AdditionalArticles title="Latest Releases">
-          {latestReleases && (
-            <ArticleList
-              articles={latestReleases as ArticleEntity[]}
-              loading={loading}
-              render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
-              skeletonAmount={latestReleases.length}
-            />
-          )}
-        </AdditionalArticles>
       </Container>
+
+      <AdditionalArticles title="Latest Releases">
+        {latestReleases && (
+          <ArticleList
+            articles={latestReleases as ArticleEntity[]}
+            loading={loading}
+            render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+            skeletonAmount={latestReleases.length}
+          />
+        )}
+      </AdditionalArticles>
     </>
   )
 }

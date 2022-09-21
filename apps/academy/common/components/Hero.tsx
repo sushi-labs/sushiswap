@@ -1,38 +1,23 @@
-import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
-import { Button, Container, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
+import { defaultSidePadding } from 'pages'
 import { FC } from 'react'
-
-import { ArticleEntity } from '../../.mesh'
 
 export const Hero: FC = () => {
   return (
-    <section>
-      <Container maxWidth="6xl" className="px-4 py-10 mx-auto">
-        <div className="flex flex-col items-center">
-          <Typography className="text-6xl md:text-[110px]" variant="hero">
-            Sushi
-          </Typography>
-          <Typography className="text-6xl md:text-[110px]" variant="hero" weight={700}>
-            Academy
-          </Typography>
-          <Typography className="mt-10 text-center">
-            Demystifying DeFI and Crypto - everything you need to know in one place.
-          </Typography>
-          <Typography className="text-center">For beginners to advanced users, and everyone in between.</Typography>
-          <Button
-            // TODO: change link
-            // TODO: styling (size, font size)
-            as="a"
-            // href={`/blog/${article?.attributes?.slug}`}
-            href={`/academy`}
-            color="blue"
-            className="inline-flex h-12 text-base font-bold transition-all rounded-full px-7 md:px-10 mt-11 hover:ring-4 focus:ring-4 text-slate-50"
-          >
-            <PaperAirplaneIcon className="-rotate-45 -translate-y-0.5 text-slate-50" width={20} height={20} />
-            Get started with Sushi
-          </Button>
-        </div>
-      </Container>
+    <section
+      className={classNames(
+        'flex sm:pt-[70px] flex-col items-center max-w-[870px] mx-auto pt-10 pb-8 sm:pb-12',
+        defaultSidePadding
+      )}
+    >
+      <div className="relative w-[280px] sm:w-[520px] h-[75px] sm:h-[135px] text-slate-50">
+        <h1 className="text-[38px] sm:text-7xl absolute top-0 left-0">Sushi</h1>
+        <h1 className="text-[38px] font-bold sm:text-7xl absolute bottom-0 right-0">Academy</h1>
+      </div>
+      <span className="mt-3 text-sm text-center text-slate-500 sm:text-slate-300 sm:text-xl">
+        Demystifying DeFI and Crypto - everything you need to know in one place. For beginners to advanced users, and
+        everyone in between.
+      </span>
     </section>
   )
 }

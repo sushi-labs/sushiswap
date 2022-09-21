@@ -17,12 +17,11 @@ export const Categories: FC<Categories> = ({ categories, selected, onSelect }) =
 
         return (
           <Button
-            size="sm"
-            color={selected === category.id ? 'blue' : 'gray'}
+            size="md"
             onClick={() => onSelect(category.id)}
-            variant="outlined"
             key={category.id}
-            className="!text-xs rounded-full"
+            color={selected === category.id ? 'blue' : 'gray'}
+            className="!px-[14px] sm:!px-4 !h-9 sm:h-10 font-medium !text-xs sm:!text-sm sm:font-normal rounded-full !bg-slate-800"
           >
             {category?.attributes?.name}
           </Button>
