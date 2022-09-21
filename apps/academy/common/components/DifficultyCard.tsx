@@ -1,9 +1,9 @@
 import { Transition } from '@headlessui/react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
-import { Chip, CircleIcon, Typography } from '@sushiswap/ui'
+import { Chip, CircleIcon } from '@sushiswap/ui'
 import { FC, Fragment, ReactNode, useState } from 'react'
 
-interface LevelCard {
+interface DifficultyCard {
   name: string
   icon: ReactNode
   chipLabel: string
@@ -11,7 +11,7 @@ interface LevelCard {
   color: string
 }
 
-export const LevelCard: FC<LevelCard> = ({ icon, chipLabel, title, name, color }) => {
+export const DifficultyCard: FC<DifficultyCard> = ({ icon, chipLabel, title, name, color }) => {
   const [hover, setHover] = useState(false)
 
   return (
@@ -27,7 +27,7 @@ export const LevelCard: FC<LevelCard> = ({ icon, chipLabel, title, name, color }
           <Chip
             label={chipLabel}
             color="default"
-            className="h-[28px] text-sm font-normal"
+            className="h-[28px] sm:text-sm sm:font-normal pl-[14px] pr-[14px]"
             icon={<CircleIcon width={8} height={8} fill={color} stroke={color} />}
           />
           <Transition
@@ -48,9 +48,7 @@ export const LevelCard: FC<LevelCard> = ({ icon, chipLabel, title, name, color }
             </div>
           </Transition>
         </div>
-        <Typography variant="h3" weight={700}>
-          {title}
-        </Typography>
+        <p className="text-xl font-bold sm:text-2xl">{title}</p>
       </div>
     </a>
   )
