@@ -1,2 +1,5 @@
+export * from './AdvancedUserIcon'
+export * from './BeginnerUserIcon'
 export * from './CircleLabyrinthIcon'
 export * from './StatisticsReportIcon'
+export * from './TechnicalUserIcon'
