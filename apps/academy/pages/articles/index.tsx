@@ -12,7 +12,7 @@ import useSWR from 'swr'
 
 import { ArticleEntity } from '../../.mesh'
 import { ArticleList, Pagination } from '../../common/components'
-import { getArticles, getCategories, getLevels } from '../../lib/api'
+import { getArticles, getCategories, getDifficulties } from '../../lib/api'
 
 type SortBy = 'relevance' | 'dateAsc' | 'dateDesc' | 'author'
 
@@ -50,7 +50,7 @@ const Articles: FC = () => {
   )
 
   const { data: categoriesData } = useSWR('/categories', async () => (await getCategories())?.categories)
-  const { data: levelsData } = useSWR('/levels', async () => (await getLevels())?.categories)
+  const { data: levelsData } = useSWR('/levels', async () => (await getDifficulties())?.categories)
 
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data

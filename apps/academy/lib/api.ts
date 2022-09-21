@@ -43,7 +43,7 @@ export const getCategories = async () => {
   return await sdk.getCategories()
 }
 
-export const getLevels = async () => {
+export const getDifficulties = async () => {
   const sdk = getMeshSDK()
   return await sdk.getLevels()
 }
