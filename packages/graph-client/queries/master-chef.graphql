@@ -20,3 +20,41 @@ query MasterChefPools($first: Int = 1000, $skip: Int = 0, $where: Pool_filter, $
     }
   }
 }
+
+query ChefUser($first: Int = 1000, $skip: Int! = 0, $where: User_filter, $block: Block_height) {
+  users:MASTERCHEF_V1_users(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    address
+    amount
+    pool {
+      id
+      pair
+    }
+  }
+}
+
+query CrossChainChefUser(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: User_filter
+  $block: Block_height
+  $chainIds: [Int!]!
+) {
+  crossChainChefUser(
+    first: $first,
+    skip: $skip,
+    where: $where,
+    block: $block,
+    chainIds: $chainIds,
+  ) {
+    id
+    address
+    amount
+    pool {
+      id
+      pair
+    }
+    chainId
+    chainName
+  }
+}

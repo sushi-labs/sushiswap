@@ -1,5 +1,5 @@
 import { Tab } from '@headlessui/react'
-import { User } from '@sushiswap/graph-client/.graphclient'
+import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
 import { Chip, classNames, Network } from '@sushiswap/ui'
 import { FC } from 'react'
 import useSWR from 'swr'
@@ -13,7 +13,7 @@ import { TableFilters } from './Tables/TableFilters'
 export const PoolsSection: FC = () => {
   const { selectedNetworks, setFilters } = usePoolFilters()
   const { address } = useAccount()
-  const { data: user } = useSWR<User>(address ? `/pool/api/user/${address}` : null, (url) =>
+  const { data: userWithFarms } = useSWR<UserWithFarm[]>(address ? `/pool/api/user/${address}` : null, (url) =>
     fetch(url).then((response) => response.json())
   )
 
@@ -40,7 +40,7 @@ export const PoolsSection: FC = () => {
               )
             }
           >
-            My Positions <Chip label={user?.liquidityPositions?.length || '0'} size="sm" color="blue" />
+            My Positions <Chip label={userWithFarms?.length || '0'} size="sm" color="blue" />
           </Tab>
         </div>
         <TableFilters />

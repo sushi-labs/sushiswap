@@ -146,7 +146,6 @@ query CrossChainPairs(
     incentiveApr
     farm {
       id
-      feeApy
       incentives {
         apr
         rewardPerDay
@@ -164,9 +163,9 @@ query CrossChainPairs(
   }
 }
 
-query CrossChainUser($id: ID!, $chainIds: [Int!]!, $now: Int!, $block: Block_height) {
+query CrossChainUser($id: ID!, $where: LiquidityPosition_filter, $chainIds: [Int!]!, $now: Int!, $block: Block_height) {
   crossChainUser(id: $id, chainIds: $chainIds, now: $now, block: $block) {
-    liquidityPositions {
+    liquidityPositions(where: $where) {
       balance
       pair {
         id
@@ -205,7 +204,6 @@ query CrossChainUser($id: ID!, $chainIds: [Int!]!, $now: Int!, $block: Block_hei
         }
         farm {
           id
-          feeApy
           incentives {
             apr
             rewardPerDay
@@ -259,7 +257,6 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
     incentiveApr
     farm {
       id
-      feeApy
       incentives {
         apr
         rewardPerDay
@@ -345,7 +342,6 @@ query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
         }
         farm {
           id
-          feeApy
           incentives {
             apr
             rewardPerDay
@@ -448,3 +444,66 @@ query CrossChainStats(
 #   $block: Block_height  
 #   $chainIds: [Int!]!
 # ) {}
+
+
+query CrossChainUserWithFarms($id: ID!, $block: Block_height, $now: Int!, $chainIds: [Int!]!) {
+  crossChainUserWithFarms(id: $id, block: $block, now: $now, chainIds: $chainIds) {
+    id
+    unstakedBalance
+    stakedBalance
+    pair {
+      id
+      chainId
+      chainName
+      chainShortName
+      name
+      reserve0
+      reserve1
+      liquidity
+      swapFee
+      twapEnabled
+      volume7d
+      source
+      token0 {
+        name
+        id
+        decimals
+        symbol
+      }
+      token1 {
+        name
+        id
+        decimals
+        symbol
+      }
+      liquidityNative
+      liquidityUSD
+      apr
+      feeApr
+      incentiveApr
+      farm {
+          id
+          incentives {
+            apr
+            rewardPerDay
+            rewardToken {
+              address
+              symbol
+              decimals
+            }
+            rewarderAddress
+            rewarderType
+          }
+          chefType
+          poolType
+        }
+      daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+        id
+        date
+        volumeUSD
+      }
+    }
+    chainId
+    chainName
+  }
+}

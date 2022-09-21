@@ -146,7 +146,7 @@ export type GetUserQuery = {
 
 export const getUser = async (query: GetUserQuery) => {
   const networks = JSON.parse(query?.networks || JSON.stringify(SUPPORTED_CHAIN_IDS))
-  const { crossChainUser: user } = await sdk.CrossChainUser({
+  const { crossChainUserWithFarms: user } = await sdk.CrossChainUserWithFarms({
     chainIds: networks,
     id: query.id.toLowerCase(),
     now: Math.round(new Date().getTime() / 1000),

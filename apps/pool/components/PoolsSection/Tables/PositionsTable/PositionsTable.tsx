@@ -1,4 +1,4 @@
-import { Pair, User } from '@sushiswap/graph-client/.graphclient'
+import { Pair, UserWithFarm } from '@sushiswap/graph-client/.graphclient'
 import { useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
@@ -20,7 +20,7 @@ export const PositionsTable: FC = () => {
   const { isMd } = useBreakpoint('md')
   const [columnVisibility, setColumnVisibility] = useState({})
 
-  const { data: user, isValidating } = useSWR<User>(
+  const { data: userWithFarms, isValidating } = useSWR<UserWithFarm[]>(
     address
       ? `/pool/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`
       : null,
@@ -28,16 +28,16 @@ export const PositionsTable: FC = () => {
   )
 
   const positions = useMemo(() => {
-    if (!user) return []
-    return user?.liquidityPositions?.map((el) => el.pair)
-  }, [user])
+    if (!userWithFarms) return []
+    return userWithFarms?.map((el) => el.pair)
+  }, [userWithFarms])
 
   const table = useReactTable<Pair>({
     data: positions || [],
     state: {
       columnVisibility,
     },
-    columns: COLUMNS,
+    columns: COLUMNS as any,
     getCoreRowModel: getCoreRowModel(),
   })
 
@@ -55,9 +55,9 @@ export const PositionsTable: FC = () => {
     <GenericTable<Pair>
       table={table}
       HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-      loading={!user || isValidating}
+      loading={!userWithFarms || isValidating}
       placeholder="No positions found"
-      pageSize={Math.max(user?.liquidityPositions?.length || 0, 5)}
+      pageSize={Math.max(userWithFarms?.length || 0, 5)}
     />
   )
 }

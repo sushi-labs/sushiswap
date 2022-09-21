@@ -10,6 +10,7 @@ import { getBundles, getPoolCount, getPools, GetPoolsQuery, getSushiBar } from '
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
+
   const [pairs, bundles, poolCount, bar] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),
     getBundles(),

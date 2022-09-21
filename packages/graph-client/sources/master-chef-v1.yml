@@ -1,7 +1,7 @@
 name: MasterChefV1
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/jiro-ono/masterchef-staging
+    endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:jiro-ono/masterchef-staging}
 transforms:
   - prefix:
       value: MASTERCHEF_V1_

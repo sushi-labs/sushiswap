@@ -143,5 +143,22 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.METIS]: 'sushi-0m/trident-metis',
 }
 
+export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.POLYGON]: 'jiro-ono/minichef-staging-updates', // new trident subgraph not synced yet
+  [ChainId.GNOSIS]: 'jiro-ono/gnosis-minichef-staging',
+  // [ChainId.HARMONY]: 'sushiswap/harmony-minichef', // subgraph broken
+  [ChainId.ARBITRUM]: 'jiro-ono/arbitrum-minichef-staging',
+  [ChainId.CELO]: 'sushiswap/celo-minichef-v2',
+  [ChainId.MOONRIVER]: 'sushiswap/moonriver-minichef',
+  [ChainId.FUSE]: 'sushiswap/fuse-minichef',
+  [ChainId.FANTOM]: 'sushiswap/fantom-minichef',
+  [ChainId.MOONBEAM]: 'sushiswap/moonbeam-minichef',
+  [ChainId.KAVA]: 'sushiswap/kava-minichef', //block subgraph not synced yet
+  [ChainId.METIS]: 'sushiswap/metis-minichef',
+}
+
+export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
+export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'
+
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]

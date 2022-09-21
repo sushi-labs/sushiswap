@@ -1,5 +1,8 @@
-import { chainName, chainShortName } from '@sushiswap/chain'
+import { ChainId, chainName, chainShortName } from '@sushiswap/chain'
 import {
+  MASTERCHEF_V1_SUBGRAPH_NAME,
+  MASTERCHEF_V2_SUBGRAPH_NAME,
+  MINICHEF_SUBGRAPH_NAME,
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
   SUSHISWAP_SUBGRAPH_NAME,
@@ -7,7 +10,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { InputMaybe, Pagination, Pair, Resolvers } from '../.graphclient'
+import { getBuiltGraphSDK, InputMaybe, Pagination, Pair, Resolvers, User } from '../.graphclient'
 
 // TODO: MOVE
 const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Pagination | undefined>): T => {
@@ -223,7 +226,6 @@ export const resolvers: Resolvers = {
                 farm: farm
                   ? {
                       id: farm.id,
-                      feeApy: String(farm.feeApy),
                       incentives: farm.incentives.map((incentive) => ({
                         apr: String(incentive.apr),
                         rewardPerDay: String(incentive.rewardPerDay),
@@ -481,6 +483,8 @@ export const resolvers: Resolvers = {
             info,
           })
 
+      if (!pool) return
+
       const volume7d = pool.daySnapshots
         ?.slice(0, 6)
         ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
@@ -502,7 +506,6 @@ export const resolvers: Resolvers = {
         farm: farm
           ? {
               id: farm.id,
-              feeApy: String(farm.feeApy),
               incentives: farm.incentives.map((incentive) => ({
                 apr: String(incentive.apr),
                 rewardPerDay: String(incentive.rewardPerDay),
@@ -656,7 +659,6 @@ export const resolvers: Resolvers = {
                   farm: farm
                     ? {
                         id: farm.id,
-                        feeApy: String(farm.feeApy),
                         incentives: farm.incentives.map((incentive) => ({
                           apr: String(incentive.apr),
                           rewardPerDay: String(incentive.rewardPerDay),
@@ -723,7 +725,6 @@ export const resolvers: Resolvers = {
                       farm: farm
                         ? {
                             id: farm.id,
-                            feeApy: String(farm.feeApy),
                             incentives: farm.incentives.map((incentive) => ({
                               apr: String(incentive.apr),
                               rewardPerDay: String(incentive.rewardPerDay),
@@ -790,6 +791,112 @@ export const resolvers: Resolvers = {
           { liquidityPositions: [] }
         )
       })
+    },
+    crossChainChefUser: async (root, args, context, info) => {
+      const fetcher = async ({
+        chainId,
+        subgraphName,
+        subgraphHost,
+      }: {
+        chainId: ChainId
+        subgraphName: string
+        subgraphHost: string
+      }) => {
+        const sdk = getBuiltGraphSDK({ subgraphHost, subgraphName, chainId })
+
+        return sdk
+          .ChefUser({
+            where: args.where,
+            block: args.block,
+          })
+          .then(({ users }) =>
+            users.map((user) => ({
+              ...user,
+              chainId,
+              chainName: chainName[chainId],
+            }))
+          )
+      }
+
+      return Promise.all([
+        ...(args.chainIds.includes(ChainId.ETHEREUM)
+          ? [MASTERCHEF_V1_SUBGRAPH_NAME, MASTERCHEF_V2_SUBGRAPH_NAME].map((subgraphName) =>
+              fetcher({ chainId: ChainId.ETHEREUM, subgraphName, subgraphHost: SUBGRAPH_HOST[ChainId.ETHEREUM] })
+            )
+          : []),
+        ...args.chainIds
+          .filter((el) => [...Object.keys(MINICHEF_SUBGRAPH_NAME)].includes(String(el)))
+          .map((chainId) =>
+            fetcher({ chainId, subgraphName: MINICHEF_SUBGRAPH_NAME[chainId], subgraphHost: SUBGRAPH_HOST[chainId] })
+          ),
+      ]).then((users) => users.flat())
+    },
+    crossChainUserWithFarms: async (root, args, context, info) => {
+      const sdk = getBuiltGraphSDK()
+
+      // ugly but good for performance because of the pair fetch
+      const [unstakedPools, stakedPools] = await Promise.all([
+        sdk
+          .CrossChainUser({ id: args.id, where: { balance_gt: 0 }, chainIds: args.chainIds, now: 0 })
+          .then(({ crossChainUser }) =>
+            (crossChainUser.liquidityPositions ?? []).map((lp) => ({
+              id: lp.pair.id.split(':')[1],
+              unstakedBalance: String(lp.balance),
+              stakedBalance: '0',
+              pair: lp.pair,
+              chainId: lp.pair.chainId,
+              chainName: lp.pair.chainName,
+            }))
+          ),
+
+        sdk
+          .CrossChainChefUser({ where: { address: args.id, amount_gt: 0 }, chainIds: args.chainIds })
+          .then(async ({ crossChainChefUser }) => {
+            // TODO?: move pair fetch to crossChainChefUser resolver
+            const stakedPairs = (
+              await Promise.all(
+                crossChainChefUser.map(({ chainId, pool }) =>
+                  sdk
+                    .CrossChainPair({ id: (pool as { pair: string }).pair, chainId, now: 0 })
+                    .then(({ crossChainPair: pair }) => pair)
+                )
+              )
+            ).filter((pair): pair is NonNullable<typeof pair> => !!pair)
+
+            return crossChainChefUser
+              .map((user) => {
+                const pair = stakedPairs.find((stakedPair) => stakedPair.id.split(':')[1] === user.pool?.pair)
+
+                if (!pair) return
+
+                return {
+                  id: pair.id.split(':')[1],
+                  unstakedBalance: '0',
+                  stakedBalance: String(user.amount),
+                  pair: pair,
+                  chainId: user.chainId,
+                  chainName: user.chainName,
+                }
+              })
+              .filter((user): user is NonNullable<typeof user> => !!user && !!user.pair.id)
+          }),
+      ])
+
+      const allPairIds = [...unstakedPools, ...stakedPools].map((el) => el.id)
+
+      return allPairIds.reduce((acc, cur) => {
+        const unstaked = unstakedPools.find((el) => el.id === cur)
+        const staked = stakedPools.find((el) => el.id === cur)
+
+        acc.push(
+          staked
+            ? unstaked
+              ? { ...unstaked, stakedBalance: staked.stakedBalance }
+              : staked
+            : (unstaked as NonNullable<typeof unstaked>)
+        )
+        return acc
+      }, [] as any[])
     },
   },
 }

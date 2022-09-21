@@ -19,10 +19,29 @@ additionalTypeDefs: |
   }
   type Farm {
     id: ID!
-    feeApy: BigDecimal!
     incentives: [Incentive!]!
     chefType: String!
     poolType: String!
+  }
+  type ChefUserPool {
+    id: BigInt!
+    pair: String!
+  }
+  type ChefUser {
+    id: ID!
+    address: String!
+    amount: BigInt!
+    pool: ChefUserPool
+    chainId: Int!
+    chainName: String!
+  }
+  type UserWithFarm {
+    id: ID!
+    unstakedBalance: BigInt!
+    stakedBalance: BigInt!
+    pair: Pair!
+    chainId: Int!
+    chainName: String!
   }
   extend type Block {
     chainId: Int!
@@ -106,13 +125,27 @@ additionalTypeDefs: |
       oneDayBlockNumbers: [Int!]!,
       oneWeekBlockNumbers: [Int!]!
     ): [Pair!]!
-    crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair!
+    crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair
     crossChainUser(
       id: ID!,
       block: Block_height,
+      where: LiquidityPosition_filter,
       now: Int!, 
       chainIds: [Int!]!,
     ): User!
+    crossChainChefUser(
+      first: Int,
+      skip: Int,
+      where: User_filter,
+      block: Block_height,
+      chainIds: [Int!]!,
+    ): [ChefUser!]!
+    crossChainUserWithFarms(
+      id: ID!,
+      block: Block_height,
+      now: Int!,
+      chainIds: [Int!]!,
+    ): [UserWithFarm!]
     crossChainToken(id: ID!, now: Int!, chainId: Int!): Token!
     crossChainTokens(
       first: Int,

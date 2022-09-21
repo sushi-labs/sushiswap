@@ -71,3 +71,6 @@ export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.KAVA]: 'sushiswap/kava-minichef', //block subgraph not synced yet
   [ChainId.METIS]: 'sushiswap/metis-minichef',
 }
+
+export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
+export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'
