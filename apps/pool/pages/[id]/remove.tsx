@@ -65,7 +65,7 @@ const _Remove = () => {
         <Layout breadcrumbs={LINKS(router.query.id as string)}>
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
-            <div className="order-3 sm:order-2 flex flex-col gap-3 pb-40">
+            <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
               <RemoveSectionUnstake poolAddress={pair.id} />
               {pair.source === 'TRIDENT' ? <RemoveSectionTrident pair={pair} /> : <RemoveSectionLegacy pair={pair} />}
               <Container className="flex justify-center">
@@ -86,7 +86,7 @@ const _Remove = () => {
               </AppearOnMount>
             </div>
           </div>
-          <div className="z-[-1] bg-gradient-radial from-blue-500/10 via-slate-900 to-slate-900 fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
+          <div className="z-[-1] bg-gradient-radial fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
         </Layout>
       </PoolPositionStakedProvider>
     </PoolPositionProvider>
