@@ -451,6 +451,7 @@ query CrossChainUserWithFarms($id: ID!, $block: Block_height, $now: Int!, $chain
     id
     unstakedBalance
     stakedBalance
+    valueUSD
     pair {
       id
       chainId

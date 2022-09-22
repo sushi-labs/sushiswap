@@ -10,7 +10,8 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { getBuiltGraphSDK, InputMaybe, Pagination, Pair, Resolvers, User } from '../.graphclient'
+import { getBuiltGraphSDK, InputMaybe, Pagination, Pair, Resolvers } from '../.graphclient'
+import { getTokenBalances } from '../fetchers/token'
 
 // TODO: MOVE
 const page = <T extends Array<unknown>>(data: T, pagination: InputMaybe<Pagination | undefined>): T => {
@@ -838,16 +839,26 @@ export const resolvers: Resolvers = {
       const [unstakedPools, stakedPools] = await Promise.all([
         sdk
           .CrossChainUser({ id: args.id, where: { balance_gt: 0 }, chainIds: args.chainIds, now: 0 })
-          .then(({ crossChainUser }) =>
-            (crossChainUser.liquidityPositions ?? []).map((lp) => ({
-              id: lp.pair.id.split(':')[1],
-              unstakedBalance: String(lp.balance),
-              stakedBalance: '0',
-              pair: lp.pair,
-              chainId: lp.pair.chainId,
-              chainName: lp.pair.chainName,
-            }))
-          ),
+          .then(async ({ crossChainUser: user }) => {
+            const balances = await getTokenBalances(
+              (user.liquidityPositions ?? []).map((lp) => ({
+                token: lp.pair.id.split(':')[1],
+                user: args.id,
+                chainId: lp.pair.chainId,
+              }))
+            )
+
+            return (user.liquidityPositions ?? [])
+              .map((lp) => ({
+                id: lp.pair.id.split(':')[1],
+                unstakedBalance: balances.find((el) => el.token === lp.pair.id.split(':')[1])?.balance ?? '0',
+                stakedBalance: '0',
+                pair: lp.pair,
+                chainId: lp.pair.chainId,
+                chainName: lp.pair.chainName,
+              }))
+              .filter((entry) => entry.unstakedBalance !== '0')
+          }),
 
         sdk
           .CrossChainChefUser({ where: { address: args.id, amount_gt: 0 }, chainIds: args.chainIds })
@@ -888,13 +899,18 @@ export const resolvers: Resolvers = {
         const unstaked = unstakedPools.find((el) => el.id === cur)
         const staked = stakedPools.find((el) => el.id === cur)
 
-        acc.push(
-          staked
-            ? unstaked
-              ? { ...unstaked, stakedBalance: staked.stakedBalance }
-              : staked
-            : (unstaked as NonNullable<typeof unstaked>)
-        )
+        const combined = staked
+          ? unstaked
+            ? { ...unstaked, stakedBalance: staked.stakedBalance }
+            : staked
+          : (unstaked as NonNullable<typeof unstaked>)
+
+        const pair = unstaked?.pair ?? (staked as NonNullable<typeof unstaked>).pair
+
+        const totalBalance = Number(unstaked?.unstakedBalance ?? 0) + Number(staked?.stakedBalance ?? 0)
+        const valueUSD = (totalBalance / pair.liquidity) * pair.liquidityUSD
+
+        acc.push({ ...combined, valueUSD })
         return acc
       }, [] as any[])
     },

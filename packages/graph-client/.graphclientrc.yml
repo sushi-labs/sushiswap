@@ -39,6 +39,7 @@ additionalTypeDefs: |
     id: ID!
     unstakedBalance: BigInt!
     stakedBalance: BigInt!
+    valueUSD: BigDecimal!
     pair: Pair!
     chainId: Int!
     chainName: String!
