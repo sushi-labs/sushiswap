@@ -2,7 +2,7 @@ import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { ChevronRightIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
-import { formatNumber } from '@sushiswap/format'
+import { formatPercent } from '@sushiswap/format'
 import { XSushi } from '@sushiswap/graph-client/.graphclient'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
@@ -86,7 +86,7 @@ export const SushiBarSectionDesktop: FC = () => {
               <h4 className="mb-1 font-semibold text-slate-50 whitespace-nowrap">Sushi Bar</h4>
               <p className="text-sm text-slate-400">APR (1y)</p>
               <p className="flex items-center gap-1 text-transparent bg-gradient-to-r from-red to-yellow bg-clip-text">
-                {formatNumber(stats?.apr12m * 100)}
+                {formatPercent(stats?.apr12m)}
                 <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
                   <ExternalLinkIcon width={16} height={16} className="text-slate-200 hover:text-blue" />
                 </Link.External>
