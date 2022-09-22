@@ -127,7 +127,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
   [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',
   [ChainId.CELO]: 'sushi-0m/sushiswap-celo',
-  [ChainId.FANTOM]: 'subgraph-qa/sushiswap-fantom',
+  [ChainId.FANTOM]: 'sushi-0m/sushiswap-fantom',
   [ChainId.FUSE]: 'sushi-0m/sushiswap-fuse',
   [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
