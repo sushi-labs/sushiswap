@@ -52,6 +52,7 @@ const ALCHEMY_API_KEY: Record<number, string | undefined> = {
 const PUBLIC_RPC: Record<number, string> = {
   [ChainId.FANTOM]: 'https://rpcapi.fantom.network',
   [ChainId.AVALANCHE]: 'https://api.avax.network/ext/bc/C/rpc',
+  [ChainId.BOBA_AVAX]: 'https://avax.boba.network',
 }
 
 export function getProvider(chainId: ChainId) {
