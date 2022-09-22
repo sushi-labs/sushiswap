@@ -37,7 +37,7 @@ export const PositionsTable: FC = () => {
     state: {
       columnVisibility,
     },
-    columns: COLUMNS as any,
+    columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
   })
 
@@ -55,7 +55,7 @@ export const PositionsTable: FC = () => {
     <GenericTable<Pair>
       table={table}
       HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
-      loading={!userWithFarms || isValidating}
+      loading={!userWithFarms && isValidating}
       placeholder="No positions found"
       pageSize={Math.max(userWithFarms?.length || 0, 5)}
     />
