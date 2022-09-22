@@ -19,7 +19,7 @@ export default {
     // url: 'https://sushi.com/furo',
     type: 'website',
     title: 'Furo',
-    description: 'and token vesting with Furo. and token vesting with Furo.',
+    description: 'Earn, stream and automate your DAO salaries and token vesting with Furo.',
     // images: [],
     // videos: [],
     // locale: 'en_IE',
