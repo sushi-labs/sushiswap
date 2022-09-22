@@ -22,7 +22,7 @@ export const GeneralDetailsSection = () => {
   // @ts-ignore
   const currency = watch('currency')
 
-  const { data: balance } = useBalance({ account: address, chainId: activeChain?.id, currency })
+  const { data: balance } = useBalance({ account: address, chainId: activeChain?.id, currency, loadBentobox: true })
 
   return (
     <Form.Section
