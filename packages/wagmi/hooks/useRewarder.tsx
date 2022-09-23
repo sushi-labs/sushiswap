@@ -50,10 +50,9 @@ export const useRewarder: UseRewarder = ({
           args: [farmId, account],
         }
       }
-
       return {
         chainId,
-        ...getRewarderConfig(chainId, rewarderAddresses[index]),
+        ...getRewarderConfig(rewarderAddresses[index]),
         functionName: 'pendingTokens',
         args: [farmId, account, 0],
       }
