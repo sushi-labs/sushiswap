@@ -2,6 +2,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useContractRead, useContractReads } from 'wagmi'
+import { ReadContractsConfig } from 'wagmi/actions'
 
 import { RewarderType } from './useFarmRewards'
 import { Chef } from './useMasterChef'
@@ -33,18 +34,17 @@ export const useRewarder: UseRewarder = ({
   farmId,
   chef,
 }) => {
-  const config = useMemo(() => getMasterChefContractConfig(chainId, chef), [chainId, chef])
+  // const config = useMemo(() => getMasterChefContractConfig(chainId, chef), [chainId, chef])
 
-  const contracts = useMemo(() => {
+  const contracts = useMemo<ReadContractsConfig['contracts']>(() => {
     if (rewardTokens.length !== rewarderAddresses.length && rewardTokens.length !== types.length) {
-      throw new Error('useRewarder: invalid params')
+      console.error('useRewarder: invalid params')
+      return []
     }
-
-    // TODO
+    const config = getMasterChefContractConfig(chainId, chef)
     return rewardTokens.map((el, index) => {
       if (types[index] === RewarderType.Primary) {
         return {
-          chainId: chainId,
           ...config,
           functionName: 'pendingSushi',
           args: [farmId, account],
@@ -57,7 +57,7 @@ export const useRewarder: UseRewarder = ({
         args: [farmId, account, 0],
       }
     })
-  }, [account, chainId, config, farmId, rewardTokens, rewarderAddresses, types])
+  }, [account, chainId, chef, farmId, rewardTokens, rewarderAddresses, types])
 
   const { data, isLoading, isError } = useContractReads({
     contracts,

@@ -1,9 +1,9 @@
-import { AddressZero } from '@ethersproject/constants'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { NotificationData } from '@sushiswap/ui'
 import { useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContractReads, useDeprecatedSendTransaction } from 'wagmi'
+import { ReadContractsConfig } from 'wagmi/actions'
 
 import {
   getMasterChefContractConfig,
@@ -40,8 +40,8 @@ interface UseMasterChefParams {
 type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 
 export const useMasterChef: UseMasterChef = ({
-  watch = true,
   chainId,
+  watch = true,
   chef,
   pid,
   token,
@@ -59,30 +59,30 @@ export const useMasterChef: UseMasterChef = ({
   const v2Config = useMemo(() => getMasterChefContractV2Config(chainId), [chainId])
 
   const contracts = useMemo(() => {
-    const inputs: any[] = []
+    const inputs: ReadContractsConfig['contracts'] = []
 
-    if (Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled) {
+    if (!chainId) return []
+
+    if (enabled && chainId in SUSHI_ADDRESS) {
       inputs.push({
-        chainId: chainId,
-        addressOrName: chainId ? SUSHI_ADDRESS[chainId] : AddressZero,
+        chainId,
+        addressOrName: SUSHI_ADDRESS[chainId],
         contractInterface: erc20ABI,
         functionName: 'balanceOf',
         args: [config.addressOrName],
       })
     }
 
-    if (!!address && enabled && config.addressOrName) {
+    if (enabled && !!address && config.addressOrName) {
       inputs.push({
-        chainId: chainId,
         ...config,
         functionName: 'userInfo',
         args: [pid, address],
       })
     }
 
-    if (enabled && !!v2Config.addressOrName) {
+    if (enabled && !!address && !!v2Config.addressOrName) {
       inputs.push({
-        chainId: chainId,
         ...v2Config,
         functionName: 'pendingSushi',
         args: [pid, address],
@@ -122,6 +122,7 @@ export const useMasterChef: UseMasterChef = ({
     async (amount: Amount<Token> | undefined) => {
       if (!chainId) return console.error('useMasterChef: chainId not defined')
       if (!amount) return console.error('useMasterChef: amount not defined')
+      if (!contract) return console.error('useMasterChef: contract not defined')
 
       const data = await sendTransactionAsync({
         request: {
@@ -151,7 +152,7 @@ export const useMasterChef: UseMasterChef = ({
         })
       }
     },
-    [address, chainId, chef, contract.address, contract.interface, onSuccess, pid, sendTransactionAsync]
+    [address, chainId, chef, contract, onSuccess, pid, sendTransactionAsync]
   )
 
   /**
@@ -161,6 +162,7 @@ export const useMasterChef: UseMasterChef = ({
     async (amount: Amount<Token> | undefined) => {
       if (!chainId) return console.error('useMasterChef: chainId not defined')
       if (!amount) return console.error('useMasterChef: amount not defined')
+      if (!contract) return console.error('useMasterChef: contract not defined')
 
       const data = await sendTransactionAsync({
         request: {
@@ -190,7 +192,7 @@ export const useMasterChef: UseMasterChef = ({
         })
       }
     },
-    [address, chainId, chef, contract.address, contract.interface, onSuccess, pid, sendTransactionAsync]
+    [address, chainId, chef, contract, onSuccess, pid, sendTransactionAsync]
   )
 
   /**
@@ -199,6 +201,7 @@ export const useMasterChef: UseMasterChef = ({
   const harvest = useCallback(async () => {
     if (!chainId) return console.error('useMasterChef: chainId not defined')
     if (!data) return console.error('useMasterChef: could not fetch pending sushi and sushi balance')
+    if (!contract) return console.error('useMasterChef: contract not defined')
 
     let tx
     if (chef === Chef.MASTERCHEF) {
@@ -209,15 +212,7 @@ export const useMasterChef: UseMasterChef = ({
           data: contract.interface.encodeFunctionData('deposit', [pid, ZERO]),
         },
       })
-    } else if (chef === Chef.MINICHEF) {
-      tx = await sendTransactionAsync({
-        request: {
-          from: address,
-          to: contract.address,
-          data: contract.interface.encodeFunctionData('harvest', [pid, address]),
-        },
-      })
-    } else {
+    } else if (chef === Chef.MASTERCHEF_V2) {
       if (pendingSushi && sushiBalance && pendingSushi.greaterThan(sushiBalance)) {
         tx = await sendTransactionAsync({
           request: {
@@ -238,9 +233,17 @@ export const useMasterChef: UseMasterChef = ({
           },
         })
       }
+    } else if (chef === Chef.MINICHEF) {
+      tx = await sendTransactionAsync({
+        request: {
+          from: address,
+          to: contract.address,
+          data: contract.interface.encodeFunctionData('harvest', [pid, address]),
+        },
+      })
     }
 
-    if (onSuccess) {
+    if (onSuccess && tx) {
       const ts = new Date().getTime()
       onSuccess({
         type: 'claimRewards',
@@ -256,19 +259,7 @@ export const useMasterChef: UseMasterChef = ({
         timestamp: ts,
       })
     }
-  }, [
-    chainId,
-    data,
-    chef,
-    onSuccess,
-    sendTransactionAsync,
-    address,
-    contract.address,
-    contract.interface,
-    pid,
-    pendingSushi,
-    sushiBalance,
-  ])
+  }, [chainId, data, chef, onSuccess, sendTransactionAsync, address, contract, pid, pendingSushi, sushiBalance])
 
   return useMemo(() => {
     return {
