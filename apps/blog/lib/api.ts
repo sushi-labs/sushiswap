@@ -8,6 +8,7 @@ export const getArticleAndMoreArticles = async (slug: string, preview: Record<st
       (await sdk.articleAndMoreArticles({
         filters: {
           slug: { eq: slug },
+          articleType: { eq: 'blog' },
         },
         filters_ne: { slug: { not: { eq: slug } } },
         publicationState: preview ? 'PREVIEW' : 'LIVE',
@@ -35,7 +36,7 @@ export const getPreviewPostBySlug = async (slug: string) => {
 
 export const getArticles = async (variables?: { filters?: ArticleFiltersInput; pagination?: PaginationArg }) => {
   const sdk = getMeshSDK()
-  return await sdk.getArticles(variables)
+  return await sdk.getArticles({ ...variables, filters: { ...variables.filters, articleType: { eq: 'blog' } } })
 }
 
 export const getCategories = async (filters?: CategoryFiltersInput) => {
