@@ -44,7 +44,6 @@ export const StreamTable: FC<FuroTableProps> = ({
   loading,
   type,
 }) => {
-  console.log(globalFilter)
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
@@ -117,12 +116,12 @@ export const StreamTable: FC<FuroTableProps> = ({
   }, [isMd, isSm])
 
   return (
-    <GenericTable
+    <GenericTable<Stream | Vesting>
       loading={loading}
       table={table}
-      columns={columns}
       placeholder={placeholder}
       pageSize={Math.max(data.length, 5)}
+      linkFormatter={(row) => `/${row instanceof Stream ? 'stream' : 'vesting'}/${row.id}?chainId=${row.chainId}`}
     />
   )
 }

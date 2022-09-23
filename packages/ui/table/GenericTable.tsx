@@ -1,5 +1,5 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { ColumnDef, flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
+import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
 import React, { ReactNode, useState } from 'react'
 
 import { classNames, Link, Table } from '..'
@@ -9,11 +9,11 @@ import { Typography } from '../typography'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
-  columns: ColumnDef<C>[]
   HoverElement?: React.FunctionComponent<{ row: C }>
   loading?: boolean
   placeholder: ReactNode
   pageSize: number
+  linkFormatter(row: C): string
 }
 
 declare module '@tanstack/react-table' {
@@ -25,11 +25,11 @@ declare module '@tanstack/react-table' {
 
 export const GenericTable = <T extends { id: string }>({
   table,
-  columns,
   HoverElement,
   loading,
   placeholder,
   pageSize,
+  linkFormatter,
 }: GenericTableProps<T>) => {
   const [showOverlay, setShowOverlay] = useState(false)
   const headers = table.getFlatHeaders()
@@ -92,11 +92,14 @@ export const GenericTable = <T extends { id: string }>({
                           {row.getVisibleCells().map((cell, i) => {
                             return (
                               <Table.td
+                                className="!px-0"
                                 style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
                                 key={cell.id}
                               >
-                                <Link.Internal href={`/${row.original.id}`} passHref={true}>
-                                  <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
+                                <Link.Internal href={linkFormatter(row.original)} passHref={true}>
+                                  <a className="table-cell align-middle h-[50px] px-3 sm:px-4">
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  </a>
                                 </Link.Internal>
                               </Table.td>
                             )
@@ -120,9 +123,15 @@ export const GenericTable = <T extends { id: string }>({
                   >
                     {row.getVisibleCells().map((cell, i) => {
                       return (
-                        <Table.td style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }} key={cell.id}>
-                          <Link.Internal href={`/${row.original.id}`} passHref={true}>
-                            <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
+                        <Table.td
+                          className="!px-0"
+                          style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
+                          key={cell.id}
+                        >
+                          <Link.Internal href={linkFormatter(row.original)} passHref={true}>
+                            <a className="table-cell align-middle h-[50px] px-3 sm:px-4">
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </a>
                           </Link.Internal>
                         </Table.td>
                       )
