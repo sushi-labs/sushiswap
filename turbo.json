@@ -3,17 +3,21 @@
   "pipeline": {
     "root#build": {
       "dependsOn": [
-        "^build",
-        "$ANALYTICS_URL",
-        "$BLOG_URL",
-        "$DOCS_URL",
-        "$FURO_URL",
-        "$LANDING_URL",
-        "$SWAP_URL",
-        "$LEGACY_URL"
+        "^build"
       ],
-      "outputs": [".next/**"],
-      "cache": true
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": true,
+      "env": [
+        "ANALYTICS_URL",
+        "BLOG_URL",
+        "DOCS_URL",
+        "FURO_URL",
+        "LANDING_URL",
+        "SWAP_URL",
+        "LEGACY_URL"
+      ]
     },
     "build": {
       "outputs": [
@@ -51,7 +55,7 @@
       ],
       "cache": true
     },
-    "test": {    
+    "test": {
       "outputs": [
         "coverage/**"
       ],
