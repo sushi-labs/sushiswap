@@ -19,6 +19,7 @@ import {
 
 const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('userPreferences') || '{}') : {}
 const initialState: StorageState = {
+  carbonOffset: parsedState?.carbonOffset || false,
   slippageTolerance: parsedState?.slippageTolerance || 0.5,
   slippageToleranceType: parsedState?.slippageToleranceType || 'auto',
   gasPrice: parsedState?.gasPrice || GasPrice.HIGH,
@@ -32,6 +33,10 @@ const initialState: StorageState = {
 }
 
 const reducers = {
+  updateCarbonOffset: (state: StorageState, action: PayloadAction<UpdateCarbonOffset>) => {
+    const { carbonOffset } = action.payload
+    state.carbonOffset = carbonOffset
+  },
   updateExpertMode: (state: StorageState, action: PayloadAction<UpdateExpertMode>) => {
     const { expertMode } = action.payload
     state.expertMode = expertMode

@@ -14,6 +14,7 @@ export enum GasPrice {
 export type TokenAsObject = { address: string; chainId: ChainId; symbol?: string; name?: string; decimals: number }
 
 export type StorageState = {
+  carbonOffset: boolean
   expertMode: boolean
   slippageTolerance: number
   slippageToleranceType: 'auto' | 'custom'
@@ -24,6 +25,10 @@ export type StorageState = {
   customTokens: Record<number, Record<string, TokenAsObject>>
   transactionDeadline: number
   notifications: Record<string, Record<string, string[]>>
+}
+
+export interface UpdateCarbonOffsetPayload {
+  carbonOffset: boolean
 }
 
 export interface UpdateSlippageTolerancePayload {

@@ -12,6 +12,7 @@ export const WBTC_ADDRESS: AddressMap = {
   [ChainId.POLYGON]: '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
   [ChainId.OPTIMISM]: '0x68f180fcCe6836688e9084f035309E29Bf0A2095',
   [ChainId.ARBITRUM_NOVA]: '0x1d05e4e72cD994cdF976181CfB0707345763564d',
+  [ChainId.BOBA]: '0xdc0486f8bf31DF57a952bcd3c1d3e166e3d9eC8b',
 }
 
 export const WBTC: Record<keyof typeof WBTC_ADDRESS, Token> = addressMapToTokenMap(
@@ -60,6 +61,7 @@ export const WETH9_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x4200000000000000000000000000000000000006',
   [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
   [ChainId.ARBITRUM_NOVA]: '0x722E8BdD2ce80A4422E880164f2079488e115365',
+  [ChainId.BOBA]: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
 }
 
 export const WETH9: Record<keyof typeof WETH9_ADDRESS, Token> = addressMapToTokenMap(
@@ -98,6 +100,7 @@ export const WNATIVE_ADDRESS: AddressMap = {
   [ChainId.KAVA]: '0xc86c7C0eFbd6A49B35E8714C5f59D99De09A225b',
   [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
   [ChainId.ARBITRUM_NOVA]: WETH9_ADDRESS[ChainId.ARBITRUM_NOVA],
+  [ChainId.BOBA]: WETH9_ADDRESS[ChainId.BOBA],
 }
 
 export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
@@ -228,6 +231,7 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     symbol: 'WMETIS',
     name: 'Wrapped Metis',
   }),
+  [ChainId.BOBA]: WETH9[ChainId.BOBA],
 }
 
 export const SUSHI_ADDRESS: AddressMap = {
@@ -252,6 +256,7 @@ export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0x2C78f1b70Ccf63CDEe49F9233e9fAa99D43AA07e',
   [ChainId.KAVA]: '0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D',
   [ChainId.METIS]: '0x17Ee7E4dA37B01FC1bcc908fA63DF343F23B4B7C',
+  [ChainId.BOBA]: '0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b',
 }
 
 export const SUSHI: Record<keyof typeof SUSHI_ADDRESS, Token> = addressMapToTokenMap(
@@ -298,6 +303,7 @@ export const USDC_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9',
   [ChainId.OPTIMISM]: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
   [ChainId.ARBITRUM_NOVA]: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
+  [ChainId.BOBA]: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
 }
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
@@ -338,6 +344,7 @@ export const USDT_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0x8e70cd5b4ff3f62659049e74b6649c6603a0e594',
   [ChainId.OPTIMISM]: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
   [ChainId.ARBITRUM_NOVA]: '0xeD9d63a96c27f87B07115b56b2e3572827f21646',
+  [ChainId.BOBA]: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
 }
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
@@ -378,6 +385,7 @@ export const DAI_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0xc234A67a4F840E61adE794be47de455361b52413',
   [ChainId.OPTIMISM]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
   [ChainId.ARBITRUM_NOVA]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+  [ChainId.BOBA]: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
 }
 
 export const DAI: Record<keyof typeof DAI_ADDRESS, Token> = addressMapToTokenMap(
@@ -418,6 +426,8 @@ export const FRAX_ADDRESS: AddressMap = {
   [ChainId.MOONRIVER]: '0x1A93B23281CC1CDE4C4741353F3064709A16197d',
   [ChainId.MOONBEAM]: '0x322E86852e492a7Ee17f28a78c663da38FB33bfb',
   [ChainId.HARMONY]: '0xFa7191D292d5633f702B0bd7E3E3BcCC0e633200',
+  [ChainId.BOBA]: '0xAb2AF3A98D229b7dAeD7305Bb88aD0BA2c42f9cA',
+  [ChainId.OPTIMISM]: '0x2E3D870790dC77A83DD1d18184Acc7439A53f475',
 }
 
 export const FRAX: Record<keyof typeof FRAX_ADDRESS, Token> = addressMapToTokenMap(
@@ -436,6 +446,11 @@ export const FXS_ADDRESS: AddressMap = {
   [ChainId.ARBITRUM]: '0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7',
   [ChainId.AVALANCHE]: '0x214DB107654fF987AD859F34125307783fC8e387',
   [ChainId.POLYGON]: '0x3e121107F6F22DA4911079845a470757aF4e1A1b',
+  [ChainId.MOONRIVER]: '0x6f1D1Ee50846Fcbc3de91723E61cb68CFa6D0E98',
+  [ChainId.MOONBEAM]: '0x2CC0A9D8047A5011dEfe85328a6f26968C8aaA1C',
+  [ChainId.HARMONY]: '0x0767D8E1b05eFA8d6A301a65b324B6b66A1CC14c',
+  [ChainId.BOBA]: '0xdc1664458d2f0B6090bEa60A8793A4E66c2F1c00',
+  [ChainId.OPTIMISM]: '0x67CCEA5bb16181E7b4109c9c2143c24a1c2205Be',
 }
 
 export const FXS: Record<keyof typeof FXS_ADDRESS, Token> = addressMapToTokenMap(
