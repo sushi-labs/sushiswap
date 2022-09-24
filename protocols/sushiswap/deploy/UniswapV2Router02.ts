@@ -1,7 +1,6 @@
+import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/dist/types'
-
-const { WNATIVE_ADDRESS } = require('@sushiswap/core-sdk')
 
 const func: DeployFunction = async function ({
   getNamedAccounts,
