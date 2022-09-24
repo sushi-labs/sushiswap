@@ -7,6 +7,7 @@ import {
   GasPrice,
   RemoveCustomToken,
   StorageState,
+  UpdateCarbonOffsetPayload,
   UpdateExpertMode,
   UpdateGasPrice,
   UpdateGasType,
@@ -33,7 +34,7 @@ const initialState: StorageState = {
 }
 
 const reducers = {
-  updateCarbonOffset: (state: StorageState, action: PayloadAction<UpdateCarbonOffset>) => {
+  updateCarbonOffset: (state: StorageState, action: PayloadAction<UpdateCarbonOffsetPayload>) => {
     const { carbonOffset } = action.payload
     state.carbonOffset = carbonOffset
   },
