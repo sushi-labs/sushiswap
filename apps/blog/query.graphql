@@ -157,7 +157,7 @@ query articleAndMoreArticles($filters: ArticleFiltersInput, $filters_ne: Article
 }
 
 query getAllArticlesWithSlug {
-    articles {
+    articles(filters: { articleType: { eq: "blog" } }) {
         data {
             id
             attributes {
@@ -213,7 +213,7 @@ query getGlobalSEO {
 }
 
 query getPreviewPostBySlug($slug: String) {
-    articles(filters: { slug: { eq: $slug }}, publicationState: PREVIEW) {
+    articles(filters: { slug: { eq: $slug } }, publicationState: PREVIEW) {
         data {
             id
             attributes {
