@@ -14,9 +14,10 @@ import { ArticleList, Card, Categories, Hero, SearchInput } from '../common/comp
 import { getArticles, getCategories, getDifficulties } from '../lib/api'
 
 export const defaultSidePadding = 'px-6 sm:px-4'
+export const difficultyColors = ['#7CFF6B', '#FFD166', '#F338C3']
 
 export async function getStaticProps() {
-  const articles = await getArticles({ pagination: { limit: 5 } })
+  const articles = await getArticles({ pagination: { limit: 6 } })
   const categories = await getCategories()
   const difficulties = await getDifficulties()
 
@@ -99,7 +100,6 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const articleList =
     (selectedCategory || selectedDifficulty) && filterData?.data ? filterData?.data : articles ? articles : undefined
   const latestReleases = articles?.slice(0, 3)
-  const difficultyColors = ['#F338C3', '#FFD166', '#7CFF6B']
   const [beginnerColor, advancedColor, technicalColor] = difficultyColors
   /**
    * const initialArticleList = special tag
@@ -187,13 +187,11 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
         <div className={classNames('mt-9 sm:mt-[70px]', defaultSidePadding)}>
           {articleList && (
-            <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 transition-all sm:grid-cols-2 md:grid-cols-3">
               <ArticleList
                 articles={articleList as ArticleEntity[]}
                 loading={loading}
-                render={(article, i) => (
-                  <Card article={article} isBig={!i} key={`article__left__${article?.attributes?.slug}`} />
-                )}
+                render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
               />
             </div>
           )}

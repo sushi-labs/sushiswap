@@ -1,88 +1,60 @@
-import { ClockIcon } from '@heroicons/react/24/outline'
-import { CircleIcon, classNames, Typography } from '@sushiswap/ui'
+import { Chip, CircleIcon, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
 import { ArticleEntity } from '../../../.mesh'
-import { isMediaVideo } from '../../../lib/media'
 import { Image } from '../Image'
 
 interface Card {
   article: ArticleEntity
-  isBig?: boolean
 }
 
-export const Card: FC<Card> = ({ article, isBig }) => {
+export const Card: FC<Card> = ({ article }) => {
   const level = 'Advanced' // TODO: connect
 
   return (
-    <div
-      className={classNames(
-        'h-[365px] sm:h-[420px] w-full rounded-xl bg-slate-800 group ring-1 ring-slate-700',
-        isBig && 'sm:col-span-2 sm:flex flex-row gap-6'
-      )}
-    >
-      <div
-        className={classNames(
-          'relative rounded-xl overflow-hidden',
-          isBig ? 'h-[150px] sm:h-full sm:w-[55%]' : 'h-[150px] sm:h-[205px]'
-        )}
-      >
-        {article?.attributes?.cover?.data && (
-          <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
-            <Image
-              quality={100}
-              image={article?.attributes.cover.data}
-              className={classNames(
-                isMediaVideo(article?.attributes.cover.data?.attributes?.provider_metadata)
-                  ? ''
-                  : 'group-hover:scale-[1.06] scale-[1.01] transition duration-[400ms] rounded-xl'
-              )}
-            />
-          </a>
-        )}
-      </div>
+    <a href={`/academy/articles/${article?.attributes?.slug}`}>
+      <div className="relative h-[436px] sm:h-[446px] rounded-lg bg-slate-800/50 sm:bg-[#182030] overflow-hidden sm:ease-in-out sm:duration-300 sm:hover:scale-125 sm:delay-300 sm:hover:shadow-[4px_4px_27px_rgba(0,0,0,0.25)_0px_24px_24px_-16px_rgba(15,15,15,0.2)] sm:z-10 sm:hover:z-20">
+        <div className="relative h-[192px] sm:h-[202px]">
+          {article?.attributes?.cover?.data && <Image quality={100} image={article?.attributes.cover.data} />}
+        </div>
 
-      <div className={classNames('flex flex-col gap-3', isBig ? 'sm:w-[45%] sm:py-14 justify-between p-6' : 'p-6')}>
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-4 text-slate-400">
-            <Typography variant="sm">
-              {article?.attributes?.publishedAt && format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
-            </Typography>
-            <div className="flex gap-2">
-              <ClockIcon width={16} />
-              <Typography variant="sm">15 min</Typography>
+        <div className="grid gap-4 p-6">
+          <div className="flex items-center w-full gap-5">
+            {/* 
+        <div className="flex gap-1">
+          {article?.attributes?.categories?.data.map((category) => (
+            <Chip key={category.id} label={category?.attributes?.name} className="capitalize" />
+          ))} */}
+            {(article?.attributes?.categories?.data || []).length > 0 && (
+              <Chip
+                key={article.attributes.categories.data[0].id}
+                label={article.attributes.categories.data[0].attributes.name}
+                className="capitalize"
+              />
+            )}
+            {/* </div> */}
+            <div className="flex items-center gap-1 min-w-max">
+              <CircleIcon width={8} height={8} stroke="#7CFF6B" fill="#7CFF6B" />
+              <Typography variant="xs" weight={500}>
+                {level}
+              </Typography>
             </div>
           </div>
-          <a href={`/academy/articles/${article?.attributes?.slug}`} className="cursor-pointer hover:underline">
-            <span
-              className={classNames(
-                'text-slate-200 font-bold',
-                isBig
-                  ? 'sm:leading-8 lg:leading-10 sm:text-2xl lg:text-3xl leading-6 text-xl line-clamp-2'
-                  : 'leading-6 lg:leading-8 text-xl lg:text-2xl line-clamp-2'
-              )}
-            >
-              {article?.attributes?.title}
-            </span>
-          </a>
 
-          <Typography
-            variant="sm"
-            className={classNames('leading-6 text-slate-400', isBig ? 'sm:line-clamp-4 line-clamp-2' : 'line-clamp-2')}
-          >
+          <Typography variant="lg" weight={600} className="leading-5 text-slate-50 line-clamp-2">
+            {article?.attributes?.title}
+          </Typography>
+
+          <Typography variant="sm" className={classNames('leading-5 text-slate-400 line-clamp-3')}>
             {article?.attributes?.description}
           </Typography>
+
+          <Typography variant="xs" weight={500} className="absolute text-slate-500 bottom-6 left-6">
+            {article?.attributes?.publishedAt && format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
+          </Typography>
         </div>
-        {isBig && (
-          <div className="items-center hidden gap-2 sm:flex">
-            <CircleIcon width={8} className="fill-white" />
-            <Typography variant="lg" weight={700}>
-              {level}
-            </Typography>
-          </div>
-        )}
       </div>
-    </div>
+    </a>
   )
 }
