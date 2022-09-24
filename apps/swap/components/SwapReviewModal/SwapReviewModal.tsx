@@ -390,8 +390,10 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     tridentRouter,
     allowedSlippage,
     deadline,
-    signature,
     chainId,
+    carbonOffset,
+    sushiSwapKlimaRouter,
+    signature,
     provider,
     sendTransactionAsync,
     createNotification,
@@ -404,11 +406,11 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const approveTokenTo = useMemo(() => {
     if (trade?.isV1()) {
-      return sushiSwapRouter?.address
+      return chainId === ChainId.POLYGON && carbonOffset ? sushiSwapKlimaRouter?.address : sushiSwapRouter?.address
     } else if (trade?.isV2()) {
       return BENTOBOX_ADDRESS[chainId]
     }
-  }, [trade, sushiSwapRouter, chainId])
+  }, [trade, carbonOffset, sushiSwapKlimaRouter?.address, sushiSwapRouter?.address, chainId])
 
   return (
     <>
