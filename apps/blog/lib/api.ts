@@ -36,7 +36,7 @@ export const getPreviewPostBySlug = async (slug: string) => {
 
 export const getArticles = async (variables?: { filters?: ArticleFiltersInput; pagination?: PaginationArg }) => {
   const sdk = getMeshSDK()
-  return await sdk.getArticles({ ...variables, filters: { ...variables.filters, articleType: { eq: 'blog' } } })
+  return await sdk.getArticles({ ...variables, filters: { ...variables?.filters, articleType: { eq: 'blog' } } })
 }
 
 export const getCategories = async (filters?: CategoryFiltersInput) => {
