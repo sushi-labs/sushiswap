@@ -165,6 +165,7 @@ const _Add: FC<AddProps> = ({
 
   const onChangeToken0TypedAmount = useCallback(
     (value) => {
+      console.log('typed0 value', value, [poolState === PoolState.NOT_EXISTS, token0, poolState, pool])
       if (poolState === PoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
@@ -183,6 +184,7 @@ const _Add: FC<AddProps> = ({
 
   const onChangeToken1TypedAmount = useCallback(
     (value) => {
+      console.log('typed1 value', value)
       if (poolState === PoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,

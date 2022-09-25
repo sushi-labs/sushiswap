@@ -11,14 +11,11 @@ import {
   Version as TradeVersion,
 } from '@sushiswap/exchange'
 import { RouteStatus } from '@sushiswap/tines'
-import { useBentoBoxTotal } from '@sushiswap/wagmi'
+import { PairState, PoolState, useBentoBoxTotal, useGetAllConstantProductPools, usePairs } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS } from 'config'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
-
-import { PoolState, useConstantProductPools } from './useConstantProductPools'
-import { PairState, usePairs } from './usePairs2'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
@@ -52,10 +49,10 @@ export function useTrade(
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
 
   // Legacy SushiSwap pairs
-  const pairs = usePairs(chainId, currencyCombinations)
+  const { data: pairs } = usePairs(chainId, currencyCombinations)
 
   // Trident constant product pools
-  const constantProductPools = useConstantProductPools(chainId, currencyCombinations)
+  const { data: constantProductPools } = useGetAllConstantProductPools(chainId, currencyCombinations)
 
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])
