@@ -1,18 +1,18 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
-import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { incentiveRewardToToken } from '../../../lib/functions'
-import { useTokensFromPair } from '../../../lib/hooks'
-import { ICON_SIZE } from './contants'
+import { incentiveRewardToToken } from '../../../../lib/functions'
+import { useTokensFromPair } from '../../../../lib/hooks'
+import { ICON_SIZE } from '../contants'
 
 interface PairQuickHoverTooltipProps {
-  row: UserWithFarm
+  row: Pair
 }
 
 export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) => {
-  const { token0, token1 } = useTokensFromPair(row.pair)
+  const { token0, token1 } = useTokensFromPair(row)
 
   return (
     <div className="flex flex-col p-2 !pb-0">
@@ -33,31 +33,31 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
             </div>
           </div>
           <Typography variant="xs" weight={600} className="flex gap-1.5 mt-1 items-center text-slate-400">
-            <Chip color="gray" label={`Fee ${row.pair.swapFee / 100}%`} />
+            <Chip color="gray" label={`Fee ${row.swapFee / 100}%`} />
           </Typography>
         </div>
         <div className="flex flex-col gap-1">
           <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
-            <span className="text-slate-400">APR:</span> {formatPercent(row.pair.apr)}
+            <span className="text-slate-400">APR:</span> {formatPercent(row.apr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
-            <span className="text-slate-400">Rewards:</span> {formatPercent(row.pair.incentiveApr)}
+            <span className="text-slate-400">Rewards:</span> {formatPercent(row.incentiveApr)}
           </Typography>
           <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
-            <span className="text-slate-400">Fees:</span> {formatPercent(row.pair.feeApr)}
+            <span className="text-slate-400">Fees:</span> {formatPercent(row.feeApr)}
           </Typography>
         </div>
       </div>
-      {row.pair.farm?.incentives && (
+      {row.farm?.incentives && (
         <>
           <hr className="my-3 border-t border-slate-200/10" />
           <div className="flex flex-col gap-1.5">
             <Typography variant="xs" className="mb-1 text-slate-500">
               Reward Emission
             </Typography>
-            {row.pair.farm.incentives.map((incentive, index) => (
+            {row.farm.incentives.map((incentive, index) => (
               <div key={index} className="flex items-center gap-2">
-                <Currency.Icon currency={incentiveRewardToToken(row.pair.chainId, incentive)} width={18} height={18} />
+                <Currency.Icon currency={incentiveRewardToToken(row.chainId, incentive)} width={18} height={18} />
                 <Typography variant="sm" weight={600} className="text-slate-50">
                   <span>
                     {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol}
@@ -70,7 +70,7 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
         </>
       )}
       <div className="flex justify-end gap-2 mt-4 mb-2">
-        <Link.Internal href={`/${row.pair.id}/add`} passHref={true}>
+        <Link.Internal href={`/${row.id}/add`} passHref={true}>
           <Button as="a" size="sm" fullWidth>
             Deposit
           </Button>

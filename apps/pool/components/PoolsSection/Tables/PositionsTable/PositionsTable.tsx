@@ -6,9 +6,9 @@ import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, VALUE_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
-import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
+import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, VALUE_COLUMN, VOLUME_COLUMN } from './Cells/columns'
+import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

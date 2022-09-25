@@ -24,6 +24,8 @@ export const PoolPositionProvider: FC<{ pair: Pair; children: ReactNode; watch?:
   children,
   watch = true,
 }) => {
+  console.log(pair)
+
   const { address: account } = useAccount()
   const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
 
