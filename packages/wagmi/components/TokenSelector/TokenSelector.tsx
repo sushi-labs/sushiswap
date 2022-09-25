@@ -32,8 +32,6 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       [tokenMap, props.customTokenMap]
     )
 
-    console.log({ _tokenMap })
-
     const _tokenMapValues = useMemo(() => {
       // Optimism token list is dumb, have to remove random weird addresses
       delete _tokenMap['0x0000000000000000000000000000000000000000']

@@ -65,7 +65,6 @@ export function usePairs(
     watch: !(typeof config?.enabled !== undefined && !config?.enabled),
     keepPreviousData: true,
   })
-
   return useMemo(() => {
     if (contracts.length === 0) return { isLoading, isError, data: [[PairState.INVALID, null]] }
     if (!data)
