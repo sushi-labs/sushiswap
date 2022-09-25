@@ -8,7 +8,6 @@ import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
@@ -18,26 +17,30 @@ import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { chainId, inputToken, outputToken, inputTypedAmount } = query
+  const { chainId, token0, token1, input0 } = query
   return {
     props: {
       chainId: chainId ?? null,
-      inputToken: inputToken ?? null,
-      outputToken: outputToken ?? null,
-      inputTypedAmount: !isNaN(Number(inputTypedAmount)) ? inputTypedAmount : '',
+      token0: token0 ?? null,
+      token1: token1 ?? null,
+      input0: !isNaN(Number(input0)) ? input0 : '',
     },
   }
 }
 
 function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { chain } = useNetwork()
-  const router = useRouter()
 
   const chainId = initialState.chainId ? Number(initialState.chainId) : chain ? chain.id : ChainId.ETHEREUM
-  const inputToken = initialState.inputToken ?? Native.onChain(chainId)
-  const outputToken = initialState.outputToken ?? (chainId in SUSHI ? SUSHI[chainId] : USDC[chainId])
 
-  const [input0, setInput0] = useState<string>(initialState.inputTypedAmount)
+  const tokens = useTokens(chainId)
+
+  const inputToken =
+    initialState.token0 && initialState.token0 in tokens ? tokens[initialState.token0] : Native.onChain(chainId)
+
+  const outputToken = initialState.token1 ?? (chainId in SUSHI ? SUSHI[chainId] : USDC[chainId])
+
+  const [input0, setInput0] = useState<string>(initialState.input0)
   const [token0, setToken0] = useState<Type | undefined>(inputToken)
   const [input1, setInput1] = useState<string>('')
   const [token1, setToken1] = useState<Type | undefined>(outputToken)
@@ -81,25 +84,6 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
     setInput0('')
     setInput1('')
   }, [])
-
-  // TODO: WIP
-  // This effect is responsible for encoding the swap state into the URL, to add statefullness
-  // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
-  // useEffect(() => {
-  //   if (chainId === Number(router.query.chainId)) return
-
-  //   void router.replace(
-  //     {
-  //       pathname: router.pathname,
-  //       query: {
-  //         ...router.query,
-  //         chainId,
-  //       },
-  //     },
-  //     undefined,
-  //     { shallow: true }
-  //   )
-  // }, [chainId, router])
 
   return (
     <>
@@ -159,14 +143,14 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 />
                 <SwapStatsDisclosure />
                 <div className="p-3 pt-0">
-                  <Checker.Amounts
-                    fullWidth
-                    size="md"
-                    chainId={chainId}
-                    fundSource={FundSource.WALLET}
-                    amounts={amounts}
-                  >
-                    <Checker.Connected fullWidth size="md">
+                  <Checker.Connected fullWidth size="md">
+                    <Checker.Amounts
+                      fullWidth
+                      size="md"
+                      chainId={chainId}
+                      fundSource={FundSource.WALLET}
+                      amounts={amounts}
+                    >
                       <Checker.Network
                         fullWidth
                         size="md"
@@ -190,8 +174,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                           }}
                         </SwapReviewModalLegacy>
                       </Checker.Network>
-                    </Checker.Connected>
-                  </Checker.Amounts>
+                    </Checker.Amounts>
+                  </Checker.Connected>
                 </div>
               </div>
             </Widget.Content>

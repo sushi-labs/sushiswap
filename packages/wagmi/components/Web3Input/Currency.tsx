@@ -105,7 +105,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           ) : currency ? (
             <>
               <div className="w-5 h-5">
-                <UICurrency.Icon disableLink layout="responsive" currency={currency} width={20} height={20} />
+                <UICurrency.Icon disableLink layout="responsive" currency={currency} width={20} height={20} priority />
               </div>
               <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
             </>

@@ -61,7 +61,7 @@
     "@sushiswap/wagmi-config": "workspace:*",
     "@types/jest": "^27.5.1",
     "@types/numeral": "^2.0.2",
-    "@wagmi/core": "^0.4.9",
+    "@wagmi/core": "^0.5.7",
     "@whatwg-node/fetch": "^0.0.2",
     "cross-undici-fetch": "^0.4.11",
     "ethers": "^5.7.1",

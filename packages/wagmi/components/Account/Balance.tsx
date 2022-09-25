@@ -51,7 +51,7 @@ export const Balance: FC<Props> = ({ address, supportedNetworks, children }) => 
             </IconButton>
           </NetworkSelector>
         )}
-        <Typography weight={500} className="hidden sm:flex gap-1 items-baseline text-slate-200" as="span">
+        <Typography weight={500} className="items-baseline hidden gap-1 sm:flex text-slate-200" as="span">
           {isMounted &&
             chain &&
             data &&

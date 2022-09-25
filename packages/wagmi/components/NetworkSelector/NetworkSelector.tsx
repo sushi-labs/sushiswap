@@ -7,11 +7,12 @@ import { useNetwork, useSwitchNetwork } from 'wagmi'
 interface NetworkSelectorProps {
   children: ReactNode
   supportedNetworks?: ChainId[]
+  onSuccess: () => void
 }
 
-export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedNetworks }) => {
+export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedNetworks, onSuccess }) => {
   const { chain } = useNetwork()
-  const { switchNetwork } = useSwitchNetwork()
+  const { switchNetwork } = useSwitchNetwork({ onSuccess })
 
   const networks = useMemo(() => Array.from(new Set(supportedNetworks)), [supportedNetworks])
 

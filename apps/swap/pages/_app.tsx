@@ -12,6 +12,7 @@ import { WagmiConfig } from 'wagmi'
 
 import { Header } from '../components'
 
+
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <WagmiConfig client={client}>
