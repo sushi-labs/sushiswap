@@ -876,7 +876,10 @@ export const resolvers: Resolvers = {
                     .then(({ crossChainPair: pair }) => pair)
                 )
               )
-            ).filter((pair): pair is NonNullable<typeof pair> => !!pair)
+            )
+              .filter((pair): pair is NonNullable<typeof pair> => !!pair)
+              // TODO: remove when polygon subgraph is synced
+              .filter((pair) => pair.chainId !== ChainId.POLYGON && pair.source !== 'LEGACY')
 
             return crossChainChefUser
               .map((user) => {
