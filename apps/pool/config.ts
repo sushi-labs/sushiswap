@@ -15,7 +15,7 @@ export const AMM_ENABLED_NETWORKS: ChainId[] = [
   // ChainId.MOONBEAM,
   ChainId.ARBITRUM_NOVA,
   // ChainId.HARMONY,
-  // ChainId.BOBA,
+  ChainId.BOBA,
 ]
 
 export const SUPPORTED_CHAIN_IDS: ChainId[] = [...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]
