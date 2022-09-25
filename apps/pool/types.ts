@@ -17,7 +17,3 @@ export interface PairWithAlias extends Pair {
     transactionCount: number
   }[]
 }
-
-export interface PairWithBalance extends PairWithFarmRewards {
-  liquidityTokenBalance: string
-}

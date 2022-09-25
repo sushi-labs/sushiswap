@@ -5,9 +5,9 @@ import { FC } from 'react'
 import { CellProps } from './types'
 
 export const PairTVLCell: FC<CellProps> = ({ row }) => {
-  const tvl = formatUSD(row.liquidityUSD)
+  const tvl = formatUSD(row.pair.liquidityUSD)
   return (
-    <Typography variant="sm" weight={600} className="text-slate-50 text-right">
+    <Typography variant="sm" weight={600} className="text-right text-slate-50">
       {tvl.includes('NaN') ? '$0.00' : tvl}
     </Typography>
   )
