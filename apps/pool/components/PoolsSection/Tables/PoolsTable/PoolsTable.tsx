@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair, UserWithFarm } from '@sushiswap/graph-client/.graphclient'
 import { Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
@@ -10,6 +10,7 @@ import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, PAGE_SIZE, TVL_COLUMN, VOLUME_
 import { GenericTable } from '../GenericTable'
 import { PairQuickHoverTooltip } from '../PairQuickHoverTooltip'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, APR_COLUMN]
 
@@ -89,8 +90,10 @@ export const PoolsTable: FC = () => {
     {}
   )
 
-  const table = useReactTable<Pair>({
-    data: pools || [],
+  const data = useMemo(() => pools?.map((pool) => ({ pair: pool })) as unknown as UserWithFarm[], [pools])
+
+  const table = useReactTable<UserWithFarm>({
+    data: data || [],
     columns: COLUMNS,
     state: {
       sorting,
@@ -117,7 +120,7 @@ export const PoolsTable: FC = () => {
 
   return (
     <>
-      <GenericTable<Pair>
+      <GenericTable<UserWithFarm>
         table={table}
         loading={!pools && isValidating}
         HoverElement={isMd ? PairQuickHoverTooltip : undefined}

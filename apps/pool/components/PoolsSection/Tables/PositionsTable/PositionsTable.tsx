@@ -1,23 +1,26 @@
-import { Pair, UserWithFarm } from '@sushiswap/graph-client/.graphclient'
+import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
 import { useBreakpoint } from '@sushiswap/ui'
-import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
+import React, { FC, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, POSITION_COLUMN, VOLUME_COLUMN } from '../contants'
+import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, VALUE_COLUMN, VOLUME_COLUMN } from '../contants'
 import { GenericTable } from '../GenericTable'
 import { PositionQuickHoverTooltip } from '../PositionQuickHoverTooltip'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, POSITION_COLUMN, VOLUME_COLUMN, APR_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, VALUE_COLUMN, VOLUME_COLUMN, APR_COLUMN]
 
 export const PositionsTable: FC = () => {
   const { selectedNetworks } = usePoolFilters()
   const { address } = useAccount()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
+
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'value', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
 
   const { data: userWithFarms, isValidating } = useSWR<UserWithFarm[]>(
@@ -27,18 +30,18 @@ export const PositionsTable: FC = () => {
     (url) => fetch(url).then((response) => response.json())
   )
 
-  const positions = useMemo(() => {
-    if (!userWithFarms) return []
-    return userWithFarms?.map((el) => el.pair)
-  }, [userWithFarms])
+  console.log(userWithFarms || [])
 
-  const table = useReactTable<Pair>({
-    data: positions || [],
+  const table = useReactTable<UserWithFarm>({
+    data: userWithFarms || [],
     state: {
+      sorting,
       columnVisibility,
     },
     columns: COLUMNS,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   })
 
   useEffect(() => {
@@ -52,7 +55,7 @@ export const PositionsTable: FC = () => {
   }, [isMd, isSm])
 
   return (
-    <GenericTable<Pair>
+    <GenericTable<UserWithFarm>
       table={table}
       HoverElement={isMd ? PositionQuickHoverTooltip : undefined}
       loading={!userWithFarms && isValidating}
