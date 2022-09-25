@@ -346,4 +346,27 @@ export const otherChains = [
       blockCreated: 8005532,
     },
   },
+  {
+    id: ChainId.BOBA,
+    name: 'Boba',
+    network: 'boba',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: {
+      default: 'https://mainnet.boba.network',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Bobascan',
+        url: 'https://bobascan.com/',
+      },
+      default: {
+        name: 'Bobascan',
+        url: 'https://bobascan.com/',
+      },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 446859,
+    },
+  },
 ]
