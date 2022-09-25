@@ -1,7 +1,7 @@
 import { NetworkIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { ICON_SIZE } from './contants'
+import { ICON_SIZE } from '../../contants'
 import { CellProps } from './types'
 
 export const PairChainCell: FC<CellProps> = ({ row }) => {

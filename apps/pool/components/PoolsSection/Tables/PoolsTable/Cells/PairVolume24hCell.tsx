@@ -4,11 +4,12 @@ import { FC } from 'react'
 
 import { CellProps } from './types'
 
-export const PairTVLCell: FC<CellProps> = ({ row }) => {
-  const tvl = formatUSD(row.pair.liquidityUSD)
+export const PairVolume24hCell: FC<CellProps> = ({ row }) => {
+  const volume = formatUSD(row.volume1d)
+
   return (
     <Typography variant="sm" weight={600} className="text-right text-slate-50">
-      {tvl.includes('NaN') ? '$0.00' : tvl}
+      {volume.includes('NaN') ? '$0.00' : volume}
     </Typography>
   )
 }

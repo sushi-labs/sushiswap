@@ -3,11 +3,11 @@ import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromPair } from '../../../lib/hooks'
-import { PoolPositionProvider, usePoolPosition } from '../../PoolPositionProvider'
-import { PoolPositionRewardsProvider, usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
-import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../PoolPositionStakedProvider'
-import { ICON_SIZE } from './contants'
+import { useTokensFromPair } from '../../../../lib/hooks'
+import { PoolPositionProvider, usePoolPosition } from '../../../PoolPositionProvider'
+import { PoolPositionRewardsProvider, usePoolPositionRewards } from '../../../PoolPositionRewardsProvider'
+import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../../PoolPositionStakedProvider'
+import { ICON_SIZE } from '../contants'
 
 interface PositionQuickHoverTooltipProps {
   row: UserWithFarm

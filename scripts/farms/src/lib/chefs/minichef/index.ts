@@ -122,7 +122,6 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
         }
 
         incentives = incentives.filter((incentive) => incentive.apr !== 0)
-        if (incentives.length === 0) return acc
 
         acc[pool.pair.id] = {
           id: pool.id,

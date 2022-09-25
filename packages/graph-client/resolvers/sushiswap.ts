@@ -854,7 +854,7 @@ export const resolvers: Resolvers = {
 
             return (user.liquidityPositions ?? [])
               .map((lp) => ({
-                id: lp.pair.id.split(':')[1],
+                id: lp.pair.id,
                 unstakedBalance: balances.find((el) => el.token === lp.pair.id.split(':')[1])?.balance ?? '0',
                 stakedBalance: '0',
                 pair: lp.pair,
@@ -885,7 +885,7 @@ export const resolvers: Resolvers = {
                 if (!pair) return
 
                 return {
-                  id: pair.id.split(':')[1],
+                  id: pair.id,
                   unstakedBalance: '0',
                   stakedBalance: String(user.amount),
                   pair: pair,

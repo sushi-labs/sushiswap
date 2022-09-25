@@ -3,8 +3,8 @@ import { useInViewport } from '@sushiswap/hooks'
 import { Typography } from '@sushiswap/ui'
 import { FC, useRef } from 'react'
 
-import { PoolPositionProvider } from '../../PoolPositionProvider'
-import { PoolPositionStakedProvider } from '../../PoolPositionStakedProvider'
+import { PoolPositionProvider } from '../../../../PoolPositionProvider'
+import { PoolPositionStakedProvider } from '../../../../PoolPositionStakedProvider'
 import { CellProps } from './types'
 
 export const PairValueCell: FC<CellProps> = ({ row }) => {

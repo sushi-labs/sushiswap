@@ -2,8 +2,8 @@ import { formatNumber } from '@sushiswap/format'
 import { classNames, Currency, NetworkIcon, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromPair } from '../../../lib/hooks'
-import { ICON_SIZE } from './contants'
+import { useTokensFromPair } from '../../../../../lib/hooks'
+import { ICON_SIZE } from '../../contants'
 import { CellProps } from './types'
 
 export const PairNameCell: FC<CellProps> = ({ row }) => {

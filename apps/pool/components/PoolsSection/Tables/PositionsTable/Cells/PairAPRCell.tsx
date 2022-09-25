@@ -2,7 +2,7 @@ import { formatPercent } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { FarmRewardsAvailableTooltip } from '../../FarmRewardsAvailableTooltip'
+import { FarmRewardsAvailableTooltip } from '../../../../FarmRewardsAvailableTooltip'
 import { CellProps } from './types'
 
 export const PairAPRCell: FC<CellProps> = ({ row }) => {
