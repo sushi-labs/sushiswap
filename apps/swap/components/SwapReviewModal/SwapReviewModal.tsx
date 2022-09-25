@@ -3,7 +3,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Currency } from '@sushiswap/currency'
+import { Amount, Currency, Native } from '@sushiswap/currency'
 import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/exchange'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber } from '@sushiswap/tines'
@@ -53,6 +53,8 @@ interface FailedCall extends SwapCallEstimate {
   error: Error
 }
 
+const KLIMA_FEE = Amount.fromRawAmount(Native.onChain(ChainId.POLYGON), '20000000000000000')
+
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
 export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children, onSuccess }) => {
@@ -71,14 +73,14 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   })
   const [signature, setSignature] = useState<Signature>()
 
-  const [sushiSwapRouter, tridentRouter] = useRouters(chainId)
+  const [sushiSwapRouter, tridentRouter, sushiSwapKlimaRouter] = useRouters(chainId)
 
   const deadline = useTransactionDeadline(chainId, open)
 
   const inputCurrencyRebase = useBentoBoxTotal(chainId, trade?.inputAmount.currency)
   const outputCurrencyRebase = useBentoBoxTotal(chainId, trade?.outputAmount.currency)
 
-  const [{ slippageTolerance }] = useSettings()
+  const [{ slippageTolerance, carbonOffset }] = useSettings()
 
   const allowedSlippage = useMemo(
     () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
@@ -106,10 +108,18 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
         const { methodName, args } = swapCallParameters
 
-        value = swapCallParameters.value
+        // value = swapCallParameters.value
+
+        const shouldCarbonOffset = chainId === ChainId.POLYGON && carbonOffset
+
+        if (trade.inputAmount.currency.isNative) {
+          value = toHex(shouldCarbonOffset ? trade.inputAmount.add(KLIMA_FEE) : trade.inputAmount)
+        } else if (shouldCarbonOffset) {
+          value = toHex(KLIMA_FEE)
+        }
 
         call = {
-          address: sushiSwapRouter.address,
+          address: shouldCarbonOffset && sushiSwapKlimaRouter ? sushiSwapKlimaRouter.address : sushiSwapRouter.address,
           calldata: sushiSwapRouter.interface.encodeFunctionData(methodName, args),
           value,
         }
@@ -380,8 +390,10 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     tridentRouter,
     allowedSlippage,
     deadline,
-    signature,
     chainId,
+    carbonOffset,
+    sushiSwapKlimaRouter,
+    signature,
     provider,
     sendTransactionAsync,
     createNotification,
@@ -394,11 +406,11 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const approveTokenTo = useMemo(() => {
     if (trade?.isV1()) {
-      return sushiSwapRouter?.address
+      return chainId === ChainId.POLYGON && carbonOffset ? sushiSwapKlimaRouter?.address : sushiSwapRouter?.address
     } else if (trade?.isV2()) {
       return BENTOBOX_ADDRESS[chainId]
     }
-  }, [trade, sushiSwapRouter, chainId])
+  }, [trade, carbonOffset, sushiSwapKlimaRouter?.address, sushiSwapRouter?.address, chainId])
 
   return (
     <>

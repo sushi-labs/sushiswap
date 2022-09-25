@@ -5,6 +5,7 @@ import { ArbitrumCircle } from './ArbitrumCircle'
 import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
 import { AvalancheCircle } from './AvalancheCircle'
 import { BinanceCircle } from './BinanceCircle'
+import { BobaCircle } from './BobaCircle'
 import { CeloCircle } from './CeloCircle'
 import { EthereumCircle } from './EthereumCircle'
 import { FantomCircle } from './FantomCircle'
@@ -26,6 +27,7 @@ export * from './ArbitrumCircle'
 export * from './ArbitrumNovaCircle'
 export * from './AvalancheCircle'
 export * from './BinanceCircle'
+export * from './BobaCircle'
 export * from './CeloCircle'
 export * from './EthereumCircle'
 export * from './FantomCircle'
@@ -64,4 +66,5 @@ export const NETWORK_CIRCLE_ICON: Record<number, (props: React.ComponentProps<'s
   [ChainId.HECO]: HecoCircle,
   [ChainId.OKEX]: OkexCircle,
   [ChainId.PALM]: PalmCircle,
+  [ChainId.BOBA]: BobaCircle,
 }

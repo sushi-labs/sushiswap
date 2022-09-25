@@ -28,6 +28,7 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.OPTIMISM]: 'optimism',
   [ChainId.METIS]: 'metis',
   [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova',
+  [ChainId.BOBA]: 'boba',
 }
 
 const AvaxLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/avax.svg'
@@ -83,6 +84,7 @@ const LOGO: Record<number, string> = {
   [ChainId.KAVA]: KavaLogo,
   [ChainId.ARBITRUM_NOVA]: EthereumLogo,
   [ChainId.METIS]: MetisLogo,
+  [ChainId.BOBA]: EthereumLogo,
 }
 
 export interface IconProps extends Omit<ImageProps, 'src'> {

@@ -117,6 +117,14 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     MIM[ChainId.BSC],
     FRAX[ChainId.BSC],
   ],
+  [ChainId.BOBA]: [
+    WNATIVE[ChainId.BOBA],
+    USDC[ChainId.BOBA],
+    USDT[ChainId.BOBA],
+    DAI[ChainId.BOBA],
+    FRAX[ChainId.BOBA],
+    WBTC[ChainId.BOBA],
+  ],
 }
 
 export const ADDITIONAL_BASES: {
@@ -146,6 +154,10 @@ export const ADDITIONAL_BASES: {
     [FRAX[ChainId.AVALANCHE].address]: [FRAX[ChainId.AVALANCHE]],
     [FXS[ChainId.AVALANCHE].address]: [FXS[ChainId.AVALANCHE]],
   },
+  [ChainId.BOBA]: {
+    [FRAX[ChainId.BOBA].address]: [FRAX[ChainId.BOBA]],
+    [FXS[ChainId.BOBA].address]: [FXS[ChainId.BOBA]],
+  },
 }
 
 export const CUSTOM_BASES: {
@@ -168,6 +180,14 @@ export const COMMON_BASES: { readonly [chainId: number]: Token[] } = {
     USDC[ChainId.ARBITRUM_NOVA],
     USDT[ChainId.ARBITRUM_NOVA],
     DAI[ChainId.ARBITRUM_NOVA],
+  ],
+  [ChainId.BOBA]: [
+    WNATIVE[ChainId.BOBA],
+    USDC[ChainId.BOBA],
+    USDT[ChainId.BOBA],
+    DAI[ChainId.BOBA],
+    FRAX[ChainId.BOBA],
+    WBTC[ChainId.BOBA],
   ],
 }
 

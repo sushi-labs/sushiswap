@@ -100,6 +100,7 @@ export enum ChainId {
   OPTIMISM_KOVAN_TESTNET = 69,
   KAVA = 2222,
   METIS = 1088,
+  BOBA = 288,
 }
 
 export enum ChainKey {
