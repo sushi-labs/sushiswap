@@ -47,6 +47,7 @@ export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.PALM]: 'Palm',
   [ChainId.KAVA]: 'Kava',
   [ChainId.METIS]: 'Metis',
+  [ChainId.BOBA]: 'Boba',
 }
 
 export const SUBGRAPH_HOST: Record<number | string, string> = {
@@ -67,6 +68,7 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.MOONRIVER]: GRAPH_HOST,
   [ChainId.OPTIMISM]: GRAPH_HOST,
   [ChainId.POLYGON]: GRAPH_HOST,
+  [ChainId.BOBA]: GRAPH_HOST,
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -104,6 +106,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.KAVA]: 'sushiswap/blocks-kava',
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
+  [ChainId.BOBA]: 'sushiswap/blocks-boba',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -134,6 +137,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
   [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
+  [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
