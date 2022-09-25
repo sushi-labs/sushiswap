@@ -197,8 +197,12 @@ export const resolvers: Resolvers = {
       const transformer = (pools: Pair[], oneDayPools: Pair[], oneWeekPools: Pair[], farms: any, chainId) => {
         return pools?.length > 0
           ? pools.map((pool) => {
-              const pool1d = oneDayPools?.find((oneDayPool) => oneDayPool.id === pool.id)
-              const pool1w = oneWeekPools?.find((oneWeekPool) => oneWeekPool.id === pool.id)
+              const pool1d = Array.isArray(oneDayPools)
+                ? oneDayPools?.find((oneDayPool) => oneDayPool.id === pool.id)
+                : undefined
+              const pool1w = Array.isArray(oneWeekPools)
+                ? oneWeekPools?.find((oneWeekPool) => oneWeekPool.id === pool.id)
+                : undefined
               const volume1w = pool1w ? Number(pool.volumeUSD) - Number(pool1w.volumeUSD) : 0
               const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d.volumeUSD) : 0
               const fees1w = pool1w ? Number(pool.feesUSD) - Number(pool1w.feesUSD) : 0
