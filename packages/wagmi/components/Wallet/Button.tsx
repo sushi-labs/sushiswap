@@ -1,4 +1,4 @@
-import { ChevronDoubleDownIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
+import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import {
@@ -131,7 +131,7 @@ export const Button = <C extends React.ElementType>({
                       >
                         <Menu.Items>
                           <div>
-                            {address && chain?.id && (
+                            {/* {address && chain?.id && (
                               <Menu.Item
                                 as="a"
                                 target="_blank"
@@ -141,7 +141,7 @@ export const Button = <C extends React.ElementType>({
                                 View Portfolio
                                 <ExternalLinkIcon width={16} height={16} />
                               </Menu.Item>
-                            )}
+                            )} */}
                             <Menu.Item
                               className="flex items-center gap-3 group justify-between !pr-4"
                               onClick={() => disconnect()}
