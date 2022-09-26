@@ -81,30 +81,50 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
       ]
 
       if (pool.rewarder) {
-        // LIDO rewards have ended
-        if (pool.rewarder.id.toLowerCase() === '0x75ff3dd673ef9fc459a52e1054db5df2a1101212') {
-          //
-        } else {
-          const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
-          if (token) {
-            const rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
-            const rewardPerDay = secondsInDay * rewardPerSecond
-            const rewardPerYearUSD = daysInYear * rewardPerDay * token.derivedUSD
+        const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
+        if (token) {
+          let rewardPerSecond = 0
 
-            incentives.push({
-              apr: rewardPerYearUSD / stakedLiquidityUSD,
-              rewardPerDay: rewardPerDay,
-              rewardToken: {
-                address: pool.rewarder.rewardToken,
-                decimals: token.decimals,
-                symbol: token.symbol,
-              },
-              rewarder: {
-                address: pool.rewarder.id,
-                type: 'Secondary',
-              },
-            })
+          switch (pool.rewarder.id.toLowerCase()) {
+            case '0x0000000000000000000000000000000000000000': {
+              break
+            }
+            // LIDO rewarder (rewards have ended)
+            case '0x75ff3dd673ef9fc459a52e1054db5df2a1101212': {
+              break
+            }
+            // ALCX rewarder (second on subgraph = block irl)
+            case '0xd101479ce045b903ae14ec6afa7a11171afb5dfa':
+            case '0x7519c93fc5073e15d89131fd38118d73a72370f8': {
+              rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond.div(12), token.decimals)
+              break
+            }
+            // Convex rewarder (rewards have ended)
+            case '0x9e01aac4b3e8781a85b21d9d9f848e72af77b362':
+            case '0x1fd97b5e5a257b0b9b9a42a96bb8870cbdd1eb79': {
+              break
+            }
+            default: {
+              rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
+            }
           }
+
+          const rewardPerDay = secondsInDay * rewardPerSecond
+          const rewardPerYearUSD = daysInYear * rewardPerDay * token.derivedUSD
+
+          incentives.push({
+            apr: rewardPerYearUSD / stakedLiquidityUSD,
+            rewardPerDay: rewardPerDay,
+            rewardToken: {
+              address: pool.rewarder.rewardToken,
+              decimals: token.decimals,
+              symbol: token.symbol,
+            },
+            rewarder: {
+              address: pool.rewarder.id,
+              type: 'Secondary',
+            },
+          })
         }
       }
 
