@@ -70,8 +70,8 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
         </>
       )}
       <div className="flex justify-end gap-2 mt-4 mb-2">
-        <Button as="a" size="sm" fullWidth href={`/pool/${row.id}/add`}>
-          Deposit
+        <Button as="a" size="sm" fullWidth href={`/invest/${row.id}/add`}>
+          Invest
         </Button>
       </div>
     </div>
