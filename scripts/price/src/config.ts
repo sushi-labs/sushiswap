@@ -14,6 +14,7 @@ export const SUSHISWAP_CHAINS = [
   ChainId.POLYGON,
   ChainId.HARMONY,
   ChainId.ARBITRUM_NOVA,
+  ChainId.BOBA,
 ]
 
 export const TRIDENT_CHAINS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.METIS, ChainId.KAVA]
@@ -36,27 +37,29 @@ export const GRAPH_HOST: Record<number | string, string> = {
   [ChainId.KAVA]: 'pvt.graph.kava.io',
   [ChainId.METIS]: 'andromeda.thegraph.metis.io',
   [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com',
+  [ChainId.BOBA]: GRAPH_HOST_ENDPOINT,
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'sushi-graph/sushiswap-ethereum',
-  [ChainId.AVALANCHE]: 'sushiswap/sushiswap-avalanche',
-  [ChainId.ARBITRUM]: 'sushiswap/sushiswap-arbitrum',
-  [ChainId.BSC]: 'sushiswap/sushiswap-bsc',
-  [ChainId.CELO]: 'sushiswap/sushiswap-celo',
-  [ChainId.FANTOM]: 'sushiswap/sushiswap-fantom',
-  [ChainId.FUSE]: 'sushiswap/sushiswap-fuse',
-  [ChainId.GNOSIS]: 'sushiswap/sushiswap-gnosis',
-  [ChainId.MOONBEAM]: 'sushiswap/sushiswap-moonbeam',
-  [ChainId.MOONRIVER]: 'sushiswap/sushiswap-moonriver',
-  [ChainId.HARMONY]: 'sushi-graph/sushiswap-harmony',
-  [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
+  [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
+  [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
+  [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
+  [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',
+  [ChainId.CELO]: 'sushi-0m/sushiswap-celo',
+  [ChainId.FANTOM]: 'sushi-0m/sushiswap-fantom',
+  [ChainId.FUSE]: 'sushi-0m/sushiswap-fuse',
+  [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
+  [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
+  [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
+  [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
+  [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
+  [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.OPTIMISM]: 'sushi-labs/trident-optimism',
-  [ChainId.POLYGON]: 'sushi-graph/trident-polygon',
-  [ChainId.METIS]: 'sushiswap/trident-metis',
-  [ChainId.KAVA]: 'sushiswap/trident-kava',
+  [ChainId.POLYGON]: 'sushi-0m/trident-polygon',
+  [ChainId.OPTIMISM]: 'sushi-0m/trident-optimism',
+  [ChainId.KAVA]: 'sushi-0m/trident-kava',
+  [ChainId.METIS]: 'sushi-0m/trident-metis',
 }

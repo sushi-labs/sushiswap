@@ -37,6 +37,7 @@ export const GRAPH_HOST: Record<number | string, string> = {
   [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
   [ChainId.KAVA]: 'pvt.graph.kava.io/subgraphs/name',
   [ChainId.METIS]: 'andromeda.thegraph.metis.io/subgraphs/name',
+  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com',
   [ChainId.BOBA]: GRAPH_HOST_ENDPOINT,
 }
 
