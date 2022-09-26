@@ -1,104 +1,19 @@
 import { ChainId } from '@sushiswap/chain'
-import { MasterChefV2 } from '@sushiswap/core'
-import MasterChefV2ABI from '@sushiswap/core/abi/MasterChefV2.json'
 import { SUSHI } from '@sushiswap/currency'
-import { readContract, ReadContractConfig, readContracts, ReadContractsConfig } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
-import { BigNumber } from 'ethers'
 import { Farm } from 'src/types'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config'
 import { divBigNumberToNumber, getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common'
-
-async function getPoolLength() {
-  const poolLengthCall: ReadContractConfig = {
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
-    functionName: 'poolLength',
-  }
-  return readContract<MasterChefV2, Awaited<ReturnType<MasterChefV2['poolLength']>>>(poolLengthCall)
-}
-
-async function getTotalAllocPoint() {
-  const totalAllocPointCall: ReadContractConfig = {
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
-    functionName: 'totalAllocPoint',
-  }
-  return readContract<MasterChefV2, Awaited<ReturnType<MasterChefV2['totalAllocPoint']>>>(totalAllocPointCall)
-}
-
-async function getSushiPerBlock() {
-  const sushiPerBlockCall: ReadContractConfig = {
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
-    functionName: 'sushiPerBlock',
-  }
-  return readContract<MasterChefV2, Awaited<ReturnType<MasterChefV2['sushiPerBlock']>>>(sushiPerBlockCall)
-}
-
-async function getPoolInfos(poolLength: number) {
-  const poolInfoCalls: ReadContractsConfig['contracts'] = [...Array(poolLength)].map((_, i) => ({
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    args: [i],
-    chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
-    functionName: 'poolInfo',
-  }))
-  return readContracts<Awaited<ReturnType<MasterChefV2['poolInfo']>>[]>({
-    allowFailure: true,
-    contracts: poolInfoCalls,
-  })
-}
-
-async function getLpTokens(poolLength: number) {
-  const lpTokenCalls: ReadContractsConfig['contracts'] = [...Array(poolLength)].map((_, i) => ({
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    args: [i],
-    chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
-    functionName: 'lpToken',
-  }))
-  return readContracts<Awaited<ReturnType<MasterChefV2['lpToken']>>[]>({
-    allowFailure: true,
-    contracts: lpTokenCalls,
-  })
-}
-
-async function getRewarders(poolLength: number) {
-  const rewarderCalls: ReadContractsConfig['contracts'] = [...Array(poolLength)].map((_, i) => ({
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    args: [i],
-    chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
-    functionName: 'rewarder',
-  }))
-  return readContracts<Awaited<ReturnType<MasterChefV2['rewarder']>>[]>({
-    allowFailure: true,
-    contracts: rewarderCalls,
-  })
-}
-
-async function getRewarderInfos() {
-  const { getBuiltGraphSDK } = await import('../../../../.graphclient')
-  const sdk = getBuiltGraphSDK()
-
-  const { rewarders } = await sdk.MasterChefV2Rewarders({
-    where: {
-      id_not: '0x0000000000000000000000000000000000000000',
-      rewardToken_not: '0x0000000000000000000000000000000000000000',
-    },
-  })
-
-  return rewarders.map((rewarder) => ({
-    id: rewarder.id,
-    rewardToken: rewarder.rewardToken as string,
-    rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
-  }))
-}
+import {
+  getLpTokens,
+  getPoolInfos,
+  getPoolLength,
+  getRewarderInfos,
+  getRewarders,
+  getSushiPerBlock,
+  getTotalAllocPoint,
+} from './fetchers'
 
 export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Record<string, Farm> }> {
   const [poolLength, totalAllocPoint, sushiPerBlock, rewarderInfos, averageBlockTime] = await Promise.all([
@@ -166,30 +81,50 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
       ]
 
       if (pool.rewarder) {
-        // LIDO rewards have ended
-        if (pool.rewarder.id.toLowerCase() === '0x75ff3dd673ef9fc459a52e1054db5df2a1101212') {
-          //
-        } else {
-          const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
-          if (token) {
-            const rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
-            const rewardPerDay = secondsInDay * rewardPerSecond
-            const rewardPerYearUSD = daysInYear * rewardPerDay * token.derivedUSD
+        const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
+        if (token) {
+          let rewardPerSecond = 0
 
-            incentives.push({
-              apr: rewardPerYearUSD / stakedLiquidityUSD,
-              rewardPerDay: rewardPerDay,
-              rewardToken: {
-                address: pool.rewarder.rewardToken,
-                decimals: token.decimals,
-                symbol: token.symbol,
-              },
-              rewarder: {
-                address: pool.rewarder.id,
-                type: 'Secondary',
-              },
-            })
+          switch (pool.rewarder.id.toLowerCase()) {
+            case '0x0000000000000000000000000000000000000000': {
+              break
+            }
+            // LIDO rewarder (rewards have ended)
+            case '0x75ff3dd673ef9fc459a52e1054db5df2a1101212': {
+              break
+            }
+            // ALCX rewarder (second on subgraph = block irl)
+            case '0xd101479ce045b903ae14ec6afa7a11171afb5dfa':
+            case '0x7519c93fc5073e15d89131fd38118d73a72370f8': {
+              rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond.div(12), token.decimals)
+              break
+            }
+            // Convex rewarder (rewards have ended)
+            case '0x9e01aac4b3e8781a85b21d9d9f848e72af77b362':
+            case '0x1fd97b5e5a257b0b9b9a42a96bb8870cbdd1eb79': {
+              break
+            }
+            default: {
+              rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
+            }
           }
+
+          const rewardPerDay = secondsInDay * rewardPerSecond
+          const rewardPerYearUSD = daysInYear * rewardPerDay * token.derivedUSD
+
+          incentives.push({
+            apr: rewardPerYearUSD / stakedLiquidityUSD,
+            rewardPerDay: rewardPerDay,
+            rewardToken: {
+              address: pool.rewarder.rewardToken,
+              decimals: token.decimals,
+              symbol: token.symbol,
+            },
+            rewarder: {
+              address: pool.rewarder.id,
+              type: 'Secondary',
+            },
+          })
         }
       }
 
