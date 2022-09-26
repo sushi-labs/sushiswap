@@ -120,7 +120,7 @@ export function Header({
                       The easiest way to trade
                     </Typography>
                   </Select.Option>
-                  {/* <Select.Option
+                  <Select.Option
                     as="a"
                     href="https://sushi.com/swap"
                     key={AppType.xSwap}
@@ -134,16 +134,16 @@ export function Header({
                   </Select.Option>
                   <Select.Option
                     as="a"
-                    href="https://sushi.com/pool"
+                    href="https://sushi.com/invest"
                     key={AppType.Pool}
                     value={AppType.Pool}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
                     {AppType.Pool}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
-                      Earn fees by providing liquidity
+                      Earn fees by providing liquidity, farm SUSHI and other rewards, and stake xSUSHI in the SushiBar
                     </Typography>
-                  </Select.Option> */}
+                  </Select.Option>
                 </div>
                 <div>
                   <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">

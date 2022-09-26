@@ -22,9 +22,11 @@ export const SushiBarInput: FC<SushiBarInputProps> = ({ currency, balance, onCha
 
   return (
     <div className="flex flex-col flex-grow gap-2">
-      <div className="rounded-2xl bg-slate-700 h-12 flex w-full gap-2 items-center px-4 shadow-md">
-        <Currency.Icon currency={currency} width={24} height={24} />
-        <p className="font-bold text-sm">{currency.symbol}</p>
+      <div className="flex items-center w-full h-12 gap-2 px-4 shadow-md rounded-2xl bg-slate-700">
+        <div className="min-w-[24px] min-height-[24px]">
+          <Currency.Icon currency={currency} width={24} height={24} />
+        </div>
+        <p className="text-sm font-bold">{currency.symbol}</p>
         <Input.Numeric
           className={classNames(
             disabled ? 'pointer-events-none' : '',
