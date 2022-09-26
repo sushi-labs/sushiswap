@@ -12,16 +12,16 @@ const withTranspileModules = transpileModules([
 // @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/pool',
+  basePath: '/invest',
   reactStrictMode: true,
   swcMinify: true,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  // experimental: {
-  //   nextScriptWorkers: true,
-  // },
+  experimental: {
+    nextScriptWorkers: true,
+  },
 }
 
 export default withTranspileModules(nextConfig)

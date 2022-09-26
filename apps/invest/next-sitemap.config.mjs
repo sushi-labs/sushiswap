@@ -1,7 +1,7 @@
 // @ts-check
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: `https://sushi.com/pool`,
+  siteUrl: `https://sushi.com/invest`,
   changefreq: 'daily',
   generateRobotsTxt: true,
   transform: (config, path) => {
