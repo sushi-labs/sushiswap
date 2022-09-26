@@ -15,6 +15,7 @@ export const SUPPORTED_CHAINS = [
   ChainId.FUSE,
   ChainId.POLYGON,
   ChainId.ARBITRUM_NOVA,
+  ChainId.BOBA,
 
   // TRIDENT
   ChainId.OPTIMISM,
