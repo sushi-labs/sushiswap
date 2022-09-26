@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
   const [pairs, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),
     getTokens(query as unknown as GetTokensQuery),
-    getCharts(),
+    getCharts(query as { networks: string }),
     getPoolCount(),
     getTokenCount(),
     getBundles(),
@@ -65,7 +65,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
             extraQuery: '',
           },
         })]: tokens,
-        [`/analytics/api/charts`]: charts,
+
+        [unstable_serialize({
+          url: '/analytics/api/charts',
+          args: {
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
+          },
+        })]: charts,
         [`/analytics/api/pools/count`]: poolCount,
         [`/analytics/api/tokens/count`]: tokenCount,
         [`/analytics/api/bundles`]: bundles,

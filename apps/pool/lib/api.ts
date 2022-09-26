@@ -75,7 +75,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const start = getUnixTime(date)
 
     const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
-      ? JSON.parse(query?.pagination)
+      ? JSON.parse(query.pagination)
       : {
           pageIndex: 0,
           pageSize: 20,
@@ -97,10 +97,10 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,
+      pagination,
       where,
       orderBy,
       orderDirection,
-      pagination,
       chainIds,
       oneDayBlockNumbers: oneDayBlocks.map((block) => Number(block.number)),
       oneWeekBlockNumbers: oneWeekBlocks.map((block) => Number(block.number)),

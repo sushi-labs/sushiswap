@@ -31,9 +31,11 @@ export const TVLChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
 
   const [xData, yData] = useMemo(() => {
     const currentDate = Math.round(Date.now())
-    const predicates = x.map((x) => x * 1000 >= currentDate - chartTimespans[chartPeriod])
-    return [x.filter((x, i) => predicates[i]).reverse(), y.filter((y, i) => predicates[i]).reverse()]
+    const predicates = x?.map((x) => x * 1000 >= currentDate - chartTimespans[chartPeriod])
+    return [x?.filter((x, i) => predicates[i]).reverse(), y?.filter((y, i) => predicates[i]).reverse()]
   }, [chartPeriod, x, y])
+
+  console.log({ xData, yData })
 
   // Transient update for performance
   const onMouseOver = useCallback(({ name, value }) => {
@@ -183,11 +185,13 @@ export const TVLChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col">
-        <Typography variant="xl" weight={500} className="text-slate-50">
-          <span className="hoveredItemValueTVL">{formatUSD(yData[yData.length - 1])}</span>{' '}
-        </Typography>
-        {xData.length && (
+      <div className="flex flex-col h-[48px]">
+        {yData && yData.length && (
+          <Typography variant="xl" weight={500} className="text-slate-50">
+            <span className="hoveredItemValueTVL">{formatUSD(yData[yData.length - 1])}</span>{' '}
+          </Typography>
+        )}
+        {xData && xData.length && (
           <Typography variant="sm" className="text-slate-500 hoveredItemNameTVL">
             {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
           </Typography>

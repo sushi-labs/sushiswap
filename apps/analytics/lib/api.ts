@@ -79,14 +79,14 @@ export const getOneWeekBlocks = async (chainIds: number[]) => {
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
     const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
-      ? JSON.parse(query?.pagination)
+      ? JSON.parse(query.pagination)
       : {
           pageIndex: 0,
           pageSize: 20,
         }
-    const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
+    const first = pagination?.pageIndex && pagination?.pageSize ? (pagination.pageIndex + 1) * pagination.pageSize : 20
     const skip = 0
-    const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
+    const where = query?.where ? { ...JSON.parse(query.where) } : {}
     const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
@@ -191,9 +191,10 @@ export const getStats = async () => {
   return stats
 }
 
-export const getCharts = async () => {
+export const getCharts = async (query: { networks: string }) => {
+  const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
   const { crossChainFactoryDaySnapshots } = await sdk.CrossChainFactoryDaySnapshots({
-    chainIds: SUPPORTED_CHAIN_IDS,
+    chainIds: chainIds,
     first: 1000,
   })
 
