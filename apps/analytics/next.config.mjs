@@ -20,39 +20,10 @@ const nextConfig = {
   experimental: {
     nextScriptWorkers: true,
   },
-
-  source: '/:path((?!another-page$).*)',
-  has: [
-    {
-      type: 'host',
-      value: 'example.com',
-    },
-  ],
-  permanent: false,
-  destination: '/another-page',
   async redirects() {
     return [
       {
         source: '/',
-        has: [
-          {
-            type: 'host',
-            value: 'analytics-fuse.sushi.com',
-          },
-        ],
-        destination: 'sushi.com/analytics',
-        permanent: true,
-        statusCode: 308,
-        basePath: false,
-      },
-      {
-        source: '/',
-        has: [
-          {
-            type: 'host',
-            value: 'sushi.com',
-          },
-        ],
         destination: '/analytics',
         permanent: true,
         basePath: false,
