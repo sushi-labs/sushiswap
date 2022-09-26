@@ -13,7 +13,7 @@ import { TableFilters } from './Tables/TableFilters'
 export const PoolsSection: FC = () => {
   const { selectedNetworks, setFilters } = usePoolFilters()
   const { address } = useAccount()
-  const { data: userWithFarms } = useSWR<UserWithFarm[]>(address ? `/invest/api/user/${address}` : null, (url) =>
+  const { data: userWithFarms } = useSWR<UserWithFarm[]>(address ? [`/invest/api/user/${address}`] : null, (url) =>
     fetch(url).then((response) => response.json())
   )
 
@@ -32,16 +32,18 @@ export const PoolsSection: FC = () => {
             All Yields
           </Tab>
 
-          <Tab
-            className={({ selected }) =>
-              classNames(
-                selected ? 'text-slate-200' : 'text-slate-500',
-                'hover:text-slate-50 focus:text-slate-50 flex items-center gap-2 font-medium !outline-none'
-              )
-            }
-          >
-            My Positions <Chip label={userWithFarms?.length || '0'} size="sm" color="blue" />
-          </Tab>
+          {address && (
+            <Tab
+              className={({ selected }) =>
+                classNames(
+                  selected ? 'text-slate-200' : 'text-slate-500',
+                  'hover:text-slate-50 focus:text-slate-50 flex items-center gap-2 font-medium !outline-none'
+                )
+              }
+            >
+              My Positions <Chip label={userWithFarms?.length || '0'} size="sm" color="blue" />
+            </Tab>
+          )}
         </div>
         <TableFilters />
         <Network.Selector
@@ -53,7 +55,7 @@ export const PoolsSection: FC = () => {
           <Tab.Panel unmount={false}>
             <PoolsTable />
           </Tab.Panel>
-          <Tab.Panel unmount={false}>
+          <Tab.Panel unmount={!address}>
             <PositionsTable />
           </Tab.Panel>
         </Tab.Panels>
