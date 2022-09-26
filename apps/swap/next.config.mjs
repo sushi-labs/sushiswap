@@ -21,6 +21,38 @@ const nextConfig = {
   experimental: {
     nextScriptWorkers: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        basePath: false,
+        has: [
+          {
+            type: 'query',
+            key: 'srcChainId',
+          },
+          {
+            type: 'query',
+            key: 'srcToken',
+          },
+          {
+            type: 'query',
+            key: 'srcTypedAmount',
+          },
+          {
+            type: 'query',
+            key: 'dstToken',
+          },
+          {
+            type: 'query',
+            key: 'dstChainId',
+          },
+        ],
+        permanent: false,
+        destination: '/xswap',
+      },
+    ]
+  },
 }
 
 export default withTranspileModules(nextConfig)
