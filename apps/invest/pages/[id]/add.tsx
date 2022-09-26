@@ -36,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   return {
     props: {
       fallback: {
-        [`/pool/api/pool/${query.id}`]: { pair },
+        [`/invest/api/pool/${query.id}`]: { pair },
       },
     },
   }
@@ -52,7 +52,7 @@ const Add: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallb
 
 const _Add = () => {
   const router = useRouter()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${router.query.id}`, (url) =>
+  const { data } = useSWR<{ pair: PairWithAlias }>(`/invest/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 

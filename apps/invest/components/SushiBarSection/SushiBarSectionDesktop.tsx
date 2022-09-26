@@ -28,7 +28,7 @@ export const SushiBarSectionDesktop: FC = () => {
   const [error, setError] = useState<string>()
   const [, { createNotification }] = useNotifications(address)
 
-  const { data: stats } = useSWR<XSushi>(`/pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
+  const { data: stats } = useSWR<XSushi>(`/invest/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
   const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),

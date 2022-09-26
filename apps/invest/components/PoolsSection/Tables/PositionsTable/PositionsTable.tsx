@@ -26,7 +26,7 @@ export const PositionsTable: FC = () => {
 
   const { data: userWithFarms, isValidating } = useSWR<UserWithFarm[]>(
     address
-      ? `/pool/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`
+      ? `/invest/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`
       : null,
     (url) => fetch(url).then((response) => response.json())
   )

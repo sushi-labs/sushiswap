@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     props: {
       fallback: {
         [unstable_serialize({
-          url: '/pool/api/pools',
+          url: '/invest/api/pools',
           args: {
             sorting: [
               {
@@ -38,9 +38,9 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
             extraQuery: '',
           },
         })]: pairs,
-        [`/pool/api/bundles`]: bundles,
-        [`/pool/api/pools/count`]: poolCount,
-        [`/pool/api/bar`]: bar,
+        [`/invest/api/bundles`]: bundles,
+        [`/invest/api/pools/count`]: poolCount,
+        [`/invest/api/bar`]: bar,
       },
     },
   }

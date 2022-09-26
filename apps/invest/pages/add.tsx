@@ -150,7 +150,7 @@ const _Add: FC<AddProps> = ({
 }) => {
   const { data } = useSWR<{ pair: PairWithAlias }>(
     pool?.liquidityToken.address
-      ? `/pool/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
+      ? `/invest/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
       : null,
     (url) => fetch(url).then((response) => response.json())
   )
