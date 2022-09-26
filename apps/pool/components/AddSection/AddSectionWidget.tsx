@@ -42,7 +42,6 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   const isMounted = useIsMounted()
   const tokenMap = useTokens(chainId)
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
-
   return (
     <Widget id="addLiquidity" maxWidth={400}>
       <Widget.Content>
@@ -51,7 +50,7 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
             <>
               {isFarm && isMounted ? (
                 <Disclosure.Button className="w-full pr-4">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <Widget.Header title="1. Add Liquidity" className="!pb-3 " />
                     <div
                       className={classNames(

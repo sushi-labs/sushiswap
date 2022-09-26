@@ -25,12 +25,14 @@ interface AddSectionStakeProps {
 
 export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ poolAddress, title }) => {
   const isMounted = useIsMounted()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress.toLowerCase()}`, (url) =>
+  const { data } = useSWR<{ pair: PairWithAlias }>(`/pool/api/pool/${poolAddress}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
   if (!data) return <></>
+
   const { pair } = data
+
   if (!pair.farm?.chefType || !isMounted) return <></>
 
   return (
