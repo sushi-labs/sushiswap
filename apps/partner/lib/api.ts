@@ -13,8 +13,12 @@ interface TokenKPI {
 }
 
 export const getExchangeTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
+  const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], EXCHANGE[chainId]]
+
+  if (!subgraphHost || !subgraphName) return
+
   const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: EXCHANGE[chainId] })
+  const sdk = getBuiltGraphSDK({ host: subgraphHost, name: subgraphName })
 
   const {
     Exchange_token: token,
@@ -32,8 +36,12 @@ export const getExchangeTokenKPI = async (id: string, chainId: ChainId): Promise
 }
 
 export const getTridentTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
+  const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], TRIDENT[chainId]]
+
+  if (!subgraphHost || !subgraphName) return
+
   const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: TRIDENT[chainId] })
+  const sdk = getBuiltGraphSDK({ host: subgraphHost, name: subgraphName })
 
   const { Trident_token: token, native } = await sdk.TridentToken({
     id: id.toLowerCase(),

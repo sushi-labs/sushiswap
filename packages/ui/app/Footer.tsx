@@ -26,7 +26,6 @@ const config: Record<string, Record<string, { href: string; rel?: string; target
     'Discord Support': { href: 'https://discord.gg/NVPXN4e', target: '_blank', rel: 'noopener noreferrer' },
     'Twitter Support': { href: 'https://twitter.com/sushiswap', target: '_blank', rel: 'noopener noreferrer' },
     'Forum Support': { href: 'https://forum.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
-    'Community Support': { href: 'https://www.samurais.io/', target: '_blank', rel: 'noopener noreferrer' },
   },
   Developers: {
     GitBook: { href: 'https://docs.sushi.com', target: '_blank', rel: 'noopener noreferrer' },

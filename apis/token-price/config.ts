@@ -19,6 +19,8 @@ export const SUPPORTED_CHAINS = [
 
   // TRIDENT
   ChainId.OPTIMISM,
+  ChainId.KAVA,
+  ChainId.METIS,
 ]
 
 export const GRAPH_HOST = 'api.thegraph.com'
