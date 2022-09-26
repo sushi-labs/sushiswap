@@ -122,7 +122,7 @@ export function Header({
                   </Select.Option>
                   <Select.Option
                     as="a"
-                    href="https://sushi.com/swap"
+                    href="https://sushi.com/xswap"
                     key={AppType.xSwap}
                     value={AppType.xSwap}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
