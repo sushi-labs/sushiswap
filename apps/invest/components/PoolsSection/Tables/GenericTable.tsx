@@ -1,7 +1,8 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
+import { useInViewport } from '@sushiswap/hooks'
 import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useRef, useState } from 'react'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
@@ -25,6 +26,8 @@ export const GenericTable = <T extends { id: string }>({
   placeholder,
   pageSize,
 }: GenericTableProps<T>) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const inViewport = useInViewport(ref)
   const [showOverlay, setShowOverlay] = useState(false)
   const headers = table.getFlatHeaders()
 
@@ -89,7 +92,7 @@ export const GenericTable = <T extends { id: string }>({
                                 style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
                                 key={cell.id}
                               >
-                                <Link.Internal href={`/${row.original.id}`} passHref={true}>
+                                <Link.Internal href={`/${row.original.id}`} passHref={true} prefetch={inViewport}>
                                   <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
                                 </Link.Internal>
                               </Table.td>

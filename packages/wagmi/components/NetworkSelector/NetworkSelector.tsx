@@ -13,8 +13,6 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedN
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
-  console.log({ supportedNetworks })
-
   const networks = useMemo(() => Array.from(new Set(supportedNetworks)), [supportedNetworks])
 
   if (!networks.length) return <>{children}</>
