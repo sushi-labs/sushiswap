@@ -13,6 +13,8 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedN
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
+  console.log({ supportedNetworks })
+
   const networks = useMemo(() => Array.from(new Set(supportedNetworks)), [supportedNetworks])
 
   if (!networks.length) return <>{children}</>
@@ -29,7 +31,10 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedN
         <div className="grid grid-cols-1 px-2 py-2 md:grid-cols-2 gap-x-4">
           {networks.map((el) => (
             <div
-              onClick={() => switchNetwork && switchNetwork(el)}
+              onClick={() => {
+                console.log('switch netwrok')
+                switchNetwork && switchNetwork(el)
+              }}
               key={el}
               className={classNames(
                 chain?.id === el ? 'bg-slate-800' : 'hover:opacity-80',
