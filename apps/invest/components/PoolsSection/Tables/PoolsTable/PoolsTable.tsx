@@ -8,12 +8,12 @@ import useSWR from 'swr'
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
 import { GenericTable } from '../GenericTable'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
+import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PairQuickHoverTooltip } from './PairQuickHoverTooltip'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, APR_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
 const fetcher = ({
   url,
@@ -109,11 +109,11 @@ export const PoolsTable: FC = () => {
 
   useEffect(() => {
     if (isSm && !isMd) {
-      setColumnVisibility({ volume: false, network: false, rewards: false })
+      setColumnVisibility({ volume: false, network: false, rewards: false, fees: false })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ volume: false, network: false, rewards: false, liquidityUSD: false })
+      setColumnVisibility({ volume: false, network: false, rewards: false, liquidityUSD: false, fees: false })
     }
   }, [isMd, isSm])
 

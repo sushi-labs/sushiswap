@@ -4,6 +4,7 @@ import React from 'react'
 
 import { PairAPRCell } from './PairAPRCell'
 import { PairChainCell } from './PairChainCell'
+import { PairFees24hCell } from './PairFees24hCell'
 import { PairNameCell } from './PairNameCell'
 import { PairTVLCell } from './PairTVLCell'
 import { PairVolume24hCell } from './PairVolume24hCell'
@@ -69,6 +70,18 @@ export const VOLUME_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'volume',
   header: 'Volume (24h)',
   cell: (props) => <PairVolume24hCell row={props.row.original} />,
+  size: 100,
+  meta: {
+    className: 'justify-end',
+    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  },
+}
+
+export const FEES_COLUMN: ColumnDef<Pair, unknown> = {
+  header: 'Fees (24h)',
+  id: 'fees',
+  // accessorFn: (row) => row.fees24h,
+  cell: (props) => <PairFees24hCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',
