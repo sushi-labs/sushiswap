@@ -3,18 +3,20 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, usePrevious } from '@sushiswap/hooks'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
+import { warningSeverity } from 'lib/functions'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
-import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider } from '../components'
+import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
-import { useCustomTokens } from '../lib/state/storage'
+import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
@@ -232,11 +234,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                       >
                         <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
                           {({ isWritePending, setOpen }) => {
-                            return (
-                              <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                                {isWritePending ? <Dots>Executing Swap</Dots> : 'Confirm Swap'}
-                              </Button>
-                            )
+                            return <SwapButton isWritePending={isWritePending} setOpen={setOpen} />
                           }}
                         </SwapReviewModalLegacy>
                       </Checker.Network>
@@ -262,6 +260,55 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
         </Layout>
       </TradeProvider>
     </>
+  )
+}
+
+function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }) {
+  const { isLoading, isError, trade } = useTrade()
+  const [{ expertMode, slippageTolerance }] = useSettings()
+
+  const swapSlippage = useMemo(
+    () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
+    [slippageTolerance]
+  )
+
+  const priceImpact = useMemo(() => {
+    if (trade) {
+      return trade.priceImpact
+    }
+    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+  }, [trade])
+
+  const priceImpactSeverity = useMemo(() => warningSeverity(priceImpact), [priceImpact])
+
+  const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
+
+  return (
+    <Button
+      fullWidth
+      onClick={() => setOpen(true)}
+      disabled={
+        isWritePending ||
+        priceImpactTooHigh ||
+        trade?.minimumAmountOut(swapSlippage)?.equalTo(ZERO) ||
+        Boolean(!trade && priceImpactSeverity > 2 && !expertMode)
+      }
+      size="md"
+      color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
+      {...(Boolean(!trade && priceImpactSeverity > 2 && !expertMode) && {
+        title: 'Enable expert mode to swap with high price impact',
+      })}
+    >
+      {isWritePending ? (
+        <Dots>Confirm transaction</Dots>
+      ) : priceImpactTooHigh ? (
+        'High Price Impact'
+      ) : trade && priceImpactSeverity > 2 ? (
+        'Swap Anyway'
+      ) : (
+        'Swap'
+      )}
+    </Button>
   )
 }
 
