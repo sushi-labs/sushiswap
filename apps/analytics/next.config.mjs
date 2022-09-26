@@ -23,24 +23,6 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: '/analytics',
-        permanent: true,
-        basePath: false,
-      },
-      {
-        source: '/',
-        has: [
-          {
-            type: 'host',
-            value: 'analytics-fuse.sushi.com',
-          },
-        ],
-        destination: `/analytics`,
-        permanent: true,
-        basePath: false,
-      },
-      {
         source: '/:path*',
         has: [
           {
@@ -48,7 +30,13 @@ const nextConfig = {
             value: 'analytics-fuse.sushi.com',
           },
         ],
-        destination: `/analytics/:path*`,
+        destination: '/analytics/:path*',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/',
+        destination: '/analytics',
         permanent: true,
         basePath: false,
       },
