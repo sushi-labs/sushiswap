@@ -89,7 +89,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const execute = useCallback(async () => {
     try {
-      if (!trade || !account || !inputCurrencyRebase || !outputCurrencyRebase) return
+      if (!trade || !account) return
+
+      if (trade && trade.isV2() && (!inputCurrencyRebase || !outputCurrencyRebase)) return
 
       let call: SwapCall | null = null
       let value = '0x0'

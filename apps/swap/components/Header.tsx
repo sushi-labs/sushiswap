@@ -16,9 +16,9 @@ export const Header: FC = () => {
       appType={AppType.Swap}
       nav={
         <App.NavItemList>
-          <App.NavItem href="/swap" label="Swap" />
-          <App.NavItem href="/xswap" label="xSwap" />
-          <App.NavItem href="/pool" label="Invest" />
+          <App.NavItem href="https://sushi.com/swap" label="Swap" />
+          <App.NavItem href="https://sushi.com/xswap" label="xSwap" />
+          <App.NavItem href="https://sushi.com/invest" label="Invest" />
         </App.NavItemList>
       }
     >

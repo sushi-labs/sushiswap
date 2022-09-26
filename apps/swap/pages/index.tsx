@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, usePrevious } from '@sushiswap/hooks'
-import { Button, Dots } from '@sushiswap/ui'
+import { Button, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
@@ -246,6 +246,19 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </div>
             </Widget.Content>
           </Widget>
+          <Container className="flex justify-center mx-auto" maxWidth="2xl">
+            <Link.Internal href="/xswap" passHref>
+              <a className="text-baseline whitespace-nowrap hover:text-white hover:underline focus:text-white active:text-white flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl">
+                <Typography
+                  variant="xs"
+                  weight={500}
+                  className="flex items-center gap-1 text-slate-500 px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+                >
+                  Do you want to swap across chains?
+                </Typography>
+              </a>
+            </Link.Internal>
+          </Container>
         </Layout>
       </TradeProvider>
     </>

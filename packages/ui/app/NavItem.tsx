@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { classNames } from '../index'
+import { classNames, Link } from '../index'
 
 export interface NavItemProps {
   href: string
@@ -12,7 +12,7 @@ export const NavItem: FC<NavItemProps> = ({ href, label }) => {
   const { basePath } = useRouter()
 
   return (
-    <a href={href}>
+    <Link.Internal href={href}>
       <span
         className={classNames(
           href === basePath ? 'text-slate-50' : 'text-slate-300',
@@ -21,6 +21,6 @@ export const NavItem: FC<NavItemProps> = ({ href, label }) => {
       >
         {label}
       </span>
-    </a>
+    </Link.Internal>
   )
 }
