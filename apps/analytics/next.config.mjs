@@ -40,7 +40,7 @@ const nextConfig = {
             value: 'analytics-fuse.sushi.com',
           },
         ],
-        destination: '/analytics',
+        destination: 'sushi.com/analytics',
         permanent: true,
         statusCode: 308,
         basePath: false,
