@@ -12,9 +12,8 @@ import { FC, useCallback, useState } from 'react'
 import useSWR from 'swr'
 import { ProviderRpcError, useAccount, useDeprecatedContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
 
-import { SushiBarInput } from './SushiBarInput'
-
 import { useNotifications } from '../../lib/state/storage'
+import { SushiBarInput } from './SushiBarInput'
 
 const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
 const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]
@@ -29,7 +28,7 @@ export const SushiBarSectionMobile: FC = () => {
   const [value, setValue] = useState('')
   const [error, setError] = useState<string>()
 
-  const { data: stats } = useSWR<XSushi>(`pool/api/bar`, (url) => fetch(url).then((response) => response.json()))
+  const { data: stats } = useSWR<XSushi>(`/invest/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
   const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
