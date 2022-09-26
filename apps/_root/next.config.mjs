@@ -63,7 +63,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/analytics',
+        source: '/',
         has: [
           {
             type: 'host',
@@ -73,7 +73,7 @@ const nextConfig = {
         destination: `${ANALYTICS_URL}/analytics`,
       },
       {
-        source: '/analytics/:path*',
+        source: '/:path*',
         has: [
           {
             type: 'host',
