@@ -54,6 +54,7 @@
     "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.5",
     "autoprefixer": "^10.4.0",
+    "eslint": "^8.20.0",
     "next": "12.2.x",
     "postcss": "^8.4.0",
     "react": "^18.2.0",

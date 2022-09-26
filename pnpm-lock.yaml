@@ -1646,6 +1646,7 @@ importers:
       '@whatwg-node/fetch': ^0.0.2
       cross-undici-fetch: ^0.4.11
       date-fns: ^2.29.3
+      eslint: ^8.20.0
       ethers: ^5.7.0
       fetchache: ^0.1.2
       graphql: 16.6.0
@@ -1655,6 +1656,7 @@ importers:
       typescript: 4.6.3
     dependencies:
       '@sushiswap/chain': link:../chain
+      '@wagmi/core': 0.5.7_ethers@5.7.1
       date-fns: 2.29.3
     devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.5_graphql@16.6.0
@@ -1680,9 +1682,9 @@ importers:
       '@sushiswap/wagmi-config': link:../config/wagmi
       '@types/jest': 27.5.2
       '@types/numeral': 2.0.2
-      '@wagmi/core': 0.5.7_ethers@5.7.1
       '@whatwg-node/fetch': 0.0.2
       cross-undici-fetch: 0.4.14
+      eslint: 8.20.0
       ethers: 5.7.1
       fetchache: 0.1.2
       graphql: 16.6.0
@@ -2029,6 +2031,7 @@ importers:
       autoprefixer: ^10.4.0
       classnames: ^2.3.1
       date-fns: ^2.29.1
+      eslint: ^8.20.0
       next: 12.2.x
       postcss: ^8.4.0
       rc-tooltip: ^5.2.2
@@ -2079,6 +2082,7 @@ importers:
       '@types/react-virtualized-auto-sizer': 1.0.1
       '@types/react-window': 1.8.5
       autoprefixer: 10.4.7_postcss@8.4.14
+      eslint: 8.20.0
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -10530,6 +10534,7 @@ packages:
     transitivePeerDependencies:
       - immer
       - react
+    dev: false
 
   /@wagmi/core/0.5.7_hipd4y7tuzeuqz2enwwtu7prbq:
     resolution: {integrity: sha512-q2RL3gHJ15lozjJUcUmdOlmz2b9DCiLfF1ksxNwi1Fy/CJ7FsHbnufJrrvn26nxkJdKWbqTvr7xv46yr6Sp0Ug==}
@@ -15377,6 +15382,7 @@ packages:
 
   /eventemitter3/4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
+    dev: false
 
   /events/1.1.1:
     resolution: {integrity: sha512-kEcvvCBByWXGnZy6JUlgAp2gBIUjfCAV6P6TgT1/aaQKcmuAEC4OZTV1I4EWQLz2gxZw76atuVyvHhTxvi0Flw==}
@@ -25468,6 +25474,7 @@ packages:
         optional: true
     dependencies:
       use-sync-external-store: 1.2.0
+    dev: false
 
   /zustand/4.0.0_react@18.2.0:
     resolution: {integrity: sha512-OrsfQTnRXF1LZ9/vR/IqN9ws5EXUhb149xmPjErZnUrkgxS/gAHGy2dPNIVkVvoxrVe1sIydn4JjF0dYHmGeeQ==}

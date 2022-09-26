@@ -182,7 +182,7 @@ export const resolvers: Resolvers = {
               info,
             }).then((snapshots) => {
               if (!Array.isArray(snapshots)) {
-                console.log({ snapshots })
+                // console.log({ snapshots })
               }
               return snapshots.map((snapshot) => ({
                 ...snapshot,
@@ -310,7 +310,7 @@ export const resolvers: Resolvers = {
                       info,
                     }),
                   ]).then(([pools, oneDayPools, oneWeekPools]) => {
-                    console.log('BEFORE TRANSFORMER 1', { pools, oneDayPools, oneWeekPools })
+                    // console.log('BEFORE TRANSFORMER 1', { pools, oneDayPools, oneWeekPools })
                     return transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
                   })
                 )

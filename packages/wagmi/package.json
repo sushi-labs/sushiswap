@@ -54,6 +54,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "ethers": "^5.7.0",
+    "eslint": "^8.20.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^6.2.0",
