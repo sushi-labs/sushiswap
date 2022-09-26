@@ -91,8 +91,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     try {
       if (!trade || !account) return
 
-      if (trade && trade.isV2() && (!inputCurrencyRebase || !outputCurrencyRebase)) return
-
       let call: SwapCall | null = null
       let value = '0x0'
 
@@ -126,6 +124,8 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           value,
         }
       } else if (tridentRouter && trade.isV2()) {
+        if (!inputCurrencyRebase || !outputCurrencyRebase) return
+
         const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
 
         if (trade.isSinglePool()) {
