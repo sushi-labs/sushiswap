@@ -96,7 +96,7 @@ export function Header({
                 type="button"
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
-                <span className="text-sm capitalize truncate">{appType}</span>
+                <span className="text-sm truncate">{appType}</span>
                 <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
               </Listbox.Button>
             }
