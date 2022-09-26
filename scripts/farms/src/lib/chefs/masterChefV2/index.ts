@@ -166,25 +166,30 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
       ]
 
       if (pool.rewarder) {
-        const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
-        if (token) {
-          const rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
-          const rewardPerDay = secondsInDay * rewardPerSecond
-          const rewardPerYearUSD = daysInYear * rewardPerDay * token.derivedUSD
+        // LIDO rewards have ended
+        if (pool.rewarder.id.toLowerCase() === '0x75ff3dd673ef9fc459a52e1054db5df2a1101212') {
+          //
+        } else {
+          const token = tokens.find((token) => token.id === pool.rewarder?.rewardToken)
+          if (token) {
+            const rewardPerSecond = divBigNumberToNumber(pool.rewarder.rewardPerSecond, token.decimals)
+            const rewardPerDay = secondsInDay * rewardPerSecond
+            const rewardPerYearUSD = daysInYear * rewardPerDay * token.derivedUSD
 
-          incentives.push({
-            apr: rewardPerYearUSD / stakedLiquidityUSD,
-            rewardPerDay: rewardPerDay,
-            rewardToken: {
-              address: pool.rewarder.rewardToken,
-              decimals: token.decimals,
-              symbol: token.symbol,
-            },
-            rewarder: {
-              address: pool.rewarder.id,
-              type: 'Secondary',
-            },
-          })
+            incentives.push({
+              apr: rewardPerYearUSD / stakedLiquidityUSD,
+              rewardPerDay: rewardPerDay,
+              rewardToken: {
+                address: pool.rewarder.rewardToken,
+                decimals: token.decimals,
+                symbol: token.symbol,
+              },
+              rewarder: {
+                address: pool.rewarder.id,
+                type: 'Secondary',
+              },
+            })
+          }
         }
       }
 
