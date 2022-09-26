@@ -247,7 +247,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
             </Widget.Content>
           </Widget>
           <Container className="flex justify-center mx-auto" maxWidth="2xl">
-            <Link.Internal href="/xswap" passHref>
+            <Link.Internal href="https://sushi.com/xswap" passHref>
               <a className="text-baseline whitespace-nowrap hover:text-white hover:underline focus:text-white active:text-white flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl">
                 <Typography
                   variant="xs"

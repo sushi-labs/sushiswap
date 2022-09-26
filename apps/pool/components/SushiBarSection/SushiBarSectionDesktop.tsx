@@ -92,8 +92,8 @@ export const SushiBarSectionDesktop: FC = () => {
                 </Link.External>
               </p>
             </div>
-            <div className="flex items-start flex-grow gap-3 p-5">
-              <div className={classNames(stake ? 'order-1 flex-grow' : 'order-3 max-w-[213px]')}>
+            <div className="flex items-start flex-grow gap-5 p-5">
+              <div className={classNames(stake ? 'order-1 flex-grow' : 'order-3')}>
                 <SushiBarInput
                   currency={SUSHI_TOKEN}
                   balance={balances?.[SUSHI_TOKEN.address]?.[FundSource.WALLET]}
@@ -111,7 +111,7 @@ export const SushiBarSectionDesktop: FC = () => {
                   <ChevronRightIcon width={16} height={16} />
                 </div>
               </button>
-              <div className={classNames(!stake ? 'order-1 flex-grow' : 'order-3 max-w-[213px]')}>
+              <div className={classNames(!stake ? 'order-1 flex-grow' : 'order-3')}>
                 <SushiBarInput
                   currency={XSUSHI_TOKEN}
                   balance={balances?.[XSUSHI_TOKEN.address]?.[FundSource.WALLET]}
@@ -145,7 +145,7 @@ export const SushiBarSectionDesktop: FC = () => {
                             amounts={[amount]}
                           >
                             <Button
-                              className="!h-[48px] w-[213px]"
+                              className="!h-[48px] w-[213px] rounded-2xl"
                               fullWidth
                               onClick={execute}
                               disabled={!approved || isWritePending}
