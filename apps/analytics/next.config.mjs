@@ -4,7 +4,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/redux-localstorage',
   '@sushiswap/wagmi',
   '@sushiswap/ui',
-  '@sushiswap/graph-client'
+  '@sushiswap/graph-client',
 ])
 
 // @ts-check
@@ -19,6 +19,16 @@ const nextConfig = {
   },
   experimental: {
     nextScriptWorkers: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/analytics',
+        permanent: true,
+        basePath: false,
+      },
+    ]
   },
 }
 
