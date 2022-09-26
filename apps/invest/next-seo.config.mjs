@@ -2,9 +2,9 @@
 /** @type {import('next-seo').DefaultSeoProps} */
 export default {
   titleTemplate: '%s | Sushi',
-  title: 'Sushi Liquidity',
-  defaultTitle: 'Sushi Liquidity',
-  description: 'Sushi Liquidity is a app for managing the liquidity of SushiSwap & SushiLend.',
+  title: 'Invest',
+  defaultTitle: 'Invest',
+  description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI',
   //   canonical: 'https://sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
@@ -19,8 +19,8 @@ export default {
   openGraph: {
     // url: 'https://sushi.com/pool',
     type: 'website',
-    title: 'Sushi Liquidity',
-    description: 'Sushi Liquidity is a app for managing the liquidity of SushiSwap & SushiLend.',
+    title: 'Invest',
+    description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI',
     // images: [],
     // videos: [],
     // locale: 'en_IE',
