@@ -45,7 +45,7 @@ export const APR_COLUMN: ColumnDef<TData, unknown> = {
   header: 'APR',
   accessorFn: (row) => row.pair.apr,
   cell: (props) => <PairAPRCell row={props.row.original} />,
-  size: 100,
+  size: 150,
   meta: {
     className: 'justify-end',
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,

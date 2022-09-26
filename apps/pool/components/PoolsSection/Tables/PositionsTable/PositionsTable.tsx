@@ -7,12 +7,13 @@ import { useAccount } from 'wagmi'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { GenericTable } from '../GenericTable'
-import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, VALUE_COLUMN, VOLUME_COLUMN } from './Cells/columns'
+import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, VALUE_COLUMN } from './Cells/columns'
 import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, VALUE_COLUMN, VOLUME_COLUMN, APR_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, VALUE_COLUMN, APR_COLUMN]
+// VOLUME_COLUMN
 
 export const PositionsTable: FC = () => {
   const { selectedNetworks } = usePoolFilters()
