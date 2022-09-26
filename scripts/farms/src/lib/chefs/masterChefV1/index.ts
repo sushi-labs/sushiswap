@@ -1,12 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { IMasterChef, MasterChef } from '@sushiswap/core'
 import MasterChefV1ABI from '@sushiswap/core/abi/MasterChef.json'
-import { MASTERCHEF_ADDRESS } from '@sushiswap/core-sdk'
 import { SUSHI } from '@sushiswap/currency'
 import { readContract, ReadContractConfig, readContracts, ReadContractsConfig } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
 import { Farm } from 'src/types'
 
+import { MASTERCHEF_ADDRESS } from '../../../config'
 import { getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common'
 
 const SUSHI_PER_BLOCK = 100

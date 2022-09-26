@@ -34,6 +34,7 @@ export const MINICHEF_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0x011E52E4E40CF9498c79273329E8827b21E2e581',
   [ChainId.KAVA]: '0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5',
   [ChainId.METIS]: '0x1334c8e873E1cae8467156e2A81d1C8b566B2da1',
+  [ChainId.BOBA]: '0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3',
 }
 
 export const _getMasterChefContractConfig = (

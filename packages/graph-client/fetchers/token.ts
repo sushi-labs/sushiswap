@@ -12,7 +12,6 @@ export async function getTokenBalance(args: Parameters<typeof getTokenBalances>[
 }
 
 export async function getTokenBalances(args: { token: string; user: string; chainId: ChainId }[]) {
-  console.log('CALL getTokenBalances set', new Set(args).size)
   return Promise.all(
     args.map(({ token, user, chainId }) =>
       readContract({
@@ -24,8 +23,8 @@ export async function getTokenBalances(args: { token: string; user: string; chai
       })
     )
   ).then((results) =>
-    results.map((result, index) => ({
-      ...args[index],
+    results.map((result, i) => ({
+      ...args[i],
       balance: result ? result.toString() : '0',
     }))
   )

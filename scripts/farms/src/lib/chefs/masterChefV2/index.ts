@@ -1,13 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import { MasterChefV2 } from '@sushiswap/core'
 import MasterChefV2ABI from '@sushiswap/core/abi/MasterChefV2.json'
-import { MASTERCHEF_V2_ADDRESS } from '@sushiswap/core-sdk'
 import { SUSHI } from '@sushiswap/currency'
 import { readContract, ReadContractConfig, readContracts, ReadContractsConfig } from '@wagmi/core'
 import { daysInYear, secondsInDay } from 'date-fns'
 import { BigNumber } from 'ethers'
 import { Farm } from 'src/types'
 
+import { MASTERCHEF_V2_ADDRESS } from '../../../config'
 import { divBigNumberToNumber, getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common'
 
 async function getPoolLength() {

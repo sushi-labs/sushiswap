@@ -1,9 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
-import { MINICHEF_ADDRESS } from '@sushiswap/core-sdk'
 import { SUSHI } from '@sushiswap/currency'
 import { daysInYear, secondsInDay } from 'date-fns'
 import { Farm } from 'src/types'
 
+import { MINICHEF_ADDRESS } from '../../../config'
 import { divBigNumberToNumber, getPairs, getTokenBalancesOf, getTokens } from '../../common'
 import {
   getLpTokens,
@@ -54,7 +54,9 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
     return {
       chainId,
       farms: pools.reduce<Record<string, Farm>>((acc, pool) => {
-        if (!pool.pair || !pool.lpBalance) return acc
+        // console.log('this', pool.pair, pool.lpBalance)
+
+        if (!pool.pair || typeof pool.lpBalance !== 'number') return acc
 
         const sushiRewardPerDay = sushiPerDay * (pool.poolInfo.allocPoint.toNumber() / totalAllocPoint.toNumber())
         const sushiRewardPerYearUSD = daysInYear * sushiRewardPerDay * sushiPriceUSD

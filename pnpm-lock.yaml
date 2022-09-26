@@ -2143,6 +2143,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@uniswap/v2-core': ^1.0.1
       '@uniswap/v3-periphery': 1.4.1
+      eslint: ^8.20.0
       ethers: ^5.7.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -2185,6 +2186,7 @@ importers:
       '@typechain/ethers-v5': 10.1.0_weo2o6amaffllglnxvhrj2xh2q
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
+      eslint: 8.20.0
       ethers: 5.7.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -2470,7 +2472,6 @@ importers:
       '@graphql-mesh/utils': ^0.37.5
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^2.0.0-canary.1
-      '@sushiswap/core-sdk': 1.0.0-canary.133
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-client': workspace:*
@@ -2503,7 +2504,6 @@ importers:
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core': 2.0.0-canary.1
-      '@sushiswap/core-sdk': 1.0.0-canary.133
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../packages/config/graph
@@ -9048,24 +9048,6 @@ packages:
 
   /@sushiswap/core-sdk/1.0.0-canary.128:
     resolution: {integrity: sha512-q/M1OLh8Q4MoS9UmyixQf7PEhjBJF9ReHj+4xUaBKhzyK5NF7ej6rsIAIbGFof2HC7hYU4gWZdyW/n97rwr0Zg==}
-    dependencies:
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/providers': 5.7.1
-      '@ethersproject/solidity': 5.7.0
-      big.js: 6.2.1
-      decimal.js-light: 2.5.1
-      jsbi: 4.3.0
-      tiny-invariant: 1.2.0
-      tiny-warning: 1.0.3
-      toformat: 2.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@sushiswap/core-sdk/1.0.0-canary.133:
-    resolution: {integrity: sha512-40Nl1LIkbmNgfzJmZ2VoHHQKDw7Xo6LT7Gq8I1334mPduVpGw695YDRi+Z2g2WVLBggBI/Gk1yRYiYSB4T3M7A==}
     dependencies:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0

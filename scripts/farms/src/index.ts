@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import './lib/wagmi'
 
-import { ChainId } from '@sushiswap/core-sdk'
+import { ChainId } from '@sushiswap/chain'
 import { getUnixTime } from 'date-fns'
 
 import { MINICHEF_SUBGRAPH_NAME } from './config'
