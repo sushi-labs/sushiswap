@@ -50,6 +50,7 @@ export function Header({
 }: HeaderProps): JSX.Element {
   const isMounted = useIsMounted()
   const scrollY = useScrollPosition()
+  const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
   // Show when:
@@ -96,7 +97,7 @@ export function Header({
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
                 <span className="text-sm capitalize truncate">
-                  {[AppType.xSwap, AppType.Swap].includes(appType) ? 'Explore Apps' : appType}
+                  {[AppType.xSwap, AppType.Swap].includes(appType) ? (isMd ? 'Explore Apps' : 'Apps') : appType}
                 </span>
                 <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
               </Listbox.Button>
