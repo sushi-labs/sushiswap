@@ -1,6 +1,7 @@
 import { formatNumber } from '@sushiswap/format'
+import { useInViewport } from '@sushiswap/hooks'
 import { classNames, Currency, NetworkIcon, Typography } from '@sushiswap/ui'
-import { FC } from 'react'
+import { FC, useRef } from 'react'
 
 import { useTokensFromPair } from '../../../../../lib/hooks'
 import { ICON_SIZE } from '../../contants'
@@ -8,13 +9,14 @@ import { CellProps } from './types'
 
 export const PairNameCell: FC<CellProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row)
-
+  const ref = useRef<HTMLDivElement>(null)
+  const inViewport = useInViewport(ref)
   return (
     <div className="flex items-center gap-3 sm:gap-0">
       <div className="hidden sm:flex">
         <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
-          <Currency.Icon disableLink currency={token0} />
-          <Currency.Icon disableLink currency={token1} />
+          <Currency.Icon disableLink currency={token0} priority={inViewport} />
+          <Currency.Icon disableLink currency={token1} priority={inViewport} />
         </Currency.IconList>
       </div>
       <div className="flex sm:hidden">
