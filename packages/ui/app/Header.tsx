@@ -169,7 +169,7 @@ export function Header({
                   >
                     {AppType.Furo}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
-                      Automate DAO salaries and vesting schedules.
+                      Automate DAO salaries and vesting schedules
                     </Typography>
                   </Select.Option>
                   <Select.Option

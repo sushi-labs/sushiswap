@@ -27,7 +27,7 @@ export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress 
 
   if (!data) return <></>
   const { pair } = data
-  if (!pair.farm?.chefType || !isMounted) return <></>
+  if (!pair?.farm?.chefType || !isMounted) return <></>
 
   return (
     <Transition

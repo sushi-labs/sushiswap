@@ -33,7 +33,7 @@ export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ p
 
   const { pair } = data
 
-  if (!pair.farm?.chefType || !isMounted) return <></>
+  if (!pair?.farm?.chefType || !isMounted) return <></>
 
   return (
     <Transition
