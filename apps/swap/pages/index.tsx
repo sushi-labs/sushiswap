@@ -31,6 +31,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   }
 }
 
+const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
+
 const DEAFAULT_TOKEN_1 = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
   [ChainId.GNOSIS]: new Token({
