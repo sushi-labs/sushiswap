@@ -84,10 +84,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     // const first = 1000
     // const skip = 0
-    const where =
-      query && query.where
-        ? { ...JSON.parse(query.where), aprUpdatedAtTimestamp_gt: start }
-        : { aprUpdatedAtTimestamp_gt: start }
+    const where = query && query.where ? { ...JSON.parse(query.where) } : {}
     const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS

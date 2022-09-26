@@ -15,6 +15,10 @@ export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   ChainId.MOONRIVER,
   ChainId.ARBITRUM_NOVA,
   ChainId.HARMONY,
+  // ChainId.PALM,
+  // ChainId.HECO,
+  // ChainId.OKEX
+  ChainId.BOBA,
 ]
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'

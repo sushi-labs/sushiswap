@@ -309,9 +309,10 @@ export const resolvers: Resolvers = {
                       },
                       info,
                     }),
-                  ]).then(([pools, oneDayPools, oneWeekPools]) =>
-                    transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
-                  )
+                  ]).then(([pools, oneDayPools, oneWeekPools]) => {
+                    console.log('BEFORE TRANSFORMER 1', { pools, oneDayPools, oneWeekPools })
+                    return transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
+                  })
                 )
               }),
             ...args.chainIds
@@ -417,9 +418,9 @@ export const resolvers: Resolvers = {
                       }),
                     ])
                   })
-                  .then(([pools, oneDayPools, oneWeekPools]) =>
-                    transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
-                  )
+                  .then(([pools, oneDayPools, oneWeekPools]) => {
+                    return transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
+                  })
               }),
           ])
         )
