@@ -20,6 +20,16 @@ const nextConfig = {
   experimental: {
     nextScriptWorkers: true,
   },
+
+  source: '/:path((?!another-page$).*)',
+  has: [
+    {
+      type: 'host',
+      value: 'example.com',
+    },
+  ],
+  permanent: false,
+  destination: '/another-page',
   async redirects() {
     return [
       {
@@ -37,6 +47,12 @@ const nextConfig = {
       },
       {
         source: '/',
+        has: [
+          {
+            type: 'host',
+            value: 'sushi.com',
+          },
+        ],
         destination: '/analytics',
         permanent: true,
         basePath: false,
