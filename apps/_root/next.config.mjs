@@ -64,6 +64,26 @@ const nextConfig = {
     return [
       {
         source: '/analytics',
+        has: [
+          {
+            type: 'host',
+            value: 'analytics-fuse.sushi.com',
+          },
+        ],
+        destination: `${ANALYTICS_URL}/analytics`,
+      },
+      {
+        source: '/analytics',
+        has: [
+          {
+            type: 'host',
+            value: 'analytics-fuse.sushi.com',
+          },
+        ],
+        destination: `${ANALYTICS_URL}/analytics/:path*`,
+      },
+      {
+        source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
       },
       {
