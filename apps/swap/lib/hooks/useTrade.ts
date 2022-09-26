@@ -84,6 +84,9 @@ export function useTrade(
       currencyInRebase &&
       currencyOut &&
       currencyOutRebase &&
+      currencyIn.wrapped.chainId === currencyOut.wrapped.chainId &&
+      currencyIn.wrapped.chainId === chainId &&
+      currencyOut.wrapped.chainId === chainId &&
       currencyIn.wrapped.address !== currencyOut.wrapped.address &&
       chainId &&
       amountSpecified &&

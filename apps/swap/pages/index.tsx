@@ -106,7 +106,6 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 
   const outputToken = useMemo(() => {
     if (initialState.token1 && initialState.token1 in tokens) return tokens[initialState.token1]
-
     return getDefaultToken1(chainId)
   }, [chainId, initialState.token1, tokens])
 

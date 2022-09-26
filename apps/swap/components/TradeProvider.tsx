@@ -32,7 +32,6 @@ export const TradeProvider: FC<_TradeProviderProps> = ({
   children,
 }) => {
   const trade = useFindTrade(chainId, tradeType, amountSpecified, mainCurrency, otherCurrency)
-
   return (
     <Context.Provider value={useMemo(() => ({ trade, isError: false, isLoading: false }), [trade])}>
       {children}
