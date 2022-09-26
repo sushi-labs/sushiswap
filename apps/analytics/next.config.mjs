@@ -23,15 +23,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/:path*',
+        source: '/',
         has: [
           {
             type: 'host',
             value: 'analytics-fuse.sushi.com',
           },
         ],
-        destination: '/analytics/:path*',
+        destination: '/analytics',
         permanent: true,
+        statusCode: 308,
         basePath: false,
       },
       {
