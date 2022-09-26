@@ -28,7 +28,7 @@ const LINK = {
   [AppType.Internal]: '/internal',
   [AppType.Kashi]: '/internal',
   [AppType.Analytics]: '/analytics',
-  [AppType.Pool]: '/pool',
+  [AppType.Pool]: '/invest',
   [AppType.Partner]: '/partner',
 }
 
@@ -141,7 +141,7 @@ export function Header({
                   >
                     {AppType.Pool}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
-                      Earn fees by providing liquidity, farm SUSHI and other rewards, and stake xSUSHI in the SushiBar
+                      Earn fees by providing liquidity
                     </Typography>
                   </Select.Option>
                 </div>
@@ -170,10 +170,10 @@ export function Header({
                   >
                     {AppType.Furo}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
-                      Earn, stream and automate with Furo
+                      Automate DAO salaries and vesting schedules.
                     </Typography>
                   </Select.Option>
-                  {/* <Select.Option
+                  <Select.Option
                     as="a"
                     href="https://sushi.com/analytics"
                     key={AppType.Analytics}
@@ -184,7 +184,7 @@ export function Header({
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Find the best opportunities
                     </Typography>
-                  </Select.Option> */}
+                  </Select.Option>
                 </div>
                 <div>
                   <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">

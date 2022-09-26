@@ -3,7 +3,7 @@
 export default {
   titleTemplate: '%s | Furo',
   defaultTitle: 'Furo',
-  description: 'Earn, stream and automate your DAO salaries and token vesting with Furo.',
+  description: 'Automate your DAO salaries and token vesting with Furo.',
   //   canonical: 'https://sushi.com/furo',
   //   mobileAlternate: {
   //     media: '',
@@ -19,7 +19,7 @@ export default {
     // url: 'https://sushi.com/furo',
     type: 'website',
     title: 'Furo',
-    description: 'Earn, stream and automate your DAO salaries and token vesting with Furo.',
+    description: 'Automate your DAO salaries and token vesting with Furo.',
     // images: [],
     // videos: [],
     // locale: 'en_IE',

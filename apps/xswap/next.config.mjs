@@ -16,9 +16,6 @@ const nextConfig = {
   basePath: '/xswap',
   reactStrictMode: true,
   swcMinify: true,
-  // typescript: {
-  //   ignoreBuildErrors: true,
-  // },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',

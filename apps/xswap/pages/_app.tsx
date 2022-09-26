@@ -9,11 +9,13 @@ import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
+import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
 
+import SEO from '../next-seo.config.mjs'
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]
@@ -54,6 +56,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <Provider store={store}>
           <ThemeProvider>
             <App.Shell>
+              <DefaultSeo {...SEO} />
               <Header />
               <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
               <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
