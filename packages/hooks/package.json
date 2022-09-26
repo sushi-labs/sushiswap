@@ -24,8 +24,8 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@ethersproject/address": "^5.0.0",
-    "@ethersproject/providers": "^5.0.0",
+    "@ethersproject/address": "^5.7.0",
+    "@ethersproject/providers": "^5.7.0",
     "copy-to-clipboard": "^3.3.1",
     "react-responsive": "9.0.0-beta.10"
   },
@@ -42,7 +42,7 @@
     "jest": "^28.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "typescript": "^4.7.0"
+    "typescript": "4.6.3"
   },
   "peerDependencies": {
     "react": "^18.2.0",

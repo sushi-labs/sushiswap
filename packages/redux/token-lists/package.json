@@ -12,10 +12,10 @@
   "main": "./index.ts",
   "source": "./index.ts",
   "dependencies": {
-    "@ethersproject/address": "^5.0.0",
-    "@ethersproject/contracts": "^5.0.0",
-    "@ethersproject/hash": "^5.0.0",
-    "@ethersproject/providers": "^5.0.0",
+    "@ethersproject/address": "^5.7.0",
+    "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/hash": "^5.7.0",
+    "@ethersproject/providers": "^5.7.0",
     "ajv": "^6.12.3",
     "cids": "^1.1.9",
     "multicodec": "^3.2.1",
@@ -38,7 +38,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
-    "typescript": "^4.7.0"
+    "typescript": "4.6.3"
   },
   "peerDependencies": {
     "@reduxjs/toolkit": "^1.8.1",

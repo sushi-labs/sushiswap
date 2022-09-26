@@ -64,12 +64,12 @@
     "@wagmi/core": "^0.5.7",
     "@whatwg-node/fetch": "^0.0.2",
     "cross-undici-fetch": "^0.4.11",
-    "ethers": "^5.7.1",
+    "ethers": "^5.7.0",
     "fetchache": "^0.1.2",
     "graphql": "16.6.0",
     "jest": "^28.1.0",
     "tslib": "^2.4.0",
     "tsup": "^6.2.0",
-    "typescript": "^4.7.0"
+    "typescript": "4.6.3"
   }
 }

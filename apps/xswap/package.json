@@ -6,18 +6,19 @@
     "build": "next build --profile",
     "dev": "next dev -p 3007",
     "lint": "eslint --fix . && next lint",
-    "start": "next start"
+    "start": "next start",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
   },
   "dependencies": {
     "@builder.io/partytown": "^0.6.1",
-    "@ethersproject/abi": "^5.0.0",
-    "@ethersproject/address": "^5.0.0",
-    "@ethersproject/bignumber": "^5.0.0",
-    "@ethersproject/bytes": "^5.0.0",
-    "@ethersproject/constants": "^5.0.0",
-    "@ethersproject/contracts": "^5.0.0",
-    "@ethersproject/experimental": "^5.0.0",
-    "@ethersproject/providers": "^5.0.0",
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/address": "^5.7.0",
+    "@ethersproject/bignumber": "^5.7.0",
+    "@ethersproject/bytes": "^5.7.0",
+    "@ethersproject/constants": "^5.7.0",
+    "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/experimental": "^5.7.0",
+    "@ethersproject/providers": "^5.7.0",
     "@headlessui/react": "^1.6.6",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
@@ -40,9 +41,9 @@
     "@typechain/ethers-v5": "^10.0.0",
     "@uniswap/redux-multicall": "^1.1.1",
     "@uniswap/v2-core": "^1.0.1",
-    "ethers": "^5.0.0",
+    "ethers": "^5.7.0",
     "nanoid": "^4.0.0",
-    "next": "^12.2.0",
+    "next": "12.2.x",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
@@ -63,6 +64,6 @@
     "next-transpile-modules": "9.0.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.1.0",
-    "typescript": "^4.7.0"
+    "typescript": "4.6.3"
   }
 }

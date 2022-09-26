@@ -54,18 +54,18 @@
     "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.5",
     "autoprefixer": "^10.4.0",
-    "next": "^12.2.0",
+    "next": "12.2.x",
     "postcss": "^8.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^6.2.0",
-    "typescript": "^4.7.0"
+    "typescript": "4.6.3"
   },
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "optionalDependencies": {
-    "next": "^12.2.0"
+    "next": "12.2.x"
   }
 }
