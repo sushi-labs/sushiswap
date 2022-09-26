@@ -31,8 +31,6 @@ export const PositionsTable: FC = () => {
     (url) => fetch(url).then((response) => response.json())
   )
 
-  console.log(userWithFarms || [])
-
   const table = useReactTable<UserWithFarm>({
     data: userWithFarms || [],
     state: {

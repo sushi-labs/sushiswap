@@ -138,8 +138,6 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     indexOfWETH = minAmount0.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 0 : indexOfWETH
     indexOfWETH = minAmount1.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 1 : indexOfWETH
 
-    console.log({ indexOfWETH })
-
     const actions = [
       approveMasterContractAction({ router: contract, signature: permit }),
       burnLiquidityAction({

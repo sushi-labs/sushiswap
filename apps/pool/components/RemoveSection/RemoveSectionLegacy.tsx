@@ -151,16 +151,16 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         ]
       }
 
-      console.log(contract.address, [
-        Native.onChain(pair.chainId).wrapped === pool.token1
-          ? pool.token0.wrapped.address
-          : pool.token1.wrapped.address,
-        balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
-        minAmount0.quotient.toString(),
-        minAmount1.quotient.toString(),
-        address,
-        deadline.toHexString(),
-      ])
+      // console.log(contract.address, [
+      //   Native.onChain(pair.chainId).wrapped === pool.token1
+      //     ? pool.token0.wrapped.address
+      //     : pool.token1.wrapped.address,
+      //   balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
+      //   minAmount0.quotient.toString(),
+      //   minAmount1.quotient.toString(),
+      //   address,
+      //   deadline.toHexString(),
+      // ])
       const safeGasEstimates = await Promise.all(
         methodNames.map((methodName) =>
           contract.estimateGas[methodName](...args)
