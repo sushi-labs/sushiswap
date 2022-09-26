@@ -16,7 +16,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
   const { balance: stakedBalance } = usePoolPositionStaked()
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col w-full gap-2">
       <div className="flex gap-2">
         <Link.Internal href={`/${pair.id}/remove`} passHref={true}>
           <a className="w-full">
@@ -41,7 +41,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
         size="md"
         variant="outlined"
         as="a"
-        href={`/swap?srcToken=${pair.id.split(':')[1]}&srcChainId=${pair.chainId}`}
+        href={`https://sushi.com/swap?token0=${pair.token0.id}&?token1=${pair.token1.id}&chainId=${pair.chainId}`}
       >
         Trade
       </Button>
