@@ -1,13 +1,14 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, tryParseAmount, Type, USDC } from '@sushiswap/currency'
+import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
-import { FundSource } from '@sushiswap/hooks'
+import { FundSource, usePrevious } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNetwork } from 'wagmi'
 
@@ -28,17 +29,82 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   }
 }
 
+const DEAFAULT_TOKEN_1 = {
+  [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
+  [ChainId.GNOSIS]: new Token({
+    address: '0x9C58BAcC331c9aa871AFD802DB6379a98e80CEdb',
+    chainId: ChainId.GNOSIS,
+    symbol: 'GNO',
+    name: 'Gnosis Token',
+    decimals: 18,
+  }),
+  [ChainId.OPTIMISM]: new Token({
+    address: '0x4200000000000000000000000000000000000042',
+    chainId: ChainId.OPTIMISM,
+    symbol: 'OP',
+    name: 'Optimism',
+    decimals: 18,
+  }),
+  [ChainId.BOBA]: new Token({
+    address: '0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7',
+    chainId: ChainId.BOBA,
+    symbol: 'BOBA',
+    name: 'Boba',
+    decimals: 18,
+  }),
+}
+
+const getDefaultToken1 = (chainId: number) => {
+  if (chainId in DEAFAULT_TOKEN_1) {
+    return DEAFAULT_TOKEN_1[chainId]
+  }
+  if (chainId in USDC) {
+    return USDC[chainId]
+  }
+  if (chainId in USDT) {
+    return USDT[chainId]
+  }
+}
+
 function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { chain } = useNetwork()
+  const router = useRouter()
 
   const chainId = initialState.chainId ? Number(initialState.chainId) : chain ? chain.id : ChainId.ETHEREUM
+
+  const previousChain = usePrevious(chain)
+
+  useEffect(() => {
+    if (chain && previousChain && chain.id !== previousChain.id && chain.id !== Number(router?.query?.chainId)) {
+      // Clear up the query string if user changes network
+      // whilst there is a chainId parameter in the query...
+      delete router.query['chainId']
+      delete router.query['token0']
+      delete router.query['token1']
+      delete router.query['input0']
+      void router.replace(
+        {
+          pathname: router.pathname,
+          query: {
+            ...router.query,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
+  }, [router, chain, previousChain])
 
   const tokens = useTokens(chainId)
 
   const inputToken =
     initialState.token0 && initialState.token0 in tokens ? tokens[initialState.token0] : Native.onChain(chainId)
 
-  const outputToken = initialState.token1 ?? (chainId in SUSHI ? SUSHI[chainId] : USDC[chainId])
+  const outputToken = useMemo(() => {
+    if (initialState.token1 && initialState.token1 in tokens) return tokens[initialState.token1]
+
+    return getDefaultToken1(chainId)
+  }, [chainId, initialState.token1, tokens])
 
   const [input0, setInput0] = useState<string>(initialState.input0)
   const [token0, setToken0] = useState<Type | undefined>(inputToken)
@@ -75,7 +141,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 
   useEffect(() => {
     setToken0(Native.onChain(chainId))
-    setToken1(chainId in SUSHI ? SUSHI[chainId] : USDC[chainId])
+    setToken1(getDefaultToken1(chainId))
     setInput0('')
     setInput1('')
   }, [chainId])
