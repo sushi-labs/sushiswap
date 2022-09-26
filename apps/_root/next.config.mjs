@@ -63,26 +63,6 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/',
-        has: [
-          {
-            type: 'host',
-            value: 'analytics-fuse.sushi.com',
-          },
-        ],
-        destination: `${ANALYTICS_URL}/analytics`,
-      },
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'analytics-fuse.sushi.com',
-          },
-        ],
-        destination: `${ANALYTICS_URL}/analytics/:path*`,
-      },
-      {
         source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
       },

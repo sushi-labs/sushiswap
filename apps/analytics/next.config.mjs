@@ -28,6 +28,26 @@ const nextConfig = {
         permanent: true,
         basePath: false,
       },
+      {
+        source: '/',
+        has: [
+          {
+            type: 'host',
+            value: 'analytics-fuse.sushi.com',
+          },
+        ],
+        destination: `/analytics`,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'analytics-fuse.sushi.com',
+          },
+        ],
+        destination: `/analytics/:path*`,
+      },
     ]
   },
 }
