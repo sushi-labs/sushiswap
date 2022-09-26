@@ -986,7 +986,7 @@ const Widget: FC<Swap> = ({
                     <>
                       <Rate price={price} theme={theme}>
                         {({ content, usdPrice, toggleInvert }) => (
-                          <div className="flex justify-between bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-1 gap-2">
+                          <div className="flex justify-between items-center bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-2 gap-2">
                             <div
                               className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center truncate"
                               onClick={toggleInvert}

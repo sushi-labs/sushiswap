@@ -548,7 +548,7 @@ importers:
 
   apps/invest:
     specifiers:
-      '@builder.io/partytown': ^0.6.0
+      '@builder.io/partytown': ^0.7.0
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/address': ^5.7.0
       '@ethersproject/bignumber': ^5.7.0
@@ -603,7 +603,7 @@ importers:
       typescript: 4.6.3
       wagmi: 0.6.7
     dependencies:
-      '@builder.io/partytown': 0.6.4
+      '@builder.io/partytown': 0.7.0
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
@@ -661,7 +661,7 @@ importers:
 
   apps/kashi:
     specifiers:
-      '@builder.io/partytown': ^0.6.0
+      '@builder.io/partytown': ^0.7.0
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/address': ^5.7.0
       '@ethersproject/bignumber': ^5.7.0
@@ -713,7 +713,7 @@ importers:
       typescript: 4.6.3
       wagmi: 0.6.7
     dependencies:
-      '@builder.io/partytown': 0.6.4
+      '@builder.io/partytown': 0.7.0
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
@@ -867,7 +867,7 @@ importers:
 
   apps/swap:
     specifiers:
-      '@builder.io/partytown': ^0.6.0
+      '@builder.io/partytown': ^0.7.0
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/address': ^5.7.0
       '@ethersproject/bignumber': ^5.7.0
@@ -922,7 +922,7 @@ importers:
       typescript: 4.6.3
       wagmi: 0.6.7
     dependencies:
-      '@builder.io/partytown': 0.6.4
+      '@builder.io/partytown': 0.7.0
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
@@ -3419,6 +3419,11 @@ packages:
 
   /@builder.io/partytown/0.6.4:
     resolution: {integrity: sha512-W6C7O0eSg6YNujHYZozXK5iJ+V69QVLLLRv+NlmYh1vFe0PUJ3kmAhRCx7rUqI3XAA/KpdyfdxLoopBg3GlfVA==}
+    hasBin: true
+    dev: false
+
+  /@builder.io/partytown/0.7.0:
+    resolution: {integrity: sha512-Mw2KeiPglCZujE99ntbJfZq52dJktzhfifWav4UJYgDx81L/hWMQXg/bNqsYlz9cnopDBqYewy+6qbv3b1DcyQ==}
     hasBin: true
     dev: false
 
