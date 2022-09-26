@@ -73,7 +73,7 @@ const nextConfig = {
         destination: `${ANALYTICS_URL}/analytics`,
       },
       {
-        source: '/analytics',
+        source: '/analytics/:path*',
         has: [
           {
             type: 'host',
