@@ -37,6 +37,8 @@ const nextConfig = {
           },
         ],
         destination: `/analytics`,
+        permanent: true,
+        basePath: false,
       },
       {
         source: '/:path*',
@@ -47,6 +49,8 @@ const nextConfig = {
           },
         ],
         destination: `/analytics/:path*`,
+        permanent: true,
+        basePath: false,
       },
     ]
   },
