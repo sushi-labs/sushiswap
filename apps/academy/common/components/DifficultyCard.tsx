@@ -1,6 +1,7 @@
 import { Transition } from '@headlessui/react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Chip, CircleIcon } from '@sushiswap/ui'
+import { SquareIcon } from 'common/icons'
 import { FC, Fragment, ReactNode, useState } from 'react'
 
 interface DifficultyCard {
@@ -21,7 +22,10 @@ export const DifficultyCard: FC<DifficultyCard> = ({ icon, chipLabel, title, nam
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <div className="w-[130px] h-[130px]">{icon}</div>
+      <div className="w-[130px] h-[130px] relative">
+        <SquareIcon fill={color} />
+        <div className="absolute bottom-0 right-0 backdrop-blur-md bg-white/[0.1] rounded-2xl">{icon}</div>
+      </div>
       <div className="space-y-5">
         <div className="relative flex items-center h-10">
           <Chip
