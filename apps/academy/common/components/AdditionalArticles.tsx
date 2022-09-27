@@ -2,6 +2,8 @@ import { classNames, Typography } from '@sushiswap/ui'
 import { defaultSidePadding } from 'pages'
 import { FC, ReactNode } from 'react'
 
+import { ViewAllButton } from './ViewAllButton'
+
 interface AdditionalArticles {
   title: string
   children?: ReactNode
@@ -10,14 +12,19 @@ interface AdditionalArticles {
 
 export const AdditionalArticles: FC<AdditionalArticles> = ({ title, children, className }) => {
   return (
-    <div className={className}>
-      <Typography variant="h3" weight={700} className={defaultSidePadding}>
-        {title}
-      </Typography>
-      <div className={classNames('overflow-x-auto pb-8', defaultSidePadding)}>
-        <div className="flex gap-6 mt-6 sm:mt-12 transition-all sm:gap-4 md:grid md:grid-cols-3 w-[888px] md:w-full">
-          {children}
-        </div>
+    <div className={classNames('max-w-6xl mx-auto', className)}>
+      <div className={classNames('flex justify-between', defaultSidePadding)}>
+        <Typography variant="xl" weight={700}>
+          {title}
+        </Typography>
+        <ViewAllButton onClick={() => null} className="" isSmall />
+      </div>
+      <div className={classNames('overflow-x-auto pb-10', defaultSidePadding)}>
+        <div className="gap-5 mt-6 sm:mt-10 sm:gap-6 grid grid-cols-3 min-w-[898px] md:w-full">{children}</div>
+      </div>
+      <div className={classNames('hidden sm:flex justify-center', defaultSidePadding)}>
+        {/** TODO: implement */}
+        <ViewAllButton onClick={() => null} />
       </div>
     </div>
   )

@@ -1,6 +1,5 @@
-import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import { useDebounce } from '@sushiswap/hooks'
-import { Button, CheckIcon, CircleIcon, classNames, Container, Typography } from '@sushiswap/ui'
+import { CircleIcon, classNames, Container, Typography } from '@sushiswap/ui'
 import { AdditionalArticles } from 'common/components/AdditionalArticles'
 import { DifficultyCard } from 'common/components/DifficultyCard'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
@@ -10,7 +9,7 @@ import { FC, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
-import { ArticleList, Card, Categories, Hero, SearchInput } from '../common/components'
+import { ArticleList, Card, Categories, Hero, SearchInput, ViewAllButton } from '../common/components'
 import { getArticles, getCategories, getDifficulties } from '../lib/api'
 
 export const defaultSidePadding = 'px-6 sm:px-4'
@@ -96,7 +95,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
   const categories = categoriesData?.data || []
-  const difficulties = difficultiesData?.data || []
+  // const difficulties = difficultiesData?.data || [] // TODO: update
+  const difficulties = [
+    { id: '6', attributes: { name: 'Beginner' } },
+    { id: '7', attributes: { name: 'Advanced' } },
+    { id: '8', attributes: { name: 'Technical' } },
+  ]
   const articleList =
     (selectedCategory || selectedDifficulty) && filterData?.data ? filterData?.data : articles ? articles : undefined
   const latestReleases = articles?.slice(0, 3)
@@ -145,49 +149,42 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <div className={classNames('flex flex-col mt-[46px] sm:mt-[124px]', defaultSidePadding)}>
           <div className="flex justify-between">
             <span className="text-xl font-bold sm:text-2xl">Choose Topic</span>
-            <Button
-              color="gray"
-              className="h-8 font-normal !bg-slate-800 rounded-full pr-1 sm:hidden"
-              endIcon={<PlusCircleIcon fill="#3B7EF6" height={24} width={24} />}
-            >
-              View All
-            </Button>
+            {/** TODO: implement */}
+            <ViewAllButton onClick={() => null} isSmall />
           </div>
           <div className="flex flex-wrap gap-3 md:gap-4 mt-9 sm:mt-8">
             <Categories selected={selectedCategory} onSelect={handleSelectCategory} categories={categories || []} />
           </div>
 
-          <div className="items-center gap-8 mt-[42px] sm:flex hidden">
+          <div className="items-center hidden gap-8 mt-10 sm:flex">
             <Typography variant="xl" weight={700}>
               Difficulty:
             </Typography>
             <div className="flex flex-wrap gap-6">
-              {difficulties.map(({ id, attributes }, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleSelectDifficulty(id)}
-                  className={classNames(
-                    'text-sm pl-3 pr-4 font-bold h-[38px] rounded-lg border flex items-center gap-2'
-                  )}
-                  style={{ borderColor: difficultyColors[i] }}
-                >
-                  <span className="w-[18px] h-[18px] flex items-center justify-center">
-                    {selectedDifficulty === id ? (
-                      <CheckIcon stroke={difficultyColors[i]} width={18} height={18} />
-                    ) : (
-                      <CircleIcon fill={difficultyColors[i]} stroke={difficultyColors[i]} width={8} height={8} />
-                    )}
-                  </span>
-                  {attributes.name}
-                </button>
-              ))}
+              {difficulties.map(
+                // TODO: extract to component
+                ({ id, attributes }, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSelectDifficulty(id)}
+                    className="text-sm px-4 font-semibold h-[38px] rounded-lg flex items-center gap-2.5 border"
+                    style={{
+                      borderColor: selectedDifficulty === id ? difficultyColors[i] : 'transparent',
+                      background: `${difficultyColors[i]}33`,
+                    }}
+                  >
+                    <CircleIcon fill={difficultyColors[i]} stroke={difficultyColors[i]} width={8} height={8} />
+                    {attributes.name}
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>
 
         <div className={classNames('mt-9 sm:mt-[70px]', defaultSidePadding)}>
           {articleList && (
-            <div className="grid grid-cols-1 gap-6 transition-all sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))]">
               <ArticleList
                 articles={articleList as ArticleEntity[]}
                 loading={loading}
@@ -196,23 +193,13 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             </div>
           )}
 
-          <div className="flex justify-center mt-14">
-            <Button
-              as="a"
-              href={'/academy/articles' + (queryParams ? `?${queryParams}` : '')}
-              color="gray"
-              variant="outlined"
-              size="md"
-              className="rounded-full"
-            >
-              View All
-              <PlusCircleIcon width={20} height={20} />
-            </Button>
+          <div className="justify-center hidden sm:flex mt-14">
+            <ViewAllButton as="a" href={'/academy/articles' + (queryParams ? `?${queryParams}` : '')} />
           </div>
         </div>
       </Container>
 
-      <AdditionalArticles title="Latest Releases">
+      <AdditionalArticles title="Latest Releases" className="pb-6">
         {latestReleases && (
           <ArticleList
             articles={latestReleases as ArticleEntity[]}
