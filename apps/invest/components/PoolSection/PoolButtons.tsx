@@ -41,7 +41,7 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
         size="md"
         variant="outlined"
         as="a"
-        href={`https://sushi.com/swap?token0=${pair.token0.id}&?token1=${pair.token1.id}&chainId=${pair.chainId}`}
+        href={`https://sushi.com/swap?token0=${pair.token0.id}&token1=${pair.token1.id}&chainId=${pair.chainId}`}
       >
         Trade
       </Button>
