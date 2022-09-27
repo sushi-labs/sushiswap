@@ -30,7 +30,7 @@ const nextConfig = {
         basePath: false,
       },
       {
-        source: '/:path',
+        source: '/swap',
         has: [
           {
             type: 'query',
