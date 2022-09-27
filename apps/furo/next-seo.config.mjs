@@ -22,7 +22,7 @@ export default {
     description: 'Automate your DAO salaries and vesting schedules while earning interest from yield strategies.',
     images: [
       {
-        url: 'https://www.sushi.com/furo/og-image.png',
+        url: 'https://www.sushi.com/furo/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Furo',
