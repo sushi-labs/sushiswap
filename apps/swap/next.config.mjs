@@ -24,8 +24,13 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/:path*',
+        source: '/',
+        destination: '/swap',
+        permanent: true,
         basePath: false,
+      },
+      {
+        source: '/:path',
         has: [
           {
             type: 'query',
@@ -48,6 +53,7 @@ const nextConfig = {
             key: 'dstChainId',
           },
         ],
+        basePath: false,
         permanent: false,
         destination: '/xswap',
       },
