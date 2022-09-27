@@ -21,7 +21,14 @@ export default {
     type: 'website',
     title: 'Invest',
     description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI',
-    // images: [],
+    images: [
+      {
+        url: 'https://www.sushi.com/invest/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Sushi Invest',
+      },
+    ],
     // videos: [],
     // locale: 'en_IE',
     site_name: 'Sushi',
