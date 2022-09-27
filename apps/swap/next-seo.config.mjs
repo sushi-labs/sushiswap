@@ -17,13 +17,20 @@ export default {
     cardType: 'summary_large_image',
   },
   openGraph: {
-    // url: 'https://sushi.com/pool',
+    url: 'https://www.sushi.com/swap',
     type: 'website',
     title: 'SushiSwap',
-    description: 'Easiest way to trade your tokens.',
-    // images: [],
-    // videos: [],
-    // locale: 'en_IE',
+    description: 'Easiest way to trade your tokens',
     site_name: 'Sushi',
+    // images: [],
+    videos: [
+      {
+        url: 'https://www.sushi.com/swap/og-video.mp4',
+        width: 1920,
+        height: 1080,
+        alt: 'SushiSwap',
+      },
+    ],
+    // locale: 'en_IE',
   },
 }
