@@ -4,7 +4,7 @@ export default {
   titleTemplate: '%s | Sushi',
   title: 'Invest',
   defaultTitle: 'Invest',
-  description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI',
+  description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI.',
   //   canonical: 'https://sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
@@ -17,10 +17,10 @@ export default {
     cardType: 'summary_large_image',
   },
   openGraph: {
-    // url: 'https://sushi.com/pool',
+    url: 'https://www.sushi.com/invest',
     type: 'website',
     title: 'Invest',
-    description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI',
+    description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI.',
     images: [
       {
         url: 'https://www.sushi.com/invest/og-image.jpg',

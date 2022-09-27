@@ -23,7 +23,7 @@ export default {
     description: 'Easiest way to trade your tokens and supported by 22 networks.',
     images: [
       {
-        url: 'https://www.sushi.com/xswap/og-image.jpg',
+        url: 'https://www.sushi.com/swap/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'SushiSwap',

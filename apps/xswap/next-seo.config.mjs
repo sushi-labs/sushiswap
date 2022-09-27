@@ -17,7 +17,7 @@ export default {
     cardType: 'summary_large_image',
   },
   openGraph: {
-    // url: 'https://sushi.com/pool',
+    url: 'https://www.sushi.com/xswap',
     type: 'website',
     title: 'SushiXSwap',
     description: 'Easiest way to trade your tokens accross 7 networks.',
