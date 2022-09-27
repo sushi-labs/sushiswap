@@ -98,7 +98,7 @@ export default function Index() {
               <span className="text-blue">Furo</span> Streaming
             </div>
             <div className="text-lg text-center sm:text-left sm:text-xl text-slate-400 md:w-1/2">
-              Earn, stream and automate your DAO salaries and token vesting with Furo.
+              Automate your DAO salaries and vesting schedules while earning interest from yield strategies.
             </div>
           </div>
           <div className="flex flex-col gap-4 sm:items-center sm:flex-row">
