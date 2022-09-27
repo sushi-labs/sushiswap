@@ -16,11 +16,18 @@ export default {
     cardType: 'summary_large_image',
   },
   openGraph: {
-    // url: 'https://sushi.com/furo',
+    url: 'https://www.sushi.com/furo',
     type: 'website',
     title: 'Furo',
     description: 'Automate your DAO salaries and vesting schedules while earning interest from yield strategies.',
-    // images: [],
+    images: [
+      {
+        url: 'https://www.sushi.com/furo/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Furo',
+      },
+    ],
     // videos: [],
     // locale: 'en_IE',
     site_name: 'Sushi',

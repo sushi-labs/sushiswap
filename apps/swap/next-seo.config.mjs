@@ -21,10 +21,9 @@ export default {
     type: 'website',
     title: 'SushiSwap',
     description: 'Easiest way to trade your tokens and supported by 22 networks.',
-    site_name: 'Sushi',
     images: [
       {
-        url: 'https://www.sushi.com/swap/og-image.jpg',
+        url: 'https://www.sushi.com/xswap/og-image.png',
         width: 1200,
         height: 630,
         alt: 'SushiSwap',
@@ -38,6 +37,7 @@ export default {
         alt: 'SushiSwap',
       },
     ],
+    site_name: 'Sushi',
     // locale: 'en_IE',
   },
 }
