@@ -5,6 +5,7 @@ import { Cloudinary } from '@cloudinary/url-gen'
 import { App, ThemeProvider } from '@sushiswap/ui'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { useEffect } from 'react'
@@ -41,6 +42,16 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 
   return (
     <>
+      <Head>
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1" />
+        <link rel="manifest" href="/site.webmanifest?v=1" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
+        <link rel="shortcut icon" href="/favicon.ico?v=1" />
+        <meta name="msapplication-TileColor" content="#2b5797" />
+        <meta name="theme-color" content="#ffffff" />
+      </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
         id="gtag-init"
