@@ -4,7 +4,7 @@ export default {
   titleTemplate: '%s | Sushi',
   title: 'SushiSwap',
   defaultTitle: 'SushiSwap',
-  description: 'Easiest way to trade your tokens.',
+  description: 'Easiest way to trade your tokens and supported by 22 networks.',
   //   canonical: 'https://sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
@@ -20,9 +20,16 @@ export default {
     url: 'https://www.sushi.com/swap',
     type: 'website',
     title: 'SushiSwap',
-    description: 'Easiest way to trade your tokens',
+    description: 'Easiest way to trade your tokens and supported by 22 networks.',
     site_name: 'Sushi',
-    // images: [],
+    images: [
+      {
+        url: 'https://www.sushi.com/swap/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'SushiSwap',
+      },
+    ],
     videos: [
       {
         url: 'https://www.sushi.com/swap/og-video.mp4',
