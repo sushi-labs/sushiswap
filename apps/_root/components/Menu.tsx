@@ -41,7 +41,7 @@ const Menu = ({ setIsOpen, isOpen }) => {
           </div>
         </div>
         <div className="items-center content-center hidden space-x-10 md:flex">
-          <Link href="https://app.sushi.com">
+          <Link href="https://sushi.com/swap">
             <a
               className="inline-flex items-center text-sm font-medium leading-5 text-white"
               style={{

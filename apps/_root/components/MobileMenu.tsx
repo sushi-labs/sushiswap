@@ -71,7 +71,7 @@ const MobileMenu = ({ setIsOpen, isOpen }) => {
                 >
                   Docs
                 </a>
-                <Link href="https://app.sushi.com">
+                <Link href="https://sushi.com/swap">
                   <a
                     className="block px-3 py-2 text-base font-medium text-white transition duration-150 ease-in-out rounded-md focus:outline-none"
                     role="menuitem"
