@@ -4,7 +4,7 @@ export default {
   titleTemplate: '%s | Sushi',
   title: 'SushiSwap',
   defaultTitle: 'SushiXSwap',
-  description: 'Easiest way to trade your tokens accross 7 networks.',
+  description: 'Easiest way to trade your tokens across 7 networks.',
   //   canonical: 'https://sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
@@ -20,7 +20,7 @@ export default {
     url: 'https://www.sushi.com/xswap',
     type: 'website',
     title: 'SushiXSwap',
-    description: 'Easiest way to trade your tokens accross 7 networks.',
+    description: 'Easiest way to trade your tokens across 7 networks.',
     images: [
       {
         url: 'https://www.sushi.com/xswap/og-image.jpg',
