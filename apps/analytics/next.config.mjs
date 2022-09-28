@@ -20,11 +20,37 @@ const nextConfig = {
   experimental: {
     nextScriptWorkers: true,
   },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/:path*',
+  //       has: [
+  //         {
+  //           type: 'host',
+  //           value: 'analytics-test.localhost',
+  //         },
+  //       ],
+  //       destination: '/another-page',
+  //     },
+  //   ]
+  // },
   async redirects() {
     return [
       {
         source: '/',
         destination: '/analytics',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/analytics',
+        has: [
+          {
+            type: 'host',
+            value: 'analytics-fuse.sushi.com',
+          },
+        ],
+        destination: 'https://www.sushi.com/analytics',
         permanent: true,
         basePath: false,
       },
