@@ -59,7 +59,7 @@ const nextConfig = {
         has: [
           {
             type: 'host',
-            value: 'analytics(?:-)?(?:arbitrum|avalanche|bsc|celo|ftm|fuse|harmony|moonriver|polygon|xdai)?.sushi.com',
+            value: 'analytics((-)+(arbitrum|avalanche|bsc|celo|ftm|fuse|harmony|moonriver|polygon|xdai))?.sushi.com',
           },
         ],
         destination: 'https://www.sushi.com/analytics',
