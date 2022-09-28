@@ -36,7 +36,7 @@ importers:
       prettier: 2.7.1
       sort-package-json: 1.57.0
       ts-jest: 28.0.7_jest@28.1.3
-      turbo: 1.5.3
+      turbo: 1.5.4
 
   apis/farm:
     specifiers:
@@ -83,7 +83,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^34.3.0
+      '@sushiswap/default-token-list': ^34.3.1
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -91,7 +91,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 34.3.0
+      '@sushiswap/default-token-list': 34.3.1
       '@vercel/node': 2.5.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -9079,8 +9079,8 @@ packages:
     resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
     dev: false
 
-  /@sushiswap/default-token-list/34.3.0:
-    resolution: {integrity: sha512-svzcfeuK6OudTA9zkDS+R+OHZdrV2q9WTE8y+sAclQuTAaGUkRkEsR5MnWxkEkXzHXoV2lopbq+6Z6bi2FRFjA==}
+  /@sushiswap/default-token-list/34.3.1:
+    resolution: {integrity: sha512-anHViYPv55jp5E1CeInUkCEtJ3TGq8ydTHHZyFLRbnsaiCaVskBVYVkzkSNju53eO2ghT7/v6FYKL1OSoH8ibw==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -23898,65 +23898,65 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /turbo-darwin-64/1.5.3:
-    resolution: {integrity: sha512-MBS8b/3DuMY6v3ljEX9qssHGQXnI4VDWLqvQ6FGfZFMp8lqa7mfoXv1U/MNR9OhSczaftsIS1e9mnD9m/qv7TQ==}
+  /turbo-darwin-64/1.5.4:
+    resolution: {integrity: sha512-Bdxnwf+m0bnRb5HsVZLe+GRer+MOUgLNjOxluwD7POETgH8CTWu99DXfIMAVDWNILVmPCZbWv8Qh2XwhmPlBqw==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.5.3:
-    resolution: {integrity: sha512-XNSV6SaxS8dAvGx2BF3H7MsKZ4zchj2kP/eXTss/vUcSRsS+zx0urZcEgxeGUeMk7V7fJq/5Ow7thApNojpwpw==}
+  /turbo-darwin-arm64/1.5.4:
+    resolution: {integrity: sha512-1Jdv6bl0v9TITEYDxwNFXdWMlYOifWdnrzkTDyaUV/IM0iL1oGiuD4ZdM9VfbR1D7y573dCmVPvbzgV3GQbJZA==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.5.3:
-    resolution: {integrity: sha512-YhYu50CUvy5m80l6dEXEgC3CvjjTelQb14fknAzIXoKztbWhBZqUCucR6jLRZpKgODwP4Fo4LUzz478EMwqy/Q==}
+  /turbo-linux-64/1.5.4:
+    resolution: {integrity: sha512-FbsXHOIkFnjX4Qu7ZtoCimmy5GlnTYuy66TO2re3i+jy+a59XOAnhU8tT/+FcA73oDAnSv/SAbz1gbsknCU4PA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.5.3:
-    resolution: {integrity: sha512-JjJjxy0kkr/xAWAAE8t7UaTBc3GUc5Tz/Bupbve2VzG0w75md0LqXUV34WpyxMiNTNLmK8Dq7bIczG6OkJ29xQ==}
+  /turbo-linux-arm64/1.5.4:
+    resolution: {integrity: sha512-dYX2ekvYsHGSEsLI+NdoYskr1IEmUES+rup3vc9fFziYX+qOoQuttB7VYA9z6+E4fPpLCxAShPwzxmaXhplCNg==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.5.3:
-    resolution: {integrity: sha512-PS7+Isy7OX9xWWvtg2FKmh/eN4fTNR2r6RW5m+b+zR7t04QLWYOya1R8CeqgA6GyeFpn4KUxC+AeZ0wOi8RSPw==}
+  /turbo-windows-64/1.5.4:
+    resolution: {integrity: sha512-xMmmfplaPrN2Bac+tmOo7bncKhcjv2a/6UGXobNspWzwf6dEboHtxbsP0kIfqoi/22gyj66jg/K/gFJgX08pnw==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-arm64/1.5.3:
-    resolution: {integrity: sha512-DQzjFbPRd/Db5kkJtCER5DNcbY4ez5Bh8usemNlPZQ7I/5XwEUl9Rn3ss2LJsiv/pR7PkY92TUvmyFtBnqao8Q==}
+  /turbo-windows-arm64/1.5.4:
+    resolution: {integrity: sha512-6/DfBdUK+FrbRavQQY9XnxW+1SHPMsuooVjrW8nSh9KFXxTccbFvslUO38usl/lZ0EMKu7MC8D7Vf/zQ9pYGyw==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.5.3:
-    resolution: {integrity: sha512-/94cswfhXr6wWD6CFyF7E8bjEdjar4O+gzCJ3d49X9t9u9aDYFoQH/TlYTSNbAwXYiGqzJoodhf3kXRyrAiqSg==}
+  /turbo/1.5.4:
+    resolution: {integrity: sha512-8txVfU6J4H5ZkSxr6N6Qn7H+W2Cpr0Uh67VeCH4/ZIbH4u24qPFZA9emlGcss0tI1pZHKGJ0+KjoSzC7vWqN2g==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: 1.5.3
-      turbo-darwin-arm64: 1.5.3
-      turbo-linux-64: 1.5.3
-      turbo-linux-arm64: 1.5.3
-      turbo-windows-64: 1.5.3
-      turbo-windows-arm64: 1.5.3
+      turbo-darwin-64: 1.5.4
+      turbo-darwin-arm64: 1.5.4
+      turbo-linux-64: 1.5.4
+      turbo-linux-arm64: 1.5.4
+      turbo-windows-64: 1.5.4
+      turbo-windows-arm64: 1.5.4
     dev: true
 
   /tweetnacl-util/0.15.1:
