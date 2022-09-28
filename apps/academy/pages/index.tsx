@@ -9,7 +9,7 @@ import { FC, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
-import { ArticleList, Card, Categories, Hero, SearchInput, ViewAllButton } from '../common/components'
+import { ArticleList, Card, Categories, Hero, HomeBackground, SearchInput, ViewAllButton } from '../common/components'
 import { getArticles, getCategories, getDifficulties } from '../lib/api'
 
 export const defaultSidePadding = 'px-6 sm:px-4'
@@ -41,28 +41,9 @@ const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Globa
 }
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
-  // const appHeaderHeight = 54
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>()
-  // const [isSticky, setIsSticky] = useState(false)
-  // const { isSm } = useBreakpoint('sm')
-  // const isMobileStickySearchBar = !isSm && isSticky
   const heroRef = useRef<HTMLDivElement>(null)
-
-  // useEffect(() => {
-  //   const cachedRef = heroRef.current
-  //   if (cachedRef) {
-  //     const observer = new IntersectionObserver(([e]) => setIsSticky(!e.isIntersecting), {
-  //       threshold: appHeaderHeight / cachedRef.clientHeight,
-  //     })
-  //     observer.observe(cachedRef)
-
-  //     return () => {
-  //       observer.unobserve(cachedRef)
-  //     }
-  //   }
-  // }, [])
-
   const queryParams = new URLSearchParams({
     ...(selectedDifficulty && { difficulty: selectedDifficulty }),
     ...(selectedCategory && { category: selectedCategory }),
@@ -116,6 +97,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   return (
     <>
       <AcademySeo seo={seo} />
+      <HomeBackground />
       <Container maxWidth="6xl" className="flex flex-col pb-16 mx-auto sm:pb-24">
         <div ref={heroRef}>
           <Hero />

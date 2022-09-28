@@ -35,7 +35,7 @@ export const Header: FC = () => {
     },
   ]
   return (
-    <App.Header appType={AppType.Academy} maxWidth="5xl" withScrollBackground>
+    <App.Header appType={AppType.Academy} withScrollBackground>
       <nav className="hidden md:flex gap-14">
         {headerLinks.map(({ title, options }, i) => (
           <Select
@@ -70,8 +70,8 @@ export const Header: FC = () => {
       <nav className="md:hidden">
         <Select
           button={
-            <Listbox.Button type="button" className="p-1.5 bg-[#A6AAB54D] rounded">
-              <Bars3Icon className="w-4 h-4" aria-hidden="true" />
+            <Listbox.Button type="button" className="p-1.5 bg-slate-900 rounded">
+              <Bars3Icon className="w-5 h-5" aria-hidden="true" />
             </Listbox.Button>
           }
         >
