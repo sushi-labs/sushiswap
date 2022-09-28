@@ -6,7 +6,7 @@ import React, { FC } from 'react'
 import { incentiveRewardToToken } from '../../lib/functions'
 
 export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
-  if (!pair.farm) return <></>
+  if (!pair?.farm?.incentives?.length) return <></>
 
   return (
     <>

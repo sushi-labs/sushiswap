@@ -48,7 +48,7 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
           </Typography>
         </div>
       </div>
-      {row.farm?.incentives && (
+      {!!row?.farm?.incentives?.length && (
         <>
           <hr className="my-3 border-t border-slate-200/10" />
           <div className="flex flex-col gap-1.5">

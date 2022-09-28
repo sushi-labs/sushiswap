@@ -18,16 +18,16 @@ export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {
 
   return (
     <AppearOnMount as={Fragment}>
-      <div className="fixed bottom-6 right-0 left-0 flex justify-center">
+      <div className="fixed left-0 right-0 flex justify-center bottom-6">
         <div>
-          <div className="rounded-full shadow-black/50 bg-blue shadow-md divide-x divide-slate-800">
-            <button onClick={() => setOpenPosition(true)} className="inline-flex cursor-pointer px-4 py-3">
+          <div className="divide-x rounded-full shadow-md shadow-black/50 bg-blue divide-slate-800">
+            <button onClick={() => setOpenPosition(true)} className="inline-flex px-4 py-3 cursor-pointer">
               <Typography variant="sm" weight={600} className="text-slate-50">
                 My Position
               </Typography>
             </button>
             {pair.farm && (
-              <button onClick={() => setOpenRewards(true)} className="inline-flex cursor-pointer px-4 py-3">
+              <button onClick={() => setOpenRewards(true)} className="inline-flex px-4 py-3 cursor-pointer">
                 <Typography variant="sm" weight={600} className="text-slate-50">
                   My Rewards
                 </Typography>
