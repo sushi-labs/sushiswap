@@ -15,7 +15,7 @@ export enum AppType {
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
   Analytics = 'Analytics',
-  Pool = 'Invest',
+  Invest = 'Invest',
   Partner = 'Partner',
 }
 
@@ -26,9 +26,9 @@ const LINK = {
   [AppType.Blog]: '/blog',
   [AppType.Legacy]: '/',
   [AppType.Internal]: '/internal',
-  [AppType.Kashi]: '/internal',
+  [AppType.Kashi]: '/kashi',
   [AppType.Analytics]: '/analytics',
-  [AppType.Pool]: '/invest',
+  [AppType.Invest]: '/invest',
   [AppType.Partner]: '/partner',
 }
 
@@ -134,11 +134,11 @@ export function Header({
                   <Select.Option
                     as="a"
                     href="https://sushi.com/invest"
-                    key={AppType.Pool}
-                    value={AppType.Pool}
+                    key={AppType.Invest}
+                    value={AppType.Invest}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
-                    {AppType.Pool}
+                    {AppType.Invest}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Earn fees by providing liquidity
                     </Typography>

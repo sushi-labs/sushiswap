@@ -12,7 +12,7 @@ export const Header = () => {
 
   return (
     <App.Header
-      appType={AppType.Pool}
+      appType={AppType.Invest}
       nav={
         <App.NavItemList>
           <App.NavItem href="https://sushi.com/swap" label="Swap" />
