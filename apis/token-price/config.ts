@@ -9,7 +9,7 @@ export const SUPPORTED_CHAINS = [
   ChainId.FANTOM,
   ChainId.GNOSIS,
   // ChainId.HECO,
-  // ChainId.HARMONY,
+  ChainId.HARMONY,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   ChainId.FUSE,
