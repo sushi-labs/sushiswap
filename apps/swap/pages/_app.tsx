@@ -3,6 +3,7 @@ import '@sushiswap/ui/index.css'
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAIN_IDS } from 'config'
+import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
 import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
@@ -37,6 +38,9 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       router.events.off('routeChangeComplete', handler)
     }
   }, [router.events])
+
+  const chainIds = Array.from(new Set(SUPPORTED_CHAIN_IDS))
+
   return (
     <>
       <Head>
@@ -70,8 +74,9 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Shell>
               <DefaultSeo {...SEO} />
               <Header />
-              <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+              <MulticallUpdaters chainIds={chainIds} />
+              <TokenListsUpdaters chainIds={chainIds} />
+              <Component {...pageProps} chainIds={chainIds} />
               <App.Footer />
               <ToastContainer className="mt-[50px]" />
             </App.Shell>
