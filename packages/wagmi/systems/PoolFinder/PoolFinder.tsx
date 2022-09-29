@@ -3,6 +3,7 @@ import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, us
 import { PairState } from '../../hooks'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { ConstantProductPool } from './ConstantProductPool'
+import { StablePool } from './StablePool'
 import { LegacyPool } from './LegacyPool'
 import {
   ComponentsWrapperProps,
@@ -61,8 +62,10 @@ export const PoolFinder: typeof Controller & {
   Components: typeof ComponentsWrapper
   LegacyPool: typeof LegacyPool
   ConstantProductPool: typeof ConstantProductPool
+  StablePool: typeof StablePool
 } = Object.assign(Controller, {
   Components: ComponentsWrapper,
   LegacyPool,
   ConstantProductPool,
+  StablePool
 })
