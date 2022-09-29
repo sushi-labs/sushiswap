@@ -28,7 +28,7 @@ export const SushiBarSectionMobile: FC = () => {
   const [value, setValue] = useState('')
   const [error, setError] = useState<string>()
 
-  const { data: stats } = useSWR<XSushi>(`/invest/api/bar`, (url) => fetch(url).then((response) => response.json()))
+  const { data: stats } = useSWR<XSushi>(`/earn/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
   const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),

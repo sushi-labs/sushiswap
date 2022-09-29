@@ -15,7 +15,7 @@ export enum AppType {
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
   Analytics = 'Analytics',
-  Invest = 'Invest',
+  Invest = 'Earn',
   Partner = 'Partner',
 }
 
@@ -28,7 +28,7 @@ const LINK = {
   [AppType.Internal]: '/internal',
   [AppType.Kashi]: '/kashi',
   [AppType.Analytics]: '/analytics',
-  [AppType.Invest]: '/invest',
+  [AppType.Invest]: '/earn',
   [AppType.Partner]: '/partner',
 }
 
@@ -109,7 +109,7 @@ export function Header({
                   </Typography>
                   <Select.Option
                     as="a"
-                    href="https://sushi.com/swap"
+                    href="https://www.sushi.com/swap"
                     key={AppType.Swap}
                     value={AppType.Swap}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
@@ -121,7 +121,7 @@ export function Header({
                   </Select.Option>
                   <Select.Option
                     as="a"
-                    href="https://sushi.com/xswap"
+                    href="https://www.sushi.com/xswap"
                     key={AppType.xSwap}
                     value={AppType.xSwap}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
@@ -133,7 +133,7 @@ export function Header({
                   </Select.Option>
                   <Select.Option
                     as="a"
-                    href="https://sushi.com/invest"
+                    href="https://www.sushi.com/earn"
                     key={AppType.Invest}
                     value={AppType.Invest}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
@@ -162,7 +162,7 @@ export function Header({
                   </Select.Option> */}
                   <Select.Option
                     as="a"
-                    href="https://sushi.com/furo"
+                    href="https://www.sushi.com/furo"
                     key={AppType.Furo}
                     value={AppType.Furo}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
@@ -174,7 +174,7 @@ export function Header({
                   </Select.Option>
                   <Select.Option
                     as="a"
-                    href="https://sushi.com/analytics"
+                    href="https://www.sushi.com/analytics"
                     key={AppType.Analytics}
                     value={AppType.Analytics}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
@@ -191,7 +191,7 @@ export function Header({
                   </Typography>
                   <Select.Option
                     as="a"
-                    href="https://sushi.com/blog"
+                    href="https://www.sushi.com/blog"
                     key={AppType.Blog}
                     value={AppType.Blog}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"

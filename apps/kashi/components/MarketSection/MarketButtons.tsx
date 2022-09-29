@@ -16,7 +16,7 @@ export const MarketButtons: FC<MarketButtonsProps> = ({ pair, side }) => {
     <div className="flex flex-col w-full gap-2">
       <Link.Internal href="/earn" passHref={true}>
         <Button as="a" size="md" color="blue" fullWidth>
-          Invest
+          Earn
         </Button>
       </Link.Internal>
       <Link.Internal href={`/${side === 'borrow' ? 'lend' : 'borrow'}/${pair.id}`} passHref={true}>

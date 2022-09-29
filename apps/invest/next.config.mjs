@@ -12,7 +12,7 @@ const withTranspileModules = transpileModules([
 // @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/invest',
+  basePath: '/earn',
   reactStrictMode: true,
   swcMinify: true,
   images: {
