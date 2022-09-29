@@ -19,6 +19,7 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.PALM,
   ChainId.OKEX,
   ChainId.BOBA,
+  ChainId.HARMONY,
 ]
 
 export const SUPPORTED_CHAIN_IDS = [...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]
