@@ -1,7 +1,7 @@
 {
     "name": "Furo by Sushi",
     "short_name": "Furo",
-    "iconPath": "/Furo_Dark_Symbol.svg",
+    "iconPath": "/furo_Dark_Symbol.svg",
     "description": "Earn, stream and automate your DAO salaries and token vesting with Furo.",
     "icons": [
         {
