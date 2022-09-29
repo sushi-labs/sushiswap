@@ -21,22 +21,22 @@ export default {
     type: 'website',
     title: 'SushiSwap',
     description: 'Easiest way to trade your tokens and supported by 22 networks.',
-    images: [
-      {
-        url: 'https://www.sushi.com/swap/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'SushiSwap',
-      },
-    ],
-    // videos: [
+    // images: [
     //   {
-    //     url: 'https://www.sushi.com/swap/og-video.mp4',
-    //     width: 1920,
-    //     height: 1080,
+    //     url: 'https://www.sushi.com/swap/og-image.jpg',
+    //     width: 1200,
+    //     height: 630,
     //     alt: 'SushiSwap',
     //   },
     // ],
+    videos: [
+      {
+        url: 'https://www.sushi.com/swap/og-video.mp4',
+        width: 1920,
+        height: 1080,
+        alt: 'SushiSwap',
+      },
+    ],
     site_name: 'Sushi',
     // locale: 'en_IE',
   },
