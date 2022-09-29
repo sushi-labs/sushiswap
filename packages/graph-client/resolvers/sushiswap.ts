@@ -818,13 +818,13 @@ export const resolvers: Resolvers = {
             where: args.where,
             block: args.block,
           })
-          .then(({ users }) =>
-            users.map((user) => ({
+          .then(({ users }) => {
+            return users.map((user) => ({
               ...user,
               chainId,
               chainName: chainName[chainId],
             }))
-          )
+          })
       }
 
       return Promise.all([
@@ -842,7 +842,6 @@ export const resolvers: Resolvers = {
     },
     crossChainUserWithFarms: async (root, args, context, info) => {
       const sdk = getBuiltGraphSDK()
-
       // ugly but good for performance because of the pair fetch
       const [unstakedPools, stakedPools] = await Promise.all([
         sdk
@@ -880,14 +879,12 @@ export const resolvers: Resolvers = {
                     .then(({ crossChainPair: pair }) => pair)
                 )
               )
-            )
-              .filter((pair): pair is NonNullable<typeof pair> => !!pair)
-              // TODO: remove when polygon subgraph is synced
-              .filter((pair) => pair.chainId !== ChainId.POLYGON && pair.source !== 'LEGACY')
+            ).filter((pair) => !(pair && pair.chainId === ChainId.POLYGON && pair.source === 'LEGACY'))
+            // TODO: remove when polygon subgraph is synced
 
             return crossChainChefUser
               .map((user) => {
-                const pair = stakedPairs.find((stakedPair) => stakedPair.id.split(':')[1] === user.pool?.pair)
+                const pair = stakedPairs.find((stakedPair) => stakedPair?.id?.split(':')[1] === user.pool?.pair)
 
                 if (!pair) return
 
@@ -906,10 +903,11 @@ export const resolvers: Resolvers = {
 
       const allPairIds = [...unstakedPools, ...stakedPools].map((el) => el.id)
 
+      // console.log({ allPairIds })
+
       return allPairIds.reduce((acc, cur) => {
         const unstaked = unstakedPools.find((el) => el.id === cur)
         const staked = stakedPools.find((el) => el.id === cur)
-
         const combined = staked
           ? unstaked
             ? { ...unstaked, stakedBalance: staked.stakedBalance }
