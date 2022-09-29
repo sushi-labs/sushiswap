@@ -819,6 +819,11 @@ export const resolvers: Resolvers = {
             block: args.block,
           })
           .then(({ users }) => {
+            users.forEach((user) => {
+              if (user?.pool?.pair === '0x99b42f2b49c395d2a77d973f6009abb5d67da343') {
+                console.log('YGG 2 >>>>>>>>>>>>>>>>>>>>>>', { user })
+              }
+            })
             return users.map((user) => ({
               ...user,
               chainId,
@@ -841,7 +846,10 @@ export const resolvers: Resolvers = {
       ]).then((users) => users.flat())
     },
     crossChainUserWithFarms: async (root, args, context, info) => {
+      console.log('CROSS CHAIN USER WITH FARMS', { args })
+
       const sdk = getBuiltGraphSDK()
+
       // ugly but good for performance because of the pair fetch
       const [unstakedPools, stakedPools] = await Promise.all([
         sdk
@@ -901,7 +909,7 @@ export const resolvers: Resolvers = {
           }),
       ])
 
-      const allPairIds = [...unstakedPools, ...stakedPools].map((el) => el.id)
+      const allPairIds = Array.from(new Set([...unstakedPools, ...stakedPools].map((el) => el.id)))
 
       // console.log({ allPairIds })
 
