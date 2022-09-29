@@ -253,7 +253,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                   weight={500}
                   className="flex items-center gap-1 text-slate-500 px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
                 >
-                  Do you want to swap across chains?
+                  Are you looking for cross chain swap?
                 </Typography>
               </a>
             </Link.Internal>
