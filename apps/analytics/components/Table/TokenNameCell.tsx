@@ -7,7 +7,6 @@ import { TokenCellProps } from './types'
 
 export const TokenNameCell: FC<TokenCellProps> = ({ row }) => {
   const token = useTokenFromToken(row)
-
   return (
     <div className="flex items-center gap-3">
       <div className="flex w-5 h-5">

@@ -26,9 +26,10 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.AVALANCHE]: 'avalanche',
   [ChainId.MOONBEAM]: 'moonbeam',
   [ChainId.OPTIMISM]: 'optimism',
-  [ChainId.METIS]: 'metis',
   [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova',
+  [ChainId.METIS]: 'metis',
   [ChainId.BOBA]: 'boba',
+  [ChainId.KAVA]: 'kava',
 }
 
 const AvaxLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/avax.svg'
