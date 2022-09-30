@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     props: {
       fallback: {
         [unstable_serialize({
-          url: '/invest/api/pools',
+          url: '/earn/api/pools',
           args: {
             sorting: [
               {
@@ -38,9 +38,9 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
             extraQuery: '',
           },
         })]: pairs,
-        [`/invest/api/bundles`]: bundles,
-        [`/invest/api/pools/count`]: poolCount,
-        [`/invest/api/bar`]: bar,
+        [`/earn/api/bundles`]: bundles,
+        [`/earn/api/pools/count`]: poolCount,
+        [`/earn/api/bar`]: bar,
       },
     },
   }
@@ -60,7 +60,7 @@ const _Pools = () => {
       <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md space-y-4">
-            <h2 className="text-2xl font-semibold text-slate-50">Invest</h2>
+            <h2 className="text-2xl font-semibold text-slate-50">Earn</h2>
             <p className="text-slate-300">Earn fees by providing liquidity and staking SUSHI into xSUSHI.</p>
           </div>
           <div className="flex justify-end flex-grow not-prose">

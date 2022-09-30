@@ -145,7 +145,7 @@ export const PairTable: FC = () => {
         HoverElement={isMd ? PairQuickHoverTooltip : undefined}
         placeholder="No pools found"
         pageSize={PAGE_SIZE}
-        linkFormatter={(id) => `/invest/${id}`}
+        linkFormatter={(id) => `/earn/${id}`}
       />
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}

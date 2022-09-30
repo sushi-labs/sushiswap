@@ -195,59 +195,62 @@ export const resolvers: Resolvers = {
       ]).then((snapshots) => snapshots.flat()),
     crossChainPairs: async (root, args, context, info) => {
       const transformer = (pools: Pair[], oneDayPools: Pair[], oneWeekPools: Pair[], farms: any, chainId) => {
+        const blacklist = ['0xd5c5e3ca5f162165a6eff096156ec70f77f3a491']
         return pools?.length > 0
-          ? pools.map((pool) => {
-              const pool1d = Array.isArray(oneDayPools)
-                ? oneDayPools?.find((oneDayPool) => oneDayPool.id === pool.id)
-                : undefined
-              const pool1w = Array.isArray(oneWeekPools)
-                ? oneWeekPools?.find((oneWeekPool) => oneWeekPool.id === pool.id)
-                : undefined
-              const volume1w = pool1w ? Number(pool.volumeUSD) - Number(pool1w.volumeUSD) : 0
-              const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d.volumeUSD) : 0
-              const fees1w = pool1w ? Number(pool.feesUSD) - Number(pool1w.feesUSD) : 0
-              const fees1d = pool1d ? Number(pool.feesUSD) - Number(pool1d.feesUSD) : 0
-              const farm = farms?.[chainId]?.farms?.[pool.id.toLowerCase()]
-              const feeApr = pool?.apr
-              const incentiveApr =
-                farm?.incentives?.reduce(
-                  (previousValue, currentValue) => previousValue + Number(currentValue.apr),
-                  0
-                ) ?? 0
-              const apr = Number(feeApr) + Number(incentiveApr)
-              return {
-                ...pool,
-                volume1d,
-                volume1w,
-                fees1w,
-                fees1d,
-                id: `${chainShortName[chainId]}:${pool.id}`,
-                chainId,
-                chainName: chainName[chainId],
-                chainShortName: chainShortName[chainId],
-                apr: String(apr),
-                feeApr: String(feeApr),
-                incentiveApr: String(incentiveApr),
-                farm: farm
-                  ? {
-                      id: farm.id,
-                      incentives: farm.incentives.map((incentive) => ({
-                        apr: String(incentive.apr),
-                        rewardPerDay: String(incentive.rewardPerDay),
-                        rewardToken: {
-                          address: incentive.rewardToken.address,
-                          symbol: incentive.rewardToken.symbol,
-                          decimals: Number(incentive.rewardToken.decimals),
-                        },
-                        rewarderAddress: incentive.rewarder.address,
-                        rewarderType: incentive.rewarder.type,
-                      })),
-                      chefType: String(farm.chefType),
-                      poolType: String(farm.poolType),
-                    }
-                  : null,
-              }
-            })
+          ? pools
+              .filter((pool) => !blacklist.includes(pool.id))
+              .map((pool) => {
+                const pool1d = Array.isArray(oneDayPools)
+                  ? oneDayPools?.find((oneDayPool) => oneDayPool.id === pool.id)
+                  : undefined
+                const pool1w = Array.isArray(oneWeekPools)
+                  ? oneWeekPools?.find((oneWeekPool) => oneWeekPool.id === pool.id)
+                  : undefined
+                const volume1w = pool1w ? Number(pool.volumeUSD) - Number(pool1w.volumeUSD) : 0
+                const volume1d = pool1d ? Number(pool.volumeUSD) - Number(pool1d.volumeUSD) : 0
+                const fees1w = pool1w ? Number(pool.feesUSD) - Number(pool1w.feesUSD) : 0
+                const fees1d = pool1d ? Number(pool.feesUSD) - Number(pool1d.feesUSD) : 0
+                const farm = farms?.[chainId]?.farms?.[pool.id.toLowerCase()]
+                const feeApr = pool?.apr
+                const incentiveApr =
+                  farm?.incentives?.reduce(
+                    (previousValue, currentValue) => previousValue + Number(currentValue.apr),
+                    0
+                  ) ?? 0
+                const apr = Number(feeApr) + Number(incentiveApr)
+                return {
+                  ...pool,
+                  volume1d,
+                  volume1w,
+                  fees1w,
+                  fees1d,
+                  id: `${chainShortName[chainId]}:${pool.id}`,
+                  chainId,
+                  chainName: chainName[chainId],
+                  chainShortName: chainShortName[chainId],
+                  apr: String(apr),
+                  feeApr: String(feeApr),
+                  incentiveApr: String(incentiveApr),
+                  farm: farm
+                    ? {
+                        id: farm.id,
+                        incentives: farm.incentives.map((incentive) => ({
+                          apr: String(incentive.apr),
+                          rewardPerDay: String(incentive.rewardPerDay),
+                          rewardToken: {
+                            address: incentive.rewardToken.address,
+                            symbol: incentive.rewardToken.symbol,
+                            decimals: Number(incentive.rewardToken.decimals),
+                          },
+                          rewarderAddress: incentive.rewarder.address,
+                          rewarderType: incentive.rewarder.type,
+                        })),
+                        chefType: String(farm.chefType),
+                        poolType: String(farm.poolType),
+                      }
+                    : null,
+                }
+              })
           : []
       }
 
@@ -815,13 +818,13 @@ export const resolvers: Resolvers = {
             where: args.where,
             block: args.block,
           })
-          .then(({ users }) =>
-            users.map((user) => ({
+          .then(({ users }) => {
+            return users.map((user) => ({
               ...user,
               chainId,
               chainName: chainName[chainId],
             }))
-          )
+          })
       }
 
       return Promise.all([
@@ -877,14 +880,12 @@ export const resolvers: Resolvers = {
                     .then(({ crossChainPair: pair }) => pair)
                 )
               )
-            )
-              .filter((pair): pair is NonNullable<typeof pair> => !!pair)
-              // TODO: remove when polygon subgraph is synced
-              .filter((pair) => pair.chainId !== ChainId.POLYGON && pair.source !== 'LEGACY')
+            ).filter((pair) => !(pair && pair.chainId === ChainId.POLYGON && pair.source === 'LEGACY'))
+            // TODO: remove when polygon subgraph is synced
 
             return crossChainChefUser
               .map((user) => {
-                const pair = stakedPairs.find((stakedPair) => stakedPair.id.split(':')[1] === user.pool?.pair)
+                const pair = stakedPairs.find((stakedPair) => stakedPair?.id?.split(':')[1] === user.pool?.pair)
 
                 if (!pair) return
 
@@ -901,12 +902,13 @@ export const resolvers: Resolvers = {
           }),
       ])
 
-      const allPairIds = [...unstakedPools, ...stakedPools].map((el) => el.id)
+      const allPairIds = Array.from(new Set([...unstakedPools, ...stakedPools].map((el) => el.id)))
+
+      // console.log({ allPairIds })
 
       return allPairIds.reduce((acc, cur) => {
         const unstaked = unstakedPools.find((el) => el.id === cur)
         const staked = stakedPools.find((el) => el.id === cur)
-
         const combined = staked
           ? unstaked
             ? { ...unstaked, stakedBalance: staked.stakedBalance }

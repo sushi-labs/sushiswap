@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Token, Type } from '@sushiswap/currency'
-import { computeStablePoolAddress, StablePool, Fee } from '@sushiswap/exchange'
+import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/exchange'
 import stablePoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/stable/StablePool.sol/StablePool.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
@@ -18,10 +18,7 @@ const POOL_INTERFACE = new Interface(stablePoolArtifact.abi)
 
 type PoolInput = [Type | undefined, Type | undefined, Fee, boolean]
 
-export function useStablePools(
-  chainId: number,
-  pools: PoolInput[]
-): [PoolState, StablePool | null][] {
+export function useStablePools(chainId: number, pools: PoolInput[]): [PoolState, StablePool | null][] {
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
 
   const input = useMemo(
@@ -50,14 +47,13 @@ export function useStablePools(
 
   const poolsAddresses = useMemo(
     () =>
-      input.reduce<string[]>((acc, [tokenA, tokenB, fee, twap]) => {
+      input.reduce<string[]>((acc, [tokenA, tokenB, fee]) => {
         acc.push(
           computeStablePoolAddress({
             factoryAddress: stablePoolFactory.address,
             tokenA,
             tokenB,
             fee,
-            twap,
           })
         )
         return acc
@@ -84,7 +80,6 @@ export function useStablePools(
       const tokenA = pools[i][0]?.wrapped
       const tokenB = pools[i][1]?.wrapped
       const fee = pools[i]?.[2]
-      const twap = pools[i]?.[3]
 
       if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PoolState.INVALID, null]
       if (!result) return [PoolState.NOT_EXISTS, null]
@@ -96,8 +91,7 @@ export function useStablePools(
         new StablePool(
           Amount.fromRawAmount(token0, reserve0.toString()),
           Amount.fromRawAmount(token1, reserve1.toString()),
-          fee,
-          twap
+          fee
         ),
       ]
     })

@@ -461,3 +461,29 @@ export const FXS: Record<keyof typeof FXS_ADDRESS, Token> = addressMapToTokenMap
   },
   FXS_ADDRESS
 )
+
+export const BCT_ADDRESS: AddressMap = {
+  [ChainId.POLYGON]: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
+}
+
+export const BCT: Record<keyof typeof BCT_ADDRESS, Token> = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'BCT',
+    name: 'Toucan Protocol: Base Carbon Tonne',
+  },
+  BCT_ADDRESS
+)
+
+export const KLIMA_ADDRESS: AddressMap = {
+  [ChainId.POLYGON]: '0x4e78011Ce80ee02d2c3e649Fb657E45898257815',
+}
+
+export const KLIMA: Record<keyof typeof KLIMA_ADDRESS, Token> = addressMapToTokenMap(
+  {
+    decimals: 9,
+    symbol: 'KLIMA',
+    name: 'Klima DAO',
+  },
+  KLIMA_ADDRESS
+)

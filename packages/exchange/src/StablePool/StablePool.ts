@@ -21,8 +21,6 @@ export class StablePool implements Pool {
   private readonly tokenAmounts: [Amount<Token>, Amount<Token>]
   private readonly decimals0: JSBI
   private readonly decimals1: JSBI
-  private readonly inputRebase: Rebase
-  private readonly outputRebase: Rebase
   private readonly MAX_FEE = JSBI.BigInt(10000)
 
   public static getAddress(tokenA: Token, tokenB: Token, fee: Fee = Fee.DEFAULT): string {
@@ -34,13 +32,7 @@ export class StablePool implements Pool {
     })
   }
 
-  public constructor(
-    amountA: Amount<Token>,
-    amountB: Amount<Token>,
-    fee: Fee = Fee.DEFAULT,
-    inputRebase: Rebase,
-    outputRebase: Rebase
-  ) {
+  public constructor(amountA: Amount<Token>, amountB: Amount<Token>, fee: Fee = Fee.DEFAULT) {
     const tokenAmounts = amountA.currency.sortsBefore(amountB.currency) // does safety checks
       ? [amountA, amountB]
       : [amountB, amountA]
@@ -59,9 +51,6 @@ export class StablePool implements Pool {
 
     this.decimals0 = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.tokenAmounts[0].currency.decimals))
     this.decimals1 = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.tokenAmounts[1].currency.decimals))
-
-    this.inputRebase = inputRebase
-    this.outputRebase = outputRebase
   }
 
   /**
@@ -240,13 +229,17 @@ export class StablePool implements Pool {
     }
   }
 
-  public getOutputAmount(inputShare: Share<Token>): [Amount<Token>, StablePool] {
+  public getOutputAmount(
+    inputShare: Share<Token>,
+    inputRebase: Rebase
+    // outputRebase: Rebase
+  ): [Amount<Token>, StablePool] {
     invariant(this.involvesToken(inputShare.currency), 'TOKEN')
     if (JSBI.equal(this.reserve0.quotient, ZERO) || JSBI.equal(this.reserve1.quotient, ZERO)) {
       throw new InsufficientReservesError()
     }
 
-    const inputAmount = inputShare.toAmount(this.inputRebase, false)
+    const inputAmount = inputShare.toAmount(inputRebase, false)
     const outputCurrency = inputAmount.currency.equals(this.token0) ? this.token1 : this.token0
 
     const inputReserve = this.reserveOf(inputAmount.currency)
@@ -286,16 +279,7 @@ export class StablePool implements Pool {
       throw new InsufficientInputAmountError()
     }
 
-    return [
-      outputAmount,
-      new StablePool(
-        inputReserve.add(inputAmount),
-        outputReserve.subtract(outputAmount),
-        this.fee,
-        this.inputRebase,
-        this.outputRebase
-      ),
-    ]
+    return [outputAmount, new StablePool(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), this.fee)]
   }
 
   // public getInputAmount(outputAmount: Amount<Token>): [Amount<Token>, StablePool] {

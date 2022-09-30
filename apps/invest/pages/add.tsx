@@ -1,11 +1,11 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { ConstantProductPool, Pair } from '@sushiswap/exchange'
+import { ConstantProductPool, Pair, StablePool } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Checker, PairState, PoolFinder, PoolState, Web3Input } from '@sushiswap/wagmi'
+import { Checker, PairState, PoolFinder, PoolFinderType, PoolState, Web3Input } from '@sushiswap/wagmi'
 import {
   AddSectionMyPosition,
   AddSectionReviewModalLegacy,
@@ -17,13 +17,14 @@ import {
   PoolPositionStakedProvider,
   SelectFeeWidget,
   SelectNetworkWidget,
+  SelectPoolTypeWidget,
 } from 'components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { CreateSectionReviewModalTrident } from '../components/CreateSection'
 import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
-import { isConstantProductPool, isLegacyPool } from '../lib/functions'
+import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 import { PairWithAlias } from '../types'
@@ -38,6 +39,7 @@ const LINKS: BreadcrumbLink[] = [
 const Add = () => {
   const [chainId, setChainId] = useState(ChainId.ETHEREUM)
   const [fee, setFee] = useState(2)
+  const [poolType, setPoolType] = useState(PoolFinderType.Stable)
 
   const [token0, setToken0] = useState<Type | undefined>()
   const [token1, setToken1] = useState<Type | undefined>()
@@ -74,7 +76,15 @@ const Add = () => {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId)}
+                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.ConstantProduct}
+                  fee={FEE_MAP[fee]}
+                  twap={false}
+                />
+                <PoolFinder.StablePool
+                  chainId={chainId}
+                  token0={token0}
+                  token1={token1}
+                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Stable}
                   fee={FEE_MAP[fee]}
                   twap={false}
                 />
@@ -109,6 +119,8 @@ const Add = () => {
                   token1={token1}
                   setToken0={setToken0}
                   setToken1={setToken1}
+                  poolType={poolType}
+                  setPoolType={setPoolType}
                 />
               )
             }}
@@ -124,7 +136,7 @@ interface AddProps {
   setChainId(chainId: ChainId): void
   fee: number
   setFee(fee: number): void
-  pool: Pair | ConstantProductPool | null
+  pool: Pair | ConstantProductPool | StablePool | null
   poolState: PoolState | PairState
   tridentPoolIfCreate: boolean
   title: ReactNode
@@ -132,6 +144,8 @@ interface AddProps {
   token1: Type | undefined
   setToken0(token: Type): void
   setToken1(token: Type): void
+  poolType: PoolFinderType
+  setPoolType(type: PoolFinderType): void
 }
 
 const _Add: FC<AddProps> = ({
@@ -147,10 +161,12 @@ const _Add: FC<AddProps> = ({
   token1,
   setToken0,
   setToken1,
+  poolType,
+  setPoolType,
 }) => {
   const { data } = useSWR<{ pair: PairWithAlias }>(
     pool?.liquidityToken.address
-      ? `/invest/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
+      ? `/earn/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
       : null,
     (url) => fetch(url).then((response) => response.json())
   )
@@ -214,8 +230,19 @@ const _Add: FC<AddProps> = ({
       <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
         <SelectNetworkWidget selectedNetwork={chainId} onSelect={setChainId} />
         <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
+          <SelectPoolTypeWidget
+            selectedNetwork={chainId}
+            poolType={poolType}
+            setPoolType={(type) => {
+              console.log('Set pool type', poolType)
+              setPoolType(type)
+            }}
+          />
+        </div>
+        <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
           <SelectFeeWidget selectedNetwork={chainId} fee={fee} setFee={setFee} />
         </div>
+
         <Widget id="addLiquidity" maxWidth={400}>
           <Widget.Content>
             <Widget.Header title="3. Add Liquidity" />
@@ -260,7 +287,7 @@ const _Add: FC<AddProps> = ({
                       fundSource={FundSource.WALLET}
                       amounts={[parsedInput0, parsedInput1]}
                     >
-                      {pool && isConstantProductPool(pool) && (
+                      {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
                         <AddSectionReviewModalTrident
                           poolAddress={pool.liquidityToken.address}
                           poolState={poolState as PoolState}
@@ -302,6 +329,7 @@ const _Add: FC<AddProps> = ({
                           input0={parsedInput0}
                           input1={parsedInput1}
                           fee={FEE_MAP[fee]}
+                          poolType={poolType}
                         >
                           {({ isWritePending, setOpen }) => (
                             <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">

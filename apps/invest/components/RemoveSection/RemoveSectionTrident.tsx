@@ -155,7 +155,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
         unwrapWETHAction({
           chainId: pair.chainId,
           router: contract,
-          amountMinimum: liquidityOutput[indexOfWETH].amount,
+          amountMinimum: indexOfWETH === 0 ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
           recipient: address,
         }),
         chain.id === ChainId.POLYGON
@@ -163,13 +163,13 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
               router: contract,
               token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
               recipient: address,
-              amount: liquidityOutput[indexOfWETH === 0 ? 1 : 0].amount,
+              amount: indexOfWETH === 0 ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
             })
           : sweep({
               router: contract,
               token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
               recipient: address,
-              amount: liquidityOutput[indexOfWETH === 0 ? 1 : 0].amount,
+              amount: indexOfWETH === 0 ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
               fromBento: false,
             })
       )

@@ -129,7 +129,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
           </div>
         </div>
       )}
-      {row.pair.farm && (
+      {row.pair.farm && pendingRewards.length > 0 && (
         <div className="flex flex-col gap-1.5 mt-4">
           <Typography variant="xs" className="mb-1 text-slate-500">
             Farmed Rewards

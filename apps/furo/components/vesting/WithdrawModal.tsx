@@ -1,9 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
@@ -70,9 +68,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       log.tenderly({
         chainId: activeChain?.id,
         from: address,
-        to:
-          furoExports[activeChain?.id as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts
-            ?.FuroVesting?.address ?? AddressZero,
+        to: getFuroVestingContractConfig(activeChain?.id)?.addressOrName,
         data: contract?.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),
           '0x',

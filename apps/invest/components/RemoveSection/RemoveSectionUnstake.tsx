@@ -21,7 +21,7 @@ interface AddSectionStakeProps {
 
 export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress }) => {
   const isMounted = useIsMounted()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/invest/api/pool/${poolAddress}`, (url) =>
+  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${poolAddress}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 

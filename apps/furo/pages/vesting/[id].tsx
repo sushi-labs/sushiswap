@@ -1,7 +1,5 @@
-import { AddressZero } from '@ethersproject/constants'
-import furoExports from '@sushiswap/furo/exports.json'
 import { Breadcrumb, BreadcrumbLink, ProgressBar, ProgressColor } from '@sushiswap/ui'
-import { useWalletState } from '@sushiswap/wagmi'
+import { getFuroVestingContractConfig, useWalletState } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
   CancelModal,
@@ -166,26 +164,14 @@ const _VestingPage: FC = () => {
             <div className="flex gap-2">
               <TransferModal
                 stream={vesting}
-                abi={
-                  furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts
-                    ?.FuroVesting?.abi ?? []
-                }
-                address={
-                  furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts
-                    ?.FuroVesting?.address ?? AddressZero
-                }
+                abi={getFuroVestingContractConfig(chainId)?.contractInterface}
+                address={getFuroVestingContractConfig(chainId)?.addressOrName}
               />
               <CancelModal
                 title="Cancel Vesting"
                 stream={vesting}
-                abi={
-                  furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts
-                    ?.FuroVesting?.abi ?? []
-                }
-                address={
-                  furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts
-                    ?.FuroVesting?.address ?? AddressZero
-                }
+                abi={getFuroVestingContractConfig(chainId)?.contractInterface}
+                address={getFuroVestingContractConfig(chainId)?.addressOrName}
                 fn="stopVesting"
               />
             </div>

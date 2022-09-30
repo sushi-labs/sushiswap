@@ -36,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   return {
     props: {
       fallback: {
-        [`/invest/api/pool/${query.id}`]: { pair },
+        [`/earn/api/pool/${query.id}`]: { pair },
       },
     },
   }
@@ -54,7 +54,7 @@ const fetcher = (url) => fetch(url).then((response) => response.json())
 
 const _Pool = () => {
   const router = useRouter()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/invest/api/pool/${router.query.id}`, fetcher)
+  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${router.query.id}`, fetcher)
 
   if (!data) return <></>
   const { pair } = data

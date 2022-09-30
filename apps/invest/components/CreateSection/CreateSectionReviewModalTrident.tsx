@@ -3,13 +3,15 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { computeConstantProductPoolAddress, Fee } from '@sushiswap/exchange'
+import { computeConstantProductPoolAddress, computeStablePoolAddress, Fee } from '@sushiswap/exchange'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
   getTridentRouterContractConfig,
+  PoolFinderType,
   useConstantProductPoolFactoryContract,
+  useStablePoolFactoryContract,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
@@ -32,6 +34,7 @@ interface CreateSectionReviewModalTridentProps {
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
   fee: Fee
+  poolType: PoolFinderType
   children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
 }
 
@@ -41,6 +44,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   input0,
   input1,
   fee,
+  poolType,
   chainId,
   children,
 }) => {
@@ -50,8 +54,17 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const [permit, setPermit] = useState<Signature>()
   const { chain } = useNetwork()
   const contract = useTridentRouterContract(chainId)
-  const factory = useConstantProductPoolFactoryContract(chainId)
+  const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
+  const stablePoolFactory = useStablePoolFactoryContract(chainId)
   const [, { createNotification }] = useNotifications(address)
+
+  const factory = useMemo(() => {
+    if (poolType === PoolFinderType.Stable) {
+      return stablePoolFactory
+    } else if (poolType === PoolFinderType.ConstantProduct) {
+      return constantProductPoolFactory
+    }
+  }, [constantProductPoolFactory, poolType, stablePoolFactory])
 
   const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
     chainId,
@@ -59,16 +72,25 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   })
 
   const poolAddress = useMemo(() => {
-    if (!factory || !token0 || !token1) return undefined
+    if (!factory || !token0 || !token1 || !poolType) return undefined
 
-    return computeConstantProductPoolAddress({
-      factoryAddress: factory.address,
-      tokenA: token0.wrapped,
-      tokenB: token1.wrapped,
-      fee: fee,
-      twap: false,
-    })
-  }, [factory, fee, token0, token1])
+    if (poolType === PoolFinderType.Stable) {
+      return computeStablePoolAddress({
+        factoryAddress: factory.address,
+        tokenA: token0.wrapped,
+        tokenB: token1.wrapped,
+        fee: fee,
+      })
+    } else if (poolType === PoolFinderType.ConstantProduct) {
+      return computeConstantProductPoolAddress({
+        factoryAddress: factory.address,
+        tokenA: token0.wrapped,
+        tokenB: token1.wrapped,
+        fee: fee,
+        twap: false,
+      })
+    }
+  }, [factory, fee, token0, token1, poolType])
 
   const execute = useCallback(async () => {
     if (!chain?.id || !factory || !token0 || !token1 || !poolAddress) return

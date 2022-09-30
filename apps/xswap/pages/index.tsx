@@ -930,7 +930,7 @@ const Widget: FC<Swap> = ({
               weight={500}
               className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
             >
-              Swap
+              xSwap
             </Typography>
             <div className="flex justify-end">
               <SettingsOverlay chainId={srcChainId} />

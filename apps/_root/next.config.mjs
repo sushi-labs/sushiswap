@@ -112,11 +112,19 @@ const nextConfig = {
       },
       {
         source: '/invest',
-        destination: `${INVEST_URL}/invest`,
+        destination: `${INVEST_URL}/earn`,
       },
       {
         source: '/invest/:path*',
-        destination: `${INVEST_URL}/invest/:path*`,
+        destination: `${INVEST_URL}/earn/:path*`,
+      },
+      {
+        source: '/earn',
+        destination: `${INVEST_URL}/earn`,
+      },
+      {
+        source: '/earn/:path*',
+        destination: `${INVEST_URL}/earn/:path*`,
       },
     ]
   },

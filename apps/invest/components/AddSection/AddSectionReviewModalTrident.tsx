@@ -3,7 +3,7 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
-import { calculateSlippageAmount, ConstantProductPool } from '@sushiswap/exchange'
+import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/exchange'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
@@ -25,7 +25,7 @@ import { AddSectionReviewModal } from './AddSectionReviewModal'
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
   poolState: PoolState
-  pool: ConstantProductPool | null
+  pool: ConstantProductPool | StablePool | null
   chainId: ChainId
   token0: Type | undefined
   token1: Type | undefined

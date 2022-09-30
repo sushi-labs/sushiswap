@@ -27,7 +27,7 @@ export interface TridentPoolFinderProps extends LegacyPoolFinderProps {
   twap?: boolean
 }
 
-export type PoolStateUnion = [PoolState | PairState, Pair | ConstantProductPool | null]
+export type PoolStateUnion = [PoolState | PairState, Pair | ConstantProductPool | StablePool | null]
 
 export enum PoolFinderType {
   Classic,
