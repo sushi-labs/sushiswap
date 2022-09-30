@@ -31,7 +31,22 @@ export const TradeProvider: FC<_TradeProviderProps> = ({
   otherCurrency,
   children,
 }) => {
-  const trade = useFindTrade(chainId, tradeType, amountSpecified, mainCurrency, otherCurrency)
+  const _mainCurrency = useMemo(
+    () => (chainId === ChainId.CELO ? mainCurrency?.wrapped : mainCurrency),
+    [chainId, mainCurrency]
+  )
+  const _otherCurrency = useMemo(
+    () => (chainId === ChainId.CELO ? otherCurrency?.wrapped : otherCurrency),
+    [chainId, otherCurrency]
+  )
+  const _amountSpecified = useMemo(
+    () =>
+      chainId === ChainId.CELO && amountSpecified
+        ? Amount.fromRawAmount(amountSpecified.currency.wrapped, amountSpecified.quotient)
+        : amountSpecified,
+    [chainId, amountSpecified]
+  )
+  const trade = useFindTrade(chainId, tradeType, _amountSpecified, _mainCurrency, _otherCurrency)
   return (
     <Context.Provider value={useMemo(() => ({ trade, isError: false, isLoading: false }), [trade])}>
       {children}
