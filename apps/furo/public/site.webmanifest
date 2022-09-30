@@ -1,8 +1,6 @@
 {
-    "name": "Furo by Sushi",
-    "short_name": "Furo",
-    "iconPath": "/furo_Dark_Symbol.svg",
-    "description": "Earn, stream and automate your DAO salaries and token vesting with Furo.",
+    "name": "Sushi",
+    "short_name": "Sushi",
     "icons": [
         {
             "src": "/android-chrome-192x192.png?v=1",

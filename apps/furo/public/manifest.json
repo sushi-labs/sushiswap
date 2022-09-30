@@ -7,6 +7,7 @@
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
   "start_url": "/",
+  "iconPath": "/furo_Dark_Symbol.svg",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
