@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants'
 import sushiswapArtifact from '@sushiswap/sushiswap/artifacts/contracts/UniswapV2Router02.sol/UniswapV2Router02.json'
 import sushiswapExports from '@sushiswap/sushiswap/exports.json'
 import { useContract, useSigner } from 'wagmi'
@@ -14,10 +13,10 @@ export const getSushiSwapKlimaRouterContractConfig = (chainId: number | undefine
 export const getSushiSwapRouterContractConfig = (chainId: number | undefined) => ({
   addressOrName:
     sushiswapExports[chainId as unknown as keyof Omit<typeof sushiswapExports, '31337' | '42220'>]?.[0]?.contracts
-      ?.UniswapV2Router02?.address ?? AddressZero,
+      ?.UniswapV2Router02?.address ?? '',
   contractInterface:
     sushiswapExports[chainId as unknown as keyof Omit<typeof sushiswapExports, '31337' | '42220'>]?.[0]?.contracts
-      ?.UniswapV2Router02?.abi ?? sushiswapArtifact.abi,
+      ?.UniswapV2Router02?.abi ?? [],
 })
 
 export function useSushiSwapRouterContract(chainId: number | undefined) {

@@ -1,5 +1,3 @@
-import { AddressZero } from '@ethersproject/constants'
-import bentoBoxArtifact from '@sushiswap/bentobox/artifacts/contracts/BentoBox.sol/BentoBox.json'
 import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 import { BentoBoxV1 } from '@sushiswap/bentobox/typechain'
 import { ChainId } from '@sushiswap/chain'
@@ -32,10 +30,10 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
 export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
   addressOrName:
     bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
-      ?.address ?? AddressZero,
+      ?.address ?? '',
   contractInterface:
     bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
-      ?.abi ?? bentoBoxArtifact.abi,
+      ?.abi ?? [],
 })
 
 export function useBentoBoxContract(chainId: number | undefined) {
