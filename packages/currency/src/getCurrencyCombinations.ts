@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import flatMap from 'lodash.flatmap'
 
-import { DAI, FRAX, FXS, LUSD, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
+import { BCT, DAI, FRAX, FXS, KLIMA, LUSD, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Token } from './Token'
 import { Type } from './Type'
 
@@ -120,7 +120,40 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     FRAX[ChainId.HARMONY],
   ],
   [ChainId.OKEX]: [WNATIVE[ChainId.OKEX], USDC[ChainId.OKEX], USDT[ChainId.OKEX], DAI[ChainId.OKEX]],
-  [ChainId.CELO]: [WNATIVE[ChainId.CELO], USDC[ChainId.CELO], USDT[ChainId.CELO], DAI[ChainId.CELO]],
+  [ChainId.CELO]: [
+    WNATIVE[ChainId.CELO],
+    USDC[ChainId.CELO],
+    USDT[ChainId.CELO],
+    DAI[ChainId.CELO],
+    new Token({
+      chainId: ChainId.CELO,
+      address: '0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73',
+      decimals: 18,
+      symbol: 'cEUR',
+      name: 'Celo Euro',
+    }),
+    new Token({
+      chainId: ChainId.CELO,
+      address: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
+      decimals: 18,
+      symbol: 'cUSD',
+      name: 'Celo Dollar',
+    }),
+    new Token({
+      chainId: ChainId.CELO,
+      address: '0x2DEf4285787d58a2f811AF24755A8150622f4361',
+      decimals: 18,
+      symbol: 'cETH',
+      name: 'Celo Ether',
+    }),
+    new Token({
+      chainId: ChainId.CELO,
+      address: '0xD629eb00dEced2a080B7EC630eF6aC117e614f1b',
+      decimals: 18,
+      symbol: 'cBTC',
+      name: 'Celo Bitcoin',
+    }),
+  ],
   [ChainId.PALM]: [WNATIVE[ChainId.PALM]],
   [ChainId.MOONRIVER]: [
     WNATIVE[ChainId.MOONRIVER],
@@ -206,6 +239,12 @@ export const ADDITIONAL_BASES: {
   [ChainId.OPTIMISM]: {
     [FRAX[ChainId.OPTIMISM].address]: [FRAX[ChainId.OPTIMISM]],
     [FXS[ChainId.OPTIMISM].address]: [FXS[ChainId.OPTIMISM]],
+  },
+  [ChainId.POLYGON]: {
+    [BCT[ChainId.POLYGON].address]: [KLIMA[ChainId.POLYGON]],
+    [KLIMA[ChainId.POLYGON].address]: [BCT[ChainId.POLYGON]],
+    [FRAX[ChainId.POLYGON].address]: [FRAX[ChainId.POLYGON]],
+    [FXS[ChainId.POLYGON].address]: [FXS[ChainId.POLYGON]],
   },
 }
 
