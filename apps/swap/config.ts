@@ -13,7 +13,7 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.MOONRIVER,
   ChainId.ARBITRUM_NOVA,
   ChainId.FUSE,
-  ChainId.CELO,
+  // ChainId.CELO,
   ChainId.MOONBEAM,
   ChainId.HECO,
   ChainId.PALM,
