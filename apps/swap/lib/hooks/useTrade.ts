@@ -38,7 +38,11 @@ export function useTrade(
   mainCurrency?: Currency,
   otherCurrency?: Currency
 ): UseTradeOutput {
-  const { data } = useFeeData({
+  const {
+    data: feeData,
+    isError,
+    error,
+  } = useFeeData({
     chainId,
   })
 
@@ -79,10 +83,29 @@ export function useTrade(
   const currencyInRebase = useBentoBoxTotal(chainId, currencyIn)
   const currencyOutRebase = useBentoBoxTotal(chainId, currencyOut)
 
+  // console.debug('Found legacy route', [
+  //   feeData,
+  //   feeData?.gasPrice,
+  //   error,
+  //   currencyIn,
+  //   currencyInRebase,
+  //   currencyOut,
+  //   currencyOutRebase,
+  //   currencyIn?.wrapped.chainId === currencyOut?.wrapped.chainId,
+  //   currencyIn?.wrapped.chainId === chainId,
+  //   currencyOut?.wrapped.chainId === chainId,
+  //   currencyIn?.wrapped.address !== currencyOut?.wrapped.address,
+  //   chainId,
+  //   amountSpecified,
+  //   amountSpecified?.greaterThan(0),
+  //   otherCurrency,
+  //   filteredPools.length > 0,
+  // ])
+
   return useMemo(() => {
     if (
-      data &&
-      data.gasPrice &&
+      feeData &&
+      feeData.gasPrice &&
       currencyIn &&
       currencyInRebase &&
       currencyOut &&
@@ -105,7 +128,7 @@ export function useTrade(
             BigNumber.from(amountSpecified.quotient.toString()),
             filteredPools.filter((pool): pool is Pair => pool instanceof Pair),
             WNATIVE[amountSpecified.currency.chainId],
-            data.gasPrice.toNumber()
+            feeData.gasPrice.toNumber()
           )
 
           // console.log([
@@ -125,7 +148,7 @@ export function useTrade(
             BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
             filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
             WNATIVE[amountSpecified.currency.chainId],
-            data.gasPrice.toNumber()
+            feeData.gasPrice.toNumber()
           )
 
           const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBN.toString()).greaterThan(
@@ -148,7 +171,7 @@ export function useTrade(
           BigNumber.from(amountSpecified.quotient.toString()),
           filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof Pair),
           WNATIVE[amountSpecified.currency.chainId],
-          data.gasPrice.toNumber()
+          feeData.gasPrice.toNumber()
         )
 
         if (legacyRoute.status === RouteStatus.Success) {
@@ -165,7 +188,7 @@ export function useTrade(
           BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
           filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
           WNATIVE[amountSpecified.currency.chainId],
-          data.gasPrice.toNumber()
+          feeData.gasPrice.toNumber()
         )
         if (tridentRoute.status === RouteStatus.Success) {
           // console.debug('Found trident route', tridentRoute)
@@ -187,7 +210,7 @@ export function useTrade(
       }
     }
   }, [
-    data,
+    feeData,
     currencyIn,
     currencyInRebase,
     currencyOut,

@@ -1,5 +1,6 @@
 import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { otherChains } from '@sushiswap/wagmi-config'
+import { BigNumber } from 'ethers'
 import { allChains, Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
@@ -33,7 +34,16 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configure
 )
 
 export const client: Client = createClient({
-  provider,
+  provider: (config) => {
+    const _provider = provider(config)
+    if (config.chainId === 42220) {
+      const block = _provider.formatter.formats.block
+      block.gasLimit = () => BigNumber.from(0)
+      block.nonce = () => ''
+      block.difficulty = () => 0
+    }
+    return _provider
+  },
   // webSocketProvider,
   autoConnect: false,
   connectors: [
