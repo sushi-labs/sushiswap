@@ -244,7 +244,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             </div>
           )}
 
-          <div className="justify-center hidden sm:flex mt-14">
+          <div className="justify-center hidden mt-10 sm:flex">
             <ViewAllButton as="a" href={'/academy/articles' + (queryParams ? `?${queryParams}` : '')} />
           </div>
         </div>

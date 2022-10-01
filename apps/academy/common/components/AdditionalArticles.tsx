@@ -1,4 +1,4 @@
-import { classNames, Typography } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import { defaultSidePadding } from 'pages'
 import { FC, ReactNode } from 'react'
 
@@ -14,9 +14,7 @@ export const AdditionalArticles: FC<AdditionalArticles> = ({ title, children, cl
   return (
     <div className={classNames('max-w-6xl mx-auto', className)}>
       <div className={classNames('flex justify-between', defaultSidePadding)}>
-        <Typography variant="xl" weight={700}>
-          {title}
-        </Typography>
+        <span className="text-xl font-bold sm:text-2xl">{title}</span>
         <ViewAllButton onClick={() => null} className="" isSmall />
       </div>
       <div className={classNames('overflow-x-auto pb-10', defaultSidePadding)}>
