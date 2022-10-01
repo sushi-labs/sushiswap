@@ -1,7 +1,7 @@
 name: Bar
 handler:
   graphql:
-    endpoint: https://api.thegraph.com/subgraphs/name/olastenberg/xsushi
+    endpoint: https://api.thegraph.com/subgraphs/name/sushi-labs/xsushi
 transforms:
   - autoPagination:
       validateSchema: true

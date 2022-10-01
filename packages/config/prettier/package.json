@@ -35,7 +35,7 @@
     "@types/prettier": "2.x",
     "prettier": "2.x",
     "tsup": "6.x",
-    "typescript": "4.x"
+    "typescript": "4.6.3"
   },
   "peerDependencies": {
     "prettier": "2.x"

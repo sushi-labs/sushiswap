@@ -1,9 +1,9 @@
 import { getAddress, isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Fraction } from '@sushiswap/math'
+import { UseQueryOptions } from '@tanstack/react-query'
 import { parseUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
-import { UseQueryOptions } from 'react-query'
 import { useQuery } from 'wagmi'
 
 function toFixed(num: number, fixed: number): string {
@@ -11,22 +11,30 @@ function toFixed(num: number, fixed: number): string {
   return num.toString().match(re)?.[0] as string
 }
 
-type UsePrices = ({
+// type UsePrices = ({
+//   chainId,
+//   options,
+// }: {
+//   chainId?: ChainId
+//   options?: UseQueryOptions<string, unknown, Record<string, number> | undefined, string[]>
+// }) => Pick<ReturnType<typeof useQuery>, 'isLoading' | 'isError'> & { data: Record<string, Fraction> | undefined }
+
+export const usePrices = ({
   chainId,
   options,
 }: {
   chainId?: ChainId
-  options?: UseQueryOptions<string, unknown, Record<string, number> | undefined, string[]>
-}) => Pick<ReturnType<typeof useQuery>, 'isLoading' | 'isError'> & { data: Record<string, Fraction> | undefined }
-
-export const usePrices: UsePrices = ({ chainId, options }) => {
+  options?: Omit<
+    UseQueryOptions<Record<string, number>, unknown, Record<string, number>, string[]>,
+    'queryKey' | 'queryFn' | 'initialData'
+  >
+}) => {
   const queryKey = useMemo(() => [`https://token-price.sushi.com/v0/${chainId}`], [chainId])
-
   const {
     data: pricesMap,
     isError,
     isLoading,
-  } = useQuery<string, unknown, Record<string, number> | undefined, string[]>(
+  } = useQuery(
     queryKey,
     () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
     { staleTime: 20000, ...options }

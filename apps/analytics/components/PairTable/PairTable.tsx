@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
-import { useBreakpoint } from '@sushiswap/ui'
+import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-import { Pair } from '../../.graphclient'
-import { usePoolFilters } from '../PairsProvider'
+import { usePoolFilters } from '../PoolsFiltersProvider'
 import {
   APR_COLUMN,
   FEES_7_COLUMN,
@@ -53,8 +53,7 @@ const fetcher = ({
   }
 
   if (args.pagination) {
-    _url.searchParams.set('first', args.pagination.pageSize.toString())
-    _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
+    _url.searchParams.set('pagination', JSON.stringify(args.pagination))
   }
 
   if (args.selectedNetworks) {
@@ -64,8 +63,7 @@ const fetcher = ({
   let where = {}
   if (args.query) {
     where = {
-      token0_: { symbol_contains_nocase: args.query },
-      token1_: { symbol_contains_nocase: args.query },
+      name_contains_nocase: args.query,
     }
 
     _url.searchParams.set('where', JSON.stringify(where))
@@ -74,7 +72,6 @@ const fetcher = ({
   if (args.extraQuery) {
     where = {
       ...where,
-      token0_: { symbol_contains_nocase: args.extraQuery },
       token1_: { symbol_contains_nocase: args.extraQuery },
     }
 
@@ -104,15 +101,21 @@ export const PairTable: FC = () => {
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
 
-  const { data: pools, isValidating, error } = useSWR<Pair[]>({ url: '/analytics/api/pairs', args }, fetcher, {})
+  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/analytics/api/pools', args }, fetcher, {})
+  const { data: poolCount } = useSWR<number>(
+    `/analytics/api/pools/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+    (url) => fetch(url).then((response) => response.json()),
+    {}
+  )
 
-  const table = useReactTable({
-    data: pools ?? [],
+  const table = useReactTable<Pair>({
+    data: pools || [],
     columns: COLUMNS,
     state: {
       sorting,
       columnVisibility,
     },
+    pageCount: Math.ceil((poolCount || 0) / PAGE_SIZE),
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
@@ -134,12 +137,26 @@ export const PairTable: FC = () => {
   }, [isLg, isMd, isSm])
 
   return (
-    <GenericTable<Pair>
-      table={table}
-      columns={COLUMNS}
-      loading={isValidating && !error && !pools}
-      placeholder="No pools found"
-      HoverElement={PairQuickHoverTooltip}
-    />
+    <div>
+      <GenericTable<Pair>
+        table={table}
+        columns={COLUMNS}
+        loading={!pools && isValidating}
+        HoverElement={isMd ? PairQuickHoverTooltip : undefined}
+        placeholder="No pools found"
+        pageSize={PAGE_SIZE}
+        linkFormatter={(id) => `/earn/${id}`}
+      />
+      <Table.Paginator
+        hasPrev={pagination.pageIndex > 0}
+        hasNext={pagination.pageIndex < table.getPageCount()}
+        onPrev={table.previousPage}
+        onNext={table.nextPage}
+        page={pagination.pageIndex}
+        onPage={table.setPageIndex}
+        pages={table.getPageCount()}
+        pageSize={PAGE_SIZE}
+      />
+    </div>
   )
 }

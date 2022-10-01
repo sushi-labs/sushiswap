@@ -1,6 +1,5 @@
 import { Transition } from '@headlessui/react'
 import { Chain } from '@sushiswap/chain'
-import { tryParseAmount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, Dialog, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
@@ -68,14 +67,12 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
   } = formData
 
   const [_cliffAmount, _stepAmount, totalAmount, endDate] = useMemo(() => {
-    const cliff = tryParseAmount(cliffAmount?.toString(), currency)
-    const step = tryParseAmount(stepAmount?.toString(), currency)
     const endDate = new Date(
       (cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
     )
     return [
-      cliff,
-      step,
+      cliffAmount,
+      stepAmount,
       cliff && stepAmount
         ? stepAmount.multiply(stepPayouts).add(cliffAmount)
         : stepAmount
@@ -83,7 +80,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
         : undefined,
       endDate,
     ]
-  }, [cliffAmount, cliffEndDate, startDate, stepAmount, stepConfig.time, stepPayouts, currency])
+  }, [cliff, cliffEndDate, startDate, stepConfig.time, stepPayouts, cliffAmount, stepAmount])
 
   const schedule = useMemo(() => {
     return open && _stepAmount

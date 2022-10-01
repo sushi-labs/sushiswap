@@ -8,8 +8,6 @@ import FeatureCard from '../components/FeatureCard'
 import Footer from '../components/Footer'
 import Menu from '../components/Menu'
 import MobileMenu from '../components/MobileMenu'
-import PartnerCard from '../components/PartnerCard'
-import ProductCard from '../components/ProductCard'
 import getBentoTVL from '../functions/graph/fetchers/bentobox'
 import { getLegacyExchangeData } from '../functions/graph/fetchers/exchange'
 import { getTridentExchangeData } from '../functions/graph/queries/trident'
@@ -77,21 +75,13 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
                   style={{ backgroundImage: 'linear-gradient(to right, #016eda, #d900c0)' }}
                 >
                   <a
-                    href="https://app.sushi.com/swap"
+                    href="https://sushi.com/swap"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center w-full px-8 py-3 text-base font-medium text-white rounded-md shadow-strong"
                   >
                     Enter App
                   </a>
-                </div>
-                <div className="w-full mt-3 rounded-md shadow sm:w-auto sm:mt-0 sm:ml-3 bg-neutral-700">
-                  <button
-                    onClick={handleClick}
-                    className="flex items-center justify-center w-full px-8 py-3 text-base font-medium text-white border border-transparent rounded-md"
-                  >
-                    Learn More
-                  </button>
                 </div>
               </div>
             </div>
@@ -114,47 +104,6 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
           </div>
           {/* Closing */}
         </div>
-        <div className="max-w-3xl px-4 mx-auto sm:pt-16">
-          <div className="text-2xl font-semibold text-center text-white sm:text-4xl max-w-[902px]" ref={ref}>
-            Michelin star-worthy DeFi innovations crafted by our master chefs
-          </div>
-        </div>
-        <div className="flex justify-center">
-          <div className="flex flex-row items-center px-10 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
-            <ProductCard
-              imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/chopsticks.png"
-              title="Multi-chain AMM"
-              description={
-                'The most competitive rates for DeFi bluechips anywhere. Switch to other chains in one click.'
-              }
-              cta="Enter Exchange"
-              ctaLink="https://app.sushi.com"
-            />
-            <ProductCard
-              imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/kashi-color-flat.png"
-              title="Kashi Lending & Leverage"
-              description={
-                'Isolated lending markets, elastic interest rates. Leverage long short or create your own market.'
-              }
-              cta="Enter Kashi"
-              ctaLink="https://app.sushi.com/kashi"
-            />
-            <ProductCard
-              imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/xsushi.png"
-              title="xSUSHI staking"
-              description="Earn governance rights and 0.045% of all swaps from all chains in one simple place."
-              cta="Enter SushiBar"
-              ctaLink="https://app.sushi.com/stake"
-            />
-            <ProductCard
-              imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/products/onsen-icon.png"
-              title="Onsen Program"
-              description="Accelerate your project with onsen. Find the best yields anywhere in DeFi hands down."
-              cta="Browse Yields"
-              ctaLink="https://app.sushi.com/farm"
-            />
-          </div>
-        </div>
         <div className="flex justify-center px-4 sm:pt-16">
           <div className="text-2xl font-semibold text-center text-white sm:text-4xl max-w-[902px]">
             An evolving community for an evolving DeFi landscape
@@ -163,63 +112,19 @@ const Root = ({ stats }: { stats: StateEntry[] }) => {
         <div className="flex justify-center">
           <div className="flex flex-row items-center px-10 mx-auto space-x-6 overflow-x-scroll no-scrollbar">
             <FeatureCard
-              imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/icons/wallet.png"
-              title="20+"
-              description="Wallets Supported"
-            />
-            <FeatureCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/icons/intersection.png"
-              title="14"
+              title="22"
               description="Chains Supported"
             />
             <FeatureCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/icons/group.png"
-              title="25k+"
+              title="75k+"
               description="Discord Members"
             />
             <FeatureCard
               imgUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/icons/sushi-outline.png"
               title="150k+"
               description="Sushi Holders"
-            />
-          </div>
-        </div>
-        <div className="flex justify-center px-4 sm:pt-16">
-          <div className="text-2xl font-semibold text-center text-white sm:text-4xl max-w-[902px]">
-            Meet the partners helping us cook up the tastiest dishes in DeFi.
-          </div>
-        </div>
-        <div className="flex justify-center">
-          <div className="grid w-full grid-cols-2 gap-6 lg:grid-cols-6">
-            <PartnerCard
-              logoUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/partners/yearn-neon.png"
-              name="Yearn Finance"
-              url="https://yearn.finance/"
-            />
-            <PartnerCard
-              logoUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/partners/cream-neon.png"
-              name="CREAM Finance"
-              url="https://cream.finance/"
-            />
-            <PartnerCard
-              logoUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/partners/aave-neon.png"
-              name="Aave"
-              url="https://aave.com/"
-            />
-            <PartnerCard
-              logoUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/partners/pickle-neon.png"
-              name="Pickle Finance"
-              url="https://pickle.finance/"
-            />
-            <PartnerCard
-              logoUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/partners/akro-neon.png"
-              name="Akropolis"
-              url="https://akropolis.io/"
-            />
-            <PartnerCard
-              logoUrl="https://raw.githubusercontent.com/sushiswap/sushi-content/master/partners/keep3r-neon.png"
-              name="Keep3r Network"
-              url="https://keep3r.network/"
             />
           </div>
         </div>

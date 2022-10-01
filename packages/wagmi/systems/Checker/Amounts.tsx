@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { ZERO } from '@sushiswap/math'
 import { Button } from '@sushiswap/ui'
 import { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
@@ -15,12 +16,23 @@ export interface AmountsProps extends CheckerButton {
   fundSource: FundSource
 }
 
-export const Amounts: FC<AmountsProps> = ({ amounts, fundSource, chainId, children, ...rest }) => {
+export const Amounts: FC<AmountsProps> = ({
+  amounts,
+  fundSource,
+  chainId,
+  children,
+  className,
+  variant,
+  fullWidth,
+  as,
+  size,
+}) => {
   const { address } = useAccount()
-  const amountsAreDefined = useMemo(() => amounts.every((el) => !!el), [amounts])
+  const amountsAreDefined = useMemo(() => amounts.every((el) => el?.greaterThan(ZERO)), [amounts])
+  const currencies = useMemo(() => amounts.map((amount) => amount?.currency), [amounts])
 
   const { data: balances } = useBalances({
-    currencies: amounts.map((amount) => amount?.currency),
+    currencies,
     chainId,
     account: address,
     enabled: amountsAreDefined,
@@ -35,19 +47,21 @@ export const Amounts: FC<AmountsProps> = ({ amounts, fundSource, chainId, childr
     })
   }, [amounts, balances, fundSource])
 
-  if (!amountsAreDefined)
-    return (
-      <Button disabled {...rest}>
-        Enter Amount
-      </Button>
-    )
+  return useMemo(() => {
+    if (!amountsAreDefined)
+      return (
+        <Button disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
+          Enter Amount
+        </Button>
+      )
 
-  if (!sufficientBalance)
-    return (
-      <Button disabled {...rest}>
-        Insufficient Balance
-      </Button>
-    )
+    if (!sufficientBalance)
+      return (
+        <Button disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
+          Insufficient Balance
+        </Button>
+      )
 
-  return <>{children}</>
+    return <>{children}</>
+  }, [amountsAreDefined, as, children, className, fullWidth, size, sufficientBalance, variant])
 }

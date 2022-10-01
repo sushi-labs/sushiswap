@@ -26,7 +26,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
-    "@ethersproject/address": "^5.6.0",
+    "@ethersproject/address": "^5.7.0",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
@@ -37,10 +37,10 @@
     "eslint": "^8.20.0",
     "jest": "^28.1.0",
     "tiny-invariant": "^1.2.0",
-    "typescript": "^4.7.0"
+    "typescript": "4.6.3"
   },
   "peerDependencies": {
-    "@ethersproject/address": "^5.6.0",
+    "@ethersproject/address": "^5.7.0",
     "@sushiswap/currency": "workspace:*",
     "@uniswap/token-lists": "^1.0.0-beta.29"
   }

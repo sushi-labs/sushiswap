@@ -1,5 +1,5 @@
 import { ChainId, chainName } from '@sushiswap/chain'
-import { FC, ReactElement, useCallback } from 'react'
+import { FC, ReactElement, useCallback, useMemo } from 'react'
 
 import { NetworkIcon } from '../icons'
 import { classNames } from '../index'
@@ -16,12 +16,13 @@ export interface SelectorProps {
 
 export const Selector: FC<SelectorProps> = ({
   className,
-  networks,
+  networks: _networks,
   selectedNetworks,
   onChange,
   exclusive,
   renderer = false,
 }) => {
+  const networks = useMemo(() => Array.from(new Set(_networks)), [_networks])
   const handleClick = useCallback(
     (chainId: ChainId) => {
       if (exclusive) {
@@ -44,7 +45,7 @@ export const Selector: FC<SelectorProps> = ({
   )
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex flex-wrap gap-2">
       {networks.map((chainId) => {
         const button = (
           <div

@@ -11,7 +11,7 @@ import { Button, classNames, createToast, Dialog, Dots, Switch, Typography } fro
 import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { useAccount, useDeprecatedContractWrite, useNetwork } from 'wagmi'
 
 interface UpdateModalProps {
   stream?: Stream
@@ -43,7 +43,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
     return value
   }, [amount, stream])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     addressOrName: contractAddress,
     contractInterface: abi,
     functionName: 'updateStream',

@@ -1,5 +1,26 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS]
+
+export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
+  ChainId.ETHEREUM,
+  ChainId.AVALANCHE,
+  ChainId.ARBITRUM,
+  ChainId.BSC,
+  ChainId.CELO,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.HARMONY,
+  // ChainId.PALM,
+  // ChainId.HECO,
+  // ChainId.OKEX
+  ChainId.BOBA,
+]
+
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
 
@@ -7,7 +28,7 @@ export const KAVA_HOST = 'pvt.graph.kava.io/subgraphs/name'
 export const PENDING_KAVA_HOST = 'pvt.graph.kava.io/subgraphs/id'
 
 export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
-export const PENDING_METIS_HOST = ''
+export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
 export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
@@ -30,26 +51,28 @@ export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.PALM]: 'Palm',
   [ChainId.KAVA]: 'Kava',
   [ChainId.METIS]: 'Metis',
+  [ChainId.BOBA]: 'Boba',
 }
 
 export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
+  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
+  [ChainId.CELO]: GRAPH_HOST,
   [ChainId.ETHEREUM]: GRAPH_HOST,
   [ChainId.FANTOM]: GRAPH_HOST,
+  [ChainId.FUSE]: GRAPH_HOST,
   [ChainId.GNOSIS]: GRAPH_HOST,
   [ChainId.GÖRLI]: GRAPH_HOST,
   [ChainId.HARMONY]: GRAPH_HOST,
+  [ChainId.KAVA]: KAVA_HOST,
+  [ChainId.METIS]: METIS_HOST,
   [ChainId.MOONBEAM]: GRAPH_HOST,
   [ChainId.MOONRIVER]: GRAPH_HOST,
   [ChainId.OPTIMISM]: GRAPH_HOST,
   [ChainId.POLYGON]: GRAPH_HOST,
-  [ChainId.METIS]: METIS_HOST,
-  [ChainId.KAVA]: KAVA_HOST,
-  [ChainId.HARMONY]: GRAPH_HOST,
-  [ChainId.FUSE]: GRAPH_HOST,
-  [ChainId.CELO]: GRAPH_HOST,
+  [ChainId.BOBA]: GRAPH_HOST,
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -86,6 +109,8 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'kybernetwork/optimism-blocks',
   [ChainId.KAVA]: 'sushiswap/blocks-kava',
   [ChainId.METIS]: 'sushiswap/blocks-metis',
+  [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
+  [ChainId.BOBA]: 'sushiswap/blocks-boba',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -103,13 +128,45 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
 }
 
-export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.POLYGON]: 'sushi-labs/trident-polygon',
-  [ChainId.KOVAN]: 'sushi-labs/trident-kovan',
-  [ChainId.OPTIMISM]: 'sushi-labs/trident-optimism',
-  [ChainId.KAVA]: 'sushiswap/trident-kava',
-  [ChainId.METIS]: 'sushiswap/trident-metis',
+export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
+  [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
+  [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
+  [ChainId.BSC]: 'sushi-0m/sushiswap-bsc',
+  [ChainId.CELO]: 'sushi-0m/sushiswap-celo',
+  [ChainId.FANTOM]: 'sushi-0m/sushiswap-fantom',
+  [ChainId.FUSE]: 'sushi-0m/sushiswap-fuse',
+  [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
+  [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
+  [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
+  [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
+  [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
+  [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
 }
+
+export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.POLYGON]: 'sushi-0m/trident-polygon',
+  [ChainId.OPTIMISM]: 'sushi-0m/trident-optimism',
+  [ChainId.KAVA]: 'sushi-0m/trident-kava',
+  [ChainId.METIS]: 'sushi-0m/trident-metis',
+}
+
+export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.POLYGON]: 'jiro-ono/minichef-staging-updates', // new trident subgraph not synced yet
+  [ChainId.GNOSIS]: 'jiro-ono/gnosis-minichef-staging',
+  // [ChainId.HARMONY]: 'sushiswap/harmony-minichef', // subgraph broken
+  [ChainId.ARBITRUM]: 'jiro-ono/arbitrum-minichef-staging',
+  [ChainId.CELO]: 'sushiswap/celo-minichef-v2',
+  [ChainId.MOONRIVER]: 'sushiswap/moonriver-minichef',
+  [ChainId.FUSE]: 'sushiswap/fuse-minichef',
+  [ChainId.FANTOM]: 'sushiswap/fantom-minichef',
+  [ChainId.MOONBEAM]: 'sushiswap/moonbeam-minichef',
+  [ChainId.KAVA]: 'sushiswap/kava-minichef', //block subgraph not synced yet
+  [ChainId.METIS]: 'sushiswap/metis-minichef',
+}
+
+export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
+export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]

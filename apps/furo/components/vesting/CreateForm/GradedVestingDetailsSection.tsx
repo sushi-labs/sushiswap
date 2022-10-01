@@ -27,7 +27,7 @@ export const GradedVestingDetailsSection = () => {
       'fundSource',
     ])
 
-  const { data: balance } = useBalance({ account: address, chainId: currency?.chainId, currency })
+  const { data: balance } = useBalance({ account: address, chainId: currency?.chainId, currency, loadBentobox: true })
 
   const endDate =
     ((cliff && cliffEndDate) || startDate) && stepPayouts

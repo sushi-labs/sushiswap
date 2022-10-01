@@ -13,7 +13,7 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { useAccount, useNetwork, useSendTransaction } from 'wagmi'
+import { useAccount, useNetwork, useDeprecatedSendTransaction } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { CreateMultipleStreamFormData, CreateStreamFormDataValidated } from '../types'
@@ -26,7 +26,7 @@ export const CreateMultipleForm: FC = () => {
   const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
   const contract = useFuroStreamRouterContract(activeChain?.id)
-  const { sendTransactionAsync, isLoading: isWritePending } = useSendTransaction()
+  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
   const [signature, setSignature] = useState<Signature>()
   const [errors, setErrors] = useState<string[]>([])
   const [review, setReview] = useState(false)

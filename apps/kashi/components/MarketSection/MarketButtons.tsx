@@ -13,7 +13,7 @@ export const MarketButtons: FC<MarketButtonsProps> = ({ pair, side }) => {
   const { asset, collateral } = useTokensFromKashiPair(pair)
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col w-full gap-2">
       <Link.Internal href="/earn" passHref={true}>
         <Button as="a" size="md" color="blue" fullWidth>
           Earn

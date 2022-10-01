@@ -7,6 +7,7 @@ import { GasPrice, StorageState, WithStorageState } from '../types'
 type UseSettingsReturn = [
   Omit<StorageState, 'customTokens'>,
   {
+    updateCarbonOffset(carbonOffset: boolean): void
     updateSlippageTolerance(slippageTolerance: number): void
     updateSlippageToleranceType(slippageToleranceType: 'auto' | 'custom'): void
     updateMaxFeePerGas(updateMaxFeePerGas: number | string | undefined): void
@@ -24,6 +25,13 @@ export const useSettings: UseSettings = (context) => {
   const { reducerPath, actions } = context
   const { customTokens, ...settings } = useSelector((state: WithStorageState) => state[reducerPath])
   const dispatch = useDispatch()
+
+  const updateCarbonOffset = useCallback(
+    (carbonOffset: boolean) => {
+      dispatch(actions.updateCarbonOffset({ carbonOffset }))
+    },
+    [actions, dispatch]
+  )
 
   const updateExpertMode = useCallback(
     (expertMode: boolean) => {
@@ -84,6 +92,7 @@ export const useSettings: UseSettings = (context) => {
   return [
     settings,
     {
+      updateCarbonOffset,
       updateExpertMode,
       updateSlippageTolerance,
       updateSlippageToleranceType,

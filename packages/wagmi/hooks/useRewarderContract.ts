@@ -1,31 +1,56 @@
-import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
-import { useContract, useProvider } from 'wagmi'
+import { useMemo } from 'react'
+import { useProvider } from 'wagmi'
+import { getContract, GetContractArgs } from 'wagmi/actions'
 
-import CLONE_REWARDER_ABI from '../abis/clone-rewarder.json'
-import COMPLEX_REWARDER_ABI from '../abis/complex-rewarder.json'
-
-export const getCloneRewarderConfig = (chainId: number, address: string | undefined = AddressZero) => ({
-  addressOrName: address,
-  contractInterface: CLONE_REWARDER_ABI,
-})
-
-export const getComplexRewarderConfig = (chainId: number, address: string | undefined = AddressZero) => ({
-  addressOrName: address,
-  contractInterface: COMPLEX_REWARDER_ABI,
-})
-
-export const getRewarderConfig = (chainId: number, address: string | undefined = AddressZero) => {
-  if ([ChainId.ETHEREUM, ChainId.ARBITRUM].includes(chainId)) {
-    return getCloneRewarderConfig(chainId, address)
+export const getRewarderConfig = (addressOrName: string): GetContractArgs => {
+  return {
+    addressOrName,
+    contractInterface: [
+      {
+        inputs: [
+          {
+            internalType: 'uint256',
+            name: 'pid',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'user',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        name: 'pendingTokens',
+        outputs: [
+          {
+            internalType: 'contract IERC20[]',
+            name: 'rewardTokens',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'rewardAmounts',
+            type: 'uint256[]',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ],
   }
-
-  return getComplexRewarderConfig(chainId, address)
 }
 
-export function useRewarderContract(chainId: number, address: string | undefined) {
-  return useContract({
-    ...getRewarderConfig(chainId, address),
-    signerOrProvider: useProvider({ chainId }),
-  })
+export function useRewarderContract(chainId: number, addressOrName: string | undefined) {
+  const provider = useProvider({ chainId })
+  return useMemo(() => {
+    if (!addressOrName) return undefined
+    return getContract({
+      ...getRewarderConfig(addressOrName),
+      signerOrProvider: provider,
+    })
+  }, [addressOrName, provider])
 }

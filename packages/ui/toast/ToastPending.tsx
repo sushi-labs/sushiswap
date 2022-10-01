@@ -1,11 +1,15 @@
+import { Chain } from '@sushiswap/chain'
 import { FC } from 'react'
 
-import { Loader } from '..'
-import { Toast } from './index'
+import { Loader, NotificationData } from '..'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
 
-export const ToastPending: FC<Toast> = ({ href, onDismiss, summary }) => {
+interface ToastPending extends NotificationData {
+  onDismiss(): void
+}
+
+export const ToastPending: FC<ToastPending> = ({ chainId, txHash, onDismiss, summary }) => {
   return (
     <>
       <ToastContent
@@ -13,7 +17,7 @@ export const ToastPending: FC<Toast> = ({ href, onDismiss, summary }) => {
         title="Transaction Pending"
         summary={summary.pending}
       />
-      <ToastButtons href={href} onDismiss={onDismiss} />
+      <ToastButtons href={Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
     </>
   )
 }

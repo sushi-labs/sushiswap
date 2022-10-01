@@ -1,7 +1,8 @@
-import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { AddressMap } from '@sushiswap/currency'
-import { useContract, useProvider } from 'wagmi'
+import { useMemo } from 'react'
+import { useProvider } from 'wagmi'
+import { getContract, ReadContractConfig } from 'wagmi/actions'
 
 import MASTERCHEF_ABI from '../abis/masterchef.json'
 import MASTERCHEF_ABI_V2 from '../abis/masterchef-v2.json'
@@ -33,24 +34,39 @@ export const MINICHEF_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0x011E52E4E40CF9498c79273329E8827b21E2e581',
   [ChainId.KAVA]: '0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5',
   [ChainId.METIS]: '0x1334c8e873E1cae8467156e2A81d1C8b566B2da1',
+  [ChainId.BOBA]: '0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3',
 }
 
-export const getMiniChefContractConfig = (chainId: number | undefined) => ({
-  addressOrName: chainId ? MINICHEF_ADDRESS[chainId] : AddressZero,
-  contractInterface: MINICHEF_ABI,
-})
-
-export const _getMasterChefContractConfig = (chainId: number | undefined) => ({
-  addressOrName: chainId ? MASTERCHEF_ADDRESS[chainId] : AddressZero,
+export const _getMasterChefContractConfig = (
+  chainId: number
+): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => ({
+  chainId,
+  addressOrName: MASTERCHEF_ADDRESS[chainId],
   contractInterface: MASTERCHEF_ABI,
 })
 
-export const getMasterChefContractV2Config = (chainId: number | undefined) => ({
-  addressOrName: chainId ? MASTERCHEF_V2_ADDRESS[chainId] : AddressZero,
+export const getMasterChefContractV2Config = (
+  chainId: number
+): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => ({
+  chainId,
+  addressOrName: MASTERCHEF_V2_ADDRESS[chainId],
   contractInterface: MASTERCHEF_ABI_V2,
 })
 
-export const getMasterChefContractConfig = (chainId: number | undefined, chef: Chef) => {
+export const getMiniChefContractConfig = (
+  chainId: number
+): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => {
+  return {
+    chainId,
+    addressOrName: MINICHEF_ADDRESS[chainId],
+    contractInterface: MINICHEF_ABI,
+  }
+}
+
+export const getMasterChefContractConfig = (
+  chainId: number,
+  chef: Chef
+): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => {
   return chef === Chef.MASTERCHEF
     ? _getMasterChefContractConfig(chainId)
     : chef === Chef.MASTERCHEF_V2
@@ -60,8 +76,12 @@ export const getMasterChefContractConfig = (chainId: number | undefined, chef: C
 
 // TODO ADD TYPECHAIN
 export function useMasterChefContract(chainId: number | undefined, chef: Chef) {
-  return useContract({
-    ...getMasterChefContractConfig(chainId, chef),
-    signerOrProvider: useProvider({ chainId }),
-  })
+  const signerOrProvider = useProvider({ chainId })
+
+  return useMemo(() => {
+    if (!chainId) return
+    const config = getMasterChefContractConfig(chainId, chef)
+    if (!config) return
+    return getContract({ ...config, signerOrProvider })
+  }, [chainId, chef, signerOrProvider])
 }

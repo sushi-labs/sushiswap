@@ -205,6 +205,10 @@ export class Trade<
     return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size !== this.route.legs.length
   }
 
+  public isSinglePool(): boolean {
+    return this.route.legs.length === 1
+  }
+
   public isSingle(): boolean {
     return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size === this.route.legs.length
   }

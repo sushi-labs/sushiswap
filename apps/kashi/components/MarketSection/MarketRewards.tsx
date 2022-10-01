@@ -13,8 +13,8 @@ export const MarketRewards: FC<MarketRewardsProps> = ({ pair }) => {
   const { asset } = useTokensFromKashiPair(pair)
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-between items-center px-2">
+    <div className="flex flex-col w-full gap-4">
+      <div className="flex items-center justify-between px-2">
         <Typography weight={700} className="text-slate-50">
           Rewards
         </Typography>
@@ -37,7 +37,7 @@ export const MarketRewards: FC<MarketRewardsProps> = ({ pair }) => {
           <Table.tbody>
             <Table.tr>
               <Table.td>
-                <div className="flex gap-3 items-center">
+                <div className="flex items-center gap-3">
                   <Currency.Icon currency={asset} width={24} height={24} />
                   <Typography weight={700} variant="sm" className="text-slate-50">
                     {asset.symbol}

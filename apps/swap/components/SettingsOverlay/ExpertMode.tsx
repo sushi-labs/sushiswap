@@ -7,7 +7,7 @@ export const ExpertMode = () => {
   const [{ expertMode }, { updateExpertMode }] = useSettings()
 
   return (
-    <div className="h-[52px] flex items-center">
+    <div className="h-[52px] flex items-center border-b border-slate-200/5">
       <div className="relative flex items-center justify-between w-full gap-3 group rounded-xl">
         <div className="flex items-center justify-center w-5 h-5">
           <AcademicCapIcon width={20} height={20} className="-ml-0.5 text-slate-500" />

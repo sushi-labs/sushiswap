@@ -10,6 +10,8 @@ const {
   FURO_URL,
   LANDING_URL,
   SWAP_URL,
+  XSWAP_URL,
+  INVEST_URL,
   LEGACY_URL,
   PARTNER_URL,
   ACADEMY_URL,
@@ -108,6 +110,30 @@ const nextConfig = {
       {
         source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
+      },
+      {
+        source: '/xswap',
+        destination: `${XSWAP_URL}/xswap`,
+      },
+      {
+        source: '/xswap/:path*',
+        destination: `${XSWAP_URL}/xswap/:path*`,
+      },
+      {
+        source: '/invest',
+        destination: `${INVEST_URL}/earn`,
+      },
+      {
+        source: '/invest/:path*',
+        destination: `${INVEST_URL}/earn/:path*`,
+      },
+      {
+        source: '/earn',
+        destination: `${INVEST_URL}/earn`,
+      },
+      {
+        source: '/earn/:path*',
+        destination: `${INVEST_URL}/earn/:path*`,
       },
     ]
   },

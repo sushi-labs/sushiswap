@@ -1,7 +1,7 @@
 import { Disclosure, Listbox } from '@headlessui/react'
 import { CheckIcon, ChevronDownIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { DuplicateIcon, MinusCircleIcon } from '@heroicons/react/solid'
-import { Type } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import {
   Button,
@@ -202,7 +202,21 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 </IconButton>
               </div>
               <div className="flex items-center">
-                <IconButton onClick={() => onCopy({ ...data, recipient: '' } as CreateVestingFormData)}>
+                <IconButton
+                  onClick={() => {
+                    onCopy({
+                      ...data,
+                      currency: {
+                        chainId: data.currency.chainId,
+                        address: (data.currency as Token).address,
+                        decimals: data.currency.decimals,
+                        symbol: data.currency.symbol,
+                        name: data.currency.name,
+                      },
+                      recipient: '',
+                    } as CreateVestingFormData)
+                  }}
+                >
                   <DuplicateIcon width={20} height={20} className="text-slate-300" />
                 </IconButton>
               </div>

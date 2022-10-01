@@ -1,9 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { AddressZero } from '@ethersproject/constants'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import furoExports from '@sushiswap/furo/exports.json'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
@@ -11,7 +9,7 @@ import { getFuroVestingContractConfig, useFuroVestingContract } from '@sushiswap
 import { CurrencyInput } from 'components'
 import { useVestingBalance, Vesting } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { useAccount, useDeprecatedContractWrite, useNetwork } from 'wagmi'
 
 interface WithdrawModalProps {
   vesting?: Vesting
@@ -32,7 +30,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
     return tryParseAmount(input, vesting.token)
   }, [input, vesting?.token])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     ...getFuroVestingContractConfig(activeChain?.id),
     functionName: 'withdraw',
     onSuccess() {
@@ -70,9 +68,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       log.tenderly({
         chainId: activeChain?.id,
         from: address,
-        to:
-          furoExports[activeChain?.id as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts
-            ?.FuroVesting?.address ?? AddressZero,
+        to: getFuroVestingContractConfig(activeChain?.id)?.addressOrName,
         data: contract?.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),
           '0x',

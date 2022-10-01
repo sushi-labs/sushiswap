@@ -1,7 +1,7 @@
 import { chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
+import { UseQueryOptions } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { UseQueryOptions } from 'react-query'
 import { useQuery } from 'wagmi'
 
 export interface FarmMap<T> {
@@ -48,22 +48,23 @@ export enum PoolType {
   Legacy = 'Legacy',
 }
 
-type UseFarmRewards = ({
+export const useFarmRewards = ({
   options,
-}?: {
-  options?: UseQueryOptions<string, unknown, Record<number, FarmMap<RewardToken>>, string[]>
-}) => Pick<ReturnType<typeof useQuery>, 'isLoading' | 'isError'> & { data: Record<number, FarmMap<Token>> | undefined }
-
-export const useFarmRewards: UseFarmRewards = ({ options } = {}) => {
+}: {
+  options?: Omit<
+    UseQueryOptions<Record<number, FarmMap<RewardToken>>, unknown, Record<number, FarmMap<RewardToken>>, string[]>,
+    'queryKey' | 'queryFn' | 'initialData'
+  >
+}) => {
+  const queryKey = useMemo(() => ['https://farm.sushi.com/v0'], [])
   const {
     data: farmsMap,
     isError,
     isLoading,
-  } = useQuery<string, unknown, Record<number, FarmMap<RewardToken>>, string[]>(
-    ['https://farm.sushi.com/v0'],
-    () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()),
-    { staleTime: 2000, ...options }
-  )
+  } = useQuery(queryKey, () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()), {
+    staleTime: 2000,
+    ...options,
+  })
 
   return useMemo(() => {
     return {

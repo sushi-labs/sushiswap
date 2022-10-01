@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:examples": "turbo run build --filter=./examples/*",
+    "build:protocols": "turbo run build --filter=./protocols/*",
+    "build:packages": "turbo run build --filter=./packages/*",
     "changeset": "changeset",
     "changeset-publish": "turbo run build --filter=docs^... && changeset publish",
     "changeset-version": "changeset version",
