@@ -33,7 +33,6 @@
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
-    "@sushiswap/swap-widget": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",

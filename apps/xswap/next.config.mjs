@@ -5,9 +5,7 @@ const withTranspileModules = transpileModules([
   '@sushiswap/redux-localstorage',
   '@sushiswap/chain',
   '@sushiswap/wagmi',
-  '@sushiswap/stargate',
   '@sushiswap/ui',
-  '@sushiswap/swap-widget',
 ])
 
 // @ts-check
