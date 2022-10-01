@@ -143,6 +143,8 @@ export enum ChainKey {
   BOBA_AVAX = 'boba-avax',
 }
 
+const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
+
 export class Chain implements Chain {
   public static from(chainId: number) {
     return chains[chainId]
@@ -153,14 +155,13 @@ export class Chain implements Chain {
   public static fromChainId(chainId: number) {
     return chains[chainId]
   }
-
   constructor(data: Chain) {
     Object.assign(this, data)
   }
   getTxUrl(txHash: string): string {
     if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (explorer.standard === Standard.Eip3091) {
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
         return `${explorer.url}/tx/${txHash}`
       }
     }
@@ -178,7 +179,7 @@ export class Chain implements Chain {
   getTokenUrl(tokenAddress: string): string {
     if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (explorer.standard === Standard.Eip3091) {
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
         return `${explorer.url}/token/${tokenAddress}`
       }
     }
@@ -187,7 +188,7 @@ export class Chain implements Chain {
   getAccountUrl(accountAddress: string): string {
     if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (explorer.standard === Standard.Eip3091) {
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
         return `${explorer.url}/address/${accountAddress}`
       }
     }
