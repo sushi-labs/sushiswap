@@ -1,4 +1,6 @@
+import { Disclosure } from '@headlessui/react'
 import { ChevronDownIcon, LinkIcon } from '@heroicons/react/24/outline'
+import { ArrowRightIcon } from '@heroicons/react/24/solid'
 import { Button, classNames, Container, IconButton, Typography } from '@sushiswap/ui'
 import { ArticleList, Card } from 'common/components'
 import { ProductCard } from 'common/components/ProductCard'
@@ -10,8 +12,6 @@ import { defaultSidePadding } from 'pages'
 import useSWR from 'swr'
 
 import { ArticleEntity } from '.mesh'
-import { ArrowRightIcon } from '@heroicons/react/24/solid'
-import { Disclosure } from '@headlessui/react'
 
 enum Product {
   BentoBox = 'bentobox',
