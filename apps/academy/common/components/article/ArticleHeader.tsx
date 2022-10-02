@@ -1,5 +1,4 @@
-import { Chip, Typography } from '@sushiswap/ui'
-import { CircleLabyrinthIcon } from 'common/icons/CircleLabyrinthIcon'
+import { CircleIcon } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
@@ -12,28 +11,27 @@ interface ArticleHeader {
 export const ArticleHeader: FC<ArticleHeader> = ({ article }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className="flex items-center justify-start gap-3 lg:gap-4">
-        <div className="flex p-1 rounded-full bg-slate-200 items-center gap-2.5 pr-3">
-          <Chip label="Furo" className="!bg-white text-black" />
+      <div className="flex items-center justify-start gap-3">
+        <div className="flex items-center gap-2 p-px pr-3 rounded-full bg-slate-200">
+          <div className="flex items-center h-6 px-3 text-xs font-medium rounded-full bg-slate-800 text-slate-50 sm:h-7 sm:text-sm sm:font-normal">
+            Furo
+          </div>
+          {/* <Chip label="Furo" className="!bg-slate-800 !text-slate-50 h-[28px] text-sm" /> */}
           {article?.attributes?.publishedAt && (
-            <Typography variant="xxs" className="text-black">
-              <time dateTime={article.attributes.publishedAt}>
-                {format(new Date(article.attributes.publishedAt), 'dd MMM yyyy')}
-              </time>
-            </Typography>
+            <time dateTime={article.attributes.publishedAt} className="text-xs text-black sm:text-sm">
+              {format(new Date(article.attributes.publishedAt), 'dd MMM yyyy')}
+            </time>
           )}
         </div>
-        <div className="flex gap-1">
-          <CircleLabyrinthIcon />
+        <div className="flex items-center gap-2">
+          <CircleIcon width={8} height={8} fill={'#F338C3'} stroke={'#F338C3'} />
           <span className="text-xs font-medium">Beginner</span>
         </div>
       </div>
-      <h1 className="mt-4 text-2xl font-bold tracking-tight text-center md:font-medium md:text-4xl text-slate-200">
+      <h1 className="mt-6 text-center text-2xl font-bold sm:mt-5 md:font-medium sm:text-[42px] text-slate-50">
         {article?.attributes?.title}
       </h1>
-      <h3 className="mt-3 text-sm tracking-tight text-center md:mt-5 md:text-lg text-slate-500">
-        {article?.attributes?.description}
-      </h3>
+      <h3 className="mt-3 text-sm text-center sm:mt-5 md:text-lg text-slate-400">{article?.attributes?.description}</h3>
     </div>
   )
 }

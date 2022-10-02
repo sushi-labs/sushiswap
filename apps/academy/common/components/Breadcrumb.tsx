@@ -25,7 +25,7 @@ export const Breadcrumb: FC = () => {
     >
       <Link href="/articles" passHref>
         <a className="flex items-center gap-2 group">
-          <ChevronLeftIcon width={20} className="text-slate-400 group-hover:text-slate-50" />
+          <ChevronLeftIcon width={16} className="text-slate-400 group-hover:text-slate-50" />
           <Typography variant="sm" weight={500} className="cursor-pointer group-hover:text-slate-50 text-slate-400">
             Back
           </Typography>
