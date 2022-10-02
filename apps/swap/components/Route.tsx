@@ -20,7 +20,7 @@ export const SingleRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
         <div key={i}>
           <div className="z-10 flex items-center gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl">
             <Typography variant="xs" weight={500}>
-              {leg.tokenFrom.symbol}/{leg.tokenTo.symbol} {leg.poolFee * 100}%
+              {leg.poolType} {leg.tokenFrom.symbol}/{leg.tokenTo.symbol} {leg.poolFee * 100}%
             </Typography>
           </div>
         </div>
