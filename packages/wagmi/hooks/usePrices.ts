@@ -1,5 +1,4 @@
 import { getAddress, isAddress } from '@ethersproject/address'
-import { ChainId } from '@sushiswap/chain'
 import { Fraction } from '@sushiswap/math'
 import { UseQueryOptions } from '@tanstack/react-query'
 import { parseUnits } from 'ethers/lib/utils'
@@ -23,7 +22,7 @@ export const usePrices = ({
   chainId,
   options,
 }: {
-  chainId?: ChainId
+  chainId?: number
   options?: Omit<
     UseQueryOptions<Record<string, number>, unknown, Record<string, number>, string[]>,
     'queryKey' | 'queryFn' | 'initialData'
@@ -37,7 +36,7 @@ export const usePrices = ({
   } = useQuery(
     queryKey,
     () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
-    { staleTime: 20000, ...options }
+    { staleTime: 20000, enabled: Boolean(chainId), ...options }
   )
 
   return useMemo(() => {

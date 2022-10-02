@@ -24,7 +24,7 @@ interface PoolData {
 }
 
 export function useConstantProductPools(
-  chainId: number,
+  chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][]
 ): [ConstantProductPoolState, ConstantProductPool | null][] {
   const { data: latestBlockNumber } = useBlockNumber({ chainId })

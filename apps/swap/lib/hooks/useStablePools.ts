@@ -25,7 +25,7 @@ interface PoolData {
 }
 
 export function useStablePools(
-  chainId: number,
+  chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][]
 ): [StablePoolState, StablePool | null][] {
   const { data: latestBlockNumber } = useBlockNumber({ chainId })

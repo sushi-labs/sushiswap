@@ -169,8 +169,6 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
     setInput1('')
   }, [])
 
-  console.log({ chainId })
-
   return (
     <>
       <TradeProvider

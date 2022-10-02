@@ -28,7 +28,7 @@ import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
 
 interface SwapReviewModalLegacy {
-  chainId: ChainId
+  chainId: number | undefined
   children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
   onSuccess(): void
 }
@@ -87,11 +87,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     [slippageTolerance]
   )
 
-  console.log({ sushiSwapRouter })
-
   const execute = useCallback(async () => {
     try {
-      if (!trade || !account) return
+      if (!trade || !account || !chainId) return
 
       let call: SwapCall | null = null
       let value = '0x0'
@@ -412,7 +410,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     if (trade?.isV1()) {
       return chainId === ChainId.POLYGON && carbonOffset ? sushiSwapKlimaRouter?.address : sushiSwapRouter?.address
     } else if (trade?.isV2()) {
-      return BENTOBOX_ADDRESS[chainId]
+      return chainId && chainId in BENTOBOX_ADDRESS ? BENTOBOX_ADDRESS[chainId] : undefined
     }
   }, [trade, carbonOffset, sushiSwapKlimaRouter?.address, sushiSwapRouter?.address, chainId])
 
