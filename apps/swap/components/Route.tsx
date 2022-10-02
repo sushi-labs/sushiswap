@@ -63,6 +63,7 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
       leg.tokenFrom.address !== trade.inputAmount.currency.wrapped.address &&
       leg.tokenTo.address === trade.outputAmount.currency.wrapped.address
   )
+
   return (
     <>
       <div className="grid items-center grid-flow-col gap-4">

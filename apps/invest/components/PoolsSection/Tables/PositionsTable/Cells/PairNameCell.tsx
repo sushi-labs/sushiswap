@@ -28,7 +28,8 @@ export const PairNameCell: FC<CellProps> = ({ row }) => {
           </div>
         </Typography>
         <Typography variant="xxs" className="text-slate-400">
-          {row.pair.farm ? 'Farm' : 'Pool'}
+          {row.pair.type === 'STABLE_POOL' && 'Stable'}
+          {row.pair.type === 'CONSTANT_PRODUCT_POOL' && 'Classic'}
         </Typography>
       </div>
     </div>

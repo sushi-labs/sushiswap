@@ -25,7 +25,7 @@ export class StablePool implements Pool {
   private readonly decimals1: JSBI
   private readonly MAX_FEE = JSBI.BigInt(10000)
 
-  public static getAddress(tokenA: Token, tokenB: Token, fee: Fee = Fee.DEFAULT): string {
+  public static getAddress(tokenA: Token, tokenB: Token, fee: Fee): string {
     return computeStablePoolAddress({
       factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts.StablePoolFactory.address,
       tokenA,
@@ -34,13 +34,7 @@ export class StablePool implements Pool {
     })
   }
 
-  public constructor(
-    amountA: Amount<Token>,
-    amountB: Amount<Token>,
-    fee: Fee = Fee.DEFAULT,
-    total0: Rebase,
-    total1: Rebase
-  ) {
+  public constructor(amountA: Amount<Token>, amountB: Amount<Token>, fee: Fee, total0: Rebase, total1: Rebase) {
     const tokenAmounts = amountA.currency.sortsBefore(amountB.currency) // does safety checks
       ? [amountA, amountB]
       : [amountB, amountA]
