@@ -1,5 +1,4 @@
 import { Signature } from '@ethersproject/bytes'
-import { Chain } from '@sushiswap/chain'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Fraction, JSBI, ZERO } from '@sushiswap/math'
@@ -8,8 +7,9 @@ import { BENTOBOX_ADDRESS, useBentoBoxTotal, useFuroVestingRouterContract } from
 import { Approve } from '@sushiswap/wagmi/systems'
 import { CreateVestingFormDataTransformedAndValidated } from 'components/vesting'
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from 'lib'
+import { useNotifications } from 'lib/state/storage'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork, useDeprecatedSendTransaction } from 'wagmi'
+import { useAccount, useDeprecatedSendTransaction, useNetwork } from 'wagmi'
 
 interface CreateFormButtons {
   onDismiss(): void
@@ -35,6 +35,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   const [signature, setSignature] = useState<Signature>()
 
   const contract = useFuroVestingRouterContract(activeChain?.id)
+  const [, { createNotification }] = useNotifications(address)
   const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
 
   const [totalAmountAsEntity, stepPercentage] = useMemo(() => {
@@ -105,9 +106,13 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
 
       onDismiss()
 
+      const ts = new Date().getTime()
       createToast({
+        type: 'createVesting',
         txHash: data.hash,
-        href: Chain.from(activeChain.id).getTxUrl(data.hash),
+        chainId: activeChain.id,
+        timestamp: ts,
+        groupTimestamp: ts,
         promise: data.wait(),
         summary: {
           pending: (
@@ -162,6 +167,7 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
   return (
     <div className="flex flex-col gap-3">
       <Approve
+        onSuccess={createNotification}
         components={
           <Approve.Components>
             <Approve.Bentobox fullWidth watch address={contract?.address} onSignature={setSignature} />

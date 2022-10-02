@@ -1,7 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { parseUnits } from '@ethersproject/units'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Chain } from '@sushiswap/chain'
 import { Amount, Currency } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
@@ -10,9 +9,10 @@ import { Button, createToast, Dots, Form } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, useBentoBoxTotal, useFuroStreamRouterContract } from '@sushiswap/wagmi'
 import { Approve } from '@sushiswap/wagmi/systems'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from 'lib'
+import { useNotifications } from 'lib/state/storage'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { useAccount, useNetwork, useDeprecatedSendTransaction } from 'wagmi'
+import { useAccount, useDeprecatedSendTransaction, useNetwork } from 'wagmi'
 
 import { CreateStreamFormData, CreateStreamFormDataValidated } from '../types'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
@@ -24,6 +24,7 @@ export const CreateForm: FC = () => {
   const { chain: activeChain } = useNetwork()
   const [error, setError] = useState<string>()
   const contract = useFuroStreamRouterContract(activeChain?.id)
+  const [, { createNotification }] = useNotifications(address)
   const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
   const [signature, setSignature] = useState<Signature>()
 
@@ -97,10 +98,13 @@ export const CreateForm: FC = () => {
             value: amountAsEntity.currency.isNative ? amountAsEntity.quotient.toString() : '0',
           },
         })
-
+        const ts = new Date().getTime()
         createToast({
+          type: 'createStream',
           txHash: data.hash,
-          href: Chain.from(activeChain.id).getTxUrl(data.hash),
+          chainId: activeChain.id,
+          timestamp: ts,
+          groupTimestamp: ts,
           promise: data.wait(),
           summary: {
             pending: (
@@ -155,6 +159,7 @@ export const CreateForm: FC = () => {
                   />
                 </Approve.Components>
               }
+              onSuccess={createNotification}
               render={({ approved }) => (
                 <Button
                   type="submit"

@@ -1,6 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { Chain } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
@@ -47,10 +46,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       const data = await writeAsync({
         args: [BigNumber.from(vesting.id), '0x', fundSource === FundSource.BENTOBOX],
       })
-
+      const ts = new Date().getTime()
       createToast({
+        type: 'withdrawVesting',
         txHash: data.hash,
-        href: Chain.from(activeChain.id).getTxUrl(data.hash),
+        chainId: activeChain.id,
+        timestamp: ts,
+        groupTimestamp: ts,
         promise: data.wait(),
         summary: {
           pending: (

@@ -1,7 +1,7 @@
 import { XCircleIcon } from '@heroicons/react/outline'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
-import { useWalletState, Wallet } from '@sushiswap/wagmi'
-import { BackgroundVector, Dashboard, Layout, Overlay } from 'components'
+import { useWalletState } from '@sushiswap/wagmi'
+import { BackgroundVector, Dashboard, Layout } from 'components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
@@ -12,12 +12,7 @@ export default function DashboardPage() {
   const { chain: activeChain } = useNetwork()
   const { address } = useAccount()
   const connect = useConnect()
-  const { connecting, notConnected, pendingConnection, reconnecting } = useWalletState(!!connect.pendingConnector)
-
-  if (connecting || reconnecting) {
-    return <Overlay />
-  }
-
+  const { connecting, notConnected } = useWalletState(!!connect.pendingConnector)
   if (notConnected) {
     return (
       <>
@@ -41,12 +36,13 @@ export default function DashboardPage() {
                   Get started by connecting your wallet.
                 </Typography>
               </div>
-              <Wallet.Button
+              {/* TODO: Fix, this causes some kind of infinite loop when rendered... */}
+              {/* <Wallet.Button
                 className="transition-all hover:ring-4 ring-blue-800 btn !bg-blue btn-blue btn-filled btn-default w-full text-slate-50 px-10 !h-[44px] rounded-2xl"
                 hack={connect}
               >
                 Connect Wallet
-              </Wallet.Button>
+              </Wallet.Button> */}
               <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
                 <Typography
                   as="a"
@@ -64,7 +60,7 @@ export default function DashboardPage() {
     )
   }
 
-  if (pendingConnection) {
+  if (connecting) {
     return (
       <>
         <NextSeo title="Dashboard" />

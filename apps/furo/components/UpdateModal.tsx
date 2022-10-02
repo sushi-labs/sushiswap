@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ContractInterface } from '@ethersproject/contracts'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
@@ -72,9 +71,13 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         ],
       })
 
+      const ts = new Date().getTime()
       createToast({
+        type: 'updateStream',
         txHash: data.hash,
-        href: Chain.from(activeChain.id).getTxUrl(data.hash),
+        chainId: activeChain.id,
+        timestamp: ts,
+        groupTimestamp: ts,
         promise: data.wait(),
         summary: {
           pending: <Dots>Updating stream</Dots>,
