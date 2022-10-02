@@ -1,6 +1,6 @@
 import { XCircleIcon } from '@heroicons/react/outline'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
-import { useWalletState, Wallet } from '@sushiswap/wagmi'
+import { Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector, Dashboard, Layout, Overlay } from 'components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -12,13 +12,12 @@ export default function DashboardPage() {
   const { chain: activeChain } = useNetwork()
   const { address } = useAccount()
   const connect = useConnect()
-  const { connecting, notConnected, pendingConnection, reconnecting } = useWalletState(!!connect.pendingConnector)
 
-  if (connecting || reconnecting) {
+  if (connect.isLoading) {
     return <Overlay />
   }
 
-  if (notConnected) {
+  if (connect.isIdle) {
     return (
       <>
         <NextSeo title="Dashboard" />
@@ -64,7 +63,7 @@ export default function DashboardPage() {
     )
   }
 
-  if (pendingConnection) {
+  if (connect.pendingConnector) {
     return (
       <>
         <NextSeo title="Dashboard" />
