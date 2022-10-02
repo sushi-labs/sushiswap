@@ -80,17 +80,12 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                 {initialPaths.map((initialPath, i) => (
                   <div
                     key={i}
-                    className="z-10 flex items-center justify-between gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl"
+                    className="z-10 flex items-center justify-between gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap"
                   >
                     {Number(initialPath.absolutePortion * 100).toFixed(2)}%
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
-                      {initialPath.poolType}
-                    </Typography>
-                    <DotsHorizontalIcon width={12} className="text-slate-600" />
-                    <Typography variant="xs" weight={500}>
-                      {initialPath.tokenFrom.symbol}/{initialPath.tokenTo.symbol}
-                      <br />
+                      {initialPath.poolType} {initialPath.tokenFrom.symbol}/{initialPath.tokenTo.symbol}{' '}
                       {initialPath.poolFee * 100}%
                     </Typography>
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
@@ -104,17 +99,12 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                 {percentPaths.map((percentagePath, i) => (
                   <div
                     key={i}
-                    className="z-10 grid items-center justify-between grid-flow-col gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl"
+                    className="z-10 grid items-center justify-between grid-flow-col gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap"
                   >
                     {Number(percentagePath.absolutePortion * 100).toFixed(2)}%
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
-                      {percentagePath.poolType}
-                    </Typography>
-                    <DotsHorizontalIcon width={12} className="text-slate-600" />
-                    <Typography variant="xs" weight={500}>
-                      {percentagePath.tokenFrom.symbol}/{percentagePath.tokenTo.symbol}
-                      <br />
+                      {percentagePath.poolType} {percentagePath.tokenFrom.symbol}/{percentagePath.tokenTo.symbol}{' '}
                       {percentagePath.poolFee * 100}%
                     </Typography>
                   </div>
@@ -124,17 +114,12 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                 {finalPaths.map((finalPath, i) => (
                   <div
                     key={i}
-                    className="z-10 grid items-center justify-between grid-flow-col gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl"
+                    className="z-10 grid items-center justify-between grid-flow-col gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap"
                   >
                     {Number(finalPath.absolutePortion * 100).toFixed(2)}%
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
-                      {finalPath.poolType}
-                    </Typography>
-                    <DotsHorizontalIcon width={12} className="text-slate-600" />
-                    <Typography variant="xs" weight={500}>
-                      {finalPath.tokenFrom.symbol}/{finalPath.tokenTo.symbol}
-                      <br />
+                      {finalPath.poolType} {finalPath.tokenFrom.symbol}/{finalPath.tokenTo.symbol}{' '}
                       {finalPath.poolFee * 100}%
                     </Typography>
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
@@ -146,27 +131,24 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
               </div>
             </div>
           </div>
-          {directPaths.map((directPath, i) => (
-            <div key={i} className="flex gap-4">
-              <div className="z-10 flex items-center justify-between flex-grow p-2 mx-auto text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl">
-                {Number(directPath.absolutePortion * 100).toFixed(2)}%
-                <DotsHorizontalIcon width={12} className="text-slate-600" />
-                <Typography variant="xs" weight={500}>
-                  {directPath.poolType}
-                </Typography>
-                <DotsHorizontalIcon width={12} className="text-slate-600" />
-                <Typography variant="xs" weight={500}>
-                  {directPath.tokenFrom.symbol}/{directPath.tokenTo.symbol}
-                  <br />
-                  {directPath.poolFee * 100}%
-                </Typography>
-                <DotsHorizontalIcon width={12} className="text-slate-600" />
-                <Typography variant="xs" weight={500}>
-                  {directPath.tokenTo.symbol}
-                </Typography>
+          <div className="flex w-full">
+            {directPaths.map((directPath, i) => (
+              <div key={i} className="flex flex-grow gap-4">
+                <div className="z-10 flex items-center justify-between flex-grow p-2 mx-auto text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap">
+                  {Number(directPath.absolutePortion * 100).toFixed(2)}%
+                  <DotsHorizontalIcon width={12} className="text-slate-600" />
+                  <Typography variant="xs" weight={500}>
+                    {directPath.poolType} {directPath.tokenFrom.symbol}/{directPath.tokenTo.symbol}{' '}
+                    {directPath.poolFee * 100}%
+                  </Typography>
+                  <DotsHorizontalIcon width={12} className="text-slate-600" />
+                  <Typography variant="xs" weight={500}>
+                    {directPath.tokenTo.symbol}
+                  </Typography>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
         <div>
           <div className="z-10 flex items-center gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl">

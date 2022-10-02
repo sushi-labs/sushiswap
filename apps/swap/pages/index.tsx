@@ -275,7 +275,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </a>
             </Link.Internal>
           </Container>
-          <Container className="flex justify-center mx-auto" maxWidth="2xl">
+          <Container className="flex justify-center mx-auto" maxWidth="3xl">
             <Route />
           </Container>
         </Layout>
