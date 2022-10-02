@@ -11,7 +11,16 @@ import { FC, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
-import { ArticleList, Card, Categories, Hero, HomeBackground, SearchInput, ViewAllButton } from '../common/components'
+import {
+  ArticleList,
+  Card,
+  Categories,
+  GradientWrapper,
+  Hero,
+  HomeBackground,
+  SearchInput,
+  ViewAllButton,
+} from '../common/components'
 import { getArticles, getCategories, getDifficulties } from '../lib/api'
 
 export const defaultSidePadding = 'px-6 sm:px-4'
@@ -173,12 +182,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 </Select>
                 <Select
                   button={
-                    <div
-                      className="w-full p-px rounded-lg h-9"
-                      style={{
-                        background: 'linear-gradient(103.72deg, #0993EC -6.18%, #F338C3 100%)',
-                      }}
-                    >
+                    <GradientWrapper className="w-full rounded-lg h-9">
                       <Listbox.Button
                         type="button"
                         className="flex items-center justify-between w-full h-full px-4 rounded-lg bg-slate-800 text-slate-50"
@@ -188,7 +192,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                         </Typography>
                         <ChevronDownIcon className="w-3 h-3" aria-hidden="true" />
                       </Listbox.Button>
-                    </div>
+                    </GradientWrapper>
                   }
                 >
                   <Select.Options className={classNames('!bg-slate-700 p-6 gap-6 grid')}>

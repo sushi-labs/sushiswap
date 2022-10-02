@@ -2,20 +2,35 @@ import { Listbox } from '@headlessui/react'
 import { ArrowsUpDownIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Container, Select, Typography } from '@sushiswap/ui'
-import { Drawer } from 'common/components/Drawer'
-import { Pane } from 'common/components/Pane'
+import { ArticlesPagesHeader } from 'common/components/ArticlesPagesHeader'
 import { useDisclosure } from 'common/hooks'
 import { useRouter } from 'next/router'
 import { defaultSidePadding } from 'pages'
 import { FC, useState } from 'react'
 import useSWR from 'swr'
 
-import { ArticleEntity } from '../../.mesh'
-import { ArticleList, Pagination } from '../../common/components'
+import { ArticleEntity, CategoryEntityResponseCollection } from '../../.mesh'
+import { ArticleList, Card, GradientWrapper, Pagination, SearchInput } from '../../common/components'
 import { getArticles, getCategories, getDifficulties } from '../../lib/api'
 
 type SortBy = 'relevance' | 'dateAsc' | 'dateDesc' | 'author'
 
+export async function getStaticProps() {
+  // const articles = await getArticles({ pagination: { limit: 6 } })
+  const categories = await getCategories()
+  const difficulties = await getDifficulties()
+
+  return {
+    props: {
+      fallback: {
+        // ['/articles']: articles?.articles,
+        ['/categories']: categories?.categories,
+        ['/difficulties']: difficulties?.categories,
+      },
+    },
+    revalidate: 1,
+  }
+}
 const Articles: FC = () => {
   const [query, setQuery] = useState<string>()
   const [page, setPage] = useState<number>(1)
@@ -24,21 +39,20 @@ const Articles: FC = () => {
 
   const [sortBy, setSortBy] = useState<SortBy>('relevance')
   const [selectedCategory, setSelectedCategory] = useState<string>(router.query.category as string | undefined)
-  const [selectedLevel, setSelectedLevel] = useState<string>(router.query.level as string | undefined)
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>(router.query.difficulty as string | undefined)
 
   const { data: articlesData, isValidating } = useSWR(
-    [`/articles`, selectedCategory, selectedLevel, debouncedQuery, page],
-    async (_url, categoryFilter, levelFilter, debouncedQuery, page) => {
+    [`/articles`, selectedCategory, selectedDifficulty, debouncedQuery, page],
+    async (_url, categoryFilter, difficultyFilter, debouncedQuery, page) => {
       return (
         await getArticles({
           filters: {
             ...(debouncedQuery && { title: { containsi: debouncedQuery } }),
-            // ...((router.query.level || router.query.category) && {
-            ...((categoryFilter || levelFilter) && {
+            ...((categoryFilter || difficultyFilter) && {
               categories: {
-                // TODO: this doesn't work, but leave for now until levels are it's own collection type in strapi
+                // TODO: this doesn't work, but leave for now until defficulties are it's own collection type in strapi
                 ...(categoryFilter && { id: { eq: categoryFilter } }),
-                ...(levelFilter && { and: [{ id: { eq: levelFilter } }] }),
+                ...(difficultyFilter && { and: [{ id: { eq: difficultyFilter } }] }),
               },
             }),
           },
@@ -49,18 +63,19 @@ const Articles: FC = () => {
     { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: true }
   )
 
-  const { data: categoriesData } = useSWR('/categories', async () => (await getCategories())?.categories)
-  const { data: levelsData } = useSWR('/levels', async () => (await getDifficulties())?.categories)
+  const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
+  const { data: difficultiesData } = useSWR<CategoryEntityResponseCollection>('/difficulties')
 
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
   const categories = categoriesData?.data
-  const levels = levelsData?.data
-  const articleList = articles ? articles : undefined
+  const difficulties = difficultiesData?.data
+  const articleList = articles ?? undefined
 
   const articlesMeta = articlesData?.meta ? articlesData.meta : undefined
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const handleSelectLevel = (id: string) => setSelectedLevel((currentLevel) => (currentLevel === id ? undefined : id))
+  const handleSelectDifficulty = (id: string) =>
+    setSelectedDifficulty((currentDifficulty) => (currentDifficulty === id ? undefined : id))
   const handleSelectCategory = (id: string) =>
     setSelectedCategory((currentCategory) => (currentCategory === id ? undefined : id))
 
@@ -68,98 +83,82 @@ const Articles: FC = () => {
   const products = ['Bentobox', 'Furo', 'Kashi', 'etc']
 
   const sortOptions: SortBy[] = ['relevance', 'dateAsc', 'dateDesc', 'author']
-  const SearchInput = ({ isSmallScreen }: { isSmallScreen?: boolean }) => (
-    <div className="flex items-center w-full h-12 gap-2 pl-3 rounded-lg md:h-14 md:w-auto bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
-      <MagnifyingGlassIcon width={24} height={24} className="text-slate-500" />
-      <input
-        onChange={(e) => setQuery(e.target.value)}
-        className="font-medium w-full placeholder:text-sm text-slate-300 bg-transparent text-base !ring-0 !outline-0"
-        placeholder="Search Topic"
-        onClick={() => isSmallScreen && onOpen()}
-      />
-    </div>
-  )
 
   return (
     <>
-      <Container
-        maxWidth="6xl"
-        className={classNames('mx-auto sm:py-24 py-11', defaultSidePadding, isOpen && 'overflow-hidden')}
-      >
-        <Container maxWidth="full" className="flex items-center justify-between">
-          <div className="flex flex-col items-center justify-between w-full gap-8 md:gap-2 sm:flex-row">
-            <div className="flex flex-col items-center w-full gap-2 sm:items-start">
-              <span className="font-medium font-base sm:text-lg">Articles</span>
-              <span className="text-3xl font-medium text-center sm:text-left sm:text-5xl">Tutorials & Explainers</span>
-            </div>
-            <div className="flex flex-col items-center w-full gap-3 sm:w-auto">
-              <div className="w-full sm:hidden">
-                <SearchInput isSmallScreen />
-              </div>
-
-              <div className="flex w-full gap-5">
-                <Select
-                  className="w-1/2 sm:w-auto"
-                  button={
-                    <Listbox.Button
-                      type="button"
-                      className="w-full sm:w-32 flex items-center justify-between pl-4 h-11 sm:h-10 gap-1 font-medium rounded-lg sm:rounded-full hover:text-slate-200 text-slate-300 border border-[#d9d9d9]"
-                    >
-                      <span className="text-xs sm:text-sm">
-                        {selectedLevel
-                          ? levels?.find(({ id }) => id === selectedLevel)?.attributes?.name ?? 'Select Level'
-                          : 'Select Level'}
-                      </span>
-                      <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
-                    </Listbox.Button>
-                  }
+      <SearchInput isTopOfPage hideTopics className="w-full sm:hidden" />
+      <ArticlesPagesHeader
+        title="Tutorials & Explainers"
+        difficulties={difficulties}
+        selectedDifficulty={selectedDifficulty}
+        handleSelectDifficulty={handleSelectDifficulty}
+      />
+      <Container maxWidth="6xl" className={classNames('mx-auto', defaultSidePadding, isOpen && 'overflow-hidden')}>
+        <div className="grid grid-cols-2 w-full gap-3 sm:hidden mt-[22px]">
+          <Select
+            button={
+              <GradientWrapper className="w-full rounded-lg h-9">
+                <Listbox.Button
+                  type="button"
+                  className="flex items-center justify-between w-full h-full gap-1 px-4 text-xs font-medium rounded-lg bg-slate-800 text-slate-50"
                 >
-                  <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
-                    {levels?.map(({ id, attributes }, i) => (
-                      <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectLevel(id)}>
-                        {attributes.name}
-                      </Typography>
-                    ))}
-                  </Select.Options>
-                </Select>
-                <Select
-                  className="w-1/2 sm:w-auto"
-                  button={
-                    // TODO: PRODUCTS
-                    <Listbox.Button
-                      type="button"
-                      className="w-full sm:w-32 flex items-center justify-between h-11 sm:h-10 pl-4 font-medium rounded-lg sm:rounded-full hover:text-slate-200 text-slate-300 border border-[#d9d9d9]"
-                    >
-                      <span className="text-xs sm:text-sm">
-                        {selectedLevel
-                          ? levels?.find(({ id }) => id === selectedLevel)?.attributes.name ?? 'Select Level'
-                          : 'Select Level'}
-                      </span>
-                      <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
-                    </Listbox.Button>
-                  }
-                >
-                  <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
-                    {levels?.map(({ id, attributes }, i) => (
-                      <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectLevel(id)}>
-                        {attributes.name}
-                      </Typography>
-                    ))}
-                  </Select.Options>
-                </Select>
-              </div>
-            </div>
-          </div>
-        </Container>
+                  {selectedDifficulty
+                    ? difficulties?.find(({ id }) => id === selectedDifficulty)?.attributes?.name ?? 'Select Difficulty'
+                    : 'Select Difficulty'}
+                  <ChevronDownIcon width={12} height={12} aria-hidden="true" />
+                </Listbox.Button>
+              </GradientWrapper>
+            }
+          >
+            <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
+              {difficulties?.map(({ id, attributes }, i) => (
+                <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectDifficulty(id)}>
+                  {attributes.name}
+                </Typography>
+              ))}
+            </Select.Options>
+          </Select>
+          <Select
+            button={
+              <Listbox.Button
+                type="button"
+                className="flex items-center justify-between w-full gap-1 px-4 text-xs font-medium border rounded-lg bg-slate-800 h-9 text-slate-50 border-slate-700"
+              >
+                <span className="flex gap-3">
+                  <ArrowsUpDownIcon width={14} height={14} />
+                  Sort by
+                </span>
+                <ChevronDownIcon width={12} height={12} aria-hidden="true" />
+              </Listbox.Button>
+            }
+          >
+            <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
+              {difficulties?.map(({ id, attributes }, i) => (
+                <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectDifficulty(id)}>
+                  {attributes.name}
+                </Typography>
+              ))}
+            </Select.Options>
+          </Select>
+        </div>
 
-        <Container maxWidth="full" className="flex gap-8 mx-auto mt-6 lg:gap-12 sm:mt-24">
-          <aside className="flex-col hidden gap-8 lg:min-w-[250px] min-w-[160px] md:flex">
-            <SearchInput />
-            <div className="flex flex-col gap-6 pl-3">
+        <Container
+          maxWidth="full"
+          className="grid sm:grid-cols-[min-content,1fr] justify-between gap-8 mx-auto lg:gap-12 mt-[22px] sm:mt-12"
+        >
+          <aside className="flex-col hidden sm:flex">
+            <div className="flex items-center w-full gap-3 px-4 rounded-lg h-11 bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
+              <MagnifyingGlassIcon width={24} height={24} className="text-slate-50" />
+              <input
+                onChange={(e) => setQuery(e.target.value)}
+                className="font-medium placeholder:text-sm bg-transparent placeholder:text-slate-50 text-base !ring-0 !outline-0"
+                placeholder="Search Topic..."
+              />
+            </div>
+            <div className="flex flex-col gap-6 pl-3 mt-12">
               {products.map((product) => (
                 <Typography
-                  className="hover:underline"
-                  weight={500}
+                  className="hover:underline text-slate-300"
                   key={product}
                   onClick={() => null /** TODO: implement */}
                 >
@@ -174,25 +173,25 @@ const Articles: FC = () => {
               <Typography variant="lg">No articles found</Typography>
             ) : (
               <>
-                <div className="items-center justify-between hidden sm:flex">
+                <div className="flex items-center justify-between">
                   {articlesMeta?.pagination?.total > 0 && (
                     <Typography weight={500}>{articlesMeta.pagination.total} Results</Typography>
                   )}
 
                   <Select
+                    className="hidden sm:flex"
                     button={
-                      // TODO: sortby
                       <Listbox.Button
                         type="button"
-                        className="pl-20 w-48 flex items-center h-14 font-medium rounded-lg hover:text-slate-200 text-slate-300 border border-[#d9d9d9]"
+                        className="px-4 bg-slate-800 w-[210px] text-sm flex items-center h-11 rounded-lg text-slate-50 border border-slate-700 relative"
                       >
-                        <Typography className="absolute text-sm left-4">Sortby:</Typography>
-                        <Typography className="text-sm">{sortBy}</Typography>
-                        <ChevronDownIcon className="absolute w-2 h-2 right-4" aria-hidden="true" />
+                        <Typography className="text-slate-500">Sort by:</Typography>
+                        <Typography className="ml-2">{sortBy}</Typography>
+                        <ChevronDownIcon width={12} height={12} className="absolute right-4" aria-hidden="true" />
                       </Listbox.Button>
                     }
                   >
-                    <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
+                    <Select.Options className="!bg-slate-700 p-6 gap-6 grid">
                       {sortOptions?.map((key) => (
                         <Typography weight={500} variant="sm" key={key} onClick={() => setSortBy(key)}>
                           {key}
@@ -201,16 +200,12 @@ const Articles: FC = () => {
                     </Select.Options>
                   </Select>
                 </div>
-                <div className="grid grid-cols-1 transition-all gap-x-6 sm:grid-cols-2 gap-y-10 sm:mt-8">
+                <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))] sm:mt-12 mt-[22px]">
                   <ArticleList
-                    articles={articleList as ArticleEntity[]}
+                    articles={articleList as unknown as ArticleEntity[]}
                     loading={loading || !articleList}
                     render={(article, i) => (
-                      <Pane
-                        article={article}
-                        isBig={page === 1 && !i}
-                        key={`article__left__${article?.attributes?.slug}`}
-                      />
+                      <Card article={article} key={`article__left__${article?.attributes?.slug}`} />
                     )}
                   />
                 </div>
@@ -228,53 +223,6 @@ const Articles: FC = () => {
           </div>
         </Container>
       </Container>
-      <Drawer isOpen={isOpen} onClose={onClose} header="Search for Article">
-        <SearchInput />
-        <Select
-          className="mt-3"
-          button={
-            // TODO: sortby
-            <Listbox.Button
-              type="button"
-              className="flex items-center w-48 gap-2 pl-2 font-medium rounded h-8 hover:text-slate-200 text-slate-300 bg-[#EAEAEA] relative"
-            >
-              <ArrowsUpDownIcon stroke="black" width={14} height={14} />
-              <Typography weight={500} className="text-sm text-gray-500">
-                Sortby:
-              </Typography>
-              <Typography weight={500} className="text-sm text-black">
-                {sortBy}
-              </Typography>
-              <ChevronDownIcon width={10} height={10} className="absolute text-black right-2" aria-hidden="true" />
-            </Listbox.Button>
-          }
-        >
-          <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col w-48">
-            {sortOptions?.map((key) => (
-              <Typography weight={500} variant="sm" key={key} onClick={() => setSortBy(key)}>
-                {key}
-              </Typography>
-            ))}
-          </Select.Options>
-        </Select>
-        <div className="flex flex-col gap-6 mt-8">
-          {products.map(
-            (
-              product // TODO: topics here
-            ) => (
-              <Typography
-                key={product}
-                onClick={() => {
-                  // TODO: apply filter
-                  onClose()
-                }}
-              >
-                {product}
-              </Typography>
-            )
-          )}
-        </div>
-      </Drawer>
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { Listbox } from '@headlessui/react'
 import { Bars3Icon, ChevronDownIcon } from '@heroicons/react/24/outline'
-import { App, classNames, IconButton, Link, Select, SushiIcon, Typography } from '@sushiswap/ui'
+import { App, classNames, IconButton, Link, Select, SushiIcon, Typography, useBreakpoint } from '@sushiswap/ui'
 import { AppType } from '@sushiswap/ui/app/Header'
 import { useDisclosure } from 'common/hooks'
 import { SushiTransparentIcon, TriangleIcon } from 'common/icons'
@@ -49,9 +49,11 @@ export const Header: FC = () => {
     onClose()
   }
 
+  const { isSm } = useBreakpoint('sm')
+
   return (
     <>
-      <App.Header appType={AppType.Academy} withScrollBackground>
+      <App.Header appType={AppType.Academy} maxWidth="6xl" withScrollBackground={isSm}>
         <nav className="hidden md:flex gap-14">
           {headerLinks.map(({ title, options }, i) => (
             <Select
@@ -98,7 +100,7 @@ export const Header: FC = () => {
                 {headerLinks.map(({ title, options }) => (
                   <div key={title}>
                     <button className="flex items-center gap-6" onClick={() => toggleSection(title)}>
-                      <TriangleIcon className={title === sectionOpen && 'rotate-90'} />
+                      <TriangleIcon className={classNames(title === sectionOpen && 'rotate-90')} />
                       <Typography variant="h3" weight={700} className="text-slate-50">
                         {title}
                       </Typography>

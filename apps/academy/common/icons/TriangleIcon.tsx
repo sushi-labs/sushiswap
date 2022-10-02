@@ -1,3 +1,5 @@
+import { FC } from 'react'
+
 export const TriangleIcon: FC<React.ComponentProps<'svg'>> = ({ ...props }) => {
   return (
     <svg width="4" height="8" viewBox="0 0 4 8" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
