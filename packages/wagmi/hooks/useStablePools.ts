@@ -1,13 +1,14 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/exchange'
+import { JSBI } from '@sushiswap/math'
 import stablePoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/stable/StablePool.sol/StablePool.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
 
 import { getStablePoolFactoryContract, useStablePoolFactoryContract } from './useStablePoolFactoryContract'
 
-export enum PoolState {
+export enum StablePoolState {
   LOADING,
   NOT_EXISTS,
   EXISTS,
@@ -16,16 +17,21 @@ export enum PoolState {
 
 const POOL_INTERFACE = new Interface(stablePoolArtifact.abi)
 
-type PoolInput = [Type | undefined, Type | undefined, Fee, boolean]
+interface Rebase {
+  base: JSBI
+  elastic: JSBI
+}
 
-export function useStablePools(chainId: number, pools: PoolInput[]): [PoolState, StablePool | null][] {
+type PoolInput = [Type | undefined, Type | undefined, Fee, boolean, Rebase, Rebase]
+
+export function useStablePools(chainId: number, pools: PoolInput[]): [StablePoolState, StablePool | null][] {
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
 
   const input = useMemo(
     () =>
       pools
-        .filter((input): input is [Type, Type, Fee, boolean] => {
-          const [currencyA, currencyB, fee, twap] = input
+        .filter((input): input is [Type, Type, Fee, boolean, Rebase, Rebase] => {
+          const [currencyA, currencyB, fee, twap, total0, total1] = input
           return Boolean(
             currencyA &&
               currencyB &&
@@ -33,14 +39,18 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [PoolState,
               twap !== undefined &&
               currencyA.chainId === currencyB.chainId &&
               !currencyA.wrapped.equals(currencyB.wrapped) &&
-              stablePoolFactory?.address
+              stablePoolFactory?.address &&
+              total0 &&
+              total1
           )
         })
-        .map<[Token, Token, Fee, boolean]>(([currencyA, currencyB, fee, twap]) => [
+        .map<[Token, Token, Fee, boolean, Rebase, Rebase]>(([currencyA, currencyB, fee, twap, total0, total1]) => [
           currencyA.wrapped,
           currencyB.wrapped,
           fee,
           twap,
+          total0,
+          total1,
         ]),
     [stablePoolFactory?.address, pools]
   )
@@ -74,24 +84,29 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [PoolState,
   })
 
   return useMemo(() => {
-    if (poolsAddresses.length === 0) return [[PoolState.INVALID, null]]
-    if (!data) return poolsAddresses.map(() => [PoolState.LOADING, null])
+    if (poolsAddresses.length === 0) return [[StablePoolState.INVALID, null]]
+    if (!data) return poolsAddresses.map(() => [StablePoolState.LOADING, null])
     return data.map((result, i) => {
       const tokenA = pools[i][0]?.wrapped
       const tokenB = pools[i][1]?.wrapped
       const fee = pools[i]?.[2]
+      const twap = pools[i]?.[3]
+      const total0 = pools[i]?.[4]
+      const total1 = pools[i]?.[5]
 
-      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PoolState.INVALID, null]
-      if (!result) return [PoolState.NOT_EXISTS, null]
+      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [StablePoolState.INVALID, null]
+      if (!result) return [StablePoolState.NOT_EXISTS, null]
       const [reserve0, reserve1] = result
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
 
       return [
-        PoolState.EXISTS,
+        StablePoolState.EXISTS,
         new StablePool(
           Amount.fromRawAmount(token0, reserve0.toString()),
           Amount.fromRawAmount(token1, reserve1.toString()),
-          fee
+          fee,
+          total0,
+          total1
         ),
       ]
     })
@@ -103,8 +118,14 @@ export function useStablePool(
   tokenA: Type | undefined,
   tokenB: Type | undefined,
   fee: Fee,
-  twap: boolean
-): [PoolState, StablePool | null] {
-  const inputs: [PoolInput] = useMemo(() => [[tokenA, tokenB, Number(fee), Boolean(twap)]], [tokenA, tokenB, fee, twap])
+  twap: boolean,
+  // TODO: Change this, just to satify TS for now
+  total0: Rebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
+  total1: Rebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
+): [StablePoolState, StablePool | null] {
+  const inputs: [PoolInput] = useMemo(
+    () => [[tokenA, tokenB, Number(fee), Boolean(twap), total0, total1]],
+    [tokenA, tokenB, fee, twap, total0, total1]
+  )
   return useStablePools(chainId, inputs)[0]
 }

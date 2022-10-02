@@ -9,8 +9,9 @@ import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
+  ConstantProductPoolState,
   getTridentRouterContractConfig,
-  PoolState,
+  StablePoolState,
   useBentoBoxTotals,
   useTotalSupply,
   useTridentRouterContract,
@@ -24,7 +25,7 @@ import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
-  poolState: PoolState
+  poolState: ConstantProductPoolState | StablePoolState
   pool: ConstantProductPool | StablePool | null
   chainId: ChainId
   token0: Type | undefined
@@ -80,12 +81,12 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
-        ? poolState === PoolState.NOT_EXISTS
+        ? poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS
           ? input0
           : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
         : undefined,
       input1
-        ? poolState === PoolState.NOT_EXISTS
+        ? poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS
           ? input1
           : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
         : undefined,
@@ -94,7 +95,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
   const noLiquidity = useMemo(() => {
     return (
-      poolState === PoolState.NOT_EXISTS ||
+      poolState === ConstantProductPoolState.NOT_EXISTS ||
+      poolState === StablePoolState.NOT_EXISTS ||
       Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
       Boolean(pool && JSBI.equal(pool.reserve0.quotient, ZERO) && JSBI.equal(pool.reserve1.quotient, ZERO))
     )

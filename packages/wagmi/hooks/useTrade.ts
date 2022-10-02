@@ -17,7 +17,7 @@ import { useFeeData } from 'wagmi'
 
 import { useBentoBoxTotals } from './useBentoBoxTotals'
 import { getConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
-import { PoolState, useGetAllConstantProductPools } from './useConstantProductPools'
+import { ConstantProductPoolState, useGetAllConstantProductPools } from './useConstantProductPools'
 import { PairState, usePairs } from './usePairs'
 
 type UseTradePayload = {
@@ -99,9 +99,9 @@ export const useTrade: UseTrade = ({
         pools
           // filter out invalid pools
           .filter(
-            (result): result is [PairState.EXISTS, Pair] | [PoolState.EXISTS, ConstantProductPool] =>
+            (result): result is [PairState.EXISTS, Pair] | [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
               Boolean(result[0] === PairState.EXISTS && result[1]) ||
-              Boolean(result[0] === PoolState.EXISTS && result[1])
+              Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
           )
           .map(([, pair]) => pair)
       ),

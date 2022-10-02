@@ -9,8 +9,9 @@ import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   Checker,
+  ConstantProductPoolState,
   getTridentRouterContractConfig,
-  PoolState,
+  StablePoolState,
   useBentoBoxTotals,
   useConstantProductPool,
   useStablePool,
@@ -254,7 +255,15 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
         >
           <Checker.Connected>
             <Checker.Custom
-              showGuardIfTrue={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+              showGuardIfTrue={
+                isMounted &&
+                [
+                  ConstantProductPoolState.NOT_EXISTS,
+                  ConstantProductPoolState.INVALID,
+                  StablePoolState.NOT_EXISTS,
+                  StablePoolState.INVALID,
+                ].includes(poolState)
+              }
               guard={
                 <Button size="md" fullWidth disabled={true}>
                   Pool Not Found

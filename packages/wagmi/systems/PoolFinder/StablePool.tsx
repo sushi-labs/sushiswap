@@ -14,7 +14,6 @@ export const StablePool: FC<TridentPoolFinderProps> = ({
   twap = false,
 }) => {
   const state = useStablePool(chainId, token0, token1, fee, twap)
-  console.log('im stable pool finder', state)
   useEffect(() => {
     if (!dispatch || index === undefined) return
 

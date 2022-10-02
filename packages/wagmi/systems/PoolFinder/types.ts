@@ -1,9 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
-import { ConstantProductPool, Fee, Pair } from '@sushiswap/exchange'
+import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/exchange'
 import { ReactElement } from 'react'
 
-import { PairState, PoolState } from '../../hooks'
+import { ConstantProductPoolState, PairState, StablePoolState } from '../../hooks'
 
 export type ComponentsWrapperProps<T> = {
   children:
@@ -27,7 +27,10 @@ export interface TridentPoolFinderProps extends LegacyPoolFinderProps {
   twap?: boolean
 }
 
-export type PoolStateUnion = [PoolState | PairState, Pair | ConstantProductPool | StablePool | null]
+export type PoolStateUnion = [
+  ConstantProductPoolState | PairState | StablePoolState,
+  Pair | ConstantProductPool | StablePool | null
+]
 
 export enum PoolFinderType {
   Classic,

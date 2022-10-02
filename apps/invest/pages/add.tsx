@@ -5,7 +5,15 @@ import { ConstantProductPool, Pair, StablePool } from '@sushiswap/exchange'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Checker, PairState, PoolFinder, PoolFinderType, PoolState, Web3Input } from '@sushiswap/wagmi'
+import {
+  Checker,
+  ConstantProductPoolState,
+  PairState,
+  PoolFinder,
+  PoolFinderType,
+  StablePoolState,
+  Web3Input,
+} from '@sushiswap/wagmi'
 import {
   AddSectionMyPosition,
   AddSectionReviewModalLegacy,
@@ -95,11 +103,13 @@ const Add = () => {
               const title =
                 !token0 || !token1 ? (
                   'Select Tokens'
-                ) : [PairState.LOADING, PoolState.LOADING].includes(poolState) ? (
+                ) : [PairState.LOADING, ConstantProductPoolState.LOADING, StablePoolState.LOADING].includes(
+                    poolState
+                  ) ? (
                   <div className="h-[20px] flex items-center justify-center">
                     <Loader width={14} />
                   </div>
-                ) : [PairState.EXISTS, PoolState.EXISTS].includes(poolState) ? (
+                ) : [PairState.EXISTS, ConstantProductPoolState.EXISTS, StablePoolState.EXISTS].includes(poolState) ? (
                   'Add Liquidity'
                 ) : (
                   'Create Pool'
@@ -137,7 +147,7 @@ interface AddProps {
   fee: number
   setFee(fee: number): void
   pool: Pair | ConstantProductPool | StablePool | null
-  poolState: PoolState | PairState
+  poolState: PairState | ConstantProductPoolState | StablePoolState
   tridentPoolIfCreate: boolean
   title: ReactNode
   token0: Type | undefined
@@ -181,8 +191,19 @@ const _Add: FC<AddProps> = ({
 
   const onChangeToken0TypedAmount = useCallback(
     (value) => {
-      console.log('typed0 value', value, [poolState === PoolState.NOT_EXISTS, token0, poolState, pool])
-      if (poolState === PoolState.NOT_EXISTS) {
+      console.log('typed0 value', value, [
+        poolState === PairState.NOT_EXISTS ||
+          poolState === ConstantProductPoolState.NOT_EXISTS ||
+          poolState === StablePoolState.NOT_EXISTS,
+        token0,
+        poolState,
+        pool,
+      ])
+      if (
+        poolState === PairState.NOT_EXISTS ||
+        poolState === ConstantProductPoolState.NOT_EXISTS ||
+        poolState === StablePoolState.NOT_EXISTS
+      ) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
@@ -201,7 +222,11 @@ const _Add: FC<AddProps> = ({
   const onChangeToken1TypedAmount = useCallback(
     (value) => {
       console.log('typed1 value', value)
-      if (poolState === PoolState.NOT_EXISTS) {
+      if (
+        poolState === PairState.NOT_EXISTS ||
+        poolState === ConstantProductPoolState.NOT_EXISTS ||
+        poolState === StablePoolState.NOT_EXISTS
+      ) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
@@ -275,7 +300,11 @@ const _Add: FC<AddProps> = ({
                 onRemoveToken={removeCustomToken}
                 chainId={chainId}
                 tokenMap={tokenMap}
-                loading={poolState === PoolState.LOADING}
+                loading={
+                  poolState === PairState.LOADING ||
+                  poolState === ConstantProductPoolState.LOADING ||
+                  poolState === StablePoolState.LOADING
+                }
               />
               <div className="p-3">
                 <Checker.Connected fullWidth size="md">
@@ -290,8 +319,9 @@ const _Add: FC<AddProps> = ({
                       {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
                         <AddSectionReviewModalTrident
                           poolAddress={pool.liquidityToken.address}
-                          poolState={poolState as PoolState}
-                          pool={pool}
+                          // TODO: Shouldnt need to case if this is done right
+                          poolState={poolState as ConstantProductPoolState | StablePoolState}
+                          pool={pool as ConstantProductPool | StablePool}
                           chainId={chainId}
                           token0={token0}
                           token1={token1}

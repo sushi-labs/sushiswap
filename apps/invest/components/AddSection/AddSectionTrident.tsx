@@ -2,7 +2,13 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
-import { Checker, PoolState, useConstantProductPool, useStablePool } from '@sushiswap/wagmi'
+import {
+  Checker,
+  ConstantProductPoolState,
+  StablePoolState,
+  useConstantProductPool,
+  useStablePool,
+} from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
@@ -34,7 +40,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
 
   const onChangeToken0TypedAmount = useCallback(
     (value) => {
-      if (poolState === PoolState.NOT_EXISTS) {
+      if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
@@ -52,7 +58,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
 
   const onChangeToken1TypedAmount = useCallback(
     (value) => {
-      if (poolState === PoolState.NOT_EXISTS) {
+      if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
@@ -93,7 +99,15 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
           >
             <Checker.Connected fullWidth size="md">
               <Checker.Custom
-                showGuardIfTrue={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+                showGuardIfTrue={
+                  isMounted &&
+                  [
+                    ConstantProductPoolState.NOT_EXISTS,
+                    ConstantProductPoolState.INVALID,
+                    StablePoolState.NOT_EXISTS,
+                    StablePoolState.INVALID,
+                  ].includes(poolState)
+                }
                 guard={
                   <Button size="md" fullWidth disabled={true}>
                     Pool Not Found
