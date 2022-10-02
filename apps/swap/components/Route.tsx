@@ -131,7 +131,7 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
               </div>
             </div>
           </div>
-          <div className="flex w-full gap-4">
+          <div className="flex flex-col w-full gap-4">
             {directPaths.map((directPath, i) => (
               <div key={i} className="flex flex-grow gap-4">
                 <div className="z-10 flex items-center justify-between flex-grow p-2 mx-auto text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap">
