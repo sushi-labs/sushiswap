@@ -50,7 +50,7 @@ export const Button = <C extends React.ElementType>({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { connectors, connect, pendingConnector } = useConnect()
 
-  const { pendingConnection, reconnecting, isConnected, connecting } = useWalletState()
+  const { pendingConnection, reconnecting, isConnected, connecting } = useWalletState(!!pendingConnector)
 
   useAutoConnect()
 
