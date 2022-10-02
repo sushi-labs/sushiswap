@@ -39,11 +39,11 @@ export function convertPoolOrPairtoRPool(pool: Pool | Pair): RPool {
       // JSBI.toNumber(pool.decimals0),
       // JSBI.toNumber(pool.decimals1),
 
-      // { elastic: BigNumber.from(pool.total0.elastic.toString()), base: BigNumber.from(pool.total0.base.toString()) },
-      // { elastic: BigNumber.from(pool.total1.elastic.toString()), base: BigNumber.from(pool.total1.base.toString()) }
+      { elastic: BigNumber.from(pool.total0.elastic.toString()), base: BigNumber.from(pool.total0.base.toString()) },
+      { elastic: BigNumber.from(pool.total1.elastic.toString()), base: BigNumber.from(pool.total1.base.toString()) }
 
-      { elastic: BigNumber.from(1), base: BigNumber.from(1) },
-      { elastic: BigNumber.from(1), base: BigNumber.from(1) }
+      // { elastic: BigNumber.from(1), base: BigNumber.from(1) },
+      // { elastic: BigNumber.from(1), base: BigNumber.from(1) }
     )
   } else {
     throw new Error('Unsupported type of pool !!!')

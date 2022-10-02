@@ -61,7 +61,9 @@ export function useTrade(
   const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
 
   // Legacy SushiSwap pairs
-  const { data: pairs } = usePairs(chainId, currencyCombinations)
+  const { data: pairs } = usePairs(chainId, currencyCombinations, {
+    enabled: Boolean(chainId && AMM_ENABLED_NETWORKS.includes(chainId)),
+  })
 
   // Trident constant product pools
   // const { data: constantProductPools } = useGetAllConstantProductPools(chainId, currencyCombinations)

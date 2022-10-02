@@ -96,6 +96,7 @@ export function useStablePools(
     })
     return pools
   }, [callStatePools, pairsUniqueProcessed])
+
   const poolsAddresses = useMemo(() => pools.map((p) => p.address), [pools])
 
   const resultsReserves = useMultipleContractSingleData(
@@ -113,10 +114,6 @@ export function useStablePools(
     'swapFee'
   )
 
-  resultsFee.forEach((r) => {
-    console.log('fee', r?.result?.toString())
-  })
-
   const totals = useBentoBoxTotals(chainId, tokensUnique)
 
   return useMemo(
@@ -131,7 +128,7 @@ export function useStablePools(
           new StablePool(
             Amount.fromRawAmount(p.token0, resultsReserves[i].result!._reserve0.toString()),
             Amount.fromRawAmount(p.token1, resultsReserves[i].result!._reserve1.toString()),
-            parseInt(resultsFee[i].result!.toString()),
+            parseInt(resultsFee[i].result![0].toString()),
             totals[p.token0.wrapped.address],
             totals[p.token1.wrapped.address]
           ),
