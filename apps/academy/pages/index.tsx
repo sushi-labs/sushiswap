@@ -142,6 +142,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             chipLabel="For Builders"
             title="Building on Sushi: Technical Documentation"
             color={technicalColor}
+            href="https://dev.sushi.com/"
           />
         </div>
 

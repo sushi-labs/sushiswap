@@ -47,7 +47,7 @@ const headerLinks: HeaderSection[] = [
     title: 'Blog',
     links: [
       { name: 'Sushi News', href: '' },
-      { name: 'Toshokan Community', href: '' },
+      { name: 'Toshokan Community News', href: '' },
     ],
   },
 ]

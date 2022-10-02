@@ -83,10 +83,11 @@ const Articles: FC = () => {
   const products = ['Bentobox', 'Furo', 'Kashi', 'etc']
 
   const sortOptions: SortBy[] = ['relevance', 'dateAsc', 'dateDesc', 'author']
+  const articlesAmount = articlesMeta?.pagination?.total ?? 0
 
   return (
     <>
-      <SearchInput isTopOfPage hideTopics className="w-full sm:hidden" />
+      <SearchInput isTopOfPage hideTopics className="w-full sm:hidden" handleSearch={setQuery} />
       <ArticlesPagesHeader
         title="Tutorials & Explainers"
         difficulties={difficulties}
@@ -174,9 +175,7 @@ const Articles: FC = () => {
             ) : (
               <>
                 <div className="flex items-center justify-between">
-                  {articlesMeta?.pagination?.total > 0 && (
-                    <Typography weight={500}>{articlesMeta.pagination.total} Results</Typography>
-                  )}
+                  <Typography weight={500}>{articlesAmount} Results</Typography>
 
                   <Select
                     className="hidden sm:flex"
