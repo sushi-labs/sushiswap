@@ -1,5 +1,6 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { classNames, IconButton, useBreakpoint } from '@sushiswap/ui'
+import { useRouter } from 'next/router'
 import { ChangeEvent, FormEvent, forwardRef, MutableRefObject, useEffect, useState } from 'react'
 
 interface SearchInput {
@@ -15,8 +16,10 @@ export const SearchInput = forwardRef(
     const { isSm } = useBreakpoint('sm')
     const appHeaderHeight = 54
     const isMobileStickySearchBar = !isSm && isSticky
-    const topicSearches = ['SushiXSwap Multichain', 'Trident AMMs', 'Shoyu NFT Marketplace', 'Metaverse', 'Blockchain']
+    const topicSearches = ['Miso', 'Sushi 2.0', 'Head chef', 'Kava', 'Paris']
     const [input, setInput] = useState('')
+    const router = useRouter()
+    const isArticlesPage = router.pathname === '/articles'
 
     useEffect(() => {
       const cachedRef = ref?.current
@@ -37,7 +40,7 @@ export const SearchInput = forwardRef(
     }
 
     const onSearch = (value: string) => {
-      handleSearch(value)
+      isArticlesPage ? handleSearch(value) : router.push('/articles?search=' + value)
     }
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
