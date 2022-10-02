@@ -52,6 +52,7 @@ const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Globa
 }
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
+  const [query, setQuery] = useState<string>()
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>()
   const heroRef = useRef<HTMLDivElement>(null)
@@ -64,12 +65,13 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
   const { data: difficultiesData } = useSWR<CategoryEntityResponseCollection>('/difficulties')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selectedCategory, selectedDifficulty],
-    async (_url, categoryFilter, difficultyFilter) => {
+    [`/articles`, selectedCategory, selectedDifficulty, query],
+    async (_url, categoryFilter, difficultyFilter, query) => {
       return (
         await getArticles({
           pagination: { limit: 5 },
           filters: {
+            ...(query && { title: { containsi: query } }),
             ...((categoryFilter || difficultyFilter) && {
               categories: {
                 id: {
@@ -94,7 +96,11 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
     { id: '8', attributes: { name: 'Technical' } },
   ]
   const articleList =
-    (selectedCategory || selectedDifficulty) && filterData?.data ? filterData?.data : articles ? articles : undefined
+    (selectedCategory || selectedDifficulty || query) && filterData?.data
+      ? filterData?.data
+      : articles
+      ? articles
+      : undefined
   const latestReleases = articles?.slice(0, 3)
   const [beginnerColor, advancedColor, technicalColor] = difficultyColors
   /**
@@ -113,7 +119,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <div ref={heroRef}>
           <Hero />
         </div>
-        <SearchInput ref={heroRef} />
+        <SearchInput handleSearch={setQuery} ref={heroRef} />
 
         <div className="flex min-w-full gap-5 px-6 py-6 mt-8 overflow-x-auto sm:mt-24 sm:gap-6 sm:px-4">
           <DifficultyCard

@@ -1,20 +1,22 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { classNames, IconButton, useBreakpoint } from '@sushiswap/ui'
-import { forwardRef, MutableRefObject, useEffect, useState } from 'react'
+import { ChangeEvent, FormEvent, forwardRef, MutableRefObject, useEffect, useState } from 'react'
 
 interface SearchInput {
+  handleSearch: (value: string) => void
   isTopOfPage?: boolean
   hideTopics?: boolean
   className?: string
 }
 
 export const SearchInput = forwardRef(
-  ({ isTopOfPage, hideTopics, className }: SearchInput, ref: MutableRefObject<HTMLDivElement>) => {
+  ({ handleSearch, isTopOfPage, hideTopics, className }: SearchInput, ref: MutableRefObject<HTMLDivElement>) => {
     const [isSticky, setIsSticky] = useState(isTopOfPage)
     const { isSm } = useBreakpoint('sm')
     const appHeaderHeight = 54
     const isMobileStickySearchBar = !isSm && isSticky
     const topicSearches = ['SushiXSwap Multichain', 'Trident AMMs', 'Shoyu NFT Marketplace', 'Metaverse', 'Blockchain']
+    const [input, setInput] = useState('')
 
     useEffect(() => {
       const cachedRef = ref?.current
@@ -30,6 +32,24 @@ export const SearchInput = forwardRef(
       }
     }, [ref])
 
+    const onInputchange = (e: ChangeEvent<HTMLInputElement>) => {
+      setInput(e.target.value)
+    }
+
+    const onSearch = (value: string) => {
+      handleSearch(value)
+    }
+
+    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      onSearch(input)
+    }
+
+    const onTopicClick = (topic: string) => {
+      setInput(topic)
+      onSearch(topic)
+    }
+
     return (
       <>
         <div
@@ -39,14 +59,17 @@ export const SearchInput = forwardRef(
             isMobileStickySearchBar && 'bg-slate-900 border-b border-slate-800'
           )}
         >
-          <div
+          <form
+            onSubmit={onSubmit}
             className={classNames(
               'flex max-w-[870px] w-full mx-auto h-full rounded-full pr-1.5 py-1.5 items-center transition ease-in-out duration-300',
               isMobileStickySearchBar ? 'bg-slate-900' : 'bg-slate-800 pl-6'
             )}
           >
-            <input // TODO: implement query
+            <input
               placeholder="Search for the Product/Topic you want to learn"
+              onChange={onInputchange}
+              value={input}
               className={classNames(
                 'w-full text-sm truncate bg-transparent sm:text-lg outline-0',
                 isMobileStickySearchBar
@@ -55,6 +78,7 @@ export const SearchInput = forwardRef(
               )}
             />
             <IconButton
+              type="submit"
               className={classNames(
                 'sm:bg-[#3B7EF6] rounded-full',
                 isMobileStickySearchBar ? 'sm:order-2 order-1' : 'order-2 ml-2 p-2.5 sm:p-[14px]'
@@ -64,17 +88,21 @@ export const SearchInput = forwardRef(
                 className={isMobileStickySearchBar ? 'w-5 h-5 fill-slate-500' : 'w-6 h-6 fill-[#3B7EF6] sm:fill-white'}
               />
             </IconButton>
-          </div>
+          </form>
         </div>
         {!hideTopics && (
           <div className="mt-4 text-center">
             <span className="block text-xs sm:text-sm text-slate-400 sm:inline">Try:</span>
             <div className="mt-2 ml-2 sm:ml-0 sm:mt-0 sm:inline">
               {topicSearches.map((topic, i, a) => (
-                <span className="ml-2 text-xs font-medium sm:text-sm" key={topic}>
+                <button
+                  className="ml-2 text-xs font-medium sm:text-sm hover:underline"
+                  key={topic}
+                  onClick={() => onTopicClick(topic)}
+                >
                   {topic}
                   {i === a.length - 1 ? '' : ','}
-                </span>
+                </button>
               ))}
             </div>
           </div>
