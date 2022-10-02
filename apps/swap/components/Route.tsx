@@ -51,6 +51,7 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
       leg.tokenTo.address !== trade.outputAmount.currency.wrapped.address
   )
 
+  // TODO: Seperate into groups of tokenFrom
   const percentPaths = trade.route.legs.filter(
     (leg) =>
       leg.tokenFrom.address !== trade.inputAmount.currency.wrapped.address &&
@@ -84,6 +85,10 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                     {Number(initialPath.absolutePortion * 100).toFixed(2)}%
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
+                      {initialPath.poolType}
+                    </Typography>
+                    <DotsHorizontalIcon width={12} className="text-slate-600" />
+                    <Typography variant="xs" weight={500}>
                       {initialPath.tokenFrom.symbol}/{initialPath.tokenTo.symbol}
                       <br />
                       {initialPath.poolFee * 100}%
@@ -104,6 +109,10 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                     {Number(percentagePath.absolutePortion * 100).toFixed(2)}%
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
+                      {percentagePath.poolType}
+                    </Typography>
+                    <DotsHorizontalIcon width={12} className="text-slate-600" />
+                    <Typography variant="xs" weight={500}>
                       {percentagePath.tokenFrom.symbol}/{percentagePath.tokenTo.symbol}
                       <br />
                       {percentagePath.poolFee * 100}%
@@ -118,6 +127,10 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                     className="z-10 grid items-center justify-between grid-flow-col gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl"
                   >
                     {Number(finalPath.absolutePortion * 100).toFixed(2)}%
+                    <DotsHorizontalIcon width={12} className="text-slate-600" />
+                    <Typography variant="xs" weight={500}>
+                      {finalPath.poolType}
+                    </Typography>
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
                       {finalPath.tokenFrom.symbol}/{finalPath.tokenTo.symbol}
@@ -137,6 +150,10 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
             <div key={i} className="flex gap-4">
               <div className="z-10 flex items-center justify-between flex-grow p-2 mx-auto text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl">
                 {Number(directPath.absolutePortion * 100).toFixed(2)}%
+                <DotsHorizontalIcon width={12} className="text-slate-600" />
+                <Typography variant="xs" weight={500}>
+                  {directPath.poolType}
+                </Typography>
                 <DotsHorizontalIcon width={12} className="text-slate-600" />
                 <Typography variant="xs" weight={500}>
                   {directPath.tokenFrom.symbol}/{directPath.tokenTo.symbol}

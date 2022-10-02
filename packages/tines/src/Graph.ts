@@ -1,10 +1,12 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { RPool, RToken, setTokenId } from './PrimaryPools'
+import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
+import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
 // Routing info about each one swap
 export interface RouteLeg {
+  poolType: 'Stable' | 'Classic' | 'Unknown'
   poolAddress: string // which pool use for swap
   poolFee: number
 
@@ -1055,8 +1057,17 @@ export class Graph {
         const p = e[2] as number
         const quantity = i + 1 === outEdges.length ? 1 : p / outAmount
         const edge = e[0] as Edge
+
+        const poolType =
+          edge.pool instanceof StableSwapRPool
+            ? 'Stable'
+            : edge.pool instanceof ConstantProductRPool
+            ? 'Classic'
+            : 'Unknown'
+
         legs.push({
           poolAddress: edge.pool.address,
+          poolType,
           poolFee: edge.pool.fee,
           tokenFrom: n.token,
           tokenTo: (n.getNeibour(edge) as Vertice).token,
