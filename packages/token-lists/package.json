@@ -2,10 +2,10 @@
   "name": "@sushiswap/token-lists",
   "version": "0.0.0",
   "private": true,
-  "description": "Sushi Stargate",
+  "description": "Sushi Token Lists",
   "keywords": [
     "sushi",
-    "stargate"
+    "token list"
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",

@@ -62,6 +62,10 @@ export enum Type {
   Shard = 'shard',
 }
 
+// TODO: some weirdness with enum in ts, maybe use object
+// const ChainId: {[k: string]: string | number} = {
+//   POLYGON: 137
+// }
 export enum ChainId {
   ETHEREUM = 1,
   ROPSTEN = 3,

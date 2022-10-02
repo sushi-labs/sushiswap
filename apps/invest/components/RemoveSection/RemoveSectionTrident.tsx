@@ -13,6 +13,7 @@ import {
   PoolState,
   useBentoBoxTotals,
   useConstantProductPool,
+  useStablePool,
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
@@ -61,7 +62,19 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     return balance?.[FundSource.WALLET].multiply(percentToRemove)
   }, [balance, percentToRemove])
 
-  const [poolState, pool] = useConstantProductPool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+    pair.chainId,
+    token0,
+    token1,
+    pair.swapFee,
+    pair.twapEnabled
+  )
+  const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+
+  const [poolState, pool] = useMemo(() => {
+    if (constantProductPool) return [constantProductPoolState, constantProductPool]
+    return [stablePoolState, stablePool]
+  }, [constantProductPool, constantProductPoolState, stablePool, stablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 

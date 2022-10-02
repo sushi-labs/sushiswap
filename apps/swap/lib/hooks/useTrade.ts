@@ -6,18 +6,20 @@ import {
   findMultiRouteExactIn,
   findSingleRouteExactIn,
   Pair,
+  StablePool,
   Trade,
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/exchange'
 import { RouteStatus } from '@sushiswap/tines'
-import { PairState, PoolState, useBentoBoxTotal, usePairs } from '@sushiswap/wagmi'
-import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS } from 'config'
+import { PairState, useBentoBoxTotal, usePairs } from '@sushiswap/wagmi'
+import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from 'config'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
 
-import { useConstantProductPools } from './useConstantProductPools'
+import { ConstantProductPoolState, useConstantProductPools } from './useConstantProductPools'
+import { StablePoolState, useStablePools } from './useStablePools'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
@@ -60,9 +62,13 @@ export function useTrade(
   // Trident constant product pools
   // const { data: constantProductPools } = useGetAllConstantProductPools(chainId, currencyCombinations)
   const constantProductPools = useConstantProductPools(chainId, currencyCombinations)
+  const stablePools = useStablePools(chainId, currencyCombinations)
 
   // Combined legacy and trident pools
-  const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])
+  const pools = useMemo(
+    () => [...pairs, ...constantProductPools, ...stablePools],
+    [pairs, constantProductPools, stablePools]
+  )
 
   // Filter legacy and trident pools by existance
   const filteredPools = useMemo(
@@ -71,9 +77,15 @@ export function useTrade(
         pools
           // filter out invalid pools
           .filter(
-            (result): result is [PairState.EXISTS, Pair] | [PoolState.EXISTS, ConstantProductPool] =>
+            (
+              result
+            ): result is
+              | [PairState.EXISTS, Pair]
+              | [ConstantProductPoolState.EXISTS, ConstantProductPool]
+              | [StablePoolState.EXISTS, StablePool] =>
               Boolean(result[0] === PairState.EXISTS && result[1]) ||
-              Boolean(result[0] === PoolState.EXISTS && result[1])
+              Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1]) ||
+              Boolean(result[0] === StablePoolState.EXISTS && result[1])
           )
           .map(([, pair]) => pair)
       ),
@@ -121,7 +133,10 @@ export function useTrade(
       filteredPools.length > 0
     ) {
       if (tradeType === TradeType.EXACT_INPUT) {
-        if (chainId in FACTORY_ADDRESS && chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS) {
+        if (
+          chainId in FACTORY_ADDRESS &&
+          (chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS || chainId in STABLE_POOL_FACTORY_ADDRESS)
+        ) {
           const legacyRoute = findSingleRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
@@ -146,7 +161,10 @@ export function useTrade(
             currencyIn.wrapped,
             currencyOut.wrapped,
             BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-            filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
+            [
+              ...filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
+              ...filteredPools.filter((pool): pool is StablePool => pool instanceof StablePool),
+            ],
             WNATIVE[amountSpecified.currency.chainId],
             feeData.gasPrice.toNumber()
           )
@@ -169,7 +187,7 @@ export function useTrade(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.quotient.toString()),
-          filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof Pair),
+          filteredPools.filter((pool): pool is Pair => pool instanceof Pair),
           WNATIVE[amountSpecified.currency.chainId],
           feeData.gasPrice.toNumber()
         )
@@ -186,12 +204,15 @@ export function useTrade(
           currencyIn.wrapped,
           currencyOut.wrapped,
           BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
-          filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
+          [
+            ...filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
+            ...filteredPools.filter((pool): pool is StablePool => pool instanceof StablePool),
+          ],
           WNATIVE[amountSpecified.currency.chainId],
           feeData.gasPrice.toNumber()
         )
         if (tridentRoute.status === RouteStatus.Success) {
-          // console.debug('Found trident route', tridentRoute)
+          console.debug('Found trident route', tridentRoute)
           return Trade.exactIn(
             tridentRoute,
             amountSpecified,

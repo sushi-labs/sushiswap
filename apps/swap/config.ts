@@ -25,7 +25,8 @@ export const AMM_ENABLED_NETWORKS = [
 export const SUPPORTED_CHAIN_IDS = [...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]
 
 export const STABLE_POOL_FACTORY_ADDRESS: Record<number, string> = {
-  [ChainId.METIS]: '0x9B3fF703FA9C8B467F5886d7b61E61ba07a9b51c',
+  [ChainId.METIS]: '',
+  [ChainId.OPTIMISM]: '0xc79Ae87E9f55761c08e346B98dDdf070C9872787',
 }
 
 export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {

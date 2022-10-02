@@ -18,6 +18,8 @@ export class StablePool implements Pool {
   public readonly swapGasCost = JSBI.BigInt(60000)
   public readonly minLiquidity = JSBI.BigInt(1000)
   public readonly fee: Fee
+  public readonly total0: Rebase
+  public readonly total1: Rebase
   private readonly tokenAmounts: [Amount<Token>, Amount<Token>]
   private readonly decimals0: JSBI
   private readonly decimals1: JSBI
@@ -32,7 +34,13 @@ export class StablePool implements Pool {
     })
   }
 
-  public constructor(amountA: Amount<Token>, amountB: Amount<Token>, fee: Fee = Fee.DEFAULT) {
+  public constructor(
+    amountA: Amount<Token>,
+    amountB: Amount<Token>,
+    fee: Fee = Fee.DEFAULT,
+    total0: Rebase,
+    total1: Rebase
+  ) {
     const tokenAmounts = amountA.currency.sortsBefore(amountB.currency) // does safety checks
       ? [amountA, amountB]
       : [amountB, amountA]
@@ -51,6 +59,9 @@ export class StablePool implements Pool {
 
     this.decimals0 = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.tokenAmounts[0].currency.decimals))
     this.decimals1 = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.tokenAmounts[1].currency.decimals))
+
+    this.total0 = total0
+    this.total1 = total1
   }
 
   /**
@@ -279,7 +290,16 @@ export class StablePool implements Pool {
       throw new InsufficientInputAmountError()
     }
 
-    return [outputAmount, new StablePool(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), this.fee)]
+    return [
+      outputAmount,
+      new StablePool(
+        inputReserve.add(inputAmount),
+        outputReserve.subtract(outputAmount),
+        this.fee,
+        this.total0,
+        this.total1
+      ),
+    ]
   }
 
   // public getInputAmount(outputAmount: Amount<Token>): [Amount<Token>, StablePool] {
