@@ -12,7 +12,7 @@ import { warningSeverity } from 'lib/functions'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 import { Layout, Route, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
@@ -72,6 +72,7 @@ const getDefaultToken1 = (chainId: number) => {
 
 function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { chain } = useNetwork()
+  const { address } = useAccount()
   const router = useRouter()
 
   const chainId = initialState.chainId ? Number(initialState.chainId) : chain ? chain.id : ChainId.ETHEREUM
@@ -104,10 +105,12 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   const inputToken =
     initialState.token0 && initialState.token0 in tokens ? tokens[initialState.token0] : Native.onChain(chainId)
 
-  const outputToken = useMemo(() => {
-    if (initialState.token1 && initialState.token1 in tokens) return tokens[initialState.token1]
-    return getDefaultToken1(chainId)
-  }, [chainId, initialState.token1, tokens])
+  const outputToken =
+    initialState.token1 && initialState.token1 in tokens ? tokens[initialState.token1] : Native.onChain(chainId)
+  // const outputToken = useMemo(() => {
+  //   if (initialState.token1 && initialState.token1 in tokens) return tokens[initialState.token1]
+  //   return getDefaultToken1(chainId)
+  // }, [chainId, initialState.token1, tokens])
 
   const [input0, setInput0] = useState<string>(initialState.input0)
   const [token0, setToken0] = useState<Type | undefined>(inputToken)
@@ -144,7 +147,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 
   useEffect(() => {
     setToken0(Native.onChain(chainId))
-    setToken1(getDefaultToken1(chainId))
+    setToken1(Native.onChain(chainId))
     setInput0('')
     setInput1('')
   }, [chainId])
@@ -182,6 +185,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 tokenMap={tokenMap}
                 inputType={TradeType.EXACT_INPUT}
                 tradeType={tradeType}
+                loading={!chain && !address}
               />
               <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
                 <button
@@ -209,6 +213,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                   tokenMap={tokenMap}
                   inputType={TradeType.EXACT_OUTPUT}
                   tradeType={tradeType}
+                  loading={!chain && !address}
                 />
                 <SwapStatsDisclosure />
                 <div className="p-3 pt-0">

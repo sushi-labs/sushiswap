@@ -84,7 +84,9 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                     {Number(initialPath.absolutePortion * 100).toFixed(2)}%
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
-                      {initialPath.tokenFrom.symbol}/{initialPath.tokenTo.symbol} {initialPath.poolFee * 100}%
+                      {initialPath.tokenFrom.symbol}/{initialPath.tokenTo.symbol}
+                      <br />
+                      {initialPath.poolFee * 100}%
                     </Typography>
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
@@ -102,7 +104,9 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                     {Number(percentagePath.absolutePortion * 100).toFixed(2)}%
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
-                      {percentagePath.tokenFrom.symbol}/{percentagePath.tokenTo.symbol} {percentagePath.poolFee * 100}%
+                      {percentagePath.tokenFrom.symbol}/{percentagePath.tokenTo.symbol}
+                      <br />
+                      {percentagePath.poolFee * 100}%
                     </Typography>
                   </div>
                 ))}
@@ -116,7 +120,9 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                     {Number(finalPath.absolutePortion * 100).toFixed(2)}%
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
-                      {finalPath.tokenFrom.symbol}/{finalPath.tokenTo.symbol} {finalPath.poolFee * 100}%
+                      {finalPath.tokenFrom.symbol}/{finalPath.tokenTo.symbol}
+                      <br />
+                      {finalPath.poolFee * 100}%
                     </Typography>
                     <DotsHorizontalIcon width={12} className="text-slate-600" />
                     <Typography variant="xs" weight={500}>
@@ -134,6 +140,7 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
                 <DotsHorizontalIcon width={12} className="text-slate-600" />
                 <Typography variant="xs" weight={500}>
                   {directPath.tokenFrom.symbol}/{directPath.tokenTo.symbol}
+                  <br />
                   {directPath.poolFee * 100}%
                 </Typography>
                 <DotsHorizontalIcon width={12} className="text-slate-600" />
