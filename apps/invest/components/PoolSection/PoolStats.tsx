@@ -28,10 +28,12 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
         <Typography weight={500} className="text-slate-50">
           {formatUSD(pair.liquidityNative * Number(nativePrice?.toFixed(4)))}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
-          {reserveChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(reserveChange))}%
-        </Typography>
+        {totals1d && totals2d && (
+          <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
+            {reserveChange > 0 ? '+' : '-'}
+            {formatNumber(Math.abs(reserveChange))}%
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -40,10 +42,12 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
         <Typography weight={500} className="text-slate-50">
           {formatUSD(totals1d?.volumeUSD)}
         </Typography>
-        <Typography variant="xs" weight={500} className={volChange > 0 ? 'text-green' : 'text-red'}>
-          {volChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(volChange))}%
-        </Typography>
+        {totals1d && totals2d && (
+          <Typography variant="xs" weight={500} className={volChange > 0 ? 'text-green' : 'text-red'}>
+            {volChange > 0 ? '+' : '-'}
+            {formatNumber(Math.abs(volChange))}%
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -52,10 +56,12 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
         <Typography weight={500} className="text-slate-50">
           {formatUSD(totals1d?.volumeUSD * (pair.swapFee / 10000))}
         </Typography>
-        <Typography variant="xs" weight={500} className={volChange > 0 ? 'text-green' : 'text-red'}>
-          {volChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(volChange))}%
-        </Typography>
+        {totals1d && totals2d && (
+          <Typography variant="xs" weight={500} className={volChange > 0 ? 'text-green' : 'text-red'}>
+            {volChange > 0 ? '+' : '-'}
+            {formatNumber(Math.abs(volChange))}%
+          </Typography>
+        )}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
@@ -64,10 +70,12 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
         <Typography weight={500} className="text-slate-50">
           {formatNumber(totals1d?.transactionCount)}
         </Typography>
-        <Typography variant="xs" weight={500} className={transactionCountChange > 0 ? 'text-green' : 'text-red'}>
-          {transactionCountChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(transactionCountChange))}%
-        </Typography>
+        {totals1d && totals2d && (
+          <Typography variant="xs" weight={500} className={transactionCountChange > 0 ? 'text-green' : 'text-red'}>
+            {transactionCountChange > 0 ? '+' : '-'}
+            {formatNumber(Math.abs(transactionCountChange))}%
+          </Typography>
+        )}
       </div>
     </div>
   )
