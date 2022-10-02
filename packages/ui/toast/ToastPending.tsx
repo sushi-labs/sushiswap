@@ -10,6 +10,7 @@ interface ToastPending extends NotificationData {
 }
 
 export const ToastPending: FC<ToastPending> = ({ chainId, txHash, onDismiss, summary }) => {
+  console.log({ chainId })
   return (
     <>
       <ToastContent

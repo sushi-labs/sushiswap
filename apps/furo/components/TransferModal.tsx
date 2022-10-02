@@ -1,16 +1,16 @@
 import { ContractInterface } from '@ethersproject/contracts'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
-import { Chain, ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { Button, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
-import { Stream } from 'lib'
+import { Stream, Vesting } from 'lib'
 import { FC, useCallback, useState } from 'react'
 import { useAccount, useDeprecatedContractWrite, useEnsAddress, useNetwork } from 'wagmi'
 
 interface TransferModalProps {
-  stream?: Stream
+  stream?: Stream | Vesting
   abi: ContractInterface
   address: string
   fn?: string
@@ -47,10 +47,13 @@ export const TransferModal: FC<TransferModalProps> = ({
 
     try {
       const data = await writeAsync({ args: [address, resolvedAddress, stream?.id] })
-
+      const ts = new Date().getTime()
       createToast({
+        type: 'transferStream',
         txHash: data.hash,
-        href: Chain.from(activeChain.id).getTxUrl(data.hash),
+        chainId: activeChain.id,
+        timestamp: ts,
+        groupTimestamp: ts,
         promise: data.wait(),
         summary: {
           pending: <Dots>Transferring stream</Dots>,
