@@ -160,9 +160,9 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   useEffect(() => {
     setToken0(inputToken)
     setToken1(outputToken)
-    setInput0('')
+    setInput0(initialState.input0)
     setInput1('')
-  }, [chainId, inputToken, outputToken])
+  }, [chainId, initialState.input0, inputToken, outputToken])
 
   const onSuccess = useCallback(() => {
     setInput0('')
