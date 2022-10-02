@@ -87,8 +87,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     [slippageTolerance]
   )
 
-  console.log({ sushiSwapRouter })
-
   const execute = useCallback(async () => {
     try {
       if (!trade || !account) return
