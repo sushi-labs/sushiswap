@@ -1,4 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency, useCurrencyCombinations, WNATIVE } from '@sushiswap/currency'
 import {
   ConstantProductPool,
@@ -34,7 +33,7 @@ export type UseTradeOutput =
  * @param otherCurrency the desired output/payment currency
  */
 export function useTrade(
-  chainId: ChainId,
+  chainId: number | undefined,
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
   amountSpecified?: Amount<Currency>,
   mainCurrency?: Currency,

@@ -6,13 +6,13 @@ import { FundSource, usePrevious } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Checker } from '@sushiswap/wagmi'
+import { Checker, useWalletState } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
 import { warningSeverity } from 'lib/functions'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useConnect, useNetwork } from 'wagmi'
 
 import { Layout, Route, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
@@ -72,10 +72,21 @@ const getDefaultToken1 = (chainId: number) => {
 
 function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { chain } = useNetwork()
-  const { address } = useAccount()
+
+  const connect = useConnect()
+  const { connecting, notConnected } = useWalletState(!!connect.pendingConnector)
   const router = useRouter()
 
-  const chainId = initialState.chainId ? Number(initialState.chainId) : chain ? chain.id : ChainId.ETHEREUM
+  const defaultChainId = ChainId.ETHEREUM
+  const activeChainId = chain ? chain.id : undefined
+  const queryChainId = router.query.chainId ? Number(router.query.chainId) : undefined
+  const chainId = queryChainId
+    ? queryChainId
+    : activeChainId
+    ? activeChainId
+    : !connecting && notConnected
+    ? defaultChainId
+    : undefined
 
   const previousChain = usePrevious(chain)
 
@@ -102,15 +113,16 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 
   const tokens = useTokens(chainId)
 
-  const inputToken =
-    initialState.token0 && initialState.token0 in tokens ? tokens[initialState.token0] : Native.onChain(chainId)
+  const inputToken = useMemo(() => {
+    if (!chainId) return
+    return initialState.token0 && initialState.token0 in tokens ? tokens[initialState.token0] : Native.onChain(chainId)
+  }, [chainId, initialState.token0, tokens])
 
-  const outputToken =
-    initialState.token1 && initialState.token1 in tokens ? tokens[initialState.token1] : Native.onChain(chainId)
-  // const outputToken = useMemo(() => {
-  //   if (initialState.token1 && initialState.token1 in tokens) return tokens[initialState.token1]
-  //   return getDefaultToken1(chainId)
-  // }, [chainId, initialState.token1, tokens])
+  const outputToken = useMemo(() => {
+    if (!chainId) return
+    if (initialState.token1 && initialState.token1 in tokens) return tokens[initialState.token1]
+    return getDefaultToken1(chainId)
+  }, [chainId, initialState.token1, tokens])
 
   const [input0, setInput0] = useState<string>(initialState.input0)
   const [token0, setToken0] = useState<Type | undefined>(inputToken)
@@ -146,16 +158,18 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   const amounts = useMemo(() => [parsedInput0], [parsedInput0])
 
   useEffect(() => {
-    setToken0(Native.onChain(chainId))
-    setToken1(Native.onChain(chainId))
+    setToken0(inputToken)
+    setToken1(outputToken)
     setInput0('')
     setInput1('')
-  }, [chainId])
+  }, [chainId, inputToken, outputToken])
 
   const onSuccess = useCallback(() => {
     setInput0('')
     setInput1('')
   }, [])
+
+  console.log({ chainId })
 
   return (
     <>
@@ -185,7 +199,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 tokenMap={tokenMap}
                 inputType={TradeType.EXACT_INPUT}
                 tradeType={tradeType}
-                loading={!chain && !address}
+                loading={!token0}
               />
               <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
                 <button
@@ -213,7 +227,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                   tokenMap={tokenMap}
                   inputType={TradeType.EXACT_OUTPUT}
                   tradeType={tradeType}
-                  loading={!chain && !address}
+                  loading={!token1}
                 />
                 <SwapStatsDisclosure />
                 <div className="p-3 pt-0">

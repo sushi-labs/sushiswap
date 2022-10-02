@@ -26,9 +26,9 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   disabled,
   loading = false,
 }) => {
-  const { trade, isLoading } = useTrade()
+  const { trade, isLoading: isLoadingTrade } = useTrade()
   const value = inputType === tradeType ? _value : trade ? trade?.outputAmount?.toExact() : ''
-  console.log('this then', [inputType !== tradeType, isLoading, loading])
+  console.log('this then', [inputType !== tradeType, isLoadingTrade, loading])
   return (
     <Web3Input.Currency
       className={className}
@@ -41,7 +41,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
       onRemoveToken={onRemoveToken}
       chainId={chainId}
       tokenMap={tokenMap}
-      loading={(inputType !== tradeType && value && !isLoading) || loading}
+      loading={loading}
       disabled={disabled}
     />
   )
