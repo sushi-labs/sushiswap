@@ -73,7 +73,7 @@ const Articles: FC = () => {
   const articleList = articles ?? undefined
 
   const articlesMeta = articlesData?.meta ? articlesData.meta : undefined
-  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const handleSelectDifficulty = (id: string) =>
     setSelectedDifficulty((currentDifficulty) => (currentDifficulty === id ? undefined : id))
   const handleSelectCategory = (id: string) =>
@@ -93,7 +93,7 @@ const Articles: FC = () => {
         selectedDifficulty={selectedDifficulty}
         handleSelectDifficulty={handleSelectDifficulty}
       />
-      <Container maxWidth="6xl" className={classNames('mx-auto', defaultSidePadding, isOpen && 'overflow-hidden')}>
+      <Container maxWidth="6xl" className={classNames('mx-auto pb-10', defaultSidePadding)}>
         <div className="grid grid-cols-2 w-full gap-3 sm:hidden mt-[22px]">
           <Select
             button={

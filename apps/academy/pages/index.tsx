@@ -7,7 +7,7 @@ import { DifficultyCard } from 'common/components/DifficultyCard'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
 import { AdvancedUserIcon, BeginnerUserIcon, TechnicalUserIcon } from 'common/icons'
 import { InferGetServerSidePropsType } from 'next'
-import { FC, useRef, useState } from 'react'
+import { FC, Fragment, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
@@ -145,7 +145,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               <span className="text-xl font-bold sm:text-2xl">Choose Topic</span>
               {/** TODO: implement */}
 
-              <Disclosure.Button>
+              <Disclosure.Button as={Fragment}>
                 <ViewAllButton isSmall />
               </Disclosure.Button>
             </div>
