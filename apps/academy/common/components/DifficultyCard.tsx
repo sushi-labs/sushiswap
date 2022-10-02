@@ -10,14 +10,17 @@ interface DifficultyCard {
   chipLabel: string
   title: string
   color: string
+  href?: string
 }
 
-export const DifficultyCard: FC<DifficultyCard> = ({ icon, chipLabel, title, name, color }) => {
+export const DifficultyCard: FC<DifficultyCard> = ({ icon, chipLabel, title, name, color, href }) => {
   const [hover, setHover] = useState(false)
 
   return (
     <a
-      href={`/academy/articles?difficulty=${name}`}
+      href={href ?? `/academy/articles?difficulty=${name}`}
+      target={href ? '_blank' : '_self'}
+      rel="noreferrer"
       className="flex-1 h-[405px] min-w-[306px] md:h-[460px] py-[50px] px-[30px] bg-slate-800 rounded-[30px] flex flex-col justify-between hover:ring-1 ring-slate-600 transition duration-300"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
