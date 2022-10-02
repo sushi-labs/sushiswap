@@ -180,6 +180,7 @@ query CrossChainUser($id: ID!, $where: LiquidityPosition_filter, $chainIds: [Int
         twapEnabled
         volume7d
         source
+        type
         token0 {
           name
           id
