@@ -8,6 +8,7 @@ import { CarbonOffsetOverlay } from './CarbonOffsetOverlay'
 import { CustomTokensOverlay } from './CustomTokensOverlay'
 import { ExpertMode } from './ExpertMode'
 import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
+import { SushiGuard } from './SushiGuard'
 
 interface SettingsOverlay {
   chainId: ChainId | undefined
@@ -45,6 +46,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
                 <SlippageToleranceDisclosure />
                 <CustomTokensOverlay />
                 <ExpertMode />
+                {chainId === ChainId.ETHEREUM && <SushiGuard />}
                 {chainId === ChainId.POLYGON && <CarbonOffsetOverlay />}
 
                 {/* <DustAmount /> */}

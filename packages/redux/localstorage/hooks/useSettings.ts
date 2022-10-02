@@ -15,6 +15,7 @@ type UseSettingsReturn = [
     updateGasPrice(gasPrice: GasPrice): void
     updateGasType(gasType: 'preset' | 'custom'): void
     updateExpertMode(expertMode: boolean): void
+    updateSushiGuard(sushiGuard: boolean): void
     updateTransactionDeadline(deadline: number): void
   }
 ]
@@ -36,6 +37,13 @@ export const useSettings: UseSettings = (context) => {
   const updateExpertMode = useCallback(
     (expertMode: boolean) => {
       dispatch(actions.updateExpertMode({ expertMode }))
+    },
+    [actions, dispatch]
+  )
+
+  const updateSushiGuard = useCallback(
+    (sushiGuard: boolean) => {
+      dispatch(actions.updateSushiGuard({ sushiGuard }))
     },
     [actions, dispatch]
   )
@@ -94,6 +102,7 @@ export const useSettings: UseSettings = (context) => {
     {
       updateCarbonOffset,
       updateExpertMode,
+      updateSushiGuard,
       updateSlippageTolerance,
       updateSlippageToleranceType,
       updateMaxFeePerGas,
