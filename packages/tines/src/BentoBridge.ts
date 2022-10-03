@@ -45,16 +45,24 @@ export class BentoBridge extends RPool {
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     let inp
     if (direction == true) {
-      if (this.base == 0) {
-        inp = amountOut
-      } else {
-        inp = (amountOut * this.elastic) / this.base
-      }
-    } else {
       if (this.elastic == 0) {
         inp = amountOut
       } else {
-        inp = (amountOut * this.base) / this.elastic
+        if (this.base == 0) {
+          inp = Number.POSITIVE_INFINITY
+        } else {
+          inp = (amountOut * this.elastic) / this.base
+        }
+      }
+    } else {
+      if (this.base == 0) {
+        inp = amountOut
+      } else {
+        if (this.elastic == 0) {
+          inp = Number.POSITIVE_INFINITY
+        } else {
+          inp = (amountOut * this.base) / this.elastic
+        }
       }
     }
     return { inp, gasSpent: this.swapGasCost }
