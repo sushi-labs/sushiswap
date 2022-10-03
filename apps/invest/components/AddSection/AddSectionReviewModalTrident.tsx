@@ -25,8 +25,8 @@ import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
-  poolState: ConstantProductPoolState | StablePoolState
-  pool: ConstantProductPool | StablePool | null
+  poolState: ConstantProductPoolState | StablePoolState | undefined
+  pool: ConstantProductPool | StablePool | null | undefined
   chainId: ChainId
   token0: Type | undefined
   token1: Type | undefined

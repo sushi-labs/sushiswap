@@ -102,6 +102,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
               <Checker.Custom
                 showGuardIfTrue={
                   isMounted &&
+                  !!poolState &&
                   [
                     ConstantProductPoolState.NOT_EXISTS,
                     ConstantProductPoolState.INVALID,

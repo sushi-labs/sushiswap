@@ -73,9 +73,11 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
 
   const [poolState, pool] = useMemo(() => {
-    if (constantProductPool) return [constantProductPoolState, constantProductPool]
-    return [stablePoolState, stablePool]
-  }, [constantProductPool, constantProductPoolState, stablePool, stablePoolState])
+    if (pair.type === 'STABLE_POOL') return [stablePoolState, stablePool]
+    if (pair.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+
+    return [undefined, undefined]
+  }, [constantProductPool, constantProductPoolState, pair.type, stablePool, stablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 
@@ -257,6 +259,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
             <Checker.Custom
               showGuardIfTrue={
                 isMounted &&
+                !!poolState &&
                 [
                   ConstantProductPoolState.NOT_EXISTS,
                   ConstantProductPoolState.INVALID,
