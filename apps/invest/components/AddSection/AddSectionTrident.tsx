@@ -30,9 +30,10 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
 
   const [poolState, pool] = useMemo(() => {
-    if (constantProductPool) return [constantProductPoolState, constantProductPool]
-    return [stablePoolState, stablePool]
-  }, [constantProductPool, constantProductPoolState, stablePool, stablePoolState])
+    if (pair.type === 'STABLE_POOL') return [stablePoolState, stablePool]
+    if (pair.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+    return [undefined, undefined]
+  }, [constantProductPool, constantProductPoolState, pair.type, stablePool, stablePoolState])
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
