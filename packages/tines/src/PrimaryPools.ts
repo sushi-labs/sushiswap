@@ -15,7 +15,7 @@ export interface RToken {
 
 export function setTokenId(...tokens: RToken[]) {
   tokens.forEach((t) => {
-    if (!t.tokenId) t.tokenId = `${t.address}_${t.chainId}_${t.name}`
+    if (!t.tokenId) t.tokenId = `${t.address}_${t.chainId}`
   })
 }
 
