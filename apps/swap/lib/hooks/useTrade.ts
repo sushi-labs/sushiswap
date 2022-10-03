@@ -98,6 +98,17 @@ export function useTrade(
     [pools]
   )
 
+  console.log(
+    filteredPools.reduce<string[]>((previousValue, currentValue) => {
+      previousValue.push(
+        `${currentValue.token0.wrapped.symbol}/${
+          currentValue.token1.wrapped.symbol
+        } ${currentValue.reserve0.quotient.toString()}/${currentValue.reserve1.quotient.toString()}`
+      )
+      return previousValue
+    }, [])
+  )
+
   const currencyInRebase = useBentoBoxTotal(chainId, currencyIn)
   const currencyOutRebase = useBentoBoxTotal(chainId, currencyOut)
 
@@ -201,7 +212,7 @@ export function useTrade(
           )
 
           if (legacyRoute.status === RouteStatus.Success) {
-            // console.debug('Found legacy route', legacyRoute)
+            console.debug('Found legacy route', legacyRoute)
             return Trade.exactIn(legacyRoute, amountSpecified, currencyOut, TradeVersion.V1)
           } else {
             // console.debug('No legacy route', legacyRoute)
@@ -211,6 +222,7 @@ export function useTrade(
         // TODO: Switch to shares
 
         if (TRIDENT_ENABLED_NETWORKS.includes(chainId) && currencyInRebase && currencyOutRebase) {
+          console.debug('Attemping to find trident route')
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
@@ -233,7 +245,7 @@ export function useTrade(
               currencyOutRebase
             )
           } else {
-            // console.debug('No trident route', tridentRoute)
+            console.debug('No trident route', tridentRoute)
           }
         }
 
