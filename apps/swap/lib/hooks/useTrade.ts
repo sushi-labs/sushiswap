@@ -98,16 +98,19 @@ export function useTrade(
     [pools]
   )
 
-  console.log(
-    filteredPools.reduce<string[]>((previousValue, currentValue) => {
-      previousValue.push(
-        `${currentValue.token0.wrapped.symbol}/${
-          currentValue.token1.wrapped.symbol
-        } ${currentValue.reserve0.quotient.toString()}/${currentValue.reserve1.quotient.toString()}`
-      )
-      return previousValue
-    }, [])
-  )
+  // console.log(
+  //   filteredPools.reduce<any[]>((previousValue, currentValue) => {
+  //     if (currentValue.token0.wrapped.address === '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1') {
+  //       delete currentValue.token0['list']
+  //       previousValue.push(currentValue)
+  //     }
+  //     if (currentValue.token1.wrapped.address === '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1') {
+  //       delete currentValue.token1['list']
+  //       previousValue.push(currentValue.token1)
+  //     }
+  //     return previousValue
+  //   }, [])
+  // )
 
   const currencyInRebase = useBentoBoxTotal(chainId, currencyIn)
   const currencyOutRebase = useBentoBoxTotal(chainId, currencyOut)
