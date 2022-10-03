@@ -111,12 +111,12 @@ export function useConstantProductPools(
         if (!resultsReserves[i].valid || !resultsReserves[i].result) return [ConstantProductPoolState.LOADING, null]
         if (!resultsFee[i].valid || !resultsFee[i].result) return [ConstantProductPoolState.LOADING, null]
 
-        console.log([
-          Amount.fromRawAmount(p.token0, resultsReserves[i].result!._reserve0.toString()).quotient.toString(),
-          Amount.fromRawAmount(p.token1, resultsReserves[i].result!._reserve1.toString()).quotient.toString(),
-          parseInt(resultsFee[i].result![0].toString()),
-          resultsReserves[i].result!._blockTimestampLast !== 0,
-        ])
+        // console.log([
+        //   Amount.fromRawAmount(p.token0, resultsReserves[i].result!._reserve0.toString()).quotient.toString(),
+        //   Amount.fromRawAmount(p.token1, resultsReserves[i].result!._reserve1.toString()).quotient.toString(),
+        //   parseInt(resultsFee[i].result![0].toString()),
+        //   resultsReserves[i].result!._blockTimestampLast !== 0,
+        // ])
 
         return [
           ConstantProductPoolState.EXISTS,
