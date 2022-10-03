@@ -1,6 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
-import { ChainId } from '@sushiswap/chain'
 
 interface Batch {
   contract: Contract
@@ -92,9 +91,6 @@ interface UnwrapETHAction {
  * @param liquidityOutput array with minimum output amounts for underlying tokens
  */
 export const unwrapWETHAction = ({ chainId, router, recipient, amountMinimum }: UnwrapETHAction) => {
-  if (chainId === ChainId.POLYGON) {
-    return router.interface.encodeFunctionData('unwrapWETH', [amountMinimum, recipient])
-  }
   return router.interface.encodeFunctionData('unwrapWETH', [recipient])
 }
 

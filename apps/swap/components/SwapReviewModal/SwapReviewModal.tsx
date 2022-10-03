@@ -1,4 +1,5 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
+import { isAddress } from '@ethersproject/address'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
@@ -310,6 +311,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         }
       }
       if (call) {
+        if (!isAddress(call.address)) new Error('call address has to be an address')
+        if (call.address === AddressZero) new Error('call address cannot be zero')
+
         const tx =
           !value || isZero(value)
             ? { from: account, to: call.address, data: call.calldata }

@@ -32,13 +32,13 @@ export function useBentoBoxApproveCallback({
   const { writeAsync } = useDeprecatedContractWrite({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'setMasterContractApproval',
-    args: [address || AddressZero, masterContract, true, 0, HashZero, HashZero],
+    args: [address, masterContract, true, 0, HashZero, HashZero],
   })
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'masterContractApproved',
-    args: [masterContract, address ? address : AddressZero],
+    args: [masterContract, address],
     // This should probably always be true anyway...
     watch,
     enabled: Boolean(address && masterContract !== AddressZero),
@@ -87,9 +87,7 @@ export function useBentoBoxApproveCallback({
       console.error('approve was called unnecessarily')
       return
     }
-
     const { data: nonces } = await getNonces()
-
     try {
       const data = await signTypedDataAsync({
         domain: {
@@ -114,12 +112,11 @@ export function useBentoBoxApproveCallback({
           nonce: nonces,
         },
       })
-
       setSignature(splitSignature(data))
       onSignature && onSignature(splitSignature(data))
     } catch (e: unknown) {
-      // Regular approval as fallback
       if (!(e instanceof UserRejectedRequestError)) {
+        // Regular approval as fallback
         const data = await writeAsync()
         if (onSuccess) {
           const ts = new Date().getTime()
@@ -137,6 +134,9 @@ export function useBentoBoxApproveCallback({
             timestamp: ts,
           })
         }
+      } else {
+        // Else just log the error
+        console.error(e)
       }
     }
   }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, onSignature, writeAsync, onSuccess])
