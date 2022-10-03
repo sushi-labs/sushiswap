@@ -78,7 +78,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           index,
         },
       })
-    }, [approvalState, disabled, dispatch, index, onApprove, props, signature])
+    }, [approvalState, disabled, dispatch, enabled, index, onApprove, props, signature])
 
     if (render) return render({ approvalState, signature, onApprove })
     if (hideIcon) return <></>
