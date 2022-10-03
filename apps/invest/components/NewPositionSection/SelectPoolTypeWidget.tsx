@@ -69,7 +69,7 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
                                   Classic
                                 </Typography>
                                 <Typography variant="xxs" weight={500} className="text-slate-400">
-                                  Suitable for stable pairs
+                                  Suitable for volatile pairs
                                 </Typography>
                               </div>
                             </Tab>
@@ -93,7 +93,7 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
                                   Stable
                                 </Typography>
                                 <Typography variant="xxs" weight={500} className="text-slate-400">
-                                  ...
+                                  Suitable for stable pairs
                                 </Typography>
                               </div>
                             </Tab>
