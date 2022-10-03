@@ -91,6 +91,8 @@ export const PoolsTable: FC = () => {
     {}
   )
 
+  console.log({ pools })
+
   const table = useReactTable<Pair>({
     data: pools || [],
     columns: COLUMNS,

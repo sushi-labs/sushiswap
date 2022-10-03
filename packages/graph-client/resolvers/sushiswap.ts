@@ -258,66 +258,66 @@ export const resolvers: Resolvers = {
         .then((data) => data.json())
         .then((farms) =>
           Promise.all([
-            ...args.chainIds
-              .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-              .map((chainId) => {
-                return context.Trident.Query.pairs({
-                  root,
-                  args,
-                  context: {
-                    ...context,
-                    chainId,
-                    chainName: chainName[chainId],
-                    chainShortName: chainShortName[chainId],
-                    subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                    subgraphHost: SUBGRAPH_HOST[chainId],
-                  },
-                  info,
-                }).then((pools) =>
-                  Promise.all([
-                    Promise.resolve(pools),
-                    context.Trident.Query.pairs({
-                      root,
-                      args: {
-                        ...args,
-                        first: pools.length,
-                        where: { id_in: pools.map((pool) => pool.id) },
-                        block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
-                      },
-                      context: {
-                        ...context,
-                        chainId,
-                        chainName: chainName[chainId],
-                        chainShortName: chainShortName[chainId],
-                        subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                        subgraphHost: SUBGRAPH_HOST[chainId],
-                      },
-                      info,
-                    }),
-                    context.Trident.Query.pairs({
-                      root,
-                      args: {
-                        ...args,
-                        first: pools.length,
-                        where: { id_in: pools.map((pool) => pool.id) },
-                        block: { number: Number(args.oneWeekBlockNumbers[args.chainIds.indexOf(chainId)]) },
-                      },
-                      context: {
-                        ...context,
-                        chainId,
-                        chainName: chainName[chainId],
-                        chainShortName: chainShortName[chainId],
-                        subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
-                        subgraphHost: SUBGRAPH_HOST[chainId],
-                      },
-                      info,
-                    }),
-                  ]).then(([pools, oneDayPools, oneWeekPools]) => {
-                    // console.log('BEFORE TRANSFORMER 1', { pools, oneDayPools, oneWeekPools })
-                    return transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
-                  })
-                )
-              }),
+            // ...args.chainIds
+            //   .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+            //   .map((chainId) => {
+            //     return context.Trident.Query.pairs({
+            //       root,
+            //       args,
+            //       context: {
+            //         ...context,
+            //         chainId,
+            //         chainName: chainName[chainId],
+            //         chainShortName: chainShortName[chainId],
+            //         subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+            //         subgraphHost: SUBGRAPH_HOST[chainId],
+            //       },
+            //       info,
+            //     }).then((pools) =>
+            //       Promise.all([
+            //         Promise.resolve(pools),
+            //         context.Trident.Query.pairs({
+            //           root,
+            //           args: {
+            //             ...args,
+            //             first: pools.length,
+            //             where: { id_in: pools.map((pool) => pool.id) },
+            //             block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
+            //           },
+            //           context: {
+            //             ...context,
+            //             chainId,
+            //             chainName: chainName[chainId],
+            //             chainShortName: chainShortName[chainId],
+            //             subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+            //             subgraphHost: SUBGRAPH_HOST[chainId],
+            //           },
+            //           info,
+            //         }),
+            //         context.Trident.Query.pairs({
+            //           root,
+            //           args: {
+            //             ...args,
+            //             first: pools.length,
+            //             where: { id_in: pools.map((pool) => pool.id) },
+            //             block: { number: Number(args.oneWeekBlockNumbers[args.chainIds.indexOf(chainId)]) },
+            //           },
+            //           context: {
+            //             ...context,
+            //             chainId,
+            //             chainName: chainName[chainId],
+            //             chainShortName: chainShortName[chainId],
+            //             subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
+            //             subgraphHost: SUBGRAPH_HOST[chainId],
+            //           },
+            //           info,
+            //         }),
+            //       ]).then(([pools, oneDayPools, oneWeekPools]) => {
+            //         // console.log('BEFORE TRANSFORMER 1', { pools, oneDayPools, oneWeekPools })
+            //         return transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
+            //       })
+            //     )
+            //   }),
             ...args.chainIds
               .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
               .map((chainId) => {
