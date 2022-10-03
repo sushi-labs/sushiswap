@@ -5,7 +5,7 @@ import { BackgroundVector } from './'
 
 export const HomeBackground = () => {
   const Vector: FC<React.ComponentProps<'svg'>> = ({ className, ...rest }) => (
-    <div className={classNames('absolute z-[-1] hidden sm:block', className)}>
+    <div className={classNames('absolute z-[-1] hidden sm:block max-w-[100vw] overflow-hidden', className)}>
       <BackgroundVector {...rest} />
     </div>
   )

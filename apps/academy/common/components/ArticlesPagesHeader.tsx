@@ -1,6 +1,6 @@
 import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { classNames, Select, Typography, useBreakpoint } from '@sushiswap/ui'
+import { classNames, Select, useBreakpoint } from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
 import { defaultSidePadding } from 'pages'
 import { FC } from 'react'
@@ -39,27 +39,25 @@ export const ArticlesPagesHeader: FC<ArticlesPagesHeader> = ({
 
         <Select
           className="hidden w-1/2 sm:w-auto sm:flex"
+          value={difficulties}
+          onChange={handleSelectDifficulty}
           button={
             <GradientWrapper className="h-[54px] w-60 rounded-lg">
               <Listbox.Button
                 type="button"
                 className="flex items-center justify-between w-full h-full gap-2 px-6 rounded-lg bg-slate-800 text-slate-50"
               >
-                <span className="text-lg min-w-max">
-                  {selectedDifficulty
-                    ? difficulties?.find(({ id }) => id === selectedDifficulty)?.attributes?.name ?? 'Select Difficulty'
-                    : 'Select Difficulty'}
-                </span>
+                <span className="text-lg min-w-max">{selectedDifficulty?.attributes?.name ?? 'Select Difficulty'}</span>
                 <ChevronDownIcon width={12} height={12} aria-hidden="true" />
               </Listbox.Button>
             </GradientWrapper>
           }
         >
-          <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
-            {difficulties?.map(({ id, attributes }, i) => (
-              <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectDifficulty(id)}>
-                {attributes.name}
-              </Typography>
+          <Select.Options className="!bg-slate-700 py-4 px-2 flex flex-col">
+            {difficulties?.map((d, i) => (
+              <Select.Option key={i} value={d} className="border-0 !cursor-pointer grid group">
+                {d.attributes.name}
+              </Select.Option>
             ))}
           </Select.Options>
         </Select>

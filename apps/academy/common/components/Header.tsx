@@ -91,7 +91,7 @@ export const Header: FC = () => {
                     href={href}
                     key={i}
                     value={name}
-                    className="border-0 !cursor-pointer grid group font-medium text-sm"
+                    className="border-0 !cursor-pointer grid group"
                   >
                     {name}
                   </Select.Option>
