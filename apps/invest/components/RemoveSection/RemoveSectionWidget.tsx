@@ -114,9 +114,6 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             type="number"
                             inputMode="numeric"
                           />
-                          <Typography variant="h3" weight={500} className="text-slate-400">
-                            SLP
-                          </Typography>
                         </div>
                         <div className="flex gap-2">
                           <Button size="xs" onClick={() => setPercentage('25')}>
