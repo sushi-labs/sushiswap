@@ -30,7 +30,7 @@ export const NavItemExternal: FC<NavItemProps> = ({ href, label }) => {
   const { basePath } = useRouter()
 
   return (
-    <Link.External href={href}>
+    <Link.External href={href} className="decoration-transparent">
       <span
         className={classNames(
           href === basePath ? 'text-slate-50' : 'text-slate-300',
