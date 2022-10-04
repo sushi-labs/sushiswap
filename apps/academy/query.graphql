@@ -233,8 +233,8 @@ query getPreviewPostBySlug($slug: String) {
   }
 }
 
-query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg) {
-  articles(pagination: $pagination, sort: "publishedAt:desc", filters: $filters) {
+query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $sort: [String]) {
+  articles(pagination: $pagination, sort: $sort, filters: $filters) {
     meta {
       pagination {
         total
