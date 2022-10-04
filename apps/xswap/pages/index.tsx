@@ -8,7 +8,7 @@ import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
-import { Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
+import { App, Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import {
   Approve,
@@ -925,13 +925,11 @@ const Widget: FC<Swap> = ({
           )}
           style={{ maxWidth }}
         >
-          <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
-            <Typography
-              weight={500}
-              className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
-            >
-              xSwap
-            </Typography>
+          <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
+            <App.NavItemList>
+              <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
+              <App.NavItemInternal href="https://sushi.com/xswap" label="xSwap" />
+            </App.NavItemList>
             <div className="flex justify-end">
               <SettingsOverlay chainId={srcChainId} />
             </div>
