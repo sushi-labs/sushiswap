@@ -2,18 +2,24 @@ import { Listbox } from '@headlessui/react'
 import { ArrowsUpDownIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Container, Select, Typography } from '@sushiswap/ui'
-import { ArticlesPagesHeader } from 'common/components/ArticlesPagesHeader'
-import { useDisclosure } from 'common/hooks'
+import { InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { defaultSidePadding } from 'pages'
 import { FC, useState } from 'react'
-import useSWR from 'swr'
+import useSWR, { SWRConfig } from 'swr'
 
 import { ArticleEntity, CategoryEntityResponseCollection } from '../../.mesh'
-import { ArticleList, Card, GradientWrapper, Pagination, SearchInput } from '../../common/components'
+import {
+  ArticleList,
+  ArticlesPageHeader,
+  Card,
+  GradientWrapper,
+  Pagination,
+  SearchInput,
+} from '../../common/components'
 import { getArticles, getCategories, getDifficulties } from '../../lib/api'
 
-type SortBy = 'relevance' | 'dateAsc' | 'dateDesc' | 'author'
+type SortBy = 'dateAsc' | 'dateDesc' | 'author'
 
 export async function getStaticProps() {
   // const articles = await getArticles({ pagination: { limit: 6 } })
@@ -31,13 +37,28 @@ export async function getStaticProps() {
     revalidate: 1,
   }
 }
-const Articles: FC = () => {
+
+const Articles: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fallback }) => {
+  return (
+    <SWRConfig value={{ fallback }}>
+      <_Articles />
+    </SWRConfig>
+  )
+}
+
+const _Articles: FC = () => {
   const [query, setQuery] = useState<string>()
   const [page, setPage] = useState<number>(1)
   const debouncedQuery = useDebounce(query, 200)
   const router = useRouter()
+  const sortingOptions = [
+    { key: 'publishedAt:asc', name: 'Date ascending' },
+    { key: 'publishedAt:desc', name: 'Date descending' },
+    { key: 'title:desc', name: 'Title descending' },
+    { key: 'title:asc', name: 'Title ascending' },
+  ]
 
-  const [sortBy, setSortBy] = useState<SortBy>('relevance')
+  const [sortBy, setSortBy] = useState<SortBy>('dateAsc')
   const [selectedCategory, setSelectedCategory] = useState<string>(router.query.category as string | undefined)
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>(router.query.difficulty as string | undefined)
 
@@ -82,14 +103,14 @@ const Articles: FC = () => {
   // TODO: strapi
   const products = ['Bentobox', 'Furo', 'Kashi', 'etc']
 
-  const sortOptions: SortBy[] = ['relevance', 'dateAsc', 'dateDesc', 'author']
+  const sortOptions: SortBy[] = ['dateAsc', 'dateDesc', 'author']
   const articlesAmount = articlesMeta?.pagination?.total ?? 0
 
   return (
     <>
       <SearchInput isTopOfPage hideTopics className="w-full sm:hidden" handleSearch={setQuery} />
-      <ArticlesPagesHeader
-        title="Tutorials & Explainers"
+      <ArticlesPageHeader
+        title="Latest releases" // TODO: dynamic
         difficulties={difficulties}
         selectedDifficulty={selectedDifficulty}
         handleSelectDifficulty={handleSelectDifficulty}
@@ -154,15 +175,12 @@ const Articles: FC = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 className="font-medium placeholder:text-sm bg-transparent placeholder:text-slate-50 text-base !ring-0 !outline-0"
                 placeholder="Search Topic..."
+                value={query}
               />
             </div>
             <div className="flex flex-col gap-6 pl-3 mt-12">
               {products.map((product) => (
-                <Typography
-                  className="hover:underline text-slate-300"
-                  key={product}
-                  onClick={() => null /** TODO: implement */}
-                >
+                <Typography className="hover:underline text-slate-300" key={product} onClick={() => setQuery(product)}>
                   {product}
                 </Typography>
               ))}

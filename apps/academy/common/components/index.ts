@@ -1,6 +1,7 @@
 export * from './article'
 export * from './ArticleList'
 export * from './ArticleListItem'
+export * from './ArticlesPageHeader'
 export * from './Breadcrumb'
 export * from './Card'
 export * from './Categories'

@@ -1,6 +1,7 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { classNames, IconButton, useBreakpoint } from '@sushiswap/ui'
 import { useRouter } from 'next/router'
+import { appHeaderHeight } from 'pages'
 import { ChangeEvent, FormEvent, forwardRef, MutableRefObject, useEffect, useState } from 'react'
 
 interface SearchInput {
@@ -14,7 +15,6 @@ export const SearchInput = forwardRef(
   ({ handleSearch, isTopOfPage, hideTopics, className }: SearchInput, ref: MutableRefObject<HTMLDivElement>) => {
     const [isSticky, setIsSticky] = useState(isTopOfPage)
     const { isSm } = useBreakpoint('sm')
-    const appHeaderHeight = 54
     const isMobileStickySearchBar = !isSm && isSticky
     const topicSearches = ['Miso', 'Sushi 2.0', 'Head chef', 'Kava', 'Paris']
     const [input, setInput] = useState('')

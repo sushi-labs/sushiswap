@@ -13,9 +13,13 @@ interface ArticlesPagesHeader {
   selectedDifficulty: any
   handleSelectDifficulty: (d: any) => void
 }
-export const ArticlesPagesHeader: FC<ArticlesPagesHeader> = ({
+export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
   title,
-  difficulties,
+  difficulties = [
+    { id: '7', attributes: { name: 'Beginner' } },
+    { id: '8', attributes: { name: 'Advanced' } },
+    { id: '9', attributes: { name: 'Technical' } },
+  ],
   selectedDifficulty,
   handleSelectDifficulty,
 }) => {

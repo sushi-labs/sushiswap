@@ -25,6 +25,7 @@ import { getArticles, getCategories, getDifficulties } from '../lib/api'
 
 export const defaultSidePadding = 'px-6 sm:px-4'
 export const difficultyColors = ['#7CFF6B', '#EEB531', '#F338C3']
+export const appHeaderHeight = 54
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 6 } })

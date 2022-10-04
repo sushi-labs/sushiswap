@@ -77,6 +77,7 @@ query articleAndMoreArticles(
             }
           }
           ... on ComponentSharedRichText {
+            key
             body
           }
           ... on ComponentSharedSlider {
