@@ -33,9 +33,13 @@ export const getPreviewPostBySlug = async (slug: string) => {
   return await sdk.getPreviewPostBySlug({ slug })
 }
 
-export const getArticles = async (variables?: { filters?: ArticleFiltersInput; pagination?: PaginationArg }) => {
+export const getArticles = async (variables?: {
+  filters?: ArticleFiltersInput
+  pagination?: PaginationArg
+  sort?: string[]
+}) => {
   const sdk = getMeshSDK()
-  return await sdk.getArticles(variables)
+  return await sdk.getArticles({ ...variables, sort: variables.sort ?? ['publishedAt:desc'] })
 }
 
 export const getCategories = async () => {

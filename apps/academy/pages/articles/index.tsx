@@ -19,8 +19,6 @@ import {
 } from '../../common/components'
 import { getArticles, getCategories, getDifficulties } from '../../lib/api'
 
-type SortBy = 'dateAsc' | 'dateDesc' | 'author'
-
 export async function getStaticProps() {
   // const articles = await getArticles({ pagination: { limit: 6 } })
   const categories = await getCategories()
@@ -52,19 +50,19 @@ const _Articles: FC = () => {
   const debouncedQuery = useDebounce(query, 200)
   const router = useRouter()
   const sortingOptions = [
-    { key: 'publishedAt:asc', name: 'Date ascending' },
-    { key: 'publishedAt:desc', name: 'Date descending' },
-    { key: 'title:desc', name: 'Title descending' },
-    { key: 'title:asc', name: 'Title ascending' },
+    { key: 'publishedAt:asc', name: 'Date (asc)' },
+    { key: 'publishedAt:desc', name: 'Date (desc)' },
+    { key: 'title:asc', name: 'Title (asc)' },
+    { key: 'title:desc', name: 'Title (desc)' },
   ]
 
-  const [sortBy, setSortBy] = useState<SortBy>('dateAsc')
+  const [sortBy, setSortBy] = useState(sortingOptions[0])
   const [selectedCategory, setSelectedCategory] = useState<string>(router.query.category as string | undefined)
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>(router.query.difficulty as string | undefined)
 
   const { data: articlesData, isValidating } = useSWR(
-    [`/articles`, selectedCategory, selectedDifficulty, debouncedQuery, page],
-    async (_url, categoryFilter, difficultyFilter, debouncedQuery, page) => {
+    [`/articles`, selectedCategory, selectedDifficulty, debouncedQuery, page, sortBy.key],
+    async (_url, categoryFilter, difficultyFilter, debouncedQuery, page, sortKey) => {
       return (
         await getArticles({
           filters: {
@@ -78,6 +76,7 @@ const _Articles: FC = () => {
             }),
           },
           pagination: { page, pageSize: 10 },
+          sort: [sortKey],
         })
       )?.articles
     },
@@ -103,7 +102,6 @@ const _Articles: FC = () => {
   // TODO: strapi
   const products = ['Bentobox', 'Furo', 'Kashi', 'etc']
 
-  const sortOptions: SortBy[] = ['dateAsc', 'dateDesc', 'author']
   const articlesAmount = articlesMeta?.pagination?.total ?? 0
 
   return (
@@ -141,24 +139,30 @@ const _Articles: FC = () => {
             </Select.Options>
           </Select>
           <Select
+            values={sortingOptions}
+            onChange={setSortBy}
             button={
               <Listbox.Button
                 type="button"
-                className="flex items-center justify-between w-full gap-1 px-4 text-xs font-medium border rounded-lg bg-slate-800 h-9 text-slate-50 border-slate-700"
+                className="flex items-center justify-between w-full gap-3 px-4 text-xs font-medium border rounded-lg whitespace-nowrap bg-slate-800 h-9 text-slate-50 border-slate-700"
               >
-                <span className="flex gap-3">
+                <span className="flex gap-2">
                   <ArrowsUpDownIcon width={14} height={14} />
-                  Sort by
+                  {sortBy.name}
                 </span>
                 <ChevronDownIcon width={12} height={12} aria-hidden="true" />
               </Listbox.Button>
             }
           >
-            <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
-              {difficulties?.map(({ id, attributes }, i) => (
-                <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectDifficulty(id)}>
-                  {attributes.name}
-                </Typography>
+            <Select.Options className="!bg-slate-700 p-2">
+              {sortingOptions?.map((option) => (
+                <Listbox.Option
+                  key={option.key}
+                  value={option}
+                  className="flex items-center px-2 text-xs rounded-lg cursor-pointer h-9 hover:bg-blue-500 transform-all"
+                >
+                  {option.name}
+                </Listbox.Option>
               ))}
             </Select.Options>
           </Select>
@@ -166,9 +170,9 @@ const _Articles: FC = () => {
 
         <Container
           maxWidth="full"
-          className="grid sm:grid-cols-[min-content,1fr] justify-between gap-8 mx-auto lg:gap-12 mt-[22px] sm:mt-12"
+          className="sm:grid sm:grid-cols-[min-content,1fr] justify-between gap-8 mx-auto lg:gap-12 mt-[22px] sm:mt-12"
         >
-          <aside className="flex-col hidden sm:flex">
+          <aside className="flex-col hidden w-full min-w-[180px] max-w-[280px] sm:flex sticky h-fit top-[104px]">
             <div className="flex items-center w-full gap-3 px-4 rounded-lg h-11 bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
               <MagnifyingGlassIcon width={24} height={24} className="text-slate-50" />
               <input
@@ -194,25 +198,30 @@ const _Articles: FC = () => {
               <>
                 <div className="flex items-center justify-between">
                   <Typography weight={500}>{articlesAmount} Results</Typography>
-
                   <Select
+                    values={sortingOptions}
+                    onChange={setSortBy}
                     className="hidden sm:flex"
                     button={
                       <Listbox.Button
                         type="button"
-                        className="px-4 bg-slate-800 w-[210px] text-sm flex items-center h-11 rounded-lg text-slate-50 border border-slate-700 relative"
+                        className="px-4 bg-slate-800 w-[250px] text-sm flex items-center h-11 rounded-lg text-slate-50 border border-slate-700 relative"
                       >
                         <Typography className="text-slate-500">Sort by:</Typography>
-                        <Typography className="ml-2">{sortBy}</Typography>
+                        <Typography className="ml-2">{sortBy.name}</Typography>
                         <ChevronDownIcon width={12} height={12} className="absolute right-4" aria-hidden="true" />
                       </Listbox.Button>
                     }
                   >
-                    <Select.Options className="!bg-slate-700 p-6 gap-6 grid">
-                      {sortOptions?.map((key) => (
-                        <Typography weight={500} variant="sm" key={key} onClick={() => setSortBy(key)}>
-                          {key}
-                        </Typography>
+                    <Select.Options className="!bg-slate-700 p-2">
+                      {sortingOptions?.map((option) => (
+                        <Listbox.Option
+                          key={option.key}
+                          value={option}
+                          className="flex items-center h-10 px-2 cursor-pointer hover:bg-blue-500 rounded-xl transform-all"
+                        >
+                          {option.name}
+                        </Listbox.Option>
                       ))}
                     </Select.Options>
                   </Select>
