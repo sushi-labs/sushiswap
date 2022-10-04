@@ -4,7 +4,7 @@ import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT } from '@sushisw
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, usePrevious } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { Button, Container, Dots, Link, Typography } from '@sushiswap/ui'
+import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
@@ -166,9 +166,15 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
         <Layout>
           <Widget id="swap" maxWidth={400}>
             <Widget.Content>
-              <Widget.Header title="Swap">
-                <SettingsOverlay chainId={chainId} />
-              </Widget.Header>
+              <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
+                <App.NavItemList>
+                  <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
+                  <App.NavItemInternal href="https://sushi.com/xswap" label="xSwap" />
+                </App.NavItemList>
+                <div className="flex justify-end">
+                  <SettingsOverlay chainId={chainId} />
+                </div>
+              </div>
               <CurrencyInput
                 className="p-3"
                 value={input0}

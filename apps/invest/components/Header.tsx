@@ -15,9 +15,8 @@ export const Header = () => {
       appType={AppType.Invest}
       nav={
         <App.NavItemList>
-          <App.NavItem href="https://sushi.com/swap" label="Swap" />
-          <App.NavItem href="https://sushi.com/xswap" label="xSwap" />
-          <App.NavItem href="https://sushi.com/earn" label="Earn" />
+          <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
+          <App.NavItemInternal href="https://sushi.com/earn" label="Earn" />
         </App.NavItemList>
       }
     >
