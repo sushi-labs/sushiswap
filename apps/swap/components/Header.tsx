@@ -32,6 +32,7 @@ export const Header: FC = () => {
     params.append('isAutoFillUserData', 'true')
     params.append('hideMenu', 'true')
     params.append('isFeeCalculationHidden', 'true')
+    // params.append('themeColor', '#3B82F6')
     return `https://global-stg.transak.com/?${params.toString()}`
   }, [address])
   return (
