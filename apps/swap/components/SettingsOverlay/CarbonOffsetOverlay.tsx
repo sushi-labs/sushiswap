@@ -35,7 +35,7 @@ export const CarbonOffsetOverlay: FC = () => {
                 <div className="flex flex-col gap-2 w-80">
                   <Typography variant="xs" weight={500}>
                     Make transactions climate positive by offsetting them with Klima Infinity. The average cost to
-                    offset a transaction on Polygon is {'<'}$0.01. Learn more
+                    offset a transaction on Polygon is {'<'}$0.01.
                   </Typography>
                 </div>
               }
