@@ -28,7 +28,10 @@ export const Header: FC = () => {
       params.append('walletAddress', address)
     }
     params.append('networks', TRANSAK_NETWORKS.join(','))
-
+    params.append('redirectURL', 'https://www.sushi.com/swap')
+    params.append('isAutoFillUserData', 'true')
+    params.append('hideMenu', 'true')
+    params.append('isFeeCalculationHidden', 'true')
     return `https://global-stg.transak.com/?${params.toString()}`
   }, [address])
   return (
