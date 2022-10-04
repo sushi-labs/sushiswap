@@ -1,6 +1,7 @@
-import { BENTOBOX_SUBGRAPH_HOST, BENTOBOX_SUBGRAPH_NAME } from 'config'
+import { SUBGRAPH_HOST, BENTOBOX_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 
-import { Resolvers } from '.graphclient'
+import { getSdk, Resolvers } from '.graphclient'
+import { getBuiltGraphSDK } from '.graphclient'
 
 export const resolvers: Resolvers = {
   BentoBoxKpi: {
@@ -20,7 +21,7 @@ export const resolvers: Resolvers = {
               ...context,
               chainId,
               name: BENTOBOX_SUBGRAPH_NAME[chainId],
-              host: BENTOBOX_SUBGRAPH_HOST[chainId],
+              host: SUBGRAPH_HOST[chainId],
             },
             info,
           }).then((kpis) =>
@@ -42,7 +43,7 @@ export const resolvers: Resolvers = {
               ...context,
               chainId,
               name: BENTOBOX_SUBGRAPH_NAME[chainId],
-              host: BENTOBOX_SUBGRAPH_HOST[chainId],
+              host: SUBGRAPH_HOST[chainId],
             },
             info,
           }).then((kpis) =>
@@ -53,5 +54,20 @@ export const resolvers: Resolvers = {
           )
         )
       ).then((kpis) => kpis.flat()),
+    subgraphStatuses: async (root, args, context, info) =>
+      Promise.all(
+        args.subgraphNames.map((subgraphName) => {
+          const sdk = getBuiltGraphSDK()
+
+          return sdk.SubgraphIndexingStatus({ subgraphName }).then(({ indexingStatusForCurrentVersion: status }) => ({
+            subgraphName,
+            startBlock: status.chains[0].earliestBlock.number,
+            lastSyncedBlock: status.chains[0].latestBlock.number,
+            chainHeadBlock: status.chains[0].chainHeadBlock.number,
+            nonFatalErrorCount: status.nonFatalErrors.length,
+            entityCount: status.entityCount,
+          }))
+        })
+      ),
   },
 }

@@ -11,10 +11,15 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.3",
+    "@heroicons/react": "v1",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/format": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@tanstack/react-table": "^8.5.13",
     "next": "12.2.x",
+    "outline": "link:@heroicons/react/outline",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
