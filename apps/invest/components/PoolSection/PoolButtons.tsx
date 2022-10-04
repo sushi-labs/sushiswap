@@ -1,3 +1,4 @@
+import { getAddress } from '@ethersproject/address'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Link } from '@sushiswap/ui'
@@ -6,7 +7,6 @@ import { FC } from 'react'
 import { PairWithAlias } from '../../types'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
-
 interface PoolButtonsProps {
   pair: PairWithAlias
 }
@@ -41,7 +41,9 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
         size="md"
         variant="outlined"
         as="a"
-        href={`https://sushi.com/swap?token0=${pair.token0.id}&token1=${pair.token1.id}&chainId=${pair.chainId}`}
+        href={`https://sushi.com/swap?token0=${getAddress(pair.token0.id)}&token1=${getAddress(
+          pair.token1.id
+        )}&chainId=${pair.chainId}`}
       >
         Trade
       </Button>
