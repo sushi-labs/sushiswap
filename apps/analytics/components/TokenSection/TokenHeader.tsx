@@ -1,6 +1,8 @@
+import { getAddress } from '@ethersproject/address'
 import { formatUSD } from '@sushiswap/format'
 import { Bundle, Token as GraphToken } from '@sushiswap/graph-client/.graphclient'
 import { Button, Chip, Currency, Typography } from '@sushiswap/ui'
+import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR from 'swr'
 
@@ -10,6 +12,7 @@ interface TokenHeader {
   token: GraphToken
 }
 export const TokenHeader: FC<TokenHeader> = ({ token }) => {
+  const router = useRouter()
   const _token = useTokenFromToken(token)
   const { data: bundles } = useSWR<Bundle[]>(
     '/analytics/api/bundles',
@@ -22,7 +25,7 @@ export const TokenHeader: FC<TokenHeader> = ({ token }) => {
   return (
     <div className="grid grid-cols-[auto_180px]">
       <div className="flex flex-col gap-2">
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <div>
             <Currency.Icon currency={_token} width={24} height={24} />
           </div>
@@ -35,7 +38,15 @@ export const TokenHeader: FC<TokenHeader> = ({ token }) => {
           {price.includes('NaN') ? '$0.00' : price}
         </Typography>
       </div>
-      <Button size="md" fullWidth>
+      <Button
+        onClick={() =>
+          router.push(
+            `https://www.sushi.com/swap?chainId=${token.chainId}&token0=${getAddress(token.id.split(':')[1])}`
+          )
+        }
+        size="md"
+        fullWidth
+      >
         Trade
       </Button>
     </div>
