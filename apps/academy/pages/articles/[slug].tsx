@@ -1,9 +1,9 @@
-import { Disclosure, Listbox, Transition } from '@headlessui/react'
+import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { classNames, Container, Select, Typography } from '@sushiswap/ui'
+import { classNames, Container, Typography } from '@sushiswap/ui'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
-import { defaultSidePadding } from 'pages'
+import { appHeaderHeight, defaultSidePadding } from 'pages'
 import { FC, useState } from 'react'
 
 import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../../.mesh'
@@ -65,10 +65,19 @@ interface ArticlePage {
 
 const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
   const router = useRouter()
-  const headers = article?.attributes?.blocks?.map(({ key }) => key)?.filter(Boolean)
+  const headers = article?.attributes?.blocks.map((block) => 'key' in block && block.key)?.filter(Boolean)
   const [selectedHeader, setSelectedHeader] = useState('')
   if (!router.isFallback && !article?.attributes?.slug) {
     return <ErrorPage statusCode={404} />
+  }
+  const scrollToHeader = (header: string) => {
+    const el = document.getElementById(header)
+    const padding = 48
+    const offset = el.getBoundingClientRect().top + window.scrollY - appHeaderHeight - padding
+    window.scrollTo({
+      top: offset,
+      behavior: 'smooth',
+    })
   }
 
   return (
@@ -76,18 +85,18 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
       <ArticleSeo article={article?.attributes} />
       <PreviewBanner show={preview} />
       <Breadcrumb />
-      <Container maxWidth="3xl" className="px-4 mx-auto mt-8 md:mt-0">
+      <Container maxWidth="3xl" className="px-4 mx-auto mt-8 sm:mt-0">
         <ArticleHeader article={article} />
         <ArticleAuthors article={article} />
       </Container>
       {article?.attributes?.cover.data && (
-        <div className="relative w-screen h-[calc(100vw/2.85)] min-h-[300px] mt-10 md:mt-[50px]">
+        <div className="relative w-screen h-[calc(100vw/2.85)] min-h-[300px] mt-10 sm:mt-12">
           <Image image={article?.attributes.cover.data} />
         </div>
       )}
 
-      <Container maxWidth="6xl" className="pb-20 mx-auto md:pb-36">
-        <Disclosure as="div" className="sticky top-[94px] md:hidden bg-slate-900 z-20 px-6 border-b border-slate-200/5">
+      <Container maxWidth="6xl" className="pb-20 mx-auto sm:pb-36">
+        <Disclosure as="div" className="sticky top-[94px] sm:hidden bg-slate-900 z-20 px-6 border-b border-slate-200/5">
           {({ open, close }) => (
             <>
               <Disclosure.Button className="flex items-center justify-between w-full h-12 gap-1 text-slate-40 outline-0">
@@ -126,10 +135,14 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
             </>
           )}
         </Disclosure>
-        {/* </div> */}
 
-        <div className={classNames('flex justify-center gap-16 md:pt-14', defaultSidePadding)}>
-          <aside className="flex-col hidden w-full gap-8 min-w-[180px] max-w-[280px] md:flex sticky top-0">
+        <div
+          className={classNames(
+            'sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]',
+            defaultSidePadding
+          )}
+        >
+          <aside className="flex-col hidden w-full gap-8 min-w-[180px] max-w-[280px] sm:flex sticky h-fit top-28">
             <ArticleLinks article={article} />
             <hr className="border border-slate-200/5" />
             <ol className="grid gap-8 list-decimal list-inside">
@@ -137,14 +150,15 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
                 <li
                   key={header}
                   className={classNames(
-                    'hover:text-slate-50',
+                    'hover:text-slate-50 font-medium text-base cursor-pointer',
                     selectedHeader === header ? 'text-slate-50' : 'text-slate-400'
                   )}
-                  onClick={() => setSelectedHeader(header)}
+                  onClick={() => {
+                    scrollToHeader(header)
+                    setSelectedHeader(header)
+                  }}
                 >
-                  <Typography as="a" href={`#${header}`} weight={500}>
-                    {header}
-                  </Typography>
+                  {header}
                 </li>
               ))}
             </ol>
