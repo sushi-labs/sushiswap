@@ -357,8 +357,21 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
             ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
           },
         })
-
         const ts = new Date().getTime()
+
+        data.wait().then(() =>
+          window.dataLayer.push({
+            event: 'swap',
+            routeType: trade.routeType(),
+            chainId: trade.inputAmount.currency.chainId,
+            inputToken: trade.outputAmount.currency.symbol,
+            inputValue: trade.inputAmount.toFixed(),
+            outputToken: trade.outputAmount.currency.symbol,
+            outputValue: trade.outputAmount.toFixed(),
+            ts,
+          })
+        )
+
         createNotification({
           type: 'swap',
           chainId,
@@ -381,6 +394,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       if (e instanceof ProviderRpcError) {
         setError(e.message)
       }
+
       console.log(e)
     }
   }, [
