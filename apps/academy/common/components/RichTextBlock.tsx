@@ -10,8 +10,8 @@ interface RichText {
 export const RichTextBlock: FC<RichText> = ({ block }) => {
   if (!block.body) return <></>
   return (
-    <p id={block.key}>
+    <div id={block.key}>
       <ReactMarkdown>{block.body}</ReactMarkdown>
-    </p>
+    </div>
   )
 }

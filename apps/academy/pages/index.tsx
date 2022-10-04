@@ -215,7 +215,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             </Transition>
           </Disclosure>
 
-          <div className="flex flex-wrap gap-3 md:gap-4 mt-9 sm:mt-8">
+          <div className="flex flex-wrap gap-3 sm:gap-4 mt-9 sm:mt-8">
             <Categories selected={selectedCategory} onSelect={handleSelectCategory} categories={categories || []} />
           </div>
 
@@ -247,7 +247,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
         <div className={classNames('mt-9 sm:mt-[70px]', defaultSidePadding)}>
           {articleList && (
-            <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))]">
+            <div className="grid gap-5 md:gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))]">
               <ArticleList
                 articles={articleList as ArticleEntity[]}
                 loading={loading}

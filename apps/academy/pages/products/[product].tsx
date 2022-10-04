@@ -146,7 +146,7 @@ const ProductPage = () => {
             <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
               <ArticleList
                 skeletonAmount={3}
-                articles={articles as ArticleEntity[]}
+                articles={articles as unknown as ArticleEntity[]}
                 loading={isValidating}
                 render={(article, i) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
               />

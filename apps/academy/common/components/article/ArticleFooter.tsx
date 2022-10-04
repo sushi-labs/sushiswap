@@ -10,7 +10,7 @@ interface ArticleFooter {
 
 export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
   return (
-    <AdditionalArticles title="Similar Articles" className="mt-12 md:mt-36">
+    <AdditionalArticles title="Similar Articles" className="mt-12 sm:mt-36">
       {articles?.map((a, i) => (
         <Card key={i} article={a} />
       ))}

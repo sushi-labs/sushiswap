@@ -57,7 +57,7 @@ export const Header: FC = () => {
 
   return (
     <App.Header appType={AppType.Academy} maxWidth="6xl" withScrollBackground>
-      <nav className="items-center hidden md:flex gap-14">
+      <nav className="items-center hidden sm:flex gap-14">
         {headerLinks.map(({ title, href, links }, i) => {
           if (href && !links) {
             return (
@@ -102,7 +102,7 @@ export const Header: FC = () => {
         })}
       </nav>
 
-      <nav className="md:hidden">
+      <nav className="sm:hidden">
         <IconButton type="button" className="p-1.5 bg-slate-900 rounded" onClick={onOpen}>
           <Bars3Icon className="w-5 h-5" aria-hidden="true" />
         </IconButton>

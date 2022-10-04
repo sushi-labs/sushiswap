@@ -9,7 +9,7 @@ interface ArticleAuthors {
 
 export const ArticleAuthors: FC<ArticleAuthors> = ({ article }) => {
   return (
-    <div className="flex justify-center mt-4 md:mt-8">
+    <div className="flex justify-center mt-4 sm:mt-8">
       <ul className="flex flex-wrap space-x-5 text-sm">
         {article?.attributes?.authors?.data.map((author, index) => (
           <li key={index} className="flex items-center whitespace-nowrap">

@@ -21,7 +21,7 @@ export const Breadcrumb: FC = () => {
   return (
     <Container
       maxWidth="6xl"
-      className="px-4 mx-auto md:mt-6 sticky md:relative top-[54px] bg-slate-900 z-30 h-10 flex justify-between items-center md:top-0"
+      className="px-4 mx-auto sm:mt-6 sticky sm:relative top-[54px] bg-slate-900 z-30 h-10 flex justify-between items-center sm:top-0"
     >
       <Link href="/articles" passHref>
         <a className="flex items-center gap-2 group">
@@ -31,7 +31,7 @@ export const Breadcrumb: FC = () => {
           </Typography>
         </a>
       </Link>
-      <IconButton className="w-5 h-5 md:hidden" onClick={openShare}>
+      <IconButton className="w-5 h-5 sm:hidden" onClick={openShare}>
         <ShareIcon className="text-slate-400" />
       </IconButton>
     </Container>
