@@ -139,6 +139,7 @@ importers:
     specifiers:
       '@headlessui/react': ^1.6.0
       '@heroicons/react': ^1.0.0
+      '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
       '@sushiswap/core-sdk': ^1.0.0-canary.65
       '@sushiswap/currency': workspace:*
@@ -146,9 +147,13 @@ importers:
       '@sushiswap/format': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-localstorage': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/sushi-data': 1.0.26
+      '@sushiswap/token-lists': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
       '@types/node': 17.0.31
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
@@ -161,30 +166,39 @@ importers:
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
+      react-redux: ^8.0.1
       react-ticker: ^1.3.2
       react-transition-group: ^4.4.2
       styled-components: ^5.3.5
       tailwindcss: ^3.1.0
       typescript: 4.6.3
       use-count-up: ^3.0.1
+      wagmi: 0.6.7
     dependencies:
       '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
+      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core-sdk': 1.0.0-canary.128
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/sushi-data': 1.0.26
+      '@sushiswap/token-lists': link:../../packages/token-lists
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wagmi': link:../../packages/wagmi
       next: 12.2.5_biqbaboplfbrettd7655fr4n2y
       next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
       react-ticker: 1.3.2_biqbaboplfbrettd7655fr4n2y
       react-transition-group: 4.4.2_biqbaboplfbrettd7655fr4n2y
       styled-components: 5.3.5_biqbaboplfbrettd7655fr4n2y
       use-count-up: 3.0.1_react@18.2.0
+      wagmi: 0.6.7_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest

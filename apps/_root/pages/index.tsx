@@ -4,6 +4,9 @@ import { SUSHI } from '@sushiswap/currency'
 import { formatNumber, formatUSD } from '@sushiswap/format'
 import sushiData from '@sushiswap/sushi-data'
 import { Button, Currency, Typography } from '@sushiswap/ui'
+import { Widget } from '@sushiswap/ui/widget'
+import { Web3Input } from '@sushiswap/wagmi'
+import { useTokens } from 'lib/state/token-lists'
 import Image from 'next/image'
 import React from 'react'
 
@@ -11,6 +14,7 @@ import { Layout } from '../components'
 import getBentoTVL from '../functions/graph/fetchers/bentobox'
 import { getLegacyExchangeData } from '../functions/graph/fetchers/exchange'
 import { getTridentExchangeData } from '../functions/graph/queries/trident'
+import { useCustomTokens } from '../lib/state/storage'
 
 export async function getStaticProps() {
   const [sushiPrice, bentoTVL, legacyExchangeData, tridentExchangeData] = await Promise.all([
@@ -59,6 +63,8 @@ export async function getStaticProps() {
 
 const Index = ({ stats }) => {
   const [price, liquidity, volume, pairs] = stats
+  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(ChainId.ETHEREUM)
+  const tokenMap = useTokens(ChainId.ETHEREUM)
 
   return (
     <Layout>
@@ -81,10 +87,22 @@ const Index = ({ stats }) => {
             </Button>
           </div>
         </div>
-        <div className="relative h-full">
-          <Image src="https://sushi.com/swap-example.png" layout="responsive" width="396px" height="378px" />
-          <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent to-slate-900" />
-        </div>
+        <Widget id="swap-widget" maxWidth={400}>
+          <Widget.Header title="Swap" />
+          <Widget.Content>
+            <Web3Input.Currency
+              value="1.1"
+              onChange={() => {}}
+              currency={SUSHI[ChainId.ETHEREUM]}
+              customTokenMap={customTokensMap}
+              onAddToken={addCustomToken}
+              onRemoveToken={removeCustomToken}
+              chainId={ChainId.ETHEREUM}
+              tokenMap={tokenMap}
+              loading={false}
+            />
+          </Widget.Content>
+        </Widget>
       </div>
       <div className="grid grid-cols-2 md:flex md:justify-between my-[120px] gap-10">
         <div className="flex items-center gap-3 px-6 lg:px-0">
