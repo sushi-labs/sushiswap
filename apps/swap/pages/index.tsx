@@ -154,6 +154,12 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
     setInput1('')
   }, [])
 
+  useEffect(() => {
+    window.dataLayer.push({
+      event: 'chain',
+    })
+  }, [chainId])
+
   return (
     <>
       <TradeProvider
