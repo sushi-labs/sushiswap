@@ -3,10 +3,11 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
+import { ZERO } from '@sushiswap/math'
 import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { useTotalSupply } from '@sushiswap/wagmi'
-import { FC, Fragment, ReactNode, useMemo } from 'react'
+import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
 
 import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
@@ -32,6 +33,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
   children,
   error,
 }) => {
+  const [hover, setHover] = useState(false)
   const totalSupply = useTotalSupply(liquidityToken)
   const { balance } = usePoolPositionStaked()
 
@@ -48,11 +50,27 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
 
   const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
 
-  return useMemo(
-    () => (
+  return (
+    <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+      <Transition
+        show={Boolean(hover && !balance?.greaterThan(ZERO))}
+        as={Fragment}
+        enter="transition duration-300 origin-center ease-out"
+        enterFrom="transform opacity-0"
+        enterTo="transform opacity-100"
+        leave="transition duration-75 ease-out"
+        leaveFrom="transform opacity-100"
+        leaveTo="transform opacity-0"
+      >
+        <div className="border border-slate-200/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
+          <Typography variant="xs" weight={600} className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
+            No staked tokens found
+          </Typography>
+        </div>
+      </Transition>
       <Widget id="stakeLiquidity" maxWidth={400} className="bg-slate-800">
         <Widget.Content>
-          <Disclosure defaultOpen={true}>
+          <Disclosure defaultOpen={balance?.greaterThan(ZERO)}>
             {({ open }) => (
               <>
                 <Disclosure.Button className="w-full pr-4">
@@ -85,7 +103,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                     <div className="flex flex-col gap-3 p-3">
                       <div className="flex items-center gap-2">
                         <div className="flex flex-grow justify-between items-center">
-                          <Input.Numeric
+                          <Input.Percent
                             onUserInput={setValue}
                             value={value}
                             placeholder="0"
@@ -163,7 +181,6 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
           </Disclosure>
         </Widget.Content>
       </Widget>
-    ),
-    [balance, children, error, reserve0.currency, reserve1.currency, setValue, value, value0, value1]
+    </div>
   )
 }

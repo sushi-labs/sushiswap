@@ -1,8 +1,7 @@
-import { Transition } from '@headlessui/react'
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button, Dots, Typography } from '@sushiswap/ui'
+import { AppearOnMount, Button, Dots, Typography } from '@sushiswap/ui'
 import { Approve, Checker, Chef, getMasterChefContractConfig } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -30,18 +29,9 @@ export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress 
   if (!pair?.farm?.chefType || !isMounted) return <></>
 
   return (
-    <Transition
-      appear
-      show={true}
-      enter="transition duration-300 origin-center ease-out"
-      enterFrom="transform scale-90 opacity-0"
-      enterTo="transform scale-100 opacity-100"
-      leave="transition duration-75 ease-out"
-      leaveFrom="transform opacity-100"
-      leaveTo="transform opacity-0"
-    >
+    <AppearOnMount show={true}>
       <_RemoveSectionUnstake pair={pair} chefType={CHEF_TYPE_MAP[pair.farm.chefType]} />
-    </Transition>
+    </AppearOnMount>
   )
 }
 

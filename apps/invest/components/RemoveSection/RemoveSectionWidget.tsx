@@ -50,6 +50,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   const [hover, setHover] = useState(false)
   const { address } = useAccount()
   const { balance, value0, value1 } = usePoolPosition()
+
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <Transition
@@ -70,7 +71,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
       </Transition>
       <Widget id="removeLiquidity" maxWidth={400} className="bg-slate-800">
         <Widget.Content>
-          <Disclosure defaultOpen={!isFarm}>
+          <Disclosure defaultOpen={true}>
             {({ open }) => (
               <>
                 {isFarm && isMounted ? (
@@ -104,15 +105,12 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                     <div className="flex flex-col gap-3 p-3">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center justify-between flex-grow">
-                          <Input.Numeric
+                          <Input.Percent
                             onUserInput={(val) => setPercentage(val ? Math.min(+val, 100).toString() : '')}
                             value={percentage}
                             placeholder="100%"
                             variant="unstyled"
                             className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-2xl')}
-                            min="0"
-                            type="number"
-                            inputMode="numeric"
                           />
                         </div>
                         <div className="flex gap-2">
