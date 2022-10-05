@@ -14,10 +14,8 @@ interface TokenHeader {
 export const TokenHeader: FC<TokenHeader> = ({ token }) => {
   const router = useRouter()
   const _token = useTokenFromToken(token)
-  const { data: bundles } = useSWR<Bundle[]>(
-    '/analytics/api/bundles',
-    (url) => fetch(url).then((response) => response.json()),
-    {}
+  const { data: bundles } = useSWR<Bundle[]>('/analytics/api/bundles', (url) =>
+    fetch(url).then((response) => response.json())
   )
 
   const price = formatUSD(token.price.derivedNative * bundles?.[token.chainId]?.nativePrice)
