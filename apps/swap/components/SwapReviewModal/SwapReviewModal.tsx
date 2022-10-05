@@ -40,20 +40,6 @@ interface SwapCall {
   value: string
 }
 
-interface SwapCallEstimate {
-  call: SwapCall
-}
-
-export interface SuccessfulCall extends SwapCallEstimate {
-  call: SwapCall
-  gasEstimate: BigNumber
-}
-
-interface FailedCall extends SwapCallEstimate {
-  call: SwapCall
-  error: Error
-}
-
 const KLIMA_FEE = Amount.fromRawAmount(Native.onChain(ChainId.POLYGON), '20000000000000000')
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
@@ -137,303 +123,302 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     [slippageTolerance]
   )
 
-  useEffect(() => {
+  const prepare = useCallback(async () => {
     if (!trade || !account) return
-    ;(async () => {
-      try {
-        let call: SwapCall | null = null
-        let value = '0x0'
 
-        if (sushiSwapRouter && trade.isV1()) {
-          const swapCallParameters = SushiSwapRouter.swapCallParameters(
-            trade as Trade<Currency, Currency, TradeType, Version.V1>,
-            {
-              feeOnTransfer: false,
-              allowedSlippage,
-              // TODO: custom recipient
-              recipient: account,
-              deadline: deadline.toNumber(),
-            }
+    try {
+      let call: SwapCall | null = null
+      let value = '0x0'
+
+      if (sushiSwapRouter && trade.isV1()) {
+        const swapCallParameters = SushiSwapRouter.swapCallParameters(
+          trade as Trade<Currency, Currency, TradeType, Version.V1>,
+          {
+            feeOnTransfer: false,
+            allowedSlippage,
+            // TODO: custom recipient
+            recipient: account,
+            deadline: deadline.toNumber(),
+          }
+        )
+
+        const { methodName, args } = swapCallParameters
+
+        // value = swapCallParameters.value
+
+        const shouldCarbonOffset = chainId === ChainId.POLYGON && carbonOffset
+
+        if (trade.inputAmount.currency.isNative) {
+          value = toHex(shouldCarbonOffset ? trade.inputAmount.add(KLIMA_FEE) : trade.inputAmount)
+        } else if (shouldCarbonOffset) {
+          value = toHex(KLIMA_FEE)
+        }
+
+        call = {
+          address: shouldCarbonOffset && sushiSwapKlimaRouter ? sushiSwapKlimaRouter.address : sushiSwapRouter.address,
+          calldata: sushiSwapRouter.interface.encodeFunctionData(methodName, args),
+          value,
+        }
+      } else if (tridentRouter && trade.isV2()) {
+        if (!inputCurrencyRebase || !outputCurrencyRebase) return
+
+        const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
+
+        if (trade.isSinglePool()) {
+          actions.push(
+            tridentRouter.interface.encodeFunctionData('exactInputSingleWithNativeToken', [
+              {
+                tokenIn: trade.inputAmount.currency.isNative ? AddressZero : trade.inputAmount.currency.wrapped.address,
+                amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
+                amountOutMinimum: BigNumber.from(
+                  trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
+                ),
+                pool: trade.route.legs[0].poolAddress,
+                data: defaultAbiCoder.encode(
+                  ['address', 'address', 'bool'],
+                  [
+                    trade.route.legs[0].tokenFrom.address,
+                    trade.outputAmount.currency.isNative ? tridentRouter.address : account,
+                    true,
+                  ]
+                ),
+              },
+            ])
           )
-
-          const { methodName, args } = swapCallParameters
-
-          // value = swapCallParameters.value
-
-          const shouldCarbonOffset = chainId === ChainId.POLYGON && carbonOffset
-
-          if (trade.inputAmount.currency.isNative) {
-            value = toHex(shouldCarbonOffset ? trade.inputAmount.add(KLIMA_FEE) : trade.inputAmount)
-          } else if (shouldCarbonOffset) {
-            value = toHex(KLIMA_FEE)
-          }
-
-          call = {
-            address:
-              shouldCarbonOffset && sushiSwapKlimaRouter ? sushiSwapKlimaRouter.address : sushiSwapRouter.address,
-            calldata: sushiSwapRouter.interface.encodeFunctionData(methodName, args),
-            value,
-          }
-        } else if (tridentRouter && trade.isV2()) {
-          if (!inputCurrencyRebase || !outputCurrencyRebase) return
-
-          const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
-
-          if (trade.isSinglePool()) {
-            actions.push(
-              tridentRouter.interface.encodeFunctionData('exactInputSingleWithNativeToken', [
-                {
-                  tokenIn: trade.inputAmount.currency.isNative
-                    ? AddressZero
-                    : trade.inputAmount.currency.wrapped.address,
-                  amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
-                  amountOutMinimum: BigNumber.from(
-                    trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
-                  ),
-                  pool: trade.route.legs[0].poolAddress,
-                  data: defaultAbiCoder.encode(
-                    ['address', 'address', 'bool'],
-                    [
-                      trade.route.legs[0].tokenFrom.address,
-                      trade.outputAmount.currency.isNative ? tridentRouter.address : account,
-                      true,
-                    ]
-                  ),
-                },
-              ])
-            )
-          } else if (trade.isSingle()) {
-            actions.push(
-              tridentRouter.interface.encodeFunctionData('exactInputWithNativeToken', [
-                {
-                  tokenIn: trade.inputAmount.currency.isNative
-                    ? AddressZero
-                    : trade.inputAmount.currency.wrapped.address,
-                  amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
-                  amountOutMinimum: BigNumber.from(
-                    trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
-                  ),
-                  path: trade.route.legs.map((leg, i) => {
-                    const isLastLeg = i === trade.route.legs.length - 1
-                    return {
+        } else if (trade.isSingle()) {
+          actions.push(
+            tridentRouter.interface.encodeFunctionData('exactInputWithNativeToken', [
+              {
+                tokenIn: trade.inputAmount.currency.isNative ? AddressZero : trade.inputAmount.currency.wrapped.address,
+                amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
+                amountOutMinimum: BigNumber.from(
+                  trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
+                ),
+                path: trade.route.legs.map((leg, i) => {
+                  const isLastLeg = i === trade.route.legs.length - 1
+                  return {
+                    pool: leg.poolAddress,
+                    data: defaultAbiCoder.encode(
+                      ['address', 'address', 'bool'],
+                      [
+                        leg.tokenFrom.address,
+                        isLastLeg
+                          ? trade.outputAmount.currency.isNative
+                            ? tridentRouter.address
+                            : account
+                          : trade.route.legs[i + 1].poolAddress,
+                        isLastLeg,
+                      ]
+                    ),
+                  }
+                }),
+              },
+            ])
+          )
+        } else if (trade.isComplex()) {
+          // complex trade
+          const initialPathCount = trade.route.legs.filter(
+            (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
+          ).length
+          const [initialPath, percentagePath, output] = trade.route.legs.reduce<
+            [
+              {
+                tokenIn: string
+                pool: string
+                native: boolean
+                amount: BigNumberish
+                data: string
+              }[],
+              {
+                tokenIn: string
+                pool: string
+                balancePercentage: BigNumberish
+                data: string
+              }[],
+              {
+                token: string
+                to: string
+                unwrapBento: boolean
+                minAmount: BigNumberish
+              }[]
+            ]
+          >(
+            ([initialPath, percentagePath, output], leg, i) => {
+              const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
+              if (isInitialPath) {
+                return [
+                  [
+                    ...initialPath,
+                    {
+                      tokenIn: trade.inputAmount.currency.isNative ? AddressZero : leg.tokenFrom.address,
                       pool: leg.poolAddress,
+                      amount:
+                        initialPathCount > 1 && i === initialPathCount - 1
+                          ? BigNumber.from(trade.inputAmount.quotient.toString()).sub(
+                              initialPath.reduce(
+                                (previousValue, currentValue) => previousValue.add(currentValue.amount),
+                                Zero
+                              )
+                            )
+                          : BigNumber.from(trade.inputAmount.quotient.toString())
+                              .mul(Math.round(leg.absolutePortion * 1e6))
+                              .div(1e6),
+                      native: true,
                       data: defaultAbiCoder.encode(
                         ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          isLastLeg
-                            ? trade.outputAmount.currency.isNative
-                              ? tridentRouter.address
-                              : account
-                            : trade.route.legs[i + 1].poolAddress,
-                          isLastLeg,
+                          getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                          false,
                         ]
                       ),
-                    }
-                  }),
-                },
-              ])
-            )
-          } else if (trade.isComplex()) {
-            // complex trade
-            const initialPathCount = trade.route.legs.filter(
-              (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-            ).length
-            const [initialPath, percentagePath, output] = trade.route.legs.reduce<
-              [
-                {
-                  tokenIn: string
-                  pool: string
-                  native: boolean
-                  amount: BigNumberish
-                  data: string
-                }[],
-                {
-                  tokenIn: string
-                  pool: string
-                  balancePercentage: BigNumberish
-                  data: string
-                }[],
-                {
-                  token: string
-                  to: string
-                  unwrapBento: boolean
-                  minAmount: BigNumberish
-                }[]
-              ]
-            >(
-              ([initialPath, percentagePath, output], leg, i) => {
-                const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-                if (isInitialPath) {
-                  return [
-                    [
-                      ...initialPath,
-                      {
-                        tokenIn: trade.inputAmount.currency.isNative ? AddressZero : leg.tokenFrom.address,
-                        pool: leg.poolAddress,
-                        amount:
-                          initialPathCount > 1 && i === initialPathCount - 1
-                            ? BigNumber.from(trade.inputAmount.quotient.toString()).sub(
-                                initialPath.reduce(
-                                  (previousValue, currentValue) => previousValue.add(currentValue.amount),
-                                  Zero
-                                )
-                              )
-                            : BigNumber.from(trade.inputAmount.quotient.toString())
-                                .mul(Math.round(leg.absolutePortion * 1e6))
-                                .div(1e6),
-                        native: true,
-                        data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [
-                            leg.tokenFrom.address,
-                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
-                            false,
-                          ]
-                        ),
-                      },
-                    ],
-                    percentagePath,
-                    output,
-                  ]
-                } else {
-                  return [
-                    initialPath,
-                    [
-                      ...percentagePath,
-                      {
-                        tokenIn: leg.tokenFrom.address,
-                        pool: leg.poolAddress,
-                        balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
-                        data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [
-                            leg.tokenFrom.address,
-                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
-                            false,
-                          ]
-                        ),
-                      },
-                    ],
-                    output,
-                  ]
-                }
-              },
-              [
-                [],
-                [],
-                [
-                  {
-                    token: trade.outputAmount.currency.wrapped.address,
-                    to: trade.outputAmount.currency.isNative ? tridentRouter.address : account,
-                    unwrapBento: true,
-                    minAmount: trade
-                      ?.minimumAmountOut(allowedSlippage)
-                      ?.toShare(outputCurrencyRebase)
-                      .quotient.toString(),
-                  },
-                ],
-              ]
-            )
-            actions.push(
-              tridentRouter.interface.encodeFunctionData('complexPath', [{ initialPath, percentagePath, output }])
-            )
-          }
-
-          if (trade.inputAmount.currency.isNative) {
-            value = toHex(trade.inputAmount)
-          }
-          if (trade.outputAmount.currency.isNative) {
-            // unwrap
-            actions.push(
-              unwrapWETHAction({
-                chainId,
-                router: tridentRouter,
-                recipient: account,
-                amountMinimum: trade?.minimumAmountOut(allowedSlippage).quotient.toString(),
-              })
-            )
-          }
-
-          call = {
-            address: tridentRouter.address,
-            calldata: batchAction({
-              contract: tridentRouter,
-              actions,
-            }),
-            value,
-          }
-        }
-        if (call) {
-          const tx =
-            !value || isZero(value)
-              ? { from: account, to: call.address, data: call.calldata }
-              : {
-                  from: account,
-                  to: call.address,
-                  data: call.calldata,
-                  value,
-                }
-
-          const estimatedCall = await provider
-            .estimateGas(tx)
-            .then((gasEstimate) => {
-              return {
-                call,
-                gasEstimate,
+                    },
+                  ],
+                  percentagePath,
+                  output,
+                ]
+              } else {
+                return [
+                  initialPath,
+                  [
+                    ...percentagePath,
+                    {
+                      tokenIn: leg.tokenFrom.address,
+                      pool: leg.poolAddress,
+                      balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
+                      data: defaultAbiCoder.encode(
+                        ['address', 'address', 'bool'],
+                        [
+                          leg.tokenFrom.address,
+                          getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                          false,
+                        ]
+                      ),
+                    },
+                  ],
+                  output,
+                ]
               }
-            })
-            .catch((gasError) => {
-              console.debug('Gas estimate failed, trying eth_call to extract error', call)
-
-              return provider
-                .call(tx)
-                .then((result) => {
-                  console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
-                  return {
-                    call,
-                    error: new Error('Unexpected issue with estimating the gas. Please try again.'),
-                  }
-                })
-                .catch((callError) => {
-                  console.debug('Call threw error', call, callError)
-                  return {
-                    call,
-                    error: new Error(callError),
-                    // error: new Error(swapErrorToUserReadableMessage(callError)),
-                  }
-                })
-            })
-
-          setRequest({
-            ...tx,
-            ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
-          })
-        }
-      } catch (e: unknown) {
-        if (e instanceof ProviderRpcError) {
-          setError(e.message)
+            },
+            [
+              [],
+              [],
+              [
+                {
+                  token: trade.outputAmount.currency.wrapped.address,
+                  to: trade.outputAmount.currency.isNative ? tridentRouter.address : account,
+                  unwrapBento: true,
+                  minAmount: trade
+                    ?.minimumAmountOut(allowedSlippage)
+                    ?.toShare(outputCurrencyRebase)
+                    .quotient.toString(),
+                },
+              ],
+            ]
+          )
+          actions.push(
+            tridentRouter.interface.encodeFunctionData('complexPath', [{ initialPath, percentagePath, output }])
+          )
         }
 
-        console.log(e)
+        if (trade.inputAmount.currency.isNative) {
+          value = toHex(trade.inputAmount)
+        }
+        if (trade.outputAmount.currency.isNative) {
+          // unwrap
+          actions.push(
+            unwrapWETHAction({
+              chainId,
+              router: tridentRouter,
+              recipient: account,
+              amountMinimum: trade?.minimumAmountOut(allowedSlippage).quotient.toString(),
+            })
+          )
+        }
+
+        call = {
+          address: tridentRouter.address,
+          calldata: batchAction({
+            contract: tridentRouter,
+            actions,
+          }),
+          value,
+        }
       }
-    })()
+      if (call) {
+        const tx =
+          !value || isZero(value)
+            ? { from: account, to: call.address, data: call.calldata }
+            : {
+                from: account,
+                to: call.address,
+                data: call.calldata,
+                value,
+              }
+
+        const estimatedCall = await provider
+          .estimateGas(tx)
+          .then((gasEstimate) => {
+            return {
+              call,
+              gasEstimate,
+            }
+          })
+          .catch((gasError) => {
+            console.debug('Gas estimate failed, trying eth_call to extract error', call)
+
+            return provider
+              .call(tx)
+              .then((result) => {
+                console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
+                return {
+                  call,
+                  error: new Error('Unexpected issue with estimating the gas. Please try again.'),
+                }
+              })
+              .catch((callError) => {
+                console.debug('Call threw error', call, callError)
+                return {
+                  call,
+                  error: new Error(callError),
+                  // error: new Error(swapErrorToUserReadableMessage(callError)),
+                }
+              })
+          })
+
+        setRequest({
+          ...tx,
+          ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
+        })
+      }
+    } catch (e: unknown) {
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
+      }
+
+      console.log(e)
+    }
   }, [
-    trade,
     account,
+    allowedSlippage,
+    carbonOffset,
+    chainId,
+    deadline,
     inputCurrencyRebase,
     outputCurrencyRebase,
-    sushiSwapRouter,
-    tridentRouter,
-    allowedSlippage,
-    deadline,
-    chainId,
-    carbonOffset,
-    sushiSwapKlimaRouter,
-    signature,
     provider,
-    createNotification,
+    signature,
+    sushiSwapKlimaRouter,
+    sushiSwapRouter,
+    trade,
+    tridentRouter,
   ])
+
+  // Prepare transaction
+  useEffect(() => {
+    void prepare()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trade])
 
   const [input0, input1] = useMemo(
     () => [trade?.inputAmount, trade?.outputAmount],
@@ -482,6 +467,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
             </Approve.Components>
           }
           render={({ approved }) => {
+            console.log(!approved || isWritePending)
             return (
               <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
