@@ -151,7 +151,7 @@ export function useTrade(
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
+            BigNumber.from(amountSpecified.toShare(currencyInRebase, true).quotient.toString()),
             filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
             WNATIVE[amountSpecified.currency.chainId],
             feeData.gasPrice.toNumber()
@@ -194,7 +194,7 @@ export function useTrade(
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
+            BigNumber.from(amountSpecified.toShare(currencyInRebase, true).quotient.toString()),
             filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
             WNATIVE[amountSpecified.currency.chainId],
             feeData.gasPrice.toNumber()
