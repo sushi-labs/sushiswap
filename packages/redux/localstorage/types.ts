@@ -16,7 +16,7 @@ export type TokenAsObject = { address: string; chainId: ChainId; symbol?: string
 export type StorageState = {
   carbonOffset: boolean
   expertMode: boolean
-  slippageTolerance: number
+  slippageTolerance: string
   slippageToleranceType: 'auto' | 'custom'
   gasPrice: GasPrice
   maxFeePerGas: undefined | number
@@ -32,7 +32,7 @@ export interface UpdateCarbonOffsetPayload {
 }
 
 export interface UpdateSlippageTolerancePayload {
-  slippageTolerance: number
+  slippageTolerance: string
 }
 
 export interface UpdateExpertMode {

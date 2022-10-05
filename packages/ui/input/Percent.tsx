@@ -29,8 +29,10 @@ export const Input = forwardRef<HTMLInputElement, PercentProps>(
         <input
           value={value}
           onChange={(event) => {
-            // replace commas with periods, because uniswap exclusively uses period as the decimal separator
-            enforcer(event.target.value.replace(/,/g, '.').replace(/%/g, ''))
+            // Dont allow string start with dot or comma
+            if (!['.', ','].includes(event.target.value))
+              // replace commas with periods, because uniswap exclusively uses period as the decimal separator
+              enforcer(event.target.value.replace(/,/g, '.').replace(/%/g, ''))
           }}
           // universal input options
           inputMode="decimal"
@@ -39,9 +41,9 @@ export const Input = forwardRef<HTMLInputElement, PercentProps>(
           autoCorrect="off"
           // text-specific options
           type="text"
-          pattern="^[0-9]*$"
+          pattern="^[0-9]*[.,]?[0-9]*$"
           placeholder={placeholder || '100%'}
-          maxLength={3}
+          maxLength={4}
           className={
             variant === 'default'
               ? classNames(DEFAULT_INPUT_CLASSNAME, error ? ERROR_INPUT_CLASSNAME : '', className)

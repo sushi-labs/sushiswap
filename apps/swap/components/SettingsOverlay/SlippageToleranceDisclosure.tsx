@@ -85,10 +85,10 @@ export const SlippageToleranceDisclosure: FC = () => {
                         Custom Slippage
                       </Typography>
                       <div className="flex items-center gap-2">
-                        <Input.Numeric
+                        <Input.Percent
                           variant="unstyled"
                           value={slippageTolerance ?? ''}
-                          onUserInput={(val) => updateSlippageTolerance(+val)}
+                          onUserInput={(val) => updateSlippageTolerance(val)}
                           placeholder="1"
                           className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                         />
