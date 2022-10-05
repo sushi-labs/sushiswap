@@ -90,19 +90,22 @@ const Index = ({ stats }) => {
           <Typography variant="hero" weight={700} className="text-center lg:text-left">
             Decentralized Exchange Made For Everybody
           </Typography>
-          <Typography variant="lg" className="text-slate-400 text-center lg:text-left">
+          <Typography variant="lg" className="text-center text-slate-400 lg:text-left">
             Swap, earn, stack yields, lend, borrow, leverage all on one decentralized, community driven platform.
             Welcome home to DeFi.
           </Typography>
-          <div className="hidden lg:flex justify-center lg:justify-start">
-            <Button
-              color="gradient"
-              className="px-12 mt-6 !font-semibold"
-              size="md"
-              endIcon={<ArrowRightIcon width={16} height={16} />}
-            >
-              Enter Sushi
-            </Button>
+          <div className="justify-center hidden lg:flex lg:justify-start">
+            <Link.Internal href="/swap" passHref={true}>
+              <Button
+                as="a"
+                color="gradient"
+                className="px-12 !font-semibold"
+                size="md"
+                endIcon={<ArrowRightIcon width={16} height={16} />}
+              >
+                Enter Sushi
+              </Button>
+            </Link.Internal>
           </div>
         </div>
         <div className="mx-auto relative w-[360px] h-[368px] min-w-[360px] min-h-[368px] mt-10 lg:mt-0">
@@ -183,7 +186,7 @@ const Index = ({ stats }) => {
             </a>
           </Link.Internal>
         </div>
-        <div className="flex lg:hidden justify-center lg:justify-start">
+        <div className="flex justify-center lg:hidden lg:justify-start">
           <Link.Internal href="/swap" passHref={true}>
             <Button
               as="a"
@@ -202,7 +205,7 @@ const Index = ({ stats }) => {
           <div className="min-w-[42px] min-h-[42px]">
             <Currency.Icon currency={SUSHI[ChainId.ETHEREUM]} width={42} height={42} />
           </div>
-          <div className="flex flex-col gap-1 justify-center">
+          <div className="flex flex-col justify-center gap-1">
             <Typography variant="h2" weight={600}>
               {price.formatted}
             </Typography>
@@ -211,8 +214,8 @@ const Index = ({ stats }) => {
             </Typography>
           </div>
         </div>
-        <div className="flex items-center gap-3 justify-end lg:justify-center px-6 lg:px-0">
-          <div className="flex flex-col gap-1 justify-center">
+        <div className="flex items-center justify-end gap-3 px-6 lg:justify-center lg:px-0">
+          <div className="flex flex-col justify-center gap-1">
             <Typography variant="h2" weight={600}>
               {liquidity.formatted}
             </Typography>
@@ -221,8 +224,8 @@ const Index = ({ stats }) => {
             </Typography>
           </div>
         </div>
-        <div className="flex items-center gap-3 lg:justify-center px-6 lg:px-0">
-          <div className="flex flex-col gap-1 justify-center">
+        <div className="flex items-center gap-3 px-6 lg:justify-center lg:px-0">
+          <div className="flex flex-col justify-center gap-1">
             <Typography variant="h2" weight={600}>
               {volume.formatted}
             </Typography>
@@ -231,8 +234,8 @@ const Index = ({ stats }) => {
             </Typography>
           </div>
         </div>
-        <div className="flex items-center gap-3 justify-end px-6 lg:px-0">
-          <div className="flex flex-col gap-1 justify-center">
+        <div className="flex items-center justify-end gap-3 px-6 lg:px-0">
+          <div className="flex flex-col justify-center gap-1">
             <Typography variant="h2" weight={600}>
               {pairs.formatted}
             </Typography>
