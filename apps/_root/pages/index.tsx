@@ -82,7 +82,7 @@ const Index = ({ stats }) => {
           </div>
         </div>
         <div className="relative h-full">
-          <Image src="/img.png" layout="responsive" width="396px" height="378px" />
+          <Image src="/swap-example.png" layout="responsive" width="396px" height="378px" />
           <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent to-slate-900" />
         </div>
       </div>
