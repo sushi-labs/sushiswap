@@ -23,7 +23,7 @@ export const Header: FC = () => {
   const [notifications, { clearNotifications }] = useNotifications(address)
   const buyUrl = useMemo(() => {
     const params = new URLSearchParams()
-    params.append('apiKey', '71d9cc91-826d-41b6-b6ba-7d8962a9c3e0')
+    params.append('apiKey', '5baa5495-64a5-4bcb-af71-febf3e54b07e')
     if (address) {
       params.append('walletAddress', address)
     }
@@ -33,7 +33,7 @@ export const Header: FC = () => {
     params.append('hideMenu', 'true')
     params.append('isFeeCalculationHidden', 'true')
     // params.append('themeColor', '#3B82F6')
-    return `https://global-stg.transak.com/?${params.toString()}`
+    return `https://global.transak.com/?${params.toString()}`
   }, [address])
   return (
     <App.Header
