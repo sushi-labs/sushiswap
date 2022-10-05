@@ -225,95 +225,77 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     createNotification,
   ])
 
-  return useMemo(
-    () => (
-      <div>
-        <RemoveSectionWidget
-          isFarm={!!pair.farm}
-          chainId={pair.chainId}
-          percentage={percentage}
-          token0={token0}
-          token1={token1}
-          token0Minimum={minAmount0}
-          token1Minimum={minAmount1}
-          setPercentage={setPercentage}
-          error={error}
-        >
-          <Checker.Connected>
-            <Checker.Custom
-              showGuardIfTrue={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
-              guard={
-                <Button size="md" fullWidth disabled={true}>
-                  Pool Not Found
-                </Button>
-              }
-            >
-              <Checker.Network chainId={pair.chainId}>
-                <Checker.Custom
-                  showGuardIfTrue={+percentage <= 0}
-                  guard={
-                    <Button size="md" fullWidth disabled={true}>
-                      Enter Amount
-                    </Button>
+  return (
+    <div>
+      <RemoveSectionWidget
+        isFarm={!!pair.farm}
+        chainId={pair.chainId}
+        percentage={percentage}
+        token0={token0}
+        token1={token1}
+        token0Minimum={minAmount0}
+        token1Minimum={minAmount1}
+        setPercentage={setPercentage}
+        error={error}
+      >
+        <Checker.Connected>
+          <Checker.Custom
+            showGuardIfTrue={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+            guard={
+              <Button size="md" fullWidth disabled={true}>
+                Pool Not Found
+              </Button>
+            }
+          >
+            <Checker.Network chainId={pair.chainId}>
+              <Checker.Custom
+                showGuardIfTrue={+percentage <= 0}
+                guard={
+                  <Button size="md" fullWidth disabled={true}>
+                    Enter Amount
+                  </Button>
+                }
+              >
+                <Approve
+                  onSuccess={createNotification}
+                  className="flex-grow !justify-end"
+                  components={
+                    <Approve.Components>
+                      <Approve.Bentobox
+                        size="md"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        address={getTridentRouterContractConfig(pair.chainId).addressOrName}
+                        onSignature={setPermit}
+                      />
+                      <Approve.Token
+                        size="md"
+                        className="whitespace-nowrap"
+                        fullWidth
+                        amount={slpAmountToRemove}
+                        address={getTridentRouterContractConfig(pair.chainId).addressOrName}
+                      />
+                    </Approve.Components>
                   }
-                >
-                  <Approve
-                    onSuccess={createNotification}
-                    className="flex-grow !justify-end"
-                    components={
-                      <Approve.Components>
-                        <Approve.Bentobox
-                          size="md"
-                          className="whitespace-nowrap"
-                          fullWidth
-                          address={getTridentRouterContractConfig(pair.chainId).addressOrName}
-                          onSignature={setPermit}
-                        />
-                        <Approve.Token
-                          size="md"
-                          className="whitespace-nowrap"
-                          fullWidth
-                          amount={slpAmountToRemove}
-                          address={getTridentRouterContractConfig(pair.chainId).addressOrName}
-                        />
-                      </Approve.Components>
-                    }
-                    render={({ approved }) => {
-                      return (
-                        <Button
-                          onClick={execute}
-                          fullWidth
-                          size="md"
-                          variant="filled"
-                          disabled={!approved || isWritePending}
-                        >
-                          {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
-                        </Button>
-                      )
-                    }}
-                  />
-                </Checker.Custom>
-              </Checker.Network>
-            </Checker.Custom>
-          </Checker.Connected>
-        </RemoveSectionWidget>
-      </div>
-    ),
-    [
-      createNotification,
-      error,
-      execute,
-      isMounted,
-      isWritePending,
-      minAmount0,
-      minAmount1,
-      pair.chainId,
-      pair.farm,
-      percentage,
-      poolState,
-      slpAmountToRemove,
-      token0,
-      token1,
-    ]
+                  render={({ approved }) => {
+                    return (
+                      <Button
+                        onClick={execute}
+                        fullWidth
+                        size="md"
+                        variant="filled"
+                        disabled={!approved || isWritePending}
+                      >
+                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
+                      </Button>
+                    )
+                  }}
+                />
+              </Checker.Custom>
+            </Checker.Network>
+          </Checker.Custom>
+        </Checker.Connected>
+      </RemoveSectionWidget>
+    </div>
   )
 }
