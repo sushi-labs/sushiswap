@@ -2,7 +2,7 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { Button, Link, OnsenIcon } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
@@ -17,8 +17,11 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     getPoolCount(),
     getSushiBar(),
   ])
+  const selectedNetworks = query?.networks ? query.networks.split(',') : SUPPORTED_CHAIN_IDS
+  console.log({ selectedNetworks })
   return {
     props: {
+      selectedNetworks,
       fallback: {
         [unstable_serialize({
           url: '/earn/api/pools',
@@ -29,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
                 desc: true,
               },
             ],
-            selectedNetworks: SUPPORTED_CHAIN_IDS,
+            selectedNetworks,
             pagination: {
               pageIndex: 0,
               pageSize: 20,
@@ -46,15 +49,16 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   }
 }
 
-const Pools: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const Pools: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback, selectedNetworks }) => {
+  const parsedSelectedNetworks = useMemo(() => selectedNetworks.map(Number), [selectedNetworks])
   return (
     <SWRConfig value={{ fallback }}>
-      <_Pools />
+      <_Pools selectedNetworks={parsedSelectedNetworks} />
     </SWRConfig>
   )
 }
 
-const _Pools = () => {
+const _Pools = ({ selectedNetworks }) => {
   return (
     <Layout>
       <div className="flex flex-col gap-10 md:gap-16">
@@ -79,7 +83,7 @@ const _Pools = () => {
           </div>
         </section>
         <SushiBarSection />
-        <PoolsFiltersProvider>
+        <PoolsFiltersProvider selectedNetworks={selectedNetworks}>
           <PoolsSection />
         </PoolsFiltersProvider>
       </div>

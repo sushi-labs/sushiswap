@@ -24,16 +24,20 @@ const FilterContext = createContext<FilterContext | undefined>(undefined)
 
 interface PoolsFiltersProvider {
   children?: ReactNode
+  selectedNetworks: ChainId[]
 }
 
-export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({ children }) => {
+export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
+  children,
+  selectedNetworks = SUPPORTED_CHAIN_IDS,
+}) => {
   const [filters, _setFilters] = useState({
     query: '',
     extraQuery: '',
     [Filters.myTokensOnly]: false,
     [Filters.singleSidedStakingOnly]: false,
     [Filters.stablePairsOnly]: false,
-    [Filters.selectedNetworks]: SUPPORTED_CHAIN_IDS,
+    [Filters.selectedNetworks]: selectedNetworks,
   })
 
   const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {
