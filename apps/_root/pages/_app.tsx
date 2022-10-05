@@ -1,11 +1,22 @@
 import '@sushiswap/ui/index.css'
 import 'styles/index.css'
 
+import { ChainId } from '@sushiswap/chain'
+import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
+import { client } from '@sushiswap/wagmi'
+import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
-import { FC, useEffect } from 'react'
+import { DefaultSeo } from 'next-seo'
+import React, { FC, useEffect } from 'react'
+import { Provider } from 'react-redux'
+import { store } from 'store'
+import { WagmiConfig } from 'wagmi'
+
+import { Header } from '../components'
+import SEO from '../next-seo.config.mjs'
 
 declare global {
   interface Window {
@@ -29,6 +40,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
+
   return (
     <>
       <Head>
@@ -47,16 +59,29 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-JW8KWJ48EF', {
-              page_path: window.location.pathname,
-            });
-          `,
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-JW8KWJ48EF', {
+            page_path: window.location.pathname,
+          });
+        `,
         }}
       />
-      <Component {...pageProps} />
+      <WagmiConfig client={client}>
+        <Provider store={store}>
+          <ThemeProvider>
+            <App.Shell>
+              <DefaultSeo {...SEO} />
+              <Header />
+              <TokenListsUpdater chainId={ChainId.ETHEREUM} />
+              <Component {...pageProps} />
+              <App.Footer />
+              <ToastContainer className="mt-[50px]" />
+            </App.Shell>
+          </ThemeProvider>
+        </Provider>
+      </WagmiConfig>
     </>
   )
 }

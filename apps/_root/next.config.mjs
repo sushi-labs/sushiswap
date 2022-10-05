@@ -1,6 +1,12 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/chain'])
+const withTranspileModules = transpileModules([
+  '@sushiswap/redux-token-lists',
+  '@sushiswap/redux-localstorage',
+  '@sushiswap/chain',
+  '@sushiswap/wagmi',
+  '@sushiswap/ui',
+])
 
 const {
   BLOG_URL,
