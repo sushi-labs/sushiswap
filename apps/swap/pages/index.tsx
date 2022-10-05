@@ -167,7 +167,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
           <Widget id="swap" maxWidth={400}>
             <Widget.Content>
               <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
-                <App.NavItemList>
+                <App.NavItemList hideOnMobile={false}>
                   <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
                   <App.NavItemInternal href="https://sushi.com/xswap" label="xSwap" />
                 </App.NavItemList>
@@ -257,7 +257,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 <Typography
                   variant="xs"
                   weight={500}
-                  className="flex items-center gap-1 text-slate-500 px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
+                  className="flex items-center gap-1 text-slate-500 py-1 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
                 >
                   Are you looking for cross chain swap?
                 </Typography>
