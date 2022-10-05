@@ -1,5 +1,4 @@
 import { Signature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
@@ -322,37 +321,12 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
     setDstToken(_srcToken)
   }, [dstChainId, dstToken, srcChainId, srcToken])
 
-  const execute = useCallback(() => {
-    // console.log([
-    //   !srcChainId,
-    //   !srcAmount,
-    //   !dstChainId,
-    //   !dstMinimumAmountOut,
-    //   !address,
-    //   !srcInputCurrencyRebase,
-    //   !srcOutputCurrencyRebase,
-    //   !dstOutputCurrencyRebase,
-    //   !contract,
-    // ])
-    if (
-      !srcChainId ||
-      !srcAmount ||
-      !dstChainId ||
-      !dstMinimumAmountOut ||
-      !address ||
-      !srcInputCurrencyRebase ||
-      !srcOutputCurrencyRebase ||
-      !dstOutputCurrencyRebase ||
-      !contract
-    ) {
+  const prepareBridge = useCallback(() => {
+    if (!srcChainId || !srcAmount || !address || !srcInputCurrencyRebase || !contract) {
       return
     }
-
     const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
-
-    setIsWritePending(true)
-
-    const sushiXSwap = new SushiBridge({
+    const bridge = new SushiBridge({
       contract,
       srcToken,
       dstToken,
@@ -361,60 +335,53 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
       user: address,
       debug: true,
     })
-
     if (signature) {
-      sushiXSwap.srcCooker.setMasterContractApproval(signature)
+      bridge.srcCooker.setMasterContractApproval(signature)
     }
-
-    if (transfer) {
-      sushiXSwap.transfer(srcAmount, srcShare)
-    }
-    if (crossChain && srcAmountOut && dstAmountIn) {
-      sushiXSwap.teleport(
-        srcBridgeToken,
-        dstBridgeToken,
-        1000000, // TODO: figure out exact extra gas required
-        nanoId
-      )
-    }
-
-    console.debug('attempt cook')
-    sushiXSwap
-      .cook(1000000)
-      .then((res) => {
-        if (res) {
-          setSrcTxHash(res.hash)
-        }
-        console.debug('then cooked', res)
-      })
-      .catch((err) => {
-        console.error('catch err', err)
-      })
-      .finally(() => {
-        setSignature(undefined)
-        setIsWritePending(false)
-      })
+    bridge.transfer(srcAmount, srcShare)
+    bridge.teleport(
+      srcBridgeToken,
+      dstBridgeToken,
+      1000000, // TODO: figure out exact extra gas required
+      nanoId
+    )
+    return bridge
   }, [
     address,
     contract,
-    crossChain,
-    dstAmountIn,
     dstBridgeToken,
-    dstChainId,
-    dstMinimumAmountOut,
-    dstOutputCurrencyRebase,
     dstToken,
     nanoId,
     signature,
     srcAmount,
-    srcAmountOut,
     srcBridgeToken,
     srcChainId,
     srcInputCurrencyRebase,
-    srcOutputCurrencyRebase,
     srcToken,
-    transfer,
   ])
+
+  const execute = useCallback(() => {
+    const bridge = prepareBridge()
+    if (bridge) {
+      setIsWritePending(true)
+      console.debug('attempt cook')
+      bridge
+        .cook(1000000)
+        .then((res) => {
+          if (res) {
+            setSrcTxHash(res.hash)
+          }
+          console.debug('then cooked', res)
+        })
+        .catch((err) => {
+          console.error('catch err', err)
+        })
+        .finally(() => {
+          setSignature(undefined)
+          setIsWritePending(false)
+        })
+    }
+  }, [prepareBridge])
 
   const priceImpact = useMemo(() => {
     if (!bridgeFee || !srcAmount) {
@@ -456,163 +423,105 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
   }, [dstAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   useEffect(() => {
-    console.log('getFee escape hatch', [
-      !srcChainId,
-      !srcAmount,
-      !dstChainId,
-      !dstMinimumAmountOut,
-      !address,
-      !srcInputCurrencyRebase,
-      !srcOutputCurrencyRebase,
-      !dstOutputCurrencyRebase,
-      !contractWithProvider,
-    ])
-    if (
-      !srcChainId ||
-      !srcAmount ||
-      !dstChainId ||
-      !dstMinimumAmountOut ||
-      !address ||
-      !srcInputCurrencyRebase ||
-      !srcOutputCurrencyRebase ||
-      !dstOutputCurrencyRebase ||
-      !contractWithProvider
-    ) {
-      return
-    }
-
     const getFee = async () => {
-      const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
-
-      const sushiXSwap = new SushiBridge({
-        contract: contractWithProvider,
-        srcToken,
-        dstToken,
-        srcUseBentoBox: false,
-        dstUseBentoBox: false,
-        user: AddressZero,
-        debug: false,
-      })
-
-      if (transfer) {
-        sushiXSwap.transfer(srcAmount, srcShare)
-      }
-
-      if (crossChain && srcAmountOut && dstAmountIn) {
-        sushiXSwap.teleport(srcBridgeToken, dstBridgeToken, 1000000, nanoId)
-      }
-
       try {
-        const [fee] = await sushiXSwap.getFee(1000000)
-        feeRef.current = Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
+        const bridge = prepareBridge()
+        if (bridge) {
+          const [fee] = await bridge.getFee(1000000)
+          feeRef.current = Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
+        }
       } catch (e) {
         console.log(e)
       }
     }
 
     void getFee()
-  }, [
-    address,
-    contractWithProvider,
-    crossChain,
-    dstAmountIn,
-    dstBridgeToken,
-    dstChainId,
-    dstMinimumAmountOut,
-    dstOutputCurrencyRebase,
-    dstToken,
-    nanoId,
-    sameChainSwap,
-    slippageTolerance,
-    srcAmount,
-    srcAmountOut,
-    srcBridgeToken,
-    srcChainId,
-    srcInputCurrencyRebase,
-    srcOutputCurrencyRebase,
-    srcToken,
-    bridgeSlippage,
-    transfer,
-  ])
+  }, [prepareBridge, srcChainId])
 
-  const stats = useMemo(() => {
-    return (
-      <>
-        <Typography variant="sm" className="text-slate-400">
-          Price Impact
-        </Typography>
-        <Typography
-          variant="sm"
-          weight={500}
-          className={classNames(
-            priceImpactSeverity === 2 ? 'text-yellow' : priceImpactSeverity > 2 ? 'text-red' : 'text-slate-200',
-            'text-right truncate'
+  const Stats = useCallback(
+    ({ feeRef }) => {
+      return (
+        <>
+          <Typography variant="sm" className="text-slate-400">
+            Price Impact
+          </Typography>
+          <Typography
+            variant="sm"
+            weight={500}
+            className={classNames(
+              priceImpactSeverity === 2 ? 'text-yellow' : priceImpactSeverity > 2 ? 'text-red' : 'text-slate-200',
+              'text-right truncate'
+            )}
+          >
+            {priceImpact?.multiply(-1).toFixed(2)}%
+          </Typography>
+          {crossChain && (
+            <>
+              <Typography variant="sm" className="text-slate-400">
+                Est. Processing Time
+              </Typography>
+              <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
+                ~
+                {Math.ceil(
+                  STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60
+                )}{' '}
+                minutes
+              </Typography>
+            </>
           )}
-        >
-          {priceImpact?.multiply(-1).toFixed(2)}%
-        </Typography>
-        {crossChain && (
-          <>
-            <Typography variant="sm" className="text-slate-400">
-              Est. Processing Time
-            </Typography>
-            <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
-              ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
-              minutes
-            </Typography>
-          </>
-        )}
-        <div className="col-span-2 border-t border-slate-200/5 w-full py-0.5" />
-        <Typography variant="sm" className="text-slate-400">
-          Min. Received
-        </Typography>
-        <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
-          {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
-        </Typography>
-        {crossChain && (
-          <>
-            <Typography variant="sm" className="text-slate-400">
-              Bridge Fee
-            </Typography>
-            {bridgeFee && srcPrices?.[srcBridgeToken.wrapped.address] ? (
-              <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
-                ~$
-                {bridgeFee?.greaterThan(0)
-                  ? bridgeFee?.multiply(srcPrices[srcBridgeToken.wrapped.address].asFraction)?.toSignificant(6)
-                  : 0}
+          <div className="col-span-2 border-t border-slate-200/5 w-full py-0.5" />
+          <Typography variant="sm" className="text-slate-400">
+            Min. Received
+          </Typography>
+          <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
+            {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
+          </Typography>
+          {crossChain && (
+            <>
+              <Typography variant="sm" className="text-slate-400">
+                Bridge Fee
               </Typography>
-            ) : (
-              <div className="flex items-center justify-end">
-                <Loader size={14} />
-              </div>
-            )}
-            <Typography variant="sm" className="text-slate-400">
-              Gas Cost
-            </Typography>
-            {feeRef.current && srcPrices?.[Native.onChain(srcChainId).wrapped.address] ? (
-              <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
-                {feeRef.current.toSignificant(6)} {Native.onChain(srcChainId).symbol}
-                {/* ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)} */}
+              {bridgeFee && srcPrices?.[srcBridgeToken.wrapped.address] ? (
+                <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
+                  ~$
+                  {bridgeFee?.greaterThan(0)
+                    ? bridgeFee?.multiply(srcPrices[srcBridgeToken.wrapped.address].asFraction)?.toSignificant(6)
+                    : 0}
+                </Typography>
+              ) : (
+                <div className="flex items-center justify-end">
+                  <Loader size={14} />
+                </div>
+              )}
+              <Typography variant="sm" className="text-slate-400">
+                Gas Cost
               </Typography>
-            ) : (
-              <div className="flex items-center justify-end">
-                <Loader size={14} />
-              </div>
-            )}
-          </>
-        )}
-      </>
-    )
-  }, [
-    priceImpactSeverity,
-    priceImpact,
-    srcChainId,
-    dstMinimumAmountOut,
-    crossChain,
-    srcPrices,
-    srcBridgeToken.wrapped.address,
-    bridgeFee,
-  ])
+              {Boolean(feeRef?.current) && Boolean(Native.onChain(srcChainId).wrapped.address in srcPrices) ? (
+                <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
+                  {feeRef.current.toSignificant(6)} {Native.onChain(srcChainId).symbol}
+                  {/* ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)} */}
+                </Typography>
+              ) : (
+                <div className="flex items-center justify-end">
+                  <Loader size={14} />
+                </div>
+              )}
+            </>
+          )}
+        </>
+      )
+    },
+    [
+      bridgeFee,
+      crossChain,
+      dstMinimumAmountOut,
+      priceImpact,
+      priceImpactSeverity,
+      srcBridgeToken.wrapped.address,
+      srcChainId,
+      srcPrices,
+    ]
+  )
 
   const onSrcNetworkSelect = useCallback((chainId: number) => {
     setSrcChainId(chainId)
@@ -704,7 +613,7 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
                               onClick={toggleInvert}
                             >
                               <Tooltip
-                                panel={<div className="grid grid-cols-2 gap-1">{stats}</div>}
+                                panel={<div className="grid grid-cols-2 gap-1">{<Stats feeRef={feeRef} />}</div>}
                                 button={<InformationCircleIcon width={16} height={16} />}
                               />{' '}
                               <>
@@ -740,7 +649,7 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
                           as="div"
                           className="grid grid-cols-2 gap-1 px-4 py-2 mb-4 border border-slate-200/5 rounded-2xl"
                         >
-                          {stats}
+                          <Stats feeRef={feeRef} />
                         </Disclosure.Panel>
                       </Transition>
                     </>
@@ -928,7 +837,7 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
                                   </div>
                                 </div>
                               </div>
-                              <div className="px-4 py-3">
+                              <div className="flex justify-center px-4 py-3">
                                 <Rate price={price} theme={theme}>
                                   {({ toggleInvert, content, usdPrice }) => (
                                     <Typography
@@ -945,7 +854,7 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
                                 </Rate>
                               </div>
                               <div className="grid grid-cols-2 gap-1 p-2 border rounded-2xl sm:p-4 border-slate-200/5 bg-slate-700/40">
-                                {stats}
+                                <Stats feeRef={feeRef} />
                               </div>
                               <Approve
                                 className="flex-grow !justify-end pt-4"
@@ -995,6 +904,7 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
       </>
     ),
     [
+      Stats,
       address,
       chain,
       createNotification,
@@ -1035,7 +945,6 @@ const Widget: FC<Bridge> = ({ maxWidth = 400, theme = defaultTheme, initialState
       srcTokens,
       srcTxHash,
       srcTypedAmount,
-      stats,
       switchCurrencies,
       switchNetwork,
       theme,
