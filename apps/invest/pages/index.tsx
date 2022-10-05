@@ -17,8 +17,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
     getPoolCount(),
     getSushiBar(),
   ])
-  const selectedNetworks = query?.networks ? query.networks.split(',') : SUPPORTED_CHAIN_IDS
-  console.log({ selectedNetworks })
+
+  const selectedNetworks = query && typeof query.networks === 'string' ? query.networks.split(',') : SUPPORTED_CHAIN_IDS
   return {
     props: {
       selectedNetworks,
