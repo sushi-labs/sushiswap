@@ -72,7 +72,7 @@ const Index = ({ stats }) => {
             Welcome home to DeFi.
           </Typography>
           <div className="mx-auto lg:hidden relative w-[320px] lg:w-[420px] lg:p-10 mt-10 lg:mt-0">
-            <Image src="/img.png" layout="responsive" width="396px" height="378px" />
+            <Image src="https://sushi.com/swap-example.png" layout="responsive" width="396px" height="378px" />
             <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent to-slate-900" />
           </div>
           <div className="flex justify-center lg:justify-start">
@@ -82,7 +82,7 @@ const Index = ({ stats }) => {
           </div>
         </div>
         <div className="relative h-full">
-          <Image src="/swap-example.png" layout="responsive" width="396px" height="378px" />
+          <Image src="https://sushi.com/swap-example.png" layout="responsive" width="396px" height="378px" />
           <div className="absolute inset-0 z-10 bg-gradient-to-b from-transparent to-slate-900" />
         </div>
       </div>
