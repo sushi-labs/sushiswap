@@ -201,8 +201,23 @@ export class Trade<
     return this.tradeVersion === Version.V2
   }
 
+  public routeType(): 'Single Pool' | 'Single Path' | 'Complex Path' | 'Not Found' {
+    if (this.isComplex()) return 'Complex Path'
+    if (this.isSingle()) return 'Single Path'
+    if (this.isSinglePool()) return 'Single Pool'
+    return 'Not Found'
+  }
+
+  public isNotFound(): boolean {
+    return !this.route.legs.length
+  }
+
   public isComplex(): boolean {
     return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size !== this.route.legs.length
+  }
+
+  public isSinglePool(): boolean {
+    return this.route.legs.length === 1
   }
 
   public isSingle(): boolean {

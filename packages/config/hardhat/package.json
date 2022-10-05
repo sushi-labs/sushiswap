@@ -40,7 +40,7 @@
     "@typechain/hardhat": "6.x",
     "dotenv": "16.x",
     "ethereum-waffle": "3.x",
-    "hardhat-deploy": "^0.11.10",
+    "hardhat-deploy": "^0.11.12",
     "hardhat-deploy-ethers": "0.3.0-beta.13",
     "typechain": "8.x"
   },
@@ -50,13 +50,13 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "17.x",
-    "ethers": "5.x",
+    "ethers": "^5.7.0",
     "hardhat": "2.x",
     "tsup": "6.x",
-    "typescript": "4.x"
+    "typescript": "4.6.3"
   },
   "peerDependencies": {
-    "ethers": "5.x",
+    "ethers": "^5.7.0",
     "hardhat": "2.x"
   }
 }

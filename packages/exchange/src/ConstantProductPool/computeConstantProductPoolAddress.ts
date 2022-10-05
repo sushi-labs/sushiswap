@@ -5,7 +5,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import constantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
 import EXPORTS from '@sushiswap/trident/exports/all.json'
-import constantProductPoolArtifactPreview from '@sushiswap/trident-preview/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
+import constantProductPoolArtifactPreview from 'trident-preview/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
 
 import { Fee } from '../Fee'
 import { computeInitCodeHash } from './computeInitCodeHash'
@@ -28,7 +28,7 @@ export const computeConstantProductPoolAddress = ({
 
   const deployData = defaultAbiCoder.encode(
     ['address', 'address', 'uint256', 'bool'],
-    [...[token0.address, token1.address].sort(), fee, twap]
+    [token0.address, token1.address, fee, twap]
   )
 
   const CONSTANT_PRODUCT_POOL_INIT_CODE_HASH =

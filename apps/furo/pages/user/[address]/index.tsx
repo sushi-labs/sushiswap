@@ -10,6 +10,8 @@ import { Streams, Vestings } from 'types'
 
 const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mod) => mod.Dashboard), { ssr: false })
 
+import { NextSeo } from 'next-seo'
+
 import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '.graphclient'
 
 interface Props {
@@ -40,6 +42,7 @@ const UserDashboard: FC<InferGetServerSidePropsType<typeof getServerSideProps>> 
 
   return (
     <SWRConfig value={{ fallback }}>
+      <NextSeo title="User" />
       <Layout
         backdrop={
           <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">

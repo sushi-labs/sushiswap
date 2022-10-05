@@ -6,17 +6,17 @@ import { CreateVestingFormData, CreateVestingFormDataTransformed } from '../type
 type TransformVestingFormData = (x: CreateVestingFormData) => CreateVestingFormDataTransformed
 
 export const transformVestingFormData: TransformVestingFormData = (payload) => {
-  const { startDate, cliffEndDate, cliff, currency, cliffAmount, stepAmount, stepPayouts } = payload
-  const _currency = currency?.isNative
-    ? Native.onChain(currency.chainId)
-    : currency
-    ? new Token({
-        chainId: currency.chainId,
-        decimals: currency.decimals,
-        address: currency.address,
-        name: currency.name,
-        symbol: currency.symbol,
-      })
+  const { startDate, cliffEndDate, cliff, currency, cliffAmount, stepAmount, stepPayouts, stepConfig } = payload
+  const _currency = currency
+    ? currency.isNative
+      ? Native.onChain(currency.chainId)
+      : new Token({
+          chainId: currency.chainId,
+          decimals: currency.decimals,
+          address: (currency as Token).address,
+          name: currency.name,
+          symbol: currency.symbol,
+        })
     : undefined
 
   const _startDate = new Date(startDate)
@@ -39,10 +39,21 @@ export const transformVestingFormData: TransformVestingFormData = (payload) => {
     totalAmount = totalStepAmountAsEntity.add(cliffAmountAsEntity)
   }
 
+  if (cliffAmountAsEntity && !totalStepAmountAsEntity) {
+    totalAmount = cliffAmountAsEntity
+  }
+
   const stepPercentage =
     totalAmount?.greaterThan(ZERO) && stepAmountAsEntity
       ? new Fraction(stepAmountAsEntity.multiply(JSBI.BigInt(1e18)).quotient, totalAmount.quotient).quotient
       : JSBI.BigInt(0)
+
+  const endDate =
+    ((cliff && cliffEndDate) || startDate) && stepPayouts
+      ? new Date(
+          new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
+        )
+      : undefined
 
   return {
     ...payload,
@@ -50,7 +61,10 @@ export const transformVestingFormData: TransformVestingFormData = (payload) => {
     startDate: _startDate,
     cliffEndDate: _cliffEndDate,
     cliffDuration,
+    cliffAmount: cliffAmountAsEntity,
+    stepAmount: stepAmountAsEntity,
     totalAmount,
     stepPercentage,
+    endDate,
   }
 }

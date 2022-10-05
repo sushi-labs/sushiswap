@@ -13,32 +13,53 @@ export const SUSHISWAP_CHAINS = [
   ChainId.MOONRIVER,
   ChainId.POLYGON,
   ChainId.HARMONY,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.BOBA,
 ]
 
-export const TRIDENT_CHAINS = [ChainId.OPTIMISM, ChainId.POLYGON]
+export const TRIDENT_CHAINS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.METIS, ChainId.KAVA]
 
-export const GRAPH_HOST = 'api.thegraph.com'
+const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
 
-export const GRAPH_CURRENT_PATH = 'subgraphs/name'
-
-export const GRAPH_PENDING_PATH = 'subgraphs/id'
-
-export const SUSHISWAP_SUBGRAPH_NAME: Record<string | number, string> = {
-  [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',
-  [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
-  [ChainId.BSC]: 'sushiswap/bsc-exchange',
-  [ChainId.CELO]: 'sushiswap/exchange-celo',
-  [ChainId.ETHEREUM]: 'sushiswap/exchange-ethereum',
-  [ChainId.FANTOM]: 'sushiswap/exchange-fantom',
-  [ChainId.FUSE]: 'sushiswap/exchange-fuse',
-  [ChainId.GNOSIS]: 'sushiswap/exchange-gnosis',
-  [ChainId.MOONBEAM]: 'sushiswap/exchange-moonbeam',
-  [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
-  [ChainId.POLYGON]: 'sushiswap/matic-exchange',
-  [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
+export const GRAPH_HOST: Record<number | string, string> = {
+  [ChainId.OPTIMISM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.ETHEREUM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.AVALANCHE]: GRAPH_HOST_ENDPOINT,
+  [ChainId.ARBITRUM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.BSC]: GRAPH_HOST_ENDPOINT,
+  [ChainId.CELO]: GRAPH_HOST_ENDPOINT,
+  [ChainId.FANTOM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.FUSE]: GRAPH_HOST_ENDPOINT,
+  [ChainId.GNOSIS]: GRAPH_HOST_ENDPOINT,
+  [ChainId.MOONBEAM]: GRAPH_HOST_ENDPOINT,
+  [ChainId.MOONRIVER]: GRAPH_HOST_ENDPOINT,
+  [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
+  [ChainId.KAVA]: 'pvt.graph.kava.io',
+  [ChainId.METIS]: 'andromeda.thegraph.metis.io',
+  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com',
+  [ChainId.BOBA]: GRAPH_HOST_ENDPOINT,
 }
 
-export const TRIDENT_SUBGRAPH_NAME: Record<string | number, string> = {
-  [ChainId.OPTIMISM]: 'olastenberg/trident-optimism',
-  [ChainId.POLYGON]: 'sushiswap/trident-polygon',
+export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
+  [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
+  [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
+  [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',
+  [ChainId.CELO]: 'sushi-0m/sushiswap-celo',
+  [ChainId.FANTOM]: 'sushi-0m/sushiswap-fantom',
+  [ChainId.FUSE]: 'sushi-0m/sushiswap-fuse',
+  [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
+  [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
+  [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
+  [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
+  [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
+  [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
+  [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
+}
+
+export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.POLYGON]: 'sushi-0m/trident-polygon',
+  [ChainId.OPTIMISM]: 'sushi-0m/trident-optimism',
+  [ChainId.KAVA]: 'sushi-0m/trident-kava',
+  [ChainId.METIS]: 'sushi-0m/trident-metis',
 }

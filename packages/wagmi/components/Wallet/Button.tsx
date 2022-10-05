@@ -1,5 +1,4 @@
-import { Transition } from '@headlessui/react'
-import { ChevronDoubleDownIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
+import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import {
@@ -49,7 +48,7 @@ export const Button = <C extends React.ElementType>({
 
   // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { connectors, connect, pendingConnector } = hack || useConnect()
+  const { connectors, connect, pendingConnector } = useConnect()
 
   const { pendingConnection, reconnecting, isConnected, connecting } = useWalletState(!!pendingConnector)
 
@@ -113,59 +112,47 @@ export const Button = <C extends React.ElementType>({
               {({ data: ens }) => (
                 <Account.Balance supportedNetworks={supportedNetworks} address={address}>
                   {({ content, isLoading }) => (
-                    <Transition
-                      appear
-                      show={Boolean(ens || address) && Boolean(content && !isLoading)}
-                      className="transition-[max-width] overflow-hidden p-1 w-full rounded-xl"
-                      enter="duration-300 ease-in-out"
-                      enterFrom="transform max-w-0"
-                      enterTo="transform max-w-[340px]"
-                      leave="transition-[max-width] duration-250 ease-in-out"
-                      leaveFrom="transform max-w-[340px]"
-                      leaveTo="transform max-w-0"
+                    <div
+                      className={classNames(
+                        'z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-xl',
+                        rest.className
+                      )}
                     >
-                      <div
-                        className={classNames(
-                          'z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-xl',
-                          rest.className
-                        )}
+                      <div className="px-3">{content}</div>
+                      <Menu
+                        className="right-0"
+                        button={
+                          <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
+                            <Typography variant="sm" weight={500} className="tracking-wide text-slate-50">
+                              {ens ? ens : address ? shortenAddress(address) : ''}
+                            </Typography>
+                          </Menu.Button>
+                        }
                       >
-                        <div className="hidden px-3 sm:block">{content}</div>
-                        <Menu
-                          className="right-0"
-                          button={
-                            <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
-                              <Typography variant="sm" weight={500} className="tracking-wide text-slate-50">
-                                {ens ? ens : address ? shortenAddress(address) : ''}
-                              </Typography>
-                            </Menu.Button>
-                          }
-                        >
-                          <Menu.Items>
-                            <div>
-                              {address && chain?.id && (
-                                <Menu.Item
-                                  as="a"
-                                  target="_blank"
-                                  href={`https://app.sushi.com/account?account=${address}&chainId=${chain.id}`}
-                                  className="flex items-center gap-3 group text-blue hover:text-white justify-between !pr-4"
-                                >
-                                  View Portfolio
-                                  <ExternalLinkIcon width={16} height={16} />
-                                </Menu.Item>
-                              )}
+                        <Menu.Items>
+                          <div>
+                            {/* {address && chain?.id && (
                               <Menu.Item
-                                className="flex items-center gap-3 group justify-between !pr-4"
-                                onClick={() => disconnect()}
+                                as="a"
+                                target="_blank"
+                                href={`https://app.sushi.com/account?account=${address}&chainId=${chain.id}`}
+                                className="flex items-center gap-3 group text-blue hover:text-white justify-between !pr-4"
                               >
-                                Disconnect
-                                <LogoutIcon height={16} />
+                                View Portfolio
+                                <ExternalLinkIcon width={16} height={16} />
                               </Menu.Item>
-                            </div>
-                          </Menu.Items>
-                        </Menu>
-                      </div>
-                    </Transition>
+                            )} */}
+                            <Menu.Item
+                              className="flex items-center gap-3 group justify-between !pr-4"
+                              onClick={() => disconnect()}
+                            >
+                              Disconnect
+                              <LogoutIcon height={16} />
+                            </Menu.Item>
+                          </div>
+                        </Menu.Items>
+                      </Menu>
+                    </div>
                   )}
                 </Account.Balance>
               )}

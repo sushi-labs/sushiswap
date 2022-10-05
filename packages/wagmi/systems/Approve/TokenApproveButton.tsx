@@ -27,9 +27,17 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
     allApproved,
     hideIcon,
     initialized,
+    onSuccess,
+    enabled = true,
     ...props
   }) => {
-    const [approvalState, onApprove] = useERC20ApproveCallback(watch, amount, address)
+    const [approvalState, onApprove] = useERC20ApproveCallback(watch, amount, address, onSuccess)
+
+    useEffect(() => {
+      if (!enabled && dispatch && index !== undefined) {
+        dispatch({ type: 'update', payload: { state: [ApprovalState.APPROVED, undefined, false], index } })
+      }
+    }, [dispatch, enabled, index])
 
     // Set to undefined on unmount
     useEffect(() => {
@@ -40,7 +48,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
     }, [])
 
     useEffect(() => {
-      if (!dispatch || index === undefined || amount === undefined) return
+      if (!dispatch || index === undefined || amount === undefined || !enabled) return
 
       dispatch({
         type: 'update',
@@ -98,32 +106,37 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
       >
         <DefaultButton as="div" {...props}>
           <Tooltip
+            mouseEnterDelay={0.3}
             button={
-              <Badge
-                badgeContent={
-                  <div
-                    className={classNames(
-                      approvalState === ApprovalState.PENDING
-                        ? 'bg-yellow'
-                        : approvalState === ApprovalState.APPROVED
-                        ? 'bg-green'
-                        : 'bg-red',
-                      'w-2 h-2 rounded-full shadow-md'
-                    )}
-                  />
-                }
-              >
-                <IconButton
-                  as="div"
-                  className={classNames(
-                    disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
-                    'flex items-center justify-center'
-                  )}
-                  onClick={onApprove}
+              <div>
+                <Badge
+                  badgeContent={
+                    <div
+                      className={classNames(
+                        approvalState === ApprovalState.PENDING
+                          ? 'bg-yellow'
+                          : approvalState === ApprovalState.APPROVED
+                          ? 'bg-green'
+                          : 'bg-red',
+                        'w-2 h-2 rounded-full shadow-md'
+                      )}
+                    />
+                  }
                 >
-                  {amount && <CurrencyFromUi.Icon disableLink currency={amount?.currency} width="100%" height="100%" />}
-                </IconButton>
-              </Badge>
+                  <IconButton
+                    as="div"
+                    className={classNames(
+                      disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
+                      'flex items-center justify-center hover:scale-[1.10] transition-all'
+                    )}
+                    onClick={onApprove}
+                  >
+                    {amount && (
+                      <CurrencyFromUi.Icon disableLink currency={amount?.currency} width="100%" height="100%" />
+                    )}
+                  </IconButton>
+                </Badge>
+              </div>
             }
             panel={
               <div className="flex flex-col gap-2 max-w-[200px]">

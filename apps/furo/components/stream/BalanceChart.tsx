@@ -33,7 +33,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
       width={width}
       height={width}
       viewBox={`0 0 ${width} ${width}`}
-      style={{ '-webkit-tap-highlight-color': 'transparent' } as unknown}
+      style={{ WebkitTapHighlightColor: 'transparent' }}
     >
       <LinearGradient id="unfilled" to="#2022314D" from="#2022314D" vertical={false} />
       <LinearGradient id="gblue" to={'#1398ED'} from={'#5CB0E4'} vertical={false} />
@@ -186,7 +186,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             className="text-slate-500"
             fontWeight={500}
           >
-            / {stream?.withdrawnAmount ? stream.amount.toSignificant(6) : '0'} {stream?.token.symbol} Total
+            / {stream?.withdrawnAmount ? stream.totalAmount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}
@@ -238,7 +238,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             className="text-slate-500"
             fontWeight={500}
           >
-            / {stream?.balance ? stream?.amount.toSignificant(6) : '0'} {stream?.token.symbol} Total
+            / {stream?.balance ? stream?.totalAmount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}

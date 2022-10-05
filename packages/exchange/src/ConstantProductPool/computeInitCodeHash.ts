@@ -9,8 +9,8 @@ export const computeInitCodeHash = ({
   creationCode: string
   deployData: string
   masterDeployerAddress: string
-}): string =>
-  keccak256(
+}): string => {
+  return keccak256(
     ['bytes'],
     [
       pack(
@@ -19,3 +19,4 @@ export const computeInitCodeHash = ({
       ),
     ]
   )
+}

@@ -34,6 +34,7 @@
     "@tailwindcss/line-clamp": "^0.4.0",
     "@tailwindcss/typography": "^0.5.2",
     "classnames": "^2.3.1",
+    "date-fns": "^2.29.1",
     "rc-tooltip": "^5.2.2",
     "react-dropzone": "^14.2.2",
     "react-popper": "^2.2.5",
@@ -53,18 +54,19 @@
     "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.5",
     "autoprefixer": "^10.4.0",
-    "next": "^12.2.0",
+    "eslint": "^8.20.0",
+    "next": "12.2.x",
     "postcss": "^8.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^6.2.0",
-    "typescript": "^4.7.0"
+    "typescript": "4.6.3"
   },
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "optionalDependencies": {
-    "next": "^12.2.0"
+    "next": "12.2.x"
   }
 }

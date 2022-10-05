@@ -3,6 +3,7 @@ import {
   DiscordIcon,
   GithubIcon,
   InstagramIcon,
+  Link,
   MediumIcon,
   SushiWithTextIcon,
   TwitterIcon,
@@ -14,12 +15,12 @@ export type FooterProps = React.HTMLProps<HTMLDivElement>
 const config: Record<string, Record<string, { href: string; rel?: string; target?: string }>> = {
   Services: {
     Swap: { href: 'https://sushi.com/swap' },
-    'Liquidity Providing': { href: 'https://app.sushi.com/pools', target: '_blank', rel: 'noopener noreferrer' },
+    Pool: { href: 'https://app.sushi.com/pools', target: '_blank', rel: 'noopener noreferrer' },
     'Lending & Borrowing': { href: 'https://app.sushi.com/kashi', target: '_blank', rel: 'noopener noreferrer' },
     'Miso Launchpad': { href: 'https://app.sushi.com/miso', target: '_blank', rel: 'noopener noreferrer' },
     'Shoyu NFT': { href: 'https://shoyunft.com', target: '_blank', rel: 'noopener noreferrer' },
-    'Furo Streaming': { href: 'https://sushi.com/furo' },
-    Analytics: { href: 'https://analytics.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
+    Streaming: { href: 'https://sushi.com/furo' },
+    Analytics: { href: 'https://sushi.com/analytics', target: '_blank', rel: 'noopener noreferrer' },
   },
   Help: {
     'About Us': { href: 'https://docs.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
@@ -49,7 +50,7 @@ const config: Record<string, Record<string, { href: string; rel?: string; target
 
 export function Footer(props: FooterProps): JSX.Element {
   return (
-    <footer className="flex border-t border-slate-400/5 py-[72px]" {...props}>
+    <footer className="hidden sm:flex flex-col border-t border-slate-400/5 pt-[72px]" {...props}>
       <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-start gap-3 pt-2">
@@ -97,7 +98,25 @@ export function Footer(props: FooterProps): JSX.Element {
           ))}
         </div>
       </Container>
-      <div className="flex border-t border-slate-800"></div>
+      <Container maxWidth="5xl" className="mx-auto mt-20 mb-5">
+        <div className="flex justify-between mx-4 border-t border-slate-800 py-2">
+          <Typography variant="xs" className="text-slate-400">
+            Copyright © 2022 Sushi. All rights reserved.
+          </Typography>
+          <div className="flex divide-x divide-slate-200/20 gap-">
+            <Link.Internal href="/terms-of-use" passHref={true}>
+              <Typography as="a" variant="xs" weight={500} className="text-slate-300 px-3">
+                Terms of Use
+              </Typography>
+            </Link.Internal>
+            {/*<Link.Internal href="/privacy-policy" passHref={true}>*/}
+            {/*  <Typography as="a" variant="xs" weight={500} className="text-slate-300 pl-3">*/}
+            {/*    Privacy Policy*/}
+            {/*  </Typography>*/}
+            {/*</Link.Internal>*/}
+          </div>
+        </div>
+      </Container>
     </footer>
   )
 }

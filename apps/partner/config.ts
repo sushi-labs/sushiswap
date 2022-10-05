@@ -37,8 +37,7 @@ export const EXCHANGE = {
 }
 
 export const TRIDENT = {
-  [ChainId.POLYGON]: 'matthewlilley/trident-polygon',
-  [ChainId.KOVAN]: 'sushiswap/trident-kovan',
+  [ChainId.POLYGON]: 'sushiswap/trident-polygon',
   [ChainId.OPTIMISM]: 'olastenberg/trident-optimism',
   [ChainId.KAVA]: 'sushiswap/trident-kava',
   [ChainId.METIS]: 'sushiswap/trident-metis',
@@ -62,6 +61,8 @@ export const SUPPORTED_CHAINS = [
   ChainId.PALM,
   ChainId.KAVA,
   ChainId.METIS,
+  ChainId.BOBA,
+  ChainId.BOBA_AVAX,
 ] as const
 
 export const CHAIN_NAME: Record<typeof SUPPORTED_CHAINS[number], string> = {
@@ -82,4 +83,6 @@ export const CHAIN_NAME: Record<typeof SUPPORTED_CHAINS[number], string> = {
   [ChainId.PALM]: 'Palm',
   [ChainId.KAVA]: 'Kava',
   [ChainId.METIS]: 'Metis',
+  [ChainId.BOBA]: 'Boba',
+  [ChainId.BOBA_AVAX]: 'Boba Avax',
 }

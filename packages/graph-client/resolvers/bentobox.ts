@@ -1,22 +1,21 @@
+import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+
 import { Resolvers } from '../.graphclient'
-import { BENTOBOX_SUBGRAPH_NAME, CHAIN_NAME, SUBGRAPH_HOST } from '../config'
 
 export const resolvers: Resolvers = {
   Rebase: {
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 1,
-    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
   },
   Query: {
     crossChainRebases: async (root, args, context, info) =>
       Promise.all(
         args.chainIds.map((chainId) =>
-          context.Rebase.Query.rebases({
+          context.BentoBox.Query.rebases({
             root,
             args,
             context: {
               ...context,
               chainId,
-              chainName: CHAIN_NAME[chainId],
               subgraphName: BENTOBOX_SUBGRAPH_NAME[chainId],
               subgraphHost: SUBGRAPH_HOST[chainId],
             },
@@ -25,7 +24,6 @@ export const resolvers: Resolvers = {
             rebases.map((rebase) => ({
               ...rebase,
               chainId,
-              chainName: CHAIN_NAME[chainId],
             }))
           )
         )

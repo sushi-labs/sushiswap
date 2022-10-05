@@ -23,7 +23,7 @@ export type TokenSelectorProps = {
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = memo(
-  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, ...props }) => {
+  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, onSelect, open, ...props }) => {
     const { address } = useAccount()
     const isMounted = useIsMounted()
 
@@ -32,43 +32,56 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       [tokenMap, props.customTokenMap]
     )
 
-    const _tokenMapValues = useMemo(() => Object.values(_tokenMap), [_tokenMap])
+    const _tokenMapValues = useMemo(() => {
+      // Optimism token list is dumb, have to remove random weird addresses
+      delete _tokenMap['0x0000000000000000000000000000000000000000']
+      delete _tokenMap['0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000']
+      return Object.values(_tokenMap)
+    }, [_tokenMap])
 
     const { data: balances } = useBalances({
       account: address,
       chainId,
       currencies: _tokenMapValues,
+      loadBentobox: false,
+      enabled: open,
     })
 
     const { data: pricesMap } = usePrices({ chainId })
 
-    if (!isMounted) return <></>
+    return useMemo(() => {
+      if (!isMounted) return <></>
 
-    if (variant === 'overlay') {
+      if (variant === 'overlay') {
+        return (
+          <TokenSelectorOverlay
+            open={open}
+            account={address}
+            balancesMap={balances}
+            tokenMap={_tokenMap}
+            pricesMap={pricesMap}
+            chainId={chainId}
+            fundSource={fundSource}
+            onSelect={onSelect}
+            {...props}
+          />
+        )
+      }
+
       return (
-        <TokenSelectorOverlay
+        <TokenSelectorDialog
+          open={open}
           account={address}
           balancesMap={balances}
           tokenMap={_tokenMap}
           pricesMap={pricesMap}
           chainId={chainId}
           fundSource={fundSource}
+          onSelect={onSelect}
           {...props}
         />
       )
-    }
-
-    return (
-      <TokenSelectorDialog
-        account={address}
-        balancesMap={balances}
-        tokenMap={_tokenMap}
-        pricesMap={pricesMap}
-        chainId={chainId}
-        fundSource={fundSource}
-        {...props}
-      />
-    )
+    }, [_tokenMap, address, balances, chainId, fundSource, isMounted, onSelect, open, pricesMap, props, variant])
   },
   (prevProps, nextProps) => {
     return (

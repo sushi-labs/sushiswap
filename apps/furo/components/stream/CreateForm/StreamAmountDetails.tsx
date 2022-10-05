@@ -24,7 +24,7 @@ export const StreamAmountDetails = () => {
   // @ts-ignore
   const [currency, fundSource] = watch(['currency', 'fundSource'])
 
-  const { data: balance } = useBalance({ account: address, currency, chainId: activeChain?.id })
+  const { data: balance } = useBalance({ account: address, currency, chainId: activeChain?.id, loadBentobox: true })
 
   return (
     <Form.Section

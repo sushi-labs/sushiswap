@@ -14,7 +14,7 @@ module.exports = {
     },
     extend: {
       backgroundImage: () => ({
-        'gradient-radial': 'radial-gradient(100% 100% at 50% 25%, var(--tw-gradient-stops))',
+        'gradient-radial': 'radial-gradient(#13213E, #111829)',
       }),
       boxShadow: {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',

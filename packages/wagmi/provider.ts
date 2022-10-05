@@ -7,7 +7,7 @@ import {
   JsonRpcProvider,
   WebSocketProvider,
 } from '@ethersproject/providers'
-import { ChainId } from '@sushiswap/chain'
+import chains, { ChainId } from '@sushiswap/chain'
 
 const providerCache: Partial<Record<ChainId, BaseProvider>> = {}
 const websocketProviderCache: Partial<Record<ChainId, WebSocketProvider>> = {}
@@ -52,6 +52,7 @@ const ALCHEMY_API_KEY: Record<number, string | undefined> = {
 const PUBLIC_RPC: Record<number, string> = {
   [ChainId.FANTOM]: 'https://rpcapi.fantom.network',
   [ChainId.AVALANCHE]: 'https://api.avax.network/ext/bc/C/rpc',
+  [ChainId.BOBA_AVAX]: 'https://avax.boba.network',
 }
 
 export function getProvider(chainId: ChainId) {
@@ -74,6 +75,8 @@ export function getProvider(chainId: ChainId) {
     // providerCache[chainId] = new AnkrProvider(name, ankrKey)
   } else if (chainId in PUBLIC_RPC) {
     providerCache[chainId] = new JsonRpcProvider(PUBLIC_RPC[chainId])
+  } else if (chainId in chains) {
+    providerCache[chainId] = new JsonRpcProvider(chains[chainId].rpc[0])
   }
 
   return providerCache[chainId]!

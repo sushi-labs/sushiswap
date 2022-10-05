@@ -30,9 +30,22 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     allApproved,
     initialized,
     hideIcon,
+    onSuccess,
+    enabled = true,
     ...props
   }) => {
-    const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({ watch, masterContract, onSignature })
+    const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
+      watch,
+      masterContract,
+      onSignature,
+      onSuccess,
+    })
+
+    useEffect(() => {
+      if (!enabled && dispatch && index !== undefined) {
+        dispatch({ type: 'update', payload: { state: [ApprovalState.APPROVED, undefined, true], index } })
+      }
+    }, [dispatch, enabled, index])
 
     // Set to undefined on unmount
     useEffect(() => {
@@ -43,7 +56,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     }, [])
 
     useEffect(() => {
-      if (!dispatch || index === undefined) return
+      if (!dispatch || index === undefined || !enabled) return
 
       dispatch({
         type: 'update',
@@ -83,34 +96,37 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
       >
         <DefaultButton as="div" {...props}>
           <Tooltip
+            mouseEnterDelay={0.3}
             button={
-              <Badge
-                badgeContent={
-                  <div
-                    className={classNames(
-                      approvalState === ApprovalState.PENDING
-                        ? 'bg-yellow'
-                        : approvalState === ApprovalState.APPROVED
-                        ? 'bg-green'
-                        : 'bg-red',
-                      'w-2 h-2 rounded-full shadow-md'
-                    )}
-                  />
-                }
-              >
-                <IconButton
-                  as="div"
-                  className={classNames(
-                    disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
-                    'flex items-center justify-center bg-slate-700 rounded-full overflow-hidden'
-                  )}
-                  onClick={onApprove}
+              <div>
+                <Badge
+                  badgeContent={
+                    <div
+                      className={classNames(
+                        approvalState === ApprovalState.PENDING
+                          ? 'bg-yellow'
+                          : approvalState === ApprovalState.APPROVED
+                          ? 'bg-green'
+                          : 'bg-red',
+                        'w-2 h-2 rounded-full shadow-md'
+                      )}
+                    />
+                  }
                 >
-                  <div className="bg-white bg-opacity-[0.24] flex items-center justify-center rounded-full w-6 h-6 min-w-6 min-h-6 ">
-                    <BentoboxIcon width={14} height={14} />
-                  </div>
-                </IconButton>
-              </Badge>
+                  <IconButton
+                    as="div"
+                    className={classNames(
+                      disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
+                      'flex items-center justify-center bg-slate-700 rounded-full overflow-hidden hover:scale-[1.10] transition-all'
+                    )}
+                    onClick={onApprove}
+                  >
+                    <div className="bg-white bg-opacity-[0.24] flex items-center justify-center rounded-full w-6 h-6 min-w-6 min-h-6 ">
+                      <BentoboxIcon width={14} height={14} />
+                    </div>
+                  </IconButton>
+                </Badge>
+              </div>
             }
             panel={
               <div className="flex flex-col gap-3 max-w-[200px]">

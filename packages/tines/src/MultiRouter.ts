@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { Graph, MultiRoute, RouteStatus } from './Graph'
+import { Graph, MultiRoute, NetworkInfo, RouteStatus } from './Graph'
 import { RPool, RToken, setTokenId } from './PrimaryPools'
 
 // Assumes route is a single path
@@ -46,16 +46,13 @@ export function findMultiRouteExactIn(
   to: RToken,
   amountIn: BigNumber | number,
   pools: RPool[],
-  baseToken: RToken,
-  gasPrice: number,
+  baseTokenOrNetworks: RToken | NetworkInfo[],
+  gasPrice?: number,
   flows?: number | number[]
 ): MultiRoute {
-  setTokenId(from, to, baseToken)
-  const g = new Graph(pools, baseToken, gasPrice)
-  const fromV = g.getVert(from)
-  if (fromV?.price === 0) {
-    g.setPricesStable(fromV, 1, 0)
-  }
+  checkChainId(pools, baseTokenOrNetworks)
+  setTokenId(from, to)
+  const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
   if (flows !== undefined) return g.findBestRouteExactIn(from, to, amountIn, flows)
 
@@ -64,7 +61,7 @@ export function findMultiRouteExactIn(
   // if (g.findBestPathExactIn(from, to, amountIn/100 + 10_000, 0)?.gasSpent === 0) return outSingle
   g.cleanTmpData()
 
-  const bestFlowNumber = calcBestFlowNumber(outSingle, amountIn, fromV?.gasPrice)
+  const bestFlowNumber = calcBestFlowNumber(outSingle, amountIn, g.getVert(from)?.gasPrice)
   if (bestFlowNumber === 1) return outSingle
 
   const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
@@ -86,20 +83,17 @@ export function findMultiRouteExactOut(
   to: RToken,
   amountOut: BigNumber | number,
   pools: RPool[],
-  baseToken: RToken,
-  gasPrice: number,
+  baseTokenOrNetworks: RToken | NetworkInfo[],
+  gasPrice?: number,
   flows?: number | number[]
 ): MultiRoute {
-  setTokenId(from, to, baseToken)
+  checkChainId(pools, baseTokenOrNetworks)
+  setTokenId(from, to)
   if (amountOut instanceof BigNumber) {
     amountOut = parseInt(amountOut.toString())
   }
 
-  const g = new Graph(pools, baseToken, gasPrice)
-  const fromV = g.getVert(from)
-  if (fromV?.price === 0) {
-    g.setPricesStable(fromV, 1, 0)
-  }
+  const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
   if (flows !== undefined) return g.findBestRouteExactOut(from, to, amountOut, flows)
 
@@ -108,11 +102,12 @@ export function findMultiRouteExactOut(
   // if (g.findBestPathExactOut(from, to, amountOut/100 + 10_000, 0)?.gasSpent === 0) return inSingle
   g.cleanTmpData()
 
+  const fromV = g.getVert(from)
   const bestFlowNumber = calcBestFlowNumber(inSingle, inSingle.amountIn, fromV?.gasPrice)
   if (bestFlowNumber === 1) return inSingle
 
   const inMulti = g.findBestRouteExactOut(from, to, amountOut, bestFlowNumber)
-  return getBetterRouteExactOut(inSingle, inMulti, gasPrice)
+  return getBetterRouteExactOut(inSingle, inMulti, fromV?.gasPrice || 0)
 }
 
 export function findSingleRouteExactIn(
@@ -120,15 +115,12 @@ export function findSingleRouteExactIn(
   to: RToken,
   amountIn: BigNumber | number,
   pools: RPool[],
-  baseToken: RToken,
-  gasPrice: number
+  baseTokenOrNetworks: RToken | NetworkInfo[],
+  gasPrice?: number
 ): MultiRoute {
-  setTokenId(from, to, baseToken)
-  const g = new Graph(pools, baseToken, gasPrice)
-  const fromV = g.getVert(from)
-  if (fromV?.price === 0) {
-    g.setPricesStable(fromV, 1, 0)
-  }
+  checkChainId(pools, baseTokenOrNetworks)
+  setTokenId(from, to)
+  const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
   const out = g.findBestRouteExactIn(from, to, amountIn, 1)
   return out
@@ -139,15 +131,12 @@ export function findSingleRouteExactOut(
   to: RToken,
   amountOut: BigNumber | number,
   pools: RPool[],
-  baseToken: RToken,
-  gasPrice: number
+  baseTokenOrNetworks: RToken | NetworkInfo[],
+  gasPrice?: number
 ): MultiRoute {
-  setTokenId(from, to, baseToken)
-  const g = new Graph(pools, baseToken, gasPrice)
-  const fromV = g.getVert(from)
-  if (fromV?.price === 0) {
-    g.setPricesStable(fromV, 1, 0)
-  }
+  checkChainId(pools, baseTokenOrNetworks)
+  setTokenId(from, to)
+  const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
 
   if (amountOut instanceof BigNumber) {
     amountOut = parseInt(amountOut.toString())
@@ -159,8 +148,39 @@ export function findSingleRouteExactOut(
 
 export function calcTokenPrices(pools: RPool[], baseToken: RToken): Map<RToken, number> {
   setTokenId(baseToken)
-  const g = new Graph(pools, baseToken, 0)
+  const g = new Graph(pools, baseToken, baseToken, 0)
   const res = new Map<RToken, number>()
   g.vertices.forEach((v) => res.set(v.token, v.price))
   return res
+}
+
+// Checks correctness of ChainId of each token in each network
+// Could be avoided for speed of work, but helps to find out difficult to catch bugs
+function checkChainId(pools: RPool[], baseTokenOrNetworks: RToken | NetworkInfo[]) {
+  if (baseTokenOrNetworks instanceof Array) {
+    baseTokenOrNetworks.forEach((n) => {
+      if (n.chainId !== n.baseToken.chainId) {
+        throw new Error(`Chain '${n.chainId}' has baseToken with '${n.baseToken.chainId}' that are not the same`)
+      }
+    })
+  }
+
+  const chainIds: (string | number | undefined)[] =
+    baseTokenOrNetworks instanceof Array ? baseTokenOrNetworks.map((n) => n.chainId) : [baseTokenOrNetworks.chainId]
+  const chainIdSet = new Set(chainIds)
+
+  const checkToken = (t: RToken) => {
+    if (!chainIdSet.has(t.chainId)) {
+      throw new Error(
+        `Token ${t.name}/${t.address} chainId='${t.chainId}' is not in list of possible chains: [${chainIds.join(
+          ', '
+        )}]`
+      )
+    }
+  }
+
+  pools.forEach((p) => {
+    checkToken(p.token0)
+    checkToken(p.token1)
+  })
 }

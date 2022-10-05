@@ -17,6 +17,11 @@ jobs:
         TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
         NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
         NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+        ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
+        PARTNER_URL: ${{ secrets.PARTNER_URL }}
+        BLOG_URL: ${{ secrets.BLOG_URL }}
+        SWAP_URL: ${{ secrets.SWAP_URL }}
+        FURO_URL: ${{ secrets.FURO_URL }}
       strategy:
         matrix:
           os: [ubuntu-latest, macos-latest]

@@ -2,9 +2,12 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 
 import {
   AddCustomToken,
+  ClearNotifications,
+  createNotification,
   GasPrice,
   RemoveCustomToken,
   StorageState,
+  UpdateCarbonOffsetPayload,
   UpdateExpertMode,
   UpdateGasPrice,
   UpdateGasType,
@@ -17,6 +20,7 @@ import {
 
 const parsedState = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('userPreferences') || '{}') : {}
 const initialState: StorageState = {
+  carbonOffset: parsedState?.carbonOffset || false,
   slippageTolerance: parsedState?.slippageTolerance || 0.5,
   slippageToleranceType: parsedState?.slippageToleranceType || 'auto',
   gasPrice: parsedState?.gasPrice || GasPrice.HIGH,
@@ -26,9 +30,14 @@ const initialState: StorageState = {
   customTokens: parsedState?.customTokens || {},
   expertMode: parsedState?.expertMode || false,
   transactionDeadline: 30,
+  notifications: parsedState?.notifications || {},
 }
 
 const reducers = {
+  updateCarbonOffset: (state: StorageState, action: PayloadAction<UpdateCarbonOffsetPayload>) => {
+    const { carbonOffset } = action.payload
+    state.carbonOffset = carbonOffset
+  },
   updateExpertMode: (state: StorageState, action: PayloadAction<UpdateExpertMode>) => {
     const { expertMode } = action.payload
     state.expertMode = expertMode
@@ -83,6 +92,22 @@ const reducers = {
   updateTransactionDeadline: (state: StorageState, action: PayloadAction<UpdateTransactionDeadline>) => {
     const { transactionDeadline } = action.payload
     state.transactionDeadline = transactionDeadline
+  },
+  createNotification: (state: StorageState, action: PayloadAction<createNotification>) => {
+    const { notification, account, timestamp } = action.payload
+    if (!state.notifications[account]) {
+      state.notifications[account] = {}
+    }
+
+    if (!state.notifications[account][timestamp]) {
+      state.notifications[account][timestamp] = [notification]
+    } else {
+      state.notifications[account][timestamp].push(notification)
+    }
+  },
+  clearNotifications: (state: StorageState, action: PayloadAction<ClearNotifications>) => {
+    const { account } = action.payload
+    delete state.notifications[account]
   },
 }
 

@@ -27,12 +27,12 @@ export const BackgroundImageMakerField: FC = () => {
   return (
     <div className="flex flex-col flex-grow space-y-4">
       <BackgroundMaker />
-      <div className="w-[200px] shadow-xl rounded-xl space-y-2">
+      <div className="w-[200px] rounded-xl space-y-2">
         <input
           placeholder="#AABBCC"
           value={customColor}
           onChange={(event) => validate(event.target.value)}
-          className={classNames(DEFAULT_FORM_FIELD_CLASSNAMES)}
+          className={classNames(DEFAULT_FORM_FIELD_CLASSNAMES, 'shadow-xl')}
         />
         <FormFieldHelperText>Enter background color in hex value</FormFieldHelperText>
       </div>

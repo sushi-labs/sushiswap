@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ContractInterface } from '@ethersproject/contracts'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { Chain } from '@sushiswap/chain'
 import { Amount } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
@@ -11,7 +10,7 @@ import { Button, classNames, createToast, Dialog, Dots, Switch, Typography } fro
 import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useContractWrite, useNetwork } from 'wagmi'
+import { useAccount, useDeprecatedContractWrite, useNetwork } from 'wagmi'
 
 interface UpdateModalProps {
   stream?: Stream
@@ -43,7 +42,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
     return value
   }, [amount, stream])
 
-  const { writeAsync, isLoading: isWritePending } = useContractWrite({
+  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     addressOrName: contractAddress,
     contractInterface: abi,
     functionName: 'updateStream',
@@ -72,9 +71,13 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         ],
       })
 
+      const ts = new Date().getTime()
       createToast({
+        type: 'updateStream',
         txHash: data.hash,
-        href: Chain.from(activeChain.id).getTxUrl(data.hash),
+        chainId: activeChain.id,
+        timestamp: ts,
+        groupTimestamp: ts,
         promise: data.wait(),
         summary: {
           pending: <Dots>Updating stream</Dots>,
@@ -117,7 +120,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
                 Stream Amount
               </Typography>
               <Typography variant="sm" weight={500} className="text-slate-200">
-                {stream.amount.toSignificant(6)}{' '}
+                {stream.remainingAmount.toSignificant(6)}{' '}
                 <span className="font-medium text-slate-500">{stream.token.symbol}</span>
               </Typography>
             </div>

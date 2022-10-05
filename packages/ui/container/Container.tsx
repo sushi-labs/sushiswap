@@ -22,7 +22,7 @@ const TailwindMapper: Record<MaxWidth, string> = {
 
 interface Props {
   children: ReactNode
-  maxWidth?: MaxWidth
+  maxWidth?: MaxWidth | number
   className?: string
   id?: string
 }
@@ -37,7 +37,13 @@ export const Container: ContainerComponent = forwardRef(
   ) => {
     const Component = as || 'div'
     return (
-      <Component ref={ref} className={classNames(className, TailwindMapper[maxWidth], 'w-full')} id={id} {...rest}>
+      <Component
+        ref={ref}
+        className={classNames(className, typeof maxWidth === 'number' ? '' : TailwindMapper[maxWidth], 'w-full')}
+        id={id}
+        {...((typeof maxWidth === 'number' || rest.style) && { style: { ...rest.style, maxWidth } })}
+        {...rest}
+      >
         {children}
       </Component>
     )

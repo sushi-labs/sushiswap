@@ -84,7 +84,7 @@ const defaultColumns = (tableProps: FuroTableProps) => [
       />
     ),
   }),
-  table.createDataColumn('amount', {
+  table.createDataColumn('totalAmount', {
     header: () => <div className="w-full text-right">Amount</div>,
     cell: (props) => {
       return (
@@ -145,11 +145,13 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
   }, [loading])
 
   const router = useRouter()
-  const data = useMemo(() => {
+  const data = useMemo<(Stream | Vesting)[]>(() => {
     if (!chainId || !streams || !vestings || !rebases) return []
-    return streams
-      .map(
-        (stream) =>
+
+    return [
+      ...streams.reduce(
+        (previousValue, stream) => [
+          ...previousValue,
           new Stream({
             chainId,
             furo: stream,
@@ -158,22 +160,26 @@ export const FuroTable: FC<FuroTableProps> = (props) => {
                 ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
                 : rebase.id === stream.token.id
             ) as RebaseDTO,
-          })
-      )
-      .concat(
-        vestings?.map(
-          (vesting) =>
-            new Vesting({
-              furo: vesting,
-              chainId,
-              rebase: rebases.find((rebase) =>
-                vesting.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
-                  : rebase.id === vesting.token.id
-              ) as RebaseDTO,
-            })
-        )
-      )
+          }),
+        ],
+        []
+      ),
+      ...vestings.reduce(
+        (previousValue, vesting) => [
+          ...previousValue,
+          new Vesting({
+            furo: vesting,
+            chainId,
+            rebase: rebases.find((rebase) =>
+              vesting.token.id === AddressZero
+                ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
+                : rebase.id === vesting.token.id
+            ) as RebaseDTO,
+          }),
+        ],
+        []
+      ),
+    ]
     //rebase: rebases.find(rebase => rebase.id === vesting.token) as { base: string; elastic: string }
   }, [chainId, streams, vestings, rebases])
 

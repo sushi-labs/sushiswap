@@ -7,7 +7,6 @@ import { Account, Wallet } from '@sushiswap/wagmi'
 import { BackgroundVector, Layout } from 'components'
 import { SUPPORTED_CHAINS } from 'config'
 import { FuroStatus, FuroType, Stream } from 'lib'
-import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -24,8 +23,13 @@ const exampleStream = new Stream({
     id: '0',
     __typename: FuroType.STREAM,
     status: FuroStatus.ACTIVE,
-    totalAmount: '119994000000',
+    remainingShares: '50000000000',
+    initialShares: '119940000000',
+    initialAmount: '117994000000',
+    initialSharesExtended: '0',
+    extendedShares: '0',
     withdrawnAmount: '69308282750',
+    withdrawnAmountAfterExtension: '0',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     recipient: { id: AddressZero },
@@ -35,6 +39,7 @@ const exampleStream = new Stream({
     expiresAt: Math.floor(new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
     startedAt: Math.floor(new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
     modifiedAtTimestamp: Math.floor(new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    extendedAtTimestamp: Math.floor(new Date().getTime() / 1000).toString(),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     token: {
@@ -85,11 +90,6 @@ export default function Index() {
         </div>
       }
     >
-      <Head>
-        <title>Furo Streaming & Vesting | Sushi</title>
-        <meta property="og:title" content="Furo Streaming & Vesting | Sushi" key="title" />
-      </Head>
-
       <div className="flex flex-col sm:grid sm:grid-cols-[580px_420px] rounded">
         <div className="flex flex-col justify-center h-[420px] gap-8">
           <div className="flex flex-col gap-3">
@@ -98,7 +98,7 @@ export default function Index() {
               <span className="text-blue">Furo</span> Streaming
             </div>
             <div className="text-lg text-center sm:text-left sm:text-xl text-slate-400 md:w-1/2">
-              Earn, stream and automate your DAO salaries and token vesting with Furo.
+              Automate your DAO salaries and vesting schedules while earning interest from yield strategies.
             </div>
           </div>
           <div className="flex flex-col gap-4 sm:items-center sm:flex-row">

@@ -5,33 +5,53 @@ import { client } from '@sushiswap/wagmi'
 import { Header } from 'components'
 import { SUPPORTED_CHAINS } from 'config'
 import type { AppProps } from 'next/app'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
+import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { WagmiConfig } from 'wagmi'
 
 import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
 import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
+import SEO from '../next-seo.config.mjs'
 import store from '../store'
+
+declare global {
+  interface Window {
+    dataLayer: Record<string, any>[]
+  }
+}
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
-
   useEffect(() => {
-    const handler = (page: any) =>
+    const handler = (page) => {
       window.dataLayer.push({
         event: 'pageview',
         page,
       })
+    }
     router.events.on('routeChangeComplete', handler)
+    router.events.on('hashChangeComplete', handler)
     return () => {
       router.events.off('routeChangeComplete', handler)
+      router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
-
   return (
     <>
+      <Head>
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1" />
+        <link rel="manifest" href="/site.webmanifest?v=1" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
+        <link rel="shortcut icon" href="/favicon.ico?v=1" />
+        <meta name="msapplication-TileColor" content="#2b5797" />
+        <meta name="theme-color" content="#ffffff" />
+      </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
         id="gtag-init"
@@ -51,6 +71,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <ReduxProvider store={store}>
           <ThemeProvider>
             <App.Shell>
+              <DefaultSeo {...SEO} />
               <Header />
               <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
               <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />

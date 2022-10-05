@@ -47,6 +47,7 @@ const Component: FC<CurrencyInput> = ({
     account,
     currency,
     chainId: currency?.chainId,
+    loadBentobox: true,
   })
 
   const insufficientBalanceError = useMemo(() => {

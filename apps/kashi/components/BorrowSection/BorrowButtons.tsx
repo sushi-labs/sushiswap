@@ -14,7 +14,7 @@ export const BorrowButtons: FC<MarketButtonsProps> = ({ pair }) => {
   const { asset } = useTokensFromKashiPair(pair)
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col w-full gap-2">
       <Link.Internal href={`/borrow/${router.query.id}/deposit`} passHref={true}>
         <Button as="a" size="md" color="blue" fullWidth>
           Borrow {asset.symbol}

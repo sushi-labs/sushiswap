@@ -59,7 +59,7 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = ({
           <Typography
             variant="sm"
             weight={500}
-            className="absolute right-4 top-3 bottom-0 text-slate-500 max-w-10 truncate"
+            className="absolute right-4 top-3 bottom-0 text-slate-300 max-w-10 truncate"
           >
             {currency?.symbol}
           </Typography>

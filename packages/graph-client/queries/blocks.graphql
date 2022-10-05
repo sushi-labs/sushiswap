@@ -1,3 +1,11 @@
+query LatestBlock {
+  blocks(first: 1, orderBy: number, orderDirection: desc) {
+    id
+    number
+    timestamp
+  }
+}
+
 query Block($id: ID!) {
   block(id: $id) {
     id
@@ -5,6 +13,7 @@ query Block($id: ID!) {
     timestamp
   }
 }
+
 query Blocks($where: Block_filter) {
   blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
     id
@@ -13,9 +22,24 @@ query Blocks($where: Block_filter) {
   }
 }
 
-query CrossChainBlocks($first: Int = 1000, $chainIds: [BigInt!]!) {
-  crossChainBlocks(first: $first, chainIds: $chainIds) {
+query CrossChainBlocks(
+  $first: Int
+  $skip: Int
+  $where: Block_filter
+  $orderBy: Block_orderBy
+  $orderDirection: OrderDirection,
+  $chainIds: [Int!]!
+) {
+  crossChainBlocks(
+    first: $first,
+    skip: $skip,
+    where: $where,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    chainIds: $chainIds
+  ) {
     id
+    chainId
     number
     timestamp
   }

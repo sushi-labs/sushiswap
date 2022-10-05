@@ -1,29 +1,78 @@
 import { ChainId } from '@sushiswap/chain'
+import { Native } from '@sushiswap/currency'
 import { getProvider } from '@sushiswap/wagmi'
-import { EXCHANGE, GRAPH_HOST } from 'config'
+import { EXCHANGE, GRAPH_HOST, TRIDENT } from 'config'
 import { Contract } from 'ethers'
 import { erc20ABI } from 'wagmi'
 
-export const getBundle = async (chainId: ChainId) => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: EXCHANGE[chainId] })
-
-  const { bundles } = await sdk.Bundle()
-
-  return bundles?.[0]
+interface TokenKPI {
+  priceUSD: number
+  liquidity: number
+  liquidityUSD: number
+  volumeUSD: number
 }
 
-export const getTokenKPI = async (id: string, chainId: ChainId) => {
-  const { getBuiltGraphSDK } = await import('../.graphclient')
-  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: EXCHANGE[chainId] })
+export const getExchangeTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
+  const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], EXCHANGE[chainId]]
 
-  const [{ token }, { ethPrice }] = await Promise.all([sdk.Token({ id: id.toLowerCase() }), getBundle(chainId)])
+  if (!subgraphHost || !subgraphName) return
+
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK({ host: subgraphHost, name: subgraphName })
+
+  const {
+    Exchange_token: token,
+    Exchange_bundles: [bundle],
+  } = await sdk.ExchangeToken({ id: id.toLowerCase() })
+
+  if (!token || !bundle) return
 
   return {
-    ...token,
-    derivedUSD: token.derivedETH * ethPrice,
-    liquidityUSD: token.derivedETH * token.liquidity * ethPrice,
+    priceUSD: token.derivedETH * bundle.ethPrice,
+    liquidity: Number(token.liquidity),
+    liquidityUSD: token.liquidity * token.derivedETH * bundle.ethPrice,
+    volumeUSD: Number(token.volumeUSD),
   }
+}
+
+export const getTridentTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
+  const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], TRIDENT[chainId]]
+
+  if (!subgraphHost || !subgraphName) return
+
+  const { getBuiltGraphSDK } = await import('../.graphclient')
+  const sdk = getBuiltGraphSDK({ host: subgraphHost, name: subgraphName })
+
+  const { Trident_token: token, native } = await sdk.TridentToken({
+    id: id.toLowerCase(),
+    native: Native.onChain(chainId).wrapped.address.toLowerCase(),
+  })
+
+  if (!token || !native) return
+
+  return {
+    priceUSD: token.price.derivedNative * native.derivedUSD,
+    liquidity: Number(token.kpi.liquidity),
+    liquidityUSD: token.kpi.liquidity * token.price.derivedNative * native.derivedUSD,
+    volumeUSD: Number(token.kpi.volumeUSD),
+  }
+}
+
+export const getTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
+  const [exchangeToken, tridentToken] = await Promise.all([
+    getExchangeTokenKPI(id, chainId),
+    getTridentTokenKPI(id, chainId),
+  ])
+
+  if (exchangeToken && tridentToken) {
+    if (exchangeToken.liquidity > tridentToken.liquidity) {
+      return exchangeToken
+    } else {
+      return tridentToken
+    }
+  }
+
+  return exchangeToken ?? tridentToken ?? undefined
 }
 
 export interface Token {

@@ -1,9 +1,26 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/chain'])
+const withTranspileModules = transpileModules([
+  '@sushiswap/redux-token-lists',
+  '@sushiswap/redux-localstorage',
+  '@sushiswap/chain',
+  '@sushiswap/wagmi',
+  '@sushiswap/ui',
+])
 
-const { BLOG_URL, ANALYTICS_URL, DAO_URL, DOCS_URL, FURO_URL, LANDING_URL, SWAP_URL, LEGACY_URL, PARTNER_URL } =
-  process.env
+const {
+  BLOG_URL,
+  ANALYTICS_URL,
+  DAO_URL,
+  DOCS_URL,
+  FURO_URL,
+  LANDING_URL,
+  SWAP_URL,
+  XSWAP_URL,
+  INVEST_URL,
+  LEGACY_URL,
+  PARTNER_URL,
+} = process.env
 
 // @ts-check
 /** @type {import('next').NextConfig} */
@@ -90,6 +107,30 @@ const nextConfig = {
       {
         source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
+      },
+      {
+        source: '/xswap',
+        destination: `${XSWAP_URL}/xswap`,
+      },
+      {
+        source: '/xswap/:path*',
+        destination: `${XSWAP_URL}/xswap/:path*`,
+      },
+      {
+        source: '/invest',
+        destination: `${INVEST_URL}/earn`,
+      },
+      {
+        source: '/invest/:path*',
+        destination: `${INVEST_URL}/earn/:path*`,
+      },
+      {
+        source: '/earn',
+        destination: `${INVEST_URL}/earn`,
+      },
+      {
+        source: '/earn/:path*',
+        destination: `${INVEST_URL}/earn/:path*`,
       },
     ]
   },

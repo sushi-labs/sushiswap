@@ -9,14 +9,18 @@ export const SUPPORTED_CHAINS = [
   ChainId.FANTOM,
   ChainId.GNOSIS,
   // ChainId.HECO,
-  // ChainId.HARMONY,
+  ChainId.HARMONY,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
   ChainId.FUSE,
   ChainId.POLYGON,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.BOBA,
 
   // TRIDENT
   ChainId.OPTIMISM,
+  ChainId.KAVA,
+  ChainId.METIS,
 ]
 
 export const GRAPH_HOST = 'api.thegraph.com'

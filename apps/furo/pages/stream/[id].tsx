@@ -1,10 +1,7 @@
-import { AddressZero } from '@ethersproject/constants'
-import furoExports from '@sushiswap/furo/exports.json'
-import { ProgressBar, ProgressColor } from '@sushiswap/ui'
-import { useWalletState } from '@sushiswap/wagmi'
+import { Breadcrumb, ProgressBar, ProgressColor } from '@sushiswap/ui'
+import { getFuroStreamContractConfig, useWalletState } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
-  Breadcrumb,
   CancelModal,
   FuroTimer,
   HistoryPopover,
@@ -19,6 +16,7 @@ import { BalanceChart, WithdrawModal } from 'components/stream'
 import { getRebase, getStream, getStreamTransactions, Stream } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
+import { NextSeo } from 'next-seo'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 import { useConnect } from 'wagmi'
@@ -39,6 +37,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { c
     getStreamTransactions(chainId as string, id as string),
     getRebase(chainId as string, stream.token.id),
   ])
+
+  console.log('stream', stream)
 
   return {
     props: {
@@ -96,99 +96,84 @@ const _Streams: FC = () => {
   if (connecting || reconnecting) return <Overlay />
 
   return (
-    <Layout
-      backdrop={
-        <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
-          <BackgroundVector width="100%" preserveAspectRatio="none" />
-        </div>
-      }
-    >
-      <Breadcrumb links={LINKS(router.query.id as string)} />
-      <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-6 pt-6 md:pt-24">
-        <div className="flex justify-center">
-          <BalanceChart stream={stream} hover={hover} setHover={setHover} />
-        </div>
-        <div>
-          <div className="flex flex-col justify-center gap-5">
-            <ProgressBarCard
-              aria-hidden="true"
-              label="Streamed"
-              value={`${stream?.streamedPercentage?.toSignificant(4)}%`}
-              onMouseEnter={() => setHover(ChartHover.STREAMED)}
-              onMouseLeave={() => setHover(ChartHover.NONE)}
-            >
-              <ProgressBar
-                progress={
-                  stream && stream.streamedPercentage ? stream.streamedPercentage.divide(100).toSignificant(4) : 0
-                }
-                color={ProgressColor.BLUE}
-                showLabel={false}
+    <>
+      <NextSeo title={`Stream #${id}`} />
+      <Layout
+        backdrop={
+          <div className="fixed inset-0 right-0 z-0 pointer-events-none opacity-20">
+            <BackgroundVector width="100%" preserveAspectRatio="none" />
+          </div>
+        }
+      >
+        <Breadcrumb home="/dashboard" links={LINKS(router.query.id as string)} />
+        <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-6 pt-6 md:pt-24">
+          <div className="flex justify-center">
+            <BalanceChart stream={stream} hover={hover} setHover={setHover} />
+          </div>
+          <div>
+            <div className="flex flex-col justify-center gap-5">
+              <ProgressBarCard
+                aria-hidden="true"
+                label="Streamed"
+                value={`${stream?.streamedPercentage?.toSignificant(4)}%`}
+                onMouseEnter={() => setHover(ChartHover.STREAMED)}
+                onMouseLeave={() => setHover(ChartHover.NONE)}
+              >
+                <ProgressBar
+                  progress={
+                    stream && stream.streamedPercentage ? stream.streamedPercentage.divide(100).toSignificant(4) : 0
+                  }
+                  color={ProgressColor.BLUE}
+                  showLabel={false}
+                />
+              </ProgressBarCard>
+              <ProgressBarCard
+                aria-hidden="true"
+                label="Withdrawn"
+                value={`${stream?.withdrawnPercentage?.toSignificant(4)}%`}
+                onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
+                onMouseLeave={() => setHover(ChartHover.NONE)}
+              >
+                <ProgressBar
+                  progress={stream ? stream.withdrawnPercentage.divide(100).toSignificant(4) : 0}
+                  color={ProgressColor.PINK}
+                  showLabel={false}
+                />
+              </ProgressBarCard>
+              <div className="mt-3">
+                <FuroTimer furo={stream} />
+              </div>
+            </div>
+          </div>
+          <div className="flex items-end justify-center gap-2">
+            <StreamDetailsPopover stream={stream} />
+            <HistoryPopover stream={stream} transactionRepresentations={transactions} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <WithdrawModal stream={stream} />
+            <div className="flex gap-2">
+              <TransferModal
+                stream={stream}
+                abi={getFuroStreamContractConfig(chainId)?.contractInterface}
+                address={getFuroStreamContractConfig(chainId)?.addressOrName}
               />
-            </ProgressBarCard>
-            <ProgressBarCard
-              aria-hidden="true"
-              label="Withdrawn"
-              value={`${stream?.withdrawnPercentage?.toSignificant(4)}%`}
-              onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
-              onMouseLeave={() => setHover(ChartHover.NONE)}
-            >
-              <ProgressBar
-                progress={stream ? stream.withdrawnPercentage.divide(100).toSignificant(4) : 0}
-                color={ProgressColor.PINK}
-                showLabel={false}
+              <UpdateModal
+                stream={stream}
+                abi={getFuroStreamContractConfig(chainId)?.contractInterface}
+                address={getFuroStreamContractConfig(chainId)?.addressOrName}
               />
-            </ProgressBarCard>
-            <div className="mt-3">
-              <FuroTimer furo={stream} />
+              <CancelModal
+                title="Cancel Stream"
+                stream={stream}
+                abi={getFuroStreamContractConfig(chainId)?.contractInterface}
+                address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                fn="cancelStream"
+              />
             </div>
           </div>
         </div>
-        <div className="flex items-end justify-center gap-2">
-          <StreamDetailsPopover stream={stream} />
-          <HistoryPopover stream={stream} transactionRepresentations={transactions} />
-        </div>
-        <div className="flex flex-col gap-2">
-          <WithdrawModal stream={stream} />
-          <div className="flex gap-2">
-            <TransferModal
-              stream={stream}
-              abi={
-                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
-                  ?.abi ?? []
-              }
-              address={
-                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
-                  ?.address ?? AddressZero
-              }
-            />
-            <UpdateModal
-              stream={stream}
-              abi={
-                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
-                  ?.abi ?? []
-              }
-              address={
-                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
-                  ?.address ?? AddressZero
-              }
-            />
-            <CancelModal
-              title="Cancel Stream"
-              stream={stream}
-              abi={
-                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
-                  ?.abi ?? []
-              }
-              address={
-                furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
-                  ?.address ?? AddressZero
-              }
-              fn="cancelStream"
-            />
-          </div>
-        </div>
-      </div>
-    </Layout>
+      </Layout>
+    </>
   )
 }
 

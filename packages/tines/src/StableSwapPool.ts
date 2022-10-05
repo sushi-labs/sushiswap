@@ -146,6 +146,10 @@ export class StableSwapRPool extends RPool {
     const outB = Math.max(outA, 0)
     const outC = direction ? this.total1.toShare(outB) : this.total0.toShare(outB)
     const out = outC / (direction ? this.decimalsCompensation1 : this.decimalsCompensation0)
+
+    const initialReserve = direction ? this.getReserve1() : this.getReserve0()
+    if (initialReserve.sub(getBigNumber(out)).lt(this.minLiquidity)) throw new Error('StableSwap OutOfLiquidity')
+
     return { out, gasSpent: this.swapGasCost }
   }
 

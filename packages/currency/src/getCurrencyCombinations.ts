@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import flatMap from 'lodash.flatmap'
 
-import { DAI, FRAX, FXS, LUSD, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
+import { BCT, DAI, FRAX, FXS, KLIMA, LUSD, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Token } from './Token'
 import { Type } from './Type'
 
@@ -25,24 +25,24 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
 
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
   [ChainId.KOVAN]: [WNATIVE[ChainId.KOVAN], USDC[ChainId.KOVAN]],
+  [ChainId.POLYGON]: [
+    WNATIVE[ChainId.POLYGON],
+    WETH9[ChainId.POLYGON],
+    WBTC[ChainId.POLYGON],
+    USDC[ChainId.POLYGON],
+    USDT[ChainId.POLYGON],
+    DAI[ChainId.POLYGON],
+    MIM[ChainId.POLYGON],
+    FRAX[ChainId.POLYGON],
+    new Token({
+      chainId: ChainId.POLYGON,
+      address: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
+      decimals: 18,
+      name: 'Toucan Protocol: Base Carbon Tonne',
+      symbol: 'BCT',
+    }),
+  ],
   [ChainId.POLYGON_TESTNET]: [WNATIVE[ChainId.POLYGON_TESTNET], USDC[ChainId.POLYGON_TESTNET]],
-  [ChainId.ARBITRUM]: [
-    WNATIVE[ChainId.ARBITRUM],
-    WBTC[ChainId.ARBITRUM],
-    USDC[ChainId.ARBITRUM],
-    USDT[ChainId.ARBITRUM],
-    DAI[ChainId.ARBITRUM],
-    MIM[ChainId.ARBITRUM],
-    FRAX[ChainId.ARBITRUM],
-  ],
-  [ChainId.OPTIMISM]: [
-    WNATIVE[ChainId.OPTIMISM],
-    WBTC[ChainId.OPTIMISM],
-    USDC[ChainId.OPTIMISM],
-    USDT[ChainId.OPTIMISM],
-    DAI[ChainId.OPTIMISM],
-    LUSD[ChainId.OPTIMISM],
-  ],
   [ChainId.FANTOM]: [
     WNATIVE[ChainId.FANTOM],
     WETH9[ChainId.FANTOM],
@@ -52,6 +52,32 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     DAI[ChainId.FANTOM],
     MIM[ChainId.FANTOM],
     FRAX[ChainId.FANTOM],
+  ],
+  [ChainId.GNOSIS]: [WNATIVE[ChainId.GNOSIS], USDC[ChainId.GNOSIS], USDT[ChainId.GNOSIS], DAI[ChainId.GNOSIS]],
+  [ChainId.BSC]: [
+    WNATIVE[ChainId.BSC],
+    WETH9[ChainId.BSC],
+    USDC[ChainId.BSC],
+    USDT[ChainId.BSC],
+    DAI[ChainId.BSC],
+    MIM[ChainId.BSC],
+    FRAX[ChainId.BSC],
+  ],
+  [ChainId.ARBITRUM]: [
+    WNATIVE[ChainId.ARBITRUM],
+    WBTC[ChainId.ARBITRUM],
+    USDC[ChainId.ARBITRUM],
+    USDT[ChainId.ARBITRUM],
+    DAI[ChainId.ARBITRUM],
+    MIM[ChainId.ARBITRUM],
+    FRAX[ChainId.ARBITRUM],
+  ],
+  [ChainId.ARBITRUM_NOVA]: [
+    WNATIVE[ChainId.ARBITRUM_NOVA],
+    WBTC[ChainId.ARBITRUM_NOVA],
+    USDC[ChainId.ARBITRUM_NOVA],
+    USDT[ChainId.ARBITRUM_NOVA],
+    DAI[ChainId.ARBITRUM_NOVA],
   ],
   [ChainId.AVALANCHE]: [
     WNATIVE[ChainId.AVALANCHE],
@@ -84,32 +110,94 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
       symbol: 'WMEMO',
     }),
   ],
-  [ChainId.POLYGON]: [
-    WNATIVE[ChainId.POLYGON],
-    WETH9[ChainId.POLYGON],
-    WBTC[ChainId.POLYGON],
-    USDC[ChainId.POLYGON],
-    USDT[ChainId.POLYGON],
-    DAI[ChainId.POLYGON],
-    MIM[ChainId.POLYGON],
-    FRAX[ChainId.POLYGON],
+
+  [ChainId.HECO]: [WNATIVE[ChainId.HECO], USDC[ChainId.HECO], USDT[ChainId.HECO], DAI[ChainId.HECO]],
+  [ChainId.HARMONY]: [
+    WNATIVE[ChainId.HARMONY],
+    USDC[ChainId.HARMONY],
+    USDT[ChainId.HARMONY],
+    DAI[ChainId.HARMONY],
+    FRAX[ChainId.HARMONY],
+  ],
+  [ChainId.OKEX]: [WNATIVE[ChainId.OKEX], USDC[ChainId.OKEX], USDT[ChainId.OKEX], DAI[ChainId.OKEX]],
+  [ChainId.CELO]: [
+    WNATIVE[ChainId.CELO],
+    USDC[ChainId.CELO],
+    USDT[ChainId.CELO],
+    DAI[ChainId.CELO],
     new Token({
-      chainId: ChainId.POLYGON,
-      address: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
+      chainId: ChainId.CELO,
+      address: '0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73',
       decimals: 18,
-      name: 'Toucan Protocol: Base Carbon Tonne',
-      symbol: 'BCT',
+      symbol: 'cEUR',
+      name: 'Celo Euro',
+    }),
+    new Token({
+      chainId: ChainId.CELO,
+      address: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
+      decimals: 18,
+      symbol: 'cUSD',
+      name: 'Celo Dollar',
+    }),
+    new Token({
+      chainId: ChainId.CELO,
+      address: '0x2DEf4285787d58a2f811AF24755A8150622f4361',
+      decimals: 18,
+      symbol: 'cETH',
+      name: 'Celo Ether',
+    }),
+    new Token({
+      chainId: ChainId.CELO,
+      address: '0xD629eb00dEced2a080B7EC630eF6aC117e614f1b',
+      decimals: 18,
+      symbol: 'cBTC',
+      name: 'Celo Bitcoin',
     }),
   ],
-  [ChainId.BSC]: [
-    WNATIVE[ChainId.BSC],
-    WETH9[ChainId.BSC],
-    USDC[ChainId.BSC],
-    USDT[ChainId.BSC],
-    DAI[ChainId.BSC],
-    MIM[ChainId.BSC],
-    FRAX[ChainId.BSC],
+  [ChainId.PALM]: [WNATIVE[ChainId.PALM]],
+  [ChainId.MOONRIVER]: [
+    WNATIVE[ChainId.MOONRIVER],
+    USDC[ChainId.MOONRIVER],
+    USDT[ChainId.MOONRIVER],
+    DAI[ChainId.MOONRIVER],
+    MIM[ChainId.MOONRIVER],
+    FRAX[ChainId.MOONRIVER],
   ],
+  [ChainId.FUSE]: [WNATIVE[ChainId.FUSE], USDC[ChainId.FUSE], USDT[ChainId.FUSE], DAI[ChainId.FUSE]],
+  [ChainId.TELOS]: [WNATIVE[ChainId.TELOS], USDC[ChainId.TELOS], USDT[ChainId.TELOS]],
+  [ChainId.MOONBEAM]: [
+    WNATIVE[ChainId.MOONBEAM],
+    USDC[ChainId.MOONBEAM],
+    USDT[ChainId.MOONBEAM],
+    DAI[ChainId.MOONBEAM],
+    FRAX[ChainId.MOONBEAM],
+  ],
+  [ChainId.OPTIMISM]: [
+    WNATIVE[ChainId.OPTIMISM],
+    WBTC[ChainId.OPTIMISM],
+    USDC[ChainId.OPTIMISM],
+    USDT[ChainId.OPTIMISM],
+    DAI[ChainId.OPTIMISM],
+    LUSD[ChainId.OPTIMISM],
+  ],
+  [ChainId.KAVA]: [
+    WNATIVE[ChainId.KAVA],
+    WETH9[ChainId.KAVA],
+    WBTC[ChainId.KAVA],
+    USDC[ChainId.KAVA],
+    USDT[ChainId.KAVA],
+    DAI[ChainId.KAVA],
+  ],
+  [ChainId.METIS]: [WNATIVE[ChainId.METIS]],
+  [ChainId.BOBA]: [
+    WNATIVE[ChainId.BOBA],
+    USDC[ChainId.BOBA],
+    USDT[ChainId.BOBA],
+    DAI[ChainId.BOBA],
+    FRAX[ChainId.BOBA],
+    WBTC[ChainId.BOBA],
+  ],
+  // [ChainId.BOBA_AVAX]: [WNATIVE[ChainId.BOBA_AVAX]],
 }
 
 export const ADDITIONAL_BASES: {
@@ -139,6 +227,32 @@ export const ADDITIONAL_BASES: {
     [FRAX[ChainId.AVALANCHE].address]: [FRAX[ChainId.AVALANCHE]],
     [FXS[ChainId.AVALANCHE].address]: [FXS[ChainId.AVALANCHE]],
   },
+  [ChainId.MOONRIVER]: {
+    [FRAX[ChainId.MOONRIVER].address]: [FRAX[ChainId.MOONRIVER]],
+    [FXS[ChainId.MOONRIVER].address]: [FXS[ChainId.MOONRIVER]],
+  },
+  [ChainId.MOONBEAM]: {
+    [FRAX[ChainId.MOONBEAM].address]: [FRAX[ChainId.MOONBEAM]],
+    [FXS[ChainId.MOONBEAM].address]: [FXS[ChainId.MOONBEAM]],
+  },
+  [ChainId.HARMONY]: {
+    [FRAX[ChainId.HARMONY].address]: [FRAX[ChainId.HARMONY]],
+    [FXS[ChainId.HARMONY].address]: [FXS[ChainId.HARMONY]],
+  },
+  [ChainId.BOBA]: {
+    [FRAX[ChainId.BOBA].address]: [FRAX[ChainId.BOBA]],
+    [FXS[ChainId.BOBA].address]: [FXS[ChainId.BOBA]],
+  },
+  [ChainId.OPTIMISM]: {
+    [FRAX[ChainId.OPTIMISM].address]: [FRAX[ChainId.OPTIMISM]],
+    [FXS[ChainId.OPTIMISM].address]: [FXS[ChainId.OPTIMISM]],
+  },
+  [ChainId.POLYGON]: {
+    [BCT[ChainId.POLYGON].address]: [KLIMA[ChainId.POLYGON]],
+    [KLIMA[ChainId.POLYGON].address]: [BCT[ChainId.POLYGON]],
+    [FRAX[ChainId.POLYGON].address]: [FRAX[ChainId.POLYGON]],
+    [FXS[ChainId.POLYGON].address]: [FXS[ChainId.POLYGON]],
+  },
 }
 
 export const CUSTOM_BASES: {
@@ -154,6 +268,21 @@ export const COMMON_BASES: { readonly [chainId: number]: Token[] } = {
     DAI[ChainId.AVALANCHE],
     MIM[ChainId.AVALANCHE],
     FRAX[ChainId.AVALANCHE],
+  ],
+  [ChainId.ARBITRUM_NOVA]: [
+    WNATIVE[ChainId.ARBITRUM_NOVA],
+    WBTC[ChainId.ARBITRUM_NOVA],
+    USDC[ChainId.ARBITRUM_NOVA],
+    USDT[ChainId.ARBITRUM_NOVA],
+    DAI[ChainId.ARBITRUM_NOVA],
+  ],
+  [ChainId.BOBA]: [
+    WNATIVE[ChainId.BOBA],
+    USDC[ChainId.BOBA],
+    USDT[ChainId.BOBA],
+    DAI[ChainId.BOBA],
+    FRAX[ChainId.BOBA],
+    WBTC[ChainId.BOBA],
   ],
 }
 

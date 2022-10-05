@@ -76,6 +76,7 @@ export enum ChainId {
   BSC = 56,
   BSC_TESTNET = 97,
   ARBITRUM = 42161,
+  ARBITRUM_NOVA = 42170,
   ARBITRUM_RINKEBY_TESTNET = 421611,
   ARBITRUM_GNOSIS_TESTNET = 200,
   ARBITRUM_TESTNET = 79377087078960,
@@ -99,10 +100,13 @@ export enum ChainId {
   OPTIMISM_KOVAN_TESTNET = 69,
   KAVA = 2222,
   METIS = 1088,
+  BOBA = 288,
+  BOBA_AVAX = 43288,
 }
 
 export enum ChainKey {
   ARBITRUM = 'arbitrum',
+  ARBITRUM_NOVA = 'arbitrum-nova',
   ARBITRUM_TESTNET = 'arbitrum-testnet',
   AVALANCHE = 'avalanche',
   AVALANCHE_TESTNET = 'avalance-testnet',
@@ -135,6 +139,8 @@ export enum ChainKey {
   OPTIMISM = 'optimism',
   KAVA = 'kava',
   METIS = 'metis',
+  BOBA = 'boba',
+  BOBA_AVAX = 'boba-avax',
 }
 
 export class Chain implements Chain {

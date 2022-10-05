@@ -1,7 +1,7 @@
 import { Disclosure, Listbox } from '@headlessui/react'
 import { CheckIcon, ChevronDownIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
 import { DuplicateIcon, MinusCircleIcon } from '@heroicons/react/solid'
-import { Type } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import {
   Button,
@@ -47,19 +47,13 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
     control,
   } as never) as CreateVestingFormData
 
-  const { totalAmount, cliff, cliffEndDate, startDate, stepConfig, stepPayouts } = transformVestingFormData(data)
-  const endDate =
-    ((cliff && cliffEndDate) || startDate) && stepPayouts
-      ? new Date(
-          new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
-        )
-      : undefined
+  const { totalAmount, endDate } = transformVestingFormData(data)
 
   return (
     <Disclosure>
       {({ close }) => (
         <div className="flex flex-col">
-          <div className="relative grid grid-cols-[100px_160px_100px_160px_160px_160px_80px] gap-y-3 gap-x-2 px-2 py-0.5">
+          <div className="relative grid grid-cols-[100px_160px_100px_160px_160px_160px_40px] gap-y-3 gap-x-2 px-2 py-0.5">
             <div className="flex flex-col gap-2">
               <Controller
                 control={control as never}
@@ -208,7 +202,21 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                 </IconButton>
               </div>
               <div className="flex items-center">
-                <IconButton onClick={() => onCopy({ ...data, recipient: '' } as CreateVestingFormData)}>
+                <IconButton
+                  onClick={() => {
+                    onCopy({
+                      ...data,
+                      currency: {
+                        chainId: data.currency.chainId,
+                        address: (data.currency as Token).address,
+                        decimals: data.currency.decimals,
+                        symbol: data.currency.symbol,
+                        name: data.currency.name,
+                      },
+                      recipient: '',
+                    } as CreateVestingFormData)
+                  }}
+                >
                   <DuplicateIcon width={20} height={20} className="text-slate-300" />
                 </IconButton>
               </div>

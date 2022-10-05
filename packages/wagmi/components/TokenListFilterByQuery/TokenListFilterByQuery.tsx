@@ -1,8 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
-import { filterTokens, FundSource, useDebounce, useSortedTokensByQuery } from '@sushiswap/hooks'
-import { tokenComparator } from '@sushiswap/hooks'
+import { filterTokens, FundSource, tokenComparator, useDebounce, useSortedTokensByQuery } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
 import { FC, RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { useToken } from 'wagmi'
@@ -83,12 +82,14 @@ export const TokenListFilterByQuery: FC<Props> = ({
     return filteredSortedTokens
   }, [_includeNative, chainId, filteredSortedTokens])
 
-  return children({
-    currencies: filteredSortedTokensWithNative,
-    inputRef,
-    query,
-    onInput: setQuery,
-    searching: isLoading || searching.current,
-    queryToken: searchToken,
-  })
+  return useMemo(() => {
+    return children({
+      currencies: filteredSortedTokensWithNative,
+      inputRef,
+      query,
+      onInput: setQuery,
+      searching: isLoading || searching.current,
+      queryToken: searchToken,
+    })
+  }, [children, filteredSortedTokensWithNative, isLoading, query, searchToken])
 }
