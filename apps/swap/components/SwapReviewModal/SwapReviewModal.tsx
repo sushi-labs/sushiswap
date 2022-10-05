@@ -96,15 +96,18 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const { config } = usePrepareSendTransaction({
     request,
     chainId,
-    onSuccess: () => {
-      setOpen(false)
-      onSuccess()
-    },
   })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     ...config,
     onSettled,
+    onSuccess: (data) => {
+      console.log(data)
+      if (data) {
+        setOpen(false)
+        onSuccess()
+      }
+    },
   })
 
   const [signature, setSignature] = useState<Signature>()
@@ -124,9 +127,8 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   )
 
   const prepare = useCallback(async () => {
-    if (!trade || !account) return
-
     try {
+      if (!trade || !account) return
       let call: SwapCall | null = null
       let value = '0x0'
 
@@ -467,7 +469,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
             </Approve.Components>
           }
           render={({ approved }) => {
-            console.log(!approved || isWritePending)
             return (
               <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
