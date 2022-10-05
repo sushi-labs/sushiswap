@@ -7,3 +7,9 @@ export const CHEF_TYPE_MAP = {
   MasterChefV1: Chef.MASTERCHEF,
   MasterChefV2: Chef.MASTERCHEF_V2,
 }
+
+export const GET_POOL_TYPE_MAP = {
+  CONSTANT_PRODUCT_POOL: 'Constant Product Pool',
+  CONCENTRATED_LIQUIDITY_POOL: 'Concentrated Liquidity Pool',
+  STABLE_POOL: 'Stable Pool',
+}
