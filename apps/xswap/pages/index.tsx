@@ -926,7 +926,7 @@ const Widget: FC<Swap> = ({
           style={{ maxWidth }}
         >
           <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
-            <App.NavItemList>
+            <App.NavItemList hideOnMobile={false}>
               <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
               <App.NavItemInternal href="https://sushi.com/xswap" label="xSwap" />
             </App.NavItemList>

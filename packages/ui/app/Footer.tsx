@@ -49,7 +49,7 @@ const config: Record<string, Record<string, { href: string; rel?: string; target
 
 export function Footer(props: FooterProps): JSX.Element {
   return (
-    <footer className="flex border-t border-slate-400/5 py-[72px]" {...props}>
+    <footer className="hidden sm:flex border-t border-slate-400/5 py-[72px]" {...props}>
       <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-start gap-3 pt-2">
