@@ -7,6 +7,7 @@ import React, { Fragment } from 'react'
 import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
 
 export enum AppType {
+  Bridge = 'Bridge',
   Swap = 'Swap',
   xSwap = 'xSwap',
   Furo = 'Streaming',
@@ -20,6 +21,7 @@ export enum AppType {
 }
 
 const LINK = {
+  [AppType.Bridge]: '/bridge',
   [AppType.Swap]: '/swap',
   [AppType.xSwap]: '/xswap',
   [AppType.Furo]: '/furo',
