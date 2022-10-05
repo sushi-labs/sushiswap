@@ -5,8 +5,11 @@ import { CircleIcon, classNames, Container, Select, Typography } from '@sushiswa
 import { AdditionalArticles } from 'common/components/AdditionalArticles'
 import { DifficultyCard } from 'common/components/DifficultyCard'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
+import { defaultSidePadding, difficultyColors } from 'common/helpers'
 import { AdvancedUserIcon, BeginnerUserIcon, TechnicalUserIcon } from 'common/icons'
 import { InferGetServerSidePropsType } from 'next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { FC, Fragment, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
@@ -22,10 +25,6 @@ import {
   ViewAllButton,
 } from '../common/components'
 import { getArticles, getCategories, getDifficulties } from '../lib/api'
-
-export const defaultSidePadding = 'px-6 sm:px-4'
-export const difficultyColors = ['#7CFF6B', '#EEB531', '#F338C3']
-export const appHeaderHeight = 54
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 6 } })
@@ -53,26 +52,21 @@ const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Globa
 }
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
-  const [query, setQuery] = useState<string>()
   const [selectedCategory, setSelectedCategory] = useState<string>()
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>()
   const heroRef = useRef<HTMLDivElement>(null)
-  const queryParams = new URLSearchParams({
-    ...(selectedDifficulty && { difficulty: selectedDifficulty }),
-    ...(selectedCategory && { category: selectedCategory }),
-  }).toString()
+  const router = useRouter()
 
   const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
   const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
   const { data: difficultiesData } = useSWR<CategoryEntityResponseCollection>('/difficulties')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selectedCategory, selectedDifficulty, query],
-    async (_url, categoryFilter, difficultyFilter, query) => {
+    [`/articles`, selectedCategory, selectedDifficulty],
+    async (_url, categoryFilter, difficultyFilter) => {
       return (
         await getArticles({
           pagination: { limit: 5 },
           filters: {
-            ...(query && { title: { containsi: query } }),
             ...((categoryFilter || difficultyFilter) && {
               categories: {
                 id: {
@@ -97,11 +91,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
     { id: '8', attributes: { name: 'Technical' } },
   ]
   const articleList =
-    (selectedCategory || selectedDifficulty || query) && filterData?.data
-      ? filterData?.data
-      : articles
-      ? articles
-      : undefined
+    (selectedCategory || selectedDifficulty) && filterData?.data ? filterData?.data : articles ? articles : undefined
   const latestReleases = articles?.slice(0, 3)
   const [beginnerColor, advancedColor, technicalColor] = difficultyColors
   /**
@@ -111,7 +101,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const handleSelectDifficulty = (id: string) => setSelectedDifficulty((current) => (current === id ? undefined : id))
   const handleSelectCategory = (id: string) =>
     setSelectedCategory((currentCategory) => (currentCategory === id ? undefined : id))
-
+  const handleSearch = (value: string) => {
+    router.push({
+      pathname: '/articles',
+      query: { search: value },
+    })
+  }
   return (
     <>
       <AcademySeo seo={seo} />
@@ -120,7 +115,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <div ref={heroRef}>
           <Hero />
         </div>
-        <SearchInput handleSearch={setQuery} ref={heroRef} />
+        <SearchInput handleSearch={handleSearch} ref={heroRef} />
 
         <div className="flex min-w-full gap-5 px-6 py-6 mt-8 overflow-x-auto sm:mt-24 sm:gap-6 sm:px-4">
           <DifficultyCard
@@ -257,7 +252,17 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           )}
 
           <div className="justify-center hidden mt-10 sm:flex">
-            <ViewAllButton as="a" href={'/academy/articles' + (queryParams ? `?${queryParams}` : '')} />
+            <Link
+              href={{
+                pathname: '/articles',
+                query: {
+                  ...(selectedDifficulty && { difficulty: selectedDifficulty }),
+                  ...(selectedCategory && { category: selectedCategory }),
+                },
+              }}
+            >
+              <ViewAllButton />
+            </Link>
           </div>
         </div>
       </Container>
