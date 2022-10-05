@@ -6,6 +6,7 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native } from '@sushiswap/currency'
 import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/exchange'
+import { event } from '@sushiswap/gtag'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
@@ -59,15 +60,14 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       const ts = new Date().getTime()
 
       data.wait().then(() =>
-        window.dataLayer.push({
-          event: 'swap',
-          routeType: trade.routeType(),
-          chainId: trade.inputAmount.currency.chainId,
-          inputToken: trade.outputAmount.currency.symbol,
-          inputValue: trade.inputAmount.toFixed(),
-          outputToken: trade.outputAmount.currency.symbol,
-          outputValue: trade.outputAmount.toFixed(),
-          ts,
+        event({
+          action: `Swap ${trade.inputAmount.toFixed()} ${
+            trade.inputAmount.currency.symbol
+          } to ${trade.outputAmount.toFixed()} ${trade.outputAmount.currency.symbol} on chainId ${
+            trade.inputAmount.currency.chainId
+          }`,
+          label: trade.routeType(),
+          category: 'swap',
         })
       )
 

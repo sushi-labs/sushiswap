@@ -41,12 +41,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
     }
   }, [router.events])
 
-  useEffect(() => {
-    window.dataLayer.push({
-      event: 'test',
-    })
-  }, [])
-
   return (
     <>
       <Head>
