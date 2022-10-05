@@ -1,7 +1,7 @@
 import { classNames } from '@sushiswap/ui'
-import { defaultSidePadding } from 'pages'
 import { FC, ReactNode } from 'react'
 
+import { defaultSidePadding } from '../helpers'
 import { ViewAllButton } from './ViewAllButton'
 
 interface AdditionalArticles {

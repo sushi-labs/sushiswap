@@ -1,9 +1,9 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { classNames, Container, Typography } from '@sushiswap/ui'
+import { appHeaderHeight, defaultSidePadding } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
-import { appHeaderHeight, defaultSidePadding } from 'pages'
 import { FC, useState } from 'react'
 
 import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../../.mesh'

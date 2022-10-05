@@ -2,9 +2,9 @@ import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { classNames, Select, useBreakpoint } from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
-import { defaultSidePadding } from 'pages'
-import { FC } from 'react'
+import { FC, useLayoutEffect, useState } from 'react'
 
+import { defaultSidePadding } from '../helpers'
 import { GradientWrapper } from './'
 
 interface ArticlesPagesHeader {
@@ -13,17 +13,22 @@ interface ArticlesPagesHeader {
   selectedDifficulty: any
   handleSelectDifficulty: (d: any) => void
 }
+
+const baseBg = [113, 285]
+const smBg = [226, 570]
+
 export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
   title,
-  difficulties = [
-    { id: '7', attributes: { name: 'Beginner' } },
-    { id: '8', attributes: { name: 'Advanced' } },
-    { id: '9', attributes: { name: 'Technical' } },
-  ],
+  // difficulties,
   selectedDifficulty,
   handleSelectDifficulty,
 }) => {
+  const difficulties = ['Beginner', 'Advanced', 'Technical']
   const { isSm } = useBreakpoint('sm')
+  const [[bgHeight, bgWidth], setBgDimensions] = useState(baseBg)
+  useLayoutEffect(() => {
+    setBgDimensions(isSm ? smBg : baseBg)
+  }, [isSm])
 
   return (
     <div className="bg-slate-800 h-[113px] sm:h-[226px] relative">
@@ -34,9 +39,9 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
         )}
       >
         <div className="absolute bottom-0 right-0 opacity-20">
-          <LooperBg height={isSm ? 226 : 113} width={isSm ? 570 : 285} />
+          <LooperBg height={bgHeight} width={bgWidth} />
         </div>
-        <div>
+        <div className="z-10">
           <p className="text-sm sm:text-[22px] sm:font-medium">Articles</p>
           <p className="text-[28px] sm:text-[52px] sm:font-medium">{title}</p>
         </div>
@@ -51,7 +56,7 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
                 type="button"
                 className="flex items-center justify-between w-full h-full gap-2 px-6 rounded-lg bg-slate-800 text-slate-50"
               >
-                <span className="text-lg min-w-max">{selectedDifficulty?.attributes?.name ?? 'Select Difficulty'}</span>
+                <span className="text-lg min-w-max">{selectedDifficulty ?? 'Select Difficulty'}</span>
                 <ChevronDownIcon width={12} height={12} aria-hidden="true" />
               </Listbox.Button>
             </GradientWrapper>
@@ -60,7 +65,8 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
           <Select.Options className="!bg-slate-700 py-4 px-2 flex flex-col">
             {difficulties?.map((d, i) => (
               <Select.Option key={i} value={d} className="border-0 !cursor-pointer grid group">
-                {d.attributes.name}
+                {/* {d.attributes.name} */}
+                {d}
               </Select.Option>
             ))}
           </Select.Options>

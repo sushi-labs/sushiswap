@@ -1,8 +1,8 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { classNames, IconButton, useBreakpoint } from '@sushiswap/ui'
-import { useRouter } from 'next/router'
-import { appHeaderHeight } from 'pages'
-import { ChangeEvent, FormEvent, forwardRef, MutableRefObject, useEffect, useState } from 'react'
+import { ChangeEvent, FormEvent, forwardRef, MutableRefObject, useLayoutEffect, useState } from 'react'
+
+import { appHeaderHeight } from '../helpers'
 
 interface SearchInput {
   handleSearch: (value: string) => void
@@ -15,13 +15,11 @@ export const SearchInput = forwardRef(
   ({ handleSearch, isTopOfPage, hideTopics, className }: SearchInput, ref: MutableRefObject<HTMLDivElement>) => {
     const [isSticky, setIsSticky] = useState(isTopOfPage)
     const { isSm } = useBreakpoint('sm')
-    const isMobileStickySearchBar = !isSm && isSticky
+    const [isMobileAndSticky, setIsMobileAndSticky] = useState(isSticky)
     const topicSearches = ['Miso', 'Sushi 2.0', 'Head chef', 'Kava', 'Paris']
     const [input, setInput] = useState('')
-    const router = useRouter()
-    const isArticlesPage = router.pathname === '/articles'
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       const cachedRef = ref?.current
       if (cachedRef) {
         const observer = new IntersectionObserver(([e]) => setIsSticky(!e.isIntersecting), {
@@ -35,12 +33,16 @@ export const SearchInput = forwardRef(
       }
     }, [ref])
 
+    useLayoutEffect(() => {
+      setIsMobileAndSticky(!isSm && isSticky)
+    }, [isSm, isSticky])
+
     const onInputchange = (e: ChangeEvent<HTMLInputElement>) => {
       setInput(e.target.value)
     }
 
     const onSearch = (value: string) => {
-      isArticlesPage ? handleSearch(value) : router.push('/articles?search=' + value)
+      handleSearch(value)
     }
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -59,14 +61,14 @@ export const SearchInput = forwardRef(
           className={classNames(
             className,
             'z-10 flex w-full h-[56px] sm:h-16 pl-6 px-4 sticky sm:relative top-[54px] sm:top-[unset]',
-            isMobileStickySearchBar && 'bg-slate-900 border-b border-slate-800'
+            isMobileAndSticky && 'bg-slate-900 border-b border-slate-800'
           )}
         >
           <form
             onSubmit={onSubmit}
             className={classNames(
               'flex max-w-[870px] w-full mx-auto h-full rounded-full pr-1.5 py-1.5 items-center transition ease-in-out duration-300',
-              isMobileStickySearchBar ? 'bg-slate-900' : 'bg-slate-800 pl-6'
+              isMobileAndSticky ? 'bg-slate-900' : 'bg-slate-800 pl-6'
             )}
           >
             <input
@@ -75,7 +77,7 @@ export const SearchInput = forwardRef(
               value={input}
               className={classNames(
                 'w-full text-sm truncate bg-transparent sm:text-lg outline-0',
-                isMobileStickySearchBar
+                isMobileAndSticky
                   ? 'sm:order-1 order-2 pl-3 placeholder:text-slate-500 font-medium'
                   : 'order-1 sm:placeholder:text-slate-400 placeholder:text-slate-50 sm:font-medium'
               )}
@@ -84,11 +86,11 @@ export const SearchInput = forwardRef(
               type="submit"
               className={classNames(
                 'sm:bg-[#3B7EF6] rounded-full',
-                isMobileStickySearchBar ? 'sm:order-2 order-1' : 'order-2 ml-2 p-2.5 sm:p-[14px]'
+                isMobileAndSticky ? 'sm:order-2 order-1' : 'order-2 ml-2 p-2.5 sm:p-[14px]'
               )}
             >
               <MagnifyingGlassIcon
-                className={isMobileStickySearchBar ? 'w-5 h-5 fill-slate-500' : 'w-6 h-6 fill-[#3B7EF6] sm:fill-white'}
+                className={isMobileAndSticky ? 'w-5 h-5 fill-slate-500' : 'w-6 h-6 fill-[#3B7EF6] sm:fill-white'}
               />
             </IconButton>
           </form>

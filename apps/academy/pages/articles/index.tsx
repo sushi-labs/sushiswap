@@ -2,10 +2,10 @@ import { Listbox } from '@headlessui/react'
 import { ArrowsUpDownIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Container, Select, Typography } from '@sushiswap/ui'
+import { defaultSidePadding, sortingOptions } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { defaultSidePadding } from 'pages'
-import { FC, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { ArticleEntity, CategoryEntityResponseCollection } from '../../.mesh'
@@ -49,16 +49,16 @@ const _Articles: FC = () => {
   const [page, setPage] = useState<number>(1)
   const debouncedQuery = useDebounce(query, 200)
   const router = useRouter()
-  const sortingOptions = [
-    { key: 'publishedAt:asc', name: 'Date (asc)' },
-    { key: 'publishedAt:desc', name: 'Date (desc)' },
-    { key: 'title:asc', name: 'Title (asc)' },
-    { key: 'title:desc', name: 'Title (desc)' },
-  ]
+  const queryParams = router.query as {
+    difficulty: string | undefined
+    category: string | undefined
+    search: string | undefined
+  }
+  const { difficulty, category, search } = queryParams
 
   const [sortBy, setSortBy] = useState(sortingOptions[0])
-  const [selectedCategory, setSelectedCategory] = useState<string>(router.query.category as string | undefined)
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>(router.query.difficulty as string | undefined)
+  const [selectedCategory, setSelectedCategory] = useState<string>(category)
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>(difficulty)
 
   const { data: articlesData, isValidating } = useSWR(
     [`/articles`, selectedCategory, selectedDifficulty, debouncedQuery, page, sortBy.key],
@@ -66,7 +66,7 @@ const _Articles: FC = () => {
       return (
         await getArticles({
           filters: {
-            ...(debouncedQuery && { title: { containsi: debouncedQuery } }),
+            ...((debouncedQuery || search) && { title: { containsi: debouncedQuery ?? search } }),
             ...((categoryFilter || difficultyFilter) && {
               categories: {
                 // TODO: this doesn't work, but leave for now until defficulties are it's own collection type in strapi
@@ -103,12 +103,19 @@ const _Articles: FC = () => {
   const products = ['Bentobox', 'Furo', 'Kashi', 'etc']
 
   const articlesAmount = articlesMeta?.pagination?.total ?? 0
+  const headerTitle = useMemo(() => {
+    let title = 'Latest releases'
+    if (difficulty === 'beginner') title = 'Tutorials & Product Explainers'
+    if (difficulty === 'advanced') title = 'Strategies & Product Features'
+    if (search) title = 'Search results'
+    return title
+  }, [difficulty, search])
 
   return (
     <>
       <SearchInput isTopOfPage hideTopics className="w-full sm:hidden" handleSearch={setQuery} />
       <ArticlesPageHeader
-        title="Latest releases" // TODO: dynamic
+        title={headerTitle}
         difficulties={difficulties}
         selectedDifficulty={selectedDifficulty}
         handleSelectDifficulty={handleSelectDifficulty}
@@ -184,7 +191,11 @@ const _Articles: FC = () => {
             </div>
             <div className="flex flex-col gap-6 pl-3 mt-12">
               {products.map((product) => (
-                <Typography className="hover:underline text-slate-300" key={product} onClick={() => setQuery(product)}>
+                <Typography
+                  className="hover:underline text-slate-300 w-fit"
+                  key={product}
+                  onClick={() => setQuery(product)}
+                >
                   {product}
                 </Typography>
               ))}
