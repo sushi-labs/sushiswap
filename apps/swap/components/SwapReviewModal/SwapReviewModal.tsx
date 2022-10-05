@@ -61,13 +61,11 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
       data.wait().then(() =>
         event({
-          action: `Swap ${trade.inputAmount.toFixed()} ${
+          action: 'swap',
+          label: `${trade.inputAmount.toFixed()} ${
             trade.inputAmount.currency.symbol
-          } to ${trade.outputAmount.toFixed()} ${trade.outputAmount.currency.symbol} on chainId ${
-            trade.inputAmount.currency.chainId
-          }`,
-          label: trade.routeType(),
-          category: 'swap',
+          } to ${trade.outputAmount.toFixed()} ${trade.outputAmount.currency.symbol}`,
+          category: trade.routeType(),
         })
       )
 
