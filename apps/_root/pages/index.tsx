@@ -184,14 +184,17 @@ const Index = ({ stats }) => {
           </Link.Internal>
         </div>
         <div className="flex lg:hidden justify-center lg:justify-start">
-          <Button
-            color="gradient"
-            className="px-12 !font-semibold"
-            size="md"
-            endIcon={<ArrowRightIcon width={16} height={16} />}
-          >
-            Enter Sushi
-          </Button>
+          <Link.Internal href="/swap" passHref={true}>
+            <Button
+              as="a"
+              color="gradient"
+              className="px-12 !font-semibold"
+              size="md"
+              endIcon={<ArrowRightIcon width={16} height={16} />}
+            >
+              Enter Sushi
+            </Button>
+          </Link.Internal>
         </div>
       </div>
       <div className="grid grid-cols-2 md:flex md:justify-between my-[120px] gap-10">
