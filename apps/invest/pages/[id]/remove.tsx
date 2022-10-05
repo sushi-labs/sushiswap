@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
-import { shortenAddress } from '@sushiswap/format'
+import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink, Container, Link, Typography } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -16,15 +16,16 @@ import {
   RemoveSectionUnstake,
 } from '../../components'
 import { getPool } from '../../lib/api'
+import { GET_POOL_TYPE_MAP } from '../../lib/constants'
 import { PairWithAlias } from '../../types'
 
-const LINKS = (id: string): BreadcrumbLink[] => [
+const LINKS = ({ pair }: { pair: PairWithAlias }): BreadcrumbLink[] => [
   {
-    href: `/${id}`,
-    label: `${shortenAddress(id.split(':')[1])}`,
+    href: `/${pair.id}`,
+    label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type]} - ${formatPercent(pair.swapFee / 10000)}`,
   },
   {
-    href: `/${id}/remove`,
+    href: `/${pair.id}/remove`,
     label: `Remove Liquidity`,
   },
 ]
@@ -56,6 +57,7 @@ const _Remove = () => {
     fetch(url).then((response) => response.json())
   )
 
+  console.log(data)
   if (!data) return <></>
 
   const { pair } = data
@@ -63,7 +65,7 @@ const _Remove = () => {
   return (
     <PoolPositionProvider pair={pair}>
       <PoolPositionStakedProvider pair={pair}>
-        <Layout breadcrumbs={LINKS(router.query.id as string)}>
+        <Layout breadcrumbs={LINKS(data)}>
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
             <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">

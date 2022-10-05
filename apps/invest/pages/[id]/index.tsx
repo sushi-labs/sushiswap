@@ -1,4 +1,4 @@
-import { shortenAddress } from '@sushiswap/format'
+import { formatPercent } from '@sushiswap/format'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -21,12 +21,13 @@ import {
   PoolStats,
 } from '../../components'
 import { getPool } from '../../lib/api'
+import { GET_POOL_TYPE_MAP } from '../../lib/constants'
 import { PairWithAlias } from '../../types'
 
-const LINKS = (id: string): BreadcrumbLink[] => [
+const LINKS = ({ pair }: { pair: PairWithAlias }): BreadcrumbLink[] => [
   {
-    href: `/${id}`,
-    label: `${shortenAddress(id.split(':')[1])}`,
+    href: `/${pair.id}`,
+    label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type]} - ${formatPercent(pair.swapFee / 10000)}`,
   },
 ]
 
@@ -63,7 +64,7 @@ const _Pool = () => {
     <PoolPositionProvider pair={pair}>
       <PoolPositionStakedProvider pair={pair}>
         <PoolPositionRewardsProvider pair={pair}>
-          <Layout breadcrumbs={LINKS(router.query.id as string)}>
+          <Layout breadcrumbs={LINKS(data)}>
             <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">
               <div className="flex flex-col order-1 gap-9">
                 <PoolHeader pair={pair} />
