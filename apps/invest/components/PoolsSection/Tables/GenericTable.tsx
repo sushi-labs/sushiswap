@@ -1,5 +1,5 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { classNames, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
+import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
 import React, { ReactNode, useState } from 'react'
 
@@ -89,12 +89,9 @@ export const GenericTable = <T extends { id: string }>({
                                 style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
                                 key={cell.id}
                               >
-                                {/* <Link.Internal href={`/${row.original.id}`} passHref={true}>
+                                <Link.Internal href={`/${row.original.id}`} passHref={true}>
                                   <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
-                                </Link.Internal> */}
-                                <a href={`/${row.original.id}`} target="_blank" rel="noreferrer">
-                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </a>
+                                </Link.Internal>
                               </Table.td>
                             )
                           })}
@@ -118,12 +115,9 @@ export const GenericTable = <T extends { id: string }>({
                     {row.getVisibleCells().map((cell, i) => {
                       return (
                         <Table.td style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }} key={cell.id}>
-                          <a href={`/${row.original.id}`}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </a>
-                          {/* <Link.Internal href={`/${row.original.id}`} passHref={true}>
+                          <Link.Internal href={`/${row.original.id}`} passHref={true}>
                             <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
-                          </Link.Internal> */}
+                          </Link.Internal>
                         </Table.td>
                       )
                     })}
