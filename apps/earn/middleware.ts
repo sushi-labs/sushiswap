@@ -8,14 +8,14 @@ export const config = {
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl
-  let changed = false
+  const changed = false
 
-  url.searchParams.forEach((_, key) => {
-    if (!allowedParams.includes(key)) {
-      url.searchParams.delete(key)
-      changed = true
-    }
-  })
+  // url.searchParams.forEach((_, key) => {
+  //   if (!allowedParams.includes(key)) {
+  //     url.searchParams.delete(key)
+  //     changed = true
+  //   }
+  // })
 
   // Avoid infinite loop by only redirecting if the query
   // params were changed
