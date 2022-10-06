@@ -29,7 +29,7 @@ export const MarketStats: FC<MarketStats> = ({ pair }) => {
           Total Supply
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(9348938)}
+          {formatUSD(pair.totalAsset.elastic / 1e18)}
         </Typography>
         <Typography variant="xs" weight={500} className={totalSupplyChange > 0 ? 'text-green' : 'text-red'}>
           {totalSupplyChange > 0 ? '+' : '-'}
@@ -41,7 +41,7 @@ export const MarketStats: FC<MarketStats> = ({ pair }) => {
           Total Borrow
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(9348938)}
+          {formatUSD(pair.totalBorrow.elastic / 1e18)}
         </Typography>
         <Typography variant="xs" weight={500} className={totalBorrowChange > 0 ? 'text-green' : 'text-red'}>
           {totalBorrowChange > 0 ? '+' : '-'}
