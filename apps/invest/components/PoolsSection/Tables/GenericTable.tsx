@@ -1,9 +1,7 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { useInViewport } from '@sushiswap/hooks'
 import { classNames, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
-import Link from 'next/link'
-import React, { ReactNode, useRef, useState } from 'react'
+import React, { ReactNode, useState } from 'react'
 
 interface GenericTableProps<C> {
   table: ReactTableType<C>
@@ -27,8 +25,6 @@ export const GenericTable = <T extends { id: string }>({
   placeholder,
   pageSize,
 }: GenericTableProps<T>) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const inViewport = useInViewport(ref)
   const [showOverlay, setShowOverlay] = useState(false)
   const headers = table.getFlatHeaders()
 
@@ -93,9 +89,12 @@ export const GenericTable = <T extends { id: string }>({
                                 style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
                                 key={cell.id}
                               >
-                                <Link href={`/${row.original.id}`} passHref={true}>
+                                {/* <Link.Internal href={`/${row.original.id}`} passHref={true}>
                                   <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
-                                </Link>
+                                </Link.Internal> */}
+                                <a href={`/${row.original.id}`} target="_blank" rel="noreferrer">
+                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </a>
                               </Table.td>
                             )
                           })}
@@ -119,9 +118,12 @@ export const GenericTable = <T extends { id: string }>({
                     {row.getVisibleCells().map((cell, i) => {
                       return (
                         <Table.td style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }} key={cell.id}>
-                          <Link href={`/${row.original.id}`} passHref={true}>
+                          <a href={`/${row.original.id}`}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </a>
+                          {/* <Link.Internal href={`/${row.original.id}`} passHref={true}>
                             <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
-                          </Link>
+                          </Link.Internal> */}
                         </Table.td>
                       )
                     })}
