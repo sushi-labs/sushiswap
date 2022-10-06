@@ -5,7 +5,7 @@ import { Button, classNames, Dialog, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
 import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
-import { getV2RouterContractConfig } from '@sushiswap/wagmi/hooks/useV2Router'
+import { getSushiSwapRouterContractConfig } from '@sushiswap/wagmi/hooks'
 import { FC, useCallback, useState } from 'react'
 
 import { KashiPair } from '../../.graphclient'
@@ -74,7 +74,7 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
           leaveFrom="transform max-h-[380px]"
           leaveTo="transform max-h-0"
         >
-          <Widget id="depositCollateral" maxWidth="md" className="shadow-none bg-transparent">
+          <Widget id="depositCollateral" maxWidth="md" className="bg-transparent shadow-none">
             <Widget.Content>
               <Widget.Header title={`Borrow ${asset.symbol}`} />
               <Web3Input.Currency
@@ -89,7 +89,7 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
                 chainId={pair.chainId}
                 tokenMap={tokenMap}
               />
-              <div className="p-3 flex flex-col gap-3">
+              <div className="flex flex-col gap-3 p-3">
                 <Disclosure>
                   {({ open }) => (
                     <div className="flex flex-col gap-2 rounded-xl bg-white bg-opacity-[0.08] px-4 py-2">
@@ -135,7 +135,7 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
                         leaveFrom="transform max-h-[380px]"
                         leaveTo="transform max-h-0"
                       >
-                        <Disclosure.Panel as="div" className="flex gap-2 justify-end">
+                        <Disclosure.Panel as="div" className="flex justify-end gap-2">
                           <button
                             onClick={() => setLeverage(0)}
                             className="bg-white bg-opacity-[0.12] hover:bg-opacity-[0.20] font-medium text-sm rounded-lg px-2 py-1"
@@ -257,7 +257,7 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
                   className="whitespace-nowrap"
                   fullWidth
                   amount={collateralAsEntity}
-                  address={getV2RouterContractConfig(pair.chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
                 />
               </Approve.Components>
             }

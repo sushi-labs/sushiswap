@@ -4,7 +4,7 @@ import { Button, Dialog, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
 import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
-import { getV2RouterContractConfig } from '@sushiswap/wagmi/hooks/useV2Router'
+import { getSushiSwapRouterContractConfig } from '@sushiswap/wagmi/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
 
 import { KashiPair } from '../../.graphclient'
@@ -113,7 +113,7 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
                   className="whitespace-nowrap"
                   fullWidth
                   amount={valueAsEntity}
-                  address={getV2RouterContractConfig(pair.chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
                 />
               </Approve.Components>
             }
