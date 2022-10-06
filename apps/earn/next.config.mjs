@@ -3,7 +3,6 @@ import transpileModules from 'next-transpile-modules'
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/redux-localstorage',
-  '@sushiswap/chain',
   '@sushiswap/wagmi',
   '@sushiswap/ui',
   '@sushiswap/graph-client',
@@ -19,9 +18,19 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  // experimental: {
-  //   nextScriptWorkers: true,
-  // },
+  experimental: {
+    nextScriptWorkers: true,
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/earn',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
 }
 
 export default withTranspileModules(nextConfig)

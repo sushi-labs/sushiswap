@@ -32,8 +32,8 @@ const LINKS = ({ pair }: { pair: PairWithAlias }): BreadcrumbLink[] => [
 ]
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=100, stale-while-revalidate=599')
-  const [pair] = await Promise.all([getPool(query.id as string)])
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  const pair = await getPool(query.id as string)
   return {
     props: {
       fallback: {
@@ -51,11 +51,11 @@ const Pool: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fall
   )
 }
 
-const fetcher = (url) => fetch(url).then((response) => response.json())
-
 const _Pool = () => {
   const router = useRouter()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${router.query.id}`, fetcher)
+  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${router.query.id}`, (url) =>
+    fetch(url).then((response) => response.json())
+  )
 
   if (!data) return <></>
   const { pair } = data
