@@ -17,7 +17,7 @@ const {
   LANDING_URL,
   SWAP_URL,
   XSWAP_URL,
-  INVEST_URL,
+  EARN_URL,
   LEGACY_URL,
   PARTNER_URL,
 } = process.env
@@ -118,19 +118,19 @@ const nextConfig = {
       },
       {
         source: '/invest',
-        destination: `${INVEST_URL}/earn`,
+        destination: `${EARN_URL}/earn`,
       },
       {
         source: '/invest/:path*',
-        destination: `${INVEST_URL}/earn/:path*`,
+        destination: `${EARN_URL}/earn/:path*`,
       },
       {
         source: '/earn',
-        destination: `${INVEST_URL}/earn`,
+        destination: `${EARN_URL}/earn`,
       },
       {
         source: '/earn/:path*',
-        destination: `${INVEST_URL}/earn/:path*`,
+        destination: `${EARN_URL}/earn/:path*`,
       },
     ]
   },
