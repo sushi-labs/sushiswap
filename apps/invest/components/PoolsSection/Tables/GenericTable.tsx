@@ -1,7 +1,8 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { useInViewport } from '@sushiswap/hooks'
-import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
+import { classNames, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
+import Link from 'next/link'
 import React, { ReactNode, useRef, useState } from 'react'
 
 interface GenericTableProps<C> {
@@ -92,9 +93,9 @@ export const GenericTable = <T extends { id: string }>({
                                 style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
                                 key={cell.id}
                               >
-                                <Link.Internal href={`/${row.original.id}`} passHref={true} prefetch={inViewport}>
+                                <Link href={`/${row.original.id}`} passHref={true}>
                                   <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
-                                </Link.Internal>
+                                </Link>
                               </Table.td>
                             )
                           })}
@@ -118,9 +119,9 @@ export const GenericTable = <T extends { id: string }>({
                     {row.getVisibleCells().map((cell, i) => {
                       return (
                         <Table.td style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }} key={cell.id}>
-                          <Link.Internal href={`/${row.original.id}`} passHref={true}>
+                          <Link href={`/${row.original.id}`} passHref={true}>
                             <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
-                          </Link.Internal>
+                          </Link>
                         </Table.td>
                       )
                     })}
