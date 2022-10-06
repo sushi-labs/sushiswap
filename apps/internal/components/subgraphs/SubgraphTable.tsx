@@ -1,7 +1,7 @@
 import { formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { classNames, Table } from '@sushiswap/ui'
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { GenericTable } from 'components/Table'
 import { Subgraph } from 'lib'
 
 interface SubgraphTable {
@@ -79,50 +79,5 @@ export function SubgraphTable({ subgraphs, groupBy }: SubgraphTable) {
     },
   })
 
-  return (
-    <Table.container>
-      <Table.table>
-        <Table.thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Table.thr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <Table.th
-                  key={header.id}
-                  colSpan={header.colSpan}
-                  style={{ maxWidth: header.column.getSize(), width: header.column.getSize() }}
-                >
-                  <div
-                    {...{
-                      className: classNames(
-                        header.column.getCanSort() ? 'cursor-pointer select-none' : '',
-                        'h-full flex items-center gap-2'
-                      ),
-                      onClick: header.column.getToggleSortingHandler(),
-                    }}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </div>
-                </Table.th>
-              ))}
-            </Table.thr>
-          ))}
-        </Table.thead>
-        <Table.tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <Table.tr key={row.id} className="cursor-pointer">
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <Table.td key={cell.id} style={{ maxWidth: columns[0].size, width: columns[0].size }}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </Table.td>
-                  )
-                })}
-              </Table.tr>
-            )
-          })}
-        </Table.tbody>
-      </Table.table>
-    </Table.container>
-  )
+  return <GenericTable table={table} columns={columns} />
 }

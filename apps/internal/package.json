@@ -12,16 +12,21 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.3",
-    "@heroicons/react": "v1",
+    "@heroicons/react": "^1.0.0",
+    "@octokit/auth-app": "^4.0.4",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/format": "workspace:*",
+    "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "^8.5.13",
-    "outline": "link:@heroicons/react/outline",
     "next": "^12.3.0",
+    "octokit": "^2.0.4",
+    "outline": "link:@heroicons/react/outline",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "swr": "^1.3.0"
   },
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "1.0.5",

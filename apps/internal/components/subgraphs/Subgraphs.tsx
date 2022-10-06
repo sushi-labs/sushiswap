@@ -28,16 +28,19 @@ export function Subgraphs({ subgraphs }: Subgraphs) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-center p-4 space-y-4 bg-slate-800 bg-opacity-70 rounded-xl w-fit">
-        <div>Group by</div>
-        <div className="h-px -m-4 bg-slate-700 w-parent" />
-        <div className="inline-grid grid-cols-2 gap-2 min-con">
-          {(['chainId', 'category'] as const).map((group) => (
-            <>
-              <div>{group}</div>
-              <Checkbox set={() => setGroupBy(group)} checked={groupBy === group} />
-            </>
-          ))}
+      <div className="space-y-2">
+        <div>Filters and other things</div>
+        <div className="flex flex-col justify-center p-4 space-y-4 text-sm bg-slate-800 bg-opacity-70 rounded-xl w-fit">
+          <div>Group by</div>
+          <div className="h-px -m-4 bg-slate-700 w-parent" />
+          <div className="inline-grid grid-cols-2 gap-2 min-con">
+            {(['chainId', 'category'] as const).map((group) => (
+              <>
+                <div>{group}</div>
+                <Checkbox set={() => setGroupBy(group)} checked={groupBy === group} />
+              </>
+            ))}
+          </div>
         </div>
       </div>
       <div className="space-y-6">

@@ -645,13 +645,16 @@ importers:
       '@graphprotocol/client-add-source-name': 1.0.5
       '@graphprotocol/client-cli': 2.2.1
       '@headlessui/react': ^1.7.3
-      '@heroicons/react': v1
+      '@heroicons/react': ^1.0.0
+      '@octokit/auth-app': ^4.0.4
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@tanstack/react-table': ^8.5.13
@@ -662,24 +665,31 @@ importers:
       eslint: ^8.20.0
       next: ^12.3.0
       next-transpile-modules: 9.0.0
+      octokit: ^2.0.4
       outline: link:@heroicons/react/outline
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
+      swr: ^1.3.0
       tailwindcss: ^3.1.0
       typescript: 4.6.3
     dependencies:
       '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
+      '@octokit/auth-app': 4.0.4
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../packages/config/graph
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/ui': link:../../packages/ui
       '@tanstack/react-table': 8.5.15_biqbaboplfbrettd7655fr4n2y
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      octokit: 2.0.4
       outline: link:@heroicons/react/outline
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      swr: 1.3.0_react@18.2.0
     devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.5
       '@graphprotocol/client-cli': 2.2.1_@types+node@17.0.45
@@ -24348,7 +24358,7 @@ packages:
     optional: true
 
   /url/0.10.3:
-    resolution: {integrity: sha1-Ah5NnHcF8hu/N9A861h2dAJ3TGQ=}
+    resolution: {integrity: sha512-hzSUW2q06EqL1gKM/a+obYHLIO6ct2hwPuviqTTOcfFVc61UbfJ2Q32+uGL/HCPxKqrdGB5QUwIe7UqlDgwsOQ==}
     dependencies:
       punycode: 1.3.2
       querystring: 0.2.0

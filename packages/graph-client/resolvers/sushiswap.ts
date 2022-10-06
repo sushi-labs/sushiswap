@@ -562,6 +562,7 @@ export const resolvers: Resolvers = {
                     chainId,
                     chainName: chainName[chainId],
                     chainShortName: chainShortName[chainId],
+                    source: 'TRIDENT',
                   }))
                 : []
             })
@@ -589,6 +590,7 @@ export const resolvers: Resolvers = {
                     chainId,
                     chainName: chainName[chainId],
                     chainShortName: chainShortName[chainId],
+                    source: 'LEGACY',
                   }))
                 : []
             })
@@ -645,6 +647,7 @@ export const resolvers: Resolvers = {
         chainId: args.chainId,
         chainName: chainName[args.chainId],
         chainShortName: chainShortName[args.chainId],
+        source: SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId) ? 'LEGACY' : 'TRIDENT',
         pairs: token.pairs
           ? token.pairs.map(({ pair }) => {
               const volume7d = pair.daySnapshots
