@@ -372,6 +372,119 @@ importers:
       tailwindcss: 3.1.6_postcss@8.4.14
       typescript: 4.6.3
 
+  apps/earn:
+    specifiers:
+      '@builder.io/partytown': ^0.7.0
+      '@ethersproject/abi': ^5.7.0
+      '@ethersproject/address': ^5.7.0
+      '@ethersproject/bignumber': ^5.7.0
+      '@ethersproject/bytes': ^5.7.0
+      '@ethersproject/constants': ^5.7.0
+      '@ethersproject/contracts': ^5.7.0
+      '@ethersproject/experimental': ^5.7.0
+      '@ethersproject/providers': ^5.7.0
+      '@ethersproject/solidity': ^5.7.0
+      '@headlessui/react': ^1.6.6
+      '@heroicons/react': ^1.0.0
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/graph-client': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-localstorage': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/token-lists': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@tanstack/react-table': 8.5.0
+      '@types/node': ^17.0.30
+      '@types/numeral': ^2.0.2
+      '@types/react': ^18.0.0
+      '@types/react-dom': ^18.0.0
+      autoprefixer: ^10.4.0
+      date-fns: ^2.29.1
+      echarts: ^5.3.3
+      echarts-for-react: ^3.0.2
+      eslint: ^8.20.0
+      ethers: ^5.7.0
+      graphql: 16.6.0
+      next: 12.2.x
+      next-seo: ^5.5.0
+      next-sitemap: ^3.1.16
+      next-transpile-modules: 9.0.0
+      numeral: ^2.0.6
+      postcss: ^8.4.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-redux: ^8.0.1
+      swr: ^1.3.0
+      tailwindcss: ^3.1.0
+      typescript: 4.6.3
+      wagmi: 0.6.7
+    dependencies:
+      '@builder.io/partytown': 0.7.0
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/experimental': 5.7.0
+      '@ethersproject/providers': 5.7.1
+      '@ethersproject/solidity': 5.7.0
+      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/exchange': link:../../packages/exchange
+      '@sushiswap/format': link:../../packages/format
+      '@sushiswap/graph-client': link:../../packages/graph-client
+      '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/math': link:../../packages/math
+      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wagmi': link:../../packages/wagmi
+      '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
+      date-fns: 2.29.3
+      echarts: 5.3.3
+      echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
+      ethers: 5.7.1
+      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
+      next-sitemap: 3.1.21_next@12.2.5
+      numeral: 2.0.6
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
+      swr: 1.3.0_react@18.2.0
+      wagmi: 0.6.7_nznuxirfauibn2fjde2ghjonky
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+      '@types/node': 17.0.45
+      '@types/numeral': 2.0.2
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
+      autoprefixer: 10.4.7_postcss@8.4.14
+      eslint: 8.20.0
+      graphql: 16.6.0
+      next-transpile-modules: 9.0.0
+      postcss: 8.4.14
+      tailwindcss: 3.1.6_postcss@8.4.14
+      typescript: 4.6.3
+
   apps/furo:
     specifiers:
       '@ethersproject/abi': ^5.7.0
@@ -567,119 +680,6 @@ importers:
       '@types/react-dom': 18.0.6
       autoprefixer: 10.4.7_postcss@8.4.14
       eslint: 8.20.0
-      next-transpile-modules: 9.0.0
-      postcss: 8.4.14
-      tailwindcss: 3.1.6_postcss@8.4.14
-      typescript: 4.6.3
-
-  apps/invest:
-    specifiers:
-      '@builder.io/partytown': ^0.7.0
-      '@ethersproject/abi': ^5.7.0
-      '@ethersproject/address': ^5.7.0
-      '@ethersproject/bignumber': ^5.7.0
-      '@ethersproject/bytes': ^5.7.0
-      '@ethersproject/constants': ^5.7.0
-      '@ethersproject/contracts': ^5.7.0
-      '@ethersproject/experimental': ^5.7.0
-      '@ethersproject/providers': ^5.7.0
-      '@ethersproject/solidity': ^5.7.0
-      '@headlessui/react': ^1.6.6
-      '@heroicons/react': ^1.0.0
-      '@reduxjs/toolkit': ^1.8.1
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/exchange': workspace:*
-      '@sushiswap/format': workspace:*
-      '@sushiswap/graph-client': workspace:*
-      '@sushiswap/hooks': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/math': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/redux-localstorage': workspace:*
-      '@sushiswap/redux-token-lists': workspace:*
-      '@sushiswap/token-lists': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@sushiswap/wagmi': workspace:*
-      '@tanstack/react-table': 8.5.0
-      '@types/node': ^17.0.30
-      '@types/numeral': ^2.0.2
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
-      autoprefixer: ^10.4.0
-      date-fns: ^2.29.1
-      echarts: ^5.3.3
-      echarts-for-react: ^3.0.2
-      eslint: ^8.20.0
-      ethers: ^5.7.0
-      graphql: 16.6.0
-      next: 12.2.x
-      next-seo: ^5.5.0
-      next-sitemap: ^3.1.16
-      next-transpile-modules: 9.0.0
-      numeral: ^2.0.6
-      postcss: ^8.4.0
-      react: ^18.2.0
-      react-dom: ^18.2.0
-      react-redux: ^8.0.1
-      swr: ^1.3.0
-      tailwindcss: ^3.1.0
-      typescript: 4.6.3
-      wagmi: 0.6.7
-    dependencies:
-      '@builder.io/partytown': 0.7.0
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/experimental': 5.7.0
-      '@ethersproject/providers': 5.7.1
-      '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 1.0.6_react@18.2.0
-      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/exchange': link:../../packages/exchange
-      '@sushiswap/format': link:../../packages/format
-      '@sushiswap/graph-client': link:../../packages/graph-client
-      '@sushiswap/hooks': link:../../packages/hooks
-      '@sushiswap/math': link:../../packages/math
-      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
-      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
-      '@sushiswap/token-lists': link:../../packages/token-lists
-      '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/wagmi': link:../../packages/wagmi
-      '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
-      date-fns: 2.29.3
-      echarts: 5.3.3
-      echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
-      ethers: 5.7.1
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
-      next-sitemap: 3.1.21_next@12.2.5
-      numeral: 2.0.6
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
-      swr: 1.3.0_react@18.2.0
-      wagmi: 0.6.7_nznuxirfauibn2fjde2ghjonky
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../packages/config/eslint
-      '@sushiswap/jest-config': link:../../packages/config/jest
-      '@sushiswap/prettier-config': link:../../packages/config/prettier
-      '@sushiswap/typescript-config': link:../../packages/config/typescript
-      '@types/node': 17.0.45
-      '@types/numeral': 2.0.2
-      '@types/react': 18.0.15
-      '@types/react-dom': 18.0.6
-      autoprefixer: 10.4.7_postcss@8.4.14
-      eslint: 8.20.0
-      graphql: 16.6.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       tailwindcss: 3.1.6_postcss@8.4.14
