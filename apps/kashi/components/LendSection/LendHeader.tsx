@@ -26,14 +26,14 @@ export const LendHeader: FC<LendHeader> = ({ pair }) => {
           <div className="flex items-center">
             <IconListVariableSizes token0={asset} token1={collateral} />
             <div className="flex flex-col">
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <Typography variant="lg" className="text-slate-50" weight={700}>
                   Lend: {asset.symbol}
                 </Typography>
-                <Chip color="gray" label="0.05%" className="text-slate-50 font-medium" />
+                <Chip color="gray" label="0.05%" className="font-medium text-slate-50" />
               </div>
-              <Typography variant="xs" weight={500} className="flex gap-1 items-center text-slate-400">
-                <div className="bg-green h-1 w-1 rounded-full" />
+              <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
+                <div className="w-1 h-1 rounded-full bg-green" />
                 Market Collateral: {collateral.symbol}
               </Typography>
             </div>
@@ -45,7 +45,7 @@ export const LendHeader: FC<LendHeader> = ({ pair }) => {
             <div className="flex gap-3 rounded-lg bg-slate-800 px-3 py-1.5">
               <Currency.Icon currency={asset} width={20} height={20} />
               <Typography variant="sm" weight={600} className="text-slate-300">
-                1 {asset.symbol} = 0.00 {collateral.symbol}
+                1 {asset.symbol} = {pair.exchangeRate / 1e18} {collateral.symbol}
               </Typography>
             </div>
           </div>
