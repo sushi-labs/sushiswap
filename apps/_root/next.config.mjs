@@ -69,6 +69,10 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/:path*',
+        destination: `/:path*`,
+      },
+      {
         source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
       },
