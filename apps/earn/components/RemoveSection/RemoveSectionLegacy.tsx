@@ -187,9 +187,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
           methodNames.map((methodName) =>
             contract.estimateGas[methodName](...args)
               .then(calculateGasMargin)
-              .catch((error) => {
-                console.error(`estimateGas failed`, methodName, args, error)
-              })
+              .catch()
           )
         )
 
