@@ -1,6 +1,6 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
-import { Button, Chip, Currency, Typography } from '@sushiswap/ui'
+import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { incentiveRewardToToken } from '../../../../lib/functions'
@@ -70,11 +70,11 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
         </>
       )}
       <div className="flex justify-end gap-2 mt-4 mb-2">
-        {/* <Link.Internal href={`/${row.id}/add`} passHref={true}> */}
-        <Button as="a" href={`/earn/${row.id}/add`} size="sm" fullWidth>
-          Deposit
-        </Button>
-        {/* </Link.Internal> */}
+        <Link.Internal href={`/${row.id}/add`} passHref={true}>
+          <Button as="a" size="sm" fullWidth>
+            Deposit
+          </Button>
+        </Link.Internal>
       </div>
     </div>
   )
