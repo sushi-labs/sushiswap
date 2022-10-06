@@ -2,9 +2,11 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
+import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native } from '@sushiswap/currency'
 import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/exchange'
+import { event } from '@sushiswap/gtag'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
@@ -21,8 +23,8 @@ import { toHex } from 'lib/functions'
 import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
-import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useProvider } from 'wagmi'
+import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { ProviderRpcError, useAccount, usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
 
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
@@ -39,20 +41,6 @@ interface SwapCall {
   value: string
 }
 
-interface SwapCallEstimate {
-  call: SwapCall
-}
-
-export interface SuccessfulCall extends SwapCallEstimate {
-  call: SwapCall
-  gasEstimate: BigNumber
-}
-
-interface FailedCall extends SwapCallEstimate {
-  call: SwapCall
-  error: Error
-}
-
 const KLIMA_FEE = Amount.fromRawAmount(Native.onChain(ChainId.POLYGON), '20000000000000000')
 
 const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
@@ -64,13 +52,62 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const [, { createNotification }] = useNotifications(account)
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
+
+  const onSettled = useCallback(
+    (data) => {
+      if (!trade) return
+
+      const ts = new Date().getTime()
+
+      data.wait().then(() =>
+        event({
+          action: 'swap',
+          label: `${trade.inputAmount.toFixed()} ${
+            trade.inputAmount.currency.symbol
+          } to ${trade.outputAmount.toFixed()} ${trade.outputAmount.currency.symbol}`,
+          category: trade.routeType(),
+        })
+      )
+
+      createNotification({
+        type: 'swap',
+        chainId,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Swapping ${trade.inputAmount.toSignificant(6)} ${
+            trade.inputAmount.currency.symbol
+          } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
+          completed: `Successfully swapped ${trade.inputAmount.toSignificant(6)} ${
+            trade.inputAmount.currency.symbol
+          } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
+          failed: `Something went wrong when trying to swap ${trade.inputAmount.currency.symbol} for ${trade.outputAmount.currency.symbol}`,
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [chainId, createNotification, trade]
+  )
+
+  const [request, setRequest] = useState<Partial<TransactionRequest & { to: string }>>({})
+  const { config } = usePrepareSendTransaction({
+    request,
     chainId,
-    onSuccess: () => {
-      setOpen(false)
-      onSuccess()
+  })
+
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    ...config,
+    onSettled,
+    onSuccess: (data) => {
+      console.log(data)
+      if (data) {
+        setOpen(false)
+        onSuccess()
+      }
     },
   })
+
   const [signature, setSignature] = useState<Signature>()
 
   const [sushiSwapRouter, tridentRouter, sushiSwapKlimaRouter] = useRouters(chainId)
@@ -87,10 +124,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     [slippageTolerance]
   )
 
-  const execute = useCallback(async () => {
+  const prepare = useCallback(async () => {
     try {
       if (!trade || !account) return
-
       let call: SwapCall | null = null
       let value = '0x0'
 
@@ -350,44 +386,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
               })
           })
 
-        const data = await sendTransactionAsync({
-          chainId,
-          request: {
-            ...tx,
-            ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
-          },
-        })
-        const ts = new Date().getTime()
-
-        data.wait().then(() =>
-          window.dataLayer.push({
-            event: 'swap',
-            routeType: trade.routeType(),
-            chainId: trade.inputAmount.currency.chainId,
-            inputToken: trade.outputAmount.currency.symbol,
-            inputValue: trade.inputAmount.toFixed(),
-            outputToken: trade.outputAmount.currency.symbol,
-            outputValue: trade.outputAmount.toFixed(),
-            ts,
-          })
-        )
-
-        createNotification({
-          type: 'swap',
-          chainId,
-          txHash: data.hash,
-          promise: data.wait(),
-          summary: {
-            pending: `Swapping ${trade.inputAmount.toSignificant(6)} ${
-              trade.inputAmount.currency.symbol
-            } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
-            completed: `Successfully swapped ${trade.inputAmount.toSignificant(6)} ${
-              trade.inputAmount.currency.symbol
-            } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
-            failed: `Something went wrong when trying to swap ${trade.inputAmount.currency.symbol} for ${trade.outputAmount.currency.symbol}`,
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
+        setRequest({
+          ...tx,
+          ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
         })
       }
     } catch (e: unknown) {
@@ -398,22 +399,26 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       console.log(e)
     }
   }, [
-    trade,
     account,
+    allowedSlippage,
+    carbonOffset,
+    chainId,
+    deadline,
     inputCurrencyRebase,
     outputCurrencyRebase,
-    sushiSwapRouter,
-    tridentRouter,
-    allowedSlippage,
-    deadline,
-    chainId,
-    carbonOffset,
-    sushiSwapKlimaRouter,
-    signature,
     provider,
-    sendTransactionAsync,
-    createNotification,
+    signature,
+    sushiSwapKlimaRouter,
+    sushiSwapRouter,
+    trade,
+    tridentRouter,
   ])
+
+  // Prepare transaction
+  useEffect(() => {
+    void prepare()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trade])
 
   const [input0, input1] = useMemo(
     () => [trade?.inputAmount, trade?.outputAmount],
@@ -463,7 +468,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={execute}>
+              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
               </Button>
             )

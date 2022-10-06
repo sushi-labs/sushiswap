@@ -2,6 +2,7 @@ name: MasterChefV2
 handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/master-chefv2
+    retry: 3
 transforms:
   - prefix:
       value: MASTERCHEF_V2_

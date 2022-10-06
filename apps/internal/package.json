@@ -18,8 +18,8 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "^8.5.13",
-    "next": "12.2.x",
     "outline": "link:@heroicons/react/outline",
+    "next": "^12.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

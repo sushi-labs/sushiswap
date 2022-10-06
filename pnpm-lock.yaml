@@ -138,47 +138,73 @@ importers:
   apps/_root:
     specifiers:
       '@headlessui/react': ^1.6.0
+      '@heroicons/react': ^1.0.0
+      '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
       '@sushiswap/core-sdk': ^1.0.0-canary.65
+      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-localstorage': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/sushi-data': 1.0.26
+      '@sushiswap/token-lists': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@tanstack/react-query': ^4.0.10
       '@types/node': 17.0.31
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
-      next: 12.2.x
+      ethers: ^5.7.0
+      next: ^12.3.0
+      next-seo: ^5.5.0
+      next-sitemap: ^3.1.16
       next-transpile-modules: 9.0.0
       numeral: ^2.0.6
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
+      react-redux: ^8.0.1
       react-ticker: ^1.3.2
       react-transition-group: ^4.4.2
       styled-components: ^5.3.5
       tailwindcss: ^3.1.0
       typescript: 4.6.3
       use-count-up: ^3.0.1
+      wagmi: 0.6.7
     dependencies:
       '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core-sdk': 1.0.0-canary.128
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/sushi-data': 1.0.26
+      '@sushiswap/token-lists': link:../../packages/token-lists
       '@sushiswap/ui': link:../../packages/ui
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      '@sushiswap/wagmi': link:../../packages/wagmi
+      '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
+      ethers: 5.7.1
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
+      next-sitemap: 3.1.21_next@12.3.0
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
       react-ticker: 1.3.2_biqbaboplfbrettd7655fr4n2y
       react-transition-group: 4.4.2_biqbaboplfbrettd7655fr4n2y
       styled-components: 5.3.5_biqbaboplfbrettd7655fr4n2y
       use-count-up: 3.0.1_react@18.2.0
+      wagmi: 0.6.7_nznuxirfauibn2fjde2ghjonky
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -223,7 +249,7 @@ importers:
       eslint: ^8.20.0
       graphql: 16.6.0
       isomorphic-fetch: ^3.0.0
-      next: 12.2.x
+      next: ^12.3.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.20
       next-transpile-modules: 9.0.0
@@ -254,9 +280,9 @@ importers:
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       graphql: 16.6.0
       isomorphic-fetch: 3.0.0
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
-      next-sitemap: 3.1.21_next@12.2.5
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
+      next-sitemap: 3.1.21_next@12.3.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -299,7 +325,7 @@ importers:
       date-fns: ^2.28.0
       eslint: ^8.20.0
       graphql: 16.6.0
-      next: 12.2.x
+      next: ^12.3.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
       next-transpile-modules: 9.0.0
@@ -318,9 +344,9 @@ importers:
       '@tailwindcss/typography': 0.5.4_tailwindcss@3.1.6
       date-fns: 2.29.1
       graphql: 16.6.0
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
-      next-sitemap: 3.1.16_next@12.2.5
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
+      next-sitemap: 3.1.16_next@12.3.0
       qs: 6.11.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -343,6 +369,119 @@ importers:
       eslint: 8.20.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
+      tailwindcss: 3.1.6
+      typescript: 4.6.3
+
+  apps/earn:
+    specifiers:
+      '@builder.io/partytown': ^0.7.0
+      '@ethersproject/abi': ^5.7.0
+      '@ethersproject/address': ^5.7.0
+      '@ethersproject/bignumber': ^5.7.0
+      '@ethersproject/bytes': ^5.7.0
+      '@ethersproject/constants': ^5.7.0
+      '@ethersproject/contracts': ^5.7.0
+      '@ethersproject/experimental': ^5.7.0
+      '@ethersproject/providers': ^5.7.0
+      '@ethersproject/solidity': ^5.7.0
+      '@headlessui/react': ^1.6.6
+      '@heroicons/react': ^1.0.0
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/graph-client': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-localstorage': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/token-lists': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@tanstack/react-table': 8.5.0
+      '@types/node': ^17.0.30
+      '@types/numeral': ^2.0.2
+      '@types/react': ^18.0.0
+      '@types/react-dom': ^18.0.0
+      autoprefixer: ^10.4.0
+      date-fns: ^2.29.1
+      echarts: ^5.3.3
+      echarts-for-react: ^3.0.2
+      eslint: ^8.20.0
+      ethers: ^5.7.0
+      graphql: 16.6.0
+      next: ^12.3.0
+      next-seo: ^5.5.0
+      next-sitemap: ^3.1.20
+      next-transpile-modules: 9.0.0
+      numeral: ^2.0.6
+      postcss: ^8.4.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-redux: ^8.0.1
+      swr: ^1.3.0
+      tailwindcss: ^3.1.0
+      typescript: 4.6.3
+      wagmi: 0.6.7
+    dependencies:
+      '@builder.io/partytown': 0.7.0
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/experimental': 5.7.0
+      '@ethersproject/providers': 5.7.1
+      '@ethersproject/solidity': 5.7.0
+      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/exchange': link:../../packages/exchange
+      '@sushiswap/format': link:../../packages/format
+      '@sushiswap/graph-client': link:../../packages/graph-client
+      '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/math': link:../../packages/math
+      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wagmi': link:../../packages/wagmi
+      '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
+      date-fns: 2.29.3
+      echarts: 5.3.3
+      echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
+      ethers: 5.7.1
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
+      next-sitemap: 3.1.21_next@12.3.0
+      numeral: 2.0.6
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
+      wagmi: 0.6.7_nznuxirfauibn2fjde2ghjonky
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+      '@types/node': 17.0.45
+      '@types/numeral': 2.0.2
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
+      autoprefixer: 10.4.7_postcss@8.4.14
+      eslint: 8.20.0
+      graphql: 16.6.0
+      next-transpile-modules: 9.0.0
+      postcss: 8.4.14
+      swr: 1.3.0_react@18.2.0
       tailwindcss: 3.1.6
       typescript: 4.6.3
 
@@ -406,7 +545,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       graphql: 16.6.0
-      next: 12.2.x
+      next: ^12.3.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.0.0
       postcss: ^8.4.0
@@ -470,8 +609,8 @@ importers:
       date-fns: 2.29.1
       ethers: 5.7.1
       graphql: 16.6.0
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.33.1_react@18.2.0
@@ -521,7 +660,7 @@ importers:
       '@types/react-dom': ^18.0.0
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
-      next: 12.2.x
+      next: ^12.3.0
       next-transpile-modules: 9.0.0
       outline: link:@heroicons/react/outline
       postcss: ^8.4.0
@@ -537,7 +676,7 @@ importers:
       '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/ui': link:../../packages/ui
       '@tanstack/react-table': 8.5.15_biqbaboplfbrettd7655fr4n2y
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
       outline: link:@heroicons/react/outline
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -553,119 +692,6 @@ importers:
       '@types/react-dom': 18.0.6
       autoprefixer: 10.4.7_postcss@8.4.14
       eslint: 8.20.0
-      next-transpile-modules: 9.0.0
-      postcss: 8.4.14
-      tailwindcss: 3.1.6
-      typescript: 4.6.3
-
-  apps/invest:
-    specifiers:
-      '@builder.io/partytown': ^0.7.0
-      '@ethersproject/abi': ^5.7.0
-      '@ethersproject/address': ^5.7.0
-      '@ethersproject/bignumber': ^5.7.0
-      '@ethersproject/bytes': ^5.7.0
-      '@ethersproject/constants': ^5.7.0
-      '@ethersproject/contracts': ^5.7.0
-      '@ethersproject/experimental': ^5.7.0
-      '@ethersproject/providers': ^5.7.0
-      '@ethersproject/solidity': ^5.7.0
-      '@headlessui/react': ^1.6.6
-      '@heroicons/react': ^1.0.0
-      '@reduxjs/toolkit': ^1.8.1
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/exchange': workspace:*
-      '@sushiswap/format': workspace:*
-      '@sushiswap/graph-client': workspace:*
-      '@sushiswap/hooks': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/math': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/redux-localstorage': workspace:*
-      '@sushiswap/redux-token-lists': workspace:*
-      '@sushiswap/token-lists': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@sushiswap/wagmi': workspace:*
-      '@tanstack/react-table': 8.5.0
-      '@types/node': ^17.0.30
-      '@types/numeral': ^2.0.2
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
-      autoprefixer: ^10.4.0
-      date-fns: ^2.29.1
-      echarts: ^5.3.3
-      echarts-for-react: ^3.0.2
-      eslint: ^8.20.0
-      ethers: ^5.7.0
-      graphql: 16.6.0
-      next: 12.2.x
-      next-seo: ^5.5.0
-      next-sitemap: ^3.1.16
-      next-transpile-modules: 9.0.0
-      numeral: ^2.0.6
-      postcss: ^8.4.0
-      react: ^18.2.0
-      react-dom: ^18.2.0
-      react-redux: ^8.0.1
-      swr: ^1.3.0
-      tailwindcss: ^3.1.0
-      typescript: 4.6.3
-      wagmi: 0.6.7
-    dependencies:
-      '@builder.io/partytown': 0.7.0
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/experimental': 5.7.0
-      '@ethersproject/providers': 5.7.1
-      '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 1.0.6_react@18.2.0
-      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/exchange': link:../../packages/exchange
-      '@sushiswap/format': link:../../packages/format
-      '@sushiswap/graph-client': link:../../packages/graph-client
-      '@sushiswap/hooks': link:../../packages/hooks
-      '@sushiswap/math': link:../../packages/math
-      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
-      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
-      '@sushiswap/token-lists': link:../../packages/token-lists
-      '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/wagmi': link:../../packages/wagmi
-      '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
-      date-fns: 2.29.3
-      echarts: 5.3.3
-      echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
-      ethers: 5.7.1
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
-      next-sitemap: 3.1.21_next@12.2.5
-      numeral: 2.0.6
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
-      swr: 1.3.0_react@18.2.0
-      wagmi: 0.6.7_nznuxirfauibn2fjde2ghjonky
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../packages/config/eslint
-      '@sushiswap/jest-config': link:../../packages/config/jest
-      '@sushiswap/prettier-config': link:../../packages/config/prettier
-      '@sushiswap/typescript-config': link:../../packages/config/typescript
-      '@types/node': 17.0.45
-      '@types/numeral': 2.0.2
-      '@types/react': 18.0.15
-      '@types/react-dom': 18.0.6
-      autoprefixer: 10.4.7_postcss@8.4.14
-      eslint: 8.20.0
-      graphql: 16.6.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.14
       tailwindcss: 3.1.6
@@ -714,7 +740,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       lodash.get: ^4.4.2
-      next: 12.2.x
+      next: ^12.3.0
       next-transpile-modules: 9.0.0
       postcss: ^8.4.0
       react: ^18.2.0
@@ -755,7 +781,7 @@ importers:
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       ethers: 5.7.1
       lodash.get: 4.4.2
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -809,7 +835,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       graphql: 16.6.0
-      next: 12.2.x
+      next: ^12.3.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.0.0
       octokit: ^2.0.4
@@ -844,8 +870,8 @@ importers:
       '@sushiswap/wagmi': link:../../packages/wagmi
       cookie-cutter: 0.2.0
       ethers: 5.7.1
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       octokit: 2.0.4
       react: 18.2.0
       react-colorful: 5.6.1_biqbaboplfbrettd7655fr4n2y
@@ -897,6 +923,7 @@ importers:
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/exchange': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/gtag': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
@@ -920,7 +947,7 @@ importers:
       date-fns: ^2.29.1
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: 12.2.x
+      next: ^12.3.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
       next-transpile-modules: 9.0.0
@@ -951,6 +978,7 @@ importers:
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/exchange': link:../../packages/exchange
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/gtag': link:../../packages/gtag
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
@@ -965,9 +993,9 @@ importers:
       '@uniswap/v2-core': 1.0.1
       date-fns: 2.29.1
       ethers: 5.7.1
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
-      next-sitemap: 3.1.21_next@12.2.5
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
+      next-sitemap: 3.1.21_next@12.3.0
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -1034,7 +1062,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       nanoid: ^4.0.0
-      next: 12.2.x
+      next: ^12.3.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.0.0
       postcss: ^8.4.0
@@ -1080,8 +1108,8 @@ importers:
       '@uniswap/v2-core': 1.0.1
       ethers: 5.7.1
       nanoid: 4.0.0
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_3xcjr4wz26biff45sz3jtokgje
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -1125,7 +1153,7 @@ importers:
       '@uniswap/v3-periphery': ^1.4.1
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: 12.2.x
+      next: ^12.3.0
       next-transpile-modules: 9.0.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -1146,7 +1174,7 @@ importers:
       '@typechain/ethers-v5': 10.1.0_nel7speefqscyw5lyoq6niyssy
       '@uniswap/redux-multicall': 1.1.5_dadq7dzi63wxf7otsdd7qhmsvi
       '@uniswap/v3-periphery': 1.4.1
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -1204,7 +1232,7 @@ importers:
       '@uniswap/token-lists': ^1.0.0-beta.29
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: 12.2.x
+      next: ^12.3.0
       next-transpile-modules: ^9.0.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -1218,7 +1246,7 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@uniswap/token-lists': 1.0.0-beta.30
       ethers: 5.7.1
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -1249,7 +1277,7 @@ importers:
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: 12.2.x
+      next: ^12.3.0
       next-transpile-modules: ^9.0.0
       postcss: ^8.4.0
       react: ^18.2.0
@@ -1261,7 +1289,7 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       ethers: 5.7.1
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       wagmi: 0.6.7_nznuxirfauibn2fjde2ghjonky
@@ -1450,9 +1478,9 @@ importers:
 
   packages/config/nextjs:
     specifiers:
-      next: 12.2.x
+      next: ^12.3.0
     devDependencies:
-      next: 12.2.5
+      next: 12.3.0
 
   packages/config/prettier:
     specifiers:
@@ -1704,6 +1732,28 @@ importers:
       graphql: 16.6.0
       jest: 28.1.3
       tslib: 2.4.0
+      tsup: 6.2.0_typescript@4.6.3
+      typescript: 4.6.3
+
+  packages/gtag:
+    specifiers:
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/gtag.js': ^0.0.12
+      '@types/jest': ^27.5.1
+      jest: ^28.1.0
+      tsup: ^6.2.0
+      typescript: 4.6.3
+    devDependencies:
+      '@sushiswap/eslint-config': link:../config/eslint
+      '@sushiswap/jest-config': link:../config/jest
+      '@sushiswap/prettier-config': link:../config/prettier
+      '@sushiswap/typescript-config': link:../config/typescript
+      '@types/gtag.js': 0.0.12
+      '@types/jest': 27.5.2
+      jest: 28.1.3
       tsup: 6.2.0_typescript@4.6.3
       typescript: 4.6.3
 
@@ -2046,7 +2096,7 @@ importers:
       classnames: ^2.3.1
       date-fns: ^2.29.1
       eslint: ^8.20.0
-      next: 12.2.x
+      next: ^12.3.0
       postcss: ^8.4.0
       rc-tooltip: ^5.2.2
       react: ^18.2.0
@@ -2085,7 +2135,7 @@ importers:
       react-virtualized-auto-sizer: 1.0.6_biqbaboplfbrettd7655fr4n2y
       react-window: 1.8.7_biqbaboplfbrettd7655fr4n2y
     optionalDependencies:
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
@@ -8211,8 +8261,8 @@ packages:
       graphql: 16.6.0
     dev: true
 
-  /@next/env/12.2.5:
-    resolution: {integrity: sha512-vLPLV3cpPGjUPT3PjgRj7e3nio9t6USkuew3JE/jMeon/9Mvp1WyR18v3iwnCuX7eUAm1HmAbJHHLAbcu/EJcw==}
+  /@next/env/12.3.0:
+    resolution: {integrity: sha512-PTJpjAFVbzBQ9xXpzMTroShvD5YDIIy46jQ7d4LrWpY+/5a8H90Tm8hE3Hvkc5RBRspVo7kvEOnqQms0A+2Q6w==}
 
   /@next/eslint-plugin-next/12.2.3:
     resolution: {integrity: sha512-B2e8Yg1MpuLsGxhCx4rU8/Tcnr5wFmCx1O2eyLXBPnaCcsFXfGCo067ujagtDLtWASL3GNgzg78U1SB0dbc38A==}
@@ -8220,104 +8270,104 @@ packages:
       glob: 7.1.7
     dev: false
 
-  /@next/swc-android-arm-eabi/12.2.5:
-    resolution: {integrity: sha512-cPWClKxGhgn2dLWnspW+7psl3MoLQUcNqJqOHk2BhNcou9ARDtC0IjQkKe5qcn9qg7I7U83Gp1yh2aesZfZJMA==}
+  /@next/swc-android-arm-eabi/12.3.0:
+    resolution: {integrity: sha512-/PuirPnAKsYBw93w/7Q9hqy+KGOU9mjYprZ/faxMUJh/dc6v3rYLxkZKNG9nFPIW4QKNTCnhP40xF9hLnxO+xg==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [android]
     requiresBuild: true
     optional: true
 
-  /@next/swc-android-arm64/12.2.5:
-    resolution: {integrity: sha512-vMj0efliXmC5b7p+wfcQCX0AfU8IypjkzT64GiKJD9PgiA3IILNiGJr1fw2lyUDHkjeWx/5HMlMEpLnTsQslwg==}
+  /@next/swc-android-arm64/12.3.0:
+    resolution: {integrity: sha512-OaI+FhAM6P9B6Ybwbn0Zl8YwWido0lLwhDBi9WiYCh4RQmIXAyVIoIJPHo4fP05+mXaJ/k1trvDvuURvHOq2qw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [android]
     requiresBuild: true
     optional: true
 
-  /@next/swc-darwin-arm64/12.2.5:
-    resolution: {integrity: sha512-VOPWbO5EFr6snla/WcxUKtvzGVShfs302TEMOtzYyWni6f9zuOetijJvVh9CCTzInnXAZMtHyNhefijA4HMYLg==}
+  /@next/swc-darwin-arm64/12.3.0:
+    resolution: {integrity: sha512-9s4d3Mhii+WFce8o8Jok7WC3Bawkr9wEUU++SJRptjU1L5tsfYJMrSYCACHLhZujziNDLyExe4Hwwsccps1sfg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     optional: true
 
-  /@next/swc-darwin-x64/12.2.5:
-    resolution: {integrity: sha512-5o8bTCgAmtYOgauO/Xd27vW52G2/m3i5PX7MUYePquxXAnX73AAtqA3WgPXBRitEB60plSKZgOTkcpqrsh546A==}
+  /@next/swc-darwin-x64/12.3.0:
+    resolution: {integrity: sha512-2scC4MqUTwGwok+wpVxP+zWp7WcCAVOtutki2E1n99rBOTnUOX6qXkgxSy083yBN6GqwuC/dzHeN7hIKjavfRA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     optional: true
 
-  /@next/swc-freebsd-x64/12.2.5:
-    resolution: {integrity: sha512-yYUbyup1JnznMtEBRkK4LT56N0lfK5qNTzr6/DEyDw5TbFVwnuy2hhLBzwCBkScFVjpFdfiC6SQAX3FrAZzuuw==}
+  /@next/swc-freebsd-x64/12.3.0:
+    resolution: {integrity: sha512-xAlruUREij/bFa+qsE1tmsP28t7vz02N4ZDHt2lh3uJUniE0Ne9idyIDLc1Ed0IF2RjfgOp4ZVunuS3OM0sngw==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-arm-gnueabihf/12.2.5:
-    resolution: {integrity: sha512-2ZE2/G921Acks7UopJZVMgKLdm4vN4U0yuzvAMJ6KBavPzqESA2yHJlm85TV/K9gIjKhSk5BVtauIUntFRP8cg==}
+  /@next/swc-linux-arm-gnueabihf/12.3.0:
+    resolution: {integrity: sha512-jin2S4VT/cugc2dSZEUIabhYDJNgrUh7fufbdsaAezgcQzqfdfJqfxl4E9GuafzB4cbRPTaqA0V5uqbp0IyGkQ==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-arm64-gnu/12.2.5:
-    resolution: {integrity: sha512-/I6+PWVlz2wkTdWqhlSYYJ1pWWgUVva6SgX353oqTh8njNQp1SdFQuWDqk8LnM6ulheVfSsgkDzxrDaAQZnzjQ==}
+  /@next/swc-linux-arm64-gnu/12.3.0:
+    resolution: {integrity: sha512-RqJHDKe0WImeUrdR0kayTkRWgp4vD/MS7g0r6Xuf8+ellOFH7JAAJffDW3ayuVZeMYOa7RvgNFcOoWnrTUl9Nw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-arm64-musl/12.2.5:
-    resolution: {integrity: sha512-LPQRelfX6asXyVr59p5sTpx5l+0yh2Vjp/R8Wi4X9pnqcayqT4CUJLiHqCvZuLin3IsFdisJL0rKHMoaZLRfmg==}
+  /@next/swc-linux-arm64-musl/12.3.0:
+    resolution: {integrity: sha512-nvNWoUieMjvDjpYJ/4SQe9lQs2xMj6ZRs8N+bmTrVu9leY2Fg3WD6W9p/1uU9hGO8u+OdF13wc4iRShu/WYIHg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-x64-gnu/12.2.5:
-    resolution: {integrity: sha512-0szyAo8jMCClkjNK0hknjhmAngUppoRekW6OAezbEYwHXN/VNtsXbfzgYOqjKWxEx3OoAzrT3jLwAF0HdX2MEw==}
+  /@next/swc-linux-x64-gnu/12.3.0:
+    resolution: {integrity: sha512-4ajhIuVU9PeQCMMhdDgZTLrHmjbOUFuIyg6J19hZqwEwDTSqQyrSLkbJs2Nd7IRiM6Ul/XyrtEFCpk4k+xD2+w==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-x64-musl/12.2.5:
-    resolution: {integrity: sha512-zg/Y6oBar1yVnW6Il1I/08/2ukWtOG6s3acdJdEyIdsCzyQi4RLxbbhkD/EGQyhqBvd3QrC6ZXQEXighQUAZ0g==}
+  /@next/swc-linux-x64-musl/12.3.0:
+    resolution: {integrity: sha512-U092RBYbaGxoMAwpauePJEu2PuZSEoUCGJBvsptQr2/2XIMwAJDYM4c/M5NfYEsBr+yjvsYNsOpYfeQ88D82Yg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-win32-arm64-msvc/12.2.5:
-    resolution: {integrity: sha512-3/90DRNSqeeSRMMEhj4gHHQlLhhKg5SCCoYfE3kBjGpE63EfnblYUqsszGGZ9ekpKL/R4/SGB40iCQr8tR5Jiw==}
+  /@next/swc-win32-arm64-msvc/12.3.0:
+    resolution: {integrity: sha512-pzSzaxjDEJe67bUok9Nxf9rykbJfHXW0owICFsPBsqHyc+cr8vpF7g9e2APTCddtVhvjkga9ILoZJ9NxWS7Yiw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     optional: true
 
-  /@next/swc-win32-ia32-msvc/12.2.5:
-    resolution: {integrity: sha512-hGLc0ZRAwnaPL4ulwpp4D2RxmkHQLuI8CFOEEHdzZpS63/hMVzv81g8jzYA0UXbb9pus/iTc3VRbVbAM03SRrw==}
+  /@next/swc-win32-ia32-msvc/12.3.0:
+    resolution: {integrity: sha512-MQGUpMbYhQmTZ06a9e0hPQJnxFMwETo2WtyAotY3GEzbNCQVbCGhsvqEKcl+ZEHgShlHXUWvSffq1ZscY6gK7A==}
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     optional: true
 
-  /@next/swc-win32-x64-msvc/12.2.5:
-    resolution: {integrity: sha512-7h5/ahY7NeaO2xygqVrSG/Y8Vs4cdjxIjowTZ5W6CKoTKn7tmnuxlUc2h74x06FKmbhAd9agOjr/AOKyxYYm9Q==}
+  /@next/swc-win32-x64-msvc/12.3.0:
+    resolution: {integrity: sha512-C/nw6OgQpEULWqs+wgMHXGvlJLguPRFFGqR2TAqWBerQ8J+Sg3z1ZTqwelkSi4FoqStGuZ2UdFHIDN1ySmR1xA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -9295,12 +9345,6 @@ packages:
     resolution: {integrity: sha512-rEUrBSGIoSFuYxwBYtlUFMlE2CwGhmW+w9355/5oduSw8e5h2+Tj4UrAGNNgP9915++wj5vkQo0UuOBqOAq4nw==}
     dependencies:
       tslib: 2.4.0
-    dev: true
-
-  /@swc/helpers/0.4.3:
-    resolution: {integrity: sha512-6JrF+fdUK2zbGpJIlN7G3v966PQjyx/dPt1T9km2wj+EUBqgrxCk3uX4Kct16MIm9gGxfKRcfax2hVf5jvlTzA==}
-    dependencies:
-      tslib: 2.4.0
 
   /@swc/wasm/1.2.122:
     resolution: {integrity: sha512-sM1VCWQxmNhFtdxME+8UXNyPNhxNu7zdb6ikWpz0YKAQQFRGT5ThZgJrubEpah335SUToNg8pkdDF7ibVCjxbQ==}
@@ -9739,6 +9783,10 @@ packages:
     resolution: {integrity: sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw==}
     dependencies:
       '@types/node': 17.0.45
+    dev: true
+
+  /@types/gtag.js/0.0.12:
+    resolution: {integrity: sha512-YQV9bUsemkzG81Ea295/nF/5GijnD2Af7QhEofh7xu+kvCN6RdodgNwwGWXB5GMI3NoyvQo0odNctoH/qLMIpg==}
     dev: true
 
   /@types/hast/2.3.4:
@@ -19891,19 +19939,19 @@ packages:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
 
-  /next-seo/5.5.0_3xcjr4wz26biff45sz3jtokgje:
+  /next-seo/5.5.0_c3hne4hwj64hb7tofigd3bvkji:
     resolution: {integrity: sha512-5ouBHFtx8YrSDW44lj0qIEQ+oMcz6stgoITB+SqHUZbhgizoJsyLmq73gJ0lxtEKpcN8vG2QgRIJfdb8OAPChw==}
     peerDependencies:
       next: ^8.1.1-canary.54 || >=9.0.0
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
     dependencies:
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /next-sitemap/3.1.16_next@12.2.5:
+  /next-sitemap/3.1.16_next@12.3.0:
     resolution: {integrity: sha512-kczTKLB1ifqi44mMImv/sLRsqxy/O4DXJ4mx/1l23vyx6QFWqeuHxS0duEL/EsChcVJUMWV4FNg2pIiX31xxmg==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -19913,10 +19961,10 @@ packages:
     dependencies:
       '@corex/deepmerge': 4.0.29
       minimist: 1.2.6
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
     dev: false
 
-  /next-sitemap/3.1.21_next@12.2.5:
+  /next-sitemap/3.1.21_next@12.3.0:
     resolution: {integrity: sha512-8upGCtI91FvjNBpeKDZzrzRBlY4BH6qjG7dMe89sdBzJ9B++PVLTzRPlpLHJYOEPukBROsxi2zVuAvePBtsrdw==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -19926,7 +19974,7 @@ packages:
     dependencies:
       '@corex/deepmerge': 4.0.29
       minimist: 1.2.6
-      next: 12.2.5_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
     dev: false
 
   /next-tick/1.1.0:
@@ -19940,8 +19988,8 @@ packages:
       escalade: 3.1.1
     dev: true
 
-  /next/12.2.5:
-    resolution: {integrity: sha512-tBdjqX5XC/oFs/6gxrZhjmiq90YWizUYU6qOWAfat7zJwrwapJ+BYgX2PmiacunXMaRpeVT4vz5MSPSLgNkrpA==}
+  /next/12.3.0:
+    resolution: {integrity: sha512-GpzI6me9V1+XYtfK0Ae9WD0mKqHyzQlGq1xH1rzNIYMASo4Tkl4rTe9jSqtBpXFhOS33KohXs9ZY38Akkhdciw==}
     engines: {node: '>=12.22.0'}
     hasBin: true
     peerDependencies:
@@ -19958,33 +20006,33 @@ packages:
       sass:
         optional: true
     dependencies:
-      '@next/env': 12.2.5
-      '@swc/helpers': 0.4.3
+      '@next/env': 12.3.0
+      '@swc/helpers': 0.4.11
       caniuse-lite: 1.0.30001370
       postcss: 8.4.14
-      styled-jsx: 5.0.4
+      styled-jsx: 5.0.6
       use-sync-external-store: 1.2.0
     optionalDependencies:
-      '@next/swc-android-arm-eabi': 12.2.5
-      '@next/swc-android-arm64': 12.2.5
-      '@next/swc-darwin-arm64': 12.2.5
-      '@next/swc-darwin-x64': 12.2.5
-      '@next/swc-freebsd-x64': 12.2.5
-      '@next/swc-linux-arm-gnueabihf': 12.2.5
-      '@next/swc-linux-arm64-gnu': 12.2.5
-      '@next/swc-linux-arm64-musl': 12.2.5
-      '@next/swc-linux-x64-gnu': 12.2.5
-      '@next/swc-linux-x64-musl': 12.2.5
-      '@next/swc-win32-arm64-msvc': 12.2.5
-      '@next/swc-win32-ia32-msvc': 12.2.5
-      '@next/swc-win32-x64-msvc': 12.2.5
+      '@next/swc-android-arm-eabi': 12.3.0
+      '@next/swc-android-arm64': 12.3.0
+      '@next/swc-darwin-arm64': 12.3.0
+      '@next/swc-darwin-x64': 12.3.0
+      '@next/swc-freebsd-x64': 12.3.0
+      '@next/swc-linux-arm-gnueabihf': 12.3.0
+      '@next/swc-linux-arm64-gnu': 12.3.0
+      '@next/swc-linux-arm64-musl': 12.3.0
+      '@next/swc-linux-x64-gnu': 12.3.0
+      '@next/swc-linux-x64-musl': 12.3.0
+      '@next/swc-win32-arm64-msvc': 12.3.0
+      '@next/swc-win32-ia32-msvc': 12.3.0
+      '@next/swc-win32-x64-msvc': 12.3.0
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
     dev: true
 
-  /next/12.2.5_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-tBdjqX5XC/oFs/6gxrZhjmiq90YWizUYU6qOWAfat7zJwrwapJ+BYgX2PmiacunXMaRpeVT4vz5MSPSLgNkrpA==}
+  /next/12.3.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-GpzI6me9V1+XYtfK0Ae9WD0mKqHyzQlGq1xH1rzNIYMASo4Tkl4rTe9jSqtBpXFhOS33KohXs9ZY38Akkhdciw==}
     engines: {node: '>=12.22.0'}
     hasBin: true
     peerDependencies:
@@ -20001,28 +20049,28 @@ packages:
       sass:
         optional: true
     dependencies:
-      '@next/env': 12.2.5
-      '@swc/helpers': 0.4.3
+      '@next/env': 12.3.0
+      '@swc/helpers': 0.4.11
       caniuse-lite: 1.0.30001370
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      styled-jsx: 5.0.4_react@18.2.0
+      styled-jsx: 5.0.6_react@18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
     optionalDependencies:
-      '@next/swc-android-arm-eabi': 12.2.5
-      '@next/swc-android-arm64': 12.2.5
-      '@next/swc-darwin-arm64': 12.2.5
-      '@next/swc-darwin-x64': 12.2.5
-      '@next/swc-freebsd-x64': 12.2.5
-      '@next/swc-linux-arm-gnueabihf': 12.2.5
-      '@next/swc-linux-arm64-gnu': 12.2.5
-      '@next/swc-linux-arm64-musl': 12.2.5
-      '@next/swc-linux-x64-gnu': 12.2.5
-      '@next/swc-linux-x64-musl': 12.2.5
-      '@next/swc-win32-arm64-msvc': 12.2.5
-      '@next/swc-win32-ia32-msvc': 12.2.5
-      '@next/swc-win32-x64-msvc': 12.2.5
+      '@next/swc-android-arm-eabi': 12.3.0
+      '@next/swc-android-arm64': 12.3.0
+      '@next/swc-darwin-arm64': 12.3.0
+      '@next/swc-darwin-x64': 12.3.0
+      '@next/swc-freebsd-x64': 12.3.0
+      '@next/swc-linux-arm-gnueabihf': 12.3.0
+      '@next/swc-linux-arm64-gnu': 12.3.0
+      '@next/swc-linux-arm64-musl': 12.3.0
+      '@next/swc-linux-x64-gnu': 12.3.0
+      '@next/swc-linux-x64-musl': 12.3.0
+      '@next/swc-win32-arm64-msvc': 12.3.0
+      '@next/swc-win32-ia32-msvc': 12.3.0
+      '@next/swc-win32-x64-msvc': 12.3.0
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -22912,8 +22960,8 @@ packages:
       supports-color: 5.5.0
     dev: false
 
-  /styled-jsx/5.0.4:
-    resolution: {integrity: sha512-sDFWLbg4zR+UkNzfk5lPilyIgtpddfxXEULxhujorr5jtePTUqiPDc5BC0v1NRqTr/WaFBGQQUoYToGlF4B2KQ==}
+  /styled-jsx/5.0.6:
+    resolution: {integrity: sha512-xOeROtkK5MGMDimBQ3J6iPId8q0t/BDoG5XN6oKkZClVz9ISF/hihN8OCn2LggMU6N32aXnrXBdn3auSqNS9fA==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
       '@babel/core': '*'
@@ -22926,8 +22974,8 @@ packages:
         optional: true
     dev: true
 
-  /styled-jsx/5.0.4_react@18.2.0:
-    resolution: {integrity: sha512-sDFWLbg4zR+UkNzfk5lPilyIgtpddfxXEULxhujorr5jtePTUqiPDc5BC0v1NRqTr/WaFBGQQUoYToGlF4B2KQ==}
+  /styled-jsx/5.0.6_react@18.2.0:
+    resolution: {integrity: sha512-xOeROtkK5MGMDimBQ3J6iPId8q0t/BDoG5XN6oKkZClVz9ISF/hihN8OCn2LggMU6N32aXnrXBdn3auSqNS9fA==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
       '@babel/core': '*'

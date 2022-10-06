@@ -13,6 +13,7 @@ export const WBTC_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x68f180fcCe6836688e9084f035309E29Bf0A2095',
   [ChainId.ARBITRUM_NOVA]: '0x1d05e4e72cD994cdF976181CfB0707345763564d',
   [ChainId.BOBA]: '0xdc0486f8bf31DF57a952bcd3c1d3e166e3d9eC8b',
+  [ChainId.KAVA]: '0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b',
 }
 
 export const WBTC: Record<keyof typeof WBTC_ADDRESS, Token> = addressMapToTokenMap(
@@ -62,6 +63,7 @@ export const WETH9_ADDRESS: AddressMap = {
   [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
   [ChainId.ARBITRUM_NOVA]: '0x722E8BdD2ce80A4422E880164f2079488e115365',
   [ChainId.BOBA]: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
+  [ChainId.KAVA]: '0xE3F5a90F9cb311505cd691a46596599aA1A0AD7D',
 }
 
 export const WETH9: Record<keyof typeof WETH9_ADDRESS, Token> = addressMapToTokenMap(
@@ -257,6 +259,7 @@ export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.KAVA]: '0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D',
   [ChainId.METIS]: '0x17Ee7E4dA37B01FC1bcc908fA63DF343F23B4B7C',
   [ChainId.BOBA]: '0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b',
+  [ChainId.KAVA]: '0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D',
 }
 
 export const SUSHI: Record<keyof typeof SUSHI_ADDRESS, Token> = addressMapToTokenMap(
@@ -304,6 +307,7 @@ export const USDC_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
   [ChainId.ARBITRUM_NOVA]: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
   [ChainId.BOBA]: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
+  [ChainId.KAVA]: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
 }
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
@@ -345,6 +349,7 @@ export const USDT_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
   [ChainId.ARBITRUM_NOVA]: '0xeD9d63a96c27f87B07115b56b2e3572827f21646',
   [ChainId.BOBA]: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
+  [ChainId.KAVA]: '0xB44a9B6905aF7c801311e8F4E76932ee959c663C',
 }
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
@@ -386,6 +391,7 @@ export const DAI_ADDRESS: AddressMap = {
   [ChainId.OPTIMISM]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
   [ChainId.ARBITRUM_NOVA]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
   [ChainId.BOBA]: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
+  [ChainId.KAVA]: '0x765277EebeCA2e31912C9946eAe1021199B39C61',
 }
 
 export const DAI: Record<keyof typeof DAI_ADDRESS, Token> = addressMapToTokenMap(

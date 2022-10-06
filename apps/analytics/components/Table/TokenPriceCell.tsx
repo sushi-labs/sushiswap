@@ -7,10 +7,8 @@ import useSWR from 'swr'
 import { TokenCellProps } from './types'
 
 export const TokenPriceCell: FC<TokenCellProps> = ({ row }) => {
-  const { data: bundles } = useSWR<Bundle[]>(
-    '/analytics/api/bundles',
-    (url) => fetch(url).then((response) => response.json()),
-    {}
+  const { data: bundles } = useSWR<Bundle[]>('/analytics/api/bundles', (url) =>
+    fetch(url).then((response) => response.json())
   )
 
   const price = formatUSD(row.price.derivedNative * bundles?.[row.chainId]?.nativePrice)
