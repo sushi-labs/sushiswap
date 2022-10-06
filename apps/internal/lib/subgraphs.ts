@@ -26,9 +26,12 @@ const CATEGORIES = {
     [ChainId.ETHEREUM + '-1']: 'jiro-ono/masterchef-staging',
     [ChainId.ETHEREUM + '-2']: 'sushiswap/master-chefv2',
   },
-  FURO: [{ ...FURO_SUBGRAPH_NAME }],
-  OTHER: [],
+  FURO: { ...FURO_SUBGRAPH_NAME },
+  OTHER: {},
 } as const
+
+const lowerCaseAllWordsExceptFirstLetters = (string) =>
+  string.replaceAll(/\S*/g, (word) => `${word.slice(0, 1)}${word.slice(1).toLowerCase()}`)
 
 const parseCategories = () => {
   return Object.keys(CATEGORIES)
@@ -36,7 +39,7 @@ const parseCategories = () => {
       Object.keys(CATEGORIES[categoryKey]).map((chainKey: keyof typeof CATEGORIES['BENTOBOX']) => ({
         chainId: Number(String(chainKey).split('-')[0]),
         subgraphName: CATEGORIES[categoryKey][chainKey] as string,
-        category: categoryKey,
+        category: lowerCaseAllWordsExceptFirstLetters(categoryKey),
       }))
     )
     .filter(({ chainId }) => SUBGRAPH_HOST[chainId] === GRAPH_HOST)

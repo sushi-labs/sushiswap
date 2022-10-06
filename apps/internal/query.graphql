@@ -39,6 +39,9 @@ query CrossChainStrategyKpis($chainIds: [BigInt!]!) {
 query SubgraphIndexingStatus($subgraphName: String!) {
   indexingStatusForCurrentVersion(subgraphName: $subgraphName) {
     entityCount
+    fatalError {
+      message
+    }
     nonFatalErrors {
       message
     }
@@ -63,6 +66,7 @@ query SubgraphStatuses($subgraphNames: [String!]!) {
     startBlock
     lastSyncedBlock
     chainHeadBlock
+    hasFailed
     nonFatalErrorCount
     entityCount
   }

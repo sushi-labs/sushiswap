@@ -9,9 +9,6 @@ interface Subgraphs {
   subgraphs: Subgraph[]
 }
 
-const lowerCaseAllWordsExceptFirstLetters = (string) =>
-  string.replaceAll(/\S*/g, (word) => `${word.slice(0, 1)}${word.slice(1).toLowerCase()}`)
-
 export function Subgraphs({ subgraphs }: Subgraphs) {
   const [groupBy, setGroupBy] = useState<keyof Subgraph>('category')
   const [blocks, setBlocks] = useState<{ title: string; subgraphs: Subgraph[] }[]>([])
@@ -46,7 +43,7 @@ export function Subgraphs({ subgraphs }: Subgraphs) {
       <div className="space-y-6">
         {blocks.map((block) => (
           <div key={block.title} className="space-y-2">
-            <div>{lowerCaseAllWordsExceptFirstLetters(block.title)}</div>
+            <div>{block.title}</div>
             <SubgraphTable subgraphs={block.subgraphs} groupBy={groupBy} />
           </div>
         ))}

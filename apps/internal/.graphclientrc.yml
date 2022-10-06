@@ -41,6 +41,7 @@ additionalTypeDefs: |
     startBlock: BigInt
     lastSyncedBlock: BigInt
     chainHeadBlock: BigInt
+    hasFailed: Boolean
     nonFatalErrorCount: BigInt
     entityCount: BigInt
   }

@@ -42,13 +42,30 @@ const columns = [
     header: 'Last Block',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('data.entityCount', {
-    header: 'Entity Count',
-    cell: (info) => info.getValue(),
-  }),
   columnHelper.accessor('data.nonFatalErrorCount', {
     header: 'NFError Count',
     cell: (info) => info.getValue(),
+  }),
+  columnHelper.display({
+    id: 'Status',
+    header: 'Status',
+    cell: ({ row }) => {
+      const unsyncedBlockCount = row.original.data.chainHeadBlock - row.original.data.lastSyncedBlock
+      const status = row.original.data.hasFailed ? 'Failed' : unsyncedBlockCount <= 10 ? 'Synced' : 'Syncing'
+
+      switch (status) {
+        case 'Synced':
+          return <div className="text-green">{status}</div>
+        case 'Syncing':
+          return (
+            <div className="text-yellow">
+              {status} ({unsyncedBlockCount})
+            </div>
+          )
+        case 'Failed':
+          return <div className="text-red">{status}</div>
+      }
+    },
   }),
 ]
 
