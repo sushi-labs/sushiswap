@@ -1,26 +1,26 @@
 import { Transition } from '@headlessui/react'
-import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Typography } from '@sushiswap/ui'
-import { Approve, Checker, Chef, getMasterChefContractConfig } from '@sushiswap/wagmi'
-import { FC, Fragment, useCallback, useMemo, useState } from 'react'
+import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChefDeposit } from '@sushiswap/wagmi'
+import { FC, Fragment, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useTokensFromPair } from '../../lib/hooks'
 import { useNotifications } from '../../lib/state/storage'
 import { PairWithAlias } from '../../types'
 import { usePoolPosition } from '../PoolPositionProvider'
-import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { AddSectionStakeWidget } from './AddSectionStakeWidget'
 
 interface AddSectionStakeProps {
   pair: Pair
   chefType: Chef
   title?: string
+  farmId: number
 }
 
 export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ poolAddress, title }) => {
@@ -33,7 +33,7 @@ export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ p
 
   const { pair } = data
 
-  if (!pair?.farm?.chefType || !isMounted) return <></>
+  if (!pair?.farm?.chefType || !isMounted || !pair.farm.id) return <></>
 
   return (
     <Transition
@@ -46,41 +46,35 @@ export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ p
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
-      <_AddSectionStake pair={pair} chefType={CHEF_TYPE_MAP[pair.farm.chefType]} title={title} />
+      <_AddSectionStake
+        pair={pair}
+        chefType={CHEF_TYPE_MAP[pair.farm.chefType]}
+        title={title}
+        farmId={Number(pair.farm.id)}
+      />
     </Transition>
   )
 }
 
-const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title }) => {
+const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title, farmId }) => {
   const [hover, setHover] = useState(false)
-  const [error, setError] = useState<string>()
   const { address } = useAccount()
   const [, { createNotification }] = useNotifications(address)
   const [value, setValue] = useState('')
   const { reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const { balance } = usePoolPosition()
-  const { deposit: _deposit, isWritePending } = usePoolPositionStaked()
 
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
 
-  const deposit = useCallback(
-    async (amount: Amount<Token> | undefined) => {
-      if (!_deposit) return
-
-      try {
-        await _deposit(amount)
-      } catch (e: unknown) {
-        if (!(e instanceof UserRejectedRequestError)) {
-          setError((e as ProviderRpcError).message)
-        }
-
-        console.log(e)
-      }
-    },
-    [_deposit]
-  )
+  const { sendTransaction, isLoading: isWritePending } = useMasterChefDeposit({
+    amount,
+    chainId: liquidityToken.chainId,
+    chef: chefType,
+    pid: farmId,
+    onSuccess: createNotification,
+  })
 
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
@@ -130,7 +124,7 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title }) =
                   render={({ approved }) => {
                     return (
                       <Button
-                        onClick={() => deposit(amount)}
+                        onClick={() => sendTransaction?.()}
                         fullWidth
                         size="md"
                         variant="filled"
@@ -141,11 +135,6 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title }) =
                     )
                   }}
                 />
-                {error && (
-                  <Typography variant="xs" className="text-center text-red" weight={500}>
-                    {error}
-                  </Typography>
-                )}
               </Checker.Amounts>
             </Checker.Network>
           </Checker.Connected>

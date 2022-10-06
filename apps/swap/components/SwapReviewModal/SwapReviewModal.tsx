@@ -6,7 +6,6 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native } from '@sushiswap/currency'
 import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/exchange'
-import { event } from '@sushiswap/gtag'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
@@ -24,7 +23,14 @@ import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
+import {
+  ProviderRpcError,
+  useAccount,
+  usePrepareSendTransaction,
+  useProvider,
+  UserRejectedRequestError,
+  useSendTransaction,
+} from 'wagmi'
 
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
@@ -100,11 +106,17 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     ...config,
     onSettled,
     onSuccess: (data) => {
-      console.log(data)
       if (data) {
         setOpen(false)
         onSuccess()
       }
+    },
+    onError: (e) => {
+      if (!(e instanceof UserRejectedRequestError)) {
+        setError((e as ProviderRpcError).message)
+      }
+
+      console.log(e)
     },
   })
 
@@ -392,11 +404,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         })
       }
     } catch (e: unknown) {
-      if (e instanceof ProviderRpcError) {
-        setError(e.message)
-      }
-
-      console.log(e)
+      //
     }
   }, [
     account,

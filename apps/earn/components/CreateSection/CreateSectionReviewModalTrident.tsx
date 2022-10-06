@@ -10,10 +10,12 @@ import {
   BENTOBOX_ADDRESS,
   getTridentRouterContractConfig,
   useConstantProductPoolFactoryContract,
+  useSendTransaction,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useNetwork, UserRejectedRequestError } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import {
   approveMasterContractAction,
@@ -46,17 +48,11 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
 }) => {
   const { address } = useAccount()
   const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string>()
   const [permit, setPermit] = useState<Signature>()
   const { chain } = useNetwork()
   const contract = useTridentRouterContract(chainId)
   const factory = useConstantProductPoolFactoryContract(chainId)
   const [, { createNotification }] = useNotifications(address)
-
-  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
-    chainId,
-    onSuccess: () => setOpen(false),
-  })
 
   const poolAddress = useMemo(() => {
     if (!factory || !token0 || !token1) return undefined
@@ -70,40 +66,61 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     })
   }, [factory, fee, token0, token1])
 
-  const execute = useCallback(async () => {
-    if (!chain?.id || !factory || !token0 || !token1 || !poolAddress) return
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined) => {
+      if (!data || !chain?.id || !token0 || !token1) return
+      const ts = new Date().getTime()
+      createNotification({
+        type: 'mint',
+        chainId: chain.id,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
+          completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
+          failed: 'Something went wrong when adding liquidity',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [chain?.id, createNotification, token0, token1]
+  )
 
-    let value
-    const liquidityInput: LiquidityInput[] = []
-    const encoded = defaultAbiCoder.encode(['address'], [address])
+  const prepare = useCallback(
+    async (setRequest) => {
+      try {
+        if (!chain?.id || !factory || !token0 || !token1 || !poolAddress) return
 
-    try {
-      if (input0) {
-        if (input0.currency.isNative) {
-          value = input0.quotient.toString()
+        let value
+        const liquidityInput: LiquidityInput[] = []
+        const encoded = defaultAbiCoder.encode(['address'], [address])
+
+        if (input0) {
+          if (input0.currency.isNative) {
+            value = input0.quotient.toString()
+          }
+
+          liquidityInput.push({
+            token: input0.currency.isNative ? AddressZero : input0.currency.wrapped.address,
+            native: true,
+            amount: input0.quotient.toString(),
+          })
         }
 
-        liquidityInput.push({
-          token: input0.currency.isNative ? AddressZero : input0.currency.wrapped.address,
-          native: true,
-          amount: input0.quotient.toString(),
-        })
-      }
+        if (input1) {
+          if (input1.currency.isNative) {
+            value = input1.quotient.toString()
+          }
 
-      if (input1) {
-        if (input1.currency.isNative) {
-          value = input1.quotient.toString()
+          liquidityInput.push({
+            token: input1.currency.isNative ? AddressZero : input1.currency.wrapped.address,
+            native: true,
+            amount: input1.quotient.toString(),
+          })
         }
 
-        liquidityInput.push({
-          token: input1.currency.isNative ? AddressZero : input1.currency.wrapped.address,
-          native: true,
-          amount: input1.quotient.toString(),
-        })
-      }
-
-      const data = await sendTransactionAsync({
-        request: {
+        setRequest({
           from: address,
           to: contract.address,
           data: batchAction({
@@ -125,57 +142,25 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
             ],
           }),
           ...(value && { value }),
-        },
-      })
-
-      const ts = new Date().getTime()
-      createNotification({
-        type: 'mint',
-        chainId: chain.id,
-        txHash: data.hash,
-        promise: data.wait(),
-        summary: {
-          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-          completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-          failed: 'Something went wrong when adding liquidity',
-        },
-        timestamp: ts,
-        groupTimestamp: ts,
-      })
-    } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+        })
+      } catch (e: unknown) {
+        //
       }
+    },
+    [address, chain?.id, contract, factory, fee, input0, input1, permit, poolAddress, token0, token1]
+  )
 
-      console.log(e)
-    }
-  }, [
-    address,
-    chain?.id,
-    contract,
-    createNotification,
-    factory,
-    fee,
-    input0,
-    input1,
-    permit,
-    poolAddress,
-    sendTransactionAsync,
-    token0,
-    token1,
-  ])
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    chainId,
+    prepare,
+    onSettled,
+    onSuccess: () => setOpen(false),
+  })
 
   return (
     <>
       {children({ isWritePending, setOpen })}
-      <AddSectionReviewModal
-        chainId={chainId}
-        input0={input0}
-        input1={input1}
-        open={open}
-        setOpen={setOpen}
-        error={error}
-      >
+      <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
         <Approve
           onSuccess={createNotification}
           className="flex-grow !justify-end"
@@ -208,7 +193,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved} fullWidth onClick={execute}>
+              <Button size="md" disabled={!approved} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
               </Button>
             )

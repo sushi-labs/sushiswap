@@ -28,9 +28,7 @@ interface RemoveSectionWidgetProps {
   token1: Type
   token0Minimum?: Amount<Type>
   token1Minimum?: Amount<Type>
-
   setPercentage(percentage: string): void
-  error?: string
   children: ReactNode
 }
 
@@ -44,7 +42,6 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   token0Minimum,
   token1Minimum,
   children,
-  error,
 }) => {
   const isMounted = useIsMounted()
   const [hover, setHover] = useState(false)
@@ -196,11 +193,6 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         </div>
                       </Transition>
                       {children}
-                      {error && (
-                        <Typography variant="xs" className="mt-4 text-center text-red" weight={500}>
-                          {error}
-                        </Typography>
-                      )}
                     </div>
                   </Disclosure.Panel>
                 </Transition>

@@ -1,8 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
+import { nanoid } from 'nanoid'
 import React, { ReactNode } from 'react'
 import { toast, ToastOptions } from 'react-toastify'
 
+import { ToastButtons } from './ToastButtons'
 import { ToastCompleted } from './ToastCompleted'
+import { ToastContent } from './ToastContent'
 import { ToastFailed } from './ToastFailed'
 import { ToastPending } from './ToastPending'
 
@@ -80,4 +83,20 @@ export const createToast = (props: NotificationData) => {
     ...TOAST_OPTIONS,
     toastId: props.txHash,
   })
+}
+
+export const createErrorToast = (message: string | undefined, code: boolean) => {
+  if (!message) return
+
+  const toastId = `failed:${nanoid()}`
+  toast(
+    <>
+      <ToastContent title="Error Occurred" summary={message} code={code} />
+      <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
+    </>,
+    {
+      ...TOAST_OPTIONS,
+      toastId,
+    }
+  )
 }

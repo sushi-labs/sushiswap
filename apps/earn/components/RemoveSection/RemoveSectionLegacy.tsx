@@ -12,11 +12,13 @@ import {
   getSushiSwapRouterContractConfig,
   PairState,
   usePair,
+  useSendTransaction,
   useSushiSwapRouterContract,
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useNetwork, UserRejectedRequestError } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
@@ -36,14 +38,8 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   const { address } = useAccount()
   const deadline = useTransactionDeadline(pair.chainId)
   const contract = useSushiSwapRouterContract(pair.chainId)
-  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({ chainId: pair.chainId })
   const [{ slippageTolerance }] = useSettings()
-  const [error, setError] = useState<string>()
   const [, { createNotification }] = useNotifications(address)
-
-  // const slippagePercent = useMemo(() => {
-  //   return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  // }, [slippageTolerance])
 
   const slippagePercent = useMemo(
     () =>
@@ -73,17 +69,25 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
 
   const [underlying0, underlying1] = underlying
 
-  const currencyAToRemove = token0
-    ? percentToRemove && percentToRemove.greaterThan('0') && underlying0
-      ? Amount.fromRawAmount(token0, percentToRemove.multiply(underlying0.quotient).quotient || '0')
-      : Amount.fromRawAmount(token0, '0')
-    : undefined
+  const currencyAToRemove = useMemo(
+    () =>
+      token0
+        ? percentToRemove && percentToRemove.greaterThan('0') && underlying0
+          ? Amount.fromRawAmount(token0, percentToRemove.multiply(underlying0.quotient).quotient || '0')
+          : Amount.fromRawAmount(token0, '0')
+        : undefined,
+    [percentToRemove, token0, underlying0]
+  )
 
-  const currencyBToRemove = token1
-    ? percentToRemove && percentToRemove.greaterThan('0') && underlying1
-      ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
-      : Amount.fromRawAmount(token1, '0')
-    : undefined
+  const currencyBToRemove = useMemo(
+    () =>
+      token1
+        ? percentToRemove && percentToRemove.greaterThan('0') && underlying1
+          ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
+          : Amount.fromRawAmount(token1, '0')
+        : undefined,
+    [percentToRemove, token1, underlying1]
+  )
 
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
@@ -102,132 +106,137 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
     ]
   }, [slippagePercent, currencyAToRemove, currencyBToRemove])
 
-  const execute = useCallback(async () => {
-    if (
-      !token0 ||
-      !token1 ||
-      !chain?.id ||
-      !contract ||
-      !underlying0 ||
-      !underlying1 ||
-      !address ||
-      !pool ||
-      !balance?.[FundSource.WALLET] ||
-      !minAmount0 ||
-      !minAmount1
-    ) {
-      return
-    }
+  const amountToRemove = useMemo(
+    () => balance?.[FundSource.WALLET].multiply(percentToRemove),
+    [balance, percentToRemove]
+  )
 
-    const withNative =
-      Native.onChain(pair.chainId).wrapped.address === pool.token0.address ||
-      Native.onChain(pair.chainId).wrapped.address === pool.token1.address
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined) => {
+      if (!data || !chain?.id) return
+      const ts = new Date().getTime()
+      createNotification({
+        type: 'burn',
+        chainId: chain.id,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
+          completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
+          failed: 'Something went wrong when removing liquidity',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [chain?.id, createNotification, token0.symbol, token1.symbol]
+  )
 
-    let methodNames
-    let args
+  const prepare = useCallback(
+    async (setRequest) => {
+      try {
+        if (
+          !token0 ||
+          !token1 ||
+          !chain?.id ||
+          !contract ||
+          !underlying0 ||
+          !underlying1 ||
+          !address ||
+          !pool ||
+          !balance?.[FundSource.WALLET] ||
+          !minAmount0 ||
+          !minAmount1 ||
+          !deadline
+        ) {
+          return
+        }
 
-    try {
-      if (withNative) {
-        const token1IsNative = Native.onChain(pair.chainId).wrapped.address === pool.token1.wrapped.address
-        methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
-        args = [
-          token1IsNative ? pool.token0.wrapped.address : pool.token1.wrapped.address,
-          balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
-          token1IsNative ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
-          token1IsNative ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
-          address,
-          deadline.toHexString(),
-        ]
-      } else {
-        methodNames = ['removeLiquidity']
-        args = [
-          pool.token0.wrapped.address,
-          pool.token1.wrapped.address,
-          balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
-          minAmount0.quotient.toString(),
-          minAmount1.quotient.toString(),
-          address,
-          deadline.toHexString(),
-        ]
-      }
+        const withNative =
+          Native.onChain(pair.chainId).wrapped.address === pool.token0.address ||
+          Native.onChain(pair.chainId).wrapped.address === pool.token1.address
 
-      // console.log(contract.address, [
-      //   Native.onChain(pair.chainId).wrapped === pool.token1
-      //     ? pool.token0.wrapped.address
-      //     : pool.token1.wrapped.address,
-      //   balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
-      //   minAmount0.quotient.toString(),
-      //   minAmount1.quotient.toString(),
-      //   address,
-      //   deadline.toHexString(),
-      // ])
-      const safeGasEstimates = await Promise.all(
-        methodNames.map((methodName) =>
-          contract.estimateGas[methodName](...args)
-            .then(calculateGasMargin)
-            .catch((error) => {
-              console.error(`estimateGas failed`, methodName, args, error)
-            })
+        let methodNames
+        let args
+
+        if (withNative) {
+          const token1IsNative = Native.onChain(pair.chainId).wrapped.address === pool.token1.wrapped.address
+          methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
+          args = [
+            token1IsNative ? pool.token0.wrapped.address : pool.token1.wrapped.address,
+            balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
+            token1IsNative ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
+            token1IsNative ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
+            address,
+            deadline.toHexString(),
+          ]
+        } else {
+          methodNames = ['removeLiquidity']
+          args = [
+            pool.token0.wrapped.address,
+            pool.token1.wrapped.address,
+            balance[FundSource.WALLET].multiply(percentToRemove).quotient.toString(),
+            minAmount0.quotient.toString(),
+            minAmount1.quotient.toString(),
+            address,
+            deadline.toHexString(),
+          ]
+        }
+
+        const safeGasEstimates = await Promise.all(
+          methodNames.map((methodName) =>
+            contract.estimateGas[methodName](...args)
+              .then(calculateGasMargin)
+              .catch((error) => {
+                console.error(`estimateGas failed`, methodName, args, error)
+              })
+          )
         )
-      )
 
-      const indexOfSuccessfulEstimation = safeGasEstimates.findIndex((safeGasEstimate) =>
-        BigNumber.isBigNumber(safeGasEstimate)
-      )
+        const indexOfSuccessfulEstimation = safeGasEstimates.findIndex((safeGasEstimate) =>
+          BigNumber.isBigNumber(safeGasEstimate)
+        )
 
-      if (indexOfSuccessfulEstimation === -1) {
-        console.error('This transaction would fail. Please contact support.')
-      } else {
-        const methodName = methodNames[indexOfSuccessfulEstimation]
-        const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
-        const data = await sendTransactionAsync({
-          request: {
+        if (indexOfSuccessfulEstimation === -1) {
+          console.error('This transaction would fail. Please contact support.')
+        } else {
+          const methodName = methodNames[indexOfSuccessfulEstimation]
+          const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
+
+          setRequest({
             from: address,
             to: contract.address,
             data: contract.interface.encodeFunctionData(methodName, args),
             gasLimit: safeGasEstimate,
-          },
-        })
-        const ts = new Date().getTime()
-        createNotification({
-          type: 'burn',
-          chainId: chain.id,
-          txHash: data.hash,
-          promise: data.wait(),
-          summary: {
-            pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
-            completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
-            failed: 'Something went wrong when removing liquidity',
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
-        })
+          })
+        }
+      } catch (e: unknown) {
+        //
       }
-    } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
-      }
+    },
+    [
+      token0,
+      token1,
+      chain?.id,
+      contract,
+      underlying0,
+      underlying1,
+      address,
+      pool,
+      balance,
+      minAmount0,
+      minAmount1,
+      pair.chainId,
+      percentToRemove,
+      deadline,
+    ]
+  )
 
-      console.log(e)
-    }
-  }, [
-    token0,
-    token1,
-    chain?.id,
-    contract,
-    underlying0,
-    underlying1,
-    address,
-    pool,
-    balance,
-    minAmount0,
-    minAmount1,
-    pair.chainId,
-    percentToRemove,
-    deadline,
-    sendTransactionAsync,
-    createNotification,
-  ])
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    chainId: pair.chainId,
+    prepare,
+    onSettled,
+  })
 
   return (
     <div>
@@ -240,7 +249,6 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         token0Minimum={minAmount0}
         token1Minimum={minAmount1}
         setPercentage={setPercentage}
-        error={error}
       >
         <Checker.Connected fullWidth size="md">
           <Checker.Custom
@@ -269,7 +277,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth
-                        amount={balance?.[FundSource.WALLET].multiply(percentToRemove)}
+                        amount={amountToRemove}
                         address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
                       />
                     </Approve.Components>
@@ -277,7 +285,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                   render={({ approved }) => {
                     return (
                       <Button
-                        onClick={execute}
+                        onClick={() => sendTransaction?.()}
                         fullWidth
                         size="md"
                         variant="filled"

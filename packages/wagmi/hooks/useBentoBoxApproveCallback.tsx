@@ -5,8 +5,9 @@ import { useCallback, useMemo, useState } from 'react'
 import {
   useAccount,
   useContractRead,
-  useDeprecatedContractWrite,
+  useContractWrite,
   useNetwork,
+  usePrepareContractWrite,
   UserRejectedRequestError,
   useSignTypedData,
 } from 'wagmi'
@@ -29,11 +30,13 @@ export function useBentoBoxApproveCallback({
   const { address } = useAccount()
   const { chain } = useNetwork()
 
-  const { writeAsync } = useDeprecatedContractWrite({
+  const { config } = usePrepareContractWrite({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'setMasterContractApproval',
     args: [address || AddressZero, masterContract, true, 0, HashZero, HashZero],
   })
+
+  const { writeAsync } = useContractWrite(config)
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
     ...getBentoBoxContractConfig(chain?.id),
@@ -120,8 +123,8 @@ export function useBentoBoxApproveCallback({
     } catch (e: unknown) {
       // Regular approval as fallback
       if (!(e instanceof UserRejectedRequestError)) {
-        const data = await writeAsync()
-        if (onSuccess) {
+        const data = await writeAsync?.()
+        if (onSuccess && data) {
           const ts = new Date().getTime()
           onSuccess({
             type: 'approval',
