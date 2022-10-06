@@ -20,6 +20,7 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
     "@tanstack/react-table": "^8.5.13",
     "next": "^12.3.0",
     "octokit": "^2.0.4",

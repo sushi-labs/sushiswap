@@ -6,7 +6,6 @@ import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { GenericTable } from 'components/Table'
 import { Token } from 'lib'
-import Image from 'next/image'
 
 import { TokenAdder } from './TokenAdder'
 
@@ -73,10 +72,7 @@ function useColumns() {
       id: 'addToDefaultList',
       header: 'Adder',
       cell: ({ row }) => {
-        if (row.original.listEntry?.logoURI)
-          return <Image src={row.original.listEntry.logoURI} height={24} width={24} alt="img" className="rounded-md" />
-
-        return <TokenAdder token={row.original} />
+        return <TokenAdder token={row.original} hasIcon={Boolean(row.original.listEntry?.logoURI)} />
       },
     }),
   ]

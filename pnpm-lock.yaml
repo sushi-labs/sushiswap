@@ -648,6 +648,7 @@ importers:
       '@heroicons/react': ^1.0.0
       '@octokit/auth-app': ^4.0.4
       '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/graph-client': workspace:*
@@ -678,6 +679,7 @@ importers:
       '@heroicons/react': 1.0.6_react@18.2.0
       '@octokit/auth-app': 4.0.4
       '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../packages/config/graph
