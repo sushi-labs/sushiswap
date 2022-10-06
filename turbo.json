@@ -1,6 +1,20 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
+    "build": {
+      "outputs": [
+        ".next/**",
+        "dist/**",
+        "typechain/**",
+        "artifacts/**",
+        "cache/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "cache": true
+    },
     "root#build": {
       "dependsOn": [
         "^build"
@@ -17,23 +31,9 @@
         "LANDING_URL",
         "SWAP_URL",
         "LEGACY_URL",
-        "INVEST_URL",
+        "EARN_URL",
         "XSWAP_URL"
       ]
-    },
-    "build": {
-      "outputs": [
-        ".next/**",
-        "dist/**",
-        "typechain/**",
-        "artifacts/**",
-        "cache/**"
-      ],
-      "dependsOn": [
-        "^build",
-        "generate"
-      ],
-      "cache": true
     },
     "clean": {
       "cache": false
