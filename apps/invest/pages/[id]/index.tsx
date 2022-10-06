@@ -55,7 +55,7 @@ const fetcher = (url) => fetch(url).then((response) => response.json())
 
 const _Pool = () => {
   const router = useRouter()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${router.query.id}`, fetcher)
+  const { data } = useSWR<{ pair: PairWithAlias }>(() => `/earn/api/pool/${router.query.id}`, fetcher)
 
   if (!data) return <></>
 
