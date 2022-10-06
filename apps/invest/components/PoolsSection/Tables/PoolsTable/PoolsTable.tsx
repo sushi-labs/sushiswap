@@ -83,12 +83,11 @@ export const PoolsTable: FC = () => {
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
 
-  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher, {})
+  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher)
 
   const { data: poolCount } = useSWR<number>(
     `/earn/api/pools/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
-    (url) => fetch(url).then((response) => response.json()),
-    {}
+    (url) => fetch(url).then((response) => response.json())
   )
 
   const table = useReactTable<Pair>({

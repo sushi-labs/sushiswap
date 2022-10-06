@@ -58,6 +58,7 @@ const _Pool = () => {
   const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${router.query.id}`, fetcher)
 
   if (!data) return <></>
+
   const { pair } = data
 
   return (

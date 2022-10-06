@@ -57,7 +57,6 @@ const _Remove = () => {
     fetch(url).then((response) => response.json())
   )
 
-  console.log(data)
   if (!data) return <></>
 
   const { pair } = data
