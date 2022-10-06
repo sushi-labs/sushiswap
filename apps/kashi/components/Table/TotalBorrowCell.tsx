@@ -6,8 +6,8 @@ import { CellProps } from './types'
 
 export const TotalBorrowCell: FC<CellProps> = ({ row }) => {
   return (
-    <Typography variant="sm" weight={500} className="text-slate-50 truncate">
-      {formatPercent(row.utilization)}%
+    <Typography variant="sm" weight={500} className="truncate text-slate-50">
+      {formatPercent(row.utilization)}
     </Typography>
   )
 }
