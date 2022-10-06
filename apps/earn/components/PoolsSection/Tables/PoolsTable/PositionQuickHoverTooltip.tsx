@@ -1,6 +1,6 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
-import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
+import { Button, Chip, Currency, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../../lib/hooks'
@@ -150,16 +150,16 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
         </div>
       )}
       <div className="flex justify-end gap-2 mt-8 mb-2">
-        <Link.Internal href={`/${row.id}/remove`} passHref={true}>
-          <Button as="a" size="sm" variant="outlined" fullWidth>
-            Withdraw
-          </Button>
-        </Link.Internal>
-        <Link.Internal href={`/${row.id}/add`} passHref={true}>
-          <Button as="a" size="sm" fullWidth>
-            Deposit
-          </Button>
-        </Link.Internal>
+        {/* <Link.Internal href={`/${row.id}/remove`} passHref={true}> */}
+        <Button as="a" href={`/earn/${row.id}/remove`} size="sm" variant="outlined" fullWidth>
+          Withdraw
+        </Button>
+        {/* </Link.Internal> */}
+        {/* <Link.Internal href={`/${row.id}/add`} passHref={true}> */}
+        <Button as="a" href={`/earn/${row.id}/add`} size="sm" fullWidth>
+          Deposit
+        </Button>
+        {/* </Link.Internal> */}
       </div>
     </div>
   )

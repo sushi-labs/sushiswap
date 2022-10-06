@@ -1,7 +1,7 @@
 import { getAddress } from '@ethersproject/address'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
-import { Button, Link } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { PairWithAlias } from '../../types'
@@ -18,23 +18,23 @@ export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex gap-2">
-        <Link.Internal href={`/${pair.id}/remove`} passHref={true}>
-          <a className="w-full">
-            <Button
-              disabled={Boolean(balance?.[FundSource.WALLET]?.equalTo(ZERO) && stakedBalance?.equalTo(ZERO))}
-              size="md"
-              color="gray"
-              fullWidth
-            >
-              Withdraw
-            </Button>
-          </a>
-        </Link.Internal>
-        <Link.Internal href={`/${pair.id}/add`} passHref={true}>
-          <Button as="a" size="md" fullWidth>
-            Deposit
+        {/* <Link.Internal href={`/${pair.id}/remove`} passHref={true}> */}
+        <a className="w-full" href={`/earn/${pair.id}/remove`}>
+          <Button
+            disabled={Boolean(balance?.[FundSource.WALLET]?.equalTo(ZERO) && stakedBalance?.equalTo(ZERO))}
+            size="md"
+            color="gray"
+            fullWidth
+          >
+            Withdraw
           </Button>
-        </Link.Internal>
+        </a>
+        {/* </Link.Internal> */}
+        {/* <Link.Internal href={`/${pair.id}/add`} passHref={true}> */}
+        <Button as="a" href={`/earn/${pair.id}/add`} size="md" fullWidth>
+          Deposit
+        </Button>
+        {/* </Link.Internal> */}
       </div>
       <Button
         className="col-span-2"
