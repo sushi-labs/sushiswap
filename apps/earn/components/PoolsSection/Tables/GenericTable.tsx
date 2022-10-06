@@ -1,7 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
-import { classNames, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
+import { classNames, Link, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
-import { useRouter } from 'next/router'
 import React, { ReactNode, useState } from 'react'
 
 interface GenericTableProps<C> {
@@ -26,7 +25,6 @@ export const GenericTable = <T extends { id: string }>({
   placeholder,
   pageSize,
 }: GenericTableProps<T>) => {
-  const router = useRouter()
   const [showOverlay, setShowOverlay] = useState(false)
   const headers = table.getFlatHeaders()
 
@@ -91,9 +89,9 @@ export const GenericTable = <T extends { id: string }>({
                                 style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
                                 key={cell.id}
                               >
-                                <a onClick={() => router.push(`/${encodeURIComponent(row.original.id)}`)}>
-                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </a>
+                                <Link.Internal href={`/${row.original.id}`}>
+                                  <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
+                                </Link.Internal>
                               </Table.td>
                             )
                           })}
@@ -117,9 +115,9 @@ export const GenericTable = <T extends { id: string }>({
                     {row.getVisibleCells().map((cell, i) => {
                       return (
                         <Table.td style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }} key={cell.id}>
-                          <a onClick={() => router.push(`/${encodeURIComponent(row.original.id)}`)}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </a>
+                          <Link.Internal href={`/${row.original.id}`}>
+                            <a>{flexRender(cell.column.columnDef.cell, cell.getContext())}</a>
+                          </Link.Internal>
                         </Table.td>
                       )
                     })}
