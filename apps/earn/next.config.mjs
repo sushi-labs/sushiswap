@@ -19,9 +19,9 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  experimental: {
-    nextScriptWorkers: true,
-  },
+  // experimental: {
+  //   nextScriptWorkers: true,
+  // },
 }
 
 export default withTranspileModules(nextConfig)
