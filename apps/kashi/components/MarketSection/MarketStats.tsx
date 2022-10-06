@@ -23,8 +23,8 @@ export const MarketStats: FC<MarketStats> = ({ pair }) => {
   const borrowedChange = 0.5
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Total Supply
         </Typography>
@@ -36,7 +36,7 @@ export const MarketStats: FC<MarketStats> = ({ pair }) => {
           {formatNumber(Math.abs(totalSupplyChange))}%
         </Typography>
       </div>
-      <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Total Borrow
         </Typography>
@@ -48,7 +48,7 @@ export const MarketStats: FC<MarketStats> = ({ pair }) => {
           {formatNumber(Math.abs(totalBorrowChange))}%
         </Typography>
       </div>
-      <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Borrowed
         </Typography>
@@ -60,12 +60,12 @@ export const MarketStats: FC<MarketStats> = ({ pair }) => {
           {formatNumber(Math.abs(borrowedChange))}%
         </Typography>
       </div>
-      <div className="flex flex-col gap-1 rounded-md bg-slate-800 shadow-md shadow-black/20 p-3">
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
-          MAX LTV
+          LTV
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          40%
+          75%
         </Typography>
       </div>
     </div>
