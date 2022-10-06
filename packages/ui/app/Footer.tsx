@@ -14,13 +14,13 @@ export type FooterProps = React.HTMLProps<HTMLDivElement>
 
 const config: Record<string, Record<string, { href: string; rel?: string; target?: string }>> = {
   Services: {
-    Swap: { href: 'https://sushi.com/swap' },
-    Pool: { href: 'https://app.sushi.com/pools', target: '_blank', rel: 'noopener noreferrer' },
+    Swap: { href: 'https://www.sushi.com/swap' },
+    Pool: { href: 'https://www.sushi.com/earn' },
     'Lending & Borrowing': { href: 'https://app.sushi.com/kashi', target: '_blank', rel: 'noopener noreferrer' },
     'Miso Launchpad': { href: 'https://app.sushi.com/miso', target: '_blank', rel: 'noopener noreferrer' },
     'Shoyu NFT': { href: 'https://shoyunft.com', target: '_blank', rel: 'noopener noreferrer' },
-    Streaming: { href: 'https://sushi.com/furo' },
-    Analytics: { href: 'https://sushi.com/analytics', target: '_blank', rel: 'noopener noreferrer' },
+    Streaming: { href: 'https://www.sushi.com/furo' },
+    Analytics: { href: 'https://www.sushi.com/analytics' },
   },
   Help: {
     'About Us': { href: 'https://docs.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
@@ -44,7 +44,6 @@ const config: Record<string, Record<string, { href: string; rel?: string; target
       target: '_blank',
       rel: 'noopener noreferrer',
     },
-    Vesting: { href: 'https://app.sushi.com/vesting', target: '_blank', rel: 'noopener noreferrer' },
   },
 }
 
@@ -99,18 +98,18 @@ export function Footer(props: FooterProps): JSX.Element {
         </div>
       </Container>
       <Container maxWidth="5xl" className="mx-auto mt-20 mb-5">
-        <div className="flex justify-between mx-4 border-t border-slate-800 py-2">
+        <div className="flex justify-between py-2 mx-4 border-t border-slate-800">
           <Typography variant="xs" className="text-slate-400">
             Copyright © 2022 Sushi. All rights reserved.
           </Typography>
           <div className="flex divide-x divide-slate-200/20 gap-">
             <Link.Internal href="/terms-of-use" passHref={true}>
-              <Typography as="a" variant="xs" weight={500} className="text-slate-300 px-3">
+              <Typography as="a" variant="xs" weight={500} className="px-3 text-slate-300">
                 Terms of Use
               </Typography>
             </Link.Internal>
             {/*<Link.Internal href="/privacy-policy" passHref={true}>*/}
-            {/*  <Typography as="a" variant="xs" weight={500} className="text-slate-300 pl-3">*/}
+            {/*  <Typography as="a" variant="xs" weight={500} className="pl-3 text-slate-300">*/}
             {/*    Privacy Policy*/}
             {/*  </Typography>*/}
             {/*</Link.Internal>*/}
