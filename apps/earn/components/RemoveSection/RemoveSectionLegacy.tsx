@@ -195,9 +195,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
           BigNumber.isBigNumber(safeGasEstimate)
         )
 
-        if (indexOfSuccessfulEstimation === -1) {
-          console.error('This transaction would fail. Please contact support.')
-        } else {
+        if (indexOfSuccessfulEstimation !== -1) {
           const methodName = methodNames[indexOfSuccessfulEstimation]
           const safeGasEstimate = safeGasEstimates[indexOfSuccessfulEstimation]
 
