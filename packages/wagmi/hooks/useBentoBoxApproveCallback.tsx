@@ -66,28 +66,13 @@ export function useBentoBoxApproveCallback({
   }, [isBentoBoxApproved, signature, isLoading])
 
   const approveBentoBox = useCallback(async (): Promise<void> => {
-    if (!address) {
-      console.error('no account connected')
-      return
-    }
-
-    if (!chain) {
-      console.error('no active chain')
-      return
-    }
-
-    if (!(chain.id in BENTOBOX_ADDRESS)) {
-      console.error(`no bentobox for active chain ${chain.id}`)
-      return
-    }
-
-    if (!masterContract) {
-      console.error('no master contract')
-      return
-    }
-
-    if (approvalState !== ApprovalState.NOT_APPROVED) {
-      console.error('approve was called unnecessarily')
+    if (
+      !address ||
+      !chain ||
+      !(chain.id in BENTOBOX_ADDRESS) ||
+      !masterContract ||
+      approvalState !== ApprovalState.NOT_APPROVED
+    ) {
       return
     }
 
