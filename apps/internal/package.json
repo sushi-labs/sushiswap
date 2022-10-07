@@ -18,6 +18,7 @@
     "@sushiswap/format": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/hooks": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/currency": "workspace:*",

@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { SUSHISWAP_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 
 export const BENTOBOX_ADDRESS: Record<number | string, string> = {
   [ChainId.ETHEREUM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
@@ -49,3 +50,5 @@ export const SUPPORTED_CHAIN_IDS = [
   ChainId.HARMONY,
   ChainId.KAVA,
 ]
+
+export const TOKENS_SUPPORTED_CHAIN_IDS = [...TRIDENT_ENABLED_NETWORKS, ...SUSHISWAP_ENABLED_NETWORKS]

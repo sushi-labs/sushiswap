@@ -1,21 +1,22 @@
 import { createAppAuth } from '@octokit/auth-app'
 import { ChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client/.graphclient'
-import { SUSHISWAP_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '@sushiswap/graph-config'
 import { SUSHI_DEFAULT_TOKEN_LIST } from '@sushiswap/redux-token-lists'
 import { Octokit } from 'octokit'
 
 export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 
-const chainIds = [...TRIDENT_ENABLED_NETWORKS, ...SUSHISWAP_ENABLED_NETWORKS]
-
-export async function getTokens({ filter }: { filter?: string } = {}) {
+export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; filter?: string } = {}) {
   const sdk = getBuiltGraphSDK()
 
   const defaultTokenList = await getDefaultTokenList()
 
   return sdk
-    .CrossChainTokens({ chainIds, orderBy: 'liquidityUSD', where: { name_contains: filter } })
+    .CrossChainTokens({
+      chainIds: chainIds,
+      orderBy: 'liquidityUSD',
+      where: { symbol_contains_nocase: filter },
+    })
     .then(({ crossChainTokens: tokens }) =>
       tokens.map((token) => ({
         ...token,
@@ -59,12 +60,10 @@ export async function getTokenLogos(octokitKey: string): Promise<TokenLogo[]> {
     },
   })
 
-  return octokit
-    .request('GET /repos/sushiswap/list/contents/logos/token-logos/token')
-    .then(({ data }) =>
-      data.map((entry) => ({
-        name: entry.name.split('.jpg')[0],
-        url: `https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/${entry.name}`,
-      }))
-    )
+  return octokit.request('GET /repos/sushiswap/list/contents/logos/token-logos/token').then(({ data }) =>
+    data.map((entry) => ({
+      name: entry.name.split('.jpg')[0],
+      url: `https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/${entry.name}`,
+    }))
+  )
 }
