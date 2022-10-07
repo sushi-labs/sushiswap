@@ -23,6 +23,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "cookie-cutter": "^0.2.0",

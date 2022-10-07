@@ -6,7 +6,7 @@ import { Octokit } from 'octokit'
 
 export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 
-export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; filter?: string } = {}) {
+export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; filter?: string }) {
   const sdk = getBuiltGraphSDK()
 
   const defaultTokenList = await getDefaultTokenList()

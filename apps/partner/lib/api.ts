@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { getProvider } from '@sushiswap/wagmi'
-import { EXCHANGE, GRAPH_HOST, TRIDENT } from 'config'
 import { Contract } from 'ethers'
 import { erc20ABI } from 'wagmi'
 
@@ -13,7 +13,7 @@ interface TokenKPI {
 }
 
 export const getExchangeTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
-  const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], EXCHANGE[chainId]]
+  const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], EXCHANGE_SUBGRAPH_NAME[chainId]]
 
   if (!subgraphHost || !subgraphName) return
 
@@ -33,7 +33,7 @@ export const getExchangeTokenKPI = async (id: string, chainId: ChainId): Promise
 }
 
 export const getTridentTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
-  const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], TRIDENT[chainId]]
+  const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], TRIDENT_SUBGRAPH_NAME[chainId]]
 
   if (!subgraphHost || !subgraphName) return
 

@@ -1,5 +1,6 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
+import { CHAIN_NAME } from '@sushiswap/graph-config'
 import Cors from 'cors'
 import { ethers } from 'ethers'
 import { getOctokit, getTokenKPI, Token } from 'lib'
@@ -186,7 +187,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     title: `Token: ${displayName}`,
     head: branch,
     base: 'master',
-    body: `Chain: ${ChainKey[chainId]}
+    body: `Chain: ${CHAIN_NAME[chainId] ?? chainId}
       Name: ${tokenData.name}
       Symbol: ${tokenData.symbol}
       Decimals: ${tokenData.decimals}

@@ -53,6 +53,8 @@ export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.KAVA]: 'Kava',
   [ChainId.METIS]: 'Metis',
   [ChainId.BOBA]: 'Boba',
+  [ChainId.ARBITRUM_NOVA]: 'Arbitrum Nova',
+  [ChainId.BOBA_AVAX]: 'Boba Avax',
 }
 
 export const SUBGRAPH_HOST: Record<number | string, string> = {
