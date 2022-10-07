@@ -30,7 +30,7 @@ export const NotificationCentre: FC<Omit<ProviderProps, 'createNotification'>> =
           </Button>
           <div className="absolute right-4 top-4">
             <Drawer.Button>
-              <IconButton>
+              <IconButton as="div">
                 <XIcon width={20} height={20} />
               </IconButton>
             </Drawer.Button>

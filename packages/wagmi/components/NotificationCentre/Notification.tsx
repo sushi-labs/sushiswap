@@ -70,7 +70,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
         <Disclosure.Button className="absolute right-3 top-0 bottom-0 z-[100]">
           {({ open }) => {
             return (
-              <IconButton>
+              <IconButton as="div">
                 <ChevronDownIcon
                   width={20}
                   height={20}
