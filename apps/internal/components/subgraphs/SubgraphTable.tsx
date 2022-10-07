@@ -1,5 +1,7 @@
+import { ChainId } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
+import { NetworkIcon } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { GenericTable } from 'components/Table'
 import { Subgraph } from 'lib'
@@ -18,7 +20,16 @@ const columns = [
   }),
   columnHelper.accessor('chainId', {
     header: 'Chain',
-    cell: (info) => CHAIN_NAME[info.getValue()],
+    cell: (info) => {
+      const chainId = info.getValue()
+
+      return (
+        <div className="flex space-x-2">
+          <NetworkIcon type="circle" chainId={chainId} width={20} height={20} />
+          <div>{CHAIN_NAME[chainId] ?? ChainId[chainId]}</div>
+        </div>
+      )
+    },
     enableHiding: true,
   }),
   columnHelper.accessor('subgraphName', {
