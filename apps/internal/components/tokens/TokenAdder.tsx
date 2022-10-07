@@ -15,7 +15,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
   const [selectedLogoURI, setSelectedLogoURI] = useState<string>()
   const [addState, setAddState] = useState<'ready' | 'submitting' | 'error'>('ready')
 
-  const { data: tokenLogos } = useSWR<TokenLogo[]>(!hasIcon ? 'tokenLogos' : null, () =>
+  const { data: tokenLogos } = useSWR<TokenLogo[]>('tokenLogos', () =>
     fetch('/internal/api/tokens/tokenLogos').then((data) => data.json())
   )
 
@@ -81,8 +81,6 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
     [selectedLogoURI, token]
   )
 
-  if (hasIcon) return <Currency.Icon currency={_token} width={24} height={24} />
-
   return (
     <Menu
       button={
@@ -99,6 +97,8 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
                 {addState === 'error' && <XIcon className="text-red" width={24} height={24} />}
               </div>
             </>
+          ) : hasIcon ? (
+            <Currency.Icon disableLink currency={_token} width={24} height={24} />
           ) : (
             <svg width={24} height={24} viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="30" height="30" rx="15" fill="url(#paint0_linear_13084_19043)" />

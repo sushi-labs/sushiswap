@@ -1,5 +1,5 @@
-import { XIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
+import { LinkIcon, XIcon } from '@heroicons/react/solid'
+import chains, { ChainId } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
@@ -72,13 +72,25 @@ function useColumns() {
     columnHelper.display({
       id: 'addToDefaultList',
       header: 'Adder',
-      cell: ({ row }) => {
-        return (
-          <div className="flex justify-center w-[60px]">
-            <TokenAdder token={row.original} hasIcon={Boolean(row.original.listEntry?.logoURI)} />
-          </div>
-        )
-      },
+      cell: ({ row }) => (
+        <div className="flex justify-center">
+          <TokenAdder token={row.original} hasIcon={Boolean(row.original.listEntry?.logoURI)} />
+        </div>
+      ),
+    }),
+    columnHelper.display({
+      id: 'link',
+      header: 'Link',
+      cell: ({ row }) => (
+        <a
+          href={chains[row.original.chainId].getTokenUrl(row.original.id.split(':')[1])}
+          target="_blank"
+          rel="noreferrer"
+          className="flex justify-center"
+        >
+          <LinkIcon width={24} height={24} />
+        </a>
+      ),
     }),
   ]
 }
