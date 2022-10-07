@@ -47,7 +47,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
             })
           })
 
-        const result = await fetch('http://192.168.1.9:3012/partner/api/submitToken', {
+        const result = await fetch('/partner/api/submitToken', {
           headers: {
             Accept: '*/*',
             'Content-Type': 'application/json',
