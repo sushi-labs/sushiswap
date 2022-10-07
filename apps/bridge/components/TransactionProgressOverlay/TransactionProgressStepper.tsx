@@ -1,5 +1,4 @@
 import chain, { chains } from '@sushiswap/chain'
-import { Amount, Token, Type } from '@sushiswap/currency'
 import { STARGATE_TOKEN } from '@sushiswap/stargate'
 import { Link, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
@@ -8,39 +7,28 @@ import { formatBytes32String } from 'ethers/lib/utils'
 import { FC, useEffect, useState } from 'react'
 import { useContractEvent, useWaitForTransaction } from 'wagmi'
 
+import { useBridgeOutput } from '../../lib/hooks'
+import { useBridgeExecute } from '../BridgeExecuteProvider'
+import { useBridgeState } from '../BridgeStateProvider'
 import { TransactionProgressStep } from './TransactionProgressStep'
 
-interface TransactionProgressStepper {
-  id: string
-  inputAmount?: Amount<Type>
-  outputAmount?: Amount<Type>
-  srcBridgeToken: Token
-  dstBridgeToken: Token
-  srcTxHash: string
-  crossChain: boolean
-}
+export const TransactionProgressStepper: FC = () => {
+  const { id, txHash } = useBridgeExecute()
+  const { amount, srcToken, dstToken } = useBridgeState()
+  const { dstAmountOut } = useBridgeOutput()
 
-export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
-  id,
-  inputAmount,
-  outputAmount,
-  srcBridgeToken,
-  dstBridgeToken,
-  srcTxHash,
-  crossChain,
-}) => {
   const { isError, isSuccess, isLoading } = useWaitForTransaction({
-    hash: srcTxHash,
-    chainId: inputAmount?.currency.chainId,
-    enabled: Boolean(srcTxHash) && Boolean(inputAmount),
+    hash: txHash,
+    chainId: amount?.currency.chainId,
+    enabled: Boolean(txHash) && Boolean(amount),
   })
 
   const [dstTxState, setDstTxState] = useState<{ txHash: string; isSuccess: boolean } | undefined>()
   const [delayed, setDelayed] = useState<boolean>(false)
 
   useContractEvent({
-    ...getSushiXSwapContractConfig(outputAmount?.currency.chainId),
-    chainId: outputAmount?.currency.chainId,
+    ...getSushiXSwapContractConfig(dstAmountOut?.currency.chainId),
+    chainId: dstAmountOut?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
     listener: (event) => {
       const [context, success, { transactionHash }] = event
@@ -62,50 +50,18 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
     }
   }, [dstTxState])
 
-  if (!crossChain) {
-    return (
-      <div className="flex flex-col">
-        {inputAmount && outputAmount && (
-          <TransactionProgressStep
-            lastStep={true}
-            link={chains[inputAmount.currency.chainId].getTxUrl(srcTxHash)}
-            status={isSuccess ? 'success' : isError ? 'failed' : isLoading ? 'pending' : 'idle'}
-            header={
-              <TransactionProgressStep.Header>
-                Swapping{' '}
-                <b>
-                  {inputAmount.toSignificant(6)} {inputAmount.currency.symbol}
-                </b>{' '}
-                for{' '}
-                <b>
-                  {outputAmount?.toSignificant(6)} {outputAmount.currency.symbol}
-                </b>
-              </TransactionProgressStep.Header>
-            }
-            subheader={
-              <TransactionProgressStep.SubHeader
-                icon={<NetworkIcon chainId={inputAmount.currency.chainId} width={16} height={16} />}
-                caption={chain[inputAmount.currency.chainId].name}
-              />
-            }
-          />
-        )}
-      </div>
-    )
-  }
-
   return (
     <div className="flex flex-col">
-      {inputAmount && (
+      {amount && (
         <TransactionProgressStep
-          link={chains[inputAmount.currency.chainId].getTxUrl(srcTxHash)}
+          link={chains[amount.currency.chainId].getTxUrl(txHash)}
           status={isSuccess ? 'success' : isError ? 'failed' : isLoading ? 'pending' : 'idle'}
           header={
-            inputAmount.currency.wrapped.equals(srcBridgeToken) ? (
+            amount.currency.wrapped.equals(srcToken) ? (
               <TransactionProgressStep.Header>
                 Transfer{' '}
                 <b>
-                  {inputAmount.toSignificant(6)} {inputAmount.currency.symbol}
+                  {amount.toSignificant(6)} {amount.currency.symbol}
                 </b>{' '}
                 to Stargate Router
               </TransactionProgressStep.Header>
@@ -113,16 +69,16 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
               <TransactionProgressStep.Header>
                 Swapping{' '}
                 <b>
-                  {inputAmount.toSignificant(6)} {inputAmount.currency.symbol}
+                  {amount.toSignificant(6)} {amount.currency.symbol}
                 </b>{' '}
-                for <b>{srcBridgeToken.symbol}</b>
+                for <b>{srcToken.symbol}</b>
               </TransactionProgressStep.Header>
             )
           }
           subheader={
             <TransactionProgressStep.SubHeader
-              icon={<NetworkIcon chainId={inputAmount.currency.chainId} width={16} height={16} />}
-              caption={chain[inputAmount.currency.chainId].name}
+              icon={<NetworkIcon chainId={amount.currency.chainId} width={16} height={16} />}
+              caption={chain[amount.currency.chainId].name}
             />
           }
         />
@@ -132,7 +88,7 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
         status={dstTxState ? 'success' : isError ? 'skipped' : isSuccess ? 'pending' : 'idle'}
         header={
           <TransactionProgressStep.Header>
-            Send <b>{srcBridgeToken.symbol}</b> to destination chain
+            Send <b>{srcToken.symbol}</b> to destination chain
           </TransactionProgressStep.Header>
         }
         subheader={
@@ -149,9 +105,9 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
           />
         }
       />
-      {outputAmount && (
+      {dstAmountOut && (
         <TransactionProgressStep
-          link={dstTxState ? chains[outputAmount.currency.chainId].getTxUrl(dstTxState.txHash) : undefined}
+          link={dstTxState ? chains[dstAmountOut.currency.chainId].getTxUrl(dstTxState.txHash) : undefined}
           lastStep={true}
           status={
             dstTxState
@@ -167,27 +123,27 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
               : 'idle'
           }
           header={
-            (dstTxState && !dstTxState.isSuccess) || outputAmount.currency.wrapped.equals(dstBridgeToken) ? (
+            (dstTxState && !dstTxState.isSuccess) || dstAmountOut.currency.wrapped.equals(dstToken) ? (
               <TransactionProgressStep.Header>
                 Transfer{' '}
                 <b>
-                  {outputAmount.toSignificant(6)} {outputAmount.currency.symbol}
+                  {dstAmountOut.toSignificant(6)} {dstAmountOut.currency.symbol}
                 </b>{' '}
                 to recipient
               </TransactionProgressStep.Header>
             ) : (
               <TransactionProgressStep.Header>
-                Swap <b>{dstBridgeToken.symbol}</b> for{' '}
+                Swap <b>{dstToken.symbol}</b> for{' '}
                 <b>
-                  {outputAmount.toSignificant(6)} {outputAmount.currency.symbol}
+                  {dstAmountOut.toSignificant(6)} {dstAmountOut.currency.symbol}
                 </b>
               </TransactionProgressStep.Header>
             )
           }
           subheader={
             <TransactionProgressStep.SubHeader
-              icon={<NetworkIcon chainId={outputAmount.currency.chainId} width={16} height={16} />}
-              caption={chain[outputAmount.currency.chainId].name}
+              icon={<NetworkIcon chainId={dstAmountOut.currency.chainId} width={16} height={16} />}
+              caption={chain[dstAmountOut.currency.chainId].name}
             />
           }
         />

@@ -1,0 +1,128 @@
+import { Disclosure, Transition } from '@headlessui/react'
+import { InformationCircleIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon } from '@heroicons/react/solid'
+import { Native } from '@sushiswap/currency'
+import { STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
+import { classNames, Loader, Tooltip, Typography } from '@sushiswap/ui'
+import { usePrices } from '@sushiswap/wagmi'
+import { Rate } from 'components'
+import React, { FC } from 'react'
+
+import { useBridgeFees, useBridgeOutput } from '../lib/hooks'
+import { useBridgeExecute } from './BridgeExecuteProvider'
+import { useBridgeState } from './BridgeStateProvider'
+
+export const SwapStatsDisclosure: FC = () => {
+  const { price } = useBridgeOutput()
+
+  return (
+    <Transition
+      show={!!price}
+      unmount={false}
+      className="p-3 !pb-1 transition-[max-height] overflow-hidden"
+      enter="duration-300 ease-in-out"
+      enterFrom="transform max-h-0"
+      enterTo="transform max-h-[380px]"
+      leave="transition-[max-height] duration-250 ease-in-out"
+      leaveFrom="transform max-h-[380px]"
+      leaveTo="transform max-h-0"
+    >
+      <Disclosure>
+        {({ open }) => (
+          <>
+            <div className="flex justify-between items-center bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-2.5 gap-2">
+              <Rate price={price}>
+                {({ content, usdPrice, toggleInvert }) => (
+                  <div
+                    className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center truncate"
+                    onClick={toggleInvert}
+                  >
+                    <Tooltip
+                      panel={<div className="grid grid-cols-2 gap-1">{}</div>}
+                      button={<InformationCircleIcon width={16} height={16} />}
+                    />{' '}
+                    {content} {usdPrice && <span className="font-medium text-slate-500">(${usdPrice})</span>}
+                  </div>
+                )}
+              </Rate>
+              <Disclosure.Button className="flex items-center justify-end flex-grow cursor-pointer">
+                <ChevronDownIcon
+                  width={24}
+                  height={24}
+                  className={classNames(
+                    open ? '!rotate-180' : '',
+                    'rotate-0 transition-[transform] duration-300 ease-in-out delay-200'
+                  )}
+                />
+              </Disclosure.Button>
+            </div>
+            <Transition
+              show={open}
+              unmount={false}
+              className="transition-[max-height] overflow-hidden"
+              enter="duration-300 ease-in-out"
+              enterFrom="transform max-h-0"
+              enterTo="transform max-h-[380px]"
+              leave="transition-[max-height] duration-250 ease-in-out"
+              leaveFrom="transform max-h-[380px]"
+              leaveTo="transform max-h-0"
+            >
+              <Disclosure.Panel
+                as="div"
+                className="grid grid-cols-2 gap-1 px-4 py-2 mb-4 border border-slate-200/5 rounded-2xl"
+              >
+                <Stats />
+              </Disclosure.Panel>
+            </Transition>
+          </>
+        )}
+      </Disclosure>
+    </Transition>
+  )
+}
+
+export const Stats: FC = () => {
+  const { bridgeFee } = useBridgeFees()
+  const { gasFee } = useBridgeExecute()
+  const { srcChainId, srcToken } = useBridgeState()
+  const { data: srcPrices } = usePrices({ chainId: srcChainId })
+
+  return (
+    <>
+      <Typography variant="sm" className="text-slate-400">
+        Est. Processing Time
+      </Typography>
+      <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
+        ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
+        minutes
+      </Typography>
+      <Typography variant="sm" className="text-slate-400">
+        Bridge Fee
+      </Typography>
+      {bridgeFee && srcPrices?.[srcToken.wrapped.address] ? (
+        <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
+          ~$
+          {bridgeFee?.greaterThan(0)
+            ? bridgeFee?.multiply(srcPrices[srcToken.wrapped.address].asFraction)?.toSignificant(6)
+            : 0}
+        </Typography>
+      ) : (
+        <div className="flex items-center justify-end">
+          <Loader size={14} />
+        </div>
+      )}
+      <Typography variant="sm" className="text-slate-400">
+        Gas Cost
+      </Typography>
+      {Boolean(gasFee) && Boolean(Native.onChain(srcChainId).wrapped.address in srcPrices) ? (
+        <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
+          {gasFee.toSignificant(6)} {Native.onChain(srcChainId).symbol}
+        </Typography>
+      ) : (
+        <div className="flex items-center justify-end">
+          <Loader size={14} />
+        </div>
+      )}
+    </>
+  )
+}

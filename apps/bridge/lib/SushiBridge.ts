@@ -2,11 +2,11 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
+import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import { STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
-import { ContractTransaction } from 'ethers'
 import { formatBytes32String } from 'ethers/lib/utils'
 
 export enum Action {
@@ -369,7 +369,7 @@ export class SushiBridge {
       : [Zero, Zero]
   }
 
-  async cook(gasSpent = 1000000): Promise<ContractTransaction | undefined> {
+  async cook(gasSpent = 1000000): Promise<Partial<TransactionRequest & { to: string }>> {
     if (!this.contract) {
       return
     }
@@ -399,9 +399,16 @@ export class SushiBridge {
       // console.log(`Successful Fee`, fee)
 
       const value = this.srcCooker.values.reduce((a, b) => a.add(b), fee)
-      return this.contract.cook(this.srcCooker.actions, this.srcCooker.values, this.srcCooker.datas, {
+      return {
+        from: this.user,
+        to: this.contract.address,
+        data: this.contract.interface.encodeFunctionData('cook', [
+          this.srcCooker.actions,
+          this.srcCooker.values,
+          this.srcCooker.datas,
+        ]),
         value,
-      })
+      }
     } catch (error) {
       console.error('SushiXSwap Fee Error', error)
     }

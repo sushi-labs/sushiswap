@@ -1,4 +1,4 @@
-import { Amount, Currency, Token } from '@sushiswap/currency'
+import { Amount } from '@sushiswap/currency'
 import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
 import STARGATE_FEE_LIBRARY_V03_ABI from 'abis/stargate-fee-library-v03.json'
@@ -6,32 +6,24 @@ import STARGATE_POOL_ABI from 'abis/stargate-pool.json'
 import { useMemo } from 'react'
 import { useContractRead, useContractReads } from 'wagmi'
 
-export const useBridgeFees = ({
-  amount,
-  srcChainId,
-  srcBridgeToken,
-  dstChainId,
-  dstBridgeToken,
-}: {
-  amount?: Amount<Currency>
-  srcChainId: number
-  srcBridgeToken: Token
-  dstChainId: number
-  dstBridgeToken: Token
-}) => {
+import { useBridgeState } from '../../components/BridgeStateProvider'
+
+export const useBridgeFees = () => {
+  const { srcChainId, dstChainId, srcToken, dstToken, amount } = useBridgeState()
+
   const contract = useSushiXSwapContractWithProvider(srcChainId)
 
   const { data: stargatePoolResults } = useContractReads({
     contracts: [
       {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
         functionName: 'getChainPath',
-        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
+        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address]],
         contractInterface: STARGATE_POOL_ABI,
         chainId: srcChainId,
       },
       {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
         functionName: 'feeLibrary',
         contractInterface: STARGATE_POOL_ABI,
         chainId: srcChainId,
@@ -44,8 +36,8 @@ export const useBridgeFees = ({
     addressOrName: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
     args: [
-      STARGATE_POOL_ID[srcChainId][srcBridgeToken.address],
-      STARGATE_POOL_ID[dstChainId][dstBridgeToken.address],
+      STARGATE_POOL_ID[srcChainId][srcToken.wrapped.address],
+      STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address],
       STARGATE_CHAIN_ID[dstChainId],
       contract.address,
       amount?.quotient?.toString(),
@@ -59,13 +51,25 @@ export const useBridgeFees = ({
 
   return useMemo(() => {
     if (!getFeesResults) {
-      return [undefined, undefined, undefined, undefined]
+      return {
+        eqFee: undefined,
+        eqReward: undefined,
+        lpFee: undefined,
+        protocolFee: undefined,
+        bridgeFee: undefined,
+      }
     }
-    return [
-      Amount.fromRawAmount(srcBridgeToken, getFeesResults.eqFee.toString()),
-      Amount.fromRawAmount(srcBridgeToken, getFeesResults.eqReward.toString()),
-      Amount.fromRawAmount(srcBridgeToken, getFeesResults.lpFee.toString()),
-      Amount.fromRawAmount(srcBridgeToken, getFeesResults.protocolFee.toString()),
-    ]
-  }, [getFeesResults, srcBridgeToken])
+
+    const eqFee = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.eqFee.toString())
+    const eqReward = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.eqReward.toString())
+    const lpFee = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.lpFee.toString())
+    const protocolFee = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.protocolFee.toString())
+    let bridgeFee = undefined
+
+    if (eqFee && eqReward && lpFee && protocolFee) {
+      bridgeFee = eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
+    }
+
+    return { eqFee, eqReward, lpFee, protocolFee, bridgeFee }
+  }, [getFeesResults, srcToken])
 }

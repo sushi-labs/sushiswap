@@ -1,16 +1,11 @@
 import { CogIcon } from '@heroicons/react/outline'
-import { ChainId } from '@sushiswap/chain'
 import { IconButton, Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
 import { ExpertMode } from './ExpertMode'
 import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
 
-interface SettingsOverlay {
-  chainId: ChainId | undefined
-}
-
-export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
+export const SettingsOverlay: FC = () => {
   const [open, setOpen] = useState(false)
   return (
     <>
@@ -23,10 +18,8 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
             <div className="h-full px-3 -ml-3 -mr-3 overflow-x-hidden overflow-y-auto scroll">
               <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
               <div className="px-1 py-1">
-                {/*<GasSettingsDisclosure chainId={chainId} />*/}
                 <SlippageToleranceDisclosure />
                 <ExpertMode />
-                {/* <DustAmount /> */}
               </div>
             </div>
           </Overlay.Content>
