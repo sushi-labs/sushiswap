@@ -17,7 +17,7 @@ export const TransactionProgressOverlay: FC<TransactionProgressOverlay> = ({ onC
       <Dialog.Header title="Transaction In Progress" onClose={onClose} />
       <div className="flex flex-col gap-8 flex-grow">
         <div className={classNames('flex justify-center items-center flex-grow pt-6')}>
-          <TransactionProgressStepper />
+          <TransactionProgressStepper onClose={onClose} />
         </div>
         <Typography variant="xs" className="text-slate-500 text-center">
           This usually takes{' '}

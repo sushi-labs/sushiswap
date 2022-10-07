@@ -20,7 +20,7 @@ interface BridgeReviewModalBase {
 }
 
 export const BridgeReviewModalBase: FC<BridgeReviewModalBase> = ({ open, setOpen, children }) => {
-  const { txHash } = useBridgeExecute()
+  const { sourceTx } = useBridgeExecute()
   const { amount, srcToken, dstToken, srcChainId, dstChainId } = useBridgeState()
   const { dstAmountOut, price } = useBridgeOutput()
 
@@ -41,9 +41,9 @@ export const BridgeReviewModalBase: FC<BridgeReviewModalBase> = ({ open, setOpen
   }, [dstAmountOut, dstTokenPrice, amount, srcTokenPrice])
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)}>
+    <Dialog open={open} onClose={() => setOpen(false)} unmount={false}>
       <Dialog.Content className="!pb-3">
-        {txHash ? (
+        {sourceTx?.hash ? (
           <TransactionProgressOverlay onClose={() => setOpen(false)} />
         ) : (
           <SlideIn>

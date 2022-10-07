@@ -5,11 +5,11 @@ import { Loader, NotificationData } from '..'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
 
-interface ToastPending extends NotificationData {
+interface ToastPending extends Omit<NotificationData, 'promise'> {
   onDismiss(): void
 }
 
-export const ToastPending: FC<ToastPending> = ({ chainId, txHash, onDismiss, summary }) => {
+export const ToastPending: FC<ToastPending> = ({ href, chainId, txHash, onDismiss, summary }) => {
   console.log({ chainId })
   return (
     <>
@@ -18,7 +18,7 @@ export const ToastPending: FC<ToastPending> = ({ chainId, txHash, onDismiss, sum
         title="Transaction Pending"
         summary={summary.pending}
       />
-      <ToastButtons href={Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
+      <ToastButtons href={href ? href : Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
     </>
   )
 }

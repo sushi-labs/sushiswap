@@ -1,7 +1,7 @@
 import { Signature } from '@ethersproject/bytes'
-import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native } from '@sushiswap/currency'
-import { getSushiXSwapContractConfig, useBentoBoxTotal, useSushiXSwapContract } from '@sushiswap/wagmi'
+import { useBentoBoxTotal, useSushiXSwapContract } from '@sushiswap/wagmi'
+import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { nanoid } from 'nanoid'
 import {
   createContext,
@@ -15,8 +15,10 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useAccount, usePrepareSendTransaction, useSendTransaction } from 'wagmi'
+import { useAccount } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
+import { useNotifications } from '../lib/state/storage'
 import { SushiBridge } from '../lib/SushiBridge'
 import { useBridgeState } from './BridgeStateProvider'
 
@@ -26,11 +28,13 @@ interface BridgeExecuteProvider {
 
 interface BridgeExecuteContext {
   id: string
-  txHash: string
+  sourceTx: SendTransactionResult | undefined
+  setSourceTx: Dispatch<SetStateAction<SendTransactionResult>>
   gasFee: Amount<Native> | undefined
   execute(): void
   isWritePending: boolean
   setSignature: Dispatch<SetStateAction<Signature>>
+  timestamp: number
 }
 
 const BridgeExecuteContext = createContext<BridgeExecuteContext>(undefined)
@@ -38,27 +42,40 @@ const BridgeExecuteContext = createContext<BridgeExecuteContext>(undefined)
 export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) => {
   const { address } = useAccount()
   const feeRef = useRef<Amount<Native>>()
-  const [txHash, setTxHash] = useState<string>()
+  const [, { createInlineNotification }] = useNotifications(address)
+  const [sourceTx, setSourceTx] = useState<SendTransactionResult>()
   const [signature, setSignature] = useState<Signature>()
-  const { srcChainId, amount, srcToken, dstToken, dstChainId, srcTypedAmount } = useBridgeState()
+  const [timestamp, setTimestamp] = useState<number>()
+  const { srcChainId, amount, srcToken, dstToken } = useBridgeState()
   const contract = useSushiXSwapContract(srcChainId)
   const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
   const [nanoId] = useState(nanoid())
-  const [request, setRequest] = useState<Partial<TransactionRequest & { to: string }>>()
 
-  const { config } = usePrepareSendTransaction({
-    ...getSushiXSwapContractConfig(srcChainId),
-    request,
-    enabled: Boolean(request),
-  })
+  const onSettled = useCallback(
+    async (data: SendTransactionResult | undefined) => {
+      if (!data) return
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
-    ...config,
-    onSuccess: (data) => {
-      setTxHash(data?.hash)
-      setSignature(undefined)
+      const ts = new Date().getTime()
+
+      setTimestamp(ts)
+      setSourceTx(data)
+
+      createInlineNotification({
+        type: 'send',
+        chainId: srcChainId,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Sending ${amount?.toSignificant(6)} ${srcToken.symbol} to Stargate Router`,
+          completed: `Send ${amount?.toSignificant(6)} ${srcToken.symbol} to Stargate Router`,
+          failed: 'Something went wrong when sending tokens to Stargate Router',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
     },
-  })
+    [amount, createInlineNotification, srcChainId, srcToken.symbol]
+  )
 
   const prepareBridge = useCallback(() => {
     if (!srcChainId || !amount || !address || !srcInputCurrencyRebase || !contract) {
@@ -88,27 +105,34 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
     return bridge
   }, [address, amount, contract, dstToken, nanoId, signature, srcChainId, srcInputCurrencyRebase, srcToken])
 
-  const prepare = useCallback(() => {
-    const bridge = prepareBridge()
-    if (bridge) {
-      console.debug('attempt cook')
-      bridge
-        .cook(1000000)
-        .then((request) => {
-          if (request) {
-            setRequest(request)
-          }
-        })
-        .catch((err) => {
-          console.error('catch err', err)
-        })
-    }
-  }, [prepareBridge])
+  const prepare = useCallback(
+    (setRequest) => {
+      const bridge = prepareBridge()
+      if (bridge) {
+        console.debug('attempt cook')
+        bridge
+          .cook(1000000)
+          .then((request) => {
+            if (request) {
+              setRequest(request)
+            }
+          })
+          .catch((err) => {
+            console.error('catch err', err)
+          })
+      }
+    },
+    [prepareBridge]
+  )
 
-  // Prepare tx
-  useEffect(() => {
-    prepare()
-  }, [srcChainId, srcToken, dstToken, dstChainId, srcTypedAmount, prepare])
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    chainId: srcChainId,
+    prepare,
+    onSettled,
+    onSuccess: () => {
+      setSignature(undefined)
+    },
+  })
 
   useEffect(() => {
     const getFee = async () => {
@@ -128,7 +152,16 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
 
   return (
     <BridgeExecuteContext.Provider
-      value={{ id: nanoId, txHash, isWritePending, gasFee: feeRef?.current, execute: sendTransaction, setSignature }}
+      value={{
+        id: nanoId,
+        sourceTx,
+        setSourceTx,
+        isWritePending,
+        gasFee: feeRef?.current,
+        execute: sendTransaction,
+        setSignature,
+        timestamp,
+      }}
     >
       {children}
     </BridgeExecuteContext.Provider>
