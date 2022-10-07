@@ -1,8 +1,9 @@
-import { Tokens } from 'components/tokens/Tokens'
-import { getTokens } from 'lib/tokens'
+import { TokenTable } from 'components/tokens/TokenTable'
+import { getTokens, Token } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { FC } from 'react'
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps<{ data: Token[] }> = async ({ req, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
 
   const data = await getTokens()
@@ -14,11 +15,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
 }
 
-function TokensPage({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+const TokensPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ data }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="max-w-6xl">
-        <Tokens tokens={data} />
+        <TokenTable tokens={data} />
       </div>
     </div>
   )

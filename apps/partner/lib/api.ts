@@ -20,10 +20,7 @@ export const getExchangeTokenKPI = async (id: string, chainId: ChainId): Promise
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK({ host: subgraphHost, name: subgraphName })
 
-  const {
-    Exchange_token: token,
-    Exchange_bundles: [bundle],
-  } = await sdk.ExchangeToken({ id: id.toLowerCase() })
+  const { Exchange_token: token, Exchange_bundle: bundle } = await sdk.ExchangeToken({ id: id.toLowerCase() })
 
   if (!token || !bundle) return
 
@@ -43,18 +40,18 @@ export const getTridentTokenKPI = async (id: string, chainId: ChainId): Promise<
   const { getBuiltGraphSDK } = await import('../.graphclient')
   const sdk = getBuiltGraphSDK({ host: subgraphHost, name: subgraphName })
 
-  const { Trident_token: token, native } = await sdk.TridentToken({
+  const { Trident_token: token, Trident_bundle: bundle } = await sdk.TridentToken({
     id: id.toLowerCase(),
     native: Native.onChain(chainId).wrapped.address.toLowerCase(),
   })
 
-  if (!token || !native) return
+  if (!token || !bundle) return
 
   return {
-    priceUSD: token.price.derivedNative * native.derivedUSD,
-    liquidity: Number(token.kpi.liquidity),
-    liquidityUSD: token.kpi.liquidity * token.price.derivedNative * native.derivedUSD,
-    volumeUSD: Number(token.kpi.volumeUSD),
+    priceUSD: token.price.derivedNative * bundle.nativePrice,
+    liquidity: Number(token.liquidity),
+    liquidityUSD: token.liquidity * token.price.derivedNative * bundle.nativePrice,
+    volumeUSD: Number(token.volumeUSD),
   }
 }
 

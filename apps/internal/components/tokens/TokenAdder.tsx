@@ -1,8 +1,9 @@
+import { XIcon } from '@heroicons/react/solid'
 import { Token as TokenEntity } from '@sushiswap/currency'
-import { Currency, Menu, Typography } from '@sushiswap/ui'
+import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
 import { Token, TokenLogo } from 'lib'
 import Image from 'next/image'
-import { FC, useMemo, useState } from 'react'
+import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 interface TokenAdder {
@@ -12,6 +13,7 @@ interface TokenAdder {
 
 export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
   const [selectedLogoURI, setSelectedLogoURI] = useState<string>()
+  const [addState, setAddState] = useState<'ready' | 'submitting' | 'error'>('ready')
 
   const { data: tokenLogos } = useSWR<TokenLogo[]>(!hasIcon ? 'tokenLogos' : null, () =>
     fetch('/internal/api/tokens/tokenLogos').then((data) => data.json())
@@ -28,6 +30,57 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
     [token.chainId, token.decimals, token.id, token.symbol]
   )
 
+  const submitToken = useCallback(
+    async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      event.stopPropagation()
+      setAddState('submitting')
+      try {
+        const logo = await fetch(selectedLogoURI)
+          .then((response) => response.blob())
+          .then((blob) => {
+            return new Promise((resolve) => {
+              const reader = new FileReader()
+              reader.onload = function () {
+                resolve(this.result)
+              } // <--- `this.result` contains a base64 data URI
+              reader.readAsDataURL(blob)
+            })
+          })
+
+        const result = await fetch('http://192.168.1.9:3012/partner/api/submitToken', {
+          headers: {
+            Accept: '*/*',
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify({
+            tokenAddress: token.id.split(':')[1],
+            tokenData: {
+              name: token.name,
+              symbol: token.symbol,
+              decimals: token.decimals,
+            },
+            tokenIcon: logo,
+            chainId: token.chainId,
+            listType: 'default-token-list',
+          }),
+        })
+
+        const { listPr } = await result.json()
+        if (listPr) {
+          setAddState('ready')
+          window.open(listPr, '_blank')
+        } else {
+          throw new Error('An unexpected error has occured.')
+        }
+      } catch (e) {
+        console.log(e)
+        setAddState('error')
+      }
+    },
+    [selectedLogoURI, token]
+  )
+
   if (hasIcon) return <Currency.Icon currency={_token} width={24} height={24} />
 
   return (
@@ -35,7 +88,17 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
       button={
         <Menu.Button variant="empty" className="px-0">
           {selectedLogoURI ? (
-            <Image src={selectedLogoURI} height={24} width={24} alt="img" className="rounded-full" />
+            <>
+              <Image src={selectedLogoURI} height={24} width={24} alt="img" className="rounded-full" />
+              <div
+                onClick={(e) => submitToken(e)}
+                className="flex items-center justify-center w-6 h-6 rounded-md bg-slate-700"
+              >
+                {addState === 'ready' && <CheckIcon className="text-white" width={24} height={24} />}
+                {addState === 'submitting' && <Loader width={24} height={24} />}
+                {addState === 'error' && <XIcon className="text-red" width={24} height={24} />}
+              </div>
+            </>
           ) : (
             <svg width={24} height={24} viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="30" height="30" rx="15" fill="url(#paint0_linear_13084_19043)" />

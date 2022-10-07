@@ -1,5 +1,6 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
+import Cors from 'cors'
 import { ethers } from 'ethers'
 import { getOctokit, getTokenKPI, Token } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -14,9 +15,28 @@ interface Body {
 
 const owner = 'sushiswap'
 
+const cors = Cors({
+  methods: ['POST', 'GET', 'HEAD'],
+})
+
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result)
+      }
+
+      return resolve(result)
+    })
+  })
+}
+
 // TODO: Clean up by extracting octokit calls
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  await runMiddleware(req, res, cors)
+
   const { tokenAddress, tokenData, tokenIcon, chainId, listType } = req.body as Body
+
   if (!tokenData?.decimals || !tokenData.name || !tokenData.symbol || !tokenIcon || !listType || !chainId) {
     res.status(500).json({ error: 'Invalid data submitted.' })
     return

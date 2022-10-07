@@ -61,5 +61,10 @@ export async function getTokenLogos(octokitKey: string): Promise<TokenLogo[]> {
 
   return octokit
     .request('GET /repos/sushiswap/list/contents/logos/token-logos/token')
-    .then(({ data }) => data.map((entry) => ({ name: entry.name.split('.jpg')[0], url: entry.url })))
+    .then(({ data }) =>
+      data.map((entry) => ({
+        name: entry.name.split('.jpg')[0],
+        url: `https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/${entry.name}`,
+      }))
+    )
 }
