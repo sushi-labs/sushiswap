@@ -3,18 +3,7 @@ import { Amount, Native } from '@sushiswap/currency'
 import { useBentoBoxTotal, useSushiXSwapContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { nanoid } from 'nanoid'
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useContext, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
@@ -41,7 +30,7 @@ const BridgeExecuteContext = createContext<BridgeExecuteContext>(undefined)
 
 export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) => {
   const { address } = useAccount()
-  const feeRef = useRef<Amount<Native>>()
+  const [fee, setFee] = useState<Amount<Native>>()
   const [, { createInlineNotification }] = useNotifications(address)
   const [sourceTx, setSourceTx] = useState<SendTransactionResult>()
   const [signature, setSignature] = useState<Signature>()
@@ -77,7 +66,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
     [amount, createInlineNotification, srcChainId, srcToken.symbol]
   )
 
-  const prepareBridge = useCallback(() => {
+  const prepareBridge = useCallback(async () => {
     if (!srcChainId || !amount || !address || !srcInputCurrencyRebase || !contract) {
       return
     }
@@ -102,12 +91,16 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
       1000000, // TODO: figure out exact extra gas required
       nanoId
     )
+
+    const [fee] = await bridge.getFee(1000000)
+    setFee(Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString()))
+
     return bridge
   }, [address, amount, contract, dstToken, nanoId, signature, srcChainId, srcInputCurrencyRebase, srcToken])
 
   const prepare = useCallback(
-    (setRequest) => {
-      const bridge = prepareBridge()
+    async (setRequest) => {
+      const bridge = await prepareBridge()
       if (bridge) {
         console.debug('attempt cook')
         bridge
@@ -134,22 +127,6 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
     },
   })
 
-  useEffect(() => {
-    const getFee = async () => {
-      try {
-        const bridge = prepareBridge()
-        if (bridge) {
-          const [fee] = await bridge.getFee(1000000)
-          feeRef.current = Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
-    void getFee()
-  }, [prepareBridge, srcChainId])
-
   return (
     <BridgeExecuteContext.Provider
       value={{
@@ -157,7 +134,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
         sourceTx,
         setSourceTx,
         isWritePending,
-        gasFee: feeRef?.current,
+        gasFee: fee,
         execute: sendTransaction,
         setSignature,
         timestamp,
