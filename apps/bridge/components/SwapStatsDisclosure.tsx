@@ -1,11 +1,9 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { InformationCircleIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Native } from '@sushiswap/currency'
 import { STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
-import { classNames, Loader, Tooltip, Typography } from '@sushiswap/ui'
+import { classNames, Loader, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
-import { Rate } from 'components'
 import React, { FC } from 'react'
 
 import { useBridgeFees, useBridgeOutput } from '../lib/hooks'
@@ -13,6 +11,7 @@ import { useBridgeExecute } from './BridgeExecuteProvider'
 import { useBridgeState } from './BridgeStateProvider'
 
 export const SwapStatsDisclosure: FC = () => {
+  const { srcChainId } = useBridgeState()
   const { price } = useBridgeOutput()
 
   return (
@@ -20,7 +19,7 @@ export const SwapStatsDisclosure: FC = () => {
       show={!!price}
       unmount={false}
       className="p-3 !pb-1 transition-[max-height] overflow-hidden"
-      enter="duration-300 ease-in-out"
+      enter="duration-300 ease-in-out delay-250"
       enterFrom="transform max-h-0"
       enterTo="transform max-h-[380px]"
       leave="transition-[max-height] duration-250 ease-in-out"
@@ -31,20 +30,16 @@ export const SwapStatsDisclosure: FC = () => {
         {({ open }) => (
           <>
             <div className="flex justify-between items-center bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-2.5 gap-2">
-              <Rate price={price}>
-                {({ content, usdPrice, toggleInvert }) => (
-                  <div
-                    className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center truncate"
-                    onClick={toggleInvert}
-                  >
-                    <Tooltip
-                      panel={<div className="grid grid-cols-2 gap-1">{}</div>}
-                      button={<InformationCircleIcon width={16} height={16} />}
-                    />{' '}
-                    {content} {usdPrice && <span className="font-medium text-slate-500">(${usdPrice})</span>}
-                  </div>
-                )}
-              </Rate>
+              <Typography variant="sm" className="text-slate-400">
+                Est. Processing Time
+              </Typography>
+              <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
+                ~
+                {Math.ceil(
+                  STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60
+                )}{' '}
+                minutes
+              </Typography>
               <Disclosure.Button className="flex items-center justify-end flex-grow cursor-pointer">
                 <ChevronDownIcon
                   width={24}

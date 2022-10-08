@@ -66,7 +66,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
     [amount, createInlineNotification, srcChainId, srcToken.symbol]
   )
 
-  const prepareBridge = useCallback(async () => {
+  const prepareBridge = useCallback(() => {
     if (!srcChainId || !amount || !address || !srcInputCurrencyRebase || !contract) {
       return
     }
@@ -92,15 +92,12 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
       nanoId
     )
 
-    const [fee] = await bridge.getFee(1000000)
-    setFee(Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString()))
-
     return bridge
   }, [address, amount, contract, dstToken, nanoId, signature, srcChainId, srcInputCurrencyRebase, srcToken])
 
   const prepare = useCallback(
     async (setRequest) => {
-      const bridge = await prepareBridge()
+      const bridge = prepareBridge()
       if (bridge) {
         console.debug('attempt cook')
         bridge
@@ -113,9 +110,16 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
           .catch((err) => {
             console.error('catch err', err)
           })
+
+        try {
+          const [fee] = await bridge.getFee(1000000)
+          setFee(Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString()))
+        } catch (e) {
+          //
+        }
       }
     },
-    [prepareBridge]
+    [prepareBridge, srcChainId]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

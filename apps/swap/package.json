@@ -20,7 +20,7 @@
     "@ethersproject/experimental": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
     "@ethersproject/solidity": "^5.7.0",
-    "@headlessui/react": "^1.6.6",
+    "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@sushiswap/chain": "workspace:*",

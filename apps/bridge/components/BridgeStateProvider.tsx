@@ -10,8 +10,8 @@ interface _BridgeStateProviderProps {
 type State = {
   srcChainId: ChainId
   dstChainId: ChainId
-  srcToken: Currency
-  dstToken: Currency
+  srcToken: Currency | null
+  dstToken: Currency | null
   srcTypedAmount: string
   dstTypedAmount: string
   amount: Amount<Currency> | undefined
@@ -40,9 +40,9 @@ type Actions =
 const reducer = (state: State, action: Actions): State => {
   switch (action.type) {
     case 'setSrcChainId':
-      return { ...state, srcChainId: action.chainId }
+      return { ...state, srcChainId: action.chainId, srcToken: null, srcTypedAmount: '', amount: undefined }
     case 'setDstChainId':
-      return { ...state, dstChainId: action.chainId }
+      return { ...state, dstChainId: action.chainId, dstToken: null, dstTypedAmount: '' }
     case 'setSrcToken':
       return { ...state, srcToken: action.currency }
     case 'setDstToken':

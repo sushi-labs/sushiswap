@@ -6,7 +6,7 @@ import STARGATE_POOL_ABI from 'abis/stargate-pool.json'
 import { useMemo } from 'react'
 import { useContractRead, useContractReads } from 'wagmi'
 
-import { useBridgeState } from '../../components/BridgeStateProvider'
+import { useBridgeState } from '../../components'
 
 export const useBridgeFees = () => {
   const { srcChainId, dstChainId, srcToken, dstToken, amount } = useBridgeState()

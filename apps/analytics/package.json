@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@ethersproject/address": "^5.7.0",
-    "@headlessui/react": "^1.6.6",
+    "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",

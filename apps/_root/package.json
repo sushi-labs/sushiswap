@@ -10,7 +10,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
   },
   "dependencies": {
-    "@headlessui/react": "^1.6.0",
+    "@headlessui/react": "^1.7.3",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core-sdk": "^1.0.0-canary.65",
     "@sushiswap/format": "workspace:*",
