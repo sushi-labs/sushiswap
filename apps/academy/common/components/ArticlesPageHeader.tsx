@@ -2,28 +2,23 @@ import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { classNames, Select, useBreakpoint } from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
-import { FC, useLayoutEffect, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 
 import { defaultSidePadding } from '../helpers'
 import { GradientWrapper } from './'
+import { DifficultyEntity } from '.mesh'
 
 interface ArticlesPagesHeader {
   title: string
-  difficulties: any[] // TODO: change
-  selectedDifficulty: any
-  handleSelectDifficulty: (d: any) => void
+  difficulties: DifficultyEntity[]
+  selectedDifficulty: DifficultyEntity
+  onSelect: Dispatch<SetStateAction<DifficultyEntity>>
 }
 
 const baseBg = [113, 285]
 const smBg = [226, 570]
 
-export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
-  title,
-  // difficulties,
-  selectedDifficulty,
-  handleSelectDifficulty,
-}) => {
-  const difficulties = ['Beginner', 'Advanced', 'Technical']
+export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficulties, selectedDifficulty, onSelect }) => {
   const { isSm } = useBreakpoint('sm')
   const [[bgHeight, bgWidth], setBgDimensions] = useState(baseBg)
   useLayoutEffect(() => {
@@ -48,26 +43,29 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({
 
         <Select
           className="hidden w-1/2 sm:w-auto sm:flex"
-          value={difficulties}
-          onChange={handleSelectDifficulty}
+          value={selectedDifficulty}
+          onChange={onSelect}
           button={
             <GradientWrapper className="h-[54px] w-60 rounded-lg">
               <Listbox.Button
                 type="button"
                 className="flex items-center justify-between w-full h-full gap-2 px-6 rounded-lg bg-slate-800 text-slate-50"
               >
-                <span className="text-lg min-w-max">{selectedDifficulty ?? 'Select Difficulty'}</span>
+                <span className="text-lg min-w-max">{selectedDifficulty?.attributes.label ?? 'Select Difficulty'}</span>
                 <ChevronDownIcon width={12} height={12} aria-hidden="true" />
               </Listbox.Button>
             </GradientWrapper>
           }
         >
           <Select.Options className="!bg-slate-700 py-4 px-2 flex flex-col">
-            {difficulties?.map((d, i) => (
-              <Select.Option key={i} value={d} className="border-0 !cursor-pointer grid group">
-                {/* {d.attributes.name} */}
-                {d}
-              </Select.Option>
+            {difficulties?.map((difficulty, i) => (
+              <Listbox.Option
+                key={i}
+                value={difficulty}
+                className="flex items-center h-10 px-4 text-base rounded-lg cursor-pointer hover:bg-blue-500 transform-all"
+              >
+                {difficulty.attributes?.name}
+              </Listbox.Option>
             ))}
           </Select.Options>
         </Select>

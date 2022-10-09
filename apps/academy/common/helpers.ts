@@ -1,5 +1,20 @@
+import { AdvancedUserIcon, BeginnerUserIcon, TechnicalUserIcon } from './icons'
+
 export const defaultSidePadding = 'px-6 sm:px-4'
-export const difficultyColors = ['#7CFF6B', '#EEB531', '#F338C3']
+export const difficultyElements = {
+  beginner: {
+    color: '#7CFF6B',
+    Icon: BeginnerUserIcon,
+  },
+  advanced: {
+    color: '#EEB531',
+    Icon: AdvancedUserIcon,
+  },
+  technical: {
+    color: '#F338C3',
+    Icon: TechnicalUserIcon,
+  },
+}
 export const appHeaderHeight = 54
 export const sortingOptions = [
   { key: 'publishedAt:desc', name: 'Date (desc)' },

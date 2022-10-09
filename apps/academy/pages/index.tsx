@@ -2,11 +2,8 @@ import { Disclosure, Listbox, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Container, Select, Typography } from '@sushiswap/ui'
-import { AdditionalArticles } from 'common/components/AdditionalArticles'
-import { DifficultyCard } from 'common/components/DifficultyCard'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
-import { defaultSidePadding, difficultyColors } from 'common/helpers'
-import { BeginnerUserIcon } from 'common/icons'
+import { defaultSidePadding } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -22,9 +19,11 @@ import {
   TopicEntityResponseCollection,
 } from '../.mesh'
 import {
+  AdditionalArticles,
   ArticleList,
   Card,
   Difficulties,
+  DifficultyCard,
   GradientWrapper,
   Hero,
   HomeBackground,
@@ -77,7 +76,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
       return (
         await getArticles({
-          pagination: { limit: 5 },
+          pagination: { limit: 6 },
           filters: {
             ...(searchTopics.length > 0 && topicsFilter),
             ...(difficultySlug && difficultyFilter),
@@ -127,15 +126,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <SearchInput handleSearch={handleSearch} ref={heroRef} />
 
         <div className="flex min-w-full gap-5 px-6 py-6 mt-8 overflow-x-auto sm:mt-24 sm:gap-6 sm:px-4">
-          {difficulties.map(({ attributes: { name, longDescription, label } }, i) => (
-            <DifficultyCard
-              key={i}
-              name={name}
-              icon={<BeginnerUserIcon />}
-              chipLabel={label}
-              title={longDescription}
-              color={difficultyColors[i]}
-            />
+          {difficulties.map((difficulty, i) => (
+            <DifficultyCard key={i} difficulty={difficulty} />
           ))}
         </div>
 
@@ -197,12 +189,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                         <Typography variant="xs" weight={500}>
                           {selectedDifficulty?.attributes?.name ?? 'Select Difficulty'}
                         </Typography>
-                        <ChevronDownIcon className="w-3 h-3" aria-hidden="true" />
+                        <ChevronDownIcon width={12} height={12} aria-hidden="true" />
                       </Listbox.Button>
                     </GradientWrapper>
                   }
                 >
-                  <Select.Options className={classNames('!bg-slate-700 p-2')}>
+                  <Select.Options className="!bg-slate-700 p-2">
                     {difficulties.map((difficulty, i) => (
                       <Listbox.Option
                         key={i}
@@ -253,7 +245,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 pathname: '/articles',
                 query: {
                   ...(selectedDifficulty && { difficulty: selectedDifficulty.attributes?.slug }),
-                  ...(selectedTopics && { category: selectedTopics }),
+                  ...(selectedTopics && { topics: selectedTopics.join(',') }),
                 },
               }}
             >

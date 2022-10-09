@@ -5,10 +5,15 @@ import { classNames, Container, Select, Typography } from '@sushiswap/ui'
 import { defaultSidePadding, sortingOptions } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { ArticleEntity, CategoryEntityResponseCollection } from '../../.mesh'
+import {
+  ArticleEntity,
+  DifficultyEntity,
+  DifficultyEntityResponseCollection,
+  TopicEntityResponseCollection,
+} from '../../.mesh'
 import {
   ArticleList,
   ArticlesPageHeader,
@@ -17,19 +22,17 @@ import {
   Pagination,
   SearchInput,
 } from '../../common/components'
-import { getArticles, getCategories, getDifficulties } from '../../lib/api'
+import { getArticles, getDifficulties, getTopics } from '../../lib/api'
 
 export async function getStaticProps() {
-  // const articles = await getArticles({ pagination: { limit: 6 } })
-  const categories = await getCategories()
   const difficulties = await getDifficulties()
+  const topics = await getTopics()
 
   return {
     props: {
       fallback: {
-        // ['/articles']: articles?.articles,
-        ['/categories']: categories?.categories,
-        ['/difficulties']: difficulties?.categories,
+        ['/difficulties']: difficulties?.difficulties,
+        ['/topics']: topics?.topics,
       },
     },
     revalidate: 1,
@@ -47,35 +50,50 @@ const Articles: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fall
 const _Articles: FC = () => {
   const [query, setQuery] = useState<string>()
   const [page, setPage] = useState<number>(1)
+  const [sortBy, setSortBy] = useState(sortingOptions[0])
   const debouncedQuery = useDebounce(query, 200)
+  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyEntity>()
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([])
   const router = useRouter()
   const queryParams = router.query as {
     difficulty: string | undefined
-    category: string | undefined
+    topics: string | undefined
     search: string | undefined
   }
-  const { difficulty, category, search } = queryParams
+  const { difficulty: difficultyQuery, topics: topicsQuery, search: searchQuery } = queryParams
 
-  const [sortBy, setSortBy] = useState(sortingOptions[0])
-  const [selectedCategory, setSelectedCategory] = useState<string>(category)
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>(difficulty)
+  const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
+  const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
+
+  useEffect(() => {
+    if (router.isReady) {
+      if (difficultyQuery) {
+        const selected = difficultiesData?.data.find(({ attributes }) => attributes?.slug === difficultyQuery)
+        selected && setSelectedDifficulty(selected)
+      }
+      if (topicsQuery) {
+        const searchTopics = topicsQuery.split(',')
+        setSelectedTopics(searchTopics)
+      }
+      if (searchQuery) setQuery(searchQuery)
+    }
+  }, [difficultiesData?.data, difficultyQuery, router.isReady, searchQuery, topicsQuery])
 
   const { data: articlesData, isValidating } = useSWR(
-    [`/articles`, selectedCategory, selectedDifficulty, debouncedQuery, page, sortBy.key],
-    async (_url, categoryFilter, difficultyFilter, debouncedQuery, page, sortKey) => {
+    [`/articles`, selectedTopics, selectedDifficulty, debouncedQuery, page, sortBy.key],
+    async (_url, searchTopics, searchDifficulty, searchInput, searchPage, sortKey) => {
+      const difficultySlug = searchDifficulty?.attributes?.slug ?? difficultyQuery
+      const difficultyFilter = { difficulty: { slug: { eq: difficultySlug } } }
+      const topicsFilter = { topics: { slug: { in: searchTopics } } }
+
       return (
         await getArticles({
           filters: {
-            ...((debouncedQuery || search) && { title: { containsi: debouncedQuery ?? search } }),
-            ...((categoryFilter || difficultyFilter) && {
-              categories: {
-                // TODO: this doesn't work, but leave for now until defficulties are it's own collection type in strapi
-                ...(categoryFilter && { id: { eq: categoryFilter } }),
-                ...(difficultyFilter && { and: [{ id: { eq: difficultyFilter } }] }),
-              },
-            }),
+            ...((searchInput || searchQuery) && { title: { containsi: searchInput ?? searchQuery } }),
+            ...(searchTopics.length > 0 && topicsFilter),
+            ...(difficultySlug && difficultyFilter),
           },
-          pagination: { page, pageSize: 10 },
+          pagination: { page: searchPage, pageSize: 10 },
           sort: [sortKey],
         })
       )?.articles
@@ -83,33 +101,28 @@ const _Articles: FC = () => {
     { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: true }
   )
 
-  const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
-  const { data: difficultiesData } = useSWR<CategoryEntityResponseCollection>('/difficulties')
-
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
-  const categories = categoriesData?.data
-  const difficulties = difficultiesData?.data
-  const articleList = articles ?? undefined
+  const difficulties = difficultiesData?.data || []
+  const topics = topicsData?.data || []
+  const articlesMeta = articlesData?.meta
 
-  const articlesMeta = articlesData?.meta ? articlesData.meta : undefined
-
-  const handleSelectDifficulty = (id: string) =>
-    setSelectedDifficulty((currentDifficulty) => (currentDifficulty === id ? undefined : id))
-  const handleSelectCategory = (id: string) =>
-    setSelectedCategory((currentCategory) => (currentCategory === id ? undefined : id))
-
-  // TODO: strapi
-  const products = ['Bentobox', 'Furo', 'Kashi', 'etc']
+  const handleSelectDifficulty = (difficulty: DifficultyEntity) => {
+    setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
+  }
+  const handleSelectTopic = (topic: string) => {
+    setSelectedTopics((prev) => (prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]))
+  }
 
   const articlesAmount = articlesMeta?.pagination?.total ?? 0
   const headerTitle = useMemo(() => {
-    let title = 'Latest releases'
-    if (difficulty === 'beginner') title = 'Tutorials & Product Explainers'
-    if (difficulty === 'advanced') title = 'Strategies & Product Features'
-    if (search) title = 'Search results'
-    return title
-  }, [difficulty, search])
+    if (router.isReady) {
+      let title = 'Latest releases'
+      if (selectedDifficulty) title = selectedDifficulty.attributes.shortDescription
+      if (searchQuery) title = 'Search results'
+      return title
+    }
+  }, [router.isReady, searchQuery, selectedDifficulty])
 
   return (
     <>
@@ -118,30 +131,34 @@ const _Articles: FC = () => {
         title={headerTitle}
         difficulties={difficulties}
         selectedDifficulty={selectedDifficulty}
-        handleSelectDifficulty={handleSelectDifficulty}
+        onSelect={handleSelectDifficulty}
       />
       <Container maxWidth="6xl" className={classNames('mx-auto pb-10', defaultSidePadding)}>
         <div className="grid grid-cols-2 w-full gap-3 sm:hidden mt-[22px]">
           <Select
+            value={selectedDifficulty}
+            onChange={setSelectedDifficulty}
             button={
               <GradientWrapper className="w-full rounded-lg h-9">
                 <Listbox.Button
                   type="button"
                   className="flex items-center justify-between w-full h-full gap-1 px-4 text-xs font-medium rounded-lg bg-slate-800 text-slate-50"
                 >
-                  {selectedDifficulty
-                    ? difficulties?.find(({ id }) => id === selectedDifficulty)?.attributes?.name ?? 'Select Difficulty'
-                    : 'Select Difficulty'}
+                  {selectedDifficulty?.attributes?.name ?? 'Select Difficulty'}
                   <ChevronDownIcon width={12} height={12} aria-hidden="true" />
                 </Listbox.Button>
               </GradientWrapper>
             }
           >
-            <Select.Options className="!bg-slate-700 p-6 gap-6 flex flex-col">
-              {difficulties?.map(({ id, attributes }, i) => (
-                <Typography weight={500} variant="sm" key={i} onClick={() => handleSelectDifficulty(id)}>
-                  {attributes.name}
-                </Typography>
+            <Select.Options className="!bg-slate-700 p-2">
+              {difficulties.map((difficulty, i) => (
+                <Listbox.Option
+                  key={i}
+                  value={difficulty}
+                  className="flex items-center px-2 text-xs rounded-lg cursor-pointer h-9 hover:bg-blue-500 transform-all"
+                >
+                  {difficulty.attributes?.name}
+                </Listbox.Option>
               ))}
             </Select.Options>
           </Select>
@@ -189,21 +206,24 @@ const _Articles: FC = () => {
                 value={query}
               />
             </div>
-            <div className="flex flex-col gap-6 pl-3 mt-12">
-              {products.map((product) => (
+            <div className="flex flex-col gap-2 pl-3 mt-12">
+              {topics.map((topic, i) => (
                 <Typography
-                  className="hover:underline text-slate-300 w-fit"
-                  key={product}
-                  onClick={() => setQuery(product)}
+                  key={i}
+                  className={classNames(
+                    'p-2 rounded-lg hover:bg-blue-500 text-slate-300',
+                    selectedTopics.includes(topic.attributes?.slug) && 'bg-blue-500'
+                  )}
+                  onClick={() => handleSelectTopic(topic.attributes?.slug)}
                 >
-                  {product}
+                  {topic.attributes?.name}
                 </Typography>
               ))}
             </div>
           </aside>
 
           <div className="w-full">
-            {articleList && !articleList.length ? (
+            {articles && !articles.length ? (
               <Typography variant="lg">No articles found</Typography>
             ) : (
               <>
@@ -239,11 +259,9 @@ const _Articles: FC = () => {
                 </div>
                 <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))] sm:mt-12 mt-[22px]">
                   <ArticleList
-                    articles={articleList as unknown as ArticleEntity[]}
-                    loading={loading || !articleList}
-                    render={(article, i) => (
-                      <Card article={article} key={`article__left__${article?.attributes?.slug}`} />
-                    )}
+                    articles={articles as unknown as ArticleEntity[]}
+                    loading={loading || !articles}
+                    render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
                   />
                 </div>
               </>
