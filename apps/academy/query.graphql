@@ -345,25 +345,26 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
   }
 }
 
-query getCategories {
-  categories(filters: { slug: { not: { in: ["beginner", "technical", "advanced"] } } }) {
+query GetDifficulties {
+  difficulties(sort: ["id"]) {
     data {
       id
       attributes {
-        description
         name
+        shortDescription
+        longDescription
         slug
+        label
       }
     }
   }
 }
 
-query getLevels {
-  categories(filters: { slug: { in: ["beginner", "technical", "advanced"] } }) {
+query GetTopics {
+  topics {
     data {
       id
       attributes {
-        description
         name
         slug
       }

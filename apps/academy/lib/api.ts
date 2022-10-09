@@ -1,4 +1,4 @@
-import { ArticleFiltersInput, CategoryFiltersInput, getMeshSDK, PaginationArg } from '../.mesh'
+import { ArticleFiltersInput, getMeshSDK, PaginationArg } from '../.mesh'
 
 export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
   const sdk = getMeshSDK()
@@ -8,6 +8,7 @@ export const getArticleAndMoreArticles = async (slug: string, preview: Record<st
       (await sdk.articleAndMoreArticles({
         filters: {
           slug: { eq: slug },
+          articleType: { eq: 'academy' },
         },
         filters_ne: { slug: { not: { eq: slug } } },
         publicationState: preview ? 'PREVIEW' : 'LIVE',
@@ -39,15 +40,19 @@ export const getArticles = async (variables?: {
   sort?: string[]
 }) => {
   const sdk = getMeshSDK()
-  return await sdk.getArticles({ ...variables, sort: variables.sort ?? ['publishedAt:desc'] })
+  return await sdk.getArticles({
+    ...variables,
+    filters: { ...variables.filters, articleType: { eq: 'academy' } },
+    sort: variables.sort ?? ['publishedAt:desc'],
+  })
 }
 
-export const getCategories = async () => {
+export const getTopics = async () => {
   const sdk = getMeshSDK()
-  return await sdk.getCategories()
+  return await sdk.GetTopics()
 }
 
 export const getDifficulties = async () => {
   const sdk = getMeshSDK()
-  return await sdk.getLevels()
+  return await sdk.GetDifficulties()
 }

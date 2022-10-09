@@ -1,42 +1,50 @@
 import { Disclosure, Listbox, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
-import { CircleIcon, classNames, Container, Select, Typography } from '@sushiswap/ui'
+import { classNames, Container, Select, Typography } from '@sushiswap/ui'
 import { AdditionalArticles } from 'common/components/AdditionalArticles'
 import { DifficultyCard } from 'common/components/DifficultyCard'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
 import { defaultSidePadding, difficultyColors } from 'common/helpers'
-import { AdvancedUserIcon, BeginnerUserIcon, TechnicalUserIcon } from 'common/icons'
+import { BeginnerUserIcon } from 'common/icons'
 import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, Fragment, useRef, useState } from 'react'
+import { FC, Fragment, useMemo, useRef, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
+import {
+  ArticleEntity,
+  ArticleEntityResponseCollection,
+  DifficultyEntity,
+  DifficultyEntityResponseCollection,
+  Global,
+  TopicEntityResponseCollection,
+} from '../.mesh'
 import {
   ArticleList,
   Card,
-  Categories,
+  Difficulties,
   GradientWrapper,
   Hero,
   HomeBackground,
   SearchInput,
+  Topics,
   ViewAllButton,
 } from '../common/components'
-import { getArticles, getCategories, getDifficulties } from '../lib/api'
+import { getArticles, getDifficulties, getTopics } from '../lib/api'
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 6 } })
-  const categories = await getCategories()
   const difficulties = await getDifficulties()
+  const topics = await getTopics()
 
   return {
     props: {
       fallback: {
         ['/articles']: articles?.articles,
-        ['/categories']: categories?.categories,
-        ['/difficulties']: difficulties?.categories,
+        ['/difficulties']: difficulties?.difficulties,
+        ['/topics']: topics?.topics,
       },
     },
     revalidate: 1,
@@ -52,28 +60,27 @@ const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Globa
 }
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>()
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>()
+  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyEntity>()
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([])
   const heroRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
-  const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
-  const { data: difficultiesData } = useSWR<CategoryEntityResponseCollection>('/difficulties')
+  const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
+  const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selectedCategory, selectedDifficulty],
-    async (_url, categoryFilter, difficultyFilter) => {
+    [`/articles`, selectedTopics, selectedDifficulty],
+    async (_url, searchTopics, searchDifficulty) => {
+      const difficultySlug = searchDifficulty?.attributes?.slug
+      const difficultyFilter = { difficulty: { slug: { eq: difficultySlug } } }
+      const topicsFilter = { topics: { slug: { in: searchTopics } } }
+
       return (
         await getArticles({
           pagination: { limit: 5 },
           filters: {
-            ...((categoryFilter || difficultyFilter) && {
-              categories: {
-                id: {
-                  in: [categoryFilter, difficultyFilter].filter(Boolean),
-                },
-              },
-            }),
+            ...(searchTopics.length > 0 && topicsFilter),
+            ...(difficultySlug && difficultyFilter),
           },
         })
       )?.articles
@@ -83,30 +90,32 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
-  const categories = categoriesData?.data || []
-  // const difficulties = difficultiesData?.data || [] // TODO: update
-  const difficulties = [
-    { id: '6', attributes: { name: 'Beginner' } },
-    { id: '7', attributes: { name: 'Advanced' } },
-    { id: '8', attributes: { name: 'Technical' } },
-  ]
-  const articleList =
-    (selectedCategory || selectedDifficulty) && filterData?.data ? filterData?.data : articles ? articles : undefined
+  const difficulties = difficultiesData?.data || []
+  const topics = topicsData?.data || []
+
+  const articleList = useMemo(() => {
+    if (filterData?.data && (selectedTopics.length > 0 || selectedDifficulty)) return filterData.data
+    return articles
+  }, [articles, filterData?.data, selectedDifficulty, selectedTopics.length])
   const latestReleases = articles?.slice(0, 3)
-  const [beginnerColor, advancedColor, technicalColor] = difficultyColors
+
   /**
    * const initialArticleList = special tag
    */
 
-  const handleSelectDifficulty = (id: string) => setSelectedDifficulty((current) => (current === id ? undefined : id))
-  const handleSelectCategory = (id: string) =>
-    setSelectedCategory((currentCategory) => (currentCategory === id ? undefined : id))
+  const handleSelectDifficulty = (difficulty: DifficultyEntity) => {
+    setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
+  }
+  const handleSelectTopic = (topic: string) => {
+    setSelectedTopics((prev) => (prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]))
+  }
   const handleSearch = (value: string) => {
     router.push({
       pathname: '/articles',
       query: { search: value },
     })
   }
+
   return (
     <>
       <AcademySeo seo={seo} />
@@ -118,35 +127,22 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <SearchInput handleSearch={handleSearch} ref={heroRef} />
 
         <div className="flex min-w-full gap-5 px-6 py-6 mt-8 overflow-x-auto sm:mt-24 sm:gap-6 sm:px-4">
-          <DifficultyCard
-            name="Beginner"
-            icon={<BeginnerUserIcon />}
-            chipLabel="For Beginners"
-            title="Getting started with Sushi: Tutorials & Product Explainers"
-            color={beginnerColor}
-          />
-          <DifficultyCard
-            name="Advanced"
-            icon={<AdvancedUserIcon />}
-            chipLabel="For Advanced users"
-            title="Deepdive into Sushi: Strategies & Product Features"
-            color={advancedColor}
-          />
-          <DifficultyCard
-            name="Builders"
-            icon={<TechnicalUserIcon />}
-            chipLabel="For Builders"
-            title="Building on Sushi: Technical Documentation"
-            color={technicalColor}
-            href="https://dev.sushi.com/"
-          />
+          {difficulties.map(({ attributes: { name, longDescription, label } }, i) => (
+            <DifficultyCard
+              key={i}
+              name={name}
+              icon={<BeginnerUserIcon />}
+              chipLabel={label}
+              title={longDescription}
+              color={difficultyColors[i]}
+            />
+          ))}
         </div>
 
         <div className={classNames('z-[1] flex flex-col mt-[46px] sm:mt-[124px]', defaultSidePadding)}>
           <Disclosure>
             <div className="flex justify-between">
               <span className="text-xl font-bold sm:text-2xl">Choose Topic</span>
-              {/** TODO: implement */}
 
               <Disclosure.Button as={Fragment}>
                 <ViewAllButton isSmall />
@@ -163,6 +159,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             >
               <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9">
                 <Select
+                  value={topics}
+                  onChange={handleSelectTopic}
                   button={
                     <Listbox.Button
                       type="button"
@@ -175,15 +173,21 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                     </Listbox.Button>
                   }
                 >
-                  <Select.Options className={classNames('!bg-slate-700 p-6 gap-6 grid')}>
-                    {['topic1', 'topic2', 'topic3', 'topic4'].map((option, i) => (
-                      <Typography weight={500} variant="sm" key={i}>
-                        {option}
-                      </Typography>
+                  <Select.Options className="!bg-slate-700 p-2">
+                    {topics.map((topic, i) => (
+                      <Listbox.Option
+                        key={i}
+                        value={topic.attributes?.slug}
+                        className="flex items-center px-2 text-xs rounded-lg cursor-pointer h-9 hover:bg-blue-500 transform-all"
+                      >
+                        {topic.attributes?.name}
+                      </Listbox.Option>
                     ))}
                   </Select.Options>
                 </Select>
                 <Select
+                  value={selectedDifficulty}
+                  onChange={setSelectedDifficulty}
                   button={
                     <GradientWrapper className="w-full rounded-lg h-9">
                       <Listbox.Button
@@ -191,18 +195,22 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                         className="flex items-center justify-between w-full h-full px-4 rounded-lg bg-slate-800 text-slate-50"
                       >
                         <Typography variant="xs" weight={500}>
-                          Select Difficulty
+                          {selectedDifficulty?.attributes?.name ?? 'Select Difficulty'}
                         </Typography>
                         <ChevronDownIcon className="w-3 h-3" aria-hidden="true" />
                       </Listbox.Button>
                     </GradientWrapper>
                   }
                 >
-                  <Select.Options className={classNames('!bg-slate-700 p-6 gap-6 grid')}>
-                    {['level1', 'level2', 'level3'].map((option, i) => (
-                      <Typography weight={500} variant="sm" key={i}>
-                        {option}
-                      </Typography>
+                  <Select.Options className={classNames('!bg-slate-700 p-2')}>
+                    {difficulties.map((difficulty, i) => (
+                      <Listbox.Option
+                        key={i}
+                        value={difficulty}
+                        className="flex items-center px-2 text-xs rounded-lg cursor-pointer h-9 hover:bg-blue-500 transform-all"
+                      >
+                        {difficulty.attributes?.name}
+                      </Listbox.Option>
                     ))}
                   </Select.Options>
                 </Select>
@@ -211,7 +219,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           </Disclosure>
 
           <div className="flex flex-wrap gap-3 sm:gap-4 mt-9 sm:mt-8">
-            <Categories selected={selectedCategory} onSelect={handleSelectCategory} categories={categories || []} />
+            <Topics selected={selectedTopics} onSelect={handleSelectTopic} topics={topics || []} />
           </div>
 
           <div className="items-center hidden gap-8 mt-10 sm:flex">
@@ -219,23 +227,11 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               Difficulty:
             </Typography>
             <div className="flex flex-wrap gap-6">
-              {difficulties.map(
-                // TODO: extract to component
-                ({ id, attributes }, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handleSelectDifficulty(id)}
-                    className="text-sm px-4 font-semibold h-[38px] rounded-lg flex items-center gap-2.5 border"
-                    style={{
-                      borderColor: selectedDifficulty === id ? difficultyColors[i] : 'transparent',
-                      background: `${difficultyColors[i]}33`,
-                    }}
-                  >
-                    <CircleIcon fill={difficultyColors[i]} stroke={difficultyColors[i]} width={8} height={8} />
-                    {attributes.name}
-                  </button>
-                )
-              )}
+              <Difficulties
+                selected={selectedDifficulty}
+                onSelect={handleSelectDifficulty}
+                difficulties={difficulties}
+              />
             </div>
           </div>
         </div>
@@ -256,8 +252,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               href={{
                 pathname: '/articles',
                 query: {
-                  ...(selectedDifficulty && { difficulty: selectedDifficulty }),
-                  ...(selectedCategory && { category: selectedCategory }),
+                  ...(selectedDifficulty && { difficulty: selectedDifficulty.attributes?.slug }),
+                  ...(selectedTopics && { category: selectedTopics }),
                 },
               }}
             >

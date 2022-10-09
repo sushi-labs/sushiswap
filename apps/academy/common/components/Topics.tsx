@@ -1,32 +1,33 @@
 import { Button, classNames } from '@sushiswap/ui'
 import { Dispatch, FC, SetStateAction } from 'react'
 
-import { CategoryEntity } from '../../.mesh'
+import { TopicEntity } from '../../.mesh'
 
-interface Categories {
-  selected: string
+interface Topics {
+  selected: string[]
   onSelect: Dispatch<SetStateAction<string>>
-  categories: CategoryEntity[]
+  topics: TopicEntity[]
 }
 
-export const Categories: FC<Categories> = ({ categories, selected, onSelect }) => {
+export const Topics: FC<Topics> = ({ topics, selected, onSelect }) => {
   return (
     <>
-      {categories.map((category) => {
-        if (!category?.id) return <></>
+      {topics.map((topic) => {
+        const slug = topic.attributes?.slug
+        if (!slug) return <></>
 
         return (
           <Button
             size="md"
-            onClick={() => onSelect(category.id)}
-            key={category.id}
+            onClick={() => onSelect(slug)}
+            key={slug}
             color="gray"
             className={classNames(
               '!px-[14px] sm:!px-4 !h-9 sm:h-10 font-medium !text-xs sm:!text-sm sm:font-normal rounded-full !bg-slate-800 hover:ring-1',
-              selected === category.id ? 'ring-1 focus:ring-1' : 'focus:ring-0 active:ring-1'
+              selected.includes(slug) ? 'ring-1 focus:ring-1' : 'focus:ring-0 active:ring-1'
             )}
           >
-            {category?.attributes?.name}
+            {topic?.attributes?.name}
           </Button>
         )
       })}
