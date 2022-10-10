@@ -133,7 +133,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           <Typography variant="xs" weight={400} className="text-slate-300 py-2 text-center">
             There are currently{' '}
             <span className="font-semibold">
-              {balance?.toSignificant(6)} {balance.currency.symbol}
+              {balance?.toSignificant(6)} {balance?.currency.symbol}
             </span>{' '}
             unlocked tokens available for withdrawal.
           </Typography>
