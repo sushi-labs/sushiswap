@@ -1,7 +1,7 @@
 {
-    "name": "SushiXSwap",
+    "name": "Sushi - XSwap",
     "description": "Easiest way to trade your tokens across 7 networks.",
-    "short_name": "SushiXSwap",
+    "short_name": "XSwap",
     "display": "standalone",
     "orientation": "portrait",
     "theme_color": "#0f172a",
