@@ -19,6 +19,7 @@ export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   // ChainId.HECO,
   // ChainId.OKEX
   ChainId.BOBA,
+  ChainId.POLYGON,
 ]
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
@@ -142,6 +143,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
+  [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {

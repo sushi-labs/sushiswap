@@ -65,7 +65,7 @@ export const client: Client = createClient({
       chains,
       options: {
         appName: 'Sushi 2.0',
-        appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo.svg',
+        appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
       },
     }),
     // @ts-ignore

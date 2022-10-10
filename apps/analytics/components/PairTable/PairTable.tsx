@@ -101,11 +101,10 @@ export const PairTable: FC = () => {
     [sorting, pagination, selectedNetworks, query, extraQuery]
   )
 
-  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/analytics/api/pools', args }, fetcher, {})
+  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/analytics/api/pools', args }, fetcher)
   const { data: poolCount } = useSWR<number>(
     `/analytics/api/pools/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
-    (url) => fetch(url).then((response) => response.json()),
-    {}
+    (url) => fetch(url).then((response) => response.json())
   )
 
   const table = useReactTable<Pair>({

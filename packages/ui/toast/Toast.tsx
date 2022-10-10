@@ -19,7 +19,24 @@ export const TOAST_OPTIONS: ToastOptions = {
 }
 
 export interface NotificationData {
-  type: 'swap' | 'mint' | 'burn' | 'approval' | 'enterBar' | 'leaveBar' | 'claimRewards'
+  type:
+    | 'swap'
+    | 'mint'
+    | 'burn'
+    | 'approval'
+    | 'enterBar'
+    | 'leaveBar'
+    | 'claimRewards'
+    | 'withdrawStream'
+    | 'cancelStream'
+    | 'transferStream'
+    | 'transferVesting'
+    | 'updateStream'
+    | 'withdrawVesting'
+    | 'createStream'
+    | 'createMultipleStream'
+    | 'createVesting'
+    | 'createMultipleVesting'
   chainId: ChainId
   summary: {
     pending: ReactNode | Array<ReactNode>

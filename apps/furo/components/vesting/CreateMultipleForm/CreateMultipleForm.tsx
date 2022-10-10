@@ -28,10 +28,11 @@ import {
 } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotals, useFuroVestingRouterContract, usePrices } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
+import { useNotifications } from 'lib/state/storage'
 import Link from 'next/link'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useAccount, useNetwork, useDeprecatedSendTransaction } from 'wagmi'
+import { useAccount, useDeprecatedSendTransaction, useNetwork } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from '../../../lib'
 import {
@@ -51,6 +52,7 @@ export const CreateMultipleForm = () => {
   const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
   const contract = useFuroVestingRouterContract(activeChain?.id)
+  const [, { createNotification }] = useNotifications(address)
   const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
   const [signature, setSignature] = useState<Signature>()
   const [errors, setErrors] = useState<string[]>([])
@@ -167,9 +169,13 @@ export const CreateMultipleForm = () => {
           },
         })
 
+        const ts = new Date().getTime()
         createToast({
+          type: 'createMultipleVesting',
           txHash: resp.hash,
-          href: Chain.from(activeChain.id).getTxUrl(resp.hash),
+          chainId: activeChain.id,
+          timestamp: ts,
+          groupTimestamp: ts,
           promise: resp.wait(),
           summary: {
             pending: (
@@ -177,8 +183,12 @@ export const CreateMultipleForm = () => {
                 Creating {data.vestings.length} stream{data.vestings.length > 0 ? 's' : ''}
               </Dots>
             ),
-            completed: `Successfully created ${data.vestings.length} stream${data.vestings.length > 0 ? 's' : ''}`,
-            failed: 'Something went wrong creating vestings',
+            completed: `Successfully created ${data.vestings.length} vesting shedule${
+              data.vestings.length > 0 ? 's' : ''
+            }`,
+            failed: `Something went wrong creating ${data.vestings.length} vesting schedule${
+              data.vestings.length > 0 ? 's' : ''
+            }`,
           },
         })
 
@@ -422,6 +432,7 @@ export const CreateMultipleForm = () => {
                   <ArrowLeftIcon width={16} height={16} /> Go Back and Edit
                 </Button>
                 <Approve
+                  onSuccess={createNotification}
                   className="!items-end"
                   components={
                     <Approve.Components>
