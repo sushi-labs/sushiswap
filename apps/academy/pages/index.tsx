@@ -125,7 +125,13 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         </div>
         <SearchInput handleSearch={handleSearch} ref={heroRef} />
 
-        <div className="flex min-w-full gap-5 px-6 py-6 mt-8 overflow-x-auto sm:mt-24 sm:gap-6 sm:px-4">
+        <div
+          className={classNames(
+            'overflow-x-auto pb-10 gap-5 pt-6 sm:pt-10 sm:gap-6 grid grid-cols-[repeat(3,minmax(306px,1fr))]',
+            defaultSidePadding,
+            'hide-scrollbar'
+          )}
+        >
           {difficulties.map((difficulty, i) => (
             <DifficultyCard key={i} difficulty={difficulty} />
           ))}
