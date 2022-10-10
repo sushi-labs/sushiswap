@@ -3,13 +3,13 @@ import { FC } from 'react'
 
 import { BackgroundVector } from './'
 
-export const HomeBackground = () => {
-  const Vector: FC<React.ComponentProps<'svg'>> = ({ className, ...rest }) => (
-    <div className={classNames('absolute z-[-1] hidden sm:block max-w-[100vw] overflow-hidden', className)}>
-      <BackgroundVector {...rest} />
-    </div>
-  )
+const Vector: FC<React.ComponentProps<'svg'>> = ({ className, ...rest }) => (
+  <div className={classNames('absolute z-[-1] hidden sm:block max-w-[90vw] overflow-hidden', className)}>
+    <BackgroundVector {...rest} />
+  </div>
+)
 
+export const HomeBackground = () => {
   return (
     <>
       <div className="top-0 right-0 absolute z-[-1]">

@@ -116,12 +116,12 @@ const _Articles: FC = () => {
 
   const articlesAmount = articlesMeta?.pagination?.total ?? 0
   const headerTitle = useMemo(() => {
+    let title = 'Latest releases'
     if (router.isReady) {
-      let title = 'Latest releases'
       if (selectedDifficulty) title = selectedDifficulty.attributes.shortDescription
       if (searchQuery) title = 'Search results'
-      return title
     }
+    return title
   }, [router.isReady, searchQuery, selectedDifficulty])
 
   return (

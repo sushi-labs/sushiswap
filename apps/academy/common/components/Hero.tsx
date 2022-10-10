@@ -1,6 +1,7 @@
 import { classNames } from '@sushiswap/ui'
-import { defaultSidePadding } from 'pages'
 import { FC } from 'react'
+
+import { defaultSidePadding } from '../helpers'
 
 export const Hero: FC = () => {
   return (
