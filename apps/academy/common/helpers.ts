@@ -22,3 +22,5 @@ export const sortingOptions = [
   { key: 'title:desc', name: 'Title (desc)' },
   { key: 'title:asc', name: 'Title (asc)' },
 ]
+
+export const getShareText = (title: string) => `Check out this Sushi article: ${title}`

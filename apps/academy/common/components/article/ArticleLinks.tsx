@@ -1,5 +1,6 @@
 import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
 import { Tooltip, TwitterIcon } from '@sushiswap/ui'
+import { getShareText } from 'common/helpers'
 import { FC, useState } from 'react'
 
 import { ArticleEntity } from '../../../.mesh'
@@ -9,7 +10,9 @@ interface ArticleLinks {
 }
 
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
-  const shareText = `Check out this Sushi article: ${article?.attributes.title}`
+  const shareText = getShareText(article?.attributes.title)
+  const url = `https://sushi.com/academy/articles/${article?.attributes?.slug}`
+
   const [showTooltip, setShowTooltip] = useState(false)
   const handleTooltipTimer = () => {
     setShowTooltip(true)
@@ -31,9 +34,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
         </a>
         <a
           title="Share by Email"
-          href={`mailto:?subject=${encodeURI(article?.attributes?.title || '')}&body=${shareText} ${encodeURI(
-            `https://sushi.com/academy/articles/${article?.attributes?.slug}`
-          )}`}
+          href={`mailto:?subject=${encodeURI(article?.attributes?.title || '')}&body=${shareText} ${encodeURI(url)}`}
         >
           <EnvelopeIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
         </a>
@@ -44,7 +45,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
               height={20}
               className="cursor-pointer text-blue hover:text-blue-400"
               onClick={() => {
-                navigator.clipboard.writeText(`https://sushi.com/academy/articles/${article?.attributes?.slug}`)
+                navigator.clipboard.writeText(url)
                 handleTooltipTimer()
               }}
             />

@@ -1,21 +1,26 @@
 import { ChevronLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
 import { Container, IconButton, Typography } from '@sushiswap/ui'
+import { getShareText } from 'common/helpers'
 import Link from 'next/link'
 import { FC } from 'react'
 
-export const Breadcrumb: FC = () => {
-  const openShare = () => {
-    console.log('navigator', navigator)
+import { ArticleEntity } from '.mesh'
+
+interface Breadcrumb {
+  article?: ArticleEntity
+}
+
+export const Breadcrumb: FC<Breadcrumb> = ({ article }) => {
+  const shareText = getShareText(article?.attributes.title)
+  const url = `https://sushi.com/academy/articles/${article?.attributes?.slug}`
+
+  const onShare = () => {
     if (navigator.share) {
-      navigator
-        .share({
-          title: 'WebShare API Demo',
-          url: 'https://codepen.io/ayoisaiah/pen/YbNazJ',
-        })
-        .then(() => {
-          console.log('Thanks for sharing!')
-        })
-        .catch(console.error)
+      navigator.share({
+        title: shareText,
+        text: shareText,
+        url,
+      })
     }
   }
   return (
@@ -31,7 +36,7 @@ export const Breadcrumb: FC = () => {
           </Typography>
         </a>
       </Link>
-      <IconButton className="w-5 h-5 sm:hidden" onClick={openShare}>
+      <IconButton className="w-5 h-5 sm:hidden" onClick={onShare}>
         <ShareIcon className="text-slate-400" />
       </IconButton>
     </Container>
