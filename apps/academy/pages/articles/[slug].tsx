@@ -1,12 +1,12 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { classNames, Container, Typography } from '@sushiswap/ui'
+import { classNames, Container, Typography, useBreakpoint } from '@sushiswap/ui'
 import { appHeaderHeight, defaultSidePadding } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC, useState } from 'react'
 
-import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../../.mesh'
+import { ArticleBlocksDynamicZone, ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../../.mesh'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -26,8 +26,6 @@ export async function getStaticPaths() {
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
       if (article?.attributes?.slug) acc.push(`/articles/${article?.attributes.slug}`)
-
-      console.log(acc)
       return acc
     }, []),
     fallback: true,
@@ -41,16 +39,12 @@ export async function getStaticProps({
   params: { slug: string }
   preview: Record<string, unknown> | null
 }) {
-  console.log('params', params)
-  console.log('preview', preview)
   const data = await getArticleAndMoreArticles(params.slug, preview)
 
   return {
     props: {
-      // @ts-ignore
       article: data?.articles?.data?.[0],
-      // @ts-ignore
-      latestArticles: data?.moreArticles?.data, // TODO: similar articles
+      latestArticles: data?.moreArticles?.data,
       preview: !!preview,
     },
     revalidate: 1,
@@ -65,26 +59,32 @@ interface ArticlePage {
 
 const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
   const router = useRouter()
-  const headers = article?.attributes?.blocks.map((block) => 'key' in block && block.key)?.filter(Boolean)
+  const tableOfContents = article?.attributes?.staticTableOfContents?.entries
+  const tableOfContentsFiltered = tableOfContents?.filter(({ key }) =>
+    article?.attributes?.blocks.some((block) => 'key' in block && block.key === key)
+  )
+  const { isSm } = useBreakpoint('sm')
   const [selectedHeader, setSelectedHeader] = useState('')
   if (!router.isFallback && !article?.attributes?.slug) {
     return <ErrorPage statusCode={404} />
   }
-  const scrollToHeader = (header: string) => {
-    const el = document.getElementById(header)
-    const padding = 48
-    const offset = el.getBoundingClientRect().top + window.scrollY - appHeaderHeight - padding
-    window.scrollTo({
-      top: offset,
-      behavior: 'smooth',
-    })
+  const scrollToHeader = (id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      const padding = isSm ? 24 : 180
+      const offset = el.getBoundingClientRect().top + window.scrollY - appHeaderHeight - padding
+      window.scrollTo({
+        top: offset,
+        behavior: 'smooth',
+      })
+    }
   }
 
   return (
     <>
       <ArticleSeo article={article?.attributes} />
       <PreviewBanner show={preview} />
-      <Breadcrumb />
+      <Breadcrumb article={article} />
       <Container maxWidth="3xl" className="px-4 mx-auto mt-8 sm:mt-0">
         <ArticleHeader article={article} />
         <ArticleAuthors article={article} />
@@ -101,7 +101,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
             <>
               <Disclosure.Button className="flex items-center justify-between w-full h-12 gap-1 text-slate-40 outline-0">
                 <Typography variant="sm" weight={500}>
-                  {selectedHeader || (headers && headers[0])}
+                  {selectedHeader || tableOfContentsFiltered?.[0].text}
                 </Typography>
                 <ChevronDownIcon width={12} height={12} className={classNames('transition', open && 'rotate-180')} />
               </Disclosure.Button>
@@ -113,19 +113,23 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
                 leaveFrom="transform scale-100 opacity-100"
                 leaveTo="transform scale-95 opacity-0"
               >
-                <Disclosure.Panel className="grid gap-3 pb-6">
+                <Disclosure.Panel className="grid gap-3 pb-6 mt-2">
                   <ol className="grid gap-3 list-decimal list-inside">
-                    {headers?.map((header) => (
+                    {tableOfContentsFiltered?.map(({ key, text }) => (
                       <li
-                        key={header}
-                        className={classNames(selectedHeader === header ? 'text-slate-50' : 'text-slate-400')}
+                        key={key}
+                        className={classNames(
+                          'cursor-pointer',
+                          selectedHeader === text ? 'text-slate-50' : 'text-slate-400'
+                        )}
                         onClick={() => {
                           close()
-                          setSelectedHeader(header)
+                          scrollToHeader(key)
+                          setSelectedHeader(text)
                         }}
                       >
-                        <Typography variant="sm" weight={500} as="a" href={`#${header}`}>
-                          {header}
+                        <Typography variant="sm" weight={500} as="span">
+                          {text}
                         </Typography>
                       </li>
                     ))}
@@ -146,38 +150,38 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
             <ArticleLinks article={article} />
             <hr className="border border-slate-200/5" />
             <ol className="grid gap-8 list-decimal list-inside">
-              {headers?.map((header) => (
+              {tableOfContentsFiltered?.map(({ text, key }) => (
                 <li
-                  key={header}
+                  key={key}
                   className={classNames(
                     'hover:text-slate-50 font-medium text-base cursor-pointer',
-                    selectedHeader === header ? 'text-slate-50' : 'text-slate-400'
+                    selectedHeader === key ? 'text-slate-50' : 'text-slate-400'
                   )}
                   onClick={() => {
-                    scrollToHeader(header)
-                    setSelectedHeader(header)
+                    scrollToHeader(key)
+                    setSelectedHeader(text)
                   }}
                 >
-                  {header}
+                  {text}
                 </li>
               ))}
             </ol>
           </aside>
           <article className="prose !prose-invert prose-slate">
-            {article?.attributes?.blocks?.map((block, i) => {
-              // @ts-ignore
-              if (block?.__typename === 'ComponentSharedRichText') {
-                return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
-              }
+            {article?.attributes?.blocks?.map((b, i) => {
+              if (b && '__typename' in b) {
+                const block = b as ArticleBlocksDynamicZone & {
+                  __typename: 'ComponentSharedDivider' | 'ComponentSharedMedia' | 'ComponentSharedRichText'
+                }
 
-              // @ts-ignore
-              if (block?.__typename === 'ComponentSharedMedia') {
-                return <MediaBlock block={block as ComponentSharedMedia} key={i} />
-              }
-
-              // @ts-ignore
-              if (block?.__typename === 'ComponentSharedDivider') {
-                return <hr key={i} className="my-12 border border-slate-200/5" />
+                switch (block.__typename) {
+                  case 'ComponentSharedDivider':
+                    return <hr key={i} className="my-12 border border-slate-200/5" />
+                  case 'ComponentSharedMedia':
+                    return <MediaBlock block={block as ComponentSharedMedia} key={i} />
+                  default:
+                    return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
+                }
               }
             })}
           </article>
