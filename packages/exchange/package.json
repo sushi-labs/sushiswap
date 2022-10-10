@@ -41,9 +41,8 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/trident": "1.0.0-canary.44",
+    "@sushiswap/trident": "1.0.0-canary.46",
     "trident-v0": "npm:@sushiswap/trident@1.0.0-canary.36",
-    "trident-v1": "npm:@sushiswap/trident@1.0.0-canary.40",
     "tiny-invariant": "^1.2.0",
     "tiny-warning": "^1.0.3"
   },
