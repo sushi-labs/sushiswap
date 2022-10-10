@@ -31,13 +31,16 @@ function expectCloseValues(
   const b = typeof v2 == 'number' ? v2 : parseFloat(v2.toString())
   const precision = calcPrecision(a, b)
   if (precision > precisionExpected) {
-    console.log('Close values expectation failed:', description)
-    console.log('v1 =', a)
-    console.log('v2 =', b)
-    console.log('precision =', precision, ', expected <', precisionExpected)
+    console.log(
+      `Close values expectation failed: ${description}\n` +
+        `v1 = ${a}\n` +
+        `v2= ${b}\n` +
+        `precision = ${precision}, expected < ${precisionExpected}`
+    )
     if (additionalInfo != '') {
       console.log(additionalInfo)
     }
+    // debugger
   }
   expect(precision <= precisionExpected).toBeTruthy()
   return precision <= precisionExpected
@@ -86,8 +89,8 @@ function getRandomBridge(rnd: () => number) {
     symbol: 'token2',
     address: 'token2',
   }
-  const elastic = rnd() < 0.2 ? 0 : getRandomExp(rnd, 1, 1e20)
-  const base = rnd() < 0.2 ? 0 : getRandomExp(rnd, 1, 1e20)
+  const elastic = Math.floor(getRandomExp(rnd, 1, 1e20))
+  const base = Math.floor(getRandomExp(rnd, 1, 1e20))
 
   return new BridgeBento('aaa', token1, token2, getBigNumber(elastic), getBigNumber(base))
 }
@@ -107,13 +110,25 @@ function getBridge(elastic: number, base: number) {
 }
 
 describe('Bento Bridge test', () => {
-  it('Zero bridge', () => {
+  it('elastic = 0, base = 0', () => {
     const rnd: () => number = seedrandom('0') // random [0, 1)
     const bridge = getBridge(0, 0)
     checkBridging(bridge, 0)
     for (let i = 0; i < 100; ++i) {
       const amount = getRandomExp(rnd, 1, 1e20)
       checkBridging(bridge, amount)
+    }
+  })
+
+  it('Random non-zero elastic + base', () => {
+    const rnd: () => number = seedrandom('1') // random [0, 1)
+    for (let j = 0; j < 100; ++j) {
+      const bridge = getRandomBridge(rnd)
+      checkBridging(bridge, 0)
+      for (let i = 0; i < 10; ++i) {
+        const amount = getRandomExp(rnd, 1, 1e20)
+        checkBridging(bridge, amount)
+      }
     }
   })
 })
