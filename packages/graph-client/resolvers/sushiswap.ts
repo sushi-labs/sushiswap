@@ -461,37 +461,42 @@ export const resolvers: Resolvers = {
       //     }),
       //   ])
       // })
+      const pools = await Promise.all([
+        SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
+          ? context.SushiSwap.Query.pair({
+              root,
+              args,
+              context: {
+                ...context,
+                now: args.now,
+                chainId: args.chainId,
+                chainName: chainName[args.chainId],
+                chainShortName: chainShortName[args.chainId],
+                subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
+                subgraphHost: SUBGRAPH_HOST[args.chainId],
+              },
+              info,
+            })
+          : undefined,
+        TRIDENT_ENABLED_NETWORKS.includes(args.chainId)
+          ? context.Trident.Query.pair({
+              root,
+              args,
+              context: {
+                ...context,
+                now: args.now,
+                chainId: args.chainId,
+                chainName: chainName[args.chainId],
+                chainShortName: chainShortName[args.chainId],
+                subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
+                subgraphHost: SUBGRAPH_HOST[args.chainId],
+              },
+              info,
+            })
+          : undefined,
+      ])
 
-      const pool = SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
-        ? await context.SushiSwap.Query.pair({
-            root,
-            args,
-            context: {
-              ...context,
-              now: args.now,
-              chainId: args.chainId,
-              chainName: chainName[args.chainId],
-              chainShortName: chainShortName[args.chainId],
-              subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: SUBGRAPH_HOST[args.chainId],
-            },
-            info,
-          })
-        : await context.Trident.Query.pair({
-            root,
-            args,
-            context: {
-              ...context,
-              now: args.now,
-              chainId: args.chainId,
-              chainName: chainName[args.chainId],
-              chainShortName: chainShortName[args.chainId],
-              subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: SUBGRAPH_HOST[args.chainId],
-            },
-            info,
-          })
-
+      const pool = pools.filter(Boolean).find(Boolean)
       if (!pool) return
 
       const volume7d = pool.daySnapshots

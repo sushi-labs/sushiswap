@@ -1,6 +1,6 @@
 import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { CarbonIcon, Overlay, SlideIn, Switch, Tooltip, Typography } from '@sushiswap/ui'
+import { CarbonIcon, Link, Overlay, SlideIn, Switch, Tooltip, Typography } from '@sushiswap/ui'
 import { useSettings } from 'lib/state/storage'
 import React, { FC, useState } from 'react'
 
@@ -37,6 +37,9 @@ export const CarbonOffsetOverlay: FC = () => {
                     Make transactions climate positive by offsetting them with Klima Infinity. The average cost to
                     offset a transaction on Polygon is {'<'}$0.01.
                   </Typography>
+                  <Link.External href="https://www.klimadao.finance/blog/klimadao-sushi-fully-automated-carbon-offsetting-green-fee">
+                    Learn more
+                  </Link.External>
                 </div>
               }
             />
@@ -65,7 +68,13 @@ export const CarbonOffsetOverlay: FC = () => {
               Make transactions climate positive by offsetting them with Klima Infinity.
             </Typography>
             <Typography variant="xs" weight={400} className="text-slate-500">
-              The average cost to offset a transaction on Polygon is {'<'}$0.01. Learn more{' '}
+              The average cost to offset a transaction on Polygon is {'<'}$0.01.{' '}
+              <Link.External
+                href="https://www.klimadao.finance/blog/klimadao-sushi-fully-automated-carbon-offsetting-green-fee"
+                className="inline-flex decoration-transparent"
+              >
+                Learn more
+              </Link.External>
             </Typography>
           </div>
           {/* <Disclosure>

@@ -7,6 +7,7 @@ import React, { Fragment } from 'react'
 import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
 
 export enum AppType {
+  Root = 'Explore Apps',
   Swap = 'Swap',
   xSwap = 'xSwap',
   Furo = 'Streaming',

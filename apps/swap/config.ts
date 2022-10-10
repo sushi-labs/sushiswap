@@ -22,7 +22,7 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.HARMONY,
 ]
 
-export const SUPPORTED_CHAIN_IDS = [...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]
+export const SUPPORTED_CHAIN_IDS = Array.from(new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))
 
 export const STABLE_POOL_FACTORY_ADDRESS: Record<number, string> = {
   [ChainId.METIS]: '',

@@ -10,6 +10,7 @@ fragment PairFull on Pair {
   swapFee
   twapEnabled
   source
+  type
   token0 {
     name
     id
@@ -180,6 +181,7 @@ query CrossChainUser($id: ID!, $where: LiquidityPosition_filter, $chainIds: [Int
         swapFee
         twapEnabled
         volume7d
+        type
         source
         type
         token0 {
@@ -468,6 +470,7 @@ query CrossChainUserWithFarms($id: ID!, $block: Block_height, $now: Int!, $chain
       twapEnabled
       volume7d
       source
+      type
       token0 {
         name
         id

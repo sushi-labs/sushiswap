@@ -18,8 +18,8 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
   )
 
   return (
-    <div className="rounded-md overflow-hidden p-3">
-      <div className="flex gap-3 items-center">
+    <div className="p-3 overflow-hidden rounded-md">
+      <div className="flex items-center gap-3">
         <div className="w-6 h-6">
           <Currency.Icon currency={collateral} width={24} height={24} />
         </div>
@@ -27,7 +27,7 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
           Borrow {row.collateral.symbol}
         </Typography>
       </div>
-      <div className="h-px bg-slate-200/5 w-full my-3" />
+      <div className="w-full h-px my-3 bg-slate-200/5" />
       <div className="grid grid-cols-3 gap-2 mb-2">
         <Typography variant="sm" weight={500} className="text-slate-100">
           Network
@@ -35,7 +35,7 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
         <Typography variant="sm" weight={500} className="text-slate-100">
           Market Asset
         </Typography>
-        <Typography variant="sm" weight={500} className="text-slate-100 text-right">
+        <Typography variant="sm" weight={500} className="text-right text-slate-100">
           APR
         </Typography>
       </div>
@@ -48,7 +48,7 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
                   <Typography variant="sm" weight={400} className="text-slate-300">
                     {pair.asset.symbol}
                   </Typography>
-                  <Typography variant="sm" weight={400} className="text-slate-100 text-right">
+                  <Typography variant="sm" weight={400} className="text-right text-slate-100">
                     {formatPercent(row.borrowAPR / 1e18)}
                   </Typography>
                 </a>
@@ -57,8 +57,8 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
           : Array.from(Array(3)).map((el, idx) => (
               <div key={idx} className="grid grid-cols-3 gap-2 cursor-pointer hover:opacity-80">
                 <div className="w-5 h-5 rounded-full animate-pulse bg-slate-700" />
-                <div className="h-4 w-full rounded-full animate-pulse bg-slate-700" />
-                <div className="h-4 w-full rounded-full animate-pulse bg-slate-700" />
+                <div className="w-full h-4 rounded-full animate-pulse bg-slate-700" />
+                <div className="w-full h-4 rounded-full animate-pulse bg-slate-700" />
               </div>
             ))}
       </div>

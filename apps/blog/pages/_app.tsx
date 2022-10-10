@@ -29,17 +29,19 @@ declare global {
 const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
   const router = useRouter()
   useEffect(() => {
-    const handler = (page) =>
+    const handler = (page) => {
       window.dataLayer.push({
         event: 'pageview',
         page,
       })
+    }
     router.events.on('routeChangeComplete', handler)
+    router.events.on('hashChangeComplete', handler)
     return () => {
       router.events.off('routeChangeComplete', handler)
+      router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
-
   return (
     <>
       <Head>

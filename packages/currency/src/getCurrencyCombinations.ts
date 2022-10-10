@@ -181,7 +181,14 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     LUSD[ChainId.OPTIMISM],
     FRAX[ChainId.OPTIMISM],
   ],
-  [ChainId.KAVA]: [WNATIVE[ChainId.KAVA]],
+  [ChainId.KAVA]: [
+    WNATIVE[ChainId.KAVA],
+    WETH9[ChainId.KAVA],
+    WBTC[ChainId.KAVA],
+    USDC[ChainId.KAVA],
+    USDT[ChainId.KAVA],
+    DAI[ChainId.KAVA],
+  ],
   [ChainId.METIS]: [WNATIVE[ChainId.METIS]],
   [ChainId.BOBA]: [
     WNATIVE[ChainId.BOBA],

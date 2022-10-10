@@ -42,7 +42,7 @@
     "@uniswap/v2-core": "^1.0.1",
     "ethers": "^5.7.0",
     "nanoid": "^4.0.0",
-    "next": "12.2.x",
+    "next": "^12.3.0",
     "next-seo": "^5.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

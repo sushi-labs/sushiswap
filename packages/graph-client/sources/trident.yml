@@ -2,6 +2,7 @@ name: Trident
 handler:
   graphql:
     endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:matthewlilley/tridnet-optimism}
+    retry: 3
 transforms:
   - autoPagination:
       validateSchema: true

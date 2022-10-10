@@ -23,16 +23,18 @@ declare global {
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
-
   useEffect(() => {
-    const handler = (page: any) =>
+    const handler = (page) => {
       window.dataLayer.push({
         event: 'pageview',
         page,
       })
+    }
     router.events.on('routeChangeComplete', handler)
+    router.events.on('hashChangeComplete', handler)
     return () => {
       router.events.off('routeChangeComplete', handler)
+      router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
   return (

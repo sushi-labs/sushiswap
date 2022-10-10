@@ -19,7 +19,7 @@ export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   // ChainId.HECO,
   // ChainId.OKEX
   ChainId.BOBA,
-  // ChainId.POLYGON,
+  ChainId.POLYGON,
 ]
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'

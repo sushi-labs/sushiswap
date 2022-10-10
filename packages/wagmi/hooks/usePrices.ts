@@ -5,11 +5,6 @@ import { parseUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
-function toFixed(num: number, fixed: number): string {
-  const re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?')
-  return num.toString().match(re)?.[0] as string
-}
-
 // type UsePrices = ({
 //   chainId,
 //   options,
@@ -48,7 +43,7 @@ export const usePrices = ({
           ? Object.entries(pricesMap).reduce<Record<string, Fraction>>((acc, [address, price]) => {
               if (isAddress(address)) {
                 acc[getAddress(address)] = new Fraction(
-                  parseUnits(toFixed(price, 18), 18).toString(),
+                  parseUnits(price.toFixed(18), 18).toString(),
                   parseUnits('1', 18).toString()
                 )
               }

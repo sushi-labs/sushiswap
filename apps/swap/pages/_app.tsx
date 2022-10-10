@@ -26,20 +26,20 @@ declare global {
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
-
   useEffect(() => {
-    const handler = (page: any) =>
+    const handler = (page) => {
       window.dataLayer.push({
         event: 'pageview',
         page,
       })
+    }
     router.events.on('routeChangeComplete', handler)
+    router.events.on('hashChangeComplete', handler)
     return () => {
       router.events.off('routeChangeComplete', handler)
+      router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
-
-  const chainIds = Array.from(new Set(SUPPORTED_CHAIN_IDS))
 
   return (
     <>
@@ -74,9 +74,9 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Shell>
               <DefaultSeo {...SEO} />
               <Header />
-              <MulticallUpdaters chainIds={chainIds} />
-              <TokenListsUpdaters chainIds={chainIds} />
-              <Component {...pageProps} chainIds={chainIds} />
+              <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+              <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
               <App.Footer />
               <ToastContainer className="mt-[50px]" />
             </App.Shell>
