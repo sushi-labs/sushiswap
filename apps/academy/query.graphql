@@ -10,13 +10,17 @@ query articleAndMoreArticles(
         description
         slug
         publishedAt
-        categories {
+        topics {
           data {
-            id
             attributes {
-              description
               name
-              slug
+            }
+          }
+        }
+        difficulty {
+          data {
+            attributes {
+              name
             }
           }
         }
@@ -53,6 +57,12 @@ query articleAndMoreArticles(
               email
               handle
             }
+          }
+        }
+        staticTableOfContents {
+          entries {
+            text
+            key
           }
         }
         blocks {
@@ -113,13 +123,17 @@ query articleAndMoreArticles(
         description
         slug
         publishedAt
-        categories {
+        topics {
           data {
-            id
             attributes {
-              description
               name
-              slug
+            }
+          }
+        }
+        difficulty {
+          data {
+            attributes {
+              name
             }
           }
         }
@@ -250,13 +264,17 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
         description
         slug
         publishedAt
-        categories {
+        topics {
           data {
-            id
             attributes {
-              description
               name
-              slug
+            }
+          }
+        }
+        difficulty {
+          data {
+            attributes {
+              name
             }
           }
         }
