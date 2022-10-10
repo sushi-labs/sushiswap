@@ -2185,7 +2185,7 @@ importers:
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.0-canary.44
+      '@sushiswap/trident': 1.0.0-canary.46
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -2223,7 +2223,7 @@ importers:
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': 1.0.0-canary.44
+      '@sushiswap/trident': 1.0.0-canary.46
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../config/wagmi
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
@@ -9135,10 +9135,6 @@ packages:
 
   /@sushiswap/trident/1.0.0-canary.36:
     resolution: {integrity: sha512-PWka8EzA7vxdaEFI8/1833nVgagnEsP59+A4tuKuzTmnIdgZb+t9qeZ8ZajooLa2aePDOPpthORCe4owgSM84w==}
-    dev: false
-
-  /@sushiswap/trident/1.0.0-canary.44:
-    resolution: {integrity: sha512-BnqBw3fEbyLWnO3AR/YR8469qQviJNUFdh7zIN0Ncpo+WxxZMOhCzJXhWT6N/ipHW/VMdqZhmWAd9mgYUVbkTg==}
     dev: false
 
   /@sushiswap/trident/1.0.0-canary.46:
