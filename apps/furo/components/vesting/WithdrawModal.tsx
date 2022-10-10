@@ -147,7 +147,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
               variant="filled"
               color="gradient"
               fullWidth
-              disabled={isWritePending || !balance || !balance.greaterThan(0)}
+              disabled={isWritePending || !balance || !balance?.greaterThan(0)}
               onClick={withdraw}
             >
               {!vesting?.token ? 'Invalid stream token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
