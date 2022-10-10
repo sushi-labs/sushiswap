@@ -21,6 +21,8 @@ query articleAndMoreArticles(
           data {
             attributes {
               name
+              label
+              slug
             }
           }
         }
@@ -134,6 +136,8 @@ query articleAndMoreArticles(
           data {
             attributes {
               name
+              label
+              slug
             }
           }
         }
@@ -275,6 +279,8 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
           data {
             attributes {
               name
+              label
+              slug
             }
           }
         }

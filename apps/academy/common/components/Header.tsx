@@ -80,7 +80,7 @@ export const Header: FC = () => {
             >
               <Select.Options
                 className={classNames(
-                  'w-[217px] max-w-[240px] !bg-slate-700 -ml-5 mt-5 max-h-[unset] py-4 px-2 flex flex-col',
+                  'w-[217px] max-w-[240px] min-w-max !bg-slate-700 -ml-5 mt-5 max-h-[unset] py-4 px-2 flex flex-col',
                   i === headerLinks.length - 2 && 'right-0 xl:right-auto',
                   i === headerLinks.length - 1 && 'right-0 2xl:right-auto'
                 )}

@@ -37,7 +37,7 @@ export const Breadcrumb: FC<Breadcrumb> = ({ article }) => {
         </a>
       </Link>
       <IconButton className="w-5 h-5 sm:hidden" onClick={onShare}>
-        <ShareIcon className="text-slate-400" />
+        <ShareIcon className="text-slate-50" />
       </IconButton>
     </Container>
   )

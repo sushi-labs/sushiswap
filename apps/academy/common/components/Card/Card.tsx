@@ -1,4 +1,5 @@
 import { Chip, CircleIcon, classNames, Typography } from '@sushiswap/ui'
+import { difficultyElements } from 'common/helpers'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
@@ -10,7 +11,8 @@ interface Card {
 }
 
 export const Card: FC<Card> = ({ article }) => {
-  const level = 'Advanced' // TODO: connect
+  const difficulty = article?.attributes?.difficulty?.data?.attributes?.slug
+  const { color } = difficultyElements[difficulty]
 
   return (
     <a href={`/academy/articles/${article?.attributes?.slug}`}>
@@ -21,11 +23,6 @@ export const Card: FC<Card> = ({ article }) => {
 
         <div className="grid gap-4 p-6">
           <div className="flex items-center w-full gap-5">
-            {/* 
-        <div className="flex gap-1">
-          {article?.attributes?.categories?.data.map((category) => (
-            <Chip key={category.id} label={category?.attributes?.name} className="capitalize" />
-          ))} TODO: what if there are more */}
             {(article?.attributes?.categories?.data || []).length > 0 && (
               <Chip
                 key={article.attributes.categories.data[0].id}
@@ -33,11 +30,10 @@ export const Card: FC<Card> = ({ article }) => {
                 className="capitalize"
               />
             )}
-            {/* </div> */}
             <div className="flex items-center gap-1 min-w-max">
-              <CircleIcon width={8} height={8} stroke="#7CFF6B" fill="#7CFF6B" />
+              <CircleIcon width={8} height={8} stroke={color} fill={color} />
               <Typography variant="xs" weight={500}>
-                {level}
+                {article?.attributes?.difficulty?.data?.attributes?.label}
               </Typography>
             </div>
           </div>

@@ -16,6 +16,7 @@ import {
   DifficultyEntity,
   DifficultyEntityResponseCollection,
   Global,
+  TopicEntity,
   TopicEntityResponseCollection,
 } from '../.mesh'
 import {
@@ -60,7 +61,7 @@ const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Globa
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyEntity>()
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([])
+  const [selectedTopic, setSelectedTopic] = useState<TopicEntity>()
   const heroRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -68,17 +69,18 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selectedTopics, selectedDifficulty],
-    async (_url, searchTopics, searchDifficulty) => {
+    [`/articles`, selectedTopic, selectedDifficulty],
+    async (_url, searchTopic, searchDifficulty) => {
       const difficultySlug = searchDifficulty?.attributes?.slug
+      const topicSlug = searchTopic?.attributes?.slug
       const difficultyFilter = { difficulty: { slug: { eq: difficultySlug } } }
-      const topicsFilter = { topics: { slug: { in: searchTopics } } }
+      const topicsFilter = { topics: { slug: { eq: topicSlug } } }
 
       return (
         await getArticles({
           pagination: { limit: 6 },
           filters: {
-            ...(searchTopics.length > 0 && topicsFilter),
+            ...(searchTopic && topicsFilter),
             ...(difficultySlug && difficultyFilter),
           },
         })
@@ -93,9 +95,9 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const topics = topicsData?.data || []
 
   const articleList = useMemo(() => {
-    if (filterData?.data && (selectedTopics.length > 0 || selectedDifficulty)) return filterData.data
+    if (filterData?.data && (selectedTopic || selectedDifficulty)) return filterData.data
     return articles
-  }, [articles, filterData?.data, selectedDifficulty, selectedTopics.length])
+  }, [articles, filterData?.data, selectedDifficulty, selectedTopic])
   const latestReleases = articles?.slice(0, 3)
 
   /**
@@ -105,8 +107,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const handleSelectDifficulty = (difficulty: DifficultyEntity) => {
     setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
   }
-  const handleSelectTopic = (topic: string) => {
-    setSelectedTopics((prev) => (prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]))
+  const handleSelectTopic = (topic: TopicEntity) => {
+    setSelectedTopic((current) => (current?.id === topic.id ? undefined : topic))
   }
   const handleSearch = (value: string) => {
     router.push({
@@ -155,28 +157,28 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9">
+              <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9 sm:hidden">
                 <Select
-                  value={topics}
-                  onChange={handleSelectTopic}
+                  value={selectedTopic}
+                  onChange={setSelectedTopic}
                   button={
                     <Listbox.Button
                       type="button"
                       className="flex items-center justify-between w-full px-4 border rounded-lg bg-slate-800 text-slate-50 h-9 border-slate-700"
                     >
                       <Typography variant="xs" weight={500}>
-                        All Topics
+                        {selectedTopic?.attributes?.name ?? 'All Topics'}
                       </Typography>
                       <ChevronDownIcon className="w-3 h-3" aria-hidden="true" />
                     </Listbox.Button>
                   }
                 >
-                  <Select.Options className="!bg-slate-700 p-2">
+                  <Select.Options className="!bg-slate-700 p-2 !max-h-[unset] space-y-1">
                     {topics.map((topic, i) => (
                       <Listbox.Option
                         key={i}
-                        value={topic.attributes?.slug}
-                        className="flex items-center px-2 text-xs rounded-lg cursor-pointer h-9 hover:bg-blue-500 transform-all"
+                        value={topic}
+                        className="p-2 text-xs rounded-lg cursor-pointer hover:bg-blue-500 transform-all"
                       >
                         {topic.attributes?.name}
                       </Listbox.Option>
@@ -200,12 +202,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                     </GradientWrapper>
                   }
                 >
-                  <Select.Options className="!bg-slate-700 p-2">
+                  <Select.Options className="!bg-slate-700 p-2 !max-h-[unset] space-y-1">
                     {difficulties.map((difficulty, i) => (
                       <Listbox.Option
                         key={i}
                         value={difficulty}
-                        className="flex items-center px-2 text-xs rounded-lg cursor-pointer h-9 hover:bg-blue-500 transform-all"
+                        className="p-2 text-xs rounded-lg cursor-pointer hover:bg-blue-500 transform-all"
                       >
                         {difficulty.attributes?.name}
                       </Listbox.Option>
@@ -216,8 +218,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             </Transition>
           </Disclosure>
 
-          <div className="flex flex-wrap gap-3 sm:gap-4 mt-9 sm:mt-8">
-            <Topics selected={selectedTopics} onSelect={handleSelectTopic} topics={topics || []} />
+          <div className="flex-wrap hidden gap-3 sm:flex sm:gap-4 mt-9 sm:mt-8">
+            <Topics selected={selectedTopic} onSelect={handleSelectTopic} topics={topics || []} />
           </div>
 
           <div className="items-center hidden gap-8 mt-10 sm:flex">
@@ -251,7 +253,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 pathname: '/articles',
                 query: {
                   ...(selectedDifficulty && { difficulty: selectedDifficulty.attributes?.slug }),
-                  ...(selectedTopics && { topics: selectedTopics.join(',') }),
+                  ...(selectedTopic && { topic: selectedTopic.attributes?.slug }),
                 },
               }}
             >

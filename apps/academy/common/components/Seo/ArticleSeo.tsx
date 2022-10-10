@@ -36,7 +36,7 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
             publishedTime: article.publishedAt,
             modifiedTime: article.updatedAt,
             authors: authors.map((author) => author.name),
-            tags: article.categories?.data.reduce<string[]>((acc, el) => [...acc, el.attributes.name], []),
+            tags: article.topics?.data.reduce<string[]>((acc, el) => [...acc, el.attributes.name], []),
           },
         }}
         twitter={{

@@ -1,6 +1,6 @@
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import { Button, ButtonProps, classNames } from '@sushiswap/ui'
-import React, { ElementType, FC, forwardRef, Ref } from 'react'
+import React, { ElementType, forwardRef, Ref } from 'react'
 
 export const ViewAllButton = forwardRef(
   ({ isSmall, className, ...rest }: ButtonProps<ElementType>, ref: Ref<HTMLButtonElement>) => (

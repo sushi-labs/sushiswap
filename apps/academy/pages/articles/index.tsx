@@ -12,6 +12,7 @@ import {
   ArticleEntity,
   DifficultyEntity,
   DifficultyEntityResponseCollection,
+  TopicEntity,
   TopicEntityResponseCollection,
 } from '../../.mesh'
 import {
@@ -53,14 +54,14 @@ const _Articles: FC = () => {
   const [sortBy, setSortBy] = useState(sortingOptions[0])
   const debouncedQuery = useDebounce(query, 200)
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyEntity>()
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([])
+  const [selectedTopic, setSelectedTopic] = useState<TopicEntity>()
   const router = useRouter()
   const queryParams = router.query as {
     difficulty: string | undefined
-    topics: string | undefined
+    topic: string | undefined
     search: string | undefined
   }
-  const { difficulty: difficultyQuery, topics: topicsQuery, search: searchQuery } = queryParams
+  const { difficulty: difficultyQuery, topic: topicQuery, search: searchQuery } = queryParams
 
   const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
@@ -68,29 +69,30 @@ const _Articles: FC = () => {
   useEffect(() => {
     if (router.isReady) {
       if (difficultyQuery) {
-        const selected = difficultiesData?.data.find(({ attributes }) => attributes?.slug === difficultyQuery)
-        selected && setSelectedDifficulty(selected)
+        const searchedDifficulty = difficultiesData?.data.find(({ attributes }) => attributes?.slug === difficultyQuery)
+        searchedDifficulty && setSelectedDifficulty(searchedDifficulty)
       }
-      if (topicsQuery) {
-        const searchTopics = topicsQuery.split(',')
-        setSelectedTopics(searchTopics)
+      if (topicQuery) {
+        const searchedTopic = topicsData?.data.find(({ attributes }) => attributes?.slug === topicQuery)
+        searchedTopic && setSelectedTopic(searchedTopic)
       }
       if (searchQuery) setQuery(searchQuery)
     }
-  }, [difficultiesData?.data, difficultyQuery, router.isReady, searchQuery, topicsQuery])
+  }, [difficultiesData?.data, difficultyQuery, router.isReady, searchQuery, topicsData?.data, topicQuery])
 
   const { data: articlesData, isValidating } = useSWR(
-    [`/articles`, selectedTopics, selectedDifficulty, debouncedQuery, page, sortBy.key],
-    async (_url, searchTopics, searchDifficulty, searchInput, searchPage, sortKey) => {
+    [`/articles`, selectedTopic, selectedDifficulty, debouncedQuery, page, sortBy.key],
+    async (_url, searchTopic, searchDifficulty, searchInput, searchPage, sortKey) => {
       const difficultySlug = searchDifficulty?.attributes?.slug ?? difficultyQuery
+      const topicSlug = searchTopic?.attributes?.slug ?? topicQuery
       const difficultyFilter = { difficulty: { slug: { eq: difficultySlug } } }
-      const topicsFilter = { topics: { slug: { in: searchTopics } } }
+      const topicsFilter = { topics: { slug: { eq: topicSlug } } }
 
       return (
         await getArticles({
           filters: {
             ...((searchInput || searchQuery) && { title: { containsi: searchInput ?? searchQuery } }),
-            ...(searchTopics.length > 0 && topicsFilter),
+            ...(searchTopic && topicsFilter),
             ...(difficultySlug && difficultyFilter),
           },
           pagination: { page: searchPage, pageSize: 10 },
@@ -110,8 +112,8 @@ const _Articles: FC = () => {
   const handleSelectDifficulty = (difficulty: DifficultyEntity) => {
     setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
   }
-  const handleSelectTopic = (topic: string) => {
-    setSelectedTopics((prev) => (prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]))
+  const handleSelectTopic = (topic: TopicEntity) => {
+    setSelectedTopic((current) => (current?.id === topic.id ? undefined : topic))
   }
 
   const articlesAmount = articlesMeta?.pagination?.total ?? 0
@@ -119,10 +121,10 @@ const _Articles: FC = () => {
     let title = 'Latest releases'
     if (router.isReady) {
       if (selectedDifficulty) title = selectedDifficulty.attributes.shortDescription
-      if (searchQuery) title = 'Search results'
+      if (searchQuery || selectedTopic) title = 'Search results'
     }
     return title
-  }, [router.isReady, searchQuery, selectedDifficulty])
+  }, [router.isReady, searchQuery, selectedDifficulty, selectedTopic])
 
   return (
     <>
@@ -212,9 +214,9 @@ const _Articles: FC = () => {
                   key={i}
                   className={classNames(
                     'p-2 rounded-lg hover:bg-blue-500 text-slate-300',
-                    selectedTopics.includes(topic.attributes?.slug) && 'bg-blue-500'
+                    selectedTopic?.id === topic.id && 'bg-blue-500'
                   )}
-                  onClick={() => handleSelectTopic(topic.attributes?.slug)}
+                  onClick={() => handleSelectTopic(topic)}
                 >
                   {topic.attributes?.name}
                 </Typography>
