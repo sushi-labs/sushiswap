@@ -7,7 +7,7 @@ const withPwa = nextPwa({
   disable: process.env.NODE_ENV === 'development',
   register: true,
   scope: '/swap',
-  sw: 'service-worker.js',
+  sw: 'sw.js',
 })
 
 const withTranspileModules = transpileModules([
