@@ -1,6 +1,10 @@
-import withPWA from 'next-pwa'
-import runtimeCaching from 'next-pwa/cache'
+import nextPwa from 'next-pwa'
+
 import transpileModules from 'next-transpile-modules'
+
+const withPwa = nextPwa({
+  dest: 'public',
+})
 
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
@@ -22,9 +26,6 @@ const nextConfig = {
   },
   experimental: {
     nextScriptWorkers: true,
-  },
-  pwa: {
-    dest: 'public',
   },
   async redirects() {
     return [
@@ -66,4 +67,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(withPWA(nextConfig))
+export default withPwa(withTranspileModules(nextConfig))
