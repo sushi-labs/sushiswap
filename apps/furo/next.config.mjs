@@ -1,4 +1,9 @@
+import nextPwa from 'next-pwa'
 import transpileModules from 'next-transpile-modules'
+
+const withPwa = nextPwa({
+  dest: 'public',
+})
 
 const withTranspileModules = transpileModules([
   '@sushiswap/ui',
@@ -21,4 +26,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default withPwa(withTranspileModules(nextConfig))

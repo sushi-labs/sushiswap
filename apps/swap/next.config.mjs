@@ -3,7 +3,6 @@ import transpileModules from 'next-transpile-modules'
 
 const withPwa = nextPwa({
   dest: 'public',
-  disable: false,
 })
 
 const withTranspileModules = transpileModules([
