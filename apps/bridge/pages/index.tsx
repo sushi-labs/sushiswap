@@ -24,6 +24,7 @@ import React, { FC, useCallback, useEffect, useMemo } from 'react'
 
 import { useBridgeOutput } from '../lib/hooks'
 import { useCustomTokens } from '../lib/state/storage'
+import { ZERO } from '@sushiswap/math'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query
@@ -81,7 +82,7 @@ const STARGATE_TOKEN_MAP = Object.fromEntries(
 
 const _Bridge: FC = () => {
   const router = useRouter()
-  const { srcChainId, dstChainId, srcToken, dstToken, srcTypedAmount, dstTypedAmount } = useBridgeState()
+  const { amount, srcChainId, dstChainId, srcToken, dstToken, srcTypedAmount, dstTypedAmount } = useBridgeState()
   const { setSrcChainId, setDstChainId, setSrcToken, setDstToken, setSrcTypedAmount, setDstTypedAmount } =
     useBridgeStateActions()
 
@@ -203,6 +204,7 @@ const _Bridge: FC = () => {
             customTokenMap={dstCustomTokenMap}
             onAddToken={onAddDstCustomToken}
             onRemoveToken={onRemoveDstCustomToken}
+            loading={amount?.greaterThan(ZERO) && !dstTypedAmount}
           />
           <SwapStatsDisclosure />
           <div className="p-3 pt-0">
