@@ -64,7 +64,7 @@ jobs:
 
       - name: Build next.js app
         # change this if your site requires a custom build command
-        run: cd ../.. && npx turbo run build --filter=swap... && cd ./apps/swap
+        run: cd ../.. && npx turbo run build --filter=swap...
 
       # Here's the first place where next-bundle-analysis' own script is used
       # This step pulls the raw bundle stats for the current bundle
