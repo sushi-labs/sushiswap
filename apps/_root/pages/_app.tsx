@@ -17,6 +17,7 @@ import { WagmiConfig } from 'wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
+export { reportWebVitals } from 'next-axiom'
 
 declare global {
   interface Window {

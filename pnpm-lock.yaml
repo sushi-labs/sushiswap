@@ -162,6 +162,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       next: ^12.3.0
+      next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
       next-transpile-modules: 9.0.0
@@ -194,6 +195,7 @@ importers:
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
       ethers: 5.7.1
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.0
       next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       next-sitemap: 3.1.21_next@12.3.0
       numeral: 2.0.6
@@ -21072,6 +21074,16 @@ packages:
   /negotiator/0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
+
+  /next-axiom/0.14.0_next@12.3.0:
+    resolution: {integrity: sha512-LLbiDcL79274HqaKTSipZo6B4SCLh++11BpVfg+cNTZoLb8VH1g7g14xgFBhKeDN+DaiDSg8Of7ZPqaYEcIUXQ==}
+    engines: {node: '>=15'}
+    peerDependencies:
+      next: ^12.1.4
+    dependencies:
+      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      whatwg-fetch: 3.6.2
+    dev: false
 
   /next-pwa/5.6.0_next@12.3.0:
     resolution: {integrity: sha512-XV8g8C6B7UmViXU8askMEYhWwQ4qc/XqJGnexbLV68hzKaGHZDMtHsm2TNxFcbR7+ypVuth/wwpiIlMwpRJJ5A==}
