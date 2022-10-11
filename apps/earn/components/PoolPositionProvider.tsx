@@ -33,23 +33,6 @@ export const PoolPositionProvider: FC<{ pair: Pair; children: ReactNode; watch?:
     isError,
   } = useBalance({ chainId: pair.chainId, currency: liquidityToken, account, watch })
 
-  // const {
-  //   data: liquidityTokenBalance,
-  //   isLoading,
-  //   isError,
-  // } = useBalance({ chainId: pair.chainId, addressOrName: liquidityToken.address, watch })
-
-  // const balance = useMemo(
-  //   () => ({
-  //     [FundSource.WALLET]: Amount.fromRawAmount(
-  //       liquidityToken,
-  //       liquidityTokenBalance?.value ? liquidityTokenBalance.value.toString() : 0
-  //     ),
-  //     [FundSource.BENTOBOX]: Amount.fromRawAmount(liquidityToken, 0),
-  //   }),
-  //   [liquidityToken, liquidityTokenBalance]
-  // )
-
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0,
     reserve1,
