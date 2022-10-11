@@ -1,17 +1,21 @@
-import { Amount } from '@sushiswap/currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import STARGATE_FEE_LIBRARY_V03_ABI from '@sushiswap/stargate/abis/stargate-fee-library-v03.json'
 import STARGATE_POOL_ABI from '@sushiswap/stargate/abis/stargate-pool.json'
-import { useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
+import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 import { useContractRead, useContractReads } from 'wagmi'
 
 import { useBridgeState } from '../../components'
 
-export const useBridgeFees = () => {
+export const useBridgeFees = (): {
+  eqFee: Amount<Token> | undefined
+  eqReward: Amount<Token> | undefined
+  lpFee: Amount<Token> | undefined
+  protocolFee: Amount<Token> | undefined
+  bridgeFee: Amount<Token> | undefined
+} => {
   const { srcChainId, dstChainId, srcToken, dstToken, amount } = useBridgeState()
-
-  const contract = useSushiXSwapContractWithProvider(srcChainId)
 
   const { data: stargatePoolResults } = useContractReads({
     contracts: [
@@ -29,7 +33,7 @@ export const useBridgeFees = () => {
         chainId: srcChainId,
       },
     ],
-    enabled: Boolean(srcChainId && dstChainId && srcChainId !== dstChainId),
+    enabled: !!srcChainId && !!dstChainId && srcChainId !== dstChainId,
   })
 
   const { data: getFeesResults } = useContractRead({
@@ -39,14 +43,18 @@ export const useBridgeFees = () => {
       STARGATE_POOL_ID[srcChainId][srcToken.wrapped.address],
       STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address],
       STARGATE_CHAIN_ID[dstChainId],
-      contract.address,
+      getSushiXSwapContractConfig(srcChainId).addressOrName,
       amount?.quotient?.toString(),
     ],
     contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
     chainId: srcChainId,
-    enabled: Boolean(
-      amount && contract && srcChainId && dstChainId && srcChainId !== dstChainId && stargatePoolResults
-    ),
+    enabled:
+      Array.isArray(stargatePoolResults) &&
+      stargatePoolResults.length > 0 &&
+      !!amount &&
+      !!srcChainId &&
+      !!dstChainId &&
+      srcChainId !== dstChainId,
   })
 
   return useMemo(() => {

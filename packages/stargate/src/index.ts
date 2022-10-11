@@ -54,6 +54,36 @@ export const STARGATE_ROUTER_ADDRESS: Record<number, string> = {
   [ChainId.FANTOM_TESTNET]: '0xa73b0a56B29aD790595763e71505FCa2c1abb77f',
 }
 
+export const STARGATE_ETH_ADDRESS: Record<number, string> = {
+  [ChainId.ETHEREUM]: '0x72E2F4830b9E45d52F80aC08CB2bEC0FeF72eD9c',
+  [ChainId.ARBITRUM]: '0x82CbeCF39bEe528B5476FE6d1550af59a9dB6Fc0',
+  [ChainId.OPTIMISM]: '0xb69c8CBCD90A39D8D3d3ccf0a3E968511C3856A0',
+}
+
+export const STARGATE_ETH: Record<keyof typeof STARGATE_ETH_ADDRESS, Token> = {
+  [ChainId.ETHEREUM]: new Token({
+    chainId: ChainId.ETHEREUM,
+    address: STARGATE_ETH_ADDRESS[ChainId.ETHEREUM],
+    decimals: 18,
+    symbol: 'ETH',
+    name: 'Ether',
+  }),
+  [ChainId.ARBITRUM]: new Token({
+    chainId: ChainId.ARBITRUM,
+    address: STARGATE_ETH_ADDRESS[ChainId.ARBITRUM],
+    decimals: 18,
+    symbol: 'ETH',
+    name: 'Ether',
+  }),
+  [ChainId.OPTIMISM]: new Token({
+    chainId: ChainId.OPTIMISM,
+    address: STARGATE_ETH_ADDRESS[ChainId.OPTIMISM],
+    decimals: 18,
+    symbol: 'ETH',
+    name: 'Ether',
+  }),
+}
+
 export const STARGATE_USDC_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: USDC_ADDRESS[ChainId.ETHEREUM],
   [ChainId.POLYGON]: USDC_ADDRESS[ChainId.POLYGON],
@@ -167,33 +197,54 @@ export const STARGATE_BUSD: Record<keyof typeof STARGATE_BUSD_ADDRESS, Token> = 
 }
 
 export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
-  [ChainId.ETHEREUM]: [STARGATE_USDC[ChainId.ETHEREUM], STARGATE_USDT[ChainId.ETHEREUM]],
+  [ChainId.ETHEREUM]: [
+    // STARGATE_ETH[ChainId.ETHEREUM],
+    STARGATE_USDC[ChainId.ETHEREUM],
+    STARGATE_USDT[ChainId.ETHEREUM],
+  ],
   [ChainId.POLYGON]: [STARGATE_USDC[ChainId.POLYGON], STARGATE_USDT[ChainId.POLYGON]],
   [ChainId.AVALANCHE]: [STARGATE_USDC[ChainId.AVALANCHE], STARGATE_USDT[ChainId.AVALANCHE]],
   [ChainId.FANTOM]: [STARGATE_USDC[ChainId.FANTOM]],
   [ChainId.BSC]: [STARGATE_USDT[ChainId.BSC], STARGATE_BUSD[ChainId.BSC]],
-  [ChainId.OPTIMISM]: [STARGATE_USDC[ChainId.OPTIMISM]],
-  [ChainId.ARBITRUM]: [STARGATE_USDC[ChainId.ARBITRUM], STARGATE_USDT[ChainId.ARBITRUM]],
+  [ChainId.OPTIMISM]: [
+    // STARGATE_ETH[ChainId.OPTIMISM],
+    STARGATE_USDC[ChainId.OPTIMISM],
+  ],
+  [ChainId.ARBITRUM]: [
+    // STARGATE_ETH[ChainId.ARBITRUM],
+    STARGATE_USDC[ChainId.ARBITRUM],
+    STARGATE_USDT[ChainId.ARBITRUM],
+  ],
 }
 
 export const STARGATE_BRIDGE_TOKEN_ADDRESSES: Record<number, string[]> = {
-  [ChainId.ETHEREUM]: [STARGATE_USDC_ADDRESS[ChainId.ETHEREUM], STARGATE_USDT_ADDRESS[ChainId.ETHEREUM]],
+  [ChainId.ETHEREUM]: [
+    // STARGATE_ETH_ADDRESS[ChainId.ETHEREUM],
+    STARGATE_USDC_ADDRESS[ChainId.ETHEREUM],
+    STARGATE_USDT_ADDRESS[ChainId.ETHEREUM],
+  ],
   [ChainId.POLYGON]: [STARGATE_USDC_ADDRESS[ChainId.POLYGON], STARGATE_USDT_ADDRESS[ChainId.POLYGON]],
   [ChainId.AVALANCHE]: [STARGATE_USDC_ADDRESS[ChainId.AVALANCHE], STARGATE_USDT_ADDRESS[ChainId.AVALANCHE]],
   [ChainId.FANTOM]: [STARGATE_USDC_ADDRESS[ChainId.FANTOM]],
   [ChainId.BSC]: [STARGATE_USDT_ADDRESS[ChainId.BSC], STARGATE_BUSD_ADDRESS[ChainId.BSC]],
-  [ChainId.OPTIMISM]: [STARGATE_USDC_ADDRESS[ChainId.OPTIMISM]],
-  [ChainId.ARBITRUM]: [STARGATE_USDC_ADDRESS[ChainId.ARBITRUM], STARGATE_USDT_ADDRESS[ChainId.ARBITRUM]],
+  [ChainId.OPTIMISM]: [
+    // STARGATE_ETH_ADDRESS[ChainId.OPTIMISM],
+    STARGATE_USDC_ADDRESS[ChainId.OPTIMISM],
+  ],
+  [ChainId.ARBITRUM]: [
+    // STARGATE_ETH_ADDRESS[ChainId.ARBITRUM],
+    STARGATE_USDC_ADDRESS[ChainId.ARBITRUM],
+    STARGATE_USDT_ADDRESS[ChainId.ARBITRUM],
+  ],
 }
 
 export const STARGATE_POOL_ID: Record<number, Record<string, number>> = {
   [ChainId.ETHEREUM]: {
+    // [STARGATE_ETH_ADDRESS[ChainId.ETHEREUM]]: 13,
     [STARGATE_USDC_ADDRESS[ChainId.ETHEREUM]]: 1,
     [STARGATE_USDT_ADDRESS[ChainId.ETHEREUM]]: 2,
   },
-  [ChainId.OPTIMISM]: {
-    [STARGATE_USDC_ADDRESS[ChainId.OPTIMISM]]: 1,
-  },
+
   [ChainId.BSC]: {
     [STARGATE_USDT_ADDRESS[ChainId.BSC]]: 2,
     [STARGATE_BUSD_ADDRESS[ChainId.BSC]]: 5,
@@ -207,8 +258,13 @@ export const STARGATE_POOL_ID: Record<number, Record<string, number>> = {
     [STARGATE_USDT_ADDRESS[ChainId.AVALANCHE]]: 2,
   },
   [ChainId.ARBITRUM]: {
-    [USDC_ADDRESS[ChainId.ARBITRUM]]: 1,
-    [USDT_ADDRESS[ChainId.ARBITRUM]]: 2,
+    // [STARGATE_ETH_ADDRESS[ChainId.ARBITRUM]]: 13,
+    [STARGATE_USDC_ADDRESS[ChainId.ARBITRUM]]: 1,
+    [STARGATE_USDT_ADDRESS[ChainId.ARBITRUM]]: 2,
+  },
+  [ChainId.OPTIMISM]: {
+    // [STARGATE_ETH_ADDRESS[ChainId.OPTIMISM]]: 13,
+    [STARGATE_USDC_ADDRESS[ChainId.OPTIMISM]]: 1,
   },
   [ChainId.FANTOM]: {
     [STARGATE_USDC_ADDRESS[ChainId.FANTOM]]: 1,
@@ -217,11 +273,13 @@ export const STARGATE_POOL_ID: Record<number, Record<string, number>> = {
 
 export const STARGATE_POOL_ADDRESS: Record<number, Record<string, string>> = {
   [ChainId.ETHEREUM]: {
+    // [STARGATE_ETH_ADDRESS[ChainId.ETHEREUM]]: '0x101816545F6bd2b1076434B54383a1E633390A2E',
     [STARGATE_USDC_ADDRESS[ChainId.ETHEREUM]]: '0xdf0770dF86a8034b3EFEf0A1Bb3c889B8332FF56',
     [STARGATE_USDT_ADDRESS[ChainId.ETHEREUM]]: '0x38EA452219524Bb87e18dE1C24D3bB59510BD783',
   },
 
   [ChainId.OPTIMISM]: {
+    // [STARGATE_ETH_ADDRESS[ChainId.OPTIMISM]]: '0xd22363e3762cA7339569F3d33EADe20127D5F98C',
     [STARGATE_USDC_ADDRESS[ChainId.OPTIMISM]]: '0xDecC0c09c3B5f6e92EF4184125D5648a66E35298',
   },
   [ChainId.BSC]: {
@@ -237,6 +295,7 @@ export const STARGATE_POOL_ADDRESS: Record<number, Record<string, string>> = {
     [STARGATE_USDT_ADDRESS[ChainId.AVALANCHE]]: '0x29e38769f23701A2e4A8Ef0492e19dA4604Be62c',
   },
   [ChainId.ARBITRUM]: {
+    // [STARGATE_ETH_ADDRESS[ChainId.ARBITRUM]]: '0x915A55e36A01285A14f05dE6e81ED9cE89772f8e',
     [USDC_ADDRESS[ChainId.ARBITRUM]]: '0x892785f33CdeE22A30AEF750F285E18c18040c3e',
     [USDT_ADDRESS[ChainId.ARBITRUM]]: '0xB6CfcF89a7B22988bfC96632aC2A9D6daB60d641',
   },

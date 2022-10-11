@@ -3,7 +3,7 @@ import { Amount, tryParseAmount, Type as Currency } from '@sushiswap/currency'
 import { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 
 interface _BridgeStateProviderProps {
-  initialState: State
+  initialState: Omit<State, 'dstTypedAmount'>
   children: ReactNode
 }
 

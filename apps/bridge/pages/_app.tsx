@@ -4,7 +4,6 @@ import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Header } from 'components'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -73,7 +72,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Shell>
               <DefaultSeo {...SEO} />
               <Header />
-              <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
               <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
               <App.Footer />
               <ToastContainer className="mt-[50px]" />

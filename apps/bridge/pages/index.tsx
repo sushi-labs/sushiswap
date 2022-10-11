@@ -19,6 +19,7 @@ import {
 } from 'components'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo } from 'react'
 
 import { useBridgeOutput } from '../lib/hooks'
@@ -44,8 +45,8 @@ export default function Bridge({
   dstToken,
   srcTypedAmount,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const srcTokens = STARGATE_BRIDGE_TOKENS[srcChainId]
-  const dstTokens = STARGATE_BRIDGE_TOKENS[dstChainId]
+  const srcTokens = useMemo(() => STARGATE_BRIDGE_TOKENS[srcChainId], [srcChainId])
+  const dstTokens = useMemo(() => STARGATE_BRIDGE_TOKENS[dstChainId], [dstChainId])
   return (
     <Layout>
       <Head>
@@ -58,9 +59,8 @@ export default function Bridge({
           dstChainId: Number(dstChainId),
           srcToken: srcTokens.includes(srcToken) ? srcTokens[srcTokens.indexOf(srcToken)] : srcTokens[0],
           dstToken: dstTokens.includes(dstToken) ? dstTokens[dstTokens.indexOf(dstToken)] : dstTokens[0],
-          srcTypedAmount: srcTypedAmount,
-          dstTypedAmount: '',
-          amount: tryParseAmount(srcTypedAmount, srcToken),
+          srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
+          amount: !isNaN(Number(srcTypedAmount)) ? tryParseAmount(srcTypedAmount, srcToken) : undefined,
         }}
       >
         <BridgeExecuteProvider>
@@ -79,6 +79,7 @@ const STARGATE_TOKEN_MAP = Object.fromEntries(
 )
 
 const _Bridge: FC = () => {
+  const router = useRouter()
   const { srcChainId, dstChainId, srcToken, dstToken, srcTypedAmount, dstTypedAmount } = useBridgeState()
   const { setSrcChainId, setDstChainId, setSrcToken, setDstToken, setSrcTypedAmount, setDstTypedAmount } =
     useBridgeStateActions()
@@ -98,15 +99,15 @@ const _Bridge: FC = () => {
   // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
   // useEffect(() => {
   //   // Escape hatch if already synced (could probably pull something like this out to generic...)
-  //
-  //   console.debug([
-  //     srcChainId === Number(router.query.srcChainId),
-  //     dstChainId === Number(router.query.dstChainId),
-  //     srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
-  //     dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
-  //     srcTypedAmount === router.query.srcTypedAmount,
-  //   ])
-  //
+
+  //   // console.debug([
+  //   //   srcChainId === Number(router.query.srcChainId),
+  //   //   dstChainId === Number(router.query.dstChainId),
+  //   //   srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
+  //   //   dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
+  //   //   srcTypedAmount === router.query.srcTypedAmount,
+  //   // ])
+
   //   if (
   //     srcChainId === Number(router.query.srcChainId) &&
   //     dstChainId === Number(router.query.dstChainId) &&
@@ -116,22 +117,18 @@ const _Bridge: FC = () => {
   //   ) {
   //     return
   //   }
-  //
-  //   void router.replace(
-  //     {
-  //       pathname: router.pathname,
-  //       query: {
-  //         ...router.query,
-  //         srcToken: srcToken && srcToken.isToken ? srcToken.address : srcToken.symbol,
-  //         dstToken: dstToken && dstToken.isToken ? dstToken.address : dstToken.symbol,
-  //         srcChainId,
-  //         dstChainId,
-  //         srcTypedAmount,
-  //       },
+
+  //   void router.replace({
+  //     pathname: router.pathname,
+  //     query: {
+  //       ...router.query,
+  //       srcChainId,
+  //       srcToken: srcToken && srcToken.isToken ? srcToken.address : srcToken.symbol,
+  //       srcTypedAmount,
+  //       dstChainId,
+  //       dstToken: dstToken && dstToken.isToken ? dstToken.address : dstToken.symbol,
   //     },
-  //     undefined,
-  //     { shallow: true }
-  //   )
+  //   })
   // }, [srcToken, dstToken, srcChainId, dstChainId, router, srcTypedAmount])
 
   const inputAmounts = useMemo(() => {
