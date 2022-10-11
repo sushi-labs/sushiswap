@@ -1,5 +1,9 @@
+import nextPwa from 'next-pwa'
 import transpileModules from 'next-transpile-modules'
 
+const withPwa = nextPwa({
+  dest: 'public',
+})
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/redux-localstorage',
@@ -33,4 +37,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default withPwa(withTranspileModules(nextConfig))

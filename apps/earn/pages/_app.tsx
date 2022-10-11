@@ -45,7 +45,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="apple-touch-icon" sizes="180x180" href="/earn/apple-touch-icon.png?v=1" />
         <link rel="icon" type="image/png" sizes="32x32" href="/earn/favicon-32x32.png?v=1" />
         <link rel="icon" type="image/png" sizes="16x16" href="/earn/favicon-16x16.png?v=1" />
-        <link rel="manifest" href="/earn/earn/site.webmanifest?v=1" />
+        <link rel="manifest" href="/earn/manifest.json?v=1" />
         <link rel="mask-icon" href="/earn/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/earn/favicon.ico?v=1" />
         <meta name="msapplication-TileColor" content="#2b5797" />
