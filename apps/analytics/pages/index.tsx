@@ -1,5 +1,6 @@
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Head from 'next/head'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
@@ -83,6 +84,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
 const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
+      <Head>
+        <meta property="og:image" content="/analytics/api/og?tvl=$9.8B&volume=$100M&fee=$1K" />
+      </Head>
       <_Index />
     </SWRConfig>
   )
