@@ -117,10 +117,10 @@ export function Footer(props: FooterProps): JSX.Element {
           </div>
         </div>
         <div className="md:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-[40px] sm:mt-[10px]">
-          {Object.entries(config).map(([title, items]) => {
+          {Object.entries(config).map(([title, items], i) => {
             if (Array.isArray(items)) {
               return (
-                <div className="flex flex-col gap-6">
+                <div key={i} className="flex flex-col gap-6">
                   {items.map((item) =>
                     Object.entries(item).map(([_title, _items]) => {
                       return leafNode(_title, _items)
