@@ -47,7 +47,7 @@ const LINKS: BreadcrumbLink[] = [
 const Add = () => {
   const [chainId, setChainId] = useState(ChainId.ETHEREUM)
   const [fee, setFee] = useState(2)
-  const [poolType, setPoolType] = useState(PoolFinderType.Stable)
+  const [poolType, setPoolType] = useState(PoolFinderType.Classic)
 
   const [token0, setToken0] = useState<Type | undefined>()
   const [token1, setToken1] = useState<Type | undefined>()
@@ -61,6 +61,7 @@ const Add = () => {
   useEffect(() => {
     if (!TRIDENT_ENABLED_NETWORKS.includes(chainId)) {
       setFee(2)
+      setPoolType(PoolFinderType.Classic)
     }
   }, [chainId])
 
@@ -319,7 +320,7 @@ const _Add: FC<AddProps> = ({
                       {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
                         <AddSectionReviewModalTrident
                           poolAddress={pool.liquidityToken.address}
-                          // TODO: Shouldnt need to case if this is done right
+                          // TODO: Shouldnt need to cast if this is done right
                           poolState={poolState as ConstantProductPoolState | StablePoolState}
                           pool={pool as ConstantProductPool | StablePool}
                           chainId={chainId}

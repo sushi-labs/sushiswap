@@ -62,26 +62,14 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
                     <div className="p-3 pt-0">
                       <Tab.Group selectedIndex={poolType} onChange={setPoolType}>
                         <Tab.List className="grid grid-cols-2 mt-2">
-                          <Disclosure.Button className="hidden">
+                          <Disclosure.Button>
                             <Tab as="div" className="!h-[unset] p-2">
                               <div className="flex flex-col gap-0.5">
                                 <Typography variant="xs" weight={500} className="text-slate-200">
                                   Classic
                                 </Typography>
                                 <Typography variant="xxs" weight={500} className="text-slate-400">
-                                  Suitable for volatile pairs
-                                </Typography>
-                              </div>
-                            </Tab>
-                          </Disclosure.Button>
-                          <Disclosure.Button>
-                            <Tab as="div" className="!h-[unset] p-2">
-                              <div className="flex flex-col gap-0.5">
-                                <Typography variant="xs" weight={500} className="text-slate-200">
-                                  Constant Product
-                                </Typography>
-                                <Typography variant="xxs" weight={500} className="text-slate-400">
-                                  Suitable for volatile pairs
+                                  Suitable for regular pairs
                                 </Typography>
                               </div>
                             </Tab>

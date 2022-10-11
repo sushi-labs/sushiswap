@@ -4,10 +4,10 @@ import { useContract, useProvider, useSigner } from 'wagmi'
 
 export const getSushiXSwapContractConfig = (chainId: number | undefined) => ({
   addressOrName:
-    sushiXSwapExports[chainId as unknown as keyof Omit<typeof sushiXSwapExports, '31337'>]?.[0]?.contracts?.SushiXSwap
+    sushiXSwapExports[chainId?.toString() as keyof Omit<typeof sushiXSwapExports, '31337'>]?.[0]?.contracts?.SushiXSwap
       ?.address ?? '',
   contractInterface:
-    sushiXSwapExports[chainId as unknown as keyof Omit<typeof sushiXSwapExports, '31337'>]?.[0]?.contracts?.SushiXSwap
+    sushiXSwapExports[chainId?.toString() as keyof Omit<typeof sushiXSwapExports, '31337'>]?.[0]?.contracts?.SushiXSwap
       ?.abi ?? [],
 })
 

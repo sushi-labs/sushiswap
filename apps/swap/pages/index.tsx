@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, usePrevious } from '@sushiswap/hooks'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from '@sushiswap/math'
 import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, useWalletState } from '@sushiswap/wagmi'
@@ -14,7 +14,7 @@ import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useConnect, useNetwork } from 'wagmi'
 
-import { Layout, Route, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
+import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
@@ -169,12 +169,6 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
     setInput1('')
   }, [])
 
-  useEffect(() => {
-    window.dataLayer.push({
-      event: 'chain',
-    })
-  }, [chainId])
-
   return (
     <>
       <TradeProvider
@@ -287,9 +281,9 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </a>
             </Link.Internal>
           </Container>
-          <Container className="flex justify-center mx-auto" maxWidth="3xl">
+          {/* <Container className="flex justify-center mx-auto" maxWidth="3xl">
             <Route />
-          </Container>
+          </Container> */}
         </Layout>
       </TradeProvider>
     </>
@@ -297,7 +291,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 }
 
 function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }) {
-  const { isLoading, isError, trade } = useTrade()
+  const { isLoading: isLoadingTrade, isError, trade } = useTrade()
   const [{ expertMode, slippageTolerance }] = useSettings()
 
   const swapSlippage = useMemo(
@@ -305,14 +299,7 @@ function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setO
     [slippageTolerance]
   )
 
-  const priceImpact = useMemo(() => {
-    if (trade) {
-      return trade.priceImpact
-    }
-    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
-  }, [trade])
-
-  const priceImpactSeverity = useMemo(() => warningSeverity(priceImpact), [priceImpact])
+  const priceImpactSeverity = useMemo(() => warningSeverity(trade?.priceImpact), [trade])
 
   const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
 
@@ -332,7 +319,9 @@ function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setO
         title: 'Enable expert mode to swap with high price impact',
       })}
     >
-      {isWritePending ? (
+      {isLoadingTrade ? (
+        'Finding Best Price'
+      ) : isWritePending ? (
         <Dots>Confirm transaction</Dots>
       ) : priceImpactTooHigh ? (
         'High Price Impact'
