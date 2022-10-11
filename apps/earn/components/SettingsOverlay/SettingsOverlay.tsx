@@ -2,6 +2,7 @@ import { CogIcon } from '@heroicons/react/outline'
 import { Dialog, IconButton, Overlay, SlideIn } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
+import { CustomTokensOverlay } from './CustomTokensOverlay'
 import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
 
 interface SettingsOverlay {
@@ -22,6 +23,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ variant = 'overlay' }) =>
               <Dialog.Header onClose={() => setOpen(false)} title="Settings" />
               <div className="px-1 py-1">
                 <SlippageToleranceDisclosure />
+                <CustomTokensOverlay />
               </div>
             </div>
           </Dialog.Content>
@@ -34,6 +36,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ variant = 'overlay' }) =>
                 <Overlay.Header onClose={() => setOpen(false)} title="Settings" />
                 <div className="px-1 py-1">
                   <SlippageToleranceDisclosure />
+                  <CustomTokensOverlay />
                 </div>
               </div>
             </Overlay.Content>
