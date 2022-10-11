@@ -4,6 +4,10 @@ import transpileModules from 'next-transpile-modules'
 
 const withPwa = nextPwa({
   dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  scope: '/swap',
+  sw: 'service-worker.js',
 })
 
 const withTranspileModules = transpileModules([
