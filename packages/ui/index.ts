@@ -39,3 +39,5 @@ export * from './typography'
 export * from './useBreakpoint'
 // Re-export classnames for convenience
 export { default as classNames } from 'classnames'
+export * from './getLayout'
+export * from './Page'
