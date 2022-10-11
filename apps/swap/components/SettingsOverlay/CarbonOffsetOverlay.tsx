@@ -1,6 +1,6 @@
 import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { CarbonIcon, Link, Overlay, SlideIn, Switch, Tooltip, Typography } from '@sushiswap/ui'
+import { Button, CarbonIcon, Link, Overlay, SlideIn, Switch, Tooltip, Typography } from '@sushiswap/ui'
 import { useSettings } from 'lib/state/storage'
 import React, { FC, useState } from 'react'
 
@@ -35,11 +35,18 @@ export const CarbonOffsetOverlay: FC = () => {
                 <div className="flex flex-col gap-2 w-80">
                   <Typography variant="xs" weight={500}>
                     Make transactions climate positive by offsetting them with Klima Infinity. The average cost to
-                    offset a transaction on Polygon is {'<'}$0.01.
+                    offset a transaction on Polygon is less than $0.01.
                   </Typography>
-                  <Link.External href="https://www.klimadao.finance/blog/klimadao-sushi-fully-automated-carbon-offsetting-green-fee">
-                    Learn more
-                  </Link.External>
+                  <Typography variant="xs" weight={400} className="text-slate-500">
+                    <Button variant="empty" size="xs" className="!p-0 !text-xs font-normal">
+                      <Link.External
+                        className="!no-underline"
+                        href="https://www.klimadao.finance/blog/klimadao-sushi-fully-automated-carbon-offsetting-green-fee"
+                      >
+                        Learn more
+                      </Link.External>
+                    </Button>
+                  </Typography>
                 </div>
               }
             />
@@ -65,16 +72,18 @@ export const CarbonOffsetOverlay: FC = () => {
               <Switch checked={carbonOffset} onChange={() => updateCarbonOffset(!carbonOffset)} size="sm" />
             </div>
             <Typography variant="xs" weight={400} className="text-slate-500">
-              Make transactions climate positive by offsetting them with Klima Infinity.
+              Make transactions climate positive by offsetting them with Klima Infinity. The average cost to offset a
+              transaction on Polygon is less than $0.01.
             </Typography>
             <Typography variant="xs" weight={400} className="text-slate-500">
-              The average cost to offset a transaction on Polygon is {'<'}$0.01.{' '}
-              <Link.External
-                href="https://www.klimadao.finance/blog/klimadao-sushi-fully-automated-carbon-offsetting-green-fee"
-                className="inline-flex decoration-transparent"
-              >
-                Learn more
-              </Link.External>
+              <Button variant="empty" size="xs" className="!p-0 !text-xs font-normal">
+                <Link.External
+                  href="https://www.klimadao.finance/blog/klimadao-sushi-fully-automated-carbon-offsetting-green-fee"
+                  className="inline-flex decoration-transparent"
+                >
+                  Learn more
+                </Link.External>
+              </Button>
             </Typography>
           </div>
           {/* <Disclosure>
