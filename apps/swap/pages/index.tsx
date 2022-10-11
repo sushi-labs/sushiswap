@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT } from '@sushiswap/currency'
+import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
@@ -61,6 +61,12 @@ const DEAFAULT_TOKEN_1 = {
 const getDefaultToken1 = (chainId: number) => {
   if (chainId in DEAFAULT_TOKEN_1) {
     return DEAFAULT_TOKEN_1[chainId]
+  }
+  if (chainId in WETH9 && chainId in WNATIVE && WNATIVE[chainId] !== WETH9[chainId]) {
+    return WETH9[chainId]
+  }
+  if (chainId in WBTC) {
+    return WBTC[chainId]
   }
   if (chainId in USDC) {
     return USDC[chainId]
@@ -243,19 +249,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                       fundSource={FundSource.WALLET}
                       amounts={amounts}
                     >
-                      <Checker.Network
-                        fullWidth
-                        size="md"
-                        chainId={chainId}
-                        // onSuccess={(chain) => {
-                        //   console.log('switch network success', chain)
-                        //   delete router.query['chainId']
-                        //   void router.replace({
-                        //     pathname: router.pathname,
-                        //     query: router.query,
-                        //   })
-                        // }}
-                      >
+                      <Checker.Network fullWidth size="md" chainId={chainId}>
                         <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
                           {({ isWritePending, setOpen }) => {
                             return <SwapButton isWritePending={isWritePending} setOpen={setOpen} />

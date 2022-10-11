@@ -17,7 +17,7 @@ import { useFeeData } from 'wagmi'
 
 import { useBentoBoxTotals } from './useBentoBoxTotals'
 import { getConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
-import { ConstantProductPoolState, useGetAllConstantProductPools } from './useConstantProductPools'
+import { ConstantProductPoolState, useGetConstantProductPools } from './useConstantProductPools'
 import { PairState, usePairs } from './usePairs'
 
 type UseTradePayload = {
@@ -87,7 +87,7 @@ export const useTrade: UseTrade = ({
     data: constantProductPools,
     isLoading: isCppLoading,
     isError: isCppError,
-  } = useGetAllConstantProductPools(chainId, currencyCombinations, { enabled: tridentEnabled })
+  } = useGetConstantProductPools(chainId, currencyCombinations, { enabled: tridentEnabled })
 
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])

@@ -11,7 +11,7 @@ import {
   Version as TradeVersion,
 } from '@sushiswap/exchange'
 import { RouteStatus } from '@sushiswap/tines'
-import { PairState, useBentoBoxTotal, usePairs } from '@sushiswap/wagmi'
+import { PairState, useBentoBoxTotals, useGetConstantProductPools, useGetStablePools, usePairs } from '@sushiswap/wagmi'
 import {
   AMM_ENABLED_NETWORKS,
   CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
@@ -22,8 +22,8 @@ import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { useFeeData } from 'wagmi'
 
-import { ConstantProductPoolState, useConstantProductPools } from './useConstantProductPools'
-import { StablePoolState, useStablePools } from './useStablePools'
+import { ConstantProductPoolState } from './useConstantProductPools'
+import { StablePoolState } from './useStablePools'
 
 export type UseTradeOutput =
   | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
@@ -66,9 +66,8 @@ export function useTrade(
   })
 
   // Trident constant product pools
-  // const { data: constantProductPools } = useGetAllConstantProductPools(chainId, currencyCombinations)
-  const constantProductPools = useConstantProductPools(chainId, currencyCombinations)
-  const stablePools = useStablePools(chainId, currencyCombinations)
+  const { data: constantProductPools } = useGetConstantProductPools(chainId, currencyCombinations)
+  const { data: stablePools } = useGetStablePools(chainId, currencyCombinations)
 
   // Combined legacy and trident pools
   const pools = useMemo(
@@ -112,8 +111,7 @@ export function useTrade(
   //   }, [])
   // )
 
-  const currencyInRebase = useBentoBoxTotal(chainId, currencyIn)
-  const currencyOutRebase = useBentoBoxTotal(chainId, currencyOut)
+  const totals = useBentoBoxTotals(chainId, [currencyIn, currencyOut])
 
   // console.debug('Found legacy route', [
   //   feeData,
@@ -155,8 +153,9 @@ export function useTrade(
           chainId in FACTORY_ADDRESS &&
           (chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS || chainId in STABLE_POOL_FACTORY_ADDRESS) &&
           TRIDENT_ENABLED_NETWORKS.includes(chainId) &&
-          currencyInRebase &&
-          currencyOutRebase
+          totals &&
+          currencyIn.wrapped.address in totals &&
+          currencyOut.wrapped.address in totals
         ) {
           const legacyRoute = findSingleRouteExactIn(
             currencyIn.wrapped,
@@ -181,7 +180,7 @@ export function useTrade(
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
+            BigNumber.from(amountSpecified.toShare(totals[currencyIn.wrapped.address]).quotient.toString()),
             [
               ...filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
               ...filteredPools.filter((pool): pool is StablePool => pool instanceof StablePool),
@@ -191,7 +190,11 @@ export function useTrade(
           )
 
           const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBN.toString()).greaterThan(
-            Amount.fromShare(currencyOut.wrapped, tridentRoute.amountOutBN.toString(), currencyOutRebase)
+            Amount.fromShare(
+              currencyOut.wrapped,
+              tridentRoute.amountOutBN.toString(),
+              totals[currencyOut.wrapped.address]
+            )
           )
 
           return Trade.exactIn(
@@ -199,8 +202,8 @@ export function useTrade(
             amountSpecified,
             currencyOut,
             useLegacy ? TradeVersion.V1 : TradeVersion.V2,
-            !useLegacy ? currencyInRebase : undefined,
-            !useLegacy ? currencyOutRebase : undefined
+            !useLegacy ? totals[currencyIn.wrapped.address] : undefined,
+            !useLegacy ? totals[currencyOut.wrapped.address] : undefined
           )
         }
 
@@ -224,12 +227,17 @@ export function useTrade(
 
         // TODO: Switch to shares
 
-        if (TRIDENT_ENABLED_NETWORKS.includes(chainId) && currencyInRebase && currencyOutRebase) {
+        if (
+          TRIDENT_ENABLED_NETWORKS.includes(chainId) &&
+          totals &&
+          currencyIn.wrapped.address in totals &&
+          currencyOut.wrapped.address in totals
+        ) {
           console.debug('Attemping to find trident route')
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.toShare(currencyInRebase).quotient.toString()),
+            BigNumber.from(amountSpecified.toShare(totals[currencyIn.wrapped.address]).quotient.toString()),
             [
               ...filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
               ...filteredPools.filter((pool): pool is StablePool => pool instanceof StablePool),
@@ -244,8 +252,8 @@ export function useTrade(
               amountSpecified,
               currencyOut,
               TradeVersion.V2,
-              currencyInRebase,
-              currencyOutRebase
+              totals[currencyIn.wrapped.address],
+              totals[currencyOut.wrapped.address]
             )
           } else {
             console.debug('No trident route', tridentRoute)
@@ -257,16 +265,5 @@ export function useTrade(
         //
       }
     }
-  }, [
-    feeData,
-    currencyIn,
-    currencyInRebase,
-    currencyOut,
-    currencyOutRebase,
-    chainId,
-    amountSpecified,
-    otherCurrency,
-    filteredPools,
-    tradeType,
-  ])
+  }, [amountSpecified, chainId, currencyIn, currencyOut, feeData, filteredPools, otherCurrency, totals, tradeType])
 }

@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Amount, Currency, Token } from '@sushiswap/currency'
 import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/exchange'
-import ConstantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
+import constantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
 import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
@@ -15,9 +15,9 @@ export enum ConstantProductPoolState {
   INVALID,
 }
 
-const POOL_INTERFACE = new Interface(ConstantProductPoolArtifact.abi)
+const POOL_INTERFACE = new Interface(constantProductPoolArtifact.abi)
 
-type PoolInput = [Type | undefined, Type | undefined, Fee, boolean]
+type PoolInput = [Currency | undefined, Currency | undefined, Fee, boolean]
 
 interface PoolData {
   address: string
@@ -25,17 +25,17 @@ interface PoolData {
   token1: Token
 }
 
-interface UseGetAllConstantProductPoolsReturn {
+interface UseGetConstantProductPoolsReturn {
   isLoading: boolean
   isError: boolean
   data: [ConstantProductPoolState, ConstantProductPool | null][]
 }
 
-export function useGetAllConstantProductPools(
-  chainId: number,
-  currencies: [Type | undefined, Type | undefined][],
-  config?: Omit<UseContractReadsConfig, 'contracts'>
-): UseGetAllConstantProductPoolsReturn {
+export function useGetConstantProductPools(
+  chainId: number | undefined,
+  currencies: [Currency | undefined, Currency | undefined][],
+  config: Omit<UseContractReadsConfig, 'contracts'> = { enabled: true }
+): UseGetConstantProductPoolsReturn {
   const contract = useConstantProductPoolFactoryContract(chainId)
   const pairsUnique = useMemo(() => {
     const pairsMap = new Map<string, [Token, Token]>()
@@ -65,8 +65,8 @@ export function useGetAllConstantProductPools(
       functionName: 'poolsCount',
       args: el,
     })),
-    enabled: pairsUniqueAddr.length > 0 && config?.enabled,
-    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
+    enabled: Boolean(pairsUniqueAddr.length > 0 && config?.enabled),
+    watch: !config?.enabled,
   })
 
   const callStatePoolsCountProcessed = useMemo(() => {
@@ -88,16 +88,19 @@ export function useGetAllConstantProductPools(
     isLoading: callStatePoolsLoading,
     isError: callStatePoolsError,
   } = useContractReads({
-    contracts:
-      callStatePoolsCountProcessed?.map((el) => ({
+    contracts: useMemo(() => {
+      if (!callStatePoolsCountProcessed) return []
+      return callStatePoolsCountProcessed.map((args) => ({
         chainId,
         addressOrName: contract.address,
         contractInterface: contract.interface,
         functionName: 'getPools',
-        args: el,
-      })) || [],
+        args,
+      }))
+    }, [callStatePoolsCountProcessed, chainId, contract.address, contract.interface]),
+
     enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
-    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
+    watch: !config?.enabled,
   })
 
   const pools = useMemo(() => {
@@ -137,7 +140,7 @@ export function useGetAllConstantProductPools(
       })),
     ],
     enabled: poolsAddresses.length > 0 && config?.enabled,
-    watch: !(typeof config?.enabled !== undefined && !config?.enabled),
+    watch: !config?.enabled,
   })
 
   return useMemo(() => {
@@ -180,7 +183,7 @@ export function useConstantProductPools(
   const input = useMemo(
     () =>
       pools
-        .filter((input): input is [Type, Type, Fee, boolean] => {
+        .filter((input): input is [Currency, Currency, Fee, boolean] => {
           const [currencyA, currencyB, fee, twap] = input
           return Boolean(
             currencyA &&
@@ -259,8 +262,8 @@ export function useConstantProductPools(
 
 export function useConstantProductPool(
   chainId: number,
-  tokenA: Type | undefined,
-  tokenB: Type | undefined,
+  tokenA: Currency | undefined,
+  tokenB: Currency | undefined,
   fee: Fee,
   twap: boolean
 ): [ConstantProductPoolState, ConstantProductPool | null] {

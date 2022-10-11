@@ -468,6 +468,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 fullWidth
                 amount={input0}
                 address={approveTokenTo}
+                enabled={trade?.inputAmount?.currency?.isToken}
               />
             </Approve.Components>
           }
