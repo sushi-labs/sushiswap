@@ -1,25 +1,37 @@
 {
-    "name": "SushiSwap by Sushi",
-    "description": "Easiest way to trade your tokens and supported by 22 networks.",
-    "short_name": "SushiSwap",
-    "display": "standalone",
-    "orientation": "portrait",
-    "theme_color": "#0f172a",
-    "background_color": "#0f172a",
-    "id": "/swap",
-    "scope": "/swap",
-    "start_url": "/swap",
-    "iconPath": "/favicon-32x32.png?v=1",
-    "icons": [
-      {
-          "src": "/swap/android-chrome-192x192.png?v=1",
-          "sizes": "192x192",
-          "type": "image/png"
-      },
-      {
-          "src": "/swap/android-chrome-512x512.png?v=1",
-          "sizes": "512x512",
-          "type": "image/png"
-      }
-    ]
+  "name": "SushiSwap by Sushi",
+  "description": "Easiest way to trade your tokens and supported by 22 networks.",
+  "short_name": "SushiSwap",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "id": "/swap",
+  "scope": "/swap",
+  "start_url": "/swap",
+  "iconPath": "/favicon-32x32.png?v=1",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png?v=1",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png?v=1",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-icon-192x192.png?v=1",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/maskable-icon-512x512.png?v=1",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }
