@@ -119,7 +119,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           )}
         </button>
       </div>
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between h-[24px]">
         <PricePanel value={value} currency={currency} usdPctChange={usdPctChange} />
         <div className="h-6">
           <BalancePanel

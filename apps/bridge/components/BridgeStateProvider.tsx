@@ -44,7 +44,7 @@ const reducer = (state: State, action: Actions): State => {
     case 'setDstChainId':
       return { ...state, dstChainId: action.chainId, dstToken: null, dstTypedAmount: '' }
     case 'setSrcToken':
-      return { ...state, srcToken: action.currency }
+      return { ...state, srcToken: action.currency, amount: tryParseAmount(state.srcTypedAmount, action.currency) }
     case 'setDstToken':
       return { ...state, dstToken: action.currency }
     case 'setSrcTypedAmount':

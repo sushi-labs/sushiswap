@@ -1,7 +1,7 @@
 import { Price, tryParseAmount } from '@sushiswap/currency'
 import { useMemo } from 'react'
 
-import { useBridgeState } from '../../components/BridgeStateProvider'
+import { useBridgeState } from '../../components'
 import { useBridgeFees } from './useBridgeFees'
 
 export const useBridgeOutput = () => {
