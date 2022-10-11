@@ -60,6 +60,7 @@ const _Articles: FC = () => {
     difficulty: string | undefined
     topic: string | undefined
     search: string | undefined
+    // TODO: product
   }
   const { difficulty: difficultyQuery, topic: topicQuery, search: searchQuery } = queryParams
 

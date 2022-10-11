@@ -1,4 +1,4 @@
-import { ArticleFiltersInput, getMeshSDK, PaginationArg } from '../.mesh'
+import { ArticleFiltersInput, getMeshSDK, GetProductsQueryVariables, PaginationArg } from '../.mesh'
 
 export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
   const sdk = getMeshSDK()
@@ -53,4 +53,9 @@ export const getTopics = async () => {
 export const getDifficulties = async () => {
   const sdk = getMeshSDK()
   return await sdk.GetDifficulties()
+}
+
+export const getProducts = async (variables: GetProductsQueryVariables) => {
+  const sdk = getMeshSDK()
+  return await sdk.GetProducts(variables)
 }
