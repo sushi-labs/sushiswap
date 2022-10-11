@@ -1,14 +1,14 @@
 {
-    "name": "Sushi",
-    "short_name": "Sushi",
+    "name": "Furo by Sushi",
+    "short_name": "Furo",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png?v=1",
+            "src": "/furo/android-chrome-192x192.png?v=1",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png?v=1",
+            "src": "/furo/android-chrome-512x512.png?v=1",
             "sizes": "512x512",
             "type": "image/png"
         }

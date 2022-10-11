@@ -21,7 +21,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
         <meta name="msapplication-TileColor" content="#2b5797" />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#FA52A0" />
       </Head>
       <WagmiConfig client={client}>
         <ThemeProvider>
