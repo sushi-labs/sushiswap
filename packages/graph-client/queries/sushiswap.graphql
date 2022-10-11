@@ -317,6 +317,7 @@ query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
     price {
       derivedNative
     }
+    source
     pairs {
       pair {
         chainId
@@ -398,6 +399,7 @@ query CrossChainTokens(
     price {
       derivedNative
     }
+    source
   }
 }
 

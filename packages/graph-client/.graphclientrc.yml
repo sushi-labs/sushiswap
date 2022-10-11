@@ -82,6 +82,7 @@ additionalTypeDefs: |
     chainId: Int!
     chainName: String!
     chainShortName: String!
+    source: String!
   }
   extend type Query {
     # BLOCKS
