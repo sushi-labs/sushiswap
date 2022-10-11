@@ -1,4 +1,4 @@
-import { classNames } from '@sushiswap/ui'
+import { classNames, DiscordIcon, GithubIcon, InstagramIcon, TwitterIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { defaultSidePadding } from '../helpers'
@@ -19,6 +19,20 @@ export const Hero: FC = () => {
         Demystifying DeFI and Crypto - everything you need to know in one place. For beginners to advanced users, and
         everyone in between.
       </span>
+      <div className="absolute hidden right-12 lg:grid top-[184px] gap-8">
+        <a href="https://github.com/sushiswap" target="_blank" rel="noopener noreferrer">
+          <GithubIcon width={24} className="text-slate-300 hover:text-slate-50" />
+        </a>
+        <a href="https://twitter.com/sushiswap" target="_blank" rel="noopener noreferrer">
+          <TwitterIcon width={24} className="text-slate-300 hover:text-slate-50" />
+        </a>
+        <a href="https://discord.gg/NVPXN4e" target="_blank" rel="noopener noreferrer">
+          <DiscordIcon width={24} className="text-slate-300 hover:text-slate-50" />
+        </a>
+        <a href="https://instagram.com/instasushiswap" target="_blank" rel="noopener noreferrer">
+          <InstagramIcon width={24} className="text-slate-300 hover:text-slate-50" />
+        </a>
+      </div>
     </section>
   )
 }
