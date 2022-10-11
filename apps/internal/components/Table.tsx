@@ -7,7 +7,7 @@ interface GenericTable<T> {
   getLink?: (row: T) => string
 }
 
-export function GenericTable<T extends { id: string }>({ table, columns, getLink }: GenericTable<T>) {
+export function GenericTable<T>({ table, columns, getLink }: GenericTable<T>) {
   return (
     <Table.container>
       <Table.table>

@@ -36,8 +36,20 @@ additionalTypeDefs: |
     crossChainStrategyKpis(first: Int!, chainIds: [BigInt!]!): [StrategyKpi!]!
   }
 
-  type SubgraphStatus {
+  enum SubgraphType {
+    Current
+    Pending
+  }
+  enum SubgraphStatus {
+    Synced
+    Syncing
+    Failed
+  }
+  type Subgraph {
     subgraphName: String
+    subgraphId: String
+    type: SubgraphType
+    status: SubgraphStatus
     startBlock: BigInt
     lastSyncedBlock: BigInt
     chainHeadBlock: BigInt
@@ -46,7 +58,7 @@ additionalTypeDefs: |
     entityCount: BigInt
   }
   extend type Query {
-    subgraphStatuses(subgraphNames: [String!]!): [SubgraphStatus!]!
+    subgraphs(subgraphNames: [String!]!, type: SubgraphType!): [Subgraph!]!
   }
 
 additionalResolvers:
