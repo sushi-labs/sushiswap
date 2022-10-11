@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import { Native } from '@sushiswap/currency'
+import { Native, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
 import { classNames, Loader, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
@@ -109,7 +109,8 @@ export const Stats: FC = () => {
       <Typography variant="sm" className="text-slate-400">
         Gas Cost
       </Typography>
-      {Boolean(gasFee) && Boolean(Native.onChain(srcChainId).wrapped.address in srcPrices) ? (
+      {Boolean(gasFee) &&
+      Boolean(srcChainId && srcChainId in WNATIVE_ADDRESS && WNATIVE_ADDRESS[srcChainId] in srcPrices) ? (
         <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
           {gasFee.toSignificant(6)} {Native.onChain(srcChainId).symbol}
         </Typography>
