@@ -6,7 +6,7 @@
     "build": "next build",
     "build:profile": "next build --profile",
     "dev": "next dev",
-    "lint": "eslint --fix . && next lint",
+    "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
   },

@@ -6,7 +6,7 @@
     "build": "next build --profile",
     "dev": "next dev --port 4000",
     "generate": "typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
-    "lint": "eslint --fix . && next lint",
+    "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient && rm -rf typechain"
   },
