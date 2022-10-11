@@ -85,7 +85,7 @@ const Add = () => {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.ConstantProduct}
+                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Classic}
                   fee={FEE_MAP[fee]}
                   twap={false}
                 />

@@ -3,8 +3,8 @@ import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, us
 import { PairState } from '../../hooks'
 import { ComponentsWrapper } from './ComponentsWrapper'
 import { ConstantProductPool } from './ConstantProductPool'
-import { StablePool } from './StablePool'
 import { LegacyPool } from './LegacyPool'
+import { StablePool } from './StablePool'
 import {
   ComponentsWrapperProps,
   LegacyPoolFinderProps,
@@ -67,5 +67,5 @@ export const PoolFinder: typeof Controller & {
   Components: ComponentsWrapper,
   LegacyPool,
   ConstantProductPool,
-  StablePool
+  StablePool,
 })

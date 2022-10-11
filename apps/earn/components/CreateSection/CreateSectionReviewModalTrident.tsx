@@ -59,10 +59,10 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const [, { createNotification }] = useNotifications(address)
 
   const factory = useMemo(() => {
-    if (poolType === PoolFinderType.Stable) {
-      return stablePoolFactory
-    } else if (poolType === PoolFinderType.ConstantProduct) {
+    if (poolType === PoolFinderType.Classic) {
       return constantProductPoolFactory
+    } else if (poolType === PoolFinderType.Stable) {
+      return stablePoolFactory
     }
   }, [constantProductPoolFactory, poolType, stablePoolFactory])
 
@@ -72,22 +72,22 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   })
 
   const poolAddress = useMemo(() => {
-    if (!factory || !token0 || !token1 || !poolType) return undefined
-
-    if (poolType === PoolFinderType.Stable) {
-      return computeStablePoolAddress({
-        factoryAddress: factory.address,
-        tokenA: token0.wrapped,
-        tokenB: token1.wrapped,
-        fee: fee,
-      })
-    } else if (poolType === PoolFinderType.ConstantProduct) {
+    // !poolType === 0, don't guared against it
+    if (!factory || !token0 || !token1) return undefined
+    if (poolType === PoolFinderType.Classic) {
       return computeConstantProductPoolAddress({
         factoryAddress: factory.address,
         tokenA: token0.wrapped,
         tokenB: token1.wrapped,
         fee: fee,
         twap: false,
+      })
+    } else if (poolType === PoolFinderType.Stable) {
+      return computeStablePoolAddress({
+        factoryAddress: factory.address,
+        tokenA: token0.wrapped,
+        tokenB: token1.wrapped,
+        fee: fee,
       })
     }
   }, [factory, fee, token0, token1, poolType])

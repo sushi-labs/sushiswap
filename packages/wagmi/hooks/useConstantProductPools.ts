@@ -6,10 +6,7 @@ import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
 import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
 
-import {
-  getConstantProductPoolFactoryContract,
-  useConstantProductPoolFactoryContract,
-} from './useConstantProductPoolFactoryContract'
+import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 
 export enum ConstantProductPoolState {
   LOADING,
@@ -228,7 +225,7 @@ export function useConstantProductPools(
       contractInterface: POOL_INTERFACE,
       functionName: 'getReserves',
     })),
-    enabled: poolsAddresses.length > 0 && getConstantProductPoolFactoryContract(chainId).addressOrName,
+    enabled: poolsAddresses.length > 0,
     watch: true,
     keepPreviousData: true,
   })

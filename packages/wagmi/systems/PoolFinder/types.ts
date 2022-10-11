@@ -28,14 +28,14 @@ export interface TridentPoolFinderProps extends LegacyPoolFinderProps {
 }
 
 export type PoolStateUnion = [
-  ConstantProductPoolState | PairState | StablePoolState,
+  PairState | ConstantProductPoolState | StablePoolState,
   Pair | ConstantProductPool | StablePool | null
 ]
 
 export enum PoolFinderType {
   Classic,
   Stable,
-  ConcentratedLiquidity,
+  // ConcentratedLiquidity,
 }
 
 export type PoolExistenceStateAction = {

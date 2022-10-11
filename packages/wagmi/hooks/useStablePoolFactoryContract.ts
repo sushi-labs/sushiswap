@@ -1,12 +1,16 @@
-import { AddressZero } from '@ethersproject/constants'
-import TRIDENT from '@sushiswap/trident/exports/all.json'
+import tridentExports from '@sushiswap/trident/exports/all.json'
 import { useContract, useProvider } from 'wagmi'
 
 export const getStablePoolFactoryContract = (chainId: number | undefined) => ({
-  // @ts-ignore
-  addressOrName: TRIDENT[chainId]?.[0]?.contracts?.StablePoolFactory?.address ?? AddressZero,
-  // @ts-ignore
-  contractInterface: TRIDENT[chainId]?.[0]?.contracts?.StablePoolFactory?.abi ?? [],
+  addressOrName:
+    // @ts-ignore
+    tridentExports[chainId?.toString() as keyof Omit<typeof tridentExports, '31337'>]?.[0]?.contracts?.StablePoolFactory
+      ?.address ?? '',
+
+  contractInterface:
+    // @ts-ignore
+    tridentExports[chainId?.toString() as keyof Omit<typeof tridentExports, '31337'>]?.[0]?.contracts?.StablePoolFactory
+      ?.abi ?? [],
 })
 
 export function useStablePoolFactoryContract(chainId: number | undefined) {
