@@ -1,3 +1,5 @@
+import withPWA from 'next-pwa'
+import runtimeCaching from 'next-pwa/cache'
 import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules([
@@ -20,6 +22,10 @@ const nextConfig = {
   },
   experimental: {
     nextScriptWorkers: true,
+  },
+  pwa: {
+    dest: 'public',
+    runtimeCaching,
   },
   async redirects() {
     return [
@@ -61,4 +67,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default withTranspileModules(withPWA(nextConfig))
