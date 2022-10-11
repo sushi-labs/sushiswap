@@ -4,9 +4,10 @@ import { ColumnDef, flexRender, Table as TableType } from '@tanstack/react-table
 interface GenericTable<T> {
   table: TableType<T>
   columns: ColumnDef<T>[]
+  getLink?: (row: T) => string
 }
 
-export function GenericTable<T>({ table, columns }: GenericTable<T>) {
+export function GenericTable<T extends { id: string }>({ table, columns, getLink }: GenericTable<T>) {
   return (
     <Table.container>
       <Table.table>
@@ -42,7 +43,13 @@ export function GenericTable<T>({ table, columns }: GenericTable<T>) {
                 {row.getVisibleCells().map((cell) => {
                   return (
                     <Table.td key={cell.id} style={{ maxWidth: columns[0].size, width: columns[0].size }}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {getLink ? (
+                        <a href={getLink(row.original)} target="_blank" rel="noreferrer">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </a>
+                      ) : (
+                        flexRender(cell.column.columnDef.cell, cell.getContext())
+                      )}
                     </Table.td>
                   )
                 })}

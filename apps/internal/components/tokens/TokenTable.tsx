@@ -73,23 +73,9 @@ function useColumns() {
       id: 'addToDefaultList',
       header: 'Adder',
       cell: ({ row }) => (
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full" onClick={(e) => e.preventDefault()}>
           <TokenAdder token={row.original} hasIcon={Boolean(row.original.listEntry?.logoURI)} />
         </div>
-      ),
-    }),
-    columnHelper.display({
-      id: 'link',
-      header: 'Link',
-      cell: ({ row }) => (
-        <a
-          href={chains[row.original.chainId].getTokenUrl(row.original.id.split(':')[1])}
-          target="_blank"
-          rel="noreferrer"
-          className="flex justify-center"
-        >
-          <LinkIcon width={24} height={24} />
-        </a>
       ),
     }),
   ]
@@ -104,5 +90,11 @@ export const TokenTable: FC<TokenTable> = ({ tokens }) => {
     getCoreRowModel: getCoreRowModel(),
   })
 
-  return <GenericTable table={table} columns={columns} />
+  return (
+    <GenericTable
+      table={table}
+      columns={columns}
+      getLink={(row) => chains[row.chainId].getTokenUrl(row.id.split(':')[1])}
+    />
+  )
 }
