@@ -1,7 +1,6 @@
-import { Transition } from '@headlessui/react'
-import { PlusIcon, SearchIcon, XCircleIcon } from '@heroicons/react/solid'
+import { SearchIcon } from '@heroicons/react/solid'
 import { useDebounce } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED } from '@sushiswap/ui'
 import React, { FC, useEffect, useState } from 'react'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'

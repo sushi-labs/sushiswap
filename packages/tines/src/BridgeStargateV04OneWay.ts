@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { RPool, RToken, TYPICAL_SWAP_GAS_COST } from './PrimaryPools'
+
+import { RPool, RToken } from './PrimaryPools'
 import { BridgeState, getStarGateFeesV04 } from './StarGateFeesV04'
 import { getBigNumber } from './Utils'
 

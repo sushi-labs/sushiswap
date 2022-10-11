@@ -104,7 +104,7 @@ export class CLRPool extends RPool {
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
-    let currentPriceBN = this.sqrtPriceX96
+    const currentPriceBN = this.sqrtPriceX96
     let currentPrice = parseInt(currentPriceBN.toString()) / two96
     let currentLiquidityBN = this.liquidity
     let outAmount = 0
@@ -182,7 +182,7 @@ export class CLRPool extends RPool {
 
   calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1
-    let currentPriceBN = this.sqrtPriceX96
+    const currentPriceBN = this.sqrtPriceX96
     let currentPrice = parseInt(currentPriceBN.toString()) / two96
     let currentLiquidityBN = this.liquidity
     let input = 0
@@ -252,7 +252,7 @@ export class CLRPool extends RPool {
   }
 
   calcCurrentPriceWithoutFee(direction: boolean): number {
-    let currentPrice = parseInt(this.sqrtPriceX96.toString()) / two96
+    const currentPrice = parseInt(this.sqrtPriceX96.toString()) / two96
     const p = currentPrice * currentPrice
     return direction ? p : 1 / p
   }

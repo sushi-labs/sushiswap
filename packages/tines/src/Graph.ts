@@ -624,6 +624,7 @@ export class Graph {
         }
         DEBUG(() => console.log(debug_info))
         if (Number.isNaN(finish.bestTotal)) {
+          // eslint-disable-next-line no-debugger
           debugger
         }
         return {

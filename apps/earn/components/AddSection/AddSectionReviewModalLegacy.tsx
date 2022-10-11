@@ -11,7 +11,7 @@ import {
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useDeprecatedSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useDeprecatedSendTransaction,useNetwork, UserRejectedRequestError } from 'wagmi'
 
 import { useTransactionDeadline } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
