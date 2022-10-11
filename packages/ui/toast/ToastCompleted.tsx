@@ -6,11 +6,11 @@ import { NotificationData } from './index'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
 
-interface ToastFailed extends NotificationData {
+interface ToastCompleted extends Omit<NotificationData, 'promise'> {
   onDismiss(): void
 }
 
-export const ToastCompleted: FC<ToastFailed> = ({ chainId, txHash, onDismiss, summary }) => {
+export const ToastCompleted: FC<ToastCompleted> = ({ href, chainId, txHash, onDismiss, summary }) => {
   return (
     <>
       <ToastContent
@@ -18,7 +18,7 @@ export const ToastCompleted: FC<ToastFailed> = ({ chainId, txHash, onDismiss, su
         title="Transaction Completed"
         summary={summary.completed}
       />
-      <ToastButtons href={Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
+      <ToastButtons href={href ? href : Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
     </>
   )
 }

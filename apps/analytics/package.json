@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@ethersproject/address": "^5.7.0",
-    "@headlessui/react": "^1.6.6",
+    "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
@@ -28,7 +28,7 @@
     "echarts-for-react": "^3.0.2",
     "graphql": "16.6.0",
     "isomorphic-fetch": "^3.0.0",
-    "next": "^12.3.0",
+    "next": "^12.3.1",
     "next-pwa": "^5.6.0",
     "next-seo": "^5.5.0",
     "next-sitemap": "^3.1.20",

@@ -55,7 +55,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
 
   const handleImport = useCallback(
     (currency: Token) => {
-      onAddToken(currency)
+      onAddToken && onAddToken(currency)
       onSelect && onSelect(currency)
       onClose()
     },

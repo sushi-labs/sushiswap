@@ -8,10 +8,11 @@ import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, u
 
 export enum AppType {
   Root = 'Explore Apps',
+  Blog = 'Blog',
+  Bridge = 'Bridge',
   Swap = 'Swap',
   xSwap = 'xSwap',
   Furo = 'Streaming',
-  Blog = 'Blog',
   Legacy = 'Sushi 1.0',
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
@@ -21,11 +22,13 @@ export enum AppType {
 }
 
 const LINK = {
+  [AppType.Root]: '/',
+  [AppType.Legacy]: '/',
+  [AppType.Blog]: '/blog',
+  [AppType.Bridge]: '/bridge',
   [AppType.Swap]: '/swap',
   [AppType.xSwap]: '/xswap',
   [AppType.Furo]: '/furo',
-  [AppType.Blog]: '/blog',
-  [AppType.Legacy]: '/',
   [AppType.Internal]: '/internal',
   [AppType.Kashi]: '/kashi',
   [AppType.Analytics]: '/analytics',

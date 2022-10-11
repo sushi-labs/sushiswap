@@ -11,10 +11,11 @@ const eslintConfig = {
   plugins: ['@typescript-eslint', 'simple-import-sort', 'unused-imports'],
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
   ignorePatterns: [
-    '**/next.config.mjs',
     '**/__tests__/*.test.ts',
     '**/dist/**',
     '**/node_modules/**',
+    '**/.graphclient/**',
+    '**/.mesh/**',
     '**/generated/**',
     '**/typechain/**',
     '**/coverage/**',

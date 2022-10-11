@@ -11,7 +11,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
   },
   "dependencies": {
-    "@headlessui/react": "^1.6.0",
+    "@headlessui/react": "^1.7.3",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/core-sdk": "^1.0.0-canary.65",
@@ -25,7 +25,7 @@
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
     "ethers": "^5.7.0",
-    "next": "^12.3.0",
+    "next": "^12.3.1",
     "next-seo": "^5.5.0",
     "next-sitemap": "^3.1.16",
     "numeral": "^2.0.6",

@@ -15,6 +15,7 @@
   "typings": "dist/index.d.ts",
   "files": [
     "dist/**",
+    "abis/**",
     "IStargateReceiver.sol",
     "IStargateRouter.sol"
   ],

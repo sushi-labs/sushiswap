@@ -137,7 +137,7 @@ importers:
 
   apps/_root:
     specifiers:
-      '@headlessui/react': ^1.6.0
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
@@ -161,7 +161,7 @@ importers:
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
@@ -179,7 +179,7 @@ importers:
       use-count-up: ^3.0.1
       wagmi: 0.6.8
     dependencies:
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/chain': link:../../packages/chain
@@ -194,10 +194,10 @@ importers:
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
       ethers: 5.7.1
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.0
-      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
-      next-sitemap: 3.1.21_next@12.3.0
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.1
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
+      next-sitemap: 3.1.21_next@12.3.1
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -225,7 +225,7 @@ importers:
   apps/analytics:
     specifiers:
       '@ethersproject/address': ^5.7.0
-      '@headlessui/react': ^1.6.6
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
@@ -251,7 +251,7 @@ importers:
       eslint: ^8.20.0
       graphql: 16.6.0
       isomorphic-fetch: ^3.0.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
@@ -267,7 +267,7 @@ importers:
       wagmi: 0.6.8
     dependencies:
       '@ethersproject/address': 5.7.0
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/chain': link:../../packages/chain
@@ -284,11 +284,11 @@ importers:
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       graphql: 16.6.0
       isomorphic-fetch: 3.0.0
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.0
-      next-pwa: 5.6.0_next@12.3.0
-      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
-      next-sitemap: 3.1.21_next@12.3.0
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.1
+      next-pwa: 5.6.0_next@12.3.1
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
+      next-sitemap: 3.1.21_next@12.3.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -331,7 +331,7 @@ importers:
       date-fns: ^2.28.0
       eslint: ^8.20.0
       graphql: 16.6.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
@@ -351,10 +351,10 @@ importers:
       '@tailwindcss/typography': 0.5.4_tailwindcss@3.1.6
       date-fns: 2.29.1
       graphql: 16.6.0
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.0
-      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
-      next-sitemap: 3.1.16_next@12.3.0
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.1
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
+      next-sitemap: 3.1.16_next@12.3.1
       qs: 6.11.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -380,6 +380,123 @@ importers:
       tailwindcss: 3.1.6_postcss@8.4.14
       typescript: 4.6.3
 
+  apps/bridge:
+    specifiers:
+      '@builder.io/partytown': ^0.6.1
+      '@ethersproject/abi': ^5.7.0
+      '@ethersproject/address': ^5.7.0
+      '@ethersproject/bignumber': ^5.7.0
+      '@ethersproject/bytes': ^5.7.0
+      '@ethersproject/constants': ^5.7.0
+      '@ethersproject/contracts': ^5.7.0
+      '@ethersproject/experimental': ^5.7.0
+      '@ethersproject/providers': ^5.7.0
+      '@headlessui/react': ^1.7.3
+      '@heroicons/react': ^1.0.0
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
+      '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/redux-localstorage': workspace:*
+      '@sushiswap/redux-token-lists': workspace:*
+      '@sushiswap/stargate': workspace:*
+      '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/token-lists': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui': workspace:*
+      '@sushiswap/wagmi': workspace:*
+      '@typechain/ethers-v5': ^10.0.0
+      '@types/node': ^17.0.30
+      '@types/react': ^18.0.0
+      '@types/react-dom': ^18.0.0
+      '@uniswap/redux-multicall': ^1.1.1
+      '@uniswap/v2-core': ^1.0.1
+      autoprefixer: ^10.4.0
+      eslint: ^8.20.0
+      ethers: ^5.7.0
+      nanoid: ^4.0.0
+      next: 12.3.1
+      next-axiom: ^0.14.0
+      next-pwa: ^5.6.0
+      next-seo: ^5.5.0
+      next-transpile-modules: 9.0.0
+      postcss: ^8.4.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-redux: ^8.0.1
+      swr: ^1.3.0
+      tailwindcss: ^3.1.0
+      typechain: ^8.0.0
+      typescript: 4.6.3
+      wagmi: 0.6.8
+    dependencies:
+      '@builder.io/partytown': 0.6.4
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/experimental': 5.7.0
+      '@ethersproject/providers': 5.7.1
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@layerzerolabs/scan-client': 0.0.0-beta.6
+      '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
+      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/exchange': link:../../packages/exchange
+      '@sushiswap/format': link:../../packages/format
+      '@sushiswap/hooks': link:../../packages/hooks
+      '@sushiswap/math': link:../../packages/math
+      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
+      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
+      '@sushiswap/stargate': link:../../packages/stargate
+      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/tines': link:../../packages/tines
+      '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/wagmi': link:../../packages/wagmi
+      '@typechain/ethers-v5': 10.1.0_weo2o6amaffllglnxvhrj2xh2q
+      '@uniswap/redux-multicall': 1.1.5_dadq7dzi63wxf7otsdd7qhmsvi
+      '@uniswap/v2-core': 1.0.1
+      ethers: 5.7.1
+      nanoid: 4.0.0
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.1
+      next-pwa: 5.6.0_next@12.3.1
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
+      swr: 1.3.0_react@18.2.0
+      typechain: 8.1.0_typescript@4.6.3
+      wagmi: 0.6.8_nznuxirfauibn2fjde2ghjonky
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+      '@types/node': 17.0.45
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
+      autoprefixer: 10.4.7_postcss@8.4.14
+      eslint: 8.20.0
+      next-transpile-modules: 9.0.0
+      postcss: 8.4.14
+      tailwindcss: 3.1.6_postcss@8.4.14
+      typescript: 4.6.3
+
   apps/earn:
     specifiers:
       '@builder.io/partytown': ^0.7.0
@@ -392,7 +509,7 @@ importers:
       '@ethersproject/experimental': ^5.7.0
       '@ethersproject/providers': ^5.7.0
       '@ethersproject/solidity': ^5.7.0
-      '@headlessui/react': ^1.6.6
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
@@ -423,7 +540,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       graphql: 16.6.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
@@ -449,7 +566,7 @@ importers:
       '@ethersproject/experimental': 5.7.0
       '@ethersproject/providers': 5.7.1
       '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/chain': link:../../packages/chain
@@ -469,11 +586,11 @@ importers:
       echarts: 5.3.3
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       ethers: 5.7.1
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.0
-      next-pwa: 5.6.0_next@12.3.0
-      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
-      next-sitemap: 3.1.21_next@12.3.0
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.1
+      next-pwa: 5.6.0_next@12.3.1
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
+      next-sitemap: 3.1.21_next@12.3.1
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -514,7 +631,7 @@ importers:
       '@graphprotocol/client-add-source-name': latest
       '@graphprotocol/client-auto-pagination': latest
       '@graphprotocol/client-cli': 2.2.13
-      '@headlessui/react': ^1.6.6
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@hookform/resolvers': ^2.8.10
       '@reduxjs/toolkit': ^1.8.1
@@ -558,7 +675,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       graphql: 16.6.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.0.0
@@ -589,7 +706,7 @@ importers:
       '@ethersproject/solidity': 5.7.0
       '@ethersproject/strings': 5.7.0
       '@ethersproject/units': 5.7.0
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@hookform/resolvers': 2.9.7_react-hook-form@7.33.1
       '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
@@ -623,9 +740,9 @@ importers:
       date-fns: 2.29.1
       ethers: 5.7.1
       graphql: 16.6.0
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
-      next-pwa: 5.6.0_next@12.3.0
-      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-pwa: 5.6.0_next@12.3.1
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.33.1_react@18.2.0
@@ -682,7 +799,7 @@ importers:
       '@types/react-dom': ^18.0.0
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-transpile-modules: 9.0.0
       octokit: ^2.0.4
       outline: link:@heroicons/react/outline
@@ -705,7 +822,7 @@ importers:
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/ui': link:../../packages/ui
       '@tanstack/react-table': 8.5.15_biqbaboplfbrettd7655fr4n2y
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       octokit: 2.0.4
       outline: link:@heroicons/react/outline
       react: 18.2.0
@@ -744,7 +861,7 @@ importers:
       '@graphprotocol/client-add-source-name': latest
       '@graphprotocol/client-auto-pagination': latest
       '@graphprotocol/client-cli': 2.2.13
-      '@headlessui/react': ^1.6.1
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/bentobox': workspace:*
@@ -773,7 +890,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       lodash.get: ^4.4.2
-      next: ^12.3.0
+      next: ^12.3.1
       next-transpile-modules: 9.0.0
       postcss: ^8.4.0
       react: ^18.2.0
@@ -794,7 +911,7 @@ importers:
       '@ethersproject/experimental': 5.7.0
       '@ethersproject/providers': 5.7.1
       '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/bentobox': link:../../protocols/bentobox
@@ -814,7 +931,7 @@ importers:
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       ethers: 5.7.1
       lodash.get: 4.4.2
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -848,7 +965,7 @@ importers:
       '@graphprotocol/client-add-source-name': latest
       '@graphprotocol/client-auto-pagination': latest
       '@graphprotocol/client-cli': 2.2.13
-      '@headlessui/react': ^1.6.6
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.5
       '@hookform/resolvers': ^2.8.10
       '@octokit/auth-app': ^4.0.4
@@ -872,7 +989,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       graphql: 16.6.0
-      next: 12.3.0
+      next: ^12.3.1
       next-seo: ^5.5.0
       next-transpile-modules: 9.0.0
       octokit: ^2.0.4
@@ -896,7 +1013,7 @@ importers:
       '@ethersproject/contracts': 5.7.0
       '@ethersproject/experimental': 5.7.0
       '@ethersproject/providers': 5.7.1
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@hookform/resolvers': 2.9.7_react-hook-form@7.33.1
       '@octokit/auth-app': 4.0.4
@@ -909,8 +1026,8 @@ importers:
       cookie-cutter: 0.2.0
       cors: 2.8.5
       ethers: 5.7.1
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       octokit: 2.0.4
       react: 18.2.0
       react-colorful: 5.6.1_biqbaboplfbrettd7655fr4n2y
@@ -955,7 +1072,7 @@ importers:
       '@ethersproject/experimental': ^5.7.0
       '@ethersproject/providers': ^5.7.0
       '@ethersproject/solidity': ^5.7.0
-      '@headlessui/react': ^1.6.6
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
@@ -987,7 +1104,7 @@ importers:
       date-fns: ^2.29.1
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
@@ -1013,7 +1130,7 @@ importers:
       '@ethersproject/experimental': 5.7.0
       '@ethersproject/providers': 5.7.1
       '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/chain': link:../../packages/chain
@@ -1035,11 +1152,11 @@ importers:
       '@uniswap/v2-core': 1.0.1
       date-fns: 2.29.1
       ethers: 5.7.1
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.0
-      next-pwa: 5.6.0_next@12.3.0
-      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
-      next-sitemap: 3.1.21_next@12.3.0
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.1
+      next-pwa: 5.6.0_next@12.3.1
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
+      next-sitemap: 3.1.21_next@12.3.1
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -1073,7 +1190,7 @@ importers:
       '@ethersproject/contracts': ^5.7.0
       '@ethersproject/experimental': ^5.7.0
       '@ethersproject/providers': ^5.7.0
-      '@headlessui/react': ^1.6.6
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/bentobox': workspace:*
@@ -1105,7 +1222,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       nanoid: ^4.0.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.0.0
@@ -1128,7 +1245,7 @@ importers:
       '@ethersproject/contracts': 5.7.0
       '@ethersproject/experimental': 5.7.0
       '@ethersproject/providers': 5.7.1
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.8.3_kkwg4cbsojnjnupd3btipussee
       '@sushiswap/bentobox': link:../../protocols/bentobox
@@ -1151,9 +1268,9 @@ importers:
       '@uniswap/v2-core': 1.0.1
       ethers: 5.7.1
       nanoid: 4.0.0
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.0
-      next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.1
+      next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -1197,7 +1314,7 @@ importers:
       '@uniswap/v3-periphery': ^1.4.1
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-transpile-modules: 9.0.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -1218,7 +1335,7 @@ importers:
       '@typechain/ethers-v5': 10.1.0_nel7speefqscyw5lyoq6niyssy
       '@uniswap/redux-multicall': 1.1.5_dadq7dzi63wxf7otsdd7qhmsvi
       '@uniswap/v3-periphery': 1.4.1
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -1276,7 +1393,7 @@ importers:
       '@uniswap/token-lists': ^1.0.0-beta.29
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-transpile-modules: ^9.0.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -1290,7 +1407,7 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@uniswap/token-lists': 1.0.0-beta.30
       ethers: 5.7.1
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
@@ -1321,7 +1438,7 @@ importers:
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
       ethers: ^5.7.0
-      next: ^12.3.0
+      next: ^12.3.1
       next-transpile-modules: ^9.0.0
       postcss: ^8.4.0
       react: ^18.2.0
@@ -1333,7 +1450,7 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       ethers: 5.7.1
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       wagmi: 0.6.8_nznuxirfauibn2fjde2ghjonky
@@ -1522,9 +1639,9 @@ importers:
 
   packages/config/nextjs:
     specifiers:
-      next: ^12.3.0
+      next: ^12.3.1
     devDependencies:
-      next: 12.3.0
+      next: 12.3.1
 
   packages/config/prettier:
     specifiers:
@@ -1897,7 +2014,7 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       eslint: ^8.20.0
-      next: ^12.3.0
+      next: ^12.3.1
       react: ^18.2.0
       react-dom: ^18.2.0
       tsup: ^6.2.0
@@ -1910,7 +2027,7 @@ importers:
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
       eslint: 8.20.0
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       tsup: 6.2.0_typescript@4.6.3
@@ -2130,7 +2247,7 @@ importers:
   packages/ui:
     specifiers:
       '@fontsource/inter': ^4.5.10
-      '@headlessui/react': ^1.6.6
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.6
       '@popperjs/core': ^2.11.5
       '@react-hook/window-scroll': ^1.3.0
@@ -2154,7 +2271,8 @@ importers:
       classnames: ^2.3.1
       date-fns: ^2.29.1
       eslint: ^8.20.0
-      next: ^12.3.0
+      nanoid: ^4.0.0
+      next: ^12.3.1
       postcss: ^8.4.0
       rc-tooltip: ^5.2.2
       react: ^18.2.0
@@ -2170,7 +2288,7 @@ importers:
       typescript: 4.6.3
     dependencies:
       '@fontsource/inter': 4.5.11
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@popperjs/core': 2.11.5
       '@react-hook/window-scroll': 1.3.0_react@18.2.0
@@ -2184,6 +2302,7 @@ importers:
       '@tailwindcss/typography': 0.5.4
       classnames: 2.3.1
       date-fns: 2.29.1
+      nanoid: 4.0.0
       rc-tooltip: 5.2.2_biqbaboplfbrettd7655fr4n2y
       react-dropzone: 14.2.2_react@18.2.0
       react-popper: 2.3.0_ili5ylfne7i3hkfpsanzgkfu6m
@@ -2193,7 +2312,7 @@ importers:
       react-virtualized-auto-sizer: 1.0.6_biqbaboplfbrettd7655fr4n2y
       react-window: 1.8.7_biqbaboplfbrettd7655fr4n2y
     optionalDependencies:
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
@@ -2237,9 +2356,10 @@ importers:
       '@ethersproject/address': ^5.7.0
       '@ethersproject/bytes': ^5.7.0
       '@ethersproject/constants': ^5.7.0
+      '@ethersproject/logger': ^5.7.0
       '@ethersproject/providers': ^5.7.0
       '@gnosis.pm/safe-apps-wagmi': ^1.0.4
-      '@headlessui/react': ^1.6.3
+      '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.6
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
@@ -2278,9 +2398,10 @@ importers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
+      '@ethersproject/logger': 5.7.0
       '@ethersproject/providers': 5.7.1
       '@gnosis.pm/safe-apps-wagmi': 1.0.4
-      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../chain
@@ -4544,7 +4665,7 @@ packages:
     dependencies:
       ajv: 6.12.6
       debug: 4.3.4
-      espree: 9.3.2
+      espree: 9.4.0
       globals: 13.17.0
       ignore: 5.2.0
       import-fresh: 3.3.0
@@ -8074,17 +8195,6 @@ packages:
       tslib: 2.4.0
     dev: true
 
-  /@headlessui/react/1.6.6_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-MFJtmj9Xh/hhBMhLccGbBoSk+sk61BlP6sJe4uQcVMtXZhCgGqd2GyIQzzmsdPdTEWGSF434CBi8mnhR6um46Q==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: ^16 || ^17 || ^18
-      react-dom: ^16 || ^17 || ^18
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    dev: false
-
   /@headlessui/react/1.7.3_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-LGp06SrGv7BMaIQlTs8s2G06moqkI0cb0b8stgq7KZ3xcHdH3qMP+cRyV7qe5x4XEW/IGY48BW4fLesD6NQLng==}
     engines: {node: '>=10'}
@@ -8497,6 +8607,14 @@ packages:
     resolution: {integrity: sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==}
     dev: false
 
+  /@layerzerolabs/scan-client/0.0.0-beta.6:
+    resolution: {integrity: sha512-TjhEfMcmN5Q8Gtog45lj6in+y8OzGPoLzUzSF45cJO703Lrlwf5tAA85TQnnRWPGBiChw70KG2S6nzgmMRQWJg==}
+    dependencies:
+      axios: 0.27.2
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /@metamask/eth-sig-util/4.0.1:
     resolution: {integrity: sha512-tghyZKLHZjcdlDqCA3gNZmLeR0XvOE9U1qoQO9ohyAZT6Pya+H9vkBPcsyXytmYLNgVoin7CKCmweo/R43V+tQ==}
     engines: {node: '>=12.0.0'}
@@ -8523,8 +8641,8 @@ packages:
       graphql: 16.6.0
     dev: true
 
-  /@next/env/12.3.0:
-    resolution: {integrity: sha512-PTJpjAFVbzBQ9xXpzMTroShvD5YDIIy46jQ7d4LrWpY+/5a8H90Tm8hE3Hvkc5RBRspVo7kvEOnqQms0A+2Q6w==}
+  /@next/env/12.3.1:
+    resolution: {integrity: sha512-9P9THmRFVKGKt9DYqeC2aKIxm8rlvkK38V1P1sRE7qyoPBIs8l9oo79QoSdPtOWfzkbDAVUqvbQGgTMsb8BtJg==}
 
   /@next/eslint-plugin-next/12.3.1:
     resolution: {integrity: sha512-sw+lTf6r6P0j+g/n9y4qdWWI2syPqZx+uc0+B/fRENqfR3KpSid6MIKqc9gNwGhJASazEQ5b3w8h4cAET213jw==}
@@ -8532,104 +8650,104 @@ packages:
       glob: 7.1.7
     dev: false
 
-  /@next/swc-android-arm-eabi/12.3.0:
-    resolution: {integrity: sha512-/PuirPnAKsYBw93w/7Q9hqy+KGOU9mjYprZ/faxMUJh/dc6v3rYLxkZKNG9nFPIW4QKNTCnhP40xF9hLnxO+xg==}
+  /@next/swc-android-arm-eabi/12.3.1:
+    resolution: {integrity: sha512-i+BvKA8tB//srVPPQxIQN5lvfROcfv4OB23/L1nXznP+N/TyKL8lql3l7oo2LNhnH66zWhfoemg3Q4VJZSruzQ==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [android]
     requiresBuild: true
     optional: true
 
-  /@next/swc-android-arm64/12.3.0:
-    resolution: {integrity: sha512-OaI+FhAM6P9B6Ybwbn0Zl8YwWido0lLwhDBi9WiYCh4RQmIXAyVIoIJPHo4fP05+mXaJ/k1trvDvuURvHOq2qw==}
+  /@next/swc-android-arm64/12.3.1:
+    resolution: {integrity: sha512-CmgU2ZNyBP0rkugOOqLnjl3+eRpXBzB/I2sjwcGZ7/Z6RcUJXK5Evz+N0ucOxqE4cZ3gkTeXtSzRrMK2mGYV8Q==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [android]
     requiresBuild: true
     optional: true
 
-  /@next/swc-darwin-arm64/12.3.0:
-    resolution: {integrity: sha512-9s4d3Mhii+WFce8o8Jok7WC3Bawkr9wEUU++SJRptjU1L5tsfYJMrSYCACHLhZujziNDLyExe4Hwwsccps1sfg==}
+  /@next/swc-darwin-arm64/12.3.1:
+    resolution: {integrity: sha512-hT/EBGNcu0ITiuWDYU9ur57Oa4LybD5DOQp4f22T6zLfpoBMfBibPtR8XktXmOyFHrL/6FC2p9ojdLZhWhvBHg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     optional: true
 
-  /@next/swc-darwin-x64/12.3.0:
-    resolution: {integrity: sha512-2scC4MqUTwGwok+wpVxP+zWp7WcCAVOtutki2E1n99rBOTnUOX6qXkgxSy083yBN6GqwuC/dzHeN7hIKjavfRA==}
+  /@next/swc-darwin-x64/12.3.1:
+    resolution: {integrity: sha512-9S6EVueCVCyGf2vuiLiGEHZCJcPAxglyckTZcEwLdJwozLqN0gtS0Eq0bQlGS3dH49Py/rQYpZ3KVWZ9BUf/WA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     optional: true
 
-  /@next/swc-freebsd-x64/12.3.0:
-    resolution: {integrity: sha512-xAlruUREij/bFa+qsE1tmsP28t7vz02N4ZDHt2lh3uJUniE0Ne9idyIDLc1Ed0IF2RjfgOp4ZVunuS3OM0sngw==}
+  /@next/swc-freebsd-x64/12.3.1:
+    resolution: {integrity: sha512-qcuUQkaBZWqzM0F1N4AkAh88lLzzpfE6ImOcI1P6YeyJSsBmpBIV8o70zV+Wxpc26yV9vpzb+e5gCyxNjKJg5Q==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-arm-gnueabihf/12.3.0:
-    resolution: {integrity: sha512-jin2S4VT/cugc2dSZEUIabhYDJNgrUh7fufbdsaAezgcQzqfdfJqfxl4E9GuafzB4cbRPTaqA0V5uqbp0IyGkQ==}
+  /@next/swc-linux-arm-gnueabihf/12.3.1:
+    resolution: {integrity: sha512-diL9MSYrEI5nY2wc/h/DBewEDUzr/DqBjIgHJ3RUNtETAOB3spMNHvJk2XKUDjnQuluLmFMloet9tpEqU2TT9w==}
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-arm64-gnu/12.3.0:
-    resolution: {integrity: sha512-RqJHDKe0WImeUrdR0kayTkRWgp4vD/MS7g0r6Xuf8+ellOFH7JAAJffDW3ayuVZeMYOa7RvgNFcOoWnrTUl9Nw==}
+  /@next/swc-linux-arm64-gnu/12.3.1:
+    resolution: {integrity: sha512-o/xB2nztoaC7jnXU3Q36vGgOolJpsGG8ETNjxM1VAPxRwM7FyGCPHOMk1XavG88QZSQf+1r+POBW0tLxQOJ9DQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-arm64-musl/12.3.0:
-    resolution: {integrity: sha512-nvNWoUieMjvDjpYJ/4SQe9lQs2xMj6ZRs8N+bmTrVu9leY2Fg3WD6W9p/1uU9hGO8u+OdF13wc4iRShu/WYIHg==}
+  /@next/swc-linux-arm64-musl/12.3.1:
+    resolution: {integrity: sha512-2WEasRxJzgAmP43glFNhADpe8zB7kJofhEAVNbDJZANp+H4+wq+/cW1CdDi8DqjkShPEA6/ejJw+xnEyDID2jg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-x64-gnu/12.3.0:
-    resolution: {integrity: sha512-4ajhIuVU9PeQCMMhdDgZTLrHmjbOUFuIyg6J19hZqwEwDTSqQyrSLkbJs2Nd7IRiM6Ul/XyrtEFCpk4k+xD2+w==}
+  /@next/swc-linux-x64-gnu/12.3.1:
+    resolution: {integrity: sha512-JWEaMyvNrXuM3dyy9Pp5cFPuSSvG82+yABqsWugjWlvfmnlnx9HOQZY23bFq3cNghy5V/t0iPb6cffzRWylgsA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-linux-x64-musl/12.3.0:
-    resolution: {integrity: sha512-U092RBYbaGxoMAwpauePJEu2PuZSEoUCGJBvsptQr2/2XIMwAJDYM4c/M5NfYEsBr+yjvsYNsOpYfeQ88D82Yg==}
+  /@next/swc-linux-x64-musl/12.3.1:
+    resolution: {integrity: sha512-xoEWQQ71waWc4BZcOjmatuvPUXKTv6MbIFzpm4LFeCHsg2iwai0ILmNXf81rJR+L1Wb9ifEke2sQpZSPNz1Iyg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     optional: true
 
-  /@next/swc-win32-arm64-msvc/12.3.0:
-    resolution: {integrity: sha512-pzSzaxjDEJe67bUok9Nxf9rykbJfHXW0owICFsPBsqHyc+cr8vpF7g9e2APTCddtVhvjkga9ILoZJ9NxWS7Yiw==}
+  /@next/swc-win32-arm64-msvc/12.3.1:
+    resolution: {integrity: sha512-hswVFYQYIeGHE2JYaBVtvqmBQ1CppplQbZJS/JgrVI3x2CurNhEkmds/yqvDONfwfbttTtH4+q9Dzf/WVl3Opw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     optional: true
 
-  /@next/swc-win32-ia32-msvc/12.3.0:
-    resolution: {integrity: sha512-MQGUpMbYhQmTZ06a9e0hPQJnxFMwETo2WtyAotY3GEzbNCQVbCGhsvqEKcl+ZEHgShlHXUWvSffq1ZscY6gK7A==}
+  /@next/swc-win32-ia32-msvc/12.3.1:
+    resolution: {integrity: sha512-Kny5JBehkTbKPmqulr5i+iKntO5YMP+bVM8Hf8UAmjSMVo3wehyLVc9IZkNmcbxi+vwETnQvJaT5ynYBkJ9dWA==}
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     optional: true
 
-  /@next/swc-win32-x64-msvc/12.3.0:
-    resolution: {integrity: sha512-C/nw6OgQpEULWqs+wgMHXGvlJLguPRFFGqR2TAqWBerQ8J+Sg3z1ZTqwelkSi4FoqStGuZ2UdFHIDN1ySmR1xA==}
+  /@next/swc-win32-x64-msvc/12.3.1:
+    resolution: {integrity: sha512-W1ijvzzg+kPEX6LAc+50EYYSEo0FVu7dmTE+t+DM4iOLqgGHoW9uYSz9wCVdkXOEEMP9xhXfGpcSxsfDucyPkA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -11868,6 +11986,15 @@ packages:
     transitivePeerDependencies:
       - debug
 
+  /axios/0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
+    dependencies:
+      follow-redirects: 1.15.1
+      form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /axobject-query/2.2.0:
     resolution: {integrity: sha512-Td525n+iPOOyUQIeBfcASuG6uJsDOITl7Mds5gFyerkWiX7qhUTdYUBlSgNMyVqtSJqwpt1kXGLdUt6SykLMRA==}
     dev: false
@@ -12857,7 +12984,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001370
+      caniuse-lite: 1.0.30001418
       electron-to-chromium: 1.4.203
       node-releases: 2.0.6
       update-browserslist-db: 1.0.5_browserslist@4.21.3
@@ -13120,10 +13247,10 @@ packages:
 
   /caniuse-lite/1.0.30001370:
     resolution: {integrity: sha512-3PDmaP56wz/qz7G508xzjx8C+MC2qEm4SYhSEzC9IBROo+dGXFWRuaXkWti0A9tuI00g+toiriVqxtWMgl350g==}
+    dev: true
 
   /caniuse-lite/1.0.30001418:
     resolution: {integrity: sha512-oIs7+JL3K9JRQ3jPZjlH6qyYDp+nBTCais7hjh0s+fuBwufc7uZ7hPYMXrDOJhV360KGMTcczMRObk0/iMqZRg==}
-    dev: false
 
   /capital-case/1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
@@ -13589,7 +13716,7 @@ packages:
     dev: false
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /concat-stream/1.6.2:
     resolution: {integrity: sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==}
@@ -15620,7 +15747,6 @@ packages:
       acorn: 8.8.0
       acorn-jsx: 5.3.2_acorn@8.8.0
       eslint-visitor-keys: 3.3.0
-    dev: false
 
   /esprima/4.0.1:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
@@ -21085,17 +21211,17 @@ packages:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
 
-  /next-axiom/0.14.0_next@12.3.0:
+  /next-axiom/0.14.0_next@12.3.1:
     resolution: {integrity: sha512-LLbiDcL79274HqaKTSipZo6B4SCLh++11BpVfg+cNTZoLb8VH1g7g14xgFBhKeDN+DaiDSg8Of7ZPqaYEcIUXQ==}
     engines: {node: '>=15'}
     peerDependencies:
       next: ^12.1.4
     dependencies:
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       whatwg-fetch: 3.6.2
     dev: false
 
-  /next-pwa/5.6.0_next@12.3.0:
+  /next-pwa/5.6.0_next@12.3.1:
     resolution: {integrity: sha512-XV8g8C6B7UmViXU8askMEYhWwQ4qc/XqJGnexbLV68hzKaGHZDMtHsm2TNxFcbR7+ypVuth/wwpiIlMwpRJJ5A==}
     peerDependencies:
       next: '>=9.0.0'
@@ -21103,7 +21229,7 @@ packages:
       babel-loader: 8.2.5
       clean-webpack-plugin: 4.0.0
       globby: 11.1.0
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       terser-webpack-plugin: 5.3.6
       workbox-webpack-plugin: 6.5.4
       workbox-window: 6.5.4
@@ -21117,19 +21243,19 @@ packages:
       - webpack
     dev: false
 
-  /next-seo/5.5.0_c3hne4hwj64hb7tofigd3bvkji:
+  /next-seo/5.5.0_azq6kxkn3od7qdylwkyksrwopy:
     resolution: {integrity: sha512-5ouBHFtx8YrSDW44lj0qIEQ+oMcz6stgoITB+SqHUZbhgizoJsyLmq73gJ0lxtEKpcN8vG2QgRIJfdb8OAPChw==}
     peerDependencies:
       next: ^8.1.1-canary.54 || >=9.0.0
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
     dependencies:
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /next-sitemap/3.1.16_next@12.3.0:
+  /next-sitemap/3.1.16_next@12.3.1:
     resolution: {integrity: sha512-kczTKLB1ifqi44mMImv/sLRsqxy/O4DXJ4mx/1l23vyx6QFWqeuHxS0duEL/EsChcVJUMWV4FNg2pIiX31xxmg==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -21139,10 +21265,10 @@ packages:
     dependencies:
       '@corex/deepmerge': 4.0.29
       minimist: 1.2.6
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
     dev: false
 
-  /next-sitemap/3.1.21_next@12.3.0:
+  /next-sitemap/3.1.21_next@12.3.1:
     resolution: {integrity: sha512-8upGCtI91FvjNBpeKDZzrzRBlY4BH6qjG7dMe89sdBzJ9B++PVLTzRPlpLHJYOEPukBROsxi2zVuAvePBtsrdw==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -21152,7 +21278,7 @@ packages:
     dependencies:
       '@corex/deepmerge': 4.0.29
       minimist: 1.2.6
-      next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
     dev: false
 
   /next-tick/1.1.0:
@@ -21166,8 +21292,8 @@ packages:
       escalade: 3.1.1
     dev: true
 
-  /next/12.3.0:
-    resolution: {integrity: sha512-GpzI6me9V1+XYtfK0Ae9WD0mKqHyzQlGq1xH1rzNIYMASo4Tkl4rTe9jSqtBpXFhOS33KohXs9ZY38Akkhdciw==}
+  /next/12.3.1:
+    resolution: {integrity: sha512-l7bvmSeIwX5lp07WtIiP9u2ytZMv7jIeB8iacR28PuUEFG5j0HGAPnMqyG5kbZNBG2H7tRsrQ4HCjuMOPnANZw==}
     engines: {node: '>=12.22.0'}
     hasBin: true
     peerDependencies:
@@ -21184,33 +21310,33 @@ packages:
       sass:
         optional: true
     dependencies:
-      '@next/env': 12.3.0
+      '@next/env': 12.3.1
       '@swc/helpers': 0.4.11
-      caniuse-lite: 1.0.30001370
+      caniuse-lite: 1.0.30001418
       postcss: 8.4.14
-      styled-jsx: 5.0.6
+      styled-jsx: 5.0.7
       use-sync-external-store: 1.2.0
     optionalDependencies:
-      '@next/swc-android-arm-eabi': 12.3.0
-      '@next/swc-android-arm64': 12.3.0
-      '@next/swc-darwin-arm64': 12.3.0
-      '@next/swc-darwin-x64': 12.3.0
-      '@next/swc-freebsd-x64': 12.3.0
-      '@next/swc-linux-arm-gnueabihf': 12.3.0
-      '@next/swc-linux-arm64-gnu': 12.3.0
-      '@next/swc-linux-arm64-musl': 12.3.0
-      '@next/swc-linux-x64-gnu': 12.3.0
-      '@next/swc-linux-x64-musl': 12.3.0
-      '@next/swc-win32-arm64-msvc': 12.3.0
-      '@next/swc-win32-ia32-msvc': 12.3.0
-      '@next/swc-win32-x64-msvc': 12.3.0
+      '@next/swc-android-arm-eabi': 12.3.1
+      '@next/swc-android-arm64': 12.3.1
+      '@next/swc-darwin-arm64': 12.3.1
+      '@next/swc-darwin-x64': 12.3.1
+      '@next/swc-freebsd-x64': 12.3.1
+      '@next/swc-linux-arm-gnueabihf': 12.3.1
+      '@next/swc-linux-arm64-gnu': 12.3.1
+      '@next/swc-linux-arm64-musl': 12.3.1
+      '@next/swc-linux-x64-gnu': 12.3.1
+      '@next/swc-linux-x64-musl': 12.3.1
+      '@next/swc-win32-arm64-msvc': 12.3.1
+      '@next/swc-win32-ia32-msvc': 12.3.1
+      '@next/swc-win32-x64-msvc': 12.3.1
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
     dev: true
 
-  /next/12.3.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-GpzI6me9V1+XYtfK0Ae9WD0mKqHyzQlGq1xH1rzNIYMASo4Tkl4rTe9jSqtBpXFhOS33KohXs9ZY38Akkhdciw==}
+  /next/12.3.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-l7bvmSeIwX5lp07WtIiP9u2ytZMv7jIeB8iacR28PuUEFG5j0HGAPnMqyG5kbZNBG2H7tRsrQ4HCjuMOPnANZw==}
     engines: {node: '>=12.22.0'}
     hasBin: true
     peerDependencies:
@@ -21227,28 +21353,28 @@ packages:
       sass:
         optional: true
     dependencies:
-      '@next/env': 12.3.0
+      '@next/env': 12.3.1
       '@swc/helpers': 0.4.11
-      caniuse-lite: 1.0.30001370
+      caniuse-lite: 1.0.30001418
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      styled-jsx: 5.0.6_react@18.2.0
+      styled-jsx: 5.0.7_react@18.2.0
       use-sync-external-store: 1.2.0_react@18.2.0
     optionalDependencies:
-      '@next/swc-android-arm-eabi': 12.3.0
-      '@next/swc-android-arm64': 12.3.0
-      '@next/swc-darwin-arm64': 12.3.0
-      '@next/swc-darwin-x64': 12.3.0
-      '@next/swc-freebsd-x64': 12.3.0
-      '@next/swc-linux-arm-gnueabihf': 12.3.0
-      '@next/swc-linux-arm64-gnu': 12.3.0
-      '@next/swc-linux-arm64-musl': 12.3.0
-      '@next/swc-linux-x64-gnu': 12.3.0
-      '@next/swc-linux-x64-musl': 12.3.0
-      '@next/swc-win32-arm64-msvc': 12.3.0
-      '@next/swc-win32-ia32-msvc': 12.3.0
-      '@next/swc-win32-x64-msvc': 12.3.0
+      '@next/swc-android-arm-eabi': 12.3.1
+      '@next/swc-android-arm64': 12.3.1
+      '@next/swc-darwin-arm64': 12.3.1
+      '@next/swc-darwin-x64': 12.3.1
+      '@next/swc-freebsd-x64': 12.3.1
+      '@next/swc-linux-arm-gnueabihf': 12.3.1
+      '@next/swc-linux-arm64-gnu': 12.3.1
+      '@next/swc-linux-arm64-musl': 12.3.1
+      '@next/swc-linux-x64-gnu': 12.3.1
+      '@next/swc-linux-x64-musl': 12.3.1
+      '@next/swc-win32-arm64-msvc': 12.3.1
+      '@next/swc-win32-ia32-msvc': 12.3.1
+      '@next/swc-win32-x64-msvc': 12.3.1
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -24265,8 +24391,8 @@ packages:
       supports-color: 5.5.0
     dev: false
 
-  /styled-jsx/5.0.6:
-    resolution: {integrity: sha512-xOeROtkK5MGMDimBQ3J6iPId8q0t/BDoG5XN6oKkZClVz9ISF/hihN8OCn2LggMU6N32aXnrXBdn3auSqNS9fA==}
+  /styled-jsx/5.0.7:
+    resolution: {integrity: sha512-b3sUzamS086YLRuvnaDigdAewz1/EFYlHpYBP5mZovKEdQQOIIYq8lApylub3HHZ6xFjV051kkGU7cudJmrXEA==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
       '@babel/core': '*'
@@ -24279,8 +24405,8 @@ packages:
         optional: true
     dev: true
 
-  /styled-jsx/5.0.6_react@18.2.0:
-    resolution: {integrity: sha512-xOeROtkK5MGMDimBQ3J6iPId8q0t/BDoG5XN6oKkZClVz9ISF/hihN8OCn2LggMU6N32aXnrXBdn3auSqNS9fA==}
+  /styled-jsx/5.0.7_react@18.2.0:
+    resolution: {integrity: sha512-b3sUzamS086YLRuvnaDigdAewz1/EFYlHpYBP5mZovKEdQQOIIYq8lApylub3HHZ6xFjV051kkGU7cudJmrXEA==}
     engines: {node: '>= 12.0.0'}
     peerDependencies:
       '@babel/core': '*'
