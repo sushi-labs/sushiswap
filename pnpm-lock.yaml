@@ -2187,7 +2187,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi-config': workspace:*
-      '@tanstack/react-query': npm:wagmi
+      '@tanstack/react-query': ^4.0.10
       '@typechain/ethers-v5': ^10.1.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
@@ -2224,7 +2224,7 @@ importers:
       '@sushiswap/trident': 1.0.0-canary.47
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../config/wagmi
-      '@tanstack/react-query': /wagmi/0.6.8_nznuxirfauibn2fjde2ghjonky
+      '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
       wagmi: 0.6.8_nznuxirfauibn2fjde2ghjonky

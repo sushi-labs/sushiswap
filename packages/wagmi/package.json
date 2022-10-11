@@ -43,7 +43,7 @@
     "@uniswap/v3-periphery": "1.4.1",
     "@gnosis.pm/safe-apps-wagmi": "^1.0.4",
     "wagmi": "0.6.8",
-    "@tanstack/react-query": "npm:wagmi"
+    "@tanstack/react-query": "^4.0.10"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
