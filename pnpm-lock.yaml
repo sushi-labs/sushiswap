@@ -250,6 +250,7 @@ importers:
       graphql: 16.6.0
       isomorphic-fetch: ^3.0.0
       next: ^12.3.0
+      next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.20
       next-transpile-modules: 9.0.0
@@ -281,6 +282,7 @@ importers:
       graphql: 16.6.0
       isomorphic-fetch: 3.0.0
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-pwa: 5.6.0_next@12.3.0
       next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       next-sitemap: 3.1.21_next@12.3.0
       react: 18.2.0

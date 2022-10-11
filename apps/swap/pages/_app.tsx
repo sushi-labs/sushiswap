@@ -52,13 +52,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="shortcut icon" href="/swap/favicon.ico?v=1" />
         <meta name="msapplication-TileColor" content="#2b5797" />
         <meta name="theme-color" content="#FA52A0" />
-        <meta name="application-name" content="SushiSwap" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="SushiSwap" />
-        <meta name="description" content="Easiest way to trade your tokens and supported by 22 networks." />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="mobile-web-app-capable" content="yes" />
       </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
