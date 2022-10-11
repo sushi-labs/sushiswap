@@ -28,11 +28,18 @@
       "purpose": "maskable"
     },
     {
+      "src": "maskable-icon-192x192.png?v=1",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
       "src": "maskable-icon-512x512.png?v=1",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "splash_pages": null
+  "splash_pages": null,
+  "prefer_related_applications": true
 }
