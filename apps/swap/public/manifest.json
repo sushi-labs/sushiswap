@@ -7,8 +7,8 @@
   "theme_color": "#0f172a",
   "background_color": "#0f172a",
   "id": "/swap",
-  "scope": "/swap",
-  "start_url": "/swap",
+  "start_url": "./swap",
+  "scope": "./",
   "iconPath": "favicon-32x32.png?v=1",
   "icons": [
     {
