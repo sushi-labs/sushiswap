@@ -47,6 +47,9 @@ export const client: Client = createClient({
     }
     return _provider
   },
+  logger: {
+    warn: null,
+  },
   // webSocketProvider,
   autoConnect: false,
   connectors: [
