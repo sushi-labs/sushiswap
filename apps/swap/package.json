@@ -52,7 +52,8 @@
     "react-redux": "^8.0.1",
     "swr": "^1.3.0",
     "wagmi": "0.6.8",
-    "@tanstack/react-query": "^4.0.10"
+    "@tanstack/react-query": "^4.0.10",
+    "next-axiom": "^0.14.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

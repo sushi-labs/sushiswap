@@ -1,4 +1,5 @@
 import transpileModules from 'next-transpile-modules'
+import { withAxiom } from 'next-axiom'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui'])
 
@@ -12,6 +13,16 @@ const nextConfig = {
   basePath: '/blog',
   reactStrictMode: true,
   swcMinify: false,
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/blog',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
 }
 
-export default withTranspileModules(nextConfig)
+export default withAxiom(withTranspileModules(nextConfig))

@@ -14,6 +14,8 @@ import { DefaultSeo, Header } from '../components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
 
+export { reportWebVitals } from 'next-axiom'
+
 export const cld = new Cloudinary({
   cloud: {
     cloudName: 'sushi-cdn',

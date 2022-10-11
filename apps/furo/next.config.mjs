@@ -24,6 +24,16 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/furo',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
 }
 
 export default withPwa(withTranspileModules(nextConfig))

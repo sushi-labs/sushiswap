@@ -24,7 +24,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.3",
-    "swr": "^1.3.0"
+    "swr": "^1.3.0",
+    "next-axiom": "^0.14.0"
   },
   "devDependencies": {
     "@graphql-mesh/cli": "^0.75.3",

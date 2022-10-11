@@ -252,6 +252,7 @@ importers:
       graphql: 16.6.0
       isomorphic-fetch: ^3.0.0
       next: ^12.3.0
+      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.20
@@ -284,6 +285,7 @@ importers:
       graphql: 16.6.0
       isomorphic-fetch: 3.0.0
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.0
       next-pwa: 5.6.0_next@12.3.0
       next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       next-sitemap: 3.1.21_next@12.3.0
@@ -330,6 +332,7 @@ importers:
       eslint: ^8.20.0
       graphql: 16.6.0
       next: ^12.3.0
+      next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
       next-transpile-modules: 9.0.0
@@ -349,6 +352,7 @@ importers:
       date-fns: 2.29.1
       graphql: 16.6.0
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.0
       next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       next-sitemap: 3.1.16_next@12.3.0
       qs: 6.11.0
@@ -420,6 +424,7 @@ importers:
       ethers: ^5.7.0
       graphql: 16.6.0
       next: ^12.3.0
+      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.20
@@ -465,6 +470,7 @@ importers:
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
       ethers: 5.7.1
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.0
       next-pwa: 5.6.0_next@12.3.0
       next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       next-sitemap: 3.1.21_next@12.3.0
@@ -982,6 +988,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       next: ^12.3.0
+      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
@@ -1029,6 +1036,7 @@ importers:
       date-fns: 2.29.1
       ethers: 5.7.1
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.0
       next-pwa: 5.6.0_next@12.3.0
       next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       next-sitemap: 3.1.21_next@12.3.0
@@ -1098,6 +1106,7 @@ importers:
       ethers: ^5.7.0
       nanoid: ^4.0.0
       next: ^12.3.0
+      next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.0.0
       postcss: ^8.4.0
@@ -1143,6 +1152,7 @@ importers:
       ethers: 5.7.1
       nanoid: 4.0.0
       next: 12.3.0_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.0
       next-seo: 5.5.0_c3hne4hwj64hb7tofigd3bvkji
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
