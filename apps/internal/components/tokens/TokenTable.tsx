@@ -42,7 +42,7 @@ function useColumns() {
       cell: (info) => {
         const name = info.getValue()
 
-        return <div className=" overflow-ellipsis max-w-[120px]">{name}</div>
+        return <div className="flex justify-start w-full max-w-[150px]">{name}</div>
       },
       enableHiding: true,
     }),
@@ -64,7 +64,7 @@ function useColumns() {
     columnHelper.accessor('listEntry', {
       header: 'Default List',
       cell: (info) => (
-        <div className="flex justify-center w-full max-w-[50px]">
+        <div className="flex justify-center max-w-[50px]">
           {info.getValue() ? (
             <CheckIcon width={24} height={24} className="text-green" />
           ) : (
