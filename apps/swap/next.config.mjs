@@ -25,7 +25,6 @@ const nextConfig = {
   },
   pwa: {
     dest: 'public',
-    runtimeCaching,
   },
   async redirects() {
     return [
