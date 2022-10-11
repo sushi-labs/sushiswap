@@ -1,3 +1,5 @@
+import { useCallback } from 'react'
+
 import {
   Container,
   DiscordIcon,
@@ -12,7 +14,11 @@ import {
 
 export type FooterProps = React.HTMLProps<HTMLDivElement>
 
-const config: Record<string, Record<string, { href: string; rel?: string; target?: string }>> = {
+const config: Record<
+  string,
+  | Record<string, { href: string; rel?: string; target?: string }>
+  | Array<Record<string, Record<string, { href: string; rel?: string; target?: string }>>>
+> = {
   Services: {
     Swap: { href: 'https://www.sushi.com/swap' },
     Earn: { href: 'https://www.sushi.com/earn' },
@@ -34,10 +40,20 @@ const config: Record<string, Record<string, { href: string; rel?: string; target
     Development: { href: 'https://dev.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
     SushiGuard: { href: 'https://docs.openmev.org', target: '_blank', rel: 'noopener noreferrer' },
   },
-  Governance: {
-    'Forum & Proposals': { href: 'https://forum.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
-    Vote: { href: 'https://snapshot.org/#/sushigov.eth', target: '_blank', rel: 'noopener noreferrer' },
-  },
+  Items: [
+    {
+      Governance: {
+        'Forum & Proposals': { href: 'https://forum.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
+        Vote: { href: 'https://snapshot.org/#/sushigov.eth', target: '_blank', rel: 'noopener noreferrer' },
+      },
+    },
+    {
+      Partners: {
+        KlimaDAO: { href: 'https://www.klimadao.finance/', target: '_blank', rel: 'noopener noreferrer' },
+        'Manifold Finance': { href: 'https://www.manifoldfinance.com/', target: '_blank', rel: 'noopener noreferrer' },
+      },
+    },
+  ],
   Protocol: {
     'Apply for Onsen': {
       href: 'https://docs.google.com/document/d/1VcdrqAn1sR8Wa0BSSU-jAl68CfoECR62LCzIyzUpZ_U',
@@ -48,6 +64,30 @@ const config: Record<string, Record<string, { href: string; rel?: string; target
 }
 
 export function Footer(props: FooterProps): JSX.Element {
+  const leafNode = useCallback(
+    (title: string, items: Record<string, { href: string; rel?: string; target?: string }>) => {
+      return (
+        <div key={title} className="flex flex-col gap-[10px]">
+          <Typography variant="xs" weight={500} className="text-sm sm:text-xs text-slate-100">
+            {title}
+          </Typography>
+          {Object.entries(items).map(([item, { href, rel, target }]) => (
+            <a
+              key={item}
+              href={href}
+              target={target}
+              rel={rel}
+              className="text-sm cursor-pointer sm:text-xs text-slate-400 hover:underline"
+            >
+              {item}
+            </a>
+          ))}
+        </div>
+      )
+    },
+    []
+  )
+
   return (
     <footer className="hidden sm:flex flex-col border-t border-slate-400/5 pt-[72px]" {...props}>
       <Container maxWidth="5xl" className="grid grid-cols-1 md:grid-cols-[176px_auto] mx-auto px-4 gap-4">
@@ -77,24 +117,21 @@ export function Footer(props: FooterProps): JSX.Element {
           </div>
         </div>
         <div className="md:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-[40px] sm:mt-[10px]">
-          {Object.entries(config).map(([title, items]) => (
-            <div key={title} className="flex flex-col gap-[10px]">
-              <Typography variant="xs" weight={500} className="text-sm sm:text-xs text-slate-100">
-                {title}
-              </Typography>
-              {Object.entries(items).map(([item, { href, rel, target }]) => (
-                <a
-                  key={item}
-                  href={href}
-                  target={target}
-                  rel={rel}
-                  className="text-sm cursor-pointer sm:text-xs text-slate-400 hover:underline"
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
-          ))}
+          {Object.entries(config).map(([title, items]) => {
+            if (Array.isArray(items)) {
+              return (
+                <div className="flex flex-col gap-6">
+                  {items.map((item) =>
+                    Object.entries(item).map(([_title, _items]) => {
+                      return leafNode(_title, _items)
+                    })
+                  )}
+                </div>
+              )
+            } else {
+              return leafNode(title, items)
+            }
+          })}
         </div>
       </Container>
       <Container maxWidth="5xl" className="mx-auto mt-20 mb-5">
