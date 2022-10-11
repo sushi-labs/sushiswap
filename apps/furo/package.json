@@ -71,8 +71,9 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "1.0.5",
-    "@graphprotocol/client-cli": "2.2.1",
+    "@graphprotocol/client-add-source-name": "latest",
+    "@graphprotocol/client-auto-pagination": "latest",
+    "@graphprotocol/client-cli": "2.2.13",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
