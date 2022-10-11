@@ -9,7 +9,7 @@
     "id": "/swap",
     "scope": "/swap",
     "start_url": "/swap",
-    "iconPath": "/swap/favicon-32x32.png?v=1",
+    "iconPath": "/favicon-32x32.png?v=1",
     "icons": [
       {
           "src": "/swap/android-chrome-192x192.png?v=1",
