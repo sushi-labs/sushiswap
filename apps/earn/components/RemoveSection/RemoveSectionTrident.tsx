@@ -68,6 +68,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     pair.swapFee,
     pair.twapEnabled
   )
+
   const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
 
   const [poolState, pool] = useMemo(() => {
@@ -80,6 +81,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   const totalSupply = useTotalSupply(liquidityToken)
 
   const [, { createNotification }] = useNotifications(address)
+
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: pool?.reserve0,
     reserve1: pool?.reserve1,

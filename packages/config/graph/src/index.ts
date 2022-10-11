@@ -148,7 +148,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.POLYGON]: 'sushi-0m/trident-polygon',
-  [ChainId.OPTIMISM]: 'matthewlilley/tridnet-optimism',
+  [ChainId.OPTIMISM]: 'sushiswap/trident-optimism',
   [ChainId.KAVA]: 'sushi-0m/trident-kava',
   [ChainId.METIS]: 'sushi-0m/trident-metis',
 }
