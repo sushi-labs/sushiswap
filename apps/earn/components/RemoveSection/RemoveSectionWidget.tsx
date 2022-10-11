@@ -19,6 +19,7 @@ import { FC, Fragment, ReactNode, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { usePoolPosition } from '../PoolPositionProvider'
+import { SettingsOverlay } from '../SettingsOverlay'
 
 interface RemoveSectionWidgetProps {
   isFarm: boolean
@@ -75,19 +76,27 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
             {({ open }) => (
               <>
                 {isFarm && isMounted ? (
-                  <Disclosure.Button className="w-full pr-4">
-                    <div className="flex items-center justify-between">
-                      <Widget.Header title="Remove Liquidity" className="!pb-3 " />
-                      <div
-                        className={classNames(
-                          open ? 'rotate-180' : 'rotate-0',
-                          'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
-                        )}
-                      >
-                        <ChevronDownIcon width={24} height={24} className="group-hover:text-slate-200 text-slate-300" />
-                      </div>
+                  <Widget.Header title="Remove Liquidity" className="!pb-3 ">
+                    <div className="flex gap-3">
+                      <SettingsOverlay variant="dialog" />
+                      <Disclosure.Button className="w-full pr-0.5">
+                        <div className="flex items-center justify-between">
+                          <div
+                            className={classNames(
+                              open ? 'rotate-180' : 'rotate-0',
+                              'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
+                            )}
+                          >
+                            <ChevronDownIcon
+                              width={24}
+                              height={24}
+                              className="group-hover:text-slate-200 text-slate-300"
+                            />
+                          </div>
+                        </div>
+                      </Disclosure.Button>
                     </div>
-                  </Disclosure.Button>
+                  </Widget.Header>
                 ) : (
                   <Widget.Header title="Remove Liquidity" className="!pb-3" />
                 )}
@@ -162,7 +171,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                       >
                         <div className="flex flex-col gap-3 py-3 pt-5 border-t border-slate-200/5">
                           <Typography variant="sm" weight={400} className="pb-1 text-slate-400">
-                            You&apos;ll receive
+                            You&apos;ll receive at least:
                           </Typography>
 
                           <div className="flex items-center justify-between">

@@ -100,7 +100,7 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
                   }
                   value={data?.fundSource}
                 >
-                  <span className="text-sm capitalize font-medium truncate">
+                  <span className="text-sm font-medium capitalize truncate">
                     {data?.fundSource?.toLowerCase() || 'Select'}
                   </span>
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />

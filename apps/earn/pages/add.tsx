@@ -26,6 +26,7 @@ import {
   SelectFeeWidget,
   SelectNetworkWidget,
   SelectPoolTypeWidget,
+  SettingsOverlay,
 } from 'components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -271,7 +272,9 @@ const _Add: FC<AddProps> = ({
 
         <Widget id="addLiquidity" maxWidth={400}>
           <Widget.Content>
-            <Widget.Header title="3. Add Liquidity" />
+            <Widget.Header title="3. Add Liquidity">
+              <SettingsOverlay />
+            </Widget.Header>
             <Web3Input.Currency
               className="p-3"
               value={input0}

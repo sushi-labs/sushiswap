@@ -45,13 +45,13 @@ export function useStablePools(
     return Array.from(pairsMap.values())
   }, [currencies])
 
+  const pairsUniqueAddr = useMemo(() => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]), [pairsUnique])
+
   const tokensUnique = useMemo(
     () =>
       Array.from(new Set(pairsUnique.reduce((previousValue, currentValue) => [...previousValue, ...currentValue], []))),
     [pairsUnique]
   )
-
-  const pairsUniqueAddr = useMemo(() => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]), [pairsUnique])
 
   const callStatePoolsCount = useSingleContractMultipleData(
     chainId,
