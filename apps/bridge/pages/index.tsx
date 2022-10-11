@@ -60,6 +60,7 @@ export default function Bridge({
           srcToken: srcTokens.includes(srcToken) ? srcTokens[srcTokens.indexOf(srcToken)] : srcTokens[0],
           dstToken: dstTokens.includes(dstToken) ? dstTokens[dstTokens.indexOf(dstToken)] : dstTokens[0],
           srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
+          dstTypedAmount: '',
           amount: !isNaN(Number(srcTypedAmount)) ? tryParseAmount(srcTypedAmount, srcToken) : undefined,
         }}
       >
