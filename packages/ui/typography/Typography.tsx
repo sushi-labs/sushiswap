@@ -24,7 +24,7 @@ const VARIANTS: Record<string, string> = {
   lg: 'text-lg ',
   base: 'text-base leading-5',
   sm: 'text-sm leading-5',
-  xs: 'text-xs leading-4',
+  xs: 'text-xs leading-5',
   xxs: 'text-[0.625rem] leading-[1.2]',
 }
 

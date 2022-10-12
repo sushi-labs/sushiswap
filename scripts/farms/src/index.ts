@@ -4,7 +4,8 @@ import './lib/wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { getUnixTime } from 'date-fns'
 
-import { MINICHEF_SUBGRAPH_NAME } from './config'
+import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+
 import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
 import { redis } from './lib'
 

@@ -19,6 +19,10 @@ sources:
         # Default value is bentobox-polygon
         # This is needed for the initial introspection on buildtime
         endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushiswap/bentobox-polygon}
+  - name: TheGraph
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/index-node/graphql
 
 additionalTypeDefs: |
   extend type BentoBoxKpi {
@@ -30,6 +34,19 @@ additionalTypeDefs: |
   extend type Query {
     crossChainBentoBoxKpis(first: Int!, chainIds: [BigInt!]!): [BentoBoxKpi!]!
     crossChainStrategyKpis(first: Int!, chainIds: [BigInt!]!): [StrategyKpi!]!
+  }
+
+  type SubgraphStatus {
+    subgraphName: String
+    startBlock: BigInt
+    lastSyncedBlock: BigInt
+    chainHeadBlock: BigInt
+    hasFailed: Boolean
+    nonFatalErrorCount: BigInt
+    entityCount: BigInt
+  }
+  extend type Query {
+    subgraphStatuses(subgraphNames: [String!]!): [SubgraphStatus!]!
   }
 
 additionalResolvers:
