@@ -11,12 +11,11 @@ import { useBridgeExecute } from './BridgeExecuteProvider'
 import { useBridgeState } from './BridgeStateProvider'
 
 export const SwapStatsDisclosure: FC = () => {
-  const { srcChainId } = useBridgeState()
-  const { price } = useBridgeOutput()
+  const { srcChainId, srcTypedAmount } = useBridgeState()
 
   return (
     <Transition
-      show={!!price}
+      show={Boolean(srcTypedAmount)}
       unmount={false}
       className="p-3 !pb-1 transition-[max-height] overflow-hidden"
       enter="duration-300 ease-in-out delay-250"
