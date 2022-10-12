@@ -1587,7 +1587,7 @@ importers:
   packages/config/hardhat:
     specifiers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
-      '@nomiclabs/hardhat-etherscan': 3.x
+      '@nomiclabs/hardhat-etherscan': ^3.0.0
       '@nomiclabs/hardhat-solhint': 2.x
       '@nomiclabs/hardhat-waffle': 2.x
       '@sushiswap/eslint-config': workspace:*
