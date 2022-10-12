@@ -83,6 +83,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
 const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
+      <_Index />
+    </SWRConfig>
+  )
+}
+
+const _Index = () => {
+  return (
+    <Layout>
       {/* <NextSeo
         openGraph={{
           images: [
@@ -95,14 +103,6 @@ const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fal
           ],
         }}
       /> */}
-      <_Index />
-    </SWRConfig>
-  )
-}
-
-const _Index = () => {
-  return (
-    <Layout>
       <div className="flex flex-col gap-10">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md space-y-4">
