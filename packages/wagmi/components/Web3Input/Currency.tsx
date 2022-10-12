@@ -98,7 +98,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             'h-[36px] text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
           )}
         >
-          {loading ? (
+          {loading && !currency ? (
             <div className="pl-1 pr-12">
               <Loader />
             </div>
