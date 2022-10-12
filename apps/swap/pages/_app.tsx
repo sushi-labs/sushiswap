@@ -14,6 +14,7 @@ import React, { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
+
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
 

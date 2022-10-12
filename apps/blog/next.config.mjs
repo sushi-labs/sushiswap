@@ -13,6 +13,7 @@ const nextConfig = {
   basePath: '/blog',
   reactStrictMode: true,
   swcMinify: false,
+  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {

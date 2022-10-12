@@ -14,7 +14,7 @@ import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useConnect, useNetwork } from 'wagmi'
 
-import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
+import { Layout, Route, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
@@ -275,9 +275,9 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </a>
             </Link.Internal>
           </Container>
-          {/* <Container className="flex justify-center mx-auto" maxWidth="3xl">
+          <Container className="flex justify-center mx-auto" maxWidth="3xl">
             <Route />
-          </Container> */}
+          </Container>
         </Layout>
       </TradeProvider>
     </>

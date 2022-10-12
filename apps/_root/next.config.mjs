@@ -38,6 +38,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {

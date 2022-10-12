@@ -26,6 +26,7 @@ const nextConfig = {
   experimental: {
     nextScriptWorkers: true,
   },
+  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {
