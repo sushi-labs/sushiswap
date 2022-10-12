@@ -85,7 +85,7 @@ const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fal
   return (
     <SWRConfig value={{ fallback }}>
       <Head>
-        <meta property="og:image" content="/analytics/api/og?tvl=$9.8B&volume=$100M&fee=$1K" />
+        <meta property="og:image" content="/api/og?tvl=$9.8B&volume=$100M&fee=$1K" />
       </Head>
       <_Index />
     </SWRConfig>
