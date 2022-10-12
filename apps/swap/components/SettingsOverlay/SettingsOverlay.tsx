@@ -8,7 +8,6 @@ import { CarbonOffsetOverlay } from './CarbonOffsetOverlay'
 import { CustomTokensOverlay } from './CustomTokensOverlay'
 import { ExpertMode } from './ExpertMode'
 import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
-import { SushiGuard } from './SushiGuard'
 
 interface SettingsOverlay {
   chainId: ChainId | undefined
@@ -20,7 +19,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
   return (
     <>
       <div className="grid grid-flow-col gap-4">
-        {chainId === ChainId.ETHEREUM && (
+        {/* {chainId === ChainId.ETHEREUM && (
           <IconButton
             className={classNames(
               'hover:animate-pulse min-w-5 min-h-5 flex items-center',
@@ -36,7 +35,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
               <path d="M10 15.798V3.75h5v6.753a4.375 4.375 0 0 1-2.313 3.858L10 15.798Z" fill="currentColor" />
             </svg>
           </IconButton>
-        )}
+        )} */}
         {chainId === ChainId.POLYGON && (
           <IconButton
             className={classNames(
@@ -71,7 +70,7 @@ export const SettingsOverlay: FC<SettingsOverlay> = ({ chainId }) => {
                 <SlippageToleranceDisclosure />
                 <CustomTokensOverlay />
                 <ExpertMode />
-                {chainId === ChainId.ETHEREUM && <SushiGuard />}
+                {/* {chainId === ChainId.ETHEREUM && <SushiGuard />} */}
                 {chainId === ChainId.POLYGON && <CarbonOffsetOverlay />}
 
                 {/* <DustAmount /> */}

@@ -43,7 +43,7 @@ export const Header: FC = () => {
         <App.NavItemList>
           <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
           <App.NavItemInternal href="https://sushi.com/earn" label="Earn" />
-          <App.NavItemInternal href="https://sushi.com/bridge" label="Bridge" />
+          {/* <App.NavItemInternal href="https://sushi.com/bridge" label="Bridge" /> */}
           <App.NavItemExternal href={buyUrl} label="Buy" />
         </App.NavItemList>
       }
