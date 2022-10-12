@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
+import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { Button, Dialog, NetworkIcon, Typography } from '@sushiswap/ui'
-import { CHAIN_NAME, SUPPORTED_CHAINS } from 'config'
+import { SUPPORTED_CHAINS } from 'config'
 import React, { FC, useState } from 'react'
 
 interface NetworkModal {
