@@ -1,6 +1,6 @@
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import Head from 'next/head'
+import { NextSeo } from 'next-seo'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
@@ -84,9 +84,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, res }
 const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <Head>
+      <NextSeo
+        openGraph={{
+          images: [
+            {
+              url: '/api/og?tvl=$9.8B&volume=$100M&fee=$1K',
+              width: 1200,
+              height: 630,
+              alt: 'Sushi Analytics',
+            },
+          ],
+        }}
+      />
+      {/* <Head>
         <meta property="og:image" content="/api/og?tvl=$9.8B&volume=$100M&fee=$1K" />
-      </Head>
+      </Head> */}
       <_Index />
     </SWRConfig>
   )
