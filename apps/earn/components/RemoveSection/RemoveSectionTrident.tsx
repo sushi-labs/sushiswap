@@ -169,16 +169,13 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     if (indexOfWETH >= 0) {
       actions.push(
         unwrapWETHAction({
-          chainId: pair.chainId,
           router: contract,
-          amountMinimum: indexOfWETH === 0 ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
           recipient: address,
         }),
         sweep({
           router: contract,
           token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
           recipient: address,
-          amount: indexOfWETH === 0 ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
           fromBento: false,
         })
       )

@@ -330,10 +330,8 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           // unwrap
           actions.push(
             unwrapWETHAction({
-              chainId,
               router: tridentRouter,
               recipient: account,
-              amountMinimum: trade?.minimumAmountOut(allowedSlippage).quotient.toString(),
             })
           )
         }

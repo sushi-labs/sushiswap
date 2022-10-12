@@ -78,10 +78,8 @@ export const batchAction = ({ contract, actions = [] }: Batch): string => {
 }
 
 interface UnwrapETHAction {
-  chainId: number
   router: Contract
   recipient: string
-  amountMinimum: string
 }
 
 /**
@@ -90,26 +88,8 @@ interface UnwrapETHAction {
  * @param recipient recipient of ETH
  * @param liquidityOutput array with minimum output amounts for underlying tokens
  */
-export const unwrapWETHAction = ({ chainId, router, recipient, amountMinimum }: UnwrapETHAction) => {
+export const unwrapWETHAction = ({ router, recipient }: UnwrapETHAction) => {
   return router.interface.encodeFunctionData('unwrapWETH', [recipient])
-}
-
-interface SweepNativeToken {
-  router: Contract
-  token: string
-  amount: string
-  recipient: string
-}
-
-/**
- * Recover mistakenly sent ERC-20 tokens
- * @param router Router contract
- * @param token address of token
- * @param amount amount to recover
- * @param recipient address to sent funds to
- */
-export const sweepNativeTokenAction = ({ router, token, amount, recipient }: SweepNativeToken) => {
-  return router.interface.encodeFunctionData('sweepNativeToken', [token, amount, recipient])
 }
 
 export interface ApproveMasterContractActionProps {
