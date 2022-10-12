@@ -14,6 +14,7 @@ import { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
+
 import SEO from '../next-seo.config.mjs'
 
 export { reportWebVitals } from 'next-axiom'
@@ -49,8 +50,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="manifest" href="/earn/manifest.json?v=1" />
         <link rel="mask-icon" href="/earn/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/earn/favicon.ico?v=1" />
-        <meta name="msapplication-TileColor" content="#2b5797" />
-        <meta name="theme-color" content="#FA52A0" />
       </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script

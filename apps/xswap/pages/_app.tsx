@@ -15,6 +15,7 @@ import { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
+
 import SEO from '../next-seo.config.mjs'
 
 export { reportWebVitals } from 'next-axiom'
@@ -47,11 +48,9 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="apple-touch-icon" sizes="180x180" href="/xswap/apple-touch-icon.png?v=1" />
         <link rel="icon" type="image/png" sizes="32x32" href="/xswap/favicon-32x32.png?v=1" />
         <link rel="icon" type="image/png" sizes="16x16" href="/xswap/favicon-16x16.png?v=1" />
-        <link rel="manifest" href="/xswap/site.webmanifest?v=1" />
+        <link rel="manifest" href="/xswap/manifest.json?v=1" />
         <link rel="mask-icon" href="/xswap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/xswap/favicon.ico?v=1" />
-        <meta name="msapplication-TileColor" content="#2b5797" />
-        <meta name="theme-color" content="#FA52A0" />
       </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
