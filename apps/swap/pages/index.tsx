@@ -131,9 +131,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   }, [chainId, initialState.token1, tokens])
 
   const [input0, setInput0] = useState<string>(initialState.input0)
-  const [token0, setToken0] = useState<Type | undefined>(inputToken)
+  const [[token0, token1], setTokens] = useState<[Type | undefined, Type | undefined]>([inputToken, outputToken])
   const [input1, setInput1] = useState<string>('')
-  const [token1, setToken1] = useState<Type | undefined>(outputToken)
   const [tradeType, setTradeType] = useState<TradeType>(TradeType.EXACT_INPUT)
 
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
@@ -154,18 +153,13 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   }, [])
 
   const switchCurrencies = useCallback(() => {
-    const srcToken = token0
-    const dstToken = token1
-
-    setToken0(dstToken)
-    setToken1(srcToken)
-  }, [token0, token1])
+    setTokens(([prevSrc, prevDst]) => [prevDst, prevSrc])
+  }, [])
 
   const amounts = useMemo(() => [parsedInput0], [parsedInput0])
 
   useEffect(() => {
-    setToken0(inputToken)
-    setToken1(outputToken)
+    setTokens([inputToken, outputToken])
     setInput0(initialState.input0)
     setInput1('')
   }, [chainId, initialState.input0, inputToken, outputToken])
@@ -173,6 +167,18 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   const onSuccess = useCallback(() => {
     setInput0('')
     setInput1('')
+  }, [])
+
+  const _setToken0 = useCallback((currency: Type) => {
+    setTokens(([prevSrc, prevDst]) => {
+      return prevDst && currency.equals(prevDst) ? [prevDst, prevSrc] : [currency, prevDst]
+    })
+  }, [])
+
+  const _setToken1 = useCallback((currency: Type) => {
+    setTokens(([prevSrc, prevDst]) => {
+      return prevSrc && currency.equals(prevSrc) ? [prevDst, prevSrc] : [prevSrc, currency]
+    })
   }, [])
 
   return (
@@ -201,7 +207,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 value={input0}
                 onChange={onInput0}
                 currency={token0}
-                onSelect={setToken0}
+                onSelect={_setToken0}
                 customTokenMap={customTokensMap}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}
@@ -229,7 +235,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                   value={input1}
                   onChange={onInput1}
                   currency={token1}
-                  onSelect={setToken1}
+                  onSelect={_setToken1}
                   customTokenMap={customTokensMap}
                   onAddToken={addCustomToken}
                   onRemoveToken={removeCustomToken}
