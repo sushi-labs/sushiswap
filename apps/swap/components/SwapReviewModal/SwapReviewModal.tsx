@@ -121,6 +121,8 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const deadline = useTransactionDeadline(chainId, open)
 
+  // console.log({ deadline })
+
   const inputCurrencyRebase = useBentoBoxTotal(chainId, trade?.inputAmount.currency)
   const outputCurrencyRebase = useBentoBoxTotal(chainId, trade?.outputAmount.currency)
 
@@ -133,7 +135,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const prepare = useCallback(async () => {
     try {
-      if (!trade || !account || !chainId) return
+      // console.log('try prepare swap', deadline)
+
+      if (!trade || !account || !chainId || !deadline) return
 
       let call: SwapCall | null = null
       let value = '0x0'
