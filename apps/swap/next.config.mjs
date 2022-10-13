@@ -9,7 +9,6 @@ const withPwa = nextPwa({
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/redux-localstorage',
-  '@sushiswap/chain',
   '@sushiswap/wagmi',
   '@sushiswap/ui',
 ])
@@ -19,7 +18,7 @@ const withTranspileModules = transpileModules([
 const nextConfig = {
   basePath: '/swap',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',

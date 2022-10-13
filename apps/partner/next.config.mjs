@@ -6,7 +6,7 @@ const withTranspileModules = transpileModules(['@sushiswap/chain', '@sushiswap/w
 const nextConfig = {
   basePath: '/partner',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   async headers() {
     return [
       {

@@ -14,7 +14,7 @@ const withTranspileModules = transpileModules([
 const nextConfig = {
   basePath: '/xswap',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
