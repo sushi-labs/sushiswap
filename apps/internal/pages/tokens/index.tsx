@@ -1,15 +1,16 @@
+import { SearchIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Network } from '@sushiswap/ui'
+import { DEFAULT_INPUT_UNSTYLED } from '@sushiswap/ui/input'
+import { Layout } from 'components'
 import { TokenTable } from 'components/tokens/TokenTable'
 import { TOKENS_SUPPORTED_CHAIN_IDS } from 'config'
 import { getTokens, Token } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
-import { SearchIcon } from '@heroicons/react/solid'
 import useSWR, { SWRConfig } from 'swr'
-import { Layout } from 'components'
-import { DEFAULT_INPUT_UNSTYLED } from '@sushiswap/ui/input'
+
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
 

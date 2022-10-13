@@ -1,8 +1,8 @@
-import { LinkIcon, XIcon } from '@heroicons/react/solid'
+import { XIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { CheckIcon, NetworkIcon, Typography } from '@sushiswap/ui'
+import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { GenericTable } from 'components/Table'
 import { Token } from 'lib'
@@ -56,11 +56,6 @@ function useColumns() {
       cell: (info) => formatUSD(info.getValue()),
       enableHiding: true,
     }),
-    // columnHelper.accessor('source', {
-    //   header: 'Source',
-    //   cell: (info) => info.getValue(),
-    //   enableHiding: true,
-    // }),
     columnHelper.accessor('listEntry', {
       header: 'Default List',
       cell: (info) => (
@@ -78,25 +73,11 @@ function useColumns() {
       id: 'addToDefaultList',
       header: 'Adder',
       cell: ({ row }) => (
-        <div className="flex justify-center max-w-[50px]">
+        <div className="flex justify-center max-w-[50px]" onClick={(e) => e.preventDefault()}>
           <TokenAdder token={row.original} hasIcon={Boolean(row.original.listEntry?.logoURI)} />
         </div>
       ),
     }),
-    // columnHelper.display({
-    //   id: 'link',
-    //   header: 'Link',
-    //   cell: ({ row }) => (
-    //     <a
-    //       href={chains[row.original.chainId].getTokenUrl(row.original.id.split(':')[1])}
-    //       target="_blank"
-    //       rel="noreferrer"
-    //       className="flex justify-center"
-    //     >
-    //       <LinkIcon width={24} height={24} />
-    //     </a>
-    //   ),
-    // }),
   ]
 }
 
@@ -109,5 +90,11 @@ export const TokenTable: FC<TokenTable> = ({ tokens }) => {
     getCoreRowModel: getCoreRowModel(),
   })
 
-  return <GenericTable table={table} columns={columns} />
+  return (
+    <GenericTable
+      table={table}
+      columns={columns}
+      getLink={(row) => chains[row.chainId].getTokenUrl(row.id.split(':')[1])}
+    />
+  )
 }

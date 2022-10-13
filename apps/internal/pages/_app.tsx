@@ -1,7 +1,8 @@
 import '../index.css'
 import '@sushiswap/ui/index.css'
 
-import { App, AppType, ThemeProvider } from '@sushiswap/ui'
+import { App, ThemeProvider } from '@sushiswap/ui'
+import { Header } from 'components/Header'
 import type { AppProps } from 'next/app'
 import { FC } from 'react'
 
@@ -9,9 +10,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <ThemeProvider>
       <App.Shell>
-        <App.Header maxWidth="6xl" appType={AppType.Internal} withScrollBackground>
-          <App.Nav />
-        </App.Header>
+        <Header />
         <Component {...pageProps} />
         <App.Footer />
       </App.Shell>
