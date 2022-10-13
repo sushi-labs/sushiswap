@@ -40,7 +40,7 @@ export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
           <Chip
             label={label}
             color="default"
-            className="h-[28px] sm:text-sm sm:font-normal pl-[14px] pr-[14px]"
+            className="h-7 sm:text-sm sm:font-normal pl-[14px] pr-[14px]"
             icon={<CircleIcon width={8} height={8} fill={color} stroke={color} />}
           />
           <Transition

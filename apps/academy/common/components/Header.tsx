@@ -146,7 +146,7 @@ export const Header: FC = () => {
                         leaveFrom="transform scale-100 opacity-100"
                         leaveTo="transform scale-95 opacity-0"
                       >
-                        <Disclosure.Panel className="grid gap-[28px] pl-7 pb-1.5 mt-9">
+                        <Disclosure.Panel className="grid gap-7 pl-7 pb-1.5 mt-9">
                           {links.map(({ name, href }, i) => (
                             <Link.Internal href={href} key={i}>
                               <Typography weight={500} className="text-slate-400">

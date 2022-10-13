@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
+import { ArrowLeftIcon, ShareIcon } from '@heroicons/react/24/solid'
 import { Container, IconButton, Typography } from '@sushiswap/ui'
 import { getShareText } from 'common/helpers'
 import Link from 'next/link'
@@ -30,7 +30,7 @@ export const Breadcrumb: FC<Breadcrumb> = ({ article }) => {
     >
       <Link href="/articles" passHref>
         <a className="flex items-center gap-2 group">
-          <ChevronLeftIcon width={16} className="text-slate-400 group-hover:text-slate-50" />
+          <ArrowLeftIcon width={12} className="text-slate-400 group-hover:text-slate-50" />
           <Typography variant="sm" weight={500} className="cursor-pointer group-hover:text-slate-50 text-slate-400">
             Back
           </Typography>

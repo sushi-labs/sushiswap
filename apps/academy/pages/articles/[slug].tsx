@@ -1,6 +1,4 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { classNames, Container, Typography, useBreakpoint } from '@sushiswap/ui'
+import { classNames, Container, LoadingOverlay, useBreakpoint } from '@sushiswap/ui'
 import { appHeaderHeight, defaultSidePadding } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
@@ -8,9 +6,9 @@ import { FC, useState } from 'react'
 
 import { ArticleBlocksDynamicZone, ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../../.mesh'
 import {
-  ArticleAuthors,
   ArticleFooter,
   ArticleHeader,
+  ArticleHeaderSelector,
   ArticleLinks,
   ArticleSeo,
   Breadcrumb,
@@ -82,112 +80,75 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
 
   return (
     <>
+      <LoadingOverlay show={!article} />
       <ArticleSeo article={article?.attributes} />
-      <PreviewBanner show={preview} />
-      <Breadcrumb article={article} />
-      <Container maxWidth="3xl" className="px-4 mx-auto mt-8 sm:mt-0">
+      <Container maxWidth="6xl" className="mx-auto">
+        <PreviewBanner show={preview} />
+        <Breadcrumb article={article} />
         <ArticleHeader article={article} />
-        <ArticleAuthors article={article} />
-      </Container>
-      {article?.attributes?.cover.data && (
-        <div className="relative max-w-screen h-[calc(100vw/2.85)] min-h-[300px] mt-10 sm:mt-12">
-          <Image image={article?.attributes.cover.data} />
-        </div>
-      )}
+        {article?.attributes?.cover.data && (
+          <div className="relative max-w-screen h-[calc(100vw/2.85)] min-h-[300px] mt-10 sm:mt-12">
+            <Image image={article?.attributes.cover.data} />
+          </div>
+        )}
 
-      <Container maxWidth="6xl" className="pb-20 mx-auto sm:pb-36">
-        <Disclosure as="div" className="sticky top-[94px] sm:hidden bg-slate-900 z-20 px-6 border-b border-slate-200/5">
-          {({ open, close }) => (
-            <>
-              <Disclosure.Button className="flex items-center justify-between w-full h-12 gap-1 text-slate-40 outline-0">
-                <Typography variant="sm" weight={500}>
-                  {selectedHeader || tableOfContentsFiltered?.[0].text}
-                </Typography>
-                <ChevronDownIcon width={12} height={12} className={classNames('transition', open && 'rotate-180')} />
-              </Disclosure.Button>
-              <Transition
-                enter="transition duration-100 ease-out"
-                enterFrom="transform scale-95 opacity-0"
-                enterTo="transform scale-100 opacity-100"
-                leave="transition duration-75 ease-out"
-                leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"
-              >
-                <Disclosure.Panel className="grid gap-3 pb-6 mt-2">
-                  <ol className="grid gap-3 list-decimal list-inside">
-                    {tableOfContentsFiltered?.map(({ key, text }) => (
-                      <li
-                        key={key}
-                        className={classNames(
-                          'cursor-pointer',
-                          selectedHeader === text ? 'text-slate-50' : 'text-slate-400'
-                        )}
-                        onClick={() => {
-                          close()
-                          scrollToHeader(key)
-                          setSelectedHeader(text)
-                        }}
-                      >
-                        <Typography variant="sm" weight={500} as="span">
-                          {text}
-                        </Typography>
-                      </li>
-                    ))}
-                  </ol>
-                </Disclosure.Panel>
-              </Transition>
-            </>
-          )}
-        </Disclosure>
+        <div className="pb-20 mx-auto sm:pb-36">
+          <ArticleHeaderSelector
+            selectedHeader={selectedHeader}
+            setSelectedHeader={setSelectedHeader}
+            tableOfContents={tableOfContentsFiltered}
+            scrollToHeader={scrollToHeader}
+          />
 
-        <div
-          className={classNames(
-            'sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]',
-            defaultSidePadding
-          )}
-        >
-          <aside className="flex-col hidden w-full gap-8 min-w-[180px] max-w-[280px] sm:flex sticky h-fit top-28">
-            <ArticleLinks article={article} />
-            <hr className="border border-slate-200/5" />
-            <ol className="grid gap-8 list-decimal list-inside">
-              {tableOfContentsFiltered?.map(({ text, key }) => (
-                <li
-                  key={key}
-                  className={classNames(
-                    'hover:text-slate-50 font-medium text-base cursor-pointer',
-                    selectedHeader === key ? 'text-slate-50' : 'text-slate-400'
-                  )}
-                  onClick={() => {
-                    scrollToHeader(key)
-                    setSelectedHeader(text)
-                  }}
-                >
-                  {text}
-                </li>
-              ))}
-            </ol>
-          </aside>
-          <article className="prose !prose-invert prose-slate">
-            {article?.attributes?.blocks?.map((b, i) => {
-              if (b && '__typename' in b) {
-                const block = b as ArticleBlocksDynamicZone & {
-                  __typename: 'ComponentSharedDivider' | 'ComponentSharedMedia' | 'ComponentSharedRichText'
+          <div
+            className={classNames(
+              'sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]',
+              defaultSidePadding
+            )}
+          >
+            <aside className="flex-col hidden w-full gap-8 min-w-[180px] max-w-[280px] sm:flex sticky h-fit top-28">
+              <ArticleLinks article={article} />
+              <hr className="border border-slate-200/5" />
+              <ol className="grid gap-8 list-decimal list-inside">
+                {tableOfContentsFiltered?.map(({ text, key }) => (
+                  <li
+                    key={key}
+                    className={classNames(
+                      'hover:text-slate-50 font-medium text-base cursor-pointer',
+                      selectedHeader === key ? 'text-slate-50' : 'text-slate-400'
+                    )}
+                    onClick={() => {
+                      scrollToHeader(key)
+                      setSelectedHeader(text)
+                    }}
+                  >
+                    {text}
+                  </li>
+                ))}
+              </ol>
+            </aside>
+            <article className="prose !prose-invert prose-slate">
+              {article?.attributes?.blocks?.map((b, i) => {
+                if (b && '__typename' in b) {
+                  const block = b as ArticleBlocksDynamicZone & {
+                    __typename: 'ComponentSharedDivider' | 'ComponentSharedMedia' | 'ComponentSharedRichText'
+                  }
+
+                  switch (block.__typename) {
+                    case 'ComponentSharedDivider':
+                      return <hr key={i} className="my-12 border border-slate-200/5" />
+                    case 'ComponentSharedMedia':
+                      return <MediaBlock block={block as ComponentSharedMedia} key={i} />
+                    default:
+                      return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
+                  }
                 }
+              })}
+            </article>
+          </div>
 
-                switch (block.__typename) {
-                  case 'ComponentSharedDivider':
-                    return <hr key={i} className="my-12 border border-slate-200/5" />
-                  case 'ComponentSharedMedia':
-                    return <MediaBlock block={block as ComponentSharedMedia} key={i} />
-                  default:
-                    return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
-                }
-              }
-            })}
-          </article>
+          <ArticleFooter articles={latestArticles} />
         </div>
-
-        <ArticleFooter articles={latestArticles} />
       </Container>
     </>
   )

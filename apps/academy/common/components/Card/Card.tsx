@@ -1,18 +1,16 @@
-import { Chip, CircleIcon, classNames, Typography } from '@sushiswap/ui'
-import { difficultyElements } from 'common/helpers'
+import { Chip, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
 import { ArticleEntity } from '../../../.mesh'
-import { Image } from '../Image'
+import { DifficultyLabel, Image } from '../'
 
 interface Card {
   article: ArticleEntity
 }
 
 export const Card: FC<Card> = ({ article }) => {
-  const difficulty = article?.attributes?.difficulty?.data?.attributes?.slug
-  const { color } = difficultyElements[difficulty]
+  const product = article?.attributes?.products?.data?.[0]?.attributes
 
   return (
     <a href={`/academy/articles/${article?.attributes?.slug}`}>
@@ -23,19 +21,8 @@ export const Card: FC<Card> = ({ article }) => {
 
         <div className="grid gap-4 p-6">
           <div className="flex items-center w-full gap-5">
-            {(article?.attributes?.categories?.data || []).length > 0 && (
-              <Chip
-                key={article.attributes.categories.data[0].id}
-                label={article.attributes.categories.data[0].attributes.name}
-                className="capitalize"
-              />
-            )}
-            <div className="flex items-center gap-1 min-w-max">
-              <CircleIcon width={8} height={8} stroke={color} fill={color} />
-              <Typography variant="xs" weight={500}>
-                {article?.attributes?.difficulty?.data?.attributes?.label}
-              </Typography>
-            </div>
+            {product && <Chip className="pl-2.5 pr-2.5 h-7" label={product.name} />}
+            <DifficultyLabel isCard article={article} />
           </div>
 
           <Typography variant="lg" weight={600} className="leading-5 text-slate-50 line-clamp-2">
