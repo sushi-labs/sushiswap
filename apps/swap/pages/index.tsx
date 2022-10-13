@@ -7,16 +7,24 @@ import { Percent, ZERO } from '@sushiswap/math'
 import { RouteStatus } from '@sushiswap/tines'
 import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Checker, useWalletState } from '@sushiswap/wagmi'
+import { Checker, useWalletState, WrapType } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
-import { warningSeverity } from 'lib/functions'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useConnect, useNetwork } from 'wagmi'
 
-import { Layout, Route, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
+import {
+  Layout,
+  Route,
+  SettingsOverlay,
+  SwapReviewModalLegacy,
+  TradeProvider,
+  useTrade,
+  WrapReviewModal,
+} from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
+import { warningSeverity } from '../lib/functions'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
 
@@ -140,8 +148,12 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const tokenMap = useTokens(chainId)
 
+  const wrap = Boolean(token0 && token1 && token0.isNative && token1.equals(Native.onChain(token1.chainId).wrapped))
+  const unwrap = Boolean(token0 && token1 && token1.isNative && token0.equals(Native.onChain(token0.chainId).wrapped))
+  const isWrap = wrap || unwrap
+
   const [parsedInput0, parsedInput1] = useMemo(() => {
-    return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
+    return [tryParseAmount(input0, token0), tryParseAmount(isWrap ? input0 : input1, token1)]
   }, [input0, input1, token0, token1])
 
   const onInput0 = useCallback((val: string) => {
@@ -227,7 +239,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 <CurrencyInput
                   disabled={true}
                   className="p-3"
-                  value={input1}
+                  value={isWrap ? input0 : input1}
                   onChange={onInput1}
                   currency={token1}
                   onSelect={setToken1}
@@ -239,6 +251,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                   inputType={TradeType.EXACT_OUTPUT}
                   tradeType={tradeType}
                   loading={!token1}
+                  isWrap={isWrap}
                 />
                 <SwapStatsDisclosure />
                 <div className="p-3 pt-0">
@@ -251,11 +264,28 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                       amounts={amounts}
                     >
                       <Checker.Network fullWidth size="md" chainId={chainId}>
-                        <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
-                          {({ isWritePending, setOpen }) => {
-                            return <SwapButton isWritePending={isWritePending} setOpen={setOpen} />
-                          }}
-                        </SwapReviewModalLegacy>
+                        {isWrap ? (
+                          <WrapReviewModal
+                            chainId={chainId}
+                            input0={parsedInput0}
+                            input1={parsedInput1}
+                            wrapType={wrap ? WrapType.Wrap : WrapType.Unwrap}
+                          >
+                            {({ isWritePending, setOpen }) => {
+                              return (
+                                <Button disabled={isWritePending} fullWidth size="md" onClick={() => setOpen(true)}>
+                                  {wrap ? 'Wrap' : 'Unwrap'}
+                                </Button>
+                              )
+                            }}
+                          </WrapReviewModal>
+                        ) : (
+                          <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
+                            {({ isWritePending, setOpen }) => {
+                              return <SwapButton isWritePending={isWritePending} setOpen={setOpen} />
+                            }}
+                          </SwapReviewModalLegacy>
+                        )}
                       </Checker.Network>
                     </Checker.Amounts>
                   </Checker.Connected>
@@ -285,18 +315,23 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   )
 }
 
-const SwapButton: FC<{ isWritePending: boolean; setOpen(open: boolean): void }> = ({ isWritePending, setOpen }) => {
+const SwapButton: FC<{
+  isWritePending: boolean
+  setOpen(open: boolean): void
+}> = ({ isWritePending, setOpen }) => {
   const { isLoading: isLoadingTrade, trade, route } = useTrade()
   const [{ expertMode, slippageTolerance }] = useSettings()
-
   const swapSlippage = useMemo(
     () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
     [slippageTolerance]
   )
 
   const priceImpactSeverity = useMemo(() => warningSeverity(trade?.priceImpact), [trade])
-
   const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
+
+  const onClick = useCallback(() => {
+    setOpen(true)
+  }, [setOpen])
 
   return (
     <Checker.Custom
@@ -309,7 +344,7 @@ const SwapButton: FC<{ isWritePending: boolean; setOpen(open: boolean): void }> 
     >
       <Button
         fullWidth
-        onClick={() => setOpen(true)}
+        onClick={onClick}
         disabled={
           isWritePending ||
           priceImpactTooHigh ||
