@@ -71,7 +71,7 @@ fragment Subgraph on SubgraphIndexingStatus {
     health
 }
 
-query Subgraphs($subgraphNames: [String!]!, $type: SubgraphType) {
+query Subgraphs($subgraphNames: [String!]!, $type: SubgraphType!) {
   subgraphs(subgraphNames: $subgraphNames, type: $type) {
     subgraphName
     subgraphId
