@@ -193,14 +193,6 @@ const _Add: FC<AddProps> = ({
 
   const onChangeToken0TypedAmount = useCallback(
     (value) => {
-      console.log('typed0 value', value, [
-        poolState === PairState.NOT_EXISTS ||
-          poolState === ConstantProductPoolState.NOT_EXISTS ||
-          poolState === StablePoolState.NOT_EXISTS,
-        token0,
-        poolState,
-        pool,
-      ])
       if (
         poolState === PairState.NOT_EXISTS ||
         poolState === ConstantProductPoolState.NOT_EXISTS ||
@@ -223,7 +215,6 @@ const _Add: FC<AddProps> = ({
 
   const onChangeToken1TypedAmount = useCallback(
     (value) => {
-      console.log('typed1 value', value)
       if (
         poolState === PairState.NOT_EXISTS ||
         poolState === ConstantProductPoolState.NOT_EXISTS ||
@@ -261,7 +252,7 @@ const _Add: FC<AddProps> = ({
             selectedNetwork={chainId}
             poolType={poolType}
             setPoolType={(type) => {
-              console.log('Set pool type', poolType)
+              // console.log('Set pool type', poolType)
               setPoolType(type)
             }}
           />

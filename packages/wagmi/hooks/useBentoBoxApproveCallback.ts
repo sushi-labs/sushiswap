@@ -115,28 +115,25 @@ export function useBentoBoxApproveCallback({
       setSignature(splitSignature(data))
       onSignature && onSignature(splitSignature(data))
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        // Regular approval as fallback
-        const data = await writeAsync()
-        if (onSuccess) {
-          const ts = new Date().getTime()
-          onSuccess({
-            type: 'approval',
-            chainId: chain?.id,
-            txHash: data.hash,
-            promise: data.wait(),
-            summary: {
-              pending: `Approving BentoBox Master Contract`,
-              completed: `Successfully approved the master contract`,
-              failed: 'Something went wrong approving the master contract',
-            },
-            groupTimestamp: ts,
-            timestamp: ts,
-          })
-        }
-      } else {
-        // Else just log the error
-        console.error(e)
+      if (e instanceof UserRejectedRequestError) return
+      console.error('Error approving BentoBox, attempting regular approval instead', e)
+      // Regular approval as fallback
+      const data = await writeAsync()
+      if (onSuccess) {
+        const ts = new Date().getTime()
+        onSuccess({
+          type: 'approval',
+          chainId: chain?.id,
+          txHash: data.hash,
+          promise: data.wait(),
+          summary: {
+            pending: `Approving BentoBox Master Contract`,
+            completed: `Successfully approved the master contract`,
+            failed: 'Something went wrong approving the master contract',
+          },
+          groupTimestamp: ts,
+          timestamp: ts,
+        })
       }
     }
   }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, onSignature, writeAsync, onSuccess])

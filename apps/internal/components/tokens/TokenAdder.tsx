@@ -74,7 +74,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
           throw new Error('An unexpected error has occured.')
         }
       } catch (e) {
-        console.log(e)
+        console.error(e)
         setAddState('error')
       }
     },

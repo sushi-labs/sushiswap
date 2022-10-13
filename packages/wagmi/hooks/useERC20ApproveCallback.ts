@@ -128,9 +128,8 @@ export function useERC20ApproveCallback(
         })
       }
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        console.error(e)
-      }
+      if (e instanceof UserRejectedRequestError) return
+      console.error(e)
     }
   }, [
     chain?.id,

@@ -53,11 +53,11 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
       try {
         await _withdraw(amount)
       } catch (e: unknown) {
-        if (!(e instanceof UserRejectedRequestError)) {
-          setError((e as ProviderRpcError).message)
+        if (e instanceof UserRejectedRequestError) return
+        if (e instanceof ProviderRpcError) {
+          setError(e.message)
         }
-
-        console.log(e)
+        console.error(e)
       }
     },
     [_withdraw]

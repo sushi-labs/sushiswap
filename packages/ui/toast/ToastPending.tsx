@@ -10,7 +10,6 @@ interface ToastPending extends Omit<NotificationData, 'promise'> {
 }
 
 export const ToastPending: FC<ToastPending> = ({ href, chainId, txHash, onDismiss, summary }) => {
-  console.log({ chainId })
   return (
     <>
       <ToastContent

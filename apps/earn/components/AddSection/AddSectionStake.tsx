@@ -72,11 +72,11 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title }) =
       try {
         await _deposit(amount)
       } catch (e: unknown) {
-        if (!(e instanceof UserRejectedRequestError)) {
-          setError((e as ProviderRpcError).message)
+        if (e instanceof UserRejectedRequestError) return
+        if (e instanceof ProviderRpcError) {
+          setError(e.message)
         }
-
-        console.log(e)
+        console.error(e)
       }
     },
     [_deposit]

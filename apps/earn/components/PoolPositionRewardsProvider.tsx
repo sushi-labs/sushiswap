@@ -114,11 +114,11 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
     try {
       await _harvest()
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+      if (e instanceof UserRejectedRequestError) return
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [_harvest])
 

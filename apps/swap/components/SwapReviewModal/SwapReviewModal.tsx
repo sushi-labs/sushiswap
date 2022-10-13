@@ -25,7 +25,14 @@ import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
+import {
+  ProviderRpcError,
+  useAccount,
+  usePrepareSendTransaction,
+  useProvider,
+  UserRejectedRequestError,
+  useSendTransaction,
+} from 'wagmi'
 
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
@@ -101,7 +108,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     ...config,
     onSettled,
     onSuccess: (data) => {
-      console.log(data)
       if (data) {
         setOpen(false)
         onSuccess()
@@ -395,11 +401,11 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         })
       }
     } catch (e: unknown) {
+      if (e instanceof UserRejectedRequestError) return
       if (e instanceof ProviderRpcError) {
         setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [
     account,
