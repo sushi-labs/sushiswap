@@ -16,13 +16,16 @@ export function useSendTransaction<Args extends UseSendTransactionArgs = UseSend
   onSuccess,
   onSettled,
   prepare,
+  enabled = true,
 }: Omit<Args & UseSendTransactionConfig, 'request' | 'mode'> & {
   prepare: (request: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => void
+  enabled?: boolean
 }) {
   const [request, setRequest] = useState<Partial<TransactionRequest & { to: string }>>({})
   const { config } = usePrepareSendTransaction({
     request,
     chainId,
+    enabled,
   })
 
   const _onSettled = useCallback(
