@@ -1,10 +1,10 @@
-import nextPwa from 'next-pwa'
+// import nextPwa from 'next-pwa'
 import transpileModules from 'next-transpile-modules'
 import { withAxiom } from 'next-axiom'
 
-const withPwa = nextPwa({
-  dest: 'public',
-})
+// const withPwa = nextPwa({
+//   dest: 'public',
+// })
 
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
@@ -66,4 +66,5 @@ const nextConfig = {
   },
 }
 
-export default withAxiom(withPwa(withTranspileModules(nextConfig)))
+// export default withAxiom(withPwa(withTranspileModules(nextConfig)))
+export default withAxiom(withTranspileModules(nextConfig))
