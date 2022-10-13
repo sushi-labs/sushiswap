@@ -4,6 +4,7 @@ import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WN
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
+import { RouteStatus } from '@sushiswap/tines'
 import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, useWalletState } from '@sushiswap/wagmi'
@@ -11,7 +12,7 @@ import { CurrencyInput } from 'components/CurrencyInput'
 import { warningSeverity } from 'lib/functions'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useConnect, useNetwork } from 'wagmi'
 
 import { Layout, Route, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
@@ -284,8 +285,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   )
 }
 
-function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }) {
-  const { isLoading: isLoadingTrade, isError, trade } = useTrade()
+const SwapButton: FC<{ isWritePending: boolean; setOpen(open: boolean): void }> = ({ isWritePending, setOpen }) => {
+  const { isLoading: isLoadingTrade, trade, route } = useTrade()
   const [{ expertMode, slippageTolerance }] = useSettings()
 
   const swapSlippage = useMemo(
@@ -298,33 +299,42 @@ function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setO
   const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
 
   return (
-    <Button
-      fullWidth
-      onClick={() => setOpen(true)}
-      disabled={
-        isWritePending ||
-        priceImpactTooHigh ||
-        trade?.minimumAmountOut(swapSlippage)?.equalTo(ZERO) ||
-        Boolean(!trade && priceImpactSeverity > 2 && !expertMode)
+    <Checker.Custom
+      showGuardIfTrue={Boolean(route && route.status === RouteStatus.NoWay)}
+      guard={
+        <Button fullWidth disabled size="md">
+          No trade found
+        </Button>
       }
-      size="md"
-      color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
-      {...(Boolean(!trade && priceImpactSeverity > 2 && !expertMode) && {
-        title: 'Enable expert mode to swap with high price impact',
-      })}
     >
-      {isLoadingTrade ? (
-        'Finding Best Price'
-      ) : isWritePending ? (
-        <Dots>Confirm transaction</Dots>
-      ) : priceImpactTooHigh ? (
-        'High Price Impact'
-      ) : trade && priceImpactSeverity > 2 ? (
-        'Swap Anyway'
-      ) : (
-        'Swap'
-      )}
-    </Button>
+      <Button
+        fullWidth
+        onClick={() => setOpen(true)}
+        disabled={
+          isWritePending ||
+          priceImpactTooHigh ||
+          trade?.minimumAmountOut(swapSlippage)?.equalTo(ZERO) ||
+          Boolean(!trade && priceImpactSeverity > 2 && !expertMode)
+        }
+        size="md"
+        color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
+        {...(Boolean(!trade && priceImpactSeverity > 2 && !expertMode) && {
+          title: 'Enable expert mode to swap with high price impact',
+        })}
+      >
+        {isLoadingTrade ? (
+          'Finding Best Price'
+        ) : isWritePending ? (
+          <Dots>Confirm transaction</Dots>
+        ) : priceImpactTooHigh ? (
+          'High Price Impact'
+        ) : trade && priceImpactSeverity > 2 ? (
+          'Swap Anyway'
+        ) : (
+          'Swap'
+        )}
+      </Button>
+    </Checker.Custom>
   )
 }
 

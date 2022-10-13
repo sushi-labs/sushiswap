@@ -10,7 +10,7 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/exchange'
-import { RouteStatus } from '@sushiswap/tines'
+import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { PairState, useBentoBoxTotals, useGetConstantProductPools, useGetStablePools, usePairs } from '@sushiswap/wagmi'
 import {
   AMM_ENABLED_NETWORKS,
@@ -25,9 +25,12 @@ import { useFeeData } from 'wagmi'
 import { ConstantProductPoolState } from './useConstantProductPools'
 import { StablePoolState } from './useStablePools'
 
-export type UseTradeOutput =
-  | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
-  | undefined
+export type UseTradeOutput = {
+  trade:
+    | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
+    | undefined
+  route: MultiRoute | undefined
+}
 
 /**
  * Returns trade for a desired swap.
@@ -44,11 +47,7 @@ export function useTrade(
   mainCurrency?: Currency,
   otherCurrency?: Currency
 ): UseTradeOutput {
-  const {
-    data: feeData,
-    isError,
-    error,
-  } = useFeeData({
+  const { data: feeData } = useFeeData({
     chainId,
   })
 
@@ -200,14 +199,17 @@ export function useTrade(
             )
           )
 
-          return Trade.exactIn(
-            useLegacy ? legacyRoute : tridentRoute,
-            amountSpecified,
-            currencyOut,
-            useLegacy ? TradeVersion.V1 : TradeVersion.V2,
-            !useLegacy ? totals[currencyIn.wrapped.address] : undefined,
-            !useLegacy ? totals[currencyOut.wrapped.address] : undefined
-          )
+          return {
+            trade: Trade.exactIn(
+              useLegacy ? legacyRoute : tridentRoute,
+              amountSpecified,
+              currencyOut,
+              useLegacy ? TradeVersion.V1 : TradeVersion.V2,
+              !useLegacy ? totals[currencyIn.wrapped.address] : undefined,
+              !useLegacy ? totals[currencyOut.wrapped.address] : undefined
+            ),
+            route: useLegacy ? legacyRoute : tridentRoute,
+          }
         }
 
         if (AMM_ENABLED_NETWORKS.includes(chainId)) {
@@ -237,9 +239,16 @@ export function useTrade(
 
           if (legacyRoute.status === RouteStatus.Success) {
             console.debug('Found legacy route', legacyRoute)
-            return Trade.exactIn(legacyRoute, amountSpecified, currencyOut, TradeVersion.V1)
+            return {
+              trade: Trade.exactIn(legacyRoute, amountSpecified, currencyOut, TradeVersion.V1),
+              route: legacyRoute,
+            }
           } else {
-            // console.debug('No legacy route', legacyRoute)
+            console.debug('No legacy route', legacyRoute)
+            return {
+              trade: undefined,
+              route: legacyRoute,
+            }
           }
         }
 
@@ -265,16 +274,23 @@ export function useTrade(
           )
           if (tridentRoute.status === RouteStatus.Success) {
             console.debug('Found trident route', tridentRoute)
-            return Trade.exactIn(
-              tridentRoute,
-              amountSpecified,
-              currencyOut,
-              TradeVersion.V2,
-              totals[currencyIn.wrapped.address],
-              totals[currencyOut.wrapped.address]
-            )
+            return {
+              trade: Trade.exactIn(
+                tridentRoute,
+                amountSpecified,
+                currencyOut,
+                TradeVersion.V2,
+                totals[currencyIn.wrapped.address],
+                totals[currencyOut.wrapped.address]
+              ),
+              route: tridentRoute,
+            }
           } else {
             console.debug('No trident route', tridentRoute)
+            return {
+              trade: undefined,
+              route: tridentRoute,
+            }
           }
         }
 
@@ -282,6 +298,11 @@ export function useTrade(
       } else if (tradeType === TradeType.EXACT_OUTPUT) {
         //
       }
+    }
+
+    return {
+      trade: undefined,
+      route: undefined,
     }
   }, [amountSpecified, chainId, currencyIn, currencyOut, feeData, filteredPools, otherCurrency, totals, tradeType])
 }

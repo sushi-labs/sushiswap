@@ -1,13 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
-import { TradeOutput } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
-import { useTrade as useFindTrade } from '../lib/hooks/useTrade'
+import { useTrade as useFindTrade, UseTradeOutput } from '../lib/hooks/useTrade'
 
-interface TradeContext {
-  trade: TradeOutput
+interface TradeContext extends UseTradeOutput {
   isLoading: boolean
   isError: boolean
 }
@@ -46,9 +44,9 @@ export const TradeProvider: FC<_TradeProviderProps> = ({
         : amountSpecified,
     [chainId, amountSpecified]
   )
-  const trade = useFindTrade(chainId, tradeType, _amountSpecified, _mainCurrency, _otherCurrency)
+  const { trade, route } = useFindTrade(chainId, tradeType, _amountSpecified, _mainCurrency, _otherCurrency)
   return (
-    <Context.Provider value={useMemo(() => ({ trade, isError: false, isLoading: false }), [trade])}>
+    <Context.Provider value={useMemo(() => ({ trade, route, isError: false, isLoading: false }), [route, trade])}>
       {children}
     </Context.Provider>
   )
