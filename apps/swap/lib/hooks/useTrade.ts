@@ -111,7 +111,10 @@ export function useTrade(
   //   }, [])
   // )
 
-  const totals = useBentoBoxTotals(chainId, [currencyIn, currencyOut])
+  const totals = useBentoBoxTotals(
+    chainId,
+    useMemo(() => [currencyIn, currencyOut], [currencyIn, currencyOut])
+  )
 
   // console.debug('Found legacy route', [
   //   feeData,
@@ -208,6 +211,21 @@ export function useTrade(
         }
 
         if (AMM_ENABLED_NETWORKS.includes(chainId)) {
+          console.debug('Legacy route input', [
+            currencyIn.wrapped,
+            currencyOut.wrapped,
+            BigNumber.from(amountSpecified.quotient.toString()),
+            filteredPools
+              .filter((pool): pool is Pair => pool instanceof Pair)
+              .map((pool) => ({
+                address: pool.liquidityToken.address,
+                name: `${pool.token0.wrapped.symbol}/${pool.token1.wrapped.symbol}`,
+                reserve0: pool.reserve0.toExact(),
+                reserve1: pool.reserve0.toExact(),
+              })),
+            WNATIVE[amountSpecified.currency.chainId],
+            feeData.gasPrice.toNumber(),
+          ])
           const legacyRoute = findSingleRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,

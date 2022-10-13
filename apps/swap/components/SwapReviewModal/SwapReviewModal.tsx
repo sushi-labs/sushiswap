@@ -430,8 +430,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   // Prepare transaction
   useEffect(() => {
     void prepare()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trade])
+  }, [prepare, trade])
 
   const [input0, input1] = useMemo(
     () => [trade?.inputAmount, trade?.outputAmount],

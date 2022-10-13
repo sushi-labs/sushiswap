@@ -7,7 +7,6 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 // import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
 export type Client = ReturnType<typeof createClient>
@@ -30,8 +29,8 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configure
     // }),
     // alchemyProvider({ apiKey: alchemyId, priority: 1 }),
     // publicProvider({ priority: 2 }),
-    alchemyProvider({ apiKey: alchemyId, priority: 0 }),
-    publicProvider({ priority: 1 }),
+    // alchemyProvider({ apiKey: alchemyId, priority: 0 }),
+    publicProvider(),
     // infuraProvider({ infuraId }),
   ],
   { pollingInterval: 8_000 }

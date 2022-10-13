@@ -1080,6 +1080,7 @@ export class Graph {
         gasSpent += (e[0] as Edge).pool.swapGasCost
         outAmount -= p
       })
+      // console.debug({ outAmount, total }, outAmount / total)
       console.assert(outAmount / total < 1e-12, 'Error 281')
     })
     return { legs, gasSpent, topologyWasChanged }
