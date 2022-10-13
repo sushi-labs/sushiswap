@@ -65,11 +65,16 @@ additionalTypeDefs: |
     chainId: Int!
     chainName: String!
     chainShortName: String!
+    liquidity1dChange: BigDecimal
+    liquidity1wChange: BigDecimal
     volume1d: BigDecimal!
+    volume1dChange: BigDecimal
     volume1w: BigDecimal!
-    volume7d: BigDecimal!
     fees1d: BigDecimal!
     fees1w: BigDecimal!
+    txCount1d: BigInt!
+    txCount1dChange: BigDecimal
+    txCount1w: BigInt!
     farm: Farm
     incentiveApr: BigDecimal!
     feeApr: BigDecimal!
