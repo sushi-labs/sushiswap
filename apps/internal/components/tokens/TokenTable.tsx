@@ -51,11 +51,6 @@ function useColumns() {
       cell: (info) => formatUSD(info.getValue()),
       enableHiding: true,
     }),
-    columnHelper.accessor('source', {
-      header: 'Source',
-      cell: (info) => info.getValue(),
-      enableHiding: true,
-    }),
     columnHelper.accessor('listEntry', {
       header: 'Default List',
       cell: (info) => (

@@ -42,7 +42,7 @@ const _TokensPage: FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="space-y-4 max-w-7xl">
+      <div className="max-w-6xl space-y-4">
         <div className="flex items-center space-x-2">
           <input
             className="p-3 rounded-xl bg-slate-800"

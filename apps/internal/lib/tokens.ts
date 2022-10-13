@@ -6,12 +6,13 @@ import { Octokit } from 'octokit'
 
 export type Token = Awaited<ReturnType<typeof getTokens>>[0]
 
+// price might be screwed because of the combination, source won't make sense either
 export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; filter?: string }) {
   const sdk = getBuiltGraphSDK()
 
   const defaultTokenList = await getDefaultTokenList()
 
-  return sdk
+  const tokens = await sdk
     .CrossChainTokens({
       chainIds: chainIds,
       orderBy: 'liquidityUSD',
@@ -27,6 +28,24 @@ export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; fil
           ) || null,
       }))
     )
+
+  const tokensCombined = new Map<string, typeof tokens[0]>()
+  tokens.forEach((token) => {
+    const tokenCombined = tokensCombined.get(token.id)
+
+    if (tokenCombined) {
+      tokensCombined.set(token.id, {
+        ...token,
+        volumeUSD: Number(token.volumeUSD) + Number(tokenCombined.volumeUSD),
+        liquidityUSD: Number(token.liquidityUSD) + Number(tokenCombined.liquidityUSD),
+        feesUSD: Number(token.feesUSD) + Number(tokenCombined.feesUSD),
+      })
+    } else {
+      tokensCombined.set(token.id, token)
+    }
+  })
+
+  return Array.from(tokensCombined.values())
 }
 
 export interface TokenListEntry {
