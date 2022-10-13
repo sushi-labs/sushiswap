@@ -9,7 +9,7 @@ import { Amount, Currency, Native } from '@sushiswap/currency'
 import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/exchange'
 import { event } from '@sushiswap/gtag'
 import { Percent } from '@sushiswap/math'
-import { getBigNumber } from '@sushiswap/tines'
+import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
 import { isZero } from '@sushiswap/validate'
 import {
@@ -102,6 +102,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const { config } = usePrepareSendTransaction({
     request,
     chainId,
+    enabled: trade && (trade.route.status === RouteStatus.Success || trade.route.status === RouteStatus.Partial),
   })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
@@ -134,15 +135,16 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   )
 
   const prepare = useCallback(async () => {
+    if (!trade || !account || !chainId) return
+
+    console.log('prepare swap', { trade, account, chainId, deadline })
+
     try {
-      // console.log('try prepare swap', deadline)
-
-      if (!trade || !account || !chainId || !deadline) return
-
       let call: SwapCall | null = null
       let value = '0x0'
 
-      if (sushiSwapRouter && trade.isV1()) {
+      if (trade.isV1()) {
+        if (!sushiSwapRouter || !deadline) return
         const swapCallParameters = SushiSwapRouter.swapCallParameters(
           trade as Trade<Currency, Currency, TradeType, Version.V1>,
           {
@@ -155,8 +157,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         )
 
         const { methodName, args } = swapCallParameters
-
-        // value = swapCallParameters.value
 
         const shouldCarbonOffset = chainId === ChainId.POLYGON && carbonOffset
 
@@ -172,7 +172,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           value,
         }
       } else if (tridentRouter && trade.isV2()) {
-        if (!inputCurrencyRebase || !outputCurrencyRebase) return
+        if (!tridentRouter || !inputCurrencyRebase || !outputCurrencyRebase) return
 
         const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
 
