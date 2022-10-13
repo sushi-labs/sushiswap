@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { classNames, Typography } from '@sushiswap/ui'
+import { AppearOnMount, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
@@ -262,7 +262,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
         </Typography>
         {xData.length && (
           <Typography variant="sm" className="text-slate-500 hoveredItemName">
-            {format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}
+            <AppearOnMount>{format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}</AppearOnMount>
           </Typography>
         )}
       </div>
