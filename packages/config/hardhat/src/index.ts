@@ -17,6 +17,24 @@ const accounts = {
 
 export const defaultConfig: HardhatUserConfig = {
   etherscan: {
+    customChains: [
+      {
+        network: 'kava',
+        chainId: 2222,
+        urls: {
+          apiURL: 'https://explorer.kava.io/api',
+          browserURL: 'https://explorer.kava.io',
+        },
+      },
+      {
+        network: 'metis',
+        chainId: 1088,
+        urls: {
+          apiURL: 'https://andromeda-explorer.metis.io/api',
+          browserURL: 'https://andromeda-explorer.metis.io',
+        },
+      },
+    ],
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
       ropsten: process.env.ETHERSCAN_API_KEY || '',
@@ -57,7 +75,8 @@ export const defaultConfig: HardhatUserConfig = {
       sokol: 'api-key',
       aurora: 'api-key',
       auroraTestnet: 'api-key',
-      bobaAvax: 'api-key',
+      metis: 'api-key',
+      // bobaAvax: 'api-key',
     },
   },
   tenderly: {

@@ -156,14 +156,6 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
     rebase,
   ])
 
-  console.log([
-    // !approved,
-    totalAmountAsEntity,
-    isWritePending,
-    !totalAmountAsEntity?.greaterThan(ZERO),
-    startDate.getTime() <= new Date().getTime(),
-  ])
-
   return (
     <div className="flex flex-col gap-3">
       <Approve

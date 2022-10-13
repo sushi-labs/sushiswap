@@ -84,9 +84,7 @@ const bentoBoxKpiReducer = (previousValue, currentValue, i, array) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-
   const sdk = getBuiltGraphSDK()
-
   const { crossChainBentoBoxKpis: data } = await sdk.CrossChainBentoBoxKpis({
     chainIds: [
       ChainId.ETHEREUM,
@@ -104,7 +102,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       // ChainId.KAVA,
     ],
   })
-  console.log('data', data)
   return {
     props: {
       data,
@@ -119,9 +116,6 @@ export default function BentoBoxPage({ data }: InferGetServerSidePropsType<typeo
       value: 0,
     })
   )
-
-  console.log({ kpis })
-
   return (
     <div className="h-full bg-slate-100">
       <div className="max-w-full px-4 py-12 mx-auto sm:px-6 lg:px-8">

@@ -15,7 +15,7 @@ interface TradeContext {
 const Context = createContext<TradeContext | undefined>(undefined)
 
 interface _TradeProviderProps {
-  chainId: ChainId
+  chainId: number | undefined
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT
   amountSpecified: Amount<Currency> | undefined
   mainCurrency: Currency | undefined
@@ -32,11 +32,11 @@ export const TradeProvider: FC<_TradeProviderProps> = ({
   children,
 }) => {
   const _mainCurrency = useMemo(
-    () => (chainId === ChainId.CELO ? mainCurrency?.wrapped : mainCurrency),
+    () => (chainId && chainId === ChainId.CELO ? mainCurrency?.wrapped : mainCurrency),
     [chainId, mainCurrency]
   )
   const _otherCurrency = useMemo(
-    () => (chainId === ChainId.CELO ? otherCurrency?.wrapped : otherCurrency),
+    () => (chainId && chainId === ChainId.CELO ? otherCurrency?.wrapped : otherCurrency),
     [chainId, otherCurrency]
   )
   const _amountSpecified = useMemo(

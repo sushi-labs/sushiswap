@@ -29,14 +29,6 @@ export default {
         alt: 'SushiSwap',
       },
     ],
-    videos: [
-      {
-        url: 'https://www.sushi.com/swap/og-video.mp4',
-        width: 1920,
-        height: 1080,
-        alt: 'SushiSwap',
-      },
-    ],
     site_name: 'Sushi',
     // locale: 'en_IE',
   },

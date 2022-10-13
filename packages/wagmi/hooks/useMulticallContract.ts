@@ -1,4 +1,3 @@
-import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import UniswapInterfaceMulticallArtifact from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
 import { useContract, useProvider } from 'wagmi'
@@ -30,10 +29,11 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   [ChainId.BOBA]: '0x4864984234195A1a97fBA52038e3ad61A1dd16E4',
   [ChainId.KAVA]: '0x25836011Bbc0d5B6db96b20361A474CbC5245b45',
+  [ChainId.METIS]: '0x25F80Cd6a1822046126Ad2AbCeCe969D0EeD4529',
 }
 
 export const getMulticallContractConfig = (chainId: number | undefined) => ({
-  addressOrName: chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : AddressZero,
+  addressOrName: chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '',
   contractInterface: UniswapInterfaceMulticallArtifact.abi,
 })
 

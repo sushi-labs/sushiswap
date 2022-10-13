@@ -183,6 +183,7 @@ query CrossChainUser($id: ID!, $where: LiquidityPosition_filter, $chainIds: [Int
         volume7d
         type
         source
+        type
         token0 {
           name
           id

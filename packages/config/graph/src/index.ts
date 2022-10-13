@@ -73,7 +73,7 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.METIS]: METIS_HOST,
   [ChainId.MOONBEAM]: GRAPH_HOST,
   [ChainId.MOONRIVER]: GRAPH_HOST,
-  [ChainId.OPTIMISM]: GRAPH_HOST,
+  [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
 }
@@ -150,10 +150,10 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.POLYGON]: 'sushi-0m/trident-polygon',
-  [ChainId.OPTIMISM]: 'sushi-0m/trident-optimism',
-  [ChainId.KAVA]: 'sushi-0m/trident-kava',
-  [ChainId.METIS]: 'sushi-0m/trident-metis',
+  [ChainId.POLYGON]: 'sushi-qa/trident-polygon',
+  [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
+  [ChainId.KAVA]: 'sushi-qa/trident-kava',
+  [ChainId.METIS]: 'sushi-qa/trident-metis',
 }
 
 export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {

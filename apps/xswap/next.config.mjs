@@ -1,13 +1,12 @@
 import transpileModules from 'next-transpile-modules'
+import { withAxiom } from 'next-axiom'
 
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/redux-localstorage',
   '@sushiswap/chain',
   '@sushiswap/wagmi',
-  '@sushiswap/stargate',
   '@sushiswap/ui',
-  '@sushiswap/swap-widget',
 ])
 
 // @ts-check
@@ -15,7 +14,7 @@ const withTranspileModules = transpileModules([
 const nextConfig = {
   basePath: '/xswap',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
@@ -35,4 +34,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default withAxiom(withTranspileModules(nextConfig))

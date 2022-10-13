@@ -1,5 +1,4 @@
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
@@ -11,7 +10,7 @@ import { useBalances } from '../../hooks'
 import { CheckerButton } from './types'
 
 export interface AmountsProps extends CheckerButton {
-  chainId: ChainId
+  chainId: number | undefined
   amounts: (Amount<Type> | undefined)[]
   fundSource: FundSource
 }

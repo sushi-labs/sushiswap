@@ -1,3 +1,4 @@
+import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
@@ -76,18 +77,29 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       <div className="relative flex items-center gap-1">
         {loading ? (
           <div className="flex flex-grow items-center h-[44px]">
-            <Loader size={18} />
+            <Loader size={20} />
           </div>
         ) : (
-          <Input.Numeric
-            ref={inputRef}
-            variant="unstyled"
-            disabled={disabled}
-            onUserInput={onChange}
-            className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-3xl py-1 text-slate-200 hover:text-slate-100')}
-            value={value}
-            readOnly={disabled}
-          />
+          <Transition
+            appear
+            show={true}
+            enter="ease-in-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in-out duration-300"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <Input.Numeric
+              ref={inputRef}
+              variant="unstyled"
+              disabled={disabled}
+              onUserInput={onChange}
+              className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-3xl py-1 text-slate-200 hover:text-slate-100')}
+              value={value}
+              readOnly={disabled}
+            />
+          </Transition>
         )}
         <button
           onClick={onClick}
@@ -98,7 +110,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             'h-[36px] text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
           )}
         >
-          {loading ? (
+          {loading && !currency ? (
             <div className="pl-1 pr-12">
               <Loader />
             </div>
@@ -119,7 +131,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           )}
         </button>
       </div>
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between h-[24px]">
         <PricePanel value={value} currency={currency} usdPctChange={usdPctChange} />
         <div className="h-6">
           <BalancePanel

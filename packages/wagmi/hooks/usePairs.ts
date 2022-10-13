@@ -15,7 +15,7 @@ export enum PairState {
   INVALID,
 }
 
-export function getPairs(chainId: number, currencies: [Currency | undefined, Currency | undefined][]) {
+export function getPairs(chainId: number | undefined, currencies: [Currency | undefined, Currency | undefined][]) {
   return currencies
     .filter((currencies): currencies is [Type, Type] => {
       const [currencyA, currencyB] = currencies
@@ -54,7 +54,7 @@ interface UsePairsReturn {
 }
 
 export function usePairs(
-  chainId: number,
+  chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
   config?: Omit<UseContractReadsConfig, 'contracts'>
 ): UsePairsReturn {

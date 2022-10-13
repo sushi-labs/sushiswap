@@ -23,7 +23,7 @@ export const ConstantProductPool: FC<TridentPoolFinderProps> = ({
       payload: {
         state,
         index,
-        poolType: PoolFinderType.ConstantProduct,
+        poolType: PoolFinderType.Classic,
       },
     })
   }, [dispatch, index, state])

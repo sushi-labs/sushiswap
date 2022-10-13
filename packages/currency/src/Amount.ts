@@ -103,6 +103,10 @@ export class Amount<T extends Type> extends Fraction {
     return super.divide(this.scale).toFixed(decimalPlaces, format, rounding)
   }
 
+  public toHex(): string {
+    return `0x${this.quotient.toString(16)}`
+  }
+
   public toExact(format: object = { groupSeparator: '' }): string {
     Big.DP = this.currency.decimals
     return new Big(this.quotient.toString()).div(this.scale.toString()).toFormat(format)

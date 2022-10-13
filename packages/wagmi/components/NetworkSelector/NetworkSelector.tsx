@@ -30,7 +30,6 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedN
           {networks.map((el) => (
             <div
               onClick={() => {
-                console.log('switch netwrok')
                 switchNetwork && switchNetwork(el)
               }}
               key={el}

@@ -1,4 +1,4 @@
-query userVestings($block: Block_height, $id: ID!) {
+query userVestings($block: Block_height, $id: String!) {
   incomingVestings: vestings(where: { recipient: $id }, orderBy: startedAt, block: $block) {
     id
     __typename
@@ -131,7 +131,7 @@ query vestingTransactions(
   }
 }
 
-query userStreams($block: Block_height, $id: ID!) {
+query userStreams($block: Block_height, $id: String!) {
   incomingStreams: streams(where: { recipient: $id }, orderBy: startedAt, block: $block) {
     id
     __typename

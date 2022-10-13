@@ -158,7 +158,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     {
       address: checksummedAddress,
       chainId: chainId,
-      decimals: tokenData.decimals,
+      decimals: Number(tokenData.decimals),
       logoURI: `https://raw.githubusercontent.com/${owner}/list/master/${imagePath}`,
       name: tokenData.name,
       symbol: tokenData.symbol,

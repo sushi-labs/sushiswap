@@ -3,7 +3,7 @@ import '@sushiswap/ui/index.css'
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
+// import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
 import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
@@ -17,6 +17,8 @@ import { WagmiConfig } from 'wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
+
+export { reportWebVitals } from 'next-axiom'
 
 declare global {
   interface Window {
@@ -44,14 +46,12 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1" />
-        <link rel="manifest" href="/site.webmanifest?v=1" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
-        <link rel="shortcut icon" href="/favicon.ico?v=1" />
-        <meta name="msapplication-TileColor" content="#2b5797" />
-        <meta name="theme-color" content="#ffffff" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/swap/apple-touch-icon.png?v=1" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/swap/favicon-32x32.png?v=1" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/swap/favicon-16x16.png?v=1" />
+        <link rel="manifest" href="/swap/manifest.json?v=1" />
+        <link rel="mask-icon" href="/swap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
+        <link rel="shortcut icon" href="/swap/favicon.ico?v=1" />
       </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
@@ -74,7 +74,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Shell>
               <DefaultSeo {...SEO} />
               <Header />
-              <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+              {/* <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} /> */}
               <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
               <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
               <App.Footer />

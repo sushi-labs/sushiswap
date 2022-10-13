@@ -11,7 +11,7 @@ const withTranspileModules = transpileModules([
 const nextConfig = {
   basePath: '/internal',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',

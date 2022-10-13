@@ -2,10 +2,10 @@
   "name": "@sushiswap/token-lists",
   "version": "0.0.0",
   "private": true,
-  "description": "Sushi Stargate",
+  "description": "Sushi Token Lists",
   "keywords": [
     "sushi",
-    "stargate"
+    "token list"
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
@@ -37,7 +37,7 @@
     "eslint": "^8.20.0",
     "jest": "^28.1.0",
     "tiny-invariant": "^1.2.0",
-    "typescript": "4.6.3"
+    "typescript": "4.8.2"
   },
   "peerDependencies": {
     "@ethersproject/address": "^5.7.0",
