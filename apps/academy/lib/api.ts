@@ -55,7 +55,7 @@ export const getDifficulties = async () => {
   return await sdk.GetDifficulties()
 }
 
-export const getProducts = async (variables: GetProductsQueryVariables) => {
+export const getProducts = async (variables?: GetProductsQueryVariables) => {
   const sdk = getMeshSDK()
   return await sdk.GetProducts(variables)
 }
