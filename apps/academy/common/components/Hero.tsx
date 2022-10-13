@@ -1,7 +1,12 @@
-import { classNames, DiscordIcon, GithubIcon, InstagramIcon, TwitterIcon } from '@sushiswap/ui'
+import { classNames, DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { defaultSidePadding } from '../helpers'
+
+const heroIconProps = {
+  width: 24,
+  className: 'text-slate-300 hover:text-slate-50',
+}
 
 export const Hero: FC = () => {
   return (
@@ -21,16 +26,16 @@ export const Hero: FC = () => {
       </span>
       <div className="absolute hidden right-12 lg:grid top-[184px] gap-8">
         <a href="https://github.com/sushiswap" target="_blank" rel="noopener noreferrer">
-          <GithubIcon width={24} className="text-slate-300 hover:text-slate-50" />
+          <GithubIcon {...heroIconProps} />
         </a>
         <a href="https://twitter.com/sushiswap" target="_blank" rel="noopener noreferrer">
-          <TwitterIcon width={24} className="text-slate-300 hover:text-slate-50" />
+          <TwitterIcon {...heroIconProps} />
         </a>
         <a href="https://discord.gg/NVPXN4e" target="_blank" rel="noopener noreferrer">
-          <DiscordIcon width={24} className="text-slate-300 hover:text-slate-50" />
+          <DiscordIcon {...heroIconProps} />
         </a>
-        <a href="https://instagram.com/instasushiswap" target="_blank" rel="noopener noreferrer">
-          <InstagramIcon width={24} className="text-slate-300 hover:text-slate-50" />
+        <a href="https://www.youtube.com/c/SushiOfficial" target="_blank" rel="noopener noreferrer">
+          <YoutubeIcon {...heroIconProps} />
         </a>
       </div>
     </section>
