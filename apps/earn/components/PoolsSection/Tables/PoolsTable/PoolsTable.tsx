@@ -90,8 +90,6 @@ export const PoolsTable: FC = () => {
     (url) => fetch(url).then((response) => response.json())
   )
 
-  console.log({ pools })
-
   const table = useReactTable<Pair>({
     data: pools || [],
     columns: COLUMNS,
