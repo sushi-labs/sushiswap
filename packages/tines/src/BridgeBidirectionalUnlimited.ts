@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { RPool, RToken, TYPICAL_SWAP_GAS_COST } from './PrimaryPools'
+
+import { RPool, RToken } from './PrimaryPools'
 
 export class BridgeUnlimited extends RPool {
   constructor(address: string, token0: RToken, token1: RToken, fee: number, swapGasCost = 150_000) {

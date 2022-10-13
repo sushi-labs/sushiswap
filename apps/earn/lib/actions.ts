@@ -1,7 +1,6 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
-import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { Fee } from '@sushiswap/exchange'
 
@@ -143,10 +142,8 @@ export const burnLiquiditySingleAction = ({
 }
 
 interface UnwrapETHAction {
-  chainId: number
   router: Contract
   recipient: string
-  amountMinimum: string
 }
 
 /**
@@ -155,49 +152,25 @@ interface UnwrapETHAction {
  * @param recipient recipient of ETH
  * @param liquidityOutput array with minimum output amounts for underlying tokens
  */
-export const unwrapWETHAction = ({ chainId, router, recipient, amountMinimum }: UnwrapETHAction) => {
-  if (chainId === ChainId.POLYGON) {
-    return router.interface.encodeFunctionData('unwrapWETH', [amountMinimum, recipient])
-  }
-
+export const unwrapWETHAction = ({ router, recipient }: UnwrapETHAction) => {
   return router.interface.encodeFunctionData('unwrapWETH', [recipient])
 }
 
 interface Sweep {
   router: Contract
   token: string
-  amount: string
   recipient: string
   fromBento: boolean
 }
 
-interface SweepNativeToken {
-  router: Contract
-  token: string
-  amount: string
-  recipient: string
-}
-
 /**
  * Recover mistakenly sent ERC-20 tokens
  * @param router Router contract
  * @param token address of token
- * @param amount amount to recover
  * @param recipient address to sent funds to
  */
-export const sweep = ({ router, token, amount, recipient, fromBento = false }: Sweep) => {
-  return router.interface.encodeFunctionData('sweep', [token, amount, recipient, fromBento])
-}
-
-/**
- * Recover mistakenly sent ERC-20 tokens
- * @param router Router contract
- * @param token address of token
- * @param amount amount to recover
- * @param recipient address to sent funds to
- */
-export const sweepNativeTokenAction = ({ router, token, amount, recipient }: SweepNativeToken) => {
-  return router.interface.encodeFunctionData('sweepNativeToken', [token, amount, recipient])
+export const sweep = ({ router, token, recipient, fromBento = false }: Sweep) => {
+  return router.interface.encodeFunctionData('sweep', [token, recipient, fromBento])
 }
 
 export interface ApproveMasterContractActionProps {

@@ -17,7 +17,7 @@ export class ConstantProductPool implements Pool {
   private readonly tokenAmounts: [Amount<Token>, Amount<Token>]
   private readonly MAX_FEE = JSBI.BigInt(10000)
 
-  public static getAddress(tokenA: Token, tokenB: Token, fee: Fee = Fee.DEFAULT, twap = true): string {
+  public static getAddress(tokenA: Token, tokenB: Token, fee: Fee, twap: boolean): string {
     return computeConstantProductPoolAddress({
       factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts.ConstantProductPoolFactory.address,
       tokenA,
@@ -27,7 +27,7 @@ export class ConstantProductPool implements Pool {
     })
   }
 
-  public constructor(AmountA: Amount<Token>, AmountB: Amount<Token>, fee: Fee = Fee.DEFAULT, twap = true) {
+  public constructor(AmountA: Amount<Token>, AmountB: Amount<Token>, fee: Fee, twap: boolean) {
     const Amounts = AmountA.currency.sortsBefore(AmountB.currency) // does safety checks
       ? [AmountA, AmountB]
       : [AmountB, AmountA]

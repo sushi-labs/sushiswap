@@ -1,1 +1,1 @@
-module.exports = require('@sushiswap/eslint-config')
+export { default } from '@sushiswap/eslint-config'

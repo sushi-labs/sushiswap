@@ -9,9 +9,7 @@ interface Params {
   balance: Amount<Type> | undefined
 }
 
-type UseUnderlyingTokenBalanceFromPairParams = (
-  params: Params
-) => [Amount<Token> | undefined, Amount<Token> | undefined]
+type UseUnderlyingTokenBalanceFromPairParams = (params: Params) => [Amount<Type> | undefined, Amount<Type> | undefined]
 
 export const useUnderlyingTokenBalanceFromPair: UseUnderlyingTokenBalanceFromPairParams = ({
   balance,

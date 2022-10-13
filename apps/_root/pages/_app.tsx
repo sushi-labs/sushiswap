@@ -18,6 +18,8 @@ import { WagmiConfig } from 'wagmi'
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
 
+export { reportWebVitals } from 'next-axiom'
+
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]
@@ -50,8 +52,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         <link rel="manifest" href="/site.webmanifest?v=1" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
-        <meta name="msapplication-TileColor" content="#2b5797" />
-        <meta name="theme-color" content="#ffffff" />
       </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script

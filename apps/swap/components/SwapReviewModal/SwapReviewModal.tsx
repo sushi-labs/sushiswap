@@ -1,4 +1,5 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
+import { isAddress } from '@ethersproject/address'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
@@ -24,13 +25,20 @@ import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
+import {
+  ProviderRpcError,
+  useAccount,
+  usePrepareSendTransaction,
+  useProvider,
+  UserRejectedRequestError,
+  useSendTransaction,
+} from 'wagmi'
 
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
 
 interface SwapReviewModalLegacy {
-  chainId: ChainId
+  chainId: number | undefined
   children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
   onSuccess(): void
 }
@@ -55,7 +63,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const onSettled = useCallback(
     (data) => {
-      if (!trade) return
+      if (!trade || !chainId) return
 
       const ts = new Date().getTime()
 
@@ -100,7 +108,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     ...config,
     onSettled,
     onSuccess: (data) => {
-      console.log(data)
       if (data) {
         setOpen(false)
         onSuccess()
@@ -126,7 +133,8 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const prepare = useCallback(async () => {
     try {
-      if (!trade || !account) return
+      if (!trade || !account || !chainId) return
+
       let call: SwapCall | null = null
       let value = '0x0'
 
@@ -328,10 +336,8 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           // unwrap
           actions.push(
             unwrapWETHAction({
-              chainId,
               router: tridentRouter,
               recipient: account,
-              amountMinimum: trade?.minimumAmountOut(allowedSlippage).quotient.toString(),
             })
           )
         }
@@ -346,6 +352,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         }
       }
       if (call) {
+        if (!isAddress(call.address)) new Error('call address has to be an address')
+        if (call.address === AddressZero) new Error('call address cannot be zero')
+
         const tx =
           !value || isZero(value)
             ? { from: account, to: call.address, data: call.calldata }
@@ -392,11 +401,11 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         })
       }
     } catch (e: unknown) {
+      if (e instanceof UserRejectedRequestError) return
       if (e instanceof ProviderRpcError) {
         setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [
     account,
@@ -429,7 +438,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     if (trade?.isV1()) {
       return chainId === ChainId.POLYGON && carbonOffset ? sushiSwapKlimaRouter?.address : sushiSwapRouter?.address
     } else if (trade?.isV2()) {
-      return BENTOBOX_ADDRESS[chainId]
+      return chainId && chainId in BENTOBOX_ADDRESS ? BENTOBOX_ADDRESS[chainId] : undefined
     }
   }, [trade, carbonOffset, sushiSwapKlimaRouter?.address, sushiSwapRouter?.address, chainId])
 
@@ -463,6 +472,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 fullWidth
                 amount={input0}
                 address={approveTokenTo}
+                enabled={trade?.inputAmount?.currency?.isToken}
               />
             </Approve.Components>
           }

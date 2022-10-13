@@ -35,8 +35,6 @@ export const TVLChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
     return [x?.filter((x, i) => predicates[i]).reverse(), y?.filter((y, i) => predicates[i]).reverse()]
   }, [chartPeriod, x, y])
 
-  console.log({ xData, yData })
-
   // Transient update for performance
   const onMouseOver = useCallback(({ name, value }) => {
     const valueNodes = document.getElementsByClassName('hoveredItemValueTVL')

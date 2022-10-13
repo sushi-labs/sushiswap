@@ -23,7 +23,7 @@ export async function getStaticPaths() {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
       if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`)
 
-      console.log(acc)
+      // console.log(acc)
       return acc
     }, []),
     fallback: true,

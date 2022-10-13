@@ -15,6 +15,7 @@ import {
   UpdateMaxPriorityFeePerGas,
   UpdateSlippageTolerancePayload,
   UpdateSlippageToleranceTypePayload,
+  UpdateSushiGuard,
   UpdateTransactionDeadline,
 } from './types'
 
@@ -29,6 +30,7 @@ const initialState: StorageState = {
   gasType: parsedState?.gasType || 'preset',
   customTokens: parsedState?.customTokens || {},
   expertMode: parsedState?.expertMode || false,
+  sushiGuard: parsedState?.sushiGuard || false,
   transactionDeadline: 30,
   notifications: parsedState?.notifications || {},
 }
@@ -41,6 +43,10 @@ const reducers = {
   updateExpertMode: (state: StorageState, action: PayloadAction<UpdateExpertMode>) => {
     const { expertMode } = action.payload
     state.expertMode = expertMode
+  },
+  updateSushiGuard: (state: StorageState, action: PayloadAction<UpdateSushiGuard>) => {
+    const { sushiGuard } = action.payload
+    state.sushiGuard = sushiGuard
   },
   updateSlippageTolerance: (state: StorageState, action: PayloadAction<UpdateSlippageTolerancePayload>) => {
     const { slippageTolerance } = action.payload

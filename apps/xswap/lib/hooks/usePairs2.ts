@@ -47,8 +47,6 @@ export function usePairs(
     'getReserves'
   )
 
-  // console.log('USE PAIRS', chainId, latestBlockNumber, pairAddresses, results)
-
   return useMemo(() => {
     return results.map((result, i) => {
       const { result: reserves, loading } = result

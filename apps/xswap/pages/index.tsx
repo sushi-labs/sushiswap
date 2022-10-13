@@ -640,17 +640,17 @@ const Widget: FC<Swap> = ({
   }, [dstAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   useEffect(() => {
-    console.log('getFee escape hatch', [
-      !srcChainId,
-      !srcAmount,
-      !dstChainId,
-      !dstMinimumAmountOut,
-      !address,
-      !srcInputCurrencyRebase,
-      !srcOutputCurrencyRebase,
-      !dstOutputCurrencyRebase,
-      !contractWithProvider,
-    ])
+    // console.log('getFee escape hatch', [
+    //   !srcChainId,
+    //   !srcAmount,
+    //   !dstChainId,
+    //   !dstMinimumAmountOut,
+    //   !address,
+    //   !srcInputCurrencyRebase,
+    //   !srcOutputCurrencyRebase,
+    //   !dstOutputCurrencyRebase,
+    //   !contractWithProvider,
+    // ])
     if (
       !srcChainId ||
       !srcAmount ||

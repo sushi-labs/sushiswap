@@ -204,11 +204,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         })
       }
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+      if (e instanceof UserRejectedRequestError) return
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [
     token0,

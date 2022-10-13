@@ -1,20 +1,20 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT } from '@sushiswap/currency'
+import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, usePrevious } from '@sushiswap/hooks'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from '@sushiswap/math'
 import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Checker } from '@sushiswap/wagmi'
+import { Checker, useWalletState } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
 import { warningSeverity } from 'lib/functions'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNetwork } from 'wagmi'
+import { useConnect, useNetwork } from 'wagmi'
 
-import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
+import { Layout, Route, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade } from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
@@ -62,6 +62,12 @@ const getDefaultToken1 = (chainId: number) => {
   if (chainId in DEAFAULT_TOKEN_1) {
     return DEAFAULT_TOKEN_1[chainId]
   }
+  if (chainId in WETH9 && chainId in WNATIVE && WNATIVE[chainId] !== WETH9[chainId]) {
+    return WETH9[chainId]
+  }
+  if (chainId in WBTC) {
+    return WBTC[chainId]
+  }
   if (chainId in USDC) {
     return USDC[chainId]
   }
@@ -72,9 +78,21 @@ const getDefaultToken1 = (chainId: number) => {
 
 function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { chain } = useNetwork()
+
+  const connect = useConnect()
+  const { connecting, notConnected } = useWalletState(!!connect.pendingConnector)
   const router = useRouter()
 
-  const chainId = initialState.chainId ? Number(initialState.chainId) : chain ? chain.id : ChainId.ETHEREUM
+  const defaultChainId = ChainId.ETHEREUM
+  const activeChainId = chain ? chain.id : undefined
+  const queryChainId = router.query.chainId ? Number(router.query.chainId) : undefined
+  const chainId = queryChainId
+    ? queryChainId
+    : activeChainId
+    ? activeChainId
+    : !connecting && notConnected
+    ? defaultChainId
+    : undefined
 
   const previousChain = usePrevious(chain)
 
@@ -101,10 +119,13 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 
   const tokens = useTokens(chainId)
 
-  const inputToken =
-    initialState.token0 && initialState.token0 in tokens ? tokens[initialState.token0] : Native.onChain(chainId)
+  const inputToken = useMemo(() => {
+    if (!chainId) return
+    return initialState.token0 && initialState.token0 in tokens ? tokens[initialState.token0] : Native.onChain(chainId)
+  }, [chainId, initialState.token0, tokens])
 
   const outputToken = useMemo(() => {
+    if (!chainId) return
     if (initialState.token1 && initialState.token1 in tokens) return tokens[initialState.token1]
     return getDefaultToken1(chainId)
   }, [chainId, initialState.token1, tokens])
@@ -143,22 +164,16 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   const amounts = useMemo(() => [parsedInput0], [parsedInput0])
 
   useEffect(() => {
-    setToken0(Native.onChain(chainId))
-    setToken1(getDefaultToken1(chainId))
-    setInput0('')
+    setToken0(inputToken)
+    setToken1(outputToken)
+    setInput0(initialState.input0)
     setInput1('')
-  }, [chainId])
+  }, [chainId, initialState.input0, inputToken, outputToken])
 
   const onSuccess = useCallback(() => {
     setInput0('')
     setInput1('')
   }, [])
-
-  useEffect(() => {
-    window.dataLayer.push({
-      event: 'chain',
-    })
-  }, [chainId])
 
   return (
     <>
@@ -194,6 +209,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 tokenMap={tokenMap}
                 inputType={TradeType.EXACT_INPUT}
                 tradeType={tradeType}
+                loading={!token0}
               />
               <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
                 <button
@@ -221,6 +237,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                   tokenMap={tokenMap}
                   inputType={TradeType.EXACT_OUTPUT}
                   tradeType={tradeType}
+                  loading={!token1}
                 />
                 <SwapStatsDisclosure />
                 <div className="p-3 pt-0">
@@ -232,19 +249,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                       fundSource={FundSource.WALLET}
                       amounts={amounts}
                     >
-                      <Checker.Network
-                        fullWidth
-                        size="md"
-                        chainId={chainId}
-                        // onSuccess={(chain) => {
-                        //   console.log('switch network success', chain)
-                        //   delete router.query['chainId']
-                        //   void router.replace({
-                        //     pathname: router.pathname,
-                        //     query: router.query,
-                        //   })
-                        // }}
-                      >
+                      <Checker.Network fullWidth size="md" chainId={chainId}>
                         <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
                           {({ isWritePending, setOpen }) => {
                             return <SwapButton isWritePending={isWritePending} setOpen={setOpen} />
@@ -270,6 +275,9 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </a>
             </Link.Internal>
           </Container>
+          <Container className="flex justify-center mx-auto" maxWidth="3xl">
+            <Route />
+          </Container>
         </Layout>
       </TradeProvider>
     </>
@@ -277,7 +285,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 }
 
 function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }) {
-  const { isLoading, isError, trade } = useTrade()
+  const { isLoading: isLoadingTrade, isError, trade } = useTrade()
   const [{ expertMode, slippageTolerance }] = useSettings()
 
   const swapSlippage = useMemo(
@@ -285,14 +293,7 @@ function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setO
     [slippageTolerance]
   )
 
-  const priceImpact = useMemo(() => {
-    if (trade) {
-      return trade.priceImpact
-    }
-    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
-  }, [trade])
-
-  const priceImpactSeverity = useMemo(() => warningSeverity(priceImpact), [priceImpact])
+  const priceImpactSeverity = useMemo(() => warningSeverity(trade?.priceImpact), [trade])
 
   const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
 
@@ -312,7 +313,9 @@ function SwapButton({ isWritePending, setOpen }: { isWritePending: boolean; setO
         title: 'Enable expert mode to swap with high price impact',
       })}
     >
-      {isWritePending ? (
+      {isLoadingTrade ? (
+        'Finding Best Price'
+      ) : isWritePending ? (
         <Dots>Confirm transaction</Dots>
       ) : priceImpactTooHigh ? (
         'High Price Impact'

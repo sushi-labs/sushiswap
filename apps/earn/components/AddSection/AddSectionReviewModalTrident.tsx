@@ -3,14 +3,15 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
-import { calculateSlippageAmount, ConstantProductPool } from '@sushiswap/exchange'
+import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/exchange'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
+  ConstantProductPoolState,
   getTridentRouterContractConfig,
-  PoolState,
+  StablePoolState,
   useBentoBoxTotals,
   useTotalSupply,
   useTridentRouterContract,
@@ -24,8 +25,8 @@ import { AddSectionReviewModal } from './AddSectionReviewModal'
 
 interface AddSectionReviewModalTridentProps {
   poolAddress: string
-  poolState: PoolState
-  pool: ConstantProductPool | null
+  poolState: ConstantProductPoolState | StablePoolState | undefined
+  pool: ConstantProductPool | StablePool | null | undefined
   chainId: ChainId
   token0: Type | undefined
   token1: Type | undefined
@@ -80,12 +81,12 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
       input0
-        ? poolState === PoolState.NOT_EXISTS
+        ? poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS
           ? input0
           : Amount.fromRawAmount(input0.currency, calculateSlippageAmount(input0, slippagePercent)[0])
         : undefined,
       input1
-        ? poolState === PoolState.NOT_EXISTS
+        ? poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS
           ? input1
           : Amount.fromRawAmount(input1.currency, calculateSlippageAmount(input1, slippagePercent)[0])
         : undefined,
@@ -94,7 +95,8 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
 
   const noLiquidity = useMemo(() => {
     return (
-      poolState === PoolState.NOT_EXISTS ||
+      poolState === ConstantProductPoolState.NOT_EXISTS ||
+      poolState === StablePoolState.NOT_EXISTS ||
       Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
       Boolean(pool && JSBI.equal(pool.reserve0.quotient, ZERO) && JSBI.equal(pool.reserve1.quotient, ZERO))
     )
@@ -211,11 +213,11 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
         groupTimestamp: ts,
       })
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+      if (e instanceof UserRejectedRequestError) return
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [
     chain?.id,

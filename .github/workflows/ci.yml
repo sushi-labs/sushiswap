@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
   pull_request:
     types: [opened, synchronize]
 
@@ -18,10 +18,12 @@ jobs:
         NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
         NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
         ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
-        PARTNER_URL: ${{ secrets.PARTNER_URL }}
         BLOG_URL: ${{ secrets.BLOG_URL }}
-        SWAP_URL: ${{ secrets.SWAP_URL }}
         FURO_URL: ${{ secrets.FURO_URL }}
+        EARN_URL: ${{ secrets.EARN_URL }}
+        SWAP_URL: ${{ secrets.SWAP_URL }}
+        XSWAP_URL: ${{ secrets.XSWAP_URL }}
+        PARTNER_URL: ${{ secrets.PARTNER_URL }}
       strategy:
         matrix:
           os: [ubuntu-latest, macos-latest]
@@ -32,9 +34,10 @@ jobs:
           with:
             fetch-depth: 2
 
-        - uses: pnpm/action-setup@v2.0.1
+        - uses: pnpm/action-setup@v2
           with:
-            version: 6.32.2
+            version: 7
+            run_install: false
 
         - name: Setup Node.js environment
           uses: actions/setup-node@v2

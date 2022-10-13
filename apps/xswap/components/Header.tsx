@@ -1,4 +1,4 @@
-import { App, AppType } from '@sushiswap/ui'
+import { App, AppType, BuyCrypto } from '@sushiswap/ui'
 import { NotificationCentre, Wallet } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useNotifications } from 'lib/state/storage'
@@ -15,6 +15,7 @@ export const Header = () => {
         <App.NavItemList>
           <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
           <App.NavItemInternal href="https://sushi.com/earn" label="Earn" />
+          <BuyCrypto address={address} />
         </App.NavItemList>
       }
     >

@@ -2,9 +2,8 @@ import 'dotenv/config'
 import './lib/wagmi'
 
 import { ChainId } from '@sushiswap/chain'
-import { getUnixTime } from 'date-fns'
-
 import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { getUnixTime } from 'date-fns'
 
 import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
 import { redis } from './lib'

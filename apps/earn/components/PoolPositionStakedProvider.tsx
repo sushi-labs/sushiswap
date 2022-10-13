@@ -1,4 +1,4 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { Amount, Currency, Token } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { Chef, useMasterChef } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
@@ -15,8 +15,8 @@ interface PoolPositionStakedContext {
   balance: Amount<Token> | undefined
   value0: number
   value1: number
-  underlying0: Amount<Token> | undefined
-  underlying1: Amount<Token> | undefined
+  underlying0: Amount<Currency> | undefined
+  underlying1: Amount<Currency> | undefined
   isLoading: boolean
   isError: boolean
   withdraw: ((amount: Amount<Token> | undefined) => void) | undefined

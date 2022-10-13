@@ -14,6 +14,7 @@ export const WBTC_ADDRESS: AddressMap = {
   [ChainId.ARBITRUM_NOVA]: '0x1d05e4e72cD994cdF976181CfB0707345763564d',
   [ChainId.BOBA]: '0xdc0486f8bf31DF57a952bcd3c1d3e166e3d9eC8b',
   [ChainId.KAVA]: '0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b',
+  [ChainId.METIS]: '0xa5B55ab1dAF0F8e1EFc0eB1931a957fd89B918f4',
 }
 
 export const WBTC: Record<keyof typeof WBTC_ADDRESS, Token> = addressMapToTokenMap(
@@ -64,6 +65,7 @@ export const WETH9_ADDRESS: AddressMap = {
   [ChainId.ARBITRUM_NOVA]: '0x722E8BdD2ce80A4422E880164f2079488e115365',
   [ChainId.BOBA]: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
   [ChainId.KAVA]: '0xE3F5a90F9cb311505cd691a46596599aA1A0AD7D',
+  [ChainId.METIS]: '0x420000000000000000000000000000000000000A',
 }
 
 export const WETH9: Record<keyof typeof WETH9_ADDRESS, Token> = addressMapToTokenMap(
@@ -308,6 +310,7 @@ export const USDC_ADDRESS: AddressMap = {
   [ChainId.ARBITRUM_NOVA]: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
   [ChainId.BOBA]: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
   [ChainId.KAVA]: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
+  [ChainId.METIS]: '0xEA32A96608495e54156Ae48931A7c20f0dcc1a21',
 }
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
@@ -350,6 +353,7 @@ export const USDT_ADDRESS: AddressMap = {
   [ChainId.ARBITRUM_NOVA]: '0xeD9d63a96c27f87B07115b56b2e3572827f21646',
   [ChainId.BOBA]: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
   [ChainId.KAVA]: '0xB44a9B6905aF7c801311e8F4E76932ee959c663C',
+  [ChainId.METIS]: '0xbB06DCA3AE6887fAbF931640f67cab3e3a16F4dC',
 }
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
@@ -392,6 +396,7 @@ export const DAI_ADDRESS: AddressMap = {
   [ChainId.ARBITRUM_NOVA]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
   [ChainId.BOBA]: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
   [ChainId.KAVA]: '0x765277EebeCA2e31912C9946eAe1021199B39C61',
+  [ChainId.METIS]: '0x4c078361FC9BbB78DF910800A991C7c3DD2F6ce0',
 }
 
 export const DAI: Record<keyof typeof DAI_ADDRESS, Token> = addressMapToTokenMap(

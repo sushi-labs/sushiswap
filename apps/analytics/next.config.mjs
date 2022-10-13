@@ -1,5 +1,10 @@
+import nextPwa from 'next-pwa'
 import transpileModules from 'next-transpile-modules'
+import { withAxiom } from 'next-axiom'
 
+const withPwa = nextPwa({
+  dest: 'public',
+})
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-localstorage',
   '@sushiswap/wagmi',
@@ -20,6 +25,7 @@ const nextConfig = {
   experimental: {
     nextScriptWorkers: true,
   },
+  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {
@@ -44,4 +50,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default withAxiom(withPwa(withTranspileModules(nextConfig)))

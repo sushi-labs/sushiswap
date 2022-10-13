@@ -1,4 +1,9 @@
+import nextPwa from 'next-pwa'
 import transpileModules from 'next-transpile-modules'
+
+const withPwa = nextPwa({
+  dest: 'public',
+})
 
 const withTranspileModules = transpileModules([
   '@sushiswap/ui',
@@ -19,6 +24,17 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
+  productionBrowserSourceMaps: true,
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/furo',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
 }
 
-export default withTranspileModules(nextConfig)
+export default withPwa(withTranspileModules(nextConfig))

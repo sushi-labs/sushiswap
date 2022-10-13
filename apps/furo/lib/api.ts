@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { SUPPORTED_CHAINS } from 'config'
 import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { SUPPORTED_CHAINS } from 'config'
 
 import { getBuiltGraphSDK } from '.graphclient'
 

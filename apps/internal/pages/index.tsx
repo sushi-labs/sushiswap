@@ -31,7 +31,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
 }
 
 export default function IndexPage({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(data)
   return (
     <div className="grid grid-cols-6 gap-4 p-8">
       {data.map((kpi) => (

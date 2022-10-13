@@ -14,6 +14,7 @@ export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
 }
 
 const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
+  const { unmount } = rest
   const { isMd } = useBreakpoint('md')
 
   // iOS body lock fix
@@ -38,7 +39,7 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
   }, [isMd, open])
 
   return (
-    <Transition show={open} as={Fragment} afterLeave={afterLeave}>
+    <Transition show={open} as={Fragment} afterLeave={afterLeave} unmount={unmount}>
       <HeadlessDialog className="relative z-[1080]" onClose={onClose} {...rest}>
         <Transition.Child
           as={Fragment}
@@ -48,6 +49,7 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
           leave="ease-in duration-200"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
+          unmount={unmount}
         >
           <div className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu" />
         </Transition.Child>
@@ -62,6 +64,7 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
               leave="ease-in duration-200"
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              unmount={unmount}
             >
               <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">{children}</HeadlessDialog.Panel>
             </Transition.Child>
