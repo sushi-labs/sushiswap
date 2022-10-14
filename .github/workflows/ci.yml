@@ -21,13 +21,13 @@ jobs:
       # NEXT_PUBLIC_STRAPI_API_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
       # LIST_PR_WEBHOOK_URL: ${{ secrets.LIST_PR_WEBHOOK_URL }}
       # OCTOKIT_KEY: ${{ secrets.OCTOKIT_KEY }}
-      # ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
-      # BLOG_URL: ${{ secrets.BLOG_URL }}
-      # EARN_URL: ${{ secrets.EARN_URL }}
-      # FURO_URL: ${{ secrets.FURO_URL }}
-      # PARTNER_URL: ${{ secrets.PARTNER_URL }}
-      # SWAP_URL: ${{ secrets.SWAP_URL }}
-      # XSWAP_URL: ${{ secrets.XSWAP_URL }}
+      ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
+      BLOG_URL: ${{ secrets.BLOG_URL }}
+      EARN_URL: ${{ secrets.EARN_URL }}
+      FURO_URL: ${{ secrets.FURO_URL }}
+      PARTNER_URL: ${{ secrets.PARTNER_URL }}
+      SWAP_URL: ${{ secrets.SWAP_URL }}
+      XSWAP_URL: ${{ secrets.XSWAP_URL }}
 
     strategy:
       matrix:
