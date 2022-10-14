@@ -27,7 +27,9 @@
         "NEXT_PUBLIC_ALCHEMY_ID",
         "NEXT_PUBLIC_INFURA_ID",
         "INFURA_ID",
-        "ALCHEMY_ID"
+        "ALCHEMY_ID",
+        "CODE_COVERAGE",
+        "ALCHEMY_API_KEY"
       ]
     },
     "root#build": {
@@ -35,8 +37,7 @@
         ".next/**"
       ],
       "dependsOn": [
-        "^build",
-        "generate"
+        "^build"
       ],
       "env": [
         "ANALYTICS_URL",
@@ -49,6 +50,9 @@
       ]
     },
     "blog#generate": {
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         ".mesh/**"
       ]
@@ -67,6 +71,9 @@
       ]
     },
     "internal#generate": {
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         ".graphclient/**"
       ]
@@ -98,6 +105,9 @@
       ]
     },
     "farms-script#generate": {
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         ".graphclient/**"
       ]

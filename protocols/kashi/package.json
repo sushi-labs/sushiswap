@@ -24,7 +24,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
     "deploy": "hardhat deploy",
     "export": "hardhat export --export-all exports.json",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    "lint": "TIMING=1 eslint . --fix"
   },
   "devDependencies": {
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#371a01c11465eb1c881193c60a53c0bf15ee8a19",

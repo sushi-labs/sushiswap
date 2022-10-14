@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build:profile": "next build --profile",
     "dev": "next dev",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",

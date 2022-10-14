@@ -32,7 +32,8 @@
     "export": "hardhat export --export-all exports.json",
     "node": "hardhat node",
     "compile": "hardhat compile",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "lint": "TIMING=1 eslint . --fix"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
