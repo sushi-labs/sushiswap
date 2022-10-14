@@ -6,7 +6,6 @@
         "^build"
       ],
       "outputs": [
-        "^build",
         ".graphclient/**",
         ".mesh/**",
         "typechain/**"
@@ -62,15 +61,14 @@
         "coverage/**"
       ],
       "dependsOn": [
-        "^build"
+        "^build",
+        "generate"
       ],
       "cache": true
     },
     "lint": {
       "outputs": [],
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": []
     },
     "validate": {
       "cache": false
