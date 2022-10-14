@@ -16,7 +16,7 @@ export const SearchInput = forwardRef(
     const [isSticky, setIsSticky] = useState(isTopOfPage)
     const { isSm } = useBreakpoint('sm')
     const [isMobileAndSticky, setIsMobileAndSticky] = useState(isSticky)
-    const topicSearches = ['Miso', 'Sushi 2.0', 'Head chef', 'Kava', 'Paris']
+    const topicSearches = ['Miso', 'Sushi 2.0', 'Head chef', 'Kava', 'Paris'] // TODO: dynamic
     const [input, setInput] = useState('')
 
     useLayoutEffect(() => {

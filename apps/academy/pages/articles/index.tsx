@@ -12,6 +12,7 @@ import {
   ArticleEntity,
   DifficultyEntity,
   DifficultyEntityResponseCollection,
+  ProductEntity,
   TopicEntity,
   TopicEntityResponseCollection,
 } from '../../.mesh'
@@ -22,18 +23,21 @@ import {
   GradientWrapper,
   Pagination,
   SearchInput,
+  SelectOption,
 } from '../../common/components'
-import { getArticles, getDifficulties, getTopics } from '../../lib/api'
+import { getArticles, getDifficulties, getProducts, getTopics } from '../../lib/api'
 
 export async function getStaticProps() {
   const difficulties = await getDifficulties()
   const topics = await getTopics()
+  const products = await getProducts()
 
   return {
     props: {
       fallback: {
         ['/difficulties']: difficulties?.difficulties,
         ['/topics']: topics?.topics,
+        ['/products']: products?.products,
       },
     },
     revalidate: 1,
@@ -49,23 +53,25 @@ const Articles: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fall
 }
 
 const _Articles: FC = () => {
-  const [query, setQuery] = useState<string>()
+  const [query, setQuery] = useState<string>('')
   const [page, setPage] = useState<number>(1)
   const [sortBy, setSortBy] = useState(sortingOptions[0])
   const debouncedQuery = useDebounce(query, 200)
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyEntity>()
+  const [selectedProduct, setSelectedProduct] = useState<ProductEntity>()
   const [selectedTopic, setSelectedTopic] = useState<TopicEntity>()
   const router = useRouter()
   const queryParams = router.query as {
     difficulty: string | undefined
+    product: string | undefined
     topic: string | undefined
     search: string | undefined
-    // TODO: product
   }
-  const { difficulty: difficultyQuery, topic: topicQuery, search: searchQuery } = queryParams
+  const { difficulty: difficultyQuery, product: productQuery, topic: topicQuery, search: searchQuery } = queryParams
 
   const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
+  const { data: productsData } = useSWR<TopicEntityResponseCollection>('/products')
 
   useEffect(() => {
     if (router.isReady) {
@@ -73,29 +79,44 @@ const _Articles: FC = () => {
         const searchedDifficulty = difficultiesData?.data.find(({ attributes }) => attributes?.slug === difficultyQuery)
         searchedDifficulty && setSelectedDifficulty(searchedDifficulty)
       }
+      if (productQuery) {
+        const searchedProduct = productsData?.data.find(({ attributes }) => attributes?.slug === productQuery)
+        searchedProduct && setSelectedProduct(searchedProduct)
+      }
       if (topicQuery) {
         const searchedTopic = topicsData?.data.find(({ attributes }) => attributes?.slug === topicQuery)
         searchedTopic && setSelectedTopic(searchedTopic)
       }
       if (searchQuery) setQuery(searchQuery)
     }
-  }, [difficultiesData?.data, difficultyQuery, router.isReady, searchQuery, topicsData?.data, topicQuery])
+  }, [
+    difficultiesData?.data,
+    difficultyQuery,
+    router.isReady,
+    searchQuery,
+    topicsData?.data,
+    topicQuery,
+    productQuery,
+    productsData?.data,
+  ])
 
   const { data: articlesData, isValidating } = useSWR(
-    [`/articles`, selectedTopic, selectedDifficulty, debouncedQuery, page, sortBy.key],
-    async (_url, searchTopic, searchDifficulty, searchInput, searchPage, sortKey) => {
-      const difficultySlug = searchDifficulty?.attributes?.slug ?? difficultyQuery
-      const topicSlug = searchTopic?.attributes?.slug ?? topicQuery
-      const difficultyFilter = { difficulty: { slug: { eq: difficultySlug } } }
-      const topicsFilter = { topics: { slug: { eq: topicSlug } } }
+    [`/articles`, selectedDifficulty, selectedProduct, selectedTopic, debouncedQuery, page, sortBy.key],
+    async (_url, searchDifficulty, searchProduct, searchTopic, searchInput, searchPage, sortKey) => {
+      const difficultySlug = searchDifficulty?.attributes?.slug
+      const productSlug = searchProduct?.attributes?.slug
+      const topicSlug = searchTopic?.attributes?.slug
+
+      const filters = {
+        ...((searchInput || searchQuery) && { title: { containsi: searchInput ?? searchQuery } }),
+        ...(difficultySlug && { difficulty: { slug: { eq: difficultySlug } } }),
+        ...(productSlug && { products: { slug: { eq: productSlug } } }),
+        ...(topicSlug && { topics: { slug: { eq: topicSlug } } }),
+      }
 
       return (
         await getArticles({
-          filters: {
-            ...((searchInput || searchQuery) && { title: { containsi: searchInput ?? searchQuery } }),
-            ...(searchTopic && topicsFilter),
-            ...(difficultySlug && difficultyFilter),
-          },
+          filters,
           pagination: { page: searchPage, pageSize: 10 },
           sort: [sortKey],
         })
@@ -107,6 +128,7 @@ const _Articles: FC = () => {
   const loading = useDebounce(isValidating, 400)
   const articles = articlesData?.data
   const difficulties = difficultiesData?.data || []
+  const products = productsData?.data || []
   const topics = topicsData?.data || []
   const articlesMeta = articlesData?.meta
 
@@ -114,7 +136,12 @@ const _Articles: FC = () => {
     setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
   }
   const handleSelectTopic = (topic: TopicEntity) => {
+    if (selectedProduct) setSelectedProduct(undefined)
     setSelectedTopic((current) => (current?.id === topic.id ? undefined : topic))
+  }
+  const handleSelectProduct = (product: ProductEntity) => {
+    if (selectedTopic) setSelectedTopic(undefined)
+    setSelectedProduct((current) => (current?.id === product.id ? undefined : product))
   }
 
   const articlesAmount = articlesMeta?.pagination?.total ?? 0
@@ -122,10 +149,10 @@ const _Articles: FC = () => {
     let title = 'Latest releases'
     if (router.isReady) {
       if (selectedDifficulty) title = selectedDifficulty.attributes.shortDescription
-      if (searchQuery || selectedTopic) title = 'Search results'
+      if (searchQuery || selectedTopic || selectedProduct) title = 'Search results'
     }
     return title
-  }, [router.isReady, searchQuery, selectedDifficulty, selectedTopic])
+  }, [router.isReady, searchQuery, selectedDifficulty, selectedProduct, selectedTopic])
 
   return (
     <>
@@ -153,15 +180,15 @@ const _Articles: FC = () => {
               </GradientWrapper>
             }
           >
-            <Select.Options className="!bg-slate-700 p-2">
+            <Select.Options className="!bg-slate-700 p-2 space-y-1">
               {difficulties.map((difficulty, i) => (
-                <Listbox.Option
+                <SelectOption
                   key={i}
                   value={difficulty}
-                  className="flex items-center px-2 text-xs rounded-lg cursor-pointer h-9 hover:bg-blue-500 transform-all"
-                >
-                  {difficulty.attributes?.name}
-                </Listbox.Option>
+                  title={difficulty.attributes?.name}
+                  isSelected={selectedDifficulty?.id === difficulty.id}
+                  className="text-xs"
+                />
               ))}
             </Select.Options>
           </Select>
@@ -181,15 +208,15 @@ const _Articles: FC = () => {
               </Listbox.Button>
             }
           >
-            <Select.Options className="!bg-slate-700 p-2">
+            <Select.Options className="!bg-slate-700 p-2 space-y-1">
               {sortingOptions?.map((option) => (
-                <Listbox.Option
+                <SelectOption
                   key={option.key}
                   value={option}
-                  className="flex items-center px-2 text-xs rounded-lg cursor-pointer h-9 hover:bg-blue-500 transform-all"
-                >
-                  {option.name}
-                </Listbox.Option>
+                  isSelected={sortBy.key === option.key}
+                  title={option.name}
+                  className="text-xs"
+                />
               ))}
             </Select.Options>
           </Select>
@@ -209,12 +236,24 @@ const _Articles: FC = () => {
                 value={query}
               />
             </div>
-            <div className="flex flex-col gap-2 pl-3 mt-12">
+            <div className="flex flex-col gap-2 mt-12">
+              {products.map((product, i) => (
+                <Typography
+                  key={i}
+                  className={classNames(
+                    'py-2 px-5 rounded-lg hover:bg-blue-500 text-slate-300',
+                    selectedProduct?.id === product.id && 'bg-blue-500'
+                  )}
+                  onClick={() => handleSelectProduct(product)}
+                >
+                  {product.attributes?.name}
+                </Typography>
+              ))}
               {topics.map((topic, i) => (
                 <Typography
                   key={i}
                   className={classNames(
-                    'p-2 rounded-lg hover:bg-blue-500 text-slate-300',
+                    'py-2 px-5 rounded-lg hover:bg-blue-500 text-slate-300',
                     selectedTopic?.id === topic.id && 'bg-blue-500'
                   )}
                   onClick={() => handleSelectTopic(topic)}
@@ -247,15 +286,14 @@ const _Articles: FC = () => {
                       </Listbox.Button>
                     }
                   >
-                    <Select.Options className="!bg-slate-700 p-2">
+                    <Select.Options className="!bg-slate-700 p-2 space-y-1">
                       {sortingOptions?.map((option) => (
-                        <Listbox.Option
+                        <SelectOption
                           key={option.key}
                           value={option}
-                          className="flex items-center h-10 px-2 cursor-pointer hover:bg-blue-500 rounded-xl transform-all"
-                        >
-                          {option.name}
-                        </Listbox.Option>
+                          isSelected={sortBy.key === option.key}
+                          title={option.name}
+                        />
                       ))}
                     </Select.Options>
                   </Select>

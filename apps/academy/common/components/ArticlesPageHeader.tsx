@@ -5,7 +5,7 @@ import { LooperBg } from 'common/assets/LooperBg'
 import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 
 import { defaultSidePadding } from '../helpers'
-import { GradientWrapper } from './'
+import { GradientWrapper, SelectOption } from './'
 import { DifficultyEntity } from '.mesh'
 
 interface ArticlesPagesHeader {
@@ -57,15 +57,15 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
             </GradientWrapper>
           }
         >
-          <Select.Options className="!bg-slate-700 py-4 px-2 flex flex-col">
+          <Select.Options className="!bg-slate-700 p-2 space-y-1">
             {difficulties?.map((difficulty, i) => (
-              <Listbox.Option
+              <SelectOption
                 key={i}
                 value={difficulty}
-                className="flex items-center h-10 px-4 text-base rounded-lg cursor-pointer hover:bg-blue-500 transform-all"
-              >
-                {difficulty.attributes?.name}
-              </Listbox.Option>
+                isSelected={difficulty.id === selectedDifficulty?.id}
+                title={difficulty.attributes?.name}
+                className="px-4 text-base"
+              />
             ))}
           </Select.Options>
         </Select>

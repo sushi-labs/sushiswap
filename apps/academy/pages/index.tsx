@@ -16,6 +16,7 @@ import {
   DifficultyEntity,
   DifficultyEntityResponseCollection,
   Global,
+  ProductEntity,
   TopicEntity,
   TopicEntityResponseCollection,
 } from '../.mesh'
@@ -25,19 +26,21 @@ import {
   Card,
   Difficulties,
   DifficultyCard,
+  FilterButton,
   GradientWrapper,
   Hero,
   HomeBackground,
   SearchInput,
-  Topics,
+  SelectOption,
   ViewAllButton,
 } from '../common/components'
-import { getArticles, getDifficulties, getTopics } from '../lib/api'
+import { getArticles, getDifficulties, getProducts, getTopics } from '../lib/api'
 
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 6 } })
   const difficulties = await getDifficulties()
   const topics = await getTopics()
+  const products = await getProducts()
 
   return {
     props: {
@@ -45,6 +48,7 @@ export async function getStaticProps() {
         ['/articles']: articles?.articles,
         ['/difficulties']: difficulties?.difficulties,
         ['/topics']: topics?.topics,
+        ['/products']: products?.products,
       },
     },
     revalidate: 1,
@@ -61,28 +65,28 @@ const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Globa
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyEntity>()
+  const [selectedProduct, setSelectedProduct] = useState<ProductEntity>()
   const [selectedTopic, setSelectedTopic] = useState<TopicEntity>()
   const heroRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
   const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
+  const { data: productsData } = useSWR<TopicEntityResponseCollection>('/products')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
   const { data: filterData, isValidating } = useSWR(
-    [`/articles`, selectedTopic, selectedDifficulty],
-    async (_url, searchTopic, searchDifficulty) => {
-      const difficultySlug = searchDifficulty?.attributes?.slug
-      const topicSlug = searchTopic?.attributes?.slug
-      const difficultyFilter = { difficulty: { slug: { eq: difficultySlug } } }
-      const topicsFilter = { topics: { slug: { eq: topicSlug } } }
+    [`/articles`, selectedTopic, selectedDifficulty, selectedProduct],
+    async (_url, searchTopic, searchDifficulty, searchProduct) => {
+      const filters = {
+        ...(searchDifficulty?.id && { difficulty: { id: { eq: searchDifficulty?.id } } }),
+        ...(searchProduct?.id && { products: { id: { eq: searchProduct?.id } } }),
+        ...(searchTopic?.id && { topics: { id: { eq: searchTopic?.id } } }),
+      }
 
       return (
         await getArticles({
+          filters,
           pagination: { limit: 6 },
-          filters: {
-            ...(searchTopic && topicsFilter),
-            ...(difficultySlug && difficultyFilter),
-          },
         })
       )?.articles
     },
@@ -93,11 +97,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const articles = articlesData?.data
   const difficulties = difficultiesData?.data || []
   const topics = topicsData?.data || []
+  const products = productsData?.data || []
 
   const articleList = useMemo(() => {
-    if (filterData?.data && (selectedTopic || selectedDifficulty)) return filterData.data
+    if (filterData?.data && (selectedTopic || selectedDifficulty || selectedProduct)) return filterData.data
     return articles
-  }, [articles, filterData?.data, selectedDifficulty, selectedTopic])
+  }, [articles, filterData?.data, selectedDifficulty, selectedTopic, selectedProduct])
   const latestReleases = articles?.slice(0, 3)
 
   /**
@@ -108,7 +113,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
     setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
   }
   const handleSelectTopic = (topic: TopicEntity) => {
+    if (selectedProduct) setSelectedProduct(undefined)
     setSelectedTopic((current) => (current?.id === topic.id ? undefined : topic))
+  }
+  const handleSelectProduct = (product: ProductEntity) => {
+    if (selectedTopic) setSelectedTopic(undefined)
+    setSelectedProduct((current) => (current?.id === product.id ? undefined : product))
   }
   const handleSearch = (value: string) => {
     router.push({
@@ -159,35 +169,43 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             >
               <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9 sm:hidden">
                 <Select
-                  value={selectedTopic}
-                  onChange={setSelectedTopic}
+                  onChange={(value) => (value.isProduct ? handleSelectProduct(value) : handleSelectTopic(value))}
                   button={
                     <Listbox.Button
                       type="button"
                       className="flex items-center justify-between w-full px-4 border rounded-lg bg-slate-800 text-slate-50 h-9 border-slate-700"
                     >
                       <Typography variant="xs" weight={500}>
-                        {selectedTopic?.attributes?.name ?? 'All Topics'}
+                        {selectedTopic?.attributes?.name ?? selectedProduct?.attributes?.name ?? 'All Topics'}
                       </Typography>
                       <ChevronDownIcon className="w-3 h-3" aria-hidden="true" />
                     </Listbox.Button>
                   }
                 >
                   <Select.Options className="!bg-slate-700 p-2 !max-h-[unset] space-y-1">
-                    {topics.map((topic, i) => (
-                      <Listbox.Option
-                        key={i}
+                    {products.map((product) => (
+                      <SelectOption
+                        className="text-xs"
+                        key={`product_${product.id}`}
+                        value={{ ...product, isProduct: true }}
+                        title={product.attributes?.name}
+                        isSelected={selectedProduct?.id === product.id}
+                      />
+                    ))}
+                    {topics.map((topic) => (
+                      <SelectOption
+                        className="text-xs"
+                        key={`topic_${topic.id}`}
                         value={topic}
-                        className="p-2 text-xs rounded-lg cursor-pointer hover:bg-blue-500 transform-all"
-                      >
-                        {topic.attributes?.name}
-                      </Listbox.Option>
+                        title={topic.attributes?.name}
+                        isSelected={selectedTopic?.id === topic.id}
+                      />
                     ))}
                   </Select.Options>
                 </Select>
                 <Select
                   value={selectedDifficulty}
-                  onChange={setSelectedDifficulty}
+                  onChange={handleSelectDifficulty}
                   button={
                     <GradientWrapper className="w-full rounded-lg h-9">
                       <Listbox.Button
@@ -203,14 +221,14 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                   }
                 >
                   <Select.Options className="!bg-slate-700 p-2 !max-h-[unset] space-y-1">
-                    {difficulties.map((difficulty, i) => (
-                      <Listbox.Option
-                        key={i}
+                    {difficulties.map((difficulty) => (
+                      <SelectOption
+                        className="text-xs"
+                        key={`difficulty_${difficulty.id}`}
                         value={difficulty}
-                        className="p-2 text-xs rounded-lg cursor-pointer hover:bg-blue-500 transform-all"
-                      >
-                        {difficulty.attributes?.name}
-                      </Listbox.Option>
+                        title={difficulty.attributes?.name}
+                        isSelected={selectedDifficulty?.id === difficulty.id}
+                      />
                     ))}
                   </Select.Options>
                 </Select>
@@ -219,7 +237,28 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           </Disclosure>
 
           <div className="flex-wrap hidden gap-3 sm:flex sm:gap-4 mt-9 sm:mt-8">
-            <Topics selected={selectedTopic} onSelect={handleSelectTopic} topics={topics || []} />
+            {products.map(
+              (product) =>
+                product && (
+                  <FilterButton
+                    key={`product_${product.id}`}
+                    isSelected={selectedProduct?.id === product.id}
+                    title={product.attributes.name}
+                    onClick={() => handleSelectProduct(product)}
+                  />
+                )
+            )}
+            {topics.map(
+              (topic) =>
+                topic && (
+                  <FilterButton
+                    key={`topic_${topic.id}`}
+                    isSelected={selectedTopic?.id === topic.id}
+                    title={topic.attributes.name}
+                    onClick={() => handleSelectTopic(topic)}
+                  />
+                )
+            )}
           </div>
 
           <div className="items-center hidden gap-8 mt-10 sm:flex">
@@ -253,6 +292,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 pathname: '/articles',
                 query: {
                   ...(selectedDifficulty && { difficulty: selectedDifficulty.attributes?.slug }),
+                  ...(selectedProduct && { product: selectedProduct.attributes?.slug }),
                   ...(selectedTopic && { topic: selectedTopic.attributes?.slug }),
                 },
               }}

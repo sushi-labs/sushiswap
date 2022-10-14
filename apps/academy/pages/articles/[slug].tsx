@@ -87,7 +87,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
         <Breadcrumb article={article} />
         <ArticleHeader article={article} />
         {article?.attributes?.cover.data && (
-          <div className="relative max-w-screen h-[calc(100vw/2.85)] min-h-[300px] mt-10 sm:mt-12">
+          <div className="relative mt-10 aspect-[1152/512] sm:mt-12">
             <Image image={article?.attributes.cover.data} />
           </div>
         )}
