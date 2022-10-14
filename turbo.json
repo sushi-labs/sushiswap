@@ -28,6 +28,7 @@
         "NEXT_PUBLIC_ALCHEMY_ID",
         "NEXT_PUBLIC_INFURA_ID",
         "NEXT_PUBLIC_STRAPI_API_URL",
+        "LIST_PR_WEBHOOK_URL",
         "OCTOKIT_KEY",
         "ANALYTICS_URL",
         "BLOG_URL",
