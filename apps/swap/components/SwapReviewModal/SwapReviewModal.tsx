@@ -7,7 +7,6 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native } from '@sushiswap/currency'
 import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/exchange'
-import { event } from '@sushiswap/gtag'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
@@ -24,6 +23,7 @@ import { toHex } from 'lib/functions'
 import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
+import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ProviderRpcError,
@@ -33,6 +33,7 @@ import {
   UserRejectedRequestError,
   useSendTransaction,
 } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
@@ -62,20 +63,37 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const [error, setError] = useState<string>()
 
   const onSettled = useCallback(
-    (data) => {
-      if (!trade || !chainId) return
+    (data: SendTransactionResult | undefined, error: Error | null) => {
+      if (!trade || !chainId || !data) return
 
       const ts = new Date().getTime()
-
-      data.wait().then(() =>
-        event({
-          action: 'swap',
-          label: `${trade.inputAmount.toFixed()} ${
-            trade.inputAmount.currency.symbol
-          } to ${trade.outputAmount.toFixed()} ${trade.outputAmount.currency.symbol}`,
-          category: trade.routeType(),
+      // data: SendTransactionResult | undefined, error: Error | null
+      data
+        .wait()
+        .then((tx) => {
+          log.info('swap success', {
+            transactionHash: tx.transactionHash,
+            chainId: trade.inputAmount.currency.chainId,
+            tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
+            tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
+            tokenInSymbol: trade.inputAmount.currency.symbol,
+            tokenOutSymbol: trade.outputAmount.currency.symbol,
+            tokenInAmount: trade.inputAmount.toFixed(),
+            tokenOutAmount: trade.outputAmount.toFixed(),
+          })
         })
-      )
+        .catch((error: unknown) => {
+          log.error('swap failure', {
+            error: JSON.stringify(error),
+            chainId: trade.inputAmount.currency.chainId,
+            tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
+            tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
+            tokenInSymbol: trade.inputAmount.currency.symbol,
+            tokenOutSymbol: trade.outputAmount.currency.symbol,
+            tokenInAmount: trade.inputAmount.toFixed(),
+            tokenOutAmount: trade.outputAmount.toFixed(),
+          })
+        })
 
       createNotification({
         type: 'swap',
