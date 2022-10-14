@@ -24,27 +24,24 @@
         "^build",
         "generate"
       ],
-      "cache": true
-    },
-    "root#build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**"
-      ],
-      "cache": true,
       "env": [
+        "NEXT_PUBLIC_ALCHEMY_ID",
+        "NEXT_PUBLIC_INFURA_ID",
+        "NEXT_PUBLIC_STRAPI_API_URL",
+        "OCTOKIT_KEY",
         "ANALYTICS_URL",
         "BLOG_URL",
+        "DAO_URL",
         "DOCS_URL",
         "FURO_URL",
         "LANDING_URL",
         "SWAP_URL",
-        "LEGACY_URL",
         "EARN_URL",
-        "XSWAP_URL"
-      ]
+        "XSWAP_URL",
+        "PARTNER_URL",
+        "LEGACY_URL"
+      ],
+      "cache": true
     },
     "clean": {
       "cache": false
