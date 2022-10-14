@@ -55,15 +55,15 @@ export function useConstantProductPools(
   const callStatePoolsCountProcessed = useMemo(() => {
     return callStatePoolsCount
       .map((s, i) => [i, s.result ? parseInt(s.result.count.toString()) : 0] as [number, number])
-      .filter(([_n, length]) => length)
+      .filter(([, length]) => length)
       .map(([i, length]) => [pairsUniqueAddr[i][0], pairsUniqueAddr[i][1], 0, length])
   }, [callStatePoolsCount, pairsUniqueAddr])
 
   const pairsUniqueProcessed = useMemo(() => {
     return callStatePoolsCount
       .map((s, i) => [i, s.result ? parseInt(s.result.count.toString()) : 0] as [number, number])
-      .filter(([_n, length]) => length)
-      .map(([i, length]) => [pairsUnique[i][0], pairsUnique[i][1]])
+      .filter(([, length]) => length)
+      .map(([i]) => [pairsUnique[i][0], pairsUnique[i][1]])
   }, [callStatePoolsCount, pairsUnique])
 
   const callStatePools = useSingleContractMultipleData(
