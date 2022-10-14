@@ -66,13 +66,18 @@
         "STRAPI_PREVIEW_SECRET"
       ]
     },
+    "internal#generate": {
+      "outputs": [
+        ".graphclient/**"
+      ]
+    },
     "internal#build": {
       "outputs": [
         ".next/**"
       ],
       "dependsOn": [
         "^build",
-        "generate"
+        "internal#generate"
       ],
       "env": [
         "OCTOKIT_KEY",

@@ -6,7 +6,7 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
-    "build": "next build --profile",
+    "build": "next build",
     "dev": "next dev --port 4001",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
