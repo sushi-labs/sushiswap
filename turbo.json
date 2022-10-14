@@ -34,12 +34,11 @@
         "OCTOKIT_KEY",
         "ANALYTICS_URL",
         "BLOG_URL",
-        "FURO_URL",
-        "LANDING_URL",
-        "SWAP_URL",
         "EARN_URL",
-        "XSWAP_URL",
-        "PARTNER_URL"
+        "FURO_URL",
+        "PARTNER_URL",
+        "SWAP_URL",
+        "XSWAP_URL"
       ],
       "cache": true
     },
