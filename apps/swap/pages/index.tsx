@@ -4,7 +4,6 @@ import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WN
 import { TradeType } from '@sushiswap/exchange'
 import { FundSource, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
-import { RouteStatus } from '@sushiswap/tines'
 import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, useWalletState, WrapType } from '@sushiswap/wagmi'
@@ -14,15 +13,7 @@ import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useConnect, useNetwork } from 'wagmi'
 
-import {
-  Layout,
-  Route,
-  SettingsOverlay,
-  SwapReviewModalLegacy,
-  TradeProvider,
-  useTrade,
-  WrapReviewModal,
-} from '../components'
+import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade, WrapReviewModal } from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
 import { warningSeverity } from '../lib/functions'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
@@ -153,7 +144,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(isWrap ? input0 : input1, token1)]
-  }, [input0, input1, token0, token1])
+  }, [input0, input1, isWrap, token0, token1])
 
   const onInput0 = useCallback((val: string) => {
     setTradeType(TradeType.EXACT_INPUT)
@@ -312,9 +303,9 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </a>
             </Link.Internal>
           </Container>
-          <Container className="flex justify-center mx-auto" maxWidth="3xl">
+          {/* <Container className="flex justify-center mx-auto" maxWidth="3xl">
             <Route />
-          </Container>
+          </Container> */}
         </Layout>
       </TradeProvider>
     </>
@@ -341,7 +332,7 @@ const SwapButton: FC<{
 
   return (
     <Checker.Custom
-      showGuardIfTrue={Boolean(route && route.status === RouteStatus.NoWay)}
+      showGuardIfTrue={!route}
       guard={
         <Button fullWidth disabled size="md">
           No trade found
