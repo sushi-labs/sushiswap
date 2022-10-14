@@ -118,11 +118,11 @@ export function useTrade(
   // console.debug('Found legacy route', [
   //   feeData,
   //   feeData?.gasPrice,
-  //   error,
+  //   // error,
   //   currencyIn,
-  //   currencyInRebase,
+  //   // currencyInRebase,
   //   currencyOut,
-  //   currencyOutRebase,
+  //   // currencyOutRebase,
   //   currencyIn?.wrapped.chainId === currencyOut?.wrapped.chainId,
   //   currencyIn?.wrapped.chainId === chainId,
   //   currencyOut?.wrapped.chainId === chainId,
@@ -213,21 +213,21 @@ export function useTrade(
         }
 
         if (AMM_ENABLED_NETWORKS.includes(chainId)) {
-          console.debug('Legacy route input', [
-            currencyIn.wrapped,
-            currencyOut.wrapped,
-            BigNumber.from(amountSpecified.quotient.toString()),
-            filteredPools
-              .filter((pool): pool is Pair => pool instanceof Pair)
-              .map((pool) => ({
-                address: pool.liquidityToken.address,
-                name: `${pool.token0.wrapped.symbol}/${pool.token1.wrapped.symbol}`,
-                reserve0: pool.reserve0.toExact(),
-                reserve1: pool.reserve0.toExact(),
-              })),
-            WNATIVE[amountSpecified.currency.chainId],
-            feeData.gasPrice.toNumber(),
-          ])
+          // console.debug('Legacy route input', [
+          //   currencyIn.wrapped,
+          //   currencyOut.wrapped,
+          //   BigNumber.from(amountSpecified.quotient.toString()),
+          //   filteredPools
+          //     .filter((pool): pool is Pair => pool instanceof Pair)
+          //     .map((pool) => ({
+          //       address: pool.liquidityToken.address,
+          //       name: `${pool.token0.wrapped.symbol}/${pool.token1.wrapped.symbol}`,
+          //       reserve0: pool.reserve0.toExact(),
+          //       reserve1: pool.reserve0.toExact(),
+          //     })),
+          //   WNATIVE[amountSpecified.currency.chainId],
+          //   feeData.gasPrice.toNumber(),
+          // ])
           const legacyRoute = findSingleRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
@@ -245,10 +245,6 @@ export function useTrade(
             }
           } else {
             console.debug('No legacy route', legacyRoute)
-            return {
-              trade: undefined,
-              route: legacyRoute,
-            }
           }
         }
 
@@ -287,10 +283,6 @@ export function useTrade(
             }
           } else {
             console.debug('No trident route', tridentRoute)
-            return {
-              trade: undefined,
-              route: tridentRoute,
-            }
           }
         }
 
