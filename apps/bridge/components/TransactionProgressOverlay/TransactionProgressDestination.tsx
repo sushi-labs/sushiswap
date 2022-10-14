@@ -90,8 +90,6 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
       onClose()
       setTimeout(() => setSourceTx(undefined), 1000)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, isError])
 
   return (

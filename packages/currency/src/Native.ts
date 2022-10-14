@@ -7,8 +7,8 @@ import { Token } from './Token'
 import { Type } from './Type'
 
 export class Native extends Currency {
-  public readonly isNative: true = true
-  public readonly isToken: false = false
+  public readonly isNative = true as const
+  public readonly isToken = false as const
   public readonly symbol: string
   public readonly name: string
   protected constructor(native: { chainId: number; decimals: number; symbol: string; name: string }) {

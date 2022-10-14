@@ -6,7 +6,7 @@ import { classNames, Loader, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import React, { FC } from 'react'
 
-import { useBridgeFees, useBridgeOutput } from '../lib/hooks'
+import { useBridgeFees } from '../lib/hooks'
 import { useBridgeExecute } from './BridgeExecuteProvider'
 import { useBridgeState } from './BridgeStateProvider'
 

@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { Button } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
@@ -24,7 +25,6 @@ import React, { FC, useCallback, useEffect, useMemo } from 'react'
 
 import { useBridgeOutput } from '../lib/hooks'
 import { useCustomTokens } from '../lib/state/storage'
-import { ZERO } from '@sushiswap/math'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query

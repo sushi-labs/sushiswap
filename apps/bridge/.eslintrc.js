@@ -1,1 +1,1 @@
-export { default } from '@sushiswap/eslint-config/nextjs'
+module.exports = require('@sushiswap/eslint-config')
