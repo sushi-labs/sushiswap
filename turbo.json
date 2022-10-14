@@ -15,10 +15,12 @@
     "build": {
       "outputs": [
         ".next/**",
-        "dist/**",
-        "typechain/**",
+        ".graphclient/**",
+        ".mesh/**",
         "artifacts/**",
-        "cache/**"
+        "cache/**",
+        "dist/**",
+        "typechain/**"
       ],
       "dependsOn": [
         "^build",
@@ -32,15 +34,12 @@
         "OCTOKIT_KEY",
         "ANALYTICS_URL",
         "BLOG_URL",
-        "DAO_URL",
-        "DOCS_URL",
         "FURO_URL",
         "LANDING_URL",
         "SWAP_URL",
         "EARN_URL",
         "XSWAP_URL",
-        "PARTNER_URL",
-        "LEGACY_URL"
+        "PARTNER_URL"
       ],
       "cache": true
     },
