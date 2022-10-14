@@ -7,16 +7,13 @@
       ],
       "outputs": [
         ".graphclient/**",
-        ".mesh/**",
         "typechain/**"
-      ],
-      "cache": true
+      ]
     },
     "build": {
       "outputs": [
-        ".next/**",
         ".graphclient/**",
-        ".mesh/**",
+        ".next/**",
         "artifacts/**",
         "cache/**",
         "dist/**",
@@ -28,10 +25,18 @@
       ],
       "env": [
         "NEXT_PUBLIC_ALCHEMY_ID",
-        "NEXT_PUBLIC_INFURA_ID",
-        "NEXT_PUBLIC_STRAPI_API_URL",
-        "LIST_PR_WEBHOOK_URL",
-        "OCTOKIT_KEY",
+        "NEXT_PUBLIC_INFURA_ID"
+      ]
+    },
+    "root#build": {
+      "outputs": [
+        ".next/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "env": [
         "ANALYTICS_URL",
         "BLOG_URL",
         "EARN_URL",
@@ -39,8 +44,50 @@
         "PARTNER_URL",
         "SWAP_URL",
         "XSWAP_URL"
+      ]
+    },
+    "blog#generate": {
+      "outputs": [
+        ".mesh/**"
+      ]
+    },
+    "blog#build": {
+      "outputs": [
+        ".next/**"
       ],
-      "cache": true
+      "dependsOn": [
+        "^build",
+        "blog#generate"
+      ],
+      "env": [
+        "NEXT_PUBLIC_STRAPI_API_URL"
+      ]
+    },
+    "internal#build": {
+      "outputs": [
+        ".next/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "env": [
+        "OCTOKIT_KEY",
+        "PARTNER_URL"
+      ]
+    },
+    "partner#build": {
+      "outputs": [
+        ".next/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "env": [
+        "LIST_PR_WEBHOOK_URL",
+        "OCTOKIT_KEY"
+      ]
     },
     "clean": {
       "cache": false
@@ -59,8 +106,7 @@
       "dependsOn": [
         "^build",
         "generate"
-      ],
-      "cache": true
+      ]
     },
     "lint": {
       "outputs": [],
@@ -84,14 +130,12 @@
       ],
       "outputs": [
         "deployments/**"
-      ],
-      "cache": true
+      ]
     },
     "server": {
       "dependsOn": [
         "build"
-      ],
-      "cache": true
+      ]
     }
   }
 }
