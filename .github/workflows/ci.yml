@@ -17,11 +17,15 @@ jobs:
       NEXT_TELEMETRY_DISABLED: 1
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      # NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
-      # NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-      # NEXT_PUBLIC_STRAPI_API_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
-      # LIST_PR_WEBHOOK_URL: ${{ secrets.LIST_PR_WEBHOOK_URL }}
-      # OCTOKIT_KEY: ${{ secrets.OCTOKIT_KEY }}
+      TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
+      INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+      ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+      NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+      NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+      NEXT_PUBLIC_STRAPI_API_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_API_URL }}
+      STRAPI_PREVIEW_SECRET: ${{ secrets.STRAPI_PREVIEW_SECRET }}
+      LIST_PR_WEBHOOK_URL: ${{ secrets.LIST_PR_WEBHOOK_URL }}
+      OCTOKIT_KEY: ${{ secrets.OCTOKIT_KEY }}
       ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
       BLOG_URL: ${{ secrets.BLOG_URL }}
       EARN_URL: ${{ secrets.EARN_URL }}
