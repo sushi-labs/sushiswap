@@ -153,7 +153,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(isWrap ? input0 : input1, token1)]
-  }, [input0, input1, token0, token1])
+  }, [input0, input1, isWrap, token0, token1])
 
   const onInput0 = useCallback((val: string) => {
     setTradeType(TradeType.EXACT_INPUT)
