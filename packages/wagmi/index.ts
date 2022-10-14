@@ -8,9 +8,6 @@ export * from './components'
 // Export hooks
 export * from './hooks'
 
-// Export provider
-export * from './provider'
-
 // Export systems
 export * from './systems'
 

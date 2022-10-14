@@ -1,7 +1,14 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { chainId, from, to, data } = req.query
+export async function simulate({
+  chainId,
+  from,
+  to,
+  data,
+}: {
+  chainId: number
+  from: string
+  to: string
+  data: string
+}) {
   const apiURL = `https://api.tenderly.co/api/v1/account/Sushi/project/furo/simulate`
   const body = {
     network_id: chainId?.toString(),
@@ -18,13 +25,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     'content-type': 'application/JSON',
     'X-Access-Key': process.env.TENDERLY_ACCESS_KEY as string,
   }
-
-  const call = await fetch(apiURL, {
+  return fetch(apiURL, {
     method: 'post',
     body: JSON.stringify(body),
     headers,
   })
-
-  const resp = await call.json()
-  res.status(200).send(resp)
 }

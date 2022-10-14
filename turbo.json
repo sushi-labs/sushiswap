@@ -25,7 +25,9 @@
       ],
       "env": [
         "NEXT_PUBLIC_ALCHEMY_ID",
-        "NEXT_PUBLIC_INFURA_ID"
+        "NEXT_PUBLIC_INFURA_ID",
+        "INFURA_ID",
+        "ALCHEMY_ID"
       ]
     },
     "root#build": {
@@ -60,7 +62,8 @@
         "blog#generate"
       ],
       "env": [
-        "NEXT_PUBLIC_STRAPI_API_URL"
+        "NEXT_PUBLIC_STRAPI_API_URL",
+        "STRAPI_PREVIEW_SECRET"
       ]
     },
     "internal#build": {
@@ -87,6 +90,35 @@
       "env": [
         "LIST_PR_WEBHOOK_URL",
         "OCTOKIT_KEY"
+      ]
+    },
+    "farms-script#generate": {
+      "outputs": [
+        ".graphclient/**"
+      ]
+    },
+    "farms-script#build": {
+      "outputs": [
+        "dist/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "farms-script#generate"
+      ],
+      "env": [
+        "REDIS_URL",
+        "ALCHEMY_ID"
+      ]
+    },
+    "@sushiswap/tenderly#build": {
+      "outputs": [
+        "dist/**"
+      ],
+      "dependsOn": [
+        "^build"
+      ],
+      "env": [
+        "TENDERLY_ACCESS_KEY"
       ]
     },
     "clean": {
@@ -137,5 +169,6 @@
         "build"
       ]
     }
-  }
+  },
+  "globalEnv": ["NODE_ENV"]
 }

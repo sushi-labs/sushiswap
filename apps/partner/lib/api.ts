@@ -1,9 +1,15 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { getProvider } from '@sushiswap/wagmi'
-import { Contract } from 'ethers'
-import { erc20ABI } from 'wagmi'
+import { otherChains } from '@sushiswap/wagmi-config'
+import { allChains, configureChains, createClient } from '@wagmi/core'
+import { alchemyProvider } from '@wagmi/core/providers/alchemy'
+import { publicProvider } from '@wagmi/core/providers/public'
+import { erc20ABI, readContracts } from 'wagmi'
+
+const apiKey = process.env.ALCHEMY_ID as string
+
+createClient(configureChains([...allChains, ...otherChains], [publicProvider(), alchemyProvider({ apiKey })]))
 
 interface TokenKPI {
   priceUSD: number
@@ -79,9 +85,28 @@ export interface Token {
 }
 
 export const getToken = async (id: string, chainId: ChainId): Promise<Token> => {
-  const token = new Contract(id, erc20ABI, getProvider(chainId))
-
-  const [symbol, name, decimals] = await Promise.all([token.symbol(), token.name(), token.decimals()])
-
-  return { symbol, name, decimals }
+  const results: [string, string, number] = await readContracts({
+    allowFailure: true,
+    contracts: [
+      {
+        addressOrName: id,
+        chainId,
+        contractInterface: erc20ABI,
+        functionName: 'symbol',
+      },
+      {
+        addressOrName: id,
+        chainId,
+        contractInterface: erc20ABI,
+        functionName: 'name',
+      },
+      {
+        addressOrName: id,
+        chainId,
+        contractInterface: erc20ABI,
+        functionName: 'decimals',
+      },
+    ],
+  })
+  return { symbol: results[0], name: results[1], decimals: results[2] }
 }

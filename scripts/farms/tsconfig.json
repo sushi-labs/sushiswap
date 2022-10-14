@@ -7,6 +7,5 @@
     "outDir": "./dist",
     "rootDir": ".",
     "resolveJsonModule": true
-  },
-  "resolveJsonModule": true
+  }
 }
