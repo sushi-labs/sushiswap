@@ -248,15 +248,12 @@ export function useTrade(
           }
         }
 
-        // TODO: Switch to shares
-
         if (
           TRIDENT_ENABLED_NETWORKS.includes(chainId) &&
           totals &&
           currencyIn.wrapped.address in totals &&
           currencyOut.wrapped.address in totals
         ) {
-          console.debug('Attemping to find trident route')
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
