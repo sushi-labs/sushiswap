@@ -11,10 +11,9 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const tokens = await getTokens({ chainIds: TOKENS_SUPPORTED_CHAIN_IDS })
-
   return {
     props: {
       fallback: {

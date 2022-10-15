@@ -7,12 +7,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-export const getServerSideProps: GetServerSideProps<{ fallback: { [key: string]: Subgraph[] } }> = async ({
-  req,
-  res,
-}) => {
+export const getServerSideProps: GetServerSideProps<{ fallback: { [key: string]: Subgraph[] } }> = async ({ res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-
   const data = await getSubgraphs()
   return {
     props: {

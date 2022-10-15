@@ -23,7 +23,6 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       // ChainId.KAVA,
     ],
   })
-  // console.log('data', data)
   return {
     props: {
       data,
