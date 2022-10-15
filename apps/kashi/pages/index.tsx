@@ -82,8 +82,8 @@ const _Index = () => {
               <Image src="https://www.sushi.com/kashi/images/KashiKanjiSign.png" layout="fill" />
             </div>
             <NetworkIcon width={32} chainId={ChainId.ETHEREUM} className="absolute top-0 right-9" />
-            <NetworkIcon width={32} chainId={ChainId.ARBITRUM} className="absolute bottom-9 right-0" />
-            <NetworkIcon width={32} chainId={ChainId.BSC} className="absolute top-9 left-0" />
+            <NetworkIcon width={32} chainId={ChainId.ARBITRUM} className="absolute right-0 bottom-9" />
+            <NetworkIcon width={32} chainId={ChainId.BSC} className="absolute left-0 top-9" />
             <NetworkIcon width={32} chainId={ChainId.POLYGON} className="absolute bottom-0 left-9" />
           </div>
         </div>

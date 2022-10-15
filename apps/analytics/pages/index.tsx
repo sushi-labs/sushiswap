@@ -15,7 +15,7 @@ import {
   GetTokensQuery,
 } from '../lib/api'
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
   const [pairs, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),

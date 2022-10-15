@@ -84,7 +84,9 @@ const theme: Theme = {
   ...defaultTheme,
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query
 
   // TODO: Need to fetch srcToken & dstToken if they're address and pass down basic object to client

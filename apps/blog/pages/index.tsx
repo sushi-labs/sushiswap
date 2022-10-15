@@ -13,7 +13,6 @@ import { getArticles, getCategories } from '../lib/api'
 export async function getStaticProps() {
   const articles = await getArticles({ pagination: { limit: 10 } })
   const categories = await getCategories()
-
   return {
     props: {
       fallback: {
@@ -21,7 +20,7 @@ export async function getStaticProps() {
         ['/categories']: categories?.categories || [],
       },
     },
-    revalidate: 1,
+    revalidate: 60,
   }
 }
 
