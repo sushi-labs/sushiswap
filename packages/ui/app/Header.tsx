@@ -154,7 +154,7 @@ export function Header({
                   </Typography>
                   {/* <Select.Option
                     as="a"
-                    href="https://sushi.com/kashi"
+                    href="https://www.sushi.com/kashi"
                     key={AppType.Kashi}
                     value={AppType.Kashi}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"

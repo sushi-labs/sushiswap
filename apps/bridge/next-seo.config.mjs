@@ -5,12 +5,12 @@ export default {
   title: 'Bridge',
   defaultTitle: 'Bridge',
   description: 'Easiest way to bridge your tokens across 7 networks.',
-  //   canonical: 'https://sushi.com/pool',
+  //   canonical: 'https://www.sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
   //     href: '',
   //   },
-  //   languageAlternates: [{ hrefLang: "en", href: "https://sushi.com/pool" }],
+  //   languageAlternates: [{ hrefLang: "en", href: "https://www.sushi.com/pool" }],
   twitter: {
     handle: '@sushiswap',
     site: '@sushiswap',

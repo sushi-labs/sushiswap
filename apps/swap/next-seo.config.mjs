@@ -5,12 +5,12 @@ export default {
   title: 'SushiSwap',
   defaultTitle: 'SushiSwap',
   description: 'Easiest way to trade your tokens and supported by 22 networks.',
-  //   canonical: 'https://sushi.com/pool',
+  //   canonical: 'https://www.sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
   //     href: '',
   //   },
-  //   languageAlternates: [{ hrefLang: "en", href: "https://sushi.com/pool" }],
+  //   languageAlternates: [{ hrefLang: "en", href: "https://www.sushi.com/pool" }],
   twitter: {
     handle: '@sushiswap',
     site: '@sushiswap',

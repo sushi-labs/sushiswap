@@ -6,12 +6,12 @@ export default {
   defaultTitle: 'Sushi',
   description:
     'Swap, earn, stack yields, lend, borrow & leverage, all on one decentralized, community driven platform. Welcome home to DeFi.',
-  //   canonical: 'https://sushi.com/pool',
+  //   canonical: 'https://www.sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
   //     href: '',
   //   },
-  //   languageAlternates: [{ hrefLang: "en", href: "https://sushi.com/pool" }],
+  //   languageAlternates: [{ hrefLang: "en", href: "https://www.sushi.com/pool" }],
   twitter: {
     handle: '@sushiswap',
     site: '@sushiswap',

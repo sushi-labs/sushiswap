@@ -204,8 +204,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
             <Widget.Content>
               <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
                 <App.NavItemList hideOnMobile={false}>
-                  <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
-                  <App.NavItemInternal href="https://sushi.com/xswap" label="xSwap" />
+                  <App.NavItemInternal href="https://www.sushi.com/swap" label="Swap" />
+                  <App.NavItemInternal href="https://www.sushi.com/xswap" label="xSwap" />
                 </App.NavItemList>
                 <div className="flex justify-end">
                   <SettingsOverlay chainId={chainId} />
@@ -296,7 +296,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
             </Widget.Content>
           </Widget>
           <Container className="flex justify-center mx-auto" maxWidth="2xl">
-            <Link.Internal href="https://sushi.com/xswap" passHref>
+            <Link.Internal href="https://www.sushi.com/xswap" passHref>
               <a className="text-baseline whitespace-nowrap hover:text-white hover:underline focus:text-white active:text-white flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl">
                 <Typography
                   variant="xs"

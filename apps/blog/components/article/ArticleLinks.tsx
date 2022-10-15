@@ -17,7 +17,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
         <a
           target="_blank"
           title="Share on Twitter"
-          href={`http://twitter.com/share?url=https://sushi.com/blog/${article?.attributes?.slug}`}
+          href={`http://twitter.com/share?url=https://www.sushi.com/blog/${article?.attributes?.slug}`}
           rel="noreferrer"
         >
           <TwitterIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
@@ -27,7 +27,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
           href={`mailto:?subject=${encodeURI(
             article?.attributes?.title || ''
           )}&body=Checkout this new SushiSwap Blog article ${encodeURI(
-            `https://sushi.com/blog/${article?.attributes?.slug}`
+            `https://www.sushi.com/blog/${article?.attributes?.slug}`
           )}`}
         >
           <MailIcon width={20} height={20} className="cursor-pointer text-blue hover:text-blue-400" />
@@ -36,7 +36,7 @@ export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
           width={20}
           height={20}
           className="cursor-pointer text-blue hover:text-blue-400"
-          onClick={() => navigator.clipboard.writeText(`https://sushi.com/blog/${article?.attributes?.slug}`)}
+          onClick={() => navigator.clipboard.writeText(`https://www.sushi.com/blog/${article?.attributes?.slug}`)}
         />
       </div>
     </section>

@@ -13,8 +13,8 @@ export const Header = () => {
       withScrollBackground
       nav={
         <App.NavItemList>
-          <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
-          <App.NavItemInternal href="https://sushi.com/earn" label="Earn" />
+          <App.NavItemInternal href="https://www.sushi.com/swap" label="Swap" />
+          <App.NavItemInternal href="https://www.sushi.com/earn" label="Earn" />
           <BuyCrypto address={address} />
         </App.NavItemList>
       }
