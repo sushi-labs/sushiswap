@@ -19,12 +19,10 @@ const nextConfig = {
   basePath: '/swap',
   reactStrictMode: true,
   swcMinify: false,
+  productionBrowserSourceMaps: true,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
-  experimental: {
-    nextScriptWorkers: true,
   },
   async redirects() {
     return [

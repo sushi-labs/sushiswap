@@ -7,6 +7,11 @@ const nextConfig = {
   basePath: '/partner',
   reactStrictMode: true,
   swcMinify: false,
+  productionBrowserSourceMaps: true,
+  images: {
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
+  },
   async headers() {
     return [
       {
@@ -23,14 +28,6 @@ const nextConfig = {
         ],
       },
     ]
-  },
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    domains: ['app.sushi.com', 'raw.githubusercontent.com'],
-  },
-  experimental: {
-    nextScriptWorkers: true,
   },
 }
 

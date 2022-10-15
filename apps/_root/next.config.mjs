@@ -32,12 +32,6 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   productionBrowserSourceMaps: true,
   async redirects() {
     return [
