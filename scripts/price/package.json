@@ -27,7 +27,7 @@
     "server": "ts-node --swc src/server.ts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "generate": "DEBUG=1 graphclient build",
+    "generate": "graphclient build",
     "lint": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"
