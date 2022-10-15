@@ -35,9 +35,7 @@
       "env": [
         "ANALYTICS_URL",
         "BLOG_URL",
-        "DOCS_URL",
         "FURO_URL",
-        "LANDING_URL",
         "SWAP_URL",
         "LEGACY_URL",
         "EARN_URL",
