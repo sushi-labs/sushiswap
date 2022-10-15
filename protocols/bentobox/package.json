@@ -20,8 +20,8 @@
     "typechain"
   ],
   "scripts": {
-    "build": "hardhat clean && TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf exports && rm -rf typechain",
+    "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf cache && rm -rf exports && rm -rf typechain",
     "deploy": "hardhat deploy",
     "export": "hardhat export --export-all exports.json",
     "node": "hardhat node"

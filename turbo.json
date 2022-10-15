@@ -1,20 +1,32 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
-    "generate": {
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": [
+        "coverage/**"
+      ]
+    },
+    "lint": {
       "dependsOn": [
         "^build"
       ],
+      "outputs": []
+    },
+    "generate": {
       "outputs": [
-        "^build",
         ".graphclient/**",
         ".mesh/**",
-        "typechain/**"
+        "typechain/**",
+        "artifacts/**",
+        "cache/**"
       ]
     },
     "build": {
       "outputs": [
         ".next/**",
+        ".graphclient/**",
+        ".mesh/**",
         "dist/**",
         "typechain/**",
         "artifacts/**",
@@ -27,20 +39,23 @@
     },
     "root#build": {
       "dependsOn": [
-        "^build"
+        "^build",
+        "generate"
       ],
       "outputs": [
         ".next/**"
       ],
       "env": [
+        "ROOT_URL",
         "ANALYTICS_URL",
         "BLOG_URL",
-        "DOCS_URL",
-        "FURO_URL",
-        "LANDING_URL",
-        "SWAP_URL",
-        "LEGACY_URL",
+        "BRIDGE_URL",
         "EARN_URL",
+        "FURO_URL",
+        "INTERNAL_URL",
+        "KASHI_URL",
+        "PARTNER_URL",
+        "SWAP_URL",
         "XSWAP_URL"
       ]
     },
@@ -53,20 +68,6 @@
         "generate"
       ],
       "cache": false
-    },
-    "test": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "coverage/**"
-      ]
-    },
-    "lint": {
-      "outputs": [],
-      "dependsOn": [
-        "^build"
-      ]
     },
     "validate": {
       "cache": false

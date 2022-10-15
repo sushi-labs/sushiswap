@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build:profile": "next build --profile",
-    "dev": "next dev -p 3007",
+    "dev": "next dev -p 3009",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"

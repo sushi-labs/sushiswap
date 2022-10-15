@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build --profile",
+    "build": "next build",
     "dev": "next dev --port 4000",
     "generate": "typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
     "lint": "TIMING=1 eslint --fix . && next lint",

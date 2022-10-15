@@ -10,17 +10,17 @@ const withTranspileModules = transpileModules([
 ])
 
 const {
-  BLOG_URL,
+  ROOT_URL,
   ANALYTICS_URL,
-  DAO_URL,
-  DOCS_URL,
+  BLOG_URL,
+  BRIDGE_URL,
+  EARN_URL,
   FURO_URL,
-  LANDING_URL,
+  INTERNAL_URL,
+  KASHI_URL,
+  PARTNER_URL,
   SWAP_URL,
   XSWAP_URL,
-  EARN_URL,
-  LEGACY_URL,
-  PARTNER_URL,
 } = process.env
 
 // @ts-check

@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev -p 3005",
-    "generate": "DEBUG=1 graphclient build",
+    "generate": "graphclient build",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
