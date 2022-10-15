@@ -88,7 +88,7 @@ export function Header({
         className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}
       >
         <div className="flex items-center gap-3">
-          <a className="flex flex-row items-center gap-1.5" href={LINK[appType]}>
+          <a className="flex flex-row items-center gap-1.5" href="/">
             <div className="w-6 h-6">
               <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
             </div>
@@ -100,7 +100,7 @@ export function Header({
                 type="button"
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
-                <span className="text-sm truncate">{appType}</span>
+                <span className="text-sm truncate">{AppType.Root}</span>
                 <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
               </Listbox.Button>
             }
