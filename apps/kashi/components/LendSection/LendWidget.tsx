@@ -6,10 +6,11 @@ import { Widget } from '@sushiswap/ui/widget'
 import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
 import { getSushiSwapRouterContractConfig } from '@sushiswap/wagmi/hooks'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { useAccount } from 'wagmi'
 
 import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
-import { useCustomTokens } from '../../lib/state/storage'
+import { useCustomTokens, useNotifications } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
 
 interface LendWidget {
@@ -17,6 +18,7 @@ interface LendWidget {
 }
 
 export const LendWidget: FC<LendWidget> = ({ pair }) => {
+  const { address: account } = useAccount()
   const { asset } = useTokensFromKashiPair(pair)
   const [value, setValue] = useState('')
   const valueAsEntity = useMemo(() => tryParseAmount(value, asset), [asset, value])
@@ -24,9 +26,8 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
   const tokenMap = useTokens(pair.chainId)
   const [review, setReview] = useState(false)
   const { data: prices } = usePrices({ chainId: pair.chainId })
-
+  const [, { createNotification }] = useNotifications(account)
   const execute = useCallback(() => {}, [])
-
   return (
     <>
       <Widget id="depositCollateral" maxWidth="md">
@@ -105,6 +106,7 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
             {/*</div>*/}
           </div>
           <Approve
+            onSuccess={createNotification}
             className="flex-grow !justify-end mt-3"
             components={
               <Approve.Components>

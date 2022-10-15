@@ -7,10 +7,11 @@ import { Widget } from '@sushiswap/ui/widget'
 import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
 import { getSushiSwapRouterContractConfig } from '@sushiswap/wagmi/hooks'
 import { FC, useCallback, useState } from 'react'
+import { useAccount } from 'wagmi'
 
 import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
-import { useCustomTokens } from '../../lib/state/storage'
+import { useCustomTokens, useNotifications } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
 import { useBorrowContext } from '../BorrowProvider'
 
@@ -21,12 +22,14 @@ interface BorrowWidget {
 export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
   const { collateralValue, setCollateralValue, setBorrowValue, borrowValue, collateralAsEntity, borrowAsEntity } =
     useBorrowContext()
+  const { address: account } = useAccount()
   const tokenMap = useTokens(pair.chainId)
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(pair.chainId)
   const { collateral, asset } = useTokensFromKashiPair(pair)
   const [leverage, setLeverage] = useState<number>(0)
   const [review, setReview] = useState(false)
   const { data: prices } = usePrices({ chainId: pair.chainId })
+  const [, { createNotification }] = useNotifications(account)
   const execute = useCallback(() => {}, [])
 
   return (
@@ -249,6 +252,7 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
             </div>
           </div>
           <Approve
+            onSuccess={createNotification}
             className="flex-grow !justify-end mt-3"
             components={
               <Approve.Components>
