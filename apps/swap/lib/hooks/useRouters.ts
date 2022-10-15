@@ -10,23 +10,25 @@ import { useMemo } from 'react'
 import { useSigner } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
-export function useRouters(chainId: number): [Contract | undefined, Contract | undefined, Contract | undefined] {
+export function useRouters(
+  chainId: number | undefined
+): [Contract | undefined, Contract | undefined, Contract | undefined] {
   const { data: signerOrProvider } = useSigner()
   return useMemo(() => {
     return [
-      AMM_ENABLED_NETWORKS.includes(chainId)
+      chainId && AMM_ENABLED_NETWORKS.includes(chainId)
         ? getContract({
             ...getSushiSwapRouterContractConfig(chainId),
             signerOrProvider,
           })
         : undefined,
-      TRIDENT_ENABLED_NETWORKS.includes(chainId)
+      chainId && TRIDENT_ENABLED_NETWORKS.includes(chainId)
         ? getContract({
             ...getTridentRouterContractConfig(chainId),
             signerOrProvider,
           })
         : undefined,
-      chainId === ChainId.POLYGON
+      chainId && chainId === ChainId.POLYGON
         ? getContract({
             ...getSushiSwapKlimaRouterContractConfig(chainId),
             signerOrProvider,

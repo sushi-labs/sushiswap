@@ -11,9 +11,7 @@ import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 
 export async function getStaticProps() {
-  const articles = await getArticles({ pagination: { limit: 10 } })
-  const categories = await getCategories()
-
+  const [articles, categories] = await Promise.all([getArticles({ pagination: { limit: 10 } }), getCategories()])
   return {
     props: {
       fallback: {
@@ -21,7 +19,7 @@ export async function getStaticProps() {
         ['/categories']: categories?.categories || [],
       },
     },
-    revalidate: 1,
+    revalidate: 60,
   }
 }
 

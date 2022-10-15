@@ -1,13 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { getFuroVestingContractConfig, useFuroVestingContract } from '@sushiswap/wagmi'
-import { CurrencyInput } from 'components'
 import { useVestingBalance, Vesting } from 'lib'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import { useAccount, useDeprecatedContractWrite, useNetwork } from 'wagmi'
 
 interface WithdrawModalProps {
@@ -17,17 +15,11 @@ interface WithdrawModalProps {
 export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const [input, setInput] = useState<string>('')
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { chain: activeChain } = useNetwork()
   const { address } = useAccount()
   const balance = useVestingBalance(activeChain?.id, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(activeChain?.id)
-
-  const amount = useMemo(() => {
-    if (!vesting?.token) return undefined
-    return tryParseAmount(input, vesting.token)
-  }, [input, vesting?.token])
 
   const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
     ...getFuroVestingContractConfig(activeChain?.id),
@@ -38,7 +30,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
   })
 
   const withdraw = useCallback(async () => {
-    if (!vesting || !amount || !activeChain?.id) return
+    if (!vesting || !balance || !activeChain?.id) return
 
     setError(undefined)
 
@@ -57,10 +49,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         summary: {
           pending: (
             <Dots>
-              Withdrawing {amount.toSignificant(6)} {amount.currency.symbol}
+              Withdrawing {balance.toSignificant(6)} {balance.currency.symbol}
             </Dots>
           ),
-          completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
+          completed: `Successfully withdrawn ${balance.toSignificant(6)} ${balance.currency.symbol}`,
           failed: 'Something went wrong withdrawing from vesting schedule',
         },
       })
@@ -78,7 +70,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         ]),
       })
     }
-  }, [address, activeChain?.id, amount, contract?.interface, fundSource, vesting, writeAsync])
+  }, [vesting, balance, activeChain.id, writeAsync, fundSource, address, contract?.interface])
 
   return (
     <>
@@ -96,23 +88,6 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Dialog.Content className="space-y-3 !max-w-xs">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
-          <div className="flex flex-col gap-2">
-            <CurrencyInput.Base
-              className="ring-offset-slate-800"
-              currency={vesting?.token}
-              onChange={setInput}
-              value={input}
-              error={amount && balance && amount.greaterThan(balance)}
-              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
-              helperTextPanel={
-                amount && balance && amount.greaterThan(balance) ? (
-                  <CurrencyInput.HelperTextPanel isError={true} text="Not enough available" />
-                ) : (
-                  <></>
-                )
-              }
-            />
-          </div>
           <div className="grid items-center grid-cols-2 gap-3">
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
@@ -155,7 +130,13 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
               )}
             </div>
           </div>
-
+          <Typography variant="xs" weight={400} className="text-slate-300 py-2 text-center">
+            There are currently{' '}
+            <span className="font-semibold">
+              {balance?.toSignificant(6)} {balance?.currency.symbol}
+            </span>{' '}
+            unlocked tokens available for withdrawal.
+          </Typography>
           {error && (
             <Typography variant="xs" className="text-center text-red" weight={500}>
               {error}
@@ -166,18 +147,10 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
               variant="filled"
               color="gradient"
               fullWidth
-              disabled={isWritePending || !amount || !balance || !amount.greaterThan(0) || amount.greaterThan(balance)}
+              disabled={isWritePending || !balance || !balance?.greaterThan(0)}
               onClick={withdraw}
             >
-              {!amount?.greaterThan(0) ? (
-                'Enter an amount'
-              ) : !vesting?.token ? (
-                'Invalid stream token'
-              ) : isWritePending ? (
-                <Dots>Confirm Withdraw</Dots>
-              ) : (
-                'Withdraw'
-              )}
+              {!vesting?.token ? 'Invalid stream token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
             </Button>
           </Dialog.Actions>
         </Dialog.Content>

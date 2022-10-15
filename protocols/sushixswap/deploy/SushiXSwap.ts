@@ -19,7 +19,7 @@ const func: DeployFunction = async function ({
   run,
 }: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
-  const chainId = (await getChainId()) as keyof (typeof sushiSwapExports | typeof bentoBoxExports)
+  const chainId = await getChainId()
 
   const { deployer } = await getNamedAccounts()
 
@@ -52,13 +52,13 @@ const func: DeployFunction = async function ({
   }
 
   const args = [
-    bentoBoxExports?.[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+    bentoBoxExports?.[chainId.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.address,
     STARGATE_ROUTER_ADDRESS[chainId],
-    sushiSwapExports?.[chainId as unknown as keyof Omit<typeof sushiSwapExports, '31337'>]?.[0]?.contracts
+    sushiSwapExports?.[chainId.toString() as keyof Omit<typeof sushiSwapExports, '31337'>]?.[0]?.contracts
       ?.UniswapV2Factory.address ?? ethers.constants.AddressZero,
     INIT_CODE_HASH?.[chainId] ?? ethers.constants.HashZero,
-    STARGATE_WIDGET_ADDRESS[chainId],
+    STARGATE_WIDGET_ADDRESS[chainId as keyof typeof STARGATE_WIDGET_ADDRESS],
   ]
 
   const { address } = await deploy('SushiXSwap', {
@@ -86,12 +86,12 @@ const func: DeployFunction = async function ({
     },
   ])
 
-  await tenderly.verify([
-    {
-      name: 'SushiXSwap',
-      address: contract.address,
-    },
-  ])
+  // await tenderly.verify([
+  //   {
+  //     name: 'SushiXSwap',
+  //     address: contract.address,
+  //   },
+  // ])
 
   console.log(`SushiXSwap deployed on chain #${chainId} at address ${address}`)
 }

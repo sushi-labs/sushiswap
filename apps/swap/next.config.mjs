@@ -1,9 +1,14 @@
+// import nextPwa from 'next-pwa'
 import transpileModules from 'next-transpile-modules'
+import { withAxiom } from 'next-axiom'
+
+// const withPwa = nextPwa({
+//   dest: 'public',
+// })
 
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/redux-localstorage',
-  '@sushiswap/chain',
   '@sushiswap/wagmi',
   '@sushiswap/ui',
 ])
@@ -13,13 +18,11 @@ const withTranspileModules = transpileModules([
 const nextConfig = {
   basePath: '/swap',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
+  productionBrowserSourceMaps: true,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
-  experimental: {
-    nextScriptWorkers: true,
   },
   async redirects() {
     return [
@@ -61,4 +64,5 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+// export default withAxiom(withPwa(withTranspileModules(nextConfig)))
+export default withAxiom(withTranspileModules(nextConfig))

@@ -8,7 +8,7 @@
     "wagmi",
     "config"
   ],
-  "homepage": "https://sushi.com",
+  "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -39,6 +39,6 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "tsup": "6.x",
-    "typescript": "4.6.3"
+    "typescript": "4.8.2"
   }
 }

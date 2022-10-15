@@ -11,6 +11,8 @@ import {
 } from '@sushiswap/graph-config'
 
 import { getBuiltGraphSDK, InputMaybe, Pagination, Pair, Resolvers } from '../.graphclient'
+import { SushiSwapTypes } from '../.graphclient/sources/SushiSwap/types'
+import { getOneDayBlocks, getOneWeekBlocks, getTwoDayBlocks } from '../fetchers/block'
 import { getTokenBalances } from '../fetchers/token'
 
 // TODO: MOVE
@@ -38,7 +40,7 @@ export const resolvers: Resolvers = {
     chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
     chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
     volume1d: (root, args, context, info) => root.volume1d || '0',
-    volume7d: (root, args, context, info) => root.volume7d || '0',
+    volume1w: (root, args, context, info) => root.volume1w || '0',
     fees1d: (root, args, context, info) => root.fees1d || '0',
     fees1w: (root, args, context, info) => root.fees1w || '0',
   },
@@ -442,73 +444,109 @@ export const resolvers: Resolvers = {
     crossChainPair: async (root, args, context, info) => {
       const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
-      // TODO: Optimise...
-      // return fetch('https://farm.sushi.com/v0').then((res) => res.json()).then(farms => {
-      //   return Promise.all([
-      //     context.SushiSwap.Query.pair({
-      //       root,
-      //       args,
-      //       context: {
-      //         ...context,
-      //         now: args.now,
-      //         chainId: args.chainId,
-      //         chainName: chainName[args.chainId],
-      //         chainShortName: chainShortName[args.chainId],
-      //         subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
-      //         subgraphHost: SUBGRAPH_HOST[args.chainId],
-      //       },
-      //       info,
-      //     }),
-      //   ])
-      // })
+      const fetcher = async (block?: { number: number }) => {
+        const pools: SushiSwapTypes.Pair[] = await Promise.all([
+          SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
+            ? context.SushiSwap.Query.pair({
+                root,
+                args: { ...args, block },
+                context: {
+                  ...context,
+                  now: args.now,
+                  chainId: args.chainId,
+                  chainName: chainName[args.chainId],
+                  chainShortName: chainShortName[args.chainId],
+                  subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
+                  subgraphHost: SUBGRAPH_HOST[args.chainId],
+                },
+                info,
+              })
+            : undefined,
+          TRIDENT_ENABLED_NETWORKS.includes(args.chainId)
+            ? context.Trident.Query.pair({
+                root,
+                args: { ...args },
+                context: {
+                  ...context,
+                  now: args.now,
+                  chainId: args.chainId,
+                  chainName: chainName[args.chainId],
+                  chainShortName: chainShortName[args.chainId],
+                  subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
+                  subgraphHost: SUBGRAPH_HOST[args.chainId],
+                },
+                info,
+              })
+            : undefined,
+        ])
 
-      const pool = SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
-        ? await context.SushiSwap.Query.pair({
-            root,
-            args,
-            context: {
-              ...context,
-              now: args.now,
-              chainId: args.chainId,
-              chainName: chainName[args.chainId],
-              chainShortName: chainShortName[args.chainId],
-              subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: SUBGRAPH_HOST[args.chainId],
-            },
-            info,
-          })
-        : await context.Trident.Query.pair({
-            root,
-            args,
-            context: {
-              ...context,
-              now: args.now,
-              chainId: args.chainId,
-              chainName: chainName[args.chainId],
-              chainShortName: chainShortName[args.chainId],
-              subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: SUBGRAPH_HOST[args.chainId],
-            },
-            info,
-          })
+        const pool = pools.filter(Boolean).find(Boolean)
 
-      if (!pool) return
+        return pool
+      }
 
-      const volume7d = pool.daySnapshots
-        ?.slice(0, 6)
-        ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
+      const blocks = await Promise.all([
+        getOneDayBlocks([args.chainId]),
+        getTwoDayBlocks([args.chainId]),
+        getOneWeekBlocks([args.chainId]),
+      ])
+      const [oneDayBlock, twoDayBlock, oneWeekBlock] = blocks.map(({ crossChainBlocks }) => ({
+        number: crossChainBlocks[0].number as number,
+      }))
+
+      const [pool, pool1d, pool2d, pool1w] = await Promise.all([
+        fetcher(),
+        fetcher(oneDayBlock),
+        fetcher(twoDayBlock),
+        fetcher(oneWeekBlock),
+      ])
+      if (!pool) return null
+
+      const liquidity1dChange = pool1d ? pool.liquidityUSD / pool1d.liquidityUSD - 1 : 0
+      const liquidity1wChange = pool1w ? pool.liquidityUSD / pool1w.liquidityUSD - 1 : 0
+
+      const volume1d = pool1d ? pool.volumeUSD - pool1d.volumeUSD : 0
+      const volume2d = pool2d ? pool1d.volumeUSD - pool2d.volumeUSD : 0
+
+      const volume1dChange = pool2d ? volume1d / volume2d - 1 : null
+      // if pool isn't 7 days old, use snapshots for at least some data
+      const volume1w = pool1w
+        ? Number(pool.volumeUSD) - Number(pool1w.volumeUSD)
+        : pool.daySnapshots
+            ?.slice(0, 6)
+            ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
+
+      const txCount1d = pool1d ? pool.txCount - pool1d.txCount : 0
+      const txCount2d = pool2d ? pool1d.txCount - pool2d.txCount : 0
+      const txCount1dChange = pool2d ? txCount1d / txCount2d - 1 : null
+      // if pool isn't 7 days old, use snapshots for at least some data
+      const txCount1w = pool1w
+        ? Number(pool.volume) - Number(pool1w.volume)
+        : pool.daySnapshots
+            ?.slice(0, 6)
+            ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.transactionCount), 0)
+
       const farm = farms?.[args.chainId]?.farms?.[pool.id]
-      const feeApr = pool?.apr
       const incentiveApr =
         farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
+
+      const feeApr = pool.apr
       const apr = Number(feeApr) + Number(incentiveApr)
+
       return {
         ...pool,
         id: `${chainShortName[args.chainId]}:${pool.id}`,
         chainId: args.chainId,
         chainName: chainName[args.chainId],
         chainShortName: chainShortName[args.chainId],
-        volume7d,
+        liquidity1dChange,
+        liquidity1wChange,
+        volume1d,
+        volume1dChange,
+        volume1w,
+        txCount1d,
+        txCount1dChange,
+        txCount1w,
         apr: String(apr),
         feeApr: String(feeApr),
         incentiveApr: String(incentiveApr),
@@ -530,7 +568,7 @@ export const resolvers: Resolvers = {
               poolType: String(farm.poolType),
             }
           : null,
-      }
+      } as Pair
     },
     crossChainTokens: async (root, args, context, info) => {
       return Promise.all([
@@ -557,6 +595,7 @@ export const resolvers: Resolvers = {
                     chainId,
                     chainName: chainName[chainId],
                     chainShortName: chainShortName[chainId],
+                    source: 'TRIDENT',
                   }))
                 : []
             })
@@ -584,6 +623,7 @@ export const resolvers: Resolvers = {
                     chainId,
                     chainName: chainName[chainId],
                     chainShortName: chainShortName[chainId],
+                    source: 'LEGACY',
                   }))
                 : []
             })
@@ -640,9 +680,10 @@ export const resolvers: Resolvers = {
         chainId: args.chainId,
         chainName: chainName[args.chainId],
         chainShortName: chainShortName[args.chainId],
+        source: SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId) ? 'LEGACY' : 'TRIDENT',
         pairs: token.pairs
           ? token.pairs.map(({ pair }) => {
-              const volume7d = pair.daySnapshots
+              const volume1w = pair.daySnapshots
                 ?.slice(0, 6)
                 ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
               const farm = farms?.[args.chainId]?.farms?.[pair.id]
@@ -657,7 +698,7 @@ export const resolvers: Resolvers = {
               return {
                 pair: {
                   ...pair,
-                  volume7d,
+                  volume1w,
                   id: `${chainShortName[args.chainId]}:${pair.id}`,
                   chainId: args.chainId,
                   chainName: chainName[args.chainId],
@@ -701,7 +742,7 @@ export const resolvers: Resolvers = {
           liquidityPositions:
             user?.liquidityPositions?.length > 0
               ? user.liquidityPositions.map((el) => {
-                  const volume7d = el.pair.daySnapshots
+                  const volume1w = el.pair.daySnapshots
                     ?.slice(0, 6)
                     ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
                   const farm = farms?.[chainId]?.farms?.[el.pair.id]
@@ -723,7 +764,7 @@ export const resolvers: Resolvers = {
                     balance: Math.floor(Number(el.balance / 2)),
                     pair: {
                       ...el.pair,
-                      volume7d,
+                      volume1w,
                       id: `${chainShortName[chainId]}:${el.pair.id}`,
                       chainId,
                       chainName: chainName[chainId],

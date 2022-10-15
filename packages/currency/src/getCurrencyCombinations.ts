@@ -71,6 +71,20 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     DAI[ChainId.ARBITRUM],
     MIM[ChainId.ARBITRUM],
     FRAX[ChainId.ARBITRUM],
+    new Token({
+      chainId: ChainId.ARBITRUM,
+      address: '0x539bdE0d7Dbd336b79148AA742883198BBF60342',
+      decimals: 18,
+      symbol: 'MAGIC',
+      name: 'MAGIC',
+    }),
+    new Token({
+      chainId: ChainId.ARBITRUM,
+      address: '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
+      decimals: 18,
+      symbol: 'gOHM',
+      name: 'Governance OHM',
+    }),
   ],
   [ChainId.ARBITRUM_NOVA]: [
     WNATIVE[ChainId.ARBITRUM_NOVA],
@@ -179,6 +193,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     USDT[ChainId.OPTIMISM],
     DAI[ChainId.OPTIMISM],
     LUSD[ChainId.OPTIMISM],
+    FRAX[ChainId.OPTIMISM],
+    MIM[ChainId.OPTIMISM],
   ],
   [ChainId.KAVA]: [
     WNATIVE[ChainId.KAVA],
@@ -191,11 +207,22 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
   [ChainId.METIS]: [WNATIVE[ChainId.METIS]],
   [ChainId.BOBA]: [
     WNATIVE[ChainId.BOBA],
+    WBTC[ChainId.BOBA],
     USDC[ChainId.BOBA],
     USDT[ChainId.BOBA],
     DAI[ChainId.BOBA],
     FRAX[ChainId.BOBA],
-    WBTC[ChainId.BOBA],
+    MIM[ChainId.BOBA],
+  ],
+  [ChainId.BOBA_AVAX]: [
+    WNATIVE[ChainId.BOBA_AVAX],
+    new Token({
+      chainId: ChainId.BOBA_AVAX,
+      address: '0x4200000000000000000000000000000000000023',
+      decimals: 18,
+      symbol: 'AVAX',
+      name: 'Avax',
+    }),
   ],
   // [ChainId.BOBA_AVAX]: [WNATIVE[ChainId.BOBA_AVAX]],
 }

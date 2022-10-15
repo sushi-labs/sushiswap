@@ -1,4 +1,3 @@
-import { Amount } from '@sushiswap/currency'
 import { Button, HistoryIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { Stream, Transaction, Vesting } from 'lib'

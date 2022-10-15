@@ -6,8 +6,10 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
+// import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
+
 export type Client = ReturnType<typeof createClient>
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
@@ -43,6 +45,9 @@ export const client: Client = createClient({
       block.difficulty = () => 0
     }
     return _provider
+  },
+  logger: {
+    warn: null,
   },
   // webSocketProvider,
   autoConnect: false,

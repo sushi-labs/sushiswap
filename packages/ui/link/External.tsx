@@ -60,7 +60,7 @@ export const External: FC<ExternalLinkProps> = ({
       href={href}
       onClick={handleClick}
       className={classNames(
-        'text-baseline whitespace-nowrap',
+        'flex text-baseline whitespace-nowrap',
         COLOR[color],
         (startIcon || endIcon) && 'space-x-1 flex items-center justify-center',
         className

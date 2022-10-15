@@ -1,29 +1,32 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
-    "root#build": {
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": [
+        "coverage/**"
+      ]
+    },
+    "lint": {
       "dependsOn": [
         "^build"
       ],
+      "outputs": []
+    },
+    "generate": {
       "outputs": [
-        ".next/**"
-      ],
-      "cache": true,
-      "env": [
-        "ANALYTICS_URL",
-        "BLOG_URL",
-        "DOCS_URL",
-        "FURO_URL",
-        "LANDING_URL",
-        "SWAP_URL",
-        "LEGACY_URL",
-        "INVEST_URL",
-        "XSWAP_URL"
+        ".graphclient/**",
+        ".mesh/**",
+        "typechain/**",
+        "artifacts/**",
+        "cache/**"
       ]
     },
     "build": {
       "outputs": [
         ".next/**",
+        ".graphclient/**",
+        ".mesh/**",
         "dist/**",
         "typechain/**",
         "artifacts/**",
@@ -32,8 +35,29 @@
       "dependsOn": [
         "^build",
         "generate"
+      ]
+    },
+    "root#build": {
+      "dependsOn": [
+        "^build",
+        "generate"
       ],
-      "cache": true
+      "outputs": [
+        ".next/**"
+      ],
+      "env": [
+        "ROOT_URL",
+        "ANALYTICS_URL",
+        "BLOG_URL",
+        "BRIDGE_URL",
+        "EARN_URL",
+        "FURO_URL",
+        "INTERNAL_URL",
+        "KASHI_URL",
+        "PARTNER_URL",
+        "SWAP_URL",
+        "XSWAP_URL"
+      ]
     },
     "clean": {
       "cache": false
@@ -44,33 +68,6 @@
         "generate"
       ],
       "cache": false
-    },
-    "generate": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "^build",
-        ".graphclient/**",
-        ".mesh/**",
-        "typechain/**"
-      ],
-      "cache": true
-    },
-    "test": {
-      "outputs": [
-        "coverage/**"
-      ],
-      "dependsOn": [
-        "^build"
-      ],
-      "cache": true
-    },
-    "lint": {
-      "outputs": [],
-      "dependsOn": [
-        "^build"
-      ]
     },
     "validate": {
       "cache": false
@@ -86,18 +83,16 @@
     },
     "node": {
       "dependsOn": [
-        "build"
+        "^build"
       ],
       "outputs": [
         "deployments/**"
-      ],
-      "cache": true
+      ]
     },
     "server": {
       "dependsOn": [
-        "build"
-      ],
-      "cache": true
+        "^build"
+      ]
     }
   }
 }

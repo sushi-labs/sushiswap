@@ -8,7 +8,7 @@ import { PairFees7dCell } from './PairFees7dCell'
 import { PairFees24hCell } from './PairFees24hCell'
 import { PairNameCell } from './PairNameCell'
 import { PairTVLCell } from './PairTVLCell'
-import { PairVolume7dCell } from './PairVolume7dCell'
+import { PairVolume1wCell } from './PairVolume1wCell'
 import { PairVolume24hCell } from './PairVolume24hCell'
 import { TokenChainCell } from './TokenChainCell'
 import { TokenLiquidityCell } from './TokenLiquidityCell'
@@ -65,9 +65,9 @@ export const VOLUME_24_COLUMN: ColumnDef<Pair, unknown> = {
 
 export const VOLUME_7_COLUMN: ColumnDef<Pair, unknown> = {
   header: 'Volume (7d)',
-  id: 'volume7d',
-  // accessorFn: (row) => row.volume7d,
-  cell: (props) => <PairVolume7dCell row={props.row.original} />,
+  id: 'volume1w',
+  // accessorFn: (row) => row.volume1w,
+  cell: (props) => <PairVolume1wCell row={props.row.original} />,
   size: 100,
   meta: {
     className: 'justify-end',

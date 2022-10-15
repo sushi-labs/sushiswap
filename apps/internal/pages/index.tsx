@@ -3,7 +3,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import { getBuiltGraphSDK } from '.graphclient'
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const sdk = getBuiltGraphSDK()
   const { crossChainBentoBoxKpis: data } = await sdk.CrossChainBentoBoxKpis({
     chainIds: [
@@ -22,7 +23,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
       // ChainId.KAVA,
     ],
   })
-  // console.log('data', data)
   return {
     props: {
       data,
@@ -31,7 +31,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
 }
 
 export default function IndexPage({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(data)
   return (
     <div className="grid grid-cols-6 gap-4 p-8">
       {data.map((kpi) => (

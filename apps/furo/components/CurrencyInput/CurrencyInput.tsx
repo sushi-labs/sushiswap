@@ -61,6 +61,7 @@ const Component: FC<CurrencyInput> = ({
 
   useEffect(() => {
     if (onError && insufficientBalanceError) onError(insufficientBalanceError)
+    else if (onError && !insufficientBalanceError) onError(undefined)
   }, [onError, insufficientBalanceError])
 
   return (

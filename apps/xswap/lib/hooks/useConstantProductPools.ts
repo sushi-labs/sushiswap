@@ -8,7 +8,7 @@ import { useBlockNumber } from 'wagmi'
 
 import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 
-export enum PoolState {
+export enum ConstantProductPoolState {
   LOADING,
   NOT_EXISTS,
   EXISTS,
@@ -26,7 +26,7 @@ interface PoolData {
 export function useConstantProductPools(
   chainId: number,
   currencies: [Currency | undefined, Currency | undefined][]
-): [PoolState, ConstantProductPool | null][] {
+): [ConstantProductPoolState, ConstantProductPool | null][] {
   const { data: latestBlockNumber } = useBlockNumber({ chainId })
   const contract = useConstantProductPoolFactoryContract(chainId)
   const pairsUnique = useMemo(() => {
@@ -108,10 +108,10 @@ export function useConstantProductPools(
   return useMemo(
     () =>
       pools.map((p, i) => {
-        if (!resultsReserves[i].valid || !resultsReserves[i].result) return [PoolState.LOADING, null]
-        if (!resultsFee[i].valid || !resultsFee[i].result) return [PoolState.LOADING, null]
+        if (!resultsReserves[i].valid || !resultsReserves[i].result) return [ConstantProductPoolState.LOADING, null]
+        if (!resultsFee[i].valid || !resultsFee[i].result) return [ConstantProductPoolState.LOADING, null]
         return [
-          PoolState.EXISTS,
+          ConstantProductPoolState.EXISTS,
           new ConstantProductPool(
             Amount.fromRawAmount(p.token0, resultsReserves[i].result!._reserve0.toString()),
             Amount.fromRawAmount(p.token1, resultsReserves[i].result!._reserve1.toString()),
@@ -126,14 +126,14 @@ export function useConstantProductPools(
 
 // Just for testing purposes
 export function poolListCompare(
-  list1: [PoolState, ConstantProductPool | null][],
-  list2: [PoolState, ConstantProductPool | null][]
+  list1: [ConstantProductPoolState, ConstantProductPool | null][],
+  list2: [ConstantProductPoolState, ConstantProductPool | null][]
 ): boolean | number {
   const l1 = list1
-    .filter((p) => p[0] == PoolState.EXISTS)
+    .filter((p) => p[0] == ConstantProductPoolState.EXISTS)
     .sort((p1, p2) => parseInt(p1[1]?.liquidityToken.address || '1') - parseInt(p2[1]?.liquidityToken.address || '1'))
   const l2 = list2
-    .filter((p) => p[0] == PoolState.EXISTS)
+    .filter((p) => p[0] == ConstantProductPoolState.EXISTS)
     .sort((p1, p2) => parseInt(p1[1]?.liquidityToken.address || '1') - parseInt(p2[1]?.liquidityToken.address || '1'))
   if (l1.length !== l2.length) {
     console.log(l1.length, '-', l2.length)

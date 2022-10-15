@@ -62,10 +62,12 @@ export const TokenSelectorCustomTokensOverlay: FC<TokenSelectorSettingsOverlayPr
   const [ids, tokens] = useMemo(() => {
     const ids: string[] = []
     const tokens: Token[] = []
-    Object.entries(customTokenMap).forEach(([k, v]) => {
-      ids.push(k)
-      tokens.push(v)
-    })
+    if (customTokenMap) {
+      Object.entries(customTokenMap).forEach(([k, v]) => {
+        ids.push(k)
+        tokens.push(v)
+      })
+    }
 
     return [ids, tokens]
   }, [customTokenMap])
@@ -106,7 +108,9 @@ export const TokenSelectorCustomTokensOverlay: FC<TokenSelectorSettingsOverlayPr
                 <TokenSelectorCustomTokenRow
                   style={style}
                   currency={currency}
-                  onRemove={() => onRemoveToken({ chainId: currency.chainId, address: currency.wrapped.address })}
+                  onRemove={() =>
+                    onRemoveToken && onRemoveToken({ chainId: currency.chainId, address: currency.wrapped.address })
+                  }
                 />
               )}
             />

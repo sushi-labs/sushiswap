@@ -3,7 +3,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import { getBuiltGraphSDK } from '.graphclient'
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const sdk = getBuiltGraphSDK()
   const { crossChainStrategyKpis: data } = await sdk.CrossChainStrategyKpis({
     chainIds: [
@@ -22,7 +23,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
       // ChainId.KAVA,
     ],
   })
-  console.log('data', data)
   return {
     props: {
       data,

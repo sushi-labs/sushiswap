@@ -1,7 +1,7 @@
 export interface ContractExport {
   address: string
-  abi: any[]
-  linkedData?: any
+  abi: unknown[]
+  linkedData?: unknown
 }
 
 export interface Export {

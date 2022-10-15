@@ -1,4 +1,4 @@
-import { App, AppType } from '@sushiswap/ui'
+import { App, AppType, BuyCrypto } from '@sushiswap/ui'
 import { NotificationCentre, Wallet } from '@sushiswap/wagmi'
 import React, { FC } from 'react'
 import { useAccount } from 'wagmi'
@@ -9,15 +9,16 @@ import { useNotifications } from '../lib/state/storage'
 export const Header: FC = () => {
   const { address } = useAccount()
   const [notifications, { clearNotifications }] = useNotifications(address)
-
   return (
     <App.Header
       withScrollBackground={true}
       appType={AppType.Swap}
       nav={
         <App.NavItemList>
-          <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
-          <App.NavItemInternal href="https://sushi.com/earn" label="Earn" />
+          <App.NavItemInternal href="https://www.sushi.com/swap" label="Swap" />
+          <App.NavItemInternal href="https://www.sushi.com/earn" label="Earn" />
+          {/* <App.NavItemInternal href="https://www.sushi.com/bridge" label="Bridge" /> */}
+          <BuyCrypto address={address} />
         </App.NavItemList>
       }
     >

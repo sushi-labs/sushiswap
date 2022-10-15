@@ -1,5 +1,28 @@
 import json from './chains.json'
 
+const CHAINS = json.concat({
+  name: 'Boba Avax',
+  chain: 'Boba Avax',
+  rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
+  faucets: [],
+  nativeCurrency: {
+    name: 'Boba Token',
+    symbol: 'BOBA',
+    decimals: 18,
+  },
+  infoURL: 'https://boba.network',
+  shortName: 'bobaavax',
+  chainId: 43288,
+  networkId: 43288,
+  explorers: [
+    {
+      name: 'Boba Avax Explorer',
+      url: 'https://blockexplorer.avax.boba.network',
+      standard: 'none',
+    },
+  ],
+}) as Chain[]
+
 export interface Chain {
   name: string
   chain: string
@@ -77,8 +100,6 @@ export enum ChainId {
   BSC_TESTNET = 97,
   ARBITRUM = 42161,
   ARBITRUM_NOVA = 42170,
-  ARBITRUM_RINKEBY_TESTNET = 421611,
-  ARBITRUM_GNOSIS_TESTNET = 200,
   ARBITRUM_TESTNET = 79377087078960,
   AVALANCHE = 43114,
   AVALANCHE_TESTNET = 43113,
@@ -90,14 +111,11 @@ export enum ChainId {
   OKEX_TESTNET = 65,
   CELO = 42220,
   PALM = 11297108109,
-  PALM_TESTNET = 11297108099,
   MOONRIVER = 1285,
   FUSE = 122,
   TELOS = 40,
-  HARDHAT = 31337,
   MOONBEAM = 1284,
   OPTIMISM = 10,
-  OPTIMISM_KOVAN_TESTNET = 69,
   KAVA = 2222,
   METIS = 1088,
   BOBA = 288,
@@ -143,6 +161,8 @@ export enum ChainKey {
   BOBA_AVAX = 'boba-avax',
 }
 
+const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
+
 export class Chain implements Chain {
   public static from(chainId: number) {
     return chains[chainId]
@@ -153,14 +173,13 @@ export class Chain implements Chain {
   public static fromChainId(chainId: number) {
     return chains[chainId]
   }
-
   constructor(data: Chain) {
     Object.assign(this, data)
   }
   getTxUrl(txHash: string): string {
     if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (explorer.standard === Standard.Eip3091) {
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
         return `${explorer.url}/tx/${txHash}`
       }
     }
@@ -178,7 +197,7 @@ export class Chain implements Chain {
   getTokenUrl(tokenAddress: string): string {
     if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (explorer.standard === Standard.Eip3091) {
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
         return `${explorer.url}/token/${tokenAddress}`
       }
     }
@@ -187,7 +206,7 @@ export class Chain implements Chain {
   getAccountUrl(accountAddress: string): string {
     if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (explorer.standard === Standard.Eip3091) {
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
         return `${explorer.url}/address/${accountAddress}`
       }
     }
@@ -196,32 +215,29 @@ export class Chain implements Chain {
 }
 
 // ChainId array
-export const chainIds = json.map((chain) => chain.chainId)
+export const chainIds = CHAINS.map((chain) => chain.chainId)
 
 // Chain Short Name => Chain Id mapping
 export const chainShortNameToChainId = Object.fromEntries(
-  (json as Chain[]).map((data): [string, number] => [data.shortName, data.chainId])
+  CHAINS.map((data): [string, number] => [data.shortName, data.chainId])
 )
 
 // Chain Id => Short Name mapping
-export const chainShortName = Object.fromEntries(
-  (json as Chain[]).map((data): [number, string] => [data.chainId, data.shortName])
-)
+export const chainShortName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.shortName]))
 
 // Chain Id => Chain Name mapping
-export const chainName = Object.fromEntries(
-  (json as Chain[]).map((data): [number, string] => [data.chainId, data.name])
-)
+export const chainName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.name]))
 
 // Chain Id => Chain mapping
 export const chains = Object.fromEntries(
-  (json as Chain[]).map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
+  CHAINS.map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
 )
 
 export const chainsL2 = Object.fromEntries(
-  (json as Chain[])
-    .filter((data) => data.parent?.type === Type.L2)
-    .map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
+  CHAINS.filter((data) => data.parent?.type === Type.L2).map((data): [number, Chain] => [
+    data.chainId,
+    new Chain(data) as Chain,
+  ])
 )
 
 export default chains

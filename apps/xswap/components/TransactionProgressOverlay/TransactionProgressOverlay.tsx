@@ -29,7 +29,7 @@ export const TransactionProgressOverlay: FC<TransactionProgressOverlay> = ({
   return (
     <>
       <Dialog.Header title="Transaction In Progress" onClose={onClose} />
-      <div className="flex flex-col gap-8 flex-grow">
+      <div className="flex flex-col flex-grow gap-8">
         <div className={classNames('flex justify-center items-center flex-grow', crossChain ? 'pt-6' : 'pt-3')}>
           <TransactionProgressStepper
             id={id}
@@ -42,7 +42,7 @@ export const TransactionProgressOverlay: FC<TransactionProgressOverlay> = ({
           />
         </div>
         {crossChain && (
-          <Typography variant="xs" className="text-slate-500 text-center">
+          <Typography variant="xs" className="text-center text-slate-500">
             This usually takes{' '}
             <span className="font-medium text-slate-200">
               ~

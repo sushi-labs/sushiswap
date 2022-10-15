@@ -8,8 +8,8 @@ import { Type } from './Type'
  * Represents an ERC20 token with a unique address and some metadata.
  */
 export class Token extends Currency {
-  public readonly isNative: false = false
-  public readonly isToken: true = true
+  public readonly isNative = false as const
+  public readonly isToken = true as const
   /**
    * The contract address on the chain on which this token lives
    */

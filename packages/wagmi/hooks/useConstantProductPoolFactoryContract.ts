@@ -1,11 +1,13 @@
-import TRIDENT from '@sushiswap/trident/exports/all.json'
+import tridentExports from '@sushiswap/trident/exports/all.json'
 import { useContract, useProvider } from 'wagmi'
 
 export const getConstantProductPoolFactoryContract = (chainId: number | undefined) => ({
-  // @ts-ignore
-  addressOrName: TRIDENT[chainId]?.[0]?.contracts?.ConstantProductPoolFactory?.address ?? '',
-  // @ts-ignore
-  contractInterface: TRIDENT[chainId]?.[0]?.contracts?.ConstantProductPoolFactory?.abi ?? [],
+  addressOrName:
+    tridentExports[chainId?.toString() as keyof Omit<typeof tridentExports, '31337'>]?.[0]?.contracts
+      ?.ConstantProductPoolFactory?.address ?? '',
+  contractInterface:
+    tridentExports[chainId?.toString() as keyof Omit<typeof tridentExports, '31337'>]?.[0]?.contracts
+      ?.ConstantProductPoolFactory?.abi ?? [],
 })
 
 export function useConstantProductPoolFactoryContract(chainId: number | undefined) {

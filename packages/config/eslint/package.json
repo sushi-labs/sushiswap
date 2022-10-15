@@ -14,21 +14,22 @@
   "files": [
     "index.js",
     "hardhat/index.js",
-    "nextjs/index.js"
+    "nextjs/index.js",
+    "react/index.js"
   ],
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "5.x",
-    "@typescript-eslint/parser": "5.x",
-    "eslint": "8.x",
-    "eslint-config-next": "12.x",
-    "eslint-config-prettier": "8.x",
-    "eslint-plugin-cypress": "2.x",
-    "eslint-plugin-simple-import-sort": "7.x",
-    "eslint-plugin-testing-library": "5.5.1",
-    "eslint-plugin-unused-imports": "2.x"
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-cypress": "latest",
+    "eslint-plugin-simple-import-sort": "latest",
+    "eslint-plugin-testing-library": "latest",
+    "eslint-plugin-unused-imports": "latest"
   },
   "devDependencies": {
-    "@types/eslint": "8.x",
-    "@types/node": "17.x"
+    "@types/eslint": "latest",
+    "@types/node": "^16.0.0"
   }
 }

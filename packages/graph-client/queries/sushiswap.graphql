@@ -139,7 +139,6 @@ query CrossChainPairs(
     feesUSD
     volume1d
     volume1w
-    volume7d
     fees1d
     fees1w
     aprUpdatedAtTimestamp
@@ -180,9 +179,10 @@ query CrossChainUser($id: ID!, $where: LiquidityPosition_filter, $chainIds: [Int
         liquidity
         swapFee
         twapEnabled
-        volume7d
+        volume1w
         type
         source
+        type
         token0 {
           name
           id
@@ -238,7 +238,16 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
     reserve1
     swapFee
     twapEnabled
-    volume7d
+    liquidity1dChange
+    liquidity1wChange
+    volumeUSD
+    volume1d
+    volume1dChange
+    volume1w
+    txCount
+    txCount1d
+    txCount1dChange
+    txCount1w
     source
     type
     token0 {
@@ -317,11 +326,12 @@ query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
     price {
       derivedNative
     }
+    source
     pairs {
       pair {
         chainId
         liquidityUSD
-        volume7d
+        volume1w
         swapFee
         token0 {
           name
@@ -398,6 +408,7 @@ query CrossChainTokens(
     price {
       derivedNative
     }
+    source
   }
 }
 
@@ -467,7 +478,7 @@ query CrossChainUserWithFarms($id: ID!, $block: Block_height, $now: Int!, $chain
       liquidity
       swapFee
       twapEnabled
-      volume7d
+      volume1w
       source
       type
       token0 {

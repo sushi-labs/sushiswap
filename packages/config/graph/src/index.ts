@@ -53,6 +53,8 @@ export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.KAVA]: 'Kava',
   [ChainId.METIS]: 'Metis',
   [ChainId.BOBA]: 'Boba',
+  [ChainId.ARBITRUM_NOVA]: 'Arbitrum Nova',
+  [ChainId.BOBA_AVAX]: 'Boba Avax',
 }
 
 export const SUBGRAPH_HOST: Record<number | string, string> = {
@@ -71,24 +73,25 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.METIS]: METIS_HOST,
   [ChainId.MOONBEAM]: GRAPH_HOST,
   [ChainId.MOONRIVER]: GRAPH_HOST,
-  [ChainId.OPTIMISM]: GRAPH_HOST,
+  [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ARBITRUM]: 'matthewlilley/bentobox-arbitrum',
-  [ChainId.AVALANCHE]: 'matthewlilley/bentobox-avalanche',
-  [ChainId.BSC]: 'matthewlilley/bentobox-bsc',
-  [ChainId.ETHEREUM]: 'matthewlilley/bentobox-ethereum',
-  [ChainId.FANTOM]: 'matthewlilley/bentobox-fantom',
-  [ChainId.GNOSIS]: 'matthewlilley/bentobox-gnosis',
-  [ChainId.GÖRLI]: 'matthewlilley/bentobox-goreli',
-  [ChainId.HARMONY]: 'matthewlilley/bentobox-harmony',
-  [ChainId.MOONBEAM]: 'matthewlilley/bentobox-moonbeam',
-  [ChainId.MOONRIVER]: 'matthewlilley/bentobox-moonriver',
-  [ChainId.OPTIMISM]: 'matthewlilley/bentobox-optimism',
-  [ChainId.POLYGON]: 'matthewlilley/bentobox-polygon',
+  [ChainId.ETHEREUM]: 'sushiswap/bentobox-ethereum',
+  [ChainId.POLYGON]: 'sushiswap/bentobox-polygon',
+  [ChainId.AVALANCHE]: 'sushiswap/bentobox-avalanche',
+  [ChainId.BSC]: 'sushiswap/bentobox-bsc',
+  [ChainId.FANTOM]: 'sushiswap/bentobox-fantom',
+  [ChainId.GNOSIS]: 'sushiswap/bentobox-gnosis',
+  [ChainId.ARBITRUM]: 'sushiswap/bentobox-arbitrum',
+  [ChainId.CELO]: 'sushiswap/bentobox-celo',
+  [ChainId.MOONRIVER]: 'sushiswap/bentobox-moonriver',
+  [ChainId.MOONBEAM]: 'sushiswap/bentobox-moonbeam',
+  [ChainId.OPTIMISM]: 'sushiswap/bentobox-optimism',
+  [ChainId.HARMONY]: 'sushiswap/bentobox-harmony',
+  [ChainId.KAVA]: 'sushiswap/bentobox-kava',
 }
 
 export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -147,10 +150,10 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
 }
 
 export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.POLYGON]: 'sushi-0m/trident-polygon',
-  [ChainId.OPTIMISM]: 'sushi-0m/trident-optimism',
-  [ChainId.KAVA]: 'sushi-0m/trident-kava',
-  [ChainId.METIS]: 'sushi-0m/trident-metis',
+  [ChainId.POLYGON]: 'sushi-qa/trident-polygon',
+  [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
+  [ChainId.KAVA]: 'sushi-qa/trident-kava',
+  [ChainId.METIS]: 'sushi-qa/trident-metis',
 }
 
 export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -169,6 +172,24 @@ export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'
+export const FURO_SUBGRAPH_NAME: Record<string | number, string> = {
+  [ChainId.ETHEREUM]: 'sushi-subgraphs/furo-ethereum',
+  [ChainId.GÖRLI]: 'sushi-subgraphs/furo-goerli',
+  [ChainId.ARBITRUM]: 'sushi-subgraphs/furo-arbitrum',
+  [ChainId.AVALANCHE]: 'sushi-subgraphs/furo-avalanche',
+  [ChainId.BSC]: 'sushi-subgraphs/furo-bsc',
+  [ChainId.FANTOM]: 'sushi-subgraphs/furo-fantom',
+  [ChainId.GNOSIS]: 'sushi-subgraphs/furo-gnosis',
+  [ChainId.HARMONY]: 'sushi-subgraphs/furo-harmony',
+  [ChainId.MOONBEAM]: 'sushi-subgraphs/furo-moonbeam',
+  [ChainId.MOONRIVER]: 'sushi-subgraphs/furo-moonriver',
+  [ChainId.OPTIMISM]: 'sushi-subgraphs/furo-optimism',
+  [ChainId.POLYGON]: 'sushi-subgraphs/furo-polygon',
+}
+
+export const KASHI_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.ARBITRUM]: 'sushiswap/kashi-arbitrum',
+}
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID]

@@ -14,22 +14,22 @@ export type TokenSelectorProps = {
   open: boolean
   chainId: ChainId | undefined
   tokenMap: Record<string, Token>
-  customTokenMap: Record<string, Token>
+  customTokenMap?: Record<string, Token>
   onClose(): void
   onSelect?(currency: Type): void
-  onAddToken(token: Token): void
-  onRemoveToken({ chainId, address }: { chainId: ChainId; address: string }): void
+  onAddToken?(token: Token): void
+  onRemoveToken?({ chainId, address }: { chainId: ChainId; address: string }): void
   fundSource?: FundSource
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = memo(
-  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, onSelect, open, ...props }) => {
+  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, onSelect, open, customTokenMap = {}, ...props }) => {
     const { address } = useAccount()
     const isMounted = useIsMounted()
 
     const _tokenMap: Record<string, Token> = useMemo(
-      () => ({ ...tokenMap, ...props.customTokenMap }),
-      [tokenMap, props.customTokenMap]
+      () => ({ ...tokenMap, ...customTokenMap }),
+      [tokenMap, customTokenMap]
     )
 
     const _tokenMapValues = useMemo(() => {

@@ -8,10 +8,11 @@ import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, u
 
 export enum AppType {
   Root = 'Explore Apps',
+  Blog = 'Blog',
+  Bridge = 'Bridge',
   Swap = 'Swap',
   xSwap = 'xSwap',
   Furo = 'Streaming',
-  Blog = 'Blog',
   Legacy = 'Sushi 1.0',
   Internal = 'Internal',
   Kashi = 'Lend & Borrow',
@@ -21,11 +22,13 @@ export enum AppType {
 }
 
 const LINK = {
+  [AppType.Root]: '/',
+  [AppType.Legacy]: '/',
+  [AppType.Blog]: '/blog',
+  [AppType.Bridge]: '/bridge',
   [AppType.Swap]: '/swap',
   [AppType.xSwap]: '/xswap',
   [AppType.Furo]: '/furo',
-  [AppType.Blog]: '/blog',
-  [AppType.Legacy]: '/',
   [AppType.Internal]: '/internal',
   [AppType.Kashi]: '/kashi',
   [AppType.Analytics]: '/analytics',
@@ -85,7 +88,7 @@ export function Header({
         className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}
       >
         <div className="flex items-center gap-3">
-          <a className="flex flex-row items-center gap-1.5" href={LINK[appType]}>
+          <a className="flex flex-row items-center gap-1.5" href="/">
             <div className="w-6 h-6">
               <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
             </div>
@@ -97,7 +100,7 @@ export function Header({
                 type="button"
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
-                <span className="text-sm truncate">{appType}</span>
+                <span className="text-sm truncate">{AppType.Root}</span>
                 <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
               </Listbox.Button>
             }
@@ -151,7 +154,7 @@ export function Header({
                   </Typography>
                   {/* <Select.Option
                     as="a"
-                    href="https://sushi.com/kashi"
+                    href="https://www.sushi.com/kashi"
                     key={AppType.Kashi}
                     value={AppType.Kashi}
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"

@@ -14,6 +14,8 @@ import { DefaultSeo, Header } from '../components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
 
+export { reportWebVitals } from 'next-axiom'
+
 export const cld = new Cloudinary({
   cloud: {
     cloudName: 'sushi-cdn',
@@ -51,8 +53,6 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
         <link rel="manifest" href="/site.webmanifest?v=1" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
-        <meta name="msapplication-TileColor" content="#2b5797" />
-        <meta name="theme-color" content="#ffffff" />
       </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
@@ -86,10 +86,12 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 // Hopefully we can replace this with getStaticProps once this issue is fixed:
 // https://github.com/vercel/next.js/discussions/10949
 MyApp.getInitialProps = async (ctx: AppContext) => {
-  // Calls page's `getInitialProps` and fills `appProps.pageProps`
-  const appProps = await NextApp.getInitialProps(ctx)
-  // Fetch global site settings from Strapi
-  const globalSEO = await getGlobalSEO()
+  const [appProps, globalSEO] = await Promise.all([
+    // Calls page's `getInitialProps` and fills `appProps.pageProps`
+    NextApp.getInitialProps(ctx),
+    // Fetch global site settings from Strapi
+    getGlobalSEO(),
+  ])
   // Pass the data to our page via props
   return { ...appProps, seo: globalSEO.global?.data.attributes }
 }

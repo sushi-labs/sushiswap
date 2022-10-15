@@ -14,6 +14,8 @@ const eslintConfig = {
     '**/__tests__/*.test.ts',
     '**/dist/**',
     '**/node_modules/**',
+    '**/.graphclient/**',
+    '**/.mesh/**',
     '**/generated/**',
     '**/typechain/**',
     '**/coverage/**',

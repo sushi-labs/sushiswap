@@ -1,12 +1,14 @@
-import TRIDENT from '@sushiswap/trident/exports/all.json'
+import tridentExports from '@sushiswap/trident/exports/all.json'
 import { useContract, useSigner } from 'wagmi'
 
-// TODO TRIDENT export should be in protocol folder
+// TODO: exports should be in protocol folder
 export const getTridentRouterContractConfig = (chainId: number | undefined) => ({
-  // @ts-ignore
-  addressOrName: TRIDENT[chainId]?.[0]?.contracts.TridentRouter.address ?? '',
-  // @ts-ignore
-  contractInterface: TRIDENT[chainId]?.[0]?.contracts.TridentRouter.abi ?? [],
+  addressOrName:
+    tridentExports[chainId?.toString() as keyof Omit<typeof tridentExports, '31337'>]?.[0]?.contracts.TridentRouter
+      ?.address ?? '',
+  contractInterface:
+    tridentExports[chainId?.toString() as keyof Omit<typeof tridentExports, '31337'>]?.[0]?.contracts.TridentRouter
+      ?.abi ?? [],
 })
 
 export function useTridentRouterContract(chainId: number | undefined) {

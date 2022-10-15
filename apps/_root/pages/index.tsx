@@ -24,11 +24,9 @@ export async function getStaticProps() {
     getLegacyExchangeData(),
     getTridentExchangeData(),
   ])
-
   const totalTVL = bentoTVL + legacyExchangeData.tvlUSD
   const totalVolume = legacyExchangeData.volumeUSD + tridentExchangeData.volumeUSD
   const totalPoolCount = legacyExchangeData.pairCount + tridentExchangeData.poolCount
-
   return {
     props: {
       stats: [
