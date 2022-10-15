@@ -86,10 +86,12 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 // Hopefully we can replace this with getStaticProps once this issue is fixed:
 // https://github.com/vercel/next.js/discussions/10949
 MyApp.getInitialProps = async (ctx: AppContext) => {
-  // Calls page's `getInitialProps` and fills `appProps.pageProps`
-  const appProps = await NextApp.getInitialProps(ctx)
-  // Fetch global site settings from Strapi
-  const globalSEO = await getGlobalSEO()
+  const [appProps, globalSEO] = await Promise.all([
+    // Calls page's `getInitialProps` and fills `appProps.pageProps`
+    NextApp.getInitialProps(ctx),
+    // Fetch global site settings from Strapi
+    getGlobalSEO(),
+  ])
   // Pass the data to our page via props
   return { ...appProps, seo: globalSEO.global?.data.attributes }
 }
