@@ -1,10 +1,10 @@
 name: 'Next.js Bundle Analysis'
 
 on:
-  pull_request:
   push:
-    branches:
-      - master # change this if your default branch is named differently
+    branches: ["master"]
+  pull_request:
+    types: [opened, synchronize]
   workflow_dispatch:
 
 defaults:
@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      NEXT_TELEMETRY_DISABLED: 1
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
@@ -83,7 +84,7 @@ jobs:
         with:
           workflow: nextjs_bundle_analysis.yml
           branch: ${{ github.event.pull_request.base.ref }}
-          path: .next/analyze/base
+          path: ./apps/swap/.next/analyze/base
 
       # And here's the second place - this runs after we have both the current and
       # base branch bundle stats, and will compare them to determine what changed.
