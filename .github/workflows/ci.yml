@@ -22,6 +22,7 @@ jobs:
         BLOG_URL: ${{ secrets.BLOG_URL }}
         SWAP_URL: ${{ secrets.SWAP_URL }}
         FURO_URL: ${{ secrets.FURO_URL }}
+        ACADEMY_URL: ${{ secrets.ACADEMY_URL }}
       strategy:
         matrix:
           os: [ubuntu-latest, macos-latest]

@@ -18,7 +18,8 @@
         "SWAP_URL",
         "LEGACY_URL",
         "INVEST_URL",
-        "XSWAP_URL"
+        "XSWAP_URL",
+        "ACADEMY_URL"
       ]
     },
     "build": {
