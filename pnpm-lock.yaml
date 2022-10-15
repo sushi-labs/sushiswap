@@ -639,7 +639,6 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/exchange': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/furo': workspace:*
       '@sushiswap/graph-client': workspace:*
@@ -715,7 +714,6 @@ importers:
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/exchange': link:../../packages/exchange
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/furo': link:../../protocols/furo
       '@sushiswap/graph-client': link:../../packages/graph-client
@@ -872,6 +870,7 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/exchange': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -921,6 +920,7 @@ importers:
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/exchange': link:../../packages/exchange
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
