@@ -1,5 +1,28 @@
 import json from './chains.json'
 
+const CHAINS = json.concat({
+  name: 'Boba Avax',
+  chain: 'Boba Avax',
+  rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
+  faucets: [],
+  nativeCurrency: {
+    name: 'Boba Token',
+    symbol: 'BOBA',
+    decimals: 18,
+  },
+  infoURL: 'https://boba.network',
+  shortName: 'bobaavax',
+  chainId: 43288,
+  networkId: 43288,
+  explorers: [
+    {
+      name: 'Boba Avax Explorer',
+      url: 'https://blockexplorer.avax.boba.network',
+      standard: 'none',
+    },
+  ],
+}) as Chain[]
+
 export interface Chain {
   name: string
   chain: string
@@ -192,32 +215,29 @@ export class Chain implements Chain {
 }
 
 // ChainId array
-export const chainIds = json.map((chain) => chain.chainId)
+export const chainIds = CHAINS.map((chain) => chain.chainId)
 
 // Chain Short Name => Chain Id mapping
 export const chainShortNameToChainId = Object.fromEntries(
-  (json as Chain[]).map((data): [string, number] => [data.shortName, data.chainId])
+  CHAINS.map((data): [string, number] => [data.shortName, data.chainId])
 )
 
 // Chain Id => Short Name mapping
-export const chainShortName = Object.fromEntries(
-  (json as Chain[]).map((data): [number, string] => [data.chainId, data.shortName])
-)
+export const chainShortName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.shortName]))
 
 // Chain Id => Chain Name mapping
-export const chainName = Object.fromEntries(
-  (json as Chain[]).map((data): [number, string] => [data.chainId, data.name])
-)
+export const chainName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.name]))
 
 // Chain Id => Chain mapping
 export const chains = Object.fromEntries(
-  (json as Chain[]).map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
+  CHAINS.map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
 )
 
 export const chainsL2 = Object.fromEntries(
-  (json as Chain[])
-    .filter((data) => data.parent?.type === Type.L2)
-    .map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
+  CHAINS.filter((data) => data.parent?.type === Type.L2).map((data): [number, Chain] => [
+    data.chainId,
+    new Chain(data) as Chain,
+  ])
 )
 
 export default chains

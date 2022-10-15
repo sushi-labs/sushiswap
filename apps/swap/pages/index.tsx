@@ -56,6 +56,13 @@ const DEAFAULT_TOKEN_1 = {
     name: 'Boba',
     decimals: 18,
   }),
+  [ChainId.BOBA_AVAX]: new Token({
+    chainId: ChainId.BOBA_AVAX,
+    address: '0x4200000000000000000000000000000000000023',
+    decimals: 18,
+    symbol: 'AVAX',
+    name: 'Avax',
+  }),
 }
 
 const getDefaultToken1 = (chainId: number) => {
