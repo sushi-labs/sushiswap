@@ -17,7 +17,7 @@ import { ExtendedColumnDef } from './types'
 export const ICON_SIZE = 20
 export const PAGE_SIZE = 20
 
-export const NETWORK_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const NETWORK_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'network',
   header: 'Network',
   cell: (props) => <NetworkCell row={props.row.original} />,
@@ -25,7 +25,7 @@ export const NETWORK_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,
 }
 
-export const ASSET_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const ASSET_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'asset',
   header: 'Lend Asset',
   cell: (props) => <AssetCell row={props.row.original} />,
@@ -33,7 +33,7 @@ export const ASSET_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const LEND_ASSET_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const LEND_ASSET_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'asset',
   header: 'Lend Asset',
   cell: (props) => <LendAssetCell row={props.row.original} />,
@@ -49,7 +49,7 @@ export const LEND_ASSET_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   ),
 }
 
-export const LEND_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiPair, unknown> = {
+export const LEND_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiPair, any> = {
   id: 'asset',
   header: 'Market',
   cell: (props) => <LendAssetCellPopover row={props.row.original} />,
@@ -57,7 +57,7 @@ export const LEND_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiPair, unknown> = 
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const BORROW_ASSET_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const BORROW_ASSET_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'collateral',
   header: 'Borrow Asset',
   cell: (props) => <BorrowAssetCell row={props.row.original} />,
@@ -73,7 +73,7 @@ export const BORROW_ASSET_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   ),
 }
 
-export const BORROW_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiPair, unknown> = {
+export const BORROW_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiPair, any> = {
   id: 'collateral',
   header: 'Market',
   cell: (props) => <BorrowAssetCellPopover row={props.row.original} />,
@@ -81,7 +81,7 @@ export const BORROW_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiPair, unknown> 
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const COLLATERAL_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const COLLATERAL_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'collateral',
   header: 'Borrow Asset',
   cell: (props) => <CollateralCell row={props.row.original} />,
@@ -89,7 +89,7 @@ export const COLLATERAL_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const TOTAL_ASSET_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const TOTAL_ASSET_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'totalAsset',
   header: 'Total Supply',
   accessorFn: (row) => row.totalAsset,
@@ -98,7 +98,7 @@ export const TOTAL_ASSET_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const TOTAL_APR_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const TOTAL_APR_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'totalAPR',
   header: 'Total APR',
   accessorFn: (row) => row.supplyAPR,
@@ -107,7 +107,7 @@ export const TOTAL_APR_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const SUPPLY_APR_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const SUPPLY_APR_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'supply',
   header: 'Lend APY',
   accessorFn: (row) => row.supplyAPR,
@@ -116,7 +116,7 @@ export const SUPPLY_APR_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const TOTAL_BORROW_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const TOTAL_BORROW_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'totalBorrow',
   header: 'Borrowed',
   cell: (props) => <TotalBorrowCell row={props.row.original} />,
@@ -124,7 +124,7 @@ export const TOTAL_BORROW_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const AVAILABLE_FOR_BORROW_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const AVAILABLE_FOR_BORROW_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'availableBorrow',
   header: 'Available For Borrow',
   cell: (props) => <AvailableForBorrowCell row={props.row.original} />,
@@ -132,7 +132,7 @@ export const AVAILABLE_FOR_BORROW_COLUMN: ExtendedColumnDef<KashiPair, unknown> 
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const BORROW_APR_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const BORROW_APR_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'borrow',
   header: 'Borrow APR',
   accessorFn: (row) => row.borrowAPR,
@@ -141,7 +141,7 @@ export const BORROW_APR_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const REWARD_APR_COLUMN: ExtendedColumnDef<KashiPair, unknown> = {
+export const REWARD_APR_COLUMN: ExtendedColumnDef<KashiPair, any> = {
   id: 'reward',
   header: 'Reward APY',
   accessorFn: (row) => row.borrowAPR,

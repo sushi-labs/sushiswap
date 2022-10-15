@@ -4,10 +4,10 @@ import './lib/wagmi'
 import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { getUnixTime } from 'date-fns'
+import stringify from 'fast-json-stable-stringify'
 
 import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
 import { redis } from './lib'
-
 export async function execute() {
   console.log(`Updating farms`)
 
@@ -29,7 +29,7 @@ export async function execute() {
   await redis.hset(
     'farms',
     Object.fromEntries(
-      combined.map(({ chainId, farms }) => [chainId, JSON.stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
+      combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
     )
   )
   console.log(`Finished updating farms`)

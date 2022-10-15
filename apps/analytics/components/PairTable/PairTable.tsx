@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
+import stringify from 'fast-json-stable-stringify'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
@@ -53,11 +54,11 @@ const fetcher = ({
   }
 
   if (args.pagination) {
-    _url.searchParams.set('pagination', JSON.stringify(args.pagination))
+    _url.searchParams.set('pagination', stringify(args.pagination))
   }
 
   if (args.selectedNetworks) {
-    _url.searchParams.set('networks', JSON.stringify(args.selectedNetworks))
+    _url.searchParams.set('networks', stringify(args.selectedNetworks))
   }
 
   let where = {}
@@ -66,7 +67,7 @@ const fetcher = ({
       name_contains_nocase: args.query,
     }
 
-    _url.searchParams.set('where', JSON.stringify(where))
+    _url.searchParams.set('where', stringify(where))
   }
 
   if (args.extraQuery) {
@@ -75,12 +76,12 @@ const fetcher = ({
       token1_: { symbol_contains_nocase: args.extraQuery },
     }
 
-    _url.searchParams.set('where', JSON.stringify(where))
+    _url.searchParams.set('where', stringify(where))
   }
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const PairTable: FC = () => {
@@ -103,7 +104,7 @@ export const PairTable: FC = () => {
 
   const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/analytics/api/pools', args }, fetcher)
   const { data: poolCount } = useSWR<number>(
-    `/analytics/api/pools/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+    `/analytics/api/pools/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
     (url) => fetch(url).then((response) => response.json())
   )
 

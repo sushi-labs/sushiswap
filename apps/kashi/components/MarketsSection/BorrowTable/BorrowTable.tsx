@@ -7,6 +7,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import stringify from 'fast-json-stable-stringify'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -14,7 +15,6 @@ import useSWR from 'swr'
 import { KashiPair } from '../../../.graphclient'
 import { BORROW_APR_COLUMN, COLLATERAL_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE } from '../../Table'
 import { BorrowTableHoverElement } from './BorrowTableHoverElement'
-
 const COLUMNS = [NETWORK_COLUMN, COLLATERAL_COLUMN, BORROW_APR_COLUMN]
 
 const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
@@ -32,7 +32,7 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const BorrowTable: FC = () => {

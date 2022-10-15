@@ -53,6 +53,18 @@ export const resolvers: Resolvers = {
             }))
           )
         )
-      ).then((kpis) => kpis.flat()),
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            if (args.orderDirection === 'asc') {
+              return Number(a[args.orderBy || 'utilization']) - Number(b[args.orderBy || 'utilization'])
+            } else if (args.orderDirection === 'desc') {
+              return Number(b[args.orderBy || 'utilization']) - Number(a[args.orderBy || 'utilization'])
+            }
+            return 0
+          })
+          .slice(0, 10)
+      ),
   },
 }

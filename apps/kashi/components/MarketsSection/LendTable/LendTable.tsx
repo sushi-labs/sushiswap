@@ -7,6 +7,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import stringify from 'fast-json-stable-stringify'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -14,7 +15,7 @@ import useSWR from 'swr'
 import { KashiPair } from '../../../.graphclient'
 import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE, SUPPLY_APR_COLUMN } from '../../Table'
 import { LendTableHoverElement } from './LendTableHoverElement'
-
+// @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, SUPPLY_APR_COLUMN]
 
 const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
@@ -32,7 +33,7 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const LendTable: FC = () => {
@@ -46,8 +47,11 @@ export const LendTable: FC = () => {
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
   const { data: pairs } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
 
+  console.log({ pairs })
+
   const table = useReactTable({
     data: pairs ?? [],
+    // @ts-ignore
     columns: COLUMNS,
     state: {
       sorting,
@@ -72,6 +76,7 @@ export const LendTable: FC = () => {
       <Typography variant="sm" weight={600} className="text-slate-400">
         Lend
       </Typography>
+      {/* @ts-ignore */}
       <GenericTable<KashiPair> table={table} columns={COLUMNS} onClick={onClick} HoverElement={LendTableHoverElement} />
     </div>
   )

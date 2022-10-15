@@ -49,7 +49,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             </App.Shell>
           </ThemeProvider>
         </Provider>
-      </WagmiConfig>{' '}
+      </WagmiConfig>
     </>
   )
 }

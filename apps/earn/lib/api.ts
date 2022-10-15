@@ -1,6 +1,7 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK, QuerycrossChainPairsArgs } from '@sushiswap/graph-client/.graphclient'
 import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
+import stringify from 'fast-json-stable-stringify'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
@@ -142,7 +143,7 @@ export type GetUserQuery = {
 }
 
 export const getUser = async (query: GetUserQuery) => {
-  const networks = JSON.parse(query?.networks || JSON.stringify(SUPPORTED_CHAIN_IDS))
+  const networks = JSON.parse(query?.networks || stringify(SUPPORTED_CHAIN_IDS))
   const { crossChainUserWithFarms: user } = await sdk.CrossChainUserWithFarms({
     chainIds: networks,
     id: query.id.toLowerCase(),

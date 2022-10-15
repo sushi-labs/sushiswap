@@ -1,6 +1,17 @@
 import { ChainId } from '@sushiswap/chain'
+import {
+  DAI_ADDRESS,
+  FRAX_ADDRESS,
+  MIM_ADDRESS,
+  USDC_ADDRESS,
+  USDT_ADDRESS,
+  WBTC_ADDRESS,
+  WNATIVE_ADDRESS,
+  XSUSHI_ADDRESS,
+} from '@sushiswap/currency'
 import { Button, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Layout, MarketsSection } from 'components'
+import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Image from 'next/image'
 import { FC } from 'react'
@@ -10,11 +21,35 @@ import { getPairs } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  const chainIds = (query.chianIds as string[]) || SUPPORTED_CHAIN_IDS
+  const assets = chainIds.reduce<string[]>((previousValue, currentValue, i) => {
+    const chainId = Number(currentValue)
+    if (chainId in WNATIVE_ADDRESS) previousValue[i] = WNATIVE_ADDRESS[chainId].toLowerCase()
+    if (chainId in WBTC_ADDRESS) previousValue[i] = WBTC_ADDRESS[chainId].toLowerCase()
+    if (chainId in XSUSHI_ADDRESS) previousValue[i] = XSUSHI_ADDRESS[chainId].toLowerCase()
+    if (chainId in USDC_ADDRESS) previousValue[i] = USDC_ADDRESS[chainId].toLowerCase()
+    if (chainId in USDT_ADDRESS) previousValue[i] = USDT_ADDRESS[chainId].toLowerCase()
+    if (chainId in DAI_ADDRESS) previousValue[i] = DAI_ADDRESS[chainId].toLowerCase()
+    if (chainId in FRAX_ADDRESS) previousValue[i] = FRAX_ADDRESS[chainId].toLowerCase()
+    if (chainId in MIM_ADDRESS) previousValue[i] = MIM_ADDRESS[chainId].toLowerCase()
+    return previousValue
+  }, [])
   const [pairs] = await Promise.all([
-    getPairs({ orderBy: 'supplyAPR', orderDirection: 'desc' }),
-    getPairs({ orderBy: 'borrowAPR', orderDirection: 'desc' }),
+    getPairs({
+      first: 20,
+      skip: 0,
+      orderBy: 'supplyAPR',
+      orderDirection: 'desc',
+      // where: { asset_in: assets },
+    }),
+    getPairs({
+      first: 20,
+      skip: 0,
+      orderBy: 'borrowAPR',
+      orderDirection: 'desc',
+      // where: { asset_in: assets },
+    }),
   ])
-
   return {
     props: {
       fallback: {

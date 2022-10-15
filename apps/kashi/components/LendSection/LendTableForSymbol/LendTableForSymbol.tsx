@@ -8,6 +8,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import stringify from 'fast-json-stable-stringify'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -61,7 +62,7 @@ const fetcher = ({
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const LendTableForSymbol: FC = () => {
