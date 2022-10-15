@@ -76,15 +76,17 @@ const _Articles: FC = () => {
   useEffect(() => {
     if (router.isReady) {
       if (difficultyQuery) {
-        const searchedDifficulty = difficultiesData?.data.find(({ attributes }) => attributes?.slug === difficultyQuery)
+        const searchedDifficulty = difficultiesData?.data?.find(
+          ({ attributes }) => attributes?.slug === difficultyQuery
+        )
         searchedDifficulty && setSelectedDifficulty(searchedDifficulty)
       }
       if (productQuery) {
-        const searchedProduct = productsData?.data.find(({ attributes }) => attributes?.slug === productQuery)
+        const searchedProduct = productsData?.data?.find(({ attributes }) => attributes?.slug === productQuery)
         searchedProduct && setSelectedProduct(searchedProduct)
       }
       if (topicQuery) {
-        const searchedTopic = topicsData?.data.find(({ attributes }) => attributes?.slug === topicQuery)
+        const searchedTopic = topicsData?.data?.find(({ attributes }) => attributes?.slug === topicQuery)
         searchedTopic && setSelectedTopic(searchedTopic)
       }
       if (searchQuery) setQuery(searchQuery)

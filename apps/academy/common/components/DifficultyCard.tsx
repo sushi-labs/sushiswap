@@ -1,7 +1,7 @@
 import { Transition } from '@headlessui/react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Chip, CircleIcon } from '@sushiswap/ui'
-import { difficultyElements } from 'common/helpers'
+import { difficultyElements, docsUrl } from 'common/helpers'
 import { SquareIcon } from 'common/icons'
 import { FC, Fragment, useState } from 'react'
 
@@ -13,7 +13,7 @@ interface DifficultyCard {
 
 export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
   const [hover, setHover] = useState(false)
-  const docsUrl = 'https://dev.sushi.com/'
+
   const {
     attributes: { label, longDescription, slug },
   } = difficulty
