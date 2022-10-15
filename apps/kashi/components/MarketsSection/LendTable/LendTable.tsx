@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { Typography } from '@sushiswap/ui'
 import {
   getCoreRowModel,
@@ -12,13 +13,25 @@ import { useRouter } from 'next/router'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-import { KashiPair } from '../../../.graphclient'
+import { KashiPair } from '../../../lib/KashiPair'
 import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE, SUPPLY_APR_COLUMN } from '../../Table'
 import { LendTableHoverElement } from './LendTableHoverElement'
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, SUPPLY_APR_COLUMN]
 
-const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
+const fetcher = ({
+  url,
+  args,
+}: {
+  url: string
+  args: {
+    sorting: SortingState
+    pagination: PaginationState
+    query: string
+    extraQuery: string
+    selectedNetworks: ChainId[]
+  }
+}) => {
   const _url = new URL(url, window.location.origin)
 
   if (args.sorting[0]) {
@@ -30,6 +43,8 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
     _url.searchParams.set('first', args.pagination.pageSize.toString())
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
+
+  _url.searchParams.set('where', stringify({ totalBorrow_: { base_not: '0' } }))
 
   return fetch(_url.href)
     .then((res) => res.json())
@@ -47,7 +62,7 @@ export const LendTable: FC = () => {
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
   const { data: pairs } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
 
-  console.log({ pairs })
+  // const pairs = useMemo(() => data?.map((d) => new KashiLendingPairV1(d)), [pairs])
 
   const table = useReactTable({
     data: pairs ?? [],

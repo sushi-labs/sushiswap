@@ -1,34 +1,35 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 
-import { KashiPair_filter, KashiPair_orderBy, OrderDirection } from '../.graphclient'
+import { KashiPair_orderBy, OrderDirection, QuerycrossChainKashiPairsArgs } from '../.graphclient'
 import { getBuiltGraphSDK } from '../.graphclient'
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
 type GetPoolsQuery = Partial<{
-  first: number
+  chainIds: QuerycrossChainKashiPairsArgs['chainIds']
+  first: QuerycrossChainKashiPairsArgs['first']
   skip: number
-  where: KashiPair_filter
-  orderBy: KashiPair_orderBy
-  orderDirection: OrderDirection
+  where: QuerycrossChainKashiPairsArgs['where']
+  orderBy: QuerycrossChainKashiPairsArgs['orderBy']
+  orderDirection: QuerycrossChainKashiPairsArgs['orderDirection']
 }>
 
 const sdk = getBuiltGraphSDK()
 
-export const getPairs = async (query?: GetPoolsQuery) => {
-  const where = query?.where || {}
-  const first = query?.first || 20
-  const skip = query?.skip || 0
-  const orderBy = query?.orderBy || 'supplyAPR'
+export const getPairs = async (query: GetPoolsQuery) => {
+  const where = query?.where
+  const first = query?.first ? Number(query?.first) : 20
+  const skip = query?.skip ? Number(query?.skip) : 0
+  const chainIds = Array.isArray(query?.chainIds) ? query.chainIds.map(Number) : SUPPORTED_CHAIN_IDS
+  const orderBy = query?.orderBy || 'utilization'
   const orderDirection = query?.orderDirection || 'desc'
-
   const { crossChainKashiPairs: pairs } = await sdk.CrossChainKashiPairs({
     first,
+    skip,
     where,
     orderBy,
     orderDirection,
-    chainIds: SUPPORTED_CHAIN_IDS,
+    chainIds,
   })
-
   return pairs
 }
 

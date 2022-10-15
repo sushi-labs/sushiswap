@@ -38,7 +38,33 @@ export type AccrueInfo = {
   feesEarnedFraction: JSBI
 }
 
-export class KashiLendingPairV1 {
+export interface KashiPair {
+  readonly address: string
+  readonly bentoBox: string
+  readonly masterContract: string
+  readonly collateral: Token
+  readonly collateralRebase: Rebase
+  readonly asset: Token
+  readonly assetRebase: Rebase
+  readonly oracle: string
+  readonly oracleData: string
+  readonly totalCollateralShare: Share<Token>
+  readonly totalAsset: Rebase
+  readonly totalBorrow: Rebase
+  readonly accrueInfo: AccrueInfo
+  readonly exchangeRate: JSBI
+
+  readonly symbol: string
+  readonly name: string
+  readonly decimals: number
+
+  readonly totalSupply: Share<Token>
+
+  readonly oracleExchangeRate: JSBI
+  readonly spotExchangeRate: JSBI
+}
+
+export class KashiMediumRiskLendingPairV1 implements KashiPair {
   readonly address: string
   readonly bentoBox: string
   readonly masterContract: string
@@ -113,7 +139,7 @@ export class KashiLendingPairV1 {
   constructor(pair: KashiPairDTO) {
     this.address = getAddress(pair.id)
 
-    this.bentoBox = getAddress(pair.bentoBox.id)
+    // this.bentoBox = getAddress(pair.bentoBox.id)
     this.masterContract = getAddress(pair.masterContract.id)
     this.collateral = new Token({
       chainId: pair.chainId,
@@ -121,8 +147,8 @@ export class KashiLendingPairV1 {
       ...pair.collateral,
     })
 
-    this.collateralRebase.base = JSBI.BigInt(pair.collateral.rebase.base)
-    this.collateralRebase.elastic = JSBI.BigInt(pair.collateral.rebase.elastic)
+    this.collateralRebase.base = JSBI.BigInt(pair.collateral.rebase.base || 0)
+    this.collateralRebase.elastic = JSBI.BigInt(pair.collateral.rebase.elastic || 0)
 
     this.asset = new Token({
       chainId: pair.chainId,
@@ -130,8 +156,8 @@ export class KashiLendingPairV1 {
       ...pair.asset,
     })
 
-    this.assetRebase.base = JSBI.BigInt(pair.asset.rebase.base)
-    this.assetRebase.elastic = JSBI.BigInt(pair.asset.rebase.elastic)
+    this.assetRebase.base = JSBI.BigInt(pair.asset.rebase.base || 0)
+    this.assetRebase.elastic = JSBI.BigInt(pair.asset.rebase.elastic || 0)
 
     this.oracle = getAddress(pair.oracle.id)
     // TODO: ADD VALIDATION

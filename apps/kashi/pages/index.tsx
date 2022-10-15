@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import {
   DAI_ADDRESS,
-  FRAX_ADDRESS,
   MIM_ADDRESS,
+  SUSHI_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
-  WBTC_ADDRESS,
+  WETH9_ADDRESS,
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
 } from '@sushiswap/currency'
@@ -20,28 +20,215 @@ import { SWRConfig, unstable_serialize } from 'swr'
 import { getPairs } from '../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  // res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const chainIds = (query.chianIds as string[]) || SUPPORTED_CHAIN_IDS
-  const assets = chainIds.reduce<string[]>((previousValue, currentValue, i) => {
-    const chainId = Number(currentValue)
-    if (chainId in WNATIVE_ADDRESS) previousValue[i] = WNATIVE_ADDRESS[chainId].toLowerCase()
-    if (chainId in WBTC_ADDRESS) previousValue[i] = WBTC_ADDRESS[chainId].toLowerCase()
-    if (chainId in XSUSHI_ADDRESS) previousValue[i] = XSUSHI_ADDRESS[chainId].toLowerCase()
-    if (chainId in USDC_ADDRESS) previousValue[i] = USDC_ADDRESS[chainId].toLowerCase()
-    if (chainId in USDT_ADDRESS) previousValue[i] = USDT_ADDRESS[chainId].toLowerCase()
-    if (chainId in DAI_ADDRESS) previousValue[i] = DAI_ADDRESS[chainId].toLowerCase()
-    if (chainId in FRAX_ADDRESS) previousValue[i] = FRAX_ADDRESS[chainId].toLowerCase()
-    if (chainId in MIM_ADDRESS) previousValue[i] = MIM_ADDRESS[chainId].toLowerCase()
-    return previousValue
-  }, [])
-  const [pairs] = await Promise.all([
-    getPairs({
-      first: 20,
-      skip: 0,
-      orderBy: 'supplyAPR',
-      orderDirection: 'desc',
-      // where: { asset_in: assets },
-    }),
+  // const assets = chainIds.reduce<string[]>((previousValue, currentValue, i) => {
+  //   const chainId = Number(currentValue)
+  // if (chainId in WNATIVE_ADDRESS) previousValue[i] = WNATIVE_ADDRESS[chainId].toLowerCase()
+  // if (chainId in WBTC_ADDRESS) previousValue[i] = WBTC_ADDRESS[chainId].toLowerCase()
+  // if (chainId in SUSHI_ADDRESS) previousValue[i] = SUSHI_ADDRESS[chainId].toLowerCase()
+  // if (chainId in XSUSHI_ADDRESS) previousValue[i] = XSUSHI_ADDRESS[chainId].toLowerCase()
+  // if (chainId in USDC_ADDRESS) previousValue[i] = USDC_ADDRESS[chainId].toLowerCase()
+  // if (chainId in USDT_ADDRESS) previousValue[i] = USDT_ADDRESS[chainId].toLowerCase()
+  // if (chainId in DAI_ADDRESS) previousValue[i] = DAI_ADDRESS[chainId].toLowerCase()
+  // if (chainId in FRAX_ADDRESS) previousValue[i] = FRAX_ADDRESS[chainId].toLowerCase()
+  // if (chainId in MIM_ADDRESS) previousValue[i] = MIM_ADDRESS[chainId].toLowerCase()
+  //   return previousValue
+  // }, [])
+
+  // get first pair for each configured base lending market, ordered by supplyAPR
+
+  const [pairs, borrowPairs] = await Promise.all([
+    Promise.all([
+      Promise.all(
+        chainIds
+          .filter((chainId) => chainId in USDC_ADDRESS)
+          .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+            previousValue[i] = getPairs({
+              first: 1,
+              skip: 0,
+              orderBy: 'supplyAPR',
+              orderDirection: 'desc',
+              where: { asset: USDC_ADDRESS[currentValue].toLowerCase() },
+              // where: { asset_in: assets },
+            })
+            return previousValue
+          }, [])
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+          })
+          .slice(0, 1)
+      ),
+      Promise.all(
+        chainIds
+          .filter((chainId) => chainId in USDT_ADDRESS)
+          .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+            previousValue[i] = getPairs({
+              first: 1,
+              skip: 0,
+              orderBy: 'supplyAPR',
+              orderDirection: 'desc',
+              where: { asset: USDT_ADDRESS[currentValue].toLowerCase() },
+              // where: { asset_in: assets },
+            })
+            return previousValue
+          }, [])
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+          })
+          .slice(0, 1)
+      ),
+      Promise.all(
+        chainIds
+          .filter((chainId) => chainId in DAI_ADDRESS)
+          .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+            previousValue[i] = getPairs({
+              first: 1,
+              skip: 0,
+              orderBy: 'supplyAPR',
+              orderDirection: 'desc',
+              where: { asset: DAI_ADDRESS[currentValue].toLowerCase() },
+              // where: { asset_in: assets },
+            })
+            return previousValue
+          }, [])
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+          })
+          .slice(0, 1)
+      ),
+      Promise.all(
+        chainIds
+          .filter((chainId) => chainId in WETH9_ADDRESS)
+          .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+            previousValue[i] = getPairs({
+              first: 1,
+              skip: 0,
+              orderBy: 'supplyAPR',
+              orderDirection: 'desc',
+              where: { asset: WETH9_ADDRESS[currentValue].toLowerCase() },
+              // where: { asset_in: assets },
+            })
+            return previousValue
+          }, [])
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+          })
+          .slice(0, 1)
+      ),
+      Promise.all(
+        chainIds
+          .filter((chainId) => chainId in WNATIVE_ADDRESS)
+          .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+            previousValue[i] = getPairs({
+              first: 1,
+              skip: 0,
+              orderBy: 'supplyAPR',
+              orderDirection: 'desc',
+              where: { asset: WNATIVE_ADDRESS[currentValue].toLowerCase() },
+              // where: { asset_in: assets },
+            })
+            return previousValue
+          }, [])
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+          })
+          .slice(0, 1)
+      ),
+      Promise.all(
+        chainIds
+          .filter((chainId) => chainId in MIM_ADDRESS)
+          .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+            previousValue[i] = getPairs({
+              first: 1,
+              skip: 0,
+              orderBy: 'supplyAPR',
+              orderDirection: 'desc',
+              where: { asset: MIM_ADDRESS[currentValue].toLowerCase() },
+              // where: { asset_in: assets },
+            })
+            return previousValue
+          }, [])
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+          })
+          .slice(0, 1)
+      ),
+      Promise.all(
+        chainIds
+          .filter((chainId) => chainId in XSUSHI_ADDRESS)
+          .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+            previousValue[i] = getPairs({
+              first: 1,
+              skip: 0,
+              orderBy: 'supplyAPR',
+              orderDirection: 'desc',
+              where: { asset: XSUSHI_ADDRESS[currentValue].toLowerCase() },
+              // where: { asset_in: assets },
+            })
+            return previousValue
+          }, [])
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+          })
+          .slice(0, 1)
+      ),
+      Promise.all(
+        chainIds
+          .filter((chainId) => chainId in SUSHI_ADDRESS)
+          .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+            previousValue[i] = getPairs({
+              first: 1,
+              skip: 0,
+              orderBy: 'supplyAPR',
+              orderDirection: 'desc',
+              where: { asset: SUSHI_ADDRESS[currentValue].toLowerCase() },
+              // where: { asset_in: assets },
+            })
+            return previousValue
+          }, [])
+      ).then((pairs) =>
+        pairs
+          .flat()
+          .sort((a, b) => {
+            return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+          })
+          .slice(0, 1)
+      ),
+    ]).then((pairs) =>
+      pairs.flat().sort((a, b) => {
+        return Number(b['supplyAPR']) - Number(a['supplyAPR'])
+      })
+    ),
+    // getPairs({
+    //   first: 1,
+    //   skip: 0,
+    //   orderBy: 'supplyAPR',
+    //   orderDirection: 'desc',
+    //   where: { totalBorrow_: { base_not: '0' }, asset: SUSHI_ADDRESS[chainId].toLowerCase() },
+    //   // where: { asset_in: assets },
+    // }),
     getPairs({
       first: 20,
       skip: 0,
@@ -82,7 +269,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
               pageSize: 20,
             },
           },
-        })]: pairs,
+        })]: borrowPairs,
       },
     },
   }

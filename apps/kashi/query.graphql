@@ -1,5 +1,5 @@
-query CrossChainKashiPairs($first: Int! = 1000, $orderBy: KashiPair_orderBy, $orderDirection: OrderDirection, $where: KashiPair_filter, $chainIds: [BigInt!]!) {
-  crossChainKashiPairs(first: $first, orderBy: $orderBy, orderDirection: $orderDirection, where: $where, chainIds: $chainIds) {
+query CrossChainKashiPairs($first: Int! = 1000,$skip: Int! = 0,$orderBy: KashiPair_orderBy, $orderDirection: OrderDirection, $where: KashiPair_filter, $chainIds: [BigInt!]!) {
+  crossChainKashiPairs(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where, chainIds: $chainIds) {
     id
     chainId
     chainName
@@ -14,12 +14,20 @@ query CrossChainKashiPairs($first: Int! = 1000, $orderBy: KashiPair_orderBy, $or
       name
       symbol
       decimals
+      rebase {
+        base
+        elastic
+      }
     }
     asset {
       id
       name
       symbol
       decimals
+      rebase {
+        base
+        elastic
+      }
     }
     oracle
     oracleData
@@ -61,12 +69,20 @@ query CrossChainKashiPair($id: String!, $now: Int!, $chainId: BigInt!) {
       name
       symbol
       decimals
+      rebase {
+        base
+        elastic
+      }
     }
     asset {
       id
       name
       symbol
       decimals
+      rebase {
+        base
+        elastic
+      }
     }
     oracle
     oracleData

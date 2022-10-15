@@ -1,10 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { ReactNode } from 'react'
 
-import { KashiPair } from '../../.graphclient'
+import { KashiPair as KashiPairDTO } from '../../.graphclient'
 
 export interface CellProps {
-  row: KashiPair
+  row: KashiPairDTO
 }
 
 export type ExtendedColumnDef<C, P> = ColumnDef<C, P> & {
