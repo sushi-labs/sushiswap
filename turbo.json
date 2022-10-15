@@ -8,7 +8,9 @@
       ]
     },
     "lint": {
-      "dependsOn": [],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "generate": {
@@ -18,8 +20,7 @@
         "typechain/**",
         "artifacts/**",
         "cache/**"
-      ],
-      "dependsOn": []
+      ]
     },
     "build": {
       "outputs": [
