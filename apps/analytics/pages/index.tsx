@@ -91,18 +91,6 @@ const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fal
 const _Index = () => {
   return (
     <Layout>
-      {/* <NextSeo
-        openGraph={{
-          images: [
-            {
-              url: '/api/og?tvl=$9.8B&volume=$100M&fee=$1K',
-              width: 1200,
-              height: 630,
-              alt: 'Sushi Analytics',
-            },
-          ],
-        }}
-      /> */}
       <div className="flex flex-col gap-10">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md space-y-4">
