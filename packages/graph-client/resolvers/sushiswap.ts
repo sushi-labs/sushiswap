@@ -8,6 +8,7 @@ import {
   SUSHISWAP_SUBGRAPH_NAME,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_START_BLOCK,
 } from '@sushiswap/graph-config'
 
 import { getBuiltGraphSDK, InputMaybe, Pagination, Pair, Resolvers } from '../.graphclient'
@@ -275,8 +276,8 @@ export const resolvers: Resolvers = {
                     subgraphHost: SUBGRAPH_HOST[chainId],
                   },
                   info,
-                }).then((pools) =>
-                  Promise.all([
+                }).then((pools) => {
+                  return Promise.all([
                     Promise.resolve(pools),
                     context.Trident.Query.pairs({
                       root,
@@ -284,7 +285,13 @@ export const resolvers: Resolvers = {
                         ...args,
                         first: pools.length,
                         where: { id_in: pools.map((pool) => pool.id) },
-                        block: { number: Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]) },
+                        block: {
+                          number:
+                            TRIDENT_SUBGRAPH_START_BLOCK[chainId] <
+                            [args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)]]
+                              ? Number(args.oneDayBlockNumbers[args.chainIds.indexOf(chainId)])
+                              : TRIDENT_SUBGRAPH_START_BLOCK[chainId],
+                        },
                       },
                       context: {
                         ...context,
@@ -302,7 +309,13 @@ export const resolvers: Resolvers = {
                         ...args,
                         first: pools.length,
                         where: { id_in: pools.map((pool) => pool.id) },
-                        block: { number: Number(args.oneWeekBlockNumbers[args.chainIds.indexOf(chainId)]) },
+                        block: {
+                          number:
+                            TRIDENT_SUBGRAPH_START_BLOCK[chainId] <
+                            [args.oneWeekBlockNumbers[args.chainIds.indexOf(chainId)]]
+                              ? Number(args.oneWeekBlockNumbers[args.chainIds.indexOf(chainId)])
+                              : TRIDENT_SUBGRAPH_START_BLOCK[chainId],
+                        },
                       },
                       context: {
                         ...context,
@@ -314,11 +327,14 @@ export const resolvers: Resolvers = {
                       },
                       info,
                     }),
-                  ]).then(([pools, oneDayPools, oneWeekPools]) => {
-                    // console.log('BEFORE TRANSFORMER 1', { pools, oneDayPools, oneWeekPools })
-                    return transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
-                  })
-                )
+                  ])
+                    .then(([pools, oneDayPools, oneWeekPools]) => {
+                      return transformer(pools, oneDayPools, oneWeekPools, farms, chainId)
+                    })
+                    .catch((error) => {
+                      console.error(error)
+                    })
+                })
               }),
             ...args.chainIds
               .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
@@ -506,7 +522,7 @@ export const resolvers: Resolvers = {
       const liquidity1wChange = pool1w ? pool.liquidityUSD / pool1w.liquidityUSD - 1 : 0
 
       const volume1d = pool1d ? pool.volumeUSD - pool1d.volumeUSD : 0
-      const volume2d = pool2d ? pool1d.volumeUSD - pool2d.volumeUSD : 0
+      const volume2d = pool1d && pool2d ? pool1d.volumeUSD - pool2d.volumeUSD : 0
 
       const volume1dChange = pool2d ? volume1d / volume2d - 1 : null
       // if pool isn't 7 days old, use snapshots for at least some data
@@ -517,7 +533,7 @@ export const resolvers: Resolvers = {
             ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
 
       const txCount1d = pool1d ? pool.txCount - pool1d.txCount : 0
-      const txCount2d = pool2d ? pool1d.txCount - pool2d.txCount : 0
+      const txCount2d = pool1d && pool2d ? pool1d.txCount - pool2d.txCount : 0
       const txCount1dChange = pool2d ? txCount1d / txCount2d - 1 : null
       // if pool isn't 7 days old, use snapshots for at least some data
       const txCount1w = pool1w
