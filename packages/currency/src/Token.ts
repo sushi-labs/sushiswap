@@ -26,6 +26,7 @@ export class Token extends Currency {
     try {
       this.address = getAddress(token.address)
     } catch {
+      console.log({ token })
       throw `${token.address} is not a valid address`
     }
   }

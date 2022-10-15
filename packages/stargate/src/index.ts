@@ -23,12 +23,14 @@ export const STARGATE_CHAIN_ID: Record<number, number> = {
   [ChainId.BSC_TESTNET]: 10002,
   [ChainId.AVALANCHE_TESTNET]: 10006,
   [ChainId.POLYGON_TESTNET]: 10009,
-  [ChainId.ARBITRUM_RINKEBY_TESTNET]: 10010,
-  [ChainId.OPTIMISM_KOVAN_TESTNET]: 10011,
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.ARBITRUM_RINKEBY_TESTNET]: 10010,
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.OPTIMISM_KOVAN_TESTNET]: 10011,
   [ChainId.FANTOM_TESTNET]: 10012,
 }
 
-export const STARGATE_WIDGET_ADDRESS: Record<number, string> = {
+export const STARGATE_WIDGET_ADDRESS = {
   [ChainId.ETHEREUM]: '0x02489ac60F7f581445b7D2Dd59bb0A415A1009Df',
   [ChainId.POLYGON]: '0xc2a6A1A8ACcc8BD757BF4b34FBAcB20fbeA87f55',
   [ChainId.AVALANCHE]: '0x0cFF9ACef65A64B5D76e83B70787b27F7416644C',
@@ -36,9 +38,9 @@ export const STARGATE_WIDGET_ADDRESS: Record<number, string> = {
   [ChainId.BSC]: '0xa8BA2FF9d0D7d175b2729866bE3D9c51cACb2e00',
   [ChainId.OPTIMISM]: '0x16419058f15a86795933f78dC624B384D09E3a4e',
   [ChainId.ARBITRUM]: '0x962F92cEe9A559d705f8999C92752EbCDD550616',
-}
+} as const
 
-export const STARGATE_ROUTER_ADDRESS: Record<number, string> = {
+export const STARGATE_ROUTER_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8731d54E9D02c286767d56ac03e8037C07e01e98',
   [ChainId.POLYGON]: '0x45A01E4e04F14f7A4a6702c74187c5F6222033cd',
   [ChainId.AVALANCHE]: '0x45A01E4e04F14f7A4a6702c74187c5F6222033cd',
@@ -52,13 +54,13 @@ export const STARGATE_ROUTER_ADDRESS: Record<number, string> = {
   [ChainId.AVALANCHE_TESTNET]: '0x13093E05Eb890dfA6DacecBdE51d24DabAb2Faa1',
   [ChainId.POLYGON_TESTNET]: '0x817436a076060D158204d955E5403b6Ed0A5fac0',
   [ChainId.FANTOM_TESTNET]: '0xa73b0a56B29aD790595763e71505FCa2c1abb77f',
-}
+} as const
 
-export const STARGATE_ETH_ADDRESS: Record<number, string> = {
+export const STARGATE_ETH_ADDRESS = {
   [ChainId.ETHEREUM]: '0x72E2F4830b9E45d52F80aC08CB2bEC0FeF72eD9c',
   [ChainId.ARBITRUM]: '0x82CbeCF39bEe528B5476FE6d1550af59a9dB6Fc0',
   [ChainId.OPTIMISM]: '0xb69c8CBCD90A39D8D3d3ccf0a3E968511C3856A0',
-}
+} as const
 
 export const STARGATE_ETH: Record<keyof typeof STARGATE_ETH_ADDRESS, Token> = {
   [ChainId.ETHEREUM]: new Token({
@@ -84,7 +86,7 @@ export const STARGATE_ETH: Record<keyof typeof STARGATE_ETH_ADDRESS, Token> = {
   }),
 }
 
-export const STARGATE_USDC_ADDRESS: Record<number, string> = {
+export const STARGATE_USDC_ADDRESS = {
   [ChainId.ETHEREUM]: USDC_ADDRESS[ChainId.ETHEREUM],
   [ChainId.POLYGON]: USDC_ADDRESS[ChainId.POLYGON],
   [ChainId.AVALANCHE]: USDC_ADDRESS[ChainId.AVALANCHE],
@@ -96,11 +98,13 @@ export const STARGATE_USDC_ADDRESS: Record<number, string> = {
   // Testnets
   [ChainId.RINKEBY]: '0x1717A0D5C8705EE89A8aD6E808268D6A826C97A4',
   [ChainId.AVALANCHE_TESTNET]: '0x4A0D1092E9df255cf95D72834Ea9255132782318',
-  [ChainId.ARBITRUM_RINKEBY_TESTNET]: '0x1EA8Fb2F671620767f41559b663b86B1365BBc3d',
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.ARBITRUM_RINKEBY_TESTNET]: '0x1EA8Fb2F671620767f41559b663b86B1365BBc3d',
   [ChainId.POLYGON_TESTNET]: '0x742DfA5Aa70a8212857966D491D67B09Ce7D6ec7',
-  [ChainId.OPTIMISM_KOVAN_TESTNET]: '0x567f39d9e6d02078F357658f498F80eF087059aa',
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.OPTIMISM_KOVAN_TESTNET]: '0x567f39d9e6d02078F357658f498F80eF087059aa',
   [ChainId.FANTOM_TESTNET]: '0x076488D244A73DA4Fa843f5A8Cd91F655CA81a1e',
-}
+} as const
 
 export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> = {
   [ChainId.ETHEREUM]: USDC[ChainId.ETHEREUM],
@@ -133,13 +137,14 @@ export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> = 
     symbol: 'USDC',
     name: 'USD Coin',
   }),
-  [ChainId.ARBITRUM_RINKEBY_TESTNET]: new Token({
-    chainId: ChainId.ARBITRUM_RINKEBY_TESTNET,
-    address: STARGATE_USDC_ADDRESS[ChainId.ARBITRUM_RINKEBY_TESTNET],
-    decimals: 6,
-    symbol: 'USDC',
-    name: 'USD Coin',
-  }),
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.ARBITRUM_RINKEBY_TESTNET]: new Token({
+  //   chainId: ChainId.ARBITRUM_RINKEBY_TESTNET,
+  //   address: STARGATE_USDC_ADDRESS[ChainId.ARBITRUM_RINKEBY_TESTNET],
+  //   decimals: 6,
+  //   symbol: 'USDC',
+  //   name: 'USD Coin',
+  // }),
   [ChainId.POLYGON_TESTNET]: new Token({
     chainId: ChainId.POLYGON_TESTNET,
     address: STARGATE_USDC_ADDRESS[ChainId.POLYGON_TESTNET],
@@ -147,13 +152,14 @@ export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> = 
     symbol: 'USDC',
     name: 'USD Coin',
   }),
-  [ChainId.OPTIMISM_KOVAN_TESTNET]: new Token({
-    chainId: ChainId.OPTIMISM_KOVAN_TESTNET,
-    address: STARGATE_USDC_ADDRESS[ChainId.OPTIMISM_KOVAN_TESTNET],
-    decimals: 6,
-    symbol: 'USDC',
-    name: 'USD Coin',
-  }),
+  // TODO: Depreciated, replace with goerli
+  // [ChainId.OPTIMISM_KOVAN_TESTNET]: new Token({
+  //   chainId: ChainId.OPTIMISM_KOVAN_TESTNET,
+  //   address: STARGATE_USDC_ADDRESS[ChainId.OPTIMISM_KOVAN_TESTNET],
+  //   decimals: 6,
+  //   symbol: 'USDC',
+  //   name: 'USD Coin',
+  // }),
   [ChainId.FANTOM_TESTNET]: new Token({
     chainId: ChainId.FANTOM_TESTNET,
     address: STARGATE_USDC_ADDRESS[ChainId.FANTOM_TESTNET],
@@ -163,28 +169,29 @@ export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> = 
   }),
 }
 
-export const STARGATE_USDT_ADDRESS: Record<number, string> = {
+export const STARGATE_USDT_ADDRESS = {
   [ChainId.ETHEREUM]: USDT_ADDRESS[ChainId.ETHEREUM],
   [ChainId.POLYGON]: USDT_ADDRESS[ChainId.POLYGON],
   [ChainId.AVALANCHE]: USDT_ADDRESS[ChainId.AVALANCHE],
   [ChainId.BSC]: USDT_ADDRESS[ChainId.BSC],
+  [ChainId.BSC_TESTNET]: USDT_ADDRESS[ChainId.BSC_TESTNET],
   [ChainId.ARBITRUM]: USDT_ADDRESS[ChainId.ARBITRUM],
   [ChainId.FANTOM]: USDT_ADDRESS[ChainId.FANTOM],
-  [ChainId.BSC_TESTNET]: '0xF49E250aEB5abDf660d643583AdFd0be41464EfD',
-}
+} as const
 
 export const STARGATE_USDT: Record<keyof typeof STARGATE_USDT_ADDRESS, Token> = {
   [ChainId.ETHEREUM]: USDT[ChainId.ETHEREUM],
   [ChainId.POLYGON]: USDT[ChainId.POLYGON],
   [ChainId.AVALANCHE]: USDT[ChainId.AVALANCHE],
   [ChainId.BSC]: USDT[ChainId.BSC],
+  [ChainId.BSC_TESTNET]: USDT[ChainId.BSC_TESTNET],
   [ChainId.ARBITRUM]: USDT[ChainId.ARBITRUM],
   [ChainId.FANTOM]: USDT[ChainId.FANTOM],
 }
 
-export const STARGATE_BUSD_ADDRESS: Record<number, string> = {
+export const STARGATE_BUSD_ADDRESS = {
   [ChainId.BSC]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-}
+} as const
 
 export const STARGATE_BUSD: Record<keyof typeof STARGATE_BUSD_ADDRESS, Token> = {
   [ChainId.BSC]: new Token({

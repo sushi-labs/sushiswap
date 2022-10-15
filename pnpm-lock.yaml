@@ -161,6 +161,7 @@ importers:
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
       ethers: ^5.7.0
+      graphql-request: ^5.0.0
       next: ^12.3.1
       next-axiom: ^0.14.0
       next-seo: ^5.5.0
@@ -194,6 +195,7 @@ importers:
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
       ethers: 5.7.1
+      graphql-request: 5.0.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
       next-axiom: 0.14.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
@@ -678,6 +680,7 @@ importers:
       ethers: ^5.7.0
       graphql: 16.6.0
       next: ^12.3.1
+      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.1.0
@@ -743,6 +746,7 @@ importers:
       ethers: 5.7.1
       graphql: 16.6.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+      next-axiom: 0.14.0_next@12.3.1
       next-pwa: 5.6.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       react: 18.2.0
@@ -8123,7 +8127,6 @@ packages:
     resolution: {integrity: sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==}
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-    dev: true
 
   /@graphql-typed-document-node/core/3.1.1_graphql@16.6.0:
     resolution: {integrity: sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==}
@@ -17518,6 +17521,19 @@ packages:
       extract-files: 9.0.0
       form-data: 3.0.1
       graphql: 14.5.8
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /graphql-request/5.0.0:
+    resolution: {integrity: sha512-SpVEnIo2J5k2+Zf76cUkdvIRaq5FMZvGQYnA4lUWYbc99m+fHh4CZYRRO/Ff4tCLQ613fzCm3SiDT64ubW5Gyw==}
+    peerDependencies:
+      graphql: 14 - 16
+    dependencies:
+      '@graphql-typed-document-node/core': 3.1.1
+      cross-fetch: 3.1.5
+      extract-files: 9.0.0
+      form-data: 3.0.1
     transitivePeerDependencies:
       - encoding
     dev: false

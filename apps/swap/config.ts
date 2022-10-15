@@ -19,6 +19,7 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.PALM,
   ChainId.OKEX,
   ChainId.BOBA,
+  ChainId.BOBA_AVAX,
   ChainId.HARMONY,
 ]
 

@@ -107,9 +107,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
       void router.replace(
         {
           pathname: router.pathname,
-          query: {
-            ...router.query,
-          },
+          query: router.query,
         },
         undefined,
         { shallow: true }

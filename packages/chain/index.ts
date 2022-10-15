@@ -62,10 +62,6 @@ export enum Type {
   Shard = 'shard',
 }
 
-// TODO: some weirdness with enum in ts, maybe use object
-// const ChainId: {[k: string]: string | number} = {
-//   POLYGON: 137
-// }
 export enum ChainId {
   ETHEREUM = 1,
   ROPSTEN = 3,
@@ -81,8 +77,6 @@ export enum ChainId {
   BSC_TESTNET = 97,
   ARBITRUM = 42161,
   ARBITRUM_NOVA = 42170,
-  ARBITRUM_RINKEBY_TESTNET = 421611,
-  ARBITRUM_GNOSIS_TESTNET = 200,
   ARBITRUM_TESTNET = 79377087078960,
   AVALANCHE = 43114,
   AVALANCHE_TESTNET = 43113,
@@ -94,14 +88,11 @@ export enum ChainId {
   OKEX_TESTNET = 65,
   CELO = 42220,
   PALM = 11297108109,
-  PALM_TESTNET = 11297108099,
   MOONRIVER = 1285,
   FUSE = 122,
   TELOS = 40,
-  HARDHAT = 31337,
   MOONBEAM = 1284,
   OPTIMISM = 10,
-  OPTIMISM_KOVAN_TESTNET = 69,
   KAVA = 2222,
   METIS = 1088,
   BOBA = 288,

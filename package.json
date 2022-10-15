@@ -3,10 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "turbo run build --filter=\\!./examples/* --filter=\\!./scripts/*",
-    "build:examples": "turbo run build --filter=./examples/*",
-    "build:protocols": "turbo run build --filter=./protocols/*",
-    "build:packages": "turbo run build --filter=./packages/*",
+    "build": "turbo run build",
+    "generate": "turbo run generate",
     "changeset": "changeset",
     "changeset-publish": "turbo run build --filter=docs^... && changeset publish",
     "changeset-version": "changeset version",

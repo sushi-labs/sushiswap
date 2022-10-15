@@ -10,8 +10,7 @@
         ".graphclient/**",
         ".mesh/**",
         "typechain/**"
-      ],
-      "cache": true
+      ]
     },
     "build": {
       "outputs": [
@@ -24,8 +23,7 @@
       "dependsOn": [
         "^build",
         "generate"
-      ],
-      "cache": true
+      ]
     },
     "root#build": {
       "dependsOn": [
@@ -34,7 +32,6 @@
       "outputs": [
         ".next/**"
       ],
-      "cache": true,
       "env": [
         "ANALYTICS_URL",
         "BLOG_URL",
@@ -58,13 +55,12 @@
       "cache": false
     },
     "test": {
-      "outputs": [
-        "coverage/**"
-      ],
       "dependsOn": [
         "^build"
       ],
-      "cache": true
+      "outputs": [
+        "coverage/**"
+      ]
     },
     "lint": {
       "outputs": [],
@@ -86,18 +82,16 @@
     },
     "node": {
       "dependsOn": [
-        "build"
+        "^build"
       ],
       "outputs": [
         "deployments/**"
-      ],
-      "cache": true
+      ]
     },
     "server": {
       "dependsOn": [
-        "build"
-      ],
-      "cache": true
+        "^build"
+      ]
     }
   }
 }

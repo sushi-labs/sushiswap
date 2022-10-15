@@ -4,7 +4,7 @@ import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
 import { Token } from './Token'
 
-export const WBTC_ADDRESS: AddressMap = {
+export const WBTC_ADDRESS = {
   [ChainId.AVALANCHE]: '0x50b7545627a5162F82A992c33b87aDc75187B218',
   [ChainId.ARBITRUM]: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
   [ChainId.ETHEREUM]: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
@@ -15,9 +15,9 @@ export const WBTC_ADDRESS: AddressMap = {
   [ChainId.BOBA]: '0xdc0486f8bf31DF57a952bcd3c1d3e166e3d9eC8b',
   [ChainId.KAVA]: '0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b',
   [ChainId.METIS]: '0xa5B55ab1dAF0F8e1EFc0eB1931a957fd89B918f4',
-}
+} as const
 
-export const WBTC: Record<keyof typeof WBTC_ADDRESS, Token> = addressMapToTokenMap(
+export const WBTC = addressMapToTokenMap(
   {
     decimals: 8,
     symbol: 'WBTC',
@@ -26,11 +26,11 @@ export const WBTC: Record<keyof typeof WBTC_ADDRESS, Token> = addressMapToTokenM
   WBTC_ADDRESS
 )
 
-export const LUSD_ADDRESS: AddressMap = {
+export const LUSD_ADDRESS = {
   [ChainId.OPTIMISM]: '0xc40F949F8a4e094D1b49a23ea9241D289B7b2819',
-}
+} as const
 
-export const LUSD: Record<keyof typeof LUSD_ADDRESS, Token> = addressMapToTokenMap(
+export const LUSD = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'LUSD',
@@ -39,16 +39,18 @@ export const LUSD: Record<keyof typeof LUSD_ADDRESS, Token> = addressMapToTokenM
   LUSD_ADDRESS
 )
 
-export const WETH9_ADDRESS: AddressMap = {
+export const WETH9_ADDRESS = {
   [ChainId.ETHEREUM]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
   [ChainId.ROPSTEN]: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
   [ChainId.RINKEBY]: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
   [ChainId.GÖRLI]: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
   [ChainId.KOVAN]: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
   [ChainId.ARBITRUM]: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+  [ChainId.ARBITRUM_TESTNET]: '0xf8456e5e6A225C2C1D74D8C9a4cB2B1d5dc1153b',
   [ChainId.BSC]: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
   [ChainId.FANTOM]: '0x74b23882a30290451A17c44f4F05243b6b58C76d',
   [ChainId.POLYGON]: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+  [ChainId.POLYGON_TESTNET]: '0x714550C2C1Ea08688607D86ed8EeF4f5E4F22323',
   [ChainId.OKEX]: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
   [ChainId.HECO]: '0x64FF637fB478863B7468bc97D30a5bF3A428a1fD',
   [ChainId.HARMONY]: '0x6983D1E6DEf3690C4d616b13597A09e6193EA013',
@@ -62,13 +64,13 @@ export const WETH9_ADDRESS: AddressMap = {
   [ChainId.MOONBEAM]: '0x30D2a9F5FDf90ACe8c17952cbb4eE48a55D916A7',
   [ChainId.OPTIMISM]: '0x4200000000000000000000000000000000000006',
   [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
-  [ChainId.ARBITRUM_NOVA]: '0x722E8BdD2ce80A4422E880164f2079488e115365',
-  [ChainId.BOBA]: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
   [ChainId.KAVA]: '0xE3F5a90F9cb311505cd691a46596599aA1A0AD7D',
   [ChainId.METIS]: '0x420000000000000000000000000000000000000A',
-}
+  [ChainId.ARBITRUM_NOVA]: '0x722E8BdD2ce80A4422E880164f2079488e115365',
+  [ChainId.BOBA]: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
+} as const
 
-export const WETH9: Record<keyof typeof WETH9_ADDRESS, Token> = addressMapToTokenMap(
+export const WETH9 = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'WETH',
@@ -77,7 +79,7 @@ export const WETH9: Record<keyof typeof WETH9_ADDRESS, Token> = addressMapToToke
   WETH9_ADDRESS
 )
 
-export const WNATIVE_ADDRESS: AddressMap = {
+export const WNATIVE_ADDRESS = {
   [ChainId.ETHEREUM]: WETH9_ADDRESS[ChainId.ETHEREUM],
   [ChainId.ROPSTEN]: WETH9_ADDRESS[ChainId.ROPSTEN],
   [ChainId.RINKEBY]: WETH9_ADDRESS[ChainId.RINKEBY],
@@ -85,14 +87,20 @@ export const WNATIVE_ADDRESS: AddressMap = {
   [ChainId.KOVAN]: WETH9_ADDRESS[ChainId.KOVAN],
   [ChainId.OPTIMISM]: WETH9_ADDRESS[ChainId.OPTIMISM],
   [ChainId.ARBITRUM]: WETH9_ADDRESS[ChainId.ARBITRUM],
+  [ChainId.ARBITRUM_TESTNET]: WETH9_ADDRESS[ChainId.ARBITRUM_TESTNET],
   [ChainId.FANTOM]: '0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83',
+  [ChainId.FANTOM_TESTNET]: '0xf1277d1Ed8AD466beddF92ef448A132661956621',
   [ChainId.POLYGON]: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
   [ChainId.POLYGON_TESTNET]: '0x5B67676a984807a212b1c59eBFc9B3568a474F0a',
   [ChainId.GNOSIS]: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
   [ChainId.BSC]: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+  [ChainId.BSC_TESTNET]: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd',
   [ChainId.AVALANCHE]: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+  [ChainId.AVALANCHE_TESTNET]: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
   [ChainId.HECO]: '0x5545153CCFcA01fbd7Dd11C0b23ba694D9509A6F',
+  [ChainId.HECO_TESTNET]: '0x5B2DA6F42CA09C77D577a12BeaD0446148830687',
   [ChainId.HARMONY]: '0xcF664087a5bB0237a0BAd6742852ec6c8d69A27a',
+  [ChainId.HARMONY_TESTNET]: '0x7a2afac38517d512E55C0bCe3b6805c10a04D60F',
   [ChainId.OKEX]: '0x8F8526dbfd6E38E3D8307702cA8469Bae6C56C15',
   [ChainId.OKEX_TESTNET]: '0x2219845942d28716c0F7C605765fABDcA1a7d9E0',
   [ChainId.PALM]: '0xF98cABF0a963452C5536330408B2590567611a71',
@@ -105,7 +113,8 @@ export const WNATIVE_ADDRESS: AddressMap = {
   [ChainId.METIS]: '0x75cb093E4D61d2A2e65D8e0BBb01DE8d89b53481',
   [ChainId.ARBITRUM_NOVA]: WETH9_ADDRESS[ChainId.ARBITRUM_NOVA],
   [ChainId.BOBA]: WETH9_ADDRESS[ChainId.BOBA],
-}
+  [ChainId.BOBA_AVAX]: '0x26c319B7B2cF823365414d082698C8ac90cbBA63',
+} as const
 
 export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
   [ChainId.ETHEREUM]: WETH9[ChainId.ETHEREUM],
@@ -117,6 +126,13 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
   [ChainId.FANTOM]: new Token({
     chainId: ChainId.FANTOM,
     address: WNATIVE_ADDRESS[ChainId.FANTOM],
+    decimals: 18,
+    symbol: 'WFTM',
+    name: 'Wrapped FTM',
+  }),
+  [ChainId.FANTOM_TESTNET]: new Token({
+    chainId: ChainId.FANTOM_TESTNET,
+    address: WNATIVE_ADDRESS[ChainId.FANTOM_TESTNET],
     decimals: 18,
     symbol: 'WFTM',
     name: 'Wrapped FTM',
@@ -149,11 +165,26 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     symbol: 'WBNB',
     name: 'Wrapped BNB',
   }),
+  [ChainId.BSC_TESTNET]: new Token({
+    chainId: ChainId.BSC_TESTNET,
+    address: WNATIVE_ADDRESS[ChainId.BSC_TESTNET],
+    decimals: 18,
+    symbol: 'WBNB',
+    name: 'Wrapped BNB',
+  }),
   [ChainId.ARBITRUM]: WETH9[ChainId.ARBITRUM],
+  [ChainId.ARBITRUM_TESTNET]: WETH9[ChainId.ARBITRUM_TESTNET],
   [ChainId.ARBITRUM_NOVA]: WETH9[ChainId.ARBITRUM_NOVA],
   [ChainId.AVALANCHE]: new Token({
     chainId: ChainId.AVALANCHE,
     address: WNATIVE_ADDRESS[ChainId.AVALANCHE],
+    decimals: 18,
+    symbol: 'WAVAX',
+    name: 'Wrapped AVAX',
+  }),
+  [ChainId.AVALANCHE_TESTNET]: new Token({
+    chainId: ChainId.AVALANCHE_TESTNET,
+    address: WNATIVE_ADDRESS[ChainId.AVALANCHE_TESTNET],
     decimals: 18,
     symbol: 'WAVAX',
     name: 'Wrapped AVAX',
@@ -165,6 +196,13 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     symbol: 'WHT',
     name: 'Wrapped HT',
   }),
+  [ChainId.HECO_TESTNET]: new Token({
+    chainId: ChainId.HECO_TESTNET,
+    address: WNATIVE_ADDRESS[ChainId.HECO_TESTNET],
+    decimals: 18,
+    symbol: 'WHT',
+    name: 'Wrapped HT',
+  }),
   [ChainId.HARMONY]: new Token({
     chainId: ChainId.HARMONY,
     address: WNATIVE_ADDRESS[ChainId.HARMONY],
@@ -172,9 +210,23 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     symbol: 'WONE',
     name: 'Wrapped ONE',
   }),
+  [ChainId.HARMONY_TESTNET]: new Token({
+    chainId: ChainId.HARMONY_TESTNET,
+    address: WNATIVE_ADDRESS[ChainId.HARMONY_TESTNET],
+    decimals: 18,
+    symbol: 'WONE',
+    name: 'Wrapped ONE',
+  }),
   [ChainId.OKEX]: new Token({
     chainId: ChainId.OKEX,
     address: WNATIVE_ADDRESS[ChainId.OKEX],
+    decimals: 18,
+    symbol: 'WOKT',
+    name: 'Wrapped OKExChain',
+  }),
+  [ChainId.OKEX_TESTNET]: new Token({
+    chainId: ChainId.OKEX_TESTNET,
+    address: WNATIVE_ADDRESS[ChainId.OKEX_TESTNET],
     decimals: 18,
     symbol: 'WOKT',
     name: 'Wrapped OKExChain',
@@ -236,6 +288,13 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     name: 'Wrapped Metis',
   }),
   [ChainId.BOBA]: WETH9[ChainId.BOBA],
+  [ChainId.BOBA_AVAX]: new Token({
+    chainId: ChainId.BOBA_AVAX,
+    address: WNATIVE_ADDRESS[ChainId.BOBA_AVAX],
+    decimals: 18,
+    symbol: 'WBOBA',
+    name: 'Wrapped Boba',
+  }),
 }
 
 export const SUSHI_ADDRESS: AddressMap = {
@@ -261,10 +320,9 @@ export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.KAVA]: '0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D',
   [ChainId.METIS]: '0x17Ee7E4dA37B01FC1bcc908fA63DF343F23B4B7C',
   [ChainId.BOBA]: '0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b',
-  [ChainId.KAVA]: '0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D',
-}
+} as const
 
-export const SUSHI: Record<keyof typeof SUSHI_ADDRESS, Token> = addressMapToTokenMap(
+export const SUSHI = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'SUSHI',
@@ -273,11 +331,11 @@ export const SUSHI: Record<keyof typeof SUSHI_ADDRESS, Token> = addressMapToToke
   SUSHI_ADDRESS
 )
 
-export const XSUSHI_ADDRESS: AddressMap = {
+export const XSUSHI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272',
-}
+} as const
 
-export const XSUSHI: Record<keyof typeof XSUSHI_ADDRESS, Token> = addressMapToTokenMap(
+export const XSUSHI = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'XSUSHI',
@@ -286,7 +344,7 @@ export const XSUSHI: Record<keyof typeof XSUSHI_ADDRESS, Token> = addressMapToTo
   XSUSHI_ADDRESS
 )
 
-export const USDC_ADDRESS: AddressMap = {
+export const USDC_ADDRESS = {
   [ChainId.ETHEREUM]: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
   [ChainId.RINKEBY]: '0x1717A0D5C8705EE89A8aD6E808268D6A826C97A4',
   [ChainId.ROPSTEN]: '0x0D9C8723B343A8368BebE0B5E89273fF8D712e3C',
@@ -307,21 +365,21 @@ export const USDC_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0x620fd5fa44BE6af63715Ef4E65DDFA0387aD13F5',
   [ChainId.MOONBEAM]: '0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9',
   [ChainId.OPTIMISM]: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
-  [ChainId.ARBITRUM_NOVA]: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
-  [ChainId.BOBA]: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
   [ChainId.KAVA]: '0xfA9343C3897324496A05fC75abeD6bAC29f8A40f',
   [ChainId.METIS]: '0xEA32A96608495e54156Ae48931A7c20f0dcc1a21',
-}
+  [ChainId.ARBITRUM_NOVA]: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
+  [ChainId.BOBA]: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
+} as const
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
-  ...addressMapToTokenMap(
+  ...(addressMapToTokenMap(
     {
       decimals: 6,
       symbol: 'USDC',
       name: 'USD Coin',
     },
     USDC_ADDRESS
-  ),
+  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, ChainId.BSC>),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
     address: USDC_ADDRESS[ChainId.BSC],
@@ -331,13 +389,14 @@ export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
   }),
 }
 
-export const USDT_ADDRESS: AddressMap = {
+export const USDT_ADDRESS = {
   [ChainId.ETHEREUM]: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   [ChainId.ROPSTEN]: '0x110a13FC3efE6A245B50102D2d79B3E76125Ae83',
   [ChainId.KOVAN]: '0x07de306FF27a2B630B1141956844eB1552B956B5',
   [ChainId.POLYGON]: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
   [ChainId.FANTOM]: '0x049d68029688eAbF473097a2fC38ef61633A3C7A',
   [ChainId.BSC]: '0x55d398326f99059fF775485246999027B3197955',
+  [ChainId.BSC_TESTNET]: '0xF49E250aEB5abDf660d643583AdFd0be41464EfD',
   [ChainId.HARMONY]: '0x3C2B8Be99c50593081EAA2A724F0B8285F5aba8f',
   [ChainId.HECO]: '0xa71EdC38d189767582C38A3145b5873052c3e47a',
   [ChainId.OKEX]: '0x382bB369d343125BfB2117af9c149795C6C65C50',
@@ -350,21 +409,21 @@ export const USDT_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0xFaDbBF8Ce7D5b7041bE672561bbA99f79c532e10',
   [ChainId.MOONBEAM]: '0x8e70cd5b4ff3f62659049e74b6649c6603a0e594',
   [ChainId.OPTIMISM]: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
-  [ChainId.ARBITRUM_NOVA]: '0xeD9d63a96c27f87B07115b56b2e3572827f21646',
-  [ChainId.BOBA]: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
   [ChainId.KAVA]: '0xB44a9B6905aF7c801311e8F4E76932ee959c663C',
   [ChainId.METIS]: '0xbB06DCA3AE6887fAbF931640f67cab3e3a16F4dC',
-}
+  [ChainId.ARBITRUM_NOVA]: '0xeD9d63a96c27f87B07115b56b2e3572827f21646',
+  [ChainId.BOBA]: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
+} as const
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
-  ...addressMapToTokenMap(
+  ...(addressMapToTokenMap(
     {
       decimals: 6,
       symbol: 'USDT',
       name: 'Tether USD',
     },
     USDT_ADDRESS
-  ),
+  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, ChainId.BSC>),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
     address: USDT_ADDRESS[ChainId.BSC],
@@ -372,9 +431,16 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
     symbol: 'USDT',
     name: 'Tether USD',
   }),
+  [ChainId.BSC_TESTNET]: new Token({
+    chainId: ChainId.BSC_TESTNET,
+    address: USDT_ADDRESS[ChainId.BSC_TESTNET],
+    decimals: 18,
+    symbol: 'USDT',
+    name: 'Tether USD',
+  }),
 }
 
-export const DAI_ADDRESS: AddressMap = {
+export const DAI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
   [ChainId.ROPSTEN]: '0xc2118d4d90b274016cB7a54c03EF52E6c537D957',
   [ChainId.KOVAN]: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
@@ -393,13 +459,13 @@ export const DAI_ADDRESS: AddressMap = {
   [ChainId.FUSE]: '0x94Ba7A27c7A95863d1bdC7645AC2951E0cca06bA',
   [ChainId.MOONBEAM]: '0xc234A67a4F840E61adE794be47de455361b52413',
   [ChainId.OPTIMISM]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-  [ChainId.ARBITRUM_NOVA]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-  [ChainId.BOBA]: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
   [ChainId.KAVA]: '0x765277EebeCA2e31912C9946eAe1021199B39C61',
   [ChainId.METIS]: '0x4c078361FC9BbB78DF910800A991C7c3DD2F6ce0',
-}
+  [ChainId.ARBITRUM_NOVA]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+  [ChainId.BOBA]: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
+} as const
 
-export const DAI: Record<keyof typeof DAI_ADDRESS, Token> = addressMapToTokenMap(
+export const DAI = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'DAI',
@@ -408,7 +474,7 @@ export const DAI: Record<keyof typeof DAI_ADDRESS, Token> = addressMapToTokenMap
   DAI_ADDRESS
 )
 
-export const MIM_ADDRESS: AddressMap = {
+export const MIM_ADDRESS = {
   [ChainId.ETHEREUM]: '0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3',
   [ChainId.FANTOM]: '0x82f0B8B456c1A451378467398982d4834b6829c1',
   [ChainId.BSC]: '0xfE19F0B51438fd612f6FD59C1dbB3eA319f433Ba',
@@ -416,9 +482,9 @@ export const MIM_ADDRESS: AddressMap = {
   [ChainId.AVALANCHE]: '0x130966628846BFd36ff31a822705796e8cb8C18D',
   [ChainId.POLYGON]: '0x49a0400587A7F65072c87c4910449fDcC5c47242',
   [ChainId.MOONRIVER]: '0x0caE51e1032e8461f4806e26332c030E34De3aDb',
-}
+} as const
 
-export const MIM: Record<keyof typeof MIM_ADDRESS, Token> = addressMapToTokenMap(
+export const MIM = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'MIM',
@@ -427,7 +493,7 @@ export const MIM: Record<keyof typeof MIM_ADDRESS, Token> = addressMapToTokenMap
   MIM_ADDRESS
 )
 
-export const FRAX_ADDRESS: AddressMap = {
+export const FRAX_ADDRESS = {
   [ChainId.ETHEREUM]: '0x853d955aCEf822Db058eb8505911ED77F175b99e',
   [ChainId.FANTOM]: '0xdc301622e621166BD8E82f2cA0A26c13Ad0BE355',
   [ChainId.BSC]: '0x90C97F71E18723b0Cf0dfa30ee176Ab653E89F40',
@@ -439,9 +505,9 @@ export const FRAX_ADDRESS: AddressMap = {
   [ChainId.HARMONY]: '0xFa7191D292d5633f702B0bd7E3E3BcCC0e633200',
   [ChainId.BOBA]: '0xAb2AF3A98D229b7dAeD7305Bb88aD0BA2c42f9cA',
   [ChainId.OPTIMISM]: '0x2E3D870790dC77A83DD1d18184Acc7439A53f475',
-}
+} as const
 
-export const FRAX: Record<keyof typeof FRAX_ADDRESS, Token> = addressMapToTokenMap(
+export const FRAX = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'FRAX',
@@ -450,7 +516,7 @@ export const FRAX: Record<keyof typeof FRAX_ADDRESS, Token> = addressMapToTokenM
   FRAX_ADDRESS
 )
 
-export const FXS_ADDRESS: AddressMap = {
+export const FXS_ADDRESS = {
   [ChainId.ETHEREUM]: '0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0',
   [ChainId.FANTOM]: '0x7d016eec9c25232b01F23EF992D98ca97fc2AF5a',
   [ChainId.BSC]: '0xe48A3d7d0Bc88d552f730B62c006bC925eadB9eE',
@@ -462,9 +528,9 @@ export const FXS_ADDRESS: AddressMap = {
   [ChainId.HARMONY]: '0x0767D8E1b05eFA8d6A301a65b324B6b66A1CC14c',
   [ChainId.BOBA]: '0xdc1664458d2f0B6090bEa60A8793A4E66c2F1c00',
   [ChainId.OPTIMISM]: '0x67CCEA5bb16181E7b4109c9c2143c24a1c2205Be',
-}
+} as const
 
-export const FXS: Record<keyof typeof FXS_ADDRESS, Token> = addressMapToTokenMap(
+export const FXS = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'FXS',
@@ -473,11 +539,11 @@ export const FXS: Record<keyof typeof FXS_ADDRESS, Token> = addressMapToTokenMap
   FXS_ADDRESS
 )
 
-export const BCT_ADDRESS: AddressMap = {
+export const BCT_ADDRESS = {
   [ChainId.POLYGON]: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
-}
+} as const
 
-export const BCT: Record<keyof typeof BCT_ADDRESS, Token> = addressMapToTokenMap(
+export const BCT = addressMapToTokenMap(
   {
     decimals: 18,
     symbol: 'BCT',
@@ -486,11 +552,11 @@ export const BCT: Record<keyof typeof BCT_ADDRESS, Token> = addressMapToTokenMap
   BCT_ADDRESS
 )
 
-export const KLIMA_ADDRESS: AddressMap = {
+export const KLIMA_ADDRESS = {
   [ChainId.POLYGON]: '0x4e78011Ce80ee02d2c3e649Fb657E45898257815',
-}
+} as const
 
-export const KLIMA: Record<keyof typeof KLIMA_ADDRESS, Token> = addressMapToTokenMap(
+export const KLIMA = addressMapToTokenMap(
   {
     decimals: 9,
     symbol: 'KLIMA',
