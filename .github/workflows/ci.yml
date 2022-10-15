@@ -24,8 +24,12 @@ jobs:
         PARTNER_URL: ${{ secrets.PARTNER_URL }}
         SWAP_URL: ${{ secrets.SWAP_URL }}
         XSWAP_URL: ${{ secrets.XSWAP_URL }}
-      #  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      #  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+        NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+        NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+        INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+        ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
  
       steps:
         - name: Check out code
@@ -45,7 +49,13 @@ jobs:
  
         - name: Install dependencies
           run: pnpm install
- 
+
+        - name: Lint
+          run: pnpm lint
+
+        # - name: Generate
+        #   run: pnpm generate
+
         - name: Build
           run: pnpm build
  

@@ -9,7 +9,19 @@ const withTranspileModules = transpileModules([
   '@sushiswap/ui',
 ])
 
-const { ROOT_URL, BLOG_URL, ANALYTICS_URL, FURO_URL, SWAP_URL, XSWAP_URL, EARN_URL, PARTNER_URL } = process.env
+const {
+  ROOT_URL,
+  ANALYTICS_URL,
+  BLOG_URL,
+  BRIDGE_URL,
+  EARN_URL,
+  FURO_URL,
+  INTERNAL_URL,
+  KASHI_URL,
+  PARTNER_URL,
+  SWAP_URL,
+  XSWAP_URL,
+} = process.env
 
 // @ts-check
 /** @type {import('next').NextConfig} */
