@@ -1,4 +1,5 @@
 import { getAddress } from '@ethersproject/address'
+import { JSBI } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { Currency } from './Currency'
@@ -14,13 +15,13 @@ export class Token extends Currency {
    * The contract address on the chain on which this token lives
    */
   public readonly address: string
-
   public constructor(token: {
     chainId: number | string
     address: string
     decimals: number
     symbol?: string
     name?: string
+    rebase?: { base: JSBI; elastic: JSBI }
   }) {
     super(token)
     try {
