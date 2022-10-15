@@ -39,15 +39,20 @@ export async function getStaticProps({
 }) {
   const data = await getArticleAndMoreArticles(params.slug, preview)
 
+  if (!data?.articles?.data?.[0]) {
+    return {
+      props: {},
+      notFound: true,
+    }
+  }
+
   return {
     props: {
-      // @ts-ignore
-      article: data?.articles?.data?.[0],
-      // @ts-ignore
-      latestArticles: data?.moreArticles?.data,
+      article: data.articles.data[0],
+      latestArticles: data.moreArticles.data,
       preview: !!preview,
     },
-    revalidate: 1,
+    revalidate: 60,
   }
 }
 
