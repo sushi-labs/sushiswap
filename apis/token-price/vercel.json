@@ -8,5 +8,10 @@
       ]
     }
   ],
-  "rewrites": [{ "source": "/v0/:chainId", "destination": "/api/v0/:chainId" }]
+  "rewrites": [
+    { "source": "/v0/:chainId", "destination": "/api/v0/:chainId" },
+    { "source": "/v1", "destination": "/api/v1" },
+    { "source": "/v1/:chainId", "destination": "/api/v1/:chainId" },
+    { "source": "/v1/:chainId/:tokenAddress", "destination": "/api/v1/:chainId/:tokenAddress" }
+  ]
 }
