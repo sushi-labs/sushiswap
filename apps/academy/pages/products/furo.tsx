@@ -1,0 +1,262 @@
+import { LinkIcon } from '@heroicons/react/24/outline'
+import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
+import aaveImg from 'common/assets/aave.png'
+import audioGrantsImg from 'common/assets/audio-grants.png'
+import banklessImg from 'common/assets/bankless.png'
+import boardImg from 'common/assets/board.png'
+import compoundImg from 'common/assets/compound.png'
+import dydxImg from 'common/assets/dydx.png'
+import forefrontImg from 'common/assets/forefront.png'
+import { FuroImg } from 'common/assets/FuroImg'
+import indexCoopImg from 'common/assets/index-coop.png'
+import olympusImg from 'common/assets/olympus.png'
+import partyImg from 'common/assets/party.png'
+import synthetixImg from 'common/assets/synthetix.png'
+import {
+  ProductArticles,
+  ProductBackground,
+  ProductCards,
+  ProductFaq,
+  ProductStats,
+  ProductTechnicalDoc,
+} from 'common/components'
+import { defaultSidePadding } from 'common/helpers'
+import { AcademyIcon, MoneyBagIcon, MoneyHandIcon, MoneyTreeIcon, PuzzlePieceIcon, TilesIcon } from 'common/icons'
+import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
+import { InferGetStaticPropsType } from 'next'
+import Image from 'next/image'
+import { FC } from 'react'
+import useSWR from 'swr'
+
+import { ArticleEntity } from '.mesh'
+
+const productSlug = 'furo'
+const color = '#EB72FF'
+const accentColor = '#B341C6'
+const productStats = [
+  { value: '20', name: 'Projects Launched' },
+  { value: '$500m', name: 'Funds Raised' },
+  { value: '13k', name: 'Users Participated' },
+  { value: '$4m', name: 'Volume Generated' },
+]
+
+const clients = [
+  banklessImg,
+  indexCoopImg,
+  compoundImg,
+  aaveImg,
+  synthetixImg,
+  audioGrantsImg,
+  olympusImg,
+  dydxImg,
+  partyImg,
+  forefrontImg,
+]
+
+const cards = [
+  {
+    Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
+    title: 'Utilize funds in multiple DeFi apps',
+    subtitle:
+      'Bento’s innovation is its ability to track the user’s deposits via artificial balance, which is used to account for their idle funds...',
+  },
+  {
+    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
+    title: 'Earn some of the highest yield in DeFi',
+    subtitle: 'Being the foundation for multiple DeFi apps, Bentobox can attract more capital than simple vaults.',
+  },
+  {
+    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
+    title: 'Flashloans',
+    subtitle:
+      'The funds in Bento can also be used in flash loans, which can add more passive value to the user’s underutilized capital.',
+  },
+  {
+    Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
+    title: 'Plug’n’play interest pools for your DeFi app',
+    subtitle: 'Build your own DeFi apps on top of Bento, to instantly utilize the 500m+ TVL',
+  },
+  {
+    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
+    title: 'Capital efficiency',
+    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+  },
+]
+
+const faq = [
+  {
+    question: 'What is Trident and what Pool types does it support?',
+    answer: (
+      <>
+        <Typography>
+          Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs can
+          be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there is a
+          framework for creating any AMM anyone would ever need.
+        </Typography>
+        <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
+        <ul className="list-disc list-inside">
+          <li>
+            <Typography weight={700} className="text-white" as="span">
+              Classic pool{' '}
+            </Typography>
+            <Typography as="span">
+              = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
+              They’re best for pairing tokens that are unpredictable.
+            </Typography>
+          </li>
+          <li>
+            <Typography weight={700} className="text-white" as="span">
+              Concentrated pool{' '}
+            </Typography>
+            <Typography as="span">
+              = these pools also use two tokens. The difference is that the liquidity in each pool is determined by the
+              ranges set by the pool creator.
+            </Typography>
+          </li>
+          <li>
+            <Typography weight={700} className="text-white" as="span">
+              Stable pools{' '}
+            </Typography>
+            <Typography as="span">
+              = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT, or
+              other pegged tokens like ETH and stETH, or renBTC and WBTC.
+            </Typography>
+          </li>
+          <li>
+            <Typography weight={700} className="text-white" as="span">
+              Index pools{' '}
+            </Typography>
+            <Typography as="span">
+              = these pools are usually used to create baskets of assets or decentralized index funds; hence the name.
+              These pools can be made of any percentage of tokens equalling 100.
+            </Typography>
+          </li>
+        </ul>
+      </>
+    ),
+  },
+]
+
+export const getStaticProps = async () => {
+  const data = await getProducts({ filters: { slug: { eq: productSlug } } })
+  const product = data?.products?.data?.[0].attributes
+
+  return { props: product }
+}
+
+const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
+  name,
+  longName,
+  url,
+  description,
+  slug,
+  relevantArticleIds,
+}) => {
+  const { data, isValidating } = useSWR(
+    [`/bentobox-articles`],
+    async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
+    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false }
+  )
+
+  const latestArticles = (data?.articles?.data ?? []) as ArticleEntity[]
+  const relevantArticles = (data?.relevantArticles?.data ?? []) as ArticleEntity[]
+
+  return (
+    <>
+      <Container maxWidth="6xl" className={classNames('mx-auto pt-10', defaultSidePadding)}>
+        <ProductBackground color={color} />
+        <section className="py-[75px] relative">
+          <FuroImg className="absolute right-0" />
+
+          <h1 className="w-2/5 text-6xl font-bold">{longName}</h1>
+          <h3 className="w-2/5 mt-2 text-2xl font-medium text-gray-500">{description}</h3>
+
+          <Link.External href={url}>
+            <Button
+              size="lg"
+              className="mt-16 rounded-lg"
+              startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+            >
+              <Typography weight={500}>Linking to farm</Typography>
+            </Button>
+          </Link.External>
+          <ProductStats productStats={productStats} />
+        </section>
+      </Container>
+
+      <section className="py-[50px] bg-slate-800">
+        <div className="flex flex-col items-center max-w-6xl gap-12 mx-auto">
+          <h3 className="text-4xl font-bold">Clients</h3>
+          <div className="flex gap-x-[70px] gap-y-12 items-center flex-wrap justify-center">
+            {clients.map((client, i) => (
+              <Image key={i} unoptimized src={client} layout="fixed" alt="client-logo" />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Container maxWidth="6xl" className={classNames('mx-auto pb-24', defaultSidePadding)}>
+        <section className="py-[75px] grid grid-rows-3 gap-[70px]">
+          <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
+            <div>
+              <h3 className="text-4xl text-slate-50">The BentoBox</h3>
+              <p className="text-lg text-slate-400">
+                {
+                  "All of the funds on Trident are also available to be applied to approved strategies in the BentoBox. This feature is made possible by Bento's empirical accounting method..."
+                }
+              </p>
+            </div>
+            <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="bentobox" />
+          </div>
+          <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
+            <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="tines" />
+            <div>
+              <h3 className="text-4xl text-slate-50">The Tines Router</h3>
+              <p className="text-lg text-slate-400">
+                {
+                  'Tines is a Smart Ordering Router (SOR) that is responsible for managing all the swaps on Trident. When the final phase of Trident is complete, Tines will be the only router in existence...'
+                }
+              </p>
+            </div>
+          </div>
+          <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
+            <div>
+              <h3 className="text-4xl text-slate-50">The IPool interface </h3>
+              <p className="text-lg text-slate-400">
+                {
+                  'The IPool interface was developed by the Sushi team in the process of building Trident, which is a system of contracts that supports the four most canonical types of liquidity in DeFi: Classic...'
+                }
+              </p>
+            </div>
+            <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="ipool" />
+          </div>
+        </section>
+        <ProductCards
+          name="Trident AMM"
+          description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."
+          cards={cards}
+          gradientBorderColor={color}
+        />
+        <ProductArticles
+          title="Articles"
+          subtitle="We are looking to create an NFT platform that focuses on artists."
+          articles={latestArticles}
+          productName={productSlug}
+          isLoading={isValidating}
+        />
+
+        <ProductArticles
+          title={`Learn about ${name}`}
+          subtitle="Checkout our how-to articles"
+          articles={relevantArticles}
+          productName={productSlug}
+          isLoading={isValidating}
+        />
+        <ProductTechnicalDoc color={color} secondaryColor="#FEC464" />
+        <ProductFaq faq={faq} />
+      </Container>
+    </>
+  )
+}
+
+export default ProductPage
