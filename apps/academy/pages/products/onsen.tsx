@@ -151,7 +151,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
       <ProductBackground color={color} />
       <section className="py-[75px]">
-        <h3 className="text-2xl font-medium text-gray-400">{description}</h3>
+        <h3 className="text-2xl leading-[78px] font-medium text-gray-400">{description}</h3>
         <h1 className="w-2/5 mt-10 text-6xl font-bold">{longName}</h1>
 
         <Link.External href={url}>

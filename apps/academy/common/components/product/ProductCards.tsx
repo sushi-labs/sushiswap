@@ -30,7 +30,7 @@ export const ProductCards: FC<ProductCards> = ({ name, description, cards, gradi
         {cards.map((card, i) => (
           <div
             key={i}
-            className="p-[1px] h-[415px] rounded-3xl"
+            className="p-px h-[415px] rounded-3xl"
             style={{
               background: !i
                 ? `linear-gradient(218.8deg, ${gradientBorderColor} 2.35%, rgba(0, 0, 0, 0) 97.65%)`

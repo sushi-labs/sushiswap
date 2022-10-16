@@ -189,7 +189,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
       <ProductBackground color={color} />
       <section className="py-[75px]">
-        <h1 className="flex gap-2 text-6xl font-bold text-slate-50">
+        <h1 className="leading-[78px] flex gap-2 text-6xl font-bold text-slate-50">
           <span>Sushi</span>
           <span className="flex items-center">
             <WideTriangle fill="#F7EA75" className="-mr-2" />

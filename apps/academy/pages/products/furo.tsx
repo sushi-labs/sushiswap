@@ -168,7 +168,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <section className="py-[75px] relative">
           <FuroImg className="absolute right-0" />
 
-          <h1 className="w-2/5 text-6xl font-bold">{longName}</h1>
+          <h1 className="w-2/5 text-6xl leading-[78px] font-bold">{longName}</h1>
           <h3 className="w-2/5 mt-2 text-2xl font-medium text-gray-500">{description}</h3>
 
           <Link.External href={url}>
