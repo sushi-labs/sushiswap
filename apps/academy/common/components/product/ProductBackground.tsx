@@ -6,7 +6,7 @@ interface ProductBackground {
 
 export const ProductBackground: FC<ProductBackground> = ({ color }) => {
   return (
-    <>
+    <div className="absolute inset-0 overflow-hidden">
       <div
         className="absolute w-[120vw] md:w-full aspect-[1/1] opacity-30 -right-[35%] -top-[50vw] -z-[1]"
         style={{
@@ -19,6 +19,6 @@ export const ProductBackground: FC<ProductBackground> = ({ color }) => {
           backgroundImage: `radial-gradient(50% 50% at 55% 45%, ${color} 0%, #0f172a 100%)`,
         }}
       />
-    </>
+    </div>
   )
 }
