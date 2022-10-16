@@ -94,8 +94,6 @@ query CrossChainPairs(
   $block: Block_height
   $pagination: Pagination
   $chainIds: [Int!]!
-  $oneDayBlockNumbers: [Int!]!
-  $oneWeekBlockNumbers: [Int!]!
 ) {
   crossChainPairs(
     first: $first, 
@@ -105,9 +103,7 @@ query CrossChainPairs(
     orderDirection: $orderDirection,
     block: $block, 
     pagination: $pagination,
-    chainIds: $chainIds,
-    oneDayBlockNumbers: $oneDayBlockNumbers,
-    oneWeekBlockNumbers: $oneWeekBlockNumbers
+    chainIds: $chainIds
   ) {
     id
     chainId

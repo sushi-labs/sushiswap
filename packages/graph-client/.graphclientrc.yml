@@ -128,9 +128,7 @@ additionalTypeDefs: |
       orderDirection: OrderDirection, 
       block: Block_height,
       pagination: Pagination,
-      chainIds: [Int!]!,
-      oneDayBlockNumbers: [Int!]!,
-      oneWeekBlockNumbers: [Int!]!
+      chainIds: [Int!]!
     ): [Pair!]!
     crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair
     crossChainUser(
