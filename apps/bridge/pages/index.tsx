@@ -26,7 +26,7 @@ import React, { FC, useCallback, useEffect, useMemo } from 'react'
 import { useBridgeOutput } from '../lib/hooks'
 import { useCustomTokens } from '../lib/state/storage'
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query
   return {
