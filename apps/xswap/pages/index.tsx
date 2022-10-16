@@ -929,8 +929,8 @@ const Widget: FC<Swap> = ({
         >
           <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
             <App.NavItemList hideOnMobile={false}>
-              <App.NavItemInternal href="https://www.sushi.com/swap" label="Swap" />
-              <App.NavItemInternal href="https://www.sushi.com/xswap" label="xSwap" />
+              <App.NavItem href="https://www.sushi.com/swap" label="Swap" />
+              <App.NavItem href="https://www.sushi.com/xswap" label="xSwap" />
             </App.NavItemList>
             <div className="flex justify-end">
               <SettingsOverlay chainId={srcChainId} />

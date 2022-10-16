@@ -29,5 +29,5 @@ export const BuyCrypto = ({ address }: { address: string | undefined }) => {
     // params.append('themeColor', '#3B82F6')
     return `https://global.transak.com/?${params.toString()}`
   }, [address])
-  return <App.NavItemExternal href={buyUrl} label="Buy Crypto" />
+  return <App.NavItem href={buyUrl} label="Buy Crypto" external />
 }

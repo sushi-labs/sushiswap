@@ -2,6 +2,7 @@ import Link, { LinkProps } from 'next/link'
 import { FC } from 'react'
 
 export type InternalLinkProps = LinkProps & {
+  className?: string | undefined
   children?: React.ReactNode
 }
 

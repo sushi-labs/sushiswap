@@ -8,8 +8,8 @@ export const Header: FC = () => {
       appType={AppType.Swap}
       nav={
         <App.NavItemList>
-          <App.NavItemInternal href="/subgraphs" label="Subgraphs" />
-          <App.NavItemInternal href="/tokens" label="Tokens" />
+          <App.NavItem href="/subgraphs" label="Subgraphs" />
+          <App.NavItem href="/tokens" label="Tokens" />
         </App.NavItemList>
       }
     ></App.Header>
