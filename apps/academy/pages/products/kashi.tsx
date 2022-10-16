@@ -1,6 +1,5 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
-import boardImg from 'common/assets/board.png'
 import {
   ProductArticles,
   ProductBackground,
@@ -13,15 +12,14 @@ import { defaultSidePadding } from 'common/helpers'
 import { AcademyIcon, MoneyBagIcon, MoneyHandIcon, MoneyTreeIcon, PuzzlePieceIcon, TilesIcon } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
 import { ArticleEntity } from '.mesh'
 
-const productSlug = 'trident'
-const color = '#93E5CE'
-const accentColor = '#22AD9D'
+const productSlug = 'kashi'
+const color = '#FF5EAF'
+const accentColor = '#D84D7F'
 const productStats = [
   { value: '20', name: 'Projects Launched' },
   { value: '$500m', name: 'Funds Raised' },
@@ -139,12 +137,11 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
       <ProductBackground color={color} />
       <section className="py-[75px]">
-        <h1 className="text-6xl">
-          <p>A Future-Proof</p>
-          <p>Framework for Building</p>
-          <p className="font-bold">AMMs</p>
+        <h1 className="text-6xl font-bold">
+          <p>Kashi Lending</p>
+          <p>Protocol</p>
         </h1>
-        <h3 className="mt-10 text-2xl font-medium text-gray-500">{description}</h3>
+        <h3 className="mt-1.5 text-2xl font-medium text-gray-500">{description}</h3>
 
         <Link.External href={url}>
           <Button
@@ -152,14 +149,14 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             className="mt-16 rounded-lg"
             startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
           >
-            <Typography weight={500}>Linking to farm</Typography>
+            <Typography weight={500}>Linking to kashi</Typography>
           </Button>
         </Link.External>
         <ProductStats productStats={productStats} />
       </section>
       <ProductCards
-        name="Trident AMM"
-        description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."
+        name={name}
+        description="Kashi is a lending and margin trading platform, built on the BentoBox, allowing lenders to earn yield on their pooled funds and borrowers to take out token loans. Kashi solves problems with existing lending markets, by introducing new paradigms:"
         cards={cards}
         gradientBorderColor={color}
       />
@@ -170,41 +167,6 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={productSlug}
         isLoading={isValidating}
       />
-      <section className="py-[75px] grid grid-rows-3 gap-[70px]">
-        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
-          <div>
-            <h3 className="text-4xl text-slate-50">The BentoBox</h3>
-            <p className="text-lg text-slate-400">
-              {
-                "All of the funds on Trident are also available to be applied to approved strategies in the BentoBox. This feature is made possible by Bento's empirical accounting method..."
-              }
-            </p>
-          </div>
-          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="bentobox" />
-        </div>
-        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
-          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="tines" />
-          <div>
-            <h3 className="text-4xl text-slate-50">The Tines Router</h3>
-            <p className="text-lg text-slate-400">
-              {
-                'Tines is a Smart Ordering Router (SOR) that is responsible for managing all the swaps on Trident. When the final phase of Trident is complete, Tines will be the only router in existence...'
-              }
-            </p>
-          </div>
-        </div>
-        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
-          <div>
-            <h3 className="text-4xl text-slate-50">The IPool interface </h3>
-            <p className="text-lg text-slate-400">
-              {
-                'The IPool interface was developed by the Sushi team in the process of building Trident, which is a system of contracts that supports the four most canonical types of liquidity in DeFi: Classic...'
-              }
-            </p>
-          </div>
-          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="ipool" />
-        </div>
-      </section>
       <ProductArticles
         title={`Learn about ${name}`}
         subtitle="Checkout our how-to articles"
@@ -212,7 +174,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={productSlug}
         isLoading={isValidating}
       />
-      <ProductTechnicalDoc color={color} secondaryColor="#FEC464" />
+      <ProductTechnicalDoc color="#5F82FF" secondaryColor={accentColor} />
       <ProductFaq faq={faq} />
     </Container>
   )
