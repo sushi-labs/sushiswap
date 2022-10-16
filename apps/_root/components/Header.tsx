@@ -5,7 +5,7 @@ export const Header: FC = () => {
   return (
     <App.Header withScrollBackground={true} appType={AppType.Root}>
       <div className="flex items-center gap-2">
-        <div className="hidden md:flex items-center gap-2">
+        <div className="items-center hidden gap-2 md:flex">
           <Link.Internal href="/blog" passHref={true}>
             <Button as="a" variant="empty" color="gray">
               Blog

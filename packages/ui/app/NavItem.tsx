@@ -14,15 +14,31 @@ export const NavItemInternal: FC<NavItemProps> = ({ href, label }) => {
 
   return (
     <Link.Internal href={href}>
-      <span
+      <a
+        href={href}
         className={classNames(
           href === basePath ? 'text-slate-50' : 'text-slate-300',
           'text-sm font-semibold text-slate-400 hover:text-slate-50 cursor-pointer'
         )}
       >
         {label}
-      </span>
+      </a>
     </Link.Internal>
+  )
+}
+
+export const NavItemApp: FC<NavItemProps> = ({ href, label }) => {
+  const { basePath } = useRouter()
+  return (
+    <a
+      href={href}
+      className={classNames(
+        href === basePath ? 'text-slate-50' : 'text-slate-300',
+        'text-sm font-semibold text-slate-400 hover:text-slate-50 cursor-pointer decoration-transparent'
+      )}
+    >
+      {label}
+    </a>
   )
 }
 
@@ -30,15 +46,15 @@ export const NavItemExternal: FC<NavItemProps> = ({ href, label }) => {
   const { basePath } = useRouter()
 
   return (
-    <Link.External href={href} className="decoration-transparent">
-      <span
+    <Link.External href={href}>
+      <a
         className={classNames(
           href === basePath ? 'text-slate-50' : 'text-slate-300',
-          'text-sm font-semibold text-slate-400 hover:text-slate-50 cursor-pointer'
+          'text-sm font-semibold text-slate-400 hover:text-slate-50 cursor-pointer decoration-transparent'
         )}
       >
         {label}
-      </span>
+      </a>
     </Link.External>
   )
 }
@@ -47,15 +63,14 @@ export const NavItem: FC<NavItemProps> = ({ href, label }) => {
   const { basePath } = useRouter()
 
   return (
-    <a href={href}>
-      <span
-        className={classNames(
-          href === basePath ? 'text-slate-50' : 'text-slate-300',
-          'text-sm font-semibold text-slate-400 hover:text-slate-50 cursor-pointer'
-        )}
-      >
-        {label}
-      </span>
+    <a
+      href={href}
+      className={classNames(
+        href === basePath ? 'text-slate-50' : 'text-slate-300',
+        'text-sm font-semibold text-slate-400 hover:text-slate-50 cursor-pointer'
+      )}
+    >
+      {label}
     </a>
   )
 }
