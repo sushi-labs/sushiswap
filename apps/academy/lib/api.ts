@@ -3,18 +3,14 @@ import { ArticleFiltersInput, getMeshSDK, GetProductsQueryVariables, PaginationA
 export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
   const sdk = getMeshSDK()
 
-  try {
-    return await sdk.articleAndMoreArticles({
-      filters: {
-        slug: { eq: slug },
-        articleType: { eq: 'academy' },
-      },
-      filters_ne: { slug: { not: { eq: slug } }, articleType: { eq: 'academy' } },
-      publicationState: preview ? 'PREVIEW' : 'LIVE',
-    })
-  } catch (e) {
-    console.error(e)
-  }
+  return await sdk.articleAndMoreArticles({
+    filters: {
+      slug: { eq: slug },
+      articleType: { eq: 'academy' },
+    },
+    filters_ne: { slug: { not: { eq: slug } }, articleType: { eq: 'academy' } },
+    publicationState: preview ? 'PREVIEW' : 'LIVE',
+  })
 }
 
 export const getAllArticlesBySlug = async () => {
@@ -58,4 +54,21 @@ export const getDifficulties = async () => {
 export const getProducts = async (variables?: GetProductsQueryVariables) => {
   const sdk = getMeshSDK()
   return await sdk.GetProducts(variables)
+}
+
+export const getLatestAndRelevantArticles = async (productSlug: string, relevantArticleIds: string[]) => {
+  const sdk = getMeshSDK()
+
+  return await sdk.GetLatestAndRelevantArticles({
+    filters: {
+      products: {
+        slug: { eq: productSlug },
+      },
+      articleType: { eq: 'academy' },
+    },
+    filters_ne: {
+      id: { in: relevantArticleIds },
+      articleType: { eq: 'academy' },
+    },
+  })
 }

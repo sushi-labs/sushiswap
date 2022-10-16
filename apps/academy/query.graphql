@@ -143,13 +143,6 @@ query articleAndMoreArticles(
             }
           }
         }
-        topics {
-          data {
-            attributes {
-              name
-            }
-          }
-        }
         difficulty {
           data {
             attributes {
@@ -170,30 +163,6 @@ query articleAndMoreArticles(
               name
               url
               provider_metadata
-            }
-          }
-        }
-        authors {
-          data {
-            id
-            attributes {
-              avatar {
-                data {
-                  id
-                  attributes {
-                    alternativeText
-                    height
-                    width
-                    caption
-                    name
-                    url
-                    provider_metadata
-                  }
-                }
-              }
-              name
-              email
-              handle
             }
           }
         }
@@ -325,72 +294,6 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
             }
           }
         }
-        authors {
-          data {
-            id
-            attributes {
-              avatar {
-                data {
-                  id
-                  attributes {
-                    alternativeText
-                    height
-                    width
-                    caption
-                    name
-                    url
-                    provider_metadata
-                  }
-                }
-              }
-              name
-              email
-              handle
-            }
-          }
-        }
-        blocks {
-          __typename
-          ... on ComponentSharedDivider {
-            id
-          }
-          ... on ComponentSharedMedia {
-            caption
-            file {
-              data {
-                id
-                attributes {
-                  alternativeText
-                  height
-                  width
-                  caption
-                  name
-                  url
-                  provider_metadata
-                }
-              }
-            }
-          }
-          ... on ComponentSharedRichText {
-            body
-          }
-          ... on ComponentSharedSlider {
-            files {
-              data {
-                id
-                attributes {
-                  alternativeText
-                  height
-                  width
-                  caption
-                  name
-                  url
-                  provider_metadata
-                }
-              }
-            }
-          }
-        }
       }
     }
   }
@@ -434,6 +337,108 @@ query GetProducts($filters: ProductFiltersInput) {
         slug
         url
         relevantArticleIds
+      }
+    }
+  }
+}
+
+query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: ArticleFiltersInput) {
+  articles(filters: $filters, sort: "publishedAt:desc", pagination: { limit: 3 }) {
+    data {
+      attributes {
+        title
+        description
+        slug
+        publishedAt
+        products {
+          data {
+            id
+            attributes {
+              name
+              slug
+            }
+          }
+        }
+        topics {
+          data {
+            attributes {
+              name
+            }
+          }
+        }
+        difficulty {
+          data {
+            attributes {
+              name
+              label
+              slug
+            }
+          }
+        }
+        cover {
+          data {
+            attributes {
+              alternativeText
+              height
+              width
+              caption
+              name
+              url
+              provider_metadata
+            }
+          }
+        }
+      }
+    }
+  }
+
+  relevantArticles: articles(filters: $filters_ne, pagination: { limit: 3 }) {
+    data {
+      id
+      attributes {
+        title
+        description
+        slug
+        publishedAt
+        products {
+          data {
+            id
+            attributes {
+              name
+              slug
+            }
+          }
+        }
+        topics {
+          data {
+            attributes {
+              name
+            }
+          }
+        }
+        difficulty {
+          data {
+            attributes {
+              name
+              label
+              slug
+            }
+          }
+        }
+        cover {
+          data {
+            id
+            attributes {
+              alternativeText
+              height
+              width
+              caption
+              name
+              url
+              provider_metadata
+            }
+          }
+        }
       }
     }
   }
