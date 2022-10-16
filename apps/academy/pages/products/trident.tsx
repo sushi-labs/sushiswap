@@ -1,6 +1,14 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
-import { ProductArticles, ProductBackground, ProductCards, ProductFaq, ProductTechnicalDoc } from 'common/components'
+import boardImg from 'common/assets/board.png'
+import {
+  ProductArticles,
+  ProductBackground,
+  ProductCards,
+  ProductFaq,
+  ProductStats,
+  ProductTechnicalDoc,
+} from 'common/components'
 import { defaultSidePadding } from 'common/helpers'
 import {
   AcademyIcon,
@@ -13,15 +21,21 @@ import {
 } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
+import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
 import { ArticleEntity } from '.mesh'
 
-const productSlug = 'bentobox'
-const color = '#FF5EAF'
-const accentColor = '#A048DA'
-
+const productSlug = 'trident'
+const color = '#93E5CE'
+const accentColor = '#22AD9D'
+const productStats = [
+  { value: '20', name: 'Projects Launched' },
+  { value: '$500m', name: 'Funds Raised' },
+  { value: '13k', name: 'Users Participated' },
+  { value: '$4m', name: 'Volume Generated' },
+]
 const cards = [
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
@@ -119,8 +133,6 @@ export const getStaticProps = async () => {
 }
 
 const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
-  name,
-  longName,
   url,
   description,
   slug,
@@ -138,9 +150,13 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
       <ProductBackground color={color} />
-      <section className="flex flex-col items-center py-[75px]">
-        <h1 className="text-6xl font-bold">{longName}</h1>
-        <h3 className="text-2xl mt-1.5 font-medium text-gray-500">{description}</h3>
+      <section className="py-[75px]">
+        <h1 className="text-6xl">
+          <p>A Future-Proof</p>
+          <p>Framework for Building</p>
+          <p className="font-bold">AMMs</p>
+        </h1>
+        <h3 className="mt-10 text-2xl font-medium text-gray-500">{description}</h3>
 
         <Link.External href={url}>
           <Button
@@ -151,9 +167,10 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             <Typography weight={500}>Linking to farm</Typography>
           </Button>
         </Link.External>
+        <ProductStats productStats={productStats} />
       </section>
       <ProductCards
-        name={name}
+        name="Trident AMM"
         description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."
         cards={cards}
         gradientBorderColor={color}
@@ -165,6 +182,41 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={productSlug}
         isLoading={isValidating}
       />
+      <section className="py-[75px] grid grid-rows-3 gap-[70px]">
+        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
+          <div>
+            <h3 className="text-4xl text-slate-50">The BentoBox</h3>
+            <p className="text-lg text-slate-400">
+              {
+                "All of the funds on Trident are also available to be applied to approved strategies in the BentoBox. This feature is made possible by Bento's empirical accounting method..."
+              }
+            </p>
+          </div>
+          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="bentobox" />
+        </div>
+        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
+          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="tines" />
+          <div>
+            <h3 className="text-4xl text-slate-50">The Tines Router</h3>
+            <p className="text-lg text-slate-400">
+              {
+                'Tines is a Smart Ordering Router (SOR) that is responsible for managing all the swaps on Trident. When the final phase of Trident is complete, Tines will be the only router in existence...'
+              }
+            </p>
+          </div>
+        </div>
+        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
+          <div>
+            <h3 className="text-4xl text-slate-50">The IPool interface </h3>
+            <p className="text-lg text-slate-400">
+              {
+                'The IPool interface was developed by the Sushi team in the process of building Trident, which is a system of contracts that supports the four most canonical types of liquidity in DeFi: Classic...'
+              }
+            </p>
+          </div>
+          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="ipool" />
+        </div>
+      </section>
       <ProductArticles
         title="Learn about Bentobox"
         subtitle="Checkout our how-to articles"
@@ -172,7 +224,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={productSlug}
         isLoading={isValidating}
       />
-      <ProductTechnicalDoc color={color} secondaryColor="#FFBCFE" />
+      <ProductTechnicalDoc color={color} secondaryColor="#FEC464" />
       <ProductFaq faq={faq} />
     </Container>
   )

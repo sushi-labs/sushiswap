@@ -1,4 +1,6 @@
 export * from './ProductArticles'
+export * from './ProductBackground'
 export * from './ProductCards'
 export * from './ProductFaq'
-export * from './ProductHero'
+export * from './ProductStats'
+export * from './ProductTechnicalDoc'

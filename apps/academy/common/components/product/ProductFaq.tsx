@@ -10,7 +10,7 @@ interface ProductFaq {
 
 export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
   return (
-    <section className="mt-44">
+    <section className="py-[75px]">
       <Typography variant="h1">FAQs</Typography>
       <Typography variant="sm">Checkout our how-to articles and Video Tutorials</Typography>
       <div className="mt-16 border-2 divide-y rounded-3xl border-slate-500/30 divide-slate-500">
@@ -18,9 +18,11 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
           <Disclosure key={i} as="div">
             {({ open }) => (
               <>
-                <Disclosure.Button className="flex justify-between w-full p-9">
-                  <Typography variant="lg">{question}</Typography>
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-700/60">
+                <Disclosure.Button className="flex items-center justify-between w-full p-6 sm:p-9">
+                  <Typography variant="lg" className="text-left">
+                    {question}
+                  </Typography>
+                  <div className="flex items-center justify-center h-6 rounded-full bg-slate-700/60 ml-2 min-w-[24px]">
                     <ChevronDownIcon
                       strokeWidth={4}
                       width={12}
@@ -34,12 +36,12 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
                   className="transition-[max-height] overflow-hidden"
                   enter="duration-300 ease-in-out"
                   enterFrom="transform max-h-0"
-                  enterTo="transform max-h-[380px]"
+                  enterTo="transform max-h-max"
                   leave="transition-[max-height] duration-250 ease-in-out"
-                  leaveFrom="transform max-h-[380px]"
+                  leaveFrom="transform max-h-max"
                   leaveTo="transform max-h-0"
                 >
-                  <Disclosure.Panel className="text-gray-500 px-9 pb-9">{answer}</Disclosure.Panel>
+                  <Disclosure.Panel className="px-6 pb-6 text-gray-500 sm:px-9 sm:pb-9">{answer}</Disclosure.Panel>
                 </Transition>
               </>
             )}

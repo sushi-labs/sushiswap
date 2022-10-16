@@ -5,6 +5,7 @@ import { AppType } from '@sushiswap/ui/app/Header'
 import { docsUrl } from 'common/helpers'
 import { SushiTransparentIcon, TriangleIcon } from 'common/icons'
 import { getDifficulties, getProducts } from 'lib/api'
+import { useRouter } from 'next/router'
 import { FC, useState } from 'react'
 import useSWR from 'swr'
 
@@ -26,6 +27,8 @@ export const Header: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { data: productsData } = useSWR('/products', async () => (await getProducts())?.products)
   const { data: difficultiesData } = useSWR('/difficulties', async () => (await getDifficulties())?.difficulties)
+  const router = useRouter()
+  const currentPath = router.pathname
 
   const products = productsData?.data ?? []
   const difficulties = difficultiesData?.data ?? []
@@ -44,7 +47,7 @@ export const Header: FC = () => {
       title: 'Product',
       links: products.map(({ attributes: { name, slug } }) => ({
         name,
-        href: `/products/${slug}`,
+        href: `/academy/products/${slug}`,
       })),
     },
     {
@@ -54,7 +57,7 @@ export const Header: FC = () => {
           const isTechnical = slug === 'technical'
           return {
             name: shortDescription,
-            href: isTechnical ? docsUrl : `/articles?difficulty=${slug}`,
+            href: isTechnical ? docsUrl : `/academy/articles?difficulty=${slug}`,
             isExternal: isTechnical,
           }
         }),
@@ -76,6 +79,7 @@ export const Header: FC = () => {
         {navData.map(({ title, links }, i) => (
           <Select
             key={title}
+            onChange={() => null}
             button={
               <Listbox.Button type="button" className="flex items-center gap-1 font-medium text-slate-50">
                 <span className="text-base font-bold">{title}</span>
@@ -97,11 +101,15 @@ export const Header: FC = () => {
                     </Select.Option>
                   </Link.External>
                 ) : (
-                  <Link.Internal key={href} href={href}>
-                    <Select.Option value={name} className="border-0 pr-10 !cursor-pointer">
-                      {name}
-                    </Select.Option>
-                  </Link.Internal>
+                  <Select.Option
+                    value={name}
+                    className={classNames('border-0 pr-10 !cursor-pointer', currentPath === href && 'bg-blue-500')}
+                    as="a"
+                    href={href}
+                    key={href}
+                  >
+                    {name}
+                  </Select.Option>
                 )
               )}
             </Select.Options>

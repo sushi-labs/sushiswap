@@ -6,26 +6,27 @@ import { Card } from '../Card'
 import { ArticleEntity } from '.mesh'
 
 interface ProductArticles {
+  title: string
   productName: string
   articles: ArticleEntity[]
   subtitle: string
   isLoading: boolean
 }
 
-export const ProductArticles: FC<ProductArticles> = ({ productName, articles, subtitle, isLoading }) => {
+export const ProductArticles: FC<ProductArticles> = ({ title, productName, articles, subtitle, isLoading }) => {
   return (
-    <section className="mt-32">
+    <section className="py-[75px]">
       <div className="flex items-center justify-between w-full">
         <div>
           <Typography weight={700} variant="h1">
-            Articles
+            {title}
           </Typography>
           <Typography variant="lg" className="mt-3 text-gray-500">
             {subtitle}
           </Typography>
         </div>
         <Link.Internal href={`/articles?product=${productName}`}>
-          <Button variant="outlined" color="pink" className="rounded-full">
+          <Button variant="outlined" className="min-w-max h-[38px] px-5 !font-medium">
             View All
           </Button>
         </Link.Internal>

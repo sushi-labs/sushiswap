@@ -1,10 +1,10 @@
 import { Typography } from '@sushiswap/ui'
-import { FC, SVGProps } from 'react'
+import { ComponentType, FC } from 'react'
 
 interface ProductCard {
   title: string
   subtitle: string
-  img: FC<SVGProps<SVGSVGElement>>
+  Icon: ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
 interface ProductCards {
@@ -16,7 +16,7 @@ interface ProductCards {
 
 export const ProductCards: FC<ProductCards> = ({ name, description, cards, gradientBorderColor }) => {
   return (
-    <section className="mt-40">
+    <section className="py-[75px]">
       <div className="text-center">
         <Typography variant="h1" weight={700}>
           What is {name}?
@@ -26,7 +26,7 @@ export const ProductCards: FC<ProductCards> = ({ name, description, cards, gradi
         </Typography>
       </div>
 
-      <div className="grid grid-cols-3 mt-24 gap-x-6 gap-y-8">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] mt-24 gap-x-6 gap-y-8">
         {cards.map((card, i) => (
           <div
             key={i}
@@ -38,7 +38,7 @@ export const ProductCards: FC<ProductCards> = ({ name, description, cards, gradi
             }}
           >
             <div className="p-12 h-full bg-[#212939] rounded-3xl">
-              <div className="w-[95px] h-[95px]">{<card.img />}</div>
+              <div className="w-[95px] h-[95px]">{<card.Icon />}</div>
               <div className="mt-11">
                 <Typography weight={700} variant="h3">
                   {card.title}
