@@ -27,6 +27,7 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ 
 
 const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
   const { token0, token1 } = useTokensFromPair(row.pair)
+
   const { underlying0, underlying1, value1, value0 } = usePoolPosition()
   const {
     underlying1: stakedUnderlying1,
@@ -56,7 +57,19 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
             </div>
           </div>
           <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
-            <Chip color="gray" size="sm" label="Classic" />
+            <Chip
+              color="gray"
+              size="sm"
+              label={
+                row.pair.type === 'CONSTANT_PRODUCT_POOL'
+                  ? 'Classic'
+                  : row.pair.type === 'STABLE_POOL'
+                  ? 'Stable'
+                  : row.pair.type === 'CONCENTRATED_LIQUIDITY_POOL'
+                  ? 'Concentrated'
+                  : ''
+              }
+            />
             Fee {row.pair.swapFee / 100}%
           </Typography>
         </div>

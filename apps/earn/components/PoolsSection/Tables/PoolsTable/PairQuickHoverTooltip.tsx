@@ -32,8 +32,21 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
               </Typography>
             </div>
           </div>
-          <Typography variant="xs" weight={600} className="flex gap-1.5 mt-1 items-center text-slate-400">
-            <Chip color="gray" label={`Fee ${row.swapFee / 100}%`} />
+          <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
+            <Chip
+              color="gray"
+              size="sm"
+              label={
+                row.type === 'CONSTANT_PRODUCT_POOL'
+                  ? 'Classic'
+                  : row.type === 'STABLE_POOL'
+                  ? 'Stable'
+                  : row.type === 'CONCENTRATED_LIQUIDITY_POOL'
+                  ? 'Concentrated'
+                  : ''
+              }
+            />
+            Fee {row.swapFee / 100}%
           </Typography>
         </div>
         <div className="flex flex-col gap-1">
