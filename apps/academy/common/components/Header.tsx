@@ -21,6 +21,7 @@ interface HeaderSection {
   title: string
   href?: string
   links?: HeaderLink[]
+  isExternal?: boolean
 }
 
 export const Header: FC = () => {
@@ -52,69 +53,73 @@ export const Header: FC = () => {
     },
     {
       title: 'Learn',
-      links: [
-        ...difficulties.map(({ attributes: { shortDescription, slug } }) => {
-          const isTechnical = slug === 'technical'
-          return {
-            name: shortDescription,
-            href: isTechnical ? docsUrl : `/academy/articles?difficulty=${slug}`,
-            isExternal: isTechnical,
-          }
-        }),
-        { name: 'Samurai Support', href: '', isExternal: true }, // TODO: here
-      ],
+      links: difficulties?.map(({ attributes: { shortDescription, slug } }) => {
+        const isTechnical = slug === 'technical'
+        return {
+          name: shortDescription,
+          href: isTechnical ? docsUrl : `/academy/articles?difficulty=${slug}`,
+          isExternal: isTechnical,
+        }
+      }),
     },
     {
       title: 'Blog',
-      links: [
-        { name: 'Sushi News', href: 'https://sushi.com/blog', isExternal: true },
-        { name: 'Toshokan Community News', href: '', isExternal: true }, // TODO: here
-      ],
+      href: 'https://sushi.com/blog',
+      isExternal: true,
     },
   ]
 
   return (
     <App.Header appType={AppType.Academy} maxWidth="6xl" withScrollBackground>
       <nav className="items-center hidden sm:flex gap-14">
-        {navData.map(({ title, links }, i) => (
-          <Select
-            key={title}
-            onChange={() => null}
-            button={
-              <Listbox.Button type="button" className="flex items-center gap-1 font-medium text-slate-50">
-                <span className="text-base font-bold">{title}</span>
-                <ChevronDownIcon width={12} height={12} aria-hidden="true" />
-              </Listbox.Button>
-            }
-          >
-            <Select.Options
-              className={classNames(
-                i && '2xl:right-[unset] right-0',
-                'min-w-max !bg-slate-700 -ml-5 mt-5 !max-h-[unset] p-2 space-y-1'
-              )}
+        {navData.map(({ title, href, links }, i) => {
+          if (href && !links) {
+            return (
+              <Link.External href={href} key={title}>
+                <Typography weight={700}>{title}</Typography>
+              </Link.External>
+            )
+          }
+          return (
+            <Select
+              key={title}
+              onChange={() => null}
+              button={
+                <Listbox.Button type="button" className="flex items-center gap-1 font-medium text-slate-50">
+                  <span className="text-base font-bold">{title}</span>
+                  <ChevronDownIcon width={12} height={12} aria-hidden="true" />
+                </Listbox.Button>
+              }
             >
-              {links?.map(({ name, href, isExternal }) =>
-                isExternal ? (
-                  <Link.External key={href} href={href}>
-                    <Select.Option value={name} className="pr-10 border-0 !cursor-pointer">
+              <Select.Options
+                className={classNames(
+                  i && '2xl:right-[unset] right-0',
+                  'min-w-max !bg-slate-700 -ml-5 mt-5 !max-h-[unset] p-2 space-y-1'
+                )}
+              >
+                {links?.map(({ name, href, isExternal }) =>
+                  isExternal ? (
+                    <Link.External key={href} href={href}>
+                      <Select.Option value={name} className="pr-10 border-0 !cursor-pointer">
+                        {name}
+                      </Select.Option>
+                    </Link.External>
+                  ) : (
+                    <Select.Option
+                      value={name}
+                      className={classNames('border-0 pr-10 !cursor-pointer', currentPath === href && 'bg-blue-500')}
+                      as="a"
+                      href={href}
+                      key={href}
+                    >
                       {name}
                     </Select.Option>
-                  </Link.External>
-                ) : (
-                  <Select.Option
-                    value={name}
-                    className={classNames('border-0 pr-10 !cursor-pointer', currentPath === href && 'bg-blue-500')}
-                    as="a"
-                    href={href}
-                    key={href}
-                  >
-                    {name}
-                  </Select.Option>
-                )
-              )}
-            </Select.Options>
-          </Select>
-        ))}
+                  )
+                )}
+              </Select.Options>
+            </Select>
+          )
+        })}
       </nav>
 
       <nav className="sm:hidden">

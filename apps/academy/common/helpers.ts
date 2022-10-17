@@ -18,10 +18,10 @@ export const difficultyElements = {
 }
 export const appHeaderHeight = 54
 export const sortingOptions = [
-  { key: 'publishedAt:desc', name: 'Date (desc)' },
-  { key: 'publishedAt:asc', name: 'Date (asc)' },
-  { key: 'title:desc', name: 'Title (desc)' },
-  { key: 'title:asc', name: 'Title (asc)' },
+  { key: 'publishedAt:desc', name: 'Newest articles first' },
+  { key: 'publishedAt:asc', name: 'Oldest articles first' },
+  { key: 'title:desc', name: 'Sort on title Z-A' },
+  { key: 'title:asc', name: 'Sort on title A-Z' },
 ]
 
 export const getShareText = (title: string) => `Check out this Sushi article: ${title}`
