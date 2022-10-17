@@ -1,6 +1,7 @@
 import '@nomiclabs/hardhat-ethers'
 import 'hardhat-deploy'
 
+// import 'hardhat-deploy-ethers'
 import { defaultConfig } from '@sushiswap/hardhat-config'
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
 import { HardhatUserConfig, subtask } from 'hardhat/config'

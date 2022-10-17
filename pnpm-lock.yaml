@@ -1760,7 +1760,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.0-canary.48
+      '@sushiswap/trident': 1.0.0-canary.49
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^17.0.33
       eslint: ^8.20.0
@@ -1777,7 +1777,7 @@ importers:
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': 1.0.0-canary.48
+      '@sushiswap/trident': 1.0.0-canary.49
       tiny-invariant: 1.2.0
       tiny-warning: 1.0.3
     devDependencies:
@@ -2379,7 +2379,7 @@ importers:
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.0-canary.48
+      '@sushiswap/trident': 1.0.0-canary.49
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -2418,7 +2418,7 @@ importers:
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': 1.0.0-canary.48
+      '@sushiswap/trident': 1.0.0-canary.49
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../config/wagmi
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
@@ -2446,7 +2446,7 @@ importers:
       '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/providers': ^5.7.0
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
@@ -2455,8 +2455,8 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^17.0.33
       ethers: ^5.7.0
-      hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.10
+      hardhat: ^2.0.0
+      hardhat-deploy: ^0.11.12
       ts-node: ^10.7.0
       typescript: 4.8.2
     devDependencies:
@@ -9597,8 +9597,8 @@ packages:
       '@sushiswap/currency': link:packages/currency
     dev: false
 
-  /@sushiswap/trident/1.0.0-canary.48:
-    resolution: {integrity: sha512-dyeEtYuyE6hiGNh5F6eUNtKxT1TbRT5XwBPVxVPomTF1q3OUi1vmgZqklvFlzq8hAwPATw1wUTDhqz6Mc8EKCg==}
+  /@sushiswap/trident/1.0.0-canary.49:
+    resolution: {integrity: sha512-4rjAhxJzbALAotRrQ/yYzlo8loFD29F3NmK1FHma0CVS2mSiRxpYbC6t0sFFojvh0BRotDbkID6TrPQld6jS5A==}
     dev: false
 
   /@swc/core-android-arm-eabi/1.2.249:

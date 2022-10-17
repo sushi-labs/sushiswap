@@ -1,6 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS]
+export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+  ChainId.KAVA,
+  ChainId.METIS,
+  ChainId.BTTC,
+]
 
 export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   ChainId.ETHEREUM,
@@ -55,6 +61,7 @@ export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.BOBA]: 'Boba',
   [ChainId.ARBITRUM_NOVA]: 'Arbitrum Nova',
   [ChainId.BOBA_AVAX]: 'Boba Avax',
+  [ChainId.BTTC]: 'BitTorrent',
 }
 
 export const SUBGRAPH_HOST: Record<number | string, string> = {
@@ -76,6 +83,7 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
+  [ChainId.BTTC]: '34.173.43.67:8000/subgraphs/name',
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -92,6 +100,7 @@ export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'sushiswap/bentobox-optimism',
   [ChainId.HARMONY]: 'sushiswap/bentobox-harmony',
   [ChainId.KAVA]: 'sushiswap/bentobox-kava',
+  [ChainId.BTTC]: 'sushiswap/bentobox-bttc',
 }
 
 export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -115,6 +124,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
   [ChainId.BOBA]: 'sushiswap/blocks-boba',
+  [ChainId.BTTC]: 'sushiswap/blocks-bttc',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -154,6 +164,7 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
   [ChainId.KAVA]: 'sushi-qa/trident-kava',
   [ChainId.METIS]: 'sushi-qa/trident-metis',
+  [ChainId.BTTC]: 'sushi-0m/trident-bttc',
 }
 
 export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {

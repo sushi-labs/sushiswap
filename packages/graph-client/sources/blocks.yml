@@ -1,5 +1,5 @@
 name: Blocks
 handler:
   graphql:
-    endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+    endpoint: http://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
     retry: 3

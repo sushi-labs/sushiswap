@@ -124,6 +124,22 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         })
       }
 
+      console.log([
+        approveMasterContractAction({ router: contract, signature: permit }),
+        deployNewPoolAction({
+          assets: [token0, token1],
+          factory: factory.address,
+          router: contract,
+          feeTier: fee,
+          twap: false,
+        }),
+        getAsEncodedAction({
+          contract,
+          fn: 'addLiquidity',
+          args: [liquidityInput, poolAddress, 1, encoded],
+        }),
+      ])
+
       const data = await sendTransactionAsync({
         request: {
           from: address,
