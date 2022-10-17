@@ -114,6 +114,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.ARBITRUM_NOVA]: WETH9_ADDRESS[ChainId.ARBITRUM_NOVA],
   [ChainId.BOBA]: WETH9_ADDRESS[ChainId.BOBA],
   [ChainId.BOBA_AVAX]: '0x26c319B7B2cF823365414d082698C8ac90cbBA63',
+  [ChainId.BTTC]: '0x0000000000000000000000000000000000001010',
 } as const
 
 export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
@@ -294,6 +295,13 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     decimals: 18,
     symbol: 'WBOBA',
     name: 'Wrapped Boba',
+  }),
+  [ChainId.BTTC]: new Token({
+    chainId: ChainId.BTTC,
+    address: WNATIVE_ADDRESS[ChainId.BTTC],
+    decimals: 18,
+    symbol: 'WBTT',
+    name: 'Wrapped BitTorrent Token',
   }),
 }
 

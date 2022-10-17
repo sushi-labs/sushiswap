@@ -77,6 +77,7 @@ export const defaultConfig: HardhatUserConfig = {
       auroraTestnet: 'api-key',
       metis: 'api-key',
       // bobaAvax: 'api-key',
+      bttc: process.env.BTTC_API_KEY || '',
     },
   },
   tenderly: {
@@ -381,6 +382,13 @@ export const defaultConfig: HardhatUserConfig = {
       url: 'https://avax.boba.network',
       accounts,
       chainId: 43288,
+      live: true,
+      saveDeployments: true,
+    },
+    bttc: {
+      url: 'https://rpc.bittorrentchain.io',
+      accounts,
+      chainId: 199,
       live: true,
       saveDeployments: true,
     },
