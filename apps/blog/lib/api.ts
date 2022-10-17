@@ -2,11 +2,10 @@ import { ArticleFiltersInput, CategoryFiltersInput, getMeshSDK, PaginationArg } 
 
 const sdk = getMeshSDK()
 
-export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
+export const getArticleAndMoreArticles = async (slug: string, preview: boolean) => {
   return sdk.articleAndMoreArticles({
     filters: {
       slug: { eq: slug },
-      articleType: { eq: 'blog' },
     },
     filters_ne: { slug: { not: { eq: slug } } },
     publicationState: preview ? 'PREVIEW' : 'LIVE',

@@ -25,7 +25,7 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
         title={article.title}
         description={article.description}
         openGraph={{
-          ...(isMediaVideo(article.cover.data.attributes.provider_metadata)
+          ...(isMediaVideo(article.cover?.data?.attributes?.provider_metadata)
             ? {
                 videos: [{ url: cover }],
               }
