@@ -57,7 +57,7 @@
         "KASHI_URL",
         "PARTNER_URL",
         "SWAP_URL",
-        "XSWAP_URL",
+        "XSWAP_URL"
       ]
     },
     "clean": {
