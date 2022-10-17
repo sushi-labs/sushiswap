@@ -1,13 +1,12 @@
 import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
-import { useBreakpoint } from '@sushiswap/ui'
+import { GenericTable, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
-import { GenericTable } from '../GenericTable'
 import { APR_COLUMN, NAME_COLUMN, NETWORK_COLUMN, VALUE_COLUMN } from './Cells/columns'
 import { PositionQuickHoverTooltip } from './PositionQuickHoverTooltip'
 
@@ -52,6 +51,10 @@ export const PositionsTable: FC = () => {
     }
   }, [isMd, isSm])
 
+  const rowLink = useCallback((row: UserWithFarm) => {
+    return `/${row.id}`
+  }, [])
+
   return (
     <GenericTable<UserWithFarm>
       table={table}
@@ -59,6 +62,7 @@ export const PositionsTable: FC = () => {
       loading={!userWithFarms && isValidating}
       placeholder="No positions found"
       pageSize={Math.max(userWithFarms?.length || 0, 5)}
+      linkFormatter={rowLink}
     />
   )
 }

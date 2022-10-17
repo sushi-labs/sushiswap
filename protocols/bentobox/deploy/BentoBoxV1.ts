@@ -12,15 +12,15 @@ const deployFunction: DeployFunction = async function ({
   const chainId = parseInt(await getChainId())
   const { deployer } = await getNamedAccounts()
 
-  const weth9 = await ethers.getContractOrNull('WETH9Mock')
+  // const weth9 = await ethers.getContractOrNull('WETH9Mock')
 
-  if (!weth9 && !(chainId in WNATIVE_ADDRESS)) {
+  if (!(chainId in WNATIVE_ADDRESS)) {
     throw Error(`No WNATIVE_ADDRESS for chain #${chainId}!`)
   }
 
   await deploy('BentoBoxV1', {
     from: deployer,
-    args: [weth9 ? weth9.address : WNATIVE_ADDRESS[chainId]],
+    args: [WNATIVE_ADDRESS[chainId as keyof typeof WNATIVE_ADDRESS]],
     log: true,
     deterministicDeployment: false,
   })
@@ -28,6 +28,6 @@ const deployFunction: DeployFunction = async function ({
 
 export default deployFunction
 
-deployFunction.dependencies = ['WETH9']
+// deployFunction.dependencies = ['WETH9']
 
 deployFunction.tags = ['BentoBoxV1']

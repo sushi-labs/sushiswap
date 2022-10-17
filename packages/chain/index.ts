@@ -120,6 +120,7 @@ export enum ChainId {
   METIS = 1088,
   BOBA = 288,
   BOBA_AVAX = 43288,
+  BTTC = 199,
 }
 
 export enum ChainKey {
@@ -159,6 +160,7 @@ export enum ChainKey {
   METIS = 'metis',
   BOBA = 'boba',
   BOBA_AVAX = 'boba-avax',
+  BTTC = 'bttc',
 }
 
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]

@@ -24,6 +24,15 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/swap',
+  //       basePath: false,
+  //     },
+  //   ]
+  // },
   async redirects() {
     return [
       {
