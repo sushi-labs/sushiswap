@@ -11,6 +11,7 @@ import { FC, ReactNode } from 'react'
 
 import { useCustomTokens } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
+import { SettingsOverlay } from '../SettingsOverlay'
 
 interface AddSectionWidgetProps {
   isFarm: boolean
@@ -49,19 +50,27 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
           {({ open }) => (
             <>
               {isFarm && isMounted ? (
-                <Disclosure.Button className="w-full pr-4">
-                  <div className="flex items-center justify-between">
-                    <Widget.Header title="1. Add Liquidity" className="!pb-3 " />
-                    <div
-                      className={classNames(
-                        open ? 'rotate-180' : 'rotate-0',
-                        'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
-                      )}
-                    >
-                      <ChevronDownIcon width={24} height={24} className="group-hover:text-slate-200 text-slate-300" />
-                    </div>
+                <Widget.Header title="1. Add Liquidity" className="!pb-3 ">
+                  <div className="flex gap-3">
+                    <SettingsOverlay variant="dialog" />
+                    <Disclosure.Button className="w-full pr-0.5">
+                      <div className="flex items-center justify-between">
+                        <div
+                          className={classNames(
+                            open ? 'rotate-180' : 'rotate-0',
+                            'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
+                          )}
+                        >
+                          <ChevronDownIcon
+                            width={24}
+                            height={24}
+                            className="group-hover:text-slate-200 text-slate-300"
+                          />
+                        </div>
+                      </div>
+                    </Disclosure.Button>
                   </div>
-                </Disclosure.Button>
+                </Widget.Header>
               ) : (
                 <Widget.Header title="Add Liquidity" className="!pb-3" />
               )}

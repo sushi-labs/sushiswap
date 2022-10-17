@@ -1,5 +1,4 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { Dialog, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
@@ -9,7 +8,7 @@ import { useTokenAmountDollarValues } from '../../lib/hooks'
 import { Rate } from '../Rate'
 
 interface SwapReviewModalBase {
-  chainId: ChainId
+  chainId: number | undefined
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
   open: boolean

@@ -3,7 +3,7 @@ import { InformationCircleIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Percent } from '@sushiswap/math'
 import { classNames, Tooltip, Typography } from '@sushiswap/ui'
-import { Rate, Route, useTrade } from 'components'
+import { Rate, useTrade } from 'components'
 import React, { FC, useMemo } from 'react'
 
 import { warningSeverity } from '../../lib/functions'
@@ -101,7 +101,6 @@ export const SwapStatsDisclosure: FC = () => {
                 className="grid grid-cols-2 gap-1 px-4 py-2 mb-4 border border-slate-200/5 rounded-2xl"
               >
                 {stats}
-                <Route />
               </Disclosure.Panel>
             </Transition>
           </>

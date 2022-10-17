@@ -59,8 +59,8 @@ export const TokenListFilterByQuery: FC<Props> = ({
 
   const searchToken = useMemo(() => {
     if (!searchTokenResult || !chainId) return undefined
-    const { decimals, address, symbol } = searchTokenResult
-    return new Token({ chainId, decimals, address, symbol, name: symbol })
+    const { decimals, address, symbol, name } = searchTokenResult
+    return new Token({ chainId, decimals, address, symbol, name })
   }, [chainId, searchTokenResult])
 
   const filteredTokens: Token[] = useMemo(() => {

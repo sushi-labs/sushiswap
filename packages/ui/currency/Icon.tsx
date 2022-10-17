@@ -8,28 +8,29 @@ import { FC, useMemo, useState } from 'react'
 import { Link } from '../link'
 
 const BLOCKCHAIN: Record<number, string> = {
-  [ChainId.ETHEREUM]: 'ethereum',
-  [ChainId.BSC]: 'binance',
+  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova',
+  [ChainId.ARBITRUM]: 'arbitrum',
+  [ChainId.AVALANCHE]: 'avalanche',
+  [ChainId.BOBA_AVAX]: 'boba-avax',
+  [ChainId.BOBA]: 'boba',
+  [ChainId.BSC]: 'bsc',
   [ChainId.CELO]: 'celo',
+  [ChainId.ETHEREUM]: 'ethereum',
   [ChainId.FANTOM]: 'fantom',
   [ChainId.AVALANCHE_TESTNET]: 'fuji',
   [ChainId.FUSE]: 'fuse',
+  [ChainId.GNOSIS]: 'gnosis',
   [ChainId.HARMONY]: 'harmony',
   [ChainId.HECO]: 'heco',
-  [ChainId.POLYGON]: 'matic',
+  [ChainId.KAVA]: 'kava',
+  [ChainId.METIS]: 'metis',
+  [ChainId.MOONBEAM]: 'moonbeam',
   [ChainId.MOONRIVER]: 'moonriver',
   [ChainId.OKEX]: 'okex',
-  [ChainId.PALM]: 'palm',
-  [ChainId.TELOS]: 'telos',
-  [ChainId.GNOSIS]: 'xdai',
-  [ChainId.ARBITRUM]: 'arbitrum',
-  [ChainId.AVALANCHE]: 'avalanche',
-  [ChainId.MOONBEAM]: 'moonbeam',
   [ChainId.OPTIMISM]: 'optimism',
-  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova',
-  [ChainId.METIS]: 'metis',
-  [ChainId.BOBA]: 'boba',
-  [ChainId.KAVA]: 'kava',
+  [ChainId.PALM]: 'palm',
+  [ChainId.POLYGON]: 'polygon',
+  [ChainId.TELOS]: 'telos',
 }
 
 const AvaxLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/avax.svg'
@@ -49,6 +50,7 @@ const FuseLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/
 const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/telos.svg'
 const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/kava.svg'
 const MetisLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/metis.svg'
+const BobaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/boba.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -75,17 +77,16 @@ const LOGO: Record<number, string> = {
   [ChainId.ARBITRUM_TESTNET]: EthereumLogo,
   [ChainId.CELO]: CeloLogo,
   [ChainId.PALM]: PalmLogo,
-  [ChainId.PALM_TESTNET]: PalmLogo,
   [ChainId.MOONRIVER]: MovrLogo,
   [ChainId.FUSE]: FuseLogo,
   [ChainId.TELOS]: TelosLogo,
-  [ChainId.HARDHAT]: EthereumLogo,
   [ChainId.MOONBEAM]: GlmrLogo,
   [ChainId.OPTIMISM]: EthereumLogo,
   [ChainId.KAVA]: KavaLogo,
   [ChainId.ARBITRUM_NOVA]: EthereumLogo,
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
+  [ChainId.BOBA_AVAX]: BobaLogo,
 }
 
 export interface IconProps extends Omit<ImageProps, 'src'> {

@@ -35,3 +35,53 @@ query CrossChainStrategyKpis($chainIds: [BigInt!]!) {
     utilization
   }
 }
+
+query CurrentSubgraphIndexingStatus($subgraphName: String!) {
+  indexingStatusForCurrentVersion(subgraphName: $subgraphName) {
+    ...Subgraph
+  }
+}
+
+query PendingSubgraphIndexingStatus($subgraphName: String!) {
+  indexingStatusForPendingVersion(subgraphName: $subgraphName) {
+    ...Subgraph
+  }
+}
+
+fragment Subgraph on SubgraphIndexingStatus {
+    subgraph
+    entityCount
+    fatalError {
+      message
+    }
+    nonFatalErrors {
+      message
+    }
+    chains {
+      chainHeadBlock {
+        number
+      }
+      earliestBlock {
+        number
+      }
+      latestBlock {
+        number
+      }
+    }
+    health
+}
+
+query Subgraphs($subgraphNames: [String!]!, $type: SubgraphType!) {
+  subgraphs(subgraphNames: $subgraphNames, type: $type) {
+    subgraphName
+    subgraphId
+    type
+    status
+    startBlock
+    lastSyncedBlock
+    chainHeadBlock
+    hasFailed
+    nonFatalErrorCount
+    entityCount
+  }
+}

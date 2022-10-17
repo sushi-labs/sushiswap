@@ -1,5 +1,4 @@
 import { Signature } from '@ethersproject/bytes'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { calculateSlippageAmount } from '@sushiswap/exchange'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
@@ -9,10 +8,12 @@ import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   Checker,
+  ConstantProductPoolState,
   getTridentRouterContractConfig,
-  PoolState,
+  StablePoolState,
   useBentoBoxTotals,
   useConstantProductPool,
+  useStablePool,
   useSendTransaction,
   useTotalSupply,
   useTridentRouterContract,
@@ -27,7 +28,6 @@ import {
   burnLiquidityAction,
   LiquidityOutput,
   sweep,
-  sweepNativeTokenAction,
   unwrapWETHAction,
 } from '../../lib/actions'
 import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
@@ -61,11 +61,27 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     return balance?.[FundSource.WALLET].multiply(percentToRemove)
   }, [balance, percentToRemove])
 
-  const [poolState, pool] = useConstantProductPool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+    pair.chainId,
+    token0,
+    token1,
+    pair.swapFee,
+    pair.twapEnabled
+  )
+
+  const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+
+  const [poolState, pool] = useMemo(() => {
+    if (pair.type === 'STABLE_POOL') return [stablePoolState, stablePool]
+    if (pair.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+
+    return [undefined, undefined]
+  }, [constantProductPool, constantProductPoolState, pair.type, stablePool, stablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 
   const [, { createNotification }] = useNotifications(address)
+
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: pool?.reserve0,
     reserve1: pool?.reserve1,
@@ -176,30 +192,20 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
           }),
         ]
 
-        if (indexOfWETH >= 0) {
-          actions.push(
-            unwrapWETHAction({
-              chainId: pair.chainId,
-              router: contract,
-              amountMinimum: indexOfWETH === 0 ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
-              recipient: address,
-            }),
-            chain.id === ChainId.POLYGON
-              ? sweepNativeTokenAction({
-                  router: contract,
-                  token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
-                  recipient: address,
-                  amount: indexOfWETH === 0 ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
-                })
-              : sweep({
-                  router: contract,
-                  token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
-                  recipient: address,
-                  amount: indexOfWETH === 0 ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
-                  fromBento: false,
-                })
-          )
-        }
+    if (indexOfWETH >= 0) {
+      actions.push(
+        unwrapWETHAction({
+          router: contract,
+          recipient: address,
+        }),
+        sweep({
+          router: contract,
+          token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
+          recipient: address,
+          fromBento: false,
+        })
+      )
+    }
 
         setRequest({
           from: address,
@@ -249,7 +255,16 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       >
         <Checker.Connected>
           <Checker.Custom
-            showGuardIfTrue={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+              showGuardIfTrue={
+                  isMounted &&
+                  !!poolState &&
+                  [
+                    ConstantProductPoolState.NOT_EXISTS,
+                    ConstantProductPoolState.INVALID,
+                    StablePoolState.NOT_EXISTS,
+                    StablePoolState.INVALID,
+                  ].includes(poolState)
+              }
             guard={
               <Button size="md" fullWidth disabled={true}>
                 Pool Not Found

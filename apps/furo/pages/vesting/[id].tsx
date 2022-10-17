@@ -36,7 +36,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { c
     getVestingTransactions(chainId as string, id as string),
     getRebase(chainId as string, vesting.token.id),
   ])
-
   return {
     props: {
       fallback: {

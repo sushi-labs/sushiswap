@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import invariant from 'tiny-invariant'
 
 import { Native } from './Native'
@@ -18,7 +19,7 @@ export abstract class Currency {
   /**
    * The chain ID on which this currency resides
    */
-  public readonly chainId: number
+  public readonly chainId: ChainId
   /**
    * The decimals used in representing currency amounts
    */

@@ -2,7 +2,13 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
-import { Checker, PoolState, useConstantProductPool } from '@sushiswap/wagmi'
+import {
+  Checker,
+  ConstantProductPoolState,
+  StablePoolState,
+  useConstantProductPool,
+  useStablePool,
+} from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
@@ -14,7 +20,20 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   const { token0, token1 } = useTokensFromPair(pair)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
 
-  const [poolState, pool] = useConstantProductPool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+    pair.chainId,
+    token0,
+    token1,
+    pair.swapFee,
+    pair.twapEnabled
+  )
+  const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+
+  const [poolState, pool] = useMemo(() => {
+    if (pair.type === 'STABLE_POOL') return [stablePoolState, stablePool]
+    if (pair.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+    return [undefined, undefined]
+  }, [constantProductPool, constantProductPoolState, pair.type, stablePool, stablePoolState])
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
     return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
@@ -22,7 +41,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
 
   const onChangeToken0TypedAmount = useCallback(
     (value) => {
-      if (poolState === PoolState.NOT_EXISTS) {
+      if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
@@ -40,7 +59,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
 
   const onChangeToken1TypedAmount = useCallback(
     (value) => {
-      if (poolState === PoolState.NOT_EXISTS) {
+      if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
@@ -81,7 +100,16 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
           >
             <Checker.Connected fullWidth size="md">
               <Checker.Custom
-                showGuardIfTrue={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
+                showGuardIfTrue={
+                  isMounted &&
+                  !!poolState &&
+                  [
+                    ConstantProductPoolState.NOT_EXISTS,
+                    ConstantProductPoolState.INVALID,
+                    StablePoolState.NOT_EXISTS,
+                    StablePoolState.INVALID,
+                  ].includes(poolState)
+                }
                 guard={
                   <Button size="md" fullWidth disabled={true}>
                     Pool Not Found

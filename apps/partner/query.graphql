@@ -1,27 +1,25 @@
-query TridentToken($id: String!, $native: String!) {
+query TridentToken($id: ID!, $native: String!) {
   Trident_token(id: $id) {
-    kpi {
-      liquidity
-        volumeUSD
-    }
+    liquidity
+    volumeUSD
     price {
       derivedNative
     }
   }
 
-  native:Trident_tokenPrice(id: $native) {
-    derivedUSD
+  Trident_bundle(id: 1) {
+    nativePrice
   }
 }
 
-query ExchangeToken($id: String!) {
+query ExchangeToken($id: ID!) {
   Exchange_token(id: $id) {
     derivedETH
     liquidity
     volumeUSD
   }
 
-  Exchange_bundles(first: 1) {
+  Exchange_bundle(id: 1) {
     ethPrice
   }
 }

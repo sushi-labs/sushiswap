@@ -10,7 +10,7 @@ interface BlogSeo {
 export const BlogSeo: FC<BlogSeo> = ({ seo }) => (
   <ArticleJsonLd
     type="Blog"
-    url="https://sushi.com/blog"
+    url="https://www.sushi.com/blog"
     title={seo.siteName}
     description={seo.siteDescription}
     authorName="Sushi"

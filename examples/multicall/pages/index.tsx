@@ -10,7 +10,6 @@ export default function Multicall({ chainIds, blockNumbers }: { chainIds: number
     })
   const blockTimestamps = useCurrentBlockTimestampMultichain(chainIds, blockNumbers)
   const isReady = blockTimestamps.filter((b) => !!b).length >= 2
-  console.log({ blockNumbers, chainIds, chainNames })
   return (
     <>
       <h1>Multichain Multicall</h1>

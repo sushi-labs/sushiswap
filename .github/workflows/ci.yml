@@ -1,52 +1,63 @@
 name: CI
-
+ 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
   pull_request:
     types: [opened, synchronize]
-
+ 
 jobs:
   build:
       name: Build and Test
-      timeout-minutes: 15
-      runs-on: ${{ matrix.os }}
+      timeout-minutes: 30
+      runs-on: ubuntu-latest
       # To use Remote Caching, uncomment the next lines and follow the steps below.
       env:
-        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+        ROOT_URL: ${{ secrets.ROOT_URL }}
+        ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
+        BLOG_URL: ${{ secrets.BLOG_URL }}
+        BRIDGE_URL: ${{ secrets.BRIDGE_URL }}
+        EARN_URL: ${{ secrets.EARN_URL }}
+        FURO_URL: ${{ secrets.FURO_URL }}
+        INTERNAL_URL: ${{ secrets.INTERNAL_URL }}
+        KASHI_URL: ${{ secrets.KASHI_URL }}
+        PARTNER_URL: ${{ secrets.PARTNER_URL }}
+        SWAP_URL: ${{ secrets.SWAP_URL }}
+        XSWAP_URL: ${{ secrets.XSWAP_URL }}
         NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
         NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-        ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
-        PARTNER_URL: ${{ secrets.PARTNER_URL }}
-        BLOG_URL: ${{ secrets.BLOG_URL }}
-        SWAP_URL: ${{ secrets.SWAP_URL }}
-        FURO_URL: ${{ secrets.FURO_URL }}
-      strategy:
-        matrix:
-          os: [ubuntu-latest, macos-latest]
-
+        INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+        ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+ 
       steps:
         - name: Check out code
-          uses: actions/checkout@v2
+          uses: actions/checkout@v3
           with:
             fetch-depth: 2
-
-        - uses: pnpm/action-setup@v2.0.1
+ 
+        - uses: pnpm/action-setup@v2
           with:
-            version: 6.32.2
-
+            version: 7
+ 
         - name: Setup Node.js environment
-          uses: actions/setup-node@v2
+          uses: actions/setup-node@v3
           with:
             node-version: 16
             cache: 'pnpm'
-
+ 
         - name: Install dependencies
           run: pnpm install
 
+        - name: Lint
+          run: pnpm lint
+
+        # - name: Generate
+        #   run: pnpm generate
+
         - name: Build
           run: pnpm build
-
+ 
         - name: Test
           run: pnpm test

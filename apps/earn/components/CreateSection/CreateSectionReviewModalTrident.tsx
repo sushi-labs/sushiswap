@@ -3,13 +3,15 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { computeConstantProductPoolAddress, Fee } from '@sushiswap/exchange'
+import { computeConstantProductPoolAddress, computeStablePoolAddress, Fee } from '@sushiswap/exchange'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   BENTOBOX_ADDRESS,
   getTridentRouterContractConfig,
+  PoolFinderType,
   useConstantProductPoolFactoryContract,
+  useStablePoolFactoryContract,
   useSendTransaction,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
@@ -34,6 +36,7 @@ interface CreateSectionReviewModalTridentProps {
   input0: Amount<Type> | undefined
   input1: Amount<Type> | undefined
   fee: Fee
+  poolType: PoolFinderType
   children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
 }
 
@@ -43,6 +46,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   input0,
   input1,
   fee,
+  poolType,
   chainId,
   children,
 }) => {
@@ -51,20 +55,38 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const [permit, setPermit] = useState<Signature>()
   const { chain } = useNetwork()
   const contract = useTridentRouterContract(chainId)
-  const factory = useConstantProductPoolFactoryContract(chainId)
+  const constantProductPoolFactory = useConstantProductPoolFactoryContract(chainId)
+  const stablePoolFactory = useStablePoolFactoryContract(chainId)
   const [, { createNotification }] = useNotifications(address)
 
-  const poolAddress = useMemo(() => {
-    if (!factory || !token0 || !token1) return undefined
+  const factory = useMemo(() => {
+    if (poolType === PoolFinderType.Classic) {
+      return constantProductPoolFactory
+    } else if (poolType === PoolFinderType.Stable) {
+      return stablePoolFactory
+    }
+  }, [constantProductPoolFactory, poolType, stablePoolFactory])
 
-    return computeConstantProductPoolAddress({
-      factoryAddress: factory.address,
-      tokenA: token0.wrapped,
-      tokenB: token1.wrapped,
-      fee: fee,
-      twap: false,
-    })
-  }, [factory, fee, token0, token1])
+  const poolAddress = useMemo(() => {
+    // !poolType === 0, don't guared against it
+    if (!factory || !token0 || !token1) return undefined
+    if (poolType === PoolFinderType.Classic) {
+      return computeConstantProductPoolAddress({
+        factoryAddress: factory.address,
+        tokenA: token0.wrapped,
+        tokenB: token1.wrapped,
+        fee: fee,
+        twap: false,
+      })
+    } else if (poolType === PoolFinderType.Stable) {
+      return computeStablePoolAddress({
+        factoryAddress: factory.address,
+        tokenA: token0.wrapped,
+        tokenB: token1.wrapped,
+        fee: fee,
+      })
+    }
+  }, [factory, fee, token0, token1, poolType])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {

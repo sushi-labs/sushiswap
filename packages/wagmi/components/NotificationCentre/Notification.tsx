@@ -1,5 +1,6 @@
 import { Disclosure } from '@headlessui/react'
 import {
+  ArrowRightIcon,
   CashIcon,
   ChevronDownIcon,
   DownloadIcon,
@@ -10,10 +11,12 @@ import {
   UploadIcon,
   XIcon,
 } from '@heroicons/react/solid'
-import chains from '@sushiswap/chain'
+import chains, { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
 import {
   Badge,
   classNames,
+  Currency as UICurrency,
   Dots,
   IconButton,
   Link,
@@ -25,6 +28,14 @@ import {
 } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { useWaitForTransaction } from 'wagmi'
+
+export const STARGATE_TOKEN = new Token({
+  chainId: ChainId.ETHEREUM,
+  address: '0xaf5191b0de278c7286d6c7cc6ab6bb8a73ba2cd6',
+  decimals: 18,
+  symbol: 'STG',
+  name: 'StargateToken',
+})
 
 export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: boolean }> = ({
   data,
@@ -59,7 +70,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
         <Disclosure.Button className="absolute right-3 top-0 bottom-0 z-[100]">
           {({ open }) => {
             return (
-              <IconButton>
+              <IconButton as="div">
                 <ChevronDownIcon
                   width={20}
                   height={20}
@@ -70,7 +81,10 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
           }}
         </Disclosure.Button>
       )}
-      <Link.External href={chains[notification.chainId].getTxUrl(notification.txHash)} className="!no-underline">
+      <Link.External
+        href={notification.href ? notification.href : chains[notification.chainId].getTxUrl(notification.txHash)}
+        className="!no-underline"
+      >
         <div
           className={classNames(
             showExtra ? 'pr-10' : 'pr-4',
@@ -87,19 +101,41 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
                 ) : (
                   <></>
                 ))}
-              {status === 'success' && notification.type === 'swap' && <SwitchVerticalIcon width={20} height={20} />}
-              {status === 'success' && notification.type === 'approval' && <LockOpenIcon width={20} height={20} />}
-              {status === 'success' && notification.type === 'mint' && <PlusIcon width={20} height={20} />}
-              {status === 'success' && notification.type === 'burn' && <FireIcon width={20} height={20} />}
-              {status === 'success' && notification.type === 'enterBar' && <DownloadIcon width={20} height={20} />}
-              {status === 'success' && notification.type === 'leaveBar' && <UploadIcon width={20} height={20} />}
-              {status === 'success' && notification.type === 'claimRewards' && <CashIcon width={20} height={20} />}
+              {(status === 'success' || notification.summary.info) && notification.type === 'send' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'stargate' && (
+                <UICurrency.Icon currency={STARGATE_TOKEN} width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'swap' && (
+                <SwitchVerticalIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'approval' && (
+                <LockOpenIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'mint' && (
+                <PlusIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'burn' && (
+                <FireIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'enterBar' && (
+                <DownloadIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'leaveBar' && (
+                <UploadIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'claimRewards' && (
+                <CashIcon width={20} height={20} />
+              )}
             </div>
           </Badge>
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
               <Typography as="span" variant="sm" weight={500} className="items-center text-slate-50 whitespace-normal">
-                {['loading'].includes(status) ? (
+                {notification.summary.info ? (
+                  notification.summary.info
+                ) : ['loading'].includes(status) ? (
                   <Dots>{notification.summary.pending}</Dots>
                 ) : status === 'error' ? (
                   notification.summary.failed

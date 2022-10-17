@@ -1,4 +1,4 @@
-import { Amount, Token, Type } from '@sushiswap/currency'
+import { Amount, Type } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource } from '@sushiswap/hooks'
 import { useBalance } from '@sushiswap/wagmi'
@@ -11,8 +11,8 @@ interface PoolPositionContext {
   balance: Record<FundSource, Amount<Type>> | undefined
   value0: number
   value1: number
-  underlying0: Amount<Token> | undefined
-  underlying1: Amount<Token> | undefined
+  underlying0: Amount<Type> | undefined
+  underlying1: Amount<Type> | undefined
   isLoading: boolean
   isError: boolean
 }
@@ -32,23 +32,6 @@ export const PoolPositionProvider: FC<{ pair: Pair; children: ReactNode; watch?:
     isLoading,
     isError,
   } = useBalance({ chainId: pair.chainId, currency: liquidityToken, account, watch })
-
-  // const {
-  //   data: liquidityTokenBalance,
-  //   isLoading,
-  //   isError,
-  // } = useBalance({ chainId: pair.chainId, addressOrName: liquidityToken.address, watch })
-
-  // const balance = useMemo(
-  //   () => ({
-  //     [FundSource.WALLET]: Amount.fromRawAmount(
-  //       liquidityToken,
-  //       liquidityTokenBalance?.value ? liquidityTokenBalance.value.toString() : 0
-  //     ),
-  //     [FundSource.BENTOBOX]: Amount.fromRawAmount(liquidityToken, 0),
-  //   }),
-  //   [liquidityToken, liquidityTokenBalance]
-  // )
 
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0,

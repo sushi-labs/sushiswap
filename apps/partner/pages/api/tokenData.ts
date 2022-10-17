@@ -15,8 +15,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const data = await getToken(address, chainId)
     res.status(200).json(data)
-  } catch (er) {
-    console.log(er)
+  } catch (error) {
+    console.error(error)
     res.status(500).end()
   }
 }

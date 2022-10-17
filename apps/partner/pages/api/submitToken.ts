@@ -1,5 +1,7 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
+import { CHAIN_NAME } from '@sushiswap/graph-config'
+import Cors from 'cors'
 import { ethers } from 'ethers'
 import { getOctokit, getTokenKPI, Token } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -14,9 +16,28 @@ interface Body {
 
 const owner = 'sushiswap'
 
+const cors = Cors({
+  methods: ['POST', 'GET', 'HEAD'],
+})
+
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result)
+      }
+
+      return resolve(result)
+    })
+  })
+}
+
 // TODO: Clean up by extracting octokit calls
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  await runMiddleware(req, res, cors)
+
   const { tokenAddress, tokenData, tokenIcon, chainId, listType } = req.body as Body
+
   if (!tokenData?.decimals || !tokenData.name || !tokenData.symbol || !tokenIcon || !listType || !chainId) {
     res.status(500).json({ error: 'Invalid data submitted.' })
     return
@@ -137,7 +158,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     {
       address: checksummedAddress,
       chainId: chainId,
-      decimals: tokenData.decimals,
+      decimals: Number(tokenData.decimals),
       logoURI: `https://raw.githubusercontent.com/${owner}/list/master/${imagePath}`,
       name: tokenData.name,
       symbol: tokenData.symbol,
@@ -166,7 +187,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     title: `Token: ${displayName}`,
     head: branch,
     base: 'master',
-    body: `Chain: ${ChainKey[chainId]}
+    body: `Chain: ${CHAIN_NAME[chainId] ?? chainId}
       Name: ${tokenData.name}
       Symbol: ${tokenData.symbol}
       Decimals: ${tokenData.decimals}

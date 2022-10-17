@@ -8,7 +8,7 @@
     "price",
     "script"
   ],
-  "homepage": "https://sushi.com",
+  "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -36,21 +36,14 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
-    "@graphprotocol/client-add-source-name": "1.0.5",
-    "@graphprotocol/client-auto-pagination": "1.1.3",
-    "@graphprotocol/client-cli": "2.2.1",
-    "@graphql-mesh/cache-localforage": "^0.6.21",
-    "@graphql-mesh/cross-helpers": "^0.2.0",
-    "@graphql-mesh/graphql": "^0.29.5",
-    "@graphql-mesh/merger-stitching": "^0.16.4",
-    "@graphql-mesh/runtime": "^0.41.4",
-    "@graphql-mesh/store": "^0.8.24",
-    "@graphql-mesh/transform-filter-schema": "^0.14.71",
-    "@graphql-mesh/transform-prefix": "^0.11.60",
-    "@graphql-mesh/transform-prune": "^0.0.47",
-    "@graphql-mesh/transform-rename": "^0.12.61",
-    "@graphql-mesh/transform-type-merging": "^0.4.15",
-    "@graphql-mesh/utils": "^0.37.5",
+    "@graphprotocol/client-cli": "2.2.13",
+    "@graphprotocol/client-add-source-name": "latest",
+    "@graphprotocol/client-auto-pagination": "latest",
+    "@graphql-mesh/transform-filter-schema": "latest",
+    "@graphql-mesh/transform-prefix": "latest",
+    "@graphql-mesh/transform-prune": "latest",
+    "@graphql-mesh/transform-rename": "latest",
+    "@graphql-mesh/transform-type-merging": "latest",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
@@ -75,7 +68,7 @@
     "regenerator-runtime": "^0.13.9",
     "ts-node": "^10.8.2",
     "tsup": "^6.2.0",
-    "typescript": "4.6.3"
+    "typescript": "4.8.2"
   },
   "engines": {
     "node": ">=16"

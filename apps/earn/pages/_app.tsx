@@ -17,6 +17,8 @@ import { WagmiConfig } from 'wagmi'
 
 import SEO from '../next-seo.config.mjs'
 
+export { reportWebVitals } from 'next-axiom'
+
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]
@@ -42,14 +44,12 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1" />
-        <link rel="manifest" href="/site.webmanifest?v=1" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
-        <link rel="shortcut icon" href="/favicon.ico?v=1" />
-        <meta name="msapplication-TileColor" content="#2b5797" />
-        <meta name="theme-color" content="#ffffff" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/earn/apple-touch-icon.png?v=1" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/earn/favicon-32x32.png?v=1" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/earn/favicon-16x16.png?v=1" />
+        <link rel="manifest" href="/earn/manifest.json?v=1" />
+        <link rel="mask-icon" href="/earn/safari-pinned-tab.svg?v=1" color="#fa52a0" />
+        <link rel="shortcut icon" href="/earn/favicon.ico?v=1" />
       </Head>
       <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script

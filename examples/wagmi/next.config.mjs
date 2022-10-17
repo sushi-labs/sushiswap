@@ -6,7 +6,7 @@ const withTranspileModules = transpileModules(['@sushiswap/wagmi', '@sushiswap/u
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
     ignoreBuildErrors: true,

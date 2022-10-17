@@ -1,4 +1,10 @@
+// import nextPwa from 'next-pwa'
 import transpileModules from 'next-transpile-modules'
+import { withAxiom } from 'next-axiom'
+
+// const withPwa = nextPwa({
+//   dest: 'public',
+// })
 
 const withTranspileModules = transpileModules([
   '@sushiswap/ui',
@@ -14,11 +20,23 @@ const withTranspileModules = transpileModules([
 const nextConfig = {
   basePath: '/furo',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
+  productionBrowserSourceMaps: true,
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/furo',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
 }
 
-export default withTranspileModules(nextConfig)
+// export default withAxiom(withPwa(withTranspileModules(nextConfig)))
+export default withAxiom(withTranspileModules(nextConfig))
