@@ -1,6 +1,6 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK, QuerycrossChainPairsArgs } from '@sushiswap/graph-client/.graphclient'
-import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
+import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
