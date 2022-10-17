@@ -61,7 +61,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
 
   const handleImport = useCallback(
     (currency: Token) => {
-      onAddToken(currency)
+      onAddToken && onAddToken(currency)
       onSelect && onSelect(currency)
       onClose()
     },
@@ -81,7 +81,9 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
           <Dialog.Content className="!max-w-md overflow-hidden h-[75vh] sm:h-[640px] pb-[116px]">
             <SlideIn>
               <Dialog.Header onClose={onClose} title="Select Token">
-                <TokenSelectorSettingsOverlay customTokenMap={customTokenMap} onRemoveToken={onRemoveToken} />
+                {customTokenMap && (
+                  <TokenSelectorSettingsOverlay customTokenMap={customTokenMap} onRemoveToken={onRemoveToken} />
+                )}
               </Dialog.Header>
               <div
                 className={classNames(

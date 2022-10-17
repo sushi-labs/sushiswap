@@ -8,6 +8,7 @@ const eslintConfig = {
       rootDir: ['apps/*/', 'packages/*/'],
     },
   },
+  ignorePatterns: ['**/.next/**'],
   rules: {
     '@next/next/no-html-link-for-pages': 'off',
     'react/display-name': 'off',

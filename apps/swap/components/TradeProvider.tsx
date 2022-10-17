@@ -1,13 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
-import { TradeOutput } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
-import { useTrade as useFindTrade } from '../lib/hooks/useTrade'
+import { useTrade as useFindTrade, UseTradeOutput } from '../lib/hooks/useTrade'
 
-interface TradeContext {
-  trade: TradeOutput
+interface TradeContext extends UseTradeOutput {
   isLoading: boolean
   isError: boolean
 }
@@ -15,7 +13,7 @@ interface TradeContext {
 const Context = createContext<TradeContext | undefined>(undefined)
 
 interface _TradeProviderProps {
-  chainId: ChainId
+  chainId: number | undefined
   tradeType: TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT
   amountSpecified: Amount<Currency> | undefined
   mainCurrency: Currency | undefined
@@ -32,11 +30,11 @@ export const TradeProvider: FC<_TradeProviderProps> = ({
   children,
 }) => {
   const _mainCurrency = useMemo(
-    () => (chainId === ChainId.CELO ? mainCurrency?.wrapped : mainCurrency),
+    () => (chainId && chainId === ChainId.CELO ? mainCurrency?.wrapped : mainCurrency),
     [chainId, mainCurrency]
   )
   const _otherCurrency = useMemo(
-    () => (chainId === ChainId.CELO ? otherCurrency?.wrapped : otherCurrency),
+    () => (chainId && chainId === ChainId.CELO ? otherCurrency?.wrapped : otherCurrency),
     [chainId, otherCurrency]
   )
   const _amountSpecified = useMemo(
@@ -46,9 +44,9 @@ export const TradeProvider: FC<_TradeProviderProps> = ({
         : amountSpecified,
     [chainId, amountSpecified]
   )
-  const trade = useFindTrade(chainId, tradeType, _amountSpecified, _mainCurrency, _otherCurrency)
+  const { trade, route } = useFindTrade(chainId, tradeType, _amountSpecified, _mainCurrency, _otherCurrency)
   return (
-    <Context.Provider value={useMemo(() => ({ trade, isError: false, isLoading: false }), [trade])}>
+    <Context.Provider value={useMemo(() => ({ trade, route, isError: false, isLoading: false }), [route, trade])}>
       {children}
     </Context.Provider>
   )

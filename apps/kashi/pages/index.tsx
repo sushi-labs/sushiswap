@@ -79,11 +79,11 @@ const _Index = () => {
         <div className="flex justify-end">
           <div className="relative rounded-full h-[240px] w-[240px] border-2 border-dashed border-slate-700 flex items-center justify-center">
             <div className="w-[140px]">
-              <Image src="https://sushi.com/kashi/images/KashiKanjiSign.png" layout="fill" />
+              <Image src="https://www.sushi.com/kashi/images/KashiKanjiSign.png" layout="fill" />
             </div>
             <NetworkIcon width={32} chainId={ChainId.ETHEREUM} className="absolute top-0 right-9" />
-            <NetworkIcon width={32} chainId={ChainId.ARBITRUM} className="absolute bottom-9 right-0" />
-            <NetworkIcon width={32} chainId={ChainId.BSC} className="absolute top-9 left-0" />
+            <NetworkIcon width={32} chainId={ChainId.ARBITRUM} className="absolute right-0 bottom-9" />
+            <NetworkIcon width={32} chainId={ChainId.BSC} className="absolute left-0 top-9" />
             <NetworkIcon width={32} chainId={ChainId.POLYGON} className="absolute bottom-0 left-9" />
           </div>
         </div>

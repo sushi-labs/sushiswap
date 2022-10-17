@@ -78,7 +78,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           index,
         },
       })
-    }, [approvalState, disabled, dispatch, index, onApprove, props, signature])
+    }, [approvalState, disabled, dispatch, enabled, index, onApprove, props, signature])
 
     if (render) return render({ approvalState, signature, onApprove })
     if (hideIcon) return <></>
@@ -149,7 +149,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
                   We need your approval first to access your wallet using BentoBox; you will only have to approve this
                   master contract once.
                 </Typography>
-                <Typography variant="xs" weight={500} className="text-slate-400 flex flex-col gap-1">
+                <Typography variant="xs" weight={500} className="flex flex-col gap-1 text-slate-400">
                   <span className="text-slate-200">Why should I approve this?</span>
                   <span>
                     BentoBox is a token vault that provides its users with passive income on their deposits from yield

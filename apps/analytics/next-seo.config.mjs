@@ -10,7 +10,7 @@ export default {
   //     media: '',
   //     href: '',
   //   },
-  //   languageAlternates: [{ hrefLang: "en", href: "https://sushi.com/analytics" }],
+  //   languageAlternates: [{ hrefLang: "en", href: "https://www.sushi.com/analytics" }],
   twitter: {
     handle: '@sushiswap',
     site: '@sushiswap',

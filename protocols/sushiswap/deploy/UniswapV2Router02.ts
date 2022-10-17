@@ -26,7 +26,7 @@ const func: DeployFunction = async function ({
     from: deployer,
     args: [
       factory.address,
-      wnative ? wnative.address : chainId in WNATIVE_ADDRESS ? WNATIVE_ADDRESS[chainId] : process.env.WNATIVE_ADDRESS,
+      wnative ? wnative.address : chainId in WNATIVE_ADDRESS ? WNATIVE_ADDRESS[chainId as keyof typeof WNATIVE_ADDRESS] : process.env.WNATIVE_ADDRESS,
     ],
     log: true,
     deterministicDeployment: false,

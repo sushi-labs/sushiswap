@@ -4,6 +4,7 @@ import { Address } from './Address'
 import { Counter } from './Counter'
 import { DatetimeLocal } from './DatetimeLocal'
 import { Input as Numeric } from './Numeric'
+import { Input as Percent } from './Percent'
 
 // Base classes
 export const DEFAULT_INPUT_FONT = 'text-left text-base md:text-sm placeholder:font-normal font-medium'
@@ -38,4 +39,4 @@ export const DEFAULT_INPUT_CLASSNAME = classNames(
   DEFAULT_INPUT_PADDING
 )
 
-export const Input = { Address, DatetimeLocal, Counter, Numeric }
+export const Input = { Address, DatetimeLocal, Counter, Numeric, Percent }

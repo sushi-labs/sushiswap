@@ -1,0 +1,23 @@
+{
+    "name": "xSwap by Sushi",
+    "description": "Easiest way to trade your tokens across 7 networks.",
+    "short_name": "xSwap",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#0f172a",
+    "background_color": "#0f172a",
+    "start_url": "/xswap",
+    "iconPath": "/xswap/favicon-32x32.png",
+    "icons": [
+      {
+          "src": "/xswap/android-chrome-192x192.png?v=1",
+          "sizes": "192x192",
+          "type": "image/png"
+      },
+      {
+          "src": "/xswap/android-chrome-512x512.png?v=1",
+          "sizes": "512x512",
+          "type": "image/png"
+      }
+    ]
+  }

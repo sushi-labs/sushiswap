@@ -58,7 +58,7 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
               ]
 
               const liquidityUSD = formatUSD(pair.liquidityUSD)
-              const volume7d = formatUSD(pair.volume7d)
+              const volume1w = formatUSD(pair.volume1w)
 
               return (
                 <Tooltip
@@ -97,7 +97,7 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                       <Table.td>
                         <Link.External href={`/pool/${pair.id}`} className="!no-underline">
                           <Typography weight={600} variant="sm" className="text-slate-100">
-                            {volume7d.includes('NaN') ? '$0.00' : volume7d}
+                            {volume1w.includes('NaN') ? '$0.00' : volume1w}
                           </Typography>
                         </Link.External>
                       </Table.td>

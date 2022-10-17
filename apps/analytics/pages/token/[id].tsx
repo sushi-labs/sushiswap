@@ -14,7 +14,6 @@ import { getBundles, getToken } from '../../lib/api'
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const [token, bundles] = await Promise.all([getToken(query.id as string), getBundles()])
-
   return {
     props: {
       fallback: {
@@ -38,8 +37,6 @@ const _TokenPage: FC = () => {
   const { data } = useSWR<{ token: GraphToken }>(`/analytics/api/token/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
-
-  console.log(data)
 
   if (!data) return <></>
   const { token } = data

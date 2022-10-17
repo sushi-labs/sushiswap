@@ -44,7 +44,7 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
     eventName: 'StargateSushiXSwapDst',
     listener: (event) => {
       const [context, success, { transactionHash }] = event
-      console.log(event, formatBytes32String(id), context === formatBytes32String(id))
+      // console.log(event, formatBytes32String(id), context === formatBytes32String(id))
       if (context === formatBytes32String(id)) {
         setDstTxState({
           txHash: transactionHash,

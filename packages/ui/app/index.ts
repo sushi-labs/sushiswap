@@ -16,6 +16,14 @@ export type AppProps = {
   NavItemList: NavItemListProps
 }
 
-export const App = { Header, Shell, Nav, NavItem, NavItemList, Main, Footer }
+export const App = {
+  Header,
+  Shell,
+  Nav,
+  NavItem,
+  NavItemList,
+  Main,
+  Footer,
+}
 
 export { AppType } from './Header'

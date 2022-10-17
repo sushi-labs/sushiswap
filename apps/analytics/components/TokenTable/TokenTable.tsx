@@ -79,11 +79,10 @@ export const TokenTable: FC = () => {
     [sorting, pagination, selectedNetworks, query]
   )
 
-  const { data: tokens, isValidating } = useSWR<Token[]>({ url: '/analytics/api/tokens', args }, fetcher, {})
+  const { data: tokens, isValidating } = useSWR<Token[]>({ url: '/analytics/api/tokens', args }, fetcher)
   const { data: tokenCount } = useSWR<number>(
     `/analytics/api/tokens/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
-    (url) => fetch(url).then((response) => response.json()),
-    {}
+    (url) => fetch(url).then((response) => response.json())
   )
 
   const table = useReactTable<Token>({

@@ -6,7 +6,7 @@ const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/redu
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   // TEMPORARY UNTIL TYPE ERROR IS SOLVED
   typescript: {
     ignoreBuildErrors: true,

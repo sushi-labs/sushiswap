@@ -10,10 +10,11 @@ import log from '@sushiswap/log'
 import { Button, classNames, createToast, Currency, Dots, Form, Link as UILink, Table, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotals, useFuroStreamRouterContract, usePrices } from '@sushiswap/wagmi'
 import { format } from 'date-fns'
+import { useNotifications } from 'lib/state/storage'
 import Link from 'next/link'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { useAccount, useNetwork, useDeprecatedSendTransaction } from 'wagmi'
+import { useAccount, useDeprecatedSendTransaction, useNetwork } from 'wagmi'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { CreateMultipleStreamFormData, CreateStreamFormDataValidated } from '../types'
@@ -26,6 +27,7 @@ export const CreateMultipleForm: FC = () => {
   const { address } = useAccount()
   const { chain: activeChain } = useNetwork()
   const contract = useFuroStreamRouterContract(activeChain?.id)
+  const [, { createNotification }] = useNotifications(address)
   const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
   const [signature, setSignature] = useState<Signature>()
   const [errors, setErrors] = useState<string[]>([])
@@ -138,10 +140,13 @@ export const CreateMultipleForm: FC = () => {
             value: summedValue.quotient.toString(),
           },
         })
-
+        const ts = new Date().getTime()
         createToast({
+          type: 'createMultipleStream',
           txHash: resp.hash,
-          href: Chain.from(activeChain.id).getTxUrl(resp.hash),
+          chainId: activeChain.id,
+          timestamp: ts,
+          groupTimestamp: ts,
           promise: resp.wait(),
           summary: {
             pending: (
@@ -371,6 +376,7 @@ export const CreateMultipleForm: FC = () => {
                   <ArrowLeftIcon width={16} height={16} /> Go Back and Edit
                 </Button>
                 <Approve
+                  onSuccess={createNotification}
                   className="!items-end"
                   components={
                     <Approve.Components>

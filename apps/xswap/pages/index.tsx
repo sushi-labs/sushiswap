@@ -8,7 +8,7 @@ import { TradeType } from '@sushiswap/exchange'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
-import { Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
+import { App, Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import {
   Approve,
@@ -84,7 +84,9 @@ const theme: Theme = {
   ...defaultTheme,
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query
 
   // TODO: Need to fetch srcToken & dstToken if they're address and pass down basic object to client
@@ -640,17 +642,17 @@ const Widget: FC<Swap> = ({
   }, [dstAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   useEffect(() => {
-    console.log('getFee escape hatch', [
-      !srcChainId,
-      !srcAmount,
-      !dstChainId,
-      !dstMinimumAmountOut,
-      !address,
-      !srcInputCurrencyRebase,
-      !srcOutputCurrencyRebase,
-      !dstOutputCurrencyRebase,
-      !contractWithProvider,
-    ])
+    // console.log('getFee escape hatch', [
+    //   !srcChainId,
+    //   !srcAmount,
+    //   !dstChainId,
+    //   !dstMinimumAmountOut,
+    //   !address,
+    //   !srcInputCurrencyRebase,
+    //   !srcOutputCurrencyRebase,
+    //   !dstOutputCurrencyRebase,
+    //   !contractWithProvider,
+    // ])
     if (
       !srcChainId ||
       !srcAmount ||
@@ -925,13 +927,11 @@ const Widget: FC<Swap> = ({
           )}
           style={{ maxWidth }}
         >
-          <div className="p-3 mx-[2px] grid grid-cols-2 items-center pb-4 font-medium">
-            <Typography
-              weight={500}
-              className={classNames(theme.primary.default, theme.primary.hover, 'flex items-center gap-2')}
-            >
-              xSwap
-            </Typography>
+          <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
+            <App.NavItemList hideOnMobile={false}>
+              <App.NavItem href="https://www.sushi.com/swap" label="Swap" />
+              <App.NavItem href="https://www.sushi.com/xswap" label="xSwap" />
+            </App.NavItemList>
             <div className="flex justify-end">
               <SettingsOverlay chainId={srcChainId} />
             </div>

@@ -27,7 +27,7 @@ const fetcher = ({
 export const ChartSection: FC = () => {
   const { selectedNetworks } = usePoolFilters()
   const args = useMemo(() => ({ selectedNetworks }), [selectedNetworks])
-  const { data, isValidating } = useSWR({ url: '/analytics/api/charts', args }, fetcher, {})
+  const { data, isValidating } = useSWR({ url: '/analytics/api/charts', args }, fetcher)
   // const { data } = useSWR('/analytics/api/charts', fetcher)
   return (
     <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">

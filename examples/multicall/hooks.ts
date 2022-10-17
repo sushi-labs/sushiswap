@@ -40,7 +40,6 @@ export function useCurrentBlockTimestampMultichain(
   blockNumbers: Array<number | undefined>
 ): Array<string | undefined> {
   const chainToBlock = useMemo(() => {
-    console.log({ blockNumbers })
     return chainIds.reduce((result, chainId, i) => {
       result[chainId] = blockNumbers[i]
       return result

@@ -157,14 +157,6 @@ export class Pair {
       const amount0 = JSBI.divide(JSBI.multiply(tokenAmounts[0].quotient, totalSupply.quotient), this.reserve0.quotient)
       const amount1 = JSBI.divide(JSBI.multiply(tokenAmounts[1].quotient, totalSupply.quotient), this.reserve1.quotient)
       liquidity = JSBI.lessThanOrEqual(amount0, amount1) ? amount0 : amount1
-
-      console.log({
-        amount0: amount0.toString(),
-        amount1: amount1.toString(),
-        liquidity: liquidity.toString(),
-        totalSupply: totalSupply.quotient.toString(),
-        kLast: sqrt(JSBI.multiply(this.tokenAmounts[0].quotient, this.tokenAmounts[1].quotient)),
-      })
     }
     if (!JSBI.greaterThan(liquidity, ZERO)) {
       throw new InsufficientInputAmountError()

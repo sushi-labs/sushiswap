@@ -8,7 +8,7 @@ import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contra
 import { getBentoBoxContractConfig } from './useBentoBoxContract'
 
 type UseBentoBoxTotals = (
-  chainId: number,
+  chainId: number | undefined,
   currencies: (Currency | undefined)[],
   config?: Omit<UseContractReadsConfig, 'contracts'>
 ) => Record<string, { base: JSBI; elastic: JSBI }> | undefined
@@ -51,7 +51,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
 }
 
 export const useBentoBoxTotal = (
-  chainId: number,
+  chainId: number | undefined,
   currency: Currency | undefined,
   config?: Omit<UseContractReadsConfig, 'contracts'>
 ): { base: JSBI; elastic: JSBI } | undefined => {

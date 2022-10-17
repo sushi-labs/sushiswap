@@ -6,7 +6,7 @@ const withTranspileModules = transpileModules(['@sushiswap/ui'])
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
 }
 
 export default withTranspileModules(nextConfig)
