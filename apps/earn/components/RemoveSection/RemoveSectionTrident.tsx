@@ -1,6 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { Amount, Native } from '@sushiswap/currency'
-import { calculateSlippageAmount } from '@sushiswap/exchange'
+import { calculateSlippageAmount, ConstantProductPool } from '@sushiswap/exchange'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
@@ -142,11 +142,17 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     const liquidityOutput: LiquidityOutput[] = [
       {
         token: minAmount0.wrapped.currency.address,
-        amount: minAmount0.toShare(rebases?.[token0.wrapped.address]).quotient.toString(),
+        amount:
+          pool instanceof ConstantProductPool
+            ? minAmount0.toShare(rebases?.[token0.wrapped.address]).quotient.toString()
+            : minAmount0.quotient.toString(),
       },
       {
         token: minAmount1.wrapped.currency.address,
-        amount: minAmount1.toShare(rebases?.[token1.wrapped.address]).quotient.toString(),
+        amount:
+          pool instanceof ConstantProductPool
+            ? minAmount1.toShare(rebases?.[token1.wrapped.address]).quotient.toString()
+            : minAmount1.quotient.toString(),
       },
     ]
 
