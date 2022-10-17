@@ -5,7 +5,15 @@ import { Amount, Currency } from '@sushiswap/currency'
 import { createErrorToast, NotificationData } from '@sushiswap/ui'
 import { BigNumber, Contract } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { erc20ABI, useAccount, useContract, usePrepareSendTransaction, useSendTransaction, useSigner } from 'wagmi'
+import {
+  erc20ABI,
+  useAccount,
+  useContract,
+  usePrepareSendTransaction,
+  UserRejectedRequestError,
+  useSendTransaction,
+  useSigner,
+} from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useERC20Allowance } from './useERC20Allowance'

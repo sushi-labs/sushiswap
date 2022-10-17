@@ -108,8 +108,8 @@ export function useBentoBoxApproveCallback({
       if (e instanceof UserRejectedRequestError) return
       console.error('Error approving BentoBox, attempting regular approval instead', e)
       // Regular approval as fallback
-      const data = await writeAsync()
-      if (onSuccess) {
+      const data = await writeAsync?.()
+      if (onSuccess && data) {
         const ts = new Date().getTime()
         onSuccess({
           type: 'approval',
