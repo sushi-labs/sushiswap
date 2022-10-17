@@ -115,9 +115,8 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
                   {queryToken && (
                     <TokenSelectorImportRow
                       className="!px-4"
-                      hideIcons
-                      currency={queryToken}
-                      onImport={() => handleImport(queryToken)}
+                      currencies={queryToken}
+                      onImport={() => queryToken[0] && handleImport(queryToken[0])}
                     />
                   )}
                   <Currency.List

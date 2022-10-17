@@ -2,15 +2,7 @@ import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import {
-  AppearOnMount,
-  classNames,
-  Currency as UICurrency,
-  DEFAULT_INPUT_UNSTYLED,
-  Input,
-  Loader,
-  Typography,
-} from '@sushiswap/ui'
+import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
 import { FC, MouseEventHandler, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -73,11 +65,11 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   )
 
   return (
-    <div className={className} onClick={focusInput}>
+    <div className={classNames(className, loading ? 'animate-pulse' : '')} onClick={focusInput}>
       <div className="relative flex items-center gap-1">
         {loading ? (
-          <div className="flex flex-grow items-center h-[44px]">
-            <Loader size={20} />
+          <div className="flex flex-col gap-1 justify-center flex-grow h-[44px]">
+            <div className="w-[120px] h-[22px] bg-slate-500 rounded-full" />
           </div>
         ) : (
           <Transition
@@ -111,8 +103,9 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           )}
         >
           {loading && !currency ? (
-            <div className="pl-1 pr-12">
-              <Loader />
+            <div className="flex gap-1">
+              <div className="w-5 h-5 bg-slate-500 rounded-full" />
+              <div className="w-[60px] h-[20px] bg-slate-500 rounded-full" />
             </div>
           ) : currency ? (
             <>
@@ -186,20 +179,23 @@ const BalancePanel: FC<BalancePanel> = ({
     enabled: Boolean(currency),
   })
 
-  return useMemo(
-    () => (
-      <AppearOnMount show={!!balance}>
-        <button
-          type="button"
-          onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
-          className="py-1 text-xs text-slate-400 hover:text-slate-300"
-          disabled={disableMaxButton}
-        >
-          {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : ''}
-        </button>
-      </AppearOnMount>
-    ),
-    [balance, disableMaxButton, fundSource, isMounted, onChange]
+  if (!balance) {
+    return (
+      <div className="h-[24px] w-[60px] flex items-center">
+        <div className="bg-slate-600 animate-pulse h-[12px] w-full rounded-full" />
+      </div>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
+      className="py-1 text-xs text-slate-400 hover:text-slate-300"
+      disabled={disableMaxButton}
+    >
+      {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : ''}
+    </button>
   )
 }
 
@@ -210,9 +206,16 @@ const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) => {
   const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
   const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
 
+  if (!tokenPrices)
+    return (
+      <div className="h-[24px] w-[60px] flex items-center">
+        <div className="bg-slate-600 animate-pulse h-[12px] w-full rounded-full" />
+      </div>
+    )
+
   return (
     <Typography variant="xs" weight={400} className="py-1 select-none text-slate-400">
-      {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : ''}
+      {parsedValue && price && isMounted ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : '$0.00'}
       {usdPctChange && (
         <span
           className={classNames(

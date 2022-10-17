@@ -123,10 +123,9 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                   <div className="absolute inset-0 h-full rounded-t-none rounded-xl">
                     {queryToken && (
                       <TokenSelectorImportRow
-                        hideIcons
                         className="!px-6"
-                        currency={queryToken}
-                        onImport={() => handleImport(queryToken)}
+                        currencies={queryToken}
+                        onImport={() => queryToken[0] && handleImport(queryToken[0])}
                       />
                     )}
                     <Currency.List

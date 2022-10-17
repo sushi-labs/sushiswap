@@ -2,11 +2,11 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { TradeType } from '@sushiswap/exchange'
-import { FundSource, usePrevious } from '@sushiswap/hooks'
+import { FundSource, useIsMounted, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
 import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Checker, useWalletState, WrapType } from '@sushiswap/wagmi'
+import { Checker, TokenListImportChecker, useWalletState, WrapType } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -86,7 +86,7 @@ const getDefaultToken1 = (chainId: number) => {
 
 function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { chain } = useNetwork()
-
+  const isMounted = useIsMounted()
   const connect = useConnect()
   const { connecting, notConnected } = useWalletState(!!connect.pendingConnector)
   const router = useRouter()
@@ -123,26 +123,29 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
     }
   }, [router, chain, previousChain])
 
-  const tokens = useTokens(chainId)
+  const tokenMap = useTokens(chainId)
+  const [customTokensMap, { addCustomToken, removeCustomToken, addCustomTokens }] = useCustomTokens(chainId)
 
   const inputToken = useMemo(() => {
-    if (!chainId) return
-    return initialState.token0 && initialState.token0 in tokens ? tokens[initialState.token0] : Native.onChain(chainId)
-  }, [chainId, initialState.token0, tokens])
+    if (!chainId || !isMounted) return
+    if (initialState.token0 && initialState.token0 in tokenMap) return tokenMap[initialState.token0]
+    if (initialState.token0 && initialState.token0.toLowerCase() in customTokensMap)
+      return customTokensMap[initialState.token0.toLowerCase()]
+    return Native.onChain(chainId)
+  }, [chainId, customTokensMap, initialState.token0, isMounted, tokenMap])
 
   const outputToken = useMemo(() => {
-    if (!chainId) return
-    if (initialState.token1 && initialState.token1 in tokens) return tokens[initialState.token1]
+    if (!chainId || !isMounted) return
+    if (initialState.token1 && initialState.token1 in tokenMap) return tokenMap[initialState.token1]
+    if (initialState.token1 && initialState.token1.toLowerCase() in customTokensMap)
+      return customTokensMap[initialState.token1.toLowerCase()]
     return getDefaultToken1(chainId)
-  }, [chainId, initialState.token1, tokens])
+  }, [chainId, customTokensMap, initialState.token1, isMounted, tokenMap])
 
   const [input0, setInput0] = useState<string>(initialState.input0)
   const [[token0, token1], setTokens] = useState<[Type | undefined, Type | undefined]>([inputToken, outputToken])
   const [input1, setInput1] = useState<string>('')
   const [tradeType, setTradeType] = useState<TradeType>(TradeType.EXACT_INPUT)
-
-  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
-  const tokenMap = useTokens(chainId)
 
   const wrap = Boolean(token0 && token1 && token0.isNative && token1.equals(Native.onChain(token1.chainId).wrapped))
   const unwrap = Boolean(token0 && token1 && token1.isNative && token0.equals(Native.onChain(token0.chainId).wrapped))
@@ -191,8 +194,22 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
     })
   }, [])
 
+  const checkIfImportedTokens = useMemo(() => {
+    if (initialState.token0 && initialState.token1) {
+      return [
+        { address: initialState.token0, chainId: Number(initialState.chainId) },
+        { address: initialState.token1, chainId: Number(initialState.chainId) },
+      ]
+    }
+  }, [initialState.chainId, initialState.token0, initialState.token1])
+
   return (
-    <>
+    <TokenListImportChecker
+      onAddTokens={addCustomTokens}
+      customTokensMap={customTokensMap}
+      tokenMap={tokenMap}
+      tokens={checkIfImportedTokens}
+    >
       <TradeProvider
         chainId={chainId}
         tradeType={tradeType}
@@ -314,7 +331,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
           </Container> */}
         </Layout>
       </TradeProvider>
-    </>
+    </TokenListImportChecker>
   )
 }
 
