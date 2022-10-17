@@ -24,18 +24,9 @@ import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import { log } from 'next-axiom'
-import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  ProviderRpcError,
-  useAccount,
-  usePrepareSendTransaction,
-  useProvider,
-  UserRejectedRequestError,
-  useSendTransaction,
-} from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useAccount, useProvider } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTrade } from '../TradeProvider'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
@@ -74,18 +65,19 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     [slippageTolerance]
   )
 
-  const prepare = useCallback(async (setRequest) => {
-    if (!trade || !account || !chainId) return
+  const prepare = useCallback(
+    async (setRequest) => {
+      if (!trade || !account || !chainId) return
 
-    console.log('prepare swap', { trade, account, chainId, deadline })
+      console.log('prepare swap', { trade, account, chainId, deadline })
 
-    try {
-      let call: SwapCall | null = null
-      let value = '0x0'
+      try {
+        let call: SwapCall | null = null
+        let value = '0x0'
 
-      if (trade.isV1()) {
-        if (!sushiSwapRouter || !deadline) return
-        const swapCallParameters = SushiSwapRouter.swapCallParameters(
+        if (trade.isV1()) {
+          if (!sushiSwapRouter || !deadline) return
+          const swapCallParameters = SushiSwapRouter.swapCallParameters(
             trade as Trade<Currency, Currency, TradeType, Version.V1>,
             {
               feeOnTransfer: false,
@@ -94,85 +86,90 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
               recipient: account,
               deadline: deadline.toNumber(),
             }
-        )
+          )
 
-        const { methodName, args } = swapCallParameters
+          const { methodName, args } = swapCallParameters
 
-        const shouldCarbonOffset = chainId === ChainId.POLYGON && carbonOffset
+          const shouldCarbonOffset = chainId === ChainId.POLYGON && carbonOffset
 
-        if (trade.inputAmount.currency.isNative) {
-          value = toHex(shouldCarbonOffset ? trade.inputAmount.add(KLIMA_FEE) : trade.inputAmount)
-        } else if (shouldCarbonOffset) {
-          value = toHex(KLIMA_FEE)
-        }
+          if (trade.inputAmount.currency.isNative) {
+            value = toHex(shouldCarbonOffset ? trade.inputAmount.add(KLIMA_FEE) : trade.inputAmount)
+          } else if (shouldCarbonOffset) {
+            value = toHex(KLIMA_FEE)
+          }
 
-        call = {
-          address: shouldCarbonOffset && sushiSwapKlimaRouter ? sushiSwapKlimaRouter.address : sushiSwapRouter.address,
-          calldata: sushiSwapRouter.interface.encodeFunctionData(methodName, args),
-          value,
-        }
-      } else if (tridentRouter && trade.isV2()) {
-        if (!tridentRouter || !inputCurrencyRebase || !outputCurrencyRebase) return
+          call = {
+            address:
+              shouldCarbonOffset && sushiSwapKlimaRouter ? sushiSwapKlimaRouter.address : sushiSwapRouter.address,
+            calldata: sushiSwapRouter.interface.encodeFunctionData(methodName, args),
+            value,
+          }
+        } else if (tridentRouter && trade.isV2()) {
+          if (!tridentRouter || !inputCurrencyRebase || !outputCurrencyRebase) return
 
-        const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
+          const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
 
-        if (trade.isSinglePool()) {
-          actions.push(
+          if (trade.isSinglePool()) {
+            actions.push(
               tridentRouter.interface.encodeFunctionData('exactInputSingleWithNativeToken', [
                 {
-                  tokenIn: trade.inputAmount.currency.isNative ? AddressZero : trade.inputAmount.currency.wrapped.address,
+                  tokenIn: trade.inputAmount.currency.isNative
+                    ? AddressZero
+                    : trade.inputAmount.currency.wrapped.address,
                   amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
                   amountOutMinimum: BigNumber.from(
-                      trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
+                    trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
                   ),
                   pool: trade.route.legs[0].poolAddress,
                   data: defaultAbiCoder.encode(
-                      ['address', 'address', 'bool'],
-                      [
-                        trade.route.legs[0].tokenFrom.address,
-                        trade.outputAmount.currency.isNative ? tridentRouter.address : account,
-                        true,
-                      ]
+                    ['address', 'address', 'bool'],
+                    [
+                      trade.route.legs[0].tokenFrom.address,
+                      trade.outputAmount.currency.isNative ? tridentRouter.address : account,
+                      true,
+                    ]
                   ),
                 },
               ])
-          )
-        } else if (trade.isSingle()) {
-          actions.push(
+            )
+          } else if (trade.isSingle()) {
+            actions.push(
               tridentRouter.interface.encodeFunctionData('exactInputWithNativeToken', [
                 {
-                  tokenIn: trade.inputAmount.currency.isNative ? AddressZero : trade.inputAmount.currency.wrapped.address,
+                  tokenIn: trade.inputAmount.currency.isNative
+                    ? AddressZero
+                    : trade.inputAmount.currency.wrapped.address,
                   amountIn: BigNumber.from(trade.inputAmount.quotient.toString()),
                   amountOutMinimum: BigNumber.from(
-                      trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
+                    trade.minimumAmountOut(allowedSlippage).toShare(outputCurrencyRebase).quotient.toString()
                   ),
                   path: trade.route.legs.map((leg, i) => {
                     const isLastLeg = i === trade.route.legs.length - 1
                     return {
                       pool: leg.poolAddress,
                       data: defaultAbiCoder.encode(
-                          ['address', 'address', 'bool'],
-                          [
-                            leg.tokenFrom.address,
-                            isLastLeg
-                                ? trade.outputAmount.currency.isNative
-                                    ? tridentRouter.address
-                                    : account
-                                : trade.route.legs[i + 1].poolAddress,
-                            isLastLeg,
-                          ]
+                        ['address', 'address', 'bool'],
+                        [
+                          leg.tokenFrom.address,
+                          isLastLeg
+                            ? trade.outputAmount.currency.isNative
+                              ? tridentRouter.address
+                              : account
+                            : trade.route.legs[i + 1].poolAddress,
+                          isLastLeg,
+                        ]
                       ),
                     }
                   }),
                 },
               ])
-          )
-        } else if (trade.isComplex()) {
-          // complex trade
-          const initialPathCount = trade.route.legs.filter(
+            )
+          } else if (trade.isComplex()) {
+            // complex trade
+            const initialPathCount = trade.route.legs.filter(
               (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-          ).length
-          const [initialPath, percentagePath, output] = trade.route.legs.reduce<
+            ).length
+            const [initialPath, percentagePath, output] = trade.route.legs.reduce<
               [
                 {
                   tokenIn: string
@@ -194,7 +191,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                   minAmount: BigNumberish
                 }[]
               ]
-              >(
+            >(
               ([initialPath, percentagePath, output], leg, i) => {
                 const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
                 if (isInitialPath) {
@@ -205,24 +202,24 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                         tokenIn: trade.inputAmount.currency.isNative ? AddressZero : leg.tokenFrom.address,
                         pool: leg.poolAddress,
                         amount:
-                            initialPathCount > 1 && i === initialPathCount - 1
-                                ? BigNumber.from(trade.inputAmount.quotient.toString()).sub(
-                                    initialPath.reduce(
-                                        (previousValue, currentValue) => previousValue.add(currentValue.amount),
-                                        Zero
-                                    )
+                          initialPathCount > 1 && i === initialPathCount - 1
+                            ? BigNumber.from(trade.inputAmount.quotient.toString()).sub(
+                                initialPath.reduce(
+                                  (previousValue, currentValue) => previousValue.add(currentValue.amount),
+                                  Zero
                                 )
-                                : BigNumber.from(trade.inputAmount.quotient.toString())
-                                    .mul(Math.round(leg.absolutePortion * 1e6))
-                                    .div(1e6),
+                              )
+                            : BigNumber.from(trade.inputAmount.quotient.toString())
+                                .mul(Math.round(leg.absolutePortion * 1e6))
+                                .div(1e6),
                         native: true,
                         data: defaultAbiCoder.encode(
-                            ['address', 'address', 'bool'],
-                            [
-                              leg.tokenFrom.address,
-                              getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
-                              false,
-                            ]
+                          ['address', 'address', 'bool'],
+                          [
+                            leg.tokenFrom.address,
+                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                            false,
+                          ]
                         ),
                       },
                     ],
@@ -239,12 +236,12 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                         pool: leg.poolAddress,
                         balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
                         data: defaultAbiCoder.encode(
-                            ['address', 'address', 'bool'],
-                            [
-                              leg.tokenFrom.address,
-                              getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
-                              false,
-                            ]
+                          ['address', 'address', 'bool'],
+                          [
+                            leg.tokenFrom.address,
+                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                            false,
+                          ]
                         ),
                       },
                     ],
@@ -261,55 +258,55 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                     to: trade.outputAmount.currency.isNative ? tridentRouter.address : account,
                     unwrapBento: true,
                     minAmount: trade
-                        ?.minimumAmountOut(allowedSlippage)
-                        ?.toShare(outputCurrencyRebase)
-                        .quotient.toString(),
+                      ?.minimumAmountOut(allowedSlippage)
+                      ?.toShare(outputCurrencyRebase)
+                      .quotient.toString(),
                   },
                 ],
               ]
-          )
-          actions.push(
+            )
+            actions.push(
               tridentRouter.interface.encodeFunctionData('complexPath', [{ initialPath, percentagePath, output }])
-          )
-        }
+            )
+          }
 
-        if (trade.inputAmount.currency.isNative) {
-          value = toHex(trade.inputAmount)
-        }
-        if (trade.outputAmount.currency.isNative) {
-          // unwrap
-          actions.push(
+          if (trade.inputAmount.currency.isNative) {
+            value = toHex(trade.inputAmount)
+          }
+          if (trade.outputAmount.currency.isNative) {
+            // unwrap
+            actions.push(
               unwrapWETHAction({
                 router: tridentRouter,
                 recipient: account,
               })
-          )
-        }
+            )
+          }
 
-        call = {
-          address: tridentRouter.address,
-          calldata: batchAction({
-            contract: tridentRouter,
-            actions,
-          }),
-          value,
+          call = {
+            address: tridentRouter.address,
+            calldata: batchAction({
+              contract: tridentRouter,
+              actions,
+            }),
+            value,
+          }
         }
-      }
-      if (call) {
-        if (!isAddress(call.address)) new Error('call address has to be an address')
-        if (call.address === AddressZero) new Error('call address cannot be zero')
+        if (call) {
+          if (!isAddress(call.address)) new Error('call address has to be an address')
+          if (call.address === AddressZero) new Error('call address cannot be zero')
 
-        const tx =
+          const tx =
             !value || isZero(value)
-                ? { from: account, to: call.address, data: call.calldata }
-                : {
+              ? { from: account, to: call.address, data: call.calldata }
+              : {
                   from: account,
                   to: call.address,
                   data: call.calldata,
                   value,
                 }
 
-        const estimatedCall = await provider
+          const estimatedCall = await provider
             .estimateGas(tx)
             .then((gasEstimate) => {
               return {
@@ -321,104 +318,102 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
               console.debug('Gas estimate failed, trying eth_call to extract error', call)
 
               return provider
-                  .call(tx)
-                  .then((result) => {
-                    console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
-                    return {
-                      call,
-                      error: new Error('Unexpected issue with estimating the gas. Please try again.'),
-                    }
-                  })
-                  .catch((callError) => {
-                    console.debug('Call threw error', call, callError)
-                    return {
-                      call,
-                      error: new Error(callError),
-                      // error: new Error(swapErrorToUserReadableMessage(callError)),
-                    }
-                  })
+                .call(tx)
+                .then((result) => {
+                  console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
+                  return {
+                    call,
+                    error: new Error('Unexpected issue with estimating the gas. Please try again.'),
+                  }
+                })
+                .catch((callError) => {
+                  console.debug('Call threw error', call, callError)
+                  return {
+                    call,
+                    error: new Error(callError),
+                    // error: new Error(swapErrorToUserReadableMessage(callError)),
+                  }
+                })
             })
 
-        setRequest({
-          ...tx,
-          ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
-        })
+          setRequest({
+            ...tx,
+            ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
+          })
+        }
+      } catch (e: unknown) {
+        //
       }
-    } catch (e: unknown) {
-      if (e instanceof UserRejectedRequestError) return
-      if (e instanceof ProviderRpcError) {
-        setError(e.message)
-      }
-      console.error(e)
-    }
-  }, [
-    account,
-    allowedSlippage,
-    carbonOffset,
-    chainId,
-    deadline,
-    inputCurrencyRebase,
-    outputCurrencyRebase,
-    provider,
-    signature,
-    sushiSwapKlimaRouter,
-    sushiSwapRouter,
-    trade,
-    tridentRouter,
-  ])
+    },
+    [
+      account,
+      allowedSlippage,
+      carbonOffset,
+      chainId,
+      deadline,
+      inputCurrencyRebase,
+      outputCurrencyRebase,
+      provider,
+      signature,
+      sushiSwapKlimaRouter,
+      sushiSwapRouter,
+      trade,
+      tridentRouter,
+    ]
+  )
 
   const onSettled = useCallback(
-      (data: SendTransactionResult | undefined, error: Error | null) => {
-        if (!trade || !chainId || !data) return
+    (data: SendTransactionResult | undefined) => {
+      if (!trade || !chainId || !data) return
 
-        const ts = new Date().getTime()
-        // data: SendTransactionResult | undefined, error: Error | null
-        data
-            .wait()
-            .then((tx) => {
-              log.info('swap success', {
-                transactionHash: tx.transactionHash,
-                chainId: trade.inputAmount.currency.chainId,
-                tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
-                tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
-                tokenInSymbol: trade.inputAmount.currency.symbol,
-                tokenOutSymbol: trade.outputAmount.currency.symbol,
-                tokenInAmount: trade.inputAmount.toFixed(),
-                tokenOutAmount: trade.outputAmount.toFixed(),
-              })
-            })
-            .catch((error: unknown) => {
-              log.error('swap failure', {
-                error: JSON.stringify(error),
-                chainId: trade.inputAmount.currency.chainId,
-                tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
-                tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
-                tokenInSymbol: trade.inputAmount.currency.symbol,
-                tokenOutSymbol: trade.outputAmount.currency.symbol,
-                tokenInAmount: trade.inputAmount.toFixed(),
-                tokenOutAmount: trade.outputAmount.toFixed(),
-              })
-            })
-
-        createNotification({
-          type: 'swap',
-          chainId,
-          txHash: data.hash,
-          promise: data.wait(),
-          summary: {
-            pending: `Swapping ${trade.inputAmount.toSignificant(6)} ${
-                trade.inputAmount.currency.symbol
-            } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
-            completed: `Successfully swapped ${trade.inputAmount.toSignificant(6)} ${
-                trade.inputAmount.currency.symbol
-            } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
-            failed: `Something went wrong when trying to swap ${trade.inputAmount.currency.symbol} for ${trade.outputAmount.currency.symbol}`,
-          },
-          timestamp: ts,
-          groupTimestamp: ts,
+      const ts = new Date().getTime()
+      // data: SendTransactionResult | undefined, error: Error | null
+      data
+        .wait()
+        .then((tx) => {
+          log.info('swap success', {
+            transactionHash: tx.transactionHash,
+            chainId: trade.inputAmount.currency.chainId,
+            tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
+            tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
+            tokenInSymbol: trade.inputAmount.currency.symbol,
+            tokenOutSymbol: trade.outputAmount.currency.symbol,
+            tokenInAmount: trade.inputAmount.toFixed(),
+            tokenOutAmount: trade.outputAmount.toFixed(),
+          })
         })
-      },
-      [chainId, createNotification, trade]
+        .catch((error: unknown) => {
+          log.error('swap failure', {
+            error: JSON.stringify(error),
+            chainId: trade.inputAmount.currency.chainId,
+            tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
+            tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
+            tokenInSymbol: trade.inputAmount.currency.symbol,
+            tokenOutSymbol: trade.outputAmount.currency.symbol,
+            tokenInAmount: trade.inputAmount.toFixed(),
+            tokenOutAmount: trade.outputAmount.toFixed(),
+          })
+        })
+
+      createNotification({
+        type: 'swap',
+        chainId,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Swapping ${trade.inputAmount.toSignificant(6)} ${
+            trade.inputAmount.currency.symbol
+          } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
+          completed: `Successfully swapped ${trade.inputAmount.toSignificant(6)} ${
+            trade.inputAmount.currency.symbol
+          } for ${trade.outputAmount.toSignificant(6)} ${trade.outputAmount.currency.symbol}`,
+          failed: `Something went wrong when trying to swap ${trade.inputAmount.currency.symbol} for ${trade.outputAmount.currency.symbol}`,
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [chainId, createNotification, trade]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
