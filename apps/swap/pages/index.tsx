@@ -8,6 +8,7 @@ import { App, Button, classNames, Container, Dots, Link, Typography } from '@sus
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, TokenListImportChecker, useWalletState, WrapType } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
+import { isAddress } from 'ethers/lib/utils'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -195,12 +196,12 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   }, [])
 
   const checkIfImportedTokens = useMemo(() => {
-    if (initialState.token0 && initialState.token1) {
-      return [
-        { address: initialState.token0, chainId: Number(initialState.chainId) },
-        { address: initialState.token1, chainId: Number(initialState.chainId) },
-      ]
-    }
+    const tokens: { address: string; chainId: number }[] = []
+    if (initialState.token0 && isAddress(initialState.token0))
+      tokens.push({ address: initialState.token0, chainId: Number(initialState.chainId) })
+    if (initialState.token1 && isAddress(initialState.token1))
+      tokens.push({ address: initialState.token1, chainId: Number(initialState.chainId) })
+    return tokens
   }, [initialState.chainId, initialState.token0, initialState.token1])
 
   return (

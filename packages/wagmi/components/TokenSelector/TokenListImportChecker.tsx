@@ -20,12 +20,17 @@ export const TokenListImportChecker: FC<TokenListImportCheckerProps> = ({
   tokens,
   children,
 }) => {
-  if (!tokens) return <>{children}</>
+  const _tokens = useMemo(() => {
+    if (!tokens || Object.keys(tokenMap).length === 0) return []
+    return tokens.filter((el) => {
+      return !(el.address in tokenMap) && !(el.address.toLowerCase() in customTokensMap)
+    })
+  }, [customTokensMap, tokenMap, tokens])
 
   return (
     <_TokenListImportChecker
       onAddTokens={onAddTokens}
-      tokens={tokens}
+      tokens={_tokens}
       tokenMap={tokenMap}
       customTokensMap={customTokensMap}
     >

@@ -121,7 +121,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                 <div className="w-full border-t border-slate-200/5" />
                 <div className="relative h-[calc(100%-32px)] pt-5">
                   <div className="absolute inset-0 h-full rounded-t-none rounded-xl">
-                    {queryToken && (
+                    {queryToken[0] && (
                       <TokenSelectorImportRow
                         className="!px-6"
                         currencies={queryToken}

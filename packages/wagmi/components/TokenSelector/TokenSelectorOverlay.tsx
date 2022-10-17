@@ -112,7 +112,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
               <div className="relative h-full pt-5">
                 <div className="w-full border-t border-slate-200/5" />
                 <div className="absolute inset-0 h-full rounded-t-none bg-slate-800 rounded-xl">
-                  {queryToken && (
+                  {queryToken[0] && (
                     <TokenSelectorImportRow
                       className="!px-4"
                       currencies={queryToken}
