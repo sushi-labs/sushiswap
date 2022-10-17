@@ -28,6 +28,7 @@
   "devDependencies": {
     "@ethersproject/address": "^5.7.0",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -42,6 +43,7 @@
   "peerDependencies": {
     "@ethersproject/address": "^5.7.0",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@uniswap/token-lists": "^1.0.0-beta.29"
   }
 }

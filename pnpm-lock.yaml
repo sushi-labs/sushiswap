@@ -890,7 +890,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
-      '@tanstack/react-table': 8.5.0
+      '@tanstack/react-table': ^8.5.15
       '@types/node': ^17.0.30
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
@@ -938,7 +938,7 @@ importers:
       '@sushiswap/token-lists': link:../../packages/token-lists
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
-      '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-table': 8.5.15_biqbaboplfbrettd7655fr4n2y
       date-fns: 2.29.1
       echarts: 5.3.3
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
@@ -2244,6 +2244,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^27.5.1
@@ -2257,6 +2258,7 @@ importers:
       '@sushiswap/currency': link:../currency
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
+      '@sushiswap/math': link:../math
       '@sushiswap/prettier-config': link:../config/prettier
       '@sushiswap/typescript-config': link:../config/typescript
       '@types/jest': 27.5.2

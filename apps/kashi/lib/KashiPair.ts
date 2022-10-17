@@ -1,6 +1,7 @@
 import { getAddress } from '@ethersproject/address'
 import { Amount, Share, Token } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { JSBI, maximum, minimum, Percent, ZERO } from '@sushiswap/math'
+import { KASHI_ADDRESS } from 'config'
 
 import { computePairAddress } from './computePairAddress'
 import { KashiPair as KashiPairDTO } from '.graphclient'
@@ -38,40 +39,14 @@ export type AccrueInfo = {
   feesEarnedFraction: JSBI
 }
 
-export interface KashiPair {
+export class KashiMediumRiskLendingPairV1 {
+  readonly chainId: keyof typeof KASHI_ADDRESS
+  readonly id: string
   readonly address: string
   readonly bentoBox: string
   readonly masterContract: string
   readonly collateral: Token
-  readonly collateralRebase: Rebase
   readonly asset: Token
-  readonly assetRebase: Rebase
-  readonly oracle: string
-  readonly oracleData: string
-  readonly totalCollateralShare: Share<Token>
-  readonly totalAsset: Rebase
-  readonly totalBorrow: Rebase
-  readonly accrueInfo: AccrueInfo
-  readonly exchangeRate: JSBI
-
-  readonly symbol: string
-  readonly name: string
-  readonly decimals: number
-
-  readonly totalSupply: Share<Token>
-
-  readonly oracleExchangeRate: JSBI
-  readonly spotExchangeRate: JSBI
-}
-
-export class KashiMediumRiskLendingPairV1 implements KashiPair {
-  readonly address: string
-  readonly bentoBox: string
-  readonly masterContract: string
-  readonly collateral: Token
-  readonly collateralRebase: Rebase
-  readonly asset: Token
-  readonly assetRebase: Rebase
   readonly oracle: string
   readonly oracleData: string
   readonly totalCollateralShare: Share<Token>
@@ -138,17 +113,18 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
 
   constructor(pair: KashiPairDTO) {
     this.address = getAddress(pair.id)
+    this.id = getAddress(pair.id)
+
+    this.chainId = pair.chainId
 
     // this.bentoBox = getAddress(pair.bentoBox.id)
     this.masterContract = getAddress(pair.masterContract.id)
+
     this.collateral = new Token({
       chainId: pair.chainId,
       address: getAddress(pair.collateral.id),
       ...pair.collateral,
     })
-
-    this.collateralRebase.base = JSBI.BigInt(pair.collateral.rebase.base || 0)
-    this.collateralRebase.elastic = JSBI.BigInt(pair.collateral.rebase.elastic || 0)
 
     this.asset = new Token({
       chainId: pair.chainId,
@@ -156,26 +132,29 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
       ...pair.asset,
     })
 
-    this.assetRebase.base = JSBI.BigInt(pair.asset.rebase.base || 0)
-    this.assetRebase.elastic = JSBI.BigInt(pair.asset.rebase.elastic || 0)
-
-    this.oracle = getAddress(pair.oracle.id)
+    this.oracle = getAddress(pair.oracle)
     // TODO: ADD VALIDATION
     this.oracleData = pair.oracleData
 
     this.totalCollateralShare = Share.fromRawShare(this.collateral, pair.totalCollateralShare)
 
-    this.totalAsset.base = JSBI.BigInt(pair.totalAsset.base)
-    this.totalAsset.elastic = JSBI.BigInt(pair.totalAsset.base)
+    this.totalAsset = {
+      base: JSBI.BigInt(pair.totalAsset.base),
+      elastic: JSBI.BigInt(pair.totalAsset.elastic),
+    }
 
-    this.totalBorrow.base = JSBI.BigInt(pair.totalBorrow.base)
-    this.totalBorrow.elastic = JSBI.BigInt(pair.totalBorrow.base)
+    this.totalBorrow = {
+      base: JSBI.BigInt(pair.totalBorrow.base),
+      elastic: JSBI.BigInt(pair.totalBorrow.elastic),
+    }
 
     this.exchangeRate = JSBI.BigInt(pair.exchangeRate)
 
-    this.accrueInfo.interestPerSecond = JSBI.BigInt(pair.accrueInfo.interestPerSecond)
-    this.accrueInfo.lastAccrued = JSBI.BigInt(pair.accrueInfo.lastAccrued)
-    this.accrueInfo.feesEarnedFraction = JSBI.BigInt(pair.accrueInfo.feesEarnedFraction)
+    this.accrueInfo = {
+      interestPerSecond: JSBI.BigInt(pair.accrueInfo.interestPerSecond),
+      lastAccrued: JSBI.BigInt(pair.accrueInfo.lastAccrued),
+      feesEarnedFraction: JSBI.BigInt(pair.accrueInfo.feesEarnedFraction),
+    }
 
     this.symbol = pair.symbol
     this.name = pair.name
@@ -212,13 +191,10 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
 
     let currentInterest = this.interestPerYear
 
-    if (JSBI.lessThan(this.utilization.quotient, this.MINIMUM_TARGET_UTILIZATION)) {
+    if (JSBI.lessThan(this.utilization, this.MINIMUM_TARGET_UTILIZATION)) {
       const underFactor = JSBI.greaterThan(this.MINIMUM_TARGET_UTILIZATION, ZERO)
         ? JSBI.divide(
-            JSBI.multiply(
-              JSBI.subtract(this.MINIMUM_TARGET_UTILIZATION, this.utilization.quotient),
-              this.FACTOR_PRECISION
-            ),
+            JSBI.multiply(JSBI.subtract(this.MINIMUM_TARGET_UTILIZATION, this.utilization), this.FACTOR_PRECISION),
             this.MINIMUM_TARGET_UTILIZATION
           )
         : ZERO
@@ -231,9 +207,9 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
       if (JSBI.lessThan(currentInterest, this.MINIMUM_INTEREST_PER_YEAR)) {
         currentInterest = this.MINIMUM_INTEREST_PER_YEAR // 0.25% APR minimum
       }
-    } else if (JSBI.greaterThan(this.utilization.quotient, this.MAXIMUM_TARGET_UTILIZATION)) {
+    } else if (JSBI.greaterThan(this.utilization, this.MAXIMUM_TARGET_UTILIZATION)) {
       const overFactor = JSBI.multiply(
-        JSBI.subtract(this.utilization.quotient, this.MAXIMUM_TARGET_UTILIZATION),
+        JSBI.subtract(this.utilization, this.MAXIMUM_TARGET_UTILIZATION),
         JSBI.divide(this.FACTOR_PRECISION, this.FULL_UTILIZATION_MINUS_MAX)
       )
       const scale = JSBI.add(
@@ -252,7 +228,8 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
    * The total collateral in the market (collateral is stable, it doesn't accrue)
    */
   public get totalCollateralAmount(): Amount<Token> {
-    return this.totalCollateralShare.toAmount(this.collateralRebase)
+    console.log('totalCollateralAmount', this.totalCollateralShare.toFixed())
+    return this.totalCollateralShare.toAmount(this.collateral.rebase)
   }
 
   /**
@@ -260,7 +237,7 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
    */
   public get totalAssetAmount(): Amount<Token> {
     // TODO: Make sure this is correct...
-    return Share.fromRawShare(this.asset, this.totalAsset.elastic).toAmount(this.assetRebase)
+    return Amount.fromRawAmount(this.asset, this.totalAsset.elastic)
   }
 
   private accrue(amount: JSBI, includePrincipal = false): JSBI {
@@ -291,7 +268,7 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
    * Current total amount of asset shares
    */
   public get currentAllAssetShares(): Share<Token> {
-    return this.currentAllAssets.toShare(this.assetRebase)
+    return this.currentAllAssets.toShare(this.asset.rebase)
   }
 
   /**
@@ -313,18 +290,83 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
     }
   }
 
+  // /**
+  //  * The current utilization in %
+  //  */
+  // public get utilization(): Percent {
+  //   return new Percent(
+  //     JSBI.divide(JSBI.multiply(JSBI.BigInt(1e18), this.currentBorrowAmount.quotient), this.currentAllAssets.quotient)
+  //   )
+  // }
+
   /**
    * The current utilization in %
    */
-  public get utilization(): Percent {
-    if (this.currentAllAssets) return new Percent(0)
-    return new Percent(
-      JSBI.divide(JSBI.multiply(JSBI.BigInt(1e18), this.currentBorrowAmount.quotient), this.currentAllAssets)
-    )
+  public get utilization(): JSBI {
+    if (this.currentAllAssets.equalTo(ZERO)) return JSBI.BigInt(0)
+    return this.currentBorrowAmount.multiply(1e18).divide(this.currentAllAssets).quotient
   }
 
   private takeFee(amount: JSBI): JSBI {
     return JSBI.subtract(amount, JSBI.divide(JSBI.multiply(amount, this.PROTOCOL_FEE), this.PROTOCOL_FEE_DIVISOR))
+  }
+
+  // /**
+  //  * Interest per year received by lenders as of now
+  //  */
+  // public get supplyAPR(): Percent {
+  //   return takeFee(JSBI.divide(JSBI.multiply(this.interestPerYear, this.utilization.q), JSBI.BigInt(1e18)))
+  //   return new Percent(1, 100)
+  // }
+
+  /**
+   * The 'mimimum' exchange rate
+   */
+  public get minimumExchangeRate(): JSBI {
+    return minimum(this.exchangeRate, this.spotExchangeRate, this.oracleExchangeRate)
+  }
+
+  /**
+   * The 'maximum' exchange rate
+   */
+  public get maximumExchangeRate(): JSBI {
+    return maximum(this.exchangeRate, this.spotExchangeRate, this.oracleExchangeRate)
+  }
+
+  /**
+   * The overall health of the lending pair
+   */
+  public get marketHealth(): Percent {
+    if (JSBI.equal(this.currentBorrowAmount.quotient, ZERO) || JSBI.equal(this.maximumExchangeRate, ZERO)) {
+      return new Percent(0)
+    }
+
+    return new Percent(
+      this.totalCollateralAmount
+        .multiply(1e18)
+        .divide(this.maximumExchangeRate)
+        .multiply(1e18)
+        .divide(this.currentBorrowAmount).quotient,
+      JSBI.BigInt(1e18)
+    )
+
+    //  return JSBI.divide(
+    //     JSBI.multiply(
+    //       JSBI.divide(JSBI.multiply(this.totalCollateralAmount, JSBI.BigInt(1e18)), this.maximumExchangeRate),
+    //       JSBI.BigInt(1e18)
+    //     ),
+    //     this.currentBorrowAmount
+    //   )
+    // if (JSBI.equal(this.currentBorrowAmount, ZERO) || JSBI.equal(this.maximumExchangeRate, ZERO)) {
+    //   return ZERO
+    // }
+    // return JSBI.divide(
+    //   JSBI.multiply(
+    //     JSBI.divide(JSBI.multiply(this.totalCollateralAmount, JSBI.BigInt(1e18)), this.maximumExchangeRate),
+    //     JSBI.BigInt(1e18)
+    //   ),
+    //   this.currentBorrowAmount
+    // )
   }
 
   /**
@@ -332,7 +374,8 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
    */
   public get supplyAPR(): Percent {
     return new Percent(
-      this.takeFee(JSBI.divide(JSBI.multiply(this.interestPerYear, this.utilization.quotient), JSBI.BigInt(1e18)))
+      this.takeFee(JSBI.divide(JSBI.multiply(this.interestPerYear, this.utilization), JSBI.BigInt(1e18))),
+      JSBI.BigInt(1e18)
     )
   }
 
@@ -341,9 +384,8 @@ export class KashiMediumRiskLendingPairV1 implements KashiPair {
    */
   public get currentSupplyAPR(): Percent {
     return new Percent(
-      this.takeFee(
-        JSBI.divide(JSBI.multiply(this.currentInterestPerYear, this.utilization.quotient), JSBI.BigInt(1e18))
-      )
+      this.takeFee(JSBI.divide(JSBI.multiply(this.currentInterestPerYear, this.utilization), JSBI.BigInt(1e18))),
+      JSBI.BigInt(1e18)
     )
   }
 }

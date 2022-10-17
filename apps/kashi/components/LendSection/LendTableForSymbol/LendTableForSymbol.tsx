@@ -9,24 +9,23 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-import { KashiPair } from '../../../.graphclient'
 import {
   GenericTable,
   LEND_ASSET_COLUMN,
   NETWORK_COLUMN,
   PAGE_SIZE,
-  REWARD_APR_COLUMN,
   SUPPLY_APR_COLUMN,
   TOTAL_APR_COLUMN,
   TOTAL_ASSET_COLUMN,
   TOTAL_BORROW_COLUMN,
 } from '../../Table'
+import { KashiPair as KashiPairDTO } from '.graphclient'
 
-// @ts-ignore
 const COLUMNS = [
   NETWORK_COLUMN,
   LEND_ASSET_COLUMN,
@@ -34,7 +33,7 @@ const COLUMNS = [
   TOTAL_ASSET_COLUMN,
   TOTAL_BORROW_COLUMN,
   SUPPLY_APR_COLUMN,
-  REWARD_APR_COLUMN,
+  // REWARD_APR_COLUMN,
 ]
 
 const fetcher = ({
@@ -42,7 +41,11 @@ const fetcher = ({
   args,
 }: {
   url: string
-  args: { sorting: SortingState; pagination: PaginationState; where: string }
+  args: {
+    sorting: SortingState
+    pagination: PaginationState
+    symbol: string
+  }
 }) => {
   const _url = new URL(url, window.location.origin)
 
@@ -56,9 +59,12 @@ const fetcher = ({
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
 
-  if (args.where) {
-    _url.searchParams.set('where', args.where)
-  }
+  _url.searchParams.set(
+    'where',
+    stringify({
+      where: { asset_: { symbol_contains_nocase: args.symbol.toLowerCase() }, totalBorrow_: { base_not: '0' } },
+    })
+  )
 
   return fetch(_url.href)
     .then((res) => res.json())
@@ -79,10 +85,18 @@ export const LendTableForSymbol: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data: pairs } = useSWR<KashiPair[]>(
-    { url: `/kashi/api/pairs?symbol=${(router.query.symbol as string).toLowerCase()}&asset=true`, args },
-    fetcher
+  const { data } = useSWR<KashiPairDTO[]>({ url: `/kashi/api/lend/${router.query.symbol}`, args }, fetcher)
+  const pairs = useMemo(
+    () =>
+      data
+        ?.map((pair) => new KashiMediumRiskLendingPairV1(pair))
+        .sort((a, b) => {
+          if (b.currentSupplyAPR.equalTo(a.currentSupplyAPR)) return 0
+          return b.currentSupplyAPR.lessThan(a.currentSupplyAPR) ? -1 : 1
+        }),
+    [data]
   )
+
   const table = useReactTable({
     data: pairs ?? [],
     columns: COLUMNS,
@@ -99,7 +113,7 @@ export const LendTableForSymbol: FC = () => {
   })
 
   const onClick = useCallback(
-    (row: Row<KashiPair>) => {
+    (row: Row<KashiMediumRiskLendingPairV1>) => {
       void router.push(`/lend/${chainShortName[row.original.chainId]}:${row.original.id}`)
     },
     [router]
@@ -125,7 +139,7 @@ export const LendTableForSymbol: FC = () => {
         </Typography>
       </div>
       <div className="flex flex-col gap-4">
-        <GenericTable<KashiPair> size="lg" table={table} columns={COLUMNS} onClick={onClick} />
+        <GenericTable<KashiMediumRiskLendingPairV1> size="lg" table={table} columns={COLUMNS} onClick={onClick} />
       </div>
     </>
   )

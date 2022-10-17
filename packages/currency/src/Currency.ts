@@ -51,7 +51,7 @@ export abstract class Currency {
     decimals,
     symbol,
     name,
-    rebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
+    rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
   }: {
     chainId: number | string
     decimals: number | string

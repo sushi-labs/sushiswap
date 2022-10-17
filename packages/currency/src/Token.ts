@@ -15,7 +15,21 @@ export class Token extends Currency {
    * The contract address on the chain on which this token lives
    */
   public readonly address: string
-  public constructor(token: {
+  /**
+   * The rebase
+   */
+  readonly rebase: {
+    base: JSBI
+    elastic: JSBI
+  }
+  public constructor({
+    chainId,
+    address,
+    decimals,
+    symbol,
+    name,
+    rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
+  }: {
     chainId: number | string
     address: string
     decimals: number
@@ -23,11 +37,22 @@ export class Token extends Currency {
     name?: string
     rebase?: { base: JSBI; elastic: JSBI }
   }) {
-    super(token)
+    super({
+      chainId,
+      decimals,
+      symbol,
+      name,
+    })
     try {
-      this.address = getAddress(token.address)
+      this.address = getAddress(address)
     } catch {
-      throw `${token.address} is not a valid address`
+      throw `${address} is not a valid address`
+    }
+    try {
+      // TODO: No rebase?
+      this.rebase = rebase
+    } catch {
+      throw `${rebase} is not a valid rebase`
     }
   }
 

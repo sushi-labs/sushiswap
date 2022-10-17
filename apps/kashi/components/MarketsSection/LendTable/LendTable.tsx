@@ -13,9 +13,10 @@ import { useRouter } from 'next/router'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-import { KashiPair } from '../../../lib/KashiPair'
+import { KashiMediumRiskLendingPairV1 } from '../../../lib/KashiPair'
 import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE, SUPPLY_APR_COLUMN } from '../../Table'
 import { LendTableHoverElement } from './LendTableHoverElement'
+import { KashiPair } from '.graphclient'
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, SUPPLY_APR_COLUMN]
 
@@ -60,13 +61,24 @@ export const LendTable: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data: pairs } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
 
-  // const pairs = useMemo(() => data?.map((d) => new KashiLendingPairV1(d)), [pairs])
+  // TODO: Automatically serialise/deserialise, middleware?
+  const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
+  const pairs = useMemo(
+    () =>
+      data
+        ? data
+            .map((pair) => new KashiMediumRiskLendingPairV1(pair))
+            .sort((a, b) => {
+              if (b.currentSupplyAPR.equalTo(a.currentSupplyAPR)) return 0
+              return b.currentSupplyAPR.lessThan(a.currentSupplyAPR) ? -1 : 1
+            })
+        : [],
+    [data]
+  )
 
   const table = useReactTable({
     data: pairs ?? [],
-    // @ts-ignore
     columns: COLUMNS,
     state: {
       sorting,
@@ -80,8 +92,8 @@ export const LendTable: FC = () => {
   })
 
   const onClick = useCallback(
-    (row: Row<KashiPair>) => {
-      void router.push(`/lend/markets/${row.original.asset.symbol.toLowerCase()}`)
+    (row: Row<KashiMediumRiskLendingPairV1>) => {
+      if (row.original.asset.symbol) void router.push(`/lend/markets/${row.original.asset.symbol.toLowerCase()}`)
     },
     [router]
   )
@@ -91,8 +103,12 @@ export const LendTable: FC = () => {
       <Typography variant="sm" weight={600} className="text-slate-400">
         Lend
       </Typography>
-      {/* @ts-ignore */}
-      <GenericTable<KashiPair> table={table} columns={COLUMNS} onClick={onClick} HoverElement={LendTableHoverElement} />
+      <GenericTable<KashiMediumRiskLendingPairV1>
+        table={table}
+        columns={COLUMNS}
+        onClick={onClick}
+        HoverElement={LendTableHoverElement}
+      />
     </div>
   )
 }

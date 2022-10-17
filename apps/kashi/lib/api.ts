@@ -1,6 +1,6 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 
-import { KashiPair_orderBy, OrderDirection, QuerycrossChainKashiPairsArgs } from '../.graphclient'
+import { QuerycrossChainKashiPairsArgs } from '../.graphclient'
 import { getBuiltGraphSDK } from '../.graphclient'
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
@@ -34,31 +34,33 @@ export const getPairs = async (query: GetPoolsQuery) => {
 }
 
 type GetPoolsForSymbolQuery = Partial<{
+  first: QuerycrossChainKashiPairsArgs['first']
+  skip: QuerycrossChainKashiPairsArgs['skip']
+  orderBy: QuerycrossChainKashiPairsArgs['orderBy']
+  orderDirection: QuerycrossChainKashiPairsArgs['orderDirection']
+  where: QuerycrossChainKashiPairsArgs['where']
+  chainIds: QuerycrossChainKashiPairsArgs['chainIds']
   symbol: string
-  asset: boolean
-  first: number
-  skip: number
-  orderBy: KashiPair_orderBy
-  orderDirection: OrderDirection
 }>
 
 export const getPairsForSymbol = async (query: GetPoolsForSymbolQuery) => {
-  const orderBy = query?.orderBy || 'supplyAPR'
+  const where = query?.where
+  const chainIds = Array.isArray(query?.chainIds) ? query.chainIds.map(Number) : SUPPORTED_CHAIN_IDS
+  const first = query?.first ? Number(query?.first) : 20
+  const skip = query?.skip ? Number(query?.skip) : 0
+  const orderBy = query?.orderBy || 'utilization'
   const orderDirection = query?.orderDirection || 'desc'
 
   const { crossChainKashiPairs: pairs } = await sdk.CrossChainKashiPairs({
-    chainIds: SUPPORTED_CHAIN_IDS,
-    first: 10,
-    ...(query && { where: { symbol_contains_nocase: query.symbol }, orderBy, orderDirection }),
+    chainIds,
+    first,
+    skip,
+    where,
+    orderBy,
+    orderDirection,
   })
 
-  return pairs.filter((el) => {
-    if (query.asset) {
-      return el.asset.symbol.toLowerCase() === query.symbol
-    } else {
-      return el.collateral.symbol.toLowerCase() === query.symbol
-    }
-  })
+  return pairs
 }
 
 export const getPair = async (id: string) => {

@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -44,8 +45,8 @@ export const BorrowTable: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data: pairs } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
-
+  const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
+  const pairs = useMemo(() => data?.map((d) => new KashiMediumRiskLendingPairV1(d)), [data])
   const table = useReactTable({
     data: pairs ?? [],
     columns: COLUMNS,
@@ -61,8 +62,9 @@ export const BorrowTable: FC = () => {
   })
 
   const onClick = useCallback(
-    (row: Row<KashiPair>) => {
-      void router.push(`/borrow/markets/${row.original.collateral.symbol.toLowerCase()}`)
+    (row: Row<KashiMediumRiskLendingPairV1>) => {
+      if (row.original.collateral.symbol)
+        void router.push(`/borrow/markets/${row.original.collateral.symbol.toLowerCase()}`)
     },
     [router]
   )
@@ -72,7 +74,7 @@ export const BorrowTable: FC = () => {
       <Typography variant="sm" weight={600} className="text-slate-400">
         Borrow
       </Typography>
-      <GenericTable<KashiPair>
+      <GenericTable<KashiMediumRiskLendingPairV1>
         table={table}
         columns={COLUMNS}
         onClick={onClick}

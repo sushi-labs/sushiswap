@@ -11,7 +11,6 @@ export const TotalAssetCell: FC<CellProps> = ({ row }) => {
   const { asset } = useTokensFromKashiPair(row)
   const { data: prices } = usePrices({ chainId: asset.chainId })
   const amount = useMemo(() => Amount.fromRawAmount(asset, row.totalAsset.base), [asset, row.totalAsset.base])
-
   return (
     <Typography variant="sm" weight={500} className="truncate text-slate-50">
       {amount && prices?.[asset.wrapped.address]
