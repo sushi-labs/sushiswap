@@ -1,13 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
-import { Table, useBreakpoint } from '@sushiswap/ui'
+import { GenericTable, Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
-import { GenericTable } from '../GenericTable'
 import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PairQuickHoverTooltip } from './PairQuickHoverTooltip'
 
@@ -116,6 +115,10 @@ export const PoolsTable: FC = () => {
     }
   }, [isMd, isSm])
 
+  const rowLink = useCallback((row: Pair) => {
+    return `/${row.id}`
+  }, [])
+
   return (
     <>
       <GenericTable<Pair>
@@ -124,6 +127,7 @@ export const PoolsTable: FC = () => {
         HoverElement={isMd ? PairQuickHoverTooltip : undefined}
         placeholder="No pools found"
         pageSize={PAGE_SIZE}
+        linkFormatter={rowLink}
       />
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}
