@@ -46,36 +46,6 @@ export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination
   pagination: string
 }
 
-export const getOneDayBlocks = async (chainIds: number[]) => {
-  const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
-  const start = getUnixTime(date)
-  const end = getUnixTime(addSeconds(date, 600))
-  return sdk.CrossChainBlocks({
-    first: 1,
-    skip: 0,
-    // @ts-ignore
-    where: { timestamp_gt: start, timestamp_lt: end },
-    orderBy: 'timestamp',
-    orderDirection: 'desc',
-    chainIds,
-  })
-}
-
-export const getOneWeekBlocks = async (chainIds: number[]) => {
-  const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 7))))
-  const start = getUnixTime(date)
-  const end = getUnixTime(addSeconds(date, 600))
-  return sdk.CrossChainBlocks({
-    first: 1,
-    skip: 0,
-    // @ts-ignore
-    where: { timestamp_gt: start, timestamp_lt: end },
-    orderBy: 'timestamp',
-    orderDirection: 'desc',
-    chainIds,
-  })
-}
-
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
     const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
@@ -91,11 +61,6 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
 
-    const [{ crossChainBlocks: oneDayBlocks }, { crossChainBlocks: oneWeekBlocks }] = await Promise.all([
-      getOneDayBlocks(chainIds),
-      getOneWeekBlocks(chainIds),
-    ])
-
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,
@@ -104,8 +69,6 @@ export const getPools = async (query?: GetPoolsQuery) => {
       orderBy,
       orderDirection,
       chainIds,
-      oneDayBlockNumbers: oneDayBlocks.map((block) => Number(block.number)),
-      oneWeekBlockNumbers: oneWeekBlocks.map((block) => Number(block.number)),
     })
 
     return crossChainPairs
