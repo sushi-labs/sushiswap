@@ -37,7 +37,7 @@ export async function getStaticProps({
   params: { slug: string }
   preview: Record<string, unknown> | null
 }) {
-  const data = await getArticleAndMoreArticles(params.slug, preview)
+  const data = await getArticleAndMoreArticles(params.slug, !!preview)
 
   if (!data?.articles?.data?.[0]) {
     return {

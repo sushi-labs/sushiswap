@@ -408,7 +408,8 @@ export class StablePool implements Pool {
     // Expected balances after minting
     const balance0 = JSBI.add(tokenAmounts[0].quotient, this.reserve0.quotient)
     const balance1 = JSBI.add(tokenAmounts[1].quotient, this.reserve1.quotient)
-    const computed = sqrt(JSBI.multiply(balance0, balance1))
+
+    const computed = this.computeLiquidity(balance0, balance1)
 
     if (JSBI.equal(totalSupply.quotient, ZERO)) {
       liquidity = JSBI.subtract(computed, this.minLiquidity)
@@ -423,7 +424,7 @@ export class StablePool implements Pool {
       const reserve0 = JSBI.add(this.reserve0.quotient, fee0)
       const reserve1 = JSBI.add(this.reserve1.quotient, fee1)
 
-      const k = sqrt(JSBI.multiply(reserve0, reserve1))
+      const k = this.computeLiquidity(reserve0, reserve1)
 
       const mintFee = this.getMintFee(reserve0, reserve1, totalSupply.quotient)
 
