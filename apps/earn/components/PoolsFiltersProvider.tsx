@@ -2,12 +2,15 @@ import { ChainId } from '@sushiswap/chain'
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
+import { AVAILABLE_POOL_TYPE_MAP } from '../lib/constants'
 
 enum Filters {
   myTokensOnly = 'myTokensOnly',
   singleSidedStakingOnly = 'singleSidedStakingOnly',
   stablePairsOnly = 'stablePairsOnly',
   selectedNetworks = 'selectedNetworks',
+  selectedPoolTypes = 'selectedPoolTypes',
+  farmsOnly = 'farmsOnly',
 }
 
 interface FilterContext {
@@ -17,6 +20,8 @@ interface FilterContext {
   [Filters.singleSidedStakingOnly]: boolean
   [Filters.stablePairsOnly]: boolean
   [Filters.selectedNetworks]: ChainId[]
+  [Filters.selectedPoolTypes]: string[]
+  [Filters.farmsOnly]: boolean
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
@@ -38,6 +43,8 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
     [Filters.singleSidedStakingOnly]: false,
     [Filters.stablePairsOnly]: false,
     [Filters.selectedNetworks]: selectedNetworks,
+    [Filters.selectedPoolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP),
+    [Filters.farmsOnly]: false,
   })
 
   const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {

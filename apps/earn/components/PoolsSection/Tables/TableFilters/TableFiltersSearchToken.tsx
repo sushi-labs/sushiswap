@@ -34,22 +34,22 @@ export const TableFiltersSearchToken: FC = () => {
   return (
     <div
       className={classNames(
-        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-4 bg-slate-800 rounded-2xl h-12'
+        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-4 bg-slate-800 rounded-xl h-[44px] border border-slate-700'
       )}
     >
       <div
         className={classNames(
           _query ? 'pr-8' : 'pr-4',
-          'w-full sm:w-[240px] flex-grow pr-4 transform-all relative flex gap-2 items-center px-4 py-2.5 rounded-2xl'
+          'w-full sm:w-[240px] flex-grow pr-4 transform-all relative flex gap-2 items-center px-2 py-2.5 rounded-2xl'
         )}
       >
         <div className="min-w-[24px] w-6 h-6 min-h-[24px] flex flex-grow items-center justify-center">
-          <SearchIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
+          <SearchIcon className="text-slate-400" strokeWidth={2} width={24} height={24} />
         </div>
 
         <input
           value={_query}
-          placeholder="Search a token"
+          placeholder="Filter tokens"
           className={classNames(DEFAULT_INPUT_UNSTYLED, 'flex flex-grow !text-base placeholder:text-sm')}
           type="text"
           onInput={(e) => setQuery(e.currentTarget.value)}

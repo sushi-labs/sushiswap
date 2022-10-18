@@ -128,7 +128,8 @@ additionalTypeDefs: |
       orderDirection: OrderDirection, 
       block: Block_height,
       pagination: Pagination,
-      chainIds: [Int!]!
+      chainIds: [Int!]!,
+      farmsOnly: Boolean
     ): [Pair!]!
     crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair
     crossChainUser(

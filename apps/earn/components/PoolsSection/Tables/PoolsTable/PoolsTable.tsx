@@ -25,6 +25,8 @@ const fetcher = ({
     query: string
     extraQuery: string
     selectedNetworks: ChainId[]
+    selectedPoolTypes: string[]
+    farmsOnly: boolean
   }
 }) => {
   const _url = new URL(url, window.location.origin)
@@ -42,23 +44,17 @@ const fetcher = ({
     _url.searchParams.set('networks', JSON.stringify(args.selectedNetworks))
   }
 
-  let where = {}
-  if (args.query) {
-    where = {
-      name_contains_nocase: args.query,
-    }
+  const where = {}
+  if (args.query) where['name_contains_nocase'] = args.query
+  if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes
 
+  if (Object.keys(where).length > 0) {
     _url.searchParams.set('where', JSON.stringify(where))
   }
 
-  // if (args.extraQuery) {
-  //   where = {
-  //     ...where,
-  //     token1_: { symbol_contains_nocase: args.extraQuery },
-  //   }
-
-  //   _url.searchParams.set('where', JSON.stringify(where))
-  // }
+  if (args.farmsOnly) {
+    _url.searchParams.set('farmsOnly', 'true')
+  }
 
   return fetch(_url.href)
     .then((res) => res.json())
@@ -66,7 +62,7 @@ const fetcher = ({
 }
 
 export const PoolsTable: FC = () => {
-  const { query, extraQuery, selectedNetworks } = usePoolFilters()
+  const { query, extraQuery, selectedNetworks, selectedPoolTypes, farmsOnly } = usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
@@ -78,8 +74,8 @@ export const PoolsTable: FC = () => {
   })
 
   const args = useMemo(
-    () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
-    [sorting, pagination, selectedNetworks, query, extraQuery]
+    () => ({ sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery }),
+    [sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery]
   )
 
   const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher)
