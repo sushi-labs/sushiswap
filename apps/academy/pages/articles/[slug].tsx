@@ -41,8 +41,8 @@ export async function getStaticProps({
 
   return {
     props: {
-      article: data?.articles?.data?.[0],
-      latestArticles: data?.moreArticles?.data,
+      article: data?.articles?.data?.[0] ?? null,
+      latestArticles: data?.moreArticles?.data ?? [],
       preview: !!preview,
     },
     revalidate: 1,
