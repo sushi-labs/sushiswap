@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 
 import {
   AddCustomToken,
+  AddCustomTokens,
   ClearNotifications,
   createNotification,
   GasPrice,
@@ -87,6 +88,17 @@ const reducers = {
     }
 
     state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
+  },
+  addCustomTokens: (state: StorageState, action: PayloadAction<AddCustomTokens>) => {
+    for (const item of action.payload) {
+      const { address, symbol, name, chainId, decimals } = item
+
+      if (!state.customTokens[chainId]) {
+        state.customTokens[chainId] = {}
+      }
+
+      state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
+    }
   },
   removeCustomToken: (state: StorageState, action: PayloadAction<RemoveCustomToken>) => {
     const { address, chainId } = action.payload

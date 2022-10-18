@@ -14,7 +14,7 @@ interface RenderProps {
   query: string
   onInput(query: string): void
   searching: boolean
-  queryToken?: Token
+  queryToken: [Token | undefined]
 }
 
 interface Props {
@@ -89,7 +89,7 @@ export const TokenListFilterByQuery: FC<Props> = ({
       query,
       onInput: setQuery,
       searching: isLoading || searching.current,
-      queryToken: searchToken,
+      queryToken: [searchToken],
     })
   }, [children, filteredSortedTokensWithNative, isLoading, query, searchToken])
 }
