@@ -128,7 +128,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   const [customTokensMap, { addCustomToken, removeCustomToken, addCustomTokens }] = useCustomTokens(chainId)
 
   const inputToken = useMemo(() => {
-    if (!chainId || !isMounted) return
+    if (!chainId || !isMounted || Object.keys(tokenMap).length === 0) return
     if (initialState.token0 && initialState.token0 in tokenMap) return tokenMap[initialState.token0]
     if (initialState.token0 && initialState.token0.toLowerCase() in customTokensMap)
       return customTokensMap[initialState.token0.toLowerCase()]
@@ -136,7 +136,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   }, [chainId, customTokensMap, initialState.token0, isMounted, tokenMap])
 
   const outputToken = useMemo(() => {
-    if (!chainId || !isMounted) return
+    if (!chainId || !isMounted || Object.keys(tokenMap).length === 0) return
     if (initialState.token1 && initialState.token1 in tokenMap) return tokenMap[initialState.token1]
     if (initialState.token1 && initialState.token1.toLowerCase() in customTokensMap)
       return customTokensMap[initialState.token1.toLowerCase()]
