@@ -1,9 +1,8 @@
 import { CheckIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
-import { Native } from '@sushiswap/currency'
 import { FC } from 'react'
 
-import { classNames, Currency, Typography } from '..'
+import { classNames, NetworkIcon, Typography } from '..'
 import { Select } from '../select'
 
 export interface SelectorMenuProps {
@@ -35,7 +34,7 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({ networks, selectedNetworks
             <div className="grid grid-cols-[auto_26px] gap-3 items-center w-full">
               <div className="flex items-center gap-2.5">
                 <div className="w-5 h-5">
-                  <Currency.Icon disableLink currency={Native.onChain(network)} width={20} height={20} />
+                  <NetworkIcon type="circle" chainId={network} width={20} height={20} />
                 </div>
                 <Typography
                   variant="sm"
