@@ -12,7 +12,10 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   const symbol = query.symbol as string
 
   const pairs = await getPairsForSymbol({
-    where: { asset_: { symbol_contains_nocase: symbol.toLowerCase() }, totalBorrow_: { base_not: '0' } },
+    where: {
+      asset_: { symbol_contains_nocase: symbol.toLowerCase() },
+      totalBorrow_: { base_not: '0' },
+    },
     orderBy: 'supplyAPR',
     orderDirection: 'desc',
   })

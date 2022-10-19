@@ -6,7 +6,7 @@ import { SUPPORTED_CHAIN_IDS } from '../config'
 const sdk = getBuiltGraphSDK()
 
 export const getPairs = async (query: Partial<QuerypairsArgs>) => {
-  const where = query?.where
+  const where = typeof query?.where === 'string' ? JSON.parse(query.where) : query.where
   const first = query?.first ? Number(query?.first) : 20
   const skip = query?.skip ? Number(query?.skip) : 0
   const chainIds =
@@ -27,7 +27,7 @@ export const getPairs = async (query: Partial<QuerypairsArgs>) => {
 }
 
 export const getPairsForSymbol = async (query: Partial<QuerypairsArgs & { symbol: string }>) => {
-  const where = query?.where
+  const where = typeof query?.where === 'string' ? JSON.parse(query.where) : query.where
   const chainIds =
     Array.isArray(query.chainIds) && query.chainIds.every((chainId) => SUPPORTED_CHAIN_IDS.includes(chainId))
       ? query.chainIds.map(Number)
@@ -36,7 +36,6 @@ export const getPairsForSymbol = async (query: Partial<QuerypairsArgs & { symbol
   const skip = query?.skip ? Number(query?.skip) : 0
   const orderBy = query?.orderBy || 'utilization'
   const orderDirection = query?.orderDirection || 'desc'
-
   const { pairs } = await sdk.pairs({
     chainIds,
     first,
@@ -45,11 +44,11 @@ export const getPairsForSymbol = async (query: Partial<QuerypairsArgs & { symbol
     orderBy,
     orderDirection,
   })
-
   return pairs
 }
 
 export const getPair = async (id: string) => {
+  // console.log('getPair', id, id.includes(':') ? id.split(':')[1] : id)
   const { pair } = await sdk.pair({
     id: id.includes(':') ? id.split(':')[1] : id,
     chainId: chainShortNameToChainId[id.split(':')[0]],

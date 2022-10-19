@@ -1,10 +1,11 @@
 import { Typography } from '@sushiswap/ui'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC } from 'react'
 
 import { KashiPair } from '../../.graphclient'
 
 interface MarketInformation {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
 }
 
 export const MarketInformation: FC<MarketInformation> = () => {
@@ -14,7 +15,7 @@ export const MarketInformation: FC<MarketInformation> = () => {
         Market Information
       </Typography>
       <div className="flex flex-col gap-1">
-        <div className="px-6 py-2 grid grid-cols-3 rounded-t-lg bg-slate-800">
+        <div className="grid grid-cols-3 px-6 py-2 rounded-t-lg bg-slate-800">
           <Typography variant="sm" weight={400} className="text-slate-400">
             LTV
           </Typography>
@@ -22,7 +23,7 @@ export const MarketInformation: FC<MarketInformation> = () => {
             90%
           </Typography>
         </div>
-        <div className="px-6 py-2 grid grid-cols-3 bg-slate-800/60">
+        <div className="grid grid-cols-3 px-6 py-2 bg-slate-800/60">
           <Typography variant="sm" weight={400} className="text-slate-400">
             Borrow APR
           </Typography>
@@ -30,7 +31,7 @@ export const MarketInformation: FC<MarketInformation> = () => {
             22.27%
           </Typography>
         </div>
-        <div className="px-6 py-2 grid grid-cols-3 rounded-b-lg bg-slate-800">
+        <div className="grid grid-cols-3 px-6 py-2 rounded-b-lg bg-slate-800">
           <Typography variant="sm" weight={400} className="text-slate-400">
             Liquidation Fee
           </Typography>

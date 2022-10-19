@@ -15,11 +15,11 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiMediumRiskLendingPairV1 } from '../../../lib/KashiPair'
-import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, SUPPLY_APR_COLUMN } from '../../Table'
+import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, SUPPLY_APR_COLUMN, TOTAL_SUPPY_USD } from '../../Table'
 import { LendTableHoverElement } from './LendTableHoverElement'
-import { KashiPair, QuerypairsArgs } from '.graphclient'
+import { KashiPair } from '.graphclient'
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, SUPPLY_APR_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, TOTAL_SUPPY_USD, SUPPLY_APR_COLUMN]
 
 const fetcher = ({
   url,
@@ -46,9 +46,9 @@ const fetcher = ({
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
 
-  const where: QuerypairsArgs['where'] = { totalBorrow_: { base_gt: '0' } }
+  // const where: QuerypairsArgs['where'] = { totalBorrow_: { base_gt: 0 } }
 
-  _url.searchParams.set('where', stringify(where))
+  // _url.searchParams.set('where', stringify(where))
 
   return fetch(_url.href)
     .then((res) => res.json())
@@ -57,7 +57,7 @@ const fetcher = ({
 
 export const LendTable: FC = () => {
   const router = useRouter()
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyAPR', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'currentSupplyAPR', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: DEFAULT_MARKETS.length,
@@ -66,37 +66,15 @@ export const LendTable: FC = () => {
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
 
   // TODO: Automatically serialise/deserialise, middleware?
-
-  const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
-
+  const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnMount: false,
+  })
   const pairs = useMemo(
-    () =>
-      Array.isArray(data)
-        ? data
-            .map((pair) => new KashiMediumRiskLendingPairV1(pair))
-            .sort((a, b) => {
-              if (b.currentSupplyAPR.equalTo(a.currentSupplyAPR)) return 0
-              return b.currentSupplyAPR.lessThan(a.currentSupplyAPR) ? -1 : 1
-            })
-        : [],
+    () => (Array.isArray(data) ? data.map((pair) => new KashiMediumRiskLendingPairV1(pair)) : []),
     [data]
   )
-  // .sort((a, b) => {
-  //   if (b.currentSupplyAPR.equalTo(a.currentSupplyAPR)) return 0
-  //   return b.currentSupplyAPR.lessThan(a.currentSupplyAPR) ? -1 : 1
-  // })
-  // const pairs = useMemo(
-  //   () =>
-  //     data
-  //       ? data
-  //           .map((pair) => new KashiMediumRiskLendingPairV1(pair))
-  //           .sort((a, b) => {
-  //             if (b.currentSupplyAPR.equalTo(a.currentSupplyAPR)) return 0
-  //             return b.currentSupplyAPR.lessThan(a.currentSupplyAPR) ? -1 : 1
-  //           })
-  //       : [],
-  //   [data]
-  // )
 
   const table = useReactTable({
     data: pairs ?? [],

@@ -4,6 +4,10 @@ import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
 import { Token } from './Token'
 
+export const SNX_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f',
+} as const
+
 export const FTM_ADDRESS = {
   [ChainId.ETHEREUM]: '0x4E15361FD6b4BB609Fa63C81A2be19d873717870',
 } as const

@@ -1,7 +1,7 @@
 import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useMemo, useState } from 'react'
 
-import { KashiPair } from '../.graphclient'
 import { useTokensFromKashiPair } from '../lib/hooks'
 
 interface BorrowContext {
@@ -16,7 +16,7 @@ interface BorrowContext {
 const BorrowContext = createContext<BorrowContext | undefined>(undefined)
 
 interface PoolsProvider {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
   children?: ReactNode
 }
 

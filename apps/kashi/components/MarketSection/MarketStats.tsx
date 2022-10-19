@@ -1,64 +1,50 @@
-import { Native } from '@sushiswap/currency'
-import { formatNumber, formatUSD } from '@sushiswap/format'
+import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
-import { usePrices } from '@sushiswap/wagmi'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC } from 'react'
 
-import { KashiPair } from '../../.graphclient'
-
 interface MarketStats {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
 }
 
-// TODO MAKE DYNAMIC
-const FEE_BPS = 0.0005
-
 export const MarketStats: FC<MarketStats> = ({ pair }) => {
-  const { data: prices } = usePrices({ chainId: pair.chainId })
-  const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
-
-  // const [totals1d, totals2d] = pair.dayChangeData
-  const totalSupplyChange = 0.5
-  const totalBorrowChange = -0.5
-  const borrowedChange = 0.5
-
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
-          Total Supply
+          Supplied
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(pair.totalAsset.elastic / 1e18)}
+          {formatUSD(pair.totalAssetUSD + pair.totalBorrowUSD)}
         </Typography>
-        <Typography variant="xs" weight={500} className={totalSupplyChange > 0 ? 'text-green' : 'text-red'}>
+        {/* <Typography variant="xs" weight={500} className={totalSupplyChange > 0 ? 'text-green' : 'text-red'}>
           {totalSupplyChange > 0 ? '+' : '-'}
           {formatNumber(Math.abs(totalSupplyChange))}%
-        </Typography>
-      </div>
-      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
-        <Typography variant="xs" weight={500} className="text-slate-400">
-          Total Borrow
-        </Typography>
-        <Typography weight={500} className="text-slate-50">
-          {formatUSD(pair.totalBorrow.elastic / 1e18)}
-        </Typography>
-        <Typography variant="xs" weight={500} className={totalBorrowChange > 0 ? 'text-green' : 'text-red'}>
-          {totalBorrowChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(totalBorrowChange))}%
-        </Typography>
+        </Typography> */}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Borrowed
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(9348938)}
+          {formatUSD(pair.totalBorrowUSD)}
         </Typography>
-        <Typography variant="xs" weight={500} className={borrowedChange > 0 ? 'text-green' : 'text-red'}>
+        {/* <Typography variant="xs" weight={500} className={totalBorrowChange > 0 ? 'text-green' : 'text-red'}>
+          {totalBorrowChange > 0 ? '+' : '-'}
+          {formatNumber(Math.abs(totalBorrowChange))}%
+        </Typography> */}
+      </div>
+      <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
+        <Typography variant="xs" weight={500} className="text-slate-400">
+          Available
+        </Typography>
+        <Typography weight={500} className="text-slate-50">
+          {formatUSD(pair.totalAssetUSD)}
+        </Typography>
+        {/* <Typography variant="xs" weight={500} className={borrowedChange > 0 ? 'text-green' : 'text-red'}>
           {borrowedChange > 0 ? '+' : '-'}
           {formatNumber(Math.abs(borrowedChange))}%
-        </Typography>
+        </Typography> */}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">

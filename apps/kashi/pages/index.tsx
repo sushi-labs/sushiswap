@@ -2,12 +2,13 @@ import { ChainId } from '@sushiswap/chain'
 import { Button, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Layout, MarketsSection } from 'components'
 import { DEFAULT_MARKETS, SUPPORTED_CHAIN_IDS } from 'config'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import Image from 'next/image'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { getPairs } from '../lib/api'
+import { KashiPair } from '.graphclient'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   // res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
@@ -21,11 +22,18 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
             .filter((chainId) => chainId in addressMap)
             .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
               previousValue[i] = getPairs({
-                first: 1,
-                orderBy: 'supplyAPR',
-                orderDirection: 'desc',
-                where: { asset: addressMap[currentValue].toLowerCase(), totalBorrow_: { base_gt: '0' } },
+                first: 1000,
+                // orderBy: 'supplyAPR',
+                // orderDirection: 'desc',
+                where: { asset: addressMap[currentValue].toLowerCase() },
                 chainIds: [currentValue],
+              }).then((pairs) => {
+                return pairs.sort((a, b) => {
+                  const _a = new KashiMediumRiskLendingPairV1(a as KashiPair)
+                  const _b = new KashiMediumRiskLendingPairV1(b as KashiPair)
+                  if (_b.supplyAPR.equalTo(_a.supplyAPR)) return 0
+                  return _b.supplyAPR.lessThan(_a.supplyAPR) ? -1 : 1
+                })
               })
               return previousValue
             }, [])
@@ -33,16 +41,20 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           pairs
             .flat()
             .sort((a, b) => {
-              if (b.supplyAPR === a.supplyAPR) return 0
-              return b.supplyAPR < a.supplyAPR ? -1 : 1
+              const _a = new KashiMediumRiskLendingPairV1(a as KashiPair)
+              const _b = new KashiMediumRiskLendingPairV1(b as KashiPair)
+              if (_b.supplyAPR.equalTo(_a.supplyAPR)) return 0
+              return _b.supplyAPR.lessThan(_a.supplyAPR) ? -1 : 1
             })
             .slice(0, 1)
         )
       )
     ).then((pairs) =>
       pairs.flat().sort((a, b) => {
-        if (b.supplyAPR === a.supplyAPR) return 0
-        return b.supplyAPR < a.supplyAPR ? -1 : 1
+        const _a = new KashiMediumRiskLendingPairV1(a as KashiPair)
+        const _b = new KashiMediumRiskLendingPairV1(b as KashiPair)
+        if (_b.supplyAPR.equalTo(_a.supplyAPR)) return 0
+        return _b.supplyAPR.lessThan(_a.supplyAPR) ? -1 : 1
       })
     ),
     Promise.all(
@@ -86,7 +98,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           args: {
             sorting: [
               {
-                id: 'supplyAPR',
+                id: 'currentSupplyAPR',
                 desc: true,
               },
             ],
@@ -130,7 +142,7 @@ const _Index = () => {
       <div className="grid grid-cols-2 gap-6">
         <div className="flex flex-col gap-6">
           <Typography variant="h3" weight={600}>
-            Kashi Lending
+            Lending
           </Typography>
           <Typography weight={400} className="text-slate-300">
             Lend, borrow or margin trade with low liquidiation risk, and earn staking rewards! Available on
@@ -141,9 +153,9 @@ const _Index = () => {
         </div>
         <div className="flex justify-end">
           <div className="relative rounded-full h-[240px] w-[240px] border-2 border-dashed border-slate-700 flex items-center justify-center">
-            <div className="w-[140px]">
+            {/* <div className="w-[140px]">
               <Image src="https://www.sushi.com/kashi/images/KashiKanjiSign.png" alt="Kashi" layout="fill" />
-            </div>
+            </div> */}
             <NetworkIcon width={32} chainId={ChainId.ETHEREUM} className="absolute top-0 right-9" />
             <NetworkIcon width={32} chainId={ChainId.ARBITRUM} className="absolute right-0 bottom-9" />
             <NetworkIcon width={32} chainId={ChainId.BSC} className="absolute left-0 top-9" />

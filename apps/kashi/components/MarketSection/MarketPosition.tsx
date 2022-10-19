@@ -1,13 +1,13 @@
 import { Currency, Dialog, Typography } from '@sushiswap/ui'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC, useCallback, useState } from 'react'
 
-import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { BorrowButtons } from '../BorrowSection'
 import { LendButtons } from '../LendSection'
 
 interface MarketPositionProps {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
   side: 'borrow' | 'lend'
 }
 

@@ -2,16 +2,16 @@ import { Amount, Price, Type } from '@sushiswap/currency'
 import { Trade, TradeType, Version } from '@sushiswap/exchange'
 import { Fraction, Percent, ZERO } from '@sushiswap/math'
 import { usePrices } from '@sushiswap/wagmi'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { useMemo } from 'react'
 
-import { KashiPair } from '../../.graphclient'
 import { useSettings } from '../state/storage'
 import { useTokensFromKashiPair } from './useTokensFromKashiPair'
 
 export const LTV = new Fraction(75, 100)
 
 interface Payload {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
   borrowAmount?: Amount<Type>
   collateralAmount?: Amount<Type>
   trade?: Trade<Type, Type, TradeType.EXACT_INPUT, Version.V1> | null

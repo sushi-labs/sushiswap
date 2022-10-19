@@ -33,6 +33,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                   <App.NavItemList>
                     <App.NavItem href="/lend" label="Lend" />
                     <App.NavItem href="/borrow" label="Borrow" />
+                    <App.NavItem href="/leverage" label="Leverage" />
                   </App.NavItemList>
                 }
               >

@@ -1,12 +1,12 @@
 import { Button, Link } from '@sushiswap/ui'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 
 interface LendButtons {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
 }
 
 export const LendButtons: FC<LendButtons> = ({ pair }) => {
@@ -14,7 +14,7 @@ export const LendButtons: FC<LendButtons> = ({ pair }) => {
   const { asset } = useTokensFromKashiPair(pair)
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col w-full gap-2">
       <Link.Internal href={`/lend/${router.query.id}/deposit`} passHref={true}>
         <Button as="a" size="md" color="blue" fullWidth>
           Lend {asset.symbol}

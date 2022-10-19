@@ -6,17 +6,17 @@ import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
 import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
 import { getSushiSwapRouterContractConfig } from '@sushiswap/wagmi/hooks'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC, useCallback, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { useCustomTokens, useNotifications } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
 import { useBorrowContext } from '../BorrowProvider'
 
 interface BorrowWidget {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
 }
 
 export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
@@ -31,7 +31,6 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const [, { createNotification }] = useNotifications(account)
   const execute = useCallback(() => {}, [])
-
   return (
     <div className="flex flex-col">
       <Widget id="depositCollateral" maxWidth="md">

@@ -29,6 +29,8 @@ fragment KashiPairFields on KashiPair {
         elastic
       }
     }
+    assetPrice
+    collateralPrice
     oracle
     oracleData
     totalCollateralShare
@@ -60,7 +62,7 @@ query pairs($first: Int! = 1000,$skip: Int! = 0,$orderBy: KashiPair_orderBy, $or
   }
 }
 
-query pair($id: String!, $now: Int!, $chainId: BigInt!) {
+query pair($id: ID!, $now: Int!, $chainId: BigInt!) {
   pair(id: $id, now: $now, chainId: $chainId) {
     ...KashiPairFields
   }

@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { Amount, Share, Token } from '@sushiswap/currency'
+import { Amount, Price, Share, Token } from '@sushiswap/currency'
 import { JSBI, maximum, minimum, Percent, ZERO } from '@sushiswap/math'
 import { KASHI_ADDRESS } from 'config'
 
@@ -67,6 +67,9 @@ export class KashiMediumRiskLendingPairV1 {
   readonly totalAssetUSD: number
   readonly totalBorrowUSD: number
 
+  readonly assetPrice: Price<Token, Token>
+  readonly collateralPrice: Price<Token, Token>
+
   static getAddress(collateral: Token, asset: Token, oracle: string, oracleData: string): string {
     return computePairAddress({
       collateral,
@@ -128,12 +131,20 @@ export class KashiMediumRiskLendingPairV1 {
       chainId: pair.chainId,
       address: getAddress(pair.collateral.id),
       ...pair.collateral,
+      rebase: {
+        base: JSBI.BigInt(pair.collateral.rebase.base),
+        elastic: JSBI.BigInt(pair.collateral.rebase.elastic),
+      },
     })
 
     this.asset = new Token({
       chainId: pair.chainId,
       address: getAddress(pair.asset.id),
       ...pair.asset,
+      rebase: {
+        base: JSBI.BigInt(pair.asset.rebase.base),
+        elastic: JSBI.BigInt(pair.asset.rebase.elastic),
+      },
     })
 
     this.oracle = getAddress(pair.oracle)
@@ -168,6 +179,19 @@ export class KashiMediumRiskLendingPairV1 {
 
     this.totalAssetUSD = Number(pair.totalAssetUSD)
     this.totalBorrowUSD = Number(pair.totalBorrowUSD)
+
+    this.assetPrice = new Price(
+      this.collateral,
+      this.asset,
+      10 ** this.collateral.decimals,
+      Math.round(pair.assetPrice * 10 ** this.asset.decimals)
+    )
+    this.collateralPrice = new Price(
+      this.asset,
+      this.collateral,
+      10 ** this.asset.decimals,
+      Math.round(pair.collateralPrice * 10 ** this.collateral.decimals)
+    )
   }
 
   /**
@@ -356,24 +380,20 @@ export class KashiMediumRiskLendingPairV1 {
         .divide(this.currentBorrowAmount).quotient,
       JSBI.BigInt(1e18)
     )
+  }
 
-    //  return JSBI.divide(
-    //     JSBI.multiply(
-    //       JSBI.divide(JSBI.multiply(this.totalCollateralAmount, JSBI.BigInt(1e18)), this.maximumExchangeRate),
-    //       JSBI.BigInt(1e18)
-    //     ),
-    //     this.currentBorrowAmount
-    //   )
-    // if (JSBI.equal(this.currentBorrowAmount, ZERO) || JSBI.equal(this.maximumExchangeRate, ZERO)) {
-    //   return ZERO
-    // }
-    // return JSBI.divide(
-    //   JSBI.multiply(
-    //     JSBI.divide(JSBI.multiply(this.totalCollateralAmount, JSBI.BigInt(1e18)), this.maximumExchangeRate),
-    //     JSBI.BigInt(1e18)
-    //   ),
-    //   this.currentBorrowAmount
-    // )
+  /**
+   * Interest per year charged to borrowers if accrue was called
+   */
+  public get borrowAPR(): Percent {
+    return new Percent(this.interestPerYear, JSBI.BigInt(1e18))
+  }
+
+  /**
+   * Interest per year charged to borrowers if accrue was called
+   */
+  public get currentBorrowAPR(): Percent {
+    return new Percent(this.currentInterestPerYear, JSBI.BigInt(1e18))
   }
 
   /**

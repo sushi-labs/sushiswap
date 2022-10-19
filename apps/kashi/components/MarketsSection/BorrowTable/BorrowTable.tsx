@@ -15,16 +15,10 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiPair, QuerypairsArgs } from '../../../.graphclient'
-import {
-  ASSET_COLUMN,
-  BORROW_APR_COLUMN,
-  GenericTable,
-  NETWORK_COLUMN,
-  TOTAL_BORROW_USD,
-  TOTAL_SUPPY_USD,
-} from '../../Table'
+import { ASSET_COLUMN, BORROW_APR_COLUMN, GenericTable, NETWORK_COLUMN, TOTAL_BORROW_USD } from '../../Table'
 import { BorrowTableHoverElement } from './BorrowTableHoverElement'
-const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, TOTAL_SUPPY_USD, BORROW_APR_COLUMN, TOTAL_BORROW_USD]
+
+const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, TOTAL_BORROW_USD, BORROW_APR_COLUMN]
 
 const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
   const _url = new URL(url, window.location.origin)
@@ -57,7 +51,11 @@ export const BorrowTable: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
+  const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnMount: false,
+  })
   const pairs = useMemo(
     () =>
       Array.isArray(data)

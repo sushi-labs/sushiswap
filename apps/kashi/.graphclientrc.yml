@@ -35,7 +35,7 @@ additionalTypeDefs: |
       chainIds: [BigInt!]!
     ): Datapoint!
     pair(
-      id: String!, 
+      id: ID!, 
       now: Int!, 
       chainId: BigInt!
     ): KashiPair!

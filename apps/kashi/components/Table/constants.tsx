@@ -1,4 +1,3 @@
-import { JSBI } from '@sushiswap/math'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import React from 'react'
 
@@ -7,13 +6,15 @@ import { AvailableForBorrowCell } from './AvailableForBorrowCell'
 import { BorrowAPRCell } from './BorrowAPRCell'
 import { BorrowAssetCell, BorrowAssetCellPopover } from './BorrowAssetCell'
 import { CollateralCell } from './CollateralCell'
+import { HealthCell } from './HealthCell'
 import { LendAssetCell, LendAssetCellPopover } from './LendAssetCell'
 import { NetworkCell } from './NetworkCell'
 import { SupplyAPRCell } from './SupplyAPRCell'
-import { TotalAPRCell } from './TotalAPRCell'
 import { TotalAssetCell } from './TotalAssetCell'
+import { TotalBorrowAPRCell } from './TotalBorrowAPRCell'
 import { TotalBorrowCell } from './TotalBorrowCell'
 import { TotalBorrowUSDCell } from './TotalBorrowUSDCell'
+import { TotalSupplyAPRCell } from './TotalSupplyAPRCell'
 import { TotalSupplyUSDCell } from './TotalSupplyUSDCell'
 import { ExtendedColumnDef } from './types'
 
@@ -30,7 +31,7 @@ export const NETWORK_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any
 
 export const ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'asset',
-  header: 'Lend Asset',
+  header: 'Asset',
   cell: (props) => <AssetCell row={props.row.original} />,
   size: 50,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
@@ -61,7 +62,7 @@ export const LEND_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiMediumRiskLending
 }
 
 export const BORROW_ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
-  id: 'collateral',
+  id: 'asset',
   header: 'Borrow Asset',
   cell: (props) => <BorrowAssetCell row={props.row.original} />,
   size: 70,
@@ -77,7 +78,7 @@ export const BORROW_ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1
 }
 
 export const BORROW_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
-  id: 'collateral',
+  id: 'asset',
   header: 'Market',
   cell: (props) => <BorrowAssetCellPopover row={props.row.original} />,
   size: 70,
@@ -92,11 +93,20 @@ export const COLLATERAL_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, 
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
 
-export const TOTAL_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
-  id: 'totalAPR',
+export const TOTAL_SUPPLY_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+  id: 'totalSupplyAPR',
   header: 'Total APR',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
-  cell: (props) => <TotalAPRCell row={props.row.original} />,
+  cell: (props) => <TotalSupplyAPRCell row={props.row.original} />,
+  size: 50,
+  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+}
+
+export const TOTAL_BORROW_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+  id: 'totalBorrowAPR',
+  header: 'Total APR',
+  // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
+  cell: (props) => <TotalBorrowAPRCell row={props.row.original} />,
   size: 50,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }
@@ -104,7 +114,7 @@ export const TOTAL_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, a
 export const TOTAL_ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'totalAsset',
   header: 'Total Supply',
-  accessorFn: (row) => row.totalAsset,
+  accessorFn: (row) => row.currentAllAssets,
   cell: (props) => <TotalAssetCell row={props.row.original} />,
   size: 40,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
@@ -113,7 +123,7 @@ export const TOTAL_ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1,
 export const SUPPLY_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'currentSupplyAPR',
   header: 'Lend APY',
-  accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
+  // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
   cell: (props) => <SupplyAPRCell row={props.row.original} />,
   size: 40,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
@@ -164,6 +174,14 @@ export const REWARD_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, 
   header: 'Reward APY',
   // accessorFn: (row) => row.currentInterestPerYear,
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
+  size: 40,
+  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+}
+
+export const HEALTH_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+  id: 'health',
+  header: 'Health',
+  cell: (props) => <HealthCell row={props.row.original} />,
   size: 40,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }

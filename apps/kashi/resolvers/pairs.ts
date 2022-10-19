@@ -1,6 +1,6 @@
 import { CHAIN_NAME, KASHI_SUBGRAPH_HOST, KASHI_SUBGRAPH_NAME } from 'config'
 
-import { QueryResolvers } from '.graphclient'
+import { KashiPair, QueryResolvers } from '.graphclient'
 
 export const pairs: QueryResolvers['pairs'] = async (root, args, context, info) =>
   Promise.all(
@@ -16,7 +16,7 @@ export const pairs: QueryResolvers['pairs'] = async (root, args, context, info) 
           subgraphHost: KASHI_SUBGRAPH_HOST[chainId],
         },
         info,
-      }).then((pairs) =>
+      }).then((pairs: KashiPair[]) =>
         pairs.map((pair) => ({
           ...pair,
           chainId,

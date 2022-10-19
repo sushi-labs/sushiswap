@@ -1,12 +1,12 @@
 import { Button, Link } from '@sushiswap/ui'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 
 interface MarketButtonsProps {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
 }
 
 export const BorrowButtons: FC<MarketButtonsProps> = ({ pair }) => {

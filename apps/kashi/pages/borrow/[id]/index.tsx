@@ -7,22 +7,20 @@ import {
   MarketRewards,
   MarketStats,
 } from 'components'
+import { useMarket } from 'lib/hooks/useMarket'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/router'
 import { FC } from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import { SWRConfig } from 'swr'
 
-import { KashiPair } from '../../../.graphclient'
 import { getPair } from '../../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pair] = await Promise.all([getPair(query.id as string)])
-
+  const pair = await getPair(query.id as string)
   return {
     props: {
       fallback: {
-        [`/kashi/api/pair/${query.id}`]: { pair },
+        [`/kashi/api/pair/${query.id}`]: pair,
       },
     },
   }
@@ -37,14 +35,8 @@ const BorrowMarket: FC<InferGetServerSidePropsType<typeof getServerSideProps>> =
 }
 
 const _BorrowMarket = () => {
-  const router = useRouter()
-  const { data } = useSWR<{ pair: KashiPair }>(`/kashi/api/pair/${router.query.id}`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
-
-  if (!data) return <></>
-  const { pair } = data
-
+  const pair = useMarket()
+  if (!pair) return <></>
   return (
     <Layout>
       <div className="flex flex-col lg:grid lg:grid-cols-[568px_auto] gap-12">

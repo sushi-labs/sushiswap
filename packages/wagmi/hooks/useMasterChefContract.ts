@@ -63,7 +63,7 @@ export const getMiniChefContractConfig = (
 }
 
 export const getMasterChefContractConfig = (
-  chainId: keyof typeof MASTERCHEF_ADDRESS & keyof typeof MASTERCHEF_V2_ADDRESS & keyof typeof MINICHEF_ADDRESS,
+  chainId: number,
   chef: Chef
 ): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => {
   if (chef === Chef.MASTERCHEF) return _getMasterChefContractConfig(chainId)
@@ -72,10 +72,7 @@ export const getMasterChefContractConfig = (
 }
 
 // TODO ADD TYPECHAIN
-export function useMasterChefContract(
-  chainId: keyof typeof MASTERCHEF_ADDRESS & keyof typeof MASTERCHEF_V2_ADDRESS & keyof typeof MINICHEF_ADDRESS,
-  chef: Chef
-) {
+export function useMasterChefContract(chainId: number, chef: Chef) {
   const signerOrProvider = useProvider({ chainId })
   return useMemo(() => {
     if (!chainId) return

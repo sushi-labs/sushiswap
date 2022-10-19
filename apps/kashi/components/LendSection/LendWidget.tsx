@@ -3,22 +3,24 @@ import { formatUSD } from '@sushiswap/format'
 import { Button, Dialog, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
-import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
-import { getSushiSwapRouterContractConfig } from '@sushiswap/wagmi/hooks'
+import { Approve, BENTOBOX_ADDRESS, usePrices, Web3Input } from '@sushiswap/wagmi'
+import { KASHI_ADDRESS } from 'config'
+import { Signature } from 'ethers'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC, useCallback, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { useCustomTokens, useNotifications } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
 
 interface LendWidget {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
 }
 
 export const LendWidget: FC<LendWidget> = ({ pair }) => {
   const { address: account } = useAccount()
+  const [signature, setSignature] = useState<Signature>()
   const { asset } = useTokensFromKashiPair(pair)
   const [value, setValue] = useState('')
   const valueAsEntity = useMemo(() => tryParseAmount(value, asset), [asset, value])
@@ -115,11 +117,21 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
                   className="whitespace-nowrap"
                   fullWidth
                   amount={valueAsEntity}
-                  address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
+                  address={BENTOBOX_ADDRESS[pair.chainId]}
+                  enabled={Boolean(BENTOBOX_ADDRESS[pair.chainId])}
+                />
+                <Approve.Bentobox
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  address={KASHI_ADDRESS[pair.chainId]}
+                  onSignature={setSignature}
+                  enabled={Boolean(KASHI_ADDRESS[pair.chainId])}
                 />
               </Approve.Components>
             }
             render={({ approved }) => {
+              console.log({ approved })
               return (
                 <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
                   Confirm Deposit

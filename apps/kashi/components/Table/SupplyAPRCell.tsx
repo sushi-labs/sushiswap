@@ -7,7 +7,7 @@ export const SupplyAPRCell: FC<CellProps> = ({ row }) => {
   return (
     <Typography variant="sm" weight={500} className="text-slate-50">
       {/* Initial APR is 1%, or min of interestPerYear or 0.25% */}
-      {row.currentSupplyAPR.toSignificant(2)}%
+      {row.supplyAPR.toSignificant(2)}%
     </Typography>
   )
 }
