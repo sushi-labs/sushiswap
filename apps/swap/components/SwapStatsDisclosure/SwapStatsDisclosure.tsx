@@ -57,7 +57,7 @@ export const SwapStatsDisclosure: FC = () => {
       <Transition
         show={showRoute}
         unmount={false}
-        className="col-span-2 p-3 !pb-1 transition-[max-height] overflow-hidden"
+        className="col-span-2 transition-[max-height] overflow-hidden"
         enter="duration-300 ease-in-out"
         enterFrom="transform max-h-0"
         enterTo="transform max-h-[380px]"

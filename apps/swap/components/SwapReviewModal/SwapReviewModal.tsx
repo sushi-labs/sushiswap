@@ -153,7 +153,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   )
 
   const prepare = useCallback(async () => {
-    if (!trade || !account || !chainId) return
+    if (!trade || !account || !chainId || !deadline) return
 
     console.log('prepare swap', { trade, account, chainId, deadline })
 
