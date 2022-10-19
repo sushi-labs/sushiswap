@@ -22,6 +22,7 @@ interface FilterContext {
   [Filters.selectedNetworks]: ChainId[]
   [Filters.selectedPoolTypes]: string[]
   [Filters.farmsOnly]: boolean
+  atLeastOneFilterSelected: boolean
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
 
@@ -45,6 +46,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
     [Filters.selectedNetworks]: selectedNetworks,
     [Filters.selectedPoolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP),
     [Filters.farmsOnly]: false,
+    atLeastOneFilterSelected: false,
   })
 
   const setFilters = useCallback((filters: Partial<Omit<FilterContext, 'setFilters'>>) => {
@@ -58,6 +60,10 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
     <FilterContext.Provider
       value={{
         ...filters,
+        atLeastOneFilterSelected:
+          filters.farmsOnly ||
+          filters.query.length > 0 ||
+          filters.selectedPoolTypes.length !== Object.keys(AVAILABLE_POOL_TYPE_MAP).length,
         setFilters,
       }}
     >
