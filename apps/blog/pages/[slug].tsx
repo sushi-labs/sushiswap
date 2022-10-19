@@ -19,6 +19,7 @@ import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()
+
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
       if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`)

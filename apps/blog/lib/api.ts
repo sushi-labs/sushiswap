@@ -4,6 +4,7 @@ const sdk = getMeshSDK()
 
 export const getArticleAndMoreArticles = async (slug: string, preview: boolean) => {
   return sdk.articleAndMoreArticles({
+    locale: 'all',
     filters: {
       slug: { eq: slug },
     },
