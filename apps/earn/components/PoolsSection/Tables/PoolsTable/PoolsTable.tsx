@@ -127,12 +127,13 @@ export const PoolsTable: FC = () => {
       />
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}
-        hasNext={pagination.pageIndex < table.getPageCount()}
+        hasNext={!farmsOnly && !query ? pagination.pageIndex < table.getPageCount() : (pools?.length || 0) >= PAGE_SIZE}
+        nextDisabled={!pools && isValidating}
         onPrev={table.previousPage}
         onNext={table.nextPage}
         page={pagination.pageIndex}
         onPage={table.setPageIndex}
-        pages={table.getPageCount()}
+        pages={!farmsOnly && !query ? table.getPageCount() : undefined}
         pageSize={PAGE_SIZE}
       />
     </>
