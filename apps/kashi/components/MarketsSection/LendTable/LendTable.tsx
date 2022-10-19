@@ -8,15 +8,16 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import { DEFAULT_MARKETS } from 'config'
 import stringify from 'fast-json-stable-stringify'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiMediumRiskLendingPairV1 } from '../../../lib/KashiPair'
-import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE, SUPPLY_APR_COLUMN } from '../../Table'
+import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, SUPPLY_APR_COLUMN } from '../../Table'
 import { LendTableHoverElement } from './LendTableHoverElement'
-import { KashiPair } from '.graphclient'
+import { KashiPair, QuerypairsArgs } from '.graphclient'
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, SUPPLY_APR_COLUMN]
 
@@ -45,7 +46,9 @@ const fetcher = ({
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
 
-  _url.searchParams.set('where', stringify({ totalBorrow_: { base_not: '0' } }))
+  const where: QuerypairsArgs['where'] = { totalBorrow_: { base_gt: '0' } }
+
+  _url.searchParams.set('where', stringify(where))
 
   return fetch(_url.href)
     .then((res) => res.json())
@@ -57,16 +60,18 @@ export const LendTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyAPR', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: PAGE_SIZE,
+    pageSize: DEFAULT_MARKETS.length,
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
 
   // TODO: Automatically serialise/deserialise, middleware?
+
   const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
+  console.log('PAIRS:', data)
   const pairs = useMemo(
     () =>
-      data
+      Array.isArray(data)
         ? data
             .map((pair) => new KashiMediumRiskLendingPairV1(pair))
             .sort((a, b) => {
@@ -76,6 +81,22 @@ export const LendTable: FC = () => {
         : [],
     [data]
   )
+  // .sort((a, b) => {
+  //   if (b.currentSupplyAPR.equalTo(a.currentSupplyAPR)) return 0
+  //   return b.currentSupplyAPR.lessThan(a.currentSupplyAPR) ? -1 : 1
+  // })
+  // const pairs = useMemo(
+  //   () =>
+  //     data
+  //       ? data
+  //           .map((pair) => new KashiMediumRiskLendingPairV1(pair))
+  //           .sort((a, b) => {
+  //             if (b.currentSupplyAPR.equalTo(a.currentSupplyAPR)) return 0
+  //             return b.currentSupplyAPR.lessThan(a.currentSupplyAPR) ? -1 : 1
+  //           })
+  //       : [],
+  //   [data]
+  // )
 
   const table = useReactTable({
     data: pairs ?? [],

@@ -1,5 +1,5 @@
-query CrossChainKashiPairs($first: Int! = 1000,$skip: Int! = 0,$orderBy: KashiPair_orderBy, $orderDirection: OrderDirection, $where: KashiPair_filter, $chainIds: [BigInt!]!) {
-  crossChainKashiPairs(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where, chainIds: $chainIds) {
+
+fragment KashiPairFields on KashiPair {
     id
     chainId
     chainName
@@ -50,60 +50,27 @@ query CrossChainKashiPairs($first: Int! = 1000,$skip: Int! = 0,$orderBy: KashiPa
     borrowAPR
     utilization
     totalFeesEarnedFraction
+}
+
+query pairs($first: Int! = 1000,$skip: Int! = 0,$orderBy: KashiPair_orderBy, $orderDirection: OrderDirection, $where: KashiPair_filter, $chainIds: [BigInt!]!) {
+  pairs(first: $first, skip: $skip, orderBy: $orderBy, orderDirection: $orderDirection, where: $where, chainIds: $chainIds) {
+    ...KashiPairFields
   }
 }
 
-query CrossChainKashiPair($id: String!, $now: Int!, $chainId: BigInt!) {
-  crossChainKashiPair(id: $id, now: $now, chainId: $chainId) {
-    id
-    chainId
-    chainName
-    masterContract {
-      id
+query pair($id: String!, $now: Int!, $chainId: BigInt!) {
+  pair(id: $id, now: $now, chainId: $chainId) {
+    ...KashiPairFields
+  }
+}
+
+query dashboard($chainIds: [BigInt!]!) {
+  dashboard(chainIds: $chainIds) {
+    lend {
+      ...KashiPairFields
     }
-    name
-    symbol
-    decimals
-    collateral {
-      id
-      name
-      symbol
-      decimals
-      rebase {
-        base
-        elastic
-      }
+    borrow {
+      ...KashiPairFields
     }
-    asset {
-      id
-      name
-      symbol
-      decimals
-      rebase {
-        base
-        elastic
-      }
-    }
-    oracle
-    oracleData
-    totalCollateralShare
-    totalAsset {
-      base
-      elastic
-    }
-    totalBorrow {
-      base
-      elastic
-    }
-    exchangeRate
-    accrueInfo {
-      interestPerSecond
-      lastAccrued
-      feesEarnedFraction
-    }
-    supplyAPR
-    borrowAPR
-    utilization
-    totalFeesEarnedFraction
   }
 }

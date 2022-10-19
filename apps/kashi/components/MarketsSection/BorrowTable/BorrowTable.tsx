@@ -1,3 +1,4 @@
+import { JSBI } from '@sushiswap/math'
 import { Typography } from '@sushiswap/ui'
 import {
   getCoreRowModel,
@@ -7,16 +8,17 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import { DEFAULT_MARKETS } from 'config'
 import stringify from 'fast-json-stable-stringify'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-import { KashiPair } from '../../../.graphclient'
-import { BORROW_APR_COLUMN, COLLATERAL_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE } from '../../Table'
+import { KashiPair, QuerypairsArgs } from '../../../.graphclient'
+import { ASSET_COLUMN, BORROW_APR_COLUMN, GenericTable, NETWORK_COLUMN, TOTAL_ASSET_COLUMN } from '../../Table'
 import { BorrowTableHoverElement } from './BorrowTableHoverElement'
-const COLUMNS = [NETWORK_COLUMN, COLLATERAL_COLUMN, BORROW_APR_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, BORROW_APR_COLUMN, TOTAL_ASSET_COLUMN]
 
 const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
   const _url = new URL(url, window.location.origin)
@@ -31,6 +33,10 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
 
+  const where: QuerypairsArgs['where'] = { totalAsset_: { base_gt: '0' } }
+
+  _url.searchParams.set('where', stringify(where))
+
   return fetch(_url.href)
     .then((res) => res.json())
     .catch((e) => console.log(stringify(e)))
@@ -38,15 +44,26 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
 
 export const BorrowTable: FC = () => {
   const router = useRouter()
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'borrowAPR', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'interestPerSecond', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: PAGE_SIZE,
+    pageSize: DEFAULT_MARKETS.length,
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
   const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
-  const pairs = useMemo(() => data?.map((d) => new KashiMediumRiskLendingPairV1(d)), [data])
+  const pairs = useMemo(
+    () =>
+      Array.isArray(data)
+        ? data
+            .map((pair) => new KashiMediumRiskLendingPairV1(pair))
+            .sort((a, b) => {
+              if (JSBI.equal(b.currentInterestPerYear, a.currentInterestPerYear)) return 0
+              return JSBI.lessThan(b.currentInterestPerYear, a.currentInterestPerYear) ? -1 : 1
+            })
+        : [],
+    [data]
+  )
   const table = useReactTable({
     data: pairs ?? [],
     columns: COLUMNS,

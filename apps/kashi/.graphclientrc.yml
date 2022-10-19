@@ -2,21 +2,56 @@ sources:
   - name: Kashi
     handler:
       graphql:
-        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-labs/kashi-arbitrum}
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:matthewlilley/kashi-ethereum}
 
 additionalTypeDefs: |
   extend type KashiPair {
     chainId: BigInt!
     chainName: String!
   }
+  type Dashboard {
+    lend: [KashiPair!]!
+    borrow: [KashiPair!]!
+  }
+  type Datapoint {
+    x: [BigInt!]!
+    y: [BigInt!]!
+  }
   extend type Query {
-    crossChainKashiPair(id: String!, now: Int!, chainId: BigInt!): KashiPair!
-    crossChainKashiPairs(first: Int, skip: Int, orderBy: KashiPair_orderBy, orderDirection: OrderDirection, where: KashiPair_filter, chainIds: [BigInt!]!): [KashiPair!]!
+    dashboard(
+      first: Int, 
+      skip: Int, 
+      orderBy: KashiPair_orderBy, 
+      orderDirection: OrderDirection, 
+      where: KashiPair_filter, 
+      chainIds: [BigInt!]!
+    ): Dashboard!
+    datapoints(
+      first: Int, 
+      skip: Int, 
+      orderBy: KashiPair_orderBy, 
+      orderDirection: OrderDirection, 
+      where: KashiPair_filter, 
+      chainIds: [BigInt!]!
+    ): Datapoint!
+    pair(
+      id: String!, 
+      now: Int!, 
+      chainId: BigInt!
+    ): KashiPair!
+    pairs(
+      first: Int, 
+      skip: Int, 
+      orderBy: KashiPair_orderBy,
+      orderDirection: OrderDirection,
+      where: KashiPair_filter,
+      chainIds: [BigInt!]!
+    ): [KashiPair!]!
   }
 
 
 additionalResolvers:
-  - ./resolvers.ts
+  - ./resolvers
 
 documents:
   - ./query.graphql

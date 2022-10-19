@@ -1,8 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
-import { DAI_ADDRESS } from '@sushiswap/currency'
 import { Button, NetworkIcon, Typography } from '@sushiswap/ui'
 import { Layout, MarketsSection } from 'components'
-import { SUPPORTED_CHAIN_IDS } from 'config'
+import { DEFAULT_MARKETS, SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Image from 'next/image'
 import { FC } from 'react'
@@ -14,35 +13,69 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   // res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const chainIds = (query.chianIds as string[]) || SUPPORTED_CHAIN_IDS
 
-  const [pairs, borrowPairs] = await Promise.all([
+  const [lending, borrowing] = await Promise.all([
     Promise.all(
-      chainIds
-        .filter((chainId) => chainId in DAI_ADDRESS)
-        .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
-          previousValue[i] = getPairs({
-            first: 1,
-            // skip: 0,
-            orderBy: 'supplyAPR',
-            orderDirection: 'desc',
-            where: { asset: DAI_ADDRESS[currentValue].toLowerCase(), totalBorrow_: { base_not: '0' } },
-          })
-
-          return previousValue
-        }, [])
-    ).then((pairs) => {
-      return pairs
-        .flat()
-        .sort((a, b) => {
-          return Number(b['supplyAPR']) - Number(a['supplyAPR'])
-        })
-        .slice(0, 1)
-    }),
-    getPairs({
-      first: 20,
-      skip: 0,
-      orderBy: 'borrowAPR',
-      orderDirection: 'desc',
-    }),
+      DEFAULT_MARKETS.map((addressMap) =>
+        Promise.all(
+          chainIds
+            .filter((chainId) => chainId in addressMap)
+            .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+              previousValue[i] = getPairs({
+                first: 1,
+                orderBy: 'supplyAPR',
+                orderDirection: 'desc',
+                where: { asset: addressMap[currentValue].toLowerCase(), totalBorrow_: { base_gt: '0' } },
+                chainIds: [currentValue],
+              })
+              return previousValue
+            }, [])
+        ).then((pairs) =>
+          pairs
+            .flat()
+            .sort((a, b) => {
+              if (b.supplyAPR === a.supplyAPR) return 0
+              return b.supplyAPR < a.supplyAPR ? -1 : 1
+            })
+            .slice(0, 1)
+        )
+      )
+    ).then((pairs) =>
+      pairs.flat().sort((a, b) => {
+        if (b.supplyAPR === a.supplyAPR) return 0
+        return b.supplyAPR < a.supplyAPR ? -1 : 1
+      })
+    ),
+    Promise.all(
+      DEFAULT_MARKETS.map((addressMap) =>
+        Promise.all(
+          chainIds
+            .filter((chainId) => chainId in addressMap)
+            .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
+              previousValue[i] = getPairs({
+                first: 1,
+                orderBy: 'interestPerSecond',
+                orderDirection: 'desc',
+                where: { asset: addressMap[currentValue].toLowerCase(), totalAsset_: { base_gt: '0' } },
+                chainIds: [currentValue],
+              })
+              return previousValue
+            }, [])
+        ).then((pairs) =>
+          pairs
+            .flat()
+            .sort((a, b) => {
+              if (b.borrowAPR === a.borrowAPR) return 0
+              return b.borrowAPR < a.borrowAPR ? -1 : 1
+            })
+            .slice(0, 1)
+        )
+      )
+    ).then((pairs) =>
+      pairs.flat().sort((a, b) => {
+        if (b.borrowAPR === a.borrowAPR) return 0
+        return b.borrowAPR < a.borrowAPR ? -1 : 1
+      })
+    ),
   ])
   return {
     props: {
@@ -58,25 +91,25 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
             ],
             pagination: {
               pageIndex: 0,
-              pageSize: 20,
+              pageSize: DEFAULT_MARKETS.length,
             },
           },
-        })]: pairs,
+        })]: lending,
         [unstable_serialize({
           url: '/kashi/api/pairs',
           args: {
             sorting: [
               {
-                id: 'borrowAPR',
+                id: 'interestPerSecond',
                 desc: true,
               },
             ],
             pagination: {
               pageIndex: 0,
-              pageSize: 20,
+              pageSize: DEFAULT_MARKETS.length,
             },
           },
-        })]: borrowPairs,
+        })]: borrowing,
       },
     },
   }
@@ -108,7 +141,7 @@ const _Index = () => {
         <div className="flex justify-end">
           <div className="relative rounded-full h-[240px] w-[240px] border-2 border-dashed border-slate-700 flex items-center justify-center">
             <div className="w-[140px]">
-              <Image src="https://www.sushi.com/kashi/images/KashiKanjiSign.png" layout="fill" />
+              <Image src="https://www.sushi.com/kashi/images/KashiKanjiSign.png" alt="Kashi" layout="fill" />
             </div>
             <NetworkIcon width={32} chainId={ChainId.ETHEREUM} className="absolute top-0 right-9" />
             <NetworkIcon width={32} chainId={ChainId.ARBITRUM} className="absolute right-0 bottom-9" />

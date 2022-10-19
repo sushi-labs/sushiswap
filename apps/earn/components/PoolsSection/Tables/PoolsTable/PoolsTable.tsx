@@ -3,7 +3,7 @@ import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { GenericTable, Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'

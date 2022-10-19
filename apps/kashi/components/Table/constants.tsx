@@ -1,3 +1,4 @@
+import { JSBI } from '@sushiswap/math'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import React from 'react'
 
@@ -15,7 +16,7 @@ import { TotalBorrowCell } from './TotalBorrowCell'
 import { ExtendedColumnDef } from './types'
 
 export const ICON_SIZE = 20
-export const PAGE_SIZE = 20
+export const PAGE_SIZE = 1000
 
 export const NETWORK_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'network',
@@ -110,7 +111,7 @@ export const TOTAL_ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1,
 export const SUPPLY_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'currentSupplyAPR',
   header: 'Lend APY',
-  // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
+  accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
   cell: (props) => <SupplyAPRCell row={props.row.original} />,
   size: 40,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,

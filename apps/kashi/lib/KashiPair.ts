@@ -112,6 +112,7 @@ export class KashiMediumRiskLendingPairV1 {
   private MAXIMUM_INTEREST_PER_YEAR = JSBI.multiply(this.MAXIMUM_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
 
   constructor(pair: KashiPairDTO) {
+    console.log('pair address is...', pair.id)
     this.address = getAddress(pair.id)
     this.id = getAddress(pair.id)
 

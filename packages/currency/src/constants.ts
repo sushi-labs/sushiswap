@@ -4,6 +4,10 @@ import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
 import { Token } from './Token'
 
+export const FTM_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x4E15361FD6b4BB609Fa63C81A2be19d873717870',
+} as const
+
 export const WBTC_ADDRESS = {
   [ChainId.AVALANCHE]: '0x50b7545627a5162F82A992c33b87aDc75187B218',
   [ChainId.ARBITRUM]: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
