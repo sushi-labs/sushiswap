@@ -53,9 +53,9 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
             .reduce<ReturnType<typeof getPairs>[]>((previousValue, currentValue: string, i) => {
               previousValue[i] = getPairs({
                 first: 1,
-                orderBy: 'interestPerSecond',
+                orderBy: 'totalBorrowUSD',
                 orderDirection: 'desc',
-                where: { asset: addressMap[currentValue].toLowerCase(), totalAsset_: { base_gt: '0' } },
+                where: { asset: addressMap[currentValue].toLowerCase() },
                 chainIds: [currentValue],
               })
               return previousValue
@@ -64,16 +64,17 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           pairs
             .flat()
             .sort((a, b) => {
-              if (b.borrowAPR === a.borrowAPR) return 0
-              return b.borrowAPR < a.borrowAPR ? -1 : 1
+              console.log({ totalBorrowUSD: a.totalBorrowUSD })
+              if (b.totalBorrowUSD === a.totalBorrowUSD) return 0
+              return b.totalBorrowUSD < a.totalBorrowUSD ? -1 : 1
             })
             .slice(0, 1)
         )
       )
     ).then((pairs) =>
       pairs.flat().sort((a, b) => {
-        if (b.borrowAPR === a.borrowAPR) return 0
-        return b.borrowAPR < a.borrowAPR ? -1 : 1
+        if (b.totalBorrowUSD === a.totalBorrowUSD) return 0
+        return b.totalBorrowUSD < a.totalBorrowUSD ? -1 : 1
       })
     ),
   ])
@@ -100,7 +101,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           args: {
             sorting: [
               {
-                id: 'interestPerSecond',
+                id: 'totalBorrowUSD',
                 desc: true,
               },
             ],

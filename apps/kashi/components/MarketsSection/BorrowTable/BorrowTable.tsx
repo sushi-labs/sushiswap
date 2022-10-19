@@ -1,4 +1,3 @@
-import { JSBI } from '@sushiswap/math'
 import { Typography } from '@sushiswap/ui'
 import {
   getCoreRowModel,
@@ -16,9 +15,16 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiPair, QuerypairsArgs } from '../../../.graphclient'
-import { ASSET_COLUMN, BORROW_APR_COLUMN, GenericTable, NETWORK_COLUMN, TOTAL_ASSET_COLUMN } from '../../Table'
+import {
+  ASSET_COLUMN,
+  BORROW_APR_COLUMN,
+  GenericTable,
+  NETWORK_COLUMN,
+  TOTAL_BORROW_USD,
+  TOTAL_SUPPY_USD,
+} from '../../Table'
 import { BorrowTableHoverElement } from './BorrowTableHoverElement'
-const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, BORROW_APR_COLUMN, TOTAL_ASSET_COLUMN]
+const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, TOTAL_SUPPY_USD, BORROW_APR_COLUMN, TOTAL_BORROW_USD]
 
 const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
   const _url = new URL(url, window.location.origin)
@@ -33,7 +39,7 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
 
-  const where: QuerypairsArgs['where'] = { totalAsset_: { base_gt: '0' } }
+  const where: QuerypairsArgs['where'] = {}
 
   _url.searchParams.set('where', stringify(where))
 
@@ -44,7 +50,7 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
 
 export const BorrowTable: FC = () => {
   const router = useRouter()
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'interestPerSecond', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'totalBorrowUSD', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: DEFAULT_MARKETS.length,
@@ -58,8 +64,10 @@ export const BorrowTable: FC = () => {
         ? data
             .map((pair) => new KashiMediumRiskLendingPairV1(pair))
             .sort((a, b) => {
-              if (JSBI.equal(b.currentInterestPerYear, a.currentInterestPerYear)) return 0
-              return JSBI.lessThan(b.currentInterestPerYear, a.currentInterestPerYear) ? -1 : 1
+              if (b.totalBorrowUSD === a.totalBorrowUSD) return 0
+              return b.totalBorrowUSD < a.totalBorrowUSD ? -1 : 1
+              // if (JSBI.equal(b.totalBorrowUSD, a.totalBorrowUSD)) return 0
+              // return JSBI.lessThan(b.totalBorrowUSD, a.totalBorrowUSD) ? -1 : 1
             })
         : [],
     [data]

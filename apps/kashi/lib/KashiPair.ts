@@ -64,6 +64,9 @@ export class KashiMediumRiskLendingPairV1 {
   readonly oracleExchangeRate: JSBI
   readonly spotExchangeRate: JSBI
 
+  readonly totalAssetUSD: number
+  readonly totalBorrowUSD: number
+
   static getAddress(collateral: Token, asset: Token, oracle: string, oracleData: string): string {
     return computePairAddress({
       collateral,
@@ -112,7 +115,7 @@ export class KashiMediumRiskLendingPairV1 {
   private MAXIMUM_INTEREST_PER_YEAR = JSBI.multiply(this.MAXIMUM_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
 
   constructor(pair: KashiPairDTO) {
-    console.log('pair address is...', pair.id)
+    // console.log('pair address is...', pair.id)
     this.address = getAddress(pair.id)
     this.id = getAddress(pair.id)
 
@@ -162,6 +165,9 @@ export class KashiMediumRiskLendingPairV1 {
     this.decimals = pair.decimals
 
     this.totalSupply = Share.fromRawShare(this.asset, this.totalAsset.base)
+
+    this.totalAssetUSD = Number(pair.totalAssetUSD)
+    this.totalBorrowUSD = Number(pair.totalBorrowUSD)
   }
 
   /**
@@ -229,7 +235,7 @@ export class KashiMediumRiskLendingPairV1 {
    * The total collateral in the market (collateral is stable, it doesn't accrue)
    */
   public get totalCollateralAmount(): Amount<Token> {
-    console.log('totalCollateralAmount', this.totalCollateralShare.toFixed())
+    // console.log('totalCollateralAmount', this.totalCollateralShare.toFixed())
     return this.totalCollateralShare.toAmount(this.collateral.rebase)
   }
 

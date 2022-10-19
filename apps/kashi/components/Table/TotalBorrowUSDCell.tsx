@@ -1,15 +1,13 @@
+import { formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { useTokensFromKashiPair } from '../../lib/hooks'
 import { CellProps } from './types'
 
-export const AvailableForBorrowCell: FC<CellProps> = ({ row }) => {
-  const { asset } = useTokensFromKashiPair(row)
-
+export const TotalBorrowUSDCell: FC<CellProps> = ({ row }) => {
   return (
     <Typography variant="sm" weight={500} className="truncate text-slate-50">
-      {'0.00'} {asset.symbol}
+      {formatUSD(row.totalBorrowUSD)}
     </Typography>
   )
 }

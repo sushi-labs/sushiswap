@@ -7,7 +7,7 @@ import { CellProps } from './types'
 export const BorrowAPRCell: FC<CellProps> = ({ row }) => {
   return (
     <Typography variant="sm" weight={500} className="text-slate-50">
-      {new Percent(row.currentInterestPerYear, 1e18).toSignificant(6)}
+      {new Percent(row.currentInterestPerYear, 1e18).toSignificant(4)}%
     </Typography>
   )
 }

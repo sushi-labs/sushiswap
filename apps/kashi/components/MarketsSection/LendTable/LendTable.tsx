@@ -68,7 +68,7 @@ export const LendTable: FC = () => {
   // TODO: Automatically serialise/deserialise, middleware?
 
   const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
-  console.log('PAIRS:', data)
+
   const pairs = useMemo(
     () =>
       Array.isArray(data)

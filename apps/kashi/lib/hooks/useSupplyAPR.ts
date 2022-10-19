@@ -24,7 +24,7 @@ export const useSupplyAPR = (pair: KashiPairDTO) => {
   // encourages/discourages lenders to call accrue
   // const interestPerYearPreview =
 
-  console.log(pair.id, pair.supplyAPR, interestPerYear.toString())
+  // console.log(pair.id, pair.supplyAPR, interestPerYear.toString())
 
   // return new Percent(pair.supplyAPR, 1e18).toSignificant(6)
 

@@ -13,10 +13,12 @@ import { SupplyAPRCell } from './SupplyAPRCell'
 import { TotalAPRCell } from './TotalAPRCell'
 import { TotalAssetCell } from './TotalAssetCell'
 import { TotalBorrowCell } from './TotalBorrowCell'
+import { TotalBorrowUSDCell } from './TotalBorrowUSDCell'
+import { TotalSupplyUSDCell } from './TotalSupplyUSDCell'
 import { ExtendedColumnDef } from './types'
 
 export const ICON_SIZE = 20
-export const PAGE_SIZE = 1000
+export const PAGE_SIZE = 20
 
 export const NETWORK_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'network',
@@ -121,6 +123,21 @@ export const TOTAL_BORROW_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1
   id: 'totalBorrow',
   header: 'Borrowed',
   cell: (props) => <TotalBorrowCell row={props.row.original} />,
+  size: 40,
+  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+}
+
+export const TOTAL_BORROW_USD: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+  id: 'totalBorrowUSD',
+  header: 'Borrowed',
+  cell: (props) => <TotalBorrowUSDCell row={props.row.original} />,
+  size: 40,
+  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+}
+export const TOTAL_SUPPY_USD: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+  id: 'totalSupplyUSD',
+  header: 'Supplied',
+  cell: (props) => <TotalSupplyUSDCell row={props.row.original} />,
   size: 40,
   skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
 }

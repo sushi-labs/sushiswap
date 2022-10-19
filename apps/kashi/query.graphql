@@ -50,6 +50,8 @@ fragment KashiPairFields on KashiPair {
     borrowAPR
     utilization
     totalFeesEarnedFraction
+    totalBorrowUSD
+    totalAssetUSD
 }
 
 query pairs($first: Int! = 1000,$skip: Int! = 0,$orderBy: KashiPair_orderBy, $orderDirection: OrderDirection, $where: KashiPair_filter, $chainIds: [BigInt!]!) {
