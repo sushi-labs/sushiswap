@@ -23,10 +23,19 @@ const transformer = (
   pools: SushiPairWithChain[],
   pools1d: SushiPairWithChain[],
   pools1w: SushiPairWithChain[],
-  farms: FarmAPI
+  farms: FarmAPI,
+  farmsOnly?: boolean
 ): Pair[] =>
   (pools || [])
     .filter((pool) => !blacklist.includes(pool.id))
+    .filter((pool) =>
+      farmsOnly
+        ? farms?.[pool.chainId]?.farms?.[pool.id.toLowerCase()]?.incentives?.reduce(
+            (previousValue, currentValue) => previousValue + Number(currentValue.apr),
+            0
+          ) > 0
+        : true
+    )
     .map((pool) => {
       const pool1d = Array.isArray(pools1d) ? pools1d?.find((oneDayPool) => oneDayPool.id === pool.id) : undefined
       const pool1w = Array.isArray(pools1w) ? pools1w?.find((oneWeekPool) => oneWeekPool.id === pool.id) : undefined
@@ -109,6 +118,11 @@ export const crossChainPairs: QueryResolvers['crossChainPairs'] = async (root, a
         })
     )
 
+    const where = { ...args.where }
+    if (where.type_in) {
+      where.type_in = where.type_in.filter((el) => el === 'CONSTANT_PRODUCT_POOL')
+    }
+
     const sushiswapPools = Promise.all(
       args.chainIds
         .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
@@ -118,7 +132,7 @@ export const crossChainPairs: QueryResolvers['crossChainPairs'] = async (root, a
             args: {
               ...args,
               where: {
-                ...args.where,
+                ...where,
                 id_in: poolIds,
               },
               // no idea why, even with autoPagination it just blows up for no reason
@@ -143,7 +157,6 @@ export const crossChainPairs: QueryResolvers['crossChainPairs'] = async (root, a
     )
 
     const pools = await Promise.all([tridentPools, sushiswapPools])
-
     return pools.flat(2)
   }
 
@@ -168,7 +181,7 @@ export const crossChainPairs: QueryResolvers['crossChainPairs'] = async (root, a
 
   const allPools = [...pools, ...farmPools]
 
-  const transformed = transformer(allPools, pools1d, pools1w, farms)
+  const transformed = transformer(allPools, pools1d, pools1w, farms, args?.farmsOnly)
 
   return page(
     transformed.sort((a, b) => {

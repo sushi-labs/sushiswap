@@ -1,26 +1,24 @@
 import { Tab } from '@headlessui/react'
 import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
-import { Chip, classNames, Network } from '@sushiswap/ui'
-import { FC } from 'react'
+import { Chip, classNames } from '@sushiswap/ui'
+import { FC, useState } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
 
-import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { usePoolFilters } from '../PoolsFiltersProvider'
 import { PoolsTable, PositionsTable } from './Tables'
 import { TableFilters } from './Tables/TableFilters'
 
 export const PoolsSection: FC = () => {
-  const { selectedNetworks, setFilters } = usePoolFilters()
   const { address } = useAccount()
+  const [tab, setTab] = useState<number>(0)
   const { data: userWithFarms } = useSWR<UserWithFarm[]>(address ? [`/earn/api/user/${address}`] : null, (url) =>
     fetch(url).then((response) => response.json())
   )
 
   return (
-    <section className="flex flex-col gap-6">
-      <Tab.Group>
-        <div className="flex items-center gap-6">
+    <section className="flex flex-col">
+      <Tab.Group selectedIndex={tab} onChange={setTab}>
+        <div className="flex items-center gap-6 mb-6">
           <Tab
             className={({ selected }) =>
               classNames(
@@ -45,12 +43,7 @@ export const PoolsSection: FC = () => {
             </Tab>
           )}
         </div>
-        <TableFilters />
-        <Network.Selector
-          networks={SUPPORTED_CHAIN_IDS}
-          selectedNetworks={selectedNetworks}
-          onChange={(selectedNetworks) => setFilters({ selectedNetworks })}
-        />
+        <TableFilters showAllFilters={tab === 0} />
         <Tab.Panels>
           <Tab.Panel unmount={false}>
             <PoolsTable />
