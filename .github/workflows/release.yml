@@ -1,36 +1,74 @@
-name: Release
-
+name: Changesets
 on:
   push:
     branches:
       - master
-
-concurrency: ${{ github.workflow }}-${{ github.ref }}
-
+env:
+  CI: true
+  PNPM_CACHE_FOLDER: .pnpm-store
 jobs:
-  release:
-    name: Release
+  version:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - name: Check out
         uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v2
         with:
           version: 7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'pnpm'
-
-      - name: Install dependencies
+      - name: install pnpm
+        run: npm i pnpm@latest -g
+      - name: Setup npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+      - name: setup pnpm config
+        run: pnpm config set store-dir $PNPM_CACHE_FOLDER
+      - name: install dependencies
         run: pnpm install
-
-      - name: Create Release Pull Request
+      - name: create and publish versions
         uses: changesets/action@v1
+        # with:
+        #   version: pnpm ci:version
+        #   commit: "chore: update versions"
+        #   title: "chore: update versions"
+        #   publish: pnpm ci:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# name: Release
+
+# on:
+#   push:
+#     branches:
+#       - master
+
+# concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+# jobs:
+#   release:
+#     name: Release
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 2
+
+#       - uses: pnpm/action-setup@v2
+#         with:
+#           version: 7
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 16
+#           cache: 'pnpm'
+
+#       - name: Install dependencies
+#         run: pnpm install
+
+#       - name: Create Release Pull Request
+#         uses: changesets/action@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
