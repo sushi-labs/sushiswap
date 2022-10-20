@@ -16,7 +16,7 @@ https://pnpm.io/installation
 
 ### Build
 
-`pnpn run build`
+`pnpm run build`
 
 #### Single Repository
 
@@ -24,7 +24,7 @@ https://pnpm.io/installation
 
 ### Test
 
-`pnpn run test`
+`pnpm run test`
 
 #### Single Repository
 
@@ -32,7 +32,7 @@ https://pnpm.io/installation
 
 ### Clean
 
-`pnpn run clean`
+`pnpm run clean`
 
 #### Single Repository
 
