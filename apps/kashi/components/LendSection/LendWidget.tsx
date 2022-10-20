@@ -1,19 +1,21 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
+import { abi } from '@sushiswap/kashi/artifacts/contracts/KashiPair.sol/KashiPair.json'
+import { KashiPairMediumRiskV1 } from '@sushiswap/kashi/typechain'
 import { Button, Dialog, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
-import { Approve, BENTOBOX_ADDRESS, usePrices, Web3Input } from '@sushiswap/wagmi'
+import { Approve, BENTOBOX_ADDRESS, useBentoBoxContract, usePrices, Web3Input } from '@sushiswap/wagmi'
 import { KASHI_ADDRESS } from 'config'
-import { Signature } from 'ethers'
+import { BigNumber, Signature } from 'ethers'
+import KashiCooker from 'lib/KashiCooker'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useContract, useSigner } from 'wagmi'
 
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { useCustomTokens, useNotifications } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
-
 interface LendWidget {
   pair: KashiMediumRiskLendingPairV1
 }
@@ -21,15 +23,46 @@ interface LendWidget {
 export const LendWidget: FC<LendWidget> = ({ pair }) => {
   const { address: account } = useAccount()
   const [signature, setSignature] = useState<Signature>()
+  const bentoBoxContract = useBentoBoxContract(pair.chainId)
+  const { data: signerOrProvider } = useSigner()
+  const kashiMediumRiskV1Contract = useContract<KashiPairMediumRiskV1>({
+    addressOrName: pair.address,
+    contractInterface: abi,
+    signerOrProvider,
+  })
   const { asset } = useTokensFromKashiPair(pair)
   const [value, setValue] = useState('')
-  const valueAsEntity = useMemo(() => tryParseAmount(value, asset), [asset, value])
+  const amount = useMemo(() => tryParseAmount(value, asset), [asset, value])
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(pair.chainId)
   const tokenMap = useTokens(pair.chainId)
   const [review, setReview] = useState(false)
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const [, { createNotification }] = useNotifications(account)
-  const execute = useCallback(() => {}, [])
+
+  const execute = useCallback(async () => {
+    console.log('exec', !pair || !account || !kashiMediumRiskV1Contract || !amount)
+    if (!pair || !account || !kashiMediumRiskV1Contract || !amount) return
+
+    const cooker = new KashiCooker({ chainId: pair.chainId, pair, account, contract: kashiMediumRiskV1Contract })
+
+    if (signature) cooker.setMasterContractApproval(signature)
+
+    cooker.updateExchangeRate(false)
+
+    const deadBalance = await bentoBoxContract.balanceOf(
+      pair.asset.address,
+      '0x000000000000000000000000000000000000dead'
+    )
+
+    cooker.addAsset(amount)
+
+    if (deadBalance.isZero()) {
+      cooker.removeAsset(BigNumber.from(1000), true)
+      cooker.bentoBoxTransferAsset('0x000000000000000000000000000000000000dead', BigNumber.from(1000))
+    }
+
+    await cooker.cook()
+  }, [account, amount, bentoBoxContract, kashiMediumRiskV1Contract, pair, signature])
   return (
     <>
       <Widget id="depositCollateral" maxWidth="md">
@@ -62,23 +95,23 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
               <div className="flex items-center gap-2">
                 <div className="flex items-center justify-between w-full gap-2">
                   <Typography variant="h3" weight={500} className="truncate text-slate-50">
-                    {valueAsEntity?.toSignificant(6)}{' '}
+                    {amount?.toSignificant(6)}{' '}
                   </Typography>
                   <div className="flex items-center justify-end gap-2 text-right">
-                    {valueAsEntity && (
+                    {amount && (
                       <div className="w-5 h-5">
-                        <Icon currency={valueAsEntity.currency} width={20} height={20} />
+                        <Icon currency={amount.currency} width={20} height={20} />
                       </div>
                     )}
                     <Typography variant="h3" weight={500} className="text-right text-slate-50">
-                      {valueAsEntity?.currency.symbol}
+                      {amount?.currency.symbol}
                     </Typography>
                   </div>
                 </div>
               </div>
               <Typography variant="sm" weight={500} className="text-slate-500">
-                {valueAsEntity && prices?.[asset.wrapped.address]
-                  ? formatUSD(valueAsEntity?.multiply(prices?.[asset.wrapped.address].asFraction).toFixed(2))
+                {amount && prices?.[asset.wrapped.address]
+                  ? formatUSD(amount?.multiply(prices?.[asset.wrapped.address].asFraction).toFixed(2))
                   : '-'}
               </Typography>
             </div>
@@ -116,7 +149,7 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
-                  amount={valueAsEntity}
+                  amount={amount}
                   address={BENTOBOX_ADDRESS[pair.chainId]}
                   enabled={Boolean(BENTOBOX_ADDRESS[pair.chainId])}
                 />

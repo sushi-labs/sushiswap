@@ -112,15 +112,14 @@ export class KashiMediumRiskLendingPairV1 {
   private STARTING_INTEREST_PER_YEAR = JSBI.multiply(this.STARTING_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
 
   // approx 0.25% APR
-  private MINIMUM_INTEREST_PER_YEAR = JSBI.multiply(this.MINIMUM_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
+  public MINIMUM_INTEREST_PER_YEAR = JSBI.multiply(this.MINIMUM_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
 
   // approx 1000% APR
   private MAXIMUM_INTEREST_PER_YEAR = JSBI.multiply(this.MAXIMUM_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
 
   constructor(pair: KashiPairDTO) {
-    // console.log('pair address is...', pair.id)
-    this.address = getAddress(pair.id)
     this.id = getAddress(pair.id)
+    this.address = getAddress(pair.id)
 
     this.chainId = pair.chainId
 
@@ -200,6 +199,20 @@ export class KashiMediumRiskLendingPairV1 {
   public get elapsedSeconds(): JSBI {
     const currentDate = JSBI.divide(JSBI.BigInt(Date.now()), JSBI.BigInt(1000))
     return JSBI.subtract(currentDate, this.accrueInfo.lastAccrued)
+  }
+
+  /**
+   * Minimum interest per year
+   */
+  public get minimumInterestPerYear(): Percent {
+    return new Percent(this.MINIMUM_INTEREST_PER_YEAR, JSBI.BigInt(1e18))
+  }
+
+  /**
+   * Maximum interest per year
+   */
+  public get maximumInterestPerYear(): Percent {
+    return new Percent(this.MAXIMUM_INTEREST_PER_YEAR, JSBI.BigInt(1e18))
   }
 
   /**

@@ -27,6 +27,7 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.6",
     "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/kashi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/exchange": "workspace:*",

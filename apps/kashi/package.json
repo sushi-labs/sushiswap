@@ -25,6 +25,7 @@
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/kashi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/exchange": "workspace:*",
