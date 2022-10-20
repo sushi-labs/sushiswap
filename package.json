@@ -22,7 +22,8 @@
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' --check",
     "test": "turbo run test --parallel",
     "test:ci": "turbo run test --parallel --filter=[HEAD^1]",
-    "publish-packages": "turbo run build --filter=./packages/* && changeset version && changeset publish"
+    "version-packages": "turbo run build --filter=./packages/* && changeset version",
+    "publish-packages": "turbo run build --filter=./packages/* && changeset publish"
   },
   "lint-staged": {
     "*.ts": [
