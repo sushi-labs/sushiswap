@@ -1,14 +1,12 @@
 {
   "name": "@sushiswap/tines",
   "version": "0.0.0",
-  "private": true,
   "repository": {
     "url": "sushiswap/sushiswap",
     "directory": "packages/tines"
   },
   "license": "UNLICENSED",
   "author": "Ilya Lyalin",
-  "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "source": "src/index.ts",
