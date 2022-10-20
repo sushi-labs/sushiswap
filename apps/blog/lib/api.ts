@@ -26,7 +26,7 @@ export const getPreviewPostBySlug = async (slug: string) => {
 }
 
 export const getArticles = async (variables?: { filters?: ArticleFiltersInput; pagination?: PaginationArg }) => {
-  return sdk.getArticles({ ...variables, filters: { ...variables?.filters, articleType: { eq: 'blog' } } })
+  return sdk.getArticles({ ...variables, filters: { ...variables?.filters, articleTypes: { type: { eq: 'blog' } } } })
 }
 
 export const getCategories = async (filters?: CategoryFiltersInput) => {
