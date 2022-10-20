@@ -157,7 +157,7 @@ query articleAndMoreArticles($locale: I18NLocaleCode, $filters: ArticleFiltersIn
 }
 
 query getAllArticlesWithSlug {
-    articles(filters: { articleType: { eq: "blog" } }, locale: "all") {
+    articles(filters: { articleTypes: { type: { eq: "blog" } } }, locale: "all") {
         data {
             id
             attributes {
