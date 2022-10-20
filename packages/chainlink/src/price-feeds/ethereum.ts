@@ -387,7 +387,7 @@ const MAINNET_CHAINLINK_MAPPING = {
   '0xD2A593BF7594aCE1faD597adb697b5645d5edDB2': {
     from: '0x1494CA1F11D487c2bBe4543E90080AeBa4BA3C2b',
     to: '0x0000000000000000000000000000000000000001',
-    decimals: 18,
+    decimals: 8,
     fromDecimals: 18,
     toDecimals: 8,
   },
