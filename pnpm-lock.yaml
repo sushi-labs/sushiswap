@@ -65,14 +65,14 @@ importers:
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/tines': ^1.0.0-canary.76
+      '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/lodash.flatmap': ^4.5.7
       '@vercel/node': ^1.14.1
       lodash.flatmap: ^4.5.0
     dependencies:
       '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/tines': 1.0.0-canary.109
+      '@sushiswap/tines': link:../../packages/tines
       '@vercel/node': 1.15.4
       lodash.flatmap: 4.5.0
     devDependencies:
@@ -5115,14 +5115,6 @@ packages:
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/properties': 5.7.0
 
-  /@ethersproject/bignumber/5.6.2:
-    resolution: {integrity: sha512-v7+EEUbhGqT3XJ9LMPsKvXYHFc8eHxTowFCG/HgJErmq4XHJ2WR7aeyICg3uTOAQ7Icn0GFHAohXEhxQHq4Ubw==}
-    dependencies:
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      bn.js: 5.2.1
-    dev: false
-
   /@ethersproject/bignumber/5.7.0:
     resolution: {integrity: sha512-n1CAdIHRWjSucQO3MC1zPSVgV/6dy/fjL9pMrPP9peL+QxEg9wOsVqwD4+818B6LUEtaXzVHQiuivzRoxPxUGw==}
     dependencies:
@@ -9899,13 +9891,6 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: false
-
-  /@sushiswap/tines/1.0.0-canary.109:
-    resolution: {integrity: sha512-OBGXiFekKUddbpa52jEsAOcHYRF0aYBGEccheBUgP3CSO7m89H3To40r9X49eGztDSH2cjZ1aK0N/t1XkTNqLQ==}
-    dependencies:
-      '@ethersproject/bignumber': 5.6.2
-      '@sushiswap/currency': link:packages/currency
     dev: false
 
   /@sushiswap/trident/1.0.0-canary.48:
