@@ -8,20 +8,23 @@ import { getPairsForSymbol } from '../../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pairs] = await Promise.all([
-    getPairsForSymbol({
-      symbol: (query.symbol as string).toLowerCase(),
-      asset: true,
-      orderBy: 'supplyAPR',
-      orderDirection: 'desc',
-    }),
-  ])
+
+  const symbol = query.symbol as string
+
+  const pairs = await getPairsForSymbol({
+    where: {
+      asset_: { symbol_contains_nocase: symbol.toLowerCase() },
+      totalBorrow_: { base_not: '0' },
+    },
+    orderBy: 'supplyAPR',
+    orderDirection: 'desc',
+  })
 
   return {
     props: {
       fallback: {
         [unstable_serialize({
-          url: `/kashi/api/pairs?symbol=${(query.symbol as string).toLowerCase()}&asset=true`,
+          url: `/kashi/api/lend/${symbol.toLowerCase()}`,
           args: {
             sorting: [
               {

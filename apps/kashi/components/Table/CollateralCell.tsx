@@ -9,7 +9,7 @@ export const CollateralCell: FC<CellProps> = ({ row }) => {
   const { collateral } = useTokensFromKashiPair(row)
 
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex items-center gap-2">
       <Currency.Icon currency={collateral} width={ICON_SIZE} height={ICON_SIZE} />
       <Typography variant="sm" weight={600} className="text-slate-50">
         {collateral.symbol}

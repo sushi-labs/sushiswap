@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/graph-client/.graphclient'
 import { Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
+import stringify from 'fast-json-stable-stringify'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
@@ -40,11 +41,11 @@ const fetcher = ({
   }
 
   if (args.pagination) {
-    _url.searchParams.set('pagination', JSON.stringify(args.pagination))
+    _url.searchParams.set('pagination', stringify(args.pagination))
   }
 
   if (args.selectedNetworks) {
-    _url.searchParams.set('networks', JSON.stringify(args.selectedNetworks))
+    _url.searchParams.set('networks', stringify(args.selectedNetworks))
   }
 
   let where = {}
@@ -53,12 +54,12 @@ const fetcher = ({
       symbol_contains_nocase: args.query,
     }
 
-    _url.searchParams.set('where', JSON.stringify(where))
+    _url.searchParams.set('where', stringify(where))
   }
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const TokenTable: FC = () => {
@@ -81,7 +82,7 @@ export const TokenTable: FC = () => {
 
   const { data: tokens, isValidating } = useSWR<Token[]>({ url: '/analytics/api/tokens', args }, fetcher)
   const { data: tokenCount } = useSWR<number>(
-    `/analytics/api/tokens/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+    `/analytics/api/tokens/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
     (url) => fetch(url).then((response) => response.json())
   )
 

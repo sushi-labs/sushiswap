@@ -17,7 +17,7 @@ export const LendAssetCell: FC<CellProps> = ({ row }) => {
           {asset.symbol}
         </Typography>
         <Typography variant="xs" weight={400} className="text-slate-400">
-          Collateral: <span className="text-slate-50">{collateral.symbol}</span>
+          Market Collateral: <span className="text-slate-50">{collateral.symbol}</span>
         </Typography>
       </div>
     </div>

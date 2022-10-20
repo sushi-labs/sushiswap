@@ -18,6 +18,7 @@ import {
   getTridentRouterContractConfig,
   useBentoBoxTotal,
 } from '@sushiswap/wagmi'
+import stringify from 'fast-json-stable-stringify'
 import { approveMasterContractAction, batchAction, unwrapWETHAction } from 'lib/actions'
 import { toHex } from 'lib/functions'
 import { useTransactionDeadline } from 'lib/hooks'
@@ -84,7 +85,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         })
         .catch((error: unknown) => {
           log.error('swap failure', {
-            error: JSON.stringify(error),
+            error: stringify(error),
             chainId: trade.inputAmount.currency.chainId,
             tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
             tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,

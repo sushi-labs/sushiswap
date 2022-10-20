@@ -2,11 +2,11 @@ import 'dotenv/config'
 
 import { ChainId } from '@sushiswap/chain'
 import { getUnixTime } from 'date-fns'
+import stringify from 'fast-json-stable-stringify'
 
 import { getBuiltGraphSDK } from '../.graphclient'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
 import redis from './redis'
-
 async function getSushiSwapResults() {
   const results = await Promise.all(
     SUSHISWAP_CHAINS.map((chainId) => {
@@ -145,7 +145,7 @@ export async function execute() {
     Object.fromEntries(
       combined.map(({ chainId, tokens, updatedAtBlock, updatedAtTimestamp }) => [
         chainId,
-        JSON.stringify({
+        stringify({
           chainId,
           ...tokens.reduce((acc, token) => ({ ...acc, [token.id]: token.priceUSD }), {}),
           updatedAtBlock,

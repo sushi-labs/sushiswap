@@ -8,7 +8,7 @@ export class Share<T extends Type> extends Fraction {
   public readonly currency: T
   public readonly scale: JSBI
 
-  public static fromRawShare<T extends Type>(currency: T, rawShare: BigintIsh): Share<T> {
+  public static fromRawShare<T extends Type>(currency: T, rawShare: BigintIsh = 0): Share<T> {
     return new Share(currency, rawShare)
   }
 

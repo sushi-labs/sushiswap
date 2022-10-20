@@ -8,7 +8,6 @@ import { Type } from './Type'
 export class Amount<T extends Type> extends Fraction {
   public readonly currency: T
   public readonly scale: JSBI
-
   /**
    * Returns a new currency amount instance from the unitless amount of token, i.e. the raw amount
    * @param currency the currency in the amount

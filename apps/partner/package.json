@@ -29,6 +29,7 @@
     "cookie-cutter": "^0.2.0",
     "cors": "^2.8.5",
     "ethers": "^5.7.0",
+    "fast-json-stable-stringify": "^2.1.0",
     "next": "^12.3.1",
     "next-seo": "^5.5.0",
     "octokit": "^2.0.4",

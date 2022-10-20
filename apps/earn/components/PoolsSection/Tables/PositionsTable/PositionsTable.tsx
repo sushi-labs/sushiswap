@@ -1,6 +1,7 @@
 import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
 import { GenericTable, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
+import stringify from 'fast-json-stable-stringify'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { useAccount } from 'wagmi'
@@ -24,9 +25,7 @@ export const PositionsTable: FC = () => {
   const [columnVisibility, setColumnVisibility] = useState({})
 
   const { data: userWithFarms, isValidating } = useSWR<UserWithFarm[]>(
-    address
-      ? `/earn/api/user/${address}${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`
-      : null,
+    address ? `/earn/api/user/${address}${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}` : null,
     (url) => fetch(url).then((response) => response.json())
   )
 

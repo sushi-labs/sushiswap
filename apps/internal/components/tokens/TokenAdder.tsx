@@ -1,6 +1,7 @@
 import { XIcon } from '@heroicons/react/solid'
 import { Token as TokenEntity } from '@sushiswap/currency'
 import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
+import stringify from 'fast-json-stable-stringify'
 import { Token, TokenLogo } from 'lib'
 import Image from 'next/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
@@ -53,7 +54,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
             'Content-Type': 'application/json',
           },
           method: 'POST',
-          body: JSON.stringify({
+          body: stringify({
             tokenAddress: token.id.split(':')[1],
             tokenData: {
               name: token.name,

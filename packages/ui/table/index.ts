@@ -23,4 +23,5 @@ export type TableProps = {
 }
 
 export const Table: TableProps = { container, thead, table, tr, thr, th, td, tbody, Paginator }
+
 export * from './GenericTable'

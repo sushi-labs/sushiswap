@@ -3,6 +3,7 @@ import { CheckIcon, PaperAirplaneIcon, XIcon } from '@heroicons/react/outline'
 import { Token } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
+import stringify from 'fast-json-stable-stringify'
 import { toToken } from 'lib'
 import { useStreamBalances } from 'lib/hooks'
 import Link from 'next/link'
@@ -18,7 +19,7 @@ import { Rebase } from '.graphclient'
 const fetcher = (params: any) =>
   fetch(params)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 
 export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boolean }> = ({
   chainId,

@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS]
+export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS] as const
 
-export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
+export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
   ChainId.AVALANCHE,
   ChainId.ARBITRUM,
@@ -19,8 +19,8 @@ export const SUSHISWAP_ENABLED_NETWORKS: ChainId[] = [
   // ChainId.HECO,
   // ChainId.OKEX
   ChainId.BOBA,
-  ChainId.POLYGON,
-]
+  // ChainId.POLYGON,
+] as const
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
@@ -149,11 +149,18 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
 }
 
-export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
+export const TRIDENT_SUBGRAPH_NAME = {
   [ChainId.POLYGON]: 'sushi-qa/trident-polygon',
   [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
   [ChainId.KAVA]: 'sushi-qa/trident-kava',
   [ChainId.METIS]: 'sushi-qa/trident-metis',
+} as const
+
+export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_NAME, number> = {
+  [ChainId.POLYGON]: 34188953,
+  [ChainId.OPTIMISM]: 7464195,
+  [ChainId.KAVA]: 162097,
+  [ChainId.METIS]: 3030678,
 }
 
 export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {

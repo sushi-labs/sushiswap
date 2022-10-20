@@ -94,11 +94,16 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           </Transition>
         )}
         <button
-          onClick={onClick}
+          {...(onSelect && {
+            onClick: (e) => {
+              setTokenSelectorOpen(true)
+              e.stopPropagation()
+            },
+          })}
           className={classNames(
             onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
             (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
-            currency || loading ? 'ring-slate-500' : 'bg-blue ring-blue-700 text-lg font-medium',
+            currency || loading ? 'ring-slate-500' : 'bg-blue ring-blue-700',
             'h-[36px] text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
           )}
         >

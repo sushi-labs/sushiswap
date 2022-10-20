@@ -11,7 +11,6 @@ import {
   crossChainUser,
   crossChainUserWithFarms,
 } from './sushiswap/index'
-
 /* eslint no-unused-vars: 0, unused-imports/no-unused-vars: 0, @typescript-eslint/no-unused-vars: 0 */
 
 export const resolvers: Resolvers = {
@@ -48,4 +47,3 @@ export const resolvers: Resolvers = {
     crossChainUserWithFarms,
   },
 }
-//
