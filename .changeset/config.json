@@ -7,5 +7,28 @@
     "access": "public",
     "baseBranch": "master",
     "updateInternalDependencies": "patch",
-    "ignore": []
+    "ignore": [
+      "root",
+      "analytics",
+      "blog",
+      "bridge",
+      "earn",
+      "furo",
+      "internal",
+      "kashi",
+      "partner",
+      "swap",
+      "xswap",
+      "multicall-example",
+      "node-16-example",
+      "token-lists-example",
+      "wagmi-example",
+      "farm-api",
+      "path-finder-api",
+      "token-list-api",
+      "token-logo-api",
+      "token-price-api",
+      "farms-script",
+      "price-script"
+    ]
   }

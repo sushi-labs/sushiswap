@@ -1,5 +1,5 @@
 {
-  "name": "price",
+  "name": "token-price-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
