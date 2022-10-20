@@ -1,5 +1,5 @@
 import { Amount, Currency } from '@sushiswap/currency'
-import { TradeType } from '@sushiswap/exchange'
+import { TradeType } from '@sushiswap/amm'
 import { QueryFunction, QueryKey, QueryOptions } from '@tanstack/react-query'
 import { useProvider, useQuery } from 'wagmi'
 

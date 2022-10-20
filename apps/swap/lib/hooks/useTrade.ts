@@ -9,7 +9,7 @@ import {
   Trade,
   TradeType,
   Version as TradeVersion,
-} from '@sushiswap/exchange'
+} from '@sushiswap/amm'
 import { MultiRoute, RouteStatus } from '@sushiswap/tines'
 import { PairState, useBentoBoxTotals, useGetConstantProductPools, useGetStablePools, usePairs } from '@sushiswap/wagmi'
 import {

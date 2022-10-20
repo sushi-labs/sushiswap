@@ -45,7 +45,7 @@
     "@sushiswap/core-sdk": "1.0.0-canary.110",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/exchange": "workspace:*",
+    "@sushiswap/amm": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

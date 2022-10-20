@@ -30,7 +30,7 @@
     "@sushiswap/kashi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/exchange": "workspace:*",
+    "@sushiswap/amm": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/furo": "workspace:*",
     "@sushiswap/hooks": "workspace:*",

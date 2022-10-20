@@ -1,6 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { Amount, Native } from '@sushiswap/currency'
-import { calculateSlippageAmount, ConstantProductPool } from '@sushiswap/exchange'
+import { calculateSlippageAmount, ConstantProductPool } from '@sushiswap/amm'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'

@@ -1,4 +1,4 @@
-import { TradeType } from '@sushiswap/exchange'
+import { TradeType } from '@sushiswap/amm'
 import { ZERO } from '@sushiswap/math'
 import { usePrices, Web3Input } from '@sushiswap/wagmi'
 import { CurrencyInputProps } from '@sushiswap/wagmi/components/Web3Input/Currency'

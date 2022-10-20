@@ -70,7 +70,7 @@ https://pnpm.io/installation
 - `@sushiswap/chain`
 - `@sushiswap/cli`
 - `@sushiswap/currency`
-- `@sushiswap/exchange`
+- `@sushiswap/amm`
 - `@sushiswap/format`
 - `@sushiswap/graph-client`
 - `@sushiswap/hooks`

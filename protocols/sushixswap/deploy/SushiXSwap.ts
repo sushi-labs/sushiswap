@@ -1,5 +1,5 @@
 import bentoBoxExports from '@sushiswap/bentobox/exports.json'
-import { INIT_CODE_HASH } from '@sushiswap/exchange'
+import { INIT_CODE_HASH } from '@sushiswap/amm'
 import {
   STARGATE_BRIDGE_TOKENS,
   STARGATE_ROUTER_ADDRESS,

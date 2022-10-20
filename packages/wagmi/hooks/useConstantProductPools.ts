@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Currency, Token } from '@sushiswap/currency'
-import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/exchange'
+import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/amm'
 import constantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
