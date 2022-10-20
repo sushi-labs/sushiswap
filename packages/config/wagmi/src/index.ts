@@ -371,7 +371,7 @@ export const otherChains = [
   },
   {
     id: ChainId.BOBA_AVAX,
-    name: 'Boba Avex',
+    name: 'Boba Avalanche Mainnet',
     network: 'boba-avax',
     nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
     rpcUrls: {
@@ -379,11 +379,11 @@ export const otherChains = [
     },
     blockExplorers: {
       etherscan: {
-        name: 'Boba Avax Explorer',
+        name: 'Boba Avalanche Mainnet Explorer',
         url: 'https://blockexplorer.avax.boba.network/',
       },
       default: {
-        name: 'Boba Avax Explorer',
+        name: 'Boba Avalanche Mainnet Explorer',
         url: 'https://blockexplorer.avax.boba.network/',
       },
     },
