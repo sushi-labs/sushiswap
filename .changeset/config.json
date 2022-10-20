@@ -31,6 +31,13 @@
       "farms-script",
       "price-script",
       "@sushiswap/amm",
-      "@sushiswap/wagmi"
+      "@sushiswap/wagmi",
+      "@sushiswap/bentobox",
+      "@sushiswap/kashi",
+      "@sushiswap/master-chef",
+      "@sushiswap/miso",
+      "@sushiswap/sushiswap",
+      "@sushiswap/sushixswap",
+      "@sushiswap/trident",
     ]
   }
