@@ -764,8 +764,8 @@ importers:
       wagmi: 0.6.8_nznuxirfauibn2fjde2ghjonky
       yup: 0.32.11
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.12_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.10_graphql@16.6.0
+      '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.13_jelggnc5b4b3hu7o6odhvrmlsa
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/graph-config': link:../../packages/config/graph
@@ -839,8 +839,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       swr: 1.3.0_react@18.2.0
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.12
-      '@graphprotocol/client-auto-pagination': 1.1.10
+      '@graphprotocol/client-add-source-name': 1.0.13
+      '@graphprotocol/client-auto-pagination': 1.1.11
       '@graphprotocol/client-cli': 2.2.13_@types+node@17.0.45
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -954,8 +954,8 @@ importers:
       swr: 1.3.0_react@18.2.0
       wagmi: 0.6.8_nznuxirfauibn2fjde2ghjonky
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.12
-      '@graphprotocol/client-auto-pagination': 1.1.10
+      '@graphprotocol/client-add-source-name': 1.0.13
+      '@graphprotocol/client-auto-pagination': 1.1.11
       '@graphprotocol/client-cli': 2.2.13_@types+node@17.0.45
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -1058,8 +1058,8 @@ importers:
       wagmi: 0.6.8_nznuxirfauibn2fjde2ghjonky
       yup: 0.32.11
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.12_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.10_graphql@16.6.0
+      '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.13_onug3sa4ph53e46o3zvxbixsym
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
@@ -1507,6 +1507,31 @@ importers:
       jest: 28.1.3
       typescript: 4.8.2
 
+  packages/chainlink:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/jest': ^27.5.1
+      jest: ^28.1.0
+      tsup: ^6.2.0
+      typescript: 4.8.2
+    dependencies:
+      '@sushiswap/chain': link:../chain
+      '@sushiswap/currency': link:../currency
+    devDependencies:
+      '@sushiswap/eslint-config': link:../config/eslint
+      '@sushiswap/jest-config': link:../config/jest
+      '@sushiswap/prettier-config': link:../config/prettier
+      '@sushiswap/typescript-config': link:../config/typescript
+      '@types/jest': 27.5.2
+      jest: 28.1.3
+      tsup: 6.2.0_typescript@4.8.2
+      typescript: 4.8.2
+
   packages/cli:
     specifiers:
       '@sushiswap/chain': workspace:*
@@ -1578,7 +1603,7 @@ importers:
       eslint-plugin-testing-library: 5.8.0_eslint@8.25.0
       eslint-plugin-unused-imports: 2.0.0_flxewya73otdbjwmwobuymqcuq
     devDependencies:
-      '@types/eslint': 8.4.6
+      '@types/eslint': 8.4.7
       '@types/node': 16.11.45
 
   packages/config/graph:
@@ -1871,14 +1896,14 @@ importers:
       '@wagmi/core': 0.5.7_ethers@5.7.1
       date-fns: 2.29.3
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.12_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.10_graphql@16.6.0
+      '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.13_graphql@16.6.0
-      '@graphql-mesh/transform-filter-schema': 0.14.103_graphql@16.6.0
-      '@graphql-mesh/transform-prefix': 0.11.93_graphql@16.6.0
-      '@graphql-mesh/transform-prune': 0.0.78_graphql@16.6.0
-      '@graphql-mesh/transform-rename': 0.12.94_graphql@16.6.0
-      '@graphql-mesh/transform-type-merging': 0.4.46_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.14.104_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.11.94_graphql@16.6.0
+      '@graphql-mesh/transform-prune': 0.0.79_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.12.95_graphql@16.6.0
+      '@graphql-mesh/transform-type-merging': 0.4.47_graphql@16.6.0
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/graph-config': link:../config/graph
       '@sushiswap/jest-config': link:../config/jest
@@ -2748,14 +2773,14 @@ importers:
       '@wagmi/core': 0.5.7_ethers@5.7.1
       express: 4.18.1
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.12_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.10_graphql@16.6.0
+      '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.13_ijzyktlvp4ucpshg5x23nsmspm
-      '@graphql-mesh/transform-filter-schema': 0.14.103_graphql@16.6.0
-      '@graphql-mesh/transform-prefix': 0.11.93_graphql@16.6.0
-      '@graphql-mesh/transform-prune': 0.0.78_graphql@16.6.0
-      '@graphql-mesh/transform-rename': 0.12.94_graphql@16.6.0
-      '@graphql-mesh/transform-type-merging': 0.4.46_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.14.104_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.11.94_graphql@16.6.0
+      '@graphql-mesh/transform-prune': 0.0.79_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.12.95_graphql@16.6.0
+      '@graphql-mesh/transform-type-merging': 0.4.47_graphql@16.6.0
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
@@ -2816,14 +2841,14 @@ importers:
       tsup: ^6.2.0
       typescript: 4.8.2
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.12_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.10_graphql@16.6.0
+      '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.13_ijzyktlvp4ucpshg5x23nsmspm
-      '@graphql-mesh/transform-filter-schema': 0.14.103_graphql@16.6.0
-      '@graphql-mesh/transform-prefix': 0.11.93_graphql@16.6.0
-      '@graphql-mesh/transform-prune': 0.0.78_graphql@16.6.0
-      '@graphql-mesh/transform-rename': 0.12.94_graphql@16.6.0
-      '@graphql-mesh/transform-type-merging': 0.4.46_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.14.104_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.11.94_graphql@16.6.0
+      '@graphql-mesh/transform-prune': 0.0.79_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.12.95_graphql@16.6.0
+      '@graphql-mesh/transform-type-merging': 0.4.47_graphql@16.6.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -5230,6 +5255,33 @@ packages:
       tslib: 2.4.0
     dev: true
 
+  /@graphprotocol/client-add-source-name/1.0.13:
+    resolution: {integrity: sha512-YDetDBO8qBh4VEFJ+ZFmBHgrhysGOME98UZaVP6eryLby3cwtqHwO0yNUUPeQ+J4Y8P44ZdXya0dFR2misF7Ww==}
+    peerDependencies:
+      '@graphql-mesh/types': ^0.78.0 || ^0.79.0 || ^0.80.0 || ^0.81.0 || ^0.82.0 || ^0.83.0 || ^0.84.0 || ^0.85.0
+      '@graphql-tools/delegate': 9.0.8
+      '@graphql-tools/utils': 8.12.0
+      '@graphql-tools/wrap': 9.2.3
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      lodash: 4.17.21
+      tslib: 2.4.0
+    dev: true
+
+  /@graphprotocol/client-add-source-name/1.0.13_graphql@16.6.0:
+    resolution: {integrity: sha512-YDetDBO8qBh4VEFJ+ZFmBHgrhysGOME98UZaVP6eryLby3cwtqHwO0yNUUPeQ+J4Y8P44ZdXya0dFR2misF7Ww==}
+    peerDependencies:
+      '@graphql-mesh/types': ^0.78.0 || ^0.79.0 || ^0.80.0 || ^0.81.0 || ^0.82.0 || ^0.83.0 || ^0.84.0 || ^0.85.0
+      '@graphql-tools/delegate': 9.0.8
+      '@graphql-tools/utils': 8.12.0
+      '@graphql-tools/wrap': 9.2.3
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      graphql: 16.6.0
+      lodash: 4.17.21
+      tslib: 2.4.0
+    dev: true
+
   /@graphprotocol/client-auto-pagination/1.1.10:
     resolution: {integrity: sha512-LLs//rXoLd3mzUWQ0lbdcApx2eEFQNuJMeoEwBIpvm/ac9bOKfxQc9xVt/BxnRXIThSVgu6r7dq6YWUtFTEc2A==}
     peerDependencies:
@@ -5247,6 +5299,33 @@ packages:
     resolution: {integrity: sha512-LLs//rXoLd3mzUWQ0lbdcApx2eEFQNuJMeoEwBIpvm/ac9bOKfxQc9xVt/BxnRXIThSVgu6r7dq6YWUtFTEc2A==}
     peerDependencies:
       '@graphql-mesh/types': ^0.78.0 || ^0.79.0 || ^0.80.0 || ^0.81.0 || ^0.82.0 || ^0.83.0 || ^0.84.0
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphql-tools/delegate': 9.0.8_graphql@16.6.0
+      '@graphql-tools/utils': 8.12.0_graphql@16.6.0
+      '@graphql-tools/wrap': 9.2.3_graphql@16.6.0
+      graphql: 16.6.0
+      lodash: 4.17.21
+      tslib: 2.4.0
+    dev: true
+
+  /@graphprotocol/client-auto-pagination/1.1.11:
+    resolution: {integrity: sha512-pJCMKFfnGK1S/Jdidycmvp1acCn5TSSgFh0s2CH+J3GxT6uQwZLN0eKuoUGhhCxQ36sRPf8VKkAaDEz+KXVNqw==}
+    peerDependencies:
+      '@graphql-mesh/types': ^0.78.0 || ^0.79.0 || ^0.80.0 || ^0.81.0 || ^0.82.0 || ^0.83.0 || ^0.84.0 || ^0.85.0
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphql-tools/delegate': 9.0.8
+      '@graphql-tools/utils': 8.12.0
+      '@graphql-tools/wrap': 9.2.3
+      lodash: 4.17.21
+      tslib: 2.4.0
+    dev: true
+
+  /@graphprotocol/client-auto-pagination/1.1.11_graphql@16.6.0:
+    resolution: {integrity: sha512-pJCMKFfnGK1S/Jdidycmvp1acCn5TSSgFh0s2CH+J3GxT6uQwZLN0eKuoUGhhCxQ36sRPf8VKkAaDEz+KXVNqw==}
+    peerDependencies:
+      '@graphql-mesh/types': ^0.78.0 || ^0.79.0 || ^0.80.0 || ^0.81.0 || ^0.82.0 || ^0.83.0 || ^0.84.0 || ^0.85.0
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
       '@graphql-tools/delegate': 9.0.8_graphql@16.6.0
@@ -6935,15 +7014,15 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/store/0.8.55_graphql@16.6.0:
-    resolution: {integrity: sha512-a1kynxoHxrAFxq4sGzHCVwQNrEEPNbKsLdFbMjSS8vx8TeVxx9ZtGadhcQOLANfXUH2gbydWYx21H2AHNv8rnw==}
+  /@graphql-mesh/store/0.8.56_graphql@16.6.0:
+    resolution: {integrity: sha512-+nuWOoe6JLN95mh1v4Cf7ymY9vnFRb805rsQtRmfWUZW77RWQD7lV49XeyCcsq1TUsMZAjXahe8VJ8gOMhsRmg==}
     peerDependencies:
       graphql: '*'
     dependencies:
       '@graphql-inspector/core': 3.3.0_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.2.6_graphql@16.6.0
-      '@graphql-mesh/types': 0.85.0_graphql@16.6.0
-      '@graphql-mesh/utils': 0.41.22_graphql@16.6.0
+      '@graphql-mesh/types': 0.85.1_graphql@16.6.0
+      '@graphql-mesh/utils': 0.42.0_graphql@16.6.0
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
       graphql: 16.6.0
       tslib: 2.4.0
@@ -6984,13 +7063,13 @@ packages:
       lodash.get: 4.4.2
     dev: true
 
-  /@graphql-mesh/transform-filter-schema/0.14.103_graphql@16.6.0:
-    resolution: {integrity: sha512-7iGFffgvnye9LZRW70wstI3dXS2mweAoVhbO989vAgQYPHFrvhBneBQDv/1+ryg0K+L54HX85/jzOFYKa0WY5Q==}
+  /@graphql-mesh/transform-filter-schema/0.14.104_graphql@16.6.0:
+    resolution: {integrity: sha512-sYgnyIrRBFtN2NFTSwNIsAfU0aRC0UaWCPto7v9Q/Q9vrGMvShgp6MLYUxu7YbOyTmPRKeVO77nnIA7MS/HoUA==}
     peerDependencies:
       graphql: '*'
     dependencies:
-      '@graphql-mesh/types': 0.85.0_graphql@16.6.0
-      '@graphql-mesh/utils': 0.41.22_graphql@16.6.0
+      '@graphql-mesh/types': 0.85.1_graphql@16.6.0
+      '@graphql-mesh/utils': 0.42.0_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.8_graphql@16.6.0
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.3_graphql@16.6.0
@@ -7002,13 +7081,13 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/transform-prefix/0.11.93_graphql@16.6.0:
-    resolution: {integrity: sha512-oQ7gIv6RnvF25Zxs0UYZAm26GdxMYnE8R8tVoMU0D1aGR0xZSlNUIkZp+746y5E2Nh96GG+n0prEElzc5FpUoA==}
+  /@graphql-mesh/transform-prefix/0.11.94_graphql@16.6.0:
+    resolution: {integrity: sha512-bqTIF6qI/zNgcSfqeSIosK0BM/B50Xs436GrhJ7qpJol3wrgPPK5Nuydq0ENs9nJNDxNrAX5MdonTd4WE4ly3g==}
     peerDependencies:
       graphql: '*'
     dependencies:
-      '@graphql-mesh/types': 0.85.0_graphql@16.6.0
-      '@graphql-mesh/utils': 0.41.22_graphql@16.6.0
+      '@graphql-mesh/types': 0.85.1_graphql@16.6.0
+      '@graphql-mesh/utils': 0.42.0_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.8_graphql@16.6.0
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.3_graphql@16.6.0
@@ -7020,24 +7099,24 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/transform-prune/0.0.78_graphql@16.6.0:
-    resolution: {integrity: sha512-vbCvZ4vG6GHKbNo333hd27cX6QdGduyJqMxL8LFjklbnII7nqzJHIJKuZOKWXDpGgHDV1qB3Y0dDstqiwHih4w==}
+  /@graphql-mesh/transform-prune/0.0.79_graphql@16.6.0:
+    resolution: {integrity: sha512-55/Feg1StgPO0yUNFe/NRVOQ36Mz+MslBDM+9IV72AZ2KHMblDD9K/W29/k5PmwaG3XHhQ0ytViQ/TbL7QRUeg==}
     peerDependencies:
       graphql: '*'
     dependencies:
-      '@graphql-mesh/types': 0.85.0_graphql@16.6.0
+      '@graphql-mesh/types': 0.85.1_graphql@16.6.0
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
       graphql: 16.6.0
       tslib: 2.4.0
     dev: true
 
-  /@graphql-mesh/transform-rename/0.12.94_graphql@16.6.0:
-    resolution: {integrity: sha512-4tq14nrM+d5ar529zSiy4CQM6ADY/4IxHROujNObHtLmnBwd+m63fR6faCjgtQQAv4cPJmi8KThalVQfZFrjvQ==}
+  /@graphql-mesh/transform-rename/0.12.95_graphql@16.6.0:
+    resolution: {integrity: sha512-n8196AJJKK2wzyTnNotyO9qh3FqTQMo1KZ6JbQ/fjhamXi/0KXPeW280MR1xzBDaVpq3yiJPebnUQuVCPNJpJg==}
     peerDependencies:
       graphql: '*'
     dependencies:
-      '@graphql-mesh/types': 0.85.0_graphql@16.6.0
-      '@graphql-mesh/utils': 0.41.22_graphql@16.6.0
+      '@graphql-mesh/types': 0.85.1_graphql@16.6.0
+      '@graphql-mesh/utils': 0.42.0_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.8_graphql@16.6.0
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.3_graphql@16.6.0
@@ -7080,13 +7159,13 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/transform-type-merging/0.4.46_graphql@16.6.0:
-    resolution: {integrity: sha512-K0EPwfa+yuRLKt3vrPE4F7/hsu9iNY6bNa0Dp11tJsrC90/fCzJCtAg+E6hTURWPffDMxjMz12Aj1zo5tAfBiw==}
+  /@graphql-mesh/transform-type-merging/0.4.47_graphql@16.6.0:
+    resolution: {integrity: sha512-c6B7oRsUMDIAaXoA7yTPR28qjg4iJMeVpuYb7W+qSNU9n8vNl6cvfNMYiXy0fanVo/bQOhkTOt4r5UQX4vytlg==}
     peerDependencies:
       graphql: '*'
     dependencies:
-      '@graphql-mesh/types': 0.85.0_graphql@16.6.0
-      '@graphql-mesh/utils': 0.41.22_graphql@16.6.0
+      '@graphql-mesh/types': 0.85.1_graphql@16.6.0
+      '@graphql-mesh/utils': 0.42.0_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.8_graphql@16.6.0
       '@graphql-tools/stitching-directives': 2.3.11_graphql@16.6.0
       graphql: 16.6.0
@@ -7145,12 +7224,12 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/types/0.85.0_graphql@16.6.0:
-    resolution: {integrity: sha512-3LtC/lrJofNTEeUmlFWpBIccrpEx5KcjHe6LHnz7DYejeuxX4P7cGjJBWsBgs897kXqQwfktYKFBOy9VXLh4TA==}
+  /@graphql-mesh/types/0.85.1_graphql@16.6.0:
+    resolution: {integrity: sha512-LiuTWH8yflaaU9SkR62aP6KD9XR9MQmoiMQuQBGmwwKnx+cNXt1yYV4IyEL2Xu0RHBo0Xw0O2w1nqjuamSvMQQ==}
     peerDependencies:
       graphql: '*'
     dependencies:
-      '@graphql-mesh/store': 0.8.55_graphql@16.6.0
+      '@graphql-mesh/store': 0.8.56_graphql@16.6.0
       '@graphql-tools/batch-delegate': 8.4.1_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.8_graphql@16.6.0
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
@@ -7229,14 +7308,14 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/utils/0.41.22_graphql@16.6.0:
-    resolution: {integrity: sha512-S6g3fdGS9LTYLgsOn0DNcwagmzrrL139zKyKsi13SGxwe6hPD0+E1vfiCNMs2UNaKykWTSPJF3RD2LaVRy/0NQ==}
+  /@graphql-mesh/utils/0.42.0_graphql@16.6.0:
+    resolution: {integrity: sha512-bYMoErraT8nVTxzcP85oHpIV2/09hD74ZEH7ax0pqXFJgRKms9cdDKGeqo7kafW+fiHuDzyKce1eV9Wo++AFRQ==}
     peerDependencies:
       graphql: '*'
     dependencies:
       '@graphql-mesh/cross-helpers': 0.2.6_graphql@16.6.0
       '@graphql-mesh/string-interpolation': 0.3.2_graphql@16.6.0
-      '@graphql-mesh/types': 0.85.0_graphql@16.6.0
+      '@graphql-mesh/types': 0.85.1_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.8_graphql@16.6.0
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
       graphql: 16.6.0
@@ -10179,8 +10258,8 @@ packages:
       '@types/ms': 0.7.31
     dev: false
 
-  /@types/eslint/8.4.6:
-    resolution: {integrity: sha512-/fqTbjxyFUaYNO7VcW5g+4npmqVACz1bB7RTHYuLj+PRjw9hrCwrUXVQFpChUS0JsyEFvMZ7U/PfmvWgxJhI9g==}
+  /@types/eslint/8.4.7:
+    resolution: {integrity: sha512-ehM7cCt2RSFs42mb+lcmhFT9ouIlV92PuaeRGn8N8c98oMjG4Z5pJHA9b1QiCcuqnbPSHcyfiD3mlhqMaHsQIw==}
     dependencies:
       '@types/estree': 1.0.0
       '@types/json-schema': 7.0.11
