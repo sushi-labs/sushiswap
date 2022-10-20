@@ -4,10 +4,4 @@
 
 ### Minor Changes
 
-- dadc282f: initial release
-
-## 0.0.1
-
-### Patch Changes
-
-- 885967330: initial release
+- initial release
