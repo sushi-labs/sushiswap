@@ -10,7 +10,7 @@ import {
   Trade,
   TradeType,
   Version as TradeVersion,
-} from '@sushiswap/exchange'
+} from '@sushiswap/amm'
 import { RouteStatus } from '@sushiswap/tines'
 import { useBentoBoxTotal } from '@sushiswap/wagmi'
 import { CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS, STABLE_POOL_FACTORY_ADDRESS } from 'config'

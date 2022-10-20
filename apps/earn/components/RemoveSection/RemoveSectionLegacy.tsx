@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Amount, Native } from '@sushiswap/currency'
-import { calculateSlippageAmount } from '@sushiswap/exchange'
+import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Pair } from '@sushiswap/graph-client/.graphclient'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'

@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
-import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/exchange'
+import { ConstantProductPool, Fee, Pair, StablePool } from '@sushiswap/amm'
 import { ReactElement } from 'react'
 
 import { ConstantProductPoolState, PairState, StablePoolState } from '../../hooks'

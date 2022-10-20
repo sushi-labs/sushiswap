@@ -1,4 +1,4 @@
-import { Fee } from '@sushiswap/exchange'
+import { Fee } from '@sushiswap/amm'
 import { FC, useEffect } from 'react'
 
 import { useConstantProductPool } from '../../hooks'

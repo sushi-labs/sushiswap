@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
-import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/exchange'
+import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/amm'
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'

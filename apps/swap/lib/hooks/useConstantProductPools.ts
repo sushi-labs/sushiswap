@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Token, Type as Currency } from '@sushiswap/currency'
-import { ConstantProductPool } from '@sushiswap/exchange'
+import { ConstantProductPool } from '@sushiswap/amm'
 import CONSTANT_PRODUCT_POOL_ABI from 'abis/constant-product-pool.json'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
