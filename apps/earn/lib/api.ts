@@ -38,6 +38,7 @@ export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination
   networks: string
   where?: string
   pagination: string
+  farmsOnly?: string
 }
 
 export const getPools = async (query?: GetPoolsQuery) => {
@@ -59,6 +60,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+    const farmsOnly = query?.farmsOnly === 'true'
 
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
@@ -68,6 +70,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
       orderBy,
       orderDirection,
       chainIds,
+      farmsOnly,
     })
     return crossChainPairs
   } catch (error) {

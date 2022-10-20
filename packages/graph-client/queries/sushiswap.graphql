@@ -94,6 +94,7 @@ query CrossChainPairs(
   $block: Block_height
   $pagination: Pagination
   $chainIds: [Int!]!
+  $farmsOnly: Boolean
 ) {
   crossChainPairs(
     first: $first, 
@@ -103,7 +104,8 @@ query CrossChainPairs(
     orderDirection: $orderDirection,
     block: $block, 
     pagination: $pagination,
-    chainIds: $chainIds
+    chainIds: $chainIds,
+    farmsOnly: $farmsOnly
   ) {
     id
     chainId

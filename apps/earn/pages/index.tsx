@@ -7,6 +7,7 @@ import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
 import { getBundles, getPoolCount, getPools, GetPoolsQuery, getSushiBar } from '../lib/api'
+import { AVAILABLE_POOL_TYPE_MAP } from '../lib/constants'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
@@ -19,6 +20,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   ])
 
   const selectedNetworks = query && typeof query.networks === 'string' ? query.networks.split(',') : SUPPORTED_CHAIN_IDS
+  const selectedPoolTypes = Object.keys(AVAILABLE_POOL_TYPE_MAP)
+
   return {
     props: {
       selectedNetworks,
@@ -33,6 +36,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
               },
             ],
             selectedNetworks,
+            selectedPoolTypes,
+            farmsOnly: false,
             pagination: {
               pageIndex: 0,
               pageSize: 20,

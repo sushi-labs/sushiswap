@@ -32,6 +32,8 @@ export const GenericTable = <T extends { id: string }>({
   linkFormatter,
 }: GenericTableProps<T>) => {
   const [showOverlay, setShowOverlay] = useState(false)
+  const [popupInvisible, setPopupInvisible] = useState(false)
+
   const headers = table.getFlatHeaders()
 
   return (
@@ -75,6 +77,7 @@ export const GenericTable = <T extends { id: string }>({
                 if (HoverElement) {
                   return (
                     <Tooltip
+                      {...(popupInvisible && { popupVisible: false })}
                       destroyTooltipOnHide={true}
                       key={row.id}
                       trigger="hover"
@@ -84,7 +87,8 @@ export const GenericTable = <T extends { id: string }>({
                         <Table.tr
                           onClick={(e) => {
                             if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
-                              setShowOverlay(true)
+                              setPopupInvisible(true)
+                              setTimeout(() => setShowOverlay(true), 250)
                             }
                           }}
                           className="cursor-pointer"
