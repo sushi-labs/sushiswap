@@ -12,7 +12,7 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "dependencies": {
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/tines": "^1.0.0-canary.76",
+    "@sushiswap/tines": "workspace:*",
     "@vercel/node": "^1.14.1",
     "lodash.flatmap": "^4.5.0"
   },
