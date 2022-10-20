@@ -23,7 +23,7 @@ describe('price feed mappings', () => {
         if (priceFeed.to === DAI_ADDRESS[chainId]) {
           expect(priceFeed.toDecimals).toEqual(DAI[chainId].decimals)
         }
-        // Always expect decimals === toDecimals
+        // Always expect decimals (oracle decimals) to equal toDecimals
         if (priceFeed.decimals !== priceFeed.toDecimals) console.log(chainId, key, priceFeed)
         expect(priceFeed.decimals).toEqual(priceFeed.toDecimals)
       }

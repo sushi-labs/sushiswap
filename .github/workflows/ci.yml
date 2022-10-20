@@ -32,7 +32,7 @@ jobs:
         TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
  
       steps:
-        - name: Check out code
+        - name: Check out
           uses: actions/checkout@v3
           with:
             fetch-depth: 2
@@ -41,7 +41,7 @@ jobs:
           with:
             version: 7
  
-        - name: Setup Node.js environment
+        - name: Setup Node.js
           uses: actions/setup-node@v3
           with:
             node-version: 16
