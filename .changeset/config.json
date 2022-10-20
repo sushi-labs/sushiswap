@@ -29,6 +29,8 @@
       "token-logo-api",
       "token-price-api",
       "farms-script",
-      "price-script"
+      "price-script",
+      "@sushiswap/amm",
+      "@sushiswap/wagmi"
     ]
   }
