@@ -31,15 +31,17 @@ enum Action {
   CALL = 30,
 }
 
-import { Amount, Currency, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { getAddress } from '@ethersproject/address'
+import { Amount, Currency, Share, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { KashiPairMediumRiskV1 as KashiPairMediumRiskV1Contract } from '@sushiswap/kashi/typechain'
 import { PromiseOrValue } from '@sushiswap/kashi/typechain/common'
 import { calculateGasMargin } from '@sushiswap/wagmi'
 import { Signature } from 'ethers'
 import { UserRejectedRequestError } from 'wagmi'
 
+// Not really neccasary here, but could be a nice pattern for SushiXSwap
 export class BentoBoxCooker<T> {
-  add: (action: Action, data: string, value: BigNumberish) => T
+  private readonly add: (action: Action, data: string, value: BigNumberish) => T
   constructor(add: (action: Action, data: string, value: BigNumberish) => T) {
     this.add = add
   }
@@ -65,12 +67,14 @@ export default class KashiCooker {
   private readonly chainId: number
   private readonly contract: KashiPairMediumRiskV1Contract
   private readonly pair: KashiMediumRiskLendingPairV1
-
-  private bentoBoxCooker: BentoBoxCooker<KashiCooker>
-
-  private actions: Action[]
-  private values: BigNumber[]
-  private datas: string[]
+  //   private readonly bentoBoxCooker: BentoBoxCooker<KashiCooker>
+  private readonly actions: Action[]
+  private readonly values: BigNumber[]
+  private readonly datas: string[]
+  // Use first return value
+  private readonly USE_VALUE1 = BigNumber.from(-1)
+  // Use second return value
+  private readonly USE_VALUE2 = BigNumber.from(-2)
 
   constructor({
     account,
@@ -83,16 +87,15 @@ export default class KashiCooker {
     contract: KashiPairMediumRiskV1Contract
     pair: KashiMediumRiskLendingPairV1
   }) {
-    this.pair = pair
-    this.account = account || AddressZero
-    this.contract = contract
     this.chainId = chainId
+    this.account = getAddress(account)
+    this.contract = contract
+    this.pair = pair
 
     this.actions = []
     this.values = []
     this.datas = []
-
-    this.bentoBoxCooker = new BentoBoxCooker(this.add)
+    // this.bentoBoxCooker = new BentoBoxCooker(this.add)
   }
 
   add(action: Action, data: string, value: BigNumberish = Zero): KashiCooker {
@@ -102,20 +105,13 @@ export default class KashiCooker {
     return this
   }
 
-  setMasterContractApproval({ v, r, s }: Signature): void {
-    this.add(
+  setMasterContractApproval({ v, r, s }: Signature): KashiCooker {
+    return this.add(
       Action.BENTO_SETAPPROVAL,
       defaultAbiCoder.encode(
         ['address', 'address', 'bool', 'uint8', 'bytes32', 'bytes32'],
         [this.account, this.pair.masterContract, true, v, r, s]
       )
-    )
-  }
-
-  updateExchangeRate(mustUpdate = false, minRate = Zero, maxRate = Zero): KashiCooker {
-    return this.add(
-      Action.UPDATE_EXCHANGE_RATE,
-      defaultAbiCoder.encode(['bool', 'uint256', 'uint256'], [mustUpdate, minRate, maxRate])
     )
   }
 
@@ -131,65 +127,110 @@ export default class KashiCooker {
     return this.bentoBoxTransfer(this.pair.asset.wrapped.address, to, share)
   }
 
-  bentoBoxDeposit(token: string, to: string, share: BigNumber): KashiCooker {
-    const useNative = this.pair.asset.wrapped.address === WNATIVE_ADDRESS[this.chainId]
+  bentoBoxDeposit(to: string, amount: Amount<Currency>, share: Share<Currency>): KashiCooker {
     return this.add(
       Action.BENTO_DEPOSIT,
-      defaultAbiCoder.encode(['address', 'address', 'int256', 'int256'], [token, to, 0, share]),
-      useNative ? share : Zero
-    )
-  }
-
-  addCollateral(amount: BigNumber): KashiCooker {
-    const useNative = this.pair.collateral.wrapped.address === WNATIVE_ADDRESS[this.chainId]
-
-    this.add(
-      Action.BENTO_DEPOSIT,
       defaultAbiCoder.encode(
         ['address', 'address', 'int256', 'int256'],
-        [useNative ? AddressZero : this.pair.collateral.wrapped.address, this.account, amount, Zero]
+        [
+          amount.currency.isNative ? AddressZero : amount.currency.address,
+          to,
+          amount.quotient.toString(),
+          share.quotient.toString(),
+        ]
       ),
-      useNative ? amount : Zero
+      amount.currency.isNative ? amount.quotient.toString() : Zero
     )
-    const share: BigNumber = BigNumber.from(-2)
-    this.add(Action.ADD_COLLATERAL, defaultAbiCoder.encode(['int256', 'address', 'bool'], [share, this.account, false]))
-    return this
   }
 
-  addAsset(amount: Amount<Currency>): KashiCooker {
-    const useNative = this.pair.asset.wrapped.address === WNATIVE_ADDRESS[this.chainId]
+  bentoBoxWithdraw(to: string, amount: Amount<Currency>, share: Share<Currency>): KashiCooker {
+    return this.add(
+      Action.BENTO_WITHDRAW,
+      defaultAbiCoder.encode(
+        ['address', 'address', 'int256', 'int256'],
+        [
+          amount.currency.isNative ? AddressZero : amount.currency.address,
+          to,
+          amount.quotient.toString(),
+          share.quotient.toString(),
+        ]
+      )
+    )
+  }
 
+  updateExchangeRate(mustUpdate = false, minRate = Zero, maxRate = Zero): KashiCooker {
+    return this.add(
+      Action.UPDATE_EXCHANGE_RATE,
+      defaultAbiCoder.encode(['bool', 'uint256', 'uint256'], [mustUpdate, minRate, maxRate])
+    )
+  }
+
+  addAsset(
+    amount: Amount<Currency>,
+    share: Share<Currency> = Share.fromRawShare(this.pair.asset),
+    to: string = this.account,
+    skim = false
+  ): KashiCooker {
+    this.bentoBoxDeposit(to, amount, share)
     this.add(
       Action.BENTO_DEPOSIT,
       defaultAbiCoder.encode(
         ['address', 'address', 'int256', 'int256'],
-        [useNative ? AddressZero : this.pair.asset.wrapped.address, this.account, amount.quotient.toString(), Zero]
+        [
+          amount.currency.isNative ? AddressZero : amount.currency.address,
+          to,
+          amount.quotient.toString(),
+          share.quotient.toString(),
+        ]
+      ),
+      amount.currency.isNative ? amount.quotient.toString() : Zero
+    )
+    return this.add(
+      Action.ADD_ASSET,
+      defaultAbiCoder.encode(['int256', 'address', 'bool'], [this.USE_VALUE2, to, skim])
+    )
+  }
+
+  removeAssetToBentoBox(fraction: BigNumber, to: string = this.account): KashiCooker {
+    return this.add(Action.REMOVE_ASSET, defaultAbiCoder.encode(['int256', 'address'], [fraction, to]))
+  }
+
+  removeAssetToWallet(fraction: BigNumber, to: string = this.account): KashiCooker {
+    this.removeAssetToBentoBox(fraction, to)
+    const useNative = this.pair.asset.wrapped.address === WNATIVE_ADDRESS[this.chainId]
+    return this.add(
+      Action.BENTO_WITHDRAW,
+      defaultAbiCoder.encode(
+        ['address', 'address', 'int256', 'int256'],
+        [useNative ? AddressZero : this.pair.asset.wrapped.address, to, Zero, this.USE_VALUE1]
+      )
+    )
+  }
+
+  addCollateralFromBentoBox(amount: Amount<Currency>, to = this.account, skim = false): KashiCooker {
+    return this.add(
+      Action.ADD_COLLATERAL,
+      defaultAbiCoder.encode(['int256', 'address', 'bool'], [amount.quotient.toString(), to, skim])
+    )
+  }
+
+  addCollateralFromWallet(amount: Amount<Currency>, to = this.account, skim = false): KashiCooker {
+    const useNative = this.pair.collateral.wrapped.address === WNATIVE_ADDRESS[this.chainId]
+    this.add(
+      Action.BENTO_DEPOSIT,
+      defaultAbiCoder.encode(
+        ['address', 'address', 'int256', 'int256'],
+        [useNative ? AddressZero : this.pair.collateral.wrapped.address, to, amount.quotient.toString(), Zero]
       ),
       useNative ? amount.quotient.toString() : Zero
     )
-    const share: BigNumber = BigNumber.from(-2)
-
-    this.add(Action.ADD_ASSET, defaultAbiCoder.encode(['int256', 'address', 'bool'], [share, this.account, false]))
-
-    return this
+    return this.add(
+      Action.ADD_COLLATERAL,
+      defaultAbiCoder.encode(['int256', 'address', 'bool'], [this.USE_VALUE2, to, skim])
+    )
   }
 
-  removeAsset(fraction: BigNumber, toBento: boolean): KashiCooker {
-    this.add(Action.REMOVE_ASSET, defaultAbiCoder.encode(['int256', 'address'], [fraction, this.account]))
-    if (!toBento) {
-      const useNative = this.pair.asset.wrapped.address === WNATIVE_ADDRESS[this.chainId]
-      this.add(
-        Action.BENTO_WITHDRAW,
-        defaultAbiCoder.encode(
-          ['address', 'address', 'int256', 'int256'],
-          [useNative ? AddressZero : this.pair.asset.wrapped.address, this.account, Zero, -1]
-        )
-      )
-    }
-    return this
-  }
-
-  action(
+  call(
     address: string,
     value: BigNumberish,
     data: string,

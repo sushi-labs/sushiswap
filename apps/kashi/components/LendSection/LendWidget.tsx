@@ -57,7 +57,9 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
     cooker.addAsset(amount)
 
     if (deadBalance.isZero()) {
-      cooker.removeAsset(BigNumber.from(1000), true)
+      // can't we do this alone?
+      // cooker.removeAssetToBentoBox(BigNumber.from(1000), '0x000000000000000000000000000000000000dead')
+      cooker.removeAssetToBentoBox(BigNumber.from(1000))
       cooker.bentoBoxTransferAsset('0x000000000000000000000000000000000000dead', BigNumber.from(1000))
     }
 

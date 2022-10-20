@@ -334,34 +334,17 @@ export class KashiMediumRiskLendingPairV1 {
     }
   }
 
-  // /**
-  //  * The current utilization in %
-  //  */
-  // public get utilization(): Percent {
-  //   return new Percent(
-  //     JSBI.divide(JSBI.multiply(JSBI.BigInt(1e18), this.currentBorrowAmount.quotient), this.currentAllAssets.quotient)
-  //   )
-  // }
+  private takeFee(amount: JSBI): JSBI {
+    return JSBI.subtract(amount, JSBI.divide(JSBI.multiply(amount, this.PROTOCOL_FEE), this.PROTOCOL_FEE_DIVISOR))
+  }
 
   /**
    * The current utilization in %
    */
   public get utilization(): JSBI {
-    if (this.currentAllAssets.equalTo(ZERO)) return JSBI.BigInt(0)
+    if (this.currentAllAssets.equalTo(ZERO)) return ZERO
     return this.currentBorrowAmount.multiply(1e18).divide(this.currentAllAssets).quotient
   }
-
-  private takeFee(amount: JSBI): JSBI {
-    return JSBI.subtract(amount, JSBI.divide(JSBI.multiply(amount, this.PROTOCOL_FEE), this.PROTOCOL_FEE_DIVISOR))
-  }
-
-  // /**
-  //  * Interest per year received by lenders as of now
-  //  */
-  // public get supplyAPR(): Percent {
-  //   return takeFee(JSBI.divide(JSBI.multiply(this.interestPerYear, this.utilization.q), JSBI.BigInt(1e18)))
-  //   return new Percent(1, 100)
-  // }
 
   /**
    * The 'mimimum' exchange rate
@@ -378,25 +361,7 @@ export class KashiMediumRiskLendingPairV1 {
   }
 
   /**
-   * The overall health of the lending pair
-   */
-  public get marketHealth(): Percent {
-    if (JSBI.equal(this.currentBorrowAmount.quotient, ZERO) || JSBI.equal(this.maximumExchangeRate, ZERO)) {
-      return new Percent(0)
-    }
-
-    return new Percent(
-      this.totalCollateralAmount
-        .multiply(1e18)
-        .divide(this.maximumExchangeRate)
-        .multiply(1e18)
-        .divide(this.currentBorrowAmount).quotient,
-      JSBI.BigInt(1e18)
-    )
-  }
-
-  /**
-   * Interest per year charged to borrowers if accrue was called
+   * Interest per year charged to borrowers as of now
    */
   public get borrowAPR(): Percent {
     return new Percent(this.interestPerYear, JSBI.BigInt(1e18))
