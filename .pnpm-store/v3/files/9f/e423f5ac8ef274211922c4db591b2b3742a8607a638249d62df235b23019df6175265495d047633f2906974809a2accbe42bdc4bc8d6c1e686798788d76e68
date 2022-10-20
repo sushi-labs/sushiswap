@@ -1,0 +1,124 @@
+'use strict';
+
+const wrap = require('@graphql-tools/wrap');
+const utils = require('@graphql-mesh/utils');
+const graphqlScalars = require('graphql-scalars');
+const graphql = require('graphql');
+const utils$1 = require('@graphql-tools/utils');
+
+const ignoreList = [
+    'Int',
+    'Float',
+    'String',
+    'Boolean',
+    'ID',
+    'date',
+    'hostname',
+    'regex',
+    'json-pointer',
+    'relative-json-pointer',
+    'uri-reference',
+    'uri-template',
+    ...Object.keys(graphqlScalars.resolvers),
+];
+
+class WrapPrefix {
+    constructor(options) {
+        this.transforms = [];
+        const { apiName, config } = options;
+        let prefix = null;
+        if (config.value) {
+            prefix = config.value;
+        }
+        else if (apiName) {
+            prefix = `${apiName}_`;
+        }
+        if (!prefix) {
+            throw new Error(`Transform 'prefix' has missing config: prefix`);
+        }
+        const ignoreList$1 = [...(config.ignore || []), ...ignoreList];
+        const includeTypes = config.includeTypes !== false;
+        if (includeTypes) {
+            this.transforms.push(new wrap.RenameTypes(typeName => (ignoreList$1.includes(typeName) ? typeName : `${prefix}${typeName}`)));
+        }
+        const includeRootOperations = config.includeRootOperations === true;
+        if (includeRootOperations) {
+            this.transforms.push(new wrap.RenameRootFields((typeName, fieldName) => ignoreList$1.includes(typeName) || ignoreList$1.includes(`${typeName}.${fieldName}`)
+                ? fieldName
+                : `${prefix}${fieldName}`));
+        }
+    }
+    transformSchema(originalWrappingSchema, subschemaConfig, transformedSchema) {
+        return utils.applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    }
+    transformRequest(originalRequest, delegationContext, transformationContext) {
+        return utils.applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    }
+    transformResult(originalResult, delegationContext, transformationContext) {
+        return utils.applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+    }
+}
+
+const rootOperations = new Set(['Query', 'Mutation', 'Subscription']);
+class BarePrefix {
+    constructor(options) {
+        this.noWrap = true;
+        const { apiName, config } = options;
+        this.ignoreList = [...(config.ignore || []), ...ignoreList];
+        this.includeRootOperations = config.includeRootOperations === true;
+        this.includeTypes = config.includeTypes !== false;
+        this.prefix = null;
+        if (config.value) {
+            this.prefix = config.value;
+        }
+        else if (apiName) {
+            this.prefix = `${apiName}_`;
+        }
+        if (!this.prefix) {
+            throw new Error(`Transform 'prefix' has missing config: prefix`);
+        }
+    }
+    transformSchema(schema) {
+        return utils$1.mapSchema(schema, {
+            [utils$1.MapperKind.TYPE]: (type) => {
+                if (this.includeTypes && !graphql.isSpecifiedScalarType(type)) {
+                    const currentName = type.name;
+                    if (!this.ignoreList.includes(currentName)) {
+                        return utils$1.renameType(type, this.prefix + currentName);
+                    }
+                }
+                return undefined;
+            },
+            [utils$1.MapperKind.ABSTRACT_TYPE]: (type) => {
+                if (this.includeTypes && !graphql.isSpecifiedScalarType(type)) {
+                    const existingResolver = type.resolveType;
+                    type.resolveType = (data, context, info, abstractType) => {
+                        const typeName = existingResolver(data, context, info, abstractType);
+                        return this.prefix + typeName;
+                    };
+                    const currentName = type.name;
+                    return utils$1.renameType(type, this.prefix + currentName);
+                }
+                return undefined;
+            },
+            [utils$1.MapperKind.ROOT_OBJECT]() {
+                return undefined;
+            },
+            ...(this.includeRootOperations && {
+                [utils$1.MapperKind.COMPOSITE_FIELD]: (fieldConfig, fieldName, typeName) => {
+                    return !rootOperations.has(typeName) || // check we're in a root Type
+                        this.ignoreList.includes(typeName) || // check if type is to be ignored
+                        this.ignoreList.includes(`${typeName}.${fieldName}`) // check if field in type is to be ignored
+                        ? undefined // do not perform any change
+                        : [`${this.prefix}${fieldName}`, fieldConfig]; // apply prefix
+                },
+            }),
+        });
+    }
+}
+
+const PrefixTransform = (function PrefixTransform(options) {
+    return options.config.mode === 'bare' ? new BarePrefix(options) : new WrapPrefix(options);
+});
+
+module.exports = PrefixTransform;

@@ -1,0 +1,182 @@
+/**
+ * table-core
+ *
+ * Copyright (c) TanStack
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var utils = require('../utils.js');
+
+//
+const Expanding = {
+  getInitialState: state => {
+    return {
+      expanded: {},
+      ...state
+    };
+  },
+  getDefaultOptions: instance => {
+    return {
+      onExpandedChange: utils.makeStateUpdater('expanded', instance),
+      autoResetExpanded: true,
+      paginateExpandedRows: true
+    };
+  },
+  createInstance: instance => {
+    let registered = false;
+    let queued = false;
+    return {
+      _autoResetExpanded: () => {
+        if (!registered) {
+          instance._queue(() => {
+            registered = true;
+          });
+
+          return;
+        }
+
+        if (instance.options.autoResetAll === false) {
+          return;
+        }
+
+        if (instance.options.autoResetAll === true || instance.options.autoResetExpanded) {
+          if (queued) return;
+          queued = true;
+
+          instance._queue(() => {
+            instance.resetExpanded();
+            queued = false;
+          });
+        }
+      },
+      setExpanded: updater => instance.options.onExpandedChange == null ? void 0 : instance.options.onExpandedChange(updater),
+      toggleAllRowsExpanded: expanded => {
+        if (expanded != null ? expanded : !instance.getIsAllRowsExpanded()) {
+          instance.setExpanded(true);
+        } else {
+          instance.setExpanded({});
+        }
+      },
+      resetExpanded: defaultState => {
+        var _instance$initialStat, _instance$initialStat2;
+
+        instance.setExpanded(defaultState ? {} : (_instance$initialStat = (_instance$initialStat2 = instance.initialState) == null ? void 0 : _instance$initialStat2.expanded) != null ? _instance$initialStat : {});
+      },
+      getCanSomeRowsExpand: () => {
+        return instance.getRowModel().flatRows.some(row => row.getCanExpand());
+      },
+      getToggleAllRowsExpandedHandler: () => {
+        return e => {
+          e.persist == null ? void 0 : e.persist();
+          instance.toggleAllRowsExpanded();
+        };
+      },
+      getIsSomeRowsExpanded: () => {
+        const expanded = instance.getState().expanded;
+        return expanded === true || Object.values(expanded).some(Boolean);
+      },
+      getIsAllRowsExpanded: () => {
+        const expanded = instance.getState().expanded; // If expanded is true, save some cycles and return true
+
+        if (expanded === true) {
+          return true;
+        } // If any row is not expanded, return false
+
+
+        if (instance.getRowModel().flatRows.some(row => row.getIsExpanded())) {
+          return false;
+        } // They must all be expanded :shrug:
+
+
+        return true;
+      },
+      getExpandedDepth: () => {
+        let maxDepth = 0;
+        const rowIds = instance.getState().expanded === true ? Object.keys(instance.getRowModel().rowsById) : Object.keys(instance.getState().expanded);
+        rowIds.forEach(id => {
+          const splitId = id.split('.');
+          maxDepth = Math.max(maxDepth, splitId.length);
+        });
+        return maxDepth;
+      },
+      getPreExpandedRowModel: () => instance.getGroupedRowModel(),
+      getExpandedRowModel: () => {
+        if (!instance._getExpandedRowModel && instance.options.getExpandedRowModel) {
+          instance._getExpandedRowModel = instance.options.getExpandedRowModel(instance);
+        }
+
+        if (instance.options.manualExpanding || !instance._getExpandedRowModel) {
+          return instance.getPreExpandedRowModel();
+        }
+
+        return instance._getExpandedRowModel();
+      }
+    };
+  },
+  createRow: (row, instance) => {
+    return {
+      toggleExpanded: expanded => {
+        instance.setExpanded(old => {
+          var _expanded;
+
+          const exists = old === true ? true : !!(old != null && old[row.id]);
+          let oldExpanded = {};
+
+          if (old === true) {
+            Object.keys(instance.getRowModel().rowsById).forEach(rowId => {
+              oldExpanded[rowId] = true;
+            });
+          } else {
+            oldExpanded = old;
+          }
+
+          expanded = (_expanded = expanded) != null ? _expanded : !exists;
+
+          if (!exists && expanded) {
+            return { ...oldExpanded,
+              [row.id]: true
+            };
+          }
+
+          if (exists && !expanded) {
+            const {
+              [row.id]: _,
+              ...rest
+            } = oldExpanded;
+            return rest;
+          }
+
+          return old;
+        });
+      },
+      getIsExpanded: () => {
+        var _instance$options$get;
+
+        const expanded = instance.getState().expanded;
+        return !!((_instance$options$get = instance.options.getIsRowExpanded == null ? void 0 : instance.options.getIsRowExpanded(row)) != null ? _instance$options$get : expanded === true || (expanded == null ? void 0 : expanded[row.id]));
+      },
+      getCanExpand: () => {
+        var _instance$options$get2, _instance$options$ena, _row$subRows;
+
+        return ((_instance$options$get2 = instance.options.getRowCanExpand == null ? void 0 : instance.options.getRowCanExpand(row)) != null ? _instance$options$get2 : true) && ((_instance$options$ena = instance.options.enableExpanding) != null ? _instance$options$ena : true) && !!((_row$subRows = row.subRows) != null && _row$subRows.length);
+      },
+      getToggleExpandedHandler: () => {
+        const canExpand = row.getCanExpand();
+        return () => {
+          if (!canExpand) return;
+          row.toggleExpanded();
+        };
+      }
+    };
+  }
+};
+
+exports.Expanding = Expanding;
+//# sourceMappingURL=Expanding.js.map

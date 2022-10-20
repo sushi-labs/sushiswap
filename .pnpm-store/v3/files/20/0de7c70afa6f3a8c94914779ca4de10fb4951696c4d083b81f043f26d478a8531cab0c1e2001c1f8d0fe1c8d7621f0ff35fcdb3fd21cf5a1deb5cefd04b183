@@ -1,0 +1,52 @@
+{
+  "name": "tiny-lru",
+  "description": "Tiny LRU cache for Client or Server",
+  "version": "8.0.2",
+  "homepage": "https://github.com/avoidwork/tiny-lru",
+  "author": "Jason Mulligan <jason.mulligan@avoidwork.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/avoidwork/tiny-lru.git"
+  },
+  "bugs": {
+    "url": "https://github.com/avoidwork/tiny-lru/issues"
+  },
+  "files": [
+    "lib",
+    "*.d.ts"
+  ],
+  "license": "BSD-3-Clause",
+  "source": "src/lru.js",
+  "browser": "lib/tiny-lru.js",
+  "main": "lib/tiny-lru.cjs.js",
+  "module": "lib/tiny-lru.esm.js",
+  "types": "tiny-lru.d.ts",
+  "engines": {
+    "node": ">=6"
+  },
+  "engineStrict": true,
+  "scripts": {
+    "benchmark": "node benchmark.js",
+    "changelog": "auto-changelog -p",
+    "test": "nodeunit test/lru.js",
+    "build": "rollup --config"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "auto-changelog": "^2.4.0",
+    "nodeunit-x": "^0.15.0",
+    "precise": "^1.1.0",
+    "rollup": "^2.67.2",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "keywords": [
+    "LRU",
+    "cache",
+    "tiny",
+    "client",
+    "server",
+    "least",
+    "recently",
+    "used"
+  ]
+}

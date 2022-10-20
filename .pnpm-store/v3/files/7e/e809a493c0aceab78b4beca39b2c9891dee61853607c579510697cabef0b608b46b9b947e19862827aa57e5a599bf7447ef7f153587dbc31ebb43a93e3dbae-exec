@@ -1,0 +1,47 @@
+#!/usr/bin/env node
+
+var
+	lambda = require( "../lib/main.js" ),
+	program = require( "commander" );
+
+program.version('1.0.1')
+
+program
+  .usage('deploy <file>')
+  .command( "deploy <file>" )
+  .description( "Deploy your application to Amazon Lambda" )
+  .action( function( prg, options ) {
+	lambda.deploy( prg );
+  } );
+
+program
+	.usage('delete <file>')
+	.command( "delete <file>" )
+	.description( "Delete Function" )
+	.action( function( prg ) {
+		lambda.delete( prg );
+	});
+
+program
+	.usage('invoke <file>')
+	.command( "invoke <file>" )
+	.description( "Invoke Function" )
+	.action( function( prg ) {
+		lambda.invoke( prg );
+	});
+
+program
+	//.requiredOption
+	.option('--docker', 'start inside docker')
+	.usage('start <file>')
+	.command( "start <file>" )
+	.description( "start Function" )
+	.action( function( prg ) {
+		if (program.docker) {
+			lambda.start_docker( prg )
+			return;
+		}
+		lambda.start( prg );
+	});
+
+program.parse( process.argv );

@@ -1,0 +1,50 @@
+{
+  "name": "@graphprotocol/client-auto-type-merging",
+  "version": "1.0.16",
+  "description": "",
+  "sideEffects": false,
+  "peerDependencies": {
+    "graphql": "^15.2.0 || ^16.0.0",
+    "@graphql-mesh/types": "^0.78.0 || ^0.79.0 || ^0.80.0 || ^0.81.0 || ^0.82.0 || ^0.83.0 || ^0.84.0"
+  },
+  "dependencies": {
+    "@graphql-tools/delegate": "9.0.8",
+    "@graphql-mesh/transform-type-merging": "0.4.44",
+    "tslib": "^2.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-client.git",
+    "directory": "packages/block-auto-type-merging"
+  },
+  "keywords": [
+    "thegraph",
+    "graphql",
+    "client"
+  ],
+  "license": "MIT",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "typings": "typings/index.d.ts",
+  "typescript": {
+    "definition": "typings/index.d.ts"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./typings/index.d.cts",
+        "default": "./cjs/index.js"
+      },
+      "import": {
+        "types": "./typings/index.d.ts",
+        "default": "./esm/index.js"
+      },
+      "default": {
+        "types": "./typings/index.d.ts",
+        "default": "./esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  }
+}

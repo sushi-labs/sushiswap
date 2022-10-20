@@ -1,0 +1,23 @@
+{
+  "name": "@sushiswap/bentobox-sdk",
+  "version": "1.0.2",
+  "description": "SDK for BentoBoxV1",
+  "main": "index.js",
+  "dependencies": {
+    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#371a01c11465eb1c881193c60a53c0bf15ee8a19"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sushiswap/bentobox-sdk.git"
+  },
+  "author": "BoringCrypto",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sushiswap/bentobox-sdk/issues"
+  },
+  "homepage": "https://github.com/sushiswap/bentobox-sdk#readme"
+}

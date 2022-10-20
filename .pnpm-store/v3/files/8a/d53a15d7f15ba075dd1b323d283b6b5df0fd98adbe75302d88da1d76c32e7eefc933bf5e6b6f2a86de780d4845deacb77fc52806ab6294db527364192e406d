@@ -1,0 +1,72 @@
+{
+  "name": "@walletconnect/signer-connection",
+  "version": "1.7.8",
+  "description": "Signer Connection for WalletConnect Providers",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build:pre": "run-s clean",
+    "build:cjs": "npx tsc -p tsconfig.cjs.json",
+    "build:esm": "npx tsc -p tsconfig.esm.json",
+    "build:umd": "webpack",
+    "build": "run-s build:pre build:cjs build:esm build:umd",
+    "test": "env TS_NODE_PROJECT=\"tsconfig.cjs.json\" mocha -r ts-node/register ./test/**/*.spec.ts --exit"
+  },
+  "keywords": [
+    "wallet",
+    "walletconnect",
+    "ethereum",
+    "jsonrpc",
+    "mobile",
+    "qrcode",
+    "web3",
+    "crypto",
+    "cryptocurrency",
+    "dapp"
+  ],
+  "author": "WalletConnect, Inc. <walletconnect.com>",
+  "homepage": "https://github.com/WalletConnect/walletconnect-monorepo/",
+  "license": "Apache-2.0",
+  "main": "dist/cjs/index.js",
+  "browser": "dist/esm/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "unpkg": "dist/umd/index.min.js",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walletconnect/walletconnect-monorepo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/walletconnect/walletconnect-monorepo/issues"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.8.3",
+    "@babel/core": "7.8.3",
+    "@babel/node": "7.8.3",
+    "@babel/polyfill": "7.8.3",
+    "@babel/preset-env": "7.8.3",
+    "@babel/preset-typescript": "7.8.3",
+    "@babel/register": "7.8.3",
+    "@types/chai": "4.2.14",
+    "@types/jest": "22.2.3",
+    "@types/lodash.isnumber": "3.0.6",
+    "@types/mocha": "8.0.4",
+    "@types/node": "12.12.14",
+    "chai": "4.2.0",
+    "mocha": "8.2.1",
+    "npm-run-all": "4.1.5",
+    "ts-node": "9.0.0",
+    "webpack": "4.41.5",
+    "webpack-cli": "3.3.10"
+  },
+  "dependencies": {
+    "@walletconnect/client": "^1.7.8",
+    "@walletconnect/jsonrpc-types": "^1.0.0",
+    "@walletconnect/jsonrpc-utils": "^1.0.0",
+    "@walletconnect/qrcode-modal": "^1.7.8",
+    "@walletconnect/types": "^1.7.8",
+    "eventemitter3": "4.0.7"
+  },
+  "gitHead": "165f7993c2acc907c653c02847fb02721052c6e7"
+}

@@ -1,0 +1,25 @@
+{
+    "name": "@types/workbox-routing",
+    "version": "4.3.1",
+    "description": "TypeScript definitions for workbox-routing",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-routing",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Kwok",
+            "url": "https://github.com/JasonHK",
+            "githubUsername": "JasonHK"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/workbox-routing"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "c1ed30ec0ef3602f14315d7d8515187cd459bc4c7538befaeb52c3d2698cb480",
+    "typeScriptVersion": "3.6"
+}

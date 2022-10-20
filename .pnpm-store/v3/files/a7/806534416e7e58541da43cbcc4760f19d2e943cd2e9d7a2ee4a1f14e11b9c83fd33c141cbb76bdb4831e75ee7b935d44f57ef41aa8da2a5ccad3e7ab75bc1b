@@ -1,0 +1,52 @@
+{
+  "name": "@octokit/auth-oauth-device",
+  "description": "GitHub OAuth Device authentication strategy for JavaScript",
+  "version": "4.0.0",
+  "license": "MIT",
+  "files": [
+    "dist-*/",
+    "bin/"
+  ],
+  "pika": true,
+  "sideEffects": false,
+  "keywords": [
+    "github",
+    "api",
+    "sdk",
+    "toolkit"
+  ],
+  "repository": "github:octokit/auth-oauth-device.js",
+  "dependencies": {
+    "@octokit/oauth-methods": "^2.0.0",
+    "@octokit/request": "^6.0.0",
+    "@octokit/types": "^6.10.0",
+    "universal-user-agent": "^6.0.0"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@octokit/tsconfig": "^1.0.2",
+    "@pika/pack": "^0.5.0",
+    "@pika/plugin-build-node": "^0.9.2",
+    "@pika/plugin-build-web": "^0.9.2",
+    "@pika/plugin-ts-standard-pkg": "^0.9.2",
+    "@types/jest": "^27.0.0",
+    "@types/node": "^16.0.0",
+    "fetch-mock": "^9.11.0",
+    "jest": "^27.0.0",
+    "prettier": "2.7.1",
+    "semantic-release": "^19.0.0",
+    "semantic-release-plugin-update-version-in-files": "^1.1.0",
+    "ts-jest": "^27.0.0-next.12",
+    "typescript": "^4.2.2"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "source": "dist-src/index.js",
+  "types": "dist-types/index.d.ts",
+  "main": "dist-node/index.js",
+  "module": "dist-web/index.js"
+}

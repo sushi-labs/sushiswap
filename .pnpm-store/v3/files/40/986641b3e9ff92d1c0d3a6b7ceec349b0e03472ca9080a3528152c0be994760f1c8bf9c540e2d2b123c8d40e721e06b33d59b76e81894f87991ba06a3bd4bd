@@ -1,0 +1,1 @@
+{"version":3,"file":"sourcify.d.ts","sourceRoot":"","sources":["../../src/sourcify.ts"],"names":[],"mappings":"AAGA,OAAO,EAAC,yBAAyB,EAAC,MAAM,eAAe,CAAC;AAiCxD,wBAAsB,uBAAuB,CAC3C,GAAG,EAAE,yBAAyB,EAC9B,MAAM,CAAC,EAAE;IACP,QAAQ,CAAC,EAAE,MAAM,CAAC;IAClB,YAAY,CAAC,EAAE,MAAM,CAAC;IACtB,oBAAoB,CAAC,EAAE,OAAO,CAAC;CAChC,GACA,OAAO,CAAC,IAAI,CAAC,CA4Ef"}

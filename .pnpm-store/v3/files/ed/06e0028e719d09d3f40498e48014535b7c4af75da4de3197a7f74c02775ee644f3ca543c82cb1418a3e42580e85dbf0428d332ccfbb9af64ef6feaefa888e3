@@ -1,0 +1,39 @@
+{
+  "name": "@sushiswap/chainlink-token-list",
+  "version": "0.1.0",
+  "description": "◦ The SushiSwap Chainlink token list",
+  "main": "dist/sushiswap-chainlink.tokenlist.json",
+  "scripts": {
+    "test": "mocha",
+    "build": "rimraf build && mkdir -p dist && node internal/write.js > dist/sushiswap-chainlink.tokenlist.json",
+    "prepublishOnly": "npm test && npm run build"
+  },
+  "files": [
+    "dist/sushiswap-chainlink.tokenlist.json"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sushiswap/chainlink-token-list.git"
+  },
+  "keywords": [
+    "sushiswap",
+    "chainlink",
+    "token list"
+  ],
+  "author": "Matthew Lilley <hello@matthewlilley.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sushiswap/chainlink-token-list/issues"
+  },
+  "homepage": "https://github.com/sushiswap/chainlink-token-list#readme",
+  "devDependencies": {
+    "@ethersproject/address": "^5.0.2",
+    "@uniswap/token-lists": "^1.0.0-beta.19",
+    "ajv": "^6.12.3",
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "rimraf": "^3.0.2",
+    "config": "workspace:*",
+    "builder": "workspace:*"
+  }
+}

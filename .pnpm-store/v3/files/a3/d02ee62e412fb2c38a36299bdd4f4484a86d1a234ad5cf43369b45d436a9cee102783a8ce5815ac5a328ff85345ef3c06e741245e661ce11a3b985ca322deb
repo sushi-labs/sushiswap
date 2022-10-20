@@ -1,0 +1,53 @@
+{
+  "name": "use-elapsed-time",
+  "version": "3.0.2",
+  "description": "React hook to measure elapsed time using requestAnimationFrame",
+  "main": "./lib/index.js",
+  "module": "./lib/index.module.js",
+  "types": "./lib/index.d.ts",
+  "author": "Vasil Dimitrov",
+  "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "ts-declaration": "tsc --declaration --emitDeclarationOnly --outDir lib",
+    "build": "yarn ts-declaration && node scripts/build.js",
+    "test": "jest --collectCoverage --coverageDirectory=\"coverage\"",
+    "test-watch": "jest --watch",
+    "prepublish": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vydimitrov/use-elapsed-time.git"
+  },
+  "keywords": [
+    "react",
+    "hook",
+    "requestAnimationFrame",
+    "animation",
+    "loop",
+    "elapsed",
+    "time"
+  ],
+  "bugs": {
+    "url": "https://github.com/vydimitrov/use-elapsed-time/issues"
+  },
+  "homepage": "https://github.com/vydimitrov/use-elapsed-time#readme",
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@testing-library/react-hooks": "7.0.2",
+    "@types/jest": "26.0.24",
+    "codecov": "3.8.3",
+    "esbuild": "0.12.24",
+    "jest": "27.1.0",
+    "prettier": "2.3.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "ts-jest": "27.0.5",
+    "typescript": "4.4.2"
+  }
+}

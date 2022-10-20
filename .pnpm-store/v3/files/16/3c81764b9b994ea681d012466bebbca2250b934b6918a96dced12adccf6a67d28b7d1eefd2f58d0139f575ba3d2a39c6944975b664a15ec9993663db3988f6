@@ -1,0 +1,126 @@
+/**
+ * table-core
+ *
+ * Copyright (c) TanStack
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var utils = require('../utils.js');
+
+//
+const Visibility = {
+  getInitialState: state => {
+    return {
+      columnVisibility: {},
+      ...state
+    };
+  },
+  getDefaultOptions: instance => {
+    return {
+      onColumnVisibilityChange: utils.makeStateUpdater('columnVisibility', instance)
+    };
+  },
+  createColumn: (column, instance) => {
+    return {
+      toggleVisibility: value => {
+        if (column.getCanHide()) {
+          instance.setColumnVisibility(old => ({ ...old,
+            [column.id]: value != null ? value : !column.getIsVisible()
+          }));
+        }
+      },
+      getIsVisible: () => {
+        var _instance$getState$co, _instance$getState$co2;
+
+        return (_instance$getState$co = (_instance$getState$co2 = instance.getState().columnVisibility) == null ? void 0 : _instance$getState$co2[column.id]) != null ? _instance$getState$co : true;
+      },
+      getCanHide: () => {
+        var _column$columnDef$ena, _instance$options$ena;
+
+        return ((_column$columnDef$ena = column.columnDef.enableHiding) != null ? _column$columnDef$ena : true) && ((_instance$options$ena = instance.options.enableHiding) != null ? _instance$options$ena : true);
+      },
+      getToggleVisibilityHandler: () => {
+        return e => {
+          column.toggleVisibility == null ? void 0 : column.toggleVisibility(e.target.checked);
+        };
+      }
+    };
+  },
+  createRow: (row, instance) => {
+    return {
+      _getAllVisibleCells: utils.memo(() => [row.getAllCells().filter(cell => cell.column.getIsVisible()).map(d => d.id).join('_')], _ => {
+        return row.getAllCells().filter(cell => cell.column.getIsVisible());
+      }, {
+        key: process.env.NODE_ENV === 'production' && 'row._getAllVisibleCells',
+        debug: () => {
+          var _instance$options$deb;
+
+          return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugRows;
+        }
+      }),
+      getVisibleCells: utils.memo(() => [row.getLeftVisibleCells(), row.getCenterVisibleCells(), row.getRightVisibleCells()], (left, center, right) => [...left, ...center, ...right], {
+        key: process.env.NODE_ENV === 'development' && 'row.getVisibleCells',
+        debug: () => {
+          var _instance$options$deb2;
+
+          return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugRows;
+        }
+      })
+    };
+  },
+  createInstance: instance => {
+    const makeVisibleColumnsMethod = (key, getColumns) => {
+      return utils.memo(() => [getColumns(), getColumns().filter(d => d.getIsVisible()).map(d => d.id).join('_')], columns => {
+        return columns.filter(d => d.getIsVisible == null ? void 0 : d.getIsVisible());
+      }, {
+        key,
+        debug: () => {
+          var _instance$options$deb3;
+
+          return (_instance$options$deb3 = instance.options.debugAll) != null ? _instance$options$deb3 : instance.options.debugColumns;
+        }
+      });
+    };
+
+    return {
+      getVisibleFlatColumns: makeVisibleColumnsMethod('getVisibleFlatColumns', () => instance.getAllFlatColumns()),
+      getVisibleLeafColumns: makeVisibleColumnsMethod('getVisibleLeafColumns', () => instance.getAllLeafColumns()),
+      getLeftVisibleLeafColumns: makeVisibleColumnsMethod('getLeftVisibleLeafColumns', () => instance.getLeftLeafColumns()),
+      getRightVisibleLeafColumns: makeVisibleColumnsMethod('getRightVisibleLeafColumns', () => instance.getRightLeafColumns()),
+      getCenterVisibleLeafColumns: makeVisibleColumnsMethod('getCenterVisibleLeafColumns', () => instance.getCenterLeafColumns()),
+      setColumnVisibility: updater => instance.options.onColumnVisibilityChange == null ? void 0 : instance.options.onColumnVisibilityChange(updater),
+      resetColumnVisibility: defaultState => {
+        var _instance$initialStat;
+
+        instance.setColumnVisibility(defaultState ? {} : (_instance$initialStat = instance.initialState.columnVisibility) != null ? _instance$initialStat : {});
+      },
+      toggleAllColumnsVisible: value => {
+        var _value;
+
+        value = (_value = value) != null ? _value : !instance.getIsAllColumnsVisible();
+        instance.setColumnVisibility(instance.getAllLeafColumns().reduce((obj, column) => ({ ...obj,
+          [column.id]: !value ? !(column.getCanHide != null && column.getCanHide()) : value
+        }), {}));
+      },
+      getIsAllColumnsVisible: () => !instance.getAllLeafColumns().some(column => !(column.getIsVisible != null && column.getIsVisible())),
+      getIsSomeColumnsVisible: () => instance.getAllLeafColumns().some(column => column.getIsVisible == null ? void 0 : column.getIsVisible()),
+      getToggleAllColumnsVisibilityHandler: () => {
+        return e => {
+          var _target;
+
+          instance.toggleAllColumnsVisible((_target = e.target) == null ? void 0 : _target.checked);
+        };
+      }
+    };
+  }
+};
+
+exports.Visibility = Visibility;
+//# sourceMappingURL=Visibility.js.map

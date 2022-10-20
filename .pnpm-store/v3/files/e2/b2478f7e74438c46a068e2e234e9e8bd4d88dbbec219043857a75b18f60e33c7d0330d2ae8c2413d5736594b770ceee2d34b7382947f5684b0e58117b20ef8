@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "solidity-parser-diligence": {
+      "signature": "8aeb305d409b2c4b7e66cb1a7aac680d",
+      "file": true,
+      "replaced": "^0.4.15"
+    }
+  }
+}

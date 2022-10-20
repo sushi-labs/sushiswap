@@ -1,0 +1,21 @@
+{
+  "name": "cookie-cutter",
+  "description": "Browserify-compatible module to get and set cookies in the browser",
+  "version": "0.2.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/cookie-cutter.git"
+  },
+  "main": "index.js",
+  "keywords": [
+    "cookie",
+    "browser",
+    "browserify"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  }
+}

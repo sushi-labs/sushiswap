@@ -1,0 +1,96 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ERC20Noncompliant",
+  "sourceName": "contracts/mocks/ERC20Noncompliant.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "shouldRevert_",
+          "type": "bool"
+        }
+      ],
+      "name": "setup",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "shouldRevert",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5061020b806100206000396000f3fe608060405234801561001057600080fd5b50600436106100675760003560e01c8063a9059cbb11610050578063a9059cbb1461006c578063d3072d8214610094578063e2c169ec146100b557600080fd5b8063095ea7b31461006c57806323b872dd14610081575b600080fd5b61007f61007a366004610146565b6100f4565b005b61007f61008f366004610170565b610108565b6000546100a19060ff1681565b604051901515815260200160405180910390f35b61007f6100c33660046101ac565b600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0016911515919091179055565b60005460ff161561010457600080fd5b5050565b60005460ff161561011857600080fd5b505050565b803573ffffffffffffffffffffffffffffffffffffffff8116811461014157600080fd5b919050565b6000806040838503121561015957600080fd5b6101628361011d565b946020939093013593505050565b60008060006060848603121561018557600080fd5b61018e8461011d565b925061019c6020850161011d565b9150604084013590509250925092565b6000602082840312156101be57600080fd5b813580151581146101ce57600080fd5b939250505056fea2646970667358221220a1e98ab1d9b5155e585a6a5f91553689dba437f5d74f952107a39cc684d0a28764736f6c634300080a0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100675760003560e01c8063a9059cbb11610050578063a9059cbb1461006c578063d3072d8214610094578063e2c169ec146100b557600080fd5b8063095ea7b31461006c57806323b872dd14610081575b600080fd5b61007f61007a366004610146565b6100f4565b005b61007f61008f366004610170565b610108565b6000546100a19060ff1681565b604051901515815260200160405180910390f35b61007f6100c33660046101ac565b600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0016911515919091179055565b60005460ff161561010457600080fd5b5050565b60005460ff161561011857600080fd5b505050565b803573ffffffffffffffffffffffffffffffffffffffff8116811461014157600080fd5b919050565b6000806040838503121561015957600080fd5b6101628361011d565b946020939093013593505050565b60008060006060848603121561018557600080fd5b61018e8461011d565b925061019c6020850161011d565b9150604084013590509250925092565b6000602082840312156101be57600080fd5b813580151581146101ce57600080fd5b939250505056fea2646970667358221220a1e98ab1d9b5155e585a6a5f91553689dba437f5d74f952107a39cc684d0a28764736f6c634300080a0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

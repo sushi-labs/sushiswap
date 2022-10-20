@@ -1,0 +1,88 @@
+/**
+ * table-core
+ *
+ * Copyright (c) TanStack
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var utils = require('../utils.js');
+
+function createColumn(instance, columnDef, depth, parent) {
+  var _ref, _columnDef$id;
+
+  const defaultColumn = instance._getDefaultColumnDef();
+
+  columnDef = { ...defaultColumn,
+    ...columnDef
+  };
+  let id = (_ref = (_columnDef$id = columnDef.id) != null ? _columnDef$id : columnDef.accessorKey) != null ? _ref : typeof columnDef.header === 'string' ? columnDef.header : undefined;
+  let accessorFn;
+
+  if (columnDef.accessorFn) {
+    accessorFn = columnDef.accessorFn;
+  } else if (columnDef.accessorKey) {
+    accessorFn = originalRow => originalRow[columnDef.accessorKey];
+  }
+
+  if (!id) {
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error(columnDef.accessorFn ? "Columns require an id when using an accessorFn" : "Columns require an id when using a non-string header");
+    }
+
+    throw new Error();
+  }
+
+  let column = { ...columnDef,
+    id: "" + id,
+    accessorFn,
+    parent: parent,
+    depth,
+    columnDef,
+    columnDefType: columnDef.columnDefType,
+    columns: [],
+    getFlatColumns: utils.memo(() => [true], () => {
+      var _column$columns;
+
+      return [column, ...((_column$columns = column.columns) == null ? void 0 : _column$columns.flatMap(d => d.getFlatColumns()))];
+    }, {
+      key: process.env.NODE_ENV === 'production' && 'column.getFlatColumns',
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugColumns;
+      }
+    }),
+    getLeafColumns: utils.memo(() => [instance._getOrderColumnsFn()], orderColumns => {
+      var _column$columns2;
+
+      if ((_column$columns2 = column.columns) != null && _column$columns2.length) {
+        let leafColumns = column.columns.flatMap(column => column.getLeafColumns());
+        return orderColumns(leafColumns);
+      }
+
+      return [column];
+    }, {
+      key: process.env.NODE_ENV === 'production' && 'column.getLeafColumns',
+      debug: () => {
+        var _instance$options$deb2;
+
+        return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugColumns;
+      }
+    })
+  };
+  column = instance._features.reduce((obj, feature) => {
+    return Object.assign(obj, feature.createColumn == null ? void 0 : feature.createColumn(column, instance));
+  }, column); // Yes, we have to convert instance to uknown, because we know more than the compiler here.
+
+  return column;
+}
+
+exports.createColumn = createColumn;
+//# sourceMappingURL=column.js.map

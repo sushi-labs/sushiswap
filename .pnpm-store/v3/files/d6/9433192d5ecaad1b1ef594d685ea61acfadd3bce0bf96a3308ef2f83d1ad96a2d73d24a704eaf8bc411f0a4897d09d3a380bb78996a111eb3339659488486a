@@ -1,0 +1,26 @@
+{
+    "name": "@types/workbox-range-requests",
+    "version": "4.3.0",
+    "description": "TypeScript definitions for workbox-range-requests",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Kwok",
+            "url": "https://github.com/JasonHK",
+            "githubUsername": "JasonHK"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/workbox-range-requests"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/workbox-core": "*"
+    },
+    "typesPublisherContentHash": "656dca8ceb13b860aa634eb57bc3fddc978db451d1359fbada8374603d078aaf",
+    "typeScriptVersion": "2.8"
+}

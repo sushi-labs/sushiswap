@@ -1,0 +1,6 @@
+import { GraphQLParams } from '../../types';
+import { Plugin } from '../types';
+export declare function assertInvalidParams(params: any): asserts params is GraphQLParams;
+export declare function checkGraphQLQueryParams(params: unknown): GraphQLParams;
+export declare function isValidGraphQLParams(params: unknown): params is GraphQLParams;
+export declare function useCheckGraphQLQueryParams(): Plugin;

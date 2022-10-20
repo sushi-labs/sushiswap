@@ -1,0 +1,5 @@
+import { PromiseOrValue } from '@envelop/core';
+import { GraphQLSchemaWithContext, YogaInitialContext } from '../types';
+import { Plugin } from './types';
+export declare type YogaSchemaDefinition<TContext> = PromiseOrValue<GraphQLSchemaWithContext<TContext>> | ((request: Request) => PromiseOrValue<GraphQLSchemaWithContext<TContext>>);
+export declare const useSchema: <TContext extends YogaInitialContext = YogaInitialContext>(schemaDef?: YogaSchemaDefinition<TContext> | undefined) => Plugin<TContext, {}, {}>;

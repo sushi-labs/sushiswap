@@ -1,0 +1,58 @@
+{
+  "name": "@walletconnect/environment",
+  "description": "Environment utilities",
+  "version": "1.0.0",
+  "author": "WalletConnect <walletconnect.org>",
+  "license": "MIT",
+  "keywords": [
+    "env",
+    "environment",
+    "utils",
+    "browser",
+    "node",
+    "react-native"
+  ],
+  "files": [
+    "dist"
+  ],
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "unpkg": "dist/umd/index.min.js",
+  "homepage": "https://github.com/walletconnect/walletconnect-utils",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walletconnect/walletconnect-utils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/walletconnect/walletconnect-utils/issues"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:umd": "webpack",
+    "build": "run-s clean build:cjs build:esm build:umd ",
+    "test": "env TS_NODE_PROJECT=\"tsconfig.cjs.json\" mocha --exit -r ts-node/register ./test/**/*.test.ts",
+    "lint": "eslint -c '../../.eslintrc' --fix './src/**/*.ts'"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "@types/node": "^14.14.7",
+    "husky": "^4.3.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "run-s lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "es5"
+  }
+}

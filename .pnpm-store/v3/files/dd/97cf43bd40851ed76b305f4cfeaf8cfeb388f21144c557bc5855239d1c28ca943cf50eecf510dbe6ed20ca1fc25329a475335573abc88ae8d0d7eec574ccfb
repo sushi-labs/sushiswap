@@ -1,0 +1,137 @@
+{
+  "name": "graphql-ws",
+  "version": "5.11.2",
+  "description": "Coherent, zero-dependency, lazy, simple, GraphQL over WebSocket Protocol compliant server and client",
+  "keywords": [
+    "protocol",
+    "graphql",
+    "transport",
+    "subscriptions",
+    "websockets",
+    "server",
+    "client",
+    "observables",
+    "express",
+    "relay",
+    "apollo",
+    "fastify",
+    "uwebsockets"
+  ],
+  "author": "Denis Badurina <badurinadenis@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/enisdenjo/graphql-ws#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enisdenjo/graphql-ws.git"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "packageManager": "yarn@3.2.3",
+  "types": "lib/index.d.ts",
+  "main": "lib/index.js",
+  "module": "lib/index.mjs",
+  "browser": "umd/graphql-ws.js",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.js",
+      "import": "./lib/index.mjs",
+      "browser": "./umd/graphql-ws.js"
+    },
+    "./lib/use/ws": {
+      "types": "./lib/use/ws.d.ts",
+      "require": "./lib/use/ws.js",
+      "import": "./lib/use/ws.mjs"
+    },
+    "./lib/use/uWebSockets": {
+      "types": "./lib/use/uWebSockets.d.ts",
+      "require": "./lib/use/uWebSockets.js",
+      "import": "./lib/use/uWebSockets.mjs"
+    },
+    "./lib/use/@fastify/websocket": {
+      "types": "./lib/use/@fastify/websocket.d.ts",
+      "require": "./lib/use/@fastify/websocket.js",
+      "import": "./lib/use/@fastify/websocket.mjs"
+    },
+    "./lib/use/fastify-websocket": {
+      "types": "./lib/use/fastify-websocket.d.ts",
+      "require": "./lib/use/fastify-websocket.js",
+      "import": "./lib/use/fastify-websocket.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "umd",
+    "README.md",
+    "LICENSE.md",
+    "PROTOCOL.md"
+  ],
+  "sideEffects": [
+    "umd/*"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "gendocs": "typedoc --options typedoc.js src/",
+    "lint": "eslint 'src'",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "bench:start-servers": "NODE_ENV=production node benchmark/servers/index.mjs",
+    "bench": "k6 run benchmark/k6.mjs",
+    "build:esm": "tsc -b tsconfig.esm.json && node scripts/esm-post-process.mjs",
+    "build:cjs": "tsc -b tsconfig.cjs.json",
+    "build:umd": "rollup -c && gzip umd/graphql-ws.min.js -c > umd/graphql-ws.min.js.gz",
+    "build": "yarn build:esm && yarn build:cjs && yarn build:umd",
+    "release": "semantic-release"
+  },
+  "peerDependencies": {
+    "graphql": ">=0.11 <=16"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.1",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.18.9",
+    "@babel/plugin-proposal-optional-chaining": "^7.18.9",
+    "@babel/preset-env": "^7.19.1",
+    "@babel/preset-typescript": "^7.18.6",
+    "@fastify/websocket": "^7.0.1",
+    "@rollup/plugin-typescript": "^8.5.0",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@types/jest": "^29.0.3",
+    "@types/ws": "^8.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "babel-jest": "^29.0.3",
+    "eslint": "^8.23.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "fastify": "^4.6.0",
+    "fastify-websocket": "4.2.2",
+    "glob": "^8.0.3",
+    "graphql": "^16.6.0",
+    "jest": "^29.0.3",
+    "jest-environment-jsdom": "^29.0.3",
+    "jest-jasmine2": "^29.0.3",
+    "prettier": "^2.7.1",
+    "replacestream": "^4.0.3",
+    "rollup": "^2.79.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "semantic-release": "^19.0.5",
+    "subscriptions-transport-ws": "^0.11.0",
+    "tslib": "^2.4.0",
+    "typedoc": "^0.23.14",
+    "typedoc-plugin-markdown": "^3.13.6",
+    "typescript": "^4.8.3",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.10.0",
+    "ws": "^8.8.1",
+    "ws7": "npm:ws@^7.5.9"
+  },
+  "resolutions": {
+    "npm/chalk": "^4.1.2"
+  }
+}

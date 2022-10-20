@@ -1,0 +1,22 @@
+import axios from 'axios';
+const URLS = {
+    testnet: 'https://api-testnet.layerzero-scan.com',
+    mainnet: 'https://api-mainnet.layerzero-scan.com',
+    sandbox: 'https://api-sandbox.layerzero-scan.com',
+};
+export const createClient = (env, options) => {
+    const url = URLS[env];
+    if (!url)
+        throw new Error(`No endpoint for env ${env}`);
+    const client = axios.create({
+        baseURL: url,
+    });
+    return {
+        async getMessagesBySrcTxHash(srcTxHash) {
+            if (!srcTxHash)
+                throw new Error('srcTxHash must be provided');
+            const { data } = await client.get(`/tx/${srcTxHash}`);
+            return data;
+        },
+    };
+};

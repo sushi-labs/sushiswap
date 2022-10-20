@@ -1,0 +1,41 @@
+{
+	"version": "1.0.7",
+	"license": "MIT",
+	"author": {
+		"name": "Adrian Praja",
+		"email": "adrian@databank.io",
+		"url": "https://awspilot.dev"
+	},
+	"name": "aws-lambda",
+	"description": "Deploy AWS Lambda functions from command line using a json or yaml config file.",
+	"keywords": [
+		"lambda",
+		"aws lambda",
+		"deploy",
+		"deploy lambda"
+	],
+	"homepage": "https://awspilot.dev",
+	"bugs": "https://github.com/awspilot/cli-lambda-deploy/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/awspilot/cli-lambda-deploy"
+	},
+	"main": "lib/main.js",
+	"bin": {
+		"lambda": "./bin/lambda"
+	},
+	"dependencies": {
+		"aws-sdk": "^2.814.0",
+		"js-yaml": "^3.14.1",
+		"watchpack": "^2.0.0-beta.10",
+		"commander": "^3.0.2"
+	},
+	"devDependencies": {
+		"eslint": "^8.2.0",
+		"mocha": "^9.1.3"
+	},
+	"scripts": {
+		"test": "mocha --timeout 100000 -S -R spec --exit",
+		"lint": "eslint lib"
+	}
+}

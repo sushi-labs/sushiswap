@@ -1,0 +1,28 @@
+{
+    "name": "@types/workbox-strategies",
+    "version": "4.3.1",
+    "description": "TypeScript definitions for workbox-strategies",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-strategies",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Kwok",
+            "url": "https://github.com/JasonHK",
+            "githubUsername": "JasonHK"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/workbox-strategies"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/workbox-core": "*",
+        "@types/workbox-routing": "*"
+    },
+    "typesPublisherContentHash": "72f59f2a35040aa7bbe09f0de1e149a6aceae5b0f5ee18e64d1f2bf21f2fabe6",
+    "typeScriptVersion": "3.6"
+}

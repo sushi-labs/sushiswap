@@ -1,0 +1,23 @@
+export declare type Environment = 'testnet' | 'mainnet' | 'sandbox';
+export declare type ClientOptions = {};
+export declare type Message = {
+    srcUaAddress: string;
+    dstUaAddress: string;
+    srcChainId: number;
+    dstChainId: number;
+    dstTxHash?: string;
+    dstTxError?: string;
+    srcTxHash: string;
+    srcBlockHash: string;
+    srcBlockNumber: string;
+    srcUaNonce: number;
+    status: 'INFLIGHT' | 'DELIVERED' | 'FAILED';
+};
+declare type GetMessagesBySrcTxHashResponse = {
+    messages: Message[];
+};
+export declare const createClient: (env: Environment, options?: ClientOptions | undefined) => {
+    getMessagesBySrcTxHash(srcTxHash: string): Promise<GetMessagesBySrcTxHashResponse>;
+};
+export {};
+//# sourceMappingURL=client.d.ts.map

@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ReactSlider> can render 1`] = `
+<div
+  className="slider"
+  onClick={[Function]}
+  onMouseDown={[Function]}
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    className="track track-0"
+    style={
+      Object {
+        "left": 0,
+        "position": "absolute",
+        "right": 0,
+        "willChange": "",
+      }
+    }
+  />
+  <div
+    className="track track-1"
+    style={
+      Object {
+        "left": 0,
+        "position": "absolute",
+        "right": 0,
+        "willChange": "",
+      }
+    }
+  />
+  <div
+    aria-orientation="horizontal"
+    aria-valuemax={100}
+    aria-valuemin={0}
+    aria-valuenow={0}
+    className="thumb thumb-0 "
+    onFocus={[Function]}
+    onMouseDown={[Function]}
+    onTouchStart={[Function]}
+    role="slider"
+    style={
+      Object {
+        "left": "0px",
+        "position": "absolute",
+        "touchAction": "none",
+        "willChange": "",
+        "zIndex": 1,
+      }
+    }
+    tabIndex={0}
+  />
+</div>
+`;

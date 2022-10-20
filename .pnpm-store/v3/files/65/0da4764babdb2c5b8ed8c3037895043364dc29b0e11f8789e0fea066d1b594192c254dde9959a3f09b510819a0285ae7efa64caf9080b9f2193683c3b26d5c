@@ -1,0 +1,47 @@
+{
+  "name": "@graphql-mesh/runtime",
+  "version": "0.44.19",
+  "sideEffects": false,
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@envelop/core": "2.6.0",
+    "@envelop/extended-validation": "1.9.0",
+    "@graphql-mesh/cross-helpers": "0.2.6",
+    "@graphql-mesh/string-interpolation": "0.3.2",
+    "@graphql-mesh/types": "0.84.9",
+    "@graphql-mesh/utils": "0.41.20",
+    "@graphql-tools/batch-delegate": "8.4.1",
+    "@graphql-tools/batch-execute": "8.5.6",
+    "@graphql-tools/delegate": "9.0.8",
+    "@graphql-tools/utils": "8.12.0",
+    "@graphql-tools/wrap": "9.2.3",
+    "@whatwg-node/fetch": "^0.4.6",
+    "fetchache": "0.1.4",
+    "tslib": "^2.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/runtime"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.mjs",
+  "typings": "index.d.ts",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    },
+    "./*": {
+      "require": "./*.js",
+      "import": "./*.mjs"
+    },
+    "./package.json": "./package.json"
+  }
+}

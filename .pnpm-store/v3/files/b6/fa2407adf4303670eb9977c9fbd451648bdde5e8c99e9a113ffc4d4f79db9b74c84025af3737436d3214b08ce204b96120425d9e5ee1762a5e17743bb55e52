@@ -1,0 +1,1 @@
+const{createResponseType:createResponseType}=require("./createResponseType"),json=createResponseType("application/json; charset=utf-8");module.exports={json:json};

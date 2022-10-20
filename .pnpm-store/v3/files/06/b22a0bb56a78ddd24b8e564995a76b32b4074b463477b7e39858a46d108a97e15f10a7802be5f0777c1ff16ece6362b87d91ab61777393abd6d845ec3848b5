@@ -1,0 +1,10 @@
+export declare const LENGTH_0 = 0;
+export declare const LENGTH_1 = 1;
+export declare const LENGTH_16 = 16;
+export declare const LENGTH_32 = 32;
+export declare const LENGTH_64 = 64;
+export declare const LENGTH_128 = 128;
+export declare const LENGTH_256 = 256;
+export declare const LENGTH_512 = 512;
+export declare const LENGTH_1024 = 1024;
+//# sourceMappingURL=length.d.ts.map

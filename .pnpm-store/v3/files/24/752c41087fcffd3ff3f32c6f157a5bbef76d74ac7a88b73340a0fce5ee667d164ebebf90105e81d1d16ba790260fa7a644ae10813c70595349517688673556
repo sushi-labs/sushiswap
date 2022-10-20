@@ -1,0 +1,27 @@
+{
+  "name": "json-bigint-patch",
+  "version": "0.0.8",
+  "description": "JSON.parse with bigints support",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup -i src/index.js -o dist/index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ardatan/json-bigint-patch.git"
+  },
+  "keywords": [
+    "JSON",
+    "bigint",
+    "bignumber",
+    "parse",
+    "json"
+  ],
+  "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "25.2.7",
+    "rollup": "2.3.2"
+  }
+}

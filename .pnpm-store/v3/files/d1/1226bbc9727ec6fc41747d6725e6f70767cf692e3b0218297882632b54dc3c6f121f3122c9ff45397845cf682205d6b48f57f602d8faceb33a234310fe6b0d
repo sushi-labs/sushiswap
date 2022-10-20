@@ -1,0 +1,37 @@
+{
+  "name": "@metamask/safe-event-emitter",
+  "version": "2.0.0",
+  "description": "An EventEmitter that isolates the emitter from errors in handlers",
+  "main": "index.js",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "index.js.map"
+  ],
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "tsc --project .",
+    "test": "jest",
+    "lint": "eslint . --ext .ts,.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@metamask/eslint-config": "^3.1.0",
+    "@types/jest": "^24.9.0",
+    "@types/node": "^10.17.13",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.16.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.6.0",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.3.0",
+    "typescript": "^3.9.2"
+  },
+  "dependencies": {}
+}

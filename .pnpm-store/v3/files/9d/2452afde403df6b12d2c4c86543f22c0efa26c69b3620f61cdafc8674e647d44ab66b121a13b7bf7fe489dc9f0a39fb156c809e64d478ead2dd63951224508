@@ -1,0 +1,298 @@
+[
+  {
+    "name": "Rainbow",
+    "shortName": "Rainbow",
+    "color": "rgb(0, 30, 89)",
+    "logo": "https://registry.walletconnect.org/logo/sm/1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369.jpeg",
+    "universalLink": "https://rnbwapp.com",
+    "deepLink": "rainbow:"
+  },
+  {
+    "name": "Trust Wallet",
+    "shortName": "Trust",
+    "color": "rgb(51, 117, 187)",
+    "logo": "https://registry.walletconnect.org/logo/sm/4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0.jpeg",
+    "universalLink": "https://link.trustwallet.com",
+    "deepLink": "trust:"
+  },
+  {
+    "name": "Argent",
+    "shortName": "Argent",
+    "color": "rgb(255, 135, 91)",
+    "logo": "https://registry.walletconnect.org/logo/sm/cf21952a9bc8108bf13b12c92443751e2cc388d27008be4201b92bbc6d83dd46.jpeg",
+    "universalLink": "https://argent.link/app",
+    "deepLink": "argent://app"
+  },
+  {
+    "name": "MetaMask",
+    "shortName": "MetaMask",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96.jpeg",
+    "universalLink": "https://metamask.app.link",
+    "deepLink": "metamask:"
+  },
+  {
+    "name": "Crypto.com | DeFi Wallet",
+    "shortName": "Crypto.com",
+    "color": "rgb(17, 153, 250)",
+    "logo": "https://registry.walletconnect.org/logo/sm/f2436c67184f158d1beda5df53298ee84abfc367581e4505134b5bcf5f46697d.jpeg",
+    "universalLink": "https://wallet.crypto.com",
+    "deepLink": "cryptowallet:"
+  },
+  {
+    "name": "Pillar",
+    "shortName": "Pillar",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/0b58bf037bf943e934706796fb017d59eace1dadcbc1d9fe24d9b46629e5985c.jpeg",
+    "universalLink": "",
+    "deepLink": "pillarwallet:"
+  },
+  {
+    "name": "imToken",
+    "shortName": "imToken",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/9d373b43ad4d2cf190fb1a774ec964a1addf406d6fd24af94ab7596e58c291b2.jpeg",
+    "universalLink": "",
+    "deepLink": "imtokenv2:"
+  },
+  {
+    "name": "ONTO",
+    "shortName": "ONTO",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/dceb063851b1833cbb209e3717a0a0b06bf3fb500fe9db8cd3a553e4b1d02137.jpeg",
+    "universalLink": "https://onto.app",
+    "deepLink": "ontoprovider:"
+  },
+  {
+    "name": "TokenPocket",
+    "shortName": "TokenPocket",
+    "color": "rgb(41, 128, 254)",
+    "logo": "https://registry.walletconnect.org/logo/sm/20459438007b75f4f4acb98bf29aa3b800550309646d375da5fd4aac6c2a2c66.jpeg",
+    "universalLink": "",
+    "deepLink": "tpoutside:"
+  },
+  {
+    "name": "MathWallet",
+    "shortName": "MathWallet",
+    "color": "",
+    "logo": "https://registry.walletconnect.org/logo/sm/7674bb4e353bf52886768a3ddc2a4562ce2f4191c80831291218ebd90f5f5e26.jpeg",
+    "universalLink": "https://www.mathwallet.org",
+    "deepLink": "mathwallet:"
+  },
+  {
+    "name": "BitPay",
+    "shortName": "BitPay",
+    "color": "rgb(26, 59, 139)",
+    "logo": "https://registry.walletconnect.org/logo/sm/ccb714920401f7d008dbe11281ae70e3a4bfb621763b187b9e4a3ce1ab8faa3b.jpeg",
+    "universalLink": "https://bitpay.com/wallet",
+    "deepLink": "bitpay:"
+  },
+  {
+    "name": "Ledger Live",
+    "shortName": "Ledger",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/4ab2542c2799c825a8465ba5ab8aa7def52b7904f38b74484af917ed9c0fc4e5.jpeg",
+    "universalLink": "",
+    "deepLink": "ledgerlive:"
+  },
+  {
+    "name": "Huobi Wallet",
+    "shortName": "Huobi",
+    "color": "rgb(45,101,248)",
+    "logo": "https://registry.walletconnect.org/logo/sm/bae74827272509a6d63ea25514d9c68ad235c14e45e183518c7ded4572a1b0c4.jpeg",
+    "universalLink": "",
+    "deepLink": "huobiwallet:"
+  },
+  {
+    "name": "Eidoo",
+    "shortName": "Eidoo",
+    "color": "rgb(55, 179, 159)",
+    "logo": "https://registry.walletconnect.org/logo/sm/efba9ae0a9e0fdd9e3e055ddf3c8e75f294babb8aea3499456eff27f771fda61.jpeg",
+    "universalLink": "https://eidoo.io/crypto-wallet",
+    "deepLink": "eidoo:"
+  },
+  {
+    "name": "MYKEY",
+    "shortName": "MYKEY",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/61f6e716826ae8455ad16abc5ec31e4fd5d6d2675f0ce2dee3336335431f720e.jpeg",
+    "universalLink": "https://mykey.org",
+    "deepLink": "mykeywalletconnect:"
+  },
+  {
+    "name": "Coin98",
+    "shortName": "Coin98",
+    "color": "rgb(39,39,39)",
+    "logo": "https://registry.walletconnect.org/logo/sm/b021913ba555948a1c81eb3d89b372be46f8354e926679de648e4fa2938bed3e.jpeg",
+    "universalLink": "https://coin98.app",
+    "deepLink": "coin98:"
+  },
+  {
+    "name": "AlphaWallet",
+    "shortName": "AlphaWallet",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/138f51c8d00ac7b9ac9d8dc75344d096a7dfe370a568aa167eabc0a21830ed98.jpeg",
+    "universalLink": "https://aw.app",
+    "deepLink": ""
+  },
+  {
+    "name": "ZelCore",
+    "shortName": "ZelCore",
+    "color": "rgb(35, 34, 32)",
+    "logo": "https://registry.walletconnect.org/logo/sm/29f4a70ad5993f3f73ae8119f0e78ecbae51deec2a021a770225c644935c0f09.jpeg",
+    "universalLink": "https://link.zel.network",
+    "deepLink": "zel:"
+  },
+  {
+    "name": "Nash",
+    "shortName": "Nash",
+    "color": "rgb(0,82,243)",
+    "logo": "https://registry.walletconnect.org/logo/sm/8605171a052e85d629c5efe5db804c7a3fb6d0ecc759d6817f0a18cb3dacbb14.jpeg",
+    "universalLink": "https://nash.io/walletconnect",
+    "deepLink": "nash:"
+  },
+  {
+    "name": "CYBAVO Wallet",
+    "shortName": "CYBAVO",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/a395dbfc92b5519cbd1cc6937a4e79830187daaeb2c6fcdf9b9cce4255f2dcd5.jpeg",
+    "universalLink": "https://cdn.cybavo.com",
+    "deepLink": "cybavowallet:"
+  },
+  {
+    "name": "SafePal",
+    "shortName": "SafePal",
+    "color": "rgb(0, 128, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/0b415a746fb9ee99cce155c2ceca0c6f6061b1dbca2d722b3ba16381d0562150.jpeg",
+    "universalLink": "https://link.safepal.io",
+    "deepLink": "safepalwallet:"
+  },
+  {
+    "name": "EasyPocket",
+    "shortName": "EasyPocket",
+    "color": "rgb(17, 93, 251)",
+    "logo": "https://registry.walletconnect.org/logo/sm/244a0d93a45df0d0501a9cb9cdfb4e91aa750cfd4fc88f6e97a54d8455a76f5c.jpeg",
+    "universalLink": "https://wallet.easypocket.app",
+    "deepLink": "easypocket:"
+  },
+  {
+    "name": "SparkPoint",
+    "shortName": "SparkPoint",
+    "color": "rgb(20,67,95)",
+    "logo": "https://registry.walletconnect.org/logo/sm/3b0e861b3a57e98325b82ab687fe0a712c81366d521ceec49eebc35591f1b5d1.jpeg",
+    "universalLink": "https://sparkpoint.io",
+    "deepLink": "sparkpoint:"
+  },
+  {
+    "name": "BitKeep",
+    "shortName": "BitKeep",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/42d72b6b34411dfacdf5364c027979908f971fc60251a817622b7bdb44a03106.jpeg",
+    "universalLink": "",
+    "deepLink": "bitkeep:"
+  },
+  {
+    "name": "PEAKDEFI Wallet",
+    "shortName": "PEAKDEFI",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/38ee551a01e3c5af9d8a9715768861e4d642e2381a62245083f96672b5646c6b.jpeg",
+    "universalLink": "https://peakdefi.com/download",
+    "deepLink": "peakdefiwallet:"
+  },
+  {
+    "name": "HaloDeFi Wallet",
+    "shortName": "HaloDeFi",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/025247d02e1972362982f04c96c78e7c02c4b68a9ac2107c26fe2ebb85c317c0.jpeg",
+    "universalLink": "",
+    "deepLink": "halodefiwallet:"
+  },
+  {
+    "name": "Ellipal",
+    "shortName": "Ellipal",
+    "color": "rgb(48, 124, 249)",
+    "logo": "https://registry.walletconnect.org/logo/sm/15d1d97de89526a3c259a235304a7c510c40cda3331f0f8433da860ecc528bef.jpeg",
+    "universalLink": "https://www.ellipal.com/",
+    "deepLink": "ellipal:"
+  },
+  {
+    "name": "KEYRING PRO",
+    "shortName": "KEYRINGPRO",
+    "color": "",
+    "logo": "https://registry.walletconnect.org/logo/sm/0fa0f603076de79bbac9a4d47770186de8913da63c8a4070c500a783cddbd1e3.jpeg",
+    "universalLink": "https://keyring.app",
+    "deepLink": "keyring:"
+  },
+  {
+    "name": "Aktionariat",
+    "shortName": "Aktionariat",
+    "color": "rgb(10, 20, 20)",
+    "logo": "https://registry.walletconnect.org/logo/sm/19ad8334f0f034f4176a95722b5746b539b47b37ce17a5abde4755956d05d44c.jpeg",
+    "universalLink": "https://app.aktionariat.com",
+    "deepLink": "aktionariat:"
+  },
+  {
+    "name": "Talken Wallet",
+    "shortName": "Talken",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/95501c1a07c8eb575cb28c753ab9044259546ebcefcd3645461086e49b671f5c.jpeg",
+    "universalLink": "https://talken.io",
+    "deepLink": "talken-wallet:"
+  },
+  {
+    "name": "Flare Wallet",
+    "shortName": "Flare",
+    "color": "rgb(31, 36, 59)",
+    "logo": "https://registry.walletconnect.org/logo/sm/d612ddb7326d7d64428d035971b82247322a4ffcf126027560502eff4c02bd1c.jpeg",
+    "universalLink": "https://flarewallet.io",
+    "deepLink": "flare:"
+  },
+  {
+    "name": "KyberSwap",
+    "shortName": "KyberSwap",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/55e5b479c9f49ddac5445c24725857f19888da1ef432ae5e4e01f8054d107670.jpeg",
+    "universalLink": "https://kyberswapnew.app.link",
+    "deepLink": "kyberswap:"
+  },
+  {
+    "name": "AToken Wallet",
+    "shortName": "AToken",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/6193353e17504afc4bb982ee743ab970cd5cf842a35ecc9b7de61c150cf291e0.jpeg",
+    "universalLink": "https://www.atoken.com",
+    "deepLink": "atoken:"
+  },
+  {
+    "name": "Tongue Wallet",
+    "shortName": "Tongue",
+    "color": "rgb(255, 49, 120)",
+    "logo": "https://registry.walletconnect.org/logo/sm/4e6af4201658b52daad51a279bb363a08b3927e74c0f27abeca3b0110bddf0a9.jpeg",
+    "universalLink": "https://www.tongue.fi",
+    "deepLink": "tongue:"
+  },
+  {
+    "name": "RWallet",
+    "shortName": "RWallet",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/b13fcc7e3500a4580c9a5341ed64c49c17d7f864497881048eb160c089be5346.jpeg",
+    "universalLink": "https://www.rwallet.app",
+    "deepLink": "rwallet:"
+  },
+  {
+    "name": "PlasmaPay",
+    "shortName": "PlasmaPay",
+    "color": "rgb(255, 255, 255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/13c6a06b733edf51784f669f508826b2ab0dc80122a8b5d25d84b17d94bbdf70.jpeg",
+    "universalLink": "https://plasmapay.com/",
+    "deepLink": "plasmapay:"
+  },
+  {
+    "name": "O3Wallet",
+    "shortName": "O3Wallet",
+    "color": "rgb(255,255,255)",
+    "logo": "https://registry.walletconnect.org/logo/sm/0aafbedfb8eb56dae59ecc37c9a5388509cf9c082635e3f752581cc7128a17c0.jpeg",
+    "universalLink": "https://o3.network",
+    "deepLink": "o3wallet:"
+  }
+]

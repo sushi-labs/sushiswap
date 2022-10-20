@@ -1,0 +1,12 @@
+import { GraphQLDirective, DirectiveLocationEnum, GraphQLArgument } from 'graphql';
+import { Change } from './change';
+export declare function directiveRemoved(directive: GraphQLDirective): Change;
+export declare function directiveAdded(directive: GraphQLDirective): Change;
+export declare function directiveDescriptionChanged(oldDirective: GraphQLDirective, newDirective: GraphQLDirective): Change;
+export declare function directiveLocationAdded(directive: GraphQLDirective, location: DirectiveLocationEnum): Change;
+export declare function directiveLocationRemoved(directive: GraphQLDirective, location: DirectiveLocationEnum): Change;
+export declare function directiveArgumentAdded(directive: GraphQLDirective, arg: GraphQLArgument): Change;
+export declare function directiveArgumentRemoved(directive: GraphQLDirective, arg: GraphQLArgument): Change;
+export declare function directiveArgumentDescriptionChanged(directive: GraphQLDirective, oldArg: GraphQLArgument, newArg: GraphQLArgument): Change;
+export declare function directiveArgumentDefaultValueChanged(directive: GraphQLDirective, oldArg: GraphQLArgument, newArg: GraphQLArgument): Change;
+export declare function directiveArgumentTypeChanged(directive: GraphQLDirective, oldArg: GraphQLArgument, newArg: GraphQLArgument): Change;

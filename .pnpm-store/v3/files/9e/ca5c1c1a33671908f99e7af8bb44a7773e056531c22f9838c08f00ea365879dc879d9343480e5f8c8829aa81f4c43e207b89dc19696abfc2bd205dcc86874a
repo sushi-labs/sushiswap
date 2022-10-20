@@ -1,0 +1,23 @@
+import { ElementType, ComponentPropsWithRef, ForwardRefExoticComponent } from 'react';
+import { FluidValue } from '@react-spring/shared';
+import { primitives } from './primitives';
+declare type Primitives = typeof primitives;
+declare type AnimatedPrimitives = {
+    [P in keyof Primitives]: AnimatedComponent<Primitives[P]>;
+};
+/** The type of the `animated()` function */
+export declare type WithAnimated = {
+    <T extends ElementType>(wrappedComponent: T): AnimatedComponent<T>;
+} & AnimatedPrimitives;
+/** The type of an `animated()` component */
+export declare type AnimatedComponent<T extends ElementType> = ForwardRefExoticComponent<AnimatedProps<ComponentPropsWithRef<T>>>;
+/** The props of an `animated()` component */
+export declare type AnimatedProps<Props extends object> = {
+    [P in keyof Props]: P extends 'ref' | 'key' ? Props[P] : AnimatedProp<Props[P]>;
+};
+declare type AnimatedProp<T> = [T, T] extends [infer T, infer DT] ? [DT] extends [never] ? never : DT extends void ? undefined : DT extends object ? AnimatedStyle<T> : DT | AnimatedLeaf<T> : never;
+declare type AnimatedStyle<T> = [T, T] extends [infer T, infer DT] ? DT extends void ? undefined : [DT] extends [never] ? never : DT extends object ? {
+    [P in keyof DT]: AnimatedStyle<DT[P]>;
+} : DT | AnimatedLeaf<T> : never;
+declare type AnimatedLeaf<T> = Exclude<T, object | void> | Extract<T, ReadonlyArray<number | string>> extends infer U ? [U] extends [never] ? never : FluidValue<U | Exclude<T, object | void>> : never;
+export {};

@@ -1,0 +1,55 @@
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.reportWebVitals = void 0;
+var shared_1 = require("./shared");
+var url = "".concat(shared_1.proxyPath, "/web-vitals");
+var throttledSendMetrics = (0, shared_1.throttle)(sendMetrics, 1000);
+var collectedMetrics = [];
+function reportWebVitals(metric) {
+    var _a;
+    collectedMetrics.push(__assign({ route: (_a = window.__NEXT_DATA__) === null || _a === void 0 ? void 0 : _a.page }, metric));
+    // if Axiom env vars are not set, do nothing,
+    // otherwise devs will get errors on dev environments
+    if (!shared_1.isEnvVarsSet) {
+        return;
+    }
+    throttledSendMetrics();
+}
+exports.reportWebVitals = reportWebVitals;
+function sendMetrics() {
+    var body = JSON.stringify({
+        webVitals: collectedMetrics,
+        environment: shared_1.vercelEnv,
+    });
+    function sendFallback() {
+        // Do not leak network errors; does not affect the running app
+        fetch(url, { body: body, method: 'POST', keepalive: true }).catch(console.error);
+    }
+    if (shared_1.isBrowser && navigator.sendBeacon) {
+        try {
+            // See https://github.com/vercel/next.js/pull/26601
+            // Navigator has to be bound to ensure it does not error in some browsers
+            // https://xgwang.me/posts/you-may-not-know-beacon/#it-may-throw-error%2C-be-sure-to-catch
+            navigator.sendBeacon.bind(navigator)(url, body);
+        }
+        catch (err) {
+            sendFallback();
+        }
+    }
+    else {
+        sendFallback();
+    }
+    collectedMetrics = [];
+}
+//# sourceMappingURL=webVitals.js.map

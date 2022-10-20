@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>d3-interpolate-path</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="example.css" />
+  </head>
+  <body>
+    <h1 class="main-header">d3-interpolate-path</h1>
+    <p class="main-link"><a href="https://github.com/pbeshai/d3-interpolate-path">https://github.com/pbeshai/d3-interpolate-path</a></p>
+    <p>
+      d3-interpolate-path is a <a href="https://d3js.org/">D3</a> plugin that adds an
+      <a href="https://github.com/d3/d3-interpolate">interpolator</a>
+      optimized for SVG &lt;path&gt; elements. See the <a href="https://github.com/pbeshai/d3-interpolate-path">GitHub page</a>
+      for details on usage.
+    </p>
+    <p>
+      A previous version of the library is currently <a href="https://github.com/pbeshai/d3-interpolate-path/issues/15">better at extending lines</a>.
+      See <a href="v1/">how the older v1.1.1 performs</a>.
+    </p>
+    <div class='chart-container'></div>
+    <p>
+      <a href="https://github.com/pbeshai/d3-interpolate-path">Code on GitHub</a>
+    </p>
+
+    <h3>Visual Test Examples</h3>
+
+    <div class='examples'>
+    </div>
+    <script src="//d3js.org/d3.v4.min.js"></script>
+    <script src="d3-interpolate-path.js"></script>
+    <script src="examples.js"></script>
+</body>
+</html>

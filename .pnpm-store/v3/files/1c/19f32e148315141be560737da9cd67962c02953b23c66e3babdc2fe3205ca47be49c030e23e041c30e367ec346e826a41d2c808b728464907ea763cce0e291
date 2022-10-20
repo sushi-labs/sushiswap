@@ -1,0 +1,30 @@
+{
+  "name": "and",
+  "version": "0.0.3",
+  "description": "Join arrays with commas and »and« before the last item",
+  "author": {
+    "name": "Thomas Rasshofer",
+    "email": "hello@thomasrasshofer.com",
+    "url": "http://thomasrasshofer.com/"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rasshofer/and.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rasshofer/and/issues"
+  },
+  "main": "and.js",
+  "keywords": [
+    "and",
+    "join"
+  ],
+  "devDependencies": {
+    "jshint": "^2.9.5",
+    "tap": "^11.0.1"
+  },
+  "scripts": {
+    "test": "jshint and.js && tap tests.js --cov"
+  }
+}

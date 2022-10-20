@@ -1,0 +1,75 @@
+{
+  "name": "use-count-up",
+  "version": "3.0.1",
+  "description": "React/React Native component and hook to animate counting up or down to a number",
+  "main": "./lib/index.js",
+  "module": "./lib/index.module.js",
+  "source": "./src/index.ts",
+  "types": "./lib/index.d.ts",
+  "author": "Vasil Dimitrov",
+  "license": "MIT",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "ts-declaration": "tsc --declaration --emitDeclarationOnly --outDir lib",
+    "build": "yarn ts-declaration && node scripts/build.js",
+    "test": "jest --collectCoverage --coverageDirectory=\"coverage\"",
+    "test-watch": "jest --watch",
+    "prepublish": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vydimitrov/use-count-up.git"
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "react-native",
+    "animate-numerical-value",
+    "animations",
+    "count-up",
+    "countup",
+    "react-count-up",
+    "react-countup",
+    "react-native-count-up",
+    "react-native-countup",
+    "countdown",
+    "count-down",
+    "counting",
+    "hooks",
+    "ios",
+    "android",
+    "use",
+    "use-count-up",
+    "use-countup",
+    "typescript"
+  ],
+  "bugs": {
+    "url": "https://github.com/vydimitrov/use-count-up/issues"
+  },
+  "homepage": "https://github.com/vydimitrov/use-count-up#readme",
+  "dependencies": {
+    "use-elapsed-time": "3.0.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "5.14.1",
+    "@testing-library/react": "12.0.0",
+    "@types/jest": "27.0.1",
+    "@types/node": "16.7.5",
+    "@types/react": "17.0.19",
+    "@types/react-dom": "17.0.9",
+    "codecov": "3.8.3",
+    "esbuild": "0.12.24",
+    "jest": "27.1.0",
+    "prettier": "2.3.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "ts-jest": "27.0.5",
+    "typescript": "4.4.2"
+  }
+}

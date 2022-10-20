@@ -1,0 +1,313 @@
+import { AddressEx, TokenInfo } from './common';
+export declare type ParamValue = string | ParamValue[];
+export declare enum Operation {
+    CALL = 0,
+    DELEGATE = 1
+}
+export declare type InternalTransaction = {
+    operation: Operation;
+    to: string;
+    value?: string;
+    data?: string;
+    dataDecoded?: DataDecoded;
+};
+export declare type ValueDecodedType = InternalTransaction[];
+export declare type Parameter = {
+    name: string;
+    type: string;
+    value: ParamValue;
+    valueDecoded?: ValueDecodedType;
+};
+export declare type DataDecoded = {
+    method: string;
+    parameters?: Parameter[];
+};
+export declare enum TransactionStatus {
+    AWAITING_CONFIRMATIONS = "AWAITING_CONFIRMATIONS",
+    AWAITING_EXECUTION = "AWAITING_EXECUTION",
+    CANCELLED = "CANCELLED",
+    FAILED = "FAILED",
+    SUCCESS = "SUCCESS",
+    PENDING = "PENDING",
+    WILL_BE_REPLACED = "WILL_BE_REPLACED"
+}
+export declare enum TransferDirection {
+    INCOMING = "INCOMING",
+    OUTGOING = "OUTGOING",
+    UNKNOWN = "UNKNOWN"
+}
+export declare enum TransactionTokenType {
+    ERC20 = "ERC20",
+    ERC721 = "ERC721",
+    NATIVE_COIN = "NATIVE_COIN"
+}
+export declare enum SettingsInfoType {
+    SET_FALLBACK_HANDLER = "SET_FALLBACK_HANDLER",
+    ADD_OWNER = "ADD_OWNER",
+    REMOVE_OWNER = "REMOVE_OWNER",
+    SWAP_OWNER = "SWAP_OWNER",
+    CHANGE_THRESHOLD = "CHANGE_THRESHOLD",
+    CHANGE_IMPLEMENTATION = "CHANGE_IMPLEMENTATION",
+    ENABLE_MODULE = "ENABLE_MODULE",
+    DISABLE_MODULE = "DISABLE_MODULE",
+    SET_GUARD = "SET_GUARD",
+    DELETE_GUARD = "DELETE_GUARD"
+}
+export declare type Erc20Transfer = {
+    type: TransactionTokenType.ERC20;
+    tokenAddress: string;
+    tokenName?: string;
+    tokenSymbol?: string;
+    logoUri?: string;
+    decimals?: number;
+    value: string;
+};
+export declare type Erc721Transfer = {
+    type: TransactionTokenType.ERC721;
+    tokenAddress: string;
+    tokenId: string;
+    tokenName?: string;
+    tokenSymbol?: string;
+    logoUri?: string;
+};
+export declare type NativeCoinTransfer = {
+    type: TransactionTokenType.NATIVE_COIN;
+    value: string;
+};
+export declare type TransferInfo = Erc20Transfer | Erc721Transfer | NativeCoinTransfer;
+export interface Transfer {
+    type: 'Transfer';
+    sender: AddressEx;
+    recipient: AddressEx;
+    direction: TransferDirection;
+    transferInfo: TransferInfo;
+}
+export declare type SetFallbackHandler = {
+    type: SettingsInfoType.SET_FALLBACK_HANDLER;
+    handler: AddressEx;
+};
+export declare type AddOwner = {
+    type: SettingsInfoType.ADD_OWNER;
+    owner: AddressEx;
+    threshold: number;
+};
+export declare type RemoveOwner = {
+    type: SettingsInfoType.REMOVE_OWNER;
+    owner: AddressEx;
+    threshold: number;
+};
+export declare type SwapOwner = {
+    type: SettingsInfoType.SWAP_OWNER;
+    oldOwner: AddressEx;
+    newOwner: AddressEx;
+};
+export declare type ChangeThreshold = {
+    type: SettingsInfoType.CHANGE_THRESHOLD;
+    threshold: number;
+};
+export declare type ChangeImplementation = {
+    type: SettingsInfoType.CHANGE_IMPLEMENTATION;
+    implementation: AddressEx;
+};
+export declare type EnableModule = {
+    type: SettingsInfoType.ENABLE_MODULE;
+    module: AddressEx;
+};
+export declare type DisableModule = {
+    type: SettingsInfoType.DISABLE_MODULE;
+    module: AddressEx;
+};
+export declare type SetGuard = {
+    type: SettingsInfoType.SET_GUARD;
+    guard: AddressEx;
+};
+export declare type DeleteGuard = {
+    type: SettingsInfoType.DELETE_GUARD;
+};
+export declare type SettingsInfo = SetFallbackHandler | AddOwner | RemoveOwner | SwapOwner | ChangeThreshold | ChangeImplementation | EnableModule | DisableModule | SetGuard | DeleteGuard;
+export declare type SettingsChange = {
+    type: 'SettingsChange';
+    dataDecoded: DataDecoded;
+    settingsInfo?: SettingsInfo;
+};
+export interface Custom {
+    type: 'Custom';
+    to: AddressEx;
+    dataSize: string;
+    value: string;
+    methodName?: string;
+    actionCount?: number;
+    isCancellation: boolean;
+}
+export declare type MultiSend = {
+    type: 'Custom';
+    to: AddressEx;
+    dataSize: string;
+    value: string;
+    methodName: 'multiSend';
+    actionCount: number;
+    isCancellation: boolean;
+};
+export declare type Cancellation = Custom & {
+    isCancellation: true;
+};
+export declare type Creation = {
+    type: 'Creation';
+    creator: AddressEx;
+    transactionHash: string;
+    implementation?: AddressEx;
+    factory?: AddressEx;
+};
+export declare type TransactionInfo = Transfer | SettingsChange | Custom | MultiSend | Cancellation | Creation;
+export declare type ModuleExecutionInfo = {
+    type: 'MODULE';
+    address: AddressEx;
+};
+export declare type MultisigExecutionInfo = {
+    type: 'MULTISIG';
+    nonce: number;
+    confirmationsRequired: number;
+    confirmationsSubmitted: number;
+    missingSigners?: AddressEx[];
+};
+export declare type ExecutionInfo = ModuleExecutionInfo | MultisigExecutionInfo;
+export declare type TransactionSummary = {
+    id: string;
+    timestamp: number;
+    txStatus: TransactionStatus;
+    txInfo: TransactionInfo;
+    executionInfo?: ExecutionInfo;
+    safeAppInfo?: SafeAppInfo;
+};
+export declare type Transaction = {
+    transaction: TransactionSummary;
+    conflictType: 'None' | 'HasNext' | 'End';
+    type: 'TRANSACTION';
+};
+export declare type IncomingTransfer = Omit<Transaction, 'transaction'> & {
+    transaction: Omit<TransactionSummary, 'txInfo' | 'executionInfo'> & {
+        txInfo: Omit<Transfer, 'direction'> & {
+            direction: TransferDirection.INCOMING;
+        };
+    };
+};
+export declare type ModuleTransaction = Omit<Transaction, 'transaction'> & {
+    transaction: Omit<TransactionSummary, 'txInfo' | 'executionInfo'> & {
+        txInfo: Transfer;
+        executionInfo?: ModuleExecutionInfo;
+    };
+};
+export declare type MultisigTransaction = Omit<Transaction, 'transaction'> & {
+    transaction: Omit<TransactionSummary, 'txInfo' | 'executionInfo'> & {
+        txInfo: Omit<Transfer, 'direction'> & {
+            direction: TransferDirection.OUTGOING;
+        };
+        executionInfo?: MultisigExecutionInfo;
+    };
+};
+export declare type DateLabel = {
+    timestamp: number;
+    type: 'DATE_LABEL';
+};
+/**
+ * @see https://gnosis.github.io/safe-client-gateway/docs/routes/transactions/models/summary/enum.Label.html
+ */
+export declare enum LabelValue {
+    Queued = "Queued",
+    Next = "Next"
+}
+export declare type Label = {
+    label: LabelValue;
+    type: 'LABEL';
+};
+export declare type ConflictHeader = {
+    nonce: number;
+    type: 'CONFLICT_HEADER';
+};
+export declare type TransactionListItem = Transaction | DateLabel | Label | ConflictHeader;
+export declare type Page<T> = {
+    next?: string;
+    previous?: string;
+    results: Array<T>;
+};
+export declare type TransactionListPage = Page<TransactionListItem>;
+export declare type MultisigTransactionRequest = {
+    to: string;
+    value: string;
+    data?: string;
+    nonce: string;
+    operation: Operation;
+    safeTxGas: string;
+    baseGas: string;
+    gasPrice: string;
+    gasToken: string;
+    refundReceiver?: string;
+    safeTxHash: string;
+    sender: string;
+    signature?: string;
+    origin?: string;
+};
+export declare type SafeAppInfo = {
+    name: string;
+    url: string;
+    logoUri: string;
+};
+export declare type TransactionData = {
+    hexData?: string;
+    dataDecoded?: DataDecoded;
+    to: AddressEx;
+    value?: string;
+    operation: Operation;
+    addressInfoIndex?: {
+        [key: string]: AddressEx;
+    };
+    trustedDelegateCallTarget: boolean;
+};
+export declare type ModuleExecutionDetails = {
+    type: 'MODULE';
+    address: AddressEx;
+};
+export declare type MultisigConfirmation = {
+    signer: AddressEx;
+    signature?: string;
+    submittedAt: number;
+};
+export declare type MultisigExecutionDetails = {
+    type: 'MULTISIG';
+    submittedAt: number;
+    nonce: number;
+    safeTxGas: string;
+    baseGas: string;
+    gasPrice: string;
+    gasToken: string;
+    refundReceiver: AddressEx;
+    safeTxHash: string;
+    executor?: AddressEx;
+    signers: AddressEx[];
+    confirmationsRequired: number;
+    confirmations: MultisigConfirmation[];
+    rejectors?: AddressEx[];
+    gasTokenInfo?: TokenInfo;
+};
+export declare type DetailedExecutionInfo = ModuleExecutionDetails | MultisigExecutionDetails;
+export declare type TransactionDetails = {
+    txId: string;
+    executedAt?: number;
+    txStatus: TransactionStatus;
+    txInfo: TransactionInfo;
+    txData?: TransactionData;
+    detailedExecutionInfo?: DetailedExecutionInfo;
+    txHash?: string;
+    safeAppInfo?: SafeAppInfo;
+};
+export declare type SafeTransactionEstimationRequest = {
+    to: string;
+    value: string;
+    data: string;
+    operation: Operation;
+};
+export declare type SafeTransactionEstimation = {
+    currentNonce: number;
+    recommendedNonce: number;
+    safeTxGas: string;
+};

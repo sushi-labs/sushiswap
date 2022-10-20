@@ -1,0 +1,1 @@
+const{error:error}=require("./error"),missing=(r="Not found.")=>error(404,r);module.exports={missing:missing};

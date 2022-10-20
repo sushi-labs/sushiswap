@@ -1,0 +1,41 @@
+{
+  "name": "@octokit/oauth-authorization-url",
+  "description": "Universal library to retrieve GitHubâs identity URL for the OAuth web flow",
+  "version": "5.0.0",
+  "license": "MIT",
+  "files": [
+    "dist-*/",
+    "bin/"
+  ],
+  "pika": true,
+  "sideEffects": false,
+  "keywords": [
+    "octokit",
+    "github",
+    "oauth"
+  ],
+  "repository": "github:octokit/oauth-authorization-url.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@pika/pack": "^0.5.0",
+    "@pika/plugin-build-node": "^0.9.0",
+    "@pika/plugin-build-web": "^0.9.0",
+    "@pika/plugin-ts-standard-pkg": "^0.9.0",
+    "@types/jest": "^27.0.0",
+    "jest": "^27.0.0",
+    "pika-plugin-unpkg-field": "^1.0.1",
+    "ts-jest": "^27.0.0-next.12",
+    "typescript": "^4.0.2"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "source": "dist-src/index.js",
+  "types": "dist-types/index.d.ts",
+  "main": "dist-node/index.js",
+  "module": "dist-web/index.js",
+  "unpkg": "dist-web/index.js"
+}

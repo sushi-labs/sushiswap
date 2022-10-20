@@ -1,0 +1,16 @@
+# Installation
+> `npm install --save @types/workbox-range-requests`
+
+# Summary
+This package contains type definitions for workbox-range-requests (https://github.com/GoogleChrome/workbox).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-range-requests.
+
+### Additional Details
+ * Last updated: Fri, 15 Nov 2019 22:07:13 GMT
+ * Dependencies: [@types/workbox-core](https://npmjs.com/package/@types/workbox-core)
+ * Global values: none
+
+# Credits
+These definitions were written by Jason Kwok (https://github.com/JasonHK).

@@ -1,0 +1,53 @@
+{
+  "name": "@uniswap/token-lists",
+  "author": {
+    "name": "Uniswap Labs",
+    "email": "contact@uniswap.org",
+    "url": "https://uniswap.org"
+  },
+  "description": "📚 The Token Lists specification",
+  "version": "1.0.0-beta.30",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "repository": {
+    "url": "https://github.com/Uniswap/token-lists",
+    "type": "git"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "postbuild": "cp src/tokenlist.schema.json dist/tokenlist.schema.json",
+    "test": "tsdx test",
+    "lint": "tsdx lint src test",
+    "prepublishOnly": "yarn test && yarn build"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "module": "dist/token-lists.esm.js",
+  "devDependencies": {
+    "ajv": "^8.6.1",
+    "ajv-formats": "^2.1.0",
+    "husky": "^4.2.5",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.0.0",
+    "typescript": "^4.3.5"
+  }
+}

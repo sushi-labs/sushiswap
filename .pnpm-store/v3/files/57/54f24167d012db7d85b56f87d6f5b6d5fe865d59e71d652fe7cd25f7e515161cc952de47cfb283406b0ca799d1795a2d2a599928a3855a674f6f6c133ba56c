@@ -1,0 +1,1 @@
+"use strict";const{Router:Router}=require("itty-router"),{error:error}=require("../response"),ThrowableRouter=(r={})=>{const{stack:e=!1}=r;return new Proxy(Router(r),{get:(r,t)=>(...o)=>"handle"===t?r[t](...o).catch(r=>error(r.status||500,{status:r.status||500,error:r.message,stack:e&&r.stack||void 0})):r[t](...o)})};module.exports={ThrowableRouter:ThrowableRouter};

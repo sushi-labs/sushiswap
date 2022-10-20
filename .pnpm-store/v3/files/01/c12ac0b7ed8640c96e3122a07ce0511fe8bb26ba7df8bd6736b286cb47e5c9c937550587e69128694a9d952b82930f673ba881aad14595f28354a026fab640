@@ -1,0 +1,37 @@
+import { utils, ethers, BigNumberish, BytesLike } from 'ethers';
+import { SignatureLike } from '@ethersproject/bytes';
+import { Address, PriorityQueueType, PriorityOpTree, DeploymentInfo } from './types';
+import { TypedDataDomain, TypedDataField } from '@ethersproject/abstract-signer';
+export declare const ETH_ADDRESS = "0x0000000000000000000000000000000000000000";
+export declare const ZKSYNC_MAIN_ABI: utils.Interface;
+export declare const CONTRACT_DEPLOYER: utils.Interface;
+export declare const L1_MESSENGER: utils.Interface;
+export declare const IERC20: utils.Interface;
+export declare const L1_BRIDGE_ABI: utils.Interface;
+export declare const L2_BRIDGE_ABI: utils.Interface;
+export declare const BOOTLOADER_FORMAL_ADDRESS = "0x0000000000000000000000000000000000008001";
+export declare const CONTRACT_DEPLOYER_ADDRESS = "0x0000000000000000000000000000000000008006";
+export declare const L1_MESSENGER_ADDRESS = "0x0000000000000000000000000000000000008008";
+export declare const EIP712_TX_TYPE = 113;
+export declare const RECOMMENDED_GAS_LIMIT: {
+    DEPOSIT: number;
+    EXECUTE: number;
+    ERC20_APPROVE: number;
+};
+export declare function isETH(token: Address): boolean;
+export declare function sleep(millis: number): Promise<unknown>;
+export declare function layer1TxDefaults(): {
+    queueType: PriorityQueueType;
+    opTree: PriorityOpTree;
+};
+export declare function getHashedL2ToL1Msg(sender: Address, msg: BytesLike): string;
+export declare function getDeployedContracts(receipt: ethers.providers.TransactionReceipt): DeploymentInfo[];
+export declare function create2Address(sender: Address, bytecodeHash: BytesLike, salt: BytesLike, input: BytesLike): string;
+export declare function createAddress(sender: Address, senderNonce: BigNumberish): string;
+export declare function checkBaseCost(baseCost: ethers.BigNumber, value: ethers.BigNumberish | Promise<ethers.BigNumberish>): Promise<void>;
+export declare function serialize(transaction: ethers.providers.TransactionRequest, signature?: SignatureLike): string;
+export declare function hashBytecode(bytecode: ethers.BytesLike): Uint8Array;
+export declare function parseTransaction(payload: ethers.BytesLike): ethers.Transaction;
+export declare function getL2HashFromPriorityOp(txReceipt: ethers.providers.TransactionReceipt, zkSyncAddress: Address): string;
+export declare function isMessageSignatureCorrect(address: string, message: ethers.Bytes | string, signature: SignatureLike): Promise<boolean>;
+export declare function isTypedDataSignatureCorrect(address: string, domain: TypedDataDomain, types: Record<string, Array<TypedDataField>>, value: Record<string, any>, signature: SignatureLike): Promise<boolean>;

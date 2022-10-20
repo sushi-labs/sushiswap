@@ -1,0 +1,32 @@
+{
+  "name": "solidity-parser-diligence",
+  "version": "0.4.15-8aeb305d",
+  "description": "A Solidity parser built from a robust ANTLR 4 grammar",
+  "main": "dist/index.js",
+  "types": "./index.d.ts",
+  "scripts": {
+    "antlr4": "sh scripts/antlr4.sh",
+    "build": "rm -rf dist && babel --out-dir=dist src --copy-files",
+    "prepare": "yarn build",
+    "prettier": "find src -name *.js | egrep -v '^src/(lib|antlr4)/' | xargs prettier --no-semi --single-quote --write",
+    "eslint": "eslint src",
+    "pretest": "eslint src && tslint-config-prettier-check ./tslint.json",
+    "test": "nyc mocha",
+    "tslint": "tslint-config-prettier-check ./tslint.json"
+  },
+  "author": [
+    "Gonçalo Sá <goncalo.sa@consensys.net>",
+    "Federico Bond <federicobond@gmail.com>"
+  ],
+  "homepage": "https://github.com/consensys/solidity-parser-antlr",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/consensys/solidity-parser-antlr.git"
+  },
+  "license": "MIT",
+  "nyc": {
+    "include": [
+      "src/*.js"
+    ]
+  }
+}

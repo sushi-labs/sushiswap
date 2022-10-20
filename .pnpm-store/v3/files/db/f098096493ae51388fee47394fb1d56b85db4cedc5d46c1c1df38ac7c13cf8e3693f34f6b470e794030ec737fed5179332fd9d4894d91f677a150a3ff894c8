@@ -1,0 +1,46 @@
+import { GetUserOctokitWithStateInterface } from "./methods/get-user-octokit";
+import { GetWebFlowAuthorizationUrlInterface } from "./methods/get-web-flow-authorization-url";
+import { CreateTokenInterface } from "./methods/create-token";
+import { CheckTokenInterface } from "./methods/check-token";
+import { ResetTokenInterface } from "./methods/reset-token";
+import { RefreshTokenInterface } from "./methods/refresh-token";
+import { ScopeTokenInterface } from "./methods/scope-token";
+import { DeleteTokenInterface } from "./methods/delete-token";
+import { DeleteAuthorizationInterface } from "./methods/delete-authorization";
+import type { AddEventHandler, ClientType, ClientTypeFromOptions, ConstructorOptions, OctokitTypeFromOptions, Options } from "./types";
+export { createNodeMiddleware } from "./middleware/node/index";
+export { createCloudflareHandler, createWebWorkerHandler, } from "./middleware/web-worker/index";
+export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-gateway-v2";
+declare type Constructor<T> = new (...args: any[]) => T;
+export declare class OAuthApp<TOptions extends Options<ClientType> = Options<"oauth-app">> {
+    static VERSION: string;
+    static defaults<TDefaults extends Options<ClientType>, S extends Constructor<OAuthApp<TDefaults>>>(this: S, defaults: TDefaults): {
+        new (...args: any[]): {
+            type: ClientTypeFromOptions<TDefaults>;
+            on: AddEventHandler<TDefaults>;
+            octokit: OctokitTypeFromOptions<TDefaults>;
+            getUserOctokit: GetUserOctokitWithStateInterface<ClientTypeFromOptions<TDefaults>>;
+            getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface<ClientTypeFromOptions<TDefaults>>;
+            createToken: CreateTokenInterface<ClientTypeFromOptions<TDefaults>>;
+            checkToken: CheckTokenInterface<ClientTypeFromOptions<TDefaults>>;
+            resetToken: ResetTokenInterface<ClientTypeFromOptions<TDefaults>>;
+            refreshToken: RefreshTokenInterface;
+            scopeToken: ScopeTokenInterface;
+            deleteToken: DeleteTokenInterface;
+            deleteAuthorization: DeleteAuthorizationInterface;
+        };
+    } & S;
+    constructor(options: ConstructorOptions<TOptions>);
+    type: ClientTypeFromOptions<TOptions>;
+    on: AddEventHandler<TOptions>;
+    octokit: OctokitTypeFromOptions<TOptions>;
+    getUserOctokit: GetUserOctokitWithStateInterface<ClientTypeFromOptions<TOptions>>;
+    getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface<ClientTypeFromOptions<TOptions>>;
+    createToken: CreateTokenInterface<ClientTypeFromOptions<TOptions>>;
+    checkToken: CheckTokenInterface<ClientTypeFromOptions<TOptions>>;
+    resetToken: ResetTokenInterface<ClientTypeFromOptions<TOptions>>;
+    refreshToken: RefreshTokenInterface;
+    scopeToken: ScopeTokenInterface;
+    deleteToken: DeleteTokenInterface;
+    deleteAuthorization: DeleteAuthorizationInterface;
+}

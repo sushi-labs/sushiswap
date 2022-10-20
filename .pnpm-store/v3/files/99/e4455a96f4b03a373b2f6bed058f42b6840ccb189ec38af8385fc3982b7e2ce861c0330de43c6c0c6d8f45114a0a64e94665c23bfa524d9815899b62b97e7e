@@ -1,0 +1,191 @@
+import { RenameTypes, RenameObjectFields, RenameInputObjectFields, RenameObjectFieldArguments } from '@graphql-tools/wrap';
+import { applySchemaTransforms, applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
+import { resolvers } from 'graphql-scalars';
+import { defaultFieldResolver } from 'graphql';
+import { renameType, mapSchema, MapperKind } from '@graphql-tools/utils';
+
+const ignoreList = [
+    'Int',
+    'Float',
+    'String',
+    'Boolean',
+    'ID',
+    'date',
+    'hostname',
+    'regex',
+    'json-pointer',
+    'relative-json-pointer',
+    'uri-reference',
+    'uri-template',
+    ...Object.keys(resolvers),
+];
+
+class WrapRename {
+    constructor({ config }) {
+        this.transforms = [];
+        for (const change of config.renames) {
+            const { from: { type: fromTypeName, field: fromFieldName, argument: fromArgumentName }, to: { type: toTypeName, field: toFieldName, argument: toArgumentName }, useRegExpForTypes, useRegExpForFields, useRegExpForArguments, } = change;
+            const regExpFlags = change.regExpFlags || undefined;
+            if (fromTypeName !== toTypeName) {
+                let replaceTypeNameFn;
+                if (useRegExpForTypes) {
+                    const typeNameRegExp = new RegExp(fromTypeName, regExpFlags);
+                    replaceTypeNameFn = (t) => t.replace(typeNameRegExp, toTypeName);
+                }
+                else {
+                    replaceTypeNameFn = t => (t === fromTypeName ? toTypeName : t);
+                }
+                this.transforms.push(new RenameTypes(typeName => {
+                    if (ignoreList.includes(typeName)) {
+                        return typeName;
+                    }
+                    return replaceTypeNameFn(typeName);
+                }));
+            }
+            if (fromFieldName && toFieldName && fromFieldName !== toFieldName) {
+                let replaceFieldNameFn;
+                if (useRegExpForFields) {
+                    const fieldNameRegExp = new RegExp(fromFieldName, regExpFlags);
+                    replaceFieldNameFn = (typeName, fieldName) => typeName === toTypeName ? fieldName.replace(fieldNameRegExp, toFieldName) : fieldName;
+                }
+                else {
+                    replaceFieldNameFn = (typeName, fieldName) => typeName === toTypeName && fieldName === fromFieldName ? toFieldName : fieldName;
+                }
+                this.transforms.push(new RenameObjectFields(replaceFieldNameFn));
+                this.transforms.push(new RenameInputObjectFields(replaceFieldNameFn));
+            }
+            if (fromTypeName &&
+                (fromTypeName === toTypeName || useRegExpForTypes) &&
+                toFieldName &&
+                (fromFieldName === toFieldName || useRegExpForFields) &&
+                fromArgumentName &&
+                fromArgumentName !== toArgumentName) {
+                let replaceArgNameFn;
+                const fieldNameMatch = (fieldName) => fieldName ===
+                    (useRegExpForFields ? fieldName.replace(new RegExp(fromFieldName, regExpFlags), toFieldName) : toFieldName);
+                const typeNameMatch = (typeName) => typeName ===
+                    (useRegExpForTypes ? typeName.replace(new RegExp(fromTypeName, regExpFlags), toTypeName) : toTypeName);
+                if (useRegExpForArguments) {
+                    const argNameRegExp = new RegExp(fromArgumentName, regExpFlags);
+                    replaceArgNameFn = (typeName, fieldName, argName) => typeNameMatch(typeName) && fieldNameMatch(fieldName)
+                        ? argName.replace(argNameRegExp, toArgumentName)
+                        : argName;
+                }
+                else {
+                    replaceArgNameFn = (typeName, fieldName, argName) => typeNameMatch(typeName) && fieldNameMatch(fieldName) && argName === fromArgumentName
+                        ? toArgumentName
+                        : argName;
+                }
+                this.transforms.push(new RenameObjectFieldArguments(replaceArgNameFn));
+            }
+        }
+    }
+    transformSchema(originalWrappingSchema, subschemaConfig, transformedSchema) {
+        return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    }
+    transformRequest(originalRequest, delegationContext, transformationContext) {
+        return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    }
+    transformResult(originalResult, delegationContext, transformationContext) {
+        return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+    }
+}
+
+// Resolver composer mapping renamed field and arguments
+const defaultResolverComposer = (resolveFn = defaultFieldResolver, originalFieldName, argsMap) => (root, args, context, info) => resolveFn(root, 
+// map renamed arguments to their original value
+argsMap
+    ? Object.keys(args).reduce((acc, key) => ({ ...acc, [argsMap[key] || key]: args[key] }), {})
+    : args, context, 
+// map renamed field name to its original value
+originalFieldName ? { ...info, fieldName: originalFieldName } : info);
+class BareRename {
+    constructor({ config }) {
+        this.noWrap = true;
+        this.typesMap = new Map();
+        this.fieldsMap = new Map();
+        this.argsMap = new Map();
+        for (const rename of config.renames) {
+            const { from: { type: fromTypeName, field: fromFieldName, argument: fromArgName }, to: { type: toTypeName, field: toFieldName, argument: toArgName }, useRegExpForTypes, useRegExpForFields, } = rename;
+            const regExpFlags = rename.regExpFlags || undefined;
+            if (fromTypeName && !fromFieldName && toTypeName && !toFieldName && fromTypeName !== toTypeName) {
+                this.typesMap.set(useRegExpForTypes ? new RegExp(fromTypeName, regExpFlags) : fromTypeName, toTypeName);
+            }
+            if (fromTypeName && fromFieldName && toTypeName && toFieldName && fromFieldName !== toFieldName) {
+                const fromName = useRegExpForFields ? new RegExp(fromFieldName, regExpFlags) : fromFieldName;
+                const typeMap = this.fieldsMap.get(fromTypeName) || new Map();
+                this.fieldsMap.set(fromTypeName, typeMap.set(fromName, toFieldName));
+            }
+            if (fromTypeName &&
+                fromFieldName &&
+                fromArgName &&
+                toTypeName &&
+                toFieldName &&
+                toArgName &&
+                fromArgName !== toArgName) {
+                const fromName = useRegExpForFields ? new RegExp(fromArgName, regExpFlags) : fromArgName;
+                const key = `${fromTypeName}.${fromFieldName}`;
+                const typeMap = this.argsMap.get(key) || new Map();
+                this.argsMap.set(key, typeMap.set(fromName, toArgName));
+            }
+        }
+    }
+    matchInMap(map, toMatch) {
+        const mapKeyIsString = map.has(toMatch);
+        const mapKey = mapKeyIsString ? toMatch : [...map.keys()].find(key => typeof key !== 'string' && key.test(toMatch));
+        if (!mapKey)
+            return null;
+        const newName = mapKeyIsString ? map.get(mapKey) : toMatch.replace(mapKey, map.get(mapKey));
+        // avoid re-iterating over strings that have already been renamed
+        if (mapKeyIsString)
+            map.delete(mapKey);
+        return newName;
+    }
+    renameType(type) {
+        const newTypeName = ignoreList.includes(type.toString()) ? null : this.matchInMap(this.typesMap, type.toString());
+        return newTypeName ? renameType(type, newTypeName) : undefined;
+    }
+    transformSchema(schema) {
+        return mapSchema(schema, {
+            ...(this.typesMap.size && { [MapperKind.TYPE]: type => this.renameType(type) }),
+            ...(this.typesMap.size && { [MapperKind.ROOT_OBJECT]: type => this.renameType(type) }),
+            ...((this.fieldsMap.size || this.argsMap.size) && {
+                [MapperKind.COMPOSITE_FIELD]: (fieldConfig, fieldName, typeName) => {
+                    const typeRules = this.fieldsMap.get(typeName);
+                    const fieldRules = this.argsMap.get(`${typeName}.${fieldName}`);
+                    const newFieldName = typeRules && this.matchInMap(typeRules, fieldName);
+                    const argsMap = fieldRules &&
+                        Array.from(fieldRules.entries()).reduce((acc, [orName, newName]) => ({ ...acc, [newName]: orName }), {});
+                    if (!newFieldName && !fieldRules)
+                        return undefined;
+                    // Rename rules for type might have been emptied by matchInMap, in which case we can cleanup
+                    if (!(typeRules === null || typeRules === void 0 ? void 0 : typeRules.size))
+                        this.fieldsMap.delete(typeName);
+                    if (fieldRules && fieldConfig.args) {
+                        fieldConfig.args = Object.entries(fieldConfig.args).reduce((args, [argName, argConfig]) => ({
+                            ...args,
+                            [this.matchInMap(fieldRules, argName) || argName]: argConfig,
+                        }), {});
+                    }
+                    // Wrap resolve fn to handle mapping renamed field name and/or renamed arguments
+                    fieldConfig.resolve = defaultResolverComposer(fieldConfig.resolve, fieldName, argsMap);
+                    return [newFieldName || fieldName, fieldConfig];
+                },
+            }),
+        });
+    }
+}
+
+const RenameTransform = (function RenameTransform(options) {
+    if (Array.isArray(options.config)) {
+        return new WrapRename({
+            config: {
+                mode: 'wrap',
+                renames: options.config,
+            },
+        });
+    }
+    return options.config.mode === 'bare' ? new BareRename(options) : new WrapRename(options);
+});
+
+export default RenameTransform;

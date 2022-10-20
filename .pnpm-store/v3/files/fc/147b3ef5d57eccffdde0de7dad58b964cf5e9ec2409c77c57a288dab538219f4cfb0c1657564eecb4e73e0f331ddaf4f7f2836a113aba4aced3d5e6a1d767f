@@ -1,0 +1,81 @@
+{
+  "name": "multihashes",
+  "version": "4.0.3",
+  "description": "multihash implementation",
+  "keywords": [
+    "multihash",
+    "multiformats",
+    "ipfs",
+    "hash"
+  ],
+  "homepage": "https://github.com/multiformats/js-multihash",
+  "bugs": "https://github.com/multiformats/js-multihash/issues",
+  "license": "MIT",
+  "leadMaintainer": "Hugo Dias <hugomrdias@gmail.com>",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "aegir build --no-bundle",
+    "lint": "aegir lint",
+    "test:browser": "aegir test --target browser",
+    "test:node": "aegir test --target node",
+    "test": "aegir test",
+    "docs": "aegir docs",
+    "release": "aegir release --docs",
+    "release-minor": "aegir release --type minor --docs",
+    "release-major": "aegir release --type major --docs",
+    "update-constants": "node update-constants.js"
+  },
+  "main": "src/index.js",
+  "types": "dist/src/index.d.ts",
+  "repository": "github:multiformats/js-multihash",
+  "dependencies": {
+    "multibase": "^4.0.1",
+    "uint8arrays": "^3.0.0",
+    "varint": "^5.0.2"
+  },
+  "devDependencies": {
+    "aegir": "^35.0.1",
+    "ipfs-utils": "^8.1.4",
+    "util": "^0.12.4"
+  },
+  "eslintConfig": {
+    "extends": "ipfs"
+  },
+  "aegir": {
+    "build": {
+      "bundlesizeMax": "10.3kB"
+    }
+  },
+  "contributors": [
+    "David Dias <daviddias.p@gmail.com>",
+    "Hugo Dias <hugomrdias@gmail.com>",
+    "Juan Benet <juan@benet.ai>",
+    "Jacob Heun <jacobheun@gmail.com>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Richard Littauer <richard.littauer@gmail.com>",
+    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
+    "Rod Vagg <rod@vagg.org>",
+    "Pedro Teixeira <i@pgte.me>",
+    "Alex Potsides <alex@achingbrain.net>",
+    "kumavis <aaron@kumavis.me>",
+    "Linus Unnebäck <linus@folkdatorn.se>",
+    "Vasco Santos <vasco.santos@moxy.studio>",
+    "Irakli Gozalishvili <contact@gozala.io>",
+    "Trond Arne Bråthen <tabrath@gmail.com>",
+    "Volker Mische <volker.mische@gmail.com>",
+    "William Cotton <williamcotton@gmail.com>",
+    "nginnever <ginneversource@gmail.com>",
+    "Fil <fil@rezo.net>",
+    "Lars Gierth <lgierth@users.noreply.github.com>",
+    "Nate Foss <npfoss@gmail.com>",
+    "Alan Shaw <alan@tableflip.io>",
+    "Donald Tsang <brandonknlee@gmail.com>"
+  ],
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=6.0.0"
+  }
+}

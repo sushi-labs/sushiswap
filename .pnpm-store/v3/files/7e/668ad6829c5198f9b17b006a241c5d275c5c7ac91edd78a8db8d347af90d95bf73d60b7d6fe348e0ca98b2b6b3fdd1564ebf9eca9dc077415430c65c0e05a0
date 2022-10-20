@@ -1,0 +1,46 @@
+{
+  "name": "@gnosis.pm/safe-apps-wagmi",
+  "version": "1.0.4",
+  "description": "WAGMI connector for Safe Apps",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "keywords": [
+    "Safe",
+    "sdk",
+    "Safe Apps",
+    "wagmi"
+  ],
+  "scripts": {
+    "build": "yarn rimraf dist && tsc"
+  },
+  "author": "Safe (https://gnosis-safe.io)",
+  "license": "MIT",
+  "dependencies": {
+    "@gnosis.pm/safe-apps-provider": "^0.14.0",
+    "@gnosis.pm/safe-apps-sdk": "^7.7.0"
+  },
+  "peerDependencies": {
+    "@wagmi/core": ">= 0.3.8 < 0.6.0"
+  },
+  "devDependencies": {
+    "@wagmi/core": "^0.5.7",
+    "ethers": "^5.7.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/safe-global/safe-apps-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/safe-global/safe-apps-sdk/issues"
+  },
+  "homepage": "https://github.com/safe-global/safe-apps-sdk#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}

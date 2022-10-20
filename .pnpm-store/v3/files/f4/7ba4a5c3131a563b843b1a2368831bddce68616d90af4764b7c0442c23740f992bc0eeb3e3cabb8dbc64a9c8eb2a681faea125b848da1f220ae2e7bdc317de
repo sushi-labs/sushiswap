@@ -1,0 +1,18 @@
+import { GraphQLSchema, DocumentNode } from 'graphql';
+import { ExecuteMeshFn, GetMeshOptions, SubscribeMeshFn } from './types';
+import { MeshPubSub, KeyValueCache, RawSourceOutput, Logger } from '@graphql-mesh/types';
+import { envelop, PluginOrDisabledPlugin } from '@envelop/core';
+export interface MeshInstance {
+    execute: ExecuteMeshFn;
+    subscribe: SubscribeMeshFn;
+    schema: GraphQLSchema;
+    rawSources: RawSourceOutput[];
+    destroy(): void;
+    pubsub: MeshPubSub;
+    cache: KeyValueCache;
+    logger: Logger;
+    plugins: PluginOrDisabledPlugin[];
+    getEnveloped: ReturnType<typeof envelop>;
+    sdkRequesterFactory: (globalContext: any) => (document: DocumentNode, variables?: any, operationContext?: any) => any;
+}
+export declare function getMesh(options: GetMeshOptions): Promise<MeshInstance>;

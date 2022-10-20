@@ -1,0 +1,1 @@
+{"version":3,"file":"getChildrenAndGrandchildrenWithProps.d.ts","sourceRoot":"","sources":["../../src/utils/getChildrenAndGrandchildrenWithProps.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAS1B;;;GAGG;AACH,MAAM,CAAC,OAAO,UAAU,oCAAoC,CAAC,CAAC,SAAS,MAAM,EAC3E,QAAQ,EAAE,GAAG,CAAC,OAAO,GAAG,GAAG,CAAC,OAAO,EAAE,GACpC,KAAK,CAAC,YAAY,CAAC,CAAC,CAAC,EAAE,CASzB"}

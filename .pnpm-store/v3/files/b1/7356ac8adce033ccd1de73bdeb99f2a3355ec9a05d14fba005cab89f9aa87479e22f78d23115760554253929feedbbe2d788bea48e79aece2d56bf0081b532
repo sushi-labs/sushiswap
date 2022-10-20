@@ -1,0 +1,250 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tenderly = void 0;
+const fs = __importStar(require("fs-extra"));
+const plugins_1 = require("hardhat/plugins");
+const path_1 = require("path");
+const index_1 = require("./index");
+const errors_1 = require("./tenderly/errors");
+const TenderlyService_1 = require("./tenderly/TenderlyService");
+const TenderlyNetwork_1 = require("./TenderlyNetwork");
+const error_logger_1 = require("./utils/error_logger");
+const util_1 = require("./utils/util");
+class Tenderly {
+    constructor(hre) {
+        this.env = hre;
+        this.tenderlyNetwork = new TenderlyNetwork_1.TenderlyNetwork(hre);
+    }
+    async verify(...contracts) {
+        var _a;
+        const priv = (_a = this.env.config.tenderly) === null || _a === void 0 ? void 0 : _a.privateVerification;
+        if (priv !== undefined && priv && this.env.network.name !== "tenderly") {
+            return this.push(...contracts);
+        }
+        if (this.env.network.name === "tenderly") {
+            return this.tenderlyNetwork.verify(contracts);
+        }
+        const flatContracts = contracts.reduce((accumulator, value) => accumulator.concat(value), []);
+        const requestData = await this.filterContracts(flatContracts);
+        if (requestData == null) {
+            console.log("Verification failed");
+            return;
+        }
+        try {
+            await TenderlyService_1.TenderlyService.verifyContracts(requestData);
+        }
+        catch (err) {
+            (0, error_logger_1.logError)(err);
+        }
+    }
+    async verifyAPI(request) {
+        if (this.env.network.name === "tenderly") {
+            console.log(`Error in ${index_1.PluginName}: .verifyAPI() is not available for fork deployments, please use verifyForkAPI().`);
+            return;
+        }
+        try {
+            await TenderlyService_1.TenderlyService.verifyContracts(request);
+        }
+        catch (err) {
+            (0, error_logger_1.logError)(err);
+        }
+    }
+    async verifyForkAPI(request, tenderlyProject, username, forkID) {
+        if (this.env.network.name !== "tenderly") {
+            console.log(`Error in ${index_1.PluginName}: .verifyForkAPI() is only available for tenderly fork deployments, please use --network tenderly.`);
+            return;
+        }
+        try {
+            await this.tenderlyNetwork.verifyAPI(request, tenderlyProject, username, forkID);
+        }
+        catch (err) {
+            (0, error_logger_1.logError)(err);
+        }
+    }
+    network() {
+        return this.tenderlyNetwork;
+    }
+    setNetwork(network) {
+        this.tenderlyNetwork = network;
+        return this.tenderlyNetwork;
+    }
+    async push(...contracts) {
+        var _a;
+        const priv = (_a = this.env.config.tenderly) === null || _a === void 0 ? void 0 : _a.privateVerification;
+        if (priv !== undefined && !priv) {
+            return this.verify(...contracts);
+        }
+        const flatContracts = contracts.reduce((accumulator, value) => accumulator.concat(value), []);
+        const requestData = await this.filterContracts(flatContracts);
+        if (this.env.config.tenderly.project === undefined) {
+            console.log(`Error in ${index_1.PluginName}: Please provide the project field in the tenderly object in hardhat.config.js`);
+            return;
+        }
+        if (this.env.config.tenderly.username === undefined) {
+            console.log(`Error in ${index_1.PluginName}: Please provide the username field in the tenderly object in hardhat.config.js`);
+            return;
+        }
+        if (requestData == null) {
+            console.log("Push failed");
+            return;
+        }
+        try {
+            await TenderlyService_1.TenderlyService.pushContracts(requestData, this.env.config.tenderly.project, this.env.config.tenderly.username);
+        }
+        catch (err) {
+            (0, error_logger_1.logError)(err);
+        }
+    }
+    async pushAPI(request, tenderlyProject, username) {
+        if (this.env.network.name === "tenderly") {
+            console.log(`Error in ${index_1.PluginName}: .pushAPI() is not available for fork deployments, please use verifyForkAPI().`);
+            return;
+        }
+        try {
+            await TenderlyService_1.TenderlyService.pushContracts(request, tenderlyProject, username);
+        }
+        catch (err) {
+            (0, error_logger_1.logError)(err);
+        }
+    }
+    async persistArtifacts(...contracts) {
+        if (contracts.length === 0) {
+            return;
+        }
+        const sourcePaths = await this.env.run("compile:solidity:get-source-paths");
+        const sourceNames = await this.env.run("compile:solidity:get-source-names", { sourcePaths });
+        const data = await this.env.run("compile:solidity:get-dependency-graph", {
+            sourceNames
+        });
+        if (data.length === 0) {
+            throw new plugins_1.HardhatPluginError(index_1.PluginName, errors_1.CONTRACTS_NOT_DETECTED);
+        }
+        let contract;
+        data._resolvedFiles.forEach((resolvedFile, _) => {
+            var _a, _b;
+            const sourcePath = resolvedFile.sourceName;
+            const name = sourcePath
+                .split("/")
+                .slice(-1)[0]
+                .split(".")[0];
+            for (contract of contracts) {
+                if (contract.name === name) {
+                    const network = this.env.hardhatArguments.network !== "hardhat"
+                        ? this.env.hardhatArguments.network || contract.network
+                        : contract.network;
+                    if (network === undefined) {
+                        console.log(`Error in ${index_1.PluginName}: Please provide a network via the hardhat --network argument or directly in the contract`);
+                        continue;
+                    }
+                    let chainID = index_1.NetworkMap[network.toLowerCase()];
+                    if (this.env.config.networks[network].chainId !== undefined) {
+                        chainID = this.env.config.networks[network].chainId.toString();
+                    }
+                    if (chainID === undefined) {
+                        chainID = index_1.DefaultChainId;
+                    }
+                    const deploymentsFolder = ((_b = (_a = this.env.config) === null || _a === void 0 ? void 0 : _a.tenderly) === null || _b === void 0 ? void 0 : _b.deploymentsDir) || "deployments";
+                    const destPath = `${deploymentsFolder}${path_1.sep}${network.toLowerCase()}_${chainID}${path_1.sep}`;
+                    const contractDataPath = `${this.env.config.paths.artifacts}${path_1.sep}${sourcePath}${path_1.sep}${name}.json`;
+                    const contractData = JSON.parse(fs.readFileSync(contractDataPath).toString());
+                    const metadata = {
+                        compiler: {
+                            version: (0, util_1.extractCompilerVersion)(this.env.config, sourcePath)
+                        },
+                        sources: {
+                            [sourcePath]: {
+                                content: resolvedFile.content.rawContent
+                            }
+                        }
+                    };
+                    const visited = {};
+                    (0, util_1.resolveDependencies)(data, sourcePath, metadata, visited);
+                    const artifact = {
+                        metadata: JSON.stringify(metadata),
+                        address: contract.address,
+                        bytecode: contractData.bytecode,
+                        deployedBytecode: contractData.deployedBytecode,
+                        abi: contractData.abi
+                    };
+                    fs.outputFileSync(`${destPath}${name}.json`, JSON.stringify(artifact));
+                }
+            }
+        });
+    }
+    async filterContracts(flatContracts) {
+        let contract;
+        let requestData;
+        try {
+            requestData = await this.getContractData(flatContracts);
+        }
+        catch (e) {
+            return null;
+        }
+        for (contract of flatContracts) {
+            const network = this.env.hardhatArguments.network !== "hardhat"
+                ? this.env.hardhatArguments.network || contract.network
+                : contract.network;
+            if (network === undefined) {
+                console.log(`Error in ${index_1.PluginName}: Please provide a network via the hardhat --network argument or directly in the contract`);
+                return null;
+            }
+            const index = requestData.contracts.findIndex(requestContract => requestContract.contractName === contract.name);
+            if (index === -1) {
+                continue;
+            }
+            let chainID = index_1.NetworkMap[network.toLowerCase()];
+            if (this.env.config.networks[network].chainId !== undefined) {
+                chainID = this.env.config.networks[network].chainId.toString();
+            }
+            if (chainID === undefined) {
+                console.log(`Error in ${index_1.PluginName}: Couldn't identify network. Please provide a chainID in the network config object`);
+                return null;
+            }
+            console.log(contract.libraries);
+            requestData.contracts[index].networks = {
+                [chainID]: {
+                    address: contract.address,
+                    links: contract.libraries
+                }
+            };
+        }
+        return requestData;
+    }
+    async getContractData(flatContracts) {
+        const contracts = await (0, util_1.getContracts)(this.env, flatContracts);
+        const config = (0, util_1.getCompilerDataFromContracts)(contracts, flatContracts, this.env.config);
+        if (config === undefined) {
+            console.log(errors_1.NO_COMPILER_FOUND_FOR_CONTRACT);
+            console.log(flatContracts);
+        }
+        return {
+            contracts,
+            config: config
+        };
+    }
+}
+exports.Tenderly = Tenderly;
+//# sourceMappingURL=Tenderly.js.map

@@ -1,0 +1,27 @@
+{
+    "name": "@types/workbox-precaching",
+    "version": "4.3.1",
+    "description": "TypeScript definitions for workbox-precaching",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-precaching",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Kwok",
+            "url": "https://github.com/JasonHK",
+            "githubUsername": "JasonHK"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/workbox-precaching"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/workbox-core": "*"
+    },
+    "typesPublisherContentHash": "f1be3c547b4169aacc712785e30aabd77957dcc3d341519828498152e10fc17a",
+    "typeScriptVersion": "3.6"
+}

@@ -1,0 +1,3 @@
+# `@sushiswap/default-token-list`
+
+...

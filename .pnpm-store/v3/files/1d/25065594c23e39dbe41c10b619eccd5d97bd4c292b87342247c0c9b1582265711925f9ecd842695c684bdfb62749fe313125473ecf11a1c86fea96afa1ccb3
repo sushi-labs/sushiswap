@@ -1,0 +1,67 @@
+{
+  "name": "multibase",
+  "version": "4.0.6",
+  "description": "JavaScript implementation of the multibase specification",
+  "keywords": [
+    "IPFS",
+    "multiformats",
+    "multibase",
+    "encode",
+    "decode",
+    "formats"
+  ],
+  "homepage": "https://github.com/multiformats/js-multibase#readme",
+  "bugs": "https://github.com/multiformats/js-multibase/issues",
+  "license": "MIT",
+  "leadMaintainer": "Hugo Dias <hugomrdias@gmail.com>",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "main": "src/index.js",
+  "repository": "github:multiformats/js-multibase",
+  "scripts": {
+    "prepare": "aegir build --no-bundle",
+    "lint": "aegir lint",
+    "test": "aegir test",
+    "test:node": "aegir test -t node",
+    "test:browser": "aegir test -t browser",
+    "release": "aegir release",
+    "release-minor": "aegir release --type minor",
+    "release-major": "aegir release --type major"
+  },
+  "dependencies": {
+    "@multiformats/base-x": "^4.0.1"
+  },
+  "devDependencies": {
+    "aegir": "^35.0.2",
+    "benchmark": "^2.1.4",
+    "util": "^0.12.4"
+  },
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=6.0.0"
+  },
+  "eslintConfig": {
+    "extends": "ipfs"
+  },
+  "types": "dist/src/index.d.ts",
+  "contributors": [
+    "Hugo Dias <hugomrdias@gmail.com>",
+    "David Dias <daviddias.p@gmail.com>",
+    "Oli Evans <oli@tableflip.io>",
+    "achingbrain <alex@achingbrain.net>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Volker Mische <volker.mische@gmail.com>",
+    "Alan Shaw <alan.shaw@protocol.ai>",
+    "Irakli Gozalishvili <contact@gozala.io>",
+    "victorbjelkholm <victorbjelkholm@gmail.com>",
+    "Bora M. Alper <boramalper@gmail.com>",
+    "Carson Farmer <carson.farmer@gmail.com>",
+    "Henrique Dias <hacdias@gmail.com>",
+    "Kyle Maas <kylemaasdev@gmail.com>",
+    "Richard Littauer <richard.littauer@gmail.com>",
+    "Wolfgang Faust <wolfgang42@users.noreply.github.com>",
+    "theobat <theophile.batoz@gmail.com>"
+  ]
+}

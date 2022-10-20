@@ -1,0 +1,1 @@
+{"version":3,"file":"useDimensions.d.ts","sourceRoot":"","sources":["../../src/hooks/useDimensions.ts"],"names":[],"mappings":"AAEA,QAAA,MAAM,YAAY;;;;;;;;;CAIjB,CAAC;AAEF,oBAAY,UAAU,GAAG,OAAO,YAAY,CAAC;AAE7C,4FAA4F;AAC5F,MAAM,CAAC,OAAO,UAAU,aAAa,CACnC,WAAW,CAAC,EAAE,OAAO,CAAC,UAAU,CAAC,GAChC,CAAC,UAAU,EAAE,CAAC,IAAI,EAAE,UAAU,KAAK,IAAI,CAAC,CAgC1C"}

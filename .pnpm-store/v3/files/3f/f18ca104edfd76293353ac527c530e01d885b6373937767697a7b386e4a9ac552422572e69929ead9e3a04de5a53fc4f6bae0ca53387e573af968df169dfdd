@@ -1,0 +1,45 @@
+# LayerZero Scan API Client
+
+## Installation
+
+```
+npm i @layerzerolabs/scan-client
+```
+
+or
+
+```
+yarn add @layerzerolabs/scan-client
+```
+
+## Usage
+
+```typescript
+import {createClient} from '@layerzerolabs/scan-client';
+
+const client = createClient('testnet');
+
+client
+  .getMessagesBySrcTxHash('0xc6071e98336996084a18a6c47ab38449e31d7d4b48040f35bbcd4106189e3036')
+  .then((result) => {
+    console.log(result.messages);
+  });
+```
+
+Message type
+
+```typescript
+export type Message = {
+  srcUaAddress: string;
+  dstUaAddress: string;
+  srcChainId: number;
+  dstChainId: number;
+  dstTxHash?: string;
+  dstTxError?: string;
+  srcTxHash: string;
+  srcBlockHash: string;
+  srcBlockNumber: string;
+  srcUaNonce: number;
+  status: 'INFLIGHT' | 'DELIVERED' | 'FAILED';
+};
+```

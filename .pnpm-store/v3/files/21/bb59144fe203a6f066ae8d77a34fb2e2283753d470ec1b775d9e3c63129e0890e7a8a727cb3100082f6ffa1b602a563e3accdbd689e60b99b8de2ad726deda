@@ -1,0 +1,10 @@
+theme: jekyll-theme-cayman
+gems:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+defaults:
+  - scope:
+      path: index
+      type: default
+    values:
+      layout: default

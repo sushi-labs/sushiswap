@@ -1,0 +1,62 @@
+{
+  "name": "next-sitemap",
+  "version": "3.1.21",
+  "description": "Sitemap generator for next.js",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/@types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "repository": "https://github.com/iamvishnusankar/next-sitemap.git",
+  "funding": [
+    {
+      "url": "https://github.com/iamvishnusankar/next-sitemap.git"
+    }
+  ],
+  "engines": {
+    "node": ">=14.18"
+  },
+  "keywords": [
+    "nextjs",
+    "next",
+    "sitemap",
+    "seo",
+    "react"
+  ],
+  "author": {
+    "name": "Vishnu Sankar",
+    "url": "https://www.iamvishnusankar.com"
+  },
+  "bugs": {
+    "url": "https://github.com/iamvishnusankar/next-sitemap/issues"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "next-sitemap": "./bin/next-sitemap.mjs",
+    "next-sitemap-cjs": "./bin/next-sitemap.cjs"
+  },
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "tsc --module commonjs --outDir dist/cjs"
+  },
+  "dependencies": {
+    "@corex/deepmerge": "^4.0.29",
+    "minimist": "^1.2.6"
+  },
+  "peerDependencies": {
+    "next": "*",
+    "@next/env": "*"
+  }
+}

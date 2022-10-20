@@ -1,0 +1,52 @@
+import { CallOverrides, PopulatedTransaction } from 'ethers';
+import { Address } from '../../types';
+import { SendTransactionResult } from '../transactions';
+import { GetContractArgs } from './getContract';
+export declare type WriteContractPreparedArgs = {
+    /**
+     * `recklesslyUnprepared`: Allow to pass through unprepared config. Note: This has
+     * [UX pitfalls](https://wagmi.sh/docs/prepare-hooks/intro#ux-pitfalls-without-prepare-hooks),
+     * it is highly recommended to not use this and instead prepare the request upfront
+     * using the {@link prepareWriteContract} function.
+     *
+     * `prepared`: The request has been prepared with parameters required for sending a transaction
+     * via the {@link prepareWriteContract} function
+     * */
+    mode: 'prepared';
+    /** The prepared request. */
+    request: PopulatedTransaction & {
+        to: Address;
+        gasLimit: NonNullable<PopulatedTransaction['gasLimit']>;
+    };
+};
+export declare type WriteContractUnpreparedArgs = {
+    mode: 'recklesslyUnprepared';
+    request?: undefined;
+};
+export declare type WriteContractArgs = Omit<GetContractArgs, 'signerOrProvider'> & {
+    /** Chain ID used to validate if the signer is connected to the target chain */
+    chainId?: number;
+    /** Method to call on contract */
+    functionName: string;
+    /** Arguments to pass contract method */
+    args?: any | any[];
+    overrides?: CallOverrides;
+} & (WriteContractUnpreparedArgs | WriteContractPreparedArgs);
+export declare type WriteContractResult = SendTransactionResult;
+/**
+ * @description Function to call a contract write method.
+ *
+ * It is recommended to pair this with the {@link prepareWriteContract} function
+ * to avoid [UX pitfalls](https://wagmi.sh/docs/prepare-hooks/intro#ux-pitfalls-without-prepare-hooks).
+ *
+ * @example
+ * import { prepareWriteContract, writeContract } from '@wagmi/core'
+ *
+ * const config = await prepareWriteContract({
+ *   addressOrName: '0x...',
+ *   contractInterface: wagmiAbi,
+ *   functionName: 'mint',
+ * })
+ * const result = await writeContract(config)
+ */
+export declare function writeContract({ addressOrName, args, chainId, contractInterface, functionName, mode, overrides, request: request_, }: WriteContractArgs): Promise<WriteContractResult>;

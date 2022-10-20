@@ -1,0 +1,68 @@
+{
+  "name": "graphql-yoga",
+  "version": "3.0.0-next.3",
+  "description": "",
+  "sideEffects": false,
+  "peerDependencies": {
+    "graphql": "^15.2.0 || ^16.0.0"
+  },
+  "dependencies": {
+    "@graphql-tools/code-file-loader": "^7.3.0",
+    "@graphql-tools/mock": "^8.7.0",
+    "@graphql-tools/utils": "8.12.0",
+    "@envelop/core": "^2.5.0",
+    "@envelop/parser-cache": "^4.6.0",
+    "@envelop/validation-cache": "^4.6.0",
+    "@graphql-typed-document-node/core": "^3.1.1",
+    "@graphql-tools/schema": "^9.0.0",
+    "@graphql-yoga/subscription": "^3.0.0-next.0",
+    "@whatwg-node/server": "0.4.10",
+    "@whatwg-node/fetch": "0.4.6",
+    "dset": "^3.1.1",
+    "graphql-config": "^4.1.0",
+    "tslib": "^2.3.1",
+    "yargs": "^17.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dotansimha/graphql-yoga.git",
+    "directory": "packages/graphql-yoga"
+  },
+  "keywords": [
+    "graphql",
+    "server",
+    "api",
+    "graphql-server"
+  ],
+  "author": "Saihajpreet Singh <saihajpreet.singh@gmail.com> (https://saihaj.dev/)",
+  "license": "MIT",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "typings": "typings/index.d.ts",
+  "typescript": {
+    "definition": "typings/index.d.ts"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./typings/index.d.cts",
+        "default": "./cjs/index.js"
+      },
+      "import": {
+        "types": "./typings/index.d.ts",
+        "default": "./esm/index.js"
+      },
+      "default": {
+        "types": "./typings/index.d.ts",
+        "default": "./esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "gql-yoga": "cjs/cli/bin.js",
+    "graphql-yoga": "cjs/cli/bin.js",
+    "yoga": "cjs/cli/bin.js"
+  }
+}

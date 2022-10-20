@@ -1,0 +1,85 @@
+.main-header {
+  margin: 0 0 4px;
+}
+
+.main-link a {
+  color: #888;
+}
+.main-link {
+  margin-top: 0;
+}
+
+body {
+  font: 14px sans-serif;
+  padding: 15px;
+}
+
+.description {
+  max-width: 800px;
+}
+
+path {
+  stroke: #0bb;
+  stroke-width: 1.5px;
+  fill: none;
+}
+
+path.filled {
+  fill: #0bb;
+  fill-opacity: 0.2;
+}
+
+.example {
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  vertical-align: top;
+}
+
+.example h4 {
+  margin: 0;
+}
+
+.path-d-string {
+  width: 80px;
+  display: inline-block;
+  overflow: hidden;
+  margin-right: 15px;
+  margin-top: 8px;
+  font-size: 12px;
+  font-family: sans-serif;
+  vertical-align: top;
+}
+
+.status, .status button {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.example-container {
+  display: inline-block;
+  padding: 8px;
+}
+
+.using-d3-default {
+  background: #eee;
+  color: #666;
+}
+
+.using-d3-default h4 {
+  font-weight: 400;
+}
+
+.using-d3-default path {
+  stroke: #b1a776;
+}
+
+.using-d3-default path.filled {
+  fill: #bcb38b;
+}
+
+.interpolator-used {
+  color: #666;
+  font-size: 0.8em;
+}

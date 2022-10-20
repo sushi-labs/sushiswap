@@ -1,0 +1,64 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GenericSdkVisitor = void 0;
+const tslib_1 = require("tslib");
+const visitor_plugin_common_1 = require("@graphql-codegen/visitor-plugin-common");
+const auto_bind_1 = tslib_1.__importDefault(require("auto-bind"));
+const graphql_1 = require("graphql");
+class GenericSdkVisitor extends visitor_plugin_common_1.ClientSideBaseVisitor {
+    constructor(schema, fragments, rawConfig) {
+        super(schema, fragments, rawConfig, {
+            usingObservableFrom: rawConfig.usingObservableFrom,
+            rawRequest: (0, visitor_plugin_common_1.getConfigValue)(rawConfig.rawRequest, false),
+        });
+        this._operationsToInclude = [];
+        (0, auto_bind_1.default)(this);
+        if (this.config.usingObservableFrom) {
+            this._additionalImports.push(this.config.usingObservableFrom);
+        }
+        if (this.config.documentMode !== visitor_plugin_common_1.DocumentMode.string) {
+            const importType = this.config.useTypeImports ? 'import type' : 'import';
+            this._additionalImports.push(`${importType} { DocumentNode } from 'graphql';`);
+        }
+    }
+    buildOperation(node, documentVariableName, operationType, operationResultType, operationVariablesTypes) {
+        if (node.name == null) {
+            throw new Error("Plugin 'generic-sdk' cannot generate SDK for unnamed operation.\n\n" + (0, graphql_1.print)(node));
+        }
+        else {
+            this._operationsToInclude.push({
+                node,
+                documentVariableName,
+                operationType,
+                operationResultType,
+                operationVariablesTypes,
+            });
+        }
+        return null;
+    }
+    get sdkContent() {
+        const usingObservable = !!this.config.usingObservableFrom;
+        const allPossibleActions = this._operationsToInclude
+            .map(o => {
+            const optionalVariables = !o.node.variableDefinitions ||
+                o.node.variableDefinitions.length === 0 ||
+                o.node.variableDefinitions.every(v => v.type.kind !== graphql_1.Kind.NON_NULL_TYPE || v.defaultValue);
+            const returnType = usingObservable && o.operationType === 'Subscription' ? 'Observable' : 'Promise';
+            const resultData = this.config.rawRequest
+                ? `{ data?: ${o.operationResultType}, errors?: Array<{ message: string; extensions?: unknown }>, extensions?: unknown }`
+                : o.operationResultType;
+            return `${o.node.name.value}(variables${optionalVariables ? '?' : ''}: ${o.operationVariablesTypes}, options?: C): ${returnType}<${resultData}> {
+  return requester<${o.operationResultType}, ${o.operationVariablesTypes}>(${o.documentVariableName}, variables, options);
+}`;
+        })
+            .map(s => (0, visitor_plugin_common_1.indentMultiline)(s, 2));
+        return `export type Requester<C= {}> = <R, V>(doc: ${this.config.documentMode === visitor_plugin_common_1.DocumentMode.string ? 'string' : 'DocumentNode'}, vars?: V, options?: C) => ${usingObservable ? 'Promise<R> & Observable<R>' : 'Promise<R>'}
+export function getSdk<C>(requester: Requester<C>) {
+  return {
+${allPossibleActions.join(',\n')}
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;`;
+    }
+}
+exports.GenericSdkVisitor = GenericSdkVisitor;

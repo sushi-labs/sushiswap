@@ -1,0 +1,42 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Prerender = void 0;
+class Prerender {
+    constructor({ expiration, lambda, fallback, group, bypassToken, allowQuery, }) {
+        this.type = 'Prerender';
+        this.expiration = expiration;
+        this.lambda = lambda;
+        if (typeof group !== 'undefined' &&
+            (group <= 0 || !Number.isInteger(group))) {
+            throw new Error('The `group` argument for `Prerender` needs to be a natural number.');
+        }
+        this.group = group;
+        if (bypassToken == null) {
+            this.bypassToken = null;
+        }
+        else if (typeof bypassToken === 'string') {
+            if (bypassToken.length < 32) {
+                // Enforce 128 bits of entropy for safety reasons (UUIDv4 size)
+                throw new Error('The `bypassToken` argument for `Prerender` must be 32 characters or more.');
+            }
+            this.bypassToken = bypassToken;
+        }
+        else {
+            throw new Error('The `bypassToken` argument for `Prerender` must be a `string`.');
+        }
+        if (typeof fallback === 'undefined') {
+            throw new Error('The `fallback` argument for `Prerender` needs to be a `FileBlob`, `FileFsRef`, `FileRef`, or null.');
+        }
+        this.fallback = fallback;
+        if (allowQuery !== undefined) {
+            if (!Array.isArray(allowQuery)) {
+                throw new Error('The `allowQuery` argument for `Prerender` must be Array.');
+            }
+            if (!allowQuery.every(q => typeof q === 'string')) {
+                throw new Error('The `allowQuery` argument for `Prerender` must be Array of strings.');
+            }
+            this.allowQuery = allowQuery;
+        }
+    }
+}
+exports.Prerender = Prerender;

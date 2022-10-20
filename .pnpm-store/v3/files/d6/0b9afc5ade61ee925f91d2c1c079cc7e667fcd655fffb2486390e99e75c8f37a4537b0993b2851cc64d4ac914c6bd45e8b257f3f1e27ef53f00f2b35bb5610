@@ -1,0 +1,60 @@
+{
+  "version": "5.3.3",
+  "name": "csv-stringify",
+  "description": "CSV stringifier implementing the Node.js `stream.Transform` API",
+  "keywords": [
+    "csv",
+    "stringify",
+    "stringifier"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "http://www.github.com/adaltas/node-csv-stringify"
+  },
+  "homepage": "https://csv.js.org/stringify/",
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    }
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.6.9",
+    "@types/should": "^13.0.0",
+    "coffeescript": "~2.4.1",
+    "csv-generate": "~3.2.3",
+    "mocha": "~6.2.0",
+    "should": "~13.2.3",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
+  },
+  "files": [
+    "/lib"
+  ],
+  "optionalDependencies": {},
+  "main": "./lib",
+  "scripts": {
+    "preversion": "grep '## Trunk' CHANGELOG.md && rm -rf lib/*.js && npm test && cp lib/*.ts lib/es5 && git add lib/es5/*.ts",
+    "version": "version=`grep '^  \"version\": ' package.json | sed 's/.*\"\\([0-9\\.]*\\)\".*/\\1/'` && sed -i \"s/## Trunk/## Version $version/\" CHANGELOG.md && git add CHANGELOG.md",
+    "postversion": "git push && git push --tags && npm publish",
+    "patch": "npm version patch -m 'Bump to version %s'",
+    "minor": "npm version minor -m 'Bump to version %s'",
+    "major": "npm version major -m 'Bump to version %s'",
+    "build": "coffee -b -o lib src && cd lib && babel *.js -d es5 && cd ..",
+    "pretest": "npm run build",
+    "test": "mocha test/**/*.{coffee,ts}"
+  },
+  "types": "./lib/index.d.ts"
+}

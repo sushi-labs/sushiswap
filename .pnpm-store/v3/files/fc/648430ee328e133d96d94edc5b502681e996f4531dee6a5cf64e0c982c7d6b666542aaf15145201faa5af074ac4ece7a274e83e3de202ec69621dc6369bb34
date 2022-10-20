@@ -1,0 +1,35 @@
+{
+    "name": "dnscache",
+    "description": "dnscache for Node",
+    "author": "Vinit Sacheti <vsacheti@yahoo.com>",
+    "version": "1.0.2",
+    "keywords": [
+        "dnscache",
+        "dns"
+    ],
+    "main": "./lib/index.js",
+    "scripts": {
+        "pretest": "jshint --config ./node_modules/yui-lint/jshint.json ./lib/ ./test/",
+        "test": "nyc mocha ./test/*.js",
+        "posttest": "nyc check-coverage --lines 100 --functions 100 --branches 100 && nyc report --reporter=lcov"
+    },
+    "bugs": {
+        "url": "http://github.com/yahoo/dnscache/issues"
+    },
+    "license": "BSD",
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/yahoo/dnscache.git"
+    },
+    "devDependencies": {
+        "async": "^2.6.2",
+        "jshint": "^2.10.2",
+        "mocha": "^6.1.4",
+        "nyc": "^14.0.0",
+        "yui-lint": "^0.2.0"
+    },
+    "dependencies": {
+        "asap": "^2.0.6",
+        "lodash.clone": "^4.5.0"
+    }
+}

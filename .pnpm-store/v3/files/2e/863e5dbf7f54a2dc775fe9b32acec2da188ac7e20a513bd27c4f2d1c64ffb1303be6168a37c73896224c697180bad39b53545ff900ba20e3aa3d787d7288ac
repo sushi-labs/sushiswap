@@ -1,0 +1,1117 @@
+{
+  "version": 2,
+  "tree": {
+    "name": "root",
+    "children": [
+      {
+        "name": "index.production.js",
+        "children": [
+          {
+            "name": "packages/table-core/src",
+            "children": [
+              {
+                "uid": "3258-64",
+                "name": "utils.ts"
+              },
+              {
+                "name": "core",
+                "children": [
+                  {
+                    "uid": "3258-66",
+                    "name": "column.ts"
+                  },
+                  {
+                    "uid": "3258-68",
+                    "name": "headers.ts"
+                  },
+                  {
+                    "uid": "3258-96",
+                    "name": "instance.ts"
+                  },
+                  {
+                    "uid": "3258-100",
+                    "name": "cell.ts"
+                  },
+                  {
+                    "uid": "3258-102",
+                    "name": "row.ts"
+                  }
+                ]
+              },
+              {
+                "name": "features",
+                "children": [
+                  {
+                    "uid": "3258-70",
+                    "name": "ColumnSizing.ts"
+                  },
+                  {
+                    "uid": "3258-72",
+                    "name": "Expanding.ts"
+                  },
+                  {
+                    "uid": "3258-76",
+                    "name": "Filters.ts"
+                  },
+                  {
+                    "uid": "3258-80",
+                    "name": "Grouping.ts"
+                  },
+                  {
+                    "uid": "3258-82",
+                    "name": "Ordering.ts"
+                  },
+                  {
+                    "uid": "3258-84",
+                    "name": "Pagination.ts"
+                  },
+                  {
+                    "uid": "3258-86",
+                    "name": "Pinning.ts"
+                  },
+                  {
+                    "uid": "3258-88",
+                    "name": "RowSelection.ts"
+                  },
+                  {
+                    "uid": "3258-92",
+                    "name": "Sorting.ts"
+                  },
+                  {
+                    "uid": "3258-94",
+                    "name": "Visibility.ts"
+                  }
+                ]
+              },
+              {
+                "uid": "3258-74",
+                "name": "filterFns.ts"
+              },
+              {
+                "uid": "3258-78",
+                "name": "aggregationFns.ts"
+              },
+              {
+                "uid": "3258-90",
+                "name": "sortingFns.ts"
+              },
+              {
+                "uid": "3258-98",
+                "name": "createTable.ts"
+              },
+              {
+                "name": "utils",
+                "children": [
+                  {
+                    "uid": "3258-104",
+                    "name": "getCoreRowModel.ts"
+                  },
+                  {
+                    "uid": "3258-106",
+                    "name": "filterRowsUtils.ts"
+                  },
+                  {
+                    "uid": "3258-108",
+                    "name": "getFilteredRowModel.ts"
+                  },
+                  {
+                    "uid": "3258-110",
+                    "name": "getFacetedRowModel.ts"
+                  },
+                  {
+                    "uid": "3258-112",
+                    "name": "getFacetedUniqueValues.ts"
+                  },
+                  {
+                    "uid": "3258-114",
+                    "name": "getFacetedMinMaxValues.ts"
+                  },
+                  {
+                    "uid": "3258-116",
+                    "name": "getSortedRowModel.ts"
+                  },
+                  {
+                    "uid": "3258-118",
+                    "name": "getGroupedRowModel.ts"
+                  },
+                  {
+                    "uid": "3258-120",
+                    "name": "getExpandedRowModel.ts"
+                  },
+                  {
+                    "uid": "3258-122",
+                    "name": "getPaginationRowModel.ts"
+                  }
+                ]
+              },
+              {
+                "uid": "3258-124",
+                "name": "index.ts"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "isRoot": true
+  },
+  "nodeParts": {
+    "3258-64": {
+      "renderedLength": 2201,
+      "gzipLength": 800,
+      "brotliLength": 0,
+      "mainUid": "3258-63"
+    },
+    "3258-66": {
+      "renderedLength": 2268,
+      "gzipLength": 742,
+      "brotliLength": 0,
+      "mainUid": "3258-65"
+    },
+    "3258-68": {
+      "renderedLength": 15972,
+      "gzipLength": 2637,
+      "brotliLength": 0,
+      "mainUid": "3258-67"
+    },
+    "3258-70": {
+      "renderedLength": 10056,
+      "gzipLength": 2221,
+      "brotliLength": 0,
+      "mainUid": "3258-69"
+    },
+    "3258-72": {
+      "renderedLength": 5657,
+      "gzipLength": 1309,
+      "brotliLength": 0,
+      "mainUid": "3258-71"
+    },
+    "3258-74": {
+      "renderedLength": 2743,
+      "gzipLength": 666,
+      "brotliLength": 0,
+      "mainUid": "3258-73"
+    },
+    "3258-76": {
+      "renderedLength": 10342,
+      "gzipLength": 1904,
+      "brotliLength": 0,
+      "mainUid": "3258-75"
+    },
+    "3258-78": {
+      "renderedLength": 2366,
+      "gzipLength": 652,
+      "brotliLength": 0,
+      "mainUid": "3258-77"
+    },
+    "3258-80": {
+      "renderedLength": 5316,
+      "gzipLength": 1365,
+      "brotliLength": 0,
+      "mainUid": "3258-79"
+    },
+    "3258-82": {
+      "renderedLength": 2231,
+      "gzipLength": 767,
+      "brotliLength": 0,
+      "mainUid": "3258-81"
+    },
+    "3258-84": {
+      "renderedLength": 6265,
+      "gzipLength": 1382,
+      "brotliLength": 0,
+      "mainUid": "3258-83"
+    },
+    "3258-86": {
+      "renderedLength": 8249,
+      "gzipLength": 1442,
+      "brotliLength": 0,
+      "mainUid": "3258-85"
+    },
+    "3258-88": {
+      "renderedLength": 12833,
+      "gzipLength": 2446,
+      "brotliLength": 0,
+      "mainUid": "3258-87"
+    },
+    "3258-90": {
+      "renderedLength": 2749,
+      "gzipLength": 841,
+      "brotliLength": 0,
+      "mainUid": "3258-89"
+    },
+    "3258-92": {
+      "renderedLength": 8615,
+      "gzipLength": 2026,
+      "brotliLength": 0,
+      "mainUid": "3258-91"
+    },
+    "3258-94": {
+      "renderedLength": 4978,
+      "gzipLength": 1096,
+      "brotliLength": 0,
+      "mainUid": "3258-93"
+    },
+    "3258-96": {
+      "renderedLength": 7546,
+      "gzipLength": 1790,
+      "brotliLength": 0,
+      "mainUid": "3258-95"
+    },
+    "3258-98": {
+      "renderedLength": 1546,
+      "gzipLength": 551,
+      "brotliLength": 0,
+      "mainUid": "3258-97"
+    },
+    "3258-100": {
+      "renderedLength": 587,
+      "gzipLength": 284,
+      "brotliLength": 0,
+      "mainUid": "3258-99"
+    },
+    "3258-102": {
+      "renderedLength": 1887,
+      "gzipLength": 636,
+      "brotliLength": 0,
+      "mainUid": "3258-101"
+    },
+    "3258-104": {
+      "renderedLength": 2002,
+      "gzipLength": 773,
+      "brotliLength": 0,
+      "mainUid": "3258-103"
+    },
+    "3258-106": {
+      "renderedLength": 2624,
+      "gzipLength": 635,
+      "brotliLength": 0,
+      "mainUid": "3258-105"
+    },
+    "3258-108": {
+      "renderedLength": 4104,
+      "gzipLength": 1090,
+      "brotliLength": 0,
+      "mainUid": "3258-107"
+    },
+    "3258-110": {
+      "renderedLength": 1207,
+      "gzipLength": 503,
+      "brotliLength": 0,
+      "mainUid": "3258-109"
+    },
+    "3258-112": {
+      "renderedLength": 1068,
+      "gzipLength": 422,
+      "brotliLength": 0,
+      "mainUid": "3258-111"
+    },
+    "3258-114": {
+      "renderedLength": 1238,
+      "gzipLength": 443,
+      "brotliLength": 0,
+      "mainUid": "3258-113"
+    },
+    "3258-116": {
+      "renderedLength": 3118,
+      "gzipLength": 1011,
+      "brotliLength": 0,
+      "mainUid": "3258-115"
+    },
+    "3258-118": {
+      "renderedLength": 5100,
+      "gzipLength": 1424,
+      "brotliLength": 0,
+      "mainUid": "3258-117"
+    },
+    "3258-120": {
+      "renderedLength": 1221,
+      "gzipLength": 488,
+      "brotliLength": 0,
+      "mainUid": "3258-119"
+    },
+    "3258-122": {
+      "renderedLength": 1020,
+      "gzipLength": 392,
+      "brotliLength": 0,
+      "mainUid": "3258-121"
+    },
+    "3258-124": {
+      "renderedLength": 0,
+      "gzipLength": 0,
+      "brotliLength": 0,
+      "mainUid": "3258-123"
+    }
+  },
+  "nodeMetas": {
+    "3258-63": {
+      "id": "/packages/table-core/src/utils.ts",
+      "moduleParts": {
+        "index.production.js": "3258-64"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        },
+        {
+          "uid": "3258-65"
+        },
+        {
+          "uid": "3258-67"
+        },
+        {
+          "uid": "3258-101"
+        },
+        {
+          "uid": "3258-69"
+        },
+        {
+          "uid": "3258-71"
+        },
+        {
+          "uid": "3258-75"
+        },
+        {
+          "uid": "3258-79"
+        },
+        {
+          "uid": "3258-81"
+        },
+        {
+          "uid": "3258-83"
+        },
+        {
+          "uid": "3258-85"
+        },
+        {
+          "uid": "3258-87"
+        },
+        {
+          "uid": "3258-91"
+        },
+        {
+          "uid": "3258-93"
+        },
+        {
+          "uid": "3258-103"
+        },
+        {
+          "uid": "3258-107"
+        },
+        {
+          "uid": "3258-109"
+        },
+        {
+          "uid": "3258-111"
+        },
+        {
+          "uid": "3258-113"
+        },
+        {
+          "uid": "3258-115"
+        },
+        {
+          "uid": "3258-117"
+        },
+        {
+          "uid": "3258-119"
+        },
+        {
+          "uid": "3258-121"
+        }
+      ]
+    },
+    "3258-65": {
+      "id": "/packages/table-core/src/core/column.ts",
+      "moduleParts": {
+        "index.production.js": "3258-66"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-67": {
+      "id": "/packages/table-core/src/core/headers.ts",
+      "moduleParts": {
+        "index.production.js": "3258-68"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-69": {
+      "id": "/packages/table-core/src/features/ColumnSizing.ts",
+      "moduleParts": {
+        "index.production.js": "3258-70"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-71": {
+      "id": "/packages/table-core/src/features/Expanding.ts",
+      "moduleParts": {
+        "index.production.js": "3258-72"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-73": {
+      "id": "/packages/table-core/src/filterFns.ts",
+      "moduleParts": {
+        "index.production.js": "3258-74"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-75"
+        }
+      ]
+    },
+    "3258-75": {
+      "id": "/packages/table-core/src/features/Filters.ts",
+      "moduleParts": {
+        "index.production.js": "3258-76"
+      },
+      "imported": [
+        {
+          "uid": "3258-73"
+        },
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-77": {
+      "id": "/packages/table-core/src/aggregationFns.ts",
+      "moduleParts": {
+        "index.production.js": "3258-78"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-79"
+        }
+      ]
+    },
+    "3258-79": {
+      "id": "/packages/table-core/src/features/Grouping.ts",
+      "moduleParts": {
+        "index.production.js": "3258-80"
+      },
+      "imported": [
+        {
+          "uid": "3258-77"
+        },
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        },
+        {
+          "uid": "3258-81"
+        }
+      ]
+    },
+    "3258-81": {
+      "id": "/packages/table-core/src/features/Ordering.ts",
+      "moduleParts": {
+        "index.production.js": "3258-82"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        },
+        {
+          "uid": "3258-79"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-83": {
+      "id": "/packages/table-core/src/features/Pagination.ts",
+      "moduleParts": {
+        "index.production.js": "3258-84"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-85": {
+      "id": "/packages/table-core/src/features/Pinning.ts",
+      "moduleParts": {
+        "index.production.js": "3258-86"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-87": {
+      "id": "/packages/table-core/src/features/RowSelection.ts",
+      "moduleParts": {
+        "index.production.js": "3258-88"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-89": {
+      "id": "/packages/table-core/src/sortingFns.ts",
+      "moduleParts": {
+        "index.production.js": "3258-90"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-91"
+        }
+      ]
+    },
+    "3258-91": {
+      "id": "/packages/table-core/src/features/Sorting.ts",
+      "moduleParts": {
+        "index.production.js": "3258-92"
+      },
+      "imported": [
+        {
+          "uid": "3258-89"
+        },
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-93": {
+      "id": "/packages/table-core/src/features/Visibility.ts",
+      "moduleParts": {
+        "index.production.js": "3258-94"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-95"
+        }
+      ]
+    },
+    "3258-95": {
+      "id": "/packages/table-core/src/core/instance.ts",
+      "moduleParts": {
+        "index.production.js": "3258-96"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        },
+        {
+          "uid": "3258-65"
+        },
+        {
+          "uid": "3258-67"
+        },
+        {
+          "uid": "3258-69"
+        },
+        {
+          "uid": "3258-71"
+        },
+        {
+          "uid": "3258-75"
+        },
+        {
+          "uid": "3258-79"
+        },
+        {
+          "uid": "3258-81"
+        },
+        {
+          "uid": "3258-83"
+        },
+        {
+          "uid": "3258-85"
+        },
+        {
+          "uid": "3258-87"
+        },
+        {
+          "uid": "3258-91"
+        },
+        {
+          "uid": "3258-93"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-97": {
+      "id": "/packages/table-core/src/createTable.ts",
+      "moduleParts": {
+        "index.production.js": "3258-98"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-99": {
+      "id": "/packages/table-core/src/core/cell.ts",
+      "moduleParts": {
+        "index.production.js": "3258-100"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "3258-101"
+        }
+      ]
+    },
+    "3258-101": {
+      "id": "/packages/table-core/src/core/row.ts",
+      "moduleParts": {
+        "index.production.js": "3258-102"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        },
+        {
+          "uid": "3258-99"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-103"
+        },
+        {
+          "uid": "3258-117"
+        },
+        {
+          "uid": "3258-105"
+        }
+      ]
+    },
+    "3258-103": {
+      "id": "/packages/table-core/src/utils/getCoreRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "3258-104"
+      },
+      "imported": [
+        {
+          "uid": "3258-101"
+        },
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-105": {
+      "id": "/packages/table-core/src/utils/filterRowsUtils.ts",
+      "moduleParts": {
+        "index.production.js": "3258-106"
+      },
+      "imported": [
+        {
+          "uid": "3258-101"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-107"
+        },
+        {
+          "uid": "3258-109"
+        }
+      ]
+    },
+    "3258-107": {
+      "id": "/packages/table-core/src/utils/getFilteredRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "3258-108"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        },
+        {
+          "uid": "3258-105"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-109": {
+      "id": "/packages/table-core/src/utils/getFacetedRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "3258-110"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        },
+        {
+          "uid": "3258-105"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-111": {
+      "id": "/packages/table-core/src/utils/getFacetedUniqueValues.ts",
+      "moduleParts": {
+        "index.production.js": "3258-112"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-113": {
+      "id": "/packages/table-core/src/utils/getFacetedMinMaxValues.ts",
+      "moduleParts": {
+        "index.production.js": "3258-114"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-115": {
+      "id": "/packages/table-core/src/utils/getSortedRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "3258-116"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-117": {
+      "id": "/packages/table-core/src/utils/getGroupedRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "3258-118"
+      },
+      "imported": [
+        {
+          "uid": "3258-101"
+        },
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-119": {
+      "id": "/packages/table-core/src/utils/getExpandedRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "3258-120"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        },
+        {
+          "uid": "3258-121"
+        }
+      ]
+    },
+    "3258-121": {
+      "id": "/packages/table-core/src/utils/getPaginationRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "3258-122"
+      },
+      "imported": [
+        {
+          "uid": "3258-63"
+        },
+        {
+          "uid": "3258-119"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    },
+    "3258-123": {
+      "id": "/packages/table-core/src/index.ts",
+      "moduleParts": {
+        "index.production.js": "3258-124"
+      },
+      "imported": [
+        {
+          "uid": "3258-95"
+        },
+        {
+          "uid": "3258-125"
+        },
+        {
+          "uid": "3258-97"
+        },
+        {
+          "uid": "3258-65"
+        },
+        {
+          "uid": "3258-67"
+        },
+        {
+          "uid": "3258-101"
+        },
+        {
+          "uid": "3258-69"
+        },
+        {
+          "uid": "3258-71"
+        },
+        {
+          "uid": "3258-75"
+        },
+        {
+          "uid": "3258-79"
+        },
+        {
+          "uid": "3258-81"
+        },
+        {
+          "uid": "3258-83"
+        },
+        {
+          "uid": "3258-85"
+        },
+        {
+          "uid": "3258-87"
+        },
+        {
+          "uid": "3258-91"
+        },
+        {
+          "uid": "3258-93"
+        },
+        {
+          "uid": "3258-73"
+        },
+        {
+          "uid": "3258-89"
+        },
+        {
+          "uid": "3258-77"
+        },
+        {
+          "uid": "3258-63"
+        },
+        {
+          "uid": "3258-103"
+        },
+        {
+          "uid": "3258-107"
+        },
+        {
+          "uid": "3258-109"
+        },
+        {
+          "uid": "3258-111"
+        },
+        {
+          "uid": "3258-113"
+        },
+        {
+          "uid": "3258-115"
+        },
+        {
+          "uid": "3258-117"
+        },
+        {
+          "uid": "3258-119"
+        },
+        {
+          "uid": "3258-121"
+        }
+      ],
+      "importedBy": [],
+      "isEntry": true
+    },
+    "3258-125": {
+      "id": "/packages/table-core/src/types.ts",
+      "moduleParts": {},
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "3258-123"
+        }
+      ]
+    }
+  },
+  "env": {
+    "rollup": "2.70.2"
+  },
+  "options": {
+    "gzip": true,
+    "brotli": false,
+    "sourcemap": false
+  }
+}

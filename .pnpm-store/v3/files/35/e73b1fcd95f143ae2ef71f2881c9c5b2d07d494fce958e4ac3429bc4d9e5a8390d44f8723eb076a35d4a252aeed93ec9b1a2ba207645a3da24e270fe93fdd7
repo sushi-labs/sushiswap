@@ -1,0 +1,10 @@
+export declare const WALLETCONNECT_HEADER_TEXT = "WalletConnect";
+export declare const ANIMATION_DURATION = 300;
+export declare const DEFAULT_BUTTON_COLOR = "rgb(64, 153, 255)";
+export declare const WALLETCONNECT_WRAPPER_ID = "walletconnect-wrapper";
+export declare const WALLETCONNECT_STYLE_ID = "walletconnect-style-sheet";
+export declare const WALLETCONNECT_MODAL_ID = "walletconnect-qrcode-modal";
+export declare const WALLETCONNECT_CLOSE_BUTTON_ID = "walletconnect-qrcode-close";
+export declare const WALLETCONNECT_CTA_TEXT_ID = "walletconnect-qrcode-text";
+export declare const WALLETCONNECT_CONNECT_BUTTON_ID = "walletconnect-connect-button";
+//# sourceMappingURL=index.d.ts.map

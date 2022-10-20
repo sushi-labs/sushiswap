@@ -1,0 +1,16 @@
+# Installation
+> `npm install --save @types/workbox-streams`
+
+# Summary
+This package contains type definitions for workbox-streams (https://github.com/GoogleChrome/workbox).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-streams.
+
+### Additional Details
+ * Last updated: Fri, 15 Nov 2019 22:07:15 GMT
+ * Dependencies: [@types/workbox-routing](https://npmjs.com/package/@types/workbox-routing)
+ * Global values: none
+
+# Credits
+These definitions were written by Jason Kwok (https://github.com/JasonHK).

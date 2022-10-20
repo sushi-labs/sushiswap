@@ -1,0 +1,14 @@
+{
+  "name": "css-box-shadow",
+  "version": "1.0.0-3",
+  "description": "CSS box-shadow parser and stringifier",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "author": "Brent Jackson",
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^0.19.1"
+  }
+}

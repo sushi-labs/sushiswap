@@ -1,0 +1,62 @@
+{
+    "name": "@types/sinon",
+    "version": "10.0.13",
+    "description": "TypeScript definitions for Sinon",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/sinon",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "William Sears",
+            "url": "https://github.com/mrbigdog2u",
+            "githubUsername": "mrbigdog2u"
+        },
+        {
+            "name": "Nico Jansen",
+            "url": "https://github.com/nicojs",
+            "githubUsername": "nicojs"
+        },
+        {
+            "name": "James Garbutt",
+            "url": "https://github.com/43081j",
+            "githubUsername": "43081j"
+        },
+        {
+            "name": "Greg Jednaszewski",
+            "url": "https://github.com/gjednaszewski",
+            "githubUsername": "gjednaszewski"
+        },
+        {
+            "name": "John Wood",
+            "url": "https://github.com/johnjesse",
+            "githubUsername": "johnjesse"
+        },
+        {
+            "name": "Alec Flett",
+            "url": "https://github.com/alecf",
+            "githubUsername": "alecf"
+        },
+        {
+            "name": "Simon Schick",
+            "url": "https://github.com/SimonSchick",
+            "githubUsername": "SimonSchick"
+        },
+        {
+            "name": "Mathias Schreck",
+            "url": "https://github.com/lo1tuma",
+            "githubUsername": "lo1tuma"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/sinon"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/sinonjs__fake-timers": "*"
+    },
+    "typesPublisherContentHash": "92dd94bfaa5ad7b53d1b6c313ff8c33f8f3eb4b7a1efadaf0418eabd4c6870e2",
+    "typeScriptVersion": "4.0"
+}

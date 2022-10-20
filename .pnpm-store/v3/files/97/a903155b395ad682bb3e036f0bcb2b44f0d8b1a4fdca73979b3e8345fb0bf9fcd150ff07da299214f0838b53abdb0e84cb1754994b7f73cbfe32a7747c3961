@@ -1,0 +1,3946 @@
+/**
+ * react-table
+ *
+ * Copyright (c) TanStack
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'react'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ReactTable = {}, global.React));
+})(this, (function (exports, React) { 'use strict';
+
+  function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+      Object.keys(e).forEach(function (k) {
+        if (k !== 'default') {
+          var d = Object.getOwnPropertyDescriptor(e, k);
+          Object.defineProperty(n, k, d.get ? d : {
+            enumerable: true,
+            get: function () { return e[k]; }
+          });
+        }
+      });
+    }
+    n["default"] = e;
+    return Object.freeze(n);
+  }
+
+  var React__namespace = /*#__PURE__*/_interopNamespace(React);
+
+  /**
+   * table-core
+   *
+   * Copyright (c) TanStack
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE.md file in the root directory of this source tree.
+   *
+   * @license MIT
+   */
+  function functionalUpdate(updater, input) {
+    return typeof updater === 'function' ? updater(input) : updater;
+  }
+  function noop() {//
+  }
+  function makeStateUpdater(key, instance) {
+    return updater => {
+      instance.setState(old => {
+        return { ...old,
+          [key]: functionalUpdate(updater, old[key])
+        };
+      });
+    };
+  }
+  function isFunction(d) {
+    return d instanceof Function;
+  }
+  function flattenBy(arr, getChildren) {
+    const flat = [];
+
+    const recurse = subArr => {
+      subArr.forEach(item => {
+        flat.push(item);
+        const children = getChildren(item);
+
+        if (children != null && children.length) {
+          recurse(children);
+        }
+      });
+    };
+
+    recurse(arr);
+    return flat;
+  }
+  function memo(getDeps, fn, opts) {
+    let deps = [];
+    let result;
+    return () => {
+      let depTime;
+      if (opts.key && opts.debug) depTime = Date.now();
+      const newDeps = getDeps();
+      const depsChanged = newDeps.length !== deps.length || newDeps.some((dep, index) => deps[index] !== dep);
+
+      if (!depsChanged) {
+        return result;
+      }
+
+      deps = newDeps;
+      let resultTime;
+      if (opts.key && opts.debug) resultTime = Date.now();
+      result = fn(...newDeps);
+      opts == null ? void 0 : opts.onChange == null ? void 0 : opts.onChange(result);
+
+      if (opts.key && opts.debug) {
+        if (opts != null && opts.debug()) {
+          const depEndTime = Math.round((Date.now() - depTime) * 100) / 100;
+          const resultEndTime = Math.round((Date.now() - resultTime) * 100) / 100;
+          const resultFpsPercentage = resultEndTime / 16;
+
+          const pad = (str, num) => {
+            str = String(str);
+
+            while (str.length < num) {
+              str = ' ' + str;
+            }
+
+            return str;
+          };
+
+          console.info("%c\u23F1 " + pad(resultEndTime, 5) + " /" + pad(depEndTime, 5) + " ms", "\n            font-size: .6rem;\n            font-weight: bold;\n            color: hsl(" + Math.max(0, Math.min(120 - 120 * resultFpsPercentage, 120)) + "deg 100% 31%);", opts == null ? void 0 : opts.key);
+        }
+      }
+
+      return result;
+    };
+  }
+
+  function createColumn(instance, columnDef, depth, parent) {
+    var _ref, _columnDef$id;
+
+    const defaultColumn = instance._getDefaultColumnDef();
+
+    columnDef = { ...defaultColumn,
+      ...columnDef
+    };
+    let id = (_ref = (_columnDef$id = columnDef.id) != null ? _columnDef$id : columnDef.accessorKey) != null ? _ref : typeof columnDef.header === 'string' ? columnDef.header : undefined;
+    let accessorFn;
+
+    if (columnDef.accessorFn) {
+      accessorFn = columnDef.accessorFn;
+    } else if (columnDef.accessorKey) {
+      accessorFn = originalRow => originalRow[columnDef.accessorKey];
+    }
+
+    if (!id) {
+      {
+        throw new Error(columnDef.accessorFn ? "Columns require an id when using an accessorFn" : "Columns require an id when using a non-string header");
+      }
+    }
+
+    let column = { ...columnDef,
+      id: "" + id,
+      accessorFn,
+      parent: parent,
+      depth,
+      columnDef,
+      columnDefType: columnDef.columnDefType,
+      columns: [],
+      getFlatColumns: memo(() => [true], () => {
+        var _column$columns;
+
+        return [column, ...((_column$columns = column.columns) == null ? void 0 : _column$columns.flatMap(d => d.getFlatColumns()))];
+      }, {
+        key: "development" === 'production' ,
+        debug: () => {
+          var _instance$options$deb;
+
+          return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugColumns;
+        }
+      }),
+      getLeafColumns: memo(() => [instance._getOrderColumnsFn()], orderColumns => {
+        var _column$columns2;
+
+        if ((_column$columns2 = column.columns) != null && _column$columns2.length) {
+          let leafColumns = column.columns.flatMap(column => column.getLeafColumns());
+          return orderColumns(leafColumns);
+        }
+
+        return [column];
+      }, {
+        key: "development" === 'production' ,
+        debug: () => {
+          var _instance$options$deb2;
+
+          return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugColumns;
+        }
+      })
+    };
+    column = instance._features.reduce((obj, feature) => {
+      return Object.assign(obj, feature.createColumn == null ? void 0 : feature.createColumn(column, instance));
+    }, column); // Yes, we have to convert instance to uknown, because we know more than the compiler here.
+
+    return column;
+  }
+
+  //
+  function createHeader(instance, column, options) {
+    var _options$id;
+
+    const id = (_options$id = options.id) != null ? _options$id : column.id;
+    let header = {
+      id,
+      column,
+      index: options.index,
+      isPlaceholder: !!options.isPlaceholder,
+      placeholderId: options.placeholderId,
+      depth: options.depth,
+      subHeaders: [],
+      colSpan: 0,
+      rowSpan: 0,
+      headerGroup: null,
+      getLeafHeaders: () => {
+        const leafHeaders = [];
+
+        const recurseHeader = h => {
+          if (h.subHeaders && h.subHeaders.length) {
+            h.subHeaders.map(recurseHeader);
+          }
+
+          leafHeaders.push(h);
+        };
+
+        recurseHeader(header);
+        return leafHeaders;
+      },
+      renderHeader: () => column.columnDef.header ? instance._render(column.columnDef.header, {
+        instance,
+        header: header,
+        column
+      }) : null,
+      renderFooter: () => column.columnDef.footer ? instance._render(column.columnDef.footer, {
+        instance,
+        header: header,
+        column
+      }) : null
+    };
+
+    instance._features.forEach(feature => {
+      Object.assign(header, feature.createHeader == null ? void 0 : feature.createHeader(header, instance));
+    });
+
+    return header;
+  }
+
+  const Headers = {
+    createInstance: instance => {
+      return {
+        // Header Groups
+        getHeaderGroups: memo(() => [instance.getAllColumns(), instance.getVisibleLeafColumns(), instance.getState().columnPinning.left, instance.getState().columnPinning.right], (allColumns, leafColumns, left, right) => {
+          var _left$map$filter, _right$map$filter;
+
+          const leftColumns = (_left$map$filter = left == null ? void 0 : left.map(columnId => leafColumns.find(d => d.id === columnId)).filter(Boolean)) != null ? _left$map$filter : [];
+          const rightColumns = (_right$map$filter = right == null ? void 0 : right.map(columnId => leafColumns.find(d => d.id === columnId)).filter(Boolean)) != null ? _right$map$filter : [];
+          const centerColumns = leafColumns.filter(column => !(left != null && left.includes(column.id)) && !(right != null && right.includes(column.id)));
+          const headerGroups = buildHeaderGroups(allColumns, [...leftColumns, ...centerColumns, ...rightColumns], instance);
+          return headerGroups;
+        }, {
+          key: 'getHeaderGroups',
+          debug: () => {
+            var _instance$options$deb;
+
+            return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugHeaders;
+          }
+        }),
+        getCenterHeaderGroups: memo(() => [instance.getAllColumns(), instance.getVisibleLeafColumns(), instance.getState().columnPinning.left, instance.getState().columnPinning.right], (allColumns, leafColumns, left, right) => {
+          leafColumns = leafColumns.filter(column => !(left != null && left.includes(column.id)) && !(right != null && right.includes(column.id)));
+          return buildHeaderGroups(allColumns, leafColumns, instance, 'center');
+        }, {
+          key: 'getCenterHeaderGroups',
+          debug: () => {
+            var _instance$options$deb2;
+
+            return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugHeaders;
+          }
+        }),
+        getLeftHeaderGroups: memo(() => [instance.getAllColumns(), instance.getVisibleLeafColumns(), instance.getState().columnPinning.left], (allColumns, leafColumns, left) => {
+          var _left$map$filter2;
+
+          const orderedLeafColumns = (_left$map$filter2 = left == null ? void 0 : left.map(columnId => leafColumns.find(d => d.id === columnId)).filter(Boolean)) != null ? _left$map$filter2 : [];
+          return buildHeaderGroups(allColumns, orderedLeafColumns, instance, 'left');
+        }, {
+          key: 'getLeftHeaderGroups',
+          debug: () => {
+            var _instance$options$deb3;
+
+            return (_instance$options$deb3 = instance.options.debugAll) != null ? _instance$options$deb3 : instance.options.debugHeaders;
+          }
+        }),
+        getRightHeaderGroups: memo(() => [instance.getAllColumns(), instance.getVisibleLeafColumns(), instance.getState().columnPinning.right], (allColumns, leafColumns, right) => {
+          var _right$map$filter2;
+
+          const orderedLeafColumns = (_right$map$filter2 = right == null ? void 0 : right.map(columnId => leafColumns.find(d => d.id === columnId)).filter(Boolean)) != null ? _right$map$filter2 : [];
+          return buildHeaderGroups(allColumns, orderedLeafColumns, instance, 'right');
+        }, {
+          key: 'getRightHeaderGroups',
+          debug: () => {
+            var _instance$options$deb4;
+
+            return (_instance$options$deb4 = instance.options.debugAll) != null ? _instance$options$deb4 : instance.options.debugHeaders;
+          }
+        }),
+        // Footer Groups
+        getFooterGroups: memo(() => [instance.getHeaderGroups()], headerGroups => {
+          return [...headerGroups].reverse();
+        }, {
+          key: 'getFooterGroups',
+          debug: () => {
+            var _instance$options$deb5;
+
+            return (_instance$options$deb5 = instance.options.debugAll) != null ? _instance$options$deb5 : instance.options.debugHeaders;
+          }
+        }),
+        getLeftFooterGroups: memo(() => [instance.getLeftHeaderGroups()], headerGroups => {
+          return [...headerGroups].reverse();
+        }, {
+          key: 'getLeftFooterGroups',
+          debug: () => {
+            var _instance$options$deb6;
+
+            return (_instance$options$deb6 = instance.options.debugAll) != null ? _instance$options$deb6 : instance.options.debugHeaders;
+          }
+        }),
+        getCenterFooterGroups: memo(() => [instance.getCenterHeaderGroups()], headerGroups => {
+          return [...headerGroups].reverse();
+        }, {
+          key: 'getCenterFooterGroups',
+          debug: () => {
+            var _instance$options$deb7;
+
+            return (_instance$options$deb7 = instance.options.debugAll) != null ? _instance$options$deb7 : instance.options.debugHeaders;
+          }
+        }),
+        getRightFooterGroups: memo(() => [instance.getRightHeaderGroups()], headerGroups => {
+          return [...headerGroups].reverse();
+        }, {
+          key: 'getRightFooterGroups',
+          debug: () => {
+            var _instance$options$deb8;
+
+            return (_instance$options$deb8 = instance.options.debugAll) != null ? _instance$options$deb8 : instance.options.debugHeaders;
+          }
+        }),
+        // Flat Headers
+        getFlatHeaders: memo(() => [instance.getHeaderGroups()], headerGroups => {
+          return headerGroups.map(headerGroup => {
+            return headerGroup.headers;
+          }).flat();
+        }, {
+          key: 'getFlatHeaders',
+          debug: () => {
+            var _instance$options$deb9;
+
+            return (_instance$options$deb9 = instance.options.debugAll) != null ? _instance$options$deb9 : instance.options.debugHeaders;
+          }
+        }),
+        getLeftFlatHeaders: memo(() => [instance.getLeftHeaderGroups()], left => {
+          return left.map(headerGroup => {
+            return headerGroup.headers;
+          }).flat();
+        }, {
+          key: 'getLeftFlatHeaders',
+          debug: () => {
+            var _instance$options$deb10;
+
+            return (_instance$options$deb10 = instance.options.debugAll) != null ? _instance$options$deb10 : instance.options.debugHeaders;
+          }
+        }),
+        getCenterFlatHeaders: memo(() => [instance.getCenterHeaderGroups()], left => {
+          return left.map(headerGroup => {
+            return headerGroup.headers;
+          }).flat();
+        }, {
+          key: 'getCenterFlatHeaders',
+          debug: () => {
+            var _instance$options$deb11;
+
+            return (_instance$options$deb11 = instance.options.debugAll) != null ? _instance$options$deb11 : instance.options.debugHeaders;
+          }
+        }),
+        getRightFlatHeaders: memo(() => [instance.getRightHeaderGroups()], left => {
+          return left.map(headerGroup => {
+            return headerGroup.headers;
+          }).flat();
+        }, {
+          key: 'getRightFlatHeaders',
+          debug: () => {
+            var _instance$options$deb12;
+
+            return (_instance$options$deb12 = instance.options.debugAll) != null ? _instance$options$deb12 : instance.options.debugHeaders;
+          }
+        }),
+        // Leaf Headers
+        getCenterLeafHeaders: memo(() => [instance.getCenterFlatHeaders()], flatHeaders => {
+          return flatHeaders.filter(header => {
+            var _header$subHeaders;
+
+            return !((_header$subHeaders = header.subHeaders) != null && _header$subHeaders.length);
+          });
+        }, {
+          key: 'getCenterLeafHeaders',
+          debug: () => {
+            var _instance$options$deb13;
+
+            return (_instance$options$deb13 = instance.options.debugAll) != null ? _instance$options$deb13 : instance.options.debugHeaders;
+          }
+        }),
+        getLeftLeafHeaders: memo(() => [instance.getLeftFlatHeaders()], flatHeaders => {
+          return flatHeaders.filter(header => {
+            var _header$subHeaders2;
+
+            return !((_header$subHeaders2 = header.subHeaders) != null && _header$subHeaders2.length);
+          });
+        }, {
+          key: 'getLeftLeafHeaders',
+          debug: () => {
+            var _instance$options$deb14;
+
+            return (_instance$options$deb14 = instance.options.debugAll) != null ? _instance$options$deb14 : instance.options.debugHeaders;
+          }
+        }),
+        getRightLeafHeaders: memo(() => [instance.getRightFlatHeaders()], flatHeaders => {
+          return flatHeaders.filter(header => {
+            var _header$subHeaders3;
+
+            return !((_header$subHeaders3 = header.subHeaders) != null && _header$subHeaders3.length);
+          });
+        }, {
+          key: 'getRightLeafHeaders',
+          debug: () => {
+            var _instance$options$deb15;
+
+            return (_instance$options$deb15 = instance.options.debugAll) != null ? _instance$options$deb15 : instance.options.debugHeaders;
+          }
+        }),
+        getLeafHeaders: memo(() => [instance.getLeftHeaderGroups(), instance.getCenterHeaderGroups(), instance.getRightHeaderGroups()], (left, center, right) => {
+          var _left$0$headers, _left$, _center$0$headers, _center$, _right$0$headers, _right$;
+
+          return [...((_left$0$headers = (_left$ = left[0]) == null ? void 0 : _left$.headers) != null ? _left$0$headers : []), ...((_center$0$headers = (_center$ = center[0]) == null ? void 0 : _center$.headers) != null ? _center$0$headers : []), ...((_right$0$headers = (_right$ = right[0]) == null ? void 0 : _right$.headers) != null ? _right$0$headers : [])].map(header => {
+            return header.getLeafHeaders();
+          }).flat();
+        }, {
+          key: 'getLeafHeaders',
+          debug: () => {
+            var _instance$options$deb16;
+
+            return (_instance$options$deb16 = instance.options.debugAll) != null ? _instance$options$deb16 : instance.options.debugHeaders;
+          }
+        })
+      };
+    }
+  };
+  function buildHeaderGroups(allColumns, columnsToGroup, instance, headerFamily) {
+    var _headerGroups$0$heade, _headerGroups$;
+
+    // Find the max depth of the columns:
+    // build the leaf column row
+    // build each buffer row going up
+    //    placeholder for non-existent level
+    //    real column for existing level
+    let maxDepth = 0;
+
+    const findMaxDepth = function (columns, depth) {
+      if (depth === void 0) {
+        depth = 1;
+      }
+
+      maxDepth = Math.max(maxDepth, depth);
+      columns.filter(column => column.getIsVisible()).forEach(column => {
+        var _column$columns;
+
+        if ((_column$columns = column.columns) != null && _column$columns.length) {
+          findMaxDepth(column.columns, depth + 1);
+        }
+      }, 0);
+    };
+
+    findMaxDepth(allColumns);
+    let headerGroups = [];
+
+    const createHeaderGroup = (headersToGroup, depth) => {
+      // The header group we are creating
+      const headerGroup = {
+        depth,
+        id: [headerFamily, "" + depth].filter(Boolean).join('_'),
+        headers: []
+      }; // The parent columns we're going to scan next
+
+      const pendingParentHeaders = []; // Scan each column for parents
+
+      headersToGroup.forEach(headerToGroup => {
+        // What is the latest (last) parent column?
+        const latestPendingParentHeader = [...pendingParentHeaders].reverse()[0];
+        const isLeafHeader = headerToGroup.column.depth === headerGroup.depth;
+        let column;
+        let isPlaceholder = false;
+
+        if (isLeafHeader && headerToGroup.column.parent) {
+          // The parent header is new
+          column = headerToGroup.column.parent;
+        } else {
+          // The parent header is repeated
+          column = headerToGroup.column;
+          isPlaceholder = true;
+        }
+
+        if ((latestPendingParentHeader == null ? void 0 : latestPendingParentHeader.column) === column) {
+          // This column is repeated. Add it as a sub header to the next batch
+          latestPendingParentHeader.subHeaders.push(headerToGroup);
+        } else {
+          // This is a new header. Let's create it
+          const header = createHeader(instance, column, {
+            id: [headerFamily, depth, column.id, headerToGroup == null ? void 0 : headerToGroup.id].filter(Boolean).join('_'),
+            isPlaceholder,
+            placeholderId: isPlaceholder ? "" + pendingParentHeaders.filter(d => d.column === column).length : undefined,
+            depth,
+            index: pendingParentHeaders.length
+          }); // Add the headerToGroup as a subHeader of the new header
+
+          header.subHeaders.push(headerToGroup); // Add the new header to the pendingParentHeaders to get grouped
+          // in the next batch
+
+          pendingParentHeaders.push(header);
+        }
+
+        headerGroup.headers.push(headerToGroup);
+        headerToGroup.headerGroup = headerGroup;
+      });
+      headerGroups.push(headerGroup);
+
+      if (depth > 0) {
+        createHeaderGroup(pendingParentHeaders, depth - 1);
+      }
+    };
+
+    const bottomHeaders = columnsToGroup.map((column, index) => createHeader(instance, column, {
+      depth: maxDepth,
+      index
+    }));
+    createHeaderGroup(bottomHeaders, maxDepth - 1);
+    headerGroups.reverse(); // headerGroups = headerGroups.filter(headerGroup => {
+    //   return !headerGroup.headers.every(header => header.isPlaceholder)
+    // })
+
+    const recurseHeadersForSpans = headers => {
+      const filteredHeaders = headers.filter(header => header.column.getIsVisible());
+      return filteredHeaders.map(header => {
+        let colSpan = 0;
+        let rowSpan = 0;
+        let childRowSpans = [0];
+
+        if (header.subHeaders && header.subHeaders.length) {
+          childRowSpans = [];
+          recurseHeadersForSpans(header.subHeaders).forEach(_ref => {
+            let {
+              colSpan: childColSpan,
+              rowSpan: childRowSpan
+            } = _ref;
+            colSpan += childColSpan;
+            childRowSpans.push(childRowSpan);
+          });
+        } else {
+          colSpan = 1;
+        }
+
+        const minChildRowSpan = Math.min(...childRowSpans);
+        rowSpan = rowSpan + minChildRowSpan;
+        header.colSpan = colSpan;
+        header.rowSpan = rowSpan;
+        return {
+          colSpan,
+          rowSpan
+        };
+      });
+    };
+
+    recurseHeadersForSpans((_headerGroups$0$heade = (_headerGroups$ = headerGroups[0]) == null ? void 0 : _headerGroups$.headers) != null ? _headerGroups$0$heade : []);
+    return headerGroups;
+  }
+
+  //
+  const defaultColumnSizing = {
+    size: 150,
+    minSize: 20,
+    maxSize: Number.MAX_SAFE_INTEGER
+  };
+
+  const getDefaultColumnSizingInfoState = () => ({
+    startOffset: null,
+    startSize: null,
+    deltaOffset: null,
+    deltaPercentage: null,
+    isResizingColumn: false,
+    columnSizingStart: []
+  });
+
+  const ColumnSizing = {
+    getDefaultColumnDef: () => {
+      return defaultColumnSizing;
+    },
+    getInitialState: state => {
+      return {
+        columnSizing: {},
+        columnSizingInfo: getDefaultColumnSizingInfoState(),
+        ...state
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        columnResizeMode: 'onEnd',
+        onColumnSizingChange: makeStateUpdater('columnSizing', instance),
+        onColumnSizingInfoChange: makeStateUpdater('columnSizingInfo', instance)
+      };
+    },
+    createColumn: (column, instance) => {
+      return {
+        getSize: () => {
+          var _column$columnDef$min, _ref, _column$columnDef$max;
+
+          const columnSize = instance.getState().columnSizing[column.id];
+          return Math.min(Math.max((_column$columnDef$min = column.columnDef.minSize) != null ? _column$columnDef$min : defaultColumnSizing.minSize, (_ref = columnSize != null ? columnSize : column.columnDef.size) != null ? _ref : defaultColumnSizing.size), (_column$columnDef$max = column.columnDef.maxSize) != null ? _column$columnDef$max : defaultColumnSizing.maxSize);
+        },
+        getStart: position => {
+          const columns = !position ? instance.getVisibleLeafColumns() : position === 'left' ? instance.getLeftVisibleLeafColumns() : instance.getRightVisibleLeafColumns();
+          const index = columns.findIndex(d => d.id === column.id);
+
+          if (index > 0) {
+            const prevSiblingColumn = columns[index - 1];
+            return prevSiblingColumn.getStart(position) + prevSiblingColumn.getSize();
+          }
+
+          return 0;
+        },
+        resetSize: () => {
+          instance.setColumnSizing(_ref2 => {
+            let {
+              [column.id]: _,
+              ...rest
+            } = _ref2;
+            return rest;
+          });
+        },
+        getCanResize: () => {
+          var _column$columnDef$ena, _instance$options$ena;
+
+          return ((_column$columnDef$ena = column.columnDef.enableResizing) != null ? _column$columnDef$ena : true) && ((_instance$options$ena = instance.options.enableColumnResizing) != null ? _instance$options$ena : true);
+        },
+        getIsResizing: () => {
+          return instance.getState().columnSizingInfo.isResizingColumn === column.id;
+        }
+      };
+    },
+    createHeader: (header, instance) => {
+      return {
+        getSize: () => {
+          let sum = 0;
+
+          const recurse = header => {
+            if (header.subHeaders.length) {
+              header.subHeaders.forEach(recurse);
+            } else {
+              var _header$column$getSiz;
+
+              sum += (_header$column$getSiz = header.column.getSize()) != null ? _header$column$getSiz : 0;
+            }
+          };
+
+          recurse(header);
+          return sum;
+        },
+        getStart: () => {
+          if (header.index > 0) {
+            const prevSiblingHeader = header.headerGroup.headers[header.index - 1];
+            return prevSiblingHeader.getStart() + prevSiblingHeader.getSize();
+          }
+
+          return 0;
+        },
+        getResizeHandler: () => {
+          const column = instance.getColumn(header.column.id);
+          const canResize = column.getCanResize();
+          return e => {
+            if (!canResize) {
+              return;
+            }
+            e.persist == null ? void 0 : e.persist();
+
+            if (isTouchStartEvent(e)) {
+              // lets not respond to multiple touches (e.g. 2 or 3 fingers)
+              if (e.touches && e.touches.length > 1) {
+                return;
+              }
+            }
+
+            const startSize = header.getSize();
+            const columnSizingStart = header ? header.getLeafHeaders().map(d => [d.column.id, d.column.getSize()]) : [[column.id, column.getSize()]];
+            const clientX = isTouchStartEvent(e) ? Math.round(e.touches[0].clientX) : e.clientX;
+
+            const updateOffset = (eventType, clientXPos) => {
+              if (typeof clientXPos !== 'number') {
+                return;
+              }
+
+              let newColumnSizing = {};
+              instance.setColumnSizingInfo(old => {
+                var _old$startOffset, _old$startSize;
+
+                const deltaOffset = clientXPos - ((_old$startOffset = old == null ? void 0 : old.startOffset) != null ? _old$startOffset : 0);
+                const deltaPercentage = Math.max(deltaOffset / ((_old$startSize = old == null ? void 0 : old.startSize) != null ? _old$startSize : 0), -0.999999);
+                old.columnSizingStart.forEach(_ref3 => {
+                  let [columnId, headerSize] = _ref3;
+                  newColumnSizing[columnId] = Math.round(Math.max(headerSize + headerSize * deltaPercentage, 0) * 100) / 100;
+                });
+                return { ...old,
+                  deltaOffset,
+                  deltaPercentage
+                };
+              });
+
+              if (instance.options.columnResizeMode === 'onChange' || eventType === 'end') {
+                instance.setColumnSizing(old => ({ ...old,
+                  ...newColumnSizing
+                }));
+              }
+            };
+
+            const onMove = clientXPos => updateOffset('move', clientXPos);
+
+            const onEnd = clientXPos => {
+              updateOffset('end', clientXPos);
+              instance.setColumnSizingInfo(old => ({ ...old,
+                isResizingColumn: false,
+                startOffset: null,
+                startSize: null,
+                deltaOffset: null,
+                deltaPercentage: null,
+                columnSizingStart: []
+              }));
+            };
+
+            const mouseEvents = {
+              moveHandler: e => onMove(e.clientX),
+              upHandler: e => {
+                document.removeEventListener('mousemove', mouseEvents.moveHandler);
+                document.removeEventListener('mouseup', mouseEvents.upHandler);
+                onEnd(e.clientX);
+              }
+            };
+            const passiveIfSupported = passiveEventSupported() ? {
+              passive: false
+            } : false;
+
+            if (isTouchStartEvent(e)) ; else {
+              document.addEventListener('mousemove', mouseEvents.moveHandler, passiveIfSupported);
+              document.addEventListener('mouseup', mouseEvents.upHandler, passiveIfSupported);
+            }
+
+            instance.setColumnSizingInfo(old => ({ ...old,
+              startOffset: clientX,
+              startSize,
+              deltaOffset: 0,
+              deltaPercentage: 0,
+              columnSizingStart,
+              isResizingColumn: column.id
+            }));
+          };
+        }
+      };
+    },
+    createInstance: instance => {
+      return {
+        setColumnSizing: updater => instance.options.onColumnSizingChange == null ? void 0 : instance.options.onColumnSizingChange(updater),
+        setColumnSizingInfo: updater => instance.options.onColumnSizingInfoChange == null ? void 0 : instance.options.onColumnSizingInfoChange(updater),
+        resetColumnSizing: defaultState => {
+          var _instance$initialStat;
+
+          instance.setColumnSizing(defaultState ? {} : (_instance$initialStat = instance.initialState.columnSizing) != null ? _instance$initialStat : {});
+        },
+        resetHeaderSizeInfo: defaultState => {
+          var _instance$initialStat2;
+
+          instance.setColumnSizingInfo(defaultState ? getDefaultColumnSizingInfoState() : (_instance$initialStat2 = instance.initialState.columnSizingInfo) != null ? _instance$initialStat2 : getDefaultColumnSizingInfoState());
+        },
+        getTotalSize: () => {
+          var _instance$getHeaderGr, _instance$getHeaderGr2;
+
+          return (_instance$getHeaderGr = (_instance$getHeaderGr2 = instance.getHeaderGroups()[0]) == null ? void 0 : _instance$getHeaderGr2.headers.reduce((sum, header) => {
+            return sum + header.getSize();
+          }, 0)) != null ? _instance$getHeaderGr : 0;
+        },
+        getLeftTotalSize: () => {
+          var _instance$getLeftHead, _instance$getLeftHead2;
+
+          return (_instance$getLeftHead = (_instance$getLeftHead2 = instance.getLeftHeaderGroups()[0]) == null ? void 0 : _instance$getLeftHead2.headers.reduce((sum, header) => {
+            return sum + header.getSize();
+          }, 0)) != null ? _instance$getLeftHead : 0;
+        },
+        getCenterTotalSize: () => {
+          var _instance$getCenterHe, _instance$getCenterHe2;
+
+          return (_instance$getCenterHe = (_instance$getCenterHe2 = instance.getCenterHeaderGroups()[0]) == null ? void 0 : _instance$getCenterHe2.headers.reduce((sum, header) => {
+            return sum + header.getSize();
+          }, 0)) != null ? _instance$getCenterHe : 0;
+        },
+        getRightTotalSize: () => {
+          var _instance$getRightHea, _instance$getRightHea2;
+
+          return (_instance$getRightHea = (_instance$getRightHea2 = instance.getRightHeaderGroups()[0]) == null ? void 0 : _instance$getRightHea2.headers.reduce((sum, header) => {
+            return sum + header.getSize();
+          }, 0)) != null ? _instance$getRightHea : 0;
+        }
+      };
+    }
+  };
+  let passiveSupported = null;
+  function passiveEventSupported() {
+    if (typeof passiveSupported === 'boolean') return passiveSupported;
+    let supported = false;
+
+    try {
+      const options = {
+        get passive() {
+          supported = true;
+          return false;
+        }
+
+      };
+
+      const noop = () => {};
+
+      window.addEventListener('test', noop, options);
+      window.removeEventListener('test', noop);
+    } catch (err) {
+      supported = false;
+    }
+
+    passiveSupported = supported;
+    return passiveSupported;
+  }
+
+  function isTouchStartEvent(e) {
+    return e.type === 'touchstart';
+  }
+
+  //
+  const Expanding = {
+    getInitialState: state => {
+      return {
+        expanded: {},
+        ...state
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onExpandedChange: makeStateUpdater('expanded', instance),
+        autoResetExpanded: true,
+        paginateExpandedRows: true
+      };
+    },
+    createInstance: instance => {
+      let registered = false;
+      let queued = false;
+      return {
+        _autoResetExpanded: () => {
+          if (!registered) {
+            instance._queue(() => {
+              registered = true;
+            });
+
+            return;
+          }
+
+          if (instance.options.autoResetAll === false) {
+            return;
+          }
+
+          if (instance.options.autoResetAll === true || instance.options.autoResetExpanded) {
+            if (queued) return;
+            queued = true;
+
+            instance._queue(() => {
+              instance.resetExpanded();
+              queued = false;
+            });
+          }
+        },
+        setExpanded: updater => instance.options.onExpandedChange == null ? void 0 : instance.options.onExpandedChange(updater),
+        toggleAllRowsExpanded: expanded => {
+          if (expanded != null ? expanded : !instance.getIsAllRowsExpanded()) {
+            instance.setExpanded(true);
+          } else {
+            instance.setExpanded({});
+          }
+        },
+        resetExpanded: defaultState => {
+          var _instance$initialStat, _instance$initialStat2;
+
+          instance.setExpanded(defaultState ? {} : (_instance$initialStat = (_instance$initialStat2 = instance.initialState) == null ? void 0 : _instance$initialStat2.expanded) != null ? _instance$initialStat : {});
+        },
+        getCanSomeRowsExpand: () => {
+          return instance.getRowModel().flatRows.some(row => row.getCanExpand());
+        },
+        getToggleAllRowsExpandedHandler: () => {
+          return e => {
+            e.persist == null ? void 0 : e.persist();
+            instance.toggleAllRowsExpanded();
+          };
+        },
+        getIsSomeRowsExpanded: () => {
+          const expanded = instance.getState().expanded;
+          return expanded === true || Object.values(expanded).some(Boolean);
+        },
+        getIsAllRowsExpanded: () => {
+          const expanded = instance.getState().expanded; // If expanded is true, save some cycles and return true
+
+          if (expanded === true) {
+            return true;
+          } // If any row is not expanded, return false
+
+
+          if (instance.getRowModel().flatRows.some(row => row.getIsExpanded())) {
+            return false;
+          } // They must all be expanded :shrug:
+
+
+          return true;
+        },
+        getExpandedDepth: () => {
+          let maxDepth = 0;
+          const rowIds = instance.getState().expanded === true ? Object.keys(instance.getRowModel().rowsById) : Object.keys(instance.getState().expanded);
+          rowIds.forEach(id => {
+            const splitId = id.split('.');
+            maxDepth = Math.max(maxDepth, splitId.length);
+          });
+          return maxDepth;
+        },
+        getPreExpandedRowModel: () => instance.getGroupedRowModel(),
+        getExpandedRowModel: () => {
+          if (!instance._getExpandedRowModel && instance.options.getExpandedRowModel) {
+            instance._getExpandedRowModel = instance.options.getExpandedRowModel(instance);
+          }
+
+          if (instance.options.manualExpanding || !instance._getExpandedRowModel) {
+            return instance.getPreExpandedRowModel();
+          }
+
+          return instance._getExpandedRowModel();
+        }
+      };
+    },
+    createRow: (row, instance) => {
+      return {
+        toggleExpanded: expanded => {
+          instance.setExpanded(old => {
+            var _expanded;
+
+            const exists = old === true ? true : !!(old != null && old[row.id]);
+            let oldExpanded = {};
+
+            if (old === true) {
+              Object.keys(instance.getRowModel().rowsById).forEach(rowId => {
+                oldExpanded[rowId] = true;
+              });
+            } else {
+              oldExpanded = old;
+            }
+
+            expanded = (_expanded = expanded) != null ? _expanded : !exists;
+
+            if (!exists && expanded) {
+              return { ...oldExpanded,
+                [row.id]: true
+              };
+            }
+
+            if (exists && !expanded) {
+              const {
+                [row.id]: _,
+                ...rest
+              } = oldExpanded;
+              return rest;
+            }
+
+            return old;
+          });
+        },
+        getIsExpanded: () => {
+          var _instance$options$get;
+
+          const expanded = instance.getState().expanded;
+          return !!((_instance$options$get = instance.options.getIsRowExpanded == null ? void 0 : instance.options.getIsRowExpanded(row)) != null ? _instance$options$get : expanded === true || (expanded == null ? void 0 : expanded[row.id]));
+        },
+        getCanExpand: () => {
+          var _instance$options$get2, _instance$options$ena, _row$subRows;
+
+          return ((_instance$options$get2 = instance.options.getRowCanExpand == null ? void 0 : instance.options.getRowCanExpand(row)) != null ? _instance$options$get2 : true) && ((_instance$options$ena = instance.options.enableExpanding) != null ? _instance$options$ena : true) && !!((_row$subRows = row.subRows) != null && _row$subRows.length);
+        },
+        getToggleExpandedHandler: () => {
+          const canExpand = row.getCanExpand();
+          return () => {
+            if (!canExpand) return;
+            row.toggleExpanded();
+          };
+        }
+      };
+    }
+  };
+
+  const includesString = (row, columnId, filterValue) => {
+    const search = filterValue.toLowerCase();
+    return row.getValue(columnId).toLowerCase().includes(search);
+  };
+
+  includesString.autoRemove = val => testFalsey(val);
+
+  const includesStringSensitive = (row, columnId, filterValue) => {
+    return row.getValue(columnId).includes(filterValue);
+  };
+
+  includesStringSensitive.autoRemove = val => testFalsey(val);
+
+  const equalsString = (row, columnId, filterValue) => {
+    return row.getValue(columnId).toLowerCase() === filterValue.toLowerCase();
+  };
+
+  equalsString.autoRemove = val => testFalsey(val);
+
+  const arrIncludes = (row, columnId, filterValue) => {
+    return row.getValue(columnId).includes(filterValue);
+  };
+
+  arrIncludes.autoRemove = val => testFalsey(val) || !(val != null && val.length);
+
+  const arrIncludesAll = (row, columnId, filterValue) => {
+    return !filterValue.some(val => !row.getValue(columnId).includes(val));
+  };
+
+  arrIncludesAll.autoRemove = val => testFalsey(val) || !(val != null && val.length);
+
+  const arrIncludesSome = (row, columnId, filterValue) => {
+    return filterValue.some(val => row.getValue(columnId).includes(val));
+  };
+
+  arrIncludesSome.autoRemove = val => testFalsey(val) || !(val != null && val.length);
+
+  const equals = (row, columnId, filterValue) => {
+    return row.getValue(columnId) === filterValue;
+  };
+
+  equals.autoRemove = val => testFalsey(val);
+
+  const weakEquals = (row, columnId, filterValue) => {
+    return row.getValue(columnId) == filterValue;
+  };
+
+  weakEquals.autoRemove = val => testFalsey(val);
+
+  const inNumberRange = (row, columnId, filterValue) => {
+    let [min, max] = filterValue;
+    const rowValue = row.getValue(columnId);
+    return rowValue >= min && rowValue <= max;
+  };
+
+  inNumberRange.resolveFilterValue = val => {
+    let [unsafeMin, unsafeMax] = val;
+    let parsedMin = typeof unsafeMin !== 'number' ? parseFloat(unsafeMin) : unsafeMin;
+    let parsedMax = typeof unsafeMax !== 'number' ? parseFloat(unsafeMax) : unsafeMax;
+    let min = unsafeMin === null || Number.isNaN(parsedMin) ? -Infinity : parsedMin;
+    let max = unsafeMax === null || Number.isNaN(parsedMax) ? Infinity : parsedMax;
+
+    if (min > max) {
+      const temp = min;
+      min = max;
+      max = temp;
+    }
+
+    return [min, max];
+  };
+
+  inNumberRange.autoRemove = val => testFalsey(val) || testFalsey(val[0]) && testFalsey(val[1]); // Export
+
+
+  const filterFns = {
+    includesString,
+    includesStringSensitive,
+    equalsString,
+    arrIncludes,
+    arrIncludesAll,
+    arrIncludesSome,
+    equals,
+    weakEquals,
+    inNumberRange
+  };
+
+  // Utils
+  function testFalsey(val) {
+    return val === undefined || val === null || val === '';
+  }
+
+  //
+  const Filters = {
+    getDefaultColumnDef: () => {
+      return {
+        filterFn: 'auto'
+      };
+    },
+    getInitialState: state => {
+      return {
+        columnFilters: [],
+        globalFilter: undefined,
+        // filtersProgress: 1,
+        // facetProgress: {},
+        ...state
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onColumnFiltersChange: makeStateUpdater('columnFilters', instance),
+        onGlobalFilterChange: makeStateUpdater('globalFilter', instance),
+        filterFromLeafRows: false,
+        globalFilterFn: 'auto',
+        getColumnCanGlobalFilter: column => {
+          var _instance$getCoreRowM, _instance$getCoreRowM2;
+
+          const value = (_instance$getCoreRowM = instance.getCoreRowModel().flatRows[0]) == null ? void 0 : (_instance$getCoreRowM2 = _instance$getCoreRowM._getAllCellsByColumnId()[column.id]) == null ? void 0 : _instance$getCoreRowM2.getValue();
+          return typeof value === 'string';
+        }
+      };
+    },
+    createColumn: (column, instance) => {
+      return {
+        filterFn: column.filterFn,
+        getAutoFilterFn: () => {
+          const firstRow = instance.getCoreRowModel().flatRows[0];
+          const value = firstRow == null ? void 0 : firstRow.getValue(column.id);
+
+          if (typeof value === 'string') {
+            return filterFns.includesString;
+          }
+
+          if (typeof value === 'number') {
+            return filterFns.inNumberRange;
+          }
+
+          if (typeof value === 'boolean') {
+            return filterFns.equals;
+          }
+
+          if (value !== null && typeof value === 'object') {
+            return filterFns.equals;
+          }
+
+          if (Array.isArray(value)) {
+            return filterFns.arrIncludes;
+          }
+
+          return filterFns.weakEquals;
+        },
+        getFilterFn: () => {
+          var _ref;
+
+          const userFilterFns = instance.options.filterFns;
+          return isFunction(column.filterFn) ? column.filterFn : column.filterFn === 'auto' ? column.getAutoFilterFn() : (_ref = userFilterFns == null ? void 0 : userFilterFns[column.filterFn]) != null ? _ref : filterFns[column.filterFn];
+        },
+        getCanFilter: () => {
+          var _column$columnDef$ena, _instance$options$ena, _instance$options$ena2;
+
+          return ((_column$columnDef$ena = column.columnDef.enableColumnFilter) != null ? _column$columnDef$ena : true) && ((_instance$options$ena = instance.options.enableColumnFilters) != null ? _instance$options$ena : true) && ((_instance$options$ena2 = instance.options.enableFilters) != null ? _instance$options$ena2 : true) && !!column.accessorFn;
+        },
+        getCanGlobalFilter: () => {
+          var _column$columnDef$ena2, _instance$options$ena3, _instance$options$ena4, _instance$options$get;
+
+          return ((_column$columnDef$ena2 = column.columnDef.enableGlobalFilter) != null ? _column$columnDef$ena2 : true) && ((_instance$options$ena3 = instance.options.enableGlobalFilter) != null ? _instance$options$ena3 : true) && ((_instance$options$ena4 = instance.options.enableFilters) != null ? _instance$options$ena4 : true) && ((_instance$options$get = instance.options.getColumnCanGlobalFilter == null ? void 0 : instance.options.getColumnCanGlobalFilter(column)) != null ? _instance$options$get : true) && !!column.accessorFn;
+        },
+        getIsFiltered: () => column.getFilterIndex() > -1,
+        getFilterValue: () => {
+          var _instance$getState$co, _instance$getState$co2;
+
+          return (_instance$getState$co = instance.getState().columnFilters) == null ? void 0 : (_instance$getState$co2 = _instance$getState$co.find(d => d.id === column.id)) == null ? void 0 : _instance$getState$co2.value;
+        },
+        getFilterIndex: () => {
+          var _instance$getState$co3, _instance$getState$co4;
+
+          return (_instance$getState$co3 = (_instance$getState$co4 = instance.getState().columnFilters) == null ? void 0 : _instance$getState$co4.findIndex(d => d.id === column.id)) != null ? _instance$getState$co3 : -1;
+        },
+        setFilterValue: value => {
+          instance.setColumnFilters(old => {
+            const filterFn = column.getFilterFn();
+            const previousfilter = old == null ? void 0 : old.find(d => d.id === column.id);
+            const newFilter = functionalUpdate(value, previousfilter ? previousfilter.value : undefined); //
+
+            if (shouldAutoRemoveFilter(filterFn, newFilter, column)) {
+              var _old$filter;
+
+              return (_old$filter = old == null ? void 0 : old.filter(d => d.id !== column.id)) != null ? _old$filter : [];
+            }
+
+            const newFilterObj = {
+              id: column.id,
+              value: newFilter
+            };
+
+            if (previousfilter) {
+              var _old$map;
+
+              return (_old$map = old == null ? void 0 : old.map(d => {
+                if (d.id === column.id) {
+                  return newFilterObj;
+                }
+
+                return d;
+              })) != null ? _old$map : [];
+            }
+
+            if (old != null && old.length) {
+              return [...old, newFilterObj];
+            }
+
+            return [newFilterObj];
+          });
+        },
+        _getFacetedRowModel: instance.options.getFacetedRowModel && instance.options.getFacetedRowModel(instance, column.id),
+        getFacetedRowModel: () => {
+          if (!column._getFacetedRowModel) {
+            return instance.getPreFilteredRowModel();
+          }
+
+          return column._getFacetedRowModel();
+        },
+        _getFacetedUniqueValues: instance.options.getFacetedUniqueValues && instance.options.getFacetedUniqueValues(instance, column.id),
+        getFacetedUniqueValues: () => {
+          if (!column._getFacetedUniqueValues) {
+            return new Map();
+          }
+
+          return column._getFacetedUniqueValues();
+        },
+        _getFacetedMinMaxValues: instance.options.getFacetedMinMaxValues && instance.options.getFacetedMinMaxValues(instance, column.id),
+        getFacetedMinMaxValues: () => {
+          if (!column._getFacetedMinMaxValues) {
+            return undefined;
+          }
+
+          return column._getFacetedMinMaxValues();
+        } // () => [column.getFacetedRowModel()],
+        // facetedRowModel => getRowModelMinMaxValues(facetedRowModel, column.id),
+
+      };
+    },
+    createRow: (row, instance) => {
+      return {
+        columnFilters: {},
+        columnFiltersMeta: {}
+      };
+    },
+    createInstance: instance => {
+      return {
+        getGlobalAutoFilterFn: () => {
+          return filterFns.includesString;
+        },
+        getGlobalFilterFn: () => {
+          var _ref2;
+
+          const {
+            filterFns: userFilterFns,
+            globalFilterFn: globalFilterFn
+          } = instance.options;
+          return isFunction(globalFilterFn) ? globalFilterFn : globalFilterFn === 'auto' ? instance.getGlobalAutoFilterFn() : (_ref2 = userFilterFns == null ? void 0 : userFilterFns[globalFilterFn]) != null ? _ref2 : filterFns[globalFilterFn];
+        },
+        setColumnFilters: updater => {
+          const leafColumns = instance.getAllLeafColumns();
+
+          const updateFn = old => {
+            var _functionalUpdate;
+
+            return (_functionalUpdate = functionalUpdate(updater, old)) == null ? void 0 : _functionalUpdate.filter(filter => {
+              const column = leafColumns.find(d => d.id === filter.id);
+
+              if (column) {
+                const filterFn = column.getFilterFn();
+
+                if (shouldAutoRemoveFilter(filterFn, filter.value, column)) {
+                  return false;
+                }
+              }
+
+              return true;
+            });
+          };
+
+          instance.options.onColumnFiltersChange == null ? void 0 : instance.options.onColumnFiltersChange(updateFn);
+        },
+        setGlobalFilter: updater => {
+          instance.options.onGlobalFilterChange == null ? void 0 : instance.options.onGlobalFilterChange(updater);
+        },
+        resetGlobalFilter: defaultState => {
+          instance.setGlobalFilter(defaultState ? undefined : instance.initialState.globalFilter);
+        },
+        resetColumnFilters: defaultState => {
+          var _instance$initialStat, _instance$initialStat2;
+
+          instance.setColumnFilters(defaultState ? [] : (_instance$initialStat = (_instance$initialStat2 = instance.initialState) == null ? void 0 : _instance$initialStat2.columnFilters) != null ? _instance$initialStat : []);
+        },
+        getPreFilteredRowModel: () => instance.getCoreRowModel(),
+        _getFilteredRowModel: instance.options.getFilteredRowModel && instance.options.getFilteredRowModel(instance),
+        getFilteredRowModel: () => {
+          if (instance.options.manualFiltering || !instance._getFilteredRowModel) {
+            return instance.getPreFilteredRowModel();
+          }
+
+          return instance._getFilteredRowModel();
+        },
+        _getGlobalFacetedRowModel: instance.options.getFacetedRowModel && instance.options.getFacetedRowModel(instance, '__global__'),
+        getGlobalFacetedRowModel: () => {
+          if (instance.options.manualFiltering || !instance._getGlobalFacetedRowModel) {
+            return instance.getPreFilteredRowModel();
+          }
+
+          return instance._getGlobalFacetedRowModel();
+        },
+        _getGlobalFacetedUniqueValues: instance.options.getFacetedUniqueValues && instance.options.getFacetedUniqueValues(instance, '__global__'),
+        getGlobalFacetedUniqueValues: () => {
+          if (!instance._getGlobalFacetedUniqueValues) {
+            return new Map();
+          }
+
+          return instance._getGlobalFacetedUniqueValues();
+        },
+        _getGlobalFacetedMinMaxValues: instance.options.getFacetedMinMaxValues && instance.options.getFacetedMinMaxValues(instance, '__global__'),
+        getGlobalFacetedMinMaxValues: () => {
+          if (!instance._getGlobalFacetedMinMaxValues) {
+            return;
+          }
+
+          return instance._getGlobalFacetedMinMaxValues();
+        }
+      };
+    }
+  };
+  function shouldAutoRemoveFilter(filterFn, value, column) {
+    return (filterFn && filterFn.autoRemove ? filterFn.autoRemove(value, column) : false) || typeof value === 'undefined' || typeof value === 'string' && !value;
+  }
+
+  const sum = (columnId, _leafRows, childRows) => {
+    // It's faster to just add the aggregations together instead of
+    // process leaf nodes individually
+    return childRows.reduce((sum, next) => sum + (typeof next === 'number' ? next : 0), 0);
+  };
+
+  const min = (columnId, _leafRows, childRows) => {
+    let min;
+    childRows.forEach(row => {
+      const value = row.getValue(columnId);
+
+      if (value != null && (min > value || min === undefined && value >= value)) {
+        min = value;
+      }
+    });
+    return min;
+  };
+
+  const max = (columnId, _leafRows, childRows) => {
+    let max;
+    childRows.forEach(row => {
+      const value = row.getValue(columnId);
+
+      if (value != null && (max < value || max === undefined && value >= value)) {
+        max = value;
+      }
+    });
+    return max;
+  };
+
+  const extent = (columnId, _leafRows, childRows) => {
+    let min;
+    let max;
+    childRows.forEach(row => {
+      const value = row.getValue(columnId);
+
+      if (value != null) {
+        if (min === undefined) {
+          if (value >= value) min = max = value;
+        } else {
+          if (min > value) min = value;
+          if (max < value) max = value;
+        }
+      }
+    });
+    return [min, max];
+  };
+
+  const mean = (columnId, leafRows) => {
+    let count = 0;
+    let sum = 0;
+    leafRows.forEach(row => {
+      let value = row.getValue(columnId);
+
+      if (value != null && (value = +value) >= value) {
+        ++count, sum += value;
+      }
+    });
+    if (count) return sum / count;
+    return;
+  };
+
+  const median = (columnId, leafRows) => {
+    if (!leafRows.length) {
+      return;
+    }
+
+    let min = 0;
+    let max = 0;
+    leafRows.forEach(row => {
+      let value = row.getValue(columnId);
+
+      if (typeof value === 'number') {
+        min = Math.min(min, value);
+        max = Math.max(max, value);
+      }
+    });
+    return (min + max) / 2;
+  };
+
+  const unique = (columnId, leafRows) => {
+    return Array.from(new Set(leafRows.map(d => d.getValue(columnId))).values());
+  };
+
+  const uniqueCount = (columnId, leafRows) => {
+    return new Set(leafRows.map(d => d.getValue(columnId))).size;
+  };
+
+  const count = (_columnId, leafRows) => {
+    return leafRows.length;
+  };
+
+  const aggregationFns = {
+    sum,
+    min,
+    max,
+    extent,
+    mean,
+    median,
+    unique,
+    uniqueCount,
+    count
+  };
+
+  //
+  const Grouping = {
+    getDefaultColumnDef: () => {
+      return {
+        aggregationFn: 'auto'
+      };
+    },
+    getInitialState: state => {
+      return {
+        grouping: [],
+        ...state
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onGroupingChange: makeStateUpdater('grouping', instance),
+        groupedColumnMode: 'reorder'
+      };
+    },
+    createColumn: (column, instance) => {
+      return {
+        toggleGrouping: () => {
+          instance.setGrouping(old => {
+            // Find any existing grouping for this column
+            if (old != null && old.includes(column.id)) {
+              return old.filter(d => d !== column.id);
+            }
+
+            return [...(old != null ? old : []), column.id];
+          });
+        },
+        getCanGroup: () => {
+          var _ref, _ref2, _ref3, _column$columnDef$ena;
+
+          return (_ref = (_ref2 = (_ref3 = (_column$columnDef$ena = column.columnDef.enableGrouping) != null ? _column$columnDef$ena : true) != null ? _ref3 : instance.options.enableGrouping) != null ? _ref2 : true) != null ? _ref : !!column.accessorFn;
+        },
+        getIsGrouped: () => {
+          var _instance$getState$gr;
+
+          return (_instance$getState$gr = instance.getState().grouping) == null ? void 0 : _instance$getState$gr.includes(column.id);
+        },
+        getGroupedIndex: () => {
+          var _instance$getState$gr2;
+
+          return (_instance$getState$gr2 = instance.getState().grouping) == null ? void 0 : _instance$getState$gr2.indexOf(column.id);
+        },
+        getToggleGroupingHandler: () => {
+          const canGroup = column.getCanGroup();
+          return () => {
+            if (!canGroup) return;
+            column.toggleGrouping();
+          };
+        },
+        getAutoAggregationFn: () => {
+          const firstRow = instance.getCoreRowModel().flatRows[0];
+          const value = firstRow == null ? void 0 : firstRow.getValue(column.id);
+
+          if (typeof value === 'number') {
+            return aggregationFns.sum;
+          }
+
+          if (Object.prototype.toString.call(value) === '[object Date]') {
+            return aggregationFns.extent;
+          }
+
+          return aggregationFns.count;
+        },
+        getAggregationFn: () => {
+          var _ref4;
+
+          const userAggregationFns = instance.options.aggregationFns;
+
+          if (!column) {
+            throw new Error();
+          }
+
+          return isFunction(column.aggregationFn) ? column.aggregationFn : column.aggregationFn === 'auto' ? column.getAutoAggregationFn() : (_ref4 = userAggregationFns == null ? void 0 : userAggregationFns[column.aggregationFn]) != null ? _ref4 : aggregationFns[column.aggregationFn];
+        }
+      };
+    },
+    createInstance: instance => {
+      return {
+        setGrouping: updater => instance.options.onGroupingChange == null ? void 0 : instance.options.onGroupingChange(updater),
+        resetGrouping: defaultState => {
+          var _instance$initialStat, _instance$initialStat2;
+
+          instance.setGrouping(defaultState ? [] : (_instance$initialStat = (_instance$initialStat2 = instance.initialState) == null ? void 0 : _instance$initialStat2.grouping) != null ? _instance$initialStat : []);
+        },
+        getPreGroupedRowModel: () => instance.getSortedRowModel(),
+        getGroupedRowModel: () => {
+          if (!instance._getGroupedRowModel && instance.options.getGroupedRowModel) {
+            instance._getGroupedRowModel = instance.options.getGroupedRowModel(instance);
+          }
+
+          if (instance.options.manualGrouping || !instance._getGroupedRowModel) {
+            return instance.getPreGroupedRowModel();
+          }
+
+          return instance._getGroupedRowModel();
+        }
+      };
+    },
+    createRow: row => {
+      return {
+        getIsGrouped: () => !!row.groupingColumnId,
+        _groupingValuesCache: {}
+      };
+    },
+    createCell: (cell, column, row, instance) => {
+      return {
+        getIsGrouped: () => column.getIsGrouped() && column.id === row.groupingColumnId,
+        getIsPlaceholder: () => !cell.getIsGrouped() && column.getIsGrouped(),
+        getIsAggregated: () => {
+          var _row$subRows;
+
+          return !cell.getIsGrouped() && !cell.getIsPlaceholder() && ((_row$subRows = row.subRows) == null ? void 0 : _row$subRows.length) > 1;
+        },
+        renderAggregatedCell: () => {
+          var _column$columnDef$agg;
+
+          const template = (_column$columnDef$agg = column.columnDef.aggregatedCell) != null ? _column$columnDef$agg : column.columnDef.cell;
+          return template ? instance._render(template, {
+            instance,
+            column,
+            row,
+            cell,
+            getValue: cell.getValue
+          }) : null;
+        }
+      };
+    }
+  };
+  function orderColumns(leafColumns, grouping, groupedColumnMode) {
+    if (!(grouping != null && grouping.length) || !groupedColumnMode) {
+      return leafColumns;
+    }
+
+    const nonGroupingColumns = leafColumns.filter(col => !grouping.includes(col.id));
+
+    if (groupedColumnMode === 'remove') {
+      return nonGroupingColumns;
+    }
+
+    const groupingColumns = grouping.map(g => leafColumns.find(col => col.id === g)).filter(Boolean);
+    return [...groupingColumns, ...nonGroupingColumns];
+  }
+
+  //
+  const Ordering = {
+    getInitialState: state => {
+      return {
+        columnOrder: [],
+        ...state
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onColumnOrderChange: makeStateUpdater('columnOrder', instance)
+      };
+    },
+    createInstance: instance => {
+      return {
+        setColumnOrder: updater => instance.options.onColumnOrderChange == null ? void 0 : instance.options.onColumnOrderChange(updater),
+        resetColumnOrder: defaultState => {
+          var _instance$initialStat;
+
+          instance.setColumnOrder(defaultState ? [] : (_instance$initialStat = instance.initialState.columnOrder) != null ? _instance$initialStat : []);
+        },
+        _getOrderColumnsFn: memo(() => [instance.getState().columnOrder, instance.getState().grouping, instance.options.groupedColumnMode], (columnOrder, grouping, groupedColumnMode) => columns => {
+          // Sort grouped columns to the start of the column list
+          // before the headers are built
+          let orderedColumns = []; // If there is no order, return the normal columns
+
+          if (!(columnOrder != null && columnOrder.length)) {
+            orderedColumns = columns;
+          } else {
+            const columnOrderCopy = [...columnOrder]; // If there is an order, make a copy of the columns
+
+            const columnsCopy = [...columns]; // And make a new ordered array of the columns
+            // Loop over the columns and place them in order into the new array
+
+            while (columnsCopy.length && columnOrderCopy.length) {
+              const targetColumnId = columnOrderCopy.shift();
+              const foundIndex = columnsCopy.findIndex(d => d.id === targetColumnId);
+
+              if (foundIndex > -1) {
+                orderedColumns.push(columnsCopy.splice(foundIndex, 1)[0]);
+              }
+            } // If there are any columns left, add them to the end
+
+
+            orderedColumns = [...orderedColumns, ...columnsCopy];
+          }
+
+          return orderColumns(orderedColumns, grouping, groupedColumnMode);
+        }, {
+          key: 'getOrderColumnsFn' // debug: () => instance.options.debugAll ?? instance.options.debugTable,
+
+        })
+      };
+    }
+  };
+
+  //
+  const defaultPageIndex = 0;
+  const defaultPageSize = 10;
+
+  const getDefaultPaginationState = () => ({
+    pageIndex: defaultPageIndex,
+    pageSize: defaultPageSize
+  });
+
+  const Pagination = {
+    getInitialState: state => {
+      return { ...state,
+        pagination: { ...getDefaultPaginationState(),
+          ...(state == null ? void 0 : state.pagination)
+        }
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onPaginationChange: makeStateUpdater('pagination', instance)
+      };
+    },
+    createInstance: instance => {
+      let registered = false;
+      let queued = false;
+      return {
+        _autoResetPageIndex: () => {
+          var _ref, _instance$options$aut;
+
+          if (!registered) {
+            instance._queue(() => {
+              registered = true;
+            });
+
+            return;
+          }
+
+          if ((_ref = (_instance$options$aut = instance.options.autoResetAll) != null ? _instance$options$aut : instance.options.autoResetPageIndex) != null ? _ref : !instance.options.manualPagination) {
+            if (queued) return;
+            queued = true;
+
+            instance._queue(() => {
+              instance.resetPageIndex();
+              queued = false;
+            });
+          }
+        },
+        setPagination: updater => {
+          const safeUpdater = old => {
+            let newState = functionalUpdate(updater, old);
+            return newState;
+          };
+
+          return instance.options.onPaginationChange == null ? void 0 : instance.options.onPaginationChange(safeUpdater);
+        },
+        resetPagination: defaultState => {
+          var _instance$initialStat;
+
+          instance.setPagination(defaultState ? getDefaultPaginationState() : (_instance$initialStat = instance.initialState.pagination) != null ? _instance$initialStat : getDefaultPaginationState());
+        },
+        setPageIndex: updater => {
+          instance.setPagination(old => {
+            let pageIndex = functionalUpdate(updater, old.pageIndex);
+            const maxPageIndex = typeof old.pageCount !== 'undefined' ? old.pageCount - 1 : Number.MAX_SAFE_INTEGER;
+            pageIndex = Math.min(Math.max(0, pageIndex), maxPageIndex);
+            return { ...old,
+              pageIndex
+            };
+          });
+        },
+        resetPageIndex: defaultState => {
+          var _instance$initialStat2, _instance$initialStat3, _instance$initialStat4;
+
+          instance.setPageIndex(defaultState ? defaultPageIndex : (_instance$initialStat2 = (_instance$initialStat3 = instance.initialState) == null ? void 0 : (_instance$initialStat4 = _instance$initialStat3.pagination) == null ? void 0 : _instance$initialStat4.pageIndex) != null ? _instance$initialStat2 : defaultPageIndex);
+        },
+        resetPageSize: defaultState => {
+          var _instance$initialStat5, _instance$initialStat6, _instance$initialStat7;
+
+          instance.setPageSize(defaultState ? defaultPageSize : (_instance$initialStat5 = (_instance$initialStat6 = instance.initialState) == null ? void 0 : (_instance$initialStat7 = _instance$initialStat6.pagination) == null ? void 0 : _instance$initialStat7.pageSize) != null ? _instance$initialStat5 : defaultPageSize);
+        },
+        setPageSize: updater => {
+          instance.setPagination(old => {
+            const pageSize = Math.max(1, functionalUpdate(updater, old.pageSize));
+            const topRowIndex = old.pageSize * old.pageIndex;
+            const pageIndex = Math.floor(topRowIndex / pageSize);
+            return { ...old,
+              pageIndex,
+              pageSize
+            };
+          });
+        },
+        setPageCount: updater => instance.setPagination(old => {
+          var _old$pageCount;
+
+          let newPageCount = functionalUpdate(updater, (_old$pageCount = old.pageCount) != null ? _old$pageCount : -1);
+
+          if (typeof newPageCount === 'number') {
+            newPageCount = Math.max(-1, newPageCount);
+          }
+
+          return { ...old,
+            pageCount: newPageCount
+          };
+        }),
+        getPageOptions: memo(() => [instance.getState().pagination.pageSize, instance.getState().pagination.pageCount], (pageSize, pageCount) => {
+          let pageOptions = [];
+
+          if (pageCount && pageCount > 0) {
+            pageOptions = [...new Array(pageCount)].fill(null).map((_, i) => i);
+          }
+
+          return pageOptions;
+        }, {
+          key: 'getPageOptions',
+          debug: () => {
+            var _instance$options$deb;
+
+            return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+          }
+        }),
+        getCanPreviousPage: () => instance.getState().pagination.pageIndex > 0,
+        getCanNextPage: () => {
+          const {
+            pageIndex
+          } = instance.getState().pagination;
+          const pageCount = instance.getPageCount();
+
+          if (pageCount === -1) {
+            return true;
+          }
+
+          if (pageCount === 0) {
+            return false;
+          }
+
+          return pageIndex < pageCount - 1;
+        },
+        previousPage: () => {
+          return instance.setPageIndex(old => old - 1);
+        },
+        nextPage: () => {
+          return instance.setPageIndex(old => {
+            return old + 1;
+          });
+        },
+        getPrePaginationRowModel: () => instance.getExpandedRowModel(),
+        getPaginationRowModel: () => {
+          if (!instance._getPaginationRowModel && instance.options.getPaginationRowModel) {
+            instance._getPaginationRowModel = instance.options.getPaginationRowModel(instance);
+          }
+
+          if (instance.options.manualPagination || !instance._getPaginationRowModel) {
+            return instance.getPrePaginationRowModel();
+          }
+
+          return instance._getPaginationRowModel();
+        },
+        getPageCount: () => {
+          const {
+            pageCount
+          } = instance.getState().pagination;
+
+          if (typeof pageCount !== 'undefined') {
+            return pageCount;
+          }
+
+          return Math.ceil(instance.getPrePaginationRowModel().rows.length / instance.getState().pagination.pageSize);
+        }
+      };
+    }
+  };
+
+  //
+  const getDefaultPinningState = () => ({
+    left: [],
+    right: []
+  });
+
+  const Pinning = {
+    getInitialState: state => {
+      return {
+        columnPinning: getDefaultPinningState(),
+        ...state
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onColumnPinningChange: makeStateUpdater('columnPinning', instance)
+      };
+    },
+    createColumn: (column, instance) => {
+      return {
+        pin: position => {
+          const columnIds = column.getLeafColumns().map(d => d.id).filter(Boolean);
+          instance.setColumnPinning(old => {
+            var _old$left3, _old$right3;
+
+            if (position === 'right') {
+              var _old$left, _old$right;
+
+              return {
+                left: ((_old$left = old == null ? void 0 : old.left) != null ? _old$left : []).filter(d => !(columnIds != null && columnIds.includes(d))),
+                right: [...((_old$right = old == null ? void 0 : old.right) != null ? _old$right : []).filter(d => !(columnIds != null && columnIds.includes(d))), ...columnIds]
+              };
+            }
+
+            if (position === 'left') {
+              var _old$left2, _old$right2;
+
+              return {
+                left: [...((_old$left2 = old == null ? void 0 : old.left) != null ? _old$left2 : []).filter(d => !(columnIds != null && columnIds.includes(d))), ...columnIds],
+                right: ((_old$right2 = old == null ? void 0 : old.right) != null ? _old$right2 : []).filter(d => !(columnIds != null && columnIds.includes(d)))
+              };
+            }
+
+            return {
+              left: ((_old$left3 = old == null ? void 0 : old.left) != null ? _old$left3 : []).filter(d => !(columnIds != null && columnIds.includes(d))),
+              right: ((_old$right3 = old == null ? void 0 : old.right) != null ? _old$right3 : []).filter(d => !(columnIds != null && columnIds.includes(d)))
+            };
+          });
+        },
+        getCanPin: () => {
+          const leafColumns = column.getLeafColumns();
+          return leafColumns.some(d => {
+            var _d$columnDef$enablePi, _instance$options$ena;
+
+            return ((_d$columnDef$enablePi = d.columnDef.enablePinning) != null ? _d$columnDef$enablePi : true) && ((_instance$options$ena = instance.options.enablePinning) != null ? _instance$options$ena : true);
+          });
+        },
+        getIsPinned: () => {
+          const leafColumnIds = column.getLeafColumns().map(d => d.id);
+          const {
+            left,
+            right
+          } = instance.getState().columnPinning;
+          const isLeft = leafColumnIds.some(d => left == null ? void 0 : left.includes(d));
+          const isRight = leafColumnIds.some(d => right == null ? void 0 : right.includes(d));
+          return isLeft ? 'left' : isRight ? 'right' : false;
+        },
+        getPinnedIndex: () => {
+          var _instance$getState$co, _instance$getState$co2, _instance$getState$co3;
+
+          const position = column.getIsPinned();
+          return position ? (_instance$getState$co = (_instance$getState$co2 = instance.getState().columnPinning) == null ? void 0 : (_instance$getState$co3 = _instance$getState$co2[position]) == null ? void 0 : _instance$getState$co3.indexOf(column.id)) != null ? _instance$getState$co : -1 : 0;
+        }
+      };
+    },
+    createRow: (row, instance) => {
+      return {
+        getCenterVisibleCells: memo(() => [row._getAllVisibleCells(), instance.getState().columnPinning.left, instance.getState().columnPinning.right], (allCells, left, right) => {
+          const leftAndRight = [...(left != null ? left : []), ...(right != null ? right : [])];
+          return allCells.filter(d => !leftAndRight.includes(d.column.id));
+        }, {
+          key: "development" === 'production' ,
+          debug: () => {
+            var _instance$options$deb;
+
+            return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugRows;
+          }
+        }),
+        getLeftVisibleCells: memo(() => [row._getAllVisibleCells(), instance.getState().columnPinning.left,,], (allCells, left) => {
+          const cells = (left != null ? left : []).map(columnId => allCells.find(cell => cell.column.id === columnId)).filter(Boolean).map(d => ({ ...d,
+            position: 'left'
+          }));
+          return cells;
+        }, {
+          key: "development" === 'production' ,
+          debug: () => {
+            var _instance$options$deb2;
+
+            return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugRows;
+          }
+        }),
+        getRightVisibleCells: memo(() => [row._getAllVisibleCells(), instance.getState().columnPinning.right], (allCells, right) => {
+          const cells = (right != null ? right : []).map(columnId => allCells.find(cell => cell.column.id === columnId)).filter(Boolean).map(d => ({ ...d,
+            position: 'left'
+          }));
+          return cells;
+        }, {
+          key: "development" === 'production' ,
+          debug: () => {
+            var _instance$options$deb3;
+
+            return (_instance$options$deb3 = instance.options.debugAll) != null ? _instance$options$deb3 : instance.options.debugRows;
+          }
+        })
+      };
+    },
+    createInstance: instance => {
+      return {
+        setColumnPinning: updater => instance.options.onColumnPinningChange == null ? void 0 : instance.options.onColumnPinningChange(updater),
+        resetColumnPinning: defaultState => {
+          var _instance$initialStat, _instance$initialStat2;
+
+          return instance.setColumnPinning(defaultState ? getDefaultPinningState() : (_instance$initialStat = (_instance$initialStat2 = instance.initialState) == null ? void 0 : _instance$initialStat2.columnPinning) != null ? _instance$initialStat : getDefaultPinningState());
+        },
+        getIsSomeColumnsPinned: position => {
+          var _pinningState$positio;
+
+          const pinningState = instance.getState().columnPinning;
+
+          if (!position) {
+            var _pinningState$left, _pinningState$right;
+
+            return Boolean(((_pinningState$left = pinningState.left) == null ? void 0 : _pinningState$left.length) || ((_pinningState$right = pinningState.right) == null ? void 0 : _pinningState$right.length));
+          }
+
+          return Boolean((_pinningState$positio = pinningState[position]) == null ? void 0 : _pinningState$positio.length);
+        },
+        getLeftLeafColumns: memo(() => [instance.getAllLeafColumns(), instance.getState().columnPinning.left], (allColumns, left) => {
+          return (left != null ? left : []).map(columnId => allColumns.find(column => column.id === columnId)).filter(Boolean);
+        }, {
+          key: 'getLeftLeafColumns',
+          debug: () => {
+            var _instance$options$deb4;
+
+            return (_instance$options$deb4 = instance.options.debugAll) != null ? _instance$options$deb4 : instance.options.debugColumns;
+          }
+        }),
+        getRightLeafColumns: memo(() => [instance.getAllLeafColumns(), instance.getState().columnPinning.right], (allColumns, right) => {
+          return (right != null ? right : []).map(columnId => allColumns.find(column => column.id === columnId)).filter(Boolean);
+        }, {
+          key: 'getRightLeafColumns',
+          debug: () => {
+            var _instance$options$deb5;
+
+            return (_instance$options$deb5 = instance.options.debugAll) != null ? _instance$options$deb5 : instance.options.debugColumns;
+          }
+        }),
+        getCenterLeafColumns: memo(() => [instance.getAllLeafColumns(), instance.getState().columnPinning.left, instance.getState().columnPinning.right], (allColumns, left, right) => {
+          const leftAndRight = [...(left != null ? left : []), ...(right != null ? right : [])];
+          return allColumns.filter(d => !leftAndRight.includes(d.id));
+        }, {
+          key: 'getCenterLeafColumns',
+          debug: () => {
+            var _instance$options$deb6;
+
+            return (_instance$options$deb6 = instance.options.debugAll) != null ? _instance$options$deb6 : instance.options.debugColumns;
+          }
+        })
+      };
+    }
+  };
+
+  //
+  const RowSelection = {
+    getInitialState: state => {
+      return {
+        rowSelection: {},
+        ...state
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onRowSelectionChange: makeStateUpdater('rowSelection', instance),
+        enableRowSelection: true,
+        enableMultiRowSelection: true,
+        enableSubRowSelection: true // enableGroupingRowSelection: false,
+        // isAdditiveSelectEvent: (e: unknown) => !!e.metaKey,
+        // isInclusiveSelectEvent: (e: unknown) => !!e.shiftKey,
+
+      };
+    },
+    createInstance: instance => {
+      return {
+        setRowSelection: updater => instance.options.onRowSelectionChange == null ? void 0 : instance.options.onRowSelectionChange(updater),
+        resetRowSelection: defaultState => {
+          var _instance$initialStat;
+
+          return instance.setRowSelection(defaultState ? {} : (_instance$initialStat = instance.initialState.rowSelection) != null ? _instance$initialStat : {});
+        },
+        toggleAllRowsSelected: value => {
+          instance.setRowSelection(old => {
+            value = typeof value !== 'undefined' ? value : !instance.getIsAllRowsSelected();
+            const rowSelection = { ...old
+            };
+            const preGroupedFlatRows = instance.getPreGroupedRowModel().flatRows; // We don't use `mutateRowIsSelected` here for performance reasons.
+            // All of the rows are flat already, so it wouldn't be worth it
+
+            if (value) {
+              preGroupedFlatRows.forEach(row => {
+                rowSelection[row.id] = true;
+              });
+            } else {
+              preGroupedFlatRows.forEach(row => {
+                delete rowSelection[row.id];
+              });
+            }
+
+            return rowSelection;
+          });
+        },
+        toggleAllPageRowsSelected: value => instance.setRowSelection(old => {
+          typeof value !== 'undefined' ? value : !instance.getIsAllPageRowsSelected();
+          const rowSelection = { ...old
+          };
+          instance.getRowModel().rows.forEach(row => {
+            mutateRowIsSelected(rowSelection, row.id, value, instance);
+          });
+          return rowSelection;
+        }),
+        // addRowSelectionRange: rowId => {
+        //   const {
+        //     rows,
+        //     rowsById,
+        //     options: { selectGroupingRows, selectSubRows },
+        //   } = instance
+        //   const findSelectedRow = (rows: Row[]) => {
+        //     let found
+        //     rows.find(d => {
+        //       if (d.getIsSelected()) {
+        //         found = d
+        //         return true
+        //       }
+        //       const subFound = findSelectedRow(d.subRows || [])
+        //       if (subFound) {
+        //         found = subFound
+        //         return true
+        //       }
+        //       return false
+        //     })
+        //     return found
+        //   }
+        //   const firstRow = findSelectedRow(rows) || rows[0]
+        //   const lastRow = rowsById[rowId]
+        //   let include = false
+        //   const selectedRowIds = {}
+        //   const addRow = (row: Row) => {
+        //     mutateRowIsSelected(selectedRowIds, row.id, true, {
+        //       rowsById,
+        //       selectGroupingRows: selectGroupingRows!,
+        //       selectSubRows: selectSubRows!,
+        //     })
+        //   }
+        //   instance.rows.forEach(row => {
+        //     const isFirstRow = row.id === firstRow.id
+        //     const isLastRow = row.id === lastRow.id
+        //     if (isFirstRow || isLastRow) {
+        //       if (!include) {
+        //         include = true
+        //       } else if (include) {
+        //         addRow(row)
+        //         include = false
+        //       }
+        //     }
+        //     if (include) {
+        //       addRow(row)
+        //     }
+        //   })
+        //   instance.setRowSelection(selectedRowIds)
+        // },
+        getPreSelectedRowModel: () => instance.getCoreRowModel(),
+        getSelectedRowModel: memo(() => [instance.getState().rowSelection, instance.getCoreRowModel()], (rowSelection, rowModel) => {
+          if (!Object.keys(rowSelection).length) {
+            return {
+              rows: [],
+              flatRows: [],
+              rowsById: {}
+            };
+          }
+
+          return selectRowsFn(instance, rowModel);
+        }, {
+          key: 'getSelectedRowModel',
+          debug: () => {
+            var _instance$options$deb;
+
+            return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+          }
+        }),
+        getFilteredSelectedRowModel: memo(() => [instance.getState().rowSelection, instance.getFilteredRowModel()], (rowSelection, rowModel) => {
+          if (!Object.keys(rowSelection).length) {
+            return {
+              rows: [],
+              flatRows: [],
+              rowsById: {}
+            };
+          }
+
+          return selectRowsFn(instance, rowModel);
+        }, {
+          key: "development" === 'production' ,
+          debug: () => {
+            var _instance$options$deb2;
+
+            return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugTable;
+          }
+        }),
+        getGroupedSelectedRowModel: memo(() => [instance.getState().rowSelection, instance.getGroupedRowModel()], (rowSelection, rowModel) => {
+          if (!Object.keys(rowSelection).length) {
+            return {
+              rows: [],
+              flatRows: [],
+              rowsById: {}
+            };
+          }
+
+          return selectRowsFn(instance, rowModel);
+        }, {
+          key: "development" === 'production' ,
+          debug: () => {
+            var _instance$options$deb3;
+
+            return (_instance$options$deb3 = instance.options.debugAll) != null ? _instance$options$deb3 : instance.options.debugTable;
+          }
+        }),
+        ///
+        // getGroupingRowCanSelect: rowId => {
+        //   const row = instance.getRow(rowId)
+        //   if (!row) {
+        //     throw new Error()
+        //   }
+        //   if (typeof instance.options.enableGroupingRowSelection === 'function') {
+        //     return instance.options.enableGroupingRowSelection(row)
+        //   }
+        //   return instance.options.enableGroupingRowSelection ?? false
+        // },
+        getIsAllRowsSelected: () => {
+          const preFilteredFlatRows = instance.getPreFilteredRowModel().flatRows;
+          const {
+            rowSelection
+          } = instance.getState();
+          let isAllRowsSelected = Boolean(preFilteredFlatRows.length && Object.keys(rowSelection).length);
+
+          if (isAllRowsSelected) {
+            if (preFilteredFlatRows.some(row => !rowSelection[row.id])) {
+              isAllRowsSelected = false;
+            }
+          }
+
+          return isAllRowsSelected;
+        },
+        getIsAllPageRowsSelected: () => {
+          const paginationFlatRows = instance.getPaginationRowModel().flatRows;
+          const {
+            rowSelection
+          } = instance.getState();
+          let isAllPageRowsSelected = !!paginationFlatRows.length;
+
+          if (isAllPageRowsSelected && paginationFlatRows.some(row => !rowSelection[row.id])) {
+            isAllPageRowsSelected = false;
+          }
+
+          return isAllPageRowsSelected;
+        },
+        getIsSomeRowsSelected: () => {
+          var _instance$getState$ro;
+
+          return !instance.getIsAllRowsSelected() && !!Object.keys((_instance$getState$ro = instance.getState().rowSelection) != null ? _instance$getState$ro : {}).length;
+        },
+        getIsSomePageRowsSelected: () => {
+          const paginationFlatRows = instance.getPaginationRowModel().flatRows;
+          return instance.getIsAllPageRowsSelected() ? false : !!(paginationFlatRows != null && paginationFlatRows.length);
+        },
+        getToggleAllRowsSelectedHandler: () => {
+          return e => {
+            instance.toggleAllRowsSelected(e.target.checked);
+          };
+        },
+        getToggleAllPageRowsSelectedHandler: () => {
+          return e => {
+            instance.toggleAllPageRowsSelected(e.target.checked);
+          };
+        }
+      };
+    },
+    createRow: (row, instance) => {
+      return {
+        toggleSelected: value => {
+          const isSelected = row.getIsSelected();
+          instance.setRowSelection(old => {
+            value = typeof value !== 'undefined' ? value : !isSelected;
+
+            if (isSelected === value) {
+              return old;
+            }
+
+            const selectedRowIds = { ...old
+            };
+            mutateRowIsSelected(selectedRowIds, row.id, value, instance);
+            return selectedRowIds;
+          });
+        },
+        getIsSelected: () => {
+          const {
+            rowSelection
+          } = instance.getState();
+          return isRowSelected(row, rowSelection) === true;
+        },
+        getIsSomeSelected: () => {
+          const {
+            rowSelection
+          } = instance.getState();
+          return isRowSelected(row, rowSelection) === 'some';
+        },
+        getCanSelect: () => {
+          var _instance$options$ena;
+
+          if (typeof instance.options.enableRowSelection === 'function') {
+            return instance.options.enableRowSelection(row);
+          }
+
+          return (_instance$options$ena = instance.options.enableRowSelection) != null ? _instance$options$ena : true;
+        },
+        getCanSelectSubRows: () => {
+          var _instance$options$ena2;
+
+          if (typeof instance.options.enableSubRowSelection === 'function') {
+            return instance.options.enableSubRowSelection(row);
+          }
+
+          return (_instance$options$ena2 = instance.options.enableSubRowSelection) != null ? _instance$options$ena2 : true;
+        },
+        getCanMultiSelect: () => {
+          var _instance$options$ena3;
+
+          if (typeof instance.options.enableMultiRowSelection === 'function') {
+            return instance.options.enableMultiRowSelection(row);
+          }
+
+          return (_instance$options$ena3 = instance.options.enableMultiRowSelection) != null ? _instance$options$ena3 : true;
+        },
+        getToggleSelectedHandler: () => {
+          const canSelect = row.getCanSelect();
+          return e => {
+            var _target;
+
+            if (!canSelect) return;
+            row.toggleSelected((_target = e.target) == null ? void 0 : _target.checked);
+          };
+        }
+      };
+    }
+  };
+
+  const mutateRowIsSelected = (selectedRowIds, id, value, instance) => {
+    var _row$subRows;
+
+    const row = instance.getRow(id);
+    row.getIsGrouped(); // if ( // TODO: enforce grouping row selection rules
+    //   !isGrouped ||
+    //   (isGrouped && instance.options.enableGroupingRowSelection)
+    // ) {
+
+    if (value) {
+      selectedRowIds[id] = true;
+    } else {
+      delete selectedRowIds[id];
+    } // }
+
+
+    if ((_row$subRows = row.subRows) != null && _row$subRows.length && row.getCanSelectSubRows()) {
+      row.subRows.forEach(row => mutateRowIsSelected(selectedRowIds, row.id, value, instance));
+    }
+  };
+
+  function selectRowsFn(instance, rowModel) {
+    const rowSelection = instance.getState().rowSelection;
+    const newSelectedFlatRows = [];
+    const newSelectedRowsById = {}; // Filters top level and nested rows
+
+    const recurseRows = function (rows, depth) {
+      if (depth === void 0) {
+        depth = 0;
+      }
+
+      return rows.map(row => {
+        var _row$subRows2;
+
+        const isSelected = isRowSelected(row, rowSelection) === true;
+
+        if (isSelected) {
+          newSelectedFlatRows.push(row);
+          newSelectedRowsById[row.id] = row;
+        }
+
+        if ((_row$subRows2 = row.subRows) != null && _row$subRows2.length) {
+          row = { ...row,
+            subRows: recurseRows(row.subRows, depth + 1)
+          };
+        }
+
+        if (isSelected) {
+          return row;
+        }
+      }).filter(Boolean);
+    };
+
+    return {
+      rows: recurseRows(rowModel.rows),
+      flatRows: newSelectedFlatRows,
+      rowsById: newSelectedRowsById
+    };
+  }
+  function isRowSelected(row, selection, instance) {
+    if (selection[row.id]) {
+      return true;
+    }
+
+    if (row.subRows && row.subRows.length) {
+      let allChildrenSelected = true;
+      let someSelected = false;
+      row.subRows.forEach(subRow => {
+        // Bail out early if we know both of these
+        if (someSelected && !allChildrenSelected) {
+          return;
+        }
+
+        if (isRowSelected(subRow, selection)) {
+          someSelected = true;
+        } else {
+          allChildrenSelected = false;
+        }
+      });
+      return allChildrenSelected ? true : someSelected ? 'some' : false;
+    }
+
+    return false;
+  }
+
+  const reSplitAlphaNumeric = /([0-9]+)/gm;
+
+  const alphanumeric = (rowA, rowB, columnId) => {
+    return compareAlphanumeric(toString(rowA.getValue(columnId)).toLowerCase(), toString(rowB.getValue(columnId)).toLowerCase());
+  };
+
+  const alphanumericCaseSensitive = (rowA, rowB, columnId) => {
+    return compareAlphanumeric(toString(rowA.getValue(columnId)), toString(rowB.getValue(columnId)));
+  }; // The text filter is more basic (less numeric support)
+  // but is much faster
+
+
+  const text = (rowA, rowB, columnId) => {
+    return compareBasic(toString(rowA.getValue(columnId)).toLowerCase(), toString(rowB.getValue(columnId)).toLowerCase());
+  }; // The text filter is more basic (less numeric support)
+  // but is much faster
+
+
+  const textCaseSensitive = (rowA, rowB, columnId) => {
+    return compareBasic(toString(rowA.getValue(columnId)), toString(rowB.getValue(columnId)));
+  };
+
+  const datetime = (rowA, rowB, columnId) => {
+    return compareBasic(rowA.getValue(columnId).getTime(), rowB.getValue(columnId).getTime());
+  };
+
+  const basic = (rowA, rowB, columnId) => {
+    return compareBasic(rowA.getValue(columnId), rowB.getValue(columnId));
+  }; // Utils
+
+
+  function compareBasic(a, b) {
+    return a === b ? 0 : a > b ? 1 : -1;
+  }
+
+  function toString(a) {
+    if (typeof a === 'number') {
+      if (isNaN(a) || a === Infinity || a === -Infinity) {
+        return '';
+      }
+
+      return String(a);
+    }
+
+    if (typeof a === 'string') {
+      return a;
+    }
+
+    return '';
+  } // Mixed sorting is slow, but very inclusive of many edge cases.
+  // It handles numbers, mixed alphanumeric combinations, and even
+  // null, undefined, and Infinity
+
+
+  function compareAlphanumeric(aStr, bStr) {
+    // Split on number groups, but keep the delimiter
+    // Then remove falsey split values
+    const a = aStr.split(reSplitAlphaNumeric).filter(Boolean);
+    const b = bStr.split(reSplitAlphaNumeric).filter(Boolean); // While
+
+    while (a.length && b.length) {
+      const aa = a.shift();
+      const bb = b.shift();
+      const an = parseInt(aa, 10);
+      const bn = parseInt(bb, 10);
+      const combo = [an, bn].sort(); // Both are string
+
+      if (isNaN(combo[0])) {
+        if (aa > bb) {
+          return 1;
+        }
+
+        if (bb > aa) {
+          return -1;
+        }
+
+        continue;
+      } // One is a string, one is a number
+
+
+      if (isNaN(combo[1])) {
+        return isNaN(an) ? -1 : 1;
+      } // Both are numbers
+
+
+      if (an > bn) {
+        return 1;
+      }
+
+      if (bn > an) {
+        return -1;
+      }
+    }
+
+    return a.length - b.length;
+  } // Exports
+
+
+  const sortingFns = {
+    alphanumeric,
+    alphanumericCaseSensitive,
+    text,
+    textCaseSensitive,
+    datetime,
+    basic
+  };
+
+  //
+  const Sorting = {
+    getInitialState: state => {
+      return {
+        sorting: [],
+        ...state
+      };
+    },
+    getDefaultColumnDef: () => {
+      return {
+        sortingFn: 'auto'
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onSortingChange: makeStateUpdater('sorting', instance),
+        isMultiSortEvent: e => {
+          return e.shiftKey;
+        }
+      };
+    },
+    createColumn: (column, instance) => {
+      return {
+        getAutoSortingFn: () => {
+          const firstRows = instance.getFilteredRowModel().flatRows.slice(10);
+          let isString = false;
+
+          for (const row of firstRows) {
+            const value = row == null ? void 0 : row.getValue(column.id);
+
+            if (Object.prototype.toString.call(value) === '[object Date]') {
+              return sortingFns.datetime;
+            }
+
+            if (typeof value === 'string') {
+              isString = true;
+
+              if (value.split(reSplitAlphaNumeric).length > 1) {
+                return sortingFns.alphanumeric;
+              }
+            }
+          }
+
+          if (isString) {
+            return sortingFns.text;
+          }
+
+          return sortingFns.basic;
+        },
+        getAutoSortDir: () => {
+          const firstRow = instance.getFilteredRowModel().flatRows[0];
+          const value = firstRow == null ? void 0 : firstRow.getValue(column.id);
+
+          if (typeof value === 'string') {
+            return 'asc';
+          }
+
+          return 'desc';
+        },
+        getSortingFn: () => {
+          var _ref;
+
+          const userSortingFn = instance.options.sortingFns;
+
+          if (!column) {
+            throw new Error();
+          }
+
+          return isFunction(column.columnDef.sortingFn) ? column.columnDef.sortingFn : column.columnDef.sortingFn === 'auto' ? column.getAutoSortingFn() : (_ref = userSortingFn == null ? void 0 : userSortingFn[column.columnDef.sortingFn]) != null ? _ref : sortingFns[column.columnDef.sortingFn];
+        },
+        toggleSorting: (desc, multi) => {
+          // if (column.columns.length) {
+          //   column.columns.forEach((c, i) => {
+          //     if (c.id) {
+          //       instance.toggleColumnSorting(c.id, undefined, multi || !!i)
+          //     }
+          //   })
+          //   return
+          // }
+          instance.setSorting(old => {
+            var _ref2, _column$columnDef$sor, _instance$options$ena, _instance$options$ena2;
+
+            // Find any existing sorting for this column
+            const existingSorting = old == null ? void 0 : old.find(d => d.id === column.id);
+            const existingIndex = old == null ? void 0 : old.findIndex(d => d.id === column.id);
+            const hasDescDefined = typeof desc !== 'undefined' && desc !== null;
+            let newSorting = []; // What should we do with this sort action?
+
+            let sortAction;
+
+            if (column.getCanMultiSort() && multi) {
+              if (existingSorting) {
+                sortAction = 'toggle';
+              } else {
+                sortAction = 'add';
+              }
+            } else {
+              // Normal mode
+              if (old != null && old.length && existingIndex !== old.length - 1) {
+                sortAction = 'replace';
+              } else if (existingSorting) {
+                sortAction = 'toggle';
+              } else {
+                sortAction = 'replace';
+              }
+            }
+
+            const sortDescFirst = (_ref2 = (_column$columnDef$sor = column.columnDef.sortDescFirst) != null ? _column$columnDef$sor : instance.options.sortDescFirst) != null ? _ref2 : column.getAutoSortDir() === 'desc'; // Handle toggle states that will remove the sorting
+
+            if (sortAction === 'toggle' && ( // Must be toggling
+            (_instance$options$ena = instance.options.enableSortingRemoval) != null ? _instance$options$ena : true) && // If enableSortRemove, enable in general
+            !hasDescDefined && ( // Must not be setting desc
+            multi ? (_instance$options$ena2 = instance.options.enableMultiRemove) != null ? _instance$options$ena2 : true : true) && ( // If multi, don't allow if enableMultiRemove
+            existingSorting != null && existingSorting.desc // Finally, detect if it should indeed be removed
+            ? !sortDescFirst : sortDescFirst)) {
+              sortAction = 'remove';
+            }
+
+            if (sortAction === 'replace') {
+              newSorting = [{
+                id: column.id,
+                desc: hasDescDefined ? desc : !!sortDescFirst
+              }];
+            } else if (sortAction === 'add' && old != null && old.length) {
+              var _instance$options$max;
+
+              newSorting = [...old, {
+                id: column.id,
+                desc: hasDescDefined ? desc : !!sortDescFirst
+              }]; // Take latest n columns
+
+              newSorting.splice(0, newSorting.length - ((_instance$options$max = instance.options.maxMultiSortColCount) != null ? _instance$options$max : Number.MAX_SAFE_INTEGER));
+            } else if (sortAction === 'toggle' && old != null && old.length) {
+              // This flips (or sets) the
+              newSorting = old.map(d => {
+                if (d.id === column.id) {
+                  return { ...d,
+                    desc: hasDescDefined ? desc : !(existingSorting != null && existingSorting.desc)
+                  };
+                }
+
+                return d;
+              });
+            } else if (sortAction === 'remove' && old != null && old.length) {
+              newSorting = old.filter(d => d.id !== column.id);
+            }
+
+            return newSorting;
+          });
+        },
+        getCanSort: () => {
+          var _column$columnDef$ena, _instance$options$ena3;
+
+          return ((_column$columnDef$ena = column.columnDef.enableSorting) != null ? _column$columnDef$ena : true) && ((_instance$options$ena3 = instance.options.enableSorting) != null ? _instance$options$ena3 : true) && !!column.accessorFn;
+        },
+        getCanMultiSort: () => {
+          var _ref3, _column$columnDef$ena2;
+
+          return (_ref3 = (_column$columnDef$ena2 = column.columnDef.enableMultiSort) != null ? _column$columnDef$ena2 : instance.options.enableMultiSort) != null ? _ref3 : !!column.accessorFn;
+        },
+        getIsSorted: () => {
+          var _instance$getState$so;
+
+          const columnSort = (_instance$getState$so = instance.getState().sorting) == null ? void 0 : _instance$getState$so.find(d => d.id === column.id);
+          return !columnSort ? false : columnSort.desc ? 'desc' : 'asc';
+        },
+        getSortIndex: () => {
+          var _instance$getState$so2, _instance$getState$so3;
+
+          return (_instance$getState$so2 = (_instance$getState$so3 = instance.getState().sorting) == null ? void 0 : _instance$getState$so3.findIndex(d => d.id === column.id)) != null ? _instance$getState$so2 : -1;
+        },
+        clearSorting: () => {
+          //clear sorting for just 1 column
+          instance.setSorting(old => old != null && old.length ? old.filter(d => d.id !== column.id) : []);
+        },
+        getToggleSortingHandler: () => {
+          const canSort = column.getCanSort();
+          return e => {
+            if (!canSort) return;
+            e.persist == null ? void 0 : e.persist();
+            column.toggleSorting == null ? void 0 : column.toggleSorting(undefined, column.getCanMultiSort() ? instance.options.isMultiSortEvent == null ? void 0 : instance.options.isMultiSortEvent(e) : false);
+          };
+        }
+      };
+    },
+    createInstance: instance => {
+      return {
+        setSorting: updater => instance.options.onSortingChange == null ? void 0 : instance.options.onSortingChange(updater),
+        resetSorting: defaultState => {
+          var _instance$initialStat, _instance$initialStat2;
+
+          instance.setSorting(defaultState ? [] : (_instance$initialStat = (_instance$initialStat2 = instance.initialState) == null ? void 0 : _instance$initialStat2.sorting) != null ? _instance$initialStat : []);
+        },
+        getPreSortedRowModel: () => instance.getFilteredRowModel(),
+        getSortedRowModel: () => {
+          if (!instance._getSortedRowModel && instance.options.getSortedRowModel) {
+            instance._getSortedRowModel = instance.options.getSortedRowModel(instance);
+          }
+
+          if (instance.options.manualSorting || !instance._getSortedRowModel) {
+            return instance.getPreSortedRowModel();
+          }
+
+          return instance._getSortedRowModel();
+        }
+      };
+    }
+  };
+
+  //
+  const Visibility = {
+    getInitialState: state => {
+      return {
+        columnVisibility: {},
+        ...state
+      };
+    },
+    getDefaultOptions: instance => {
+      return {
+        onColumnVisibilityChange: makeStateUpdater('columnVisibility', instance)
+      };
+    },
+    createColumn: (column, instance) => {
+      return {
+        toggleVisibility: value => {
+          if (column.getCanHide()) {
+            instance.setColumnVisibility(old => ({ ...old,
+              [column.id]: value != null ? value : !column.getIsVisible()
+            }));
+          }
+        },
+        getIsVisible: () => {
+          var _instance$getState$co, _instance$getState$co2;
+
+          return (_instance$getState$co = (_instance$getState$co2 = instance.getState().columnVisibility) == null ? void 0 : _instance$getState$co2[column.id]) != null ? _instance$getState$co : true;
+        },
+        getCanHide: () => {
+          var _column$columnDef$ena, _instance$options$ena;
+
+          return ((_column$columnDef$ena = column.columnDef.enableHiding) != null ? _column$columnDef$ena : true) && ((_instance$options$ena = instance.options.enableHiding) != null ? _instance$options$ena : true);
+        },
+        getToggleVisibilityHandler: () => {
+          return e => {
+            column.toggleVisibility == null ? void 0 : column.toggleVisibility(e.target.checked);
+          };
+        }
+      };
+    },
+    createRow: (row, instance) => {
+      return {
+        _getAllVisibleCells: memo(() => [row.getAllCells().filter(cell => cell.column.getIsVisible()).map(d => d.id).join('_')], _ => {
+          return row.getAllCells().filter(cell => cell.column.getIsVisible());
+        }, {
+          key: "development" === 'production' ,
+          debug: () => {
+            var _instance$options$deb;
+
+            return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugRows;
+          }
+        }),
+        getVisibleCells: memo(() => [row.getLeftVisibleCells(), row.getCenterVisibleCells(), row.getRightVisibleCells()], (left, center, right) => [...left, ...center, ...right], {
+          key: 'row.getVisibleCells',
+          debug: () => {
+            var _instance$options$deb2;
+
+            return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugRows;
+          }
+        })
+      };
+    },
+    createInstance: instance => {
+      const makeVisibleColumnsMethod = (key, getColumns) => {
+        return memo(() => [getColumns(), getColumns().filter(d => d.getIsVisible()).map(d => d.id).join('_')], columns => {
+          return columns.filter(d => d.getIsVisible == null ? void 0 : d.getIsVisible());
+        }, {
+          key,
+          debug: () => {
+            var _instance$options$deb3;
+
+            return (_instance$options$deb3 = instance.options.debugAll) != null ? _instance$options$deb3 : instance.options.debugColumns;
+          }
+        });
+      };
+
+      return {
+        getVisibleFlatColumns: makeVisibleColumnsMethod('getVisibleFlatColumns', () => instance.getAllFlatColumns()),
+        getVisibleLeafColumns: makeVisibleColumnsMethod('getVisibleLeafColumns', () => instance.getAllLeafColumns()),
+        getLeftVisibleLeafColumns: makeVisibleColumnsMethod('getLeftVisibleLeafColumns', () => instance.getLeftLeafColumns()),
+        getRightVisibleLeafColumns: makeVisibleColumnsMethod('getRightVisibleLeafColumns', () => instance.getRightLeafColumns()),
+        getCenterVisibleLeafColumns: makeVisibleColumnsMethod('getCenterVisibleLeafColumns', () => instance.getCenterLeafColumns()),
+        setColumnVisibility: updater => instance.options.onColumnVisibilityChange == null ? void 0 : instance.options.onColumnVisibilityChange(updater),
+        resetColumnVisibility: defaultState => {
+          var _instance$initialStat;
+
+          instance.setColumnVisibility(defaultState ? {} : (_instance$initialStat = instance.initialState.columnVisibility) != null ? _instance$initialStat : {});
+        },
+        toggleAllColumnsVisible: value => {
+          var _value;
+
+          value = (_value = value) != null ? _value : !instance.getIsAllColumnsVisible();
+          instance.setColumnVisibility(instance.getAllLeafColumns().reduce((obj, column) => ({ ...obj,
+            [column.id]: !value ? !(column.getCanHide != null && column.getCanHide()) : value
+          }), {}));
+        },
+        getIsAllColumnsVisible: () => !instance.getAllLeafColumns().some(column => !(column.getIsVisible != null && column.getIsVisible())),
+        getIsSomeColumnsVisible: () => instance.getAllLeafColumns().some(column => column.getIsVisible == null ? void 0 : column.getIsVisible()),
+        getToggleAllColumnsVisibilityHandler: () => {
+          return e => {
+            var _target;
+
+            instance.toggleAllColumnsVisible((_target = e.target) == null ? void 0 : _target.checked);
+          };
+        }
+      };
+    }
+  };
+
+  const features = [Headers, Visibility, Ordering, Pinning, Filters, Sorting, Grouping, Expanding, Pagination, RowSelection, ColumnSizing]; //
+
+  function createTableInstance(options) {
+    var _options$initialState;
+
+    if (options.debugAll || options.debugTable) {
+      console.info('Creating Table Instance...');
+    }
+
+    let instance = {
+      _features: features
+    };
+
+    const defaultOptions = instance._features.reduce((obj, feature) => {
+      return Object.assign(obj, feature.getDefaultOptions == null ? void 0 : feature.getDefaultOptions(instance));
+    }, {});
+
+    const mergeOptions = options => {
+      if (instance.options.mergeOptions) {
+        return instance.options.mergeOptions(defaultOptions, options);
+      }
+
+      return { ...defaultOptions,
+        ...options
+      };
+    };
+
+    const coreInitialState = {};
+    let initialState = { ...coreInitialState,
+      ...((_options$initialState = options.initialState) != null ? _options$initialState : {})
+    };
+
+    instance._features.forEach(feature => {
+      var _feature$getInitialSt;
+
+      initialState = (_feature$getInitialSt = feature.getInitialState == null ? void 0 : feature.getInitialState(initialState)) != null ? _feature$getInitialSt : initialState;
+    });
+
+    const queued = [];
+    let queuedTimeout = false;
+    const coreInstance = {
+      _features: features,
+      options: { ...defaultOptions,
+        ...options
+      },
+      initialState,
+      _queue: cb => {
+        queued.push(cb);
+
+        if (!queuedTimeout) {
+          queuedTimeout = true; // Schedule a microtask to run the queued callbacks after
+          // the current call stack (render, etc) has finished.
+
+          Promise.resolve().then(() => {
+            while (queued.length) {
+              queued.shift()();
+            }
+
+            queuedTimeout = false;
+          }).catch(error => setTimeout(() => {
+            throw error;
+          }));
+        }
+      },
+      reset: () => {
+        instance.setState(instance.initialState);
+      },
+      setOptions: updater => {
+        const newOptions = functionalUpdate(updater, instance.options);
+        instance.options = mergeOptions(newOptions);
+      },
+      _render: (template, props) => {
+        if (typeof instance.options.render === 'function') {
+          return instance.options.render(template, props);
+        }
+
+        if (typeof template === 'function') {
+          return template(props);
+        }
+
+        return template;
+      },
+      getState: () => {
+        return instance.options.state;
+      },
+      setState: updater => {
+        instance.options.onStateChange == null ? void 0 : instance.options.onStateChange(updater);
+      },
+      _getRowId: (row, index, parent) => {
+        var _instance$options$get;
+
+        return (_instance$options$get = instance.options.getRowId == null ? void 0 : instance.options.getRowId(row, index, parent)) != null ? _instance$options$get : "" + (parent ? [parent.id, index].join('.') : index);
+      },
+      getCoreRowModel: () => {
+        if (!instance._getCoreRowModel) {
+          instance._getCoreRowModel = instance.options.getCoreRowModel(instance);
+        }
+
+        return instance._getCoreRowModel();
+      },
+      // The final calls start at the bottom of the model,
+      // expanded rows, which then work their way up
+      getRowModel: () => {
+        return instance.getPaginationRowModel();
+      },
+      getRow: id => {
+        const row = instance.getRowModel().rowsById[id];
+
+        if (!row) {
+          {
+            throw new Error("getRow expected an ID, but got " + id);
+          }
+        }
+
+        return row;
+      },
+      _getDefaultColumnDef: memo(() => [instance.options.defaultColumn], defaultColumn => {
+        var _defaultColumn;
+
+        defaultColumn = (_defaultColumn = defaultColumn) != null ? _defaultColumn : {};
+        return {
+          header: props => props.header.column.id,
+          footer: props => props.header.column.id,
+          cell: props => {
+            var _props$getValue$toStr, _props$getValue$toStr2, _props$getValue;
+
+            return (_props$getValue$toStr = (_props$getValue$toStr2 = (_props$getValue = props.getValue()).toString) == null ? void 0 : _props$getValue$toStr2.call(_props$getValue)) != null ? _props$getValue$toStr : null;
+          },
+          ...instance._features.reduce((obj, feature) => {
+            return Object.assign(obj, feature.getDefaultColumnDef == null ? void 0 : feature.getDefaultColumnDef());
+          }, {}),
+          ...defaultColumn
+        };
+      }, {
+        debug: () => {
+          var _instance$options$deb;
+
+          return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugColumns;
+        },
+        key: 'getDefaultColumnDef'
+      }),
+      _getColumnDefs: () => instance.options.columns,
+      getAllColumns: memo(() => [instance._getColumnDefs()], columnDefs => {
+        const recurseColumns = function (columnDefs, parent, depth) {
+          if (depth === void 0) {
+            depth = 0;
+          }
+
+          return columnDefs.map(columnDef => {
+            const column = createColumn(instance, columnDef, depth, parent);
+            column.columns = columnDef.columns ? recurseColumns(columnDef.columns, column, depth + 1) : [];
+            return column;
+          });
+        };
+
+        return recurseColumns(columnDefs);
+      }, {
+        key: 'getAllColumns',
+        debug: () => {
+          var _instance$options$deb2;
+
+          return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugColumns;
+        }
+      }),
+      getAllFlatColumns: memo(() => [instance.getAllColumns()], allColumns => {
+        return allColumns.flatMap(column => {
+          return column.getFlatColumns();
+        });
+      }, {
+        key: 'getAllFlatColumns',
+        debug: () => {
+          var _instance$options$deb3;
+
+          return (_instance$options$deb3 = instance.options.debugAll) != null ? _instance$options$deb3 : instance.options.debugColumns;
+        }
+      }),
+      _getAllFlatColumnsById: memo(() => [instance.getAllFlatColumns()], flatColumns => {
+        return flatColumns.reduce((acc, column) => {
+          acc[column.id] = column;
+          return acc;
+        }, {});
+      }, {
+        key: 'getAllFlatColumnsById',
+        debug: () => {
+          var _instance$options$deb4;
+
+          return (_instance$options$deb4 = instance.options.debugAll) != null ? _instance$options$deb4 : instance.options.debugColumns;
+        }
+      }),
+      getAllLeafColumns: memo(() => [instance.getAllColumns(), instance._getOrderColumnsFn()], (allColumns, orderColumns) => {
+        let leafColumns = allColumns.flatMap(column => column.getLeafColumns());
+        return orderColumns(leafColumns);
+      }, {
+        key: 'getAllLeafColumns',
+        debug: () => {
+          var _instance$options$deb5;
+
+          return (_instance$options$deb5 = instance.options.debugAll) != null ? _instance$options$deb5 : instance.options.debugColumns;
+        }
+      }),
+      getColumn: columnId => {
+        const column = instance._getAllFlatColumnsById()[columnId];
+
+        if (!column) {
+          {
+            console.warn("[Table] Column with id " + columnId + " does not exist.");
+          }
+
+          throw new Error();
+        }
+
+        return column;
+      }
+    };
+    Object.assign(instance, coreInstance);
+
+    instance._features.forEach(feature => {
+      return Object.assign(instance, feature.createInstance == null ? void 0 : feature.createInstance(instance));
+    });
+
+    return instance;
+  }
+
+  //
+  function createTableFactory(opts) {
+    return () => createTable$1(undefined, undefined, opts);
+  } // A lot of returns in here are `as any` for a reason. Unless you
+  // can find a better way to do this, then don't worry about them
+
+  function createTable$1(_, __, options) {
+    const table = {
+      generics: undefined,
+      options: options != null ? options : {
+        render: (() => {
+          throw new Error('');
+        })()
+      },
+      // setGenerics: () => table as any,
+      setRowType: () => table,
+      setTableMetaType: () => table,
+      setColumnMetaType: () => table,
+      setFilterMetaType: () => table,
+      setOptions: newOptions => createTable$1(_, __, { ...options,
+        ...newOptions
+      }),
+      createDisplayColumn: column => ({ ...column,
+        columnDefType: 'display'
+      }),
+      createGroup: column => ({ ...column,
+        columnDefType: 'group'
+      }),
+      createDataColumn: (accessor, column) => {
+        column = { ...column,
+          columnDefType: 'data',
+          id: column.id
+        };
+
+        if (typeof accessor === 'string') {
+          var _column$id;
+
+          return { ...column,
+            id: (_column$id = column.id) != null ? _column$id : accessor,
+            accessorKey: accessor
+          };
+        }
+
+        if (typeof accessor === 'function') {
+          return { ...column,
+            accessorFn: accessor
+          };
+        }
+
+        throw new Error('Invalid accessor');
+      },
+      createOptions: options => options
+    };
+    return table;
+  }
+
+  function createCell(instance, row, column, columnId) {
+    const cell = {
+      id: row.id + "_" + column.id,
+      row,
+      column,
+      getValue: () => row.getValue(columnId),
+      renderCell: () => column.columnDef.cell ? instance._render(column.columnDef.cell, {
+        instance,
+        column,
+        row,
+        cell: cell,
+        getValue: cell.getValue
+      }) : null
+    };
+
+    instance._features.forEach(feature => {
+      Object.assign(cell, feature.createCell == null ? void 0 : feature.createCell(cell, column, row, instance));
+    }, {});
+
+    return cell;
+  }
+
+  const createRow = (instance, id, original, rowIndex, depth, subRows) => {
+    let row = {
+      id,
+      index: rowIndex,
+      original,
+      depth,
+      _valuesCache: {},
+      getValue: columnId => {
+        if (row._valuesCache.hasOwnProperty(columnId)) {
+          return row._valuesCache[columnId];
+        }
+
+        const column = instance.getColumn(columnId);
+
+        if (!column.accessorFn) {
+          return undefined;
+        }
+
+        row._valuesCache[columnId] = column.accessorFn(row.original, rowIndex);
+        return row._valuesCache[columnId];
+      },
+      subRows: subRows != null ? subRows : [],
+      getLeafRows: () => flattenBy(row.subRows, d => d.subRows),
+      getAllCells: memo(() => [instance.getAllLeafColumns()], leafColumns => {
+        return leafColumns.map(column => {
+          return createCell(instance, row, column, column.id);
+        });
+      }, {
+        key: 'row.getAllCells',
+        debug: () => {
+          var _instance$options$deb;
+
+          return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugRows;
+        }
+      }),
+      _getAllCellsByColumnId: memo(() => [row.getAllCells()], allCells => {
+        return allCells.reduce((acc, cell) => {
+          acc[cell.column.id] = cell;
+          return acc;
+        }, {});
+      }, {
+        key: "development" === 'production' ,
+        debug: () => {
+          var _instance$options$deb2;
+
+          return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugRows;
+        }
+      })
+    };
+
+    for (let i = 0; i < instance._features.length; i++) {
+      const feature = instance._features[i];
+      Object.assign(row, feature == null ? void 0 : feature.createRow == null ? void 0 : feature.createRow(row, instance));
+    }
+
+    return row;
+  };
+
+  function getCoreRowModel() {
+    return instance => memo(() => [instance.options.data], data => {
+      const rowModel = {
+        rows: [],
+        flatRows: [],
+        rowsById: {}
+      };
+      let rows;
+      let row;
+      let originalRow;
+
+      const accessRows = function (originalRows, depth, parent) {
+        if (depth === void 0) {
+          depth = 0;
+        }
+
+        rows = [];
+
+        for (let i = 0; i < originalRows.length; i++) {
+          originalRow = originalRows[i]; // This could be an expensive check at scale, so we should move it somewhere else, but where?
+          // if (!id) {
+          //   if ("development" !== 'production') {
+          //     throw new Error(`getRowId expected an ID, but got ${id}`)
+          //   }
+          // }
+          // Make the row
+
+          row = createRow(instance, instance._getRowId(originalRow, i, parent), originalRow, i, depth); // Keep track of every row in a flat array
+
+          rowModel.flatRows.push(row); // Also keep track of every row by its ID
+
+          rowModel.rowsById[row.id] = row; // Push instance row into parent
+
+          rows.push(row); // Get the original subrows
+
+          if (instance.options.getSubRows) {
+            var _row$originalSubRows;
+
+            row.originalSubRows = instance.options.getSubRows(originalRow, i); // Then recursively access them
+
+            if ((_row$originalSubRows = row.originalSubRows) != null && _row$originalSubRows.length) {
+              row.subRows = accessRows(row.originalSubRows, depth + 1, row);
+            }
+          }
+        }
+
+        return rows;
+      };
+
+      rowModel.rows = accessRows(data);
+      return rowModel;
+    }, {
+      key: 'getRowModel',
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      },
+      onChange: () => {
+        instance._autoResetPageIndex();
+      }
+    });
+  }
+
+  function filterRows(rows, filterRowImpl, instance) {
+    if (instance.options.filterFromLeafRows) {
+      return filterRowModelFromLeafs(rows, filterRowImpl, instance);
+    }
+
+    return filterRowModelFromRoot(rows, filterRowImpl, instance);
+  }
+  function filterRowModelFromLeafs(rowsToFilter, filterRow, instance) {
+    const newFilteredFlatRows = [];
+    const newFilteredRowsById = {};
+    let row;
+    let newRow;
+
+    const recurseFilterRows = function (rowsToFilter, depth) {
+      if (depth === void 0) {
+        depth = 0;
+      }
+
+      const rows = []; // Filter from children up first
+
+      for (let i = 0; i < rowsToFilter.length; i++) {
+        var _row$subRows;
+
+        row = rowsToFilter[i];
+
+        if ((_row$subRows = row.subRows) != null && _row$subRows.length) {
+          newRow = createRow(instance, row.id, row.original, row.index, row.depth);
+          newRow.columnFilters = row.columnFilters;
+          newRow.subRows = recurseFilterRows(row.subRows, depth + 1);
+
+          if (!newRow.subRows.length) {
+            continue;
+          }
+
+          row = newRow;
+        }
+
+        if (filterRow(row)) {
+          rows.push(row);
+          newFilteredRowsById[row.id] = row;
+          newFilteredRowsById[i] = row;
+        }
+      }
+
+      return rows;
+    };
+
+    return {
+      rows: recurseFilterRows(rowsToFilter),
+      flatRows: newFilteredFlatRows,
+      rowsById: newFilteredRowsById
+    };
+  }
+  function filterRowModelFromRoot(rowsToFilter, filterRow, instance) {
+    const newFilteredFlatRows = [];
+    const newFilteredRowsById = {};
+    let rows;
+    let row;
+    let newRow; // Filters top level and nested rows
+
+    const recurseFilterRows = function (rowsToFilter, depth) {
+      if (depth === void 0) {
+        depth = 0;
+      }
+
+      // Filter from parents downward first
+      rows = []; // Apply the filter to any subRows
+
+      for (let i = 0; i < rowsToFilter.length; i++) {
+        row = rowsToFilter[i];
+        const pass = filterRow(row);
+
+        if (pass) {
+          var _row$subRows2;
+
+          if ((_row$subRows2 = row.subRows) != null && _row$subRows2.length) {
+            newRow = createRow(instance, row.id, row.original, row.index, row.depth);
+            newRow.subRows = recurseFilterRows(row.subRows, depth + 1);
+            row = newRow;
+          }
+
+          rows.push(row);
+          newFilteredFlatRows.push(row);
+          newFilteredRowsById[row.id] = row;
+        }
+      }
+
+      return rows;
+    };
+
+    return {
+      rows: recurseFilterRows(rowsToFilter),
+      flatRows: newFilteredFlatRows,
+      rowsById: newFilteredRowsById
+    };
+  }
+
+  function getFilteredRowModel() {
+    return instance => memo(() => [instance.getPreFilteredRowModel(), instance.getState().columnFilters, instance.getState().globalFilter], (rowModel, columnFilters, globalFilter) => {
+      if (!rowModel.rows.length || !(columnFilters != null && columnFilters.length) && !globalFilter) {
+        for (let i = 0; i < rowModel.flatRows.length; i++) {
+          rowModel.flatRows[i].columnFilters = {};
+          rowModel.flatRows[i].columnFiltersMeta = {};
+        }
+
+        return rowModel;
+      }
+
+      const resolvedColumnFilters = [];
+      const resolvedGlobalFilters = [];
+      (columnFilters != null ? columnFilters : []).forEach(d => {
+        var _filterFn$resolveFilt;
+
+        const column = instance.getColumn(d.id);
+
+        if (!column) {
+          {
+            console.warn("Table: Could not find a column to filter with columnId: " + d.id);
+          }
+        }
+
+        const filterFn = column.getFilterFn();
+
+        if (!filterFn) {
+          {
+            console.warn("Could not find a valid 'column.filterFn' for column with the ID: " + column.id + ".");
+          }
+
+          return;
+        }
+
+        resolvedColumnFilters.push({
+          id: d.id,
+          filterFn,
+          resolvedValue: (_filterFn$resolveFilt = filterFn.resolveFilterValue == null ? void 0 : filterFn.resolveFilterValue(d.value)) != null ? _filterFn$resolveFilt : d.value
+        });
+      });
+      const filterableIds = columnFilters.map(d => d.id);
+      const globalFilterFn = instance.getGlobalFilterFn();
+      const globallyFilterableColumns = instance.getAllLeafColumns().filter(column => column.getCanGlobalFilter());
+
+      if (globalFilter && globalFilterFn && globallyFilterableColumns.length) {
+        filterableIds.push('__global__');
+        globallyFilterableColumns.forEach(column => {
+          var _globalFilterFn$resol;
+
+          resolvedGlobalFilters.push({
+            id: column.id,
+            filterFn: globalFilterFn,
+            resolvedValue: (_globalFilterFn$resol = globalFilterFn.resolveFilterValue == null ? void 0 : globalFilterFn.resolveFilterValue(globalFilter)) != null ? _globalFilterFn$resol : globalFilter
+          });
+        });
+      }
+
+      let currentColumnFilter;
+      let currentGlobalFilter; // Flag the prefiltered row model with each filter state
+
+      for (let j = 0; j < rowModel.flatRows.length; j++) {
+        const row = rowModel.flatRows[j];
+        row.columnFilters = {};
+
+        if (resolvedColumnFilters.length) {
+          for (let i = 0; i < resolvedColumnFilters.length; i++) {
+            currentColumnFilter = resolvedColumnFilters[i];
+            const id = currentColumnFilter.id; // Tag the row with the column filter state
+
+            row.columnFilters[id] = currentColumnFilter.filterFn(row, id, currentColumnFilter.resolvedValue, filterMeta => {
+              row.columnFiltersMeta[id] = filterMeta;
+            });
+          }
+        }
+
+        if (resolvedGlobalFilters.length) {
+          for (let i = 0; i < resolvedGlobalFilters.length; i++) {
+            currentGlobalFilter = resolvedGlobalFilters[i];
+            const id = currentGlobalFilter.id; // Tag the row with the first truthy global filter state
+
+            if (currentGlobalFilter.filterFn(row, id, currentGlobalFilter.resolvedValue, filterMeta => {
+              row.columnFiltersMeta[id] = filterMeta;
+            })) {
+              row.columnFilters.__global__ = true;
+              break;
+            }
+          }
+
+          if (row.columnFilters.__global__ !== true) {
+            row.columnFilters.__global__ = false;
+          }
+        }
+      }
+
+      const filterRowsImpl = row => {
+        // Horizontally filter rows through each column
+        for (let i = 0; i < filterableIds.length; i++) {
+          if (row.columnFilters[filterableIds[i]] === false) {
+            return false;
+          }
+        }
+
+        return true;
+      }; // Filter final rows using all of the active filters
+
+
+      return filterRows(rowModel.rows, filterRowsImpl, instance);
+    }, {
+      key: 'getFilteredRowModel',
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      },
+      onChange: () => {
+        instance._autoResetPageIndex();
+      }
+    });
+  }
+
+  function getFacetedRowModel() {
+    return (instance, columnId) => memo(() => [instance.getPreFilteredRowModel(), instance.getState().columnFilters, instance.getState().globalFilter, instance.getFilteredRowModel()], (preRowModel, columnFilters, globalFilter) => {
+      if (!preRowModel.rows.length || !(columnFilters != null && columnFilters.length) && !globalFilter) {
+        return preRowModel;
+      }
+
+      const filterableIds = [...columnFilters.map(d => d.id).filter(d => d !== columnId), globalFilter ? '__global__' : undefined].filter(Boolean);
+
+      const filterRowsImpl = row => {
+        // Horizontally filter rows through each column
+        for (let i = 0; i < filterableIds.length; i++) {
+          if (row.columnFilters[filterableIds[i]] === false) {
+            return false;
+          }
+        }
+
+        return true;
+      };
+
+      return filterRows(preRowModel.rows, filterRowsImpl, instance);
+    }, {
+      key: 'getFacetedRowModel_' + columnId,
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      },
+      onChange: () => {}
+    });
+  }
+
+  function getFacetedUniqueValues() {
+    return (instance, columnId) => memo(() => [instance.getColumn(columnId).getFacetedRowModel()], facetedRowModel => {
+      let facetedUniqueValues = new Map();
+
+      for (let i = 0; i < facetedRowModel.flatRows.length; i++) {
+        var _facetedRowModel$flat;
+
+        const value = (_facetedRowModel$flat = facetedRowModel.flatRows[i]) == null ? void 0 : _facetedRowModel$flat.getValue(columnId);
+
+        if (facetedUniqueValues.has(value)) {
+          var _facetedUniqueValues$;
+
+          facetedUniqueValues.set(value, ((_facetedUniqueValues$ = facetedUniqueValues.get(value)) != null ? _facetedUniqueValues$ : 0) + 1);
+        } else {
+          facetedUniqueValues.set(value, 1);
+        }
+      }
+
+      return facetedUniqueValues;
+    }, {
+      key: 'getFacetedUniqueValues_' + columnId,
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      },
+      onChange: () => {}
+    });
+  }
+
+  function getFacetedMinMaxValues() {
+    return (instance, columnId) => memo(() => [instance.getColumn(columnId).getFacetedRowModel()], facetedRowModel => {
+      var _facetedRowModel$flat;
+
+      const firstValue = (_facetedRowModel$flat = facetedRowModel.flatRows[0]) == null ? void 0 : _facetedRowModel$flat.getValue(columnId);
+
+      if (typeof firstValue === 'undefined') {
+        return undefined;
+      }
+
+      let facetedMinMaxValues = [firstValue, firstValue];
+
+      for (let i = 0; i < facetedRowModel.flatRows.length; i++) {
+        var _facetedRowModel$flat2;
+
+        const value = (_facetedRowModel$flat2 = facetedRowModel.flatRows[i]) == null ? void 0 : _facetedRowModel$flat2.getValue(columnId);
+
+        if (value < facetedMinMaxValues[0]) {
+          facetedMinMaxValues[0] = value;
+        } else if (value > facetedMinMaxValues[1]) {
+          facetedMinMaxValues[1] = value;
+        }
+      }
+
+      return facetedMinMaxValues;
+    }, {
+      key: 'getFacetedMinMaxValues_' + columnId,
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      },
+      onChange: () => {}
+    });
+  }
+
+  function getSortedRowModel() {
+    return instance => memo(() => [instance.getState().sorting, instance.getPreSortedRowModel()], (sorting, rowModel) => {
+      if (!rowModel.rows.length || !(sorting != null && sorting.length)) {
+        return rowModel;
+      }
+
+      const sortingState = instance.getState().sorting;
+      const sortedFlatRows = []; // Filter out sortings that correspond to non existing columns
+
+      const availableSorting = sortingState.filter(sort => instance.getColumn(sort.id).getCanSort());
+      const columnInfoById = {};
+      availableSorting.forEach(sortEntry => {
+        const column = instance.getColumn(sortEntry.id);
+        columnInfoById[sortEntry.id] = {
+          sortUndefined: column.columnDef.sortUndefined,
+          invertSorting: column.columnDef.invertSorting,
+          sortingFn: column.getSortingFn()
+        };
+      });
+
+      const sortData = rows => {
+        // This will also perform a stable sorting using the row index
+        // if needed.
+        const sortedData = rows.slice();
+        sortedData.sort((rowA, rowB) => {
+          for (let i = 0; i < availableSorting.length; i += 1) {
+            var _sortEntry$desc;
+
+            const sortEntry = availableSorting[i];
+            const columnInfo = columnInfoById[sortEntry.id];
+            const isDesc = (_sortEntry$desc = sortEntry == null ? void 0 : sortEntry.desc) != null ? _sortEntry$desc : false;
+
+            if (columnInfo.sortUndefined) {
+              const aValue = rowA.getValue(sortEntry.id);
+              const bValue = rowB.getValue(sortEntry.id);
+              const aUndefined = typeof aValue === 'undefined';
+              const bUndefined = typeof bValue === 'undefined';
+
+              if (aUndefined || bUndefined) {
+                return aUndefined && bUndefined ? 0 : aUndefined ? columnInfo.sortUndefined : -columnInfo.sortUndefined;
+              }
+            } // This function should always return in ascending order
+
+
+            let sortInt = columnInfo.sortingFn(rowA, rowB, sortEntry.id);
+
+            if (sortInt !== 0) {
+              if (isDesc) {
+                sortInt *= -1;
+              }
+
+              if (columnInfo.invertSorting) {
+                sortInt *= -1;
+              }
+
+              return sortInt;
+            }
+          }
+
+          return rowA.index - rowB.index;
+        }); // If there are sub-rows, sort them
+
+        sortedData.forEach(row => {
+          sortedFlatRows.push(row);
+
+          if (!row.subRows || row.subRows.length <= 1) {
+            return;
+          }
+
+          row.subRows = sortData(row.subRows);
+        });
+        return sortedData;
+      };
+
+      return {
+        rows: sortData(rowModel.rows),
+        flatRows: sortedFlatRows,
+        rowsById: rowModel.rowsById
+      };
+    }, {
+      key: 'getSortedRowModel',
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      },
+      onChange: () => {
+        instance._autoResetPageIndex();
+      }
+    });
+  }
+
+  function getGroupedRowModel() {
+    return instance => memo(() => [instance.getState().grouping, instance.getPreGroupedRowModel()], (grouping, rowModel) => {
+      if (!rowModel.rows.length || !grouping.length) {
+        return rowModel;
+      } // Filter the grouping list down to columns that exist
+
+
+      const existingGrouping = grouping.filter(columnId => instance.getColumn(columnId));
+      const groupedFlatRows = [];
+      const groupedRowsById = {}; // const onlyGroupedFlatRows: Row[] = [];
+      // const onlyGroupedRowsById: Record<RowId, Row> = {};
+      // const nonGroupedFlatRows: Row[] = [];
+      // const nonGroupedRowsById: Record<RowId, Row> = {};
+      // Recursively group the data
+
+      const groupUpRecursively = function (rows, depth, parentId) {
+        if (depth === void 0) {
+          depth = 0;
+        }
+
+        // This is the last level, just return the rows
+        if (depth === existingGrouping.length) {
+          return rows;
+        }
+
+        const columnId = existingGrouping[depth]; // Group the rows together for this level
+
+        const rowGroupsMap = groupBy(rows, columnId); // Peform aggregations for each group
+
+        const aggregatedGroupedRows = Array.from(rowGroupsMap.entries()).map((_ref, index) => {
+          let [groupingValue, groupedRows] = _ref;
+          let id = columnId + ":" + groupingValue;
+          id = parentId ? parentId + ">" + id : id; // First, Recurse to group sub rows before aggregation
+
+          const subRows = groupUpRecursively(groupedRows, depth + 1, id); // Flatten the leaf rows of the rows in this group
+
+          const leafRows = depth ? flattenBy(groupedRows, row => row.subRows) : groupedRows;
+          const row = createRow(instance, id, undefined, index, depth);
+          Object.assign(row, {
+            groupingColumnId: columnId,
+            groupingValue,
+            subRows,
+            leafRows,
+            getValue: columnId => {
+              // Don't aggregate columns that are in the grouping
+              if (existingGrouping.includes(columnId)) {
+                if (row._valuesCache.hasOwnProperty(columnId)) {
+                  return row._valuesCache[columnId];
+                }
+
+                if (groupedRows[0]) {
+                  var _groupedRows$0$getVal;
+
+                  row._valuesCache[columnId] = (_groupedRows$0$getVal = groupedRows[0].getValue(columnId)) != null ? _groupedRows$0$getVal : undefined;
+                }
+
+                return row._valuesCache[columnId];
+              }
+
+              if (row._groupingValuesCache.hasOwnProperty(columnId)) {
+                return row._groupingValuesCache[columnId];
+              } // Aggregate the values
+
+
+              const column = instance.getColumn(columnId);
+              const aggregateFn = column.getAggregationFn();
+
+              if (aggregateFn) {
+                row._groupingValuesCache[columnId] = aggregateFn(columnId, leafRows, groupedRows);
+                return row._groupingValuesCache[columnId];
+              } else if (column.aggregationFn) {
+                console.info({
+                  column
+                });
+                throw new Error("Table: Invalid column.aggregateType option for column listed above" );
+              }
+            }
+          });
+          subRows.forEach(subRow => {
+            groupedFlatRows.push(subRow);
+            groupedRowsById[subRow.id] = subRow; // if (subRow.getIsGrouped?.()) {
+            //   onlyGroupedFlatRows.push(subRow);
+            //   onlyGroupedRowsById[subRow.id] = subRow;
+            // } else {
+            //   nonGroupedFlatRows.push(subRow);
+            //   nonGroupedRowsById[subRow.id] = subRow;
+            // }
+          });
+          return row;
+        });
+        return aggregatedGroupedRows;
+      };
+
+      const groupedRows = groupUpRecursively(rowModel.rows, 0, '');
+      groupedRows.forEach(subRow => {
+        groupedFlatRows.push(subRow);
+        groupedRowsById[subRow.id] = subRow; // if (subRow.getIsGrouped?.()) {
+        //   onlyGroupedFlatRows.push(subRow);
+        //   onlyGroupedRowsById[subRow.id] = subRow;
+        // } else {
+        //   nonGroupedFlatRows.push(subRow);
+        //   nonGroupedRowsById[subRow.id] = subRow;
+        // }
+      });
+      return {
+        rows: groupedRows,
+        flatRows: groupedFlatRows,
+        rowsById: groupedRowsById
+      };
+    }, {
+      key: 'getGroupedRowModel',
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      },
+      onChange: () => {
+        instance._queue(() => {
+          instance._autoResetExpanded();
+
+          instance._autoResetPageIndex();
+        });
+      }
+    });
+  }
+
+  function groupBy(rows, columnId) {
+    const groupMap = new Map();
+    return rows.reduce((map, row) => {
+      const resKey = "" + row.getValue(columnId);
+      const previous = map.get(resKey);
+
+      if (!previous) {
+        map.set(resKey, [row]);
+      } else {
+        map.set(resKey, [...previous, row]);
+      }
+
+      return map;
+    }, groupMap);
+  }
+
+  function getExpandedRowModel() {
+    return instance => memo(() => [instance.getState().expanded, instance.getPreExpandedRowModel(), instance.options.paginateExpandedRows], (expanded, rowModel, paginateExpandedRows) => {
+      if (!rowModel.rows.length || // Do not expand if rows are not included in pagination
+      !paginateExpandedRows || expanded !== true && !Object.keys(expanded != null ? expanded : {}).length) {
+        return rowModel;
+      }
+
+      return expandRows(rowModel);
+    }, {
+      key: 'getExpandedRowModel',
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      }
+    });
+  }
+  function expandRows(rowModel, instance) {
+    const expandedRows = [];
+
+    const handleRow = row => {
+      var _row$subRows;
+
+      expandedRows.push(row);
+
+      if ((_row$subRows = row.subRows) != null && _row$subRows.length && row.getIsExpanded()) {
+        row.subRows.forEach(handleRow);
+      }
+    };
+
+    rowModel.rows.forEach(handleRow);
+    return {
+      rows: expandedRows,
+      flatRows: rowModel.flatRows,
+      rowsById: rowModel.rowsById
+    };
+  }
+
+  function getPaginationRowModel(opts) {
+    return instance => memo(() => [instance.getState().pagination, instance.getPrePaginationRowModel()], (pagination, rowModel) => {
+      if (!rowModel.rows.length) {
+        return rowModel;
+      }
+
+      const {
+        pageSize,
+        pageIndex
+      } = pagination;
+      let {
+        rows,
+        flatRows,
+        rowsById
+      } = rowModel;
+      const pageStart = pageSize * pageIndex;
+      const pageEnd = pageStart + pageSize;
+      rows = rows.slice(pageStart, pageEnd);
+
+      if (!instance.options.paginateExpandedRows) {
+        return expandRows({
+          rows,
+          flatRows,
+          rowsById
+        });
+      }
+
+      return {
+        rows,
+        flatRows,
+        rowsById
+      };
+    }, {
+      key: 'getPaginationRowModel',
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugTable;
+      }
+    });
+  }
+
+  //
+  const render = (Comp, props) => !Comp ? null : isReactComponent(Comp) ? /*#__PURE__*/React__namespace.createElement(Comp, props) : Comp;
+
+  function isReactComponent(component) {
+    return isClassComponent(component) || typeof component === 'function' || isExoticComponent(component);
+  }
+
+  function isClassComponent(component) {
+    return typeof component === 'function' && (() => {
+      const proto = Object.getPrototypeOf(component);
+      return proto.prototype && proto.prototype.isReactComponent;
+    })();
+  }
+
+  function isExoticComponent(component) {
+    return typeof component === 'object' && typeof component.$$typeof === 'symbol' && ['react.memo', 'react.forward_ref'].includes(component.$$typeof.description);
+  }
+
+  const createTable = createTableFactory({
+    render
+  }); // const useIsomorphicLayoutEffect =
+  //   typeof document !== 'undefined' ? React.useLayoutEffect : React.useEffect
+
+  function useTableInstance(table, options) {
+    // Compose in the generic options to the user options
+    const resolvedOptions = { ...table.options,
+      state: {},
+      // Dummy state
+      onStateChange: () => {},
+      // noop
+      render,
+      ...options
+    }; // Create a new table instance and store it in state
+
+    const [instanceRef] = React__namespace.useState(() => ({
+      current: createTableInstance(resolvedOptions)
+    })); // By default, manage table state here using the instance's initial state
+
+    const [state, setState] = React__namespace.useState(() => instanceRef.current.initialState); // Compose the default state above with any user state. This will allow the user
+    // to only control a subset of the state if desired.
+
+    instanceRef.current.setOptions(prev => ({ ...prev,
+      ...options,
+      state: { ...state,
+        ...options.state
+      },
+      // Similarly, we'll maintain both our internal state and any user-provided
+      // state.
+      onStateChange: updater => {
+        setState(updater);
+        options.onStateChange == null ? void 0 : options.onStateChange(updater);
+      }
+    }));
+    return instanceRef.current;
+  }
+
+  exports.ColumnSizing = ColumnSizing;
+  exports.Expanding = Expanding;
+  exports.Filters = Filters;
+  exports.Grouping = Grouping;
+  exports.Headers = Headers;
+  exports.Ordering = Ordering;
+  exports.Pagination = Pagination;
+  exports.Pinning = Pinning;
+  exports.RowSelection = RowSelection;
+  exports.Sorting = Sorting;
+  exports.Visibility = Visibility;
+  exports.aggregationFns = aggregationFns;
+  exports.buildHeaderGroups = buildHeaderGroups;
+  exports.createColumn = createColumn;
+  exports.createRow = createRow;
+  exports.createTable = createTable;
+  exports.createTableFactory = createTableFactory;
+  exports.createTableInstance = createTableInstance;
+  exports.defaultColumnSizing = defaultColumnSizing;
+  exports.expandRows = expandRows;
+  exports.filterFns = filterFns;
+  exports.flattenBy = flattenBy;
+  exports.functionalUpdate = functionalUpdate;
+  exports.getCoreRowModel = getCoreRowModel;
+  exports.getExpandedRowModel = getExpandedRowModel;
+  exports.getFacetedMinMaxValues = getFacetedMinMaxValues;
+  exports.getFacetedRowModel = getFacetedRowModel;
+  exports.getFacetedUniqueValues = getFacetedUniqueValues;
+  exports.getFilteredRowModel = getFilteredRowModel;
+  exports.getGroupedRowModel = getGroupedRowModel;
+  exports.getPaginationRowModel = getPaginationRowModel;
+  exports.getSortedRowModel = getSortedRowModel;
+  exports.isFunction = isFunction;
+  exports.isRowSelected = isRowSelected;
+  exports.makeStateUpdater = makeStateUpdater;
+  exports.memo = memo;
+  exports.noop = noop;
+  exports.orderColumns = orderColumns;
+  exports.passiveEventSupported = passiveEventSupported;
+  exports.reSplitAlphaNumeric = reSplitAlphaNumeric;
+  exports.render = render;
+  exports.selectRowsFn = selectRowsFn;
+  exports.shouldAutoRemoveFilter = shouldAutoRemoveFilter;
+  exports.sortingFns = sortingFns;
+  exports.useTableInstance = useTableInstance;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
+//# sourceMappingURL=index.development.js.map

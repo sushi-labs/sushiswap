@@ -1,0 +1,1 @@
+const retrieve=(e,r)=>t=>{t.proxy=new Proxy(t,{get:(o,i)=>e(i,o)?r(i,t):o[i]})};module.exports={retrieve:retrieve};

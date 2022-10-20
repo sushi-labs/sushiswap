@@ -1,0 +1,96 @@
+{
+  "name": "multicodec",
+  "version": "3.2.1",
+  "description": "JavaScript implementation of the multicodec specification",
+  "leadMaintainer": "Henrique Dias <hacdias@gmail.com>",
+  "main": "src/index.js",
+  "types": "dist/src/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "src/*": [
+        "dist/src/*",
+        "dist/src/*/index"
+      ],
+      "src/": [
+        "dist/src/index"
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "aegir lint",
+    "test": "aegir test",
+    "test:node": "aegir test --target node",
+    "test:browser": "aegir test --target browser",
+    "build": "aegir build",
+    "docs": "aegir docs",
+    "release": "aegir release",
+    "release-minor": "aegir release --type minor",
+    "release-major": "aegir release --type major",
+    "update-table": "node tools/update-table.js"
+  },
+  "pre-push": [
+    "lint",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiformats/js-multicodec.git"
+  },
+  "keywords": [
+    "IPFS",
+    "multiformats",
+    "multicodec",
+    "binary",
+    "packed",
+    "the",
+    "data!"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/multiformats/js-multicodec/issues"
+  },
+  "homepage": "https://github.com/multiformats/js-multicodec#readme",
+  "dependencies": {
+    "uint8arrays": "^3.0.0",
+    "varint": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/varint": "^6.0.0",
+    "aegir": "^32.2.0",
+    "bent": "^7.3.12",
+    "pre-push": "~0.1.1",
+    "util": "^0.12.3"
+  },
+  "eslintConfig": {
+    "extends": "ipfs"
+  },
+  "aegir": {
+    "build": {
+      "bundlesizeMax": "15kB"
+    }
+  },
+  "contributors": [
+    "Henrique Dias <hacdias@gmail.com>",
+    "David Dias <daviddias.p@gmail.com>",
+    "Volker Mische <volker.mische@gmail.com>",
+    "Hugo Dias <hugomrdias@gmail.com>",
+    "achingbrain <alex@achingbrain.net>",
+    "kumavis <kumavis@users.noreply.github.com>",
+    "Mikeal Rogers <mikeal.rogers@gmail.com>",
+    "Richard Littauer <richard.littauer@gmail.com>",
+    "Vasco Santos <vasco.santos@moxy.studio>",
+    "wanderer <mjbecze@gmail.com>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Rod Vagg <rod@vagg.org>",
+    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
+    "Carson Farmer <carson.farmer@gmail.com>",
+    "Filip Š <filip.stamcar@hotmail.com>",
+    "Joel Thorstensson <oed@3box.io>",
+    "Jonas Kruckenberg <iterpre@protonmail.com>",
+    "Lars Gierth <lgierth@users.noreply.github.com>",
+    "Marcin Rataj <lidel@lidel.org>",
+    "Mitrasish Mukherjee <34746546+rekpero@users.noreply.github.com>",
+    "Peter-Jan Brone <peter-jan@settlemint.com>",
+    "Łukasz Magiera <magik6k@users.noreply.github.com>"
+  ]
+}

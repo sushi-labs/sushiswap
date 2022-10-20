@@ -1,0 +1,90 @@
+{
+    "name": "@types/yup",
+    "version": "0.29.14",
+    "description": "TypeScript definitions for yup",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/yup",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Dominik Hardtke",
+            "url": "https://github.com/dhardtke",
+            "githubUsername": "dhardtke"
+        },
+        {
+            "name": "Vladyslav Tserman",
+            "url": "https://github.com/vtserman",
+            "githubUsername": "vtserman"
+        },
+        {
+            "name": "Moreton Bay Regional Council",
+            "url": "https://github.com/MoretonBayRC",
+            "githubUsername": "MoretonBayRC"
+        },
+        {
+            "name": "Sindre Seppola",
+            "url": "https://github.com/sseppola",
+            "githubUsername": "sseppola"
+        },
+        {
+            "name": "Yash Kulshrestha",
+            "url": "https://github.com/YashdalfTheGray",
+            "githubUsername": "YashdalfTheGray"
+        },
+        {
+            "name": "Vincent Pizzo",
+            "url": "https://github.com/vincentjames501",
+            "githubUsername": "vincentjames501"
+        },
+        {
+            "name": "Robert Bullen",
+            "url": "https://github.com/robertbullen",
+            "githubUsername": "robertbullen"
+        },
+        {
+            "name": "Yusuke Sato",
+            "url": "https://github.com/sat0yu",
+            "githubUsername": "sat0yu"
+        },
+        {
+            "name": "Desmond Koh",
+            "url": "https://github.com/deskoh",
+            "githubUsername": "deskoh"
+        },
+        {
+            "name": "Maurice de Beijer",
+            "url": "https://github.com/mauricedb",
+            "githubUsername": "mauricedb"
+        },
+        {
+            "name": "Elías García",
+            "url": "https://github.com/elias-garcia",
+            "githubUsername": "elias-garcia"
+        },
+        {
+            "name": "Ian Sanders",
+            "url": "https://github.com/iansan5653",
+            "githubUsername": "iansan5653"
+        },
+        {
+            "name": "Jay Fong",
+            "url": "https://github.com/fjc0k",
+            "githubUsername": "fjc0k"
+        },
+        {
+            "name": "Lukas Elmer",
+            "url": "https://github.com/lukaselmer",
+            "githubUsername": "lukaselmer"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/yup"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "f78a55493129ba9eb39ac8a879b24a8d6f3c67b1898c4b2dd8e5bce95009c449",
+    "typeScriptVersion": "3.9"
+}

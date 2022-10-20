@@ -1,0 +1,156 @@
+import { applySchemaTransforms, applyRequestTransforms, applyResultTransforms } from '@graphql-mesh/utils';
+import { FilterTypes, TransformCompositeFields, FilterRootFields, FilterObjectFields, FilterInputObjectFields } from '@graphql-tools/wrap';
+import minimatch from 'minimatch';
+import { mapSchema, MapperKind } from '@graphql-tools/utils';
+
+class WrapFilter {
+    constructor({ config: { filters } }) {
+        this.transforms = [];
+        for (const filter of filters) {
+            const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
+            const typeMatcher = new minimatch.Minimatch(typeName);
+            // TODO: deprecate this in next major release as dscussed in #1605
+            if (!fieldNameOrGlob) {
+                this.transforms.push(new FilterTypes(type => {
+                    return typeMatcher.match(type.name);
+                }));
+                continue;
+            }
+            let fixedFieldGlob = argsGlob || fieldNameOrGlob;
+            if (fixedFieldGlob.includes('{') && !fixedFieldGlob.includes(',')) {
+                fixedFieldGlob = fieldNameOrGlob.replace('{', '').replace('}', '');
+            }
+            fixedFieldGlob = fixedFieldGlob.split(', ').join(',');
+            const globalTypeMatcher = new minimatch.Minimatch(fixedFieldGlob.trim());
+            if (typeName === 'Type') {
+                this.transforms.push(new FilterTypes(type => {
+                    return globalTypeMatcher.match(type.name);
+                }));
+                continue;
+            }
+            if (argsGlob) {
+                const fieldMatcher = new minimatch.Minimatch(fieldNameOrGlob);
+                this.transforms.push(new TransformCompositeFields((fieldTypeName, fieldName, fieldConfig) => {
+                    if (typeMatcher.match(fieldTypeName) && fieldMatcher.match(fieldName)) {
+                        const fieldArgs = Object.entries(fieldConfig.args).reduce((args, [argName, argConfig]) => !globalTypeMatcher.match(argName) ? args : { ...args, [argName]: argConfig }, {});
+                        return { ...fieldConfig, args: fieldArgs };
+                    }
+                    return undefined;
+                }));
+                continue;
+            }
+            // If the glob is not for Types nor Args, finally we register Fields filters
+            this.transforms.push(new FilterRootFields((rootTypeName, rootFieldName) => {
+                if (typeMatcher.match(rootTypeName)) {
+                    return globalTypeMatcher.match(rootFieldName);
+                }
+                return true;
+            }));
+            this.transforms.push(new FilterObjectFields((objectTypeName, objectFieldName) => {
+                if (typeMatcher.match(objectTypeName)) {
+                    return globalTypeMatcher.match(objectFieldName);
+                }
+                return true;
+            }));
+            this.transforms.push(new FilterInputObjectFields((inputObjectTypeName, inputObjectFieldName) => {
+                if (typeMatcher.match(inputObjectTypeName)) {
+                    return globalTypeMatcher.match(inputObjectFieldName);
+                }
+                return true;
+            }));
+        }
+    }
+    transformSchema(originalWrappingSchema, subschemaConfig, transformedSchema) {
+        return applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, this.transforms);
+    }
+    transformRequest(originalRequest, delegationContext, transformationContext) {
+        return applyRequestTransforms(originalRequest, delegationContext, transformationContext, this.transforms);
+    }
+    transformResult(originalResult, delegationContext, transformationContext) {
+        return applyResultTransforms(originalResult, delegationContext, transformationContext, this.transforms);
+    }
+}
+
+class BareFilter {
+    constructor({ config: { filters } }) {
+        this.noWrap = true;
+        this.typeGlobs = [];
+        this.fieldsMap = new Map();
+        this.argsMap = new Map();
+        for (const filter of filters) {
+            const [typeName, fieldNameOrGlob, argsGlob] = filter.split('.');
+            // TODO: deprecate this in next major release as dscussed in #1605
+            if (!fieldNameOrGlob) {
+                this.typeGlobs.push(typeName);
+                continue;
+            }
+            const rawGlob = argsGlob || fieldNameOrGlob;
+            const fixedGlob = rawGlob.includes('{') && !rawGlob.includes(',') ? rawGlob.replace('{', '').replace('}', '') : rawGlob;
+            const polishedGlob = fixedGlob.split(', ').join(',').trim();
+            if (typeName === 'Type') {
+                this.typeGlobs.push(polishedGlob);
+                continue;
+            }
+            const mapName = argsGlob ? 'argsMap' : 'fieldsMap';
+            const mapKey = argsGlob ? `${typeName}.${fieldNameOrGlob}` : typeName;
+            const currentRules = this[mapName].get(mapKey) || [];
+            this[mapName].set(mapKey, [...currentRules, polishedGlob]);
+        }
+    }
+    matchInArray(rulesArray, value) {
+        for (const rule of rulesArray) {
+            const ruleMatcher = new minimatch.Minimatch(rule);
+            if (!ruleMatcher.match(value))
+                return null;
+        }
+        return undefined;
+    }
+    transformSchema(schema) {
+        const transformedSchema = mapSchema(schema, {
+            ...(this.typeGlobs.length && {
+                [MapperKind.TYPE]: type => this.matchInArray(this.typeGlobs, type.toString()),
+            }),
+            ...((this.fieldsMap.size || this.argsMap.size) && {
+                [MapperKind.COMPOSITE_FIELD]: (fieldConfig, fieldName, typeName) => {
+                    const fieldRules = this.fieldsMap.get(typeName);
+                    const wildcardArgRules = this.argsMap.get(`${typeName}.*`) || [];
+                    const fieldArgRules = this.argsMap.get(`${typeName}.${fieldName}`) || [];
+                    const argRules = wildcardArgRules.concat(fieldArgRules);
+                    const hasFieldRules = Boolean(fieldRules && fieldRules.length);
+                    const hasArgRules = Boolean(argRules && argRules.length);
+                    if (hasFieldRules && this.matchInArray(fieldRules, fieldName) === null)
+                        return null;
+                    if (!hasArgRules)
+                        return undefined;
+                    const fieldArgs = Object.entries(fieldConfig.args).reduce((args, [argName, argConfig]) => this.matchInArray(argRules, argName) === null ? args : { ...args, [argName]: argConfig }, {});
+                    return { ...fieldConfig, args: fieldArgs };
+                },
+            }),
+            ...(this.fieldsMap.size && {
+                [MapperKind.INPUT_OBJECT_FIELD]: (_, fieldName, typeName) => {
+                    const fieldRules = this.fieldsMap.get(typeName);
+                    const hasFieldRules = Boolean(fieldRules && fieldRules.length);
+                    if (hasFieldRules && this.matchInArray(fieldRules, fieldName) === null)
+                        return null;
+                    return undefined;
+                },
+            }),
+        });
+        return transformedSchema;
+    }
+}
+
+const FilterTransform = (function FilterTransform(options) {
+    if (Array.isArray(options.config)) {
+        return new WrapFilter({
+            ...options,
+            config: {
+                mode: 'wrap',
+                filters: options.config,
+            },
+        });
+    }
+    return options.config.mode === 'bare' ? new BareFilter(options) : new WrapFilter(options);
+});
+
+export default FilterTransform;

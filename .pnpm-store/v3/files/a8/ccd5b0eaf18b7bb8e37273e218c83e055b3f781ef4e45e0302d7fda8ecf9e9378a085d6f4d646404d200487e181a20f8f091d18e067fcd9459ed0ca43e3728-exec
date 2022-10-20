@@ -1,0 +1,49 @@
+{
+  "name": "match-all",
+  "version": "1.2.6",
+  "description": "Get all the matches for a regular expression in a string.",
+  "main": "lib/index.js",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test"
+  },
+  "keywords": [
+    "matches",
+    "regex",
+    "string"
+  ],
+  "author": "Ionică Bizău <bizauionica@gmail.com> (https://ionicabizau.net)",
+  "contributors": [
+    "Johny Jugianto <johnyj@amproker.com>"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "tester": "^1.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IonicaBizau/match-all.git"
+  },
+  "bugs": {
+    "url": "https://github.com/IonicaBizau/match-all/issues"
+  },
+  "homepage": "https://github.com/IonicaBizau/match-all#readme",
+  "files": [
+    "bin/",
+    "app/",
+    "lib/",
+    "dist/",
+    "src/",
+    "scripts/",
+    "resources/",
+    "menu/",
+    "cli.js",
+    "index.js",
+    "bloggify.js",
+    "bloggify.json",
+    "bloggify/"
+  ]
+}

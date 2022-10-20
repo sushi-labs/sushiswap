@@ -1,0 +1,51 @@
+{
+  "name": "@edge-runtime/vm",
+  "description": "Low level bindings for creating Web Standard contexts.",
+  "homepage": "https://edge-runtime.vercel.app/packages/vm",
+  "version": "1.0.1",
+  "main": "dist/index.js",
+  "repository": {
+    "directory": "packages/vm",
+    "type": "git",
+    "url": "git+https://github.com/vercel/edge-runtime.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vercel/edge-runtime/issues"
+  },
+  "keywords": [
+    "context",
+    "edge",
+    "functions",
+    "runtime",
+    "standard",
+    "vm",
+    "web"
+  ],
+  "dependencies": {
+    "@edge-runtime/primitives": "^1.0.1"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project ./tsconfig.prod.json",
+    "test": "jest"
+  },
+  "license": "MPLv2",
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "diagnostics": true,
+        "isolatedModules": true
+      }
+    },
+    "preset": "ts-jest/presets/default",
+    "testEnvironment": "node",
+    "testTimeout": 30000
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "types": "dist/index.d.ts",
+  "gitHead": "4d5c7ddd2216facb2c3e5da32f466f56d15d3894"
+}

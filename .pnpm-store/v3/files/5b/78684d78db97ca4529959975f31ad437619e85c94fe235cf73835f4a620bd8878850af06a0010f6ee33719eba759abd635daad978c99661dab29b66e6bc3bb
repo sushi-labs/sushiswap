@@ -1,0 +1,84 @@
+{
+  "name": "cids",
+  "version": "1.1.9",
+  "description": "CID Implementation in JavaScript",
+  "leadMaintainer": "Volker Mische <volker.mische@gmail.com>",
+  "main": "src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "lint": "aegir lint",
+    "test": "aegir test",
+    "test:node": "aegir test --target node",
+    "test:browser": "aegir test --target browser",
+    "build": "aegir build",
+    "release": "aegir release --docs",
+    "release-minor": "aegir release --type minor --docs",
+    "release-major": "aegir release --type major --docs",
+    "coverage": "aegir coverage",
+    "docs": "aegir docs",
+    "prepare": "aegir ts -p types"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "pre-push": [
+    "lint",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiformats/js-cid.git"
+  },
+  "keywords": [
+    "multihash",
+    "cid",
+    "ipld"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/multiformats/js-cid/issues"
+  },
+  "dependencies": {
+    "multibase": "^4.0.1",
+    "multicodec": "^3.0.1",
+    "multihashes": "^4.0.1",
+    "uint8arrays": "^3.0.0"
+  },
+  "devDependencies": {
+    "@sinonjs/samsam": "^5.3.0",
+    "aegir": "^30.3.0",
+    "multihashing-async": "^2.0.1"
+  },
+  "engines": {
+    "node": ">=4.0.0",
+    "npm": ">=3.0.0"
+  },
+  "eslintConfig": {
+    "extends": "ipfs"
+  },
+  "contributors": [
+    "Volker Mische <volker.mische@gmail.com>",
+    "David Dias <daviddias.p@gmail.com>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Alan Shaw <alan.shaw@protocol.ai>",
+    "achingbrain <alex@achingbrain.net>",
+    "Irakli Gozalishvili <contact@gozala.io>",
+    "Mikeal Rogers <mikeal.rogers@gmail.com>",
+    "Carson Farmer <carson.farmer@gmail.com>",
+    "Enrico Marino <enrico.marino@email.com>",
+    "Hugo Dias <hugomrdias@gmail.com>",
+    "kumavis <kumavis@users.noreply.github.com>",
+    "Oli Evans <oli@tableflip.io>",
+    "Marcin Rataj <lidel@lidel.org>",
+    "Real Harry <sidewaybot@gmail.com>",
+    "Rod Vagg <rod@vagg.org>",
+    "bluelovers <codelovers@users.sourceforge.net>",
+    "Chris Dukakis <chrisdukakis@gmail.com>",
+    "Victor Bjelkholm <victorbjelkholm@gmail.com>",
+    "Mitar <mitar.github@tnode.com>",
+    "Henrique Dias <hacdias@gmail.com>",
+    "Richard Littauer <richard.littauer@gmail.com>",
+    "Vasco Santos <vasco.santos@moxy.studio>"
+  ]
+}

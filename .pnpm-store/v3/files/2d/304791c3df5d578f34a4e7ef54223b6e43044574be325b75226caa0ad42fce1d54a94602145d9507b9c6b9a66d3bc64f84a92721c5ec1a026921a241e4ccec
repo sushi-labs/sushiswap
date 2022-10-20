@@ -1,0 +1,2 @@
+import{useThrottle as o}from"@react-hook/throttle";import e from"@react-hook/event";var t="undefined"==typeof window?null:window,r=()=>void 0!==t.scrollY?t.scrollY:void 0===t.pageYOffset?0:t.pageYOffset,f=function(f){void 0===f&&(f=30);var n=o("undefined"==typeof window?0:r,f,1);return e(t,"scroll",()=>n[1](r())),n[0]};export default f;export{f as useWindowScroll};
+//# sourceMappingURL=index.mjs.map

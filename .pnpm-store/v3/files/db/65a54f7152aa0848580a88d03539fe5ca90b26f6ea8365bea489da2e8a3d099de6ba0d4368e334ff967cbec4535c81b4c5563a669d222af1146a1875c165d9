@@ -1,0 +1,71 @@
+{
+  "name": "@graphql-mesh/cli",
+  "version": "0.78.31",
+  "sideEffects": false,
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-codegen/core": "2.6.2",
+    "@graphql-codegen/typed-document-node": "2.3.3",
+    "@graphql-codegen/typescript": "2.7.3",
+    "@graphql-codegen/typescript-generic-sdk": "3.0.1",
+    "@graphql-codegen/typescript-operations": "2.5.3",
+    "@graphql-codegen/typescript-resolvers": "2.7.3",
+    "@graphql-mesh/config": "8.0.19",
+    "@graphql-mesh/cross-helpers": "0.2.6",
+    "@graphql-mesh/http": "0.1.27",
+    "@graphql-mesh/runtime": "0.44.19",
+    "@graphql-mesh/store": "0.8.53",
+    "@graphql-mesh/types": "0.84.9",
+    "@graphql-mesh/utils": "0.41.20",
+    "@graphql-tools/utils": "8.12.0",
+    "ajv": "8.11.0",
+    "change-case": "4.1.2",
+    "cosmiconfig": "7.0.1",
+    "dnscache": "1.0.2",
+    "dotenv": "16.0.3",
+    "graphql-import-node": "0.0.5",
+    "graphql-ws": "5.11.2",
+    "json-bigint-patch": "0.0.8",
+    "json5": "2.2.1",
+    "mkdirp": "1.0.4",
+    "open": "7.4.2",
+    "pascal-case": "3.1.2",
+    "rimraf": "3.0.2",
+    "ts-node": "10.9.1",
+    "tsconfig-paths": "4.1.0",
+    "tslib": "^2.4.0",
+    "typescript": "4.8.4",
+    "ws": "8.9.0",
+    "yargs": "17.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.mjs",
+  "typings": "index.d.ts",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    },
+    "./*": {
+      "require": "./*.js",
+      "import": "./*.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "mesh": "bin.js",
+    "gql-mesh": "bin.js",
+    "graphql-mesh": "bin.js"
+  }
+}

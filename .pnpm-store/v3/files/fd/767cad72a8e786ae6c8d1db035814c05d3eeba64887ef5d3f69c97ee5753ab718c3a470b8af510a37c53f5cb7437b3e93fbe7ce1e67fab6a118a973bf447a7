@@ -1,0 +1,16 @@
+# Installation
+> `npm install --save @types/workbox-navigation-preload`
+
+# Summary
+This package contains type definitions for workbox-navigation-preload (https://github.com/GoogleChrome/workbox).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-navigation-preload.
+
+### Additional Details
+ * Last updated: Fri, 15 Nov 2019 22:07:12 GMT
+ * Dependencies: none
+ * Global values: none
+
+# Credits
+These definitions were written by Jason Kwok (https://github.com/JasonHK).

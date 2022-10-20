@@ -1,0 +1,4 @@
+import { AuthInterface, StrategyOptions } from "./types";
+export { createOAuthUserAuth } from "@octokit/auth-oauth-user";
+export { StrategyOptions, AppAuthOptions, OAuthAppAuthOptions, InstallationAuthOptions, OAuthWebFlowAuthOptions, OAuthDeviceFlowAuthOptions, Authentication, AppAuthentication, OAuthAppAuthentication, InstallationAccessTokenAuthentication, GitHubAppUserAuthentication, GitHubAppUserAuthenticationWithExpiration, } from "./types";
+export declare function createAppAuth(options: StrategyOptions): AuthInterface;

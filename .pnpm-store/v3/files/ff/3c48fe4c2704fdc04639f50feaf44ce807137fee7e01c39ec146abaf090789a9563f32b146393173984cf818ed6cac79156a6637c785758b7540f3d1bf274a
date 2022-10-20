@@ -1,0 +1,264 @@
+/**
+ * table-core
+ *
+ * Copyright (c) TanStack
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var filterFns = require('../filterFns.js');
+var utils = require('../utils.js');
+
+//
+const Filters = {
+  getDefaultColumnDef: () => {
+    return {
+      filterFn: 'auto'
+    };
+  },
+  getInitialState: state => {
+    return {
+      columnFilters: [],
+      globalFilter: undefined,
+      // filtersProgress: 1,
+      // facetProgress: {},
+      ...state
+    };
+  },
+  getDefaultOptions: instance => {
+    return {
+      onColumnFiltersChange: utils.makeStateUpdater('columnFilters', instance),
+      onGlobalFilterChange: utils.makeStateUpdater('globalFilter', instance),
+      filterFromLeafRows: false,
+      globalFilterFn: 'auto',
+      getColumnCanGlobalFilter: column => {
+        var _instance$getCoreRowM, _instance$getCoreRowM2;
+
+        const value = (_instance$getCoreRowM = instance.getCoreRowModel().flatRows[0]) == null ? void 0 : (_instance$getCoreRowM2 = _instance$getCoreRowM._getAllCellsByColumnId()[column.id]) == null ? void 0 : _instance$getCoreRowM2.getValue();
+        return typeof value === 'string';
+      }
+    };
+  },
+  createColumn: (column, instance) => {
+    return {
+      filterFn: column.filterFn,
+      getAutoFilterFn: () => {
+        const firstRow = instance.getCoreRowModel().flatRows[0];
+        const value = firstRow == null ? void 0 : firstRow.getValue(column.id);
+
+        if (typeof value === 'string') {
+          return filterFns.filterFns.includesString;
+        }
+
+        if (typeof value === 'number') {
+          return filterFns.filterFns.inNumberRange;
+        }
+
+        if (typeof value === 'boolean') {
+          return filterFns.filterFns.equals;
+        }
+
+        if (value !== null && typeof value === 'object') {
+          return filterFns.filterFns.equals;
+        }
+
+        if (Array.isArray(value)) {
+          return filterFns.filterFns.arrIncludes;
+        }
+
+        return filterFns.filterFns.weakEquals;
+      },
+      getFilterFn: () => {
+        var _ref;
+
+        const userFilterFns = instance.options.filterFns;
+        return utils.isFunction(column.filterFn) ? column.filterFn : column.filterFn === 'auto' ? column.getAutoFilterFn() : (_ref = userFilterFns == null ? void 0 : userFilterFns[column.filterFn]) != null ? _ref : filterFns.filterFns[column.filterFn];
+      },
+      getCanFilter: () => {
+        var _column$columnDef$ena, _instance$options$ena, _instance$options$ena2;
+
+        return ((_column$columnDef$ena = column.columnDef.enableColumnFilter) != null ? _column$columnDef$ena : true) && ((_instance$options$ena = instance.options.enableColumnFilters) != null ? _instance$options$ena : true) && ((_instance$options$ena2 = instance.options.enableFilters) != null ? _instance$options$ena2 : true) && !!column.accessorFn;
+      },
+      getCanGlobalFilter: () => {
+        var _column$columnDef$ena2, _instance$options$ena3, _instance$options$ena4, _instance$options$get;
+
+        return ((_column$columnDef$ena2 = column.columnDef.enableGlobalFilter) != null ? _column$columnDef$ena2 : true) && ((_instance$options$ena3 = instance.options.enableGlobalFilter) != null ? _instance$options$ena3 : true) && ((_instance$options$ena4 = instance.options.enableFilters) != null ? _instance$options$ena4 : true) && ((_instance$options$get = instance.options.getColumnCanGlobalFilter == null ? void 0 : instance.options.getColumnCanGlobalFilter(column)) != null ? _instance$options$get : true) && !!column.accessorFn;
+      },
+      getIsFiltered: () => column.getFilterIndex() > -1,
+      getFilterValue: () => {
+        var _instance$getState$co, _instance$getState$co2;
+
+        return (_instance$getState$co = instance.getState().columnFilters) == null ? void 0 : (_instance$getState$co2 = _instance$getState$co.find(d => d.id === column.id)) == null ? void 0 : _instance$getState$co2.value;
+      },
+      getFilterIndex: () => {
+        var _instance$getState$co3, _instance$getState$co4;
+
+        return (_instance$getState$co3 = (_instance$getState$co4 = instance.getState().columnFilters) == null ? void 0 : _instance$getState$co4.findIndex(d => d.id === column.id)) != null ? _instance$getState$co3 : -1;
+      },
+      setFilterValue: value => {
+        instance.setColumnFilters(old => {
+          const filterFn = column.getFilterFn();
+          const previousfilter = old == null ? void 0 : old.find(d => d.id === column.id);
+          const newFilter = utils.functionalUpdate(value, previousfilter ? previousfilter.value : undefined); //
+
+          if (shouldAutoRemoveFilter(filterFn, newFilter, column)) {
+            var _old$filter;
+
+            return (_old$filter = old == null ? void 0 : old.filter(d => d.id !== column.id)) != null ? _old$filter : [];
+          }
+
+          const newFilterObj = {
+            id: column.id,
+            value: newFilter
+          };
+
+          if (previousfilter) {
+            var _old$map;
+
+            return (_old$map = old == null ? void 0 : old.map(d => {
+              if (d.id === column.id) {
+                return newFilterObj;
+              }
+
+              return d;
+            })) != null ? _old$map : [];
+          }
+
+          if (old != null && old.length) {
+            return [...old, newFilterObj];
+          }
+
+          return [newFilterObj];
+        });
+      },
+      _getFacetedRowModel: instance.options.getFacetedRowModel && instance.options.getFacetedRowModel(instance, column.id),
+      getFacetedRowModel: () => {
+        if (!column._getFacetedRowModel) {
+          return instance.getPreFilteredRowModel();
+        }
+
+        return column._getFacetedRowModel();
+      },
+      _getFacetedUniqueValues: instance.options.getFacetedUniqueValues && instance.options.getFacetedUniqueValues(instance, column.id),
+      getFacetedUniqueValues: () => {
+        if (!column._getFacetedUniqueValues) {
+          return new Map();
+        }
+
+        return column._getFacetedUniqueValues();
+      },
+      _getFacetedMinMaxValues: instance.options.getFacetedMinMaxValues && instance.options.getFacetedMinMaxValues(instance, column.id),
+      getFacetedMinMaxValues: () => {
+        if (!column._getFacetedMinMaxValues) {
+          return undefined;
+        }
+
+        return column._getFacetedMinMaxValues();
+      } // () => [column.getFacetedRowModel()],
+      // facetedRowModel => getRowModelMinMaxValues(facetedRowModel, column.id),
+
+    };
+  },
+  createRow: (row, instance) => {
+    return {
+      columnFilters: {},
+      columnFiltersMeta: {}
+    };
+  },
+  createInstance: instance => {
+    return {
+      getGlobalAutoFilterFn: () => {
+        return filterFns.filterFns.includesString;
+      },
+      getGlobalFilterFn: () => {
+        var _ref2;
+
+        const {
+          filterFns: userFilterFns,
+          globalFilterFn: globalFilterFn
+        } = instance.options;
+        return utils.isFunction(globalFilterFn) ? globalFilterFn : globalFilterFn === 'auto' ? instance.getGlobalAutoFilterFn() : (_ref2 = userFilterFns == null ? void 0 : userFilterFns[globalFilterFn]) != null ? _ref2 : filterFns.filterFns[globalFilterFn];
+      },
+      setColumnFilters: updater => {
+        const leafColumns = instance.getAllLeafColumns();
+
+        const updateFn = old => {
+          var _functionalUpdate;
+
+          return (_functionalUpdate = utils.functionalUpdate(updater, old)) == null ? void 0 : _functionalUpdate.filter(filter => {
+            const column = leafColumns.find(d => d.id === filter.id);
+
+            if (column) {
+              const filterFn = column.getFilterFn();
+
+              if (shouldAutoRemoveFilter(filterFn, filter.value, column)) {
+                return false;
+              }
+            }
+
+            return true;
+          });
+        };
+
+        instance.options.onColumnFiltersChange == null ? void 0 : instance.options.onColumnFiltersChange(updateFn);
+      },
+      setGlobalFilter: updater => {
+        instance.options.onGlobalFilterChange == null ? void 0 : instance.options.onGlobalFilterChange(updater);
+      },
+      resetGlobalFilter: defaultState => {
+        instance.setGlobalFilter(defaultState ? undefined : instance.initialState.globalFilter);
+      },
+      resetColumnFilters: defaultState => {
+        var _instance$initialStat, _instance$initialStat2;
+
+        instance.setColumnFilters(defaultState ? [] : (_instance$initialStat = (_instance$initialStat2 = instance.initialState) == null ? void 0 : _instance$initialStat2.columnFilters) != null ? _instance$initialStat : []);
+      },
+      getPreFilteredRowModel: () => instance.getCoreRowModel(),
+      _getFilteredRowModel: instance.options.getFilteredRowModel && instance.options.getFilteredRowModel(instance),
+      getFilteredRowModel: () => {
+        if (instance.options.manualFiltering || !instance._getFilteredRowModel) {
+          return instance.getPreFilteredRowModel();
+        }
+
+        return instance._getFilteredRowModel();
+      },
+      _getGlobalFacetedRowModel: instance.options.getFacetedRowModel && instance.options.getFacetedRowModel(instance, '__global__'),
+      getGlobalFacetedRowModel: () => {
+        if (instance.options.manualFiltering || !instance._getGlobalFacetedRowModel) {
+          return instance.getPreFilteredRowModel();
+        }
+
+        return instance._getGlobalFacetedRowModel();
+      },
+      _getGlobalFacetedUniqueValues: instance.options.getFacetedUniqueValues && instance.options.getFacetedUniqueValues(instance, '__global__'),
+      getGlobalFacetedUniqueValues: () => {
+        if (!instance._getGlobalFacetedUniqueValues) {
+          return new Map();
+        }
+
+        return instance._getGlobalFacetedUniqueValues();
+      },
+      _getGlobalFacetedMinMaxValues: instance.options.getFacetedMinMaxValues && instance.options.getFacetedMinMaxValues(instance, '__global__'),
+      getGlobalFacetedMinMaxValues: () => {
+        if (!instance._getGlobalFacetedMinMaxValues) {
+          return;
+        }
+
+        return instance._getGlobalFacetedMinMaxValues();
+      }
+    };
+  }
+};
+function shouldAutoRemoveFilter(filterFn, value, column) {
+  return (filterFn && filterFn.autoRemove ? filterFn.autoRemove(value, column) : false) || typeof value === 'undefined' || typeof value === 'string' && !value;
+}
+
+exports.Filters = Filters;
+exports.shouldAutoRemoveFilter = shouldAutoRemoveFilter;
+//# sourceMappingURL=Filters.js.map

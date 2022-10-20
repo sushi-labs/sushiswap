@@ -1,0 +1,13 @@
+import { Contract, ethers } from "ethers";
+import { Libraries } from "hardhat-deploy/dist/types";
+import { TenderlyPlugin } from "../../type-extensions";
+export declare class TdlyContract {
+    [key: string]: any;
+    private readonly contractName;
+    private nativeContract;
+    private tenderly;
+    private libraries;
+    constructor(nativeContract: ethers.Contract, tenderly: TenderlyPlugin, contractName: string, libs?: Libraries);
+    deployed(): Promise<Contract>;
+}
+//# sourceMappingURL=Contract.d.ts.map

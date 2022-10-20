@@ -1,0 +1,20 @@
+{
+  "name": "@octokit/webhooks-types",
+  "version": "6.2.4",
+  "description": "Generated TypeScript definitions based on community contributed JSON Schemas",
+  "keywords": [],
+  "repository": "github:octokit/webhooks",
+  "license": "MIT",
+  "author": "Gregor Martynus (https://github.com/gr2m)",
+  "main": "",
+  "types": "schema.d.ts",
+  "files": [
+    "schema.d.ts"
+  ],
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}

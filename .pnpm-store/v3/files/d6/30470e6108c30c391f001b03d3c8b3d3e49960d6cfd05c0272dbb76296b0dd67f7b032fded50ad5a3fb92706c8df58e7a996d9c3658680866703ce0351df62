@@ -1,0 +1,82 @@
+{
+  "name": "react-slider",
+  "version": "1.3.1",
+  "description": "Slider component for React",
+  "main": "lib/components/ReactSlider/ReactSlider.js",
+  "module": "es/components/ReactSlider/ReactSlider.js",
+  "sideEffects": false,
+  "files": [
+    "es",
+    "lib"
+  ],
+  "keywords": [
+    "react-component",
+    "react",
+    "slider",
+    "component"
+  ],
+  "author": "Michał Powaga <michalpowaga13@gmail.com>",
+  "scripts": {
+    "build": "create-react-styleguide script build",
+    "build:watch": "create-react-styleguide script build:watch",
+    "build:styleguide": "create-react-styleguide script build:styleguide",
+    "clean": "create-react-styleguide script clean",
+    "eslint": "create-react-styleguide script eslint",
+    "eslint:fix": "create-react-styleguide script eslint:fix",
+    "start": "create-react-styleguide script start",
+    "test": "create-react-styleguide script test",
+    "test:coverage": "create-react-styleguide script test:coverage",
+    "test:update": "create-react-styleguide script test:update",
+    "test:watch": "create-react-styleguide script test:watch",
+    "prepublishOnly": "create-react-styleguide script prepublishOnly",
+    "predeploy": "npm run build:styleguide",
+    "deploy": "gh-pages -d styleguide",
+    "release": "standard-version"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run eslint && npm run test"
+    }
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^16 || ^17",
+    "prop-types": "^15.6"
+  },
+  "devDependencies": {
+    "babel-plugin-styled-components": "^1.12.0",
+    "babel-preset-zillow": "^4.4.0",
+    "create-react-styleguide": "^7.0.0",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-zillow": "^4.0.0",
+    "gh-pages": "^3.1.0",
+    "husky": "^4.3.8",
+    "jest-styled-components": "^7.0.3",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-test-renderer": "^17.0.1",
+    "standard-version": "^9.1.0",
+    "styled-components": "^5.2.1"
+  },
+  "contributors": [
+    {
+      "name": "Florian Klampfer",
+      "email": "f.klampfer@gmail.com"
+    },
+    {
+      "name": "James Brauman",
+      "email": "james.22au@gmail.com"
+    },
+    {
+      "name": "Brian Stone",
+      "email": "brians@zillowgroup.com"
+    }
+  ],
+  "homepage": "https://github.com/zillow/react-slider",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zillow/react-slider.git"
+  }
+}

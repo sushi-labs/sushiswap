@@ -1,0 +1,41 @@
+{
+  "name": "@vercel/og",
+  "version": "0.0.16",
+  "description": "Generate Open Graph Images dynamically from HTML/CSS without a browser",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "vendor/**/*"
+  ],
+  "keywords": [
+    "open graph image",
+    "open graph",
+    "og image",
+    "og:image",
+    "social",
+    "card",
+    "image"
+  ],
+  "license": "MPL-2.0",
+  "dependencies": {
+    "@resvg/resvg-wasm": "2.0.0-alpha.4",
+    "satori": "0.0.38",
+    "yoga-wasm-web": "0.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.5",
+    "@types/react": "^18.0.15",
+    "tsup": "^6.1.3",
+    "typescript": "^4.7.4"
+  },
+  "packageManager": "pnpm@7.12.2",
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm && pnpm types",
+    "types": "tsc --project tsconfig.json"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "bind-decorator",
+  "version": "1.0.11",
+  "description": "The fastest automatic method.bind(this) decorator",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "test": "tsc -p __tests__ && jest --verbose",
+    "jest-cov": "tsc --sourceMap -p __tests__ && jest --verbose --coverage --collectCoverageFrom src/index.js",
+    "map-cov": "remap-istanbul -i ./coverage/coverage-final.json -t lcovonly -o ./lcov.info",
+    "report-cov": "codeclimate-test-reporter < ./lcov.info",
+    "coverage": "npm run jest-cov && npm run map-cov && npm run report-cov",
+    "npm": "npm run clean && tsc -d -p . && mv ./src/index.js . && mv ./src/index.d.ts .",
+    "clean": "rm -f ./src/index.js* ./__tests__/*.d.ts ./__tests__/*.js ./lcov.info  && rm -f -R ./coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoHomey/bind-decorator.git"
+  },
+  "keywords": [
+    "bind",
+    "autobind",
+    "methodbind",
+    "bind-decorator",
+    "autobind-decorator",
+    "decorator"
+  ],
+  "author": "Ivo Stratev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NoHomey/bind-decorator/issues"
+  },
+  "homepage": "https://github.com/NoHomey/bind-decorator#readme",
+  "devDependencies": {
+    "codeclimate-test-reporter": "^0.5.0",
+    "jest": "^20.0.4",
+    "remap-istanbul": "^0.9.5",
+    "typescript": "^2.4.2",
+    "@types/jest": "^20.0.4"
+  }
+}

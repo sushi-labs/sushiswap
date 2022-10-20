@@ -1,0 +1,25 @@
+{
+    "name": "@types/workbox-google-analytics",
+    "version": "4.3.1",
+    "description": "TypeScript definitions for workbox-google-analytics",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-google-analytics",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Kwok",
+            "url": "https://github.com/JasonHK",
+            "githubUsername": "JasonHK"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/workbox-google-analytics"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "924cdc887e1e19dd7070f35fcd53862eab5d9637d230654d1f531eb9d5059b25",
+    "typeScriptVersion": "3.6"
+}

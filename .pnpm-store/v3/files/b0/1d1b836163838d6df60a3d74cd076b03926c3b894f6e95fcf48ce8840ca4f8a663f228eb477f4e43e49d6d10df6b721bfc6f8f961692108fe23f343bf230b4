@@ -1,0 +1,37 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "BoringOwnableData",
+  "sourceName": "contracts/bentobox/KashiPairMediumRiskV1.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pendingOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5060bf8061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c80638da5cb5b146037578063e30c3978146051575b600080fd5b603d6057565b604051604891906075565b60405180910390f35b603d6066565b6000546001600160a01b031681565b6001546001600160a01b031681565b6001600160a01b039190911681526020019056fea264697066735822122036d821849cec6de77a19eea73a322d5766d37015140526c2bf9ee90c15a250ab64736f6c634300060c0033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060325760003560e01c80638da5cb5b146037578063e30c3978146051575b600080fd5b603d6057565b604051604891906075565b60405180910390f35b603d6066565b6000546001600160a01b031681565b6001546001600160a01b031681565b6001600160a01b039190911681526020019056fea264697066735822122036d821849cec6de77a19eea73a322d5766d37015140526c2bf9ee90c15a250ab64736f6c634300060c0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

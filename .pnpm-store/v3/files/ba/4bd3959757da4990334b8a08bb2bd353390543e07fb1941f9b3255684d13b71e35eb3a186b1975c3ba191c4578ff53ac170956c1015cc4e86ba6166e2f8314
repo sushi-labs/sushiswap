@@ -1,0 +1,77 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.graphqlYoga = exports.YogaExtensions = void 0;
+const tslib_1 = require("tslib");
+const yargs_1 = tslib_1.__importDefault(require("yargs"));
+const helpers_1 = require("yargs/helpers");
+const graphql_config_1 = require("graphql-config");
+const code_file_loader_1 = require("@graphql-tools/code-file-loader");
+const graphql_yoga_1 = require("graphql-yoga");
+const http_1 = require("http");
+const mock_1 = require("@graphql-tools/mock");
+const terminateEvents = ['SIGINT', 'SIGTERM'];
+function registerTerminateHandler(callback) {
+    for (const eventName of terminateEvents) {
+        process.on(eventName, () => callback(eventName));
+    }
+}
+const YogaExtensions = (api) => {
+    const codeFileLoader = new code_file_loader_1.CodeFileLoader({
+        noPluck: true,
+    });
+    api.loaders.schema.register(codeFileLoader);
+    api.loaders.documents.register(codeFileLoader);
+    return {
+        name: 'Yoga',
+    };
+};
+exports.YogaExtensions = YogaExtensions;
+function graphqlYoga() {
+    return (0, yargs_1.default)((0, helpers_1.hideBin)(process.argv)).command('$0', 'Serves GraphQL over HTTP using your GraphQL Config', (builder) => {
+        builder.option('project', {
+            type: 'string',
+            description: 'Project name',
+        });
+        builder.option('mock', {
+            type: 'boolean',
+            description: 'Mock the given schema',
+        });
+    }, async ({ project = 'default', mock }) => {
+        console.info(`Loading GraphQL Config from ${process.cwd()}`);
+        const config = await (0, graphql_config_1.loadConfig)({
+            extensions: [exports.YogaExtensions],
+            throwOnMissing: false,
+            throwOnEmpty: false,
+        });
+        console.log(`Loading project: ${project}`);
+        const projectConfig = config?.getProject(project);
+        console.log(`Loading GraphQL Schema of ${project}`);
+        let schema = await projectConfig?.getSchema();
+        if (!schema) {
+            console.warn(`Could not find schema for project ${project} fallback to default schema`);
+        }
+        if (mock) {
+            if (!schema) {
+                console.warn('No schema found for mocking. Skipping mocking.');
+            }
+            else {
+                console.log(`Adding mocks to the schema`);
+                schema = (0, mock_1.addMocksToSchema)({ schema });
+            }
+        }
+        console.log(`Building GraphQL Server`);
+        const yoga = (0, graphql_yoga_1.createYoga)({
+            schema,
+        });
+        const server = (0, http_1.createServer)(yoga);
+        console.log(`Starting GraphQL Server`);
+        server.listen(4000, () => {
+            console.info('Server is running on http://localhost:4000/graphql');
+        });
+        registerTerminateHandler(() => {
+            server.close();
+        });
+    }).argv;
+}
+exports.graphqlYoga = graphqlYoga;
+tslib_1.__exportStar(require("graphql-yoga"), exports);

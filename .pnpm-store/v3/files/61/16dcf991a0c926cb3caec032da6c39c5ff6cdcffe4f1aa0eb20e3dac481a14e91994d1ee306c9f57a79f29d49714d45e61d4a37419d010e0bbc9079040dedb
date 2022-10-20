@@ -1,0 +1,88 @@
+{
+  "name": "http-status",
+  "version": "1.5.2",
+  "description": "Interact with HTTP status code",
+  "homepage": "https://github.com/adaltas/node-http-status",
+  "author": "David Worms <david@adaltas.com> (https://www.adaltas.com)",
+  "keywords": [
+    "http",
+    "express",
+    "connect"
+  ],
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adaltas/node-http-status"
+  },
+  "bugs": {
+    "email": "open@adaltas.com",
+    "url": "http://github.com/adaltas/node-http-status/issues"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
+    "@types/mocha": "^8.0.4",
+    "@types/node": "^14.14.7",
+    "@types/should": "^13.0.0",
+    "coffeescript": "2.5.1",
+    "commitlint": "^16.2.3",
+    "husky": "^7.0.4",
+    "mocha": "8.2.1",
+    "should": "13.2.3",
+    "standard-version": "^9.3.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.5"
+  },
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    }
+  },
+  "contributors": [
+    {
+      "name": "David Worms",
+      "email": "david@adaltas.com"
+    },
+    {
+      "name": "Daniel Gasienica",
+      "email": "daniel@gasienica.ch"
+    }
+  ],
+  "mocha": {
+    "throw-deprecation": true,
+    "require": [
+      "should",
+      "coffeescript/register",
+      "ts-node/register"
+    ],
+    "inline-diffs": true,
+    "timeout": 40000,
+    "reporter": "spec",
+    "recursive": true
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "scripts": {
+    "__postversion": "git push origin master && git push origin master --tags && npm publish",
+    "build": "coffee -b -o lib src && cp src/index.d.ts lib",
+    "prepare": "husky install",
+    "prepublishOnly": "git push --follow-tags origin master",
+    "pretest": "npm run build",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:patch": "standard-version --release-as patch",
+    "release:major": "standard-version --release-as major",
+    "test": "mocha \"test/**/*.{coffee,ts}\""
+  }
+}

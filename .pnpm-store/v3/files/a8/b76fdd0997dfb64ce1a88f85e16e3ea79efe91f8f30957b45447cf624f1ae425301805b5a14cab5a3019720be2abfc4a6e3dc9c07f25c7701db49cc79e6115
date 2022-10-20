@@ -1,0 +1,21 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "TickMath",
+  "sourceName": "contracts/libraries/TickMath.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "PriceOutOfBounds",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TickOutOfBounds",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212200d3d9a4eaefb8f7e2efbe16d86b674336f48929b5afd046a0f1390550a07f5d764736f6c634300080a0033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212200d3d9a4eaefb8f7e2efbe16d86b674336f48929b5afd046a0f1390550a07f5d764736f6c634300080a0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

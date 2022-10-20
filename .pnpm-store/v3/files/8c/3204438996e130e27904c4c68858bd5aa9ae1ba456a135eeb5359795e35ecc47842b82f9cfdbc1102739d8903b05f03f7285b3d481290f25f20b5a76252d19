@@ -1,0 +1,124 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TenderlyService = exports.TENDERLY_RPC_BASE = exports.TENDERLY_DASHBOARD_BASE_URL = exports.TENDERLY_API_BASE_URL = void 0;
+const index_1 = require("../index");
+const error_logger_1 = require("../utils/error_logger");
+const errors_1 = require("./errors");
+const TenderlyApiService_1 = require("./TenderlyApiService");
+exports.TENDERLY_API_BASE_URL = "https://api.tenderly.co";
+exports.TENDERLY_DASHBOARD_BASE_URL = "https://dashboard.tenderly.co";
+exports.TENDERLY_RPC_BASE = "https://rpc.tenderly.co";
+class TenderlyService {
+    static async getPublicNetworks() {
+        let tenderlyApi = TenderlyApiService_1.TenderlyApiService.configureAnonymousInstance();
+        const apiPath = "/api/v1/public-networks";
+        if (TenderlyApiService_1.TenderlyApiService.isAuthenticated()) {
+            tenderlyApi = TenderlyApiService_1.TenderlyApiService.configureInstance();
+        }
+        let response = [];
+        try {
+            response = (await tenderlyApi.get(apiPath)).data;
+        }
+        catch (e) {
+            console.log(`Error in ${index_1.PluginName}: There was an error during the request. Network fetch failed`);
+        }
+        return response;
+    }
+    static async verifyContracts(request) {
+        var _a;
+        let tenderlyApi = TenderlyApiService_1.TenderlyApiService.configureAnonymousInstance();
+        const apiPath = "/api/v1/public/verify-contracts";
+        if (TenderlyApiService_1.TenderlyApiService.isAuthenticated()) {
+            tenderlyApi = TenderlyApiService_1.TenderlyApiService.configureInstance();
+        }
+        try {
+            if (!request.contracts.length) {
+                console.log(errors_1.NO_VERIFIABLE_CONTRACTS_ERROR);
+                return;
+            }
+            const response = await tenderlyApi.post(apiPath, Object.assign({}, request));
+            const responseData = response.data;
+            let contract;
+            if (responseData.bytecode_mismatch_errors != null) {
+                console.log(errors_1.BYTECODE_MISMATCH_ERROR);
+                return;
+            }
+            if (!((_a = responseData.contracts) === null || _a === void 0 ? void 0 : _a.length)) {
+                let addresses = "";
+                for (const cont of request.contracts) {
+                    addresses += cont.contractName + ", ";
+                }
+                console.log(errors_1.NO_NEW_CONTRACTS_VERIFIED_ERROR, addresses);
+                return;
+            }
+            console.log("Smart Contracts successfully verified");
+            console.group();
+            for (contract of responseData.contracts) {
+                const contractLink = `${exports.TENDERLY_DASHBOARD_BASE_URL}/contract/${index_1.ReverseNetworkMap[contract.network_id]}/${contract.address}`;
+                console.log(`Contract ${contract.address} verified. You can view the contract at ${contractLink}`);
+            }
+            console.groupEnd();
+        }
+        catch (error) {
+            (0, error_logger_1.logError)(error);
+            console.log(errors_1.API_VERIFICATION_REQUEST_ERROR);
+        }
+    }
+    static async pushContracts(request, tenderlyProject, username) {
+        var _a;
+        const tenderlyApi = TenderlyApiService_1.TenderlyApiService.configureInstance();
+        try {
+            const response = await tenderlyApi.post(`/api/v1/account/${username}/project/${tenderlyProject}/contracts`, Object.assign({}, request));
+            const responseData = response.data;
+            if (responseData.bytecode_mismatch_errors != null) {
+                console.log(errors_1.BYTECODE_MISMATCH_ERROR);
+                return;
+            }
+            if (!((_a = responseData.contracts) === null || _a === void 0 ? void 0 : _a.length)) {
+                let addresses = "";
+                for (const cont of request.contracts) {
+                    addresses += cont.contractName + ", ";
+                }
+                console.log(errors_1.NO_NEW_CONTRACTS_VERIFIED_ERROR, addresses);
+                return;
+            }
+            const dashLink = `${exports.TENDERLY_DASHBOARD_BASE_URL}/${username}/${tenderlyProject}/contracts`;
+            console.log(`Successfully privately verified Smart Contracts for project ${tenderlyProject}. You can view your contracts at ${dashLink}`);
+        }
+        catch (error) {
+            (0, error_logger_1.logError)(error);
+            console.log(errors_1.API_VERIFICATION_REQUEST_ERROR);
+        }
+    }
+    static async verifyForkContracts(request, tenderlyProject, username, fork) {
+        var _a;
+        const tenderlyApi = TenderlyApiService_1.TenderlyApiService.configureTenderlyRPCInstance();
+        try {
+            const response = await tenderlyApi.post(`/account/${username}/project/${tenderlyProject}/fork/${fork}/verify`, Object.assign({}, request));
+            const responseData = response.data;
+            if (responseData.bytecode_mismatch_errors != null) {
+                console.log(errors_1.BYTECODE_MISMATCH_ERROR);
+                return;
+            }
+            if (!((_a = responseData.contracts) === null || _a === void 0 ? void 0 : _a.length)) {
+                let addresses = "";
+                for (const cont of request.contracts) {
+                    addresses += cont.contractName + ", ";
+                }
+                console.log(errors_1.NO_NEW_CONTRACTS_VERIFIED_ERROR, addresses);
+                return;
+            }
+            console.group();
+            for (const contract of responseData.contracts) {
+                console.log(`Contract at ${contract.address} verified.`);
+            }
+            console.groupEnd();
+        }
+        catch (error) {
+            (0, error_logger_1.logError)(error);
+            console.log(errors_1.API_VERIFICATION_REQUEST_ERROR);
+        }
+    }
+}
+exports.TenderlyService = TenderlyService;
+//# sourceMappingURL=TenderlyService.js.map

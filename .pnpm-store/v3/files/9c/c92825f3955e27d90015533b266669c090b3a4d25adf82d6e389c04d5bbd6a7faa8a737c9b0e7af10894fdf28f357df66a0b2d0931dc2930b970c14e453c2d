@@ -1,0 +1,40 @@
+{
+  "name": "@graphql-mesh/transform-rename",
+  "version": "0.12.95",
+  "sideEffects": false,
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-mesh/types": "0.85.1",
+    "@graphql-mesh/utils": "0.42.0",
+    "@graphql-tools/delegate": "9.0.8",
+    "@graphql-tools/utils": "8.12.0",
+    "@graphql-tools/wrap": "9.2.3",
+    "graphql-scalars": "1.19.0",
+    "tslib": "^2.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/transforms/rename"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.mjs",
+  "typings": "index.d.ts",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    },
+    "./*": {
+      "require": "./*.js",
+      "import": "./*.mjs"
+    },
+    "./package.json": "./package.json"
+  }
+}

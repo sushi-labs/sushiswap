@@ -1,0 +1,71 @@
+{
+	"name": "@cloudinary/url-gen",
+	"version": "1.8.0",
+	"description": "",
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"exports": {
+		"./bundles/umd/package.json": "./bundles/umd/package.json",
+		"./bundles/umd": {
+			"require": "./bundles/umd/base.js",
+			"import": "./bundles/umd/base.js"
+		},
+		"./package.json": "./package.json",
+		"./actions/*": {
+			"require": "./actions/*.cjs",
+			"import": "./actions/*.js"
+		},
+		"./assets/*": {
+			"require": "./assets/*.cjs",
+			"import": "./assets/*.js"
+		},
+		"./backwards/*": {
+			"require": "./backwards/*.cjs",
+			"import": "./backwards/*.js"
+		},
+		"./bundles/*": {
+			"require": "./bundles/*.cjs",
+			"import": "./bundles/*.js"
+		},
+		"./config/*": {
+			"require": "./config/*.cjs",
+			"import": "./config/*.js"
+		},
+		"./instance/*": {
+			"require": "./instance/*.cjs",
+			"import": "./instance/*.js"
+		},
+		"./qualifiers/*": {
+			"require": "./qualifiers/*.cjs",
+			"import": "./qualifiers/*.js"
+		},
+		"./sdkAnalytics/*": {
+			"require": "./sdkAnalytics/*.cjs",
+			"import": "./sdkAnalytics/*.js"
+		},
+		"./transformation/*": {
+			"require": "./transformation/*.cjs",
+			"import": "./transformation/*.js"
+		},
+		"./types/*": {
+			"require": "./types/*.cjs",
+			"import": "./types/*.js"
+		},
+		"./*": {
+			"require": "./*.cjs",
+			"import": "./*.js"
+		},
+		".": {
+			"require": "./index.cjs",
+			"import": "./index.js",
+			"node": "./index.js",
+			"default": "./index.js"
+		}
+	},
+	"main": "./bundles/umd/base.js",
+	"browser": "./index.js",
+	"module": "./index.js",
+	"type": "module",
+	"sideEffects": false
+}

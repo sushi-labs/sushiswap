@@ -1,0 +1,67 @@
+import type { HelperManager } from "./HelperManager";
+import type { Token } from "./parser/tokenizer";
+import type { ContextualKeyword } from "./parser/tokenizer/keywords";
+import { TokenType } from "./parser/tokenizer/types";
+export interface TokenProcessorSnapshot {
+    resultCode: string;
+    tokenIndex: number;
+}
+export default class TokenProcessor {
+    readonly code: string;
+    readonly tokens: Array<Token>;
+    readonly isFlowEnabled: boolean;
+    readonly disableESTransforms: boolean;
+    readonly helperManager: HelperManager;
+    private resultCode;
+    private tokenIndex;
+    constructor(code: string, tokens: Array<Token>, isFlowEnabled: boolean, disableESTransforms: boolean, helperManager: HelperManager);
+    /**
+     * Make a new TokenProcessor for things like lookahead.
+     */
+    snapshot(): TokenProcessorSnapshot;
+    restoreToSnapshot(snapshot: TokenProcessorSnapshot): void;
+    getResultCodeIndex(): number;
+    reset(): void;
+    matchesContextualAtIndex(index: number, contextualKeyword: ContextualKeyword): boolean;
+    identifierNameAtIndex(index: number): string;
+    identifierNameAtRelativeIndex(relativeIndex: number): string;
+    identifierName(): string;
+    identifierNameForToken(token: Token): string;
+    rawCodeForToken(token: Token): string;
+    stringValueAtIndex(index: number): string;
+    stringValue(): string;
+    stringValueForToken(token: Token): string;
+    matches1AtIndex(index: number, t1: TokenType): boolean;
+    matches2AtIndex(index: number, t1: TokenType, t2: TokenType): boolean;
+    matches3AtIndex(index: number, t1: TokenType, t2: TokenType, t3: TokenType): boolean;
+    matches1(t1: TokenType): boolean;
+    matches2(t1: TokenType, t2: TokenType): boolean;
+    matches3(t1: TokenType, t2: TokenType, t3: TokenType): boolean;
+    matches4(t1: TokenType, t2: TokenType, t3: TokenType, t4: TokenType): boolean;
+    matches5(t1: TokenType, t2: TokenType, t3: TokenType, t4: TokenType, t5: TokenType): boolean;
+    matchesContextual(contextualKeyword: ContextualKeyword): boolean;
+    matchesContextIdAndLabel(type: TokenType, contextId: number): boolean;
+    previousWhitespaceAndComments(): string;
+    replaceToken(newCode: string): void;
+    replaceTokenTrimmingLeftWhitespace(newCode: string): void;
+    removeInitialToken(): void;
+    removeToken(): void;
+    copyExpectedToken(tokenType: TokenType): void;
+    copyToken(): void;
+    copyTokenWithPrefix(prefix: string): void;
+    private appendTokenPrefix;
+    private appendTokenSuffix;
+    appendCode(code: string): void;
+    currentToken(): Token;
+    currentTokenCode(): string;
+    tokenAtRelativeIndex(relativeIndex: number): Token;
+    currentIndex(): number;
+    /**
+     * Move to the next token. Only suitable in preprocessing steps. When
+     * generating new code, you should use copyToken or removeToken.
+     */
+    nextToken(): void;
+    previousToken(): void;
+    finish(): string;
+    isAtEnd(): boolean;
+}

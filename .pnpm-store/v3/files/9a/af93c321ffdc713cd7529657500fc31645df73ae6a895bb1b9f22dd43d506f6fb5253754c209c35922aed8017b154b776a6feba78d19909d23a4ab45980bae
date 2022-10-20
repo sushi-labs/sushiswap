@@ -1,0 +1,30 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TdlyContract = void 0;
+class TdlyContract {
+    constructor(nativeContract, tenderly, contractName, libs) {
+        this.contractName = contractName;
+        this.nativeContract = nativeContract;
+        this.tenderly = tenderly;
+        this.libraries = libs;
+        Object.keys(nativeContract).forEach(key => {
+            if (this[key] !== undefined) {
+                return;
+            }
+            this[key] = nativeContract[key];
+        });
+    }
+    async deployed() {
+        const contract = await this.nativeContract.deployed();
+        const contPair = {
+            name: this.contractName,
+            address: contract.address,
+            libraries: this.libraries
+        };
+        await this.tenderly.persistArtifacts(contPair);
+        await this.tenderly.verify(contPair);
+        return contract;
+    }
+}
+exports.TdlyContract = TdlyContract;
+//# sourceMappingURL=Contract.js.map

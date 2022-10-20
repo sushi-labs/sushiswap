@@ -1,0 +1,44 @@
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
+/**
+ * Load file
+ * @param path
+ * @param throwError
+ * @returns
+ */
+export const loadJSON = async (path, throwError = true) => {
+    // Get path stat
+    const stat = await fs.stat(path);
+    // Return undefined or throw error
+    if (!stat.isFile()) {
+        // Handle error
+        if (throwError) {
+            throw new Error(`${path} does not exist.`);
+        }
+        return;
+    }
+    const jsonString = await fs.readFile(path, { encoding: 'utf-8' });
+    return JSON.parse(jsonString);
+};
+/**
+ * Export file
+ * @param filePath
+ * @param content
+ * @returns
+ */
+export const exportFile = async (filePath, content) => {
+    // Target folder
+    const folder = path.dirname(filePath);
+    // Get file stat
+    const stat = await fs.stat(folder).catch(() => ({
+        isDirectory: () => false,
+    }));
+    // Directory
+    if (!stat.isDirectory()) {
+        await fs.mkdir(folder).catch(() => {
+            return;
+        });
+    }
+    // Write file
+    return fs.writeFile(filePath, content);
+};

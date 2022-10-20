@@ -1,0 +1,35 @@
+import type { MeshResolvedSource } from '@graphql-mesh/runtime';
+import { ImportFn, Logger, MeshMerger, MeshPubSub, MeshTransform, YamlConfig, KeyValueCache } from '@graphql-mesh/types';
+import { IResolvers, Source } from '@graphql-tools/utils';
+import { DocumentNode } from 'graphql';
+import { MeshStore } from '@graphql-mesh/store';
+import { envelop } from '@envelop/core';
+export declare type ConfigProcessOptions = {
+    dir?: string;
+    importFn?: ImportFn;
+    store?: MeshStore;
+    ignoreAdditionalResolvers?: boolean;
+    configName?: string;
+    artifactsDir?: string;
+    additionalPackagePrefixes?: string[];
+    generateCode?: boolean;
+    initialLoggerPrefix?: string;
+};
+declare type EnvelopPlugins = Parameters<typeof envelop>[0]['plugins'];
+export declare type ProcessedConfig = {
+    sources: MeshResolvedSource[];
+    transforms: MeshTransform[];
+    additionalTypeDefs: DocumentNode[];
+    additionalResolvers: IResolvers[];
+    cache: KeyValueCache<string>;
+    merger: MeshMerger;
+    pubsub: MeshPubSub;
+    config: YamlConfig.Config;
+    documents: Source[];
+    logger: Logger;
+    store: MeshStore;
+    code: string;
+    additionalEnvelopPlugins: EnvelopPlugins;
+};
+export declare function processConfig(config: YamlConfig.Config, options?: ConfigProcessOptions): Promise<ProcessedConfig>;
+export {};

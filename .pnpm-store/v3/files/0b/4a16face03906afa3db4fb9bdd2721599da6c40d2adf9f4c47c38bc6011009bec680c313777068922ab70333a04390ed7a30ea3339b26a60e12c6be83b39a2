@@ -1,0 +1,2 @@
+import{validateFieldsNatively as r,toNestError as e}from"@hookform/resolvers";const o=o=>async(s,a,t)=>{try{const e=await o(s);return t.shouldUseNativeValidation&&r({},t),{errors:{},values:e}}catch(r){return{values:{},errors:e((n=r,(n.errors||[]).reduce((r,e)=>(r[e.path.join(".")]={type:e.error.name,message:e.error.message},r),{})),t)}}var n};export{o as computedTypesResolver};
+//# sourceMappingURL=computed-types.modern.js.map

@@ -1,0 +1,16 @@
+# Installation
+> `npm install --save @types/workbox-background-sync`
+
+# Summary
+This package contains type definitions for workbox-background-sync (https://github.com/GoogleChrome/workbox).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-background-sync.
+
+### Additional Details
+ * Last updated: Fri, 02 Jul 2021 18:05:56 GMT
+ * Dependencies: [@types/workbox-core](https://npmjs.com/package/@types/workbox-core)
+ * Global values: none
+
+# Credits
+These definitions were written by [Jason Kwok](https://github.com/JasonHK).

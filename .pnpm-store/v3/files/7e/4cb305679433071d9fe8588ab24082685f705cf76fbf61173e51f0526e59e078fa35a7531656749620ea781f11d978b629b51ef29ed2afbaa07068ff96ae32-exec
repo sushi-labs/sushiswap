@@ -1,0 +1,27 @@
+{
+    "name": "@types/workbox-broadcast-update",
+    "version": "4.3.1",
+    "description": "TypeScript definitions for workbox-broadcast-update",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-broadcast-update",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Kwok",
+            "url": "https://github.com/JasonHK",
+            "githubUsername": "JasonHK"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/workbox-broadcast-update"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/workbox-core": "*"
+    },
+    "typesPublisherContentHash": "38ed00e657d70e9f8a2912540022ae6d8aed2750d649ef00c515eed3277ad912",
+    "typeScriptVersion": "3.6"
+}

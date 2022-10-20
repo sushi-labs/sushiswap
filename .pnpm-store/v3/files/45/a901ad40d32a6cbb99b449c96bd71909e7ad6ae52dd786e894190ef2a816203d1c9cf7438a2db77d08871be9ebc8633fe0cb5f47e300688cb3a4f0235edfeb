@@ -1,0 +1,94 @@
+{
+	"name": "meros",
+	"version": "1.2.0",
+	"description": "A fast 626B utility that makes reading multipart responses simple",
+	"keywords": [
+		"defer",
+		"fetch",
+		"graphql",
+		"multipart mixed",
+		"multipart",
+		"reader",
+		"stream",
+		"utility"
+	],
+	"repository": "maraisr/meros",
+	"license": "MIT",
+	"author": {
+		"name": "Marais Rossouw",
+		"email": "me@marais.dev",
+		"url": "https://marais.io"
+	},
+	"sideEffects": false,
+	"exports": {
+		".": {
+			"browser": {
+				"import": "./browser/index.mjs",
+				"require": "./browser/index.js"
+			},
+			"node": {
+				"import": "./node/index.mjs",
+				"require": "./node/index.js"
+			},
+			"default": {
+				"import": "./node/index.mjs",
+				"require": "./node/index.js"
+			}
+		},
+		"./browser": {
+			"import": "./browser/index.mjs",
+			"require": "./browser/index.js"
+		},
+		"./node": {
+			"import": "./node/index.mjs",
+			"require": "./node/index.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"main": "node/index.js",
+	"unpkg": "browser/index.min.js",
+	"module": "node/index.mjs",
+	"browser": "browser/index.mjs",
+	"types": "index.d.ts",
+	"files": [
+		"*.d.ts",
+		"types",
+		"browser",
+		"node"
+	],
+	"scripts": {
+		"bench": "node -r tsm -r ./test/_polyfill.ts bench/index.ts",
+		"build": "rollup -c",
+		"format": "prettier --write --list-different \"{*,examples/*/**,.github/**/*}.+(ts|tsx|json|yml|md)\"",
+		"prepublishOnly": "pnpm run build",
+		"test": "uvu test \".spec.ts$\" -r tsm -r test/_polyfill.ts -i suites",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@marais/tsconfig": "0.0.2",
+		"@n1ru4l/push-pull-async-iterable-iterator": "3.2.0",
+		"@rollup/plugin-node-resolve": "13.1.3",
+		"@types/node": "17.0.21",
+		"prettier": "2.5.1",
+		"rollup": "2.68.0",
+		"rollup-plugin-dts": "4.1.0",
+		"rollup-plugin-terser": "7.0.2",
+		"tsm": "2.2.1",
+		"typescript": "4.5.5",
+		"uvu": "0.5.3"
+	},
+	"peerDependencies": {
+		"@types/node": ">=12"
+	},
+	"peerDependenciesMeta": {
+		"@types/node": {
+			"optional": true
+		}
+	},
+	"engines": {
+		"node": ">=12"
+	},
+	"volta": {
+		"node": "17.3.0"
+	}
+}

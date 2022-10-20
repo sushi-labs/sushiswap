@@ -1,0 +1,32 @@
+{
+  "name": "@corex/deepmerge",
+  "version": "4.0.29",
+  "sideEffects": false,
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/@types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "description": "A zero dependency object merger with typescript support and built in common merge utilities.",
+  "keywords": [
+    "deepmerge",
+    "typescript"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "tsc --module commonjs --outDir dist/cjs",
+    "test": "jest",
+    "lint": "tsc --noEmit --declaration"
+  }
+}

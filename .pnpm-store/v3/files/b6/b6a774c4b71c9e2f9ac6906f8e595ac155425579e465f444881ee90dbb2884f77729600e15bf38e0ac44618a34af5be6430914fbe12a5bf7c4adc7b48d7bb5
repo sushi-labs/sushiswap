@@ -1,0 +1,26 @@
+{
+  "name": "Chainlink Token List",
+  "timestamp": "2022-04-11T14:11:28.991Z",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo-256x256.png",
+  "keywords": [
+    "sushiswap",
+    "chainlink",
+    "tokenlist"
+  ],
+  "tokens": [
+    {
+      "chainId": 1,
+      "address": "0x1776e1F26f98b1A5dF9cD347953a26dd3Cb46671",
+      "name": "Numeraire",
+      "symbol": "NMR",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/nmr.jpg"
+    }
+  ]
+}

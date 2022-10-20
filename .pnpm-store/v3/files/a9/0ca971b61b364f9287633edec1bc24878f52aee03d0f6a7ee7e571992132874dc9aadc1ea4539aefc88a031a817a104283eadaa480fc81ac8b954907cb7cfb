@@ -1,0 +1,1 @@
+const text=(e,t={})=>new Response(e,t);module.exports={text:text};

@@ -1,0 +1,44 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.throttle = exports.getIngestURL = exports.EndpointType = exports.vercelEnv = exports.vercelRegion = exports.isNoPrettyPrint = exports.isEnvVarsSet = exports.isBrowser = exports.proxyPath = void 0;
+exports.proxyPath = '/_axiom';
+exports.isBrowser = typeof window !== 'undefined';
+exports.isEnvVarsSet = process.env.AXIOM_INGEST_ENDPOINT || process.env.NEXT_PUBLIC_AXIOM_INGEST_ENDPOINT;
+exports.isNoPrettyPrint = process.env.AXIOM_NO_PRETTY_PRINT == 'true' ? true : false;
+exports.vercelRegion = process.env.VERCEL_REGION || process.env.NEXT_PUBLIC_VERCEL_REGION;
+exports.vercelEnv = process.env.VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV;
+var EndpointType;
+(function (EndpointType) {
+    EndpointType["webVitals"] = "web-vitals";
+    EndpointType["logs"] = "logs";
+})(EndpointType = exports.EndpointType || (exports.EndpointType = {}));
+var getIngestURL = function (t) {
+    var ingestEndpoint = process.env.AXIOM_INGEST_ENDPOINT || process.env.NEXT_PUBLIC_AXIOM_INGEST_ENDPOINT;
+    if (!ingestEndpoint) {
+        return '';
+    }
+    var url = new URL(ingestEndpoint);
+    // attach type query param based on passed EndpointType
+    url.searchParams.set('type', t.toString());
+    return url.toString();
+};
+exports.getIngestURL = getIngestURL;
+var throttle = function (fn, wait) {
+    var lastFn, lastTime;
+    return function () {
+        var context = this, args = arguments;
+        // First call, set lastTime
+        if (lastTime == null) {
+            lastTime = Date.now();
+        }
+        clearTimeout(lastFn);
+        lastFn = setTimeout(function () {
+            if (Date.now() - lastTime >= wait) {
+                fn.apply(context, args);
+                lastTime = Date.now();
+            }
+        }, Math.max(wait - (Date.now() - lastTime), 0));
+    };
+};
+exports.throttle = throttle;
+//# sourceMappingURL=shared.js.map

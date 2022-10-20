@@ -1,0 +1,99 @@
+{
+  "name": "eslint-import-resolver-typescript",
+  "version": "2.7.1",
+  "description": "TypeScript .ts .tsx module resolver for `eslint-plugin-import`.",
+  "repository": "https://github.com/alexgorbatchev/eslint-import-resolver-typescript",
+  "author": "Alex Gorbatchev <alex.gorbatchev@gmail.com>",
+  "contributors": [
+    "JounQin <admin@1stg.me>"
+  ],
+  "license": "ISC",
+  "engines": {
+    "node": ">=4"
+  },
+  "main": "lib/index.cjs",
+  "module": "lib/index.es2015.mjs",
+  "exports": {
+    ".": {
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.es2015.mjs",
+      "types": "./lib/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "es2015": "lib/index.es2015.mjs",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "!*.tsbuildinfo"
+  ],
+  "keywords": [
+    "typescript",
+    "eslint",
+    "import",
+    "resolver",
+    "plugin"
+  ],
+  "scripts": {
+    "build": "run-p build:*",
+    "build:r": "r -f cjs,es2015",
+    "build:ts": "tsc -b",
+    "lint": "run-p lint:*",
+    "lint:es": "eslint src --cache -f friendly",
+    "lint:tsc": "tsc --noEmit",
+    "prepare": "simple-git-hooks && yarn-deduplicate --strategy fewer || exit 0",
+    "prepublishOnly": "yarn build",
+    "release": "sh scripts/release.sh",
+    "test": "run-p test:*",
+    "test:multipleEslintrcs": "eslint --ext ts,tsx tests/multipleEslintrcs",
+    "test:multipleTsconfigs": "eslint --ext ts,tsx tests/multipleTsconfigs",
+    "test:withJsExtension": "node tests/withJsExtension/test.js && eslint --ext ts,tsx tests/withJsExtension",
+    "test:withPaths": "eslint --ext ts,tsx tests/withPaths",
+    "test:withPathsAndNestedBaseUrl": "eslint --ext ts,tsx tests/withPathsAndNestedBaseUrl",
+    "test:withQuerystring": "eslint --ext ts,tsx tests/withQuerystring",
+    "test:withoutPaths": "eslint --ext ts,tsx tests/withoutPaths",
+    "typecov": "type-coverage"
+  },
+  "peerDependencies": {
+    "eslint": "*",
+    "eslint-plugin-import": "*"
+  },
+  "dependencies": {
+    "debug": "^4.3.4",
+    "glob": "^7.2.0",
+    "is-glob": "^4.0.3",
+    "resolve": "^1.22.0",
+    "tsconfig-paths": "^3.14.1"
+  },
+  "devDependencies": {
+    "@1stg/lib-config": "^5.4.0",
+    "@types/debug": "^4.1.7",
+    "@types/glob": "^7.2.0",
+    "@types/is-glob": "^4.0.2",
+    "@types/node": "^17.0.23",
+    "@types/resolve": "^1.20.1",
+    "@types/unist": "^2.0.6",
+    "dummy.js": "link:dummy.js",
+    "eslint-import-resolver-typescript": "link:.",
+    "react": "^18.0.0",
+    "standard-version": "^9.3.2",
+    "type-coverage": "^2.21.1",
+    "typescript": "^4.6.3"
+  },
+  "resolutions": {
+    "eslint-import-resolver-typescript": "link:.",
+    "prettier": "^2.6.2"
+  },
+  "typeCoverage": {
+    "atLeast": 99.28,
+    "cache": true,
+    "detail": true,
+    "ignoreAsAssertion": true,
+    "ignoreCatch": true,
+    "ignoreFiles": [
+      "**/*.d.ts"
+    ],
+    "strict": true,
+    "update": true
+  }
+}

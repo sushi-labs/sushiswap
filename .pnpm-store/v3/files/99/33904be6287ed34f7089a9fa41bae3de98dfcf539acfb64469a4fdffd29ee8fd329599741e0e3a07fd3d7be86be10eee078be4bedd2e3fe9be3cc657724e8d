@@ -1,0 +1,147 @@
+import { ExecutionResult } from 'graphql';
+import { GetEnvelopedFn, UseMaskedErrorsOpts, PromiseOrValue } from '@envelop/core';
+import { ValidationCache } from '@envelop/validation-cache';
+import { ParserCacheOptions } from '@envelop/parser-cache';
+import { GraphQLServerInject, YogaInitialContext, FetchAPI, GraphQLParams } from './types.js';
+import { ExecutorResult, Plugin } from './plugins/types.js';
+import { ServerAdapter } from '@whatwg-node/server';
+import { YogaLogger } from './logger.js';
+import { CORSPluginOptions } from './plugins/useCORS.js';
+import { GraphiQLOptions, GraphiQLOptionsOrFactory } from './plugins/useGraphiQL.js';
+import { YogaSchemaDefinition } from './plugins/useSchema.js';
+/**
+ * Configuration options for the server
+ */
+export declare type YogaServerOptions<TServerContext extends Record<string, any>, TUserContext extends Record<string, any>> = {
+    /**
+     * Enable/disable logging or provide a custom logger.
+     * @default true
+     */
+    logging?: boolean | YogaLogger;
+    /**
+     * Prevent leaking unexpected errors to the client. We highly recommend enabling this in production.
+     * If you throw `EnvelopError`/`GraphQLError` within your GraphQL resolvers then that error will be sent back to the client.
+     *
+     * You can lean more about this here:
+     * @see https://graphql-yoga.vercel.app/docs/features/error-masking
+     *
+     * @default true
+     */
+    maskedErrors?: boolean | UseMaskedErrorsOpts;
+    /**
+     * Context
+     */
+    context?: ((initialContext: YogaInitialContext & TServerContext) => Promise<TUserContext> | TUserContext) | Promise<TUserContext> | TUserContext;
+    cors?: CORSPluginOptions<TServerContext>;
+    /**
+     * GraphQL endpoint
+     * So you need to define it explicitly if GraphQL API lives in a different path other than `/graphql`
+     *
+     * @default "/graphql"
+     */
+    graphqlEndpoint?: string;
+    /**
+     * Readiness check endpoint
+     *
+     * @default "/readiness"
+     */
+    readinessCheckEndpoint?: string;
+    /**
+     * Readiness check endpoint
+     *
+     * @default "/health"
+     */
+    healthCheckEndpoint?: string;
+    /**
+     * Whether the landing page should be shown.
+     */
+    landingPage?: boolean;
+    /**
+     * GraphiQL options
+     *
+     * @default true
+     */
+    graphiql?: GraphiQLOptionsOrFactory<TServerContext>;
+    renderGraphiQL?: (options?: GraphiQLOptions) => PromiseOrValue<BodyInit>;
+    schema?: YogaSchemaDefinition<TUserContext & TServerContext & YogaInitialContext>;
+    /**
+     * Envelop Plugins
+     * @see https://envelop.dev/plugins
+     */
+    plugins?: Array<Plugin<TUserContext & TServerContext & YogaInitialContext> | Plugin | {}>;
+    parserCache?: boolean | ParserCacheOptions;
+    validationCache?: boolean | ValidationCache;
+    fetchAPI?: FetchAPI;
+    /**
+     * GraphQL Multipart Request spec support
+     *
+     * @see https://github.com/jaydenseric/graphql-multipart-request-spec
+     *
+     * @default true
+     */
+    multipart?: boolean;
+    id?: string;
+    /**
+     * Batching RFC Support configuration
+     *
+     * @see https://github.com/graphql/graphql-over-http/blob/main/rfcs/Batching.md
+     *
+     * @default false
+     */
+    batching?: BatchingOptions;
+};
+export declare type BatchingOptions = boolean | {
+    /**
+     * You can limit the number of batched operations per request.
+     *
+     * @default 10
+     */
+    limit?: number;
+};
+/**
+ * Base class that can be extended to create a GraphQL server with any HTTP server framework.
+ * @internal
+ */
+export declare class YogaServer<TServerContext extends Record<string, any>, TUserContext extends Record<string, any>> {
+    /**
+     * Instance of envelop
+     */
+    readonly getEnveloped: GetEnvelopedFn<TUserContext & TServerContext & YogaInitialContext>;
+    logger: YogaLogger;
+    readonly graphqlEndpoint: string;
+    fetchAPI: FetchAPI;
+    protected plugins: Array<Plugin<TUserContext & TServerContext & YogaInitialContext, TServerContext>>;
+    private onRequestParseHooks;
+    private onParamsHooks;
+    private onRequestHooks;
+    private onResultProcessHooks;
+    private onResponseHooks;
+    private maskedErrorsOpts;
+    private id;
+    constructor(options?: YogaServerOptions<TServerContext, TUserContext>);
+    getResultForParams({ params, request, }: {
+        params: GraphQLParams;
+        request: Request;
+    }, ...args: {} extends TServerContext ? [serverContext?: TServerContext | undefined] : [serverContext: TServerContext]): Promise<ExecutorResult>;
+    getResponse(request: Request, serverContext: TServerContext): Promise<Response>;
+    handle: (request: Request, serverContext: TServerContext) => Promise<Response>;
+    /**
+     * Testing utility to mock http request for GraphQL endpoint
+     *
+     *
+     * Example - Test a simple query
+     * ```ts
+     * const { response, executionResult } = await yoga.inject({
+     *  document: "query { ping }",
+     * })
+     * expect(response.status).toBe(200)
+     * expect(executionResult.data.ping).toBe('pong')
+     * ```
+     **/
+    inject<TData = any, TVariables = any>({ document, variables, operationName, headers, serverContext, }: GraphQLServerInject<TData, TVariables, TServerContext>): Promise<{
+        response: Response;
+        executionResult: ExecutionResult<TData> | null;
+    }>;
+}
+export declare type YogaServerInstance<TServerContext extends Record<string, any>, TUserContext extends Record<string, any>> = ServerAdapter<TServerContext, YogaServer<TServerContext, TUserContext>>;
+export declare function createYoga<TServerContext extends Record<string, any> = {}, TUserContext extends Record<string, any> = {}>(options: YogaServerOptions<TServerContext, TUserContext>): YogaServerInstance<TServerContext, TUserContext>;

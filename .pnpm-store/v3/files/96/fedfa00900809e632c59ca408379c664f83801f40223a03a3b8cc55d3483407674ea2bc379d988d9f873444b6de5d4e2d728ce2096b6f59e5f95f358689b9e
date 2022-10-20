@@ -1,0 +1,51 @@
+{
+  "name": "universal-github-app-jwt",
+  "description": "Calculate GitHub App bearer tokens for Node & modern browsers",
+  "version": "1.1.0",
+  "license": "MIT",
+  "files": [
+    "dist-*/",
+    "bin/"
+  ],
+  "pika": true,
+  "sideEffects": false,
+  "keywords": [
+    "github",
+    "authentication",
+    "app",
+    "jwt",
+    "webcrypto"
+  ],
+  "homepage": "https://github.com/gr2m/universal-github-app-jwt#readme",
+  "bugs": {
+    "url": "https://github.com/gr2m/universal-github-app-jwt/issues"
+  },
+  "repository": "https://github.com/gr2m/universal-github-app-jwt",
+  "dependencies": {
+    "@types/jsonwebtoken": "^8.3.3",
+    "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "@gr2m/pika-plugin-build-web": "^0.6.0-issue-84.1",
+    "@pika/pack": "^0.5.0",
+    "@pika/plugin-build-node": "^0.9.1",
+    "@pika/plugin-bundle-web": "^0.9.1",
+    "@pika/plugin-ts-standard-pkg": "^0.9.1",
+    "@types/jest": "^25.1.0",
+    "@types/lolex": "^5.1.0",
+    "jest": "^25.1.0",
+    "lolex": "^6.0.0",
+    "playwright": "^1.0.1",
+    "prettier": "^2.0.0",
+    "rollup-plugin-json": "^4.0.0",
+    "semantic-release": "^17.0.0",
+    "serve-handler": "^6.1.1",
+    "ts-jest": "^26.0.0",
+    "typescript": "^3.6.2"
+  },
+  "source": "dist-src/index.js",
+  "types": "dist-types/index.d.ts",
+  "main": "dist-node/index.js",
+  "module": "dist-web/index.js",
+  "browser": "dist-web/index.bundled.js"
+}

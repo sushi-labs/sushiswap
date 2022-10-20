@@ -1,0 +1,1 @@
+const watch=(t,o)=>r=>{r.proxy=new Proxy(r.proxy||r,{set:(e,n,c)=>{return e[n]=c,("function"==typeof t?t(n,e):e.hasOwnProperty(n))&&o(c,n,r),!0}})};module.exports={watch:watch};

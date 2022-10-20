@@ -1,0 +1,11 @@
+import { EventArgDeclaration, EventDeclaration } from 'typechain';
+export declare function generateEventFilters(events: EventDeclaration[]): string;
+export declare function generateEventTypeExports(events: EventDeclaration[]): string;
+export declare function generateEventTypeExport(event: EventDeclaration, includeArgTypes: boolean): string;
+export declare function generateInterfaceEventDescription(event: EventDeclaration): string;
+export declare function generateEventSignature(event: EventDeclaration): string;
+export declare function generateEventInputs(eventArgs: EventArgDeclaration[]): string;
+export declare function generateEventArgType(eventArg: EventArgDeclaration): string;
+export declare function generateGetEvent(event: EventDeclaration, useSignature: boolean): string;
+export declare const EVENT_METHOD_OVERRIDES = "\n  queryFilter<TEvent extends TypedEvent>(\n    event: TypedEventFilter<TEvent>,\n    fromBlockOrBlockhash?: string | number | undefined,\n    toBlock?: string | number | undefined,\n  ): Promise<Array<TEvent>>\n\n  listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>\n  listeners(eventName?: string): Array<Listener>\n  removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this\n  removeAllListeners(eventName?: string): this\n  off: OnEvent<this>\n  on: OnEvent<this>\n  once: OnEvent<this>\n  removeListener: OnEvent<this>\n";
+export declare const EVENT_IMPORTS: string[];

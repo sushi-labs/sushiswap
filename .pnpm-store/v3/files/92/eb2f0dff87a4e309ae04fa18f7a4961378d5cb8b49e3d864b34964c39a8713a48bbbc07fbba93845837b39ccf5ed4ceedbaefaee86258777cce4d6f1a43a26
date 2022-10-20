@@ -1,0 +1,39 @@
+import { RowModel } from '..';
+import { TableFeature } from '../core/instance';
+import { OnChangeFn, TableGenerics, TableInstance, Row, Updater } from '../types';
+export declare type ExpandedStateList = Record<string, boolean>;
+export declare type ExpandedState = true | Record<string, boolean>;
+export declare type ExpandedTableState = {
+    expanded: ExpandedState;
+};
+export declare type ExpandedRow = {
+    toggleExpanded: (expanded?: boolean) => void;
+    getIsExpanded: () => boolean;
+    getCanExpand: () => boolean;
+    getToggleExpandedHandler: () => () => void;
+};
+export declare type ExpandedOptions<TGenerics extends TableGenerics> = {
+    manualExpanding?: boolean;
+    onExpandedChange?: OnChangeFn<ExpandedState>;
+    autoResetExpanded?: boolean;
+    enableExpanding?: boolean;
+    getExpandedRowModel?: (instance: TableInstance<TGenerics>) => () => RowModel<TGenerics>;
+    getIsRowExpanded?: (row: Row<TGenerics>) => boolean;
+    getRowCanExpand?: (row: Row<TGenerics>) => boolean;
+    paginateExpandedRows?: boolean;
+};
+export declare type ExpandedInstance<TGenerics extends TableGenerics> = {
+    _autoResetExpanded: () => void;
+    setExpanded: (updater: Updater<ExpandedState>) => void;
+    toggleAllRowsExpanded: (expanded?: boolean) => void;
+    resetExpanded: (defaultState?: boolean) => void;
+    getCanSomeRowsExpand: () => boolean;
+    getToggleAllRowsExpandedHandler: () => (event: unknown) => void;
+    getIsSomeRowsExpanded: () => boolean;
+    getIsAllRowsExpanded: () => boolean;
+    getExpandedDepth: () => number;
+    getExpandedRowModel: () => RowModel<TGenerics>;
+    _getExpandedRowModel?: () => RowModel<TGenerics>;
+    getPreExpandedRowModel: () => RowModel<TGenerics>;
+};
+export declare const Expanding: TableFeature;

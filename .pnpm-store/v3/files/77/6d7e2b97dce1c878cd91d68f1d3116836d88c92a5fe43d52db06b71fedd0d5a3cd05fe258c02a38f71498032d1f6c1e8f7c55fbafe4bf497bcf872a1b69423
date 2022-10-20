@@ -1,0 +1,16 @@
+import { FetchAPI, GraphQLParams } from './types.cjs';
+import { OnResultProcess, ResultProcessorInput } from './plugins/types.cjs';
+import { GetEnvelopedFn } from '@envelop/core';
+export declare function processResult({ request, result, fetchAPI, onResultProcessHooks, }: {
+    request: Request;
+    result: ResultProcessorInput;
+    fetchAPI: FetchAPI;
+    /**
+     * Response Hooks
+     */
+    onResultProcessHooks: OnResultProcess[];
+}): Promise<Response>;
+export declare function processRequest<TContext>({ params, enveloped, }: {
+    params: GraphQLParams;
+    enveloped: ReturnType<GetEnvelopedFn<TContext>>;
+}): Promise<import("graphql").ExecutionResult<import("graphql/jsutils/ObjMap.js").ObjMap<unknown>, import("graphql/jsutils/ObjMap.js").ObjMap<unknown>> | AsyncGenerator<import("graphql").ExecutionResult<import("graphql/jsutils/ObjMap.js").ObjMap<unknown>, import("graphql/jsutils/ObjMap.js").ObjMap<unknown>>, void, void>>;

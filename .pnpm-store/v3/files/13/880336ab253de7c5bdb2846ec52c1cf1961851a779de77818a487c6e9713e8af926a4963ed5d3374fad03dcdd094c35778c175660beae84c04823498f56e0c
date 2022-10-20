@@ -1,0 +1,1 @@
+const withParams=a=>{for(const s in a.params||{})a[s]=a.params[s]};module.exports={withParams:withParams};

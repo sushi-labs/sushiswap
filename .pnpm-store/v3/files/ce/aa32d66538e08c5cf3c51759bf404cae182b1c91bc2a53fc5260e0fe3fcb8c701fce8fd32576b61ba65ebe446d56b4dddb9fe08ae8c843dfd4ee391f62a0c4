@@ -1,0 +1,47 @@
+interface LogEvent {
+    level: string;
+    message: string;
+    fields: {};
+    _time: string;
+    request?: RequestReport;
+    vercel?: VercelData;
+}
+export interface RequestReport {
+    startTime: number;
+    statusCode?: number;
+    ip?: string;
+    region?: string;
+    path: string;
+    host: string;
+    method: string;
+    scheme: string;
+    userAgent?: string | null;
+}
+interface VercelData {
+    environment?: string;
+    region?: string;
+    route?: string;
+    source?: string;
+}
+export declare class Logger {
+    private args;
+    private req;
+    private autoFlush;
+    source: 'frontend' | 'lambda' | 'edge';
+    logEvents: LogEvent[];
+    throttledSendLogs: (this: any) => void;
+    constructor(args?: any, req?: RequestReport | null, autoFlush?: Boolean, source?: 'frontend' | 'lambda' | 'edge');
+    debug(message: string, args?: any): void;
+    info(message: string, args?: any): void;
+    warn(message: string, args?: any): void;
+    error(message: string, args?: any): void;
+    with(args: any): Logger;
+    withRequest(req: RequestReport): Logger;
+    _log(level: string, message: string, args?: any): void;
+    attachResponseStatus(statusCode: number): void;
+    sendLogs(): Promise<void>;
+    flush: () => Promise<void>;
+}
+export declare const log: Logger;
+export declare function prettyPrint(ev: LogEvent): void;
+export {};

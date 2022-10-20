@@ -1,0 +1,93 @@
+import { RowModel } from '..';
+import { TableFeature } from '../core/instance';
+import { BuiltInFilterFn } from '../filterFns';
+import { Column, OnChangeFn, TableGenerics, TableInstance, Row, Updater } from '../types';
+import { Overwrite } from '../utils';
+export declare type FiltersTableState = {
+    columnFilters: ColumnFiltersState;
+    globalFilter: any;
+};
+export declare type ColumnFiltersState = ColumnFilter[];
+export declare type ColumnFilter = {
+    id: string;
+    value: unknown;
+};
+export declare type ResolvedColumnFilter<TGenerics extends TableGenerics> = {
+    id: string;
+    resolvedValue: unknown;
+    filterFn: FilterFn<TGenerics>;
+};
+export declare type FilterFn<TGenerics extends TableGenerics> = {
+    (row: Row<TGenerics>, columnId: string, filterValue: any, addMeta: (meta: TGenerics['FilterMeta']) => void): boolean;
+    resolveFilterValue?: TransformFilterValueFn<TGenerics>;
+    autoRemove?: ColumnFilterAutoRemoveTestFn<TGenerics>;
+};
+export declare type TransformFilterValueFn<TGenerics extends TableGenerics> = (value: any, column?: Column<TGenerics>) => unknown;
+export declare type ColumnFilterAutoRemoveTestFn<TGenerics extends TableGenerics> = (value: any, column?: Column<TGenerics>) => boolean;
+export declare type CustomFilterFns<TGenerics extends TableGenerics> = Record<string, FilterFn<TGenerics>>;
+export declare type FilterFnOption<TGenerics extends TableGenerics> = 'auto' | BuiltInFilterFn | keyof TGenerics['FilterFns'] | FilterFn<TGenerics>;
+export declare type FiltersColumnDef<TGenerics extends TableGenerics> = {
+    filterFn?: FilterFnOption<Overwrite<TGenerics, {
+        Value: any;
+    }>>;
+    enableColumnFilter?: boolean;
+    enableGlobalFilter?: boolean;
+};
+export declare type FiltersColumn<TGenerics extends TableGenerics> = {
+    filterFn: FilterFnOption<Overwrite<TGenerics, {
+        Value: any;
+    }>>;
+    getAutoFilterFn: () => FilterFn<TGenerics> | undefined;
+    getFilterFn: () => FilterFn<TGenerics> | undefined;
+    setFilterValue: (updater: Updater<any>) => void;
+    getCanFilter: () => boolean;
+    getCanGlobalFilter: () => boolean;
+    getFacetedRowModel: () => RowModel<TGenerics>;
+    _getFacetedRowModel?: () => RowModel<TGenerics>;
+    getIsFiltered: () => boolean;
+    getFilterValue: () => unknown;
+    getFilterIndex: () => number;
+    getFacetedUniqueValues: () => Map<any, number>;
+    _getFacetedUniqueValues?: () => Map<any, number>;
+    getFacetedMinMaxValues: () => undefined | [number, number];
+    _getFacetedMinMaxValues?: () => undefined | [number, number];
+};
+export declare type FiltersRow<TGenerics extends TableGenerics> = {
+    columnFilters: Record<string, boolean>;
+    columnFiltersMeta: Record<string, TGenerics['FilterMeta']>;
+};
+export declare type FiltersOptions<TGenerics extends TableGenerics> = {
+    enableFilters?: boolean;
+    manualFiltering?: boolean;
+    filterFromLeafRows?: boolean;
+    filterFns?: TGenerics['FilterFns'];
+    getFilteredRowModel?: (instance: TableInstance<TGenerics>) => () => RowModel<TGenerics>;
+    onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
+    enableColumnFilters?: boolean;
+    globalFilterFn?: FilterFnOption<TGenerics>;
+    onGlobalFilterChange?: OnChangeFn<any>;
+    enableGlobalFilter?: boolean;
+    getColumnCanGlobalFilter?: (column: Column<TGenerics>) => boolean;
+    getFacetedRowModel?: (instance: TableInstance<TGenerics>, columnId: string) => () => RowModel<TGenerics>;
+    getFacetedUniqueValues?: (instance: TableInstance<TGenerics>, columnId: string) => () => Map<any, number>;
+    getFacetedMinMaxValues?: (instance: TableInstance<TGenerics>, columnId: string) => () => undefined | [number, number];
+};
+export declare type FiltersInstance<TGenerics extends TableGenerics> = {
+    setColumnFilters: (updater: Updater<ColumnFiltersState>) => void;
+    resetColumnFilters: (defaultState?: boolean) => void;
+    getPreFilteredRowModel: () => RowModel<TGenerics>;
+    getFilteredRowModel: () => RowModel<TGenerics>;
+    _getFilteredRowModel?: () => RowModel<TGenerics>;
+    setGlobalFilter: (updater: Updater<any>) => void;
+    resetGlobalFilter: (defaultState?: boolean) => void;
+    getGlobalAutoFilterFn: () => FilterFn<TGenerics> | undefined;
+    getGlobalFilterFn: () => FilterFn<TGenerics> | undefined;
+    getGlobalFacetedRowModel: () => RowModel<TGenerics>;
+    _getGlobalFacetedRowModel?: () => RowModel<TGenerics>;
+    getGlobalFacetedUniqueValues: () => Map<any, number>;
+    _getGlobalFacetedUniqueValues?: () => Map<any, number>;
+    getGlobalFacetedMinMaxValues: () => undefined | [number, number];
+    _getGlobalFacetedMinMaxValues?: () => undefined | [number, number];
+};
+export declare const Filters: TableFeature;
+export declare function shouldAutoRemoveFilter<TGenerics extends TableGenerics>(filterFn?: FilterFn<TGenerics>, value?: any, column?: Column<TGenerics>): boolean;

@@ -1,0 +1,1112 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+function _interopNamespace(e) {
+    if (e && e.__esModule) { return e; } else {
+        var n = {};
+        if (e) {
+            Object.keys(e).forEach(function (k) {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () {
+                        return e[k];
+                    }
+                });
+            });
+        }
+        n['default'] = e;
+        return n;
+    }
+}
+
+const jsYaml = require('js-yaml');
+const crossHelpers = require('@graphql-mesh/cross-helpers');
+const utils = require('@graphql-tools/utils');
+const lru = _interopDefault(require('tiny-lru'));
+const graphql = require('graphql');
+const lodashGet = _interopDefault(require('lodash.get'));
+const lodashSet = _interopDefault(require('lodash.set'));
+const toPath = _interopDefault(require('lodash.topath'));
+const stringInterpolation = require('@graphql-mesh/string-interpolation');
+
+async function defaultImportFn(path) {
+    let module = await new Promise(function (resolve) { resolve(_interopNamespace(require(/* @vite-ignore */ path))); }).catch(e => {
+        if (e.message.includes('Must use import to load ES Module')) {
+            // eslint-disable-next-line no-new-func
+            return new Function(`return import(${JSON.stringify(path)})`)();
+        }
+        throw e;
+    });
+    if (module.default != null) {
+        module = module.default;
+    }
+    if (typeof module === 'object' && module != null) {
+        const prototypeOfObject = Object.getPrototypeOf(module);
+        if (prototypeOfObject == null || prototypeOfObject === Object.prototype) {
+            const normalizedVal = {};
+            for (const key in module) {
+                normalizedVal[key] = module[key];
+            }
+            return normalizedVal;
+        }
+    }
+    return module;
+}
+
+/* eslint-disable @typescript-eslint/return-await */
+async function loadFromModuleExportExpression(expression, options) {
+    if (typeof expression !== 'string') {
+        return Promise.resolve(expression);
+    }
+    const { defaultExportName, cwd, importFn = defaultImportFn } = options || {};
+    const [modulePath, exportName = defaultExportName] = expression.split('#');
+    const mod = await tryImport(modulePath, cwd, importFn);
+    return mod[exportName] || (mod.default && mod.default[exportName]) || mod.default || mod;
+}
+async function tryImport(modulePath, cwd, importFn) {
+    try {
+        return await importFn(modulePath);
+    }
+    catch (_a) {
+        if (!crossHelpers.path.isAbsolute(modulePath)) {
+            const absoluteModulePath = crossHelpers.path.isAbsolute(modulePath) ? modulePath : crossHelpers.path.join(cwd, modulePath);
+            return importFn(absoluteModulePath);
+        }
+    }
+}
+
+function isUrl(str) {
+    try {
+        // eslint-disable-next-line no-new
+        new URL(str);
+        return true;
+    }
+    catch (_a) {
+        return false;
+    }
+}
+async function readFileOrUrl(filePathOrUrl, config) {
+    if (isUrl(filePathOrUrl)) {
+        config.logger.debug(`Fetching ${filePathOrUrl} via HTTP`);
+        return readUrl(filePathOrUrl, config);
+    }
+    else if (filePathOrUrl.startsWith('{') || filePathOrUrl.startsWith('[')) {
+        return JSON.parse(filePathOrUrl);
+    }
+    else {
+        config.logger.debug(`Reading ${filePathOrUrl} from the file system`);
+        return readFile(filePathOrUrl, config);
+    }
+}
+function getSchema(filepath, logger) {
+    return jsYaml.DEFAULT_SCHEMA.extend([
+        new jsYaml.Type('!include', {
+            kind: 'scalar',
+            resolve(path) {
+                return typeof path === 'string';
+            },
+            construct(path) {
+                const newCwd = crossHelpers.path.dirname(filepath);
+                const absoluteFilePath = crossHelpers.path.isAbsolute(path) ? path : crossHelpers.path.resolve(newCwd, path);
+                const content = crossHelpers.fs.readFileSync(absoluteFilePath, 'utf8');
+                return loadYaml(absoluteFilePath, content, logger);
+            },
+        }),
+        new jsYaml.Type('!includes', {
+            kind: 'scalar',
+            resolve(path) {
+                return typeof path === 'string';
+            },
+            construct(path) {
+                const newCwd = crossHelpers.path.dirname(filepath);
+                const absoluteDirPath = crossHelpers.path.isAbsolute(path) ? path : crossHelpers.path.resolve(newCwd, path);
+                const files = crossHelpers.fs.readdirSync(absoluteDirPath);
+                return files.map(filePath => {
+                    const absoluteFilePath = crossHelpers.path.resolve(absoluteDirPath, filePath);
+                    const fileContent = crossHelpers.fs.readFileSync(absoluteFilePath, 'utf8');
+                    return loadYaml(absoluteFilePath, fileContent, logger);
+                });
+            },
+        }),
+    ]);
+}
+function loadYaml(filepath, content, logger) {
+    return jsYaml.load(content, {
+        filename: filepath,
+        schema: getSchema(filepath, logger),
+        onWarning(warning) {
+            logger.warn(`${filepath}: ${warning.message}\n${warning.stack}`);
+        },
+    });
+}
+async function readFile(fileExpression, { allowUnknownExtensions, cwd, fallbackFormat, importFn, logger }) {
+    const [filePath] = fileExpression.split('#');
+    if (/js$/.test(filePath) || /ts$/.test(filePath)) {
+        return loadFromModuleExportExpression(fileExpression, {
+            cwd,
+            importFn,
+            defaultExportName: 'default',
+        });
+    }
+    const actualPath = crossHelpers.path.isAbsolute(filePath) ? filePath : crossHelpers.path.join(cwd, filePath);
+    const rawResult = await crossHelpers.fs.promises.readFile(actualPath, 'utf-8');
+    if (/json$/.test(actualPath)) {
+        return JSON.parse(rawResult);
+    }
+    if (/yaml$/.test(actualPath) || /yml$/.test(actualPath)) {
+        return loadYaml(actualPath, rawResult, logger);
+    }
+    else if (fallbackFormat) {
+        switch (fallbackFormat) {
+            case 'json':
+                return JSON.parse(rawResult);
+            case 'yaml':
+                return loadYaml(actualPath, rawResult, logger);
+            case 'ts':
+            case 'js':
+                return importFn(actualPath);
+        }
+    }
+    else if (!allowUnknownExtensions) {
+        throw new Error(`Failed to parse JSON/YAML. Ensure file '${filePath}' has ` +
+            `the correct extension (i.e. '.json', '.yaml', or '.yml).`);
+    }
+    return rawResult;
+}
+async function readUrl(path, config) {
+    var _a, _b;
+    const { allowUnknownExtensions, fallbackFormat } = config || {};
+    config.headers = config.headers || {};
+    const response = await config.fetch(path, config);
+    const contentType = ((_a = response.headers) === null || _a === void 0 ? void 0 : _a.get('content-type')) || '';
+    const responseText = await response.text();
+    (_b = config === null || config === void 0 ? void 0 : config.logger) === null || _b === void 0 ? void 0 : _b.debug(`${path} returned `, responseText);
+    if (/json$/.test(path) || contentType.startsWith('application/json') || fallbackFormat === 'json') {
+        return JSON.parse(responseText);
+    }
+    else if (/yaml$/.test(path) ||
+        /yml$/.test(path) ||
+        contentType.includes('yaml') ||
+        contentType.includes('yml') ||
+        fallbackFormat === 'yaml') {
+        return loadYaml(path, responseText, config === null || config === void 0 ? void 0 : config.logger);
+    }
+    else if (!allowUnknownExtensions) {
+        throw new Error(`Failed to parse JSON/YAML. Ensure URL '${path}' has ` +
+            `the correct extension (i.e. '.json', '.yaml', or '.yml) or mime type in the response headers.`);
+    }
+    return responseText;
+}
+
+function withCancel(asyncIterable, onCancel) {
+    return new Proxy(asyncIterable, {
+        get(asyncIterable, prop) {
+            var _a;
+            if (prop === Symbol.asyncIterator) {
+                return function getIteratorWithCancel() {
+                    const asyncIterator = asyncIterable[Symbol.asyncIterator]();
+                    return {
+                        next: asyncIterator.next ? (...args) => asyncIterator.next(...args) : undefined,
+                        return: async (...args) => {
+                            onCancel();
+                            if (asyncIterator.return) {
+                                return asyncIterator.return(...args);
+                            }
+                            return {
+                                value: undefined,
+                                done: true,
+                            };
+                        },
+                        throw: asyncIterator.throw ? (...args) => asyncIterator.throw(...args) : undefined,
+                    };
+                };
+            }
+            return (_a = asyncIterable[prop]) === null || _a === void 0 ? void 0 : _a.bind(asyncIterable);
+        },
+    });
+}
+
+function extractResolvers(schema) {
+    const allResolvers = utils.getResolversFromSchema(schema);
+    const filteredResolvers = {};
+    for (const prop in allResolvers) {
+        if (!prop.startsWith('_')) {
+            filteredResolvers[prop] = allResolvers[prop];
+        }
+        if (typeof filteredResolvers === 'object') {
+            for (const fieldName in filteredResolvers[prop]) {
+                if (!prop.startsWith('_resolveType')) {
+                    filteredResolvers[prop][fieldName] = allResolvers[prop][fieldName];
+                }
+            }
+        }
+    }
+    return filteredResolvers;
+}
+
+function groupTransforms(transforms) {
+    const wrapTransforms = [];
+    const noWrapTransforms = [];
+    transforms === null || transforms === void 0 ? void 0 : transforms.forEach(transform => {
+        if (transform.noWrap) {
+            noWrapTransforms.push(transform);
+        }
+        else {
+            wrapTransforms.push(transform);
+        }
+    });
+    return { wrapTransforms, noWrapTransforms };
+}
+
+function applySchemaTransforms(originalWrappingSchema, subschemaConfig, transformedSchema, transforms) {
+    if (transforms === null || transforms === void 0 ? void 0 : transforms.length) {
+        return transforms.reduce((schema, transform) => 'transformSchema' in transform ? transform.transformSchema(schema, subschemaConfig, transformedSchema) : schema, originalWrappingSchema);
+    }
+    return originalWrappingSchema;
+}
+function applyRequestTransforms(originalRequest, delegationContext, transformationContext, transforms) {
+    transformationContext.contextMap = transformationContext.contextMap || new WeakMap();
+    const contextMap = transformationContext.contextMap;
+    transforms === null || transforms === void 0 ? void 0 : transforms.forEach(transform => {
+        if (!contextMap.has(transform)) {
+            contextMap.set(transform, {
+                nextIndex: 0,
+                paths: {},
+            });
+        }
+    });
+    return transforms.reduceRight((request, transform) => 'transformRequest' in transform
+        ? transform.transformRequest(request, delegationContext, contextMap.get(transform))
+        : request, originalRequest);
+}
+function applyResultTransforms(originalResult, delegationContext, transformationContext, transforms) {
+    const contextMap = transformationContext.contextMap;
+    return transforms.reduce((result, transform) => 'transformResult' in transform
+        ? transform.transformResult(result, delegationContext, contextMap.get(transform))
+        : result, originalResult);
+}
+
+async function pathExists(path) {
+    if (!path) {
+        return false;
+    }
+    try {
+        await crossHelpers.fs.promises.stat(path);
+        return true;
+    }
+    catch (e) {
+        if (e.toString().includes('ENOENT')) {
+            return false;
+        }
+        else {
+            throw e;
+        }
+    }
+}
+function writeJSON(path, data, replacer, space) {
+    const stringified = JSON.stringify(data, replacer, space);
+    return writeFile(path, stringified, 'utf-8');
+}
+const writeFile = async (path, ...args) => {
+    if (typeof path === 'string') {
+        const containingDir = crossHelpers.path.dirname(path);
+        if (!(await pathExists(containingDir))) {
+            await mkdir(containingDir);
+        }
+    }
+    return crossHelpers.fs.promises.writeFile(path, ...args);
+};
+async function mkdir(path, options = { recursive: true }) {
+    const ifExists = await pathExists(path);
+    if (!ifExists) {
+        await crossHelpers.fs.promises.mkdir(path, options);
+    }
+}
+async function rmdirs(dir) {
+    if (await pathExists(dir)) {
+        const entries = await crossHelpers.fs.promises.readdir(dir, { withFileTypes: true });
+        const results = await Promise.allSettled(entries.map(entry => {
+            const fullPath = crossHelpers.path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                return rmdirs(fullPath);
+            }
+            else {
+                return crossHelpers.fs.promises.unlink(fullPath);
+            }
+        }));
+        for (const result of results) {
+            if (result.status === 'rejected' && result.reason.code !== 'ENOENT') {
+                throw result.reason;
+            }
+        }
+        await crossHelpers.fs.promises.rmdir(dir);
+    }
+}
+
+function createLruCache(max, ttl) {
+    return lru(max, ttl);
+}
+
+const reservedNames = ['Query', 'Mutation', 'Subscription'];
+const KNOWN_CHARACTERS = {
+    '+': 'PLUS',
+    '-': 'MINUS',
+    '>': 'GREATER_THAN',
+    '<': 'LESS_THAN',
+    '=': 'EQUALS',
+    '&': 'AMPERSAND',
+    '|': 'PIPE',
+    '@': 'AT',
+    '*': 'STAR',
+    ':': 'COLON',
+    '{': 'LEFT_CURLY_BRACE',
+    '}': 'RIGHT_CURLY_BRACE',
+    '[': 'LEFT_SQUARE_BRACE',
+    ']': 'RIGHT_SQUARE_BRACE',
+    ',': 'COMMA',
+    '%': 'PERCENT',
+    $: 'DOLLAR',
+    '#': 'POUND',
+    '^': 'CARET',
+    '~': 'TILDE',
+    '?': 'QUESTION_MARK',
+    '!': 'EXCLAMATION_MARK',
+    '"': 'QUOTATION_MARK',
+    "'": 'SINGLE_QUOTE',
+    '\\': 'BACKSLASH',
+    '/': 'SLASH',
+    '.': 'DOT',
+    '`': 'BACKTICK',
+    ';': 'SEMICOLON',
+    '(': 'LEFT_PARENTHESIS',
+    ')': 'RIGHT_PARENTHESIS',
+};
+function getKnownCharacterOrCharCode(ch) {
+    return KNOWN_CHARACTERS[ch] || ch.charCodeAt(0).toString();
+}
+function sanitizeNameForGraphQL(unsafeName) {
+    let sanitizedName = unsafeName.trim();
+    if (!isNaN(parseInt(sanitizedName))) {
+        if (sanitizedName.startsWith('-')) {
+            sanitizedName = sanitizedName.replace('-', 'NEGATIVE_');
+        }
+        else {
+            sanitizedName = '_' + sanitizedName;
+        }
+    }
+    if (!/^[_a-zA-Z0-9]*$/.test(sanitizedName)) {
+        const unsanitizedName = sanitizedName;
+        sanitizedName = '';
+        for (const ch of unsanitizedName) {
+            if (/^[_a-zA-Z0-9]$/.test(ch)) {
+                sanitizedName += ch;
+            }
+            else if (ch === ' ' || ch === '-' || ch === '.') {
+                sanitizedName += '_';
+            }
+            else {
+                sanitizedName += `_${getKnownCharacterOrCharCode(ch)}_`;
+            }
+        }
+    }
+    // Names cannot start with __
+    if (sanitizedName.startsWith('__')) {
+        sanitizedName = sanitizedName.replace('__', '_0');
+    }
+    if (reservedNames.includes(sanitizedName)) {
+        sanitizedName += '_';
+    }
+    return sanitizedName;
+}
+
+function withFilter(asyncIteratorFn, filterFn) {
+    return async (rootValue, args, context, info) => {
+        const asyncIterator = await asyncIteratorFn(rootValue, args, context, info);
+        const getNextPromise = () => {
+            return new Promise((resolve, reject) => {
+                const inner = () => {
+                    asyncIterator
+                        .next()
+                        .then(payload => {
+                        if (payload.done === true) {
+                            resolve(payload);
+                            return;
+                        }
+                        Promise.resolve(filterFn(payload.value, args, context, info))
+                            .catch(() => false) // We ignore errors from filter function
+                            .then(filterResult => {
+                            if (filterResult === true) {
+                                resolve(payload);
+                                return;
+                            }
+                            // Skip the current value and wait for the next one
+                            inner();
+                        })
+                            .catch(() => false); // We ignore errors from filter function;
+                    })
+                        .catch(err => {
+                        reject(err);
+                    });
+                };
+                inner();
+            });
+        };
+        const asyncIterator2 = {
+            next() {
+                return getNextPromise();
+            },
+            return() {
+                return asyncIterator.return();
+            },
+            throw(error) {
+                return asyncIterator.throw(error);
+            },
+            [Symbol.asyncIterator]() {
+                return this;
+            },
+        };
+        return asyncIterator2;
+    };
+}
+
+function getTypeByPath(type, path) {
+    if ('ofType' in type) {
+        return getTypeByPath(graphql.getNamedType(type), path);
+    }
+    if (path.length === 0) {
+        return graphql.getNamedType(type);
+    }
+    if (!('getFields' in type)) {
+        throw new Error(`${type} cannot have a path ${path.join('.')}`);
+    }
+    const fieldMap = type.getFields();
+    const currentFieldName = path[0];
+    // Might be an index of an array
+    if (!Number.isNaN(parseInt(currentFieldName))) {
+        return getTypeByPath(type, path.slice(1));
+    }
+    const field = fieldMap[currentFieldName];
+    if (!(field === null || field === void 0 ? void 0 : field.type)) {
+        throw new Error(`${type}.${currentFieldName} is not a valid field.`);
+    }
+    return getTypeByPath(field.type, path.slice(1));
+}
+function generateSelectionSetFactory(schema, additionalResolver) {
+    if (additionalResolver.sourceSelectionSet) {
+        return () => utils.parseSelectionSet(additionalResolver.sourceSelectionSet);
+        // If result path provided without a selectionSet
+    }
+    else if (additionalResolver.result) {
+        const resultPath = toPath(additionalResolver.result);
+        let abstractResultTypeName;
+        const sourceType = schema.getType(additionalResolver.sourceTypeName);
+        const sourceTypeFields = sourceType.getFields();
+        const sourceField = sourceTypeFields[additionalResolver.sourceFieldName];
+        const resultFieldType = getTypeByPath(sourceField.type, resultPath);
+        if (graphql.isAbstractType(resultFieldType)) {
+            if (additionalResolver.resultType) {
+                abstractResultTypeName = additionalResolver.resultType;
+            }
+            else {
+                const targetType = schema.getType(additionalResolver.targetTypeName);
+                const targetTypeFields = targetType.getFields();
+                const targetField = targetTypeFields[additionalResolver.targetFieldName];
+                const targetFieldType = graphql.getNamedType(targetField.type);
+                abstractResultTypeName = targetFieldType === null || targetFieldType === void 0 ? void 0 : targetFieldType.name;
+            }
+            if (abstractResultTypeName !== resultFieldType.name) {
+                const abstractResultType = schema.getType(abstractResultTypeName);
+                if ((graphql.isInterfaceType(abstractResultType) || graphql.isObjectType(abstractResultType)) &&
+                    !schema.isSubType(resultFieldType, abstractResultType)) {
+                    throw new Error(`${additionalResolver.sourceTypeName}.${additionalResolver.sourceFieldName}.${resultPath.join('.')} doesn't implement ${abstractResultTypeName}.}`);
+                }
+            }
+        }
+        return (subtree) => {
+            let finalSelectionSet = subtree;
+            let isLastResult = true;
+            const resultPathReversed = [...resultPath].reverse();
+            for (const pathElem of resultPathReversed) {
+                // Ensure the path elem is not array index
+                if (Number.isNaN(parseInt(pathElem))) {
+                    if (isLastResult && abstractResultTypeName && abstractResultTypeName !== resultFieldType.name) {
+                        finalSelectionSet = {
+                            kind: graphql.Kind.SELECTION_SET,
+                            selections: [
+                                {
+                                    kind: graphql.Kind.INLINE_FRAGMENT,
+                                    typeCondition: {
+                                        kind: graphql.Kind.NAMED_TYPE,
+                                        name: {
+                                            kind: graphql.Kind.NAME,
+                                            value: abstractResultTypeName,
+                                        },
+                                    },
+                                    selectionSet: finalSelectionSet,
+                                },
+                            ],
+                        };
+                    }
+                    finalSelectionSet = {
+                        kind: graphql.Kind.SELECTION_SET,
+                        selections: [
+                            {
+                                // we create a wrapping AST Field
+                                kind: graphql.Kind.FIELD,
+                                name: {
+                                    kind: graphql.Kind.NAME,
+                                    value: pathElem,
+                                },
+                                // Inside the field selection
+                                selectionSet: finalSelectionSet,
+                            },
+                        ],
+                    };
+                    isLastResult = false;
+                }
+            }
+            return finalSelectionSet;
+        };
+    }
+    return undefined;
+}
+function generateValuesFromResults(resultExpression) {
+    return function valuesFromResults(result) {
+        if (Array.isArray(result)) {
+            return result.map(valuesFromResults);
+        }
+        return lodashGet(result, resultExpression);
+    };
+}
+function resolveAdditionalResolversWithoutImport(additionalResolver, pubsub) {
+    const baseOptions = {};
+    if (additionalResolver.result) {
+        baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
+    }
+    if ('pubsubTopic' in additionalResolver) {
+        return {
+            [additionalResolver.targetTypeName]: {
+                [additionalResolver.targetFieldName]: {
+                    subscribe: withFilter((root, args, context, info) => {
+                        const resolverData = { root, args, context, info, env: crossHelpers.process.env };
+                        const topic = stringInterpolation.stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
+                        return pubsub.asyncIterator(topic);
+                    }, (root, args, context, info) => {
+                        // eslint-disable-next-line no-new-func
+                        return additionalResolver.filterBy ? new Function(`return ${additionalResolver.filterBy}`)() : true;
+                    }),
+                    resolve: (payload) => {
+                        if (baseOptions.valuesFromResults) {
+                            return baseOptions.valuesFromResults(payload);
+                        }
+                        return payload;
+                    },
+                },
+            },
+        };
+    }
+    else if ('keysArg' in additionalResolver) {
+        return {
+            [additionalResolver.targetTypeName]: {
+                [additionalResolver.targetFieldName]: {
+                    selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
+                    resolve: async (root, args, context, info) => {
+                        if (!baseOptions.selectionSet) {
+                            baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                        }
+                        const resolverData = { root, args, context, info, env: crossHelpers.process.env };
+                        const targetArgs = {};
+                        for (const argPath in additionalResolver.additionalArgs || {}) {
+                            lodashSet(targetArgs, argPath, stringInterpolation.stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData));
+                        }
+                        const options = {
+                            ...baseOptions,
+                            root,
+                            context,
+                            info,
+                            argsFromKeys: (keys) => {
+                                const args = {};
+                                lodashSet(args, additionalResolver.keysArg, keys);
+                                Object.assign(args, targetArgs);
+                                return args;
+                            },
+                            key: lodashGet(root, additionalResolver.keyField),
+                        };
+                        return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][additionalResolver.sourceFieldName](options);
+                    },
+                },
+            },
+        };
+    }
+    else if ('targetTypeName' in additionalResolver) {
+        return {
+            [additionalResolver.targetTypeName]: {
+                [additionalResolver.targetFieldName]: {
+                    selectionSet: additionalResolver.requiredSelectionSet,
+                    resolve: (root, args, context, info) => {
+                        // Assert source exists
+                        if (!context[additionalResolver.sourceName]) {
+                            throw new Error(`No source found named "${additionalResolver.sourceName}"`);
+                        }
+                        if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
+                            throw new Error(`No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
+                                `It should be one of the following; ${Object.keys(context[additionalResolver.sourceName]).join(',')})}}`);
+                        }
+                        if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName][additionalResolver.sourceFieldName]) {
+                            throw new Error(`No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`);
+                        }
+                        if (!baseOptions.selectionSet) {
+                            baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                        }
+                        const resolverData = { root, args, context, info, env: crossHelpers.process.env };
+                        const targetArgs = {};
+                        for (const argPath in additionalResolver.sourceArgs) {
+                            lodashSet(targetArgs, argPath, stringInterpolation.stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData));
+                        }
+                        const options = {
+                            ...baseOptions,
+                            root,
+                            args: targetArgs,
+                            context,
+                            info,
+                        };
+                        return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][additionalResolver.sourceFieldName](options);
+                    },
+                },
+            },
+        };
+    }
+    else {
+        return additionalResolver;
+    }
+}
+function resolveAdditionalResolvers(baseDir, additionalResolvers, importFn, pubsub) {
+    return Promise.all((additionalResolvers || []).map(async (additionalResolver) => {
+        if (typeof additionalResolver === 'string') {
+            const resolvers = await loadFromModuleExportExpression(additionalResolver, {
+                cwd: baseDir,
+                defaultExportName: 'resolvers',
+                importFn,
+            });
+            if (!resolvers) {
+                console.warn(`Unable to load resolvers from file: ${additionalResolver}`);
+                return {};
+            }
+            return resolvers;
+        }
+        else {
+            const baseOptions = {};
+            if (additionalResolver.result) {
+                baseOptions.valuesFromResults = generateValuesFromResults(additionalResolver.result);
+            }
+            if ('pubsubTopic' in additionalResolver) {
+                return {
+                    [additionalResolver.targetTypeName]: {
+                        [additionalResolver.targetFieldName]: {
+                            subscribe: withFilter((root, args, context, info) => {
+                                const resolverData = { root, args, context, info, env: crossHelpers.process.env };
+                                const topic = stringInterpolation.stringInterpolator.parse(additionalResolver.pubsubTopic, resolverData);
+                                return pubsub.asyncIterator(topic);
+                            }, (root, args, context, info) => {
+                                // eslint-disable-next-line no-new-func
+                                return additionalResolver.filterBy ? new Function(`return ${additionalResolver.filterBy}`)() : true;
+                            }),
+                            resolve: (payload) => {
+                                if (baseOptions.valuesFromResults) {
+                                    return baseOptions.valuesFromResults(payload);
+                                }
+                                return payload;
+                            },
+                        },
+                    },
+                };
+            }
+            else if ('keysArg' in additionalResolver) {
+                return {
+                    [additionalResolver.targetTypeName]: {
+                        [additionalResolver.targetFieldName]: {
+                            selectionSet: additionalResolver.requiredSelectionSet || `{ ${additionalResolver.keyField} }`,
+                            resolve: async (root, args, context, info) => {
+                                if (!baseOptions.selectionSet) {
+                                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                                }
+                                const resolverData = { root, args, context, info, env: crossHelpers.process.env };
+                                const targetArgs = {};
+                                for (const argPath in additionalResolver.additionalArgs || {}) {
+                                    lodashSet(targetArgs, argPath, stringInterpolation.stringInterpolator.parse(additionalResolver.additionalArgs[argPath], resolverData));
+                                }
+                                const options = {
+                                    ...baseOptions,
+                                    root,
+                                    context,
+                                    info,
+                                    argsFromKeys: (keys) => {
+                                        const args = {};
+                                        lodashSet(args, additionalResolver.keysArg, keys);
+                                        Object.assign(args, targetArgs);
+                                        return args;
+                                    },
+                                    key: lodashGet(root, additionalResolver.keyField),
+                                };
+                                return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][additionalResolver.sourceFieldName](options);
+                            },
+                        },
+                    },
+                };
+            }
+            else if ('targetTypeName' in additionalResolver) {
+                return {
+                    [additionalResolver.targetTypeName]: {
+                        [additionalResolver.targetFieldName]: {
+                            selectionSet: additionalResolver.requiredSelectionSet,
+                            resolve: (root, args, context, info) => {
+                                // Assert source exists
+                                if (!context[additionalResolver.sourceName]) {
+                                    throw new Error(`No source found named "${additionalResolver.sourceName}"`);
+                                }
+                                if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName]) {
+                                    throw new Error(`No root type found named "${additionalResolver.sourceTypeName}" exists in the source ${additionalResolver.sourceName}\n` +
+                                        `It should be one of the following; ${Object.keys(context[additionalResolver.sourceName]).join(',')})}}`);
+                                }
+                                if (!context[additionalResolver.sourceName][additionalResolver.sourceTypeName][additionalResolver.sourceFieldName]) {
+                                    throw new Error(`No field named "${additionalResolver.sourceFieldName}" exists in the type ${additionalResolver.sourceTypeName} from the source ${additionalResolver.sourceName}`);
+                                }
+                                if (!baseOptions.selectionSet) {
+                                    baseOptions.selectionSet = generateSelectionSetFactory(info.schema, additionalResolver);
+                                }
+                                const resolverData = { root, args, context, info, env: crossHelpers.process.env };
+                                const targetArgs = {};
+                                for (const argPath in additionalResolver.sourceArgs) {
+                                    lodashSet(targetArgs, argPath, stringInterpolation.stringInterpolator.parse(additionalResolver.sourceArgs[argPath].toString(), resolverData));
+                                }
+                                const options = {
+                                    ...baseOptions,
+                                    root,
+                                    args: targetArgs,
+                                    context,
+                                    info,
+                                };
+                                return context[additionalResolver.sourceName][additionalResolver.sourceTypeName][additionalResolver.sourceFieldName](options);
+                            },
+                        },
+                    },
+                };
+            }
+            else {
+                return additionalResolver;
+            }
+        }
+    }));
+}
+
+const ANSI_CODES = {
+    black: '\x1b[30m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m',
+    white: '\x1b[37m',
+    reset: '\x1b[0m',
+    bold: '\x1b[1m',
+    orange: '\x1b[48:5:166m',
+};
+const warnColor = msg => ANSI_CODES.orange + msg + ANSI_CODES.reset;
+const infoColor = msg => ANSI_CODES.cyan + msg + ANSI_CODES.reset;
+const errorColor = msg => ANSI_CODES.red + msg + ANSI_CODES.reset;
+const debugColor = msg => ANSI_CODES.magenta + msg + ANSI_CODES.reset;
+const titleBold = msg => ANSI_CODES.bold + msg + ANSI_CODES.reset;
+class DefaultLogger {
+    constructor(name) {
+        this.name = name;
+    }
+    getLoggerMessage(...args) {
+        return args
+            .flat(Infinity)
+            .map(arg => {
+            if (typeof arg === 'string') {
+                if (arg.length > 100 && !this.isDebug) {
+                    return arg.slice(0, 100) + '...';
+                }
+                return arg;
+            }
+            else if (typeof arg === 'object' && (arg === null || arg === void 0 ? void 0 : arg.stack) != null) {
+                return arg.stack;
+            }
+            return crossHelpers.util.inspect(arg);
+        })
+            .join(` `);
+    }
+    handleLazyMessage(...lazyArgs) {
+        const flattenedArgs = lazyArgs.flat(Infinity).flatMap(arg => {
+            if (typeof arg === 'function') {
+                return arg();
+            }
+            return arg;
+        });
+        return this.getLoggerMessage(flattenedArgs);
+    }
+    get isDebug() {
+        return (crossHelpers.process.env.DEBUG === '1' ||
+            globalThis.DEBUG === '1' ||
+            this.name.includes(crossHelpers.process.env.DEBUG || globalThis.DEBUG));
+    }
+    get prefix() {
+        return this.name ? titleBold(this.name) : ``;
+    }
+    log(...args) {
+        const message = this.getLoggerMessage(...args);
+        return console.log(`${this.prefix} ${message}`);
+    }
+    warn(...args) {
+        const message = this.getLoggerMessage(...args);
+        const fullMessage = `⚠️ ${this.prefix} ${warnColor(message)}`;
+        if (console.warn) {
+            console.warn(fullMessage);
+        }
+        else {
+            console.log(fullMessage);
+        }
+    }
+    info(...args) {
+        const message = this.getLoggerMessage(...args);
+        const fullMessage = `💡 ${this.prefix} ${infoColor(message)}`;
+        if (console.info) {
+            console.info(fullMessage);
+        }
+        else {
+            console.log(fullMessage);
+        }
+    }
+    error(...args) {
+        const message = this.getLoggerMessage(...args);
+        const fullMessage = `💥 ${this.prefix} ${errorColor(message)}`;
+        console.log(fullMessage);
+    }
+    debug(...lazyArgs) {
+        if (this.isDebug) {
+            const message = this.handleLazyMessage(lazyArgs);
+            const fullMessage = `🐛 ${this.prefix} ${debugColor(message)}`;
+            if (console.debug) {
+                console.debug(fullMessage);
+            }
+            else {
+                console.log(fullMessage);
+            }
+        }
+    }
+    child(name) {
+        return new DefaultLogger(this.name ? `${this.name} - ${name}` : name);
+    }
+}
+
+const parseCache = createLruCache(1000, 3600);
+const printCache = createLruCache(1000, 3600);
+function parseWithCache(sdl) {
+    const trimmedSdl = sdl.trim();
+    let document = parseCache.get(trimmedSdl);
+    if (!document) {
+        document = graphql.parse(trimmedSdl, { noLocation: true });
+        parseCache.set(trimmedSdl, document);
+        printCache.set(JSON.stringify(document), trimmedSdl);
+    }
+    return document;
+}
+const printWithCache = utils.memoize1(function printWithCache(document) {
+    const stringifedDocumentJson = JSON.stringify(document);
+    let sdl = printCache.get(stringifedDocumentJson);
+    if (!sdl) {
+        sdl = graphql.print(document).trim();
+        printCache.set(stringifedDocumentJson, sdl);
+        parseCache.set(sdl, document);
+    }
+    return sdl;
+});
+function gql([sdl], ...args) {
+    let result = sdl;
+    for (const arg of args || []) {
+        if (typeof arg === 'string') {
+            result += arg;
+        }
+        else {
+            result += printWithCache(arg);
+        }
+    }
+    return parseWithCache(result);
+}
+
+class PubSub {
+    constructor() {
+        this.subIdListenerMap = new Map();
+        this.listenerEventMap = new Map();
+        this.eventNameListenersMap = new Map();
+    }
+    publish(triggerName, detail) {
+        const eventNameListeners = this.eventNameListenersMap.get(triggerName);
+        if (eventNameListeners) {
+            Promise.allSettled([...eventNameListeners].map(listener => listener(detail))).catch(e => console.error(e));
+        }
+    }
+    subscribe(triggerName, onMessage) {
+        let eventNameListeners = this.eventNameListenersMap.get(triggerName);
+        if (!eventNameListeners) {
+            eventNameListeners = new Set();
+            this.eventNameListenersMap.set(triggerName, eventNameListeners);
+        }
+        const subId = Date.now();
+        eventNameListeners.add(onMessage);
+        this.subIdListenerMap.set(subId, onMessage);
+        this.listenerEventMap.set(onMessage, triggerName);
+        return subId;
+    }
+    unsubscribe(subId) {
+        const listener = this.subIdListenerMap.get(subId);
+        if (listener) {
+            this.subIdListenerMap.delete(subId);
+            const eventName = this.listenerEventMap.get(listener);
+            if (eventName) {
+                const eventNameListeners = this.eventNameListenersMap.get(eventName);
+                if (eventNameListeners) {
+                    eventNameListeners.delete(listener);
+                }
+            }
+        }
+        this.listenerEventMap.delete(listener);
+    }
+    asyncIterator(triggerName) {
+        return utils.observableToAsyncIterable({
+            subscribe: observer => {
+                const subId = this.subscribe(triggerName, data => observer.next(data));
+                return {
+                    unsubscribe: () => this.unsubscribe(subId),
+                };
+            },
+        });
+    }
+}
+
+function fileUriToPath(uri) {
+    if (typeof uri !== 'string' || uri.length <= 7 || uri.substring(0, 7) !== 'file://') {
+        throw new TypeError('must pass in a file:// URI to convert to a file path');
+    }
+    const rest = decodeURI(uri.substring(7));
+    const firstSlash = rest.indexOf('/');
+    let host = rest.substring(0, firstSlash);
+    let path = rest.substring(firstSlash + 1);
+    // 2.  Scheme Definition
+    // As a special case, <host> can be the string "localhost" or the empty
+    // string; this is interpreted as "the machine from which the URL is
+    // being interpreted".
+    if (host === 'localhost') {
+        host = '';
+    }
+    if (host) {
+        host = crossHelpers.path.sep + crossHelpers.path.sep + host;
+    }
+    // 3.2  Drives, drive letters, mount points, file system root
+    // Drive letters are mapped into the top of a file URI in various ways,
+    // depending on the implementation; some applications substitute
+    // vertical bar ("|") for the colon after the drive letter, yielding
+    // "file:///c|/tmp/test.txt".  In some cases, the colon is left
+    // unchanged, as in "file:///c:/tmp/test.txt".  In other cases, the
+    // colon is simply omitted, as in "file:///c/tmp/test.txt".
+    path = path.replace(/^(.+)\|/, '$1:');
+    // for Windows, we need to invert the path separators from what a URI uses
+    if (crossHelpers.path.sep === '\\') {
+        path = path.replace(/\//g, '\\');
+    }
+    if (/^.+:/.test(path)) ;
+    else {
+        // unix path…
+        path = crossHelpers.path.sep + path;
+    }
+    return host + path;
+}
+function fileURLToPath(url) {
+    if (url === null || url === void 0 ? void 0 : url.startsWith('file://')) {
+        return fileUriToPath(url);
+    }
+    return url || '';
+}
+
+function headersToJSON(headers) {
+    const obj = {};
+    headers.forEach((value, key) => {
+        obj[key] = value;
+    });
+    return obj;
+}
+function getHeadersObj(headers) {
+    return new Proxy({}, {
+        get(_target, name) {
+            if (name === 'toJSON') {
+                return () => headersToJSON(headers);
+            }
+            return headers.get(name.toString());
+        },
+        has(_target, name) {
+            if (name === 'toJSON') {
+                return true;
+            }
+            return headers.has(name.toString());
+        },
+        ownKeys(_target) {
+            const keys = [];
+            headers.forEach((_value, name) => {
+                keys.push(name);
+            });
+            return keys;
+        },
+        set(_target, name, value) {
+            headers.set(name.toString(), value);
+            return true;
+        },
+        deleteProperty(_target, name) {
+            headers.delete(name.toString());
+            return true;
+        },
+        preventExtensions() {
+            return true;
+        },
+    });
+}
+
+exports.DefaultLogger = DefaultLogger;
+exports.PubSub = PubSub;
+exports.applyRequestTransforms = applyRequestTransforms;
+exports.applyResultTransforms = applyResultTransforms;
+exports.applySchemaTransforms = applySchemaTransforms;
+exports.createLruCache = createLruCache;
+exports.debugColor = debugColor;
+exports.defaultImportFn = defaultImportFn;
+exports.errorColor = errorColor;
+exports.extractResolvers = extractResolvers;
+exports.fileURLToPath = fileURLToPath;
+exports.getHeadersObj = getHeadersObj;
+exports.gql = gql;
+exports.groupTransforms = groupTransforms;
+exports.infoColor = infoColor;
+exports.isUrl = isUrl;
+exports.loadFromModuleExportExpression = loadFromModuleExportExpression;
+exports.loadYaml = loadYaml;
+exports.mkdir = mkdir;
+exports.parseWithCache = parseWithCache;
+exports.pathExists = pathExists;
+exports.printWithCache = printWithCache;
+exports.readFile = readFile;
+exports.readFileOrUrl = readFileOrUrl;
+exports.readUrl = readUrl;
+exports.resolveAdditionalResolvers = resolveAdditionalResolvers;
+exports.resolveAdditionalResolversWithoutImport = resolveAdditionalResolversWithoutImport;
+exports.rmdirs = rmdirs;
+exports.sanitizeNameForGraphQL = sanitizeNameForGraphQL;
+exports.titleBold = titleBold;
+exports.warnColor = warnColor;
+exports.withCancel = withCancel;
+exports.writeFile = writeFile;
+exports.writeJSON = writeJSON;

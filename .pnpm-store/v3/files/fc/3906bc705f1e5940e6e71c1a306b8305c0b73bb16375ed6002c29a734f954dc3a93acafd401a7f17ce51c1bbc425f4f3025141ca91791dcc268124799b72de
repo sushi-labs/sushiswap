@@ -1,0 +1,1 @@
+const withCookies=o=>{o.cookies={};try{o.cookies=(o.headers.get("Cookie")||"").split(/;\s*/).map(o=>o.split("=")).reduce((o,[e,i])=>(o[e]=i,o),{})}catch(o){}};module.exports={withCookies:withCookies};

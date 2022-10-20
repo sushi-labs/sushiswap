@@ -1,0 +1,21 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MAC_LENGTH = exports.IV_LENGTH = exports.KEY_LENGTH = exports.PREFIX_LENGTH = exports.RIPEMD160_NODE_ALGO = exports.SHA512_NODE_ALGO = exports.SHA256_NODE_ALGO = exports.HMAC_NODE_ALGO = exports.AES_NODE_ALGO = exports.SHA512_BROWSER_ALGO = exports.SHA256_BROWSER_ALGO = exports.HMAC_BROWSER = exports.HMAC_BROWSER_ALGO = exports.AES_BROWSER_ALGO = exports.HMAC_LENGTH = exports.AES_LENGTH = void 0;
+const length_1 = require("./length");
+exports.AES_LENGTH = length_1.LENGTH_256;
+exports.HMAC_LENGTH = length_1.LENGTH_256;
+exports.AES_BROWSER_ALGO = "AES-CBC";
+exports.HMAC_BROWSER_ALGO = `SHA-${exports.AES_LENGTH}`;
+exports.HMAC_BROWSER = "HMAC";
+exports.SHA256_BROWSER_ALGO = "SHA-256";
+exports.SHA512_BROWSER_ALGO = "SHA-512";
+exports.AES_NODE_ALGO = `aes-${exports.AES_LENGTH}-cbc`;
+exports.HMAC_NODE_ALGO = `sha${exports.HMAC_LENGTH}`;
+exports.SHA256_NODE_ALGO = "sha256";
+exports.SHA512_NODE_ALGO = "sha512";
+exports.RIPEMD160_NODE_ALGO = "ripemd160";
+exports.PREFIX_LENGTH = length_1.LENGTH_1;
+exports.KEY_LENGTH = length_1.LENGTH_32;
+exports.IV_LENGTH = length_1.LENGTH_16;
+exports.MAC_LENGTH = length_1.LENGTH_32;
+//# sourceMappingURL=default.js.map

@@ -1,0 +1,43 @@
+{
+  "name": "@sushiswap/core-sdk",
+  "version": "1.0.0-canary.110",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "module": "dist/core-sdk.esm.js",
+  "repository": {
+    "url": "sushiswap/sdk",
+    "directory": "packages/core-sdk"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "lint": "tsdx lint src test",
+    "build": "tsdx build",
+    "watch": "tsdx watch",
+    "test": "tsdx test --passWithNoTests",
+    "prepublishOnly": "npx tsdx build"
+  },
+  "dependencies": {
+    "@ethersproject/address": "^5.4.0",
+    "@ethersproject/bignumber": "^5.4.0",
+    "@ethersproject/providers": "^5.4.0",
+    "@ethersproject/solidity": "^5.4.0",
+    "big.js": "^6.1.1",
+    "decimal.js-light": "^2.5.0",
+    "jsbi": "^4.1.0",
+    "tiny-invariant": "^1.1.0",
+    "tiny-warning": "^1.0.0",
+    "toformat": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/big.js": "^6.1.0",
+    "tsdx": "^0.14.1"
+  },
+  "gitHead": "c6fd262943b44ea035d1ab826403cf74aacf58b3"
+}

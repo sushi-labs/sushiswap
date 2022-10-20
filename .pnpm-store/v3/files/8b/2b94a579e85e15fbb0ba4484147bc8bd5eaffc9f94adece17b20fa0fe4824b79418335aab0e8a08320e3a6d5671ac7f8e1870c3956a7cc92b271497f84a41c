@@ -1,0 +1,1 @@
+{"version":3,"file":"reactBatchedUpdates.js","sources":["../../src/reactBatchedUpdates.ts"],"sourcesContent":["import * as ReactDOM from 'react-dom'\nexport const unstable_batchedUpdates = ReactDOM.unstable_batchedUpdates\n"],"names":["unstable_batchedUpdates","ReactDOM"],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;AACaA,MAAAA,uBAAuB,GAAGC,mBAAQ,CAACD;;;;"}

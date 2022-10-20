@@ -1,0 +1,23 @@
+{
+  "name": "btoa",
+  "homepage": "https://git.coolaj86.com/coolaj86/btoa.js.git",
+  "description": "btoa for Node.JS (it's a one-liner)",
+  "repository": {
+    "type": "git",
+    "url": "git://git.coolaj86.com/coolaj86/btoa.js.git"
+  },
+  "keywords": [
+    "btoa",
+    "browser"
+  ],
+  "author": "AJ ONeal <coolaj86@gmail.com> (https://coolaj86.com)",
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "bin": {
+    "btoa": "bin/btoa.js"
+  },
+  "main": "index",
+  "license": "(MIT OR Apache-2.0)",
+  "version": "1.2.1"
+}

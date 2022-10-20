@@ -1,0 +1,23 @@
+{
+  "name": "@whatwg-node/events",
+  "version": "0.0.2",
+  "description": "Cross Platform Smart Event API Ponyfill",
+  "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/whatwg-node",
+    "directory": "packages/events"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "main": "dist/node-ponyfill.js",
+  "browser": "dist/global-ponyfill.js",
+  "react-native": "dist/global-ponyfill.js",
+  "types": "dist/index.d.ts",
+  "denoify": {
+    "index": "dist/deno-ponyfill.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

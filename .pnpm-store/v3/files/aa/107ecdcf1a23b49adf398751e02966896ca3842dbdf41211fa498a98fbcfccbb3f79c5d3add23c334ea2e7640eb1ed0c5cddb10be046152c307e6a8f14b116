@@ -1,0 +1,42 @@
+import { TableFeature } from '../core/instance';
+import { OnChangeFn, TableGenerics, TableInstance, RowModel, Updater } from '../types';
+export declare type PaginationState = {
+    pageIndex: number;
+    pageSize: number;
+    pageCount?: number;
+};
+export declare type PaginationTableState = {
+    pagination: PaginationState;
+};
+export declare type PaginationInitialTableState = {
+    pagination?: Partial<PaginationState>;
+};
+export declare type PaginationOptions<TGenerics extends TableGenerics> = {
+    manualPagination?: boolean;
+    onPaginationChange?: OnChangeFn<PaginationState>;
+    autoResetPageIndex?: boolean;
+    getPaginationRowModel?: (instance: TableInstance<TGenerics>) => () => RowModel<TGenerics>;
+};
+export declare type PaginationDefaultOptions = {
+    onPaginationChange: OnChangeFn<PaginationState>;
+};
+export declare type PaginationInstance<TGenerics extends TableGenerics> = {
+    _autoResetPageIndex: () => void;
+    setPagination: (updater: Updater<PaginationState>) => void;
+    resetPagination: (defaultState?: boolean) => void;
+    setPageIndex: (updater: Updater<number>) => void;
+    resetPageIndex: (defaultState?: boolean) => void;
+    setPageSize: (updater: Updater<number>) => void;
+    resetPageSize: (defaultState?: boolean) => void;
+    setPageCount: (updater: Updater<number>) => void;
+    getPageOptions: () => number[];
+    getCanPreviousPage: () => boolean;
+    getCanNextPage: () => boolean;
+    previousPage: () => void;
+    nextPage: () => void;
+    getPrePaginationRowModel: () => RowModel<TGenerics>;
+    getPaginationRowModel: () => RowModel<TGenerics>;
+    _getPaginationRowModel?: () => RowModel<TGenerics>;
+    getPageCount: () => number;
+};
+export declare const Pagination: TableFeature;

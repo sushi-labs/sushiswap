@@ -1,0 +1,10 @@
+import "@nomiclabs/hardhat-ethers";
+import "./type-extensions";
+export declare const PluginName = "hardhat-tenderly";
+export declare const setup: (cfg?: {
+    automaticVerifications: boolean;
+}) => void;
+export declare const NetworkMap: Record<string, string>;
+export declare const DefaultChainId = "31337";
+export declare const ReverseNetworkMap: Record<string, string>;
+//# sourceMappingURL=index.d.ts.map

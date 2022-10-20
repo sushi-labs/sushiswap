@@ -1,0 +1,21 @@
+{
+  "name": "graphql-import-node",
+  "version": "0.0.5",
+  "main": "register.js",
+  "types": "register.d.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-import-node"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "graphql": "14.2.1",
+    "mocha": "6.1.4"
+  },
+  "peerDependencies": {
+    "graphql": "*"
+  }
+}

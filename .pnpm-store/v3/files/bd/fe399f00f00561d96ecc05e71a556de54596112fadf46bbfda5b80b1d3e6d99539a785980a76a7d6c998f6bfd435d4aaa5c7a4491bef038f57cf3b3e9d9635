@@ -1,0 +1,11 @@
+import { GraphQLInputType, GraphQLOutputType, GraphQLNamedType, KindEnum, GraphQLSchema, GraphQLError, DocumentNode, FieldNode } from 'graphql';
+export declare function safeChangeForField(oldType: GraphQLOutputType, newType: GraphQLOutputType): boolean;
+export declare function safeChangeForInputValue(oldType: GraphQLInputType, newType: GraphQLInputType): boolean;
+export declare function getKind(type: GraphQLNamedType): KindEnum;
+export declare function getTypePrefix(type: GraphQLNamedType): string;
+export declare function isPrimitive(type: GraphQLNamedType | string): boolean;
+export declare function isForIntrospection(type: GraphQLNamedType | string): boolean;
+export declare function findDeprecatedUsages(schema: GraphQLSchema, ast: DocumentNode): Array<GraphQLError>;
+export declare function removeFieldIfDirectives(node: FieldNode, directiveNames: string[]): FieldNode | null;
+export declare function removeDirectives(node: FieldNode, directiveNames: string[]): FieldNode;
+export declare function getReachableTypes(schema: GraphQLSchema): Set<string>;

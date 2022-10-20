@@ -1,0 +1,54 @@
+{
+  "name": "@sushiswap/default-token-list",
+  "version": "36.0.0",
+  "description": "◦ The SushiSwap default token list",
+  "main": "build/sushiswap-default.tokenlist.json",
+  "files": [
+    "build/sushiswap-default.tokenlist.json"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sushiswap/list.git",
+    "directory": "lists/token-lists/default-token-list"
+  },
+  "keywords": [
+    "sushiswap",
+    "default",
+    "token",
+    "list"
+  ],
+  "author": "Matthew Lilley <hello@matthewlilley.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/sushiswap/default-token-list/issues"
+  },
+  "homepage": "https://github.com/sushiswap/default-token-list#readme",
+  "devDependencies": {
+    "@ethersproject/address": "^5.0.2",
+    "@ethersproject/solidity": "^5.3.0",
+    "@octokit/rest": "^18.6.2",
+    "@sushiswap/core-sdk": "^1.0.0-canary.134",
+    "@uniswap/token-lists": "1.0.0-beta.30",
+    "ajv": "^6.12.3",
+    "chai": "^4.2.0",
+    "graphql": "^16.3.0",
+    "graphql-request": "^4.1.0",
+    "lodash": "^4.17.21",
+    "mocha": "^8.0.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2",
+    "xlsx": "^0.17.0",
+    "@types/node": "^17.0.21",
+    "config": "0.0.0",
+    "builder": "0.0.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "build": "rimraf build && mkdir -p build && node internal/write.js > build/sushiswap-default.tokenlist.json",
+    "sync": "node internal/sync.js",
+    "volume": "ts-node ./internal/tokenVolumes.ts",
+    "ci:version": "pnpm version minor",
+    "ci:publish": "pnpm publish --access public --tag latest"
+  }
+}

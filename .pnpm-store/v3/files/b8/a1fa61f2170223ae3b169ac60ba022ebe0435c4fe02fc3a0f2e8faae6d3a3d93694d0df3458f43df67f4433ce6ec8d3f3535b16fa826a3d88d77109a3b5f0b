@@ -1,0 +1,31 @@
+{
+  "name": "@walletconnect/types",
+  "version": "1.7.8",
+  "description": "Typescript Types for WalletConnect",
+  "scripts": {},
+  "keywords": [
+    "wallet",
+    "walletconnect",
+    "ethereum",
+    "jsonrpc",
+    "mobile",
+    "qrcode",
+    "web3",
+    "crypto",
+    "cryptocurrency",
+    "dapp"
+  ],
+  "author": "WalletConnect, Inc. <walletconnect.com>",
+  "homepage": "https://github.com/WalletConnect/walletconnect-monorepo/",
+  "license": "Apache-2.0",
+  "main": "",
+  "types": "index",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walletconnect/walletconnect-monorepo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/walletconnect/walletconnect-monorepo/issues"
+  },
+  "gitHead": "165f7993c2acc907c653c02847fb02721052c6e7"
+}

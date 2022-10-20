@@ -1,0 +1,1130 @@
+{
+  "version": 2,
+  "tree": {
+    "name": "root",
+    "children": [
+      {
+        "name": "index.production.js",
+        "children": [
+          {
+            "name": "packages/table-core/src",
+            "children": [
+              {
+                "uid": "ef32-64",
+                "name": "utils.ts"
+              },
+              {
+                "name": "core",
+                "children": [
+                  {
+                    "uid": "ef32-66",
+                    "name": "column.ts"
+                  },
+                  {
+                    "uid": "ef32-68",
+                    "name": "headers.ts"
+                  },
+                  {
+                    "uid": "ef32-96",
+                    "name": "table.ts"
+                  },
+                  {
+                    "uid": "ef32-98",
+                    "name": "cell.ts"
+                  },
+                  {
+                    "uid": "ef32-100",
+                    "name": "row.ts"
+                  }
+                ]
+              },
+              {
+                "name": "features",
+                "children": [
+                  {
+                    "uid": "ef32-70",
+                    "name": "ColumnSizing.ts"
+                  },
+                  {
+                    "uid": "ef32-72",
+                    "name": "Expanding.ts"
+                  },
+                  {
+                    "uid": "ef32-76",
+                    "name": "Filters.ts"
+                  },
+                  {
+                    "uid": "ef32-80",
+                    "name": "Grouping.ts"
+                  },
+                  {
+                    "uid": "ef32-82",
+                    "name": "Ordering.ts"
+                  },
+                  {
+                    "uid": "ef32-84",
+                    "name": "Pagination.ts"
+                  },
+                  {
+                    "uid": "ef32-86",
+                    "name": "Pinning.ts"
+                  },
+                  {
+                    "uid": "ef32-88",
+                    "name": "RowSelection.ts"
+                  },
+                  {
+                    "uid": "ef32-92",
+                    "name": "Sorting.ts"
+                  },
+                  {
+                    "uid": "ef32-94",
+                    "name": "Visibility.ts"
+                  }
+                ]
+              },
+              {
+                "uid": "ef32-74",
+                "name": "filterFns.ts"
+              },
+              {
+                "uid": "ef32-78",
+                "name": "aggregationFns.ts"
+              },
+              {
+                "uid": "ef32-90",
+                "name": "sortingFns.ts"
+              },
+              {
+                "uid": "ef32-102",
+                "name": "columnHelper.ts"
+              },
+              {
+                "name": "utils",
+                "children": [
+                  {
+                    "uid": "ef32-104",
+                    "name": "getCoreRowModel.ts"
+                  },
+                  {
+                    "uid": "ef32-106",
+                    "name": "filterRowsUtils.ts"
+                  },
+                  {
+                    "uid": "ef32-108",
+                    "name": "getFilteredRowModel.ts"
+                  },
+                  {
+                    "uid": "ef32-110",
+                    "name": "getFacetedRowModel.ts"
+                  },
+                  {
+                    "uid": "ef32-112",
+                    "name": "getFacetedUniqueValues.ts"
+                  },
+                  {
+                    "uid": "ef32-114",
+                    "name": "getFacetedMinMaxValues.ts"
+                  },
+                  {
+                    "uid": "ef32-116",
+                    "name": "getSortedRowModel.ts"
+                  },
+                  {
+                    "uid": "ef32-118",
+                    "name": "getGroupedRowModel.ts"
+                  },
+                  {
+                    "uid": "ef32-120",
+                    "name": "getExpandedRowModel.ts"
+                  },
+                  {
+                    "uid": "ef32-122",
+                    "name": "getPaginationRowModel.ts"
+                  }
+                ]
+              },
+              {
+                "uid": "ef32-124",
+                "name": "index.ts"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "isRoot": true
+  },
+  "nodeParts": {
+    "ef32-64": {
+      "renderedLength": 2269,
+      "gzipLength": 845,
+      "brotliLength": 0,
+      "mainUid": "ef32-63"
+    },
+    "ef32-66": {
+      "renderedLength": 2315,
+      "gzipLength": 800,
+      "brotliLength": 0,
+      "mainUid": "ef32-65"
+    },
+    "ef32-68": {
+      "renderedLength": 12739,
+      "gzipLength": 2304,
+      "brotliLength": 0,
+      "mainUid": "ef32-67"
+    },
+    "ef32-70": {
+      "renderedLength": 8802,
+      "gzipLength": 2019,
+      "brotliLength": 0,
+      "mainUid": "ef32-69"
+    },
+    "ef32-72": {
+      "renderedLength": 5105,
+      "gzipLength": 1245,
+      "brotliLength": 0,
+      "mainUid": "ef32-71"
+    },
+    "ef32-74": {
+      "renderedLength": 3252,
+      "gzipLength": 764,
+      "brotliLength": 0,
+      "mainUid": "ef32-73"
+    },
+    "ef32-76": {
+      "renderedLength": 9352,
+      "gzipLength": 1747,
+      "brotliLength": 0,
+      "mainUid": "ef32-75"
+    },
+    "ef32-78": {
+      "renderedLength": 2447,
+      "gzipLength": 657,
+      "brotliLength": 0,
+      "mainUid": "ef32-77"
+    },
+    "ef32-80": {
+      "renderedLength": 4730,
+      "gzipLength": 1247,
+      "brotliLength": 0,
+      "mainUid": "ef32-79"
+    },
+    "ef32-82": {
+      "renderedLength": 2097,
+      "gzipLength": 738,
+      "brotliLength": 0,
+      "mainUid": "ef32-81"
+    },
+    "ef32-84": {
+      "renderedLength": 5376,
+      "gzipLength": 1255,
+      "brotliLength": 0,
+      "mainUid": "ef32-83"
+    },
+    "ef32-86": {
+      "renderedLength": 6512,
+      "gzipLength": 1235,
+      "brotliLength": 0,
+      "mainUid": "ef32-85"
+    },
+    "ef32-88": {
+      "renderedLength": 12273,
+      "gzipLength": 2403,
+      "brotliLength": 0,
+      "mainUid": "ef32-87"
+    },
+    "ef32-90": {
+      "renderedLength": 2914,
+      "gzipLength": 936,
+      "brotliLength": 0,
+      "mainUid": "ef32-89"
+    },
+    "ef32-92": {
+      "renderedLength": 8152,
+      "gzipLength": 2015,
+      "brotliLength": 0,
+      "mainUid": "ef32-91"
+    },
+    "ef32-94": {
+      "renderedLength": 4032,
+      "gzipLength": 975,
+      "brotliLength": 0,
+      "mainUid": "ef32-93"
+    },
+    "ef32-96": {
+      "renderedLength": 6370,
+      "gzipLength": 1635,
+      "brotliLength": 0,
+      "mainUid": "ef32-95"
+    },
+    "ef32-98": {
+      "renderedLength": 832,
+      "gzipLength": 383,
+      "brotliLength": 0,
+      "mainUid": "ef32-97"
+    },
+    "ef32-100": {
+      "renderedLength": 1676,
+      "gzipLength": 619,
+      "brotliLength": 0,
+      "mainUid": "ef32-99"
+    },
+    "ef32-102": {
+      "renderedLength": 1168,
+      "gzipLength": 409,
+      "brotliLength": 0,
+      "mainUid": "ef32-101"
+    },
+    "ef32-104": {
+      "renderedLength": 1791,
+      "gzipLength": 728,
+      "brotliLength": 0,
+      "mainUid": "ef32-103"
+    },
+    "ef32-106": {
+      "renderedLength": 2418,
+      "gzipLength": 599,
+      "brotliLength": 0,
+      "mainUid": "ef32-105"
+    },
+    "ef32-108": {
+      "renderedLength": 3745,
+      "gzipLength": 1028,
+      "brotliLength": 0,
+      "mainUid": "ef32-107"
+    },
+    "ef32-110": {
+      "renderedLength": 1064,
+      "gzipLength": 472,
+      "brotliLength": 0,
+      "mainUid": "ef32-109"
+    },
+    "ef32-112": {
+      "renderedLength": 842,
+      "gzipLength": 372,
+      "brotliLength": 0,
+      "mainUid": "ef32-111"
+    },
+    "ef32-114": {
+      "renderedLength": 1001,
+      "gzipLength": 404,
+      "brotliLength": 0,
+      "mainUid": "ef32-113"
+    },
+    "ef32-116": {
+      "renderedLength": 2895,
+      "gzipLength": 962,
+      "brotliLength": 0,
+      "mainUid": "ef32-115"
+    },
+    "ef32-118": {
+      "renderedLength": 5039,
+      "gzipLength": 1424,
+      "brotliLength": 0,
+      "mainUid": "ef32-117"
+    },
+    "ef32-120": {
+      "renderedLength": 1108,
+      "gzipLength": 466,
+      "brotliLength": 0,
+      "mainUid": "ef32-119"
+    },
+    "ef32-122": {
+      "renderedLength": 1336,
+      "gzipLength": 457,
+      "brotliLength": 0,
+      "mainUid": "ef32-121"
+    },
+    "ef32-124": {
+      "renderedLength": 0,
+      "gzipLength": 0,
+      "brotliLength": 0,
+      "mainUid": "ef32-123"
+    }
+  },
+  "nodeMetas": {
+    "ef32-63": {
+      "id": "/packages/table-core/src/utils.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-64"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        },
+        {
+          "uid": "ef32-65"
+        },
+        {
+          "uid": "ef32-67"
+        },
+        {
+          "uid": "ef32-99"
+        },
+        {
+          "uid": "ef32-97"
+        },
+        {
+          "uid": "ef32-69"
+        },
+        {
+          "uid": "ef32-71"
+        },
+        {
+          "uid": "ef32-75"
+        },
+        {
+          "uid": "ef32-79"
+        },
+        {
+          "uid": "ef32-81"
+        },
+        {
+          "uid": "ef32-83"
+        },
+        {
+          "uid": "ef32-85"
+        },
+        {
+          "uid": "ef32-87"
+        },
+        {
+          "uid": "ef32-91"
+        },
+        {
+          "uid": "ef32-93"
+        },
+        {
+          "uid": "ef32-103"
+        },
+        {
+          "uid": "ef32-107"
+        },
+        {
+          "uid": "ef32-109"
+        },
+        {
+          "uid": "ef32-111"
+        },
+        {
+          "uid": "ef32-113"
+        },
+        {
+          "uid": "ef32-115"
+        },
+        {
+          "uid": "ef32-117"
+        },
+        {
+          "uid": "ef32-119"
+        },
+        {
+          "uid": "ef32-121"
+        }
+      ]
+    },
+    "ef32-65": {
+      "id": "/packages/table-core/src/core/column.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-66"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-67": {
+      "id": "/packages/table-core/src/core/headers.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-68"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-69": {
+      "id": "/packages/table-core/src/features/ColumnSizing.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-70"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-71": {
+      "id": "/packages/table-core/src/features/Expanding.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-72"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-73": {
+      "id": "/packages/table-core/src/filterFns.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-74"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-75"
+        }
+      ]
+    },
+    "ef32-75": {
+      "id": "/packages/table-core/src/features/Filters.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-76"
+      },
+      "imported": [
+        {
+          "uid": "ef32-73"
+        },
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-77": {
+      "id": "/packages/table-core/src/aggregationFns.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-78"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-79"
+        }
+      ]
+    },
+    "ef32-79": {
+      "id": "/packages/table-core/src/features/Grouping.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-80"
+      },
+      "imported": [
+        {
+          "uid": "ef32-77"
+        },
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        },
+        {
+          "uid": "ef32-81"
+        }
+      ]
+    },
+    "ef32-81": {
+      "id": "/packages/table-core/src/features/Ordering.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-82"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        },
+        {
+          "uid": "ef32-79"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-83": {
+      "id": "/packages/table-core/src/features/Pagination.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-84"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-85": {
+      "id": "/packages/table-core/src/features/Pinning.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-86"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-87": {
+      "id": "/packages/table-core/src/features/RowSelection.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-88"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-89": {
+      "id": "/packages/table-core/src/sortingFns.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-90"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-91"
+        }
+      ]
+    },
+    "ef32-91": {
+      "id": "/packages/table-core/src/features/Sorting.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-92"
+      },
+      "imported": [
+        {
+          "uid": "ef32-89"
+        },
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-93": {
+      "id": "/packages/table-core/src/features/Visibility.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-94"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-95"
+        }
+      ]
+    },
+    "ef32-95": {
+      "id": "/packages/table-core/src/core/table.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-96"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        },
+        {
+          "uid": "ef32-65"
+        },
+        {
+          "uid": "ef32-67"
+        },
+        {
+          "uid": "ef32-69"
+        },
+        {
+          "uid": "ef32-71"
+        },
+        {
+          "uid": "ef32-75"
+        },
+        {
+          "uid": "ef32-79"
+        },
+        {
+          "uid": "ef32-81"
+        },
+        {
+          "uid": "ef32-83"
+        },
+        {
+          "uid": "ef32-85"
+        },
+        {
+          "uid": "ef32-87"
+        },
+        {
+          "uid": "ef32-91"
+        },
+        {
+          "uid": "ef32-93"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-97": {
+      "id": "/packages/table-core/src/core/cell.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-98"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-99"
+        }
+      ]
+    },
+    "ef32-99": {
+      "id": "/packages/table-core/src/core/row.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-100"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        },
+        {
+          "uid": "ef32-97"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-103"
+        },
+        {
+          "uid": "ef32-117"
+        },
+        {
+          "uid": "ef32-105"
+        }
+      ]
+    },
+    "ef32-101": {
+      "id": "/packages/table-core/src/columnHelper.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-102"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-103": {
+      "id": "/packages/table-core/src/utils/getCoreRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-104"
+      },
+      "imported": [
+        {
+          "uid": "ef32-99"
+        },
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-105": {
+      "id": "/packages/table-core/src/utils/filterRowsUtils.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-106"
+      },
+      "imported": [
+        {
+          "uid": "ef32-99"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-107"
+        },
+        {
+          "uid": "ef32-109"
+        }
+      ]
+    },
+    "ef32-107": {
+      "id": "/packages/table-core/src/utils/getFilteredRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-108"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        },
+        {
+          "uid": "ef32-105"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-109": {
+      "id": "/packages/table-core/src/utils/getFacetedRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-110"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        },
+        {
+          "uid": "ef32-105"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-111": {
+      "id": "/packages/table-core/src/utils/getFacetedUniqueValues.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-112"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-113": {
+      "id": "/packages/table-core/src/utils/getFacetedMinMaxValues.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-114"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-115": {
+      "id": "/packages/table-core/src/utils/getSortedRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-116"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-117": {
+      "id": "/packages/table-core/src/utils/getGroupedRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-118"
+      },
+      "imported": [
+        {
+          "uid": "ef32-99"
+        },
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-119": {
+      "id": "/packages/table-core/src/utils/getExpandedRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-120"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        },
+        {
+          "uid": "ef32-121"
+        }
+      ]
+    },
+    "ef32-121": {
+      "id": "/packages/table-core/src/utils/getPaginationRowModel.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-122"
+      },
+      "imported": [
+        {
+          "uid": "ef32-63"
+        },
+        {
+          "uid": "ef32-119"
+        }
+      ],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    },
+    "ef32-123": {
+      "id": "/packages/table-core/src/index.ts",
+      "moduleParts": {
+        "index.production.js": "ef32-124"
+      },
+      "imported": [
+        {
+          "uid": "ef32-95"
+        },
+        {
+          "uid": "ef32-125"
+        },
+        {
+          "uid": "ef32-65"
+        },
+        {
+          "uid": "ef32-67"
+        },
+        {
+          "uid": "ef32-99"
+        },
+        {
+          "uid": "ef32-97"
+        },
+        {
+          "uid": "ef32-69"
+        },
+        {
+          "uid": "ef32-71"
+        },
+        {
+          "uid": "ef32-75"
+        },
+        {
+          "uid": "ef32-79"
+        },
+        {
+          "uid": "ef32-81"
+        },
+        {
+          "uid": "ef32-83"
+        },
+        {
+          "uid": "ef32-85"
+        },
+        {
+          "uid": "ef32-87"
+        },
+        {
+          "uid": "ef32-91"
+        },
+        {
+          "uid": "ef32-93"
+        },
+        {
+          "uid": "ef32-73"
+        },
+        {
+          "uid": "ef32-89"
+        },
+        {
+          "uid": "ef32-77"
+        },
+        {
+          "uid": "ef32-101"
+        },
+        {
+          "uid": "ef32-63"
+        },
+        {
+          "uid": "ef32-103"
+        },
+        {
+          "uid": "ef32-107"
+        },
+        {
+          "uid": "ef32-109"
+        },
+        {
+          "uid": "ef32-111"
+        },
+        {
+          "uid": "ef32-113"
+        },
+        {
+          "uid": "ef32-115"
+        },
+        {
+          "uid": "ef32-117"
+        },
+        {
+          "uid": "ef32-119"
+        },
+        {
+          "uid": "ef32-121"
+        }
+      ],
+      "importedBy": [],
+      "isEntry": true
+    },
+    "ef32-125": {
+      "id": "/packages/table-core/src/types.ts",
+      "moduleParts": {},
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "ef32-123"
+        }
+      ]
+    }
+  },
+  "env": {
+    "rollup": "2.79.1"
+  },
+  "options": {
+    "gzip": true,
+    "brotli": false,
+    "sourcemap": false
+  }
+}

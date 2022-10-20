@@ -1,0 +1,37 @@
+{
+	"name": "graph-results-pager",
+	"version": "1.0.3",
+	"description": "Utility to get paged results from The Graph subgraphs",
+	"main": "index.js",
+	"browser": "browser.js",
+	"dependencies": {
+		"node-fetch": "2.6.1"
+	},
+	"devDependencies": {
+		"eslint": "5.16.0",
+		"eslint-config-prettier": "4.3.0",
+		"eslint-plugin-import": "2.18.2",
+		"eslint-plugin-prettier": "3.1.0",
+		"prettier": "1.17.1",
+		"webpack": "4.41.2",
+		"webpack-cli": "3.3.9"
+	},
+	"scripts": {
+		"lint": "eslint .",
+		"pack": "webpack --mode production",
+		"prepublish": "npm run pack"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/justinjmoses/graph-results-pager.git"
+	},
+	"keywords": [
+		"thegraprotocol"
+	],
+	"author": "justin j. moses",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/justinjmoses/graph-results-pager/issues"
+	},
+	"homepage": "https://github.com/justinjmoses/graph-results-pager#readme"
+}

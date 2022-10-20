@@ -1,0 +1,68 @@
+# Installation
+> `npm install --save @types/workbox-sw`
+
+# Summary
+This package contains type definitions for workbox-sw (https://github.com/GoogleChrome/workbox).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-sw.
+## [index.d.ts](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-sw/index.d.ts)
+````ts
+// Type definitions for workbox-sw 4.3
+// Project: https://github.com/GoogleChrome/workbox
+// Definitions by: Frederik Wessberg <https://github.com/wessberg>
+//                   Jason Kwok <https://github.com/JasonHK>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.6
+
+import * as WorkboxBackgroundSync from "workbox-background-sync";
+import * as WorkboxBroadcastUpdate from "workbox-broadcast-update";
+import * as WorkboxCacheableResponse from "workbox-cacheable-response";
+import * as WorkboxCore from "workbox-core";
+import * as WorkboxExpiration from "workbox-expiration";
+import * as WorkboxGoogleAnalytics from "workbox-google-analytics";
+import * as WorkboxNavigationPreload from "workbox-navigation-preload";
+import * as WorkboxPrecaching from "workbox-precaching";
+import * as WorkboxRangeRequests from "workbox-range-requests";
+import * as WorkboxRouting from "workbox-routing";
+import * as WorkboxStrategies from "workbox-strategies";
+import * as WorkboxStreams from "workbox-streams";
+
+declare global {
+    namespace workbox {
+        const backgroundSync: typeof WorkboxBackgroundSync;
+        const broadcastUpdate: typeof WorkboxBroadcastUpdate;
+        const cacheableResponse: typeof WorkboxCacheableResponse;
+        const core: typeof WorkboxCore;
+        const expiration: typeof WorkboxExpiration;
+        const googleAnalytics: typeof WorkboxGoogleAnalytics;
+        const navigationPreload: typeof WorkboxNavigationPreload;
+        const precaching: typeof WorkboxPrecaching;
+        const rangeRequests: typeof WorkboxRangeRequests;
+        const routing: typeof WorkboxRouting;
+        const strategies: typeof WorkboxStrategies;
+        const streams: typeof WorkboxStreams;
+
+        function loadModule(moduleName: string): void;
+
+        function setConfig(options?: WorkboxOptions): void;
+
+        interface WorkboxOptions {
+            debug?: boolean | undefined;
+            modulePathCb?: ModulePathCallback | undefined;
+            modulePathPrefix?: string | undefined;
+        }
+
+        type ModulePathCallback = (moduleName: string, debug: boolean) => string;
+    }
+}
+
+````
+
+### Additional Details
+ * Last updated: Fri, 02 Jul 2021 18:06:00 GMT
+ * Dependencies: [@types/workbox-background-sync](https://npmjs.com/package/@types/workbox-background-sync), [@types/workbox-broadcast-update](https://npmjs.com/package/@types/workbox-broadcast-update), [@types/workbox-cacheable-response](https://npmjs.com/package/@types/workbox-cacheable-response), [@types/workbox-core](https://npmjs.com/package/@types/workbox-core), [@types/workbox-expiration](https://npmjs.com/package/@types/workbox-expiration), [@types/workbox-google-analytics](https://npmjs.com/package/@types/workbox-google-analytics), [@types/workbox-navigation-preload](https://npmjs.com/package/@types/workbox-navigation-preload), [@types/workbox-precaching](https://npmjs.com/package/@types/workbox-precaching), [@types/workbox-range-requests](https://npmjs.com/package/@types/workbox-range-requests), [@types/workbox-routing](https://npmjs.com/package/@types/workbox-routing), [@types/workbox-strategies](https://npmjs.com/package/@types/workbox-strategies), [@types/workbox-streams](https://npmjs.com/package/@types/workbox-streams)
+ * Global values: none
+
+# Credits
+These definitions were written by [Frederik Wessberg](https://github.com/wessberg), and [Jason Kwok](https://github.com/JasonHK).

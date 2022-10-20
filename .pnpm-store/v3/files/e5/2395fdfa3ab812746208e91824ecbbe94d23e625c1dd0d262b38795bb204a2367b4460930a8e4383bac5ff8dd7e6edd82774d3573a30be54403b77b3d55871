@@ -1,0 +1,49 @@
+{
+  "name": "@graphprotocol/client-block-tracking",
+  "version": "1.0.9",
+  "description": "",
+  "sideEffects": false,
+  "peerDependencies": {
+    "graphql": "^15.2.0 || ^16.0.0",
+    "@graphql-tools/delegate": "^9.0.3"
+  },
+  "dependencies": {
+    "@graphql-tools/utils": "8.12.0",
+    "tslib": "^2.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphprotocol/graph-client.git",
+    "directory": "packages/block-tracking"
+  },
+  "keywords": [
+    "thegraph",
+    "graphql",
+    "client"
+  ],
+  "license": "MIT",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
+  "typings": "typings/index.d.ts",
+  "typescript": {
+    "definition": "typings/index.d.ts"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./typings/index.d.cts",
+        "default": "./cjs/index.js"
+      },
+      "import": {
+        "types": "./typings/index.d.ts",
+        "default": "./esm/index.js"
+      },
+      "default": {
+        "types": "./typings/index.d.ts",
+        "default": "./esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  }
+}

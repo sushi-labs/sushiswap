@@ -1,0 +1,1 @@
+{"version":3,"file":"QRCodeDisplay.d.ts","sourceRoot":"","sources":["../../../../src/browser/components/QRCodeDisplay.tsx"],"names":[],"mappings":"AASA,OAAO,EAAE,OAAO,EAAE,MAAM,UAAU,CAAC;AAWnC,UAAU,kBAAkB;IAC1B,IAAI,EAAE,OAAO,CAAC;IACd,GAAG,EAAE,MAAM,CAAC;CACb;AAED,iBAAS,aAAa,CAAC,KAAK,EAAE,kBAAkB,eAiC/C;AAED,eAAe,aAAa,CAAC"}

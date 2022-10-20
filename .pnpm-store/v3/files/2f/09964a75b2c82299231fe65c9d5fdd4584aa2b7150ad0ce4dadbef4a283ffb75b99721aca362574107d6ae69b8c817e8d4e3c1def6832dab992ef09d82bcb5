@@ -1,0 +1,54 @@
+{
+  "name": "@visx/react-spring",
+  "version": "2.11.1",
+  "description": "visx primitives that rely on react-spring for animation",
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "esm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/airbnb/visx.git"
+  },
+  "keywords": [
+    "visx",
+    "react",
+    "d3",
+    "visualizations",
+    "charts",
+    "animation",
+    "react-spring"
+  ],
+  "contributors": [
+    {
+      "name": "Chris Williams",
+      "url": "https://github.com/williaster"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/airbnb/visx/issues"
+  },
+  "homepage": "https://github.com/airbnb/visx#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@react-spring/web": "^9.4.5",
+    "react": "^16.3.0-0 || ^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@types/react": "*",
+    "@visx/axis": "2.11.1",
+    "@visx/grid": "2.11.1",
+    "@visx/scale": "2.2.2",
+    "@visx/text": "2.10.0",
+    "classnames": "^2.3.1",
+    "prop-types": "^15.6.2"
+  },
+  "gitHead": "9317b710b3933497cd20a25e89c8ca6ae5dff5a2"
+}

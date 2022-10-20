@@ -1,0 +1,1 @@
+class StatusError extends Error{constructor(r=500,t="Internal Error."){super(t),this.name="StatusError",this.status=r}}module.exports={StatusError:StatusError};

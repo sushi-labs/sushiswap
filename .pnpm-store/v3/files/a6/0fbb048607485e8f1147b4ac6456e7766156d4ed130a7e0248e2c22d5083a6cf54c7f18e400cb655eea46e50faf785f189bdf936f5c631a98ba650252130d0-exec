@@ -1,0 +1,1099 @@
+#!/usr/bin/env node
+'use strict';
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+const utils = require('@graphql-mesh/utils');
+const config = require('@graphql-mesh/config');
+const types = require('@graphql-mesh/types');
+const Ajv = _interopDefault(require('ajv'));
+const cosmiconfig = require('cosmiconfig');
+const crossHelpers = require('@graphql-mesh/cross-helpers');
+const utils$1 = require('@graphql-tools/utils');
+const runtime = require('@graphql-mesh/runtime');
+const tsBasePlugin = require('@graphql-codegen/typescript');
+const tsResolversPlugin = require('@graphql-codegen/typescript-resolvers');
+const graphql = require('graphql');
+const core = require('@graphql-codegen/core');
+const pascalCase = require('pascal-case');
+const tsOperationsPlugin = require('@graphql-codegen/typescript-operations');
+const typescriptGenericSdk = require('@graphql-codegen/typescript-generic-sdk');
+const typedDocumentNodePlugin = require('@graphql-codegen/typed-document-node');
+const ts = _interopDefault(require('typescript'));
+const JSON5 = _interopDefault(require('json5'));
+const cluster = _interopDefault(require('cluster'));
+const os = require('os');
+require('json-bigint-patch');
+const http = require('http');
+const ws = _interopDefault(require('ws'));
+const https = require('https');
+const open = _interopDefault(require('open'));
+const ws$1 = require('graphql-ws/lib/use/ws');
+const dnscache = _interopDefault(require('dnscache'));
+const http$1 = require('@graphql-mesh/http');
+const store = require('@graphql-mesh/store');
+const yargs = _interopDefault(require('yargs'));
+const helpers = require('yargs/helpers');
+const tsNode = require('ts-node');
+const tsconfigPaths = require('tsconfig-paths');
+const dotenv = require('dotenv');
+
+function validateConfig(config, filepath, initialLoggerPrefix, throwOnInvalidConfig = false) {
+    const ajv = new Ajv({
+        strict: false,
+    });
+    types.jsonSchema.$schema = undefined;
+    const isValid = ajv.validate(types.jsonSchema, config);
+    if (!isValid) {
+        if (throwOnInvalidConfig) {
+            const aggregateError = new utils$1.AggregateError(ajv.errors.map(e => {
+                const error = new Error(e.message);
+                error.stack += `\n    at ${filepath}:0:0`;
+                return error;
+            }), 'Configuration file is not valid');
+            throw aggregateError;
+        }
+        const logger = new utils.DefaultLogger(initialLoggerPrefix).child('config');
+        logger.warn('Configuration file is not valid!');
+        logger.warn("This is just a warning! It doesn't have any effects on runtime.");
+        ajv.errors.forEach(error => {
+            logger.warn(error.message);
+        });
+    }
+}
+async function findAndParseConfig(options) {
+    const { configName = 'mesh', dir: configDir = '', initialLoggerPrefix = '🕸️  Mesh', importFn, ...restOptions } = options || {};
+    const dir = crossHelpers.path.isAbsolute(configDir) ? configDir : crossHelpers.path.join(crossHelpers.process.cwd(), configDir);
+    const explorer = cosmiconfig.cosmiconfig(configName, {
+        searchPlaces: [
+            'package.json',
+            `.${configName}rc`,
+            `.${configName}rc.json`,
+            `.${configName}rc.yaml`,
+            `.${configName}rc.yml`,
+            `.${configName}rc.js`,
+            `.${configName}rc.ts`,
+            `.${configName}rc.cjs`,
+            `${configName}.config.js`,
+            `${configName}.config.cjs`,
+        ],
+        loaders: {
+            '.json': customLoader('json', importFn, initialLoggerPrefix),
+            '.yaml': customLoader('yaml', importFn, initialLoggerPrefix),
+            '.yml': customLoader('yaml', importFn, initialLoggerPrefix),
+            '.js': customLoader('js', importFn, initialLoggerPrefix),
+            '.ts': customLoader('js', importFn, initialLoggerPrefix),
+            noExt: customLoader('yaml', importFn, initialLoggerPrefix),
+        },
+    });
+    const results = await explorer.search(dir);
+    if (!results) {
+        throw new Error(`No ${configName} config file found in "${dir}"!`);
+    }
+    const config$1 = results.config;
+    validateConfig(config$1, results.filepath, initialLoggerPrefix);
+    return config.processConfig(config$1, { dir, initialLoggerPrefix, importFn, ...restOptions });
+}
+function customLoader(ext, importFn = utils.defaultImportFn, initialLoggerPrefix = '🕸️  Mesh') {
+    const logger = new utils.DefaultLogger(initialLoggerPrefix).child('config');
+    function loader(filepath, content) {
+        if (crossHelpers.process.env) {
+            content = content.replace(/\$\{(.*?)\}/g, (_, variable) => {
+                let varName = variable;
+                let defaultValue = '';
+                if (variable.includes(':')) {
+                    const spl = variable.split(':');
+                    varName = spl.shift();
+                    defaultValue = spl.join(':');
+                }
+                return crossHelpers.process.env[varName] || defaultValue;
+            });
+        }
+        if (ext === 'json') {
+            return cosmiconfig.defaultLoaders['.json'](filepath, content);
+        }
+        if (ext === 'yaml') {
+            return utils.loadYaml(filepath, content, logger);
+        }
+        if (ext === 'js') {
+            return importFn(filepath);
+        }
+    }
+    return loader;
+}
+
+function generateOperations(schema, options) {
+    var _a;
+    const sources = [];
+    const rootTypeMap = utils$1.getRootTypeMap(schema);
+    for (const [operationType, rootType] of rootTypeMap) {
+        const fieldMap = rootType.getFields();
+        for (const fieldName in fieldMap) {
+            const operationNode = utils$1.buildOperationNodeForField({
+                schema,
+                kind: operationType,
+                field: fieldName,
+                depthLimit: options.selectionSetDepth,
+            });
+            const defaultName = `operation_${sources.length}`;
+            const virtualFileName = ((_a = operationNode.name) === null || _a === void 0 ? void 0 : _a.value) || defaultName;
+            const rawSDL = graphql.print(operationNode);
+            const source = utils$1.parseGraphQLSDL(`${virtualFileName}.graphql`, rawSDL);
+            sources.push(source);
+        }
+    }
+    return sources;
+}
+
+const unifiedContextIdentifier = 'MeshContext';
+class CodegenHelpers extends tsBasePlugin.TsVisitor {
+    getTypeToUse(namedType) {
+        if (this.scalars[namedType.name.value]) {
+            return this._getScalar(namedType.name.value);
+        }
+        return this._getTypeForNode(namedType);
+    }
+}
+function buildSignatureBasedOnRootFields(codegenHelpers, type) {
+    if (!type) {
+        return {};
+    }
+    const fields = type.getFields();
+    const operationMap = {};
+    for (const fieldName in fields) {
+        const field = fields[fieldName];
+        const argsExists = field.args && field.args.length > 0;
+        const argsName = argsExists ? `${type.name}${field.name}Args` : '{}';
+        const parentTypeNode = {
+            kind: graphql.Kind.NAMED_TYPE,
+            name: {
+                kind: graphql.Kind.NAME,
+                value: type.name,
+            },
+        };
+        operationMap[fieldName] = `  /** ${field.description} **/\n  ${field.name}: InContextSdkMethod<${codegenHelpers.getTypeToUse(parentTypeNode)}['${fieldName}'], ${argsName}, ${unifiedContextIdentifier}>`;
+    }
+    return operationMap;
+}
+async function generateTypesForApi(options) {
+    const config = {
+        skipTypename: true,
+        namingConvention: 'keep',
+        enumsAsTypes: true,
+        ignoreEnumValuesFromSchema: true,
+    };
+    const baseTypes = await core.codegen({
+        filename: options.name + '_types.ts',
+        documents: [],
+        config,
+        schemaAst: options.schema,
+        schema: undefined,
+        skipDocumentsValidation: true,
+        plugins: [
+            {
+                typescript: {},
+            },
+        ],
+        pluginMap: {
+            typescript: tsBasePlugin,
+        },
+    });
+    const codegenHelpers = new CodegenHelpers(options.schema, config, {});
+    const namespace = pascalCase.pascalCase(`${options.name}Types`);
+    const queryOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getQueryType());
+    const mutationOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getMutationType());
+    const subscriptionsOperationMap = buildSignatureBasedOnRootFields(codegenHelpers, options.schema.getSubscriptionType());
+    const codeAst = `
+import { InContextSdkMethod } from '@graphql-mesh/types';
+import { MeshContext } from '@graphql-mesh/runtime';
+
+export namespace ${namespace} {
+  ${baseTypes}
+  export type QuerySdk = {
+    ${Object.values(queryOperationMap).join(',\n')}
+  };
+
+  export type MutationSdk = {
+    ${Object.values(mutationOperationMap).join(',\n')}
+  };
+
+  export type SubscriptionSdk = {
+    ${Object.values(subscriptionsOperationMap).join(',\n')}
+  };
+
+  export type Context = {
+      [${JSON.stringify(options.name)}]: { Query: QuerySdk, Mutation: MutationSdk, Subscription: SubscriptionSdk },
+      ${Object.keys(options.contextVariables)
+        .map(key => `[${JSON.stringify(key)}]: ${options.contextVariables[key]}`)
+        .join(',\n')}
+    };
+}
+`;
+    return {
+        identifier: namespace,
+        codeAst,
+    };
+}
+const BASEDIR_ASSIGNMENT_COMMENT = `/* BASEDIR_ASSIGNMENT */`;
+async function generateTsArtifacts({ unifiedSchema, rawSources, mergerType = 'stitching', documents, flattenTypes, importedModulesSet, baseDir, meshConfigImportCodes, meshConfigCodes, logger, sdkConfig, fileType, codegenConfig = {}, }, cliParams) {
+    var _a, _b, _c;
+    const artifactsDir = crossHelpers.path.join(baseDir, cliParams.artifactsDir);
+    logger.info('Generating index file in TypeScript');
+    for (const rawSource of rawSources) {
+        const transformedSchema = unifiedSchema.extensions.sourceMap.get(rawSource);
+        const sdl = utils$1.printSchemaWithDirectives(transformedSchema);
+        await utils.writeFile(crossHelpers.path.join(artifactsDir, `sources/${rawSource.name}/schema.graphql`), sdl);
+    }
+    const documentsInput = (sdkConfig === null || sdkConfig === void 0 ? void 0 : sdkConfig.generateOperations)
+        ? generateOperations(unifiedSchema, sdkConfig.generateOperations)
+        : documents;
+    const pluginsInput = [
+        {
+            typescript: {},
+        },
+        {
+            resolvers: {},
+        },
+        {
+            contextSdk: {},
+        },
+    ];
+    if (documentsInput.length) {
+        pluginsInput.push({
+            typescriptOperations: {},
+        }, {
+            typedDocumentNode: {},
+        }, {
+            typescriptGenericSdk: {
+                documentMode: 'external',
+                importDocumentNodeExternallyFrom: 'NOWHERE',
+            },
+        });
+    }
+    const codegenOutput = '// @ts-nocheck\n' +
+        (await core.codegen({
+            filename: 'types.ts',
+            documents: documentsInput,
+            config: {
+                skipTypename: true,
+                flattenGeneratedTypes: flattenTypes,
+                onlyOperationTypes: flattenTypes,
+                preResolveTypes: flattenTypes,
+                namingConvention: 'keep',
+                documentMode: 'graphQLTag',
+                gqlImport: '@graphql-mesh/utils#gql',
+                enumsAsTypes: true,
+                ignoreEnumValuesFromSchema: true,
+                useIndexSignature: true,
+                noSchemaStitching: false,
+                contextType: unifiedContextIdentifier,
+                federation: mergerType === 'federation',
+                ...codegenConfig,
+            },
+            schemaAst: unifiedSchema,
+            schema: undefined,
+            // skipDocumentsValidation: true,
+            pluginMap: {
+                typescript: tsBasePlugin,
+                typescriptOperations: tsOperationsPlugin,
+                typedDocumentNode: typedDocumentNodePlugin,
+                typescriptGenericSdk,
+                resolvers: tsResolversPlugin,
+                contextSdk: {
+                    plugin: async () => {
+                        const importCodes = new Set([
+                            ...meshConfigImportCodes,
+                            `import { getMesh, ExecuteMeshFn, SubscribeMeshFn, MeshContext as BaseMeshContext, MeshInstance } from '@graphql-mesh/runtime';`,
+                            `import { MeshStore, FsStoreStorageAdapter } from '@graphql-mesh/store';`,
+                            `import { path as pathModule } from '@graphql-mesh/cross-helpers';`,
+                            `import { ImportFn } from '@graphql-mesh/types';`,
+                        ]);
+                        const results = await Promise.all(rawSources.map(async (source) => {
+                            const sourceMap = unifiedSchema.extensions.sourceMap;
+                            const sourceSchema = sourceMap.get(source);
+                            const { identifier, codeAst } = await generateTypesForApi({
+                                schema: sourceSchema,
+                                name: source.name,
+                                contextVariables: source.contextVariables,
+                            });
+                            if (codeAst) {
+                                const content = '// @ts-nocheck\n' + codeAst;
+                                await utils.writeFile(crossHelpers.path.join(artifactsDir, `sources/${source.name}/types.ts`), content);
+                            }
+                            if (identifier) {
+                                importCodes.add(`import type { ${identifier} } from './sources/${source.name}/types';`);
+                            }
+                            return {
+                                identifier,
+                                codeAst,
+                            };
+                        }));
+                        const contextType = `export type ${unifiedContextIdentifier} = ${results
+                            .map(r => `${r === null || r === void 0 ? void 0 : r.identifier}.Context`)
+                            .filter(Boolean)
+                            .join(' & ')} & BaseMeshContext;`;
+                        let meshMethods = `
+${BASEDIR_ASSIGNMENT_COMMENT}
+
+const importFn: ImportFn = <T>(moduleId: string) => {
+  const relativeModuleId = (pathModule.isAbsolute(moduleId) ? pathModule.relative(baseDir, moduleId) : moduleId).split('\\\\').join('/').replace(baseDir + '/', '');
+  switch(relativeModuleId) {${[...importedModulesSet]
+                            .map(importedModuleName => {
+                            let moduleMapProp = importedModuleName;
+                            let importPath = importedModuleName;
+                            if (importPath.startsWith('.')) {
+                                importPath = crossHelpers.path.join(baseDir, importPath);
+                            }
+                            if (crossHelpers.path.isAbsolute(importPath)) {
+                                moduleMapProp = crossHelpers.path.relative(baseDir, importedModuleName).split('\\').join('/');
+                                importPath = `./${crossHelpers.path.relative(artifactsDir, importedModuleName).split('\\').join('/')}`;
+                            }
+                            return `
+    case ${JSON.stringify(moduleMapProp)}:
+      return import(${JSON.stringify(importPath)}) as T;
+    `;
+                        })
+                            .join('')}
+    default:
+      return Promise.reject(new Error(\`Cannot find module '\${relativeModuleId}'.\`));
+  }
+};
+
+const rootStore = new MeshStore('${cliParams.artifactsDir}', new FsStoreStorageAdapter({
+  cwd: baseDir,
+  importFn,
+  fileType: ${JSON.stringify(fileType)},
+}), {
+  readonly: true,
+  validate: false
+});
+
+${[...meshConfigCodes].join('\n')}
+
+let meshInstance$: Promise<MeshInstance> | undefined;
+
+export function ${cliParams.builtMeshFactoryName}(): Promise<MeshInstance> {
+  if (meshInstance$ == null) {
+    meshInstance$ = getMeshOptions().then(meshOptions => getMesh(meshOptions)).then(mesh => {
+      const id = mesh.pubsub.subscribe('destroy', () => {
+        meshInstance$ = undefined;
+        mesh.pubsub.unsubscribe(id);
+      });
+      return mesh;
+    });
+  }
+  return meshInstance$;
+}
+
+export const execute: ExecuteMeshFn = (...args) => ${cliParams.builtMeshFactoryName}().then(({ execute }) => execute(...args));
+
+export const subscribe: SubscribeMeshFn = (...args) => ${cliParams.builtMeshFactoryName}().then(({ subscribe }) => subscribe(...args));`;
+                        if (documentsInput.length) {
+                            meshMethods += `
+export function ${cliParams.builtMeshSDKFactoryName}<TGlobalContext = any, TOperationContext = any>(globalContext?: TGlobalContext) {
+  const sdkRequester$ = ${cliParams.builtMeshFactoryName}().then(({ sdkRequesterFactory }) => sdkRequesterFactory(globalContext));
+  return getSdk<TOperationContext, TGlobalContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
+}`;
+                        }
+                        return {
+                            prepend: [[...importCodes].join('\n'), '\n\n'],
+                            content: [contextType, meshMethods].join('\n\n'),
+                        };
+                    },
+                },
+            },
+            plugins: pluginsInput,
+        }))
+            .replace(`import * as Operations from 'NOWHERE';\n`, '')
+            .replace(`import { DocumentNode } from 'graphql';`, '');
+    const baseUrlAssignmentESM = `import { fileURLToPath } from '@graphql-mesh/utils';
+const baseDir = pathModule.join(pathModule.dirname(fileURLToPath(import.meta.url)), '${crossHelpers.path.relative(artifactsDir, baseDir)}');`;
+    const baseUrlAssignmentCJS = `const baseDir = pathModule.join(typeof __dirname === 'string' ? __dirname : '/', '${crossHelpers.path.relative(artifactsDir, baseDir)}');`;
+    const tsFilePath = crossHelpers.path.join(artifactsDir, 'index.ts');
+    const jobs = [];
+    const jsFilePath = crossHelpers.path.join(artifactsDir, 'index.js');
+    const dtsFilePath = crossHelpers.path.join(artifactsDir, 'index.d.ts');
+    const esmJob = (ext) => async () => {
+        logger.info('Writing index.ts for ESM to the disk.');
+        await utils.writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentESM));
+        const esmJsFilePath = crossHelpers.path.join(artifactsDir, `index.${ext}`);
+        if (await utils.pathExists(esmJsFilePath)) {
+            await crossHelpers.fs.promises.unlink(esmJsFilePath);
+        }
+        if (fileType !== 'ts') {
+            logger.info(`Compiling TS file as ES Module to "index.${ext}"`);
+            compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
+            if (ext === 'mjs') {
+                const mjsFilePath = crossHelpers.path.join(artifactsDir, 'index.mjs');
+                await crossHelpers.fs.promises.rename(jsFilePath, mjsFilePath);
+            }
+            logger.info('Deleting index.ts');
+            await crossHelpers.fs.promises.unlink(tsFilePath);
+        }
+    };
+    const cjsJob = async () => {
+        logger.info('Writing index.ts for CJS to the disk.');
+        await utils.writeFile(tsFilePath, codegenOutput.replace(BASEDIR_ASSIGNMENT_COMMENT, baseUrlAssignmentCJS));
+        if (await utils.pathExists(jsFilePath)) {
+            await crossHelpers.fs.promises.unlink(jsFilePath);
+        }
+        if (fileType !== 'ts') {
+            logger.info('Compiling TS file as CommonJS Module to `index.js`');
+            compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
+            logger.info('Deleting index.ts');
+            await crossHelpers.fs.promises.unlink(tsFilePath);
+        }
+    };
+    const packageJsonJob = (module) => () => utils.writeJSON(crossHelpers.path.join(artifactsDir, 'package.json'), {
+        name: 'mesh-artifacts',
+        private: true,
+        type: module,
+        main: 'index.js',
+        module: 'index.mjs',
+        sideEffects: false,
+        typings: 'index.d.ts',
+        typescript: {
+            definition: 'index.d.ts',
+        },
+        exports: {
+            '.': {
+                require: './index.js',
+                import: './index.mjs',
+            },
+            './*': {
+                require: './*.js',
+                import: './*.mjs',
+            },
+        },
+    });
+    const tsConfigPath = crossHelpers.path.join(baseDir, 'tsconfig.json');
+    if (await utils.pathExists(tsConfigPath)) {
+        const tsConfigStr = await crossHelpers.fs.promises.readFile(tsConfigPath, 'utf-8');
+        const tsConfig = JSON5.parse(tsConfigStr);
+        if ((_c = (_b = (_a = tsConfig === null || tsConfig === void 0 ? void 0 : tsConfig.compilerOptions) === null || _a === void 0 ? void 0 : _a.module) === null || _b === void 0 ? void 0 : _b.toLowerCase()) === null || _c === void 0 ? void 0 : _c.startsWith('es')) {
+            jobs.push(esmJob('js'));
+            if (fileType !== 'ts') {
+                jobs.push(packageJsonJob('module'));
+            }
+        }
+        else {
+            jobs.push(cjsJob);
+            if (fileType !== 'ts') {
+                jobs.push(packageJsonJob('commonjs'));
+            }
+        }
+    }
+    else {
+        jobs.push(esmJob('mjs'));
+        if (fileType === 'js') {
+            jobs.push(packageJsonJob('module'));
+        }
+        else {
+            jobs.push(cjsJob);
+            jobs.push(packageJsonJob('commonjs'));
+        }
+    }
+    for (const job of jobs) {
+        await job();
+    }
+}
+function compileTS(tsFilePath, module, outputFilePaths) {
+    const options = {
+        target: ts.ScriptTarget.ESNext,
+        module,
+        sourceMap: false,
+        inlineSourceMap: false,
+        importHelpers: true,
+        allowSyntheticDefaultImports: true,
+        esModuleInterop: true,
+        declaration: true,
+    };
+    const host = ts.createCompilerHost(options);
+    const hostWriteFile = host.writeFile.bind(host);
+    host.writeFile = (fileName, ...rest) => {
+        if (outputFilePaths.some(f => crossHelpers.path.normalize(f) === crossHelpers.path.normalize(fileName))) {
+            return hostWriteFile(fileName, ...rest);
+        }
+    };
+    // Prepare and emit the d.ts files
+    const program = ts.createProgram([tsFilePath], options, host);
+    program.emit();
+}
+
+function handleFatalError(e, logger) {
+    logger.error(e);
+    if (crossHelpers.process.env.JEST == null) {
+        crossHelpers.process.exit(1);
+    }
+}
+
+/* eslint-disable import/no-nodejs-modules */
+const terminateEvents = ['SIGINT', 'SIGTERM'];
+function registerTerminateHandler(callback) {
+    for (const eventName of terminateEvents) {
+        crossHelpers.process.on(eventName, () => callback(eventName));
+    }
+}
+function portSelectorFn(sources, logger) {
+    const port = sources.find(source => Boolean(source)) || 4000;
+    if (sources.filter(source => Boolean(source)).length > 1) {
+        const activeSources = [];
+        if (sources[0]) {
+            activeSources.push('CLI');
+        }
+        if (sources[1]) {
+            activeSources.push('serve configuration');
+        }
+        if (sources[2]) {
+            activeSources.push('environment variable');
+        }
+        logger.warn(`Multiple ports specified (${activeSources.join(', ')}), using ${port}`);
+    }
+    return port;
+}
+async function serveMesh({ baseDir, argsPort, getBuiltMesh, logger, rawServeConfig = {}, playgroundTitle }, cliParams) {
+    const { fork, port: configPort, hostname = os.platform() === 'win32' ||
+        // is WSL?
+        os.release().toLowerCase().includes('microsoft')
+        ? '127.0.0.1'
+        : '0.0.0.0', sslCredentials, endpoint: graphqlPath = '/graphql', browser,
+    // TODO
+    // trustProxy = 'loopback',
+     } = rawServeConfig;
+    const port = portSelectorFn([argsPort, parseInt(configPort === null || configPort === void 0 ? void 0 : configPort.toString()), parseInt(crossHelpers.process.env.PORT)], logger);
+    const protocol = sslCredentials ? 'https' : 'http';
+    const serverUrl = `${protocol}://${hostname}:${port}`;
+    if (!playgroundTitle) {
+        playgroundTitle = (rawServeConfig === null || rawServeConfig === void 0 ? void 0 : rawServeConfig.playgroundTitle) || cliParams.playgroundTitle;
+    }
+    if (!cluster.isWorker && Boolean(fork)) {
+        const forkNum = fork > 0 && typeof fork === 'number' ? fork : os.cpus().length;
+        for (let i = 0; i < forkNum; i++) {
+            const worker = cluster.fork();
+            registerTerminateHandler(eventName => worker.kill(eventName));
+        }
+        logger.info(`${cliParams.serveMessage}: ${serverUrl} in ${forkNum} forks`);
+    }
+    else {
+        logger.info(`Generating the unified schema...`);
+        const mesh$ = getBuiltMesh()
+            .then(mesh => {
+            dnscache({
+                enable: true,
+                cache: function CacheCtor({ ttl }) {
+                    return {
+                        get: (key, callback) => mesh.cache
+                            .get(key)
+                            .then(value => callback(null, value))
+                            .catch(e => callback(e)),
+                        set: (key, value, callback) => mesh.cache
+                            .set(key, value, { ttl })
+                            .then(() => callback())
+                            .catch(e => callback(e)),
+                    };
+                },
+            });
+            logger.info(`${cliParams.serveMessage}: ${serverUrl}`);
+            registerTerminateHandler(eventName => {
+                const eventLogger = logger.child(`${eventName}  💀`);
+                eventLogger.info(`Destroying the server`);
+                mesh.destroy();
+            });
+            return mesh;
+        })
+            .catch(e => handleFatalError(e, logger));
+        let httpServer;
+        const requestHandler = http$1.createMeshHTTPHandler({
+            baseDir,
+            getBuiltMesh,
+            rawServeConfig,
+            playgroundTitle,
+        });
+        if (sslCredentials) {
+            const [key, cert] = await Promise.all([
+                crossHelpers.fs.promises.readFile(sslCredentials.key, 'utf-8'),
+                crossHelpers.fs.promises.readFile(sslCredentials.cert, 'utf-8'),
+            ]);
+            httpServer = https.createServer({ key, cert }, requestHandler);
+        }
+        else {
+            httpServer = http.createServer(requestHandler);
+        }
+        registerTerminateHandler(eventName => {
+            const eventLogger = logger.child(`${eventName}💀`);
+            eventLogger.debug(`Stopping HTTP Server`);
+            httpServer.close(error => {
+                if (error) {
+                    eventLogger.debug(`HTTP Server couldn't be stopped: `, error);
+                }
+                else {
+                    eventLogger.debug(`HTTP Server has been stopped`);
+                }
+            });
+        });
+        const wsServer = new ws.Server({
+            path: graphqlPath,
+            server: httpServer,
+        });
+        registerTerminateHandler(eventName => {
+            const eventLogger = logger.child(`${eventName}💀`);
+            eventLogger.debug(`Stopping WebSocket Server`);
+            wsServer.close(error => {
+                if (error) {
+                    eventLogger.debug(`WebSocket Server couldn't be stopped: `, error);
+                }
+                else {
+                    eventLogger.debug(`WebSocket Server has been stopped`);
+                }
+            });
+        });
+        const { dispose: stopGraphQLWSServer } = ws$1.useServer({
+            onSubscribe: async ({ connectionParams, extra: { request } }, msg) => {
+                var _a;
+                // spread connectionParams.headers to upgrade request headers.
+                // we completely ignore the root connectionParams because
+                // [@graphql-tools/url-loader adds the headers inside the "headers" field](https://github.com/ardatan/graphql-tools/blob/9a13357c4be98038c645f6efb26f0584828177cf/packages/loaders/url/src/index.ts#L597)
+                for (const [key, value] of Object.entries((_a = connectionParams === null || connectionParams === void 0 ? void 0 : connectionParams.headers) !== null && _a !== void 0 ? _a : {})) {
+                    // dont overwrite existing upgrade headers due to security reasons
+                    if (!(key.toLowerCase() in request.headers)) {
+                        request.headers[key.toLowerCase()] = value;
+                    }
+                }
+                const { getEnveloped } = await mesh$;
+                const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped({
+                    // req object holds the Node request used for extracting the headers (see packages/runtime/src/get-mesh.ts)
+                    req: request,
+                });
+                const args = {
+                    schema,
+                    operationName: msg.payload.operationName,
+                    document: parse(msg.payload.query),
+                    variableValues: msg.payload.variables,
+                    contextValue: await contextFactory(),
+                    execute,
+                    subscribe,
+                };
+                const errors = validate(args.schema, args.document);
+                if (errors.length)
+                    return errors;
+                return args;
+            },
+            execute: (args) => args.execute(args),
+            subscribe: (args) => args.subscribe(args),
+        }, wsServer);
+        registerTerminateHandler(eventName => {
+            const eventLogger = logger.child(`${eventName}💀`);
+            eventLogger.debug(`Stopping GraphQL WS`);
+            Promise.resolve()
+                .then(() => stopGraphQLWSServer())
+                .then(() => {
+                eventLogger.debug(`GraphQL WS has been stopped`);
+            })
+                .catch(error => {
+                eventLogger.debug(`GraphQL WS couldn't be stopped: `, error);
+            });
+        });
+        httpServer
+            .listen(port, hostname, () => {
+            var _a;
+            const shouldntOpenBrowser = ((_a = crossHelpers.process.env.NODE_ENV) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'production' || browser === false;
+            if (!shouldntOpenBrowser) {
+                open(serverUrl, typeof browser === 'string' ? { app: browser } : undefined).catch(() => { });
+            }
+        })
+            .on('error', handleFatalError);
+        return mesh$.then(mesh => ({
+            mesh,
+            httpServer,
+            logger,
+        }));
+    }
+    return null;
+}
+
+const DEFAULT_CLI_PARAMS = {
+    commandName: 'mesh',
+    initialLoggerPrefix: '🕸️  Mesh',
+    configName: 'mesh',
+    artifactsDir: '.mesh',
+    serveMessage: 'Serving GraphQL Mesh',
+    playgroundTitle: 'GraphiQL Mesh',
+    builtMeshFactoryName: 'getBuiltMesh',
+    builtMeshSDKFactoryName: 'getMeshSDK',
+    devServerCommand: 'dev',
+    prodServerCommand: 'start',
+    buildArtifactsCommand: 'build',
+    sourceServerCommand: 'serve-source',
+    validateCommand: 'validate',
+    additionalPackagePrefixes: [],
+};
+async function graphqlMesh(cliParams = DEFAULT_CLI_PARAMS, args = helpers.hideBin(crossHelpers.process.argv), cwdPath = crossHelpers.process.cwd()) {
+    let baseDir = cwdPath;
+    let logger = new utils.DefaultLogger(cliParams.initialLoggerPrefix);
+    return yargs(args)
+        .help()
+        .option('r', {
+        alias: 'require',
+        describe: 'Loads specific require.extensions before running the codegen and reading the configuration',
+        type: 'array',
+        default: [],
+        coerce: (externalModules) => Promise.all(externalModules.map(module => {
+            const localModulePath = crossHelpers.path.resolve(baseDir, module);
+            const islocalModule = crossHelpers.fs.existsSync(localModulePath);
+            return utils.defaultImportFn(islocalModule ? localModulePath : module);
+        })),
+    })
+        .option('dir', {
+        describe: 'Modified the base directory to use for looking for ' + cliParams.configName + ' config file',
+        type: 'string',
+        default: baseDir,
+        coerce: dir => {
+            var _a;
+            if (crossHelpers.path.isAbsolute(dir)) {
+                baseDir = dir;
+            }
+            else {
+                baseDir = crossHelpers.path.resolve(cwdPath, dir);
+            }
+            const tsConfigPath = crossHelpers.path.join(baseDir, 'tsconfig.json');
+            const tsConfigExists = crossHelpers.fs.existsSync(tsConfigPath);
+            tsNode.register({
+                transpileOnly: true,
+                typeCheck: false,
+                dir: baseDir,
+                require: ['graphql-import-node/register'],
+                compilerOptions: {
+                    module: 'commonjs',
+                },
+            });
+            if (tsConfigExists) {
+                try {
+                    const tsConfigStr = crossHelpers.fs.readFileSync(tsConfigPath, 'utf-8');
+                    const tsConfig = JSON5.parse(tsConfigStr);
+                    if ((_a = tsConfig.compilerOptions) === null || _a === void 0 ? void 0 : _a.paths) {
+                        tsconfigPaths.register({
+                            baseUrl: baseDir,
+                            paths: tsConfig.compilerOptions.paths,
+                        });
+                    }
+                }
+                catch (e) {
+                    logger.warn(`Unable to read TSConfig file ${tsConfigPath};\n`, e);
+                }
+            }
+            if (crossHelpers.fs.existsSync(crossHelpers.path.join(baseDir, '.env'))) {
+                dotenv.config({
+                    path: crossHelpers.path.join(baseDir, '.env'),
+                });
+            }
+        },
+    })
+        .command(cliParams.devServerCommand, 'Serves a GraphQL server with GraphQL interface by building artifacts on the fly', builder => {
+        builder.option('port', {
+            type: 'number',
+        });
+    }, async (args) => {
+        var _a;
+        try {
+            const outputDir = crossHelpers.path.join(baseDir, cliParams.artifactsDir);
+            crossHelpers.process.env.NODE_ENV = 'development';
+            const meshConfig = await findAndParseConfig({
+                dir: baseDir,
+                artifactsDir: cliParams.artifactsDir,
+                configName: cliParams.configName,
+                additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+                initialLoggerPrefix: cliParams.initialLoggerPrefix,
+            });
+            logger = meshConfig.logger;
+            const meshInstance$ = runtime.getMesh(meshConfig);
+            // We already handle Mesh instance errors inside `serveMesh`
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            meshInstance$.then(({ schema }) => utils.writeFile(crossHelpers.path.join(outputDir, 'schema.graphql'), utils$1.printSchemaWithDirectives(schema)).catch(e => logger.error(`An error occured while writing the schema file: `, e)));
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            meshInstance$.then(({ schema, rawSources }) => generateTsArtifacts({
+                unifiedSchema: schema,
+                rawSources,
+                mergerType: meshConfig.merger.name,
+                documents: meshConfig.documents,
+                flattenTypes: false,
+                importedModulesSet: new Set(),
+                baseDir,
+                meshConfigImportCodes: new Set([
+                    `import { findAndParseConfig } from '@graphql-mesh/cli';`,
+                    `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
+                ]),
+                meshConfigCodes: new Set([
+                    `
+export function getMeshOptions() {
+  console.warn('WARNING: These artifacts are built for development mode. Please run "${cliParams.commandName} build" to build production artifacts');
+  return findAndParseConfig({
+    dir: baseDir,
+    artifactsDir: ${JSON.stringify(cliParams.artifactsDir)},
+    configName: ${JSON.stringify(cliParams.configName)},
+    additionalPackagePrefixes: ${JSON.stringify(cliParams.additionalPackagePrefixes)},
+    initialLoggerPrefix: ${JSON.stringify(cliParams.initialLoggerPrefix)},
+  });
+}
+
+export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
+  return createMeshHTTPHandler<MeshContext>({
+    baseDir,
+    getBuiltMesh: ${cliParams.builtMeshFactoryName},
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
+  })
+}
+              `.trim(),
+                ]),
+                logger,
+                sdkConfig: meshConfig.config.sdk,
+                fileType: 'ts',
+                codegenConfig: meshConfig.config.codegen,
+            }, cliParams).catch(e => {
+                logger.error(`An error occurred while building the artifacts: ${e.stack || e.message}`);
+            }));
+            const serveMeshOptions = {
+                baseDir,
+                argsPort: args.port,
+                getBuiltMesh: () => meshInstance$,
+                logger: meshConfig.logger.child('Server'),
+                rawServeConfig: meshConfig.config.serve,
+            };
+            if ((_a = meshConfig.config.serve) === null || _a === void 0 ? void 0 : _a.customServerHandler) {
+                const customServerHandler = await utils.loadFromModuleExportExpression(meshConfig.config.serve.customServerHandler, {
+                    defaultExportName: 'default',
+                    cwd: baseDir,
+                    importFn: utils.defaultImportFn,
+                });
+                await customServerHandler(serveMeshOptions);
+            }
+            else {
+                await serveMesh(serveMeshOptions, cliParams);
+            }
+        }
+        catch (e) {
+            handleFatalError(e, logger);
+        }
+    })
+        .command(cliParams.prodServerCommand, 'Serves a GraphQL server with GraphQL interface based on your generated artifacts', builder => {
+        builder.option('port', {
+            type: 'number',
+        });
+    }, async (args) => {
+        try {
+            const builtMeshArtifactsPath = crossHelpers.path.join(baseDir, cliParams.artifactsDir);
+            if (!(await utils.pathExists(builtMeshArtifactsPath))) {
+                throw new Error(`Seems like you haven't build the artifacts yet to start production server! You need to build artifacts first with "${cliParams.commandName} build" command!`);
+            }
+            crossHelpers.process.env.NODE_ENV = 'production';
+            const mainModule = crossHelpers.path.join(builtMeshArtifactsPath, 'index');
+            const builtMeshArtifacts = await utils.defaultImportFn(mainModule);
+            const getMeshOptions = await builtMeshArtifacts.getMeshOptions();
+            logger = getMeshOptions.logger;
+            const rawServeConfig = builtMeshArtifacts.rawServeConfig;
+            const serveMeshOptions = {
+                baseDir,
+                argsPort: args.port,
+                getBuiltMesh: () => runtime.getMesh(getMeshOptions),
+                logger: getMeshOptions.logger.child('Server'),
+                rawServeConfig,
+            };
+            if (rawServeConfig === null || rawServeConfig === void 0 ? void 0 : rawServeConfig.customServerHandler) {
+                const customServerHandler = await utils.loadFromModuleExportExpression(rawServeConfig.customServerHandler, {
+                    defaultExportName: 'default',
+                    cwd: baseDir,
+                    importFn: utils.defaultImportFn,
+                });
+                await customServerHandler(serveMeshOptions);
+            }
+            else {
+                await serveMesh(serveMeshOptions, cliParams);
+            }
+        }
+        catch (e) {
+            handleFatalError(e, logger);
+        }
+    })
+        .command(cliParams.validateCommand, 'Validates artifacts', builder => { }, async (args) => {
+        let destroy;
+        try {
+            if (!(await utils.pathExists(crossHelpers.path.join(baseDir, cliParams.artifactsDir)))) {
+                throw new Error(`You cannot validate artifacts now because you don't have built artifacts yet! You need to build artifacts first with "${cliParams.commandName} build" command!`);
+            }
+            const store$1 = new store.MeshStore(cliParams.artifactsDir, new store.FsStoreStorageAdapter({
+                cwd: baseDir,
+                importFn: utils.defaultImportFn,
+                fileType: 'ts',
+            }), {
+                readonly: false,
+                validate: true,
+            });
+            logger.info(`Reading the configuration`);
+            const meshConfig = await findAndParseConfig({
+                dir: baseDir,
+                store: store$1,
+                importFn: utils.defaultImportFn,
+                ignoreAdditionalResolvers: true,
+                artifactsDir: cliParams.artifactsDir,
+                configName: cliParams.configName,
+                additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+                initialLoggerPrefix: cliParams.initialLoggerPrefix,
+            });
+            logger = meshConfig.logger;
+            logger.info(`Generating the unified schema`);
+            const mesh = await runtime.getMesh(meshConfig);
+            logger.info(`Artifacts have been validated successfully`);
+            destroy = mesh === null || mesh === void 0 ? void 0 : mesh.destroy;
+        }
+        catch (e) {
+            handleFatalError(e, logger);
+        }
+        if (destroy) {
+            destroy();
+        }
+    })
+        .command(cliParams.buildArtifactsCommand, 'Builds artifacts', builder => {
+        builder.option('fileType', {
+            type: 'string',
+            choices: ['json', 'ts', 'js'],
+            default: 'ts',
+        });
+        builder.option('throwOnInvalidConfig', {
+            type: 'boolean',
+            default: false,
+        });
+    }, async (args) => {
+        try {
+            const outputDir = crossHelpers.path.join(baseDir, cliParams.artifactsDir);
+            logger.info('Cleaning existing artifacts');
+            await utils.rmdirs(outputDir);
+            const importedModulesSet = new Set();
+            const importPromises = [];
+            const importFn = (moduleId, noCache) => {
+                const importPromise = utils.defaultImportFn(moduleId)
+                    .catch(e => {
+                    if (e.message.includes('getter')) {
+                        return e;
+                    }
+                    else {
+                        throw e;
+                    }
+                })
+                    .then(m => {
+                    if (!noCache) {
+                        importedModulesSet.add(moduleId);
+                    }
+                    return m;
+                });
+                importPromises.push(importPromise.catch(() => { }));
+                return importPromise;
+            };
+            await Promise.all(importPromises);
+            const store$1 = new store.MeshStore(cliParams.artifactsDir, new store.FsStoreStorageAdapter({
+                cwd: baseDir,
+                importFn,
+                fileType: args.fileType,
+            }), {
+                readonly: false,
+                validate: false,
+            });
+            logger.info(`Reading the configuration`);
+            const meshConfig = await findAndParseConfig({
+                dir: baseDir,
+                store: store$1,
+                importFn,
+                ignoreAdditionalResolvers: true,
+                artifactsDir: cliParams.artifactsDir,
+                configName: cliParams.configName,
+                additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+                generateCode: true,
+                initialLoggerPrefix: cliParams.initialLoggerPrefix,
+                throwOnInvalidConfig: args.throwOnInvalidConfig,
+            });
+            logger = meshConfig.logger;
+            logger.info(`Generating the unified schema`);
+            const { schema, destroy, rawSources } = await runtime.getMesh(meshConfig);
+            await utils.writeFile(crossHelpers.path.join(outputDir, 'schema.graphql'), utils$1.printSchemaWithDirectives(schema));
+            logger.info(`Generating artifacts`);
+            meshConfig.importCodes.add(`import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`);
+            meshConfig.codes.add(`
+export function createBuiltMeshHTTPHandler(): MeshHTTPHandler<MeshContext> {
+  return createMeshHTTPHandler<MeshContext>({
+    baseDir,
+    getBuiltMesh: ${cliParams.builtMeshFactoryName},
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},
+  })
+}
+`);
+            await generateTsArtifacts({
+                unifiedSchema: schema,
+                rawSources,
+                mergerType: meshConfig.merger.name,
+                documents: meshConfig.documents,
+                flattenTypes: false,
+                importedModulesSet,
+                baseDir,
+                meshConfigImportCodes: meshConfig.importCodes,
+                meshConfigCodes: meshConfig.codes,
+                logger,
+                sdkConfig: meshConfig.config.sdk,
+                fileType: args.fileType,
+                codegenConfig: meshConfig.config.codegen,
+            }, cliParams);
+            logger.info(`Cleanup`);
+            destroy();
+            logger.info('Done! => ' + outputDir);
+        }
+        catch (e) {
+            handleFatalError(e, logger);
+        }
+    })
+        .command(cliParams.sourceServerCommand + ' <source>', 'Serves specific source in development mode', builder => {
+        builder.positional('source', {
+            type: 'string',
+            requiresArg: true,
+        });
+    }, async (args) => {
+        var _a;
+        crossHelpers.process.env.NODE_ENV = 'development';
+        const meshConfig = await findAndParseConfig({
+            dir: baseDir,
+            artifactsDir: cliParams.artifactsDir,
+            configName: cliParams.configName,
+            additionalPackagePrefixes: cliParams.additionalPackagePrefixes,
+            initialLoggerPrefix: cliParams.initialLoggerPrefix,
+        });
+        logger = meshConfig.logger;
+        const sourceIndex = meshConfig.sources.findIndex(rawSource => rawSource.name === args.source);
+        if (sourceIndex === -1) {
+            throw new Error(`Source ${args.source} not found`);
+        }
+        const meshInstance$ = runtime.getMesh({
+            ...meshConfig,
+            additionalTypeDefs: undefined,
+            additionalResolvers: [],
+            transforms: [],
+            sources: [meshConfig.sources[sourceIndex]],
+        });
+        const serveMeshOptions = {
+            baseDir,
+            argsPort: 4000 + sourceIndex + 1,
+            getBuiltMesh: () => meshInstance$,
+            logger: meshConfig.logger.child('Server'),
+            rawServeConfig: meshConfig.config.serve,
+            playgroundTitle: `${args.source} GraphiQL`,
+        };
+        if ((_a = meshConfig.config.serve) === null || _a === void 0 ? void 0 : _a.customServerHandler) {
+            const customServerHandler = await utils.loadFromModuleExportExpression(meshConfig.config.serve.customServerHandler, {
+                defaultExportName: 'default',
+                cwd: baseDir,
+                importFn: utils.defaultImportFn,
+            });
+            await customServerHandler(serveMeshOptions);
+        }
+        else {
+            await serveMesh(serveMeshOptions, cliParams);
+        }
+    }).argv;
+}
+
+graphqlMesh(DEFAULT_CLI_PARAMS).catch(e => handleFatalError(e, new utils.DefaultLogger(DEFAULT_CLI_PARAMS.initialLoggerPrefix)));

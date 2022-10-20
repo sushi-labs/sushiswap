@@ -1,0 +1,49 @@
+{
+  "name": "d3-interpolate-path",
+  "version": "2.2.1",
+  "description": "Interpolates path `d` attribute smoothly when A and B have different number of points.",
+  "author": "Peter Beshai <peter.beshai@gmail.com> (http://github.com/pbeshai)",
+  "keywords": [
+    "d3",
+    "d3-module",
+    "d3-interpolate",
+    "d3-interpolate-path",
+    "svg path",
+    "path animation",
+    "interpolation",
+    "canvas path"
+  ],
+  "license": "BSD-3-Clause",
+  "main": "build/d3-interpolate-path.js",
+  "jsnext:main": "index",
+  "homepage": "https://github.com/pbeshai/d3-interpolate-path",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pbeshai/d3-interpolate-path.git"
+  },
+  "scripts": {
+    "build": "rm -rf build && mkdir build && rollup --config rollup.config.js",
+    "watch": "rollup --config rollup.config.js --watch",
+    "lint": "eslint --ext .js src --fix",
+    "pretest": "npm run build",
+    "test": "tape 'test/**/*-test.js'",
+    "prepublish": "npm run lint && npm run test && uglifyjs build/d3-interpolate-path.js -c -m -o build/d3-interpolate-path.min.js",
+    "postpublish": "zip -j build/d3-interpolate-path.zip -- LICENSE README.md build/d3-interpolate-path.js build/d3-interpolate-path.min.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-runtime": "^6.26.0",
+    "braces": ">= 2.3.1",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "minimist": ">= 1.2.3",
+    "rollup": "^2.21.0",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-node-resolve": "^5.0.1",
+    "tape": "^5.0.1",
+    "uglify-js": "^3.10.0"
+  },
+  "dependencies": {}
+}

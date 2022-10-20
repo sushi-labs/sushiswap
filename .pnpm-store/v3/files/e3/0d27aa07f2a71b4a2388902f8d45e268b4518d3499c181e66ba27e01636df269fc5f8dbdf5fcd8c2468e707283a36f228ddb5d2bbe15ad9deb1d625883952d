@@ -1,0 +1,90 @@
+{
+  "version": 2,
+  "tree": {
+    "name": "root",
+    "children": [
+      {
+        "name": "index.production.js",
+        "children": [
+          {
+            "name": "packages",
+            "children": [
+              {
+                "name": "table-core/build/esm/index.js",
+                "uid": "f507-132"
+              },
+              {
+                "name": "react-table/src/index.tsx",
+                "uid": "f507-134"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "isRoot": true
+  },
+  "nodeParts": {
+    "f507-132": {
+      "renderedLength": 137788,
+      "gzipLength": 23944,
+      "brotliLength": 0,
+      "mainUid": "f507-131"
+    },
+    "f507-134": {
+      "renderedLength": 1900,
+      "gzipLength": 752,
+      "brotliLength": 0,
+      "mainUid": "f507-133"
+    }
+  },
+  "nodeMetas": {
+    "f507-131": {
+      "id": "/packages/table-core/build/esm/index.js",
+      "moduleParts": {
+        "index.production.js": "f507-132"
+      },
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "f507-133"
+        }
+      ]
+    },
+    "f507-133": {
+      "id": "/packages/react-table/src/index.tsx",
+      "moduleParts": {
+        "index.production.js": "f507-134"
+      },
+      "imported": [
+        {
+          "uid": "f507-135"
+        },
+        {
+          "uid": "f507-131"
+        }
+      ],
+      "importedBy": [],
+      "isEntry": true
+    },
+    "f507-135": {
+      "id": "react",
+      "moduleParts": {},
+      "imported": [],
+      "importedBy": [
+        {
+          "uid": "f507-133"
+        }
+      ],
+      "isExternal": true
+    }
+  },
+  "env": {
+    "rollup": "2.77.1"
+  },
+  "options": {
+    "gzip": true,
+    "brotli": false,
+    "sourcemap": false
+  }
+}

@@ -1,0 +1,6 @@
+import { App as DefaultApp } from "@octokit/app";
+import { OAuthApp as DefaultOAuthApp } from "@octokit/oauth-app";
+import { Octokit } from "./octokit";
+export const App = DefaultApp.defaults({ Octokit });
+export const OAuthApp = DefaultOAuthApp.defaults({ Octokit });
+export { createNodeMiddleware } from "@octokit/app";

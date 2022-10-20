@@ -1,0 +1,74 @@
+{
+  "name": "next-transpile-modules",
+  "version": "9.0.0",
+  "license": "MIT",
+  "author": "Pierre de la Martinière <pierre.de.la.martiniere@gmail.com>",
+  "description": "Next.js plugin to transpile code from node_modules (supports TypeScript)",
+  "main": "src/next-transpile-modules.js",
+  "files": [
+    "src/next-transpile-modules.js",
+    "src/next-transpile-modules.d.ts"
+  ],
+  "scripts": {
+    "setup": "node --trace-uncaught src/__tests__/setup.js",
+    "update:next": "npm run setup && bash scripts/next-update.sh",
+    "typings": "tsc",
+    "prepublishOnly": "npm run typings",
+    "pretest": "npm run setup",
+    "quickie": "node --trace-uncaught src/__tests__/setup.js && yarn --cwd src/__tests__/__apps__/swc/app run dev",
+    "test": "jest --forceExit",
+    "test:debug": "jest --detectOpenHandles --forceExit",
+    "test:lint": "eslint .",
+    "test:formatting": "prettier --check \"**/*.js\"",
+    "test:formatting:fix": "prettier --check \"**/*.js\" --write",
+    "test:prepare:npm-basic": "npm run build --prefix=src/__tests__/__apps__/npm-basic",
+    "test:prepare:yarn-workspaces": "yarn --cwd src/__tests__/__apps__/yarn-workspaces/app run build",
+    "test:prepare:yarn-workspaces-symlinks": "yarn --cwd src/__tests__/__apps__/yarn-workspaces-symlinks/app run build",
+    "test:prepare:pnpm": "npm run build --prefix=src/__tests__/__apps__/pnpm",
+    "test:prepare:swc": "yarn --cwd src/__tests__/__apps__/swc/app run build",
+    "test:prepare": "npm run test:prepare:npm-basic && npm run test:prepare:yarn-workspaces && npm run test:prepare:yarn-workspaces-symlinks && npm run test:prepare:pnpm && npm run test:prepare:swc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martpie/next-transpile-modules.git"
+  },
+  "bugs": {
+    "url": "https://github.com/martpie/next-transpile-modules/issues"
+  },
+  "homepage": "https://github.com/martpie/next-transpile-modules#readme",
+  "keywords": [
+    "next",
+    "next.js",
+    "plugin",
+    "transpile",
+    "modules",
+    "babel",
+    "webpack"
+  ],
+  "dependencies": {
+    "enhanced-resolve": "^5.7.0",
+    "escalade": "^3.1.1"
+  },
+  "devDependencies": {
+    "@types/jest-environment-puppeteer": "4.4.1",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-config-semistandard": "^15.0.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^5.0.0",
+    "fs-extra": "^9.1.0",
+    "jest": "^26.6.3",
+    "jest-environment-node": "^26.6.2",
+    "jest-environment-puppeteer": "^4.4.0",
+    "jest-puppeteer": "^4.4.0",
+    "prettier": "^2.2.1",
+    "prettier-eslint": "^12.0.0",
+    "puppeteer": "^5.5.0",
+    "rewire": "^4.0.1",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.0"
+  }
+}

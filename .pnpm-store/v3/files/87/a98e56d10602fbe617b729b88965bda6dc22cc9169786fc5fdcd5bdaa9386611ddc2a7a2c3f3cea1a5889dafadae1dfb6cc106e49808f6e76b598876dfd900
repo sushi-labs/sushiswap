@@ -1,0 +1,2 @@
+import{useRef as r,useEffect as e}from"react";export default function(t,n,a,u){var c=r(a),i=r(u);e(()=>{c.current=a,i.current=u}),e(()=>{function r(){if(!a){for(var r=arguments.length,e=new Array(r),t=0;r>t;t++)e[t]=arguments[t];c.current.apply(this,e)}}var e=t&&"current"in t?t.current:t;if(e){var a=0;e.addEventListener(n,r);var u=i.current;return()=>{a=1,e.removeEventListener(n,r),u&&u()}}},[t,n])}
+//# sourceMappingURL=index.mjs.map

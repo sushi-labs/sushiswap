@@ -1,0 +1,167 @@
+/**
+ * table-core
+ *
+ * Copyright (c) TanStack
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var aggregationFns = require('../aggregationFns.js');
+var utils = require('../utils.js');
+
+//
+const Grouping = {
+  getDefaultColumnDef: () => {
+    return {
+      aggregationFn: 'auto'
+    };
+  },
+  getInitialState: state => {
+    return {
+      grouping: [],
+      ...state
+    };
+  },
+  getDefaultOptions: instance => {
+    return {
+      onGroupingChange: utils.makeStateUpdater('grouping', instance),
+      groupedColumnMode: 'reorder'
+    };
+  },
+  createColumn: (column, instance) => {
+    return {
+      toggleGrouping: () => {
+        instance.setGrouping(old => {
+          // Find any existing grouping for this column
+          if (old != null && old.includes(column.id)) {
+            return old.filter(d => d !== column.id);
+          }
+
+          return [...(old != null ? old : []), column.id];
+        });
+      },
+      getCanGroup: () => {
+        var _ref, _ref2, _ref3, _column$columnDef$ena;
+
+        return (_ref = (_ref2 = (_ref3 = (_column$columnDef$ena = column.columnDef.enableGrouping) != null ? _column$columnDef$ena : true) != null ? _ref3 : instance.options.enableGrouping) != null ? _ref2 : true) != null ? _ref : !!column.accessorFn;
+      },
+      getIsGrouped: () => {
+        var _instance$getState$gr;
+
+        return (_instance$getState$gr = instance.getState().grouping) == null ? void 0 : _instance$getState$gr.includes(column.id);
+      },
+      getGroupedIndex: () => {
+        var _instance$getState$gr2;
+
+        return (_instance$getState$gr2 = instance.getState().grouping) == null ? void 0 : _instance$getState$gr2.indexOf(column.id);
+      },
+      getToggleGroupingHandler: () => {
+        const canGroup = column.getCanGroup();
+        return () => {
+          if (!canGroup) return;
+          column.toggleGrouping();
+        };
+      },
+      getAutoAggregationFn: () => {
+        const firstRow = instance.getCoreRowModel().flatRows[0];
+        const value = firstRow == null ? void 0 : firstRow.getValue(column.id);
+
+        if (typeof value === 'number') {
+          return aggregationFns.aggregationFns.sum;
+        }
+
+        if (Object.prototype.toString.call(value) === '[object Date]') {
+          return aggregationFns.aggregationFns.extent;
+        }
+
+        return aggregationFns.aggregationFns.count;
+      },
+      getAggregationFn: () => {
+        var _ref4;
+
+        const userAggregationFns = instance.options.aggregationFns;
+
+        if (!column) {
+          throw new Error();
+        }
+
+        return utils.isFunction(column.aggregationFn) ? column.aggregationFn : column.aggregationFn === 'auto' ? column.getAutoAggregationFn() : (_ref4 = userAggregationFns == null ? void 0 : userAggregationFns[column.aggregationFn]) != null ? _ref4 : aggregationFns.aggregationFns[column.aggregationFn];
+      }
+    };
+  },
+  createInstance: instance => {
+    return {
+      setGrouping: updater => instance.options.onGroupingChange == null ? void 0 : instance.options.onGroupingChange(updater),
+      resetGrouping: defaultState => {
+        var _instance$initialStat, _instance$initialStat2;
+
+        instance.setGrouping(defaultState ? [] : (_instance$initialStat = (_instance$initialStat2 = instance.initialState) == null ? void 0 : _instance$initialStat2.grouping) != null ? _instance$initialStat : []);
+      },
+      getPreGroupedRowModel: () => instance.getSortedRowModel(),
+      getGroupedRowModel: () => {
+        if (!instance._getGroupedRowModel && instance.options.getGroupedRowModel) {
+          instance._getGroupedRowModel = instance.options.getGroupedRowModel(instance);
+        }
+
+        if (instance.options.manualGrouping || !instance._getGroupedRowModel) {
+          return instance.getPreGroupedRowModel();
+        }
+
+        return instance._getGroupedRowModel();
+      }
+    };
+  },
+  createRow: row => {
+    return {
+      getIsGrouped: () => !!row.groupingColumnId,
+      _groupingValuesCache: {}
+    };
+  },
+  createCell: (cell, column, row, instance) => {
+    return {
+      getIsGrouped: () => column.getIsGrouped() && column.id === row.groupingColumnId,
+      getIsPlaceholder: () => !cell.getIsGrouped() && column.getIsGrouped(),
+      getIsAggregated: () => {
+        var _row$subRows;
+
+        return !cell.getIsGrouped() && !cell.getIsPlaceholder() && ((_row$subRows = row.subRows) == null ? void 0 : _row$subRows.length) > 1;
+      },
+      renderAggregatedCell: () => {
+        var _column$columnDef$agg;
+
+        const template = (_column$columnDef$agg = column.columnDef.aggregatedCell) != null ? _column$columnDef$agg : column.columnDef.cell;
+        return template ? instance._render(template, {
+          instance,
+          column,
+          row,
+          cell,
+          getValue: cell.getValue
+        }) : null;
+      }
+    };
+  }
+};
+function orderColumns(leafColumns, grouping, groupedColumnMode) {
+  if (!(grouping != null && grouping.length) || !groupedColumnMode) {
+    return leafColumns;
+  }
+
+  const nonGroupingColumns = leafColumns.filter(col => !grouping.includes(col.id));
+
+  if (groupedColumnMode === 'remove') {
+    return nonGroupingColumns;
+  }
+
+  const groupingColumns = grouping.map(g => leafColumns.find(col => col.id === g)).filter(Boolean);
+  return [...groupingColumns, ...nonGroupingColumns];
+}
+
+exports.Grouping = Grouping;
+exports.orderColumns = orderColumns;
+//# sourceMappingURL=Grouping.js.map

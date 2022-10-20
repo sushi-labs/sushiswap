@@ -1,0 +1,24 @@
+{
+    "name": "@types/btoa-lite",
+    "version": "1.0.0",
+    "description": "TypeScript definitions for btoa-lite",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Gregor Martynus",
+            "url": "https://github.com/gr2m",
+            "githubUsername": "gr2m"
+        }
+    ],
+    "main": "",
+    "types": "index",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/btoa-lite"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "62db71e6c7d4b0ec13f068b0e9d9dc9a80c2131a9703cace1abf225a479c7e84",
+    "typeScriptVersion": "2.0"
+}

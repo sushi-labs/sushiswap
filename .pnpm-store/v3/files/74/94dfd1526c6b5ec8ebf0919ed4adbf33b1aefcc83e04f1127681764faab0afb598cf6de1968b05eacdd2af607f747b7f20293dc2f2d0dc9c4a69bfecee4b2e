@@ -1,0 +1,23 @@
+{
+  "name": "base64-sol",
+  "version": "1.0.1",
+  "description": "base64 implementation in solidity",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brechtpd/base64.git"
+  },
+  "keywords": [
+    "base64",
+    "solidity"
+  ],
+  "author": "Brecht Devos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Brechtpd/base64/issues"
+  },
+  "homepage": "https://github.com/Brechtpd/base64#readme"
+}

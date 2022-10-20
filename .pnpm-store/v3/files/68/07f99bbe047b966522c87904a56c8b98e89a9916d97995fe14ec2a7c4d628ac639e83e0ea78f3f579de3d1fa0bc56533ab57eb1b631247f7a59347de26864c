@@ -1,0 +1,1 @@
+export declare function unsigned_url_prefix(source: string, cloud_name: string, private_cdn: boolean, cdn_subdomain: boolean, secure_cdn_subdomain: boolean, cname: string, secure: boolean, secure_distribution: string): string;

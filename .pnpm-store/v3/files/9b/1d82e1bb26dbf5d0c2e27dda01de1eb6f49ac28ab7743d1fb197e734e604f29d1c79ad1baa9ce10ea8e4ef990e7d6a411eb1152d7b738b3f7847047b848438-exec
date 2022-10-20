@@ -1,0 +1,25 @@
+{
+    "name": "@types/workbox-core",
+    "version": "4.3.1",
+    "description": "TypeScript definitions for workbox-core",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-core",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Kwok",
+            "url": "https://github.com/JasonHK",
+            "githubUsername": "JasonHK"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/workbox-core"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "2bcec88e0369c8ea8b62bac3500a1a8c7f232c6be19d4f492b48907737374d39",
+    "typeScriptVersion": "3.6"
+}

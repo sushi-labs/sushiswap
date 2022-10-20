@@ -1,0 +1,43 @@
+{
+  "name": "@graphql-mesh/http",
+  "version": "0.1.27",
+  "sideEffects": false,
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "@graphql-mesh/cross-helpers": "0.2.6",
+    "@graphql-mesh/runtime": "0.44.19",
+    "@graphql-mesh/types": "0.84.9",
+    "@graphql-mesh/utils": "0.41.20",
+    "@whatwg-node/fetch": "^0.4.6",
+    "@whatwg-node/server": "^0.4.10",
+    "graphql-yoga": "3.0.0-next.3",
+    "itty-router": "2.6.6",
+    "itty-router-extras": "0.4.2",
+    "tslib": "^2.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/http"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "module": "index.mjs",
+  "typings": "index.d.ts",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    },
+    "./*": {
+      "require": "./*.js",
+      "import": "./*.mjs"
+    },
+    "./package.json": "./package.json"
+  }
+}

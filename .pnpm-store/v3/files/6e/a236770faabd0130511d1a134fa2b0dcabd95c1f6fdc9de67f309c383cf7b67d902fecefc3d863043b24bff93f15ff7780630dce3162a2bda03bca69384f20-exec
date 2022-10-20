@@ -1,0 +1,16 @@
+# Installation
+> `npm install --save @types/workbox-core`
+
+# Summary
+This package contains type definitions for workbox-core (https://github.com/GoogleChrome/workbox).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-core.
+
+### Additional Details
+ * Last updated: Fri, 02 Jul 2021 18:05:57 GMT
+ * Dependencies: none
+ * Global values: none
+
+# Credits
+These definitions were written by [Jason Kwok](https://github.com/JasonHK).

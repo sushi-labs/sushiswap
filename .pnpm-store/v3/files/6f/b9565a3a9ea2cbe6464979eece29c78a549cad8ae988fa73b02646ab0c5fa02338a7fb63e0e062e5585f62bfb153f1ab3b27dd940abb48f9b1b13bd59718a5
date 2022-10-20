@@ -1,0 +1,219 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TenderlyNetwork = void 0;
+const fs_1 = __importDefault(require("fs"));
+const yaml = __importStar(require("js-yaml"));
+const os_1 = __importDefault(require("os"));
+const path_1 = __importDefault(require("path"));
+const index_1 = require("./index");
+const errors_1 = require("./tenderly/errors");
+const TenderlyApiService_1 = require("./tenderly/TenderlyApiService");
+const TenderlyService_1 = require("./tenderly/TenderlyService");
+const error_logger_1 = require("./utils/error_logger");
+const util_1 = require("./utils/util");
+class TenderlyNetwork {
+    constructor(hre) {
+        this.filepath = os_1.default.homedir() + path_1.default.sep + ".tenderly" + path_1.default.sep + "config.yaml";
+        this.env = hre;
+        this.connected = true;
+        const fileData = fs_1.default.readFileSync(this.filepath);
+        const yamlData = yaml.load(fileData.toString());
+        this.accessKey = yamlData.access_key;
+        this.tenderlyAPI = TenderlyApiService_1.TenderlyApiService.configureTenderlyRPCInstance();
+        this.host = this.tenderlyAPI.defaults.baseURL;
+        if (hre.network.name === "tenderly" &&
+            "url" in hre.network.config &&
+            hre.network.config.url !== undefined) {
+            this.fork = hre.network.config.url.split("/").pop();
+        }
+    }
+    supportsSubscriptions() {
+        if (!this.checkNetwork()) {
+            return;
+        }
+        return false;
+    }
+    disconnect() {
+        if (!this.checkNetwork()) {
+            return;
+        }
+        return true;
+    }
+    async send(payload, cb) {
+        if (!this.checkNetwork()) {
+            return;
+        }
+        if (this.head === undefined) {
+            await this.initializeFork();
+        }
+        try {
+            this.tenderlyAPI.defaults.headers.Head = this.head;
+            const resp = await this.tenderlyAPI.post("", payload);
+            this.head = resp.headers.head;
+            this.writeHead();
+            cb(null, resp.data);
+        }
+        catch (err) {
+            (0, error_logger_1.logError)(err);
+            cb(err.response.data);
+        }
+    }
+    resetFork() {
+        const fileData = fs_1.default.readFileSync(this.filepath);
+        const yamlData = yaml.load(fileData.toString());
+        const oldHead = yamlData.head;
+        delete yamlData.head;
+        delete yamlData.fork;
+        fs_1.default.writeFileSync(this.filepath, yaml.safeDump(yamlData), "utf8");
+        return oldHead;
+    }
+    async verify(...contracts) {
+        if (!this.checkNetwork()) {
+            return;
+        }
+        if (this.head === undefined && this.fork === undefined) {
+            await this.initializeFork();
+        }
+        const flatContracts = contracts.reduce((accumulator, value) => accumulator.concat(value), []);
+        const requestData = await this.filterContracts(flatContracts);
+        if (requestData == null) {
+            console.log("Fork verification failed");
+            return;
+        }
+        try {
+            await TenderlyService_1.TenderlyService.verifyForkContracts(requestData, this.env.config.tenderly.project, this.env.config.tenderly.username, this.fork);
+        }
+        catch (err) {
+            (0, error_logger_1.logError)(err);
+        }
+    }
+    async verifyAPI(request, tenderlyProject, username, forkID) {
+        try {
+            await TenderlyService_1.TenderlyService.verifyForkContracts(request, tenderlyProject, username, forkID);
+        }
+        catch (err) {
+            (0, error_logger_1.logError)(err);
+        }
+    }
+    getHead() {
+        if (!this.checkNetwork()) {
+            return;
+        }
+        return this.head;
+    }
+    setHead(head) {
+        if (!this.checkNetwork()) {
+            return;
+        }
+        this.head = head;
+    }
+    getFork() {
+        if (!this.checkNetwork()) {
+            return;
+        }
+        return this.fork;
+    }
+    setFork(fork) {
+        if (!this.checkNetwork()) {
+            return;
+        }
+        this.fork = fork;
+    }
+    async initializeFork() {
+        var _a;
+        if (!this.checkNetwork()) {
+            return;
+        }
+        if (!((_a = this.env.config.tenderly) === null || _a === void 0 ? void 0 : _a.forkNetwork)) {
+            return;
+        }
+        const username = this.env.config.tenderly.username;
+        const projectID = this.env.config.tenderly.project;
+        try {
+            const resp = await this.tenderlyAPI.post(`/account/${username}/project/${projectID}/fork`, { network_id: this.env.config.tenderly.forkNetwork });
+            this.head = resp.data.root_transaction.id;
+            this.accounts = resp.data.simulation_fork.accounts;
+            this.fork = resp.data.simulation_fork.id;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+    writeHead() {
+        const fileData = fs_1.default.readFileSync(this.filepath);
+        const yamlData = yaml.load(fileData.toString());
+        yamlData.head = this.head;
+        fs_1.default.writeFileSync(this.filepath, yaml.safeDump(yamlData), "utf8");
+    }
+    async filterContracts(flatContracts) {
+        let contract;
+        let requestData;
+        try {
+            requestData = await this.getForkContractData(flatContracts);
+        }
+        catch (e) {
+            return null;
+        }
+        for (contract of flatContracts) {
+            const index = requestData.contracts.findIndex(requestContract => requestContract.contractName === contract.name);
+            if (index === -1) {
+                continue;
+            }
+            requestData.contracts[index].networks = {
+                [this.fork]: {
+                    address: contract.address,
+                    links: contract.libraries
+                }
+            };
+        }
+        return requestData;
+    }
+    async getForkContractData(flatContracts) {
+        const contracts = await (0, util_1.getContracts)(this.env, flatContracts);
+        const solcConfig = (0, util_1.getCompilerDataFromContracts)(contracts, flatContracts, this.env.config);
+        if (solcConfig === undefined) {
+            console.log(errors_1.NO_COMPILER_FOUND_FOR_CONTRACT);
+            console.log(flatContracts);
+        }
+        return {
+            contracts,
+            config: solcConfig,
+            root: this.head
+        };
+    }
+    checkNetwork() {
+        if (this.env.network.name !== "tenderly") {
+            console.log(`Warning in ${index_1.PluginName}: Network is not set to tenderly. Please call the task again with --network tenderly`);
+            return false;
+        }
+        return true;
+    }
+}
+exports.TenderlyNetwork = TenderlyNetwork;
+//# sourceMappingURL=TenderlyNetwork.js.map

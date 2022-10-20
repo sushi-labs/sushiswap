@@ -1,0 +1,42 @@
+{
+    "name": "@types/react-slider",
+    "version": "1.3.1",
+    "description": "TypeScript definitions for react-slider",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-slider",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Unger",
+            "url": "https://github.com/jsonunger",
+            "githubUsername": "jsonunger"
+        },
+        {
+            "name": "Björgvin Bæhrenz Þórðarson",
+            "url": "https://github.com/bjorgvin",
+            "githubUsername": "bjorgvin"
+        },
+        {
+            "name": "Loïc Huder",
+            "url": "https://github.com/loichuder",
+            "githubUsername": "loichuder"
+        },
+        {
+            "name": "Axel Bocciarelli",
+            "url": "https://github.com/axelboc",
+            "githubUsername": "axelboc"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/react-slider"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/react": "*"
+    },
+    "typesPublisherContentHash": "146a6734ef74e72c5a3ba4bcca26e60c36dc0a603b015485eef198ad7f38696a",
+    "typeScriptVersion": "3.9"
+}

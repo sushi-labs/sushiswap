@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;;AACA,mCAAmD;AAA1C,uGAAA,aAAa,OAAA;AAAE,mGAAA,SAAS,OAAA;AACjC,+CAA4C;AAAnC,2GAAA,WAAW,OAAA","sourcesContent":["export type { Primitives } from '@edge-runtime/vm'\nexport { createHandler, runServer } from './server'\nexport { EdgeRuntime } from './edge-runtime'\n"]}

@@ -1,0 +1,1 @@
+{"version":3,"file":"globalStore.d.ts","sourceRoot":"","sources":["../../src/globalStore.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,OAAO,EAAC,MAAM,eAAe,CAAC;AAGtC,eAAO,MAAM,KAAK,EAAE;IAClB,QAAQ,EAAE;QAAC,CAAC,IAAI,EAAE,MAAM,GAAG,OAAO,CAAA;KAAC,CAAC;CAGrC,CAAC"}

@@ -1,0 +1,2 @@
+import{toNestError as r,validateFieldsNatively as o}from"@hookform/resolvers";import e from"vest/promisify";const s=(r,o)=>{const e={};for(const s in r)e[s]||(e[s]={message:r[s][0],type:""}),o&&(e[s].types=r[s].reduce((r,o,e)=>(r[e]=o)&&r,{}));return e},t=(t,a,i={})=>async(a,n,l)=>{const c="sync"===i.mode?t(a):await e(t)(a);return c.hasErrors()?{values:{},errors:r(s(c.getErrors(),!l.shouldUseNativeValidation&&"all"===l.criteriaMode),l)}:(l.shouldUseNativeValidation&&o({},l),{values:a,errors:{}})};export{t as vestResolver};
+//# sourceMappingURL=vest.modern.js.map

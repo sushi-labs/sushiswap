@@ -1,0 +1,16 @@
+# Installation
+> `npm install --save @types/workbox-google-analytics`
+
+# Summary
+This package contains type definitions for workbox-google-analytics (https://github.com/GoogleChrome/workbox).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-google-analytics.
+
+### Additional Details
+ * Last updated: Fri, 02 Jul 2021 18:05:58 GMT
+ * Dependencies: none
+ * Global values: none
+
+# Credits
+These definitions were written by [Jason Kwok](https://github.com/JasonHK).

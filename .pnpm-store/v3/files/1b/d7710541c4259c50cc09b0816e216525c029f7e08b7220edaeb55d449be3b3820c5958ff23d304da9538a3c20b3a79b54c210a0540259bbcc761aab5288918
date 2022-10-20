@@ -1,0 +1,63 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useSchema = void 0;
+const graphql_1 = require("graphql");
+const useSchema = (schemaDef) => {
+    if (schemaDef == null) {
+        return {};
+    }
+    if ((0, graphql_1.isSchema)(schemaDef)) {
+        return {
+            onPluginInit({ setSchema }) {
+                setSchema(schemaDef);
+            },
+        };
+    }
+    if ('then' in schemaDef) {
+        let schema;
+        return {
+            async onRequest() {
+                if (!schema) {
+                    schema = await schemaDef;
+                }
+            },
+            onEnveloped({ setSchema }) {
+                if (!schema) {
+                    throw new graphql_1.GraphQLError(`You provide a promise of a schema but it hasn't been resolved yet. Make sure you use this plugin with GraphQL Yoga.`, {
+                        extensions: {
+                            http: {
+                                status: 500,
+                            },
+                        },
+                    });
+                }
+                setSchema(schema);
+            },
+        };
+    }
+    const schemaByRequest = new WeakMap();
+    return {
+        async onRequest({ request }) {
+            const schema = await schemaDef(request);
+            schemaByRequest.set(request, schema);
+        },
+        onEnveloped({ setSchema, context }) {
+            if (context?.request) {
+                const schema = schemaByRequest.get(context.request);
+                if (schema) {
+                    setSchema(schema);
+                }
+            }
+            else {
+                throw new graphql_1.GraphQLError('Request object is not available in the context. Make sure you use this plugin with GraphQL Yoga.', {
+                    extensions: {
+                        http: {
+                            status: 500,
+                        },
+                    },
+                });
+            }
+        },
+    };
+};
+exports.useSchema = useSchema;

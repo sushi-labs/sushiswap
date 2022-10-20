@@ -1,0 +1,94 @@
+/// <reference types="node" />
+import { Observable } from "rxjs";
+import { DiagnosticLogger } from "../connection/DiagnosticLogger";
+import { EventListener } from "../connection/EventListener";
+import { SessionConfig } from "../connection/SessionConfig";
+import { WalletSDKConnection } from "../connection/WalletSDKConnection";
+import { ScopedLocalStorage } from "../lib/ScopedLocalStorage";
+import { WalletUI, WalletUIOptions } from "../provider/WalletUI";
+import { AddressString, IntNumber, ProviderType, RegExpString } from "../types";
+import { EthereumTransactionParams } from "./EthereumTransactionParams";
+import { RelayMessage } from "./RelayMessage";
+import { Session } from "./Session";
+import { CancelablePromise, WalletSDKRelayAbstract } from "./WalletSDKRelayAbstract";
+import { WalletSDKRelayEventManager } from "./WalletSDKRelayEventManager";
+import { GenericRequest, Web3Request } from "./Web3Request";
+import { AddEthereumChainResponse, EthereumAddressFromSignedMessageResponse, GenericResponse, RequestEthereumAccountsResponse, ScanQRCodeResponse, SelectProviderResponse, SignEthereumMessageResponse, SignEthereumTransactionResponse, SubmitEthereumTransactionResponse, SwitchEthereumChainResponse, WatchAssetResponse, Web3Response } from "./Web3Response";
+export interface WalletSDKRelayOptions {
+    linkAPIUrl: string;
+    version: string;
+    darkMode: boolean;
+    storage: ScopedLocalStorage;
+    relayEventManager: WalletSDKRelayEventManager;
+    uiConstructor: (options: Readonly<WalletUIOptions>) => WalletUI;
+    diagnosticLogger?: DiagnosticLogger;
+    eventListener?: EventListener;
+    reloadOnDisconnect?: boolean;
+}
+export declare class WalletSDKRelay extends WalletSDKRelayAbstract {
+    private static accountRequestCallbackIds;
+    private readonly linkAPIUrl;
+    protected readonly storage: ScopedLocalStorage;
+    private _session;
+    private readonly relayEventManager;
+    protected readonly diagnostic?: DiagnosticLogger;
+    private connection;
+    private accountsCallback;
+    private chainCallback;
+    private readonly options;
+    private ui;
+    private appName;
+    private appLogoUrl;
+    private subscriptions;
+    private _reloadOnDisconnect;
+    isLinked: boolean | undefined;
+    isUnlinkedErrorState: boolean | undefined;
+    constructor(options: Readonly<WalletSDKRelayOptions>);
+    subscribe(): {
+        session: Session;
+        ui: WalletUI;
+        connection: WalletSDKConnection;
+    };
+    attachUI(): void;
+    resetAndReload(): void;
+    setAppInfo(appName: string, appLogoUrl: string | null): void;
+    getStorageItem(key: string): string | null;
+    get session(): Session;
+    setStorageItem(key: string, value: string): void;
+    signEthereumMessage(message: Buffer, address: AddressString, addPrefix: boolean, typedDataJson?: string | null): CancelablePromise<SignEthereumMessageResponse>;
+    ethereumAddressFromSignedMessage(message: Buffer, signature: Buffer, addPrefix: boolean): CancelablePromise<EthereumAddressFromSignedMessageResponse>;
+    signEthereumTransaction(params: EthereumTransactionParams): CancelablePromise<SignEthereumTransactionResponse>;
+    signAndSubmitEthereumTransaction(params: EthereumTransactionParams): CancelablePromise<SubmitEthereumTransactionResponse>;
+    submitEthereumTransaction(signedTransaction: Buffer, chainId: IntNumber): CancelablePromise<SubmitEthereumTransactionResponse>;
+    scanQRCode(regExp: RegExpString): CancelablePromise<ScanQRCodeResponse>;
+    getQRCodeUrl(): string;
+    genericRequest(data: object, action: string): CancelablePromise<GenericResponse>;
+    sendGenericMessage(request: GenericRequest): CancelablePromise<GenericResponse>;
+    sendRequest<T extends Web3Request, U extends Web3Response>(request: T): CancelablePromise<U>;
+    setConnectDisabled(disabled: boolean): void;
+    setAccountsCallback(accountsCallback: (accounts: string[], isDisconnect?: boolean) => void): void;
+    setChainCallback(chainCallback: (chainId: string, jsonRpcUrl: string) => void): void;
+    private publishWeb3RequestEvent;
+    private publishWeb3RequestCanceledEvent;
+    protected publishEvent(event: string, message: RelayMessage, callWebhook: boolean): Observable<string>;
+    private handleIncomingEvent;
+    private handleWeb3ResponseMessage;
+    private handleErrorResponse;
+    private invokeCallback;
+    requestEthereumAccounts(): CancelablePromise<RequestEthereumAccountsResponse>;
+    selectProvider(providerOptions: ProviderType[]): CancelablePromise<SelectProviderResponse>;
+    watchAsset(type: string, address: string, symbol?: string, decimals?: number, image?: string, chainId?: string): CancelablePromise<WatchAssetResponse>;
+    addEthereumChain(chainId: string, rpcUrls: string[], iconUrls: string[], blockExplorerUrls: string[], chainName?: string, nativeCurrency?: {
+        name: string;
+        symbol: string;
+        decimals: number;
+    }): {
+        promise: Promise<AddEthereumChainResponse>;
+        cancel: (error?: Error | undefined) => void;
+    };
+    switchEthereumChain(chainId: string): CancelablePromise<SwitchEthereumChainResponse>;
+    inlineAddEthereumChain(chainId: string): boolean;
+    private getSessionIdHash;
+    private sendRequestStandalone;
+    protected onSessionConfigChanged(_nextSessionConfig: SessionConfig): void;
+}

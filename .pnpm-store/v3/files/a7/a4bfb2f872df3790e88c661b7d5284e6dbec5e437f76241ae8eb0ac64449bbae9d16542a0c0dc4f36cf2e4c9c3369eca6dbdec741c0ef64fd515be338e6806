@@ -1,0 +1,67 @@
+{
+  "name": "@sushiswap/core",
+  "version": "1.4.2",
+  "license": "MIT",
+  "description": "🎛 Core contracts for the SushiSwap protocol",
+  "files": [
+    "contracts",
+    "build"
+  ],
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sushiswap/sushiswap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sushiswap/sushiswap/issues"
+  },
+  "homepage": "https://github.com/sushiswap/sushiswap#readme",
+  "keywords": [
+    "sushiswap",
+    "ethereum"
+  ],
+  "scripts": {
+    "build": "hardhat compile",
+    "console": "hardhat console",
+    "mainnet:deploy": "hardhat --network mainnet deploy",
+    "mainnet:verify": "hardhat --network mainnet etherscan-verify --solc-input --license UNLICENSED",
+    "mainnet:export": "hardhat --network mainnet export",
+    "ropsten:deploy": "hardhat --network ropsten deploy",
+    "ropsten:verify": "hardhat --network ropsten etherscan-verify --solc-input --license UNLICENSED",
+    "ropsten:export": "hardhat --network ropsten export",
+    "kovan:deploy": "hardhat --network kovan deploy",
+    "kovan:export": "hardhat --network kovan export",
+    "kovan:verify": "hardhat --network kovan etherscan-verify --solc-input --license UNLICENSED",
+    "test": "hardhat test",
+    "test:coverage": "cross-env NODE_OPTIONS=\"--max-old-space-size=2048\" hardhat coverage",
+    "test:gas": "cross-env REPORT_GAS=true yarn test",
+    "prettier": "prettier --write test/**/*.{js,ts} && prettier --write contracts/**/*.sol",
+    "lint": "yarn prettier && solhint -c .solhint.json contracts/**/*.sol",
+    "prepublishOnly": "yarn run build && node scripts/prepublish.js"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.0",
+    "@nomiclabs/hardhat-etherscan": "^2.1.0",
+    "@nomiclabs/hardhat-solhint": "^2.0.0",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "^3.1.0",
+    "@tenderly/hardhat-tenderly": "^1.0.0",
+    "@uniswap/v2-core": "git://github.com/uniswap/uniswap-v2-core.git#27f6354bae6685612c182c3bc7577e61bc8717e3",
+    "chai": "^4.2.0",
+    "cross-env": "^7.0.0",
+    "dotenv": "^8.2.0",
+    "ethereum-waffle": "^3.2.0",
+    "ethers": "^5.0.0",
+    "hardhat": "^2.0.7",
+    "hardhat-abi-exporter": "^2.0.0",
+    "hardhat-deploy": "^0.7.0",
+    "hardhat-deploy-ethers": "^0.3.0",
+    "hardhat-gas-reporter": "^1.0.4",
+    "hardhat-preprocessor": "^0.1.1",
+    "hardhat-spdx-license-identifier": "^2.0.0",
+    "hardhat-watcher": "^2.0.0",
+    "prettier": "^2.2.1",
+    "prettier-plugin-solidity": "^1.0.0",
+    "solidity-coverage": "^0.7.0"
+  }
+}

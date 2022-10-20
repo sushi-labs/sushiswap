@@ -1,0 +1,1 @@
+const withContent=async t=>{let n=t.headers.get("content-type");t.content=void 0;try{n&&n.includes("application/json")&&(t.content=await t.json())}catch(t){}};module.exports={withContent:withContent};

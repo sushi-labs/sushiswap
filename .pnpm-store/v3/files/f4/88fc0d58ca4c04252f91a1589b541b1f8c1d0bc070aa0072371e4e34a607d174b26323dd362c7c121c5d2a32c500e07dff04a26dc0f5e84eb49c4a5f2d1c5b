@@ -1,0 +1,15 @@
+import { GraphQLObjectType, GraphQLField, GraphQLArgument, GraphQLInterfaceType } from 'graphql';
+import { Change } from './change';
+export declare function fieldRemoved(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any, any>): Change;
+export declare function fieldAdded(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any, any>): Change;
+export declare function fieldDescriptionChanged(type: GraphQLObjectType | GraphQLInterfaceType, oldField: GraphQLField<any, any>, newField: GraphQLField<any, any>): Change;
+export declare function fieldDescriptionAdded(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any>): Change;
+export declare function fieldDescriptionRemoved(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any>): Change;
+export declare function fieldDeprecationAdded(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any>): Change;
+export declare function fieldDeprecationRemoved(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any>): Change;
+export declare function fieldDeprecationReasonChanged(type: GraphQLObjectType | GraphQLInterfaceType, oldField: GraphQLField<any, any>, newField: GraphQLField<any, any>): Change;
+export declare function fieldDeprecationReasonAdded(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any>): Change;
+export declare function fieldDeprecationReasonRemoved(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any>): Change;
+export declare function fieldTypeChanged(type: GraphQLObjectType | GraphQLInterfaceType, oldField: GraphQLField<any, any, any>, newField: GraphQLField<any, any, any>): Change;
+export declare function fieldArgumentAdded(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any, any>, arg: GraphQLArgument): Change;
+export declare function fieldArgumentRemoved(type: GraphQLObjectType | GraphQLInterfaceType, field: GraphQLField<any, any, any>, arg: GraphQLArgument): Change;

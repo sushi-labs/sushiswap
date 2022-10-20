@@ -1,0 +1,36 @@
+import { Client, Data } from '../../client';
+import { Provider } from '../../types';
+export declare type GetAccountResult<TProvider extends Provider = Provider> = {
+    address: NonNullable<Data<TProvider>['account']>;
+    connector: NonNullable<Client<TProvider>['connector']>;
+    isConnected: true;
+    isConnecting: false;
+    isDisconnected: false;
+    isReconnecting: false;
+    status: 'connected';
+} | {
+    address: Data<TProvider>['account'];
+    connector: Client<TProvider>['connector'];
+    isConnected: boolean;
+    isConnecting: false;
+    isDisconnected: false;
+    isReconnecting: true;
+    status: 'reconnecting';
+} | {
+    address: undefined;
+    connector: undefined;
+    isConnected: false;
+    isReconnecting: false;
+    isConnecting: true;
+    isDisconnected: false;
+    status: 'connecting';
+} | {
+    address: undefined;
+    connector: undefined;
+    isConnected: false;
+    isReconnecting: false;
+    isConnecting: false;
+    isDisconnected: true;
+    status: 'disconnected';
+};
+export declare function getAccount<TProvider extends Provider>(): GetAccountResult<TProvider>;

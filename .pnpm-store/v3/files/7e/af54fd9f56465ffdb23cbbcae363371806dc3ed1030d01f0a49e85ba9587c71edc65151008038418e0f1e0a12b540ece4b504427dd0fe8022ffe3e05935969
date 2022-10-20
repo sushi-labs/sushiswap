@@ -1,0 +1,22 @@
+{
+  "name": "react-native-path",
+  "version": "0.0.5",
+  "description": "path util for react-native",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "程巍巍",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LittoCats/react-native-path.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LittoCats/react-native-path/issues"
+  },
+  "homepage": "https://github.com/LittoCats/react-native-path#readme",
+  "author": "程巍巍",
+  "license": "Apache-2.0"
+}

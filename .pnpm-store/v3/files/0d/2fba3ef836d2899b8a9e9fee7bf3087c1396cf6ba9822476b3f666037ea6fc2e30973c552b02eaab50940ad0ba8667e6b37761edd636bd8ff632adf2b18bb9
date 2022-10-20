@@ -1,0 +1,5 @@
+{
+	"types": "../../index.d.ts",
+	"main": "./base.js",
+	"sideEffects": false
+}

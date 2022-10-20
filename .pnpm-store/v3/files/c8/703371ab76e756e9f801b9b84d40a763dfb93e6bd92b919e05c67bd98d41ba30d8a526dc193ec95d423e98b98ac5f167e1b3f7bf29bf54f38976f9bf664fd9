@@ -1,0 +1,1 @@
+const abi = require('js/abi')

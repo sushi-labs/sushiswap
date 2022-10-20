@@ -1,0 +1,1 @@
+module.exports={...require("./withContent"),...require("./withCookies"),...require("./withParams")};

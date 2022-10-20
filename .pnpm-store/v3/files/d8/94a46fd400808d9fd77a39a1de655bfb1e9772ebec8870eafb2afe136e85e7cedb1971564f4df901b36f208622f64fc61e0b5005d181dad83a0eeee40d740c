@@ -1,0 +1,1 @@
+const createResponseType=(e="text/plain; charset=utf-8")=>(s,t={})=>{const{headers:n={},...o}=t;return"object"==typeof s?new Response(JSON.stringify(s),{headers:{"Content-Type":e,...n},...o}):new Response(s,t)};module.exports={createResponseType:createResponseType};

@@ -1,0 +1,22 @@
+{
+  "name": "yoga-wasm-web",
+  "version": "0.1.2",
+  "main": "dist/index.js",
+  "types": "index.d.ts",
+  "typings": "index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "make && node build.js"
+  },
+  "repository": "shuding/yoga-wasm-web",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "package.json",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "esbuild": "^0.14.18",
+    "esbuild-plugin-flow": "^0.3.2"
+  }
+}

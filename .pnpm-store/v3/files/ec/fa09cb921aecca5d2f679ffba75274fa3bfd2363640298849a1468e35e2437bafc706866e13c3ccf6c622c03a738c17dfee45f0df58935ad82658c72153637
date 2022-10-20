@@ -1,0 +1,1 @@
+System.register([],function(a){"use strict";return{execute:function(){const o=n=>{let t;const s=new Set,r=(e,f)=>{const c=typeof e=="function"?e(t):e;if(c!==t){const d=t;t=f?c:Object.assign({},t,c),s.forEach(S=>S(t,d))}},u=()=>t,i={setState:r,getState:u,subscribe:e=>(s.add(e),()=>s.delete(e)),destroy:()=>s.clear()};return t=n(r,u,i),i},l=a("default",n=>n?o(n):o)}}});

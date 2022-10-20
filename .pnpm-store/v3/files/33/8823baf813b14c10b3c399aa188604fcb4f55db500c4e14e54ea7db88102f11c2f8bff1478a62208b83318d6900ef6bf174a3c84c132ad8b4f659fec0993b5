@@ -1,0 +1,667 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+const graphql = require('graphql');
+const utils = require('@graphql-mesh/utils');
+const delegate = require('@graphql-tools/delegate');
+const utils$1 = require('@graphql-tools/utils');
+const core = require('@envelop/core');
+const extendedValidation = require('@envelop/extended-validation');
+const batchDelegate = require('@graphql-tools/batch-delegate');
+const wrap = require('@graphql-tools/wrap');
+const batchExecute = require('@graphql-tools/batch-execute');
+const crossHelpers = require('@graphql-mesh/cross-helpers');
+const fetch = require('@whatwg-node/fetch');
+const fetchache = require('fetchache');
+
+const MESH_CONTEXT_SYMBOL = Symbol('isMeshContext');
+const MESH_API_CONTEXT_SYMBOL = Symbol('isMeshAPIContext');
+
+async function getInContextSDK(unifiedSchema, rawSources, logger, onDelegateHooks) {
+    const inContextSDK = {};
+    const sourceMap = unifiedSchema.extensions.sourceMap;
+    for (const rawSource of rawSources) {
+        const rawSourceLogger = logger.child(`${rawSource.name}`);
+        const rawSourceContext = {
+            rawSource,
+            [MESH_API_CONTEXT_SYMBOL]: true,
+        };
+        // TODO: Somehow rawSource reference got lost in somewhere
+        let rawSourceSubSchemaConfig;
+        const stitchingInfo = unifiedSchema.extensions.stitchingInfo;
+        if (stitchingInfo) {
+            for (const [subschemaConfig, subschema] of stitchingInfo.subschemaMap) {
+                if (subschemaConfig.name === rawSource.name) {
+                    rawSourceSubSchemaConfig = subschema;
+                    break;
+                }
+            }
+        }
+        else {
+            rawSourceSubSchemaConfig = rawSource;
+        }
+        // If there is a single source, there is no unifiedSchema
+        const transformedSchema = sourceMap.get(rawSource);
+        const rootTypes = {
+            query: transformedSchema.getQueryType(),
+            mutation: transformedSchema.getMutationType(),
+            subscription: transformedSchema.getSubscriptionType(),
+        };
+        rawSourceLogger.debug(`Generating In Context SDK`);
+        for (const operationType in rootTypes) {
+            const rootType = rootTypes[operationType];
+            if (rootType) {
+                rawSourceContext[rootType.name] = {};
+                const rootTypeFieldMap = rootType.getFields();
+                for (const fieldName in rootTypeFieldMap) {
+                    const rootTypeField = rootTypeFieldMap[fieldName];
+                    const inContextSdkLogger = rawSourceLogger.child(`InContextSDK.${rootType.name}.${fieldName}`);
+                    const namedReturnType = graphql.getNamedType(rootTypeField.type);
+                    const shouldHaveSelectionSet = !graphql.isLeafType(namedReturnType);
+                    rawSourceContext[rootType.name][fieldName] = async ({ root, args, context, info = {
+                        fieldName,
+                        fieldNodes: [],
+                        returnType: namedReturnType,
+                        parentType: rootType,
+                        path: {
+                            typename: rootType.name,
+                            key: fieldName,
+                            prev: undefined,
+                        },
+                        schema: transformedSchema,
+                        fragments: {},
+                        rootValue: root,
+                        operation: {
+                            kind: graphql.Kind.OPERATION_DEFINITION,
+                            operation: operationType,
+                            selectionSet: {
+                                kind: graphql.Kind.SELECTION_SET,
+                                selections: [],
+                            },
+                        },
+                        variableValues: {},
+                    }, selectionSet, key, argsFromKeys, valuesFromResults, }) => {
+                        inContextSdkLogger.debug(`Called with`, {
+                            args,
+                            key,
+                        });
+                        const commonDelegateOptions = {
+                            schema: rawSourceSubSchemaConfig,
+                            rootValue: root,
+                            operation: operationType,
+                            fieldName,
+                            context,
+                            transformedSchema,
+                            info,
+                        };
+                        // If there isn't an extraction of a value
+                        if (typeof selectionSet !== 'function') {
+                            commonDelegateOptions.returnType = rootTypeField.type;
+                        }
+                        if (shouldHaveSelectionSet) {
+                            let selectionCount = 0;
+                            for (const fieldNode of info.fieldNodes) {
+                                if (fieldNode.selectionSet != null) {
+                                    selectionCount += fieldNode.selectionSet.selections.length;
+                                }
+                            }
+                            if (selectionCount === 0) {
+                                if (!selectionSet) {
+                                    throw new Error(`You have to provide 'selectionSet' for context.${rawSource.name}.${rootType.name}.${fieldName}`);
+                                }
+                                commonDelegateOptions.info = {
+                                    ...info,
+                                    fieldNodes: [
+                                        {
+                                            ...info.fieldNodes[0],
+                                            selectionSet: {
+                                                kind: graphql.Kind.SELECTION_SET,
+                                                selections: [
+                                                    {
+                                                        kind: graphql.Kind.FIELD,
+                                                        name: {
+                                                            kind: graphql.Kind.NAME,
+                                                            value: '__typename',
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                        ...info.fieldNodes.slice(1),
+                                    ],
+                                };
+                            }
+                        }
+                        if (key && argsFromKeys) {
+                            const batchDelegationOptions = {
+                                ...commonDelegateOptions,
+                                key,
+                                argsFromKeys,
+                                valuesFromResults,
+                            };
+                            if (selectionSet) {
+                                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                                const path = [fieldName];
+                                const wrapQueryTransform = new wrap.WrapQuery(path, selectionSetFactory, identical);
+                                batchDelegationOptions.transforms = [wrapQueryTransform];
+                            }
+                            const onDelegateHookDones = [];
+                            for (const onDelegateHook of onDelegateHooks) {
+                                const onDelegateDone = await onDelegateHook({
+                                    ...batchDelegationOptions,
+                                    sourceName: rawSource.name,
+                                    typeName: rootType.name,
+                                    fieldName,
+                                });
+                                if (onDelegateDone) {
+                                    onDelegateHookDones.push(onDelegateDone);
+                                }
+                            }
+                            let result = await batchDelegate.batchDelegateToSchema(batchDelegationOptions);
+                            for (const onDelegateHookDone of onDelegateHookDones) {
+                                await onDelegateHookDone({
+                                    result,
+                                    setResult(newResult) {
+                                        result = newResult;
+                                    },
+                                });
+                            }
+                            return result;
+                        }
+                        else {
+                            const regularDelegateOptions = {
+                                ...commonDelegateOptions,
+                                args,
+                            };
+                            if (selectionSet) {
+                                const selectionSetFactory = normalizeSelectionSetParamOrFactory(selectionSet);
+                                const path = [fieldName];
+                                const wrapQueryTransform = new wrap.WrapQuery(path, selectionSetFactory, valuesFromResults || identical);
+                                regularDelegateOptions.transforms = [wrapQueryTransform];
+                            }
+                            const onDelegateHookDones = [];
+                            for (const onDelegateHook of onDelegateHooks) {
+                                const onDelegateDone = await onDelegateHook({
+                                    ...regularDelegateOptions,
+                                    sourceName: rawSource.name,
+                                    typeName: rootType.name,
+                                    fieldName,
+                                });
+                                if (onDelegateDone) {
+                                    onDelegateHookDones.push(onDelegateDone);
+                                }
+                            }
+                            let result = await delegate.delegateToSchema(regularDelegateOptions);
+                            for (const onDelegateHookDone of onDelegateHookDones) {
+                                await onDelegateHookDone({
+                                    result,
+                                    setResult(newResult) {
+                                        result = newResult;
+                                    },
+                                });
+                            }
+                            return result;
+                        }
+                    };
+                }
+            }
+        }
+        inContextSDK[rawSource.name] = rawSourceContext;
+    }
+    return inContextSDK;
+}
+function getSelectionSetFromDocumentNode(documentNode) {
+    const operationDefinition = documentNode.definitions.find(definition => definition.kind === graphql.Kind.OPERATION_DEFINITION);
+    if (!operationDefinition) {
+        throw new Error('DocumentNode must contain an OperationDefinitionNode');
+    }
+    return operationDefinition.selectionSet;
+}
+function normalizeSelectionSetParam(selectionSetParam) {
+    if (typeof selectionSetParam === 'string') {
+        const documentNode = utils.parseWithCache(selectionSetParam);
+        return getSelectionSetFromDocumentNode(documentNode);
+    }
+    if (utils$1.isDocumentNode(selectionSetParam)) {
+        return getSelectionSetFromDocumentNode(selectionSetParam);
+    }
+    return selectionSetParam;
+}
+const normalizeSelectionSetParamFactory = utils$1.memoize1(function normalizeSelectionSetParamFactory(selectionSetParamFactory) {
+    const memoizedSelectionSetFactory = utils$1.memoize1(selectionSetParamFactory);
+    return function selectionSetFactory(subtree) {
+        const selectionSetParam = memoizedSelectionSetFactory(subtree);
+        return normalizeSelectionSetParam(selectionSetParam);
+    };
+});
+function normalizeSelectionSetParamOrFactory(selectionSetParamOrFactory) {
+    if (typeof selectionSetParamOrFactory === 'function') {
+        return normalizeSelectionSetParamFactory(selectionSetParamOrFactory);
+    }
+    return () => normalizeSelectionSetParam(selectionSetParamOrFactory);
+}
+function identical(val) {
+    return val;
+}
+
+function getExecuteFn(subschema) {
+    return async function subschemaExecute(args) {
+        var _a;
+        const originalRequest = {
+            document: args.document,
+            variables: args.variableValues,
+            operationName: (_a = args.operationName) !== null && _a !== void 0 ? _a : undefined,
+            rootValue: args.rootValue,
+            context: args.contextValue,
+        };
+        const operationAST = utils$1.getOperationASTFromRequest(originalRequest);
+        // TODO: We need more elegant solution
+        if (core.isIntrospectionOperation(operationAST)) {
+            return {
+                data: graphql.introspectionFromSchema(args.schema),
+            };
+        }
+        const delegationContext = {
+            subschema,
+            subschemaConfig: subschema,
+            targetSchema: args.schema,
+            operation: operationAST.operation,
+            fieldName: '',
+            context: args.contextValue,
+            rootValue: args.rootValue,
+            transforms: subschema.transforms,
+            transformedSchema: subschema.transformedSchema,
+            skipTypeMerging: true,
+            returnType: args.schema.getRootType(operationAST.operation),
+        };
+        let executor = subschema.executor;
+        if (executor == null) {
+            executor = delegate.createDefaultExecutor(subschema.schema);
+        }
+        if (subschema.batch) {
+            executor = batchExecute.createBatchingExecutor(executor);
+        }
+        const transformationContext = {};
+        const transformedRequest = utils.applyRequestTransforms(originalRequest, delegationContext, transformationContext, subschema.transforms);
+        const originalResult = await executor(transformedRequest);
+        if (utils$1.isAsyncIterable(originalResult)) {
+            return core.mapAsyncIterator(originalResult, singleResult => utils.applyResultTransforms(singleResult, delegationContext, transformationContext, subschema.transforms));
+        }
+        const transformedResult = utils.applyResultTransforms(originalResult, delegationContext, transformationContext, subschema.transforms);
+        return transformedResult;
+    };
+}
+// Creates an envelop plugin to execute a subschema inside Envelop
+function useSubschema(subschema) {
+    const executeFn = getExecuteFn(subschema);
+    const plugin = {
+        onPluginInit({ setSchema }) {
+            // To prevent unwanted warnings from stitching
+            if (!('_transformedSchema' in subschema)) {
+                subschema.transformedSchema = delegate.applySchemaTransforms(subschema.schema, subschema);
+            }
+            subschema.transformedSchema.extensions =
+                subschema.transformedSchema.extensions || subschema.schema.extensions || {};
+            Object.assign(subschema.transformedSchema.extensions, subschema.schema.extensions);
+            setSchema(subschema.transformedSchema);
+        },
+        onExecute({ setExecuteFn }) {
+            setExecuteFn(executeFn);
+        },
+        onSubscribe({ setSubscribeFn }) {
+            setSubscribeFn(executeFn);
+        },
+    };
+    return plugin;
+}
+
+function useIncludeHttpDetailsInExtensions() {
+    const httpDetailsByContext = new WeakMap();
+    return {
+        onFetch({ url, context, info, options }) {
+            if (context != null) {
+                const requestTimestamp = Date.now();
+                return ({ response }) => {
+                    const responseTimestamp = Date.now();
+                    const responseTime = responseTimestamp - requestTimestamp;
+                    let httpDetailsList = httpDetailsByContext.get(context);
+                    if (!httpDetailsList) {
+                        httpDetailsList = [];
+                        httpDetailsByContext.set(context, httpDetailsList);
+                    }
+                    const httpDetails = {
+                        sourceName: info === null || info === void 0 ? void 0 : info.sourceName,
+                        path: info === null || info === void 0 ? void 0 : info.path,
+                        request: {
+                            timestamp: requestTimestamp,
+                            url,
+                            method: options.method || 'GET',
+                            headers: utils.getHeadersObj(options.headers),
+                        },
+                        response: {
+                            timestamp: responseTimestamp,
+                            status: response.status,
+                            statusText: response.statusText,
+                            headers: utils.getHeadersObj(response.headers),
+                        },
+                        responseTime,
+                    };
+                    httpDetailsList.push(httpDetails);
+                };
+            }
+            return undefined;
+        },
+        onExecute({ args: { contextValue } }) {
+            return {
+                onExecuteDone({ result, setResult }) {
+                    if (!core.isAsyncIterable(result)) {
+                        const httpDetailsList = httpDetailsByContext.get(contextValue);
+                        if (httpDetailsList != null) {
+                            setResult({
+                                ...result,
+                                extensions: {
+                                    ...result.extensions,
+                                    httpDetails: httpDetailsList,
+                                },
+                            });
+                        }
+                    }
+                },
+            };
+        },
+    };
+}
+
+function useFetchache(cache) {
+    return {
+        onFetch({ fetchFn, setFetchFn }) {
+            setFetchFn(fetchache.fetchFactory({
+                cache,
+                fetch: fetchFn,
+                Request: fetch.Request,
+                Response: fetch.Response,
+            }));
+        },
+    };
+}
+
+function useDeduplicateRequest() {
+    const getReqResMapByContext = utils$1.memoize1((_context) => {
+        return new Map();
+    });
+    return {
+        onFetch({ url, options, context, info, fetchFn, setFetchFn }) {
+            if (context !== null) {
+                let method = 'GET';
+                if (options.method) {
+                    method = options.method;
+                }
+                if (method === 'GET') {
+                    let headers = {};
+                    if (options.headers) {
+                        headers = utils.getHeadersObj(options.headers);
+                    }
+                    const acceptHeader = headers.Accept || headers.accept;
+                    if (acceptHeader === null || acceptHeader === void 0 ? void 0 : acceptHeader.includes('application/json')) {
+                        const reqResMap = getReqResMapByContext(context);
+                        const dedupCacheKey = JSON.stringify({
+                            url,
+                            headers,
+                        });
+                        setFetchFn(() => {
+                            let dedupRes$ = reqResMap.get(dedupCacheKey);
+                            if (dedupRes$ == null) {
+                                dedupRes$ = fetchFn(url, options, context, info).then(async (res) => ({
+                                    res,
+                                    resText: await res.text(),
+                                }));
+                                reqResMap.set(dedupCacheKey, dedupRes$);
+                            }
+                            return dedupRes$.then(({ res, resText }) => new fetch.Response(resText, res));
+                        });
+                    }
+                }
+            }
+        },
+    };
+}
+
+const memoizedGetOperationType = utils$1.memoize1((document) => {
+    const operationAST = graphql.getOperationAST(document, undefined);
+    if (!operationAST) {
+        throw new Error('Must provide document with a valid operation');
+    }
+    return operationAST.operation;
+});
+function wrapFetchWithPlugins(plugins) {
+    return async function wrappedFetchFn(url, options, context, info) {
+        let fetchFn;
+        const doneHooks = [];
+        for (const plugin of plugins) {
+            if ((plugin === null || plugin === void 0 ? void 0 : plugin.onFetch) != null) {
+                const doneHook = await plugin.onFetch({
+                    fetchFn,
+                    setFetchFn(newFetchFn) {
+                        fetchFn = newFetchFn;
+                    },
+                    url,
+                    options,
+                    context,
+                    info,
+                });
+                if (doneHook) {
+                    doneHooks.push(doneHook);
+                }
+            }
+        }
+        let response = await fetchFn(url, options, context, info);
+        for (const doneHook of doneHooks) {
+            await doneHook({
+                response,
+                setResponse(newResponse) {
+                    response = newResponse;
+                },
+            });
+        }
+        return response;
+    };
+}
+// Use in-context-sdk for tracing
+function createProxyingResolverFactory(apiName, rootTypeMap) {
+    return function createProxyingResolver({ operation }) {
+        const rootType = rootTypeMap.get(operation);
+        return function proxyingResolver(root, args, context, info) {
+            if (!context[apiName][rootType.name][info.fieldName]) {
+                throw new Error(`${info.fieldName} couldn't find in ${rootType.name} of ${apiName} as a ${operation}`);
+            }
+            return context[apiName][rootType.name][info.fieldName]({ root, args, context, info });
+        };
+    };
+}
+async function getMesh(options) {
+    var _a, _b, _c;
+    const rawSources = [];
+    const { pubsub = new utils.PubSub(), cache, logger = new utils.DefaultLogger('🕸️  Mesh'), additionalEnvelopPlugins = [], sources, merger, additionalResolvers = [], additionalTypeDefs = [], transforms = [], includeHttpDetailsInExtensions = ((_a = crossHelpers.process === null || crossHelpers.process === void 0 ? void 0 : crossHelpers.process.env) === null || _a === void 0 ? void 0 : _a.DEBUG) === '1' || ((_c = (_b = crossHelpers.process === null || crossHelpers.process === void 0 ? void 0 : crossHelpers.process.env) === null || _b === void 0 ? void 0 : _b.DEBUG) === null || _c === void 0 ? void 0 : _c.includes('http')), fetchFn = fetch.fetch, } = options;
+    const getMeshLogger = logger.child('GetMesh');
+    getMeshLogger.debug(`Getting subschemas from source handlers`);
+    let failed = false;
+    const initialPluginList = [
+        // TODO: Not a good practise to expect users to be a Yoga user
+        core.useExtendContext(({ request, req }) => {
+            // Maybe Node-like environment
+            if (req === null || req === void 0 ? void 0 : req.headers) {
+                return {
+                    headers: req.headers,
+                };
+            }
+            // Fetch environment
+            if (request === null || request === void 0 ? void 0 : request.headers) {
+                return {
+                    headers: utils.getHeadersObj(request.headers),
+                };
+            }
+            return {};
+        }),
+        core.useExtendContext(() => ({
+            pubsub,
+            cache,
+            logger,
+            [MESH_CONTEXT_SYMBOL]: true,
+        })),
+        {
+            onFetch({ setFetchFn }) {
+                setFetchFn(fetchFn);
+            },
+        },
+        useFetchache(cache),
+        useDeduplicateRequest(),
+        includeHttpDetailsInExtensions ? useIncludeHttpDetailsInExtensions() : {},
+        {
+            onParse({ setParseFn }) {
+                setParseFn(utils.parseWithCache);
+            },
+        },
+        ...additionalEnvelopPlugins,
+    ];
+    const wrappedFetchFn = wrapFetchWithPlugins(initialPluginList);
+    await Promise.allSettled(sources.map(async (apiSource) => {
+        const apiName = apiSource.name;
+        const sourceLogger = logger.child(apiName);
+        sourceLogger.debug(`Generating the schema`);
+        try {
+            const source = await apiSource.handler.getMeshSource({
+                fetchFn: wrappedFetchFn,
+            });
+            sourceLogger.debug(`The schema has been generated successfully`);
+            let apiSchema = source.schema;
+            sourceLogger.debug(`Analyzing transforms`);
+            let transforms;
+            const { wrapTransforms, noWrapTransforms } = utils.groupTransforms(apiSource.transforms);
+            if (!(wrapTransforms === null || wrapTransforms === void 0 ? void 0 : wrapTransforms.length) && (noWrapTransforms === null || noWrapTransforms === void 0 ? void 0 : noWrapTransforms.length)) {
+                sourceLogger.debug(`${noWrapTransforms.length} bare transforms found and applying`);
+                apiSchema = utils.applySchemaTransforms(apiSchema, source, null, noWrapTransforms);
+            }
+            else {
+                transforms = apiSource.transforms;
+            }
+            const rootTypeMap = utils$1.getRootTypeMap(apiSchema);
+            rawSources.push({
+                name: apiName,
+                schema: apiSchema,
+                executor: source.executor,
+                transforms,
+                contextVariables: source.contextVariables || {},
+                handler: apiSource.handler,
+                batch: 'batch' in source ? source.batch : true,
+                merge: source.merge,
+                createProxyingResolver: createProxyingResolverFactory(apiName, rootTypeMap),
+            });
+        }
+        catch (e) {
+            sourceLogger.error(`Failed to generate the schema`, e);
+            failed = true;
+        }
+    }));
+    if (failed) {
+        throw new Error(`Schemas couldn't be generated successfully. Check for the logs by running Mesh with DEBUG=1 environmental variable to get more verbose output.`);
+    }
+    getMeshLogger.debug(`Schemas have been generated by the source handlers`);
+    getMeshLogger.debug(`Merging schemas using the defined merging strategy.`);
+    const unifiedSubschema = await merger.getUnifiedSchema({
+        rawSources,
+        typeDefs: additionalTypeDefs,
+        resolvers: additionalResolvers,
+    });
+    unifiedSubschema.transforms = unifiedSubschema.transforms || [];
+    unifiedSubschema.transforms.push(...transforms);
+    let inContextSDK$;
+    const subschema = new delegate.Subschema(unifiedSubschema);
+    const getEnveloped = core.envelop({
+        plugins: [
+            useSubschema(subschema),
+            core.useExtendContext(() => {
+                if (!inContextSDK$) {
+                    const onDelegateHooks = [];
+                    for (const plugin of initialPluginList) {
+                        if ((plugin === null || plugin === void 0 ? void 0 : plugin.onDelegate) != null) {
+                            onDelegateHooks.push(plugin.onDelegate);
+                        }
+                    }
+                    inContextSDK$ = getInContextSDK(subschema.transformedSchema, rawSources, logger, onDelegateHooks);
+                }
+                return inContextSDK$;
+            }),
+            extendedValidation.useExtendedValidation({
+                rules: [extendedValidation.OneOfInputObjectsRule],
+            }),
+            ...initialPluginList,
+        ],
+    });
+    const EMPTY_ROOT_VALUE = {};
+    const EMPTY_CONTEXT_VALUE = {};
+    const EMPTY_VARIABLES_VALUE = {};
+    function createExecutor(globalContext = EMPTY_CONTEXT_VALUE) {
+        const { schema, parse, execute, subscribe, contextFactory } = getEnveloped(globalContext);
+        return async function meshExecutor(documentOrSDL, variableValues = EMPTY_VARIABLES_VALUE, contextValue = EMPTY_CONTEXT_VALUE, rootValue = EMPTY_ROOT_VALUE, operationName) {
+            const document = typeof documentOrSDL === 'string' ? parse(documentOrSDL) : documentOrSDL;
+            const executeFn = memoizedGetOperationType(document) === 'subscription' ? subscribe : execute;
+            return executeFn({
+                schema,
+                document,
+                contextValue: await contextFactory(contextValue),
+                rootValue,
+                variableValues: variableValues,
+                operationName,
+            });
+        };
+    }
+    function sdkRequesterFactory(globalContext) {
+        const executor = createExecutor(globalContext);
+        return async function sdkRequester(...args) {
+            const result = await executor(...args);
+            if (utils$1.isAsyncIterable(result)) {
+                return utils$1.mapAsyncIterator(result, extractDataOrThrowErrors);
+            }
+            return extractDataOrThrowErrors(result);
+        };
+    }
+    function meshDestroy() {
+        return pubsub.publish('destroy', undefined);
+    }
+    return {
+        get schema() {
+            return subschema.transformedSchema;
+        },
+        rawSources,
+        cache,
+        pubsub,
+        destroy: meshDestroy,
+        logger,
+        get plugins() {
+            return getEnveloped._plugins;
+        },
+        getEnveloped,
+        createExecutor,
+        get execute() {
+            return createExecutor();
+        },
+        get subscribe() {
+            return createExecutor();
+        },
+        sdkRequesterFactory,
+    };
+}
+function extractDataOrThrowErrors(result) {
+    if (result.errors) {
+        if (result.errors.length === 1) {
+            throw result.errors[0];
+        }
+        throw new utils$1.AggregateError(result.errors);
+    }
+    return result.data;
+}
+
+exports.getMesh = getMesh;
+exports.useSubschema = useSubschema;
+exports.wrapFetchWithPlugins = wrapFetchWithPlugins;

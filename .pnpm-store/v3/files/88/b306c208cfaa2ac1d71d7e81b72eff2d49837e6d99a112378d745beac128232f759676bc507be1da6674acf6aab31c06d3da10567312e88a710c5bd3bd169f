@@ -1,0 +1,1 @@
+{"version":3,"file":"restrictPoint.d.ts","sourceRoot":"","sources":["../../src/util/restrictPoint.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,YAAY,CAAC;AAI5C,4DAA4D;AAC5D,MAAM,CAAC,OAAO,UAAU,aAAa,CACnC,KAAK,EAAE;IAAE,CAAC,EAAE,MAAM,CAAC;IAAC,CAAC,EAAE,MAAM,CAAA;CAAE,EAC/B,OAAO,EAAE,QAAQ,EAAE,EACnB,QAAQ,GAAE,cAAc,CAAC,UAAU,CAAM;;;EAS1C"}

@@ -1,0 +1,62 @@
+import { RowModel } from '..';
+import { TableFeature } from '../core/instance';
+import { BuiltInSortingFn } from '../sortingFns';
+import { OnChangeFn, TableGenerics, TableInstance, Row, Updater } from '../types';
+import { Overwrite } from '../utils';
+export declare type SortDirection = 'asc' | 'desc';
+export declare type ColumnSort = {
+    id: string;
+    desc: boolean;
+};
+export declare type SortingState = ColumnSort[];
+export declare type SortingTableState = {
+    sorting: SortingState;
+};
+export declare type SortingFn<TGenerics extends TableGenerics> = {
+    (rowA: Row<TGenerics>, rowB: Row<TGenerics>, columnId: string): number;
+};
+export declare type CustomSortingFns<TGenerics extends TableGenerics> = Record<string, SortingFn<TGenerics>>;
+export declare type SortingFnOption<TGenerics extends TableGenerics> = 'auto' | BuiltInSortingFn | keyof TGenerics['SortingFns'] | SortingFn<TGenerics>;
+export declare type SortingColumnDef<TGenerics extends TableGenerics> = {
+    sortingFn?: SortingFnOption<Overwrite<TGenerics, {
+        Value: any;
+    }>>;
+    sortDescFirst?: boolean;
+    enableSorting?: boolean;
+    enableMultiSort?: boolean;
+    invertSorting?: boolean;
+    sortUndefined?: false | -1 | 1;
+};
+export declare type SortingColumn<TGenerics extends TableGenerics> = {
+    getAutoSortingFn: () => SortingFn<TGenerics>;
+    getAutoSortDir: () => SortDirection;
+    getSortingFn: () => SortingFn<TGenerics>;
+    getCanSort: () => boolean;
+    getCanMultiSort: () => boolean;
+    getSortIndex: () => number;
+    getIsSorted: () => false | SortDirection;
+    clearSorting: () => void;
+    toggleSorting: (desc?: boolean, isMulti?: boolean) => void;
+    getToggleSortingHandler: () => undefined | ((event: unknown) => void);
+};
+export declare type SortingOptions<TGenerics extends TableGenerics> = {
+    manualSorting?: boolean;
+    sortingFns?: TGenerics['SortingFns'];
+    onSortingChange?: OnChangeFn<SortingState>;
+    enableSorting?: boolean;
+    enableSortingRemoval?: boolean;
+    enableMultiRemove?: boolean;
+    enableMultiSort?: boolean;
+    sortDescFirst?: boolean;
+    getSortedRowModel?: (instance: TableInstance<TGenerics>) => () => RowModel<TGenerics>;
+    maxMultiSortColCount?: number;
+    isMultiSortEvent?: (e: unknown) => boolean;
+};
+export declare type SortingInstance<TGenerics extends TableGenerics> = {
+    setSorting: (updater: Updater<SortingState>) => void;
+    resetSorting: (defaultState?: boolean) => void;
+    getPreSortedRowModel: () => RowModel<TGenerics>;
+    getSortedRowModel: () => RowModel<TGenerics>;
+    _getSortedRowModel?: () => RowModel<TGenerics>;
+};
+export declare const Sorting: TableFeature;

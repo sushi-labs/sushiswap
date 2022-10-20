@@ -1,0 +1,1 @@
+const{json:json}=require("./json"),error=(r=500,o="Internal Server Error.")=>json({..."object"==typeof o?o:{status:r,error:o}},{status:r});module.exports={error:error};

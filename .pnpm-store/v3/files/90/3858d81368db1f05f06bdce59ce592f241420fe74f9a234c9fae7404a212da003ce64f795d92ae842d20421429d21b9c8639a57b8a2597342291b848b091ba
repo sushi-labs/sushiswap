@@ -1,0 +1,47 @@
+{
+  "name": "@visx/axis",
+  "version": "2.11.1",
+  "description": "visx axis",
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "esm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/airbnb/visx.git"
+  },
+  "keywords": [
+    "visx",
+    "react",
+    "d3",
+    "visualizations",
+    "charts"
+  ],
+  "author": "@hshoff",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/airbnb/visx/issues"
+  },
+  "homepage": "https://github.com/airbnb/visx#readme",
+  "dependencies": {
+    "@types/react": "*",
+    "@visx/group": "2.10.0",
+    "@visx/point": "2.6.0",
+    "@visx/scale": "2.2.2",
+    "@visx/shape": "2.11.1",
+    "@visx/text": "2.10.0",
+    "classnames": "^2.3.1",
+    "prop-types": "^15.6.0"
+  },
+  "peerDependencies": {
+    "react": "^16.3.0-0 || ^17.0.0-0 || ^18.0.0-0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "9317b710b3933497cd20a25e89c8ca6ae5dff5a2"
+}

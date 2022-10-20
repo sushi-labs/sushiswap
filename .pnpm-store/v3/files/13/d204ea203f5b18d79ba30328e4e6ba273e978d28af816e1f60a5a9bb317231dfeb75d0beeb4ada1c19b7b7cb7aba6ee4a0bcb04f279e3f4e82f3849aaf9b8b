@@ -1,0 +1,1 @@
+{"version":3,"file":"getClosestPoint.d.ts","sourceRoot":"","sources":["../../src/util/getClosestPoint.ts"],"names":[],"mappings":"AAAA,6CAA6C;AAC7C,MAAM,CAAC,OAAO,UAAU,eAAe,CAAC,KAAK,EAAE;IAAE,CAAC,EAAE,MAAM,CAAC;IAAC,CAAC,EAAE,MAAM,CAAA;CAAE,EAAE,OAAO,EAAE,QAAQ,EAAE;OAAxC,MAAM;OAAK,MAAM;EAWpE"}

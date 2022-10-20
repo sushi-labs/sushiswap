@@ -1,0 +1,45 @@
+{
+    "name": "@types/sinonjs__fake-timers",
+    "version": "8.1.2",
+    "description": "TypeScript definitions for @sinonjs/fake-timers",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/sinonjs__fake-timers",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Wim Looman",
+            "url": "https://github.com/Nemo157",
+            "githubUsername": "Nemo157"
+        },
+        {
+            "name": "Rogier Schouten",
+            "url": "https://github.com/rogierschouten",
+            "githubUsername": "rogierschouten"
+        },
+        {
+            "name": "Yishai Zehavi",
+            "url": "https://github.com/zyishai",
+            "githubUsername": "zyishai"
+        },
+        {
+            "name": "Remco Haszing",
+            "url": "https://github.com/remcohaszing",
+            "githubUsername": "remcohaszing"
+        },
+        {
+            "name": "Jaden Simon",
+            "url": "https://github.com/JadenSimon",
+            "githubUsername": "JadenSimon"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/sinonjs__fake-timers"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "452fe64e05b9936a8b0868109cdd45c3e241020b1658d8cf534cb04b6cae7c4e",
+    "typeScriptVersion": "3.9"
+}

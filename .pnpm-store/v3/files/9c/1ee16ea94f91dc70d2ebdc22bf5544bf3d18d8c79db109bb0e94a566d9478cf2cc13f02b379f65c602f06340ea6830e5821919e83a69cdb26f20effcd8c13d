@@ -1,0 +1,60 @@
+{
+  "name": "itty-router-extras",
+  "version": "0.4.2",
+  "description": "An assortment of delicious extras for the calorie-light itty-router.",
+  "main": "./index.js",
+  "keywords": [
+    "router",
+    "cloudflare",
+    "workers",
+    "serverless",
+    "regex",
+    "routing",
+    "api",
+    "handler",
+    "params",
+    "middleware",
+    "nested",
+    "helpers",
+    "utils",
+    "cookies",
+    "content",
+    "cors"
+  ],
+  "scripts": {
+    "lint": "npx eslint src",
+    "test": "yarn lint && jest --verbose --coverage src",
+    "verify": "echo 'verifying module...' && yarn build && yarn test",
+    "dev": "yarn lint && jest --verbose --watch src",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
+    "prerelease": "yarn verify",
+    "prebuild": "rimraf dist",
+    "build": "terser-folder src -eo dist --pattern '**/*.js,!**/*spec.js' -x .js",
+    "release": "release --tag --push --src=dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kwhitley/itty-router-extras.git"
+  },
+  "author": "Kevin R. Whitley <krwhitley@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kwhitley/itty-router-extras/issues"
+  },
+  "homepage": "https://github.com/kwhitley/itty-router-extras#readme",
+  "devDependencies": {
+    "chalk": "^4.1.0",
+    "coveralls": "^3.1.0",
+    "eslint": "^7.22.0",
+    "eslint-plugin-jest": "^24.3.2",
+    "fs-extra": "^9.1.0",
+    "gzip-size": "^6.0.0",
+    "isomorphic-fetch": "^3.0.0",
+    "itty-router": "^2.3.2",
+    "jest": "^26.6.3",
+    "rimraf": "^3.0.2",
+    "terser": "^5.6.1",
+    "terser-folder": "^2.0.0",
+    "yarn-release": "^1.10.3"
+  }
+}

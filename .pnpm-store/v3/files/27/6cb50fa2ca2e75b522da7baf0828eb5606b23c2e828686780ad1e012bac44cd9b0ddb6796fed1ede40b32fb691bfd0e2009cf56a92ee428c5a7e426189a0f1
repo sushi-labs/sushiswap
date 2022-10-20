@@ -1,0 +1,64 @@
+{
+  "name": "edge-runtime",
+  "description": "Run any Edge Function from CLI or Node.js module.",
+  "homepage": "https://edge-runtime.vercel.app/packages/runtime",
+  "version": "1.0.1",
+  "main": "dist/index.js",
+  "bin": {
+    "edge-runtime": "dist/cli/index.js"
+  },
+  "repository": {
+    "directory": "packages/runtime",
+    "type": "git",
+    "url": "git+https://github.com/vercel/edge-runtime.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vercel/edge-runtime/issues"
+  },
+  "keywords": [
+    "edge",
+    "functions",
+    "runtime"
+  ],
+  "dependencies": {
+    "@edge-runtime/format": "^1.0.0",
+    "@edge-runtime/vm": "^1.0.1",
+    "exit-hook": "2.2.1",
+    "http-status": "~1.5.0",
+    "mri": "1.2.0",
+    "picocolors": "1.0.0",
+    "pretty-bytes": "5.6.0",
+    "pretty-ms": "7.0.1",
+    "time-span": "4.0.0"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "2.x",
+    "node-fetch": "2"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.prod.json",
+    "postversion": "pnpm run build",
+    "prebuild": "node -p \"'export const VERSION = ' + JSON.stringify(require('./package.json').version)\" > src/version.ts",
+    "test": "jest"
+  },
+  "license": "MPLv2",
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "diagnostics": true,
+        "isolatedModules": true
+      }
+    },
+    "preset": "ts-jest/presets/default",
+    "testEnvironment": "node",
+    "testTimeout": 30000
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "types": "dist/index.d.ts",
+  "gitHead": "4d5c7ddd2216facb2c3e5da32f466f56d15d3894"
+}

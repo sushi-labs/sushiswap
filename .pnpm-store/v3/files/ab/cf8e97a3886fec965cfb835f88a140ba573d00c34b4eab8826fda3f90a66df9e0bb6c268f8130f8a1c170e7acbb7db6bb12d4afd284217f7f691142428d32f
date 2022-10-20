@@ -1,0 +1,410 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createYoga = exports.YogaServer = void 0;
+const graphql_1 = require("graphql");
+const core_1 = require("@envelop/core");
+const validation_cache_1 = require("@envelop/validation-cache");
+const parser_cache_1 = require("@envelop/parser-cache");
+const fetch_1 = require("@whatwg-node/fetch");
+const server_1 = require("@whatwg-node/server");
+const processRequest_js_1 = require("./processRequest.js");
+const logger_js_1 = require("./logger.js");
+const useCORS_js_1 = require("./plugins/useCORS.js");
+const useHealthCheck_js_1 = require("./plugins/useHealthCheck.js");
+const useGraphiQL_js_1 = require("./plugins/useGraphiQL.js");
+const useRequestParser_js_1 = require("./plugins/useRequestParser.js");
+const GET_js_1 = require("./plugins/requestParser/GET.js");
+const POSTJson_js_1 = require("./plugins/requestParser/POSTJson.js");
+const POSTMultipart_js_1 = require("./plugins/requestParser/POSTMultipart.js");
+const POSTGraphQLString_js_1 = require("./plugins/requestParser/POSTGraphQLString.js");
+const useResultProcessor_js_1 = require("./plugins/useResultProcessor.js");
+const regular_js_1 = require("./plugins/resultProcessor/regular.js");
+const push_js_1 = require("./plugins/resultProcessor/push.js");
+const multipart_js_1 = require("./plugins/resultProcessor/multipart.js");
+const POSTFormUrlEncoded_js_1 = require("./plugins/requestParser/POSTFormUrlEncoded.js");
+const error_js_1 = require("./error.js");
+const useCheckMethodForGraphQL_js_1 = require("./plugins/requestValidation/useCheckMethodForGraphQL.js");
+const useCheckGraphQLQueryParams_js_1 = require("./plugins/requestValidation/useCheckGraphQLQueryParams.js");
+const useHTTPValidationError_js_1 = require("./plugins/requestValidation/useHTTPValidationError.js");
+const usePreventMutationViaGET_js_1 = require("./plugins/requestValidation/usePreventMutationViaGET.js");
+const useUnhandledRoute_js_1 = require("./plugins/useUnhandledRoute.js");
+const yogaDefaultFormatError_js_1 = require("./utils/yogaDefaultFormatError.js");
+const useSchema_js_1 = require("./plugins/useSchema.js");
+const useLimitBatching_js_1 = require("./plugins/requestValidation/useLimitBatching.js");
+/**
+ * Base class that can be extended to create a GraphQL server with any HTTP server framework.
+ * @internal
+ */
+class YogaServer {
+    constructor(options) {
+        this.handle = async (request, serverContext) => {
+            try {
+                const response = await this.getResponse(request, serverContext);
+                for (const onResponseHook of this.onResponseHooks) {
+                    await onResponseHook({
+                        request,
+                        response,
+                        serverContext,
+                    });
+                }
+                return response;
+            }
+            catch (e) {
+                this.logger.error(e);
+                return new this.fetchAPI.Response('Internal Server Error', {
+                    status: 500,
+                });
+            }
+        };
+        this.id = options?.id ?? 'yoga';
+        this.fetchAPI =
+            options?.fetchAPI ??
+                (0, fetch_1.createFetch)({
+                    // Enable it after leaking issues with node-fetch on Node 18
+                    // useNodeFetch: true,
+                    formDataLimits: {
+                        fieldsFirst: true,
+                    },
+                });
+        const logger = options?.logging != null ? options.logging : true;
+        this.logger =
+            typeof logger === 'boolean'
+                ? logger === true
+                    ? logger_js_1.defaultYogaLogger
+                    : {
+                        debug: () => { },
+                        error: () => { },
+                        warn: () => { },
+                        info: () => { },
+                    }
+                : logger;
+        this.maskedErrorsOpts =
+            options?.maskedErrors === false
+                ? null
+                : {
+                    formatError: yogaDefaultFormatError_js_1.yogaDefaultFormatError,
+                    errorMessage: 'Unexpected error.',
+                    isDev: globalThis.process?.env?.NODE_ENV === 'development',
+                    ...(typeof options?.maskedErrors === 'object'
+                        ? options.maskedErrors
+                        : {}),
+                };
+        const maskedErrors = this.maskedErrorsOpts != null ? this.maskedErrorsOpts : null;
+        let batchingLimit = 0;
+        if (options?.batching) {
+            if (typeof options.batching === 'boolean') {
+                batchingLimit = 10;
+            }
+            else {
+                batchingLimit = options.batching.limit ?? 10;
+            }
+        }
+        this.graphqlEndpoint = options?.graphqlEndpoint || '/graphql';
+        const graphqlEndpoint = this.graphqlEndpoint;
+        this.plugins = [
+            // Use the schema provided by the user
+            !!options?.schema && (0, useSchema_js_1.useSchema)(options.schema),
+            // Performance things
+            options?.parserCache !== false &&
+                (0, parser_cache_1.useParserCache)(typeof options?.parserCache === 'object'
+                    ? options.parserCache
+                    : undefined),
+            options?.validationCache !== false &&
+                (0, validation_cache_1.useValidationCache)({
+                    cache: typeof options?.validationCache === 'object'
+                        ? options.validationCache
+                        : undefined,
+                }),
+            // Log events - useful for debugging purposes
+            logger !== false &&
+                (0, core_1.useLogger)({
+                    skipIntrospection: true,
+                    logFn: (eventName, events) => {
+                        switch (eventName) {
+                            case 'execute-start':
+                            case 'subscribe-start':
+                                this.logger.debug((0, logger_js_1.titleBold)('Execution start'));
+                                const { params: { query, operationName, variables, extensions }, } = events.args.contextValue;
+                                this.logger.debug((0, logger_js_1.titleBold)('Received GraphQL operation:'));
+                                this.logger.debug({
+                                    query,
+                                    operationName,
+                                    variables,
+                                    extensions,
+                                });
+                                break;
+                            case 'execute-end':
+                            case 'subscribe-end':
+                                this.logger.debug((0, logger_js_1.titleBold)('Execution end'));
+                                this.logger.debug({
+                                    result: events.result,
+                                });
+                                break;
+                        }
+                    },
+                }),
+            options?.context != null &&
+                (0, core_1.useExtendContext)(async (initialContext) => {
+                    if (options?.context) {
+                        if (typeof options.context === 'function') {
+                            return options.context(initialContext);
+                        }
+                        return options.context;
+                    }
+                }),
+            // Middlewares before processing the incoming HTTP request
+            (0, useHealthCheck_js_1.useHealthCheck)({
+                id: this.id,
+                logger: this.logger,
+                healthCheckEndpoint: options?.healthCheckEndpoint,
+                readinessCheckEndpoint: options?.readinessCheckEndpoint,
+            }),
+            options?.cors !== false && (0, useCORS_js_1.useCORS)(options?.cors),
+            options?.graphiql !== false &&
+                (0, useGraphiQL_js_1.useGraphiQL)({
+                    graphqlEndpoint: this.graphqlEndpoint,
+                    options: options?.graphiql,
+                    render: options?.renderGraphiQL,
+                    logger: this.logger,
+                }),
+            // Middlewares before the GraphQL execution
+            (0, useCheckMethodForGraphQL_js_1.useCheckMethodForGraphQL)(),
+            (0, useRequestParser_js_1.useRequestParser)({
+                match: GET_js_1.isGETRequest,
+                parse: GET_js_1.parseGETRequest,
+            }),
+            (0, useRequestParser_js_1.useRequestParser)({
+                match: POSTJson_js_1.isPOSTJsonRequest,
+                parse: POSTJson_js_1.parsePOSTJsonRequest,
+            }),
+            options?.multipart !== false &&
+                (0, useRequestParser_js_1.useRequestParser)({
+                    match: POSTMultipart_js_1.isPOSTMultipartRequest,
+                    parse: POSTMultipart_js_1.parsePOSTMultipartRequest,
+                }),
+            (0, useRequestParser_js_1.useRequestParser)({
+                match: POSTGraphQLString_js_1.isPOSTGraphQLStringRequest,
+                parse: POSTGraphQLString_js_1.parsePOSTGraphQLStringRequest,
+            }),
+            (0, useRequestParser_js_1.useRequestParser)({
+                match: POSTFormUrlEncoded_js_1.isPOSTFormUrlEncodedRequest,
+                parse: POSTFormUrlEncoded_js_1.parsePOSTFormUrlEncodedRequest,
+            }),
+            // Middlewares after the GraphQL execution
+            (0, useResultProcessor_js_1.useResultProcessor)({
+                mediaTypes: ['multipart/mixed'],
+                processResult: multipart_js_1.processMultipartResult,
+            }),
+            (0, useResultProcessor_js_1.useResultProcessor)({
+                mediaTypes: ['text/event-stream'],
+                processResult: push_js_1.processPushResult,
+            }),
+            (0, useResultProcessor_js_1.useResultProcessor)({
+                mediaTypes: ['application/graphql-response+json', 'application/json'],
+                processResult: regular_js_1.processRegularResult,
+            }),
+            ...(options?.plugins ?? []),
+            (0, useLimitBatching_js_1.useLimitBatching)(batchingLimit),
+            (0, useCheckGraphQLQueryParams_js_1.useCheckGraphQLQueryParams)(),
+            (0, useUnhandledRoute_js_1.useUnhandledRoute)({
+                graphqlEndpoint,
+                showLandingPage: options?.landingPage ?? true,
+            }),
+            // We make sure that the user doesn't send a mutation with GET
+            (0, usePreventMutationViaGET_js_1.usePreventMutationViaGET)(),
+            // To make sure those are called at the end
+            {
+                onPluginInit({ addPlugin }) {
+                    if (maskedErrors) {
+                        addPlugin((0, core_1.useMaskedErrors)(maskedErrors));
+                    }
+                    addPlugin(
+                    // We handle validation errors at the end
+                    (0, useHTTPValidationError_js_1.useHTTPValidationError)());
+                },
+            },
+        ];
+        this.getEnveloped = (0, core_1.envelop)({
+            plugins: this.plugins,
+        });
+        this.onRequestHooks = [];
+        this.onRequestParseHooks = [];
+        this.onParamsHooks = [];
+        this.onResultProcessHooks = [];
+        this.onResponseHooks = [];
+        for (const plugin of this.plugins) {
+            if (plugin) {
+                if (plugin.onRequest) {
+                    this.onRequestHooks.push(plugin.onRequest);
+                }
+                if (plugin.onRequestParse) {
+                    this.onRequestParseHooks.push(plugin.onRequestParse);
+                }
+                if (plugin.onParams) {
+                    this.onParamsHooks.push(plugin.onParams);
+                }
+                if (plugin.onResultProcess) {
+                    this.onResultProcessHooks.push(plugin.onResultProcess);
+                }
+                if (plugin.onResponse) {
+                    this.onResponseHooks.push(plugin.onResponse);
+                }
+            }
+        }
+    }
+    async getResultForParams({ params, request, }, ...args) {
+        try {
+            let result;
+            for (const onParamsHook of this.onParamsHooks) {
+                await onParamsHook({
+                    params,
+                    request,
+                    setParams(newParams) {
+                        params = newParams;
+                    },
+                    setResult(newResult) {
+                        result = newResult;
+                    },
+                });
+            }
+            if (result == null) {
+                const serverContext = args[0];
+                const initialContext = {
+                    ...serverContext,
+                    request,
+                    params,
+                };
+                const enveloped = this.getEnveloped(initialContext);
+                this.logger.debug(`Processing GraphQL Parameters`);
+                result = await (0, processRequest_js_1.processRequest)({
+                    params,
+                    enveloped,
+                });
+            }
+            return result;
+        }
+        catch (error) {
+            const errors = (0, error_js_1.handleError)(error, this.maskedErrorsOpts);
+            const result = {
+                errors,
+            };
+            return result;
+        }
+    }
+    async getResponse(request, serverContext) {
+        const url = new URL(request.url, 'http://localhost');
+        for (const onRequestHook of this.onRequestHooks) {
+            let response;
+            await onRequestHook({
+                request,
+                serverContext,
+                fetchAPI: this.fetchAPI,
+                url,
+                endResponse(newResponse) {
+                    response = newResponse;
+                },
+            });
+            if (response) {
+                return response;
+            }
+        }
+        let requestParser;
+        const onRequestParseDoneList = [];
+        let result;
+        try {
+            for (const onRequestParse of this.onRequestParseHooks) {
+                const onRequestParseResult = await onRequestParse({
+                    request,
+                    requestParser,
+                    setRequestParser(parser) {
+                        requestParser = parser;
+                    },
+                });
+                if (onRequestParseResult?.onRequestParseDone != null) {
+                    onRequestParseDoneList.push(onRequestParseResult.onRequestParseDone);
+                }
+            }
+            this.logger.debug(`Parsing request to extract GraphQL parameters`);
+            if (!requestParser) {
+                return new this.fetchAPI.Response('Request is not valid', {
+                    status: 400,
+                    statusText: 'Bad Request',
+                });
+            }
+            let requestParserResult = await requestParser(request);
+            for (const onRequestParseDone of onRequestParseDoneList) {
+                await onRequestParseDone({
+                    requestParserResult,
+                    setRequestParserResult(newParams) {
+                        requestParserResult = newParams;
+                    },
+                });
+            }
+            result = (await (Array.isArray(requestParserResult)
+                ? Promise.all(requestParserResult.map((params) => this.getResultForParams({
+                    params,
+                    request,
+                }, serverContext)))
+                : this.getResultForParams({
+                    params: requestParserResult,
+                    request,
+                }, serverContext)));
+        }
+        catch (error) {
+            const errors = (0, error_js_1.handleError)(error, this.maskedErrorsOpts);
+            result = {
+                errors,
+            };
+        }
+        const response = await (0, processRequest_js_1.processResult)({
+            request,
+            result,
+            fetchAPI: this.fetchAPI,
+            onResultProcessHooks: this.onResultProcessHooks,
+        });
+        return response;
+    }
+    /**
+     * Testing utility to mock http request for GraphQL endpoint
+     *
+     *
+     * Example - Test a simple query
+     * ```ts
+     * const { response, executionResult } = await yoga.inject({
+     *  document: "query { ping }",
+     * })
+     * expect(response.status).toBe(200)
+     * expect(executionResult.data.ping).toBe('pong')
+     * ```
+     **/
+    async inject({ document, variables, operationName, headers, serverContext, }) {
+        const request = new this.fetchAPI.Request('http://localhost' + this.graphqlEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers,
+            },
+            body: JSON.stringify({
+                query: document &&
+                    (typeof document === 'string' ? document : (0, graphql_1.print)(document)),
+                variables,
+                operationName,
+            }),
+        });
+        const response = await this.handle(request, serverContext);
+        let executionResult = null;
+        if (response.headers.get('content-type') === 'application/json') {
+            executionResult = await response.json();
+        }
+        return {
+            response,
+            executionResult,
+        };
+    }
+}
+exports.YogaServer = YogaServer;
+function createYoga(options) {
+    const server = new YogaServer(options);
+    return (0, server_1.createServerAdapter)(server, server.fetchAPI.Request);
+}
+exports.createYoga = createYoga;

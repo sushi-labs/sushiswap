@@ -1,0 +1,91 @@
+import { operations } from './types/api';
+import { SafeTransactionEstimation, TransactionDetails, TransactionListPage } from './types/transactions';
+import { FiatCurrencies, OwnedSafes, SafeBalanceResponse, SafeCollectibleResponse, SafeIncomingTransfersResponse, SafeModuleTransactionsResponse, SafeMultisigTransactionsResponse } from './types/common';
+import { SafeInfo } from './types/safe-info';
+import { ChainListResponse, ChainInfo } from './types/chains';
+import { SafeAppsResponse } from './types/safe-apps';
+import { MasterCopyReponse } from './types/master-copies';
+import { DecodedDataResponse } from './types/decoded-data';
+export * from './types/safe-info';
+export * from './types/safe-apps';
+export * from './types/transactions';
+export * from './types/chains';
+export * from './types/common';
+export * from './types/master-copies';
+export * from './types/decoded-data';
+/**
+ * Set the base CGW URL, e.g. `https://safe-client.gnosis.io`
+ */
+export declare const setBaseUrl: (url: string) => void;
+/**
+ * Get basic information about a Safe. E.g. owners, modules, version etc
+ */
+export declare function getSafeInfo(chainId: string, address: string): Promise<SafeInfo>;
+/**
+ * Get filterable list of incoming transactions
+ */
+export declare function getIncomingTransfers(chainId: string, address: string, query?: operations['incoming_transfers']['parameters']['query'], pageUrl?: string): Promise<SafeIncomingTransfersResponse>;
+/**
+ * Get filterable list of module transactions
+ */
+export declare function getModuleTransactions(chainId: string, address: string, query?: operations['module_transactions']['parameters']['query'], pageUrl?: string): Promise<SafeModuleTransactionsResponse>;
+/**
+ * Get filterable list of multisig transactions
+ */
+export declare function getMultisigTransactions(chainId: string, address: string, query?: operations['multisig_transactions']['parameters']['query'], pageUrl?: string): Promise<SafeMultisigTransactionsResponse>;
+/**
+ * Get the total balance and all assets stored in a Safe
+ */
+export declare function getBalances(chainId: string, address: string, currency?: string, query?: operations['safes_balances_list']['parameters']['query']): Promise<SafeBalanceResponse>;
+/**
+ * Get a list of supported fiat currencies (e.g. USD, EUR etc)
+ */
+export declare function getFiatCurrencies(): Promise<FiatCurrencies>;
+/**
+ * Get the addresses of all Safes belonging to an owner
+ */
+export declare function getOwnedSafes(chainId: string, address: string): Promise<OwnedSafes>;
+/**
+ * Get NFTs stored in a Safe
+ */
+export declare function getCollectibles(chainId: string, address: string, query?: operations['safes_collectibles_list']['parameters']['query']): Promise<SafeCollectibleResponse[]>;
+/**
+ * Get a list of past Safe transactions
+ */
+export declare function getTransactionHistory(chainId: string, address: string, pageUrl?: string): Promise<TransactionListPage>;
+/**
+ * Get the list of pending transactions
+ */
+export declare function getTransactionQueue(chainId: string, address: string, pageUrl?: string): Promise<TransactionListPage>;
+/**
+ * Get the details of an individual transaction by its id
+ */
+export declare function getTransactionDetails(chainId: string, transactionId: string): Promise<TransactionDetails>;
+/**
+ * Request a gas estimate & recommmended tx nonce for a created transaction
+ */
+export declare function postSafeGasEstimation(chainId: string, address: string, body: operations['post_safe_gas_estimation']['parameters']['body']): Promise<SafeTransactionEstimation>;
+/**
+ * Propose a new transaction for other owners to sign/execute
+ */
+export declare function proposeTransaction(chainId: string, address: string, body: operations['propose_transaction']['parameters']['body']): Promise<TransactionDetails>;
+/**
+ * Returns all defined chain configs
+ */
+export declare function getChainsConfig(query?: operations['chains_list']['parameters']['query']): Promise<ChainListResponse>;
+/**
+ * Returns a chain config
+ */
+export declare function getChainConfig(chainId: string): Promise<ChainInfo>;
+/**
+ * Returns Safe Apps List
+ */
+export declare function getSafeApps(chainId: string, query?: operations['safe_apps_read']['parameters']['query']): Promise<SafeAppsResponse>;
+/**
+ * Returns list of Master Copies
+ */
+export declare function getMasterCopies(chainId: string): Promise<MasterCopyReponse>;
+/**
+ * Returns decoded data
+ */
+export declare function getDecodedData(chainId: string, encodedData: operations['data_decoder']['parameters']['body']['data']): Promise<DecodedDataResponse>;

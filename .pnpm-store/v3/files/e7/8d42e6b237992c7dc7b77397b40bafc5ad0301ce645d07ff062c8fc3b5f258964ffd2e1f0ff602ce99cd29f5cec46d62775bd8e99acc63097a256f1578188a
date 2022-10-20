@@ -1,0 +1,10 @@
+import { JsonRpcProvider } from '@ethersproject/providers';
+import { UniswapInterfaceMulticall } from '../src/abi/types';
+import { ChainId } from './consts';
+export declare function useContract(chainId: ChainId): UniswapInterfaceMulticall;
+export declare function useLatestBlock(provider: JsonRpcProvider): number | undefined;
+export declare function useCurrentBlockTimestamp(chainId: ChainId, blockNumber: number | undefined): string | undefined;
+export declare function useCurrentBlockTimestampMultichain(chainIds: ChainId[], blockNumbers: Array<number | undefined>): Array<string | undefined>;
+export declare function useMaxTokenBalance(chainId: ChainId, blockNumber: number | undefined): string | undefined;
+export declare function getProvider(chainId: ChainId): JsonRpcProvider;
+export declare function getInfuraChainName(chainId: ChainId): "homestead" | "rinkeby" | "ropsten" | "goerli" | "kovan";

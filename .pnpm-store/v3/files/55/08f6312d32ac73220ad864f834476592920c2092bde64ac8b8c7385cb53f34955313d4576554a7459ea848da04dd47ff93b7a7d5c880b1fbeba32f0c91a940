@@ -1,0 +1,13 @@
+import { Libraries } from "@nomiclabs/hardhat-ethers/types";
+import { Contract, ethers } from "ethers";
+import { TenderlyPlugin } from "../../type-extensions";
+export declare class TdlyContractFactory {
+    [key: string]: any;
+    private readonly contractName;
+    private libs;
+    private nativeContractFactory;
+    private tenderly;
+    constructor(nativeContractFactory: ethers.ContractFactory, tenderly: TenderlyPlugin, contractName: string, libs?: Libraries);
+    deploy(...args: any[]): Promise<Contract>;
+}
+//# sourceMappingURL=ContractFactory.d.ts.map

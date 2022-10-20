@@ -1,0 +1,255 @@
+/**
+ * table-core
+ *
+ * Copyright (c) TanStack
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var utils = require('../utils.js');
+var column = require('./column.js');
+var headers = require('./headers.js');
+var ColumnSizing = require('../features/ColumnSizing.js');
+var Expanding = require('../features/Expanding.js');
+var Filters = require('../features/Filters.js');
+var Grouping = require('../features/Grouping.js');
+var Ordering = require('../features/Ordering.js');
+var Pagination = require('../features/Pagination.js');
+var Pinning = require('../features/Pinning.js');
+var RowSelection = require('../features/RowSelection.js');
+var Sorting = require('../features/Sorting.js');
+var Visibility = require('../features/Visibility.js');
+
+const features = [headers.Headers, Visibility.Visibility, Ordering.Ordering, Pinning.Pinning, Filters.Filters, Sorting.Sorting, Grouping.Grouping, Expanding.Expanding, Pagination.Pagination, RowSelection.RowSelection, ColumnSizing.ColumnSizing]; //
+
+function createTableInstance(options) {
+  var _options$initialState;
+
+  if (options.debugAll || options.debugTable) {
+    console.info('Creating Table Instance...');
+  }
+
+  let instance = {
+    _features: features
+  };
+
+  const defaultOptions = instance._features.reduce((obj, feature) => {
+    return Object.assign(obj, feature.getDefaultOptions == null ? void 0 : feature.getDefaultOptions(instance));
+  }, {});
+
+  const mergeOptions = options => {
+    if (instance.options.mergeOptions) {
+      return instance.options.mergeOptions(defaultOptions, options);
+    }
+
+    return { ...defaultOptions,
+      ...options
+    };
+  };
+
+  const coreInitialState = {};
+  let initialState = { ...coreInitialState,
+    ...((_options$initialState = options.initialState) != null ? _options$initialState : {})
+  };
+
+  instance._features.forEach(feature => {
+    var _feature$getInitialSt;
+
+    initialState = (_feature$getInitialSt = feature.getInitialState == null ? void 0 : feature.getInitialState(initialState)) != null ? _feature$getInitialSt : initialState;
+  });
+
+  const queued = [];
+  let queuedTimeout = false;
+  const coreInstance = {
+    _features: features,
+    options: { ...defaultOptions,
+      ...options
+    },
+    initialState,
+    _queue: cb => {
+      queued.push(cb);
+
+      if (!queuedTimeout) {
+        queuedTimeout = true; // Schedule a microtask to run the queued callbacks after
+        // the current call stack (render, etc) has finished.
+
+        Promise.resolve().then(() => {
+          while (queued.length) {
+            queued.shift()();
+          }
+
+          queuedTimeout = false;
+        }).catch(error => setTimeout(() => {
+          throw error;
+        }));
+      }
+    },
+    reset: () => {
+      instance.setState(instance.initialState);
+    },
+    setOptions: updater => {
+      const newOptions = utils.functionalUpdate(updater, instance.options);
+      instance.options = mergeOptions(newOptions);
+    },
+    _render: (template, props) => {
+      if (typeof instance.options.render === 'function') {
+        return instance.options.render(template, props);
+      }
+
+      if (typeof template === 'function') {
+        return template(props);
+      }
+
+      return template;
+    },
+    getState: () => {
+      return instance.options.state;
+    },
+    setState: updater => {
+      instance.options.onStateChange == null ? void 0 : instance.options.onStateChange(updater);
+    },
+    _getRowId: (row, index, parent) => {
+      var _instance$options$get;
+
+      return (_instance$options$get = instance.options.getRowId == null ? void 0 : instance.options.getRowId(row, index, parent)) != null ? _instance$options$get : "" + (parent ? [parent.id, index].join('.') : index);
+    },
+    getCoreRowModel: () => {
+      if (!instance._getCoreRowModel) {
+        instance._getCoreRowModel = instance.options.getCoreRowModel(instance);
+      }
+
+      return instance._getCoreRowModel();
+    },
+    // The final calls start at the bottom of the model,
+    // expanded rows, which then work their way up
+    getRowModel: () => {
+      return instance.getPaginationRowModel();
+    },
+    getRow: id => {
+      const row = instance.getRowModel().rowsById[id];
+
+      if (!row) {
+        if (process.env.NODE_ENV !== 'production') {
+          throw new Error("getRow expected an ID, but got " + id);
+        }
+
+        throw new Error();
+      }
+
+      return row;
+    },
+    _getDefaultColumnDef: utils.memo(() => [instance.options.defaultColumn], defaultColumn => {
+      var _defaultColumn;
+
+      defaultColumn = (_defaultColumn = defaultColumn) != null ? _defaultColumn : {};
+      return {
+        header: props => props.header.column.id,
+        footer: props => props.header.column.id,
+        cell: props => {
+          var _props$getValue$toStr, _props$getValue$toStr2, _props$getValue;
+
+          return (_props$getValue$toStr = (_props$getValue$toStr2 = (_props$getValue = props.getValue()).toString) == null ? void 0 : _props$getValue$toStr2.call(_props$getValue)) != null ? _props$getValue$toStr : null;
+        },
+        ...instance._features.reduce((obj, feature) => {
+          return Object.assign(obj, feature.getDefaultColumnDef == null ? void 0 : feature.getDefaultColumnDef());
+        }, {}),
+        ...defaultColumn
+      };
+    }, {
+      debug: () => {
+        var _instance$options$deb;
+
+        return (_instance$options$deb = instance.options.debugAll) != null ? _instance$options$deb : instance.options.debugColumns;
+      },
+      key: process.env.NODE_ENV === 'development' && 'getDefaultColumnDef'
+    }),
+    _getColumnDefs: () => instance.options.columns,
+    getAllColumns: utils.memo(() => [instance._getColumnDefs()], columnDefs => {
+      const recurseColumns = function (columnDefs, parent, depth) {
+        if (depth === void 0) {
+          depth = 0;
+        }
+
+        return columnDefs.map(columnDef => {
+          const column$1 = column.createColumn(instance, columnDef, depth, parent);
+          column$1.columns = columnDef.columns ? recurseColumns(columnDef.columns, column$1, depth + 1) : [];
+          return column$1;
+        });
+      };
+
+      return recurseColumns(columnDefs);
+    }, {
+      key: process.env.NODE_ENV === 'development' && 'getAllColumns',
+      debug: () => {
+        var _instance$options$deb2;
+
+        return (_instance$options$deb2 = instance.options.debugAll) != null ? _instance$options$deb2 : instance.options.debugColumns;
+      }
+    }),
+    getAllFlatColumns: utils.memo(() => [instance.getAllColumns()], allColumns => {
+      return allColumns.flatMap(column => {
+        return column.getFlatColumns();
+      });
+    }, {
+      key: process.env.NODE_ENV === 'development' && 'getAllFlatColumns',
+      debug: () => {
+        var _instance$options$deb3;
+
+        return (_instance$options$deb3 = instance.options.debugAll) != null ? _instance$options$deb3 : instance.options.debugColumns;
+      }
+    }),
+    _getAllFlatColumnsById: utils.memo(() => [instance.getAllFlatColumns()], flatColumns => {
+      return flatColumns.reduce((acc, column) => {
+        acc[column.id] = column;
+        return acc;
+      }, {});
+    }, {
+      key: process.env.NODE_ENV === 'development' && 'getAllFlatColumnsById',
+      debug: () => {
+        var _instance$options$deb4;
+
+        return (_instance$options$deb4 = instance.options.debugAll) != null ? _instance$options$deb4 : instance.options.debugColumns;
+      }
+    }),
+    getAllLeafColumns: utils.memo(() => [instance.getAllColumns(), instance._getOrderColumnsFn()], (allColumns, orderColumns) => {
+      let leafColumns = allColumns.flatMap(column => column.getLeafColumns());
+      return orderColumns(leafColumns);
+    }, {
+      key: process.env.NODE_ENV === 'development' && 'getAllLeafColumns',
+      debug: () => {
+        var _instance$options$deb5;
+
+        return (_instance$options$deb5 = instance.options.debugAll) != null ? _instance$options$deb5 : instance.options.debugColumns;
+      }
+    }),
+    getColumn: columnId => {
+      const column = instance._getAllFlatColumnsById()[columnId];
+
+      if (!column) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn("[Table] Column with id " + columnId + " does not exist.");
+        }
+
+        throw new Error();
+      }
+
+      return column;
+    }
+  };
+  Object.assign(instance, coreInstance);
+
+  instance._features.forEach(feature => {
+    return Object.assign(instance, feature.createInstance == null ? void 0 : feature.createInstance(instance));
+  });
+
+  return instance;
+}
+
+exports.createTableInstance = createTableInstance;
+//# sourceMappingURL=instance.js.map

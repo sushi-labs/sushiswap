@@ -1,0 +1,48 @@
+{
+  "name": "@octokit/app",
+  "description": "GitHub Apps toolset for Node.js",
+  "version": "13.0.5",
+  "license": "MIT",
+  "files": [
+    "dist-*/",
+    "bin/"
+  ],
+  "pika": true,
+  "sideEffects": false,
+  "repository": "github:octokit/app.js",
+  "dependencies": {
+    "@octokit/auth-app": "^4.0.0",
+    "@octokit/auth-unauthenticated": "^3.0.0",
+    "@octokit/core": "^4.0.0",
+    "@octokit/oauth-app": "^4.0.4",
+    "@octokit/plugin-paginate-rest": "^3.0.0",
+    "@octokit/types": "^6.27.1",
+    "@octokit/webhooks": "^10.0.0"
+  },
+  "devDependencies": {
+    "@pika/pack": "^0.5.0",
+    "@pika/plugin-build-node": "^0.9.1",
+    "@pika/plugin-ts-standard-pkg": "^0.9.1",
+    "@types/jest": "^28.0.0",
+    "@types/node": "^16.0.0",
+    "@types/node-fetch": "^2.5.8",
+    "express": "^4.17.1",
+    "fetch-mock": "^9.10.7",
+    "jest": "^28.0.0",
+    "mockdate": "^3.0.2",
+    "node-fetch": "^2.6.7",
+    "prettier": "2.7.1",
+    "semantic-release-plugin-update-version-in-files": "^1.0.0",
+    "ts-jest": "^28.0.0",
+    "typescript": "^4.0.5"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "source": "dist-src/index.js",
+  "types": "dist-types/index.d.ts",
+  "main": "dist-node/index.js"
+}

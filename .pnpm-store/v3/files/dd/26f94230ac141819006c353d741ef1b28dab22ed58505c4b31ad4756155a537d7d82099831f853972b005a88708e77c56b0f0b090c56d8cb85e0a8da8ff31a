@@ -1,0 +1,11 @@
+import { ChainName } from './chains';
+export declare const defaultAlchemyApiKey = "_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC";
+export declare const defaultInfuraApiKey = "84842078b09946638c03157f83405213";
+export declare type RpcProviderName = 'alchemy' | 'infura' | 'public';
+declare type AlchemyChains = Extract<ChainName, 'mainnet' | 'ropsten' | 'rinkeby' | 'goerli' | 'kovan' | 'optimism' | 'optimismKovan' | 'optimismGoerli' | 'polygon' | 'polygonMumbai' | 'arbitrum' | 'arbitrumRinkeby' | 'arbitrumGoerli'>;
+export declare const alchemyRpcUrls: Record<AlchemyChains, string>;
+declare type InfuraChains = Extract<ChainName, 'mainnet' | 'ropsten' | 'rinkeby' | 'goerli' | 'kovan' | 'sepolia' | 'optimism' | 'optimismKovan' | 'optimismGoerli' | 'polygon' | 'polygonMumbai' | 'arbitrum' | 'arbitrumRinkeby' | 'arbitrumGoerli'>;
+export declare const infuraRpcUrls: Record<InfuraChains, string>;
+declare type PublicChains = Extract<ChainName, 'mainnet' | 'ropsten' | 'rinkeby' | 'goerli' | 'kovan' | 'sepolia' | 'optimism' | 'optimismKovan' | 'optimismGoerli' | 'polygon' | 'polygonMumbai' | 'arbitrum' | 'arbitrumRinkeby' | 'arbitrumGoerli'>;
+export declare const publicRpcUrls: Record<PublicChains, string>;
+export {};

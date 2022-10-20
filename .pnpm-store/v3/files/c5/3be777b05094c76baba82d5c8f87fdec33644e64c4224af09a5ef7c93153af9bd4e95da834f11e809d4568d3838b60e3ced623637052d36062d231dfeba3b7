@@ -1,0 +1,251 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ReverseNetworkMap = exports.DefaultChainId = exports.NetworkMap = exports.setup = exports.PluginName = void 0;
+require("@nomiclabs/hardhat-ethers");
+const config_1 = require("hardhat/config");
+const plugins_1 = require("hardhat/plugins");
+const Tenderly_1 = require("./Tenderly");
+const errors_1 = require("./tenderly/errors");
+const ethers_1 = require("./tenderly/ethers");
+const hardhat_deploy_1 = require("./tenderly/hardhat-deploy");
+const TenderlyService_1 = require("./tenderly/TenderlyService");
+const TenderlyNetwork_1 = require("./TenderlyNetwork");
+require("./type-extensions");
+const util_1 = require("./utils/util");
+exports.PluginName = "hardhat-tenderly";
+(0, config_1.extendEnvironment)(env => {
+    env.tenderly = (0, plugins_1.lazyObject)(() => new Tenderly_1.Tenderly(env));
+    extendProvider(env);
+    populateNetworks(env);
+});
+(0, config_1.extendConfig)((resolvedConfig, userConfig) => {
+    resolvedConfig.networks.tenderly = Object.assign({}, resolvedConfig.networks.tenderly);
+});
+const setup = (cfg) => {
+    let automatic = true;
+    if (cfg !== undefined && (cfg === null || cfg === void 0 ? void 0 : cfg.automaticVerifications) !== undefined) {
+        automatic = cfg.automaticVerifications;
+    }
+    (0, config_1.extendEnvironment)(env => {
+        env.tenderly = (0, plugins_1.lazyObject)(() => new Tenderly_1.Tenderly(env));
+        extendProvider(env);
+        populateNetworks(env);
+        if (automatic) {
+            extendEthers(env);
+            extendHardhatDeploy(env);
+        }
+    });
+};
+exports.setup = setup;
+const extendEthers = (hre) => {
+    if ("ethers" in hre &&
+        hre.ethers !== undefined &&
+        "tenderly" in hre &&
+        hre.tenderly !== undefined) {
+        Object.assign(hre.ethers, (0, ethers_1.wrapEthers)(hre.ethers, hre.tenderly, hre.config.tenderly));
+    }
+};
+const extendHardhatDeploy = (hre) => {
+    // ts-ignore is needed here because we want to avoid importing hardhat-deploy in order not to cause duplicated initialization of the .deployments field
+    if ("deployments" in hre &&
+        // @ts-ignore
+        hre.deployments !== undefined &&
+        "tenderly" in hre &&
+        // @ts-ignore
+        hre.tenderly !== undefined) {
+        // @ts-ignore
+        hre.deployments = (0, hardhat_deploy_1.wrapHHDeployments)(hre.deployments, hre.tenderly);
+    }
+};
+const extendProvider = (hre) => {
+    if (hre.network.name !== "tenderly") {
+        return;
+    }
+    if ("url" in hre.network.config && hre.network.config.url !== undefined) {
+        const forkID = hre.network.config.url.split("/").pop();
+        hre.tenderly.network().setFork(forkID);
+        return;
+    }
+    const fork = new TenderlyNetwork_1.TenderlyNetwork(hre);
+    fork
+        .initializeFork()
+        .then(_ => {
+        hre.tenderly.setNetwork(fork);
+        hre.network.config.url =
+            TenderlyService_1.TENDERLY_RPC_BASE + `/fork/${hre.tenderly.network().getFork()}`;
+        hre.ethers.provider = new hre.ethers.providers.Web3Provider(hre.tenderly.network());
+    })
+        .catch(_ => {
+        console.log(`Error in ${exports.PluginName}: Initializing fork, check your tenderly configuration`);
+    });
+};
+exports.NetworkMap = {
+    kovan: "42",
+    goerli: "5",
+    mainnet: "1",
+    rinkeby: "4",
+    ropsten: "3",
+    matic: "137",
+    mumbai: "80001",
+    xdai: "100",
+    poa: "99",
+    bsc: "56",
+    "bsc-testnet": "97",
+    rsk: "30",
+    "rsk-testnet": "31",
+    avalanche: "43114",
+    "avalanche-testnet": "43113"
+};
+exports.DefaultChainId = "31337";
+exports.ReverseNetworkMap = {
+    "42": "kovan",
+    "5": "goerli",
+    "1": "mainnet",
+    "4": "rinkeby",
+    "3": "ropsten",
+    "80001": "matic-mumbai",
+    "137": "matic-mainnet",
+    "100": "xdai",
+    "99": "poa",
+    "56": "binance",
+    "97": "rialto",
+    "30": "rsk",
+    "31": "rsk-testnet",
+    "43114": "c-chain",
+    "43113": "c-chain-testnet"
+};
+const populateNetworks = (env) => {
+    TenderlyService_1.TenderlyService.getPublicNetworks()
+        .then(networks => {
+        var _a;
+        let network;
+        let slug;
+        for (network of networks) {
+            exports.NetworkMap[network.slug] = network.ethereum_network_id;
+            if ((_a = network === null || network === void 0 ? void 0 : network.metadata) === null || _a === void 0 ? void 0 : _a.slug) {
+                exports.NetworkMap[network.metadata.slug] = network.ethereum_network_id;
+            }
+            exports.ReverseNetworkMap[network.ethereum_network_id] = network.slug;
+            for (slug of network.metadata.secondary_slugs) {
+                exports.NetworkMap[slug] = network.ethereum_network_id;
+            }
+        }
+    })
+        .catch(e => {
+        console.log("Error encountered while fetching public networks");
+    });
+};
+const extractContractData = async (contracts, network, config, run) => {
+    let contract;
+    const requestContracts = [];
+    const sourcePaths = await run("compile:solidity:get-source-paths");
+    const sourceNames = await run("compile:solidity:get-source-names", {
+        sourcePaths
+    });
+    const data = await run("compile:solidity:get-dependency-graph", {
+        sourceNames
+    });
+    if (data.length === 0) {
+        throw new plugins_1.HardhatPluginError(exports.PluginName, errors_1.CONTRACTS_NOT_DETECTED);
+    }
+    const metadata = {
+        compiler: {
+            version: (0, util_1.extractCompilerVersion)(config)
+        },
+        sources: {}
+    };
+    data._resolvedFiles.forEach((resolvedFile, _) => {
+        for (contract of contracts) {
+            const contractData = contract.split("=");
+            if (contractData.length < 2) {
+                throw new plugins_1.HardhatPluginError(exports.PluginName, `Invalid contract provided`);
+            }
+            if (network === undefined) {
+                throw new plugins_1.HardhatPluginError(exports.PluginName, `No network provided`);
+            }
+            const sourcePath = resolvedFile.sourceName;
+            const name = sourcePath
+                .split("/")
+                .slice(-1)[0]
+                .split(".")[0];
+            if (name !== contractData[0]) {
+                continue;
+            }
+            metadata.sources[sourcePath] = {
+                content: resolvedFile.content.rawContent
+            };
+            const visited = {};
+            (0, util_1.resolveDependencies)(data, sourcePath, metadata, visited);
+        }
+    });
+    for (const [key, value] of Object.entries(metadata.sources)) {
+        const name = key
+            .split("/")
+            .slice(-1)[0]
+            .split(".")[0];
+        const contractToPush = {
+            contractName: name,
+            source: value.content,
+            sourcePath: key,
+            networks: {},
+            compiler: {
+                name: "solc",
+                version: (0, util_1.extractCompilerVersion)(config, key)
+            }
+        };
+        for (contract of contracts) {
+            const contractData = contract.split("=");
+            if (contractToPush.contractName === contractData[0]) {
+                let chainID = exports.NetworkMap[network.toLowerCase()];
+                if (config.networks[network].chainId !== undefined) {
+                    chainID = config.networks[network].chainId.toString();
+                }
+                if (chainID === undefined) {
+                    console.log(`Error in ${exports.PluginName}: Couldn't identify network. Please provide a chainID in the network config object`);
+                    return [];
+                }
+                contractToPush.networks = {
+                    [chainID]: {
+                        address: contractData[1]
+                    }
+                };
+            }
+        }
+        requestContracts.push(contractToPush);
+    }
+    return requestContracts;
+};
+const verifyContract = async ({ contracts }, { config, hardhatArguments, run }) => {
+    if (contracts === undefined) {
+        throw new plugins_1.HardhatPluginError(exports.PluginName, `At least one contract must be provided (ContractName=Address). Run --help for information.`);
+    }
+    const requestContracts = await extractContractData(contracts, hardhatArguments.network, config, run);
+    await TenderlyService_1.TenderlyService.verifyContracts({
+        config: (0, util_1.newCompilerConfig)(config),
+        contracts: requestContracts
+    });
+};
+const pushContracts = async ({ contracts }, { config, hardhatArguments, run }) => {
+    if (contracts === undefined) {
+        throw new plugins_1.HardhatPluginError(exports.PluginName, `At least one contract must be provided (ContractName=Address)`);
+    }
+    if (config.tenderly.project === undefined) {
+        throw new plugins_1.HardhatPluginError(exports.PluginName, `Please provide the project field in the tenderly object in hardhat.config.js`);
+    }
+    if (config.tenderly.username === undefined) {
+        throw new plugins_1.HardhatPluginError(exports.PluginName, `Please provide the username field in the tenderly object in hardhat.config.js`);
+    }
+    const requestContracts = await extractContractData(contracts, hardhatArguments.network, config, run);
+    const solcConfig = (0, util_1.newCompilerConfig)(config);
+    await TenderlyService_1.TenderlyService.pushContracts({
+        config: solcConfig,
+        contracts: requestContracts
+    }, config.tenderly.project, config.tenderly.username);
+};
+(0, config_1.task)("tenderly:verify", "Verifies contracts on Tenderly")
+    .addOptionalVariadicPositionalParam("contracts", "Addresses and names of contracts that will be verified formatted ContractName=Address")
+    .setAction(verifyContract);
+(0, config_1.task)("tenderly:push", "Privately pushes contracts to Tenderly")
+    .addOptionalVariadicPositionalParam("contracts", "Addresses and names of contracts that will be verified formatted ContractName=Address")
+    .setAction(pushContracts);
+//# sourceMappingURL=index.js.map

@@ -1,0 +1,27 @@
+{
+    "name": "@types/workbox-expiration",
+    "version": "4.3.1",
+    "description": "TypeScript definitions for workbox-expiration",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/workbox-expiration",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Jason Kwok",
+            "url": "https://github.com/JasonHK",
+            "githubUsername": "JasonHK"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/workbox-expiration"
+    },
+    "scripts": {},
+    "dependencies": {
+        "@types/workbox-core": "*"
+    },
+    "typesPublisherContentHash": "4c95b0b4d1b6fe1d9adbb1afe669b45d7026774409be223c11c1db1f09d4de13",
+    "typeScriptVersion": "3.6"
+}

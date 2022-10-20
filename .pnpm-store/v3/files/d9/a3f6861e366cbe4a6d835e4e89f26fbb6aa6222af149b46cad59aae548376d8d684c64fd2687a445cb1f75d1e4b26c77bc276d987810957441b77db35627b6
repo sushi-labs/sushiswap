@@ -1,0 +1,71 @@
+import { RowModel } from '..';
+import { BuiltInAggregationFn } from '../aggregationFns';
+import { TableFeature } from '../core/instance';
+import { Cell, Column, OnChangeFn, TableInstance, Row, Updater, Renderable, TableGenerics } from '../types';
+import { Overwrite } from '../utils';
+export declare type GroupingState = string[];
+export declare type GroupingTableState = {
+    grouping: GroupingState;
+};
+export declare type AggregationFn<TGenerics extends TableGenerics> = (columnId: string, leafRows: Row<TGenerics>[], childRows: Row<TGenerics>[]) => any;
+export declare type CustomAggregationFns<TGenerics extends TableGenerics> = Record<string, AggregationFn<TGenerics>>;
+export declare type AggregationFnOption<TGenerics extends TableGenerics> = 'auto' | BuiltInAggregationFn | keyof TGenerics['AggregationFns'] | AggregationFn<TGenerics>;
+export declare type GroupingColumnDef<TGenerics extends TableGenerics> = {
+    aggregationFn?: AggregationFnOption<Overwrite<TGenerics, {
+        Value: any;
+    }>>;
+    aggregatedCell?: Renderable<TGenerics, {
+        instance: TableInstance<TGenerics>;
+        row: Row<TGenerics>;
+        column: Column<TGenerics>;
+        cell: Cell<TGenerics>;
+        getValue: () => TGenerics['Value'];
+    }>;
+    enableGrouping?: boolean;
+};
+export declare type GroupingColumn<TGenerics extends TableGenerics> = {
+    aggregationFn?: AggregationFnOption<Overwrite<TGenerics, {
+        Value: any;
+    }>>;
+    getCanGroup: () => boolean;
+    getIsGrouped: () => boolean;
+    getGroupedIndex: () => number;
+    toggleGrouping: () => void;
+    getToggleGroupingHandler: () => () => void;
+    getAutoAggregationFn: () => AggregationFn<TGenerics> | undefined;
+    getAggregationFn: () => AggregationFn<TGenerics> | undefined;
+};
+export declare type GroupingRow = {
+    groupingColumnId?: string;
+    groupingValue?: any;
+    getIsGrouped: () => boolean;
+    _groupingValuesCache: Record<string, any>;
+};
+export declare type GroupingCell<TGenerics extends TableGenerics> = {
+    getIsGrouped: () => boolean;
+    getIsPlaceholder: () => boolean;
+    getIsAggregated: () => boolean;
+    renderAggregatedCell: () => string | null | TGenerics['Rendered'];
+};
+export declare type ColumnDefaultOptions = {
+    onGroupingChange: OnChangeFn<GroupingState>;
+    enableGrouping: boolean;
+};
+export declare type GroupingOptions<TGenerics extends TableGenerics> = {
+    manualGrouping?: boolean;
+    aggregationFns?: TGenerics['AggregationFns'];
+    onGroupingChange?: OnChangeFn<GroupingState>;
+    enableGrouping?: boolean;
+    getGroupedRowModel?: (instance: TableInstance<TGenerics>) => () => RowModel<TGenerics>;
+    groupedColumnMode?: false | 'reorder' | 'remove';
+};
+export declare type GroupingColumnMode = false | 'reorder' | 'remove';
+export declare type GroupingInstance<TGenerics extends TableGenerics> = {
+    setGrouping: (updater: Updater<GroupingState>) => void;
+    resetGrouping: (defaultState?: boolean) => void;
+    getPreGroupedRowModel: () => RowModel<TGenerics>;
+    getGroupedRowModel: () => RowModel<TGenerics>;
+    _getGroupedRowModel?: () => RowModel<TGenerics>;
+};
+export declare const Grouping: TableFeature;
+export declare function orderColumns<TGenerics extends TableGenerics>(leafColumns: Column<TGenerics>[], grouping: string[], groupedColumnMode?: GroupingColumnMode): Column<TGenerics>[];

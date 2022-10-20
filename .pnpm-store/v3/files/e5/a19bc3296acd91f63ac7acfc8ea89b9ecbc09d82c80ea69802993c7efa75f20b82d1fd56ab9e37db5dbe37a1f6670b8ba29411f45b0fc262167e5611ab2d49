@@ -1,0 +1,83 @@
+{
+  "name": "@walletconnect/jsonrpc-utils",
+  "description": "Utilities for JSON-RPC",
+  "version": "1.0.3",
+  "author": "WalletConnect, Inc. <walletconnect.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/WalletConnect/walletconnect-utils/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WalletConnect/walletconnect-utils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WalletConnect/walletconnect-utils/issues"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "browser": "dist/esm/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "unpkg": "dist/umd/index.min.js",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "json",
+    "rpc",
+    "jsonrpc",
+    "json-rpc",
+    "tools",
+    "types",
+    "utils",
+    "provider"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build:pre": "run-s clean",
+    "build:cjs": "npx tsc -p tsconfig.cjs.json",
+    "build:umd": "webpack",
+    "build:esm": "npx tsc -p tsconfig.esm.json",
+    "build": "run-s build:pre build:cjs build:esm build:umd",
+    "test": "env TS_NODE_PROJECT=\"tsconfig.cjs.json\" mocha -r ts-node/register ./test/**/*.{test,spec}.ts",
+    "lint": "eslint -c '../../.eslintrc' --fix './src/**/*.ts'"
+  },
+  "dependencies": {
+    "@walletconnect/environment": "^1.0.0",
+    "@walletconnect/jsonrpc-types": "^1.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/node": "^7.12.1",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "@babel/register": "^7.12.1",
+    "@types/chai": "^4.2.14",
+    "@types/jest": "^26.0.15",
+    "@types/lodash.isequal": "^4.5.5",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.7",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
+    "@walletconnect/timestamp": "^1.0.0",
+    "chai": "^4.2.0",
+    "core-js": "^3.6.5",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^9.2.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "lodash.isequal": "4.5.0",
+    "mocha": "^8.1.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.19.1",
+    "ts-node": "^9.0.0",
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
+  }
+}

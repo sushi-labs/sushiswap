@@ -1,0 +1,37 @@
+{
+  "name": "@graphql-mesh/string-interpolation",
+  "version": "0.3.0",
+  "description": "Dynamic string manipulation",
+  "sideEffects": false,
+  "peerDependencies": {
+    "graphql": "*"
+  },
+  "dependencies": {
+    "dayjs": "1.11.3",
+    "json-pointer": "0.6.2",
+    "lodash.get": "4.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Urigo/graphql-mesh",
+    "directory": "packages/string-interpolation"
+  },
+  "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
+  "main": "index.js",
+  "module": "index.mjs",
+  "typings": "index.d.ts",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./index.mjs"
+    },
+    "./*": {
+      "require": "./*.js",
+      "import": "./*.mjs"
+    },
+    "./package.json": "./package.json"
+  }
+}
