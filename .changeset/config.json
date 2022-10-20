@@ -38,6 +38,6 @@
       "@sushiswap/miso",
       "@sushiswap/sushiswap",
       "@sushiswap/sushixswap",
-      "@sushiswap/trident",
+      "@sushiswap/trident"
     ]
   }
