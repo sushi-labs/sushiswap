@@ -36,6 +36,15 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@graphql-mesh/cache-localforage": "^0.6.54",
+    "@graphql-mesh/cli": "^0.75.3",
+    "@graphql-mesh/cross-helpers": "^0.2.6",
+    "@graphql-mesh/graphql": "^0.29.5",
+    "@graphql-mesh/http": "^0.2.6",
+    "@graphql-mesh/merger-stitching": "^0.17.0",
+    "@graphql-mesh/runtime": "^0.44.25",
+    "@graphql-mesh/store": "^0.8.56",
+    "@graphql-mesh/utils": "^0.42.0",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^2.0.0-canary.1",
     "@sushiswap/currency": "workspace:*",
@@ -46,9 +55,9 @@
     "express": "^4.18.1"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "2.2.13",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
+    "@graphprotocol/client-cli": "2.2.13",
     "@graphql-mesh/transform-filter-schema": "latest",
     "@graphql-mesh/transform-prefix": "latest",
     "@graphql-mesh/transform-prune": "latest",
