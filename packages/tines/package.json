@@ -11,6 +11,7 @@
   "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
+  "sideEffects": false,
   "files": [
     "dist/**"
   ],
@@ -41,5 +42,8 @@
     "seedrandom": "^3.0.5",
     "tsup": "^6.2.0",
     "typescript": "4.8.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
