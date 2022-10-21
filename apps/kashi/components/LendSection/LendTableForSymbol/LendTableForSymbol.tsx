@@ -1,5 +1,5 @@
-import { chainShortName } from '@sushiswap/chain'
-import { Chip, Typography, useBreakpoint } from '@sushiswap/ui'
+import chains, { chainShortName } from '@sushiswap/chain'
+import { Chip, GenericTable, Typography, useBreakpoint } from '@sushiswap/ui'
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -15,7 +15,6 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import {
-  GenericTable,
   LEND_ASSET_COLUMN,
   NETWORK_COLUMN,
   PAGE_SIZE,
@@ -139,7 +138,15 @@ export const LendTableForSymbol: FC = () => {
         </Typography>
       </div>
       <div className="flex flex-col gap-4">
-        <GenericTable<KashiMediumRiskLendingPairV1> size="lg" table={table} columns={COLUMNS} onClick={onClick} />
+        <GenericTable<KashiMediumRiskLendingPairV1>
+          size="lg"
+          table={table}
+          columns={COLUMNS}
+          onClick={onClick}
+          placeholder="No markets found"
+          pageSize={PAGE_SIZE}
+          linkFormatter={(row) => `/lend/${chains[row.chainId].shortName}:${row.id}`}
+        />
       </div>
     </>
   )

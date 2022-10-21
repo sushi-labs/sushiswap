@@ -1,5 +1,5 @@
-import { chainShortName } from '@sushiswap/chain'
-import { Chip, Typography, useBreakpoint } from '@sushiswap/ui'
+import chains, { chainShortName } from '@sushiswap/chain'
+import { Chip, GenericTable, Typography, useBreakpoint } from '@sushiswap/ui'
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -18,7 +18,6 @@ import { KashiPair } from '../../../.graphclient'
 import {
   AVAILABLE_FOR_BORROW_COLUMN,
   BORROW_ASSET_COLUMN,
-  GenericTable,
   NETWORK_COLUMN,
   PAGE_SIZE,
   TOTAL_BORROW_APR_COLUMN,
@@ -135,8 +134,15 @@ export const BorrowTableForSymbol: FC = () => {
         </Typography>
       </div>
       <div className="flex flex-col gap-4">
-        {/* @ts-ignore */}
-        <GenericTable<KashiMediumRiskLendingPairV1> size="lg" table={table} columns={COLUMNS} onClick={onClick} />
+        <GenericTable<KashiMediumRiskLendingPairV1>
+          size="lg"
+          table={table}
+          columns={COLUMNS}
+          onClick={onClick}
+          placeholder="No markets found"
+          pageSize={PAGE_SIZE}
+          linkFormatter={(row) => `/borrow/${chains[row.chainId].shortName}:${row.id}`}
+        />
       </div>
     </>
   )

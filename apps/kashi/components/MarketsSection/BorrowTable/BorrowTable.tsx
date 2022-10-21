@@ -1,4 +1,4 @@
-import { Button, Link, Typography } from '@sushiswap/ui'
+import { Button, GenericTable, Link, Typography } from '@sushiswap/ui'
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -15,7 +15,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiPair, QuerypairsArgs } from '../../../.graphclient'
-import { ASSET_COLUMN, BORROW_APR_COLUMN, GenericTable, NETWORK_COLUMN, TOTAL_BORROW_USD } from '../../Table'
+import { ASSET_COLUMN, BORROW_APR_COLUMN, NETWORK_COLUMN, TOTAL_BORROW_USD } from '../../Table'
 import { BorrowTableHoverElement } from './BorrowTableHoverElement'
 
 const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, TOTAL_BORROW_USD, BORROW_APR_COLUMN]
@@ -105,10 +105,13 @@ export const BorrowTable: FC = () => {
         </Link.Internal>
       </div>
       <GenericTable<KashiMediumRiskLendingPairV1>
+        placeholder="No markets found"
+        pageSize={13}
         table={table}
         columns={COLUMNS}
         onClick={onClick}
         HoverElement={BorrowTableHoverElement}
+        linkFormatter={(row) => `/borrow/markets/${row.asset.symbol.toLowerCase()}`}
       />
     </div>
   )

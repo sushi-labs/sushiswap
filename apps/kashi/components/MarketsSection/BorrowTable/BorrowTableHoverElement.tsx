@@ -66,7 +66,7 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
                         {pair.collateral.symbol}
                       </Typography>
                     </div>
-                    <Typography variant="sm" weight={500} className="text-slate-100">
+                    <Typography variant="sm" weight={500} className="text-right text-slate-100">
                       {formatUSD(pair.totalAssetUSD)}
                     </Typography>
                     <Typography variant="sm" weight={500} className="text-right text-slate-100">

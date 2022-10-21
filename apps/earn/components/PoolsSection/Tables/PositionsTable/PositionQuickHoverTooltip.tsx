@@ -39,7 +39,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
   const { pendingRewards, rewardTokens, values } = usePoolPositionRewards()
 
   return (
-    <div className="flex flex-col p-2 !pb-0">
+    <div className="flex flex-col p-4 pb-3 bg-slate-900 rounded-md">
       <div className="flex justify-between gap-8">
         <div className="flex flex-col gap-1">
           <div className="flex gap-1">

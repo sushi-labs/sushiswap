@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Button, Link, Typography } from '@sushiswap/ui'
+import { Button, GenericTable, Link, Typography } from '@sushiswap/ui'
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -15,7 +15,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { KashiMediumRiskLendingPairV1 } from '../../../lib/KashiPair'
-import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, SUPPLY_APR_COLUMN, TOTAL_SUPPY_USD } from '../../Table'
+import { ASSET_COLUMN, NETWORK_COLUMN, SUPPLY_APR_COLUMN, TOTAL_SUPPY_USD } from '../../Table'
 import { LendTableHoverElement } from './LendTableHoverElement'
 import { KashiPair } from '.graphclient'
 // @ts-ignore
@@ -110,10 +110,13 @@ export const LendTable: FC = () => {
         </Link.Internal>
       </div>
       <GenericTable<KashiMediumRiskLendingPairV1>
+        placeholder="No markets found"
+        pageSize={13}
         table={table}
         columns={COLUMNS}
         onClick={onClick}
         HoverElement={LendTableHoverElement}
+        linkFormatter={(row) => `/lend/markets/${row.asset.symbol.toLowerCase()}`}
       />
     </div>
   )

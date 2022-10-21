@@ -77,6 +77,7 @@ export const GenericTable = <T extends { id: string }>({
                 if (HoverElement) {
                   return (
                     <Tooltip
+                      naked
                       {...(popupInvisible && { popupVisible: false })}
                       destroyTooltipOnHide={true}
                       key={row.id}

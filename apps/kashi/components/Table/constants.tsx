@@ -1,3 +1,5 @@
+import { Skeleton } from '@sushiswap/ui'
+import { ColumnDef } from '@tanstack/react-table'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import React from 'react'
 
@@ -16,172 +18,216 @@ import { TotalBorrowCell } from './TotalBorrowCell'
 import { TotalBorrowUSDCell } from './TotalBorrowUSDCell'
 import { TotalSupplyAPRCell } from './TotalSupplyAPRCell'
 import { TotalSupplyUSDCell } from './TotalSupplyUSDCell'
-import { ExtendedColumnDef } from './types'
 
 export const ICON_SIZE = 20
 export const PAGE_SIZE = 20
 
-export const NETWORK_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const NETWORK_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'network',
   header: 'Network',
   cell: (props) => <NetworkCell row={props.row.original} />,
   size: 20,
-  skeleton: <div className="rounded-full bg-slate-700 w-[26px] h-[26px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Circle radius={26} className="bg-slate-700" />,
+  },
 }
 
-export const ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'asset',
   header: 'Asset',
   cell: (props) => <AssetCell row={props.row.original} />,
   size: 50,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+  },
 }
 
-export const LEND_ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const LEND_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'asset',
   header: 'Lend Asset',
   cell: (props) => <LendAssetCell row={props.row.original} />,
   size: 70,
-  skeleton: (
-    <div className="flex items-center flex-grow">
-      <div className="flex items-baseline min-w-[54px] min-h-[40px]">
-        <div className="z-[1] w-[32px] h-[32px] rounded-full animate-pulse bg-slate-700" />
-        <div className="-ml-2.5 w-[20px] h-[20px] rounded-full animate-pulse bg-slate-700" />
+  meta: {
+    skeleton: (
+      <div className="flex items-center flex-grow">
+        <div className="flex items-baseline min-w-[54px] min-h-[40px]">
+          <Skeleton.Circle radius={32} className="z-[1] bg-slate-700" />
+          <Skeleton.Circle radius={20} className="-ml-2.5 bg-slate-700" />
+        </div>
+        <Skeleton.Box className="flex bg-slate-700 w-full h-5 " />
       </div>
-      <div className="flex rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />
-    </div>
-  ),
+    ),
+  },
 }
 
-export const LEND_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const LEND_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'asset',
   header: 'Market',
   cell: (props) => <LendAssetCellPopover row={props.row.original} />,
   size: 70,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+  },
 }
 
-export const BORROW_ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const BORROW_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'asset',
   header: 'Borrow Asset',
   cell: (props) => <BorrowAssetCell row={props.row.original} />,
   size: 70,
-  skeleton: (
-    <div className="flex items-center flex-grow">
-      <div className="flex items-baseline min-w-[54px] min-h-[40px]">
-        <div className="z-[1] w-[32px] h-[32px] rounded-full animate-pulse bg-slate-700" />
-        <div className="-ml-2.5 w-[20px] h-[20px] rounded-full animate-pulse bg-slate-700" />
+  meta: {
+    skeleton: (
+      <div className="flex items-center flex-grow">
+        <div className="flex items-baseline min-w-[54px] min-h-[40px]">
+          <Skeleton.Circle radius={32} className="z-[1] bg-slate-700" />
+          <Skeleton.Circle radius={20} className="-ml-2.5 bg-slate-700" />
+        </div>
+        <Skeleton.Box className="flex bg-slate-700 w-full h-5 " />
       </div>
-      <div className="flex rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />
-    </div>
-  ),
+    ),
+  },
 }
 
-export const BORROW_ASSET_COLUMN_POPOVER: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const BORROW_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'asset',
   header: 'Market',
   cell: (props) => <BorrowAssetCellPopover row={props.row.original} />,
   size: 70,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+  },
 }
 
-export const COLLATERAL_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const COLLATERAL_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'collateral',
   header: 'Borrow Asset',
   cell: (props) => <CollateralCell row={props.row.original} />,
   size: 50,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+  },
 }
 
-export const TOTAL_SUPPLY_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'totalSupplyAPR',
   header: 'Total APR',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
   cell: (props) => <TotalSupplyAPRCell row={props.row.original} />,
   size: 50,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+  },
 }
 
-export const TOTAL_BORROW_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'totalBorrowAPR',
   header: 'Total APR',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
   cell: (props) => <TotalBorrowAPRCell row={props.row.original} />,
   size: 50,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+  },
 }
 
-export const TOTAL_ASSET_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'totalAsset',
   header: 'Total Supply',
   accessorFn: (row) => row.currentAllAssets,
   cell: (props) => <TotalAssetCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
 
-export const SUPPLY_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'currentSupplyAPR',
   header: 'Lend APY',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
   cell: (props) => <SupplyAPRCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
 
-export const TOTAL_BORROW_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'totalBorrow',
   header: 'Borrowed',
   cell: (props) => <TotalBorrowCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
 
-export const TOTAL_BORROW_USD: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_BORROW_USD: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'totalBorrowUSD',
   header: 'Borrowed',
   cell: (props) => <TotalBorrowUSDCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
-export const TOTAL_SUPPY_USD: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_SUPPY_USD: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'totalSupplyUSD',
   header: 'Supplied',
   cell: (props) => <TotalSupplyUSDCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
 
-export const AVAILABLE_FOR_BORROW_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const AVAILABLE_FOR_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'availableBorrow',
   header: 'Available For Borrow',
   cell: (props) => <AvailableForBorrowCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
 
-export const BORROW_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'borrow',
   header: 'Borrow APR',
   // accessorFn: (row) => row.currentInterestPerYear,
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
 
-export const REWARD_APR_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const REWARD_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'reward',
   header: 'Reward APY',
   // accessorFn: (row) => row.currentInterestPerYear,
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
 
-export const HEALTH_COLUMN: ExtendedColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const HEALTH_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   id: 'health',
   header: 'Health',
   cell: (props) => <HealthCell row={props.row.original} />,
   size: 40,
-  skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
+  meta: {
+    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    className: 'flex justify-end',
+  },
 }
