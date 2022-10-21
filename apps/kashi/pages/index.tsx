@@ -181,8 +181,8 @@ const _Index = () => {
               ? pairs
                   .sort((a, b) => Number(b.supplyAPR.toFixed()) - Number(a.supplyAPR.toFixed()))
                   .slice(0, 8)
-                  .map((el) => <PairCard key={el.id} pair={el} />)
-              : Array.from(Array(8)).map((el, idx) => <PairCard key={idx} loading />)}
+                  .map((el) => <PairCard key={el.id} pair={el} variant="Lend" />)
+              : Array.from(Array(8)).map((el, idx) => <PairCard key={idx} loading variant="Lend" />)}
           </div>
         </section>
         <MarketsSection />
@@ -196,8 +196,8 @@ const _Index = () => {
                   .filter((el) => el.asset.symbol && ['USDC', 'USDT', 'DAI', 'TUSD'].includes(el.asset.symbol))
                   .sort((a, b) => Number(a.borrowAPR.toFixed()) - Number(b.borrowAPR.toFixed()))
                   .slice(0, 8)
-                  .map((el) => <PairCard key={el.id} pair={el} />)
-              : Array.from(Array(8)).map((el, idx) => <PairCard key={idx} loading />)}
+                  .map((el) => <PairCard key={el.id} pair={el} variant="Borrow" />)
+              : Array.from(Array(8)).map((el, idx) => <PairCard key={idx} loading variant="Borrow" />)}
           </div>
         </section>
       </div>

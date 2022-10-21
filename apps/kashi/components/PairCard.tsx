@@ -9,9 +9,10 @@ import { KashiMediumRiskLendingPairV1 } from '../lib/KashiPair'
 interface PairCard {
   pair?: KashiMediumRiskLendingPairV1
   loading?: boolean
+  variant: 'Lend' | 'Borrow'
 }
 
-export const PairCard: FC<PairCard> = ({ pair, loading = false }) => {
+export const PairCard: FC<PairCard> = ({ pair, loading = false, variant }) => {
   if (!pair || loading)
     return (
       <div className="flex flex-col p-4 bg-slate-800 rounded-lg">
@@ -70,7 +71,7 @@ export const PairCard: FC<PairCard> = ({ pair, loading = false }) => {
             </div>
             <div className="flex flex-col">
               <Typography weight={600} className="text-slate-100">
-                {pair.asset.symbol}
+                {variant} {pair.asset.symbol}
               </Typography>
               <div className="flex items-center gap-1">
                 <Typography variant="xs" weight={500} className="text-slate-500">
@@ -94,10 +95,10 @@ export const PairCard: FC<PairCard> = ({ pair, loading = false }) => {
               {formatUSD(pair.totalBorrowUSD)}
             </Typography>
             <Typography weight={500} variant="xs" className="text-slate-500">
-              Lend APR:
+              {variant} APR:
             </Typography>
             <Typography weight={600} variant="sm" className="text-right text-slate-200">
-              {pair.supplyAPR.toSignificant(2)}%
+              {variant === 'Lend' ? pair.supplyAPR.toSignificant(2) : pair.borrowAPR.toSignificant(2)}%
             </Typography>
             <Typography weight={500} variant="xs" className="text-slate-500">
               Utilization Rate:
