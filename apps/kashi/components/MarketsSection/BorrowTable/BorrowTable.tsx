@@ -1,4 +1,4 @@
-import { Typography } from '@sushiswap/ui'
+import { Button, Link, Typography } from '@sushiswap/ui'
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -93,10 +93,17 @@ export const BorrowTable: FC = () => {
   )
 
   return (
-    <div className="flex flex-col gap-4">
-      <Typography variant="sm" weight={600} className="text-slate-400">
-        Borrow
-      </Typography>
+    <div className="flex flex-col gap-3">
+      <div className="flex justify-between items-center">
+        <Typography variant="lg" weight={600} className="text-slate-200">
+          Borrow
+        </Typography>
+        <Link.Internal passHref={true} href="/borrow">
+          <Button as="a" variant="empty" size="sm" className="!p-0">
+            View All
+          </Button>
+        </Link.Internal>
+      </div>
       <GenericTable<KashiMediumRiskLendingPairV1>
         table={table}
         columns={COLUMNS}

@@ -15,6 +15,8 @@ module.exports = {
     extend: {
       backgroundImage: () => ({
         'gradient-radial': 'radial-gradient(#13213E, #111829)',
+        'shimmer-gradient':
+          'linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.03) 30%, rgba(255, 255, 255, 0.06) 50%, rgba(255, 255, 255, 0.03) 70%, rgba(255, 255, 255, 0) 100%)',
       }),
       boxShadow: {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
@@ -41,8 +43,12 @@ module.exports = {
         'spin-slow': 'spin 2s linear infinite',
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
         rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
+        wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' },
+        },
         ellipsis: {
           '0%': { content: '"."' },
           '33%': { content: '".."' },

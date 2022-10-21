@@ -1,5 +1,6 @@
+import chains from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
-import { Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Badge, Currency, Link, NetworkIcon, Skeleton, Typography } from '@sushiswap/ui'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import React, { FC, useMemo } from 'react'
 import useSWR from 'swr'
@@ -20,31 +21,30 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
     [data]
   )
   return (
-    <div className="p-3 overflow-hidden rounded-md">
-      <div className="flex items-center gap-3">
-        <div className="w-6 h-6">
-          <Currency.Icon currency={row.collateral} width={24} height={24} />
+    <div className="overflow-hidden rounded-md bg-slate-900 w-[320px]">
+      <div className="p-3 flex items-center gap-3">
+        <div className="w-8 h-8">
+          <Currency.Icon currency={row.collateral} width={32} height={32} />
         </div>
         <Typography weight={600} variant="xl">
           Borrow {row.asset.symbol}
         </Typography>
       </div>
-      <div className="w-full h-px my-3 bg-slate-200/5" />
-      <div className="grid grid-cols-4 gap-2 mb-2">
-        <Typography variant="sm" weight={500} className="text-slate-100">
-          Network
-        </Typography>
-        <Typography variant="sm" weight={500} className="text-slate-100">
+      <div className="pl-3 pr-5 pt-3 grid grid-cols-3 gap-3 mb-2">
+        <Typography variant="sm" weight={500} className="text-slate-400">
           Collateral
         </Typography>
-        <Typography variant="sm" weight={500} className="text-slate-100">
+        <Typography variant="sm" weight={500} className="text-right text-slate-400">
           Available
         </Typography>
-        <Typography variant="sm" weight={500} className="text-right text-slate-100">
+        <Typography variant="sm" weight={500} className="text-right text-slate-400">
           APR
         </Typography>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="px-3">
+        <div className="w-full h-px bg-slate-200/5" />
+      </div>
+      <div className="py-1.5 pl-1.5 pr-3.5 flex flex-col h-[200px] max-h-[200px] scroll">
         {pairs.length
           ? pairs
               .sort((a, b) => {
@@ -52,27 +52,40 @@ export const BorrowTableHoverElement: FC<BorrowTableHoverElementProps> = ({ row 
                 return b.totalAssetUSD < a.totalAssetUSD ? -1 : 1
               })
               .map((pair) => (
-                <Link.Internal passHref={true} key={pair.id} href={`/${pair.id}`}>
-                  <a className="grid grid-cols-4 gap-2 cursor-pointer hover:opacity-80">
-                    <NetworkIcon chainId={pair.chainId} width={20} height={20} />
-                    <Typography variant="sm" weight={400} className="text-slate-300">
-                      {pair.collateral.symbol}
-                    </Typography>
-                    <Typography variant="sm" weight={400} className="text-slate-100">
+                <Link.Internal
+                  passHref={true}
+                  key={pair.id}
+                  href={`/borrow/${chains[pair.chainId].shortName}:${pair.id}`}
+                >
+                  <a className="grid grid-cols-3 gap-3 cursor-pointer items-center hover:bg-slate-800 rounded-xl px-1.5 py-2 min-h-[42px]">
+                    <div className="flex items-center gap-4">
+                      <Badge badgeContent={<NetworkIcon chainId={pair.chainId} width={14} height={14} />}>
+                        <Currency.Icon currency={pair.collateral} width={26} height={26} />
+                      </Badge>
+                      <Typography variant="sm" weight={600} className="text-right text-slate-100">
+                        {pair.collateral.symbol}
+                      </Typography>
+                    </div>
+                    <Typography variant="sm" weight={500} className="text-slate-100">
                       {formatUSD(pair.totalAssetUSD)}
                     </Typography>
-                    <Typography variant="sm" weight={400} className="text-right text-slate-100">
+                    <Typography variant="sm" weight={500} className="text-right text-slate-100">
                       {pair.borrowAPR.toSignificant(4)}%
                     </Typography>
                   </a>
                 </Link.Internal>
               ))
-          : Array.from(Array(3)).map((el, idx) => (
-              <div key={idx} className="grid grid-cols-4 gap-2 cursor-pointer hover:opacity-80">
-                <div className="w-5 h-5 rounded-full animate-pulse bg-slate-700" />
-                <div className="w-full h-4 rounded-full animate-pulse bg-slate-700" />
-                <div className="w-full h-4 rounded-full animate-pulse bg-slate-700" />
-                <div className="w-full h-4 rounded-full animate-pulse bg-slate-700" />
+          : Array.from(Array(5)).map((el, idx) => (
+              <div
+                key={idx}
+                className="grid grid-cols-3 items-center gap-3 cursor-pointer hover:opacity-80 px-1.5 py-2 min-h-[42px]"
+              >
+                <div className="flex gap-3 items-center">
+                  <Skeleton.Circle radius={26} className="bg-slate-800" />
+                  <Skeleton.Box className="w-full h-5 bg-slate-800" />
+                </div>
+                <Skeleton.Box className="w-full h-5 bg-slate-800" />
+                <Skeleton.Box className="w-full h-5 bg-slate-800" />
               </div>
             ))}
       </div>
