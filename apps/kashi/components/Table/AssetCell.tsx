@@ -10,7 +10,7 @@ export const AssetCell: FC<CellProps> = ({ row }) => {
 
   return (
     <div className="flex gap-2 items-center">
-      <Currency.Icon currency={asset} width={ICON_SIZE} height={ICON_SIZE} />
+      <Currency.Icon disableLink currency={asset} width={ICON_SIZE} height={ICON_SIZE} />
       <Typography variant="sm" weight={600} className="text-slate-50">
         {asset.symbol}
       </Typography>

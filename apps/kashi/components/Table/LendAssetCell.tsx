@@ -30,8 +30,8 @@ export const LendAssetCellPopover: FC<CellProps> = ({ row }) => {
   return (
     <div className="flex items-center">
       <Currency.IconList iconWidth={ICON_SIZE} iconHeight={ICON_SIZE}>
-        <Currency.Icon currency={asset} />
-        <Currency.Icon currency={collateral} />
+        <Currency.Icon disableLink currency={asset} />
+        <Currency.Icon disableLink currency={collateral} />
       </Currency.IconList>
       <div className="flex flex-col">
         <Typography variant="sm" weight={600} className="text-slate-50">
