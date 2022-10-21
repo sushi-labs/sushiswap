@@ -33,11 +33,9 @@
       "@sushiswap/amm",
       "@sushiswap/wagmi",
       "@sushiswap/bentobox",
+      "@sushiswap/furo",
       "@sushiswap/kashi",
-      "@sushiswap/master-chef",
-      "@sushiswap/miso",
       "@sushiswap/sushiswap",
-      "@sushiswap/sushixswap",
-      "@sushiswap/trident"
+      "@sushiswap/sushixswap"
     ]
   }
