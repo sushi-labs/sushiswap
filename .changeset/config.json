@@ -33,7 +33,6 @@
       "@sushiswap/amm",
       "@sushiswap/cli",
       "@sushiswap/convert",
-      "@sushiswap/currency",
       "@sushiswap/format",
       "@sushiswap/graph-client",
       "@sushiswap/gtag",
