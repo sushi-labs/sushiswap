@@ -4,6 +4,9 @@ const config = {
   siteUrl: `https://www.sushi.com/earn`,
   changefreq: 'daily',
   generateRobotsTxt: true,
+  robotsTxtOptions: {
+    additionalSitemaps: [`https://www.sushi.com/earn/pool-sitemap.xml`],
+  },
   transform: (config, path) => {
     // Use default transformation for all other cases
     return {
