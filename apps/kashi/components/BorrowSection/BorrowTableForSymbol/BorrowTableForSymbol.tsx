@@ -24,6 +24,7 @@ import {
   TOTAL_SUPPY_USD,
 } from '../../Table'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [
   NETWORK_COLUMN,
@@ -93,7 +94,6 @@ export const BorrowTableForSymbol: FC = () => {
   )
   const table = useReactTable<KashiMediumRiskLendingPairV1>({
     data: pairs ?? [],
-    // @ts-ignore
     columns: COLUMNS,
     state: {
       sorting,
@@ -134,7 +134,6 @@ export const BorrowTableForSymbol: FC = () => {
         </Typography>
       </div>
       <div className="flex flex-col gap-4">
-        {/*// @ts-ignore*/}
         <GenericTable<KashiMediumRiskLendingPairV1>
           size="lg"
           table={table}

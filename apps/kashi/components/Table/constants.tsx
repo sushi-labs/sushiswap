@@ -22,7 +22,7 @@ import { TotalSupplyUSDCell } from './TotalSupplyUSDCell'
 export const ICON_SIZE = 20
 export const PAGE_SIZE = 20
 
-export const NETWORK_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const NETWORK_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'network',
   header: 'Network',
   cell: (props) => <NetworkCell row={props.row.original} />,
@@ -32,7 +32,7 @@ export const NETWORK_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   },
 }
 
-export const ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'asset',
   header: 'Asset',
   cell: (props) => <AssetCell row={props.row.original} />,
@@ -42,7 +42,7 @@ export const ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   },
 }
 
-export const LEND_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const LEND_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'asset',
   header: 'Lend Asset',
   cell: (props) => <LendAssetCell row={props.row.original} />,
@@ -60,7 +60,7 @@ export const LEND_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   },
 }
 
-export const LEND_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const LEND_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'asset',
   header: 'Market',
   cell: (props) => <LendAssetCellPopover row={props.row.original} />,
@@ -70,7 +70,7 @@ export const LEND_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1, 
   },
 }
 
-export const BORROW_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const BORROW_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'asset',
   header: 'Borrow Asset',
   cell: (props) => <BorrowAssetCell row={props.row.original} />,
@@ -88,7 +88,7 @@ export const BORROW_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> =
   },
 }
 
-export const BORROW_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const BORROW_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'asset',
   header: 'Market',
   cell: (props) => <BorrowAssetCellPopover row={props.row.original} />,
@@ -98,7 +98,7 @@ export const BORROW_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1
   },
 }
 
-export const COLLATERAL_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const COLLATERAL_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'collateral',
   header: 'Borrow Asset',
   cell: (props) => <CollateralCell row={props.row.original} />,
@@ -108,7 +108,7 @@ export const COLLATERAL_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   },
 }
 
-export const TOTAL_SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalSupplyAPR',
   header: 'Total APR',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
@@ -119,7 +119,7 @@ export const TOTAL_SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, an
   },
 }
 
-export const TOTAL_BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalBorrowAPR',
   header: 'Total APR',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
@@ -130,7 +130,7 @@ export const TOTAL_BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, an
   },
 }
 
-export const TOTAL_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalAsset',
   header: 'Total Supply',
   accessorFn: (row) => row.currentAllAssets,
@@ -142,7 +142,7 @@ export const TOTAL_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = 
   },
 }
 
-export const SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'currentSupplyAPR',
   header: 'Lend APY',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
@@ -154,7 +154,7 @@ export const SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   },
 }
 
-export const TOTAL_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalBorrow',
   header: 'Borrowed',
   cell: (props) => <TotalBorrowCell row={props.row.original} />,
@@ -165,7 +165,7 @@ export const TOTAL_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> =
   },
 }
 
-export const TOTAL_BORROW_USD: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_BORROW_USD: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalBorrowUSD',
   header: 'Borrowed',
   cell: (props) => <TotalBorrowUSDCell row={props.row.original} />,
@@ -175,7 +175,7 @@ export const TOTAL_BORROW_USD: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
     className: 'flex justify-end',
   },
 }
-export const TOTAL_SUPPY_USD: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const TOTAL_SUPPY_USD: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalSupplyUSD',
   header: 'Supplied',
   cell: (props) => <TotalSupplyUSDCell row={props.row.original} />,
@@ -186,7 +186,7 @@ export const TOTAL_SUPPY_USD: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   },
 }
 
-export const AVAILABLE_FOR_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const AVAILABLE_FOR_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'availableBorrow',
   header: 'Available For Borrow',
   cell: (props) => <AvailableForBorrowCell row={props.row.original} />,
@@ -197,7 +197,7 @@ export const AVAILABLE_FOR_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1
   },
 }
 
-export const BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'borrow',
   header: 'Borrow APR',
   // accessorFn: (row) => row.currentInterestPerYear,
@@ -209,7 +209,7 @@ export const BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   },
 }
 
-export const REWARD_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const REWARD_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'reward',
   header: 'Reward APY',
   // accessorFn: (row) => row.currentInterestPerYear,
@@ -221,7 +221,7 @@ export const REWARD_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
   },
 }
 
-export const HEALTH_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, any> = {
+export const HEALTH_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'health',
   header: 'Health',
   cell: (props) => <HealthCell row={props.row.original} />,

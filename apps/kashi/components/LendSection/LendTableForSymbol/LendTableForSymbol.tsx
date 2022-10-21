@@ -25,6 +25,8 @@ import {
 } from '../../Table'
 import { KashiPair as KashiPairDTO } from '.graphclient'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const COLUMNS = [
   NETWORK_COLUMN,
   LEND_ASSET_COLUMN,
@@ -138,7 +140,6 @@ export const LendTableForSymbol: FC = () => {
         </Typography>
       </div>
       <div className="flex flex-col gap-4">
-        {/*// @ts-ignore*/}
         <GenericTable<KashiMediumRiskLendingPairV1>
           size="lg"
           table={table}

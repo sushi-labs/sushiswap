@@ -18,6 +18,8 @@ import { KashiPair, QuerypairsArgs } from '../../../.graphclient'
 import { ASSET_COLUMN, BORROW_APR_COLUMN, NETWORK_COLUMN, TOTAL_BORROW_USD } from '../../Table'
 import { BorrowTableHoverElement } from './BorrowTableHoverElement'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, TOTAL_BORROW_USD, BORROW_APR_COLUMN]
 
 const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
@@ -104,7 +106,6 @@ export const BorrowTable: FC = () => {
           </Button>
         </Link.Internal>
       </div>
-      {/*// @ts-ignore*/}
       <GenericTable<KashiMediumRiskLendingPairV1>
         placeholder="No markets found"
         pageSize={pairs.length}

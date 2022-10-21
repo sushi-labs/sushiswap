@@ -18,6 +18,8 @@ import { KashiMediumRiskLendingPairV1 } from '../../../lib/KashiPair'
 import { ASSET_COLUMN, NETWORK_COLUMN, SUPPLY_APR_COLUMN, TOTAL_SUPPY_USD } from '../../Table'
 import { LendTableHoverElement } from './LendTableHoverElement'
 import { KashiPair } from '.graphclient'
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, TOTAL_SUPPY_USD, SUPPLY_APR_COLUMN]
 
@@ -109,7 +111,6 @@ export const LendTable: FC = () => {
           </Button>
         </Link.Internal>
       </div>
-      {/*// @ts-ignore*/}
       <GenericTable<KashiMediumRiskLendingPairV1>
         placeholder="No markets found"
         pageSize={pairs.length}
