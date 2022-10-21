@@ -38,7 +38,6 @@
       "@sushiswap/gtag",
       "@sushiswap/hooks",
       "@sushiswap/log",
-      "@sushiswap/math",
       "@sushiswap/next",
       "@sushiswap/redux-token-lists",
       "@sushiswap/redux-localstorage",
