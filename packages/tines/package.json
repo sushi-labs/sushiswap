@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/tines",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "url": "sushiswap/sushiswap",
     "directory": "packages/tines"
