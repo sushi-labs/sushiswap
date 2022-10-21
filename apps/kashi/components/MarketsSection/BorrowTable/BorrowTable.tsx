@@ -93,7 +93,7 @@ export const BorrowTable: FC = () => {
   )
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <Typography variant="lg" weight={600} className="text-slate-200">
           Borrow
@@ -106,7 +106,7 @@ export const BorrowTable: FC = () => {
       </div>
       <GenericTable<KashiMediumRiskLendingPairV1>
         placeholder="No markets found"
-        pageSize={13}
+        pageSize={pairs.length}
         table={table}
         columns={COLUMNS}
         onClick={onClick}

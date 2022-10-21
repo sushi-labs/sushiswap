@@ -111,7 +111,7 @@ export const LendTable: FC = () => {
       </div>
       <GenericTable<KashiMediumRiskLendingPairV1>
         placeholder="No markets found"
-        pageSize={13}
+        pageSize={pairs.length}
         table={table}
         columns={COLUMNS}
         onClick={onClick}
