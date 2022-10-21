@@ -134,6 +134,7 @@ export const BorrowTableForSymbol: FC = () => {
         </Typography>
       </div>
       <div className="flex flex-col gap-4">
+        {/*// @ts-ignore*/}
         <GenericTable<KashiMediumRiskLendingPairV1>
           size="lg"
           table={table}
