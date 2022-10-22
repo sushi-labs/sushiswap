@@ -40,19 +40,6 @@ const productStats = [
   { value: '$4m', name: 'Volume Generated' },
 ]
 
-const clients = [
-  banklessImg,
-  indexCoopImg,
-  compoundImg,
-  aaveImg,
-  synthetixImg,
-  audioGrantsImg,
-  olympusImg,
-  dydxImg,
-  partyImg,
-  forefrontImg,
-]
-
 const cards = [
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
@@ -183,17 +170,6 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           <ProductStats productStats={productStats} />
         </section>
       </Container>
-
-      <section className="py-[50px] bg-slate-800">
-        <div className="flex flex-col items-center max-w-6xl gap-12 mx-auto">
-          <h3 className="text-4xl font-bold">Clients</h3>
-          <div className="flex gap-x-[70px] gap-y-12 items-center flex-wrap justify-center">
-            {clients.map((client, i) => (
-              <Image key={i} unoptimized src={client} layout="fixed" alt="client-logo" />
-            ))}
-          </div>
-        </div>
-      </section>
 
       <Container maxWidth="6xl" className={classNames('mx-auto pb-24', defaultSidePadding)}>
         <section className="py-[75px] grid grid-rows-3 gap-[70px]">
