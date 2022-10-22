@@ -3,7 +3,7 @@ import { FC } from 'react'
 export const TriangleIcon: FC<React.ComponentProps<'svg'>> = ({ ...props }) => {
   return (
     <svg width="4" height="8" viewBox="0 0 4 8" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <path d="M4 4L0 8L-3.49691e-07 0L4 4Z" fill="#97A3B7" />
+      <path d="M4 4L0 8L-3.49691e-07 0L4 4Z" fill="currentcolor" />
     </svg>
   )
 }
