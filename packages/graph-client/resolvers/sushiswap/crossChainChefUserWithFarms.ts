@@ -18,7 +18,6 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
             chainId: lp.pair.chainId,
           }))
         )
-
         return (user.liquidityPositions ?? [])
           .map((lp) => ({
             id: lp.pair.id,
