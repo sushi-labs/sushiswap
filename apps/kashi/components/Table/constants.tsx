@@ -38,7 +38,7 @@ export const ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   cell: (props) => <AssetCell row={props.row.original} />,
   size: 50,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
   },
 }
 
@@ -54,7 +54,7 @@ export const LEND_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown>
           <Skeleton.Circle radius={32} className="z-[1] bg-slate-700" />
           <Skeleton.Circle radius={20} className="-ml-2.5 bg-slate-700" />
         </div>
-        <Skeleton.Box className="flex bg-slate-700 w-full h-5 " />
+        <Skeleton.Box className="flex w-full h-5 bg-slate-700 " />
       </div>
     ),
   },
@@ -66,7 +66,7 @@ export const LEND_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1, 
   cell: (props) => <LendAssetCellPopover row={props.row.original} />,
   size: 70,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
   },
 }
 
@@ -82,7 +82,7 @@ export const BORROW_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknow
           <Skeleton.Circle radius={32} className="z-[1] bg-slate-700" />
           <Skeleton.Circle radius={20} className="-ml-2.5 bg-slate-700" />
         </div>
-        <Skeleton.Box className="flex bg-slate-700 w-full h-5 " />
+        <Skeleton.Box className="flex w-full h-5 bg-slate-700 " />
       </div>
     ),
   },
@@ -94,7 +94,7 @@ export const BORROW_ASSET_COLUMN_POPOVER: ColumnDef<KashiMediumRiskLendingPairV1
   cell: (props) => <BorrowAssetCellPopover row={props.row.original} />,
   size: 70,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
   },
 }
 
@@ -104,29 +104,29 @@ export const COLLATERAL_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown>
   cell: (props) => <CollateralCell row={props.row.original} />,
   size: 50,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
   },
 }
 
 export const TOTAL_SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalSupplyAPR',
-  header: 'Total APR',
+  header: 'Variable APR',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
   cell: (props) => <TotalSupplyAPRCell row={props.row.original} />,
   size: 50,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
   },
 }
 
 export const TOTAL_BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalBorrowAPR',
-  header: 'Total APR',
+  header: 'Variable APR',
   // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
   cell: (props) => <TotalBorrowAPRCell row={props.row.original} />,
   size: 50,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
   },
 }
 
@@ -137,7 +137,7 @@ export const TOTAL_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown
   cell: (props) => <TotalAssetCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }
@@ -149,7 +149,7 @@ export const SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown>
   cell: (props) => <SupplyAPRCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }
@@ -160,7 +160,7 @@ export const TOTAL_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknow
   cell: (props) => <TotalBorrowCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }
@@ -171,7 +171,7 @@ export const TOTAL_BORROW_USD: ColumnDef<KashiMediumRiskLendingPairV1, unknown> 
   cell: (props) => <TotalBorrowUSDCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }
@@ -181,7 +181,7 @@ export const TOTAL_SUPPY_USD: ColumnDef<KashiMediumRiskLendingPairV1, unknown> =
   cell: (props) => <TotalSupplyUSDCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }
@@ -192,7 +192,7 @@ export const AVAILABLE_FOR_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1
   cell: (props) => <AvailableForBorrowCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }
@@ -204,7 +204,7 @@ export const BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown>
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }
@@ -216,7 +216,7 @@ export const REWARD_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown>
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }
@@ -227,7 +227,7 @@ export const HEALTH_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   cell: (props) => <HealthCell row={props.row.original} />,
   size: 40,
   meta: {
-    skeleton: <Skeleton.Box className="bg-slate-700 w-full h-5" />,
+    skeleton: <Skeleton.Box className="w-full h-5 bg-slate-700" />,
     className: 'flex justify-end',
   },
 }

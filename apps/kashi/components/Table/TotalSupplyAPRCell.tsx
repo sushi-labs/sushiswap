@@ -6,7 +6,7 @@ import { CellProps } from './types'
 
 export const TotalSupplyAPRCell: FC<CellProps> = ({ row }) => {
   return (
-    <div className="flex flex-col gap-1.5 h-[40px]">
+    <div className="flex flex-col gap-1.5 h-[40px] w-full">
       <Typography variant="sm" weight={500} className="text-slate-50">
         {row.supplyAPR.toSignificant(2)}%
       </Typography>

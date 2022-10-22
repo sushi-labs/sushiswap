@@ -10,7 +10,14 @@ export const KASHI_ADDRESS = {
   // [ChainId.HECO]: '0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42',
 } as const
 
-export const SUPPORTED_CHAIN_IDS = [ChainId.ETHEREUM]
+export const SUPPORTED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  // ChainId.POLYGON,
+  ChainId.GNOSIS,
+  ChainId.ARBITRUM,
+  // ChainId.AVALANCHE,
+  ChainId.BSC,
+]
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'

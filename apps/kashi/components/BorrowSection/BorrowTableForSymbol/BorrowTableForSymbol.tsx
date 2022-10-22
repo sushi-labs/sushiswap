@@ -1,4 +1,4 @@
-import chains, { chainShortName } from '@sushiswap/chain'
+import { chainShortName } from '@sushiswap/chain'
 import { Chip, GenericTable, Typography, useBreakpoint } from '@sushiswap/ui'
 import {
   getCoreRowModel,
@@ -141,7 +141,7 @@ export const BorrowTableForSymbol: FC = () => {
           onClick={onClick}
           placeholder="No markets found"
           pageSize={PAGE_SIZE}
-          linkFormatter={(row) => `/borrow/${chains[row.chainId].shortName}:${row.id}`}
+          linkFormatter={(row) => `/borrow/${chainShortName[row.chainId]}:${row.id}`}
         />
       </div>
     </>

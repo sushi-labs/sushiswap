@@ -1,4 +1,4 @@
-import chains from '@sushiswap/chain'
+import { chainName, chainShortName } from '@sushiswap/chain'
 import { formatPercent, formatUSD } from '@sushiswap/format'
 import { JSBI } from '@sushiswap/math'
 import { Currency, Link, NetworkIcon, Skeleton, Typography } from '@sushiswap/ui'
@@ -15,7 +15,7 @@ interface PairCard {
 export const PairCard: FC<PairCard> = ({ pair, loading = false, variant }) => {
   if (!pair || loading)
     return (
-      <div className="flex flex-col p-4 bg-slate-800 rounded-lg">
+      <div className="flex flex-col p-4 rounded-lg bg-slate-800">
         <div className="flex gap-1.5 items-center w-full h-[20px]">
           <Skeleton.Circle radius={14} className="bg-slate-700" />
           <Skeleton.Box className="bg-slate-700 h-3 w-[100px]" />
@@ -23,32 +23,32 @@ export const PairCard: FC<PairCard> = ({ pair, loading = false, variant }) => {
         <div className="flex items-center gap-2.5 mt-4">
           <Skeleton.Circle radius={36} className="bg-slate-700" />
           <div className="flex flex-col">
-            <div className="h-5 flex items-center">
+            <div className="flex items-center h-5">
               <Skeleton.Box className="bg-slate-700 h-4 w-[60px]" />
             </div>
-            <div className="h-5 flex items-center">
+            <div className="flex items-center h-5">
               <Skeleton.Box className="bg-slate-700 h-3 w-[120px]" />
             </div>
           </div>
         </div>
-        <div className="my-4 w-full h-px border-b border-slate-200/5" />
+        <div className="w-full h-px my-4 border-b border-slate-200/5" />
         <div className="grid grid-cols-2 gap-1">
-          <div className="h-5 flex items-center">
+          <div className="flex items-center h-5">
             <Skeleton.Box className="bg-slate-700 h-4 w-[40px]" />
           </div>
-          <div className="h-5 flex items-center justify-end">
+          <div className="flex items-center justify-end h-5">
             <Skeleton.Box className="bg-slate-700 h-4 w-[60px]" />
           </div>
-          <div className="h-5 flex items-center">
+          <div className="flex items-center h-5">
             <Skeleton.Box className="bg-slate-700 h-4 w-[60px]" />
           </div>
-          <div className="h-5 flex items-center justify-end">
+          <div className="flex items-center justify-end h-5">
             <Skeleton.Box className="bg-slate-700 h-4 w-[70px]" />
           </div>
-          <div className="h-5 flex items-center">
+          <div className="flex items-center h-5">
             <Skeleton.Box className="bg-slate-700 h-4 w-[50px]" />
           </div>
-          <div className="h-5 flex items-center justify-end">
+          <div className="flex items-center justify-end h-5">
             <Skeleton.Box className="bg-slate-700 h-4 w-[50px]" />
           </div>
         </div>
@@ -56,13 +56,13 @@ export const PairCard: FC<PairCard> = ({ pair, loading = false, variant }) => {
     )
 
   return (
-    <Link.Internal passHref={true} href={`/lend/${chains[pair.chainId].shortName}:${pair.id}`}>
+    <Link.Internal passHref={true} href={`/lend/${chainShortName[pair.chainId]}:${pair.id}`}>
       <a>
         <div className="transition-all flex flex-col p-4 bg-slate-800 rounded-lg hover:translate-y-[-2px] hover:ring-2 ring-blue ring-offset-2 ring-offset-slate-900 cursor-pointer">
           <div className="flex gap-1.5 items-center">
             <NetworkIcon chainId={pair.chainId} width={14} height={14} />
             <Typography variant="xs" weight={500} className="text-slate-50">
-              {chains[pair.chainId].name}
+              {chainName[pair.chainId]}
             </Typography>
           </div>
           <div className="flex items-center gap-2.5 mt-4">
@@ -86,7 +86,7 @@ export const PairCard: FC<PairCard> = ({ pair, loading = false, variant }) => {
               </div>
             </div>
           </div>
-          <div className="my-4 w-full h-px border-b border-slate-200/5" />
+          <div className="w-full h-px my-4 border-b border-slate-200/5" />
           <div className="grid grid-cols-2 gap-1">
             <Typography weight={500} variant="xs" className="text-slate-500">
               Borrowed:
