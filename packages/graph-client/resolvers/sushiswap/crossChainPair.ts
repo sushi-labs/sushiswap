@@ -35,7 +35,7 @@ export const crossChainPair: QueryResolvers['crossChainPair'] = async (root, arg
       TRIDENT_ENABLED_NETWORKS.includes(args.chainId)
         ? context.Trident.Query.pair({
             root,
-            args: { ...args },
+            args: { ...args, block },
             context: {
               ...context,
               now: args.now,

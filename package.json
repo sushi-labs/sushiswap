@@ -23,8 +23,7 @@
     "test": "turbo run test --parallel",
     "test:ci": "turbo run test --parallel --filter=[HEAD^1]",
     "version-packages": "turbo run build --filter=./packages/* && changeset version",
-    "publish-packages": "turbo run build --filter=./packages/* && changeset publish",
-    "release": "turbo run build --filter=./packages/tines && changeset publish"
+    "publish-packages": "turbo run build --filter=./packages/* && changeset version && changeset publish"
   },
   "lint-staged": {
     "*.ts": [

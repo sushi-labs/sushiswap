@@ -39,7 +39,7 @@
     "@wagmi/core": "^0.5.7"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "2.2.13",
+    "@graphprotocol/client-cli": "2.2.15",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphql-mesh/transform-filter-schema": "latest",
