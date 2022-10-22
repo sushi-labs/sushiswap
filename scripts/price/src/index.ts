@@ -1,11 +1,12 @@
 import 'dotenv/config'
 
 import { ChainId } from '@sushiswap/chain'
+import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { getUnixTime } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
 import { getBuiltGraphSDK } from '../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from './config'
 import redis from './redis'
 async function getSushiSwapResults() {
   const results = await Promise.all(
@@ -63,7 +64,7 @@ async function getSushiSwapResults() {
 
 async function getTridentResults() {
   const results = await Promise.all(
-    TRIDENT_CHAINS.map((chainId) => {
+    TRIDENT_ENABLED_NETWORKS.map((chainId) => {
       const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId] })
       return sdk
         .Tokens({
@@ -86,7 +87,7 @@ async function getTridentResults() {
       const nativePrice = Number(result.bundle?.nativePrice)
       const updatedAtBlock = Number(result._meta?.block.number)
       return {
-        chainId: TRIDENT_CHAINS[i],
+        chainId: TRIDENT_ENABLED_NETWORKS[i],
         updatedAtBlock,
         tokens: result.tokenPrices.map((tokenPrice) => {
           return {
@@ -101,7 +102,7 @@ async function getTridentResults() {
 
 export async function execute() {
   console.log(
-    `Updating prices for chains: ${[...SUSHISWAP_CHAINS, ...TRIDENT_CHAINS]
+    `Updating prices for chains: ${[...SUSHISWAP_CHAINS, ...TRIDENT_ENABLED_NETWORKS]
       .map((chainId) => ChainId[chainId])
       .join(', ')}`
   )
