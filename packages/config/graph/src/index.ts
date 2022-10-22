@@ -175,6 +175,7 @@ export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONBEAM]: 'sushiswap/moonbeam-minichef',
   [ChainId.KAVA]: 'sushiswap/kava-minichef', //block subgraph not synced yet
   [ChainId.METIS]: 'sushiswap/metis-minichef',
+  [ChainId.BOBA]: 'sushiswap/minichef-boba',
 }
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
