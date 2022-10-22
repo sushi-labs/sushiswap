@@ -22,8 +22,8 @@ const { provider } = configureChains(
         }
       },
     }),
-    alchemyProvider({ apiKey: alchemyId, priority: 1 }),
-    publicProvider({ priority: 2 }),
+    // alchemyProvider({ apiKey: alchemyId, priority: 1 }),
+    publicProvider({ priority: 1 }),
   ]
 )
 
