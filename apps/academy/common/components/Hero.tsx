@@ -21,8 +21,8 @@ export const Hero: FC = () => {
         <h1 className="text-[38px] font-bold sm:text-7xl absolute bottom-0 right-0">Academy</h1>
       </div>
       <span className="mt-3 text-sm text-center text-slate-500 sm:text-slate-300 sm:text-xl">
-        Demystifying DeFI and Crypto - everything you need to know in one place. For beginners to advanced users, and
-        everyone in between.
+        Demystifying DeFi - everything you need to know in one place. For beginners to advanced users, and everyone in
+        between.
       </span>
       <div className="absolute hidden right-12 lg:grid top-[184px] gap-8">
         <a href="https://github.com/sushiswap" target="_blank" rel="noopener noreferrer">

@@ -140,9 +140,10 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       <ProductBackground color={color} />
       <section className="py-[75px]">
         <h1 className="text-6xl leading-[78px]">
+          <p className="font-bold">Trident</p>
           <p>A Future-Proof</p>
-          <p>Framework for Building</p>
-          <p className="font-bold">AMMs</p>
+          <p>Framework for Building </p>
+          <p className="font-bold"> AMMs</p>
         </h1>
         <h3 className="mt-10 text-2xl font-medium text-gray-500">{description}</h3>
 
@@ -152,7 +153,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             className="mt-16 rounded-lg"
             startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
           >
-            <Typography weight={500}>Linking to farm</Typography>
+            <Typography weight={500}>Live on Polygon, Kava, Optimism & Metis network</Typography>
           </Button>
         </Link.External>
         <ProductStats productStats={productStats} />
@@ -165,7 +166,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       />
       <ProductArticles
         title="Articles"
-        subtitle="We are looking to create an NFT platform that focuses on artists."
+        subtitle="Read more about the latest releases"
         articles={latestArticles}
         productName={productSlug}
         isLoading={isValidating}
@@ -207,7 +208,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       </section>
       <ProductArticles
         title={`Learn about ${name}`}
-        subtitle="Checkout our how-to articles"
+        subtitle="Check out our tutorials and explainers"
         articles={relevantArticles}
         productName={productSlug}
         isLoading={isValidating}

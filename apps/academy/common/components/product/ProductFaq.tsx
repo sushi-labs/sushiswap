@@ -12,7 +12,7 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
   return (
     <section className="py-[75px]">
       <Typography variant="h1">FAQs</Typography>
-      <Typography variant="sm">Checkout our how-to articles and Video Tutorials</Typography>
+      <Typography variant="sm">Frequently asked questions</Typography>
       <div className="mt-16 border-2 divide-y rounded-3xl border-slate-500/30 divide-slate-500">
         {faq.map(({ question, answer }, i) => (
           <Disclosure key={i} as="div">

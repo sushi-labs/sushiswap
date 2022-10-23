@@ -110,7 +110,7 @@ const chains = [
 
 const faq = [
   {
-    question: 'What is Trident and what Pool types does it support?',
+    question: 'Lorem Ipsum',
     answer: (
       <>
         <Typography>
@@ -206,7 +206,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             className="mt-16 rounded-lg"
             startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
           >
-            <Typography weight={500}>Linking to the XSwap</Typography>
+            <Typography weight={500}>Link to SushiXSwap</Typography>
           </Button>
         </Link.External>
         <ProductStats productStats={productStats} />
@@ -219,7 +219,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       />
       <ProductArticles
         title="Articles"
-        subtitle="We are looking to create an NFT platform that focuses on artists."
+        subtitle="Read more about the latest releases"
         articles={latestArticles}
         productName={productSlug}
         isLoading={isValidating}
@@ -269,7 +269,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       </section>
       <ProductArticles
         title={`Learn about ${name}`}
-        subtitle="Checkout our how-to articles"
+        subtitle="Check out our tutorials and explainers"
         articles={relevantArticles}
         productName={productSlug}
         isLoading={isValidating}

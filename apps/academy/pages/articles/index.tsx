@@ -13,6 +13,7 @@ import {
   DifficultyEntity,
   DifficultyEntityResponseCollection,
   ProductEntity,
+  ProductEntityResponseCollection,
   TopicEntity,
   TopicEntityResponseCollection,
 } from '../../.mesh'
@@ -71,7 +72,7 @@ const _Articles: FC = () => {
 
   const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
-  const { data: productsData } = useSWR<TopicEntityResponseCollection>('/products')
+  const { data: productsData } = useSWR<ProductEntityResponseCollection>('/products')
 
   useEffect(() => {
     if (router.isReady) {
@@ -248,7 +249,7 @@ const _Articles: FC = () => {
                   )}
                   onClick={() => handleSelectProduct(product)}
                 >
-                  {product.attributes?.name}
+                  {product.attributes?.longName}
                 </Typography>
               ))}
               {topics.map((topic, i) => (

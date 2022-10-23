@@ -39,8 +39,8 @@ export const Header: FC = () => {
     },
     {
       title: 'Product',
-      links: products.map(({ attributes: { name, slug } }) => ({
-        name,
+      links: products.map(({ attributes: { longName, slug } }) => ({
+        name: longName,
         href: `/products/${slug}`,
       })),
     },

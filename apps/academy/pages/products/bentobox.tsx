@@ -27,39 +27,40 @@ const cards = [
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
     title: 'Utilize funds in multiple DeFi apps',
     subtitle:
-      'Bento’s innovation is its ability to track the user’s deposits via artificial balance, which is used to account for their idle funds...',
+      'Bento’s innovation is its ability to track the user’s deposits via an artificial balance, which is used to account for the idle funds.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yield in DeFi',
-    subtitle: 'Being the foundation for multiple DeFi apps, Bentobox can attract more capital than simple vaults.',
+    title: 'Earn some of the highest yields in DeFi',
+    subtitle: 'As the foundation for multiple DeFi apps, Bentobox can attract more capital than regular vaults.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Flashloans',
+    title: 'Flash Loans',
     subtitle:
-      'The funds in Bento can also be used in flash loans, which can add more passive value to the user’s underutilized capital.',
+      'Funds in BentoBox can be used in flash loans, resulting in more passive value to the user’s underutilized capital.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Plug’n’play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of Bento, to instantly utilize the 500m+ TVL',
+    title: 'Plug ’n play interest pools for your DeFi app',
+    subtitle: 'Build your own DeFi apps on top of BentoBox to instantly unlock and utilize 500m+ TVL.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Capital Efficiency',
+    subtitle:
+      'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on BentoBox.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={ScreenCheckIcon} />,
     title: 'Smooth UX',
-    subtitle: 'Approvals are inherited by the system, making individual transactions within Bento cheaper.',
+    subtitle: 'Transaction approvals are inherited by the system, making individual txns within BentoBox cheaper.',
   },
 ]
 
 const faq = [
   {
-    question: 'What is Trident and what Pool types does it support?',
+    question: 'Lorem ipsum',
     answer: (
       <>
         <Typography>
@@ -154,20 +155,20 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       </section>
       <ProductCards
         name={name}
-        description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."
+        description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets or liquidity pools."
         cards={cards}
         gradientBorderColor={color}
       />
       <ProductArticles
         title="Articles"
-        subtitle="We are looking to create an NFT platform that focuses on artists."
+        subtitle="Read more about the latest releases"
         articles={latestArticles}
         productName={productSlug}
         isLoading={isValidating}
       />
       <ProductArticles
         title="Learn about Bentobox"
-        subtitle="Checkout our how-to articles"
+        subtitle="Check out our tutorials and explainers"
         articles={relevantArticles}
         productName={productSlug}
         isLoading={isValidating}

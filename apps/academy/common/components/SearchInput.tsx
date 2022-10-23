@@ -16,7 +16,7 @@ export const SearchInput = forwardRef(
     const [isSticky, setIsSticky] = useState(isTopOfPage)
     const { isSm } = useBreakpoint('sm')
     const [isMobileAndSticky, setIsMobileAndSticky] = useState(isSticky)
-    const topicSearches = ['Miso', 'Sushi 2.0', 'Head chef', 'Kava', 'Paris'] // TODO: dynamic
+    const topicSearches = ['Cross-chain Swap', 'Sushi 2.0', 'Stable Swap', 'Trident', 'Furo Streaming'] // TODO: dynamic
     const [input, setInput] = useState('')
 
     useLayoutEffect(() => {
@@ -72,7 +72,7 @@ export const SearchInput = forwardRef(
             )}
           >
             <input
-              placeholder="Search for the Product/Topic you want to learn"
+              placeholder="Search for the product/topic you want to learn about"
               onChange={onInputchange}
               value={input}
               className={classNames(

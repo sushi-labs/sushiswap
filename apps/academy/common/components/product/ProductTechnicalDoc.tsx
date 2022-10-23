@@ -18,8 +18,8 @@ export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({ color, secondaryC
         <div className="sm:ml-8">
           <Typography variant="lg">Technical Documentation</Typography>
           <Typography variant="sm" className="mt-3 text-gray-500">
-            The IPool interface was developed by the Sushi team in the process of building. The IPool interface was
-            developed by the Sushi team in the process of building.
+            Learn about the architecture of Sushi's smart contracts and how to build on top of the protocol, you can
+            find implementations and explanations for each of our core smart contracts, broken out by product.
           </Typography>
         </div>
         <Link.External href={docsUrl}>
