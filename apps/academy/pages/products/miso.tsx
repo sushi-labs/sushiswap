@@ -152,7 +152,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <ProductStats productStats={productStats} />
       </section>
       <ProductCards
-        name={longName}
+        name={name}
         description="The only community curated launchpad platform, available to everyone. MISO enables project owners to easily launch a token in a true permissionless and decentralized way."
         cards={cards}
         gradientBorderColor={color}

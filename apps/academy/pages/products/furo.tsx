@@ -207,7 +207,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           </div>
         </section>
         <ProductCards
-          name="Trident AMM"
+          name={name}
           description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."
           cards={cards}
           gradientBorderColor={color}

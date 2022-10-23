@@ -166,7 +166,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <ProductStats productStats={productStats} />
       </section>
       <ProductCards
-        name={longName}
+        name={name}
         description="Onsen aims to bring new liquidity to Sushi, decrease slippage, expand our pool offerings, and foster exciting synergistic partnerships with other DeFi projects."
         cards={cards}
         gradientBorderColor={color}
