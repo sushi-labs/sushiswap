@@ -142,8 +142,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <h1 className="text-6xl leading-[78px]">
           <p className="font-bold">Trident</p>
           <p>A Future-Proof</p>
-          <p>Framework for Building </p>
-          <p className="font-bold"> AMMs</p>
+          <span>Framework for Building </span>
+          <span className="font-bold"> AMMs</span>
         </h1>
         <h3 className="mt-10 text-2xl font-medium text-gray-500">{description}</h3>
 
