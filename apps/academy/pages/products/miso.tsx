@@ -159,14 +159,14 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       />
       <ProductArticles
         title="Articles"
-        subtitle="We are looking to create an NFT platform that focuses on artists."
+        subtitle="Read more about the latest releases"
         articles={latestArticles}
         productName={productSlug}
         isLoading={isValidating}
       />
       <ProductArticles
         title={`Learn about ${name}`}
-        subtitle="Checkout our how-to articles"
+        subtitle="Check out our tutorials and explainers"
         articles={relevantArticles}
         productName={productSlug}
         isLoading={isValidating}
