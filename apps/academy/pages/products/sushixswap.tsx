@@ -16,6 +16,7 @@ import {
   PolygonCircle,
   Typography,
 } from '@sushiswap/ui'
+import sushixswapImg from 'common/assets/sushixswap-img.png'
 import {
   ProductArticles,
   ProductBackground,
@@ -36,6 +37,7 @@ import {
 } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
+import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
@@ -188,29 +190,37 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
       <ProductBackground color={color} />
-      <section className="py-[75px]">
-        <h1 className="leading-[78px] flex gap-2 text-6xl font-bold text-slate-50">
-          <span>Sushi</span>
-          <span className="flex items-center">
-            <WideTriangle fill="#F7EA75" className="-mr-2" />
-            X
-            <WideTriangle fill="#FF9A5F" className="-ml-2 rotate-180" />
-          </span>
-          <span>Swap</span>
-        </h1>
-        <h3 className="mt-1.5 text-2xl font-medium text-gray-500">{description}</h3>
+      <section className="py-[75px] relative">
+        <div className="grid md:grid-cols-2">
+          <div>
+            <h1 className="leading-[78px] flex gap-2 text-6xl font-bold text-slate-50">
+              <span>Sushi</span>
+              <span className="flex items-center">
+                <WideTriangle fill="#F7EA75" className="-mr-2" />
+                X
+                <WideTriangle fill="#FF9A5F" className="-ml-2 rotate-180" />
+              </span>
+              <span>Swap</span>
+            </h1>
+            <h3 className="mt-2 text-2xl font-medium text-gray-500">{description}</h3>
+            <Link.External href={url}>
+              <Button
+                size="lg"
+                className="mt-16 rounded-lg"
+                startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+              >
+                <Typography weight={500}>Link to SushiXSwap</Typography>
+              </Button>
+            </Link.External>
+          </div>
+          <div className="md:block hidden">
+            <Image src={sushixswapImg} unoptimized alt="sushixswap-img" />
+          </div>
+        </div>
 
-        <Link.External href={url}>
-          <Button
-            size="lg"
-            className="mt-16 rounded-lg"
-            startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
-          >
-            <Typography weight={500}>Link to SushiXSwap</Typography>
-          </Button>
-        </Link.External>
         <ProductStats productStats={productStats} />
       </section>
+
       <ProductCards
         name={name}
         description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."

@@ -1,17 +1,7 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
-import aaveImg from 'common/assets/aave.png'
-import audioGrantsImg from 'common/assets/audio-grants.png'
-import banklessImg from 'common/assets/bankless.png'
 import boardImg from 'common/assets/board.png'
-import compoundImg from 'common/assets/compound.png'
-import dydxImg from 'common/assets/dydx.png'
-import forefrontImg from 'common/assets/forefront.png'
-import { FuroImg } from 'common/assets/FuroImg'
-import indexCoopImg from 'common/assets/index-coop.png'
-import olympusImg from 'common/assets/olympus.png'
-import partyImg from 'common/assets/party.png'
-import synthetixImg from 'common/assets/synthetix.png'
+import furoImg from 'common/assets/furo-img.png'
 import {
   ProductArticles,
   ProductBackground,
@@ -153,20 +143,29 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       <Container maxWidth="6xl" className={classNames('mx-auto pt-10', defaultSidePadding)}>
         <ProductBackground color={color} />
         <section className="py-[75px] relative">
-          <FuroImg className="absolute right-0" />
+          <div className="grid md:grid-cols-2">
+            <div>
+              {longName.split('-').map((name, i) => (
+                <h1 key={i} className="text-6xl font-bold leading-[78px]">
+                  {name}
+                </h1>
+              ))}
+              <h3 className="mt-2 text-2xl font-medium text-gray-500">{description}</h3>
+              <Link.External href={url}>
+                <Button
+                  size="lg"
+                  className="mt-16 rounded-lg"
+                  startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+                >
+                  <Typography weight={500}>Linking to farm</Typography>
+                </Button>
+              </Link.External>
+            </div>
+            <div className="md:block hidden">
+              <Image src={furoImg} unoptimized alt="furo-img" />
+            </div>
+          </div>
 
-          <h1 className="w-2/5 text-6xl leading-[78px] font-bold">{longName}</h1>
-          <h3 className="w-2/5 mt-2 text-2xl font-medium text-gray-500">{description}</h3>
-
-          <Link.External href={url}>
-            <Button
-              size="lg"
-              className="mt-16 rounded-lg"
-              startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
-            >
-              <Typography weight={500}>Linking to farm</Typography>
-            </Button>
-          </Link.External>
           <ProductStats productStats={productStats} />
         </section>
       </Container>

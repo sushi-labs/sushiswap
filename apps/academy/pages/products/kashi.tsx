@@ -1,5 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
+import kashiImg from 'common/assets/kashi-img.png'
 import {
   ProductArticles,
   ProductBackground,
@@ -12,6 +13,7 @@ import { defaultSidePadding } from 'common/helpers'
 import { AcademyIcon, MoneyBagIcon, MoneyHandIcon, MoneyTreeIcon, PuzzlePieceIcon, TilesIcon } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
+import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
@@ -137,19 +139,30 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
       <ProductBackground color={color} />
-      <section className="py-[75px]">
-        <h1 className="w-2/5 leading-[78px] text-6xl font-bold">{longName}</h1>
-        <h3 className="w-2/5 mt-1.5 text-2xl font-medium text-gray-500">{description}</h3>
+      <section className="py-[75px] relative">
+        <div className="grid md:grid-cols-2">
+          <div>
+            {longName.split('-').map((name, i) => (
+              <h1 key={i} className="text-6xl font-bold leading-[78px]">
+                {name}
+              </h1>
+            ))}
+            <h3 className="mt-2 text-2xl font-medium text-gray-500">{description}</h3>
+            <Link.External href={url}>
+              <Button
+                size="lg"
+                className="mt-16 rounded-lg"
+                startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+              >
+                <Typography weight={500}>Linking to kashi</Typography>
+              </Button>
+            </Link.External>
+          </div>
+          <div className="md:block hidden">
+            <Image src={kashiImg} unoptimized alt="kashi-img" />
+          </div>
+        </div>
 
-        <Link.External href={url}>
-          <Button
-            size="lg"
-            className="mt-16 rounded-lg"
-            startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
-          >
-            <Typography weight={500}>Linking to kashi</Typography>
-          </Button>
-        </Link.External>
         <ProductStats productStats={productStats} />
       </section>
       <ProductCards

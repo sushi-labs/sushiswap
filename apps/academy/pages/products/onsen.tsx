@@ -151,8 +151,12 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
       <ProductBackground color={color} />
       <section className="py-[75px]">
-        <h3 className="text-2xl leading-[78px] font-medium text-gray-400">{description}</h3>
-        <h1 className="w-2/5 mt-10 text-6xl font-bold">{longName}</h1>
+        {longName.split('-').map((name, i) => (
+          <h1 key={i} className="text-6xl font-bold leading-[68px]">
+            {name}
+          </h1>
+        ))}
+        <h3 className="text-2xl mt-1.5 font-medium text-gray-500">{description}</h3>
 
         <Link.External href={url}>
           <Button size="lg" className="mt-16 rounded-lg" startIcon={<ArrowRightCircleIcon width={20} height={20} />}>
