@@ -105,10 +105,10 @@ export function Header({
               </Listbox.Button>
             }
           >
-            <Select.Options className="w-[max-content] !bg-slate-700 -ml-5 mt-5 max-h-[unset]">
-              <div className="grid grid-cols-1 gap-1 px-2 py-3 pt-4 md:grid-cols-3">
+            <Select.Options className="w-[max-content] !bg-slate-700 -ml-5 mt-5 !max-h-[unset]">
+              <div className="grid grid-cols-1 gap-1 px-2 py-2 md:grid-cols-3">
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-2 mb-1 uppercase md:block text-slate-400">
                     Core
                   </Typography>
                   <Select.Option
@@ -149,7 +149,7 @@ export function Header({
                   </Select.Option>
                 </div>
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-2 mb-1 uppercase md:block text-slate-400">
                     Products
                   </Typography>
                   {/* <Select.Option
@@ -190,7 +190,7 @@ export function Header({
                   </Select.Option>
                 </div>
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-3 mb-1 uppercase md:block text-slate-400">
+                  <Typography variant="xs" weight={600} className="hidden px-2 mb-1 uppercase md:block text-slate-400">
                     Links
                   </Typography>
                   <Select.Option

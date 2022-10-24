@@ -6,6 +6,7 @@ import {
   createToast,
   NotificationData,
 } from '@sushiswap/ui'
+import stringify from 'fast-json-stable-stringify'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -37,7 +38,7 @@ export const useNotifications: UseNotifications = (context, account) => {
     ({ promise, ...rest }: NotificationData) => {
       const { groupTimestamp } = rest
       createToast({ ...rest, promise })
-      dispatch(actions.createNotification({ account, notification: JSON.stringify(rest), timestamp: groupTimestamp }))
+      dispatch(actions.createNotification({ account, notification: stringify(rest), timestamp: groupTimestamp }))
     },
     [account, actions, dispatch]
   )
@@ -46,7 +47,7 @@ export const useNotifications: UseNotifications = (context, account) => {
     (rest: NotificationData) => {
       const { groupTimestamp } = rest
       createSuccessToast(rest)
-      dispatch(actions.createNotification({ account, notification: JSON.stringify(rest), timestamp: groupTimestamp }))
+      dispatch(actions.createNotification({ account, notification: stringify(rest), timestamp: groupTimestamp }))
     },
     [account, actions, dispatch]
   )
@@ -55,7 +56,7 @@ export const useNotifications: UseNotifications = (context, account) => {
     (rest: NotificationData) => {
       const { groupTimestamp } = rest
       createFailedToast(rest)
-      dispatch(actions.createNotification({ account, notification: JSON.stringify(rest), timestamp: groupTimestamp }))
+      dispatch(actions.createNotification({ account, notification: stringify(rest), timestamp: groupTimestamp }))
     },
     [account, actions, dispatch]
   )
@@ -64,7 +65,7 @@ export const useNotifications: UseNotifications = (context, account) => {
     (rest: NotificationData) => {
       const { groupTimestamp } = rest
       createInfoToast(rest)
-      dispatch(actions.createNotification({ account, notification: JSON.stringify(rest), timestamp: groupTimestamp }))
+      dispatch(actions.createNotification({ account, notification: stringify(rest), timestamp: groupTimestamp }))
     },
     [account, actions, dispatch]
   )
@@ -73,7 +74,7 @@ export const useNotifications: UseNotifications = (context, account) => {
     ({ promise, ...rest }: NotificationData) => {
       const { groupTimestamp } = rest
       createInlineToast({ ...rest, promise })
-      dispatch(actions.createNotification({ account, notification: JSON.stringify(rest), timestamp: groupTimestamp }))
+      dispatch(actions.createNotification({ account, notification: stringify(rest), timestamp: groupTimestamp }))
     },
     [account, actions, dispatch]
   )

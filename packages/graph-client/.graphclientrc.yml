@@ -129,8 +129,7 @@ additionalTypeDefs: |
       block: Block_height,
       pagination: Pagination,
       chainIds: [Int!]!,
-      oneDayBlockNumbers: [Int!]!,
-      oneWeekBlockNumbers: [Int!]!
+      farmsOnly: Boolean
     ): [Pair!]!
     crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair
     crossChainUser(

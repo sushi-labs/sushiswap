@@ -3,9 +3,9 @@ import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import Cors from 'cors'
 import { ethers } from 'ethers'
+import stringify from 'fast-json-stable-stringify'
 import { getOctokit, getTokenKPI, Token } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
 interface Body {
   tokenAddress: string
   tokenData: Token
@@ -203,7 +203,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // Send Discord notification using webhook
   await fetch(process.env.LIST_PR_WEBHOOK_URL, {
     method: 'POST',
-    body: JSON.stringify({
+    body: stringify({
       content: null,
       embeds: [
         {

@@ -1,5 +1,5 @@
 import { Listbox } from '@headlessui/react'
-import { SelectorIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon } from '@heroicons/react/solid'
 import classNames from 'classnames'
 import React, { FC, forwardRef, ReactNode } from 'react'
 
@@ -38,7 +38,11 @@ const SelectButton: FC<SelectButtonProps> = forwardRef(
           {children}
         </Typography>
         <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-          <SelectorIcon className="w-5 h-5" aria-hidden="true" />
+          <ChevronDownIcon
+            width={24}
+            height={24}
+            className={classNames(open ? 'rotate-180' : 'rotate-0', 'transition-[transform] duration-150 ease-in-out')}
+          />
         </span>
       </>
     )

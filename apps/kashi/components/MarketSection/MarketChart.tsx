@@ -3,6 +3,7 @@ import { classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC, useCallback, useMemo, useState } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
@@ -10,10 +11,8 @@ import tailwindConfig from '../../tailwind.config.js'
 
 const tailwind = resolveConfig(tailwindConfig)
 
-import { KashiPair } from '../../.graphclient'
-
 interface MarketChartProps {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
 }
 
 enum MarketChartType {
@@ -41,7 +40,7 @@ const chartTimespans: Record<MarketChartPeriod, number> = {
   [MarketChartPeriod.All]: Infinity,
 }
 
-export const MarketChart: FC<MarketChartProps> = ({ pair }) => {
+export const MarketChart: FC<MarketChartProps> = () => {
   const [chartType, setChartType] = useState<MarketChartType>(MarketChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<MarketChartPeriod>(MarketChartPeriod.All)
 
@@ -262,7 +261,7 @@ export const MarketChart: FC<MarketChartProps> = ({ pair }) => {
         <Typography variant="xl" weight={500} className="text-slate-50">
           <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1])}</span>{' '}
           {chartType === MarketChartType.Volume && (
-            <span className="font-medium text-sm text-slate-300">
+            <span className="text-sm font-medium text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}
               <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * FEE_BPS)}</span> earned
             </span>

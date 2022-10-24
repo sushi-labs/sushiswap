@@ -6,7 +6,7 @@ import { AddressZero, Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native } from '@sushiswap/currency'
-import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/exchange'
+import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/amm'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
@@ -18,6 +18,7 @@ import {
   getTridentRouterContractConfig,
   useBentoBoxTotal,
 } from '@sushiswap/wagmi'
+import stringify from 'fast-json-stable-stringify'
 import { approveMasterContractAction, batchAction, unwrapWETHAction } from 'lib/actions'
 import { toHex } from 'lib/functions'
 import { useTransactionDeadline } from 'lib/hooks'
@@ -84,7 +85,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         })
         .catch((error: unknown) => {
           log.error('swap failure', {
-            error: JSON.stringify(error),
+            error: stringify(error),
             chainId: trade.inputAmount.currency.chainId,
             tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
             tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
@@ -153,7 +154,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   )
 
   const prepare = useCallback(async () => {
-    if (!trade || !account || !chainId) return
+    if (!trade || !account || !chainId || !deadline) return
 
     console.log('prepare swap', { trade, account, chainId, deadline })
 

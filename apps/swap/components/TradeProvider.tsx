@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type as Currency } from '@sushiswap/currency'
-import { TradeType } from '@sushiswap/exchange'
+import { TradeType } from '@sushiswap/amm'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
 import { useTrade as useFindTrade, UseTradeOutput } from '../lib/hooks/useTrade'

@@ -379,11 +379,11 @@ export const otherChains = [
     },
     blockExplorers: {
       etherscan: {
-        name: 'Boba Avax Explorer',
+        name: 'Boba Avalanche Mainnet Explorer',
         url: 'https://blockexplorer.avax.boba.network/',
       },
       default: {
-        name: 'Boba Avax Explorer',
+        name: 'Boba Avalanche Mainnet Explorer',
         url: 'https://blockexplorer.avax.boba.network/',
       },
     },

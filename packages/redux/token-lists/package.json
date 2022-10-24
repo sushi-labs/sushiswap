@@ -19,7 +19,8 @@
     "ajv": "^6.12.3",
     "cids": "^1.1.9",
     "multicodec": "^3.2.1",
-    "multihashes": "^4.0.3"
+    "multihashes": "^4.0.3",
+    "fast-json-stable-stringify": "^2.1.0"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.8.1",

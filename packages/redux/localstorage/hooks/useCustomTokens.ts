@@ -9,6 +9,7 @@ type UseCustomTokensReturn = [
   Record<string, Token>,
   {
     addCustomToken(payload: TokenAsObject): void
+    addCustomTokens(payload: TokenAsObject[]): void
     removeCustomToken(payload: Pick<TokenAsObject, 'address' | 'chainId'>): void
   }
 ]
@@ -23,6 +24,13 @@ export const useCustomTokens: UseCustomTokens = (context, chainId?: number) => {
   const addCustomToken = useCallback(
     ({ symbol, address, chainId, name, decimals }: TokenAsObject) => {
       dispatch(actions.addCustomToken({ symbol, address, chainId, name, decimals }))
+    },
+    [actions, dispatch]
+  )
+
+  const addCustomTokens = useCallback(
+    (tokens: TokenAsObject[]) => {
+      dispatch(actions.addCustomTokens(tokens))
     },
     [actions, dispatch]
   )
@@ -45,5 +53,5 @@ export const useCustomTokens: UseCustomTokens = (context, chainId?: number) => {
     )
   }, [chainId, customTokens])
 
-  return [tokens, { addCustomToken, removeCustomToken }]
+  return [tokens, { addCustomToken, removeCustomToken, addCustomTokens }]
 }

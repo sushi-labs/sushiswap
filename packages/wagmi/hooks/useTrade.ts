@@ -9,7 +9,7 @@ import {
   Trade,
   TradeType,
   Version as TradeVersion,
-} from '@sushiswap/exchange'
+} from '@sushiswap/amm'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'

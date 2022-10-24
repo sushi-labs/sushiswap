@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { ConstantProductPool, Pair, StablePool } from '@sushiswap/exchange'
+import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'

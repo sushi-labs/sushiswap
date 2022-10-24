@@ -1,19 +1,19 @@
 import { Currency, Dialog, Typography } from '@sushiswap/ui'
-import { usePrices } from '@sushiswap/wagmi'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC, useCallback, useState } from 'react'
 
-import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
-import { MarketButtons } from './MarketButtons'
+import { BorrowButtons } from '../BorrowSection'
+import { LendButtons } from '../LendSection'
 
 interface MarketPositionProps {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
+  side: 'borrow' | 'lend'
 }
 
-export const MarketPosition: FC<MarketPositionProps> = ({ pair }) => {
+export const MarketPosition: FC<MarketPositionProps> = ({ pair, side }) => {
   const { asset, collateral } = useTokensFromKashiPair(pair)
   const [open, setOpen] = useState(false)
-  const { data: prices } = usePrices({ chainId: pair.chainId })
 
   const handleClose = useCallback(() => {
     setOpen(false)
@@ -132,10 +132,7 @@ export const MarketPosition: FC<MarketPositionProps> = ({ pair }) => {
               </Typography>
             </div>
           </div>
-          <div className="px-2">
-            {/* @ts-ignore */}
-            <MarketButtons pair={pair} />
-          </div>
+          <div className="px-2">{side === 'borrow' ? <BorrowButtons pair={pair} /> : <LendButtons pair={pair} />}</div>
         </Dialog.Content>
       </Dialog>
       <div className="flex flex-col hidden shadow-md lg:flex bg-slate-800 rounded-2xl shadow-black/30">{content}</div>

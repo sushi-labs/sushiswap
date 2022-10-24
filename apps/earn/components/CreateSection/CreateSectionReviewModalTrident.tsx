@@ -9,7 +9,7 @@ import {
   ConstantProductPool,
   Fee,
   StablePool,
-} from '@sushiswap/exchange'
+} from '@sushiswap/amm'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
