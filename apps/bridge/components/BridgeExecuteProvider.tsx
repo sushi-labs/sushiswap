@@ -120,7 +120,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
         }
       }
     },
-    [prepareBridge, srcChainId, contract]
+    [prepareBridge, srcChainId]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

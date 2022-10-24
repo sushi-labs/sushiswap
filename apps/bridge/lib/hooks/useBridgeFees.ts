@@ -43,7 +43,6 @@ export const useBridgeFees = (): {
   const { data: stargatePoolResults, isLoading } = useContractReads({
     contracts,
     enabled: !!srcChainId && !!dstChainId && srcChainId !== dstChainId && contracts.length > 0,
-    keepPreviousData: true,
   })
 
   const { data: getFeesResults } = useContractRead({

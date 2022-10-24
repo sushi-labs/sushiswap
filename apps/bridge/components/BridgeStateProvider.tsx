@@ -64,8 +64,8 @@ const reducer = (state: State, action: Actions): State => {
       return {
         ...state,
         srcChainId: state.dstChainId,
-        srcToken: undefined,
-        dstToken: undefined,
+        srcToken: state.dstToken,
+        dstToken: state.srcToken,
         dstChainId: state.srcChainId,
         srcTypedAmount: '',
         dstTypedAmount: '',

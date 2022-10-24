@@ -4,7 +4,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { AppearOnMount, Button, Typography } from '@sushiswap/ui'
+import { AppearOnMount, Button, Loader, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import {
@@ -192,25 +192,34 @@ const _Bridge: FC = () => {
           <SwapStatsDisclosure />
           <div className="p-3 pt-0">
             <Checker.Connected fullWidth size="md">
-              <Checker.Amounts
-                fullWidth
-                size="md"
-                chainId={srcChainId}
-                fundSource={FundSource.WALLET}
-                amounts={inputAmounts}
+              <Checker.Custom
+                showGuardIfTrue={Boolean(amount?.greaterThan(ZERO) && !dstTypedAmount)}
+                guard={
+                  <Button size="md" fullWidth>
+                    <Loader size={18} />
+                  </Button>
+                }
               >
-                <Checker.Network fullWidth size="md" chainId={srcChainId}>
-                  <BridgeReviewModal>
-                    {({ setOpen }) => {
-                      return (
-                        <Button fullWidth size="md" onClick={() => setOpen(true)}>
-                          Bridge
-                        </Button>
-                      )
-                    }}
-                  </BridgeReviewModal>
-                </Checker.Network>
-              </Checker.Amounts>
+                <Checker.Amounts
+                  fullWidth
+                  size="md"
+                  chainId={srcChainId}
+                  fundSource={FundSource.WALLET}
+                  amounts={inputAmounts}
+                >
+                  <Checker.Network fullWidth size="md" chainId={srcChainId}>
+                    <BridgeReviewModal>
+                      {({ setOpen }) => {
+                        return (
+                          <Button fullWidth size="md" onClick={() => setOpen(true)}>
+                            Bridge
+                          </Button>
+                        )
+                      }}
+                    </BridgeReviewModal>
+                  </Checker.Network>
+                </Checker.Amounts>
+              </Checker.Custom>
             </Checker.Connected>
           </div>
         </div>
