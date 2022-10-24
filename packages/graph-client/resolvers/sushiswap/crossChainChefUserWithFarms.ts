@@ -12,34 +12,21 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
       .CrossChainLiquidityPositions({
         where: { balance_gt: 0, user: args.id.toLowerCase() },
         chainIds: args.chainIds,
-        now: 0,
       })
-      .then(async (data) => {
-        const { crossChainLiquidityPositions } = data
-        const user = crossChainUsers.reduce(
-          (acc, cur) => {
-            acc.liquidityPositions = [...acc.liquidityPositions, ...cur.liquidityPositions]
-            return acc
-          },
-          { liquidityPositions: [] }
-        )
-
+      .then(async ({ crossChainLiquidityPositions }) => {
         const balances = await getTokenBalances(
-          (user.liquidityPositions ?? []).map((lp) => ({
+          crossChainLiquidityPositions.map((lp) => ({
             token: lp.pair.id.split(':')[1],
             user: args.id,
-            chainId: lp.pair.chainId,
+            chainId: lp.chainId,
           }))
         )
 
-        return user.liquidityPositions
+        return crossChainLiquidityPositions
           .map((lp) => ({
-            id: lp.pair.id,
+            ...lp,
             unstakedBalance: balances.find((el) => el.token === lp.pair.id.split(':')[1])?.balance ?? '0',
             stakedBalance: '0',
-            pair: lp.pair,
-            chainId: lp.pair.chainId,
-            chainName: lp.pair.chainName,
           }))
           .filter((entry) => entry.unstakedBalance !== '0')
       }),
@@ -89,7 +76,7 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
         : staked
       : (unstaked as NonNullable<typeof unstaked>)) as unknown as UserWithFarm // pair type doesn't match, problem for a future somebody
 
-    const pair = unstaked?.pair ?? (staked as NonNullable<typeof unstaked>).pair
+    const pair = unstaked?.pair ?? staked.pair
 
     const totalBalance = Number(unstaked?.unstakedBalance ?? 0) + Number(staked?.stakedBalance ?? 0)
     const valueUSD = (totalBalance / pair.liquidity) * pair.liquidityUSD

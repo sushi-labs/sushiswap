@@ -162,8 +162,8 @@ query CrossChainPairs(
   }
 }
 
-query CrossChainLiquidityPositions($where: LiquidityPosition_filter, $chainIds: [Int!]!, $now: Int!, $block: Block_height) {
-  crossChainLiquidityPositions(chainIds: $chainIds, now: $now, block: $block, where: $where) {
+query CrossChainLiquidityPositions($where: LiquidityPosition_filter, $chainIds: [Int!]!, $block: Block_height) {
+  crossChainLiquidityPositions(chainIds: $chainIds, block: $block, where: $where) {
     id
     chainId
     chainName
@@ -171,13 +171,15 @@ query CrossChainLiquidityPositions($where: LiquidityPosition_filter, $chainIds: 
     balance
     pair {
       id
+      chainId
+      chainName
+      chainShortName
       name
       reserve0
       reserve1
       liquidity
       swapFee
       twapEnabled
-      volume1w
       source
       type
       token0 {
@@ -197,11 +199,6 @@ query CrossChainLiquidityPositions($where: LiquidityPosition_filter, $chainIds: 
       apr
       feeApr
       incentiveApr
-      daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
-        id
-        date
-        volumeUSD
-      }
       farm {
         id
         incentives {
@@ -457,8 +454,8 @@ query CrossChainStats(
 # ) {}
 
 
-query CrossChainUserWithFarms($id: ID!, $block: Block_height, $now: Int!, $chainIds: [Int!]!) {
-  crossChainUserWithFarms(id: $id, block: $block, now: $now, chainIds: $chainIds) {
+query CrossChainUserWithFarms($id: ID!, $block: Block_height, $chainIds: [Int!]!) {
+  crossChainUserWithFarms(id: $id, block: $block, chainIds: $chainIds) {
     id
     unstakedBalance
     stakedBalance
@@ -474,7 +471,6 @@ query CrossChainUserWithFarms($id: ID!, $block: Block_height, $now: Int!, $chain
       liquidity
       swapFee
       twapEnabled
-      volume1w
       source
       type
       token0 {
@@ -510,11 +506,6 @@ query CrossChainUserWithFarms($id: ID!, $block: Block_height, $now: Int!, $chain
           chefType
           poolType
         }
-      daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
-        id
-        date
-        volumeUSD
-      }
     }
     chainId
     chainName

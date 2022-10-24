@@ -140,7 +140,6 @@ additionalTypeDefs: |
     crossChainLiquidityPositions(
       block: Block_height,
       where: LiquidityPosition_filter,
-      now: Int!, 
       chainIds: [Int!]!,
     ): [LiquidityPosition!]!
     crossChainChefUser(
@@ -153,7 +152,6 @@ additionalTypeDefs: |
     crossChainUserWithFarms(
       id: ID!,
       block: Block_height,
-      now: Int!,
       chainIds: [Int!]!,
     ): [UserWithFarm!]
     crossChainToken(id: ID!, now: Int!, chainId: Int!): Token!

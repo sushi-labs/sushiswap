@@ -18,9 +18,6 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
   const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
   const transformer = (liquidityPosition, chainId) => {
-    const volume1w = liquidityPosition.pair.daySnapshots
-      ?.slice(0, 6)
-      ?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.volumeUSD), 0)
     const farm = farms?.[chainId]?.farms?.[liquidityPosition.pair.id]
     const feeApr =
       Number(liquidityPosition.pair?.liquidityUSD) > 5000
@@ -42,8 +39,10 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
       balance: Math.floor(Number(liquidityPosition.balance / 2)),
       pair: {
         ...liquidityPosition.pair,
-        volume1w,
         id: `${chainShortName[chainId]}:${liquidityPosition.pair.id}`,
+        chainId,
+        chainName: chainName[chainId],
+        chainShortName: chainShortName[chainId],
         apr: String(apr),
         feeApr: String(feeApr),
         incentiveApr: String(incentiveApr),
@@ -73,7 +72,7 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
     ...args.chainIds
       .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
-        context.SushiSwap.Query.user({
+        context.SushiSwap.Query.liquidityPositions({
           root,
           args,
           context: {
@@ -84,12 +83,12 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((user) => transformer(user, chainId))
+        }).then((positions) => positions.map((position) => transformer(position, chainId)))
       ),
     ...args.chainIds
       .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
-        context.Trident.Query.user({
+        context.Trident.Query.liquidityPositions({
           root,
           args,
           context: {
@@ -100,13 +99,12 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((user) => transformer(user, chainId))
+        }).then((positions) => positions.map((position) => transformer(position, chainId)))
       ),
-  ]).then((users) => {
-    console.log(users)
-    return users.flat().reduce((acc, cur) => {
+  ]).then((positions) => {
+    return positions.flat().reduce((acc, cur) => {
       if (cur.status === 'fulfilled') {
-        acc.push(cur.value)
+        acc.push(...cur.value)
       }
 
       return acc

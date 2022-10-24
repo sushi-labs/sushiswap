@@ -34,6 +34,11 @@ export const resolvers: Resolvers = {
     fees1d: (root, args, context, info) => root.fees1d || '0',
     fees1w: (root, args, context, info) => root.fees1w || '0',
   },
+  LiquidityPosition: {
+    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
+    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+    chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
+  },
   Query: {
     crossChainBundles,
     crossChainFactories,
