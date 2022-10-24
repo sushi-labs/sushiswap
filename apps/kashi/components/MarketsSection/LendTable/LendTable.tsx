@@ -59,7 +59,7 @@ const fetcher = ({
 
 export const LendTable: FC = () => {
   const router = useRouter()
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'currentSupplyAPR', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'previewSupplyAPR', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: DEFAULT_MARKETS.length,
@@ -101,7 +101,7 @@ export const LendTable: FC = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Typography variant="lg" weight={600} className="text-slate-200">
           Lend
         </Typography>

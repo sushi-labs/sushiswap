@@ -17,7 +17,7 @@ export const LendInformation: FC<LendInformation> = ({ pair }) => {
           Supply APY
         </Typography>
         <Typography variant="sm" weight={600} className="text-slate-100">
-          {pair.currentSupplyAPR.toSignificant(4)}%
+          {pair.previewSupplyAPR.toSignificant(4)}%
         </Typography>
       </div>
       <hr className="w-full h-px my-3 border-t border-slate-200/10" />

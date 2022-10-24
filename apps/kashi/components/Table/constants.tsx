@@ -111,7 +111,7 @@ export const COLLATERAL_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown>
 export const TOTAL_SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalSupplyAPR',
   header: 'Variable APR',
-  // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
+  // accessorFn: (row) => JSBI.toNumber(row.previewSupplyAPR.quotient),
   cell: (props) => <TotalSupplyAPRCell row={props.row.original} />,
   size: 50,
   meta: {
@@ -122,7 +122,7 @@ export const TOTAL_SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, un
 export const TOTAL_BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'totalBorrowAPR',
   header: 'Variable APR',
-  // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
+  // accessorFn: (row) => JSBI.toNumber(row.previewSupplyAPR.quotient),
   cell: (props) => <TotalBorrowAPRCell row={props.row.original} />,
   size: 50,
   meta: {
@@ -143,9 +143,9 @@ export const TOTAL_ASSET_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown
 }
 
 export const SUPPLY_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
-  id: 'currentSupplyAPR',
+  id: 'previewSupplyAPR',
   header: 'Lend APY',
-  // accessorFn: (row) => JSBI.toNumber(row.currentSupplyAPR.quotient),
+  // accessorFn: (row) => JSBI.toNumber(row.previewSupplyAPR.quotient),
   cell: (props) => <SupplyAPRCell row={props.row.original} />,
   size: 40,
   meta: {
@@ -200,7 +200,7 @@ export const AVAILABLE_FOR_BORROW_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1
 export const BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'borrow',
   header: 'Borrow APR',
-  // accessorFn: (row) => row.currentInterestPerYear,
+  // accessorFn: (row) => row.previewInterestPerYear,
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
   size: 40,
   meta: {
@@ -212,7 +212,7 @@ export const BORROW_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown>
 export const REWARD_APR_COLUMN: ColumnDef<KashiMediumRiskLendingPairV1, unknown> = {
   id: 'reward',
   header: 'Reward APY',
-  // accessorFn: (row) => row.currentInterestPerYear,
+  // accessorFn: (row) => row.previewInterestPerYear,
   cell: (props) => <BorrowAPRCell row={props.row.original} />,
   size: 40,
   meta: {

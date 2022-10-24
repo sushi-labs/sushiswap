@@ -99,7 +99,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           args: {
             sorting: [
               {
-                id: 'currentSupplyAPR',
+                id: 'previewSupplyAPR',
                 desc: true,
               },
             ],
@@ -153,7 +153,7 @@ const _Index = () => {
             <Typography variant="hero" weight={600}>
               Kashi Lending
             </Typography>
-            <Typography weight={400} className="text-slate-300 leading-7">
+            <Typography weight={400} className="leading-7 text-slate-300">
               Lend, borrow or margin trade with low liquidiation risk, and earn staking rewards!
             </Typography>
             <div className="mt-4">
@@ -173,7 +173,7 @@ const _Index = () => {
           </div>
         </div>
         <section className="space-y-8">
-          <Typography variant="h3" weight={600} className="text-slate-50 font-semibold">
+          <Typography variant="h3" weight={600} className="font-semibold text-slate-50">
             Top Lending Pairs
           </Typography>
           <div className="grid grid-cols-4 gap-6">
@@ -187,7 +187,7 @@ const _Index = () => {
         </section>
         <MarketsSection />
         <section className="space-y-8">
-          <Typography variant="h3" weight={600} className="text-slate-50 font-semibold">
+          <Typography variant="h3" weight={600} className="font-semibold text-slate-50">
             Lowest Borrowing Fee on Stablecoin
           </Typography>
           <div className="grid grid-cols-4 gap-6">

@@ -16,6 +16,7 @@ import { useAccount, useContract, useSigner } from 'wagmi'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { useCustomTokens, useNotifications } from '../../lib/state/storage'
 import { useTokens } from '../../lib/state/token-lists'
+
 interface LendWidget {
   pair: KashiMediumRiskLendingPairV1
 }
@@ -47,7 +48,7 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
 
     if (signature) cooker.setMasterContractApproval(signature)
 
-    cooker.updateExchangeRate(false)
+    cooker.updateExchangeRate(true)
 
     const deadBalance = await bentoBoxContract.balanceOf(
       pair.asset.address,

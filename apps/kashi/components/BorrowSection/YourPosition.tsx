@@ -68,7 +68,8 @@ interface YourPosition {
 
 export const YourPosition: FC<YourPosition> = ({ pair }) => {
   const { asset, collateral } = useTokensFromKashiPair(pair)
-  const { collateralValue, collateralAsEntity, borrowValue, borrowAsEntity } = useBorrowContext()
+  const { collateralValue, collateralAsEntity, borrowValue, borrowAsEntity, userCollateralShare, userBorrowPart } =
+    useBorrowContext()
   const { data: prices } = usePrices({ chainId: pair.chainId })
 
   // TODO
@@ -98,24 +99,46 @@ export const YourPosition: FC<YourPosition> = ({ pair }) => {
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <YourPositionBlock
           label="Collateral"
-          value="$0.0"
+          value={
+            userCollateralShare && prices?.[collateral.wrapped.address]
+              ? formatUSD(
+                  userCollateralShare
+                    .toAmount(pair.collateralTotals, true)
+                    ?.multiply(prices?.[collateral.wrapped.address].asFraction)
+                    .toFixed(2)
+                )
+              : '$0.0'
+          }
           newValue={
             collateralAsEntity && prices?.[collateral.wrapped.address]
               ? formatUSD(collateralAsEntity?.multiply(prices?.[collateral.wrapped.address].asFraction).toFixed(2))
               : undefined
           }
-          caption={`0.00 ${pair.collateral.symbol}`}
+          caption={`${
+            userCollateralShare ? userCollateralShare.toAmount(pair.collateralTotals, true).toSignificant(6) : '0.00'
+          } ${pair.collateral.symbol}`}
           {...(collateralValue && { newCaption: `${collateralValue} ${pair.collateral.symbol}` })}
         />
         <YourPositionBlock
           label="Borrowed"
-          value="$0.0"
+          value={
+            userBorrowPart && prices?.[asset.wrapped.address]
+              ? formatUSD(
+                  userBorrowPart
+                    .toAmount(pair.assetTotals, true)
+                    ?.multiply(prices?.[asset.wrapped.address].asFraction)
+                    .toFixed(2)
+                )
+              : '$0.0'
+          }
           newValue={
             borrowAsEntity && prices?.[asset.wrapped.address]
               ? formatUSD(borrowAsEntity?.multiply(prices?.[asset.wrapped.address].asFraction).toFixed(2))
               : undefined
           }
-          caption={`0.00 ${pair.asset.symbol}`}
+          caption={`${userBorrowPart ? userBorrowPart.toAmount(pair.assetTotals, true).toSignificant(6) : '0.00'} ${
+            pair.asset.symbol
+          }`}
           {...(borrowValue && { newCaption: `${borrowValue} ${pair.asset.symbol}` })}
         />
         <YourPositionBlock label="Liquidation Price" value={liquidationPriceAsString} caption="n/a" />

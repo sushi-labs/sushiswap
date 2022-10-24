@@ -92,8 +92,8 @@ export const LendTableForSymbol: FC = () => {
       data
         ?.map((pair) => new KashiMediumRiskLendingPairV1(pair))
         .sort((a, b) => {
-          if (b.currentSupplyAPR.equalTo(a.currentSupplyAPR)) return 0
-          return b.currentSupplyAPR.lessThan(a.currentSupplyAPR) ? -1 : 1
+          if (b.previewSupplyAPR.equalTo(a.previewSupplyAPR)) return 0
+          return b.previewSupplyAPR.lessThan(a.previewSupplyAPR) ? -1 : 1
         }),
     [data]
   )

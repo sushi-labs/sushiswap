@@ -1,6 +1,8 @@
+import { abi } from '@sushiswap/kashi/artifacts/contracts/KashiPair.sol/KashiPair.json'
 import { Currency, Dialog, Typography } from '@sushiswap/ui'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
+import { useAccount, useContractReads } from 'wagmi'
 
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { BorrowButtons } from '../BorrowSection'
@@ -12,12 +14,49 @@ interface MarketPositionProps {
 }
 
 export const MarketPosition: FC<MarketPositionProps> = ({ pair, side }) => {
+  const { address } = useAccount()
   const { asset, collateral } = useTokensFromKashiPair(pair)
   const [open, setOpen] = useState(false)
 
   const handleClose = useCallback(() => {
     setOpen(false)
   }, [])
+
+  const { data } = useContractReads({
+    contracts: [
+      {
+        addressOrName: pair.id,
+        contractInterface: abi,
+        functionName: 'balanceOf',
+        args: [address],
+      },
+      {
+        addressOrName: pair.id,
+        contractInterface: abi,
+        functionName: 'userCollateralShare',
+        args: [address],
+      },
+      {
+        addressOrName: pair.id,
+        contractInterface: abi,
+        functionName: 'userBorrowPart',
+        args: [address],
+      },
+    ],
+    enabled: !!address,
+  })
+
+  const [userAssetAmount, userCollateralShare, userBorrowPart] = useMemo(() => {
+    if (!data?.[0] || !data?.[1] || !data?.[2]) return [undefined, undefined, undefined]
+    return [pair.userAssetAmount(data[0].toString()), data[1], data[2]]
+  }, [data, pair])
+
+  console.log({
+    userAssetAmount: userAssetAmount?.toFixed(),
+    test: data?.[0]?.toString(),
+    userCollateralShare,
+    userBorrowPart,
+  })
 
   const content = (
     <>
@@ -30,7 +69,7 @@ export const MarketPosition: FC<MarketPositionProps> = ({ pair, side }) => {
             $0.00
           </Typography>
           <Typography variant="xxs" weight={600} className="text-right text-slate-400">
-            0.00 {asset.symbol}
+            {userAssetAmount?.toSignificant(6)} {asset.symbol}
           </Typography>
         </div>
       </div>
@@ -38,24 +77,26 @@ export const MarketPosition: FC<MarketPositionProps> = ({ pair, side }) => {
         <div className="flex items-center gap-2">
           <Currency.Icon currency={asset} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-50">
-            0.00 {asset.symbol}
+            {userAssetAmount?.toSignificant(6)} {asset.symbol}
           </Typography>
         </div>
         <Typography variant="xs" weight={600} className="text-slate-400">
           $0.00
         </Typography>
       </div>
-      <div className="flex justify-between py-3 bg-white bg-opacity-[0.04] px-6">
-        <div className="flex items-center gap-2">
-          <Currency.Icon currency={collateral} width={20} height={20} />
-          <Typography variant="sm" weight={700} className="text-slate-50">
-            0.00 {collateral.symbol}
+      {side === 'borrow' && (
+        <div className="flex justify-between py-3 bg-white bg-opacity-[0.04] px-6">
+          <div className="flex items-center gap-2">
+            <Currency.Icon currency={collateral} width={20} height={20} />
+            <Typography variant="sm" weight={700} className="text-slate-50">
+              0.00 {collateral.symbol}
+            </Typography>
+          </div>
+          <Typography variant="xs" weight={500} className="text-slate-400">
+            $0.00
           </Typography>
         </div>
-        <Typography variant="xs" weight={500} className="text-slate-400">
-          $0.00
-        </Typography>
-      </div>
+      )}
       <div className="flex items-center justify-between px-6 py-4">
         <Typography variant="xs" className="text-slate-200">
           Total Earned

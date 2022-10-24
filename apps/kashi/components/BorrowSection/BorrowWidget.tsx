@@ -1,14 +1,18 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline'
 import { formatUSD } from '@sushiswap/format'
+import { abi } from '@sushiswap/kashi/artifacts/contracts/KashiPair.sol/KashiPair.json'
+import { KashiPairMediumRiskV1 } from '@sushiswap/kashi/typechain'
 import { Button, classNames, Dialog, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
-import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
-import { getSushiSwapRouterContractConfig } from '@sushiswap/wagmi/hooks'
+import { Approve, BENTOBOX_ADDRESS, usePrices, Web3Input } from '@sushiswap/wagmi'
+import { KASHI_ADDRESS } from 'config'
+import { Signature } from 'ethers'
+import KashiCooker from 'lib/KashiCooker'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC, useCallback, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useContract, useSigner } from 'wagmi'
 
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { useCustomTokens, useNotifications } from '../../lib/state/storage'
@@ -20,9 +24,23 @@ interface BorrowWidget {
 }
 
 export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
-  const { collateralValue, setCollateralValue, setBorrowValue, borrowValue, collateralAsEntity, borrowAsEntity } =
-    useBorrowContext()
+  const {
+    collateralValue,
+    setCollateralValue,
+    setBorrowValue,
+    borrowValue,
+    collateralAsEntity,
+    borrowAsEntity,
+    userCollateralShare,
+  } = useBorrowContext()
   const { address: account } = useAccount()
+  const [signature, setSignature] = useState<Signature>()
+  const { data: signerOrProvider } = useSigner()
+  const kashiMediumRiskV1Contract = useContract<KashiPairMediumRiskV1>({
+    addressOrName: pair.address,
+    contractInterface: abi,
+    signerOrProvider,
+  })
   const tokenMap = useTokens(pair.chainId)
   const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(pair.chainId)
   const { collateral, asset } = useTokensFromKashiPair(pair)
@@ -30,7 +48,25 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
   const [review, setReview] = useState(false)
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const [, { createNotification }] = useNotifications(account)
-  const execute = useCallback(() => {}, [])
+  const execute = useCallback(async () => {
+    if (!pair || !account || !kashiMediumRiskV1Contract) return
+
+    const cooker = new KashiCooker({ chainId: pair.chainId, pair, account, contract: kashiMediumRiskV1Contract })
+
+    if (signature) cooker.setMasterContractApproval(signature)
+
+    cooker.updateExchangeRate(true)
+
+    if (collateralAsEntity && collateralAsEntity.greaterThan(0)) {
+      cooker.addCollateralFromWallet(collateralAsEntity)
+    }
+
+    if (borrowAsEntity && borrowAsEntity.greaterThan(0)) {
+      cooker.borrow(borrowAsEntity)
+    }
+
+    await cooker.cook()
+  }, [account, borrowAsEntity, collateralAsEntity, kashiMediumRiskV1Contract, pair, signature])
   return (
     <div className="flex flex-col">
       <Widget id="depositCollateral" maxWidth="md">
@@ -66,7 +102,7 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
           </div>
         </Transition>
         <Transition
-          show={!!collateralValue}
+          show={!!collateralValue || !!userCollateralShare}
           unmount={false}
           className="transition-[max-height] overflow-hidden border-t border-slate-200/10 bg-slate-800/30"
           enter="duration-300 ease-in-out"
@@ -217,38 +253,42 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
                   : '-'}
               </Typography>
             </div>
-            <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
-              <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
-                <ChevronDownIcon width={18} height={18} className="text-slate-200" />
-              </div>
-            </div>
-            <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
-              <Typography variant="sm" weight={500} className="text-slate-300">
-                Borrow
-              </Typography>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center justify-between w-full gap-2">
-                  <Typography variant="h3" weight={500} className="truncate text-slate-50">
-                    {borrowAsEntity?.toSignificant(6)}{' '}
-                  </Typography>
-                  <div className="flex items-center justify-end gap-2 text-right">
-                    {borrowAsEntity && (
-                      <div className="w-5 h-5">
-                        <Icon currency={borrowAsEntity.currency} width={20} height={20} />
-                      </div>
-                    )}
-                    <Typography variant="h3" weight={500} className="text-right text-slate-50">
-                      {borrowAsEntity?.currency.symbol}
-                    </Typography>
-                  </div>
+            {
+              <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
+                <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
+                  <ChevronDownIcon width={18} height={18} className="text-slate-200" />
                 </div>
               </div>
-              <Typography variant="sm" weight={500} className="text-slate-500">
-                {borrowAsEntity && prices?.[asset.wrapped.address]
-                  ? formatUSD(borrowAsEntity?.multiply(prices?.[asset.wrapped.address].asFraction).toFixed(2))
-                  : '-'}
-              </Typography>
-            </div>
+            }
+            {
+              <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
+                <Typography variant="sm" weight={500} className="text-slate-300">
+                  Borrow
+                </Typography>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                      {borrowAsEntity?.toSignificant(6)}{' '}
+                    </Typography>
+                    <div className="flex items-center justify-end gap-2 text-right">
+                      {borrowAsEntity && (
+                        <div className="w-5 h-5">
+                          <Icon currency={borrowAsEntity.currency} width={20} height={20} />
+                        </div>
+                      )}
+                      <Typography variant="h3" weight={500} className="text-right text-slate-50">
+                        {borrowAsEntity?.currency.symbol}
+                      </Typography>
+                    </div>
+                  </div>
+                </div>
+                <Typography variant="sm" weight={500} className="text-slate-500">
+                  {borrowAsEntity && prices?.[asset.wrapped.address]
+                    ? formatUSD(borrowAsEntity?.multiply(prices?.[asset.wrapped.address].asFraction).toFixed(2))
+                    : '-'}
+                </Typography>
+              </div>
+            }
           </div>
           <Approve
             onSuccess={createNotification}
@@ -260,11 +300,21 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
                   className="whitespace-nowrap"
                   fullWidth
                   amount={collateralAsEntity}
-                  address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
+                  address={BENTOBOX_ADDRESS[pair.chainId]}
+                  enabled={Boolean(BENTOBOX_ADDRESS[pair.chainId])}
+                />
+                <Approve.Bentobox
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  address={KASHI_ADDRESS[pair.chainId]}
+                  onSignature={setSignature}
+                  enabled={Boolean(KASHI_ADDRESS[pair.chainId])}
                 />
               </Approve.Components>
             }
             render={({ approved }) => {
+              console.log({ approved })
               return (
                 <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
                   Confirm Borrow

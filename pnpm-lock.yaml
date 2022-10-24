@@ -879,6 +879,7 @@ importers:
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
+      '@sushiswap/chainlink': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
@@ -932,6 +933,7 @@ importers:
       '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/chainlink': link:../../packages/chainlink
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
       '@sushiswap/hooks': link:../../packages/hooks

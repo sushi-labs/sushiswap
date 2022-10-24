@@ -28,6 +28,7 @@
     "@sushiswap/kashi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/chainlink": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
