@@ -52,6 +52,7 @@ const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos
 const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/kava.svg'
 const MetisLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/metis.svg'
 const BobaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/boba.svg'
+const BttcLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/bttc.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -88,6 +89,7 @@ const LOGO: Record<number, string> = {
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
   [ChainId.BOBA_AVAX]: BobaLogo,
+  [ChainId.BTTC]: BttcLogo,
 }
 
 export interface IconProps extends Omit<ImageProps, 'src'> {
