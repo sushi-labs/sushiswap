@@ -1,20 +1,20 @@
+import { ArrowRightIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { Button } from '@sushiswap/ui'
+import { Button, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
-import { Checker } from '@sushiswap/wagmi'
+import { Checker, Web3Input } from '@sushiswap/wagmi'
 import {
   BridgeExecuteProvider,
   BridgeReviewModal,
   BridgeStateProvider,
-  CurrencyInputWithNetworkSelector,
   Layout,
+  NetworkSelector,
   SettingsOverlay,
   SwapStatsDisclosure,
-  SwitchCurrenciesButton,
   useBridgeState,
   useBridgeStateActions,
 } from 'components'
@@ -174,39 +174,56 @@ const _Bridge: FC = () => {
             <SettingsOverlay />
           </div>
         </Widget.Header>
-        <CurrencyInputWithNetworkSelector
-          className="p-3"
-          onNetworkSelect={onSrcNetworkSelect}
-          value={srcTypedAmount}
-          onChange={setSrcTypedAmount}
-          onSelect={setSrcToken}
-          currency={srcToken}
-          chainId={srcChainId}
-          tokenMap={srcTokens}
-          customTokenMap={srcCustomTokenMap}
-          onAddToken={onAddSrcCustomToken}
-          onRemoveToken={onRemoveSrcCustomToken}
-        />
-        <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-          <SwitchCurrenciesButton onClick={switchCurrencies} />
+        <div className="grid grid-cols-[auto_40px_auto] items-center p-3">
+          <NetworkSelector label="From" value={srcChainId} onChange={onSrcNetworkSelect} />
+          <div className="flex items-center justify-center">
+            <div className="cursor-pointer bg-slate-800 hover:ring-2 ring-offset-2 ring-offset-slate-700 ring-slate-800 rounded-full p-[5px]">
+              <ArrowRightIcon width={14} height={14} />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <NetworkSelector label="To" value={dstChainId} onChange={onDstNetworkSelect} />
+          </div>
+        </div>
+        <div className="bg-slate-800 p-3 flex flex-col gap-3">
+          <div className="flex flex-col py-1">
+            <Typography variant="xs" weight={500} className="text-slate-400">
+              Send
+            </Typography>
+            <Web3Input.Currency
+              value={srcTypedAmount}
+              onChange={setSrcTypedAmount}
+              onSelect={setSrcToken}
+              currency={srcToken}
+              chainId={srcChainId}
+              tokenMap={srcTokens}
+              customTokenMap={srcCustomTokenMap}
+              onAddToken={onAddSrcCustomToken}
+              onRemoveToken={onRemoveSrcCustomToken}
+            />
+          </div>
+          <div className="border-b border-slate-200/5" />
+          <div className="flex flex-col py-1">
+            <Typography variant="xs" weight={500} className="text-slate-400">
+              Receive
+            </Typography>
+            <Web3Input.Currency
+              disabled
+              disableMaxButton
+              value={dstTypedAmount}
+              onChange={setDstTypedAmount}
+              onSelect={setDstToken}
+              currency={dstToken}
+              chainId={dstChainId}
+              tokenMap={dstTokens}
+              customTokenMap={dstCustomTokenMap}
+              onAddToken={onAddDstCustomToken}
+              onRemoveToken={onRemoveDstCustomToken}
+              loading={amount?.greaterThan(ZERO) && !dstTypedAmount}
+            />
+          </div>
         </div>
         <div className="bg-slate-800">
-          <CurrencyInputWithNetworkSelector
-            className="p-3"
-            disabled
-            disableMaxButton
-            onNetworkSelect={onDstNetworkSelect}
-            value={dstTypedAmount}
-            onChange={setDstTypedAmount}
-            onSelect={setDstToken}
-            currency={dstToken}
-            chainId={dstChainId}
-            tokenMap={dstTokens}
-            customTokenMap={dstCustomTokenMap}
-            onAddToken={onAddDstCustomToken}
-            onRemoveToken={onRemoveDstCustomToken}
-            loading={amount?.greaterThan(ZERO) && !dstTypedAmount}
-          />
           <SwapStatsDisclosure />
           <div className="p-3 pt-0">
             <Checker.Connected fullWidth size="md">
