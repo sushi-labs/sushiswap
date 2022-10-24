@@ -10490,7 +10490,7 @@
       "chainId": "199",
       "contracts": {
         "BentoBoxV1": {
-          "address": "0x2f686751b19a9d91cc3d57d90150Bc767f050066",
+          "address": "0x8dacffa7F69Ce572992132697252E16254225D38",
           "abi": [
             {
               "inputs": [

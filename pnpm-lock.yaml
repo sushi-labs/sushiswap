@@ -1502,7 +1502,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.0-canary.50
+      '@sushiswap/trident': 1.0.0-canary.51
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^17.0.33
       eslint: ^8.20.0
@@ -1519,7 +1519,7 @@ importers:
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': 1.0.0-canary.50
+      '@sushiswap/trident': 1.0.0-canary.51
       tiny-invariant: 1.2.0
       tiny-warning: 1.0.3
     devDependencies:
@@ -2431,7 +2431,7 @@ importers:
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
-      '@sushiswap/trident': 1.0.0-canary.50
+      '@sushiswap/trident': 1.0.0-canary.51
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi-config': workspace:*
@@ -2471,7 +2471,7 @@ importers:
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
-      '@sushiswap/trident': 1.0.0-canary.50
+      '@sushiswap/trident': 1.0.0-canary.51
       '@sushiswap/ui': link:../ui
       '@sushiswap/wagmi-config': link:../config/wagmi
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
@@ -9619,8 +9619,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@sushiswap/trident/1.0.0-canary.50:
-    resolution: {integrity: sha512-hB4FU7RtgTNSH/LU/KY3OgzU7YildERDJwrreVggMvtPbjfCnq9OOimuJPlMpdeZNFHDGAqa8OsTaQZdhJNT9g==}
+  /@sushiswap/trident/1.0.0-canary.51:
+    resolution: {integrity: sha512-tg4FaIPsedXFCotFWTs+dCrH31M1x73qODztoqqzYlGwaFVqeAJIWmseQkErU0P5GFX3ga+we6iAXdf9OwQudQ==}
     dev: false
 
   /@swc/core-android-arm-eabi/1.2.249:
