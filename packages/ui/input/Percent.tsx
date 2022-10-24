@@ -15,7 +15,7 @@ export type PercentProps = Omit<React.HTMLProps<HTMLInputElement>, 'onChange' | 
 }
 
 export const Input = forwardRef<HTMLInputElement, PercentProps>(
-  ({ value, onUserInput, placeholder, className = defaultClassName, variant = 'default', error, ...rest }) => {
+  ({ value, onUserInput, placeholder, className = defaultClassName, variant = 'default', error, ...rest }, ref) => {
     const enforcer = (nextUserInput: string) => {
       if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
         if (onUserInput) {
@@ -27,6 +27,7 @@ export const Input = forwardRef<HTMLInputElement, PercentProps>(
     return (
       <>
         <input
+          ref={ref}
           value={value}
           onChange={(event) => {
             // replace commas with periods, because uniswap exclusively uses period as the decimal separator
