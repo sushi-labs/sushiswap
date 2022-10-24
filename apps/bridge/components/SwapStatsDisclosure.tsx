@@ -64,6 +64,7 @@ export const SwapStatsDisclosure: FC = () => {
               <Disclosure.Panel
                 as="div"
                 className="grid grid-cols-2 gap-1 px-4 py-2 mb-4 border border-slate-200/5 rounded-2xl"
+                unmount={false}
               >
                 <Stats />
               </Disclosure.Panel>
