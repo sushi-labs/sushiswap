@@ -53,44 +53,48 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
   })
 
   useEffect(() => {
-    if (isSuccess) {
-      const ts = new Date().getTime()
-      createSuccessNotification({
-        type: 'send',
-        chainId: dstChainId,
-        txHash: dstTxState?.txHash,
-        summary: {
-          pending: '',
-          completed: `Send ${amount?.toSignificant(6)} ${srcToken?.symbol} to recipient`,
-          failed: '',
-        },
-        timestamp: ts,
-        groupTimestamp: timestamp,
-      })
+    if (dstTxState && timestamp) {
+      if (isSuccess) {
+        const ts = new Date().getTime()
+        createSuccessNotification({
+          type: 'send',
+          chainId: dstChainId,
+          txHash: dstTxState.txHash,
+          summary: {
+            pending: '',
+            completed: `Send ${amount?.toSignificant(6)} ${srcToken?.symbol} to recipient`,
+            failed: '',
+          },
+          timestamp: ts,
+          groupTimestamp: timestamp,
+        })
 
-      onClose()
-      setTimeout(() => setSourceTx(undefined), 1000)
-    }
+        onClose()
+        setTimeout(() => setSourceTx(undefined), 1000)
+      }
 
-    if (isError) {
-      const ts = new Date().getTime()
-      createFailedNotification({
-        type: 'send',
-        chainId: dstChainId,
-        txHash: dstTxState?.txHash,
-        summary: {
-          pending: '',
-          completed: '',
-          failed: 'Something went wrong when sending tokens to recipient',
-        },
-        timestamp: ts,
-        groupTimestamp: timestamp,
-      })
+      if (isError) {
+        const ts = new Date().getTime()
+        createFailedNotification({
+          type: 'send',
+          chainId: dstChainId,
+          txHash: dstTxState?.txHash,
+          summary: {
+            pending: '',
+            completed: '',
+            failed: 'Something went wrong when sending tokens to recipient',
+          },
+          timestamp: ts,
+          groupTimestamp: timestamp,
+        })
 
-      onClose()
-      setTimeout(() => setSourceTx(undefined), 1000)
+        onClose()
+        setTimeout(() => setSourceTx(undefined), 1000)
+      }
     }
   }, [isSuccess, isError])
+
+  if (!dstAmountOut) return <></>
 
   return (
     <TransactionProgressStep
@@ -112,7 +116,7 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
           : 'idle'
       }
       header={
-        (dstTxState && !dstTxState.isSuccess) || dstAmountOut.currency.wrapped.equals(dstToken) ? (
+        (dstTxState && !dstTxState.isSuccess) || (dstToken && dstAmountOut.currency.wrapped.equals(dstToken)) ? (
           <TransactionProgressStep.Header>
             Transfer{' '}
             <b>
@@ -122,7 +126,7 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
           </TransactionProgressStep.Header>
         ) : (
           <TransactionProgressStep.Header>
-            Swap <b>{dstToken.symbol}</b> for{' '}
+            Swap <b>{dstToken?.symbol}</b> for{' '}
             <b>
               {dstAmountOut.toSignificant(6)} {dstAmountOut.currency.symbol}
             </b>

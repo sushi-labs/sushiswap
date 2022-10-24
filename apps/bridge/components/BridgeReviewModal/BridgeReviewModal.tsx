@@ -1,6 +1,7 @@
+import { Signature } from '@ethersproject/bytes'
 import { Button, Dots } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, getSushiXSwapContractConfig } from '@sushiswap/wagmi'
-import React, { FC, ReactNode, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useNotifications } from '../../lib/state/storage'
@@ -19,6 +20,12 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
   const { srcChainId, amount } = useBridgeState()
   const { execute, isWritePending, setSignature } = useBridgeExecute()
 
+  const onSig = useCallback((sig: Signature | undefined) => {
+    if (sig) {
+      setSignature(sig)
+    }
+  }, [])
+
   return (
     <>
       {children({ isWritePending, setOpen })}
@@ -33,7 +40,8 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
                 className="whitespace-nowrap"
                 fullWidth
                 address={getSushiXSwapContractConfig(srcChainId).addressOrName}
-                onSignature={setSignature}
+                onSignature={onSig}
+                enabled={Boolean(getSushiXSwapContractConfig(srcChainId).addressOrName)}
               />
               <Approve.Token
                 size="md"
@@ -41,6 +49,7 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
                 fullWidth
                 amount={amount}
                 address={BENTOBOX_ADDRESS[srcChainId]}
+                enabled={Boolean(BENTOBOX_ADDRESS[srcChainId])}
               />
             </Approve.Components>
           }

@@ -369,7 +369,7 @@ export class SushiBridge {
       : [Zero, Zero]
   }
 
-  async cook(gasSpent = 1000000): Promise<Partial<TransactionRequest & { to: string }>> {
+  async cook(gasSpent = 1000000): Promise<Partial<(TransactionRequest & { to: string }) | undefined>> {
     if (!this.contract) {
       return
     }
@@ -410,7 +410,7 @@ export class SushiBridge {
         value,
       }
     } catch (error) {
-      console.error('SushiXSwap Fee Error', error)
+      console.log('SushiXSwap Fee Error', error)
     }
   }
 }

@@ -67,7 +67,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
   })
 
   useEffect(() => {
-    if (isPrevSuccess && sourceTx?.hash) {
+    if (isPrevSuccess && sourceTx?.hash && timestamp) {
       let notificationSent = false
 
       const ts = new Date().getTime()
@@ -84,7 +84,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
               pending: '',
               completed: '',
               failed: '',
-              info: `Bridging ${amount?.toSignificant(6)} ${srcToken.symbol} to ${chains[dstChainId].name}`,
+              info: `Bridging ${amount?.toSignificant(6)} ${srcToken?.symbol} to ${chains[dstChainId].name}`,
             },
             timestamp: ts,
             groupTimestamp: timestamp,
@@ -113,7 +113,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
     lzLink,
     sourceTx,
     srcChainId,
-    srcToken.symbol,
+    srcToken?.symbol,
     timestamp,
   ])
 
@@ -124,7 +124,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
         status={isSuccess ? 'success' : isError ? 'skipped' : lzLink ? 'pending' : 'idle'}
         header={
           <TransactionProgressStep.Header>
-            Send <b>{srcToken.symbol}</b> to destination chain
+            Send <b>{srcToken?.symbol}</b> to destination chain
           </TransactionProgressStep.Header>
         }
         subheader={

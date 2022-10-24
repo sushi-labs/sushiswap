@@ -3,6 +3,7 @@ import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sus
 import STARGATE_FEE_LIBRARY_V03_ABI from '@sushiswap/stargate/abis/stargate-fee-library-v03.json'
 import STARGATE_POOL_ABI from '@sushiswap/stargate/abis/stargate-pool.json'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { isAddress } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useContractRead, useContractReads } from 'wagmi'
 
@@ -17,48 +18,62 @@ export const useBridgeFees = (): {
 } => {
   const { srcChainId, dstChainId, srcToken, dstToken, amount } = useBridgeState()
 
-  const { data: stargatePoolResults } = useContractReads({
-    contracts: [
-      {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
-        functionName: 'getChainPath',
-        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address]],
-        contractInterface: STARGATE_POOL_ABI,
-        chainId: srcChainId,
-      },
-      {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
-        functionName: 'feeLibrary',
-        contractInterface: STARGATE_POOL_ABI,
-        chainId: srcChainId,
-      },
-    ],
-    enabled: !!srcChainId && !!dstChainId && srcChainId !== dstChainId,
+  const contracts = useMemo(() => {
+    if (srcToken && dstToken) {
+      return [
+        {
+          addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
+          functionName: 'getChainPath',
+          args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address]],
+          contractInterface: STARGATE_POOL_ABI,
+          chainId: srcChainId,
+        },
+        {
+          addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
+          functionName: 'feeLibrary',
+          contractInterface: STARGATE_POOL_ABI,
+          chainId: srcChainId,
+        },
+      ]
+    }
+
+    return []
+  }, [])
+
+  const { data: stargatePoolResults, isLoading } = useContractReads({
+    contracts,
+    enabled: !!srcChainId && !!dstChainId && srcChainId !== dstChainId && contracts.length > 0,
+    keepPreviousData: true,
   })
 
   const { data: getFeesResults } = useContractRead({
     addressOrName: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
     args: [
-      STARGATE_POOL_ID[srcChainId][srcToken.wrapped.address],
-      STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address],
+      srcToken ? STARGATE_POOL_ID[srcChainId][srcToken.wrapped.address] : undefined,
+      dstToken ? STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address] : undefined,
       STARGATE_CHAIN_ID[dstChainId],
       getSushiXSwapContractConfig(srcChainId).addressOrName,
       amount?.quotient?.toString(),
     ],
     contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
     chainId: srcChainId,
-    enabled:
-      Array.isArray(stargatePoolResults) &&
-      stargatePoolResults.length > 0 &&
-      !!amount &&
-      !!srcChainId &&
-      !!dstChainId &&
-      srcChainId !== dstChainId,
+    enabled: Boolean(
+      !isLoading &&
+        isAddress(String(stargatePoolResults?.[1])) &&
+        Array.isArray(stargatePoolResults) &&
+        stargatePoolResults.length > 0 &&
+        !!amount &&
+        !!srcChainId &&
+        !!dstChainId &&
+        srcChainId !== dstChainId &&
+        !!srcToken &&
+        !!dstToken
+    ),
   })
 
   return useMemo(() => {
-    if (!getFeesResults) {
+    if (!getFeesResults || !srcToken) {
       return {
         eqFee: undefined,
         eqReward: undefined,
@@ -72,8 +87,8 @@ export const useBridgeFees = (): {
     const eqReward = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.eqReward.toString())
     const lpFee = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.lpFee.toString())
     const protocolFee = Amount.fromRawAmount(srcToken.wrapped, getFeesResults.protocolFee.toString())
-    let bridgeFee = undefined
 
+    let bridgeFee: Amount<Token> | undefined = undefined
     if (eqFee && eqReward && lpFee && protocolFee) {
       bridgeFee = eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
     }

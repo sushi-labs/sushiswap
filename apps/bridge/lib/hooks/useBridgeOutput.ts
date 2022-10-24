@@ -11,7 +11,7 @@ export const useBridgeOutput = () => {
   const srcAmountOut = useMemo(() => (bridgeFee ? amount?.subtract(bridgeFee) : undefined), [bridgeFee, amount])
 
   const dstAmountOut = useMemo(() => {
-    if (!srcAmountOut) return
+    if (!srcAmountOut || !dstToken) return
     return tryParseAmount(
       srcAmountOut.toFixed(srcAmountOut.currency.decimals > dstToken.decimals ? dstToken.decimals : undefined),
       dstToken

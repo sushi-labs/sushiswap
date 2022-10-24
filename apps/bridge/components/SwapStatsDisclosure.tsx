@@ -93,7 +93,7 @@ export const Stats: FC = () => {
       <Typography variant="sm" className="text-slate-400">
         Bridge Fee
       </Typography>
-      {bridgeFee && srcPrices?.[srcToken.wrapped.address] ? (
+      {bridgeFee && srcToken && srcPrices?.[srcToken.wrapped.address] ? (
         <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
           ~$
           {bridgeFee?.greaterThan(0)
@@ -108,7 +108,8 @@ export const Stats: FC = () => {
       <Typography variant="sm" className="text-slate-400">
         Gas Cost
       </Typography>
-      {Boolean(gasFee) &&
+      {gasFee &&
+      srcPrices &&
       Boolean(srcChainId && srcChainId in WNATIVE_ADDRESS && WNATIVE_ADDRESS[srcChainId] in srcPrices) ? (
         <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
           {gasFee.toSignificant(6)} {Native.onChain(srcChainId).symbol}

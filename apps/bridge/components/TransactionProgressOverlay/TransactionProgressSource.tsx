@@ -23,10 +23,12 @@ export const TransactionProgressSource: FC<TransactionProgressSource> = ({ child
   const { sourceTx } = useBridgeExecute()
 
   const { isError, isSuccess, isLoading } = useWaitForTransaction({
-    hash: sourceTx.hash,
+    hash: sourceTx?.hash,
     chainId: srcChainId,
-    enabled: Boolean(sourceTx.hash) && Boolean(amount),
+    enabled: Boolean(sourceTx?.hash) && Boolean(amount),
   })
+
+  if (!amount || !sourceTx?.hash) return <></>
 
   return (
     <>
@@ -34,7 +36,7 @@ export const TransactionProgressSource: FC<TransactionProgressSource> = ({ child
         link={chains[amount.currency.chainId].getTxUrl(sourceTx.hash)}
         status={isSuccess ? 'success' : isError ? 'failed' : isLoading ? 'pending' : 'idle'}
         header={
-          amount.currency.wrapped.equals(srcToken) ? (
+          srcToken && amount.currency.wrapped.equals(srcToken) ? (
             <TransactionProgressStep.Header>
               Transfer{' '}
               <b>
@@ -48,7 +50,7 @@ export const TransactionProgressSource: FC<TransactionProgressSource> = ({ child
               <b>
                 {amount.toSignificant(6)} {amount.currency.symbol}
               </b>{' '}
-              for <b>{srcToken.symbol}</b>
+              for <b>{srcToken?.symbol}</b>
             </TransactionProgressStep.Header>
           )
         }

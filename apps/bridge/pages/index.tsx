@@ -4,7 +4,7 @@ import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { Button, Typography } from '@sushiswap/ui'
+import { AppearOnMount, Button, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import {
@@ -20,7 +20,6 @@ import {
 } from 'components'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo } from 'react'
 
 import { useBridgeOutput } from '../lib/hooks'
@@ -82,10 +81,18 @@ const STARGATE_TOKEN_MAP = Object.fromEntries(
 )
 
 const _Bridge: FC = () => {
-  const router = useRouter()
+  const { dstAmountOut } = useBridgeOutput()
   const { amount, srcChainId, dstChainId, srcToken, dstToken, srcTypedAmount, dstTypedAmount } = useBridgeState()
-  const { setSrcChainId, setDstChainId, setSrcToken, setDstToken, setSrcTypedAmount, setDstTypedAmount } =
-    useBridgeStateActions()
+
+  const {
+    setSrcChainId,
+    setDstChainId,
+    setSrcToken,
+    setDstToken,
+    setSrcTypedAmount,
+    setDstTypedAmount,
+    switchChainIds,
+  } = useBridgeStateActions()
 
   const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
     useCustomTokens(srcChainId)
@@ -95,60 +102,11 @@ const _Bridge: FC = () => {
   const srcTokens = useMemo(() => STARGATE_TOKEN_MAP[srcChainId], [srcChainId])
   const dstTokens = useMemo(() => STARGATE_TOKEN_MAP[dstChainId], [dstChainId])
 
-  const { dstAmountOut } = useBridgeOutput()
   useEffect(() => setDstTypedAmount(dstAmountOut?.toExact() ?? ''), [dstAmountOut, setDstTypedAmount])
-
-  // This effect is responsible for encoding the swap state into the URL, to add statefullness
-  // to the swapper. It has an escape hatch to prevent uneeded re-runs, this is important.
-  // useEffect(() => {
-  //   // Escape hatch if already synced (could probably pull something like this out to generic...)
-
-  //   // console.debug([
-  //   //   srcChainId === Number(router.query.srcChainId),
-  //   //   dstChainId === Number(router.query.dstChainId),
-  //   //   srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
-  //   //   dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
-  //   //   srcTypedAmount === router.query.srcTypedAmount,
-  //   // ])
-
-  //   if (
-  //     srcChainId === Number(router.query.srcChainId) &&
-  //     dstChainId === Number(router.query.dstChainId) &&
-  //     (srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken) &&
-  //     (dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken) &&
-  //     srcTypedAmount === router.query.srcTypedAmount
-  //   ) {
-  //     return
-  //   }
-
-  //   void router.replace({
-  //     pathname: router.pathname,
-  //     query: {
-  //       ...router.query,
-  //       srcChainId,
-  //       srcToken: srcToken && srcToken.isToken ? srcToken.address : srcToken.symbol,
-  //       srcTypedAmount,
-  //       dstChainId,
-  //       dstToken: dstToken && dstToken.isToken ? dstToken.address : dstToken.symbol,
-  //     },
-  //   })
-  // }, [srcToken, dstToken, srcChainId, dstChainId, router, srcTypedAmount])
 
   const inputAmounts = useMemo(() => {
     return [tryParseAmount(srcTypedAmount, srcToken)]
   }, [srcToken, srcTypedAmount])
-
-  const switchCurrencies = useCallback(() => {
-    const _srcChainId = srcChainId
-    const _srcToken = srcToken
-    const _dstChainId = dstChainId
-    const _dstToken = dstToken
-
-    setSrcChainId(_dstChainId)
-    setSrcToken(_dstToken)
-    setDstChainId(_srcChainId)
-    setDstToken(_srcToken)
-  }, [dstChainId, dstToken, setDstChainId, setDstToken, setSrcChainId, setSrcToken, srcChainId, srcToken])
 
   const onSrcNetworkSelect = useCallback(
     (chainId: number) => {
@@ -177,9 +135,12 @@ const _Bridge: FC = () => {
         <div className="grid grid-cols-[auto_40px_auto] items-center p-3">
           <NetworkSelector label="From" value={srcChainId} onChange={onSrcNetworkSelect} />
           <div className="flex items-center justify-center">
-            <div className="cursor-pointer bg-slate-800 hover:ring-2 ring-offset-2 ring-offset-slate-700 ring-slate-800 rounded-full p-[5px]">
+            <button
+              onClick={() => switchChainIds()}
+              className="cursor-pointer bg-slate-800 hover:ring-2 ring-offset-2 ring-offset-slate-700 ring-slate-800 rounded-full p-[5px]"
+            >
               <ArrowRightIcon width={14} height={14} />
-            </div>
+            </button>
           </div>
           <div className="flex justify-end">
             <NetworkSelector label="To" value={dstChainId} onChange={onDstNetworkSelect} />
@@ -190,37 +151,41 @@ const _Bridge: FC = () => {
             <Typography variant="xs" weight={500} className="text-slate-400">
               Send
             </Typography>
-            <Web3Input.Currency
-              value={srcTypedAmount}
-              onChange={setSrcTypedAmount}
-              onSelect={setSrcToken}
-              currency={srcToken}
-              chainId={srcChainId}
-              tokenMap={srcTokens}
-              customTokenMap={srcCustomTokenMap}
-              onAddToken={onAddSrcCustomToken}
-              onRemoveToken={onRemoveSrcCustomToken}
-            />
+            <AppearOnMount>
+              <Web3Input.Currency
+                value={srcTypedAmount}
+                onChange={setSrcTypedAmount}
+                onSelect={setSrcToken}
+                currency={srcToken}
+                chainId={srcChainId}
+                tokenMap={srcTokens}
+                customTokenMap={srcCustomTokenMap}
+                onAddToken={onAddSrcCustomToken}
+                onRemoveToken={onRemoveSrcCustomToken}
+              />
+            </AppearOnMount>
           </div>
           <div className="border-b border-slate-200/5" />
           <div className="flex flex-col py-1">
             <Typography variant="xs" weight={500} className="text-slate-400">
               Receive
             </Typography>
-            <Web3Input.Currency
-              disabled
-              disableMaxButton
-              value={dstTypedAmount}
-              onChange={setDstTypedAmount}
-              onSelect={setDstToken}
-              currency={dstToken}
-              chainId={dstChainId}
-              tokenMap={dstTokens}
-              customTokenMap={dstCustomTokenMap}
-              onAddToken={onAddDstCustomToken}
-              onRemoveToken={onRemoveDstCustomToken}
-              loading={amount?.greaterThan(ZERO) && !dstTypedAmount}
-            />
+            <AppearOnMount>
+              <Web3Input.Currency
+                disabled
+                disableMaxButton
+                value={dstTypedAmount}
+                onChange={setDstTypedAmount}
+                onSelect={setDstToken}
+                currency={dstToken}
+                chainId={dstChainId}
+                tokenMap={dstTokens}
+                customTokenMap={dstCustomTokenMap}
+                onAddToken={onAddDstCustomToken}
+                onRemoveToken={onRemoveDstCustomToken}
+                loading={amount?.greaterThan(ZERO) && !dstTypedAmount}
+              />
+            </AppearOnMount>
           </div>
         </div>
         <div className="bg-slate-800">
@@ -236,7 +201,7 @@ const _Bridge: FC = () => {
               >
                 <Checker.Network fullWidth size="md" chainId={srcChainId}>
                   <BridgeReviewModal>
-                    {({ isWritePending, setOpen }) => {
+                    {({ setOpen }) => {
                       return (
                         <Button fullWidth size="md" onClick={() => setOpen(true)}>
                           Bridge

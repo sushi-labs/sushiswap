@@ -18,15 +18,15 @@ interface BridgeExecuteProvider {
 interface BridgeExecuteContext {
   id: string
   sourceTx: SendTransactionResult | undefined
-  setSourceTx: Dispatch<SetStateAction<SendTransactionResult>>
+  setSourceTx: Dispatch<SetStateAction<SendTransactionResult | undefined>>
   gasFee: Amount<Native> | undefined
-  execute(): void
+  execute: (() => void) | undefined
   isWritePending: boolean
   setSignature: Dispatch<SetStateAction<Signature>>
-  timestamp: number
+  timestamp: number | undefined
 }
 
-const BridgeExecuteContext = createContext<BridgeExecuteContext>(undefined)
+const BridgeExecuteContext = createContext<BridgeExecuteContext | undefined>(undefined)
 
 export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) => {
   const { address } = useAccount()
@@ -42,7 +42,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data) return
+      if (!data || !srcToken || !amount) return
 
       const ts = new Date().getTime()
 
@@ -63,11 +63,11 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
         groupTimestamp: ts,
       })
     },
-    [amount, createInlineNotification, srcChainId, srcToken.symbol]
+    [createInlineNotification, srcChainId, srcToken?.symbol]
   )
 
   const prepareBridge = useCallback(() => {
-    if (!srcChainId || !amount || !address || !srcInputCurrencyRebase || !contract) {
+    if (!srcChainId || !amount || !address || !srcInputCurrencyRebase || !contract || !srcToken || !dstToken) {
       return
     }
 
@@ -113,22 +113,22 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
 
         try {
           const [fee] = await bridge.getFee(1000000)
+          console.log('here')
           setFee(Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString()))
         } catch (e) {
           //
         }
       }
     },
-    [prepareBridge, srcChainId]
+    [prepareBridge, srcChainId, contract]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     chainId: srcChainId,
     prepare,
     onSettled,
-    onSuccess: () => {
-      setSignature(undefined)
-    },
+    onSuccess: () => setSignature(undefined),
+    enabled: Boolean(srcChainId && amount && address && srcInputCurrencyRebase && contract && srcToken && dstToken),
   })
 
   return (

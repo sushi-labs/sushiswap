@@ -27,8 +27,8 @@ export const BridgeReviewModalBase: FC<BridgeReviewModalBase> = ({ open, setOpen
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
 
-  const srcTokenPrice = srcPrices?.[srcToken.wrapped.address]
-  const dstTokenPrice = dstPrices?.[dstToken.wrapped.address]
+  const srcTokenPrice = srcToken ? srcPrices?.[srcToken.wrapped.address] : undefined
+  const dstTokenPrice = dstToken ? dstPrices?.[dstToken.wrapped.address] : undefined
 
   const [inputUsd, outputUsd, usdPctChange] = useMemo(() => {
     const inputUSD = amount && srcTokenPrice ? amount.multiply(srcTokenPrice.asFraction) : undefined
