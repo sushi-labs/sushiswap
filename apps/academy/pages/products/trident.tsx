@@ -31,30 +31,29 @@ const productStats = [
 const cards = [
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
-    title: 'Utilize funds in multiple DeFi apps',
-    subtitle:
-      'Bento’s innovation is its ability to track the user’s deposits via artificial balance, which is used to account for their idle funds...',
+    title: 'All-In-One Decentralized Exchange',
+    subtitle: 'The Trident Framework can support any pool type, no matter how novel or complex.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yield in DeFi',
-    subtitle: 'Being the foundation for multiple DeFi apps, Bentobox can attract more capital than simple vaults.',
+    title: 'More than a single AMM',
+    subtitle: "Trident is not one specific AMM itself, it's a host (framework) to all.",
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Flashloans',
-    subtitle:
-      'The funds in Bento can also be used in flash loans, which can add more passive value to the user’s underutilized capital.',
+    title: 'Capital Efficient',
+    subtitle: 'Built on and powered by the BentoBox, passively earning yield on your tokens.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Plug’n’play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of Bento, to instantly utilize the 500m+ TVL',
+    title: 'Save money on every swap',
+    subtitle: 'Managed by Tines, our smart ordering router, calculating and saving you money on every swap.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Extensible Versioning',
+    subtitle:
+      'Always compatible with previous versions, allowing developers to continue building new AMMs on Trident, without reinventing the wheel.',
   },
 ]
 

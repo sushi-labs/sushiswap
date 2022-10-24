@@ -27,34 +27,34 @@ const cards = [
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
     title: 'Utilize funds in multiple DeFi apps',
     subtitle:
-      'Bento’s innovation is its ability to track the user’s deposits via an artificial balance, which is used to account for the idle funds.',
+      'BentoBox’s innovation is its ability to track users’ deposits via an artificial balance, which is used to account for their idle funds while they’re simultaneously applied to strategies.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yields in DeFi',
-    subtitle: 'As the foundation for multiple DeFi apps, Bentobox can attract more capital than regular vaults.',
+    title: 'Earn some of the highest yield in DeFi',
+    subtitle:
+      'As the foundation for multiple DeFi apps, BentoBox can attract more capital than simple vaults, leading to higher yield than most vaults',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
     title: 'Flash Loans',
     subtitle:
-      'Funds in BentoBox can be used in flash loans, resulting in more passive value to the user’s underutilized capital.',
+      'Funds in BentoBox can be used for flash loans, adding more passive value to users’ underutilized capital.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
     title: 'Plug ’n play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of BentoBox to instantly unlock and utilize 500m+ TVL.',
+    subtitle: 'Build your own DeFi apps on top of BentoBox to instantly utilize over 500m+ TVL.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
     title: 'Capital Efficiency',
-    subtitle:
-      'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on BentoBox.',
+    subtitle: 'Profit from efficiencies of a growing protocol by saving on gas fees on each dApp deployed on BentoBox.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={ScreenCheckIcon} />,
     title: 'Smooth UX',
-    subtitle: 'Transaction approvals are inherited by the system, making individual txns within BentoBox cheaper.',
+    subtitle: 'Approvals are inherited by the system, making individual transactions within BentoBox cheaper.',
   },
 ]
 

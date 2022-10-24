@@ -31,30 +31,35 @@ const productStats = [
 const cards = [
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
-    title: 'Utilize funds in multiple DeFi apps',
+    title: 'Isolated Lending Pairs',
     subtitle:
-      'Bento’s innovation is its ability to track the user’s deposits via artificial balance, which is used to account for their idle funds...',
+      'Anyone can create a pair, it’s up to users which pairs they find safe enough; risk is isolated to just that pair.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yield in DeFi',
-    subtitle: 'Being the foundation for multiple DeFi apps, Bentobox can attract more capital than simple vaults.',
+    title: 'Flexible',
+    subtitle: 'Flexible oracles, both on-chain and off-chain.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Flashloans',
-    subtitle:
-      'The funds in Bento can also be used in flash loans, which can add more passive value to the user’s underutilized capital.',
+    title: 'Liquid Utilization Range',
+    subtitle: 'Liquid interest rates based on a specific target utilization range.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Plug’n’play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of Bento, to instantly utilize the 500m+ TVL',
+    title: 'Lowest Gas Fees',
+    subtitle: 'Flexible/composable contracts optimized for low gas consumption.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Flash Loans',
+    subtitle:
+      'Built on the BentoBox, so supplied assets can be used for flash loans and strategies, providing extra revenue for liquidity providers.',
+  },
+  {
+    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
+    title: 'Smooth UX',
+    subtitle: 'Benefits of liquidations go to the liquidity providers, not the liquidators.',
   },
 ]
 

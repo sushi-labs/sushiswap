@@ -9,7 +9,7 @@ import {
   ProductTechnicalDoc,
 } from 'common/components'
 import { defaultSidePadding } from 'common/helpers'
-import { AcademyIcon, MoneyHandIcon, MoneyTreeIcon, PuzzlePieceIcon, TilesIcon } from 'common/icons'
+import { AcademyIcon, TilesIcon } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
@@ -29,25 +29,23 @@ const productStats = [
 const cards = [
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
-    title: 'Utilize funds in multiple DeFi apps',
-    subtitle:
-      'Bento’s innovation is its ability to track the user’s deposits via artificial balance, which is used to account for their idle funds...',
+    title: 'Wide Exposure',
+    subtitle: 'Introduce your tokens to the largest possible crypto native audiences.',
   },
   {
-    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yield in DeFi',
-    subtitle: 'Being the foundation for multiple DeFi apps, Bentobox can attract more capital than simple vaults.',
+    Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
+    title: 'Simple and Intuitive',
+    subtitle: 'Anyone can launch a token on MISO, no technical knowledge required.',
   },
   {
-    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Flashloans',
-    subtitle:
-      'The funds in Bento can also be used in flash loans, which can add more passive value to the user’s underutilized capital.',
+    Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
+    title: 'Rich in Data',
+    subtitle: 'The highest level of transparency and data availability to help you make informed decisions.',
   },
   {
-    Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Plug’n’play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of Bento, to instantly utilize the 500m+ TVL',
+    Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
+    title: 'Fast to Launch',
+    subtitle: 'Quick launches with no interruption.',
   },
 ]
 

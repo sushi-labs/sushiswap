@@ -55,45 +55,43 @@ const productStats = [
 const cards = [
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
-    title: 'Utilize funds in multiple DeFi apps',
-    subtitle:
-      'Bento’s innovation is its ability to track the user’s deposits via artificial balance, which is used to account for their idle funds...',
+    title: 'Deepest Liquidity',
+    subtitle: 'Automatically finds a path to trade on all major chains.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yield in DeFi',
-    subtitle: 'Being the foundation for multiple DeFi apps, Bentobox can attract more capital than simple vaults.',
+    title: 'Fully Decentralized',
+    subtitle: 'Built on Stargate.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Flashloans',
-    subtitle:
-      'The funds in Bento can also be used in flash loans, which can add more passive value to the user’s underutilized capital.',
+    title: 'No Additional Fees',
+    subtitle: '0.3% standard DEX fee.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Plug’n’play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of Bento, to instantly utilize the 500m+ TVL',
+    title: 'Lowest Slippage',
+    subtitle: 'No reliance on third parties.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Non-Custodial',
+    subtitle: 'Protocol-managed liquidity.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Fast',
+    subtitle: 'Instantly initiates trades on both the source and destination chains.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Safety Guard',
+    subtitle: 'Failed transactions are saved into stablecoins.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Bridge Aggregator',
+    subtitle: 'Modular bridge API.',
   },
 ]
 

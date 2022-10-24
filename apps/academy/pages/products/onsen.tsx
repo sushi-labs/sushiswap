@@ -1,5 +1,6 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/24/solid'
 import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
+import onsenImg from 'common/assets/onsen-img.png'
 import {
   ProductArticles,
   ProductBackground,
@@ -20,6 +21,7 @@ import {
 } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
+import Image from 'next/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
@@ -37,35 +39,35 @@ const productStats = [
 const cards = [
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
-    title: 'Utilize funds in multiple DeFi apps',
-    subtitle:
-      'Bento’s innovation is its ability to track the user’s deposits via artificial balance, which is used to account for their idle funds...',
+    title: 'Earn some of the highest yields in DeFi',
+    subtitle: 'Earn some of the highest yields on new, exciting projects.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yield in DeFi',
-    subtitle: 'Being the foundation for multiple DeFi apps, Bentobox can attract more capital than simple vaults.',
+    title: 'Deep Liquidity',
+    subtitle:
+      'Provides incentives to pool tokens into BentoBox, providing deeper liquidity for trades on Trident AMMs and Kashi lending markets.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Flashloans',
-    subtitle:
-      'The funds in Bento can also be used in flash loans, which can add more passive value to the user’s underutilized capital.',
+    title: 'Multichain Deployment',
+    subtitle: 'Deployed across 14+ chains, never miss another opportunity to farm on a new chain again.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Plug’n’play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of Bento, to instantly utilize the 500m+ TVL',
+    title: 'Attract Liquidity & Attention',
+    subtitle: 'Get incentives from Sushi to match with your own, attracting liquidity and attention to your project.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Earn Yield & Boost Efficiency',
+    subtitle:
+      'Earn yield on treasury tokens, ease the burden of impermanent loss and decrease the price impact/slippage of individual trades, improving cost efficiency.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={ScreenCheckIcon} />,
-    title: 'Smooth UX',
-    subtitle: 'Approvals are inherited by the system, making individual transactions within Bento cheaper.',
+    title: 'Security Audited',
+    subtitle: 'Safe, fully audited for security and peace of mind.',
   },
 ]
 
@@ -150,21 +152,33 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
       <ProductBackground color={color} />
-      <section className="py-[75px]">
-        {longName.split('-').map((name, i) => (
-          <h1 key={i} className="text-6xl font-bold leading-[68px]">
-            {name}
-          </h1>
-        ))}
-        <h3 className="text-2xl mt-1.5 font-medium text-gray-500">{description}</h3>
+      <section className="py-[75px] relative">
+        <div className="grid md:grid-cols-2">
+          <div>
+            {longName.split('-').map((name, i) => (
+              <h1 key={i} className="text-6xl font-bold leading-[78px]">
+                {name}
+              </h1>
+            ))}
+            <h3 className="mt-2 text-2xl font-medium text-gray-500">{description}</h3>
+            <Link.External href={url}>
+              <Button
+                size="lg"
+                className="mt-16 rounded-lg"
+                startIcon={<ArrowRightCircleIcon width={20} height={20} />}
+              >
+                <Typography weight={500}>Enter App</Typography>
+              </Button>
+            </Link.External>
+          </div>
+          <div className="md:block hidden">
+            <Image src={onsenImg} unoptimized alt="furo-img" />
+          </div>
+        </div>
 
-        <Link.External href={url}>
-          <Button size="lg" className="mt-16 rounded-lg" startIcon={<ArrowRightCircleIcon width={20} height={20} />}>
-            <Typography weight={500}>Enter App</Typography>
-          </Button>
-        </Link.External>
         <ProductStats productStats={productStats} />
       </section>
+
       <ProductCards
         name={name}
         description="Onsen aims to bring new liquidity to Sushi, decrease slippage, expand our pool offerings, and foster exciting synergistic partnerships with other DeFi projects."

@@ -33,30 +33,35 @@ const productStats = [
 const cards = [
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
-    title: 'Utilize funds in multiple DeFi apps',
-    subtitle:
-      'Bento’s innovation is its ability to track the user’s deposits via artificial balance, which is used to account for their idle funds...',
+    title: 'Plug ‘n Play',
+    subtitle: 'Furo saves you time from having to do  contract deployments yourself.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yield in DeFi',
-    subtitle: 'Being the foundation for multiple DeFi apps, Bentobox can attract more capital than simple vaults.',
+    title: 'Intuitive UI',
+    subtitle: 'See the vesting schedules and progress in an easy-to-use dashboard.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Flashloans',
-    subtitle:
-      'The funds in Bento can also be used in flash loans, which can add more passive value to the user’s underutilized capital.',
+    title: 'Integration Possibilities',
+    subtitle: 'Furo minimizes admin by integrating directly into your existing DAO or DeFi tooling.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Plug’n’play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of Bento, to instantly utilize the 500m+ TVL',
+    title: 'NFT Composability',
+    subtitle:
+      'NFT tokenization on Furo allows our users to utilize their future payments in lending and borrowing money market protocols.',
   },
   {
     Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol, by saving on gas fees on each dApp deployed on Bento.',
+    title: 'Passive Income',
+    subtitle:
+      'All Furo subproducts are built upon BentoBox; all capital stored in Furo will be automatically earning yield.',
+  },
+  {
+    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
+    title: 'Sushi Ecosystem',
+    subtitle: 'Furo is fully open source and integrated into the Sushi ecosystem and our suite of products.',
   },
 ]
 
