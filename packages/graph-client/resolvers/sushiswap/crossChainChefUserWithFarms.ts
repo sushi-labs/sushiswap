@@ -9,9 +9,13 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
   // ugly but good for performance because of the pair fetch
   const [unstakedPools, stakedPools] = await Promise.all([
     sdk
-      .CrossChainUsers({ id: args.id, where: { balance_gt: 0 }, chainIds: args.chainIds, now: 0 })
+      .CrossChainLiquidityPositions({
+        where: { balance_gt: 0, user: args.id.toLowerCase() },
+        chainIds: args.chainIds,
+        now: 0,
+      })
       .then(async (data) => {
-        const { crossChainUsers } = data
+        const { crossChainLiquidityPositions } = data
         const user = crossChainUsers.reduce(
           (acc, cur) => {
             acc.liquidityPositions = [...acc.liquidityPositions, ...cur.liquidityPositions]

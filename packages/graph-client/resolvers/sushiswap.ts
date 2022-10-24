@@ -8,7 +8,7 @@ import {
   crossChainPairs,
   crossChainToken,
   crossChainTokens,
-  crossChainUsers,
+  crossChainLiquidityPositions,
   crossChainUserWithFarms,
 } from './sushiswap/index'
 /* eslint no-unused-vars: 0, unused-imports/no-unused-vars: 0, @typescript-eslint/no-unused-vars: 0 */
@@ -42,7 +42,7 @@ export const resolvers: Resolvers = {
     crossChainPairs,
     crossChainTokens,
     crossChainToken,
-    crossChainUsers,
+    crossChainLiquidityPositions,
     crossChainChefUser,
     crossChainUserWithFarms,
   },

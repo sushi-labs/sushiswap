@@ -162,63 +162,61 @@ query CrossChainPairs(
   }
 }
 
-query CrossChainUsers($id: ID!, $where: LiquidityPosition_filter, $chainIds: [Int!]!, $now: Int!, $block: Block_height) {
-  crossChainUsers(id: $id, chainIds: $chainIds, now: $now, block: $block) {
-    liquidityPositions(where: $where) {
-      balance
-      pair {
-        id
-        chainId
-        chainName
-        chainShortName
+query CrossChainLiquidityPositions($where: LiquidityPosition_filter, $chainIds: [Int!]!, $now: Int!, $block: Block_height) {
+  crossChainLiquidityPositions(chainIds: $chainIds, now: $now, block: $block, where: $where) {
+    id
+    chainId
+    chainName
+    chainShortName
+    balance
+    pair {
+      id
+      name
+      reserve0
+      reserve1
+      liquidity
+      swapFee
+      twapEnabled
+      volume1w
+      source
+      type
+      token0 {
         name
-        reserve0
-        reserve1
-        liquidity
-        swapFee
-        twapEnabled
-        volume1w
-        type
-        source
-        type
-        token0 {
-          name
-          id
-          decimals
-          symbol
-        }
-        token1 {
-          name
-          id
-          decimals
-          symbol
-        }
-        liquidityNative
-        liquidityUSD
-        apr
-        feeApr
-        incentiveApr
-        daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
-          id
-          date
-          volumeUSD
-        }
-        farm {
-          id
-          incentives {
-            apr
-            rewardPerDay
-            rewardToken {
-              address
-              symbol
-              decimals
-            }
-            rewarderAddress
-            rewarderType
+        id
+        decimals
+        symbol
+      }
+      token1 {
+        name
+        id
+        decimals
+        symbol
+      }
+      liquidityNative
+      liquidityUSD
+      apr
+      feeApr
+      incentiveApr
+      daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+        id
+        date
+        volumeUSD
+      }
+      farm {
+        id
+        incentives {
+          apr
+          rewardPerDay
+          rewardToken {
+            address
+            symbol
+            decimals
           }
-          chefType
-          poolType
+          rewarderAddress
+          rewarderType
         }
+        chefType
+        poolType
       }
     }
   }

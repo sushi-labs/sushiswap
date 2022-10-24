@@ -61,6 +61,11 @@ additionalTypeDefs: |
     chainName: String!
     chainShortName: String!
   }
+  extend type LiquidityPosition {
+    chainId: Int!
+    chainName: String!
+    chainShortName: String!
+  }
   extend type Pair {
     chainId: Int!
     chainName: String!
@@ -132,13 +137,12 @@ additionalTypeDefs: |
       farmsOnly: Boolean
     ): [Pair!]!
     crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair
-    crossChainUsers(
-      id: ID!,
+    crossChainLiquidityPositions(
       block: Block_height,
       where: LiquidityPosition_filter,
       now: Int!, 
       chainIds: [Int!]!,
-    ): [User]
+    ): [LiquidityPosition!]!
     crossChainChefUser(
       first: Int,
       skip: Int,
@@ -151,7 +155,7 @@ additionalTypeDefs: |
       block: Block_height,
       now: Int!,
       chainIds: [Int!]!,
-    ): [UserWithFarm]
+    ): [UserWithFarm!]
     crossChainToken(id: ID!, now: Int!, chainId: Int!): Token!
     crossChainTokens(
       first: Int,
