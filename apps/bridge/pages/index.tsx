@@ -151,41 +151,37 @@ const _Bridge: FC = () => {
             <Typography variant="xs" weight={500} className="text-slate-400">
               Send
             </Typography>
-            <AppearOnMount>
-              <Web3Input.Currency
-                value={srcTypedAmount}
-                onChange={setSrcTypedAmount}
-                onSelect={setSrcToken}
-                currency={srcToken}
-                chainId={srcChainId}
-                tokenMap={srcTokens}
-                customTokenMap={srcCustomTokenMap}
-                onAddToken={onAddSrcCustomToken}
-                onRemoveToken={onRemoveSrcCustomToken}
-              />
-            </AppearOnMount>
+            <Web3Input.Currency
+              value={srcTypedAmount}
+              onChange={setSrcTypedAmount}
+              onSelect={setSrcToken}
+              currency={srcToken}
+              chainId={srcChainId}
+              tokenMap={srcTokens}
+              customTokenMap={srcCustomTokenMap}
+              onAddToken={onAddSrcCustomToken}
+              onRemoveToken={onRemoveSrcCustomToken}
+            />
           </div>
           <div className="border-b border-slate-200/5" />
           <div className="flex flex-col py-1">
             <Typography variant="xs" weight={500} className="text-slate-400">
               Receive
             </Typography>
-            <AppearOnMount>
-              <Web3Input.Currency
-                disabled
-                disableMaxButton
-                value={dstTypedAmount}
-                onChange={setDstTypedAmount}
-                onSelect={setDstToken}
-                currency={dstToken}
-                chainId={dstChainId}
-                tokenMap={dstTokens}
-                customTokenMap={dstCustomTokenMap}
-                onAddToken={onAddDstCustomToken}
-                onRemoveToken={onRemoveDstCustomToken}
-                loading={amount?.greaterThan(ZERO) && !dstTypedAmount}
-              />
-            </AppearOnMount>
+            <Web3Input.Currency
+              disabled
+              disableMaxButton
+              value={dstTypedAmount}
+              onChange={setDstTypedAmount}
+              onSelect={setDstToken}
+              currency={dstToken}
+              chainId={dstChainId}
+              tokenMap={dstTokens}
+              customTokenMap={dstCustomTokenMap}
+              onAddToken={onAddDstCustomToken}
+              onRemoveToken={onRemoveDstCustomToken}
+              loading={amount?.greaterThan(ZERO) && !dstTypedAmount}
+            />
           </div>
         </div>
         <div className="bg-slate-800">

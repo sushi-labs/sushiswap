@@ -184,7 +184,7 @@ const BalancePanel: FC<BalancePanel> = ({
     enabled: Boolean(currency),
   })
 
-  if (!balance) {
+  if (!balance && isMounted) {
     return (
       <div className="h-[24px] w-[60px] flex items-center">
         <div className="bg-slate-600 animate-pulse h-[12px] w-full rounded-full" />
@@ -211,7 +211,7 @@ const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) => {
   const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
   const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
 
-  if (!tokenPrices)
+  if (!tokenPrices && isMounted)
     return (
       <div className="h-[24px] w-[60px] flex items-center">
         <div className="bg-slate-600 animate-pulse h-[12px] w-full rounded-full" />
