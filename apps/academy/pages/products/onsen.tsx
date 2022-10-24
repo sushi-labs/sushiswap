@@ -1,23 +1,18 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/24/solid'
 import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
 import onsenImg from 'common/assets/onsen-img.png'
-import {
-  ProductArticles,
-  ProductBackground,
-  ProductCards,
-  ProductFaq,
-  ProductStats,
-  ProductTechnicalDoc,
-} from 'common/components'
+import { ProductArticles, ProductBackground, ProductFaq, ProductStats, ProductTechnicalDoc } from 'common/components'
 import { defaultSidePadding } from 'common/helpers'
 import {
   AcademyIcon,
   MoneyBagIcon,
   MoneyHandIcon,
   MoneyTreeIcon,
+  PeopleIcon,
   PuzzlePieceIcon,
   ScreenCheckIcon,
   TilesIcon,
+  TradingIcon,
 } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
@@ -148,6 +143,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   const latestArticles = (data?.articles?.data ?? []) as ArticleEntity[]
   const relevantArticles = (data?.relevantArticles?.data ?? []) as ArticleEntity[]
+  const traderCards = cards.slice(0, 3)
+  const projectCards = cards.slice(3)
 
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
@@ -160,7 +157,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
                 {name}
               </h1>
             ))}
-            <h3 className="mt-2 text-2xl font-medium text-gray-500">{description}</h3>
+            <h3 className="mt-2 text-2xl font-medium text-slate-400">{description}</h3>
             <Link.External href={url}>
               <Button
                 size="lg"
@@ -179,12 +176,73 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <ProductStats productStats={productStats} />
       </section>
 
-      <ProductCards
-        name={name}
-        description="Onsen aims to bring new liquidity to Sushi, decrease slippage, expand our pool offerings, and foster exciting synergistic partnerships with other DeFi projects."
-        cards={cards}
-        gradientBorderColor={color}
-      />
+      <section className="py-[75px]">
+        <div className="text-center">
+          <Typography variant="h1" weight={700}>
+            What is {name}?
+          </Typography>
+          <Typography className="mt-6 text-center text-slate-400" variant="lg">
+            Onsen aims to bring new liquidity to Sushi, decrease slippage, expand our pool offerings, and foster
+            exciting synergistic partnerships with other DeFi projects.
+          </Typography>
+        </div>
+
+        <div className="grid gap-6 mt-[70px]">
+          <div className="flex items-center gap-4">
+            <TradingIcon />
+            <span className="font-bold text-2xl">For Traders</span>
+          </div>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-6 gap-y-8">
+            {traderCards.map((card, i) => (
+              <div
+                key={i}
+                className="p-px h-[415px] rounded-3xl"
+                style={{
+                  background: !i ? `linear-gradient(218.8deg, ${color} 2.35%, rgba(0, 0, 0, 0) 97.65%)` : 'unset',
+                }}
+              >
+                <div className="p-12 h-full bg-[#212939] rounded-3xl">
+                  <card.Icon />
+                  <div className="mt-11">
+                    <Typography weight={700} variant="h3">
+                      {card.title}
+                    </Typography>
+                  </div>
+                  <div className="mt-5">
+                    <Typography variant="sm" className="text-slate-400">
+                      {card.subtitle}
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="grid gap-6 mt-20">
+          <div className="flex items-center gap-4">
+            <PeopleIcon />
+            <span className="font-bold text-2xl">For Projects</span>
+          </div>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-6 gap-y-8">
+            {projectCards.map((card, i) => (
+              <div key={i} className="p-12 h-full bg-[#212939] rounded-3xl">
+                <card.Icon />
+                <div className="mt-11">
+                  <Typography weight={700} variant="h3">
+                    {card.title}
+                  </Typography>
+                </div>
+                <div className="mt-5">
+                  <Typography variant="sm" className="text-slate-400">
+                    {card.subtitle}
+                  </Typography>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <ProductArticles
         title="Articles"
         subtitle="Read more about the latest releases"

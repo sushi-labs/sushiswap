@@ -21,7 +21,7 @@ export const ProductArticles: FC<ProductArticles> = ({ title, productName, artic
           <Typography weight={700} variant="h1">
             {title}
           </Typography>
-          <Typography variant="lg" className="mt-3 text-gray-500">
+          <Typography variant="lg" className="mt-3 text-slate-400">
             {subtitle}
           </Typography>
         </div>

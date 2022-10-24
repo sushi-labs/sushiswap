@@ -144,7 +144,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           <span>Framework for Building </span>
           <span className="font-bold"> AMMs</span>
         </h1>
-        <h3 className="mt-10 text-2xl font-medium text-gray-500">{description}</h3>
+        <h3 className="mt-10 text-2xl font-medium text-slate-400">{description}</h3>
 
         <Link.External href={url}>
           <Button

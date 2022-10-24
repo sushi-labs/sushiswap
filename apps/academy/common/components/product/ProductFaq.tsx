@@ -41,7 +41,7 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
                   leaveFrom="transform max-h-max"
                   leaveTo="transform max-h-0"
                 >
-                  <Disclosure.Panel className="px-6 pb-6 text-gray-500 sm:px-9 sm:pb-9">{answer}</Disclosure.Panel>
+                  <Disclosure.Panel className="px-6 pb-6 text-slate-400 sm:px-9 sm:pb-9">{answer}</Disclosure.Panel>
                 </Transition>
               </>
             )}

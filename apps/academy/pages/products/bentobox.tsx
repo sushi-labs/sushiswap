@@ -145,7 +145,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             {name}
           </h1>
         ))}
-        <h3 className="text-2xl mt-1.5 font-medium text-gray-500">{description}</h3>
+        <h3 className="text-2xl mt-1.5 font-medium text-slate-400">{description}</h3>
 
         <Link.External href={url}>
           <Button

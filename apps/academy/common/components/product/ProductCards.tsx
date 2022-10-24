@@ -21,12 +21,12 @@ export const ProductCards: FC<ProductCards> = ({ name, description, cards, gradi
         <Typography variant="h1" weight={700}>
           What is {name}?
         </Typography>
-        <Typography className="mt-6 text-center text-gray-500" variant="lg">
+        <Typography className="mt-6 text-center text-slate-400" variant="lg">
           {description}
         </Typography>
       </div>
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] mt-24 gap-x-6 gap-y-8">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] mt-[70px] gap-x-6 gap-y-8">
         {cards.map((card, i) => (
           <div
             key={i}
@@ -38,14 +38,14 @@ export const ProductCards: FC<ProductCards> = ({ name, description, cards, gradi
             }}
           >
             <div className="p-12 h-full bg-[#212939] rounded-3xl">
-              <div className="w-[95px] h-[95px]">{<card.Icon />}</div>
+              <card.Icon />
               <div className="mt-11">
                 <Typography weight={700} variant="h3">
                   {card.title}
                 </Typography>
               </div>
               <div className="mt-5">
-                <Typography variant="sm" className="text-gray-500">
+                <Typography variant="sm" className="text-slate-400">
                   {card.subtitle}
                 </Typography>
               </div>

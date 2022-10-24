@@ -1,13 +1,6 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
-import {
-  ProductArticles,
-  ProductBackground,
-  ProductCards,
-  ProductFaq,
-  ProductStats,
-  ProductTechnicalDoc,
-} from 'common/components'
+import { Button, CheckIcon, classNames, Container, Link, Typography } from '@sushiswap/ui'
+import { ProductArticles, ProductBackground, ProductFaq, ProductStats, ProductTechnicalDoc } from 'common/components'
 import { defaultSidePadding } from 'common/helpers'
 import { AcademyIcon, TilesIcon } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
@@ -25,6 +18,10 @@ const productStats = [
   { value: '$500m', name: 'Funds Raised' },
   { value: '13k', name: 'Users Participated' },
   { value: '$4m', name: 'Volume Generated' },
+]
+const usps = [
+  'From token generation to launch on Sushi, MISO is optimized for every aspect of a trustless UX.',
+  'MISO aims to capture the spirit of crypto, a platform where any project can launch and anyone can buy, no strings attached.',
 ]
 const cards = [
   {
@@ -136,7 +133,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             {name}
           </h1>
         ))}
-        <h3 className="w-2/5 mt-2 text-2xl font-medium text-gray-400">{description}</h3>
+        <h3 className="w-2/5 mt-2 text-2xl font-medium text-slate-400">{description}</h3>
 
         <Link.External href={url}>
           <Button
@@ -149,12 +146,57 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         </Link.External>
         <ProductStats productStats={productStats} />
       </section>
-      <ProductCards
-        name={name}
-        description="The only community curated launchpad platform, available to everyone. MISO enables project owners to easily launch a token in a true permissionless and decentralized way."
-        cards={cards}
-        gradientBorderColor={color}
-      />
+      <section className="py-[75px]">
+        <div className="text-center">
+          <Typography variant="h1" weight={700}>
+            What is {name}?
+          </Typography>
+          <Typography className="mt-6 text-center text-slate-400" variant="lg">
+            The only community curated launchpad platform, available to everyone.
+          </Typography>
+          <Typography className="text-center text-slate-400" variant="lg">
+            MISO enables project owners to easily launch a token in a true permissionless and decentralized way.
+          </Typography>
+        </div>
+
+        <div className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(360px,1fr))] gap-6">
+          {usps.map((usp, i) => (
+            <div key={i} className="flex gap-6 p-4">
+              <div className="bg-slate-800 rounded-full min-w-[56px] h-14 flex items-center justify-center">
+                <CheckIcon className="text-[#7CFF6B] w-10" />
+              </div>
+              <p className="text-lg text-slate-400">{usp}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(360px,1fr))] mt-[70px] gap-x-6 gap-y-8">
+          {cards.map((card, i) => (
+            <div
+              key={i}
+              className="p-px h-[415px] rounded-3xl"
+              style={{
+                background: !i ? `linear-gradient(218.8deg, ${color} 2.35%, rgba(0, 0, 0, 0) 97.65%)` : 'unset',
+              }}
+            >
+              <div className="p-12 h-full bg-[#212939] rounded-3xl">
+                <card.Icon />
+                <div className="mt-11">
+                  <Typography weight={700} variant="h3">
+                    {card.title}
+                  </Typography>
+                </div>
+                <div className="mt-5">
+                  <Typography variant="sm" className="text-slate-400">
+                    {card.subtitle}
+                  </Typography>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <ProductArticles
         title="Articles"
         subtitle="Read more about the latest releases"
