@@ -63,7 +63,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ children }) =
         groupTimestamp: ts,
       })
     },
-    [createInlineNotification, srcChainId, srcToken?.symbol]
+    [amount, createInlineNotification, srcChainId, srcToken]
   )
 
   const prepareBridge = useCallback(() => {

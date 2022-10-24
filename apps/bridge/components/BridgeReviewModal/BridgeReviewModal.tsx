@@ -24,7 +24,7 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
     if (sig) {
       setSignature(sig)
     }
-  }, [])
+  }, [setSignature])
 
   return (
     <>

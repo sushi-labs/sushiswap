@@ -38,7 +38,7 @@ export const useBridgeFees = (): {
     }
 
     return []
-  }, [])
+  }, [dstChainId, dstToken, srcChainId, srcToken])
 
   const { data: stargatePoolResults, isLoading } = useContractReads({
     contracts,
