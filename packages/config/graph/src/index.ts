@@ -83,7 +83,7 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
-  [ChainId.BTTC]: '34.173.43.67:8000/subgraphs/name',
+  [ChainId.BTTC]: 'subgraphs.sushi.com/subgraphs/name',
 }
 
 export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {

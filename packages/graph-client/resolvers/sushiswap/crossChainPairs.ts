@@ -7,7 +7,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { Pair, QueryResolvers } from '../../.graphclient'
+import { InputMaybe, Pair, QueryResolvers } from '../../.graphclient'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
 import { getOneDayBlocks, getOneWeekBlocks } from '../../fetchers/block'
 import { FarmAPI, getFarms } from '../../fetchers/farms'
@@ -24,7 +24,7 @@ const transformer = (
   pools1d: SushiPairWithChain[],
   pools1w: SushiPairWithChain[],
   farms: FarmAPI,
-  farmsOnly?: boolean
+  farmsOnly?: InputMaybe<boolean> | undefined
 ): Pair[] =>
   (pools || [])
     .filter((pool) => !blacklist.includes(pool.id))

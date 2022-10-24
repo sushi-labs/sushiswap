@@ -1,7 +1,7 @@
 name: Trident
 handler:
   graphql:
-    endpoint: http://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/trident-optimism}
+    endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/trident-optimism}
     retry: 3
 transforms:
   - autoPagination:

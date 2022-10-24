@@ -36,7 +36,7 @@ export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
   contractInterface:
     bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.abi ?? [],
-})
+}) 
 
 export function useBentoBoxContract(chainId: number | undefined) {
   return useContract<BentoBoxV1>({
