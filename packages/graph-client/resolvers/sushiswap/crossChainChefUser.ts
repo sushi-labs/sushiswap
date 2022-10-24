@@ -34,7 +34,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (r
       })
   }
 
-  return Promise.all([
+  return Promise.allSettled([
     ...(args.chainIds.includes(ChainId.ETHEREUM)
       ? [MASTERCHEF_V1_SUBGRAPH_NAME, MASTERCHEF_V2_SUBGRAPH_NAME].map((subgraphName) =>
           fetcher({ chainId: ChainId.ETHEREUM, subgraphName, subgraphHost: SUBGRAPH_HOST[ChainId.ETHEREUM] })
@@ -45,5 +45,13 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (r
       .map((chainId) =>
         fetcher({ chainId, subgraphName: MINICHEF_SUBGRAPH_NAME[chainId], subgraphHost: SUBGRAPH_HOST[chainId] })
       ),
-  ]).then((users) => users.flat())
+  ]).then((users) => {
+    return users.flat().reduce((acc, cur) => {
+      if (cur.status === 'fulfilled' && cur.value.length > 0) {
+        acc.push(...cur.value)
+      }
+
+      return acc
+    }, [])
+  })
 }

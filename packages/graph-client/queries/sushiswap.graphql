@@ -162,8 +162,8 @@ query CrossChainPairs(
   }
 }
 
-query CrossChainUser($id: ID!, $where: LiquidityPosition_filter, $chainIds: [Int!]!, $now: Int!, $block: Block_height) {
-  crossChainUser(id: $id, chainIds: $chainIds, now: $now, block: $block) {
+query CrossChainUsers($id: ID!, $where: LiquidityPosition_filter, $chainIds: [Int!]!, $now: Int!, $block: Block_height) {
+  crossChainUsers(id: $id, chainIds: $chainIds, now: $now, block: $block) {
     liquidityPositions(where: $where) {
       balance
       pair {

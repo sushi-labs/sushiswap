@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
 import { getBuiltGraphSDK, QueryResolvers, UserWithFarm } from '../../.graphclient'
-import { getTokenBalances } from '../../fetchers/token'
+import { getTokenBalances } from '../../fetchers'
 
 export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] = async (root, args) => {
   const sdk = getBuiltGraphSDK()
@@ -9,8 +9,17 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
   // ugly but good for performance because of the pair fetch
   const [unstakedPools, stakedPools] = await Promise.all([
     sdk
-      .CrossChainUser({ id: args.id, where: { balance_gt: 0 }, chainIds: args.chainIds, now: 0 })
-      .then(async ({ crossChainUser: user }) => {
+      .CrossChainUsers({ id: args.id, where: { balance_gt: 0 }, chainIds: args.chainIds, now: 0 })
+      .then(async (data) => {
+        const { crossChainUsers } = data
+        const user = crossChainUsers.reduce(
+          (acc, cur) => {
+            acc.liquidityPositions = [...acc.liquidityPositions, ...cur.liquidityPositions]
+            return acc
+          },
+          { liquidityPositions: [] }
+        )
+
         const balances = await getTokenBalances(
           (user.liquidityPositions ?? []).map((lp) => ({
             token: lp.pair.id.split(':')[1],
@@ -18,7 +27,8 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
             chainId: lp.pair.chainId,
           }))
         )
-        return (user.liquidityPositions ?? [])
+
+        return user.liquidityPositions
           .map((lp) => ({
             id: lp.pair.id,
             unstakedBalance: balances.find((el) => el.token === lp.pair.id.split(':')[1])?.balance ?? '0',

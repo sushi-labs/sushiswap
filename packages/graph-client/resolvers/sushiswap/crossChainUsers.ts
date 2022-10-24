@@ -9,7 +9,7 @@ import {
 
 import { QueryResolvers } from '../../.graphclient'
 
-export const crossChainUser: QueryResolvers['crossChainUser'] = async (root, args, context, info) => {
+export const crossChainUsers: QueryResolvers['crossChainUsers'] = async (root, args, context, info) => {
   const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
   const transformer = (user, chainId) => {
@@ -72,7 +72,7 @@ export const crossChainUser: QueryResolvers['crossChainUser'] = async (root, arg
     }
   }
 
-  return Promise.all([
+  return Promise.allSettled([
     ...args.chainIds
       .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
@@ -106,14 +106,12 @@ export const crossChainUser: QueryResolvers['crossChainUser'] = async (root, arg
         }).then((user) => transformer(user, chainId))
       ),
   ]).then((users) => {
-    return users.flat().reduce(
-      (acc, cur) => {
-        return {
-          ...acc,
-          liquidityPositions: [...acc.liquidityPositions, ...cur.liquidityPositions],
-        }
-      },
-      { liquidityPositions: [] }
-    )
+    return users.flat().reduce((acc, cur) => {
+      if (cur.status === 'fulfilled') {
+        acc.push(cur.value)
+      }
+
+      return acc
+    }, [])
   })
 }
