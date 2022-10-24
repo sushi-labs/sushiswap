@@ -26,7 +26,7 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
   [ChainId.OPTIMISM]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.KAVA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.METIS]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-  [ChainId.BTTC]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+  [ChainId.BTTC]: '0x2f686751b19a9d91cc3d57d90150Bc767f050066',
 }
 
 export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
