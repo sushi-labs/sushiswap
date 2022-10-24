@@ -48,8 +48,8 @@
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
-    "@graphprotocol/client-cli": "2.2.13",
     "@graphql-mesh/transform-filter-schema": "latest",
+    "@graphprotocol/client-cli": "2.2.15",
     "@graphql-mesh/transform-prefix": "latest",
     "@graphql-mesh/transform-prune": "latest",
     "@graphql-mesh/transform-rename": "latest",

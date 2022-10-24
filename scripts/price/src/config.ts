@@ -17,8 +17,6 @@ export const SUSHISWAP_CHAINS = [
   ChainId.BOBA,
 ]
 
-export const TRIDENT_CHAINS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.METIS, ChainId.KAVA]
-
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
 
 export const GRAPH_HOST: Record<number | string, string> = {
@@ -55,11 +53,4 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
-}
-
-export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.POLYGON]: 'sushi-0m/trident-polygon',
-  [ChainId.OPTIMISM]: 'sushi-0m/trident-optimism',
-  [ChainId.KAVA]: 'sushi-0m/trident-kava',
-  [ChainId.METIS]: 'sushi-0m/trident-metis',
 }

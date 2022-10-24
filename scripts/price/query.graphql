@@ -19,7 +19,7 @@ query Tokens($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter, $blo
 }
 
 query PolygonTokens($first: Int = 5000, $skip: Int = 0, $where: Polygon_Token_filter, $block: Polygon_Block_height) {
-  Polygon_tokens(first: $first, skip: $skip, where: $where, block: $block) {
+  Polygon_tokens(first: $first, skip: $skip, where: $where) {
     id
     liquidity
     derivedETH

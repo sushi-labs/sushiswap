@@ -236,16 +236,19 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
     reserve1
     swapFee
     twapEnabled
+    liquidity
+    liquidityNative
+    liquidityUSD
     liquidity1dChange
     liquidity1wChange
     volumeUSD
     volume1d
     volume1dChange
-    volume1w
+    feesUSD
+    fees1d
     txCount
-    txCount1d
-    txCount1dChange
-    txCount1w
+    txCount1d,
+    txCount1dChange,
     source
     type
     token0 {
@@ -260,9 +263,6 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
       decimals
       symbol
     }
-    liquidity
-    liquidityNative
-    liquidityUSD
     apr
     feeApr
     incentiveApr

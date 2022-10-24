@@ -3,23 +3,23 @@ import { ChainId } from '@sushiswap/chain'
 export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS] as const
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
-  ChainId.ETHEREUM,
-  ChainId.AVALANCHE,
   ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
   ChainId.BSC,
   ChainId.CELO,
+  ChainId.ETHEREUM,
   ChainId.FANTOM,
   ChainId.FUSE,
   ChainId.GNOSIS,
   ChainId.MOONBEAM,
   ChainId.MOONRIVER,
-  ChainId.ARBITRUM_NOVA,
+  ChainId.POLYGON,
   ChainId.HARMONY,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.BOBA,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
-  ChainId.BOBA,
-  // ChainId.POLYGON,
 ] as const
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
@@ -130,6 +130,9 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
   [ChainId.POLYGON]: 'sushiswap/matic-exchange',
   [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
+  [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
+  [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
+  [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
 }
 
 export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
