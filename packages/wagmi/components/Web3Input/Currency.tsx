@@ -2,7 +2,7 @@ import { Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
+import { classNames, Currency as UICurrency, DEFAULT_INPUT_UNSTYLED, Input, Typography, Skeleton } from '@sushiswap/ui'
 import { FC, MouseEventHandler, useCallback, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -65,11 +65,11 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   )
 
   return (
-    <div className={classNames(className, loading ? 'animate-pulse' : '')} onClick={focusInput}>
+    <div className={classNames(className)} onClick={focusInput}>
       <div className="relative flex items-center gap-1">
         {loading ? (
           <div className="flex flex-col gap-1 justify-center flex-grow h-[44px]">
-            <div className="w-[120px] h-[22px] bg-slate-500 rounded-full" />
+            <Skeleton.Box className="w-[120px] h-[22px] bg-slate-600" />
           </div>
         ) : (
           <Transition
@@ -109,8 +109,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         >
           {loading && !currency ? (
             <div className="flex gap-1">
-              <div className="w-5 h-5 bg-slate-500 rounded-full" />
-              <div className="w-[60px] h-[20px] bg-slate-500 rounded-full" />
+              <Skeleton.Circle radius={20} className="bg-slate-500" />
+              <Skeleton.Box className="w-[60px] h-[20px] bg-slate-500" />
             </div>
           ) : currency ? (
             <>
@@ -187,7 +187,7 @@ const BalancePanel: FC<BalancePanel> = ({
   if (!balance) {
     return (
       <div className="h-[24px] w-[60px] flex items-center">
-        <div className="bg-slate-600 animate-pulse h-[12px] w-full rounded-full" />
+        <Skeleton.Box className="bg-slate-600 h-[12px] w-full" />
       </div>
     )
   }
@@ -214,7 +214,7 @@ const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) => {
   if (!tokenPrices)
     return (
       <div className="h-[24px] w-[60px] flex items-center">
-        <div className="bg-slate-600 animate-pulse h-[12px] w-full rounded-full" />
+        <Skeleton.Box className="bg-slate-600 h-[12px] w-full" />
       </div>
     )
 
