@@ -52,6 +52,6 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (r
       }
 
       return acc
-    }, [])
+    }, [] as Awaited<ReturnType<typeof fetcher>>)
   })
 }
