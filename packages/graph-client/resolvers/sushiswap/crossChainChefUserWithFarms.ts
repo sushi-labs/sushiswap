@@ -11,24 +11,20 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
     sdk
       .CrossChainUsers({ id: args.id, where: { balance_gt: 0 }, chainIds: args.chainIds, now: 0 })
       .then(async (data) => {
-        const { crossChainUsers } = data
-        const user = crossChainUsers.reduce(
-          (acc, cur) => {
-            acc.liquidityPositions = [...acc.liquidityPositions, ...cur.liquidityPositions]
-            return acc
-          },
-          { liquidityPositions: [] }
-        )
+        const liquidityPositions = data.crossChainUsers.reduce((acc, cur) => {
+          acc.push(...(cur.liquidityPositions || []))
+          return acc
+        }, [] as NonNullable<typeof data.crossChainUsers[0]['liquidityPositions']>)
 
         const balances = await getTokenBalances(
-          (user.liquidityPositions ?? []).map((lp) => ({
+          (liquidityPositions ?? []).map((lp) => ({
             token: lp.pair.id.split(':')[1],
             user: args.id,
             chainId: lp.pair.chainId,
           }))
         )
 
-        return user.liquidityPositions
+        return liquidityPositions
           .map((lp) => ({
             id: lp.pair.id,
             unstakedBalance: balances.find((el) => el.token === lp.pair.id.split(':')[1])?.balance ?? '0',
@@ -85,7 +81,9 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
         : staked
       : (unstaked as NonNullable<typeof unstaked>)) as unknown as UserWithFarm // pair type doesn't match, problem for a future somebody
 
-    const pair = unstaked?.pair ?? (staked as NonNullable<typeof unstaked>).pair
+    const pair = unstaked?.pair ?? staked?.pair
+    // type guard-ish, should never happen
+    if (!pair) return acc
 
     const totalBalance = Number(unstaked?.unstakedBalance ?? 0) + Number(staked?.stakedBalance ?? 0)
     const valueUSD = (totalBalance / pair.liquidity) * pair.liquidityUSD

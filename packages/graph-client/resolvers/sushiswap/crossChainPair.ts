@@ -8,13 +8,14 @@ import {
 } from '@sushiswap/graph-config'
 
 import { Pair, QueryResolvers } from '../../.graphclient'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
 import { getOneDayBlocks, getOneWeekBlocks, getTwoDayBlocks } from '../../fetchers'
 
 export const crossChainPair: QueryResolvers['crossChainPair'] = async (root, args, context, info) => {
   const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
   const fetcher = async (block?: { number: number }) => {
-    const pool = await Promise.allSettled([
+    const pool = await Promise.allSettled<SushiSwapTypes.Pair[]>([
       SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
         ? context.SushiSwap.Query.pair({
             root,

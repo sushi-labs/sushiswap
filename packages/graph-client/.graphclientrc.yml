@@ -138,20 +138,20 @@ additionalTypeDefs: |
       where: LiquidityPosition_filter,
       now: Int!, 
       chainIds: [Int!]!,
-    ): [User]
+    ): [User!]!
     crossChainChefUser(
       first: Int,
       skip: Int,
       where: User_filter,
       block: Block_height,
       chainIds: [Int!]!,
-    ): [ChefUser]
+    ): [ChefUser!]!
     crossChainUserWithFarms(
       id: ID!,
       block: Block_height,
       now: Int!,
       chainIds: [Int!]!,
-    ): [UserWithFarm]
+    ): [UserWithFarm!]!
     crossChainToken(id: ID!, now: Int!, chainId: Int!): Token!
     crossChainTokens(
       first: Int,

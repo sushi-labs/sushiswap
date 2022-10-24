@@ -7,7 +7,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { QueryResolvers } from '../../.graphclient'
+import { QueryResolvers, User } from '../../.graphclient'
 
 export const crossChainUsers: QueryResolvers['crossChainUsers'] = async (root, args, context, info) => {
   const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
@@ -112,6 +112,6 @@ export const crossChainUsers: QueryResolvers['crossChainUsers'] = async (root, a
       }
 
       return acc
-    }, [])
+    }, [] as User[])
   })
 }
