@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
+import { TradeType } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
-import { TradeType } from '@sushiswap/amm'
 import { FundSource, useIsMounted, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
 import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
