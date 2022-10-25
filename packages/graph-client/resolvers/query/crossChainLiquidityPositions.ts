@@ -7,7 +7,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { QueryResolvers } from '../../.graphclient'
+import { LiquidityPosition, QueryResolvers } from '../../.graphclient'
 
 export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPositions'] = async (
   root,
@@ -102,12 +102,11 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
         }).then((positions) => positions.map((position) => transformer(position, chainId)))
       ),
   ]).then((positions) => {
-    return positions.flat().reduce((acc, cur) => {
-      if (cur.status === 'fulfilled') {
-        acc.push(...cur.value)
+    return positions.flat().reduce<LiquidityPosition[]>((previousValue, currentValue) => {
+      if (currentValue.status === 'fulfilled') {
+        previousValue.push(...currentValue.value)
       }
-
-      return acc
+      return previousValue
     }, [])
   })
 }

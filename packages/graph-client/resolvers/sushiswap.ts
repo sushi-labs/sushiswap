@@ -4,13 +4,14 @@ import {
   crossChainChefUser,
   crossChainFactories,
   crossChainFactoryDaySnapshots,
+  crossChainLiquidityPositions,
   crossChainPair,
   crossChainPairs,
   crossChainToken,
   crossChainTokens,
-  crossChainLiquidityPositions,
   crossChainUserWithFarms,
-} from './sushiswap/index'
+} from './query'
+
 /* eslint no-unused-vars: 0, unused-imports/no-unused-vars: 0, @typescript-eslint/no-unused-vars: 0 */
 
 export const resolvers: Resolvers = {
