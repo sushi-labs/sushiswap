@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
-    "@openzeppelin/contracts": "^3.1.0",
+    "@openzeppelin/contracts": "3.1.0",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
