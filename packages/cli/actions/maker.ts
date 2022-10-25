@@ -80,15 +80,14 @@ export async function maker(args: Arguments) {
         },
       }).start()
 
-      // const { liquidityPositions }: { liquidityPositions: LiquidityPosition[] } = await sdk.LiquidityPositions({
-      //   first: 10000000,
-      //   where: { user: MAKER_ADDRESS[chainId] },
-      // })
       const liquidityPositions = await sdk
-        .ExchangeUser({
-          id: MAKER_ADDRESS[chainId],
+        .ExchangeLiquidityPositions({
+          where: { user: MAKER_ADDRESS[chainId] },
         })
-        .then(({ user }) => user?.liquidityPositions ?? [])
+        .then(({ liquidityPositions }) => {
+          console.log({ liquidityPositions })
+          return liquidityPositions ?? []
+        })
 
       if (liquidityPositions) {
         throbber.stopAndPersist({

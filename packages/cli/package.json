@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",

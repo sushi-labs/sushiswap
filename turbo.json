@@ -37,7 +37,8 @@
         "dist/**",
         "typechain/**",
         "artifacts/**",
-        "cache/**"
+        "cache/**",
+        "public/**"
       ],
       "dependsOn": [
         "^build",
