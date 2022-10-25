@@ -1,6 +1,6 @@
 import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { classNames, Select, useBreakpoint } from '@sushiswap/ui'
+import { classNames, Container, Select, useBreakpoint } from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
 import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 
@@ -26,12 +26,10 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
   }, [isSm])
 
   return (
-    <div className="bg-slate-800 h-[113px] sm:h-[226px] relative">
-      <div
-        className={classNames(
-          defaultSidePadding,
-          'flex items-center justify-between w-full h-full max-w-6xl gap-4 mx-auto'
-        )}
+    <section className="bg-slate-800 h-[113px] sm:h-[226px] relative">
+      <Container
+        maxWidth="6xl"
+        className={classNames(defaultSidePadding, 'flex items-center justify-between h-full gap-4 mx-auto')}
       >
         <div className="absolute bottom-0 right-0 opacity-20">
           <LooperBg height={bgHeight} width={bgWidth} />
@@ -69,7 +67,7 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
             ))}
           </Select.Options>
         </Select>
-      </div>
-    </div>
+      </Container>
+    </section>
   )
 }
