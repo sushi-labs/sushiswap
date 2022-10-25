@@ -139,9 +139,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
         <div
           className={classNames(
-            'overflow-x-auto pb-10 gap-5 pt-6 sm:pt-10 sm:gap-6 grid grid-cols-[repeat(3,minmax(306px,1fr))]',
-            defaultSidePadding,
-            'hide-scrollbar'
+            'overflow-x-auto gap-5 pb-1 pt-[60px] sm:pt-32 sm:gap-6 grid grid-cols-[repeat(3,minmax(306px,1fr))] scroll',
+            defaultSidePadding
           )}
         >
           {difficulties.map((difficulty, i) => (
@@ -149,7 +148,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           ))}
         </div>
 
-        <div className={classNames('z-[1] flex flex-col mt-[46px] sm:mt-[124px]', defaultSidePadding)}>
+        <div className={classNames('z-[1] flex flex-col mt-16 sm:mt-[124px]', defaultSidePadding)}>
           <Disclosure>
             <div className="flex justify-between">
               <span className="text-xl font-bold sm:text-2xl">Choose Topic</span>
@@ -303,7 +302,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         </div>
       </Container>
 
-      <AdditionalArticles title="Latest Releases" className="pb-6">
+      <AdditionalArticles title="Latest Releases" className="pb-[70px]">
         {latestReleases && (
           <ArticleList
             articles={latestReleases as ArticleEntity[]}
