@@ -1,5 +1,5 @@
 query Bar($id: ID! = "xSushi", $block: Block_height) {
-  xsushi(id: $id) {
+  xsushi(id: $id, block: $block) {
     sushiXsushiRatio
     xSushiSushiRatio
     apr1m

@@ -7,3 +7,9 @@ transforms:
   - addSourceName: true
   - autoPagination:
       validateSchema: true
+  - prefix:
+      value: EXCHANGE_
+      includeRootOperations: true
+      includeTypes: false
+      ignore: 
+        - _SubgraphErrorPolicy_  

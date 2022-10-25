@@ -1,5 +1,5 @@
-query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
-  pairs(first: $first, skip: $skip, where: $where, block: $block) {
+query ExchangePairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
+  pairs: EXCHANGE_pairs(first: $first, skip: $skip, where: $where, block: $block) {
     id
     name
     token0 {
@@ -20,8 +20,8 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
   }
 }
 
-query User($block: Block_height, $id: ID!) {
-  user(id: $id) {
+query ExchangeUser($block: Block_height, $id: ID!) {
+  user: EXCHANGE_user(id: $id) {
     id
     liquidityPositions(first: 25000) {
       id
@@ -47,8 +47,8 @@ query User($block: Block_height, $id: ID!) {
   }
 }
 
-query LiquidityPositions($block: Block_height, $first: Int = 10000, $orderBy:  LiquidityPosition_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: LiquidityPosition_filter) {
-  liquidityPositions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
+query ExchangeLiquidityPositions($block: Block_height, $first: Int = 10000, $orderBy:  LiquidityPosition_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: LiquidityPosition_filter) {
+  liquidityPositions: EXCHANGE_liquidityPositions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
     id
     liquidityTokenBalance
     pair {
@@ -71,13 +71,13 @@ query LiquidityPositions($block: Block_height, $first: Int = 10000, $orderBy:  L
   }
 }
 
-query TokenPrices($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
-  tokens(first: $first, skip: $skip, where: $where, block: $block) {
+query ExchangeTokenPrices($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  tokens: EXCHANGE_tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
     derivedETH
   }
 
-  bundle(id: 1, block: $block) {
+  bundle: EXCHANGE_bundle(id: 1, block: $block) {
     ethPrice
   }
 }
