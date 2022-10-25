@@ -1,5 +1,5 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK, QuerycrossChainPairsArgs } from '@sushiswap/graph-client/.graphclient'
+import { getBuiltGraphSDK, Pagination, QuerycrossChainPairsArgs } from '@sushiswap/graph-client/.graphclient'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
@@ -46,7 +46,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
     const start = getUnixTime(date)
 
-    const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
+    const pagination: Pagination = query?.pagination
       ? JSON.parse(query.pagination)
       : {
           pageIndex: 0,

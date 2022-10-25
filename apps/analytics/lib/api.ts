@@ -1,10 +1,10 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import {
   getBuiltGraphSDK,
+  Pagination,
   QuerycrossChainPairsArgs,
   QuerycrossChainTokensArgs,
 } from '@sushiswap/graph-client/.graphclient'
-import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays } from 'date-fns'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
@@ -48,7 +48,7 @@ export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
-    const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
+    const pagination: Pagination = query?.pagination
       ? JSON.parse(query.pagination)
       : {
           pageIndex: 0,
@@ -86,7 +86,7 @@ export type GetTokensQuery = Omit<QuerycrossChainTokensArgs, 'where' | 'paginati
 
 export const getTokens = async (query?: GetTokensQuery) => {
   try {
-    const pagination: QuerycrossChainTokensArgs['pagination'] = query?.pagination
+    const pagination: Pagination = query?.pagination
       ? JSON.parse(query?.pagination)
       : {
           pageIndex: 0,

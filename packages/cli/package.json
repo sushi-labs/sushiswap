@@ -14,6 +14,9 @@
   "bin": {
     "scli": "./dist/index.js"
   },
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsup index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
@@ -45,6 +48,8 @@
     "cli-table3": "^0.6.0",
     "commander": "^9.4.0",
     "date-fns": "^2.29.0",
+    "eslint": "^8.20.0",
+    "jest": "^28.1.0",
     "numeral": "^2.0.0",
     "ora": "^5.4.1",
     "ts-node": "^10.9.0",

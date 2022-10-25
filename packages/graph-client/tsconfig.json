@@ -1,5 +1,5 @@
 {
   "extends": "@sushiswap/typescript-config/node16.json",
-  "include": [".graphclient", "."],
-  "exclude": ["node_modules"]
+  "include": ["."],
+  "exclude": ["node_modules", ".graphclient"]
 }
