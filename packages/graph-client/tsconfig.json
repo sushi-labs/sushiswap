@@ -1,6 +1,6 @@
 {
   "extends": "@sushiswap/typescript-config/node16.json",
-  "include": [".graphclient"],
+  "include": [".graphclient", "resolvers", "fetchers"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "./dist",
