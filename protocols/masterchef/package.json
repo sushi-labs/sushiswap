@@ -34,6 +34,7 @@
     "node": "hardhat node"
   },
   "devDependencies": {
+    "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#e06e943",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@openzeppelin/contracts": "3.1.0",
     "@sushiswap/eslint-config": "workspace:*",

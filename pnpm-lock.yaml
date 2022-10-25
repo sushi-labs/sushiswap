@@ -2608,6 +2608,7 @@ importers:
 
   protocols/masterchef:
     specifiers:
+      '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#e06e943
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
       '@openzeppelin/contracts': 3.1.0
       '@sushiswap/eslint-config': workspace:*
@@ -2622,6 +2623,7 @@ importers:
       ts-node: ^10.7.0
       typescript: 4.8.2
     devDependencies:
+      '@boringcrypto/boring-solidity': github.com/boringcrypto/BoringSolidity/e06e943
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_hardhat@2.10.1
       '@openzeppelin/contracts': 3.1.0
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -27408,6 +27410,12 @@ packages:
     resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc}
     name: '@boringcrypto/boring-solidity'
     version: 1.2.0
+    dev: true
+
+  github.com/boringcrypto/BoringSolidity/e06e943:
+    resolution: {tarball: https://codeload.github.com/boringcrypto/BoringSolidity/tar.gz/e06e943}
+    name: '@boringcrypto/boring-solidity'
+    version: 1.0.4
     dev: true
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:
