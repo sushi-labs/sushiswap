@@ -1,6 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
-import { getBuiltGraphSDK, LiquidityPosition } from '@sushiswap/graph-client'
-import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS } from 'config'
+import { getBuiltGraphSDK, LiquidityPosition } from '@sushiswap/graph-client/.graphclient'
+
+import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS } from './../config'
 
 type Arguments = {
   network?: string
@@ -18,7 +19,10 @@ export async function serve({ network, verbose }: Arguments) {
 
   const sdk = getBuiltGraphSDK({ chainId, subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId] })
 
-  const { liquidityPositions } = await sdk.LiquidityPositions({ first: 10000, where: { user: MAKER_ADDRESS[chainId] } })
+  const { liquidityPositions } = await sdk.ExchangeLiquidityPositions({
+    first: 10000,
+    where: { user: MAKER_ADDRESS[chainId] },
+  })
 
   if (!liquidityPositions) {
     console.error(liquidityPositions)
@@ -27,35 +31,18 @@ export async function serve({ network, verbose }: Arguments) {
 
   console.log('Maker liquidity positons length', liquidityPositions.length)
 
-  // for (const liquidityPosition of res.liquidityPositions) {
-  //   const valueUSD =
-  //     (liquidityPosition.liquidityTokenBalance / liquidityPosition.pair.totalSupply) * liquidityPosition.pair.reserveUSD
+  const burnPairs = liquidityPositions
+    .map((burnPair) => ({
+      ...burnPair,
+      valueUSD: (burnPair.liquidityTokenBalance / burnPair.pair.totalSupply) * burnPair.pair.reserveUSD,
+    }))
+    .filter((burnPair) => burnPair.valueUSD > 1000)
+    .sort((a, b) => b.valueUSD - a.valueUSD)
 
-  //   if (valueUSD > 1000) {
-  //     console.log(
-  //       `🔥 BURN: ${formatUSD(valueUSD)} on ${liquidityPosition.pair.token0.symbol}/${
-  //         liquidityPosition.pair.token1.symbol
-  //       } pair`
-  //     )
-  //   } else {
-  //     console.log(
-  //       `🚩 DONT BURN: ${formatUSD(valueUSD)} on ${liquidityPosition.pair.token0.symbol}/${
-  //         liquidityPosition.pair.token1.symbol
-  //       } pair`
-  //     )
-  //   }
-  // }
-
-  const burnPairs = liquidityPositions.filter(
-    (liquidityPosition: LiquidityPosition) =>
-      (liquidityPosition.liquidityTokenBalance / liquidityPosition.pair.totalSupply) *
-        liquidityPosition.pair.reserveUSD >
-      1000
-  )
-
-  for (const burPair of burnPairs) {
-    const valueUSD = (burPair.liquidityTokenBalance / burPair.pair.totalSupply) * burPair.pair.reserveUSD
-    console.log(`🔥 BURN: ${formatUSD(valueUSD)} on ${burPair.pair.token0.symbol}/${burPair.pair.token1.symbol} pair`)
+  for (const burnPair of burnPairs) {
+    console.log(
+      `🔥 BURN: ${formatUSD(burnPair.valueUSD)} on ${burnPair.pair.token0.symbol}/${burnPair.pair.token1.symbol} pair`
+    )
   }
 
   // 1. burnPairs

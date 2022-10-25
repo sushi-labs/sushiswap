@@ -19,7 +19,8 @@
   "source": ".graphclient/index.ts",
   "typings": ".graphclient/index.d.ts",
   "files": [
-    ".graphclient/**"
+    ".graphclient/**",
+    "fetchers/**"
   ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",

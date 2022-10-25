@@ -1,5 +1,5 @@
 import { ChainKey } from '@sushiswap/chain'
-import { getBuiltGraphSDK, LiquidityPosition, Pair, Token, User } from '@sushiswap/graph-client'
+import { getBuiltGraphSDK, LiquidityPosition, Pair, Token } from '@sushiswap/graph-client/.graphclient'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import numeral from 'numeral'
@@ -44,14 +44,14 @@ export async function maker(args: Arguments) {
 
     const chainId = CHAIN_NAME_TO_CHAIN_ID[network]
 
-    const sdk = await getBuiltGraphSDK({
+    const sdk = getBuiltGraphSDK({
       chainId,
       subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
     })
 
     // const liquidityPositions = Object.values(await sdk.User({ id: MAKER_ADDRESS[chainId] }))[0]?.liquidityPositions
 
-    const { liquidityPositions }: { liquidityPositions: LiquidityPosition[] } = await sdk.LiquidityPositions({
+    const { liquidityPositions } = await sdk.ExchangeLiquidityPositions({
       first: 10000,
       where: { user: MAKER_ADDRESS[chainId] },
     })
@@ -84,11 +84,11 @@ export async function maker(args: Arguments) {
       //   first: 10000000,
       //   where: { user: MAKER_ADDRESS[chainId] },
       // })
-      const {
-        user: { liquidityPositions },
-      }: { user: User } = await sdk.User({
-        id: MAKER_ADDRESS[chainId],
-      })
+      const liquidityPositions = await sdk
+        .ExchangeUser({
+          id: MAKER_ADDRESS[chainId],
+        })
+        .then(({ user }) => user?.liquidityPositions ?? [])
 
       if (liquidityPositions) {
         throbber.stopAndPersist({

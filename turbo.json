@@ -13,6 +13,13 @@
       ],
       "outputs": []
     },
+    "start": {
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "cache": false
+    },
     "generate": {
       "outputs": [
         ".graphclient/**",

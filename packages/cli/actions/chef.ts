@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
+import { SUSHI_ADDRESS } from '@sushiswap/currency'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client/.graphclient'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import { addYears, getUnixTime } from 'date-fns'
@@ -13,11 +14,11 @@ type Arguments = {
 }
 
 export async function chef(args: Arguments) {
-  const sdk = getBuiltGraphSDK({ chainId: ChainId.ETHEREUM })
+  const sdk = getBuiltGraphSDK()
 
   const { MASTERCHEF_V1_pools, MASTERCHEF_V2_pools } = await sdk.MasterChefPools()
 
-  const { pairs } = await sdk.Pairs({
+  const { pairs } = await sdk.ExchangePairs({
     where: {
       id_in: [...MASTERCHEF_V1_pools, ...MASTERCHEF_V2_pools].reduce<string[]>(
         (previousValue, currentValue) => [...previousValue, currentValue.pair],
@@ -28,11 +29,8 @@ export async function chef(args: Arguments) {
 
   const sushiPriceUSD = await (async function () {
     {
-      const { tokens: tokens, bundle: bundle } = await sdk.TokenPrices({
-        where: { id_in: ['0x6b3595068778dd592e39a122f4f5a5cf09c90fe2'] },
-      })
-
-      return bundle?.ethPrice * tokens[0].derivedETH
+      const prices = await fetch('https://token-price.sushi.com/v0/1').then((data) => data.json())
+      return prices[SUSHI_ADDRESS[ChainId.ETHEREUM].toLowerCase()]
     }
   })()
 
