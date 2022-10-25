@@ -8,10 +8,8 @@ import { formatBytes32String } from 'ethers/lib/utils'
 import { FC, ReactNode, useEffect, useState } from 'react'
 import { useAccount, useContractEvent, useWaitForTransaction } from 'wagmi'
 
-import { useBridgeOutput } from '../../lib/hooks'
 import { useNotifications } from '../../lib/state/storage'
-import { useBridgeExecute } from '../BridgeExecuteProvider'
-import { useBridgeState } from '../BridgeStateProvider'
+import { useBridgeState, useDerivedBridgeState } from '../BridgeStateProvider'
 import { TransactionProgressStep } from './TransactionProgressStep'
 
 const client = createClient('mainnet')
@@ -38,11 +36,10 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
   children,
 }) => {
   const { address } = useAccount()
-  const { srcChainId, dstChainId, srcToken, amount } = useBridgeState()
-  const { dstAmountOut } = useBridgeOutput()
+  const { srcChainId, dstChainId, srcToken, amount, sourceTx, timestamp, id } = useBridgeState()
+  const { dstAmountOut } = useDerivedBridgeState()
   const [dstTxState, setDstTxState] = useState<{ txHash: `0x${string}`; isSuccess: boolean } | undefined>()
   const [, { createInfoNotification }] = useNotifications(address)
-  const { sourceTx, timestamp, id } = useBridgeExecute()
   const [lzLink, setLzLink] = useState<string>()
 
   useContractEvent({

@@ -6,10 +6,8 @@ import { formatBytes32String } from 'ethers/lib/utils'
 import { FC, useEffect, useState } from 'react'
 import { useAccount, useContractEvent, useWaitForTransaction } from 'wagmi'
 
-import { useBridgeOutput } from '../../lib/hooks'
 import { useNotifications } from '../../lib/state/storage'
-import { useBridgeExecute } from '../BridgeExecuteProvider'
-import { useBridgeState } from '../BridgeStateProvider'
+import { useBridgeState, useBridgeStateActions, useDerivedBridgeState } from '../BridgeStateProvider'
 import { TransactionProgressStep } from './TransactionProgressStep'
 
 interface TransactionProgressDestination {
@@ -25,9 +23,9 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
   onClose,
 }) => {
   const { address } = useAccount()
-  const { id, timestamp, setSourceTx } = useBridgeExecute()
-  const { dstToken, dstChainId, amount, srcToken } = useBridgeState()
-  const { dstAmountOut } = useBridgeOutput()
+  const { id, dstToken, dstChainId, amount, srcToken, timestamp } = useBridgeState()
+  const { setSourceTx } = useBridgeStateActions()
+  const { dstAmountOut } = useDerivedBridgeState()
   const [dstTxState, setDstTxState] = useState<{ txHash: `0x${string}`; isSuccess: boolean } | undefined>()
   const [, { createSuccessNotification, createFailedNotification }] = useNotifications(address)
 

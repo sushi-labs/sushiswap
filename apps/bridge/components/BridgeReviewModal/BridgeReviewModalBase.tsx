@@ -6,9 +6,7 @@ import { Icon } from '@sushiswap/ui/currency/Icon'
 import { usePrices } from '@sushiswap/wagmi'
 import React, { FC, ReactNode, useMemo } from 'react'
 
-import { useBridgeOutput } from '../../lib/hooks'
-import { useBridgeExecute } from '../BridgeExecuteProvider'
-import { useBridgeState } from '../BridgeStateProvider'
+import { useBridgeState, useDerivedBridgeState } from '../BridgeStateProvider'
 import { Rate } from '../Rate'
 import { Stats } from '../SwapStatsDisclosure'
 import { TransactionProgressOverlay } from '../TransactionProgressOverlay'
@@ -20,9 +18,8 @@ interface BridgeReviewModalBase {
 }
 
 export const BridgeReviewModalBase: FC<BridgeReviewModalBase> = ({ open, setOpen, children }) => {
-  const { sourceTx } = useBridgeExecute()
-  const { amount, srcToken, dstToken, srcChainId, dstChainId } = useBridgeState()
-  const { dstAmountOut, price } = useBridgeOutput()
+  const { amount, srcToken, dstToken, srcChainId, dstChainId, sourceTx } = useBridgeState()
+  const { dstAmountOut, price } = useDerivedBridgeState()
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })

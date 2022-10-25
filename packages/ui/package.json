@@ -35,16 +35,18 @@
     "@tailwindcss/typography": "^0.5.2",
     "@tanstack/react-table": "8.5.0",
     "classnames": "^2.3.1",
-    "nanoid": "^4.0.0",
     "date-fns": "^2.29.1",
+    "nanoid": "^4.0.0",
     "rc-tooltip": "^5.2.2",
     "react-dropzone": "^14.2.2",
     "react-popper": "^2.2.5",
+    "react-spring": "^9.4.4",
     "react-tiny-popover": "^7.1.0",
     "react-toastify": "^8.2.0",
     "react-tooltip": "^4.2.21",
     "react-virtualized-auto-sizer": "^1.0.6",
-    "react-window": "^1.8.7"
+    "react-window": "^1.8.7",
+    "use-resize-observer": "^9.0.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

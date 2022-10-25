@@ -1,14 +1,12 @@
 import { ArrowRightIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { AppearOnMount, Button, Loader, Typography } from '@sushiswap/ui'
+import { Button, Loader, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import {
-  BridgeExecuteProvider,
   BridgeReviewModal,
   BridgeStateProvider,
   Layout,
@@ -17,12 +15,13 @@ import {
   SwapStatsDisclosure,
   useBridgeState,
   useBridgeStateActions,
+  useDerivedBridgeState,
 } from 'components'
+import { nanoid } from 'nanoid'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import React, { FC, useCallback, useEffect, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 
-import { useBridgeOutput } from '../lib/hooks'
 import { useCustomTokens } from '../lib/state/storage'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
@@ -56,6 +55,7 @@ export default function Bridge({
       </Head>
       <BridgeStateProvider
         initialState={{
+          id: nanoid(),
           srcChainId: Number(srcChainId),
           dstChainId: Number(dstChainId),
           srcToken: srcTokens.includes(srcToken) ? srcTokens[srcTokens.indexOf(srcToken)] : srcTokens[0],
@@ -65,9 +65,7 @@ export default function Bridge({
           amount: !isNaN(Number(srcTypedAmount)) ? tryParseAmount(srcTypedAmount, srcToken) : undefined,
         }}
       >
-        <BridgeExecuteProvider>
-          <_Bridge />
-        </BridgeExecuteProvider>
+        <_Bridge />
       </BridgeStateProvider>
     </Layout>
   )
@@ -81,18 +79,11 @@ const STARGATE_TOKEN_MAP = Object.fromEntries(
 )
 
 const _Bridge: FC = () => {
-  const { dstAmountOut } = useBridgeOutput()
-  const { amount, srcChainId, dstChainId, srcToken, dstToken, srcTypedAmount, dstTypedAmount } = useBridgeState()
-
-  const {
-    setSrcChainId,
-    setDstChainId,
-    setSrcToken,
-    setDstToken,
-    setSrcTypedAmount,
-    setDstTypedAmount,
-    switchChainIds,
-  } = useBridgeStateActions()
+  const isMounted = useIsMounted()
+  const { srcChainId, dstChainId, srcToken, dstToken, srcTypedAmount } = useBridgeState()
+  const { dstAmountOut, isLoading } = useDerivedBridgeState()
+  const { setSrcChainId, setDstChainId, setSrcToken, setDstToken, setSrcTypedAmount, switchChainIds } =
+    useBridgeStateActions()
 
   const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
     useCustomTokens(srcChainId)
@@ -101,8 +92,6 @@ const _Bridge: FC = () => {
 
   const srcTokens = useMemo(() => STARGATE_TOKEN_MAP[srcChainId], [srcChainId])
   const dstTokens = useMemo(() => STARGATE_TOKEN_MAP[dstChainId], [dstChainId])
-
-  useEffect(() => setDstTypedAmount(dstAmountOut?.toExact() ?? ''), [dstAmountOut, setDstTypedAmount])
 
   const inputAmounts = useMemo(() => {
     return [tryParseAmount(srcTypedAmount, srcToken)]
@@ -132,7 +121,7 @@ const _Bridge: FC = () => {
             <SettingsOverlay />
           </div>
         </Widget.Header>
-        <div className="grid grid-cols-[auto_40px_auto] items-center p-3">
+        <div className="grid grid-cols-[176px_24px_176px] items-center p-3">
           <NetworkSelector label="From" value={srcChainId} onChange={onSrcNetworkSelect} />
           <div className="flex items-center justify-center">
             <button
@@ -171,8 +160,8 @@ const _Bridge: FC = () => {
             <Web3Input.Currency
               disabled
               disableMaxButton
-              value={dstTypedAmount}
-              onChange={setDstTypedAmount}
+              value={dstAmountOut?.toExact() || ''}
+              onChange={() => {}}
               onSelect={setDstToken}
               currency={dstToken}
               chainId={dstChainId}
@@ -180,7 +169,7 @@ const _Bridge: FC = () => {
               customTokenMap={dstCustomTokenMap}
               onAddToken={onAddDstCustomToken}
               onRemoveToken={onRemoveDstCustomToken}
-              loading={amount?.greaterThan(ZERO) && !dstTypedAmount}
+              loading={isLoading}
             />
           </div>
         </div>
@@ -189,7 +178,7 @@ const _Bridge: FC = () => {
           <div className="p-3 pt-0">
             <Checker.Connected fullWidth size="md">
               <Checker.Custom
-                showGuardIfTrue={Boolean(amount?.greaterThan(ZERO) && !dstTypedAmount)}
+                showGuardIfTrue={isLoading && isMounted}
                 guard={
                   <Button size="md" fullWidth>
                     <Loader size={18} />

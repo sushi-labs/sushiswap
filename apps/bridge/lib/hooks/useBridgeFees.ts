@@ -7,17 +7,22 @@ import { isAddress } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useContractRead, useContractReads } from 'wagmi'
 
-import { useBridgeState } from '../../components'
+import { BridgeState } from '../../components'
 
-export const useBridgeFees = (): {
+export const useBridgeFees = ({
+  srcChainId,
+  dstChainId,
+  srcToken,
+  dstToken,
+  amount,
+}: BridgeState): {
   eqFee: Amount<Token> | undefined
   eqReward: Amount<Token> | undefined
   lpFee: Amount<Token> | undefined
   protocolFee: Amount<Token> | undefined
   bridgeFee: Amount<Token> | undefined
+  isLoading: boolean
 } => {
-  const { srcChainId, dstChainId, srcToken, dstToken, amount } = useBridgeState()
-
   const contracts = useMemo(() => {
     if (srcToken && dstToken) {
       return [
@@ -45,7 +50,7 @@ export const useBridgeFees = (): {
     enabled: !!srcChainId && !!dstChainId && srcChainId !== dstChainId && contracts.length > 0,
   })
 
-  const { data: getFeesResults } = useContractRead({
+  const { data: getFeesResults, isLoading: isFeeResultLoading } = useContractRead({
     addressOrName: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
     args: [
@@ -79,6 +84,7 @@ export const useBridgeFees = (): {
         lpFee: undefined,
         protocolFee: undefined,
         bridgeFee: undefined,
+        isLoading: isLoading || isFeeResultLoading,
       }
     }
 
@@ -92,6 +98,6 @@ export const useBridgeFees = (): {
       bridgeFee = eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
     }
 
-    return { eqFee, eqReward, lpFee, protocolFee, bridgeFee }
-  }, [getFeesResults, srcToken])
+    return { eqFee, eqReward, lpFee, protocolFee, bridgeFee, isLoading: isLoading || isFeeResultLoading }
+  }, [getFeesResults, isFeeResultLoading, isLoading, srcToken])
 }

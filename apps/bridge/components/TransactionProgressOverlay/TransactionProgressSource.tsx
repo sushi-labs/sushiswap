@@ -3,7 +3,6 @@ import { NetworkIcon } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
-import { useBridgeExecute } from '../BridgeExecuteProvider'
 import { useBridgeState } from '../BridgeStateProvider'
 import { TransactionProgressStep } from './TransactionProgressStep'
 
@@ -19,9 +18,7 @@ interface TransactionProgressSource {
   }): ReactNode
 }
 export const TransactionProgressSource: FC<TransactionProgressSource> = ({ children }) => {
-  const { amount, srcChainId, srcToken } = useBridgeState()
-  const { sourceTx } = useBridgeExecute()
-
+  const { amount, srcChainId, srcToken, sourceTx } = useBridgeState()
   const { isError, isSuccess, isLoading } = useWaitForTransaction({
     hash: sourceTx?.hash,
     chainId: srcChainId,

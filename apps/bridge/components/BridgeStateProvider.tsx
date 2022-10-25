@@ -1,13 +1,18 @@
+import { Signature } from '@ethersproject/bytes'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, tryParseAmount, Type as Currency, Type } from '@sushiswap/currency'
+import { Amount, Price, Token, tryParseAmount, Type as Currency, Type } from '@sushiswap/currency'
 import { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
+import { SendTransactionResult } from 'wagmi/actions'
+
+import { useBridgeOutput } from '../lib/hooks'
 
 interface _BridgeStateProviderProps {
-  initialState: State
+  initialState: BridgeState
   children: ReactNode
 }
 
-type State = {
+export type BridgeState = {
+  id: string
   srcChainId: ChainId
   dstChainId: ChainId
   srcToken: Type | undefined
@@ -15,6 +20,17 @@ type State = {
   srcTypedAmount: string
   dstTypedAmount: string
   amount: Amount<Type> | undefined
+  sourceTx?: SendTransactionResult
+  signature?: Signature
+  timestamp?: number
+  gasFee?: Amount<Type>
+}
+
+interface BridgeStateDerived {
+  dstAmountOut: Amount<Currency> | undefined
+  bridgeFee: Amount<Token> | undefined
+  price: Price<Type, Type> | undefined
+  isLoading: boolean
 }
 
 type API = {
@@ -23,11 +39,15 @@ type API = {
   setSrcToken(currency: Type): void
   setDstToken(currency: Type): void
   setSrcTypedAmount(srcTypedAmount: string): void
-  setDstTypedAmount(dstTypedAmount: string): void
   switchChainIds(): void
+  setSourceTx(tx: SendTransactionResult | undefined): void
+  setSignature(sig: Signature | undefined): void
+  setTimestamp(ts: number | undefined): void
+  setGasFee(gasFee: Amount<Type> | undefined): void
 }
 
-const DataContext = createContext<State>({} as State)
+const DataContext = createContext<BridgeState>({} as BridgeState)
+const DerivedDataContext = createContext<BridgeStateDerived>({} as BridgeStateDerived)
 const APIContext = createContext<API>({} as API)
 
 type Actions =
@@ -36,10 +56,13 @@ type Actions =
   | { type: 'setSrcToken'; currency: Type }
   | { type: 'setDstToken'; currency: Type }
   | { type: 'setSrcTypedAmount'; srcTypedAmount: string }
-  | { type: 'setDstTypedAmount'; dstTypedAmount: string }
   | { type: 'switchChainIds' }
+  | { type: 'setSourceTx'; tx: SendTransactionResult | undefined }
+  | { type: 'setSignature'; sig: Signature | undefined }
+  | { type: 'setTimestamp'; ts: number | undefined }
+  | { type: 'setGasFee'; gasFee: Amount<Type> | undefined }
 
-const reducer = (state: State, action: Actions): State => {
+const reducer = (state: BridgeState, action: Actions): BridgeState => {
   switch (action.type) {
     case 'setSrcChainId':
       return { ...state, srcChainId: action.chainId, srcToken: undefined, srcTypedAmount: '', amount: undefined }
@@ -55,11 +78,6 @@ const reducer = (state: State, action: Actions): State => {
         srcTypedAmount: action.srcTypedAmount,
         amount: tryParseAmount(action.srcTypedAmount, state.srcToken),
       }
-    case 'setDstTypedAmount':
-      return {
-        ...state,
-        dstTypedAmount: action.dstTypedAmount,
-      }
     case 'switchChainIds':
       return {
         ...state,
@@ -71,11 +89,32 @@ const reducer = (state: State, action: Actions): State => {
         dstTypedAmount: '',
         amount: undefined,
       }
+    case 'setSourceTx':
+      return {
+        ...state,
+        sourceTx: action.tx,
+      }
+    case 'setSignature':
+      return {
+        ...state,
+        signature: action.sig,
+      }
+    case 'setTimestamp':
+      return {
+        ...state,
+        timestamp: action.ts,
+      }
+    case 'setGasFee':
+      return {
+        ...state,
+        gasFee: action.gasFee,
+      }
   }
 }
 
 export const BridgeStateProvider: FC<_BridgeStateProviderProps> = ({ initialState, children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
+  const bridgeOutput = useBridgeOutput(state)
 
   const api = useMemo(() => {
     const setSrcChainId = (chainId: ChainId) => dispatch({ type: 'setSrcChainId', chainId })
@@ -83,8 +122,11 @@ export const BridgeStateProvider: FC<_BridgeStateProviderProps> = ({ initialStat
     const setSrcToken = (currency: Currency) => dispatch({ type: 'setSrcToken', currency })
     const setDstToken = (currency: Currency) => dispatch({ type: 'setDstToken', currency })
     const setSrcTypedAmount = (srcTypedAmount: string) => dispatch({ type: 'setSrcTypedAmount', srcTypedAmount })
-    const setDstTypedAmount = (dstTypedAmount: string) => dispatch({ type: 'setDstTypedAmount', dstTypedAmount })
     const switchChainIds = () => dispatch({ type: 'switchChainIds' })
+    const setSourceTx = (tx: SendTransactionResult) => dispatch({ type: 'setSourceTx', tx })
+    const setSignature = (sig: Signature) => dispatch({ type: 'setSignature', sig })
+    const setTimestamp = (ts: number) => dispatch({ type: 'setTimestamp', ts })
+    const setGasFee = (gasFee: Amount<Type>) => dispatch({ type: 'setGasFee', gasFee })
 
     return {
       setSrcChainId,
@@ -92,20 +134,36 @@ export const BridgeStateProvider: FC<_BridgeStateProviderProps> = ({ initialStat
       setSrcToken,
       setDstToken,
       setSrcTypedAmount,
-      setDstTypedAmount,
       switchChainIds,
+      setSourceTx,
+      setSignature,
+      setTimestamp,
+      setGasFee,
     }
   }, [])
 
   return (
     <APIContext.Provider value={api}>
-      <DataContext.Provider value={state}>{children}</DataContext.Provider>
+      <DataContext.Provider value={state}>
+        <DerivedDataContext.Provider value={useMemo(() => bridgeOutput, [bridgeOutput])}>
+          {children}
+        </DerivedDataContext.Provider>
+      </DataContext.Provider>
     </APIContext.Provider>
   )
 }
 
 export const useBridgeState = () => {
   const context = useContext(DataContext)
+  if (!context) {
+    throw new Error('Hook can only be used inside Bridge State Context')
+  }
+
+  return context
+}
+
+export const useDerivedBridgeState = () => {
+  const context = useContext(DerivedDataContext)
   if (!context) {
     throw new Error('Hook can only be used inside Bridge State Context')
   }
