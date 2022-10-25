@@ -46,10 +46,10 @@
     "express": "^4.18.1"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "2.2.15",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphql-mesh/transform-filter-schema": "latest",
+    "@graphprotocol/client-cli": "2.2.15",
     "@graphql-mesh/transform-prefix": "latest",
     "@graphql-mesh/transform-prune": "latest",
     "@graphql-mesh/transform-rename": "latest",
