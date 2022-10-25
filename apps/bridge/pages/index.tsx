@@ -135,7 +135,7 @@ const _Bridge: FC = () => {
             <NetworkSelector label="To" value={dstChainId} onChange={onDstNetworkSelect} />
           </div>
         </div>
-        <div className="bg-slate-800 p-3 flex flex-col gap-3">
+        <div className="flex flex-col gap-3 p-3 bg-slate-800">
           <div className="flex flex-col py-1">
             <Typography variant="xs" weight={500} className="text-slate-400">
               Send
@@ -150,6 +150,7 @@ const _Bridge: FC = () => {
               customTokenMap={srcCustomTokenMap}
               onAddToken={onAddSrcCustomToken}
               onRemoveToken={onRemoveSrcCustomToken}
+              includeNative={false}
             />
           </div>
           <div className="border-b border-slate-200/5" />
@@ -170,6 +171,7 @@ const _Bridge: FC = () => {
               onAddToken={onAddDstCustomToken}
               onRemoveToken={onRemoveDstCustomToken}
               loading={isLoading}
+              includeNative={false}
             />
           </div>
         </div>

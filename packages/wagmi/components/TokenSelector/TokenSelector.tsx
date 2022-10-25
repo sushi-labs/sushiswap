@@ -20,10 +20,21 @@ export type TokenSelectorProps = {
   onAddToken?(token: Token): void
   onRemoveToken?({ chainId, address }: { chainId: ChainId; address: string }): void
   fundSource?: FundSource
+  includeNative?: boolean
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = memo(
-  ({ variant, tokenMap, chainId, fundSource = FundSource.WALLET, onSelect, open, customTokenMap = {}, ...props }) => {
+  ({
+    variant,
+    tokenMap,
+    chainId,
+    fundSource = FundSource.WALLET,
+    onSelect,
+    open,
+    customTokenMap = {},
+    includeNative,
+    ...props
+  }) => {
     const { address } = useAccount()
     const isMounted = useIsMounted()
 
@@ -63,6 +74,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
             chainId={chainId}
             fundSource={fundSource}
             onSelect={onSelect}
+            includeNative={includeNative}
             {...props}
           />
         )
@@ -78,6 +90,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
           chainId={chainId}
           fundSource={fundSource}
           onSelect={onSelect}
+          includeNative={includeNative}
           {...props}
         />
       )

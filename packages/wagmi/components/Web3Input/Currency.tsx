@@ -22,6 +22,7 @@ export interface CurrencyInputProps
   className?: string
   fundSource?: FundSource
   loading?: boolean
+  includeNative?: boolean
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -39,6 +40,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   usdPctChange,
   className,
   fundSource = FundSource.WALLET,
+  includeNative = true,
   loading,
 }) => {
   const isMounted = useIsMounted()
@@ -143,6 +145,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             onRemoveToken={onRemoveToken}
             tokenMap={tokenMap}
             customTokenMap={customTokenMap}
+            includeNative={includeNative}
           />
         )}
       </div>
@@ -158,6 +161,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       focusInput,
       fundSource,
       handleClose,
+      includeNative,
+      isMounted,
       loading,
       onAddToken,
       onChange,
