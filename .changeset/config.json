@@ -23,6 +23,7 @@
       "node-16-example",
       "token-lists-example",
       "wagmi-example",
+      "widget-example",
       "farm-api",
       "path-finder-api",
       "token-list-api",
@@ -39,9 +40,7 @@
       "@sushiswap/token-lists",
       "@sushiswap/ui",
       "@sushiswap/wagmi",
-      "@sushiswap/bentobox",
       "@sushiswap/furo",
-      "@sushiswap/kashi",
-      "@sushiswap/sushiswap"
+      "@sushiswap/kashi"
     ]
   }

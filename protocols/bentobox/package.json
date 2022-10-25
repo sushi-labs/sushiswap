@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/bentobox",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.4.0",
   "description": "BentoBox",
   "keywords": [
     "bentobox",
