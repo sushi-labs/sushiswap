@@ -20,7 +20,6 @@ import {
 } from '@sushiswap/wagmi'
 import stringify from 'fast-json-stable-stringify'
 import { approveMasterContractAction, batchAction, unwrapWETHAction } from 'lib/actions'
-import { toHex } from 'lib/functions'
 import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
@@ -180,9 +179,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         const shouldCarbonOffset = chainId === ChainId.POLYGON && carbonOffset
 
         if (trade.inputAmount.currency.isNative) {
-          value = toHex(shouldCarbonOffset ? trade.inputAmount.add(KLIMA_FEE) : trade.inputAmount)
+          value = shouldCarbonOffset ? trade.inputAmount.add(KLIMA_FEE).toHex() : trade.inputAmount.toHex()
         } else if (shouldCarbonOffset) {
-          value = toHex(KLIMA_FEE)
+          value = KLIMA_FEE.toHex()
         }
 
         call = {
@@ -353,7 +352,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         }
 
         if (trade.inputAmount.currency.isNative) {
-          value = toHex(trade.inputAmount)
+          value = trade.inputAmount.toHex()
         }
         if (trade.outputAmount.currency.isNative) {
           // unwrap

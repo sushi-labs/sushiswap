@@ -1,0 +1,41 @@
+{
+  "name": "widget-example",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev -p 4003",
+    "lint": "eslint --fix . && next lint",
+    "start": "next start",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.3",
+    "@heroicons/react": "^1.0.0",
+    "@sushiswap/ui": "workspace:*",
+    "@sushiswap/wagmi": "workspace:*",
+    "ethers": "^5.7.0",
+    "next": "12.3.1",
+    "next-seo": "^5.5.0",
+    "next-axiom": "^0.14.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.1",
+    "wagmi": "0.6.8"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/node": "^17.0.30",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.20.0",
+    "next-transpile-modules": "9.1.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.1.0",
+    "typescript": "4.8.2"
+  }
+}

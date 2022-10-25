@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/graph-config",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.1.0",
   "description": "Sushi Graph Config",
   "keywords": [
     "sushi",
