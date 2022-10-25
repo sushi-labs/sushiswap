@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/cli",
   "version": "0.0.0",
-  "private": true,
   "description": "Sushi CLI",
   "keywords": [
     "sushi",
