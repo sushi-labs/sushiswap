@@ -34,11 +34,11 @@ export const ArticleHeader: FC<ArticleHeader> = ({ article }) => {
         <DifficultyLabel article={article} />
       </div>
       <h1 className="mt-6 text-center text-2xl font-bold sm:mt-5 sm:font-medium sm:text-[42px] text-slate-50">
-        {article?.attributes?.title}
+        {article.attributes?.title}
       </h1>
-      <h3 className="mt-3 text-sm text-center sm:mt-5 sm:text-lg text-slate-400">{article?.attributes?.description}</h3>
+      <h3 className="mt-3 text-sm text-center sm:mt-5 sm:text-lg text-slate-400">{article.attributes?.description}</h3>
       <ul className="flex flex-wrap justify-center gap-5 mt-4 text-sm sm:mt-8">
-        {article?.attributes?.authors?.data.map((author, index) => (
+        {article.attributes?.authors?.data.map((author, index) => (
           <li key={index} className="flex items-center gap-2 whitespace-nowrap">
             <div className="relative w-6 h-6 overflow-hidden rounded-full bg-slate-800">
               {author?.attributes?.avatar.data && <Image image={author?.attributes.avatar.data} />}
