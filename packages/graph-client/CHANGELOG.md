@@ -1,5 +1,11 @@
 # @sushiswap/graph-client
 
+## 0.1.3
+
+### Patch Changes
+
+- 12704de8: only include cli dist and generate js for graph client
+
 ## 0.1.2
 
 ### Patch Changes
