@@ -47,6 +47,8 @@ contract SushiXSwap is
 
     uint8 internal constant ACTION_SRC_TOKEN_TRANSFER = 11;
 
+    uint8 internal constant ACTION_WRAP_TOKEN = 12;
+
     /// @notice Executes a set of actions and allows composability (contract calls) to other contracts.
     /// @param actions An array with a sequence of actions to execute (see ACTION_ declarations).
     /// @param values A one-to-one mapped array to `actions`. Native token amount to send along action.
@@ -182,6 +184,13 @@ contract SushiXSwap is
                 );
 
                 _unwrapTransfer(token, to);
+            } else if (action == ACTION_WRAP_TOKEN) {
+                (address token, uint256 amount) = abi.decode(
+                    datas[i],
+                    (address, uint256)
+                );
+
+                _wrapToken(token, amount);
             } else if (action == ACTION_LEGACY_SWAP) {
                 (
                     uint256 amountIn,
