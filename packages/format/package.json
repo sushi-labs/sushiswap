@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/format",
   "version": "0.0.0",
-  "private": true,
   "description": "Sushi Format",
   "keywords": [
     "sushi",
