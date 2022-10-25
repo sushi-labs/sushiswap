@@ -9,7 +9,7 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./dist/index.js",
-  "source": "./index.ts",
+  "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "bin": {
     "scli": "./dist/index.js"
@@ -18,10 +18,10 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup index.ts --format esm,cjs --dts",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup index.ts --format esm,cjs --watch --dts",
-    "lint": "TIMING=1 eslint . --fix",
+    "lint": "TIMING=1 eslint ./src --fix",
     "start": "ts-node --transpileOnly index.ts",
     "test": "jest --passWithNoTests"
   },
@@ -35,7 +35,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/log": "workspace:*",
-    "graphql": "16.6.0"
+    "graphql": "@sushiswap/graph-client@workspace:*"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

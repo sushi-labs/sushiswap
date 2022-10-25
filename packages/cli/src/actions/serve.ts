@@ -1,7 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
 import { getBuiltGraphSDK, LiquidityPosition } from '@sushiswap/graph-client/.graphclient'
 
-import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS } from './../config'
+import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS } from '../config'
 
 type Arguments = {
   network?: string
