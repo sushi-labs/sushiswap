@@ -14,7 +14,7 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": ".graphclient/index.js",
+  "main": ".graphclient/index.ts",
   "source": ".graphclient/index.ts",
   "typings": ".graphclient/index.d.ts",
   "files": [
