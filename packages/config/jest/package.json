@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/jest-config",
   "version": "0.0.0",
-  "private": true,
   "description": "Sushi Jest Config",
   "keywords": [
     "sushi",
