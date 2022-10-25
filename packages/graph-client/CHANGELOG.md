@@ -1,5 +1,11 @@
 # @sushiswap/graph-client
 
+## 0.1.2
+
+### Patch Changes
+
+- 8b4fca0d: use correct main in package json
+
 ## 0.1.1
 
 ### Patch Changes
