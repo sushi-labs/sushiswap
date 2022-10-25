@@ -25,6 +25,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev:gql": "graphclient serve-dev",
     "generate": "graphclient build",
+    "build": "graphclient build",
     "lint": "TIMING=1 eslint . --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests",
