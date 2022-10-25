@@ -42,7 +42,6 @@
       "@sushiswap/bentobox",
       "@sushiswap/furo",
       "@sushiswap/kashi",
-      "@sushiswap/sushiswap",
-      "@sushiswap/sushixswap"
+      "@sushiswap/sushiswap"
     ]
   }
