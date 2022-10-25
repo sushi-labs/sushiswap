@@ -43,7 +43,7 @@ module.exports = {
         'spin-slow': 'spin 2s linear infinite',
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
         rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
-        wave: 'shimmer 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         shimmer: {
