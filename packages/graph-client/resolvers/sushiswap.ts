@@ -4,13 +4,14 @@ import {
   crossChainChefUser,
   crossChainFactories,
   crossChainFactoryDaySnapshots,
+  crossChainLiquidityPositions,
   crossChainPair,
   crossChainPairs,
   crossChainToken,
   crossChainTokens,
-  crossChainUser,
   crossChainUserWithFarms,
-} from './sushiswap/index'
+} from './query'
+
 /* eslint no-unused-vars: 0, unused-imports/no-unused-vars: 0, @typescript-eslint/no-unused-vars: 0 */
 
 export const resolvers: Resolvers = {
@@ -34,6 +35,11 @@ export const resolvers: Resolvers = {
     fees1d: (root, args, context, info) => root.fees1d || '0',
     fees1w: (root, args, context, info) => root.fees1w || '0',
   },
+  LiquidityPosition: {
+    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
+    chainName: (root, args, context, info) => root.chainName || context.chainName || 'Ethereum',
+    chainShortName: (root, args, context, info) => root.chainShortName || context.chainShortName || 'eth',
+  },
   Query: {
     crossChainBundles,
     crossChainFactories,
@@ -42,7 +48,7 @@ export const resolvers: Resolvers = {
     crossChainPairs,
     crossChainTokens,
     crossChainToken,
-    crossChainUser,
+    crossChainLiquidityPositions,
     crossChainChefUser,
     crossChainUserWithFarms,
   },

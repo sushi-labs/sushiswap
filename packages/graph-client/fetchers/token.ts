@@ -2,9 +2,9 @@ import { ChainId } from '@sushiswap/chain'
 import { otherChains } from '@sushiswap/wagmi-config'
 import { allChains, configureChains, createClient, readContract } from '@wagmi/core'
 import { erc20ABI } from '@wagmi/core'
-import { publicProvider } from '@wagmi/core/providers/public'
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+import { publicProvider } from '@wagmi/core/providers/public'
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
@@ -34,7 +34,7 @@ export async function getTokenBalance(args: Parameters<typeof getTokenBalances>[
 }
 
 export async function getTokenBalances(args: { token: string; user: string; chainId: ChainId }[]) {
-  return Promise.all(
+  return Promise.allSettled(
     args.map(({ token, user, chainId }) =>
       readContract({
         addressOrName: token,
@@ -45,9 +45,11 @@ export async function getTokenBalances(args: { token: string; user: string; chai
       })
     )
   ).then((results) => {
-    return results.map((result, i) => ({
-      ...args[i],
-      balance: result ? result.toString() : '0',
-    }))
+    return results.map((result, i) => {
+      return {
+        ...args[i],
+        balance: result.status === 'fulfilled' ? result.value.toString() : '0',
+      }
+    })
   })
 }

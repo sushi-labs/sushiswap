@@ -4,9 +4,9 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
+import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native } from '@sushiswap/currency'
-import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/amm'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { Button, Dots } from '@sushiswap/ui'
@@ -156,7 +156,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const prepare = useCallback(async () => {
     if (!trade || !account || !chainId || !deadline) return
 
-    console.log('prepare swap', { trade, account, chainId, deadline })
+    console.log('prepare swap', { trade, account, chainId, deadline: deadline.toString() })
 
     try {
       let call: SwapCall | null = null

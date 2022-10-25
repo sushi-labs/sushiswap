@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
 import { getBuiltGraphSDK, QueryResolvers, UserWithFarm } from '../../.graphclient'
-import { getTokenBalances } from '../../fetchers/token'
+import { getTokenBalances } from '../../fetchers'
 
 export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] = async (root, args) => {
   const sdk = getBuiltGraphSDK()
@@ -9,23 +9,24 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
   // ugly but good for performance because of the pair fetch
   const [unstakedPools, stakedPools] = await Promise.all([
     sdk
-      .CrossChainUser({ id: args.id, where: { balance_gt: 0 }, chainIds: args.chainIds, now: 0 })
-      .then(async ({ crossChainUser: user }) => {
+      .CrossChainLiquidityPositions({
+        where: { balance_gt: 0, user: args.id.toLowerCase() },
+        chainIds: args.chainIds,
+      })
+      .then(async ({ crossChainLiquidityPositions }) => {
         const balances = await getTokenBalances(
-          (user.liquidityPositions ?? []).map((lp) => ({
+          crossChainLiquidityPositions.map((lp) => ({
             token: lp.pair.id.split(':')[1],
             user: args.id,
-            chainId: lp.pair.chainId,
+            chainId: lp.chainId,
           }))
         )
-        return (user.liquidityPositions ?? [])
+
+        return crossChainLiquidityPositions
           .map((lp) => ({
-            id: lp.pair.id,
+            ...lp,
             unstakedBalance: balances.find((el) => el.token === lp.pair.id.split(':')[1])?.balance ?? '0',
             stakedBalance: '0',
-            pair: lp.pair,
-            chainId: lp.pair.chainId,
-            chainName: lp.pair.chainName,
           }))
           .filter((entry) => entry.unstakedBalance !== '0')
       }),
@@ -75,7 +76,7 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
         : staked
       : (unstaked as NonNullable<typeof unstaked>)) as unknown as UserWithFarm // pair type doesn't match, problem for a future somebody
 
-    const pair = unstaked?.pair ?? (staked as NonNullable<typeof unstaked>).pair
+    const pair = unstaked?.pair ?? staked.pair
 
     const totalBalance = Number(unstaked?.unstakedBalance ?? 0) + Number(staked?.stakedBalance ?? 0)
     const valueUSD = (totalBalance / pair.liquidity) * pair.liquidityUSD

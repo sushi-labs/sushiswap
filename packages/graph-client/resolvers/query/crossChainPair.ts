@@ -9,13 +9,13 @@ import {
 
 import { Pair, QueryResolvers } from '../../.graphclient'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
-import { getOneDayBlocks, getOneWeekBlocks, getTwoDayBlocks } from '../../fetchers/block'
+import { getOneDayBlocks, getOneWeekBlocks, getTwoDayBlocks } from '../../fetchers'
 
 export const crossChainPair: QueryResolvers['crossChainPair'] = async (root, args, context, info) => {
   const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
   const fetcher = async (block?: { number: number }) => {
-    const pools: SushiSwapTypes.Pair[] = await Promise.all([
+    const pool = await Promise.allSettled<SushiSwapTypes.Pair[]>([
       SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
         ? context.SushiSwap.Query.pair({
             root,
@@ -48,11 +48,15 @@ export const crossChainPair: QueryResolvers['crossChainPair'] = async (root, arg
             info,
           })
         : undefined,
-    ])
+    ]).then((results) => {
+      return results.flat().map((result) => {
+        if (result.status === 'fulfilled' && result.value) {
+          return result.value
+        }
+      })
+    })
 
-    const pool = pools.filter(Boolean).find(Boolean)
-
-    return pool
+    return pool.filter(Boolean).find(Boolean)
   }
 
   const [[oneDayBlock], [twoDayBlock], [oneWeekBlock]] = await Promise.all([
