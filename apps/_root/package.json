@@ -15,6 +15,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/core-sdk": "^1.0.0-canary.65",
     "@sushiswap/format": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/sushi-data": "1.0.26",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",

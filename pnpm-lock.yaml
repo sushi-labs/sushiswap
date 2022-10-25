@@ -85,7 +85,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^37.0.0
+      '@sushiswap/default-token-list': ^38.0.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -93,7 +93,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 37.0.0
+      '@sushiswap/default-token-list': 38.0.0
       '@vercel/node': 2.5.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -147,6 +147,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
@@ -189,6 +190,7 @@ importers:
       '@sushiswap/core-sdk': 1.0.0-canary.128
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/sushi-data': 1.0.26
@@ -9595,8 +9597,8 @@ packages:
     resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
     dev: false
 
-  /@sushiswap/default-token-list/37.0.0:
-    resolution: {integrity: sha512-76e+sMTMeHjGaB4DNDUeoR33DGOuIwlysB8D/hW7ptfdMeyLjE7mLyjw7Yffmcas5vV+yno0lIo6ElGNYrs7kQ==}
+  /@sushiswap/default-token-list/38.0.0:
+    resolution: {integrity: sha512-ykZak4C93I4KvPuza/7/Qdfy3+8v1Ri2odJBGHeeeJTQIDPagP9mLWztoxFJqoIuLMg1u3ptiw59XvPozt8aag==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -13761,7 +13763,7 @@ packages:
     dev: false
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
 
   /concat-stream/1.6.2:
     resolution: {integrity: sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==}
@@ -22693,7 +22695,7 @@ packages:
     dev: true
 
   /react-native-path/0.0.5:
-    resolution: {integrity: sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==}
+    resolution: {integrity: sha1-oE5Lc6U1qKfPFcbnYOJ9t3ia+xM=}
     dev: true
 
   /react-popper/2.3.0_ili5ylfne7i3hkfpsanzgkfu6m:
