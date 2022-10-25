@@ -1,14 +1,19 @@
+import classNames from 'classnames'
 import { FC } from 'react'
 
 interface ProductBackground {
   color: string
+  isCentered?: boolean
 }
 
-export const ProductBackground: FC<ProductBackground> = ({ color }) => {
+export const ProductBackground: FC<ProductBackground> = ({ color, isCentered }) => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <div
-        className="absolute w-[120vw] md:w-full aspect-[1/1] opacity-30 -right-[35%] -top-[50vw] -z-[1]"
+        className={classNames(
+          'absolute w-[120vw] md:w-full aspect-[1/1] opacity-30 -z-[1]',
+          isCentered ? '-top-[40vw]' : '-right-[35%] -top-[50vw]'
+        )}
         style={{
           backgroundImage: `radial-gradient(50% 50% at 55% 45%, ${color} 0%, #0f172a 100%)`,
         }}
