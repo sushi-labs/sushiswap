@@ -6,16 +6,3 @@ body {
   height: 100vh;
   overflow: hidden;
 }
-
-.hide-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-.hide-scrollbar ::-webkit-scrollbar {
-  display: none;
-}
-
-::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-}
