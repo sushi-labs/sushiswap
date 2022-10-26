@@ -1,5 +1,11 @@
 # @sushiswap/graph-client
 
+## 0.2.2
+
+### Patch Changes
+
+- 624d7fc2: ethers in deps
+
 ## 0.2.1
 
 ### Patch Changes
