@@ -4,16 +4,17 @@ import { Typography } from '@sushiswap/ui'
 import classNames from 'classnames'
 import { FC, ReactNode } from 'react'
 
+import { ProductSectionTitle } from './ProductSectionTitle'
+
 interface ProductFaq {
   faq: { question: string; answer: ReactNode }[]
 }
 
 export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
   return (
-    <section className="py-[75px]">
-      <Typography variant="h1">FAQs</Typography>
-      <Typography variant="sm">Frequently asked questions</Typography>
-      <div className="mt-16 border-2 divide-y rounded-3xl border-slate-500/30 divide-slate-500">
+    <section className="py-10 sm:py-[75px]">
+      <ProductSectionTitle title="FAQs" subtitle="Frequently asked questions" />
+      <div className="mt-8 sm:mt-16 border-2 divide-y rounded-3xl border-slate-500/30 divide-slate-500">
         {faq.map(({ question, answer }, i) => (
           <Disclosure key={i} as="div">
             {({ open }) => (
@@ -33,6 +34,7 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
                 </Disclosure.Button>
 
                 <Transition
+                  show={open}
                   className="transition-[max-height] overflow-hidden"
                   enter="duration-300 ease-in-out"
                   enterFrom="transform max-h-0"

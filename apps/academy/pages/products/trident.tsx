@@ -1,118 +1,28 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
-import boardImg from 'common/assets/board.png'
+import { classNames, Container } from '@sushiswap/ui'
 import {
   ProductArticles,
   ProductBackground,
   ProductCards,
   ProductFaq,
-  ProductStats,
+  ProductHero,
+  ProductInfoImages,
   ProductTechnicalDoc,
 } from 'common/components'
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
-import { AcademyIcon, MoneyBagIcon, MoneyHandIcon, MoneyTreeIcon, PuzzlePieceIcon, TilesIcon } from 'common/icons'
+import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
-import Image from 'next/image'
-import { FC } from 'react'
+import React, { FC } from 'react'
 import useSWR from 'swr'
 
 import { ArticleEntity } from '.mesh'
 
-const productSlug = 'trident'
-const color = '#93E5CE'
-const accentColor = '#22AD9D'
-const productStats = [
-  { value: '20', name: 'Projects Launched' },
-  { value: '$500m', name: 'Funds Raised' },
-  { value: '13k', name: 'Users Participated' },
-  { value: '$4m', name: 'Volume Generated' },
-]
-const cards = [
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
-    title: 'All-In-One Decentralized Exchange',
-    subtitle: 'The Trident Framework can support any pool type, no matter how novel or complex.',
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'More than a single AMM',
-    subtitle: "Trident is not one specific AMM itself, it's a host (framework) to all.",
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Capital Efficient',
-    subtitle: 'Built on and powered by the BentoBox, passively earning yield on your tokens.',
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Save money on every swap',
-    subtitle: 'Managed by Tines, our smart ordering router, calculating and saving you money on every swap.',
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Extensible Versioning',
-    subtitle:
-      'Always compatible with previous versions, allowing developers to continue building new AMMs on Trident, without reinventing the wheel.',
-  },
-]
-
-const faq = [
-  {
-    question: 'What is Trident and what Pool types does it support?',
-    answer: (
-      <>
-        <Typography>
-          Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs can
-          be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there is a
-          framework for creating any AMM anyone would ever need.
-        </Typography>
-        <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
-        <ul className="list-disc list-inside">
-          <li>
-            <Typography weight={700} className="text-white" as="span">
-              Classic pool{' '}
-            </Typography>
-            <Typography as="span">
-              = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-              They’re best for pairing tokens that are unpredictable.
-            </Typography>
-          </li>
-          <li>
-            <Typography weight={700} className="text-white" as="span">
-              Concentrated pool{' '}
-            </Typography>
-            <Typography as="span">
-              = these pools also use two tokens. The difference is that the liquidity in each pool is determined by the
-              ranges set by the pool creator.
-            </Typography>
-          </li>
-          <li>
-            <Typography weight={700} className="text-white" as="span">
-              Stable pools{' '}
-            </Typography>
-            <Typography as="span">
-              = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT, or
-              other pegged tokens like ETH and stETH, or renBTC and WBTC.
-            </Typography>
-          </li>
-          <li>
-            <Typography weight={700} className="text-white" as="span">
-              Index pools{' '}
-            </Typography>
-            <Typography as="span">
-              = these pools are usually used to create baskets of assets or decentralized index funds; hence the name.
-              These pools can be made of any percentage of tokens equalling 100.
-            </Typography>
-          </li>
-        </ul>
-      </>
-    ),
-  },
-]
+const PRODUCT_SLUG = 'trident'
+const { color, productStats, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
 export const getStaticProps = async () => {
-  const data = await getProducts({ filters: { slug: { eq: productSlug } } })
+  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0].attributes
 
   return { props: product }
@@ -137,28 +47,20 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
       <ProductBackground color={color} />
-      <section className="py-[75px] flex flex-col items-center">
-        <h1 className="text-6xl leading-[78px] text-center">
-          <p className="font-bold">Trident</p>
-          <p>A Future-Proof Framework for</p>
-          <span>
-            Building <strong>AMMs</strong>
-          </span>
-        </h1>
-        <h3 className="text-center mt-10 text-2xl font-medium text-slate-400">{description}</h3>
-
-        <Link.External href={url}>
-          <Button
-            size="lg"
-            className="mt-16 rounded-lg"
-            startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
-          >
-            <Typography weight={500}>Enter App</Typography>
-          </Button>
-        </Link.External>
-
-        <ProductStats productStats={productStats} />
-      </section>
+      <ProductHero
+        productName={
+          <h1 className="text-4xl sm:text-6xl sm:leading-[78px] text-center max-w-5xl">
+            <strong>Trident</strong>
+            <p>
+              A Future-Proof Framework for Building <strong>AMMs</strong>
+            </p>
+          </h1>
+        }
+        productDescription={description}
+        productUrl={url}
+        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+        productStats={productStats}
+      />
       <ProductCards
         name={name}
         description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."
@@ -169,49 +71,35 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         title="Articles"
         subtitle="Read more about the latest releases"
         articles={latestArticles}
-        productName={productSlug}
+        productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
-      <section className="py-[75px] grid grid-rows-3 gap-[70px]">
-        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
-          <div>
-            <h3 className="text-4xl text-slate-50">The BentoBox</h3>
-            <p className="text-lg text-slate-400">
-              {
-                "All of the funds on Trident are also available to be applied to approved strategies in the BentoBox. This feature is made possible by Bento's empirical accounting method..."
-              }
-            </p>
-          </div>
-          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="bentobox" />
-        </div>
-        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
-          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="tines" />
-          <div>
-            <h3 className="text-4xl text-slate-50">The Tines Router</h3>
-            <p className="text-lg text-slate-400">
-              {
-                'Tines is a Smart Ordering Router (SOR) that is responsible for managing all the swaps on Trident. When the final phase of Trident is complete, Tines will be the only router in existence...'
-              }
-            </p>
-          </div>
-        </div>
-        <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
-          <div>
-            <h3 className="text-4xl text-slate-50">The IPool interface </h3>
-            <p className="text-lg text-slate-400">
-              {
-                'The IPool interface was developed by the Sushi team in the process of building Trident, which is a system of contracts that supports the four most canonical types of liquidity in DeFi: Classic...'
-              }
-            </p>
-          </div>
-          <Image src={boardImg} width={360} height={320} unoptimized objectFit="scale-down" alt="ipool" />
-        </div>
-      </section>
+      <ProductInfoImages
+        color="#FEC464"
+        secondaryColor="#84E9DD"
+        infoSections={[
+          {
+            title: 'The BentoBox',
+            description:
+              "All of the funds on Trident are also available to be applied to approved strategies in the BentoBox. This feature is made possible by Bento's empirical accounting method.",
+          },
+          {
+            title: 'The Tines Router',
+            description:
+              'Tines is a Smart Ordering Router (SOR) that is responsible for managing all the swaps on Trident. When the final phase of Trident is complete, Tines will be the only router in existence.',
+          },
+          {
+            title: 'The IPool interface',
+            description:
+              'The IPool interface was developed by the Sushi team in the process of building Trident, which is a system of contracts that supports the four most canonical types of liquidity in DeFi: Constant Product Pool, Stable Swap Pool, Concentrated Liquidity Pool, Index Pool.',
+          },
+        ]}
+      />
       <ProductArticles
         title={`Learn about ${name}`}
         subtitle="Check out our tutorials and explainers"
         articles={relevantArticles}
-        productName={productSlug}
+        productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
       <ProductTechnicalDoc color={color} secondaryColor="#FEC464" />

@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/solid'
-import { IconButton, Link, SushiIcon, Typography } from '@sushiswap/ui'
+import { Link, SushiIcon, Typography } from '@sushiswap/ui'
 import classNames from 'classnames'
 import { SushiTransparentIcon, TriangleIcon } from 'common/icons'
 import { FC, useCallback, useState } from 'react'
@@ -25,9 +25,9 @@ export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
 
   return (
     <nav className="sm:hidden">
-      <IconButton type="button" className="p-1.5 bg-slate-900 rounded" onClick={onOpen}>
+      <button className="p-1.5 bg-slate-900 rounded hover:opacity-80" onClick={onOpen}>
         <Bars3Icon className="w-5 h-5" aria-hidden="true" />
-      </IconButton>
+      </button>
 
       <Drawer
         isOpen={isOpen}

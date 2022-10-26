@@ -4,6 +4,7 @@ interface DocsIcon {
   color: string
   secondaryColor: string
 }
+
 export const DocsIcon: FC<React.ComponentProps<'svg'> & DocsIcon> = ({ color, secondaryColor, ...props }) => {
   return (
     <svg width="108" height="91" viewBox="0 0 108 91" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

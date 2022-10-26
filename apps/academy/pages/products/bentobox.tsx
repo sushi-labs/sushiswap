@@ -1,16 +1,15 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
-import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
-import { ProductArticles, ProductBackground, ProductCards, ProductFaq, ProductTechnicalDoc } from 'common/components'
-import { DEFAULT_SIDE_PADDING } from 'common/helpers'
+import { classNames, Container } from '@sushiswap/ui'
 import {
-  AcademyIcon,
-  MoneyBagIcon,
-  MoneyHandIcon,
-  MoneyTreeIcon,
-  PuzzlePieceIcon,
-  ScreenCheckIcon,
-  TilesIcon,
-} from 'common/icons'
+  ProductArticles,
+  ProductBackground,
+  ProductCards,
+  ProductFaq,
+  ProductHero,
+  ProductTechnicalDoc,
+} from 'common/components'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
+import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
@@ -18,102 +17,11 @@ import useSWR from 'swr'
 
 import { ArticleEntity } from '.mesh'
 
-const productSlug = 'bentobox'
-const color = '#FF5EAF'
-const accentColor = '#A048DA'
-
-const cards = [
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={TilesIcon} />,
-    title: 'Utilize funds in multiple DeFi apps',
-    subtitle:
-      'BentoBox’s innovation is its ability to track users’ deposits via an artificial balance, which is used to account for their idle funds while they’re simultaneously applied to strategies.',
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyTreeIcon} />,
-    title: 'Earn some of the highest yield in DeFi',
-    subtitle:
-      'As the foundation for multiple DeFi apps, BentoBox can attract more capital than simple vaults, leading to higher yield than most vaults',
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyHandIcon} />,
-    title: 'Flash Loans',
-    subtitle:
-      'Funds in BentoBox can be used for flash loans, adding more passive value to users’ underutilized capital.',
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={PuzzlePieceIcon} />,
-    title: 'Plug ’n play interest pools for your DeFi app',
-    subtitle: 'Build your own DeFi apps on top of BentoBox to instantly utilize over 500m+ TVL.',
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={MoneyBagIcon} />,
-    title: 'Capital Efficiency',
-    subtitle: 'Profit from efficiencies of a growing protocol by saving on gas fees on each dApp deployed on BentoBox.',
-  },
-  {
-    Icon: () => <AcademyIcon color={accentColor} Icon={ScreenCheckIcon} />,
-    title: 'Smooth UX',
-    subtitle: 'Approvals are inherited by the system, making individual transactions within BentoBox cheaper.',
-  },
-]
-
-const faq = [
-  {
-    question: 'Lorem ipsum',
-    answer: (
-      <>
-        <Typography>
-          Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs can
-          be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there is a
-          framework for creating any AMM anyone would ever need.
-        </Typography>
-        <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
-        <ul className="list-disc list-inside">
-          <li>
-            <Typography weight={700} className="text-white" as="span">
-              Classic pool{' '}
-            </Typography>
-            <Typography as="span">
-              = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-              They’re best for pairing tokens that are unpredictable.
-            </Typography>
-          </li>
-          <li>
-            <Typography weight={700} className="text-white" as="span">
-              Concentrated pool{' '}
-            </Typography>
-            <Typography as="span">
-              = these pools also use two tokens. The difference is that the liquidity in each pool is determined by the
-              ranges set by the pool creator.
-            </Typography>
-          </li>
-          <li>
-            <Typography weight={700} className="text-white" as="span">
-              Stable pools{' '}
-            </Typography>
-            <Typography as="span">
-              = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT, or
-              other pegged tokens like ETH and stETH, or renBTC and WBTC.
-            </Typography>
-          </li>
-          <li>
-            <Typography weight={700} className="text-white" as="span">
-              Index pools{' '}
-            </Typography>
-            <Typography as="span">
-              = these pools are usually used to create baskets of assets or decentralized index funds; hence the name.
-              These pools can be made of any percentage of tokens equalling 100.
-            </Typography>
-          </li>
-        </ul>
-      </>
-    ),
-  },
-]
+const PRODUCT_SLUG = 'bentobox'
+const { color, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
 export const getStaticProps = async () => {
-  const data = await getProducts({ filters: { slug: { eq: productSlug } } })
+  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0].attributes
 
   return { props: product }
@@ -137,26 +45,14 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
+    <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>
       <ProductBackground color={color} isCentered />
-      <section className="flex flex-col items-center py-[75px]">
-        {longName.split('-').map((name, i) => (
-          <h1 key={i} className="text-6xl font-bold leading-[78px]">
-            {name}
-          </h1>
-        ))}
-        <h3 className="text-2xl mt-1.5 font-medium text-slate-400">{description}</h3>
-
-        <Link.External href={url}>
-          <Button
-            size="lg"
-            className="mt-16 rounded-lg"
-            startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
-          >
-            <Typography weight={500}>Enter Farms</Typography>
-          </Button>
-        </Link.External>
-      </section>
+      <ProductHero
+        productName={longName}
+        productDescription={description}
+        productUrl={url}
+        buttonIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
+      />
       <ProductCards
         name={name}
         description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets or liquidity pools."
@@ -167,14 +63,14 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         title="Articles"
         subtitle="Read more about the latest releases"
         articles={latestArticles}
-        productName={productSlug}
+        productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
       <ProductArticles
         title="Learn about Bentobox"
         subtitle="Check out our tutorials and explainers"
         articles={relevantArticles}
-        productName={productSlug}
+        productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
       <ProductTechnicalDoc color={color} secondaryColor="#FFBCFE" />

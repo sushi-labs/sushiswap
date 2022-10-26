@@ -15,7 +15,7 @@ export const ProductBackground: FC<ProductBackground> = ({ color, isCentered }) 
           isCentered ? '-top-[40vw]' : '-right-[35%] -top-[50vw]'
         )}
         style={{
-          backgroundImage: `radial-gradient(50% 50% at 55% 45%, ${color} 0%, #0f172a 100%)`,
+          backgroundImage: `radial-gradient(50% 50% at 50% 45%, ${color} 0%, #0f172a 100%)`,
         }}
       />
       <div
