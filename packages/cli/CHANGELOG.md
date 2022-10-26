@@ -1,5 +1,12 @@
 # @sushiswap/cli
 
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies [e0b880fe]
+  - @sushiswap/currency@0.0.3
+
 ## 0.1.5
 
 ### Patch Changes
