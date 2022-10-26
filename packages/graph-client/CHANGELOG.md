@@ -1,5 +1,11 @@
 # @sushiswap/graph-client
 
+## 0.2.1
+
+### Patch Changes
+
+- 19cbeef0: move dependencies
+
 ## 0.2.0
 
 ### Minor Changes
