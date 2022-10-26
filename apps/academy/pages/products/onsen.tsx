@@ -21,7 +21,7 @@ import useSWR from 'swr'
 import { ArticleEntity } from '.mesh'
 
 const PRODUCT_SLUG = 'onsen'
-const { color, productStats, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
+const { color, productStats, buttonText, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
 export const getStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
@@ -56,6 +56,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={longName}
         productDescription={description}
         productUrl={url}
+        buttonText={buttonText}
         buttonIcon={<ArrowRightCircleIcon width={20} height={20} />}
         image={<Image src={onsenImg} unoptimized alt="onsen-img" />}
         productStats={productStats}

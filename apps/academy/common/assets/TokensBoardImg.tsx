@@ -26,35 +26,35 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
     <path
       d="M64.6988 205.109C62.4362 203.808 61.3052 202.093 61.3052 200.378C61.3043 198.663 62.4362 196.948 64.6988 195.648L117.051 165.549C121.576 162.947 128.982 162.947 133.508 165.549L185.86 195.648C188.123 196.949 189.254 198.663 189.254 200.378C189.254 202.093 188.123 203.808 185.86 205.109L133.508 235.208C128.982 237.81 121.576 237.81 117.051 235.208L64.6988 205.109Z"
       fill="#BCCFFF"
-      fill-opacity="0.88"
+      fillOpacity="0.88"
     />
     <path
       d="M320.575 135.005C320.575 147.205 329.177 162.043 339.79 168.144C350.398 174.242 359 169.299 359 157.098C359 144.897 350.398 130.059 339.79 123.959C329.177 117.857 320.575 122.805 320.575 135.005Z"
       stroke="white"
-      stroke-opacity="0.3"
-      stroke-width="0.765472"
-      stroke-miterlimit="10"
+      strokeOpacity="0.3"
+      strokeWidth="0.765472"
+      strokeMiterlimit="10"
     />
     <path
       d="M306.933 142.849C306.933 155.049 315.535 169.887 326.148 175.987C336.755 182.086 345.358 177.142 345.358 164.942C345.358 152.741 336.755 137.903 326.148 131.803C315.535 125.701 306.933 130.649 306.933 142.849Z"
       stroke="white"
-      stroke-opacity="0.5"
-      stroke-width="1.14821"
-      stroke-miterlimit="10"
+      strokeOpacity="0.5"
+      strokeWidth="1.14821"
+      strokeMiterlimit="10"
     />
     <path
       d="M293.29 150.693C293.29 162.892 301.892 177.731 312.505 183.831C323.112 189.93 331.715 184.986 331.715 172.785C331.715 160.585 323.112 145.747 312.505 139.646C301.892 133.545 293.29 138.493 293.29 150.693Z"
       stroke="white"
-      stroke-opacity="0.7"
-      stroke-width="1.53094"
-      stroke-miterlimit="10"
+      strokeOpacity="0.7"
+      strokeWidth="1.53094"
+      strokeMiterlimit="10"
     />
     <path
       d="M314.386 160.763C310.892 154.738 306.067 149.48 300.736 146.415C295.13 143.192 290.084 143.042 286.557 145.403C286.557 145.403 286.556 145.403 286.556 145.403C286.555 145.402 286.555 145.402 286.554 145.402L281.801 148.135C285.247 146.432 289.863 146.829 294.939 149.747C300.27 152.813 305.095 158.07 308.589 164.096C312.082 170.121 314.242 176.912 314.242 183.041C314.242 189.026 312.178 193.267 308.828 195.333L314.134 192.283C314.3 192.194 314.464 192.1 314.625 192.001L314.625 192C314.625 192 314.625 192 314.625 192C314.625 192 314.625 192 314.625 192C317.975 189.934 320.038 185.693 320.038 179.708C320.039 173.579 317.879 166.788 314.386 160.763Z"
       fill="url(#paint2_linear_1810_3186)"
     />
     <path
-      d="M294.939 149.747C284.278 143.618 275.636 148.587 275.636 160.845C275.636 166.956 277.784 173.726 281.259 179.737C284.755 185.784 289.593 191.064 294.939 194.138C305.6 200.267 314.242 195.298 314.241 183.04C314.242 176.911 312.082 170.12 308.589 164.096C305.095 158.07 300.27 152.812 294.939 149.747ZM-nan -nanL294.939 192.049C285.281 186.497 277.452 172.993 277.452 161.889C277.452 150.784 285.282 146.283 294.939 151.836C304.596 157.387 312.425 170.891 312.426 181.996C312.426 193.101 304.596 197.602 294.939 192.049L-nan -nanZ"
+      d="M294.939 149.747C284.278 143.618 275.636 148.587 275.636 160.845C275.636 166.956 277.784 173.726 281.259 179.737C284.755 185.784 289.593 191.064 294.939 194.138C305.6 200.267 314.242 195.298 314.241 183.04C314.242 176.911 312.082 170.12 308.589 164.096C305.095 158.07 300.27 152.812 294.939 149.747ZM L294.939 192.049C285.281 186.497 277.452 172.993 277.452 161.889C277.452 150.784 285.282 146.283 294.939 151.836C304.596 157.387 312.425 170.891 312.426 181.996C312.426 193.101 304.596 197.602 294.939 192.049L"
       fill="url(#paint3_linear_1810_3186)"
     />
     <path
@@ -80,7 +80,7 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
     <path
       d="M214.904 151.116V75.0115C214.904 71.3308 212.285 66.8145 209.084 64.9743L121.286 14.4967C119.705 13.5881 118.268 13.4981 117.215 14.0814L119.287 12.8895C119.289 12.8884 119.292 12.889 119.293 12.8908C119.294 12.8926 119.296 12.8931 119.298 12.892C120.36 12.2152 121.856 12.265 123.512 13.2169L211.31 63.6946C214.511 65.5352 217.13 70.0511 217.13 73.7318V149.835C217.13 151.762 216.409 153.084 215.267 153.651L213.334 154.762C214.304 154.123 214.904 152.87 214.904 151.116Z"
       fill="#0C1935"
-      fill-opacity="0.36"
+      fillOpacity="0.36"
     />
     <path
       d="M151.662 72.0081C151.662 70.23 152.916 69.5093 154.462 70.3984C155.277 70.9275 155.955 71.6405 156.442 72.4796C156.928 73.3187 157.209 74.2601 157.262 75.2276C157.262 77.0057 156.008 77.7264 154.462 76.8373C153.647 76.3082 152.969 75.5952 152.482 74.7561C151.996 73.917 151.715 72.9756 151.662 72.0081Z"
@@ -152,23 +152,23 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
     <path
       d="M44.0508 13.4591C44.0508 24.572 51.8871 38.0885 61.5542 43.6454C71.2168 49.201 79.0531 44.6976 79.0531 33.5838C79.0531 22.4698 71.2168 8.95391 61.5542 3.39688C51.8871 -2.16084 44.0508 2.34602 44.0508 13.4591Z"
       stroke="white"
-      stroke-opacity="0.3"
-      stroke-width="0.765472"
-      stroke-miterlimit="10"
+      strokeOpacity="0.3"
+      strokeWidth="0.765472"
+      strokeMiterlimit="10"
     />
     <path
       d="M31.6235 20.6037C31.6235 31.7165 39.4598 45.233 49.127 50.79C58.7895 56.3455 66.6258 51.8421 66.6258 40.7283C66.6258 29.6143 58.7895 16.0985 49.127 10.5415C39.4598 4.98367 31.6235 9.49052 31.6235 20.6037Z"
       stroke="white"
-      stroke-opacity="0.5"
-      stroke-width="1.14821"
-      stroke-miterlimit="10"
+      strokeOpacity="0.5"
+      strokeWidth="1.14821"
+      strokeMiterlimit="10"
     />
     <path
       d="M19.1963 27.7482C19.1963 38.8611 27.0327 52.3776 36.6997 57.9345C46.3623 63.4901 54.1986 58.9867 54.1986 47.8729C54.1986 36.7589 46.3623 23.243 36.6997 17.686C27.0327 12.1282 19.1963 16.6351 19.1963 27.7482Z"
       stroke="white"
-      stroke-opacity="0.7"
-      stroke-width="1.53094"
-      stroke-miterlimit="10"
+      strokeOpacity="0.7"
+      strokeWidth="1.53094"
+      strokeMiterlimit="10"
     />
     <path
       d="M39.4159 38.9881C35.9222 32.9623 31.0968 27.7044 25.7659 24.6393C20.1598 21.4164 15.114 21.2663 11.5875 23.6275C11.587 23.6278 11.5864 23.6277 11.586 23.6272C11.5857 23.6267 11.5851 23.6265 11.5846 23.6268L6.83105 26.3597C10.2769 24.6567 14.8928 25.0538 19.969 27.9721C25.3 31.0371 30.1253 36.295 33.619 42.3209C37.112 48.3455 39.2723 55.1364 39.2718 61.2651C39.2719 67.2504 37.2079 71.4915 33.8584 73.5578L39.164 70.5075C39.3306 70.4185 39.4942 70.3244 39.6548 70.2254L39.6553 70.2251C39.6553 70.2251 39.6554 70.225 39.6554 70.225C39.6554 70.225 39.6554 70.225 39.6554 70.225C43.0048 68.1587 45.0686 63.9176 45.0686 57.9324C45.0692 51.8037 42.9089 45.0128 39.4159 38.9881Z"
@@ -194,9 +194,9 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         width="105.577"
         height="123.778"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -218,8 +218,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="259.265"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0.425" stop-color="#414F72" />
-        <stop offset="0.563" stop-color="#7988AF" />
+        <stop offset="0.425" stopColor="#414F72" />
+        <stop offset="0.563" stopColor="#7988AF" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_1810_3186"
@@ -229,8 +229,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="266.315"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-opacity="0" />
-        <stop offset="1" stop-color="#0C121F" />
+        <stop stopOpacity="0" />
+        <stop offset="1" stopColor="#0C121F" />
       </linearGradient>
       <linearGradient
         id="paint2_linear_1810_3186"
@@ -240,8 +240,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="163.048"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint3_linear_1810_3186"
@@ -251,8 +251,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="173.638"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint4_linear_1810_3186"
@@ -262,8 +262,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="173.479"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint5_linear_1810_3186"
@@ -273,8 +273,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="102.565"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint6_linear_1810_3186"
@@ -284,8 +284,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="73.8638"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint7_linear_1810_3186"
@@ -295,11 +295,11 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="209.759"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#C2C7E2" />
-        <stop offset="0.111" stop-color="#CED2E8" />
-        <stop offset="0.419" stop-color="#E9EBF4" />
-        <stop offset="0.691" stop-color="#F9FAFC" />
-        <stop offset="0.899" stop-color="white" />
+        <stop stopColor="#C2C7E2" />
+        <stop offset="0.111" stopColor="#CED2E8" />
+        <stop offset="0.419" stopColor="#E9EBF4" />
+        <stop offset="0.691" stopColor="#F9FAFC" />
+        <stop offset="0.899" stopColor="white" />
       </linearGradient>
       <linearGradient
         id="paint8_linear_1810_3186"
@@ -309,11 +309,11 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="198.407"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#C2C7E2" />
-        <stop offset="0.111" stop-color="#CED2E8" />
-        <stop offset="0.419" stop-color="#E9EBF4" />
-        <stop offset="0.691" stop-color="#F9FAFC" />
-        <stop offset="0.899" stop-color="white" />
+        <stop stopColor="#C2C7E2" />
+        <stop offset="0.111" stopColor="#CED2E8" />
+        <stop offset="0.419" stopColor="#E9EBF4" />
+        <stop offset="0.691" stopColor="#F9FAFC" />
+        <stop offset="0.899" stopColor="white" />
       </linearGradient>
       <linearGradient
         id="paint9_linear_1810_3186"
@@ -323,10 +323,10 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="196.902"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#34318A" />
-        <stop offset="0.244" stop-color="#3E3C99" />
-        <stop offset="0.716" stop-color="#5857C2" />
-        <stop offset="1" stop-color="#696ADD" />
+        <stop stopColor="#34318A" />
+        <stop offset="0.244" stopColor="#3E3C99" />
+        <stop offset="0.716" stopColor="#5857C2" />
+        <stop offset="1" stopColor="#696ADD" />
       </linearGradient>
       <linearGradient
         id="paint10_linear_1810_3186"
@@ -336,10 +336,10 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="163.609"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#4241A8" />
-        <stop offset="0.275" stop-color="#363593" />
-        <stop offset="0.737" stop-color="#252376" />
-        <stop offset="1" stop-color="#1E1C6B" />
+        <stop stopColor="#4241A8" />
+        <stop offset="0.275" stopColor="#363593" />
+        <stop offset="0.737" stopColor="#252376" />
+        <stop offset="1" stopColor="#1E1C6B" />
       </linearGradient>
       <linearGradient
         id="paint11_linear_1810_3186"
@@ -349,10 +349,10 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="208.25"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#34318A" />
-        <stop offset="0.244" stop-color="#3E3C99" />
-        <stop offset="0.716" stop-color="#5857C2" />
-        <stop offset="1" stop-color="#696ADD" />
+        <stop stopColor="#34318A" />
+        <stop offset="0.244" stopColor="#3E3C99" />
+        <stop offset="0.716" stopColor="#5857C2" />
+        <stop offset="1" stopColor="#696ADD" />
       </linearGradient>
       <linearGradient
         id="paint12_linear_1810_3186"
@@ -362,10 +362,10 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="170.578"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#1E1C6B" />
-        <stop offset="0.2" stop-color="#252376" />
-        <stop offset="0.551" stop-color="#373794" />
-        <stop offset="1" stop-color="#5455C2" />
+        <stop stopColor="#1E1C6B" />
+        <stop offset="0.2" stopColor="#252376" />
+        <stop offset="0.551" stopColor="#373794" />
+        <stop offset="1" stopColor="#5455C2" />
       </linearGradient>
       <linearGradient
         id="paint13_linear_1810_3186"
@@ -375,9 +375,9 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="135.438"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#CCD0F2" />
-        <stop offset="0.432" stop-color="#C2C6E8" />
-        <stop offset="1" stop-color="#B9BDE0" />
+        <stop stopColor="#CCD0F2" />
+        <stop offset="0.432" stopColor="#C2C6E8" />
+        <stop offset="1" stopColor="#B9BDE0" />
       </linearGradient>
       <linearGradient
         id="paint14_linear_1810_3186"
@@ -387,11 +387,11 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="99.9389"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#F1F1F6" />
-        <stop offset="0.383" stop-color="#EEEEF6" />
-        <stop offset="0.67" stop-color="#E4E6F5" />
-        <stop offset="0.924" stop-color="#D4D8F4" />
-        <stop offset="1" stop-color="#CED2F4" />
+        <stop stopColor="#F1F1F6" />
+        <stop offset="0.383" stopColor="#EEEEF6" />
+        <stop offset="0.67" stopColor="#E4E6F5" />
+        <stop offset="0.924" stopColor="#D4D8F4" />
+        <stop offset="1" stopColor="#CED2F4" />
       </linearGradient>
       <linearGradient
         id="paint15_linear_1810_3186"
@@ -401,8 +401,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="41.273"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint16_linear_1810_3186"
@@ -412,8 +412,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="51.8626"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint17_linear_1810_3186"
@@ -423,8 +423,8 @@ export const TokensBoardImg: FC<TokensBoardImg & React.ComponentProps<'svg'>> = 
         y2="51.7036"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
     </defs>
   </svg>

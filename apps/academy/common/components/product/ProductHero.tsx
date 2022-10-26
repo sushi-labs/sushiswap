@@ -1,5 +1,5 @@
 import { Button, classNames, Link, Typography, useBreakpoint } from '@sushiswap/ui'
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useLayoutEffect, useState } from 'react'
 
 import { ProductStat, ProductStats } from './'
 
@@ -38,7 +38,11 @@ export const ProductHero: FC<ProductHero> = ({
   productStats,
 }) => {
   const { isMd } = useBreakpoint('md')
-  const isCentered = !image || !isMd
+
+  const [isCentered, setIsCentered] = useState(false)
+  useLayoutEffect(() => {
+    setIsCentered(!image || !isMd)
+  }, [image, isMd])
 
   return (
     <section className={classNames('py-10 sm:py-[75px] relative')}>

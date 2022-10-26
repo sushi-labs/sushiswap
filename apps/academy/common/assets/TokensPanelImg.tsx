@@ -18,7 +18,7 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
     <path
       d="M8.4402 198.431C-1.91106 204.404 -1.91106 214.182 8.4402 220.153L153.383 303.713C163.729 309.688 180.662 309.688 191.009 303.713L335.951 220.157C346.299 214.182 346.299 204.404 335.951 198.431L191.009 114.872C180.661 108.899 163.727 108.899 153.383 114.872L8.4402 198.431Z"
       fill="#BCCFFF"
-      fill-opacity="0.88"
+      fillOpacity="0.88"
     />
     <path
       d="M343.711 209.293C343.711 213.232 341.126 217.167 335.951 220.157L191.009 303.713C180.662 309.688 163.729 309.688 153.383 303.713L8.44026 220.153C3.28074 217.178 0.696837 213.252 0.68328 209.327H0.679688V220.094H0.68328C0.696837 224.019 3.28074 227.944 8.44026 230.923L153.383 314.48C163.729 320.455 180.662 320.455 191.009 314.48L335.951 230.923C341.126 227.936 343.711 223.997 343.711 220.058H343.713V209.293H343.711Z"
@@ -97,9 +97,9 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="221.629"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#D1D7F3" />
-        <stop offset="0.5" stop-color="#E6E9F8" />
-        <stop offset="1" stop-color="white" />
+        <stop stopColor="#D1D7F3" />
+        <stop offset="0.5" stopColor="#E6E9F8" />
+        <stop offset="1" stopColor="white" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_1810_3101"
@@ -109,8 +109,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="264.127"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0.425" stop-color="#414F72" />
-        <stop offset="0.563" stop-color="#7988AF" />
+        <stop offset="0.425" stopColor="#414F72" />
+        <stop offset="0.563" stopColor="#7988AF" />
       </linearGradient>
       <linearGradient
         id="paint2_linear_1810_3101"
@@ -120,8 +120,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="160.525"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint3_linear_1810_3101"
@@ -131,8 +131,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="159.7"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint4_linear_1810_3101"
@@ -142,8 +142,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="151.092"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint5_linear_1810_3101"
@@ -153,8 +153,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="244.525"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint6_linear_1810_3101"
@@ -164,8 +164,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="243.7"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint7_linear_1810_3101"
@@ -175,8 +175,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="235.092"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint8_linear_1810_3101"
@@ -186,8 +186,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="146.665"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint9_linear_1810_3101"
@@ -197,8 +197,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="145.586"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint10_linear_1810_3101"
@@ -208,8 +208,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="134.314"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint11_linear_1810_3101"
@@ -219,8 +219,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="43.4243"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint12_linear_1810_3101"
@@ -230,8 +230,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="42.3962"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint13_linear_1810_3101"
@@ -241,8 +241,8 @@ export const TokensPanelImg: FC<TokensPanelImg & React.ComponentProps<'svg'>> = 
         y2="31.6714"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
     </defs>
   </svg>

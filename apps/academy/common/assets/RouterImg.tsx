@@ -81,7 +81,7 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
       fill="url(#paint6_linear_1810_3146)"
     />
     <path d="M208.749 161.316L245.735 183.151V147.145L208.749 125.311V161.316Z" fill="#FCFCFD" />
-    <path d="M208.749 161.316L245.735 183.151V147.145L208.749 125.311V161.316Z" fill="#0C1935" fill-opacity="0.36" />
+    <path d="M208.749 161.316L245.735 183.151V147.145L208.749 125.311V161.316Z" fill="#0C1935" fillOpacity="0.36" />
     <path
       d="M342.138 65.9102C341.103 67.8257 340.495 69.9509 340.355 72.1345L340.353 97.4148C340.353 99.1072 341.153 100.952 342.138 101.533L343.922 102.588V62.75C343.922 62.75 343.124 64.1638 342.138 65.9102Z"
       fill="#414A72"
@@ -101,7 +101,7 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
     <path
       d="M141.76 131.239L132.481 128.875L132.443 133.603L113.757 144.633L94.9452 171.422L84.2678 177.725L84.2172 184.029L97.564 176.149L116.376 149.361L132.392 139.906L132.354 144.633L141.76 131.239Z"
       fill="#BCC3FF"
-      fill-opacity="0.14"
+      fillOpacity="0.14"
     />
     <path
       d="M133.613 153.3L124.334 150.937L124.296 155.664L116.288 160.392L97.7286 155.665L84.3818 163.544L84.3313 169.847L95.0087 163.544L113.568 168.271L124.245 161.967L124.207 166.695L133.613 153.3Z"
@@ -110,7 +110,7 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
     <path
       d="M133.613 153.3L124.334 150.937L124.296 155.664L116.288 160.392L97.7286 155.665L84.3818 163.544L84.3313 169.847L95.0087 163.544L113.568 168.271L124.245 161.967L124.207 166.695L133.613 153.3Z"
       fill="#BCC3FF"
-      fill-opacity="0.18"
+      fillOpacity="0.18"
     />
     <path
       d="M109.538 173.786L108.498 175.968C104.901 181.985 100.1 187.199 94.8466 190.3C83.7955 196.824 74.9114 191.53 75.0161 178.482C75.1208 165.435 84.1748 149.551 95.2259 143.027C99.7305 140.367 103.874 139.672 107.291 141.357L109.791 142.27L117.904 130.439L114.209 129.236L116.586 123.124L107.401 122.273L105.108 128.19C103.672 128.443 102.181 128.852 100.648 129.428L100.691 124.117L90.0136 130.421L89.971 135.731C88.4335 136.968 86.9348 138.323 85.4886 139.773L83.2698 136.519L73.9832 148.274L76.1886 151.552C75.0046 153.427 73.8998 155.365 72.8876 157.343L69.0116 156.997L63.5854 171.053L67.448 171.423C66.9271 173.424 66.5126 175.425 66.2177 177.403L61.7199 180.058L61.6187 192.665L66.1166 190.009C66.3823 191.656 66.7686 193.184 67.2621 194.587L63.3568 199.543L68.6081 207.296L72.5266 202.348C73.5165 203.143 74.6005 203.789 75.7656 204.278L73.4864 210.203L82.6718 211.054L84.9642 205.136C86.4008 204.884 87.8919 204.475 89.4241 203.899L89.3815 209.21L100.059 202.906L100.102 197.596C101.639 196.359 103.138 195.004 104.584 193.554L106.803 196.808L116.089 185.052L113.453 182.452L116.891 175.991L109.538 173.786Z"
@@ -129,10 +129,10 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
         y2="122.604"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#C6CBE7" />
-        <stop offset="0.367" stop-color="#E1E4F2" />
-        <stop offset="0.752" stop-color="#F7F8FC" />
-        <stop offset="1" stop-color="white" />
+        <stop stopColor="#C6CBE7" />
+        <stop offset="0.367" stopColor="#E1E4F2" />
+        <stop offset="0.752" stopColor="#F7F8FC" />
+        <stop offset="1" stopColor="white" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_1810_3146"
@@ -142,8 +142,8 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
         y2="293.384"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0.425" stop-color="#414F72" />
-        <stop offset="0.563" stop-color="#7988AF" />
+        <stop offset="0.425" stopColor="#414F72" />
+        <stop offset="0.563" stopColor="#7988AF" />
       </linearGradient>
       <linearGradient
         id="paint2_linear_1810_3146"
@@ -153,8 +153,8 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
         y2="129.614"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0.425" stop-color="#414F72" />
-        <stop offset="0.563" stop-color="#7988AF" />
+        <stop offset="0.425" stopColor="#414F72" />
+        <stop offset="0.563" stopColor="#7988AF" />
       </linearGradient>
       <linearGradient
         id="paint3_linear_1810_3146"
@@ -164,8 +164,8 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
         y2="172.499"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color={color} />
-        <stop offset="1" stop-color={secondaryColor} />
+        <stop stopColor={color} />
+        <stop offset="1" stopColor={secondaryColor} />
       </linearGradient>
       <linearGradient
         id="paint4_linear_1810_3146"
@@ -175,10 +175,10 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
         y2="141.705"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#D1D6F0" />
-        <stop offset="0.26" stop-color="#E1E4F5" />
-        <stop offset="0.711" stop-color="#F7F8FC" />
-        <stop offset="1" stop-color="white" />
+        <stop stopColor="#D1D6F0" />
+        <stop offset="0.26" stopColor="#E1E4F5" />
+        <stop offset="0.711" stopColor="#F7F8FC" />
+        <stop offset="1" stopColor="white" />
       </linearGradient>
       <linearGradient
         id="paint5_linear_1810_3146"
@@ -188,8 +188,8 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
         y2="152.883"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0.425" stop-color="#414F72" />
-        <stop offset="0.563" stop-color="#7988AF" />
+        <stop offset="0.425" stopColor="#414F72" />
+        <stop offset="0.563" stopColor="#7988AF" />
       </linearGradient>
       <linearGradient
         id="paint6_linear_1810_3146"
@@ -199,8 +199,8 @@ export const RouterImg: FC<RouterImg & React.ComponentProps<'svg'>> = ({ color, 
         y2="124.086"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#A6AAB5" />
-        <stop offset="1" stop-color="#7E828D" />
+        <stop stopColor="#A6AAB5" />
+        <stop offset="1" stopColor="#7E828D" />
       </linearGradient>
     </defs>
   </svg>

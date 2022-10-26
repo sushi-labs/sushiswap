@@ -11,19 +11,43 @@ import {
 
 import {
   AcademyIcon,
+  ArrowUpIcon,
+  BarsIcon,
+  BlockchainIcon,
+  BridgeIcon,
+  CheckPaperIcon,
+  CircleArrowsIcon,
+  DashboardIcon,
+  GasPumpIcon,
+  HalfScreenIcon,
+  LeftRightArrowIcon,
+  LightBulbIcon,
+  LinkIcon,
+  MobileUiIcon,
   MoneyBagIcon,
   MoneyHandIcon,
+  MoneyPaperIcon,
   MoneyTreeIcon,
+  MoneyWavesIcon,
+  NftLinkIcon,
   PuzzlePieceIcon,
   ScreenCheckIcon,
+  ShieldIcon,
+  SlidersIcon,
+  SmellyMoneyHandIcon,
+  SmileyIcon,
+  SushiIcon,
+  ThreeLinkIcon,
   TilesIcon,
+  TwoCoinsIcon,
+  WavesIcon,
 } from './icons'
 
 export const PRODUCTS_DATA = {
   bentobox: {
     color: '#FF5EAF',
     accentColor: '#A048DA',
-
+    buttonText: 'Enter farms',
     cards: [
       {
         Icon: () => <AcademyIcon color={PRODUCTS_DATA.bentobox.accentColor} Icon={TilesIcon} />,
@@ -124,27 +148,27 @@ export const PRODUCTS_DATA = {
     ],
     cards: [
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={CircleArrowsIcon} />,
         title: 'All-In-One Decentralized Exchange',
         subtitle: 'The Trident Framework can support any pool type, no matter how novel or complex.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={MoneyTreeIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={BarsIcon} />,
         title: 'More than a single AMM',
         subtitle: "Trident is not one specific AMM itself, it's a host (framework) to all.",
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={MoneyHandIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={MoneyBagIcon} />,
         title: 'Capital Efficient',
         subtitle: 'Built on and powered by the BentoBox, passively earning yield on your tokens.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={PuzzlePieceIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={SmellyMoneyHandIcon} />,
         title: 'Save money on every swap',
         subtitle: 'Managed by Tines, our smart ordering router, calculating and saving you money on every swap.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={MoneyBagIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.trident.accentColor} Icon={HalfScreenIcon} />,
         title: 'Extensible Versioning',
         subtitle:
           'Always compatible with previous versions, allowing developers to continue building new AMMs on Trident, without reinventing the wheel.',
@@ -207,6 +231,7 @@ export const PRODUCTS_DATA = {
   onsen: {
     color: '#75B5F0',
     accentColor: '#187BD8',
+    buttonText: 'Enter Farms',
     productStats: [
       { value: '$500+ mln', name: 'Total Value Locked' },
       { value: '500+', name: 'Projects Onboarded' },
@@ -214,35 +239,35 @@ export const PRODUCTS_DATA = {
     ],
     cards: [
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={MoneyBagIcon} />,
         title: 'Earn some of the highest yields in DeFi',
         subtitle: 'Earn some of the highest yields on new, exciting projects.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={MoneyTreeIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={MoneyWavesIcon} />,
         title: 'Deep Liquidity',
         subtitle:
           'Provides incentives to pool tokens into BentoBox, providing deeper liquidity for trades on Trident AMMs and Kashi lending markets.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={MoneyHandIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={LinkIcon} />,
         title: 'Multichain Deployment',
-        subtitle: 'Deployed across 14+ chains, never miss another opportunity to farm on a new chain again.',
+        subtitle: 'Deployed across 20+ chains, never miss another opportunity to farm on a new chain again.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={PuzzlePieceIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={CircleArrowsIcon} />,
         title: 'Attract Liquidity & Attention',
         subtitle:
           'Get incentives from Sushi to match with your own, attracting liquidity and attention to your project.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={MoneyBagIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={SmileyIcon} />,
         title: 'Earn Yield & Boost Efficiency',
         subtitle:
           'Earn yield on treasury tokens, ease the burden of impermanent loss and decrease the price impact/slippage of individual trades, improving cost efficiency.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={ScreenCheckIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.onsen.accentColor} Icon={ShieldIcon} />,
         title: 'Security Audited',
         subtitle: 'Safe, fully audited for security and peace of mind.',
       },
@@ -306,42 +331,42 @@ export const PRODUCTS_DATA = {
     accentColor: '#C56D3A',
     cards: [
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={MoneyWavesIcon} />,
         title: 'Deepest Liquidity',
         subtitle: 'Automatically finds a path to trade on all major chains.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={MoneyTreeIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={BlockchainIcon} />,
         title: 'Fully Decentralized',
         subtitle: 'Built on Stargate.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={MoneyHandIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={MoneyPaperIcon} />,
         title: 'No Additional Fees',
         subtitle: '0.3% standard DEX fee.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={PuzzlePieceIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={CheckPaperIcon} />,
         title: 'Lowest Slippage',
         subtitle: 'No reliance on third parties.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={MoneyBagIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={SlidersIcon} />,
         title: 'Non-Custodial',
         subtitle: 'Protocol-managed liquidity.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={MoneyBagIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={DashboardIcon} />,
         title: 'Fast',
         subtitle: 'Instantly initiates trades on both the source and destination chains.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={MoneyBagIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={ShieldIcon} />,
         title: 'Safety Guard',
         subtitle: 'Failed transactions are saved into stablecoins.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={MoneyBagIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.sushixswap.accentColor} Icon={BridgeIcon} />,
         title: 'Bridge Aggregator',
         subtitle: 'Modular bridge API.',
       },
@@ -415,13 +440,13 @@ export const PRODUCTS_DATA = {
     accentColor: '#D84D7F',
     cards: [
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={TwoCoinsIcon} />,
         title: 'Isolated Lending Pairs',
         subtitle:
           'Anyone can create a pair, it’s up to users which pairs they find safe enough; risk is isolated to just that pair.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={MoneyTreeIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={WavesIcon} />,
         title: 'Flexible',
         subtitle: 'Flexible oracles, both on-chain and off-chain.',
       },
@@ -431,19 +456,19 @@ export const PRODUCTS_DATA = {
         subtitle: 'Liquid interest rates based on a specific target utilization range.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={PuzzlePieceIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={GasPumpIcon} />,
         title: 'Lowest Gas Fees',
         subtitle: 'Flexible/composable contracts optimized for low gas consumption.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={MoneyBagIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={ArrowUpIcon} />,
         title: 'Flash Loans',
         subtitle:
           'Built on the BentoBox, so supplied assets can be used for flash loans and strategies, providing extra revenue for liquidity providers.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={MoneyBagIcon} />,
-        title: 'Smooth UX',
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.kashi.accentColor} Icon={ScreenCheckIcon} />,
+        title: 'LP Benefits',
         subtitle: 'Benefits of liquidations go to the liquidity providers, not the liquidators.',
       },
     ],
@@ -504,6 +529,7 @@ export const PRODUCTS_DATA = {
   furo: {
     color: '#EB72FF',
     accentColor: '#B341C6',
+    buttonText: 'Launch Furo',
     productStats: [
       { value: '$100+ mln', name: 'Total Value Locked' },
       { value: '500+', name: 'Streams/Vests Live' },
@@ -511,22 +537,22 @@ export const PRODUCTS_DATA = {
     ],
     cards: [
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={PuzzlePieceIcon} />,
         title: 'Plug ‘n Play',
         subtitle: 'Furo saves you time from having to do  contract deployments yourself.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={MoneyTreeIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={MobileUiIcon} />,
         title: 'Intuitive UI',
         subtitle: 'See the vesting schedules and progress in an easy-to-use dashboard.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={MoneyHandIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={LeftRightArrowIcon} />,
         title: 'Integration Possibilities',
         subtitle: 'Furo minimizes admin by integrating directly into your existing DAO or DeFi tooling.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={PuzzlePieceIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={NftLinkIcon} />,
         title: 'NFT Composability',
         subtitle:
           'NFT tokenization on Furo allows our users to utilize their future payments in lending and borrowing money market protocols.',
@@ -538,7 +564,7 @@ export const PRODUCTS_DATA = {
           'All Furo subproducts are built upon BentoBox; all capital stored in Furo will be automatically earning yield.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={MoneyBagIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.furo.accentColor} Icon={SushiIcon} />,
         title: 'Sushi Ecosystem',
         subtitle: 'Furo is fully open source and integrated into the Sushi ecosystem and our suite of products.',
       },
@@ -600,6 +626,7 @@ export const PRODUCTS_DATA = {
   miso: {
     color: '#87BC06',
     accentColor: '#7F9F30',
+    buttonText: 'Launch Miso',
     productStats: [
       { value: '100+', name: 'Projects Launched' },
       { value: '$400+ mln', name: 'Funds Raised' },
@@ -610,22 +637,22 @@ export const PRODUCTS_DATA = {
     ],
     cards: [
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={ThreeLinkIcon} />,
         title: 'Wide Exposure',
         subtitle: 'Introduce your tokens to the largest possible crypto native audiences.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={LightBulbIcon} />,
         title: 'Simple and Intuitive',
         subtitle: 'Anyone can launch a token on MISO, no technical knowledge required.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={BarsIcon} />,
         title: 'Rich in Data',
         subtitle: 'The highest level of transparency and data availability to help you make informed decisions.',
       },
       {
-        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={TilesIcon} />,
+        Icon: () => <AcademyIcon color={PRODUCTS_DATA.miso.accentColor} Icon={DashboardIcon} />,
         title: 'Fast to Launch',
         subtitle: 'Quick launches with no interruption.',
       },
