@@ -1,11 +1,8 @@
 {
-  "extends": "@sushiswap/typescript-config/base.json",
+  "extends": "@sushiswap/typescript-config/react-library.json",
   "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "lib": ["ES2015", "DOM"],
-    "module": "CommonJS",
-    "target": "ES5",
     "outDir": "./dist",
     "rootDir": "./src"
   }

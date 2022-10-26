@@ -57,7 +57,7 @@ export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.BOBA_AVAX]: 'Boba Avax',
 }
 
-export const SUBGRAPH_HOST: Record<number | string, string> = {
+export const SUBGRAPH_HOST = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
   [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
@@ -76,9 +76,12 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
-}
+  [ChainId.OKEX]: '',
+  [ChainId.HECO]: '',
+  [ChainId.KOVAN]: '',
+} as const
 
-export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
+export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.ETHEREUM]: 'sushiswap/bentobox-ethereum',
   [ChainId.POLYGON]: 'sushiswap/bentobox-polygon',
   [ChainId.AVALANCHE]: 'sushiswap/bentobox-avalanche',
@@ -92,9 +95,9 @@ export const BENTOBOX_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.OPTIMISM]: 'sushiswap/bentobox-optimism',
   [ChainId.HARMONY]: 'sushiswap/bentobox-harmony',
   [ChainId.KAVA]: 'sushiswap/bentobox-kava',
-}
+} as const
 
-export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
+export const BLOCKS_SUBGRAPH_NAME = {
   [ChainId.ETHEREUM]: 'blocklytics/ethereum-blocks',
   [ChainId.GNOSIS]: 'matthewlilley/xdai-blocks',
   [ChainId.POLYGON]: 'matthewlilley/polygon-blocks',
@@ -115,7 +118,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
   [ChainId.BOBA]: 'sushiswap/blocks-boba',
-}
+} as const
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
@@ -166,7 +169,7 @@ export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_
   [ChainId.METIS]: 3030678,
 }
 
-export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {
+export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.POLYGON]: 'jiro-ono/minichef-staging-updates', // new trident subgraph not synced yet
   [ChainId.GNOSIS]: 'jiro-ono/gnosis-minichef-staging',
   // [ChainId.HARMONY]: 'sushiswap/harmony-minichef', // subgraph broken
@@ -179,7 +182,7 @@ export const MINICHEF_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.KAVA]: 'sushiswap/kava-minichef', //block subgraph not synced yet
   [ChainId.METIS]: 'sushiswap/metis-minichef',
   [ChainId.BOBA]: 'sushiswap/minichef-boba',
-}
+} as const
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'

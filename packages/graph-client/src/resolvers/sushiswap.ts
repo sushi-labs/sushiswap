@@ -1,4 +1,4 @@
-import { Resolvers } from '../.graphclient'
+import { Resolvers } from '../../.graphclient'
 import {
   crossChainBundles,
   crossChainChefUser,

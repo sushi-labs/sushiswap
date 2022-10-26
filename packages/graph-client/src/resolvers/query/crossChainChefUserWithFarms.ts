@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { getBuiltGraphSDK, QueryResolvers, UserWithFarm } from '../../.graphclient'
+import { getBuiltGraphSDK, QueryResolvers, UserWithFarm } from '../../../.graphclient'
 import { getTokenBalances } from '../../fetchers'
 
 export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] = async (root, args) => {
@@ -37,6 +37,7 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
         // TODO?: move pair fetch to crossChainChefUser resolver
         const stakedPairs = (
           await Promise.all(
+            // @ts-ignore
             crossChainChefUser.map(({ chainId, pool }) =>
               sdk
                 .CrossChainPair({ id: (pool as { pair: string }).pair, chainId, now: 0 })
@@ -46,8 +47,10 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
         ).filter((pair) => !(pair && pair.chainId === ChainId.POLYGON && pair.source === 'LEGACY'))
         // TODO: remove when polygon subgraph is synced
 
+        // @ts-ignore
         return crossChainChefUser
           .map((user) => {
+            // @ts-ignore
             const pair = stakedPairs.find((stakedPair) => stakedPair?.id?.split(':')[1] === user.pool?.pair)
 
             if (!pair) return
@@ -55,9 +58,12 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
             return {
               id: pair.id,
               unstakedBalance: '0',
+              // @ts-ignore
               stakedBalance: String(user.amount),
               pair: pair,
+              // @ts-ignore
               chainId: user.chainId,
+              // @ts-ignore
               chainName: user.chainName,
             }
           })
@@ -76,9 +82,10 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
         : staked
       : (unstaked as NonNullable<typeof unstaked>)) as unknown as UserWithFarm // pair type doesn't match, problem for a future somebody
 
-    const pair = unstaked?.pair ?? staked.pair
+    const pair = unstaked?.pair ?? staked?.pair
 
     const totalBalance = Number(unstaked?.unstakedBalance ?? 0) + Number(staked?.stakedBalance ?? 0)
+    // @ts-ignore
     const valueUSD = (totalBalance / pair.liquidity) * pair.liquidityUSD
 
     acc.push({ ...combined, valueUSD })

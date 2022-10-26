@@ -7,7 +7,8 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { LiquidityPosition, QueryResolvers } from '../../.graphclient'
+import { LiquidityPosition, QueryResolvers } from '../../../.graphclient'
+import { FarmAPI } from '../../farm'
 
 export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPositions'] = async (
   root,
@@ -15,9 +16,9 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
   context,
   info
 ) => {
-  const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
+  const farms: FarmAPI = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
-  const transformer = (liquidityPosition, chainId) => {
+  const transformer = (liquidityPosition: LiquidityPosition, chainId: number) => {
     const farm = farms?.[chainId]?.farms?.[liquidityPosition.pair.id]
     const feeApr =
       Number(liquidityPosition.pair?.liquidityUSD) > 5000
@@ -70,7 +71,7 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
 
   return Promise.allSettled([
     ...args.chainIds
-      .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.SushiSwap.Query.liquidityPositions({
           root,
@@ -83,10 +84,10 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((positions) => positions.map((position) => transformer(position, chainId)))
+        }).then((positions: LiquidityPosition[]) => positions.map((position) => transformer(position, chainId)))
       ),
     ...args.chainIds
-      .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.Trident.Query.liquidityPositions({
           root,
@@ -99,7 +100,7 @@ export const crossChainLiquidityPositions: QueryResolvers['crossChainLiquidityPo
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((positions) => positions.map((position) => transformer(position, chainId)))
+        }).then((positions: LiquidityPosition[]) => positions.map((position) => transformer(position, chainId)))
       ),
   ]).then((positions) => {
     return positions.flat().reduce<LiquidityPosition[]>((previousValue, currentValue) => {

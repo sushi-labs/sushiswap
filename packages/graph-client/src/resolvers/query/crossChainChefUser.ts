@@ -6,7 +6,7 @@ import {
   SUBGRAPH_HOST,
 } from '@sushiswap/graph-config'
 
-import { getBuiltGraphSDK, QueryResolvers } from '../../.graphclient'
+import { getBuiltGraphSDK, QueryResolvers } from '../../../.graphclient'
 
 export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (root, args) => {
   const fetcher = async ({
@@ -22,7 +22,9 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (r
 
     return sdk
       .ChefUser({
+        // @ts-ignore
         where: args.where,
+        // @ts-ignore
         block: args.block,
       })
       .then(({ users }) => {
@@ -41,7 +43,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (r
         )
       : []),
     ...args.chainIds
-      .filter((el) => [...Object.keys(MINICHEF_SUBGRAPH_NAME)].includes(String(el)))
+      .filter((chainId): chainId is keyof typeof MINICHEF_SUBGRAPH_NAME => chainId in MINICHEF_SUBGRAPH_NAME)
       .map((chainId) =>
         fetcher({ chainId, subgraphName: MINICHEF_SUBGRAPH_NAME[chainId], subgraphHost: SUBGRAPH_HOST[chainId] })
       ),

@@ -7,7 +7,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { QueryResolvers } from '../../.graphclient'
+import { FactoryDaySnapshot, QueryResolvers } from '../../../.graphclient'
 
 export const crossChainFactoryDaySnapshots: QueryResolvers['crossChainFactoryDaySnapshots'] = async (
   root,
@@ -17,7 +17,7 @@ export const crossChainFactoryDaySnapshots: QueryResolvers['crossChainFactoryDay
 ) =>
   Promise.all([
     ...args.chainIds
-      .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.Trident.Query.factoryDaySnapshots({
           root,
@@ -31,7 +31,7 @@ export const crossChainFactoryDaySnapshots: QueryResolvers['crossChainFactoryDay
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((snapshots) => {
+        }).then((snapshots: FactoryDaySnapshot[]) => {
           return snapshots.map((snapshot) => ({
             ...snapshot,
             chainId,
@@ -41,7 +41,7 @@ export const crossChainFactoryDaySnapshots: QueryResolvers['crossChainFactoryDay
         })
       ),
     ...args.chainIds
-      .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.SushiSwap.Query.factoryDaySnapshots({
           root,
@@ -55,7 +55,7 @@ export const crossChainFactoryDaySnapshots: QueryResolvers['crossChainFactoryDay
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((snapshots) => {
+        }).then((snapshots: FactoryDaySnapshot[]) => {
           if (!Array.isArray(snapshots)) {
             // console.log({ snapshots })
           }

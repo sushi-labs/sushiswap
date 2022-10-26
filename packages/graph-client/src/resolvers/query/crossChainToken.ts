@@ -3,15 +3,17 @@ import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,
   SUSHISWAP_SUBGRAPH_NAME,
+  TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { QueryResolvers } from '../../.graphclient'
+import { QueryResolvers, Token } from '../../../.graphclient'
+import { FarmAPI } from '../../farm'
 
-export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, args, context, info) => {
-  const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
+export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, args, context, info): Promise<Token> => {
+  const farms: FarmAPI = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
-  const token = SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
+  const token: Token = SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId)
     ? await context.SushiSwap.Query.token({
         root,
         args,
@@ -21,8 +23,8 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, a
           chainId: args.chainId,
           chainName: chainName[args.chainId],
           chainShortName: chainShortName[args.chainId],
-          subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
-          subgraphHost: SUBGRAPH_HOST[args.chainId],
+          subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
+          subgraphHost: SUBGRAPH_HOST[args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
         },
         info,
       })
@@ -35,8 +37,8 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, a
           chainId: args.chainId,
           chainName: chainName[args.chainId],
           chainShortName: chainShortName[args.chainId],
-          subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
-          subgraphHost: SUBGRAPH_HOST[args.chainId],
+          subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
+          subgraphHost: SUBGRAPH_HOST[args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
         },
         info,
       })
@@ -48,6 +50,7 @@ export const crossChainToken: QueryResolvers['crossChainToken'] = async (root, a
     chainName: chainName[args.chainId],
     chainShortName: chainShortName[args.chainId],
     source: SUSHISWAP_ENABLED_NETWORKS.includes(args.chainId) ? 'LEGACY' : 'TRIDENT',
+    // @ts-ignore
     pairs: token.pairs
       ? token.pairs.map(({ pair }) => {
           const volume1w = pair.daySnapshots

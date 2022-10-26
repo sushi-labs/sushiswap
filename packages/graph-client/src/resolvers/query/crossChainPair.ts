@@ -7,12 +7,13 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { Pair, QueryResolvers } from '../../.graphclient'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
+import { Pair, QueryResolvers } from '../../../.graphclient'
+import { SushiSwapTypes } from '../../../.graphclient/sources/SushiSwap/types'
+import { FarmAPI } from '../../farm'
 import { getOneDayBlocks, getOneWeekBlocks, getTwoDayBlocks } from '../../fetchers'
 
 export const crossChainPair: QueryResolvers['crossChainPair'] = async (root, args, context, info) => {
-  const farms = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
+  const farms: FarmAPI = await fetch('https://farm.sushi.com/v0').then((res) => res.json())
 
   const fetcher = async (block?: { number: number }) => {
     const pool = await Promise.allSettled<SushiSwapTypes.Pair[]>([
@@ -26,8 +27,8 @@ export const crossChainPair: QueryResolvers['crossChainPair'] = async (root, arg
               chainId: args.chainId,
               chainName: chainName[args.chainId],
               chainShortName: chainShortName[args.chainId],
-              subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: SUBGRAPH_HOST[args.chainId],
+              subgraphName: SUSHISWAP_SUBGRAPH_NAME[args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
+              subgraphHost: SUBGRAPH_HOST[args.chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
             },
             info,
           })
@@ -42,8 +43,8 @@ export const crossChainPair: QueryResolvers['crossChainPair'] = async (root, arg
               chainId: args.chainId,
               chainName: chainName[args.chainId],
               chainShortName: chainShortName[args.chainId],
-              subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId],
-              subgraphHost: SUBGRAPH_HOST[args.chainId],
+              subgraphName: TRIDENT_SUBGRAPH_NAME[args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
+              subgraphHost: SUBGRAPH_HOST[args.chainId as typeof TRIDENT_ENABLED_NETWORKS[number]],
             },
             info,
           })

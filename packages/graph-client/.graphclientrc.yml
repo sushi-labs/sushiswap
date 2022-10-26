@@ -1,4 +1,4 @@
-sources: !includes sources
+sources: !includes ./src/sources
 
 additionalTypeDefs: |
   input Pagination {
@@ -191,12 +191,12 @@ additionalTypeDefs: |
   }
 
 additionalResolvers:
-  - ./resolvers/bentobox.ts
-  - ./resolvers/blocks.ts
-  - ./resolvers/sushiswap.ts
+  - .graphclient/resolvers/bentobox.js
+  - .graphclient/resolvers/blocks.js
+  - .graphclient/resolvers/sushiswap.js
 
 documents:
-  - './queries/*.graphql'
+  - './src/queries/*.graphql'
   # - './queries/bar.graphql'
   # - './queries/bentobox.graphql'
   # - './queries/blocks.graphql'

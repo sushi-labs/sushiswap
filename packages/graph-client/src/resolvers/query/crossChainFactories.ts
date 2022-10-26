@@ -5,12 +5,12 @@ import {
   TRIDENT_ENABLED_NETWORKS,
 } from '@sushiswap/graph-config'
 
-import { QueryResolvers } from '../../.graphclient'
+import { Factory, QueryResolvers } from '../../../.graphclient'
 
 export const crossChainFactories: QueryResolvers['crossChainFactories'] = async (root, args, context, info) => {
   return Promise.all([
     ...args.chainIds
-      .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.Trident.Query.factories({
           root,
@@ -22,7 +22,7 @@ export const crossChainFactories: QueryResolvers['crossChainFactories'] = async 
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((factories) => {
+        }).then((factories: Factory[]) => {
           return factories?.length > 0
             ? factories.map((factory) => ({
                 ...factory,
@@ -32,7 +32,7 @@ export const crossChainFactories: QueryResolvers['crossChainFactories'] = async 
         })
       ),
     ...args.chainIds
-      .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>
         context.SushiSwap.Query.factories({
           root,
@@ -44,7 +44,7 @@ export const crossChainFactories: QueryResolvers['crossChainFactories'] = async 
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((factories) => {
+        }).then((factories: Factory[]) => {
           return factories?.length > 0
             ? factories.map((factory) => ({
                 ...factory,

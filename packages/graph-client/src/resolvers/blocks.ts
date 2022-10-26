@@ -1,23 +1,25 @@
 import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays } from 'date-fns'
 
-import { Block, QueryResolvers, Resolvers } from '../.graphclient'
+import { Block, QueryResolvers, Resolvers } from '../../.graphclient'
 
 const crossChainBlocks: QueryResolvers['crossChainBlocks'] = async (root, args, context, info): Promise<Block[]> => {
   return Promise.all<Block[]>(
-    args.chainIds.map((chainId) => {
-      return context.Blocks.Query.blocks({
-        root,
-        args,
-        context: {
-          ...context,
-          chainId,
-          subgraphName: BLOCKS_SUBGRAPH_NAME[chainId],
-          subgraphHost: SUBGRAPH_HOST[chainId],
-        },
-        info,
+    args.chainIds
+      .filter((chainId): chainId is keyof typeof BLOCKS_SUBGRAPH_NAME => chainId in BLOCKS_SUBGRAPH_NAME)
+      .map((chainId) => {
+        return context.Blocks.Query.blocks({
+          root,
+          args,
+          context: {
+            ...context,
+            chainId,
+            subgraphName: BLOCKS_SUBGRAPH_NAME[chainId],
+            subgraphHost: SUBGRAPH_HOST[chainId],
+          },
+          info,
+        })
       })
-    })
   ).then((blocks) => blocks.flat())
 }
 

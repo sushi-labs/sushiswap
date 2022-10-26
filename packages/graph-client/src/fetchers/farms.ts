@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
 // TODO: Move API to OpenAPI, use graph-mesh to fetch
-interface Farm {
+export interface Farm {
   id: number
   incentives: {
     apr: number

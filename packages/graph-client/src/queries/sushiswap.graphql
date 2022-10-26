@@ -306,10 +306,10 @@ query CrossChainPair($id: ID!, $now: Int!, $chainId: Int!) {
 
 query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
   crossChainToken(id: $id, now: $now, chainId: $chainId) {
+    id
     chainId
     chainName
     chainShortName
-    id
     name
     liquidityUSD
     symbol
@@ -388,10 +388,10 @@ query CrossChainTokens(
     block: $block,
     chainIds: $chainIds,
   ) {
+    id
     chainId
     chainName
     chainShortName
-    id
     name
     liquidityUSD
     symbol

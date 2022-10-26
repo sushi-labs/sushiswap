@@ -7,14 +7,14 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { QueryResolvers } from '../../.graphclient'
-import { page } from '../../functions'
+import { QueryResolvers, Token } from '../../../.graphclient'
+import { page } from '../../page'
 
 export const crossChainTokens: QueryResolvers['crossChainTokens'] = async (root, args, context, info) => {
   return Promise.all([
     ...args.chainIds
       .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
-      .map((chainId) =>
+      .map((chainId: typeof TRIDENT_ENABLED_NETWORKS[number]) =>
         context.Trident.Query.tokens({
           root,
           args,
@@ -27,7 +27,7 @@ export const crossChainTokens: QueryResolvers['crossChainTokens'] = async (root,
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((tokens) => {
+        }).then((tokens: Token[]) => {
           return tokens?.length > 0
             ? tokens.map((token) => ({
                 ...token,
@@ -42,7 +42,7 @@ export const crossChainTokens: QueryResolvers['crossChainTokens'] = async (root,
       ),
     ...args.chainIds
       .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
-      .map((chainId) =>
+      .map((chainId: typeof SUSHISWAP_ENABLED_NETWORKS[number]) =>
         context.SushiSwap.Query.tokens({
           root,
           args,
@@ -55,7 +55,7 @@ export const crossChainTokens: QueryResolvers['crossChainTokens'] = async (root,
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((tokens) => {
+        }).then((tokens: Token[]) => {
           return tokens?.length > 0
             ? tokens.map((token) => ({
                 ...token,

@@ -7,11 +7,11 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { Pair, QueryResolvers } from '../../.graphclient'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
+import { InputMaybe, Pair, QueryResolvers, Scalars } from '../../../.graphclient'
+import { SushiSwapTypes } from '../../../.graphclient/sources/SushiSwap/types'
 import { getOneDayBlocks, getOneWeekBlocks } from '../../fetchers/block'
 import { FarmAPI, getFarms } from '../../fetchers/farms'
-import { page } from './../../functions'
+import { page } from '../../page'
 
 const blacklist = ['0xd5c5e3ca5f162165a6eff096156ec70f77f3a491']
 
@@ -24,7 +24,7 @@ const transformer = (
   pools1d: SushiPairWithChain[],
   pools1w: SushiPairWithChain[],
   farms: FarmAPI,
-  farmsOnly?: boolean
+  farmsOnly?: InputMaybe<Scalars['Boolean']>
 ): Pair[] =>
   (pools || [])
     .filter((pool) => !blacklist.includes(pool.id))
@@ -87,7 +87,7 @@ export const crossChainPairs: QueryResolvers['crossChainPairs'] = async (root, a
   const fetcher = async ({ blocks, poolIds }: { blocks?: { number: number }[]; poolIds?: string[] } = {}) => {
     const tridentPools = Promise.all(
       args.chainIds
-        .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
+        .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
         .map(async (chainId) => {
           const pools: SushiSwapTypes.Pair[] | undefined = await context.Trident.Query.pairs({
             root,
@@ -125,7 +125,7 @@ export const crossChainPairs: QueryResolvers['crossChainPairs'] = async (root, a
 
     const sushiswapPools = Promise.all(
       args.chainIds
-        .filter((el) => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+        .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
         .map(async (chainId) => {
           const pools: SushiSwapTypes.Pair[] = await context.SushiSwap.Query.pairs({
             root,

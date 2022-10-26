@@ -24,7 +24,7 @@
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev:gql": "graphclient serve-dev",
-    "generate": "graphclient build --fileType json",
+    "build": "graphclient build --fileType json && tsc",
     "lint": "TIMING=1 eslint . --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests",
@@ -34,9 +34,18 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@graphql-mesh/utils": "latest",
+    "@graphql-mesh/cache-localforage": "latest",
+    "@whatwg-node/fetch": "latest",
+    "@graphql-mesh/graphql": "latest",
+    "@graphql-mesh/merger-stitching": "latest",
+    "@graphql-mesh/http": "latest",
+    "@graphql-mesh/runtime": "latest",
+    "@graphql-mesh/store": "latest",
+    "@graphql-mesh/cross-helpers": "latest",
     "@sushiswap/chain": "workspace:*",
-    "date-fns": "^2.29.3",
-    "@wagmi/core": "^0.5.7"
+    "@wagmi/core": "^0.5.7",
+    "date-fns": "^2.29.3"
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "2.2.15",
