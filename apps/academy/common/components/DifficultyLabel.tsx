@@ -1,5 +1,5 @@
 import { CircleIcon, classNames } from '@sushiswap/ui'
-import { difficultyElements } from 'common/helpers'
+import { DIFFICULTY_ELEMENTS } from 'common/helpers'
 import { FC } from 'react'
 
 import { ArticleEntity } from '.mesh'
@@ -9,8 +9,8 @@ interface DifficultyLabel {
   isCard?: boolean
 }
 export const DifficultyLabel: FC<DifficultyLabel> = ({ article, isCard }) => {
-  const difficulty = article?.attributes?.difficulty?.data?.attributes
-  const difficultyColor = difficulty?.slug && difficultyElements[difficulty.slug].color
+  const difficulty = article.attributes?.difficulty?.data?.attributes
+  const difficultyColor = difficulty?.slug && DIFFICULTY_ELEMENTS[difficulty.slug].color
 
   return (
     <div className="flex items-center gap-1.5">

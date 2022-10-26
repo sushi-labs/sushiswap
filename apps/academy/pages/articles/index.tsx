@@ -2,7 +2,7 @@ import { Listbox } from '@headlessui/react'
 import { ArrowsUpDownIcon, ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Container, Select, Typography } from '@sushiswap/ui'
-import { defaultSidePadding, sortingOptions } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING, SORTING_OPTIONS } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useMemo, useState } from 'react'
@@ -56,7 +56,7 @@ const Articles: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fall
 const _Articles: FC = () => {
   const [query, setQuery] = useState<string>('')
   const [page, setPage] = useState<number>(1)
-  const [sortBy, setSortBy] = useState(sortingOptions[0])
+  const [sortBy, setSortBy] = useState(SORTING_OPTIONS[0])
   const debouncedQuery = useDebounce(query, 200)
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyEntity>()
   const [selectedProduct, setSelectedProduct] = useState<ProductEntity>()
@@ -166,7 +166,7 @@ const _Articles: FC = () => {
         selectedDifficulty={selectedDifficulty}
         onSelect={handleSelectDifficulty}
       />
-      <Container maxWidth="6xl" className={classNames('mx-auto pb-10', defaultSidePadding)}>
+      <Container maxWidth="6xl" className={classNames('mx-auto pb-10', DEFAULT_SIDE_PADDING)}>
         <div className="grid grid-cols-2 w-full gap-3 sm:hidden mt-[22px]">
           <Select
             value={selectedDifficulty}
@@ -196,7 +196,7 @@ const _Articles: FC = () => {
             </Select.Options>
           </Select>
           <Select
-            values={sortingOptions}
+            values={SORTING_OPTIONS}
             onChange={setSortBy}
             button={
               <Listbox.Button
@@ -212,7 +212,7 @@ const _Articles: FC = () => {
             }
           >
             <Select.Options className="!bg-slate-700 p-2 space-y-1">
-              {sortingOptions?.map((option) => (
+              {SORTING_OPTIONS?.map((option) => (
                 <SelectOption
                   key={option.key}
                   value={option}
@@ -275,7 +275,7 @@ const _Articles: FC = () => {
                 <div className="flex items-center justify-between">
                   <Typography weight={500}>{articlesAmount} Results</Typography>
                   <Select
-                    values={sortingOptions}
+                    values={SORTING_OPTIONS}
                     onChange={setSortBy}
                     className="hidden sm:flex"
                     button={
@@ -290,7 +290,7 @@ const _Articles: FC = () => {
                     }
                   >
                     <Select.Options className="!bg-slate-700 p-2 space-y-1">
-                      {sortingOptions?.map((option) => (
+                      {SORTING_OPTIONS?.map((option) => (
                         <SelectOption
                           key={option.key}
                           value={option}

@@ -1,6 +1,6 @@
 import { ArrowRightIcon } from '@heroicons/react/24/solid'
 import { Button, Link, Typography } from '@sushiswap/ui'
-import { docsUrl } from 'common/helpers'
+import { DOCS_URL } from 'common/helpers'
 import { DocsIcon } from 'common/icons'
 import { FC } from 'react'
 
@@ -23,7 +23,7 @@ export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({ color, secondaryC
             }
           </Typography>
         </div>
-        <Link.External href={docsUrl}>
+        <Link.External href={DOCS_URL}>
           <Button className="w-12 h-12 ml-6" variant="outlined">
             <ArrowRightIcon width={20} height={20} />
           </Button>

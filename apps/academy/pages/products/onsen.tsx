@@ -2,7 +2,7 @@ import { ArrowRightCircleIcon } from '@heroicons/react/24/solid'
 import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
 import onsenImg from 'common/assets/onsen-img.png'
 import { ProductArticles, ProductBackground, ProductFaq, ProductStats, ProductTechnicalDoc } from 'common/components'
-import { defaultSidePadding } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import {
   AcademyIcon,
   MoneyBagIcon,
@@ -147,7 +147,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const projectCards = cards.slice(3)
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
+    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
       <ProductBackground color={color} />
       <section className="py-[75px] relative">
         <div className="grid md:grid-cols-2">

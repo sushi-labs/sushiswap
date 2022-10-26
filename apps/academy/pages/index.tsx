@@ -3,7 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { classNames, Container, Select, Typography } from '@sushiswap/ui'
 import { AcademySeo } from 'common/components/Seo/AcademySeo'
-import { defaultSidePadding } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -140,7 +140,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <div
           className={classNames(
             'overflow-x-auto gap-5 pb-1 pt-[60px] sm:pt-32 sm:gap-6 grid grid-cols-[repeat(3,minmax(306px,1fr))] scroll',
-            defaultSidePadding
+            DEFAULT_SIDE_PADDING
           )}
         >
           {difficulties.map((difficulty, i) => (
@@ -148,7 +148,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           ))}
         </div>
 
-        <div className={classNames('z-[1] flex flex-col mt-16 sm:mt-[124px]', defaultSidePadding)}>
+        <div className={classNames('z-[1] flex flex-col mt-16 sm:mt-[124px]', DEFAULT_SIDE_PADDING)}>
           <Disclosure>
             <div className="flex justify-between">
               <span className="text-xl font-bold sm:text-2xl">Choose Topic</span>
@@ -274,7 +274,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           </div>
         </div>
 
-        <div className={classNames('mt-9 sm:mt-[70px]', defaultSidePadding)}>
+        <div className={classNames('mt-9 sm:mt-[70px]', DEFAULT_SIDE_PADDING)}>
           {articleList && (
             <div className="grid gap-5 md:gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))]">
               <ArticleList

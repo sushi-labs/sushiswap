@@ -1,7 +1,7 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
 import { ProductArticles, ProductBackground, ProductCards, ProductFaq, ProductTechnicalDoc } from 'common/components'
-import { defaultSidePadding } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import {
   AcademyIcon,
   MoneyBagIcon,
@@ -137,8 +137,8 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const relevantArticles = (data?.relevantArticles?.data ?? []) as ArticleEntity[]
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
-      <ProductBackground color={color} />
+    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
+      <ProductBackground color={color} isCentered />
       <section className="flex flex-col items-center py-[75px]">
         {longName.split('-').map((name, i) => (
           <h1 key={i} className="text-6xl font-bold leading-[78px]">
@@ -153,7 +153,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             className="mt-16 rounded-lg"
             startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
           >
-            <Typography weight={500}>Linking to farm</Typography>
+            <Typography weight={500}>Enter Farms</Typography>
           </Button>
         </Link.External>
       </section>

@@ -1,7 +1,7 @@
 import { classNames, DiscordIcon, GithubIcon, TwitterIcon, YoutubeIcon } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { defaultSidePadding } from '../helpers'
+import { DEFAULT_SIDE_PADDING } from '../helpers'
 
 const heroIconProps = {
   width: 24,
@@ -13,7 +13,7 @@ export const Hero: FC = () => {
     <section
       className={classNames(
         'flex sm:pt-[70px] flex-col items-center max-w-[870px] mx-auto pt-10 pb-8 sm:pb-12',
-        defaultSidePadding
+        DEFAULT_SIDE_PADDING
       )}
     >
       <div className="relative w-[280px] sm:w-[520px] h-[75px] sm:h-[135px] text-slate-50">

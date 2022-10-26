@@ -2,7 +2,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { classNames, IconButton, useBreakpoint } from '@sushiswap/ui'
 import { ChangeEvent, FormEvent, forwardRef, MutableRefObject, useLayoutEffect, useState } from 'react'
 
-import { appHeaderHeight } from '../helpers'
+import { APP_HEADER_HEIGHT } from '../helpers'
 
 interface SearchInput {
   handleSearch: (value: string) => void
@@ -23,7 +23,7 @@ export const SearchInput = forwardRef(
       const cachedRef = ref?.current
       if (cachedRef) {
         const observer = new IntersectionObserver(([e]) => setIsSticky(!e.isIntersecting), {
-          threshold: appHeaderHeight / cachedRef.clientHeight,
+          threshold: APP_HEADER_HEIGHT / cachedRef.clientHeight,
         })
         observer.observe(cachedRef)
 

@@ -2,10 +2,10 @@ import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { App, classNames, Link, Select, Typography } from '@sushiswap/ui'
 import { AppType } from '@sushiswap/ui/app/Header'
-import { docsUrl } from 'common/helpers'
+import { DOCS_URL } from 'common/helpers'
 import { getDifficulties, getProducts } from 'lib/api'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import useSWR from 'swr'
 
 import { MobileMenu } from '.'
@@ -26,41 +26,43 @@ export interface HeaderSection {
 export const Header: FC = () => {
   const { data: productsData } = useSWR('/products', async () => (await getProducts())?.products)
   const { data: difficultiesData } = useSWR('/difficulties', async () => (await getDifficulties())?.difficulties)
-  const router = useRouter()
-  const currentPath = router.pathname
+  const { pathname } = useRouter()
 
-  const products = productsData?.data ?? []
-  const difficulties = difficultiesData?.data ?? []
+  const products = useMemo(() => productsData?.data ?? [], [productsData?.data])
+  const difficulties = useMemo(() => difficultiesData?.data ?? [], [difficultiesData?.data])
 
-  const navData: HeaderSection[] = [
-    {
-      title: 'About',
-      href: '/about',
-    },
-    {
-      title: 'Product',
-      links: products.map(({ attributes: { longName, slug } }) => ({
-        name: longName,
-        href: `/products/${slug}`,
-      })),
-    },
-    {
-      title: 'Learn',
-      links: difficulties?.map(({ attributes: { shortDescription, slug } }) => {
-        const isTechnical = slug === 'technical'
-        return {
-          name: shortDescription,
-          href: isTechnical ? docsUrl : `/articles?difficulty=${slug}`,
-          isExternal: isTechnical,
-        }
-      }),
-    },
-    {
-      title: 'Blog',
-      href: 'https://sushi.com/blog',
-      isExternal: true,
-    },
-  ]
+  const navData: HeaderSection[] = useMemo(
+    () => [
+      {
+        title: 'About',
+        href: '/about',
+      },
+      {
+        title: 'Product',
+        links: products.map(({ attributes: { longName, slug } }) => ({
+          name: longName,
+          href: `/products/${slug}`,
+        })),
+      },
+      {
+        title: 'Learn',
+        links: difficulties?.map(({ attributes: { shortDescription, slug } }) => {
+          const isTechnical = slug === 'technical'
+          return {
+            name: shortDescription,
+            href: isTechnical ? DOCS_URL : `/articles?difficulty=${slug}`,
+            isExternal: isTechnical,
+          }
+        }),
+      },
+      {
+        title: 'Blog',
+        href: 'https://sushi.com/blog',
+        isExternal: true,
+      },
+    ],
+    [difficulties, products]
+  )
 
   return (
     <App.Header appType={AppType.Academy} maxWidth="6xl" withScrollBackground>
@@ -105,7 +107,7 @@ export const Header: FC = () => {
                     <Link.Internal key={href} href={href}>
                       <Select.Option
                         value={name}
-                        className={classNames('border-0 pr-10 !cursor-pointer', currentPath === href && 'bg-blue-500')}
+                        className={classNames('border-0 pr-10 !cursor-pointer', pathname === href && 'bg-blue-500')}
                       >
                         {name}
                       </Select.Option>

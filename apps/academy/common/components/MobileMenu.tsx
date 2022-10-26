@@ -3,7 +3,7 @@ import { Bars3Icon } from '@heroicons/react/24/solid'
 import { IconButton, Link, SushiIcon, Typography } from '@sushiswap/ui'
 import classNames from 'classnames'
 import { SushiTransparentIcon, TriangleIcon } from 'common/icons'
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 
 import { Drawer } from './Drawer'
 import { HeaderSection } from './Header'
@@ -14,14 +14,14 @@ interface MobileMenu {
 export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const onOpen = () => {
+  const onOpen = useCallback(() => {
     document.body.className = 'scroll-lock'
     setIsOpen(true)
-  }
-  const onClose = () => {
+  }, [])
+  const onClose = useCallback(() => {
     document.body.className = ''
     setIsOpen(false)
-  }
+  }, [])
 
   return (
     <nav className="sm:hidden">

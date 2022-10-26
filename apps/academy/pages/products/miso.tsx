@@ -1,7 +1,7 @@
 import { LinkIcon } from '@heroicons/react/24/outline'
 import { Button, CheckIcon, classNames, Container, Link, Typography } from '@sushiswap/ui'
 import { ProductArticles, ProductBackground, ProductFaq, ProductStats, ProductTechnicalDoc } from 'common/components'
-import { defaultSidePadding } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { AcademyIcon, TilesIcon } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
@@ -125,7 +125,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const relevantArticles = (data?.relevantArticles?.data ?? []) as ArticleEntity[]
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
+    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
       <ProductBackground color={color} />
       <section className="py-[75px]">
         {longName.split('-').map((name, i) => (

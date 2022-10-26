@@ -2,7 +2,7 @@ import { Disclosure, Transition } from '@headlessui/react'
 import { classNames, Container, Link } from '@sushiswap/ui'
 import sushiPulse from 'common/assets/sushi-pulse.png'
 import sushidilly from 'common/assets/sushidilly.png'
-import { defaultSidePadding } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { TriangleIcon } from 'common/icons'
 import { roadmapSections } from 'common/roadmap'
 import { format } from 'date-fns'
@@ -20,7 +20,7 @@ const productStats = [
 const About: NextPage = () => {
   return (
     <>
-      <section className={classNames('py-6 sm:py-[75px] bg-slate-800', defaultSidePadding)}>
+      <section className={classNames('py-6 sm:py-[75px] bg-slate-800', DEFAULT_SIDE_PADDING)}>
         <Container maxWidth="6xl" className="mx-auto grid gap-5 sm:gap-[60px]">
           <div className="grid gap-4">
             <p className="sm:text-base text-slate-400">About Us</p>
@@ -43,7 +43,7 @@ const About: NextPage = () => {
         </Container>
       </section>
 
-      <section className={classNames('overflow-hidden relative', defaultSidePadding)}>
+      <section className={classNames('overflow-hidden relative', DEFAULT_SIDE_PADDING)}>
         <Container maxWidth="6xl" className="mx-auto py-9 sm:py-[75px] relative">
           <article className="flex">
             <div className="md:w-[55%]">

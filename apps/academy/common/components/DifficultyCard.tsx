@@ -1,7 +1,7 @@
 import { Transition } from '@headlessui/react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Chip, CircleIcon } from '@sushiswap/ui'
-import { difficultyElements, docsUrl } from 'common/helpers'
+import { DIFFICULTY_ELEMENTS, DOCS_URL } from 'common/helpers'
 import { AcademyIcon } from 'common/icons'
 import { FC, Fragment, useState } from 'react'
 
@@ -17,12 +17,12 @@ export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
   const {
     attributes: { label, longDescription, slug },
   } = difficulty
-  const { color, Icon } = difficultyElements[slug]
+  const { color, Icon } = DIFFICULTY_ELEMENTS[slug]
   const isTechnicalCard = slug === 'technical'
 
   return (
     <a
-      href={isTechnicalCard ? docsUrl : `/academy/articles?difficulty=${slug}`}
+      href={isTechnicalCard ? DOCS_URL : `/academy/articles?difficulty=${slug}`}
       target={isTechnicalCard ? '_blank' : '_self'}
       rel="noreferrer"
       className="h-[405px] py-[50px] px-[30px] bg-slate-800 rounded-[30px] flex flex-col justify-between hover:ring-1 ring-slate-600 transition duration-300"

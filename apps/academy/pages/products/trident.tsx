@@ -9,7 +9,7 @@ import {
   ProductStats,
   ProductTechnicalDoc,
 } from 'common/components'
-import { defaultSidePadding } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { AcademyIcon, MoneyBagIcon, MoneyHandIcon, MoneyTreeIcon, PuzzlePieceIcon, TilesIcon } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
@@ -135,16 +135,17 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const relevantArticles = (data?.relevantArticles?.data ?? []) as ArticleEntity[]
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', defaultSidePadding)}>
+    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
       <ProductBackground color={color} />
-      <section className="py-[75px]">
-        <h1 className="text-6xl leading-[78px]">
+      <section className="py-[75px] flex flex-col items-center">
+        <h1 className="text-6xl leading-[78px] text-center">
           <p className="font-bold">Trident</p>
-          <p>A Future-Proof</p>
-          <span>Framework for Building </span>
-          <span className="font-bold"> AMMs</span>
+          <p>A Future-Proof Framework for</p>
+          <span>
+            Building <strong>AMMs</strong>
+          </span>
         </h1>
-        <h3 className="mt-10 text-2xl font-medium text-slate-400">{description}</h3>
+        <h3 className="text-center mt-10 text-2xl font-medium text-slate-400">{description}</h3>
 
         <Link.External href={url}>
           <Button
@@ -152,9 +153,10 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
             className="mt-16 rounded-lg"
             startIcon={<LinkIcon width={20} height={20} strokeWidth={2} />}
           >
-            <Typography weight={500}>Live on Polygon, Kava, Optimism & Metis network</Typography>
+            <Typography weight={500}>Enter App</Typography>
           </Button>
         </Link.External>
+
         <ProductStats productStats={productStats} />
       </section>
       <ProductCards

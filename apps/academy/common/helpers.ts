@@ -1,8 +1,8 @@
 import { AdvancedUserIcon, BeginnerUserIcon, TechnicalUserIcon } from './icons'
 
-export const docsUrl = 'https://dev.sushi.com/'
-export const defaultSidePadding = 'px-6 sm:px-4'
-export const difficultyElements = {
+export const DOCS_URL = 'https://dev.sushi.com/'
+export const DEFAULT_SIDE_PADDING = 'px-6 sm:px-4'
+export const DIFFICULTY_ELEMENTS = {
   beginner: {
     color: '#7CFF6B',
     Icon: BeginnerUserIcon,
@@ -16,8 +16,8 @@ export const difficultyElements = {
     Icon: TechnicalUserIcon,
   },
 }
-export const appHeaderHeight = 54
-export const sortingOptions = [
+export const APP_HEADER_HEIGHT = 54
+export const SORTING_OPTIONS = [
   { key: 'publishedAt:desc', name: 'Newest First' },
   { key: 'publishedAt:asc', name: 'Oldest First' },
   { key: 'title:desc', name: 'Sort Title Z-A' },

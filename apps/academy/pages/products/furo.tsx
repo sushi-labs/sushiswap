@@ -10,7 +10,7 @@ import {
   ProductStats,
   ProductTechnicalDoc,
 } from 'common/components'
-import { defaultSidePadding } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { AcademyIcon, MoneyBagIcon, MoneyHandIcon, MoneyTreeIcon, PuzzlePieceIcon, TilesIcon } from 'common/icons'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
 import { InferGetStaticPropsType } from 'next'
@@ -145,7 +145,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   return (
     <>
-      <Container maxWidth="6xl" className={classNames('mx-auto pt-10', defaultSidePadding)}>
+      <Container maxWidth="6xl" className={classNames('mx-auto pt-10', DEFAULT_SIDE_PADDING)}>
         <ProductBackground color={color} />
         <section className="py-[75px] relative">
           <div className="grid md:grid-cols-2">
@@ -175,7 +175,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         </section>
       </Container>
 
-      <Container maxWidth="6xl" className={classNames('mx-auto pb-24', defaultSidePadding)}>
+      <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>
         <section className="py-[75px] grid grid-rows-3 gap-[70px]">
           <div className="grid items-center grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-10">
             <div>

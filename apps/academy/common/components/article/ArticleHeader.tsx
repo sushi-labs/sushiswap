@@ -1,5 +1,5 @@
 import { classNames, Container } from '@sushiswap/ui'
-import { defaultSidePadding } from 'common/helpers'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { format } from 'date-fns'
 import { FC } from 'react'
 
@@ -17,7 +17,7 @@ export const ArticleHeader: FC<ArticleHeader> = ({ article }) => {
   return (
     <Container
       maxWidth="3xl"
-      className={classNames(defaultSidePadding, 'flex flex-col items-center mt-10 sm:mt-0 mx-auto')}
+      className={classNames(DEFAULT_SIDE_PADDING, 'flex flex-col items-center mt-10 sm:mt-0 mx-auto')}
     >
       <div className="flex flex-wrap items-center justify-center gap-3">
         <div className="flex items-center gap-2.5 px-3 rounded-full bg-slate-800 h-6 sm:h-7">

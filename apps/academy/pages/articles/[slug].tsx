@@ -1,5 +1,5 @@
 import { classNames, Container, LoadingOverlay, useBreakpoint } from '@sushiswap/ui'
-import { appHeaderHeight, defaultSidePadding } from 'common/helpers'
+import { APP_HEADER_HEIGHT, DEFAULT_SIDE_PADDING } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import { FC, useState } from 'react'
@@ -70,7 +70,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
     const el = document.getElementById(id)
     if (el) {
       const padding = isSm ? 24 : 180
-      const offset = el.getBoundingClientRect().top + window.scrollY - appHeaderHeight - padding
+      const offset = el.getBoundingClientRect().top + window.scrollY - APP_HEADER_HEIGHT - padding
       window.scrollTo({
         top: offset,
         behavior: 'smooth',
@@ -103,7 +103,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
           <div
             className={classNames(
               'sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]',
-              defaultSidePadding
+              DEFAULT_SIDE_PADDING
             )}
           >
             <aside className="flex-col hidden w-full gap-8 min-w-[180px] max-w-[280px] sm:flex sticky h-fit top-28">

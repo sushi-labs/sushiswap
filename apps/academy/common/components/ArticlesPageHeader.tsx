@@ -4,7 +4,7 @@ import { classNames, Container, Select, useBreakpoint } from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
 import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 
-import { defaultSidePadding } from '../helpers'
+import { DEFAULT_SIDE_PADDING } from '../helpers'
 import { GradientWrapper, SelectOption } from './'
 import { DifficultyEntity } from '.mesh'
 
@@ -29,7 +29,7 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
     <section className="bg-slate-800 h-[113px] sm:h-[226px] relative">
       <Container
         maxWidth="6xl"
-        className={classNames(defaultSidePadding, 'flex items-center justify-between h-full gap-4 mx-auto')}
+        className={classNames(DEFAULT_SIDE_PADDING, 'flex items-center justify-between h-full gap-4 mx-auto')}
       >
         <div className="absolute bottom-0 right-0 opacity-20">
           <LooperBg height={bgHeight} width={bgWidth} />
