@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build-apps": "turbo run build --filter=./apps/*",
+    "build-apps": "turbo run build --filter=...{./apps/*}",
+    "build-packages": "turbo run build --filter=...{./packages/*}",
+    "build-protocols": "turbo run build --filter=...{./protocols/*}",
     "build": "turbo run build",
     "build:ci": "turbo run build --filter=[HEAD^1]",
     "generate": "turbo run generate",
