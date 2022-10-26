@@ -1,8 +1,6 @@
-import { FC } from 'react'
-
-export const MoneyHandIcon: FC = () => {
+export const MoneyHandIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g filter="url(#filter0_b_1608_691)">
         <rect width="102" height="102" rx="12.5446" fill="white" fillOpacity="0.1" />
         <path

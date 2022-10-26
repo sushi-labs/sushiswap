@@ -1,8 +1,6 @@
-import { FC } from 'react'
-
-export const AdvancedUserIcon: FC = () => {
+export const AdvancedUserIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg width="103" height="108" viewBox="0 0 103 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="103" height="108" viewBox="0 0 103 108" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g filter="url(#filter0_b_226_688)">
         <rect x="0.580078" y="0.398438" width="102.029" height="107.047" rx="12.5446" fill="white" fillOpacity="0.1" />
         <path

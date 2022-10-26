@@ -1,7 +1,6 @@
 export * from './AcademyIcon'
 export * from './AdvancedUserIcon'
 export * from './BeginnerUserIcon'
-export * from './CircleLabyrinthIcon'
 export * from './DocsIcon'
 export * from './MoneyBagIcon'
 export * from './MoneyHandIcon'
