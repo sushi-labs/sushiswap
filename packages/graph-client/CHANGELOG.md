@@ -1,5 +1,11 @@
 # @sushiswap/graph-client
 
+## 0.2.0
+
+### Minor Changes
+
+- 0ec96030: working dist
+
 ## 0.1.3
 
 ### Patch Changes
