@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { getBuiltGraphSDK, LiquidityPosition } from '@sushiswap/graph-client/.graphclient'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client/.graphclient'
 
 import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS } from '../config'
 
@@ -13,14 +13,12 @@ export async function serve({ network, verbose }: Arguments) {
     throw Error('No network given')
   }
 
-  console.log('serve fees')
-
   const chainId = CHAIN_NAME_TO_CHAIN_ID[network]
 
   const sdk = getBuiltGraphSDK({ chainId, subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId] })
 
   const { liquidityPositions } = await sdk.ExchangeLiquidityPositions({
-    first: 10000,
+    first: 25000,
     where: { user: MAKER_ADDRESS[chainId] },
   })
 

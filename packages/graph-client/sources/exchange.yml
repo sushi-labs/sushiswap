@@ -4,12 +4,12 @@ handler:
     endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange}
     retry: 3
 transforms:
-  - addSourceName: true
-  - autoPagination:
-      validateSchema: true
   - prefix:
       value: EXCHANGE_
       includeRootOperations: true
       includeTypes: false
       ignore: 
         - _SubgraphErrorPolicy_  
+  - addSourceName: true
+  - autoPagination:
+      validateSchema: true

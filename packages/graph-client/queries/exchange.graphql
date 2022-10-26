@@ -47,7 +47,7 @@ query ExchangeUser($block: Block_height, $id: ID!) {
   }
 }
 
-query ExchangeLiquidityPositions($block: Block_height, $first: Int = 10000, $orderBy:  LiquidityPosition_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: LiquidityPosition_filter) {
+query ExchangeLiquidityPositions($block: Block_height, $first: Int = 10000, $orderBy: LiquidityPosition_orderBy, $orderDirection:  OrderDirection, $skip: Int, $where: LiquidityPosition_filter) {
   liquidityPositions: EXCHANGE_liquidityPositions(block: $block, first: $first, orderBy: $orderBy, orderDirection: $orderDirection, skip: $skip, where: $where) {
     id
     liquidityTokenBalance

@@ -14,7 +14,7 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": ".graphclient/index.mjs",
+  "main": ".graphclient/index.js",
   "source": ".graphclient/index.ts",
   "typings": ".graphclient/index.d.ts",
   "files": [
@@ -24,7 +24,7 @@
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev:gql": "graphclient serve-dev",
-    "build": "graphclient build --fileType json",
+    "generate": "graphclient build --fileType json",
     "lint": "TIMING=1 eslint . --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests",
@@ -34,6 +34,11 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@sushiswap/chain": "workspace:*",
+    "date-fns": "^2.29.3",
+    "@wagmi/core": "^0.5.7"
+  },
+  "devDependencies": {
     "@graphprotocol/client-cli": "2.2.15",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
@@ -42,22 +47,6 @@
     "@graphql-mesh/transform-prune": "latest",
     "@graphql-mesh/transform-rename": "latest",
     "@graphql-mesh/transform-type-merging": "latest",
-    "@graphql-mesh/merger-stitching": "latest",
-    "@graphql-mesh/utils": "latest",
-    "@graphql-mesh/http": "latest",
-    "@graphql-mesh/runtime": "latest",
-    "@graphql-mesh/store": "latest",
-    "@graphql-mesh/cross-helpers": "latest",
-    "@graphql-mesh/cache-localforage": "latest",
-    "@whatwg-node/fetch": "latest",
-    "@graphql-mesh/graphql": "latest",
-    "@sushiswap/chain": "workspace:*",
-    "@wagmi/core": "^0.5.7",
-    "date-fns": "^2.29.3",
-    "ethers": "^5.7.0",
-    "graphql": "16.6.0"
-  },
-  "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
@@ -66,7 +55,9 @@
     "@sushiswap/wagmi-config": "workspace:*",
     "@types/jest": "^27.5.1",
     "@types/numeral": "^2.0.2",
+    "ethers": "^5.7.0",
     "eslint": "^8.20.0",
+    "graphql": "16.6.0",
     "jest": "^28.1.0",
     "tslib": "^2.4.0",
     "tsup": "^6.2.0",

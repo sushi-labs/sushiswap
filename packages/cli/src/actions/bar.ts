@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client/.graphclient'
-import { getCustomBlocks } from '@sushiswap/graph-client/fetchers'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import log from '@sushiswap/log'
 import { getUnixTime, subMonths, subYears } from 'date-fns'
 import numeral from 'numeral'
@@ -10,6 +9,7 @@ type Arguments = {
 }
 
 export async function bar(args: Arguments) {
+  // const { getBuiltGraphSDK } = await import('@sushiswap/graph-client/.graphclient')
   const sdk = getBuiltGraphSDK({ chainId: ChainId.ETHEREUM })
 
   const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))
@@ -17,21 +17,34 @@ export async function bar(args: Arguments) {
   const sixMonthAgo = getUnixTime(subMonths(new Date(), 6))
   const oneYearAgo = getUnixTime(subYears(new Date(), 1))
 
-  const [[oneMonthBlock], [threeMonthBlock], [sixMonthBlock], [oneYearBlock]] = await Promise.all([
-    getCustomBlocks([ChainId.ETHEREUM], oneMonthAgo),
-    getCustomBlocks([ChainId.ETHEREUM], threeMonthAgo),
-    getCustomBlocks([ChainId.ETHEREUM], sixMonthAgo),
-    getCustomBlocks([ChainId.ETHEREUM], oneYearAgo),
+  const [
+    {
+      customBlocks: [oneMonthBlock],
+    },
+    {
+      customBlocks: [threeMonthBlock],
+    },
+    {
+      customBlocks: [sixMonthBlock],
+    },
+    {
+      customBlocks: [oneYearBlock],
+    },
+  ] = await Promise.all([
+    sdk.CustomBlocks({ timestamp: oneMonthAgo, chainIds: [ChainId.ETHEREUM] }),
+    sdk.CustomBlocks({ timestamp: threeMonthAgo, chainIds: [ChainId.ETHEREUM] }),
+    sdk.CustomBlocks({ timestamp: sixMonthAgo, chainIds: [ChainId.ETHEREUM] }),
+    sdk.CustomBlocks({ timestamp: oneYearAgo, chainIds: [ChainId.ETHEREUM] }),
   ])
 
   const { xsushi: bar } = await sdk.Bar()
 
   const [{ xsushi: oneMonthBar }, { xsushi: threeMonthBar }, { xsushi: sixMonthBar }, { xsushi: oneYearBar }] =
     await Promise.all([
-      sdk.Bar({ block: oneMonthBlock }),
-      sdk.Bar({ block: threeMonthBlock }),
-      sdk.Bar({ block: sixMonthBlock }),
-      sdk.Bar({ block: oneYearBlock }),
+      sdk.Bar({ block: { number: Number(oneMonthBlock.number) } }),
+      sdk.Bar({ block: { number: Number(threeMonthBlock.number) } }),
+      sdk.Bar({ block: { number: Number(sixMonthBlock.number) } }),
+      sdk.Bar({ block: { number: Number(oneYearBlock.number) } }),
     ])
 
   // Lukas Witpeerd, [02/05/2022 19:23] ((current ratio / ratio 365 days ago) - 1) * 100

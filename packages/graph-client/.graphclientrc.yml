@@ -104,6 +104,19 @@ additionalTypeDefs: |
       orderDirection: OrderDirection,
       chainIds: [Int!]!
     ): [Block!]!
+    oneDayBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    twoDayBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    oneWeekBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    customBlocks(
+      timestamp: Int!
+      chainIds: [Int!]!
+    ): [Block!]!
     # BENTOBOX
     crossChainRebases(
       first: Int!,
@@ -184,6 +197,11 @@ additionalResolvers:
 
 documents:
   - './queries/*.graphql'
-
+  # - './queries/bar.graphql'
+  # - './queries/bentobox.graphql'
+  # - './queries/blocks.graphql'
+  # - './queries/exchange.graphql'
+  # - './queries/masterchef.graphql'
+  # - './queries/sushiswap.graphql'
 codegen:
   contextType: 'MeshContext & { chainId: string; chainName: string; chainShortName: string; subgraphName: string; subgraphHost: string }'

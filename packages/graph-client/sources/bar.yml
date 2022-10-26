@@ -3,6 +3,3 @@ handler:
   graphql:
     endpoint: https://api.thegraph.com/subgraphs/name/sushi-labs/xsushi
     retry: 3
-transforms:
-  - autoPagination:
-      validateSchema: true

@@ -22,7 +22,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint ./src --fix",
-    "start": "ts-node --transpileOnly index.ts",
+    "start": "ts-node --transpileOnly ./src/index.ts",
     "test": "jest --passWithNoTests"
   },
   "jest": {
@@ -35,7 +35,8 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/log": "workspace:*",
-    "graphql": "@sushiswap/graph-client@workspace:*"
+    "isomorphic-unfetch": "^3.1.0",
+    "graphql": "16.6.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

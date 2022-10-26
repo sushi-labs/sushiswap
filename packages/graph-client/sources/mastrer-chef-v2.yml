@@ -4,11 +4,12 @@ handler:
     endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/master-chefv2
     retry: 3
 transforms:
+  - addSourceName: true
+  - autoPagination:
+      validateSchema: true
   - prefix:
       value: MASTERCHEF_V2_
       includeRootOperations: true
       includeTypes: false
       ignore: 
         - _SubgraphErrorPolicy_
-  - autoPagination:
-      validateSchema: true

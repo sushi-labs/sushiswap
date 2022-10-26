@@ -4,6 +4,9 @@ handler:
     endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:jiro-ono/masterchef-staging}
     retry: 3
 transforms:
+  - addSourceName: true
+  - autoPagination:
+      validateSchema: true
   - prefix:
       value: MASTERCHEF_V1_
       includeRootOperations: true
@@ -25,5 +28,3 @@ transforms:
           to:
             type:   Pool
             field:  slpBalance
-  - autoPagination:
-      validateSchema: true

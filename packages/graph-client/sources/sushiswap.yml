@@ -4,5 +4,6 @@ handler:
     endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:subgraph-qa/sushiswap-ethereum}
     retry: 3
 transforms:
+  - addSourceName: true
   - autoPagination:
       validateSchema: true

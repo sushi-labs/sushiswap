@@ -14,8 +14,20 @@ query Block($id: ID!) {
   }
 }
 
-query Blocks($where: Block_filter) {
-  blocks(first: 1, orderBy: timestamp, orderDirection: asc, where: $where) {
+query Blocks(
+  $first: Int = 1
+  $skip: Int = 0
+  $where: Block_filter
+  $orderBy: Block_orderBy = timestamp
+  $orderDirection: OrderDirection = desc,
+) {
+  blocks(
+    first: $first,
+    skip: $skip,
+    where: $where,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+  ) {
     id
     number
     timestamp
@@ -36,6 +48,60 @@ query CrossChainBlocks(
     where: $where,
     orderBy: $orderBy,
     orderDirection: $orderDirection,
+    chainIds: $chainIds
+  ) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query OneDayBlocks(
+  $chainIds: [Int!]!
+) {
+  oneDayBlocks(
+    chainIds: $chainIds
+  ) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query TwoDayBlocks(
+  $chainIds: [Int!]!
+) {
+  twoDayBlocks(
+    chainIds: $chainIds
+  ) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query OneWeekBlocks(
+  $chainIds: [Int!]!
+) {
+  oneWeekBlocks(
+    chainIds: $chainIds
+  ) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query CustomBlocks(
+  $timestamp: Int!
+  $chainIds: [Int!]!
+) {
+  customBlocks(
+    timestamp: $timestamp
     chainIds: $chainIds
   ) {
     id
