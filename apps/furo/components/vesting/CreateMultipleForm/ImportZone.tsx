@@ -113,7 +113,7 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
                   errors.current[index].push(`Vesting ${index}: Start date in csv file must be a unix timestamp`)
                 }
 
-                let _endDate = null
+                let _endDate: string | null = null
                 try {
                   if (Number(cliff) === 1) {
                     _endDate = new Date(Number(cliffEndDate) * 1000).toISOString().slice(0, 16)

@@ -70,7 +70,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
         ]),
       })
     }
-  }, [vesting, balance, activeChain.id, writeAsync, fundSource, address, contract?.interface])
+  }, [vesting, balance, activeChain?.id, writeAsync, fundSource, address, contract?.interface])
 
   return (
     <>

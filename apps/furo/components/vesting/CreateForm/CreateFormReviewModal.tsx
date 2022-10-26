@@ -73,7 +73,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
     return [
       cliffAmount,
       stepAmount,
-      cliff && stepAmount
+      cliff && stepAmount && cliffAmount
         ? stepAmount.multiply(stepPayouts).add(cliffAmount)
         : stepAmount
         ? stepAmount.multiply(stepPayouts)
@@ -141,7 +141,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
                   title="Cliff Amount"
                   value={
                     <>
-                      {cliffAmount.toSignificant(6)} {currency.symbol}
+                      {cliffAmount?.toSignificant(6)} {currency.symbol}
                     </>
                   }
                 />
@@ -155,7 +155,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ open, onDismiss, for
               title="Payment per Period"
               value={
                 <>
-                  {stepAmount.toSignificant(6)} {currency.symbol}
+                  {stepAmount?.toSignificant(6)} {currency.symbol}
                 </>
               }
             />

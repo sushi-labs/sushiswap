@@ -121,7 +121,7 @@ export const CreateMultipleForm = () => {
         return acc
       }, Amount.fromRawAmount(Native.onChain(activeChain.id), '0'))
 
-      const actions = []
+      const actions: string[] = []
 
       if (signature) {
         actions.push(approveBentoBoxAction({ contract, user: address, signature }))
@@ -137,7 +137,8 @@ export const CreateMultipleForm = () => {
             cur?.stepConfig?.time &&
             cur?.stepPercentage &&
             cur?.totalAmount &&
-            cur?.stepPayouts
+            cur?.stepPayouts &&
+            rebases?.[cur.currency.wrapped.address]
           ) {
             acc.push(
               vestingCreationAction({
@@ -276,16 +277,17 @@ export const CreateMultipleForm = () => {
                   </Typography>
                 ))}
                 <>
-                  {formStateErrors.vestings?.map((errors, idx) => {
-                    if (errors) {
-                      return Object.entries(errors).map(([k, v]) => (
-                        <Typography variant="sm" className="flex items-center gap-2 text-red" key={`${idx}-${k}`}>
-                          <ExclamationCircleIcon width={20} height={20} />
-                          Vesting {idx + 1}: {(v as any).message}
-                        </Typography>
-                      ))
-                    }
-                  })}
+                  {Array.isArray(formStateErrors.vestings) &&
+                    formStateErrors.vestings.map((errors, idx) => {
+                      if (errors) {
+                        return Object.entries(errors).map(([k, v]) => (
+                          <Typography variant="sm" className="flex items-center gap-2 text-red" key={`${idx}-${k}`}>
+                            <ExclamationCircleIcon width={20} height={20} />
+                            Vesting {idx + 1}: {(v as any).message}
+                          </Typography>
+                        ))
+                      }
+                    })}
                 </>
               </div>
               <TableSection />

@@ -68,12 +68,12 @@ export const CliffDetailsSection: FC = () => {
               value={value}
               onChange={onChange}
               currency={currency}
-              helperTextPanel={({ errorMessage }) => (
-                <CurrencyInput.HelperTextPanel
-                  isError={!!errorMessage}
-                  text={errorMessage ? errorMessage : 'Amount the recipient receives after the cliff end date'}
-                />
-              )}
+              // helperTextPanel={({ errorMessage }) => (
+              //   <CurrencyInput.HelperTextPanel
+              //     isError={!!errorMessage}
+              //     text={errorMessage ? errorMessage : 'Amount the recipient receives after the cliff end date'}
+              //   />
+              // )}
             />
           )}
         />

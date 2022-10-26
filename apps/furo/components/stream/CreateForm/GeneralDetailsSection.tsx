@@ -2,12 +2,10 @@ import { Form, Input } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { CreateStreamFormData } from '../types'
+import { CreateStreamBaseSchemaType } from './schema'
 
 export const GeneralDetailsSection = () => {
-  const { control, watch } = useFormContext<CreateStreamFormData>()
-  // @ts-ignore
-  const currency = watch('currency')
+  const { control } = useFormContext<CreateStreamBaseSchemaType>()
 
   return (
     <Form.Section
@@ -18,15 +16,15 @@ export const GeneralDetailsSection = () => {
         <Form.Control label="Start date">
           <Controller
             control={control}
-            name="startDate"
+            name="dates.startDate"
             render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <>
                   <Input.DatetimeLocal
-                    value={value}
-                    onChange={onChange}
+                    value={value?.toISOString().slice(0, 16) || ''}
+                    onChange={(value) => onChange(new Date(value))}
                     error={!!error?.message}
-                    className="!ring-offset-slate-900"
+                    className="!ring-offset-slate-900 cursor-pointer"
                   />
                   <Form.Error message={error?.message} />
                 </>
@@ -37,15 +35,15 @@ export const GeneralDetailsSection = () => {
         <Form.Control label="End date">
           <Controller
             control={control}
-            name="endDate"
+            name="dates.endDate"
             render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <>
                   <Input.DatetimeLocal
-                    value={value}
-                    onChange={onChange}
+                    value={value?.toISOString().slice(0, 16) || ''}
+                    onChange={(value) => onChange(new Date(value))}
                     error={!!error?.message}
-                    className="!ring-offset-slate-900"
+                    className="!ring-offset-slate-900 cursor-pointer"
                   />
                   <Form.Error message={error?.message} />
                 </>

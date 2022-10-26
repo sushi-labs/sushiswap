@@ -34,7 +34,7 @@ export const batchAction = <T extends BaseContract>({ contract, actions = [] }: 
 export interface ApproveBentoBoxActionProps<T> {
   contract: T
   user: string
-  signature?: Signature
+  signature: Signature
 }
 
 export const approveBentoBoxAction = <T extends BaseContract>({
@@ -42,8 +42,6 @@ export const approveBentoBoxAction = <T extends BaseContract>({
   user,
   signature,
 }: ApproveBentoBoxActionProps<T>) => {
-  if (!signature) return undefined
-
   const { v, r, s } = signature
   return contract.interface.encodeFunctionData('setBentoBoxApproval', [user, true, v, r, s])
 }

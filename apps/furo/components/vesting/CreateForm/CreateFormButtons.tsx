@@ -72,13 +72,18 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
       !stepConfig?.time ||
       !stepPercentage ||
       !totalAmountAsEntity ||
-      !stepPayouts
+      !stepPayouts ||
+      !rebase
     ) {
       return
     }
 
-    const actions = [
-      approveBentoBoxAction({ contract, user: address, signature }),
+    const actions: string[] = []
+    if (signature) {
+      actions.push(approveBentoBoxAction({ contract, user: address, signature }))
+    }
+
+    actions.push(
       vestingCreationAction({
         contract,
         recipient,
@@ -91,8 +96,8 @@ const CreateFormButtons: FC<CreateFormButtons> = ({
         amount: totalAmountAsEntity.quotient.toString(),
         fromBentobox: fundSource === FundSource.BENTOBOX,
         minShare: totalAmountAsEntity.toShare(rebase),
-      }),
-    ]
+      })
+    )
 
     try {
       const data = await sendTransactionAsync({

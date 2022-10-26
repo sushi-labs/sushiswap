@@ -5,10 +5,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
 import { CreateVestingFormData, CreateVestingFormDataTransformedAndValidated } from '../types'
-import { CliffDetailsSection } from './CliffDetailsSection'
 import CreateFormReviewModal from './CreateFormReviewModal'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
-import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
 import { createVestingSchema, stepConfigurations } from './schema'
 import { transformVestingFormData } from './transformVestingFormData'
 
@@ -69,8 +67,8 @@ export const CreateForm: FC = () => {
       <FormProvider {...methods}>
         <Form header="Create vesting" onSubmit={methods.handleSubmit(() => setReview(true))}>
           <GeneralDetailsSection />
-          <CliffDetailsSection />
-          <GradedVestingDetailsSection />
+          {/*<CliffDetailsSection />*/}
+          {/*<GradedVestingDetailsSection />*/}
           <Form.Buttons>
             <Button type="submit" color="blue" disabled={!isValid || isValidating}>
               Review Details

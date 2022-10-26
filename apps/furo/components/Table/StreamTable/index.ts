@@ -1,2 +1,2 @@
-export * from './FuroTable'
 export * from './Placeholder'
+export * from './StreamTable'

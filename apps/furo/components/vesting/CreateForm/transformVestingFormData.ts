@@ -22,7 +22,7 @@ export const transformVestingFormData: TransformVestingFormData = (payload) => {
   const _startDate = new Date(startDate)
 
   let cliffDuration = JSBI.BigInt(0)
-  let _cliffEndDate = undefined
+  let _cliffEndDate: Date | undefined = undefined
   if (cliff && cliffEndDate) {
     _cliffEndDate = new Date(cliffEndDate)
     cliffDuration = JSBI.BigInt((new Date(cliffEndDate).getTime() - _startDate.getTime()) / 1000)

@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRConfig } from 'swr'
-import { Streams, Vestings } from 'types'
 
 const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mod) => mod.Dashboard), { ssr: false })
 
@@ -27,8 +26,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
   return {
     props: {
       fallback: {
-        [`/api/user/${chainId}/${query.address}/streams`]: (await getUserStreams(chainId, query.address)) as Streams,
-        [`/api/user/${chainId}/${query.address}/vestings`]: (await getUserVestings(chainId, query.address)) as Vestings,
+        [`/api/user/${chainId}/${query.address}/streams`]: await getUserStreams(chainId, query.address),
+        [`/api/user/${chainId}/${query.address}/vestings`]: await getUserVestings(chainId, query.address),
       },
     },
   }

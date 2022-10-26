@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ContractInterface } from '@ethersproject/contracts'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { Amount } from '@sushiswap/currency'
+import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
@@ -32,7 +32,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
   const amountAsEntity = useMemo(() => {
     if (!stream || !amount) return undefined
 
-    let value = undefined
+    let value: Amount<Token> | undefined = undefined
     try {
       value = Amount.fromRawAmount(stream.token, JSBI.BigInt(parseUnits(amount, stream.token.decimals).toString()))
     } catch (e) {

@@ -204,17 +204,18 @@ export const TableSectionRow: FC<TableSectionRow> = ({ control, index, onRemove,
               <div className="flex items-center">
                 <IconButton
                   onClick={() => {
-                    onCopy({
-                      ...data,
-                      currency: {
-                        chainId: data.currency.chainId,
-                        address: (data.currency as Token).address,
-                        decimals: data.currency.decimals,
-                        symbol: data.currency.symbol,
-                        name: data.currency.name,
-                      },
-                      recipient: '',
-                    } as CreateVestingFormData)
+                    data.currency &&
+                      onCopy({
+                        ...data,
+                        currency: {
+                          chainId: data.currency.chainId,
+                          address: (data.currency as Token).address,
+                          decimals: data.currency.decimals,
+                          symbol: data.currency.symbol,
+                          name: data.currency.name,
+                        },
+                        recipient: '',
+                      } as CreateVestingFormData)
                   }}
                 >
                   <DuplicateIcon width={20} height={20} className="text-slate-300" />

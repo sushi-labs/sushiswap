@@ -1,7 +1,9 @@
-import * as yup from 'yup'
+import { z } from 'zod'
 
-import { createStreamSchema } from '../CreateForm'
+import { CreateStreamBaseSchema } from '../CreateForm'
 
-export const createMultipleStreamSchema = yup.object({
-  streams: yup.array().of(createStreamSchema),
+export const CreateMultipleStreamBaseSchema = z.object({
+  streams: z.array(CreateStreamBaseSchema.partial()),
 })
+
+export type CreateMultipleStreamBaseSchemaType = z.infer<typeof CreateMultipleStreamBaseSchema>
