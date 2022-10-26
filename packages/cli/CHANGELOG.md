@@ -1,5 +1,12 @@
 # @sushiswap/cli
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [624d7fc2]
+  - @sushiswap/graph-client@0.2.2
+
 ## 0.1.6
 
 ### Patch Changes
