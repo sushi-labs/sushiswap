@@ -55,7 +55,9 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@wagmi/core": "^0.5.7",
-    "date-fns": "^2.29.3"
+    "date-fns": "^2.29.3",
+    "ethers": "^5.7.0",
+    "graphql": "16.6.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -64,9 +66,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^27.5.1",
     "@types/numeral": "^2.0.2",
-    "ethers": "^5.7.0",
     "eslint": "^8.20.0",
-    "graphql": "16.6.0",
     "jest": "^28.1.0",
     "tslib": "^2.4.0",
     "tsup": "^6.2.0",
