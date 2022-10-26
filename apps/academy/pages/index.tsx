@@ -37,10 +37,12 @@ import {
 import { getArticles, getDifficulties, getProducts, getTopics } from '../lib/api'
 
 export async function getStaticProps() {
-  const articles = await getArticles({ pagination: { limit: 6 } })
-  const difficulties = await getDifficulties()
-  const topics = await getTopics()
-  const products = await getProducts()
+  const [articles, difficulties, topics, products] = await Promise.all([
+    getArticles({ pagination: { limit: 6 } }),
+    getDifficulties(),
+    getTopics(),
+    getProducts(),
+  ])
 
   return {
     props: {
@@ -99,7 +101,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const topics = topicsData?.data || []
   const products = productsData?.data || []
 
-  const articleList = useMemo(() => {
+  const articleList: ArticleEntity[] = useMemo(() => {
     if (filterData?.data && (selectedTopic || selectedDifficulty || selectedProduct)) return filterData.data
     return articles
   }, [articles, filterData?.data, selectedDifficulty, selectedTopic, selectedProduct])
@@ -278,7 +280,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
           {articleList && (
             <div className="grid gap-5 md:gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))]">
               <ArticleList
-                articles={articleList as ArticleEntity[]}
+                articles={articleList}
                 loading={loading}
                 render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
               />
@@ -305,7 +307,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
       <AdditionalArticles title="Latest Releases" className="pb-[70px]">
         {latestReleases && (
           <ArticleList
-            articles={latestReleases as ArticleEntity[]}
+            articles={latestReleases}
             loading={loading}
             render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
             skeletonAmount={latestReleases.length}

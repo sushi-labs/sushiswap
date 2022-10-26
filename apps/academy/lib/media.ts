@@ -16,7 +16,7 @@ type Metadata =
   | undefined
 
 export function isMediaVideo(metadata: Metadata) {
-  return metadata?.resource_type == 'video'
+  return metadata?.resource_type === 'video'
 }
 
 export function getOptimizedMedia({

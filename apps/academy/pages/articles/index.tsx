@@ -29,9 +29,7 @@ import {
 import { getArticles, getDifficulties, getProducts, getTopics } from '../../lib/api'
 
 export async function getStaticProps() {
-  const difficulties = await getDifficulties()
-  const topics = await getTopics()
-  const products = await getProducts()
+  const [difficulties, topics, products] = await Promise.all([getDifficulties(), getTopics(), getProducts()])
 
   return {
     props: {
@@ -75,33 +73,31 @@ const _Articles: FC = () => {
   const { data: productsData } = useSWR<ProductEntityResponseCollection>('/products')
 
   useEffect(() => {
-    if (router.isReady) {
-      if (difficultyQuery) {
-        const searchedDifficulty = difficultiesData?.data?.find(
-          ({ attributes }) => attributes?.slug === difficultyQuery
-        )
-        searchedDifficulty && setSelectedDifficulty(searchedDifficulty)
-      }
-      if (productQuery) {
-        const searchedProduct = productsData?.data?.find(({ attributes }) => attributes?.slug === productQuery)
-        searchedProduct && setSelectedProduct(searchedProduct)
-      }
-      if (topicQuery) {
-        const searchedTopic = topicsData?.data?.find(({ attributes }) => attributes?.slug === topicQuery)
-        searchedTopic && setSelectedTopic(searchedTopic)
-      }
-      if (searchQuery) setQuery(searchQuery)
+    if (router.isReady && difficultyQuery) {
+      const searchedDifficulty = difficultiesData?.data?.find(({ attributes }) => attributes?.slug === difficultyQuery)
+      searchedDifficulty && setSelectedDifficulty(searchedDifficulty)
     }
-  }, [
-    difficultiesData?.data,
-    difficultyQuery,
-    router.isReady,
-    searchQuery,
-    topicsData?.data,
-    topicQuery,
-    productQuery,
-    productsData?.data,
-  ])
+  }, [difficultiesData?.data, difficultyQuery, router.isReady])
+
+  useEffect(() => {
+    if (router.isReady && productQuery) {
+      const searchedProduct = productsData?.data?.find(({ attributes }) => attributes?.slug === productQuery)
+      searchedProduct && setSelectedProduct(searchedProduct)
+    }
+  }, [productQuery, productsData?.data, router.isReady])
+
+  useEffect(() => {
+    if (router.isReady && topicQuery) {
+      const searchedTopic = topicsData?.data?.find(({ attributes }) => attributes?.slug === topicQuery)
+      searchedTopic && setSelectedTopic(searchedTopic)
+    }
+  }, [router.isReady, topicQuery, topicsData?.data])
+
+  useEffect(() => {
+    if (router.isReady && searchQuery) {
+      setQuery(searchQuery)
+    }
+  }, [router.isReady, searchQuery])
 
   const { data: articlesData, isValidating } = useSWR(
     [`/articles`, selectedDifficulty, selectedProduct, selectedTopic, debouncedQuery, page, sortBy.key],
@@ -303,7 +299,7 @@ const _Articles: FC = () => {
                 </div>
                 <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(286px,1fr))] sm:mt-12 mt-[22px]">
                   <ArticleList
-                    articles={articles as unknown as ArticleEntity[]}
+                    articles={articles}
                     loading={loading || !articles}
                     render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
                   />

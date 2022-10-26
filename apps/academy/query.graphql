@@ -255,6 +255,7 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
         description
         slug
         publishedAt
+        articleType
         products {
           data {
             id
@@ -291,6 +292,10 @@ query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $so
               name
               url
               provider_metadata
+              hash
+              mime
+              size
+              provider
             }
           }
         }
@@ -350,6 +355,7 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
         description
         slug
         publishedAt
+        articleType
         products {
           data {
             id
@@ -378,6 +384,10 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
         cover {
           data {
             attributes {
+              hash
+              mime
+              size
+              provider
               alternativeText
               height
               width
@@ -400,6 +410,7 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
         description
         slug
         publishedAt
+        articleType
         products {
           data {
             id
@@ -429,6 +440,10 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
           data {
             id
             attributes {
+              hash
+              mime
+              size
+              provider
               alternativeText
               height
               width
