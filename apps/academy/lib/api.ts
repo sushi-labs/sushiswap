@@ -72,3 +72,8 @@ export const getLatestAndRelevantArticles = async (productSlug: string, relevant
     },
   })
 }
+
+export const getTrendingSearch = async () => {
+  const sdk = getMeshSDK()
+  return await sdk.GetTrendingSearch()
+}

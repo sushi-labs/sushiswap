@@ -137,7 +137,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         <div ref={heroRef}>
           <Hero />
         </div>
-        <SearchInput handleSearch={handleSearch} ref={heroRef} />
+        <SearchInput handleSearch={handleSearch} ref={heroRef} showTopics />
 
         <div
           className={classNames(

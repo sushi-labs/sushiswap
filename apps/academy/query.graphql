@@ -458,3 +458,13 @@ query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: A
     }
   }
 }
+
+query GetTrendingSearch {
+  trendingSearch {
+    data {
+      attributes {
+        topics
+      }
+    }
+  }
+}

@@ -1,22 +1,26 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { classNames, IconButton, useBreakpoint } from '@sushiswap/ui'
+import { getTrendingSearch } from 'lib/api'
 import { ChangeEvent, FormEvent, forwardRef, MutableRefObject, useLayoutEffect, useState } from 'react'
+import useSWR from 'swr'
 
 import { APP_HEADER_HEIGHT } from '../helpers'
 
 interface SearchInput {
   handleSearch: (value: string) => void
   isTopOfPage?: boolean
-  hideTopics?: boolean
+  showTopics?: boolean
   className?: string
 }
 
 export const SearchInput = forwardRef(
-  ({ handleSearch, isTopOfPage, hideTopics, className }: SearchInput, ref: MutableRefObject<HTMLDivElement>) => {
+  ({ handleSearch, isTopOfPage, showTopics, className }: SearchInput, ref: MutableRefObject<HTMLDivElement>) => {
     const [isSticky, setIsSticky] = useState(isTopOfPage)
     const { isSm } = useBreakpoint('sm')
     const [isMobileAndSticky, setIsMobileAndSticky] = useState(isSticky)
-    const topicSearches = ['Cross-chain Swap', 'Sushi 2.0', 'Stable Swap', 'Trident', 'Furo Streaming'] // TODO: dynamic
+    const { data } = useSWR(showTopics && '/trending-search', async () => await getTrendingSearch())
+    const trendingTopics: string[] | undefined = data?.trendingSearch.data.attributes.topics
+
     const [input, setInput] = useState('')
 
     useLayoutEffect(() => {
@@ -95,20 +99,31 @@ export const SearchInput = forwardRef(
             </IconButton>
           </form>
         </div>
-        {!hideTopics && (
+        {showTopics && (
           <div className="mt-4 text-center">
             <span className="block text-xs sm:text-sm text-slate-400 sm:inline">Try:</span>
             <div className="mt-2 ml-2 sm:ml-0 sm:mt-0 sm:inline">
-              {topicSearches.map((topic, i, a) => (
-                <button
-                  className="ml-2 text-xs font-medium sm:text-sm hover:underline"
-                  key={topic}
-                  onClick={() => onTopicClick(topic)}
-                >
-                  {topic}
-                  {i === a.length - 1 ? '' : ','}
-                </button>
-              ))}
+              {!trendingTopics ? (
+                <>
+                  <div className="rounded-full w-20 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
+                  <div className="rounded-full w-14 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
+                  <div className="rounded-full w-28 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
+                  <div className="rounded-full w-12 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
+                  <div className="rounded-full w-20 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
+                  <div className="rounded-full w-14 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
+                </>
+              ) : (
+                trendingTopics.map((topic, i, a) => (
+                  <button
+                    className="ml-2 text-xs font-medium sm:text-sm hover:underline"
+                    key={topic}
+                    onClick={() => onTopicClick(topic)}
+                  >
+                    {topic}
+                    {i === a.length - 1 ? '' : ','}
+                  </button>
+                ))
+              )}
             </div>
           </div>
         )}

@@ -9,7 +9,6 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import {
-  ArticleEntity,
   DifficultyEntity,
   DifficultyEntityResponseCollection,
   ProductEntity,
@@ -107,7 +106,7 @@ const _Articles: FC = () => {
       const topicSlug = searchTopic?.attributes?.slug
 
       const filters = {
-        ...((searchInput || searchQuery) && { title: { containsi: searchInput ?? searchQuery } }),
+        ...(searchInput && { title: { containsi: searchInput } }),
         ...(difficultySlug && { difficulty: { slug: { eq: difficultySlug } } }),
         ...(productSlug && { products: { slug: { eq: productSlug } } }),
         ...(topicSlug && { topics: { slug: { eq: topicSlug } } }),
@@ -155,7 +154,7 @@ const _Articles: FC = () => {
 
   return (
     <>
-      <SearchInput isTopOfPage hideTopics className="w-full sm:hidden" handleSearch={setQuery} />
+      <SearchInput isTopOfPage className="w-full sm:hidden" handleSearch={setQuery} />
       <ArticlesPageHeader
         title={headerTitle}
         difficulties={difficulties}
