@@ -7,6 +7,7 @@ import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../com
 import {
   getBundles,
   getCharts,
+  getFuroTokens,
   getPoolCount,
   getPools,
   GetPoolsQuery,
@@ -17,9 +18,10 @@ import {
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  const [pairs, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
+  const [pairs, tokens, furoTokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),
     getTokens(query as unknown as GetTokensQuery),
+    getFuroTokens(query as unknown as GetTokensQuery),
     getCharts(query as { networks: string }),
     getPoolCount(),
     getTokenCount(),
@@ -65,6 +67,24 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
             extraQuery: '',
           },
         })]: tokens,
+        [unstable_serialize({
+          url: '/analytics/api/furo',
+          args: {
+            sorting: [
+              {
+                id: 'liquidityUSD',
+                desc: true,
+              },
+            ],
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
+            pagination: {
+              pageIndex: 0,
+              pageSize: 20,
+            },
+            query: '',
+            extraQuery: '',
+          },
+        })]: furoTokens,
 
         [unstable_serialize({
           url: '/analytics/api/charts',

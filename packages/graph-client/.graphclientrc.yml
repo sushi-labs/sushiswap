@@ -94,6 +94,15 @@ additionalTypeDefs: |
     chainShortName: String!
     source: String!
   }
+
+  extend type FuroToken {
+    address: String!
+    liquidityElastic: BigInt!
+    chainId: Int!
+    chainName: String!
+    chainShortName: String!
+  }
+
   extend type Query {
     # BLOCKS
     crossChainBlocks(
@@ -120,6 +129,7 @@ additionalTypeDefs: |
     # BENTOBOX
     crossChainRebases(
       first: Int!,
+      where: Rebase_filter,
       chainIds: [Int!]!
     ): [Rebase!]!
     # EXCHANGE
@@ -188,11 +198,21 @@ additionalTypeDefs: |
       chainIds: [Int!]!, 
       now: Int!
     ): [Pair!]!
+
+    crossChainFuroTokens(
+      first: Int,
+      skip: Int,
+      where: FuroToken_filter
+      block: FuroBlock_height,
+      pagination: Pagination,
+      chainIds: [Int!]!
+    ): [FuroToken!]!
   }
 
 additionalResolvers:
   - .graphclient/resolvers/bentobox.js
   - .graphclient/resolvers/blocks.js
+  - .graphclient/resolvers/furo.js
   - .graphclient/resolvers/sushiswap.js
 
 documents:

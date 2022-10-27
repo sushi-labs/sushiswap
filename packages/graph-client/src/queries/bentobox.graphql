@@ -13,8 +13,8 @@ query Rebases($where: Rebase_filter) {
   }
 }
 
-query CrossChainRebases($first: Int = 1000, $chainIds: [Int!]!) {
-  crossChainRebases(first: $first, chainIds: $chainIds) {
+query CrossChainRebases($first: Int = 1000, $where: Rebase_filter, $chainIds: [Int!]!) {
+  crossChainRebases(first: $first, where: $where, chainIds: $chainIds) {
     id
     base
     elastic

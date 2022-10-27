@@ -84,6 +84,36 @@ export type GetTokensQuery = Omit<QuerycrossChainTokensArgs, 'where' | 'paginati
   pagination: string
 }
 
+export const getFuroTokens = async (query?: GetTokensQuery) => {
+  try {
+    const pagination: Pagination = query?.pagination
+      ? JSON.parse(query?.pagination)
+      : {
+          pageIndex: 0,
+          pageSize: 20,
+        }
+    const first = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 20
+    const skip = 0
+    const where = { ...(query?.where && { ...JSON.parse(query.where) }) }
+    const orderBy = query?.orderBy || 'liquidityUSD'
+    const orderDirection = query?.orderDirection || 'desc'
+    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+    const { crossChainFuroTokens } = await sdk.CrossChainFuroTokens({
+      first,
+      skip,
+      where,
+      pagination,
+      // orderBy,
+      // orderDirection,
+      chainIds,
+    })
+    return crossChainFuroTokens
+  } catch (error) {
+    console.log(error)
+    throw new Error(error)
+  }
+}
+
 export const getTokens = async (query?: GetTokensQuery) => {
   try {
     const pagination: Pagination = query?.pagination

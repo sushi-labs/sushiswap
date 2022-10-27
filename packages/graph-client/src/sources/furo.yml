@@ -1,0 +1,15 @@
+name: Furo
+handler:
+  graphql:
+    endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-subgraphs/furo-ethereum}
+    retry: 3
+transforms:
+  - prefix:
+      value: Furo
+      includeRootOperations: true
+      includeTypes: true
+      ignore: 
+        - _SubgraphErrorPolicy_  
+  - addSourceName: true
+  - autoPagination:
+      validateSchema: true

@@ -1,5 +1,6 @@
 import { Tab } from '@headlessui/react'
 import { classNames, Network } from '@sushiswap/ui'
+import { FuroTable } from 'components/FuroTable'
 import { FC, useCallback } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
@@ -42,6 +43,16 @@ export const TableSection: FC = () => {
           >
             Top Tokens
           </Tab>
+          <Tab
+            className={({ selected }) =>
+              classNames(
+                selected ? 'text-slate-200' : 'text-slate-500',
+                'hover:text-slate-50 focus:text-slate-50 font-medium !outline-none'
+              )
+            }
+          >
+            Furo
+          </Tab>
         </div>
         <TableFilters />
         <Network.Selector
@@ -55,6 +66,9 @@ export const TableSection: FC = () => {
           </Tab.Panel>
           <Tab.Panel unmount={false}>
             <TokenTable />
+          </Tab.Panel>
+          <Tab.Panel unmount={false}>
+            <FuroTable />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

@@ -1,0 +1,38 @@
+query FuroTokens($first: Int = 1000, $skip: Int, $where: FuroToken_filter, $block: FuroBlock_height) {
+  tokens: Furotokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    liquidityShares
+    symbol
+    name
+    decimals
+  }
+}
+
+query FuroRebases($first: Int = 1000, $skip: Int, $where: FuroRebase_filter, $block: FuroBlock_height) {
+  rebases: Furorebases(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    token {
+      id
+      liquidityShares
+      symbol
+      name
+      decimals
+    }
+    base
+    elastic
+  }
+}
+
+query CrossChainFuroTokens($first: Int = 1000, $skip: Int, $where: FuroToken_filter, $block: FuroBlock_height, $pagination: Pagination, $chainIds: [Int!]!) {
+  crossChainFuroTokens(first: $first, skip: $skip, where: $where, block: $block, pagination: $pagination, chainIds: $chainIds) {
+    id
+    address
+    chainId
+    chainName
+    chainShortName
+    liquidityShares
+    symbol
+    name
+    decimals
+  }
+}
