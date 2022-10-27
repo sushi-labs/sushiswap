@@ -14,7 +14,7 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
   return (
     <section className="py-10 sm:py-[75px]">
       <ProductSectionTitle title="FAQs" subtitle="Frequently asked questions" />
-      <div className="mt-8 sm:mt-16 border-2 divide-y rounded-3xl border-slate-500/30 divide-slate-500">
+      <div className="mt-8 sm:mt-16 border-2 divide-y-2 rounded-3xl border-slate-500/30 divide-slate-500/30">
         {faq.map(({ question, answer }, i) => (
           <Disclosure key={i} as="div">
             {({ open }) => (
@@ -43,7 +43,9 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
                   leaveFrom="transform max-h-max"
                   leaveTo="transform max-h-0"
                 >
-                  <Disclosure.Panel className="px-6 pb-6 text-slate-400 sm:px-9 sm:pb-9">{answer}</Disclosure.Panel>
+                  <Disclosure.Panel className="px-6 pb-6 text-slate-400 sm:px-9 sm:pb-9 sm:text-base">
+                    {answer}
+                  </Disclosure.Panel>
                 </Transition>
               </>
             )}

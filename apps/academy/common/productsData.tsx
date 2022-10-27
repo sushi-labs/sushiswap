@@ -6,7 +6,6 @@ import {
   FantomCircle,
   OptimismCircle,
   PolygonCircle,
-  Typography,
 } from '@sushiswap/ui'
 
 import {
@@ -86,54 +85,23 @@ export const PRODUCTS_DATA = {
     ],
     faq: [
       {
-        question: 'Lorem ipsum',
+        question: 'What is a Flash Loan?',
         answer: (
-          <>
-            <Typography>
-              Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs
-              can be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there
-              is a framework for creating any AMM anyone would ever need.
-            </Typography>
-            <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
-            <ul className="list-disc list-inside">
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Classic pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-                  They’re best for pairing tokens that are unpredictable.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Concentrated pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools also use two tokens. The difference is that the liquidity in each pool is determined by
-                  the ranges set by the pool creator.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Stable pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT,
-                  or other pegged tokens like ETH and stETH, or renBTC and WBTC.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Index pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools are usually used to create baskets of assets or decentralized index funds; hence the
-                  name. These pools can be made of any percentage of tokens equalling 100.
-                </Typography>
-              </li>
-            </ul>
-          </>
+          <div className="space-y-4">
+            <p>
+              Flash loans are loans that can be taken by anyone without having to put out any collateral. It is possible
+              to make such a transaction because everything is repaid in the same block.
+            </p>
+            <p>
+              The entire process is executed by a smart contract. If the smart contract detects that the loan will not
+              be fully repaid in the same block, the transaction will be rejected.
+            </p>
+            <p>Platforms that allow the usage of flash loans usually charge a fee - for Bentobox it is 0.05%.</p>
+            <p>
+              Flash loans are particularly useful for arbitrage and liquidations. It is very capital efficient as bots
+              and users do not need to have high amount of idle funds in their wallets to execute the trade.
+            </p>
+          </div>
         ),
       },
     ],
@@ -176,54 +144,34 @@ export const PRODUCTS_DATA = {
     ],
     faq: [
       {
-        question: 'What is Trident and what Pool types does it support?',
+        question: 'What is the difference between Trident’s Classic and Legacy pools?',
         answer: (
-          <>
-            <Typography>
-              Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs
-              can be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there
-              is a framework for creating any AMM anyone would ever need.
-            </Typography>
-            <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
-            <ul className="list-disc list-inside">
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Classic pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-                  They’re best for pairing tokens that are unpredictable.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Concentrated pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools also use two tokens. The difference is that the liquidity in each pool is determined by
-                  the ranges set by the pool creator.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Stable pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT,
-                  or other pegged tokens like ETH and stETH, or renBTC and WBTC.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Index pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools are usually used to create baskets of assets or decentralized index funds; hence the
-                  name. These pools can be made of any percentage of tokens equalling 100.
-                </Typography>
-              </li>
-            </ul>
-          </>
+          <p>
+            Classic pools made through the Trident framework have new additional capabilities that legacy pools do not.
+            Legacy pools use the old AMM framework and stick to a 0.3% base fee structure. Trident classic pools have
+            adjustable fees (anywhere from 0.01% to 1%) and can use TWAP pricing oracles.
+          </p>
+        ),
+      },
+      {
+        question: 'What is a Constant Product Pool?',
+        answer: (
+          <p>
+            Constant Product Pools (AMMs) are pools that DeFi users are most familiar with, where trading happens
+            between two assets over the x*y=k constant product formula. ‘Constant Product’ pools are composed 50% of one
+            token and 50% of another. They’re best for pairing tokens that are unpredictable.
+          </p>
+        ),
+      },
+      {
+        question: 'What is a Stable Swap Pool?',
+        answer: (
+          <p>
+            Stable Pools are liquidity pools set particularly for pairs of pegged assets. This applies not just to
+            stable coins, but also other assets such a wBitcoin to renBTC or wETH to stETH. Unlike regular constant
+            product pools where you would see a somewhat large margin of slippage, these stable pools allow users to
+            trade straight across these assets with minimal price impact.
+          </p>
         ),
       },
     ],
@@ -274,54 +222,66 @@ export const PRODUCTS_DATA = {
     ],
     faq: [
       {
-        question: 'What is Trident and what Pool types does it support?',
+        question: 'What is triple yield? (Bentobox + Kashi + Onsen)',
         answer: (
-          <>
-            <Typography>
-              Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs
-              can be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there
-              is a framework for creating any AMM anyone would ever need.
-            </Typography>
-            <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
-            <ul className="list-disc list-inside">
+          <div className="space-y-4">
+            <p>
+              Triple yield means accumulating three forms of yield on your funds. This is made possible when you lend
+              out your funds via Kashi.
+            </p>
+            <p>How?</p>
+            <ol className="list-decimal pl-4">
+              <li>Lend out your funds via Kashi and earn interest from borrowers.</li>
+              <li>Idle assets automatically earn a small yield from Bentobox strategies.</li>
+              <li>Stake the KMP tokens you receive in Kashi farms to earn extra $SUSHI rewards.</li>
+            </ol>
+            <p>With Trident it will be possible to do the same with your SLPs</p>
+            <ol className="list-decimal pl-4">
+              <li>Add liquidity on Trident and earn fees from all swaps.</li>
+              <li>Idle assets automatically earn a small yield from Bentobox strategies.</li>
+              <li>Stake the SLP tokens you receive in Sushiswap farms to earn extra $SUSHI rewards.</li>
+            </ol>
+          </div>
+        ),
+      },
+      {
+        question: 'What is a 2x reward Farm?',
+        answer: (
+          <div className="space-y-4">
+            <p>
+              A 2x reward farm allows a user to earn $SUSHI & an addition token as a reward when their SLP tokens are
+              staked in it. These are extra rewards added on top of the trading fees earned from providing liquidity.
+            </p>
+            <p>These farm contracts are named Masterchefv2 (or Minichefv2 on L2 & sidechains).</p>
+            <p>
+              This allows other projects that are listed on Sushiswap to incentivize their token holders to provide
+              liquidity for that specific token.
+            </p>
+          </div>
+        ),
+      },
+      {
+        question: 'What is the difference between MasterChef, MasterChefv2 and MiniChef?',
+
+        answer: (
+          <div className="space-y-4">
+            <p>There are three different types of implementations for Masterchef</p>
+            <ul className="list-disc pl-4">
               <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Classic pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-                  They’re best for pairing tokens that are unpredictable.
-                </Typography>
+                MasterChefv1: The main contract on the Ethereum network that rewards $SUSHI to users for staking their
+                LP and/or KMP tokens.
               </li>
               <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Concentrated pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools also use two tokens. The difference is that the liquidity in each pool is determined by
-                  the ranges set by the pool creator.
-                </Typography>
+                MasterChefv2: Secondary contract on the Ethereum network. It is built on top of MasterChefv1 and gives 2
+                different type of tokens as a reward. e.g Users will receive SUSHI & another token as their staking
+                reward.
               </li>
               <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Stable pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT,
-                  or other pegged tokens like ETH and stETH, or renBTC and WBTC.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Index pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools are usually used to create baskets of assets or decentralized index funds; hence the
-                  name. These pools can be made of any percentage of tokens equalling 100.
-                </Typography>
+                MiniChef: This contract is mainly deployed on various EVM compatible chains (AVAX, FTM, CELO etc.). It
+                is similar to MasterChefv2, in which it also gives 2 different type of tokens as a reward.
               </li>
             </ul>
-          </>
+          </div>
         ),
       },
     ],
@@ -383,54 +343,27 @@ export const PRODUCTS_DATA = {
     ],
     faq: [
       {
-        question: 'Lorem Ipsum',
+        question: 'How does SushiXSwap provide best prices and minimal slippage?',
         answer: (
-          <>
-            <Typography>
-              Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs
-              can be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there
-              is a framework for creating any AMM anyone would ever need.
-            </Typography>
-            <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
-            <ul className="list-disc list-inside">
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Classic pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-                  They’re best for pairing tokens that are unpredictable.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Concentrated pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools also use two tokens. The difference is that the liquidity in each pool is determined by
-                  the ranges set by the pool creator.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Stable pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT,
-                  or other pegged tokens like ETH and stETH, or renBTC and WBTC.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Index pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools are usually used to create baskets of assets or decentralized index funds; hence the
-                  name. These pools can be made of any percentage of tokens equalling 100.
-                </Typography>
-              </li>
-            </ul>
-          </>
+          <div className="space-y-4">
+            <p>
+              A challenge for crosschain bridges so far has been finding a path with sufficient liquidity on both sides
+              of a swap. We solve this problem by plugging into our own Sushi liquidity pools, which are currently
+              deployed on 14 chains. Being able to use this liquidity guarantees our users to always receive the best
+              price for any pair across all the chains.
+            </p>
+
+            <p>
+              Sushi’s swap routing finds the cheapest, fastest and most secure route for any user to get from point A to
+              point B by plugging into Layer0’s Stargate bridge infrastructure. Stargate bridges chains securely without
+              compromising on decentralization, which allows SushiXSwap to scale to any number of chains in the future.
+            </p>
+            <p>
+              To further ensure we can always find the cheapest route and best price between any two tokens on all
+              chains, we will continue to aggregate more bridges in the future. By building SushiXSwap in a modular,
+              composable way, we will simplify the integration of your favorite bridge into our aggregator interface.
+            </p>
+          </div>
         ),
       },
     ],
@@ -474,54 +407,59 @@ export const PRODUCTS_DATA = {
     ],
     faq: [
       {
-        question: 'What is Trident and what Pool types does it support?',
+        question: 'What is the difference between the Onsen and Kashi farm?',
         answer: (
-          <>
-            <Typography>
-              Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs
-              can be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there
-              is a framework for creating any AMM anyone would ever need.
-            </Typography>
-            <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
-            <ul className="list-disc list-inside">
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Classic pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-                  They’re best for pairing tokens that are unpredictable.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Concentrated pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools also use two tokens. The difference is that the liquidity in each pool is determined by
-                  the ranges set by the pool creator.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Stable pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT,
-                  or other pegged tokens like ETH and stETH, or renBTC and WBTC.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Index pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools are usually used to create baskets of assets or decentralized index funds; hence the
-                  name. These pools can be made of any percentage of tokens equalling 100.
-                </Typography>
-              </li>
+          <div className="space-y-4">
+            <p>On Sushi, you can stake two different type of liquidity tokens:</p>
+            <ul className="list-disc pl-4">
+              <li>SLP tokens: Tokens you receive as an IOU when adding liquidity on Sushi.</li>
+              <li>KMP tokens: Tokens you receive as an IOU when lending on Kashi.</li>
             </ul>
-          </>
+            <p>
+              The Onsen Menu for staking SLP tokens can be found under the ‘Farm’ tab at the top of the Sushi web page.
+              These farms allow you to receive daily rewards in $SUSHI or other tokens as an incentive for providing
+              liquidity.
+            </p>
+          </div>
+        ),
+      },
+      {
+        question: 'What is triple yield? (Bentobox + Kashi + Onsen)',
+        answer: (
+          <div className="space-y-4">
+            <p>
+              Triple yield means accumulating three forms of yield on your funds. This is made possible when you lend
+              out your funds via Kashi.
+            </p>
+            <p>How?</p>
+            <ol className="list-decimal pl-4">
+              <li>Lend out your funds via Kashi and earn interest from borrowers.</li>
+              <li>Idle assets automatically earn a small yield from Bentobox strategies.</li>
+              <li>Stake the KMP tokens you receive in Kashi farms to earn extra $SUSHI rewards.</li>
+            </ol>
+            <p>With Trident it will be possible to do the same with your SLPs</p>
+            <ol className="list-decimal pl-4">
+              <li>Add liquidity on Trident and earn fees from all swaps.</li>
+              <li>Idle assets automatically earn a small yield from Bentobox strategies.</li>
+              <li>Stake the SLP tokens you receive in Sushiswap farms to earn extra $SUSHI rewards.</li>
+            </ol>
+          </div>
+        ),
+      },
+      {
+        question: 'How is Kashi different from other lending platforms like Aave & Compound?',
+        answer: (
+          <div className="space-y-4">
+            <p>
+              Both Aave & Compound use a pool-based system which tags their funds to various tokens on their platforms.
+              This means that the solvency of any token will affect the entire platform.
+            </p>
+            <p>
+              {"Kashi's"} isolated lending architecture mitigates the risks to a specific pair only, thus enabling any
+              token to be listed as an asset/collateral. It uses an elastic interest rate to incentivize liquidity into
+              a certain range and oracles to provide price feeds for all tokens.
+            </p>
+          </div>
         ),
       },
     ],
@@ -571,54 +509,45 @@ export const PRODUCTS_DATA = {
     ],
     faq: [
       {
-        question: 'What is Trident and what Pool types does it support?',
+        question: 'What is Furo?',
         answer: (
-          <>
-            <Typography>
-              Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs
-              can be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there
-              is a framework for creating any AMM anyone would ever need.
-            </Typography>
-            <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
+          <div className="space-y-4">
+            <p>
+              Furo is a payment streaming platform that anyone can use to make automated payments to other wallets -
+              whether they be for individuals, DAOs, or any other type of entity. While it my seem very similar to apps
+              like Sablier or Llamapay, there are additional features which make Furo particularly appealing. One of
+              these strengths would be the utilization of the BentoBox architecture.
+            </p>
+            <p>
+              Other apps require funds to be locked in contract. With Furo, tokens sit inside of the BentoBox giving
+              potential for them to also simultaneously be utilized by strategies to accrue yield. This provides a
+              pleasant way to have your value grow before you even receive it! Streams and vesting that are sent via
+              Furo are also represented by an NFT minted to the receiving wallet. The owner can even send that NFT to
+              another wallet to transfer ownership of the stream.
+            </p>
+          </div>
+        ),
+      },
+      {
+        question: 'On what chains is Furo available?',
+        answer: (
+          <div className="space-y-4">
+            <p>Currently Furo is available on most networks/chains that Sushi is deployed on:</p>
             <ul className="list-disc list-inside">
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Classic pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-                  They’re best for pairing tokens that are unpredictable.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Concentrated pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools also use two tokens. The difference is that the liquidity in each pool is determined by
-                  the ranges set by the pool creator.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Stable pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT,
-                  or other pegged tokens like ETH and stETH, or renBTC and WBTC.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Index pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools are usually used to create baskets of assets or decentralized index funds; hence the
-                  name. These pools can be made of any percentage of tokens equalling 100.
-                </Typography>
-              </li>
+              <li>Ethereum</li>
+              <li>Polygon</li>
+              <li>Gnosis</li>
+              <li>Arbitrum</li>
+              <li>Optimism</li>
+              <li>Goerli Test Network</li>
+              <li>Avalanche</li>
+              <li>BSC</li>
+              <li>Fantom</li>
+              <li>Harmony</li>
+              <li>Moonbeam</li>
+              <li>Moonriver</li>
             </ul>
-          </>
+          </div>
         ),
       },
     ],
@@ -659,54 +588,35 @@ export const PRODUCTS_DATA = {
     ],
     faq: [
       {
-        question: 'What is Trident and what Pool types does it support?',
+        question: 'What is a Dutch auction?',
         answer: (
-          <>
-            <Typography>
-              Trident is a production framework for building and deploying AMMs, but it is not an AMM itself. While AMMs
-              can be created using the Trident code, there isn’t a specific AMM at the center of Trident. Instead, there
-              is a framework for creating any AMM anyone would ever need.
-            </Typography>
-            <Typography className="mt-9">Trident is able to produce the following pool types:</Typography>
-            <ul className="list-disc list-inside">
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Classic pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = constant product pool (x * y = k). Classic pools are composed 50% of one token and 50% of another.
-                  They’re best for pairing tokens that are unpredictable.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Concentrated pool{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools also use two tokens. The difference is that the liquidity in each pool is determined by
-                  the ranges set by the pool creator.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Stable pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = are ideal for pooling “like-kind” assets. These tokens are usually stable coins like USDC and USDT,
-                  or other pegged tokens like ETH and stETH, or renBTC and WBTC.
-                </Typography>
-              </li>
-              <li>
-                <Typography weight={700} className="text-white" as="span">
-                  Index pools{' '}
-                </Typography>
-                <Typography as="span">
-                  = these pools are usually used to create baskets of assets or decentralized index funds; hence the
-                  name. These pools can be made of any percentage of tokens equalling 100.
-                </Typography>
-              </li>
-            </ul>
-          </>
+          <div className="space-y-4">
+            <p>
+              Dutch auctions are “inverted” auctions. The price point per token is set high and descends as the auction
+              goes on in the event that no one is buying in. This rate of price adjustment is set by the auctioneer. The
+              final price per token is set when all tokens have been allocated. Participants are committing to receive a
+              minimum total value rather than bidding for the tokens themselves - because of this it is common to end up
+              with more tokens than what was initially bid for.
+            </p>
+            <p>
+              <i>Example:</i> An auction starts at $100 per token. It is set to depreciate in value every hour if a
+              token is not bought. If no one buys the token after the first hour, it automatically lowers itself to the
+              price point of $90 per token. Every purchase resets the hour long timer until the token price starts to
+              depreciates again. If no tokens are bought in the second hour - again the price of the token drops, this
+              time to $80. Another hour passes, now it is valued at $70. This cycle would continue until all the tokens
+              are purchased or they become valued at $0.
+            </p>
+          </div>
+        ),
+      },
+      {
+        question: 'What is a Batch auction?',
+        answer: (
+          <p>
+            Batch auctions are based around a single pool of tokens that is split amongst all auction participants. At
+            the end of the auction the token price is determined by the total amount raised from all participants.
+            Everybody participating gets a share of the tokens equal to their share of the contribution pool.
+          </p>
         ),
       },
     ],
