@@ -23,6 +23,8 @@ export interface HeaderSection {
   isExternal?: boolean
 }
 
+const PRODUCTS_ORDER = ['trident', 'furo', 'sushixswap', 'onsen', 'kashi', 'miso', 'bentobox']
+
 export const Header: FC = () => {
   const { data: productsData } = useSWR('/products', async () => (await getProducts())?.products)
   const { data: difficultiesData } = useSWR('/difficulties', async () => (await getDifficulties())?.difficulties)
@@ -30,6 +32,9 @@ export const Header: FC = () => {
 
   const products = useMemo(() => productsData?.data ?? [], [productsData?.data])
   const difficulties = useMemo(() => difficultiesData?.data ?? [], [difficultiesData?.data])
+  const sortedProducts = products.sort((a, b) =>
+    PRODUCTS_ORDER.indexOf(a.attributes.slug) > PRODUCTS_ORDER.indexOf(b.attributes.slug) ? 1 : -1
+  )
 
   const navData: HeaderSection[] = useMemo(
     () => [
@@ -42,8 +47,8 @@ export const Header: FC = () => {
         href: '/about',
       },
       {
-        title: 'Product',
-        links: products.map(({ attributes: { longName, slug } }) => ({
+        title: 'Products',
+        links: sortedProducts.map(({ attributes: { longName, slug } }) => ({
           name: longName,
           href: `/products/${slug}`,
         })),
@@ -65,7 +70,7 @@ export const Header: FC = () => {
         isExternal: true,
       },
     ],
-    [difficulties, products]
+    [difficulties, sortedProducts]
   )
 
   return (
@@ -86,7 +91,6 @@ export const Header: FC = () => {
           return (
             <Select
               key={title}
-              onChange={() => null}
               button={
                 <Listbox.Button type="button" className="flex items-center gap-1 font-medium text-slate-50">
                   <span className="text-base font-bold">{title}</span>
