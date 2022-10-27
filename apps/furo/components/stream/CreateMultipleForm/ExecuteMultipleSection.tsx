@@ -19,7 +19,7 @@ import {
   ZAmountToAmount,
   ZFundSourceToFundSource,
 } from '../../../lib/zod'
-import { CreateMultipleStreamBaseSchemaType } from './schema'
+import { CreateMultipleStreamFormSchemaType } from './schema'
 
 export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
@@ -30,7 +30,7 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
   const {
     watch,
     formState: { isValid, isValidating },
-  } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  } = useFormContext<CreateMultipleStreamFormSchemaType>()
 
   const streams = watch('streams')
   const _amounts = useAmountsFromZAmounts((streams || []).map((el) => el.amount))
@@ -59,7 +59,7 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
       const ts = new Date().getTime()
 
       createNotification({
-        type: 'send',
+        type: 'createStream',
         chainId: chainId,
         txHash: data.hash,
         promise: data.wait(),

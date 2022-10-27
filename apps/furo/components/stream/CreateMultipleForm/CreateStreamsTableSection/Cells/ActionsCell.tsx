@@ -3,15 +3,14 @@ import { IconButton } from '@sushiswap/ui'
 import React, { Dispatch, FC, SetStateAction, useCallback } from 'react'
 import { FieldErrors, UseFieldArrayAppend, UseFieldArrayRemove } from 'react-hook-form'
 
-import { CreateStreamBaseSchemaType } from '../../../CreateForm'
-import { CreateMultipleStreamBaseSchemaType } from '../../schema'
+import { CreateMultipleStreamFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 interface ActionsCellProps extends CellProps {
-  append?: UseFieldArrayAppend<CreateStreamBaseSchemaType>
+  append?: UseFieldArrayAppend<CreateMultipleStreamFormSchemaType, 'streams'>
   remove?: UseFieldArrayRemove
-  importErrors?: FieldErrors<CreateMultipleStreamBaseSchemaType>
-  setImportErrors?: Dispatch<SetStateAction<FieldErrors<CreateMultipleStreamBaseSchemaType>>>
+  importErrors?: FieldErrors<CreateMultipleStreamFormSchemaType>
+  setImportErrors?: Dispatch<SetStateAction<FieldErrors<CreateMultipleStreamFormSchemaType>>>
 }
 
 export const ActionsCell: FC<ActionsCellProps> = ({ row, index, append, remove, importErrors, setImportErrors }) => {

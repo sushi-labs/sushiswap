@@ -1,88 +1,72 @@
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ChainId } from '@sushiswap/chain'
+import { FundSource } from '@sushiswap/hooks'
 import { Button, Form } from '@sushiswap/ui'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useAccount, useNetwork } from 'wagmi'
 
-import { CreateVestingFormData, CreateVestingFormDataTransformedAndValidated } from '../types'
-import CreateFormReviewModal from './CreateFormReviewModal'
+import { CliffDetailsSection } from './CliffDetailsSection'
+import CreateFormReviewModal from './CreateFormReviewModal/CreateFormReviewModal'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
-import { createVestingSchema, stepConfigurations } from './schema'
-import { transformVestingFormData } from './transformVestingFormData'
+import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
+import { CreateVestingFormSchemaType, CreateVestingModelSchema, stepConfigurations } from './schema'
 
-export const CreateForm: FC = () => {
-  const { chain: activeChain } = useNetwork()
-  const { address } = useAccount()
-  const [review, setReview] = useState(false)
-
-  const methods = useForm<CreateVestingFormData>({
-    // @ts-ignore
-    resolver: yupResolver(createVestingSchema),
+export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
+  const methods = useForm<CreateVestingFormSchemaType>({
+    resolver: zodResolver(CreateVestingModelSchema),
     defaultValues: {
-      currency: undefined,
-      cliff: false,
-      startDate: undefined,
-      recipient: undefined,
-      cliffEndDate: undefined,
-      cliffAmount: '',
-      stepPayouts: 1,
-      stepAmount: '',
+      fundSource: FundSource.WALLET,
       stepConfig: stepConfigurations[0],
-      fundSource: undefined,
-      insufficientBalance: false,
+      stepPayouts: 1,
+      cliffEnabled: false,
+      cliff: {
+        cliffAmount: undefined,
+        cliffEndDate: undefined,
+      },
     },
-    mode: 'onChange',
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
   })
 
   const {
     formState: { isValid, isValidating },
-    watch,
-    reset,
   } = methods
 
-  const formData = watch() as CreateVestingFormData
-  const validatedData = isValid && !isValidating ? transformVestingFormData(formData) : undefined
-
-  // Reset form if we switch network or change account
-  useEffect(() => {
-    setReview(false)
-    reset()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChain?.id, address])
-
-  // createVestingSchema
-  //   .validate(formData, { abortEarly: false })
-  //   .then(function () {
-  //     // Success
-  //   })
-  //   .catch(function (err) {
-  //     err?.inner?.forEach((e) => {
-  //       console.log(e.message, e.path)
-  //     })
-  //   })
+  // const formData = watch()
+  //
+  // console.log(formData)
+  // useEffect(() => {
+  //   try {
+  //     CreateVestingModelSchema.parse(formData)
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }, [formData])
 
   return (
     <>
       <FormProvider {...methods}>
-        <Form header="Create vesting" onSubmit={methods.handleSubmit(() => setReview(true))}>
-          <GeneralDetailsSection />
-          {/*<CliffDetailsSection />*/}
-          {/*<GradedVestingDetailsSection />*/}
-          <Form.Buttons>
-            <Button type="submit" color="blue" disabled={!isValid || isValidating}>
-              Review Details
-            </Button>
-          </Form.Buttons>
+        <Form header="Create vesting">
+          <GeneralDetailsSection chainId={chainId} />
+          <CliffDetailsSection />
+          <GradedVestingDetailsSection />
+          <CreateFormReviewModal chainId={chainId}>
+            {({ isWritePending, setOpen }) => {
+              return (
+                <div className="flex justify-end pt-4">
+                  <Button
+                    type="button"
+                    disabled={isWritePending || !isValid || isValidating}
+                    onClick={() => setOpen(true)}
+                  >
+                    Review Vesting
+                  </Button>
+                </div>
+              )
+            }}
+          </CreateFormReviewModal>
         </Form>
       </FormProvider>
-      {validatedData && review && (
-        <CreateFormReviewModal
-          open={review}
-          onDismiss={() => setReview(false)}
-          formData={validatedData as CreateVestingFormDataTransformedAndValidated}
-        />
-      )}
     </>
   )
 }

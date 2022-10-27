@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { CreateStreamBaseSchemaType } from '../../../CreateForm'
+import { CreateStreamFormSchemaType } from '../../../CreateForm'
 import { ActionsCell } from './ActionsCell'
 import { AmountCell } from './AmountCell'
 import { CurrencyCell } from './CurrencyCell'
@@ -13,7 +13,7 @@ import { StartDateCell } from './StartDateCell'
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
 
-export const CURRENCY_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
+export const CURRENCY_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   id: 'currency',
   header: 'Currency',
   cell: (props) => (
@@ -22,7 +22,7 @@ export const CURRENCY_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
   size: 50,
 }
 
-export const FUND_SOURCE_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
+export const FUND_SOURCE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   id: 'fundSource',
   header: 'Source',
   cell: (props) => (
@@ -31,7 +31,7 @@ export const FUND_SOURCE_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> 
   size: 50,
 }
 
-export const AMOUNT_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
+export const AMOUNT_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   id: 'amount',
   header: 'Amount',
   cell: (props) => (
@@ -40,7 +40,7 @@ export const AMOUNT_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
   size: 50,
 }
 
-export const RECIPIENT_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
+export const RECIPIENT_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   id: 'recipient',
   header: 'Recipient',
   cell: (props) => (
@@ -49,7 +49,7 @@ export const RECIPIENT_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = 
   size: 50,
 }
 
-export const START_DATE_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
+export const START_DATE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   id: 'startDate',
   header: 'Starts',
   cell: (props) => (
@@ -58,7 +58,7 @@ export const START_DATE_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> =
   size: 50,
 }
 
-export const END_DATE_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
+export const END_DATE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   id: 'endDate',
   header: 'Ends',
   cell: (props) => (
@@ -67,7 +67,7 @@ export const END_DATE_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
   size: 50,
 }
 
-export const ACTIONS_COLUMN: ColumnDef<CreateStreamBaseSchemaType, unknown> = {
+export const ACTIONS_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   id: 'actions',
   header: '',
   cell: (props) => (

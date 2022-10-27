@@ -5,11 +5,11 @@ import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { ZFundSourceToFundSource } from '../../../../../lib/zod'
-import { CreateMultipleStreamBaseSchemaType } from '../../schema'
+import { CreateMultipleStreamFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const FundSourceCell: FC<CellProps> = ({ row, index }) => {
-  const { control } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  const { control } = useFormContext<CreateMultipleStreamFormSchemaType>()
   const _fundSource = ZFundSourceToFundSource.parse(row.fundSource)
 
   return (

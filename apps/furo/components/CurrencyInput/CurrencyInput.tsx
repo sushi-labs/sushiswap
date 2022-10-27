@@ -17,7 +17,7 @@ type HelperTextPanelRenderProps = {
   errorMessage: string | undefined
 }
 
-type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTextPanel'> & {
+type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTextPanel' | 'onError'> & {
   onError?(message?: string): void
   fundSource: FundSource
   account: string | undefined

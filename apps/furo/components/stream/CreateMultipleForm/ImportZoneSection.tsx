@@ -9,17 +9,17 @@ import { FC, useCallback } from 'react'
 import { FieldErrors, useFieldArray, useFormContext } from 'react-hook-form'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
 
-import { CreateStreamBaseSchemaType } from '../CreateForm'
-import { CreateMultipleStreamBaseSchemaType } from './schema'
+import { CreateStreamFormSchemaType } from '../CreateForm'
+import { CreateMultipleStreamFormSchemaType } from './schema'
 
 interface ImportZoneSection {
   chainId: ChainId
-  errors: FieldErrors<CreateMultipleStreamBaseSchemaType>
-  onErrors(errors: FieldErrors<CreateMultipleStreamBaseSchemaType>): void
+  errors: FieldErrors<CreateMultipleStreamFormSchemaType>
+  onErrors(errors: FieldErrors<CreateMultipleStreamFormSchemaType>): void
 }
 
 export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, chainId }) => {
-  const { control, trigger, watch } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  const { control, trigger, watch } = useFormContext<CreateMultipleStreamFormSchemaType>()
   const { append } = useFieldArray({
     control,
     name: 'streams',
@@ -27,6 +27,7 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
   })
 
   const streams = watch('streams')
+  const nrOfStreams = streams?.length || 0
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -48,7 +49,7 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
               }
             }
 
-            const rows: CreateStreamBaseSchemaType[] = []
+            const rows: CreateStreamFormSchemaType[] = []
             const tokens = await Promise.all(
               arr.reduce<Promise<void | FetchTokenResult>[]>((acc, cur, index) => {
                 if (cur !== '') {
@@ -60,7 +61,7 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
                           errors.streams = []
                         }
 
-                        errors.streams[index + streams.length] = {
+                        errors.streams[index + nrOfStreams] = {
                           amount: {
                             type: 'custom',
                             message: `${tokenAddress} was not found`,
@@ -99,25 +100,23 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
                     ? Native.onChain(chainId)
                     : tokenMap?.[tokenAddress.toLowerCase()]
 
-                if (errors.streams[index + streams.length]?.amount) {
+                if (errors.streams[index + nrOfStreams]?.amount) {
                   _currency = undefined
                 }
 
                 if (!isAddress(recipient)) {
                   _recipient = undefined
-                  errors.streams[index + streams.length] = {
-                    ...errors.streams[index + streams.length],
+                  errors.streams[index + nrOfStreams] = {
+                    ...errors.streams[index + nrOfStreams],
                     recipient: { type: 'custom', message: `${recipient} is not a valid address` },
                   }
                 }
 
                 if (isNaN(_startDate.getTime())) {
                   _startDate = null
-                  errors.streams[index + streams.length] = {
-                    ...errors.streams[index + streams.length],
+                  errors.streams[index + nrOfStreams] = {
+                    ...errors.streams[index + nrOfStreams],
                     dates: {
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore this is a type error in the library
                       startDate: { type: 'custom', message: `${startDate} is not a valid unix timestamp` },
                     },
                   }
@@ -125,12 +124,10 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
 
                 if (isNaN(_endDate.getTime())) {
                   _endDate = null
-                  errors.streams[index + streams.length] = {
-                    ...errors.streams[index + streams.length],
+                  errors.streams[index + nrOfStreams] = {
+                    ...errors.streams[index + nrOfStreams],
                     dates: {
-                      ...errors.streams[index + streams.length]?.dates,
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore this is a type error in the library
+                      ...errors.streams[index + nrOfStreams]?.dates,
                       endDate: { type: 'custom', message: `${endDate} is not a valid unix timestamp` },
                     },
                   }
@@ -160,7 +157,7 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
         reader.readAsText(file)
       })
     },
-    [append, chainId, errors, onErrors, streams.length, trigger]
+    [append, chainId, errors, nrOfStreams, onErrors, trigger]
   )
 
   const downloadExample = useCallback(() => {

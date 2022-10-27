@@ -6,16 +6,20 @@ import Link from 'next/link'
 import React, { FC, useCallback, useState } from 'react'
 import { FieldErrors, FormProvider, useForm } from 'react-hook-form'
 
-import { ExecuteMultipleSection, ImportZoneSection } from '.'
+import {
+  CreateMultipleStreamFormSchemaType,
+  CreateMultipleStreamModelSchema,
+  ExecuteMultipleSection,
+  ImportZoneSection,
+} from '.'
 import { CreateStreamsTableSection } from './CreateStreamsTableSection'
 import { ReviewSection } from './ReviewSection'
-import { CreateMultipleStreamBaseSchema, CreateMultipleStreamBaseSchemaType } from './schema'
 
 export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const [review, setReview] = useState(false)
-  const [errors, setErrors] = useState<FieldErrors<CreateMultipleStreamBaseSchemaType>>({ streams: [] })
-  const methods = useForm<CreateMultipleStreamBaseSchemaType>({
-    resolver: zodResolver(CreateMultipleStreamBaseSchema),
+  const [errors, setErrors] = useState<FieldErrors<CreateMultipleStreamFormSchemaType>>({ streams: [] })
+  const methods = useForm<CreateMultipleStreamFormSchemaType>({
+    resolver: zodResolver(CreateMultipleStreamModelSchema),
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: {

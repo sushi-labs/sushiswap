@@ -10,14 +10,14 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useCustomTokens } from '../../../../../lib/state/storage'
 import { useTokens } from '../../../../../lib/state/token-lists'
 import { useTokenFromZAmount } from '../../../../../lib/zod'
-import { CreateMultipleStreamBaseSchemaType } from '../../schema'
+import { CreateMultipleStreamFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHEREUM }) => {
   const tokenMap = useTokens(chainId)
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const [open, setOpen] = useState(false)
-  const { control, setValue } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  const { control, setValue } = useFormContext<CreateMultipleStreamFormSchemaType>()
 
   const handleOpen = useCallback(() => {
     setOpen(true)

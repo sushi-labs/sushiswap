@@ -2,11 +2,11 @@ import { Input } from '@sushiswap/ui'
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { CreateMultipleStreamBaseSchemaType } from '../../schema'
+import { CreateMultipleStreamFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const StartDateCell: FC<CellProps> = ({ index }) => {
-  const { control } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  const { control } = useFormContext<CreateMultipleStreamFormSchemaType>()
 
   return (
     <Controller

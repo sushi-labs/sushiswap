@@ -12,8 +12,8 @@ import {
   useFormContext,
 } from 'react-hook-form'
 
-import { CreateStreamBaseSchemaType } from '../../CreateForm'
-import { CreateMultipleStreamBaseSchemaType } from '../schema'
+import { CreateStreamFormSchemaType } from '../../CreateForm'
+import { CreateMultipleStreamFormSchemaType } from '../schema'
 import {
   ACTIONS_COLUMN,
   AMOUNT_COLUMN,
@@ -39,19 +39,19 @@ const COLUMNS = [
 declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
     chainId: ChainId
-    append: UseFieldArrayAppend<CreateStreamBaseSchemaType>
+    append: UseFieldArrayAppend<CreateMultipleStreamFormSchemaType, 'streams'>
     remove: UseFieldArrayRemove
-    importErrors: FieldErrors<CreateMultipleStreamBaseSchemaType>
-    setImportErrors: Dispatch<SetStateAction<FieldErrors<CreateMultipleStreamBaseSchemaType>>>
+    importErrors: FieldErrors<CreateMultipleStreamFormSchemaType>
+    setImportErrors: Dispatch<SetStateAction<FieldErrors<CreateMultipleStreamFormSchemaType>>>
   }
 }
 
 interface CreateStreamsTableSection {
   chainId: ChainId
   onReview(): void
-  importErrors: FieldErrors<CreateMultipleStreamBaseSchemaType>
+  importErrors: FieldErrors<CreateMultipleStreamFormSchemaType>
   onDismissErrors(): void
-  setImportErrors: Dispatch<SetStateAction<FieldErrors<CreateMultipleStreamBaseSchemaType>>>
+  setImportErrors: Dispatch<SetStateAction<FieldErrors<CreateMultipleStreamFormSchemaType>>>
 }
 
 export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({
@@ -65,7 +65,7 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({
     control,
     watch,
     formState: { isValid, isValidating, errors: formErrors },
-  } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  } = useFormContext<CreateMultipleStreamFormSchemaType>()
   const { append, remove } = useFieldArray({
     control,
     name: 'streams',
@@ -74,8 +74,8 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({
 
   const fields = watch('streams')
 
-  const table = useReactTable<CreateStreamBaseSchemaType>({
-    data: fields,
+  const table = useReactTable<CreateStreamFormSchemaType>({
+    data: fields || [],
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     meta: {
@@ -93,12 +93,7 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({
       <div className="flex flex-col gap-4">
         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
         {/*@ts-ignore*/}
-        <GenericTable<CreateStreamBaseSchemaType>
-          table={table}
-          loading={false}
-          placeholder="No positions found"
-          pageSize={fields.length}
-        />
+        <GenericTable table={table} loading={false} placeholder="No positions found" pageSize={fields?.length || 0} />
         {Array.isArray(importErrors?.streams) && importErrors.streams.length > 0 && (
           <div className="border border-slate-200/5 rounded-xl px-5 py-3 text-sm flex flex-col gap-3">
             <div className="flex justify-between items-center border-b border-slate-200/5 pb-3">
@@ -153,7 +148,7 @@ const Error: FC<{ k: string; v: FieldError }> = ({ k, v }) => {
   )
 }
 
-const FieldErrorRenderer: FC<{ errors: FieldErrors<CreateMultipleStreamBaseSchemaType> }> = ({ errors }) => {
+const FieldErrorRenderer: FC<{ errors: FieldErrors<CreateMultipleStreamFormSchemaType> }> = ({ errors }) => {
   return (
     <>
       {Array.isArray(errors?.streams) &&

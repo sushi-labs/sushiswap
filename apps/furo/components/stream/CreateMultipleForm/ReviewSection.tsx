@@ -12,7 +12,7 @@ import React, { FC, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { useAmountsFromZAmounts, ZAmountToAmount } from '../../../lib/zod'
-import { CreateMultipleStreamBaseSchemaType } from './schema'
+import { CreateMultipleStreamFormSchemaType } from './schema'
 
 interface ReviewSection {
   chainId: ChainId
@@ -24,7 +24,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
   const {
     watch,
     formState: { isValid },
-  } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  } = useFormContext<CreateMultipleStreamFormSchemaType>()
 
   const streams = watch('streams')
   const _amounts = useAmountsFromZAmounts((streams || []).map((el) => el.amount))
@@ -110,7 +110,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
                 </Table.thr>
               </Table.thead>
               <Table.tbody>
-                {streams.map((el, idx) => {
+                {streams?.map((el, idx) => {
                   const amount = ZAmountToAmount.parse(el.amount)
                   return (
                     <Table.tr key={idx}>

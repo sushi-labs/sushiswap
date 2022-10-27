@@ -1,9 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { CreateStreamBaseSchemaType } from '../../../CreateForm'
+import { CreateStreamFormSchemaType } from '../../../CreateForm'
 
 export interface CellProps {
-  row: CreateStreamBaseSchemaType
+  row: CreateStreamFormSchemaType
   index: number
   chainId?: ChainId
 }

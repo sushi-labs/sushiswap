@@ -9,9 +9,9 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { useCustomTokens } from '../../../lib/state/storage'
-import { useTokenFromZAmount, ZFundSourceToFundSource } from '../../../lib/zod'
+import { useFundSourceFromZFundSource, useTokenFromZAmount, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from './FundSourceOption'
-import { CreateStreamBaseSchemaType } from './schema'
+import { CreateStreamFormSchemaType } from './schema'
 
 export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
@@ -19,11 +19,11 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateStreamBaseSchemaType>()
+  const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateStreamFormSchemaType>()
 
   const [amount, fundSource] = watch(['amount', 'fundSource'])
   const currency = useTokenFromZAmount(amount)
-  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
+  const _fundSource = useFundSourceFromZFundSource(fundSource)
 
   const onClose = useCallback(() => {
     setDialogOpen(false)
@@ -43,6 +43,13 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
       onClose()
     },
     [onClose, setValue]
+  )
+
+  const onCurrencyInputError = useCallback(
+    (message: string) => {
+      message ? setError('amount', { type: 'typeError', message }) : clearErrors('amount.amount')
+    },
+    [clearErrors, setError]
   )
 
   return (
@@ -90,6 +97,14 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
             return (
               <div className="flex flex-col">
                 <div className="flex items-center gap-3">
+                  <FundSourceOption
+                    chainId={chainId}
+                    label="Wallet"
+                    active={_value === FundSource.WALLET}
+                    value={FundSource.WALLET}
+                    currency={currency}
+                    onChange={() => onChange(FundSource.WALLET)}
+                  />
                   {!currency?.isNative && (
                     <FundSourceOption
                       chainId={chainId}
@@ -100,14 +115,6 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                       onChange={() => onChange(FundSource.BENTOBOX)}
                     />
                   )}
-                  <FundSourceOption
-                    chainId={chainId}
-                    label="Wallet"
-                    active={_value === FundSource.WALLET}
-                    value={FundSource.WALLET}
-                    currency={currency}
-                    onChange={() => onChange(FundSource.WALLET)}
-                  />
                 </div>
                 <Form.Error message={error?.message} />
               </div>
@@ -128,9 +135,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
               currency={currency}
               fundSource={_fundSource}
               errorMessage={error?.message}
-              onError={(message) => {
-                message ? setError('amount', { type: 'typeError', message }) : clearErrors('amount.amount')
-              }}
+              onError={onCurrencyInputError}
             />
           )}
         />

@@ -13,7 +13,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { useNotifications } from '../../../lib/state/storage'
 import { useAmountFromZAmount, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CreateStreamBaseSchemaType } from './schema'
+import { CreateStreamFormSchemaType } from './schema'
 
 export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
@@ -24,7 +24,7 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const {
     watch,
     formState: { isValid, isValidating },
-  } = useFormContext<CreateStreamBaseSchemaType>()
+  } = useFormContext<CreateStreamFormSchemaType>()
 
   const [amount, fundSource, recipient, dates] = watch(['amount', 'fundSource', 'recipient', 'dates'])
   const _amount = useAmountFromZAmount(amount)
@@ -38,7 +38,7 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
       const ts = new Date().getTime()
 
       createNotification({
-        type: 'send',
+        type: 'createStream',
         chainId: chainId,
         txHash: data.hash,
         promise: data.wait(),
@@ -125,13 +125,22 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         className="!items-end"
         components={
           <Approve.Components>
-            <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
-            <Approve.Token amount={_amount} address={BENTOBOX_ADDRESS[chainId]} />
+            <Approve.Bentobox
+              enabled={isValid && !isValidating}
+              address={contract?.address}
+              onSignature={setSignature}
+            />
+            <Approve.Token
+              enabled={isValid && !isValidating && !!_amount}
+              amount={_amount}
+              address={BENTOBOX_ADDRESS[chainId]}
+            />
           </Approve.Components>
         }
         render={({ approved }) => {
           return (
             <Button
+              name="execute"
               size="md"
               type="button"
               variant="filled"

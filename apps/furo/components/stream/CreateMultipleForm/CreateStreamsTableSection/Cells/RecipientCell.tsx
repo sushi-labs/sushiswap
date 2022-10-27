@@ -3,11 +3,11 @@ import { Web3Input } from '@sushiswap/wagmi'
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { CreateMultipleStreamBaseSchemaType } from '../../schema'
+import { CreateMultipleStreamFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const RecipientCell: FC<CellProps> = ({ index }) => {
-  const { control } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  const { control } = useFormContext<CreateMultipleStreamFormSchemaType>()
 
   return (
     <Controller

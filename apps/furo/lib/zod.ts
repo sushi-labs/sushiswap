@@ -48,6 +48,12 @@ export const ZFundSourceToFundSource = ZFundSource.optional().transform((fundSou
   return undefined
 })
 
+export const useFundSourceFromZFundSource = (fundSource?: z.infer<typeof ZFundSource>) => {
+  return useMemo(() => {
+    return ZFundSourceToFundSource.parse(fundSource)
+  }, [fundSource])
+}
+
 export const useAmountFromZAmount = (amount?: z.infer<typeof ZAmount>) => {
   return useMemo(() => {
     return ZAmountToAmount.parse(amount)
@@ -62,6 +68,14 @@ export const useTokenFromZAmount = (amount?: z.infer<typeof ZAmount>) => {
 
     return undefined
   }, [amount?.token])
+}
+
+export const useTokenFromZToken = (token?: z.infer<typeof ZToken>) => {
+  return useMemo(() => {
+    if (token) return ZTokenToToken.parse(token)
+
+    return undefined
+  }, [token])
 }
 
 export const useTokensFromZAmounts = (amounts: (z.infer<typeof ZAmount> | undefined)[]) => {

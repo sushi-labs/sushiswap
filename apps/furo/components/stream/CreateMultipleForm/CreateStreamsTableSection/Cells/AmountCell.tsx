@@ -7,12 +7,12 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { useAmountFromZAmount, useTokenFromZAmount, ZFundSourceToFundSource } from '../../../../../lib/zod'
-import { CreateMultipleStreamBaseSchemaType } from '../../schema'
+import { CreateMultipleStreamFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const AmountCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHEREUM }) => {
   const { address } = useAccount()
-  const { control, setError, clearErrors } = useFormContext<CreateMultipleStreamBaseSchemaType>()
+  const { control, setError, clearErrors } = useFormContext<CreateMultipleStreamFormSchemaType>()
   const _amount = useAmountFromZAmount(row.amount)
   const _currency = useTokenFromZAmount(row.amount)
   const _fundSource = ZFundSourceToFundSource.parse(row.fundSource) || FundSource.WALLET

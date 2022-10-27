@@ -1,28 +1,43 @@
-import { CheckCircleIcon } from '@heroicons/react/solid'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_BG, Form, Input, Select, Typography } from '@sushiswap/ui'
-import { TokenSelector, useBalance, Web3Input } from '@sushiswap/wagmi'
+import { ChainId } from '@sushiswap/chain'
+import { FundSource } from '@sushiswap/hooks'
+import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Input, Select } from '@sushiswap/ui'
+import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
 import { useTokens } from 'lib/state/token-lists'
-import { useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount, useNetwork } from 'wagmi'
 
 import { useCustomTokens } from '../../../lib/state/storage'
-import { CreateVestingFormData } from '../types'
+import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
+import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
+import { CreateVestingFormSchemaType } from './schema'
 
-export const GeneralDetailsSection = () => {
-  const isMounted = useIsMounted()
-  const { address } = useAccount()
+export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
+  const tokenMap = useTokens(chainId)
+  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const { control, watch, setValue } = useFormContext<CreateVestingFormData>()
-  const { chain: activeChain } = useNetwork()
-  const tokenMap = useTokens(activeChain?.id)
-  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(activeChain?.id)
+  const { control, watch, setValue } = useFormContext<CreateVestingFormSchemaType>()
+  const [currency] = watch(['currency'])
+  const _currency = useTokenFromZToken(currency)
 
-  // @ts-ignore
-  const currency = watch('currency')
+  const onClose = useCallback(() => {
+    setDialogOpen(false)
+  }, [])
 
-  const { data: balance } = useBalance({ account: address, chainId: activeChain?.id, currency, loadBentobox: true })
+  const onSelect = useCallback(
+    (onChange, currency) => {
+      if (currency.isNative) {
+        const { chainId, decimals, symbol, name, isNative } = currency
+        onChange({ chainId, decimals, address: undefined, symbol, name, isNative })
+        setValue('fundSource', FundSource.WALLET)
+      } else {
+        const { chainId, decimals, symbol, name, isNative, wrapped } = currency
+        onChange({ chainId, decimals, address: wrapped.address, symbol, name, isNative })
+      }
+
+      onClose()
+    },
+    [onClose, setValue]
+  )
 
   return (
     <Form.Section
@@ -33,53 +48,48 @@ export const GeneralDetailsSection = () => {
         <Controller
           control={control}
           name="currency"
-          render={({ field: { onChange }, fieldState: { error } }) => {
-            return (
-              <>
-                <Select.Button
-                  error={!!error?.message}
-                  standalone
-                  className="!cursor-pointer"
-                  onClick={() => setDialogOpen(true)}
-                >
-                  {currency?.symbol || <span className="text-slate-500">Select a currency</span>}
-                </Select.Button>
-                <Form.Error message={error?.message} />
-                <TokenSelector
-                  open={dialogOpen}
-                  variant="dialog"
-                  chainId={activeChain?.id}
-                  tokenMap={tokenMap}
-                  customTokenMap={customTokenMap}
-                  onSelect={(currency) => {
-                    if (currency.isNative) {
-                      setValue('fundSource', FundSource.WALLET)
-                    }
-                    onChange(currency)
-                    setDialogOpen(false)
-                  }}
-                  currency={currency}
-                  onClose={() => setDialogOpen(false)}
-                  onAddToken={({ address, chainId, name, symbol, decimals }) =>
-                    addCustomToken({ address, name, chainId, symbol, decimals })
-                  }
-                  onRemoveToken={removeCustomToken}
-                />
-              </>
-            )
-          }}
+          render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
+            <>
+              <Select.Button
+                error={!!error?.message}
+                standalone
+                className="!cursor-pointer ring-offset-slate-900"
+                onClick={() => setDialogOpen(true)}
+              >
+                {value?.symbol || <span className="text-slate-500">Select a currency</span>}
+              </Select.Button>
+              <Form.Error message={error?.message} />
+              <TokenSelector
+                open={dialogOpen}
+                variant="dialog"
+                chainId={chainId}
+                tokenMap={tokenMap}
+                customTokenMap={customTokenMap}
+                onSelect={(currency) => {
+                  onSelect(onChange, currency)
+                  onBlur()
+                }}
+                currency={_currency}
+                onClose={onClose}
+                onAddToken={addCustomToken}
+                onRemoveToken={removeCustomToken}
+              />
+            </>
+          )}
         />
       </Form.Control>
       <Form.Control label="Start date">
         <Controller
           control={control}
           name="startDate"
-          render={({ field: { onChange, value }, fieldState: { error } }) => {
+          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>
                 <Input.DatetimeLocal
-                  onChange={onChange}
-                  value={value}
+                  onBlur={onBlur}
+                  name={name}
+                  onChange={(value) => onChange(new Date(value))}
+                  value={value?.toISOString().slice(0, 16) || ''}
                   error={!!error?.message}
                   className="!ring-offset-slate-900"
                 />
@@ -93,15 +103,21 @@ export const GeneralDetailsSection = () => {
         <Controller
           control={control}
           name="recipient"
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
             <>
               <Web3Input.Ens
+                name={name}
+                onBlur={onBlur}
                 id="ensInput"
                 value={value}
                 onChange={onChange}
                 error={!!error?.message}
                 placeholder="Address or ENS Name"
-                className="ring-offset-slate-900"
+                className={classNames(
+                  DEFAULT_INPUT_CLASSNAME,
+                  error ? ERROR_INPUT_CLASSNAME : '',
+                  'ring-offset-slate-900'
+                )}
               />
               <Form.Error message={error?.message} />
             </>
@@ -112,75 +128,34 @@ export const GeneralDetailsSection = () => {
         <Controller
           control={control}
           name="fundSource"
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <div className="flex flex-col">
-              <div className="flex items-center gap-3">
-                {!currency?.isNative && (
-                  <div
-                    onClick={() => onChange(FundSource.BENTOBOX)}
-                    className={classNames(
-                      value === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
-                      DEFAULT_INPUT_BG,
-                      'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-                    )}
-                  >
-                    <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                      BentoBox
-                    </Typography>
-                    <div className="flex flex-col gap-1">
-                      <Typography variant="xs">Available Balance</Typography>
-                      <Typography weight={500} variant="xs" className="text-slate-200">
-                        {isMounted ? (
-                          <>
-                            {balance?.[FundSource.BENTOBOX] ? balance[FundSource.BENTOBOX].toSignificant(6) : '0.00'}{' '}
-                            <span className="text-slate-500">{balance?.[FundSource.BENTOBOX].currency.symbol}</span>
-                          </>
-                        ) : (
-                          <div className="h-4" />
-                        )}
-                      </Typography>
-                    </div>
-                    {value === FundSource.BENTOBOX && (
-                      <div className="absolute w-5 h-5 top-3 right-3">
-                        <CheckCircleIcon className="text-green/70" />
-                      </div>
-                    )}
-                  </div>
-                )}
-                <div
-                  onClick={() => onChange(FundSource.WALLET)}
-                  className={classNames(
-                    value === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
-                    DEFAULT_INPUT_BG,
-                    'ring-2 ring-offset-2 ring-offset-slate-900 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
-                  )}
-                >
-                  <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-300">
-                    Wallet
-                  </Typography>
-                  <div className="flex flex-col gap-1">
-                    <Typography variant="xs">Available Balance</Typography>
-                    <Typography weight={500} variant="xs" className="text-slate-200">
-                      {isMounted ? (
-                        <>
-                          {balance?.[FundSource.WALLET] ? balance[FundSource.WALLET].toSignificant(6) : '0.00'}{' '}
-                          <span className="text-slate-500">{balance?.[FundSource.WALLET].currency.symbol}</span>
-                        </>
-                      ) : (
-                        <div className="h-4" />
-                      )}
-                    </Typography>
-                  </div>
-                  {value === FundSource.WALLET && (
-                    <div className="absolute w-5 h-5 top-3 right-3">
-                      <CheckCircleIcon className="text-green/70" />
-                    </div>
+          render={({ field: { onChange, value }, fieldState: { error } }) => {
+            const _value = ZFundSourceToFundSource.parse(value)
+            return (
+              <div className="flex flex-col">
+                <div className="flex items-center gap-3">
+                  <FundSourceOption
+                    chainId={chainId}
+                    label="Wallet"
+                    active={_value === FundSource.WALLET}
+                    value={FundSource.WALLET}
+                    currency={_currency}
+                    onChange={() => onChange(FundSource.WALLET)}
+                  />
+                  {!currency?.isNative && (
+                    <FundSourceOption
+                      chainId={chainId}
+                      label="BentoBox"
+                      active={_value === FundSource.BENTOBOX}
+                      value={FundSource.BENTOBOX}
+                      currency={_currency}
+                      onChange={() => onChange(FundSource.BENTOBOX)}
+                    />
                   )}
                 </div>
+                <Form.Error message={error?.message} />
               </div>
-              <Form.Error message={error?.message} />
-            </div>
-          )}
+            )
+          }}
         />
       </Form.Control>
     </Form.Section>
