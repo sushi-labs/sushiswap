@@ -66,7 +66,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         <ProductSectionTitle
           className="text-center"
           title={`What is ${name}?`}
-          subtitle="Onsen aims to bring new liquidity to Sushi, decrease slippage, expand our pool offerings, and foster exciting synergistic partnerships with other DeFi projects."
+          subtitle="Onsen Farms bring new liquidity to Sushi, expand our pool offerings and foster exciting synergistic partnerships with other DeFi projects."
         />
 
         <div className="grid gap-2 sm:gap-6 mt-10 sm:mt-[70px]">

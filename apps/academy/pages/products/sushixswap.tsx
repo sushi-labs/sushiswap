@@ -68,7 +68,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       />
       <ProductCards
         name={name}
-        description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."
+        description="SushiXSwap is a first of its kind, cross-chain AMM, built on BentoBox and powered by Stargate. Make trades between chains seamlessly, utilizing Sushi’s liquidity on 20+ chains."
         cards={cards}
         gradientBorderColor={color}
       />

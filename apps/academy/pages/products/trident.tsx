@@ -36,7 +36,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   relevantArticleIds,
 }) => {
   const { data, isValidating } = useSWR(
-    [`/bentobox-articles`],
+    [`/trident-articles`],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false }
   )
@@ -63,7 +63,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       />
       <ProductCards
         name={name}
-        description="BentoBox is unique token vault that generates yield (interest) on your tokens, while also allowing you to utilize them in DeFi protocols like lending markets ir liquidity pools."
+        description="An extensible framework for building and scaling AMMs, powered by the BentoBox. Live on the following networks: Polygon, Kava, Optimism & Metis."
         cards={cards}
         gradientBorderColor={color}
       />

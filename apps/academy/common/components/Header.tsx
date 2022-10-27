@@ -34,6 +34,10 @@ export const Header: FC = () => {
   const navData: HeaderSection[] = useMemo(
     () => [
       {
+        title: 'Home',
+        href: '/',
+      },
+      {
         title: 'About',
         href: '/about',
       },

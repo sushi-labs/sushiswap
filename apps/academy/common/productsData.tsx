@@ -47,7 +47,7 @@ export const PRODUCTS_DATA = {
   bentobox: {
     color: '#FF5EAF',
     accentColor: '#A048DA',
-    buttonText: 'Enter farms',
+    buttonText: 'Enter Farms',
     cards: [
       {
         Icon: () => <AcademyIcon color={PRODUCTS_DATA.bentobox.accentColor} Icon={TilesIcon} />,

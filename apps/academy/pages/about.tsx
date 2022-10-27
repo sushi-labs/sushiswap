@@ -9,14 +9,6 @@ import { format } from 'date-fns'
 import { NextPage } from 'next'
 import Image from 'next/image'
 
-const productStats = [
-  { value: '20', name: 'Projects Launched' },
-  { value: '$500m', name: 'Funds Raised' },
-  { value: '13k', name: 'Users Participated' },
-  { value: '$4m', name: 'Volume Generated' },
-  { value: '$4m', name: 'Volume' },
-]
-
 const About: NextPage = () => {
   return (
     <>
@@ -32,14 +24,6 @@ const About: NextPage = () => {
             </p>
           </div>
           <Image src={sushidilly} alt="sushidilly" unoptimized />
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,155px))] justify-between gap-y-6">
-            {productStats.map(({ name, value }) => (
-              <div key={name} className="grid grid-rows-[repeat(2, minmax(0,1fr))] gap-1.5">
-                <p className="text-xl sm:text-3xl font-bold text-slate-50">{value}</p>
-                <p className="sm:text-base text-slate-300">{name}</p>
-              </div>
-            ))}
-          </div>
         </Container>
       </section>
 
@@ -55,7 +39,7 @@ const About: NextPage = () => {
                 into smart contracts, and traders then buy and sell cryptocurrencies from those pools, swapping out one
                 token for another.
               </p>
-              <p className="mt-[18px] sm:mt-10 w-fit sm:bg-none sm:text-[#F338C3] from-[#0993EC] bg-clip-text text-transparent to-[#F338C3] bg-gradient-to-r text-xl sm:text-3xl">
+              <p className="mt-[18px] sm:mt-10 w-fit from-[#0993EC] bg-clip-text text-transparent to-[#F338C3] bg-gradient-to-r text-xl sm:text-3xl">
                 {'"私たちを期待してください"'}
               </p>
             </div>
@@ -63,7 +47,7 @@ const About: NextPage = () => {
               <Image src={sushiPulse} unoptimized objectFit="cover" alt="sushi-pulse" />
             </div>
           </article>
-          <article className="mt-[100px]">
+          <article className="mt-10 sm:mt-[100px]">
             <h2 className="font-medium text-slate-50 text-xl sm:text-4xl">Product Roadmap Sushi 2.0</h2>
             <p className="text-slate-300 mt-5 sm:mt-[30px] text-sm sm:text-xl">
               On 11th May 2022 the

@@ -58,7 +58,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       />
       <ProductCards
         name={name}
-        description="Kashi is a lending and margin trading platform, built on the BentoBox, allowing lenders to earn yield on their pooled funds and borrowers to take out token loans. Kashi solves problems with existing lending markets, by introducing new paradigms:"
+        description="Kashi is a lending and margin trading platform, built on the BentoBox, allowing lenders to earn yield on their pooled funds and borrowers to take out token loans."
         cards={cards}
         gradientBorderColor={color}
       />
