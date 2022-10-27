@@ -11,6 +11,9 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "scripts": {
+    "start": "graphclient start"
+  },
   "dependencies": {
     "@sushiswap/graph-client": "workspace:*",
     "@vercel/node": "^1.14.1"
