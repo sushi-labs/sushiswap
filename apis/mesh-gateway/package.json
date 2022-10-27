@@ -1,0 +1,24 @@
+{
+  "name": "mesh-gateway",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi GraphQL Mesh Gateway",
+  "keywords": [
+    "sushi",
+    "graphql",
+    "mesh",
+    "gateway"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "dependencies": {
+    "@sushiswap/graph-client": "workspace:*",
+    "@vercel/node": "^1.14.1"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*"
+  }
+}

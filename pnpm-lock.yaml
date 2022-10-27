@@ -59,6 +59,23 @@ importers:
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
 
+  apis/mesh-gateway:
+    specifiers:
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-client': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@vercel/node': ^1.14.1
+    dependencies:
+      '@sushiswap/graph-client': link:../../packages/graph-client
+      '@vercel/node': 1.15.4
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+
   apis/path-finder:
     specifiers:
       '@sushiswap/currency': workspace:*
