@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Network {
+  Ethereum
+  Polygon
+}
+
+enum ChainId {
+  Ethereum @map("1")
+  Polygon @map("137")
+}
+
+enum Protocol {
+  Sushiswap
+  Quickswap // quickswap06 subgraph
+  Uniswap
+}
+
+enum AAMVersion {
+  V2
+  V3
+  TRIDENT
+}
+
+model Token {
+  id       String  @unique
+  network  Network
+  chainId  ChainId
+  name     String // TODO: constraints? if subgraph would return "", "", 0? success false?
+  symbol   String
+  decimals Int
+
+  price  TokenPrice?
+  pools0 Pool[]      @relation("token0")
+  pools1 Pool[]      @relation("token1")
+
+  //   @@id([id, network]) // Needed? can't just use id
+  @@index(fields: [id, network, name, symbol])
+}
+
+model TokenPrice {
+  id            String  @unique
+  network       Network
+  chainId       ChainId
+  derivedNative Decimal
+  lastUsdPrice  Decimal
+
+  generatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  token         Token   @relation(fields: [id], references: [id])
+}
+
+model Pool {
+  id       String     @id @unique
+  network  Network
+  chainId  ChainId
+  protocol Protocol
+  version  AAMVersion
+  token0   Token      @relation("token0", fields: [token0Id], references: [id])
+  token0Id String
+  token1   Token      @relation("token1", fields: [token1Id], references: [id])
+  token1Id String
+
+  swapFee     Float?
+  twapEnabled Boolean?
+
+  reserve0        BigInt // Liquidity of token0
+  reserve1        BigInt // Liquidity of token1
+  totalSupply     BigInt // Liquidity, Total supply of all LP in this pool
+  liquidityUSD    Decimal // liquidity in USD
+  liquiditynative Decimal // liquidity in native
+
+  volumeUSD    Decimal // volume in USD
+  volumeNative Decimal // volume in native
+
+  token0Price Decimal // Price of token0 in token1
+  token1Price Decimal // Price of token1 in token0
+
+  createdAtTimestamp   DateTime
+  createdAtBlockNumber BigInt
+  generatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([token0Id, token1Id])
+}
+
+// model Token {
+//   id    String     @id
+//   name String // TODO: default values here? if subgraph would return "", "", 0? success false?
+//   symbol String
+//   decimals Int
+// }
+
+// TOKEN AND POOLS
+
+// _generatedAtTimestamp
+
+// IDEAS:
+
+// TokenProtocol
+// network, 
