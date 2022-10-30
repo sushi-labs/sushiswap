@@ -53,8 +53,8 @@ jobs:
         - name: Lint
           run: pnpm lint:ci
 
-        # - name: Generate
-        #   run: pnpm generate:ci
+        - name: Generate
+          run: pnpm generate:ci
 
         - name: Build
           run: pnpm build:ci

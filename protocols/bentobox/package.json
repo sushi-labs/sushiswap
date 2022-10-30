@@ -39,6 +39,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.33",
     "ethers": "^5.7.0",
+    "eslint": "^8.20.0",
     "hardhat": "^2.9.5",
     "hardhat-deploy": "^0.11.10",
     "ts-node": "^10.7.0",

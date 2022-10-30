@@ -1,0 +1,8 @@
+query CrossChainFactories($chainIds: [Int!]!) {
+  crossChainFactories(chainIds: $chainIds) {
+    id
+    chainId
+    pairCount
+    tokenCount
+  }
+}
