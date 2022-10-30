@@ -1,0 +1,24 @@
+{
+  "extends": "@sushiswap/typescript-config/node16.json",
+  "include": [
+    "lib",
+    "bentobox.ts", 
+    "blocks.ts",
+    "bundles.ts",
+    "deprecated.ts",
+    "factories.ts",
+    "masterchef.ts",
+    "pairs.ts",
+    "resolvers.ts",
+    "tokens.ts"
+  ],
+  "exclude": ["node_modules", ".graphclient"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "noImplicitAny": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false
+  }
+}

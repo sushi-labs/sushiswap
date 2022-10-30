@@ -1,0 +1,5 @@
+query Prices {
+  prices {
+    id
+  }
+}

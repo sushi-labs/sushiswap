@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client/.graphclient'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import { addYears, getUnixTime } from 'date-fns'
@@ -18,7 +18,7 @@ export async function chef(args: Arguments) {
 
   const { MASTERCHEF_V1_pools, MASTERCHEF_V2_pools } = await sdk.MasterChefPools()
 
-  const { pairs } = await sdk.ExchangePairs({
+  const { pairs } = await sdk.deprecated_Pairs({
     where: {
       id_in: [...MASTERCHEF_V1_pools, ...MASTERCHEF_V2_pools].reduce<string[]>(
         (previousValue, currentValue) => [...previousValue, currentValue.pair],
@@ -52,7 +52,7 @@ export async function chef(args: Arguments) {
           'Pair Address': pair?.id,
           'Farm TVL': numeral(tvl).format('$0.00a'),
           APs: pool.allocPoint,
-          'Sushi/s': sushiPerSecond.toFixed(6),
+          'Sushi/day': (sushiPerSecond * 86400).toFixed(2),
           APR: numeral(apr).format('0.00 %'),
         }
       })

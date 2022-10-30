@@ -1,0 +1,22 @@
+query Farms {
+  farms {
+    id
+    chainId
+    pool
+    # chefType
+    # poolType
+    # incentives {
+    #   apr
+    #   rewardPerDay
+    #   rewardToken {
+    #     address
+    #     decimals
+    #     symbol
+    #   }
+    #   rewarder {
+    #     address
+    #     type
+    #   }
+    # }
+  }
+}

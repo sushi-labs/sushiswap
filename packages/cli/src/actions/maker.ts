@@ -1,10 +1,6 @@
-import { ChainKey } from '@sushiswap/chain'
-import {
-  EXCHANGE_LiquidityPosition,
-  EXCHANGE_Pair,
-  EXCHANGE_Token,
-  getBuiltGraphSDK,
-} from '@sushiswap/graph-client/.graphclient'
+import { chainName } from '@sushiswap/chain'
+import { deprecated_LiquidityPositionsQuery, getBuiltGraphSDK } from '@sushiswap/graph-client'
+import { isPromiseFulfilled } from '@sushiswap/validate'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import numeral from 'numeral'
@@ -15,187 +11,113 @@ import {
   MAKER_ADDRESS,
   MAKER_SUPPORTED_CHAIN_NAMES,
   MAKER_TYPE,
+  SUBGRAPH_HOST,
 } from '../config'
 
-type LiquidityPositons = Array<
-  Pick<EXCHANGE_LiquidityPosition, 'liquidityTokenBalance'> & {
-    pair: Pick<EXCHANGE_Pair, 'id' | 'totalSupply' | 'reserveUSD'> & {
-      token0: Pick<EXCHANGE_Token, 'id' | 'symbol' | 'name' | 'decimals'>
-      token1: Pick<EXCHANGE_Token, 'id' | 'symbol' | 'name' | 'decimals'>
-    }
-  }
->
-
 type Arguments = {
-  network?: string
+  network?: typeof MAKER_SUPPORTED_CHAIN_NAMES[number]
   verbose?: boolean
 }
 
-interface row {
-  pair: string
-  pairId: string
-  lpUsdValue: number
-}
-
 export async function maker(args: Arguments) {
-  if (args.network) {
-    const network = Object.values(ChainKey).find((networkName) => networkName === args.network?.toLowerCase())
-    console.log('network selected: ', network)
+  const { default: ora } = await import('ora')
 
-    if (!network || !MAKER_SUPPORTED_CHAIN_NAMES.includes(network)) {
-      throw new Error('Unsupported chain. Supported chains are: '.concat(MAKER_SUPPORTED_CHAIN_NAMES.join(', ')))
-    }
+  const throbber = ora({
+    text: `Loading Sushi Maker liquidity positions for chain ids ${MAKER_SUPPORTED_CHAIN_NAMES.join(', ')}\n`,
+    spinner: {
+      frames: ['🍱', '🥠', '🍣', '🥢', '🍙'],
+      interval: 300,
+    },
+  })
+  throbber.start()
 
-    const chainId = CHAIN_NAME_TO_CHAIN_ID[network]
-
-    const sdk = getBuiltGraphSDK({
-      chainId,
-      subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-    })
-
-    // const liquidityPositions = Object.values(await sdk.User({ id: MAKER_ADDRESS[chainId] }))[0]?.liquidityPositions
-
-    const { liquidityPositions } = await sdk.ExchangeLiquidityPositions({
-      first: 25000,
-      where: { user: MAKER_ADDRESS[chainId] },
-    })
-
-    if (network && liquidityPositions) {
-      printMakerTable(network, liquidityPositions)
-    } else {
-      console.log('network or subgraph response was empty')
-    }
-  } else {
-    // const makers = []
-
-    const { default: ora } = await import('ora')
-
-    const throbber = ora({
-      text: `Searching maker liquidity positions for ${MAKER_SUPPORTED_CHAIN_NAMES.join(', ')}`,
-      spinner: {
-        frames: ['🍱', '🥠', '🍣', '🥢', '🍙'],
-        interval: 300,
-      },
-    }).start()
-
-    const promises = MAKER_SUPPORTED_CHAIN_NAMES.map((chainName) => {
+  const results = await Promise.allSettled(
+    MAKER_SUPPORTED_CHAIN_NAMES.map((chainName) => {
       const chainId = CHAIN_NAME_TO_CHAIN_ID[chainName]
       const sdk = getBuiltGraphSDK({
         chainId,
+        chainName,
         subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+        subgraphHost: SUBGRAPH_HOST[chainId],
       })
+
       return sdk
-        .ExchangeLiquidityPositions({
-          first: 25000,
-          where: { user: MAKER_ADDRESS[chainId] },
+        .deprecated_LiquidityPositions({
+          first: 5000,
+          skip: 0,
+          where: { user: MAKER_ADDRESS[chainId].toLowerCase() },
         })
-        .then(({ liquidityPositions }) => ({
-          network: chainName,
-          address: MAKER_ADDRESS[chainId],
-          type: MAKER_TYPE[chainId],
-          liquidityPositions,
-        }))
+        .then(({ liquidityPositions }) => {
+          if (!Array.isArray(liquidityPositions) || !liquidityPositions.length) {
+            throbber.warn(`We were unable to find any liquidity positions for ${chainName}:${MAKER_ADDRESS[chainId]}`)
+          }
+          throbber.succeed(
+            `Found ${liquidityPositions.length} liquidity positions for ${chainName}:${MAKER_ADDRESS[chainId]}`
+          )
+          return {
+            chainId,
+            liquidityPositions,
+          }
+        })
     })
+  ).then((promiseSettledResults) =>
+    promiseSettledResults
+      .flat()
+      .filter(isPromiseFulfilled)
+      .map((promiseFulfilled) => promiseFulfilled.value)
+  )
 
-    const makers = await Promise.all(promises).then((data) => data.flat())
+  throbber.stopAndPersist({
+    symbol: '🍽️ ',
+    text: `Found ${results.reduce(
+      (a, { liquidityPositions }) => a + liquidityPositions.length,
+      0
+    )} liquidity positions for Sushi Maker across ${MAKER_SUPPORTED_CHAIN_NAMES.join(', ')} chains`,
+  })
 
-    console.log({ makers })
+  const columns = ['Network', 'Maker address', 'type/owner', 'LP USD value']
+  let totalValue = 0
+  const rows =
+    results?.map(({ chainId, liquidityPositions }) => {
+      const network = chainName[chainId]
+      const makerAddress = MAKER_ADDRESS[chainId]
+      const type = MAKER_TYPE[chainId]
 
-    const liquidityPositions = makers.reduce<EXCHANGE_LiquidityPosition[]>((previousValue, currentValue) => {
-      return [...previousValue, ...currentValue.liquidityPositions]
-    }, [])
+      console.log([chainId, MAKER_ADDRESS[chainId], MAKER_TYPE[chainId]])
 
-    throbber.stopAndPersist({
-      symbol: '🍽️ ',
-      text: `Found ${
-        liquidityPositions.length
-      } liquidity positions for Sushi Maker across ${MAKER_SUPPORTED_CHAIN_NAMES.join(', ')} chains`,
-    })
+      const lpValue = liquidityPositions?.map((lp) =>
+        Number(lp.pair.totalSupply)
+          ? (Number(lp.liquidityTokenBalance) / Number(lp.pair.totalSupply)) * Number(lp.pair.reserveUSD)
+          : 0
+      )
+      const summedLp = lpValue?.reduce((acc, curr) => acc + curr)
+      totalValue += summedLp ?? 0
 
-    // for (const chainName of MAKER_SUPPORTED_CHAIN_NAMES) {
-    //   const chainId = CHAIN_NAME_TO_CHAIN_ID[chainName]
-    //   const sdk = getBuiltGraphSDK({
-    //     chainId,
-    //     subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
-    //   })
-    //   // throbber.info(`Searching maker liquidity positions for ${chainName}`)
+      if (network && liquidityPositions && args.verbose) {
+        printMakerTable(network, liquidityPositions)
+      }
 
-    //   const { default: ora } = await import('ora')
+      return {
+        network,
+        makerAddress,
+        type,
+        summedLp: numeral(summedLp).format('$0.00a'),
+      }
+    }) ?? []
 
-    //   const throbber = ora({
-    //     text: `Searching maker liquidity positions for ${chainName}`,
-    //     spinner: {
-    //       frames: ['🍱', '🥠', '🍣', '🥢', '🍙'],
-    //       interval: 300,
-    //     },
-    //   }).start()
+  const table = new Table({ head: columns, style: { compact: true } })
 
-    //   const liquidityPositions = await sdk
-    //     .ExchangeLiquidityPositions({
-    //       first: 25000,
-    //       where: { user: MAKER_ADDRESS[chainId] },
-    //     })
-    //     .then(({ liquidityPositions }) => liquidityPositions ?? [])
+  rows.forEach((row) => table.push(Object.values(row)))
 
-    //   if (liquidityPositions) {
-    //     throbber.stopAndPersist({
-    //       symbol: '🍽️ ',
-    //       text: `Found ${liquidityPositions.length} maker liquidity positions for ${chainName}, set size is ${
-    //         new Set(liquidityPositions.map((liquidityPosition) => liquidityPosition.id)).size
-    //       }`,
-    //     })
-    //     makers.push({
-    //       network: chainName,
-    //       address: MAKER_ADDRESS[chainId],
-    //       type: MAKER_TYPE[chainId],
-    //       liquidityPositions,
-    //     })
-    //   } else {
-    //     throbber.stopAndPersist({
-    //       symbol: '❌ ',
-    //       text: 'Liquidity Positons is undefined',
-    //     })
-    //   }
-    // }
-
-    const columns = ['Network', 'Maker address', 'type/owner', 'LP USD value']
-    let totalValue = 0
-    const rows =
-      makers?.map((lp) => {
-        const network = lp.network
-        const makerAddress = lp.address
-        const type = lp.type
-        const lpValue = lp.liquidityPositions?.map((lp) =>
-          Number(lp.pair.totalSupply)
-            ? (Number(lp.liquidityTokenBalance) / Number(lp.pair.totalSupply)) * Number(lp.pair.reserveUSD)
-            : 0
-        )
-        const summedLp = lpValue?.reduce((acc, curr) => acc + curr)
-        totalValue += summedLp ?? 0
-
-        if (network && lp.liquidityPositions && args.verbose) {
-          printMakerTable(network, lp.liquidityPositions)
-        }
-
-        return {
-          network,
-          makerAddress,
-          type,
-          summedLp: numeral(summedLp).format('$0.00a'),
-        }
-      }) ?? []
-
-    const table = new Table({ head: columns, style: { compact: true } })
-
-    rows.forEach((row) => table.push(Object.values(row)))
-
-    console.log(chalk.red('Maker, summary'))
-    console.log(table.toString())
-    console.log(`Total value: ` + chalk.green(`${numeral(totalValue).format('$0.00a')}`))
-  }
+  console.log(chalk.red('Maker, summary'))
+  console.log(table.toString())
+  console.log(`Total value: ` + chalk.green(`${numeral(totalValue).format('$0.00a')}`))
 }
 
-function printMakerTable(network: string, liquidityPositions: LiquidityPositons) {
+function printMakerTable(
+  network: string,
+  liquidityPositions: deprecated_LiquidityPositionsQuery['liquidityPositions']
+) {
   const columns = ['Pair Name', 'Pair Address', 'LP USD Value']
 
   const rows =
@@ -206,10 +128,10 @@ function printMakerTable(network: string, liquidityPositions: LiquidityPositons)
           ? (Number(lp.liquidityTokenBalance) / Number(lp.pair.totalSupply)) * Number(lp.pair.reserveUSD)
           : 0
         return {
-          pair: `${pair?.token0.symbol}-${pair?.token1.symbol}`,
-          pairId: pair?.id,
+          pair: `${pair.token0.symbol}-${pair.token1.symbol}`,
+          pairId: pair.id,
           lpUsdValue,
-        } as row
+        } as const
       })
       .sort((a, b) => (a.lpUsdValue > b.lpUsdValue ? -1 : 1))
       .map((row) => ({ pair: row.pair, pairId: row.pairId, lpUsdValue: numeral(row.lpUsdValue).format('$0.00a') })) ??

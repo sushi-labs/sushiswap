@@ -3,6 +3,7 @@ import {
   SUSHISWAP_ENABLED_NETWORKS,
   SUSHISWAP_SUBGRAPH_NAME,
   TRIDENT_ENABLED_NETWORKS,
+  TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
 import { Bundle, QueryResolvers } from '../../../.graphclient'
@@ -18,7 +19,7 @@ export const crossChainBundles: QueryResolvers['crossChainBundles'] = async (roo
           context: {
             ...context,
             chainId,
-            subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId],
+            subgraphName: TRIDENT_SUBGRAPH_NAME[chainId],
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,

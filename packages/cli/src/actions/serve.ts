@@ -1,10 +1,11 @@
 import { formatUSD } from '@sushiswap/format'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client/.graphclient'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
+import chalk from 'chalk'
 
-import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS } from '../config'
+import { CHAIN_NAME_TO_CHAIN_ID, EXCHANGE_SUBGRAPH_NAME, MAKER_ADDRESS, SUBGRAPH_HOST } from '../config'
 
 type Arguments = {
-  network?: string
+  network?: keyof typeof CHAIN_NAME_TO_CHAIN_ID
   verbose?: boolean
 }
 
@@ -15,10 +16,15 @@ export async function serve({ network, verbose }: Arguments) {
 
   const chainId = CHAIN_NAME_TO_CHAIN_ID[network]
 
-  const sdk = getBuiltGraphSDK({ chainId, subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId] })
+  const sdk = getBuiltGraphSDK({
+    chainId,
+    subgraphName: EXCHANGE_SUBGRAPH_NAME[chainId],
+    subgraphHost: SUBGRAPH_HOST[chainId],
+  })
 
-  const { liquidityPositions } = await sdk.ExchangeLiquidityPositions({
-    first: 25000,
+  const { liquidityPositions } = await sdk.deprecated_LiquidityPositions({
+    first: 5000,
+    skip: 0,
     where: { user: MAKER_ADDRESS[chainId] },
   })
 
@@ -27,7 +33,7 @@ export async function serve({ network, verbose }: Arguments) {
     throw Error("Response didn't have liquidityPositions")
   }
 
-  console.log('Maker liquidity positons length', liquidityPositions.length)
+  console.log(chalk.red('Burn, summary'))
 
   const burnPairs = liquidityPositions
     .map((burnPair) => ({
@@ -39,7 +45,9 @@ export async function serve({ network, verbose }: Arguments) {
 
   for (const burnPair of burnPairs) {
     console.log(
-      `🔥 BURN: ${formatUSD(burnPair.valueUSD)} on ${burnPair.pair.token0.symbol}/${burnPair.pair.token1.symbol} pair`
+      `${chalk.blue(`🔥 ${burnPair.pair.token0.symbol}/${burnPair.pair.token1.symbol}`)} ${chalk.green(
+        formatUSD(burnPair.valueUSD)
+      )}`
     )
   }
 
