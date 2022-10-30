@@ -72,5 +72,14 @@ jobs:
         - name: Build apps
           run: pnpm build-apps
  
+        - name: Test packages
+          run: pnpm test-packages
+
+        - name: Test protocols
+          run: pnpm test-protocols
+
+        - name: Test apps
+          run: pnpm test-apps
+
         # - name: Test
         #   run: pnpm test:ci
