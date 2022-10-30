@@ -1,10 +1,11 @@
 query Tokens($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
-    tokens(first: $first, skip: $skip, where: $where, block: $block) {
+  tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
     name
     symbol
     decimals
   }
+
   # tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
   #   id
   #   token {
@@ -24,3 +25,62 @@ query Tokens($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: B
   # }
 }
 
+# address       String
+# network  String
+# chainId  String
+# protocol String
+# version  String
+# token0   Token      @relation("token0", fields: [network, token0Id], references: [network, address])
+# token0Id String
+# token1   Token      @relation("token1", fields: [network, token1Id], references: [network, address])
+# token1Id String
+
+# swapFee     Float?
+# twapEnabled Boolean?
+
+# reserve0        BigInt // Liquidity of token0
+# reserve1        BigInt // Liquidity of token1
+# totalSupply     BigInt // Liquidity, Total supply of all LP in this pool
+# liquidityUSD    Decimal // liquidity in USD
+# liquiditynative Decimal // liquidity in native
+
+# volumeUSD    Decimal // volume in USD
+# volumeNative Decimal // volume in native
+
+# token0Price Decimal // Price of token0 in token1
+# token1Price Decimal // Price of token1 in token0
+
+# createdAtTimestamp   DateTime
+# createdAtBlockNumber BigInt
+
+query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
+  pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    name
+    swapFee
+    twapEnabled
+    reserve0
+    reserve1
+    liquidity
+    token0Price
+    token1Price
+    liquidityUSD
+    liquidityNative
+    volumeUSD
+    volumeNative
+    createdAtTimestamp
+    createdAtBlock
+  }
+}

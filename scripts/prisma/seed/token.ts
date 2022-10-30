@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { getBuiltGraphSDK } from './.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from './config'
+import { getBuiltGraphSDK } from '../.graphclient'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from '../config'
 
 const prisma = new PrismaClient()
 
@@ -13,17 +13,19 @@ async function main() {
   const exchanges = await Promise.all(
     SUSHISWAP_CHAINS.map((chainId) => {
       const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] })
-      return sdk.Tokens({ first: 1000 }).catch(() => {
-        console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
+      // TODO: fix pagination...................... 
+      return sdk.Tokens({ first: 1000, skip: 0}).catch((reason) => {
+        console.log(`Fetch failed: Exchange - ${ChainId[chainId]}. Reason: ${reason}`)
         return undefined
       })
     })
   )
-  console.log(`Extract - Extract tokens from ${exchanges.length} exchanges`)
+  console.log(`EXTRACT - Extract tokens from ${exchanges.length} exchanges`)
 
   // TRANSFORM
   const transformed = exchanges.map((exchange, i) => {
     if (!exchange?.tokens) return []
+    console.log(`TRANSFORM - ${chainName[SUSHISWAP_CHAINS[i]]} contains ${exchange.tokens.length} tokens`)
     return exchange?.tokens.map((token) => {
       return {
         address: token.id,
@@ -43,8 +45,8 @@ async function main() {
   }
 
   // LOAD
-  const loadedCount = await prisma.token.createMany({ data: transformed, skipDuplicates: true})
-  console.log(`LOAD - Lodaded ${loadedCount.count} tokens`)
+  const loaded = await prisma.token.createMany({ data: transformed, skipDuplicates: true})
+  console.log(`LOAD - Loaded ${loaded.count} tokens`)
 
   // TODO: Validate? check if e.g. a certain token was retrieved?
 }

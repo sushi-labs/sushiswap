@@ -1,34 +1,22 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
-enum Protocol {
-  Sushiswap
-  Quickswap // quickswap06 subgraph
-  Uniswap
-}
-
-enum AAMVersion {
-  V2
-  V3
-  TRIDENT
-}
-
 model Token {
-  address  String 
+  address  String
   network  String
   chainId  String
   name     String // TODO: constraints? if subgraph would return "", "", 0? success false?
   symbol   String
   decimals Int
-  
+
   generatedAt DateTime @default(now())
 
   price  TokenPrice?
@@ -40,53 +28,56 @@ model Token {
 }
 
 model TokenPrice {
-  address  String 
+  address       String
   network       String
   chainId       String
   derivedNative Decimal
   lastUsdPrice  Decimal
 
   generatedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt   DateTime @updatedAt
 
-  token         Token   @relation(fields: [network, address], references: [network, address])
+  token Token @relation(fields: [network, address], references: [network, address])
+
   @@id([network, address])
   @@index(fields: [address, network])
 }
 
 model Pool {
-  address       String
+  address  String
+  name     String
   network  String
   chainId  String
-  protocol Protocol
-  version  AAMVersion
-  token0   Token      @relation("token0", fields: [network, token0Id], references: [network, address])
+  protocol String
+  version  String
+  type     String
+  token0   Token  @relation("token0", fields: [network, token0Id], references: [network, address])
   token0Id String
-  token1   Token      @relation("token1", fields: [network, token1Id], references: [network, address])
+  token1   Token  @relation("token1", fields: [network, token1Id], references: [network, address])
   token1Id String
 
   swapFee     Float?
   twapEnabled Boolean?
 
-  reserve0        BigInt // Liquidity of token0
-  reserve1        BigInt // Liquidity of token1
-  totalSupply     BigInt // Liquidity, Total supply of all LP in this pool
-  liquidityUSD    Decimal // liquidity in USD
-  liquiditynative Decimal // liquidity in native
+  reserve0        String //BigInt 	@db.BigInt // Liquidity of token0 // TODO: When prisma 4.6.0 is released, use BigInt instead
+  reserve1        String //BigInt 	@db.BigInt // Liquidity of token1 // TODO: When prisma 4.6.0 is released, use BigInt instead
+  totalSupply     String //BigInt 	@db.BigInt // Liquidity, Total supply of all LP in this pool // TODO: When prisma 4.6.0 is released, use BigInt instead
+  liquidityUSD    String // liquidity in USD
+  liquidityNative String // liquidity in native
 
-  volumeUSD    Decimal // volume in USD
-  volumeNative Decimal // volume in native
+  volumeUSD    String // volume in USD
+  volumeNative String // volume in native
 
-  token0Price Decimal // Price of token0 in token1
-  token1Price Decimal // Price of token1 in token0
+  token0Price String // Price of token0 in token1
+  token1Price String // Price of token1 in token0
 
-  createdAtTimestamp   DateTime
-  createdAtBlockNumber BigInt
-  generatedAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // createdAtTimestamp   DateTime
+  createdAtBlockNumber String //BigInt 	@db.BigInt // TODO: When prisma 4.6.0 is released, use BigInt instead
+  generatedAt          DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   @@id([network, address])
-  @@index([token0Id, token1Id, address, network])
+  @@index(fields: [token0Id, token1Id, address], name: "pool_index")
 }
 
 // model Token {
