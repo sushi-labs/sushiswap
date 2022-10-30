@@ -1,0 +1,26 @@
+query Tokens($first: Int = 5000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+    tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    name
+    symbol
+    decimals
+  }
+  # tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
+  #   id
+  #   token {
+  #     liquidity
+  #   }
+  #   derivedNative
+  # }
+
+  # bundle(id: 1, block: $block) {
+  #   nativePrice
+  # }
+
+  # _meta {
+  #   block {
+  #     number
+  #   }
+  # }
+}
+

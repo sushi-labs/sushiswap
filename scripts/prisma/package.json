@@ -62,10 +62,11 @@
     "graphql": "16.6.0",
     "jest": "^28.1.0",
     "prettier": "^2.7.0",
+    "prisma": "^4.5.0",
     "ts-node": "^10.8.2",
     "tsup": "^6.2.0",
     "typescript": "4.8.2",
-    "prisma": "^4.5.0"
+    "@prisma/client": "^4.5.0"
   },
   "engines": {
     "node": ">=16"

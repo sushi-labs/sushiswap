@@ -1,20 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-}
-
-enum Network {
-  Ethereum
-  Polygon
-}
-
-enum ChainId {
-  Ethereum @map("1")
-  Polygon @map("137")
+  referentialIntegrity = "prisma"
 }
 
 enum Protocol {
@@ -30,43 +22,47 @@ enum AAMVersion {
 }
 
 model Token {
-  id       String  @unique
-  network  Network
-  chainId  ChainId
+  address  String 
+  network  String
+  chainId  String
   name     String // TODO: constraints? if subgraph would return "", "", 0? success false?
   symbol   String
   decimals Int
+  
+  generatedAt DateTime @default(now())
 
   price  TokenPrice?
   pools0 Pool[]      @relation("token0")
   pools1 Pool[]      @relation("token1")
 
-  //   @@id([id, network]) // Needed? can't just use id
-  @@index(fields: [id, network, name, symbol])
+  @@id([network, address])
+  @@index(fields: [address, network, name, symbol])
 }
 
 model TokenPrice {
-  id            String  @unique
-  network       Network
-  chainId       ChainId
+  address  String 
+  network       String
+  chainId       String
   derivedNative Decimal
   lastUsdPrice  Decimal
 
   generatedAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  token         Token   @relation(fields: [id], references: [id])
+  token         Token   @relation(fields: [network, address], references: [network, address])
+  @@id([network, address])
+  @@index(fields: [address, network])
 }
 
 model Pool {
-  id       String     @id @unique
-  network  Network
-  chainId  ChainId
+  address       String
+  network  String
+  chainId  String
   protocol Protocol
   version  AAMVersion
-  token0   Token      @relation("token0", fields: [token0Id], references: [id])
+  token0   Token      @relation("token0", fields: [network, token0Id], references: [network, address])
   token0Id String
-  token1   Token      @relation("token1", fields: [token1Id], references: [id])
+  token1   Token      @relation("token1", fields: [network, token1Id], references: [network, address])
   token1Id String
 
   swapFee     Float?
@@ -89,7 +85,8 @@ model Pool {
   generatedAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([token0Id, token1Id])
+  @@id([network, address])
+  @@index([token0Id, token1Id, address, network])
 }
 
 // model Token {
