@@ -65,5 +65,5 @@ jobs:
         - name: Build apps
           run: pnpm build-apps
  
-        - name: Test
-          run: pnpm test:ci
+        # - name: Test
+        #   run: pnpm test:ci

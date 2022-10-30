@@ -27,7 +27,7 @@ const eslintConfig = {
     'unused-imports/no-unused-imports': 'warn',
     'unused-imports/no-unused-vars': 'off',
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-non-null-assertion': 'warn',
     '@typescript-eslint/ban-ts-comment': 'warn',
