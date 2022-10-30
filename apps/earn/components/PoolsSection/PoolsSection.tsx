@@ -1,5 +1,5 @@
 import { Tab } from '@headlessui/react'
-import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
+import { UserWithFarm } from '@sushiswap/graph-client'
 import { Chip, classNames } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 import useSWR from 'swr'

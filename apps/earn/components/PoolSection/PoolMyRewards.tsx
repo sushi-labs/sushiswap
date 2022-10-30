@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { Button, Currency, Typography, useBreakpoint } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { FC } from 'react'

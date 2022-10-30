@@ -1,5 +1,5 @@
 import { Amount, Token } from '@sushiswap/currency'
-import { Incentive, Pair } from '@sushiswap/graph-client/.graphclient'
+import { Incentive, Pair } from '@sushiswap/graph-client'
 import { Chef, RewarderType, useMasterChef } from '@sushiswap/wagmi'
 import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
 import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'

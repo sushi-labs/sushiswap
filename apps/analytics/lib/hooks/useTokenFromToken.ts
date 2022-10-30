@@ -1,5 +1,5 @@
 import { Native, Token } from '@sushiswap/currency'
-import { Token as GraphToken } from '@sushiswap/graph-client/.graphclient'
+import { Token as GraphToken } from '@sushiswap/graph-client'
 import { useMemo } from 'react'
 export const useTokenFromToken = (token: GraphToken) => {
   return useMemo(() => {

@@ -1,5 +1,5 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK, Pagination, QuerycrossChainPairsArgs } from '@sushiswap/graph-client/.graphclient'
+import { getBuiltGraphSDK, Pagination, QuerycrossChainPairsArgs } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
