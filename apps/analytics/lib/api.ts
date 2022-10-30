@@ -4,7 +4,7 @@ import {
   Pagination,
   QuerycrossChainPairsArgs,
   QuerycrossChainTokensArgs,
-} from '@sushiswap/graph-client/.graphclient'
+} from '@sushiswap/graph-client'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 

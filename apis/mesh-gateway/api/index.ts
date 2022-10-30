@@ -1,3 +1,3 @@
-import { createBuiltMeshHTTPHandler } from '@sushiswap/graph-client/.graphclient'
+import { createBuiltMeshHTTPHandler } from '@sushiswap/graph-client'
 
 export default createBuiltMeshHTTPHandler()

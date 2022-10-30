@@ -1,10 +1,5 @@
 import { ChainKey } from '@sushiswap/chain'
-import {
-  EXCHANGE_LiquidityPosition,
-  EXCHANGE_Pair,
-  EXCHANGE_Token,
-  getBuiltGraphSDK,
-} from '@sushiswap/graph-client/.graphclient'
+import { EXCHANGE_LiquidityPosition, EXCHANGE_Pair, EXCHANGE_Token, getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import Table from 'cli-table3'
 import numeral from 'numeral'

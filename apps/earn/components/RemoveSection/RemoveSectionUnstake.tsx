@@ -1,5 +1,5 @@
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount, Button, Dots, Typography } from '@sushiswap/ui'
 import { Approve, Checker, Chef, getMasterChefContractConfig } from '@sushiswap/wagmi'

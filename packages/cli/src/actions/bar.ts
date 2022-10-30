@@ -9,7 +9,7 @@ type Arguments = {
 }
 
 export async function bar(args: Arguments) {
-  // const { getBuiltGraphSDK } = await import('@sushiswap/graph-client/.graphclient')
+  // const { getBuiltGraphSDK } = await import('@sushiswap/graph-client')
   const sdk = getBuiltGraphSDK({ chainId: ChainId.ETHEREUM })
 
   const oneMonthAgo = getUnixTime(subMonths(new Date(), 1))

@@ -1,11 +1,18 @@
 name: CI
- 
+
 on:
   push:
     branches: ["master"]
   pull_request:
     types: [opened, synchronize]
- 
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  CI: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
   build:
       name: Build and Test
@@ -53,11 +60,26 @@ jobs:
         - name: Lint
           run: pnpm lint:ci
 
-        # - name: Generate
-        #   run: pnpm generate:ci
+        - name: Code generation
+          run: pnpm generate:ci
 
-        - name: Build
-          run: pnpm build:ci
+        - name: Build packages
+          run: pnpm build-packages
+
+        - name: Build protocols
+          run: pnpm build-protocols
+
+        - name: Build apps
+          run: pnpm build-apps
  
-        - name: Test
-          run: pnpm test:ci
+        - name: Test packages
+          run: pnpm test-packages
+
+        - name: Test protocols
+          run: pnpm test-protocols
+
+        - name: Test apps
+          run: pnpm test-apps
+
+        # - name: Test
+        #   run: pnpm test:ci
