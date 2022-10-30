@@ -1,15 +1,23 @@
 {
-  "name": "token-price-api",
+  "name": "mesh-gateway",
   "version": "0.0.0",
   "private": true,
+  "description": "Sushi GraphQL Mesh Gateway",
+  "keywords": [
+    "sushi",
+    "graphql",
+    "mesh",
+    "gateway"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
+    "start": "graphclient start",
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
-    "@sushiswap/chain": "workspace:*",
-    "@vercel/node": "^2.2.0",
-    "date-fns": "2.x",
-    "ioredis": "5.x"
+    "@sushiswap/graph-client": "workspace:*",
+    "@vercel/node": "^1.14.1"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
