@@ -1,11 +1,18 @@
 name: CI
- 
+
 on:
   push:
     branches: ["master"]
   pull_request:
     types: [opened, synchronize]
- 
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  CI: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
   build:
       name: Build and Test
