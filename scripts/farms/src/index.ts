@@ -27,11 +27,11 @@ export async function execute() {
     ...minichefs,
   ]
 
-  // await redis.hset(
-  //   'farms',
-  //   Object.fromEntries(
-  //     combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
-  //   )
-  // )
+  await redis.hset(
+    'farms',
+    Object.fromEntries(
+      combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
+    )
+  )
   console.log(`Finished updating farms`)
 }
