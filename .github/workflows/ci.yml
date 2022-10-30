@@ -53,11 +53,17 @@ jobs:
         - name: Lint
           run: pnpm lint:ci
 
-        # - name: Generate
-        #   run: pnpm generate:ci
+        - name: Generate
+          run: pnpm generate:ci
 
-        - name: Build
-          run: pnpm build:ci
+        - name: Build Packages
+          run: pnpm build-packages
+
+        - name: Build Protocols
+          run: pnpm build-protocols
+
+        - name: Build Apps
+          run: pnpm build-apps
  
         - name: Test
           run: pnpm test:ci
