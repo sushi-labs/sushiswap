@@ -29,6 +29,6 @@ export const getArticles = async (variables?: { filters?: ArticleFiltersInput; p
   return sdk.getArticles({ ...variables, filters: { ...variables?.filters, articleTypes: { type: { eq: 'blog' } } } })
 }
 
-export const getCategories = async (filters?: CategoryFiltersInput) => {
+export const getCategories = async (filters: CategoryFiltersInput = {}) => {
   return sdk.getCategories({ filters })
 }
