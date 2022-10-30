@@ -46,9 +46,6 @@
     "Incentive": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
         "apr": {
           "type": "number"
         },
@@ -75,7 +72,7 @@
       "description": "Farm Object",
       "properties": {
         "id": {
-          "type": "number"
+          "type": "string"
         },
         "chainId": {
           "type": "number"

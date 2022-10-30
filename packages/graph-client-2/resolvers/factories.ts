@@ -1,6 +1,6 @@
 import { SUBGRAPH_HOST, SUSHISWAP_ENABLED_NETWORKS, SUSHISWAP_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 
-import { Factory, QueryResolvers, Resolvers } from './.graphclient'
+import { Factory, QueryResolvers, Resolvers } from '../.graphclient'
 
 export const crossChainFactories: QueryResolvers['crossChainFactories'] = async (root, args, context, info) => {
   return Promise.all([

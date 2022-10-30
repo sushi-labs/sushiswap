@@ -61,6 +61,28 @@ query CrossChainPairs(
   }
 }
 
+query CrossChainPairsWithFarms(
+  $first: Int
+  $skip: Int
+  $where: Pair_filter
+  $orderBy: Pair_orderBy
+  $orderDirection: OrderDirection
+  $block: Block_height
+  $chainIds: [Int!]!
+) {
+  crossChainPairsWithFarms(
+    first: $first
+    skip: $skip
+    where: $where,
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    block: $block
+    chainIds: $chainIds
+  ) {
+    ...PairFields
+  }
+}
+
 # fragment PairWithIncentivesFields on PairWithIncentives {
 #   ...PairFields
 #   # liquidityPositions {
@@ -73,6 +95,28 @@ query CrossChainPairs(
 #     id
 #     # currency { id symbol name decimals }
 #     apr
+#   }
+# }
+
+# query PairWithIncentives(
+#   $first: Int
+#   $skip: Int
+#   # $where: PairWithIncentives_filter
+#   # $orderBy: PairWithIncentives_orderBy
+#   # $orderDirection: OrderDirection
+#   $block: Block_height
+#   $chainIds: [Int!]!
+# ) {
+#   pairWithIncentives(
+#     first: $first
+#     skip: $skip
+#     # where: $where
+#     # orderBy: $orderBy
+#     # orderDirection: $orderDirection
+#     block: $block
+#     chainIds: $chainIds
+#   ) {
+#     ...PairWithIncentivesFields
 #   }
 # }
 

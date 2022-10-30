@@ -1,6 +1,6 @@
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
-import { Query, QueryResolvers, Resolvers } from './.graphclient'
+import { Query, QueryResolvers, Resolvers } from '../.graphclient'
 
 export const crossChainRebases: QueryResolvers['crossChainRebases'] = async (
   root,

@@ -1,5 +1,5 @@
-import { getBuiltGraphSDK, QueryResolvers, Resolvers, UserWithFarm } from './.graphclient'
-import { fetchBalances } from './lib/wagmi'
+import { getBuiltGraphSDK, QueryResolvers, Resolvers, UserWithFarm } from '../.graphclient'
+import { fetchBalances } from '../lib/wagmi'
 
 export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] = async (
   root,

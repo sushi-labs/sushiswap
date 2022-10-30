@@ -2,15 +2,8 @@
   "extends": "@sushiswap/typescript-config/node16.json",
   "include": [
     "lib",
-    "bentobox.ts", 
-    "blocks.ts",
-    "bundles.ts",
-    "deprecated.ts",
-    "factories.ts",
-    "masterchef.ts",
-    "pairs.ts",
-    "resolvers.ts",
-    "tokens.ts"
+    "actions",
+    "resolvers"
   ],
   "exclude": ["node_modules", ".graphclient"],
   "compilerOptions": {

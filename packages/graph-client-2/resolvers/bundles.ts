@@ -6,7 +6,7 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { Bundle, QueryResolvers, Resolvers } from './.graphclient'
+import { Bundle, QueryResolvers, Resolvers } from '../.graphclient'
 
 export const crossChainBundles: QueryResolvers['crossChainBundles'] = async (root, args, context, info) => {
   return Promise.all([

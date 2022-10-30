@@ -69,6 +69,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@vercel/node': ^1.14.1
+      eslint: ^8.20.0
     dependencies:
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@vercel/node': 1.15.4
@@ -77,6 +78,7 @@ importers:
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
+      eslint: 8.26.0
 
   apis/path-finder:
     specifiers:
@@ -144,6 +146,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@vercel/node': ^2.2.0
       date-fns: 2.x
+      eslint: ^8.20.0
       ioredis: 5.x
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
@@ -155,6 +158,7 @@ importers:
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
+      eslint: 8.26.0
 
   apps/_root:
     specifiers:
@@ -2070,6 +2074,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       graphql: 16.6.0
+      isomorphic-unfetch: 3.1.0
       jest: ^28.1.0
       tslib: latest
       tsup: ^6.2.0
@@ -2105,6 +2110,7 @@ importers:
       date-fns: 2.29.3
       ethers: 5.7.2
       graphql: 16.6.0
+      isomorphic-unfetch: 3.1.0
       tslib: 2.4.0
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint

@@ -1,6 +1,6 @@
 import { mergeResolvers } from '@graphql-tools/merge'
 
-import { Resolvers } from './.graphclient'
+import { Resolvers } from '../.graphclient'
 import { resolvers as bentobox } from './bentobox'
 import { resolvers as blocks } from './blocks'
 import { resolvers as bundles } from './bundles'

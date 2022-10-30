@@ -7,52 +7,15 @@ import {
 } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
-import { getBuiltGraphSDK, Query, QueryResolvers, Resolvers } from './.graphclient'
+import { Query, QueryResolvers, Resolvers } from '../.graphclient'
 
-export const _crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
+export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
   root,
   args,
   context,
   info
 ): Promise<Query['crossChainChefUser']> => {
   console.debug('_crossChainChefUser')
-  const fetcher = async ({
-    chainId,
-    subgraphName,
-    subgraphHost,
-  }: {
-    chainId: ChainId
-    subgraphName:
-      | typeof MASTERCHEF_V1_SUBGRAPH_NAME
-      | typeof MASTERCHEF_V2_SUBGRAPH_NAME
-      | typeof MINICHEF_SUBGRAPH_NAME[keyof typeof MINICHEF_SUBGRAPH_NAME]
-    subgraphHost: typeof SUBGRAPH_HOST[number]
-  }) => {
-    const sdk = getBuiltGraphSDK()
-    const { first, skip, where, block } = args
-    return sdk
-      .ChefUser(
-        {
-          first: first ?? 1000,
-          skip: skip ?? 0,
-          where: where ?? undefined,
-          // block: block ?? undefined, // bugs it out...
-        },
-        {
-          chainId,
-          subgraphHost,
-          subgraphName,
-        }
-      )
-      .then(({ users }) => {
-        // console.log('USERS IS', users)
-        return users.map((user) => ({
-          ...user,
-          chainId,
-          chainName: chainName[chainId],
-        }))
-      })
-  }
   return Promise.allSettled<Query['crossChainChefUser']>([
     ...args.chainIds
       .filter((chainId) => chainId === ChainId.ETHEREUM)
@@ -135,6 +98,6 @@ export const resolvers: Resolvers = {
     chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
   },
   Query: {
-    crossChainChefUser: _crossChainChefUser,
+    crossChainChefUser,
   },
 }

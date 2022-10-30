@@ -39,6 +39,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "isomorphic-unfetch": "3.1.0",
     "@graphprotocol/client-cli": "2.2.15",
     "@graphql-mesh/utils": "latest",
     "@graphql-mesh/cache-localforage": "latest",

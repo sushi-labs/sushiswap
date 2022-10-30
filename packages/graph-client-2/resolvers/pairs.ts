@@ -5,8 +5,32 @@ import {
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
+import { fetchFarms } from 'actions'
 
-import { getBuiltGraphSDK, Pair, Query, QueryResolvers, Resolvers } from './.graphclient'
+import { getBuiltGraphSDK, Pair, Query, QueryResolvers, Resolvers } from '../.graphclient'
+
+export const crossChainPairsWithFarms: QueryResolvers['crossChainPairsWithFarms'] = async (
+  root,
+  args,
+  context,
+  info
+): Promise<Query['crossChainPairsWithFarms']> => {
+  const sdk = getBuiltGraphSDK()
+
+  // console.log('farms', [await context.Farm.Query.farms({ root, args, context, info })])
+
+  const [{ crossChainPairs: pairs }, farms, { oneDayBlocks }, { oneWeekBlocks }] = await Promise.all([
+    sdk.CrossChainPairs({ chainIds: args.chainIds }),
+    fetchFarms(),
+    // sdk.Farms(),
+    sdk.OneDayBlocks({ chainIds: args.chainIds }),
+    sdk.OneWeekBlocks({ chainIds: args.chainIds }),
+  ])
+
+  console.log('FARMS', JSON.stringify(farms))
+
+  return [] as Query['crossChainPairsWithFarms']
+}
 
 export const crossChainPairs: QueryResolvers['crossChainPairs'] = async (
   root,
@@ -14,16 +38,6 @@ export const crossChainPairs: QueryResolvers['crossChainPairs'] = async (
   context,
   info
 ): Promise<Query['crossChainPairs']> => {
-  const sdk = getBuiltGraphSDK()
-
-  // const [farms, oneDayBlocks, oneWeekBlocks] = await Promise.all([
-  //   context.Farm.Query.farms({ root, args, context, info }),
-  //   sdk.OneDayBlocks({ chainIds: args.chainIds }),
-  //   sdk.OneWeekBlocks({ chainIds: args.chainIds }),
-  // ])
-
-  // console.log('farms', [await context.Farm.Query.farms({ root, args, context, info })])
-
   return Promise.all<Query['crossChainPairs'][]>([
     ...args.chainIds
       .filter((chainId): chainId is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
@@ -93,5 +107,6 @@ export const resolvers: Resolvers = {
   Query: {
     crossChainPair,
     crossChainPairs,
+    crossChainPairsWithFarms,
   },
 }

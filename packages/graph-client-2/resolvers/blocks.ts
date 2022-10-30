@@ -1,7 +1,7 @@
 import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays } from 'date-fns'
 
-import { Block, QueryResolvers, Resolvers } from './.graphclient'
+import { Block, QueryResolvers, Resolvers } from '../.graphclient'
 
 const crossChainBlocks: QueryResolvers['crossChainBlocks'] = async (root, args, context, info): Promise<Block[]> => {
   return Promise.all<Block[]>(
