@@ -8,6 +8,7 @@ import stringify from 'fast-json-stable-stringify'
 
 import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
 import { redis } from './lib'
+
 export async function execute() {
   console.log(`Updating farms`)
 
@@ -26,11 +27,11 @@ export async function execute() {
     ...minichefs,
   ]
 
-  await redis.hset(
-    'farms',
-    Object.fromEntries(
-      combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
-    )
-  )
+  // await redis.hset(
+  //   'farms',
+  //   Object.fromEntries(
+  //     combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
+  //   )
+  // )
   console.log(`Finished updating farms`)
 }
