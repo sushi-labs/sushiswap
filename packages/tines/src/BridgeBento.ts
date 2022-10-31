@@ -7,12 +7,21 @@ const BRIDGING_GAS_COST = 60_000 // gas points
 export class BridgeBento extends RPool {
   elastic: number
   base: number
+  freeLiquidity?: number // Maximum number of tokens we can withdraw without harvest
 
   // elastic is reserve0, base is reserve1
-  constructor(address: string, tokenEthereum: RToken, tokenBento: RToken, elastic: BigNumber, base: BigNumber) {
+  constructor(
+    address: string,
+    tokenEthereum: RToken,
+    tokenBento: RToken,
+    elastic: BigNumber,
+    base: BigNumber,
+    freeLiquidity?: BigNumber
+  ) {
     super(address, tokenEthereum, tokenBento, 0, elastic, base, BENTO_MINIMUM_SHARE_BALANCE, BRIDGING_GAS_COST)
     this.elastic = parseInt(elastic.toString())
     this.base = parseInt(base.toString())
+    this.freeLiquidity = freeLiquidity === undefined ? undefined : parseInt(freeLiquidity.toString())
   }
 
   updateReserves(elastic: BigNumber, base: BigNumber) {
@@ -38,6 +47,7 @@ export class BridgeBento extends RPool {
       } else {
         out = (amountIn * this.elastic) / this.base
       }
+      if (this.freeLiquidity !== undefined && out > this.freeLiquidity) throw new Error('OutOfLiquidity BridgeBento')
     }
     return { out, gasSpent: this.swapGasCost }
   }
@@ -55,13 +65,16 @@ export class BridgeBento extends RPool {
         }
       }
     } else {
-      if (this.base == 0) {
-        inp = amountOut
-      } else {
-        if (this.elastic == 0) {
-          inp = Number.POSITIVE_INFINITY
+      if (this.freeLiquidity !== undefined && amountOut > this.freeLiquidity) inp = Number.POSITIVE_INFINITY
+      else {
+        if (this.base == 0) {
+          inp = amountOut
         } else {
-          inp = (amountOut * this.base) / this.elastic
+          if (this.elastic == 0) {
+            inp = Number.POSITIVE_INFINITY
+          } else {
+            inp = (amountOut * this.base) / this.elastic
+          }
         }
       }
     }

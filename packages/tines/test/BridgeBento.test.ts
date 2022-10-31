@@ -1,7 +1,7 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import seedrandom from 'seedrandom'
 import { _1e12 } from '../../math/dist'
-import { RToken } from '../dist'
+import { RToken } from '../src'
 import { BridgeBento, getBigNumber } from '../src'
 
 function closeValues(a: number, b: number, accuracy: number, logInfoIfFalse = ''): boolean {
@@ -49,14 +49,29 @@ function expectCloseValues(
 function checkBridging(bridge: BridgeBento, amount: number) {
   const share = bridge.calcOutByIn(amount, true).out
 
-  const amount2 = bridge.calcOutByIn(share, false).out
-  expectCloseValues(amount, amount2, 1e-10)
+  try {
+    const amount2 = bridge.calcOutByIn(share, false).out
+    expectCloseValues(amount, amount2, 1e-10)
+  } catch (e) {
+    expect(bridge.freeLiquidity).toBeDefined()
+    let out
+    if (bridge.base == 0) {
+      out = share
+    } else {
+      out = (share * bridge.elastic) / bridge.base
+    }
+    expect(out).toBeGreaterThan(bridge.freeLiquidity as number)
+  }
 
   const amount3 = bridge.calcInByOut(share, true).inp
   expectCloseValues(amount, amount3, 1e-10)
 
   const share2 = bridge.calcInByOut(amount, false).inp
-  expectCloseValues(share, share2, 1e-10)
+  if (bridge.freeLiquidity !== undefined && amount > bridge.freeLiquidity) {
+    expect(share2).toEqual(Number.POSITIVE_INFINITY)
+  } else {
+    expectCloseValues(share, share2, 1e-10)
+  }
 
   if (amount != 0) {
     const price = bridge.calcCurrentPriceWithoutFee(true)
@@ -92,7 +107,7 @@ function getRandomBridge(rnd: () => number) {
   const elastic = Math.floor(getRandomExp(rnd, 1, 1e20))
   const base = Math.floor(getRandomExp(rnd, 1, 1e20))
 
-  return new BridgeBento('aaa', token1, token2, getBigNumber(elastic), getBigNumber(base))
+  return new BridgeBento('aaa', token1, token2, getBigNumber(elastic), getBigNumber(base), getBigNumber(elastic / 2))
 }
 
 function getBridge(elastic: number, base: number) {
