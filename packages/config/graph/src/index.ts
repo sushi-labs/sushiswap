@@ -19,7 +19,8 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.BOBA,
   // ChainId.PALM,
   // ChainId.HECO,
-  // ChainId.OKEX
+  // ChainId.OKEX,
+  // ChainId.AURORA,
 ] as const
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
@@ -55,6 +56,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BOBA]: 'Boba',
   [ChainId.ARBITRUM_NOVA]: 'Arbitrum Nova',
   [ChainId.BOBA_AVAX]: 'Boba Avax',
+  // [ChainId.AURORA]: 'Aurora',
 }
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -79,6 +81,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
+  // [ChainId.AURORA]: GRAPH_HOST,
 }
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -95,6 +98,7 @@ export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.OPTIMISM]: 'sushiswap/bentobox-optimism',
   [ChainId.HARMONY]: 'sushiswap/bentobox-harmony',
   [ChainId.KAVA]: 'sushiswap/bentobox-kava',
+  // [ChainId.AURORA]: 'sushiswap/bentobox-aurora',
 } as const
 
 export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
@@ -153,6 +157,7 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
+  // [ChainId.AURORA]: 'sushiswap/sushiswap-aurora',
 } as const
 
 export const TRIDENT_SUBGRAPH_NAME = {
@@ -204,6 +209,7 @@ export const FURO_SUBGRAPH_NAME: Record<string, string> = {
 
 export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'sushiswap/kashi-arbitrum',
+  // [ChainId.AURORA]: 'sushiswap/kashi-aurora',
 }
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM

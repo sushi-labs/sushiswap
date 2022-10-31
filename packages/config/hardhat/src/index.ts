@@ -73,8 +73,8 @@ export const defaultConfig: HardhatUserConfig = {
       // to specify one; any string placeholder will work
       xdai: 'api-key',
       sokol: 'api-key',
-      aurora: 'api-key',
-      auroraTestnet: 'api-key',
+      aurora: process.env.AURORA_API_KEY || '',
+      auroraTestnet: process.env.AURORA_API_KEY || '',
       metis: 'api-key',
       // bobaAvax: 'api-key',
       bttc: process.env.BTTC_API_KEY || '',
@@ -391,6 +391,21 @@ export const defaultConfig: HardhatUserConfig = {
       chainId: 199,
       live: true,
       saveDeployments: true,
+    },
+    aurora: {
+      url: 'https://mainnet.aurora.dev',
+      accounts,
+      chainId: 1313161554,
+      live: true,
+      saveDeployments: true,
+    },
+    'aurora-testnet': {
+      url: 'https://testnet.aurora.dev/',
+      accounts,
+      chainId: 1313161555,
+      live: true,
+      saveDeployments: true,
+      tags: ['staging'],
     },
   },
   namedAccounts: {

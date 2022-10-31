@@ -25,11 +25,26 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVers
 const config: HardhatUserConfig = {
   ...defaultConfig,
   solidity: {
-    version: '0.6.12',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 350,
+    compilers: [
+      {
+        version: '0.6.12',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 350,
+          },
+        },
+      },
+    ],
+    overrides: {
+      'contracts/lens/UniswapInterfaceMulticall.sol': {
+        version: '0.7.6',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
       },
     },
   },

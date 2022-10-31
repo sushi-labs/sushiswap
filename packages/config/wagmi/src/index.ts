@@ -392,4 +392,27 @@ export const otherChains = [
       blockCreated: 3652,
     },
   },
+  {
+    id: ChainId.AURORA,
+    name: 'Aurora Mainnet',
+    network: 'aurora',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    rpcUrls: {
+      default: 'https://mainnet.aurora.dev',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Aurorascan',
+        url: 'https://aurorascan.dev/',
+      },
+      default: {
+        name: 'Aurorascan',
+        url: 'https://aurorascan.dev/',
+      },
+    },
+    multicall: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 62907815,
+    },
+  },
 ]

@@ -121,6 +121,7 @@ export enum ChainId {
   BOBA = 288,
   BOBA_AVAX = 43288,
   BTTC = 199,
+  AURORA = 1313161554,
 }
 
 export enum ChainKey {
@@ -161,6 +162,7 @@ export enum ChainKey {
   BOBA = 'boba',
   BOBA_AVAX = 'boba-avax',
   BTTC = 'bttc',
+  AURORA = 'aurora',
 }
 
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]

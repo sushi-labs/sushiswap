@@ -36,6 +36,7 @@
     "@sushiswap/bentobox-sdk": "sushiswap/bentobox-sdk#e3f809870b86afbd57e0930662221d2362a160db",
     "@sushiswap/core": "1.4.2",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

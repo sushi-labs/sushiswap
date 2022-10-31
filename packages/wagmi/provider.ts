@@ -53,6 +53,7 @@ const PUBLIC_RPC: Record<number, string> = {
   [ChainId.FANTOM]: 'https://rpcapi.fantom.network',
   [ChainId.AVALANCHE]: 'https://api.avax.network/ext/bc/C/rpc',
   [ChainId.BOBA_AVAX]: 'https://avax.boba.network',
+  // [ChainId.AURORA]: 'https://mainnet.aurora.dev',
 }
 
 export function getProvider(chainId: ChainId) {

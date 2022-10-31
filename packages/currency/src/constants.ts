@@ -23,6 +23,7 @@ export const WBTC_ADDRESS = {
   [ChainId.BOBA]: '0xdc0486f8bf31DF57a952bcd3c1d3e166e3d9eC8b',
   [ChainId.KAVA]: '0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b',
   [ChainId.METIS]: '0xa5B55ab1dAF0F8e1EFc0eB1931a957fd89B918f4',
+  [ChainId.AURORA]: '0xF4eB217Ba2454613b15dBdea6e5f22276410e89e',
 } as const
 
 export const WBTC = addressMapToTokenMap(
@@ -206,6 +207,7 @@ export const WETH9_ADDRESS = {
   [ChainId.METIS]: '0x420000000000000000000000000000000000000A',
   [ChainId.ARBITRUM_NOVA]: '0x722E8BdD2ce80A4422E880164f2079488e115365',
   [ChainId.BOBA]: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
+  [ChainId.AURORA]: '0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB',
 } as const
 
 export const WETH9 = addressMapToTokenMap(
@@ -253,6 +255,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.BOBA]: WETH9_ADDRESS[ChainId.BOBA],
   [ChainId.BOBA_AVAX]: '0x26c319B7B2cF823365414d082698C8ac90cbBA63',
   [ChainId.BTTC]: '0x0000000000000000000000000000000000001010',
+  [ChainId.AURORA]: WETH9_ADDRESS[ChainId.AURORA],
 } as const
 
 export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
@@ -441,6 +444,7 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     symbol: 'WBTT',
     name: 'Wrapped BitTorrent Token',
   }),
+  [ChainId.AURORA]: WETH9[ChainId.AURORA],
 }
 
 export const SUSHI_ADDRESS: AddressMap = {
@@ -515,6 +519,7 @@ export const USDC_ADDRESS = {
   [ChainId.METIS]: '0xEA32A96608495e54156Ae48931A7c20f0dcc1a21',
   [ChainId.ARBITRUM_NOVA]: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
   [ChainId.BOBA]: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
+  [ChainId.AURORA]: '0xB12BFcA5A55806AaF64E99521918A4bf0fC40802',
 } as const
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
@@ -559,6 +564,7 @@ export const USDT_ADDRESS = {
   [ChainId.METIS]: '0xbB06DCA3AE6887fAbF931640f67cab3e3a16F4dC',
   [ChainId.ARBITRUM_NOVA]: '0xeD9d63a96c27f87B07115b56b2e3572827f21646',
   [ChainId.BOBA]: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
+  [ChainId.AURORA]: '0x4988a896b1227218e4A686fdE5EabdcAbd91571f',
 } as const
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
@@ -609,6 +615,7 @@ export const DAI_ADDRESS = {
   [ChainId.METIS]: '0x4c078361FC9BbB78DF910800A991C7c3DD2F6ce0',
   [ChainId.ARBITRUM_NOVA]: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
   [ChainId.BOBA]: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
+  [ChainId.AURORA]: '0xe3520349F477A5F6EB06107066048508498A291b',
 } as const
 
 export const DAI = addressMapToTokenMap(
@@ -637,6 +644,19 @@ export const MIM = addressMapToTokenMap(
     name: 'Magic Internet Money',
   },
   MIM_ADDRESS
+)
+
+export const NEAR_ADDRESS = {
+  [ChainId.AURORA]: '0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d',
+} as const
+
+export const NEAR = addressMapToTokenMap(
+  {
+    decimals: 24,
+    symbol: 'NEAR',
+    name: 'NEAR',
+  },
+  NEAR_ADDRESS
 )
 
 export const FRAX_ADDRESS = {

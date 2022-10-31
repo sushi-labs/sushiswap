@@ -30,6 +30,7 @@ export const INIT_CODE_HASH: Record<string | number, string> = {
   [ChainId.ARBITRUM_NOVA]: '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
   [ChainId.BOBA]: '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
   [ChainId.BOBA_AVAX]: '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
+  // [ChainId.AURORA]: '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
 }
 
 export const FACTORY_ADDRESS: Record<string | number, string> = {
@@ -64,4 +65,5 @@ export const FACTORY_ADDRESS: Record<string | number, string> = {
   [ChainId.ARBITRUM_NOVA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.BOBA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.BOBA_AVAX]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+  // [ChainId.AURORA]: '0x0000000000000000000000000000000000000000',
 }
