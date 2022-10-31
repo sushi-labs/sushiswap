@@ -1,5 +1,5 @@
-query articleAndMoreArticles($filters: ArticleFiltersInput, $filters_ne: ArticleFiltersInput, $publicationState: PublicationState) {
-    articles(filters: $filters, publicationState: $publicationState) {
+query articleAndMoreArticles($locale: I18NLocaleCode, $filters: ArticleFiltersInput, $filters_ne: ArticleFiltersInput, $publicationState: PublicationState) {
+    articles(locale: $locale, filters: $filters, publicationState: $publicationState) {
         data {
             attributes {
                 title
@@ -157,7 +157,7 @@ query articleAndMoreArticles($filters: ArticleFiltersInput, $filters_ne: Article
 }
 
 query getAllArticlesWithSlug {
-    articles(filters: { articleType: { eq: "blog" } }) {
+    articles(filters: { articleTypes: { type: { eq: "blog" } } }, locale: "all") {
         data {
             id
             attributes {

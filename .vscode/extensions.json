@@ -8,6 +8,7 @@
     "VisualStudioExptTeam.vscodeintellicode",
     "wix.vscode-import-cost",
     "GraphQL.vscode-graphql",
-    "mattpocock.ts-error-translator"
+    "mattpocock.ts-error-translator",
+    "bierner.markdown-mermaid"
   ]
 }

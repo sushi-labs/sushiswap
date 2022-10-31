@@ -1,18 +1,19 @@
 import { Signature } from '@ethersproject/bytes'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
-import { calculateSlippageAmount } from '@sushiswap/exchange'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { calculateSlippageAmount, ConstantProductPool } from '@sushiswap/amm'
+import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
   Checker,
+  ConstantProductPoolState,
   getTridentRouterContractConfig,
-  PoolState,
+  StablePoolState,
   useBentoBoxTotals,
   useConstantProductPool,
+  useStablePool,
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
@@ -25,7 +26,6 @@ import {
   burnLiquidityAction,
   LiquidityOutput,
   sweep,
-  sweepNativeTokenAction,
   unwrapWETHAction,
 } from '../../lib/actions'
 import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
@@ -61,11 +61,27 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     return balance?.[FundSource.WALLET].multiply(percentToRemove)
   }, [balance, percentToRemove])
 
-  const [poolState, pool] = useConstantProductPool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+    pair.chainId,
+    token0,
+    token1,
+    pair.swapFee,
+    pair.twapEnabled
+  )
+
+  const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+
+  const [poolState, pool] = useMemo(() => {
+    if (pair.type === 'STABLE_POOL') return [stablePoolState, stablePool]
+    if (pair.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+
+    return [undefined, undefined]
+  }, [constantProductPool, constantProductPoolState, pair.type, stablePool, stablePoolState])
 
   const totalSupply = useTotalSupply(liquidityToken)
 
   const [, { createNotification }] = useNotifications(address)
+
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: pool?.reserve0,
     reserve1: pool?.reserve1,
@@ -126,11 +142,17 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     const liquidityOutput: LiquidityOutput[] = [
       {
         token: minAmount0.wrapped.currency.address,
-        amount: minAmount0.toShare(rebases?.[token0.wrapped.address]).quotient.toString(),
+        amount:
+          pool instanceof ConstantProductPool
+            ? minAmount0.toShare(rebases?.[token0.wrapped.address]).quotient.toString()
+            : minAmount0.quotient.toString(),
       },
       {
         token: minAmount1.wrapped.currency.address,
-        amount: minAmount1.toShare(rebases?.[token1.wrapped.address]).quotient.toString(),
+        amount:
+          pool instanceof ConstantProductPool
+            ? minAmount1.toShare(rebases?.[token1.wrapped.address]).quotient.toString()
+            : minAmount1.quotient.toString(),
       },
     ]
 
@@ -153,25 +175,15 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     if (indexOfWETH >= 0) {
       actions.push(
         unwrapWETHAction({
-          chainId: pair.chainId,
           router: contract,
-          amountMinimum: indexOfWETH === 0 ? minAmount0.quotient.toString() : minAmount1.quotient.toString(),
           recipient: address,
         }),
-        chain.id === ChainId.POLYGON
-          ? sweepNativeTokenAction({
-              router: contract,
-              token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
-              recipient: address,
-              amount: indexOfWETH === 0 ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
-            })
-          : sweep({
-              router: contract,
-              token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
-              recipient: address,
-              amount: indexOfWETH === 0 ? minAmount1.quotient.toString() : minAmount0.quotient.toString(),
-              fromBento: false,
-            })
+        sweep({
+          router: contract,
+          token: liquidityOutput[indexOfWETH === 0 ? 1 : 0].token,
+          recipient: address,
+          fromBento: false,
+        })
       )
     }
 
@@ -202,11 +214,11 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
         groupTimestamp: ts,
       })
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+      if (e instanceof UserRejectedRequestError) return
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [
     chain?.id,
@@ -225,77 +237,104 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
     createNotification,
   ])
 
-  return (
-    <div>
-      <RemoveSectionWidget
-        isFarm={!!pair.farm}
-        chainId={pair.chainId}
-        percentage={percentage}
-        token0={token0}
-        token1={token1}
-        token0Minimum={minAmount0}
-        token1Minimum={minAmount1}
-        setPercentage={setPercentage}
-        error={error}
-      >
-        <Checker.Connected>
-          <Checker.Custom
-            showGuardIfTrue={isMounted && [PoolState.NOT_EXISTS, PoolState.INVALID].includes(poolState)}
-            guard={
-              <Button size="md" fullWidth disabled={true}>
-                Pool Not Found
-              </Button>
-            }
-          >
-            <Checker.Network chainId={pair.chainId}>
-              <Checker.Custom
-                showGuardIfTrue={+percentage <= 0}
-                guard={
-                  <Button size="md" fullWidth disabled={true}>
-                    Enter Amount
-                  </Button>
-                }
-              >
-                <Approve
-                  onSuccess={createNotification}
-                  className="flex-grow !justify-end"
-                  components={
-                    <Approve.Components>
-                      <Approve.Bentobox
-                        size="md"
-                        className="whitespace-nowrap"
-                        fullWidth
-                        address={getTridentRouterContractConfig(pair.chainId).addressOrName}
-                        onSignature={setPermit}
-                      />
-                      <Approve.Token
-                        size="md"
-                        className="whitespace-nowrap"
-                        fullWidth
-                        amount={slpAmountToRemove}
-                        address={getTridentRouterContractConfig(pair.chainId).addressOrName}
-                      />
-                    </Approve.Components>
+  return useMemo(
+    () => (
+      <div>
+        <RemoveSectionWidget
+          isFarm={!!pair.farm}
+          chainId={pair.chainId}
+          percentage={percentage}
+          token0={token0}
+          token1={token1}
+          token0Minimum={minAmount0}
+          token1Minimum={minAmount1}
+          setPercentage={setPercentage}
+          error={error}
+        >
+          <Checker.Connected>
+            <Checker.Custom
+              showGuardIfTrue={
+                isMounted &&
+                !!poolState &&
+                [
+                  ConstantProductPoolState.NOT_EXISTS,
+                  ConstantProductPoolState.INVALID,
+                  StablePoolState.NOT_EXISTS,
+                  StablePoolState.INVALID,
+                ].includes(poolState)
+              }
+              guard={
+                <Button size="md" fullWidth disabled={true}>
+                  Pool Not Found
+                </Button>
+              }
+            >
+              <Checker.Network chainId={pair.chainId}>
+                <Checker.Custom
+                  showGuardIfTrue={+percentage <= 0}
+                  guard={
+                    <Button size="md" fullWidth disabled={true}>
+                      Enter Amount
+                    </Button>
                   }
-                  render={({ approved }) => {
-                    return (
-                      <Button
-                        onClick={execute}
-                        fullWidth
-                        size="md"
-                        variant="filled"
-                        disabled={!approved || isWritePending}
-                      >
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
-                      </Button>
-                    )
-                  }}
-                />
-              </Checker.Custom>
-            </Checker.Network>
-          </Checker.Custom>
-        </Checker.Connected>
-      </RemoveSectionWidget>
-    </div>
+                >
+                  <Approve
+                    onSuccess={createNotification}
+                    className="flex-grow !justify-end"
+                    components={
+                      <Approve.Components>
+                        <Approve.Bentobox
+                          size="md"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          address={getTridentRouterContractConfig(pair.chainId).addressOrName}
+                          onSignature={setPermit}
+                        />
+                        <Approve.Token
+                          size="md"
+                          className="whitespace-nowrap"
+                          fullWidth
+                          amount={slpAmountToRemove}
+                          address={getTridentRouterContractConfig(pair.chainId).addressOrName}
+                        />
+                      </Approve.Components>
+                    }
+                    render={({ approved }) => {
+                      return (
+                        <Button
+                          onClick={execute}
+                          fullWidth
+                          size="md"
+                          variant="filled"
+                          disabled={!approved || isWritePending}
+                        >
+                          {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
+                        </Button>
+                      )
+                    }}
+                  />
+                </Checker.Custom>
+              </Checker.Network>
+            </Checker.Custom>
+          </Checker.Connected>
+        </RemoveSectionWidget>
+      </div>
+    ),
+    [
+      createNotification,
+      error,
+      execute,
+      isMounted,
+      isWritePending,
+      minAmount0,
+      minAmount1,
+      pair.chainId,
+      pair.farm,
+      percentage,
+      poolState,
+      slpAmountToRemove,
+      token0,
+      token1,
+    ]
   )
 }

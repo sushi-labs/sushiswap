@@ -194,9 +194,8 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
   const percentPaths = trade.route.legs.filter(
     (leg) => leg.tokenFrom.address !== trade.inputAmount.currency.wrapped.address
   )
-  console.log('initial paths length', initialPaths.length)
-
-  console.log('remaining paths length', trade.route.legs.length - initialPaths.length)
+  // console.log('initial paths length', initialPaths.length)
+  // console.log('remaining paths length', trade.route.legs.length - initialPaths.length)
   // TODO: Figure out what would make sense here...
   return (
     <>

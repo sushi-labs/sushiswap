@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/log",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "description": "Sushi Log",
   "keywords": [
     "sushi",
@@ -47,6 +46,6 @@
     "eslint": "^8.20.0",
     "jest": "^28.1.0",
     "tsup": "^6.2.0",
-    "typescript": "4.6.3"
+    "typescript": "4.8.2"
   }
 }

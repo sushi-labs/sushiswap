@@ -1,6 +1,7 @@
 import { XIcon } from '@heroicons/react/solid'
 import { Token as TokenEntity } from '@sushiswap/currency'
 import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
+import stringify from 'fast-json-stable-stringify'
 import { Token, TokenLogo } from 'lib'
 import Image from 'next/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
@@ -47,13 +48,13 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
             })
           })
 
-        const result = await fetch('/partner/api/submitToken', {
+        const result = await fetch(process.env.NEXT_PUBLIC_PARTNER_URL + '/partner/api/submitToken', {
           headers: {
             Accept: '*/*',
             'Content-Type': 'application/json',
           },
           method: 'POST',
-          body: JSON.stringify({
+          body: stringify({
             tokenAddress: token.id.split(':')[1],
             tokenData: {
               name: token.name,
@@ -74,7 +75,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
           throw new Error('An unexpected error has occured.')
         }
       } catch (e) {
-        console.log(e)
+        console.error(e)
         setAddState('error')
       }
     },

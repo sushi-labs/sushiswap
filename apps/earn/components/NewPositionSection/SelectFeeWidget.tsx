@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChainId } from '@sushiswap/chain'
-import { Fee } from '@sushiswap/exchange'
+import { Fee } from '@sushiswap/amm'
 import { Tab, Tooltip, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import React, { FC, memo } from 'react'
@@ -27,7 +27,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
                   mouseEnterDelay={0.3}
                   button={
                     <div className="flex items-center justify-between pr-3">
-                      <Widget.Header title="2. Select Fee Tier" className="!pb-3" />
+                      <Widget.Header title="3. Select Fee Tier" className="!pb-3" />
                       <Typography variant="sm" weight={700} className="px-2 py-1 rounded-lg bg-slate-900">
                         {(FEE_MAP[fee] / 100).toFixed(2)}%
                       </Typography>
@@ -42,7 +42,7 @@ export const SelectFeeWidget: FC<SelectFeeWidgetProps> = memo(({ selectedNetwork
               ) : (
                 <Disclosure.Button className="w-full pr-3">
                   <div className="flex items-center justify-between">
-                    <Widget.Header title="2. Select Fee Tier" className="!pb-3" />
+                    <Widget.Header title="3. Select Fee Tier" className="!pb-3" />
                     <Typography variant="sm" weight={700} className="px-2 py-1 rounded-lg bg-slate-900">
                       {(FEE_MAP[fee] / 100).toFixed(2)}%
                     </Typography>

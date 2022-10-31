@@ -13,13 +13,21 @@ const withTranspileModules = transpileModules([
 const nextConfig = {
   basePath: '/kashi',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
+  productionBrowserSourceMaps: true,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  experimental: {
-    nextScriptWorkers: true,
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/kashi',
+        permanent: true,
+        basePath: false,
+      },
+    ]
   },
 }
 

@@ -25,7 +25,7 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
         title={article.title}
         description={article.description}
         openGraph={{
-          ...(isMediaVideo(article.cover.data.attributes.provider_metadata)
+          ...(isMediaVideo(article.cover?.data?.attributes?.provider_metadata)
             ? {
                 videos: [{ url: cover }],
               }
@@ -45,7 +45,7 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
       />
       <ArticleJsonLd
         type="Article"
-        url={`https://sushi.com/blog/${article.slug}`}
+        url={`https://www.sushi.com/blog/${article.slug}`}
         title={article.title}
         description={article.description}
         authorName={authors}

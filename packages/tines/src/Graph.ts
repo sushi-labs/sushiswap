@@ -1,10 +1,12 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { RPool, RToken, setTokenId } from './PrimaryPools'
+import { ConstantProductRPool, RPool, RToken, setTokenId } from './PrimaryPools'
+import { StableSwapRPool } from './StableSwapPool'
 import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils'
 
 // Routing info about each one swap
 export interface RouteLeg {
+  poolType: 'Stable' | 'Classic' | 'Unknown'
   poolAddress: string // which pool use for swap
   poolFee: number
 
@@ -622,6 +624,7 @@ export class Graph {
         }
         DEBUG(() => console.log(debug_info))
         if (Number.isNaN(finish.bestTotal)) {
+          // eslint-disable-next-line no-debugger
           debugger
         }
         return {
@@ -1051,12 +1054,31 @@ export class Graph {
       if (outAmount <= 0) return
 
       const total = outAmount
+
+      // IMPORTANT: Casting to Number to avoid compiler bug which for some reason
+      // keeps reference to outAmount which is mutated later
+      // const total = Number(outAmount)
+      // const totalTest = outAmount
+
+      // console.debug('BEFORE', { outAmount, total, totalTest })
+
       outEdges.forEach((e, i) => {
         const p = e[2] as number
         const quantity = i + 1 === outEdges.length ? 1 : p / outAmount
         const edge = e[0] as Edge
+
+        // console.debug(`edge iter ${0}`, { e, p })
+
+        const poolType =
+          edge.pool instanceof StableSwapRPool
+            ? 'Stable'
+            : edge.pool instanceof ConstantProductRPool
+            ? 'Classic'
+            : 'Unknown'
+
         legs.push({
           poolAddress: edge.pool.address,
+          poolType,
           poolFee: edge.pool.fee,
           tokenFrom: n.token,
           tokenTo: (n.getNeibour(edge) as Vertice).token,
@@ -1066,8 +1088,11 @@ export class Graph {
           absolutePortion: p / total,
         })
         gasSpent += (e[0] as Edge).pool.swapGasCost
+        // console.debug('before amountOut mutation', { total, outAmount })
         outAmount -= p
+        // console.debug('after amountOut mutation', { total, outAmount })
       })
+      // console.debug('AFTER', { outAmount, total, totalTest }, outAmount / total)
       console.assert(outAmount / total < 1e-12, 'Error 281')
     })
     return { legs, gasSpent, topologyWasChanged }

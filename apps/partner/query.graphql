@@ -1,4 +1,4 @@
-query TridentToken($id: String!, $native: String!) {
+query TridentToken($id: ID!, $native: String!) {
   Trident_token(id: $id) {
     liquidity
     volumeUSD
@@ -12,7 +12,7 @@ query TridentToken($id: String!, $native: String!) {
   }
 }
 
-query ExchangeToken($id: String!) {
+query ExchangeToken($id: ID!) {
   Exchange_token(id: $id) {
     derivedETH
     liquidity

@@ -4,7 +4,7 @@ import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
-import { TradeType } from '@sushiswap/exchange'
+import { TradeType } from '@sushiswap/amm'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
@@ -84,7 +84,9 @@ const theme: Theme = {
   ...defaultTheme,
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+
   const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query
 
   // TODO: Need to fetch srcToken & dstToken if they're address and pass down basic object to client
@@ -640,17 +642,17 @@ const Widget: FC<Swap> = ({
   }, [dstAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   useEffect(() => {
-    console.log('getFee escape hatch', [
-      !srcChainId,
-      !srcAmount,
-      !dstChainId,
-      !dstMinimumAmountOut,
-      !address,
-      !srcInputCurrencyRebase,
-      !srcOutputCurrencyRebase,
-      !dstOutputCurrencyRebase,
-      !contractWithProvider,
-    ])
+    // console.log('getFee escape hatch', [
+    //   !srcChainId,
+    //   !srcAmount,
+    //   !dstChainId,
+    //   !dstMinimumAmountOut,
+    //   !address,
+    //   !srcInputCurrencyRebase,
+    //   !srcOutputCurrencyRebase,
+    //   !dstOutputCurrencyRebase,
+    //   !contractWithProvider,
+    // ])
     if (
       !srcChainId ||
       !srcAmount ||
@@ -927,8 +929,8 @@ const Widget: FC<Swap> = ({
         >
           <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
             <App.NavItemList hideOnMobile={false}>
-              <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
-              <App.NavItemInternal href="https://sushi.com/xswap" label="xSwap" />
+              <App.NavItem href="https://www.sushi.com/swap" label="Swap" />
+              <App.NavItem href="https://www.sushi.com/xswap" label="xSwap" />
             </App.NavItemList>
             <div className="flex justify-end">
               <SettingsOverlay chainId={srcChainId} />

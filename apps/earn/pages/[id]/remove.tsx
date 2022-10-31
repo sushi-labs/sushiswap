@@ -31,7 +31,7 @@ const LINKS = ({ pair }: { pair: PairWithAlias }): BreadcrumbLink[] => [
 ]
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=100, stale-while-revalidate=599')
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const [pair] = await Promise.all([getPool(query.id as string)])
 
   return {

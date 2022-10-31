@@ -1,14 +1,13 @@
 {
   "name": "@sushiswap/nextjs-config",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "description": "Sushi Next.js Config",
   "keywords": [
     "sushi",
     "nextjs",
     "config"
   ],
-  "homepage": "https://sushi.com",
+  "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -20,9 +19,9 @@
     "index.js"
   ],
   "devDependencies": {
-    "next": "^12.3.0"
+    "next": "^12.3.1"
   },
   "peerDependencies": {
-    "next": "^12.3.0"
+    "next": "^12.3.1"
   }
 }

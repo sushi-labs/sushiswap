@@ -34,3 +34,7 @@ sources:
             - Type.!{Factory}
 documents:
   - ./query.graphql
+
+codegen:
+  contextType: 'MeshContext & { name: string; host: string; path: string; }'
+

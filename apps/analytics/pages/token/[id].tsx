@@ -1,4 +1,4 @@
-import { Token as GraphToken } from '@sushiswap/graph-client/.graphclient'
+import { Token as GraphToken } from '@sushiswap/graph-client'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -14,7 +14,6 @@ import { getBundles, getToken } from '../../lib/api'
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   const [token, bundles] = await Promise.all([getToken(query.id as string), getBundles()])
-
   return {
     props: {
       fallback: {

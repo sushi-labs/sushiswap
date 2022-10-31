@@ -1,5 +1,5 @@
 import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { useIsMounted } from '@sushiswap/hooks'
 import { AppearOnMount, Button, Dots, Typography } from '@sushiswap/ui'
 import { Approve, Checker, Chef, getMasterChefContractConfig } from '@sushiswap/wagmi'
@@ -53,11 +53,11 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
       try {
         await _withdraw(amount)
       } catch (e: unknown) {
-        if (!(e instanceof UserRejectedRequestError)) {
-          setError((e as ProviderRpcError).message)
+        if (e instanceof UserRejectedRequestError) return
+        if (e instanceof ProviderRpcError) {
+          setError(e.message)
         }
-
-        console.log(e)
+        console.error(e)
       }
     },
     [_withdraw]

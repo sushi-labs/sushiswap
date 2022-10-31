@@ -1,5 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type as Currency, useCurrencyCombinations, WNATIVE } from '@sushiswap/currency'
 import {
   ConstantProductPool,
   FACTORY_ADDRESS,
@@ -9,7 +7,9 @@ import {
   Trade,
   TradeType,
   Version as TradeVersion,
-} from '@sushiswap/exchange'
+} from '@sushiswap/amm'
+import { ChainId } from '@sushiswap/chain'
+import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
@@ -17,7 +17,8 @@ import { useFeeData } from 'wagmi'
 
 import { useBentoBoxTotals } from './useBentoBoxTotals'
 import { getConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
-import { PoolState, useGetAllConstantProductPools } from './useConstantProductPools'
+import { ConstantProductPoolState, useGetConstantProductPools } from './useConstantProductPools'
+import { useCurrencyCombinations } from './useCurrencyCombinations'
 import { PairState, usePairs } from './usePairs'
 
 type UseTradePayload = {
@@ -87,7 +88,7 @@ export const useTrade: UseTrade = ({
     data: constantProductPools,
     isLoading: isCppLoading,
     isError: isCppError,
-  } = useGetAllConstantProductPools(chainId, currencyCombinations, { enabled: tridentEnabled })
+  } = useGetConstantProductPools(chainId, currencyCombinations, { enabled: tridentEnabled })
 
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])
@@ -99,9 +100,9 @@ export const useTrade: UseTrade = ({
         pools
           // filter out invalid pools
           .filter(
-            (result): result is [PairState.EXISTS, Pair] | [PoolState.EXISTS, ConstantProductPool] =>
+            (result): result is [PairState.EXISTS, Pair] | [ConstantProductPoolState.EXISTS, ConstantProductPool] =>
               Boolean(result[0] === PairState.EXISTS && result[1]) ||
-              Boolean(result[0] === PoolState.EXISTS && result[1])
+              Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1])
           )
           .map(([, pair]) => pair)
       ),

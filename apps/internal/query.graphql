@@ -36,8 +36,20 @@ query CrossChainStrategyKpis($chainIds: [BigInt!]!) {
   }
 }
 
-query SubgraphIndexingStatus($subgraphName: String!) {
+query CurrentSubgraphIndexingStatus($subgraphName: String!) {
   indexingStatusForCurrentVersion(subgraphName: $subgraphName) {
+    ...Subgraph
+  }
+}
+
+query PendingSubgraphIndexingStatus($subgraphName: String!) {
+  indexingStatusForPendingVersion(subgraphName: $subgraphName) {
+    ...Subgraph
+  }
+}
+
+fragment Subgraph on SubgraphIndexingStatus {
+    subgraph
     entityCount
     fatalError {
       message
@@ -57,12 +69,14 @@ query SubgraphIndexingStatus($subgraphName: String!) {
       }
     }
     health
-  }
 }
 
-query SubgraphStatuses($subgraphNames: [String!]!) {
-  subgraphStatuses(subgraphNames: $subgraphNames) {
+query Subgraphs($subgraphNames: [String!]!, $type: SubgraphType!) {
+  subgraphs(subgraphNames: $subgraphNames, type: $type) {
     subgraphName
+    subgraphId
+    type
+    status
     startBlock
     lastSyncedBlock
     chainHeadBlock

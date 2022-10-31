@@ -6,7 +6,22 @@ const withTranspileModules = transpileModules(['@sushiswap/chain', '@sushiswap/w
 const nextConfig = {
   basePath: '/partner',
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
+  productionBrowserSourceMaps: true,
+  images: {
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/partner',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
   async headers() {
     return [
       {
@@ -23,14 +38,6 @@ const nextConfig = {
         ],
       },
     ]
-  },
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-    domains: ['app.sushi.com', 'raw.githubusercontent.com'],
-  },
-  experimental: {
-    nextScriptWorkers: true,
   },
 }
 

@@ -1,4 +1,5 @@
 import { getAddress } from '@ethersproject/address'
+import { JSBI } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { Currency } from './Currency'
@@ -8,25 +9,50 @@ import { Type } from './Type'
  * Represents an ERC20 token with a unique address and some metadata.
  */
 export class Token extends Currency {
-  public readonly isNative: false = false
-  public readonly isToken: true = true
+  public readonly isNative = false as const
+  public readonly isToken = true as const
   /**
    * The contract address on the chain on which this token lives
    */
   public readonly address: string
-
-  public constructor(token: {
+  /**
+   * The rebase
+   */
+  readonly rebase: {
+    base: JSBI
+    elastic: JSBI
+  }
+  public constructor({
+    chainId,
+    address,
+    decimals,
+    symbol,
+    name,
+    rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
+  }: {
     chainId: number | string
     address: string
     decimals: number
     symbol?: string
     name?: string
+    rebase?: { base: JSBI; elastic: JSBI }
   }) {
-    super(token)
+    super({
+      chainId,
+      decimals,
+      symbol,
+      name,
+    })
     try {
-      this.address = getAddress(token.address)
+      this.address = getAddress(address)
     } catch {
-      throw `${token.address} is not a valid address`
+      throw `${address} is not a valid address`
+    }
+    try {
+      // TODO: No rebase?
+      this.rebase = rebase
+    } catch {
+      throw `${rebase} is not a valid rebase`
     }
   }
 

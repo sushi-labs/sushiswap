@@ -14,7 +14,7 @@ interface RenderProps {
   query: string
   onInput(query: string): void
   searching: boolean
-  queryToken?: Token
+  queryToken: [Token | undefined]
 }
 
 interface Props {
@@ -59,8 +59,8 @@ export const TokenListFilterByQuery: FC<Props> = ({
 
   const searchToken = useMemo(() => {
     if (!searchTokenResult || !chainId) return undefined
-    const { decimals, address, symbol } = searchTokenResult
-    return new Token({ chainId, decimals, address, symbol, name: symbol })
+    const { decimals, address, symbol, name } = searchTokenResult
+    return new Token({ chainId, decimals, address, symbol, name })
   }, [chainId, searchTokenResult])
 
   const filteredTokens: Token[] = useMemo(() => {
@@ -89,7 +89,7 @@ export const TokenListFilterByQuery: FC<Props> = ({
       query,
       onInput: setQuery,
       searching: isLoading || searching.current,
-      queryToken: searchToken,
+      queryToken: [searchToken],
     })
   }, [children, filteredSortedTokensWithNative, isLoading, query, searchToken])
 }

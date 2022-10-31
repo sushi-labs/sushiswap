@@ -2,7 +2,7 @@ import { ExternalLinkIcon } from '@heroicons/react/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { formatNumber } from '@sushiswap/format'
-import { XSushi } from '@sushiswap/graph-client/.graphclient'
+import { XSushi } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
@@ -64,11 +64,11 @@ export const SushiBarSectionMobile: FC = () => {
         groupTimestamp: ts,
       })
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+      if (e instanceof UserRejectedRequestError) return
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [activeChain?.id, amount, writeAsync, createNotification, selectedIndex])
 

@@ -1,5 +1,7 @@
-import { Token } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
+import { getAddress } from '@ethersproject/address'
+import { Amount, Price, Share, Token } from '@sushiswap/currency'
+import { JSBI, maximum, minimum, Percent, ZERO } from '@sushiswap/math'
+import { KASHI_ADDRESS } from 'config'
 
 import { computePairAddress } from './computePairAddress'
 import { KashiPair as KashiPairDTO } from '.graphclient'
@@ -11,8 +13,8 @@ export type StrategyData = {
 }
 
 export type Rebase = {
-  readonly base: JSBI
-  readonly elastic: JSBI
+  base: JSBI
+  elastic: JSBI
 }
 
 export class Strategy {}
@@ -32,23 +34,41 @@ export class Oracle {
 }
 
 export type AccrueInfo = {
-  readonly interestPerSecond: JSBI
-  readonly lastAccrued: JSBI
-  readonly feesEarnedFraction: JSBI
+  interestPerSecond: JSBI
+  lastAccrued: JSBI
+  feesEarnedFraction: JSBI
 }
 
-export class KashiLendingPairV1 {
+export class KashiMediumRiskLendingPairV1 {
+  readonly chainId: keyof typeof KASHI_ADDRESS
+  readonly id: string
   readonly address: string
-  readonly accrueInfo: AccrueInfo
+  readonly bentoBox: string
+  readonly masterContract: string
   readonly collateral: Token
   readonly asset: Token
   readonly oracle: string
   readonly oracleData: string
+  readonly totalCollateralShare: Share<Token>
   readonly totalAsset: Rebase
   readonly totalBorrow: Rebase
+  readonly accrueInfo: AccrueInfo
   readonly exchangeRate: JSBI
+
+  readonly symbol: string
+  readonly name: string
+  readonly decimals: number
+
+  readonly totalSupply: Share<Token>
+
   readonly oracleExchangeRate: JSBI
   readonly spotExchangeRate: JSBI
+
+  readonly totalAssetUSD: number
+  readonly totalBorrowUSD: number
+
+  readonly assetPrice: Price<Token, Token>
+  readonly collateralPrice: Price<Token, Token>
 
   static getAddress(collateral: Token, asset: Token, oracle: string, oracleData: string): string {
     return computePairAddress({
@@ -60,33 +80,317 @@ export class KashiLendingPairV1 {
   }
 
   // Settings for the Medium Risk KashiPair
-  private CLOSED_COLLATERIZATION_RATE = 75000 // 75%
-  private OPEN_COLLATERIZATION_RATE = 77000 // 77%
-  private COLLATERIZATION_RATE_PRECISION = 1e5 // Must be less than EXCHANGE_RATE_PRECISION (due to optimization in math)
-  private MINIMUM_TARGET_UTILIZATION = 7e17 // 70%
-  private MAXIMUM_TARGET_UTILIZATION = 8e17 // 80%
-  private UTILIZATION_PRECISION = 1e18
-  private FULL_UTILIZATION = 1e18
-  private FULL_UTILIZATION_MINUS_MAX = this.FULL_UTILIZATION - this.MAXIMUM_TARGET_UTILIZATION
-  private FACTOR_PRECISION = 1e18
+  private CLOSED_COLLATERIZATION_RATE = JSBI.BigInt(75000) // 75%
+  private OPEN_COLLATERIZATION_RATE = JSBI.BigInt(77000) // 77%
+  private COLLATERIZATION_RATE_PRECISION = JSBI.BigInt(1e5) // Must be less than EXCHANGE_RATE_PRECISION (due to optimization in math)
+  private MINIMUM_TARGET_UTILIZATION = JSBI.BigInt(7e17) // 70%
+  private MAXIMUM_TARGET_UTILIZATION = JSBI.BigInt(8e17) // 80%
+  private UTILIZATION_PRECISION = JSBI.BigInt(1e18)
+  private FULL_UTILIZATION = JSBI.BigInt(1e18)
+  private FULL_UTILIZATION_MINUS_MAX = JSBI.subtract(this.FULL_UTILIZATION, this.MAXIMUM_TARGET_UTILIZATION)
+  private FACTOR_PRECISION = JSBI.BigInt(1e18)
 
-  private STARTING_INTEREST_PER_SECOND = 317097920 // approx 1% APR
-  private MINIMUM_INTEREST_PER_SECOND = 79274480 // approx 0.25% APR
-  private MAXIMUM_INTEREST_PER_SECOND = 317097920000 // approx 1000% APR
-  private INTEREST_ELASTICITY = 28800e36 // Half or double in 28800 seconds (8 hours) if linear
+  private STARTING_INTEREST_PER_SECOND = JSBI.BigInt(317097920) // approx 1% APR
+  private MINIMUM_INTEREST_PER_SECOND = JSBI.BigInt(79274480) // approx 0.25% APR
+  private MAXIMUM_INTEREST_PER_SECOND = JSBI.BigInt(317097920000) // approx 1000% APR
+  private INTEREST_ELASTICITY = JSBI.BigInt(28800e36) // Half or double in 28800 seconds (8 hours) if linear
 
-  private EXCHANGE_RATE_PRECISION = 1e18
+  private EXCHANGE_RATE_PRECISION = JSBI.BigInt(1e18)
 
-  private LIQUIDATION_MULTIPLIER = 112000 // add 12%
-  private LIQUIDATION_MULTIPLIER_PRECISION = 1e5
+  private LIQUIDATION_MULTIPLIER = JSBI.BigInt(112000) // add 12%
+  private LIQUIDATION_MULTIPLIER_PRECISION = JSBI.BigInt(1e5)
 
   // Fees
-  private PROTOCOL_FEE = 10000 // 10%
-  private PROTOCOL_FEE_DIVISOR = 1e5
-  private BORROW_OPENING_FEE = 50 // 0.05%
-  private BORROW_OPENING_FEE_PRECISION = 1e5
+  private PROTOCOL_FEE = JSBI.BigInt(10000) // 10%
+  private PROTOCOL_FEE_DIVISOR = JSBI.BigInt(1e5)
+  private BORROW_OPENING_FEE = JSBI.BigInt(50) // 0.05%
+  private BORROW_OPENING_FEE_PRECISION = JSBI.BigInt(1e5)
+
+  // Non contract
+
+  // approx 1% APR
+  private STARTING_INTEREST_PER_YEAR = JSBI.multiply(this.STARTING_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
+
+  // approx 0.25% APR
+  public MINIMUM_INTEREST_PER_YEAR = JSBI.multiply(this.MINIMUM_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
+
+  // approx 1000% APR
+  private MAXIMUM_INTEREST_PER_YEAR = JSBI.multiply(this.MAXIMUM_INTEREST_PER_SECOND, JSBI.BigInt(60 * 60 * 24 * 365))
 
   constructor(pair: KashiPairDTO) {
-    //
+    this.id = getAddress(pair.id)
+    this.address = getAddress(pair.id)
+
+    this.chainId = pair.chainId
+
+    // this.bentoBox = getAddress(pair.bentoBox.id)
+    this.masterContract = getAddress(pair.masterContract.id)
+
+    this.collateral = new Token({
+      chainId: pair.chainId,
+      address: getAddress(pair.collateral.id),
+      ...pair.collateral,
+      rebase: {
+        base: JSBI.BigInt(pair.collateral.rebase.base),
+        elastic: JSBI.BigInt(pair.collateral.rebase.elastic),
+      },
+    })
+
+    this.asset = new Token({
+      chainId: pair.chainId,
+      address: getAddress(pair.asset.id),
+      ...pair.asset,
+      rebase: {
+        base: JSBI.BigInt(pair.asset.rebase.base),
+        elastic: JSBI.BigInt(pair.asset.rebase.elastic),
+      },
+    })
+
+    this.oracle = getAddress(pair.oracle)
+    // TODO: ADD VALIDATION
+    this.oracleData = pair.oracleData
+
+    this.totalCollateralShare = Share.fromRawShare(this.collateral, pair.totalCollateralShare)
+
+    this.totalAsset = {
+      base: JSBI.BigInt(pair.totalAsset.base),
+      elastic: JSBI.BigInt(pair.totalAsset.elastic),
+    }
+
+    this.totalBorrow = {
+      base: JSBI.BigInt(pair.totalBorrow.base),
+      elastic: JSBI.BigInt(pair.totalBorrow.elastic),
+    }
+
+    this.exchangeRate = JSBI.BigInt(pair.exchangeRate)
+
+    this.accrueInfo = {
+      interestPerSecond: JSBI.BigInt(pair.accrueInfo.interestPerSecond),
+      lastAccrued: JSBI.BigInt(pair.accrueInfo.lastAccrued),
+      feesEarnedFraction: JSBI.BigInt(pair.accrueInfo.feesEarnedFraction),
+    }
+
+    this.symbol = pair.symbol
+    this.name = pair.name
+    this.decimals = pair.decimals
+
+    this.totalSupply = Share.fromRawShare(this.asset, this.totalAsset.base)
+
+    this.totalAssetUSD = Number(pair.totalAssetUSD)
+    this.totalBorrowUSD = Number(pair.totalBorrowUSD)
+
+    this.assetPrice = new Price(
+      this.collateral,
+      this.asset,
+      10 ** this.collateral.decimals,
+      Math.round(pair.assetPrice * 10 ** this.asset.decimals)
+    )
+    this.collateralPrice = new Price(
+      this.asset,
+      this.collateral,
+      10 ** this.asset.decimals,
+      Math.round(pair.collateralPrice * 10 ** this.collateral.decimals)
+    )
+  }
+
+  /**
+   * Returns the number of elapsed seconds since the last accrue
+   */
+  public get elapsedSeconds(): JSBI {
+    const currentDate = JSBI.divide(JSBI.BigInt(Date.now()), JSBI.BigInt(1000))
+    return JSBI.subtract(currentDate, this.accrueInfo.lastAccrued)
+  }
+
+  /**
+   * Minimum interest per year
+   */
+  public get minimumInterestPerYear(): Percent {
+    return new Percent(this.MINIMUM_INTEREST_PER_YEAR, JSBI.BigInt(1e18))
+  }
+
+  /**
+   * Maximum interest per year
+   */
+  public get maximumInterestPerYear(): Percent {
+    return new Percent(this.MAXIMUM_INTEREST_PER_YEAR, JSBI.BigInt(1e18))
+  }
+
+  /**
+   * Interest per year for borrowers at last accrue, this will apply during the next accrue
+   */
+  public get interestPerYear(): JSBI {
+    return JSBI.multiply(this.accrueInfo.interestPerSecond, JSBI.BigInt(60 * 60 * 24 * 365))
+  }
+
+  /**
+   * Interest per year for borrowers if accrued was called
+   */
+  public get currentInterestPerYear(): JSBI {
+    if (JSBI.equal(this.totalBorrow.base, ZERO)) {
+      return this.STARTING_INTEREST_PER_YEAR
+    }
+    if (JSBI.lessThanOrEqual(this.elapsedSeconds, ZERO)) {
+      return this.interestPerYear
+    }
+
+    let currentInterest = this.interestPerYear
+
+    if (JSBI.lessThan(this.utilization, this.MINIMUM_TARGET_UTILIZATION)) {
+      const underFactor = JSBI.greaterThan(this.MINIMUM_TARGET_UTILIZATION, ZERO)
+        ? JSBI.divide(
+            JSBI.multiply(JSBI.subtract(this.MINIMUM_TARGET_UTILIZATION, this.utilization), this.FACTOR_PRECISION),
+            this.MINIMUM_TARGET_UTILIZATION
+          )
+        : ZERO
+      const scale = JSBI.add(
+        this.INTEREST_ELASTICITY,
+        JSBI.multiply(JSBI.multiply(underFactor, underFactor), this.elapsedSeconds)
+      )
+      currentInterest = JSBI.divide(JSBI.multiply(currentInterest, this.INTEREST_ELASTICITY), scale)
+
+      if (JSBI.lessThan(currentInterest, this.MINIMUM_INTEREST_PER_YEAR)) {
+        currentInterest = this.MINIMUM_INTEREST_PER_YEAR // 0.25% APR minimum
+      }
+    } else if (JSBI.greaterThan(this.utilization, this.MAXIMUM_TARGET_UTILIZATION)) {
+      const overFactor = JSBI.multiply(
+        JSBI.subtract(this.utilization, this.MAXIMUM_TARGET_UTILIZATION),
+        JSBI.divide(this.FACTOR_PRECISION, this.FULL_UTILIZATION_MINUS_MAX)
+      )
+      const scale = JSBI.add(
+        this.INTEREST_ELASTICITY,
+        JSBI.multiply(JSBI.multiply(overFactor, overFactor), this.elapsedSeconds)
+      )
+      currentInterest = JSBI.divide(JSBI.multiply(currentInterest, scale), this.INTEREST_ELASTICITY)
+      if (JSBI.greaterThan(currentInterest, this.MAXIMUM_INTEREST_PER_YEAR)) {
+        currentInterest = this.MAXIMUM_INTEREST_PER_YEAR // 1000% APR maximum
+      }
+    }
+    return currentInterest
+  }
+
+  /**
+   * The total collateral in the market (collateral is stable, it doesn't accrue)
+   */
+  public get totalCollateralAmount(): Amount<Token> {
+    // console.log('totalCollateralAmount', this.totalCollateralShare.toFixed())
+    return this.totalCollateralShare.toAmount(this.collateral.rebase)
+  }
+
+  /**
+   * The total assets unborrowed in the market (stable, doesn't accrue)
+   */
+  public get totalAssetAmount(): Amount<Token> {
+    // TODO: Make sure this is correct...
+    return Amount.fromRawAmount(this.asset, this.totalAsset.elastic)
+  }
+
+  private accrue(amount: JSBI, includePrincipal = false): JSBI {
+    return JSBI.add(
+      JSBI.divide(
+        JSBI.multiply(JSBI.multiply(amount, this.accrueInfo.interestPerSecond), this.elapsedSeconds),
+        JSBI.BigInt(1e18)
+      ),
+      includePrincipal ? amount : ZERO
+    )
+  }
+
+  /**
+   * The total assets borrowed in the market right now
+   */
+  public get currentBorrowAmount(): Amount<Token> {
+    return Amount.fromRawAmount(this.asset, this.accrue(this.totalBorrow.elastic, true))
+  }
+
+  /**
+   * The total amount of assets, both borrowed and still available right now
+   */
+  public get currentAllAssets(): Amount<Token> {
+    return this.totalAssetAmount.add(this.currentBorrowAmount)
+  }
+
+  /**
+   * Current total amount of asset shares
+   */
+  public get currentAllAssetShares(): Share<Token> {
+    return this.currentAllAssets.toShare(this.asset.rebase)
+  }
+
+  /**
+   * Current totalAsset with the protocol fee accrued
+   */
+  public get currentTotalAsset(): Rebase {
+    const extraAmount = JSBI.divide(
+      JSBI.multiply(
+        JSBI.multiply(this.totalBorrow.elastic, this.accrueInfo.interestPerSecond),
+        JSBI.add(this.elapsedSeconds, JSBI.BigInt(3600)) // For some transactions, to succeed in the next hour (and not only this block), some margin has to be added
+      ),
+      JSBI.BigInt(1e18)
+    )
+    const feeAmount = JSBI.divide(JSBI.multiply(extraAmount, this.PROTOCOL_FEE), this.PROTOCOL_FEE_DIVISOR) // % of interest paid goes to fee
+    const feeFraction = JSBI.divide(JSBI.multiply(feeAmount, this.totalAsset.base), this.currentAllAssets.quotient)
+    return {
+      elastic: this.totalAsset.elastic,
+      base: JSBI.add(this.totalAsset.base, feeFraction),
+    }
+  }
+
+  private takeFee(amount: JSBI): JSBI {
+    return JSBI.subtract(amount, JSBI.divide(JSBI.multiply(amount, this.PROTOCOL_FEE), this.PROTOCOL_FEE_DIVISOR))
+  }
+
+  /**
+   * The current utilization in %
+   */
+  public get utilization(): JSBI {
+    if (this.currentAllAssets.equalTo(ZERO)) return ZERO
+    return this.currentBorrowAmount.multiply(1e18).divide(this.currentAllAssets).quotient
+  }
+
+  /**
+   * The 'mimimum' exchange rate
+   */
+  public get minimumExchangeRate(): JSBI {
+    return minimum(this.exchangeRate, this.spotExchangeRate, this.oracleExchangeRate)
+  }
+
+  /**
+   * The 'maximum' exchange rate
+   */
+  public get maximumExchangeRate(): JSBI {
+    return maximum(this.exchangeRate, this.spotExchangeRate, this.oracleExchangeRate)
+  }
+
+  /**
+   * Interest per year charged to borrowers as of now
+   */
+  public get borrowAPR(): Percent {
+    return new Percent(this.interestPerYear, JSBI.BigInt(1e18))
+  }
+
+  /**
+   * Interest per year charged to borrowers if accrue was called
+   */
+  public get currentBorrowAPR(): Percent {
+    return new Percent(this.currentInterestPerYear, JSBI.BigInt(1e18))
+  }
+
+  /**
+   * Interest per year received by lenders as of now
+   */
+  public get supplyAPR(): Percent {
+    return new Percent(
+      this.takeFee(JSBI.divide(JSBI.multiply(this.interestPerYear, this.utilization), JSBI.BigInt(1e18))),
+      JSBI.BigInt(1e18)
+    )
+  }
+
+  /**
+   * Interest per year received by lenders if accrue was called
+   */
+  public get currentSupplyAPR(): Percent {
+    return new Percent(
+      this.takeFee(JSBI.divide(JSBI.multiply(this.currentInterestPerYear, this.utilization), JSBI.BigInt(1e18))),
+      JSBI.BigInt(1e18)
+    )
   }
 }

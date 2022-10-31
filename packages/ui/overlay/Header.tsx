@@ -19,7 +19,7 @@ export const Header: FC<Header> = ({ className, title, border = true, onBack, on
       className={classNames(
         className,
         border ? 'border-b border-slate-200/5' : '',
-        'flex items-center justify-between absolute top-0 left-0 right-0 px-3 h-[48px]'
+        'grid grid-cols-3 absolute top-0 left-0 right-0 px-3 h-[48px]'
       )}
     >
       {onBack ? (
@@ -40,13 +40,19 @@ export const Header: FC<Header> = ({ className, title, border = true, onBack, on
       ) : (
         <div />
       )}
-      <Typography weight={500} as="h3" className={classNames('flex gap-4 text-lg font-medium leading-6 ')}>
+      <Typography
+        weight={500}
+        as="h3"
+        className={classNames('flex items-center justify-center gap-4 text-lg font-medium leading-6')}
+      >
         {title}
       </Typography>
       {onClose ? (
-        <IconButton className="flex items-center justify-center cursor-pointer" onClick={onClose}>
-          <XIcon width={24} height={24} />
-        </IconButton>
+        <div className="flex items-center justify-end">
+          <IconButton className="flex items-center justify-end cursor-pointer" onClick={onClose}>
+            <XIcon width={24} height={24} />
+          </IconButton>
+        </div>
       ) : (
         <div />
       )}

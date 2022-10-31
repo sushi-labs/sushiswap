@@ -1,5 +1,5 @@
 import { Native } from '@sushiswap/currency'
-import { formatNumber, formatUSD } from '@sushiswap/format'
+import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
 import { Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
@@ -13,12 +13,6 @@ interface PoolStats {
 export const PoolStats: FC<PoolStats> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
   const nativePrice = prices?.[Native.onChain(pair.chainId).wrapped.address]
-  const [totals1d, totals2d] = pair.dayChangeData
-  const reserveChange = ((totals1d.liquidityUSD - totals2d?.liquidityUSD) / totals2d?.liquidityUSD) * 100
-  const volChange = ((totals1d.volumeUSD - totals2d?.volumeUSD) / totals2d?.volumeUSD) * 100
-  const transactionCountChange =
-    ((totals1d.transactionCount - totals2d?.transactionCount) / totals2d?.transactionCount) * 100
-
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
@@ -28,46 +22,55 @@ export const PoolStats: FC<PoolStats> = ({ pair }) => {
         <Typography weight={500} className="text-slate-50">
           {formatUSD(pair.liquidityNative * Number(nativePrice?.toFixed(4)))}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
-          {reserveChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(reserveChange))}%
-        </Typography>
+        {pair.liquidity1dChange ? (
+          <Typography variant="xs" weight={500} className={pair.liquidity1dChange > 0 ? 'text-green' : 'text-red'}>
+            {pair.liquidity1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(pair.liquidity1dChange))}
+          </Typography>
+        ) : null}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Volume (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(totals1d.volumeUSD)}
+          {formatUSD(pair.volume1d)}
         </Typography>
-        <Typography variant="xs" weight={500} className={volChange > 0 ? 'text-green' : 'text-red'}>
-          {volChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(volChange))}%
-        </Typography>
+        {pair.volume1dChange ? (
+          <Typography variant="xs" weight={500} className={pair.volume1dChange > 0 ? 'text-green' : 'text-red'}>
+            {pair.volume1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(pair.volume1dChange))}
+          </Typography>
+        ) : null}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Fees (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatUSD(totals1d.volumeUSD * (pair.swapFee / 10000))}
+          {formatUSD(pair.volume1d * (pair.swapFee / 10000))}
         </Typography>
-        <Typography variant="xs" weight={500} className={volChange > 0 ? 'text-green' : 'text-red'}>
-          {volChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(volChange))}%
-        </Typography>
+        {pair.volume1dChange ? (
+          <Typography variant="xs" weight={500} className={pair.volume1dChange > 0 ? 'text-green' : 'text-red'}>
+            {pair.volume1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(pair.volume1dChange))}
+          </Typography>
+        ) : null}
       </div>
       <div className="flex flex-col gap-1 p-3 rounded-md shadow-md bg-slate-800 shadow-black/20">
         <Typography variant="xs" weight={500} className="text-slate-400">
           Transactions (24h)
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {formatNumber(totals1d.transactionCount)}
+          {/* Don't need decimals for a count */}
+          {formatNumber(pair.txCount1d).replace('.00', '')}
         </Typography>
-        <Typography variant="xs" weight={500} className={transactionCountChange > 0 ? 'text-green' : 'text-red'}>
-          {transactionCountChange > 0 ? '+' : '-'}
-          {formatNumber(Math.abs(transactionCountChange))}%
-        </Typography>
+        {pair.txCount1dChange ? (
+          <Typography variant="xs" weight={500} className={pair.txCount1dChange > 0 ? 'text-green' : 'text-red'}>
+            {pair.txCount1dChange > 0 ? '+' : '-'}
+            {formatPercent(Math.abs(pair.txCount1dChange))}
+          </Typography>
+        ) : null}
       </div>
     </div>
   )

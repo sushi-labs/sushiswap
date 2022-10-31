@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 
 import {
   AddCustomToken,
+  AddCustomTokens,
   ClearNotifications,
   createNotification,
   GasPrice,
@@ -15,6 +16,7 @@ import {
   UpdateMaxPriorityFeePerGas,
   UpdateSlippageTolerancePayload,
   UpdateSlippageToleranceTypePayload,
+  UpdateSushiGuard,
   UpdateTransactionDeadline,
 } from './types'
 
@@ -29,6 +31,7 @@ const initialState: StorageState = {
   gasType: parsedState?.gasType || 'preset',
   customTokens: parsedState?.customTokens || {},
   expertMode: parsedState?.expertMode || false,
+  sushiGuard: parsedState?.sushiGuard || false,
   transactionDeadline: 30,
   notifications: parsedState?.notifications || {},
 }
@@ -41,6 +44,10 @@ const reducers = {
   updateExpertMode: (state: StorageState, action: PayloadAction<UpdateExpertMode>) => {
     const { expertMode } = action.payload
     state.expertMode = expertMode
+  },
+  updateSushiGuard: (state: StorageState, action: PayloadAction<UpdateSushiGuard>) => {
+    const { sushiGuard } = action.payload
+    state.sushiGuard = sushiGuard
   },
   updateSlippageTolerance: (state: StorageState, action: PayloadAction<UpdateSlippageTolerancePayload>) => {
     const { slippageTolerance } = action.payload
@@ -81,6 +88,17 @@ const reducers = {
     }
 
     state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
+  },
+  addCustomTokens: (state: StorageState, action: PayloadAction<AddCustomTokens>) => {
+    for (const item of action.payload) {
+      const { address, symbol, name, chainId, decimals } = item
+
+      if (!state.customTokens[chainId]) {
+        state.customTokens[chainId] = {}
+      }
+
+      state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
+    }
   },
   removeCustomToken: (state: StorageState, action: PayloadAction<RemoveCustomToken>) => {
     const { address, chainId } = action.payload

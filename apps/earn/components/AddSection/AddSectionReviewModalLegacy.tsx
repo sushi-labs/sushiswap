@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { calculateSlippageAmount } from '@sushiswap/exchange'
+import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
@@ -11,7 +11,7 @@ import {
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useNetwork, UserRejectedRequestError, useDeprecatedSendTransaction } from 'wagmi'
+import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useNetwork, UserRejectedRequestError } from 'wagmi'
 
 import { useTransactionDeadline } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
@@ -136,11 +136,11 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         groupTimestamp: ts,
       })
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+      if (e instanceof UserRejectedRequestError) return
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [
     token0,

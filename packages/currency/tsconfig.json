@@ -1,6 +1,6 @@
 {
-  "extends": "@sushiswap/typescript-config/react-library.json",
-  "include": ["src",],
+  "extends": "@sushiswap/typescript-config/node16.json",
+  "include": ["src"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "./dist",

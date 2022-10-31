@@ -1,11 +1,13 @@
 import { useContractRead } from 'wagmi'
 
-import { getMulticallContractConfig } from './useMulticallContract'
+import { getMulticall3ContractConfig } from './useMulticall3Contract'
 
-export const useCurrentBlockTimestamp = (chainId: number, enabled = true) => {
+export const useCurrentBlockTimestamp = (chainId: number | undefined, enabled = true) => {
   return useContractRead({
-    ...getMulticallContractConfig(chainId),
+    ...getMulticall3ContractConfig(chainId),
     functionName: 'getCurrentBlockTimestamp',
-    watch: enabled,
+    enabled: true,
+    watch: true,
+    keepPreviousData: true,
   })
 }

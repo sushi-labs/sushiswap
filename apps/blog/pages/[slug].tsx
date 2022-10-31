@@ -19,11 +19,12 @@ import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
 export async function getStaticPaths() {
   const allArticles = await getAllArticlesBySlug()
+
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
       if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`)
 
-      console.log(acc)
+      // console.log(acc)
       return acc
     }, []),
     fallback: true,
@@ -37,17 +38,22 @@ export async function getStaticProps({
   params: { slug: string }
   preview: Record<string, unknown> | null
 }) {
-  const data = await getArticleAndMoreArticles(params.slug, preview)
+  const data = await getArticleAndMoreArticles(params.slug, !!preview)
+
+  if (!data?.articles?.data?.[0]) {
+    return {
+      props: {},
+      notFound: true,
+    }
+  }
 
   return {
     props: {
-      // @ts-ignore
-      article: data?.articles?.data?.[0],
-      // @ts-ignore
-      latestArticles: data?.moreArticles?.data,
+      article: data.articles.data[0],
+      latestArticles: data.moreArticles.data,
       preview: !!preview,
     },
-    revalidate: 1,
+    revalidate: 60,
   }
 }
 

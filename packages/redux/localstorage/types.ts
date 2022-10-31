@@ -16,6 +16,7 @@ export type TokenAsObject = { address: string; chainId: ChainId; symbol?: string
 export type StorageState = {
   carbonOffset: boolean
   expertMode: boolean
+  sushiGuard: boolean
   slippageTolerance: number
   slippageToleranceType: 'auto' | 'custom'
   gasPrice: GasPrice
@@ -37,6 +38,10 @@ export interface UpdateSlippageTolerancePayload {
 
 export interface UpdateExpertMode {
   expertMode: boolean
+}
+
+export interface UpdateSushiGuard {
+  sushiGuard: boolean
 }
 
 export interface UpdateSlippageToleranceTypePayload {
@@ -74,4 +79,5 @@ export interface ClearNotifications {
 }
 
 export type AddCustomToken = TokenAsObject
+export type AddCustomTokens = TokenAsObject[]
 export type RemoveCustomToken = Pick<TokenAsObject, 'chainId' | 'address'>

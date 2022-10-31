@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Amount, Native } from '@sushiswap/currency'
-import { calculateSlippageAmount } from '@sushiswap/exchange'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { calculateSlippageAmount } from '@sushiswap/amm'
+import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
@@ -204,11 +204,11 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
         })
       }
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+      if (e instanceof UserRejectedRequestError) return
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [
     token0,

@@ -19,6 +19,7 @@ export const bentoTokensQuery = gql`
   query bentoTokens($first: Int = 1000, $skip: Int = 0, $block: Block_height, $where: Token_filter) {
     tokens(first: $first, skip: $skip, block: $block, where: $where) {
       id
+      decimals
       rebase {
         elastic
       }

@@ -1,7 +1,8 @@
+import { RefreshIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { formatPercent } from '@sushiswap/format'
+import { formatNumber, formatPercent } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { NetworkIcon } from '@sushiswap/ui'
+import { CheckIcon, NetworkIcon, Tooltip } from '@sushiswap/ui'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { GenericTable } from 'components/Table'
 import { Subgraph } from 'lib'
@@ -32,45 +33,64 @@ const columns = [
     },
     enableHiding: true,
   }),
+  columnHelper.accessor('type', {
+    header: 'Type',
+    cell: (info) => (
+      <div className="flex justify-center">
+        {info.getValue() === 'Current' ? (
+          <Tooltip panel={<>Synced</>} button={<CheckIcon width={24} height={24} />} />
+        ) : (
+          <Tooltip panel={<>Syncing</>} button={<RefreshIcon width={24} height={24} />} />
+        )}
+      </div>
+    ),
+  }),
   columnHelper.accessor('subgraphName', {
     header: 'Name',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('data.startBlock', {
+  columnHelper.accessor('startBlock', {
     header: 'Start Block',
     cell: (info) => info.getValue(),
   }),
   columnHelper.display({
     id: 'Synced %',
     header: 'Synced %',
-    cell: ({ row }) => formatPercent(row.original.data.lastSyncedBlock / row.original.data.chainHeadBlock),
+    cell: ({ row }) => formatPercent(row.original.lastSyncedBlock / row.original.chainHeadBlock),
   }),
-  columnHelper.accessor('data.lastSyncedBlock', {
+  columnHelper.accessor('lastSyncedBlock', {
     header: 'Synced Block',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('data.chainHeadBlock', {
+  columnHelper.accessor('chainHeadBlock', {
     header: 'Last Block',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('data.nonFatalErrorCount', {
+  columnHelper.accessor('nonFatalErrorCount', {
     header: 'NFError Count',
     cell: (info) => info.getValue(),
   }),
   columnHelper.display({
     id: 'Status',
     header: 'Status',
-    cell: ({ row }) => {
-      const unsyncedBlockCount = row.original.data.chainHeadBlock - row.original.data.lastSyncedBlock
-      const status = row.original.data.hasFailed ? 'Failed' : unsyncedBlockCount <= 10 ? 'Synced' : 'Syncing'
+    cell: ({
+      row: {
+        original: { status, chainHeadBlock, lastSyncedBlock },
+      },
+    }) => {
+      const unsyncedBlockCount = chainHeadBlock - lastSyncedBlock
 
       switch (status) {
         case 'Synced':
-          return <div className="text-green">{status}</div>
+          return (
+            <div className="text-green">
+              {status} {unsyncedBlockCount !== 0 && <>({unsyncedBlockCount})</>}
+            </div>
+          )
         case 'Syncing':
           return (
             <div className="text-yellow">
-              {status} ({unsyncedBlockCount})
+              {status} ({formatNumber(unsyncedBlockCount).replace(/\.(00|0)/, '')})
             </div>
           )
         case 'Failed':
@@ -90,5 +110,11 @@ export function SubgraphTable({ subgraphs, groupBy }: SubgraphTable) {
     },
   })
 
-  return <GenericTable table={table} columns={columns} />
+  return (
+    <GenericTable
+      table={table}
+      columns={columns}
+      getLink={(row) => `https://thegraph.com/hosted-service/subgraph/${row.subgraphName}`}
+    />
+  )
 }

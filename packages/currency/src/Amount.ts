@@ -8,7 +8,6 @@ import { Type } from './Type'
 export class Amount<T extends Type> extends Fraction {
   public readonly currency: T
   public readonly scale: JSBI
-
   /**
    * Returns a new currency amount instance from the unitless amount of token, i.e. the raw amount
    * @param currency the currency in the amount
@@ -101,6 +100,10 @@ export class Amount<T extends Type> extends Fraction {
   ): string {
     invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS')
     return super.divide(this.scale).toFixed(decimalPlaces, format, rounding)
+  }
+
+  public toHex(): string {
+    return `0x${this.quotient.toString(16)}`
   }
 
   public toExact(format: object = { groupSeparator: '' }): string {

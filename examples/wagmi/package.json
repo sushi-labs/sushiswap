@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --port 4002",
-    "lint": "eslint --fix . && next lint",
+    "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
   },
@@ -16,10 +16,10 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "ethers": "^5.7.0",
-    "next": "^12.3.0",
+    "next": "^12.3.1",
     "react": "^18.2.0",
     "react-dom": "18.2.0",
-    "wagmi": "0.6.7"
+    "wagmi": "0.6.8"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -34,6 +34,6 @@
     "next-transpile-modules": "^9.0.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.1.0",
-    "typescript": "4.6.3"
+    "typescript": "4.8.2"
   }
 }

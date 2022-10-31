@@ -1,6 +1,7 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK, QuerycrossChainPairsArgs } from '@sushiswap/graph-client/.graphclient'
-import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
+import { getBuiltGraphSDK, Pagination, QuerycrossChainPairsArgs } from '@sushiswap/graph-client'
+import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
+import stringify from 'fast-json-stable-stringify'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
@@ -33,40 +34,11 @@ export const getBundles = async () => {
   }, {})
 }
 
-export const getOneDayBlocks = async (chainIds: number[]) => {
-  const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
-  const start = getUnixTime(date)
-  const end = getUnixTime(addSeconds(date, 600))
-  return sdk.CrossChainBlocks({
-    first: 1,
-    skip: 0,
-    // @ts-ignore
-    where: { timestamp_gt: start, timestamp_lt: end },
-    orderBy: 'timestamp',
-    orderDirection: 'desc',
-    chainIds,
-  })
-}
-
-export const getOneWeekBlocks = async (chainIds: number[]) => {
-  const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 7))))
-  const start = getUnixTime(date)
-  const end = getUnixTime(addSeconds(date, 600))
-  return sdk.CrossChainBlocks({
-    first: 1,
-    skip: 0,
-    // @ts-ignore
-    where: { timestamp_gt: start, timestamp_lt: end },
-    orderBy: 'timestamp',
-    orderDirection: 'desc',
-    chainIds,
-  })
-}
-
 export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
   pagination: string
+  farmsOnly?: string
 }
 
 export const getPools = async (query?: GetPoolsQuery) => {
@@ -74,7 +46,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
     const start = getUnixTime(date)
 
-    const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
+    const pagination: Pagination = query?.pagination
       ? JSON.parse(query.pagination)
       : {
           pageIndex: 0,
@@ -88,11 +60,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-
-    const [{ crossChainBlocks: oneDayBlocks }, { crossChainBlocks: oneWeekBlocks }] = await Promise.all([
-      getOneDayBlocks(chainIds),
-      getOneWeekBlocks(chainIds),
-    ])
+    const farmsOnly = query?.farmsOnly === 'true'
 
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
@@ -102,8 +70,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
       orderBy,
       orderDirection,
       chainIds,
-      oneDayBlockNumbers: oneDayBlocks.map((block) => Number(block.number)),
-      oneWeekBlockNumbers: oneWeekBlocks.map((block) => Number(block.number)),
+      farmsOnly,
     })
     return crossChainPairs
   } catch (error) {
@@ -142,12 +109,10 @@ export type GetUserQuery = {
 }
 
 export const getUser = async (query: GetUserQuery) => {
-  const networks = JSON.parse(query?.networks || JSON.stringify(SUPPORTED_CHAIN_IDS))
+  const networks = JSON.parse(query?.networks || stringify(SUPPORTED_CHAIN_IDS))
   const { crossChainUserWithFarms: user } = await sdk.CrossChainUserWithFarms({
     chainIds: networks,
     id: query.id.toLowerCase(),
-    now: Math.round(new Date().getTime() / 1000),
   })
-
   return user
 }

@@ -31,6 +31,7 @@ type TokenSelectorOverlay = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
   tokenMap: Record<string, Token>
   pricesMap?: Record<string, Fraction> | undefined
   fundSource: FundSource
+  includeNative?: boolean
 }
 
 export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
@@ -44,6 +45,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
   balancesMap,
   pricesMap,
   fundSource,
+  includeNative,
 }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
@@ -55,7 +57,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
 
   const handleImport = useCallback(
     (currency: Token) => {
-      onAddToken(currency)
+      onAddToken && onAddToken(currency)
       onSelect && onSelect(currency)
       onClose()
     },
@@ -69,6 +71,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
       pricesMap={pricesMap}
       balancesMap={balancesMap}
       fundSource={fundSource}
+      includeNative={includeNative}
     >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <SlideIn>
@@ -112,12 +115,11 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
               <div className="relative h-full pt-5">
                 <div className="w-full border-t border-slate-200/5" />
                 <div className="absolute inset-0 h-full rounded-t-none bg-slate-800 rounded-xl">
-                  {queryToken && (
+                  {queryToken[0] && (
                     <TokenSelectorImportRow
                       className="!px-4"
-                      hideIcons
-                      currency={queryToken}
-                      onImport={() => handleImport(queryToken)}
+                      currencies={queryToken}
+                      onImport={() => queryToken[0] && handleImport(queryToken[0])}
                     />
                   )}
                   <Currency.List

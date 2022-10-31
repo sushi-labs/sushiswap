@@ -1,14 +1,14 @@
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
-import { Resolvers } from '.graphclient'
+import { Resolvers, SubgraphStatus } from '.graphclient'
 import { getBuiltGraphSDK } from '.graphclient'
 
 export const resolvers: Resolvers = {
   BentoBoxKpi: {
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 137,
+    chainId: (root, args, context) => root.chainId || context.chainId || 137,
   },
   StrategyKpi: {
-    chainId: (root, args, context, info) => root.chainId || context.chainId || 137,
+    chainId: (root, args, context) => root.chainId || context.chainId || 137,
   },
   Query: {
     crossChainBentoBoxKpis: async (root, args, context, info) =>
@@ -54,21 +54,50 @@ export const resolvers: Resolvers = {
           )
         )
       ).then((kpis) => kpis.flat()),
-    subgraphStatuses: async (root, args, context, info) =>
-      Promise.all(
-        args.subgraphNames.map(async (subgraphName) => {
-          const sdk = getBuiltGraphSDK()
+    subgraphs: async (root, args) => {
+      const sdk = getBuiltGraphSDK()
 
-          return sdk.SubgraphIndexingStatus({ subgraphName }).then(({ indexingStatusForCurrentVersion: status }) => ({
-            subgraphName,
-            startBlock: status.chains[0].earliestBlock.number,
-            lastSyncedBlock: status.chains[0].latestBlock.number,
-            chainHeadBlock: status.chains[0].chainHeadBlock.number,
-            hasFailed: status.fatalError?.message ? true : false,
-            nonFatalErrorCount: status.nonFatalErrors.length,
-            entityCount: status.entityCount,
-          }))
-        })
-      ),
+      const fetch = async (subgraphName: string) => {
+        switch (args.type) {
+          case 'Current': {
+            return sdk.CurrentSubgraphIndexingStatus({ subgraphName })
+          }
+          case 'Pending': {
+            return sdk.PendingSubgraphIndexingStatus({ subgraphName })
+          }
+        }
+      }
+
+      return (
+        await Promise.all(
+          args.subgraphNames.map(async (subgraphName) =>
+            fetch(subgraphName).then((statusObject) => {
+              const data = Object.values(statusObject)[0]
+
+              if (!data) return undefined
+              const hasFailed = data.fatalError?.message ? true : false
+              const status: SubgraphStatus = hasFailed
+                ? 'Failed'
+                : data.chains[0].chainHeadBlock.number - data.chains[0].latestBlock.number <= 50
+                ? 'Synced'
+                : 'Syncing'
+
+              return {
+                subgraphName,
+                subgraphId: data.subgraph,
+                type: args.type,
+                status,
+                startBlock: data.chains[0].earliestBlock.number as number,
+                lastSyncedBlock: data.chains[0].latestBlock.number as number,
+                chainHeadBlock: data.chains[0].chainHeadBlock.number as number,
+                hasFailed,
+                nonFatalErrorCount: data.nonFatalErrors.length,
+                entityCount: data.entityCount as number,
+              }
+            })
+          )
+        )
+      ).filter(Boolean)
+    },
   },
 }

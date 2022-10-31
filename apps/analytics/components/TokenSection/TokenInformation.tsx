@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { Token as GraphToken } from '@sushiswap/graph-client/.graphclient'
+import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Currency, Link, Table, Typography } from '@sushiswap/ui'
 import CopyHelper from '@sushiswap/ui/copy/Copy'
 import { FC } from 'react'

@@ -1,3 +1,5 @@
+import stringify from 'fast-json-stable-stringify'
+
 import { useAllLists } from '../token-lists'
 
 export default function TokenLists() {
@@ -5,7 +7,7 @@ export default function TokenLists() {
   return (
     <>
       <h1>Token Lists</h1>
-      {JSON.stringify(tokenList, undefined, 2)}
+      {stringify(tokenList, undefined, 2)}
     </>
   )
 }

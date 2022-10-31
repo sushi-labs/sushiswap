@@ -1,4 +1,4 @@
-import { App, AppType } from '@sushiswap/ui'
+import { App, AppType, BuyCrypto } from '@sushiswap/ui'
 import { NotificationCentre, Wallet } from '@sushiswap/wagmi'
 import React from 'react'
 import { useAccount } from 'wagmi'
@@ -15,8 +15,9 @@ export const Header = () => {
       appType={AppType.Invest}
       nav={
         <App.NavItemList>
-          <App.NavItemInternal href="https://sushi.com/swap" label="Swap" />
-          <App.NavItemInternal href="https://sushi.com/earn" label="Earn" />
+          <App.NavItem href="https://www.sushi.com/swap" label="Swap" />
+          <App.NavItem href="https://www.sushi.com/earn" label="Earn" />
+          <BuyCrypto address={address} />
         </App.NavItemList>
       }
     >

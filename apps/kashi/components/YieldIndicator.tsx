@@ -7,8 +7,11 @@ interface YieldIndicatorProps {
 
 export const YieldIndicator: FC<YieldIndicatorProps> = ({ percentage }) => {
   return (
-    <div className="relative rounded-full w-full h-2 bg-blue/20">
-      <div className="absolute rounded-full w-2 h-2 bg-blue" style={{ left: `${percentage?.toFixed(2)}%` }} />
+    <div className="relative w-full h-2 rounded-full bg-blue/20">
+      <div
+        className="absolute w-2 h-2 rounded-full bg-blue"
+        style={{ left: `${percentage.divide(10)?.toFixed(2)}%` }}
+      />
     </div>
   )
 }

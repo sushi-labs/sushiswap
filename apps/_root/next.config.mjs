@@ -1,4 +1,5 @@
 import transpileModules from 'next-transpile-modules'
+import { withAxiom } from 'next-axiom'
 
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
@@ -9,34 +10,29 @@ const withTranspileModules = transpileModules([
 ])
 
 const {
-  BLOG_URL,
+  ROOT_URL,
   ANALYTICS_URL,
-  DAO_URL,
-  DOCS_URL,
+  BLOG_URL,
+  BRIDGE_URL,
+  EARN_URL,
   FURO_URL,
-  LANDING_URL,
+  INTERNAL_URL,
+  KASHI_URL,
+  PARTNER_URL,
   SWAP_URL,
   XSWAP_URL,
-  EARN_URL,
-  LEGACY_URL,
-  PARTNER_URL,
 } = process.env
 
 // @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
+  swcMinify: false,
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {
@@ -140,4 +136,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default withAxiom(withTranspileModules(nextConfig))

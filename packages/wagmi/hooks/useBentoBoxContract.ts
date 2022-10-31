@@ -25,14 +25,15 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
   [ChainId.MOONRIVER]: '0x145d82bCa93cCa2AE057D1c6f26245d1b9522E6F',
   [ChainId.OPTIMISM]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.KAVA]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
+  [ChainId.METIS]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
 }
 
 export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
   addressOrName:
-    bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+    bentoBoxExports[chainId?.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.address ?? '',
   contractInterface:
-    bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+    bentoBoxExports[chainId?.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.abi ?? [],
 })
 

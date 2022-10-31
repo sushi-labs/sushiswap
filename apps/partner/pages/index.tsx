@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { ChainId } from '@sushiswap/chain'
 import { Button, classNames, Loader, Typography } from '@sushiswap/ui'
 import { BackgroundImageMakerField, Form, ImageCanvas, NetworkModal, SizeSlider, UploadImageField } from 'components'
+import stringify from 'fast-json-stable-stringify'
 import { addressValidator, useTokenData } from 'lib'
 import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -67,7 +68,7 @@ export default function Home() {
         'Content-Type': 'application/json',
       },
       method: 'POST',
-      body: JSON.stringify({
+      body: stringify({
         tokenAddress,
         tokenData,
         tokenIcon: canvasRef.current?.toDataURL(),

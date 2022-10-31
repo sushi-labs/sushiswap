@@ -1,4 +1,4 @@
-sources: !includes sources
+sources: !includes ./src/sources
 
 additionalTypeDefs: |
   input Pagination {
@@ -61,15 +61,25 @@ additionalTypeDefs: |
     chainName: String!
     chainShortName: String!
   }
+  extend type LiquidityPosition {
+    chainId: Int!
+    chainName: String!
+    chainShortName: String!
+  }
   extend type Pair {
     chainId: Int!
     chainName: String!
     chainShortName: String!
+    liquidity1dChange: BigDecimal
+    liquidity1wChange: BigDecimal
     volume1d: BigDecimal!
+    volume1dChange: BigDecimal
     volume1w: BigDecimal!
-    volume7d: BigDecimal!
     fees1d: BigDecimal!
     fees1w: BigDecimal!
+    txCount1d: BigInt!
+    txCount1dChange: BigDecimal
+    txCount1w: BigInt!
     farm: Farm
     incentiveApr: BigDecimal!
     feeApr: BigDecimal!
@@ -92,6 +102,19 @@ additionalTypeDefs: |
       where: Block_filter,
       orderBy: Block_orderBy,
       orderDirection: OrderDirection,
+      chainIds: [Int!]!
+    ): [Block!]!
+    oneDayBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    twoDayBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    oneWeekBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    customBlocks(
+      timestamp: Int!
       chainIds: [Int!]!
     ): [Block!]!
     # BENTOBOX
@@ -124,28 +147,24 @@ additionalTypeDefs: |
       block: Block_height,
       pagination: Pagination,
       chainIds: [Int!]!,
-      oneDayBlockNumbers: [Int!]!,
-      oneWeekBlockNumbers: [Int!]!
+      farmsOnly: Boolean
     ): [Pair!]!
     crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair
-    crossChainUser(
-      id: ID!,
+    crossChainLiquidityPositions(
       block: Block_height,
       where: LiquidityPosition_filter,
-      now: Int!, 
       chainIds: [Int!]!,
-    ): User!
+    ): [LiquidityPosition!]!
     crossChainChefUser(
       first: Int,
       skip: Int,
       where: User_filter,
       block: Block_height,
       chainIds: [Int!]!,
-    ): [ChefUser!]!
+    ): [ChefUser]
     crossChainUserWithFarms(
       id: ID!,
       block: Block_height,
-      now: Int!,
       chainIds: [Int!]!,
     ): [UserWithFarm!]
     crossChainToken(id: ID!, now: Int!, chainId: Int!): Token!
@@ -172,12 +191,17 @@ additionalTypeDefs: |
   }
 
 additionalResolvers:
-  - ./resolvers/bentobox.ts
-  - ./resolvers/blocks.ts
-  - ./resolvers/sushiswap.ts
+  - .graphclient/resolvers/bentobox.js
+  - .graphclient/resolvers/blocks.js
+  - .graphclient/resolvers/sushiswap.js
 
 documents:
-  - './queries/*.graphql'
-
+  - './src/queries/*.graphql'
+  # - './queries/bar.graphql'
+  # - './queries/bentobox.graphql'
+  # - './queries/blocks.graphql'
+  # - './queries/exchange.graphql'
+  # - './queries/masterchef.graphql'
+  # - './queries/sushiswap.graphql'
 codegen:
   contextType: 'MeshContext & { chainId: string; chainName: string; chainShortName: string; subgraphName: string; subgraphHost: string }'

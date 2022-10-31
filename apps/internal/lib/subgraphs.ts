@@ -13,7 +13,7 @@ import {
 
 import { getBuiltGraphSDK } from '.graphclient'
 
-export type Subgraph = Awaited<ReturnType<typeof getAllSubgraphs>>[0]
+export type Subgraph = Awaited<ReturnType<typeof getSubgraphs>>[0]
 
 const CATEGORIES = {
   BENTOBOX: { ...BENTOBOX_SUBGRAPH_NAME },
@@ -30,12 +30,13 @@ const CATEGORIES = {
   OTHER: {},
 } as const
 
-const lowerCaseAllWordsExceptFirstLetters = (string) =>
+const lowerCaseAllWordsExceptFirstLetters = (string: string): string =>
   string.replaceAll(/\S*/g, (word) => `${word.slice(0, 1)}${word.slice(1).toLowerCase()}`)
 
 const parseCategories = () => {
   return Object.keys(CATEGORIES)
     .flatMap((categoryKey: keyof typeof CATEGORIES) =>
+      // @ts-ignore
       Object.keys(CATEGORIES[categoryKey]).map((chainKey: keyof typeof CATEGORIES['BENTOBOX']) => ({
         chainId: Number(String(chainKey).split('-')[0]),
         subgraphName: CATEGORIES[categoryKey][chainKey] as string,
@@ -45,16 +46,30 @@ const parseCategories = () => {
     .filter(({ chainId }) => SUBGRAPH_HOST[chainId] === GRAPH_HOST)
 }
 
-export async function getAllSubgraphs() {
+interface GetSubgraphs {
+  filter?: string
+}
+
+export async function getSubgraphs({ filter }: GetSubgraphs = {}) {
   const sdk = getBuiltGraphSDK()
   const subgraphs = parseCategories()
 
-  return sdk
-    .SubgraphStatuses({ subgraphNames: subgraphs.map((subgraph) => subgraph.subgraphName) })
-    .then(({ subgraphStatuses }) =>
-      subgraphStatuses.map((subgraphData) => ({
-        data: subgraphData,
-        ...subgraphs.find(({ subgraphName }) => subgraphName === subgraphData.subgraphName),
-      }))
+  const subgraphNames = subgraphs
+    .map((subgraph) => subgraph.subgraphName)
+    .filter((name) => (filter ? name.includes(filter) : true))
+
+  async function fetch(type: 'Current' | 'Pending') {
+    return sdk.Subgraphs({ subgraphNames: subgraphNames, type })
+  }
+
+  return (await Promise.all((['Current', 'Pending'] as const).map((type) => fetch(type))))
+    .flat(1)
+    .flatMap(({ subgraphs: res }) =>
+      res
+        .map((data) => ({
+          ...data,
+          ...subgraphs.find(({ subgraphName }) => subgraphName === data.subgraphName),
+        }))
+        .filter(Boolean)
     )
 }

@@ -1,9 +1,9 @@
 import { ExternalLinkIcon } from '@heroicons/react/outline'
-import { ChevronRightIcon } from '@heroicons/react/solid'
+import { SwitchHorizontalIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
-import { XSushi } from '@sushiswap/graph-client/.graphclient'
+import { XSushi } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, Dots, Link, Typography } from '@sushiswap/ui'
@@ -64,11 +64,11 @@ export const SushiBarSectionDesktop: FC = () => {
         groupTimestamp: ts,
       })
     } catch (e: unknown) {
-      if (!(e instanceof UserRejectedRequestError)) {
-        setError((e as ProviderRpcError).message)
+      if (e instanceof UserRejectedRequestError) return
+      if (e instanceof ProviderRpcError) {
+        setError(e.message)
       }
-
-      console.log(e)
+      console.error(e)
     }
   }, [chain?.id, amount, writeAsync, createNotification, stake])
 
@@ -108,7 +108,7 @@ export const SushiBarSectionDesktop: FC = () => {
                 className="order-2 mt-2.5 group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full hover:ring-2 hover:ring-slate-500 cursor-pointer"
               >
                 <div className="transition-all rotate-0 group-hover:rotate-180 group-hover:delay-200">
-                  <ChevronRightIcon width={16} height={16} />
+                  <SwitchHorizontalIcon width={16} height={16} />
                 </div>
               </button>
               <div className={classNames(!stake ? 'order-1 flex-grow' : 'order-3')}>

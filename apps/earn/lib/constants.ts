@@ -9,7 +9,12 @@ export const CHEF_TYPE_MAP = {
 }
 
 export const GET_POOL_TYPE_MAP = {
-  CONSTANT_PRODUCT_POOL: 'Constant Product Pool',
+  CONSTANT_PRODUCT_POOL: 'Classic Pool',
   CONCENTRATED_LIQUIDITY_POOL: 'Concentrated Liquidity Pool',
+  STABLE_POOL: 'Stable Pool',
+}
+
+export const AVAILABLE_POOL_TYPE_MAP = {
+  CONSTANT_PRODUCT_POOL: 'Classic Pool',
   STABLE_POOL: 'Stable Pool',
 }

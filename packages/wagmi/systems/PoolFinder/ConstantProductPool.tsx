@@ -1,4 +1,4 @@
-import { Fee } from '@sushiswap/exchange'
+import { Fee } from '@sushiswap/amm'
 import { FC, useEffect } from 'react'
 
 import { useConstantProductPool } from '../../hooks'
@@ -23,7 +23,7 @@ export const ConstantProductPool: FC<TridentPoolFinderProps> = ({
       payload: {
         state,
         index,
-        poolType: PoolFinderType.ConstantProduct,
+        poolType: PoolFinderType.Classic,
       },
     })
   }, [dispatch, index, state])
