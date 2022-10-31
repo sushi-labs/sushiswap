@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { RPool, RToken } from '../dist'
+import { RPool, RToken } from './PrimaryPools'
 
 const BENTO_MINIMUM_SHARE_BALANCE = 1000 // Bento Shares
 const BRIDGING_GAS_COST = 60_000 // gas points
