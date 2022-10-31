@@ -21,6 +21,7 @@ async function main() {
 
   // TRANSFORM
   const tokens: {
+    id: string
     address: string
     network: string
     chainId: string
@@ -34,6 +35,7 @@ async function main() {
       console.log(`TRANSFORM - ${chainName[SUSHISWAP_CHAINS[i]]} contains ${exchange.pairs.length} pairs`)
       return exchange?.pairs.map((pair) => {
         tokens.push({
+          id: SUSHISWAP_CHAINS[i].toString().concat('_').concat(pair.token0.id),
           address: pair.token0.id,
           network: chainName[SUSHISWAP_CHAINS[i]],
           chainId: SUSHISWAP_CHAINS[i].toString(),
@@ -42,6 +44,7 @@ async function main() {
           decimals: Number(pair.token0.decimals),
         })
         tokens.push({
+          id: SUSHISWAP_CHAINS[i].toString().concat('_').concat(pair.token1.id),
           address: pair.token1.id,
           network: chainName[SUSHISWAP_CHAINS[i]],
           chainId: SUSHISWAP_CHAINS[i].toString(),
@@ -50,6 +53,7 @@ async function main() {
           decimals: Number(pair.token1.decimals),
         })
         return {
+          id: SUSHISWAP_CHAINS[i].toString().concat('_').concat(pair.id),
           address: pair.id,
           name: pair.name,
           protocol: 'Sushiswap',
@@ -81,14 +85,16 @@ async function main() {
     })
     .flat()
 
-  const uniqueIds = new Set()
-  const uniqueTokens = tokens.filter((token) => {
-    if (!uniqueIds.has(token.address)) {
-      uniqueIds.add(token.address)
-      return true
-    }
-    return false
-  })
+  const uniqueIds: Set<string> = new Set()
+  const uniqueTokens = tokens
+    .filter((token) => {
+      if (!uniqueIds.has(token.id)) {
+        uniqueIds.add(token.id)
+        return true
+      }
+      return false
+    })
+    .sort()
   console.log(`TRANSFORM - Transformed ${uniqueTokens.length} tokens and ${poolsTransformed.length} pools`)
 
   if (poolsTransformed.length === 0) {
@@ -96,11 +102,12 @@ async function main() {
     return
   }
 
-  const findMany = await prisma.pool.findMany({
+  const poolsFound = await prisma.pool.findMany({
     where: {
       address: { in: poolsTransformed.map((pool) => pool.address) },
     },
     select: {
+      id: true,
       address: true,
       reserve0: true,
       reserve1: true,
@@ -113,11 +120,52 @@ async function main() {
       token1Price: true,
     },
   })
-  console.log(`TRANSFORM - db contains ${findMany.length} pools`)
-  const poolsToUpsert = poolsTransformed.filter((pool) => {
-    const poolExists = findMany.find((p) => p.address === pool.address)
+
+  const tokensFound = await prisma.token.findMany({
+    where: {
+      id: { in: uniqueTokens.map((token) => token.id) },
+    },
+    select: {
+      id: true,
+    },
+  })
+
+  // const test = poolsTransformed.filter((pool) => !poolsFound.find((p) => p.id === pool.id))
+  // for(let i = 0; i < test.length; i++) {
+  //   console.log(`DEBUG - these pools need to be created, are they? ${test[i].id}`)
+  // }
+  console.log(`TRANSFORM - Found ${tokensFound.length} tokens and ${poolsFound.length} pools`)
+
+  const tokensToCreate = uniqueTokens.filter((token) => !tokensFound.find((t) => t.id === token.id))
+  console.log(`TRANSFORM - Tokens to create: ${tokensToCreate.length}`)
+
+  // TODO: this could be improved, perhaps an entity to read off instead, to see if the protocol has been initialized
+  // instead of reading and checking all the pools
+  if (poolsFound.length === 0 || tokensFound.length === 0) {
+    // const tokensLoaded = await prisma.token.createMany({ data: uniqueTokens, skipDuplicates: true })
+    let tokensCreatedCount = 0
+    const batchSize = 500
+    for (let i = 0; i < tokensToCreate.length; i += batchSize) {
+      const createdTokens = await prisma.token.createMany({
+        data: tokensToCreate.slice(i, i + batchSize),
+        skipDuplicates: true,
+      })
+      console.log(`LOAD - Batched and created ${createdTokens.count} tokens`)
+      tokensCreatedCount += createdTokens.count
+    }
+    // const createdTokens = await prisma.$transaction([...prisma.token.createMany({ data: uniqueTokens, skipDuplicates: true })])
+    const createdPools = await prisma.pool.createMany({ data: poolsTransformed, skipDuplicates: true })
+    console.log(
+      `LOAD - Initialize first time seeding, created ${tokensCreatedCount} tokens and ${createdPools.count} pools. `
+    )
+    return // Exit after first time seeding
+  }
+
+  console.log(`TRANSFORM - db contains ${poolsFound.length} pools`)
+  const poolsToUpdate = poolsTransformed.filter((pool) => {
+    const poolExists = poolsFound.find((p) => p.id === pool.id)
     if (!poolExists) {
-      console.log(`TRANSFORM - ${pool.address} does not exist in db, will be created`)
+      console.log(`TRANSFORM - ${pool.id} does not exist in db, will be created`)
       return true
     }
     return (
@@ -132,11 +180,11 @@ async function main() {
       pool.token1Price !== poolExists.token1Price
     )
   })
-  console.log(`TRANSFORM - pools to upsert: ${poolsToUpsert.length}`)
+  console.log(`TRANSFORM - pools to update: ${poolsToUpdate.length}`)
 
-  const upsertManyPools = poolsToUpsert.map((pool) => {
+  const updateManyPools = poolsToUpdate.map((pool) => {
     return prisma.pool.upsert({
-      where: { address: pool.address },
+      where: { id: pool.id },
       update: {
         reserve0: pool.reserve0,
         reserve1: pool.reserve1,
@@ -148,18 +196,28 @@ async function main() {
         token0Price: pool.token0Price,
         token1Price: pool.token1Price,
       },
-      create: pool,
+      create: pool
     })
   })
 
-  const tokensLoaded = await prisma.token.createMany({ data: uniqueTokens, skipDuplicates: true })
-  console.log(`LOAD - Created ${tokensLoaded.count} tokens`)
-
-  const batchSize = 20
-  for (let i = 0; i < upsertManyPools.length; i += batchSize) {
-    const updatedPools = await prisma.$transaction([...upsertManyPools.slice(i, i + batchSize)])
-    console.log(`LOAD - Upserted ${updatedPools.length} pools`)
+  let tokensCreatedCount = 0
+  const tokenBatchSize = 500
+  for (let i = 0; i < tokensToCreate.length; i += tokenBatchSize) {
+    const createdTokens = await prisma.token.createMany({
+      data: tokensToCreate.slice(i, i + tokenBatchSize),
+      skipDuplicates: true,
+    })
+    console.log(`LOAD - Batched and created ${createdTokens.count} tokens`)
+    tokensCreatedCount += createdTokens.count
   }
+  console.log(`LOAD - Created ${tokensCreatedCount} tokens. `)
+
+  const poolBatchSize = 20
+  for (let i = 0; i < updateManyPools.length; i += poolBatchSize) {
+    const updatedPools = await prisma.$transaction([...updateManyPools.slice(i, i + poolBatchSize)])
+    console.log(`LOAD - Updated ${updatedPools.length} pools`)
+  }
+
 }
 
 main()

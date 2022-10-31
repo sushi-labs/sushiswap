@@ -26,6 +26,7 @@ async function main() {
     console.log(`TRANSFORM - ${chainName[SUSHISWAP_CHAINS[i]]} contains ${exchange.tokens.length} tokens`)
     return exchange?.tokens.map((token) => {
       return {
+        id: SUSHISWAP_CHAINS[i].toString().concat("_").concat(token.id),
         address: token.id,
         network: chainName[SUSHISWAP_CHAINS[i]],
         chainId: SUSHISWAP_CHAINS[i].toString(),

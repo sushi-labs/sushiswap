@@ -10,6 +10,7 @@ datasource db {
 }
 
 model Token {
+  id        String   @id // network_address
   address  String
   network  String
   chainId  String
@@ -23,12 +24,13 @@ model Token {
   pools0 Pool[]      @relation("token0")
   pools1 Pool[]      @relation("token1")
 
-  @@id([network, address])
-  @@unique([network, address])
+  // @@id([chainId, address])
+  @@unique([chainId, address])
   @@index(fields: [address, network, name, symbol])
 }
 
 model TokenPrice {
+  id        String   @id // network_address
   address       String
   network       String
   chainId       String
@@ -38,14 +40,14 @@ model TokenPrice {
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  token Token @relation(fields: [network, address], references: [network, address])
+  token Token @relation(fields: [chainId, address], references: [chainId, address])
 
-  @@id([network, address])
-  @@unique([network, address])
+  @@unique([chainId, address])
   @@index(fields: [address, network])
 }
 
 model Pool {
+  id        String   @id // network_address
   address  String
   name     String
   network  String
@@ -53,9 +55,9 @@ model Pool {
   protocol String
   version  String
   type     String
-  token0   Token  @relation("token0", fields: [network, token0Id], references: [network, address])
+  token0   Token  @relation("token0", fields: [chainId, token0Id], references: [chainId, address])
   token0Id String
-  token1   Token  @relation("token1", fields: [network, token1Id], references: [network, address])
+  token1   Token  @relation("token1", fields: [chainId, token1Id], references: [chainId, address])
   token1Id String
 
   swapFee     Float?
@@ -78,8 +80,8 @@ model Pool {
   generatedAt          DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
-  @@id([network, address])
-  @@unique([network, address])
+  // @@id([chainId, address])
+  @@unique([chainId, address])
   @@index(fields: [token0Id, token1Id, address], name: "pool_index")
 }
 
