@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { getBuiltGraphSDK, PairsQuery } from '../.graphclient'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from '../config'
@@ -9,44 +9,19 @@ const PROTOCOL = 'SushiSwap'
 const VERSION = 'V2'
 const POOL_TYPE = 'ConstantProductPool'
 
-interface Token {
-  id: string
-  address: string
-  network: string
-  chainId: string
-  name: string
-  symbol: string
-  decimals: number
-}
-
-interface Pool {
-  id: string
-  address: string
-  name: string
-  protocol: string
-  version: string
-  type: string
-  network: string
-  chainId: string
-  swapFee: number
-  twapEnabled: boolean
-  token0Id: string
-  token1Id: string
-  // reserve0:  BigInt(pair.reserve0),
-  // reserve1:  BigInt(pair.reserve1),
-  // totalSupply: BigInt(pair.liquidity),
-  reserve0: string
-  reserve1: string
-  totalSupply: string
-  liquidityUSD: string
-  liquidityNative: string
-  volumeUSD: string
-  volumeNative: string
-  token0Price: string
-  token1Price: string
-  // createdAtTimestamp: new Date(pair.createdAtTimestamp),
-  createdAtBlockNumber: string
-}
+const poolSelect = Prisma.validator<Prisma.PoolSelect>()({
+  id: true,
+  address: true,
+  reserve0: true,
+  reserve1: true,
+  totalSupply: true,
+  liquidityUSD: true,
+  liquidityNative: true,
+  volumeUSD: true,
+  volumeNative: true,
+  token0Price: true,
+  token1Price: true,
+})
 
 async function main() {
   // EXTRACT
@@ -85,31 +60,35 @@ async function extract() {
 }
 
 async function transform(data: (PairsQuery | undefined)[]) {
-  const tokens: Token[] = []
+  const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = data
     .map((exchange, i) => {
       if (!exchange?.pairs) return []
       console.log(`TRANSFORM - ${chainName[SUSHISWAP_CHAINS[i]]} contains ${exchange.pairs.length} pairs`)
       return exchange?.pairs.map((pair) => {
-        tokens.push({
-          id: SUSHISWAP_CHAINS[i].toString().concat('_').concat(pair.token0.id),
-          address: pair.token0.id,
-          network: chainName[SUSHISWAP_CHAINS[i]],
-          chainId: SUSHISWAP_CHAINS[i].toString(),
-          name: pair.token0.name,
-          symbol: pair.token0.symbol,
-          decimals: Number(pair.token0.decimals),
-        })
-        tokens.push({
-          id: SUSHISWAP_CHAINS[i].toString().concat('_').concat(pair.token1.id),
-          address: pair.token1.id,
-          network: chainName[SUSHISWAP_CHAINS[i]],
-          chainId: SUSHISWAP_CHAINS[i].toString(),
-          name: pair.token1.name,
-          symbol: pair.token1.symbol,
-          decimals: Number(pair.token1.decimals),
-        })
-        return {
+        tokens.push(
+          Prisma.validator<Prisma.TokenCreateManyInput>()({
+            id: SUSHISWAP_CHAINS[i].toString().concat('_').concat(pair.token0.id),
+            address: pair.token0.id,
+            network: chainName[SUSHISWAP_CHAINS[i]],
+            chainId: SUSHISWAP_CHAINS[i].toString(),
+            name: pair.token0.name,
+            symbol: pair.token0.symbol,
+            decimals: Number(pair.token0.decimals),
+          })
+        )
+        tokens.push(
+          Prisma.validator<Prisma.TokenCreateManyInput>()({
+            id: SUSHISWAP_CHAINS[i].toString().concat('_').concat(pair.token1.id),
+            address: pair.token1.id,
+            network: chainName[SUSHISWAP_CHAINS[i]],
+            chainId: SUSHISWAP_CHAINS[i].toString(),
+            name: pair.token1.name,
+            symbol: pair.token1.symbol,
+            decimals: Number(pair.token1.decimals),
+          })
+        )
+        return Prisma.validator<Prisma.PoolCreateManyInput>()({
           id: SUSHISWAP_CHAINS[i].toString().concat('_').concat(pair.id),
           address: pair.id,
           name: pair.name,
@@ -137,40 +116,26 @@ async function transform(data: (PairsQuery | undefined)[]) {
           // createdAtTimestamp: new Date(pair.createdAtTimestamp),
           createdAtBlockNumber: pair.createdAtBlock,
           // createdAtBlockNumber: BigInt(pair.createdAtBlock),
-        }
+        })
       })
     })
     .flat()
 
   const uniqueIds: Set<string> = new Set()
-  const uniqueTokens = tokens
-    .filter((token) => {
-      if (!uniqueIds.has(token.id)) {
-        uniqueIds.add(token.id)
-        return true
-      }
-      return false
-    })
-    .sort()
+  const uniqueTokens = tokens.filter((token) => {
+    if (!uniqueIds.has(token.id)) {
+      uniqueIds.add(token.id)
+      return true
+    }
+    return false
+  })
   console.log(`TRANSFORM - Transformed ${uniqueTokens.length} tokens and ${poolsTransformed.length} pools`)
 
   const poolsFound = await prisma.pool.findMany({
     where: {
       address: { in: poolsTransformed.map((pool) => pool.address) },
     },
-    select: {
-      id: true,
-      address: true,
-      reserve0: true,
-      reserve1: true,
-      totalSupply: true,
-      liquidityUSD: true,
-      liquidityNative: true,
-      volumeUSD: true,
-      volumeNative: true,
-      token0Price: true,
-      token1Price: true,
-    },
+    select: poolSelect,
   })
 
   const tokensFound = await prisma.token.findMany({
@@ -216,7 +181,8 @@ async function alreadyContainsProtocol(protocol: string, version: string) {
   return count > 0
 }
 
-async function upsertPools(pools: Pool[]) {
+async function upsertPools(pools: Prisma.PoolCreateManyInput[]) {
+  console.log(`LOAD - Preparing to update ${pools.length} pools`)
   const upsertManyPools = pools.map((pool) => {
     return prisma.pool.upsert({
       where: { id: pool.id },
@@ -242,7 +208,7 @@ async function upsertPools(pools: Pool[]) {
   }
 }
 
-async function createPools(pools: Pool[]) {
+async function createPools(pools: Prisma.PoolCreateManyInput[]) {
   let count = 0
   const batchSize = 500
   for (let i = 0; i < pools.length; i += batchSize) {
@@ -256,7 +222,7 @@ async function createPools(pools: Pool[]) {
   console.log(`LOAD - Created ${count} pools. `)
 }
 
-async function createTokens(tokens: Token[]) {
+async function createTokens(tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {
     console.log(`LOAD - Not updating any tokens, all tokens seem to be created. `)
     return

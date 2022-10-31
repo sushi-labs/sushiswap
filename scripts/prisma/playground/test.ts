@@ -1,7 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { ChainId, chainName } from '@sushiswap/chain'
-import { getBuiltGraphSDK } from '../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from '../config'
+import { ChainId } from '@sushiswap/chain'
 
 const prisma = new PrismaClient()
 
