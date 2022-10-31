@@ -5,9 +5,7 @@ import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from '../config'
 
 const prisma = new PrismaClient()
 
-// A `main` function so that we can use async/await
 async function main() {
-  // Seed the database with users and posts
 
   // EXTRACT
   const exchanges = await Promise.all(
@@ -48,7 +46,7 @@ async function main() {
   const loaded = await prisma.token.createMany({ data: transformed, skipDuplicates: true})
   console.log(`LOAD - Loaded ${loaded.count} tokens`)
 
-  // TODO: Validate? check if e.g. a certain token was retrieved?
+  // TODO: Validate? check if e.g. a certain token exists?
 }
 
 main()

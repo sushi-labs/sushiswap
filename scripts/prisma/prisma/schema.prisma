@@ -24,6 +24,7 @@ model Token {
   pools1 Pool[]      @relation("token1")
 
   @@id([network, address])
+  @@unique([network, address])
   @@index(fields: [address, network, name, symbol])
 }
 
@@ -40,6 +41,7 @@ model TokenPrice {
   token Token @relation(fields: [network, address], references: [network, address])
 
   @@id([network, address])
+  @@unique([network, address])
   @@index(fields: [address, network])
 }
 
@@ -77,6 +79,7 @@ model Pool {
   updatedAt            DateTime @updatedAt
 
   @@id([network, address])
+  @@unique([network, address])
   @@index(fields: [token0Id, token1Id, address], name: "pool_index")
 }
 

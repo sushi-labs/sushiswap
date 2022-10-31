@@ -5,10 +5,7 @@ import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from '../config'
 
 const prisma = new PrismaClient()
 
-// A `main` function so that we can use async/await
 async function main() {
-  // Seed the database with users and posts
-
   // EXTRACT
   const exchanges = await Promise.all(
     SUSHISWAP_CHAINS.map((chainId) => {
@@ -23,7 +20,6 @@ async function main() {
   console.log(`EXTRACT - Extract pairs from ${exchanges.length} exchanges`)
 
   // TRANSFORM
-  // TODO: tokens?
   const tokens: {
     address: string
     network: string
@@ -32,7 +28,7 @@ async function main() {
     symbol: string
     decimals: number
   }[] = []
-  const transformed = exchanges
+  const poolsTransformed = exchanges
     .map((exchange, i) => {
       if (!exchange?.pairs) return []
       console.log(`TRANSFORM - ${chainName[SUSHISWAP_CHAINS[i]]} contains ${exchange.pairs.length} pairs`)
@@ -50,8 +46,8 @@ async function main() {
           network: chainName[SUSHISWAP_CHAINS[i]],
           chainId: SUSHISWAP_CHAINS[i].toString(),
           name: pair.token1.name,
-          symbol: pair.token0.symbol,
-          decimals: Number(pair.token0.decimals),
+          symbol: pair.token1.symbol,
+          decimals: Number(pair.token1.decimals),
         })
         return {
           address: pair.id,
@@ -84,28 +80,86 @@ async function main() {
       })
     })
     .flat()
-  console.log(`TRANSFORM - Transformed ${tokens.length} tokens and ${transformed.length} pools`)
 
-  if (transformed.length === 0) {
+  const uniqueIds = new Set()
+  const uniqueTokens = tokens.filter((token) => {
+    if (!uniqueIds.has(token.address)) {
+      uniqueIds.add(token.address)
+      return true
+    }
+    return false
+  })
+  console.log(`TRANSFORM - Transformed ${uniqueTokens.length} tokens and ${poolsTransformed.length} pools`)
+
+  if (poolsTransformed.length === 0) {
     console.log('TRANSFORM - No pools to seed, exiting')
     return
   }
 
-  // LOAD
-  // create relations? TODO:
+  const findMany = await prisma.pool.findMany({
+    where: {
+      address: { in: poolsTransformed.map((pool) => pool.address) },
+    },
+    select: {
+      address: true,
+      reserve0: true,
+      reserve1: true,
+      totalSupply: true,
+      liquidityUSD: true,
+      liquidityNative: true,
+      volumeUSD: true,
+      volumeNative: true,
+      token0Price: true,
+      token1Price: true,
+    },
+  })
+  console.log(`TRANSFORM - db contains ${findMany.length} pools`)
+  const poolsToUpsert = poolsTransformed.filter((pool) => {
+    const poolExists = findMany.find((p) => p.address === pool.address)
+    if (!poolExists) {
+      console.log(`TRANSFORM - ${pool.address} does not exist in db, will be created`)
+      return true
+    }
+    return (
+      pool.reserve0 !== poolExists.reserve0 ||
+      pool.reserve1 !== poolExists.reserve1 ||
+      pool.totalSupply !== poolExists.totalSupply ||
+      pool.liquidityUSD !== poolExists.liquidityUSD ||
+      pool.liquidityNative !== poolExists.liquidityNative ||
+      pool.volumeUSD !== poolExists.volumeUSD ||
+      pool.volumeNative !== poolExists.volumeNative ||
+      pool.token0Price !== poolExists.token0Price ||
+      pool.token1Price !== poolExists.token1Price
+    )
+  })
+  console.log(`TRANSFORM - pools to upsert: ${poolsToUpsert.length}`)
 
-  // const [tokensLoaded, poolsLoaded] = await prisma.$transaction(
-  //   [
-  //     prisma.token.createMany({ data: tokens, skipDuplicates: true }),
-  //     prisma.pool.createMany({ data: transformed, skipDuplicates: true }),
-  //   ],
-  // )
-    // const tokensLoaded = await prisma.token.createMany({ data: tokens, skipDuplicates: true })
-    const poolsLoaded = await prisma.pool.createMany({ data: transformed, skipDuplicates: true })
-  // console.log(`LOAD - Loaded ${tokensLoaded.count} tokens and ${poolsLoaded.count} pairs`)
-  console.log(`LOAD - Loaded ${poolsLoaded.count} pairs`)
+  const upsertManyPools = poolsToUpsert.map((pool) => {
+    return prisma.pool.upsert({
+      where: { address: pool.address },
+      update: {
+        reserve0: pool.reserve0,
+        reserve1: pool.reserve1,
+        totalSupply: pool.totalSupply,
+        liquidityUSD: pool.liquidityUSD,
+        liquidityNative: pool.liquidityNative,
+        volumeUSD: pool.volumeUSD,
+        volumeNative: pool.volumeNative,
+        token0Price: pool.token0Price,
+        token1Price: pool.token1Price,
+      },
+      create: pool,
+    })
+  })
 
-  // TODO: Validate? check if e.g. a certain pair was retrieved?
+  const tokensLoaded = await prisma.token.createMany({ data: uniqueTokens, skipDuplicates: true })
+  console.log(`LOAD - Created ${tokensLoaded.count} tokens`)
+
+  const batchSize = 20
+  for (let i = 0; i < upsertManyPools.length; i += batchSize) {
+    const updatedPools = await prisma.$transaction([...upsertManyPools.slice(i, i + batchSize)])
+    console.log(`LOAD - Upserted ${updatedPools.length} pools`)
+  }
 }
 
 main()
