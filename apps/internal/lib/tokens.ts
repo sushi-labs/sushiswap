@@ -14,7 +14,7 @@ export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; fil
 
   const tokens = await sdk
     .CrossChainTokens({
-      chainIds: chainIds,
+      chainIds,
       orderBy: 'liquidityUSD',
       where: { symbol_contains_nocase: filter },
     })

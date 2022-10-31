@@ -1,5 +1,5 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK, Pagination, QuerycrossChainPairsArgs } from '@sushiswap/graph-client'
+import { getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
@@ -34,7 +34,7 @@ export const getBundles = async () => {
   }, {})
 }
 
-export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
+export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
   pagination: string
@@ -62,7 +62,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
     const farmsOnly = query?.farmsOnly === 'true'
 
-    const { crossChainPairs } = await sdk.CrossChainPairs({
+    const { pairs } = await sdk.PairsWithFarms({
       first,
       skip,
       pagination,
@@ -72,7 +72,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
       chainIds,
       farmsOnly,
     })
-    return crossChainPairs
+    return pairs
   } catch (error) {
     console.log(error)
     throw new Error(error)

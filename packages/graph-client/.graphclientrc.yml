@@ -1,10 +1,237 @@
-sources: !includes ./src/sources
+sources:
+
+  - name: xSUSHI
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushi-labs/xsushi
+        retry: 3
+    # transforms:
+
+  - name: BentoBox
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:matthewlilley/bentobox-ethereum}
+        retry: 3
+    # transforms:
+
+  - name: Blocks
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+        retry: 3
+    transforms:
+
+  - name: Exchange
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushiswap/exchange-ethereum}
+        retry: 3
+    transforms:
+      # - addSourceName: true
+      - autoPagination:
+          if: false
+          validateSchema: false
+      - prefix:
+          value: deprecated_
+          includeRootOperations: true
+          includeTypes: true
+
+  - name: SushiSwap
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:subgraph-qa/sushiswap-ethereum}
+        retry: 3
+    transforms:
+      # - addSourceName: true
+      # - autoPagination:
+      #     validateSchema: true
+      # transforms:
+        # Rename type names and field names to let stitching merger merges them
+        # - rename:
+        #     renames:
+        #       - from:
+        #           type: PairWithIncentives
+        #         to:
+        #           type: Pair
+        #       - from:
+        #           type: Query
+        #           field: pairWithIncentives
+        #         to:
+        #           type: Query
+        #           field: pair
+        #       - from:
+        #           type: Query
+        #           field: pairsWithIncentives
+        #         to:
+        #           type: Query
+        #           field: pairs
+        # - typeMerging:
+        #     queryFields:
+        #       - queryFieldName: incentives
+        #         keyField: id
+        #       - queryFieldName: pairs
+        #         keyField: id
+
+  - name: Trident
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-qa/trident-optimism}
+        retry: 3
+    transforms:
+
+  - name: MasterChefV1
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:jiro-ono/masterchef-staging}
+        retry: 3
+    transforms:
+      - addSourceName: true
+      - autoPagination:
+          validateSchema: true
+      - prefix:
+          value: MASTERCHEF_V1_
+          includeRootOperations: true
+          includeTypes: false
+          ignore: 
+            - _SubgraphErrorPolicy_  
+      - rename:
+          mode: wrap
+          renames:
+            - from:
+                type:   Pool
+                field:  owner
+              to:
+                type:   Pool
+                field:  masterChef
+            - from:
+                type:   Pool
+                field:  balance
+              to:
+                type:   Pool
+                field:  slpBalance
+
+  - name: MasterChefV2
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/master-chefv2
+        retry: 3
+    transforms:
+      - addSourceName: true
+      - autoPagination:
+          validateSchema: true
+      - prefix:
+          value: MASTERCHEF_V2_
+          includeRootOperations: true
+          includeTypes: false
+          ignore: 
+            - _SubgraphErrorPolicy_
+
+  - name: FarmsV0
+    handler:
+      jsonSchema:
+        baseUrl: https://farm.sushi.com/api/v0
+        operations:
+          - type: Query
+            field: farmsv0
+            path: /
+            method: GET
+            responseSample: ./json-samples/farms-v0.json
+            responseSchema: ./json-schemas/farms-v0.json
+    transforms:
+
+  - name: FarmsV1
+    handler:
+      jsonSchema:
+        baseUrl: http://localhost:3000/api/v1
+        operations:
+          - type: Query
+            field: farmsv1
+            path: /
+            method: GET
+            responseSample: ./json-samples/farms-v1.json
+            responseSchema: ./json-schemas/farms-v1.json
+    transforms:
+
+  - name: PricesV0
+    handler:
+      jsonSchema:
+        baseUrl: https://token-price.sushi.com/api/v0
+        operations:
+          - type: Query
+            field: pricesv0
+            path: /{args.chainId}
+            method: GET
+            responseSample: ./json-samples/prices-v0.json
+            responseSchema: ./json-schemas/prices-v0.json
+            argTypeMap:
+              chainId:
+                type: integer
+                nullable: false
+    transforms:
+
+  - name: PricesV1
+    handler:
+      jsonSchema:
+        baseUrl: http://localhost:3001/api/v1/1
+        operations:
+          - type: Query
+            field: pricesv1
+            path: /
+            method: GET
+            responseSample: ./json-samples/prices-v1.json
+            responseSchema: ./json-schemas/prices-v1.json
+    transforms:
+
+# Had to disable global transforms since we have a jsonSchema handler in here now...
+transforms:
+  - autoPagination:
+      validateSchema: false
+  - autoTypeMerging: true
+  - addSourceName: true
 
 additionalTypeDefs: |
-  input Pagination {
-    pageIndex: Int! = 0
-    pageSize: Int! = 20
+  # Deprecated 
+  extend type deprecated_Token {
+    chainId: Int!
   }
+  extend type deprecated_Pair {
+    chainId: Int!
+  }
+  extend type deprecated_LiquidityPosition {
+    chainId: Int!
+  }
+
+  # Custom types
+
+  # type User {
+  #   id: ID!
+  #   positions: [Position!]!
+  # }
+  # type Apr {
+  #   fee: BigDecimal!
+  #   incentive: BigDecimal!
+  #   combined: BigDecimal!
+  # }
+
+  type UserWithFarm {
+    id: ID!
+    chainId: Int!
+    unstakedBalance: BigInt!
+    stakedBalance: BigInt!
+    valueUSD: BigDecimal!
+    pair: Pair!
+  }
+  type ChefUserPool {
+    id: BigInt!
+    pair: String!
+  }
+  type ChefUser {
+    id: ID!
+    chainId: Int!
+    address: String!
+    amount: BigInt!
+    pool: ChefUserPool
+  }  
   type RewardToken {
     address: String!
     symbol: String!
@@ -23,31 +250,17 @@ additionalTypeDefs: |
     chefType: String!
     poolType: String!
   }
-  type ChefUserPool {
-    id: BigInt!
-    pair: String!
-  }
-  type ChefUser {
+  type PairWithIncentives {
     id: ID!
-    address: String!
-    amount: BigInt!
-    pool: ChefUserPool
-    chainId: Int!
-    chainName: String!
+    incentives: [Incentive!]!
   }
-  type UserWithFarm {
-    id: ID!
-    unstakedBalance: BigInt!
-    stakedBalance: BigInt!
-    valueUSD: BigDecimal!
-    pair: Pair!
-    chainId: Int!
-    chainName: String!
+  # Input
+  input Pagination {
+    pageIndex: Int! = 0
+    pageSize: Int! = 20
   }
+  # Type Extensions
   extend type Block {
-    chainId: Int!
-  }
-  extend type Rebase {
     chainId: Int!
   }
   extend type Bundle {
@@ -56,73 +269,142 @@ additionalTypeDefs: |
   extend type Factory {
     chainId: Int!
   }
-  extend type FactoryDaySnapshot {
+  extend type Rebase {
     chainId: Int!
-    chainName: String!
-    chainShortName: String!
-  }
-  extend type LiquidityPosition {
-    chainId: Int!
-    chainName: String!
-    chainShortName: String!
-  }
-  extend type Pair {
-    chainId: Int!
-    chainName: String!
-    chainShortName: String!
-    liquidity1dChange: BigDecimal
-    liquidity1wChange: BigDecimal
-    volume1d: BigDecimal!
-    volume1dChange: BigDecimal
-    volume1w: BigDecimal!
-    fees1d: BigDecimal!
-    fees1w: BigDecimal!
-    txCount1d: BigInt!
-    txCount1dChange: BigDecimal
-    txCount1w: BigInt!
-    farm: Farm
-    incentiveApr: BigDecimal!
-    feeApr: BigDecimal!
-  }
-  extend type User {
-    chainId: Int!
-    chainName: String!
   }
   extend type Token {
     chainId: Int!
-    chainName: String!
-    chainShortName: String!
     source: String!
   }
+  extend type FactoryDaySnapshot {
+    chainId: Int!
+  }
+  extend type Pair {
+    address: String!
+    chainId: Int!
+    liquidity1dChange: BigDecimal
+    liquidity1wChange: BigDecimal
+    volume1d: BigDecimal
+    volume1dChange: BigDecimal
+    volume1w: BigDecimal
+    fees1d: BigDecimal
+    fees1w: BigDecimal
+    txCount1d: BigDecimal
+    txCount1dChange: BigDecimal
+    txCount1w: BigDecimal
+    feeApr: BigDecimal
+    incentiveApr: BigDecimal
+    farm: Farm
+  }
+  extend type LiquidityPosition {
+    chainId: Int!
+  }
+  # Query Extensions
   extend type Query {
-    # BLOCKS
     crossChainBlocks(
-      first: Int,
-      skip: Int,
-      where: Block_filter,
-      orderBy: Block_orderBy,
-      orderDirection: OrderDirection,
+      skip: Int = 0
+      first: Int = 100
+      where: Block_filter
+      orderBy: Block_orderBy
+      orderDirection: OrderDirection
       chainIds: [Int!]!
     ): [Block!]!
     oneDayBlocks(
+      skip: Int = 0
+      first: Int = 100
       chainIds: [Int!]!
     ): [Block!]!
     twoDayBlocks(
+      skip: Int = 0
+      first: Int = 100
       chainIds: [Int!]!
     ): [Block!]!
     oneWeekBlocks(
+      skip: Int = 0
+      first: Int = 100
       chainIds: [Int!]!
     ): [Block!]!
-    customBlocks(
-      timestamp: Int!
+    # customBlocks(
+    #   skip: Int = 0
+    #   first: Int = 100
+    #   timestamp: Int!
+    #   chainIds: [Int!]!
+    # ): [Block!]!
+    # pairsByIds(
+    #   skip: Int = 0
+    #   first: Int = 100
+    #   where: Pair_filter
+    #   orderBy: Pair_orderBy
+    #   orderDirection: OrderDirection
+    #   block: Block_height
+    #   ids: [String!]!
+    # ): [Pair!]!
+    pairsWithFarms(
+      skip: Int = 0
+      first: Int = 100
+      where: Pair_filter
+      orderBy: Pair_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
       chainIds: [Int!]!
-    ): [Block!]!
-    # BENTOBOX
+      farmsOnly: Boolean
+      pagination: Pagination
+    ): [Pair!]!
+    pairsByChainId(
+      skip: Int = 0
+      first: Int = 100
+      where: Pair_filter
+      orderBy: Pair_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainId: Int!
+    ): [Pair!]!
+    pairsByChainIds(
+      skip: Int = 0
+      first: Int = 100
+      where: Pair_filter
+      orderBy: Pair_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainIds: [Int!]!
+      blocks: [Block_height!]
+    ): [Pair!]!
+    # pairWithIncentives(
+    #   id: ID!
+    # ): PairWithIncentives!
+    # pairsWithIncentives(
+    #   ids: [ID!]
+    #   skip: Int = 0
+    #   first: Int = 100
+    #   where: Pair_filter
+    #   orderBy: Pair_orderBy
+    #   orderDirection: OrderDirection
+    #   chainIds: [Int!]!
+    # ): [PairWithIncentives!]!
+    liquidityPositionsByChainIds(
+      skip: Int = 0
+      first: Int = 100
+      where: LiquidityPosition_filter
+      orderBy: LiquidityPosition_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainIds: [Int!]!
+    ): [LiquidityPosition!]!
+    crossChainChefUser(
+      skip: Int = 0
+      first: Int = 100
+      where: User_filter
+      orderBy: User_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainIds: [Int!]!
+    ): [ChefUser!]!
     crossChainRebases(
-      first: Int!,
+      skip: Int = 0
+      first: Int = 100
+      where: Rebase_filter
       chainIds: [Int!]!
     ): [Rebase!]!
-    # EXCHANGE
     crossChainBundles(
       chainIds: [Int!]!
     ): [Bundle!]!
@@ -130,78 +412,52 @@ additionalTypeDefs: |
       chainIds: [Int!]!
     ): [Factory!]!
     crossChainFactoryDaySnapshots(
-      first: Int, 
-      skip: Int, 
-      where: FactoryDaySnapshot_filter, 
-      orderBy: FactoryDaySnapshot_orderBy, 
-      orderDirection: OrderDirection, 
-      block: Block_height, 
+      first: Int
+      skip: Int
+      where: FactoryDaySnapshot_filter
+      orderBy: FactoryDaySnapshot_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
       chainIds: [Int!]!
     ): [FactoryDaySnapshot!]!
-    crossChainPairs(
-      first: Int,
-      skip: Int, 
-      where: Pair_filter, 
-      orderBy: Pair_orderBy, 
-      orderDirection: OrderDirection, 
-      block: Block_height,
-      pagination: Pagination,
-      chainIds: [Int!]!,
-      farmsOnly: Boolean
-    ): [Pair!]!
-    crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair
-    crossChainLiquidityPositions(
-      block: Block_height,
-      where: LiquidityPosition_filter,
-      chainIds: [Int!]!,
-    ): [LiquidityPosition!]!
-    crossChainChefUser(
-      first: Int,
-      skip: Int,
-      where: User_filter,
-      block: Block_height,
-      chainIds: [Int!]!,
-    ): [ChefUser]
+    crossChainPair(id: ID! now: Int! chainId: Int!): Pair
     crossChainUserWithFarms(
-      id: ID!,
-      block: Block_height,
-      chainIds: [Int!]!,
-    ): [UserWithFarm!]
-    crossChainToken(id: ID!, now: Int!, chainId: Int!): Token!
+      id: ID!
+      chainIds: [Int!]!
+      block: Block_height
+    ): [UserWithFarm!]!
+    crossChainToken(id: ID! now: Int! chainId: Int!): Token!
     crossChainTokens(
-      first: Int,
-      skip: Int,
-      where: Token_filter,
-      orderBy: Token_orderBy,
-      orderDirection: OrderDirection,
-      block: Block_height,
-      pagination: Pagination,
+      first: Int
+      skip: Int
+      where: Token_filter
+      orderBy: Token_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      pagination: Pagination
       chainIds: [Int!]! 
     ): [Token!]!
     crossChainStats(
-      first: Int,
-      skip: Int,
-      where: Pair_filter,
-      orderBy: Pair_orderBy, 
-      orderDirection: OrderDirection,
-      block: Block_height,
-      chainIds: [Int!]!, 
+      first: Int
+      skip: Int
+      where: Pair_filter
+      orderBy: Pair_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainIds: [Int!]!
       now: Int!
     ): [Pair!]!
   }
 
 additionalResolvers:
-  - .graphclient/resolvers/bentobox.js
-  - .graphclient/resolvers/blocks.js
-  - .graphclient/resolvers/sushiswap.js
-
+  - resolvers/index.js
+  
 documents:
-  - './src/queries/*.graphql'
-  # - './queries/bar.graphql'
-  # - './queries/bentobox.graphql'
-  # - './queries/blocks.graphql'
-  # - './queries/exchange.graphql'
-  # - './queries/masterchef.graphql'
-  # - './queries/sushiswap.graphql'
+  - queries/*.graphql
+
+serve:
+  endpoint: /api/graphql
+  playground: true
+
 codegen:
-  contextType: 'MeshContext & { chainId: string; chainName: string; chainShortName: string; subgraphName: string; subgraphHost: string }'
+  contextType: 'MeshContext & { chainId: string; subgraphName: string; subgraphHost: string }'

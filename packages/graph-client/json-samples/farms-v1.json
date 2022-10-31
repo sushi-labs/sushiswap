@@ -1,0 +1,6726 @@
+[
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x001b6450083e531a5a7bf310bd2c1af4247e23d4",
+    "incentives": [
+      {
+        "apr": 0.018262563310654602,
+        "rewardPerDay": 8.212719194572474,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x001b6450083e531a5a7bf310bd2c1af4247e23d4"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0040a2cebc65894bc2cfb57565f9acfa33fab137",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0040a2cebc65894bc2cfb57565f9acfa33fab137"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x02c6260ce42ea5cd055911ed0d4857ecd4583740",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x02c6260ce42ea5cd055911ed0d4857ecd4583740"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0463a06fbc8bf28b3f120cd1bfc59483f099d332",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0463a06fbc8bf28b3f120cd1bfc59483f099d332"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x055475920a8c93cffb64d039a8205f7acc7722d3",
+    "incentives": [
+      {
+        "apr": 0.6001700305583473,
+        "rewardPerDay": 313.5765510654944,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x055475920a8c93cffb64d039a8205f7acc7722d3"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x05767d9ef41dc40689678ffca0608878fb3de906",
+    "incentives": [
+      {
+        "apr": 0.10295918727782973,
+        "rewardPerDay": 118.929159696142,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x05767d9ef41dc40689678ffca0608878fb3de906"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0589e281d35ee1acf6d4fd32f1fba60effb5281b",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0589e281d35ee1acf6d4fd32f1fba60effb5281b"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x05cc2e064e0b48e46015ead9961f1391d74e5f83",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x05cc2e064e0b48e46015ead9961f1391d74e5f83"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0652687e87a4b8b5370b05bc298ff00d205d9b5f",
+    "incentives": [
+      {
+        "apr": 0.046481536497856135,
+        "rewardPerDay": 5.226275851091573,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0652687e87a4b8b5370b05bc298ff00d205d9b5f"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x06da0fd433c1a5d7a4faa01111c044910a184553",
+    "incentives": [
+      {
+        "apr": 0.07315891875388567,
+        "rewardPerDay": 2986.4433434808993,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x06da0fd433c1a5d7a4faa01111c044910a184553"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0780b42b3c4caf41933cfc0040d2853363de20a7",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0780b42b3c4caf41933cfc0040d2853363de20a7"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x07d5695a24904cc1b6e3bd57cc7780b90618e3c4",
+    "incentives": [
+      {
+        "apr": 0.017249072653706128,
+        "rewardPerDay": 11.199162538053372,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x07d5695a24904cc1b6e3bd57cc7780b90618e3c4"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x088ee5007c98a9677165d78dd2109ae4a3d04d0c",
+    "incentives": [
+      {
+        "apr": 0.056419445346738706,
+        "rewardPerDay": 410.6359597286236,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x088ee5007c98a9677165d78dd2109ae4a3d04d0c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0a54d4b378c8dbfc7bc93be50c85debafdb87439",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0a54d4b378c8dbfc7bc93be50c85debafdb87439"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0bb6e2a9858a089437ec678da05e559ffe0af5b2",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0bb6e2a9858a089437ec678da05e559ffe0af5b2"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0bc5ae46c32d99c434b7383183aca16dd6e9bdc8",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0bc5ae46c32d99c434b7383183aca16dd6e9bdc8"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0be88ac4b5c81700acf3a606a52a31c261a24a35",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0be88ac4b5c81700acf3a606a52a31c261a24a35"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0bec54c89a7d9f15c4e7faa8d47adedf374462ed",
+    "incentives": [
+      {
+        "apr": 0.9406550694455039,
+        "rewardPerDay": 5.226275851091573,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0bec54c89a7d9f15c4e7faa8d47adedf374462ed"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0bff31d8179da718a7ee3669853cf9978c90a24a",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0bff31d8179da718a7ee3669853cf9978c90a24a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0c365789dbbb94a29f8720dc465554c587e897db",
+    "incentives": [
+      {
+        "apr": 0.024711912842634985,
+        "rewardPerDay": 1.4932216717404494,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0c365789dbbb94a29f8720dc465554c587e897db"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0c48ae092a7d35be0e8ad0e122a02351ba51fedd",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0c48ae092a7d35be0e8ad0e122a02351ba51fedd"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x0c6f06b32e6ae0c110861b8607e67da594781961",
+    "incentives": [
+      {
+        "apr": 2.247955036430692,
+        "rewardPerDay": 29.7322899240355,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0c6f06b32e6ae0c110861b8607e67da594781961"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0cfe7968e7c34a51217a7c9b9dc1690f416e027e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0cfe7968e7c34a51217a7c9b9dc1690f416e027e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0d15e893cf50724382368cafed222cf131b55307",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0d15e893cf50724382368cafed222cf131b55307"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0d9f9c919f1b66a8587a5637b8d1a6a6c5854380",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0d9f9c919f1b66a8587a5637b8d1a6a6c5854380"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0e26a21013f2f8c0362cfae608b4e69a249d5efc",
+    "incentives": [
+      {
+        "apr": 0.05196012144937227,
+        "rewardPerDay": 22.398325076106744,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0e26a21013f2f8c0362cfae608b4e69a249d5efc"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0eee7f7319013df1f24f5eaf83004fcf9cf49245",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0eee7f7319013df1f24f5eaf83004fcf9cf49245"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x0f82e57804d0b1f6fab2370a43dcfad3c7cb239c",
+    "incentives": [
+      {
+        "apr": 0.006892302852668641,
+        "rewardPerDay": 2.239832507610674,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x0f82e57804d0b1f6fab2370a43dcfad3c7cb239c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x10b47177e92ef9d5c6059055d92ddf6290848991",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x10b47177e92ef9d5c6059055d92ddf6290848991"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x110492b31c59716ac47337e616804e3e3adc0b4a",
+    "incentives": [
+      {
+        "apr": 0.05009566009790384,
+        "rewardPerDay": 82.12719194572473,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x110492b31c59716ac47337e616804e3e3adc0b4a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x117d4288b3635021a3d612fe05a3cbf5c717fef2",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x117d4288b3635021a3d612fe05a3cbf5c717fef2"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x1241f4a348162d99379a23e73926cf0bfcbf131e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x1241f4a348162d99379a23e73926cf0bfcbf131e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x132eeb05d5cb6829bd34f552cde0b6b708ef5014",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x132eeb05d5cb6829bd34f552cde0b6b708ef5014"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x1365707157a1ec841064a18d2a1771c677df9a1c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x1365707157a1ec841064a18d2a1771c677df9a1c"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x15e86e6f65ef7ea1dbb72a5e51a07926fb1c82e3",
+    "incentives": [
+      {
+        "apr": 0.06765328400056733,
+        "rewardPerDay": 1.9821526616023666,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x15e86e6f65ef7ea1dbb72a5e51a07926fb1c82e3"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x164fe0239d703379bddde3c80e4d4800a1cd452b",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x164fe0239d703379bddde3c80e4d4800a1cd452b"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x17890deb188f2de6c3e966e053da1c9a111ed4a5",
+    "incentives": [
+      {
+        "apr": 0.013753631725404546,
+        "rewardPerDay": 2.97322899240355,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x17890deb188f2de6c3e966e053da1c9a111ed4a5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x17a2194d55f52fd0c711e0e42b41975494bb109b",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x17a2194d55f52fd0c711e0e42b41975494bb109b"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x17b3c19bd640a59e832ab73eccf716cb47419846",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x17b3c19bd640a59e832ab73eccf716cb47419846"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x18a797c7c70c1bf22fdee1c09062aba709cacf04",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x18a797c7c70c1bf22fdee1c09062aba709cacf04"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x18cd890f4e23422dc4aa8c2d6e0bd3f3bd8873d8",
+    "incentives": [
+      {
+        "apr": 0.09102068631148168,
+        "rewardPerDay": 79.28610646409467,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x18cd890f4e23422dc4aa8c2d6e0bd3f3bd8873d8"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x18d98d452072ac2eb7b74ce3db723374360539f1",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x18d98d452072ac2eb7b74ce3db723374360539f1"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x193008eaade86658df8237a436261e23e3bcbbaa",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x193008eaade86658df8237a436261e23e3bcbbaa"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x195b2ed7dfb2bb19c63b8b06677d46934c0c4eea",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x195b2ed7dfb2bb19c63b8b06677d46934c0c4eea"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x1b803af96f37ae51fa753e13e1d2e372dfa17791",
+    "incentives": [
+      {
+        "apr": 0.006131987569891323,
+        "rewardPerDay": 9.910763308011834,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.30910260787362387,
+        "rewardPerDay": 14999.99999904,
+        "rewardToken": {
+          "address": "0x00813e3421e1367353bfe7615c7f7f133c89df74",
+          "decimals": 18,
+          "symbol": "SPS"
+        },
+        "rewarder": {
+          "address": "0xf6a15e94ef40f5b927d301c8af06012411ecca69",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x1b803af96f37ae51fa753e13e1d2e372dfa17791"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x1bec4db6c3bc499f3dbf289f5499c30d541fec97",
+    "incentives": [
+      {
+        "apr": 0.016520755742735857,
+        "rewardPerDay": 29.86443343480899,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x1bec4db6c3bc499f3dbf289f5499c30d541fec97"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x1c580cc549d03171b13b55074dc1658f60641c73",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x1c580cc549d03171b13b55074dc1658f60641c73"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x1cb9e12b35199bee15d9ee13696b87bb777776dd",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x1cb9e12b35199bee15d9ee13696b87bb777776dd"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x1e888882d0f291dd88c5605108c72d414f29d460",
+    "incentives": [
+      {
+        "apr": 0.12050911512175064,
+        "rewardPerDay": 49.55381654005917,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x1e888882d0f291dd88c5605108c72d414f29d460"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x1f4c763bde1d4832b3ea0640e66da00b98831355",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x1f4c763bde1d4832b3ea0640e66da00b98831355"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x201e6a9e75df132a8598720433af35fe8d73e94d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x201e6a9e75df132a8598720433af35fe8d73e94d"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x2024324a99231509a3715172d4f4f4e751b38d4d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x2024324a99231509a3715172d4f4f4e751b38d4d"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x208226200b45b82212b814f49efa643980a7bdd1",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x208226200b45b82212b814f49efa643980a7bdd1"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x22def8cf4e481417cb014d9dc64975ba12e3a184",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x22def8cf4e481417cb014d9dc64975ba12e3a184"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x23a9292830fc80db7f563edb28d2fe6fb47f8624",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x23a9292830fc80db7f563edb28d2fe6fb47f8624"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x24e2adf50c49633039757ab08bff489b7c5bd6b2",
+    "incentives": [
+      {
+        "apr": 0.03767594839659524,
+        "rewardPerDay": 5.226275851091573,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x24e2adf50c49633039757ab08bff489b7c5bd6b2"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x269db91fc3c7fcc275c2e6f22e5552504512811c",
+    "incentives": [
+      {
+        "apr": 0.008254433538581537,
+        "rewardPerDay": 1.9821526616023666,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x269db91fc3c7fcc275c2e6f22e5552504512811c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x26d8151e631608570f3c28bec769c3afee0d73a3",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x26d8151e631608570f3c28bec769c3afee0d73a3"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x2734f4a846d1127f4b5d3bab261facfe51df1d9a",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x2734f4a846d1127f4b5d3bab261facfe51df1d9a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x279ca79d5fb2490721512c8ae4767e249d75f41b",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x279ca79d5fb2490721512c8ae4767e249d75f41b"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x295685c8fe08d8192981d21ea1fe856a07443920",
+    "incentives": [
+      {
+        "apr": 0.129555589986143,
+        "rewardPerDay": 34.68767157804142,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.3764207297583,
+        "rewardPerDay": 518.4,
+        "rewardToken": {
+          "address": "0xccc8cb5229b0ac8069c51fd58367fd1e622afd97",
+          "decimals": 18,
+          "symbol": "GODS"
+        },
+        "rewarder": {
+          "address": "0xdc7f3bb3f032aea63b5e26c63bc9694bf16ab9ee",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x295685c8fe08d8192981d21ea1fe856a07443920"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x29c827ce49accf68a1a278c67c9d30c52fbbc348",
+    "incentives": [
+      {
+        "apr": 0.056385905767788215,
+        "rewardPerDay": 39.643053232047336,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.4668660850508547,
+        "rewardPerDay": 420.5699712,
+        "rewardToken": {
+          "address": "0xcb84d72e61e383767c4dfeb2d8ff7f4fb89abc6e",
+          "decimals": 18,
+          "symbol": "VEGA"
+        },
+        "rewarder": {
+          "address": "0x51d8a431f8b6c25f3b987e0bb8dd3cfb01366b79",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x29c827ce49accf68a1a278c67c9d30c52fbbc348"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x2c51eaa1bcc7b013c3f1d5985cdcb3c56dc3fbc1",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x2c51eaa1bcc7b013c3f1d5985cdcb3c56dc3fbc1"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x2dbc7dd86c6cd87b525bd54ea73ebeebbc307f68",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x2dbc7dd86c6cd87b525bd54ea73ebeebbc307f68"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x2f8ac927aa94293461c75406e90ec0ccfb2748d9",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x2f8ac927aa94293461c75406e90ec0ccfb2748d9"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x30045ad74f4475e82dcdc269952581ecb7cd2bad",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x30045ad74f4475e82dcdc269952581ecb7cd2bad"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x31503dcb60119a812fee820bb7042752019f2355",
+    "incentives": [
+      {
+        "apr": 0.01374149450925792,
+        "rewardPerDay": 97.05940866312922,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x31503dcb60119a812fee820bb7042752019f2355"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x31d64f9403e82243e71c2af9d8f56c7dbe10c178",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x31d64f9403e82243e71c2af9d8f56c7dbe10c178"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x31fa985bb0c282a814e7f3f0dce88b2a44197f60",
+    "incentives": [
+      {
+        "apr": 0.26535109825008435,
+        "rewardPerDay": 11.199162538053372,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x31fa985bb0c282a814e7f3f0dce88b2a44197f60"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x328dfd0139e26cb0fef7b0742b49b0fe4325f821",
+    "incentives": [
+      {
+        "apr": 0.1569294388903837,
+        "rewardPerDay": 22.398325076106744,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x328dfd0139e26cb0fef7b0742b49b0fe4325f821"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x33f6ddaea2a8a54062e021873bcaee006cdf4007",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x33f6ddaea2a8a54062e021873bcaee006cdf4007"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x34b13f8cd184f55d0bd4dd1fe6c07d46f245c7ed",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x34b13f8cd184f55d0bd4dd1fe6c07d46f245c7ed"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x34d25a4749867ef8b62a0cd1e2d7b4f7af167e01",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x34d25a4749867ef8b62a0cd1e2d7b4f7af167e01"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x34d7d7aaf50ad4944b70b320acb24c95fa2def7c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x34d7d7aaf50ad4944b70b320acb24c95fa2def7c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x364248b2f1f57c5402d244b2d469a35b4c0e9dab",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x364248b2f1f57c5402d244b2d469a35b4c0e9dab"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x36e2fcccc59e5747ff63a03ea2e5c0c2c14911e7",
+    "incentives": [
+      {
+        "apr": 0.0013461969729009892,
+        "rewardPerDay": 7.466108358702248,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x36e2fcccc59e5747ff63a03ea2e5c0c2c14911e7"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x378b4c5f2a8a0796a8d4c798ef737cf00ae8e667",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x378b4c5f2a8a0796a8d4c798ef737cf00ae8e667"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x37922c69b08babcceae735a31235c81f1d1e8e43",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x37922c69b08babcceae735a31235c81f1d1e8e43"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x37fc088cfd67349be00f5504d00ddb7f2274b3f6",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x37fc088cfd67349be00f5504d00ddb7f2274b3f6"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x382c4a5147fd4090f7be3a9ff398f95638f5d39e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x382c4a5147fd4090f7be3a9ff398f95638f5d39e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x38a0469520534fc70c9c0b9de4b8649e36a2ae3e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x38a0469520534fc70c9c0b9de4b8649e36a2ae3e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x397ff1542f962076d0bfe58ea045ffa2d347aca0",
+    "incentives": [
+      {
+        "apr": 0.05826734350438976,
+        "rewardPerDay": 5375.5980182656185,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x397ff1542f962076d0bfe58ea045ffa2d347aca0"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x3bfca4fb8054fa42da3e77749b21450a1290beed",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x3bfca4fb8054fa42da3e77749b21450a1290beed"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x3cf1cf47bc87c23cd9410549bd8a75e82c1c73cf",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x3cf1cf47bc87c23cd9410549bd8a75e82c1c73cf"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x3d3f13f2529ec3c84b2940155effbf9b39a8f3ec",
+    "incentives": [
+      {
+        "apr": 0.019291639897043314,
+        "rewardPerDay": 24.776908270029583,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.03974465000340843,
+        "rewardPerDay": 691.2,
+        "rewardToken": {
+          "address": "0xa5f2211b9b8170f694421f2046281775e8468044",
+          "decimals": 18,
+          "symbol": "THOR"
+        },
+        "rewarder": {
+          "address": "0x34c8ab3bda8e1b68a4f69766e2d4f71f39c8ec09",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x3d3f13f2529ec3c84b2940155effbf9b39a8f3ec"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x41848373dec2867ef3924e47b2ebd0ee645a54f9",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x41848373dec2867ef3924e47b2ebd0ee645a54f9"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x4441eb3076f828d5176f4fe74d7c775542dae106",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x4441eb3076f828d5176f4fe74d7c775542dae106"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x44d34985826578e5ba24ec78c93be968549bb918",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x44d34985826578e5ba24ec78c93be968549bb918"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x458ae80894a0924ac763c034977e330c565f1687",
+    "incentives": [
+      {
+        "apr": 0.014248444695668267,
+        "rewardPerDay": 1.9821526616023666,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x458ae80894a0924ac763c034977e330c565f1687"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x46acb1187a6d83e26c0bb46a57ffeaf23ad7851e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x46acb1187a6d83e26c0bb46a57ffeaf23ad7851e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x4a86c01d67965f8cb3d0aaa2c655705e64097c31",
+    "incentives": [
+      {
+        "apr": 0.33468467726996287,
+        "rewardPerDay": 373.3054179351124,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x4a86c01d67965f8cb3d0aaa2c655705e64097c31"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x4e726311e7036d7be9a9b2a1e9e00c48aeec28ae",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x4e726311e7036d7be9a9b2a1e9e00c48aeec28ae"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x4fb3cae84a1264b8bb1911e8915f56660ec8178e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x4fb3cae84a1264b8bb1911e8915f56660ec8178e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x518d6ce2d7a689a591bf46433443c31615b206c5",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x518d6ce2d7a689a591bf46433443c31615b206c5"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x52dac05fc0000e9f01ce9a1e91592bfbfce87350",
+    "incentives": [
+      {
+        "apr": 0.024390268566665034,
+        "rewardPerDay": 4.955381654005917,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x52dac05fc0000e9f01ce9a1e91592bfbfce87350"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x53162d78dca413d9e28cf62799d17a9e278b60e8",
+    "incentives": [
+      {
+        "apr": 0.0020054661272660133,
+        "rewardPerDay": 1.9821526616023666,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x53162d78dca413d9e28cf62799d17a9e278b60e8"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x53813285cc60b13fcd2105c6472a47af01f8ac84",
+    "incentives": [
+      {
+        "apr": 0.4303976236860369,
+        "rewardPerDay": 6168.96,
+        "rewardToken": {
+          "address": "0x725c263e32c72ddc3a19bea12c5a0479a81ee688",
+          "decimals": 18,
+          "symbol": "BMI"
+        },
+        "rewarder": {
+          "address": "0xf166427ee8175aa30d6b58d10e0b044eeed3b9de",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x53813285cc60b13fcd2105c6472a47af01f8ac84"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x53aabccae8c1713a6a150d9981d2ee867d0720e8",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x53aabccae8c1713a6a150d9981d2ee867d0720e8"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x53e9fb796b2feb4b3184afdf601c2a2797548d88",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x53e9fb796b2feb4b3184afdf601c2a2797548d88"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x54bcf4948e32a8706c286416e3ced37284f17fc9",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x54bcf4948e32a8706c286416e3ced37284f17fc9"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x559ebe4e206e6b4d50e9bd3008cda7ce640c52cb",
+    "incentives": [
+      {
+        "apr": 0.015653857782890815,
+        "rewardPerDay": 29.7322899240355,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.840775775847777,
+        "rewardPerDay": 355555.55555555556,
+        "rewardToken": {
+          "address": "0x44709a920fccf795fbc57baa433cc3dd53c44dbe",
+          "decimals": 18,
+          "symbol": "RADAR"
+        },
+        "rewarder": {
+          "address": "0x6558e44e58aee09fb24cb63a6a8270baebd6122f",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x559ebe4e206e6b4d50e9bd3008cda7ce640c52cb"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x55d8ec728ea72477c6db12ca497a803c8db361e9",
+    "incentives": [
+      {
+        "apr": 0.018840841978749082,
+        "rewardPerDay": 2.97322899240355,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x55d8ec728ea72477c6db12ca497a803c8db361e9"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x57024267e8272618f9c5037d373043a8646507e5",
+    "incentives": [
+      {
+        "apr": 0.043177196633673066,
+        "rewardPerDay": 1.4932216717404494,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x57024267e8272618f9c5037d373043a8646507e5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x577959c519c24ee6add28ad96d3531bc6878ba34",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x577959c519c24ee6add28ad96d3531bc6878ba34"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x58dc5a51fe44589beb22e8ce67720b5bc5378009",
+    "incentives": [
+      {
+        "apr": 0.034342690170055964,
+        "rewardPerDay": 97.05940866312922,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x58dc5a51fe44589beb22e8ce67720b5bc5378009"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x5ba61c0a8c4dcccc200cd0ccc40a5725a426d002",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x5ba61c0a8c4dcccc200cd0ccc40a5725a426d002"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x5c596c6a65f628fc1090853d8eb1927651e9d9b2",
+    "incentives": [
+      {
+        "apr": 0.06098894930494711,
+        "rewardPerDay": 19.821526616023668,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.7699077670297787,
+        "rewardPerDay": 1999.9999999999957,
+        "rewardToken": {
+          "address": "0x9ab7bb7fdc60f4357ecfef43986818a2a3569c62",
+          "decimals": 18,
+          "symbol": "GOG"
+        },
+        "rewarder": {
+          "address": "0xd254a8f7ffeb6ecd76bedb2acbcf04f196c9d7a2",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x5c596c6a65f628fc1090853d8eb1927651e9d9b2"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x5e63360e891bd60c69445970256c260b0a6a54c6",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x5e63360e891bd60c69445970256c260b0a6a54c6"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x5f30aac9a472f6c33d5284f9d340c0d57ef33697",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x5f30aac9a472f6c33d5284f9d340c0d57ef33697"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x611cde65dea90918c0078ac0400a72b0d25b9bb1",
+    "incentives": [
+      {
+        "apr": 0.15113611793983497,
+        "rewardPerDay": 44.79665015221349,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x611cde65dea90918c0078ac0400a72b0d25b9bb1"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x613c836df6695c10f0f4900528b6931441ac5d5a",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x613c836df6695c10f0f4900528b6931441ac5d5a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x62ccb80f72cc5c975c5bc7fb4433d3c336ce5ceb",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x62ccb80f72cc5c975c5bc7fb4433d3c336ce5ceb"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x6463bd6026a2e7bfab5851b62969a92f7cca0eb6",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x6463bd6026a2e7bfab5851b62969a92f7cca0eb6"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x6469b34a2a4723163c4902dbbdea728d20693c12",
+    "incentives": [
+      {
+        "apr": 0.022649781841071134,
+        "rewardPerDay": 4.955381654005917,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x6469b34a2a4723163c4902dbbdea728d20693c12"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x662511a91734aea8b06ef770d6ed51cc539772d0",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x662511a91734aea8b06ef770d6ed51cc539772d0"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x663242d053057f317a773d7c262b700616d0b9a0",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x663242d053057f317a773d7c262b700616d0b9a0"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x66ae32178640813f3c32a9929520bfe4fef5d167",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x66ae32178640813f3c32a9929520bfe4fef5d167"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x67e475577b4036ee4f0f12fa2d538ed18cef48e3",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x67e475577b4036ee4f0f12fa2d538ed18cef48e3"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x698abbbc986c59d02941e18bc96fe2396493339b",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x698abbbc986c59d02941e18bc96fe2396493339b"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x69ab811953499eb253c5a69ae06275a42b97c9ae",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x69ab811953499eb253c5a69ae06275a42b97c9ae"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x69b39b89f9274a16e8a19b78e5eb47a4d91dac9e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x69b39b89f9274a16e8a19b78e5eb47a4d91dac9e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x6a091a3406e0073c3cd6340122143009adac0eda",
+    "incentives": [
+      {
+        "apr": 0.035065062284757906,
+        "rewardPerDay": 447.9665015221349,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x6a091a3406e0073c3cd6340122143009adac0eda"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x6e939360196c7f044871b17770268e8a04556121",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x6e939360196c7f044871b17770268e8a04556121"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x71817445d11f42506f2d7f54417c935be90ca731",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x71817445d11f42506f2d7f54417c935be90ca731"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x7229d526d5fd693720b88eb7129058db5d497bce",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x7229d526d5fd693720b88eb7129058db5d497bce"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x742c15d71ea7444964bc39b0ed729b3729adc361",
+    "incentives": [
+      {
+        "apr": 0.007455360323136748,
+        "rewardPerDay": 2.239832507610674,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x742c15d71ea7444964bc39b0ed729b3729adc361"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x750d711277fd27d1ec5256f13f5110e097713a95",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x750d711277fd27d1ec5256f13f5110e097713a95"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x75382c52b6f90b3f8014bfcadac2386513f1e3bc",
+    "incentives": [
+      {
+        "apr": 0.01011504103435378,
+        "rewardPerDay": 5.972886686961798,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x75382c52b6f90b3f8014bfcadac2386513f1e3bc"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x75507bab932fc47531bf1654f243c088a3fa1f69",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x75507bab932fc47531bf1654f243c088a3fa1f69"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x760166fa4f227da29ecac3bec348f5fa853a1f3c",
+    "incentives": [
+      {
+        "apr": 0.006036438242961233,
+        "rewardPerDay": 1.4932216717404494,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x760166fa4f227da29ecac3bec348f5fa853a1f3c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x77337ff10206480739a768124a18f3aa8c089153",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x77337ff10206480739a768124a18f3aa8c089153"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x7835cb043e8d53a5b361d489956d6c30808349da",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x7835cb043e8d53a5b361d489956d6c30808349da"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x795065dcc9f64b5614c407a6efdc400da6221fb0",
+    "incentives": [
+      {
+        "apr": 0.05528996100049835,
+        "rewardPerDay": 1119.9162538053372,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x795065dcc9f64b5614c407a6efdc400da6221fb0"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x7b504a15ef05f4eed1c07208c5815c49022a0c19",
+    "incentives": [
+      {
+        "apr": 0.26121256179721536,
+        "rewardPerDay": 37.33054179351124,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x7b504a15ef05f4eed1c07208c5815c49022a0c19"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x7b98e476de2c50b6fa284dbd410dd516f9a72b30",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x7b98e476de2c50b6fa284dbd410dd516f9a72b30"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x7c03cf21483fa45006e81669b991af3a16733a44",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x7c03cf21483fa45006e81669b991af3a16733a44"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x7f7d686b05ce0b9b7b7b0b4d56207ace4b13a87a",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x7f7d686b05ce0b9b7b7b0b4d56207ace4b13a87a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x804be24f625c7e23edd9fa68e4582590c57ad2b3",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x804be24f625c7e23edd9fa68e4582590c57ad2b3"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x82917fb0dd65b0e5c85eea66e4f5c1ed484bc629",
+    "incentives": [
+      {
+        "apr": 0.012202657980028921,
+        "rewardPerDay": 82.12719194572473,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x82917fb0dd65b0e5c85eea66e4f5c1ed484bc629"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x82dbc2673e9640343d263a3c55de49021ad39ae2",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x82dbc2673e9640343d263a3c55de49021ad39ae2"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x82ebcd936c9e938704b65027850e42393f8bc4d4",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x82ebcd936c9e938704b65027850e42393f8bc4d4"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x83e5e791f4ab29d1b0941bc4d00f3d6027d1dae5",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x83e5e791f4ab29d1b0941bc4d00f3d6027d1dae5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8486c538dcbd6a707c5b3f730b6413286fe8c854",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8486c538dcbd6a707c5b3f730b6413286fe8c854"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8597fa0773888107e2867d36dd87fe5bafeab328",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8597fa0773888107e2867d36dd87fe5bafeab328"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8775ae5e83bc5d926b6277579c2b0d40c7d9b528",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8775ae5e83bc5d926b6277579c2b0d40c7d9b528"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x877d9c970b8b5501e95967fe845b7293f63e72f7",
+    "incentives": [
+      {
+        "apr": 0.006931730027202108,
+        "rewardPerDay": 44.444333318400005,
+        "rewardToken": {
+          "address": "0xf203ca1769ca8e9e8fe1da9d147db68b6c919817",
+          "decimals": 18,
+          "symbol": "WNCG"
+        },
+        "rewarder": {
+          "address": "0xe7ec4353fa1c8393281dcf94e069bc4b823d907c",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x877d9c970b8b5501e95967fe845b7293f63e72f7"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x87b6f3a2dc6e541a9ce40e58f517953782ae614e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x87b6f3a2dc6e541a9ce40e58f517953782ae614e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x87b918e76c92818db0c76a4e174447aee6e6d23f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x87b918e76c92818db0c76a4e174447aee6e6d23f"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x87bf6386f7611afa452c642c2835a305a692607d",
+    "incentives": [
+      {
+        "apr": null,
+        "rewardPerDay": 0,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x87bf6386f7611afa452c642c2835a305a692607d"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8911fce375a8414b1b578be66ee691a8d2d4dbf7",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8911fce375a8414b1b578be66ee691a8d2d4dbf7"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8b00ee8606cc70c2dce68dea0cefe632cca0fb7b",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8b00ee8606cc70c2dce68dea0cefe632cca0fb7b"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8c2e6a4af15c94cf4a86cd3c067159f08571d780",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8c2e6a4af15c94cf4a86cd3c067159f08571d780"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8cd7dadc8e11c8706763e0de7332f5ea91e04e35",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8cd7dadc8e11c8706763e0de7332f5ea91e04e35"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8d782c5806607e9aafb2ac38c1da3838edf8bd03",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8d782c5806607e9aafb2ac38c1da3838edf8bd03"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x8f9ef75cd6e610dd8acf8611c344573032fb9c3d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x8f9ef75cd6e610dd8acf8611c344573032fb9c3d"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x91a48c69ec3f3ce855fe5054f82d2bef8fd66c43",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x91a48c69ec3f3ce855fe5054f82d2bef8fd66c43"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9360b76f8f5f932ac33d46a3ce82ad6c52a713e5",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9360b76f8f5f932ac33d46a3ce82ad6c52a713e5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x938625591adb4e865b882377e2c965f9f9b85e34",
+    "incentives": [
+      {
+        "apr": 0.13329654617000727,
+        "rewardPerDay": 10.452551702183147,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x938625591adb4e865b882377e2c965f9f9b85e34"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x93e2f3a8277e0360081547d711446e4a1f83546d",
+    "incentives": [
+      {
+        "apr": 0.0039086694327524155,
+        "rewardPerDay": 22.398325076106744,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x93e2f3a8277e0360081547d711446e4a1f83546d"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9461173740d27311b176476fa27e94c681b1ea6b",
+    "incentives": [
+      {
+        "apr": 0.005317234937743058,
+        "rewardPerDay": 9.705940866312922,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9461173740d27311b176476fa27e94c681b1ea6b"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x95b54c8da12bb23f7a5f6e26c38d04acc6f81820",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x95b54c8da12bb23f7a5f6e26c38d04acc6f81820"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x95cfa1f48fad82232772d3b1415ad4393517f3b5",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x95cfa1f48fad82232772d3b1415ad4393517f3b5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x96f5b7c2be10dc7de02fa8858a8f1bd19c2fa72a",
+    "incentives": [
+      {
+        "apr": 0.018221133580456177,
+        "rewardPerDay": 3.733054179351124,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x96f5b7c2be10dc7de02fa8858a8f1bd19c2fa72a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x97f34c8e5992eb985c5f740e7ee8c7e48a1de76a",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x97f34c8e5992eb985c5f740e7ee8c7e48a1de76a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x986627db5e4aae987f580feb63d475992e5ac0ae",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x986627db5e4aae987f580feb63d475992e5ac0ae"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x98c2f9d752e044dc2e1f1743bf0b76a7096eceb2",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x98c2f9d752e044dc2e1f1743bf0b76a7096eceb2"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x99b42f2b49c395d2a77d973f6009abb5d67da343",
+    "incentives": [
+      {
+        "apr": 0.019504042094485984,
+        "rewardPerDay": 99.10763308011833,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.367584369220504,
+        "rewardPerDay": 10584.415584415585,
+        "rewardToken": {
+          "address": "0x25f8087ead173b73d6e8b84329989a8eea16cf73",
+          "decimals": 18,
+          "symbol": "YGG"
+        },
+        "rewarder": {
+          "address": "0x083773a02311894a7e5710d62662bfbd268e10ec",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x99b42f2b49c395d2a77d973f6009abb5d67da343"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9a13867048e01c663ce8ce2fe0cdae69ff9f35e3",
+    "incentives": [
+      {
+        "apr": 0.035342220735460825,
+        "rewardPerDay": 14.932216717404495,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9a13867048e01c663ce8ce2fe0cdae69ff9f35e3"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0x9b880dd096ef74ef7e4b771526bd9584e0b8f7b5",
+    "incentives": [
+      {
+        "apr": 0.5887915247639364,
+        "rewardPerDay": 328.76712,
+        "rewardToken": {
+          "address": "0x471ea49dd8e60e697f4cac262b5fafcc307506e4",
+          "decimals": 10,
+          "symbol": "xcRMRK"
+        },
+        "rewarder": {
+          "address": "0xbec5a9803ff6f66e4287611a5c146a812d1456e2",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9b880dd096ef74ef7e4b771526bd9584e0b8f7b5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9c86bc3c72ab97c2234cba8c6c7069009465ae86",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9c86bc3c72ab97c2234cba8c6c7069009465ae86"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9cd028b1287803250b1e226f0180eb725428d069",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9cd028b1287803250b1e226f0180eb725428d069"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9cee2ad771b57555c93f55d8babc3c8a221e3b74",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9cee2ad771b57555c93f55d8babc3c8a221e3b74"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9d45081706102e7aaddd0973268457527722e274",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9d45081706102e7aaddd0973268457527722e274"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9e48fadf799e0513d2ef4631478ea186741fa617",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9e48fadf799e0513d2ef4631478ea186741fa617"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9ebc2a125b1daf3b8a56cb52fa81f89a199e2b38",
+    "incentives": [
+      {
+        "apr": 0.45841478803161045,
+        "rewardPerDay": 1.4932216717404494,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9ebc2a125b1daf3b8a56cb52fa81f89a199e2b38"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0x9fc5b87b74b9bd239879491056752eb90188106d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0x9fc5b87b74b9bd239879491056752eb90188106d"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xa1181481beb2dc5de0daf2c85392d81c704bf75d",
+    "incentives": [
+      {
+        "apr": 0.03395539352433093,
+        "rewardPerDay": 99.10763308011833,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa1181481beb2dc5de0daf2c85392d81c704bf75d"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa1d7b2d891e3a1f9ef4bbc5be20630c2feb1c470",
+    "incentives": [
+      {
+        "apr": 0.029320685001861288,
+        "rewardPerDay": 41.063595972862366,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa1d7b2d891e3a1f9ef4bbc5be20630c2feb1c470"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa1f967f25ae32bd3435e45ea8657de16ce5a4ae6",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa1f967f25ae32bd3435e45ea8657de16ce5a4ae6"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa2d81bedf22201a77044cdf3ab4d9dc1ffbc391b",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa2d81bedf22201a77044cdf3ab4d9dc1ffbc391b"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa30911e072a0c88d55b5d0a0984b66b0d04569d0",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa30911e072a0c88d55b5d0a0984b66b0d04569d0"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa3dfbf2933ff3d96177bde4928d0f5840ee55600",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa3dfbf2933ff3d96177bde4928d0f5840ee55600"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa55b28c07bc43feb42119e83f5b56de89eb54712",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa55b28c07bc43feb42119e83f5b56de89eb54712"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa5c475167f03b1556c054e0da78192cd2779087f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa5c475167f03b1556c054e0da78192cd2779087f"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa73df646512c82550c2b3c0324c4eedee53b400c",
+    "incentives": [
+      {
+        "apr": 0.024674109987621363,
+        "rewardPerDay": 2.239832507610674,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa73df646512c82550c2b3c0324c4eedee53b400c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa75f7c2f025f470355515482bde9efa8153536a8",
+    "incentives": [
+      {
+        "apr": 0.018611615628553502,
+        "rewardPerDay": 9.705940866312922,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa75f7c2f025f470355515482bde9efa8153536a8"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa7f11e026a0af768d285360a855f2bded3047530",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa7f11e026a0af768d285360a855f2bded3047530"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa872d244b8948dfd6cb7bd19f79e7c1bfb7db4a0",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa872d244b8948dfd6cb7bd19f79e7c1bfb7db4a0"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa8aec03d5cf2824fd984ee249493d6d4d6740e61",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa8aec03d5cf2824fd984ee249493d6d4d6740e61"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xa914a9b9e03b6af84f9c6bd2e0e8d27d405695db",
+    "incentives": [
+      {
+        "apr": 0.27446634756326155,
+        "rewardPerDay": 74.66108358702247,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xa914a9b9e03b6af84f9c6bd2e0e8d27d405695db"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xaa500101c73065f755ba9b902d643705ef2523e3",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xaa500101c73065f755ba9b902d643705ef2523e3"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xada8b1613ce6fe75f3549fa4eb2a993ca1220a7c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xada8b1613ce6fe75f3549fa4eb2a993ca1220a7c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xadeaa96a81ebba4e3a5525a008ee107385d588c3",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xadeaa96a81ebba4e3a5525a008ee107385d588c3"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xaf988aff99d3d0cb870812c325c588d8d8cb7de8",
+    "incentives": [
+      {
+        "apr": 0.20269500512391242,
+        "rewardPerDay": 41.063595972862366,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xaf988aff99d3d0cb870812c325c588d8d8cb7de8"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xafa5767374ba12c59a79182e8e4e27d27f1d9aa6",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xafa5767374ba12c59a79182e8e4e27d27f1d9aa6"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xb0484fb3ac155aaf7d024b20f1a569ddd6332c32",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb0484fb3ac155aaf7d024b20f1a569ddd6332c32"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xb124c4e18a282143d362a066736fd60d22393ef4",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb124c4e18a282143d362a066736fd60d22393ef4"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xb12aa722a3a4566645f079b6f10c89a3205b6c2c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb12aa722a3a4566645f079b6f10c89a3205b6c2c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xb1d38026062ac10feda072ca0e9b7e35f1f5795a",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb1d38026062ac10feda072ca0e9b7e35f1f5795a"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xb1eecfea192907fc4bf9c4ce99ac07186075fc51",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb1eecfea192907fc4bf9c4ce99ac07186075fc51"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xb264dc9d22ece51aaa6028c5cbf2738b684560d6",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb264dc9d22ece51aaa6028c5cbf2738b684560d6"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xb270176ba6075196df88b855c3ec7776871fdb33",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb270176ba6075196df88b855c3ec7776871fdb33"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xb27c7b131cf4915bec6c4bc1ce2f33f9ee434b9f",
+    "incentives": [
+      {
+        "apr": 0.15385721197029276,
+        "rewardPerDay": 19.821526616023668,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb27c7b131cf4915bec6c4bc1ce2f33f9ee434b9f"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xb2aef5dbec896830b7391c3d7dee130ad36b8e9f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb2aef5dbec896830b7391c3d7dee130ad36b8e9f"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xb2c29e311916a346304f83aa44527092d5bd4f0f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb2c29e311916a346304f83aa44527092d5bd4f0f"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xb46736888247c68c995b156ca86426ff32e27cc9",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb46736888247c68c995b156ca86426ff32e27cc9"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xb50580b0d81d9fe860746387cef9a8fc36d48d49",
+    "incentives": [
+      {
+        "apr": 0.644945822399508,
+        "rewardPerDay": 172800,
+        "rewardToken": {
+          "address": "0x16cda4028e9e872a38acb903176719299beaed87",
+          "decimals": 18,
+          "symbol": "MARS4"
+        },
+        "rewarder": {
+          "address": "0xf313455fa32db78a02aebf824624cf914abe2533",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb50580b0d81d9fe860746387cef9a8fc36d48d49"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xb5de0c3753b6e1b4dba616db82767f17513e6d4e",
+    "incentives": [
+      {
+        "apr": 0.3318544264346483,
+        "rewardPerDay": 100.79246284248035,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb5de0c3753b6e1b4dba616db82767f17513e6d4e"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xb84c45174bfc6b8f3eaecbae11dee63114f5c1b2",
+    "incentives": [
+      {
+        "apr": 0.008939843663827498,
+        "rewardPerDay": 29.7322899240355,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.5751230801094497,
+        "rewardPerDay": 14999999999.999998,
+        "rewardToken": {
+          "address": "0x3b484b82567a09e2588a13d54d032153f0c0aee0",
+          "decimals": 18,
+          "symbol": "SOS"
+        },
+        "rewarder": {
+          "address": "0x2646cbb689bce70dd7d8e041ea35b1879412059c",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb84c45174bfc6b8f3eaecbae11dee63114f5c1b2"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xb90047676cc13e68632c55cb5b7cbd8a4c5a0a8e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xb90047676cc13e68632c55cb5b7cbd8a4c5a0a8e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xba13afecda9beb75de5c56bbaf696b880a5a50dd",
+    "incentives": [
+      {
+        "apr": 0.00734818410540546,
+        "rewardPerDay": 4.479665015221348,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xba13afecda9beb75de5c56bbaf696b880a5a50dd"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xbb19141e045b133169d7c7160c5e54a54cc821b2",
+    "incentives": [
+      {
+        "apr": 0.6362539572551075,
+        "rewardPerDay": 3.964305323204733,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xbb19141e045b133169d7c7160c5e54a54cc821b2"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xbbbdb106a806173d1eea1640961533ff3114d69a",
+    "incentives": [
+      {
+        "apr": 1.0418777850291963,
+        "rewardPerDay": 18.66527089675562,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xbbbdb106a806173d1eea1640961533ff3114d69a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xbbfd9b37ec6ea1ca612ab4adef6d8c6ece1a4134",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xbbfd9b37ec6ea1ca612ab4adef6d8c6ece1a4134"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xbe1e98685fb293144325440c16f69954ffcb790c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xbe1e98685fb293144325440c16f69954ffcb790c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xbe71372995e8e920e4e72a29a51463677a302e8d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xbe71372995e8e920e4e72a29a51463677a302e8d"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xc08ed9a9abeabcc53875787573dc32eee5e43513",
+    "incentives": [
+      {
+        "apr": 0.6397749307145484,
+        "rewardPerDay": 21.803679277626035,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc08ed9a9abeabcc53875787573dc32eee5e43513"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc2b0f2a7f736d3b908bdde8608177c8fc28c1690",
+    "incentives": [
+      {
+        "apr": 0.04296964902329904,
+        "rewardPerDay": 7.466108358702248,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc2b0f2a7f736d3b908bdde8608177c8fc28c1690"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xc2ce29af8930fc32ca24ccb76c2866fb2bf692fe",
+    "incentives": [
+      {
+        "apr": 0.07810384592513296,
+        "rewardPerDay": 1.9821526616023666,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc2ce29af8930fc32ca24ccb76c2866fb2bf692fe"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc3d03e4f041fd4cd388c549ee2a29a9e5075882f",
+    "incentives": [
+      {
+        "apr": 0.06684890407041255,
+        "rewardPerDay": 895.9330030442698,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc3d03e4f041fd4cd388c549ee2a29a9e5075882f"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xc3f279090a47e80990fe3a9c30d24cb117ef91a8",
+    "incentives": [
+      {
+        "apr": 0.018275198280483004,
+        "rewardPerDay": 226.956479753471,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.2927558662719858,
+        "rewardPerDay": 285.80382719999994,
+        "rewardToken": {
+          "address": "0xdbdb4d16eda451d0503b854cf79d55697f90c8df",
+          "decimals": 18,
+          "symbol": "ALCX"
+        },
+        "rewarder": {
+          "address": "0x7519c93fc5073e15d89131fd38118d73a72370f8",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc3f279090a47e80990fe3a9c30d24cb117ef91a8"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc40d16476380e4037e6b1a2594caf6a6cc8da967",
+    "incentives": [
+      {
+        "apr": 0.015364941933941388,
+        "rewardPerDay": 59.72886686961798,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc40d16476380e4037e6b1a2594caf6a6cc8da967"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xc5578194d457dcce3f272538d1ad52c68d1ce849",
+    "incentives": [
+      {
+        "apr": 0.011958563358774214,
+        "rewardPerDay": 1.9821526616023666,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc5578194d457dcce3f272538d1ad52c68d1ce849"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc558f600b34a5f69dd2f0d06cb8a88d829b7420a",
+    "incentives": [
+      {
+        "apr": 0.07114854111027273,
+        "rewardPerDay": 746.6108358702248,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc558f600b34a5f69dd2f0d06cb8a88d829b7420a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc5fa164247d2f8d68804139457146efbde8370f6",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc5fa164247d2f8d68804139457146efbde8370f6"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc79faeed130816b38e5996b79b1b3b6568cc599f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc79faeed130816b38e5996b79b1b3b6568cc599f"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc7ff546c6cbc87ad9f6f557db5a0df5c742ca440",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc7ff546c6cbc87ad9f6f557db5a0df5c742ca440"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc83ce8612164ef7a13d17ddea4271dd8e8eebe5d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc83ce8612164ef7a13d17ddea4271dd8e8eebe5d"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc8a6189bb16331b37c7a903b8904201b4ca7accb",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc8a6189bb16331b37c7a903b8904201b4ca7accb"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc926990039045611eb1de520c1e249fd0d20a8ea",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc926990039045611eb1de520c1e249fd0d20a8ea"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xc96f20099d96b37d7ede66ff9e4de59b9b1065b1",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xc96f20099d96b37d7ede66ff9e4de59b9b1065b1"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xca2ae9c5c491f497dc5625feaef4572076c946c5",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xca2ae9c5c491f497dc5625feaef4572076c946c5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xca658217ce94dfb2156a49a8fad0ff752cac39c2",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xca658217ce94dfb2156a49a8fad0ff752cac39c2"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xcb2286d9471cc185281c4f763d34a962ed212962",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xcb2286d9471cc185281c4f763d34a962ed212962"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xce7e98d4da6ebda6af474ea618c6b175729cd366",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xce7e98d4da6ebda6af474ea618c6b175729cd366"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xceff51756c56ceffca006cd410b03ffc46dd3a58",
+    "incentives": [
+      {
+        "apr": 0.007399399899579746,
+        "rewardPerDay": 209.05103404366295,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xceff51756c56ceffca006cd410b03ffc46dd3a58"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xcfa9a297a406a48d1137172c18de04c944b47ba9",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xcfa9a297a406a48d1137172c18de04c944b47ba9"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xd3da6236aecb6b55f571249c011b8eec340a418e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xd3da6236aecb6b55f571249c011b8eec340a418e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xd45afa3649e57a961c001b935ded1c79d81a9d23",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xd45afa3649e57a961c001b935ded1c79d81a9d23"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xd4e7a6e2d03e4e48dfc27dd3f46df1c176647e38",
+    "incentives": [
+      {
+        "apr": 0.3338727617631938,
+        "rewardPerDay": 49.55381654005917,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xd4e7a6e2d03e4e48dfc27dd3f46df1c176647e38"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xd54a895623552853f8d673981cc32eb8f3929dfb",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xd54a895623552853f8d673981cc32eb8f3929dfb"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xd597924b16cc1904d808285bc9044fd51ceeead7",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xd597924b16cc1904d808285bc9044fd51ceeead7"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xd75ea151a61d06868e31f8988d28dfe5e9df57b4",
+    "incentives": [
+      {
+        "apr": 0.06366735428118686,
+        "rewardPerDay": 201.5849256849607,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xd75ea151a61d06868e31f8988d28dfe5e9df57b4"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xd829de54877e0b66a2c3890b702fa5df2245203e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xd829de54877e0b66a2c3890b702fa5df2245203e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xd8b8b575c943f3d63638c9563b464d204ed8b710",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xd8b8b575c943f3d63638c9563b464d204ed8b710"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xdafd66636e2561b0284edde37e42d192f2844d40",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xdafd66636e2561b0284edde37e42d192f2844d40"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xdb06a76733528761eda47d356647297bc35a98bd",
+    "incentives": [
+      {
+        "apr": 0.13810419315012826,
+        "rewardPerDay": 9.910763308011834,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xdb06a76733528761eda47d356647297bc35a98bd"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xdbaa04796cb5c05d02b8a41b702d9b67c13c9fa9",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xdbaa04796cb5c05d02b8a41b702d9b67c13c9fa9"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xdbb69ea87507525fffbd1c4f1ad6f7d30a9a402e",
+    "incentives": [
+      {
+        "apr": 0.9251268966542245,
+        "rewardPerDay": 5011.2,
+        "rewardToken": {
+          "address": "0x46e98ffe40e408ba6412beb670507e083c8b95ff",
+          "decimals": 18,
+          "symbol": "PRIMATE"
+        },
+        "rewarder": {
+          "address": "0x173ea048c2b5a3b234ffe40eb3c8859802778bf3",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xdbb69ea87507525fffbd1c4f1ad6f7d30a9a402e"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xdd487b90450e90029b107d1c9ad9955cebd2c7e5",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xdd487b90450e90029b107d1c9ad9955cebd2c7e5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xdff71165a646be71fcfbaa6206342faa503aed5d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xdff71165a646be71fcfbaa6206342faa503aed5d"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xe12af1218b4e9272e9628d7c7dc6354d137d024e",
+    "incentives": [
+      {
+        "apr": 0.03236502792594001,
+        "rewardPerDay": 39.643053232047336,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe12af1218b4e9272e9628d7c7dc6354d137d024e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xe4455fdec181561e9ffe909dde46aaeaedc55283",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe4455fdec181561e9ffe909dde46aaeaedc55283"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xe4ebd836832f1a8a81641111a5b081a2f90b9430",
+    "incentives": [
+      {
+        "apr": 0.013533364209669937,
+        "rewardPerDay": 1.9821526616023666,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe4ebd836832f1a8a81641111a5b081a2f90b9430"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xe55c3e83852429334a986b265d03b879a3d188ac",
+    "incentives": [
+      {
+        "apr": 1.5599650601293522,
+        "rewardPerDay": 18.66527089675562,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe55c3e83852429334a986b265d03b879a3d188ac"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xe5f06db4f3473e7e35490f1f98017728496fe81e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe5f06db4f3473e7e35490f1f98017728496fe81e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xe73ad09925201f21b607ccada9a371c12a2f49c3",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe73ad09925201f21b607ccada9a371c12a2f49c3"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xe8eb0f7b866a85da49401d04fffcfc1abbf24dfd",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe8eb0f7b866a85da49401d04fffcfc1abbf24dfd"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xe93527d1f8c586353b13826c501fa5a69bce2b0e",
+    "incentives": [
+      {
+        "apr": 0.8295209414359274,
+        "rewardPerDay": 49999.99999968,
+        "rewardToken": {
+          "address": "0x807a0774236a0fbe9e7f8e7df49edfed0e6777ea",
+          "decimals": 18,
+          "symbol": "BLOCK"
+        },
+        "rewarder": {
+          "address": "0x754e3f0123a96eb7f8d81a8e067375115bbb82f7",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe93527d1f8c586353b13826c501fa5a69bce2b0e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xe93b1b5e1dadce8152a69470c1b31463af260296",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe93b1b5e1dadce8152a69470c1b31463af260296"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xe9a889e6963f122a98f8083d951c71329c726c0a",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe9a889e6963f122a98f8083d951c71329c726c0a"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xe9ab8038ee6dd4fcc7612997fe28d4e22019c4b4",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xe9ab8038ee6dd4fcc7612997fe28d4e22019c4b4"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xea9b00b169dda4cbc9fa0a64b0d1e4a6a23a3f34",
+    "incentives": [
+      {
+        "apr": 0.002930206953936645,
+        "rewardPerDay": 2.97322899240355,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xea9b00b169dda4cbc9fa0a64b0d1e4a6a23a3f34"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xeaadde1e14c587a7fb4ba78ea78109bb32975f1e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xeaadde1e14c587a7fb4ba78ea78109bb32975f1e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xeb1b57d4f7d4557b032b66c422bc94a8e4af859e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xeb1b57d4f7d4557b032b66c422bc94a8e4af859e"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xec3bdd98f0461a7966510d2f26bafc6680aab2c5",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xec3bdd98f0461a7966510d2f26bafc6680aab2c5"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xec78bd3b23ac867fcc028f2db405a1d9a0a2f712",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xec78bd3b23ac867fcc028f2db405a1d9a0a2f712"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xec87cb93ecd0fe2f80dbd0d85431eacf1de09d50",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xec87cb93ecd0fe2f80dbd0d85431eacf1de09d50"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xec8c342bc3e07f05b9a782bc34e7f04fb9b44502",
+    "incentives": [
+      {
+        "apr": 0.08532643122661263,
+        "rewardPerDay": 9.705940866312922,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xec8c342bc3e07f05b9a782bc34e7f04fb9b44502"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xed92bfe08de542bbb40fdbe0a27ca66313c0c457",
+    "incentives": [
+      {
+        "apr": 0.09207762193493425,
+        "rewardPerDay": 1.9821526616023666,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xed92bfe08de542bbb40fdbe0a27ca66313c0c457"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xee35e548c7457fcdd51ae95ed09108be660ea374",
+    "incentives": [
+      {
+        "apr": 0.07369317756024105,
+        "rewardPerDay": 5.226275851091573,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xee35e548c7457fcdd51ae95ed09108be660ea374"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xee6d78755e06c31ae7a5ea2b29b35c073dfc00a9",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xee6d78755e06c31ae7a5ea2b29b35c073dfc00a9"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xeefa3b448768dd561af4f743c9e925987a1f8d09",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xeefa3b448768dd561af4f743c9e925987a1f8d09"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xef4f1d5007b4ff88c1a56261fec00264af6001fb",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xef4f1d5007b4ff88c1a56261fec00264af6001fb"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf1360c4ae1cead17b588ec1111983d2791b760d3",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf1360c4ae1cead17b588ec1111983d2791b760d3"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf13eef1c6485348b9c9fa0d5df2d89accc5b0147",
+    "incentives": [
+      {
+        "apr": 0.01092481423524103,
+        "rewardPerDay": 8.959330030442697,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf13eef1c6485348b9c9fa0d5df2d89accc5b0147"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf169cea51eb51774cf107c88309717dda20be167",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf169cea51eb51774cf107c88309717dda20be167"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf1f85b2c54a2bd284b1cf4141d64fd171bd85539",
+    "incentives": [
+      {
+        "apr": 0.007591456950552782,
+        "rewardPerDay": 3.733054179351124,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf1f85b2c54a2bd284b1cf4141d64fd171bd85539"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf39ff863730268c9bb867b3a69d031d1c1614b31",
+    "incentives": [
+      {
+        "apr": 0.014533552880979905,
+        "rewardPerDay": 2.239832507610674,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf39ff863730268c9bb867b3a69d031d1c1614b31"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf45d97f9d457661783146d63dd13da20ce9bf847",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf45d97f9d457661783146d63dd13da20ce9bf847"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf55c33d94150d93c2cfb833bcca30be388b14964",
+    "incentives": [
+      {
+        "apr": 0.015686867205963236,
+        "rewardPerDay": 11.199162538053372,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf55c33d94150d93c2cfb833bcca30be388b14964"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf5ca27927ffb16bd8c870dcb49750146cce8217c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf5ca27927ffb16bd8c870dcb49750146cce8217c"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xf79321e80acd5fa590936f09acb90ec6471fcbc4",
+    "incentives": [
+      {
+        "apr": 0.06709788144357469,
+        "rewardPerDay": 9.910763308011834,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.5057357892450804,
+        "rewardPerDay": 99999.36,
+        "rewardToken": {
+          "address": "0x3c8d2fce49906e11e71cb16fa0ffeb2b16c29638",
+          "decimals": 18,
+          "symbol": "NFTL"
+        },
+        "rewarder": {
+          "address": "0xdf3754b114a523d8b0b3647018fe2b5ef28d15b6",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf79321e80acd5fa590936f09acb90ec6471fcbc4"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf79a07cd3488bbafb86df1bad09a6168d935c017",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf79a07cd3488bbafb86df1bad09a6168d935c017"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xf9440fedc72a0b8030861dcdac39a75b544e7a3c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xf9440fedc72a0b8030861dcdac39a75b544e7a3c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xfa5bc40c3bd5afa8bc2fe6b84562fee16fb2df5f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfa5bc40c3bd5afa8bc2fe6b84562fee16fb2df5f"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xfa8c3f98debf3d0a192e2edf9182352332def35c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfa8c3f98debf3d0a192e2edf9182352332def35c"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xfb3cd0b8a5371fe93ef92e3988d30df7931e2820",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfb3cd0b8a5371fe93ef92e3988d30df7931e2820"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xfb55af0ef0dcdec92bd3752e7a9237dfefb8acc0",
+    "incentives": [
+      {
+        "apr": 0.24862860605848633,
+        "rewardPerDay": 5.226275851091573,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xc2EdaD668740f1aA35E4D8f227fB8E17dcA888Cd",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfb55af0ef0dcdec92bd3752e7a9237dfefb8acc0"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xfceaaf9792139bf714a694f868a215493461446d",
+    "incentives": [
+      {
+        "apr": 0.04291440414781167,
+        "rewardPerDay": 29.7322899240355,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.43014258196470057,
+        "rewardPerDay": 10107.999936,
+        "rewardToken": {
+          "address": "0x4c19596f5aaff459fa38b0f7ed92f11ae6543784",
+          "decimals": 8,
+          "symbol": "TRU"
+        },
+        "rewarder": {
+          "address": "0xc0482b9d1ff34f7cd98e3a0a4584298492acf550",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfceaaf9792139bf714a694f868a215493461446d"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xfcff3b04c499a57778ae2cf05584ab24278a7fcb",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfcff3b04c499a57778ae2cf05584ab24278a7fcb"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xfe308fe2eb938f772807aec2e87fc762d47c40e0",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfe308fe2eb938f772807aec2e87fc762d47c40e0"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xfe9a776154f30281517d4f06578591911906f4e1",
+    "incentives": [
+      {
+        "apr": 0.2664959906736351,
+        "rewardPerDay": 18144,
+        "rewardToken": {
+          "address": "0xfb782396c9b20e564a64896181c7ac8d8979d5f4",
+          "decimals": 18,
+          "symbol": "DIVER"
+        },
+        "rewarder": {
+          "address": "0x40610c4c136bfa63b98ec58f2f392958fe8a8f5d",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfe9a776154f30281517d4f06578591911906f4e1"
+  },
+  {
+    "chefType": "MasterChefV2",
+    "id": "1:0xfed8e81bd0fba2664e9bd9abfaffb77828f959b7",
+    "incentives": [
+      {
+        "apr": 0.04533083991705611,
+        "rewardPerDay": 9.910763308011834,
+        "rewardToken": {
+          "address": "0x6B3595068778DD592e39A122f4f5a5cF09C90fE2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xEF0881eC094552b2e128Cf945EF17a6752B4Ec5d",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.5719587494192585,
+        "rewardPerDay": 0.1369863013536,
+        "rewardToken": {
+          "address": "0xe9f84de264e91529af07fa2c746e934397810334",
+          "decimals": 18,
+          "symbol": "SAK3"
+        },
+        "rewarder": {
+          "address": "0x330045c1ea0d7eea6ff8c1e9c8f7a461e125d199",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfed8e81bd0fba2664e9bd9abfaffb77828f959b7"
+  },
+  {
+    "chefType": "MasterChefV1",
+    "id": "1:0xfffae4a0f4ac251f4705717cd24cadccc9f33e06",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1,
+    "pool": "0xfffae4a0f4ac251f4705717cd24cadccc9f33e06"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0x0f9d54d9ee044220a3925f9b97509811924fd269",
+    "incentives": [
+      {
+        "apr": 0.018852952180935054,
+        "rewardPerDay": 14.923636363636364,
+        "rewardToken": {
+          "address": "0x2995D1317DcD4f0aB89f4AE60F3f020A4F17C7CE",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0x0f9d54d9ee044220a3925f9b97509811924fd269"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0x15f9eedeebd121fbb238a8a0cae38f4b4a07a585",
+    "incentives": [
+      {
+        "apr": 0.008192482858636965,
+        "rewardPerDay": 11.93890909090909,
+        "rewardToken": {
+          "address": "0x2995D1317DcD4f0aB89f4AE60F3f020A4F17C7CE",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0x15f9eedeebd121fbb238a8a0cae38f4b4a07a585"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0x6685c047eab042297e659bfaa7423e94b4a14b9e",
+    "incentives": [
+      {
+        "apr": 0.018338702186029943,
+        "rewardPerDay": 2.4872727272727273,
+        "rewardToken": {
+          "address": "0x2995D1317DcD4f0aB89f4AE60F3f020A4F17C7CE",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0x6685c047eab042297e659bfaa7423e94b4a14b9e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0x74c2efa722010ad7c142476f525a051084da2c42",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0x74c2efa722010ad7c142476f525a051084da2c42"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0x8c0c36c85192204c8d782f763ff5a30f5ba0192f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0x8c0c36c85192204c8d782f763ff5a30f5ba0192f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0xa227c72a4055a9dc949cae24f54535fe890d3663",
+    "incentives": [
+      {
+        "apr": 0.006624149848728131,
+        "rewardPerDay": 12.436363636363637,
+        "rewardToken": {
+          "address": "0x2995D1317DcD4f0aB89f4AE60F3f020A4F17C7CE",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0xa227c72a4055a9dc949cae24f54535fe890d3663"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0xb320609f2bf3ca98754c14db717307c6d6794d8b",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0xb320609f2bf3ca98754c14db717307c6d6794d8b"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0xc704050a17af0caed763431b80e38e8d8ff15591",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0xc704050a17af0caed763431b80e38e8d8ff15591"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0xd77c13d58fc67da84f3b440ce42a802d905ec6a0",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0xd77c13d58fc67da84f3b440ce42a802d905ec6a0"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0xe21f631f47bfb2bc53ed134e83b8cff00e0ec054",
+    "incentives": [
+      {
+        "apr": 0.0011830695960831448,
+        "rewardPerDay": 4.974545454545455,
+        "rewardToken": {
+          "address": "0x2995D1317DcD4f0aB89f4AE60F3f020A4F17C7CE",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.008307953025870875,
+        "rewardPerDay": 0.4666666666752,
+        "rewardToken": {
+          "address": "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+          "decimals": 18,
+          "symbol": "GNO"
+        },
+        "rewarder": {
+          "address": "0x3f505b5cff05d04f468db65e27e72ec45a12645f",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0xe21f631f47bfb2bc53ed134e83b8cff00e0ec054"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "100:0xf38c5b39f29600765849ca38712f302b1522c9b8",
+    "incentives": [
+      {
+        "apr": 0.03616833542752862,
+        "rewardPerDay": 2.4872727272727273,
+        "rewardToken": {
+          "address": "0x2995D1317DcD4f0aB89f4AE60F3f020A4F17C7CE",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 100,
+    "pool": "0xf38c5b39f29600765849ca38712f302b1522c9b8"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "122:0x00e485d833099679ed7d121ce46a9557ea8ada1e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 122,
+    "pool": "0x00e485d833099679ed7d121ce46a9557ea8ada1e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "122:0x90c3ba00d2f7f15cd9fde087538be3a2865e7e2f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 122,
+    "pool": "0x90c3ba00d2f7f15cd9fde087538be3a2865e7e2f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "122:0x9d9e8787f25594fd68551989de185408f9442124",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 122,
+    "pool": "0x9d9e8787f25594fd68551989de185408f9442124"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "122:0xba9ca720e314f42e17e80991c1d0affe47387108",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 122,
+    "pool": "0xba9ca720e314f42e17e80991c1d0affe47387108"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "122:0xc0fe33da40e43bb113810f8ae5c5f5a9256c82f6",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 122,
+    "pool": "0xc0fe33da40e43bb113810f8ae5c5f5a9256c82f6"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "122:0xd97703c816e1b4cda7c621c5124497de516f2400",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 122,
+    "pool": "0xd97703c816e1b4cda7c621c5124497de516f2400"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "122:0xf9c63e6e21d65ba3cb6b95790f559e8da1b38764",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 122,
+    "pool": "0xf9c63e6e21d65ba3cb6b95790f559e8da1b38764"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x01cdcc99a4f9a68be18504750b219caa881841eb",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x01cdcc99a4f9a68be18504750b219caa881841eb"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x0a7f27e370168b1e1be2ef77a8ba28d66983c515",
+    "incentives": [
+      {
+        "apr": 0.13306049075230295,
+        "rewardPerDay": 3.4999776,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.2624385104269681,
+        "rewardPerDay": 443.94448333333304,
+        "rewardToken": {
+          "address": "0xeb45921fedadf41df0bfcf5c33453acedda32441",
+          "decimals": 18,
+          "symbol": "pZUG"
+        },
+        "rewarder": {
+          "address": "0xb52b4b6779553a89e7f5f6f1d463595d88e88822",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x0a7f27e370168b1e1be2ef77a8ba28d66983c515"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x116ff0d1caa91a6b94276b3471f33dbeb52073e7",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x116ff0d1caa91a6b94276b3471f33dbeb52073e7"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x1274de0de2e9d9b1d0e06313c0e5edd01cc335ef",
+    "incentives": [
+      {
+        "apr": 0.01577316878582081,
+        "rewardPerDay": 2.499984,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00017032912753357557,
+        "rewardPerDay": 0.0510236220472441,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x1274de0de2e9d9b1d0e06313c0e5edd01cc335ef"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x1549e0e8127d380080aab448b82d280433ce4030",
+    "incentives": [
+      {
+        "apr": 0.025705104611804294,
+        "rewardPerDay": 7.499951999999999,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x1549e0e8127d380080aab448b82d280433ce4030"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x180237bd326d5245d0898336f54b3c8012c5c62f",
+    "incentives": [
+      {
+        "apr": 0.0068340410431796455,
+        "rewardPerDay": 0.9999935999999999,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00003689925164117431,
+        "rewardPerDay": 0.010204724409448819,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x180237bd326d5245d0898336f54b3c8012c5c62f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x1bf9805b40a5f69c7d0f9e5d1ab718642203c652",
+    "incentives": [
+      {
+        "apr": 0.6549372356193423,
+        "rewardPerDay": 4.999968,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.0070724462184526896,
+        "rewardPerDay": 0.1020472440944882,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x1bf9805b40a5f69c7d0f9e5d1ab718642203c652"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x1ceda73c034218255f50ef8a2c282e6b4c301d60",
+    "incentives": [
+      {
+        "apr": 0.05122687295951528,
+        "rewardPerDay": 9.999936,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00046098476342682333,
+        "rewardPerDay": 0.1700787401574803,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x1ceda73c034218255f50ef8a2c282e6b4c301d60"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x1e67124681b402064cd0abe8ed1b5c79d2e02f64",
+    "incentives": [
+      {
+        "apr": 0.018425640721834145,
+        "rewardPerDay": 2.499984,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00013264818464878988,
+        "rewardPerDay": 0.03401574803149606,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x1e67124681b402064cd0abe8ed1b5c79d2e02f64"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x211f8e61113edaf00cf37a804b0ba721875ef560",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x211f8e61113edaf00cf37a804b0ba721875ef560"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x21ef14b5580a852477ef31e7ea9373485bf50377",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x21ef14b5580a852477ef31e7ea9373485bf50377"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x25e8bbc103842f0dad2465f4e04cb8d44fb787bc",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x25e8bbc103842f0dad2465f4e04cb8d44fb787bc"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x2813d43463c374a680f235c428fb1d7f08de0b69",
+    "incentives": [
+      {
+        "apr": 0.01810432499903762,
+        "rewardPerDay": 12.49992,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00013033499793406325,
+        "rewardPerDay": 0.1700787401574803,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x2813d43463c374a680f235c428fb1d7f08de0b69"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x3398787dca0f1bd830713ec5294ade196a198984",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x3398787dca0f1bd830713ec5294ade196a198984"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x34908ec7f451beaa88c46c60a394cf324f86f67e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x34908ec7f451beaa88c46c60a394cf324f86f67e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x34965ba0ac2451a34a0471f04cca3f990b8dea27",
+    "incentives": [
+      {
+        "apr": 0.029667467705921883,
+        "rewardPerDay": 99.99936,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00016605791785605814,
+        "rewardPerDay": 1.0578897637795277,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x34965ba0ac2451a34a0471f04cca3f990b8dea27"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x374552804f7ca26c307c8d31f4cc0d9215c87f46",
+    "incentives": [
+      {
+        "apr": 0.6968888921645439,
+        "rewardPerDay": 203.99869439999998,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.8302832817290839,
+        "rewardPerDay": 11111.1111072,
+        "rewardToken": {
+          "address": "0x5ec03c1f7fa7ff05ec476d19e34a22eddb48acdc",
+          "decimals": 18,
+          "symbol": "ZED"
+        },
+        "rewarder": {
+          "address": "0x0fc98e524095f7a0f09eb9786beba120060f8004",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x374552804f7ca26c307c8d31f4cc0d9215c87f46"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x396e655c309676caf0acf4607a868e0cded876db",
+    "incentives": [
+      {
+        "apr": 0.0035359281508450715,
+        "rewardPerDay": 1.9999871999999999,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00002227358875447721,
+        "rewardPerDay": 0.023811023622047248,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x396e655c309676caf0acf4607a868e0cded876db"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x4642dafc5281ba5a8d35b2896e0d925b23c6883c",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x4642dafc5281ba5a8d35b2896e0d925b23c6883c"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x497c2cbad454952b20ab66a1a17dac0999ba228e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x497c2cbad454952b20ab66a1a17dac0999ba228e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x4ab66a7138f50db9b7adaf8ce8afb3f638b22f7f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x4ab66a7138f50db9b7adaf8ce8afb3f638b22f7f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001",
+    "incentives": [
+      {
+        "apr": 0.0033891695394651228,
+        "rewardPerDay": 4.999968,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.000018299249141345702,
+        "rewardPerDay": 0.0510236220472441,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x4b1f1e2435a9c96f7330faea190ef6a7c8d70001"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x5518a3af961eee8771657050c5cb23d2b3e2f6ee",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x5518a3af961eee8771657050c5cb23d2b3e2f6ee"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x57602582eb5e82a197bae4e8b6b80e39abfc94eb",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x57602582eb5e82a197bae4e8b6b80e39abfc94eb"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x590f5e967d73ea06dae9aed2788108dcf52da269",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x590f5e967d73ea06dae9aed2788108dcf52da269"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x5fcb390b4422f4ff7940c23618a62bf5f69658a8",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x5fcb390b4422f4ff7940c23618a62bf5f69658a8"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x6be10c5c7178af8c49997d07d6a5444c15e58170",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x6be10c5c7178af8c49997d07d6a5444c15e58170"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x6f21996181915d688c787a1ec7c987e2a31b6829",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x6f21996181915d688c787a1ec7c987e2a31b6829"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x6ff62bfb8c12109e8000935a6de54dad83a4f39f",
+    "incentives": [
+      {
+        "apr": 0.007466086281121477,
+        "rewardPerDay": 7.499951999999999,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00007166555248186886,
+        "rewardPerDay": 0.13606299212598424,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x6ff62bfb8c12109e8000935a6de54dad83a4f39f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x74d23f21f780ca26b47db16b0504f2e3832b9321",
+    "incentives": [
+      {
+        "apr": 0.007084300826866793,
+        "rewardPerDay": 4.999968,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00005100064949579992,
+        "rewardPerDay": 0.06803149606299212,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x74d23f21f780ca26b47db16b0504f2e3832b9321"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x7ba331a8b360f4c31e6014abdd6852f92fb21557",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x7ba331a8b360f4c31e6014abdd6852f92fb21557"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x8f8e95ff4b4c5e354ccb005c6b0278492d7b5907",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x8f8e95ff4b4c5e354ccb005c6b0278492d7b5907"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x93ef615f1ddd27d0e141ad7192623a5c45e8f200",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x93ef615f1ddd27d0e141ad7192623a5c45e8f200"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x9803c7ae526049210a1725f7487af26fe2c24614",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x9803c7ae526049210a1725f7487af26fe2c24614"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0x9e20a8d3501bf96eda8e69b96dd84840058a1cb0",
+    "incentives": [
+      {
+        "apr": 0.029433119201682383,
+        "rewardPerDay": 0.9999935999999999,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00010594610764411909,
+        "rewardPerDay": 0.006803149606299214,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0x9e20a8d3501bf96eda8e69b96dd84840058a1cb0"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xa375d23a751124359568f3a22576528bd1c8c3e3",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xa375d23a751124359568f3a22576528bd1c8c3e3"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xa769c6786c3717945438d4c4feb8494a1a6ca443",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xa769c6786c3717945438d4c4feb8494a1a6ca443"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xadd053a09f95e565b25d8b9b84d0fcfaa962465e",
+    "incentives": [
+      {
+        "apr": 0.012506326701434907,
+        "rewardPerDay": 4.999968,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00006752580108127006,
+        "rewardPerDay": 0.0510236220472441,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xadd053a09f95e565b25d8b9b84d0fcfaa962465e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xb6d9a4649c579b8768f1cb55e9dd6ba99581e4a9",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xb6d9a4649c579b8768f1cb55e9dd6ba99581e4a9"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xc2755915a85c6f6c1c0f3a86ac8c058f11caa9c9",
+    "incentives": [
+      {
+        "apr": 0.023902369077339374,
+        "rewardPerDay": 7.499951999999999,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.0003441514913679298,
+        "rewardPerDay": 0.2040944881889764,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xc2755915a85c6f6c1c0f3a86ac8c058f11caa9c9"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xc37899901ffdef1b6baf95fd4081d82942a0a85a",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xc37899901ffdef1b6baf95fd4081d82942a0a85a"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xc48ae82ca34c63887b975f20aba91a38f2a900b8",
+    "incentives": [
+      {
+        "apr": 0.014855609369410319,
+        "rewardPerDay": 3.4999776,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00011458622357054787,
+        "rewardPerDay": 0.0510236220472441,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xc48ae82ca34c63887b975f20aba91a38f2a900b8"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xc4e595acdd7d12fec385e5da5d43160e8a0bac0e",
+    "incentives": [
+      {
+        "apr": 0.013433246942262594,
+        "rewardPerDay": 99.99936,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00007253055054084975,
+        "rewardPerDay": 1.020472440944882,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xc4e595acdd7d12fec385e5da5d43160e8a0bac0e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xc5666d43f06c073e869bce02407569f578b2072d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xc5666d43f06c073e869bce02407569f578b2072d"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xcb60e17ea720ef331446e434be5de5f35fae8bc8",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xcb60e17ea720ef331446e434be5de5f35fae8bc8"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xcd578f016888b57f1b1e3f887f392f0159e26747",
+    "incentives": [
+      {
+        "apr": 0.0018109673369737559,
+        "rewardPerDay": 2.9999808,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.000010864458452868645,
+        "rewardPerDay": 0.03401574803149606,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xcd578f016888b57f1b1e3f887f392f0159e26747"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xcea28c2b744c0d159a070e11a0f04dc7182f155d",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xcea28c2b744c0d159a070e11a0f04dc7182f155d"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xd10bb4ed281a84492343573885168027cc625bf7",
+    "incentives": [
+      {
+        "apr": 0.005884104864917886,
+        "rewardPerDay": 0.49999679999999996,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00006354046302087906,
+        "rewardPerDay": 0.010204724409448819,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xd10bb4ed281a84492343573885168027cc625bf7"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xd53a56ae0f48c9a03660cd36c2e4ae20493a1eca",
+    "incentives": [
+      {
+        "apr": 0.06761596120963964,
+        "rewardPerDay": 0.9999935999999999,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.0006084682917642984,
+        "rewardPerDay": 0.01700787401574803,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xd53a56ae0f48c9a03660cd36c2e4ae20493a1eca"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xd8d51ea2edca2c2ea15a053a5730f559d79a1570",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xd8d51ea2edca2c2ea15a053a5730f559d79a1570"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xdb995f975f1bfc3b2157495c47e4efb31196b2ca",
+    "incentives": [
+      {
+        "apr": 0.1939088076817785,
+        "rewardPerDay": 0.49999679999999996,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.0034899263090373053,
+        "rewardPerDay": 0.01700787401574803,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xdb995f975f1bfc3b2157495c47e4efb31196b2ca"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xdf45b5b68d9dc84173dd963c763aea8cad3e24a6",
+    "incentives": [
+      {
+        "apr": null,
+        "rewardPerDay": 0.0510236220472441,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xdf45b5b68d9dc84173dd963c763aea8cad3e24a6"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xe62ec2e799305e0d367b0cc3ee2cda135bf89816",
+    "incentives": [
+      {
+        "apr": 0.006259676523409485,
+        "rewardPerDay": 7.499951999999999,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.000045064089756997205,
+        "rewardPerDay": 0.1020472440944882,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xe62ec2e799305e0d367b0cc3ee2cda135bf89816"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xe7fed735afffba5365e80cad6c2ca157b2678b41",
+    "incentives": [
+      {
+        "apr": 0.4070254707364402,
+        "rewardPerDay": 0.49999679999999996,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xe7fed735afffba5365e80cad6c2ca157b2678b41"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xf2c9650fd759f93e59d2ae8f42a97c0600150f0e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xf2c9650fd759f93e59d2ae8f42a97c0600150f0e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xf69e93771f11aecd8e554aa165c3fe7fd811530c",
+    "incentives": [
+      {
+        "apr": 0.006257704800692749,
+        "rewardPerDay": 1.4999904,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.00003754157925954259,
+        "rewardPerDay": 0.01700787401574803,
+        "rewardToken": {
+          "address": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+          "decimals": 18,
+          "symbol": "WMATIC"
+        },
+        "rewarder": {
+          "address": "0xa3378ca78633b3b9b2255eaa26748770211163ae",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xf69e93771f11aecd8e554aa165c3fe7fd811530c"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xfb659315e36ae39917014da60f362b600e8cd0ca",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xfb659315e36ae39917014da60f362b600e8cd0ca"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "137:0xfc1d865c455a1e84f24c95cc5a6c821d18f458ce",
+    "incentives": [
+      {
+        "apr": 1.0817957855984357,
+        "rewardPerDay": 0.49999679999999996,
+        "rewardToken": {
+          "address": "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x0769fd68dFb93167989C6f7254cd0D766Fb2841F",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 137,
+    "pool": "0xfc1d865c455a1e84f24c95cc5a6c821d18f458ce"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0x1ca86e57103564f47ffcea7259a6ce8cc1301549",
+    "incentives": [
+      {
+        "apr": 0.03196654035061929,
+        "rewardPerDay": 0.756,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.14554835009824557,
+        "rewardPerDay": 24.9912,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0x1ca86e57103564f47ffcea7259a6ce8cc1301549"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0x33e29a9ebdd370a8d50656e822abfd3a910da1b6",
+    "incentives": [
+      {
+        "apr": 0.007607871783290283,
+        "rewardPerDay": 2.268,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.0346397568730157,
+        "rewardPerDay": 74.9736,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0x33e29a9ebdd370a8d50656e822abfd3a910da1b6"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0x3d0bd54c48c2c433ea6fed609cc3d5fb7a77622b",
+    "incentives": [
+      {
+        "apr": 0.020520475129273717,
+        "rewardPerDay": 7.106399999999999,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.09343273515177289,
+        "rewardPerDay": 234.91728,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0x3d0bd54c48c2c433ea6fed609cc3d5fb7a77622b"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0x49d2e0dc99c7358d7a9a8633bf6df111d0ee7f65",
+    "incentives": [
+      {
+        "apr": 0.014865628592547676,
+        "rewardPerDay": 1.2096,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.06768538888121192,
+        "rewardPerDay": 39.98592,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0x49d2e0dc99c7358d7a9a8633bf6df111d0ee7f65"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0x71c8bceece3daf9e27741d2cc1f03170f862555f",
+    "incentives": [
+      {
+        "apr": 0.015830598741165068,
+        "rewardPerDay": 3.78,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.07207903960114663,
+        "rewardPerDay": 124.956,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0x71c8bceece3daf9e27741d2cc1f03170f862555f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0x97a039255ecc352e5782fc49bea26b03f60fa49b",
+    "incentives": [
+      {
+        "apr": 0.024314318607402872,
+        "rewardPerDay": 0.756,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.11070666134823065,
+        "rewardPerDay": 24.9912,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0x97a039255ecc352e5782fc49bea26b03f60fa49b"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0xa48869049e36f8bfe0cc5cf655632626988c0140",
+    "incentives": [
+      {
+        "apr": 0.017379102868268586,
+        "rewardPerDay": 5.8968,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.07912960617319903,
+        "rewardPerDay": 194.93136,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0xa48869049e36f8bfe0cc5cf655632626988c0140"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0xd019dd7c760c6431797d6ed170bffb8faee11f99",
+    "incentives": [
+      {
+        "apr": 0.01705671227027574,
+        "rewardPerDay": 4.536,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.07766171446172904,
+        "rewardPerDay": 149.9472,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0xd019dd7c760c6431797d6ed170bffb8faee11f99"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0xe3ed4237532e6095749a6c984bfcb449c2b86122",
+    "incentives": [
+      {
+        "apr": 0.013571048646463212,
+        "rewardPerDay": 0.9071999999999999,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.06179097637500465,
+        "rewardPerDay": 29.98944,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0xe3ed4237532e6095749a6c984bfcb449c2b86122"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "250:0xffdc0531288dc91c1f49db03a90ed84725e9eda7",
+    "incentives": [
+      {
+        "apr": 0.008473669738479461,
+        "rewardPerDay": 3.024,
+        "rewardToken": {
+          "address": "0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.038581862040295026,
+        "rewardPerDay": 99.9648,
+        "rewardToken": {
+          "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+          "decimals": 18,
+          "symbol": "WFTM"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 250,
+    "pool": "0xffdc0531288dc91c1f49db03a90ed84725e9eda7"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "288:0x247442181b8baa03b3c7dc0d8e971bd4686db27c",
+    "incentives": [
+      {
+        "apr": 0.14746554575433876,
+        "rewardPerDay": 66.66666666239999,
+        "rewardToken": {
+          "address": "0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.2066730012655189,
+        "rewardPerDay": 549.0196078531764,
+        "rewardToken": {
+          "address": "0xa18bf3994c0cc6e3b63ac420308e5383f53120d7",
+          "decimals": 18,
+          "symbol": "BOBA"
+        },
+        "rewarder": {
+          "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 288,
+    "pool": "0x247442181b8baa03b3c7dc0d8e971bd4686db27c"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "288:0x4f059f8d45230cd5b37544e87eebba033a5f1b17",
+    "incentives": [
+      {
+        "apr": 0.16991869072349874,
+        "rewardPerDay": 166.66666665600002,
+        "rewardToken": {
+          "address": "0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.23814108986132257,
+        "rewardPerDay": 1372.549019632941,
+        "rewardToken": {
+          "address": "0xa18bf3994c0cc6e3b63ac420308e5383f53120d7",
+          "decimals": 18,
+          "symbol": "BOBA"
+        },
+        "rewarder": {
+          "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 288,
+    "pool": "0x4f059f8d45230cd5b37544e87eebba033a5f1b17"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "288:0x6398a59ca706c11d02de1ea3d921742771bcd06f",
+    "incentives": [
+      {
+        "apr": 0.14055577271698533,
+        "rewardPerDay": 49.9999999968,
+        "rewardToken": {
+          "address": "0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.19698895253136658,
+        "rewardPerDay": 411.7647058898824,
+        "rewardToken": {
+          "address": "0xa18bf3994c0cc6e3b63ac420308e5383f53120d7",
+          "decimals": 18,
+          "symbol": "BOBA"
+        },
+        "rewarder": {
+          "address": "0xf731202a3cf7efa9368c2d7bd613926f7a144db5",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 288,
+    "pool": "0x6398a59ca706c11d02de1ea3d921742771bcd06f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "288:0x78c6db2b6073e762f89a23eb3da71d2feeb18315",
+    "incentives": [
+      {
+        "apr": 2.3553324282642722,
+        "rewardPerDay": 16.666666665599998,
+        "rewardToken": {
+          "address": "0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 288,
+    "pool": "0x78c6db2b6073e762f89a23eb3da71d2feeb18315"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "288:0xaf3da220bc03bdbf9b0280d6e2813ea0ffe03f69",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 288,
+    "pool": "0xaf3da220bc03bdbf9b0280d6e2813ea0ffe03f69"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1088:0x0da1f6f025b229145ebf1c39b757524973ec0b35",
+    "incentives": [
+      {
+        "apr": 0.3059226964316943,
+        "rewardPerDay": 36.72,
+        "rewardToken": {
+          "address": "0x17Ee7E4dA37B01FC1bcc908fA63DF343F23B4B7C",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Trident",
+    "chainId": 1088,
+    "pool": "0x0da1f6f025b229145ebf1c39b757524973ec0b35"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1088:0x51ed6aa23937027f06e4a1f88342fe54be50e972",
+    "incentives": [],
+    "poolType": "Trident",
+    "chainId": 1088,
+    "pool": "0x51ed6aa23937027f06e4a1f88342fe54be50e972"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1088:0xa8deb6efb61b526b683638ef0b247a94be205680",
+    "incentives": [
+      {
+        "apr": 0.2822109627486376,
+        "rewardPerDay": 36.72,
+        "rewardToken": {
+          "address": "0x17Ee7E4dA37B01FC1bcc908fA63DF343F23B4B7C",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Trident",
+    "chainId": 1088,
+    "pool": "0xa8deb6efb61b526b683638ef0b247a94be205680"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1088:0xcaa23382f8baa166884d664bd67b85e44178990f",
+    "incentives": [
+      {
+        "apr": 0.45909785596284175,
+        "rewardPerDay": 36.72,
+        "rewardToken": {
+          "address": "0x17Ee7E4dA37B01FC1bcc908fA63DF343F23B4B7C",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x1334c8e873E1cae8467156e2A81d1C8b566B2da1",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Trident",
+    "chainId": 1088,
+    "pool": "0xcaa23382f8baa166884d664bd67b85e44178990f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1284:0x499a09c00911d373fda6c28818d95fa8ca148a60",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1284,
+    "pool": "0x499a09c00911d373fda6c28818d95fa8ca148a60"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1284:0x6853f323508ba1c33a09c4e956ecb9044cc1a801",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1284,
+    "pool": "0x6853f323508ba1c33a09c4e956ecb9044cc1a801"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1284:0xa4a536c9c23bf48dcb207ce7a0d20054eea1fa57",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1284,
+    "pool": "0xa4a536c9c23bf48dcb207ce7a0d20054eea1fa57"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1284:0xa8581e054e239fd7b2fa6db9298b941591f52dbe",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1284,
+    "pool": "0xa8581e054e239fd7b2fa6db9298b941591f52dbe"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0x1310de654782c606b6863ac6a130bccf946376b4",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0x1310de654782c606b6863ac6a130bccf946376b4"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0x310c4d18640af4878567c4a31cb9cbde7cd234a3",
+    "incentives": [
+      {
+        "apr": 0.004076570637560061,
+        "rewardPerDay": 1.58976,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0x310c4d18640af4878567c4a31cb9cbde7cd234a3"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0x5a5eb8242c73302b10031a5f777b927223a5fc7f",
+    "incentives": [
+      {
+        "apr": 0.1948317299193415,
+        "rewardPerDay": 3.9744,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0x5a5eb8242c73302b10031a5f777b927223a5fc7f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0x69b4fbd8c8cf74720a62a5e92e2528c3f895ce10",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0x69b4fbd8c8cf74720a62a5e92e2528c3f895ce10"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0x6dc6d33331e9d5deef449c8cab9e34d687bea80e",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0x6dc6d33331e9d5deef449c8cab9e34d687bea80e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0x85657487978d65bb7881e9dad3aa119e6e6705ce",
+    "incentives": [
+      {
+        "apr": 0.034167551295714804,
+        "rewardPerDay": 1.9872,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0x85657487978d65bb7881e9dad3aa119e6e6705ce"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0x8e4157e06bcab773ec3dc1b750d4e56bb2e80a31",
+    "incentives": [
+      {
+        "apr": 0.9266139876497533,
+        "rewardPerDay": 2.9808,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0x8e4157e06bcab773ec3dc1b750d4e56bb2e80a31"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0x930b0464411de2296e3fd3eee30ab989f635645e",
+    "incentives": [
+      {
+        "apr": 0.0038912144918960955,
+        "rewardPerDay": 3.5769599999999997,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0x930b0464411de2296e3fd3eee30ab989f635645e"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0xb0a594e76a876de40a7fda9819e5c4ec6d9fd222",
+    "incentives": [
+      {
+        "apr": 0.034811773688118136,
+        "rewardPerDay": 4.76928,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0xb0a594e76a876de40a7fda9819e5c4ec6d9fd222"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0xc398b71b68aedb2ddda986221b1c1e0ecaee703c",
+    "incentives": [
+      {
+        "apr": 0.6504677625391354,
+        "rewardPerDay": 3.17952,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0xc398b71b68aedb2ddda986221b1c1e0ecaee703c"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0xc6ca9c83c07a7a3a5461c817ea5210723508a9fd",
+    "incentives": [
+      {
+        "apr": 0.12923635025582902,
+        "rewardPerDay": 1.19232,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0xc6ca9c83c07a7a3a5461c817ea5210723508a9fd"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0xc85171c3eb023b456247c5013800448274390a84",
+    "incentives": [
+      {
+        "apr": 0.27476850561515115,
+        "rewardPerDay": 6.16032,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0xc85171c3eb023b456247c5013800448274390a84"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "1285:0xd4ce5671b842573eda99164971afaa034245f4d8",
+    "incentives": [
+      {
+        "apr": 0.0622937018881031,
+        "rewardPerDay": 10.33344,
+        "rewardToken": {
+          "address": "0xf390830DF829cf22c53c8840554B98eafC5dCBc2",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 1285,
+    "pool": "0xd4ce5671b842573eda99164971afaa034245f4d8"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0x2138bc1e2ae27e87b3e5950915951242ee9e7bf1",
+    "incentives": [],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0x2138bc1e2ae27e87b3e5950915951242ee9e7bf1"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0x3a6319eb49772180d2ac28ce30d029253f1201cf",
+    "incentives": [],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0x3a6319eb49772180d2ac28ce30d029253f1201cf"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0x4bfb79fa5a0a7e6d4a3273e4f8e0c900950d1164",
+    "incentives": [],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0x4bfb79fa5a0a7e6d4a3273e4f8e0c900950d1164"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0x52089cd962a5665498aea8d57576e2d3f68eb47d",
+    "incentives": [
+      {
+        "apr": 0.4804174858412769,
+        "rewardPerDay": 14.99999999904,
+        "rewardToken": {
+          "address": "0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0x52089cd962a5665498aea8d57576e2d3f68eb47d"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0x5b3b7e769ebb5f35262b1ce532f230ed4ebb9c51",
+    "incentives": [
+      {
+        "apr": 0.5049632924613464,
+        "rewardPerDay": 29.99999999808,
+        "rewardToken": {
+          "address": "0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0x5b3b7e769ebb5f35262b1ce532f230ed4ebb9c51"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0x8070cfc234c4b7f3ec2ae873885390973f5b15c0",
+    "incentives": [
+      {
+        "apr": 0.20329271069650964,
+        "rewardPerDay": 44.99999999712,
+        "rewardToken": {
+          "address": "0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0x8070cfc234c4b7f3ec2ae873885390973f5b15c0"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0x88395b86cf9787e131d2fb5462a22b44056bf574",
+    "incentives": [
+      {
+        "apr": 0.2184912108541103,
+        "rewardPerDay": 149.9999999904,
+        "rewardToken": {
+          "address": "0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.2920183687815076,
+        "rewardPerDay": 233.3333332512,
+        "rewardToken": {
+          "address": "0xc86c7c0efbd6a49b35e8714c5f59d99de09a225b",
+          "decimals": 18,
+          "symbol": "WKAVA"
+        },
+        "rewarder": {
+          "address": "0xeaf76e3bd36680d98d254b378ed706cb0dfbfc1b",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0x88395b86cf9787e131d2fb5462a22b44056bf574"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0x9c23fefb59b49064ebc4890a97726ceed3852a3a",
+    "incentives": [],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0x9c23fefb59b49064ebc4890a97726ceed3852a3a"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "2222:0xe9c40af74fcfb85b38db2a74a7d5d22d731660f5",
+    "incentives": [
+      {
+        "apr": 0.46239132872510436,
+        "rewardPerDay": 59.99999999616,
+        "rewardToken": {
+          "address": "0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Trident",
+    "chainId": 2222,
+    "pool": "0xe9c40af74fcfb85b38db2a74a7d5d22d731660f5"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0x3221022e37029923ace4235d812273c5a42c322d",
+    "incentives": [
+      {
+        "apr": 0.062319037275914875,
+        "rewardPerDay": 33.32571428571428,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0x3221022e37029923ace4235d812273c5a42c322d"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0x42e9dc3f1a7dd582e81d2edf7e5c4869007ce14a",
+    "incentives": [
+      {
+        "apr": 0.21694691951565861,
+        "rewardPerDay": 13.330285714285713,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0x42e9dc3f1a7dd582e81d2edf7e5c4869007ce14a"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0x515e252b2b5c22b4b2b6df66c2ebeea871aa4d69",
+    "incentives": [
+      {
+        "apr": 0.028959834599012958,
+        "rewardPerDay": 66.65142857142855,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0x515e252b2b5c22b4b2b6df66c2ebeea871aa4d69"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0x692a0b300366d1042679397e40f3d2cb4b8f7d30",
+    "incentives": [
+      {
+        "apr": 0.1590372916287135,
+        "rewardPerDay": 16.66285714285714,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0x692a0b300366d1042679397e40f3d2cb4b8f7d30"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0x7050a8908e2a60899d8788015148241f0993a3fd",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0x7050a8908e2a60899d8788015148241f0993a3fd"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0x8f93eaae544e8f5eb077a1e09c1554067d9e2ca8",
+    "incentives": [
+      {
+        "apr": 0.011189952563570684,
+        "rewardPerDay": 16.66285714285714,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.24702798531657022,
+        "rewardPerDay": 729262.8486543053,
+        "rewardToken": {
+          "address": "0x3e6648c5a70a150a88bce65f4ad4d506fe15d2af",
+          "decimals": 18,
+          "symbol": "SPELL"
+        },
+        "rewarder": {
+          "address": "0x3c61b93b64f59b5091a11a071083598ee8b5cb64",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0x8f93eaae544e8f5eb077a1e09c1554067d9e2ca8"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0x905dfcd5649217c42684f23958568e533c711aa3",
+    "incentives": [
+      {
+        "apr": 0.008896152789268285,
+        "rewardPerDay": 306.5965714285714,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0x905dfcd5649217c42684f23958568e533c711aa3"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0xaa5bd49f2162ffdc15634c87a77ac67bd51c6a6d",
+    "incentives": [
+      {
+        "apr": 0.00814335080831714,
+        "rewardPerDay": 49.98857142857142,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.1964392010458437,
+        "rewardPerDay": 0.788800000032,
+        "rewardToken": {
+          "address": "0x8d9ba570d6cb60c7e3e0f31343efe75ab8e65fb1",
+          "decimals": 18,
+          "symbol": "gOHM"
+        },
+        "rewarder": {
+          "address": "0xae961a7d116bfd9b2534ad27fe4d178ed188c87a",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0xaa5bd49f2162ffdc15634c87a77ac67bd51c6a6d"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0xb6dd51d5425861c808fd60827ab6cfbffe604959",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0xb6dd51d5425861c808fd60827ab6cfbffe604959"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0xb7e50106a5bd3cf21af210a755f9c8740890a8c9",
+    "incentives": [
+      {
+        "apr": 0.0053426545846933194,
+        "rewardPerDay": 66.65142857142855,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      },
+      {
+        "apr": 0.43057367256920853,
+        "rewardPerDay": 21666.666665952,
+        "rewardToken": {
+          "address": "0x539bde0d7dbd336b79148aa742883198bbf60342",
+          "decimals": 18,
+          "symbol": "MAGIC"
+        },
+        "rewarder": {
+          "address": "0x1a9c20e2b0ac11ebecbdca626bba566c4ce8e606",
+          "type": "Secondary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0xb7e50106a5bd3cf21af210a755f9c8740890a8c9"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42161:0xcb0e5bfa72bbb4d16ab5aa0c60601c438f04b4ad",
+    "incentives": [
+      {
+        "apr": 0.06629514511808346,
+        "rewardPerDay": 83.3142857142857,
+        "rewardToken": {
+          "address": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0xF4d73326C13a4Fc5FD7A064217e12780e9Bd62c3",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42161,
+    "pool": "0xcb0e5bfa72bbb4d16ab5aa0c60601c438f04b4ad"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0x0b655e7d966cb27998af94aa5719ab7bfe07d3b3",
+    "incentives": [
+      {
+        "apr": 0.003797983859977692,
+        "rewardPerDay": 0.9936,
+        "rewardToken": {
+          "address": "0x29dFce9c22003A4999930382Fd00f9Fd6133Acd1",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x8084936982D089130e001b470eDf58faCA445008",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0x0b655e7d966cb27998af94aa5719ab7bfe07d3b3"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0x517f717f0ae11efc2af8943071b66d77dfafc9fc",
+    "incentives": [
+      {
+        "apr": 0.010398889977961002,
+        "rewardPerDay": 3.4776,
+        "rewardToken": {
+          "address": "0x29dFce9c22003A4999930382Fd00f9Fd6133Acd1",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x8084936982D089130e001b470eDf58faCA445008",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0x517f717f0ae11efc2af8943071b66d77dfafc9fc"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0x6caf59c81febbb1006b372d1be1ae2670cdc5768",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0x6caf59c81febbb1006b372d1be1ae2670cdc5768"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0x850197dd5a4865324291d7b5745622a8cd732bcb",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0x850197dd5a4865324291d7b5745622a8cd732bcb"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0x8ecded81a2abf3b7e724978060739edbeb01b24f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0x8ecded81a2abf3b7e724978060739edbeb01b24f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0x93887e0fa9f6c375b2765a6fe885593f16f077f9",
+    "incentives": [
+      {
+        "apr": 0.015467149050553138,
+        "rewardPerDay": 2.9808,
+        "rewardToken": {
+          "address": "0x29dFce9c22003A4999930382Fd00f9Fd6133Acd1",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x8084936982D089130e001b470eDf58faCA445008",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0x93887e0fa9f6c375b2765a6fe885593f16f077f9"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0xa364ede5590b46e618527d7535506743d978bbf2",
+    "incentives": [
+      {
+        "apr": 0.014468113120370128,
+        "rewardPerDay": 1.4904,
+        "rewardToken": {
+          "address": "0x29dFce9c22003A4999930382Fd00f9Fd6133Acd1",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x8084936982D089130e001b470eDf58faCA445008",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0xa364ede5590b46e618527d7535506743d978bbf2"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0xc77398cfb7b0f7ab42bafc02abc20a69ce8cef7f",
+    "incentives": [],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0xc77398cfb7b0f7ab42bafc02abc20a69ce8cef7f"
+  },
+  {
+    "chefType": "MiniChef",
+    "id": "42220:0xccd9d850ef40f19566cd8df950765e9a1a0b9ef2",
+    "incentives": [
+      {
+        "apr": 0.009074411168438995,
+        "rewardPerDay": 0.9936,
+        "rewardToken": {
+          "address": "0x29dFce9c22003A4999930382Fd00f9Fd6133Acd1",
+          "decimals": 18,
+          "symbol": "SUSHI"
+        },
+        "rewarder": {
+          "address": "0x8084936982D089130e001b470eDf58faCA445008",
+          "type": "Primary"
+        }
+      }
+    ],
+    "poolType": "Legacy",
+    "chainId": 42220,
+    "pool": "0xccd9d850ef40f19566cd8df950765e9a1a0b9ef2"
+  }
+]
