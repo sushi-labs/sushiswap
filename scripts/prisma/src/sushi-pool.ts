@@ -1,11 +1,12 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { getBuiltGraphSDK, PairsQuery } from '../../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from '../../config'
-import { mergePools } from '../pool/load'
-import { createTokens } from '../token/load'
-import { filterPools } from '../pool/transform'
-import { filterTokens } from '../token/transform'
+import { performance } from 'perf_hooks'
+import { getBuiltGraphSDK, PairsQuery } from '../.graphclient'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from '../config'
+import { mergePools } from './entity/pool/load'
+import { filterPools } from './entity/pool/transform'
+import { createTokens } from './entity/token/load'
+import { filterTokens } from './entity/token/transform'
 
 const client = new PrismaClient()
 
@@ -14,7 +15,9 @@ const VERSION = 'V2'
 const POOL_TYPE = 'ConstantProductPool'
 
 async function main() {
-  console.log(`Preparing to protocol: ${PROTOCOL}, version: ${VERSION}, type: ${POOL_TYPE}`)
+  const startTime = performance.now()
+  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}, version: ${VERSION}, type: ${POOL_TYPE}`)
+
   // EXTRACT
   const exchanges = await extract()
   console.log(`EXTRACT - Pairs extracted from ${exchanges.length} different exchanges`)
@@ -25,6 +28,9 @@ async function main() {
   // LOAD
   await createTokens(client, tokens)
   await mergePools(client, PROTOCOL, VERSION, pools)
+  const endTime = performance.now()
+
+  console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
 
 async function extract() {

@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
 /**
- * Filters the pools to only include the ones that are new or have changed.
+ * Filters pools to only include the ones that are new or have changed.
  * @param client
  * @param pools
  * @returns

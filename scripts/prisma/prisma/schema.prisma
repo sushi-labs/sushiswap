@@ -10,7 +10,7 @@ datasource db {
 }
 
 model Token {
-  id        String   @id // network_address
+  id       String @id // chainId_address
   address  String
   network  String
   chainId  String
@@ -24,18 +24,21 @@ model Token {
   pools0 Pool[]      @relation("token0")
   pools1 Pool[]      @relation("token1")
 
-  // @@id([chainId, address])
   @@unique([chainId, address])
-  @@index(fields: [address, network, name, symbol])
+  @@index(fields: [id])
+  @@index(fields: [address, chainId, name])
+  @@index(fields: [address, chainId, symbol])
 }
 
 model TokenPrice {
-  id        String   @id // network_address
+  id            String  @id // chainId_address
   address       String
   network       String
   chainId       String
+  protocol      String
+  version       String
   derivedNative Decimal
-  lastUsdPrice  Decimal
+  usd           Decimal
 
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -43,11 +46,12 @@ model TokenPrice {
   token Token @relation(fields: [chainId, address], references: [chainId, address])
 
   @@unique([chainId, address])
-  @@index(fields: [address, network])
+  @@index(fields: [id])
+  @@index(fields: [id, usd])
 }
 
 model Pool {
-  id        String   @id // network_address
+  id       String @id // chainId_address
   address  String
   name     String
   network  String
@@ -74,6 +78,7 @@ model Pool {
 
   token0Price String // Price of token0 in token1
   token1Price String // Price of token1 in token0
+  // TODO: add APR, null allowed
 
   // createdAtTimestamp   DateTime
   createdAtBlockNumber String //BigInt 	@db.BigInt // TODO: When prisma 4.6.0 is released, use BigInt instead
@@ -82,21 +87,7 @@ model Pool {
 
   // @@id([chainId, address])
   @@unique([chainId, address])
-  @@index(fields: [token0Id, token1Id, address], name: "pool_index")
+  @@index(fields: [id])
+  @@index(fields: [id, token0Id, token1Id])
+  // TODO: add more indexes on volumeUSD, liquidityUSD etc. when BigInt is fixed
 }
-
-// model Token {
-//   id    String     @id
-//   name String // TODO: default values here? if subgraph would return "", "", 0? success false?
-//   symbol String
-//   decimals Int
-// }
-
-// TOKEN AND POOLS
-
-// _generatedAtTimestamp
-
-// IDEAS:
-
-// TokenProtocol
-// network, 

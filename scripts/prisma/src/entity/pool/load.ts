@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client'
+import { performance } from 'perf_hooks'
 
 /**
  * Merges(Create/Update) pools. 
@@ -41,15 +42,22 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
   })
 
   const poolBatchSize = 20
-  for (let i = 0; i < upsertManyPools.length; i += poolBatchSize) {
-    const updatedPools = await client.$transaction([...upsertManyPools.slice(i, i + poolBatchSize)])
-    console.log(`LOAD - Updated ${updatedPools.length} pools`)
-  }
+  const startTime = performance.now()
+  // let count = 0
+  // for (let i = 0; i < upsertManyPools.length; i += poolBatchSize) {
+  //   const updatedPools = await client.$transaction([...upsertManyPools.slice(i, i + poolBatchSize)])
+  //   count += updatedPools.length
+  // }
+  
+  const updatedPools = await Promise.all(upsertManyPools)
+  const endTime = performance.now()
+  console.log(`LOAD - Updated ${updatedPools.length} pools. (${((endTime-startTime)/1000).toFixed(1)}s) `)
 }
 
 async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
   let count = 0
   const batchSize = 500
+  const startTime = performance.now()
   for (let i = 0; i < pools.length; i += batchSize) {
     const created = await client.pool.createMany({
       data: pools.slice(i, i + batchSize),
@@ -58,7 +66,8 @@ async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
     console.log(`LOAD - Batched and created ${created.count} pools`)
     count += created.count
   }
-  console.log(`LOAD - Created ${count} pools. `)
+  const endTime = performance.now()
+  console.log(`LOAD - Created ${count} pools. (${((endTime-startTime)/1000).toFixed(1)}s) `)
 }
 
 async function alreadyContainsProtocol(client: PrismaClient, protocol: string, version: string) {
