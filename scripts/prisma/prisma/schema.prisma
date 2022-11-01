@@ -78,6 +78,14 @@ model Pool {
 
   token0Price String // Price of token0 in token1
   token1Price String // Price of token1 in token0
+
+  farmApr
+  apr
+  totalApr
+  incentives // array of incentives
+  // isIncentivized Boolean
+
+
   // TODO: add APR, null allowed
 
   // createdAtTimestamp   DateTime
@@ -90,4 +98,9 @@ model Pool {
   @@index(fields: [id])
   @@index(fields: [id, token0Id, token1Id])
   // TODO: add more indexes on volumeUSD, liquidityUSD etc. when BigInt is fixed
+}
+
+
+model Incentive {
+  id       String @id // chainId_address
 }

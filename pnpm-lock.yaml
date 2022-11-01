@@ -2989,27 +2989,42 @@ importers:
       '@graphql-mesh/transform-type-merging': latest
       '@prisma/client': ^4.5.0
       '@sushiswap/chain': workspace:*
+      '@sushiswap/core': ^2.0.0-canary.1
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
       '@swc/core': ^1.2.249
       '@swc/helpers': ^0.4.11
       '@types/express': ^4.17.13
-      date-fns: ^2.28.0
+      '@wagmi/core': ^0.5.7
+      date-fns: ^2.29.1
       dotenv: ^16.0.1
       eslint: ^8.20.0
+      ethers: ^5.7.0
       express: ^4.18.1
-      fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
+      hardhat: ^2.10.0
+      ioredis: ^5.2.0
       jest: ^28.1.0
       prettier: ^2.7.0
       prisma: ^4.5.0
-      ts-node: ^10.8.2
+      ts-node: ^10.9.0
       tsup: ^6.2.0
       typescript: 4.8.2
+    dependencies:
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/core': 2.0.0-canary.1
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/graph-client': link:../../packages/graph-client
+      '@sushiswap/graph-config': link:../../packages/config/graph
+      '@sushiswap/wagmi-config': link:../../packages/config/wagmi
+      '@wagmi/core': 0.5.8_ethers@5.7.1
+      express: 4.18.1
     devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
       '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
@@ -3020,10 +3035,7 @@ importers:
       '@graphql-mesh/transform-rename': 0.12.100_graphql@16.6.0
       '@graphql-mesh/transform-type-merging': 0.4.52_graphql@16.6.0
       '@prisma/client': 4.5.0_prisma@4.5.0
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../packages/config/eslint
-      '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
@@ -3033,9 +3045,10 @@ importers:
       date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.26.0
-      express: 4.18.1
-      fast-json-stable-stringify: 2.1.0
+      ethers: 5.7.1
       graphql: 16.6.0
+      hardhat: 2.10.1_s5ojjbx2isjkawqptqpitvy25q
+      ioredis: 5.2.2
       jest: 28.1.3_ts-node@10.9.1
       prettier: 2.7.1
       prisma: 4.5.0
@@ -11685,6 +11698,26 @@ packages:
       ethers: 5.7.1
       eventemitter3: 4.0.7
       zustand: 4.0.0_react@18.2.0
+    transitivePeerDependencies:
+      - immer
+      - react
+    dev: false
+
+  /@wagmi/core/0.5.8_ethers@5.7.1:
+    resolution: {integrity: sha512-1mABf1bXyn3AOHyQkios4FTGqoARa8y1tf7GMH6t1c7q0nAMSbpXoTDdjEidUHy8qhWoG0y3Ez4PjCi8WQnmMg==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.3.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      ethers: 5.7.1
+      eventemitter3: 4.0.7
+      zustand: 4.0.0
     transitivePeerDependencies:
       - immer
       - react

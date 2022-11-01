@@ -6,17 +6,24 @@ sources:
     transforms:
       - autoPagination:
           validateSchema: true
-  - name: Exchange
+  - name: MasterChef
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:sushi-graph/sushiswap-ethereum}
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/masterchef-v2-ethereum
     transforms:
-      - autoPagination:
-          validateSchema: true
-      - filterSchema:
-          mode: wrap
-          filters:
-            - Type.!{Factory}
+      - prefix:
+          value: MasterChef_
+          includeRootOperations: true
+          includeTypes: true
+  - name: MiniChef
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:jiro-ono/minichef-staging-updates}
+    transforms:
+      - prefix:
+          value: MiniChef_
+          includeRootOperations: true
+          includeTypes: true
 documents:
   - ./query.graphql
 

@@ -16,7 +16,6 @@ async function main() {
     },
   })
   if (result) {
-    
   const pools = [
     result.pools0.map((pool) => (pool.address)),
     result.pools1.map((pool) => (pool.address))

@@ -2,10 +2,10 @@ query TokenPrices($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter,
   tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
     id
     token {
-          id
-    name
-    symbol
-    decimals
+      id
+      name
+      symbol
+      decimals
     }
     derivedNative
   }
@@ -13,7 +13,6 @@ query TokenPrices($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter,
   bundle(id: 1, block: $block) {
     nativePrice
   }
-
 }
 
 query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
@@ -45,5 +44,52 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
     volumeNative
     createdAtTimestamp
     createdAtBlock
+  }
+  
+  bundle(id: 1, block: $block) {
+    nativePrice
+  }
+}
+
+query Tokens($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    symbol
+    decimals
+    liquidity
+
+    price {
+      derivedNative
+    }
+  }
+
+  bundle(id: 1, block: $block) {
+    nativePrice
+  }
+}
+
+query MasterChefV2Rewarders(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: MasterChef_MasterChefV2Rewarder_filter
+  $block: MasterChef_Block_height
+) {
+  rewarders: MasterChef_masterChefV2Rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    rewardToken
+    rewardPerSecond
+  }
+}
+
+query MiniChefRewarders(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: MiniChef_Rewarder_filter
+  $block: MiniChef_Block_height
+) {
+  rewarders: MiniChef_rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    rewardToken
+    rewardPerSecond
   }
 }
