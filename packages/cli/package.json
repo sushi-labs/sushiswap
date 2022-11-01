@@ -8,6 +8,7 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "module": "./dist/index.mjs",
   "main": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
@@ -23,7 +24,8 @@
     "dev": "tsup index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint ./src --fix",
     "start": "ts-node --transpileOnly ./src/index.ts",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "check": "tsc --pretty --noEmit"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
@@ -34,9 +36,16 @@
     "@sushiswap/format": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/validate": "workspace:*",
     "@sushiswap/log": "workspace:*",
-    "isomorphic-unfetch": "^3.1.0",
-    "graphql": "16.6.0"
+    "numeral": "2.0.6",
+    "isomorphic-unfetch": "3.1.0",
+    "ora": "5.4.1",
+    "listr": "0.14.3",
+    "chalk": "4.1.2",
+    "cli-table3": "0.6.3",
+    "commander": "9.4.1",
+    "date-fns": "2.29.3"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -45,14 +54,8 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.31",
     "@types/numeral": "^2.0.2",
-    "chalk": "^4.1.2",
-    "cli-table3": "^0.6.0",
-    "commander": "^9.4.0",
-    "date-fns": "^2.29.0",
     "eslint": "^8.20.0",
     "jest": "^28.1.0",
-    "numeral": "^2.0.0",
-    "ora": "^5.4.1",
     "ts-node": "^10.9.0",
     "tsup": "^6.2.0",
     "typescript": "4.8.2"

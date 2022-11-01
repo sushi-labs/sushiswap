@@ -31,7 +31,7 @@ export const PENDING_KAVA_HOST = 'pvt.graph.kava.io/subgraphs/id'
 export const METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/name'
 export const PENDING_METIS_HOST = 'andromeda.thegraph.metis.io/subgraphs/id'
 
-export const CHAIN_NAME: Record<number | string, string> = {
+export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'Arbitrum',
   [ChainId.AVALANCHE]: 'Avalanche',
   [ChainId.BSC]: 'Bsc',
@@ -57,7 +57,7 @@ export const CHAIN_NAME: Record<number | string, string> = {
   [ChainId.BOBA_AVAX]: 'Boba Avax',
 }
 
-export const SUBGRAPH_HOST = {
+export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
   [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
@@ -79,7 +79,7 @@ export const SUBGRAPH_HOST = {
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
-} as const
+}
 
 export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.ETHEREUM]: 'sushiswap/bentobox-ethereum',
@@ -97,7 +97,7 @@ export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.KAVA]: 'sushiswap/bentobox-kava',
 } as const
 
-export const BLOCKS_SUBGRAPH_NAME = {
+export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'blocklytics/ethereum-blocks',
   [ChainId.GNOSIS]: 'matthewlilley/xdai-blocks',
   [ChainId.POLYGON]: 'matthewlilley/polygon-blocks',
@@ -118,9 +118,9 @@ export const BLOCKS_SUBGRAPH_NAME = {
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
   [ChainId.BOBA]: 'sushiswap/blocks-boba',
-} as const
+}
 
-export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
+export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
   [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',
   [ChainId.BSC]: 'sushiswap/bsc-exchange',
@@ -138,7 +138,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
 }
 
-export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
+export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
@@ -153,7 +153,7 @@ export const SUSHISWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
-}
+} as const
 
 export const TRIDENT_SUBGRAPH_NAME = {
   [ChainId.POLYGON]: 'sushi-qa/trident-polygon',
@@ -184,9 +184,10 @@ export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.BOBA]: 'sushiswap/minichef-boba',
 } as const
 
-export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
-export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'
-export const FURO_SUBGRAPH_NAME: Record<string | number, string> = {
+export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const
+export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2' as const
+
+export const FURO_SUBGRAPH_NAME: Record<string, string> = {
   [ChainId.ETHEREUM]: 'sushi-subgraphs/furo-ethereum',
   [ChainId.GÖRLI]: 'sushi-subgraphs/furo-goerli',
   [ChainId.ARBITRUM]: 'sushi-subgraphs/furo-arbitrum',
@@ -201,7 +202,7 @@ export const FURO_SUBGRAPH_NAME: Record<string | number, string> = {
   [ChainId.POLYGON]: 'sushi-subgraphs/furo-polygon',
 }
 
-export const KASHI_SUBGRAPH_NAME: Record<number | string, string> = {
+export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'sushiswap/kashi-arbitrum',
 }
 

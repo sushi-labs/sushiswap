@@ -10,7 +10,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     const data = await redis.hget('farms', chainId)
 
     if (!data) {
-      return response.status(204)
+      return response.status(503)
     }
 
     const json = JSON.parse(data)
@@ -26,7 +26,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   const data = await redis.hgetall('farms')
 
   if (!data) {
-    return response.status(204)
+    return response.status(503)
   }
 
   const now = getUnixTime(Date.now())

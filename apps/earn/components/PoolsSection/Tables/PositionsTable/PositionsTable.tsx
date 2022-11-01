@@ -1,4 +1,4 @@
-import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
+import { UserWithFarm } from '@sushiswap/graph-client'
 import { GenericTable, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'

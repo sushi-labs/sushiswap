@@ -1,6 +1,11 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 
-export const WETH_MAKER_SUPPORTED_CHAINS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM, ChainId.AVALANCHE]
+export const WETH_MAKER_SUPPORTED_CHAINS = [
+  ChainId.ETHEREUM,
+  ChainId.POLYGON,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+] as const
 
 export const MAKER_SUPPORTED_CHAIN_NAMES = [
   ChainKey.ETHEREUM,
@@ -15,9 +20,9 @@ export const MAKER_SUPPORTED_CHAIN_NAMES = [
   ChainKey.MOONRIVER,
   ChainKey.FUSE,
   ChainKey.HARMONY,
-]
+] as const
 
-export const CHAIN_NAME_TO_CHAIN_ID: Record<string, string | number> = {
+export const CHAIN_NAME_TO_CHAIN_ID = {
   [ChainKey.ETHEREUM]: ChainId.ETHEREUM,
   [ChainKey.FANTOM]: ChainId.FANTOM,
   [ChainKey.POLYGON]: ChainId.POLYGON,
@@ -30,9 +35,9 @@ export const CHAIN_NAME_TO_CHAIN_ID: Record<string, string | number> = {
   [ChainKey.MOONRIVER]: ChainId.MOONRIVER,
   [ChainKey.FUSE]: ChainId.FUSE,
   [ChainKey.HARMONY]: ChainId.HARMONY,
-}
+} as const
 
-export const MAKER_TYPE: Record<number | string, string> = {
+export const MAKER_TYPE = {
   [ChainId.ETHEREUM]: 'SushiMaker',
   [ChainId.FANTOM]: 'Safe',
   [ChainId.POLYGON]: 'WethMaker',
@@ -45,9 +50,9 @@ export const MAKER_TYPE: Record<number | string, string> = {
   [ChainId.MOONRIVER]: 'Deployer',
   [ChainId.FUSE]: 'Safe',
   [ChainId.HARMONY]: 'Deployer',
-}
+} as const
 
-export const MAKER_ADDRESS: Record<number | string, string> = {
+export const MAKER_ADDRESS = {
   [ChainId.ETHEREUM]: '0x5ad6211cd3fde39a9cecb5df6f380b8263d1e277',
   [ChainId.FANTOM]: '0xf9e7d4c6d36ca311566f46c81e572102a2dc9f52',
   [ChainId.POLYGON]: '0xf1c9881be22ebf108b8927c4d197d126346b5036',
@@ -60,7 +65,7 @@ export const MAKER_ADDRESS: Record<number | string, string> = {
   [ChainId.MOONRIVER]: '0xcc159bcb6a466da442d254ad934125f05dab66b5',
   [ChainId.FUSE]: '0x33b6beb37837459ee84a1ffed2c6a4ca22e5f316',
   [ChainId.HARMONY]: '0xcc159bcb6a466da442d254ad934125f05dab66b5',
-}
+} as const
 
 // [ChainKey.MOONBEAM]: {address: '0x87aeb22b7bb02ac42204eb312c08a22fc3f077f3', type: "Safe"}, // Disabled, reserveUSD returns 0
 // [ChainKey.HARMONY]: {address: '0xcc159bcb6a466da442d254ad934125f05dab66b5', type: "Matt"}, // inconsistent uptime, not hosted by thegraph
@@ -68,12 +73,14 @@ export const MAKER_ADDRESS: Record<number | string, string> = {
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
 
-export const SUBGRAPH_HOST: Record<number | string, string> = {
+export const SUBGRAPH_HOST = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
+  [ChainId.CELO]: GRAPH_HOST,
   [ChainId.ETHEREUM]: GRAPH_HOST,
   [ChainId.FANTOM]: GRAPH_HOST,
+  [ChainId.FUSE]: GRAPH_HOST,
   [ChainId.GNOSIS]: GRAPH_HOST,
   [ChainId.GÖRLI]: GRAPH_HOST,
   [ChainId.HARMONY]: GRAPH_HOST,
@@ -81,19 +88,19 @@ export const SUBGRAPH_HOST: Record<number | string, string> = {
   [ChainId.MOONRIVER]: GRAPH_HOST,
   [ChainId.OPTIMISM]: GRAPH_HOST,
   [ChainId.POLYGON]: GRAPH_HOST,
-}
+} as const
 
-export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
+export const EXCHANGE_SUBGRAPH_NAME = {
   [ChainId.ARBITRUM]: 'sushiswap/exchange-arbitrum-backup',
+  [ChainId.AVALANCHE]: 'sushiswap/exchange-avalanche',
   [ChainId.BSC]: 'sushiswap/bsc-exchange',
   [ChainId.CELO]: 'sushiswap/exchange-celo',
-  [ChainId.ETHEREUM]: 'sushiswap/exchange-ethereum',
+  [ChainId.ETHEREUM]: 'sushiswap/exchange',
   [ChainId.FANTOM]: 'sushiswap/exchange-fantom',
   [ChainId.FUSE]: 'sushiswap/exchange-fuse',
   [ChainId.GNOSIS]: 'sushiswap/exchange-gnosis',
+  [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
   [ChainId.MOONBEAM]: 'sushiswap/exchange-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
   [ChainId.POLYGON]: 'sushiswap/matic-exchange',
-  [ChainId.HARMONY]: 'sushiswap/exchange-harmony',
-}
+} as const

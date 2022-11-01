@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build-apps": "turbo run build --filter=...{./apps/*}",
-    "build-packages": "turbo run build --filter=...{./packages/*}",
-    "build-protocols": "turbo run build --filter=...{./protocols/*}",
+    "build-apps": "turbo run build --filter={./apps/*}[HEAD^1]...",
+    "build-packages": "turbo run build --filter={./packages/*}[HEAD^1]...",
+    "build-protocols": "turbo run build --filter={./protocols/*}[HEAD^1]...",
     "build": "turbo run build",
     "build:ci": "turbo run build --filter=[HEAD^1]",
     "generate": "turbo run generate",
@@ -23,6 +23,9 @@
     "prepare": "husky install ",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' --check",
+    "test-apps": "turbo run test --filter={./apps/*}[HEAD^1]...",
+    "test-packages": "turbo run test --filter={./packages/*}[HEAD^1]...",
+    "test-protocols": "turbo run test --filter={./protocols/*}[HEAD^1]...",
     "test": "turbo run test --parallel",
     "test:ci": "turbo run test --parallel --filter=[HEAD^1]",
     "version-packages": "turbo run build --filter=./packages/* && changeset version",
@@ -57,7 +60,8 @@
     "prettier": "^2.7.0",
     "sort-package-json": "^1.57.0",
     "ts-jest": "^28.0.0",
-    "turbo": "latest"
+    "turbo": "latest",
+    "ts-node": "latest"
   },
   "packageManager": "pnpm@7.6.0",
   "engines": {
