@@ -60,8 +60,8 @@ jobs:
         - name: Lint
           run: pnpm lint:ci
 
-        - name: Code generation
-          run: pnpm generate:ci
+        # - name: Code generation
+        #   run: pnpm generate:ci
 
         - name: Build packages
           run: pnpm build-packages
