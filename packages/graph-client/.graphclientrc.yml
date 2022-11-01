@@ -205,3 +205,6 @@ documents:
   # - './queries/sushiswap.graphql'
 codegen:
   contextType: 'MeshContext & { chainId: string; chainName: string; chainShortName: string; subgraphName: string; subgraphHost: string }'
+
+serve:
+   endpoint: /api/graphql
