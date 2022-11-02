@@ -127,7 +127,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                 name={name}
                                 onBlur={onBlur}
                                 onChange={(value) => onChange(new Date(value))}
-                                value={value?.toISOString().slice(0, 16) || ''}
+                                value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
                                 error={!!error?.message}
                                 className="!ring-offset-slate-900"
                               />

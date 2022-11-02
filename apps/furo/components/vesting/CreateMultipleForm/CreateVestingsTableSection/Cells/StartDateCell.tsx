@@ -1,4 +1,5 @@
 import { classNames, Input } from '@sushiswap/ui'
+import { format } from 'date-fns'
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -24,7 +25,7 @@ export const StartDateCell: FC<CellProps> = ({ index }) => {
               'border-0 !border-b-[1px]',
               'py-2 without-ring !bg-transparent !px-0 truncate text-sm border-0'
             )}
-            value={value?.toISOString().slice(0, 16) || ''}
+            value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
             onChange={(value) => onChange(new Date(value))}
             error={!!error?.message}
           />

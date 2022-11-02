@@ -1,5 +1,6 @@
 import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Input } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
+import { format } from 'date-fns'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { CreateStreamFormSchemaType } from './schema'
@@ -24,8 +25,11 @@ export const GeneralDetailsSection = () => {
                     min={new Date(Date.now() + 5 * 60 * 1000)?.toISOString().slice(0, 16)}
                     name={name}
                     onBlur={onBlur}
-                    value={value?.toISOString().slice(0, 16) || ''}
-                    onChange={(value) => onChange(new Date(value))}
+                    value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
+                    onChange={(value) => {
+                      console.log(value)
+                      onChange(new Date(value))
+                    }}
                     error={!!error?.message}
                     className="!ring-offset-slate-900 cursor-pointer"
                   />
@@ -50,7 +54,7 @@ export const GeneralDetailsSection = () => {
                     }
                     name={name}
                     onBlur={onBlur}
-                    value={value?.toISOString().slice(0, 16) || ''}
+                    value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
                     onChange={(value) => onChange(new Date(value))}
                     error={!!error?.message}
                     className="!ring-offset-slate-900 cursor-pointer"

@@ -2,6 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Input, Select } from '@sushiswap/ui'
 import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
+import { format } from 'date-fns'
 import { useTokens } from 'lib/state/token-lists'
 import { FC, useCallback, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -90,7 +91,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
                   onBlur={onBlur}
                   name={name}
                   onChange={(value) => onChange(new Date(value))}
-                  value={value?.toISOString().slice(0, 16) || ''}
+                  value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
                   error={!!error?.message}
                   className="!ring-offset-slate-900"
                 />

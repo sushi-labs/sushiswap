@@ -1,6 +1,7 @@
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
 import { Form, Input, Switch } from '@sushiswap/ui'
 import { CurrencyInput } from 'components'
+import { format } from 'date-fns'
 import { FC, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -73,7 +74,7 @@ export const CliffDetailsSection: FC = () => {
                   name={name}
                   onBlur={onBlur}
                   onChange={(value) => onChange(new Date(value))}
-                  value={value?.toISOString().slice(0, 16) || ''}
+                  value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
                   error={!!error?.message}
                   className="!ring-offset-slate-900"
                 />

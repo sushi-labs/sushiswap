@@ -82,7 +82,10 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
     return data
   }, [fields?.length, _memoizedErrors.FORM_ERRORS, _memoizedErrors.streams])
 
-  const formValid = isValid && !isValidating && Object.keys(errors).length === 0 && Object.keys(formErrors).length === 0
+  const _errors =
+    (Array.isArray(errors?.streams) && errors.streams.length > 0) ||
+    (Array.isArray(_formErrors?.streams) && _formErrors.streams.length > 0)
+  const formValid = isValid && !isValidating && !_errors
 
   return (
     <div className="flex flex-col col-span-2 gap-4">
