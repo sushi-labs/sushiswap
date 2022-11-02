@@ -22,17 +22,22 @@ abstract contract ImmutableState is IImmutableState {
     /// @notice Sushiswap Legacy AMM PairCodeHash
     bytes32 public immutable override pairCodeHash;
 
+    /// @notice Address of the Stargate ETH Vault
+    address public immutable override SGETH;
+
     constructor(
         IBentoBoxMinimal _bentoBox,
         IStargateRouter _stargateRouter,
         address _factory,
         bytes32 _pairCodeHash,
-        IStargateWidget _stargateWidget
+        IStargateWidget _stargateWidget,
+        address _SGETH
     ) {
         bentoBox = _bentoBox;
         stargateRouter = _stargateRouter;
         stargateWidget = _stargateWidget;
         factory = _factory;
         pairCodeHash = _pairCodeHash;
+        SGETH = _SGETH;
     }
 }

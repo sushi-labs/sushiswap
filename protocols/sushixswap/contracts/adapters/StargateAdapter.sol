@@ -133,7 +133,7 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
         bool failed;
 
         if(gasleft() < reserveGas) {
-            IERC20(_token).safeTransfer(to, amountLD);
+            IERC20(_token != SGETH ? _token : address(0)).safeTransfer(to, amountLD);
             failed = true;
             emit StargateSushiXSwapDst(srcContext, failed);
             return;
@@ -150,7 +150,7 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
                 datas
             )
         {} catch (bytes memory) {
-            IERC20(_token).safeTransfer(to, amountLD);
+            IERC20(_token != SGETH ? _token : address(0)).safeTransfer(to, amountLD);
             failed = true;
         }
 
