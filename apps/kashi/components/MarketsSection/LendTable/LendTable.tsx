@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { Typography } from '@sushiswap/ui'
 import {
   getCoreRowModel,
@@ -7,17 +8,32 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import { DEFAULT_MARKETS } from 'config'
+import stringify from 'fast-json-stable-stringify'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
-import { KashiPair } from '../../../.graphclient'
-import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, PAGE_SIZE, SUPPLY_APR_COLUMN } from '../../Table'
+import { KashiMediumRiskLendingPairV1 } from '../../../lib/KashiPair'
+import { ASSET_COLUMN, GenericTable, NETWORK_COLUMN, SUPPLY_APR_COLUMN, TOTAL_SUPPY_USD } from '../../Table'
 import { LendTableHoverElement } from './LendTableHoverElement'
+import { KashiPair } from '.graphclient'
+// @ts-ignore
+const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, TOTAL_SUPPY_USD, SUPPLY_APR_COLUMN]
 
-const COLUMNS = [NETWORK_COLUMN, ASSET_COLUMN, SUPPLY_APR_COLUMN]
-
-const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pagination: PaginationState } }) => {
+const fetcher = ({
+  url,
+  args,
+}: {
+  url: string
+  args: {
+    sorting: SortingState
+    pagination: PaginationState
+    query: string
+    extraQuery: string
+    selectedNetworks: ChainId[]
+  }
+}) => {
   const _url = new URL(url, window.location.origin)
 
   if (args.sorting[0]) {
@@ -30,21 +46,35 @@ const fetcher = ({ url, args }: { url: string; args: { sorting: SortingState; pa
     _url.searchParams.set('skip', (args.pagination.pageSize * args.pagination.pageIndex).toString())
   }
 
+  // const where: QuerypairsArgs['where'] = { totalBorrow_: { base_gt: 0 } }
+
+  // _url.searchParams.set('where', stringify(where))
+
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const LendTable: FC = () => {
   const router = useRouter()
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyAPR', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'currentSupplyAPR', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: PAGE_SIZE,
+    pageSize: DEFAULT_MARKETS.length,
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data: pairs } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher)
+
+  // TODO: Automatically serialise/deserialise, middleware?
+  const { data } = useSWR<KashiPair[]>({ url: '/kashi/api/pairs', args }, fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnMount: false,
+  })
+  const pairs = useMemo(
+    () => (Array.isArray(data) ? data.map((pair) => new KashiMediumRiskLendingPairV1(pair)) : []),
+    [data]
+  )
 
   const table = useReactTable({
     data: pairs ?? [],
@@ -61,8 +91,8 @@ export const LendTable: FC = () => {
   })
 
   const onClick = useCallback(
-    (row: Row<KashiPair>) => {
-      void router.push(`/lend/markets/${row.original.asset.symbol.toLowerCase()}`)
+    (row: Row<KashiMediumRiskLendingPairV1>) => {
+      if (row.original.asset.symbol) void router.push(`/lend/markets/${row.original.asset.symbol.toLowerCase()}`)
     },
     [router]
   )
@@ -72,7 +102,12 @@ export const LendTable: FC = () => {
       <Typography variant="sm" weight={600} className="text-slate-400">
         Lend
       </Typography>
-      <GenericTable<KashiPair> table={table} columns={COLUMNS} onClick={onClick} HoverElement={LendTableHoverElement} />
+      <GenericTable<KashiMediumRiskLendingPairV1>
+        table={table}
+        columns={COLUMNS}
+        onClick={onClick}
+        HoverElement={LendTableHoverElement}
+      />
     </div>
   )
 }

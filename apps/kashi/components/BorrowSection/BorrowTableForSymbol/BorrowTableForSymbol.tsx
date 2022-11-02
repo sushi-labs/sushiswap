@@ -8,6 +8,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import stringify from 'fast-json-stable-stringify'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
@@ -19,12 +21,18 @@ import {
   GenericTable,
   NETWORK_COLUMN,
   PAGE_SIZE,
-  TOTAL_APR_COLUMN,
-  TOTAL_ASSET_COLUMN,
+  TOTAL_BORROW_APR_COLUMN,
+  TOTAL_SUPPY_USD,
 } from '../../Table'
 
 // @ts-ignore
-const COLUMNS = [NETWORK_COLUMN, BORROW_ASSET_COLUMN, TOTAL_APR_COLUMN, TOTAL_ASSET_COLUMN, AVAILABLE_FOR_BORROW_COLUMN]
+const COLUMNS = [
+  NETWORK_COLUMN,
+  BORROW_ASSET_COLUMN,
+  TOTAL_BORROW_APR_COLUMN,
+  TOTAL_SUPPY_USD,
+  AVAILABLE_FOR_BORROW_COLUMN,
+]
 
 const fetcher = ({
   url,
@@ -51,7 +59,7 @@ const fetcher = ({
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const BorrowTableForSymbol: FC = () => {
@@ -60,7 +68,7 @@ export const BorrowTableForSymbol: FC = () => {
   const { isMd } = useBreakpoint('md')
   const { isLg } = useBreakpoint('lg')
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyAPR', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'totalBorrowUSD', desc: true }])
   const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -68,12 +76,25 @@ export const BorrowTableForSymbol: FC = () => {
   })
 
   const args = useMemo(() => ({ sorting, pagination }), [sorting, pagination])
-  const { data: pairs } = useSWR<KashiPair[]>(
-    { url: `/kashi/api/pairs?symbol=${(router.query.symbol as string).toLowerCase()}&asset=false`, args },
+  const { data } = useSWR<KashiPair[]>(
+    { url: `/kashi/api/borrow/${(router.query.symbol as string).toLowerCase()}`, args },
     fetcher
   )
-  const table = useReactTable({
+  const pairs = useMemo(
+    () =>
+      Array.isArray(data)
+        ? data
+            .map((pair) => new KashiMediumRiskLendingPairV1(pair))
+            .sort((a, b) => {
+              if (b.totalBorrowUSD === a.totalBorrowUSD) return 0
+              return b.totalBorrowUSD < a.totalBorrowUSD ? -1 : 1
+            })
+        : [],
+    [data]
+  )
+  const table = useReactTable<KashiMediumRiskLendingPairV1>({
     data: pairs ?? [],
+    // @ts-ignore
     columns: COLUMNS,
     state: {
       sorting,
@@ -88,7 +109,7 @@ export const BorrowTableForSymbol: FC = () => {
   })
 
   const onClick = useCallback(
-    (row: Row<KashiPair>) => {
+    (row: Row<KashiMediumRiskLendingPairV1>) => {
       void router.push(`/borrow/${chainShortName[row.original.chainId]}:${row.original.id}`)
     },
     [router]
@@ -114,7 +135,8 @@ export const BorrowTableForSymbol: FC = () => {
         </Typography>
       </div>
       <div className="flex flex-col gap-4">
-        <GenericTable<KashiPair> size="lg" table={table} columns={COLUMNS} onClick={onClick} />
+        {/* @ts-ignore */}
+        <GenericTable<KashiMediumRiskLendingPairV1> size="lg" table={table} columns={COLUMNS} onClick={onClick} />
       </div>
     </>
   )

@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/format",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "description": "Sushi Format",
   "keywords": [
     "sushi",
@@ -44,6 +43,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^27.5.1",
     "@types/numeral": "^2.0.2",
+    "eslint": "^8.20.0",
     "jest": "^28.1.0",
     "tsup": "^6.2.0",
     "typescript": "4.8.2"

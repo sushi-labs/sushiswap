@@ -1,4 +1,3 @@
-import { Amount, Type as Currency, useCurrencyCombinations, WNATIVE } from '@sushiswap/currency'
 import {
   ConstantProductPool,
   FACTORY_ADDRESS,
@@ -9,9 +8,17 @@ import {
   Trade,
   TradeType,
   Version as TradeVersion,
-} from '@sushiswap/exchange'
+} from '@sushiswap/amm'
+import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { MultiRoute, RouteStatus } from '@sushiswap/tines'
-import { PairState, useBentoBoxTotals, useGetConstantProductPools, useGetStablePools, usePairs } from '@sushiswap/wagmi'
+import {
+  PairState,
+  useBentoBoxTotals,
+  useCurrencyCombinations,
+  useGetConstantProductPools,
+  useGetStablePools,
+  usePairs,
+} from '@sushiswap/wagmi'
 import {
   AMM_ENABLED_NETWORKS,
   CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
@@ -115,23 +122,21 @@ export function useTrade(
     useMemo(() => [currencyIn, currencyOut], [currencyIn, currencyOut])
   )
 
-  // console.debug('Found legacy route', [
+  // console.log([
   //   feeData,
-  //   feeData?.gasPrice,
-  //   // error,
+  //   feeData && feeData.gasPrice,
   //   currencyIn,
-  //   // currencyInRebase,
   //   currencyOut,
-  //   // currencyOutRebase,
-  //   currencyIn?.wrapped.chainId === currencyOut?.wrapped.chainId,
-  //   currencyIn?.wrapped.chainId === chainId,
-  //   currencyOut?.wrapped.chainId === chainId,
-  //   currencyIn?.wrapped.address !== currencyOut?.wrapped.address,
+  //   currencyIn && currencyOut && currencyIn.wrapped.chainId === currencyOut.wrapped.chainId,
+  //   currencyIn && currencyIn.wrapped.chainId === chainId,
+  //   currencyOut && currencyOut.wrapped.chainId === chainId,
+  //   currencyIn && currencyOut && currencyIn.wrapped.address !== currencyOut.wrapped.address,
   //   chainId,
   //   amountSpecified,
-  //   amountSpecified?.greaterThan(0),
+  //   amountSpecified && amountSpecified.greaterThan(0),
   //   otherCurrency,
   //   filteredPools.length > 0,
+  //   filteredPools,
   // ])
 
   return useMemo(() => {

@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
-import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/exchange'
+import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/amm'
 import { JSBI } from '@sushiswap/math'
 import stablePoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/stable/StablePool.sol/StablePool.json'
 import { useMemo } from 'react'

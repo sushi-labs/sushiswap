@@ -1,5 +1,5 @@
 {
-  "name": "price",
+  "name": "token-price-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*"
+    "@sushiswap/typescript-config": "workspace:*",
+    "eslint": "^8.20.0"
   }
 }

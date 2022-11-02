@@ -7,9 +7,10 @@ import { ExtractProps } from '../types'
 
 export type SelectOptionProps = ExtractProps<typeof Listbox.Option> & {
   children?: ReactNode
+  showArrow?: boolean
 }
 
-const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, ...props }, ref) => {
+const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, showArrow = true, ...props }, ref) => {
   const [hover, setHover] = useState(false)
 
   return (
@@ -20,8 +21,8 @@ const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, .
       onMouseLeave={() => setHover(false)}
       className={({ active }: { active: boolean }) =>
         classNames(
-          active ? 'text-white bg-blue-500' : 'text-high-emphesis',
-          'flex gap-2 px-4 items-center font-medium text-sm cursor-default select-none relative py-2 rounded-xl border-[3px] border-slate-600 whitespace-nowrap',
+          active ? 'text-white bg-white bg-opacity-[0.06]' : 'text-high-emphesis',
+          'flex gap-2 px-2 items-center font-medium text-sm cursor-default select-none relative py-3 rounded-2xl whitespace-nowrap',
           className
         )
       }
@@ -29,7 +30,7 @@ const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, .
       {children}
       <Transition
         as={Fragment}
-        show={hover}
+        show={hover && showArrow}
         enter="ease-in-out duration-300"
         enterFrom="translate-x-[10px] opacity-0"
         enterTo="translate-x-[-10px] opacity-100"
@@ -39,7 +40,7 @@ const SelectOption: FC<SelectOptionProps> = forwardRef(({ className, children, .
         unmount={false}
       >
         <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
-          <div className="bg-white text-blue rounded-full p-1 shadow-md shadow-black/30">
+          <div className="bg-white text-blue rounded-full p-1 shadow-lg shadow-black/30">
             <ArrowRightIcon width={10} height={10} />
           </div>
         </div>

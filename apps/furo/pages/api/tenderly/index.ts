@@ -1,3 +1,4 @@
+import stringify from 'fast-json-stable-stringify'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -21,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const call = await fetch(apiURL, {
     method: 'post',
-    body: JSON.stringify(body),
+    body: stringify(body),
     headers,
   })
 

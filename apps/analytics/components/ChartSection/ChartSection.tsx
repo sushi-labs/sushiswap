@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { usePoolFilters } from 'components/PoolsFiltersProvider'
+import stringify from 'fast-json-stable-stringify'
 import { FC, useMemo } from 'react'
 import useSWR from 'swr'
 
@@ -17,11 +18,11 @@ const fetcher = ({
 }) => {
   const _url = new URL(url, window.location.origin)
   if (args.selectedNetworks) {
-    _url.searchParams.set('networks', JSON.stringify(args.selectedNetworks))
+    _url.searchParams.set('networks', stringify(args.selectedNetworks))
   }
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const ChartSection: FC = () => {

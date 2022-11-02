@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { ERC20 } from '@sushiswap/core'
+import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { erc20ABI, readContracts, ReadContractsConfig } from '@wagmi/core'
 
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '../../config'
 import { divBigNumberToNumber } from './utils'
 
 interface Token {
@@ -15,18 +15,12 @@ interface Token {
 
 const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
-  const subgraphName = EXCHANGE_SUBGRAPH_NAME[chainId]
+  const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
 
   // waiting for new subgraph to sync
-  const { tokens, bundle } =
-    chainId === ChainId.POLYGON
-      ? await sdk.PolygonTokens({ where: { id_in: ids.map((id) => id.toLowerCase()) } }).then(({ tokens, bundle }) => ({
-          tokens: tokens.map((token) => ({ ...token, price: { derivedNative: token.derivedETH } })),
-          bundle,
-        }))
-      : await sdk.Tokens({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
+  const { tokens, bundle } = await sdk.Tokens({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
 
   return tokens.map((token) => ({
     id: token.id,
@@ -41,7 +35,7 @@ const getTridentTokens = async (ids: string[], chainId: ChainId): Promise<Token[
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
 
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },

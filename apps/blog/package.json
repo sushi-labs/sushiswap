@@ -16,6 +16,7 @@
     "@sushiswap/ui": "workspace:*",
     "@tailwindcss/typography": "^0.5.2",
     "date-fns": "^2.28.0",
+    "fast-json-stable-stringify": "^2.1.0",
     "graphql": "16.6.0",
     "next": "^12.3.1",
     "next-seo": "^5.5.0",
@@ -28,8 +29,8 @@
     "next-axiom": "^0.14.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "^0.75.3",
-    "@graphql-mesh/graphql": "^0.29.5",
+    "@graphql-mesh/cli": "0.78.39",
+    "@graphql-mesh/graphql": "0.31.25",
     "@heroicons/react": "^1.0.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

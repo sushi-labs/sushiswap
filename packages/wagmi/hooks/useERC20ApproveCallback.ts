@@ -1,7 +1,7 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { Amount, Currency } from '@sushiswap/currency'
 import { NotificationData } from '@sushiswap/ui'
-import { BigNumber, Contract } from 'ethers'
+import { Contract } from 'ethers'
 import { useCallback, useMemo } from 'react'
 import {
   erc20ABI,
@@ -13,11 +13,8 @@ import {
   useSigner,
 } from 'wagmi'
 
+import { calculateGasMargin } from '../calculateGasMargin'
 import { useERC20Allowance } from './useERC20Allowance'
-
-export function calculateGasMargin(value: BigNumber): BigNumber {
-  return value.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000))
-}
 
 export enum ApprovalState {
   UNKNOWN = 'UNKNOWN',

@@ -29,6 +29,7 @@
     "cookie-cutter": "^0.2.0",
     "cors": "^2.8.5",
     "ethers": "^5.7.0",
+    "fast-json-stable-stringify": "^2.1.0",
     "next": "^12.3.1",
     "next-seo": "^5.5.0",
     "octokit": "^2.0.4",
@@ -46,7 +47,7 @@
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
-    "@graphprotocol/client-cli": "2.2.13",
+    "@graphprotocol/client-cli": "2.2.15",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

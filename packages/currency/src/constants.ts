@@ -4,6 +4,14 @@ import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
 import { Token } from './Token'
 
+export const SNX_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f',
+} as const
+
+export const FTM_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x4E15361FD6b4BB609Fa63C81A2be19d873717870',
+} as const
+
 export const WBTC_ADDRESS = {
   [ChainId.AVALANCHE]: '0x50b7545627a5162F82A992c33b87aDc75187B218',
   [ChainId.ARBITRUM]: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
@@ -26,7 +34,137 @@ export const WBTC = addressMapToTokenMap(
   WBTC_ADDRESS
 )
 
+export const UNI_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
+  [ChainId.GNOSIS]: '0x4537e328Bf7e4eFA29D05CAeA260D7fE26af9D74',
+  [ChainId.OPTIMISM]: '0x6fd9d7AD17242c41f7131d257212c54A0e816691',
+  [ChainId.AVALANCHE]: '0x8eBAf22B6F053dFFeaf46f4Dd9eFA95D89ba8580',
+  [ChainId.BSC]: '0xBf5140A22578168FD562DCcF235E5D43A02ce9B1',
+  [ChainId.POLYGON]: '0xb33EaAd8d922B1083446DC23f610c2567fB5180f',
+  [ChainId.HECO]: '0x22C54cE8321A4015740eE1109D9cBc25815C46E6',
+  [ChainId.HARMONY]: '0x90D81749da8867962c760414C1C25ec926E889b6',
+  [ChainId.ARBITRUM]: '0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0',
+} as const
+
+export const UNI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'UNI',
+    name: 'Uniswap',
+  },
+  UNI_ADDRESS
+)
+
+export const BUSD_ADDRESS = {
+  [ChainId.BSC]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+} as const
+
+export const BUSD = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'BUSD',
+    name: 'BUSD Token',
+  },
+  BUSD_ADDRESS
+)
+
+export const MAI_ADDRESS = {
+  [ChainId.POLYGON]: '0xa3Fa99A148fA48D14Ed51d610c367C61876997F1',
+  [ChainId.FANTOM]: '0xfB98B335551a418cD0737375a2ea0ded62Ea213b',
+  [ChainId.AVALANCHE]: '0x5c49b268c9841AFF1Cc3B0a418ff5c3442eE3F3b',
+  [ChainId.MOONRIVER]: '0xFb2019DfD635a03cfFF624D210AEe6AF2B00fC2C',
+  [ChainId.HARMONY]: '0x3F56e0c36d275367b8C502090EDF38289b3dEa0d',
+  [ChainId.ARBITRUM]: '0x3F56e0c36d275367b8C502090EDF38289b3dEa0d',
+  [ChainId.BOBA]: '0x3F56e0c36d275367b8C502090EDF38289b3dEa0d',
+  [ChainId.GNOSIS]: '0x3F56e0c36d275367b8C502090EDF38289b3dEa0d',
+  [ChainId.METIS]: '0xdFA46478F9e5EA86d57387849598dbFB2e964b02',
+  [ChainId.BSC]: '0x3F56e0c36d275367b8C502090EDF38289b3dEa0d',
+  [ChainId.CELO]: '0xB9C8F0d3254007eE4b98970b94544e473Cd610EC',
+  [ChainId.OPTIMISM]: '0xdFA46478F9e5EA86d57387849598dbFB2e964b02',
+  [ChainId.MOONBEAM]: '0xdFA46478F9e5EA86d57387849598dbFB2e964b02',
+  [ChainId.KAVA]: '0xb84Df10966a5D7e1ab46D9276F55d57bD336AFC7',
+  [ChainId.ETHEREUM]: '0x8D6CeBD76f18E1558D4DB88138e2DeFB3909fAD6',
+} as const
+
+export const MAI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'MAI',
+    name: 'Mai Stablecoin',
+  },
+  MAI_ADDRESS
+)
+
+export const TUSD_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x0000000000085d4780B73119b644AE5ecd22b376',
+} as const
+
+export const TUSD = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'TUSD',
+    name: 'TrueUSD',
+  },
+  TUSD_ADDRESS
+)
+
+export const ANKR_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x8290333ceF9e6D528dD5618Fb97a76f268f3EDD4',
+} as const
+
+export const ANKR = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'ANKR',
+    name: 'Anker Network',
+  },
+  ANKR_ADDRESS
+)
+
+export const AAVE_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9',
+} as const
+
+export const AAVE = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'AAVE',
+    name: 'Aave Token',
+  },
+  AAVE_ADDRESS
+)
+
+export const COMP_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xc00e94Cb662C3520282E6f5717214004A7f26888',
+} as const
+
+export const COMP = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'COMP',
+    name: 'Compound ',
+  },
+  COMP_ADDRESS
+)
+
+export const JPY_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB',
+  [ChainId.POLYGON]: '0x6AE7Dfc73E0dDE2aa99ac063DcF7e8A63265108c',
+  [ChainId.AVALANCHE]: '0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB',
+  [ChainId.GNOSIS]: '0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB',
+} as const
+
+export const JPY = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'JPYC',
+    name: 'JPY Coin',
+  },
+  JPY_ADDRESS
+)
+
 export const LUSD_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
   [ChainId.OPTIMISM]: '0xc40F949F8a4e094D1b49a23ea9241D289B7b2819',
 } as const
 

@@ -1,13 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
-import { Table, useBreakpoint } from '@sushiswap/ui'
+import { Pair } from '@sushiswap/graph-client'
+import { GenericTable, Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import stringify from 'fast-json-stable-stringify'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { PAGE_SIZE } from '../contants'
-import { GenericTable } from '../GenericTable'
 import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PairQuickHoverTooltip } from './PairQuickHoverTooltip'
 
@@ -26,6 +26,8 @@ const fetcher = ({
     query: string
     extraQuery: string
     selectedNetworks: ChainId[]
+    selectedPoolTypes: string[]
+    farmsOnly: boolean
   }
 }) => {
   const _url = new URL(url, window.location.origin)
@@ -36,38 +38,33 @@ const fetcher = ({
   }
 
   if (args.pagination) {
-    _url.searchParams.set('pagination', JSON.stringify(args.pagination))
+    _url.searchParams.set('pagination', stringify(args.pagination))
   }
 
   if (args.selectedNetworks) {
-    _url.searchParams.set('networks', JSON.stringify(args.selectedNetworks))
+    _url.searchParams.set('networks', stringify(args.selectedNetworks))
   }
 
-  let where = {}
-  if (args.query) {
-    where = {
-      name_contains_nocase: args.query,
-    }
+  const where = {}
+  if (args.query) where['name_contains_nocase'] = args.query
+  if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes
 
+  if (Object.keys(where).length > 0) {
     _url.searchParams.set('where', JSON.stringify(where))
   }
 
-  // if (args.extraQuery) {
-  //   where = {
-  //     ...where,
-  //     token1_: { symbol_contains_nocase: args.extraQuery },
-  //   }
-
-  //   _url.searchParams.set('where', JSON.stringify(where))
-  // }
+  if (args.farmsOnly) {
+    _url.searchParams.set('farmsOnly', 'true')
+  }
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(JSON.stringify(e)))
+    .catch((e) => console.log(stringify(e)))
 }
 
 export const PoolsTable: FC = () => {
-  const { query, extraQuery, selectedNetworks } = usePoolFilters()
+  const { query, extraQuery, selectedNetworks, selectedPoolTypes, farmsOnly, atLeastOneFilterSelected } =
+    usePoolFilters()
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
@@ -79,14 +76,16 @@ export const PoolsTable: FC = () => {
   })
 
   const args = useMemo(
-    () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
-    [sorting, pagination, selectedNetworks, query, extraQuery]
+    () => ({ sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery }),
+    [sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery]
   )
 
   const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher)
 
+  console.log({ pools })
+
   const { data: poolCount } = useSWR<number>(
-    `/earn/api/pools/count${selectedNetworks ? `?networks=${JSON.stringify(selectedNetworks)}` : ''}`,
+    `/earn/api/pools/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
     (url) => fetch(url).then((response) => response.json())
   )
 
@@ -116,6 +115,10 @@ export const PoolsTable: FC = () => {
     }
   }, [isMd, isSm])
 
+  const rowLink = useCallback((row: Pair) => {
+    return `/${row.id}`
+  }, [])
+
   return (
     <>
       <GenericTable<Pair>
@@ -124,15 +127,19 @@ export const PoolsTable: FC = () => {
         HoverElement={isMd ? PairQuickHoverTooltip : undefined}
         placeholder="No pools found"
         pageSize={PAGE_SIZE}
+        linkFormatter={rowLink}
       />
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}
-        hasNext={pagination.pageIndex < table.getPageCount()}
+        hasNext={
+          !atLeastOneFilterSelected ? pagination.pageIndex < table.getPageCount() : (pools?.length || 0) >= PAGE_SIZE
+        }
+        nextDisabled={!pools && isValidating}
         onPrev={table.previousPage}
         onNext={table.nextPage}
         page={pagination.pageIndex}
         onPage={table.setPageIndex}
-        pages={table.getPageCount()}
+        pages={!atLeastOneFilterSelected ? table.getPageCount() : undefined}
         pageSize={PAGE_SIZE}
       />
     </>

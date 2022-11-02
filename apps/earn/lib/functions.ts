@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { ConstantProductPool, Pair, StablePool } from '@sushiswap/exchange'
-import { Incentive } from '@sushiswap/graph-client/.graphclient'
+import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
+import { Incentive } from '@sushiswap/graph-client'
 
 export const isConstantProductPool = (
   pool: Pair | ConstantProductPool | StablePool | null

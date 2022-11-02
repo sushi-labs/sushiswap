@@ -1,17 +1,17 @@
 import { Price, tryParseAmount } from '@sushiswap/currency'
 import { useMemo } from 'react'
 
-import { useBridgeState } from '../../components'
+import { BridgeState } from '../../components'
 import { useBridgeFees } from './useBridgeFees'
 
-export const useBridgeOutput = () => {
-  const { amount, dstToken } = useBridgeState()
-  const { bridgeFee } = useBridgeFees()
+export const useBridgeOutput = (state: BridgeState) => {
+  const { amount, dstToken } = state
+  const { bridgeFee, isLoading } = useBridgeFees(state)
 
   const srcAmountOut = useMemo(() => (bridgeFee ? amount?.subtract(bridgeFee) : undefined), [bridgeFee, amount])
 
   const dstAmountOut = useMemo(() => {
-    if (!srcAmountOut) return
+    if (!srcAmountOut || !dstToken) return
     return tryParseAmount(
       srcAmountOut.toFixed(srcAmountOut.currency.decimals > dstToken.decimals ? dstToken.decimals : undefined),
       dstToken
@@ -28,7 +28,9 @@ export const useBridgeOutput = () => {
       srcAmountOut,
       dstAmountOut,
       price,
+      bridgeFee,
+      isLoading,
     }),
-    [dstAmountOut, price, srcAmountOut]
+    [bridgeFee, dstAmountOut, isLoading, price, srcAmountOut]
   )
 }

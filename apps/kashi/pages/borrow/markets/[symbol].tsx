@@ -4,28 +4,30 @@ import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { BorrowSection } from '../../../components'
-import { getPairsForSymbol } from '../../../lib/api'
+import { getPairs } from '../../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const [pairs] = await Promise.all([
-    getPairsForSymbol({
-      symbol: (query.symbol as string).toLowerCase(),
-      asset: false,
-      orderBy: 'borrowAPR',
-      orderDirection: 'desc',
-    }),
-  ])
-
+  const symbol = query.symbol as string
+  const pairs = await getPairs({
+    where: {
+      asset_: {
+        symbol_contains_nocase: symbol.toLowerCase(),
+      },
+      // totalAsset_: { base_not: '0' },
+    },
+    orderBy: 'totalBorrowUSD',
+    orderDirection: 'desc',
+  })
   return {
     props: {
       fallback: {
         [unstable_serialize({
-          url: `/kashi/api/pairs?symbol=${(query.symbol as string).toLowerCase()}&asset=false`,
+          url: `/kashi/api/borrow/${symbol.toLowerCase()}`,
           args: {
             sorting: [
               {
-                id: 'borrowAPR',
+                id: 'totalBorrowUSD',
                 desc: true,
               },
             ],

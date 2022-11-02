@@ -1,5 +1,5 @@
 {
-  "name": "token-list",
+  "name": "token-list-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@sushiswap/chainlink-token-list": "^0.1.0",
-    "@sushiswap/default-token-list": "^36.0.0",
+    "@sushiswap/default-token-list": "^38.3.0",
     "@vercel/node": "^2.2.0"
   },
   "devDependencies": {

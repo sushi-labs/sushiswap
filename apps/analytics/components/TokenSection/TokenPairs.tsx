@@ -1,7 +1,7 @@
 import chains from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Token as GraphToken } from '@sushiswap/graph-client/.graphclient'
+import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Currency, Link, Table, Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 

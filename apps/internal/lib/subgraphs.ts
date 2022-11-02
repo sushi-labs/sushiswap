@@ -36,6 +36,7 @@ const lowerCaseAllWordsExceptFirstLetters = (string: string): string =>
 const parseCategories = () => {
   return Object.keys(CATEGORIES)
     .flatMap((categoryKey: keyof typeof CATEGORIES) =>
+      // @ts-ignore
       Object.keys(CATEGORIES[categoryKey]).map((chainKey: keyof typeof CATEGORIES['BENTOBOX']) => ({
         chainId: Number(String(chainKey).split('-')[0]),
         subgraphName: CATEGORIES[categoryKey][chainKey] as string,

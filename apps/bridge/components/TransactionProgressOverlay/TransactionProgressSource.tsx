@@ -3,7 +3,6 @@ import { NetworkIcon } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
-import { useBridgeExecute } from '../BridgeExecuteProvider'
 import { useBridgeState } from '../BridgeStateProvider'
 import { TransactionProgressStep } from './TransactionProgressStep'
 
@@ -19,14 +18,14 @@ interface TransactionProgressSource {
   }): ReactNode
 }
 export const TransactionProgressSource: FC<TransactionProgressSource> = ({ children }) => {
-  const { amount, srcChainId, srcToken } = useBridgeState()
-  const { sourceTx } = useBridgeExecute()
-
+  const { amount, srcChainId, srcToken, sourceTx } = useBridgeState()
   const { isError, isSuccess, isLoading } = useWaitForTransaction({
-    hash: sourceTx.hash,
+    hash: sourceTx?.hash,
     chainId: srcChainId,
-    enabled: Boolean(sourceTx.hash) && Boolean(amount),
+    enabled: Boolean(sourceTx?.hash) && Boolean(amount),
   })
+
+  if (!amount || !sourceTx?.hash) return <></>
 
   return (
     <>
@@ -34,7 +33,7 @@ export const TransactionProgressSource: FC<TransactionProgressSource> = ({ child
         link={chains[amount.currency.chainId].getTxUrl(sourceTx.hash)}
         status={isSuccess ? 'success' : isError ? 'failed' : isLoading ? 'pending' : 'idle'}
         header={
-          amount.currency.wrapped.equals(srcToken) ? (
+          srcToken && amount.currency.wrapped.equals(srcToken) ? (
             <TransactionProgressStep.Header>
               Transfer{' '}
               <b>
@@ -48,7 +47,7 @@ export const TransactionProgressSource: FC<TransactionProgressSource> = ({ child
               <b>
                 {amount.toSignificant(6)} {amount.currency.symbol}
               </b>{' '}
-              for <b>{srcToken.symbol}</b>
+              for <b>{srcToken?.symbol}</b>
             </TransactionProgressStep.Header>
           )
         }

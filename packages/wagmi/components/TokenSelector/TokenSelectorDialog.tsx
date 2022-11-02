@@ -32,6 +32,7 @@ type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
   tokenMap: Record<string, Token>
   pricesMap?: Record<string, Fraction> | undefined
   fundSource: FundSource
+  includeNative?: boolean
 }
 
 export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
@@ -48,6 +49,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
   balancesMap,
   pricesMap,
   fundSource,
+  includeNative
 }) => {
   const isSmallScreen = useIsSmScreen()
 
@@ -75,6 +77,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
       pricesMap={pricesMap}
       balancesMap={balancesMap}
       fundSource={fundSource}
+      includeNative={includeNative}
     >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <Dialog open={open} unmount={false} onClose={onClose} initialFocus={isSmallScreen ? undefined : inputRef}>
@@ -121,12 +124,11 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                 <div className="w-full border-t border-slate-200/5" />
                 <div className="relative h-[calc(100%-32px)] pt-5">
                   <div className="absolute inset-0 h-full rounded-t-none rounded-xl">
-                    {queryToken && (
+                    {queryToken[0] && (
                       <TokenSelectorImportRow
-                        hideIcons
                         className="!px-6"
-                        currency={queryToken}
-                        onImport={() => handleImport(queryToken)}
+                        currencies={queryToken}
+                        onImport={() => queryToken[0] && handleImport(queryToken[0])}
                       />
                     )}
                     <Currency.List

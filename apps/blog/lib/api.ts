@@ -2,11 +2,11 @@ import { ArticleFiltersInput, CategoryFiltersInput, getMeshSDK, PaginationArg } 
 
 const sdk = getMeshSDK()
 
-export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
+export const getArticleAndMoreArticles = async (slug: string, preview: boolean) => {
   return sdk.articleAndMoreArticles({
+    locale: 'all',
     filters: {
       slug: { eq: slug },
-      articleType: { eq: 'blog' },
     },
     filters_ne: { slug: { not: { eq: slug } } },
     publicationState: preview ? 'PREVIEW' : 'LIVE',
@@ -26,9 +26,9 @@ export const getPreviewPostBySlug = async (slug: string) => {
 }
 
 export const getArticles = async (variables?: { filters?: ArticleFiltersInput; pagination?: PaginationArg }) => {
-  return sdk.getArticles({ ...variables, filters: { ...variables?.filters, articleType: { eq: 'blog' } } })
+  return sdk.getArticles({ ...variables, filters: { ...variables?.filters, articleTypes: { type: { eq: 'blog' } } } })
 }
 
-export const getCategories = async (filters?: CategoryFiltersInput) => {
+export const getCategories = async (filters: CategoryFiltersInput = {}) => {
   return sdk.getCategories({ filters })
 }

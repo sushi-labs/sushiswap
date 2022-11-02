@@ -1,11 +1,11 @@
 import { Currency, Table, Typography } from '@sushiswap/ui'
+import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC } from 'react'
 
-import { KashiPair } from '../../.graphclient'
 import { useTokensFromKashiPair } from '../../lib/hooks'
 
 interface MarketRewardsProps {
-  pair: KashiPair
+  pair: KashiMediumRiskLendingPairV1
 }
 
 // TODO rewards

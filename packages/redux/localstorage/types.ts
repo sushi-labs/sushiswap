@@ -79,4 +79,5 @@ export interface ClearNotifications {
 }
 
 export type AddCustomToken = TokenAsObject
+export type AddCustomTokens = TokenAsObject[]
 export type RemoveCustomToken = Pick<TokenAsObject, 'chainId' | 'address'>

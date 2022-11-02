@@ -31,8 +31,10 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
                 withScrollBackground
                 nav={
                   <App.NavItemList>
+                    <App.NavItem href="/dashboard" label="Dashboard" />
                     <App.NavItem href="/lend" label="Lend" />
                     <App.NavItem href="/borrow" label="Borrow" />
+                    <App.NavItem href="/leverage" label="Leverage" />
                   </App.NavItemList>
                 }
               >
@@ -49,7 +51,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             </App.Shell>
           </ThemeProvider>
         </Provider>
-      </WagmiConfig>{' '}
+      </WagmiConfig>
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { Amount, Token, Type as Currency } from '@sushiswap/currency'
-import { StablePool } from '@sushiswap/exchange'
+import { StablePool } from '@sushiswap/amm'
 import { useBentoBoxTotals } from '@sushiswap/wagmi'
 import STABLE_POOL_ABI from 'abis/stable-pool.json'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from 'lib/state/multicall'

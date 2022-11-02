@@ -1,11 +1,18 @@
 name: CI
- 
+
 on:
   push:
     branches: ["master"]
   pull_request:
     types: [opened, synchronize]
- 
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  CI: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
   build:
       name: Build and Test
@@ -33,7 +40,7 @@ jobs:
         ACADEMY_URL: ${{ secrets.ACADEMY_URL }}
  
       steps:
-        - name: Check out code
+        - name: Check out
           uses: actions/checkout@v3
           with:
             fetch-depth: 2
@@ -42,7 +49,7 @@ jobs:
           with:
             version: 7
  
-        - name: Setup Node.js environment
+        - name: Setup Node.js
           uses: actions/setup-node@v3
           with:
             node-version: 16
@@ -52,13 +59,28 @@ jobs:
           run: pnpm install
 
         - name: Lint
-          run: pnpm lint
+          run: pnpm lint:ci
 
-        # - name: Generate
-        #   run: pnpm generate
+        # - name: Code generation
+        #   run: pnpm generate:ci
 
-        - name: Build
-          run: pnpm build
+        - name: Build packages
+          run: pnpm build-packages
+
+        - name: Build protocols
+          run: pnpm build-protocols
+
+        - name: Build apps
+          run: pnpm build-apps
  
-        - name: Test
-          run: pnpm test
+        - name: Test packages
+          run: pnpm test-packages
+
+        - name: Test protocols
+          run: pnpm test-protocols
+
+        - name: Test apps
+          run: pnpm test-apps
+
+        # - name: Test
+        #   run: pnpm test:ci

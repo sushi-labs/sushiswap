@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import stringify from 'fast-json-stable-stringify'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import { getBuiltGraphSDK } from '.graphclient'

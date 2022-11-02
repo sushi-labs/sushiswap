@@ -1,4 +1,4 @@
-sources: !includes sources
+sources: !includes ./src/sources
 
 additionalTypeDefs: |
   input Pagination {
@@ -61,6 +61,11 @@ additionalTypeDefs: |
     chainName: String!
     chainShortName: String!
   }
+  extend type LiquidityPosition {
+    chainId: Int!
+    chainName: String!
+    chainShortName: String!
+  }
   extend type Pair {
     chainId: Int!
     chainName: String!
@@ -99,6 +104,19 @@ additionalTypeDefs: |
       orderDirection: OrderDirection,
       chainIds: [Int!]!
     ): [Block!]!
+    oneDayBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    twoDayBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    oneWeekBlocks(
+      chainIds: [Int!]!
+    ): [Block!]!
+    customBlocks(
+      timestamp: Int!
+      chainIds: [Int!]!
+    ): [Block!]!
     # BENTOBOX
     crossChainRebases(
       first: Int!,
@@ -129,28 +147,24 @@ additionalTypeDefs: |
       block: Block_height,
       pagination: Pagination,
       chainIds: [Int!]!,
-      oneDayBlockNumbers: [Int!]!,
-      oneWeekBlockNumbers: [Int!]!
+      farmsOnly: Boolean
     ): [Pair!]!
     crossChainPair(id: ID!, now: Int!, chainId: Int!): Pair
-    crossChainUser(
-      id: ID!,
+    crossChainLiquidityPositions(
       block: Block_height,
       where: LiquidityPosition_filter,
-      now: Int!, 
       chainIds: [Int!]!,
-    ): User!
+    ): [LiquidityPosition!]!
     crossChainChefUser(
       first: Int,
       skip: Int,
       where: User_filter,
       block: Block_height,
       chainIds: [Int!]!,
-    ): [ChefUser!]!
+    ): [ChefUser]
     crossChainUserWithFarms(
       id: ID!,
       block: Block_height,
-      now: Int!,
       chainIds: [Int!]!,
     ): [UserWithFarm!]
     crossChainToken(id: ID!, now: Int!, chainId: Int!): Token!
@@ -177,12 +191,20 @@ additionalTypeDefs: |
   }
 
 additionalResolvers:
-  - ./resolvers/bentobox.ts
-  - ./resolvers/blocks.ts
-  - ./resolvers/sushiswap.ts
+  - .graphclient/resolvers/bentobox.js
+  - .graphclient/resolvers/blocks.js
+  - .graphclient/resolvers/sushiswap.js
 
 documents:
-  - './queries/*.graphql'
-
+  - './src/queries/*.graphql'
+  # - './queries/bar.graphql'
+  # - './queries/bentobox.graphql'
+  # - './queries/blocks.graphql'
+  # - './queries/exchange.graphql'
+  # - './queries/masterchef.graphql'
+  # - './queries/sushiswap.graphql'
 codegen:
   contextType: 'MeshContext & { chainId: string; chainName: string; chainShortName: string; subgraphName: string; subgraphHost: string }'
+
+serve:
+   endpoint: /api/graphql

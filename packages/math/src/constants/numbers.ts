@@ -1,5 +1,7 @@
 import JSBI from 'jsbi'
 
+import Percent from '../Percent'
+
 export const ZERO = JSBI.BigInt(0)
 export const ONE = JSBI.BigInt(1)
 export const TWO = JSBI.BigInt(2)
@@ -24,3 +26,5 @@ export const MAX_UINT256 = JSBI.BigInt('0xffffffffffffffffffffffffffffffffffffff
 
 // 2^128 - 1
 export const MAX_UINT128 = JSBI.subtract(JSBI.exponentiate(JSBI.BigInt('2'), JSBI.BigInt(128)), JSBI.BigInt(1))
+
+export const ZERO_PERCENT = new Percent(0)

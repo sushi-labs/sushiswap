@@ -1,10 +1,10 @@
-import { Token } from '@sushiswap/currency'
+import { Type } from '@sushiswap/currency'
 import { Currency } from '@sushiswap/ui'
 import { FC } from 'react'
 
 interface IconListVariableSizesProps {
-  token0: Token
-  token1: Token
+  token0: Type
+  token1: Type
 }
 export const IconListVariableSizes: FC<IconListVariableSizesProps> = ({ token0, token1 }) => {
   return (
