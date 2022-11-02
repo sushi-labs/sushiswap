@@ -1,8 +1,11 @@
 import { BigNumber, utils } from 'ethers'
 
 export const divBigNumberToNumber = (value: BigNumber, decimals: number): number =>
-  Number(utils.formatUnits(value, decimals))
-
+{
+  if (value === null || undefined) return 0
+  if (decimals === 0) return value.toNumber()
+  return Number(utils.formatUnits(value, decimals))
+}
 /**
  * Formula source: http://www.linked8.com/blog/158-apy-to-apr-and-apr-to-apy-calculation-methodologies
  *

@@ -41,14 +41,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
     })
   })
 
-  const poolBatchSize = 20
   const startTime = performance.now()
-  // let count = 0
-  // for (let i = 0; i < upsertManyPools.length; i += poolBatchSize) {
-  //   const updatedPools = await client.$transaction([...upsertManyPools.slice(i, i + poolBatchSize)])
-  //   count += updatedPools.length
-  // }
-  
   const updatedPools = await Promise.all(upsertManyPools)
   const endTime = performance.now()
   console.log(`LOAD - Updated ${updatedPools.length} pools. (${((endTime-startTime)/1000).toFixed(1)}s) `)

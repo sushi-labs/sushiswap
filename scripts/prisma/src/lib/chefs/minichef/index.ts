@@ -35,17 +35,24 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
         chainId
       ),
     ])
-
+    const filteredLpTokens = lpTokens
+    .filter((lp) => {
+      if (lp == null) {
+        console.log('MiniChef contained a null lp token')
+        return false
+      }
+      return true
+    })
     const [pairs, lpBalances] = await Promise.all([
-      getPairs(lpTokens, chainId),
-      getTokenBalancesOf(lpTokens, MINICHEF_ADDRESS[chainId], chainId),
+      getPairs(filteredLpTokens, chainId),
+      getTokenBalancesOf(filteredLpTokens, MINICHEF_ADDRESS[chainId], chainId),
     ])
 
     const pools = [...Array(poolLength.toNumber())].map((_, i) => ({
       id: i,
       poolInfo: poolInfos[i],
-      lpBalance: lpBalances.find(({ token }) => token === lpTokens[i])?.balance,
-      pair: pairs.find((pair) => pair.id === lpTokens[i].toLowerCase()),
+      lpBalance: lpBalances.find(({ token }) => token === filteredLpTokens[i])?.balance,
+      pair: pairs.find((pair) => pair.id === filteredLpTokens[i].toLowerCase()),
       rewarder: rewarderInfos.find((rewarderInfo) => rewarderInfo.id === rewarders[i].toLowerCase()),
     }))
 

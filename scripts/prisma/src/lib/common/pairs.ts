@@ -1,7 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
-import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { BigNumber } from 'ethers'
+import { GRAPH_HOST } from '../../config'
 import { Farm } from '../types'
+
 
 import { divBigNumberToNumber } from './utils'
 
@@ -14,9 +16,9 @@ interface Pair {
 
 async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
-  const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
+  const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId as keyof typeof SUSHISWAP_SUBGRAPH_NAME]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
   const { pairs, bundle } = await sdk.Pairs({
     first: ids.length,
@@ -37,9 +39,9 @@ async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]
 
 async function getTridentPairs(ids: string[], chainId: ChainId): Promise<Pair[]> {
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
-  const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
+  const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId as keyof typeof TRIDENT_SUBGRAPH_NAME]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
   const { pairs, bundle } = await sdk.Pairs({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
 

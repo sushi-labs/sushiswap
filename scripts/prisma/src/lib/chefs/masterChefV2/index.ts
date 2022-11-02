@@ -57,7 +57,7 @@ export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Reco
   return {
     chainId: ChainId.ETHEREUM,
     farms: pools.reduce<Record<string, Farm>>((acc, pool) => {
-      if (!pool.pair || !pool.lpBalance) return acc
+      if (!pool.pair || !pool.lpBalance || !pool.poolInfo.allocPoint) return acc
 
       const sushiRewardPerDay = sushiPerDay * (pool.poolInfo.allocPoint.toNumber() / totalAllocPoint.toNumber())
       const sushiRewardPerYearUSD = daysInYear * sushiRewardPerDay * sushiPriceUSD

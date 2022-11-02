@@ -14,7 +14,7 @@ model Token {
   address  String
   network  String
   chainId  String
-  name     String // TODO: constraints? if subgraph would return "", "", 0? success false?
+  name     String 
   symbol   String
   decimals Int
 
@@ -23,6 +23,7 @@ model Token {
   price  TokenPrice?
   pools0 Pool[]      @relation("token0")
   pools1 Pool[]      @relation("token1")
+  incentives  Incentive[]
 
   @@unique([chainId, address])
   @@index(fields: [id])
@@ -79,14 +80,12 @@ model Pool {
   token0Price String // Price of token0 in token1
   token1Price String // Price of token1 in token0
 
-  farmApr
-  apr
-  totalApr
-  incentives // array of incentives
-  // isIncentivized Boolean
+  farmApr Float?
+  apr  Float?
+  totalApr  Float?
+  isIncentivized Boolean @default(false)
+  incentives Incentive[] @relation()
 
-
-  // TODO: add APR, null allowed
 
   // createdAtTimestamp   DateTime
   createdAtBlockNumber String //BigInt 	@db.BigInt // TODO: When prisma 4.6.0 is released, use BigInt instead
@@ -102,5 +101,19 @@ model Pool {
 
 
 model Incentive {
-  id       String @id // chainId_address
+  id       String @id // poolAddress_rewarderAddress
+  chainId  String
+  type     String
+
+  apr Float
+  rewarderAddress String
+  rewardPerDay Float
+  rewardToken Token @relation(fields: [chainId, rewardTokenId], references: [chainId, address])
+  rewardTokenId String
+  
+  pool Pool @relation(fields: [chainId, poolAddress], references: [chainId, address])
+  poolAddress String
+
+  @@index(fields: [id])
+  @@index(fields: [poolAddress, chainId])
 }

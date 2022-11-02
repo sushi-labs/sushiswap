@@ -17,18 +17,21 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
     getAverageBlockTime(ChainId.ETHEREUM),
   ])
 
+  console.log('MasterChefV1 poolLength', poolLength?.toNumber())
   const poolInfos = await getPoolInfos(poolLength.toNumber())
 
+  const lpTokens = poolInfos
+    .filter((poolInfo) => {
+      if (!poolInfo || !poolInfo.lpToken) {
+        console.log('MCV1, PoolInfo has no lpToken')
+        return false
+      }
+      return true
+    })
+    .map((poolInfo) => poolInfo.lpToken)
   const [pairs, lpBalances] = await Promise.all([
-    getPairs(
-      poolInfos.map((pool) => pool.lpToken),
-      ChainId.ETHEREUM
-    ),
-    getTokenBalancesOf(
-      poolInfos.map((pool) => pool.lpToken),
-      MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
-      ChainId.ETHEREUM
-    ),
+    getPairs(lpTokens, ChainId.ETHEREUM),
+    getTokenBalancesOf(lpTokens, MASTERCHEF_ADDRESS[ChainId.ETHEREUM], ChainId.ETHEREUM),
   ])
 
   const blocksPerDay = averageBlockTime ? secondsInDay / averageBlockTime : 0
@@ -60,7 +63,7 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
         },
       ]
 
-      incentives = incentives.filter((incentive) => incentive.apr !== 0)
+      incentives = incentives.filter((incentive) => incentive.apr !== null)
 
       acc[farm.lpToken.toLowerCase()] = {
         id: i,

@@ -1,7 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { ERC20 } from '@sushiswap/core'
-import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import {  SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { erc20ABI, readContracts, ReadContractsConfig } from '@wagmi/core'
+import { GRAPH_HOST } from '../../config'
 
 import { divBigNumberToNumber } from './utils'
 
@@ -15,9 +16,9 @@ interface Token {
 
 const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
-  const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
+  const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId as keyof typeof SUSHISWAP_SUBGRAPH_NAME]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
   // waiting for new subgraph to sync
   const { tokens, bundle } = await sdk.Tokens({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
@@ -33,9 +34,9 @@ const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token
 
 const getTridentTokens = async (ids: string[], chainId: ChainId): Promise<Token[]> => {
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
-  const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
+  const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId as keyof typeof TRIDENT_SUBGRAPH_NAME]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
 
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },
@@ -77,7 +78,6 @@ export async function getTokenBalancesOf(tokens: string[], address: string, chai
     contractInterface: erc20ABI,
     functionName: 'balanceOf',
   }))
-
   const decimalCalls: ReadContractsConfig['contracts'] = tokens.map((token) => ({
     addressOrName: token,
     chainId: chainId,
