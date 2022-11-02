@@ -1,7 +1,7 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, Type } from '@sushiswap/currency'
+import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotals, useFuroStreamRouterContract } from '@sushiswap/wagmi'
@@ -11,14 +11,9 @@ import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
+import { approveBentoBoxAction, batchAction, streamCreationAction, useDeepCompareMemoize } from '../../../lib'
 import { useNotifications } from '../../../lib/state/storage'
-import {
-  useAmountsFromZAmounts,
-  useTokensFromZAmounts,
-  ZAmountToAmount,
-  ZFundSourceToFundSource,
-} from '../../../lib/zod'
+import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CreateMultipleStreamFormSchemaType } from './schema'
 
 export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }> = ({ chainId, isReview }) => {
@@ -32,9 +27,17 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
     formState: { isValid, isValidating },
   } = useFormContext<CreateMultipleStreamFormSchemaType>()
 
+  // Watch mutates the same object which means effects do not trigger when you're watching an array
   const streams = watch('streams')
-  const _amounts = useAmountsFromZAmounts((streams || []).map((el) => el.amount))
-  const _tokens = useTokensFromZAmounts((streams || []).map((el) => el.amount))
+  const _streams = useDeepCompareMemoize(streams)
+
+  const amounts = useMemo(() => (_streams || []).map((el) => el.amount), [_streams])
+  const tokens = useMemo(() => (_streams || []).map((el) => el.currency), [_streams])
+
+  const _tokens = useTokensFromZTokens(tokens)
+  const _amounts = useMemo(() => {
+    return amounts.map((el, index) => tryParseAmount(el, _tokens[index]))
+  }, [_tokens, amounts])
 
   const rebases = useBentoBoxTotals(chainId, _tokens)
   const summedAmounts = useMemo(
@@ -88,8 +91,8 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
       }
 
       streams
-        .reduce<string[]>((acc, { recipient, amount, dates, fundSource }) => {
-          const _amount = ZAmountToAmount.parse(amount)
+        .reduce<string[]>((acc, { recipient, dates, fundSource }, idx) => {
+          const _amount = _amounts[idx]
           const _fundSource = ZFundSourceToFundSource.parse(fundSource)
 
           if (
@@ -126,7 +129,7 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
         })
       }
     },
-    [address, chainId, contract, isReview, rebases, signature, streams, summedAmounts]
+    [_amounts, address, chainId, contract, isReview, rebases, signature, streams, summedAmounts]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
@@ -143,9 +146,9 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
       className="!items-end"
       components={
         <Approve.Components>
-          <Approve.Bentobox address={contract?.address} onSignature={setSignature} />
+          <Approve.Bentobox enabled={true} address={contract?.address} onSignature={setSignature} />
           {Object.values(summedAmounts).map((amount, index) => (
-            <Approve.Token key={index} amount={amount} address={BENTOBOX_ADDRESS[chainId]} />
+            <Approve.Token enabled={true} key={index} amount={amount} address={BENTOBOX_ADDRESS[chainId]} />
           ))}
         </Approve.Components>
       }

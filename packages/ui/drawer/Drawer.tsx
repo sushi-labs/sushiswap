@@ -28,7 +28,7 @@ interface DrawerContext {
 const DrawerContext = createContext<DrawerContext | undefined>(undefined)
 
 interface ProviderProps {
-  children: ReactNode
+  children: (({ open, setOpen }: { open: boolean; setOpen(open: boolean): void }) => ReactNode) | ReactNode
 }
 
 export const DrawerRoot: FC<ProviderProps> = ({ children }) => {
@@ -41,7 +41,11 @@ export const DrawerRoot: FC<ProviderProps> = ({ children }) => {
     if (ref.current) setRender(true)
   }, [])
 
-  return <DrawerContext.Provider value={{ element: ref?.current, open, setOpen }}>{children}</DrawerContext.Provider>
+  return (
+    <DrawerContext.Provider value={{ element: ref?.current, open, setOpen }}>
+      {typeof children === 'function' ? children({ open, setOpen }) : children}
+    </DrawerContext.Provider>
+  )
 }
 
 export const useDrawer = () => {

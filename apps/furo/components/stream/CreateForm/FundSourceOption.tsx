@@ -24,6 +24,7 @@ export const FundSourceOption: FC<FundSourceOption> = ({ chainId, label, active,
     currency,
     chainId,
     loadBentobox: true,
+    enabled: Boolean(isMounted && currency && chainId && address),
   })
 
   return (

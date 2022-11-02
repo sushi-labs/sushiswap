@@ -56,13 +56,13 @@ interface CreateFormReviewModalBase {
 
 const CreateFormReviewModalBase: FC<CreateFormReviewModalBase> = ({ chainId, children, open, setOpen }) => {
   const { watch } = useFormContext<CreateVestingFormSchemaType>()
-  const { currency, recipient, stepConfig, cliff, cliffEnabled, startDate, stepPayouts, stepAmount, fundSource } =
-    watch()
+  const formData = watch()
+  const { cliff, recipient, currency, stepAmount, stepPayouts, stepConfig, startDate, fundSource } = formData
 
   const _currency = useTokenFromZToken(currency)
   const endDate = useMemo(
-    () => calculateEndDate({ cliff, cliffEnabled, startDate, stepPayouts, stepConfig }),
-    [cliff, cliffEnabled, startDate, stepConfig, stepPayouts]
+    () => calculateEndDate({ cliff, startDate, stepPayouts, stepConfig }),
+    [cliff, startDate, stepConfig, stepPayouts]
   )
   const totalAmount = useMemo(
     () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
@@ -70,10 +70,10 @@ const CreateFormReviewModalBase: FC<CreateFormReviewModalBase> = ({ chainId, chi
   )
   const [_cliffAmount, _stepAmount] = useMemo(() => {
     return [
-      tryParseAmount(cliff?.cliffAmount?.toString(), _currency),
+      cliff.cliffEnabled ? tryParseAmount(cliff.cliffAmount?.toString(), _currency) : undefined,
       tryParseAmount(stepAmount?.toString(), _currency),
     ]
-  }, [cliff?.cliffAmount, _currency, stepAmount])
+  }, [cliff.cliffEnabled, _currency, stepAmount])
 
   const schedule = useMemo(() => {
     return _stepAmount && _currency && stepConfig && startDate && stepPayouts
@@ -83,16 +83,17 @@ const CreateFormReviewModalBase: FC<CreateFormReviewModalBase> = ({ chainId, chi
           stepAmount: _stepAmount,
           stepDuration: stepConfig.time * 1000,
           startDate,
-          cliffEndDate: cliff?.cliffEndDate,
+          cliffEndDate: cliff.cliffEnabled ? cliff?.cliffEndDate : null,
           stepPayouts,
         })
       : undefined
-  }, [_stepAmount, _currency, stepConfig, startDate, stepPayouts, _cliffAmount, cliff?.cliffEndDate])
+  }, [_stepAmount, _currency, stepConfig, startDate, stepPayouts, _cliffAmount, cliff.cliffEnabled])
 
   const onDismiss = useCallback(() => {
     setOpen(false)
   }, [setOpen])
 
+  // console.log(_currency, recipient, isAddress(recipient), endDate)
   return (
     <Dialog open={open} onClose={onDismiss} unmount={false}>
       <Dialog.Content className="!space-y- min-h-[300px] !max-w-md relative overflow-hidden bg-slate-900 !pb-3 !px-4">
@@ -131,8 +132,8 @@ const CreateFormReviewModalBase: FC<CreateFormReviewModalBase> = ({ chainId, chi
                 />
                 <Item title="End Date" value={format(endDate, 'dd MMM yyyy')} />
               </Table>
-              <Table title="Cliff Details" className={cliff ? '' : 'opacity-40'}>
-                {cliff && cliff.cliffEndDate ? (
+              <Table title="Cliff Details" className={cliff.cliffEnabled ? '' : 'opacity-40'}>
+                {cliff.cliffEnabled && cliff.cliffEndDate ? (
                   <>
                     <Item title="Cliff End Date" value={format(cliff.cliffEndDate, 'dd MMM yyyy')} />
                     <Item

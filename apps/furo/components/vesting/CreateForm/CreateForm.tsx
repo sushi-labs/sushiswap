@@ -1,8 +1,11 @@
+import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { nanoid } from '@reduxjs/toolkit'
 import { ChainId } from '@sushiswap/chain'
-import { FundSource } from '@sushiswap/hooks'
+import { Native } from '@sushiswap/currency'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Form } from '@sushiswap/ui'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { CliffDetailsSection } from './CliffDetailsSection'
@@ -11,62 +14,93 @@ import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
 import { CreateVestingFormSchemaType, CreateVestingModelSchema, stepConfigurations } from './schema'
 
+export const FORM_ERROR = 'FORM_ERROR' as const
+export type FormErrors = { [FORM_ERROR]?: never }
+
+export const createVestDefaultValue = (chainId: ChainId): CreateVestingFormSchemaType => {
+  const { decimals, name, isNative, symbol } = Native.onChain(chainId)
+  return {
+    id: nanoid(),
+    currency: { chainId, decimals, name, isNative, symbol },
+    recipient: undefined,
+    startDate: undefined,
+    fundSource: FundSource.WALLET,
+    stepConfig: stepConfigurations[0],
+    stepPayouts: 1,
+    stepAmount: undefined,
+    cliff: {
+      cliffEnabled: false,
+    },
+  }
+}
+
 export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
+  const isMounted = useIsMounted()
   const methods = useForm<CreateVestingFormSchemaType>({
     resolver: zodResolver(CreateVestingModelSchema),
-    defaultValues: {
-      fundSource: FundSource.WALLET,
-      stepConfig: stepConfigurations[0],
-      stepPayouts: 1,
-      cliffEnabled: false,
-      cliff: {
-        cliffAmount: undefined,
-        cliffEndDate: undefined,
-      },
-    },
+    defaultValues: createVestDefaultValue(chainId),
     mode: 'onBlur',
-    reValidateMode: 'onBlur',
   })
 
   const {
-    formState: { isValid, isValidating },
+    watch,
+    setError,
+    clearErrors,
+    reset,
+    formState: { isValid, isValidating, errors },
+    control,
   } = methods
 
-  // const formData = watch()
-  //
-  // console.log(formData)
+  const [startDate, cliffEnabled, cliffEndDate] = watch(['startDate', 'cliff.cliffEnabled', 'cliff.cliffEndDate'])
+
+  // Temporary solution for when Zod fixes conditional validation
+  // https://github.com/colinhacks/zod/issues/1394
+  useEffect(() => {
+    if (startDate && cliffEnabled && cliffEndDate) {
+      if (cliffEndDate < startDate) {
+        setError('cliff.cliffEndDate', { type: 'custom', message: 'Must be later than start date' })
+      } else {
+        clearErrors('cliff.cliffEndDate')
+      }
+    }
+  }, [clearErrors, cliffEnabled, cliffEndDate, setError, startDate])
+
   // useEffect(() => {
   //   try {
   //     CreateVestingModelSchema.parse(formData)
   //   } catch (e) {
+  //     console.log(formData)
   //     console.log(e)
   //   }
   // }, [formData])
 
+  useEffect(() => {
+    reset()
+  }, [chainId, reset])
+
   return (
-    <>
-      <FormProvider {...methods}>
-        <Form header="Create vesting">
-          <GeneralDetailsSection chainId={chainId} />
-          <CliffDetailsSection />
-          <GradedVestingDetailsSection />
-          <CreateFormReviewModal chainId={chainId}>
-            {({ isWritePending, setOpen }) => {
-              return (
-                <div className="flex justify-end pt-4">
-                  <Button
-                    type="button"
-                    disabled={isWritePending || !isValid || isValidating}
-                    onClick={() => setOpen(true)}
-                  >
-                    Review Vesting
-                  </Button>
-                </div>
-              )
-            }}
-          </CreateFormReviewModal>
-        </Form>
-      </FormProvider>
-    </>
+    <FormProvider {...methods}>
+      <Form header="Create vesting">
+        <GeneralDetailsSection chainId={chainId} />
+        <CliffDetailsSection />
+        <GradedVestingDetailsSection />
+        <CreateFormReviewModal chainId={chainId}>
+          {({ isWritePending, setOpen }) => {
+            return (
+              <div className="flex justify-end pt-4">
+                <Button
+                  type="button"
+                  disabled={isWritePending || !isValid || isValidating || errors?.[FORM_ERROR]}
+                  onClick={() => setOpen(true)}
+                >
+                  Review Vesting
+                </Button>
+              </div>
+            )
+          }}
+        </CreateFormReviewModal>
+      </Form>
+      {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />}
+    </FormProvider>
   )
 }

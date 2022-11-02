@@ -1,50 +1,53 @@
 import { Form, Input, Select, Typography } from '@sushiswap/ui'
+import { useBalance } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
-import { CreateVestingFormSchemaType, stepConfigurations } from 'components/vesting'
+import { CreateVestingFormSchemaType, FormErrors, stepConfigurations } from 'components/vesting'
 import { format } from 'date-fns'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
-import { useTokenFromZToken } from '../../../lib/zod'
+import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
 
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()
-  const { control, watch, setError, clearErrors } = useFormContext<CreateVestingFormSchemaType>()
+  const {
+    control,
+    watch,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext<CreateVestingFormSchemaType & FormErrors>()
+  const formData = watch()
+  const { currency, stepConfig, fundSource, cliff, stepAmount, stepPayouts } = formData
 
-  const [currency, stepConfig, cliffEnabled, cliff, startDate, stepPayouts, stepAmount] = watch([
-    'currency',
-    'stepConfig',
-    'cliffEnabled',
-    'cliff',
-    'startDate',
-    'stepPayouts',
-    'stepAmount',
-    'fundSource',
-  ])
-
-  // const { data: balance } = useBalance({ account: address, chainId: currency?.chainId, currency, loadBentobox: true })
-
+  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(currency)
-  const endDate = calculateEndDate({ cliff, cliffEnabled, startDate, stepPayouts, stepConfig })
+  const endDate = calculateEndDate(formData)
   const totalAmount = useMemo(
     () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
     [cliff, currency, stepAmount, stepPayouts]
   )
+  const { data: balance } = useBalance({
+    account: address,
+    chainId: currency?.chainId,
+    currency: _currency,
+    loadBentobox: true,
+  })
 
-  // useEffect(() => {
-  //   if (!totalAmount || !balance || !balance[fundSource]) return
-  //   if (totalAmount.greaterThan(balance[fundSource])) {
-  //     setError('insufficientBalance', { type: 'custom', message: 'Insufficient Balance' })
-  //   } else {
-  //     clearErrors('insufficientBalance')
-  //   }
-  // }, [balance, clearErrors, fundSource, setError, totalAmount])
+  useEffect(() => {
+    if (!totalAmount || !balance || !balance[_fundSource]) return
+    if (totalAmount.greaterThan(balance[_fundSource])) {
+      setError('FORM_ERROR', { type: 'custom', message: 'Insufficient Balance' })
+    } else {
+      clearErrors('FORM_ERROR')
+    }
+  }, [balance, clearErrors, _fundSource, setError, totalAmount])
 
   return (
     <Form.Section title="Graded Vesting Details" description="Optionally provide graded vesting details">
-      <Form.Control label="Payout per Period">
+      <Form.Control label="Payout per Period*">
         <Controller
           control={control}
           name="stepAmount"
@@ -78,7 +81,7 @@ export const GradedVestingDetailsSection = () => {
         />
       </Form.Control>
       <div className="flex flex-col gap-6 md:flex-row">
-        <Form.Control label="Amount of Periods">
+        <Form.Control label="Amount of Periods*">
           <Controller
             control={control}
             name="stepPayouts"
@@ -102,7 +105,7 @@ export const GradedVestingDetailsSection = () => {
             }}
           />
         </Form.Control>
-        <Form.Control label="Period Length">
+        <Form.Control label="Period Length*">
           <Controller
             control={control}
             name="stepConfig"
@@ -134,41 +137,35 @@ export const GradedVestingDetailsSection = () => {
           />
         </Form.Control>
       </div>
-      {/*<Form.Control label="Total Amount">*/}
-      {/*  <Controller*/}
-      {/*    control={control}*/}
-      {/*    name="insufficientBalance"*/}
-      {/*    render={({ fieldState: { error } }) => (*/}
-      {/*      <>*/}
-      {/*        <Typography*/}
-      {/*          variant="sm"*/}
-      {/*          className={*/}
-      {/*            balance?.[fundSource] && totalAmount?.greaterThan(balance[fundSource])*/}
-      {/*              ? 'text-red'*/}
-      {/*              : totalAmount*/}
-      {/*              ? 'text-slate-50'*/}
-      {/*              : 'text-slate-500'*/}
-      {/*          }*/}
-      {/*          weight={totalAmount ? 700 : 400}*/}
-      {/*        >*/}
-      {/*          {totalAmount ? totalAmount?.toSignificant(6) : '0.000000'} {totalAmount?.currency.symbol}*/}
-      {/*        </Typography>*/}
-      {/*        <Form.Error message={error?.message} />*/}
-      {/*      </>*/}
-      {/*    )}*/}
-      {/*  />*/}
-      {/*</Form.Control>*/}
-      <Form.Control label="End Date">
-        {endDate ? (
-          <Typography variant="sm" className="text-slate-50" weight={500}>
-            {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+      <div className="flex gap-6">
+        <Form.Control label="Total Amount">
+          <Typography
+            variant="sm"
+            className={
+              balance?.[_fundSource] && totalAmount?.greaterThan(balance[_fundSource])
+                ? 'text-red'
+                : totalAmount
+                ? 'text-slate-50'
+                : 'text-slate-500'
+            }
+            weight={600}
+          >
+            {totalAmount ? totalAmount?.toSignificant(6) : '0.000000'} {totalAmount?.currency.symbol}
           </Typography>
-        ) : (
-          <Typography variant="sm" className="italic text-slate-500">
-            Not available
-          </Typography>
-        )}
-      </Form.Control>
+          <Form.Error message={errors['FORM_ERROR']?.message} />
+        </Form.Control>
+        <Form.Control label="End Date">
+          {endDate ? (
+            <Typography variant="sm" className="text-slate-50" weight={600}>
+              {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+            </Typography>
+          ) : (
+            <Typography variant="sm" className="italic text-slate-500">
+              Not available
+            </Typography>
+          )}
+        </Form.Control>
+      </div>
     </Form.Section>
   )
 }

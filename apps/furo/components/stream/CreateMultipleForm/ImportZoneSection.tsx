@@ -1,24 +1,25 @@
 import { getAddress, isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { DownloadIcon } from '@heroicons/react/outline'
+import { nanoid } from '@reduxjs/toolkit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dropzone, Typography } from '@sushiswap/ui'
 import { FC, useCallback } from 'react'
-import { FieldErrors, useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
 
+import { useImportErrorContext } from '../../vesting/CreateMultipleForm/ImportErrorContext'
 import { CreateStreamFormSchemaType } from '../CreateForm'
 import { CreateMultipleStreamFormSchemaType } from './schema'
 
 interface ImportZoneSection {
   chainId: ChainId
-  errors: FieldErrors<CreateMultipleStreamFormSchemaType>
-  onErrors(errors: FieldErrors<CreateMultipleStreamFormSchemaType>): void
 }
 
-export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, chainId }) => {
+export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
+  const { errors, setErrors } = useImportErrorContext<CreateMultipleStreamFormSchemaType>()
   const { control, trigger, watch } = useFormContext<CreateMultipleStreamFormSchemaType>()
   const { append } = useFieldArray({
     control,
@@ -92,6 +93,7 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
                   errors.streams = []
                 }
 
+                console.log(amount)
                 let _startDate: Date | null = new Date(Number(startDate) * 1000)
                 let _endDate: Date | null = new Date(Number(endDate) * 1000)
                 let _recipient: string | undefined = recipient
@@ -134,15 +136,14 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
                 }
 
                 rows.push({
+                  id: nanoid(),
                   fundSource: Number(fundSource) === 0 ? FundSource.WALLET : FundSource.BENTOBOX,
                   recipient: _recipient,
-                  amount: {
-                    token: _currency,
-                    amount,
-                  },
+                  currency: _currency,
+                  amount,
                   dates: {
-                    startDate: _startDate,
-                    endDate: _endDate,
+                    startDate: _startDate || new Date(0),
+                    endDate: _endDate || new Date(0),
                   },
                 })
               }
@@ -150,14 +151,14 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ errors, onErrors, cha
 
             append(rows)
             await trigger()
-            onErrors(errors)
+            setErrors(errors)
           }
         }
 
         reader.readAsText(file)
       })
     },
-    [append, chainId, errors, nrOfStreams, onErrors, trigger]
+    [append, chainId, errors, nrOfStreams, setErrors, trigger]
   )
 
   const downloadExample = useCallback(() => {

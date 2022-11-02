@@ -4,32 +4,28 @@ import { Fraction, JSBI, ZERO } from '@sushiswap/math'
 import { ZTokenToToken } from '../../lib/zod'
 import { CreateVestingFormSchemaType } from './CreateForm'
 
-type CalculateEndDatePayload = Partial<
-  Pick<CreateVestingFormSchemaType, 'cliffEnabled' | 'cliff' | 'startDate' | 'stepPayouts' | 'stepConfig'>
->
-
 export const calculateEndDate = ({
-  cliffEnabled,
   cliff,
   startDate,
   stepPayouts,
   stepConfig,
-}: CalculateEndDatePayload) => {
+}: Pick<CreateVestingFormSchemaType, 'cliff' | 'startDate' | 'stepPayouts' | 'stepConfig'>) => {
   if (!stepPayouts || !stepConfig) return undefined
-  if (startDate && !cliffEnabled) return new Date(startDate.getTime() + stepConfig.time * stepPayouts * 1000)
-  if (cliffEnabled && cliff?.cliffEndDate)
+  if (startDate && !cliff.cliffEnabled) return new Date(startDate.getTime() + stepConfig.time * stepPayouts * 1000)
+  if (cliff.cliffEnabled && cliff.cliffEndDate)
     return new Date(cliff.cliffEndDate.getTime() + stepConfig.time * stepPayouts * 1000)
   return undefined
 }
 
-type CalculateTotalAmount = Partial<
-  Pick<CreateVestingFormSchemaType, 'currency' | 'cliff' | 'stepAmount' | 'stepPayouts'>
->
-
-export const calculateTotalAmount = ({ currency, cliff, stepAmount, stepPayouts }: CalculateTotalAmount) => {
+export const calculateTotalAmount = ({
+  currency,
+  cliff,
+  stepAmount,
+  stepPayouts,
+}: Pick<CreateVestingFormSchemaType, 'currency' | 'cliff' | 'stepAmount' | 'stepPayouts'>) => {
   if (!currency || !stepPayouts) return undefined
   const _currency = ZTokenToToken.parse(currency)
-  const _cliffAmount = tryParseAmount(cliff?.cliffAmount?.toString(), _currency)
+  const _cliffAmount = cliff.cliffEnabled ? tryParseAmount(cliff.cliffAmount?.toString(), _currency) : undefined
   const _totalStep = tryParseAmount(stepAmount?.toString(), _currency)?.multiply(JSBI.BigInt(stepPayouts))
 
   if (_cliffAmount && !_totalStep) return _cliffAmount
@@ -39,22 +35,24 @@ export const calculateTotalAmount = ({ currency, cliff, stepAmount, stepPayouts 
   return undefined
 }
 
-type CalculateCliffDuration = Partial<Pick<CreateVestingFormSchemaType, 'cliffEnabled' | 'cliff' | 'startDate'>>
-
-export const calculateCliffDuration = ({ cliffEnabled, cliff, startDate }: CalculateCliffDuration) => {
+export const calculateCliffDuration = ({
+  cliff,
+  startDate,
+}: Pick<CreateVestingFormSchemaType, 'cliff' | 'startDate'>) => {
   let cliffDuration = JSBI.BigInt(0)
-  if (cliffEnabled && cliff?.cliffEndDate && startDate) {
+  if (cliff.cliffEnabled && cliff.cliffEndDate && startDate && cliff.cliffEndDate > startDate) {
     cliffDuration = JSBI.BigInt((cliff.cliffEndDate.getTime() - startDate.getTime()) / 1000)
   }
 
   return cliffDuration
 }
 
-type CalculateStepPercentage = Partial<
-  Pick<CreateVestingFormSchemaType, 'stepAmount' | 'currency' | 'cliff' | 'stepPayouts'>
->
-
-export const calculateStepPercentage = ({ stepAmount, currency, cliff, stepPayouts }: CalculateStepPercentage) => {
+export const calculateStepPercentage = ({
+  currency,
+  cliff,
+  stepAmount,
+  stepPayouts,
+}: Pick<CreateVestingFormSchemaType, 'currency' | 'cliff' | 'stepAmount' | 'stepPayouts'>) => {
   if (!currency || !stepAmount) return undefined
   const _currency = ZTokenToToken.parse(currency)
   const totalAmount = calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts })

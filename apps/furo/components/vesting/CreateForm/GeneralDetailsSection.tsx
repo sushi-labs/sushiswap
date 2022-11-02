@@ -44,7 +44,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
       title="General Details"
       description="Furo allows for creating a vested stream using your BentoBox balance."
     >
-      <Form.Control label="Token">
+      <Form.Control label="Token*">
         <Controller
           control={control}
           name="currency"
@@ -78,7 +78,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
           )}
         />
       </Form.Control>
-      <Form.Control label="Start date">
+      <Form.Control label="Start date*">
         <Controller
           control={control}
           name="startDate"
@@ -86,6 +86,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
             return (
               <>
                 <Input.DatetimeLocal
+                  min={new Date(Date.now() + 5 * 60 * 1000)?.toISOString().slice(0, 16)}
                   onBlur={onBlur}
                   name={name}
                   onChange={(value) => onChange(new Date(value))}
@@ -99,7 +100,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
           }}
         />
       </Form.Control>
-      <Form.Control label="Recipient">
+      <Form.Control label="Recipient*">
         <Controller
           control={control}
           name="recipient"
@@ -124,7 +125,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
           )}
         />
       </Form.Control>
-      <Form.Control label="Change Funds Source">
+      <Form.Control label="Change Funds Source*">
         <Controller
           control={control}
           name="fundSource"

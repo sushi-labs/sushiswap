@@ -13,7 +13,7 @@ export const ZToken = z.object({
   isNative: z.boolean(),
 })
 
-export const ZAddress = z.string().refine((val) => (val ? isAddress(val) : true), 'Invalid address')
+export const ZAddress = z.string().refine((val) => (val ? isAddress(val) : false), 'Invalid address')
 
 export const ZAmount = z
   .object({
@@ -25,11 +25,7 @@ export const ZAmount = z
 export const ZFundSource = z.string()
 
 export const ZAmountToAmount = ZAmount.optional().transform((input) => {
-  if (input?.amount && input?.token) {
-    return tryParseAmount(input.amount, ZTokenToToken.parse(input.token))
-  }
-
-  return undefined
+  return tryParseAmount(input?.amount, ZTokenToToken.parse(input?.token))
 })
 
 export const ZTokenToToken = ZToken.transform(({ address, decimals, chainId, symbol, name, isNative }) => {
@@ -56,10 +52,12 @@ export const useFundSourceFromZFundSource = (fundSource?: z.infer<typeof ZFundSo
 
 export const useAmountFromZAmount = (amount?: z.infer<typeof ZAmount>) => {
   return useMemo(() => {
-    return ZAmountToAmount.parse(amount)
+    if (amount?.token && amount?.amount) {
+      return ZAmountToAmount.parse(amount)
+    }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amount?.token, amount?.amount])
+    return undefined
+  }, [amount])
 }
 
 export const useTokenFromZAmount = (amount?: z.infer<typeof ZAmount>) => {
@@ -86,6 +84,18 @@ export const useTokensFromZAmounts = (amounts: (z.infer<typeof ZAmount> | undefi
       return undefined
     })
   }, [amounts])
+}
+
+export const useTokensFromZTokens = (tokens: (z.infer<typeof ZToken> | undefined)[]) => {
+  return useMemo(() => {
+    return tokens.map((token) => {
+      if (token) {
+        return ZTokenToToken.parse(token)
+      }
+
+      return undefined
+    })
+  }, [tokens])
 }
 
 export const useAmountsFromZAmounts = (amounts: (z.infer<typeof ZAmount> | undefined)[]) => {

@@ -1,73 +1,63 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 
-import { CreateStreamFormSchemaType } from '../../../CreateForm'
+import { CreateVestingFormSchemaType } from '../../../CreateForm'
 import { ActionsCell } from './ActionsCell'
-import { AmountCell } from './AmountCell'
 import { CurrencyCell } from './CurrencyCell'
-import { EndDateCell } from './EndDateCell'
 import { FundSourceCell } from './FundSourceCell'
 import { RecipientCell } from './RecipientCell'
+import { ScheduleCell } from './ScheduleCell'
 import { StartDateCell } from './StartDateCell'
 
 export const ICON_SIZE = 26
 export const PAGE_SIZE = 20
 
-export const CURRENCY_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
+export const CURRENCY_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
   id: 'currency',
-  header: 'Currency',
+  header: 'Currency*',
   cell: (props) => (
     <CurrencyCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
   size: 50,
 }
 
-export const FUND_SOURCE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
+export const FUND_SOURCE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
   id: 'fundSource',
-  header: 'Source',
+  header: 'Source*',
   cell: (props) => (
     <FundSourceCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
   size: 50,
 }
 
-export const AMOUNT_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
-  id: 'amount',
-  header: 'Amount',
-  cell: (props) => (
-    <AmountCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
-  ),
-  size: 50,
-}
-
-export const RECIPIENT_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
+export const RECIPIENT_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
   id: 'recipient',
-  header: 'Recipient',
+  header: 'Recipient*',
   cell: (props) => (
     <RecipientCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
   size: 50,
 }
 
-export const START_DATE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
+export const START_DATE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
   id: 'startDate',
-  header: 'Starts',
+  header: 'Starts*',
   cell: (props) => (
     <StartDateCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
   size: 50,
 }
 
-export const END_DATE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
-  id: 'endDate',
-  header: 'Ends',
+export const SCHEDULE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
+  id: 'schedule',
+  header: 'Schedule*',
   cell: (props) => (
-    <EndDateCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
+    <ScheduleCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
   size: 50,
 }
 
-export const ACTIONS_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
+export const ACTIONS_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
   id: 'actions',
   header: '',
   cell: (props) => (

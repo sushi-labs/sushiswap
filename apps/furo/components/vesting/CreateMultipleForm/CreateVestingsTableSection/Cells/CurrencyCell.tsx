@@ -10,14 +10,14 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useCustomTokens } from '../../../../../lib/state/storage'
 import { useTokens } from '../../../../../lib/state/token-lists'
 import { useTokenFromZToken } from '../../../../../lib/zod'
-import { CreateMultipleStreamFormSchemaType } from '../../schema'
+import { CreateMultipleVestingFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHEREUM }) => {
   const tokenMap = useTokens(chainId)
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const [open, setOpen] = useState(false)
-  const { control, setValue } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const { control, setValue } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
   const handleOpen = useCallback(() => {
     setOpen(true)
@@ -32,7 +32,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
       if (currency.isNative) {
         const { chainId, decimals, symbol, name, isNative } = currency
         onChange({ chainId, decimals, address: undefined, symbol, name, isNative })
-        setValue(`streams.${index}.fundSource`, FundSource.WALLET)
+        setValue(`vestings.${index}.fundSource`, FundSource.WALLET)
       } else {
         const { chainId, decimals, symbol, name, isNative, wrapped } = currency
         onChange({ chainId, decimals, address: wrapped.address, symbol, name, isNative })
@@ -46,7 +46,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
   return (
     <Controller
       control={control}
-      name={`streams.${index}.currency`}
+      name={`vestings.${index}.currency`}
       render={({ field: { onChange }, fieldState: { error } }) => {
         return (
           <div
@@ -58,7 +58,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
           >
             <Button
               variant="empty"
-              className="!px-0 text-left !text-slate-50"
+              className={classNames('!px-0 text-left !text-slate-50')}
               color="gray"
               type="button"
               onClick={handleOpen}

@@ -10,8 +10,13 @@ import { CreateVestingFormSchemaType } from './schema'
 
 export const CliffDetailsSection: FC = () => {
   const { address } = useAccount()
-  const { control, watch, setError, clearErrors, resetField } = useFormContext<CreateVestingFormSchemaType>()
-  const [currency, cliffEnabled, fundSource] = watch(['currency', 'cliffEnabled', 'fundSource'])
+  const { control, watch, setError, clearErrors, setValue } = useFormContext<CreateVestingFormSchemaType>()
+  const [startDate, currency, cliffEnabled, fundSource] = watch([
+    'startDate',
+    'currency',
+    'cliff.cliffEnabled',
+    'fundSource',
+  ])
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(currency)
 
@@ -26,17 +31,22 @@ export const CliffDetailsSection: FC = () => {
     <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">
       <Form.Control label="Enable Cliff">
         <Controller
-          name="cliffEnabled"
+          name="cliff.cliffEnabled"
           control={control}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { value } }) => (
             <Switch
               checked={value}
               onChange={(val) => {
-                onChange(val)
-
-                if (!val) {
-                  resetField('cliff.cliffEndDate')
-                  resetField('cliff.cliffAmount')
+                if (val) {
+                  setValue('cliff', {
+                    cliffEnabled: true,
+                    cliffAmount: '',
+                    cliffEndDate: null,
+                  })
+                } else {
+                  setValue('cliff', {
+                    cliffEnabled: false,
+                  })
                 }
               }}
               size="sm"
@@ -50,10 +60,16 @@ export const CliffDetailsSection: FC = () => {
         <Form.Control label="Cliff End Date">
           <Controller
             name="cliff.cliffEndDate"
+            shouldUnregister={true}
             control={control}
             render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
               <>
                 <Input.DatetimeLocal
+                  min={
+                    startDate
+                      ? new Date(startDate.getTime() + 5 * 60 * 1000)?.toISOString().slice(0, 16)
+                      : new Date(Date.now() + 10 * 60 * 1000)?.toISOString().slice(0, 16)
+                  }
                   name={name}
                   onBlur={onBlur}
                   onChange={(value) => onChange(new Date(value))}
@@ -74,6 +90,7 @@ export const CliffDetailsSection: FC = () => {
           <Controller
             control={control}
             name="cliff.cliffAmount"
+            shouldUnregister={true}
             render={({ field: { onChange, value, onBlur, name }, fieldState: { error: validationError } }) => (
               <CurrencyInput
                 name={name}

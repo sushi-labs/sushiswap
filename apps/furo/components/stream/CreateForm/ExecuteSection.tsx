@@ -1,18 +1,20 @@
 import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { ChainId } from '@sushiswap/chain'
+import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
+import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotal, useFuroStreamRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
 import { useNotifications } from '../../../lib/state/storage'
-import { useAmountFromZAmount, ZFundSourceToFundSource } from '../../../lib/zod'
+import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
 
 export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
@@ -23,11 +25,17 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
 
   const {
     watch,
-    formState: { isValid, isValidating },
+    formState: { isValid, isValidating, errors },
   } = useFormContext<CreateStreamFormSchemaType>()
 
-  const [amount, fundSource, recipient, dates] = watch(['amount', 'fundSource', 'recipient', 'dates'])
-  const _amount = useAmountFromZAmount(amount)
+  const [amount, currency, fundSource, recipient, dates] = watch([
+    'amount',
+    'currency',
+    'fundSource',
+    'recipient',
+    'dates',
+  ])
+  const _amount = useMemo(() => tryParseAmount(amount, ZTokenToToken.parse(currency)), [amount, currency])
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const rebase = useBentoBoxTotal(chainId, _amount?.currency)
 
@@ -118,6 +126,8 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
     ),
   })
 
+  const formValid = isValid && !isValidating && Object.keys(errors).length === 0
+
   return (
     <Form.Buttons className="flex flex-col items-end gap-3">
       <Approve
@@ -125,13 +135,9 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         className="!items-end"
         components={
           <Approve.Components>
-            <Approve.Bentobox
-              enabled={isValid && !isValidating}
-              address={contract?.address}
-              onSignature={setSignature}
-            />
+            <Approve.Bentobox enabled={formValid} address={contract?.address} onSignature={setSignature} />
             <Approve.Token
-              enabled={isValid && !isValidating && !!_amount}
+              enabled={formValid && _amount?.greaterThan(ZERO)}
               amount={_amount}
               address={BENTOBOX_ADDRESS[chainId]}
             />
@@ -141,10 +147,9 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
           return (
             <Button
               name="execute"
-              size="md"
               type="button"
               variant="filled"
-              disabled={isWritePending || !approved || !isValid || isValidating}
+              disabled={isWritePending || !approved || !formValid}
               onClick={() => sendTransaction?.()}
             >
               {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Stream'}

@@ -5,15 +5,15 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { CreateStreamFormSchemaType } from './schema'
 
 export const GeneralDetailsSection = () => {
-  const { control } = useFormContext<CreateStreamFormSchemaType>()
-
+  const { control, watch } = useFormContext<CreateStreamFormSchemaType>()
+  const startDate = watch('dates.startDate')
   return (
     <Form.Section
       title="General Details"
       description="Furo allows you to create a vested or non vested stream using your wallet or BentoBox balance."
     >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <Form.Control label="Start date">
+        <Form.Control label="Start date*">
           <Controller
             control={control}
             name="dates.startDate"
@@ -21,6 +21,7 @@ export const GeneralDetailsSection = () => {
               return (
                 <>
                   <Input.DatetimeLocal
+                    min={new Date(Date.now() + 5 * 60 * 1000)?.toISOString().slice(0, 16)}
                     name={name}
                     onBlur={onBlur}
                     value={value?.toISOString().slice(0, 16) || ''}
@@ -34,7 +35,7 @@ export const GeneralDetailsSection = () => {
             }}
           />
         </Form.Control>
-        <Form.Control label="End date">
+        <Form.Control label="End date*">
           <Controller
             control={control}
             name="dates.endDate"
@@ -42,6 +43,11 @@ export const GeneralDetailsSection = () => {
               return (
                 <>
                   <Input.DatetimeLocal
+                    min={
+                      startDate
+                        ? new Date(startDate.getTime() + 5 * 60 * 1000)?.toISOString().slice(0, 16)
+                        : new Date(Date.now() + 10 * 60 * 1000)?.toISOString().slice(0, 16)
+                    }
                     name={name}
                     onBlur={onBlur}
                     value={value?.toISOString().slice(0, 16) || ''}
@@ -56,7 +62,7 @@ export const GeneralDetailsSection = () => {
           />
         </Form.Control>
       </div>
-      <Form.Control label="Recipient">
+      <Form.Control label="Recipient*">
         <Controller
           control={control}
           name="recipient"

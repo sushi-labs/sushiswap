@@ -12,7 +12,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, vestingCreationAction } from '../../../../lib'
 import { useNotifications } from '../../../../lib/state/storage'
-import { useTokenFromZToken } from '../../../../lib/zod'
+import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../../utils'
 import { CreateVestingFormSchemaType } from '../schema'
 import CreateFormReviewModalBase from './CreateFormReviewModalBase'
@@ -68,20 +68,17 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
   const [open, setOpen] = useState(false)
   const [signature, setSignature] = useState<Signature>()
 
-  const { currency, recipient, stepConfig, cliff, cliffEnabled, startDate, stepPayouts, stepAmount, fundSource } =
-    watch()
-
-  const _currency = useTokenFromZToken(currency)
+  const formData = watch()
+  const { recipient, startDate, stepConfig, stepPayouts, fundSource, currency, cliff, stepAmount } = formData
+  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
+  const _currency = useTokenFromZToken(formData.currency)
   const _totalAmount = useMemo(
     () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
-    [currency, cliff, stepAmount, stepPayouts]
+    [cliff, currency, stepAmount, stepPayouts]
   )
-  const _cliffDuration = useMemo(
-    () => calculateCliffDuration({ cliffEnabled, cliff, startDate }),
-    [cliff, cliffEnabled, startDate]
-  )
+  const _cliffDuration = useMemo(() => calculateCliffDuration({ cliff, startDate }), [cliff, startDate])
   const _stepPercentage = useMemo(
-    () => calculateStepPercentage({ stepAmount, currency, cliff, stepPayouts }),
+    () => calculateStepPercentage({ currency, cliff, stepAmount, stepPayouts }),
     [cliff, currency, stepAmount, stepPayouts]
   )
   const rebase = useBentoBoxTotal(chainId, _currency)
@@ -147,7 +144,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
           steps: stepPayouts.toString(),
           stepPercentage: _stepPercentage.toString(),
           amount: _totalAmount.quotient.toString(),
-          fromBentobox: fundSource === FundSource.BENTOBOX,
+          fromBentobox: _fundSource === FundSource.BENTOBOX,
           minShare: _totalAmount.toShare(rebase),
         })
       )
@@ -175,7 +172,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
       stepPayouts,
       rebase,
       signature,
-      fundSource,
+      _fundSource,
     ]
   )
 
@@ -205,45 +202,59 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
     ),
   })
 
-  return (
-    <>
-      {children({ setOpen, isWritePending })}
-      <CreateFormReviewModalBase chainId={chainId} open={open} setOpen={setOpen}>
-        <Approve
-          onSuccess={createNotification}
-          components={
-            <Approve.Components>
-              <Approve.Bentobox
-                fullWidth
-                enabled={isValid && !isValidating}
-                address={contract?.address}
-                onSignature={setSignature}
-              />
-              <Approve.Token
-                fullWidth
-                enabled={isValid && !isValidating && !!_totalAmount}
-                amount={_totalAmount}
-                address={BENTOBOX_ADDRESS[chainId]}
-              />
-            </Approve.Components>
-          }
-          render={({ approved }) => {
-            return (
-              <Button
-                fullWidth
-                size="md"
-                variant="filled"
-                color="blue"
-                disabled={isWritePending || !approved || !isValid || isValidating}
-                onClick={() => sendTransaction?.()}
-              >
-                {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vesting'}
-              </Button>
-            )
-          }}
-        />
-      </CreateFormReviewModalBase>
-    </>
+  return useMemo(
+    () => (
+      <>
+        {children({ setOpen, isWritePending })}
+        <CreateFormReviewModalBase chainId={chainId} open={open} setOpen={setOpen}>
+          <Approve
+            onSuccess={createNotification}
+            components={
+              <Approve.Components>
+                <Approve.Bentobox
+                  fullWidth
+                  enabled={isValid && !isValidating}
+                  address={contract?.address}
+                  onSignature={setSignature}
+                />
+                <Approve.Token
+                  fullWidth
+                  enabled={isValid && !isValidating && !!_totalAmount}
+                  amount={_totalAmount}
+                  address={BENTOBOX_ADDRESS[chainId]}
+                />
+              </Approve.Components>
+            }
+            render={({ approved }) => {
+              return (
+                <Button
+                  fullWidth
+                  size="md"
+                  variant="filled"
+                  color="blue"
+                  disabled={isWritePending || !approved || !isValid || isValidating}
+                  onClick={() => sendTransaction?.()}
+                >
+                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vesting'}
+                </Button>
+              )
+            }}
+          />
+        </CreateFormReviewModalBase>
+      </>
+    ),
+    [
+      _totalAmount,
+      chainId,
+      children,
+      contract?.address,
+      createNotification,
+      isValid,
+      isValidating,
+      isWritePending,
+      open,
+      sendTransaction,
+    ]
   )
 }
 

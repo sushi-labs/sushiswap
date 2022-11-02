@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ArrowLeftIcon } from '@heroicons/react/outline'
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { Button, Currency, Link, Table, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
@@ -11,7 +11,8 @@ import { format } from 'date-fns'
 import React, { FC, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { useAmountsFromZAmounts, ZAmountToAmount } from '../../../lib/zod'
+import { useDeepCompareMemoize } from '../../../lib'
+import { useTokensFromZTokens } from '../../../lib/zod'
 import { CreateMultipleStreamFormSchemaType } from './schema'
 
 interface ReviewSection {
@@ -26,8 +27,17 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
     formState: { isValid },
   } = useFormContext<CreateMultipleStreamFormSchemaType>()
 
+  // Watch mutates the same object which means effects do not trigger when you're watching an array
   const streams = watch('streams')
-  const _amounts = useAmountsFromZAmounts((streams || []).map((el) => el.amount))
+  const _streams = useDeepCompareMemoize(streams)
+
+  const amounts = useMemo(() => (_streams || []).map((el) => el.amount), [_streams])
+  const tokens = useMemo(() => (_streams || []).map((el) => el.currency), [_streams])
+
+  const _tokens = useTokensFromZTokens(tokens)
+  const _amounts = useMemo(() => {
+    return amounts.map((el, index) => tryParseAmount(el, _tokens[index]))
+  }, [_tokens, amounts])
 
   const summedAmounts = useMemo(
     () =>
@@ -111,7 +121,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
               </Table.thead>
               <Table.tbody>
                 {streams?.map((el, idx) => {
-                  const amount = ZAmountToAmount.parse(el.amount)
+                  const amount = _amounts[idx]
                   return (
                     <Table.tr key={idx}>
                       <Table.td>

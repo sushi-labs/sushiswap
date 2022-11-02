@@ -40,11 +40,11 @@ export const Header: FC = () => {
               <Menu.Button
                 color="blue"
                 fullWidth
-                startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5" />}
+                startIcon={<PaperAirplaneIcon width={18} className="transform rotate-45 -mt-0.5 -mr-0.5" />}
                 size="sm"
                 as="div"
               >
-                Pay Someone
+                <span className="hidden sm:block">Pay Someone</span>
               </Menu.Button>
             }
           >

@@ -3,16 +3,16 @@ import { IconButton } from '@sushiswap/ui'
 import React, { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 
-import { useImportErrorContext } from '../../../../vesting/CreateMultipleForm/ImportErrorContext'
-import { CreateMultipleStreamFormSchemaType } from '../../schema'
+import { useImportErrorContext } from '../../ImportErrorContext'
+import { CreateMultipleVestingFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const ActionsCell: FC<CellProps> = ({ row, index }) => {
-  const { errors, setErrors } = useImportErrorContext<CreateMultipleStreamFormSchemaType>()
-  const { control } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const { errors, setErrors } = useImportErrorContext<CreateMultipleVestingFormSchemaType>()
+  const { control } = useFormContext<CreateMultipleVestingFormSchemaType>()
   const { append, remove } = useFieldArray({
     control,
-    name: 'streams',
+    name: 'vestings',
   })
 
   const onRemove = useCallback(() => {
@@ -21,8 +21,8 @@ export const ActionsCell: FC<CellProps> = ({ row, index }) => {
     }
 
     const _errors = { ...errors }
-    if (_errors?.streams?.[index]) {
-      delete _errors.streams[index]
+    if (_errors?.vestings?.[index]) {
+      delete _errors.vestings[index]
       setErrors(_errors)
     }
   }, [errors, index, remove, setErrors])

@@ -1,8 +1,9 @@
 import { z } from 'zod'
 
-import { ZAddress, ZAmount } from '../../../lib/zod'
+import { ZAddress, ZToken } from '../../../lib/zod'
 
 export const CreateStreamBaseSchema = z.object({
+  id: z.string(),
   dates: z
     .object({
       startDate: z
@@ -10,9 +11,8 @@ export const CreateStreamBaseSchema = z.object({
         .refine(
           (val) => val.getTime() > new Date(Date.now() + 5 * 60 * 1000).getTime(),
           'Must be at least 5 minutes from now'
-        )
-        .nullable(),
-      endDate: z.date().nullable(),
+        ),
+      endDate: z.date(),
     })
     .required()
     .refine(
@@ -23,7 +23,8 @@ export const CreateStreamBaseSchema = z.object({
       { message: 'Must be later than start date', path: ['endDate'] }
     ),
   recipient: ZAddress,
-  amount: ZAmount,
+  currency: ZToken,
+  amount: z.string().refine((val) => Number(val) > 0, 'Must be at least 0'),
   fundSource: z.string(),
 })
 

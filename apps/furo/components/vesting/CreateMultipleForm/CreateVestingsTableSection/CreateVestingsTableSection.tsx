@@ -1,21 +1,20 @@
 import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Button, GenericTable, Typography } from '@sushiswap/ui'
-import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import React, { FC, useMemo } from 'react'
-import { FieldError, FieldErrors, useFieldArray, useFormContext } from 'react-hook-form'
+import { getCoreRowModel, RowData, useReactTable } from '@tanstack/react-table'
+import React, { FC, useEffect } from 'react'
+import { FieldError, FieldErrors, useFieldArray, UseFieldArrayRemove, useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../../lib'
-import { useImportErrorContext } from '../../../vesting/CreateMultipleForm/ImportErrorContext'
-import { createStreamDefaultValues, CreateStreamFormSchemaType } from '../../CreateForm'
-import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../schema'
+import { createVestDefaultValue, CreateVestingFormSchemaType } from '../../CreateForm'
+import { useImportErrorContext } from '../ImportErrorContext'
+import { CreateMultipleVestingFormSchemaType } from '../schema'
 import {
   ACTIONS_COLUMN,
-  AMOUNT_COLUMN,
   CURRENCY_COLUMN,
-  END_DATE_COLUMN,
   FUND_SOURCE_COLUMN,
   RECIPIENT_COLUMN,
+  SCHEDULE_COLUMN,
   START_DATE_COLUMN,
 } from './Cells/columns'
 
@@ -23,36 +22,47 @@ import {
 // @ts-ignore
 const COLUMNS = [
   CURRENCY_COLUMN,
-  AMOUNT_COLUMN,
   RECIPIENT_COLUMN,
   FUND_SOURCE_COLUMN,
   START_DATE_COLUMN,
-  END_DATE_COLUMN,
+  SCHEDULE_COLUMN,
   ACTIONS_COLUMN,
 ]
 
-interface CreateStreamsTableSection {
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends RowData> {
+    chainId: ChainId
+    remove: UseFieldArrayRemove
+  }
+}
+
+interface CreateVestingsTableSection {
   chainId: ChainId
   onReview(): void
 }
 
-export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chainId, onReview }) => {
-  const { errors, setErrors } = useImportErrorContext<CreateMultipleStreamFormSchemaType>()
+export const CreateVestingsTableSection: FC<CreateVestingsTableSection> = ({ chainId, onReview }) => {
+  const { errors, setErrors } = useImportErrorContext<CreateMultipleVestingFormSchemaType>()
   const {
     control,
     watch,
     formState: { isValid, isValidating, errors: formErrors },
-  } = useFormContext<CreateMultipleStreamFormSchemaType & CreateMultipleStreamBaseSchemaFormErrorsType>()
+  } = useFormContext<CreateMultipleVestingFormSchemaType>()
   const { append, remove } = useFieldArray({
     control,
-    name: 'streams',
+    name: 'vestings',
     shouldUnregister: true,
   })
 
-  const fields = watch('streams')
+  const fields = watch('vestings')
+  const _fields = useDeepCompareMemoize(fields)
 
-  const table = useReactTable<CreateStreamFormSchemaType>({
-    data: fields || [],
+  useEffect(() => {
+    console.log('changed')
+  }, [_fields])
+
+  const table = useReactTable<CreateVestingFormSchemaType>({
+    data: _fields || [],
     getRowId: (row) => `${row.id}`,
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
@@ -62,36 +72,15 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
     },
   })
 
-  const _memoizedErrors = useDeepCompareMemoize(formErrors)
-  const _formErrors = useMemo(() => {
-    const length = fields?.length || 0
-    const data: FieldErrors<CreateMultipleStreamFormSchemaType> = { streams: [] }
-    for (let i = 0; i < length; i++) {
-      if (data.streams && _memoizedErrors.streams?.[i]) {
-        data.streams[i] = _memoizedErrors.streams[i]
-      }
-
-      if (data.streams && _memoizedErrors.FORM_ERRORS?.[i]) {
-        data.streams[i] = {
-          ...data.streams[i],
-          ..._memoizedErrors.FORM_ERRORS[i],
-        }
-      }
-    }
-
-    return data
-  }, [fields?.length, _memoizedErrors.FORM_ERRORS, _memoizedErrors.streams])
-
-  const formValid = isValid && !isValidating && Object.keys(errors).length === 0 && Object.keys(formErrors).length === 0
-
+  console.log(_fields)
   return (
     <div className="flex flex-col col-span-2 gap-4">
-      <Typography weight={500}>Streams</Typography>
+      <Typography weight={500}>Vestings</Typography>
       <div className="flex flex-col gap-4">
         {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
         {/*@ts-ignore*/}
         <GenericTable table={table} loading={false} placeholder="No positions found" pageSize={fields?.length || 0} />
-        {Array.isArray(errors?.streams) && errors.streams.length > 0 && (
+        {Array.isArray(errors?.vestings) && errors.vestings.length > 0 && (
           <div className="border border-slate-200/5 rounded-xl px-5 py-3 text-sm flex flex-col gap-3">
             <div className="flex justify-between items-center border-b border-slate-200/5 pb-3">
               <Typography variant="sm" weight={600}>
@@ -104,12 +93,12 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
             <FieldErrorRenderer errors={errors} />
           </div>
         )}
-        {Array.isArray(_formErrors?.streams) && _formErrors.streams.length > 0 && (
+        {Array.isArray(formErrors?.vestings) && formErrors.vestings.length > 0 && (
           <div className="border border-slate-200/5 rounded-xl px-5 py-3 text-sm flex flex-col gap-3">
             <Typography variant="sm" weight={600} className="border-b border-slate-200/5 pb-3">
               Form Errors
             </Typography>
-            <FieldErrorRenderer errors={_formErrors} />
+            <FieldErrorRenderer errors={formErrors} />
           </div>
         )}
         <div className="flex justify-between">
@@ -118,11 +107,11 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
             variant="empty"
             size="sm"
             startIcon={<PlusIcon width={16} height={16} />}
-            onClick={() => append(createStreamDefaultValues(chainId))}
+            onClick={() => append(createVestDefaultValue(chainId))}
           >
             Add Item
           </Button>
-          <Button onClick={onReview} disabled={!formValid} type="submit" className="!px-10">
+          <Button onClick={onReview} disabled={!isValid || isValidating} type="submit" className="!px-10">
             Review
           </Button>
         </div>
@@ -145,17 +134,17 @@ const Error: FC<{ k: string; v: FieldError }> = ({ k, v }) => {
   )
 }
 
-const FieldErrorRenderer: FC<{ errors: FieldErrors<CreateMultipleStreamFormSchemaType> }> = ({ errors }) => {
+const FieldErrorRenderer: FC<{ errors: FieldErrors<CreateMultipleVestingFormSchemaType> }> = ({ errors }) => {
   return (
     <>
-      {Array.isArray(errors?.streams) &&
-        errors.streams.length > 0 &&
-        errors.streams.map((el, idx) => {
+      {Array.isArray(errors?.vestings) &&
+        errors.vestings.length > 0 &&
+        errors.vestings.map((el, idx) => {
           if (!el) return
           return (
             <div key={idx}>
               <Typography variant="xs" weight={400} className="text-slate-300 mb-1">
-                Stream {idx + 1}
+                Vesting {idx + 1}
               </Typography>
               <ul className="!list-disc !list-inside">
                 {Object.entries(el).map(([k, v]: [k: string, v: any]) => {

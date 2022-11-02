@@ -1,15 +1,17 @@
 import { ChainId } from '@sushiswap/chain'
+import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Form, Select } from '@sushiswap/ui'
-import { TokenSelector } from '@sushiswap/wagmi'
+import { TokenSelector, useBalance } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { useTokens } from 'lib/state/token-lists'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { useCustomTokens } from '../../../lib/state/storage'
-import { useFundSourceFromZFundSource, useTokenFromZAmount, ZFundSourceToFundSource } from '../../../lib/zod'
+import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
+import { FormErrors } from './CreateForm'
 import { FundSourceOption } from './FundSourceOption'
 import { CreateStreamFormSchemaType } from './schema'
 
@@ -19,11 +21,24 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateStreamFormSchemaType>()
+  const {
+    control,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext<CreateStreamFormSchemaType & FormErrors>()
 
-  const [amount, fundSource] = watch(['amount', 'fundSource'])
-  const currency = useTokenFromZAmount(amount)
+  const [amount, currency, fundSource] = watch(['amount', 'currency', 'fundSource'])
+  const _currency = useTokenFromZToken(currency)
   const _fundSource = useFundSourceFromZFundSource(fundSource)
+  const { data: balance } = useBalance({
+    account: address,
+    currency: _currency,
+    chainId,
+    loadBentobox: true,
+  })
 
   const onClose = useCallback(() => {
     setDialogOpen(false)
@@ -45,22 +60,25 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
     [onClose, setValue]
   )
 
-  const onCurrencyInputError = useCallback(
-    (message: string) => {
-      message ? setError('amount', { type: 'typeError', message }) : clearErrors('amount.amount')
-    },
-    [clearErrors, setError]
-  )
+  useEffect(() => {
+    const cAmount = tryParseAmount(amount, _currency)
+    if (!balance?.[_fundSource] || !cAmount) return
+    if (balance[_fundSource].lessThan(cAmount)) {
+      setError('FORM_ERROR', { type: 'min', message: 'Insufficient Balance' })
+    } else {
+      clearErrors('FORM_ERROR')
+    }
+  }, [_currency, _fundSource, amount, balance, clearErrors, setError])
 
   return (
     <Form.Section
       title="Stream Details"
       description="Furo allows you to create a stream from BentoBox to allow the recipient to gain yield whilst receiving the stream if the token that's being used has a BentoBox strategy set on it."
     >
-      <Form.Control label="Token">
+      <Form.Control label="Token*">
         <Controller
           control={control}
-          name="amount.token"
+          name="currency"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
               <Select.Button
@@ -79,7 +97,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                 tokenMap={tokenMap}
                 customTokenMap={customTokenMap}
                 onSelect={(currency) => onSelect(onChange, currency)}
-                currency={currency}
+                currency={_currency}
                 onClose={onClose}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}
@@ -88,7 +106,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           )}
         />
       </Form.Control>
-      <Form.Control label="Change Funds Source">
+      <Form.Control label="Change Funds Source*">
         <Controller
           control={control}
           name="fundSource"
@@ -102,7 +120,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                     label="Wallet"
                     active={_value === FundSource.WALLET}
                     value={FundSource.WALLET}
-                    currency={currency}
+                    currency={_currency}
                     onChange={() => onChange(FundSource.WALLET)}
                   />
                   {!currency?.isNative && (
@@ -111,7 +129,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                       label="BentoBox"
                       active={_value === FundSource.BENTOBOX}
                       value={FundSource.BENTOBOX}
-                      currency={currency}
+                      currency={_currency}
                       onChange={() => onChange(FundSource.BENTOBOX)}
                     />
                   )}
@@ -122,22 +140,25 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           }}
         />
       </Form.Control>
-      <Form.Control label="Stream Amount">
+      <Form.Control label="Stream Amount*">
         <Controller
           control={control}
-          name="amount.amount"
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <CurrencyInput
-              className="ring-offset-slate-900"
-              onChange={onChange}
-              account={address}
-              value={value || ''}
-              currency={currency}
-              fundSource={_fundSource}
-              errorMessage={error?.message}
-              onError={onCurrencyInputError}
-            />
-          )}
+          name="amount"
+          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+            return (
+              <>
+                <CurrencyInput.Base
+                  onBlur={onBlur}
+                  name={name}
+                  className="ring-offset-slate-900"
+                  onChange={onChange}
+                  value={value || ''}
+                  currency={_currency}
+                />
+                <Form.Error message={error?.message || errors['FORM_ERROR']?.message} />
+              </>
+            )
+          }}
         />
       </Form.Control>
     </Form.Section>

@@ -1,42 +1,38 @@
-import { getAddress } from '@ethersproject/address'
+import { getAddress, isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { DownloadIcon } from '@heroicons/react/outline'
-import chains from '@sushiswap/chain'
-import { Native, Token } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
+import { nanoid } from '@reduxjs/toolkit'
+import { ChainId } from '@sushiswap/chain'
+import { Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dropzone, Typography } from '@sushiswap/ui'
-import { FC, useCallback, useRef } from 'react'
+import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { useNetwork } from 'wagmi'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
 
-import { stepConfigurations } from '../CreateForm'
-import { CreateMultipleVestingFormData, CreateVestingFormData } from '../types'
+import { CreateVestingFormSchemaType, stepConfigurations } from '../CreateForm'
+import { useImportErrorContext } from './ImportErrorContext'
+import { CreateMultipleVestingFormSchemaType } from './schema'
 
-interface ImportZone {
-  onErrors(errors: string[]): void
+interface ImportZoneSection {
+  chainId: ChainId
 }
 
-export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
-  const { chain } = useNetwork()
-  const { control, trigger } = useFormContext<CreateMultipleVestingFormData>()
-  const errors = useRef<string[][]>([])
+export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
+  const { errors, setErrors } = useImportErrorContext<CreateMultipleVestingFormSchemaType>()
+  const { control, trigger, watch } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
-  // TODO: cast as never until
-  // https://github.com/react-hook-form/react-hook-form/issues/4055#issuecomment-950145092 gets fixed
   const { append } = useFieldArray({
     control,
     name: 'vestings',
-  } as never)
+    shouldUnregister: true,
+  })
+
+  const vestings = watch('vestings')
+  const nrOfVests = vestings?.length || 0
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      if (!chain) {
-        console.error('Not connected to network')
-        return
-      }
-
       acceptedFiles.forEach((currentFile) => {
         const reader = new FileReader()
         reader.onload = async () => {
@@ -55,7 +51,7 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
               }
             }
 
-            const rows: CreateVestingFormData[] = []
+            const rows: CreateVestingFormSchemaType[] = []
 
             const tokens = await Promise.all(
               arr.reduce<Promise<void | FetchTokenResult>[]>((acc, cur, index) => {
@@ -63,13 +59,17 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
                   const [tokenAddress] = cur.split(',')
                   if (tokenAddress !== AddressZero) {
                     acc.push(
-                      fetchToken({ address: tokenAddress, chainId: chain.id }).catch(() => {
-                        if (!errors.current[index]) {
-                          errors.current[index] = []
+                      fetchToken({ address: tokenAddress, chainId }).catch(() => {
+                        if (!errors.vestings?.[index]) {
+                          errors.vestings = []
                         }
-                        errors.current[index].push(
-                          `${index}: ${shortenAddress(tokenAddress)} was not found on ${chains[chain.id].name}`
-                        )
+
+                        errors.vestings[index + nrOfVests] = {
+                          currency: {
+                            type: 'custom',
+                            message: `${tokenAddress} was not found`,
+                          },
+                        }
                       })
                     )
                   }
@@ -82,7 +82,7 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
             const tokenMap = tokens?.reduce<Record<string, Token>>((acc, result) => {
               if (result) {
                 const { address, symbol, decimals } = result
-                acc[address.toLowerCase()] = new Token({ address, symbol, decimals, chainId: chain.id })
+                acc[address.toLowerCase()] = new Token({ address, symbol, decimals, chainId })
               }
               return acc
             }, {})
@@ -102,57 +102,80 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
                   stepAmount,
                 ] = cur.split(',')
 
-                if (!errors.current[index]) {
-                  errors.current[index] = []
+                if (!errors.vestings?.[index]) {
+                  errors.vestings = []
                 }
 
-                let _startDate = ''
-                try {
-                  _startDate = new Date(Number(startDate) * 1000).toISOString().slice(0, 16)
-                } catch (e) {
-                  errors.current[index].push(`Vesting ${index}: Start date in csv file must be a unix timestamp`)
-                }
+                let _startDate: Date | undefined = new Date(Number(startDate) * 1000)
+                let _cliffEndDate: Date | null = new Date(Number(cliffEndDate) * 1000)
+                let _recipient: string | undefined = recipient
+                const _currency: Type | undefined =
+                  tokenAddress.toLowerCase() === AddressZero.toLowerCase()
+                    ? Native.onChain(chainId)
+                    : tokenMap?.[tokenAddress.toLowerCase()]
 
-                let _endDate: string | null = null
-                try {
-                  if (Number(cliff) === 1) {
-                    _endDate = new Date(Number(cliffEndDate) * 1000).toISOString().slice(0, 16)
+                if (!isAddress(recipient)) {
+                  _recipient = undefined
+                  errors.vestings[index + nrOfVests] = {
+                    ...errors.vestings[index + nrOfVests],
+                    recipient: { type: 'custom', message: `${recipient} is not a valid address` },
                   }
-                } catch (e) {
-                  errors.current[index].push(`Vesting ${index}: End date in csv file must be a unix timestamp`)
+                }
+
+                if (isNaN(_startDate.getTime())) {
+                  _startDate = undefined
+                  errors.vestings[index + nrOfVests] = {
+                    ...errors.vestings[index + nrOfVests],
+                    startDate: { type: 'custom', message: `${startDate} is not a valid unix timestamp` },
+                  }
+                }
+
+                if (Number(cliff) === 1 && isNaN(_cliffEndDate.getTime())) {
+                  _cliffEndDate = null
+                  errors.vestings[index + nrOfVests] = {
+                    ...errors.vestings[index + nrOfVests],
+                    cliff: {
+                      ...errors.vestings[index + nrOfVests]?.cliff,
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      cliffEndDate: { type: 'custom', message: `${cliffEndDate} is not a valid unix timestamp` },
+                    },
+                  }
                 }
 
                 rows.push({
-                  currency:
-                    tokenAddress.toLowerCase() === AddressZero.toLowerCase()
-                      ? Native.onChain(chain.id)
-                      : tokenMap?.[tokenAddress.toLowerCase()],
+                  id: nanoid(),
+                  currency: _currency,
                   fundSource: Number(fundSource) === 0 ? FundSource.WALLET : FundSource.BENTOBOX,
-                  recipient,
+                  recipient: _recipient,
                   startDate: _startDate,
-                  cliff: Number(cliff) === 1,
-                  cliffAmount: Number(cliff) === 1 ? Number(cliffAmount) : '',
-                  cliffEndDate: _endDate,
+                  cliff:
+                    Number(cliff) === 1
+                      ? {
+                          cliffEnabled: true,
+                          cliffAmount: cliffAmount,
+                          cliffEndDate: _cliffEndDate,
+                        }
+                      : {
+                          cliffEnabled: false,
+                        },
                   stepPayouts: Number(stepPayouts),
-                  stepAmount: Number(stepAmount),
+                  stepAmount,
                   stepConfig: stepConfigurations[Number(stepConfig)],
-                  insufficientBalance: false,
                 })
               }
             }, [])
 
             append(rows)
             await trigger()
-            onErrors(errors.current.flat())
+            setErrors(errors)
           }
         }
 
         reader.readAsText(currentFile)
       })
     },
-
-    // @ts-ignore
-    [append, chain, onErrors, trigger]
+    [append, chainId, errors, nrOfVests, setErrors, trigger]
   )
 
   const downloadExample = useCallback(() => {
@@ -167,7 +190,7 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
   }, [])
 
   return (
-    <>
+    <div className="flex flex-col md:grid md:grid-cols-[296px_auto] gap-y-10 lg:gap-20">
       <div className="flex flex-col gap-3">
         <Typography weight={500}>Quick Import</Typography>
         <Typography variant="sm" weight={400} className="text-slate-400">
@@ -191,6 +214,6 @@ export const ImportZone: FC<ImportZone> = ({ onErrors }) => {
         }}
         onDrop={onDrop}
       />
-    </>
+    </div>
   )
 }

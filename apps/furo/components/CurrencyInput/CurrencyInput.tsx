@@ -42,6 +42,8 @@ const Component: FC<CurrencyInput> = ({
   bottomPanel,
   className,
   hideSymbol,
+  name,
+  onBlur,
 }) => {
   const { data: balance, isLoading: loading } = useBalance({
     account,
@@ -67,6 +69,8 @@ const Component: FC<CurrencyInput> = ({
   return useMemo(
     () => (
       <CurrencyInput.Base
+        name={name}
+        onBlur={onBlur}
         hideSymbol={hideSymbol}
         className={classNames(className, DEFAULT_INPUT_PADDING)}
         inputClassName="pl-0 pt-0 pr-0 !pb-2"

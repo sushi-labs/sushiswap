@@ -3,16 +3,16 @@ import { Web3Input } from '@sushiswap/wagmi'
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { CreateMultipleStreamFormSchemaType } from '../../schema'
+import { CreateMultipleVestingFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const RecipientCell: FC<CellProps> = ({ index }) => {
-  const { control } = useFormContext<CreateMultipleStreamFormSchemaType>()
+  const { control } = useFormContext<CreateMultipleVestingFormSchemaType>()
 
   return (
     <Controller
       control={control}
-      name={`streams.${index}.recipient`}
+      name={`vestings.${index}.recipient`}
       render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
         <Web3Input.Ens
           variant="unstyled"
@@ -23,9 +23,9 @@ export const RecipientCell: FC<CellProps> = ({ index }) => {
           error={!!error?.message}
           placeholder="0x..."
           className={classNames(
+            'without-ring py-2',
             error?.message ? ' !border-red' : 'border-transparent border-none',
-            'border-0 !border-b-[1px] py-2 flex items-center',
-            'without-ring h-[37px]'
+            'border-0 !border-b-[1px] h-[37px]'
           )}
           inputClassName={classNames('')}
         />
