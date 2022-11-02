@@ -8,10 +8,8 @@ import { formatBytes32String } from 'ethers/lib/utils'
 import { FC, ReactNode, useEffect, useState } from 'react'
 import { useAccount, useContractEvent, useWaitForTransaction } from 'wagmi'
 
-import { useBridgeOutput } from '../../lib/hooks'
 import { useNotifications } from '../../lib/state/storage'
-import { useBridgeExecute } from '../BridgeExecuteProvider'
-import { useBridgeState } from '../BridgeStateProvider'
+import { useBridgeState, useDerivedBridgeState } from '../BridgeStateProvider'
 import { TransactionProgressStep } from './TransactionProgressStep'
 
 const client = createClient('mainnet')
@@ -38,11 +36,10 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
   children,
 }) => {
   const { address } = useAccount()
-  const { srcChainId, dstChainId, srcToken, amount } = useBridgeState()
-  const { dstAmountOut } = useBridgeOutput()
+  const { srcChainId, dstChainId, srcToken, amount, sourceTx, timestamp, id } = useBridgeState()
+  const { dstAmountOut } = useDerivedBridgeState()
   const [dstTxState, setDstTxState] = useState<{ txHash: `0x${string}`; isSuccess: boolean } | undefined>()
   const [, { createInfoNotification }] = useNotifications(address)
-  const { sourceTx, timestamp, id } = useBridgeExecute()
   const [lzLink, setLzLink] = useState<string>()
 
   useContractEvent({
@@ -67,7 +64,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
   })
 
   useEffect(() => {
-    if (isPrevSuccess && sourceTx?.hash) {
+    if (isPrevSuccess && sourceTx?.hash && timestamp) {
       let notificationSent = false
 
       const ts = new Date().getTime()
@@ -84,7 +81,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
               pending: '',
               completed: '',
               failed: '',
-              info: `Bridging ${amount?.toSignificant(6)} ${srcToken.symbol} to ${chains[dstChainId].name}`,
+              info: `Bridging ${amount?.toSignificant(6)} ${srcToken?.symbol} to ${chains[dstChainId].name}`,
             },
             timestamp: ts,
             groupTimestamp: timestamp,
@@ -113,7 +110,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
     lzLink,
     sourceTx,
     srcChainId,
-    srcToken.symbol,
+    srcToken?.symbol,
     timestamp,
   ])
 
@@ -124,7 +121,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
         status={isSuccess ? 'success' : isError ? 'skipped' : lzLink ? 'pending' : 'idle'}
         header={
           <TransactionProgressStep.Header>
-            Send <b>{srcToken.symbol}</b> to destination chain
+            Send <b>{srcToken?.symbol}</b> to destination chain
           </TransactionProgressStep.Header>
         }
         subheader={

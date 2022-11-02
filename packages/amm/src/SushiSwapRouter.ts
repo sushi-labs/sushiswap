@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { Amount, Currency } from '@sushiswap/currency'
+import { Currency } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 import warning from 'tiny-warning'
@@ -68,10 +68,6 @@ export interface SwapParameters {
   value: string
 }
 
-export function toHex(currencyAmount: Amount<Currency>) {
-  return `0x${currencyAmount.quotient.toString(16)}`
-}
-
 const ZERO_HEX = '0x0'
 
 /**
@@ -99,8 +95,8 @@ export abstract class SushiSwapRouter {
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
     const to: string = validateAndParseAddress(options.recipient)
-    const amountIn: string = toHex(trade.maximumAmountIn(options.allowedSlippage))
-    const amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
+    const amountIn: string = trade.maximumAmountIn(options.allowedSlippage).toHex()
+    const amountOut: string = trade.minimumAmountOut(options.allowedSlippage).toHex()
     const path: string[] = trade.route.legs.reduce<string[]>(
       (previousValue, currentValue) => [...previousValue, currentValue.tokenTo.address],
       [trade.route.legs[0].tokenFrom.address]

@@ -13,6 +13,13 @@
       ],
       "outputs": []
     },
+    "start": {
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "cache": false
+    },
     "generate": {
       "outputs": [
         ".graphclient/**",
@@ -30,7 +37,8 @@
         "dist/**",
         "typechain/**",
         "artifacts/**",
-        "cache/**"
+        "cache/**",
+        "public/**"
       ],
       "dependsOn": [
         "^build",
@@ -60,6 +68,9 @@
       ]
     },
     "clean": {
+      "cache": false
+    },
+    "check": {
       "cache": false
     },
     "dev": {

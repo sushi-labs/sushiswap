@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid'
+import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
@@ -252,7 +252,6 @@ const _Add: FC<AddProps> = ({
             selectedNetwork={chainId}
             poolType={poolType}
             setPoolType={(type) => {
-              // console.log('Set pool type', poolType)
               setPoolType(type)
             }}
           />

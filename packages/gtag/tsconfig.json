@@ -1,5 +1,0 @@
-{
-  "extends": "@sushiswap/typescript-config/react-library.json",
-  "include": ["src"],
-  "exclude": ["node_modules"]
-}

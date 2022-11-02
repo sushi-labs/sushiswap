@@ -6,10 +6,8 @@ import { formatBytes32String } from 'ethers/lib/utils'
 import { FC, useEffect, useState } from 'react'
 import { useAccount, useContractEvent, useWaitForTransaction } from 'wagmi'
 
-import { useBridgeOutput } from '../../lib/hooks'
 import { useNotifications } from '../../lib/state/storage'
-import { useBridgeExecute } from '../BridgeExecuteProvider'
-import { useBridgeState } from '../BridgeStateProvider'
+import { useBridgeState, useBridgeStateActions, useDerivedBridgeState } from '../BridgeStateProvider'
 import { TransactionProgressStep } from './TransactionProgressStep'
 
 interface TransactionProgressDestination {
@@ -25,9 +23,9 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
   onClose,
 }) => {
   const { address } = useAccount()
-  const { id, timestamp, setSourceTx } = useBridgeExecute()
-  const { dstToken, dstChainId, amount, srcToken } = useBridgeState()
-  const { dstAmountOut } = useBridgeOutput()
+  const { id, dstToken, dstChainId, amount, srcToken, timestamp } = useBridgeState()
+  const { setSourceTx } = useBridgeStateActions()
+  const { dstAmountOut } = useDerivedBridgeState()
   const [dstTxState, setDstTxState] = useState<{ txHash: `0x${string}`; isSuccess: boolean } | undefined>()
   const [, { createSuccessNotification, createFailedNotification }] = useNotifications(address)
 
@@ -53,44 +51,48 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
   })
 
   useEffect(() => {
-    if (isSuccess) {
-      const ts = new Date().getTime()
-      createSuccessNotification({
-        type: 'send',
-        chainId: dstChainId,
-        txHash: dstTxState?.txHash,
-        summary: {
-          pending: '',
-          completed: `Send ${amount?.toSignificant(6)} ${srcToken?.symbol} to recipient`,
-          failed: '',
-        },
-        timestamp: ts,
-        groupTimestamp: timestamp,
-      })
+    if (dstTxState && timestamp) {
+      if (isSuccess) {
+        const ts = new Date().getTime()
+        createSuccessNotification({
+          type: 'send',
+          chainId: dstChainId,
+          txHash: dstTxState.txHash,
+          summary: {
+            pending: '',
+            completed: `Send ${amount?.toSignificant(6)} ${srcToken?.symbol} to recipient`,
+            failed: '',
+          },
+          timestamp: ts,
+          groupTimestamp: timestamp,
+        })
 
-      onClose()
-      setTimeout(() => setSourceTx(undefined), 1000)
-    }
+        onClose()
+        setTimeout(() => setSourceTx(undefined), 1000)
+      }
 
-    if (isError) {
-      const ts = new Date().getTime()
-      createFailedNotification({
-        type: 'send',
-        chainId: dstChainId,
-        txHash: dstTxState?.txHash,
-        summary: {
-          pending: '',
-          completed: '',
-          failed: 'Something went wrong when sending tokens to recipient',
-        },
-        timestamp: ts,
-        groupTimestamp: timestamp,
-      })
+      if (isError) {
+        const ts = new Date().getTime()
+        createFailedNotification({
+          type: 'send',
+          chainId: dstChainId,
+          txHash: dstTxState?.txHash,
+          summary: {
+            pending: '',
+            completed: '',
+            failed: 'Something went wrong when sending tokens to recipient',
+          },
+          timestamp: ts,
+          groupTimestamp: timestamp,
+        })
 
-      onClose()
-      setTimeout(() => setSourceTx(undefined), 1000)
+        onClose()
+        setTimeout(() => setSourceTx(undefined), 1000)
+      }
     }
   }, [isSuccess, isError])
+
+  if (!dstAmountOut) return <></>
 
   return (
     <TransactionProgressStep
@@ -112,7 +114,7 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
           : 'idle'
       }
       header={
-        (dstTxState && !dstTxState.isSuccess) || dstAmountOut.currency.wrapped.equals(dstToken) ? (
+        (dstTxState && !dstTxState.isSuccess) || (dstToken && dstAmountOut.currency.wrapped.equals(dstToken)) ? (
           <TransactionProgressStep.Header>
             Transfer{' '}
             <b>
@@ -122,7 +124,7 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
           </TransactionProgressStep.Header>
         ) : (
           <TransactionProgressStep.Header>
-            Swap <b>{dstToken.symbol}</b> for{' '}
+            Swap <b>{dstToken?.symbol}</b> for{' '}
             <b>
               {dstAmountOut.toSignificant(6)} {dstAmountOut.currency.symbol}
             </b>

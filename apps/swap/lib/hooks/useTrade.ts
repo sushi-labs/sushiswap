@@ -9,9 +9,16 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
-import { Amount, Type as Currency, useCurrencyCombinations, WNATIVE } from '@sushiswap/currency'
+import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { MultiRoute, RouteStatus } from '@sushiswap/tines'
-import { PairState, useBentoBoxTotals, useGetConstantProductPools, useGetStablePools, usePairs } from '@sushiswap/wagmi'
+import {
+  PairState,
+  useBentoBoxTotals,
+  useCurrencyCombinations,
+  useGetConstantProductPools,
+  useGetStablePools,
+  usePairs,
+} from '@sushiswap/wagmi'
 import {
   AMM_ENABLED_NETWORKS,
   CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,

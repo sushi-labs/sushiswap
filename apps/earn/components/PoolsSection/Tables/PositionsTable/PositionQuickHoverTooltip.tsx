@@ -1,5 +1,5 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
+import { UserWithFarm } from '@sushiswap/graph-client'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 

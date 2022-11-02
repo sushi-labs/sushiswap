@@ -32,6 +32,7 @@ type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
   tokenMap: Record<string, Token>
   pricesMap?: Record<string, Fraction> | undefined
   fundSource: FundSource
+  includeNative?: boolean
 }
 
 export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
@@ -48,6 +49,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
   balancesMap,
   pricesMap,
   fundSource,
+  includeNative
 }) => {
   const isSmallScreen = useIsSmScreen()
 
@@ -75,6 +77,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
       pricesMap={pricesMap}
       balancesMap={balancesMap}
       fundSource={fundSource}
+      includeNative={includeNative}
     >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <Dialog open={open} unmount={false} onClose={onClose} initialFocus={isSmallScreen ? undefined : inputRef}>

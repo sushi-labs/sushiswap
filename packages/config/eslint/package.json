@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/eslint-config",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.1",
   "description": "Sushi Config",
   "keywords": [
     "sushi",
@@ -20,6 +19,7 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
+    "@graphql-eslint/eslint-plugin": "latest",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "eslint-config-prettier": "latest",

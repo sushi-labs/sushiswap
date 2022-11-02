@@ -30,8 +30,24 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configure
     // alchemyProvider({ apiKey: alchemyId, priority: 1 }),
     // publicProvider({ priority: 2 }),
 
-    alchemyProvider({ apiKey: alchemyId }),
-    publicProvider(),
+    // jsonRpcProvider({
+    //   priority: 0,
+    //   rpc: (chain) => {
+    //     if (chain.id !== 1) return null
+    //     return {
+    //       http: `https://api.securerpc.com/v1`,
+    //       webSocket: `wss://api.securerpc.com/v1`,
+    //     }
+    //   },
+    // }),
+
+    alchemyProvider({
+      apiKey: alchemyId,
+      // priority: 1,
+    }),
+    publicProvider({
+      // priority: 2,
+    }),
 
     // infuraProvider({ infuraId }),
   ],

@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { Bundle } from '@sushiswap/graph-client/.graphclient'
+import { Bundle } from '@sushiswap/graph-client'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 import useSWR from 'swr'

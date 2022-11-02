@@ -30,10 +30,10 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
 
 export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
   addressOrName:
-    bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+    bentoBoxExports[chainId?.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.address ?? '',
   contractInterface:
-    bentoBoxExports[chainId as unknown as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
+    bentoBoxExports[chainId?.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.abi ?? [],
 })
 

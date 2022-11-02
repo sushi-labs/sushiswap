@@ -1,4 +1,3 @@
-import { Amount, Currency } from '@sushiswap/currency'
 import { JSBI, Percent } from '@sushiswap/math'
 
 const BIPS_BASE = JSBI.BigInt(10000)
@@ -29,8 +28,4 @@ export function warningSeverity(priceImpact: Percent | undefined): WarningSeveri
     impact--
   }
   return 0
-}
-
-export function toHex(currencyAmount: Amount<Currency>) {
-  return `0x${currencyAmount.quotient.toString(16)}`
 }

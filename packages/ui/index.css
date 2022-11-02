@@ -8,6 +8,7 @@
 @import "./variables.css";
 @import './tooltip/Tooltip.css';
 @import './input/Input.css';
+@import "./skeleton/Skeleton.css";
 
 *,
 *:before,
