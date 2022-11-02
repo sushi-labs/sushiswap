@@ -1,27 +1,50 @@
 import json from './chains.json'
 
-const CHAINS = json.concat({
-  name: 'Boba Avax',
-  chain: 'Boba Avax',
-  rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
-  faucets: [],
-  nativeCurrency: {
-    name: 'Boba Token',
-    symbol: 'BOBA',
-    decimals: 18,
-  },
-  infoURL: 'https://boba.network',
-  shortName: 'bobaavax',
-  chainId: 43288,
-  networkId: 43288,
-  explorers: [
-    {
-      name: 'Boba Avax Explorer',
-      url: 'https://blockexplorer.avax.boba.network',
-      standard: 'none',
+const CHAINS = json
+  .concat({
+    name: 'Boba Avax',
+    chain: 'Boba Avax',
+    rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Boba Token',
+      symbol: 'BOBA',
+      decimals: 18,
     },
-  ],
-}) as Chain[]
+    infoURL: 'https://boba.network',
+    shortName: 'bobaavax',
+    chainId: 43288,
+    networkId: 43288,
+    explorers: [
+      {
+        name: 'Boba Avax Explorer',
+        url: 'https://blockexplorer.avax.boba.network',
+        standard: 'none',
+      },
+    ],
+  })
+  .concat({
+    name: 'Boba BNB',
+    chain: 'Boba BNB',
+    rpc: ['https://bnb.boba.network', 'wss://wss.bnb.boba.network', 'https://replica.bnb.boba.network'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Boba Token',
+      symbol: 'BOBA',
+      decimals: 18,
+    },
+    infoURL: 'https://boba.network',
+    shortName: 'bobabnb',
+    chainId: 56288,
+    networkId: 56288,
+    explorers: [
+      {
+        name: 'Boba BNB Explorer',
+        url: 'https://blockexplorer.bnb.boba.network',
+        standard: 'none',
+      },
+    ],
+  }) as Chain[]
 
 export interface Chain {
   name: string
@@ -121,6 +144,7 @@ export enum ChainId {
   BOBA = 288,
   BOBA_AVAX = 43288,
   BTTC = 199,
+  BOBA_BNB = 56288,
 }
 
 export enum ChainKey {
@@ -161,6 +185,7 @@ export enum ChainKey {
   BOBA = 'boba',
   BOBA_AVAX = 'boba-avax',
   BTTC = 'bttc',
+  BOBA_BNB = 'boba-bnb',
 }
 
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]

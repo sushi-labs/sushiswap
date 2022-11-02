@@ -392,6 +392,13 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
+    'boba-bsc': {
+      url: 'https://bnb.boba.network',
+      accounts,
+      chainId: 56288,
+      live: true,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     // e.g. ledger://0x18dd4e0Eb8699eA4fee238dE41ecF115e32272F8
