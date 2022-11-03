@@ -10,7 +10,7 @@ import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { approveBentoBoxAction, batchAction, vestingCreationAction } from '../../../../lib'
+import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../../lib'
 import { useNotifications } from '../../../../lib/state/storage'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../../utils'
@@ -69,7 +69,9 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
   const [signature, setSignature] = useState<Signature>()
 
   const formData = watch()
-  const { recipient, startDate, stepConfig, stepPayouts, fundSource, currency, cliff, stepAmount } = formData
+  const _formData = useDeepCompareMemoize(formData)
+
+  const { recipient, startDate, stepConfig, stepPayouts, fundSource, currency, cliff, stepAmount } = _formData
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(formData.currency)
   const _totalAmount = useMemo(

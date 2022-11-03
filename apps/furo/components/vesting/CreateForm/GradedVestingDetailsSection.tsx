@@ -7,6 +7,7 @@ import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
+import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
 
@@ -20,7 +21,9 @@ export const GradedVestingDetailsSection = () => {
     formState: { errors },
   } = useFormContext<CreateVestingFormSchemaType & FormErrors>()
   const formData = watch()
-  const { currency, stepConfig, fundSource, cliff, stepAmount, stepPayouts } = formData
+  const _formData = useDeepCompareMemoize(formData)
+
+  const { currency, stepConfig, fundSource, cliff, stepAmount, stepPayouts } = _formData
 
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(currency)

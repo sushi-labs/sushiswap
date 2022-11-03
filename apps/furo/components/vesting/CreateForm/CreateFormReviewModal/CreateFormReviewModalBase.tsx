@@ -8,6 +8,7 @@ import { format } from 'date-fns'
 import React, { FC, Fragment, ReactNode, useCallback, useMemo } from 'react'
 import { useFormContext } from 'react-hook-form'
 
+import { useDeepCompareMemoize } from '../../../../lib'
 import { useTokenFromZToken } from '../../../../lib/zod'
 import { createScheduleRepresentation } from '../../createScheduleRepresentation'
 import { calculateEndDate, calculateTotalAmount } from '../../utils'
@@ -57,9 +58,10 @@ interface CreateFormReviewModalBase {
 const CreateFormReviewModalBase: FC<CreateFormReviewModalBase> = ({ chainId, children, open, setOpen }) => {
   const { watch } = useFormContext<CreateVestingFormSchemaType>()
   const formData = watch()
-  const { cliff, recipient, currency, stepAmount, stepPayouts, stepConfig, startDate, fundSource } = formData
-
+  const _formData = useDeepCompareMemoize(formData)
+  const { cliff, recipient, currency, stepAmount, stepPayouts, stepConfig, startDate, fundSource } = _formData
   const _currency = useTokenFromZToken(currency)
+
   const endDate = useMemo(
     () => calculateEndDate({ cliff, startDate, stepPayouts, stepConfig }),
     [cliff, startDate, stepConfig, stepPayouts]
@@ -69,13 +71,30 @@ const CreateFormReviewModalBase: FC<CreateFormReviewModalBase> = ({ chainId, chi
     [cliff, currency, stepAmount, stepPayouts]
   )
   const [_cliffAmount, _stepAmount] = useMemo(() => {
-    return [
-      cliff.cliffEnabled ? tryParseAmount(cliff.cliffAmount?.toString(), _currency) : undefined,
-      tryParseAmount(stepAmount?.toString(), _currency),
-    ]
-  }, [cliff.cliffEnabled, _currency, stepAmount])
+    if (cliff.cliffEnabled) {
+      const { cliffAmount } = cliff
+      return [tryParseAmount(cliffAmount?.toString(), _currency), tryParseAmount(stepAmount?.toString(), _currency)]
+    } else {
+      return [undefined, tryParseAmount(stepAmount?.toString(), _currency)]
+    }
+  }, [_currency, cliff, stepAmount])
 
   const schedule = useMemo(() => {
+    if (cliff.cliffEnabled) {
+      const { cliffEndDate } = cliff
+      return _stepAmount && _currency && stepConfig && startDate && stepPayouts
+        ? createScheduleRepresentation({
+            currency: _currency,
+            cliffAmount: _cliffAmount,
+            stepAmount: _stepAmount,
+            stepDuration: stepConfig.time * 1000,
+            startDate,
+            cliffEndDate,
+            stepPayouts,
+          })
+        : undefined
+    }
+
     return _stepAmount && _currency && stepConfig && startDate && stepPayouts
       ? createScheduleRepresentation({
           currency: _currency,
@@ -83,17 +102,16 @@ const CreateFormReviewModalBase: FC<CreateFormReviewModalBase> = ({ chainId, chi
           stepAmount: _stepAmount,
           stepDuration: stepConfig.time * 1000,
           startDate,
-          cliffEndDate: cliff.cliffEnabled ? cliff?.cliffEndDate : null,
+          cliffEndDate: null,
           stepPayouts,
         })
       : undefined
-  }, [_stepAmount, _currency, stepConfig, startDate, stepPayouts, _cliffAmount, cliff.cliffEnabled])
+  }, [cliff, _stepAmount, _currency, stepConfig, startDate, stepPayouts, _cliffAmount])
 
   const onDismiss = useCallback(() => {
     setOpen(false)
   }, [setOpen])
 
-  // console.log(_currency, recipient, isAddress(recipient), endDate)
   return (
     <Dialog open={open} onClose={onDismiss} unmount={false}>
       <Dialog.Content className="!space-y- min-h-[300px] !max-w-md relative overflow-hidden bg-slate-900 !pb-3 !px-4">
