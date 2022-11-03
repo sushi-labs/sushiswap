@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { CheckCircleIcon } from '@heroicons/react/solid'
+import { formatNumber } from '@sushiswap/format'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import log from '@sushiswap/log'
 import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
@@ -133,7 +134,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           <Typography variant="xs" weight={400} className="text-slate-300 py-2 text-center">
             There are currently{' '}
             <span className="font-semibold">
-              {balance?.toSignificant(6)} {balance?.currency.symbol}
+              {formatNumber(balance?.toSignificant(6))} {balance?.currency.symbol}
             </span>{' '}
             unlocked tokens available for withdrawal.
           </Typography>
