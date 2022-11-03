@@ -101,7 +101,9 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
           </Typography>
           {unlocked ? <LockOpenIcon width={24} /> : <LockClosedIcon width={24} />}
           <Typography variant="sm" weight={500} className="w-full text-center truncate text-slate-200">
-            {formatNumber(+period.amount.toSignificant(4))}{' '}
+            {formatNumber(+period.amount.toSignificant(4)) === 'NaN'
+              ? '0.00'
+              : formatNumber(+period.amount.toSignificant(4))}{' '}
             <span className="text-sm text-slate-400">{period.amount.currency.symbol}</span>
           </Typography>
           <Typography variant="xs" className="text-slate-500">
