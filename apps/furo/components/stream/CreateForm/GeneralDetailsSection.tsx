@@ -1,6 +1,7 @@
-import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Input } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form } from '@sushiswap/ui'
+import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { Web3Input } from '@sushiswap/wagmi'
-import { format } from 'date-fns'
+import React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { CreateStreamFormSchemaType } from './schema'
@@ -21,17 +22,25 @@ export const GeneralDetailsSection = () => {
             render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
               return (
                 <>
-                  <Input.DatetimeLocal
-                    min={new Date(Date.now() + 5 * 60 * 1000)?.toISOString().slice(0, 16)}
+                  <DatePicker
                     name={name}
                     onBlur={onBlur}
-                    value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
-                    onChange={(value) => {
-                      console.log(value)
-                      onChange(new Date(value))
-                    }}
-                    error={!!error?.message}
-                    className="!ring-offset-slate-900 cursor-pointer"
+                    className={classNames(
+                      DEFAULT_INPUT_CLASSNAME,
+                      error ? ERROR_INPUT_CLASSNAME : '',
+                      '!ring-offset-slate-900'
+                    )}
+                    onChange={onChange}
+                    selected={value}
+                    portalId="root-portal"
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    timeCaption="time"
+                    minDate={new Date(Date.now() + 5 * 60 * 1000)}
+                    dateFormat="MMM d, yyyy HH:mm"
+                    placeholderText="Select date"
+                    autoComplete="off"
                   />
                   <Form.Error message={error?.message} />
                 </>
@@ -46,18 +55,27 @@ export const GeneralDetailsSection = () => {
             render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
               return (
                 <>
-                  <Input.DatetimeLocal
-                    min={
-                      startDate
-                        ? new Date(startDate.getTime() + 5 * 60 * 1000)?.toISOString().slice(0, 16)
-                        : new Date(Date.now() + 10 * 60 * 1000)?.toISOString().slice(0, 16)
-                    }
+                  <DatePicker
                     name={name}
                     onBlur={onBlur}
-                    value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
-                    onChange={(value) => onChange(new Date(value))}
-                    error={!!error?.message}
-                    className="!ring-offset-slate-900 cursor-pointer"
+                    className={classNames(
+                      DEFAULT_INPUT_CLASSNAME,
+                      error ? ERROR_INPUT_CLASSNAME : '',
+                      '!ring-offset-slate-900'
+                    )}
+                    onChange={onChange}
+                    selected={value}
+                    portalId="root-portal"
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    timeCaption="time"
+                    minDate={
+                      startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
+                    }
+                    dateFormat="MMM d, yyyy HH:mm"
+                    placeholderText="Select date"
+                    autoComplete="off"
                   />
                   <Form.Error message={error?.message} />
                 </>

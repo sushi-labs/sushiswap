@@ -2,7 +2,7 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Button, GenericTable, Typography } from '@sushiswap/ui'
 import { getCoreRowModel, RowData, useReactTable } from '@tanstack/react-table'
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { FieldError, FieldErrors, useFieldArray, UseFieldArrayRemove, useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../../lib'
@@ -57,10 +57,6 @@ export const CreateVestingsTableSection: FC<CreateVestingsTableSection> = ({ cha
   const fields = watch('vestings')
   const _fields = useDeepCompareMemoize(fields)
 
-  useEffect(() => {
-    console.log('changed')
-  }, [_fields])
-
   const table = useReactTable<CreateVestingFormSchemaType>({
     data: _fields || [],
     getRowId: (row) => `${row.id}`,
@@ -72,7 +68,6 @@ export const CreateVestingsTableSection: FC<CreateVestingsTableSection> = ({ cha
     },
   })
 
-  console.log(_fields)
   return (
     <div className="flex flex-col col-span-2 gap-4">
       <Typography weight={500}>Vestings</Typography>

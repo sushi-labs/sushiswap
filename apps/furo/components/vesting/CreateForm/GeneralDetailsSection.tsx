@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { FundSource } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Input, Select } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Select } from '@sushiswap/ui'
+import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { TokenSelector, Web3Input } from '@sushiswap/wagmi'
-import { format } from 'date-fns'
 import { useTokens } from 'lib/state/token-lists'
-import { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { useCustomTokens } from '../../../lib/state/storage'
@@ -16,8 +16,8 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
   const tokenMap = useTokens(chainId)
   const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const { control, watch, setValue } = useFormContext<CreateVestingFormSchemaType>()
-  const [currency] = watch(['currency'])
+  const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateVestingFormSchemaType>()
+  const [currency, startDate] = watch(['currency', 'startDate'])
   const _currency = useTokenFromZToken(currency)
 
   const onClose = useCallback(() => {
@@ -39,6 +39,16 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
     },
     [onClose, setValue]
   )
+
+  // Temporary solution for when Zod fixes conditional validation
+  // https://github.com/colinhacks/zod/issues/1394
+  useEffect(() => {
+    if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
+      setError(`startDate`, { type: 'custom', message: 'Must be at least 5 minutes from now' })
+    } else {
+      clearErrors(`startDate`)
+    }
+  }, [clearErrors, setError, startDate])
 
   return (
     <Form.Section
@@ -86,14 +96,25 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>
-                <Input.DatetimeLocal
-                  min={new Date(Date.now() + 5 * 60 * 1000)?.toISOString().slice(0, 16)}
-                  onBlur={onBlur}
+                <DatePicker
                   name={name}
-                  onChange={(value) => onChange(new Date(value))}
-                  value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
-                  error={!!error?.message}
-                  className="!ring-offset-slate-900"
+                  onBlur={onBlur}
+                  className={classNames(
+                    DEFAULT_INPUT_CLASSNAME,
+                    error ? ERROR_INPUT_CLASSNAME : '',
+                    '!ring-offset-slate-900'
+                  )}
+                  onChange={onChange}
+                  selected={value}
+                  portalId="root-portal"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="time"
+                  minDate={new Date(Date.now() + 5 * 60 * 1000)}
+                  dateFormat="MMM d, yyyy HH:mm"
+                  placeholderText="Select date"
+                  autoComplete="off"
                 />
                 <Form.Error message={error?.message} />
               </>

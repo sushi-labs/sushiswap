@@ -1,8 +1,8 @@
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
-import { Form, Input, Switch } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Switch } from '@sushiswap/ui'
+import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { CurrencyInput } from 'components'
-import { format } from 'date-fns'
-import { FC, useCallback } from 'react'
+import React, { FC, useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
@@ -65,18 +65,27 @@ export const CliffDetailsSection: FC = () => {
             control={control}
             render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
               <>
-                <Input.DatetimeLocal
-                  min={
-                    startDate
-                      ? new Date(startDate.getTime() + 5 * 60 * 1000)?.toISOString().slice(0, 16)
-                      : new Date(Date.now() + 10 * 60 * 1000)?.toISOString().slice(0, 16)
-                  }
+                <DatePicker
                   name={name}
                   onBlur={onBlur}
-                  onChange={(value) => onChange(new Date(value))}
-                  value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
-                  error={!!error?.message}
-                  className="!ring-offset-slate-900"
+                  className={classNames(
+                    DEFAULT_INPUT_CLASSNAME,
+                    error ? ERROR_INPUT_CLASSNAME : '',
+                    '!ring-offset-slate-900'
+                  )}
+                  onChange={onChange}
+                  selected={value}
+                  portalId="root-portal"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="time"
+                  minDate={
+                    startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
+                  }
+                  dateFormat="MMM d, yyyy HH:mm"
+                  placeholderText="Select date"
+                  autoComplete="off"
                 />
                 <Form.Error message={error?.message} />
               </>

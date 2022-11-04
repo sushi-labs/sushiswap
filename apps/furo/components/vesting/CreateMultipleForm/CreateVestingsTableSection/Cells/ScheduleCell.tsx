@@ -1,5 +1,18 @@
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { Button, classNames, Drawer, Form, IconButton, Input, Select, Switch, Typography } from '@sushiswap/ui'
+import {
+  Button,
+  classNames,
+  DEFAULT_INPUT_CLASSNAME,
+  Drawer,
+  ERROR_INPUT_CLASSNAME,
+  Form,
+  IconButton,
+  Input,
+  Select,
+  Switch,
+  Typography,
+} from '@sushiswap/ui'
+import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { format } from 'date-fns'
 import React, { FC, useCallback, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -27,6 +40,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const _currency = useTokenFromZToken(currency)
   const endDate = calculateEndDate(formData)
+  const cliffEndDate = cliff.cliffEnabled ? cliff.cliffEndDate : undefined
 
   const onCurrencyInputError = useCallback(
     (message?: string) => {
@@ -40,14 +54,14 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
   // Temporary solution for when Zod fixes conditional validation
   // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
-    if (startDate && cliff.cliffEnabled && cliff.cliffEndDate) {
-      if (cliff.cliffEndDate < startDate) {
+    if (startDate && cliffEndDate) {
+      if (cliffEndDate < startDate) {
         setError(`vestings.${index}.cliff.cliffEndDate`, { type: 'custom', message: 'Must be later than start date' })
       } else {
         clearErrors(`vestings.${index}.cliff.cliffEndDate`)
       }
     }
-  }, [clearErrors, cliff.cliffEnabled, index, setError, startDate])
+  }, [clearErrors, cliffEndDate, index, setError, startDate])
 
   return (
     <Drawer.Root>
@@ -118,18 +132,29 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
                           return (
                             <>
-                              <Input.DatetimeLocal
-                                min={
-                                  startDate
-                                    ? new Date(startDate.getTime() + 5 * 60 * 1000)?.toISOString().slice(0, 16)
-                                    : new Date(Date.now() + 10 * 60 * 1000)?.toISOString().slice(0, 16)
-                                }
+                              <DatePicker
                                 name={name}
                                 onBlur={onBlur}
-                                onChange={(value) => onChange(new Date(value))}
-                                value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
-                                error={!!error?.message}
-                                className="!ring-offset-slate-900"
+                                className={classNames(
+                                  DEFAULT_INPUT_CLASSNAME,
+                                  error ? ERROR_INPUT_CLASSNAME : '',
+                                  '!ring-offset-slate-900'
+                                )}
+                                onChange={onChange}
+                                selected={value}
+                                portalId="root-portal"
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                timeIntervals={15}
+                                timeCaption="time"
+                                minDate={
+                                  startDate
+                                    ? new Date(startDate.getTime() + 5 * 60 * 1000)
+                                    : new Date(Date.now() + 10 * 60 * 1000)
+                                }
+                                dateFormat="MMM d, yyyy HH:mm"
+                                placeholderText="Select date"
+                                autoComplete="off"
                               />
                               <Form.Error message={error?.message} />
                             </>

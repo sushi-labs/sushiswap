@@ -6,12 +6,7 @@ export const CreateStreamBaseSchema = z.object({
   id: z.string(),
   dates: z
     .object({
-      startDate: z
-        .date()
-        .refine(
-          (val) => val.getTime() > new Date(Date.now() + 5 * 60 * 1000).getTime(),
-          'Must be at least 5 minutes from now'
-        ),
+      startDate: z.date(),
       endDate: z.date(),
     })
     .required()

@@ -13,13 +13,7 @@ export const stepConfigurations: StepConfig[] = [
 
 const CliffFieldsEnabled = z.object({
   cliffEnabled: z.literal(true),
-  cliffEndDate: z
-    .date()
-    .nullable()
-    .refine(
-      (val) => val && val.getTime() > new Date(Date.now() + 10 * 60 * 1000).getTime(),
-      'Must be at least 10 minutes from now'
-    ),
+  cliffEndDate: z.date().nullable(),
   cliffAmount: z.string().refine((val) => Number(val) > 0, 'Must be at least 0'),
 })
 const CliffFieldsDisabled = z.object({ cliffEnabled: z.literal(false) })
@@ -28,12 +22,7 @@ const CliffFields = CliffFieldsEnabled.or(CliffFieldsDisabled)
 export const CreateVestingBaseSchema = z.object({
   id: z.string(),
   currency: ZToken,
-  startDate: z
-    .date()
-    .refine(
-      (val) => val.getTime() > new Date(Date.now() + 5 * 60 * 1000).getTime(),
-      'Must be at least 5 minutes from now'
-    ),
+  startDate: z.date(),
   recipient: ZAddress,
   stepAmount: z.string().refine((val) => (val !== '' ? Number(val) > 0 : true), 'Must be at least 0'),
   stepPayouts: z.number().min(1).int(),

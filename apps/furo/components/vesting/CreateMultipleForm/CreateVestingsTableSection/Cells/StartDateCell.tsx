@@ -1,13 +1,25 @@
-import { classNames, Input } from '@sushiswap/ui'
-import { format } from 'date-fns'
-import React, { FC } from 'react'
+import { classNames } from '@sushiswap/ui'
+import { DatePicker } from '@sushiswap/ui/input/DatePicker'
+import React, { FC, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { CreateMultipleVestingFormSchemaType } from '../../schema'
 import { CellProps } from './types'
 
 export const StartDateCell: FC<CellProps> = ({ index }) => {
-  const { control } = useFormContext<CreateMultipleVestingFormSchemaType>()
+  const { control, watch, setError, clearErrors } = useFormContext<CreateMultipleVestingFormSchemaType>()
+
+  const startDate = watch(`vestings.${index}.startDate`)
+
+  // Temporary solution for when Zod fixes conditional validation
+  // https://github.com/colinhacks/zod/issues/1394
+  useEffect(() => {
+    if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
+      setError(`vestings.${index}.startDate`, { type: 'custom', message: 'Must be at least 5 minutes from now' })
+    } else {
+      clearErrors(`vestings.${index}.startDate`)
+    }
+  }, [clearErrors, index, setError, startDate])
 
   return (
     <Controller
@@ -15,19 +27,25 @@ export const StartDateCell: FC<CellProps> = ({ index }) => {
       name={`vestings.${index}.startDate`}
       render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
         return (
-          <Input.DatetimeLocal
+          <DatePicker
             name={name}
-            min={new Date(Date.now() + 5 * 60 * 1000)?.toISOString().slice(0, 16)}
             onBlur={onBlur}
-            variant="unstyled"
             className={classNames(
               error?.message ? ' !border-red' : 'border-transparent border-none',
               'border-0 !border-b-[1px]',
-              'py-2 without-ring !bg-transparent !px-0 truncate text-sm border-0'
+              'py-2 without-ring !bg-transparent !px-0 truncate text-sm border-0 font-medium'
             )}
-            value={value ? format(value, "yyyy-MM-dd'T'HH:mm") : ''}
-            onChange={(value) => onChange(new Date(value))}
-            error={!!error?.message}
+            onChange={onChange}
+            selected={value}
+            portalId="root-portal"
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}
+            timeCaption="time"
+            minDate={new Date(Date.now() + 5 * 60 * 1000)}
+            dateFormat="MMM d, yyyy HH:mm"
+            placeholderText="Select date"
+            autoComplete="off"
           />
         )
       }}
