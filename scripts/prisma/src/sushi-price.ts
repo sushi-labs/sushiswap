@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { getBuiltGraphSDK, TokenPricesQuery } from '../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from '../config'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from './config'
 import { mergePrices } from './entity/price/load'
 import { filterTokenPrices } from './entity/price/transform'
 import { createTokens } from './entity/token/load'
