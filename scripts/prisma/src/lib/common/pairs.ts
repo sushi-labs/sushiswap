@@ -19,7 +19,10 @@ async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId as keyof typeof SUSHISWAP_SUBGRAPH_NAME]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({ host: GRAPH_HOST[chainId], name: subgraphName })
-
+  if(!ids) {
+    console.log("warning: no ids", chainId)
+    return []
+  }
   const { pairs, bundle } = await sdk.Pairs({
     first: ids.length,
     where: { id_in: ids.map((id) => id.toLowerCase()) },

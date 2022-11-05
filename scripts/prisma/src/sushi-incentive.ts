@@ -105,7 +105,7 @@ async function transform(data: { chainId: ChainId; farms: Record<string, Farm> }
     .flat()
 
   const filteredTokens = await filterTokens(client, tokens)
-  console.log(`TEST, tokens: ${filteredTokens.map(token => token.address).join(',')}`)
+  console.log(`TEST, token needed: ${filteredTokens.length}`)
   const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(client, incentives)
 
   return { incentivesToCreate, incentivesToUpdate, tokens: filteredTokens }

@@ -33,7 +33,6 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
     getPairs(lpTokens, ChainId.ETHEREUM),
     getTokenBalancesOf(lpTokens, MASTERCHEF_ADDRESS[ChainId.ETHEREUM], ChainId.ETHEREUM),
   ])
-
   const blocksPerDay = averageBlockTime ? secondsInDay / averageBlockTime : 0
   const sushiPerDay = SUSHI_PER_BLOCK * blocksPerDay
 
