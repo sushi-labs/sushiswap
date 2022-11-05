@@ -2,7 +2,7 @@ sources:
   - name: Trident
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:sushi-labs/trident-optimism}
+        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:sushi-qa/trident-optimism}
     transforms:
       - autoPagination:
           validateSchema: true

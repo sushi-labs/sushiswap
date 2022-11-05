@@ -22,6 +22,7 @@ export async function filterPools(
     volumeNative: true,
     token0Price: true,
     token1Price: true,
+    apr: true,
   })
 
   const poolsFound = await client.pool.findMany({
@@ -48,7 +49,8 @@ export async function filterPools(
       pool.volumeUSD !== poolExists.volumeUSD ||
       pool.volumeNative !== poolExists.volumeNative ||
       pool.token0Price !== poolExists.token0Price ||
-      pool.token1Price !== poolExists.token1Price
+      pool.token1Price !== poolExists.token1Price ||
+      pool.apr !== poolExists.apr
     ) {
       poolsToUpdate++
       return true

@@ -31,6 +31,8 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
       decimals
     }
     name
+    type
+    source
     swapFee
     twapEnabled
     reserve0
@@ -40,6 +42,7 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
     token1Price
     liquidityUSD
     liquidityNative
+    apr
     volumeUSD
     volumeNative
     createdAtTimestamp

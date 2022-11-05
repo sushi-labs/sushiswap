@@ -1,10 +1,10 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainIds, chainName } from '@sushiswap/chain'
-import { SUSHISWAP_ENABLED_NETWORKS } from '@sushiswap/graph-config'
+import { SUSHISWAP_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { request } from 'http'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, PairsQuery } from '../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from './config'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
 import { mergePools } from './entity/pool/load'
 import { filterPools } from './entity/pool/transform'
 import { createTokens } from './entity/token/load'
@@ -13,47 +13,72 @@ import { filterTokens } from './entity/token/transform'
 const client = new PrismaClient()
 
 const PROTOCOL = 'SushiSwap'
-const VERSION = 'V2'
-const POOL_TYPE = 'ConstantProductPool'
+const VERSION_V2 = 'Legacy'
+// const VERSION_V3 = 'V2'
+// const POOL_TYPE = 'ConstantProductPool'
 
 async function main() {
   const startTime = performance.now()
-  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}, version: ${VERSION}, type: ${POOL_TYPE}`)
+  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}, version: ${VERSION_V2}`)
 
   // EXTRACT
   const exchanges = await extract()
-  console.log(`EXTRACT - Pairs extracted from ${exchanges.length} different exchanges`)
+  console.log(`EXTRACT - Pairs extracted from ${exchanges.length} different subgraphs`)
 
   // TRANSFORM
   const { tokens, pools } = await transform(exchanges)
 
   // LOAD
   await createTokens(client, tokens)
-  await mergePools(client, PROTOCOL, VERSION, pools)
+  await mergePools(client, PROTOCOL, VERSION_V2, pools)
   const endTime = performance.now()
 
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
 
 async function extract() {
-  console.log(`Fetchin data from chains: `, SUSHISWAP_CHAINS.map((chainId) => chainName[chainId]).join(', '))
-  const requests = SUSHISWAP_CHAINS.map((chainId) => {
+  console.log(
+    `Fetching pools from sushiswap from chains: `,
+    SUSHISWAP_CHAINS.map((chainId) => chainName[chainId]).join(', ')
+  )
+  const legacyRequests = SUSHISWAP_CHAINS.map((chainId) => {
     const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] })
     const data = []
     const size = 1000
-    for (let i = 0; i < 8; i++) {
+    // TODO: use auto pagination when it works, currently skip only works up to 5000, and we have more than 6k pools on polygon
+    for (let i = 0; i < 6; i++) {
       data.push(sdk.Pairs({ first: size, skip: i * size }).catch(() => undefined))
     }
     return { chainId, data }
   })
-  // const allRequests = requests.map( request => request.data).flat()
+  const tridentRequests = TRIDENT_CHAINS.map((chainId) => {
+    const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
+    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] })
+    const data = []
+    const size = 1000
+    for (let i = 0; i < 6; i++) {
+      data.push(sdk.Pairs({ first: size, skip: i * size }).catch(() => undefined))
+    }
+    return { chainId, data }
+  })
+  // OLD TRIDENT POLYGON
+  const polygon = [ChainId.POLYGON].map((chainId) => {
+    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: 'sushi-0m/trident-polygon' })
+    const data = []
+    const size = 1000
+    for (let i = 0; i < 6; i++) {
+      data.push(sdk.Pairs({ first: size, skip: i * size }).catch(() => undefined))
+    }
+    return { chainId, data }
+  })
+
   return await Promise.all(
-    requests.map((request) =>
+    [...legacyRequests, ...tridentRequests, ...polygon].map((request) =>
       Promise.all(request.data).then((data) => {
         const pairs = data.filter((d) => d !== undefined).flat()
         return { chainId: request.chainId, data: pairs }
       })
-    )
+    ),
   )
 }
 
@@ -64,20 +89,17 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
   const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = data
     .map((exchange) => {
-      // const pairs = exchange.data.filter((d) => d !== undefined).flat().reduce( (pair => pair?.pairs.length)
-      // index issue, 1 works.. nothing else nope
       return exchange.data
         .map((batch) => {
           if (!batch?.pairs) return []
-          if (exchange.chainId == undefined) {
-            console.log(`batch.chainId == undefined`)
-            return []
-          }
-          if (!SUSHISWAP_CHAINS.includes(exchange.chainId)) {
-            console.log(`Chain ID ${exchange.chainId} is not in the list of supported chains`)
-            return []
-          }
-          // console.log(`TRANSFORM - ${chainName[SUSHISWAP_CHAINS[batch.chainId]]} contains ${exchange.pairs.length} pairs`)
+          // if (exchange.chainId == undefined) {
+          //   console.log(`batch.chainId == undefined`)
+          //   return []
+          // }
+          // if (!SUSHISWAP_CHAINS.includes(exchange.chainId)) {
+          //   console.log(`Chain ID ${exchange.chainId} is not in the list of supported chains`)
+          //   return []
+          // }
           return batch?.pairs.map((pair) => {
             tokens.push(
               Prisma.validator<Prisma.TokenCreateManyInput>()({
@@ -106,8 +128,8 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               address: pair.id,
               name: pair.name,
               protocol: PROTOCOL,
-              version: VERSION,
-              type: POOL_TYPE,
+              version: pair.source,
+              type: pair.type,
               network: chainName[exchange.chainId],
               chainId: exchange.chainId.toString(),
               swapFee: Number(pair.swapFee) / 10000,
@@ -117,6 +139,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               // reserve0:  BigInt(pair.reserve0),
               // reserve1:  BigInt(pair.reserve1),
               // totalSupply: BigInt(pair.liquidity),
+              apr: Number(pair.apr),
               reserve0: pair.reserve0,
               reserve1: pair.reserve1,
               totalSupply: pair.liquidity,

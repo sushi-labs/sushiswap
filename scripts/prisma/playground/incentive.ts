@@ -48,6 +48,32 @@ async function main() {
   //   // },
   // })
   // console.log("results: ", results)
+
+  
+  const results = await prisma.pool.findMany({
+    where: {
+      incentives: {
+        some: {
+        }
+      }
+    },
+    include: { 
+      incentives: {
+        include: {
+        rewardToken: true
+        },
+      }
+    },
+  })
+  results.forEach( result => {
+    console.log(`${result.name} - Pool APR: ${result.apr}`)
+    if (result.incentives.length != 0) {
+      console.log(`Farm APR: ${result.incentives.map( i => `${i.rewardToken.symbol} ${i.apr}`).join(', ')}`)
+    }
+    console.log(``)
+  })
+  console.log("results: ", results.length)
+  
 }
 
 

@@ -17,6 +17,15 @@ export const SUSHISWAP_CHAINS = [
   ChainId.BOBA,
 ]
 
+
+export const TRIDENT_CHAINS = [
+  ChainId.POLYGON,
+  ChainId.OPTIMISM,
+  ChainId.METIS,
+  ChainId.KAVA,
+]
+
+
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
 
 export const GRAPH_HOST: Record<number | string, string> = {

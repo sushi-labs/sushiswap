@@ -43,7 +43,7 @@ async function main() {
   // // LOAD
   await createTokens(client, tokens)
   await mergeIncentives(client, incentivesToCreate, incentivesToUpdate)
-
+  
   const endTime = performance.now()
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
