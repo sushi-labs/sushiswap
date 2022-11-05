@@ -23,6 +23,7 @@ export async function filterPools(
     token0Price: true,
     token1Price: true,
     apr: true,
+    totalApr: true
   })
 
   const poolsFound = await client.pool.findMany({

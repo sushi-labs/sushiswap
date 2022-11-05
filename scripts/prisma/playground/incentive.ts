@@ -49,8 +49,26 @@ async function main() {
   // })
   // console.log("results: ", results)
 
+  const poolsWithoutIncentives = await prisma.pool.findMany({
+    where: {
+      incentives: {
+        none: {
+        }
+      }
+    },
+    orderBy: {
+      totalApr: 'desc'
+    },
+    take: 25
+  }
+  )
+
+  console.log("WTIHOUT INCENTIVES")
+  poolsWithoutIncentives.forEach( result => {
+    console.log(`${result.name} - TOTAL APR: ${((result.totalApr ?? 0) * 100).toFixed(2)}%`)
+  })
   
-  const results = await prisma.pool.findMany({
+  const poolsWithIncentives = await prisma.pool.findMany({
     where: {
       incentives: {
         some: {
@@ -64,15 +82,17 @@ async function main() {
         },
       }
     },
+    orderBy: {
+      totalApr: 'desc'
+    },
+    take: 25
+  }
+  )
+  console.log("WTIH INCENTIVES")
+  poolsWithIncentives.forEach( result => {
+    console.log(`${result.name} - TOTAL APR: ${((result.totalApr ?? 0) * 100).toFixed(2)}%`)
   })
-  results.forEach( result => {
-    console.log(`${result.name} - Pool APR: ${result.apr}`)
-    if (result.incentives.length != 0) {
-      console.log(`Farm APR: ${result.incentives.map( i => `${i.rewardToken.symbol} ${i.apr}`).join(', ')}`)
-    }
-    console.log(``)
-  })
-  console.log("results: ", results.length)
+  console.log("results: ", poolsWithIncentives.length)
   
 }
 

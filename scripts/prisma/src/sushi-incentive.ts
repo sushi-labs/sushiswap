@@ -13,6 +13,7 @@ import { filterIncentives } from './entity/incentive/transform'
 import { createTokens } from './entity/token/load'
 import { filterTokens } from './entity/token/transform'
 import { Farm } from './lib/types'
+import { updatePoolsWithIncentivesTotalApr } from './entity/pool/load'
 
 const client = new PrismaClient()
 
@@ -43,6 +44,7 @@ async function main() {
   // // LOAD
   await createTokens(client, tokens)
   await mergeIncentives(client, incentivesToCreate, incentivesToUpdate)
+  await updatePoolsWithIncentivesTotalApr(client)
   
   const endTime = performance.now()
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)

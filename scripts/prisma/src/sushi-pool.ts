@@ -149,6 +149,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               volumeNative: pair.volumeNative,
               token0Price: pair.token0Price,
               token1Price: pair.token1Price,
+              totalApr: Number(pair.apr),
               // createdAtTimestamp: new Date(pair.createdAtTimestamp),
               createdAtBlockNumber: pair.createdAtBlock,
               // createdAtBlockNumber: BigInt(pair.createdAtBlock),
