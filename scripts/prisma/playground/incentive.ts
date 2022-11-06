@@ -4,51 +4,12 @@ import { ChainId } from '@sushiswap/chain'
 const prisma = new PrismaClient()
 
 async function main() {
-  // const poolAddress = '0x001b6450083e531a5a7bf310bd2c1af4247e23d4'
-  // const results = await prisma.incentive.findMany({
-  //   // where: {
-  //     // id: "0x06da0fd433c1a5d7a4faa01111c044910a184553"
-  //   // },
-  //   include: {
-  //     // token0: true,
-  //     pool: true,
-  //     rewardToken: true,
-  //   },
-  //   // select: {
-  //     // id: true,
-  //   //   pool: true,
-  //   //   apr: true,
-  //   // },
-  // })
-  // if (results) {
-  //   results.forEach( result => {
-  //     // console.log({result})
-  //     // console.log(`incentive tokens: ${result.id} -  ${result.pool.id}  ${result.rewardToken.symbol}`)
+  await pools()
+  await poolsWithIncentives()
+  await incentivizedPools()
+}
 
-  //   })
-  //   console.log("results: ", results.length)
-  // } else {
-  //   console.log("no incentive found")
-  // }
-
-
-  // const results = await prisma.pool.count({
-  //   where: {
-  //     chainId: ChainId.ETHEREUM.toString(),
-  //   },
-  //   // include: {
-  //   //   // token0: true,
-  //   //   pool: true,
-  //   //   rewardToken: true,
-  //   // },
-  //   // select: {
-  //     // id: true,
-  //   //   pool: true,
-  //   //   apr: true,
-  //   // },
-  // })
-  // console.log("results: ", results)
-
+async function pools() {
   const poolsWithoutIncentives = await prisma.pool.findMany({
     where: {
       incentives: {
@@ -59,15 +20,17 @@ async function main() {
     orderBy: {
       totalApr: 'desc'
     },
-    take: 25
+    take: 10
   }
   )
 
   console.log("WTIHOUT INCENTIVES")
   poolsWithoutIncentives.forEach( result => {
-    console.log(`${result.name} - TOTAL APR: ${((result.totalApr ?? 0) * 100).toFixed(2)}%`)
+    console.log(` ${result.name}  ${result.isIncentivized} - TOTAL APR: ${((result.totalApr ?? 0) * 100).toFixed(2)}%`)
   })
-  
+}
+
+async function poolsWithIncentives() {
   const poolsWithIncentives = await prisma.pool.findMany({
     where: {
       incentives: {
@@ -85,15 +48,42 @@ async function main() {
     orderBy: {
       totalApr: 'desc'
     },
-    take: 25
+    take: 10
   }
   )
   console.log("WTIH INCENTIVES")
   poolsWithIncentives.forEach( result => {
+    console.log(` ${result.id} ${result.name} ${result.isIncentivized} - TOTAL APR: ${((result.totalApr ?? 0) * 100).toFixed(2)}%`)
+  })
+  console.log("results: ", poolsWithIncentives.length)
+
+}
+
+
+async function incentivizedPools() {
+  const poolsWithIncentives = await prisma.pool.findMany({
+    where: {
+      isIncentivized: true
+    },
+    include: { 
+      incentives: {
+        include: {
+        rewardToken: true
+        },
+      }
+    },
+    orderBy: {
+      totalApr: 'desc'
+    },
+    take: 10
+  }
+  )
+  console.log("INCENTIVIZED POOLS")
+  poolsWithIncentives.forEach( result => {
     console.log(`${result.name} - TOTAL APR: ${((result.totalApr ?? 0) * 100).toFixed(2)}%`)
   })
   console.log("results: ", poolsWithIncentives.length)
-  
+
 }
 
 

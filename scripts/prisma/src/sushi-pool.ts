@@ -86,6 +86,8 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
   pools: Prisma.PoolCreateManyInput[]
   tokens: Prisma.TokenCreateManyInput[]
 }> {
+  const yesterday = new Date(Date.now() - 86400000);
+  const unix24hAgo = Math.floor(yesterday.getTime() / 1000)
   const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = data
     .map((exchange) => {
@@ -123,6 +125,8 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
                 decimals: Number(pair.token1.decimals),
               })
             )
+            const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo
+            const apr = isAprValid ? Number(pair.apr) : 0
             return Prisma.validator<Prisma.PoolCreateManyInput>()({
               id: exchange.chainId.toString().concat('_').concat(pair.id),
               address: pair.id,
@@ -139,7 +143,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               // reserve0:  BigInt(pair.reserve0),
               // reserve1:  BigInt(pair.reserve1),
               // totalSupply: BigInt(pair.liquidity),
-              apr: Number(pair.apr),
+              apr,
               reserve0: pair.reserve0,
               reserve1: pair.reserve1,
               totalSupply: pair.liquidity,
@@ -149,7 +153,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               volumeNative: pair.volumeNative,
               token0Price: pair.token0Price,
               token1Price: pair.token1Price,
-              totalApr: Number(pair.apr),
+              totalApr: apr,
               // createdAtTimestamp: new Date(pair.createdAtTimestamp),
               createdAtBlockNumber: pair.createdAtBlock,
               // createdAtBlockNumber: BigInt(pair.createdAtBlock),

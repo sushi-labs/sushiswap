@@ -80,7 +80,6 @@ model Pool {
   token0Price String // Price of token0 in token1
   token1Price String // Price of token1 in token0
 
-  farmApr Float?
   apr  Float?
   totalApr  Float?
   isIncentivized Boolean @default(false)

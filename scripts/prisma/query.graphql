@@ -43,6 +43,7 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
     liquidityUSD
     liquidityNative
     apr
+    aprUpdatedAtTimestamp
     volumeUSD
     volumeNative
     createdAtTimestamp

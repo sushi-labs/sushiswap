@@ -15,7 +15,7 @@ export async function mergePools(
 ) {
   const containsProtocolPools = await alreadyContainsProtocol(client, protocol, version)
   if (containsProtocolPools) {
-    const upsertedPools = await upsertPools(client, pools)
+    await upsertPools(client, pools)
   } else {
     await createPools(client, pools)
   }
@@ -84,7 +84,6 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
   const updatedPools = await Promise.all(upsertManyPools)
   const endTime = performance.now()
   console.log(`LOAD - Updated ${updatedPools.length} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
-  return updatedPools
 }
 
 async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
@@ -136,13 +135,17 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
       }
       return best
     }, 0)
+
     const totalApr = bestIncentiveApr + (pool.apr ?? 0)
+    const isIncentivized = pool.incentives.some((incentive) => incentive.rewardPerDay > 0)
+
     return client.pool.update({
       where: {
         id: pool.id,
       },
       data: {
         totalApr,
+         isIncentivized,
       },
     })
   })
