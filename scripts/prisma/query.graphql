@@ -6,6 +6,7 @@ query TokenPrices($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter,
       name
       symbol
       decimals
+      liquidity
     }
     derivedNative
   }

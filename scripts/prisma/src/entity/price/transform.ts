@@ -23,9 +23,6 @@ export async function filterTokenPrices(
     select: tokenPriceSelect,
   })
 
-  // let pricesToCreate = 0
-  // let pricesToUpdate = 0
-
   const pricesToCreate = prices.filter((price) => {
     const priceExists = priceFound.find((p) => p.id === price.id)
     if (!priceExists) {
