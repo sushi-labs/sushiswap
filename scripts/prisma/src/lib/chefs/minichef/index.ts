@@ -79,6 +79,7 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
             rewardToken: {
               address: SUSHI[chainId]?.address ?? '',
               decimals: SUSHI[chainId]?.decimals ?? 18,
+              name: SUSHI[ChainId.ETHEREUM].name ?? '',
               symbol: SUSHI[chainId]?.symbol ?? '',
             },
             rewarder: {
@@ -120,6 +121,7 @@ export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId;
                   address: pool.rewarder.rewardToken,
                   decimals: token.decimals,
                   symbol: token.symbol,
+                  name: token.name,
                 },
                 rewarder: {
                   address: pool.rewarder.id,

@@ -20,7 +20,7 @@ async function pools() {
     orderBy: {
       totalApr: 'desc'
     },
-    take: 10
+    take: 40
   }
   )
 

@@ -84,7 +84,7 @@ async function transform(data: { chainId: ChainId; farms: Record<string, Farm> }
                   address: incentive.rewardToken.address.toLowerCase(),
                   network: chainName[chainId],
                   chainId: chainId.toString(),
-                  name: 'TODO',
+                  name: incentive.rewardToken.name,
                   symbol: incentive.rewardToken.symbol,
                   decimals: incentive.rewardToken.decimals,
                 })

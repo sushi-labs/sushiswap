@@ -9,6 +9,7 @@ import { divBigNumberToNumber } from './utils'
 interface Token {
   id: string
   symbol: string
+  name: string
   decimals: number
   liquidity: number
   derivedUSD: number
@@ -26,6 +27,7 @@ const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token
   return tokens.map((token) => ({
     id: token.id,
     symbol: token.symbol,
+    name: token.name,
     decimals: Number(token.decimals),
     liquidity: Number(token.liquidity),
     derivedUSD: token.price.derivedNative * bundle?.nativePrice,
@@ -46,6 +48,7 @@ const getTridentTokens = async (ids: string[], chainId: ChainId): Promise<Token[
     id: token.id,
     symbol: token.symbol,
     decimals: Number(token.decimals),
+    name: token.name,
     liquidity: divBigNumberToNumber(token.liquidity, token.decimals),
     derivedUSD: token.price?.derivedNative * bundle?.nativePrice,
   }))

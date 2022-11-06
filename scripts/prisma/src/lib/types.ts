@@ -6,6 +6,7 @@ export interface Farm {
     rewardToken: {
       address: string
       decimals: number
+      name: string
       symbol: string
     }
     rewarder: {

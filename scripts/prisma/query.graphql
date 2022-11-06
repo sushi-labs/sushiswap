@@ -59,6 +59,7 @@ query Tokens($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: B
   tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
     symbol
+    name
     decimals
     liquidity
 
