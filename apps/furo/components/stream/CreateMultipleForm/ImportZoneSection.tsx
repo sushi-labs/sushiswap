@@ -4,10 +4,12 @@ import { DownloadIcon } from '@heroicons/react/outline'
 import { nanoid } from '@reduxjs/toolkit'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { Button, Dropzone, Typography } from '@sushiswap/ui'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { Button, Dropzone, NetworkIcon, Typography } from '@sushiswap/ui'
+import { Wallet } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useAccount } from 'wagmi'
 import { fetchToken, FetchTokenResult } from 'wagmi/actions'
 
 import { useImportErrorContext } from '../../vesting/CreateMultipleForm/ImportErrorContext'
@@ -19,6 +21,8 @@ interface ImportZoneSection {
 }
 
 export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
+  const isMounted = useIsMounted()
+  const { address } = useAccount()
   const { errors, setErrors } = useImportErrorContext<CreateMultipleStreamFormSchemaType>()
   const { control, trigger, watch } = useFormContext<CreateMultipleStreamFormSchemaType>()
   const { append } = useFieldArray({
@@ -191,12 +195,24 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
           </Button>
         </div>
       </div>
-      <Dropzone
-        accept={{
-          'text/csv': ['.csv'],
-        }}
-        onDrop={onDrop}
-      />
+      <div className="grid relative">
+        {isMounted && !address && (
+          <div className="absolute inset-0 z-10 backdrop-blur-[2px] flex justify-center items-center">
+            <Wallet.Button size="sm" className="shadow-md shadow-black/40">
+              Connect Wallet
+            </Wallet.Button>
+          </div>
+        )}
+        <div className="absolute -ml-2 -mt-2">
+          <NetworkIcon chainId={chainId} className="w-6 h-6" />
+        </div>
+        <Dropzone
+          accept={{
+            'text/csv': ['.csv'],
+          }}
+          onDrop={onDrop}
+        />
+      </div>
     </div>
   )
 }
