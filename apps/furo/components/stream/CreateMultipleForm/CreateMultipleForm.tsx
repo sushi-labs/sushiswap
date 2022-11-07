@@ -32,8 +32,8 @@ export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
     },
   })
 
-  const { control, reset } = methods
-
+  const { control, reset, watch } = methods
+  const formData = watch()
   const onReview = useCallback(() => {
     setReview(true)
   }, [])
@@ -45,6 +45,12 @@ export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
   useEffect(() => {
     reset()
   }, [chainId, reset])
+
+  try {
+    CreateMultipleStreamModelSchema.parse(formData)
+  } catch (e) {
+    console.log(e)
+  }
 
   return (
     <div className={classNames('flex flex-col gap-20')}>

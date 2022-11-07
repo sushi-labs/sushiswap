@@ -97,7 +97,6 @@ export const ImportZoneSection: FC<ImportZoneSection> = ({ chainId }) => {
                   errors.streams = []
                 }
 
-                console.log(amount)
                 let _startDate: Date | null = new Date(Number(startDate) * 1000)
                 let _endDate: Date | null = new Date(Number(endDate) * 1000)
                 let _recipient: string | undefined = recipient
