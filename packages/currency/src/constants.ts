@@ -253,7 +253,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.BOBA]: WETH9_ADDRESS[ChainId.BOBA],
   [ChainId.BOBA_AVAX]: '0x26c319B7B2cF823365414d082698C8ac90cbBA63',
   [ChainId.BTTC]: '0x0000000000000000000000000000000000001010',
-  // [ChainId.BOBA_BNB]: '',
+  [ChainId.BOBA_BNB]: '0xC58aaD327D6D58D979882601ba8DDa0685B505eA',
 } as const
 
 export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
@@ -442,13 +442,13 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     symbol: 'WBTT',
     name: 'Wrapped BitTorrent Token',
   }),
-  // [ChainId.BOBA_BNB]: new Token({
-  //   chainId: ChainId.BOBA_BNB,
-  //   address: WNATIVE_ADDRESS[ChainId.BOBA_BNB],
-  //   decimals: 18,
-  //   symbol: 'WBOBA',
-  //   name: 'Wrapped Boba',
-  // }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: WNATIVE_ADDRESS[ChainId.BOBA_BNB],
+    decimals: 18,
+    symbol: 'WBOBA',
+    name: 'Wrapped Boba',
+  }),
 }
 
 export const SUSHI_ADDRESS: AddressMap = {

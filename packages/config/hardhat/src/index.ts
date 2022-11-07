@@ -392,7 +392,7 @@ export const defaultConfig: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
-    'boba-bsc': {
+    'boba-bnb': {
       url: 'https://bnb.boba.network',
       accounts,
       chainId: 56288,
