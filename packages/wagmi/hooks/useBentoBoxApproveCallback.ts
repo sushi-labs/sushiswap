@@ -5,8 +5,9 @@ import { useCallback, useMemo, useState } from 'react'
 import {
   useAccount,
   useContractRead,
-  useDeprecatedContractWrite,
+  useContractWrite,
   useNetwork,
+  usePrepareContractWrite,
   UserRejectedRequestError,
   useSignTypedData,
 } from 'wagmi'
@@ -29,11 +30,13 @@ export function useBentoBoxApproveCallback({
   const { address, connector } = useAccount()
   const { chain } = useNetwork()
 
-  const { writeAsync } = useDeprecatedContractWrite({
+  const { config } = usePrepareContractWrite({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'setMasterContractApproval',
     args: [address, masterContract, true, 0, HashZero, HashZero],
   })
+
+  const { writeAsync } = useContractWrite(config)
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
     ...getBentoBoxContractConfig(chain?.id),
@@ -68,7 +71,8 @@ export function useBentoBoxApproveCallback({
       !chain ||
       !(chain.id in BENTOBOX_ADDRESS) ||
       !masterContract ||
-      approvalState !== ApprovalState.NOT_APPROVED
+      approvalState !== ApprovalState.NOT_APPROVED ||
+      !writeAsync
     ) {
       return
     }
