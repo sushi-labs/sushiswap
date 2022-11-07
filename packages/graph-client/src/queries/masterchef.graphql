@@ -37,14 +37,12 @@ query CrossChainChefUser(
   $first: Int = 1000
   $skip: Int = 0
   $where: User_filter
-  $block: Block_height
   $chainIds: [Int!]!
 ) {
   crossChainChefUser(
     first: $first,
     skip: $skip,
     where: $where,
-    block: $block,
     chainIds: $chainIds,
   ) {
     id
