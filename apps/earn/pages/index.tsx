@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/solid'
-import { Button, Link, OnsenIcon } from '@sushiswap/ui'
+import { Button, Link, OnsenIcon, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useMemo } from 'react'
@@ -69,7 +69,9 @@ const _Pools = ({ selectedNetworks }) => {
       <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md space-y-4">
-            <h2 className="text-2xl font-semibold text-slate-50">Earn</h2>
+            <Typography variant="hero" weight={600} className="text-slate-50">
+              Earn
+            </Typography>
             <p className="text-slate-300">Earn fees by providing liquidity and staking SUSHI into xSUSHI.</p>
           </div>
           <div className="flex justify-end flex-grow not-prose">
