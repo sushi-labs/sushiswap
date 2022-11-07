@@ -26,7 +26,7 @@ export function useBentoBoxApproveCallback({
   onSignature?(payload: Signature): void
   onSuccess?(data: NotificationData): void
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
   const { chain } = useNetwork()
 
   const { writeAsync } = useDeprecatedContractWrite({
@@ -62,6 +62,36 @@ export function useBentoBoxApproveCallback({
     return isBentoBoxApproved ? ApprovalState.APPROVED : ApprovalState.NOT_APPROVED
   }, [isBentoBoxApproved, signature, isLoading])
 
+  const legacyApproval = useCallback(async () => {
+    if (
+      !address ||
+      !chain ||
+      !(chain.id in BENTOBOX_ADDRESS) ||
+      !masterContract ||
+      approvalState !== ApprovalState.NOT_APPROVED
+    ) {
+      return
+    }
+
+    const data = await writeAsync()
+    if (onSuccess) {
+      const ts = new Date().getTime()
+      onSuccess({
+        type: 'approval',
+        chainId: chain?.id,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Approving BentoBox Master Contract`,
+          completed: `Successfully approved the master contract`,
+          failed: 'Something went wrong approving the master contract',
+        },
+        groupTimestamp: ts,
+        timestamp: ts,
+      })
+    }
+  }, [address, approvalState, chain, masterContract, onSuccess, writeAsync])
+
   const approveBentoBox = useCallback(async (): Promise<void> => {
     if (!address) {
       console.error('no account connected')
@@ -87,6 +117,12 @@ export function useBentoBoxApproveCallback({
       console.error('approve was called unnecessarily')
       return
     }
+
+    // Use regular approvals for safe apps
+    if (connector && connector.id === 'safe') {
+      return await legacyApproval()
+    }
+
     const { data: nonces } = await getNonces()
     try {
       const data = await signTypedDataAsync({
@@ -117,26 +153,19 @@ export function useBentoBoxApproveCallback({
     } catch (e: unknown) {
       if (e instanceof UserRejectedRequestError) return
       console.error('Error approving BentoBox, attempting regular approval instead', e)
-      // Regular approval as fallback
-      const data = await writeAsync()
-      if (onSuccess) {
-        const ts = new Date().getTime()
-        onSuccess({
-          type: 'approval',
-          chainId: chain?.id,
-          txHash: data.hash,
-          promise: data.wait(),
-          summary: {
-            pending: `Approving BentoBox Master Contract`,
-            completed: `Successfully approved the master contract`,
-            failed: 'Something went wrong approving the master contract',
-          },
-          groupTimestamp: ts,
-          timestamp: ts,
-        })
-      }
+      await legacyApproval()
     }
-  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, onSignature, writeAsync, onSuccess])
+  }, [
+    address,
+    chain,
+    masterContract,
+    approvalState,
+    connector,
+    getNonces,
+    legacyApproval,
+    signTypedDataAsync,
+    onSignature,
+  ])
 
   return useMemo(() => [approvalState, signature, approveBentoBox], [approvalState, approveBentoBox, signature])
 }
