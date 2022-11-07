@@ -41,6 +41,14 @@ export const DrawerRoot: FC<ProviderProps> = ({ children }) => {
     if (ref.current) setRender(true)
   }, [])
 
+  useEffect(() => {
+    if (open) {
+      document.body.parentElement?.classList.add('overflow-hidden')
+    } else {
+      document.body.parentElement?.classList.remove('overflow-hidden')
+    }
+  }, [open])
+
   return (
     <DrawerContext.Provider value={{ element: ref?.current, open, setOpen }}>
       {typeof children === 'function' ? children({ open, setOpen }) : children}
@@ -102,7 +110,7 @@ export const Panel: FC<PanelProps> = ({ children, className }) => {
           />
         </Transition.Child>
         <Transition.Child
-          className="w-full sm:w-[380px] bg-slate-800 top-0 bottom-0 absolute px-5 shadow-xl shadow-black/30 border-l border-slate-200/10"
+          className="overflow-y-auto scroll w-full sm:w-[380px] bg-slate-800 top-0 bottom-0 absolute px-5 shadow-xl shadow-black/30 border-l border-slate-200/10"
           enter="transform transition ease-in-out duration-300"
           enterFrom="translate-x-0"
           enterTo="translate-x-[-100%]"
