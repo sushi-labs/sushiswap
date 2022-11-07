@@ -57,6 +57,8 @@ export const UNI = addressMapToTokenMap(
 
 export const BUSD_ADDRESS = {
   [ChainId.BSC]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+  [ChainId.BOBA_AVAX]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+  [ChainId.BOBA_BNB]: '0x4a2c2838c3907D024916c3f4Fe07832745Ae4bec',
 } as const
 
 export const BUSD = addressMapToTokenMap(
@@ -523,6 +525,8 @@ export const USDC_ADDRESS = {
   [ChainId.METIS]: '0xEA32A96608495e54156Ae48931A7c20f0dcc1a21',
   [ChainId.ARBITRUM_NOVA]: '0x750ba8b76187092B0D1E87E28daaf484d1b5273b',
   [ChainId.BOBA]: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
+  [ChainId.BOBA_AVAX]: '0x12bb1A120dcF8Cb7152eDAC9f04d176DD7f41F7e',
+  [ChainId.BOBA_BNB]: '0x9F98f9F312D23d078061962837042b8918e6aff2',
 } as const
 
 export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
@@ -533,10 +537,17 @@ export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
       name: 'USD Coin',
     },
     USDC_ADDRESS
-  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, ChainId.BSC>),
+  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, ChainId.BSC | ChainId.BOBA_BNB>),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
     address: USDC_ADDRESS[ChainId.BSC],
+    decimals: 18,
+    symbol: 'USDC',
+    name: 'USD Coin',
+  }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: USDC_ADDRESS[ChainId.BOBA_BNB],
     decimals: 18,
     symbol: 'USDC',
     name: 'USD Coin',
@@ -567,6 +578,8 @@ export const USDT_ADDRESS = {
   [ChainId.METIS]: '0xbB06DCA3AE6887fAbF931640f67cab3e3a16F4dC',
   [ChainId.ARBITRUM_NOVA]: '0xeD9d63a96c27f87B07115b56b2e3572827f21646',
   [ChainId.BOBA]: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
+  [ChainId.BOBA_AVAX]: '0xfaA13D82756f1e0e4dec9416b83121db3Fc35199',
+  [ChainId.BOBA_BNB]: '0x1E633Dcd0d3D349126983D58988051F7c62c543D',
 } as const
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
@@ -577,7 +590,7 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
       name: 'Tether USD',
     },
     USDT_ADDRESS
-  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, ChainId.BSC>),
+  ) as Omit<Record<keyof typeof USDT_ADDRESS, Token>, ChainId.BSC | ChainId.BSC_TESTNET | ChainId.BOBA_BNB>),
   [ChainId.BSC]: new Token({
     chainId: ChainId.BSC,
     address: USDT_ADDRESS[ChainId.BSC],
@@ -588,6 +601,13 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
   [ChainId.BSC_TESTNET]: new Token({
     chainId: ChainId.BSC_TESTNET,
     address: USDT_ADDRESS[ChainId.BSC_TESTNET],
+    decimals: 18,
+    symbol: 'USDT',
+    name: 'Tether USD',
+  }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: USDT_ADDRESS[ChainId.BOBA_BNB],
     decimals: 18,
     symbol: 'USDT',
     name: 'Tether USD',

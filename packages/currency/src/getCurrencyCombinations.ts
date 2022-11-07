@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import flatMap from 'lodash.flatmap'
 
-import { BCT, DAI, FRAX, FXS, KLIMA, LUSD, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
+import { BCT, BUSD, DAI, FRAX, FXS, KLIMA, LUSD, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Token } from './Token'
 import { Type } from './Type'
 
@@ -223,7 +223,25 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
       symbol: 'AVAX',
       name: 'Avax',
     }),
+    USDT[ChainId.BOBA_AVAX],
+    USDC[ChainId.BOBA_AVAX],
+    BUSD[ChainId.BOBA_AVAX],
   ],
+
+  [ChainId.BOBA_BNB]: [
+    WNATIVE[ChainId.BOBA_BNB],
+    new Token({
+      chainId: ChainId.BOBA_AVAX,
+      address: '0x4200000000000000000000000000000000000023',
+      decimals: 18,
+      symbol: 'BNB',
+      name: 'Binance Coin',
+    }),
+    USDT[ChainId.BOBA_BNB],
+    USDC[ChainId.BOBA_BNB],
+    BUSD[ChainId.BOBA_BNB],
+  ],
+
   // [ChainId.BOBA_AVAX]: [WNATIVE[ChainId.BOBA_AVAX]],
 }
 
