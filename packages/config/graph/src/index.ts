@@ -17,6 +17,8 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.HARMONY,
   ChainId.ARBITRUM_NOVA,
   ChainId.BOBA,
+  ChainId.BOBA_AVAX,
+  ChainId.BOBA_BNB,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
@@ -55,6 +57,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BOBA]: 'Boba',
   [ChainId.ARBITRUM_NOVA]: 'Arbitrum Nova',
   [ChainId.BOBA_AVAX]: 'Boba Avax',
+  [ChainId.BOBA_BNB]: 'Boba BNB',
 }
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -79,6 +82,8 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
+  [ChainId.BOBA_AVAX]: 'subgraphs.sushi.com/subgraphs/name',
+  [ChainId.BOBA_BNB]: 'subgraphs.sushi.com/subgraphs/name',
 }
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -118,6 +123,8 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
   [ChainId.BOBA]: 'sushiswap/blocks-boba',
+  [ChainId.BOBA_AVAX]: 'sushiswap/blocks-boba-avax',
+  [ChainId.BOBA_BNB]: 'sushiswap/blocks-boba-bnb',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
@@ -136,6 +143,8 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
+  [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
+  [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
 }
 
 export const SUSHISWAP_SUBGRAPH_NAME = {
@@ -153,6 +162,8 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
+  [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
+  [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
 } as const
 
 export const TRIDENT_SUBGRAPH_NAME = {

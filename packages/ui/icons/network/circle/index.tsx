@@ -68,4 +68,5 @@ export const NETWORK_CIRCLE_ICON: Record<number, (props: React.ComponentProps<'s
   [ChainId.PALM]: PalmCircle,
   [ChainId.BOBA]: BobaCircle,
   [ChainId.BOBA_AVAX]: BobaCircle,
+  [ChainId.BOBA_BNB]: BobaCircle,
 }

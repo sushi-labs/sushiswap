@@ -61,7 +61,6 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
     const farmsOnly = query?.farmsOnly === 'true'
-
     const { crossChainPairs } = await sdk.CrossChainPairs({
       first,
       skip,

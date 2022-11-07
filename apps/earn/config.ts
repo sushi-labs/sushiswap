@@ -17,6 +17,8 @@ export const AMM_ENABLED_NETWORKS: ChainId[] = [
   ChainId.HARMONY,
   ChainId.BOBA,
   ChainId.POLYGON,
+  ChainId.BOBA_AVAX,
+  ChainId.BOBA_BNB,
 ]
 
 export const SUPPORTED_CHAIN_IDS: ChainId[] = Array.from(

@@ -82,8 +82,6 @@ export const PoolsTable: FC = () => {
 
   const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher)
 
-  console.log({ pools })
-
   const { data: poolCount } = useSWR<number>(
     `/earn/api/pools/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
     (url) => fetch(url).then((response) => response.json())

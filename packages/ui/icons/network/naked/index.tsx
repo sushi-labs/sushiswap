@@ -68,4 +68,5 @@ export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'sv
   [ChainId.PALM]: PalmNaked,
   [ChainId.BOBA]: BobaNaked,
   [ChainId.BOBA_AVAX]: BobaNaked,
+  [ChainId.BOBA_BNB]: BobaNaked,
 }
