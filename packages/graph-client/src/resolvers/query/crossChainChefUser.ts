@@ -24,8 +24,6 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (r
       .ChefUser({
         // @ts-ignore
         where: args.where,
-        // @ts-ignore
-        block: args.block,
       })
       .then(({ users }) => {
         return users.map((user) => ({
