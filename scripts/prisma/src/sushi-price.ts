@@ -148,9 +148,6 @@ async function transform(
         if (pricesWithLiquidity[id]) {
           const savedPrice = pricesWithLiquidity[id]
           if (savedPrice.liquidity < currentLiquidity) {
-            console.log(
-              `DEBUG: ${tokenPrice.token.symbol} replaced, previous liquidity: ${savedPrice.liquidity} new: ${currentLiquidity}.`
-            )
             pricesWithLiquidity[id] = { price, liquidity: currentLiquidity }
           }
         }

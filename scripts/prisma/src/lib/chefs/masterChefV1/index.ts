@@ -63,7 +63,15 @@ export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Reco
         },
       ]
 
-      incentives = incentives.filter((incentive) => incentive.apr !== null)
+      incentives = incentives.map(
+        (incentive) => {
+          if (incentive.apr === null) {
+            incentive.apr = 0
+            return incentive
+          }
+          return incentive
+        }
+      )
 
       acc[farm.lpToken.toLowerCase()] = {
         id: i,
