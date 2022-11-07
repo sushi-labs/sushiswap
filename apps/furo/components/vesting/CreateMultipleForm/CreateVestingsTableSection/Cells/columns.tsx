@@ -18,7 +18,8 @@ export const CURRENCY_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = 
   cell: (props) => (
     <CurrencyCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const FUND_SOURCE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
@@ -27,7 +28,8 @@ export const FUND_SOURCE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown>
   cell: (props) => (
     <FundSourceCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 120,
+  minSize: 120,
 }
 
 export const RECIPIENT_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
@@ -36,7 +38,8 @@ export const RECIPIENT_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> =
   cell: (props) => (
     <RecipientCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const START_DATE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
@@ -45,7 +48,8 @@ export const START_DATE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> 
   cell: (props) => (
     <StartDateCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const SCHEDULE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
@@ -54,7 +58,8 @@ export const SCHEDULE_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = 
   cell: (props) => (
     <ScheduleCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const ACTIONS_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
@@ -63,7 +68,8 @@ export const ACTIONS_COLUMN: ColumnDef<CreateVestingFormSchemaType, unknown> = {
   cell: (props) => (
     <ActionsCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 120,
+  minSize: 120,
   meta: {
     className: 'justify-end',
   },

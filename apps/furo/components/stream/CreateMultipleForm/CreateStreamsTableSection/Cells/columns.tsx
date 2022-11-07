@@ -19,7 +19,8 @@ export const CURRENCY_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   cell: (props) => (
     <CurrencyCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const FUND_SOURCE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
@@ -28,7 +29,8 @@ export const FUND_SOURCE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> 
   cell: (props) => (
     <FundSourceCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 120,
+  minSize: 120,
 }
 
 export const AMOUNT_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
@@ -37,7 +39,8 @@ export const AMOUNT_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   cell: (props) => (
     <AmountCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const RECIPIENT_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
@@ -46,7 +49,8 @@ export const RECIPIENT_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = 
   cell: (props) => (
     <RecipientCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const START_DATE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
@@ -55,7 +59,8 @@ export const START_DATE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> =
   cell: (props) => (
     <StartDateCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const END_DATE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
@@ -64,7 +69,8 @@ export const END_DATE_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   cell: (props) => (
     <EndDateCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 150,
+  minSize: 150,
 }
 
 export const ACTIONS_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
@@ -73,7 +79,8 @@ export const ACTIONS_COLUMN: ColumnDef<CreateStreamFormSchemaType, unknown> = {
   cell: (props) => (
     <ActionsCell row={props.row.original} index={props.row.index} chainId={props.table.options.meta?.chainId} />
   ),
-  size: 50,
+  size: 120,
+  minSize: 120,
   meta: {
     className: 'justify-end',
   },

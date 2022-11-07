@@ -48,7 +48,11 @@ export const GenericTable = <T extends { id: string }>({
                   <Table.th
                     key={header.id}
                     colSpan={header.colSpan}
-                    style={{ maxWidth: header.column.getSize(), width: header.column.getSize() }}
+                    style={{
+                      ...(header.column.columnDef.maxSize && { maxWidth: header.column.columnDef.maxSize }),
+                      ...(header.column.columnDef.size && { width: header.column.columnDef.size }),
+                      ...(header.column.columnDef.minSize && { minWidth: header.column.columnDef.minSize }),
+                    }}
                   >
                     <div
                       {...{
@@ -97,7 +101,11 @@ export const GenericTable = <T extends { id: string }>({
                             return (
                               <Table.td
                                 className="!px-0 relative"
-                                style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
+                                style={{
+                                  ...(cell.column.columnDef.maxSize && { maxWidth: cell.column.columnDef.maxSize }),
+                                  ...(cell.column.columnDef.size && { width: cell.column.columnDef.size }),
+                                  ...(cell.column.columnDef.minSize && { minWidth: cell.column.columnDef.minSize }),
+                                }}
                                 key={cell.id}
                               >
                                 {linkFormatter ? (
@@ -145,7 +153,11 @@ export const GenericTable = <T extends { id: string }>({
                       return (
                         <Table.td
                           className="!px-0 relative"
-                          style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
+                          style={{
+                            ...(cell.column.columnDef.maxSize && { maxWidth: cell.column.columnDef.maxSize }),
+                            ...(cell.column.columnDef.size && { width: cell.column.columnDef.size }),
+                            ...(cell.column.columnDef.minSize && { minWidth: cell.column.columnDef.minSize }),
+                          }}
                           key={cell.id}
                         >
                           {linkFormatter ? (
@@ -180,7 +192,14 @@ export const GenericTable = <T extends { id: string }>({
               Array.from(Array(Math.max(pageSize - table.getRowModel().rows.length, 0))).map((el, index) => (
                 <Table.tr key={index}>
                   {table.getVisibleFlatColumns().map((column) => (
-                    <Table.td key={column.id} style={{ maxWidth: column.getSize(), width: column.getSize() }} />
+                    <Table.td
+                      key={column.id}
+                      style={{
+                        ...(column.columnDef.maxSize && { maxWidth: column.columnDef.maxSize }),
+                        ...(column.columnDef.size && { maxWidth: column.columnDef.size }),
+                        ...(column.columnDef.minSize && { maxWidth: column.columnDef.minSize }),
+                      }}
+                    />
                   ))}
                 </Table.tr>
               ))}
