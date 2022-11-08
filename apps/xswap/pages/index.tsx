@@ -246,13 +246,13 @@ const Widget: FC<Swap> = ({
   useEffect(() => {
     // Escape hatch if already synced (could probably pull something like this out to generic...)
 
-    console.debug([
-      srcChainId === Number(router.query.srcChainId),
-      dstChainId === Number(router.query.dstChainId),
-      srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
-      dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
-      srcTypedAmount === router.query.srcTypedAmount,
-    ])
+    // console.debug([
+    //   srcChainId === Number(router.query.srcChainId),
+    //   dstChainId === Number(router.query.dstChainId),
+    //   srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
+    //   dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
+    //   srcTypedAmount === router.query.srcTypedAmount,
+    // ])
 
     if (
       srcChainId === Number(router.query.srcChainId) &&

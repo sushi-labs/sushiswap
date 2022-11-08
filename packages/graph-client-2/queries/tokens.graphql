@@ -1,4 +1,0 @@
-fragment TokenFields on Token {
-  id
-  chainId
-}
