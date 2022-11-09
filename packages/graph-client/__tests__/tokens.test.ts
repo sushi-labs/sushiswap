@@ -25,7 +25,7 @@ import { getBuiltGraphSDK } from '..'
 describe('Tokens', () => {
   const sdk = getBuiltGraphSDK()
   const chainIds = [1, 137]
-  it('should return tokens for multiple chain ids', async () => {
+  it.skip('should return tokens for multiple chain ids', async () => {
     const { tokens } = await sdk.TokensByChainIds({ chainIds })
     expect(chainIds.every((chainId) => tokens.find((token) => chainId === token.chainId))).toBe(true)
   })

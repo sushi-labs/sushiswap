@@ -3,7 +3,7 @@ import { getBuiltGraphSDK } from '../dist/.graphclient'
 describe('Pairs', () => {
   const sdk = getBuiltGraphSDK()
   const chainIds = [1, 137]
-  it('should return pairs for multiple chain ids', async () => {
+  it.skip('should return pairs for multiple chain ids', async () => {
     const { pairs } = await sdk.PairsByChainIds({ chainIds })
     expect(chainIds.every((chainId) => pairs.find((token) => chainId === token.chainId))).toBe(true)
   })
