@@ -66,7 +66,7 @@ export async function revenues(args: Arguments) {
     revenues[pair.chainName].revenue += pair.fees1d / 6
   }
 
-  const revenuesArray = Object.entries(revenues).sort((a, b) => {
+  const orderedRevenues = Object.entries(revenues).sort((a, b) => {
     return a[1].revenue > b[1].revenue ? -1 : 1
   })
 
@@ -80,16 +80,13 @@ export async function revenues(args: Arguments) {
     colWidths: [30, 20, 20, 20],
   })
 
-  for (const revenue of revenuesArray) {
-    const chainString = revenue[0]
-    const revenueString = revenue[1].revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'
-    const spentString = revenue[1].spent.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'
+  for (const revenue of orderedRevenues) {
     const benefits = revenue[1].revenue - revenue[1].spent
     const benefitsString = benefits.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'
     table.push([
-      chainString,
-      revenueString,
-      spentString,
+      revenue[0],
+      revenue[1].revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $',
+      revenue[1].spent.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $',
       benefits > 0 ? chalk.green(benefitsString) : chalk.red(benefitsString),
     ])
   }
