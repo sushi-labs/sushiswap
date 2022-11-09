@@ -96,18 +96,18 @@ export const resolvers: Resolvers = {
         info
       )
     },
-    // customBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
-    //   const start = args.timestamp
-    //   const end = start + 600
-    //   return _blocks(
-    //     root,
-    //     {
-    //       ...args,
-    //       where: { timestamp_gt: start, timestamp_lt: end },
-    //     },
-    //     context,
-    //     info
-    //   )
-    // },
+    customBlocks: async (root, args, context, info): Promise<ResolverTypeWrapper<Block>[]> => {
+      const start = args.timestamp
+      const end = start + 600
+      return _blocks(
+        root,
+        {
+          ...args,
+          where: { timestamp_gt: start, timestamp_lt: end },
+        },
+        context,
+        info
+      )
+    },
   },
 }

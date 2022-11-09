@@ -324,12 +324,12 @@ additionalTypeDefs: |
       first: Int = 100
       chainIds: [Int!]!
     ): [Block!]!
-    # customBlocks(
-    #   skip: Int = 0
-    #   first: Int = 100
-    #   timestamp: Int!
-    #   chainIds: [Int!]!
-    # ): [Block!]!
+    customBlocks(
+      skip: Int = 0
+      first: Int = 100
+      timestamp: Int!
+      chainIds: [Int!]!
+    ): [Block!]!
     # pairsByIds(
     #   skip: Int = 0
     #   first: Int = 100
