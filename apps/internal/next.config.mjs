@@ -13,6 +13,16 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/internal',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
 }
 
 export default withTranspileModules(nextConfig)

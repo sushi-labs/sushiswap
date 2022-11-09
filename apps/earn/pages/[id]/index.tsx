@@ -127,7 +127,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         [`/earn/api/pool/${id}`]: { pair },
       },
     },
-    revalidate: 10,
+    revalidate: 60,
   }
 }
 
