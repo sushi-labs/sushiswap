@@ -1,10 +1,10 @@
-name: Sushi - apps
+name: Sushi - apps root
 
 on:
   push:
     branches: ["master"]
     paths:
-      - "apps"
+      - "apps/root"
   pull_request:
     types: [opened, synchronize]
 
@@ -46,7 +46,7 @@ jobs:
           uses: actions/checkout@v3
           with:
             fetch-depth: 2
- 
+
         - uses: pnpm/action-setup@v2
           with:
             version: 7
@@ -62,12 +62,3 @@ jobs:
 
         - name: Build root app
           run: pnpm build-root-app
-
-        - name: Build analytics app
-          run: pnpm build-analytics-app
-
-        - name: Build blog app
-          run: pnpm build-blog-app
-
-        - name: Build furo app
-          run: pnpm build-blog-app
