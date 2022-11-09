@@ -1,10 +1,10 @@
-name: CI - protocols
+name: CI - packages
 
 on:
   push:
     branches: ["master"]
     paths:
-      - "protocols"
+      - "packages"
   pull_request:
     types: [opened, synchronize]
 
@@ -43,10 +43,10 @@ jobs:
           run: pnpm install
 
         - name: Lint protocols
-          run: pnpm lint-protocols
+          run: pnpm lint-packages
 
         - name: Build protocols
-          run: pnpm build-protocols
+          run: pnpm build-packages
 
         - name: Test protocols
-          run: pnpm test-protocols
+          run: pnpm test-packages
