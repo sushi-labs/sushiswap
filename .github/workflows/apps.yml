@@ -69,5 +69,14 @@ jobs:
         - name: Build blog app
           run: pnpm build-blog-app
 
+        - name: Build earn app
+          run: pnpm build-earn-app
+
         - name: Build furo app
-          run: pnpm build-blog-app
+          run: pnpm build-furo-app
+
+        - name: Build swap app
+          run: pnpm build-swap-app
+
+        - name: Build xswap app
+          run: pnpm build-xswap-app
