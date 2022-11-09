@@ -32,18 +32,6 @@ const LINKS = ({ pair }: { pair: Pair }): BreadcrumbLink[] => [
   },
 ]
 
-// export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-//   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-//   const pair = await getPool(query.id as string)
-//   return {
-//     props: {
-//       fallback: {
-//         [`/earn/api/pool/${query.id}`]: { pair },
-//       },
-//     },
-//   }
-// }
-
 const Pool: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
@@ -99,7 +87,7 @@ const _Pool = () => {
 export const getStaticPaths: GetStaticPaths = async () => {
   const sdk = getBuiltGraphSDK()
   const { pairs } = await sdk.PairsByChainIds({
-    first: 1000,
+    first: 250,
     orderBy: 'liquidityUSD',
     orderDirection: 'desc',
     chainIds: SUPPORTED_CHAIN_IDS,
@@ -110,7 +98,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
       return Number(b) - Number(a)
     })
-    .slice(0, 1000)
+    .slice(0, 250)
     .map((pair, i) => ({
       params: { id: `${chainShortName[pair.chainId]}:${pair.address}` },
     }))
