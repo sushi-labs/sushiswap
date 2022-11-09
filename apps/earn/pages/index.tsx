@@ -39,6 +39,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
         [`/earn/api/pools/count`]: poolCount,
         [`/earn/api/bar`]: bar,
       },
+      revalidate: 60,
     },
   }
 }
