@@ -20,8 +20,9 @@ contract SushiXSwap is
         IStargateRouter _stargateRouter,
         address _factory,
         bytes32 _pairCodeHash,
-        IStargateWidget _stargateWidget
-    ) ImmutableState(_bentoBox, _stargateRouter, _factory, _pairCodeHash, _stargateWidget) {
+        IStargateWidget _stargateWidget,
+        address _SGETH
+    ) ImmutableState(_bentoBox, _stargateRouter, _factory, _pairCodeHash, _stargateWidget, _SGETH) {
         // Register to BentoBox
         _bentoBox.registerProtocol();
     }
