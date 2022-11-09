@@ -2,18 +2,21 @@
 
 pragma solidity 0.8.11;
 
-import "./IBentoBoxMinimal.sol";
-import "./stargate/IStargateRouter.sol";
-import "./stargate/IStargateWidget.sol";
+import './IBentoBoxMinimal.sol';
+import './stargate/IStargateRouter.sol';
+import './stargate/IStargateWidget.sol';
+import './multichain/IMultiChainV7Router.sol';
 
 interface IImmutableState {
-    function bentoBox() external view returns (IBentoBoxMinimal);
+  function bentoBox() external view returns (IBentoBoxMinimal);
 
-    function stargateRouter() external view returns (IStargateRouter);
+  function stargateRouter() external view returns (IStargateRouter);
 
-    function stargateWidget() external view returns (IStargateWidget);
+  function stargateWidget() external view returns (IStargateWidget);
 
-    function factory() external view returns (address);
+  function factory() external view returns (address);
 
-    function pairCodeHash() external view returns (bytes32);
+  function pairCodeHash() external view returns (bytes32);
+
+  function multichainRouter() external view returns (IMultiChainV7Router);
 }

@@ -13,15 +13,17 @@ contract SushiXSwap is
     TokenAdapter,
     SushiLegacyAdapter,
     TridentSwapAdapter,
-    StargateAdapter
+    StargateAdapter,
+    MultiChainAdapter
 {
     constructor(
         IBentoBoxMinimal _bentoBox,
         IStargateRouter _stargateRouter,
         address _factory,
         bytes32 _pairCodeHash,
-        IStargateWidget _stargateWidget
-    ) ImmutableState(_bentoBox, _stargateRouter, _factory, _pairCodeHash, _stargateWidget) {
+        IStargateWidget _stargateWidget,
+        IMultiChainV7Router _multichainRouter
+    ) ImmutableState(_bentoBox, _stargateRouter, _factory, _pairCodeHash, _stargateWidget, _multichainRouter) {
         // Register to BentoBox
         _bentoBox.registerProtocol();
     }
