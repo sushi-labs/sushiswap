@@ -132,32 +132,7 @@ query deprecated_TokensAndBundle(
 #   }
 # }
 
-query CrossChainFactoryDaySnapshots(
-  $first: Int = 365
-  $skip: Int = 0
-  $where: FactoryDaySnapshot_filter
-  $orderBy: FactoryDaySnapshot_orderBy = date
-  $orderDirection: OrderDirection = desc
-  $block: Block_height
-  $chainIds: [Int!]!
-) {
-  crossChainFactoryDaySnapshots(
-    first: $first, 
-    skip: $skip, 
-    where: $where, 
-    orderBy: $orderBy, 
-    orderDirection: $orderDirection, 
-    block: $block, 
-    chainIds: $chainIds
-  ) {
-    chainId
-    id
-    date
-    volumeUSD
-    liquidityUSD
-    feesUSD
-  }
-}
+
 
 query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
   crossChainToken(id: $id, now: $now, chainId: $chainId) {
@@ -218,41 +193,6 @@ query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
         }
       }
     }
-  }
-}
-
-query CrossChainTokens(
-  $first: Int = 20
-  $skip: Int = 0
-  $pagination: Pagination
-  $where: Token_filter
-  $orderBy: Token_orderBy = liquidityUSD
-  $orderDirection: OrderDirection = desc
-  $block: Block_height
-  $chainIds: [Int!]!
-) {
-  crossChainTokens(
-    first: $first,
-    skip: $skip,
-    pagination: $pagination,
-    where: $where,
-    orderBy: $orderBy,
-    orderDirection: $orderDirection,
-    block: $block,
-    chainIds: $chainIds,
-  ) {
-    id
-    chainId
-    name
-    liquidityUSD
-    symbol
-    decimals
-    volumeUSD
-    feesUSD
-    price {
-      derivedNative
-    }
-    source
   }
 }
 

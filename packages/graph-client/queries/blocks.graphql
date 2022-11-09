@@ -34,7 +34,7 @@ query Blocks(
   }
 }
 
-query CrossChainBlocks(
+query BlocksByChainIds(
   $first: Int
   $skip: Int
   $where: Block_filter
@@ -42,7 +42,7 @@ query CrossChainBlocks(
   $orderDirection: OrderDirection = desc
   $chainIds: [Int!]!
 ) {
-  crossChainBlocks(
+  blocks: blocksByChainIds(
     first: $first
     skip: $skip
     where: $where

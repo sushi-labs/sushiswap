@@ -9,7 +9,7 @@ export const getOneDayBlocks = async (chainIds: number[]) => {
   const start = getUnixTime(date)
   const end = getUnixTime(addSeconds(date, 600))
   return sdk
-    .CrossChainBlocks({
+    .BlocksByChainIds({
       first: 1,
       skip: 0,
       where: { timestamp_gt: start, timestamp_lt: end },
@@ -17,7 +17,7 @@ export const getOneDayBlocks = async (chainIds: number[]) => {
       orderDirection: 'desc',
       chainIds,
     })
-    .then(({ crossChainBlocks }) => crossChainBlocks.map((block) => ({ number: Number(block?.number ?? 0) })))
+    .then(({ blocks }) => blocks.map((block) => ({ number: Number(block?.number ?? 0) })))
 }
 
 export const getTwoDayBlocks = async (chainIds: number[]) => {
@@ -25,7 +25,7 @@ export const getTwoDayBlocks = async (chainIds: number[]) => {
   const start = getUnixTime(date)
   const end = getUnixTime(addSeconds(date, 600))
   return sdk
-    .CrossChainBlocks({
+    .BlocksByChainIds({
       first: 1,
       skip: 0,
       where: { timestamp_gt: start, timestamp_lt: end },
@@ -33,7 +33,7 @@ export const getTwoDayBlocks = async (chainIds: number[]) => {
       orderDirection: 'desc',
       chainIds,
     })
-    .then(({ crossChainBlocks }) => crossChainBlocks.map((block) => ({ number: Number(block?.number ?? 0) })))
+    .then(({ blocks }) => blocks.map((block) => ({ number: Number(block?.number ?? 0) })))
 }
 
 export const getOneWeekBlocks = async (chainIds: number[]) => {
@@ -41,7 +41,7 @@ export const getOneWeekBlocks = async (chainIds: number[]) => {
   const start = getUnixTime(date)
   const end = getUnixTime(addSeconds(date, 600))
   return sdk
-    .CrossChainBlocks({
+    .BlocksByChainIds({
       first: 1,
       skip: 0,
       where: { timestamp_gt: start, timestamp_lt: end },
@@ -49,7 +49,7 @@ export const getOneWeekBlocks = async (chainIds: number[]) => {
       orderDirection: 'desc',
       chainIds,
     })
-    .then(({ crossChainBlocks }) => crossChainBlocks.map((block) => ({ number: Number(block?.number ?? 0) })))
+    .then(({ blocks }) => blocks.map((block) => ({ number: Number(block?.number ?? 0) })))
 }
 
 export const getCustomBlocks = async (chainIds: number[], timestamp: number) => {
@@ -57,7 +57,7 @@ export const getCustomBlocks = async (chainIds: number[], timestamp: number) => 
   const end = timestamp + 600
 
   return sdk
-    .CrossChainBlocks({
+    .BlocksByChainIds({
       first: 1,
       skip: 0,
       where: { timestamp_gt: start, timestamp_lt: end },
@@ -65,5 +65,5 @@ export const getCustomBlocks = async (chainIds: number[], timestamp: number) => 
       orderDirection: 'desc',
       chainIds,
     })
-    .then(({ crossChainBlocks }) => crossChainBlocks.map((block) => ({ number: Number(block?.number ?? 0) })))
+    .then(({ blocks }) => blocks.map((block) => ({ number: Number(block?.number ?? 0) })))
 }

@@ -14,7 +14,7 @@ interface Arguments {
 const sdk = getBuiltGraphSDK()
 
 export async function bentobox(args: Arguments) {
-  const { crossChainRebases } = await sdk.CrossChainRebases({
+  const { rebases } = await sdk.RebasesByChainIds({
     first: 5000,
     skip: 0,
     chainIds: Object.keys(BENTOBOX_SUBGRAPH_NAME).map(Number),
@@ -41,7 +41,7 @@ export async function bentobox(args: Arguments) {
               // first: 5000,
               // skip: 0,
               where: {
-                id_in: crossChainRebases
+                id_in: rebases
                   .filter((rebase) => Number(rebase.chainId) === Number(chainId))
                   .map((rebase) => rebase.id),
               },
@@ -54,7 +54,7 @@ export async function bentobox(args: Arguments) {
     )
   )
 
-  crossChainRebases
+  rebases
     .reduce<[number, string | undefined, number, number][]>((previousValue, rebase) => {
       const tokenPrice: deprecated_TokensAndBundleQuery = tokenPrices[rebase.chainId]
       const ethPrice = tokenPrice?.bundle?.ethPrice

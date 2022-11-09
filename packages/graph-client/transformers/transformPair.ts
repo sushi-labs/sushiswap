@@ -16,26 +16,45 @@ export function transformPair({
   pair1w?: Pair
   farm?: Farm
 }) {
-  const volume1d = pair1d ? Number(pair.volumeUSD) - Number(pair1d.volumeUSD) : 0
-  const volume2d = pair1d && pair2d ? Number(pair1d.volumeUSD) - Number(pair2d.volumeUSD) : 0
-  const volume1w = pair1w ? Number(pair.volumeUSD) - Number(pair1w.volumeUSD) : 0
-  const fees1d = pair1d ? Number(pair.feesUSD) - Number(pair1d.feesUSD) : 0
-  const fees2d = pair1d && pair2d ? Number(pair1d.feesUSD) - Number(pair2d.feesUSD) : 0
-  const fees1w = pair1w ? Number(pair.feesUSD) - Number(pair1w.feesUSD) : 0
+  const liquidity1dChange = pair1d ? pair.liquidityUSD / pair1d.liquidityUSD - 1 : 0
+  const liquidity1wChange = pair1w ? pair.liquidityUSD / pair1w.liquidityUSD - 1 : 0
+
+  const volume1d = pair1d ? Number(pair.volumeUSD) - Number(pair1d.volumeUSD) : Number(pair.volumeUSD)
+  const volume2d = pair1d && pair2d ? Number(pair1d.volumeUSD) - Number(pair2d.volumeUSD) : Number(pair.volumeUSD)
+  const volume1w = pair1w ? Number(pair.volumeUSD) - Number(pair1w.volumeUSD) : Number(pair.volumeUSD)
+  const volume1dChange = pair1d && pair2d ? volume1d / volume2d - 1 : null
+
+  const fees1d = pair1d ? Number(pair.feesUSD) - Number(pair1d.feesUSD) : Number(pair.feesUSD)
+  const fees2d = pair1d && pair2d ? Number(pair1d.feesUSD) - Number(pair2d.feesUSD) : Number(pair.feesUSD)
+  const fees1w = pair1w ? Number(pair.feesUSD) - Number(pair1w.feesUSD) : Number(pair.feesUSD)
+  const fees1dChange = pair1d && pair2d ? fees1d / fees2d - 1 : null
+
+  const txCount1d = pair1d ? Number(pair.txCount) - Number(pair1d.txCount) : Number(pair.txCount)
+  const txCount2d = pair1d && pair2d ? Number(pair1d.txCount) - Number(pair2d.txCount) : Number(pair.txCount)
+  const txCount1w = pair1w ? Number(pair.txCount) - Number(pair1w.txCount) : Number(pair.txCount)
+  const txCount1dChange = pair1d && pair2d ? txCount1d / txCount2d - 1 : null
+
   const feeApr = pair?.apr
   const incentiveApr =
     farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
   const apr = Number(feeApr) + Number(incentiveApr)
+
   return {
     ...pair,
     id: `${chainShortName[pair.chainId]}:${pair.id}`,
     // _id: `${pool.chainId}:${pool.id}`,
     address: pair.id,
-    // address: pool.id,
+    liquidity1dChange,
+    liquidity1wChange,
     volume1d,
+    volume1dChange,
     volume1w,
-    fees1w,
     fees1d,
+    fees1dChange,
+    fees1w,
+    txCount1d,
+    txCount1dChange,
+    txCount1w,
     apr,
     feeApr,
     incentiveApr,

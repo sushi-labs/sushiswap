@@ -24,13 +24,13 @@ query Rebases(
   }
 }
 
-query CrossChainRebases(
+query RebasesByChainIds(
   $first: Int
   $skip: Int
   $where: Rebase_filter
   $chainIds: [Int!]!
 ) {
-  crossChainRebases(
+  rebases: rebasesByChainIds(
     skip: $skip
     first: $first
     where: $where

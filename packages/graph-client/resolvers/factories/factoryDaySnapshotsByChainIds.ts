@@ -7,15 +7,15 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 
-import { FactoryDaySnapshot, QueryResolvers } from '../../.graphclient'
+import { FactoryDaySnapshot, Query, QueryResolvers } from '../../.graphclient'
 
-export const crossChainFactoryDaySnapshots: QueryResolvers['crossChainFactoryDaySnapshots'] = async (
+export const factoryDaySnapshotsByChainIds: QueryResolvers['factoryDaySnapshotsByChainIds'] = async (
   root,
   args,
   context,
   info
-) =>
-  Promise.all([
+): Promise<Query['factoryDaySnapshotsByChainIds']> =>
+  Promise.all<Query['factoryDaySnapshotsByChainIds'][]>([
     ...args.chainIds
       .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId) =>

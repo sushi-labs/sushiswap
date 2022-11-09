@@ -289,6 +289,7 @@ additionalTypeDefs: |
     volume1w: BigDecimal
     fees1d: BigDecimal
     fees1w: BigDecimal
+    fees1dChange: BigDecimal
     txCount1d: BigDecimal
     txCount1dChange: BigDecimal
     txCount1w: BigDecimal
@@ -301,7 +302,10 @@ additionalTypeDefs: |
   }
   # Query Extensions
   extend type Query {
-    crossChainBlocks(
+    bundlesByChainIds(
+      chainIds: [Int!]!
+    ): [Bundle!]!
+    blocksByChainIds(
       skip: Int = 0
       first: Int = 100
       where: Block_filter
@@ -309,27 +313,18 @@ additionalTypeDefs: |
       orderDirection: OrderDirection
       chainIds: [Int!]!
     ): [Block!]!
-    oneDayBlocks(
+    factoriesByChainIds(
+      chainIds: [Int!]!
+    ): [Factory!]!
+    liquidityPositionsByChainIds(
       skip: Int = 0
       first: Int = 100
+      where: LiquidityPosition_filter
+      orderBy: LiquidityPosition_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
       chainIds: [Int!]!
-    ): [Block!]!
-    twoDayBlocks(
-      skip: Int = 0
-      first: Int = 100
-      chainIds: [Int!]!
-    ): [Block!]!
-    oneWeekBlocks(
-      skip: Int = 0
-      first: Int = 100
-      chainIds: [Int!]!
-    ): [Block!]!
-    customBlocks(
-      skip: Int = 0
-      first: Int = 100
-      timestamp: Int!
-      chainIds: [Int!]!
-    ): [Block!]!
+    ): [LiquidityPosition!]!
     # pairsByIds(
     #   skip: Int = 0
     #   first: Int = 100
@@ -369,6 +364,14 @@ additionalTypeDefs: |
       chainIds: [Int!]!
       blocks: [Block_height!]
     ): [Pair!]!
+    pairById(
+      id: ID!
+      block: Block_height
+    ): Pair
+    pairsByIds(
+      ids: [ID!]!
+      block: Block_height
+    ): [Pair!]!
     # pairWithIncentives(
     #   id: ID!
     # ): PairWithIncentives!
@@ -381,15 +384,40 @@ additionalTypeDefs: |
     #   orderDirection: OrderDirection
     #   chainIds: [Int!]!
     # ): [PairWithIncentives!]!
-    liquidityPositionsByChainIds(
+    rebasesByChainIds(
       skip: Int = 0
       first: Int = 100
-      where: LiquidityPosition_filter
-      orderBy: LiquidityPosition_orderBy
+      where: Rebase_filter
+      chainIds: [Int!]!
+    ): [Rebase!]!
+    tokensByChainIds(
+      skip: Int = 0
+      first: Int = 100
+      where: Token_filter
+      orderBy: Token_orderBy
       orderDirection: OrderDirection
       block: Block_height
-      chainIds: [Int!]!
-    ): [LiquidityPosition!]!
+      pagination: Pagination
+      chainIds: [Int!]! 
+    ): [Token!]!
+    tokensByChainId(
+      skip: Int = 0
+      first: Int = 100
+      where: Token_filter
+      orderBy: Token_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainId: Int!
+    ): [Token!]!
+    tokenById(
+      id: ID!
+      block: Block_height
+    ): Token!
+    tokensByIds(
+      ids: [ID!]!
+      block: Block_height
+    ): [Token!]!
+    # TODO: REFACTOR BELOW
     crossChainChefUser(
       skip: Int = 0
       first: Int = 100
@@ -399,19 +427,7 @@ additionalTypeDefs: |
       block: Block_height
       chainIds: [Int!]!
     ): [ChefUser!]!
-    crossChainRebases(
-      skip: Int = 0
-      first: Int = 100
-      where: Rebase_filter
-      chainIds: [Int!]!
-    ): [Rebase!]!
-    crossChainBundles(
-      chainIds: [Int!]!
-    ): [Bundle!]!
-    crossChainFactories(
-      chainIds: [Int!]!
-    ): [Factory!]!
-    crossChainFactoryDaySnapshots(
+    factoryDaySnapshotsByChainIds(
       first: Int
       skip: Int
       where: FactoryDaySnapshot_filter
@@ -420,23 +436,12 @@ additionalTypeDefs: |
       block: Block_height
       chainIds: [Int!]!
     ): [FactoryDaySnapshot!]!
-    crossChainPair(id: ID! now: Int! chainId: Int!): Pair
     crossChainUserWithFarms(
       id: ID!
       chainIds: [Int!]!
       block: Block_height
     ): [UserWithFarm!]!
     crossChainToken(id: ID! now: Int! chainId: Int!): Token!
-    crossChainTokens(
-      first: Int
-      skip: Int
-      where: Token_filter
-      orderBy: Token_orderBy
-      orderDirection: OrderDirection
-      block: Block_height
-      pagination: Pagination
-      chainIds: [Int!]! 
-    ): [Token!]!
     crossChainStats(
       first: Int
       skip: Int
@@ -447,6 +452,27 @@ additionalTypeDefs: |
       chainIds: [Int!]!
       now: Int!
     ): [Pair!]!
+    oneDayBlocks(
+      skip: Int = 0
+      first: Int = 100
+      chainIds: [Int!]!
+    ): [Block!]!
+    twoDayBlocks(
+      skip: Int = 0
+      first: Int = 100
+      chainIds: [Int!]!
+    ): [Block!]!
+    oneWeekBlocks(
+      skip: Int = 0
+      first: Int = 100
+      chainIds: [Int!]!
+    ): [Block!]!
+    customBlocks(
+      skip: Int = 0
+      first: Int = 100
+      timestamp: Int!
+      chainIds: [Int!]!
+    ): [Block!]!
   }
 
 additionalResolvers:

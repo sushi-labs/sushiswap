@@ -1,11 +1,17 @@
 import { Resolvers } from '../../.graphclient'
-import { crossChainTokens } from './crossChainTokens'
+// import { tokenById } from './tokenById'
+import { tokensByChainId } from './tokensByChainId'
+import { tokensByChainIds } from './tokensByChainIds'
+// import { tokensByIds } from './tokensByIds'
 
 export const resolvers: Resolvers = {
   Token: {
     chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
   },
   Query: {
-    crossChainTokens,
+    tokensByChainIds,
+    tokensByChainId,
+    // tokensByIds,
+    // tokenById,
   },
 }

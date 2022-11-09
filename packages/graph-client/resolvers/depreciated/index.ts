@@ -1,6 +1,4 @@
 import { Resolvers } from '../../.graphclient'
-import { crossChainFactoryDaySnapshots } from './crossChainFactoryDaySnapshots'
-import { crossChainPair } from './crossChainPair'
 import { crossChainToken } from './crossChainToken'
 
 export const resolvers: Resolvers = {
@@ -14,8 +12,6 @@ export const resolvers: Resolvers = {
     chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
   },
   Query: {
-    crossChainPair,
-    crossChainFactoryDaySnapshots,
     crossChainToken,
   },
 }

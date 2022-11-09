@@ -1,4 +1,3 @@
-import { chainShortNameToChainId } from '@sushiswap/chain'
 import { getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
@@ -12,7 +11,7 @@ export type GetPoolCountQuery = Partial<{
 }>
 
 export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+  const { factories } = await sdk.Factories({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
   const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
@@ -25,7 +24,7 @@ export const getPoolCount = async (query?: GetPoolCountQuery) => {
 }
 
 export const getBundles = async () => {
-  const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
+  const { bundles } = await sdk.Bundles({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
   return bundles.reduce((acc, cur) => {
@@ -80,9 +79,9 @@ export const getPools = async (query?: GetPoolsQuery) => {
 }
 
 export const getPool = async (id: string) => {
-  const { crossChainPair: pair } = await sdk.CrossChainPair({
-    id: id.includes(':') ? id.split(':')[1] : id,
-    chainId: chainShortNameToChainId[id.split(':')[0]],
+  if (!id.includes(':')) throw Error('Invalid pair id')
+  const { pair } = await sdk.PairById({
+    id,
     now: Math.round(new Date().getTime() / 1000),
   })
   return pair

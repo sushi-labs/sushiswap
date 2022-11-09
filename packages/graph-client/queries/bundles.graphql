@@ -1,5 +1,5 @@
-query CrossChainBundles($chainIds: [Int!]!) {
-  crossChainBundles(chainIds: $chainIds) {
+query Bundles($chainIds: [Int!]!) {
+  bundles: bundlesByChainIds(chainIds: $chainIds) {
     id
     chainId
     nativePrice
