@@ -149,7 +149,6 @@ query PairsWithFarms(
 
 query PairById(
   $id: ID!
-  $now: Int!
 ) {
   pair: pairById(
     id: $id
@@ -192,6 +191,7 @@ query PairById(
       liquidityNative
       liquidityUSD
       transactionCount
+      apr
     }
     daySnapshots(first: 730, orderBy: date, orderDirection: desc) {
       id
@@ -200,14 +200,7 @@ query PairById(
       liquidityNative
       liquidityUSD
       transactionCount
-    }
-    dayChangeData: daySnapshots(first: 2, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
-      id
-      date
-      volumeUSD
-      liquidityNative
-      liquidityUSD
-      transactionCount
+      apr
     }
   }
 }

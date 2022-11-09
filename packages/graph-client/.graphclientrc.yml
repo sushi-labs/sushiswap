@@ -280,8 +280,8 @@ additionalTypeDefs: |
     chainId: Int!
   }
   extend type Pair {
-    address: String!
     chainId: Int!
+    address: String!
     liquidity1dChange: BigDecimal
     liquidity1wChange: BigDecimal
     volume1d: BigDecimal

@@ -55,7 +55,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const skip = 0 // query?.skip && !isNaN(Number(query.skip)) ? Number(query.skip) : 0
     // const first = 1000
     // const skip = 0
-    const where = query?.where ? { ...JSON.parse(query.where) } : {}
+    const where = query?.where ? { ...JSON.parse(query.where), liquidityUSD_gt: 1000 } : { liquidityUSD_gt: 1000 }
     const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
@@ -82,7 +82,6 @@ export const getPool = async (id: string) => {
   if (!id.includes(':')) throw Error('Invalid pair id')
   const { pair } = await sdk.PairById({
     id,
-    now: Math.round(new Date().getTime() / 1000),
   })
   return pair
 }

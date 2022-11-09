@@ -9,7 +9,6 @@ import { ProviderRpcError, UserRejectedRequestError } from 'wagmi'
 
 import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useCreateNotification, useTokensFromPair } from '../../lib/hooks'
-import { PairWithAlias } from '../../types'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 
@@ -20,7 +19,7 @@ interface AddSectionStakeProps {
 
 export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress }) => {
   const isMounted = useIsMounted()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${poolAddress}`, (url) =>
+  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${poolAddress}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 

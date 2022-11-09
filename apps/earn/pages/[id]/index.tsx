@@ -1,6 +1,11 @@
+import { chainShortName } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
+import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { SUPPORTED_CHAIN_IDS } from 'config'
+import orderBy from 'lodash.orderby'
+import take from 'lodash.take'
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import useSWR, { SWRConfig } from 'swr'
@@ -20,30 +25,28 @@ import {
   PoolRewards,
   PoolStats,
 } from '../../components'
-import { getPool } from '../../lib/api'
 import { GET_POOL_TYPE_MAP } from '../../lib/constants'
-import { PairWithAlias } from '../../types'
 
-const LINKS = ({ pair }: { pair: PairWithAlias }): BreadcrumbLink[] => [
+const LINKS = ({ pair }: { pair: Pair }): BreadcrumbLink[] => [
   {
     href: `/${pair.id}`,
     label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type]} - ${formatPercent(pair.swapFee / 10000)}`,
   },
 ]
 
-export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const pair = await getPool(query.id as string)
-  return {
-    props: {
-      fallback: {
-        [`/earn/api/pool/${query.id}`]: { pair },
-      },
-    },
-  }
-}
+// export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+//   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+//   const pair = await getPool(query.id as string)
+//   return {
+//     props: {
+//       fallback: {
+//         [`/earn/api/pool/${query.id}`]: { pair },
+//       },
+//     },
+//   }
+// }
 
-const Pool: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const Pool: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_Pool />
@@ -53,15 +56,11 @@ const Pool: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fall
 
 const _Pool = () => {
   const router = useRouter()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${router.query.id}`, (url) =>
+  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
-
-  console.log({ data })
-
   if (!data) return <></>
   const { pair } = data
-
   return (
     <PoolPositionProvider pair={pair}>
       <PoolPositionStakedProvider pair={pair}>
@@ -97,6 +96,50 @@ const _Pool = () => {
       </PoolPositionStakedProvider>
     </PoolPositionProvider>
   )
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const sdk = getBuiltGraphSDK()
+  const { pairs } = await sdk.PairsByChainIds({
+    first: 1000,
+    orderBy: 'liquidityUSD',
+    orderDirection: 'desc',
+    chainIds: SUPPORTED_CHAIN_IDS,
+  })
+
+  // Get the paths we want to pre-render based on pairs
+  const paths = take(orderBy(pairs, ['liquidityUSD'], ['desc']), 1000).map((pair) => {
+    return {
+      params: { id: `${chainShortName[pair.chainId]}:${pair.address}` },
+    }
+  })
+
+  // We'll pre-render only these paths at build time.
+  // { fallback: blocking } will server-render pages
+  // on-demand if the path doesn't exist.
+  return { paths, fallback: 'blocking' }
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const sdk = getBuiltGraphSDK()
+  const id = params?.id as string
+  const { pair } = await sdk.PairById({ id })
+
+  if (!pair) {
+    // If there is a server error, you might want to
+    // throw an error instead of returning so that the cache is not updated
+    // until the next successful request.
+    throw new Error(`Failed to fetch pair, received ${pair}`)
+  }
+
+  return {
+    props: {
+      fallback: {
+        [`/earn/api/pool/${id}`]: { pair },
+      },
+    },
+    revalidate: 10,
+  }
 }
 
 export default Pool

@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { formatPercent } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, BreadcrumbLink, Container, Link, Typography } from '@sushiswap/ui'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
@@ -17,9 +18,8 @@ import {
 } from '../../components'
 import { getPool } from '../../lib/api'
 import { GET_POOL_TYPE_MAP } from '../../lib/constants'
-import { PairWithAlias } from '../../types'
 
-const LINKS = ({ pair }: { pair: PairWithAlias }): BreadcrumbLink[] => [
+const LINKS = ({ pair }: { pair: Pair }): BreadcrumbLink[] => [
   {
     href: `/${pair.id}`,
     label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type]} - ${formatPercent(pair.swapFee / 10000)}`,
@@ -53,7 +53,7 @@ const Remove: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fa
 
 const _Remove = () => {
   const router = useRouter()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${router.query.id}`, (url) =>
+  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 

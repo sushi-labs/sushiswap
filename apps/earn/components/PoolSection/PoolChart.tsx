@@ -1,4 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
@@ -7,18 +8,18 @@ import { FC, useCallback, useMemo, useState } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import tailwindConfig from '../../tailwind.config.js'
-import { PairWithAlias } from '../../types'
 
 const tailwind = resolveConfig(tailwindConfig)
 
 interface PoolChartProps {
-  pair: PairWithAlias
+  pair: Pair
 }
 
 enum PoolChartType {
   Volume,
   TVL,
   Fees,
+  Apr,
 }
 
 enum PoolChartPeriod {
@@ -40,7 +41,6 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
 export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
   const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
   const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Week)
-
   const [xData, yData] = useMemo(() => {
     const data =
       chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week] ? pair.hourSnapshots : pair.daySnapshots
@@ -49,15 +49,15 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       (acc, cur) => {
         if (cur.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
           acc[0].push(cur.date)
-          acc[1].push(
-            Number(
-              chartType === PoolChartType.Fees
-                ? cur.volumeUSD * (pair.swapFee / 10000)
-                : chartType === PoolChartType.Volume
-                ? cur.volumeUSD
-                : cur.liquidityUSD
-            )
-          )
+          if (chartType === PoolChartType.Fees) {
+            acc[1].push(Number(cur.volumeUSD * (pair.swapFee / 10000)))
+          } else if (chartType === PoolChartType.Volume) {
+            acc[1].push(Number(cur.volumeUSD))
+          } else if (chartType === PoolChartType.TVL) {
+            acc[1].push(Number(cur.liquidityUSD))
+          } else if (chartType === PoolChartType.Apr) {
+            acc[1].push(Number(cur.apr))
+          }
         }
         return acc
       },
@@ -199,6 +199,15 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             )}
           >
             Fees
+          </button>
+          <button
+            onClick={() => setChartType(PoolChartType.Apr)}
+            className={classNames(
+              'border-b-[3px] pb-2 font-semibold text-sm',
+              chartType === PoolChartType.Apr ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
+            )}
+          >
+            Apr
           </button>
         </div>
         <div className="flex gap-4">
