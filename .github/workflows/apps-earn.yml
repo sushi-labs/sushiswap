@@ -103,7 +103,7 @@ jobs:
           id: get-comment-body
           if: success() && github.event.number
           run: |
-            body=$(cat ./apps/earn/.next/analyze/__bundle_analysis_comment.txt)
+            body=$(cat .next/analyze/__bundle_analysis_comment.txt)
             body="${body//'%'/'%25'}"
             body="${body//$'\n'/'%0A'}"
             body="${body//$'\r'/'%0D'}"
