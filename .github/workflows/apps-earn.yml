@@ -10,6 +10,11 @@ on:
     paths:
       - "apps/earn/**"
 
+defaults:
+  run:
+    # change this if your nextjs app does not live at the root of the repo
+    working-directory: ./apps/earn
+
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
@@ -49,23 +54,25 @@ jobs:
  
         - name: Install dependencies
           run: pnpm install
+          working-directory: .
 
         # - name: Lint earn app
         #   run: pnpm lint-earn-app
 
         - name: Build earn app
           run: pnpm build-earn-app
+          working-directory: .
 
         # Here's the first place where next-bundle-analysis' own script is used
         # This step pulls the raw bundle stats for the current bundle
         - name: Analyze bundle
-          run: cd ./apps/earn && npx -p nextjs-bundle-analysis report
+          run: npx -p nextjs-bundle-analysis report
 
         - name: Upload bundle
           uses: actions/upload-artifact@v2
           with:
             name: bundle
-            path: ./apps/earn/.next/analyze/__bundle_analysis.json
+            path: apps/earn/analyze/__bundle_analysis.json
 
         - name: Download base branch bundle stats
           uses: dawidd6/action-download-artifact@v2
@@ -73,7 +80,7 @@ jobs:
           with:
             workflow: nextjs_bundle_analysis.yml
             branch: ${{ github.event.pull_request.base.ref }}
-            path: ./apps/earn/.next/analyze/base
+            path: apps/earn/.next/analyze/base
 
         # And here's the second place - this runs after we have both the current and
         # base branch bundle stats, and will compare them to determine what changed.
@@ -90,7 +97,7 @@ jobs:
         # entry in your package.json file.
         - name: Compare with base branch bundle
           if: success() && github.event.number
-          run: ls -laR ./apps/earn/.next/analyze/base && cd ./apps/earn &&  npx -p nextjs-bundle-analysis compare
+          run: ls -laR .next/analyze/base && npx -p nextjs-bundle-analysis compare
 
         - name: Get comment body
           id: get-comment-body
