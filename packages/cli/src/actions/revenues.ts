@@ -50,7 +50,9 @@ export async function revenues(args: Arguments) {
       revenue: number
       spent: number
     }
-  } = {}
+  } = {
+    Total: { revenue: 0, spent: 0 },
+  }
   for (const pair of pairs) {
     if (!revenues[pair.chainName]) {
       revenues[pair.chainName] = { revenue: 0, spent: 0 }
@@ -61,9 +63,11 @@ export async function revenues(args: Arguments) {
       })
       if (sushiIncentive) {
         revenues[pair.chainName].spent += sushiIncentive.rewardPerDay * sushiPriceUSD
+        revenues['Total'].spent += sushiIncentive.rewardPerDay * sushiPriceUSD
       }
     }
     revenues[pair.chainName].revenue += pair.fees1d / 6
+    revenues['Total'].revenue += pair.fees1d / 6
   }
 
   const orderedRevenues = Object.entries(revenues).sort((a, b) => {
