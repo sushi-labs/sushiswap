@@ -37,7 +37,7 @@ import 'isomorphic-unfetch'
 import { program } from 'commander'
 
 import { bar, bentobox, chef, maker, revenues, serve } from './actions'
-import { MAKER_SUPPORTED_CHAIN_NAMES, REVENUE_SUPPORTED_CHAIN_NAMES } from './config'
+import { MAKER_SUPPORTED_CHAIN_NAMES, REVENUES_SUPPORTED_CHAIN_NAMES } from './config'
 
 program.version('0.0.0').description('Sushi CLI')
 
@@ -48,7 +48,7 @@ program.command('bentobox').description('bentobox').action(bentobox)
 program
   .command('revenues')
   .description('Get revenues')
-  .option('-n,--network <NETWORK>', 'network available: '.concat(REVENUE_SUPPORTED_CHAIN_NAMES.join(', ')))
+  .option('-n,--network <NETWORK>', 'network available: '.concat(REVENUES_SUPPORTED_CHAIN_NAMES.join(', ')))
   .action(revenues)
 
 program

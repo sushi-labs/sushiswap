@@ -4,17 +4,17 @@ import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import CliTable3 from 'cli-table3'
 
-import { REVENUE_SUPPORTED_CHAIN_NAMES } from '../config'
+import { REVENUES_SUPPORTED_CHAIN_NAMES } from '../config'
 
 type Arguments = {
-  network?: typeof REVENUE_SUPPORTED_CHAIN_NAMES[number]
+  network?: typeof REVENUES_SUPPORTED_CHAIN_NAMES[number]
 }
 export async function revenues(args: Arguments) {
   const sdk = getBuiltGraphSDK()
 
   if (args.network) {
     if (!ChainId[args.network.toUpperCase() as any]) {
-      console.log(chalk.red('Please provide a valid network: ' + REVENUE_SUPPORTED_CHAIN_NAMES.join(', ') + '.'))
+      console.log(chalk.red('Please provide a valid network: ' + REVENUES_SUPPORTED_CHAIN_NAMES.join(', ') + '.'))
       return
     } else {
       console.log(chalk.green('Querying revenues for ' + args.network + '...'))
@@ -25,7 +25,7 @@ export async function revenues(args: Arguments) {
 
   const chainIds = args.network
     ? [parseInt(ChainId[args.network.toUpperCase() as any])]
-    : REVENUE_SUPPORTED_CHAIN_NAMES.map((name) => {
+    : REVENUES_SUPPORTED_CHAIN_NAMES.map((name) => {
         return parseInt(ChainId[name.toUpperCase() as any])
       })
 

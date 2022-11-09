@@ -22,7 +22,7 @@ export const MAKER_SUPPORTED_CHAIN_NAMES = [
   ChainKey.HARMONY,
 ] as const
 
-export const REVENUE_SUPPORTED_CHAIN_NAMES = [
+export const REVENUES_SUPPORTED_CHAIN_NAMES = [
   ChainKey.ETHEREUM,
   ChainKey.OPTIMISM,
   ChainKey.GNOSIS,
