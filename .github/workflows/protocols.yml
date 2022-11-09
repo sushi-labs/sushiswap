@@ -4,11 +4,11 @@ on:
   push:
     branches: ["master"]
     paths:
-      - "protocols"
+      - "protocols/**"
   pull_request:
     types: [opened, synchronize]
     paths:
-      - "protocols"
+      - "protocols/**"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 

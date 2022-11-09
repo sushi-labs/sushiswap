@@ -4,11 +4,11 @@ on:
   push:
     branches: ["master"]
     paths:
-      - "apps"
+      - "apps/**"
   pull_request:
     types: [opened, synchronize]
     paths:
-      - "apps"
+      - "apps/**"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
