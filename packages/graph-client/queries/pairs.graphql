@@ -126,6 +126,7 @@ query PairsWithFarms(
     volume1w
     fees1d
     fees1w
+    utilisation1dChange
     feeApr
     incentiveApr
     farm {
@@ -154,20 +155,20 @@ query PairById(
     id: $id
   ) {
     ...PairFields
-    liquidity1dChange,
-    liquidity1wChange,
-    volume1d,
-    volume1dChange,
-    volume1w,
-    fees1d,
-    fees1dChange,
-    fees1w,
-    txCount1d,
-    txCount1dChange,
-    txCount1w,
-    apr,
-    feeApr,
-    incentiveApr,
+    liquidity1dChange
+    liquidity1wChange
+    volume1d
+    volume1dChange
+    volume1w
+    fees1d
+    fees1dChange
+    fees1w
+    txCount1d
+    txCount1dChange
+    txCount1w
+    apr
+    feeApr
+    incentiveApr
     farm {
       id
       incentives {

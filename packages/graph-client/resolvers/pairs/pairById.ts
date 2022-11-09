@@ -54,7 +54,7 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
         subgraphHost: SUBGRAPH_HOST[chainId as typeof SUSHISWAP_ENABLED_NETWORKS[number]],
       },
       info,
-    }).then((pair: SushiSwapTypes.Pair) => {
+    }).then((pair: SushiSwapTypes.Pair | null) => {
       if (!pair) return pair
       return { ...pair, chainId, address }
     })
@@ -84,7 +84,6 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
     } else if (!SUSHISWAP_ENABLED_NETWORKS.includes(chainId) && TRIDENT_ENABLED_NETWORKS.includes(chainId)) {
       return fetchTridentPair(block)
     } else if (SUSHISWAP_ENABLED_NETWORKS.includes(chainId) && TRIDENT_ENABLED_NETWORKS.includes(chainId)) {
-      console.log('TRIDENT AND SUSHISWAP', await Promise.all([fetchSushiSwapPair(block), fetchTridentPair(block)]))
       return Promise.allSettled<Pair[]>([fetchSushiSwapPair(block), fetchTridentPair(block)]).then((results) => {
         return results
           .filter(isPromiseFulfilled)

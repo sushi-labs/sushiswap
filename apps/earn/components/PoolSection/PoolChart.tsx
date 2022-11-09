@@ -1,4 +1,4 @@
-import { formatUSD } from '@sushiswap/format'
+import { formatPercent, formatUSD } from '@sushiswap/format'
 import { Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
@@ -19,7 +19,7 @@ enum PoolChartType {
   Volume,
   TVL,
   Fees,
-  Apr,
+  APR,
 }
 
 enum PoolChartPeriod {
@@ -55,7 +55,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             acc[1].push(Number(cur.volumeUSD))
           } else if (chartType === PoolChartType.TVL) {
             acc[1].push(Number(cur.liquidityUSD))
-          } else if (chartType === PoolChartType.Apr) {
+          } else if (chartType === PoolChartType.APR) {
             acc[1].push(Number(cur.apr))
           }
         }
@@ -73,7 +73,12 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
       const nameNodes = document.getElementsByClassName('hoveredItemName')
 
-      valueNodes[0].innerHTML = formatUSD(value)
+      if (chartType === PoolChartType.APR) {
+        valueNodes[0].innerHTML = formatPercent(value)
+      } else {
+        valueNodes[0].innerHTML = formatUSD(value)
+      }
+
       if (chartType === PoolChartType.Volume) {
         valueNodes[1].innerHTML = formatUSD(value * (pair.swapFee / 10000))
       }
@@ -99,7 +104,9 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
 
           const date = new Date(Number(params[0].name * 1000))
           return `<div class="flex flex-col gap-0.5">
-            <span class="text-sm text-slate-50 font-semibold">${formatUSD(params[0].value)}</span>
+            <span class="text-sm text-slate-50 font-semibold">${
+              chartType === PoolChartType.APR ? formatPercent(params[0].value) : formatUSD(params[0].value)
+            }</span>
             <span class="text-xs text-slate-400 font-medium">${
               date instanceof Date && !isNaN(date?.getTime()) ? format(date, 'dd MMM yyyy HH:mm') : ''
             }</span>
@@ -146,7 +153,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       series: [
         {
           name: 'Volume',
-          type: chartType === PoolChartType.TVL ? 'line' : 'bar',
+          type: chartType === PoolChartType.TVL || chartType === PoolChartType.APR ? 'line' : 'bar',
           xAxisIndex: 0,
           yAxisIndex: 0,
           itemStyle: {
@@ -201,13 +208,13 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             Fees
           </button>
           <button
-            onClick={() => setChartType(PoolChartType.Apr)}
+            onClick={() => setChartType(PoolChartType.APR)}
             className={classNames(
               'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.Apr ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
+              chartType === PoolChartType.APR ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
             )}
           >
-            Apr
+            APR
           </button>
         </div>
         <div className="flex gap-4">
@@ -260,7 +267,11 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       </div>
       <div className="flex flex-col">
         <Typography variant="xl" weight={500} className="text-slate-50">
-          <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1])}</span>{' '}
+          <span className="hoveredItemValue">
+            {chartType === PoolChartType.APR
+              ? formatPercent(yData[yData.length - 1])
+              : formatUSD(yData[yData.length - 1])}
+          </span>{' '}
           {chartType === PoolChartType.Volume && (
             <span className="text-sm font-medium text-slate-300">
               <span className="text-xs top-[-2px] relative">•</span>{' '}

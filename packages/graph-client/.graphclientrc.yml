@@ -290,6 +290,9 @@ additionalTypeDefs: |
     fees1d: BigDecimal
     fees1w: BigDecimal
     fees1dChange: BigDecimal
+    utilisation1d: BigDecimal
+    utilisation2d: BigDecimal
+    utilisation1dChange: BigDecimal
     txCount1d: BigDecimal
     txCount1dChange: BigDecimal
     txCount1w: BigDecimal

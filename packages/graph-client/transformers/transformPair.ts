@@ -34,6 +34,10 @@ export function transformPair({
   const txCount1w = pair1w ? Number(pair.txCount) - Number(pair1w.txCount) : Number(pair.txCount)
   const txCount1dChange = pair1d && pair2d ? txCount1d / txCount2d - 1 : null
 
+  const utilisation1d = pair1d ? (volume1d / pair.liquidityUSD) * 100 : 0
+  const utilisation2d = pair1d && pair2d ? (volume2d / pair1d.liquidityUSD) * 100 : 0
+  const utilisation1dChange = (utilisation1d / utilisation2d) * 100 - 100
+
   const feeApr = pair?.apr
   const incentiveApr =
     farm?.incentives?.reduce((previousValue, currentValue) => previousValue + Number(currentValue.apr), 0) ?? 0
@@ -55,6 +59,9 @@ export function transformPair({
     txCount1d,
     txCount1dChange,
     txCount1w,
+    utilisation1d,
+    utilisation2d,
+    utilisation1dChange,
     apr,
     feeApr,
     incentiveApr,

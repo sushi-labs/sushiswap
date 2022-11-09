@@ -108,7 +108,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
   })
 
   // Get the paths we want to pre-render based on pairs
-  const paths = take(orderBy(pairs, ['liquidityUSD'], ['desc']), 1000).map((pair) => {
+  const paths = take(orderBy(pairs, ['liquidityUSD'], ['desc']), 1000).map((pair, i) => {
+    if (i == 0) console.log('HIGHEST LIQ PAIR', pair)
     return {
       params: { id: `${chainShortName[pair.chainId]}:${pair.address}` },
     }

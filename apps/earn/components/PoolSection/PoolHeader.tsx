@@ -16,7 +16,7 @@ interface PoolHeader {
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
-  console.log({ pair })
+  // console.log({ pair })
   const { token0, token1, reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const price = useMemo(() => new Price({ baseAmount: reserve0, quoteAmount: reserve1 }), [reserve0, reserve1])
 
