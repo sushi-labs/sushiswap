@@ -15,8 +15,6 @@ defaults:
     # change this if your nextjs app does not live at the root of the repo
     working-directory: ./apps/swap
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
-
 env:
   CI: true
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
