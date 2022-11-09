@@ -22,6 +22,21 @@ export const MAKER_SUPPORTED_CHAIN_NAMES = [
   ChainKey.HARMONY,
 ] as const
 
+export const REVENUE_SUPPORTED_CHAIN_NAMES = [
+  ChainKey.ETHEREUM,
+  ChainKey.OPTIMISM,
+  ChainKey.GNOSIS,
+  ChainKey.POLYGON,
+  ChainKey.ARBITRUM,
+  ChainKey.FANTOM,
+  ChainKey.BOBA,
+  ChainKey.METIS,
+  ChainKey.MOONRIVER,
+  ChainKey.KAVA,
+  ChainKey.CELO,
+  ChainKey.HARMONY,
+] as const
+
 export const CHAIN_NAME_TO_CHAIN_ID = {
   [ChainKey.ETHEREUM]: ChainId.ETHEREUM,
   [ChainKey.FANTOM]: ChainId.FANTOM,
@@ -72,6 +87,8 @@ export const MAKER_ADDRESS = {
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
+export const KAVA_GRAPH_HOST = 'https://pvt.graph.kava.io/subgraphs/name'
+export const METIS_GRAPH_HOST = 'https://andromeda.thegraph.metis.io/subgraphs/name'
 
 export const SUBGRAPH_HOST = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
@@ -88,6 +105,9 @@ export const SUBGRAPH_HOST = {
   [ChainId.MOONRIVER]: GRAPH_HOST,
   [ChainId.OPTIMISM]: GRAPH_HOST,
   [ChainId.POLYGON]: GRAPH_HOST,
+  [ChainId.BOBA]: GRAPH_HOST,
+  [ChainId.KAVA]: KAVA_GRAPH_HOST,
+  [ChainId.METIS]: METIS_GRAPH_HOST,
 } as const
 
 export const EXCHANGE_SUBGRAPH_NAME = {
@@ -103,4 +123,12 @@ export const EXCHANGE_SUBGRAPH_NAME = {
   [ChainId.MOONBEAM]: 'sushiswap/exchange-moonbeam',
   [ChainId.MOONRIVER]: 'sushiswap/exchange-moonriver',
   [ChainId.POLYGON]: 'sushiswap/matic-exchange',
+} as const
+
+export const TRIDENT_SUBGRAPH_NAME = {
+  [ChainId.POLYGON]: 'sushi-qa/trident-polygon',
+  [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
+  [ChainId.KAVA]: 'sushi-qa/trident-kava',
+  [ChainId.METIS]: 'sushi-qa/trident-metis',
+  [ChainId.BOBA]: 'sushi-qa/trident-metis',
 } as const
