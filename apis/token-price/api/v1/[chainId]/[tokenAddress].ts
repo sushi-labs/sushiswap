@@ -8,7 +8,7 @@ export default async (request: VercelRequest, response: VercelResponse) => {
 
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     response
-      .status(400)
+      .status(422)
       .json({ message: 'Unsupported network. Supported chain ids: '.concat(SUPPORTED_CHAINS.join(', ')) })
   }
 

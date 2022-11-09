@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev -p 3007",
     "generate": "graphclient build",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "start": "next start",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
+    "start": "next start"
   },
   "dependencies": {
     "@builder.io/partytown": "^0.7.0",
@@ -24,13 +24,13 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
+    "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
-    "@sushiswap/kashi": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/amm": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
+    "@sushiswap/kashi": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/redux-localstorage": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",

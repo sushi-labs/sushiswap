@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev -p 4003",
     "lint": "eslint --fix . && next lint",
-    "start": "next start",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
+    "start": "next start"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.3",
@@ -16,8 +16,8 @@
     "@sushiswap/wagmi": "workspace:*",
     "ethers": "^5.7.0",
     "next": "12.3.1",
-    "next-seo": "^5.5.0",
     "next-axiom": "^0.14.0",
+    "next-seo": "^5.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",

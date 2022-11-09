@@ -12,8 +12,8 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
-    "start": "graphclient start",
-    "lint": "TIMING=1 eslint --fix ."
+    "lint": "TIMING=1 eslint --fix .",
+    "start": "graphclient start"
   },
   "dependencies": {
     "@sushiswap/graph-client": "workspace:*",

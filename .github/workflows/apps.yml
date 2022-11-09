@@ -1,0 +1,84 @@
+name: Sushi - apps
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "apps/**"
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "apps/**"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  CI: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  ci:
+      name: Continuous integration
+      timeout-minutes: 30
+      runs-on: ubuntu-latest
+      env:
+        # TURBO
+        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+        # ROOT ENV
+        ROOT_URL: ${{ secrets.ROOT_URL }}
+        ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
+        BLOG_URL: ${{ secrets.BLOG_URL }}
+        BRIDGE_URL: ${{ secrets.BRIDGE_URL }}
+        EARN_URL: ${{ secrets.EARN_URL }}
+        FURO_URL: ${{ secrets.FURO_URL }}
+        INTERNAL_URL: ${{ secrets.INTERNAL_URL }}
+        KASHI_URL: ${{ secrets.KASHI_URL }}
+        PARTNER_URL: ${{ secrets.PARTNER_URL }}
+        SWAP_URL: ${{ secrets.SWAP_URL }}
+        XSWAP_URL: ${{ secrets.XSWAP_URL }}
+        # RPC
+        NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+        NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+        INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+        ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+      steps:
+        - name: Check out
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 2
+ 
+        - uses: pnpm/action-setup@v2
+          with:
+            version: 7
+ 
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: 16
+            cache: 'pnpm'
+ 
+        - name: Install dependencies
+          run: pnpm install
+
+        - name: Build root app
+          run: pnpm build-root-app
+
+        - name: Build analytics app
+          run: pnpm build-analytics-app
+
+        - name: Build blog app
+          run: pnpm build-blog-app
+
+        - name: Build earn app
+          run: pnpm build-earn-app
+
+        - name: Build furo app
+          run: pnpm build-furo-app
+
+        - name: Build swap app
+          run: pnpm build-swap-app
+
+        - name: Build xswap app
+          run: pnpm build-xswap-app

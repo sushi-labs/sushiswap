@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import stringify from 'fast-json-stable-stringify'
+import { Typography } from '@sushiswap/ui'
+import { Layout } from 'components'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import { getBuiltGraphSDK } from '.graphclient'
@@ -33,12 +34,19 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 
 export default function BentoBoxStrategiesPage({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <div className="grid grid-cols-4 gap-4 p-8">
-      {data.map((kpi) => (
-        <pre key={kpi.chainId} className="p-4 bg-slate-700 rounded-3xl">
-          {JSON.stringify(kpi, null, 2)}
-        </pre>
-      ))}
-    </div>
+    <Layout>
+      <div className="max-w-full px-4 py-12 mx-auto sm:px-6 lg:px-8">
+        <Typography variant="hero" weight={600} className="text-slate-50">
+          BentoBox Strategies
+        </Typography>
+        <div className="grid grid-cols-1 gap-5 mt-5">
+          {data.map((kpi) => (
+            <pre key={kpi.chainId} className="p-4 bg-slate-700 rounded-3xl">
+              {JSON.stringify(kpi, null, 2)}
+            </pre>
+          ))}
+        </div>
+      </div>
+    </Layout>
   )
 }

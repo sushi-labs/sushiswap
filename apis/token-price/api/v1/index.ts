@@ -6,10 +6,8 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   const data = await redis.hgetall('prices')
 
   if (!data) {
-    return response.status(204)
+    return response.status(503)
   }
 
-  const json = data
-
-  return response.status(200).json(json)
+  return response.status(200).json(data)
 }

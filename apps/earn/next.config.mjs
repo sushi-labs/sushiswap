@@ -11,7 +11,6 @@ const withTranspileModules = transpileModules([
   '@sushiswap/redux-localstorage',
   '@sushiswap/wagmi',
   '@sushiswap/ui',
-  '@sushiswap/graph-client',
 ])
 
 // @ts-check

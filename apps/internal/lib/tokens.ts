@@ -13,12 +13,12 @@ export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; fil
   const defaultTokenList = await getDefaultTokenList()
 
   const tokens = await sdk
-    .CrossChainTokens({
-      chainIds: chainIds,
+    .TokensByChainIds({
+      chainIds,
       orderBy: 'liquidityUSD',
       where: { symbol_contains_nocase: filter },
     })
-    .then(({ crossChainTokens: tokens }) =>
+    .then(({ tokens }) =>
       tokens.map((token) => ({
         ...token,
         listEntry:

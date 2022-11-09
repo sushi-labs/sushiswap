@@ -7,10 +7,10 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
     "build": "next build",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev --port 4001",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "start": "next start",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
+    "start": "next start"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
