@@ -1,9 +1,7 @@
-import { XIcon } from '@heroicons/react/solid'
 import { Token as TokenEntity } from '@sushiswap/currency'
-import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
+import { Menu, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
 import { Token, TokenLogo } from 'lib'
-import Image from 'next/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
@@ -86,7 +84,8 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
     <Menu
       button={
         <Menu.Button variant="empty" className="px-0">
-          {selectedLogoURI ? (
+          TEST
+          {/* {selectedLogoURI ? (
             <>
               <Image src={selectedLogoURI} height={24} width={24} alt="img" className="rounded-full" />
               <div
@@ -117,7 +116,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
                 </linearGradient>
               </defs>
             </svg>
-          )}
+          )} */}
         </Menu.Button>
       }
     >

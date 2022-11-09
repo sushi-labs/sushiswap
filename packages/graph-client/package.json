@@ -41,9 +41,10 @@
   "dependencies": {
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
+    "@graphql-mesh/cache-redis": "latest",
     "@graphprotocol/client-auto-type-merging": "latest",
     "@graphprotocol/client-cli": "2.2.15",
-    "@graphql-mesh/cache-localforage": "latest",
+    "ioredis": "5.2.4",
     "@graphql-mesh/cross-helpers": "latest",
     "@graphql-mesh/graphql": "latest",
     "@graphql-mesh/http": "latest",

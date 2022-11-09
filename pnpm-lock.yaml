@@ -1985,7 +1985,7 @@ importers:
       '@graphprotocol/client-auto-pagination': latest
       '@graphprotocol/client-auto-type-merging': latest
       '@graphprotocol/client-cli': 2.2.15
-      '@graphql-mesh/cache-localforage': latest
+      '@graphql-mesh/cache-redis': latest
       '@graphql-mesh/cross-helpers': latest
       '@graphql-mesh/graphql': latest
       '@graphql-mesh/http': latest
@@ -2018,6 +2018,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       graphql: 16.6.0
+      ioredis: 5.2.4
       isomorphic-unfetch: 3.1.0
       jest: ^28.1.0
       tslib: latest
@@ -2028,7 +2029,7 @@ importers:
       '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
       '@graphprotocol/client-auto-type-merging': 1.0.18_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.15_7vxdibmbn7q7iouuxdvmk6ueoi
-      '@graphql-mesh/cache-localforage': 0.6.60_graphql@16.6.0
+      '@graphql-mesh/cache-redis': 0.10.44_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.2.9_graphql@16.6.0
       '@graphql-mesh/graphql': 0.31.31_graphql@16.6.0
       '@graphql-mesh/http': 0.2.12_graphql@16.6.0
@@ -2054,6 +2055,7 @@ importers:
       date-fns: 2.29.3
       ethers: 5.7.1
       graphql: 16.6.0
+      ioredis: 5.2.4
       isomorphic-unfetch: 3.1.0
       tslib: 2.4.1
     devDependencies:
@@ -6112,19 +6114,23 @@ packages:
       - react-native
       - react-native-windows
 
-  /@graphql-mesh/cache-localforage/0.6.60_graphql@16.6.0:
-    resolution: {integrity: sha512-okbmbNiNdZk+cYLM0COLMhIpjNZKBcZamZ4a1pMbghwPRWZvIJ+p7tJLurjwB7seyYkuxz/RE7E0YIUfMXvTyA==}
+  /@graphql-mesh/cache-redis/0.10.44_graphql@16.6.0:
+    resolution: {integrity: sha512-5QoNFUlrfnJDUp8kw0yhFlM8fVEqKw6AmRaSH6ZWRHn4sJ8W0P+UiDpEKXJDzkU+GsoxT5wYIvDr5KKLCQiXNQ==}
     peerDependencies:
       graphql: '*'
     dependencies:
+      '@graphql-mesh/cross-helpers': 0.2.9_graphql@16.6.0
+      '@graphql-mesh/string-interpolation': 0.3.3_graphql@16.6.0
       '@graphql-mesh/types': 0.85.7_graphql@16.6.0
       '@graphql-mesh/utils': 0.42.6_graphql@16.6.0
       graphql: 16.6.0
-      localforage: 1.10.0
+      ioredis: 5.2.4
+      ioredis-mock: 8.2.2_ioredis@5.2.4
       tslib: 2.4.1
     transitivePeerDependencies:
       - react-native
       - react-native-windows
+      - supports-color
     dev: false
 
   /@graphql-mesh/cli/0.78.39_@types+node@17.0.45:
@@ -8144,6 +8150,10 @@ packages:
 
   /@iarna/toml/2.2.5:
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
+    dev: false
+
+  /@ioredis/as-callback/3.0.0:
+    resolution: {integrity: sha512-Kqv1rZ3WbgOrS+hgzJ5xG5WQuhvzzSTRYvNeyPMLOAM78MHSnuKI20JeJGbpuAt//LCuP0vsexZcorqW7kWhJg==}
     dev: false
 
   /@ioredis/commands/1.2.0:
@@ -16678,6 +16688,22 @@ packages:
     transitivePeerDependencies:
       - encoding
 
+  /fengari-interop/0.1.3_fengari@0.1.4:
+    resolution: {integrity: sha512-EtZ+oTu3kEwVJnoymFPBVLIbQcCoy9uWCVnMA6h3M/RqHkUBsLYp29+RRHf9rKr6GwjubWREU1O7RretFIXjHw==}
+    peerDependencies:
+      fengari: ^0.1.0
+    dependencies:
+      fengari: 0.1.4
+    dev: false
+
+  /fengari/0.1.4:
+    resolution: {integrity: sha512-6ujqUuiIYmcgkGz8MGAdERU57EIluGGPSUgGPTsco657EHa+srq0S3/YUl/r9kx1+D+d4rGfYObd+m8K22gB1g==}
+    dependencies:
+      readline-sync: 1.4.10
+      sprintf-js: 1.1.2
+      tmp: 0.0.33
+    dev: false
+
   /fetch-ponyfill/4.1.0:
     resolution: {integrity: sha512-knK9sGskIg2T7OnYLdZ2hZXn0CtDrAIBxYQLpmEf0BqfdWnwmM1weccUl5+4EdA44tzNSFAuxITPbXtPehUB3g==}
     dependencies:
@@ -18205,6 +18231,19 @@ packages:
     dependencies:
       fp-ts: 1.19.3
 
+  /ioredis-mock/8.2.2_ioredis@5.2.4:
+    resolution: {integrity: sha512-XyJfcF6pqcLHwAYtldkzaLtjRxPw7d8U0FUfjgQ5U/d0vVhFxiXbqsILR4FEOp+ygzyZgBA8xye+uPKu74IH1A==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      ioredis: 5.x
+    dependencies:
+      '@ioredis/as-callback': 3.0.0
+      '@ioredis/commands': 1.2.0
+      fengari: 0.1.4
+      fengari-interop: 0.1.3_fengari@0.1.4
+      ioredis: 5.2.4
+    dev: false
+
   /ioredis/5.2.2:
     resolution: {integrity: sha512-wryKc1ur8PcCmNwfcGkw5evouzpbDXxxkMkzPK8wl4xQfQf7lHe11Jotell5ikMVAtikXJEu/OJVaoV51BggRQ==}
     engines: {node: '>=12.22.0'}
@@ -18220,6 +18259,23 @@ packages:
       standard-as-callback: 2.1.0
     transitivePeerDependencies:
       - supports-color
+
+  /ioredis/5.2.4:
+    resolution: {integrity: sha512-qIpuAEt32lZJQ0XyrloCRdlEdUUNGG9i0UOk6zgzK6igyudNWqEBxfH6OlbnOOoBBvr1WB02mm8fR55CnikRng==}
+    engines: {node: '>=12.22.0'}
+    dependencies:
+      '@ioredis/commands': 1.2.0
+      cluster-key-slot: 1.1.0
+      debug: 4.3.4
+      denque: 2.1.0
+      lodash.defaults: 4.2.0
+      lodash.isarguments: 3.1.0
+      redis-errors: 1.2.0
+      redis-parser: 3.0.0
+      standard-as-callback: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /ipaddr.js/1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
@@ -23224,6 +23280,11 @@ packages:
     dependencies:
       picomatch: 2.3.1
 
+  /readline-sync/1.4.10:
+    resolution: {integrity: sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==}
+    engines: {node: '>= 0.8.0'}
+    dev: false
+
   /redent/3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
@@ -24262,6 +24323,10 @@ packages:
 
   /sprintf-js/1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
+
+  /sprintf-js/1.1.2:
+    resolution: {integrity: sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==}
+    dev: false
 
   /sshpk/1.17.0:
     resolution: {integrity: sha512-/9HIEs1ZXGhSPE8X6Ccm7Nam1z8KcoCqPdI7ecm1N33EzAetWahvQWVqLZtaZQ+IDKX4IyA2o0gBzqIMkAagHQ==}

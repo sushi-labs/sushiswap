@@ -17,7 +17,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   return {
     props: {
       fallback: {
-        [`tokens?chainIds${TOKENS_SUPPORTED_CHAIN_IDS}`]: tokens,
+        [`tokens?chainIds=${TOKENS_SUPPORTED_CHAIN_IDS}`]: tokens,
       },
     },
   }
@@ -37,7 +37,7 @@ const _TokensPage: FC = () => {
   const debouncedFilter = useDebounce(filter, 400)
 
   const { data: tokens } = useSWR<Token[]>(
-    `tokens?chainIds${chainIds}${debouncedFilter ? `?filter=${debouncedFilter}` : ''}`,
+    `tokens?chainIds=${chainIds}${filter.length ? `&filter=${debouncedFilter}` : ''}`,
     () => getTokens({ chainIds: chainIds, filter: debouncedFilter })
   )
 

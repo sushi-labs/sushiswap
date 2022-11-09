@@ -490,3 +490,7 @@ serve:
 
 codegen:
   contextType: 'MeshContext & { chainId: string; subgraphName: string; subgraphHost: string }'
+
+cache:
+  redis:
+    url: "${env.REDIS_URL}"
