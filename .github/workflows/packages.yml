@@ -1,4 +1,4 @@
-name: CI - packages
+name: Sushi - packages
 
 on:
   push:
@@ -16,7 +16,8 @@ env:
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
 jobs:
-  build:
+  ci:
+      name: Continuous integration
       timeout-minutes: 15
       runs-on: ubuntu-latest
       env:
