@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev -p 3010",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "start": "next start",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
+    "start": "next start"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -21,10 +21,10 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
+    "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/amm": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
@@ -42,14 +42,14 @@
     "ethers": "^5.7.0",
     "nanoid": "^4.0.0",
     "next": "^12.3.1",
+    "next-axiom": "^0.14.0",
     "next-seo": "^5.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
     "swr": "^1.3.0",
     "typechain": "^8.0.0",
-    "wagmi": "0.6.8",
-    "next-axiom": "^0.14.0"
+    "wagmi": "0.6.8"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

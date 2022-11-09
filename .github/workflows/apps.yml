@@ -18,7 +18,7 @@ env:
 jobs:
   ci:
       name: Continuous integration
-      timeout-minutes: 15
+      timeout-minutes: 30
       runs-on: ubuntu-latest
       env:
         # TURBO

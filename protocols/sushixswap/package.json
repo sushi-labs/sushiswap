@@ -28,9 +28,9 @@
   "scripts": {
     "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf cache && rm -rf exports && rm -rf typechain",
+    "compile": "hardhat compile",
     "export": "hardhat export --export-all exports.json",
     "node": "hardhat node",
-    "compile": "hardhat compile",
     "test": "hardhat test"
   },
   "devDependencies": {
@@ -38,13 +38,13 @@
     "@ethersproject/providers": "^5.7.0",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.6.0",
+    "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^1.4.2",
     "@sushiswap/core-sdk": "1.0.0-canary.110",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/amm": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

@@ -17,9 +17,9 @@
     "react/index.js"
   ],
   "dependencies": {
+    "@graphql-eslint/eslint-plugin": "latest",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
-    "@graphql-eslint/eslint-plugin": "latest",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "eslint-config-prettier": "latest",

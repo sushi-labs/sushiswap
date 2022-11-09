@@ -3,20 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build-apps": "turbo run build --filter={./apps/*}[HEAD^1]...",
-    "build-root-app": "turbo run build --filter=root[HEAD^1]",
+    "build": "turbo run build",
     "build-analytics-app": "turbo run build --filter=analytics[HEAD^1]",
+    "build-apps": "turbo run build --filter={./apps/*}[HEAD^1]...",
     "build-blog-app": "turbo run build --filter=blog[HEAD^1]",
     "build-earn-app": "turbo run build --filter=earn[HEAD^1]",
     "build-furo-app": "turbo run build --filter=furo[HEAD^1]",
-    "build-swap-app": "turbo run build --filter=swap[HEAD^1]",
-    "build-xswap-app": "turbo run build --filter=xswap[HEAD^1]",
     "build-packages": "turbo run build --filter={./packages/*}[HEAD^1]...",
     "build-protocols": "turbo run build --filter={./protocols/*}[HEAD^1]...",
-    "build": "turbo run build",
+    "build-root-app": "turbo run build --filter=root[HEAD^1]",
+    "build-swap-app": "turbo run build --filter=swap[HEAD^1]",
+    "build-xswap-app": "turbo run build --filter=xswap[HEAD^1]",
     "build:ci": "turbo run build --filter=[HEAD^1]",
-    "generate": "turbo run generate",
-    "generate:ci": "turbo run generate --filter=[HEAD^1]",
     "changeset": "changeset",
     "changeset-publish": "changeset publish",
     "changeset-version": "changeset version",
@@ -25,26 +23,23 @@
     "disable-remote-caching": "turbo unlink && rm -rf ./node_modules/.cache/turbo",
     "enable-remote-caching": "turbo link",
     "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\"",
+    "generate": "turbo run generate",
+    "generate:ci": "turbo run generate --filter=[HEAD^1]",
+    "lint": "turbo run lint --parallel",
     "lint-apps": "turbo run lint --filter={./apps/*}[HEAD^1]...",
     "lint-packages": "turbo run lint --filter={./packages/*}[HEAD^1]...",
     "lint-protocols": "turbo run lint --filter={./protocols/*}[HEAD^1]...",
-    "lint": "turbo run lint --parallel",
     "lint:ci": "turbo run lint --parallel --filter=[HEAD^1]",
     "prepare": "husky install ",
+    "publish-packages": "turbo run build --filter=./packages/* && changeset version && changeset publish",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' --check",
+    "test": "turbo run test --parallel",
     "test-apps": "turbo run test --filter={./apps/*}[HEAD^1]...",
     "test-packages": "turbo run test --filter={./packages/*}[HEAD^1]...",
     "test-protocols": "turbo run test --filter={./protocols/*}[HEAD^1]...",
-    "test": "turbo run test --parallel",
     "test:ci": "turbo run test --parallel --filter=[HEAD^1]",
-    "version-packages": "turbo run build --filter=./packages/* && changeset version",
-    "publish-packages": "turbo run build --filter=./packages/* && changeset version && changeset publish"
-  },
-  "pnpm": {
-    "overrides": {
-      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
-    }
+    "version-packages": "turbo run build --filter=./packages/* && changeset version"
   },
   "lint-staged": {
     "*.ts": [
@@ -75,12 +70,17 @@
     "prettier": "^2.7.0",
     "sort-package-json": "^1.57.0",
     "ts-jest": "^28.0.0",
-    "turbo": "latest",
-    "ts-node": "latest"
+    "ts-node": "latest",
+    "turbo": "latest"
   },
   "packageManager": "pnpm@7.6.0",
   "engines": {
     "node": ">=16.x",
     "pnpm": ">=6.x"
+  },
+  "pnpm": {
+    "overrides": {
+      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
+    }
   }
 }
