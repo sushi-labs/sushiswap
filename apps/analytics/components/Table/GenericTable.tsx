@@ -88,7 +88,7 @@ export const GenericTable = <T extends { id: string }>({
                         >
                           {row.getVisibleCells().map((cell) => {
                             return (
-                              <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                              <Table.td style={{ maxWidth: cell.column.columnDef.size, width: cell.column.columnDef.size }} key={cell.id}>
                                 <a href={linkFormatter ? linkFormatter(row.original.id) : `/${row.original.id}`}>
                                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </a>
@@ -114,7 +114,7 @@ export const GenericTable = <T extends { id: string }>({
                   >
                     {row.getVisibleCells().map((cell) => {
                       return (
-                        <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                        <Table.td style={{ maxWidth: cell.column.columnDef.size, width: cell.column.columnDef.size }} key={cell.id}>
                           <a href={linkFormatter ? linkFormatter(row.original.id) : `/${row.original.id}`}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </a>

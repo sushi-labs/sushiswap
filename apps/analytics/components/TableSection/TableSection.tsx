@@ -7,13 +7,17 @@ import { PairTable } from '../PairTable'
 import { SelectedTable, usePoolFilters } from '../PoolsFiltersProvider'
 import { TableFilters } from '../Table/TableFilters'
 import { TokenTable } from '../TokenTable'
+import { TransactionTable } from '../TransactionTable'
 
 export const TableSection: FC = () => {
-  const { selectedNetworks, setFilters } = usePoolFilters()
+  const { selectedNetworks, setFilters, selectedTable } = usePoolFilters()
 
   const onChange = useCallback(
     (val) => {
-      setFilters({ selectedTable: val === 0 ? SelectedTable.Markets : SelectedTable.Tokens })
+      setFilters({
+        selectedTable:
+          val === 0 ? SelectedTable.Markets : val === 1 ? SelectedTable.Tokens : SelectedTable.Transactions,
+      })
     },
     [setFilters]
   )
@@ -42,19 +46,44 @@ export const TableSection: FC = () => {
           >
             Top Tokens
           </Tab>
+          <Tab
+            className={({ selected }) =>
+              classNames(
+                selected ? 'text-slate-200' : 'text-slate-500',
+                'hover:text-slate-50 focus:text-slate-50 font-medium !outline-none'
+              )
+            }
+          >
+            Transactions
+          </Tab>
         </div>
-        <TableFilters />
-        <Network.Selector
-          networks={SUPPORTED_CHAIN_IDS}
-          selectedNetworks={selectedNetworks}
-          onChange={(selectedNetworks) => setFilters({ selectedNetworks })}
-        />
+        {selectedTable === SelectedTable.Transactions ? (
+          <Network.SelectorTxn
+            networks={SUPPORTED_CHAIN_IDS}
+            selectedNetwork={selectedNetworks[0]}
+            onChange={(selectedNetwork) =>
+              setFilters({ selectedNetworks: selectedNetwork === null ? [] : [selectedNetwork] })
+            }
+          />
+        ) : (
+          <>
+            <TableFilters />
+            <Network.Selector
+              networks={SUPPORTED_CHAIN_IDS}
+              selectedNetworks={selectedNetworks}
+              onChange={(selectedNetworks) => setFilters({ selectedNetworks })}
+            />
+          </>
+        )}
         <Tab.Panels>
           <Tab.Panel unmount={false}>
             <PairTable />
           </Tab.Panel>
           <Tab.Panel unmount={false}>
             <TokenTable />
+          </Tab.Panel>
+          <Tab.Panel unmount={false}>
+            <TransactionTable />
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

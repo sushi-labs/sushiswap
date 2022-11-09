@@ -189,3 +189,4 @@ export const getCharts = async (query: { networks: string }) => {
 
   return [tvl, vol]
 }
+

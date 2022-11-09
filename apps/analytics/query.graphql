@@ -1,0 +1,34 @@
+query analyticsTransactions (
+  $block: Block_height
+  $first: Int = 1000
+  $orderBy: Transaction_orderBy = createdAtTimestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Transaction_filter
+) {
+  transactions(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) {
+    id
+    type
+    amount
+    toBentoBox
+    createdAtBlock
+    createdAtTimestamp
+    txHash
+    token {
+      id
+      name
+      symbol
+      decimals
+    }
+    to {
+      id
+    }
+  }
+}

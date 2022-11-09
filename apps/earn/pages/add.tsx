@@ -262,7 +262,7 @@ const _Add: FC<AddProps> = ({
 
         <Widget id="addLiquidity" maxWidth={400}>
           <Widget.Content>
-            <Widget.Header title="3. Add Liquidity">
+            <Widget.Header title="4. Add Liquidity">
               <SettingsOverlay />
             </Widget.Header>
             <Web3Input.Currency

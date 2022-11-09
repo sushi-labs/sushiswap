@@ -15,14 +15,22 @@ import {
   GetTokensQuery,
 } from '../lib/api'
 
+import {
+  getTransactions,
+  getTransactionCount,
+  GetTransactionsQuery,
+} from '../lib/txn_api'
+
 export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  const [pairs, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
+  const [pairs, tokens, transactions, charts, poolCount, tokenCount, transactionCount, bundles] = await Promise.all([
     getPools(query as unknown as GetPoolsQuery),
     getTokens(query as unknown as GetTokensQuery),
+    getTransactions(query as unknown as GetTransactionsQuery),
     getCharts(query as { networks: string }),
     getPoolCount(),
     getTokenCount(),
+    getTransactionCount(),
     getBundles(),
   ])
 
@@ -65,7 +73,24 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
             extraQuery: '',
           },
         })]: tokens,
-
+        [unstable_serialize({
+          url: '/analytics/api/transactions',
+          args: {
+            sorting: [
+              {
+                id: 'createdAtTimestamp',
+                desc: true,
+              },
+            ],
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
+            pagination: {
+              pageIndex: 0,
+              pageSize: 20,
+            },
+            query: '',
+            extraQuery: '',
+          },
+        })]: transactions,
         [unstable_serialize({
           url: '/analytics/api/charts',
           args: {
@@ -73,7 +98,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           },
         })]: charts,
         [`/analytics/api/pools/count`]: poolCount,
-        [`/analytics/api/tokens/count`]: tokenCount,
+        [`/analytics/api/tokens/count`]: tokenCount,        
+        [`/analytics/api/transactions/count`]: transactionCount,
         [`/analytics/api/bundles`]: bundles,
       },
     },

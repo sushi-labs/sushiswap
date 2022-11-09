@@ -13,6 +13,7 @@ enum Filters {
 export enum SelectedTable {
   Markets = 'Markets',
   Tokens = 'Tokens',
+  Transactions = 'Transactions',
 }
 
 interface FilterContext {

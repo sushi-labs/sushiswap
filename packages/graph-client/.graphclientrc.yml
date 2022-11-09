@@ -159,7 +159,6 @@ additionalTypeDefs: |
       first: Int,
       skip: Int,
       where: User_filter,
-      block: Block_height,
       chainIds: [Int!]!,
     ): [ChefUser]
     crossChainUserWithFarms(

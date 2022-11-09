@@ -1,0 +1,14 @@
+sources:
+  - name: Analytics
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushi-subgraphs/furo-ethereum}
+    transforms:
+      - autoPagination:
+          validateSchema: true
+plugins:
+  - pollingLive:
+      defaultInterval: 1000
+      
+documents:
+  - ./query.graphql
