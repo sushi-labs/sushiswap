@@ -7,6 +7,8 @@ on:
       - "apps"
   pull_request:
     types: [opened, synchronize]
+    paths:
+      - "apps"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
