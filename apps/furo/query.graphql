@@ -61,6 +61,12 @@ query userVestings($block: Block_height, $id: String!) {
   }
 }
 
+query vestingIds($first: Int = 1000, $skip: Int = 0, $where: Vesting_filter, $block: Block_height) {
+  vestings(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+  }
+}
+
 query vesting($block: Block_height, $id: ID!) {
   vesting(block: $block, id: $id) {
     id
@@ -187,6 +193,12 @@ query userStreams($block: Block_height, $id: String!) {
       name
       decimals
     }
+  }
+}
+
+query streamIds($first: Int = 1000, $skip: Int = 0, $where: Stream_filter, $block: Block_height) {
+  streams(first: $first, skip: $skip, where: $where,, block: $block) {
+    id
   }
 }
 

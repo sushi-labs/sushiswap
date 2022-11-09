@@ -31,6 +31,11 @@
     "version-packages": "turbo run build --filter=./packages/* && changeset version",
     "publish-packages": "turbo run build --filter=./packages/* && changeset version && changeset publish"
   },
+  "pnpm": {
+    "overrides": {
+      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
+    }
+  },
   "lint-staged": {
     "*.ts": [
       "eslint --cache --fix",

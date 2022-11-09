@@ -1,5 +1,8 @@
 lockfileVersion: 5.4
 
+overrides:
+  '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
+
 importers:
 
   .:
@@ -106,7 +109,7 @@ importers:
   apis/token-list:
     specifiers:
       '@sushiswap/chainlink-token-list': ^0.1.0
-      '@sushiswap/default-token-list': ^38.3.0
+      '@sushiswap/default-token-list': ^39.0.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -114,7 +117,7 @@ importers:
       '@vercel/node': ^2.2.0
     dependencies:
       '@sushiswap/chainlink-token-list': 0.1.0
-      '@sushiswap/default-token-list': 38.3.0
+      '@sushiswap/default-token-list': 39.0.0
       '@vercel/node': 2.5.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -170,6 +173,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -213,6 +217,7 @@ importers:
       '@sushiswap/core-sdk': 1.0.0-canary.128
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
@@ -714,6 +719,7 @@ importers:
       next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
+      next-sitemap: ^3.1.29
       next-transpile-modules: 9.1.0
       postcss: ^8.4.0
       react: ^18.2.0
@@ -780,6 +786,7 @@ importers:
       next-axiom: 0.14.0_next@12.3.1
       next-pwa: 5.6.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
+      next-sitemap: 3.1.30_next@12.3.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.33.1_react@18.2.0
@@ -1764,7 +1771,7 @@ importers:
 
   packages/config/hardhat:
     specifiers:
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@nomiclabs/hardhat-etherscan': ^3.0.0
       '@nomiclabs/hardhat-solhint': 2.x
       '@nomiclabs/hardhat-waffle': 2.x
@@ -1780,7 +1787,7 @@ importers:
       ethereum-waffle: 3.x
       ethers: ^5.7.0
       hardhat: 2.x
-      hardhat-deploy: ^0.11.12
+      hardhat-deploy: 0.11.20
       hardhat-deploy-ethers: 0.3.0-beta.13
       tsup: 6.x
       typechain: 8.x
@@ -1795,7 +1802,7 @@ importers:
       '@typechain/hardhat': 6.1.2_qk7fyj6ad6teqh3goaiav5uu7y
       dotenv: 16.0.1
       ethereum-waffle: 3.4.4_typescript@4.8.2
-      hardhat-deploy: 0.11.12
+      hardhat-deploy: 0.11.20
       hardhat-deploy-ethers: 0.3.0-beta.13_lcn3obx7j6hxzhed6lqrzaytkm
       typechain: 8.1.0_typescript@4.8.2
     devDependencies:
@@ -2615,7 +2622,7 @@ importers:
       '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/providers': ^5.7.0
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
@@ -2626,7 +2633,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.10
+      hardhat-deploy: 0.11.20
       ts-node: ^10.7.0
       typescript: 4.8.2
     devDependencies:
@@ -2644,7 +2651,7 @@ importers:
       eslint: 8.26.0
       ethers: 5.7.1
       hardhat: 2.10.1_s5ojjbx2isjkawqptqpitvy25q
-      hardhat-deploy: 0.11.12
+      hardhat-deploy: 0.11.20
       ts-node: 10.9.1_vxrnv5tlr43u5xabofdb6zoswy
       typescript: 4.8.2
 
@@ -2652,7 +2659,7 @@ importers:
     specifiers:
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/providers': ^5.7.0
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@nomiclabs/hardhat-etherscan': ^3.1.0
       '@openzeppelin/contracts': ^4.6.0
       '@rari-capital/solmate': 6.2.0
@@ -2673,7 +2680,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       hardhat: ^2.10.1
-      hardhat-deploy: ^0.11.10
+      hardhat-deploy: 0.11.20
       ts-node: ^10.7.0
       typescript: 4.8.2
     devDependencies:
@@ -2700,7 +2707,7 @@ importers:
       eslint: 8.26.0
       ethers: 5.7.1
       hardhat: 2.10.1_s5ojjbx2isjkawqptqpitvy25q
-      hardhat-deploy: 0.11.12
+      hardhat-deploy: 0.11.20
       ts-node: 10.9.1_vxrnv5tlr43u5xabofdb6zoswy
       typescript: 4.8.2
 
@@ -2709,7 +2716,7 @@ importers:
       '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#371a01c11465eb1c881193c60a53c0bf15ee8a19
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/providers': ^5.7.0
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/bentobox-sdk': sushiswap/bentobox-sdk#e3f809870b86afbd57e0930662221d2362a160db
       '@sushiswap/core': 1.4.2
@@ -2723,7 +2730,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.10
+      hardhat-deploy: 0.11.20
       hardhat-deploy-ethers: 0.3.0-beta.13
       ts-node: ^10.7.0
       typescript: 4.8.2
@@ -2745,7 +2752,7 @@ importers:
       eslint: 8.26.0
       ethers: 5.7.1
       hardhat: 2.10.1_s5ojjbx2isjkawqptqpitvy25q
-      hardhat-deploy: 0.11.12
+      hardhat-deploy: 0.11.20
       hardhat-deploy-ethers: 0.3.0-beta.13_lcn3obx7j6hxzhed6lqrzaytkm
       ts-node: 10.9.1_vxrnv5tlr43u5xabofdb6zoswy
       typescript: 4.8.2
@@ -2753,7 +2760,7 @@ importers:
   protocols/masterchef:
     specifiers:
       '@boringcrypto/boring-solidity': boringcrypto/BoringSolidity#e06e943
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': 3.1.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hardhat-config': workspace:*
@@ -2764,7 +2771,7 @@ importers:
       '@types/node': ^17.0.33
       eslint: ^8.20.0
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.10
+      hardhat-deploy: 0.11.20
       ts-node: ^10.7.0
       typescript: 4.8.2
     devDependencies:
@@ -2780,13 +2787,13 @@ importers:
       '@types/node': 17.0.45
       eslint: 8.26.0
       hardhat: 2.10.1_s5ojjbx2isjkawqptqpitvy25q
-      hardhat-deploy: 0.11.12
+      hardhat-deploy: 0.11.20
       ts-node: 10.9.1_vxrnv5tlr43u5xabofdb6zoswy
       typescript: 4.8.2
 
   protocols/sushiswap:
     specifiers:
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': 3.1.0
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
@@ -2799,7 +2806,7 @@ importers:
       '@types/node': ^17.0.33
       eslint: ^8.20.0
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.10
+      hardhat-deploy: 0.11.20
       ts-node: ^10.7.0
       typescript: 4.8.2
     devDependencies:
@@ -2816,7 +2823,7 @@ importers:
       '@types/node': 17.0.45
       eslint: 8.26.0
       hardhat: 2.10.1_s5ojjbx2isjkawqptqpitvy25q
-      hardhat-deploy: 0.11.12
+      hardhat-deploy: 0.11.20
       ts-node: 10.9.1_vxrnv5tlr43u5xabofdb6zoswy
       typescript: 4.8.2
 
@@ -2824,7 +2831,7 @@ importers:
     specifiers:
       '@ethersproject/abi': ^5.7.0
       '@ethersproject/providers': ^5.7.0
-      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
+      '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
       '@openzeppelin/contracts': ^4.6.0
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
@@ -2848,7 +2855,7 @@ importers:
       eslint: ^8.20.0
       ethers: ^5.7.0
       hardhat: ^2.9.5
-      hardhat-deploy: ^0.11.10
+      hardhat-deploy: 0.11.20
       seedrandom: ^3.0.5
       ts-node: ^10.7.0
       typescript: 4.8.2
@@ -2879,7 +2886,7 @@ importers:
       eslint: 8.26.0
       ethers: 5.7.1
       hardhat: 2.10.1_s5ojjbx2isjkawqptqpitvy25q
-      hardhat-deploy: 0.11.12
+      hardhat-deploy: 0.11.20
       seedrandom: 3.0.5
       ts-node: 10.9.1_vxrnv5tlr43u5xabofdb6zoswy
       typescript: 4.8.2
@@ -8721,15 +8728,6 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
 
-  /@nomiclabs/hardhat-ethers/2.1.0_lcn3obx7j6hxzhed6lqrzaytkm:
-    resolution: {integrity: sha512-vlW90etB3675QWG7tMrHaDoTa7ymMB7irM4DAQ98g8zJoe9YqEggeDnbO6v5b+BLth/ty4vN6Ko/kaqRN1krHw==}
-    peerDependencies:
-      ethers: ^5.0.0
-      hardhat: ^2.0.0
-    dependencies:
-      ethers: 5.7.1
-      hardhat: 2.10.1_typescript@4.8.2
-
   /@nomiclabs/hardhat-etherscan/3.1.0_hardhat@2.10.1:
     resolution: {integrity: sha512-JroYgfN1AlYFkQTQ3nRwFi4o8NtZF7K/qFR2dxDUgHbCtIagkUseca9L4E/D2ScUm4XT40+8PbCdqZi+XmHyQA==}
     peerDependencies:
@@ -9596,8 +9594,8 @@ packages:
     resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
     dev: false
 
-  /@sushiswap/default-token-list/38.3.0:
-    resolution: {integrity: sha512-cCEHfGhuXoNYscder6sFkbzKWfkd+6Swc9/HqXFpkpOBdnXcgjwJSrg22KNdnA6ab7QYR4tX+8X6LfTSxHwN9g==}
+  /@sushiswap/default-token-list/39.0.0:
+    resolution: {integrity: sha512-QCviJzwRTz2AVo8YXIozuCvMMH9g8kc7V9f14g8qEoCSE5wLeAux6YymhoEXIFyvlOeI5eC/DJxi7z8OYNExNg==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
@@ -9939,12 +9937,12 @@ packages:
     peerDependencies:
       hardhat: ^2.9.9
     dependencies:
-      '@nomiclabs/hardhat-ethers': 2.1.0_lcn3obx7j6hxzhed6lqrzaytkm
+      '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_lcn3obx7j6hxzhed6lqrzaytkm
       axios: 0.21.4
       ethers: 5.7.1
       fs-extra: 9.1.0
       hardhat: 2.10.1_typescript@4.8.2
-      hardhat-deploy: 0.11.12
+      hardhat-deploy: 0.11.20
       js-yaml: 3.14.1
     transitivePeerDependencies:
       - bufferutil
@@ -17711,8 +17709,8 @@ packages:
       ethers: 5.7.1
       hardhat: 2.10.1_typescript@4.8.2
 
-  /hardhat-deploy/0.11.12:
-    resolution: {integrity: sha512-Wv0BqzwW4mz78raxkfQtBbkhZwZTRWXwRbEwgkTUimD3MX/0Z9+D4O+s1zHJlG0zwZvJMbwxPOrOHQm4NZ3JAQ==}
+  /hardhat-deploy/0.11.20:
+    resolution: {integrity: sha512-6G2aFLW0mfZxY0ljDf8rxzEJkVh57gr3Eia5H2DeBIQNJh0dhBV2Y5LDq4E4J9K4Crq0DjpxGNTshEtAB9eWxA==}
     dependencies:
       '@types/qs': 6.9.7
       axios: 0.21.4_debug@4.3.4
@@ -17726,7 +17724,7 @@ packages:
       match-all: 1.2.6
       murmur-128: 0.2.1
       qs: 6.11.0
-      zksync-web3: 0.7.9_ethers@5.7.1
+      zksync-web3: 0.8.1_ethers@5.7.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -21453,6 +21451,19 @@ packages:
 
   /next-sitemap/3.1.21_next@12.3.1:
     resolution: {integrity: sha512-8upGCtI91FvjNBpeKDZzrzRBlY4BH6qjG7dMe89sdBzJ9B++PVLTzRPlpLHJYOEPukBROsxi2zVuAvePBtsrdw==}
+    engines: {node: '>=14.18'}
+    hasBin: true
+    peerDependencies:
+      '@next/env': '*'
+      next: '*'
+    dependencies:
+      '@corex/deepmerge': 4.0.29
+      minimist: 1.2.6
+      next: 12.3.1_biqbaboplfbrettd7655fr4n2y
+    dev: false
+
+  /next-sitemap/3.1.30_next@12.3.1:
+    resolution: {integrity: sha512-mZqq9xWrTp/tgUM7+Oz/qxT6x2vnJhwQ3AGke2GjypRbUo44QaTb+4Cp1uX9GwXBaiuuuXDoWyS5VxJP3pJljw==}
     engines: {node: '>=14.18'}
     hasBin: true
     peerDependencies:
@@ -27502,10 +27513,10 @@ packages:
       toposort: 2.0.2
     dev: false
 
-  /zksync-web3/0.7.9_ethers@5.7.1:
-    resolution: {integrity: sha512-B0pitKvEQGJuWkY2UWjXrL1YgHghXEoDaq6acVZnB62TRF099GV58Fzi7Fnqt+Nw14A7Wc9iJ2AHD4GBTLFgkg==}
+  /zksync-web3/0.8.1_ethers@5.7.1:
+    resolution: {integrity: sha512-1A4aHPQ3MyuGjpv5X/8pVEN+MdZqMjfVmiweQSRjOlklXYu65wT9BGEOtCmMs5d3gIvLp4ssfTeuR5OCKOD2kw==}
     peerDependencies:
-      ethers: ~5.5.0
+      ethers: ~5.7.0
     dependencies:
       ethers: 5.7.1
 

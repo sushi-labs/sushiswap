@@ -4,7 +4,7 @@ import { classNames, DEFAULT_INPUT_BG, Form, Select, Typography } from '@sushisw
 import { TokenSelector, useBalance } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
 import { useTokens } from 'lib/state/token-lists'
-import { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount, useNetwork } from 'wagmi'
 
@@ -20,11 +20,18 @@ export const StreamAmountDetails = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const { control, watch, setValue, setError } = useFormContext<CreateStreamFormData>()
+  const { control, watch, setValue, setError, clearErrors } = useFormContext<CreateStreamFormData>()
   // @ts-ignore
   const [currency, fundSource] = watch(['currency', 'fundSource'])
 
   const { data: balance } = useBalance({ account: address, currency, chainId: activeChain?.id, loadBentobox: true })
+
+  const onCurrencyInputError = useCallback(
+    (message: string) => {
+      message ? setError('amount', { type: 'typeError', message }) : clearErrors('amount')
+    },
+    [clearErrors, setError]
+  )
 
   return (
     <Form.Section
@@ -153,26 +160,22 @@ export const StreamAmountDetails = () => {
           control={control}
           name="amount"
           render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <CurrencyInput
-              className="ring-offset-slate-900"
-              onChange={onChange}
-              account={address}
-              value={value}
-              currency={currency}
-              fundSource={fundSource}
-              onError={(message) => setError('amount', { type: 'typeError', message })}
-              errorMessage={error?.message}
-              helperTextPanel={({ errorMessage }) => (
-                <CurrencyInput.HelperTextPanel
-                  text={
-                    errorMessage
-                      ? errorMessage
-                      : 'The total stream amount the recipient can withdraw when the stream passes its end date.'
-                  }
-                  isError={!!errorMessage}
-                />
-              )}
-            />
+            <>
+              <CurrencyInput
+                className="ring-offset-slate-900"
+                onChange={onChange}
+                account={address}
+                value={value}
+                currency={currency}
+                fundSource={fundSource}
+                errorMessage={error?.message}
+                onError={onCurrencyInputError}
+              />
+              <CurrencyInput.HelperTextPanel
+                text="The total stream amount the recipient can withdraw when the stream passes its end date."
+                isError={false}
+              />
+            </>
           )}
         />
       </Form.Control>

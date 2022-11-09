@@ -56,7 +56,7 @@
     "ethers": "^5.7.0",
     "eslint": "^8.20.0",
     "hardhat": "^2.10.1",
-    "hardhat-deploy": "^0.11.10",
+    "hardhat-deploy": "0.11.20",
     "ts-node": "^10.7.0",
     "typescript": "4.8.2"
   },
