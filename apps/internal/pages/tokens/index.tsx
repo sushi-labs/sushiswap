@@ -6,24 +6,50 @@ import { DEFAULT_INPUT_UNSTYLED } from '@sushiswap/ui/input'
 import { Layout } from 'components'
 import { TokenTable } from 'components/tokens/TokenTable'
 import { TOKENS_SUPPORTED_CHAIN_IDS } from 'config'
+import stringify from 'fast-json-stable-stringify'
 import { getTokens, Token } from 'lib'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const tokens = await getTokens({ chainIds: TOKENS_SUPPORTED_CHAIN_IDS })
+export const getStaticProps: GetStaticProps = async (context) => {
+  const tokens = await getTokens({ chainIds: TOKENS_SUPPORTED_CHAIN_IDS, filter: '' })
   return {
     props: {
       fallback: {
-        [`tokens?chainIds=${TOKENS_SUPPORTED_CHAIN_IDS}`]: tokens,
+        [`/internal/api/tokens?chainIds=${TOKENS_SUPPORTED_CHAIN_IDS}&filter=`]: tokens,
       },
+      revalidate: 60,
     },
   }
 }
 
-const TokensPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const fetcher = ({
+  url,
+  args,
+}: {
+  url: string
+  args: {
+    chainIds: ChainId[]
+    filter: string
+  }
+}) => {
+  const _url = new URL(url, window.location.origin)
+
+  if (args.chainIds) {
+    _url.searchParams.set('chainIds', stringify(args.chainIds))
+  }
+
+  if (args.filter) {
+    _url.searchParams.set('filter', stringify(args.filter))
+  }
+
+  return fetch(_url.href)
+    .then((res) => res.json())
+    .catch((e) => console.log(stringify(e)))
+}
+
+const TokensPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_TokensPage />
@@ -37,8 +63,8 @@ const _TokensPage: FC = () => {
   const debouncedFilter = useDebounce(filter, 400)
 
   const { data: tokens } = useSWR<Token[]>(
-    `tokens?chainIds=${chainIds}${filter.length ? `&filter=${debouncedFilter}` : ''}`,
-    () => getTokens({ chainIds: chainIds, filter: debouncedFilter })
+    { url: '/internal/api/tokens', args: { filter: debouncedFilter, chainIds } },
+    fetcher
   )
 
   return (
