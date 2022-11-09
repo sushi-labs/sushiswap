@@ -45,12 +45,11 @@ abstract contract MultiChainAdapter is ImmutableState {
     bytes calldata data
   ) external returns (bool success, bytes memory result) {
     (address to, uint8[] memory actions, uint256[] memory values, bytes[] memory datas, bytes32 srcContext) = abi
-      .decode(payload, (address, uint8[], uint256[], bytes[], bytes32));
+      .decode(data, (address, uint8[], uint256[], bytes[], bytes32));
 
     /// @dev incase the actions fail, transfer bridge token to the to address
-    try ISushiXSwap(payable(address(this))).cook{gas: limit}(actions, values, datas) {} catch (bytes memory) {
-      IERC20(_token).safeTransfer(to, amountLD);
-      failed = true;
+    try ISushiXSwap(payable(address(this))).cook(actions, values, datas) {} catch (bytes memory) {
+      IERC20(token).safeTransfer(receiver, amount);
     }
 
     /// @dev transfer any native token received as dust to the to address
