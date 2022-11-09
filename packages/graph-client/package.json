@@ -18,7 +18,13 @@
   "module": ".graphclient/index.mjs",
   "source": ".graphclient/index.ts",
   "typings": ".graphclient/index.d.ts",
-  "files": [".graphclient"],
+  "files": [
+    ".graphclient",
+    "actions",
+    "lib",
+    "resolvers",
+    "transformers"
+  ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "generate": "pnpm build",

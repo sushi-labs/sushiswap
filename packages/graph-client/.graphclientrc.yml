@@ -450,10 +450,10 @@ additionalTypeDefs: |
   }
 
 additionalResolvers:
-  - resolvers/index.js
+  - ./resolvers/index.js
   
 documents:
-  - queries/*.graphql
+  - ./queries/*.graphql
 
 serve:
   endpoint: /api/graphql

@@ -3,7 +3,8 @@
   "include": [
     "lib",
     "actions",
-    "resolvers"
+    "resolvers",
+    "transformers"
   ],
   "exclude": ["node_modules", ".graphclient"],
   "compilerOptions": {
