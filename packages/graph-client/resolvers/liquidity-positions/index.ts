@@ -15,8 +15,8 @@ import {
   RequireFields,
   Resolvers,
 } from '../../.graphclient'
-import { SushiSwapTypes } from '.graphclient/sources/SushiSwap/types'
-import { TridentTypes } from '.graphclient/sources/Trident/types'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
+import { TridentTypes } from '../../.graphclient/sources/Trident/types'
 
 export const _liquidityPositionsByChainIds = async (
   root = {},
@@ -38,7 +38,7 @@ export const _liquidityPositionsByChainIds = async (
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((liquidityPositions) => {
+        }).then((liquidityPositions: SushiSwapTypes.LiquidityPosition[]) => {
           if (!Array.isArray(liquidityPositions)) {
             console.error(`SushiSwap liquidityPositions query failed on ${chainId}`, liquidityPositions)
             return []
@@ -59,7 +59,7 @@ export const _liquidityPositionsByChainIds = async (
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((liquidityPositions) => {
+        }).then((liquidityPositions: TridentTypes.LiquidityPosition[]) => {
           if (!Array.isArray(liquidityPositions)) {
             console.error(`Trident liquidityPositions query failed on ${chainId}`, liquidityPositions)
             return []

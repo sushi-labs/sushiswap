@@ -15,10 +15,10 @@ import {
   QueryResolvers,
   Resolvers,
 } from '../../.graphclient'
+import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
+import { TridentTypes } from '../../.graphclient/sources/Trident/types'
 import { page } from '../../lib/page'
 import { transformPair } from '../../transformers'
-import { SushiSwapTypes } from '.graphclient/sources/SushiSwap/types'
-import { TridentTypes } from '.graphclient/sources/Trident/types'
 
 const sdk = getBuiltGraphSDK()
 
@@ -166,7 +166,7 @@ const _pairsByChainIds = async (
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((pairs) => {
+        }).then((pairs: SushiSwapTypes.Pair[]) => {
           if (!Array.isArray(pairs)) {
             console.error(`SushiSwap pairs query failed on ${chainId}`, pairs)
             return []
@@ -190,7 +190,7 @@ const _pairsByChainIds = async (
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((pairs) => {
+        }).then((pairs: TridentTypes.Pair[]) => {
           if (!Array.isArray(pairs)) {
             console.error(`Trident pairs query failed on ${chainId}`, pairs)
             return []

@@ -4,6 +4,5 @@ import { crossChainUserWithFarms } from './crossChainUserWithFarms'
 export const resolvers: Resolvers = {
   Query: {
     crossChainUserWithFarms,
-    // userWithLiquidityPositions,
   },
 }

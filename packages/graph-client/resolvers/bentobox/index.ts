@@ -2,6 +2,7 @@ import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
 import { Query, QueryResolvers, Resolvers } from '../../.graphclient'
+import { BentoBoxTypes } from '../../.graphclient/sources/BentoBox/types'
 
 export const crossChainRebases: QueryResolvers['crossChainRebases'] = async (
   root,
@@ -23,7 +24,7 @@ export const crossChainRebases: QueryResolvers['crossChainRebases'] = async (
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((rebases) => {
+        }).then((rebases: BentoBoxTypes.Rebase[]) => {
           return rebases.map((rebase) => ({ ...rebase, chainId }))
         })
       })

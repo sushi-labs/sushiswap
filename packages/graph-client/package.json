@@ -19,15 +19,10 @@
   "source": ".graphclient/index.ts",
   "typings": ".graphclient/index.d.ts",
   "files": [
-    ".graphclient",
-    "actions",
-    "lib",
-    "resolvers",
-    "transformers"
+    ".graphclient/**"
   ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "generate": "pnpm build",
     "dev": "graphclient serve-dev",
     "build": "graphclient build --fileType json --throwOnInvalidConfig && tsc",
     "build:cjs": "graphclient build --fileType json --throwOnInvalidConfig",
@@ -50,8 +45,8 @@
     "@graphql-mesh/cache-localforage": "latest",
     "@whatwg-node/fetch": "latest",
     "@graphql-mesh/graphql": "latest",
-    "@graphql-mesh/json-schema": "0.35.29",
-    "@graphql-mesh/plugin-mock": "0.0.33",
+    "@graphql-mesh/json-schema": "latest",
+    "@graphql-mesh/plugin-mock": "latest",
     "@graphql-mesh/transform-filter-schema": "latest",
     "@graphql-mesh/transform-prefix": "latest",
     "@graphql-mesh/transform-prune": "latest",

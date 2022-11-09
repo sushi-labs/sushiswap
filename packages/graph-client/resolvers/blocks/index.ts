@@ -10,7 +10,7 @@ import {
   Resolvers,
   ResolverTypeWrapper,
 } from '../../.graphclient'
-import { BlocksTypes } from '.graphclient/sources/Blocks/types'
+import { BlocksTypes } from '../../.graphclient/sources/Blocks/types'
 
 export const _blocks: QueryResolvers['crossChainBlocks'] = async (
   root = {},
@@ -32,7 +32,7 @@ export const _blocks: QueryResolvers['crossChainBlocks'] = async (
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
-        }).then((blocks) => {
+        }).then((blocks: BlocksTypes.Block[]) => {
           if (!Array.isArray(blocks)) {
             console.error(`Blocks query failed on ${chainId}`, blocks)
             return []

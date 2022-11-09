@@ -30,7 +30,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
             subgraphHost: SUBGRAPH_HOST[ChainId.ETHEREUM],
           },
           info,
-        }).then((users) => {
+        }).then((users: Query['MASTERCHEF_V1_users']) => {
           if (!Array.isArray(users)) {
             console.error(`MasterChefV1 users query failed on ${chainId}`, users)
             return []
@@ -47,7 +47,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
             subgraphHost: SUBGRAPH_HOST[ChainId.ETHEREUM],
           },
           info,
-        }).then((users) => {
+        }).then((users: Query['MASTERCHEF_V2_users']) => {
           if (!Array.isArray(users)) {
             console.error(`MasterChefV2 users query failed on ${chainId}`, users)
             return []
@@ -70,7 +70,7 @@ export const crossChainChefUser: QueryResolvers['crossChainChefUser'] = async (
               subgraphHost: SUBGRAPH_HOST[chainId],
             },
             info,
-          }).then((users) => {
+          }).then((users: Query['MASTERCHEF_V1_users']) => {
             if (!Array.isArray(users)) {
               console.error(`MiniChefV2 users query failed on ${chainId}`, users)
               return []
