@@ -18,7 +18,6 @@ jobs:
       name: Build and Test
       timeout-minutes: 30
       runs-on: ubuntu-latest
-      # To use Remote Caching, uncomment the next lines and follow the steps below.
       env:
         ROOT_URL: ${{ secrets.ROOT_URL }}
         ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
@@ -37,38 +36,23 @@ jobs:
         ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
         TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
- 
+
       steps:
         - name: Check out
           uses: actions/checkout@v3
           with:
             fetch-depth: 2
  
+        - uses: pnpm/action-setup@v2
+          with:
+            version: 7
+ 
         - name: Setup Node.js
           uses: actions/setup-node@v3
           with:
             node-version: 16
-            # cache: 'pnpm'
-
-        - uses: pnpm/action-setup@v2
-          with:
-            version: 7
-            run_install: false
+            cache: 'pnpm'
  
-        - name: Get pnpm store directory
-          id: pnpm-cache
-          shell: bash
-          run: |
-            echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-        - uses: actions/cache@v3
-          name: Setup pnpm cache
-          with:
-            path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-            key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-            restore-keys: |
-              ${{ runner.os }}-pnpm-store-
-
         - name: Install dependencies
           run: pnpm install
 
