@@ -50,6 +50,7 @@
     "@graphql-mesh/http": "latest",
     "@graphql-mesh/json-schema": "latest",
     "@graphql-mesh/merger-bare": "latest",
+    "@graphql-mesh/plugin-deduplicate-request": "latest",
     "@graphql-mesh/merger-stitching": "latest",
     "@graphql-mesh/plugin-mock": "latest",
     "@graphql-mesh/runtime": "latest",

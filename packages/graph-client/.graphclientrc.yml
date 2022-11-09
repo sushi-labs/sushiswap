@@ -494,3 +494,6 @@ codegen:
 cache:
   redis:
     url: "${env.REDIS_URL}"
+
+plugins:
+  - deduplicateRequest: {}
