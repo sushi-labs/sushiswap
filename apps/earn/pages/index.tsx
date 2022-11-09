@@ -1,30 +1,19 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { Button, Link, OnsenIcon, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC, useMemo } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
-import { getBundles, getPoolCount, getPools, GetPoolsQuery, getSushiBar } from '../lib/api'
+import { getBundles, getPoolCount, getPools, getSushiBar } from '../lib/api'
 import { AVAILABLE_POOL_TYPE_MAP } from '../lib/constants'
 
-export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-
-  const [pairs, bundles, poolCount, bar] = await Promise.all([
-    getPools(query as unknown as GetPoolsQuery),
-    getBundles(),
-    getPoolCount(),
-    getSushiBar(),
-  ])
-
-  const selectedNetworks = query && typeof query.networks === 'string' ? query.networks.split(',') : SUPPORTED_CHAIN_IDS
-  const selectedPoolTypes = Object.keys(AVAILABLE_POOL_TYPE_MAP)
-
+export const getStaticProps: GetStaticProps = async (context) => {
+  const [pairs, bundles, poolCount, bar] = await Promise.all([getPools(), getBundles(), getPoolCount(), getSushiBar()])
   return {
     props: {
-      selectedNetworks,
+      selectedNetworks: SUPPORTED_CHAIN_IDS,
       fallback: {
         [unstable_serialize({
           url: '/earn/api/pools',
@@ -35,8 +24,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
                 desc: true,
               },
             ],
-            selectedNetworks,
-            selectedPoolTypes,
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
+            selectedPoolTypes: Object.keys(AVAILABLE_POOL_TYPE_MAP),
             farmsOnly: false,
             pagination: {
               pageIndex: 0,
@@ -54,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   }
 }
 
-const Pools: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback, selectedNetworks }) => {
+const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback, selectedNetworks }) => {
   const parsedSelectedNetworks = useMemo(() => selectedNetworks.map(Number), [selectedNetworks])
   return (
     <SWRConfig value={{ fallback }}>
