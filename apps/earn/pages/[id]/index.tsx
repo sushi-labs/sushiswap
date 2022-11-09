@@ -3,8 +3,6 @@ import { formatPercent } from '@sushiswap/format'
 import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import orderBy from 'lodash.orderby'
-import take from 'lodash.take'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -108,12 +106,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   })
 
   // Get the paths we want to pre-render based on pairs
-  const paths = take(orderBy(pairs, ['liquidityUSD'], ['desc']), 1000).map((pair, i) => {
-    if (i == 0) console.log('HIGHEST LIQ PAIR', pair)
-    return {
+  const paths = pairs
+    .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
+      return Number(b) - Number(a)
+    })
+    .slice(0, 1000)
+    .map((pair, i) => ({
       params: { id: `${chainShortName[pair.chainId]}:${pair.address}` },
-    }
-  })
+    }))
 
   // We'll pre-render only these paths at build time.
   // { fallback: blocking } will server-render pages
