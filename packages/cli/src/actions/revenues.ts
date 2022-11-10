@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
@@ -29,14 +29,12 @@ export async function revenues(args: Arguments) {
         return parseInt(ChainId[name.toUpperCase() as any])
       })
 
-  const pairs = (
-    await sdk.CrossChainPairs({
-      chainIds: chainIds,
-      orderBy: 'liquidityUSD',
-      orderDirection: 'desc',
-      first: 1000,
-    })
-  ).crossChainPairs
+  const { pairs } = await sdk.PairsWithFarms({
+    chainIds: chainIds,
+    orderBy: 'liquidityUSD',
+    orderDirection: 'desc',
+    first: 1000,
+  })
 
   const sushiPriceUSD = await (async function () {
     {
@@ -54,19 +52,19 @@ export async function revenues(args: Arguments) {
     Total: { revenue: 0, spent: 0 },
   }
   for (const pair of pairs) {
-    if (!revenues[pair.chainName]) {
-      revenues[pair.chainName] = { revenue: 0, spent: 0 }
+    if (!revenues[chainName[pair.chainId]]) {
+      revenues[chainName[pair.chainId]] = { revenue: 0, spent: 0 }
     }
     if (pair.farm) {
       const sushiIncentive = pair.farm.incentives.find((incentive) => {
         return incentive.rewardToken.address.toLowerCase() == SUSHI_ADDRESS[pair.chainId].toLowerCase()
       })
       if (sushiIncentive) {
-        revenues[pair.chainName].spent += sushiIncentive.rewardPerDay * sushiPriceUSD
+        revenues[chainName[pair.chainId]].spent += sushiIncentive.rewardPerDay * sushiPriceUSD
         revenues['Total'].spent += sushiIncentive.rewardPerDay * sushiPriceUSD
       }
     }
-    revenues[pair.chainName].revenue += pair.fees1d / 6
+    revenues[chainName[pair.chainId]].revenue += pair.fees1d / 6
     revenues['Total'].revenue += pair.fees1d / 6
   }
 
