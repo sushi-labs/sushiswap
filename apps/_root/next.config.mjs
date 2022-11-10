@@ -117,14 +117,6 @@ const nextConfig = {
         destination: `${XSWAP_URL}/xswap/:path*`,
       },
       {
-        source: '/invest',
-        destination: `${EARN_URL}/earn`,
-      },
-      {
-        source: '/invest/:path*',
-        destination: `${EARN_URL}/earn/:path*`,
-      },
-      {
         source: '/earn',
         destination: `${EARN_URL}/earn`,
       },
