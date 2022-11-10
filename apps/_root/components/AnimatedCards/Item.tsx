@@ -68,9 +68,9 @@ export const Item: FC<{ id: string; onSelect(id?: string): void; data: CardInter
               The BentoBox creates yield for these funds without incurring any loss. The vault uses low-risk farming
               strategies, like depositing tokens on Compound for lending yield, or serving up $SUSHI on the SushiBar to
               earn more $SUSHI. The funds in Bento can also be used in flash loans, which can add more passive value to
-              the user’s underutilized capital. The BentoBox will be the foundation for all of Sushi's financial
-              instruments; therefore, the user can always put their tokens to use while they make moves on Sushi's many
-              different DeFi offerings.
+              the user’s underutilized capital. The BentoBox will be the foundation for all of {`Sushi's`} financial
+              instruments; therefore, the user can always put their tokens to use while they make moves on {`Sushi's`}{' '}
+              many different DeFi offerings.
             </p>
             <Button className="!p-0" variant="empty" endIcon={<ChevronRightIcon width={16} height={16} />}>
               View More
