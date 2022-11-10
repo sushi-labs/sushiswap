@@ -2785,7 +2785,13 @@ importers:
       '@nomiclabs/hardhat-etherscan': ^2.1.0
       '@nomiclabs/hardhat-solhint': ^2.0.0
       '@nomiclabs/hardhat-waffle': ^2.0.0
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/hardhat-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
       '@sushiswap/tines': workspace:*
+      '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.0
       '@typechain/ethers-v5': ^8.0.0
       '@typechain/hardhat': ^3.1.0
@@ -2799,10 +2805,10 @@ importers:
       dotenv: ^10.0.0
       eslint: ^8.6.0
       ethereum-waffle: ^3.4.0
-      ethers: ^5.5.0
-      hardhat: ^2.8.0
+      ethers: ^5.7.0
+      hardhat: ^2.9.5
       hardhat-contract-sizer: ^2.3.0
-      hardhat-deploy: ^0.9.0
+      hardhat-deploy: ^0.11.10
       hardhat-gas-reporter: ^1.0.0
       hardhat-log-remover: ^2.0.0
       hardhat-preprocessor: ^0.1.0
@@ -2824,7 +2830,13 @@ importers:
       '@nomiclabs/hardhat-etherscan': 2.1.8_hardhat@2.10.1
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.10.1
       '@nomiclabs/hardhat-waffle': 2.0.3_ufwnrg4u6ve4x7euv5ywdwz6me
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/hardhat-config': link:../../packages/config/hardhat
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/tines': link:../../packages/tines
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@tenderly/hardhat-tenderly': 1.1.4_hardhat@2.10.1
       '@typechain/ethers-v5': 8.0.5_i5lj4s34ylkru2z76cal6phyre
       '@typechain/hardhat': 3.1.0_g4s6etozqeg5ymnaf4fy5yzg5i
@@ -2841,7 +2853,7 @@ importers:
       ethers: 5.7.1
       hardhat: 2.10.1_mwhvu7sfp6vq5ryuwb6hlbjfka
       hardhat-contract-sizer: 2.6.1_hardhat@2.10.1
-      hardhat-deploy: 0.9.29_hardhat@2.10.1
+      hardhat-deploy: 0.11.12
       hardhat-gas-reporter: 1.0.9_hardhat@2.10.1
       hardhat-log-remover: 2.0.2_hardhat@2.10.1
       hardhat-preprocessor: 0.1.5_hardhat@2.10.1
@@ -10902,6 +10914,7 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.42.0
       '@typescript-eslint/visitor-keys': 5.42.0
+    dev: true
 
   /@typescript-eslint/scope-manager/5.42.1:
     resolution: {integrity: sha512-QAZY/CBP1Emx4rzxurgqj3rUinfsh/6mvuKbLNMfJMMKYLRBfweus8brgXF8f64ABkIZ3zdj2/rYYtF8eiuksQ==}
@@ -10953,30 +10966,11 @@ packages:
   /@typescript-eslint/types/5.42.0:
     resolution: {integrity: sha512-t4lzO9ZOAUcHY6bXQYRuu+3SSYdD9TS8ooApZft4WARt4/f2Cj/YpvbTe8A4GuhT4bNW72goDMOy7SW71mZwGw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: true
 
   /@typescript-eslint/types/5.42.1:
     resolution: {integrity: sha512-Qrco9dsFF5lhalz+lLFtxs3ui1/YfC6NdXu+RAGBa8uSfn01cjO7ssCsjIsUs484vny9Xm699FSKwpkCcqwWwA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    dev: false
-
-  /@typescript-eslint/typescript-estree/5.42.0:
-    resolution: {integrity: sha512-2O3vSq794x3kZGtV7i4SCWZWCwjEtkWfVqX4m5fbUBomOsEOyd6OAD1qU2lbvV5S8tgy/luJnOYluNyYVeOTTg==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-    dependencies:
-      '@typescript-eslint/types': 5.42.0
-      '@typescript-eslint/visitor-keys': 5.42.0
-      debug: 4.3.4
-      globby: 11.1.0
-      is-glob: 4.0.3
-      semver: 7.3.7
-      tsutils: 3.21.0
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /@typescript-eslint/typescript-estree/5.42.0_typescript@4.8.4:
@@ -11018,26 +11012,6 @@ packages:
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /@typescript-eslint/utils/5.42.0_eslint@8.27.0:
-    resolution: {integrity: sha512-JZ++3+h1vbeG1NUECXQZE3hg0kias9kOtcQr3+JVQ3whnjvKuMyktJAAIj6743OeNPnGBmjj7KEmiDL7qsdnCQ==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-    peerDependencies:
-      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-    dependencies:
-      '@types/json-schema': 7.0.11
-      '@types/semver': 7.3.12
-      '@typescript-eslint/scope-manager': 5.42.0
-      '@typescript-eslint/types': 5.42.0
-      '@typescript-eslint/typescript-estree': 5.42.0
-      eslint: 8.27.0
-      eslint-scope: 5.1.1
-      eslint-utils: 3.0.0_eslint@8.27.0
-      semver: 7.3.7
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
     dev: false
 
   /@typescript-eslint/utils/5.42.0_rmayb2veg2btbq6mbmnyivgasy:
@@ -11086,6 +11060,7 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.42.0
       eslint-visitor-keys: 3.3.0
+    dev: true
 
   /@typescript-eslint/visitor-keys/5.42.1:
     resolution: {integrity: sha512-LOQtSF4z+hejmpUvitPlc4hA7ERGoj2BVkesOcG91HCn8edLGUXbTrErmutmPbl8Bo9HjAvOO/zBKQHExXNA2A==}
@@ -14087,7 +14062,7 @@ packages:
     resolution: {integrity: sha512-Rd3se6QB+sO1TwqZjscQrurpEPIfO0/yYnSin6Q/rD3mOutHvUrCAhJub3r90uNb+SESBuE0QYoB90YdfatsRg==}
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /concat-stream/1.6.2:
     resolution: {integrity: sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==}
@@ -15854,7 +15829,7 @@ packages:
     peerDependencies:
       eslint: ^7.5.0 || ^8.0.0
     dependencies:
-      '@typescript-eslint/utils': 5.42.0_eslint@8.27.0
+      '@typescript-eslint/utils': 5.42.1_eslint@8.27.0
       eslint: 8.27.0
     transitivePeerDependencies:
       - supports-color
@@ -18088,41 +18063,6 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  /hardhat-deploy/0.9.29_hardhat@2.10.1:
-    resolution: {integrity: sha512-8tIGszPFmOaXtyloCbASiZPvoAgLNGGL/Ubys3YW/oj4dvoPa8G6YDyaOCdsAhsENZ+QgR280NFSG9JdN7SU9Q==}
-    peerDependencies:
-      '@ethersproject/hardware-wallets': ^5.0.14
-      hardhat: ^2.6.8
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/abstract-signer': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/providers': 5.7.1
-      '@ethersproject/solidity': 5.7.0
-      '@ethersproject/transactions': 5.7.0
-      '@ethersproject/wallet': 5.7.0
-      '@types/qs': 6.9.7
-      axios: 0.21.4_debug@4.3.4
-      chalk: 4.1.2
-      chokidar: 3.5.3
-      debug: 4.3.4
-      enquirer: 2.3.6
-      form-data: 4.0.0
-      fs-extra: 10.1.0
-      hardhat: 2.10.1_mwhvu7sfp6vq5ryuwb6hlbjfka
-      match-all: 1.2.6
-      murmur-128: 0.2.1
-      qs: 6.11.0
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    dev: true
 
   /hardhat-gas-reporter/1.0.9_hardhat@2.10.1:
     resolution: {integrity: sha512-INN26G3EW43adGKBNzYWOlI3+rlLnasXTwW79YNnUhXPDa+yHESgt639dJEs37gCjhkbNKcRRJnomXEuMFBXJg==}

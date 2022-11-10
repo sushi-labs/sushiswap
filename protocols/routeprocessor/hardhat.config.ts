@@ -1,20 +1,11 @@
-import "dotenv/config";
-import "@nomiclabs/hardhat-etherscan";
-import "@nomiclabs/hardhat-solhint";
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-ethers";
-import "@tenderly/hardhat-tenderly";
-import "@typechain/hardhat";
-import "hardhat-contract-sizer";
-import "hardhat-deploy";
-import "hardhat-gas-reporter";
-import "hardhat-spdx-license-identifier";
-import "hardhat-watcher";
-import "solidity-coverage";
+import '@nomiclabs/hardhat-ethers'
+import 'hardhat-deploy'
+import '@tenderly/hardhat-tenderly'
 
-import { HardhatUserConfig, task } from "hardhat/config";
-
-import { removeConsoleLog } from "hardhat-preprocessor";
+import { defaultConfig } from '@sushiswap/hardhat-config'
+import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
+import { HardhatUserConfig, subtask } from 'hardhat/config'
+import path from 'path'
 
 let accounts;
 
@@ -28,33 +19,36 @@ if (process.env.PRIVATE_KEY) {
   };
 }
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (args, { ethers }) => {
-  const accounts = await ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(await account.address);
+subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
+  if (solcVersion === '0.8.10') {
+    const compilerPath = path.join(__dirname, 'soljson-v0.8.10+commit.fc410830.js')
+    return {
+      compilerPath,
+      isSolcJs: true, // if you are using a native compiler, set this to false
+      version: solcVersion,
+      // this is used as extra information in the build-info files, but other than
+      // that is not important
+      longVersion: '0.8.10+commit.fc410830',
+    }
+  } else if (solcVersion === '0.6.12') {
+    const compilerPath = path.join(__dirname, 'soljson-v0.6.12+commit.27d51765.js')
+    return {
+      compilerPath,
+      isSolcJs: true, // if you are using a native compiler, set this to false
+      version: solcVersion,
+      // this is used as extra information in the build-info files, but other than
+      // that is not important
+      longVersion: '0.6.12+commit.27d51765',
+    }
   }
-});
+
+  // we just use the default subtask if the version is not 0.8.5
+  return runSuper()
+})
 
 const config: HardhatUserConfig = {
-  contractSizer: {
-    alphaSort: true,
-    disambiguatePaths: false,
-    runOnCompile: true,
-    strict: true,
-    only: [":Greeter$"],
-  },
+  ...defaultConfig,
   defaultNetwork: "hardhat",
-  etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
-  },
-  gasReporter: {
-    coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-    currency: "USD",
-    enabled: process.env.REPORT_GAS === "true",
-  },
   namedAccounts: {
     deployer: {
       default: 0,
@@ -115,35 +109,27 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
     },
   },
-  preprocess: {
-    eachLine: removeConsoleLog(
-      (bre) =>
-        bre.network.name !== "hardhat" && bre.network.name !== "localhost"
-    ),
-  },
   solidity: {
-    version: "0.8.11",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 999999,
+    compilers: [
+      {
+        version: '0.8.10',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 999999,
+          },
+        },
       },
-    },
-  },
-  tenderly: {
-    project: String(process.env.TENDERLY_PROJECT),
-    username: String(process.env.TENDERLY_USERNAME),
-  },
-  typechain: {
-    outDir: "types",
-    target: "ethers-v5",
-  },
-  watcher: {
-    compile: {
-      tasks: ["compile"],
-      files: ["./contracts"],
-      verbose: true,
-    },
+      {
+        version: '0.6.12',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 999999,
+          },
+        },
+      },
+    ],
   },
   mocha: {
     timeout: 3600_000
