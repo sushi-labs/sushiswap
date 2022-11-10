@@ -1,49 +1,37 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { TransactionRequest } from '@ethersproject/providers'
 import { CheckCircleIcon } from '@heroicons/react/solid'
-import { formatNumber } from '@sushiswap/format'
+import { ChainId } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import log from '@sushiswap/log'
 import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { getFuroVestingContractConfig, useFuroVestingContract } from '@sushiswap/wagmi'
+import { Checker, useFuroVestingContract } from '@sushiswap/wagmi'
+import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useVestingBalance, Vesting } from 'lib'
-import { FC, useCallback, useState } from 'react'
-import { useAccount, useDeprecatedContractWrite, useNetwork } from 'wagmi'
+import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import { useAccount } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 interface WithdrawModalProps {
   vesting?: Vesting
+  chainId: ChainId
 }
 
-export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
+export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
   const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string>()
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { chain: activeChain } = useNetwork()
   const { address } = useAccount()
-  const balance = useVestingBalance(activeChain?.id, vesting?.id, vesting?.token)
-  const contract = useFuroVestingContract(activeChain?.id)
+  const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
+  const contract = useFuroVestingContract(chainId)
 
-  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
-    ...getFuroVestingContractConfig(activeChain?.id),
-    functionName: 'withdraw',
-    onSuccess() {
-      setOpen(false)
-    },
-  })
+  const onSettled = useCallback(
+    async (data: SendTransactionResult | undefined) => {
+      if (!data || !balance) return
 
-  const withdraw = useCallback(async () => {
-    if (!vesting || !balance || !activeChain?.id) return
-
-    setError(undefined)
-
-    try {
-      const data = await writeAsync({
-        args: [BigNumber.from(vesting.id), '0x', fundSource === FundSource.BENTOBOX],
-      })
       const ts = new Date().getTime()
       createToast({
         type: 'withdrawVesting',
         txHash: data.hash,
-        chainId: activeChain.id,
+        chainId,
         timestamp: ts,
         groupTimestamp: ts,
         promise: data.wait(),
@@ -57,37 +45,55 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           failed: 'Something went wrong withdrawing from vesting schedule',
         },
       })
-    } catch (e: any) {
-      setError(e.message)
+    },
+    [balance, chainId]
+  )
 
-      log.tenderly({
-        chainId: activeChain?.id,
+  const prepare = useCallback(
+    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+      if (!vesting || !balance || !contract) return
+
+      setRequest({
         from: address,
-        to: getFuroVestingContractConfig(activeChain?.id)?.addressOrName,
-        data: contract?.interface.encodeFunctionData('withdraw', [
+        to: contract.address,
+        data: contract.interface.encodeFunctionData('withdraw', [
           BigNumber.from(vesting.id),
           '0x',
           fundSource === FundSource.BENTOBOX,
         ]),
       })
-    }
-  }, [vesting, balance, activeChain?.id, writeAsync, fundSource, address, contract?.interface])
+    },
+    [vesting, balance, contract, address, fundSource]
+  )
+
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    chainId,
+    prepare,
+    onSettled,
+    onSuccess() {
+      setOpen(false)
+    },
+    enabled: Boolean(vesting && balance && contract),
+  })
 
   return (
     <>
-      <Button
-        fullWidth
-        variant="filled"
-        color="gradient"
-        disabled={!address || !vesting?.canWithdraw(address)}
-        onClick={() => {
-          setOpen(true)
-        }}
-      >
-        Withdraw
-      </Button>
+      <Checker.Connected size="md">
+        <Checker.Network size="md" chainId={chainId}>
+          <Button
+            size="md"
+            fullWidth
+            disabled={!address || !vesting?.canWithdraw(address) || !balance || !balance?.greaterThan(0)}
+            onClick={() => {
+              setOpen(true)
+            }}
+          >
+            Withdraw
+          </Button>
+        </Checker.Network>
+      </Checker.Connected>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-3 !max-w-xs">
+        <Dialog.Content className="space-y-4 !max-w-xs !pb-4">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="grid items-center grid-cols-2 gap-3">
             <div
@@ -134,26 +140,19 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting }) => {
           <Typography variant="xs" weight={400} className="text-slate-300 py-2 text-center">
             There are currently{' '}
             <span className="font-semibold">
-              {formatNumber(balance?.toSignificant(6))} {balance?.currency.symbol}
+              {balance?.toSignificant(6)} {balance?.currency.symbol}
             </span>{' '}
             unlocked tokens available for withdrawal.
           </Typography>
-          {error && (
-            <Typography variant="xs" className="text-center text-red" weight={500}>
-              {error}
-            </Typography>
-          )}
-          <Dialog.Actions>
-            <Button
-              variant="filled"
-              color="gradient"
-              fullWidth
-              disabled={isWritePending || !balance || !balance?.greaterThan(0)}
-              onClick={withdraw}
-            >
-              {!vesting?.token ? 'Invalid stream token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
-            </Button>
-          </Dialog.Actions>
+          <Button
+            size="md"
+            variant="filled"
+            fullWidth
+            disabled={isWritePending || !balance || !balance?.greaterThan(0)}
+            onClick={() => sendTransaction?.()}
+          >
+            {!vesting?.token ? 'Invalid stream token' : isWritePending ? <Dots>Confirm Withdraw</Dots> : 'Withdraw'}
+          </Button>
         </Dialog.Content>
       </Dialog>
     </>
