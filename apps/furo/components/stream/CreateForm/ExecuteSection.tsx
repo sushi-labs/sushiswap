@@ -35,7 +35,10 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
     'recipient',
     'dates',
   ])
-  const _amount = useMemo(() => tryParseAmount(amount, ZTokenToToken.parse(currency)), [amount, currency])
+  const _amount = useMemo(
+    () => (currency ? tryParseAmount(amount, ZTokenToToken.parse(currency)) : undefined),
+    [amount, currency]
+  )
   const _fundSource = ZFundSourceToFundSource.parse(fundSource)
   const rebase = useBentoBoxTotal(chainId, _amount?.currency)
 

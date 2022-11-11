@@ -3,13 +3,15 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Checker, useFuroVestingContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { useVestingBalance, Vesting } from 'lib'
 import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+
+import { useNotifications } from '../../lib/state/storage'
 
 interface WithdrawModalProps {
   vesting?: Vesting
@@ -22,13 +24,14 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
   const { address } = useAccount()
   const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
   const contract = useFuroVestingContract(chainId)
+  const [, { createNotification }] = useNotifications(address)
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
       if (!data || !balance) return
 
       const ts = new Date().getTime()
-      createToast({
+      createNotification({
         type: 'withdrawVesting',
         txHash: data.hash,
         chainId,
@@ -46,7 +49,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
         },
       })
     },
-    [balance, chainId]
+    [balance, chainId, createNotification]
   )
 
   const prepare = useCallback(

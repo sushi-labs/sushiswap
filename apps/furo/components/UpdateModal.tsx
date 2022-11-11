@@ -8,16 +8,7 @@ import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
-import {
-  Button,
-  classNames,
-  createToast,
-  DEFAULT_INPUT_CLASSNAME,
-  Dialog,
-  Dots,
-  Switch,
-  Typography,
-} from '@sushiswap/ui'
+import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { Approve, BENTOBOX_ADDRESS, Checker } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
@@ -36,8 +27,8 @@ interface UpdateModalProps {
 }
 
 export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress, chainId }) => {
-  const [, { createNotification }] = useNotifications(address)
   const { address } = useAccount()
+  const [, { createNotification }] = useNotifications(address)
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
   const [changeEndDate, setChangeEndDate] = useState(false)
@@ -66,7 +57,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       if (!data || !amount) return
 
       const ts = new Date().getTime()
-      createToast({
+      createNotification({
         type: 'updateStream',
         txHash: data.hash,
         chainId,
@@ -80,7 +71,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         },
       })
     },
-    [amount, chainId]
+    [amount, chainId, createNotification]
   )
 
   const prepare = useCallback(

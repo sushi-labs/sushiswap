@@ -1,4 +1,5 @@
 import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
+import { nanoid } from '@reduxjs/toolkit'
 import { ChainId } from '@sushiswap/chain'
 import { Button, GenericTable, Typography } from '@sushiswap/ui'
 import { getCoreRowModel, RowData, useReactTable } from '@tanstack/react-table'
@@ -6,7 +7,7 @@ import React, { FC } from 'react'
 import { FieldError, FieldErrors, useFieldArray, UseFieldArrayRemove, useFormContext } from 'react-hook-form'
 
 import { useDeepCompareMemoize } from '../../../../lib'
-import { createVestDefaultValue, CreateVestingFormSchemaType } from '../../CreateForm'
+import { CREATE_VEST_DEFAULT_VALUES, CreateVestingFormSchemaType } from '../../CreateForm'
 import { useImportErrorContext } from '../ImportErrorContext'
 import { CreateMultipleVestingFormSchemaType } from '../schema'
 import {
@@ -102,7 +103,7 @@ export const CreateVestingsTableSection: FC<CreateVestingsTableSection> = ({ cha
             variant="empty"
             size="sm"
             startIcon={<PlusIcon width={16} height={16} />}
-            onClick={() => append(createVestDefaultValue(chainId))}
+            onClick={() => append({ ...CREATE_VEST_DEFAULT_VALUES, id: nanoid() })}
           >
             Add Item
           </Button>

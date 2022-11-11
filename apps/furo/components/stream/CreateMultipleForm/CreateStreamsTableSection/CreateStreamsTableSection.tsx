@@ -1,4 +1,5 @@
 import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
+import { nanoid } from '@reduxjs/toolkit'
 import { ChainId } from '@sushiswap/chain'
 import { Button, GenericTable, Typography } from '@sushiswap/ui'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
@@ -7,7 +8,7 @@ import { FieldError, FieldErrors, useFieldArray, useFormContext } from 'react-ho
 
 import { useDeepCompareMemoize } from '../../../../lib'
 import { useImportErrorContext } from '../../../vesting/CreateMultipleForm/ImportErrorContext'
-import { createStreamDefaultValues, CreateStreamFormSchemaType } from '../../CreateForm'
+import { CREATE_STREAM_DEFAULT_VALUES, CreateStreamFormSchemaType } from '../../CreateForm'
 import { CreateMultipleStreamBaseSchemaFormErrorsType, CreateMultipleStreamFormSchemaType } from '../schema'
 import {
   ACTIONS_COLUMN,
@@ -121,7 +122,7 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
             variant="empty"
             size="sm"
             startIcon={<PlusIcon width={16} height={16} />}
-            onClick={() => append(createStreamDefaultValues(chainId))}
+            onClick={() => append({ ...CREATE_STREAM_DEFAULT_VALUES, id: nanoid() })}
           >
             Add Item
           </Button>

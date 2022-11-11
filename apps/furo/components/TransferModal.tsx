@@ -4,13 +4,15 @@ import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { Button, classNames, createToast, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
+import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Stream, Vesting } from 'lib'
 import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract, useEnsAddress } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+
+import { useNotifications } from '../lib/state/storage'
 
 interface TransferModalProps {
   stream?: Stream | Vesting
@@ -30,6 +32,8 @@ export const TransferModal: FC<TransferModalProps> = ({
   const { address } = useAccount()
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
+  const [, { createNotification }] = useNotifications(address)
+
   const contract = useContract({
     addressOrName: contractAddress,
     contractInterface: abi,
@@ -57,7 +61,7 @@ export const TransferModal: FC<TransferModalProps> = ({
       if (!data || !resolvedAddress) return
 
       const ts = new Date().getTime()
-      createToast({
+      createNotification({
         type: 'transferStream',
         txHash: data.hash,
         chainId,
@@ -71,7 +75,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         },
       })
     },
-    [chainId, resolvedAddress]
+    [chainId, createNotification, resolvedAddress]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

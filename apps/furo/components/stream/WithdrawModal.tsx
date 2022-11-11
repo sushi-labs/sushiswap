@@ -4,7 +4,7 @@ import { CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Checker, useFuroStreamContract, Web3Input } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { CurrencyInput } from 'components/CurrencyInput'
@@ -13,6 +13,8 @@ import { useStreamBalance } from 'lib/hooks'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+
+import { useNotifications } from '../../lib/state/storage'
 
 interface WithdrawModalProps {
   stream?: Stream
@@ -24,6 +26,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const balance = useStreamBalance(chainId, stream?.id, stream?.token)
   const contract = useFuroStreamContract(chainId)
+  const [, { createNotification }] = useNotifications(address)
 
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState<string>('')
@@ -40,7 +43,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
 
       const ts = new Date().getTime()
 
-      createToast({
+      createNotification({
         type: 'withdrawStream',
         txHash: data.hash,
         chainId: chainId,
@@ -58,7 +61,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         },
       })
     },
-    [amount, chainId]
+    [amount, chainId, createNotification]
   )
 
   const prepare = useCallback(

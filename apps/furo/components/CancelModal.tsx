@@ -4,13 +4,15 @@ import { TrashIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, createToast, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
+import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Stream, Vesting } from 'lib'
 import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+
+import { useNotifications } from '../lib/state/storage'
 
 interface CancelModalProps {
   title: string
@@ -25,6 +27,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
   const [open, setOpen] = useState(false)
   const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
   const { address } = useAccount()
+  const [, { createNotification }] = useNotifications(address)
   const contract = useContract({
     addressOrName: contractAddress,
     contractInterface: abi,
@@ -48,7 +51,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
       if (!data) return
 
       const ts = new Date().getTime()
-      createToast({
+      createNotification({
         type: 'cancelStream',
         txHash: data.hash,
         chainId,
@@ -62,7 +65,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         },
       })
     },
-    [chainId]
+    [chainId, createNotification]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

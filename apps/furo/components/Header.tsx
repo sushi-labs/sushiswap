@@ -2,16 +2,19 @@ import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
 import { App, Link, Menu } from '@sushiswap/ui'
 import { AppType } from '@sushiswap/ui/app/Header'
-import { Wallet } from '@sushiswap/wagmi'
+import { NotificationCentre, Wallet } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAINS } from 'config'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { useAccount, useConnect } from 'wagmi'
+
+import { useNotifications } from '../lib/state/storage'
 
 export const Header: FC = () => {
   const isMounted = useIsMounted()
   const { address, isConnected } = useAccount()
   const router = useRouter()
+  const [notifications, { clearNotifications }] = useNotifications(address)
 
   const connect = useConnect({
     onSuccess: () => {
@@ -34,6 +37,7 @@ export const Header: FC = () => {
           supportedNetworks={SUPPORTED_CHAINS}
           className="border-none shadow-md"
         />
+        <NotificationCentre notifications={notifications} clearNotifications={clearNotifications} />
         {address && isMounted && isConnected && (
           <Menu
             button={
@@ -44,7 +48,7 @@ export const Header: FC = () => {
                 size="sm"
                 as="div"
               >
-                <span className="hidden sm:block">Pay Someone</span>
+                <span className="hidden md:block">Pay Someone</span>
               </Menu.Button>
             }
           >

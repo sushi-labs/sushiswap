@@ -2,7 +2,6 @@ import { DevTool } from '@hookform/devtools'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { nanoid } from '@reduxjs/toolkit'
 import { ChainId } from '@sushiswap/chain'
-import { Native } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Form } from '@sushiswap/ui'
 import { FC, useEffect } from 'react'
@@ -17,28 +16,25 @@ import { CreateVestingFormSchemaType, CreateVestingModelSchema, stepConfiguratio
 export const FORM_ERROR = 'FORM_ERROR' as const
 export type FormErrors = { [FORM_ERROR]?: never }
 
-export const createVestDefaultValue = (chainId: ChainId): CreateVestingFormSchemaType => {
-  const { decimals, name, isNative, symbol } = Native.onChain(chainId)
-  return {
-    id: nanoid(),
-    currency: { chainId, decimals, name, isNative, symbol },
-    recipient: undefined,
-    startDate: undefined,
-    fundSource: FundSource.WALLET,
-    stepConfig: stepConfigurations[0],
-    stepPayouts: 1,
-    stepAmount: undefined,
-    cliff: {
-      cliffEnabled: false,
-    },
-  }
+export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
+  id: nanoid(),
+  currency: undefined,
+  recipient: undefined,
+  startDate: undefined,
+  fundSource: FundSource.WALLET,
+  stepConfig: stepConfigurations[0],
+  stepPayouts: 1,
+  stepAmount: undefined,
+  cliff: {
+    cliffEnabled: false,
+  },
 }
 
 export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()
   const methods = useForm<CreateVestingFormSchemaType>({
     resolver: zodResolver(CreateVestingModelSchema),
-    defaultValues: createVestDefaultValue(chainId),
+    defaultValues: CREATE_VEST_DEFAULT_VALUES,
     mode: 'onBlur',
   })
 
