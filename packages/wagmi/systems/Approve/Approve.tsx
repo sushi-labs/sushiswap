@@ -71,7 +71,11 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
       components,
       components.props,
       Children.map(components.props.children, (component, index) => {
-        if (isValidElement<TokenApproveButton | BentoApproveButton>(component) && component.props.enabled) {
+        const valid = isValidElement<TokenApproveButton | BentoApproveButton>(component)
+
+        const enabled = valid && typeof component.props.enabled === 'boolean' ? component.props.enabled : true
+
+        if (valid && enabled) {
           return cloneElement(component, {
             dispatch,
             index,

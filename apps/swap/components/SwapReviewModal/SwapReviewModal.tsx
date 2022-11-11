@@ -477,7 +477,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
               </Button>
             )
