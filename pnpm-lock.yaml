@@ -3010,17 +3010,10 @@ importers:
 
   scripts/price:
     specifiers:
-      '@graphprotocol/client-add-source-name': latest
-      '@graphprotocol/client-auto-pagination': latest
-      '@graphprotocol/client-cli': 2.2.15
-      '@graphql-mesh/transform-filter-schema': latest
-      '@graphql-mesh/transform-prefix': latest
-      '@graphql-mesh/transform-prune': latest
-      '@graphql-mesh/transform-rename': latest
-      '@graphql-mesh/transform-type-merging': latest
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -3042,17 +3035,10 @@ importers:
       tsup: ^6.2.0
       typescript: 4.8.2
     devDependencies:
-      '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
-      '@graphprotocol/client-cli': 2.2.15_ijzyktlvp4ucpshg5x23nsmspm
-      '@graphql-mesh/transform-filter-schema': 0.14.110_graphql@16.6.0
-      '@graphql-mesh/transform-prefix': 0.11.100_graphql@16.6.0
-      '@graphql-mesh/transform-prune': 0.0.85_graphql@16.6.0
-      '@graphql-mesh/transform-rename': 0.12.101_graphql@16.6.0
-      '@graphql-mesh/transform-type-merging': 0.4.53_graphql@16.6.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
