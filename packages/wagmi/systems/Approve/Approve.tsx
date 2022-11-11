@@ -72,12 +72,7 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
       components.props,
       Children.map(components.props.children, (component, index) => {
         const valid = isValidElement<TokenApproveButton | BentoApproveButton>(component)
-
-        const enabled = valid && typeof component.props.enabled === 'boolean' ? component.props.enabled : true
-
-        console.log({ enabled })
-
-        if (valid && enabled) {
+        if (valid) {
           return cloneElement(component, {
             dispatch,
             index,
@@ -86,6 +81,8 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
             onSuccess,
           })
         }
+
+        return null
       })
     )
   }, [components, initialized, onSuccess, state.isApproved])

@@ -21,11 +21,13 @@ export function useBentoBoxApproveCallback({
   watch,
   onSignature,
   onSuccess,
+  enabled = true,
 }: {
   masterContract?: string
   watch: boolean
   onSignature?(payload: Signature): void
   onSuccess?(data: NotificationData): void
+  enabled?: boolean
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { address, connector } = useAccount()
   const { chain } = useNetwork()
@@ -34,6 +36,7 @@ export function useBentoBoxApproveCallback({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'setMasterContractApproval',
     args: [address, masterContract, true, 0, HashZero, HashZero],
+    enabled,
   })
 
   const { writeAsync } = useContractWrite(config)
@@ -44,7 +47,7 @@ export function useBentoBoxApproveCallback({
     args: [masterContract, address],
     // This should probably always be true anyway...
     watch,
-    enabled: Boolean(address && masterContract !== AddressZero),
+    enabled: enabled && Boolean(address && masterContract !== AddressZero),
   })
 
   const { refetch: getNonces } = useContractRead({
