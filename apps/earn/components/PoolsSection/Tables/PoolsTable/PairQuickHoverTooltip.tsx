@@ -41,7 +41,8 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
                   ? 'Classic'
                   : row.type === 'STABLE_POOL'
                   ? 'Stable'
-                  : row.type === 'CONCENTRATED_LIQUIDITY_POOL'
+                  : // @ts-ignore
+                  row.type === 'CONCENTRATED_LIQUIDITY_POOL'
                   ? 'Concentrated'
                   : ''
               }

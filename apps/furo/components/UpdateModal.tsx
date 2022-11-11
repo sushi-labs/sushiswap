@@ -19,10 +19,11 @@ import {
   Typography,
 } from '@sushiswap/ui'
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import { Checker } from '@sushiswap/wagmi'
+import { Approve, BENTOBOX_ADDRESS, Checker } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { CurrencyInput } from 'components'
 import { Stream } from 'lib'
+import { useNotifications } from 'lib/state/storage'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContract } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -35,6 +36,7 @@ interface UpdateModalProps {
 }
 
 export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contractAddress, chainId }) => {
+  const [, { createNotification }] = useNotifications(address)
   const { address } = useAccount()
   const [open, setOpen] = useState(false)
   const [topUp, setTopUp] = useState(false)
@@ -230,9 +232,34 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
             />
           </div>
           <div>
-            <Button size="md" variant="filled" fullWidth disabled={isWritePending} onClick={() => sendTransaction?.()}>
-              {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
-            </Button>
+            <Approve
+              onSuccess={createNotification}
+              components={
+                <Approve.Components>
+                  <Approve.Token
+                    enabled={amountAsEntity?.greaterThan(0)}
+                    amount={amountAsEntity}
+                    address={BENTOBOX_ADDRESS[chainId]}
+                    fullWidth
+                    size="md"
+                  />
+                </Approve.Components>
+              }
+              render={({ approved }) => {
+                return (
+                  <Button
+                    type="button"
+                    size="md"
+                    variant="filled"
+                    fullWidth
+                    disabled={isWritePending || !approved}
+                    onClick={() => sendTransaction?.()}
+                  >
+                    {isWritePending ? <Dots>Confirm Update</Dots> : 'Update'}
+                  </Button>
+                )
+              }}
+            />
           </div>
         </Dialog.Content>
       </Dialog>

@@ -57,7 +57,6 @@ export const TVL_COLUMN: ColumnDef<Pair, unknown> = {
 export const APR_COLUMN: ColumnDef<Pair, unknown> = {
   id: 'apr',
   header: 'APR',
-  accessorFn: (row) => row.apr,
   cell: (props) => <PairAPRCell row={props.row.original} />,
   size: 100,
   meta: {

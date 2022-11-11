@@ -17,8 +17,25 @@ query CrossChainBentoBoxKpis($chainIds: [BigInt!]!) {
   }
 }
 
-query CrossChainStrategyKpis($chainIds: [BigInt!]!) {
-  crossChainStrategyKpis(first: 1000, chainIds: $chainIds) {
+query CrossChainStrategyKpis(
+  $skip: Int = 0
+  $first: Int = 100
+  $where: StrategyKpi_filter
+  $orderBy: StrategyKpi_orderBy = apr
+  $orderDirection:  OrderDirection = desc
+  $block: Block_height
+  $chainIds: [Int!]!
+  
+) {
+  crossChainStrategyKpis(
+    skip: $skip
+    first: $first
+    where: $where
+    orderBy: $orderBy
+    # orderDirection: $orderDirection
+    block: $block
+    chainIds: $chainIds
+  ) {
     id
     chainId
     harvestCount

@@ -2,10 +2,11 @@ import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { useDebounce } from '@sushiswap/hooks'
 import Checkbox from '@sushiswap/ui/checkbox/Checkbox'
 import { SubgraphTable } from 'components/subgraphs/SubgraphTable'
+import stringify from 'fast-json-stable-stringify'
 import { getSubgraphs, Subgraph } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { FC, useMemo, useState } from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import useSWR, { SWRConfig, unstable_serialize } from 'swr'
 
 export const getServerSideProps: GetServerSideProps<{ fallback: { [key: string]: Subgraph[] } }> = async ({ res }) => {
   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
@@ -13,10 +14,31 @@ export const getServerSideProps: GetServerSideProps<{ fallback: { [key: string]:
   return {
     props: {
       fallback: {
-        ['subgraphs?filter=']: data,
+        [unstable_serialize({
+          url: '/internal/api/subgraphs',
+          args: {
+            filter: '',
+          },
+        })]: data,
       },
     },
   }
+}
+
+const fetcher = ({
+  url,
+  args,
+}: {
+  url: string
+  args: {
+    filter: string
+  }
+}) => {
+  const _url = new URL(url, window.location.origin)
+
+  return fetch(_url.href + args.filter)
+    .then((res) => res.json())
+    .catch((e) => console.log(stringify(e)))
 }
 
 const SubgraphsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
@@ -33,9 +55,11 @@ const _SubgraphsPage = () => {
   const [groupBy, setGroupBy] = useState<keyof Subgraph>('category')
   const [blocks, setBlocks] = useState<{ title: string; subgraphs: Subgraph[] }[]>([])
 
-  const { data } = useSWR<Subgraph[]>(`subgraphs?filter=${debouncedFilterBy}`, () =>
-    getSubgraphs({ filter: debouncedFilterBy })
-  )
+  // const { data } = useSWR<Subgraph[]>(`/internal/api/subgraphs${debouncedFilterBy}`, () =>
+  //   getSubgraphs({ filter: debouncedFilterBy })
+  // )
+
+  const { data } = useSWR<Subgraph[]>({ url: '/internal/api/subgraphs', args: { filter: debouncedFilterBy } }, fetcher)
 
   const subgraphs = useMemo(() => data || [], [data])
 

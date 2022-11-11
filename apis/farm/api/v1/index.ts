@@ -2,6 +2,38 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 import redis from '../../lib/redis'
 
+interface ChainIdFarmMap {
+  [key: string]: {
+    chainId: number
+    farms: FarmsMap
+  }
+}
+
+interface FarmsMap {
+  [poolAddress: string]: Farm
+}
+
+interface Farm {
+  id: string
+  chainId: number
+  pool: string
+  incentives: {
+    apr: number
+    rewardPerDay: number
+    rewardToken: {
+      address: string
+      decimals: number
+      symbol: string
+    }
+    rewarder: {
+      address: string
+      type: 'Primary' | 'Secondary'
+    }
+  }[]
+  chefType: 'MasterChefV1' | 'MasterChefV2' | 'MiniChef'
+  poolType: 'Legacy' | 'Trident' | 'Kashi' | 'Unknown'
+}
+
 export default async (request: VercelRequest, response: VercelResponse) => {
   const data = await redis.hgetall('farms')
 
@@ -9,21 +41,30 @@ export default async (request: VercelRequest, response: VercelResponse) => {
     return response.status(503)
   }
 
-  const farms = Object.values(data).reduce((previousValue: any, data: any) => {
-    const { chainId, farms } = JSON.parse(data)
-    return [
-      ...previousValue,
-      ...Object.entries(farms).reduce((previousValue: any[], [key, value]: [string, any], i) => {
-        previousValue[i] = {
-          ...value,
-          id: `${chainId}:${key}`,
-          chainId,
-          pool: key,
-        }
-        return previousValue
-      }, []),
-    ]
-  }, [])
-
-  return response.status(200).json(farms)
+  return response.status(200).json(
+    Object.entries(data).reduce((previousValue: Farm[], [key, value]: [string, string]) => {
+      const {
+        chainId,
+        farms,
+      }: {
+        chainId: number
+        farms: FarmsMap
+      } = JSON.parse(value)
+      return [
+        ...previousValue,
+        ...Object.entries(farms).reduce<Farm[]>(
+          (previousValue, [key, value]) => [
+            ...previousValue,
+            {
+              ...value,
+              id: `${chainId}:${key}`,
+              chainId,
+              pool: key,
+            },
+          ],
+          []
+        ),
+      ]
+    }, [])
+  )
 }

@@ -82,6 +82,16 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         actions.push(approveBentoBoxAction({ contract, user: address, signature }))
       }
 
+      console.log([
+        recipient,
+        _amount.currency,
+        new Date(dates.startDate),
+        new Date(dates.endDate),
+        _amount,
+        _fundSource === FundSource.BENTOBOX,
+        _amount.toShare(rebase).toFixed(),
+      ])
+
       actions.push(
         streamCreationAction({
           contract,

@@ -15,6 +15,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
     "lint": "TIMING=1 eslint src --fix",

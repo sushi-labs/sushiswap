@@ -32,8 +32,19 @@ additionalTypeDefs: |
     chainId: BigInt
   }
   extend type Query {
-    crossChainBentoBoxKpis(first: Int!, chainIds: [BigInt!]!): [BentoBoxKpi!]!
-    crossChainStrategyKpis(first: Int!, chainIds: [BigInt!]!): [StrategyKpi!]!
+    crossChainBentoBoxKpis(
+      first: Int!
+      chainIds: [BigInt!]!
+    ): [BentoBoxKpi!]!
+    crossChainStrategyKpis(
+      skip: Int = 0
+      first: Int = 100
+      where: StrategyKpi_filter
+      orderBy: StrategyKpi_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainIds: [Int!]!
+    ): [StrategyKpi!]!
   }
 
   enum SubgraphType {

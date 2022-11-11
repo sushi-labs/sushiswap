@@ -65,7 +65,8 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                   ? 'Classic'
                   : row.pair.type === 'STABLE_POOL'
                   ? 'Stable'
-                  : row.pair.type === 'CONCENTRATED_LIQUIDITY_POOL'
+                  : // @ts-ignore
+                  row.pair.type === 'CONCENTRATED_LIQUIDITY_POOL'
                   ? 'Concentrated'
                   : ''
               }

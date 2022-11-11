@@ -1,13 +1,13 @@
 import { formatUSD } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client'
 import { Button, Currency, Dialog, Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 
-import { PairWithAlias } from '../../../types'
 import { usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
 
 interface PoolActionBarPositionRewardsProps {
-  pair: PairWithAlias
+  pair: Pair
   open: boolean
   setOpen(open: boolean): void
 }
