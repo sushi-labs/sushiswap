@@ -75,6 +75,8 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
 
         const enabled = valid && typeof component.props.enabled === 'boolean' ? component.props.enabled : true
 
+        console.log({ enabled })
+
         if (valid && enabled) {
           return cloneElement(component, {
             dispatch,

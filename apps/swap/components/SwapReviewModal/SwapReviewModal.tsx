@@ -453,18 +453,14 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           className="flex-grow !justify-end"
           components={
             <Approve.Components>
-              {chainId && TRIDENT_ENABLED_NETWORKS[chainId] ? (
-                <Approve.Bentobox
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  address={getTridentRouterContractConfig(chainId).addressOrName}
-                  onSignature={setSignature}
-                  enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
-                />
-              ) : (
-                <></>
-              )}
+              <Approve.Bentobox
+                size="md"
+                className="whitespace-nowrap"
+                fullWidth
+                address={getTridentRouterContractConfig(chainId).addressOrName}
+                onSignature={setSignature}
+                enabled={Boolean(typeof chainId === 'number' && TRIDENT_ENABLED_NETWORKS[chainId])}
+              />
               <Approve.Token
                 size="md"
                 className="whitespace-nowrap"
@@ -477,7 +473,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+              <Button size="md" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
               </Button>
             )
