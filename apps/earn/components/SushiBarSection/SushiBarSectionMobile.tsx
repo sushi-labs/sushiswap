@@ -1,16 +1,17 @@
+import { ErrorCode } from '@ethersproject/logger'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
 import { XSushi } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
-import { Button, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
+import { Button, createErrorToast, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
 import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
 import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { ProviderRpcError, useAccount, useDeprecatedContractWrite, useNetwork, UserRejectedRequestError } from 'wagmi'
+import { useAccount, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import { useNotifications } from '../../lib/state/storage'
 import { SushiBarInput } from './SushiBarInput'
@@ -26,13 +27,52 @@ export const SushiBarSectionMobile: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState('')
-  const [error, setError] = useState<string>()
 
   const { data: stats } = useSWR<XSushi>(`/earn/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
-  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined, e: Error) => {
+      // TODO: ignore until wagmi workaround on ethers error
+      // @ts-ignore
+      if (e?.code !== ErrorCode.ACTION_REJECTED) {
+        createErrorToast(e?.message, true)
+      }
+
+      if (data && activeChain?.id) {
+        const ts = new Date().getTime()
+        createNotification({
+          type: selectedIndex === 0 ? 'enterBar' : 'leaveBar',
+          chainId: activeChain.id,
+          txHash: data.hash,
+          promise: data.wait(),
+          summary: {
+            pending: `${selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar`,
+            completed: `Successfully ${selectedIndex === 0 ? 'entered' : 'exited'} the Bar`,
+            failed: `Something went wrong ${selectedIndex === 0 ? 'entering' : 'exiting'} the Bar`,
+          },
+          timestamp: ts,
+          groupTimestamp: ts,
+        })
+      }
+    },
+    [activeChain?.id, createNotification, selectedIndex]
+  )
+
+  const amount = useMemo(
+    () => tryParseAmount(value, selectedIndex === 0 ? SUSHI_TOKEN : XSUSHI_TOKEN),
+    [selectedIndex, value]
+  )
+
+  const { config } = usePrepareContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: selectedIndex === 0 ? 'enter' : 'leave',
+    args: [amount?.quotient.toString()],
+    enabled: !!amount?.quotient.toString(),
+  })
+
+  const { write, isLoading: isWritePending } = useContractWrite({
+    ...config,
+    onSettled,
   })
 
   const { data: balances } = useBalances({
@@ -40,37 +80,6 @@ export const SushiBarSectionMobile: FC = () => {
     chainId: ChainId.ETHEREUM,
     account: address,
   })
-
-  const amount = tryParseAmount(value, selectedIndex === 0 ? SUSHI_TOKEN : XSUSHI_TOKEN)
-
-  const execute = useCallback(async () => {
-    if (!activeChain?.id || !amount?.greaterThan(ZERO)) return
-
-    try {
-      const data = await writeAsync({ args: [amount.quotient.toString()] })
-
-      const ts = new Date().getTime()
-      createNotification({
-        type: selectedIndex === 0 ? 'enterBar' : 'leaveBar',
-        chainId: activeChain.id,
-        txHash: data.hash,
-        promise: data.wait(),
-        summary: {
-          pending: `${selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar`,
-          completed: `Successfully ${selectedIndex === 0 ? 'entered' : 'exited'} the Bar`,
-          failed: `Something went wrong ${selectedIndex === 0 ? 'entering' : 'exiting'} the Bar`,
-        },
-        timestamp: ts,
-        groupTimestamp: ts,
-      })
-    } catch (e: unknown) {
-      if (e instanceof UserRejectedRequestError) return
-      if (e instanceof ProviderRpcError) {
-        setError(e.message)
-      }
-      console.error(e)
-    }
-  }, [activeChain?.id, amount, writeAsync, createNotification, selectedIndex])
 
   const handleClose = useCallback(() => {
     setOpen(false)
@@ -173,7 +182,12 @@ export const SushiBarSectionMobile: FC = () => {
                                 fundSource={FundSource.WALLET}
                                 amounts={[amount]}
                               >
-                                <Button size="md" fullWidth onClick={execute} disabled={!approved || isWritePending}>
+                                <Button
+                                  size="md"
+                                  fullWidth
+                                  onClick={() => write?.()}
+                                  disabled={!approved || isWritePending}
+                                >
                                   {isWritePending ? (
                                     <Dots>Confirm transaction</Dots>
                                   ) : selectedIndex === 0 ? (
@@ -189,11 +203,6 @@ export const SushiBarSectionMobile: FC = () => {
                       }}
                     />
                   </Dialog.Actions>
-                  {error && (
-                    <Typography variant="xs" className="mt-4 text-center text-red" weight={500}>
-                      {error}
-                    </Typography>
-                  )}
                 </Tab.Panels>
               </Tab.Group>
             </div>

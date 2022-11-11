@@ -4,12 +4,9 @@ import { Button, CarbonIcon, Link, Overlay, SlideIn, Switch, Tooltip, Typography
 import { useSettings } from 'lib/state/storage'
 import React, { FC, useState } from 'react'
 
-const TOKENS = ['BCT', 'NCT', 'UBO', 'NBO', 'MCO2']
-
 export const CarbonOffsetOverlay: FC = () => {
   const isMounted = useIsMounted()
   const [open, setOpen] = useState<boolean>(false)
-  const [tokenIndex, setTokenIndex] = useState<number>(0)
 
   const [{ carbonOffset }, { updateCarbonOffset }] = useSettings()
 
@@ -86,57 +83,6 @@ export const CarbonOffsetOverlay: FC = () => {
               </Button>
             </Typography>
           </div>
-          {/* <Disclosure>
-            {({ open }) => (
-              <div className="mx-1">
-                <Disclosure.Button className="relative flex items-center justify-between w-full gap-3 group rounded-xl">
-                  <div className="flex items-center justify-between w-full gap-1 py-4">
-                    <Typography variant="sm" weight={500}>
-                      Offset Token
-                    </Typography>
-                    <div className="flex gap-1">
-                      <Typography variant="sm" weight={500} className="group-hover:text-slate-200 text-slate-400">
-                        {TOKENS[tokenIndex]}
-                      </Typography>
-                      <div
-                        className={classNames(
-                          open ? 'rotate-90' : 'rotate-0',
-                          'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
-                        )}
-                      >
-                        <ChevronRightIcon
-                          width={16}
-                          height={16}
-                          className="group-hover:text-slate-200 text-slate-300"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </Disclosure.Button>
-
-                <Transition
-                  unmount={false}
-                  className="transition-[max-height] overflow-hidden mb-3"
-                  enter="duration-300 ease-in-out"
-                  enterFrom="transform max-h-0"
-                  enterTo="transform max-h-[380px]"
-                  leave="transition-[max-height] duration-250 ease-in-out"
-                  leaveFrom="transform max-h-[380px]"
-                  leaveTo="transform max-h-0"
-                >
-                  <Disclosure.Panel>
-                    <Tab.Group selectedIndex={0} onChange={setTokenIndex}>
-                      <Tab.List>
-                        {TOKENS.map((el) => {
-                          return <Tab key={el}>{el}</Tab>
-                        })}
-                      </Tab.List>
-                    </Tab.Group>
-                  </Disclosure.Panel>
-                </Transition>
-              </div>
-            )}
-          </Disclosure> */}
         </Overlay.Content>
       </SlideIn.FromLeft>
     </div>

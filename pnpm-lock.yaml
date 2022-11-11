@@ -545,6 +545,7 @@ importers:
       '@ethersproject/constants': ^5.7.0
       '@ethersproject/contracts': ^5.7.0
       '@ethersproject/experimental': ^5.7.0
+      '@ethersproject/logger': ^5.7.0
       '@ethersproject/providers': ^5.7.0
       '@ethersproject/solidity': ^5.7.0
       '@headlessui/react': ^1.7.3
@@ -609,6 +610,7 @@ importers:
       '@ethersproject/constants': 5.7.0
       '@ethersproject/contracts': 5.7.0
       '@ethersproject/experimental': 5.7.0
+      '@ethersproject/logger': 5.7.0
       '@ethersproject/providers': 5.7.1
       '@ethersproject/solidity': 5.7.0
       '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
