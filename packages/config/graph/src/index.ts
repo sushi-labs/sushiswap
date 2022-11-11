@@ -139,7 +139,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
 }
 
 export const SUSHISWAP_SUBGRAPH_NAME = {
-  [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
+  [ChainId.ETHEREUM]: 'sushi-0m/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
   [ChainId.BSC]: 'sushi-0m/sushiswap-bsc',
@@ -149,7 +149,7 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
-  [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
+  [ChainId.HARMONY]: 'sushi-0m/sushiswap-harmony',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
