@@ -18,6 +18,7 @@ import {
   useBentoBoxTotal,
   useSendTransaction,
 } from '@sushiswap/wagmi'
+import { TRIDENT_ENABLED_NETWORKS } from 'config'
 import stringify from 'fast-json-stable-stringify'
 import { approveMasterContractAction, batchAction, unwrapWETHAction } from 'lib/actions'
 import { useTransactionDeadline } from 'lib/hooks'
@@ -452,14 +453,18 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           className="flex-grow !justify-end"
           components={
             <Approve.Components>
-              <Approve.Bentobox
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                address={getTridentRouterContractConfig(chainId).addressOrName}
-                onSignature={setSignature}
-                enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
-              />
+              {chainId && TRIDENT_ENABLED_NETWORKS[chainId] ? (
+                <Approve.Bentobox
+                  size="md"
+                  className="whitespace-nowrap"
+                  fullWidth
+                  address={getTridentRouterContractConfig(chainId).addressOrName}
+                  onSignature={setSignature}
+                  enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
+                />
+              ) : (
+                <></>
+              )}
               <Approve.Token
                 size="md"
                 className="whitespace-nowrap"
@@ -472,7 +477,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+              <Button size="md" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
               </Button>
             )
