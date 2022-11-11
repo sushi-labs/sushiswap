@@ -11,8 +11,8 @@ export function useERC20Allowance(
 ): Amount<Token> | undefined {
   const args = useMemo(() => [owner, spender], [owner, spender])
   const { data } = useContractRead({
-    addressOrName: token?.address ?? AddressZero,
-    contractInterface: erc20ABI,
+    address: token?.address ?? AddressZero,
+    abi: erc20ABI,
     functionName: 'allowance',
     args,
     watch,

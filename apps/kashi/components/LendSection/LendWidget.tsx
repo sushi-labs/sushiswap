@@ -26,8 +26,8 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
   const bentoBoxContract = useBentoBoxContract(pair.chainId)
   const { data: signerOrProvider } = useSigner()
   const kashiMediumRiskV1Contract = useContract<KashiPairMediumRiskV1>({
-    addressOrName: pair.address,
-    contractInterface: abi,
+    address: pair.address,
+    abi: abi,
     signerOrProvider,
   })
   const { asset } = useTokensFromKashiPair(pair)

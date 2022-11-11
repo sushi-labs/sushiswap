@@ -71,17 +71,17 @@ export const getTokens = async (ids: string[], chainId: ChainId) => {
 
 export async function getTokenBalancesOf(tokens: string[], address: string, chainId: ChainId) {
   const balanceOfCalls: ReadContractsConfig['contracts'] = tokens.map((token) => ({
-    addressOrName: token,
+    address: token,
     args: [address],
     chainId: chainId,
-    contractInterface: erc20ABI,
+    abi: erc20ABI,
     functionName: 'balanceOf',
   }))
 
   const decimalCalls: ReadContractsConfig['contracts'] = tokens.map((token) => ({
-    addressOrName: token,
+    address: token,
     chainId: chainId,
-    contractInterface: erc20ABI,
+    abi: erc20ABI,
     functionName: 'decimals',
   }))
 

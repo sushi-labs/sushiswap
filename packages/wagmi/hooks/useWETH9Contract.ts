@@ -4,8 +4,8 @@ import { useContract, useProvider } from 'wagmi'
 import WETH9_ABI from '../abis/weth9.json'
 
 export const getWETH9ContractConfig = (chainId: number | undefined) => ({
-  addressOrName: chainId ? WNATIVE_ADDRESS[chainId] : '',
-  contractInterface: WETH9_ABI,
+  address: chainId ? WNATIVE_ADDRESS[chainId] : '',
+  abi: WETH9_ABI,
 })
 
 export function useWETH9Contract(chainId: number | undefined) {

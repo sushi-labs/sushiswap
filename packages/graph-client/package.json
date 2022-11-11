@@ -65,7 +65,7 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "^0.5.7",
+    "@wagmi/core": "0.7.1",
     "@whatwg-node/fetch": "latest",
     "date-fns": "^2.29.3",
     "ethers": "^5.7.0",
@@ -82,7 +82,7 @@
     "@types/numeral": "^2.0.2",
     "eslint": "^8.20.0",
     "jest": "^28.1.0",
-    "tsup": "^6.2.0",
+    "tsup": "6.4.0",
     "typescript": "4.8.2"
   }
 }

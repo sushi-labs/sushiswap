@@ -29,8 +29,8 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
   const { address } = useAccount()
   const [, { createNotification }] = useNotifications(address)
   const contract = useContract({
-    addressOrName: contractAddress,
-    contractInterface: abi,
+    address: contractAddress,
+    abi: abi,
   })
 
   const prepare = useCallback(

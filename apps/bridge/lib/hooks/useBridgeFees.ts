@@ -27,16 +27,16 @@ export const useBridgeFees = ({
     if (srcToken && dstToken) {
       return [
         {
-          addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
+          address: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
           functionName: 'getChainPath',
           args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address]],
-          contractInterface: STARGATE_POOL_ABI,
+          abi: STARGATE_POOL_ABI,
           chainId: srcChainId,
         },
         {
-          addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
+          address: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
           functionName: 'feeLibrary',
-          contractInterface: STARGATE_POOL_ABI,
+          abi: STARGATE_POOL_ABI,
           chainId: srcChainId,
         },
       ]
@@ -51,7 +51,7 @@ export const useBridgeFees = ({
   })
 
   const { data: getFeesResults, isLoading: isFeeResultLoading } = useContractRead({
-    addressOrName: String(stargatePoolResults?.[1]),
+    address: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
     args: [
       srcToken ? STARGATE_POOL_ID[srcChainId][srcToken.wrapped.address] : undefined,
@@ -60,7 +60,7 @@ export const useBridgeFees = ({
       getSushiXSwapContractConfig(srcChainId).addressOrName,
       amount?.quotient?.toString(),
     ],
-    contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
+    abi: STARGATE_FEE_LIBRARY_V03_ABI,
     chainId: srcChainId,
     enabled: Boolean(
       !isLoading &&

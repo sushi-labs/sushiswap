@@ -12,9 +12,9 @@ export const useMultipleTotalSupply = (tokens?: Token[]): Record<string, Amount<
     return (
       tokens?.map((token) => {
         return {
-          addressOrName: token.wrapped.address,
+          address: token.wrapped.address,
           chainId: token.chainId,
-          contractInterface: erc20ABI,
+          abi: erc20ABI,
           functionName: 'totalSupply',
         }
       }) || []

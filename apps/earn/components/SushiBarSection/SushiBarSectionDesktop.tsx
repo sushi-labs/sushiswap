@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { ErrorCode } from '@ethersproject/logger'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import { SwitchHorizontalIcon } from '@heroicons/react/solid'
@@ -63,7 +64,7 @@ export const SushiBarSectionDesktop: FC = () => {
   const { config } = usePrepareContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: stake ? 'enter' : 'leave',
-    args: [amount?.quotient.toString()],
+    args: [BigNumber.from(amount?.quotient.toString())],
     enabled: !!amount?.quotient.toString(),
   })
 
@@ -136,7 +137,7 @@ export const SushiBarSectionDesktop: FC = () => {
                         hideIcon
                         className="whitespace-nowrap w-[213px] min-h-[48px]"
                         amount={amount}
-                        address={getSushiBarContractConfig(ChainId.ETHEREUM).addressOrName}
+                        address={getSushiBarContractConfig(ChainId.ETHEREUM).address}
                       />
                     </Approve.Components>
                   }

@@ -33,8 +33,8 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
 }
 
 export const getMulticallContractConfig = (chainId: number | undefined) => ({
-  addressOrName: chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '',
-  contractInterface: UniswapInterfaceMulticallArtifact.abi,
+  address: chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '',
+  abi: UniswapInterfaceMulticallArtifact.abi,
 })
 
 export function useMulticallContract(chainId: number): UniswapInterfaceMulticall {

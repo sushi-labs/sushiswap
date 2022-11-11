@@ -9,8 +9,8 @@ const PAIR_INTERFACE = new Interface(IUniswapV2PairArtifact.abi)
 
 export const usePairTotalSupply = (address: string | undefined, chainId: ChainId) => {
   const { data: totalSupply } = useContractRead({
-    addressOrName: address ?? '',
-    contractInterface: PAIR_INTERFACE,
+    address: address ?? '',
+    abi: PAIR_INTERFACE,
     functionName: 'totalSupply',
     chainId,
   })

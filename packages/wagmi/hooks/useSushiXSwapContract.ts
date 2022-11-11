@@ -3,10 +3,10 @@ import { SushiXSwap } from '@sushiswap/sushixswap/typechain'
 import { useContract, useProvider, useSigner } from 'wagmi'
 
 export const getSushiXSwapContractConfig = (chainId: number | undefined) => ({
-  addressOrName:
+  address:
     sushiXSwapExports[chainId?.toString() as keyof Omit<typeof sushiXSwapExports, '31337'>]?.[0]?.contracts?.SushiXSwap
       ?.address ?? '',
-  contractInterface:
+  abi:
     sushiXSwapExports[chainId?.toString() as keyof Omit<typeof sushiXSwapExports, '31337'>]?.[0]?.contracts?.SushiXSwap
       ?.abi ?? [],
 })

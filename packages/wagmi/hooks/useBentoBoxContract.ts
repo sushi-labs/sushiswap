@@ -1,5 +1,6 @@
+// import { BentoBoxV1 } from '@sushiswap/bentobox/typechain'
+import { bentoBoxV1Abi } from '@sushiswap/abi'
 import bentoBoxExports from '@sushiswap/bentobox/exports.json'
-import { BentoBoxV1 } from '@sushiswap/bentobox/typechain'
 import { ChainId } from '@sushiswap/chain'
 import { useContract, useProvider } from 'wagmi'
 
@@ -29,17 +30,16 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
 }
 
 export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
-  addressOrName:
+  address:
     bentoBoxExports[chainId?.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.address ?? '',
-  contractInterface:
-    bentoBoxExports[chainId?.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
-      ?.abi ?? [],
+  abi: bentoBoxV1Abi,
 })
 
-export function useBentoBoxContract(chainId: number | undefined) {
-  return useContract<BentoBoxV1>({
+export function useBentoBoxContract(chainId: number | undefined): ReturnType<typeof useContract> {
+  return useContract({
     ...getBentoBoxContractConfig(chainId),
+    abi: bentoBoxV1Abi,
     signerOrProvider: useProvider({ chainId }),
   })
 }

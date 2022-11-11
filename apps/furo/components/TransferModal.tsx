@@ -35,8 +35,8 @@ export const TransferModal: FC<TransferModalProps> = ({
   const [, { createNotification }] = useNotifications(address)
 
   const contract = useContract({
-    addressOrName: contractAddress,
-    contractInterface: abi,
+    address: contractAddress,
+    abi: abi,
   })
   const { data: resolvedAddress } = useEnsAddress({
     name: recipient,

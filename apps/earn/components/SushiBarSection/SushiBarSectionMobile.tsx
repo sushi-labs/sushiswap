@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { ErrorCode } from '@ethersproject/logger'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
 import chains, { ChainId } from '@sushiswap/chain'
@@ -66,7 +67,7 @@ export const SushiBarSectionMobile: FC = () => {
   const { config } = usePrepareContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: selectedIndex === 0 ? 'enter' : 'leave',
-    args: [amount?.quotient.toString()],
+    args: [BigNumber.from(amount?.quotient.toString())],
     enabled: !!amount?.quotient.toString(),
   })
 
@@ -161,7 +162,7 @@ export const SushiBarSectionMobile: FC = () => {
                             size="md"
                             className="whitespace-nowrap min-h-[48px]"
                             amount={amount}
-                            address={getSushiBarContractConfig(ChainId.ETHEREUM).addressOrName}
+                            address={getSushiBarContractConfig(ChainId.ETHEREUM).address}
                           />
                         </Approve.Components>
                       }

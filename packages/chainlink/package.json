@@ -6,6 +6,7 @@
     "sushi",
     "chainlink"
   ],
+  "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
@@ -43,7 +44,7 @@
     "@types/jest": "^27.5.1",
     "eslint": "^8.20.0",
     "jest": "^28.1.0",
-    "tsup": "^6.2.0",
+    "tsup": "6.4.0",
     "typescript": "4.8.2"
   }
 }

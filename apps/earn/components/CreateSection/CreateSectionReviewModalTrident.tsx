@@ -148,7 +148,18 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const prepare = useCallback(
     async (setRequest) => {
       try {
-        if (!chain?.id || !factory || !token0 || !token1 || !poolAddress || !input0 || !input1 || !totalSupply || !pool)
+        if (
+          !chain?.id ||
+          !factory ||
+          !token0 ||
+          !token1 ||
+          !poolAddress ||
+          !input0 ||
+          !input1 ||
+          !totalSupply ||
+          !pool ||
+          !contract
+        )
           return
 
         let value
@@ -234,7 +245,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
-                address={getTridentRouterContractConfig(chainId).addressOrName}
+                address={getTridentRouterContractConfig(chainId).address}
                 onSignature={setPermit}
               />
               <Approve.Token

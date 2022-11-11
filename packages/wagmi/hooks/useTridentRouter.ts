@@ -3,10 +3,10 @@ import { useContract, useSigner } from 'wagmi'
 
 // TODO: exports should be in protocol folder
 export const getTridentRouterContractConfig = (chainId: number | undefined) => ({
-  addressOrName:
+  address:
     tridentExports[chainId?.toString() as keyof Omit<typeof tridentExports, '31337'>]?.[0]?.contracts.TridentRouter
       ?.address ?? '',
-  contractInterface:
+  abi:
     tridentExports[chainId?.toString() as keyof Omit<typeof tridentExports, '31337'>]?.[0]?.contracts.TridentRouter
       ?.abi ?? [],
 })

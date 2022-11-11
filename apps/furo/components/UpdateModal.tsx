@@ -35,8 +35,8 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
   const [amount, setAmount] = useState<string>('')
   const [endDate, setEndDate] = useState<Date | null>(null)
   const contract = useContract({
-    addressOrName: contractAddress,
-    contractInterface: abi,
+    address: contractAddress,
+    abi: abi,
   })
 
   const amountAsEntity = useMemo(() => {

@@ -14,6 +14,10 @@ export type Client = ReturnType<typeof createClient>
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
+if (!alchemyId) {
+  throw Error('NO ALCHEMY ID SET')
+}
+
 const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configureChains(
   [...allChains, ...otherChains],
   [

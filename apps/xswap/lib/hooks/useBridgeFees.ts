@@ -25,22 +25,22 @@ export const useBridgeFees = ({
   const { data: stargatePoolResults } = useContractReads({
     contracts: [
       {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
         functionName: 'getChainPath',
         args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
-        contractInterface: STARGATE_POOL_ABI,
+        abi: STARGATE_POOL_ABI,
         chainId: srcChainId,
       },
       {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
         functionName: 'feeLibrary',
-        contractInterface: STARGATE_POOL_ABI,
+        abi: STARGATE_POOL_ABI,
         chainId: srcChainId,
       },
       {
-        addressOrName: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
+        address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
         functionName: 'sharedDecimals',
-        contractInterface: STARGATE_POOL_ABI,
+        abi: STARGATE_POOL_ABI,
         chainId: srcChainId,
       },
     ],
@@ -58,7 +58,7 @@ export const useBridgeFees = ({
   }, [amount, stargatePoolResults?.[2]])
 
   const { data: getFeesResults } = useContractRead({
-    addressOrName: String(stargatePoolResults?.[1]),
+    address: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
     args: [
       STARGATE_POOL_ID[srcChainId][srcBridgeToken.address],
@@ -67,7 +67,7 @@ export const useBridgeFees = ({
       contract.address,
       adjusted?.quotient?.toString(),
     ],
-    contractInterface: STARGATE_FEE_LIBRARY_V03_ABI,
+    abi: STARGATE_FEE_LIBRARY_V03_ABI,
     chainId: srcChainId,
     enabled: Boolean(
       adjusted && contract && srcChainId && dstChainId && srcChainId !== dstChainId && stargatePoolResults?.[1]

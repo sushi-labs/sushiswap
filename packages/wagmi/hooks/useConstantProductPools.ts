@@ -1,10 +1,9 @@
-import { Interface } from '@ethersproject/abi'
-import { Amount, Currency, Token } from '@sushiswap/currency'
+import { constantProductPoolAbi } from '@sushiswap/abi/src/ConstantProductPool'
 import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/amm'
-import constantProductPoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/constant-product/ConstantProductPool.sol/ConstantProductPool.json'
+import { Amount, Currency, Token } from '@sushiswap/currency'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { useContractReads } from 'wagmi'
-import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
+import { Address, useContractReads } from 'wagmi'
 
 import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 
@@ -14,8 +13,6 @@ export enum ConstantProductPoolState {
   EXISTS,
   INVALID,
 }
-
-const POOL_INTERFACE = new Interface(constantProductPoolArtifact.abi)
 
 type PoolInput = [Currency | undefined, Currency | undefined, Fee, boolean]
 
@@ -34,7 +31,7 @@ interface UseGetConstantProductPoolsReturn {
 export function useGetConstantProductPools(
   chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
-  config: Omit<UseContractReadsConfig, 'contracts'> = { enabled: true }
+  config: Omit<Parameters<typeof useContractReads>[number], 'contracts'> & { enabled?: boolean } = { enabled: true }
 ): UseGetConstantProductPoolsReturn {
   const contract = useConstantProductPoolFactoryContract(chainId)
   const pairsUnique = useMemo(() => {
@@ -60,8 +57,8 @@ export function useGetConstantProductPools(
   } = useContractReads({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
-      addressOrName: contract.address,
-      contractInterface: contract.interface,
+      address: contract?.address,
+      abi: constantProductPoolAbi,
       functionName: 'poolsCount',
       args: el,
     })),
@@ -92,12 +89,12 @@ export function useGetConstantProductPools(
       if (!callStatePoolsCountProcessed) return []
       return callStatePoolsCountProcessed.map((args) => ({
         chainId,
-        addressOrName: contract.address,
-        contractInterface: contract.interface,
+        address: contract?.address,
+        abi: constantProductPoolAbi,
         functionName: 'getPools',
         args,
       }))
-    }, [callStatePoolsCountProcessed, chainId, contract.address, contract.interface]),
+    }, [callStatePoolsCountProcessed, chainId, contract?.address]),
 
     enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
     watch: !config?.enabled,
@@ -107,13 +104,13 @@ export function useGetConstantProductPools(
     const pools: PoolData[] = []
     callStatePools?.forEach((s, i) => {
       if (s !== undefined)
-        s.forEach((address: string) =>
+        s?.forEach((address) => {
           pools.push({
-            address,
+            address: address as Address,
             token0: pairsUniqueProcessed?.[i][0] as Token,
             token1: pairsUniqueProcessed?.[i][1] as Token,
           })
-        )
+        })
     })
     return pools
   }, [callStatePools, pairsUniqueProcessed])
@@ -126,16 +123,16 @@ export function useGetConstantProductPools(
     isError: reservesAndFeesError,
   } = useContractReads({
     contracts: [
-      ...poolsAddresses.map((addressOrName) => ({
+      ...poolsAddresses.map((address) => ({
         chainId,
-        addressOrName,
-        contractInterface: POOL_INTERFACE,
+        address,
+        abi: constantProductPoolAbi,
         functionName: 'getReserves',
       })),
-      ...poolsAddresses.map((addressOrName) => ({
+      ...poolsAddresses.map((address) => ({
         chainId,
-        addressOrName,
-        contractInterface: POOL_INTERFACE,
+        address,
+        abi: constantProductPoolAbi,
         functionName: 'swapFee',
       })),
     ],
@@ -153,8 +150,8 @@ export function useGetConstantProductPools(
         return [
           ConstantProductPoolState.EXISTS,
           new ConstantProductPool(
-            Amount.fromRawAmount(p.token0, reservesAndFees[i]._reserve0.toString()),
-            Amount.fromRawAmount(p.token1, reservesAndFees[i]._reserve1.toString()),
+            Amount.fromRawAmount(p.token0, BigNumber.from(reservesAndFees[i]._reserve0).toString()),
+            Amount.fromRawAmount(p.token1, BigNumber.from(reservesAndFees[i]._reserve1).toString()),
             parseInt(reservesAndFees[i + poolsAddresses.length].toString()),
             reservesAndFees[i]._blockTimestampLast !== 0
           ),
@@ -207,6 +204,7 @@ export function useConstantProductPools(
   const poolsAddresses = useMemo(
     () =>
       input.reduce<string[]>((acc, [tokenA, tokenB, fee, twap]) => {
+        if (!constantProductPoolFactory) return acc
         acc.push(
           computeConstantProductPoolAddress({
             factoryAddress: constantProductPoolFactory.address,
@@ -218,14 +216,14 @@ export function useConstantProductPools(
         )
         return acc
       }, []),
-    [constantProductPoolFactory.address, input]
+    [constantProductPoolFactory, input]
   )
 
   const { data } = useContractReads({
     contracts: poolsAddresses.map((addressOrName) => ({
       chainId,
       addressOrName,
-      contractInterface: POOL_INTERFACE,
+      abi: constantProductPoolAbi,
       functionName: 'getReserves',
     })),
     enabled: poolsAddresses.length > 0,
@@ -250,8 +248,8 @@ export function useConstantProductPools(
       return [
         ConstantProductPoolState.EXISTS,
         new ConstantProductPool(
-          Amount.fromRawAmount(token0, reserve0.toString()),
-          Amount.fromRawAmount(token1, reserve1.toString()),
+          Amount.fromRawAmount(token0, BigNumber.from(reserve0).toString()),
+          Amount.fromRawAmount(token1, BigNumber.from(reserve1).toString()),
           fee,
           twap
         ),

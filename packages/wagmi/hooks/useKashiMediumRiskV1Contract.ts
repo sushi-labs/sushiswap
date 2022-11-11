@@ -14,10 +14,10 @@ export const KASHI_ADDRESS = {
 } as const
 
 export const getKashiMediumRiskV1ContractConfig = (chainId: number | undefined) => ({
-  addressOrName:
+  address:
     kashiExports[chainId as unknown as keyof Omit<typeof kashiExports, '31337'>]?.[0]?.contracts?.KashiPairMediumRiskV1
       ?.address ?? '',
-  contractInterface:
+  abi:
     kashiExports[chainId as unknown as keyof Omit<typeof kashiExports, '31337'>]?.[0]?.contracts?.KashiPairMediumRiskV1
       ?.abi ?? [],
 })

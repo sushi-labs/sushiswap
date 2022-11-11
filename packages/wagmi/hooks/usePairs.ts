@@ -33,12 +33,12 @@ export function getPairs(chainId: number | undefined, currencies: [Currency | un
         acc[1].push(currencyB.wrapped)
         acc[2].push({
           chainId,
-          addressOrName: computePairAddress({
+          address: computePairAddress({
             factoryAddress: FACTORY_ADDRESS[currencyA.chainId],
             tokenA: currencyA.wrapped,
             tokenB: currencyB.wrapped,
           }),
-          contractInterface: PAIR_INTERFACE,
+          abi: PAIR_INTERFACE,
           functionName: 'getReserves',
         })
         return acc

@@ -92,8 +92,8 @@ export function useERC20ApproveCallback(
   }, [amountToApprove, currentAllowance, isWritePending, spender])
 
   const tokenContract = useContract<Contract>({
-    addressOrName: token?.address ?? AddressZero,
-    contractInterface: erc20ABI,
+    address: token?.address ?? AddressZero,
+    abi: erc20ABI,
     signerOrProvider: signer,
   })
 

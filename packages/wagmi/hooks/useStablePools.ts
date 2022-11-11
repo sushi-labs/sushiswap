@@ -73,8 +73,8 @@ export function useGetStablePools(
   } = useContractReads({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
-      addressOrName: contract.address,
-      contractInterface: contract.interface,
+      address: contract.address,
+      abi: contract.interface,
       functionName: 'poolsCount',
       args: el,
     })),
@@ -105,8 +105,8 @@ export function useGetStablePools(
       if (!callStatePoolsCountProcessed) return []
       return callStatePoolsCountProcessed.map((args) => ({
         chainId,
-        addressOrName: contract.address,
-        contractInterface: contract.interface,
+        address: contract.address,
+        abi: contract.interface,
         functionName: 'getPools',
         args,
       }))
@@ -141,13 +141,13 @@ export function useGetStablePools(
       ...poolsAddresses.map((addressOrName) => ({
         chainId,
         addressOrName,
-        contractInterface: POOL_INTERFACE,
+        abi: POOL_INTERFACE,
         functionName: 'getReserves',
       })),
       ...poolsAddresses.map((addressOrName) => ({
         chainId,
         addressOrName,
-        contractInterface: POOL_INTERFACE,
+        abi: POOL_INTERFACE,
         functionName: 'swapFee',
       })),
     ],
@@ -247,7 +247,7 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [StablePool
     contracts: poolsAddresses.map((addressOrName) => ({
       chainId,
       addressOrName,
-      contractInterface: POOL_INTERFACE,
+      abi: POOL_INTERFACE,
       functionName: 'getReserves',
     })),
     enabled: poolsAddresses.length > 0 && getStablePoolFactoryContract(chainId).addressOrName,

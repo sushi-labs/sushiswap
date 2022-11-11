@@ -61,8 +61,8 @@ export const useMasterChef: UseMasterChef = ({
     if (enabled && chainId in SUSHI_ADDRESS) {
       inputs.push({
         chainId,
-        addressOrName: SUSHI_ADDRESS[chainId],
-        contractInterface: erc20ABI,
+        address: SUSHI_ADDRESS[chainId],
+        abi: erc20ABI,
         functionName: 'balanceOf',
         args: [config.addressOrName],
       })

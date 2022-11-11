@@ -5,7 +5,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
 import { IconButton, Loader, NetworkIcon, Tooltip, Typography } from '@sushiswap/ui'
 import React, { FC, ReactNode, useMemo } from 'react'
-import { useBalance, useNetwork } from 'wagmi'
+import { Address, useBalance, useNetwork } from 'wagmi'
 
 import { NetworkSelector } from '../NetworkSelector'
 
@@ -18,7 +18,7 @@ export type Props = {
 export const Balance: FC<Props> = ({ address, supportedNetworks, children }) => {
   const { chain } = useNetwork()
   const isMounted = useIsMounted()
-  const { data, isError, isLoading } = useBalance({ addressOrName: address, enabled: !!address })
+  const { data, isError, isLoading } = useBalance({ address: address as Address, enabled: !!address })
 
   return useMemo(() => {
     const content = isLoading ? (

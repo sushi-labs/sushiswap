@@ -2,10 +2,10 @@ import { useMemo } from 'react'
 import { useProvider } from 'wagmi'
 import { getContract, GetContractArgs } from 'wagmi/actions'
 
-export const getRewarderConfig = (addressOrName: string): GetContractArgs => {
+export const getRewarderConfig = (address: string): GetContractArgs => {
   return {
     addressOrName,
-    contractInterface: [
+    abi: [
       {
         inputs: [
           {
@@ -44,7 +44,7 @@ export const getRewarderConfig = (addressOrName: string): GetContractArgs => {
   }
 }
 
-export function useRewarderContract(chainId: number, addressOrName: string | undefined) {
+export function useRewarderContract(chainId: number, address: string | undefined) {
   const provider = useProvider({ chainId })
   return useMemo(() => {
     if (!addressOrName) return undefined

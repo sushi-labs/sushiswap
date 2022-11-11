@@ -274,7 +274,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                         className="whitespace-nowrap"
                         fullWidth
                         amount={amountToRemove}
-                        address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
+                        address={getSushiSwapRouterContractConfig(pair.chainId).address}
                       />
                     </Approve.Components>
                   }

@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
+import { Chain } from '@wagmi/core'
 
-export const otherChains = [
+export const otherChains: Chain[] = [
   {
     id: ChainId.AVALANCHE,
     name: 'Avalanche',

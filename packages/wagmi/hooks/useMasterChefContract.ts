@@ -38,34 +38,34 @@ export const MINICHEF_ADDRESS = {
 
 export const _getMasterChefContractConfig = (
   chainId: keyof typeof MASTERCHEF_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => ({
+): Pick<ReadContractConfig, 'chainId' | 'address' | 'abi'> => ({
   chainId,
-  addressOrName: MASTERCHEF_ADDRESS[chainId],
-  contractInterface: MASTERCHEF_ABI,
+  address: MASTERCHEF_ADDRESS[chainId],
+  abi: MASTERCHEF_ABI,
 })
 
 export const getMasterChefContractV2Config = (
   chainId: keyof typeof MASTERCHEF_V2_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => ({
+): Pick<ReadContractConfig, 'chainId' | 'address' | 'abi'> => ({
   chainId,
-  addressOrName: MASTERCHEF_V2_ADDRESS[chainId],
-  contractInterface: MASTERCHEF_ABI_V2,
+  address: MASTERCHEF_V2_ADDRESS[chainId],
+  abi: MASTERCHEF_ABI_V2,
 })
 
 export const getMiniChefContractConfig = (
   chainId: keyof typeof MINICHEF_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => {
+): Pick<ReadContractConfig, 'chainId' | 'address' | 'abi'> => {
   return {
     chainId,
-    addressOrName: MINICHEF_ADDRESS[chainId],
-    contractInterface: MINICHEF_ABI,
+    address: MINICHEF_ADDRESS[chainId],
+    abi: MINICHEF_ABI,
   }
 }
 
 export const getMasterChefContractConfig = (
   chainId: number,
   chef: Chef
-): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => {
+): Pick<ReadContractConfig, 'chainId' | 'address' | 'abi'> => {
   if (chef === Chef.MASTERCHEF) return _getMasterChefContractConfig(chainId)
   if (chef === Chef.MASTERCHEF_V2) return getMasterChefContractV2Config(chainId)
   return getMiniChefContractConfig(chainId)
