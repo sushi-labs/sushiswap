@@ -1,4 +1,4 @@
-import { Pool, Prisma, PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { performance } from 'perf_hooks'
 
 /**
@@ -59,7 +59,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
           token0Price: pool.token0Price,
           token1Price: pool.token1Price,
           totalApr: (pool.apr ?? 0) + bestIncentiveApr,
-        }
+        },
       })
     }
     return client.pool.upsert({
@@ -74,7 +74,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
         volumeNative: pool.volumeNative,
         token0Price: pool.token0Price,
         token1Price: pool.token1Price,
-        totalApr: pool.apr
+        totalApr: pool.apr,
       },
       create: pool,
     })
@@ -128,12 +128,8 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
     },
   })
   const poolsToUpdate = poolsWithIncentives.map((pool) => {
-    const bestIncentiveApr = pool.incentives.reduce((best, incentive) => {
-      const apr = incentive.apr
-      if (apr > best) {
-        return apr
-      }
-      return best
+    const bestIncentiveApr = pool.incentives.reduce((totalIncentiveApr, incentive) => {
+      return totalIncentiveApr + incentive.apr
     }, 0)
 
     const totalApr = bestIncentiveApr + (pool.apr ?? 0)
@@ -145,7 +141,7 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
       },
       data: {
         totalApr,
-         isIncentivized,
+        isIncentivized,
       },
     })
   })
