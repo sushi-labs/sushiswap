@@ -65,7 +65,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: <Dots>Updating stream</Dots>,
+          pending: `Updating stream`,
           completed: `Successfully updated stream`,
           failed: 'Something went wrong updating the stream',
         },

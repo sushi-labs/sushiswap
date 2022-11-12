@@ -69,7 +69,7 @@ export const TransferModal: FC<TransferModalProps> = ({
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: <Dots>Transferring stream</Dots>,
+          pending: `Transferring stream`,
           completed: `Successfully transferred stream to ${shortenAddress(resolvedAddress)}`,
           failed: 'Something went wrong transferring the stream',
         },
