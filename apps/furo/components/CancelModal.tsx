@@ -59,7 +59,7 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: <Dots>Cancelling stream</Dots>,
+          pending: `Cancelling stream`,
           completed: `Successfully cancelled stream`,
           failed: 'Something went wrong cancelling the stream',
         },

@@ -51,11 +51,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: (
-            <Dots>
-              Withdrawing {amount.toSignificant(6)} {amount.currency.symbol}
-            </Dots>
-          ),
+          pending: `Withdrawing ${amount.toSignificant(6)} ${amount.currency.symbol}`,
           completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
           failed: 'Something went wrong withdrawing from stream',
         },
