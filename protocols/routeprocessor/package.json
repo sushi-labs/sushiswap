@@ -60,6 +60,7 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
