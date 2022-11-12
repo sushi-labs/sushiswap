@@ -1,18 +1,10 @@
-import {
-  Chip,
-  classNames,
-  DEFAULT_INPUT_CLASSNAME,
-  DEFAULT_INPUT_UNSTYLED,
-  ERROR_INPUT_CLASSNAME,
-  Input,
-  Loader,
-} from '@sushiswap/ui'
+import { Chip, classNames, DEFAULT_INPUT_UNSTYLED, Input, Loader } from '@sushiswap/ui'
 import { AddressProps } from '@sushiswap/ui/input/Address'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Account } from '../Account'
 
-export interface EnsInputProps extends Omit<AddressProps, 'ref'> {
+export interface EnsInputProps extends AddressProps {
   inputClassName?: string
 }
 
@@ -49,10 +41,8 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInputProps>(
           <div
             className={classNames(
               className,
-              DEFAULT_INPUT_CLASSNAME,
-              rest.error ? ERROR_INPUT_CLASSNAME : '',
               isLoading || isFetching ? 'pr-4' : '',
-              'relative flex flex-col justify-center'
+              'without-ring relative flex flex-col justify-center'
             )}
           >
             <Input.Address

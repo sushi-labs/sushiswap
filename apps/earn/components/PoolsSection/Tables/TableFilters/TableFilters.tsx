@@ -9,13 +9,13 @@ import { usePoolFilters } from '../../../PoolsFiltersProvider'
 import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 
 export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters = false }) => {
-  const { selectedNetworks, selectedPoolTypes, farmsOnly, setFilters } = usePoolFilters()
+  const { selectedNetworks, selectedPoolTypes, farmsOnly, ignoreLowTvl, setFilters } = usePoolFilters()
   const poolTypesValue =
     Object.keys(AVAILABLE_POOL_TYPE_MAP).length === selectedPoolTypes.length ? [] : selectedPoolTypes
 
   return (
     <>
-      <div className="flex gap-3 flex-wrap mb-4">
+      <div className="flex flex-wrap gap-3 mb-4">
         <Network.SelectorMenu
           networks={SUPPORTED_CHAIN_IDS}
           selectedNetworks={selectedNetworks}
@@ -72,6 +72,20 @@ export const TableFilters: FC<{ showAllFilters?: boolean }> = ({ showAllFilters 
               ))}
             </Select.Options>
           </Select>
+
+          {/* <div className="flex items-center bg-slate-700 rounded-xl gap-3 px-3 h-[44px]">
+            <Typography variant="sm" weight={600} className="text-slate-200">
+              &gt; $1,000.00
+            </Typography>
+            <Switch
+              checked={ignoreLowTvl}
+              onChange={(checked) => setFilters({ ignoreLowTvl: checked })}
+              size="sm"
+              uncheckedIcon={<XIcon />}
+              checkedIcon={<CheckIcon />}
+            />
+          </div> */}
+
           <div className="flex items-center bg-slate-700 rounded-xl gap-3 px-3 h-[44px]">
             <Typography variant="sm" weight={600} className="text-slate-200">
               Farms

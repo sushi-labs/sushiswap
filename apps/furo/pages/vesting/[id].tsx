@@ -17,7 +17,7 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useConnect } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 import VestingChart2 from '../../components/vesting/VestingChart2'
 import { ChartHover } from '../../types'
@@ -63,6 +63,7 @@ const LINKS = (id: string): BreadcrumbLink[] => [
 ]
 
 const _VestingPage: FC = () => {
+  const { address } = useAccount()
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
@@ -159,21 +160,25 @@ const _VestingPage: FC = () => {
             <SchedulePopover vesting={vesting} schedule={schedule} />
           </div>
           <div className="flex flex-col gap-2">
-            <WithdrawModal vesting={vesting} />
-            <div className="flex gap-2">
-              <TransferModal
-                stream={vesting}
-                abi={getFuroVestingContractConfig(chainId)?.contractInterface}
-                address={getFuroVestingContractConfig(chainId)?.addressOrName}
-              />
-              <CancelModal
-                title="Cancel Vesting"
-                stream={vesting}
-                abi={getFuroVestingContractConfig(chainId)?.contractInterface}
-                address={getFuroVestingContractConfig(chainId)?.addressOrName}
-                fn="stopVesting"
-              />
-            </div>
+            <WithdrawModal vesting={vesting} chainId={chainId} />
+            {address && (
+              <div className="flex gap-2">
+                <TransferModal
+                  stream={vesting}
+                  abi={getFuroVestingContractConfig(chainId)?.contractInterface}
+                  address={getFuroVestingContractConfig(chainId)?.addressOrName}
+                  chainId={chainId}
+                />
+                <CancelModal
+                  title="Cancel Vesting"
+                  stream={vesting}
+                  abi={getFuroVestingContractConfig(chainId)?.contractInterface}
+                  address={getFuroVestingContractConfig(chainId)?.addressOrName}
+                  fn="stopVesting"
+                  chainId={chainId}
+                />
+              </div>
+            )}
           </div>
         </div>
       </Layout>

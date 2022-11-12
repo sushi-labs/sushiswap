@@ -11,6 +11,7 @@ enum Filters {
   selectedNetworks = 'selectedNetworks',
   selectedPoolTypes = 'selectedPoolTypes',
   farmsOnly = 'farmsOnly',
+  ignoreLowTvl = 'ignoreLowTvl',
 }
 
 interface FilterContext {
@@ -22,6 +23,7 @@ interface FilterContext {
   [Filters.selectedNetworks]: ChainId[]
   [Filters.selectedPoolTypes]: string[]
   [Filters.farmsOnly]: boolean
+  [Filters.ignoreLowTvl]: boolean
   atLeastOneFilterSelected: boolean
   setFilters(filters: Partial<Omit<FilterContext, 'setFilters'>>): void
 }
@@ -46,6 +48,7 @@ export const PoolsFiltersProvider: FC<PoolsFiltersProvider> = ({
     [Filters.selectedNetworks]: selectedNetworks,
     [Filters.selectedPoolTypes]: Object.keys(AVAILABLE_POOL_TYPE_MAP),
     [Filters.farmsOnly]: false,
+    [Filters.ignoreLowTvl]: true,
     atLeastOneFilterSelected: false,
   })
 

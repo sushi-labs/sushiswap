@@ -1,76 +1,68 @@
-import { tryParseAmount } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import { Form, Input, Select, Typography } from '@sushiswap/ui'
 import { useBalance } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components'
-import { CreateVestingFormData, stepConfigurations } from 'components/vesting'
+import { CreateVestingFormSchemaType, FormErrors, stepConfigurations } from 'components/vesting'
 import { format } from 'date-fns'
 import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
+import { useDeepCompareMemoize } from '../../../lib'
+import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
+import { calculateEndDate, calculateTotalAmount } from '../utils'
+
 export const GradedVestingDetailsSection = () => {
   const { address } = useAccount()
-  const { control, watch, setError, clearErrors } = useFormContext<CreateVestingFormData>()
+  const {
+    control,
+    watch,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext<CreateVestingFormSchemaType & FormErrors>()
+  const formData = watch()
+  const _formData = useDeepCompareMemoize(formData)
 
-  const [currency, stepConfig, cliff, cliffAmount, cliffEndDate, startDate, stepPayouts, stepAmount, fundSource] =
-    // @ts-ignore
-    watch([
-      'currency',
-      'stepConfig',
-      'cliff',
-      'cliffAmount',
-      'cliffEndDate',
-      'startDate',
-      'stepPayouts',
-      'stepAmount',
-      'fundSource',
-    ])
+  const { currency, stepConfig, fundSource, cliff, stepAmount, stepPayouts } = _formData
 
-  const { data: balance } = useBalance({ account: address, chainId: currency?.chainId, currency, loadBentobox: true })
-
-  const endDate =
-    ((cliff && cliffEndDate) || startDate) && stepPayouts
-      ? new Date(
-          new Date(cliff && cliffEndDate ? cliffEndDate : startDate).getTime() + stepConfig.time * stepPayouts * 1000
-        )
-      : undefined
-
-  const totalAmount = useMemo(() => {
-    if (!currency || !stepPayouts) return undefined
-
-    const cliff = tryParseAmount(cliffAmount?.toString(), currency)
-    const totalStep = tryParseAmount(stepAmount?.toString(), currency)?.multiply(JSBI.BigInt(stepPayouts))
-
-    if (cliff && !totalStep) return cliff
-    if (!cliff && totalStep) return totalStep
-    if (cliff && totalStep) return totalStep.add(cliff)
-
-    return undefined
-  }, [cliffAmount, stepAmount, stepPayouts, currency])
+  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
+  const _currency = useTokenFromZToken(currency)
+  const endDate = calculateEndDate(formData)
+  const totalAmount = useMemo(
+    () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
+    [cliff, currency, stepAmount, stepPayouts]
+  )
+  const { data: balance } = useBalance({
+    account: address,
+    chainId: currency?.chainId,
+    currency: _currency,
+    loadBentobox: true,
+  })
 
   useEffect(() => {
-    if (!totalAmount || !balance || !balance[fundSource]) return
-    if (totalAmount.greaterThan(balance[fundSource])) {
-      setError('insufficientBalance', { type: 'custom', message: 'Insufficient Balance' })
+    if (!totalAmount || !balance || !balance[_fundSource]) return
+    if (totalAmount.greaterThan(balance[_fundSource])) {
+      setError('FORM_ERROR', { type: 'custom', message: 'Insufficient Balance' })
     } else {
-      clearErrors('insufficientBalance')
+      clearErrors('FORM_ERROR')
     }
-  }, [balance, clearErrors, fundSource, setError, totalAmount])
+  }, [balance, clearErrors, _fundSource, setError, totalAmount])
 
   return (
     <Form.Section title="Graded Vesting Details" description="Optionally provide graded vesting details">
-      <Form.Control label="Payout per Period">
+      <Form.Control label="Payout per Period*">
         <Controller
           control={control}
           name="stepAmount"
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
             <CurrencyInput.Base
               className="ring-offset-slate-900"
               onChange={onChange}
-              value={value}
-              currency={currency}
+              value={value || ''}
+              currency={_currency}
               error={!!error?.message}
+              name={name}
+              onBlur={onBlur}
               helperTextPanel={
                 <CurrencyInput.HelperTextPanel
                   text={
@@ -92,31 +84,35 @@ export const GradedVestingDetailsSection = () => {
         />
       </Form.Control>
       <div className="flex flex-col gap-6 md:flex-row">
-        <Form.Control label="Amount of Periods">
+        <Form.Control label="Amount of Periods*">
           <Controller
             control={control}
             name="stepPayouts"
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <>
-                <Input.Counter
-                  step={1}
-                  min={0}
-                  max={100}
-                  onChange={onChange}
-                  value={value}
-                  error={!!error?.message}
-                  className="ring-offset-slate-900"
-                />
-                <Form.Error message={error?.message} />
-              </>
-            )}
+            render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
+              return (
+                <>
+                  <Input.Counter
+                    name={name}
+                    onBlur={onBlur}
+                    step={1}
+                    min={0}
+                    max={100}
+                    onChange={(val) => onChange(Number(val) > 0 ? Number(val) : 1)}
+                    value={value}
+                    error={!!error?.message}
+                    className="ring-offset-slate-900"
+                  />
+                  <Form.Error message={error?.message} />
+                </>
+              )
+            }}
           />
         </Form.Control>
-        <Form.Control label="Period Length">
+        <Form.Control label="Period Length*">
           <Controller
             control={control}
             name="stepConfig"
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
+            render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
               <>
                 <Select
                   button={
@@ -125,7 +121,10 @@ export const GradedVestingDetailsSection = () => {
                     </Select.Button>
                   }
                   value={value}
-                  onChange={onChange}
+                  onChange={(val) => {
+                    onChange(val)
+                    onBlur()
+                  }}
                 >
                   <Select.Options>
                     {Object.values(stepConfigurations).map((stepConfig) => (
@@ -141,41 +140,35 @@ export const GradedVestingDetailsSection = () => {
           />
         </Form.Control>
       </div>
-      <Form.Control label="Total Amount">
-        <Controller
-          control={control}
-          name="insufficientBalance"
-          render={({ fieldState: { error } }) => (
-            <>
-              <Typography
-                variant="sm"
-                className={
-                  balance?.[fundSource] && totalAmount?.greaterThan(balance[fundSource])
-                    ? 'text-red'
-                    : totalAmount
-                    ? 'text-slate-50'
-                    : 'text-slate-500'
-                }
-                weight={totalAmount ? 700 : 400}
-              >
-                {totalAmount ? totalAmount?.toSignificant(6) : '0.000000'} {totalAmount?.currency.symbol}
-              </Typography>
-              <Form.Error message={error?.message} />
-            </>
+      <div className="flex gap-6">
+        <Form.Control label="Total Amount">
+          <Typography
+            variant="sm"
+            className={
+              balance?.[_fundSource] && totalAmount?.greaterThan(balance[_fundSource])
+                ? 'text-red'
+                : totalAmount
+                ? 'text-slate-50'
+                : 'text-slate-500'
+            }
+            weight={600}
+          >
+            {totalAmount ? totalAmount?.toSignificant(6) : '0.000000'} {totalAmount?.currency.symbol}
+          </Typography>
+          <Form.Error message={errors['FORM_ERROR']?.message} />
+        </Form.Control>
+        <Form.Control label="End Date">
+          {endDate ? (
+            <Typography variant="sm" className="text-slate-50" weight={600}>
+              {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+            </Typography>
+          ) : (
+            <Typography variant="sm" className="italic text-slate-500">
+              Not available
+            </Typography>
           )}
-        />
-      </Form.Control>
-      <Form.Control label="End Date">
-        {endDate ? (
-          <Typography variant="sm" className="text-slate-50" weight={500}>
-            {format(endDate, 'dd MMM yyyy hh:mmaaa')}
-          </Typography>
-        ) : (
-          <Typography variant="sm" className="italic text-slate-500">
-            Not available
-          </Typography>
-        )}
-      </Form.Control>
+        </Form.Control>
+      </div>
     </Form.Section>
   )
 }

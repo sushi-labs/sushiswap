@@ -10,7 +10,6 @@ type ComponentsWrapper = {
     | ReactElement<DefaultButtonInterface>
     | Array<ReactElement<DefaultButtonInterface> | undefined>
     | Array<Array<ReactElement<DefaultButtonInterface>> | ReactElement<DefaultButtonInterface> | undefined>
-    | undefined
 }
 
 export const ComponentsWrapper: FC<ComponentsWrapper> = ({ className, children }) => {

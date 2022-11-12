@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build && next-sitemap --config next-sitemap.config.mjs",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev --port 3004",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "start": "next start",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
+    "start": "next start"
   },
   "dependencies": {
     "@builder.io/partytown": "^0.7.0",
@@ -17,6 +17,7 @@
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/logger": "^5.7.0",
     "@ethersproject/experimental": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
     "@ethersproject/solidity": "^5.7.0",
@@ -36,6 +37,9 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@tanstack/react-table": "8.5.0",
+    "lodash.sortby": "4.7.0",
+    "lodash.take": "4.1.1",
+    "lodash.orderby": "4.6.0",
     "date-fns": "^2.29.1",
     "echarts": "^5.3.3",
     "echarts-for-react": "^3.0.2",
@@ -61,6 +65,9 @@
     "@types/numeral": "^2.0.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/lodash.take": "4.1.7",
+    "@types/lodash.sortby": "4.7.7",
+    "@types/lodash.orderby": "4.6.7",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.20.0",
     "graphql": "16.6.0",

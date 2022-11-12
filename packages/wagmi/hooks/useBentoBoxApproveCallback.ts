@@ -5,8 +5,9 @@ import { useCallback, useMemo, useState } from 'react'
 import {
   useAccount,
   useContractRead,
-  useDeprecatedContractWrite,
+  useContractWrite,
   useNetwork,
+  usePrepareContractWrite,
   UserRejectedRequestError,
   useSignTypedData,
 } from 'wagmi'
@@ -20,20 +21,25 @@ export function useBentoBoxApproveCallback({
   watch,
   onSignature,
   onSuccess,
+  enabled = true,
 }: {
   masterContract?: string
   watch: boolean
   onSignature?(payload: Signature): void
   onSuccess?(data: NotificationData): void
+  enabled?: boolean
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
   const { chain } = useNetwork()
 
-  const { writeAsync } = useDeprecatedContractWrite({
+  const { config } = usePrepareContractWrite({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'setMasterContractApproval',
     args: [address, masterContract, true, 0, HashZero, HashZero],
+    enabled,
   })
+
+  const { writeAsync } = useContractWrite(config)
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
     ...getBentoBoxContractConfig(chain?.id),
@@ -41,7 +47,7 @@ export function useBentoBoxApproveCallback({
     args: [masterContract, address],
     // This should probably always be true anyway...
     watch,
-    enabled: Boolean(address && masterContract !== AddressZero),
+    enabled: enabled && Boolean(address && masterContract !== AddressZero),
   })
 
   const { refetch: getNonces } = useContractRead({
@@ -62,19 +68,45 @@ export function useBentoBoxApproveCallback({
     return isBentoBoxApproved ? ApprovalState.APPROVED : ApprovalState.NOT_APPROVED
   }, [isBentoBoxApproved, signature, isLoading])
 
+  const legacyApproval = useCallback(async () => {
+    if (
+      !address ||
+      !chain ||
+      !(chain.id in BENTOBOX_ADDRESS) ||
+      !masterContract ||
+      approvalState !== ApprovalState.NOT_APPROVED ||
+      !writeAsync
+    ) {
+      return
+    }
+
+    const data = await writeAsync()
+    if (onSuccess) {
+      const ts = new Date().getTime()
+      onSuccess({
+        type: 'approval',
+        chainId: chain?.id,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Approving BentoBox Master Contract`,
+          completed: `Successfully approved the master contract`,
+          failed: 'Something went wrong approving the master contract',
+        },
+        groupTimestamp: ts,
+        timestamp: ts,
+      })
+    }
+  }, [address, approvalState, chain, masterContract, onSuccess, writeAsync])
+
   const approveBentoBox = useCallback(async (): Promise<void> => {
-    if (!address) {
-      console.error('no account connected')
-      return
-    }
-
-    if (!chain) {
-      console.error('no active chain')
-      return
-    }
-
-    if (!(chain.id in BENTOBOX_ADDRESS)) {
-      console.error(`no bentobox for active chain ${chain.id}`)
+    if (
+      !address ||
+      !chain ||
+      !(chain.id in BENTOBOX_ADDRESS) ||
+      !masterContract ||
+      approvalState !== ApprovalState.NOT_APPROVED
+    ) {
       return
     }
 
@@ -87,7 +119,14 @@ export function useBentoBoxApproveCallback({
       console.error('approve was called unnecessarily')
       return
     }
+
+    // Use regular approvals for safe apps
+    if (connector && connector.id === 'safe') {
+      return await legacyApproval()
+    }
+
     const { data: nonces } = await getNonces()
+
     try {
       const data = await signTypedDataAsync({
         domain: {
@@ -117,26 +156,19 @@ export function useBentoBoxApproveCallback({
     } catch (e: unknown) {
       if (e instanceof UserRejectedRequestError) return
       console.error('Error approving BentoBox, attempting regular approval instead', e)
-      // Regular approval as fallback
-      const data = await writeAsync()
-      if (onSuccess) {
-        const ts = new Date().getTime()
-        onSuccess({
-          type: 'approval',
-          chainId: chain?.id,
-          txHash: data.hash,
-          promise: data.wait(),
-          summary: {
-            pending: `Approving BentoBox Master Contract`,
-            completed: `Successfully approved the master contract`,
-            failed: 'Something went wrong approving the master contract',
-          },
-          groupTimestamp: ts,
-          timestamp: ts,
-        })
-      }
+      await legacyApproval()
     }
-  }, [address, chain, masterContract, approvalState, getNonces, signTypedDataAsync, onSignature, writeAsync, onSuccess])
+  }, [
+    address,
+    chain,
+    masterContract,
+    approvalState,
+    connector,
+    getNonces,
+    legacyApproval,
+    signTypedDataAsync,
+    onSignature,
+  ])
 
   return useMemo(() => [approvalState, signature, approveBentoBox], [approvalState, approveBentoBox, signature])
 }

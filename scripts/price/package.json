@@ -36,14 +36,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "2.2.15",
-    "@graphprotocol/client-add-source-name": "latest",
-    "@graphprotocol/client-auto-pagination": "latest",
-    "@graphql-mesh/transform-filter-schema": "latest",
-    "@graphql-mesh/transform-prefix": "latest",
-    "@graphql-mesh/transform-prune": "latest",
-    "@graphql-mesh/transform-rename": "latest",
-    "@graphql-mesh/transform-type-merging": "latest",
+    "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
