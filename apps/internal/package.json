@@ -4,24 +4,24 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev -p 3006",
     "generate": "graphclient build",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "start": "next start",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient"
+    "start": "next start"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@octokit/auth-app": "^4.0.4",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
     "@tanstack/react-table": "^8.5.13",
     "fast-json-stable-stringify": "^2.1.0",
     "next": "^12.3.1",

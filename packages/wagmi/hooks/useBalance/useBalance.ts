@@ -108,7 +108,7 @@ export const useBalances: UseBalances = ({
     for (let i = 0; i < validatedTokenAddresses.length; i++) {
       if (loadBentobox) {
         const { base, elastic } = data[i + validatedTokenAddresses.length]
-        if (base && elastic) {
+        if (base && elastic && data[i + 2 * validatedTokenAddresses.length]) {
           const rebase = { base: JSBI.BigInt(base.toString()), elastic: JSBI.BigInt(elastic.toString()) }
           const amount = Amount.fromShare(
             validatedTokens[i],

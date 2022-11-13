@@ -43,15 +43,6 @@
       "dependsOn": [
         "^build",
         "generate"
-      ]
-    },
-    "root#build": {
-      "dependsOn": [
-        "^build",
-        "generate"
-      ],
-      "outputs": [
-        ".next/**"
       ],
       "env": [
         "ROOT_URL",

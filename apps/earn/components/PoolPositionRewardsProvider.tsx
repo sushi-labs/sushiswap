@@ -2,8 +2,8 @@ import { Amount, Token } from '@sushiswap/currency'
 import { Incentive, Pair } from '@sushiswap/graph-client'
 import { Chef, RewarderType, useMasterChef } from '@sushiswap/wagmi'
 import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
-import { createContext, FC, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, UserRejectedRequestError } from 'wagmi'
+import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
+import { useAccount } from 'wagmi'
 
 import { CHEF_TYPE_MAP } from '../lib/constants'
 import { incentiveRewardToToken } from '../lib/functions'
@@ -17,7 +17,6 @@ interface PoolPositionRewardsContext {
   isLoading: boolean
   isError: boolean
   harvest: undefined | (() => void)
-  error?: string
 }
 
 const Context = createContext<PoolPositionRewardsContext | undefined>(undefined)
@@ -73,7 +72,6 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
 }) => {
   const { address: account } = useAccount()
   const { liquidityToken } = useTokensFromPair(pair)
-  const [error, setError] = useState<string>()
 
   const [, { createNotification }] = useNotifications(account)
   const [rewardTokens, rewarderAddresses, types] = useMemo(() => {
@@ -102,25 +100,13 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
     chef: chefType,
   })
 
-  const { harvest: _harvest } = useMasterChef({
+  const { harvest } = useMasterChef({
     chainId: pair.chainId,
     chef: chefType,
     pid: farmId,
     token: liquidityToken,
     onSuccess: createNotification,
   })
-
-  const harvest = useCallback(async () => {
-    try {
-      await _harvest()
-    } catch (e: unknown) {
-      if (e instanceof UserRejectedRequestError) return
-      if (e instanceof ProviderRpcError) {
-        setError(e.message)
-      }
-      console.error(e)
-    }
-  }, [_harvest])
 
   const values = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: pendingRewards })
 
@@ -134,9 +120,8 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
           isLoading,
           isError,
           harvest,
-          error,
         }),
-        [error, harvest, isError, isLoading, pendingRewards, rewardTokens, values]
+        [harvest, isError, isLoading, pendingRewards, rewardTokens, values]
       )}
     >
       {children}

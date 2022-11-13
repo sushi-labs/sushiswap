@@ -1,12 +1,10 @@
 import transpileModules from 'next-transpile-modules'
-import { withAxiom } from 'next-axiom'
 
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/redux-localstorage',
-  '@sushiswap/chain',
-  '@sushiswap/wagmi',
   '@sushiswap/ui',
+  '@sushiswap/wagmi',
 ])
 
 const {
@@ -136,4 +134,4 @@ const nextConfig = {
   },
 }
 
-export default withAxiom(withTranspileModules(nextConfig))
+export default withTranspileModules(nextConfig)

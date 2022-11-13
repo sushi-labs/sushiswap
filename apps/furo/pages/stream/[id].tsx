@@ -1,12 +1,11 @@
 import { Breadcrumb, ProgressBar, ProgressColor } from '@sushiswap/ui'
-import { getFuroStreamContractConfig, useWalletState } from '@sushiswap/wagmi'
+import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
 import {
   BackgroundVector,
   CancelModal,
   FuroTimer,
   HistoryPopover,
   Layout,
-  Overlay,
   ProgressBarCard,
   StreamDetailsPopover,
   TransferModal,
@@ -19,7 +18,7 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useConnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { ChartHover } from '../../types'
 import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
@@ -64,11 +63,10 @@ const LINKS = (id: string) => [
 ]
 
 const _Streams: FC = () => {
+  const { address } = useAccount()
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
-  const connect = useConnect()
-  const { connecting, reconnecting } = useWalletState(!!connect.pendingConnector)
 
   const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/stream/${chainId}/${id}/transactions`, (url) =>
     fetch(url).then((response) => response.json())
@@ -89,8 +87,6 @@ const _Streams: FC = () => {
     () => (chainId && furo && rebase ? new Stream({ chainId, furo, rebase }) : undefined),
     [chainId, furo, rebase]
   )
-
-  if (connecting || reconnecting) return <Overlay />
 
   return (
     <>
@@ -147,26 +143,31 @@ const _Streams: FC = () => {
             <HistoryPopover stream={stream} transactionRepresentations={transactions} />
           </div>
           <div className="flex flex-col gap-2">
-            <WithdrawModal stream={stream} />
-            <div className="flex gap-2">
-              <TransferModal
-                stream={stream}
-                abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                address={getFuroStreamContractConfig(chainId)?.addressOrName}
-              />
-              <UpdateModal
-                stream={stream}
-                abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                address={getFuroStreamContractConfig(chainId)?.addressOrName}
-              />
-              <CancelModal
-                title="Cancel Stream"
-                stream={stream}
-                abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                address={getFuroStreamContractConfig(chainId)?.addressOrName}
-                fn="cancelStream"
-              />
-            </div>
+            <WithdrawModal stream={stream} chainId={chainId} />
+            {address && (
+              <div className="flex gap-2">
+                <TransferModal
+                  stream={stream}
+                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
+                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  chainId={chainId}
+                />
+                <UpdateModal
+                  stream={stream}
+                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
+                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  chainId={chainId}
+                />
+                <CancelModal
+                  title="Cancel Stream"
+                  stream={stream}
+                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
+                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  fn="cancelStream"
+                  chainId={chainId}
+                />
+              </div>
+            )}
           </div>
         </div>
       </Layout>

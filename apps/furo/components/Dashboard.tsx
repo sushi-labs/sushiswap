@@ -13,7 +13,7 @@ import useSWR from 'swr'
 import { Streams, Vestings } from 'types'
 import { useAccount } from 'wagmi'
 
-import { FuroTable, FuroTableType } from './FuroTable'
+import { FuroTableType, StreamTable } from './Table'
 import { Rebase } from '.graphclient'
 
 const fetcher = (params: any) =>
@@ -183,7 +183,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
         </div>
         <Tab.Panels>
           <Tab.Panel>
-            <FuroTable
+            <StreamTable
               chainId={chainId}
               balances={balancesData}
               globalFilter={showActiveIncoming}
@@ -201,7 +201,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
             />
           </Tab.Panel>
           <Tab.Panel>
-            <FuroTable
+            <StreamTable
               chainId={chainId}
               balances={balancesData}
               globalFilter={showActiveIncoming}

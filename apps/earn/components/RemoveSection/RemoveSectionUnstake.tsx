@@ -1,67 +1,56 @@
-import { Amount, Token, tryParseAmount } from '@sushiswap/currency'
+import { tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'
 import { useIsMounted } from '@sushiswap/hooks'
-import { AppearOnMount, Button, Dots, Typography } from '@sushiswap/ui'
-import { Approve, Checker, Chef, getMasterChefContractConfig } from '@sushiswap/wagmi'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { AppearOnMount, Button, Dots } from '@sushiswap/ui'
+import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
+import { FC, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { ProviderRpcError, UserRejectedRequestError } from 'wagmi'
 
 import { CHEF_TYPE_MAP } from '../../lib/constants'
 import { useCreateNotification, useTokensFromPair } from '../../lib/hooks'
-import { PairWithAlias } from '../../types'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 
 interface AddSectionStakeProps {
   pair: Pair
   chefType: Chef
+  farmId: number
 }
 
 export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress }) => {
   const isMounted = useIsMounted()
-  const { data } = useSWR<{ pair: PairWithAlias }>(`/earn/api/pool/${poolAddress}`, (url) =>
+  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${poolAddress}`, (url) =>
     fetch(url).then((response) => response.json())
   )
 
   if (!data) return <></>
   const { pair } = data
-  if (!pair?.farm?.chefType || !isMounted) return <></>
+  if (!pair?.farm?.chefType || !isMounted || !pair.farm.id) return <></>
 
   return (
     <AppearOnMount show={true}>
-      <_RemoveSectionUnstake pair={pair} chefType={CHEF_TYPE_MAP[pair.farm.chefType]} />
+      <_RemoveSectionUnstake pair={pair} chefType={CHEF_TYPE_MAP[pair.farm.chefType]} farmId={Number(pair.farm.id)} />
     </AppearOnMount>
   )
 }
 
-export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType }) => {
+export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId }) => {
   const createNotification = useCreateNotification()
   const [value, setValue] = useState('')
-  const [error, setError] = useState<string>()
   const { reserve0, reserve1, liquidityToken } = useTokensFromPair(pair)
-  const { withdraw: _withdraw, balance, isLoading: isWritePending } = usePoolPositionStaked()
+  const { balance } = usePoolPositionStaked()
 
   const amount = useMemo(() => {
     return tryParseAmount(value, liquidityToken)
   }, [liquidityToken, value])
 
-  const withdraw = useCallback(
-    async (amount: Amount<Token> | undefined) => {
-      if (!_withdraw) return
-
-      try {
-        await _withdraw(amount)
-      } catch (e: unknown) {
-        if (e instanceof UserRejectedRequestError) return
-        if (e instanceof ProviderRpcError) {
-          setError(e.message)
-        }
-        console.error(e)
-      }
-    },
-    [_withdraw]
-  )
+  const { sendTransaction, isLoading: isWritePending } = useMasterChefWithdraw({
+    chainId: liquidityToken.chainId,
+    amount,
+    pid: farmId,
+    chef: chefType,
+    onSuccess: createNotification,
+  })
 
   return (
     <RemoveSectionUnstakeWidget
@@ -95,7 +84,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
               render={({ approved }) => {
                 return (
                   <Button
-                    onClick={() => withdraw(amount)}
+                    onClick={() => sendTransaction?.()}
                     fullWidth
                     size="md"
                     variant="filled"
@@ -106,11 +95,6 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
                 )
               }}
             />
-            {error && (
-              <Typography variant="xs" className="text-center text-red" weight={500}>
-                {error}
-              </Typography>
-            )}
           </Checker.Custom>
         </Checker.Network>
       </Checker.Connected>

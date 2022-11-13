@@ -15,7 +15,7 @@ type CreateScheduleRepresentation = (x: {
   cliffAmount: Amount<Currency> | undefined
   stepAmount: Amount<Currency> | undefined
   startDate: Date
-  cliffEndDate: Date | undefined
+  cliffEndDate: Date | null
   stepPayouts: number
   stepDuration: number
 }) => Schedule

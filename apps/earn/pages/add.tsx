@@ -2,6 +2,7 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
 import { ChainId, chainShortName } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
+import { Pair as PairDTO } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
@@ -36,7 +37,6 @@ import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
-import { PairWithAlias } from '../types'
 
 const LINKS: BreadcrumbLink[] = [
   {
@@ -176,7 +176,7 @@ const _Add: FC<AddProps> = ({
   poolType,
   setPoolType,
 }) => {
-  const { data } = useSWR<{ pair: PairWithAlias }>(
+  const { data } = useSWR<{ pair: PairDTO }>(
     pool?.liquidityToken.address
       ? `/earn/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
       : null,
@@ -262,7 +262,7 @@ const _Add: FC<AddProps> = ({
 
         <Widget id="addLiquidity" maxWidth={400}>
           <Widget.Content>
-            <Widget.Header title="3. Add Liquidity">
+            <Widget.Header title="4. Add Liquidity">
               <SettingsOverlay />
             </Widget.Header>
             <Web3Input.Currency

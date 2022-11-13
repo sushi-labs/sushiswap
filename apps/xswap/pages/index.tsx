@@ -2,9 +2,9 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { TradeType } from '@sushiswap/amm'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
-import { TradeType } from '@sushiswap/amm'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
@@ -246,13 +246,13 @@ const Widget: FC<Swap> = ({
   useEffect(() => {
     // Escape hatch if already synced (could probably pull something like this out to generic...)
 
-    console.debug([
-      srcChainId === Number(router.query.srcChainId),
-      dstChainId === Number(router.query.dstChainId),
-      srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
-      dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
-      srcTypedAmount === router.query.srcTypedAmount,
-    ])
+    // console.debug([
+    //   srcChainId === Number(router.query.srcChainId),
+    //   dstChainId === Number(router.query.dstChainId),
+    //   srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
+    //   dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
+    //   srcTypedAmount === router.query.srcTypedAmount,
+    // ])
 
     if (
       srcChainId === Number(router.query.srcChainId) &&
@@ -527,12 +527,12 @@ const Widget: FC<Swap> = ({
           setSrcTxHash(res.hash)
         }
         console.debug('then cooked', res)
+        setSignature(undefined)
       })
       .catch((err) => {
         console.error('catch err', err)
       })
       .finally(() => {
-        setSignature(undefined)
         setIsWritePending(false)
       })
   }, [

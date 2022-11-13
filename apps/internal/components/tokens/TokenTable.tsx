@@ -1,5 +1,5 @@
 import { XIcon } from '@heroicons/react/solid'
-import chains, { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { CheckIcon, NetworkIcon } from '@sushiswap/ui'
@@ -73,7 +73,12 @@ function useColumns() {
       id: 'addToDefaultList',
       header: 'Adder',
       cell: ({ row }) => (
-        <div className="flex justify-center max-w-[50px]" onClick={(e) => e.preventDefault()}>
+        <div
+          className="flex justify-center max-w-[50px]"
+          onClick={(e) => {
+            e.preventDefault()
+          }}
+        >
           <TokenAdder token={row.original} hasIcon={Boolean(row.original.listEntry?.logoURI)} />
         </div>
       ),
@@ -94,7 +99,7 @@ export const TokenTable: FC<TokenTable> = ({ tokens }) => {
     <GenericTable
       table={table}
       columns={columns}
-      getLink={(row) => chains[row.chainId].getTokenUrl(row.id.split(':')[1])}
+      // getLink={(row) => chains[row.chainId].getTokenUrl(row.id.split(':')[1])}
     />
   )
 }
