@@ -575,6 +575,7 @@ importers:
       '@types/numeral': ^2.0.2
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
+      '@vercel/analytics': 0.1.4
       autoprefixer: ^10.4.0
       date-fns: ^2.29.1
       echarts: ^5.3.3
@@ -587,7 +588,6 @@ importers:
       lodash.sortby: 4.7.0
       lodash.take: 4.1.1
       next: ^12.3.1
-      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.20
@@ -629,6 +629,7 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
+      '@vercel/analytics': 0.1.4_react@18.2.0
       date-fns: 2.29.3
       echarts: 5.3.3
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
@@ -638,7 +639,6 @@ importers:
       lodash.sortby: 4.7.0
       lodash.take: 4.1.1
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.1
       next-pwa: 5.6.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       next-sitemap: 3.1.21_next@12.3.1
@@ -1774,7 +1774,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.42.1_jnohwm7eexgw7uduhweedcbnpe
       '@typescript-eslint/parser': 5.42.1_eslint@8.27.0
       eslint: 8.27.0
-      eslint-config-next: 13.0.2_eslint@8.27.0
+      eslint-config-next: 13.0.3_eslint@8.27.0
       eslint-config-prettier: 8.5.0_eslint@8.27.0
       eslint-plugin-cypress: 2.12.1_eslint@8.27.0
       eslint-plugin-simple-import-sort: 8.0.0_eslint@8.27.0
@@ -2073,7 +2073,7 @@ importers:
       '@sushiswap/validate': link:../validate
       '@sushiswap/wagmi-config': link:../config/wagmi
       '@wagmi/core': 0.5.7_ethers@5.7.1
-      '@whatwg-node/fetch': 0.5.1
+      '@whatwg-node/fetch': 0.5.3
       date-fns: 2.29.3
       ethers: 5.7.1
       graphql: 16.6.0
@@ -6783,7 +6783,7 @@ packages:
       '@graphql-mesh/runtime': 0.44.31_graphql@16.6.0
       '@graphql-mesh/types': 0.85.7_graphql@16.6.0
       '@graphql-mesh/utils': 0.42.6_graphql@16.6.0
-      '@whatwg-node/fetch': 0.5.1
+      '@whatwg-node/fetch': 0.5.3
       '@whatwg-node/server': 0.4.14
       graphql: 16.6.0
       graphql-yoga: 3.0.0-next.10_graphql@16.6.0
@@ -7102,7 +7102,7 @@ packages:
       '@graphql-tools/delegate': 9.0.14_graphql@16.6.0
       '@graphql-tools/utils': 9.0.1_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.10_graphql@16.6.0
-      '@whatwg-node/fetch': 0.5.1
+      '@whatwg-node/fetch': 0.5.3
       graphql: 16.6.0
       tslib: 2.4.1
     transitivePeerDependencies:
@@ -7924,7 +7924,7 @@ packages:
       '@graphql-tools/utils': 9.0.1
       '@graphql-tools/wrap': 9.2.10
       '@types/ws': 8.5.3
-      '@whatwg-node/fetch': 0.5.1
+      '@whatwg-node/fetch': 0.5.3
       dset: 3.1.2
       extract-files: 11.0.0
       graphql-ws: 5.11.2
@@ -7950,7 +7950,7 @@ packages:
       '@graphql-tools/utils': 9.0.1_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.10_graphql@16.6.0
       '@types/ws': 8.5.3
-      '@whatwg-node/fetch': 0.5.1
+      '@whatwg-node/fetch': 0.5.3
       dset: 3.1.2
       extract-files: 11.0.0
       graphql: 16.6.0
@@ -8739,8 +8739,8 @@ packages:
   /@next/env/12.3.1:
     resolution: {integrity: sha512-9P9THmRFVKGKt9DYqeC2aKIxm8rlvkK38V1P1sRE7qyoPBIs8l9oo79QoSdPtOWfzkbDAVUqvbQGgTMsb8BtJg==}
 
-  /@next/eslint-plugin-next/13.0.2:
-    resolution: {integrity: sha512-W+fIIIaFU7Kct7Okx91C7XDRGolv/w2RUenX2yZFeeNVcuVzDIKUcNmckrYbYcwrNQUSXmtwrs3g8xwast0YtA==}
+  /@next/eslint-plugin-next/13.0.3:
+    resolution: {integrity: sha512-slmTAHNKDyc7jhx4VF8lFbmOPWJ3PShtUUWpb6x9+ga59CyOxgP6AdcDhxfapnWYACKe/TwYiaveufu7LqXgZg==}
     dependencies:
       glob: 7.1.7
     dev: false
@@ -9211,7 +9211,7 @@ packages:
       '@graphql-mesh/utils': 0.42.6_graphql@16.6.0
       '@graphql-tools/utils': 9.0.1_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@whatwg-node/fetch': 0.5.1
+      '@whatwg-node/fetch': 0.5.3
       ajv: 8.11.0
       ajv-formats: 2.1.1
       graphql: 16.6.0
@@ -11041,6 +11041,14 @@ packages:
       - hardhat
     dev: false
 
+  /@vercel/analytics/0.1.4_react@18.2.0:
+    resolution: {integrity: sha512-6xI1kozfgigwmDTQCrtj+m0yQnzhLGa/l0yE8BjTbUQ2vF9b88CEXF3dXjZl48ESfjssCur3FkK3jOwZm4emrw==}
+    peerDependencies:
+      react: ^16.8||^17||^18
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /@vercel/build-utils/5.0.5:
     resolution: {integrity: sha512-ug+MM5uZbb2IdGEa8vGdYP3Tt1Qi6YDlwt+/b946ZrR4PF+x/hhhjPjN+FVSqnW2ix99M5+SiXNG+w33k6j2pw==}
     dev: false
@@ -11641,6 +11649,21 @@ packages:
       web-streams-polyfill: 3.2.1
     transitivePeerDependencies:
       - encoding
+
+  /@whatwg-node/fetch/0.5.3:
+    resolution: {integrity: sha512-cuAKL3Z7lrJJuUrfF1wxkQTb24Qd1QO/lsjJpM5ZSZZzUMms5TPnbGeGUKWA3hVKNHh30lVfr2MyRCT5Jfkucw==}
+    dependencies:
+      '@peculiar/webcrypto': 1.4.0
+      abort-controller: 3.0.0
+      busboy: 1.6.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.3.3
+      node-fetch: 2.6.7
+      undici: 5.12.0
+      web-streams-polyfill: 3.2.1
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /@whatwg-node/server/0.4.11:
     resolution: {integrity: sha512-hEPbl0o91uXv8JGcHgYBwPoyYoKIsclpF56RwKq54GibT22i1ld4W+yUVjObriuY5h/0o07WAzNJ8T8aUhQGYQ==}
@@ -15711,8 +15734,8 @@ packages:
       source-map: 0.6.1
     dev: true
 
-  /eslint-config-next/13.0.2_eslint@8.27.0:
-    resolution: {integrity: sha512-SrrHp+zBDYLjOFZdM5b9aW/pliK687Xxfa+qpDuL08Z04ReHhmz3L+maXaAqgrEVZHQximP7nh0El4yNDJW+CA==}
+  /eslint-config-next/13.0.3_eslint@8.27.0:
+    resolution: {integrity: sha512-i2JoQP8gGv303GjXTonA27fm1ckRRkRoAP1WYEQgN0D2DDoFeBPqlJgHlMHnXKWjmNct/sW8jQEvy9am2juc8g==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0
       typescript: '>=3.3.1'
@@ -15720,7 +15743,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@next/eslint-plugin-next': 13.0.2
+      '@next/eslint-plugin-next': 13.0.3
       '@rushstack/eslint-patch': 1.1.4
       '@typescript-eslint/parser': 5.42.1_eslint@8.27.0
       eslint: 8.27.0
@@ -20257,7 +20280,7 @@ packages:
       '@graphql-mesh/utils': 0.42.6_graphql@16.6.0
       '@graphql-tools/utils': 9.0.1_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@whatwg-node/fetch': 0.5.1
+      '@whatwg-node/fetch': 0.5.3
       json-pointer: 0.6.2
       to-json-schema: 0.2.5
       tslib: 2.4.1
