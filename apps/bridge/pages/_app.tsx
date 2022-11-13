@@ -16,8 +16,6 @@ import { WagmiConfig } from 'wagmi'
 
 import SEO from '../next-seo.config.mjs'
 
-export { reportWebVitals } from 'next-axiom'
-
 declare global {
   interface Window {
     dataLayer: Record<string, any>[]

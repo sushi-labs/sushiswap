@@ -188,13 +188,13 @@ importers:
       '@types/node': 17.0.31
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
+      '@vercel/analytics': 0.1.4
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
       ethers: ^5.7.0
       fast-json-stable-stringify: ^2.1.0
       graphql-request: ^5.0.0
       next: ^12.3.1
-      next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
       next-transpile-modules: 9.1.0
@@ -226,11 +226,11 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
+      '@vercel/analytics': 0.1.4_react@18.2.0
       ethers: 5.7.1
       fast-json-stable-stringify: 2.1.0
       graphql-request: 5.0.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       next-sitemap: 3.1.21_next@12.3.1
       numeral: 2.0.6
@@ -278,7 +278,8 @@ importers:
       '@types/node': ^17.0.31
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@vercel/og': ^0.0.16
+      '@vercel/analytics': 0.1.4
+      '@vercel/og': 0.0.20
       autoprefixer: ^10.4.0
       date-fns: ^2.29.1
       echarts: ^5.3.3
@@ -288,7 +289,6 @@ importers:
       graphql: 16.6.0
       isomorphic-fetch: ^3.0.0
       next: ^12.3.1
-      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.20
@@ -315,7 +315,8 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
-      '@vercel/og': 0.0.16
+      '@vercel/analytics': 0.1.4_react@18.2.0
+      '@vercel/og': 0.0.20
       date-fns: 2.29.1
       echarts: 5.3.3
       echarts-for-react: 3.0.2_echarts@5.3.3+react@18.2.0
@@ -323,7 +324,6 @@ importers:
       graphql: 16.6.0
       isomorphic-fetch: 3.0.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.1
       next-pwa: 5.6.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       next-sitemap: 3.1.21_next@12.3.1
@@ -364,6 +364,7 @@ importers:
       '@types/qs': ^6.9.7
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
+      '@vercel/analytics': 0.1.4
       and: ^0.0.3
       autoprefixer: ^10.4.0
       date-fns: ^2.28.0
@@ -371,7 +372,6 @@ importers:
       fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
       next: ^12.3.1
-      next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
       next-transpile-modules: 9.1.0
@@ -388,11 +388,11 @@ importers:
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/ui': link:../../packages/ui
       '@tailwindcss/typography': 0.5.4_tailwindcss@3.1.6
+      '@vercel/analytics': 0.1.4_react@18.2.0
       date-fns: 2.29.1
       fast-json-stable-stringify: 2.1.0
       graphql: 16.6.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       next-sitemap: 3.1.16_next@12.3.1
       qs: 6.11.0
@@ -464,7 +464,6 @@ importers:
       ethers: ^5.7.0
       nanoid: ^4.0.0
       next: 12.3.1
-      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.1.0
@@ -511,7 +510,6 @@ importers:
       ethers: 5.7.1
       nanoid: 4.0.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.1
       next-pwa: 5.6.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       react: 18.2.0
@@ -719,6 +717,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/token-lists': ^1.0.0-beta.29
+      '@vercel/analytics': 0.1.4
       '@visx/curve': ^2.1.0
       '@visx/gradient': ^2.1.0
       '@visx/group': ^2.1.0
@@ -739,7 +738,6 @@ importers:
       jest-environment-jsdom: ^28.1.0
       lodash.clonedeep: ^4.5.0
       next: ^12.3.1
-      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.29
@@ -792,6 +790,7 @@ importers:
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       '@uniswap/redux-multicall': 1.1.5_dadq7dzi63wxf7otsdd7qhmsvi
       '@uniswap/token-lists': 1.0.0-beta.30
+      '@vercel/analytics': 0.1.4_react@18.2.0
       '@visx/curve': 2.1.0
       '@visx/gradient': 2.10.0_react@18.2.0
       '@visx/group': 2.10.0_react@18.2.0
@@ -808,7 +807,6 @@ importers:
       graphql: 16.6.0
       lodash.clonedeep: 4.5.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.1
       next-pwa: 5.6.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       next-sitemap: 3.1.30_next@12.3.1
@@ -1186,12 +1184,12 @@ importers:
       '@types/workbox-sw': ^4.3.2
       '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/v2-core': ^1.0.1
+      '@vercel/analytics': 0.1.4
       autoprefixer: ^10.4.0
       date-fns: ^2.29.1
       eslint: ^8.20.0
       ethers: ^5.7.0
       next: ^12.3.1
-      next-axiom: ^0.14.0
       next-pwa: ^5.6.0
       next-seo: ^5.5.0
       next-sitemap: ^3.1.16
@@ -1235,10 +1233,10 @@ importers:
       '@tanstack/react-query': 4.3.4_biqbaboplfbrettd7655fr4n2y
       '@uniswap/redux-multicall': 1.1.5_dadq7dzi63wxf7otsdd7qhmsvi
       '@uniswap/v2-core': 1.0.1
+      '@vercel/analytics': 0.1.4_react@18.2.0
       date-fns: 2.29.1
       ethers: 5.7.1
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.1
       next-pwa: 5.6.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       next-sitemap: 3.1.21_next@12.3.1
@@ -1303,12 +1301,12 @@ importers:
       '@types/react-dom': ^18.0.0
       '@uniswap/redux-multicall': ^1.1.1
       '@uniswap/v2-core': ^1.0.1
+      '@vercel/analytics': 0.1.4
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
       ethers: ^5.7.0
       nanoid: ^4.0.0
       next: ^12.3.1
-      next-axiom: ^0.14.0
       next-seo: ^5.5.0
       next-transpile-modules: 9.1.0
       postcss: ^8.4.0
@@ -1350,10 +1348,10 @@ importers:
       '@typechain/ethers-v5': 10.1.0_ivywm4bmdoa7s2eypp32vignw4
       '@uniswap/redux-multicall': 1.1.5_dadq7dzi63wxf7otsdd7qhmsvi
       '@uniswap/v2-core': 1.0.1
+      '@vercel/analytics': 0.1.4_react@18.2.0
       ethers: 5.7.1
       nanoid: 4.0.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-      next-axiom: 0.14.0_next@12.3.1
       next-seo: 5.5.0_azq6kxkn3od7qdylwkyksrwopy
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -3010,6 +3008,14 @@ importers:
 
   scripts/price:
     specifiers:
+      '@graphprotocol/client-add-source-name': latest
+      '@graphprotocol/client-auto-pagination': latest
+      '@graphprotocol/client-cli': 2.2.15
+      '@graphql-mesh/transform-filter-schema': latest
+      '@graphql-mesh/transform-prefix': latest
+      '@graphql-mesh/transform-prune': latest
+      '@graphql-mesh/transform-rename': latest
+      '@graphql-mesh/transform-type-merging': latest
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -3035,6 +3041,14 @@ importers:
       tsup: ^6.2.0
       typescript: 4.8.2
     devDependencies:
+      '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
+      '@graphprotocol/client-cli': 2.2.15_ijzyktlvp4ucpshg5x23nsmspm
+      '@graphql-mesh/transform-filter-schema': 0.14.110_graphql@16.6.0
+      '@graphql-mesh/transform-prefix': 0.11.100_graphql@16.6.0
+      '@graphql-mesh/transform-prune': 0.0.85_graphql@16.6.0
+      '@graphql-mesh/transform-rename': 0.12.101_graphql@16.6.0
+      '@graphql-mesh/transform-type-merging': 0.4.53_graphql@16.6.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../packages/config/eslint
@@ -11087,12 +11101,12 @@ packages:
       - encoding
     dev: false
 
-  /@vercel/og/0.0.16:
-    resolution: {integrity: sha512-uYSvOChLuAk6UzD+Rc/0yp6xcl31tNR4Q4WNpJsoGzyDEoR/H0oGrHzxTrReXfOkkLbguEpG2uUAvy7fsjCllw==}
+  /@vercel/og/0.0.20:
+    resolution: {integrity: sha512-089P+TfqWz0xBxjOvOhkZIDDtfrLcye94H4IZ+SqxoGPWpNGXaBvRJER/z5SoJxJRcCAL8tPiK5zdjRskM6tLw==}
     engines: {node: '>=16'}
     dependencies:
       '@resvg/resvg-wasm': 2.0.0-alpha.4
-      satori: 0.0.38
+      satori: 0.0.43
       yoga-wasm-web: 0.1.2
     dev: false
 
@@ -15118,6 +15132,10 @@ packages:
     resolution: {integrity: sha512-aITqOwnLanpHLNXZJENbOgjUBeHocD+xsSJmNrjovKBW5HbSpW3d1pEls7GFQPUWXiwG9+0P4GtHfEqC/4M0Iw==}
     engines: {node: '>=12'}
     dev: true
+
+  /emoji-regex/10.2.1:
+    resolution: {integrity: sha512-97g6QgOk8zlDRdgq1WxwgTMgEWGVAQvB5Fdpgc1MkNy56la5SKP9GsMXKDOdqwn90/41a8yPwIGk1Y6WVbeMQA==}
+    dev: false
 
   /emoji-regex/7.0.3:
     resolution: {integrity: sha512-CwBLREIQ7LvYFB0WyRvwhq5N5qPhc6PMjD6bYggFlI5YyDgl+0vxq5VHbMOFqLg7hfWzmu8T5Z1QofhmTIhItA==}
@@ -24428,14 +24446,15 @@ packages:
   /safer-buffer/2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  /satori/0.0.38:
-    resolution: {integrity: sha512-o8nMTp5IiLKi3oOw80Y3LdDAReGS+UfC1StQBAwlnFNzHmY1A3JGFT+9gam6x8I6uMDFrs82FnG9R/kI9iONdg==}
+  /satori/0.0.43:
+    resolution: {integrity: sha512-SzYwr+LsELWRJU9KMviEOE9TdShry+R5AdS54YQvgAVKFDN4yniAIzwQk1/z2TtIx0ceUT9zTeosWAoWvJBEtQ==}
     engines: {node: '>=16'}
     dependencies:
       '@shuding/opentype.js': 1.4.0-beta.0
       css-background-parser: 0.1.0
       css-box-shadow: 1.0.0-3
       css-to-react-native: 3.0.0
+      emoji-regex: 10.2.1
       postcss-value-parser: 4.2.0
       yoga-layout-prebuilt: 1.10.0
     dev: false
