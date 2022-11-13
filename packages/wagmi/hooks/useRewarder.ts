@@ -1,8 +1,7 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { useContractRead, useContractReads } from 'wagmi'
-import { ReadContractsConfig } from 'wagmi/actions'
+import { Address, useContractRead, useContractReads } from 'wagmi'
 
 import { RewarderType } from './useFarmRewards'
 import { Chef } from './useMasterChef'
@@ -34,9 +33,7 @@ export const useRewarder: UseRewarder = ({
   farmId,
   chef,
 }) => {
-  // const config = useMemo(() => getMasterChefContractConfig(chainId, chef), [chainId, chef])
-
-  const contracts = useMemo<ReadContractsConfig['contracts']>(() => {
+  const contracts = useMemo(() => {
     if (rewardTokens.length !== rewarderAddresses.length && rewardTokens.length !== types.length) {
       console.error('useRewarder: invalid params')
       return []
@@ -46,26 +43,31 @@ export const useRewarder: UseRewarder = ({
       if (types[index] === RewarderType.Primary) {
         return {
           ...config,
-          functionName: 'pendingSushi',
-          args: [farmId, account],
+          functionName: 'pendingSushi' as const,
+          args: [BigNumber.from(farmId), (account ?? '') as Address] as const,
         }
       }
+
       return {
         chainId,
         ...getRewarderConfig(rewarderAddresses[index]),
-        functionName: 'pendingTokens',
-        args: [farmId, account, 0],
+        functionName: 'pendingTokens' as const,
+        args: [BigNumber.from(farmId), (account ?? '') as Address, BigNumber.from(0)] as const,
       }
     })
   }, [account, chainId, chef, farmId, rewardTokens, rewarderAddresses, types])
 
-  const { data, isLoading, isError } = useContractReads({
+  const read = useContractReads({
     contracts,
     watch: true,
     keepPreviousData: true,
     allowFailure: true,
     enabled: !!account,
   })
+
+  // Can't have 2 different types in one read, have to assign manually
+  const { isError, isLoading } = read
+  const data = read.data as (BigNumber | { rewardAmounts: BigNumber[] } | undefined)[]
 
   return useMemo(() => {
     if (!data)
@@ -75,24 +77,26 @@ export const useRewarder: UseRewarder = ({
         isError,
       }
 
-    const _data = data.filter(Boolean).reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
-      if (types[index] === RewarderType.Primary) {
-        acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result.toString()) : undefined)
-      } else {
-        acc.push(
-          ...result.rewardAmounts.map((rewardAmount: BigNumber, index2: number) => {
-            return Amount.fromRawAmount(rewardTokens[index + index2], rewardAmount.toString())
-          })
-        )
-      }
+    const _data = data
+      .filter((el): el is NonNullable<typeof data['0']> => el !== undefined)
+      .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
+        if (BigNumber.isBigNumber(result)) {
+          acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result.toString()) : undefined)
+        } else {
+          acc.push(
+            ...result.rewardAmounts.map((rewardAmount, index2: number) => {
+              return Amount.fromRawAmount(rewardTokens[index + index2], rewardAmount.toString())
+            })
+          )
+        }
 
-      return acc
-    }, [])
+        return acc
+      }, [])
 
     return {
       data: _data,
       isLoading,
       isError,
     }
-  }, [data, isError, isLoading, rewardTokens, types])
+  }, [data, isError, isLoading, rewardTokens])
 }

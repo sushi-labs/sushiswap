@@ -1,8 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { useContractReads } from 'wagmi'
+import { Address, useContractReads } from 'wagmi'
 
 import { getBentoBoxContractConfig } from './useBentoBoxContract'
 
@@ -20,76 +21,49 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
         .map((token) => token.wrapped.address),
     [currencies]
   )
+
   const contracts = useMemo(
     () =>
-      addresses.map((address) => ({
-        chainId,
-        ...getBentoBoxContractConfig(chainId),
-        abi: [
-          {
-            inputs: [
+      addresses.map(
+        (address) =>
+          ({
+            chainId,
+            address: getBentoBoxContractConfig(chainId).address,
+            abi: [
               {
-                internalType: 'contract IERC20',
-                name: '',
-                type: 'address',
+                inputs: [
+                  {
+                    internalType: 'contract IERC20',
+                    name: '',
+                    type: 'address',
+                  },
+                ],
+                name: 'totals',
+                outputs: [
+                  {
+                    internalType: 'uint128',
+                    name: 'elastic',
+                    type: 'uint128',
+                  },
+                  {
+                    internalType: 'uint128',
+                    name: 'base',
+                    type: 'uint128',
+                  },
+                ],
+                stateMutability: 'view',
+                type: 'function',
               },
-            ],
-            name: 'totals',
-            outputs: [
-              {
-                internalType: 'uint128',
-                name: 'elastic',
-                type: 'uint128',
-              },
-              {
-                internalType: 'uint128',
-                name: 'base',
-                type: 'uint128',
-              },
-            ],
-            stateMutability: 'view',
-            type: 'function',
-          },
-        ],
-        functionName: 'totals',
-        args: [address],
-      })),
+            ] as const,
+            functionName: 'totals',
+            args: [address as Address],
+          } as const)
+      ),
     [addresses, chainId]
   )
 
   const { data: totals } = useContractReads({
-    contracts: addresses.map((address) => ({
-      chainId,
-      ...getBentoBoxContractConfig(chainId),
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: 'contract IERC20',
-              name: '',
-              type: 'address',
-            },
-          ],
-          name: 'totals',
-          outputs: [
-            {
-              internalType: 'uint128',
-              name: 'elastic',
-              type: 'uint128',
-            },
-            {
-              internalType: 'uint128',
-              name: 'base',
-              type: 'uint128',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-      ] as const,
-      functionName: 'totals',
-      args: [address],
-    })),
+    contracts,
     watch: !(typeof config?.enabled !== undefined && !config?.enabled),
     keepPreviousData: true,
     enabled: Boolean(getBentoBoxContractConfig(chainId).address !== AddressZero),

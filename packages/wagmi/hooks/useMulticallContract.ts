@@ -1,8 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
-import UniswapInterfaceMulticallArtifact from '@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'
-import { useContract, useProvider } from 'wagmi'
+import { Address, useContract, useProvider } from 'wagmi'
 
-import type { UniswapInterfaceMulticall } from '../typechain'
+import { multicall3Abi } from '../abis'
 
 export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98415757620B543A52E61c46B32eB19261F984',
@@ -33,12 +32,12 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
 }
 
 export const getMulticallContractConfig = (chainId: number | undefined) => ({
-  address: chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '',
-  abi: UniswapInterfaceMulticallArtifact.abi,
+  address: (chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '') as Address,
+  abi: multicall3Abi,
 })
 
-export function useMulticallContract(chainId: number): UniswapInterfaceMulticall {
-  return useContract<UniswapInterfaceMulticall>({
+export function useMulticallContract(chainId: number): ReturnType<typeof useContract> {
+  return useContract({
     ...getMulticallContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
   })

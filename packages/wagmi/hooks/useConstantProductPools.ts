@@ -1,4 +1,5 @@
-import { constantProductPoolAbi } from '@sushiswap/abi/src/ConstantProductPool'
+import { constantProductPoolAbi } from '@sushiswap/abi'
+import { constantProductPoolFactoryAbi } from '@sushiswap/abi/src/ConstantProductPoolFactory'
 import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
@@ -48,6 +49,7 @@ export function useGetConstantProductPools(
     })
     return Array.from(pairsMap.values())
   }, [currencies])
+
   const pairsUniqueAddr = useMemo(() => pairsUnique.map(([t0, t1]) => [t0.address, t1.address]), [pairsUnique])
 
   const {
@@ -57,20 +59,30 @@ export function useGetConstantProductPools(
   } = useContractReads({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
-      address: contract?.address,
-      abi: constantProductPoolAbi,
+      address: contract?.address as Address,
+      abi: constantProductPoolFactoryAbi,
       functionName: 'poolsCount',
-      args: el,
+      args: el as [Address, Address],
     })),
     enabled: Boolean(pairsUniqueAddr.length > 0 && config?.enabled),
     watch: !config?.enabled,
   })
 
   const callStatePoolsCountProcessed = useMemo(() => {
-    return callStatePoolsCount
-      ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
-      .filter(([, length]) => length)
-      .map(([i, length]) => [pairsUniqueAddr[i][0], pairsUniqueAddr[i][1], 0, length])
+    return (
+      callStatePoolsCount
+        ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
+        .filter(([, length]) => length)
+        .map(
+          ([i, length]) =>
+            [
+              pairsUniqueAddr[i][0] as Address,
+              pairsUniqueAddr[i][1] as Address,
+              BigNumber.from(0),
+              BigNumber.from(length),
+            ] as const
+        ) ?? []
+    )
   }, [callStatePoolsCount, pairsUniqueAddr])
 
   const pairsUniqueProcessed = useMemo(() => {
@@ -89,8 +101,8 @@ export function useGetConstantProductPools(
       if (!callStatePoolsCountProcessed) return []
       return callStatePoolsCountProcessed.map((args) => ({
         chainId,
-        address: contract?.address,
-        abi: constantProductPoolAbi,
+        address: contract?.address as Address,
+        abi: constantProductPoolFactoryAbi,
         functionName: 'getPools',
         args,
       }))
@@ -115,45 +127,51 @@ export function useGetConstantProductPools(
     return pools
   }, [callStatePools, pairsUniqueProcessed])
 
-  const poolsAddresses = useMemo(() => pools.map((p) => p.address), [pools])
+  const poolsAddresses = useMemo(() => pools.map((p) => p.address as Address), [pools])
 
   const {
-    data: reservesAndFees,
-    isLoading: reservesAndFeesLoading,
-    isError: reservesAndFeesError,
+    data: reserves,
+    isLoading: reservesLoading,
+    isError: reservesError,
   } = useContractReads({
-    contracts: [
-      ...poolsAddresses.map((address) => ({
-        chainId,
-        address,
-        abi: constantProductPoolAbi,
-        functionName: 'getReserves',
-      })),
-      ...poolsAddresses.map((address) => ({
-        chainId,
-        address,
-        abi: constantProductPoolAbi,
-        functionName: 'swapFee',
-      })),
-    ],
+    contracts: poolsAddresses.map((address) => ({
+      chainId,
+      address,
+      abi: constantProductPoolAbi,
+      functionName: 'getReserves',
+    })),
+    enabled: poolsAddresses.length > 0 && config?.enabled,
+    watch: !config?.enabled,
+  })
+
+  const {
+    data: fees,
+    isLoading: feesLoading,
+    isError: feesError,
+  } = useContractReads({
+    contracts: poolsAddresses.map((address) => ({
+      chainId,
+      address,
+      abi: constantProductPoolAbi,
+      functionName: 'swapFee',
+    })),
     enabled: poolsAddresses.length > 0 && config?.enabled,
     watch: !config?.enabled,
   })
 
   return useMemo(() => {
     return {
-      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesAndFeesLoading,
-      isError: callStatePoolsCountError || callStatePoolsError || reservesAndFeesError,
+      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesLoading || feesLoading,
+      isError: callStatePoolsCountError || callStatePoolsError || reservesError || feesError,
       data: pools.map((p, i) => {
-        if (!reservesAndFees?.[i] || !reservesAndFees?.[i + poolsAddresses.length])
-          return [ConstantProductPoolState.LOADING, null]
+        if (!reserves?.[i] || !fees?.[i]) return [ConstantProductPoolState.LOADING, null]
         return [
           ConstantProductPoolState.EXISTS,
           new ConstantProductPool(
-            Amount.fromRawAmount(p.token0, BigNumber.from(reservesAndFees[i]._reserve0).toString()),
-            Amount.fromRawAmount(p.token1, BigNumber.from(reservesAndFees[i]._reserve1).toString()),
-            parseInt(reservesAndFees[i + poolsAddresses.length].toString()),
-            reservesAndFees[i]._blockTimestampLast !== 0
+            Amount.fromRawAmount(p.token0, BigNumber.from(reserves[i]._reserve0).toString()),
+            Amount.fromRawAmount(p.token1, BigNumber.from(reserves[i]._reserve1).toString()),
+            parseInt(fees[i].toString()),
+            reserves[i]._blockTimestampLast !== 0
           ),
         ]
       }),
@@ -161,13 +179,15 @@ export function useGetConstantProductPools(
   }, [
     callStatePoolsCountLoading,
     callStatePoolsLoading,
-    reservesAndFeesLoading,
+    reservesLoading,
+    feesLoading,
     callStatePoolsCountError,
     callStatePoolsError,
-    reservesAndFeesError,
+    reservesError,
+    feesError,
     pools,
-    reservesAndFees,
-    poolsAddresses.length,
+    reserves,
+    fees,
   ])
 }
 
@@ -212,7 +232,7 @@ export function useConstantProductPools(
             tokenB,
             fee,
             twap,
-          })
+          }) as Address
         )
         return acc
       }, []),
@@ -220,9 +240,9 @@ export function useConstantProductPools(
   )
 
   const { data } = useContractReads({
-    contracts: poolsAddresses.map((addressOrName) => ({
+    contracts: poolsAddresses.map((address) => ({
       chainId,
-      addressOrName,
+      address,
       abi: constantProductPoolAbi,
       functionName: 'getReserves',
     })),

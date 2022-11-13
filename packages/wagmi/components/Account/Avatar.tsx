@@ -2,7 +2,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Address, useEnsAvatar } from 'wagmi'
 
 export type Props = {
-  address?: string
+  address?: `0x${string}`
 }
 
 export function Avatar({ address }: Props): JSX.Element {

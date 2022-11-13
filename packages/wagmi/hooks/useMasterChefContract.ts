@@ -1,11 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { useMemo } from 'react'
 import { useProvider } from 'wagmi'
-import { getContract, ReadContractConfig } from 'wagmi/actions'
+import { getContract } from 'wagmi/actions'
 
-import MASTERCHEF_ABI from '../abis/masterchef.json'
-import MASTERCHEF_ABI_V2 from '../abis/masterchef-v2.json'
-import MINICHEF_ABI from '../abis/minichef-v2.json'
+import { masterchefAbi, masterchefV2Abi, minichefV2Abi } from '../abis'
 import { Chef } from './useMasterChef'
 
 // TODO move to package
@@ -36,43 +34,34 @@ export const MINICHEF_ADDRESS = {
   [ChainId.BOBA]: '0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3',
 } as const
 
-export const _getMasterChefContractConfig = (
-  chainId: keyof typeof MASTERCHEF_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'address' | 'abi'> => ({
+export const _getMasterChefContractConfig = (chainId: keyof typeof MASTERCHEF_ADDRESS) => ({
   chainId,
   address: MASTERCHEF_ADDRESS[chainId],
-  abi: MASTERCHEF_ABI,
+  abi: masterchefAbi,
 })
 
-export const getMasterChefContractV2Config = (
-  chainId: keyof typeof MASTERCHEF_V2_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'address' | 'abi'> => ({
+export const getMasterChefContractV2Config = (chainId: keyof typeof MASTERCHEF_V2_ADDRESS) => ({
   chainId,
   address: MASTERCHEF_V2_ADDRESS[chainId],
-  abi: MASTERCHEF_ABI_V2,
+  abi: masterchefV2Abi,
 })
 
-export const getMiniChefContractConfig = (
-  chainId: keyof typeof MINICHEF_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'address' | 'abi'> => {
+export const getMiniChefContractConfig = (chainId: keyof typeof MINICHEF_ADDRESS) => {
   return {
     chainId,
     address: MINICHEF_ADDRESS[chainId],
-    abi: MINICHEF_ABI,
+    abi: minichefV2Abi,
   }
 }
 
-export const getMasterChefContractConfig = (
-  chainId: number,
-  chef: Chef
-): Pick<ReadContractConfig, 'chainId' | 'address' | 'abi'> => {
+export const getMasterChefContractConfig = (chainId: number, chef: Chef) => {
   if (chef === Chef.MASTERCHEF) return _getMasterChefContractConfig(chainId)
   if (chef === Chef.MASTERCHEF_V2) return getMasterChefContractV2Config(chainId)
   return getMiniChefContractConfig(chainId)
 }
 
 // TODO ADD TYPECHAIN
-export function useMasterChefContract(chainId: number, chef: Chef) {
+export function useMasterChefContract(chainId: number, chef: Chef): ReturnType<typeof getContract> | undefined {
   const signerOrProvider = useProvider({ chainId })
   return useMemo(() => {
     if (!chainId) return

@@ -52,7 +52,7 @@ export interface NotificationData {
     info?: ReactNode | Array<ReactNode>
   }
   href?: string
-  txHash: string
+  txHash: `0x${string}`
   groupTimestamp: number
   timestamp: number
   promise: Promise<any>

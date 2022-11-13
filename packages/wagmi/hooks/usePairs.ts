@@ -1,12 +1,11 @@
-import { Interface } from '@ethersproject/abi'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/amm'
 import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
-import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
-import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
 
-const PAIR_INTERFACE = new Interface(IUniswapV2PairArtifact.abi)
+import { uniswapV2PairAbi } from '../abis'
+
+type UseContractReadsConfig = Parameters<typeof useContractReads>['0']
 
 export enum PairState {
   LOADING,
@@ -16,35 +15,39 @@ export enum PairState {
 }
 
 export function getPairs(chainId: number | undefined, currencies: [Currency | undefined, Currency | undefined][]) {
-  return currencies
-    .filter((currencies): currencies is [Type, Type] => {
-      const [currencyA, currencyB] = currencies
-      return Boolean(
-        currencyA &&
-          currencyB &&
-          currencyA.chainId === currencyB.chainId &&
-          !currencyA.wrapped.equals(currencyB.wrapped) &&
-          FACTORY_ADDRESS[currencyA.chainId]
-      )
-    })
-    .reduce<[Token[], Token[], any[]]>(
-      (acc, [currencyA, currencyB]) => {
-        acc[0].push(currencyA.wrapped)
-        acc[1].push(currencyB.wrapped)
-        acc[2].push({
-          chainId,
-          address: computePairAddress({
-            factoryAddress: FACTORY_ADDRESS[currencyA.chainId],
-            tokenA: currencyA.wrapped,
-            tokenB: currencyB.wrapped,
-          }),
-          abi: PAIR_INTERFACE,
-          functionName: 'getReserves',
-        })
-        return acc
-      },
-      [[], [], []]
+  const filtered = currencies.filter((currencies): currencies is [Type, Type] => {
+    const [currencyA, currencyB] = currencies
+    return Boolean(
+      currencyA &&
+        currencyB &&
+        currencyA.chainId === currencyB.chainId &&
+        !currencyA.wrapped.equals(currencyB.wrapped) &&
+        FACTORY_ADDRESS[currencyA.chainId]
     )
+  })
+
+  const [tokensA, tokensB] = filtered.reduce<[Token[], Token[]]>(
+    (acc, [currencyA, currencyB]) => {
+      acc[0].push(currencyA.wrapped)
+      acc[1].push(currencyB.wrapped)
+
+      return acc
+    },
+    [[], []]
+  )
+
+  const contracts = filtered.map(([currencyA, currencyB]) => ({
+    chainId,
+    address: computePairAddress({
+      factoryAddress: FACTORY_ADDRESS[currencyA.chainId],
+      tokenA: currencyA.wrapped,
+      tokenB: currencyB.wrapped,
+    }),
+    abi: uniswapV2PairAbi,
+    functionName: 'getReserves' as const,
+  }))
+
+  return [tokensA, tokensB, contracts] as const
 }
 
 interface UsePairsReturn {
@@ -56,7 +59,7 @@ interface UsePairsReturn {
 export function usePairs(
   chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
-  config?: Omit<UseContractReadsConfig, 'contracts'>
+  config?: Omit<NonNullable<UseContractReadsConfig>, 'contracts'>
 ): UsePairsReturn {
   const [tokensA, tokensB, contracts] = useMemo(() => getPairs(chainId, currencies), [chainId, currencies])
 

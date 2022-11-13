@@ -10,7 +10,7 @@ import { Address, useBalance, useNetwork } from 'wagmi'
 import { NetworkSelector } from '../NetworkSelector'
 
 export type Props = {
-  address?: string
+  address?: `0x${string}`
   supportedNetworks?: ChainId[]
   children?({ content, isLoading }: { content: ReactNode; isLoading: boolean }): ReactNode
 }

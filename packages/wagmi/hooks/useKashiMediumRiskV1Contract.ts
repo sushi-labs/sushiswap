@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import kashiExports from '@sushiswap/kashi/exports.json'
-import { KashiPairMediumRiskV1 } from '@sushiswap/kashi/typechain'
-import { useContract, useProvider } from 'wagmi'
+import { Address, useContract, useProvider } from 'wagmi'
 
 export const KASHI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42',
@@ -14,16 +13,15 @@ export const KASHI_ADDRESS = {
 } as const
 
 export const getKashiMediumRiskV1ContractConfig = (chainId: number | undefined) => ({
-  address:
-    kashiExports[chainId as unknown as keyof Omit<typeof kashiExports, '31337'>]?.[0]?.contracts?.KashiPairMediumRiskV1
-      ?.address ?? '',
+  address: (kashiExports[chainId as unknown as keyof Omit<typeof kashiExports, '31337'>]?.[0]?.contracts
+    ?.KashiPairMediumRiskV1?.address ?? '') as Address,
   abi:
     kashiExports[chainId as unknown as keyof Omit<typeof kashiExports, '31337'>]?.[0]?.contracts?.KashiPairMediumRiskV1
       ?.abi ?? [],
 })
 
 export function useKashiMediumRiskV1Contract(chainId: number | undefined) {
-  return useContract<KashiPairMediumRiskV1>({
+  return useContract({
     ...getKashiMediumRiskV1ContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
   })
