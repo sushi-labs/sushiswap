@@ -10,45 +10,27 @@ datasource db {
 }
 
 model Token {
-  id       String @id // chainId_address
+  id       String   @id // chainId_address
   address  String
   network  String
   chainId  String
-  name     String 
+  name     String
   symbol   String
   decimals Int
+  usdPrice Decimal?
 
-  generatedAt DateTime @default(now())
+  generatedAt    DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  priceUpdatedAt DateTime?
 
-  price  TokenPrice?
-  pools0 Pool[]      @relation("token0")
-  pools1 Pool[]      @relation("token1")
-  incentives  Incentive[]
+  pools0     Pool[]      @relation("token0")
+  pools1     Pool[]      @relation("token1")
+  incentives Incentive[]
 
   @@unique([chainId, address])
   @@index(fields: [id])
   @@index(fields: [address, chainId, name])
   @@index(fields: [address, chainId, symbol])
-}
-
-model TokenPrice {
-  id            String  @id // chainId_address
-  address       String
-  network       String
-  chainId       String
-  protocol      String
-  version       String
-  derivedNative Decimal
-  usd           Decimal
-
-  generatedAt DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  token Token @relation(fields: [chainId, address], references: [chainId, address])
-
-  @@unique([chainId, address])
-  @@index(fields: [id])
-  @@index(fields: [id, usd])
 }
 
 model Pool {
@@ -68,49 +50,50 @@ model Pool {
   swapFee     Float?
   twapEnabled Boolean?
 
-  reserve0        String //BigInt 	@db.BigInt // Liquidity of token0 // TODO: When prisma 4.6.0 is released, use BigInt instead
-  reserve1        String //BigInt 	@db.BigInt // Liquidity of token1 // TODO: When prisma 4.6.0 is released, use BigInt instead
-  totalSupply     String //BigInt 	@db.BigInt // Liquidity, Total supply of all LP in this pool // TODO: When prisma 4.6.0 is released, use BigInt instead
-  liquidityUSD    String // liquidity in USD
-  liquidityNative String // liquidity in native
+  reserve0        String // Liquidity of token0
+  reserve1        String // Liquidity of token1 
+  totalSupply     String // Liquidity, Total supply of all LP in this pool
+  liquidityUSD    Decimal // liquidity in USD
+  liquidityNative Decimal // liquidity in native
 
-  volumeUSD    String // volume in USD
-  volumeNative String // volume in native
+  volumeUSD    Decimal // volume in USD
+  volumeNative Decimal // volume in native
 
-  token0Price String // Price of token0 in token1
-  token1Price String // Price of token1 in token0
+  token0Price Decimal // Price of token0 in token1
+  token1Price Decimal // Price of token1 in token0
 
-  apr  Float?
-  totalApr  Float?
-  isIncentivized Boolean @default(false)
-  incentives Incentive[] @relation()
-
+  apr            Float?
+  totalApr       Float?
+  isIncentivized Boolean     @default(false)
+  incentives     Incentive[] @relation()
 
   // createdAtTimestamp   DateTime
-  createdAtBlockNumber String //BigInt 	@db.BigInt // TODO: When prisma 4.6.0 is released, use BigInt instead
+  createdAtBlockNumber BigInt @db.UnsignedBigInt
   generatedAt          DateTime @default(now())
   updatedAt            DateTime @updatedAt
+  // TODO: add more composite indexes once we have decided which queries we'll need
+  // @@index(fields: [chainId, protocol, type, volumeUSD]) 
+  // @@index(fields: [chainId, protocol, type, liquidityUSD])
+  // @@index(fields: [chainId, protocol, type, totalApr])
 
   // @@id([chainId, address])
   @@unique([chainId, address])
   @@index(fields: [id])
   @@index(fields: [id, token0Id, token1Id])
-  // TODO: add more indexes on volumeUSD, liquidityUSD etc. when BigInt is fixed
 }
 
-
 model Incentive {
-  id       String @id // poolAddress_rewarderAddress
-  chainId  String
-  type     String
+  id      String @id // poolAddress_rewarderAddress
+  chainId String
+  type    String
 
-  apr Float
+  apr             Float
   rewarderAddress String
-  rewardPerDay Float
-  rewardToken Token @relation(fields: [chainId, rewardTokenId], references: [chainId, address])
-  rewardTokenId String
-  
-  pool Pool @relation(fields: [chainId, poolAddress], references: [chainId, address])
+  rewardPerDay    Float
+  rewardToken     Token  @relation(fields: [chainId, rewardTokenId], references: [chainId, address])
+  rewardTokenId   String
+
+  pool        Pool   @relation(fields: [chainId, poolAddress], references: [chainId, address])
   poolAddress String
 
   @@index(fields: [id])

@@ -8,18 +8,15 @@ import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } 
 import { mergePools } from './entity/pool/load'
 import { filterPools } from './entity/pool/transform'
 import { createTokens } from './entity/token/load'
-import { filterTokens } from './entity/token/transform'
+import { filterTokensToCreate } from './entity/token/transform'
 
 const client = new PrismaClient()
 
 const PROTOCOL = 'SushiSwap'
-const VERSION_V2 = 'Legacy'
-// const VERSION_V3 = 'V2'
-// const POOL_TYPE = 'ConstantProductPool'
 
 async function main() {
   const startTime = performance.now()
-  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}, version: ${VERSION_V2}`)
+  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
 
   // EXTRACT
   const exchanges = await extract()
@@ -30,7 +27,7 @@ async function main() {
 
   // LOAD
   await createTokens(client, tokens)
-  await mergePools(client, PROTOCOL, VERSION_V2, pools)
+  await mergePools(client, PROTOCOL, pools)
   const endTime = performance.now()
 
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -78,7 +75,7 @@ async function extract() {
         const pairs = data.filter((d) => d !== undefined).flat()
         return { chainId: request.chainId, data: pairs }
       })
-    ),
+    )
   )
 }
 
@@ -86,7 +83,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
   pools: Prisma.PoolCreateManyInput[]
   tokens: Prisma.TokenCreateManyInput[]
 }> {
-  const yesterday = new Date(Date.now() - 86400000);
+  const yesterday = new Date(Date.now() - 86400000)
   const unix24hAgo = Math.floor(yesterday.getTime() / 1000)
   const tokens: Prisma.TokenCreateManyInput[] = []
   const poolsTransformed = data
@@ -94,14 +91,6 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
       return exchange.data
         .map((batch) => {
           if (!batch?.pairs) return []
-          // if (exchange.chainId == undefined) {
-          //   console.log(`batch.chainId == undefined`)
-          //   return []
-          // }
-          // if (!SUSHISWAP_CHAINS.includes(exchange.chainId)) {
-          //   console.log(`Chain ID ${exchange.chainId} is not in the list of supported chains`)
-          //   return []
-          // }
           return batch?.pairs.map((pair) => {
             tokens.push(
               Prisma.validator<Prisma.TokenCreateManyInput>()({
@@ -140,13 +129,10 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               twapEnabled: pair.twapEnabled,
               token0Id: pair.token0.id,
               token1Id: pair.token1.id,
-              // reserve0:  BigInt(pair.reserve0),
-              // reserve1:  BigInt(pair.reserve1),
-              // totalSupply: BigInt(pair.liquidity),
-              apr,
-              reserve0: pair.reserve0,
-              reserve1: pair.reserve1,
+              reserve0:  pair.reserve0,
+              reserve1:  pair.reserve1,
               totalSupply: pair.liquidity,
+              apr,
               liquidityUSD: pair.liquidityUSD,
               liquidityNative: pair.liquidityNative,
               volumeUSD: pair.volumeUSD,
@@ -154,9 +140,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               token0Price: pair.token0Price,
               token1Price: pair.token1Price,
               totalApr: apr,
-              // createdAtTimestamp: new Date(pair.createdAtTimestamp),
-              createdAtBlockNumber: pair.createdAtBlock,
-              // createdAtBlockNumber: BigInt(pair.createdAtBlock),
+              createdAtBlockNumber: BigInt(pair.createdAtBlock),
             })
           })
         })
@@ -165,7 +149,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
     .flat()
 
   const filteredPools = await filterPools(client, poolsTransformed)
-  const filteredTokens = await filterTokens(client, tokens)
+  const filteredTokens = await filterTokensToCreate(client, tokens)
 
   return { pools: filteredPools, tokens: filteredTokens }
 }

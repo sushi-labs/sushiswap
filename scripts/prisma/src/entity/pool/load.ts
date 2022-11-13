@@ -10,10 +10,9 @@ import { performance } from 'perf_hooks'
 export async function mergePools(
   client: PrismaClient,
   protocol: string,
-  version: string,
   pools: Prisma.PoolCreateManyInput[]
 ) {
-  const containsProtocolPools = await alreadyContainsProtocol(client, protocol, version)
+  const containsProtocolPools = await alreadyContainsProtocol(client, protocol)
   if (containsProtocolPools) {
     await upsertPools(client, pools)
   } else {
@@ -89,6 +88,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
 async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
   let count = 0
   const batchSize = 500
+  // const batchSize = 1
   const startTime = performance.now()
   for (let i = 0; i < pools.length; i += batchSize) {
     const created = await client.pool.createMany({
@@ -102,11 +102,10 @@ async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
   console.log(`LOAD - Created ${count} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
 }
 
-async function alreadyContainsProtocol(client: PrismaClient, protocol: string, version: string) {
+async function alreadyContainsProtocol(client: PrismaClient, protocol: string) {
   const count = await client.pool.count({
     where: {
       protocol,
-      version,
     },
   })
   return count > 0

@@ -1,13 +1,11 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
+import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, TokenPricesQuery } from '../.graphclient'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
-import { mergePrices } from './entity/price/load'
-import { filterTokenPrices } from './entity/price/transform'
-import { createTokens } from './entity/token/load'
-import { filterTokens } from './entity/token/transform'
-import { performance } from 'perf_hooks'
-import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { createTokens, updateTokenPrices } from './entity/token/load'
+import { filterTokensByUsdPrice } from './entity/token/transform'
 
 const client = new PrismaClient()
 
@@ -23,11 +21,11 @@ async function main() {
   console.log(`EXTRACT - Tokens and TokenPrices extracted from ${exchanges.length} different exchanges`)
 
   // TRANSFORM
-  const { tokens, pricesToCreate, pricesToUpdate } = await transform(exchanges)
+  const { tokensToCreate, tokensToUpdate } = await transform(exchanges)
 
   // LOAD
-  await createTokens(client, tokens)
-  await mergePrices(client, PROTOCOL, VERSION, pricesToCreate, pricesToUpdate)
+  await createTokens(client, tokensToCreate)
+  await updateTokenPrices(client, tokensToUpdate)
 
   const endTime = performance.now()
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -104,12 +102,10 @@ async function transform(
     data: (TokenPricesQuery | undefined)[]
   }[]
 ): Promise<{
-  tokens: Prisma.TokenCreateManyInput[]
-  pricesToCreate: Prisma.TokenPriceCreateManyInput[]
-  pricesToUpdate: Prisma.TokenPriceCreateManyInput[]
+  tokensToCreate: Prisma.TokenCreateManyInput[]
+  tokensToUpdate: Prisma.TokenUpdateArgs[]
 }> {
-  const tokens: Prisma.TokenCreateManyInput[] = []
-  const pricesWithLiquidity: Record<string, { price: Prisma.TokenPriceCreateManyInput; liquidity: number }> = {}
+  const tokensIncludingLiquidity: Record<string, { token: Prisma.TokenCreateManyInput; liquidity: number }> = {}
 
   data.forEach((exchange) => {
     const { chainId, data } = exchange
@@ -117,50 +113,38 @@ async function transform(
     data.forEach((data) => {
       if (data == undefined || !data?.tokenPrices) return
       const nativePrice = Number(data?.bundle?.nativePrice)
-      if (!nativePrice) {
-        console.warn(`TRANSFORM - ${chainName[chainId]} does not have a native price`)
-        return
-      }
-      data.tokenPrices.map((tokenPrice) => {
+      data.tokenPrices.forEach((tokenPrice) => {
         const id = chainId.toString().concat('_').concat(tokenPrice.id)
-        tokens.push(
-          Prisma.validator<Prisma.TokenCreateManyInput>()({
-            id: id,
-            address: tokenPrice.id,
-            network: chainName[chainId],
-            chainId: chainId.toString(),
-            name: tokenPrice.token.name,
-            symbol: tokenPrice.token.symbol,
-            decimals: Number(tokenPrice.token.decimals),
-          })
-        )
-        const price = Prisma.validator<Prisma.TokenPriceCreateManyInput>()({
+        const usdPrice = nativePrice ? nativePrice * Number(tokenPrice.derivedNative) : null
+        const price = Prisma.validator<Prisma.TokenCreateManyInput>()({
           id: id,
           address: tokenPrice.id,
           network: chainName[chainId],
-          protocol: PROTOCOL,
-          version: VERSION,
           chainId: chainId.toString(),
-          derivedNative: tokenPrice.derivedNative,
-          usd: nativePrice * Number(tokenPrice.derivedNative),
+          name: tokenPrice.token.name,
+          symbol: tokenPrice.token.symbol,
+          decimals: Number(tokenPrice.token.decimals),
+          usdPrice,
         })
+
         const currentLiquidity = Number(tokenPrice.token.liquidity)
-        if (pricesWithLiquidity[id]) {
-          const savedPrice = pricesWithLiquidity[id]
+        if (tokensIncludingLiquidity[id]) {
+          const savedPrice = tokensIncludingLiquidity[id]
           if (savedPrice.liquidity < currentLiquidity) {
-            pricesWithLiquidity[id] = { price, liquidity: currentLiquidity }
+            tokensIncludingLiquidity[id] = { token: price, liquidity: currentLiquidity }
           }
+        } else {
+          tokensIncludingLiquidity[id] = { token: price, liquidity: currentLiquidity }
         }
-        pricesWithLiquidity[id] = { price, liquidity: currentLiquidity }
       })
     })
   })
 
-  const prices = Object.values(pricesWithLiquidity).map((pricesWithLiquidity) => pricesWithLiquidity.price)
+  const tokens = Object.values(tokensIncludingLiquidity).map((pricesWithLiquidity) => pricesWithLiquidity.token)
+  console.log(`TRANSFORM - mapped ${tokens.length} tokens`)
+  const { tokensToCreate, tokensToUpdate } = await filterTokensByUsdPrice(client, tokens)
 
-  const filteredTokens = await filterTokens(client, tokens)
-  const { pricesToCreate, pricesToUpdate } = await filterTokenPrices(client, prices)
-  return { tokens: filteredTokens, pricesToCreate, pricesToUpdate }
+  return { tokensToCreate, tokensToUpdate }
 }
 
 main()

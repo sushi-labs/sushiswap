@@ -11,7 +11,7 @@ import { performance } from 'perf_hooks'
 import { mergeIncentives } from './entity/incentive/load'
 import { filterIncentives } from './entity/incentive/transform'
 import { createTokens } from './entity/token/load'
-import { filterTokens } from './entity/token/transform'
+import { filterTokensToCreate } from './entity/token/transform'
 import { Farm } from './lib/types'
 import { updatePoolsWithIncentivesTotalApr } from './entity/pool/load'
 
@@ -28,16 +28,20 @@ async function main() {
   // TRANSFORM
   const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(farms)
 
-  const poolsFound = [incentivesToCreate.map(incentive => incentive.poolAddress).concat(incentivesToUpdate.map(incentive => incentive.poolAddress))].flat()
+  const poolsFound = [
+    incentivesToCreate
+      .map((incentive) => incentive.poolAddress)
+      .concat(incentivesToUpdate.map((incentive) => incentive.poolAddress)),
+  ].flat()
   const result = await client.pool.findMany({
     where: {
       id: {
-        in: poolsFound
-      }
+        in: poolsFound,
+      },
     },
     select: {
       id: true,
-    }
+    },
   })
   console.log(`f ${poolsFound.length} r ${result.length}`)
 
@@ -45,7 +49,7 @@ async function main() {
   await createTokens(client, tokens)
   await mergeIncentives(client, incentivesToCreate, incentivesToUpdate)
   await updatePoolsWithIncentivesTotalApr(client)
-  
+
   const endTime = performance.now()
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
@@ -106,7 +110,7 @@ async function transform(data: { chainId: ChainId; farms: Record<string, Farm> }
     })
     .flat()
 
-  const filteredTokens = await filterTokens(client, tokens)
+  const filteredTokens = await filterTokensToCreate(client, tokens)
   console.log(`TEST, token needed: ${filteredTokens.length}`)
   const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(client, incentives)
 

@@ -4,20 +4,20 @@ import { ChainId } from '@sushiswap/chain'
 const prisma = new PrismaClient()
 
 async function main() {
-  const prices = await prisma.token.findMany({
+  const prices = await prisma.token.count({
     where: {
-      symbol: 'SUSHI',
-    },
-    include: {
-      price: true,
+      usdPrice: {
+        gt: 0,
+      }
     },
   })
-  console.log(`All prices for tokens with symbol SUSHI:`)
-  prices.forEach((result) => {
-    if (Number(result.price?.usd) > 0) {
-    console.log(` ${result.address} ${result.network} ${result.price?.usd}`)
-    }
-  })
+  // console.log(`All prices for tokens with symbol SUSHI:`)
+  // prices.forEach((result) => {
+  //   if (Number(result.usdPrice) > 0) {
+  //   console.log(` ${result.address} ${result.network} ${result.usdPrice}`)
+  //   }
+  // })
+  console.log(`Total number of tokens with usdPrice > 0: ${prices}`)
 }
 
 main()
