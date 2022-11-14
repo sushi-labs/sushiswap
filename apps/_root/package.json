@@ -24,6 +24,7 @@
     "@sushiswap/sushi-data": "1.0.26",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
+    "@sushiswap/hooks": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@tanstack/react-query": "^4.0.10",
     "ethers": "^5.7.0",
