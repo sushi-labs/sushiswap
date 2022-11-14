@@ -66,8 +66,9 @@ model Pool {
   totalApr       Float?
   isIncentivized Boolean     @default(false)
   incentives     Incentive[] @relation()
+  volume1w       Decimal?
+  fees1w         Decimal?
 
-  // createdAtTimestamp   DateTime
   createdAtBlockNumber BigInt @db.UnsignedBigInt
   generatedAt          DateTime @default(now())
   updatedAt            DateTime @updatedAt

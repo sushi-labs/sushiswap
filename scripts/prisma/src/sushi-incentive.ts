@@ -21,6 +21,8 @@ async function main() {
   console.log(`Preparing to load farms`)
   const startTime = performance.now()
 
+  // TODO: Consider if we are going to keep the current farm script running for the single pages, if we are
+  // we might as well use the graph client to fetch the farms here.
   // EXTRACT
   const farms = await extract()
   console.log(`EXTRACT - Extracted ${farms.length} farms`)

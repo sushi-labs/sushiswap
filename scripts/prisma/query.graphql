@@ -56,6 +56,17 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
   }
 }
 
+
+query PairsVolumeLiquidity($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
+  pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    liquidityUSD
+    volumeUSD
+  }
+}
+
+
+
 query Tokens($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
   tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id

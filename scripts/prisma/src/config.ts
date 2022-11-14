@@ -25,6 +25,8 @@ export const TRIDENT_CHAINS = [
   ChainId.KAVA,
 ]
 
+export const SUSHI_SUPPORTED_CHAINS = Array.from(new Set([...SUSHISWAP_CHAINS, ...TRIDENT_CHAINS]))
+
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
 
