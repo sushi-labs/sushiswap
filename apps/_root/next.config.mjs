@@ -68,6 +68,14 @@ const nextConfig = {
         destination: `/:path*`,
       },
       {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
+      },
+      {
         source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
       },
