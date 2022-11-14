@@ -19,6 +19,7 @@ const {
   PARTNER_URL,
   SWAP_URL,
   XSWAP_URL,
+  ACADEMY_URL,
 } = process.env
 
 // @ts-check
@@ -101,6 +102,14 @@ const nextConfig = {
       {
         source: '/swap',
         destination: `${SWAP_URL}/swap`,
+      },
+      {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
       },
       {
         source: '/swap/:path*',

@@ -9,13 +9,13 @@ interface CircleWithText extends React.ComponentProps<'svg'> {
 export const CircleIcon: FC<CircleWithText> = ({ text, className, ...props }) => {
   return (
     <svg
-      {...props}
       viewBox="0 0 24 24"
       fill="transparent"
       stroke="currentColor"
       fontSize="1.5rem"
       strokeWidth="2"
       className={classNames('shrink-0 block rounded-full', className)}
+      {...props}
     >
       <circle cx="12" cy="12" r="9.6" />
       {typeof text !== undefined && (
