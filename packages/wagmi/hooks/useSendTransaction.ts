@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'reac
 import { ProviderRpcError, usePrepareSendTransaction, useSendTransaction as useSendTransaction_ } from 'wagmi'
 import { SendTransactionArgs, SendTransactionResult } from 'wagmi/actions'
 
-type Args = Parameters<typeof usePrepareSendTransaction>['0'] & Parameters<typeof useSendTransaction_>['0']
+type Args = Parameters<typeof useSendTransaction_>['0']
 
 export function useSendTransaction({
   chainId,

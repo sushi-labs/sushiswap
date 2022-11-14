@@ -82,6 +82,6 @@ export const useWrapCallback: UseWrapCallback = ({ chainId, wrapType, amount, on
     chainId,
     prepare,
     onSettled,
-    enabled: contract && chainId && address && amount && amount?.greaterThan(ZERO),
+    enabled: !!contract && chainId && address && amount && amount?.greaterThan(ZERO),
   })
 }

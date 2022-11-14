@@ -2,9 +2,10 @@ import { Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { NotificationData } from '@sushiswap/ui'
+import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContractReads } from 'wagmi'
-import { ReadContractsConfig, SendTransactionResult } from 'wagmi/actions'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import {
   getMasterChefContractConfig,
@@ -54,7 +55,7 @@ export const useMasterChef: UseMasterChef = ({
   const v2Config = useMemo(() => getMasterChefContractV2Config(chainId), [chainId])
 
   const contracts = useMemo(() => {
-    const inputs: ReadContractsConfig['contracts'] = []
+    const inputs = []
 
     if (!chainId) return []
 
@@ -63,23 +64,23 @@ export const useMasterChef: UseMasterChef = ({
         chainId,
         address: SUSHI_ADDRESS[chainId],
         abi: erc20ABI,
-        functionName: 'balanceOf',
-        args: [config.addressOrName],
+        functionName: 'balanceOf' as const,
+        args: [config.address],
       })
     }
 
-    if (enabled && !!address && config.addressOrName) {
+    if (enabled && !!address && config.address) {
       inputs.push({
         ...config,
-        functionName: 'userInfo',
+        functionName: 'userInfo' as const,
         args: [pid, address],
       })
     }
 
-    if (enabled && !!address && !!v2Config.addressOrName) {
+    if (enabled && !!address && !!v2Config.address) {
       inputs.push({
         ...v2Config,
-        functionName: 'pendingSushi',
+        functionName: 'pendingSushi' as const,
         args: [pid, address],
       })
     }
@@ -87,6 +88,7 @@ export const useMasterChef: UseMasterChef = ({
     return inputs
   }, [address, chainId, config, enabled, pid, v2Config])
 
+  // Can't type runtime...
   const { data, isLoading, isError } = useContractReads({
     contracts,
     watch,
@@ -96,9 +98,10 @@ export const useMasterChef: UseMasterChef = ({
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const copy = data ? [...data] : []
-    const _sushiBalance = Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled ? copy.shift() : undefined
-    const _balance = !!address && enabled && config.addressOrName ? copy.shift()?.amount : undefined
-    const _pendingSushi = enabled && !!v2Config.addressOrName ? copy.shift() : undefined
+    const _sushiBalance =
+      Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled ? (copy.shift() as unknown as BigNumber) : undefined
+    const _balance = !!address && enabled && config.address ? (copy.shift()?.amount as unknown as BigNumber) : undefined
+    const _pendingSushi = enabled && !!v2Config.address ? (copy.shift() as unknown as BigNumber) : undefined
 
     const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
     const pendingSushi = SUSHI[chainId]
@@ -108,7 +111,7 @@ export const useMasterChef: UseMasterChef = ({
       ? Amount.fromRawAmount(SUSHI[chainId], _sushiBalance ? _sushiBalance.toString() : 0)
       : undefined
     return [sushiBalance, balance, pendingSushi]
-  }, [address, chainId, config.addressOrName, data, enabled, token, v2Config.addressOrName])
+  }, [address, chainId, config.address, data, enabled, token, v2Config.address])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
