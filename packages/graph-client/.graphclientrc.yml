@@ -234,6 +234,7 @@ additionalTypeDefs: |
     liquidityShares: BigInt!
     symbol: String!
     name: String!
+    decimals: Int!
     chainId: Int!
   }
   type ChefUserPool {

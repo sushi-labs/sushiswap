@@ -18,6 +18,7 @@ query furoTokensByChainIds(
     liquidityShares
     symbol
     name
+    decimals
     chainId
   }
 }
