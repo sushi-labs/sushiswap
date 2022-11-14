@@ -9,6 +9,7 @@
     "updateInternalDependencies": "patch",
     "ignore": [
       "root",
+      "academy",
       "analytics",
       "blog",
       "bridge",
