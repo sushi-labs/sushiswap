@@ -11,8 +11,9 @@ import React, { useMemo } from 'react'
 import { AnimatedCards } from '../components/AnimatedCards'
 import { AnimatedTitle } from '../components/AnimatedTitle/AnimatedTitle'
 import { BuildWealth } from '../components/BuildWealth/BuildWealth'
-import { PRODUCT_CARDS, SUPPORT_CARDS } from '../components/data'
+import { PRODUCT_CARDS } from '../components/data'
 import { Hero } from '../components/Hero/Hero'
+import { NeedHelp } from '../components/NeedHelp/NeedHelp'
 import { Partners } from '../components/Partners/Partners'
 import { Story } from '../components/Story/Story'
 import getBentoTVL from '../functions/graph/fetchers/bentobox'
@@ -142,7 +143,7 @@ const Index = ({ stats }) => {
 
       <div className="flex flex-col gap-2 border-t border-slate-200/5">
         <BuildWealth />
-        <section className="py-60">
+        <section className="py-40">
           <Container maxWidth="5xl" className="mx-auto">
             <div className="flex flex-col gap-20">
               <AnimatedTitle className="text-left">
@@ -154,19 +155,7 @@ const Index = ({ stats }) => {
           </Container>
         </section>
 
-        <section className="py-[120px] bg-gradient-to-b from-[rgba(0,0,0,0.1)] to-slate-900">
-          <Container maxWidth="5xl" className="mx-auto">
-            <div className="flex flex-col gap-20">
-              <div className="flex flex-col gap-4">
-                <AnimatedTitle>Need Help?</AnimatedTitle>
-                <AnimatedTitle className="!text-xl max-w-[460px] font-medium text-slate-400">
-                  If you need help or have any questions, contact us on one of our social channels
-                </AnimatedTitle>
-              </div>
-              <AnimatedCards data={SUPPORT_CARDS} />
-            </div>
-          </Container>
-        </section>
+        <NeedHelp />
       </div>
     </article>
   )

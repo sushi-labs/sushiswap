@@ -29,7 +29,8 @@ export const Item: FC<{ id: string; onSelect(id?: string): void; data: CardInter
         <motion.div
           layoutId={`card-container-${id}`}
           className={classNames(
-            'h-[auto] max-w-[700px] overflow-hidden pointer-events-none relative rounded-[20px] overflow-hidden w-full h-full m-[0_auto] bg-slate-900'
+            backgroundColor,
+            'h-[auto] max-w-[700px] overflow-hidden pointer-events-none relative rounded-[20px] overflow-hidden w-full h-full m-[0_auto]'
           )}
         >
           <motion.div
