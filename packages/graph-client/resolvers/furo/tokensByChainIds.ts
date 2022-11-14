@@ -1,14 +1,15 @@
 import { FURO_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
+import { GraphQLResolveInfo } from 'graphql'
 
-import { Query, QueryResolvers } from '../../.graphclient'
+import { Query, QueryfuroTokensByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient'
 import { FuroStreamTypes } from '../../.graphclient/sources/FuroStream/types'
 
-export const furoTokensByChainIds: QueryResolvers['furoTokensByChainIds'] = async (
-  root,
-  args,
-  context,
-  info
+export const _furoTokensByChainIds = async (
+  root = {},
+  args: RequireFields<QueryfuroTokensByChainIdsArgs, 'chainIds'>,
+  context: FuroStreamTypes.Context,
+  info: GraphQLResolveInfo
 ): Promise<Query['furoTokensByChainIds']> => {
   return Promise.allSettled<Query['furoTokensByChainIds'][]>(
     args.chainIds
@@ -41,3 +42,10 @@ export const furoTokensByChainIds: QueryResolvers['furoTokensByChainIds'] = asyn
       .flatMap((promiseFulfilled) => promiseFulfilled.value)
   )
 }
+
+export const furoTokensByChainIds: QueryResolvers['furoTokensByChainIds'] = async (
+  root,
+  args,
+  context,
+  info
+): Promise<Query['furoTokensByChainIds']> => _furoTokensByChainIds(root, args, context, info)

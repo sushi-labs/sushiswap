@@ -321,6 +321,7 @@ additionalTypeDefs: |
   # Query Extensions
   extend type Query {
     furoTokensByChainIds(
+      skip: Int = 0
       chainIds: [Int!]!
       orderBy: Token_orderBy
       orderDirection: OrderDirection

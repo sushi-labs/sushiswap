@@ -1,14 +1,23 @@
-query furoTokensByChainIds($chainIds: [Int!]!, $orderBy: Token_orderBy, $orderDirection: OrderDirection, $first: Int = 100, $where: Token_filter) {
-    tokens(
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      first: $first
-      where: $where
-    ) {
-      id
-      liquidityShares
-      symbol
-      name
-      chainId
-    }
+query furoTokensByChainIds(
+  $first: Int
+  $skip: Int
+  $where: Token_filter
+  $orderBy: Token_orderBy = liquidityShares
+  $orderDirection: OrderDirection = desc
+  $chainIds: [Int!]!
+) {
+  tokens: furoTokensByChainIds(
+    first: $first
+    skip: $skip
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    chainIds: $chainIds
+  ) {
+    id
+    liquidityShares
+    symbol
+    name
+    chainId
   }
+}
