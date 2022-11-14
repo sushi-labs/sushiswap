@@ -200,7 +200,7 @@ export const FURO_SUBGRAPH_NAME: Record<string, string> = {
   [ChainId.MOONRIVER]: 'sushi-subgraphs/furo-moonriver',
   [ChainId.OPTIMISM]: 'sushi-subgraphs/furo-optimism',
   [ChainId.POLYGON]: 'sushi-subgraphs/furo-polygon',
-}
+} as const
 
 export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'sushiswap/kashi-arbitrum',
