@@ -1,5 +1,4 @@
 import sushiXSwapExports from '@sushiswap/sushixswap/exports.json'
-import { SushiXSwap } from '@sushiswap/sushixswap/typechain'
 import { useContract, useProvider, useSigner } from 'wagmi'
 
 export const getSushiXSwapContractConfig = (chainId: number | undefined) => ({
@@ -13,7 +12,7 @@ export const getSushiXSwapContractConfig = (chainId: number | undefined) => ({
 
 export function useSushiXSwapContract(chainId: number | undefined) {
   const { data: signerOrProvider } = useSigner()
-  return useContract<SushiXSwap>({
+  return useContract({
     ...getSushiXSwapContractConfig(chainId),
     signerOrProvider,
   })
@@ -21,7 +20,7 @@ export function useSushiXSwapContract(chainId: number | undefined) {
 
 export function useSushiXSwapContractWithProvider(chainId: number | undefined) {
   const provider = useProvider({ chainId })
-  return useContract<SushiXSwap>({
+  return useContract({
     ...getSushiXSwapContractConfig(chainId),
     signerOrProvider: provider,
   })

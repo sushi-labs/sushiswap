@@ -68,8 +68,7 @@ export function useERC20ApproveCallback(
   const [request, setRequest] = useState<Partial<TransactionRequest & { to: string }>>({})
   const { config } = usePrepareSendTransaction({
     chainId: amountToApprove?.currency.chainId,
-    // @ts-ignore
-    request,
+    request: request.to ? { ...request, to: request.to as string } : undefined,
   })
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({

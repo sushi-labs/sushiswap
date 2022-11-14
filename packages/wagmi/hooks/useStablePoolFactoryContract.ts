@@ -13,7 +13,7 @@ export const getStablePoolFactoryContract = (chainId: number | undefined) => ({
       ?.abi ?? [],
 })
 
-export function useStablePoolFactoryContract(chainId: number | undefined) {
+export function useStablePoolFactoryContract(chainId: number | undefined): ReturnType<typeof useContract> {
   return useContract({
     ...getStablePoolFactoryContract(chainId),
     signerOrProvider: useProvider({ chainId }),

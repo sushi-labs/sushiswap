@@ -1,8 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import sushiswapExports from '@sushiswap/sushiswap/exports.json'
-import { useMemo } from 'react'
-import { useSigner } from 'wagmi'
-import { getContract } from 'wagmi/actions'
+import { useContract, useSigner } from 'wagmi'
 
 type Exports = typeof sushiswapExports
 
@@ -19,11 +17,8 @@ export const getSushiSwapRouterContractConfig = (chainId: number | undefined) =>
 
 export function useSushiSwapRouterContract(chainId: number | undefined) {
   const { data: signerOrProvider } = useSigner()
-  return useMemo(() => {
-    if (!chainId || !(chainId in sushiswapExports)) return
-    return getContract({
-      ...getSushiSwapRouterContractConfig(chainId),
-      signerOrProvider,
-    })
-  }, [chainId, signerOrProvider])
+  return useContract({
+    ...getSushiSwapRouterContractConfig(chainId),
+    signerOrProvider,
+  })
 }

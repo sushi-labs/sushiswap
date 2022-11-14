@@ -44,7 +44,10 @@ export const getRewarderConfig = (address: string) => {
   }
 }
 
-export function useRewarderContract(chainId: number, address: string | undefined) {
+export function useRewarderContract(
+  chainId: number,
+  address: string | undefined
+): ReturnType<typeof getContract> | undefined {
   const provider = useProvider({ chainId })
   return useMemo(() => {
     if (!address) return undefined

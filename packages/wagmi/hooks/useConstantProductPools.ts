@@ -29,10 +29,12 @@ interface UseGetConstantProductPoolsReturn {
   data: [ConstantProductPoolState, ConstantProductPool | null][]
 }
 
+type Config = Omit<NonNullable<Parameters<typeof useContractReads>['0']>, 'contracts'>
+
 export function useGetConstantProductPools(
   chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
-  config: Omit<Parameters<typeof useContractReads>[number], 'contracts'> & { enabled?: boolean } = { enabled: true }
+  config: Config = { enabled: true }
 ): UseGetConstantProductPoolsReturn {
   const contract = useConstantProductPoolFactoryContract(chainId)
   const pairsUnique = useMemo(() => {

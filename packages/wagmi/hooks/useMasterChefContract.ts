@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { useMemo } from 'react'
-import { useProvider } from 'wagmi'
+import { useContract, useProvider } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
 import { masterchefAbi, masterchefV2Abi, minichefV2Abi } from '../abis'
@@ -60,13 +60,11 @@ export const getMasterChefContractConfig = (chainId: number, chef: Chef) => {
   return getMiniChefContractConfig(chainId)
 }
 
-// TODO ADD TYPECHAIN
-export function useMasterChefContract(chainId: number, chef: Chef): ReturnType<typeof getContract> | undefined {
+export function useMasterChefContract(chainId: number, chef: Chef): ReturnType<typeof useContract> {
   const signerOrProvider = useProvider({ chainId })
-  return useMemo(() => {
-    if (!chainId) return
-    const config = getMasterChefContractConfig(chainId, chef)
-    if (!config) return
-    return getContract({ ...config, signerOrProvider })
-  }, [chainId, chef, signerOrProvider])
+  // @ts-ignore - Workaround for TS#4058
+  return useContract({
+    ...getMasterChefContractConfig(chainId, chef),
+    signerOrProvider,
+  })
 }
