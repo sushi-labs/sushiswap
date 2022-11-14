@@ -136,7 +136,7 @@ export const useMasterChef: UseMasterChef = ({
   )
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!address || !chainId || !data || !contract) return
       if (chef === Chef.MASTERCHEF) {
         setRequest({

@@ -4,7 +4,7 @@ import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@su
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { Address, useContractReads } from 'wagmi'
+import { Address, useContractRead, useContractReads } from 'wagmi'
 
 import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 
@@ -131,49 +131,51 @@ export function useGetConstantProductPools(
 
   const poolsAddresses = useMemo(() => pools.map((p) => p.address as Address), [pools])
 
-  const {
-    data: reserves,
-    isLoading: reservesLoading,
-    isError: reservesError,
-  } = useContractReads({
-    contracts: poolsAddresses.map((address) => ({
+  const contracts = [
+    ...poolsAddresses.map((address) => ({
       chainId,
       address,
       abi: constantProductPoolAbi,
-      functionName: 'getReserves',
+      functionName: 'getReserves' as const,
     })),
-    enabled: poolsAddresses.length > 0 && config?.enabled,
-    watch: !config?.enabled,
-  })
+    ...poolsAddresses.map((address) => ({
+      chainId,
+      address,
+      abi: constantProductPoolAbi,
+      functionName: 'swapFee' as const,
+    })),
+  ]
 
   const {
-    data: fees,
-    isLoading: feesLoading,
-    isError: feesError,
+    data: reservesAndFees,
+    isLoading: reservesAndFeesLoading,
+    isError: reservesAndFeesError,
   } = useContractReads({
-    contracts: poolsAddresses.map((address) => ({
-      chainId,
-      address,
-      abi: constantProductPoolAbi,
-      functionName: 'swapFee',
-    })),
+    contracts,
     enabled: poolsAddresses.length > 0 && config?.enabled,
     watch: !config?.enabled,
   })
 
   return useMemo(() => {
     return {
-      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesLoading || feesLoading,
-      isError: callStatePoolsCountError || callStatePoolsError || reservesError || feesError,
+      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesAndFeesLoading,
+      isError: callStatePoolsCountError || callStatePoolsError || reservesAndFeesError,
       data: pools.map((p, i) => {
-        if (!reserves?.[i] || !fees?.[i]) return [ConstantProductPoolState.LOADING, null]
+        if (!reservesAndFees?.[i] || !reservesAndFees?.[i + poolsAddresses.length])
+          return [ConstantProductPoolState.LOADING, null]
+        // Type guard
+        if (
+          BigNumber.isBigNumber(reservesAndFees[i]._reserve0) ||
+          !BigNumber.isBigNumber(reservesAndFees[i + poolsAddresses.length])
+        )
+          return [ConstantProductPoolState.INVALID, null]
         return [
           ConstantProductPoolState.EXISTS,
           new ConstantProductPool(
-            Amount.fromRawAmount(p.token0, BigNumber.from(reserves[i]._reserve0).toString()),
-            Amount.fromRawAmount(p.token1, BigNumber.from(reserves[i]._reserve1).toString()),
-            parseInt(fees[i].toString()),
-            reserves[i]._blockTimestampLast !== 0
+            Amount.fromRawAmount(p.token0, reservesAndFees[i]._reserve0.toString()),
+            Amount.fromRawAmount(p.token1, reservesAndFees[i]._reserve1.toString()),
+            parseInt(reservesAndFees[i + poolsAddresses.length].toString()),
+            reservesAndFees[i]._blockTimestampLast !== 0
           ),
         ]
       }),
@@ -181,15 +183,13 @@ export function useGetConstantProductPools(
   }, [
     callStatePoolsCountLoading,
     callStatePoolsLoading,
-    reservesLoading,
-    feesLoading,
+    reservesAndFeesLoading,
     callStatePoolsCountError,
     callStatePoolsError,
-    reservesError,
-    feesError,
+    reservesAndFeesError,
     pools,
-    reserves,
-    fees,
+    reservesAndFees,
+    poolsAddresses.length,
   ])
 }
 
