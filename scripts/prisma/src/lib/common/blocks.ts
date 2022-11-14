@@ -8,7 +8,7 @@ interface Block {
 }
 
 const getBlock = async (timestamp: number | undefined = undefined, chainId: ChainId): Promise<Block | undefined> => {
-  const { getBuiltGraphSDK } = await import('@sushiswap/graph-client/.graphclient')
+  const { getBuiltGraphSDK } = await import('@sushiswap/graph-client')
   const subgraphName = BLOCKS_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return
   const sdk = getBuiltGraphSDK({ subgraphHost: SUBGRAPH_HOST[chainId], subgraphName: subgraphName })

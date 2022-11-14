@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { performance } from 'perf_hooks'
+import { PairMinimal as PoolMinimal } from '.'
 
 /**
  * Merges(Create/Update) pools.
@@ -7,11 +8,7 @@ import { performance } from 'perf_hooks'
  * @param client
  * @param pools
  */
-export async function mergePools(
-  client: PrismaClient,
-  protocol: string,
-  pools: Prisma.PoolCreateManyInput[]
-) {
+export async function mergePools(client: PrismaClient, protocol: string, pools: Prisma.PoolCreateManyInput[]) {
   const containsProtocolPools = await alreadyContainsProtocol(client, protocol)
   if (containsProtocolPools) {
     await upsertPools(client, pools)
@@ -150,5 +147,33 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
   const endTime = performance.now()
   console.log(
     `LOAD - Updated ${updatedPools.length} pools with total APR (${((endTime - startTime) / 1000).toFixed(1)}s) `
+  )
+}
+
+export async function updatePoolsWithVolumeAndFee(client: PrismaClient, pools: PoolMinimal[]) {
+  const poolsToUpdate = pools.map((pool) => {
+    return client.pool.update({
+      where: {
+        id: pool.id,
+      },
+      data: {
+        volume1d: pool.volume1d,
+        fees1d: pool.fees1d,
+        volume1w: pool.volume1w,
+        fees1w: pool.fees1w,
+      },
+    })
+  })
+  console.log(`LOAD - Starting to update ${poolsToUpdate.length} pools.`)
+  const startTime = performance.now()
+  const updatedPools = await Promise.allSettled(poolsToUpdate)
+  // const rejected = updatedPools.filter(result => result.status == 'rejected').map(result => result.reason)
+  //   console.log(rejected) // ['failed to fetch']
+  const endTime = performance.now()
+  console.log(
+    `LOAD - Updated ${updatedPools.length} pools with daily and weekly volume/fee data. (${(
+      (endTime - startTime) /
+      1000
+    ).toFixed(1)}s) `
   )
 }

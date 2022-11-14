@@ -50,7 +50,7 @@ export const GRAPH_HOST: Record<number | string, string> = {
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
+  [ChainId.ETHEREUM]: 'sushiswap-subgraphs/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
   [ChainId.BSC]: 'subgraph-qa/sushiswap-bsc',

@@ -66,6 +66,8 @@ model Pool {
   totalApr       Float?
   isIncentivized Boolean     @default(false)
   incentives     Incentive[] @relation()
+  volume1d       Decimal?
+  fees1d         Decimal?
   volume1w       Decimal?
   fees1w         Decimal?
 

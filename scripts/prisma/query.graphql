@@ -57,11 +57,12 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
 }
 
 
-query PairsVolumeLiquidity($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
-  pairs(first: $first, skip: $skip, where: $where, block: $block) {
+query PairsVolumeFee($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height,
+$orderBy: Pair_orderBy = volumeUSD, $orderDirection: OrderDirection = desc) {
+  pairs(first: $first, skip: $skip, where: $where, block: $block, orderBy: $orderBy, orderDirection: $orderDirection) {
     id
-    liquidityUSD
     volumeUSD
+    feesUSD
   }
 }
 
