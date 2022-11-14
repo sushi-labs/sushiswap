@@ -288,6 +288,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
             value,
           }
         }
+
         if (call) {
           if (!isAddress(call.address)) new Error('call address has to be an address')
           if (call.address === AddressZero) new Error('call address cannot be zero')
@@ -428,7 +429,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 fullWidth
                 address={getTridentRouterContractConfig(chainId).addressOrName}
                 onSignature={setSignature}
-                enabled={Boolean(typeof chainId === 'number' && TRIDENT_ENABLED_NETWORKS[chainId])}
+                enabled={Boolean(typeof chainId === 'number' && TRIDENT_ENABLED_NETWORKS.includes(chainId))}
               />
               <Approve.Token
                 size="md"
