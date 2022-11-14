@@ -9,7 +9,7 @@ export const Partners: FC = () => {
   const diff = Math.floor((new Date().getTime() - INCEPTION_DATE.getTime()) / (60 * 60 * 24 * 1000))
 
   return (
-    <section className="py-40 border-t border-slate-200/5 bg-gradient-to-b from-pink/[0.04] to-black">
+    <section className="py-20 sm:py-40 px-4 border-t border-slate-200/5 bg-gradient-to-b from-pink/[0.04] to-black">
       <Container maxWidth="5xl" className="mx-auto px-4 space-y-20">
         <div className="flex flex-col items-center">
           <Typography variant="h1" weight={600} className="text-center">

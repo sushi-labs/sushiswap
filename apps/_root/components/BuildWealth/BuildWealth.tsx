@@ -6,14 +6,14 @@ import { AnimatedTitle } from '../AnimatedTitle/AnimatedTitle'
 
 export const BuildWealth: FC = () => {
   return (
-    <section className="py-40">
+    <section className="py-20 sm:py-40 px-4">
       <Container maxWidth="5xl" className="mx-auto">
         <div className="flex flex-col gap-[120px]">
           <AnimatedTitle className="text-left">
             Build <span className="text-blue">wealth</span> with Sushi.{' '}
             <span className="text-slate-400">{`It doesnt stop at trading.`}</span>
           </AnimatedTitle>
-          <div className="grid grid-cols-2 gap-20 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
             <div className="flex flex-col gap-2">
               <Typography variant="h3" weight={500}>
                 Earn passive income with <br /> your coins.

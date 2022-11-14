@@ -143,7 +143,7 @@ const Index = ({ stats }) => {
 
       <div className="flex flex-col gap-2 border-t border-slate-200/5">
         <BuildWealth />
-        <section className="py-40">
+        <section className="sm:py-20 py-40 px-4">
           <Container maxWidth="5xl" className="mx-auto">
             <div className="flex flex-col gap-20">
               <AnimatedTitle className="text-left">

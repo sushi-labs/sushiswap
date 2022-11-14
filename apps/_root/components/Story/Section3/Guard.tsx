@@ -6,7 +6,7 @@ import { GuardImage } from './GuardImage'
 
 export const Guard: FC = () => {
   return (
-    <section className="py-40">
+    <section className="py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto px-4 space-y-20">
         <div className="grid grid-cols-1 lg:grid-cols-[auto_380px] gap-[100px]">
           <GuardImage />

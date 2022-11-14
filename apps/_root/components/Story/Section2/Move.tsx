@@ -6,7 +6,7 @@ import { MoveImage } from './MoveImage'
 
 export const Move: FC = () => {
   return (
-    <section className="py-40">
+    <section className="py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto px-4 space-y-20">
         <div className="grid grid-cols-1 lg:grid-cols-[380px_auto] gap-x-[100px] gap-y-[60px]">
           <div className="order-2 lg:order-1 flex flex-col justify-center gap-3">
