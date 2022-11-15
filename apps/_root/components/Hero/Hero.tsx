@@ -2,6 +2,7 @@ import { useInterval } from '@sushiswap/hooks'
 import { Container, Typography } from '@sushiswap/ui'
 import { FC, useState } from 'react'
 
+import { Parallax } from './Parallax'
 import { Search } from './Search'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
@@ -12,7 +13,7 @@ export const Hero: FC = () => {
   useInterval(() => setIndex((prev) => (prev + 1) % 3), 1500)
 
   return (
-    <section>
+    <section className="relative">
       <Container maxWidth="5xl" className="mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
@@ -32,6 +33,7 @@ export const Hero: FC = () => {
           <div className="">{/*<HeroSVG width={496} height={312} />*/}</div>
         </div>
       </Container>
+      <Parallax />
     </section>
   )
 }

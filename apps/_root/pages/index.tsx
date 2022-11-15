@@ -135,24 +135,26 @@ const Index = ({ stats }) => {
         </Container>
       </section>
 
-      <Partners />
-      <Story />
+      <div className="bg-black">
+        <Partners />
+        <Story />
 
-      <div className="flex flex-col gap-2 border-t border-neutral-200/5">
-        <BuildWealth />
-        <section className="sm:py-20 py-40 px-4">
-          <Container maxWidth="5xl" className="mx-auto">
-            <div className="flex flex-col gap-20">
-              <AnimatedTitle className="text-left">
-                Build <span className="text-pink">the future</span> with Sushi.{' '}
-                <span className="text-neutral-400">{`We invite all developers to explore Sushi's frameworks.`}</span>
-              </AnimatedTitle>
-              <AnimatedCards data={PRODUCT_CARDS} />
-            </div>
-          </Container>
-        </section>
+        <div className="flex flex-col gap-2 border-t border-neutral-200/5">
+          <BuildWealth />
+          <section className="sm:py-20 py-40 px-4">
+            <Container maxWidth="5xl" className="mx-auto">
+              <div className="flex flex-col gap-20">
+                <AnimatedTitle className="text-left">
+                  Build <span className="text-pink">the future</span> with Sushi.{' '}
+                  <span className="text-neutral-400">{`We invite all developers to explore Sushi's frameworks.`}</span>
+                </AnimatedTitle>
+                <AnimatedCards data={PRODUCT_CARDS} />
+              </div>
+            </Container>
+          </section>
 
-        <NeedHelp />
+          <NeedHelp />
+        </div>
       </div>
     </article>
   )
