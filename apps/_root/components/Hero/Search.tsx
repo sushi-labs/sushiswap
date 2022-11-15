@@ -1,4 +1,4 @@
-import { SearchIcon, StarIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
@@ -118,13 +118,13 @@ export const Search: FC = () => {
               />
             </div>
             <Typography
-              onClick={() => setSelectNetwork(true)}
+              onClick={() => setSelectNetwork((prev) => !prev)}
               as="button"
               weight={600}
               variant="sm"
-              className="bg-neutral-700 hover:bg-neutral-600 px-3 py-2 rounded-lg text-neutral-300 hover:text-neutral-200 cursor-pointer"
+              className="flex items-center gap-1 bg-neutral-700 hover:bg-neutral-600 pl-3 pr-2 py-2 rounded-lg text-neutral-300 hover:text-neutral-200 cursor-pointer"
             >
-              {chains[chainId].shortName.toUpperCase()}
+              {chains[chainId].shortName.toUpperCase()} <ChevronDownIcon width={16} height={16} />
             </Typography>
           </div>
           <div
@@ -243,7 +243,7 @@ const Row: FC<{ currency: Type; onClick?(): void; isNetwork?: boolean }> = ({
 
   return (
     <a
-      href={`https://sushi.com/swap?token0=${currency.wrapped.address}&token1=0x0000000000000000000000000000000000000000&chainId=${currency.chainId}`}
+      href={`https://sushi.com/swap?token1=${currency.wrapped.address}&token0=0x0000000000000000000000000000000000000000&chainId=${currency.chainId}`}
     >
       {content}
     </a>
