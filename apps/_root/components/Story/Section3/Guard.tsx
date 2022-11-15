@@ -18,7 +18,7 @@ export const Guard: FC = () => {
               <div className="flex flex-col items-center lg:items-start">
                 <motion.div layoutId={`custody-title`} className="flex flex-col items-center lg:items-start z-[2001]">
                   <Typography variant="h1" weight={600} className="text-center lg:text-left">
-                    Keep more profits and earn gas refund.
+                    Keep more profits and earn gas refunds.
                   </Typography>
                   <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
                     Enable SushiGuard and say no to MEV attacks.

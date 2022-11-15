@@ -14,7 +14,7 @@ export const Hero: FC = () => {
   return (
     <section>
       <Container maxWidth="5xl" className="mx-auto px-4">
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
             <Typography variant="hero" weight={800} className="text-neutral-50 leading-[3.5rem]">
               Buy and Sell Instantly on Sushi.
