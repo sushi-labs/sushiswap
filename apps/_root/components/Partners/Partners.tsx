@@ -20,24 +20,26 @@ export const Partners: FC = () => {
             Finance.
           </Typography>
         </div>
-        <div className="flex gap-x-4 gap-y-4 justify-center flex-wrap">
-          {PARTNERS.slice(0, 4).map((el) => (
-            <Typography
-              variant="lg"
-              key={el}
-              weight={500}
-              className="flex text-center whitespace-nowrap bg-white/[0.04] rounded-xl px-10 py-3"
-            >
-              {el}
-            </Typography>
-          ))}
-          <div className="flex gap-x-4 gap-y-4 justify-center flex-wrap">
+        <div className="flex flex-col gap-y-10">
+          <div className="flex justify-center flex-wrap divide-x-2 divide-neutral-600">
+            {PARTNERS.slice(0, 4).map((el) => (
+              <Typography
+                variant="lg"
+                key={el}
+                weight={500}
+                className="cursor-pointer transition-all flex text-center whitespace-nowrap border-slate-200/5 px-10 hover:text-blue"
+              >
+                {el}
+              </Typography>
+            ))}
+          </div>
+          <div className="flex justify-center flex-wrap divide-x-2 divide-neutral-600">
             {PARTNERS.slice(4, 7).map((el) => (
               <Typography
                 variant="lg"
                 key={el}
                 weight={500}
-                className="flex text-center whitespace-nowrap bg-white/[0.04] rounded-xl px-10 py-3"
+                className="cursor-pointer transition-all flex text-center whitespace-nowrap border-slate-200/5 px-10 hover:text-blue"
               >
                 {el}
               </Typography>
