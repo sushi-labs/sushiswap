@@ -1,5 +1,6 @@
 import { useInterval } from '@sushiswap/hooks'
 import { Container, Typography } from '@sushiswap/ui'
+import { HeroSVG } from 'components/SVG/HeroSVG'
 import { FC, useState } from 'react'
 
 import { Parallax } from './Parallax'
@@ -15,7 +16,7 @@ export const Hero: FC = () => {
   return (
     <section className="relative">
       <Container maxWidth="5xl" className="mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
           <div className="flex flex-col">
             <Typography variant="hero" weight={800} className="text-neutral-50 leading-[3.5rem]">
               Buy and Sell Instantly on Sushi.
@@ -30,7 +31,9 @@ export const Hero: FC = () => {
               <Search />
             </div>
           </div>
-          <div className="">{/*<HeroSVG width={496} height={312} />*/}</div>
+          <div className="hidden lg:block">
+            <HeroSVG width={496} height={312} />
+          </div>
         </div>
       </Container>
       <Parallax />
