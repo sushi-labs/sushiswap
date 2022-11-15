@@ -38,7 +38,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { tokenAddress, tokenData, tokenIcon, chainId, listType } = req.body as Body
 
-  if (!tokenData?.decimals || !tokenData.name || !tokenData.symbol || !tokenIcon || !listType || !chainId) {
+  if (
+    tokenData?.decimals === undefined ||
+    !tokenData.name ||
+    !tokenData.symbol ||
+    !tokenIcon ||
+    !listType ||
+    !chainId
+  ) {
     res.status(500).json({ error: 'Invalid data submitted.' })
     return
   }
