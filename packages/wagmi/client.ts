@@ -1,4 +1,4 @@
-import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
+// import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { otherChains } from '@sushiswap/wagmi-config'
 import { BigNumber } from 'ethers'
 import { allChains, Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
@@ -97,6 +97,6 @@ export const client: Client = createClient({
       },
     }),
     // @ts-ignore
-    new SafeConnector({ chains }),
+    // new SafeConnector({ chains }),
   ],
 })

@@ -1,2 +1,6 @@
 export { bentoBoxV1Abi } from './BentoBoxV1'
 export { constantProductPoolAbi } from './ConstantProductPool'
+export { constantProductPoolFactoryAbi } from './ConstantProductPoolFactory'
+export { masterChefV1Abi } from './MasterChef'
+export { masterChefV2Abi } from './MasterChefV2'
+export { miniChefAbi } from './MiniChefV2'

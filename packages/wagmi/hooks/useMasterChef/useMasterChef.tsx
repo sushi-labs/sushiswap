@@ -5,7 +5,7 @@ import { NotificationData } from '@sushiswap/ui'
 import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
 import { erc20ABI, useAccount, useContractReads } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { ReadContractConfig, ReadContractsConfig, SendTransactionResult } from 'wagmi/actions'
 
 import {
   getMasterChefContractConfig,
@@ -55,7 +55,7 @@ export const useMasterChef: UseMasterChef = ({
   const v2Config = useMemo(() => getMasterChefContractV2Config(chainId), [chainId])
 
   const contracts = useMemo(() => {
-    const inputs = []
+    const inputs: ReadContractConfig[] = []
 
     if (!chainId) return []
 
@@ -100,7 +100,8 @@ export const useMasterChef: UseMasterChef = ({
     const copy = data ? [...data] : []
     const _sushiBalance =
       Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled ? (copy.shift() as unknown as BigNumber) : undefined
-    const _balance = !!address && enabled && config.address ? (copy.shift()?.amount as unknown as BigNumber) : undefined
+    const _balance =
+      !!address && enabled && config.address ? (copy.shift() as unknown as { amount: BigNumber })?.amount : undefined
     const _pendingSushi = enabled && !!v2Config.address ? (copy.shift() as unknown as BigNumber) : undefined
 
     const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
@@ -136,7 +137,7 @@ export const useMasterChef: UseMasterChef = ({
   )
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!address || !chainId || !data || !contract) return
       if (chef === Chef.MASTERCHEF) {
         setRequest({

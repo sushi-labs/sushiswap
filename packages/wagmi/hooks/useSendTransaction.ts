@@ -16,12 +16,12 @@ export function useSendTransaction({
   prepare,
   enabled = true,
 }: Omit<NonNullable<Args>, 'request' | 'mode'> & {
-  prepare: (request: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => void
+  prepare: (request: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => void
   enabled?: boolean
 }) {
-  const [request, setRequest] = useState<Partial<TransactionRequest & { to: string }>>({})
+  const [request, setRequest] = useState<(TransactionRequest & { to: string }) | undefined>()
   const { config } = usePrepareSendTransaction({
-    request: request.to ? { ...request, to: request.to as string } : undefined,
+    request,
     chainId,
     enabled,
   })

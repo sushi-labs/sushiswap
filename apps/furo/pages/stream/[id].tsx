@@ -148,21 +148,21 @@ const _Streams: FC = () => {
               <div className="flex gap-2">
                 <TransferModal
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   chainId={chainId}
                 />
                 <UpdateModal
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   chainId={chainId}
                 />
                 <CancelModal
                   title="Cancel Stream"
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   fn="cancelStream"
                   chainId={chainId}
                 />

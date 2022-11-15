@@ -6,7 +6,7 @@ import { fetchToken, FetchTokenArgs, FetchTokenResult } from 'wagmi/actions'
 export type FetchTokensArgs = { tokens: FetchTokenArgs[] }
 export type FetchTokensResult = FetchTokenResult[]
 export type UseTokensArgs = Partial<FetchTokensArgs>
-export type UseTokensConfig = Parameters<typeof useQuery>['2']
+export type UseTokensConfig = Partial<Parameters<typeof useQuery>['2']>
 
 export const queryKey = (tokens?: FetchTokensArgs['tokens']) => {
   return (
