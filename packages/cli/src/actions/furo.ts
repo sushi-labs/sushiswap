@@ -62,10 +62,14 @@ export async function furo(args: Arguments) {
     })
   )
 
+  let totalTvl = 0
   const tokensTVL = tokens
     .map((token) => {
       const tokenAmount = (Number(token.liquidityShares) / 10 ** Number(token.decimals)) * rebases[token.id]
       const tokenTVL = tokenAmount * symbolToPrice[token.symbol]
+      if (!isNaN(tokenTVL)) {
+        totalTvl += tokenTVL
+      }
       return {
         chain: ChainId[token.chainId],
         symbol: token.symbol,
@@ -81,6 +85,11 @@ export async function furo(args: Arguments) {
     head: [chalk.white('Chain'), chalk.white('Symbol'), chalk.white('TVL')],
     colWidths: [20, 20, 20],
   })
+  table.push([
+    chalk.green('TOTAL'),
+    chalk.green('-'),
+    chalk.green(totalTvl.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'),
+  ])
   for (const token of tokensTVL) {
     table.push([token.chain, token.symbol, token.tvl.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'])
   }
