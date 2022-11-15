@@ -11,7 +11,7 @@ export const BuildWealth: FC = () => {
         <div className="flex flex-col gap-[120px]">
           <AnimatedTitle className="text-left">
             Build <span className="text-blue">wealth</span> with Sushi.{' '}
-            <span className="text-slate-400">{`It doesnt stop at trading.`}</span>
+            <span className="text-neutral-400">{`It doesnt stop at trading.`}</span>
           </AnimatedTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
             <div className="flex flex-col gap-2">

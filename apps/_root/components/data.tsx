@@ -42,7 +42,7 @@ export const SUPPORT_CARDS: CardInterface[] = [
     category: 'Sushi Academy',
     title: 'The interest-bearing DeFi base layer',
     pointOfInterest: 260,
-    backgroundColor: 'bg-slate-800',
+    backgroundColor: 'bg-neutral-800',
     textColor: 'text-white',
     icon: BookOpenIcon,
   },

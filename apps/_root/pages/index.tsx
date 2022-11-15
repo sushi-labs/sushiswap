@@ -3,7 +3,7 @@ import { TradeType } from '@sushiswap/core-sdk'
 import { Native, SUSHI, tryParseAmount } from '@sushiswap/currency'
 import { formatNumber, formatUSD } from '@sushiswap/format'
 import sushiData from '@sushiswap/sushi-data'
-import { Container, Currency, Typography } from '@sushiswap/ui'
+import { Container, Typography } from '@sushiswap/ui'
 import { usePrices, useTrade } from '@sushiswap/wagmi'
 import { useTokens } from 'lib/state/token-lists'
 import React, { useMemo } from 'react'
@@ -92,14 +92,11 @@ const Index = ({ stats }) => {
         <Container maxWidth="5xl" className="mx-auto">
           <div className="grid grid-cols-2 md:flex md:justify-between my-[120px] gap-10">
             <div className="flex items-center gap-3 px-6 lg:px-0">
-              <div className="min-w-[42px] min-h-[42px]">
-                <Currency.Icon currency={SUSHI[ChainId.ETHEREUM]} width={42} height={42} />
-              </div>
               <div className="flex flex-col justify-center gap-1">
                 <Typography variant="h2" weight={600}>
                   {price.formatted}
                 </Typography>
-                <Typography variant="sm" weight={400} className="text-slate-400 -mt-0.5">
+                <Typography variant="sm" weight={400} className="text-neutral-400 -mt-0.5">
                   SUSHI Price
                 </Typography>
               </div>
@@ -109,7 +106,7 @@ const Index = ({ stats }) => {
                 <Typography variant="h2" weight={600}>
                   {liquidity.formatted}
                 </Typography>
-                <Typography variant="sm" weight={400} className="text-slate-400 -mt-0.5">
+                <Typography variant="sm" weight={400} className="text-neutral-400 -mt-0.5">
                   Total Liquidity
                 </Typography>
               </div>
@@ -119,7 +116,7 @@ const Index = ({ stats }) => {
                 <Typography variant="h2" weight={600}>
                   {volume.formatted}
                 </Typography>
-                <Typography variant="sm" weight={400} className="text-slate-400 -mt-0.5">
+                <Typography variant="sm" weight={400} className="text-neutral-400 -mt-0.5">
                   Total Volume
                 </Typography>
               </div>
@@ -129,7 +126,7 @@ const Index = ({ stats }) => {
                 <Typography variant="h2" weight={600}>
                   {pairs.formatted}
                 </Typography>
-                <Typography variant="sm" weight={400} className="text-slate-400 -mt-0.5">
+                <Typography variant="sm" weight={400} className="text-neutral-400 -mt-0.5">
                   Total Pairs
                 </Typography>
               </div>
@@ -141,14 +138,14 @@ const Index = ({ stats }) => {
       <Partners />
       <Story />
 
-      <div className="flex flex-col gap-2 border-t border-slate-200/5">
+      <div className="flex flex-col gap-2 border-t border-neutral-200/5">
         <BuildWealth />
         <section className="sm:py-20 py-40 px-4">
           <Container maxWidth="5xl" className="mx-auto">
             <div className="flex flex-col gap-20">
               <AnimatedTitle className="text-left">
                 Build <span className="text-pink">the future</span> with Sushi.{' '}
-                <span className="text-slate-400">{`We invite all developers to explore Sushi's frameworks.`}</span>
+                <span className="text-neutral-400">{`We invite all developers to explore Sushi's frameworks.`}</span>
               </AnimatedTitle>
               <AnimatedCards data={PRODUCT_CARDS} />
             </div>

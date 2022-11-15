@@ -123,6 +123,10 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   }, [src])
 
   if (error) {
+    if (disableLink) {
+      return <GradientCircleIcon width={rest.width} height={rest.height} />
+    }
+
     return (
       <Link.External className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
         <GradientCircleIcon width={rest.width} height={rest.height} />

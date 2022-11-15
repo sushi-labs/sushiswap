@@ -22,9 +22,7 @@ export const Item: FC<{ id: string; onSelect(id?: string): void; data: CardInter
         style={{ pointerEvents: 'auto' }}
         className="z-[2000] fixed bg-[rgba(0,0,0,0.6)] will-change-[opacity] inset-0 w-full"
         onClick={() => onSelect()}
-      >
-        {/*<Link to="/" />*/}
-      </motion.div>
+      />
       <article className="w-full h-full pointer-events-none top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed z-[2001] overflow-hidden px-[40px] py-0 flex items-center justify-center">
         <motion.div
           layoutId={`card-container-${id}`}
@@ -55,7 +53,7 @@ export const Item: FC<{ id: string; onSelect(id?: string): void; data: CardInter
             </Typography>
           </motion.div>
           <motion.div
-            className="p-[280px_35px_35px_35px] max-w-[700px] w-[90vw] prose !prose-invert prose-slate"
+            className="p-[280px_35px_35px_35px] max-w-[700px] w-[90vw] prose !prose-invert prose-neutral"
             animate
           >
             <h3>What is the BentoBox?</h3>

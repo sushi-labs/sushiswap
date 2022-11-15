@@ -16,13 +16,13 @@ export const Hero: FC = () => {
       <Container maxWidth="5xl" className="mx-auto px-4">
         <div className="grid grid-cols-2 gap-6">
           <div className="flex flex-col">
-            <Typography variant="hero" weight={800} className="text-slate-50">
+            <Typography variant="hero" weight={800} className="text-neutral-50 leading-[3.5rem]">
               Buy and Sell Instantly on Sushi.
             </Typography>
-            <Typography variant="hero" weight={700} className="text-blue">
+            <Typography variant="hero" weight={800} className="text-blue leading-[3.5rem]">
               {TITLES[index]}.
             </Typography>
-            <Typography variant="lg" className="text-slate-400 mt-3">
+            <Typography variant="lg" className="text-neutral-400 mt-3">
               No registration needed. Over 400 tokens to trade at your fingertips.
             </Typography>
             <div className="mt-10">
