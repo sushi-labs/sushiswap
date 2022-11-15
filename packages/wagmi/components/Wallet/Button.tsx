@@ -11,6 +11,7 @@ import {
   Loader,
   Menu,
   MetamaskIcon,
+  TrustWalletIcon,
   Typography,
   WalletConnectIcon,
 } from '@sushiswap/ui'
@@ -23,6 +24,7 @@ import { Account } from '..'
 const Icons: Record<string, ReactNode> = {
   Injected: <ChevronDoubleDownIcon width={16} height={16} />,
   MetaMask: <MetamaskIcon width={16} height={16} />,
+  'Trust Wallet': <TrustWalletIcon width={16} height={16} />,
   WalletConnect: <WalletConnectIcon width={16} height={16} />,
   'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
   Safe: <GnosisSafeIcon width={16} height={16} />,
