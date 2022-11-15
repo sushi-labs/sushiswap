@@ -25,6 +25,12 @@ export const TRIDENT_CHAINS = [
   ChainId.KAVA,
 ]
 
+
+export const QUICKSWAP_SUPPORTED_CHAINS = [
+  ChainId.POLYGON,
+]
+
+
 export const SUSHI_SUPPORTED_CHAINS = Array.from(new Set([...SUSHISWAP_CHAINS, ...TRIDENT_CHAINS]))
 
 
@@ -66,6 +72,10 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
 }
 
+
+export const QUICKSWAP_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.POLYGON]: 'sameepsi/quickswap06',
+}
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging'
 export const MASTERCHEF_V2_SUBGRAPH_NAME = 'sushiswap/master-chefv2'

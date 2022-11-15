@@ -56,17 +56,62 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
   }
 }
 
+query QuickSwapPairs(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: QuickSwap_Pair_filter
+  $block: QuickSwap_Block_height
+  $orderBy: QuickSwap_Pair_orderBy = reserveUSD
+  $orderDirection: QuickSwap_OrderDirection = desc
+) {
+  QuickSwap_pairs(
+    first: $first
+    skip: $skip
+    where: $where
+    block: $block
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+  ) {
+    id
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    reserve0
+    reserve1
+    liquidity: totalSupply
+    token0Price
+    token1Price
+    liquidityUSD: reserveUSD
+    liquidityNative: reserveETH
+    volumeUSD
+    createdAtTimestamp
+    createdAtBlock: createdAtBlockNumber
+  }
+}
 
-query PairsVolumeFee($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height,
-$orderBy: Pair_orderBy = volumeUSD, $orderDirection: OrderDirection = desc) {
+query PairsVolumeFee(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: Pair_filter
+  $block: Block_height
+  $orderBy: Pair_orderBy = volumeUSD
+  $orderDirection: OrderDirection = desc
+) {
   pairs(first: $first, skip: $skip, where: $where, block: $block, orderBy: $orderBy, orderDirection: $orderDirection) {
     id
     volumeUSD
     feesUSD
   }
 }
-
-
 
 query Tokens($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
   tokens(first: $first, skip: $skip, where: $where, block: $block) {
@@ -92,7 +137,7 @@ query MasterChefV2Rewarders(
   $where: MasterChef_MasterChefV2Rewarder_filter
   $block: MasterChef_Block_height
 ) {
-  rewarders:MasterChef_masterChefV2Rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+  rewarders: MasterChef_masterChefV2Rewarders(first: $first, skip: $skip, where: $where, block: $block) {
     id
     rewardToken
     rewardPerSecond
@@ -105,7 +150,7 @@ query MiniChefRewarders(
   $where: MiniChef_Rewarder_filter
   $block: MiniChef_Block_height
 ) {
-  rewarders:MiniChef_rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+  rewarders: MiniChef_rewarders(first: $first, skip: $skip, where: $where, block: $block) {
     id
     rewardToken
     rewardPerSecond
