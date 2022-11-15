@@ -17,22 +17,13 @@ export const SUSHISWAP_CHAINS = [
   ChainId.BOBA,
 ]
 
+export const TRIDENT_CHAINS = [ChainId.POLYGON, ChainId.OPTIMISM, ChainId.METIS, ChainId.KAVA]
 
-export const TRIDENT_CHAINS = [
-  ChainId.POLYGON,
-  ChainId.OPTIMISM,
-  ChainId.METIS,
-  ChainId.KAVA,
-]
+export const UNISWAP_SUPPORTED_CHAINS = [ChainId.ETHEREUM]
 
-
-export const QUICKSWAP_SUPPORTED_CHAINS = [
-  ChainId.POLYGON,
-]
-
+export const QUICKSWAP_SUPPORTED_CHAINS = [ChainId.POLYGON]
 
 export const SUSHI_SUPPORTED_CHAINS = Array.from(new Set([...SUSHISWAP_CHAINS, ...TRIDENT_CHAINS]))
-
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
 
@@ -72,6 +63,9 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
 }
 
+export const UNISWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.ETHEREUM]: 'uniswap/uniswap-v2',
+}
 
 export const QUICKSWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.POLYGON]: 'sameepsi/quickswap06',

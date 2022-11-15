@@ -56,15 +56,15 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
   }
 }
 
-query QuickSwapPairs(
+query V2Pairs(
   $first: Int = 1000
   $skip: Int = 0
-  $where: QuickSwap_Pair_filter
-  $block: QuickSwap_Block_height
-  $orderBy: QuickSwap_Pair_orderBy = reserveUSD
-  $orderDirection: QuickSwap_OrderDirection = desc
+  $where: V2_Pair_filter
+  $block: V2_Block_height
+  $orderBy: V2_Pair_orderBy
+  $orderDirection: V2_OrderDirection
 ) {
-  QuickSwap_pairs(
+  V2_pairs(
     first: $first
     skip: $skip
     where: $where

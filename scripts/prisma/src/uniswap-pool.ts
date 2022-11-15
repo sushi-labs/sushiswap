@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, PairsQuery, V2PairsQuery } from '../.graphclient'
-import { GRAPH_HOST, QUICKSWAP_SUPPORTED_CHAINS } from './config'
+import { GRAPH_HOST, QUICKSWAP_SUPPORTED_CHAINS, UNISWAP_V2_SUBGRAPH_NAME, UNISWAP_SUPPORTED_CHAINS } from './config'
 import { mergePools } from './entity/pool/load'
 import { filterPools } from './entity/pool/transform'
 import { createTokens } from './entity/token/load'
@@ -10,7 +10,7 @@ import { filterTokensToCreate } from './entity/token/transform'
 
 const client = new PrismaClient()
 
-const PROTOCOL = 'QuickSwap'
+const PROTOCOL = 'UniSwap'
 const VERSION = 'V2'
 const CONSTANT_PRODUCT_POOL = 'CONSTANT_PRODUCT_POOL'
 
@@ -20,7 +20,7 @@ async function main() {
 
   // EXTRACT
   const exchanges = await extract()
-  console.log(`EXTRACT - Pairs extracted from ${exchanges.length} different subgraphs`)
+  console.log(`EXTRACT - Pairs extracted from 1 subgraphs`)
 
   // TRANSFORM
   const { tokens, pools } = await transform(exchanges)
@@ -35,34 +35,38 @@ async function main() {
 
 async function extract() {
   console.log(
-    `Fetching pools from ${PROTOCOL}, chains: ${QUICKSWAP_SUPPORTED_CHAINS.map((chainId) => chainName[chainId]).join(
+    `Fetching pools from ${PROTOCOL}, chains: ${UNISWAP_SUPPORTED_CHAINS.map((chainId) => chainName[chainId]).join(
       ', '
     )}`
   )
-  const v2Requests = QUICKSWAP_SUPPORTED_CHAINS.map((chainId) => {
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: QUICKSWAP_SUPPORTED_CHAINS[chainId] })
-    const data = []
-    const size = 1000
-    // TODO: use auto pagination when it works, currently skip only works up to 5000, and theres 40k pools on qs
-    for (let i = 0; i < 6; i++) {
-      data.push(sdk.V2Pairs({ first: size, skip: i * size, where: {
-        reserveUSD_gt: 50
-      },
-      orderBy: 'reserveUSD',
-      orderDirection: 'desc'
-    }).catch(() => undefined))
-    }
-    return { chainId, data }
-  })
-
-  return await Promise.all(
-    [...v2Requests].map((request) =>
-      Promise.all(request.data).then((data) => {
-        const pairs = data.filter((d) => d !== undefined).flat()
-        return { chainId: request.chainId, data: pairs }
+  const chainId = ChainId.ETHEREUM
+  const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: UNISWAP_V2_SUBGRAPH_NAME[chainId] })
+  if (!UNISWAP_V2_SUBGRAPH_NAME[chainId]) {
+    throw new Error(`Subgraph not found: ${chainId} ${UNISWAP_V2_SUBGRAPH_NAME[chainId]}`)
+  }
+  console.log(UNISWAP_V2_SUBGRAPH_NAME[chainId])
+  const data: (V2PairsQuery | undefined)[] = []
+  let pairCount = 0
+  let cursor: string = ''
+  do {
+    const where = cursor !== '' ? { reserveUSD_gt: 250, id_gt: cursor } : { reserveUSD_gt: 250 }
+    const request = await sdk
+      .V2Pairs({
+        first: 1000,
+        where,
       })
-    )
-  )
+      .catch((e: string) => {
+        console.log({ e })
+        return undefined
+      })
+    const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''
+    cursor = newCursor
+    console.log(`New cursor: ${newCursor}`)
+    pairCount += request?.V2_pairs.length ?? 0
+    data.push(request)
+  } while (cursor !== '')
+  console.log('Pair count:', pairCount)
+  return [{ chainId, data }]
 }
 
 async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefined)[] }[]): Promise<{
