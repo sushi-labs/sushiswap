@@ -46,7 +46,7 @@ export const Search: FC = () => {
   const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
   const debouncedQuery = useDebounce(query, 500)
   const [selectNetwork, setSelectNetwork] = useState(false)
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
 
   useOnClickOutside(ref, () => {
     setOpen(false)
