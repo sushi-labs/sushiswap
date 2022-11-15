@@ -79,7 +79,6 @@ model Pool {
   // @@index(fields: [chainId, protocol, type, liquidityUSD])
   // @@index(fields: [chainId, protocol, type, totalApr])
 
-  // @@id([chainId, address])
   @@unique([chainId, address])
   @@index(fields: [id])
   @@index(fields: [id, token0Id, token1Id])

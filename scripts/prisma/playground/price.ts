@@ -11,12 +11,6 @@ async function main() {
       }
     },
   })
-  // console.log(`All prices for tokens with symbol SUSHI:`)
-  // prices.forEach((result) => {
-  //   if (Number(result.usdPrice) > 0) {
-  //   console.log(` ${result.address} ${result.network} ${result.usdPrice}`)
-  //   }
-  // })
   console.log(`Total number of tokens with usdPrice > 0: ${prices}`)
 }
 

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import { Block, getBuiltGraphSDK as graphClientSdk, Pair } from '@sushiswap/graph-client'
+import { Block, getBuiltGraphSDK as graphClientSDK, Pair } from '@sushiswap/graph-client'
 import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK } from '../.graphclient'
@@ -15,11 +15,12 @@ async function main() {
 
   // EXTRACT
   const { pairs, pairs1d, pairs1w } = await extract()
-  // const test = 
-  console.log(`EXTRACT: extracted 
-  pairs(${pairs.map(p => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)}) 
-  pairs1d(${pairs1d.map(p => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)})
-  pairs1w(${pairs1w.map(p => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)})`)
+  console.log(
+    `EXTRACT: extracted 
+    pairs(${pairs.map((p) => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)}) 
+    pairs1d(${pairs1d.map((p) => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)})
+    pairs1w(${pairs1w.map((p) => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)}) `
+  )
 
   // TRANSFORM
   const transformed = transform(pairs, pairs1d, pairs1w)
@@ -32,10 +33,10 @@ async function main() {
 }
 
 async function extract() {
-  const graphClient = graphClientSdk()
+  const graphClientSdk = graphClientSDK()
   const [{ oneDayBlocks }, { oneWeekBlocks }] = await Promise.all([
-    graphClient.OneDayBlocks({ chainIds: SUSHISWAP_CHAINS }),
-    graphClient.OneWeekBlocks({ chainIds: SUSHISWAP_CHAINS }),
+    graphClientSdk.OneDayBlocks({ chainIds: SUSHISWAP_CHAINS }),
+    graphClientSdk.OneWeekBlocks({ chainIds: SUSHISWAP_CHAINS }),
   ])
 
   const pairs = await extractPairs()
