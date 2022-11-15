@@ -8,6 +8,7 @@ Sushiswap multirouter
     - Takes gas prices into account
     - Makes both Exact In and Exact Out multiroutes
     - Routes in the multiroute can be split or merged at arbitrary points
+    - Has internal pricing calculation
 
 ## Basics
 The main idea of multirouting in Tines is:
@@ -40,3 +41,90 @@ How optimal is this approach
             1. Really large imbalances are resolved by arbitrage bots, a regular user is unlikely to catch them
             2. Making full use of big imbalances necessitates the use of circular routes that are not supported by neigher on-chain routes (aka route processors).
             3. Small imbalances are edges with negative weights from the point of view of Dijkstra algorithm that is used by Tines for single routing. This algorithm doesn't find the optimal path in graphs that have edges with negative weights. So, such imbalances can be found and used in route occasionally, Tines doesn't guarantee finding and using all of them
+
+## Interface
+
+Each pool for Tines is presented by an instance that extends RPool
+
+```
+class RPool {
+  // Calculates pool's output having input amount
+  // amountIn - input amount 
+  // direction - direction of swap. true for Token 0 to Token 1, false otherwise
+  // Returns {out: output amount, gasSpent: gas consumption estimation for the swap}
+  // Must throw if the rest of output liquidity is lesser than minLiquidity
+  abstract calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number }
+
+  // Calculates pool's input having output amount
+  // amountOut - output amount 
+  // direction - direction of swap. true for Token 0 to Token 1, false otherwise
+  // Returns {inp: input amount, gasSpent: gas consumption estimation for the swap}
+  // Must return Number.POSITIVE_INFINITY if amountOut is more than the pool can return
+  abstract calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number }
+
+  // Returns current price in the pool without taking fee into account
+  // direction = true - price(Token0)/price(Token1),
+  // direction = false - price(Token1)/price(Token0)
+  abstract calcCurrentPriceWithoutFee(direction: boolean): number
+}
+```
+
+Tines interface:
+
+```
+
+// Creates multiroute with amountIn input tokens
+function findMultiRouteExactIn(
+  from: RToken,                                 // input token 
+  to: RToken,                                   // output token
+  amountIn: BigNumber | number,                 // amount of input tokens
+  pools: RPool[],                               // List of pools that could be used in the multiroute
+  baseTokenOrNetworks: RToken | NetworkInfo[],  // If RToken, then the main token of the network, used for gas prices
+                                                // For example, WETH for Ethereum. 
+                                                // If NetworkInfo[], then info about all used networks.
+                                                // Used for making multiroutes between several networks using bridges
+  gasPrice?: number,                            // If baseTokenOrNetworks is RToken, then gasPrice - price of gas,
+                                                // in baseTokens. Otherwise undefined
+  streams?: number | number[]                   // Number of streams. Usually shuld be ignored.
+                                                // Default value is calculated, up to 100
+): MultiRoute
+
+// The same as findMultiRouteExactIn, just creates multiroute that returns exact amountOut output tokens
+function findMultiRouteExactOut(
+  from: RToken,
+  to: RToken,
+  amountOut: BigNumber | number,
+  pools: RPool[],
+  baseTokenOrNetworks: RToken | NetworkInfo[],
+  gasPrice?: number,
+  streams?: number | number[]
+): MultiRoute
+
+// The same as findMultiRouteExactIn, just creates single route
+function findSingleRouteExactIn(
+  from: RToken,
+  to: RToken,
+  amountIn: BigNumber | number,
+  pools: RPool[],
+  baseTokenOrNetworks: RToken | NetworkInfo[],
+  gasPrice?: number
+): MultiRoute
+
+// The same as findMultiRouteExactOut, just creates single route
+function findSingleRouteExactOut(
+  from: RToken,
+  to: RToken,
+  amountOut: BigNumber | number,
+  pools: RPool[],
+  baseTokenOrNetworks: RToken | NetworkInfo[],
+  gasPrice?: number
+): MultiRoute
+
+// Calculates all token prices to baseToken, judging by pools' balances 
+function calcTokenPrices(pools: RPool[], baseToken: RToken): Map<RToken, number>
+
+```
+
+## Further improvements
+
+    - To add route postprocessing: legs rebalancing, low-liquidity legs removing
