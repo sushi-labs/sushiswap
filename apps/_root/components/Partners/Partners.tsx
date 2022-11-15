@@ -1,7 +1,18 @@
 import { Container, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-const PARTNERS = ['Manifold Finance', 'KlimaDAO', 'The Graph', 'Partner 4', 'Partner 5', 'Partner 6', 'Partner 7']
+import { KlimaDaoSVG } from '../SVG/KlimaDaoSVG'
+import { ManifoldLogoSVG } from '../SVG/ManifoldLogoSVG'
+
+const PARTNERS = [
+  { title: 'Manifold Finance', icon: ManifoldLogoSVG },
+  { title: 'KlimaDAO', icon: KlimaDaoSVG },
+  { title: 'The Graph', icon: ManifoldLogoSVG },
+  { title: 'Partner 4', icon: ManifoldLogoSVG },
+  { title: 'Partner 5', icon: ManifoldLogoSVG },
+  { title: 'Partner 6', icon: ManifoldLogoSVG },
+  { title: 'Partner 7', icon: ManifoldLogoSVG },
+]
 
 const INCEPTION_DATE = new Date('08/26/2020')
 
@@ -21,27 +32,27 @@ export const Partners: FC = () => {
           </Typography>
         </div>
         <div className="flex flex-col gap-y-10">
-          <div className="flex justify-center flex-wrap divide-x-2 divide-neutral-600">
-            {PARTNERS.slice(0, 4).map((el) => (
+          <div className="flex justify-center flex-wrap">
+            {PARTNERS.slice(0, 4).map(({ title, icon: Icon }) => (
               <Typography
                 variant="lg"
-                key={el}
+                key={title}
                 weight={500}
-                className="cursor-pointer transition-all flex text-center whitespace-nowrap border-slate-200/5 px-10 hover:text-blue"
+                className="cursor-pointer transition-all flex items-center gap-3 text-center whitespace-nowrap border-slate-200/5 px-10 hover:text-blue"
               >
-                {el}
+                <Icon width={24} height={24} /> {title}
               </Typography>
             ))}
           </div>
-          <div className="flex justify-center flex-wrap divide-x-2 divide-neutral-600">
-            {PARTNERS.slice(4, 7).map((el) => (
+          <div className="flex justify-center flex-wrap">
+            {PARTNERS.slice(4, 7).map(({ title, icon: Icon }) => (
               <Typography
                 variant="lg"
-                key={el}
+                key={title}
                 weight={500}
-                className="cursor-pointer transition-all flex text-center whitespace-nowrap border-slate-200/5 px-10 hover:text-blue"
+                className="cursor-pointer transition-all flex items-center gap-3 text-center whitespace-nowrap border-slate-200/5 px-10 hover:text-blue"
               >
-                {el}
+                <Icon width={24} height={24} /> {title}
               </Typography>
             ))}
           </div>
