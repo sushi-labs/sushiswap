@@ -1,11 +1,11 @@
+import { stargateFeeLibraryV03Abi, stargatePoolAbi } from '@sushiswap/abi'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
-import STARGATE_FEE_LIBRARY_V03_ABI from 'abis/stargate-fee-library-v03.json'
-import STARGATE_POOL_ABI from 'abis/stargate-pool.json'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { useContractRead, useContractReads } from 'wagmi'
+import { Address, useContractRead, useContractReads } from 'wagmi'
 
 export const useBridgeFees = ({
   amount,
@@ -27,20 +27,20 @@ export const useBridgeFees = ({
       {
         address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
         functionName: 'getChainPath',
-        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]],
-        abi: STARGATE_POOL_ABI,
+        args: [STARGATE_CHAIN_ID[dstChainId], BigNumber.from(STARGATE_POOL_ID[dstChainId][dstBridgeToken.address])],
+        abi: stargatePoolAbi,
         chainId: srcChainId,
       },
       {
         address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
         functionName: 'feeLibrary',
-        abi: STARGATE_POOL_ABI,
+        abi: stargatePoolAbi,
         chainId: srcChainId,
       },
       {
         address: STARGATE_POOL_ADDRESS[srcChainId][srcBridgeToken.address],
         functionName: 'sharedDecimals',
-        abi: STARGATE_POOL_ABI,
+        abi: stargatePoolAbi,
         chainId: srcChainId,
       },
     ],
@@ -55,19 +55,19 @@ export const useBridgeFees = ({
     return localDecimals > sharedDecimals
       ? amount.asFraction.divide(JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(localDecimals - sharedDecimals)))
       : amount.asFraction.multiply(JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(sharedDecimals - localDecimals)))
-  }, [amount, stargatePoolResults?.[2]])
+  }, [amount, stargatePoolResults])
 
   const { data: getFeesResults } = useContractRead({
     address: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
     args: [
-      STARGATE_POOL_ID[srcChainId][srcBridgeToken.address],
-      STARGATE_POOL_ID[dstChainId][dstBridgeToken.address],
+      BigNumber.from(STARGATE_POOL_ID[srcChainId][srcBridgeToken.address]),
+      BigNumber.from(STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]),
       STARGATE_CHAIN_ID[dstChainId],
-      contract.address,
-      adjusted?.quotient?.toString(),
+      contract.address as Address,
+      BigNumber.from(adjusted?.quotient?.toString()),
     ],
-    abi: STARGATE_FEE_LIBRARY_V03_ABI,
+    abi: stargateFeeLibraryV03Abi,
     chainId: srcChainId,
     enabled: Boolean(
       adjusted && contract && srcChainId && dstChainId && srcChainId !== dstChainId && stargatePoolResults?.[1]
@@ -120,5 +120,5 @@ export const useBridgeFees = ({
       Amount.fromRawAmount(srcBridgeToken, _lpFee),
       Amount.fromRawAmount(srcBridgeToken, _protocolFee),
     ]
-  }, [getFeesResults, srcBridgeToken, stargatePoolResults?.[2]])
+  }, [amount.currency.decimals, getFeesResults, srcBridgeToken, stargatePoolResults])
 }

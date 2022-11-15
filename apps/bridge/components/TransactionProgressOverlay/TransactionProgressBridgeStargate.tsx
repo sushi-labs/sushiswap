@@ -75,7 +75,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
           createInfoNotification({
             type: 'stargate',
             chainId: srcChainId,
-            txHash: '',
+            txHash: '0x',
             href: lzLink,
             summary: {
               pending: '',

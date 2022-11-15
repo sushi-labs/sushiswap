@@ -1,5 +1,6 @@
 import { Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
+import { ChainId } from '@sushiswap/chain'
 import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { NotificationData } from '@sushiswap/ui'
 import { BigNumber } from 'ethers'
@@ -8,8 +9,9 @@ import { erc20ABI, useAccount, useContractReads } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import {
-  getMasterChefContractConfig,
-  getMasterChefContractV2Config,
+  MASTERCHEF_ADDRESS,
+  MASTERCHEF_V2_ADDRESS,
+  MINICHEF_ADDRESS,
   useMasterChefContract,
 } from '../useMasterChefContract'
 import { useSendTransaction } from '../useSendTransaction'
@@ -51,42 +53,110 @@ export const useMasterChef: UseMasterChef = ({
 }) => {
   const { address } = useAccount()
   const contract = useMasterChefContract(chainId, chef)
-  const config = useMemo(() => getMasterChefContractConfig(chainId, chef), [chainId, chef])
-  const v2Config = useMemo(() => getMasterChefContractV2Config(chainId), [chainId])
 
   const contracts = useMemo(() => {
-    const inputs = []
+    if (!chainId || !enabled || !address) return []
 
-    if (!chainId) return []
-
-    if (enabled && chainId in SUSHI_ADDRESS) {
-      inputs.push({
-        chainId,
-        address: SUSHI_ADDRESS[chainId],
-        abi: erc20ABI,
-        functionName: 'balanceOf' as const,
-        args: [config.address],
-      })
+    if (chainId === ChainId.ETHEREUM) {
+      return [
+        {
+          chainId: ChainId.ETHEREUM,
+          address: SUSHI_ADDRESS[chainId],
+          abi: erc20ABI,
+          functionName: 'balanceOf',
+          args: [Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]],
+        } as const,
+        {
+          chainId: ChainId.ETHEREUM,
+          address: MASTERCHEF_ADDRESS[chainId],
+          abi: [
+            chef === Chef.MASTERCHEF
+              ? ({
+                  inputs: [
+                    { internalType: 'uint256', name: '', type: 'uint256' },
+                    { internalType: 'address', name: '', type: 'address' },
+                  ],
+                  name: 'userInfo',
+                  outputs: [
+                    { internalType: 'uint256', name: 'amount', type: 'uint256' },
+                    { internalType: 'uint256', name: 'rewardDebt', type: 'uint256' },
+                  ],
+                  stateMutability: 'view',
+                  type: 'function',
+                } as const)
+              : ({
+                  inputs: [
+                    { internalType: 'uint256', name: '', type: 'uint256' },
+                    { internalType: 'address', name: '', type: 'address' },
+                  ],
+                  name: 'userInfo',
+                  outputs: [
+                    { internalType: 'uint256', name: 'amount', type: 'uint256' },
+                    { internalType: 'int256', name: 'rewardDebt', type: 'int256' },
+                  ],
+                  stateMutability: 'view',
+                  type: 'function',
+                } as const),
+          ] as const,
+          functionName: 'userInfo',
+          args: [BigNumber.from(pid), address],
+        } as const,
+        {
+          chainId: ChainId.ETHEREUM,
+          address: MASTERCHEF_V2_ADDRESS[chainId],
+          abi: [
+            {
+              inputs: [
+                { internalType: 'uint256', name: '_pid', type: 'uint256' },
+                { internalType: 'address', name: '_user', type: 'address' },
+              ],
+              name: 'pendingSushi',
+              outputs: [{ internalType: 'uint256', name: 'pending', type: 'uint256' }],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ] as const,
+          functionName: 'pendingSushi',
+          args: [BigNumber.from(pid), address],
+        } as const,
+      ]
     }
 
-    if (enabled && !!address && config.address) {
-      inputs.push({
-        ...config,
-        functionName: 'userInfo' as const,
-        args: [pid, address],
-      })
+    if (chainId in MINICHEF_ADDRESS && chainId in SUSHI_ADDRESS) {
+      return [
+        {
+          chainId,
+          address: SUSHI_ADDRESS[chainId],
+          abi: erc20ABI,
+          functionName: 'balanceOf',
+          args: [MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS]],
+        } as const,
+        {
+          chainId,
+          address: MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS],
+          abi: [
+            {
+              inputs: [
+                { internalType: 'uint256', name: '', type: 'uint256' },
+                { internalType: 'address', name: '', type: 'address' },
+              ],
+              name: 'userInfo',
+              outputs: [
+                { internalType: 'uint256', name: 'amount', type: 'uint256' },
+                { internalType: 'int256', name: 'rewardDebt', type: 'int256' },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            } as const,
+          ] as const,
+          functionName: 'userInfo',
+          args: [BigNumber.from(pid), address],
+        } as const,
+      ] as const
     }
 
-    if (enabled && !!address && !!v2Config.address) {
-      inputs.push({
-        ...v2Config,
-        functionName: 'pendingSushi' as const,
-        args: [pid, address],
-      })
-    }
-
-    return inputs
-  }, [address, chainId, config, enabled, pid, v2Config])
+    return []
+  }, [address, chainId, chef, enabled, pid])
 
   // Can't type runtime...
   const { data, isLoading, isError } = useContractReads({
@@ -97,12 +167,16 @@ export const useMasterChef: UseMasterChef = ({
   })
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
-    const copy = data ? [...data] : []
-    const _sushiBalance =
-      Boolean(chainId && SUSHI_ADDRESS[chainId]) && enabled ? (copy.shift() as unknown as BigNumber) : undefined
-    const _balance = !!address && enabled && config.address ? (copy.shift()?.amount as unknown as BigNumber) : undefined
-    const _pendingSushi = enabled && !!v2Config.address ? (copy.shift() as unknown as BigNumber) : undefined
-
+    const _sushiBalance = data?.[0] ? data?.[0] : undefined
+    const _balance = data?.[1]
+      ? (
+          data?.[1] as {
+            amount: BigNumber
+            rewardDebt: BigNumber
+          }
+        ).amount
+      : undefined
+    const _pendingSushi = data?.[2] ? data?.[2] : undefined
     const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
     const pendingSushi = SUSHI[chainId]
       ? Amount.fromRawAmount(SUSHI[chainId], _pendingSushi ? _pendingSushi.toString() : 0)
@@ -111,7 +185,7 @@ export const useMasterChef: UseMasterChef = ({
       ? Amount.fromRawAmount(SUSHI[chainId], _sushiBalance ? _sushiBalance.toString() : 0)
       : undefined
     return [sushiBalance, balance, pendingSushi]
-  }, [address, chainId, config.address, data, enabled, token, v2Config.address])
+  }, [chainId, data, token])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {

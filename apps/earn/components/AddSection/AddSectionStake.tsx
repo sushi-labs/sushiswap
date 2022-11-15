@@ -116,7 +116,8 @@ const _AddSectionStake: FC<AddSectionStakeProps> = ({ pair, chefType, title, far
                         className="whitespace-nowrap"
                         fullWidth
                         amount={amount}
-                        address={getMasterChefContractConfig(pair.chainId, chefType).address}
+                        address={getMasterChefContractConfig(pair.chainId, chefType)?.address}
+                        enabled={Boolean(getMasterChefContractConfig(pair.chainId, chefType)?.address)}
                       />
                     </Approve.Components>
                   }

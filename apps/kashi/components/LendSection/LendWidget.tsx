@@ -1,7 +1,7 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { abi } from '@sushiswap/kashi/artifacts/contracts/KashiPair.sol/KashiPair.json'
-import { KashiPairMediumRiskV1 } from '@sushiswap/kashi/typechain'
+import { BentoBoxV1, KashiPairMediumRiskV1 } from '@sushiswap/kashi/typechain'
 import { Button, Dialog, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { Widget } from '@sushiswap/ui/widget'
@@ -23,13 +23,13 @@ interface LendWidget {
 export const LendWidget: FC<LendWidget> = ({ pair }) => {
   const { address: account } = useAccount()
   const [signature, setSignature] = useState<Signature>()
-  const bentoBoxContract = useBentoBoxContract(pair.chainId)
+  const bentoBoxContract = useBentoBoxContract(pair.chainId) as BentoBoxV1
   const { data: signerOrProvider } = useSigner()
-  const kashiMediumRiskV1Contract = useContract<KashiPairMediumRiskV1>({
+  const kashiMediumRiskV1Contract = useContract({
     address: pair.address,
     abi: abi,
     signerOrProvider,
-  })
+  }) as KashiPairMediumRiskV1
   const { asset } = useTokensFromKashiPair(pair)
   const [value, setValue] = useState('')
   const amount = useMemo(() => tryParseAmount(value, asset), [asset, value])

@@ -8,7 +8,7 @@ import { Approve, usePrices, Web3Input } from '@sushiswap/wagmi'
 import { getSushiSwapRouterContractConfig } from '@sushiswap/wagmi/hooks'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC, useCallback, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { Address, useAccount } from 'wagmi'
 
 import { useTokensFromKashiPair } from '../../lib/hooks'
 import { useCustomTokens, useNotifications } from '../../lib/state/storage'
@@ -260,7 +260,7 @@ export const BorrowWidget: FC<BorrowWidget> = ({ pair }) => {
                   className="whitespace-nowrap"
                   fullWidth
                   amount={collateralAsEntity}
-                  address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(pair.chainId).address as Address}
                 />
               </Approve.Components>
             }

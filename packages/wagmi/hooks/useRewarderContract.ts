@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
-import { useProvider } from 'wagmi'
+import { Address, useProvider } from 'wagmi'
 import { getContract } from 'wagmi/actions'
 
 export const getRewarderConfig = (address: string) => {
   return {
-    address,
+    address: address as Address,
     abi: [
       {
         inputs: [

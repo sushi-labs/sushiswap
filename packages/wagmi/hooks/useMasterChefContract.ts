@@ -1,9 +1,7 @@
+import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
-import { useMemo } from 'react'
-import { useContract, useProvider } from 'wagmi'
-import { getContract } from 'wagmi/actions'
+import { Address, useContract, useProvider } from 'wagmi'
 
-import { masterchefAbi, masterchefV2Abi, minichefV2Abi } from '../abis'
 import { Chef } from './useMasterChef'
 
 // TODO move to package
@@ -34,30 +32,35 @@ export const MINICHEF_ADDRESS = {
   [ChainId.BOBA]: '0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3',
 } as const
 
-export const _getMasterChefContractConfig = (chainId: keyof typeof MASTERCHEF_ADDRESS) => ({
-  chainId,
-  address: MASTERCHEF_ADDRESS[chainId],
-  abi: masterchefAbi,
-})
+export const _getMasterChefContractConfig = (chainId: keyof typeof MASTERCHEF_ADDRESS) =>
+  ({
+    chainId,
+    address: MASTERCHEF_ADDRESS[chainId] as Address,
+    abi: masterChefV1Abi,
+  } as const)
 
-export const getMasterChefContractV2Config = (chainId: keyof typeof MASTERCHEF_V2_ADDRESS) => ({
-  chainId,
-  address: MASTERCHEF_V2_ADDRESS[chainId],
-  abi: masterchefV2Abi,
-})
+export const getMasterChefContractV2Config = (chainId: keyof typeof MASTERCHEF_V2_ADDRESS) =>
+  ({
+    chainId,
+    address: MASTERCHEF_V2_ADDRESS[chainId] as Address,
+    abi: masterChefV2Abi,
+  } as const)
 
 export const getMiniChefContractConfig = (chainId: keyof typeof MINICHEF_ADDRESS) => {
   return {
     chainId,
-    address: MINICHEF_ADDRESS[chainId],
-    abi: minichefV2Abi,
-  }
+    address: MINICHEF_ADDRESS[chainId] as Address,
+    abi: miniChefAbi,
+  } as const
 }
 
-export const getMasterChefContractConfig = (chainId: number, chef: Chef) => {
-  if (chef === Chef.MASTERCHEF) return _getMasterChefContractConfig(chainId)
-  if (chef === Chef.MASTERCHEF_V2) return getMasterChefContractV2Config(chainId)
-  return getMiniChefContractConfig(chainId)
+export const getMasterChefContractConfig = (
+  chainId: keyof typeof MASTERCHEF_ADDRESS | keyof typeof MASTERCHEF_V2_ADDRESS | keyof typeof MINICHEF_ADDRESS,
+  chef: Chef
+) => {
+  if (chef === Chef.MASTERCHEF) return _getMasterChefContractConfig(chainId as keyof typeof MASTERCHEF_ADDRESS)
+  if (chef === Chef.MASTERCHEF_V2) return getMasterChefContractV2Config(chainId as keyof typeof MASTERCHEF_V2_ADDRESS)
+  if (chef === Chef.MINICHEF) return getMiniChefContractConfig(chainId as keyof typeof MINICHEF_ADDRESS)
 }
 
 export function useMasterChefContract(chainId: number, chef: Chef): ReturnType<typeof useContract> {

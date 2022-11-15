@@ -33,41 +33,102 @@ export const useRewarder: UseRewarder = ({
   farmId,
   chef,
 }) => {
+  const config = getMasterChefContractConfig(chainId, chef)
+
   const contracts = useMemo(() => {
-    if (rewardTokens.length !== rewarderAddresses.length && rewardTokens.length !== types.length) {
-      console.error('useRewarder: invalid params')
+    if (
+      !account ||
+      !config ||
+      (rewardTokens.length !== rewarderAddresses.length && rewardTokens.length !== types.length)
+    ) {
       return []
     }
-    const config = getMasterChefContractConfig(chainId, chef)
-    return rewardTokens.map((el, index) => {
-      if (types[index] === RewarderType.Primary) {
-        return {
-          ...config,
-          functionName: 'pendingSushi' as const,
-          args: [BigNumber.from(farmId), (account ?? '') as Address] as const,
-        }
-      }
 
-      return {
-        chainId,
-        ...getRewarderConfig(rewarderAddresses[index]),
-        functionName: 'pendingTokens' as const,
-        args: [BigNumber.from(farmId), (account ?? '') as Address, BigNumber.from(0)] as const,
-      }
+    return types.map((type, i) => {
+      return type === RewarderType.Primary
+        ? ({
+            ...config,
+            abi: [
+              {
+                inputs: [
+                  {
+                    internalType: 'uint256',
+                    name: '_pid',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'address',
+                    name: '_user',
+                    type: 'address',
+                  },
+                ],
+                name: 'pendingSushi',
+                outputs: [
+                  {
+                    internalType: 'uint256',
+                    name: '',
+                    type: 'uint256',
+                  },
+                ],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'pendingSushi',
+            args: [BigNumber.from(farmId), account as Address],
+          } as const)
+        : ({
+            ...getRewarderConfig(rewarderAddresses[i]),
+            chainId,
+            abi: [
+              {
+                inputs: [
+                  {
+                    internalType: 'uint256',
+                    name: 'pid',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'address',
+                    name: 'user',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: '',
+                    type: 'uint256',
+                  },
+                ],
+                name: 'pendingTokens',
+                outputs: [
+                  {
+                    internalType: 'contract IERC20[]',
+                    name: 'rewardTokens',
+                    type: 'address[]',
+                  },
+                  {
+                    internalType: 'uint256[]',
+                    name: 'rewardAmounts',
+                    type: 'uint256[]',
+                  },
+                ],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'pendingTokens',
+            args: [BigNumber.from(farmId), account as Address, BigNumber.from(0)],
+          } as const)
     })
-  }, [account, chainId, chef, farmId, rewardTokens, rewarderAddresses, types])
+  }, [account, chainId, config, farmId, rewardTokens.length, rewarderAddresses, types])
 
-  const read = useContractReads({
+  const { isError, isLoading, data } = useContractReads({
     contracts,
     watch: true,
     keepPreviousData: true,
     allowFailure: true,
     enabled: !!account,
   })
-
-  // Can't have 2 different types in one read, have to assign manually
-  const { isError, isLoading } = read
-  const data = read.data as (BigNumber | { rewardAmounts: BigNumber[] } | undefined)[]
 
   return useMemo(() => {
     if (!data)
@@ -77,24 +138,24 @@ export const useRewarder: UseRewarder = ({
         isError,
       }
 
-    const _data = data
-      .filter((el): el is NonNullable<typeof data['0']> => el !== undefined)
-      .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
-        if (BigNumber.isBigNumber(result)) {
-          acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result.toString()) : undefined)
-        } else {
-          acc.push(
-            ...result.rewardAmounts.map((rewardAmount, index2: number) => {
-              return Amount.fromRawAmount(rewardTokens[index + index2], rewardAmount.toString())
-            })
-          )
-        }
-
-        return acc
-      }, [])
+    const _data = data as (BigNumber | { rewardAmounts: BigNumber[] })[]
 
     return {
-      data: _data,
+      data: _data
+        .filter((el): el is NonNullable<typeof _data['0']> => el !== undefined)
+        .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
+          if (BigNumber.isBigNumber(result)) {
+            acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result.toString()) : undefined)
+          } else {
+            acc.push(
+              ...result.rewardAmounts.map((rewardAmount, index2: number) => {
+                return Amount.fromRawAmount(rewardTokens[index + index2], rewardAmount.toString())
+              })
+            )
+          }
+
+          return acc
+        }, []),
       isLoading,
       isError,
     }

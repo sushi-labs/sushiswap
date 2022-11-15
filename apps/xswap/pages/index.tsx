@@ -2,9 +2,9 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { TradeType } from '@sushiswap/amm'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
-import { TradeType } from '@sushiswap/amm'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
@@ -205,7 +205,7 @@ const Widget: FC<Swap> = ({
 
   const feeRef = useRef<Amount<Native>>()
   const [nanoId] = useState(nanoid())
-  const [srcTxHash, setSrcTxHash] = useState<string>()
+  const [srcTxHash, setSrcTxHash] = useState<`0x${string}`>()
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
@@ -524,7 +524,7 @@ const Widget: FC<Swap> = ({
       .cook(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
       .then((res) => {
         if (res) {
-          setSrcTxHash(res.hash)
+          setSrcTxHash(res.hash as `0x${string}`)
         }
         console.debug('then cooked', res)
       })
@@ -1272,7 +1272,7 @@ const Widget: FC<Swap> = ({
                                       size="md"
                                       className="whitespace-nowrap"
                                       fullWidth
-                                      address={getSushiXSwapContractConfig(srcChainId).addressOrName}
+                                      address={getSushiXSwapContractConfig(srcChainId).address}
                                       onSignature={setSignature}
                                     />
                                     <Approve.Token

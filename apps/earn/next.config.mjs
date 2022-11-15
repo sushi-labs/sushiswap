@@ -23,6 +23,9 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
+  experimental: {
+    esmExternals: 'loose',
+  },
   productionBrowserSourceMaps: true,
   async redirects() {
     return [

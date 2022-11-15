@@ -1,11 +1,11 @@
-import { Amount, Token } from '@sushiswap/currency'
+import { stargateFeeLibraryV03Abi, stargatePoolAbi } from '@sushiswap/abi'
+import { Amount, Token, Type } from '@sushiswap/currency'
 import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
-import STARGATE_FEE_LIBRARY_V03_ABI from '@sushiswap/stargate/abis/stargate-fee-library-v03.json'
-import STARGATE_POOL_ABI from '@sushiswap/stargate/abis/stargate-pool.json'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { BigNumber } from 'ethers'
 import { isAddress } from 'ethers/lib/utils'
 import { useMemo } from 'react'
-import { useContractRead, useContractReads } from 'wagmi'
+import { Address, useContractRead, useContractReads } from 'wagmi'
 
 import { BridgeState } from '../../components'
 
@@ -24,25 +24,22 @@ export const useBridgeFees = ({
   isLoading: boolean
 } => {
   const contracts = useMemo(() => {
-    if (srcToken && dstToken) {
-      return [
-        {
-          address: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
-          functionName: 'getChainPath',
-          args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address]],
-          abi: STARGATE_POOL_ABI,
-          chainId: srcChainId,
-        },
-        {
-          address: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
-          functionName: 'feeLibrary',
-          abi: STARGATE_POOL_ABI,
-          chainId: srcChainId,
-        },
-      ]
-    }
-
-    return []
+    if (!srcToken || !dstToken) return []
+    return [
+      {
+        address: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
+        functionName: 'getChainPath',
+        args: [STARGATE_CHAIN_ID[dstChainId], STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address]],
+        abi: stargatePoolAbi,
+        chainId: srcChainId,
+      },
+      {
+        address: STARGATE_POOL_ADDRESS[srcChainId][srcToken.wrapped.address],
+        functionName: 'feeLibrary',
+        abi: stargatePoolAbi,
+        chainId: srcChainId,
+      },
+    ]
   }, [dstChainId, dstToken, srcChainId, srcToken])
 
   const { data: stargatePoolResults, isLoading } = useContractReads({
@@ -54,13 +51,13 @@ export const useBridgeFees = ({
     address: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
     args: [
-      srcToken ? STARGATE_POOL_ID[srcChainId][srcToken.wrapped.address] : undefined,
-      dstToken ? STARGATE_POOL_ID[dstChainId][dstToken.wrapped.address] : undefined,
+      BigNumber.from(STARGATE_POOL_ID[srcChainId][(srcToken as Type).wrapped.address]),
+      BigNumber.from(STARGATE_POOL_ID[dstChainId][(dstToken as Type).wrapped.address]),
       STARGATE_CHAIN_ID[dstChainId],
-      getSushiXSwapContractConfig(srcChainId).addressOrName,
-      amount?.quotient?.toString(),
+      getSushiXSwapContractConfig(srcChainId).address as Address,
+      BigNumber.from(amount?.quotient?.toString()),
     ],
-    abi: STARGATE_FEE_LIBRARY_V03_ABI,
+    abi: stargateFeeLibraryV03Abi,
     chainId: srcChainId,
     enabled: Boolean(
       !isLoading &&

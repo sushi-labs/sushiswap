@@ -1,10 +1,9 @@
-import { constantProductPoolAbi } from '@sushiswap/abi'
-import { constantProductPoolFactoryAbi } from '@sushiswap/abi/src/ConstantProductPoolFactory'
+import { constantProductPoolAbi, constantProductPoolFactoryAbi } from '@sushiswap/abi'
 import { computeConstantProductPoolAddress, ConstantProductPool, Fee } from '@sushiswap/amm'
 import { Amount, Currency, Token } from '@sushiswap/currency'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { Address, useContractRead, useContractReads } from 'wagmi'
+import { Address, useContractReads } from 'wagmi'
 
 import { useConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 
@@ -161,21 +160,25 @@ export function useGetConstantProductPools(
       isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesAndFeesLoading,
       isError: callStatePoolsCountError || callStatePoolsError || reservesAndFeesError,
       data: pools.map((p, i) => {
-        if (!reservesAndFees?.[i] || !reservesAndFees?.[i + poolsAddresses.length])
+        if (!reservesAndFees?.[i] || !reservesAndFees?.[i + poolsAddresses.length]) {
           return [ConstantProductPoolState.LOADING, null]
-        // Type guard
-        if (
-          BigNumber.isBigNumber(reservesAndFees[i]._reserve0) ||
-          !BigNumber.isBigNumber(reservesAndFees[i + poolsAddresses.length])
-        )
-          return [ConstantProductPoolState.INVALID, null]
+        }
+
+        const reserves = reservesAndFees[i] as {
+          _reserve0: BigNumber
+          _reserve1: BigNumber
+          _blockTimestampLast: number
+        }
+
+        const swapFee = reservesAndFees[i + poolsAddresses.length]
+
         return [
           ConstantProductPoolState.EXISTS,
           new ConstantProductPool(
-            Amount.fromRawAmount(p.token0, reservesAndFees[i]._reserve0.toString()),
-            Amount.fromRawAmount(p.token1, reservesAndFees[i]._reserve1.toString()),
-            parseInt(reservesAndFees[i + poolsAddresses.length].toString()),
-            reservesAndFees[i]._blockTimestampLast !== 0
+            Amount.fromRawAmount(p.token0, reserves._reserve0.toString()),
+            Amount.fromRawAmount(p.token1, reserves._reserve1.toString()),
+            parseInt(swapFee.toString()),
+            reserves._blockTimestampLast !== 0
           ),
         ]
       }),
