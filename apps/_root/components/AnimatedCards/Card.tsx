@@ -1,4 +1,5 @@
-import { classNames, Typography } from '@sushiswap/ui'
+import { ChevronRightIcon } from '@heroicons/react/solid'
+import { Button, classNames, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import { FC } from 'react'
 
@@ -24,18 +25,25 @@ export const Card: FC<Card> = ({ id, title, category, backgroundColor, textColor
             layoutId={`card-image-container-${id}`}
           />
           <motion.div
-            className="absolute top-[15px] left-[15px] max-w-[300px] flex flex-col gap-1"
+            className="absolute top-[30px] left-[30px] max-w-[300px] flex flex-col gap-4"
             layoutId={`title-container-${id}`}
           >
-            <Typography weight={500} className={classNames(textColor, 'uppercase')}>
-              {category}
-            </Typography>
+            <div className="flex gap-3 items-center">
+              <motion.div layoutId={`title-container-icon-${id}`}>
+                <Icon width={40} height={40} className={classNames(textColor, 'opacity-1')} />
+              </motion.div>
+              <Typography weight={500} className={classNames(textColor, 'text-neutral-400')}>
+                {category}
+              </Typography>
+            </div>
             <Typography weight={600} variant="h3" className={textColor}>
               {title}
             </Typography>
-          </motion.div>
-          <motion.div className="absolute right-3 top-3" layoutId={`title-container-icon-${id}`}>
-            <Icon width={26} height={26} className={classNames(textColor, 'opacity-1')} />
+            <motion.div layoutId={`title-container-view-more-${id}`}>
+              <Button className="!p-0" variant="empty" endIcon={<ChevronRightIcon width={16} height={16} />}>
+                View More
+              </Button>
+            </motion.div>
           </motion.div>
         </motion.div>
       </div>

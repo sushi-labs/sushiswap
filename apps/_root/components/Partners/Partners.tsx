@@ -1,18 +1,13 @@
 import { Container, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { KlimaDaoSVG } from '../SVG/KlimaDaoSVG'
-import { ManifoldLogoSVG } from '../SVG/ManifoldLogoSVG'
-
-const PARTNERS = [
-  { title: 'Manifold Finance', icon: ManifoldLogoSVG },
-  { title: 'KlimaDAO', icon: KlimaDaoSVG },
-  { title: 'The Graph', icon: ManifoldLogoSVG },
-  { title: 'Partner 4', icon: ManifoldLogoSVG },
-  { title: 'Partner 5', icon: ManifoldLogoSVG },
-  { title: 'Partner 6', icon: ManifoldLogoSVG },
-  { title: 'Partner 7', icon: ManifoldLogoSVG },
-]
+import { BarnBridgeSVG } from '../SVG/BarnBridgeSVG'
+import { LayerzeroSVG } from '../SVG/LayerzeroSVG'
+import { MagnaSVG } from '../SVG/MagnaSVG'
+import { MetamaskSVG } from '../SVG/MetamaskSVG'
+import { OptimismSVG } from '../SVG/OptimismSVG'
+import { PolygonSVG } from '../SVG/PolygonSVG'
+import { ZkSyncSVG } from '../SVG/ZkSyncSVG'
 
 const INCEPTION_DATE = new Date('08/26/2020')
 
@@ -32,29 +27,16 @@ export const Partners: FC = () => {
           </Typography>
         </div>
         <div className="flex flex-col gap-y-10">
-          <div className="flex justify-center flex-wrap">
-            {PARTNERS.slice(0, 4).map(({ title, icon: Icon }) => (
-              <Typography
-                variant="lg"
-                key={title}
-                weight={500}
-                className="cursor-pointer transition-all flex items-center gap-3 text-center whitespace-nowrap border-slate-200/5 px-10 hover:text-blue"
-              >
-                <Icon width={24} height={24} /> {title}
-              </Typography>
-            ))}
+          <div className="flex justify-center items-center flex-wrap gap-10">
+            <BarnBridgeSVG width={120} />
+            <LayerzeroSVG width={120} />
+            <MagnaSVG width={120} />
+            <MetamaskSVG width={120} />
           </div>
-          <div className="flex justify-center flex-wrap">
-            {PARTNERS.slice(4, 7).map(({ title, icon: Icon }) => (
-              <Typography
-                variant="lg"
-                key={title}
-                weight={500}
-                className="cursor-pointer transition-all flex items-center gap-3 text-center whitespace-nowrap border-slate-200/5 px-10 hover:text-blue"
-              >
-                <Icon width={24} height={24} /> {title}
-              </Typography>
-            ))}
+          <div className="flex justify-center flex-wrap gap-10">
+            <OptimismSVG width={120} />
+            <PolygonSVG width={120} />
+            <ZkSyncSVG width={120} />
           </div>
         </div>
       </Container>

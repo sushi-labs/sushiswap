@@ -16,12 +16,13 @@ export const Custody: FC = () => {
           <div className="flex flex-col justify-center gap-3">
             <AnimateSharedLayout>
               <motion.div layoutId={`custody-container`} className="flex flex-col items-center lg:items-start">
-                <motion.div layoutId={`custody-title`} className="flex flex-col items-center lg:items-start z-[2001]">
+                <motion.div layoutId={`custody-title`} className="flex flex-col items-center lg:items-start">
                   <Typography variant="h1" weight={600} className="text-center lg:text-left">
                     Your keys, your coins
                   </Typography>
                   <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
-                    As decentralized as it goes.
+                    Own your own crypto, just like cash in your wallet. Fully decentralized & self custody of your funds
+                    means your money in your wallet, as it should be.
                   </Typography>
                 </motion.div>
 
@@ -59,7 +60,8 @@ export const Custody: FC = () => {
                               Your keys, your coins
                             </Typography>
                             <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
-                              As decentralized as it goes.
+                              Own your own crypto, just like cash in your wallet. Fully decentralized & self custody of
+                              your funds means your money in your wallet, as it should be.
                             </Typography>
                           </motion.div>
                         </div>

@@ -8,10 +8,9 @@ import { usePrices, useTrade } from '@sushiswap/wagmi'
 import { useTokens } from 'lib/state/token-lists'
 import React, { useMemo } from 'react'
 
-import { AnimatedCards } from '../components/AnimatedCards'
-import { AnimatedTitle } from '../components/AnimatedTitle/AnimatedTitle'
+import { BuildFuture } from '../components/BuildFuture/BuildFuture'
 import { BuildWealth } from '../components/BuildWealth/BuildWealth'
-import { PRODUCT_CARDS } from '../components/data'
+import { Ecosystem } from '../components/Ecosystem/Ecosystem'
 import { Hero } from '../components/Hero/Hero'
 import { NeedHelp } from '../components/NeedHelp/NeedHelp'
 import { Partners } from '../components/Partners/Partners'
@@ -141,18 +140,8 @@ const Index = ({ stats }) => {
 
         <div className="flex flex-col gap-2 border-t border-neutral-200/5">
           <BuildWealth />
-          <section className="sm:py-20 py-40 px-4">
-            <Container maxWidth="5xl" className="mx-auto">
-              <div className="flex flex-col gap-20">
-                <AnimatedTitle className="text-left">
-                  Build <span className="text-pink">the future</span> with Sushi.{' '}
-                  <span className="text-neutral-400">{`We invite all developers to explore Sushi's frameworks.`}</span>
-                </AnimatedTitle>
-                <AnimatedCards data={PRODUCT_CARDS} />
-              </div>
-            </Container>
-          </section>
-
+          <Ecosystem />
+          <BuildFuture />
           <NeedHelp />
         </div>
       </div>

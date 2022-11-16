@@ -18,10 +18,10 @@ export const Guard: FC = () => {
               <motion.div layoutId={`guard-container`} className="flex flex-col items-center lg:items-start">
                 <motion.div layoutId={`guard-title`} className="flex flex-col items-center lg:items-start z-[2001]">
                   <Typography variant="h1" weight={600} className="text-center lg:text-left">
-                    Keep more profits and earn gas refunds.
+                    Keep more of your profits & say no to MEV attacks.
                   </Typography>
                   <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
-                    Enable SushiGuard and say no to MEV attacks.
+                    Enable SushiGuard and earn gas refunds on all of your transactions.
                   </Typography>
                 </motion.div>
                 <Button
@@ -55,10 +55,10 @@ export const Guard: FC = () => {
                         <div className="flex flex-col items-center lg:items-start">
                           <motion.div layoutId={`guard-title`} className="flex flex-col items-center lg:items-start">
                             <Typography variant="h1" weight={600} className="text-center lg:text-left">
-                              Keep more profits and <br /> earn gas refund.
+                              Keep more of your profits & say no to MEV attacks.
                             </Typography>
                             <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
-                              Enable SushiGuard and say no to MEV attacks.
+                              Enable SushiGuard and earn gas refunds on all of your transactions.
                             </Typography>
                           </motion.div>
                           <motion.div animate className="prose !prose-invert prose-neutral prose-dark mt-10">

@@ -8,9 +8,9 @@ import { NetworkStellarSVG } from '../../SVG/NetworkStellarSVG'
 
 export const MoveImage = () => {
   const scrollRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: scrollRef, axis: 'y' })
-  const opacity = useTransform(scrollYProgress, [0.7, 1], [1, 0])
-  const scale = useTransform(scrollYProgress, [0.7, 1], [1, 1.5])
+  const { scrollYProgress } = useScroll({ target: scrollRef, axis: 'y', offset: ['end end', 'start end'] })
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.5])
 
   return (
     <div ref={scrollRef}>

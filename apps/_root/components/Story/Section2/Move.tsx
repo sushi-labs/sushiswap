@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
+import { ExternalLinkIcon } from '@heroicons/react/solid'
 import { Button, Container, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -12,16 +12,29 @@ export const Move: FC = () => {
           <div className="order-2 lg:order-1 flex flex-col justify-center gap-3">
             <div className="flex flex-col items-center lg:items-start">
               <Typography variant="h1" weight={600} className="text-center lg:text-left">
-                Bridge assets in seconds.
+                Move assets across networks in seconds.
               </Typography>
               <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
-                We find you the best rate, no extra fees.
+                We will always find you the best rate, no matter what network you’re on, with no extra fees.
               </Typography>
               <div className="flex gap-6">
-                <Button className="!p-0 mt-3" variant="empty" endIcon={<ChevronRightIcon width={16} height={16} />}>
-                  Visit Bridge
-                </Button>
-                <Button className="!p-0 mt-3" variant="empty" endIcon={<ChevronRightIcon width={16} height={16} />}>
+                {/*<Button*/}
+                {/*  as="a"*/}
+                {/*  href="https://sushi.com/bridge"*/}
+                {/*  className="!p-0 mt-3"*/}
+                {/*  variant="empty"*/}
+                {/*  endIcon={<ChevronRightIcon width={16} height={16} />}*/}
+                {/*>*/}
+                {/*  Visit Bridge*/}
+                {/*</Button>*/}
+                <Button
+                  as="a"
+                  target="_blank"
+                  href="https://sushi.com/xswap"
+                  className="!p-0 mt-3"
+                  variant="empty"
+                  endIcon={<ExternalLinkIcon width={16} height={16} />}
+                >
                   Visit xSwap
                 </Button>
               </div>
