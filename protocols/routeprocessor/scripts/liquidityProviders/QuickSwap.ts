@@ -1,32 +1,33 @@
-import { ConstantProductRPool} from "@sushiswap/tines";
+import { ConstantProductRPool, RToken} from "@sushiswap/tines";
 import {BigNumber, ethers} from 'ethers'
 import { LiquidityProvider } from "./LiquidityProvider";
 import { getCreate2Address } from "ethers/lib/utils";
 import { keccak256, pack } from '@ethersproject/solidity'
 import { SushiPoolABI } from "../../ABI/SushiPool";
-import { ChainId, Network, Token } from "../networks/Network";
 import { Limited } from "../Limited";
 import { PoolCode } from "../pools/PoolCode";
 import { ConstantProductPoolCode } from "../pools/ConstantProductPool";
+import { ChainId } from "@sushiswap/chain";
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from "@sushiswap/currency";
 
-const QUICKSWAP_FACTORY = {
-  [ChainId.MATIC]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
+const QUICKSWAP_FACTORY: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
 }
 
-const INIT_CODE_HASH = {
-  [ChainId.MATIC]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+const QUICKSWAP_INIT_CODE_HASH: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
 }
 
 export class QuickSwapProvider extends LiquidityProvider {
 
-  constructor(chainDataProvider: ethers.providers.BaseProvider, net: Network, l: Limited) {
-    super(chainDataProvider, net, l)
+  constructor(chainDataProvider: ethers.providers.BaseProvider, chainId: ChainId, l: Limited) {
+    super(chainDataProvider, chainId, l)
   }
 
   getPoolProviderName(): string {return 'Quickswap'}
 
   async getPools(t0: Token, t1: Token): Promise<PoolCode[]> {
-    if (QUICKSWAP_FACTORY[this.network.chainId] === undefined) {
+    if (QUICKSWAP_FACTORY[this.chainId] === undefined) {
       // No pools for this network
       return []
     }
@@ -38,9 +39,9 @@ export class QuickSwapProvider extends LiquidityProvider {
   _getPoolAddress(t1: Token, t2: Token): string {
     const [token0, token1] = t1.address.toLowerCase() < t2.address.toLowerCase() ? [t1, t2] : [t2, t1]
     return getCreate2Address(
-      QUICKSWAP_FACTORY[this.network.chainId],
+      QUICKSWAP_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [token0.address, token1.address])]),
-      INIT_CODE_HASH[this.network.chainId]
+      QUICKSWAP_INIT_CODE_HASH[this.chainId]
     )
   }
 
@@ -51,7 +52,9 @@ export class QuickSwapProvider extends LiquidityProvider {
     try {
       const pool = await new ethers.Contract(poolAddress, SushiPoolABI, this.chainDataProvider)
       const [reserve0, reserve1]:[BigNumber, BigNumber] = await this.limited.callOnce(() => pool.getReserves())
-      const rPool = new ConstantProductRPool(poolAddress, token0, token1, 0.003, reserve0, reserve1)
+      const rPool = new ConstantProductRPool(
+        poolAddress, token0 as RToken, token1 as RToken, 0.003, reserve0, reserve1
+      )
       return new ConstantProductPoolCode(rPool, this.getPoolProviderName())
     } catch (e) {
       return undefined
@@ -75,9 +78,9 @@ export class QuickSwapProvider extends LiquidityProvider {
     const set = new Set<Token>([
       t1, 
       t2, 
-      ...this.network.BASES_TO_CHECK_TRADES_AGAINST, 
-      ...(this.network.ADDITIONAL_BASES[t1.address] || []),
-      ...(this.network.ADDITIONAL_BASES[t2.address] || []),
+      ...BASES_TO_CHECK_TRADES_AGAINST[this.chainId], 
+      ...(ADDITIONAL_BASES[this.chainId][t1.address] || []),
+      ...(ADDITIONAL_BASES[this.chainId][t2.address] || []),
      ])
      return Array.from(set)
   }

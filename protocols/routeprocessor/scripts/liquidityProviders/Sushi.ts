@@ -1,34 +1,30 @@
-import { ConstantProductRPool} from "@sushiswap/tines";
+import { ConstantProductRPool, RToken} from "@sushiswap/tines";
 import {BigNumber, ethers} from 'ethers'
 import { LiquidityProvider } from "./LiquidityProvider";
 import { getCreate2Address } from "ethers/lib/utils";
 import { keccak256, pack } from '@ethersproject/solidity'
 import { SushiPoolABI } from "../../ABI/SushiPool";
-import { ChainId, Network, Token } from "../networks/Network";
 import { Limited } from "../Limited";
 import { PoolCode } from "../pools/PoolCode";
 import { ConstantProductPoolCode } from "../pools/ConstantProductPool";
-
-const SUSHISWAP_FACTORY = {
-  [ChainId.ETHEREUM]: '0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac',
-  [ChainId.MATIC]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
-}
-
-const INIT_CODE_HASH = {
-  [ChainId.ETHEREUM]: '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
-  [ChainId.MATIC]:    '0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303',
-}
+import { ChainId } from "@sushiswap/chain";
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from "@sushiswap/currency";
+import { FACTORY_ADDRESS, INIT_CODE_HASH } from "@sushiswap/amm";
 
 export class SushiProvider extends LiquidityProvider {
+  poolCodes: PoolCode[]
+  lastPoolCodeNumber: number
 
-  constructor(chainDataProvider: ethers.providers.BaseProvider, net: Network, l: Limited) {
-    super(chainDataProvider, net, l)
+  constructor(chainDataProvider: ethers.providers.BaseProvider, chainId: ChainId, l: Limited) {
+    super(chainDataProvider, chainId, l)
+    this.poolCodes = []
+    this.lastPoolCodeNumber = 0
   }
 
   getPoolProviderName(): string {return 'Sushiswap'}
 
   async getPools(t0: Token, t1: Token): Promise<PoolCode[]> {
-    if (SUSHISWAP_FACTORY[this.network.chainId] === undefined) {
+    if (FACTORY_ADDRESS[this.chainId] === undefined) {
       // No sushiswap for this network
       return []
     }
@@ -40,9 +36,9 @@ export class SushiProvider extends LiquidityProvider {
   _getPoolAddress(t1: Token, t2: Token): string {
     const [token0, token1] = t1.address.toLowerCase() < t2.address.toLowerCase() ? [t1, t2] : [t2, t1]
     return getCreate2Address(
-      SUSHISWAP_FACTORY[this.network.chainId],
+      FACTORY_ADDRESS[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [token0.address, token1.address])]),
-      INIT_CODE_HASH[this.network.chainId]
+      INIT_CODE_HASH[this.chainId]
     )
   }
 
@@ -53,8 +49,12 @@ export class SushiProvider extends LiquidityProvider {
     try {
       const pool = await new ethers.Contract(poolAddress, SushiPoolABI, this.chainDataProvider)
       const [reserve0, reserve1]:[BigNumber, BigNumber] = await this.limited.callOnce(() => pool.getReserves())
-      const rPool = new ConstantProductRPool(poolAddress, token0, token1, 0.003, reserve0, reserve1)
-      return new ConstantProductPoolCode(rPool, this.getPoolProviderName())
+      const rPool = new ConstantProductRPool(
+        poolAddress, token0 as RToken, token1 as RToken, 0.003, reserve0, reserve1
+      )
+      const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
+      this.poolCodes.push(pc)
+      return pc
     } catch (e) {
       return undefined
     }
@@ -77,11 +77,25 @@ export class SushiProvider extends LiquidityProvider {
     const set = new Set<Token>([
       t1, 
       t2, 
-      ...this.network.BASES_TO_CHECK_TRADES_AGAINST, 
-      ...(this.network.ADDITIONAL_BASES[t1.address] || []),
-      ...(this.network.ADDITIONAL_BASES[t2.address] || []),
+      ...BASES_TO_CHECK_TRADES_AGAINST[this.chainId], 
+      ...(ADDITIONAL_BASES[this.chainId][t1.address] || []),
+      ...(ADDITIONAL_BASES[this.chainId][t2.address] || []),
      ])
      return Array.from(set)
   }
+
+  startGetherData(t0: Token, t1: Token) {
+    this.poolCodes = []
+    this.lastPoolCodeNumber = 0
+    this.getPools(t0, t1)   // starting the process
+  }
+  poolListWereUpdated(): boolean {
+    return this.lastPoolCodeNumber !== this.poolCodes.length
+  }
+  getCurrentPoolList(): PoolCode[] {
+    this.lastPoolCodeNumber = this.poolCodes.length
+    return this.poolCodes
+  }
+  stopGetherData() {}
 
 }
