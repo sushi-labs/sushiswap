@@ -3,6 +3,7 @@ import '../index.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
 import { App, ThemeProvider } from '@sushiswap/ui'
+import { Analytics } from '@vercel/analytics/react'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import Head from 'next/head'
@@ -13,8 +14,6 @@ import { useEffect } from 'react'
 import { DefaultSeo, Header } from '../components'
 import { getGlobalSEO } from '../lib/api'
 import { Global } from '.mesh'
-
-export { reportWebVitals } from 'next-axiom'
 
 export const cld = new Cloudinary({
   cloud: {
@@ -77,6 +76,7 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
           <App.Footer />
         </App.Shell>
       </ThemeProvider>
+      <Analytics />
     </>
   )
 }

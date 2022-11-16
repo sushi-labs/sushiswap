@@ -28,6 +28,7 @@ jobs:
         TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
         # ROOT ENV
         ROOT_URL: ${{ secrets.ROOT_URL }}
+        ACADEMY_URL: ${{ secrets.ACADEMY_URL }}
         ANALYTICS_URL: ${{ secrets.ANALYTICS_URL }}
         BLOG_URL: ${{ secrets.BLOG_URL }}
         BRIDGE_URL: ${{ secrets.BRIDGE_URL }}

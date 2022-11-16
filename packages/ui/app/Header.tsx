@@ -20,6 +20,7 @@ export enum AppType {
   Invest = 'Earn',
   Partner = 'Partner',
   Widget = 'Widget',
+  Academy = 'Academy',
 }
 
 const LINK = {
@@ -36,6 +37,7 @@ const LINK = {
   [AppType.Invest]: '/earn',
   [AppType.Partner]: '/partner',
   [AppType.Widget]: '/widget',
+  [AppType.Academy]: '/academy',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
