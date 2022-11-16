@@ -50,6 +50,7 @@ program
   .command('revenues')
   .description('Get revenues')
   .option('-n,--network <NETWORK>', 'network available: '.concat(REVENUES_SUPPORTED_CHAIN_NAMES.join(', ')))
+  .option('-d,--days <Amount of days>', '1 to 30, default set to 1.')
   .action(revenues)
 
 program
