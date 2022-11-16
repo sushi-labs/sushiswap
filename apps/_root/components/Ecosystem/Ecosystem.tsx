@@ -1,17 +1,23 @@
-import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react/solid'
-import { Button, classNames, Container, Link, Tab, Typography } from '@sushiswap/ui'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+import { ChevronRightIcon } from '@heroicons/react/solid'
+import { Button, classNames, Container, Tab, Typography } from '@sushiswap/ui'
+import { motion } from 'framer-motion'
 import React, { FC, useState } from 'react'
 
+import { ExpandableCard, ExpendableCardData } from '../ExpandableCard/ExpandableCard'
 import { FuroSVG } from '../SVG/FuroSVG'
 
-const TABS = [
+interface TabsExpendableCardData extends ExpendableCardData {
+  summary: string
+  image: (props: React.ComponentProps<'svg'>) => JSX.Element
+}
+
+const TABS: TabsExpendableCardData[] = [
   {
     title: 'Furo Streaming',
-    content:
+    summary:
       'Automate your DAO salaries and vesting schedules while earning interest from yield strategies. Automate your DAO salaries and vesting schedules while earning.',
     image: FuroSVG,
-    moreContent: (
+    content: (
       <>
         <p>
           Furo is Sushi’s payment streaming and token vesting application, a useful and efficient way of setting up
@@ -32,13 +38,13 @@ const TABS = [
     ),
     link: 'https://sushi.com/furo',
     linkText: 'Pay Someone',
-    audience: 'Retail Users',
+    caption: 'For Retail Users',
   },
   {
     title: 'Kashi Lending',
-    content: 'test content',
+    summary: 'test content',
     image: FuroSVG,
-    moreContent: (
+    content: (
       <>
         <span>
           Kashi allows for lending across a multitude of assets with varying risk tolerances, including tokens,
@@ -59,16 +65,16 @@ const TABS = [
     ),
     link: 'https://sushi.com/kashi',
     linkText: 'Visit Kashi',
-    audience: 'Retail Users',
+    caption: 'For Retail Users',
   },
   {
     title: 'Launchpad',
-    content: 'test content',
+    summary: 'test content',
     image: FuroSVG,
-    moreContent: '',
+    content: '',
     link: 'https://sushi.com/miso',
     linkText: 'Visit Launchpad',
-    audience: 'Retail Users',
+    caption: 'For Retail Users',
   },
 ]
 
@@ -78,10 +84,9 @@ function transformTemplate(transformProps) {
 
 export const Ecosystem: FC = () => {
   const [_index, setIndex] = useState(0)
-  const [open, setOpen] = useState(false)
 
   return (
-    <section className="py-20 sm:py-40 px-4 overflow-x-hidden">
+    <section className="py-20 sm:py-40 px-1 overflow-x-hidden">
       <Container maxWidth="5xl" className="mx-auto">
         <div className="border-2 border-neutral-800 rounded-xl">
           <div className="h-[28px] flex items-center px-[10px] border-b-2 border-neutral-800 flex gap-2">
@@ -93,7 +98,7 @@ export const Ecosystem: FC = () => {
             <Typography weight={400} className="text-center text-slate-400">
               Ecosystem
             </Typography>
-            <Typography variant="hero" weight={600} className="text-center">
+            <Typography variant="hero" weight={600} className="!text-4xl !md:text-5xl px-4 text-center">
               Explore our suite of <span className="text-blue">DeFi</span> Products
             </Typography>
             <Tab.Group selectedIndex={_index} onChange={setIndex}>
@@ -117,25 +122,26 @@ export const Ecosystem: FC = () => {
               </div>
               <Tab.Panels>
                 <div className="p-10">
-                  {TABS.map(({ title, content, image: Image, moreContent, link, linkText, audience }, index) => (
+                  {TABS.map(({ title, content, image: HeroImage, summary, link, linkText, caption }) => (
                     <Tab.Panel key={title} className="items-center grid grid-cols-1 md:grid-cols-2 gap-20">
-                      <AnimateSharedLayout>
-                        <div>
-                          <Image />
-                        </div>
-                        <motion.div
-                          layoutId={`ecosystem-container-${index}`}
-                          className="flex flex-col gap-2 items-start"
-                        >
-                          <motion.div layoutId={`ecosystem-title-${index}`}>
-                            <Typography weight={600} variant="h2">
+                      <div>
+                        <HeroImage />
+                      </div>
+                      <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
+                        {({ setOpen, containerId, titleId }) => (
+                          <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">
+                            <Typography
+                              as={motion.h1}
+                              layoutId={titleId}
+                              variant="h1"
+                              weight={600}
+                              className="flex flex-col items-center lg:items-start text-center lg:text-left"
+                            >
                               {title}
                             </Typography>
-                          </motion.div>
-                          <div className="prose prose-dark !prose-invert prose-neutral">
-                            <p>{content}</p>
-                          </div>
-                          <motion.div layoutId={`ecosystem-learn-${index}`}>
+                            <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
+                              {summary}
+                            </Typography>
                             <Button
                               onClick={() => setOpen(true)}
                               className="!p-0 mt-3"
@@ -145,59 +151,8 @@ export const Ecosystem: FC = () => {
                               Learn More
                             </Button>
                           </motion.div>
-                        </motion.div>
-                        <AnimatePresence>
-                          {open && (
-                            <>
-                              <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                                transition={{ duration: 0.2, delay: 0.15 }}
-                                style={{ pointerEvents: 'auto' }}
-                                className="z-[2000] fixed bg-[rgba(0,0,0,0.6)] will-change-[opacity] inset-0 w-full"
-                                onClick={() => setOpen(false)}
-                              />
-                              <article
-                                onClick={() => setOpen(false)}
-                                className="w-full h-full top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed z-[2001] overflow-hidden px-[40px] py-0 flex items-center justify-center"
-                              >
-                                <motion.div
-                                  layoutId={`ecosystem-container-${index}`}
-                                  className="bg-neutral-800 p-[35px] rounded-xl flex flex-col gap-2 items-start"
-                                >
-                                  <motion.div layoutId={`ecosystem-title-${index}`}>
-                                    <Typography variant="xs" weight={600} className="text-neutral-400 uppercase mb-1">
-                                      For {audience}
-                                    </Typography>
-                                    <Typography weight={600} variant="h2">
-                                      {title}
-                                    </Typography>
-                                  </motion.div>
-                                  <motion.div
-                                    className="max-w-[700px] w-[90vw] prose !prose-invert prose-neutral mt-5 pt-5 border-t border-neutral-200/5"
-                                    animate
-                                  >
-                                    {moreContent}
-                                  </motion.div>
-                                  <motion.div layoutId={`ecosystem-learn-${index}`}>
-                                    <Button
-                                      target="_blank"
-                                      as={Link.External}
-                                      href={link}
-                                      className="!p-0 mt-3 !no-underline"
-                                      variant="empty"
-                                      endIcon={<ExternalLinkIcon width={16} height={16} />}
-                                    >
-                                      {linkText}
-                                    </Button>
-                                  </motion.div>
-                                </motion.div>
-                              </article>
-                            </>
-                          )}
-                        </AnimatePresence>
-                      </AnimateSharedLayout>
+                        )}
+                      </ExpandableCard>
                     </Tab.Panel>
                   ))}
                 </div>

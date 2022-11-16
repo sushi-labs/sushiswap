@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI } from '@sushiswap/currency'
+import { useIsSmScreen } from '@sushiswap/hooks'
 import { Currency } from '@sushiswap/ui'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
@@ -11,6 +12,7 @@ function transformTemplate(transformProps) {
 }
 
 export const CustodyImage = () => {
+  const isSmallScreen = useIsSmScreen()
   const scrollRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: scrollRef, axis: 'y' })
   const opacity = useTransform(scrollYProgress, [0.7, 1], [1, 0])
@@ -21,8 +23,7 @@ export const CustodyImage = () => {
   return (
     <div ref={scrollRef}>
       <motion.div
-        transformTemplate={transformTemplate}
-        style={{ opacity, scale, y: perspective, rotateX }}
+        {...(!isSmallScreen && { ...{ transformTemplate, style: { opacity, scale, y: perspective, rotateX } } })}
         className="scale-[0.9] sm:scale-[1] relative -left-[140px] sm:left-0"
       >
         <div className="flex items-center justify-center relative">

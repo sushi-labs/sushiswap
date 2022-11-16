@@ -1,9 +1,8 @@
-import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react/solid'
-import { Button, Container, Link, Typography } from '@sushiswap/ui'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import React, { FC, ReactNode, useState } from 'react'
+import { Container, Typography } from '@sushiswap/ui'
+import React, { FC } from 'react'
 
 import { AnimatedTitle } from '../AnimatedTitle/AnimatedTitle'
+import { ExpandableCard } from '../ExpandableCard/ExpandableCard'
 import { NetworkStellarSVG } from '../SVG/NetworkStellarSVG'
 
 export const BuildWealth: FC = () => {
@@ -23,10 +22,9 @@ export const BuildWealth: FC = () => {
               <Typography variant="h3" weight={600} className="text-center md:text-left">
                 Earn passive income with <br /> your coins.
               </Typography>
-              <div className="flex flex-wrap gap-x-6">
-                <BuildWealthExplainer
-                  audience="Retail Users"
-                  id="provide"
+              <div className="flex flex-wrap justify-center md:justify-start gap-x-6">
+                <ExpandableCard
+                  caption="For Retail Users"
                   title="Provide Liquidity"
                   content={
                     <>
@@ -52,9 +50,8 @@ export const BuildWealth: FC = () => {
                   link="https://sushi.com/earn"
                   linkText="Visit Earn"
                 />
-                <BuildWealthExplainer
-                  audience="Retail Users"
-                  id="farm"
+                <ExpandableCard
+                  caption="For Retail Users"
                   title="Farm Rewards"
                   content={
                     <>
@@ -79,9 +76,8 @@ export const BuildWealth: FC = () => {
                   link="https://sushi.com/earn"
                   linkText="Visit Earn"
                 />
-                <BuildWealthExplainer
-                  id="vault"
-                  audience="Retail Users"
+                <ExpandableCard
+                  caption="For Retail Users"
                   title="Sushi Vault"
                   content={
                     <>
@@ -113,86 +109,5 @@ export const BuildWealth: FC = () => {
         </div>
       </Container>
     </section>
-  )
-}
-
-export const BuildWealthExplainer: FC<{
-  id: string
-  title: string
-  content: ReactNode
-  link: string
-  linkText: string
-  audience: string
-}> = ({ id, audience, title, content, link, linkText }) => {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <AnimateSharedLayout>
-      <motion.div layoutId={`container-${id}`}>
-        <motion.div layoutId={`container-title-${id}`}>
-          <Button
-            onClick={() => setOpen(true)}
-            className="!p-0 mt-3 whitespace-nowrap"
-            size="md"
-            variant="empty"
-            endIcon={<ChevronRightIcon width={16} height={16} />}
-          >
-            {title}
-          </Button>
-        </motion.div>
-      </motion.div>
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.15 } }}
-              transition={{ duration: 0.2, delay: 0.15 }}
-              style={{ pointerEvents: 'auto' }}
-              className="z-[2000] fixed bg-[rgba(0,0,0,0.6)] will-change-[opacity] inset-0 w-full"
-              onClick={() => setOpen(false)}
-            />
-            <article
-              onClick={() => setOpen(false)}
-              className="w-full h-full top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed z-[2001] overflow-hidden px-[40px] py-0 flex items-center justify-center"
-            >
-              <motion.div
-                layoutId={`container-${id}`}
-                animate
-                className="bg-neutral-800 p-[35px] rounded-xl flex flex-col gap-2 items-start"
-              >
-                <motion.div layoutId={`container-title-${id}`}>
-                  <Typography variant="xs" weight={600} className="text-neutral-400 uppercase mb-1">
-                    For {audience}
-                  </Typography>
-                  <Typography weight={600} variant="h2">
-                    {title}
-                  </Typography>
-                </motion.div>
-                <motion.div
-                  className="max-w-[700px] w-[90vw] prose !prose-invert prose-neutral mt-5 pt-5 border-t border-neutral-200/5"
-                  animate
-                >
-                  {content}
-                </motion.div>
-                <motion.div>
-                  <Button
-                    target="_blank"
-                    as={Link.External}
-                    href={link}
-                    className="!p-0 mt-3 !no-underline"
-                    variant="empty"
-                    endIcon={<ExternalLinkIcon width={16} height={16} />}
-                  >
-                    {linkText}
-                  </Button>
-                </motion.div>
-              </motion.div>
-            </article>
-          </>
-        )}
-      </AnimatePresence>
-    </AnimateSharedLayout>
   )
 }
