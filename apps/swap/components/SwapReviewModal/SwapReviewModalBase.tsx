@@ -13,19 +13,10 @@ interface SwapReviewModalBase {
   input1: Amount<Type> | undefined
   open: boolean
   setOpen(open: boolean): void
-  error?: string
   children: ReactNode
 }
 
-export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({
-  chainId,
-  children,
-  input0,
-  input1,
-  open,
-  setOpen,
-  error,
-}) => {
+export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({ chainId, children, input0, input1, open, setOpen }) => {
   const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: [input0, input1] })
 
   const price = useMemo(() => {
@@ -104,11 +95,6 @@ export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({
           </Rate>
         </div>
         {children}
-        {error && (
-          <Typography variant="xs" className="mt-4 text-center text-red" weight={500}>
-            {error}
-          </Typography>
-        )}
       </Dialog.Content>
     </Dialog>
   )

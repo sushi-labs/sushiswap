@@ -20,7 +20,6 @@ interface RemoveSectionUnstakeWidget {
   reserve1: Amount<Type>
   liquidityToken: Token
   children: ReactNode
-  error?: string
 }
 
 export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
@@ -31,7 +30,6 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
   reserve1,
   reserve0,
   children,
-  error,
 }) => {
   const [hover, setHover] = useState(false)
   const totalSupply = useTotalSupply(liquidityToken)
@@ -168,11 +166,6 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                         </Transition>
                       </div>
                       {children}
-                      {error && (
-                        <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
-                          {error}
-                        </Typography>
-                      )}
                     </div>
                   </Disclosure.Panel>
                 </Transition>

@@ -1,5 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/solid'
+import { formatNumber } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { classNames, ProgressBar, ProgressColor, Tooltip, Typography } from '@sushiswap/ui'
@@ -100,7 +101,9 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
           </Typography>
           {unlocked ? <LockOpenIcon width={24} /> : <LockClosedIcon width={24} />}
           <Typography variant="sm" weight={500} className="w-full text-center truncate text-slate-200">
-            {period.amount.toSignificant(4)}{' '}
+            {formatNumber(+period.amount.toSignificant(4)) === 'NaN'
+              ? '0.00'
+              : formatNumber(+period.amount.toSignificant(4))}{' '}
             <span className="text-sm text-slate-400">{period.amount.currency.symbol}</span>
           </Typography>
           <Typography variant="xs" className="text-slate-500">
@@ -156,7 +159,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                   </Typography>
                 </Typography>
                 <Typography variant="sm" className="text-slate-500" weight={500}>
-                  / {vesting?.totalAmount.toSignificant(6)} {vesting?.token.symbol} Total
+                  / {formatNumber(vesting?.totalAmount.toSignificant(6))} {vesting?.token.symbol} Total
                 </Typography>
               </div>
             </div>

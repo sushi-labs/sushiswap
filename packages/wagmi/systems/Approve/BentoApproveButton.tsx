@@ -34,11 +34,14 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     enabled = true,
     ...props
   }) => {
+
+    
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
       watch,
       masterContract,
       onSignature,
       onSuccess,
+      enabled,
     })
 
     useEffect(() => {
@@ -53,7 +56,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
         if (!dispatch || index === undefined) return
         dispatch({ type: 'remove', payload: { index } })
       }
-    }, [])
+    }, [dispatch, index])
 
     useEffect(() => {
       if (!dispatch || index === undefined || !enabled) return

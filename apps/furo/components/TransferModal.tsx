@@ -1,19 +1,25 @@
 import { ContractInterface } from '@ethersproject/contracts'
+import { TransactionRequest } from '@ethersproject/providers'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
-import { Button, createToast, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi'
+import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
+import { Checker, Web3Input } from '@sushiswap/wagmi'
+import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Stream, Vesting } from 'lib'
-import { FC, useCallback, useState } from 'react'
-import { useAccount, useDeprecatedContractWrite, useEnsAddress, useNetwork } from 'wagmi'
+import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
+import { useAccount, useContract, useEnsAddress } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
+
+import { useNotifications } from '../lib/state/storage'
 
 interface TransferModalProps {
   stream?: Stream | Vesting
   abi: ContractInterface
   address: string
   fn?: string
+  chainId: ChainId
 }
 
 export const TransferModal: FC<TransferModalProps> = ({
@@ -21,75 +27,88 @@ export const TransferModal: FC<TransferModalProps> = ({
   abi,
   address: contractAddress,
   fn = 'transferFrom',
+  chainId,
 }) => {
   const { address } = useAccount()
-  const { chain: activeChain } = useNetwork()
   const [open, setOpen] = useState(false)
   const [recipient, setRecipient] = useState<string>()
-  const [error, setError] = useState<string>()
+  const [, { createNotification }] = useNotifications(address)
+
+  const contract = useContract({
+    addressOrName: contractAddress,
+    contractInterface: abi,
+  })
   const { data: resolvedAddress } = useEnsAddress({
     name: recipient,
     chainId: ChainId.ETHEREUM,
   })
 
-  const { writeAsync, isLoading: isWritePending } = useDeprecatedContractWrite({
-    addressOrName: contractAddress,
-    contractInterface: abi,
-    functionName: fn,
-    onSuccess() {
-      setOpen(false)
+  const prepare = useCallback(
+    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+      if (!stream || !address || !recipient || !resolvedAddress) return
+
+      setRequest({
+        from: address,
+        to: contractAddress,
+        data: contract.interface.encodeFunctionData(fn, [address, resolvedAddress, stream?.id]),
+      })
     },
-  })
+    [stream, address, recipient, resolvedAddress, contractAddress, contract.interface, fn]
+  )
 
-  const transferStream = useCallback(async () => {
-    if (!stream || !address || !recipient || !resolvedAddress || !activeChain?.id) return
-    setError(undefined)
+  const onSettled = useCallback(
+    async (data: SendTransactionResult | undefined) => {
+      if (!data || !resolvedAddress) return
 
-    try {
-      const data = await writeAsync({ args: [address, resolvedAddress, stream?.id] })
       const ts = new Date().getTime()
-      createToast({
+      createNotification({
         type: 'transferStream',
         txHash: data.hash,
-        chainId: activeChain.id,
+        chainId,
         timestamp: ts,
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: <Dots>Transferring stream</Dots>,
+          pending: `Transferring stream`,
           completed: `Successfully transferred stream to ${shortenAddress(resolvedAddress)}`,
           failed: 'Something went wrong transferring the stream',
         },
       })
-    } catch (e: any) {
-      setError(e.message)
-    }
+    },
+    [chainId, createNotification, resolvedAddress]
+  )
 
-    setRecipient(undefined)
-  }, [address, activeChain?.id, recipient, resolvedAddress, stream, writeAsync])
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    chainId,
+    prepare,
+    onSettled,
+    onSuccess() {
+      setOpen(false)
+    },
+    enabled: Boolean(stream && address && recipient && resolvedAddress),
+  })
 
   if (!stream || stream?.isEnded) return null
 
   return (
     <>
-      <Button
-        color="gray"
-        fullWidth
-        startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
-        disabled={
-          !address ||
-          stream?.chainId !== activeChain?.id ||
-          !stream?.canTransfer(address) ||
-          !stream?.remainingAmount?.greaterThan(ZERO)
-        }
-        onClick={() => setOpen(true)}
-      >
-        Transfer
-      </Button>
+      <Checker.Connected>
+        <Checker.Network chainId={chainId}>
+          <Button
+            color="gray"
+            fullWidth
+            startIcon={<PaperAirplaneIcon width={18} height={18} className="transform rotate-45 mt-[-4px] ml-0.5" />}
+            disabled={!stream?.canTransfer(address) || !stream?.remainingAmount?.greaterThan(ZERO)}
+            onClick={() => setOpen(true)}
+          >
+            Transfer
+          </Button>
+        </Checker.Network>
+      </Checker.Connected>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <Dialog.Content className="space-y-3 !max-w-xs">
+        <Dialog.Content className="space-y-4 !max-w-xs !pb-4">
           <Dialog.Header title="Transfer Stream" onClose={() => setOpen(false)} />
-          <Typography variant="xs" weight={400} className="text-slate-400">
+          <Typography variant="sm" weight={400} className="text-slate-400">
             This will transfer a stream consisting of{' '}
             <span className="font-medium text-slate-200">
               {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
@@ -106,38 +125,28 @@ export const TransferModal: FC<TransferModalProps> = ({
               value={recipient}
               onChange={setRecipient}
               placeholder="Address or ENS Name"
-              className="ring-offset-slate-800"
+              className={classNames(DEFAULT_INPUT_CLASSNAME, 'ring-offset-slate-900')}
             />
           </Form.Control>
-
-          {error && (
-            <Typography variant="xs" className="text-center text-red" weight={500}>
-              {error}
-            </Typography>
-          )}
-          <Dialog.Actions>
-            <Button
-              variant="filled"
-              color="gradient"
-              fullWidth
-              disabled={
-                isWritePending ||
-                !resolvedAddress ||
-                resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
-              }
-              onClick={transferStream}
-            >
-              {isWritePending ? (
-                <Dots>Confirm Transfer</Dots>
-              ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
-                'Invalid recipient'
-              ) : !resolvedAddress ? (
-                'Enter recipient'
-              ) : (
-                'Transfer'
-              )}
-            </Button>
-          </Dialog.Actions>
+          <Button
+            size="md"
+            variant="filled"
+            fullWidth
+            disabled={
+              isWritePending || !resolvedAddress || resolvedAddress.toLowerCase() == stream?.recipient.id.toLowerCase()
+            }
+            onClick={() => sendTransaction?.()}
+          >
+            {isWritePending ? (
+              <Dots>Confirm Transfer</Dots>
+            ) : resolvedAddress?.toLowerCase() == stream?.recipient.id.toLowerCase() ? (
+              'Invalid recipient'
+            ) : !resolvedAddress ? (
+              'Enter recipient'
+            ) : (
+              'Transfer'
+            )}
+          </Button>
         </Dialog.Content>
       </Dialog>
     </>

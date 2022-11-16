@@ -4,7 +4,7 @@ import useScrollPosition from '@react-hook/window-scroll'
 import { useIsMounted } from '@sushiswap/hooks'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
+import { classNames, Container, IconButton, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
 
 export enum AppType {
   Root = 'Explore Apps',
@@ -20,6 +20,7 @@ export enum AppType {
   Invest = 'Earn',
   Partner = 'Partner',
   Widget = 'Widget',
+  Academy = 'Academy',
 }
 
 const LINK = {
@@ -36,6 +37,7 @@ const LINK = {
   [AppType.Invest]: '/earn',
   [AppType.Partner]: '/partner',
   [AppType.Widget]: '/widget',
+  [AppType.Academy]: '/academy',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
@@ -104,8 +106,10 @@ export function Header({
                 type="button"
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
-                <span className="text-sm truncate">{AppType.Root}</span>
-                <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+                <span className="hidden sm:block text-sm truncate">{AppType.Root}</span>
+                <IconButton as="div" className="p-1">
+                  <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+                </IconButton>
               </Listbox.Button>
             }
           >

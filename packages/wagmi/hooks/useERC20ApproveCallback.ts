@@ -1,17 +1,20 @@
 import { AddressZero, MaxUint256 } from '@ethersproject/constants'
+import { ErrorCode } from '@ethersproject/logger'
+import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency } from '@sushiswap/currency'
-import { NotificationData } from '@sushiswap/ui'
+import { createErrorToast, NotificationData } from '@sushiswap/ui'
 import { Contract } from 'ethers'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   erc20ABI,
   useAccount,
   useContract,
-  useDeprecatedSendTransaction,
-  useNetwork,
+  usePrepareSendTransaction,
   UserRejectedRequestError,
+  useSendTransaction,
   useSigner,
 } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import { calculateGasMargin } from '../calculateGasMargin'
 import { useERC20Allowance } from './useERC20Allowance'
@@ -29,11 +32,48 @@ export function useERC20ApproveCallback(
   amountToApprove?: Amount<Currency>,
   spender?: string,
   onSuccess?: (data: NotificationData) => void
-): [ApprovalState, () => Promise<void>] {
-  const { chain } = useNetwork()
+): [ApprovalState, () => void] {
   const { address } = useAccount()
   const { data: signer } = useSigner()
-  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction()
+
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined, e: Error | null) => {
+      // TODO: ignore until wagmi workaround on ethers error
+      // @ts-ignore
+      if (e?.code === ErrorCode.ACTION_REJECTED) {
+        createErrorToast(e?.message, true)
+      }
+
+      if (data && onSuccess && amountToApprove) {
+        const ts = new Date().getTime()
+        onSuccess({
+          type: 'approval',
+          chainId: amountToApprove.currency.chainId,
+          txHash: data.hash,
+          promise: data.wait(),
+          summary: {
+            pending: `Approving ${amountToApprove.currency.symbol}`,
+            completed: `Successfully approved ${amountToApprove.currency.symbol}`,
+            failed: `Something went wrong approving ${amountToApprove.currency.symbol}`,
+          },
+          groupTimestamp: ts,
+          timestamp: ts,
+        })
+      }
+    },
+    [amountToApprove, onSuccess]
+  )
+
+  const [request, setRequest] = useState<Partial<TransactionRequest & { to: string }>>({})
+  const { config } = usePrepareSendTransaction({
+    chainId: amountToApprove?.currency.chainId,
+    request,
+  })
+
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    ...config,
+    onSettled,
+  })
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
   const currentAllowance = useERC20Allowance(watch, token, address ?? undefined, spender)
@@ -57,88 +97,45 @@ export function useERC20ApproveCallback(
     signerOrProvider: signer,
   })
 
-  const approve = useCallback(async (): Promise<void> => {
-    if (!chain?.id) {
-      console.error('Not connected')
-      return
-    }
-
-    if (approvalState !== ApprovalState.NOT_APPROVED) {
-      console.error('approve was called unnecessarily')
-      return
-    }
-
-    if (!token) {
-      console.error('no token')
-      return
-    }
-
-    if (!tokenContract) {
-      console.error('tokenContract is null')
-      return
-    }
-
-    if (!amountToApprove) {
-      console.error('missing amount to approve')
-      return
-    }
-
-    if (!spender) {
-      console.error('no spender')
-      return
-    }
-
-    let useExact = false
-    const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
-      // General fallback for tokens who restrict approval amounts
-      useExact = true
-      return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
-    })
-
+  const prepare = useCallback(async (): Promise<void> => {
     try {
-      const data = await sendTransactionAsync({
-        request: {
-          from: address,
-          to: tokenContract?.address,
-          data: tokenContract.interface.encodeFunctionData('approve', [
-            spender,
-            useExact ? amountToApprove.quotient.toString() : MaxUint256,
-          ]),
-          gasLimit: calculateGasMargin(estimatedGas),
-        },
+      if (
+        !amountToApprove?.currency.chainId ||
+        approvalState !== ApprovalState.NOT_APPROVED ||
+        !token ||
+        !tokenContract ||
+        !amountToApprove ||
+        !spender
+      ) {
+        return
+      }
+
+      let useExact = false
+      const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
+        // General fallback for tokens who restrict approval amounts
+        useExact = true
+        return tokenContract.estimateGas.approve(spender, amountToApprove.quotient.toString())
       })
 
-      if (onSuccess) {
-        const ts = new Date().getTime()
-        onSuccess({
-          type: 'approval',
-          chainId: chain?.id,
-          txHash: data.hash,
-          promise: data.wait(),
-          summary: {
-            pending: `Approving ${amountToApprove.currency.symbol}`,
-            completed: `Successfully approved ${amountToApprove.currency.symbol}`,
-            failed: `Something went wrong approving ${amountToApprove.currency.symbol}`,
-          },
-          groupTimestamp: ts,
-          timestamp: ts,
-        })
-      }
+      setRequest({
+        from: address,
+        to: tokenContract?.address,
+        data: tokenContract.interface.encodeFunctionData('approve', [
+          spender,
+          useExact ? amountToApprove.quotient.toString() : MaxUint256,
+        ]),
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
     } catch (e: unknown) {
       if (e instanceof UserRejectedRequestError) return
       console.error(e)
     }
-  }, [
-    chain?.id,
-    approvalState,
-    token,
-    tokenContract,
-    amountToApprove,
-    spender,
-    sendTransactionAsync,
-    address,
-    onSuccess,
-  ])
+  }, [amountToApprove, approvalState, token, tokenContract, spender, address])
 
-  return [approvalState, approve]
+  // Prepare transaction
+  useEffect(() => {
+    void prepare()
+  }, [prepare])
+
+  return useMemo(() => [approvalState, () => sendTransaction?.()], [approvalState, sendTransaction])
 }

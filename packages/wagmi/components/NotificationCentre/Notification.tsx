@@ -2,6 +2,7 @@ import { Disclosure } from '@headlessui/react'
 import {
   ArrowRightIcon,
   CashIcon,
+  CheckIcon,
   ChevronDownIcon,
   DownloadIcon,
   FireIcon,
@@ -121,6 +122,36 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'enterBar' && (
                 <DownloadIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'transferStream' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'transferVesting' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createMultipleStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createMultipleVesting' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'cancelStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createVesting' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'updateStream' && (
+                <DownloadIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'withdrawStream' && (
+                <UploadIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'withdrawVesting' && (
+                <UploadIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'leaveBar' && (
                 <UploadIcon width={20} height={20} />
