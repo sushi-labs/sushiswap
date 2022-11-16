@@ -19,12 +19,10 @@ import {
   useSendTransaction,
 } from '@sushiswap/wagmi'
 import { TRIDENT_ENABLED_NETWORKS } from 'config'
-import stringify from 'fast-json-stable-stringify'
 import { approveMasterContractAction, batchAction, unwrapWETHAction } from 'lib/actions'
 import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
-import { log } from 'next-axiom'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { useAccount, useProvider, UserRejectedRequestError } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -290,6 +288,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
             value,
           }
         }
+
         if (call) {
           if (!isAddress(call.address)) new Error('call address has to be an address')
           if (call.address === AddressZero) new Error('call address cannot be zero')
@@ -367,32 +366,6 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
       const ts = new Date().getTime()
       // data: SendTransactionResult | undefined, error: Error | null
-      data
-        .wait()
-        .then((tx) => {
-          log.info('swap success', {
-            transactionHash: tx.transactionHash,
-            chainId: trade.inputAmount.currency.chainId,
-            tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
-            tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
-            tokenInSymbol: trade.inputAmount.currency.symbol,
-            tokenOutSymbol: trade.outputAmount.currency.symbol,
-            tokenInAmount: trade.inputAmount.toFixed(),
-            tokenOutAmount: trade.outputAmount.toFixed(),
-          })
-        })
-        .catch((error: unknown) => {
-          log.error('swap failure', {
-            error: stringify(error),
-            chainId: trade.inputAmount.currency.chainId,
-            tokenInAddress: trade.inputAmount.currency.isNative ? 'NATIVE' : trade.inputAmount.currency.address,
-            tokenOutAddress: trade.outputAmount.currency.isNative ? 'NATIVE' : trade.outputAmount.currency.address,
-            tokenInSymbol: trade.inputAmount.currency.symbol,
-            tokenOutSymbol: trade.outputAmount.currency.symbol,
-            tokenInAmount: trade.inputAmount.toFixed(),
-            tokenOutAmount: trade.outputAmount.toFixed(),
-          })
-        })
 
       createNotification({
         type: 'swap',
@@ -456,7 +429,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 fullWidth
                 address={getTridentRouterContractConfig(chainId).addressOrName}
                 onSignature={setSignature}
-                enabled={Boolean(typeof chainId === 'number' && TRIDENT_ENABLED_NETWORKS[chainId])}
+                enabled={Boolean(typeof chainId === 'number' && TRIDENT_ENABLED_NETWORKS.includes(chainId))}
               />
               <Approve.Token
                 size="md"

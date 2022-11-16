@@ -36,7 +36,8 @@ jobs:
         ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
         TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
+        ACADEMY_URL: ${{ secrets.ACADEMY_URL }}
+ 
       steps:
         - name: Check out
           uses: actions/checkout@v3
