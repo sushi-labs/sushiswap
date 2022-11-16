@@ -20,6 +20,9 @@ export const List: FC<{ selectedId: string; onSelect(id: string): void; data: Ca
           backgroundColor={card.backgroundColor}
           textColor={card.textColor}
           onSelect={onSelect}
+          audience={card.audience}
+          content={card.content}
+          link={card.link}
         />
       ))}
     </ul>

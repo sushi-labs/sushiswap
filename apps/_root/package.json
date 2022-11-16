@@ -25,6 +25,7 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
+    "@vercel/analytics": "0.1.4",
     "ethers": "^5.7.0",
     "framer-motion": "^7.6.5",
     "graphql-request": "^5.0.0",
