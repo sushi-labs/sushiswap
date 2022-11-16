@@ -3,7 +3,6 @@ import { Container, Typography } from '@sushiswap/ui'
 import { HeroSVG } from 'components/SVG/HeroSVG'
 import { FC, useState } from 'react'
 
-import { Parallax } from './Parallax'
 import { Search } from './Search'
 
 const TITLES = ['Whenever', 'Wherever', 'Whoever']
@@ -36,7 +35,7 @@ export const Hero: FC = () => {
           </div>
         </div>
       </Container>
-      <Parallax />
+      {/*<Parallax />*/}
     </section>
   )
 }

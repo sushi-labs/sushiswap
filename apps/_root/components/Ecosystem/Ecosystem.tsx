@@ -120,7 +120,9 @@ export const Ecosystem: FC = () => {
                   {TABS.map(({ title, content, image: Image, moreContent, link, linkText, audience }, index) => (
                     <Tab.Panel key={title} className="items-center grid grid-cols-1 md:grid-cols-2 gap-20">
                       <AnimateSharedLayout>
-                        <Image />
+                        <div>
+                          <Image />
+                        </div>
                         <motion.div
                           layoutId={`ecosystem-container-${index}`}
                           className="flex flex-col gap-2 items-start"

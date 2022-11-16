@@ -16,7 +16,9 @@ export const BuildWealth: FC = () => {
             <span className="text-neutral-400">{`It doesnt stop at trading.`}</span>
           </AnimatedTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-            <NetworkStellarSVG />
+            <div>
+              <NetworkStellarSVG />
+            </div>
             <div className="flex flex-col items-center md:items-start">
               <Typography variant="h3" weight={600} className="text-center md:text-left">
                 Earn passive income with <br /> your coins.

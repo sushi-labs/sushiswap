@@ -138,7 +138,7 @@ const Index = ({ stats }) => {
         <Partners />
         <Story />
 
-        <div className="flex flex-col gap-2 border-t border-neutral-200/5">
+        <div className="flex flex-col gap-2 border-t border-neutral-200/10">
           <BuildWealth />
           <Ecosystem />
           <BuildFuture />
