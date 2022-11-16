@@ -21,6 +21,14 @@ sources:
         retry: 3
     transforms:
 
+  - name: FuroStream
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-subgraphs/furo-ethereum}
+    transforms:
+      - autoPagination:
+          validateSchema: true
+
   - name: Exchange
     handler:
       graphql:
@@ -221,6 +229,14 @@ additionalTypeDefs: |
     valueUSD: BigDecimal!
     pair: Pair!
   }
+  type Furo_token {
+    id: ID!
+    liquidityShares: BigInt!
+    symbol: String!
+    name: String!
+    decimals: Int!
+    chainId: Int!
+  }
   type ChefUserPool {
     id: BigInt!
     pair: String!
@@ -305,6 +321,14 @@ additionalTypeDefs: |
   }
   # Query Extensions
   extend type Query {
+    furoTokensByChainIds(
+      skip: Int = 0
+      chainIds: [Int!]!
+      orderBy: Token_orderBy
+      orderDirection: OrderDirection
+      first: Int = 100
+      where: Token_filter
+    ): [Furo_token!]!
     bundlesByChainIds(
       chainIds: [Int!]!
     ): [Bundle!]!
