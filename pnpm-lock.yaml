@@ -189,6 +189,7 @@ importers:
       autoprefixer: ^10.4.0
       eslint: ^8.20.0
       ethers: ^5.7.0
+      fast-json-stable-stringify: ^2.1.0
       framer-motion: ^7.6.5
       graphql-request: ^5.0.0
       next: ^12.3.1
@@ -221,6 +222,7 @@ importers:
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@vercel/analytics': 0.1.4_react@18.2.0
       ethers: 5.7.1
+      fast-json-stable-stringify: 2.1.0
       framer-motion: 7.6.5_biqbaboplfbrettd7655fr4n2y
       graphql-request: 5.0.0
       next: 12.3.1_biqbaboplfbrettd7655fr4n2y
@@ -5821,6 +5823,7 @@ packages:
       - react-native-windows
       - supports-color
       - utf-8-validate
+    dev: false
 
   /@graphprotocol/client-polling-live/1.0.1:
     resolution: {integrity: sha512-lTeHCYQfF54i2P25YQbo20E1ZK1xnBTcjaZKwFPv83Xrkrc4mvYyjfbOSNMFhzjRjpGoabOewrKu4Kv9+WLl4w==}

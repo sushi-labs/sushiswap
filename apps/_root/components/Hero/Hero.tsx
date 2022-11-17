@@ -35,7 +35,6 @@ export const Hero: FC = () => {
           </div>
         </div>
       </Container>
-      {/*<Parallax />*/}
     </section>
   )
 }
