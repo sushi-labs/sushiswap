@@ -30,6 +30,8 @@ export const MoveImage = () => {
           objectFit="contain"
           src="https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668714065/Ellipse_1107_oopeuh.webp"
           layout="fill"
+          width={420}
+          height={420}
         />
       </div>
     </div>

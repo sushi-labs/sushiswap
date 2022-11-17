@@ -1,23 +1,21 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
 import { Button, classNames, Container, Tab, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import React, { FC, useState } from 'react'
 
 import { ExpandableCard, ExpendableCardData } from '../ExpandableCard/ExpandableCard'
-import { FuroSVG } from '../SVG/FuroSVG'
-import { KashiSVG } from '../SVG/KashiSVG'
-import { MisoSVG } from '../SVG/MisoSVG'
 
 interface TabsExpendableCardData extends ExpendableCardData {
   summary: string
-  image: (props: React.ComponentProps<'svg'>) => JSX.Element
+  image: string
 }
 
 const TABS: TabsExpendableCardData[] = [
   {
     title: 'Furo Streaming',
     summary: 'Automate your DAO salaries and vesting schedules while earning interest from yield strategies.',
-    image: FuroSVG,
+    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668717586/px-furo_2_mvt9vl.webp',
     content: (
       <>
         <p>
@@ -44,7 +42,7 @@ const TABS: TabsExpendableCardData[] = [
   {
     title: 'Kashi Lending',
     summary: 'Define your own risk profile. Borrow and Lend with confidence',
-    image: KashiSVG,
+    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668717586/px-Frame_38657_exywa7.webp',
     content: (
       <>
         <span>
@@ -70,9 +68,38 @@ const TABS: TabsExpendableCardData[] = [
   },
   {
     title: 'Miso Launchpad',
-    summary: 'Be an early participant in the latest Web3 projects.',
-    image: MisoSVG,
-    content: 'Join new projects launched using our launchpad Miso.',
+    summary:
+      'MISO is Sushi’s permissionless launchpad where project founders can create auctions for their token listings efficiently and market them to a willing audience.',
+    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668717586/px-Frame_38658_lyl2g5.webp',
+    content: (
+      <>
+        <h2>For project founders</h2>
+        <p>
+          MISO offers a collection of open-source smart contracts directly out-of-the-box that are interoperable,
+          allowing you the ability to easily spin up your own token listing for your project in a variety of ways,
+          without dedicating hours to research and develop. Non-technical founders are welcome; it’s simple and
+          intuitive to make your own listing and get it up and running quickly, without any technical or web3-specific
+          knowledge.
+        </p>
+        <h3>Connect with your audience</h3>
+        <p>
+          The MISO marketplace helps founders abstract away a lot of the pain associated with traditional token listings
+          by assisting the tokens in their price discovery with willing audiences via auctions or a general crowdsale,
+          before they are to be listed on the open exchange at Sushi.
+        </p>
+        <h2>For participants</h2>
+        <span>
+          MISO’s marketplace allows users the opportunity to get in early and invest in projects that they believe in.
+        </span>
+        <h3>Make informed decisions</h3>
+        <p>
+          Users can get early exposure to projects that they believe in, all while committing the amount they feel most
+          comfortable with and defining their own risk profile. With tons of information available on the easy-to-use
+          interface, users have all the necessary tools to make informed business decisions and play a part in the
+          development of the earliest stages of new projects.
+        </p>
+      </>
+    ),
     link: 'https://sushi.com/miso',
     linkText: 'Visit Launchpad',
     caption: 'For Retail Users',
@@ -123,11 +150,9 @@ export const Ecosystem: FC = () => {
               </div>
               <Tab.Panels>
                 <div className="flex items-center p-10 min-h-[520px]">
-                  {TABS.map(({ title, content, image: HeroImage, summary, link, linkText, caption }) => (
+                  {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
                     <Tab.Panel key={title} className="items-center grid grid-cols-1 md:grid-cols-2 gap-20">
-                      <div className="w-[420px] relative">
-                        <HeroImage width={420} />
-                      </div>
+                      <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
                       <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
                         {({ setOpen, containerId, titleId }) => (
                           <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">

@@ -11,33 +11,24 @@ const DATA: ExpendableCardData = {
   caption: 'For Retail Users',
   content: (
     <>
-      <h3>What is OpenMEV?</h3>
       <p>
-        OpenMEV aims to provide a credible neutral platform for facilitating both aggregation and direct communication
-        channels between block validators, block producers and block synchronizers for the Ethereum and EVM-based
-        networks.
+        Centralized exchanges, or exchanges run by a centralized entity, custody users’ tokens on their behalf into an
+        intermediary account, and are prone to many attack vectors such as hacks, government intervention, internal
+        mismanagement, frozen withdrawals, bank runs, etc. Due to the unfortunate prevalence of these issues with users’
+        funds on centralized exchanges, the space had adopted a common mantra: “Not your keys, not your crypto.” This
+        refers to the idea that if you yourself do not have the literal custody of your funds (because a third party is
+        looking over them for you), you can never be completely sure your funds are safe.
       </p>
-      <p>Example use cases include:</p>
-      <ul>
-        <li>Users that would like to communicate their preferred transaction order within a block.</li>
-        <li>Account abstraction via private mempool </li>
-      </ul>
       <p>
-        OpenMEV is built on top of SecureRPC. SecureRPC provides users with an accessible, convenient and secure
-        infrastructure for transaction routing and execution.
+        As a decentralized exchange, Sushi never has control of users’ funds, nor will they ever in the future. The
+        decentralized nature of it means that we do not rely on a third party or an intermediary account; the users are
+        always in full custody of your their tokens, and can exchange with them at any time, without ever having to jump
+        through any hoops or submit any personal information. Stay in full control of your money.
       </p>
-      <ul>
-        <li>Accessible: allow ordinary users to easily discover the trading risk and value on the network.</li>
-        <li>
-          Convenient: enable backrunning swaps automatically so that more opportunities to capture profits at a lower
-          cost.
-        </li>
-        <li>Secure: make transactions on the blockchain network more secure and private.</li>
-      </ul>
     </>
   ),
-  link: 'https://manifoldfinance.com',
-  linkText: 'Visit Manifold',
+  link: 'https://sushi.com/swap',
+  linkText: 'Visit Swap',
 }
 
 export const Custody: FC = () => {

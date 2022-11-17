@@ -25,8 +25,12 @@ export const BuildWealth: FC = () => {
               />
             </div>
             <div className="flex flex-col items-center md:items-start">
-              <Typography variant="h3" weight={600} className="text-center md:text-left">
+              <Typography variant="h1" weight={600} className="text-center md:text-left">
                 Earn passive income with <br /> your coins.
+              </Typography>
+              <Typography variant="lg" weight={400} className="text-center md:text-left mt-2">
+                With multiple ways to passively earn yield on your coins, you can choose your own yield stack and make
+                your money work for you, all in the background, 24/7.
               </Typography>
               <div className="flex flex-wrap justify-center md:justify-start gap-x-6">
                 <ExpandableCard

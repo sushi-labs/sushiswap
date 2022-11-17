@@ -23,7 +23,7 @@ export const CustodyImage = () => {
       {...(!isSmallScreen && { ...{ transformTemplate, style: { opacity, scale, y: perspective, rotateX } } })}
       className="relative w-[420px] h-[420px] -left-[140px] sm:left-0"
     >
-      <IphoneMockupSVG />
+      <IphoneMockupSVG width={420} />
     </motion.div>
   )
 }

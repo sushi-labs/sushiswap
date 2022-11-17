@@ -7,33 +7,21 @@ import { ExpandableCard, ExpendableCardData } from '../../ExpandableCard/Expanda
 import { GuardImage } from './GuardImage'
 
 const DATA: ExpendableCardData = {
-  title: 'No more sandwich attacks',
+  title: 'Keep more profts and earn gas refunds',
   caption: 'For Retail Users',
   content: (
     <>
-      <h3>What is OpenMEV?</h3>
       <p>
-        OpenMEV aims to provide a credible neutral platform for facilitating both aggregation and direct communication
-        channels between block validators, block producers and block synchronizers for the Ethereum and EVM-based
-        networks.
+        SushiGuard is a way of protecting Sushi users from a predatory process known as MEV. MEV stands for “Maximal
+        Extractable Value” and in essence plays the same role in web3 as arbitrage trading does in traditional finance.
+        Automated bots will monitor the network and “sandwich” your trades by reordering transactions in a block,
+        leaving users with a less-optimal trade than they originally thought.
       </p>
-      <p>Example use cases include:</p>
-      <ul>
-        <li>Users that would like to communicate their preferred transaction order within a block.</li>
-        <li>Account abstraction via private mempool </li>
-      </ul>
       <p>
-        OpenMEV is built on top of SecureRPC. SecureRPC provides users with an accessible, convenient and secure
-        infrastructure for transaction routing and execution.
+        SushiGuard can easily be toggled on in the swap interface for trades, giving users the ability to protect their
+        trades from these “sandwich attacks” and refund an amount of the gas fees to users that they spent to make the
+        trade, improving the experience and saving them money.
       </p>
-      <ul>
-        <li>Accessible: allow ordinary users to easily discover the trading risk and value on the network.</li>
-        <li>
-          Convenient: enable backrunning swaps automatically so that more opportunities to capture profits at a lower
-          cost.
-        </li>
-        <li>Secure: make transactions on the blockchain network more secure and private.</li>
-      </ul>
     </>
   ),
   link: 'https://manifoldfinance.com',
