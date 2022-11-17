@@ -1,6 +1,6 @@
 import { ChainId, chainName } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client'
+import { Block, getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
 import CliTable3 from 'cli-table3'
 
@@ -49,63 +49,7 @@ export async function revenues(args: Arguments) {
   const lastBlocks = await getBlockByTimestamp(chainIds, 0) //lastest block
   const pastBlocks = await getBlockByTimestamp(chainIds, days) //block x days ago
 
-  const revenues: {
-    [chainName: string]: {
-      volume: number
-      revenue: number
-      spent: number
-      pairs: PairRevenue[]
-    }
-  } = {
-    Total: { revenue: 0, spent: 0, volume: 0, pairs: [] },
-  }
-  await Promise.all(
-    lastBlocks.map(async (block) => {
-      const lastPairs = await getAllPairsWithFarms([block.chainId], Number(block.number))
-
-      const pastPairs = await getAllPairsWithFarms(
-        [block.chainId],
-        Number(pastBlocks.find((b) => b.chainId === block.chainId)?.number)
-      )
-
-      for (const pair of lastPairs) {
-        if (!revenues[chainName[pair.chainId]]) {
-          revenues[chainName[pair.chainId]] = { revenue: 0, volume: 0, spent: 0, pairs: [] }
-        }
-
-        let spent = 0
-        //process spending
-        if (pair.farm) {
-          const sushiIncentive = pair.farm.incentives.find((incentive) => {
-            return incentive.rewardToken.address.toLowerCase() == SUSHI_ADDRESS[pair.chainId].toLowerCase()
-          })
-          if (sushiIncentive) {
-            spent = Number(sushiIncentive.rewardPerDay) * Number(sushiPriceUSD) * days
-          }
-        }
-        //process revenues
-        const previousFees = Number(pastPairs.find((p) => p.id === pair.id)?.feesUSD)
-        const revenue = (previousFees ? Number(pair.feesUSD) - previousFees : Number(pair.feesUSD)) / 6
-        const previousVolume = Number(pastPairs.find((p) => p.id === pair.id)?.volumeUSD)
-        const volume = previousVolume ? Number(pair.volumeUSD) - previousVolume : Number(pair.volumeUSD)
-
-        //push results
-        revenues[chainName[pair.chainId]].pairs.push({
-          name: pair.name,
-          address: pair.address,
-          spent: spent,
-          revenue: revenue,
-          volume: volume,
-        })
-        revenues[chainName[pair.chainId]].spent += spent
-        revenues[chainName[pair.chainId]].revenue += revenue
-        revenues[chainName[pair.chainId]].volume += volume
-        revenues['Total'].spent += spent
-        revenues['Total'].revenue += revenue
-        revenues['Total'].volume += volume
-      }
-    })
-  )
+  const revenues = await processRevenues(lastBlocks, pastBlocks, sushiPriceUSD, days)
 
   const orderedRevenues = Object.entries(revenues).sort((a, b) => {
     const benefitsA = a[1].revenue - a[1].spent
@@ -127,6 +71,7 @@ export async function revenues(args: Arguments) {
   })
 
   for (const revenue of orderedRevenues) {
+    //total revenues
     const benefits = revenue[1].revenue - revenue[1].spent
     const benefitsString = chalk.bold(benefits.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $')
     table.push([
@@ -143,6 +88,7 @@ export async function revenues(args: Arguments) {
       const benefitsB = b.revenue - b.spent
       return benefitsA > benefitsB ? -1 : 1
     })
+    //pairs details
     const topPairs = [...revenue[1].pairs.slice(0, 5), ...revenue[1].pairs.slice(-5).reverse()]
     topPairs.map((pair, i) => {
       const pairBenefits = pair.revenue - pair.spent
@@ -202,4 +148,65 @@ async function getAllPairsWithFarms(chainIds: number[], blockNumber: number) {
     id = pairs[999].address
   }
   return allPairs
+}
+
+async function processRevenues(lastBlocks: Block[], pastBlocks: Block[], sushiPriceUSD: number, days: number) {
+  const revenues: {
+    [chainName: string]: {
+      volume: number
+      revenue: number
+      spent: number
+      pairs: PairRevenue[]
+    }
+  } = {
+    Total: { revenue: 0, spent: 0, volume: 0, pairs: [] },
+  }
+  await Promise.all(
+    lastBlocks.map(async (block) => {
+      const lastPairs = await getAllPairsWithFarms([block.chainId], Number(block.number))
+
+      const pastPairs = await getAllPairsWithFarms(
+        [block.chainId],
+        Number(pastBlocks.find((b) => b.chainId === block.chainId)?.number)
+      )
+
+      for (const pair of lastPairs) {
+        if (!revenues[chainName[pair.chainId]]) {
+          revenues[chainName[pair.chainId]] = { revenue: 0, volume: 0, spent: 0, pairs: [] }
+        }
+
+        let spent = 0
+        //process spending
+        if (pair.farm) {
+          const sushiIncentive = pair.farm.incentives.find((incentive) => {
+            return incentive.rewardToken.address.toLowerCase() == SUSHI_ADDRESS[pair.chainId].toLowerCase()
+          })
+          if (sushiIncentive) {
+            spent = Number(sushiIncentive.rewardPerDay) * Number(sushiPriceUSD) * days
+          }
+        }
+        //process revenues
+        const previousFees = Number(pastPairs.find((p) => p.id === pair.id)?.feesUSD)
+        const revenue = (previousFees ? Number(pair.feesUSD) - previousFees : Number(pair.feesUSD)) / 6
+        const previousVolume = Number(pastPairs.find((p) => p.id === pair.id)?.volumeUSD)
+        const volume = previousVolume ? Number(pair.volumeUSD) - previousVolume : Number(pair.volumeUSD)
+
+        //push results
+        revenues[chainName[pair.chainId]].pairs.push({
+          name: pair.name,
+          address: pair.address,
+          spent: spent,
+          revenue: revenue,
+          volume: volume,
+        })
+        revenues[chainName[pair.chainId]].spent += spent
+        revenues[chainName[pair.chainId]].revenue += revenue
+        revenues[chainName[pair.chainId]].volume += volume
+        revenues['Total'].spent += spent
+        revenues['Total'].revenue += revenue
+        revenues['Total'].volume += volume
+      }
+    })
+  )
+  return revenues
 }
