@@ -33,12 +33,12 @@ export const Partners: FC = () => {
             <LayerzeroSVG width={120} />
             <MagnaSVG width={120} />
             <MetamaskSVG width={120} />
-            <BobaSVG height={38} />
           </div>
           <div className="flex justify-center flex-wrap gap-10">
             <OptimismSVG width={120} />
             <PolygonSVG width={120} />
             <ZkSyncSVG width={120} />
+            <BobaSVG height={38} />
           </div>
         </div>
       </Container>
