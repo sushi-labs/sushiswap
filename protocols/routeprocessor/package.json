@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "build": "TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf artifacts && rm -rf cache && rm -rf exports && rm -rf typechain",
     "console": "hardhat console",
     "ethereum:deploy": "hardhat --network ethereum deploy",
     "ethereum:verify": "hardhat --network ethereum etherscan-verify --license MIT",
@@ -82,7 +83,7 @@
     "ethers": "^5.7.0",
     "hardhat": "^2.9.5",
     "hardhat-contract-sizer": "^2.3.0",
-    "hardhat-deploy": "^0.11.10",
+    "hardhat-deploy": "0.11.20",
     "hardhat-gas-reporter": "^1.0.0",
     "hardhat-log-remover": "^2.0.0",
     "hardhat-preprocessor": "^0.1.0",
