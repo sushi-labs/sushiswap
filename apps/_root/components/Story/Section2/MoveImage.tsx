@@ -1,7 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
-import { SUSHI } from '@sushiswap/currency'
 import { useIsSmScreen } from '@sushiswap/hooks'
-import { Currency } from '@sushiswap/ui'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 
@@ -24,9 +21,6 @@ export const MoveImage = () => {
           <div className="blur-[100px] opacity-[0.25] w-full h-full rounded-full h-full w-full bg-[linear-gradient(160.45deg,_#F760E7_8.22%,_#197FDE_91.32%)]" />
         </div>
         <NetworkStellarSVG width={423} height={320} />
-        <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center z-[2]">
-          <Currency.Icon currency={SUSHI[ChainId.ETHEREUM]} width={112} height={112} />
-        </div>
       </motion.div>
     </div>
   )

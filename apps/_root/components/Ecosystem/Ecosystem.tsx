@@ -5,6 +5,8 @@ import React, { FC, useState } from 'react'
 
 import { ExpandableCard, ExpendableCardData } from '../ExpandableCard/ExpandableCard'
 import { FuroSVG } from '../SVG/FuroSVG'
+import { KashiSVG } from '../SVG/KashiSVG'
+import { MisoSVG } from '../SVG/MisoSVG'
 
 interface TabsExpendableCardData extends ExpendableCardData {
   summary: string
@@ -14,8 +16,7 @@ interface TabsExpendableCardData extends ExpendableCardData {
 const TABS: TabsExpendableCardData[] = [
   {
     title: 'Furo Streaming',
-    summary:
-      'Automate your DAO salaries and vesting schedules while earning interest from yield strategies. Automate your DAO salaries and vesting schedules while earning.',
+    summary: 'Automate your DAO salaries and vesting schedules while earning interest from yield strategies.',
     image: FuroSVG,
     content: (
       <>
@@ -42,8 +43,8 @@ const TABS: TabsExpendableCardData[] = [
   },
   {
     title: 'Kashi Lending',
-    summary: 'test content',
-    image: FuroSVG,
+    summary: 'Define your own risk profile. Borrow and Lend with confidence',
+    image: KashiSVG,
     content: (
       <>
         <span>
@@ -68,10 +69,10 @@ const TABS: TabsExpendableCardData[] = [
     caption: 'For Retail Users',
   },
   {
-    title: 'Launchpad',
-    summary: 'test content',
-    image: FuroSVG,
-    content: '',
+    title: 'Miso Launchpad',
+    summary: 'Be an early participant in the latest Web3 projects.',
+    image: MisoSVG,
+    content: 'Join new projects launched using our launchpad Miso.',
     link: 'https://sushi.com/miso',
     linkText: 'Visit Launchpad',
     caption: 'For Retail Users',
@@ -124,8 +125,11 @@ export const Ecosystem: FC = () => {
                 <div className="p-10">
                   {TABS.map(({ title, content, image: HeroImage, summary, link, linkText, caption }) => (
                     <Tab.Panel key={title} className="items-center grid grid-cols-1 md:grid-cols-2 gap-20">
-                      <div>
-                        <HeroImage />
+                      <div className="relative">
+                        <HeroImage className="z-[2]" />
+                        <div className="pointer-events-none absolute inset-0">
+                          <div className="blur-[100px] opacity-[0.25] w-full h-full rounded-full h-full w-full bg-[linear-gradient(160.45deg,_#63DFFA_8.22%,_#197FDE_91.32%)]" />
+                        </div>
                       </div>
                       <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
                         {({ setOpen, containerId, titleId }) => (

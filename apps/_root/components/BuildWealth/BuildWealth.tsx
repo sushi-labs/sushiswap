@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 
 import { AnimatedTitle } from '../AnimatedTitle/AnimatedTitle'
 import { ExpandableCard } from '../ExpandableCard/ExpandableCard'
-import { NetworkStellarSVG } from '../SVG/NetworkStellarSVG'
+import { MagnetSVG } from '../SVG/MagnetSVG'
 
 export const BuildWealth: FC = () => {
   return (
@@ -15,8 +15,11 @@ export const BuildWealth: FC = () => {
             <span className="text-neutral-400">{`It doesnt stop at trading.`}</span>
           </AnimatedTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-            <div>
-              <NetworkStellarSVG />
+            <div className="relative">
+              <MagnetSVG />
+              <div className="z-[1] absolute inset-0">
+                <div className="blur-[100px] opacity-[0.25] w-full h-full rounded-full h-full w-full bg-[linear-gradient(160.45deg,_#F760E7_8.22%,_#197FDE_91.32%)]" />
+              </div>
             </div>
             <div className="flex flex-col items-center md:items-start">
               <Typography variant="h3" weight={600} className="text-center md:text-left">
