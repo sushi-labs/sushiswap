@@ -212,6 +212,18 @@ export function Header({
                     </Typography>
                   </Select.Option>
                   <Select.Option
+                    as="a"
+                    href="https://www.sushi.com/academy"
+                    key={AppType.Academy}
+                    value={AppType.Academy}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.Academy}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Demystifying DeFi
+                    </Typography>
+                  </Select.Option>
+                  <Select.Option
                     as={Link.External}
                     href="https://app.sushi.com"
                     key={AppType.Legacy}
