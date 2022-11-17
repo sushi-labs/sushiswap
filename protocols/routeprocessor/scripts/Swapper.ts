@@ -1,6 +1,5 @@
-import { findMultiRouteExactIn, MultiRoute, NetworkInfo } from "@sushiswap/tines";
+import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RToken } from "@sushiswap/tines";
 import { BigNumber, ethers } from "ethers";
-import { Network, Token } from "./networks/Network";
 import { SushiProvider } from "./liquidityProviders/Sushi";
 import { getRouteProcessorCode } from "./TinesToRouteProcessor";
 import { UniswapProvider } from "./liquidityProviders/UniswapV2";
@@ -8,26 +7,25 @@ import { convertTokenToBento, getBentoChainId, TridentProvider } from "./liquidi
 import { Limited } from "./Limited";
 import { PoolCode } from "./pools/PoolCode";
 import { QuickSwapProvider } from "./liquidityProviders/QuickSwap";
+import { ChainId } from "@sushiswap/chain";
+import { Token, WNATIVE } from "@sushiswap/currency";
 
 export class Swapper {
   routeProcessor: string
   chainDataProvider: ethers.providers.BaseProvider
-  forkProvider: Provider
-  network: Network
+  chainId: ChainId
   poolsNumber: {[network: string]: number}
   limited: Limited
   pools: Map<string, PoolCode>
 
   constructor(
     routeProcessor: string, 
-    chainDataProvider: ethers.providers.BaseProvider, 
-    forkProvider: Provider, 
-    net: Network
+    chainDataProvider: ethers.providers.BaseProvider,
+    chainId: ChainId
   ) {
     this.routeProcessor = routeProcessor
     this.chainDataProvider = chainDataProvider
-    this.forkProvider = forkProvider
-    this.network = net
+    this.chainId = chainId
     this.poolsNumber = {}
     this.limited = new Limited(12, 1000)    // Free Alchemy account allows 330/26 eth_calls per second
     this.pools = new Map()
@@ -35,10 +33,10 @@ export class Swapper {
 
   async getRoute(tokenIn: Token, amountIn: BigNumber, tokenOut: Token): Promise<MultiRoute> {
     const providers = [
-      new SushiProvider(this.chainDataProvider, this.network, this.limited),
-      new UniswapProvider(this.chainDataProvider, this.network, this.limited),
-      new QuickSwapProvider(this.chainDataProvider, this.network, this.limited),
-      new TridentProvider(this.chainDataProvider, this.forkProvider, this.network, this.limited),
+      new SushiProvider(this.chainDataProvider, this.chainId, this.limited),
+      new UniswapProvider(this.chainDataProvider, this.chainId, this.limited),
+      new QuickSwapProvider(this.chainDataProvider, this.chainId, this.limited),
+      new TridentProvider(this.chainDataProvider, this.chainId, this.limited),
     ]
     const poolsPromises = providers.map(p => p.getPools(tokenIn, tokenOut))
     const poolsArrays = await Promise.all(poolsPromises)
@@ -48,16 +46,16 @@ export class Swapper {
     const pools = poolCodes.map(pc => pc.pool)
 
     const networks: NetworkInfo[] = [{
-      chainId: this.network.chainId,
-      baseToken:this.network.baseWrappedToken, 
+      chainId: this.chainId,
+      baseToken: WNATIVE[this.chainId] as RToken, 
       gasPrice: 50e9
     }, {
-      chainId: getBentoChainId(this.network.chainId),
-      baseToken: convertTokenToBento(this.network.baseWrappedToken), 
+      chainId: getBentoChainId(this.chainId),
+      baseToken: convertTokenToBento(WNATIVE[this.chainId]), 
       gasPrice: 50e9
     }]
 
-    const route = findMultiRouteExactIn(tokenIn, tokenOut, amountIn, pools, networks,  50e9)
+    const route = findMultiRouteExactIn(tokenIn as RToken, tokenOut as RToken, amountIn, pools, networks,  50e9)
     return route
   }
 

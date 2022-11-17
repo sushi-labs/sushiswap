@@ -1,22 +1,38 @@
 import { ethers, network } from "hardhat";
 import { RouteProcessor__factory } from "../types/index";
 import { Swapper } from "../scripts/Swapper";
-import {ETHEREUM} from '../scripts/networks/Ethereum'
 import { getBigNumber, RouteStatus } from "@sushiswap/tines";
 import { WETH9ABI } from "../ABI/WETH9";
-import { Network, Token } from "../scripts/networks/Network";
-import { POLYGON } from "../scripts/networks/Polygon";
 import { HardhatNetworkConfig, ProviderConnectInfo } from "hardhat/types";
 import { HEXer } from "../scripts/HEXer";
 import { ERC20ABI } from "../ABI/ERC20";
 import { BentoBox } from "../scripts/liquidityProviders/Trident";
 import { Contract } from "ethers";
 import { BentoBoxABI } from "../ABI/BentoBoxABI";
+import { ChainKey, ChainId } from "@sushiswap/chain";
+import { SUSHI, Token, WBTC, WNATIVE } from "@sushiswap/currency";
 
-const delay = async ms => new Promise(res => setTimeout(res, ms));
+const delay = async (ms: number) => new Promise(res => setTimeout(res, ms));
+
+const WRAPPED_NATIVE: Record<number, Token>  = {
+  [ChainId.ETHEREUM]: new Token({
+    chainId: ChainId.ETHEREUM,
+    address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    decimals: 18,
+    symbol: "WETH",
+    name: "Wrapped Ether"
+  }),
+  [ChainId.POLYGON]: new Token({
+    chainId: ChainId.POLYGON,
+    address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+    decimals: 18,
+    symbol: "WMATIC",
+    name: "Wrapped Matic"
+  })
+}
 
 async function BentoMakeTokenStrategyPercentage(
-  net: Network,
+  chainId: ChainId,
   token: string, 
   percentage: number
 ) {
@@ -33,7 +49,7 @@ async function BentoMakeTokenStrategyPercentage(
   })
 
   const BentoContract = await new Contract(
-    BentoBox[net.chainId], 
+    BentoBox[chainId], 
     BentoBoxABI, 
     bentoOwner
   )
@@ -42,36 +58,38 @@ async function BentoMakeTokenStrategyPercentage(
 }
 
 // Swaps amountIn basewrappedToken(WETH, ...) to toToken
-async function testRouteProcessor(net: Network, amountIn: number, toToken: Token, swaps = 1) {
-  console.log(`1. ${net.name} RouteProcessor deployment ...`);  
+async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: Token, swaps = 1) {
+  console.log(`1. ${chainId} RouteProcessor deployment ...`);  
   // const [_, John] = await ethers.getSigners()
   // const provider = John.provider as Provider
-  const provider = new ethers.providers.AlchemyProvider(...net.alchemyProviderArgs)   
+  //const provider = new ethers.providers.AlchemyProvider(...net.alchemyProviderArgs)   
+  const provider = ethers.getDefaultProvider()
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory(
     "RouteProcessor"
   );
   const routeProcessor = await RouteProcessor.deploy(
-    BentoBox[net.chainId] || "0x0000000000000000000000000000000000000000"
+    BentoBox[chainId] || "0x0000000000000000000000000000000000000000"
   );    
   await routeProcessor.deployed();
   
   console.log("2. User creation ...");
   const amountInBN = getBigNumber(amountIn * 1e18)
   const [Alice] = await ethers.getSigners()
+  const baseWrappedToken = WRAPPED_NATIVE[chainId]
 
-    console.log(`3. Deposit user's ${amountIn} ${net.baseTokenSymbol} to ${net.baseWrappedToken.symbol}`)
-    await Alice.sendTransaction({ 
-      to: net.baseWrappedToken.address,
-      value: amountInBN.mul(swaps)
-    })
+  console.log(`3. Deposit user's ${amountIn} ${WNATIVE[chainId].symbol} to ${baseWrappedToken.symbol}`)
+  await Alice.sendTransaction({ 
+    to: baseWrappedToken.address,
+    value: amountInBN.mul(swaps)
+  })
     
-  console.log(`4. Approve user's ${net.baseWrappedToken.symbol} to the route processor ...`);    
-  const WrappedBaseTokenContract = await new ethers.Contract(net.baseWrappedToken.address, WETH9ABI, Alice)
+  console.log(`4. Approve user's ${baseWrappedToken.symbol} to the route processor ...`);    
+  const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
   await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
 
   console.log("5. Fetch pools' data ...");    
-  const swapper = new Swapper(routeProcessor.address, provider, Alice.provider as Provider,  net)
-  const route = await swapper.getRoute(net.baseWrappedToken, amountInBN, toToken)
+  const swapper = new Swapper(routeProcessor.address, provider, chainId)
+  const route = await swapper.getRoute(baseWrappedToken, amountInBN, toToken)
   console.log(
     `    RPC calls were done total: ${swapper.limited.counterTotalCall}, failed: ${swapper.limited.counterFailedCall}`
   );
@@ -108,7 +126,7 @@ async function testRouteProcessor(net: Network, amountIn: number, toToken: Token
     const toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, Alice)
     const balanceOutBNBefore = await toTokenContract.connect(Alice).balanceOf(Alice.address)
     const tx = await routeProcessor.processRoute(
-      net.baseWrappedToken.address, 
+      baseWrappedToken.address, 
       route.amountInBN, 
       toToken.address, 
       amountOutMin, 
@@ -134,25 +152,26 @@ describe("RouteProcessor", async function () {
       const erc20 = new ethers.utils.Interface(ERC20ABI);
       const callDataHex: string = erc20.encodeFunctionData('symbol', []);
 
+      const WMATIC = WRAPPED_NATIVE[ChainId.POLYGON]
       const code = new HEXer()
-        .uint8(10).address(POLYGON.tokens.WMATIC.address)
+        .uint8(10).address(WMATIC.address)
         .uint16(callDataHex.length/2 - 1)   // -1 for 0x
         .hexData(callDataHex).toString0x()
       
       const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory(
         "RouteProcessor"
       );
-      const routeProcessor = await RouteProcessor.deploy(BentoBox[POLYGON.chainId]);    
+      const routeProcessor = await RouteProcessor.deploy(BentoBox[ChainId.POLYGON]);    
       await routeProcessor.deployed();
 
       console.log(code);
       
       await routeProcessor.processRoute(
-        POLYGON.tokens.WMATIC.address, 
+        WMATIC.address, 
         0, 
-        POLYGON.tokens.WMATIC.address, 
+        WMATIC.address, 
         0, 
-        POLYGON.tokens.WMATIC.address,
+        WMATIC.address,
         code
       )
     }
@@ -161,29 +180,37 @@ describe("RouteProcessor", async function () {
   it("Ethereum WETH => FEI check", async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url;
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
-      await testRouteProcessor(ETHEREUM, 10, ETHEREUM.tokens.FEI)
+      const FEI = new Token({
+        chainId: ChainId.ETHEREUM,
+        address: "0x956F47F50A910163D8BF957Cf5846D573E7f87CA",
+        decimals: 18,
+        symbol: "FEI",
+        name: "Fei USD"
+      })
+      await testRouteProcessor(ChainId.ETHEREUM, 10, FEI)
     }
   })
 
-  it("Polygon WMATIC => FEI check", async function () {
+  it("Polygon WMATIC => SUSHI check", async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url;
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
-      await testRouteProcessor(POLYGON, 1_000_000, POLYGON.tokens.SUSHI)
+      await testRouteProcessor(ChainId.POLYGON, 1_000_000, SUSHI[ChainId.POLYGON])
     }
   })
 
   it.skip("Polygon 5 swaps test", async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url;
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
-      await testRouteProcessor(POLYGON, 1000000, POLYGON.tokens.SUSHI, 5)
+      await testRouteProcessor(ChainId.POLYGON, 1000000, SUSHI[ChainId.POLYGON], 5)
     }
   })
 
   it.skip("Polygon max output limitation", async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url;
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
-      await BentoMakeTokenStrategyPercentage(POLYGON, POLYGON.tokens.WBTC.address, 60)  
-      await testRouteProcessor(POLYGON, 100_000, POLYGON.tokens.WBTC)
+      const WBTC_Token = WBTC[ChainId.POLYGON]
+      await BentoMakeTokenStrategyPercentage(ChainId.POLYGON, WBTC_Token.address, 60)  
+      await testRouteProcessor(ChainId.POLYGON, 100_000, WBTC_Token)
     }
   })
 });

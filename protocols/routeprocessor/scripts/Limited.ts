@@ -41,6 +41,7 @@ export class Limited {
                 //console.log('Fail!!! Retry'+this.counterFailedCall+' successed: '+(this.counterTotalCall -this.counterFailedCall))
             }
         }
+        return await func() // unreachable. Just to calm down Linter
     }
 
     async callOnce<T>(func: () => Promise<T>): Promise<T> {
