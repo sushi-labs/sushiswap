@@ -1,7 +1,7 @@
 import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react/solid'
-import { nanoid } from '@reduxjs/toolkit'
 import { Button, Link, Typography } from '@sushiswap/ui'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+import { nanoid } from 'nanoid'
 import React, { FC, ReactNode, useCallback, useState } from 'react'
 
 interface ExpandableCardRenderProps {
@@ -55,15 +55,15 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
       <AnimatePresence>
         {open && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.15 } }}
-              transition={{ duration: 0.2, delay: 0.15 }}
-              style={{ pointerEvents: 'auto' }}
-              className="z-[2000] fixed bg-[rgba(0,0,0,0.9)] will-change-[opacity] inset-0 w-full"
-              onClick={handleClose}
-            />
+            {/*<motion.div*/}
+            {/*  initial={{ opacity: 0 }}*/}
+            {/*  animate={{ opacity: 1 }}*/}
+            {/*  exit={{ opacity: 0, transition: { duration: 0.15 } }}*/}
+            {/*  transition={{ duration: 0.2, delay: 0.15 }}*/}
+            {/*  style={{ pointerEvents: 'auto' }}*/}
+            {/*  className="z-[2000] fixed bg-[rgba(0,0,0,0.9)] will-change-[opacity] inset-0 w-full"*/}
+            {/*  onClick={handleClose}*/}
+            {/*/>*/}
             <article
               onClick={handleClose}
               className="w-full h-full top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] fixed z-[2001] overflow-hidden p-4 md:px-[36px] py-0 flex items-center justify-center"

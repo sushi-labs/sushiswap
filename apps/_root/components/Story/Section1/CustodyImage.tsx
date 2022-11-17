@@ -1,7 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
-import { SUSHI } from '@sushiswap/currency'
 import { useIsSmScreen } from '@sushiswap/hooks'
-import { Currency } from '@sushiswap/ui'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 
@@ -21,23 +18,12 @@ export const CustodyImage = () => {
   const rotateX = useTransform(scrollYProgress, [0.7, 1], [0, 60])
 
   return (
-    <div ref={scrollRef}>
-      <motion.div
-        {...(!isSmallScreen && { ...{ transformTemplate, style: { opacity, scale, y: perspective, rotateX } } })}
-        className="scale-[0.9] sm:scale-[1] relative -left-[140px] sm:left-0"
-      >
-        <div className="flex items-center justify-center relative">
-          <div className="z-[0] absolute w-[358px] h-[358px]">
-            <div className="blur-[40px] w-full h-full rounded-full h-full w-full bg-[linear-gradient(160.45deg,_#F760E7_8.22%,_#197FDE_91.32%)]" />
-          </div>
-          <div className="z-[1] flex items-center justify-center bg-[linear-gradient(69.95deg,_#6F89A0_-14.87%,_#692963_134.4%)] rounded-[28px] border-[9px] border-neutral-900">
-            <IphoneMockupSVG width={490} height={235} />
-          </div>
-          <div className="absolute z-[2] bg-neutral-900 rounded-full">
-            <Currency.Icon currency={SUSHI[ChainId.ETHEREUM]} width={112} height={112} />
-          </div>
-        </div>
-      </motion.div>
-    </div>
+    <motion.div
+      ref={scrollRef}
+      {...(!isSmallScreen && { ...{ transformTemplate, style: { opacity, scale, y: perspective, rotateX } } })}
+      className="relative w-[420px] h-[420px] -left-[140px] sm:left-0"
+    >
+      <IphoneMockupSVG />
+    </motion.div>
   )
 }

@@ -1,8 +1,7 @@
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import Image from 'next/image'
 import { useRef } from 'react'
-
-import { NetworkStellarSVG } from '../../SVG/NetworkStellarSVG'
 
 export const MoveImage = () => {
   const isSmallScreen = useIsSmScreen()
@@ -12,16 +11,27 @@ export const MoveImage = () => {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.5])
 
   return (
-    <div ref={scrollRef}>
+    <div className="relative w-[420px] h-[420px] flex justify-center items-center">
       <motion.div
+        className="z-[1] relative w-[420px] h-[420px]"
+        ref={scrollRef}
         {...(!isSmallScreen && { ...{ style: { opacity, scale } } })}
-        className="relative scale-[0.9] sm:scale-[1] relative relative"
       >
-        <div className="z-[1] absolute w-[423px] h-[320px]">
-          <div className="blur-[100px] opacity-[0.25] w-full h-full rounded-full h-full w-full bg-[linear-gradient(160.45deg,_#F760E7_8.22%,_#197FDE_91.32%)]" />
-        </div>
-        <NetworkStellarSVG width={423} height={320} />
+        <Image
+          alt="stellar"
+          objectFit="contain"
+          src="https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668713540/orbit_gnelpc.webp"
+          layout="fill"
+        />
       </motion.div>
+      <div className="absolute inset-[-60px] w-[calc(100%+120px)] h-[calc(100%+120px)] opacity-60">
+        <Image
+          alt="stellar"
+          objectFit="contain"
+          src="https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668714065/Ellipse_1107_oopeuh.webp"
+          layout="fill"
+        />
+      </div>
     </div>
   )
 }

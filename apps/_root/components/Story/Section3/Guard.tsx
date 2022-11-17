@@ -44,8 +44,10 @@ export const Guard: FC = () => {
   return (
     <section className="py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto px-4 space-y-20">
-        <div className="grid grid-cols-1 lg:grid-cols-[auto_380px] gap-x-[100px] gap-y-[20px]">
-          <GuardImage />
+        <div className="grid grid-cols-1 lg:grid-cols-2 justify-center gap-x-[100px] gap-y-[40px]">
+          <div>
+            <GuardImage />
+          </div>
           <div className="flex flex-col justify-center gap-3">
             <ExpandableCard
               title={DATA.title}

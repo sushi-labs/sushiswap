@@ -122,14 +122,11 @@ export const Ecosystem: FC = () => {
                 ))}
               </div>
               <Tab.Panels>
-                <div className="p-10">
+                <div className="flex items-center p-10 min-h-[520px]">
                   {TABS.map(({ title, content, image: HeroImage, summary, link, linkText, caption }) => (
                     <Tab.Panel key={title} className="items-center grid grid-cols-1 md:grid-cols-2 gap-20">
-                      <div className="relative">
-                        <HeroImage className="z-[2]" />
-                        <div className="pointer-events-none absolute inset-0">
-                          <div className="blur-[100px] opacity-[0.25] w-full h-full rounded-full h-full w-full bg-[linear-gradient(160.45deg,_#63DFFA_8.22%,_#197FDE_91.32%)]" />
-                        </div>
+                      <div className="w-[420px] relative">
+                        <HeroImage width={420} />
                       </div>
                       <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
                         {({ setOpen, containerId, titleId }) => (

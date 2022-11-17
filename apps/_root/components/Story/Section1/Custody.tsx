@@ -44,7 +44,7 @@ export const Custody: FC = () => {
   return (
     <section className="py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto px-4 space-y-20">
-        <div className="grid grid-cols-1 lg:grid-cols-[auto_380px] gap-[100px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 justify-center gap-[100px]">
           <CustodyImage />
           <div className="flex flex-col justify-center gap-3">
             <ExpandableCard

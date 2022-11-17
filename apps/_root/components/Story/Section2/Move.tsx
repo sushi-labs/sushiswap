@@ -8,7 +8,7 @@ export const Move: FC = () => {
   return (
     <section className="py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto px-4 space-y-20">
-        <div className="grid grid-cols-1 lg:grid-cols-[380px_auto] gap-x-[100px] gap-y-[60px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[380px_auto] justify-center gap-x-[100px] gap-y-[20px]">
           <div className="order-2 lg:order-1 flex flex-col justify-center gap-3">
             <div className="flex flex-col items-center lg:items-start">
               <Typography variant="h1" weight={600} className="text-center lg:text-left">
@@ -18,15 +18,6 @@ export const Move: FC = () => {
                 We will always find you the best rate, no matter what network you’re on, with no extra fees.
               </Typography>
               <div className="flex gap-6">
-                {/*<Button*/}
-                {/*  as="a"*/}
-                {/*  href="https://sushi.com/bridge"*/}
-                {/*  className="!p-0 mt-3"*/}
-                {/*  variant="empty"*/}
-                {/*  endIcon={<ChevronRightIcon width={16} height={16} />}*/}
-                {/*>*/}
-                {/*  Visit Bridge*/}
-                {/*</Button>*/}
                 <Button
                   as="a"
                   target="_blank"

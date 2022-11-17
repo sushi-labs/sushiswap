@@ -1,8 +1,6 @@
 import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules([
-  '@sushiswap/redux-token-lists',
-  '@sushiswap/redux-localstorage',
   '@sushiswap/ui',
   '@sushiswap/wagmi',
 ])

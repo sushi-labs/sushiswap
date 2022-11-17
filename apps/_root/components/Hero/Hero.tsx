@@ -13,7 +13,7 @@ export const Hero: FC = () => {
   useInterval(() => setIndex((prev) => (prev + 1) % 3), 1500)
 
   return (
-    <section className="relative">
+    <section className="relative overflow-hidden">
       <Container maxWidth="5xl" className="mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
           <div className="flex flex-col">
@@ -31,7 +31,7 @@ export const Hero: FC = () => {
             </div>
           </div>
           <div className="hidden lg:block">
-            <HeroSVG width={496} height={312} />
+            <HeroSVG width={420} height={312} />
           </div>
         </div>
       </Container>
