@@ -2,7 +2,6 @@ import { ChainId, chainName } from '@sushiswap/chain'
 import { SUSHI_ADDRESS } from '@sushiswap/currency'
 import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import chalk from 'chalk'
-import cliProgress from 'cli-progress'
 import CliTable3 from 'cli-table3'
 
 import { REVENUES_SUPPORTED_CHAIN_NAMES } from '../config'
@@ -13,6 +12,8 @@ type Arguments = {
   network?: typeof REVENUES_SUPPORTED_CHAIN_NAMES[number]
   days?: string
 }
+
+type PairRevenue = { name: string; address: string; revenue: number; spent: number; volume: number }
 
 export async function revenues(args: Arguments) {
   const days = args.days ? Number(args.days) : 1
@@ -38,9 +39,6 @@ export async function revenues(args: Arguments) {
         return parseInt(ChainId[name.toUpperCase() as any])
       })
 
-  const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic)
-  progressBar.start(chainIds.length, 0, { speed: 'N/A' })
-
   const sushiPriceUSD = await (async function () {
     {
       const prices = await fetch('https://token-price.sushi.com/v0/1').then((data) => data.json())
@@ -53,11 +51,13 @@ export async function revenues(args: Arguments) {
 
   const revenues: {
     [chainName: string]: {
+      volume: number
       revenue: number
       spent: number
+      pairs: PairRevenue[]
     }
   } = {
-    Total: { revenue: 0, spent: 0 },
+    Total: { revenue: 0, spent: 0, volume: 0, pairs: [] },
   }
   await Promise.all(
     lastBlocks.map(async (block) => {
@@ -70,53 +70,95 @@ export async function revenues(args: Arguments) {
 
       for (const pair of lastPairs) {
         if (!revenues[chainName[pair.chainId]]) {
-          revenues[chainName[pair.chainId]] = { revenue: 0, spent: 0 }
+          revenues[chainName[pair.chainId]] = { revenue: 0, volume: 0, spent: 0, pairs: [] }
         }
+
+        let spent = 0
+        //process spending
         if (pair.farm) {
           const sushiIncentive = pair.farm.incentives.find((incentive) => {
             return incentive.rewardToken.address.toLowerCase() == SUSHI_ADDRESS[pair.chainId].toLowerCase()
           })
           if (sushiIncentive) {
-            const spent1d = sushiIncentive.rewardPerDay * sushiPriceUSD
-            revenues[chainName[pair.chainId]].spent += spent1d * days
-            revenues['Total'].spent += spent1d * days
+            spent = Number(sushiIncentive.rewardPerDay) * Number(sushiPriceUSD) * days
           }
         }
-        const previousFees = pastPairs.find((p) => p.id === pair.id)?.feesUSD
-        const revenue = previousFees ? pair.feesUSD - previousFees : pair.feesUSD
-        revenues[chainName[pair.chainId]].revenue += revenue / 6
-        revenues['Total'].revenue += revenue / 6
+        //process revenues
+        const previousFees = Number(pastPairs.find((p) => p.id === pair.id)?.feesUSD)
+        const revenue = (previousFees ? Number(pair.feesUSD) - previousFees : Number(pair.feesUSD)) / 6
+        const previousVolume = Number(pastPairs.find((p) => p.id === pair.id)?.volumeUSD)
+        const volume = previousVolume ? Number(pair.volumeUSD) - previousVolume : Number(pair.volumeUSD)
+
+        //push results
+        revenues[chainName[pair.chainId]].pairs.push({
+          name: pair.name,
+          address: pair.address,
+          spent: spent,
+          revenue: revenue,
+          volume: volume,
+        })
+        revenues[chainName[pair.chainId]].spent += spent
+        revenues[chainName[pair.chainId]].revenue += revenue
+        revenues[chainName[pair.chainId]].volume += volume
+        revenues['Total'].spent += spent
+        revenues['Total'].revenue += revenue
+        revenues['Total'].volume += volume
       }
-      progressBar.increment()
     })
   )
 
   const orderedRevenues = Object.entries(revenues).sort((a, b) => {
-    return a[1].revenue > b[1].revenue ? -1 : 1
+    const benefitsA = a[1].revenue - a[1].spent
+    const benefitsB = b[1].revenue - b[1].spent
+    return benefitsA > benefitsB ? -1 : 1
   })
 
   const table = new CliTable3({
     head: [
       chalk.white('Chain'),
+      chalk.white('Pair'),
+      chalk.white('Address'),
+      chalk.white(days + ' day(s) volume'),
       chalk.white(days + ' day(s) revenues'),
       chalk.white(days + ' day(s) sushi spent'),
       chalk.white(days + ' day(s) benefits'),
     ],
-    colWidths: [40, 30, 30, 30],
+    colWidths: [25, 15, 50, 25, 25, 25, 25],
   })
 
   for (const revenue of orderedRevenues) {
     const benefits = revenue[1].revenue - revenue[1].spent
-    const benefitsString = benefits.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'
+    const benefitsString = chalk.bold(benefits.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $')
     table.push([
-      revenue[0],
-      revenue[1].revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $',
-      revenue[1].spent.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $',
+      chalk.bold(revenue[0]),
+      chalk.bold('Total'),
+      '',
+      chalk.bold(revenue[1].volume.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'),
+      chalk.bold(revenue[1].revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'),
+      chalk.bold(revenue[1].spent.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'),
       benefits > 0 ? chalk.green(benefitsString) : chalk.red(benefitsString),
     ])
+    revenue[1].pairs.sort((a, b) => {
+      const benefitsA = a.revenue - a.spent
+      const benefitsB = b.revenue - b.spent
+      return benefitsA > benefitsB ? -1 : 1
+    })
+    const topPairs = [...revenue[1].pairs.slice(0, 5), ...revenue[1].pairs.slice(-5).reverse()]
+    topPairs.map((pair, i) => {
+      const pairBenefits = pair.revenue - pair.spent
+      const pairBenefitsString = pairBenefits.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $'
+      table.push([
+        i === 0 ? 'Best 5 pairs' : i === 5 ? 'Worst 5 pairs' : '',
+        pair.name,
+        pair.address,
+        pair.volume.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $',
+        pair.revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $',
+        pair.spent.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $',
+        pairBenefits > 0 ? chalk.green(pairBenefitsString) : chalk.red(pairBenefitsString),
+      ])
+    })
   }
 
-  progressBar.stop()
   console.log(table.toString())
 }
 
@@ -147,7 +189,7 @@ async function getAllPairsWithFarms(chainIds: number[], blockNumber: number) {
         chainIds: chainIds,
         orderBy: 'id',
         orderDirection: 'asc',
-        where: { id_gt: id, feesUSD_gt: 1 },
+        where: { id_gt: id, liquidityUSD_gt: 100 },
         first: 1000,
         block: { number: blockNumber },
       })
