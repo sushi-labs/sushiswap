@@ -40,9 +40,8 @@ export const calculateCliffDuration = ({
   startDate,
 }: Pick<CreateVestingFormSchemaType, 'cliff' | 'startDate'>) => {
   let cliffDuration = JSBI.BigInt(0)
-  console.log(cliff.cliffEnabled && cliff.cliffEndDate && startDate && cliff.cliffEndDate > startDate)
   if (cliff.cliffEnabled && cliff.cliffEndDate && startDate && cliff.cliffEndDate > startDate) {
-    cliffDuration = JSBI.BigInt((cliff.cliffEndDate.getTime() - startDate.getTime()) / 1000)
+    cliffDuration = JSBI.BigInt(Math.floor((cliff.cliffEndDate.getTime() - startDate.getTime()) / 1000))
   }
 
   return cliffDuration
