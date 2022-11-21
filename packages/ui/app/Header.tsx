@@ -4,7 +4,7 @@ import useScrollPosition from '@react-hook/window-scroll'
 import { useIsMounted } from '@sushiswap/hooks'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, IconButton, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
+import { classNames, IconButton, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
 
 export enum AppType {
   Root = 'Explore Apps',
@@ -87,10 +87,7 @@ export function Header({
       >
         <div className="absolute inset-0 border-b pointer-events-none bg-slate-900 border-slate-200/10" />
       </Transition>
-      <Container
-        maxWidth={maxWidth}
-        className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}
-      >
+      <div className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}>
         <div className="flex items-center gap-3">
           <a className="flex flex-row items-center gap-1.5" href="/">
             <div className="w-6 h-6">
@@ -245,7 +242,7 @@ export function Header({
         </div>
         <div className="flex justify-center">{nav}</div>
         <div className="flex justify-end">{children}</div>
-      </Container>
+      </div>
     </header>
   )
 }

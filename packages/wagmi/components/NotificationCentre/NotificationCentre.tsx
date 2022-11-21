@@ -36,7 +36,7 @@ export const NotificationCentre: FC<Omit<ProviderProps, 'createNotification'>> =
             </Drawer.Button>
           </div>
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 divide-y divide-slate-200/5">
           {Object.entries(notifications)
             .reverse()
             .map(([, notifications], index) => {

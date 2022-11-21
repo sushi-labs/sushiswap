@@ -51,7 +51,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
 
   if (!status)
     return (
-      <div className="flex items-center gap-5 px-4 pr-8 bg-white bg-opacity-[0.06] rounded-2xl min-h-[82px] w-full">
+      <div className="flex items-center gap-5 px-4 pr-8 rounded-2xl min-h-[82px] w-full">
         <div>
           <div className="rounded-full bg-slate-600 h-9 w-9" />
         </div>
