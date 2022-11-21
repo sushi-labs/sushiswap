@@ -627,6 +627,9 @@ importers:
       '@ethersproject/logger': ^5.7.0
       '@ethersproject/providers': ^5.7.0
       '@ethersproject/solidity': ^5.7.0
+      '@graphprotocol/client-add-source-name': latest
+      '@graphprotocol/client-auto-pagination': latest
+      '@graphprotocol/client-cli': 2.2.15
       '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
@@ -636,6 +639,7 @@ importers:
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
       '@sushiswap/graph-client': workspace:*
+      '@sushiswap/graph-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
@@ -727,7 +731,11 @@ importers:
       react-redux: 8.0.2_v7vsrdtui4d36prbwvdnlb7tpq
       wagmi: 0.6.8_nznuxirfauibn2fjde2ghjonky
     devDependencies:
+      '@graphprotocol/client-add-source-name': 1.0.13_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.11_graphql@16.6.0
+      '@graphprotocol/client-cli': 2.2.15_onug3sa4ph53e46o3zvxbixsym
       '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
@@ -6228,7 +6236,7 @@ packages:
       '@babel/code-frame': 7.18.6
       '@graphql-tools/code-file-loader': 7.3.6
       '@graphql-tools/graphql-tag-pluck': 7.3.6
-      '@graphql-tools/utils': 9.1.0
+      '@graphql-tools/utils': 9.1.1
       chalk: 4.1.2
       debug: 4.3.4
       fast-glob: 3.2.12
@@ -8681,14 +8689,6 @@ packages:
     dependencies:
       graphql: 16.6.0
       tslib: 2.4.1
-
-  /@graphql-tools/utils/9.1.0:
-    resolution: {integrity: sha512-4Ketxo98IwKA/56LP6cI6PgQBwUCujszQcTNkzjq7liJPa2mLjKnmVOJ0bauMwKcEazeYuZagceljb0POmEGvQ==}
-    peerDependencies:
-      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-    dependencies:
-      tslib: 2.4.1
-    dev: false
 
   /@graphql-tools/utils/9.1.1:
     resolution: {integrity: sha512-DXKLIEDbihK24fktR2hwp/BNIVwULIHaSTNTNhXS+19vgT50eX9wndx1bPxGwHnVBOONcwjXy0roQac49vdt/w==}
@@ -18397,7 +18397,7 @@ packages:
       '@types/glob': 7.2.0
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.2.11
+      fast-glob: 3.2.12
       glob: 7.2.3
       ignore: 5.2.0
       merge2: 1.4.1

@@ -1,0 +1,39 @@
+query swapsArray (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Swap_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Swap_filter
+) {
+  swaps(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) @live(interval: 5000) {
+    id
+    transaction {
+      id
+      createdAtBlock
+    }
+    timestamp
+    pair {
+      id
+    }
+    sender
+    tokenIn {
+      id
+      symbol
+    }
+    tokenOut {
+      id
+      symbol
+    }
+    amountIn
+    amountOut
+    to
+  }
+}

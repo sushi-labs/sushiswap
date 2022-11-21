@@ -46,7 +46,7 @@ export const TableSection: FC = () => {
           >
             Top Tokens
           </Tab>
-          <Tab
+          {/* <Tab
             className={({ selected }) =>
               classNames(
                 selected ? 'text-slate-200' : 'text-slate-500',
@@ -55,7 +55,7 @@ export const TableSection: FC = () => {
             }
           >
             Transactions
-          </Tab>
+          </Tab> */}
         </div>
         {selectedTable === SelectedTable.Transactions ? (
           <Network.SelectorTxn
@@ -82,9 +82,9 @@ export const TableSection: FC = () => {
           <Tab.Panel unmount={false}>
             <TokenTable />
           </Tab.Panel>
-          <Tab.Panel unmount={false}>
+          {/* <Tab.Panel unmount={false}>
             <TransactionTable />
-          </Tab.Panel>
+          </Tab.Panel> */}
         </Tab.Panels>
       </Tab.Group>
     </section>

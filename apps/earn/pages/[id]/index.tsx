@@ -1,11 +1,12 @@
+import { Tab } from '@headlessui/react'
 import { chainShortName } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
 import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
-import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
+import { AppearOnMount, BreadcrumbLink, classNames } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import {
@@ -22,6 +23,7 @@ import {
   PoolPositionStakedProvider,
   PoolRewards,
   PoolStats,
+  SwapsTable
 } from '../../components'
 import { GET_POOL_TYPE_MAP } from '../../lib/constants'
 
@@ -47,6 +49,8 @@ const _Pool = () => {
   )
   if (!data) return <></>
   const { pair } = data
+  const [tab, setTab] = useState<number>(0)
+  
   return (
     <PoolPositionProvider pair={pair}>
       <PoolPositionStakedProvider pair={pair}>
@@ -76,6 +80,40 @@ const _Pool = () => {
                 </div>
               </div>
             </div>
+            <section className="flex flex-col mt-8">
+              <Tab.Group selectedIndex={tab} onChange={setTab}>
+                <div className="flex items-center gap-6 mb-6 px-2">
+                  <Tab
+                    className={({ selected }) =>
+                      classNames(
+                        selected ? 'text-slate-200' : 'text-slate-500',
+                        'hover:text-slate-50 focus:text-slate-50 font-medium !outline-none'
+                      )
+                    }
+                  >
+                    Swaps
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      classNames(
+                        selected ? 'text-slate-200' : 'text-slate-500',
+                        'hover:text-slate-50 focus:text-slate-50 flex items-center gap-2 font-medium !outline-none'
+                      )
+                    }
+                  >
+                    Add Liquidity
+                  </Tab>
+                </div>
+                <Tab.Panels>
+                  <Tab.Panel unmount={false}>
+                    <SwapsTable pair={pair}/>
+                  </Tab.Panel>
+                  <Tab.Panel unmount={false}>
+                    <div>Add Liquidity Table</div>
+                  </Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
+            </section>            
           </Layout>
           <PoolActionBar pair={pair} />
         </PoolPositionRewardsProvider>
