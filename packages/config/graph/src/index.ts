@@ -149,7 +149,7 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
-  [ChainId.HARMONY]: 'sushi-0m/sushiswap-harmony',
+  [ChainId.HARMONY]: 'sushiswap-subgraphs/sushiswap-harmony',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
