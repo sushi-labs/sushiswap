@@ -1,7 +1,7 @@
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon, SearchIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
-import { classNames, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Typography, useBreakpoint } from '@sushiswap/ui'
+import { classNames, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Typography } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
@@ -11,11 +11,12 @@ interface NetworkSelectorNewProps {
 
 export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks = [] }) => {
   const [query, setQuery] = useState('')
-  const { isSm } = useBreakpoint('sm')
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
-  const chainId = chain?.id || ChainId.ETHEREUM
+  if (!chain) return <></>
+
+  const chainId = chain.id
 
   const panel = (
     <Popover.Panel className="flex flex-col w-full sm:w-[320px] fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] mt-4 sm:rounded-xl rounded-b-none shadow-md shadow-black/[0.3] bg-slate-900 border border-slate-200/20">
