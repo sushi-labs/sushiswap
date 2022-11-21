@@ -1,39 +1,20 @@
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
-import {
-  getBundles,
-  getCharts,
-  getPoolCount,
-  getPools,
-  GetPoolsQuery,
-  getTokenCount,
-  getTokens,
-  GetTokensQuery,
-} from '../lib/api'
+import { getBundles, getCharts, getPoolCount, getPools, getTokenCount, getTokens } from '../lib/api'
 
-import {
-  getTransactions,
-  getTransactionCount,
-  GetTransactionsQuery,
-} from '../lib/txn_api'
-
-export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-  const [pairs, tokens, transactions, charts, poolCount, tokenCount, transactionCount, bundles] = await Promise.all([
-    getPools(query as unknown as GetPoolsQuery),
-    getTokens(query as unknown as GetTokensQuery),
-    getTransactions(query as unknown as GetTransactionsQuery),
-    getCharts(query as { networks: string }),
+export const getStaticProps: GetStaticProps = async () => {
+  const [pairs, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
+    getPools(),
+    getTokens(),
+    getCharts(),
     getPoolCount(),
     getTokenCount(),
-    getTransactionCount(),
     getBundles(),
   ])
-
   return {
     props: {
       fallback: {
@@ -73,24 +54,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
             extraQuery: '',
           },
         })]: tokens,
-        [unstable_serialize({
-          url: '/analytics/api/transactions',
-          args: {
-            sorting: [
-              {
-                id: 'createdAtTimestamp',
-                desc: true,
-              },
-            ],
-            selectedNetworks: SUPPORTED_CHAIN_IDS,
-            pagination: {
-              pageIndex: 0,
-              pageSize: 20,
-            },
-            query: '',
-            extraQuery: '',
-          },
-        })]: transactions,
+
         [unstable_serialize({
           url: '/analytics/api/charts',
           args: {
@@ -98,15 +62,14 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           },
         })]: charts,
         [`/analytics/api/pools/count`]: poolCount,
-        [`/analytics/api/tokens/count`]: tokenCount,        
-        [`/analytics/api/transactions/count`]: transactionCount,
+        [`/analytics/api/tokens/count`]: tokenCount,
         [`/analytics/api/bundles`]: bundles,
       },
     },
   }
 }
 
-const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const Index: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_Index />
