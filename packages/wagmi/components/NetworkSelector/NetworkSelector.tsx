@@ -6,10 +6,10 @@ import React, { FC, useState } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 interface NetworkSelectorNewProps {
-  supportedNetworks: ChainId[]
+  supportedNetworks?: ChainId[]
 }
 
-export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks }) => {
+export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks = [] }) => {
   const [query, setQuery] = useState('')
   const { isSm } = useBreakpoint('sm')
   const { chain } = useNetwork()
