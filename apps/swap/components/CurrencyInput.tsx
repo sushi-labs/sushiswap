@@ -7,12 +7,14 @@ import React, { FC, useMemo } from 'react'
 import { useTrade } from './TradeProvider'
 
 interface CurrencyInput extends CurrencyInputProps {
+  id: string
   inputType: TradeType
   tradeType: TradeType
   isWrap?: boolean
 }
 
 export const CurrencyInput: FC<CurrencyInput> = ({
+  id,
   className,
   value: _value,
   onChange,
@@ -51,6 +53,7 @@ export const CurrencyInput: FC<CurrencyInput> = ({
 
   return (
     <Web3Input.Currency
+      id={id}
       className={className}
       value={value}
       onChange={onChange}
@@ -65,5 +68,6 @@ export const CurrencyInput: FC<CurrencyInput> = ({
       disabled={disabled}
       usdPctChange={inputType === TradeType.EXACT_OUTPUT ? usdPctChange : undefined}
     />
+    
   )
 }

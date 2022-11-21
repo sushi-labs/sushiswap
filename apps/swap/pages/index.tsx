@@ -231,6 +231,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 </div>
               </div>
               <CurrencyInput
+                id={'token-input'}
                 className="p-3"
                 value={input0}
                 onChange={onInput0}
@@ -258,6 +259,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </div>
               <div className="bg-slate-800">
                 <CurrencyInput
+                  id={'token-output'}
                   disabled={true}
                   className="p-3"
                   value={isWrap ? input0 : input1}

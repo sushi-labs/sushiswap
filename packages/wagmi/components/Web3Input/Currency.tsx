@@ -13,6 +13,7 @@ export interface CurrencyInputProps
     TokenSelectorProps,
     'onAddToken' | 'onRemoveToken' | 'onSelect' | 'tokenMap' | 'chainId' | 'customTokenMap'
   > {
+  id: string
   value: string
   disabled?: boolean
   onChange(value: string): void
@@ -26,6 +27,7 @@ export interface CurrencyInputProps
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
+  id,
   disabled,
   value,
   onChange,
@@ -83,6 +85,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
                 e.stopPropagation()
               },
             })}
+            data-testid={id}
             className={classNames(
               onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
               (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',

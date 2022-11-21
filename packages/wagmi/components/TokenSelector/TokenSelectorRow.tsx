@@ -1,3 +1,4 @@
+import { AddressZero } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource, useInViewport } from '@sushiswap/hooks'
 import { Fraction, ZERO } from '@sushiswap/math'
@@ -25,6 +26,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
     const inViewport = useInViewport(ref)
     return (
       <div
+        testdata-id={`token-selector-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
         onClick={onClick}
         className={classNames(
           className,
