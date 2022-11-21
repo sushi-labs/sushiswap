@@ -68,9 +68,14 @@ async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: T
   switch(chainId) {
     case ChainId.ETHEREUM: 
       provider = new ethers.providers.AlchemyProvider("homestead", process.env.ALCHEMY_API_KEY)
+      break
     case ChainId.POLYGON:
-      provider = new ethers.providers.AlchemyProvider('matic', process.env.ALCHEMY_POLYGON_API_KEY) 
-  }  
+      provider = new ethers.providers.AlchemyProvider('matic', process.env.ALCHEMY_POLYGON_API_KEY)
+      break
+    default:
+      throw new Error('Unsupported net!')
+  }
+  
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory(
     "RouteProcessor"
   );
