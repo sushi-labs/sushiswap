@@ -18,7 +18,7 @@ export const Hero: FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[auto_550px] flex justify-between gap-6">
           <div className="flex flex-col">
             <Typography variant="hero" weight={800} className="text-neutral-50 leading-[3.5rem]">
-              Buy and Sell Instantly on Sushi. <span className="text-blue"> {TITLES[index]}.</span>
+              Buy and Sell Instantly on Sushi. <br /> <span className="text-blue"> {TITLES[index]}.</span>
             </Typography>
             <Typography variant="lg" className="text-neutral-400 mt-3">
               No registration needed. Over 400 tokens to trade at your fingertips.

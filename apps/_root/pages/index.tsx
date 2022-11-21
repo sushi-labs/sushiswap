@@ -1,16 +1,13 @@
 import { Stats } from 'components/Stats/Stats'
-import dynamic from 'next/dynamic'
 import React from 'react'
 
+import { BuildFuture } from '../components/BuildFuture/BuildFuture'
+import { BuildWealth } from '../components/BuildWealth/BuildWealth'
+import { Ecosystem } from '../components/Ecosystem/Ecosystem'
 import { Hero } from '../components/Hero/Hero'
-import { InViewportComponent } from '../components/InViewportComponent/InViewportComponent'
+import { NeedHelp } from '../components/NeedHelp/NeedHelp'
 import { Partners } from '../components/Partners/Partners'
-
-const Story = dynamic(() => import('../components/Story/Story').then((res) => res.Story))
-const LoadBuildWealth = dynamic(() => import('../components/BuildWealth/BuildWealth').then((res) => res.BuildWealth))
-const Ecosystem = dynamic(() => import('../components/Ecosystem/Ecosystem').then((res) => res.Ecosystem))
-const BuildFuture = dynamic(() => import('../components/BuildFuture/BuildFuture').then((res) => res.BuildFuture))
-const NeedHelp = dynamic(() => import('../components/NeedHelp/NeedHelp').then((res) => res.NeedHelp))
+import { Story } from '../components/Story/Story'
 
 const Index = () => {
   return (
@@ -20,22 +17,12 @@ const Index = () => {
 
       <div className="bg-black overflow-x-hidden">
         <Partners />
-        <InViewportComponent>
-          <Story />
-        </InViewportComponent>
+        <Story />
         <div className="flex flex-col gap-2 border-t border-neutral-200/10">
-          <InViewportComponent>
-            <LoadBuildWealth />
-          </InViewportComponent>
-          <InViewportComponent>
-            <Ecosystem />
-          </InViewportComponent>
-          <InViewportComponent>
-            <BuildFuture />
-          </InViewportComponent>
-          <InViewportComponent>
-            <NeedHelp />
-          </InViewportComponent>
+          <BuildWealth />
+          <Ecosystem />
+          <BuildFuture />
+          <NeedHelp />
         </div>
       </div>
     </article>
