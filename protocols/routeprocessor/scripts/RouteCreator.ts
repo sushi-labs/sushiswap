@@ -18,22 +18,26 @@ enum LiquidityProviders {
 
 type RouteProcessor = (r: MultiRoute) => void
 
+interface RoutingState {
+  tokenFrom: RToken
+  amountIn: number | BigNumber
+  tokenTo: RToken
+  gasPrice: number
+  timer: any  // timer from setTimeout
+}
+
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes
-class RouteCreator {
+export class RouteCreator {
   chainId: ChainId
   minUpdateDelay: number
   chainDataProvider: ethers.providers.BaseProvider
   limited: Limited
   routeProcessors: RouteProcessor[]
+  providers: LiquidityProvider[]
   
   currentBestRoute?: MultiRoute
-  timer: any
-  providers: LiquidityProvider[]
-  tokenFrom?: Token
-  amountIn?: number | BigNumber
-  tokenTo?: Token
-  gasPrice?: number
+  routingState?: RoutingState
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider, 
@@ -49,6 +53,7 @@ class RouteCreator {
   }
 
   // Starts pool data fetching and routing calculation
+  // Async routing protocol
   startRouting(
     tokenFrom: Token, 
     amountIn: number | BigNumber, 
@@ -57,29 +62,40 @@ class RouteCreator {
     liquidity?: LiquidityProviders[]    // all providers if undefined
   ) {
     this.stopRouting()
+    this.currentBestRoute = undefined
     this.providers = [
       new SushiProvider(this.chainDataProvider, this.chainId, this.limited),
     ]
     this.providers.forEach(p => p.startGetherData(tokenFrom, tokenTo))
-    this.tokenFrom = tokenFrom
-    this.amountIn = amountIn
-    this.tokenTo = tokenTo
-    this.gasPrice = gasPrice
-    this.timer = setTimeout(() => this._checkRouteUpdate(), this.minUpdateDelay)
+    this.routingState = {
+      tokenFrom: tokenFrom as RToken,
+      amountIn,
+      tokenTo: tokenTo as RToken,
+      gasPrice,
+      timer: setTimeout(() => this._checkRouteUpdate(), this.minUpdateDelay)
+    }
   }
 
+  // Callback registration.
+  // callbacks are called each time route changes
   onRouteUpdate(p: RouteProcessor) {
     this.routeProcessors.push(p)
     if (this.currentBestRoute) p(this.currentBestRoute)
   }
 
+  // To stop gather pool data and routing calculation
   stopRouting() {
-    if (this.timer !== undefined) clearTimeout(this.timer)
+    if (this.routingState?.timer !== undefined) clearTimeout(this.routingState?.timer)
     this.providers.forEach(p =>p.stopGetherData())
+    this.routingState = undefined
+    this.routeProcessors = []
   }
 
-  _checkRouteUpdate() {    
-    this.timer = setTimeout(() => this._checkRouteUpdate(), this.minUpdateDelay)
+  _checkRouteUpdate() {
+    const state = this.routingState
+    if (!state) return
+
+    state.timer = setTimeout(() => this._checkRouteUpdate(), this.minUpdateDelay)
     if (this.providers.some(p => p.poolListWereUpdated())) {
       let poolCodes: PoolCode[] = []
       this.providers.forEach(p => poolCodes = poolCodes.concat(p.getCurrentPoolList()))
@@ -87,20 +103,20 @@ class RouteCreator {
       const networks: NetworkInfo[] = [{
         chainId: this.chainId,
         baseToken: WNATIVE[this.chainId] as RToken, 
-        gasPrice: this.gasPrice as number
+        gasPrice: state.gasPrice as number
       }, {
         chainId: getBentoChainId(this.chainId),
         baseToken: convertTokenToBento(WNATIVE[this.chainId]), 
-        gasPrice: this.gasPrice as number
+        gasPrice: state.gasPrice as number
       }]
   
       const route = findMultiRouteExactIn(
-        this.tokenFrom as RToken, 
-        this.tokenTo as RToken, 
-        this.amountIn as number | BigNumber, 
+        state.tokenFrom, 
+        state.tokenTo, 
+        state.amountIn,
         poolCodes.map(pc => pc.pool), 
         networks,
-        this.gasPrice as number
+        state.gasPrice
       )
       if (route.status != RouteStatus.NoWay) {
         if (!this.currentBestRoute || route.totalAmountOut > this.currentBestRoute.totalAmountOut) {
@@ -111,10 +127,12 @@ class RouteCreator {
     }    
   }
 
+  // Converts route in route processor code
   makeRouteProcessorCode(route: MultiRoute, to: string, maxSlippage: number): string {
     return 'unimplemented'
   }
 
+  // Human-readable route printing
   printRoute(route: MultiRoute): string {
     return 'unimplemented'
   }
