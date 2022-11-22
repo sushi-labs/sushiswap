@@ -1,7 +1,33 @@
+import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
+import { ChainId } from '@sushiswap/chain'
+import { SUSHI_ADDRESS, USDC_ADDRESS, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 
-test.describe.configure({ mode: 'parallel' })
+// test.describe.configure({ mode: 'parallel' })
+const nativeToken = {
+  address: AddressZero,
+  symbol: 'NATIVE', // not being used except for logging
+}
+const wNativeToken = {
+  address: WNATIVE_ADDRESS[ChainId.POLYGON].toLowerCase(),
+  symbol: WNATIVE[ChainId.POLYGON].symbol ?? 'WETH',
+}
+const usdc = { address: USDC_ADDRESS[ChainId.POLYGON].toLowerCase(), symbol: 'USDC' }
 
+const TRADES: Trade[] = [
+  {
+    input: nativeToken,
+    output: usdc,
+    amount: '10',
+  },
+  {
+    input: usdc,
+    output: nativeToken,
+    amount: '1',
+  },
+]
+
+// TODO: one time setup
 test.beforeEach(async ({ page }) => {
   await page.goto(process.env.PLAYWRIGHT_URL as string)
   await screenshot('start-setup', page)
@@ -22,107 +48,89 @@ function timeout(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-const swaps = [
-  // POLYGON
-  {
-    token: { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', symbol: 'USDC' },
-    // token: { address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', symbol: 'WMATIC' },
-    amount: '1',
-  },
-  // BELOW ARE ETH
-  // {
-  //   token: { address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', symbol: 'USDC' },
-  //   amount: '1',
-  // },
-  // // {
-  // //   token: {
-  // //     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-  // //     symbol: 'DAI',
-  // //   },
-  // //   amount: '1',
-  // // },
-  // // {
-  // //   token: {
-  // //     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-  // //     symbol: 'USDT',
-  // //   },
-  // //   amount: '1',
-  // // },
-  // // {
-  // //   token: {
-  // //     address: '0x6b3595068778dd592e39a122f4f5a5cf09c90fe2',
-  // //     symbol: 'SUSHI',
-  // //   },
-  // //   amount: '1',
-  // // },
-]
-for (const swap of swaps) {
-  test(`Swap NATIVE to ${swap.token.symbol} `, async ({ page }) => {
-    // TODO: get chainId
-    // get WBTC, USDC, USDT, NATIVE from config
-
-    // await page.goto(process.env.PLAYWRIGHT_URL as string)
-
+for (const trade of TRADES) {
+  test(`Swap ${trade.input.symbol} to ${trade.output.symbol} `, async ({ page }) => {
     const logs: string[] = []
     page.on('console', (message) => {
       logs.push(message.text())
     })
 
-    await swapFromNative(swap.token.address, swap.token.symbol, swap.amount, page)
+    await swap(trade, page)
   })
 }
 
 /**
  * NOTE: this searches for the token in the list, and selects it by testdata-id. It cannot select it directly
  * because the list is long and the desired token may be further down in the list, by searching for it the result is narrowed down and the correct token should be listed.
- * @param token
+ * @param trade
  * @param symbol
  * @param amount
  * @param page
  */
-async function swapFromNative(token: string, symbol: string, amount: string, page: Page) {
+async function swap(trade: Trade, page: Page) {
   let swapButton = page.locator('button', { hasText: /Enter Amount/i })
+  const label = `${trade.input.symbol}-to-${trade.output.symbol}`
   await expect(swapButton).not.toBeEnabled()
 
-  const input0 = page.locator('#swap > div > div:nth-child(2) > div.relative.flex.items-center.gap-1 > input')
-  await expect(input0).toBeVisible()
-  await input0.fill(amount)
-
-  // Open token list
-  const tokenOutputList = page.getByTestId('token-output')
-  expect(tokenOutputList).toBeVisible()
-  await tokenOutputList.click()
-
-  // Select token
-  await page.fill('[placeholder="Search token by address"] >> visible=true', symbol)
-  await timeout(1000) // TODO: wait for the list to load instead of using timeout
-
-  await screenshot(`${symbol}-search-token`, page)
-  await page.locator(`[testdata-id=token-selector-row-${token}]`).click()
+  await handleToken(trade.input, page, InputType.INPUT, trade.amount)
+  await handleToken(trade.output, page, InputType.OUTPUT)
 
   swapButton = page.locator('button', { hasText: /Swap/i })
 
-  await screenshot(`${symbol}-before-swap`, page)
+  await screenshot(`${label}-before-swap`, page)
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
-  await screenshot(`${symbol}-bento-approval`, page)
+  await screenshot(`${label}-bento-approval`, page)
   await page
     .locator('button', { hasText: /Approve BentoBox/i })
     .click({ timeout: 500 })
     .then(() => console.log('BentoBox approved'))
     .catch(() => console.log('BentoBox already approved'))
 
-  await screenshot(`${symbol}-confirm`, page)
+  await page
+    .locator('button', { hasText: /Approve / })
+    .click({ timeout: 500 })
+    .then(() => console.log(`Approved ${trade.input.symbol}`))
+    .catch(() => console.log(`${trade.input.symbol} already approved or not needed`))
+
+  await screenshot(`${label}-confirm`, page)
   const confirmSwap = page.locator('div[role="dialog"] button:has-text("Swap")')
   await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
 
   await expect(page.locator('text=Transaction Completed')).toHaveText('Transaction Completed')
 
-  await screenshot(`${symbol}-success`, page)
+  await screenshot(`${label}-success`, page)
 }
 
+async function handleToken(token: Token, page: Page, type: InputType, amount?: string) {
+  if (amount && type === InputType.INPUT) {
+    const input0 = page.locator('#swap > div > div:nth-child(2) > div.relative.flex.items-center.gap-1 > input') // TODO: add data-testid
+    await expect(input0).toBeVisible()
+    await input0.fill(amount)
+  }
+
+  // Open token list
+  const tokenOutputList = page.getByTestId(type === InputType.INPUT ? 'token-input' : 'token-output')
+  expect(tokenOutputList).toBeVisible()
+  await tokenOutputList.click()
+
+  // Search token, not needed if it's the first token in the list, which is always NATIVE
+  if (token.address !== AddressZero) {
+    await page.fill('[placeholder="Search token by address"] >> visible=true', token.symbol)
+    await timeout(1000) // TODO: wait for the list to load instead of using timeout
+    await screenshot(`search-token`, page)
+  }
+  if (type === InputType.INPUT) {
+    await page.locator(`[testdata-id=token-selector-row-${token.address}]`).first().click() // Might be able to use .scrollIntoViewIfNeeded()
+  } else {
+    await page.locator(`[testdata-id=token-selector-row-${token.address}]`).last().click() // Might be able to use .scrollIntoViewIfNeeded()
+  }
+
+  // How to get input/ouput?
+  console.log(`Selected ${token.symbol}`)
+}
 
 async function screenshot(name: string, page: Page) {
   if (process.env.SCREENSHOTS_ENABLED === 'true') {
@@ -130,4 +138,20 @@ async function screenshot(name: string, page: Page) {
     const unix = new Date().getTime()
     await page.screenshot({ path: `screenshots/${unix}-${name}.png` })
   }
+}
+
+enum InputType {
+  INPUT,
+  OUTPUT,
+}
+
+interface Token {
+  address: string
+  symbol: string
+}
+
+interface Trade {
+  input: Token
+  output: Token
+  amount: string
 }
