@@ -258,7 +258,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   fullWidth
                   address={getTridentRouterContractConfig(chainId).address}
                   onSignature={setPermit}
-                  enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
+                  enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                 />
                 <Approve.Token
                   size="md"
