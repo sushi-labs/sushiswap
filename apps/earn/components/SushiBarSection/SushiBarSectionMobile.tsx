@@ -67,8 +67,8 @@ export const SushiBarSectionMobile: FC = () => {
   const { config } = usePrepareContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: selectedIndex === 0 ? 'enter' : 'leave',
-    args: [BigNumber.from(amount?.quotient.toString())],
-    enabled: !!amount?.quotient.toString(),
+    args: amount ? [BigNumber.from(amount.quotient.toString())] : undefined,
+    enabled: !!amount?.quotient,
   })
 
   const { write, isLoading: isWritePending } = useContractWrite({

@@ -64,8 +64,8 @@ export const SushiBarSectionDesktop: FC = () => {
   const { config } = usePrepareContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
     functionName: stake ? 'enter' : 'leave',
-    args: [BigNumber.from(amount?.quotient.toString())],
-    enabled: !!amount?.quotient.toString(),
+    args: amount ? [BigNumber.from(amount.quotient.toString())] : undefined,
+    enabled: !!amount?.quotient,
   })
 
   const { write, isLoading: isWritePending } = useContractWrite({

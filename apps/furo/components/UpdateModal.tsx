@@ -1,5 +1,4 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { ContractInterface } from '@ethersproject/contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
@@ -21,7 +20,7 @@ import { SendTransactionResult } from 'wagmi/actions'
 
 interface UpdateModalProps {
   stream?: Stream
-  abi: ContractInterface
+  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
   address: string
   chainId: ChainId
 }
@@ -75,7 +74,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
   )
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!stream || !chainId) return
       if (topUp && !amount) return
       if (changeEndDate && !endDate) return
@@ -86,7 +85,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       setRequest({
         from: address,
         to: contractAddress,
-        data: contract.interface.encodeFunctionData('updateStream', [
+        data: contract?.interface.encodeFunctionData('updateStream', [
           BigNumber.from(stream.id),
           BigNumber.from(topUp ? topUpAmount : '0'),
           difference,
@@ -100,7 +99,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       amountAsEntity,
       chainId,
       changeEndDate,
-      contract.interface,
+      contract?.interface,
       contractAddress,
       endDate,
       stream,

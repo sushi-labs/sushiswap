@@ -1,4 +1,5 @@
 import furoExports from '@sushiswap/furo/exports.json'
+import { FuroVestingRouter } from '@sushiswap/furo/typechain'
 import { Address, useContract, useProvider } from 'wagmi'
 
 export const getFuroVestingRouterContractConfig = (chainId: number | undefined) => ({
@@ -12,9 +13,9 @@ export const getFuroVestingRouterContractConfig = (chainId: number | undefined) 
       ?.abi ?? [],
 })
 
-export function useFuroVestingRouterContract(chainId: number | undefined): ReturnType<typeof useContract> {
+export function useFuroVestingRouterContract(chainId: number | undefined): FuroVestingRouter | null {
   return useContract({
     ...getFuroVestingRouterContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
-  })
+  }) as FuroVestingRouter
 }
