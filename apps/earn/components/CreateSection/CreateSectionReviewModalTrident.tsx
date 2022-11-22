@@ -68,6 +68,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const [, { createNotification }] = useNotifications(address)
 
   const [{ slippageTolerance }] = useSettings()
+
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
   }, [slippageTolerance])
@@ -89,15 +90,15 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     } else if (
       poolType === PoolFinderType.Stable &&
       totals &&
-      token0?.wrapped?.address in totals &&
-      token1?.wrapped?.address in totals
+      token0.wrapped.address in totals &&
+      token1.wrapped.address in totals
     ) {
       return new StablePool(
         Amount.fromRawAmount(token0.wrapped, 0),
         Amount.fromRawAmount(token1.wrapped, 0),
         fee,
-        totals[token0?.wrapped?.address],
-        totals[token1?.wrapped?.address]
+        totals[token0.wrapped.address],
+        totals[token1.wrapped.address]
       )
     }
   }, [fee, token0, token1, poolType, totals])

@@ -6,7 +6,6 @@ import { FarmRewardsAvailableTooltip } from '../../../../FarmRewardsAvailableToo
 import { CellProps } from './types'
 
 export const PairAPRCell: FC<CellProps> = ({ row }) => {
-  console.log({ row })
   return (
     <Typography variant="sm" weight={600} className="flex items-center justify-end gap-1 text-slate-50">
       {!!row.farm && row.farm.incentives.length > 0 && <FarmRewardsAvailableTooltip />}

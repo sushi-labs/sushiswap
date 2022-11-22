@@ -76,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
           pairs
             .flat()
             .sort((a, b) => {
-              console.log({ totalBorrowUSD: a.totalBorrowUSD })
+              // console.log({ totalBorrowUSD: a.totalBorrowUSD })
               if (b.totalBorrowUSD === a.totalBorrowUSD) return 0
               return b.totalBorrowUSD < a.totalBorrowUSD ? -1 : 1
             })

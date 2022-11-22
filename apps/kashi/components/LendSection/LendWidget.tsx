@@ -166,7 +166,7 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
               </Approve.Components>
             }
             render={({ approved }) => {
-              console.log({ approved })
+              // console.log({ approved })
               return (
                 <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
                   Confirm Deposit

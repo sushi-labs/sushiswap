@@ -1,7 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
 
