@@ -1,16 +1,6 @@
 import { useCallback } from 'react'
 
-import {
-  Container,
-  DiscordIcon,
-  GithubIcon,
-  InstagramIcon,
-  Link,
-  MediumIcon,
-  SushiWithTextIcon,
-  TwitterIcon,
-  Typography,
-} from '..'
+import { Container, DiscordIcon, GithubIcon, InstagramIcon, Link, SushiWithTextIcon, TwitterIcon, Typography } from '..'
 
 export type FooterProps = React.HTMLProps<HTMLDivElement>
 
@@ -29,6 +19,7 @@ const config: Record<
     Analytics: { href: 'https://www.sushi.com/analytics' },
   },
   Help: {
+    Academy: { href: 'https://sushi.com/academy', target: '_blank', rel: 'noopener noreferrer' },
     'About Us': { href: 'https://docs.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
     'Discord Support': { href: 'https://discord.gg/NVPXN4e', target: '_blank', rel: 'noopener noreferrer' },
     'Twitter Support': { href: 'https://twitter.com/sushiswap', target: '_blank', rel: 'noopener noreferrer' },
@@ -107,9 +98,6 @@ export function Footer(props: FooterProps): JSX.Element {
             </a>
             <a href="https://instagram.com/instasushiswap" target="_blank" rel="noopener noreferrer">
               <InstagramIcon width={16} className="text-slate-300 hover:text-slate-50" />
-            </a>
-            <a href="https://medium.com/sushiswap-org" target="_blank" rel="noopener noreferrer">
-              <MediumIcon width={16} className="text-slate-300 hover:text-slate-50" />
             </a>
             <a href="https://discord.gg/NVPXN4e" target="_blank" rel="noopener noreferrer">
               <DiscordIcon width={16} className="text-slate-300 hover:text-slate-50" />

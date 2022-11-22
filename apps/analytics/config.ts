@@ -14,7 +14,7 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.FUSE,
   ChainId.MOONBEAM,
   ChainId.ARBITRUM_NOVA,
-  // ChainId.HARMONY,
+  ChainId.HARMONY,
   ChainId.POLYGON,
   ChainId.BOBA,
 ]
