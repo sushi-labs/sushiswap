@@ -2,6 +2,7 @@ import '@sushiswap/ui/index.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
+import { Analytics } from '@vercel/analytics/react'
 import { Header } from 'components'
 import { SUPPORTED_CHAINS } from 'config'
 import type { AppProps } from 'next/app'
@@ -80,6 +81,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           </ThemeProvider>
         </ReduxProvider>
       </WagmiConfig>
+      <Analytics />
     </>
   )
 }

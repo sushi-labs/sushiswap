@@ -37,7 +37,8 @@ import 'isomorphic-unfetch'
 import { program } from 'commander'
 
 import { bar, bentobox, chef, maker, revenues, serve } from './actions'
-import { MAKER_SUPPORTED_CHAIN_NAMES, REVENUES_SUPPORTED_CHAIN_NAMES } from './config'
+import { furo } from './actions/furo'
+import { FURO_SUPPORTED_CHAIN_NAMES, MAKER_SUPPORTED_CHAIN_NAMES, REVENUES_SUPPORTED_CHAIN_NAMES } from './config'
 
 program.version('0.0.0').description('Sushi CLI')
 
@@ -49,7 +50,14 @@ program
   .command('revenues')
   .description('Get revenues')
   .option('-n,--network <NETWORK>', 'network available: '.concat(REVENUES_SUPPORTED_CHAIN_NAMES.join(', ')))
+  .option('-d,--days <Amount of days>', '1 to 30, default set to 1.')
   .action(revenues)
+
+program
+  .command('furo')
+  .description('Get Furo TVL')
+  .option('-n,--network <NETWORK>', 'network available: '.concat(FURO_SUPPORTED_CHAIN_NAMES.join(', ')))
+  .action(furo)
 
 program
   .command('chef')

@@ -258,6 +258,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   fullWidth
                   address={getTridentRouterContractConfig(chainId).address}
                   onSignature={setPermit}
+                  enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
                 />
                 <Approve.Token
                   size="md"
@@ -265,6 +266,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   fullWidth
                   amount={input0}
                   address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
                 />
                 <Approve.Token
                   size="md"
@@ -272,6 +274,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   fullWidth
                   amount={input1}
                   address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
                 />
               </Approve.Components>
             }

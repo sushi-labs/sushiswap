@@ -10,6 +10,7 @@ import {
 } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
+import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
@@ -33,7 +34,7 @@ import {
   getAsEncodedAction,
   LiquidityInput,
 } from '../../lib/actions'
-import { useNotifications } from '../../lib/state/storage'
+import { useNotifications, useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from '../AddSection'
 
 interface CreateSectionReviewModalTridentProps {
@@ -66,7 +67,15 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
   const [, { createNotification }] = useNotifications(address)
 
-  const totals = useBentoBoxTotals(chainId, [token0, token1])
+  const [{ slippageTolerance }] = useSettings()
+  const slippagePercent = useMemo(() => {
+    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
+  }, [slippageTolerance])
+
+  const totals = useBentoBoxTotals(
+    chainId,
+    useMemo(() => [token0, token1], [token0, token1])
+  )
 
   const pool = useMemo(() => {
     if (!token0 || !token1 || !fee) return
@@ -158,9 +167,12 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           !input1 ||
           !totalSupply ||
           !pool ||
-          !contract
-        )
+          !contract ||
+          !totals?.[token0.wrapped.address] ||
+          !totals?.[token1.wrapped.address]
+        ) {
           return
+        }
 
         let value
         const liquidityInput: LiquidityInput[] = []
@@ -210,7 +222,13 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 args: [
                   liquidityInput,
                   poolAddress,
-                  pool.getLiquidityMinted(totalSupply, input0.wrapped, input1.wrapped).quotient.toString(),
+                  pool
+                    .getLiquidityMinted(
+                      totalSupply,
+                      input0.wrapped.toShare(totals?.[token0.wrapped.address]),
+                      input1.wrapped.toShare(totals?.[token1.wrapped.address])
+                    )
+                    .quotient.toString(),
                   encoded,
                 ],
               }),
@@ -222,10 +240,31 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         //
       }
     },
-    [address, chain?.id, contract, factory, fee, input0, input1, permit, pool, poolAddress, token0, token1, totalSupply]
+    [
+      address,
+      chain?.id,
+      contract,
+      factory,
+      fee,
+      input0,
+      input1,
+      permit,
+      pool,
+      poolAddress,
+      token0,
+      token1,
+      totalSupply,
+      totals,
+    ]
   )
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransaction,
+    isLoading: isWritePending,
+    error,
+    data,
+    isSuccess,
+  } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
@@ -247,6 +286,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 fullWidth
                 address={getTridentRouterContractConfig(chainId).address}
                 onSignature={setPermit}
+                enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
               />
               <Approve.Token
                 size="md"
@@ -268,7 +308,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved} fullWidth onClick={() => sendTransaction?.()}>
+              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
               </Button>
             )

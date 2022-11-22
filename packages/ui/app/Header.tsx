@@ -20,6 +20,7 @@ export enum AppType {
   Invest = 'Earn',
   Partner = 'Partner',
   Widget = 'Widget',
+  Academy = 'Academy',
 }
 
 const LINK = {
@@ -36,6 +37,7 @@ const LINK = {
   [AppType.Invest]: '/earn',
   [AppType.Partner]: '/partner',
   [AppType.Widget]: '/widget',
+  [AppType.Academy]: '/academy',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
@@ -207,6 +209,18 @@ export function Header({
                     {AppType.Blog}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Stay up to date with Sushi
+                    </Typography>
+                  </Select.Option>
+                  <Select.Option
+                    as="a"
+                    href="https://www.sushi.com/academy"
+                    key={AppType.Academy}
+                    value={AppType.Academy}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.Academy}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Demystifying DeFi
                     </Typography>
                   </Select.Option>
                   <Select.Option

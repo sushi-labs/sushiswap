@@ -6,6 +6,7 @@ import { resolvers as blocks } from './blocks'
 import { resolvers as bundles } from './bundles'
 import { resolvers as deprecated } from './depreciated'
 import { resolvers as factories } from './factories'
+import { resolvers as furo } from './furo'
 import { resolvers as liquidityPositions } from './liquidity-positions'
 import { resolvers as masterchef } from './masterchef'
 import { resolvers as pairs } from './pairs'
@@ -24,4 +25,5 @@ export const resolvers: Resolvers = mergeResolvers([
   pairs,
   tokens,
   user,
+  furo,
 ])

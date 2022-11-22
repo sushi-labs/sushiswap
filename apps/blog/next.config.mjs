@@ -1,5 +1,4 @@
 import transpileModules from 'next-transpile-modules'
-import { withAxiom } from 'next-axiom'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui'])
 
@@ -29,4 +28,4 @@ const nextConfig = {
   },
 }
 
-export default withAxiom(withTranspileModules(nextConfig))
+export default withTranspileModules(nextConfig)

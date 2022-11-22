@@ -1,12 +1,10 @@
 import transpileModules from 'next-transpile-modules'
-import { withAxiom } from 'next-axiom'
 
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/redux-localstorage',
-  '@sushiswap/chain',
-  '@sushiswap/wagmi',
   '@sushiswap/ui',
+  '@sushiswap/wagmi',
 ])
 
 const {
@@ -21,6 +19,7 @@ const {
   PARTNER_URL,
   SWAP_URL,
   XSWAP_URL,
+  ACADEMY_URL,
 } = process.env
 
 // @ts-check
@@ -75,6 +74,14 @@ const nextConfig = {
         destination: `/:path*`,
       },
       {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
+      },
+      {
         source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
       },
@@ -111,6 +118,14 @@ const nextConfig = {
         destination: `${SWAP_URL}/swap`,
       },
       {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
+      },
+      {
         source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
       },
@@ -142,4 +157,4 @@ const nextConfig = {
   },
 }
 
-export default withAxiom(withTranspileModules(nextConfig))
+export default withTranspileModules(nextConfig)

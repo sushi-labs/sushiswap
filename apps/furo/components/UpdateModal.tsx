@@ -64,7 +64,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: <Dots>Updating stream</Dots>,
+          pending: `Updating stream`,
           completed: `Successfully updated stream`,
           failed: 'Something went wrong updating the stream',
         },
@@ -79,7 +79,8 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
       if (topUp && !amount) return
       if (changeEndDate && !endDate) return
 
-      const difference = changeEndDate && endDate ? (endDate?.getTime() - stream?.endTime.getTime()) / 1000 : 0
+      const difference =
+        changeEndDate && endDate ? Math.floor((endDate?.getTime() - stream?.endTime.getTime()) / 1000) : 0
       const topUpAmount = amountAsEntity?.greaterThan(0) ? amountAsEntity.quotient.toString() : '0'
 
       setRequest({

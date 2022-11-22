@@ -44,6 +44,7 @@
     "@graphql-mesh/transform-prune": "latest",
     "@graphql-mesh/transform-rename": "latest",
     "@graphql-mesh/transform-type-merging": "latest",
+    "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",

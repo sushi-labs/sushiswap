@@ -527,12 +527,12 @@ const Widget: FC<Swap> = ({
           setSrcTxHash(res.hash as `0x${string}`)
         }
         console.debug('then cooked', res)
+        setSignature(undefined)
       })
       .catch((err) => {
         console.error('catch err', err)
       })
       .finally(() => {
-        setSignature(undefined)
         setIsWritePending(false)
       })
   }, [

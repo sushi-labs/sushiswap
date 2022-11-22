@@ -39,11 +39,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: (
-            <Dots>
-              Withdrawing {balance.toSignificant(6)} {balance.currency.symbol}
-            </Dots>
-          ),
+          pending: `Withdrawing ${balance.toSignificant(6)} ${balance.currency.symbol}`,
           completed: `Successfully withdrawn ${balance.toSignificant(6)} ${balance.currency.symbol}`,
           failed: 'Something went wrong withdrawing from vesting schedule',
         },
