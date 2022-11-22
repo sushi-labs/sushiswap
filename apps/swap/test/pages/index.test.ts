@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI_ADDRESS, USDC_ADDRESS, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { USDC_ADDRESS, USDT_ADDRESS, WBTC_ADDRESS, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 
 // test.describe.configure({ mode: 'parallel' })
 const nativeToken = {
@@ -13,21 +13,44 @@ const wNativeToken = {
   symbol: WNATIVE[ChainId.POLYGON].symbol ?? 'WETH',
 }
 const usdc = { address: USDC_ADDRESS[ChainId.POLYGON].toLowerCase(), symbol: 'USDC' }
+const usdt = { address: USDT_ADDRESS[ChainId.POLYGON].toLowerCase(), symbol: 'USDT' }
+const wbtc = { address: WBTC_ADDRESS[ChainId.POLYGON].toLowerCase(), symbol: 'WBTC' }
 
-const TRADES: Trade[] = [
+const NATIVE_TO_TOKENS: Trade[] = [
   {
     input: nativeToken,
     output: usdc,
     amount: '10',
   },
   {
-    input: usdc,
-    output: nativeToken,
-    amount: '1',
+    input: nativeToken,
+    output: wbtc,
+    amount: '10',
+  },
+
+  {
+    input: nativeToken,
+    output: usdt,
+    amount: '10',
   },
 ]
 
-// TODO: one time setup
+const TOKENS_TO_NATIVE: Trade[] = [
+  {
+    input: usdc,
+    output: nativeToken,
+  },
+  {
+    input: wbtc,
+    output: nativeToken,
+  },
+  {
+    input: usdt,
+    output: nativeToken,
+  },
+]
+// TODO: add one test for wnative
+
 test.beforeEach(async ({ page }) => {
   await page.goto(process.env.PLAYWRIGHT_URL as string)
   await screenshot('start-setup', page)
@@ -44,35 +67,44 @@ test.beforeEach(async ({ page }) => {
   }
 })
 
-function timeout(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
+test.describe.only('Swap natives for tokens, then back to native.', () => {
+  test.slow()
+  for (const trade of NATIVE_TO_TOKENS) {
+    test(`Swap ${trade.input.symbol} to ${trade.output.symbol} `, async ({ page }) => {
+      const logs: string[] = []
+      page.on('console', (message) => {
+        logs.push(message.text())
+      })
 
-for (const trade of TRADES) {
-  test(`Swap ${trade.input.symbol} to ${trade.output.symbol} `, async ({ page }) => {
-    const logs: string[] = []
-    page.on('console', (message) => {
-      logs.push(message.text())
+      await swap(trade, page)
     })
+  }
 
-    await swap(trade, page)
-  })
-}
+  for (const trade of TOKENS_TO_NATIVE) {
+    test(`Swap ${trade.input.symbol} to ${trade.output.symbol} `, async ({ page }) => {
+      const logs: string[] = []
+      page.on('console', (message) => {
+        logs.push(message.text())
+      })
+
+      await swap(trade, page, true)
+    })
+  }
+})
 
 /**
  * NOTE: this searches for the token in the list, and selects it by testdata-id. It cannot select it directly
  * because the list is long and the desired token may be further down in the list, by searching for it the result is narrowed down and the correct token should be listed.
  * @param trade
- * @param symbol
- * @param amount
  * @param page
  */
-async function swap(trade: Trade, page: Page) {
-  let swapButton = page.locator('button', { hasText: /Enter Amount/i })
+async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
+  
   const label = `${trade.input.symbol}-to-${trade.output.symbol}`
+  let swapButton = page.locator('button', { hasText: /Enter Amount/i })
   await expect(swapButton).not.toBeEnabled()
 
-  await handleToken(trade.input, page, InputType.INPUT, trade.amount)
+  await handleToken(trade.input, page, InputType.INPUT, trade.amount, useMaxBalances)
   await handleToken(trade.output, page, InputType.OUTPUT)
 
   swapButton = page.locator('button', { hasText: /Swap/i })
@@ -80,6 +112,8 @@ async function swap(trade: Trade, page: Page) {
   await screenshot(`${label}-before-swap`, page)
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
+
+  await timeout(500) // wait for rpc calls to figure out if approvals are needed 
 
   await screenshot(`${label}-bento-approval`, page)
   await page
@@ -99,18 +133,14 @@ async function swap(trade: Trade, page: Page) {
   await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
 
-  await expect(page.locator('text=Transaction Completed')).toHaveText('Transaction Completed')
+  await screenshot(`DEBUG-${label}`, page)
+  let expectedText = 'Successfully swapped '
+  await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
 
   await screenshot(`${label}-success`, page)
 }
 
-async function handleToken(token: Token, page: Page, type: InputType, amount?: string) {
-  if (amount && type === InputType.INPUT) {
-    const input0 = page.locator('#swap > div > div:nth-child(2) > div.relative.flex.items-center.gap-1 > input') // TODO: add data-testid
-    await expect(input0).toBeVisible()
-    await input0.fill(amount)
-  }
-
+async function handleToken(token: Token, page: Page, type: InputType, amount?: string, useMax?: boolean) {
   // Open token list
   const tokenOutputList = page.getByTestId(type === InputType.INPUT ? 'token-input' : 'token-output')
   expect(tokenOutputList).toBeVisible()
@@ -128,8 +158,21 @@ async function handleToken(token: Token, page: Page, type: InputType, amount?: s
     await page.locator(`[testdata-id=token-selector-row-${token.address}]`).last().click() // Might be able to use .scrollIntoViewIfNeeded()
   }
 
-  // How to get input/ouput?
+  if (useMax && type === InputType.INPUT) {
+    await timeout(500) // wait for the balance to be set before continuing
+    const balanceButton = page.locator('button', { hasText: /Balance:/ }).first()
+    await balanceButton.click()
+  } else if (amount && type === InputType.INPUT) {
+    const input0 = page.locator('#swap > div > div:nth-child(2) > div.relative.flex.items-center.gap-1 > input') // TODO: add data-testid
+    await expect(input0).toBeVisible()
+    await input0.fill(amount)
+  }
+
   console.log(`Selected ${token.symbol}`)
+}
+
+function timeout(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 async function screenshot(name: string, page: Page) {
@@ -139,6 +182,7 @@ async function screenshot(name: string, page: Page) {
     await page.screenshot({ path: `screenshots/${unix}-${name}.png` })
   }
 }
+
 
 enum InputType {
   INPUT,
@@ -153,5 +197,5 @@ interface Token {
 interface Trade {
   input: Token
   output: Token
-  amount: string
+  amount?: string
 }
