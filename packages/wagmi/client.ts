@@ -9,6 +9,8 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
+import { SafeConnector } from './connectors/safe'
+
 export type Client = ReturnType<typeof createClient>
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
@@ -96,8 +98,6 @@ export const client: Client = createClient({
         appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
       },
     }),
-    // @ts-ignore
-    // new SafeConnector({ chains }),
-    // import('@gnosis.pm/safe-apps-wagmi').then((value) => value.default.SafeConnector),
+    new SafeConnector({ chains }),
   ],
 })

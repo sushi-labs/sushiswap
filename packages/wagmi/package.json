@@ -47,6 +47,9 @@
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "wagmi": "0.8.6",
+    "@wagmi/core": "0.7.5",
+    "@gnosis.pm/safe-apps-provider": "^0.14.0",
+    "@gnosis.pm/safe-apps-sdk": "^7.8.0",
     "@tanstack/react-query": "^4.14.5"
   },
   "devDependencies": {
