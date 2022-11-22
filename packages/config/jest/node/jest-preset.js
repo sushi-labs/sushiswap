@@ -1,5 +1,4 @@
-// @ts-check
-/** @type {import('jest').Config} */
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 const jestConfig = {
   verbose: true,
   roots: ['<rootDir>'],
