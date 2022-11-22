@@ -23,7 +23,7 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@tanstack/react-table": "8.5.0",
-    "@vercel/analytics": "0.1.4",
+    "@vercel/analytics": "0.1.5",
     "@vercel/og": "0.0.20",
     "date-fns": "^2.29.1",
     "echarts": "^5.3.3",

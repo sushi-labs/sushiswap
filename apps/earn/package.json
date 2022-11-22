@@ -37,7 +37,7 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@tanstack/react-table": "8.5.0",
-    "@vercel/analytics": "0.1.4",
+    "@vercel/analytics": "0.1.5",
     "lodash.sortby": "4.7.0",
     "lodash.take": "4.1.1",
     "lodash.orderby": "4.6.0",

@@ -53,7 +53,7 @@
     "@visx/text": "^2.3.0",
     "@visx/tooltip": "^2.8.0",
     "@visx/xychart": "^2.9.0",
-    "@vercel/analytics": "0.1.4",
+    "@vercel/analytics": "0.1.5",
     "ajv": "^6.12.6",
     "cids": "^1.0.0",
     "date-fns": "^2.28.0",
