@@ -1,20 +1,26 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainIds, chainName } from '@sushiswap/chain'
 import { USDC_ADDRESS, USDT_ADDRESS, WBTC_ADDRESS, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 
-// test.describe.configure({ mode: 'parallel' })
+
+if (!process.env.CHAIN_ID) {
+  throw new Error('CHAIN_ID env var not set')
+}
+
+const CHAIN_ID = parseInt(process.env.CHAIN_ID)
+
 const nativeToken = {
   address: AddressZero,
-  symbol: 'NATIVE', // not being used except for logging
+  symbol: 'NATIVE', // not being used except for test description
 }
 const wNativeToken = {
-  address: WNATIVE_ADDRESS[ChainId.POLYGON].toLowerCase(),
-  symbol: WNATIVE[ChainId.POLYGON].symbol ?? 'WETH',
+  address: WNATIVE_ADDRESS[CHAIN_ID].toLowerCase(),
+  symbol: WNATIVE[CHAIN_ID].symbol ?? 'WETH',
 }
-const usdc = { address: USDC_ADDRESS[ChainId.POLYGON].toLowerCase(), symbol: 'USDC' }
-const usdt = { address: USDT_ADDRESS[ChainId.POLYGON].toLowerCase(), symbol: 'USDT' }
-const wbtc = { address: WBTC_ADDRESS[ChainId.POLYGON].toLowerCase(), symbol: 'WBTC' }
+const usdc = { address: USDC_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'USDC' }
+const usdt = { address: USDT_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'USDT' }
+const wbtc = { address: WBTC_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'WBTC' }
 
 const NATIVE_TO_TOKENS: Trade[] = [
   {
@@ -56,7 +62,7 @@ test.beforeEach(async ({ page }) => {
   await page.locator(`[testdata-id=network-selector-button]`).click()
   await screenshot('network-selector-list', page)
   const networkList = page.locator(`[testdata-id=network-selector-list]`)
-  const desiredNetwork = networkList.getByText('Polygon Mainnet')
+  const desiredNetwork = networkList.getByText(chainName[CHAIN_ID])
   expect(desiredNetwork).toBeVisible()
   await desiredNetwork.click()
   await screenshot('network-selected', page)
