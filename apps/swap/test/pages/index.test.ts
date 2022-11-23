@@ -118,25 +118,11 @@ async function wrap(trade: Trade, page: Page, useMaxBalances?: boolean) {
   await handleToken(trade.input, page, InputType.INPUT, trade.amount, useMaxBalances)
   await handleToken(trade.output, page, InputType.OUTPUT)
 
-  let unwrapButton = page.locator('button', { hasText: /(Wrap|Unwrap)/i })
-
+  let unwrapButton = page.locator('[testdata-id=open-wrap-review-modal-button]')
   await expect(unwrapButton).toBeEnabled()
   await unwrapButton.click()
 
-  await timeout(500) // wait for rpc calls to figure out if approvals are needed
-
-  await page
-    .locator('button', { hasText: /Approve BentoBox/i })
-    .click({ timeout: 500 })
-    .then(async () => {
-      await timeout(1500) // wait for rpc calls to update approval status
-      console.log(`BentoBox Approved`)
-    })
-    .catch(() => console.log('BentoBox already approved'))
-
-  await timeout(500) // wait for rpc calls to update approval status
-
-  const confirmUnwrap = page.locator('div[role="dialog"] button', { hasText: /Wrap|Unwrap/i })
+  const confirmUnwrap = page.locator('[testdata-id=swap-wrap-review-modal-confirm-button]')
   await expect(confirmUnwrap).toBeEnabled()
   await confirmUnwrap.click()
 
@@ -145,30 +131,29 @@ async function wrap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 }
 
 async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
-  let swapButton = page.locator('button', { hasText: /Enter Amount/i })
-  await expect(swapButton).not.toBeEnabled()
+
+  await expect(page.locator('[id=amount-checker]')).not.toBeEnabled()
 
   await handleToken(trade.input, page, InputType.INPUT, trade.amount, useMaxBalances)
   await handleToken(trade.output, page, InputType.OUTPUT)
-
-  swapButton = page.locator('button', { hasText: /Swap/i })
-
+  
+  let swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
   await timeout(500) // wait for rpc calls to figure out if approvals are needed
 
   await page
-    .locator('button', { hasText: /Approve BentoBox/i })
+    .locator('[testdata-id=swap-review-approve-bentobox-button]')
     .click({ timeout: 1000 })
     .then(async () => {
       await timeout(1500) // wait for rpc calls to update approval status
       console.log(`BentoBox Approved`)
     })
-    .catch(() => console.log('BentoBox already approved'))
+    .catch(() => console.log('BentoBox already approved or not needed'))
 
   await page
-    .locator('button', { hasText: /Approve / })
+    .locator('[testdata-id=swap-review-approve-token-button]')
     .click({ timeout: 1000 })
     .then(async () => {
       await timeout(1500) // wait for rpc calls to update approval status
@@ -177,7 +162,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
     .catch(() => console.log(`${trade.input.symbol} already approved or not needed`))
 
   await timeout(2000) // wait for rpc calls to update approval status
-  const confirmSwap = page.locator('div[role="dialog"] button', { hasText: /Swap/i })
+  const confirmSwap = page.locator('[testdata-id=swap-review-confirm-button]')
   await confirmSwap.click()
 
   let expectedText = 'Successfully swapped '
@@ -185,26 +170,27 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 }
 
 async function handleToken(token: Token, page: Page, type: InputType, amount?: string, useMax?: boolean) {
+  const selectorInfix = `${type === InputType.INPUT ? 'input' : 'output'}-currency${type === InputType.INPUT ? '0' : '1'}`
+  
   // Open token list
-  const tokenOutputList = page.getByTestId(type === InputType.INPUT ? 'token-input' : 'token-output')
+  const tokenOutputList = page.getByTestId(`swap-${selectorInfix}-button`)
   expect(tokenOutputList).toBeVisible()
   await tokenOutputList.click()
 
   // Search token, not needed if it's the first token in the list, which is always NATIVE
   if (token.address !== AddressZero) {
-    await page.fill('[placeholder="Search token by address"] >> visible=true', token.symbol)
+    await page.fill(
+      `[testdata-id=swap-${selectorInfix}-token-selector-dialog-address-input]`,
+      token.symbol
+    )
     await timeout(1000) // TODO: wait for the list to load instead of using timeout
   }
-  if (type === InputType.INPUT) {
-    await page.locator(`[testdata-id=token-selector-row-${token.address}]`).first().click() // Might be able to use .scrollIntoViewIfNeeded()
-  } else {
-    await page.locator(`[testdata-id=token-selector-row-${token.address}]`).last().click() // Might be able to use .scrollIntoViewIfNeeded()
-  }
+
+  await page
+    .locator(`[testdata-id=swap-${selectorInfix}-token-selector-dialog-row-${token.address}]`)
+    .click() // Might be able to use .scrollIntoViewIfNeeded()
 
   if (useMax && type === InputType.INPUT) {
-    // await timeout(2000) // wait for the balance to be set before continuing
-    // const balanceButton = page.locator('button', { hasText: /Balance:/ }).first()
-    // await balanceButton.click()
     // TODO: refactor this later, cannot use max balance until we have separate accounts for each worker. for now, divide the balance by 2 to make sure we have enough
     await timeout(3000) // wait for the balance to be set before continuing.
     const amount = (
@@ -217,10 +203,11 @@ async function handleToken(token: Token, page: Page, type: InputType, amount?: s
     if (formattedAmount === '0.00000000') {
       throw new Error(`Balance is 0 for ${token.symbol}, cannot proceed.`)
     }
-    const input0 = page.locator('#swap > div > div:nth-child(2) > div.relative.flex.items-center.gap-1 > input') // TODO: add data-testid
+
+    const input0 = page.locator('[testdata-id="swap-input-currency0-input"]')
     await input0.fill(formattedAmount)
   } else if (amount && type === InputType.INPUT) {
-    const input0 = page.locator('#swap > div > div:nth-child(2) > div.relative.flex.items-center.gap-1 > input') // TODO: add data-testid
+    const input0 = page.locator('[testdata-id="swap-input-currency0-input"]')
     await expect(input0).toBeVisible()
     await input0.fill(amount)
   }

@@ -10,6 +10,7 @@ export type ApprovalButtonRenderProp = {
 }
 
 export interface ApproveButton<T> extends Omit<ButtonProps<'button'>, 'onClick'> {
+  id: string
   dispatch?(payload: ApprovalAction): void
   index?: number
   render?: (renderProps: T) => ReactElement

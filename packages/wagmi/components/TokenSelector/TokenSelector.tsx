@@ -9,6 +9,7 @@ import { TokenSelectorDialog } from './TokenSelectorDialog'
 import { TokenSelectorOverlay } from './TokenSelectorOverlay'
 
 export type TokenSelectorProps = {
+  id: string
   variant: 'overlay' | 'dialog'
   currency?: Type
   open: boolean
@@ -25,6 +26,7 @@ export type TokenSelectorProps = {
 
 export const TokenSelector: FC<TokenSelectorProps> = memo(
   ({
+    id,
     variant,
     tokenMap,
     chainId,
@@ -66,6 +68,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       if (variant === 'overlay') {
         return (
           <TokenSelectorOverlay
+            id={`${id}-token-selector-overlay`}
             open={open}
             account={address}
             balancesMap={balances}
@@ -82,6 +85,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
 
       return (
         <TokenSelectorDialog
+          id={`${id}-token-selector-dialog`}
           open={open}
           account={address}
           balancesMap={balances}

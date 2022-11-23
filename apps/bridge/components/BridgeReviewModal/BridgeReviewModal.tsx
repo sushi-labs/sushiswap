@@ -39,6 +39,7 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
           components={
             <Approve.Components>
               <Approve.Bentobox
+                id="bridge-review-modal"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
@@ -47,6 +48,7 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
                 enabled={Boolean(getSushiXSwapContractConfig(srcChainId).addressOrName)}
               />
               <Approve.Token
+                id="bridge-review-token"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth

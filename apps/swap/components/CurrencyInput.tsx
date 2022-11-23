@@ -68,6 +68,5 @@ export const CurrencyInput: FC<CurrencyInput> = ({
       disabled={disabled}
       usdPctChange={inputType === TradeType.EXACT_OUTPUT ? usdPctChange : undefined}
     />
-    
   )
 }

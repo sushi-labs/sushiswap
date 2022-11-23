@@ -148,8 +148,9 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         className="!items-end"
         components={
           <Approve.Components>
-            <Approve.Bentobox enabled={formValid} address={contract?.address} onSignature={setSignature} />
+            <Approve.Bentobox id="furo-create-single-stream-approve-bentobox" enabled={formValid} address={contract?.address} onSignature={setSignature} />
             <Approve.Token
+              id="furo-create-single-stream-approve-token" 
               enabled={formValid && _amount?.greaterThan(ZERO)}
               amount={_amount}
               address={BENTOBOX_ADDRESS[chainId]}

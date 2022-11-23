@@ -20,6 +20,7 @@ export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
 
 export const BentoApproveButton: FC<BentoApproveButton> = memo(
   ({
+    id,
     watch = true,
     address: masterContract,
     render,
@@ -67,6 +68,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           state: [
             approvalState,
             <Button
+              testdata-id={`${id}-button`} 
               {...props}
               type="button"
               key={1}

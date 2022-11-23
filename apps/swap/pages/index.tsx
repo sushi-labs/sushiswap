@@ -231,7 +231,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 </div>
               </div>
               <CurrencyInput
-                id={'token-input'}
+                id={'swap-input-currency0'}
                 className="p-3"
                 value={input0}
                 onChange={onInput0}
@@ -259,7 +259,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </div>
               <div className="bg-slate-800">
                 <CurrencyInput
-                  id={'token-output'}
+                  id={'swap-output-currency1'}
                   disabled={true}
                   className="p-3"
                   value={isWrap ? input0 : input1}
@@ -289,6 +289,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                       <Checker.Network fullWidth size="md" chainId={chainId}>
                         {isWrap ? (
                           <WrapReviewModal
+                            id="swap-wrap-review-modal"
                             chainId={chainId}
                             input0={parsedInput0}
                             input1={parsedInput1}
@@ -296,7 +297,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                           >
                             {({ isWritePending, setOpen }) => {
                               return (
-                                <Button disabled={isWritePending} fullWidth size="md" onClick={() => setOpen(true)}>
+                                <Button testdata-id={'open-wrap-review-modal-button'} disabled={isWritePending} fullWidth size="md" onClick={() => setOpen(true)}>
                                   {wrap ? 'Wrap' : 'Unwrap'}
                                 </Button>
                               )
@@ -366,6 +367,7 @@ const SwapButton: FC<{
       }
     >
       <Button
+        testdata-id="swap-button"
         fullWidth
         onClick={onClick}
         disabled={

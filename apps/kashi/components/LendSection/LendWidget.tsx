@@ -148,6 +148,7 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
             components={
               <Approve.Components>
                 <Approve.Token
+                  id="kashi-approve-token"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
@@ -156,6 +157,7 @@ export const LendWidget: FC<LendWidget> = ({ pair }) => {
                   enabled={Boolean(BENTOBOX_ADDRESS[pair.chainId])}
                 />
                 <Approve.Bentobox
+                  id="kashi-approve-bentobox"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth

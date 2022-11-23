@@ -424,6 +424,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           components={
             <Approve.Components>
               <Approve.Bentobox
+                id="swap-review-approve-bentobox"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
@@ -432,6 +433,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 enabled={Boolean(typeof chainId === 'number' && TRIDENT_ENABLED_NETWORKS.includes(chainId))}
               />
               <Approve.Token
+                id="swap-review-approve-token"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
@@ -443,7 +445,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+              <Button size="md" testdata-id="swap-review-confirm-button" disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
               </Button>
             )

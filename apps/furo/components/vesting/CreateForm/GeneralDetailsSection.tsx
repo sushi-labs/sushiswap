@@ -71,6 +71,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
               </Select.Button>
               <Form.Error message={error?.message} />
               <TokenSelector
+                id={`create-single-vest`}
                 open={dialogOpen}
                 variant="dialog"
                 chainId={chainId}

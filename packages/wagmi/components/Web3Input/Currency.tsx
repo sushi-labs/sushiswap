@@ -69,6 +69,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             </div>
           ) : (
             <Input.Numeric
+              testdata-id={`${id}-input`}
               ref={inputRef}
               variant="unstyled"
               disabled={disabled}
@@ -85,7 +86,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
                 e.stopPropagation()
               },
             })}
-            data-testid={id}
+            data-testid={`${id}-button`}
             className={classNames(
               onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
               (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
@@ -137,6 +138,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         </div>
         {onSelect && (
           <TokenSelector
+            id={id}
             variant="dialog"
             onClose={handleClose}
             open={tokenSelectorOpen}

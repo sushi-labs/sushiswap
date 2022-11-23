@@ -17,6 +17,7 @@ export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
 
 export const TokenApproveButton: FC<TokenApproveButton> = memo(
   ({
+    id,
     watch = true,
     amount,
     address,
@@ -57,6 +58,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
             approvalState,
             !amount?.currency.isNative ? (
               <Button
+                testdata-id={`${id}-button`} 
                 {...props}
                 type="button"
                 key={1}
