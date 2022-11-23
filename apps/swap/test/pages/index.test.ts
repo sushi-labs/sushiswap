@@ -1,8 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
-import { ChainId, chainIds, chainName } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
 import { USDC_ADDRESS, USDT_ADDRESS, WBTC_ADDRESS, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
-
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
@@ -22,82 +21,85 @@ const usdc = { address: USDC_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'USDC' }
 const usdt = { address: USDT_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'USDT' }
 const wbtc = { address: WBTC_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'WBTC' }
 
-const NATIVE_TO_TOKENS: Trade[] = [
-  {
-    input: nativeToken,
-    output: usdc,
-    amount: '10',
-  },
-  {
-    input: nativeToken,
-    output: wbtc,
-    amount: '10',
-  },
-
-  {
-    input: nativeToken,
-    output: usdt,
-    amount: '10',
-  },
-]
-
-const TOKENS_TO_NATIVE: Trade[] = [
-  {
-    input: usdc,
-    output: nativeToken,
-  },
-  {
-    input: wbtc,
-    output: nativeToken,
-  },
-  {
-    input: usdt,
-    output: nativeToken,
-  },
-]
-
 test.beforeEach(async ({ page }) => {
   await page.goto(process.env.PLAYWRIGHT_URL as string)
-  await screenshot('start-setup', page)
   await page.locator(`[testdata-id=network-selector-button]`).click()
-  await screenshot('network-selector-list', page)
   const networkList = page.locator(`[testdata-id=network-selector-list]`)
   const desiredNetwork = networkList.getByText(chainName[CHAIN_ID])
   expect(desiredNetwork).toBeVisible()
   await desiredNetwork.click()
-  await screenshot('network-selected', page)
 
   if (await desiredNetwork.isVisible()) {
     await page.locator(`[testdata-id=network-selector-button]`).click()
   }
 })
 
-test.describe('Swap natives for tokens, then back to native.', () => {
+test.describe('Swap Native to USDC, then USDC to NATIVE', () => {
   test.slow()
-  for (const trade of NATIVE_TO_TOKENS) {
-    test(`Swap ${trade.input.symbol} to ${trade.output.symbol} `, async ({ page }) => {
-      const logs: string[] = []
-      page.on('console', (message) => {
-        logs.push(message.text())
-      })
-
-      await swap(trade, page)
+  test(`Swap Native to USDC`, async ({ page }) => {
+    const logs: string[] = []
+    page.on('console', (message) => {
+      logs.push(message.text())
     })
-  }
-
-  for (const trade of TOKENS_TO_NATIVE) {
-    test(`Swap ${trade.input.symbol} to ${trade.output.symbol} `, async ({ page }) => {
-      const logs: string[] = []
-      page.on('console', (message) => {
-        logs.push(message.text())
-      })
-
-      await swap(trade, page, true)
+    const trade: Trade = { input: nativeToken, output: usdc, amount: '10' }
+    await swap(trade, page)
+  })
+  test(`Swap USDC to NATIVE`, async ({ page }) => {
+    const logs: string[] = []
+    page.on('console', (message) => {
+      logs.push(message.text())
     })
-  }
+    const trade: Trade = { input: usdc, output: nativeToken }
+    await swap(trade, page, true)
+  })
+})
+
+test.describe('Swap Native to USDT, then USDT to NATIVE', () => {
+  test.slow()
+  test(`Swap Native to USDT`, async ({ page }) => {
+    const logs: string[] = []
+    page.on('console', (message) => {
+      logs.push(message.text())
+    })
+    const trade: Trade = { input: nativeToken, output: usdt, amount: '10' }
+    await swap(trade, page)
+  })
+  test(`Swap USDT to NATIVE`, async ({ page }) => {
+    const logs: string[] = []
+    page.on('console', (message) => {
+      logs.push(message.text())
+    })
+    const trade: Trade = { input: usdt, output: nativeToken }
+    await swap(trade, page, true)
+  })
+})
+
+test.describe('Swap Native to WBTC, then WBTC to NATIVE', () => {
+  test.slow()
+  test(`Swap Native to WBTC`, async ({ page }) => {
+    const logs: string[] = []
+    page.on('console', (message) => {
+      logs.push(message.text())
+    })
+    const trade: Trade = { input: nativeToken, output: wbtc, amount: '10' }
+    await swap(trade, page)
+  })
+  test(`Swap WBTC to NATIVE`, async ({ page }) => {
+    const logs: string[] = []
+    page.on('console', (message) => {
+      logs.push(message.text())
+    })
+    const trade: Trade = { input: wbtc, output: nativeToken }
+    await swap(trade, page, true)
+  })
 })
 
 test(`Wrap and unwrap`, async ({ page }) => {
+  test.slow()
+  const logs: string[] = []
+  page.on('console', (message) => {
+    logs.push(message.text())
+  })
   const nativeToWrapped = {
     input: nativeToken,
     output: wNativeToken,
@@ -113,42 +115,36 @@ test(`Wrap and unwrap`, async ({ page }) => {
 })
 
 async function wrap(trade: Trade, page: Page, useMaxBalances?: boolean) {
-  const label = `${trade.input.symbol}-to-${trade.output.symbol}`
-  console.log(`wrap: ${label}`)
-
   await handleToken(trade.input, page, InputType.INPUT, trade.amount, useMaxBalances)
   await handleToken(trade.output, page, InputType.OUTPUT)
 
   let unwrapButton = page.locator('button', { hasText: /(Wrap|Unwrap)/i })
 
-  await screenshot(`${label}-before-wra`, page)
   await expect(unwrapButton).toBeEnabled()
   await unwrapButton.click()
 
   await timeout(500) // wait for rpc calls to figure out if approvals are needed
 
-  await screenshot(`${label}-bento-approval`, page)
   await page
     .locator('button', { hasText: /Approve BentoBox/i })
     .click({ timeout: 500 })
-    .then(() => console.log('BentoBox approved'))
+    .then(async () => {
+      await timeout(1500) // wait for rpc calls to update approval status
+      console.log(`BentoBox Approved`)
+    })
     .catch(() => console.log('BentoBox already approved'))
 
-  await screenshot(`${label}-confirm`, page)
-  const confirmSwap = page.locator('div[role="dialog"] button', { hasText: /Wrap|Unwrap/i })
-  await expect(confirmSwap).toBeEnabled()
-  await confirmSwap.click()
+  await timeout(500) // wait for rpc calls to update approval status
 
-  await screenshot(`DEBUG-${label}`, page)
+  const confirmUnwrap = page.locator('div[role="dialog"] button', { hasText: /Wrap|Unwrap/i })
+  await expect(confirmUnwrap).toBeEnabled()
+  await confirmUnwrap.click()
+
   let expectedRegex = /Successfully wrapped|unwrapped /
   await expect(page.locator('div', { hasText: expectedRegex }).last()).toContainText(expectedRegex)
-
-  await screenshot(`${label}-success`, page)
 }
 
 async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
-  const label = `${trade.input.symbol}-to-${trade.output.symbol}`
-  console.log(`Swap: ${label}`)
   let swapButton = page.locator('button', { hasText: /Enter Amount/i })
   await expect(swapButton).not.toBeEnabled()
 
@@ -157,35 +153,35 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   swapButton = page.locator('button', { hasText: /Swap/i })
 
-  await screenshot(`${label}-before-swap`, page)
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
   await timeout(500) // wait for rpc calls to figure out if approvals are needed
 
-  await screenshot(`${label}-bento-approval`, page)
   await page
     .locator('button', { hasText: /Approve BentoBox/i })
-    .click({ timeout: 500 })
-    .then(() => console.log('BentoBox approved'))
+    .click({ timeout: 1000 })
+    .then(async () => {
+      await timeout(1500) // wait for rpc calls to update approval status
+      console.log(`BentoBox Approved`)
+    })
     .catch(() => console.log('BentoBox already approved'))
 
   await page
     .locator('button', { hasText: /Approve / })
-    .click({ timeout: 500 })
-    .then(() => console.log(`Approved ${trade.input.symbol}`))
+    .click({ timeout: 1000 })
+    .then(async () => {
+      await timeout(1500) // wait for rpc calls to update approval status
+      console.log(`Approved ${trade.input.symbol}`)
+    })
     .catch(() => console.log(`${trade.input.symbol} already approved or not needed`))
 
-  await screenshot(`${label}-confirm`, page)
+  await timeout(2000) // wait for rpc calls to update approval status
   const confirmSwap = page.locator('div[role="dialog"] button', { hasText: /Swap/i })
-  await expect(confirmSwap).toBeEnabled()
   await confirmSwap.click()
 
-  await screenshot(`DEBUG-${label}`, page)
   let expectedText = 'Successfully swapped '
   await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
-
-  await screenshot(`${label}-success`, page)
 }
 
 async function handleToken(token: Token, page: Page, type: InputType, amount?: string, useMax?: boolean) {
@@ -198,7 +194,6 @@ async function handleToken(token: Token, page: Page, type: InputType, amount?: s
   if (token.address !== AddressZero) {
     await page.fill('[placeholder="Search token by address"] >> visible=true', token.symbol)
     await timeout(1000) // TODO: wait for the list to load instead of using timeout
-    await screenshot(`search-token`, page)
   }
   if (type === InputType.INPUT) {
     await page.locator(`[testdata-id=token-selector-row-${token.address}]`).first().click() // Might be able to use .scrollIntoViewIfNeeded()
@@ -207,28 +202,32 @@ async function handleToken(token: Token, page: Page, type: InputType, amount?: s
   }
 
   if (useMax && type === InputType.INPUT) {
-    await timeout(500) // wait for the balance to be set before continuing
-    const balanceButton = page.locator('button', { hasText: /Balance:/ }).first()
-    await balanceButton.click()
+    // await timeout(2000) // wait for the balance to be set before continuing
+    // const balanceButton = page.locator('button', { hasText: /Balance:/ }).first()
+    // await balanceButton.click()
+    // TODO: refactor this later, cannot use max balance until we have separate accounts for each worker. for now, divide the balance by 2 to make sure we have enough
+    await timeout(3000) // wait for the balance to be set before continuing.
+    const amount = (
+      await page
+        .locator('button', { hasText: /Balance:/ })
+        .first()
+        .innerText()
+    ).split('Balance: ')[1]
+    const formattedAmount = String((parseFloat(amount) / 2).toFixed(8))
+    if (formattedAmount === '0.00000000') {
+      throw new Error(`Balance is 0 for ${token.symbol}, cannot proceed.`)
+    }
+    const input0 = page.locator('#swap > div > div:nth-child(2) > div.relative.flex.items-center.gap-1 > input') // TODO: add data-testid
+    await input0.fill(formattedAmount)
   } else if (amount && type === InputType.INPUT) {
     const input0 = page.locator('#swap > div > div:nth-child(2) > div.relative.flex.items-center.gap-1 > input') // TODO: add data-testid
     await expect(input0).toBeVisible()
     await input0.fill(amount)
   }
-
-  console.log(`Selected ${token.symbol}`)
 }
 
-function timeout(ms) {
+function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-async function screenshot(name: string, page: Page) {
-  if (process.env.SCREENSHOTS_ENABLED === 'true') {
-    await timeout(1000)
-    const unix = new Date().getTime()
-    await page.screenshot({ path: `screenshots/${unix}-${name}.png` })
-  }
 }
 
 enum InputType {
