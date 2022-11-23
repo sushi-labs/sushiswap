@@ -5,8 +5,10 @@ import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RouteStatus, RToken } f
 import { BigNumber, BigNumberish, ethers } from 'ethers'
 import { Limited } from './Limited'
 import { LiquidityProvider } from './liquidityProviders/LiquidityProvider'
+import { QuickSwapProvider } from './liquidityProviders/QuickSwap'
 import { SushiProvider } from './liquidityProviders/Sushi'
-import { convertTokenToBento, getBentoChainId } from './liquidityProviders/Trident'
+import { convertTokenToBento, getBentoChainId, TridentProvider } from './liquidityProviders/Trident'
+import { UniswapProvider } from './liquidityProviders/UniswapV2'
 import { PoolCode } from './pools/PoolCode'
 
 enum LiquidityProviders {
@@ -16,7 +18,7 @@ enum LiquidityProviders {
     Quickswap = 'Quickswap'
 }
 
-type RouteProcessor = (r: MultiRoute) => void
+type RouteCallBack = (r: MultiRoute) => void
 
 interface RoutingState {
   tokenFrom: RToken
@@ -24,6 +26,7 @@ interface RoutingState {
   tokenTo: RToken
   gasPrice: number
   timer: any  // timer from setTimeout
+  poolCodes: Map<string, PoolCode>
 }
 
 // Gathers pools info, creates routing in 'incremental' mode
@@ -33,7 +36,7 @@ export class RouteCreator {
   minUpdateDelay: number
   chainDataProvider: ethers.providers.BaseProvider
   limited: Limited
-  routeProcessors: RouteProcessor[]
+  routeCallBacks: RouteCallBack[]
   providers: LiquidityProvider[]
   
   currentBestRoute?: MultiRoute
@@ -48,7 +51,7 @@ export class RouteCreator {
     this.minUpdateDelay = minUpdateDelay
     this.chainDataProvider = chainDataProvider
     this.limited = new Limited(10, 1000)
-    this.routeProcessors = []
+    this.routeCallBacks = []
     this.providers = []
   }
 
@@ -65,6 +68,9 @@ export class RouteCreator {
     this.currentBestRoute = undefined
     this.providers = [
       new SushiProvider(this.chainDataProvider, this.chainId, this.limited),
+      new TridentProvider(this.chainDataProvider, this.chainId, this.limited),
+      new UniswapProvider(this.chainDataProvider, this.chainId, this.limited),
+      new QuickSwapProvider(this.chainDataProvider, this.chainId, this.limited),
     ]
     this.providers.forEach(p => p.startGetherData(tokenFrom, tokenTo))
     this.routingState = {
@@ -72,14 +78,15 @@ export class RouteCreator {
       amountIn,
       tokenTo: tokenTo as RToken,
       gasPrice,
-      timer: setTimeout(() => this._checkRouteUpdate(), this.minUpdateDelay)
+      timer: setTimeout(() => this._checkRouteUpdate(), this.minUpdateDelay),
+      poolCodes: new Map()
     }
   }
 
   // Callback registration.
   // callbacks are called each time route changes
-  onRouteUpdate(p: RouteProcessor) {
-    this.routeProcessors.push(p)
+  onRouteUpdate(p: RouteCallBack) {
+    this.routeCallBacks.push(p)
     if (this.currentBestRoute) p(this.currentBestRoute)
   }
 
@@ -88,10 +95,10 @@ export class RouteCreator {
     if (this.routingState?.timer !== undefined) clearTimeout(this.routingState?.timer)
     this.providers.forEach(p =>p.stopGetherData())
     this.routingState = undefined
-    this.routeProcessors = []
+    this.routeCallBacks = []
   }
 
-  _checkRouteUpdate() {
+  _checkRouteUpdate() {    
     const state = this.routingState
     if (!state) return
 
@@ -99,6 +106,10 @@ export class RouteCreator {
     if (this.providers.some(p => p.poolListWereUpdated())) {
       let poolCodes: PoolCode[] = []
       this.providers.forEach(p => poolCodes = poolCodes.concat(p.getCurrentPoolList()))
+      // console.log('pools:', poolCodes.length)
+      // state.poolCodes?.forEach(pc => {
+      //   console.log(`${pc.pool.token0.symbol} ${pc.pool.token1.symbol} ${pc.pool.address}`);        
+      // })
       
       const networks: NetworkInfo[] = [{
         chainId: this.chainId,
@@ -110,6 +121,8 @@ export class RouteCreator {
         gasPrice: state.gasPrice as number
       }]
   
+      poolCodes.forEach(pc => state.poolCodes.set(pc.pool.address, pc))
+
       const route = findMultiRouteExactIn(
         state.tokenFrom, 
         state.tokenTo, 
@@ -118,10 +131,12 @@ export class RouteCreator {
         networks,
         state.gasPrice
       )
+      //console.log('route status', route.status, route.totalAmountOut)
+      
       if (route.status != RouteStatus.NoWay) {
         if (!this.currentBestRoute || route.totalAmountOut > this.currentBestRoute.totalAmountOut) {
           this.currentBestRoute = route
-          this.routeProcessors.forEach(p => p(route))
+          this.routeCallBacks.forEach(p => p(route))
         }
       }
     }    
@@ -133,7 +148,19 @@ export class RouteCreator {
   }
 
   // Human-readable route printing
-  printRoute(route: MultiRoute): string {
-    return 'unimplemented'
+  routeToString(route: MultiRoute, fromToken: Token, toToken: Token, shiftPrimary = '', shiftSub = '    '): string {
+    let res = ''
+    res += shiftPrimary + 'Route Status: ' + route.status + '\n'
+    res += shiftPrimary + `Input: ${route.amountIn/Math.pow(10, fromToken.decimals)} ${fromToken.symbol}\n`  
+    route.legs.forEach((l, i) => {
+      res += shiftSub + shiftSub + 
+        `${i+1}. ${l.tokenFrom.name} ${Math.round(l.absolutePortion*100)}%`
+        + ` -> [${this.routingState?.poolCodes.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.name}\n`
+      //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
+    })
+    const output = parseInt(route.amountOutBN.toString())/Math.pow(10, toToken.decimals)
+    res += shiftPrimary + `Output: ${output} ${route.toToken.name}\n`
+
+    return res
   }
 }
