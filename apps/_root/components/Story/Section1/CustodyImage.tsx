@@ -1,8 +1,7 @@
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import Image from 'next/image'
 import { useRef } from 'react'
-
-import { IphoneMockupSVG } from '../../SVG/IphoneMockup'
 
 function transformTemplate(transformProps) {
   return `perspective(${transformProps.y.toString()}) rotateX(${transformProps.rotateX.toString()}) scale(${transformProps.scale.toString()})`
@@ -23,7 +22,12 @@ export const CustodyImage = () => {
       {...(!isSmallScreen && { ...{ transformTemplate, style: { opacity, scale, y: perspective, rotateX } } })}
       className="relative w-[420px] h-[420px] -left-[140px] sm:left-0"
     >
-      <IphoneMockupSVG width={420} />
+      <Image
+        alt="stellar"
+        objectFit="contain"
+        src="https://res.cloudinary.com/sushi-cdn/image/upload/v1669286681/Phone_1_cajrdn.webp"
+        layout="fill"
+      />
     </motion.div>
   )
 }

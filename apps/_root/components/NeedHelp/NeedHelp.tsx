@@ -1,23 +1,27 @@
 import { ExternalLinkIcon } from '@heroicons/react/solid'
-import { Button, Container, DiscordIcon, GithubIcon, InstagramIcon, TwitterIcon, Typography } from '@sushiswap/ui'
+import { Button, Container, DiscordIcon, GithubIcon, TwitterIcon, Typography, YoutubeIcon } from '@sushiswap/ui'
 import React, { FC } from 'react'
 
 const SUPPORT_CHANNELS = [
   {
     icon: DiscordIcon,
     title: 'Community on Discord',
+    link: 'https://discord.gg/NVPXN4e',
   },
   {
     icon: TwitterIcon,
     title: 'Follow us on Twitter',
+    link: 'https://twitter.com/sushiswap',
   },
   {
     icon: GithubIcon,
-    title: 'Open Source',
+    title: 'Code on Github',
+    link: 'https://github.com/sushiswap',
   },
   {
-    icon: InstagramIcon,
-    title: 'Instagram',
+    icon: YoutubeIcon,
+    title: 'Youtube',
+    link: 'https://www.youtube.com/c/SushiOfficial',
   },
 ]
 
@@ -43,13 +47,13 @@ export const NeedHelp: FC = () => {
                 Join the Sushi Discord community and ask away!
               </Typography>
               <div className="mt-4">
-                {SUPPORT_CHANNELS.map(({ title, icon: Icon }, index) => (
-                  <div className="flex items-center gap-4 cursor-pointer group py-2" key={index}>
+                {SUPPORT_CHANNELS.map(({ title, icon: Icon, link }, index) => (
+                  <a href={link} className="flex items-center gap-4 cursor-pointer group py-2" key={index}>
                     <Icon width={24} height={24} className="text-blue group-hover:text-blue-300" />
                     <Typography variant="sm" weight={500} className="text-blue group-hover:text-blue-300">
                       {title}
                     </Typography>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
-import { Button, classNames, Container, Tab, Typography } from '@sushiswap/ui'
+import { Button, Container, Tab, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import React, { FC, useState } from 'react'
@@ -15,7 +15,7 @@ const TABS: TabsExpendableCardData[] = [
   {
     title: 'Furo Streaming',
     summary: 'Automate your DAO salaries and vesting schedules while earning interest from yield strategies.',
-    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668717586/px-furo_2_mvt9vl.webp',
+    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/v1669286681/Frame_38656_lci5if.webp',
     content: (
       <>
         <p>
@@ -39,71 +39,71 @@ const TABS: TabsExpendableCardData[] = [
     linkText: 'Pay Someone',
     caption: 'For Retail Users',
   },
-  {
-    title: 'Kashi Lending',
-    summary: 'Define your own risk profile. Borrow and Lend with confidence',
-    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668717586/px-Frame_38657_exywa7.webp',
-    content: (
-      <>
-        <span>
-          Kashi allows for lending across a multitude of assets with varying risk tolerances, including tokens,
-          stablecoins and synthetics.
-        </span>
-        <h3>Isolated risk</h3>
-        <p>
-          Any user can create a customized, gas-efficient market thanks to Kashi’s unique isolated markets, allowing
-          them to define their own risk profile.{' '}
-        </p>
-        <p>
-          Unlike in traditional money markets which use a pooled asset model, Kashi utilizes an isolated market model
-          that isolates the risk to just that market, making lending exponentially safer for users who wish to do so.
-        </p>
-        <h3>Interest rate model</h3>
-        <p>A variable interest rate ensures that lenders make the most yield possible, efficiently.</p>
-      </>
-    ),
-    link: 'https://sushi.com/kashi',
-    linkText: 'Visit Kashi',
-    caption: 'For Retail Users',
-  },
-  {
-    title: 'Miso Launchpad',
-    summary:
-      'MISO is Sushi’s permissionless launchpad where project founders can create auctions for their token listings efficiently and market them to a willing audience.',
-    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668717586/px-Frame_38658_lyl2g5.webp',
-    content: (
-      <>
-        <h2>For project founders</h2>
-        <p>
-          MISO offers a collection of open-source smart contracts directly out-of-the-box that are interoperable,
-          allowing you the ability to easily spin up your own token listing for your project in a variety of ways,
-          without dedicating hours to research and develop. Non-technical founders are welcome; it’s simple and
-          intuitive to make your own listing and get it up and running quickly, without any technical or web3-specific
-          knowledge.
-        </p>
-        <h3>Connect with your audience</h3>
-        <p>
-          The MISO marketplace helps founders abstract away a lot of the pain associated with traditional token listings
-          by assisting the tokens in their price discovery with willing audiences via auctions or a general crowdsale,
-          before they are to be listed on the open exchange at Sushi.
-        </p>
-        <h2>For participants</h2>
-        <span>
-          MISO’s marketplace allows users the opportunity to get in early and invest in projects that they believe in.
-        </span>
-        <h3>Make informed decisions</h3>
-        <p>
-          Users can get early exposure to projects that they believe in, all while committing the amount they feel most
-          comfortable with and defining their own risk profile. With tons of information available on the easy-to-use
-          interface, users have all the necessary tools to make informed business decisions and play a part in the
-          development of the earliest stages of new projects.
-        </p>
-      </>
-    ),
-    link: 'https://sushi.com/miso',
-    linkText: 'Visit Launchpad',
-    caption: 'For Retail Users',
-  },
+  // {
+  //   title: 'Kashi Lending',
+  //   summary: 'Define your own risk profile. Borrow and Lend with confidence',
+  //   image: 'https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668717586/px-Frame_38657_exywa7.webp',
+  //   content: (
+  //     <>
+  //       <span>
+  //         Kashi allows for lending across a multitude of assets with varying risk tolerances, including tokens,
+  //         stablecoins and synthetics.
+  //       </span>
+  //       <h3>Isolated risk</h3>
+  //       <p>
+  //         Any user can create a customized, gas-efficient market thanks to Kashi’s unique isolated markets, allowing
+  //         them to define their own risk profile.{' '}
+  //       </p>
+  //       <p>
+  //         Unlike in traditional money markets which use a pooled asset model, Kashi utilizes an isolated market model
+  //         that isolates the risk to just that market, making lending exponentially safer for users who wish to do so.
+  //       </p>
+  //       <h3>Interest rate model</h3>
+  //       <p>A variable interest rate ensures that lenders make the most yield possible, efficiently.</p>
+  //     </>
+  //   ),
+  //   link: 'https://sushi.com/kashi',
+  //   linkText: 'Visit Kashi',
+  //   caption: 'For Retail Users',
+  // },
+  // {
+  //   title: 'Miso Launchpad',
+  //   summary:
+  //     'MISO is Sushi’s permissionless launchpad where project founders can create auctions for their token listings efficiently and market them to a willing audience.',
+  //   image: 'https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668717586/px-Frame_38658_lyl2g5.webp',
+  //   content: (
+  //     <>
+  //       <h2>For project founders</h2>
+  //       <p>
+  //         MISO offers a collection of open-source smart contracts directly out-of-the-box that are interoperable,
+  //         allowing you the ability to easily spin up your own token listing for your project in a variety of ways,
+  //         without dedicating hours to research and develop. Non-technical founders are welcome; it’s simple and
+  //         intuitive to make your own listing and get it up and running quickly, without any technical or web3-specific
+  //         knowledge.
+  //       </p>
+  //       <h3>Connect with your audience</h3>
+  //       <p>
+  //         The MISO marketplace helps founders abstract away a lot of the pain associated with traditional token listings
+  //         by assisting the tokens in their price discovery with willing audiences via auctions or a general crowdsale,
+  //         before they are to be listed on the open exchange at Sushi.
+  //       </p>
+  //       <h2>For participants</h2>
+  //       <span>
+  //         MISO’s marketplace allows users the opportunity to get in early and invest in projects that they believe in.
+  //       </span>
+  //       <h3>Make informed decisions</h3>
+  //       <p>
+  //         Users can get early exposure to projects that they believe in, all while committing the amount they feel most
+  //         comfortable with and defining their own risk profile. With tons of information available on the easy-to-use
+  //         interface, users have all the necessary tools to make informed business decisions and play a part in the
+  //         development of the earliest stages of new projects.
+  //       </p>
+  //     </>
+  //   ),
+  //   link: 'https://sushi.com/miso',
+  //   linkText: 'Visit Launchpad',
+  //   caption: 'For Retail Users',
+  // },
 ]
 
 function transformTemplate(transformProps) {
@@ -122,34 +122,16 @@ export const Ecosystem: FC = () => {
             <div className="rounded-full w-[10px] h-[10px] bg-yellow" />
             <div className="rounded-full w-[10px] h-[10px] bg-green" />
           </div>
-          <div className="flex flex-col gap-3 py-10">
+          <div className="flex flex-col gap-3 pt-10">
             <Typography weight={400} className="text-center text-slate-400">
               Ecosystem
             </Typography>
             <Typography variant="hero" weight={600} className="!text-4xl !md:text-5xl px-4 text-center">
-              Explore our suite of <span className="text-blue">DeFi</span> Products
+              Explore our <span className="text-blue">DeFi</span> Payment Solution
             </Typography>
             <Tab.Group selectedIndex={_index} onChange={setIndex}>
-              <div className="relative flex justify-center mt-10">
-                <div className="absolute inset-0 top-[50%] z-[0] h-px bg-neutral-800" />
-                {TABS.map((el, index) => (
-                  <Button
-                    as={Tab}
-                    key={el.title}
-                    size="sm"
-                    className={classNames(
-                      index === 0 ? 'rounded-r-none rounded-l-2xl' : '',
-                      index === TABS.length - 1 ? 'rounded-l-none rounded-r-2xl' : '',
-                      '!ring-0 rounded-none z-[1] text-white',
-                      _index === index ? 'bg-blue-600' : 'bg-neutral-600'
-                    )}
-                  >
-                    {el.title}
-                  </Button>
-                ))}
-              </div>
               <Tab.Panels>
-                <div className="flex items-center p-10 min-h-[520px]">
+                <div className="flex items-center p-10 min-h-[420px]">
                   {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
                     <Tab.Panel key={title} className="items-center grid grid-cols-1 md:grid-cols-2 gap-20">
                       <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
