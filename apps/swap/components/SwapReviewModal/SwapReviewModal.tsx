@@ -42,6 +42,8 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const onSwapSuccess = useCallback(() => {
     setSignature(undefined)
+    setOpen(false)
+
     onSuccess()
   }, [onSuccess])
 
