@@ -33,11 +33,30 @@ const WRAPPED_NATIVE: Record<number, Token>  = {
   })
 }
 
+class BackCounter {
+  start: number
+  current: number
+
+  constructor(start: number) {
+    this.start = start
+    this.current = start
+  }
+
+  async wait() {
+    while(this.current > 0) {
+      console.log(`Wait ${this.current} sec ...`);
+      this.current--
+      await delay(1000)
+    }
+  }
+
+  reset() {
+    this.current = this.start
+  }
+
+}
+
 async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Token, swaps = 1) {
-  console.log(`1. ${chainId} RouteProcessor deployment ...`);  
-  // const [_, John] = await ethers.getSigners()
-  // const provider = John.provider as Provider
-  //const provider = ethers.getDefaultProvider()
   let provider
   switch(chainId) {
     case ChainId.ETHEREUM: 
@@ -49,19 +68,73 @@ async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Tok
     default:
       throw new Error('Unsupported net!')
   }
-
+  
   const amountInBN = getBigNumber(amountIn * 1e18)
   const baseWrappedToken = WRAPPED_NATIVE[chainId]
-
+  
+  console.log(`1. ${chainId} Find best route ...`);
+  const backCounter = new BackCounter(8)
   const routeCreator = new RouteCreator(provider, chainId)
   routeCreator.startRouting(baseWrappedToken, amountInBN, toToken, 30e9)
   routeCreator.onRouteUpdate(r => {
-    console.log('Pools:', routeCreator.routingState?.poolCodes?.size)
+    console.log('Known Pools:', routeCreator.poolCodes.size)
     const printed = routeCreator.routeToString(r, baseWrappedToken, toToken)
-    console.log(printed);    
+    console.log(printed);
+    backCounter.reset()  
   })
 
-  return new Promise((res, reg) => {})
+  await backCounter.wait()
+  routeCreator.stopRouting()
+
+  console.log(`2. ChainId=${chainId} RouteProcessor deployment ...`);  
+
+  const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory(
+    "RouteProcessor"
+  );
+  const routeProcessor = await RouteProcessor.deploy(
+    BentoBox[chainId] || "0x0000000000000000000000000000000000000000"
+  );    
+  await routeProcessor.deployed();
+  
+  console.log("3. User creation ...");
+  const [Alice] = await ethers.getSigners()
+
+  console.log(`4. Deposit user's ${amountIn} ${WNATIVE[chainId].symbol} to ${baseWrappedToken.symbol}`)
+  await Alice.sendTransaction({ 
+    to: baseWrappedToken.address,
+    value: amountInBN.mul(swaps)
+  })
+    
+  console.log(`5. Approve user's ${baseWrappedToken.symbol} to the route processor ...`);    
+  const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
+  await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
+
+  console.log('6. Create route processor code ...');    
+  const code = routeCreator.getRouteProcessorCodeForBestRoute(routeProcessor.address, Alice.address, 0.5)
+  
+  console.log('7. Call route processor ...');    
+  const route = routeCreator.getBestRoute() as MultiRoute
+  const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - 0.005)*1_000_000)).div(1_000_000)
+  
+  const toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, Alice)
+  const balanceOutBNBefore = await toTokenContract.connect(Alice).balanceOf(Alice.address)
+  const tx = await routeProcessor.processRoute(
+    baseWrappedToken.address, 
+    route.amountInBN, 
+    toToken.address, 
+    amountOutMin, 
+    Alice.address,
+    code
+  )
+  const receipt = await tx.wait()
+  
+  console.log('8. Fetching user\'s output balance ...')
+  const balanceOutBN = (await toTokenContract.connect(Alice).balanceOf(Alice.address)).sub(balanceOutBNBefore)
+  console.log(`    expected amountOut: ${route.amountOutBN.toString()}`);
+  console.log(`    real amountOut:     ${balanceOutBN.toString()}`);
+  const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
+  console.log(`    slippage: ${slippage/100}%`)
+  console.log(`    gas use: ${receipt.gasUsed.toString()}`)
 }
 
 describe("RouteCreator", async function () {

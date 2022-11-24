@@ -10,6 +10,7 @@ import { SushiProvider } from './liquidityProviders/Sushi'
 import { convertTokenToBento, getBentoChainId, TridentProvider } from './liquidityProviders/Trident'
 import { UniswapProvider } from './liquidityProviders/UniswapV2'
 import { PoolCode } from './pools/PoolCode'
+import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
 enum LiquidityProviders {
     Sushiswap = 'Sushiswap',
@@ -26,7 +27,6 @@ interface RoutingState {
   tokenTo: RToken
   gasPrice: number
   timer: any  // timer from setTimeout
-  poolCodes: Map<string, PoolCode>
 }
 
 // Gathers pools info, creates routing in 'incremental' mode
@@ -38,6 +38,7 @@ export class RouteCreator {
   limited: Limited
   routeCallBacks: RouteCallBack[]
   providers: LiquidityProvider[]
+  poolCodes: Map<string, PoolCode>
   
   currentBestRoute?: MultiRoute
   routingState?: RoutingState
@@ -53,6 +54,7 @@ export class RouteCreator {
     this.limited = new Limited(10, 1000)
     this.routeCallBacks = []
     this.providers = []
+    this.poolCodes = new Map()
   }
 
   // Starts pool data fetching and routing calculation
@@ -66,6 +68,7 @@ export class RouteCreator {
   ) {
     this.stopRouting()
     this.currentBestRoute = undefined
+    this.poolCodes = new Map()
     this.providers = [
       new SushiProvider(this.chainDataProvider, this.chainId, this.limited),
       new TridentProvider(this.chainDataProvider, this.chainId, this.limited),
@@ -78,8 +81,7 @@ export class RouteCreator {
       amountIn,
       tokenTo: tokenTo as RToken,
       gasPrice,
-      timer: setTimeout(() => this._checkRouteUpdate(), this.minUpdateDelay),
-      poolCodes: new Map()
+      timer: setTimeout(() => this._checkRouteUpdate(), this.minUpdateDelay)
     }
   }
 
@@ -96,6 +98,10 @@ export class RouteCreator {
     this.providers.forEach(p =>p.stopGetherData())
     this.routingState = undefined
     this.routeCallBacks = []
+  }
+
+  getBestRoute() {
+    return this.currentBestRoute
   }
 
   _checkRouteUpdate() {    
@@ -121,7 +127,7 @@ export class RouteCreator {
         gasPrice: state.gasPrice as number
       }]
   
-      poolCodes.forEach(pc => state.poolCodes.set(pc.pool.address, pc))
+      poolCodes.forEach(pc => this.poolCodes.set(pc.pool.address, pc))
 
       const route = findMultiRouteExactIn(
         state.tokenFrom, 
@@ -143,8 +149,10 @@ export class RouteCreator {
   }
 
   // Converts route in route processor code
-  makeRouteProcessorCode(route: MultiRoute, to: string, maxSlippage: number): string {
-    return 'unimplemented'
+  getRouteProcessorCodeForBestRoute(routeProcessor: string, to: string, maxSlippage: number): string {
+    if (this.currentBestRoute === undefined) return ''
+    const code = getRouteProcessorCode(this.currentBestRoute, routeProcessor, to, this.poolCodes)
+    return code
   }
 
   // Human-readable route printing
@@ -155,7 +163,7 @@ export class RouteCreator {
     route.legs.forEach((l, i) => {
       res += shiftSub + shiftSub + 
         `${i+1}. ${l.tokenFrom.name} ${Math.round(l.absolutePortion*100)}%`
-        + ` -> [${this.routingState?.poolCodes.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.name}\n`
+        + ` -> [${this.poolCodes.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.name}\n`
       //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
     })
     const output = parseInt(route.amountOutBN.toString())/Math.pow(10, toToken.decimals)
