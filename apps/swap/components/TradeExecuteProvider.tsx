@@ -281,6 +281,8 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
             )
           }
 
+          console.log({ actions })
+
           call = {
             address: tridentRouter.address,
             calldata: batchAction({
@@ -334,6 +336,8 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
                   }
                 })
             })
+
+          console.log({ estimatedCall })
 
           setRequest({
             ...tx,

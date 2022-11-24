@@ -1,7 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { expect, Page, test } from '@playwright/test'
 import { chainName } from '@sushiswap/chain'
-import { Native, SUSHI_ADDRESS, USDC_ADDRESS, USDT_ADDRESS, WBTC_ADDRESS } from '@sushiswap/currency'
+import { Native, SUSHI_ADDRESS, USDC_ADDRESS } from '@sushiswap/currency'
 
 if (!process.env.CHAIN_ID) {
   throw new Error('CHAIN_ID env var not set')
@@ -20,7 +20,6 @@ const wNativeToken = {
 const usdc = { address: USDC_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'USDC' }
 const sushi = { address: SUSHI_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'SUSHI' }
 
-
 test.beforeEach(async ({ page }) => {
   await page.goto(process.env.PLAYWRIGHT_URL as string)
   await page.locator(`[testdata-id=network-selector-button]`).click()
@@ -36,7 +35,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   test.slow()
-  page.on("pageerror", (err) => {
+  page.on('pageerror', (err) => {
     console.log(err.message)
   })
   const trade1: Trade = { input: nativeToken, output: usdc, amount: '10' }
@@ -47,7 +46,7 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
-  page.on("pageerror", (err) => {
+  page.on('pageerror', (err) => {
     console.log(err.message)
   })
   const trade1: Trade = { input: nativeToken, output: sushi, amount: '10' }
@@ -56,10 +55,9 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   await swap(trade2, page, true)
 })
 
-
 test(`Wrap and unwrap`, async ({ page }) => {
   test.slow()
-  page.on("pageerror", (err) => {
+  page.on('pageerror', (err) => {
     console.log(err.message)
   })
   const nativeToWrapped = {
@@ -80,7 +78,7 @@ async function wrap(trade: Trade, page: Page, useBalance?: boolean) {
   await handleToken(trade.input, page, InputType.INPUT, trade.amount, useBalance)
   await handleToken(trade.output, page, InputType.OUTPUT)
 
-  let unwrapButton = page.locator('[testdata-id=open-wrap-review-modal-button]')
+  const unwrapButton = page.locator('[testdata-id=open-wrap-review-modal-button]')
   await expect(unwrapButton).toBeEnabled()
   await unwrapButton.click()
 
@@ -88,7 +86,7 @@ async function wrap(trade: Trade, page: Page, useBalance?: boolean) {
   await expect(confirmUnwrap).toBeEnabled()
   await confirmUnwrap.click()
 
-  let expectedRegex = /Successfully wrapped|unwrapped /
+  const expectedRegex = /Successfully wrapped|unwrapped /
   await expect(page.locator('div', { hasText: expectedRegex }).last()).toContainText(expectedRegex)
 }
 
@@ -98,7 +96,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
   await handleToken(trade.input, page, InputType.INPUT, trade.amount, useMaxBalances)
   await handleToken(trade.output, page, InputType.OUTPUT)
 
-  let swapButton = page.locator('[testdata-id=swap-button]')
+  const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
@@ -106,7 +104,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   await page
     .locator('[testdata-id=swap-review-approve-bentobox-button]')
-    .click({ timeout: 1500 })
+    .click({ timeout: 10000 })
     .then(async () => {
       console.log(`BentoBox Approved`)
     })
@@ -114,7 +112,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   await page
     .locator('[testdata-id=swap-review-approve-token-button]')
-    .click({ timeout: 1500 })
+    .click({ timeout: 10000 })
     .then(async () => {
       console.log(`Approved ${trade.input.symbol}`)
     })

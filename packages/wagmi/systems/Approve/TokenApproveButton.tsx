@@ -58,7 +58,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
             approvalState,
             !amount?.currency.isNative ? (
               <Button
-                testdata-id={`${id}-button`} 
+                testdata-id={`${id}-button`}
                 {...props}
                 type="button"
                 key={1}
@@ -75,6 +75,8 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
         },
       })
     }, [
+      id,
+      enabled,
       amount,
       amount?.currency.isNative,
       amount?.currency.symbol,
