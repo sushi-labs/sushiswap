@@ -46,6 +46,7 @@
       ],
       "env": [
         "ROOT_URL",
+        "ACADEMY_URL",
         "ANALYTICS_URL",
         "BLOG_URL",
         "BRIDGE_URL",

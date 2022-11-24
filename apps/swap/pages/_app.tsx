@@ -2,6 +2,7 @@ import '@sushiswap/ui/index.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
+import { Analytics } from '@vercel/analytics/react'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 // import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
 import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
@@ -17,8 +18,6 @@ import { WagmiConfig } from 'wagmi'
 
 import { Header } from '../components'
 import SEO from '../next-seo.config.mjs'
-
-export { reportWebVitals } from 'next-axiom'
 
 declare global {
   interface Window {
@@ -84,6 +83,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           </ThemeProvider>
         </Provider>
       </WagmiConfig>
+      <Analytics />
     </>
   )
 }

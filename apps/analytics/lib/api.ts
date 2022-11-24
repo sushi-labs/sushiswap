@@ -154,7 +154,7 @@ export const getStats = async () => {
   return stats
 }
 
-export const getCharts = async (query: { networks: string }) => {
+export const getCharts = async (query?: { networks: string }) => {
   const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
   const { factoryDaySnapshots } = await sdk.FactoryDaySnapshots({
     chainIds: chainIds,
