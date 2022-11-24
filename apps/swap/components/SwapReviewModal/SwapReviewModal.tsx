@@ -23,7 +23,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   const { address: account } = useAccount()
   const [, { createNotification }] = useNotifications(account)
   const [open, setOpen] = useState(false)
-  const [sushiSwapRouter, , sushiSwapKlimaRouter] = useRouters(chainId)
+  const [sushiSwapRouter, tridentRouter, sushiSwapKlimaRouter] = useRouters(chainId)
   const [{ carbonOffset }] = useSettings()
   const [signature, setSignature] = useState<Signature>()
 
@@ -84,17 +84,20 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 signature={signature}
                 onSuccess={onSwapSuccess}
               >
-                {({ isWritePending, execute }) => (
-                  <Button
-                    size="md"
-                    testdata-id="swap-review-confirm-button"
-                    disabled={isWritePending}
-                    fullWidth
-                    onClick={() => execute?.()}
-                  >
-                    {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
-                  </Button>
-                )}
+                {({ isWritePending, execute }) => {
+                  console.log(approved, execute)
+                  return (
+                    <Button
+                      size="md"
+                      testdata-id="swap-review-confirm-button"
+                      disabled={isWritePending}
+                      fullWidth
+                      onClick={() => execute?.()}
+                    >
+                      {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
+                    </Button>
+                  )
+                }}
               </TradeExecuteProvider>
             )
           }}

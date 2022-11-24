@@ -67,7 +67,8 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
 
   const prepare = useCallback(
     async (setRequest) => {
-      if (!trade || !account || !chainId || !deadline) return
+      console.log(trade, account, chainId, deadline, approved)
+      if (!trade || !account || !chainId || !deadline || !approved) return
       try {
         let call: SwapCall | null = null
         let value = '0x0'
@@ -347,6 +348,7 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
     [
       account,
       allowedSlippage,
+      approved,
       carbonOffset,
       chainId,
       deadline,
