@@ -127,6 +127,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           <PricePanel value={value} currency={currency} usdPctChange={usdPctChange} />
           <div className="h-6">
             <BalancePanel
+              id={id}
               chainId={chainId}
               account={address}
               onChange={onChange}
@@ -185,10 +186,12 @@ type BalancePanel = Pick<
   CurrencyInputProps,
   'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource'
 > & {
+  id: string
   account: string | undefined
 }
 
 const BalancePanel: FC<BalancePanel> = ({
+  id,
   chainId,
   account,
   onChange,
@@ -214,6 +217,7 @@ const BalancePanel: FC<BalancePanel> = ({
 
   return (
     <button
+      data-testid={`${id}-balance-button`}
       type="button"
       onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
       className="py-1 text-xs text-slate-400 hover:text-slate-300"

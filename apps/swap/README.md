@@ -15,6 +15,8 @@ npx playwright install-deps
 
 #### How to run
 
+#### Prerequisites
+
 You need to run three terminal sessions:
 
 Start Anvil in terminal session
@@ -32,8 +34,16 @@ follwed by:
 NODE_ENV=test NEXT_PUBLIC_PLAYWRIGHT_ENABLED=true pnpm exec turbo run start --filter=swap --force
 ```
 
+#### Run test
+
+
 Open a third terminal, run:
 ```
 cd apps/swap
-NODE_ENV=test PLAYWRIGHT_URL=http://localhost:3000/swap pnpm test:e2e
+CHAIN_ID=137 NODE_ENV=test PLAYWRIGHT_URL=http://localhost:3000/swap pnpm test:e2e
+```
+
+Run a test a single test on a certain line, with one browser
+```
+CHAIN_ID=137 NODE_ENV=test PLAYWRIGHT_URL=http://localhost:3000/swap pnpm test:e2e -- index:37 --project=chromium --workers=1
 ```
