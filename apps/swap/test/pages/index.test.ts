@@ -124,7 +124,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
   await expect(page.locator('div', { hasText: expectedText }).last()).toContainText(expectedText)
 }
 
-async function handleToken(token: Token, page: Page, type: InputType, amount?: string, useBalance?: boolean) {
+async function handleToken(token: Token, page: Page, type: InputType, amount?: string, useMax?: boolean) {
   const selectorInfix = `${type === InputType.INPUT ? 'input' : 'output'}-currency${
     type === InputType.INPUT ? '0' : '1'
   }`
@@ -138,18 +138,9 @@ async function handleToken(token: Token, page: Page, type: InputType, amount?: s
   await timeout(1000) // TODO: wait for the list to load instead of using timeout
   await page.locator(`[testdata-id=swap-${selectorInfix}-token-selector-dialog-row-${token.address}]`).click()
 
-  if (useBalance && type === InputType.INPUT) {
-    // TODO: refactor this later, cannot use max balance until we have separate accounts for each worker. For now, use 1/10 of the balance
+  if (useMax && type === InputType.INPUT) {
     await timeout(3000) // wait for the balance to be set before continuing.
-    const balanceButtonText = await page.getByTestId('swap-input-currency0-balance-button').innerText()
-    const amount = balanceButtonText.split('Balance: ')[1]
-    const formattedAmount = String((parseFloat(amount) / 10).toFixed(8))
-    if (formattedAmount === '0.00000000') {
-      throw new Error(`Balance is 0 for ${token.symbol}, cannot proceed.`)
-    }
-
-    const input0 = page.locator('[testdata-id="swap-input-currency0-input"]')
-    await input0.fill(formattedAmount)
+    await page.getByTestId('swap-input-currency0-balance-button').click()
   } else if (amount && type === InputType.INPUT) {
     const input0 = page.locator('[testdata-id="swap-input-currency0-input"]')
     await expect(input0).toBeVisible()
