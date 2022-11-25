@@ -7,6 +7,11 @@ Swap application.
 
 #### Install
 
+install anvil
+```
+curl -L https://foundry.paradigm.xyz/ | bash
+```
+
 If you are on WSL, you might need to run 
 ```
 npx playwright install
