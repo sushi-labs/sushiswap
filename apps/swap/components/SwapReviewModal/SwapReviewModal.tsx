@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Button, Dots } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, getTridentRouterContractConfig } from '@sushiswap/wagmi'
 import { Approve2 } from '@sushiswap/wagmi/systems/Approve2'
-import { ApprovalType } from '@sushiswap/wagmi/systems/Approve2/types'
+import { ApprovalType, ApprovalTypeBentobox, ApprovalTypeToken, ToDef } from '@sushiswap/wagmi/systems/Approve2/types'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
@@ -48,35 +48,39 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     onSuccess()
   }, [onSuccess])
 
+  const definition = useMemo(() => {
+    const definition: Array<ToDef<ApprovalTypeBentobox> | ToDef<ApprovalTypeToken>> = []
+    if (trade?.isV2()) {
+      definition.push({
+        type: ApprovalType.Bentobox,
+        masterContract: getTridentRouterContractConfig(chainId).addressOrName,
+        buttonProps: {
+          className: 'whitespace-nowrap',
+          size: 'md',
+          id: 'swap-review-approve-button',
+        },
+      })
+    }
+
+    definition.push({
+      type: ApprovalType.Token,
+      amount: input0,
+      address: approveTokenTo,
+      buttonProps: {
+        className: 'whitespace-nowrap',
+        size: 'md',
+        id: 'swap-review-approve-button',
+      },
+    })
+
+    return definition
+  }, [approveTokenTo, chainId, input0, trade])
+
   return (
     <>
       {children({ setOpen })}
       <SwapReviewModalBase chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
-        <Approve2.Root
-          chainId={chainId}
-          onSuccess={createNotification}
-          definition={[
-            {
-              type: ApprovalType.Bentobox,
-              masterContract: getTridentRouterContractConfig(chainId).addressOrName,
-              buttonProps: {
-                className: 'whitespace-nowrap',
-                size: 'md',
-                id: 'swap-review-approve-button',
-              },
-            },
-            {
-              type: ApprovalType.Token,
-              amount: input0,
-              address: approveTokenTo,
-              buttonProps: {
-                className: 'whitespace-nowrap',
-                size: 'md',
-                id: 'swap-review-approve-button',
-              },
-            },
-          ]}
-        >
+        <Approve2.Root chainId={chainId} onSuccess={createNotification} definition={definition}>
           <TradeExecuteProvider chainId={chainId} approved={true} signature={signature} onSuccess={onSwapSuccess}>
             {({ isWritePending, execute }) => {
               return (

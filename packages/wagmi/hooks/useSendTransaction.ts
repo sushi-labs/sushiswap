@@ -28,6 +28,11 @@ export function useSendTransaction<Args extends UseSendTransactionArgs = UseSend
     enabled,
   })
 
+  console.log({
+    request,
+    'config.setrequest': config.request,
+  })
+
   const _onSettled = useCallback(
     (
       data: SendTransactionResult | undefined,
