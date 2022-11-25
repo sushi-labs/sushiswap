@@ -61,5 +61,6 @@ export function useSendTransaction<Args extends UseSendTransactionArgs = UseSend
     // TODO: ignore until wagmi workaround on ethers error
     // @ts-ignore
     onSettled: _onSettled,
+    mode: 'prepared',
   })
 }

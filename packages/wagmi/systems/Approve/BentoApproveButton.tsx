@@ -3,6 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Transition } from '@headlessui/react'
 import { Badge, BentoboxIcon, Button, classNames, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
+import { useNetwork } from 'wagmi'
 
 import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
 import { DefaultButton } from './DefaultButton'
@@ -35,7 +36,9 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     enabled = true,
     ...props
   }) => {
+    const { chain } = useNetwork()
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
+      chainId: chain?.id,
       watch,
       masterContract,
       onSignature,

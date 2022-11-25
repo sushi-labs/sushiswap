@@ -67,7 +67,6 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
 
   const prepare = useCallback(
     async (setRequest) => {
-      console.log(trade, account, chainId, deadline, approved)
       if (!trade || !account || !chainId || !deadline || !approved) return
       try {
         let call: SwapCall | null = null
@@ -281,8 +280,6 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
             )
           }
 
-          console.log({ actions })
-
           call = {
             address: tridentRouter.address,
             calldata: batchAction({
@@ -336,8 +333,6 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
                   }
                 })
             })
-
-          console.log({ estimatedCall })
 
           setRequest({
             ...tx,

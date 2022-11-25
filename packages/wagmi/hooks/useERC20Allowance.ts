@@ -3,14 +3,18 @@ import { Amount, Token } from '@sushiswap/currency'
 import { useMemo } from 'react'
 import { erc20ABI, useContractRead } from 'wagmi'
 
+interface UseERC20AllowanceReturn extends Omit<ReturnType<typeof useContractRead>, 'data'> {
+  data: Amount<Token> | undefined
+}
+
 export function useERC20Allowance(
   watch: boolean,
   token?: Token,
   owner?: string,
   spender?: string
-): Amount<Token> | undefined {
+): UseERC20AllowanceReturn {
   const args = useMemo(() => [owner, spender], [owner, spender])
-  const { data } = useContractRead({
+  const data = useContractRead({
     addressOrName: token?.address ?? AddressZero,
     contractInterface: erc20ABI,
     functionName: 'allowance',
@@ -19,5 +23,12 @@ export function useERC20Allowance(
     enabled: !!token,
   })
 
-  return data && token ? Amount.fromRawAmount(token, data.toString()) : undefined
+  const amount = data?.data && token ? Amount.fromRawAmount(token, data.data.toString()) : undefined
+  return useMemo(
+    () => ({
+      ...data,
+      data: amount,
+    }),
+    [amount, data]
+  )
 }

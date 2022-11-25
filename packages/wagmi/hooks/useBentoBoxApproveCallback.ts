@@ -1,12 +1,12 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero, HashZero } from '@ethersproject/constants'
+import { ChainId } from '@sushiswap/chain'
 import { NotificationData } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 import {
   useAccount,
   useContractRead,
   useContractWrite,
-  useNetwork,
   usePrepareContractWrite,
   UserRejectedRequestError,
   useSignTypedData,
@@ -17,23 +17,24 @@ import { ApprovalState } from './useERC20ApproveCallback'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useBentoBoxApproveCallback({
+  chainId,
   masterContract,
-  watch,
+  watch = true,
   onSignature,
   onSuccess,
   enabled = true,
 }: {
+  chainId: ChainId | undefined
   masterContract?: string
-  watch: boolean
+  watch?: boolean
   onSignature?(payload: Signature): void
   onSuccess?(data: NotificationData): void
   enabled?: boolean
 }): [ApprovalState, Signature | undefined, () => Promise<void>] {
   const { address, connector } = useAccount()
-  const { chain } = useNetwork()
 
   const { config } = usePrepareContractWrite({
-    ...getBentoBoxContractConfig(chain?.id),
+    ...getBentoBoxContractConfig(chainId),
     functionName: 'setMasterContractApproval',
     args: [address, masterContract, true, 0, HashZero, HashZero],
     enabled,
@@ -42,7 +43,7 @@ export function useBentoBoxApproveCallback({
   const { writeAsync } = useContractWrite(config)
 
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
-    ...getBentoBoxContractConfig(chain?.id),
+    ...getBentoBoxContractConfig(chainId),
     functionName: 'masterContractApproved',
     args: [masterContract, address],
     // This should probably always be true anyway...
@@ -51,7 +52,7 @@ export function useBentoBoxApproveCallback({
   })
 
   const { refetch: getNonces } = useContractRead({
-    ...getBentoBoxContractConfig(chain?.id),
+    ...getBentoBoxContractConfig(chainId),
     functionName: 'nonces',
     args: [address ? address : AddressZero],
     enabled: false,
@@ -63,7 +64,8 @@ export function useBentoBoxApproveCallback({
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
-    if (isLoading || isBentoBoxApproved === undefined) return ApprovalState.UNKNOWN
+    if (isLoading) return ApprovalState.LOADING
+    if (isBentoBoxApproved === undefined) return ApprovalState.UNKNOWN
     if (signature && !isBentoBoxApproved) return ApprovalState.PENDING
     return isBentoBoxApproved ? ApprovalState.APPROVED : ApprovalState.NOT_APPROVED
   }, [isBentoBoxApproved, signature, isLoading])
@@ -71,8 +73,7 @@ export function useBentoBoxApproveCallback({
   const legacyApproval = useCallback(async () => {
     if (
       !address ||
-      !chain ||
-      !(chain.id in BENTOBOX_ADDRESS) ||
+      !(chainId && chainId in BENTOBOX_ADDRESS) ||
       !masterContract ||
       approvalState !== ApprovalState.NOT_APPROVED ||
       !writeAsync
@@ -85,7 +86,7 @@ export function useBentoBoxApproveCallback({
       const ts = new Date().getTime()
       onSuccess({
         type: 'approval',
-        chainId: chain?.id,
+        chainId,
         txHash: data.hash,
         promise: data.wait(),
         summary: {
@@ -97,13 +98,12 @@ export function useBentoBoxApproveCallback({
         timestamp: ts,
       })
     }
-  }, [address, approvalState, chain, masterContract, onSuccess, writeAsync])
+  }, [address, approvalState, chainId, masterContract, onSuccess, writeAsync])
 
   const approveBentoBox = useCallback(async (): Promise<void> => {
     if (
       !address ||
-      !chain ||
-      !(chain.id in BENTOBOX_ADDRESS) ||
+      !(chainId && chainId in BENTOBOX_ADDRESS) ||
       !masterContract ||
       approvalState !== ApprovalState.NOT_APPROVED
     ) {
@@ -131,8 +131,8 @@ export function useBentoBoxApproveCallback({
       const data = await signTypedDataAsync({
         domain: {
           name: 'BentoBox V1',
-          chainId: chain.id,
-          verifyingContract: BENTOBOX_ADDRESS[chain.id],
+          chainId,
+          verifyingContract: BENTOBOX_ADDRESS[chainId],
         },
         types: {
           SetMasterContractApproval: [
@@ -160,7 +160,7 @@ export function useBentoBoxApproveCallback({
     }
   }, [
     address,
-    chain,
+    chainId,
     masterContract,
     approvalState,
     connector,

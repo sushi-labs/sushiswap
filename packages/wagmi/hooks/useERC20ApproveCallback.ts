@@ -20,6 +20,7 @@ import { calculateGasMargin } from '../calculateGasMargin'
 import { useERC20Allowance } from './useERC20Allowance'
 
 export enum ApprovalState {
+  LOADING = 'LOADING',
   UNKNOWN = 'UNKNOWN',
   NOT_APPROVED = 'NOT_APPROVED',
   PENDING = 'PENDING',
@@ -76,10 +77,11 @@ export function useERC20ApproveCallback(
   })
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
-  const currentAllowance = useERC20Allowance(watch, token, address ?? undefined, spender)
+  const { data: currentAllowance, isLoading } = useERC20Allowance(watch, token, address ?? undefined, spender)
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
+    if (isLoading) return ApprovalState.LOADING
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
     if (amountToApprove.currency.isNative) return ApprovalState.APPROVED
     if (isWritePending) return ApprovalState.PENDING
@@ -89,7 +91,7 @@ export function useERC20ApproveCallback(
 
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove) ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, isWritePending, spender])
+  }, [amountToApprove, currentAllowance, isLoading, isWritePending, spender])
 
   const tokenContract = useContract<Contract>({
     addressOrName: token?.address ?? AddressZero,

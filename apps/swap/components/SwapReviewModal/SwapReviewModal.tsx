@@ -1,8 +1,9 @@
 import { Signature } from '@ethersproject/bytes'
 import { ChainId } from '@sushiswap/chain'
 import { Button, Dots } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, getTridentRouterContractConfig } from '@sushiswap/wagmi'
-import { TRIDENT_ENABLED_NETWORKS } from 'config'
+import { BENTOBOX_ADDRESS, getTridentRouterContractConfig } from '@sushiswap/wagmi'
+import { Approve2 } from '@sushiswap/wagmi/systems/Approve2'
+import { ApprovalType } from '@sushiswap/wagmi/systems/Approve2/types'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
@@ -51,57 +52,47 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     <>
       {children({ setOpen })}
       <SwapReviewModalBase chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
-        <Approve
+        <Approve2.Root
+          chainId={chainId}
           onSuccess={createNotification}
-          className="flex-grow !justify-end"
-          components={
-            <Approve.Components>
-              <Approve.Bentobox
-                id="swap-review-approve-bentobox"
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                address={getTridentRouterContractConfig(chainId).addressOrName}
-                onSignature={setSignature}
-                enabled={Boolean(typeof chainId === 'number' && TRIDENT_ENABLED_NETWORKS.includes(chainId))}
-              />
-              <Approve.Token
-                id="swap-review-approve-token"
-                size="md"
-                className="whitespace-nowrap"
-                fullWidth
-                amount={input0}
-                address={approveTokenTo}
-                enabled={trade?.inputAmount?.currency?.isToken}
-              />
-            </Approve.Components>
-          }
-          render={({ approved }) => {
-            return (
-              <TradeExecuteProvider
-                chainId={chainId}
-                approved={approved}
-                signature={signature}
-                onSuccess={onSwapSuccess}
-              >
-                {({ isWritePending, execute }) => {
-                  console.log(approved, execute)
-                  return (
-                    <Button
-                      size="md"
-                      testdata-id="swap-review-confirm-button"
-                      disabled={isWritePending || !approved || !execute}
-                      fullWidth
-                      onClick={() => execute?.()}
-                    >
-                      {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
-                    </Button>
-                  )
-                }}
-              </TradeExecuteProvider>
-            )
-          }}
-        />
+          definition={[
+            {
+              type: ApprovalType.Bentobox,
+              masterContract: getTridentRouterContractConfig(chainId).addressOrName,
+              buttonProps: {
+                className: 'whitespace-nowrap',
+                size: 'md',
+                id: 'swap-review-approve-button',
+              },
+            },
+            {
+              type: ApprovalType.Token,
+              amount: input0,
+              address: approveTokenTo,
+              buttonProps: {
+                className: 'whitespace-nowrap',
+                size: 'md',
+                id: 'swap-review-approve-button',
+              },
+            },
+          ]}
+        >
+          <TradeExecuteProvider chainId={chainId} approved={true} signature={signature} onSuccess={onSwapSuccess}>
+            {({ isWritePending, execute }) => {
+              return (
+                <Button
+                  size="md"
+                  testdata-id="swap-review-confirm-button"
+                  disabled={isWritePending || !execute}
+                  fullWidth
+                  onClick={() => execute?.()}
+                >
+                  {isWritePending ? <Dots>Confirm Swap</Dots> : 'Swap'}
+                </Button>
+              )
+            }}
+          </TradeExecuteProvider>
+        </Approve2.Root>
       </SwapReviewModalBase>
     </>
   )
