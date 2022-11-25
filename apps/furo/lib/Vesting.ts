@@ -114,8 +114,9 @@ export class Vesting extends Furo {
       if (Date.now() > this.startTime.getTime() + this.cliffDuration * 1000) {
         sum = sum.add(this.cliffAmount)
 
-        const payouts = Math.floor(
-          (Date.now() - this.startTime.getTime() - this.cliffDuration * 1000) / (this.stepDuration * 1000)
+        const payouts = Math.min(
+          Math.floor((Date.now() - this.startTime.getTime() - this.cliffDuration * 1000) / (this.stepDuration * 1000)),
+          this.steps
         )
         sum = sum.add(this.stepAmount.multiply(payouts))
       }
@@ -135,8 +136,9 @@ export class Vesting extends Furo {
       if (Date.now() > this.startTime.getTime() + this.cliffDuration * 1000) {
         sum = sum.add(this.cliffShares)
 
-        const payouts = Math.floor(
-          (Date.now() - this.startTime.getTime() - this.cliffDuration * 1000) / (this.stepDuration * 1000)
+        const payouts = Math.min(
+          Math.floor((Date.now() - this.startTime.getTime() - this.cliffDuration * 1000) / (this.stepDuration * 1000)),
+          this.steps
         )
         sum = sum.add(this.stepShares.multiply(payouts))
       }
