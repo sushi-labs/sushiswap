@@ -57,7 +57,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         buttonProps: {
           className: 'whitespace-nowrap',
           size: 'md',
-          id: 'swap-review-approve-button',
+          id: 'swap-review-approve-bentobox-button',
         },
         onSignature: setSignature,
       })
@@ -70,7 +70,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
       buttonProps: {
         className: 'whitespace-nowrap',
         size: 'md',
-        id: 'swap-review-approve-button',
+        id: 'swap-review-approve-token-button',
       },
     })
 

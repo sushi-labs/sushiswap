@@ -21,6 +21,9 @@ const usdc = { address: USDC_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'USDC' }
 const sushi = { address: SUSHI_ADDRESS[CHAIN_ID].toLowerCase(), symbol: 'SUSHI' }
 
 test.beforeEach(async ({ page }) => {
+  page.on('pageerror', (err) => {
+    console.log(err)
+  })
   await page.goto(process.env.PLAYWRIGHT_URL as string)
   await page.locator(`[testdata-id=network-selector-button]`).click()
   const networkList = page.locator(`[testdata-id=network-selector-list]`)
@@ -35,9 +38,6 @@ test.beforeEach(async ({ page }) => {
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   test.slow()
-  page.on('pageerror', (err) => {
-    console.log(err.message)
-  })
   const trade1: Trade = { input: nativeToken, output: usdc, amount: '10' }
   await swap(trade1, page)
   const trade2: Trade = { input: usdc, output: nativeToken }
@@ -46,9 +46,6 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
   test.slow()
-  page.on('pageerror', (err) => {
-    console.log(err.message)
-  })
   const trade1: Trade = { input: nativeToken, output: sushi, amount: '10' }
   await swap(trade1, page)
   const trade2: Trade = { input: sushi, output: nativeToken }
@@ -57,9 +54,6 @@ test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
 
 test(`Wrap and unwrap`, async ({ page }) => {
   test.slow()
-  page.on('pageerror', (err) => {
-    console.log(err.message)
-  })
   const nativeToWrapped = {
     input: nativeToken,
     output: wNativeToken,
@@ -100,11 +94,11 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
   await expect(swapButton).toBeEnabled()
   await swapButton.click()
 
-  await timeout(500) // wait for rpc calls to figure out if approvals are needed
+  await timeout(1500) // wait for rpc calls to figure out if approvals are needed
 
   await page
     .locator('[testdata-id=swap-review-approve-bentobox-button]')
-    .click({ timeout: 1000 })
+    .click({ timeout: 1500 })
     .then(async () => {
       console.log(`BentoBox Approved`)
     })
@@ -112,7 +106,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   await page
     .locator('[testdata-id=swap-review-approve-token-button]')
-    .click({ timeout: 1000 })
+    .click({ timeout: 1500 })
     .then(async () => {
       console.log(`Approved ${trade.input.symbol}`)
     })
