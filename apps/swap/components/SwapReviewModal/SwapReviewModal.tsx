@@ -3,7 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Button, Dots } from '@sushiswap/ui'
 import { BENTOBOX_ADDRESS, getTridentRouterContractConfig } from '@sushiswap/wagmi'
 import { Approve2 } from '@sushiswap/wagmi/systems/Approve2'
-import { ApprovalType, ApprovalTypeBentobox, ApprovalTypeToken, ToDef } from '@sushiswap/wagmi/systems/Approve2/types'
+import { ApprovalType, ApproveDefinition } from '@sushiswap/wagmi/systems/Approve2/types'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
@@ -49,7 +49,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
   }, [onSuccess])
 
   const definition = useMemo(() => {
-    const definition: Array<ToDef<ApprovalTypeBentobox> | ToDef<ApprovalTypeToken>> = []
+    const definition: ApproveDefinition = []
     if (trade?.isV2()) {
       definition.push({
         type: ApprovalType.Bentobox,

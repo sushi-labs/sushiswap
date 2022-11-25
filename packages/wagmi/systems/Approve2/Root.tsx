@@ -5,13 +5,13 @@ import React, { FC, ReactNode } from 'react'
 import { ApprovalState } from '../../hooks'
 import { Bentobox } from './Bentobox'
 import { Token } from './Token'
-import { ApprovalType, ApprovalTypeBentobox, ApprovalTypeToken, ToDef } from './types'
+import { ApprovalType, ApproveDefinition } from './types'
 
 export interface RootProps {
   chainId: ChainId | undefined
   className?: string
   children: ReactNode
-  definition: Array<ToDef<ApprovalTypeBentobox> | ToDef<ApprovalTypeToken>>
+  definition: ApproveDefinition
   onSuccess(data: NotificationData): void
 }
 

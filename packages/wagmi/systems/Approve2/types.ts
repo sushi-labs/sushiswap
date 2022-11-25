@@ -6,6 +6,8 @@ import { ReactNode } from 'react'
 
 import { ApprovalState } from '../../hooks'
 
+export type ApproveDefinition = Array<ToDef<ApprovalTypeBentobox> | ToDef<ApprovalTypeToken>>
+
 export interface ApproveButtonReturnType {
   approvalState: ApprovalState
   iconButton: ReactNode
