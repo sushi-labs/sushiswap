@@ -229,7 +229,6 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
               components={
                 <Approve.Components>
                   <Approve.Token
-                    id={'furo-update-modal-approve-token'}
                     enabled={amountAsEntity?.greaterThan(0)}
                     amount={amountAsEntity}
                     address={BENTOBOX_ADDRESS[chainId]}
