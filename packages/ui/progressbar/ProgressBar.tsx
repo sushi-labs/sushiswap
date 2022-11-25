@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import { FC } from 'react'
 
+import { AppearOnMount } from '../animation'
+
 export enum ProgressColor {
   PINK,
   BLUE,
@@ -40,10 +42,12 @@ export const ProgressBar: FC<ProgressBarProps> = ({ progress, color, showLabel =
           className
         )}
       >
-        <div
-          className={`flex justify-end h-full rounded-r-full bg-gradient-to-r ${fromColor} ${toColor}`}
-          style={{ width: `${Number(progress) * 100}%` }}
-        />
+        <AppearOnMount>
+          <div
+            className={`flex justify-end h-full rounded-r-full bg-gradient-to-r ${fromColor} ${toColor}`}
+            style={{ width: `${Number(progress) * 100}%` }}
+          />
+        </AppearOnMount>
       </div>
       {showLabel ? `${(Number(progress) * 100).toFixed(1)}%` : ''}
     </div>
