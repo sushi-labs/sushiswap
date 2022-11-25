@@ -104,7 +104,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   await page
     .locator('[testdata-id=swap-review-approve-bentobox-button]')
-    .click({ timeout: 10000 })
+    .click({ timeout: 2000 })
     .then(async () => {
       console.log(`BentoBox Approved`)
     })
@@ -112,7 +112,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   await page
     .locator('[testdata-id=swap-review-approve-token-button]')
-    .click({ timeout: 10000 })
+    .click({ timeout: 2000 })
     .then(async () => {
       console.log(`Approved ${trade.input.symbol}`)
     })
