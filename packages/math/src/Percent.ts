@@ -45,7 +45,7 @@ class Percent extends Fraction {
     return super.multiply(ONE_HUNDRED).toFixed(decimalPlaces, format, rounding)
   }
 
-  public toPercetangeString(decimalPlaces = 2): string {
+  public toPercentageString(decimalPlaces = 2): string {
     // +2 since 0.5 = 50%
     return formatPercent(super.toFixed(decimalPlaces + 2))
   }

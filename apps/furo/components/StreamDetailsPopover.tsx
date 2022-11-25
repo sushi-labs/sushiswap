@@ -143,7 +143,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   Streamed
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-blue-300">
-                  {stream?.streamedPercentage?.toPercetangeString(2)} of total
+                  {stream?.streamedPercentage?.toPercentageString(2)} of total
                 </Typography>
                 <Typography variant="h3" className="flex items-center mt-3 text-blue-200 truncate" weight={500}>
                   {stream?.streamedAmount?.toSignificant(6)}
@@ -159,7 +159,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   Withdrawn
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-pink-300">
-                  {stream?.withdrawnPercentage.toPercetangeString(2)} of total
+                  {stream?.withdrawnPercentage.toPercentageString(2)} of total
                 </Typography>
                 <Typography variant="h3" className="flex items-center mt-3 text-pink-200 truncate" weight={500}>
                   {stream?.withdrawnAmount.toSignificant(6)}
