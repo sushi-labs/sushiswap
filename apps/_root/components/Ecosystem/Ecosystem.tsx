@@ -116,7 +116,7 @@ export const Ecosystem: FC = () => {
   return (
     <section className="py-20 sm:py-40 px-1 overflow-x-hidden">
       <Container maxWidth="5xl" className="mx-auto">
-        <div className="border-2 border-neutral-800 rounded-xl">
+        <div className="border-2 border-neutral-800 rounded-xl overflow-hidden">
           <div className="h-[28px] flex items-center px-[10px] border-b-2 border-neutral-800 flex gap-2">
             <div className="rounded-full w-[10px] h-[10px] bg-red" />
             <div className="rounded-full w-[10px] h-[10px] bg-yellow" />
@@ -134,7 +134,10 @@ export const Ecosystem: FC = () => {
                 <div className="flex items-center p-10 min-h-[420px]">
                   {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
                     <Tab.Panel key={title} className="items-center grid grid-cols-1 md:grid-cols-2 gap-20">
-                      <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
+                      <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
+                        <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
+                        <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
+                      </div>
                       <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
                         {({ setOpen, containerId, titleId }) => (
                           <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">

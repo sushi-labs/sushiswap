@@ -14,14 +14,14 @@ export const BuildWealth: FC = () => {
             Build <span className="text-blue">wealth</span> with Sushi. <br />
             <span className="text-neutral-400">{`It doesnt stop at trading.`}</span>
           </AnimatedTitle>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-            <div className="relative w-[420px] h-[420px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center justify-items-center">
+            <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
+              <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
               <Image
                 alt="stellar"
                 objectFit="contain"
                 src="https://res.cloudinary.com/sushi-cdn/image/upload/v1668715316/ezgif.com-gif-maker_tyon6k.webp"
-                width={420}
-                height={420}
+                layout="fill"
               />
             </div>
             <div className="flex flex-col items-center md:items-start">

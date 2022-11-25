@@ -20,20 +20,10 @@ export const MoveImage = () => {
         <Image
           alt="stellar"
           objectFit="contain"
-          src="https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668713540/orbit_gnelpc.webp"
+          src="https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1669343082/Orbit_1_bl83x0.webp"
           layout="fill"
         />
       </motion.div>
-      <div className="absolute inset-[-60px] w-[calc(100%+120px)] h-[calc(100%+120px)] opacity-60">
-        <Image
-          alt="stellar"
-          objectFit="contain"
-          src="https://res.cloudinary.com/sushi-cdn/image/upload/w_420,h_420/v1668714065/Ellipse_1107_oopeuh.webp"
-          layout="fill"
-          width={420}
-          height={420}
-        />
-      </div>
     </div>
   )
 }
