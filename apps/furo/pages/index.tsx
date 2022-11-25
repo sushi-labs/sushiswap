@@ -109,6 +109,7 @@ export default function Index() {
                   color="blue"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={paySomeone}
+                  testdata-id={'create-stream-button'}
                 >
                   Pay Someone
                 </Wallet.Button>
@@ -117,6 +118,7 @@ export default function Index() {
                   color="gray"
                   className="transition-all hover:ring-4 focus:ring-4 text-sm sm:text-base text-slate-50 px-8 h-[52px] sm:!h-[56px] rounded-2xl"
                   hack={viewEarnings}
+                  testdata-id={'view-stream-button'}
                 >
                   View My Earnings
                 </Wallet.Button>
