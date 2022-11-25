@@ -24,8 +24,17 @@ export const Root: FC<RootProps> = ({ className, children, definition, onSuccess
   const components = definition.map((element, index) => {
     switch (element.type) {
       case ApprovalType.Bentobox: {
-        const { masterContract, type, enabled, buttonProps } = element
-        return APPROVE_BUTTON_MAP[type]({ masterContract, type, enabled, buttonProps, chainId, onSuccess, index })
+        const { masterContract, type, enabled, buttonProps, onSignature } = element
+        return APPROVE_BUTTON_MAP[type]({
+          masterContract,
+          type,
+          enabled,
+          buttonProps,
+          chainId,
+          onSuccess,
+          index,
+          onSignature,
+        })
       }
 
       default:

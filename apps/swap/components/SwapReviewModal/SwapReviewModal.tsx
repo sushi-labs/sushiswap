@@ -59,6 +59,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
           size: 'md',
           id: 'swap-review-approve-button',
         },
+        onSignature: setSignature,
       })
     }
 

@@ -1,3 +1,4 @@
+import { Signature } from '@ethersproject/bytes'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { ButtonProps, NotificationData } from '@sushiswap/ui'
@@ -29,6 +30,7 @@ export interface ApprovalTypeBentobox extends ApprovalTypeBase {
   masterContract: string | undefined
   enabled?: boolean
   buttonProps: Omit<ButtonProps<'button'>, 'onClick'>
+  onSignature(signature: Signature): void
 }
 
 export interface ApprovalTypeToken extends ApprovalTypeBase {

@@ -105,6 +105,9 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
           if (!tridentRouter || !inputCurrencyRebase || !outputCurrencyRebase) return
 
           const actions = [approveMasterContractAction({ router: tridentRouter, signature })]
+          console.log(actions)
+
+          console.log(actions, signature)
 
           if (trade.isSinglePool()) {
             actions.push(
