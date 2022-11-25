@@ -108,7 +108,7 @@ const _Streams: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Streamed"
-                value={`${stream?.streamedPercentage?.toSignificant(4)}%`}
+                value={`${stream?.streamedPercentage?.toPercetangeString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.STREAMED)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
@@ -123,7 +123,7 @@ const _Streams: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Withdrawn"
-                value={`${stream?.withdrawnPercentage?.toSignificant(4)}%`}
+                value={`${stream?.withdrawnPercentage?.toPercetangeString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >

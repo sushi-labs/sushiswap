@@ -1,3 +1,4 @@
+import { formatPercent } from '@sushiswap/format'
 import JSBI from 'jsbi'
 
 import BigintIsh from './BigintIsh'
@@ -42,6 +43,11 @@ class Percent extends Fraction {
 
   public toFixed(decimalPlaces = 2, format?: object, rounding?: Rounding): string {
     return super.multiply(ONE_HUNDRED).toFixed(decimalPlaces, format, rounding)
+  }
+
+  public toPercetangeString(decimalPlaces = 2): string {
+    // +2 since 0.5 = 50%
+    return formatPercent(super.toFixed(decimalPlaces + 2))
   }
 }
 

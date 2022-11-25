@@ -33,6 +33,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "@sushiswap/format": "workspace:*",
     "big.js": "^6.1.1",
     "decimal.js-light": "^2.5.1",
     "jsbi": "^4.1.0",
