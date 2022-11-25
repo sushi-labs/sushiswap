@@ -83,7 +83,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 <Button
                   size="md"
                   testdata-id="swap-review-confirm-button"
-                  disabled={isWritePending || !execute}
+                  disabled={isWritePending}
                   fullWidth
                   onClick={() => execute?.()}
                 >
