@@ -106,7 +106,7 @@ export const Token: ApproveTokenFn = ({
       button: (
         <Button
           key={index}
-          loading={approvalState === ApprovalState.LOADING}
+          loading={[ApprovalState.LOADING, ApprovalState.PENDING].includes(approvalState)}
           testdata-id={id}
           variant={variant}
           size={size}

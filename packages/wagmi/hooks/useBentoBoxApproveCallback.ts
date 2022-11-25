@@ -46,8 +46,7 @@ export function useBentoBoxApproveCallback({
     ...getBentoBoxContractConfig(chainId),
     functionName: 'masterContractApproved',
     args: [masterContract, address],
-    // This should probably always be true anyway...
-    watch,
+    watch: true,
     enabled: enabled && Boolean(address && masterContract !== AddressZero),
   })
 
