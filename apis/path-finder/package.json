@@ -11,10 +11,14 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "dependencies": {
+    "@prisma/client": "^4.6.1",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@vercel/node": "^1.14.1",
-    "lodash.flatmap": "^4.5.0"
+    "lodash.flatmap": "^4.5.0",
+    "prisma": "^4.6.1",
+    "prisma-redis-middleware": "^4.3.0",
+    "ioredis": "^5.2.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

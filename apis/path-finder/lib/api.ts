@@ -5,9 +5,9 @@ import prisma from './prisma'
 import redis from './redis'
 
 const cacheMiddleware = createPrismaRedisCache({
-  models: [{ model: 'Pool', cacheTime: 300 }],
-  storage: { type: 'redis', options: { client: redis, invalidation: { referencesTTL: 300 } } },
-  cacheTime: 60,
+  models: [{ model: 'Pool', cacheTime: 900 }],
+  storage: { type: 'redis', options: { client: redis, invalidation: { referencesTTL: 900 } } },
+  cacheTime: 900,
   onHit: (key: string) => {
     console.log('Hit: ✅', key)
   },
@@ -18,7 +18,7 @@ const cacheMiddleware = createPrismaRedisCache({
 
 prisma.$use(cacheMiddleware)
 
-export async function getPools(response: VercelResponse, chainId: string, tokenAddress: string, protocols: string[]) {
+export async function getPools(chainId: string, tokenAddress: string, protocols: string[]) {
   const tokenWithPools = await prisma.token.findFirst({
     where: {
       address: tokenAddress,
@@ -86,11 +86,11 @@ export async function getPools(response: VercelResponse, chainId: string, tokenA
 
   if (!tokenWithPools) {
     await prisma.$disconnect()
-    return response.status(204).json({ message: 'No token found.' })
+    return []
   }
   if (tokenWithPools.pools0.length === 0 && tokenWithPools.pools1.length === 0) {
     await prisma.$disconnect()
-    return response.status(204).json({ message: 'Token found, but no pools.' })
+    return []
   }
 
   const pools = Array.from(
@@ -125,11 +125,10 @@ export async function getPools(response: VercelResponse, chainId: string, tokenA
     },
   }
   await prisma.$disconnect()
-  return response.status(200).json(result)
+  return result
 }
 
 export async function getBase(
-  response: VercelResponse,
   chainId: string,
   excludeTokens: string[],
   protocols: string[],
@@ -166,8 +165,8 @@ export async function getBase(
 
   if (!pools) {
     await prisma.$disconnect()
-    return response.status(204).json({ message: 'No pools found.' })
+    return []
   }
   await prisma.$disconnect()
-  return response.status(200).json(pools)
+  return pools
 }
