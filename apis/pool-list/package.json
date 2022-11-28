@@ -3,14 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "generate": "touch prisma.schema && prisma db pull --schema prisma.schema",
+    "generate": "touch schema.prisma && prisma db pull --schema schema.prisma && prisma generate",
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
     "@prisma/client": "^4.6.1",
     "@sushiswap/chain": "workspace:*",
     "@vercel/node": "^2.2.0",
-    "prisma": "^4.6.1"
+    "prisma": "^4.6.1",
+    "prisma-redis-middleware": "^4.3.0",
+    "ioredis": "^5.2.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
