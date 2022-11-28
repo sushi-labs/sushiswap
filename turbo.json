@@ -13,6 +13,13 @@
       ],
       "outputs": []
     },
+    "start": {
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "cache": false
+    },
     "generate": {
       "outputs": [
         ".graphclient/**",
@@ -30,23 +37,16 @@
         "dist/**",
         "typechain/**",
         "artifacts/**",
-        "cache/**"
+        "cache/**",
+        "public/**"
       ],
       "dependsOn": [
         "^build",
         "generate"
-      ]
-    },
-    "root#build": {
-      "dependsOn": [
-        "^build",
-        "generate"
-      ],
-      "outputs": [
-        ".next/**"
       ],
       "env": [
         "ROOT_URL",
+        "ACADEMY_URL",
         "ANALYTICS_URL",
         "BLOG_URL",
         "BRIDGE_URL",
@@ -60,6 +60,9 @@
       ]
     },
     "clean": {
+      "cache": false
+    },
+    "check": {
       "cache": false
     },
     "dev": {

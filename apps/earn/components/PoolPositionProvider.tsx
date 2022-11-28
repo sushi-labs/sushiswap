@@ -1,5 +1,5 @@
 import { Amount, Type } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
 import { useBalance } from '@sushiswap/wagmi'
 import { createContext, FC, ReactNode, useContext, useMemo } from 'react'

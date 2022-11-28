@@ -1,5 +1,4 @@
-import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK, QuerycrossChainPairsArgs } from '@sushiswap/graph-client/.graphclient'
+import { getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
@@ -12,7 +11,7 @@ export type GetPoolCountQuery = Partial<{
 }>
 
 export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+  const { factories } = await sdk.Factories({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
   const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
@@ -25,7 +24,7 @@ export const getPoolCount = async (query?: GetPoolCountQuery) => {
 }
 
 export const getBundles = async () => {
-  const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
+  const { bundles } = await sdk.Bundles({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
   return bundles.reduce((acc, cur) => {
@@ -34,7 +33,7 @@ export const getBundles = async () => {
   }, {})
 }
 
-export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
+export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
   pagination: string
@@ -46,7 +45,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
     const start = getUnixTime(date)
 
-    const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
+    const pagination: Pagination = query?.pagination
       ? JSON.parse(query.pagination)
       : {
           pageIndex: 0,
@@ -62,7 +61,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
     const farmsOnly = query?.farmsOnly === 'true'
 
-    const { crossChainPairs } = await sdk.CrossChainPairs({
+    const { pairs } = await sdk.PairsWithFarms({
       first,
       skip,
       pagination,
@@ -72,7 +71,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
       chainIds,
       farmsOnly,
     })
-    return crossChainPairs
+    return pairs
   } catch (error) {
     console.log(error)
     throw new Error(error)
@@ -80,10 +79,9 @@ export const getPools = async (query?: GetPoolsQuery) => {
 }
 
 export const getPool = async (id: string) => {
-  const { crossChainPair: pair } = await sdk.CrossChainPair({
-    id: id.includes(':') ? id.split(':')[1] : id,
-    chainId: chainShortNameToChainId[id.split(':')[0]],
-    now: Math.round(new Date().getTime() / 1000),
+  if (!id.includes(':')) throw Error('Invalid pair id')
+  const { pair } = await sdk.PairById({
+    id,
   })
   return pair
 }
@@ -113,7 +111,6 @@ export const getUser = async (query: GetUserQuery) => {
   const { crossChainUserWithFarms: user } = await sdk.CrossChainUserWithFarms({
     chainIds: networks,
     id: query.id.toLowerCase(),
-    now: Math.round(new Date().getTime() / 1000),
   })
   return user
 }

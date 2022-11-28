@@ -1,29 +1,15 @@
-import { ChainId } from '@sushiswap/core-sdk'
+import { EXCHANGE_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import request from 'graphql-request'
 
-import { GRAPH_HOST } from '../constants'
 import { pager } from '../pager'
 import { bundleQuery, factoryQuery, tokenPricesQuery } from '../queries/exchange'
 
-export const EXCHANGE = {
-  [ChainId.ETHEREUM]: 'sushiswap/exchange',
-  [ChainId.XDAI]: 'sushiswap/xdai-exchange',
-  [ChainId.MATIC]: 'sushiswap/matic-exchange',
-  [ChainId.FANTOM]: 'sushiswap/fantom-exchange',
-  [ChainId.BSC]: 'sushiswap/bsc-exchange',
-  // [ChainId.HARMONY]: 'sushiswap/harmony-exchange',
-  [ChainId.AVALANCHE]: 'sushiswap/avalanche-exchange',
-  [ChainId.CELO]: 'jiro-ono/sushitestsubgraph',
-  [ChainId.ARBITRUM]: 'sushiswap/arbitrum-exchange',
-  [ChainId.MOONRIVER]: 'sushiswap/moonriver-exchange',
-  [ChainId.HECO]: 'heco-exchange/heco',
-  [ChainId.FUSE]: 'sushiswap/fuse-exchange',
-  [ChainId.MOONBEAM]: 'sushiswap/moonbeam-exchange',
-}
-
 export async function getNativePrice(chainId: number) {
   try {
-    const { bundle } = await request(`${GRAPH_HOST[chainId]}/subgraphs/name/${EXCHANGE[chainId]}`, bundleQuery)
+    const { bundle } = await request(
+      `https://${SUBGRAPH_HOST[chainId]}/${EXCHANGE_SUBGRAPH_NAME[chainId]}`,
+      bundleQuery
+    )
 
     return Number(bundle?.ethPrice) ?? 0
   } catch {
@@ -34,7 +20,7 @@ export async function getNativePrice(chainId: number) {
 export async function getTokenPrices(tokens: string[], chainId: number) {
   try {
     const { tokens: tokenPrices } = await pager(
-      `${GRAPH_HOST[chainId]}/subgraphs/name/${EXCHANGE[chainId]}`,
+      `https://${SUBGRAPH_HOST[chainId]}/${EXCHANGE_SUBGRAPH_NAME[chainId]}`,
       tokenPricesQuery,
       {
         where: { id_in: tokens },
@@ -49,7 +35,10 @@ export async function getTokenPrices(tokens: string[], chainId: number) {
 
 async function getFactory(chainId: number) {
   try {
-    const { factories } = await request(`${GRAPH_HOST[chainId]}/subgraphs/name/${EXCHANGE[chainId]}`, factoryQuery)
+    const { factories } = await request(
+      `https://${SUBGRAPH_HOST[chainId]}/${EXCHANGE_SUBGRAPH_NAME[chainId]}`,
+      factoryQuery
+    )
     const factory = factories[0]
 
     return {
@@ -70,7 +59,7 @@ async function getFactory(chainId: number) {
 
 export async function getLegacyExchangeData() {
   const factoryQueries: ReturnType<typeof getFactory>[] = []
-  for (const chainId of Object.keys(EXCHANGE) as unknown as number[]) {
+  for (const chainId of Object.keys(EXCHANGE_SUBGRAPH_NAME) as unknown as number[]) {
     factoryQueries.push(getFactory(chainId))
   }
 

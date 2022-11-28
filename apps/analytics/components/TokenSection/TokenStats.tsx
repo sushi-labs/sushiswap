@@ -1,5 +1,5 @@
 import { formatNumber, formatUSD } from '@sushiswap/format'
-import { Token as GraphToken } from '@sushiswap/graph-client/.graphclient'
+import { Token as GraphToken } from '@sushiswap/graph-client'
 import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 

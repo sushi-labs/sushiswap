@@ -15,7 +15,6 @@ interface AddSectionReviewModal {
   open: boolean
   setOpen(open: boolean): void
   children: ReactNode
-  error?: string
 }
 
 export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
@@ -25,7 +24,6 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   open,
   setOpen,
   children,
-  error,
 }) => {
   const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: [input0, input1] })
 
@@ -105,11 +103,6 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
           </Rate>
         </div>
         {children}
-        {error && (
-          <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
-            {error}
-          </Typography>
-        )}
       </Dialog.Content>
     </Dialog>
   )

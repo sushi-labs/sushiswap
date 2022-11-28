@@ -1,5 +1,5 @@
 import { Token } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { Chef, Incentive } from '@sushiswap/wagmi'
 
 export interface PairWithFarmRewards extends Pair {
@@ -8,12 +8,3 @@ export interface PairWithFarmRewards extends Pair {
   chefType: Chef | undefined
 }
 
-export interface PairWithAlias extends Pair {
-  dayChangeData: {
-    id: string
-    date: number
-    volumeUSD: number
-    liquidityUSD: number
-    transactionCount: number
-  }[]
-}

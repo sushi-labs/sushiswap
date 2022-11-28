@@ -18,9 +18,9 @@
     "@ethersproject/providers": "^5.7.0",
     "ajv": "^6.12.3",
     "cids": "^1.1.9",
+    "fast-json-stable-stringify": "^2.1.0",
     "multicodec": "^3.2.1",
-    "multihashes": "^4.0.3",
-    "fast-json-stable-stringify": "^2.1.0"
+    "multihashes": "^4.0.3"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.8.1",
@@ -36,6 +36,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@uniswap/token-lists": "^1.0.0-beta.29",
+    "eslint": "^8.20.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",

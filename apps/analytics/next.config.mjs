@@ -1,17 +1,6 @@
-// import nextPwa from 'next-pwa'
-import { withAxiom } from 'next-axiom'
 import transpileModules from 'next-transpile-modules'
 
-// const withPwa = nextPwa({
-//   dest: 'public',
-// })
-
-const withTranspileModules = transpileModules([
-  '@sushiswap/redux-localstorage',
-  '@sushiswap/wagmi',
-  '@sushiswap/ui',
-  '@sushiswap/graph-client',
-])
+const withTranspileModules = transpileModules(['@sushiswap/redux-localstorage', '@sushiswap/wagmi', '@sushiswap/ui'])
 
 // @ts-check
 /** @type {import('next').NextConfig} */
@@ -48,5 +37,4 @@ const nextConfig = {
   },
 }
 
-// export default withAxiom(withPwa(withTranspileModules(nextConfig)))
-export default withAxiom(withTranspileModules(nextConfig))
+export default withTranspileModules(nextConfig)

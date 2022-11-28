@@ -1,15 +1,16 @@
+import { Signature } from '@ethersproject/bytes'
 import { Button, Dots } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, getSushiXSwapContractConfig } from '@sushiswap/wagmi'
-import React, { FC, ReactNode, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useNotifications } from '../../lib/state/storage'
-import { useBridgeExecute } from '../BridgeExecuteProvider'
-import { useBridgeState } from '../BridgeStateProvider'
+import { BridgeExecuteProvider } from '../BridgeExecuteProvider'
+import { useBridgeState, useBridgeStateActions } from '../BridgeStateProvider'
 import { BridgeReviewModalBase } from './BridgeReviewModalBase'
 
 interface BridgeReviewModal {
-  children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
+  children({ setOpen }: { setOpen(open: boolean): void }): ReactNode
 }
 
 export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
@@ -17,11 +18,20 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
   const [open, setOpen] = useState(false)
   const [, { createNotification }] = useNotifications(address)
   const { srcChainId, amount } = useBridgeState()
-  const { execute, isWritePending, setSignature } = useBridgeExecute()
+  const { setSignature } = useBridgeStateActions()
+
+  const onSig = useCallback(
+    (sig: Signature | undefined) => {
+      if (sig) {
+        setSignature(sig)
+      }
+    },
+    [setSignature]
+  )
 
   return (
     <>
-      {children({ isWritePending, setOpen })}
+      {children({ setOpen })}
       <BridgeReviewModalBase open={open} setOpen={setOpen}>
         <Approve
           className="flex-grow !justify-end pt-4"
@@ -33,7 +43,8 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
                 className="whitespace-nowrap"
                 fullWidth
                 address={getSushiXSwapContractConfig(srcChainId).addressOrName}
-                onSignature={setSignature}
+                onSignature={onSig}
+                enabled={Boolean(getSushiXSwapContractConfig(srcChainId).addressOrName)}
               />
               <Approve.Token
                 size="md"
@@ -41,14 +52,21 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
                 fullWidth
                 amount={amount}
                 address={BENTOBOX_ADDRESS[srcChainId]}
+                enabled={Boolean(BENTOBOX_ADDRESS[srcChainId])}
               />
             </Approve.Components>
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={execute}>
-                {isWritePending ? <Dots>Confirm Bridging</Dots> : 'Bridge'}
-              </Button>
+              <BridgeExecuteProvider approved={approved}>
+                {({ isWritePending, execute }) => {
+                  return (
+                    <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => execute?.()}>
+                      {isWritePending ? <Dots>Confirm Bridging</Dots> : 'Bridge'}
+                    </Button>
+                  )
+                }}
+              </BridgeExecuteProvider>
             )
           }}
         />

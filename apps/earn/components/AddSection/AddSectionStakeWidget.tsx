@@ -21,7 +21,6 @@ interface AddSectionStakeWidgetProps {
   reserve1: Amount<Type>
   liquidityToken: Token
   children: ReactNode
-  error?: string
 }
 
 export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
@@ -33,7 +32,6 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
   reserve1,
   reserve0,
   children,
-  error,
 }) => {
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
@@ -159,11 +157,6 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                         </Transition>
                       </div>
                       {children}
-                      {error && (
-                        <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
-                          {error}
-                        </Typography>
-                      )}
                     </div>
                   </Disclosure.Panel>
                 </Transition>
@@ -173,6 +166,6 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
         </Widget.Content>
       </Widget>
     ),
-    [balance, children, error, reserve0.currency, reserve1.currency, setValue, title, value, value0, value1]
+    [balance, children, reserve0.currency, reserve1.currency, setValue, title, value, value0, value1]
   )
 }

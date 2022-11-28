@@ -1,4 +1,4 @@
-query Tokens($first: Int = 100000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+query Tokens($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
   tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
     symbol
@@ -15,7 +15,7 @@ query Tokens($first: Int = 100000, $skip: Int = 0, $where: Token_filter, $block:
   }
 }
 
-query PolygonTokens($first: Int = 100000, $skip: Int = 0, $where: Polygon_Token_filter, $block: Polygon_Block_height) {
+query PolygonTokens($first: Int = 1000, $skip: Int = 0, $where: Polygon_Token_filter, $block: Polygon_Block_height) {
   tokens:Polygon_tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
     symbol
@@ -29,7 +29,7 @@ query PolygonTokens($first: Int = 100000, $skip: Int = 0, $where: Polygon_Token_
   }
 }
 
-query Pairs($first: Int = 100000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
+query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
   pairs(first: $first, skip: $skip, where: $where, block: $block) {
     id
     liquidity
@@ -42,7 +42,7 @@ query Pairs($first: Int = 100000, $skip: Int = 0, $where: Pair_filter, $block: B
   }
 }
 
-query PolygonPairs($first: Int = 100000, $skip: Int = 0, $where: Polygon_Pair_filter, $block: Polygon_Block_height) {
+query PolygonPairs($first: Int = 1000, $skip: Int = 0, $where: Polygon_Pair_filter, $block: Polygon_Block_height) {
   pairs:Polygon_pairs(first: $first, skip: $skip, where: $where, block: $block) {
     id
     liquidity:totalSupply

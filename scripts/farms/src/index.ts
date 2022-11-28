@@ -8,6 +8,7 @@ import stringify from 'fast-json-stable-stringify'
 
 import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
 import { redis } from './lib'
+
 export async function execute() {
   console.log(`Updating farms`)
 

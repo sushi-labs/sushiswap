@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
-import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
 import { computePairAddress, FACTORY_ADDRESS, Pair } from '@sushiswap/amm'
+import { Amount, Token, Type as Currency, Type } from '@sushiswap/currency'
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import { useContractReads } from 'wagmi'
@@ -59,11 +59,11 @@ export function usePairs(
   config?: Omit<UseContractReadsConfig, 'contracts'>
 ): UsePairsReturn {
   const [tokensA, tokensB, contracts] = useMemo(() => getPairs(chainId, currencies), [chainId, currencies])
+
   const { data, isLoading, isError } = useContractReads({
     contracts: contracts,
     enabled: config?.enabled !== undefined ? config.enabled && contracts.length > 0 : contracts.length > 0,
     watch: !(typeof config?.enabled !== undefined && !config?.enabled),
-    keepPreviousData: true,
   })
   return useMemo(() => {
     if (contracts.length === 0) return { isLoading, isError, data: [[PairState.INVALID, null]] }

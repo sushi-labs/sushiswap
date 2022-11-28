@@ -31,6 +31,7 @@ type TokenSelectorOverlay = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
   tokenMap: Record<string, Token>
   pricesMap?: Record<string, Fraction> | undefined
   fundSource: FundSource
+  includeNative?: boolean
 }
 
 export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
@@ -44,6 +45,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
   balancesMap,
   pricesMap,
   fundSource,
+  includeNative,
 }) => {
   const handleSelect = useCallback(
     (currency: Type) => {
@@ -69,6 +71,7 @@ export const TokenSelectorOverlay: FC<TokenSelectorOverlay> = ({
       pricesMap={pricesMap}
       balancesMap={balancesMap}
       fundSource={fundSource}
+      includeNative={includeNative}
     >
       {({ currencies, inputRef, query, onInput, searching, queryToken }) => (
         <SlideIn>

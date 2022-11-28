@@ -8,7 +8,6 @@ import { useSettings } from '../state/storage'
 export const useTransactionDeadline = (chainId: number | undefined, enabled = true) => {
   const { data: blockTimestamp } = useCurrentBlockTimestamp(chainId, enabled)
   const [{ transactionDeadline: ttl }] = useSettings()
-
   return useMemo(() => {
     if (blockTimestamp && chainId && Object.keys(chainsL2).includes(chainId.toString()))
       return blockTimestamp.add(L2_DEADLINE_FROM_NOW)

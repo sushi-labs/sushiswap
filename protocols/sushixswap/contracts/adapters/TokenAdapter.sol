@@ -45,4 +45,11 @@ abstract contract TokenAdapter {
         IWETH(token).withdraw(IERC20(token).balanceOf(address(this)));
         _transferTokens(IERC20(address(0)), to, address(this).balance);
     }
+
+    /// @notice Wraps the token to the wrapped token
+    /// @param token token to wrap
+    /// @param amount amount to wrap
+    function _wrapToken(address token, uint256 amount) internal {
+        IWETH(token).deposit{value: amount}();
+    }
 }

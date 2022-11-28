@@ -5,4 +5,6 @@ import { publicProvider } from '@wagmi/core/providers/public'
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 
-createClient(configureChains([...allChains, ...otherChains], [publicProvider(), alchemyProvider({ alchemyId })]))
+createClient(
+  configureChains([...allChains, ...otherChains], [publicProvider(), alchemyProvider({ apiKey: alchemyId })])
+)

@@ -1,4 +1,4 @@
-import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
+import { UserWithFarm } from '@sushiswap/graph-client'
 import { GenericTable, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
@@ -28,6 +28,8 @@ export const PositionsTable: FC = () => {
     address ? `/earn/api/user/${address}${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}` : null,
     (url) => fetch(url).then((response) => response.json())
   )
+
+  // console.log({userWithFarms})
 
   const table = useReactTable<UserWithFarm>({
     data: userWithFarms || [],

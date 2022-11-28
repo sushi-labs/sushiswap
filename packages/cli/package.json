@@ -1,7 +1,6 @@
 {
   "name": "@sushiswap/cli",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.8",
   "description": "Sushi CLI",
   "keywords": [
     "sushi",
@@ -10,29 +9,43 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./dist/index.js",
-  "source": "./index.ts",
+  "module": "./dist/index.mjs",
+  "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "bin": {
     "scli": "./dist/index.js"
   },
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
-    "build": "tsup index.ts --format esm,cjs --dts",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup index.ts --format esm,cjs --watch --dts",
-    "lint": "TIMING=1 eslint . --fix",
-    "start": "ts-node --transpileOnly index.ts",
+    "lint": "TIMING=1 eslint ./src --fix",
+    "start": "ts-node --transpileOnly ./src/index.ts",
     "test": "jest --passWithNoTests"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@sushiswap/graph-client": "workspace:*",
-    "@sushiswap/format": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/format": "workspace:*",
+    "@sushiswap/graph-client": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/log": "workspace:*",
-    "graphql": "16.6.0"
+    "@sushiswap/validate": "workspace:*",
+    "chalk": "4.1.2",
+    "cli-table3": "0.6.3",
+    "commander": "9.4.1",
+    "date-fns": "2.29.3",
+    "isomorphic-unfetch": "3.1.0",
+    "listr": "0.14.3",
+    "numeral": "2.0.6",
+    "ora": "5.4.1"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -41,12 +54,8 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.31",
     "@types/numeral": "^2.0.2",
-    "chalk": "^4.1.2",
-    "cli-table3": "^0.6.0",
-    "commander": "^9.4.0",
-    "date-fns": "^2.29.0",
-    "numeral": "^2.0.0",
-    "ora": "^6.1.0",
+    "eslint": "^8.20.0",
+    "jest": "^28.1.0",
     "ts-node": "^10.9.0",
     "tsup": "^6.2.0",
     "typescript": "4.8.2"

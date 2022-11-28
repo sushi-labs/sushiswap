@@ -1,5 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type as Currency, useCurrencyCombinations, WNATIVE } from '@sushiswap/currency'
 import {
   ConstantProductPool,
   FACTORY_ADDRESS,
@@ -10,6 +8,8 @@ import {
   TradeType,
   Version as TradeVersion,
 } from '@sushiswap/amm'
+import { ChainId } from '@sushiswap/chain'
+import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
@@ -18,6 +18,7 @@ import { useFeeData } from 'wagmi'
 import { useBentoBoxTotals } from './useBentoBoxTotals'
 import { getConstantProductPoolFactoryContract } from './useConstantProductPoolFactoryContract'
 import { ConstantProductPoolState, useGetConstantProductPools } from './useConstantProductPools'
+import { useCurrencyCombinations } from './useCurrencyCombinations'
 import { PairState, usePairs } from './usePairs'
 
 type UseTradePayload = {

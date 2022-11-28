@@ -1,22 +1,23 @@
 {
   "name": "@sushiswap/tines",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": {
     "url": "sushiswap/sushiswap",
     "directory": "packages/tines"
   },
   "license": "UNLICENSED",
   "author": "Ilya Lyalin",
+  "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "sideEffects": false,
   "files": [
     "dist/**"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint src --fix",

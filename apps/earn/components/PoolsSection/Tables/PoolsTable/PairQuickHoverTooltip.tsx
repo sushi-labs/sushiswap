@@ -1,5 +1,5 @@
 import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -41,7 +41,8 @@ export const PairQuickHoverTooltip: FC<PairQuickHoverTooltipProps> = ({ row }) =
                   ? 'Classic'
                   : row.type === 'STABLE_POOL'
                   ? 'Stable'
-                  : row.type === 'CONCENTRATED_LIQUIDITY_POOL'
+                  : // @ts-ignore
+                  row.type === 'CONCENTRATED_LIQUIDITY_POOL'
                   ? 'Concentrated'
                   : ''
               }

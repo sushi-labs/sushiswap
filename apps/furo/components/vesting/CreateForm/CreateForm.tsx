@@ -1,90 +1,102 @@
-import { yupResolver } from '@hookform/resolvers/yup'
+import { DevTool } from '@hookform/devtools'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { nanoid } from '@reduxjs/toolkit'
+import { ChainId } from '@sushiswap/chain'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { Button, Form } from '@sushiswap/ui'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useAccount, useNetwork } from 'wagmi'
 
-import { CreateVestingFormData, CreateVestingFormDataTransformedAndValidated } from '../types'
 import { CliffDetailsSection } from './CliffDetailsSection'
-import CreateFormReviewModal from './CreateFormReviewModal'
+import CreateFormReviewModal from './CreateFormReviewModal/CreateFormReviewModal'
 import { GeneralDetailsSection } from './GeneralDetailsSection'
 import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
-import { createVestingSchema, stepConfigurations } from './schema'
-import { transformVestingFormData } from './transformVestingFormData'
+import { CreateVestingFormSchemaType, CreateVestingModelSchema, stepConfigurations } from './schema'
 
-export const CreateForm: FC = () => {
-  const { chain: activeChain } = useNetwork()
-  const { address } = useAccount()
-  const [review, setReview] = useState(false)
+export const FORM_ERROR = 'FORM_ERROR' as const
+export type FormErrors = { [FORM_ERROR]?: never }
 
-  const methods = useForm<CreateVestingFormData>({
-    // @ts-ignore
-    resolver: yupResolver(createVestingSchema),
-    defaultValues: {
-      currency: undefined,
-      cliff: false,
-      startDate: undefined,
-      recipient: undefined,
-      cliffEndDate: undefined,
-      cliffAmount: '',
-      stepPayouts: 1,
-      stepAmount: '',
-      stepConfig: stepConfigurations[0],
-      fundSource: undefined,
-      insufficientBalance: false,
-    },
-    mode: 'onChange',
+export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
+  id: nanoid(),
+  currency: undefined,
+  recipient: undefined,
+  startDate: undefined,
+  fundSource: FundSource.WALLET,
+  stepConfig: stepConfigurations[0],
+  stepPayouts: 1,
+  stepAmount: undefined,
+  cliff: {
+    cliffEnabled: false,
+  },
+}
+
+export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
+  const isMounted = useIsMounted()
+  const methods = useForm<CreateVestingFormSchemaType>({
+    resolver: zodResolver(CreateVestingModelSchema),
+    defaultValues: CREATE_VEST_DEFAULT_VALUES,
+    mode: 'onBlur',
   })
 
   const {
-    formState: { isValid, isValidating },
     watch,
+    setError,
+    clearErrors,
     reset,
+    formState: { isValid, isValidating, errors },
+    control,
   } = methods
 
-  const formData = watch() as CreateVestingFormData
-  const validatedData = isValid && !isValidating ? transformVestingFormData(formData) : undefined
+  const [startDate, cliffEnabled, cliffEndDate] = watch(['startDate', 'cliff.cliffEnabled', 'cliff.cliffEndDate'])
 
-  // Reset form if we switch network or change account
+  // Temporary solution for when Zod fixes conditional validation
+  // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
-    setReview(false)
+    if (startDate && cliffEnabled && cliffEndDate) {
+      if (cliffEndDate < startDate) {
+        setError('cliff.cliffEndDate', { type: 'custom', message: 'Must be later than start date' })
+      } else {
+        clearErrors('cliff.cliffEndDate')
+      }
+    }
+  }, [clearErrors, cliffEnabled, cliffEndDate, setError, startDate])
+
+  // useEffect(() => {
+  //   try {
+  //     CreateVestingModelSchema.parse(formData)
+  //   } catch (e) {
+  //     console.log(formData)
+  //     console.log(e)
+  //   }
+  // }, [formData])
+
+  useEffect(() => {
     reset()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChain?.id, address])
-
-  // createVestingSchema
-  //   .validate(formData, { abortEarly: false })
-  //   .then(function () {
-  //     // Success
-  //   })
-  //   .catch(function (err) {
-  //     err?.inner?.forEach((e) => {
-  //       console.log(e.message, e.path)
-  //     })
-  //   })
+  }, [chainId, reset])
 
   return (
-    <>
-      <FormProvider {...methods}>
-        <Form header="Create vesting" onSubmit={methods.handleSubmit(() => setReview(true))}>
-          <GeneralDetailsSection />
-          <CliffDetailsSection />
-          <GradedVestingDetailsSection />
-          <Form.Buttons>
-            <Button type="submit" color="blue" disabled={!isValid || isValidating}>
-              Review Details
-            </Button>
-          </Form.Buttons>
-        </Form>
-      </FormProvider>
-      {validatedData && review && (
-        <CreateFormReviewModal
-          open={review}
-          onDismiss={() => setReview(false)}
-          formData={validatedData as CreateVestingFormDataTransformedAndValidated}
-        />
-      )}
-    </>
+    <FormProvider {...methods}>
+      <Form header="Create vesting">
+        <GeneralDetailsSection chainId={chainId} />
+        <CliffDetailsSection />
+        <GradedVestingDetailsSection />
+        <CreateFormReviewModal chainId={chainId}>
+          {({ isWritePending, setOpen }) => {
+            return (
+              <div className="flex justify-end pt-4">
+                <Button
+                  type="button"
+                  disabled={isWritePending || !isValid || isValidating || errors?.[FORM_ERROR]}
+                  onClick={() => setOpen(true)}
+                >
+                  Review Vesting
+                </Button>
+              </div>
+            )
+          }}
+        </CreateFormReviewModal>
+      </Form>
+      {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />}
+    </FormProvider>
   )
 }

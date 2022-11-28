@@ -4,7 +4,7 @@ import useScrollPosition from '@react-hook/window-scroll'
 import { useIsMounted } from '@sushiswap/hooks'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
+import { classNames, Container, IconButton, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
 
 export enum AppType {
   Root = 'Explore Apps',
@@ -19,6 +19,8 @@ export enum AppType {
   Analytics = 'Analytics',
   Invest = 'Earn',
   Partner = 'Partner',
+  Widget = 'Widget',
+  Academy = 'Academy',
 }
 
 const LINK = {
@@ -34,6 +36,8 @@ const LINK = {
   [AppType.Analytics]: '/analytics',
   [AppType.Invest]: '/earn',
   [AppType.Partner]: '/partner',
+  [AppType.Widget]: '/widget',
+  [AppType.Academy]: '/academy',
 }
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
@@ -100,8 +104,10 @@ export function Header({
                 type="button"
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
-                <span className="text-sm truncate">{AppType.Root}</span>
-                <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+                <span className="hidden sm:block text-sm truncate">{AppType.Root}</span>
+                <IconButton as="div" className="p-1">
+                  <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+                </IconButton>
               </Listbox.Button>
             }
           >
@@ -203,6 +209,18 @@ export function Header({
                     {AppType.Blog}
                     <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
                       Stay up to date with Sushi
+                    </Typography>
+                  </Select.Option>
+                  <Select.Option
+                    as="a"
+                    href="https://www.sushi.com/academy"
+                    key={AppType.Academy}
+                    value={AppType.Academy}
+                    className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
+                  >
+                    {AppType.Academy}
+                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                      Demystifying DeFi
                     </Typography>
                   </Select.Option>
                   <Select.Option

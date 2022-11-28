@@ -1,5 +1,5 @@
 import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { Button, Currency, Typography, useBreakpoint } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { FC } from 'react'
@@ -11,7 +11,7 @@ interface PoolMyRewardsProps {
 }
 
 export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
-  const { pendingRewards, rewardTokens, harvest, isError, values, isLoading, error } = usePoolPositionRewards()
+  const { pendingRewards, rewardTokens, harvest, isError, values, isLoading } = usePoolPositionRewards()
   const { isLg } = useBreakpoint('lg')
 
   if (!isLg || (!pair?.farm?.incentives?.length && !pendingRewards?.length)) return <></>
@@ -62,11 +62,6 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
           </Button>
         </Checker.Network>
       </Checker.Connected>
-      {error && (
-        <Typography variant="xs" className="mt-2 text-center text-red" weight={500}>
-          {error}
-        </Typography>
-      )}
     </div>
   )
 }

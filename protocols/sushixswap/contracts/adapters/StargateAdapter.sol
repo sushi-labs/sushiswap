@@ -11,6 +11,7 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
 
     // Custom Error
     error NotStargateRouter();
+    error InsufficientGas();
 
     // events
     event StargateSushiXSwapSrc(bytes32 indexed srcContext);
@@ -50,6 +51,9 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
         bytes[] memory datas
     ) internal {
         bytes memory payload = abi.encode(params.to, actions, values, datas, params.srcContext);
+
+        /// @dev dst gas should be more than 100k
+        if(params.gas < 100000) revert InsufficientGas();
 
         stargateRouter.swap{value: address(this).balance}(
             params.dstChainId,
@@ -125,9 +129,25 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
             bytes32 srcContext
         ) = abi.decode(payload, (address, uint8[], uint256[], bytes[], bytes32));
 
-        // 200000 -> exit gas
-        uint256 limit = gasleft() - 200000;
+        uint256 reserveGas = 100000;
         bool failed;
+
+        if(gasleft() < reserveGas) {
+            if(_token != SGETH) {
+                IERC20(_token).safeTransfer(to, amountLD);
+            }
+            /// @dev transfer any native token received as dust to the to address
+            if (address(this).balance > 0)
+                to.call{value: (address(this).balance)}("");
+
+            failed = true;
+            emit StargateSushiXSwapDst(srcContext, failed);
+            return;
+        }
+
+        // 100000 -> exit gas
+        uint256 limit = gasleft() - reserveGas;
+
         /// @dev incase the actions fail, transfer bridge token to the to address
         try
             ISushiXSwap(payable(address(this))).cook{gas: limit}(
@@ -136,7 +156,9 @@ abstract contract StargateAdapter is ImmutableState, IStargateReceiver {
                 datas
             )
         {} catch (bytes memory) {
-            IERC20(_token).safeTransfer(to, amountLD);
+            if(_token != SGETH) {
+                IERC20(_token).safeTransfer(to, amountLD);
+            }
             failed = true;
         }
 

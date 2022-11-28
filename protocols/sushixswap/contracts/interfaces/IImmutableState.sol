@@ -16,4 +16,6 @@ interface IImmutableState {
     function factory() external view returns (address);
 
     function pairCodeHash() external view returns (bytes32);
+
+    function SGETH() external view returns(address);
 }

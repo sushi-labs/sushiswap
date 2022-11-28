@@ -1,13 +1,12 @@
 import { Native } from '@sushiswap/currency'
 import { formatNumber, formatPercent, formatUSD } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client'
 import { Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC } from 'react'
 
-import { PairWithAlias } from '../../types'
-
 interface PoolStats {
-  pair: PairWithAlias
+  pair: Pair
 }
 
 export const PoolStats: FC<PoolStats> = ({ pair }) => {

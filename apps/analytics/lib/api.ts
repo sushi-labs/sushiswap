@@ -1,17 +1,17 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import {
   getBuiltGraphSDK,
-  QuerycrossChainPairsArgs,
-  QuerycrossChainTokensArgs,
-} from '@sushiswap/graph-client/.graphclient'
-import { addSeconds, getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays } from 'date-fns'
+  Pagination,
+  QuerypairsWithFarmsArgs,
+  QuerytokensByChainIdsArgs,
+} from '@sushiswap/graph-client'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 
 const sdk = getBuiltGraphSDK()
 
 export const getBundles = async () => {
-  const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
+  const { bundles } = await sdk.Bundles({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
@@ -26,7 +26,7 @@ export type GetPoolCountQuery = Partial<{
 }>
 
 export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+  const { factories } = await sdk.Factories({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
@@ -40,7 +40,7 @@ export const getPoolCount = async (query?: GetPoolCountQuery) => {
   }, 0)
 }
 
-export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
+export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
   pagination: string
@@ -48,7 +48,7 @@ export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
-    const pagination: QuerycrossChainPairsArgs['pagination'] = query?.pagination
+    const pagination: Pagination = query?.pagination
       ? JSON.parse(query.pagination)
       : {
           pageIndex: 0,
@@ -61,7 +61,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
 
-    const { crossChainPairs } = await sdk.CrossChainPairs({
+    const { pairs } = await sdk.PairsWithFarms({
       first,
       skip,
       pagination,
@@ -71,14 +71,14 @@ export const getPools = async (query?: GetPoolsQuery) => {
       chainIds,
     })
 
-    return crossChainPairs
+    return pairs
   } catch (error) {
     console.log(error)
     throw new Error(error)
   }
 }
 
-export type GetTokensQuery = Omit<QuerycrossChainTokensArgs, 'where' | 'pagination'> & {
+export type GetTokensQuery = Omit<QuerytokensByChainIdsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
   pagination: string
@@ -86,7 +86,7 @@ export type GetTokensQuery = Omit<QuerycrossChainTokensArgs, 'where' | 'paginati
 
 export const getTokens = async (query?: GetTokensQuery) => {
   try {
-    const pagination: QuerycrossChainTokensArgs['pagination'] = query?.pagination
+    const pagination: Pagination = query?.pagination
       ? JSON.parse(query?.pagination)
       : {
           pageIndex: 0,
@@ -98,7 +98,7 @@ export const getTokens = async (query?: GetTokensQuery) => {
     const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-    const { crossChainTokens } = await sdk.CrossChainTokens({
+    const { tokens } = await sdk.TokensByChainIds({
       first,
       skip,
       pagination,
@@ -107,7 +107,7 @@ export const getTokens = async (query?: GetTokensQuery) => {
       orderDirection,
       chainIds,
     })
-    return crossChainTokens
+    return tokens
   } catch (error) {
     console.log(error)
     throw new Error(error)
@@ -129,7 +129,7 @@ export type GetTokenCountQuery = Partial<{
 }>
 
 export const getTokenCount = async (query?: GetTokenCountQuery) => {
-  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+  const { factories } = await sdk.Factories({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
@@ -154,16 +154,16 @@ export const getStats = async () => {
   return stats
 }
 
-export const getCharts = async (query: { networks: string }) => {
+export const getCharts = async (query?: { networks: string }) => {
   const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-  const { crossChainFactoryDaySnapshots } = await sdk.CrossChainFactoryDaySnapshots({
+  const { factoryDaySnapshots } = await sdk.FactoryDaySnapshots({
     chainIds: chainIds,
     first: 1000,
   })
 
   const dateSnapshotMap = new Map()
 
-  for (const snapshot of crossChainFactoryDaySnapshots) {
+  for (const snapshot of factoryDaySnapshots) {
     const value = dateSnapshotMap.get(snapshot.date)
     dateSnapshotMap.set(
       snapshot.date,

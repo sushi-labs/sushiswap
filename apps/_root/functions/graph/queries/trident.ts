@@ -1,17 +1,12 @@
-import { ChainId } from '@sushiswap/core-sdk'
+import { SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import request from 'graphql-request'
 
-import { GRAPH_HOST } from '../constants'
 import { tridentFactoryQuery } from '../fetchers/trident'
-
-const TRIDENT = {
-  [ChainId.MATIC]: 'matthewlilley/trident-polygon',
-}
 
 async function getTridentFactory(chainId: number) {
   try {
     const { factories } = await request(
-      `${GRAPH_HOST[chainId]}/subgraphs/name/${TRIDENT[chainId]}`,
+      `https://${SUBGRAPH_HOST[chainId]}/${TRIDENT_SUBGRAPH_NAME[chainId]}`,
       tridentFactoryQuery
     )
     const factory = factories[0]
@@ -30,7 +25,7 @@ async function getTridentFactory(chainId: number) {
 
 export async function getTridentExchangeData() {
   const factoryQueries: ReturnType<typeof getTridentFactory>[] = []
-  for (const chainId of Object.keys(TRIDENT) as unknown as number[]) {
+  for (const chainId of Object.keys(TRIDENT_SUBGRAPH_NAME) as unknown as number[]) {
     factoryQueries.push(getTridentFactory(chainId))
   }
 

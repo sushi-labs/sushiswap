@@ -1,6 +1,6 @@
 import { createAppAuth } from '@octokit/auth-app'
 import { ChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK } from '@sushiswap/graph-client/.graphclient'
+import { getBuiltGraphSDK } from '@sushiswap/graph-client'
 import { SUSHI_DEFAULT_TOKEN_LIST } from '@sushiswap/redux-token-lists'
 import { Octokit } from 'octokit'
 
@@ -13,12 +13,12 @@ export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; fil
   const defaultTokenList = await getDefaultTokenList()
 
   const tokens = await sdk
-    .CrossChainTokens({
-      chainIds: chainIds,
+    .TokensByChainIds({
+      chainIds,
       orderBy: 'liquidityUSD',
       where: { symbol_contains_nocase: filter },
     })
-    .then(({ crossChainTokens: tokens }) =>
+    .then(({ tokens }) =>
       tokens.map((token) => ({
         ...token,
         listEntry:

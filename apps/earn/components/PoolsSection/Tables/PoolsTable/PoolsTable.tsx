@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Pair } from '@sushiswap/graph-client/.graphclient'
+import { Pair } from '@sushiswap/graph-client'
 import { GenericTable, Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
@@ -81,6 +81,8 @@ export const PoolsTable: FC = () => {
   )
 
   const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher)
+
+  // console.log({ pools })
 
   const { data: poolCount } = useSWR<number>(
     `/earn/api/pools/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,

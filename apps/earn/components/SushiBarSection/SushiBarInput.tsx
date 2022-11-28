@@ -24,7 +24,7 @@ export const SushiBarInput: FC<SushiBarInputProps> = ({ currency, balance, onCha
     <div className="flex flex-col flex-grow gap-2">
       <div className="flex items-center w-full h-12 gap-2 px-4 shadow-md rounded-2xl bg-slate-700">
         <div className="min-w-[24px] min-height-[24px]">
-          <Currency.Icon currency={currency} width={24} height={24} />
+          <Currency.Icon currency={currency} width={24} height={24} priority={true} />
         </div>
         <p className="text-sm font-bold">{currency.symbol}</p>
         <Input.Numeric

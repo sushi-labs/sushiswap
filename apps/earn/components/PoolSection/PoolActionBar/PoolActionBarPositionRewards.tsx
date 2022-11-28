@@ -1,19 +1,19 @@
 import { formatUSD } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client'
 import { Button, Currency, Dialog, Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { FC, useCallback } from 'react'
 
-import { PairWithAlias } from '../../../types'
 import { usePoolPositionRewards } from '../../PoolPositionRewardsProvider'
 
 interface PoolActionBarPositionRewardsProps {
-  pair: PairWithAlias
+  pair: Pair
   open: boolean
   setOpen(open: boolean): void
 }
 
 export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps> = ({ pair, open, setOpen }) => {
-  const { pendingRewards, values, rewardTokens, isError, isLoading, error, harvest } = usePoolPositionRewards()
+  const { pendingRewards, values, rewardTokens, isError, isLoading, harvest } = usePoolPositionRewards()
   const handleClose = useCallback(() => {
     setOpen(false)
   }, [setOpen])
@@ -65,11 +65,6 @@ export const PoolActionBarPositionRewards: FC<PoolActionBarPositionRewardsProps>
               </Button>
             </Checker.Network>
           </Checker.Connected>
-          {error && (
-            <Typography variant="xs" className="mt-2 text-center text-red" weight={500}>
-              {error}
-            </Typography>
-          )}
         </div>
       </Dialog.Content>
     </Dialog>

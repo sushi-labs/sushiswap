@@ -1,5 +1,6 @@
 @tailwind base;
 
+@import "react-datepicker/dist/react-datepicker.css";
 @import '@fontsource/inter/variable.css';
 
 @tailwind components;
@@ -7,6 +8,9 @@
 
 @import "./variables.css";
 @import './tooltip/Tooltip.css';
+@import './input/Input.css';
+@import "./skeleton/Skeleton.css";
+@import "./input/DatePicker.css";
 
 *,
 *:before,

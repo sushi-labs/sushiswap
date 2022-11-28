@@ -1,5 +1,5 @@
 import { formatPercent, formatUSD } from '@sushiswap/format'
-import { UserWithFarm } from '@sushiswap/graph-client/.graphclient'
+import { UserWithFarm } from '@sushiswap/graph-client'
 import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
@@ -65,7 +65,8 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row })
                   ? 'Classic'
                   : row.pair.type === 'STABLE_POOL'
                   ? 'Stable'
-                  : row.pair.type === 'CONCENTRATED_LIQUIDITY_POOL'
+                  : // @ts-ignore
+                  row.pair.type === 'CONCENTRATED_LIQUIDITY_POOL'
                   ? 'Concentrated'
                   : ''
               }

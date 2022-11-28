@@ -1,5 +1,11 @@
 # @sushiswap/currency
 
+## 0.0.3
+
+### Patch Changes
+
+- e0b880fe: move back to vanilla js
+
 ## 0.0.2
 
 ### Patch Changes

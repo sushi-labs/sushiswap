@@ -20,8 +20,9 @@ contract SushiXSwap is
         IStargateRouter _stargateRouter,
         address _factory,
         bytes32 _pairCodeHash,
-        IStargateWidget _stargateWidget
-    ) ImmutableState(_bentoBox, _stargateRouter, _factory, _pairCodeHash, _stargateWidget) {
+        IStargateWidget _stargateWidget,
+        address _SGETH
+    ) ImmutableState(_bentoBox, _stargateRouter, _factory, _pairCodeHash, _stargateWidget, _SGETH) {
         // Register to BentoBox
         _bentoBox.registerProtocol();
     }
@@ -46,6 +47,8 @@ contract SushiXSwap is
     uint8 internal constant ACTION_STARGATE_TELEPORT = 10;
 
     uint8 internal constant ACTION_SRC_TOKEN_TRANSFER = 11;
+
+    uint8 internal constant ACTION_WRAP_TOKEN = 12;
 
     /// @notice Executes a set of actions and allows composability (contract calls) to other contracts.
     /// @param actions An array with a sequence of actions to execute (see ACTION_ declarations).
@@ -182,6 +185,13 @@ contract SushiXSwap is
                 );
 
                 _unwrapTransfer(token, to);
+            } else if (action == ACTION_WRAP_TOKEN) {
+                (address token, uint256 amount) = abi.decode(
+                    datas[i],
+                    (address, uint256)
+                );
+
+                _wrapToken(token, amount);
             } else if (action == ACTION_LEGACY_SWAP) {
                 (
                     uint256 amountIn,

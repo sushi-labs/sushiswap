@@ -2,20 +2,21 @@ import { ExternalLinkIcon } from '@heroicons/react/solid'
 import chains from '@sushiswap/chain'
 import { Price } from '@sushiswap/currency'
 import { formatPercent, formatUSD } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
 import { usePrices } from '@sushiswap/wagmi'
 import { FC, useMemo } from 'react'
 
 import { useTokensFromPair } from '../../lib/hooks'
-import { PairWithAlias } from '../../types'
 import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
 
 interface PoolHeader {
-  pair: PairWithAlias
+  pair: Pair
 }
 
 export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
   const { data: prices } = usePrices({ chainId: pair.chainId })
+  // console.log({ pair })
   const { token0, token1, reserve1, reserve0, liquidityToken } = useTokensFromPair(pair)
   const price = useMemo(() => new Price({ baseAmount: reserve0, quoteAmount: reserve1 }), [reserve0, reserve1])
 
@@ -38,7 +39,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
               className="flex flex-col !no-underline group"
               href={chains[pair.chainId].getTokenUrl(liquidityToken.wrapped.address)}
             >
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <Typography
                   variant="lg"
                   className="flex items-center gap-1 text-slate-50 group-hover:text-blue-400"
@@ -69,8 +70,8 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="flex gap-3 rounded-lg bg-slate-800 shadow-md shadow-black/10 p-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="flex gap-3 p-3 rounded-lg shadow-md bg-slate-800 shadow-black/10">
           <Currency.Icon currency={token0} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">
             <AppearOnMount>
@@ -81,7 +82,7 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
             </AppearOnMount>
           </Typography>
         </div>
-        <div className="flex gap-3 rounded-lg bg-slate-800 shadow-md shadow-black/10 p-3">
+        <div className="flex gap-3 p-3 rounded-lg shadow-md bg-slate-800 shadow-black/10">
           <Currency.Icon currency={token1} width={20} height={20} />
           <Typography variant="sm" weight={600} className="text-slate-300">
             <AppearOnMount>
