@@ -21,7 +21,7 @@ export const getSwaps = async (query?: GetSwapsQuery) => {
 	const pagination: Pagination = query?.pagination ? JSON.parse(query.pagination) : { pageIndex: 0, pageSize: 20 }
 	const first = 20
 	const skip = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 0;
-  const orderBy = query?.orderBy || 'timestamp'
+	const orderBy = query?.orderBy || 'timestamp'
 	const orderDirection = query?.orderDirection || 'desc'
 	const chainId = query?.chainId
 	const pairId = query?.pairId
@@ -31,12 +31,12 @@ export const getSwaps = async (query?: GetSwapsQuery) => {
 		}
 	}
 	const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: SUSHISWAP_SUBGRAPH_NAME[chainId]})
-	const result = (await sdk.swapsArray({ first, skip, where, orderBy, orderDirection })).swaps
+	const result = (await sdk.swapsArray({ first, skip, where, orderBy, orderDirection })).swaps ?? []
 	return result === undefined ? [] : result;
 }
 
 export type GetSwapsCountQuery = Partial<{
-  chainId: string
+	chainId: string
 	pairId: string
 }>
 

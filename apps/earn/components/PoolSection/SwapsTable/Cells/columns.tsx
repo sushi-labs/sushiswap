@@ -14,9 +14,9 @@ export const PAGE_SIZE = 20
 
 export const TXN_HASH_COLUMN: ColumnDef<Swap, unknown> = {
   id: 'txnHash',
-	header: 'Txn_Hash',
+	header: 'Txn Hash',
 	cell: (props) => <SwapTxnHashCell row={props.row.original} />,
-	size: 240,
+	size: 260,
 	meta: {
 		skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse"/>
 	},
@@ -26,7 +26,7 @@ export const TXN_BLOCK_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'txnBlock',
   header: 'Block',
   cell: (props) => <SwapTxnBlockCell row={props.row.original} />,
-  size: 90,
+  size: 100,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
@@ -46,9 +46,8 @@ export const SWAP_TO_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'to',
   header: 'To',
   cell: (props) => <SwapToCell row={props.row.original} />,
-  size: 110,
+  size: 120,
   meta: {
-    className: 'justify-end',
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
 }
@@ -57,7 +56,7 @@ export const AMOUNT_IN_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'amountIn',
   header: 'Amount In',
   cell: (props) => <SwapAmountInCell row={props.row.original} />,
-  size: 80,
+  size: 100,
   meta: {
     className: 'justify-end',
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
@@ -68,9 +67,8 @@ export const AMOUNT_OUT_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'amountOut',
   header: 'Amount Out',
   cell: (props) => <SwapAmountOutCell row={props.row.original} />,
-  size: 80,
+  size: 100,
   meta: {
-    className: 'justify-end',
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
 }
@@ -81,6 +79,6 @@ export const TXN_AGE_COLUMN: ColumnDef<Swap, unknown> = {
   cell: (props) => <SwapTxnAgeCell row={props.row.original} />,
   size: 140,
   meta: {
-    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse ml-2" />,
+    skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
 }

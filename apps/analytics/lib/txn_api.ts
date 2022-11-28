@@ -11,11 +11,11 @@ import { getBuiltGraphSDK, QuerytransactionsArgs } from '.graphclient'
 const GRAPH_HOST = 'api.thegraph.com'
 
 export type GetTransactionsQuery = Omit<QuerytransactionsArgs, 'where' | 'pagination'> & {
-    networks: string
-    where?: string
-    pagination: string
-  }
-  
+  networks: string
+  where?: string
+  pagination: string
+}
+
 export const getTransactions = async (query?: GetTransactionsQuery) => {
   const pagination: Pagination = query?.pagination ? JSON.parse(query.pagination) : { pageIndex: 0, pageSize: 20 }
   const first = 20;
