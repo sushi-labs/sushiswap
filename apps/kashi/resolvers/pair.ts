@@ -4,7 +4,7 @@ import { KASHI_SUBGRAPH_HOST, KASHI_SUBGRAPH_NAME } from 'config'
 import { KashiPair, QueryResolvers } from '.graphclient'
 
 export const pair: QueryResolvers['pair'] = async (root, args, context, info) => {
-  console.log({ args })
+  // console.log({ args })
   return context.Kashi.Query.kashiPair({
     root,
     args: {

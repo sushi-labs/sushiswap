@@ -49,7 +49,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
   )
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!vesting || !balance || !contract) return
 
       setRequest({
@@ -136,7 +136,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ vesting, chainId }) => {
               )}
             </div>
           </div>
-          <Typography variant="xs" weight={400} className="text-slate-300 py-2 text-center">
+          <Typography variant="xs" weight={400} className="py-2 text-center text-slate-300">
             There are currently{' '}
             <span className="font-semibold">
               {balance?.toSignificant(6)} {balance?.currency.symbol}

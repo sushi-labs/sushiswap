@@ -34,8 +34,6 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     enabled = true,
     ...props
   }) => {
-
-    
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
       watch,
       masterContract,

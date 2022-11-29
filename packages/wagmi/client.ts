@@ -1,4 +1,4 @@
-import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
+// import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { otherChains } from '@sushiswap/wagmi-config'
 import { BigNumber } from 'ethers'
 import { allChains, Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
@@ -9,10 +9,16 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
+import { SafeConnector } from './connectors/safe'
+
 export type Client = ReturnType<typeof createClient>
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
+
+if (!alchemyId) {
+  throw Error('NO ALCHEMY ID SET')
+}
 
 const { chains, provider }: CreateClientConfig & { chains: Chain[] } = configureChains(
   [...allChains, ...otherChains],
@@ -92,7 +98,6 @@ export const client: Client = createClient({
         appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
       },
     }),
-    // @ts-ignore
     new SafeConnector({ chains }),
   ],
 })

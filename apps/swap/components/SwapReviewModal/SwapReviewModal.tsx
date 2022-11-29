@@ -24,7 +24,7 @@ import { useTransactionDeadline } from 'lib/hooks'
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { useAccount, useProvider, UserRejectedRequestError } from 'wagmi'
+import { Address, useAccount, useProvider, UserRejectedRequestError } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTrade } from '../TradeProvider'
@@ -213,7 +213,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                           ['address', 'address', 'bool'],
                           [
                             leg.tokenFrom.address,
-                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).address,
                             false,
                           ]
                         ),
@@ -235,7 +235,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                           ['address', 'address', 'bool'],
                           [
                             leg.tokenFrom.address,
-                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).address,
                             false,
                           ]
                         ),
@@ -408,7 +408,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const approveTokenTo = useMemo(() => {
     if (trade?.isV1()) {
-      return chainId === ChainId.POLYGON && carbonOffset ? sushiSwapKlimaRouter?.address : sushiSwapRouter?.address
+      return chainId === ChainId.POLYGON && carbonOffset
+        ? (sushiSwapKlimaRouter?.address as Address)
+        : (sushiSwapRouter?.address as Address)
     } else if (trade?.isV2()) {
       return chainId && chainId in BENTOBOX_ADDRESS ? BENTOBOX_ADDRESS[chainId] : undefined
     }
@@ -427,7 +429,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
-                address={getTridentRouterContractConfig(chainId).addressOrName}
+                address={getTridentRouterContractConfig(chainId).address}
                 onSignature={setSignature}
                 enabled={Boolean(typeof chainId === 'number' && TRIDENT_ENABLED_NETWORKS.includes(chainId))}
               />

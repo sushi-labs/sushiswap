@@ -1,11 +1,13 @@
 import { isAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
+import { bentoBoxV1Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
+import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
 import { getBentoBoxContractConfig } from '../useBentoBoxContract'
 import { BalanceMap } from './types'
@@ -39,7 +41,7 @@ export const useBalances: UseBalances = ({
     isLoading: isNativeLoading,
     isError: isNativeError,
   } = useWagmiBalance({
-    addressOrName: account,
+    address: account as Address,
     chainId,
     enabled,
     watch: !(typeof enabled !== undefined && !enabled) && watch,
@@ -66,8 +68,8 @@ export const useBalances: UseBalances = ({
     const input = validatedTokenAddresses.map((token) => {
       return {
         chainId,
-        addressOrName: token[0],
-        contractInterface: erc20ABI,
+        address: token[0],
+        abi: erc20ABI,
         functionName: 'balanceOf',
         args: [account],
       }
@@ -77,6 +79,7 @@ export const useBalances: UseBalances = ({
       const totals = validatedTokenAddresses.map((token) => ({
         chainId,
         ...getBentoBoxContractConfig(chainId),
+        abi: bentoBoxV1Abi,
         functionName: 'totals',
         args: token,
       }))
@@ -84,6 +87,7 @@ export const useBalances: UseBalances = ({
       const balanceInputs = validatedTokenAddresses.map((token, i) => ({
         chainId,
         ...getBentoBoxContractConfig(chainId),
+        abi: bentoBoxV1Abi,
         functionName: 'balanceOf',
         args: [validatedTokenAddresses[i][0], account],
       }))
@@ -95,7 +99,7 @@ export const useBalances: UseBalances = ({
   }, [validatedTokenAddresses, loadBentobox, chainId, account])
 
   const { data, isError, isLoading } = useContractReads({
-    contracts: contracts,
+    contracts,
     enabled,
     watch: !(typeof enabled !== undefined && !enabled) && watch,
     keepPreviousData: true,
@@ -107,12 +111,15 @@ export const useBalances: UseBalances = ({
     if (data?.length !== contracts.length) return result
     for (let i = 0; i < validatedTokenAddresses.length; i++) {
       if (loadBentobox) {
-        const { base, elastic } = data[i + validatedTokenAddresses.length]
+        const { base, elastic } = data[i + validatedTokenAddresses.length] as unknown as {
+          base: BigNumber
+          elastic: BigNumber
+        }
         if (base && elastic && data[i + 2 * validatedTokenAddresses.length]) {
           const rebase = { base: JSBI.BigInt(base.toString()), elastic: JSBI.BigInt(elastic.toString()) }
           const amount = Amount.fromShare(
             validatedTokens[i],
-            data[i + 2 * validatedTokenAddresses.length].toString(),
+            (data[i + 2 * validatedTokenAddresses.length] as unknown as BigNumber).toString(),
             rebase
           )
 
@@ -128,7 +135,7 @@ export const useBalances: UseBalances = ({
         }
       }
 
-      const value = data[i]
+      const value = data[i] as unknown as BigNumber
       const amount = value ? JSBI.BigInt(value.toString()) : undefined
       if (!result[validatedTokens[i].address]) {
         result[validatedTokens[i].address] = {

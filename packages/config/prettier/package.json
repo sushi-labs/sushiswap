@@ -34,7 +34,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/prettier": "2.x",
     "prettier": "2.x",
-    "tsup": "6.x",
+    "tsup": "6.4.0",
     "typescript": "4.8.2"
   },
   "peerDependencies": {

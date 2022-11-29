@@ -3,6 +3,7 @@ import { AddressZero, HashZero } from '@ethersproject/constants'
 import { NotificationData } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 import {
+  Address,
   useAccount,
   useContractRead,
   useContractWrite,
@@ -35,7 +36,7 @@ export function useBentoBoxApproveCallback({
   const { config } = usePrepareContractWrite({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'setMasterContractApproval',
-    args: [address, masterContract, true, 0, HashZero, HashZero],
+    args: [address as Address, masterContract as Address, true, 0, HashZero, HashZero],
     enabled,
   })
 
@@ -44,7 +45,7 @@ export function useBentoBoxApproveCallback({
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
     ...getBentoBoxContractConfig(chain?.id),
     functionName: 'masterContractApproved',
-    args: [masterContract, address],
+    args: [masterContract as Address, address as Address],
     // This should probably always be true anyway...
     watch,
     enabled: enabled && Boolean(address && masterContract !== AddressZero),
@@ -127,12 +128,17 @@ export function useBentoBoxApproveCallback({
 
     const { data: nonces } = await getNonces()
 
+    if (!nonces) {
+      console.error('nonces could not be fetched')
+      return
+    }
+
     try {
       const data = await signTypedDataAsync({
         domain: {
           name: 'BentoBox V1',
           chainId: chain.id,
-          verifyingContract: BENTOBOX_ADDRESS[chain.id],
+          verifyingContract: BENTOBOX_ADDRESS[chain.id] as Address,
         },
         types: {
           SetMasterContractApproval: [
@@ -146,7 +152,7 @@ export function useBentoBoxApproveCallback({
         value: {
           warning: 'Give FULL access to funds in (and approved to) BentoBox?',
           user: address,
-          masterContract,
+          masterContract: masterContract as Address,
           approved: true,
           nonce: nonces,
         },

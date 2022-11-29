@@ -2,8 +2,6 @@ import { Typography } from '@sushiswap/ui'
 import { KashiMediumRiskLendingPairV1 } from 'lib/KashiPair'
 import { FC } from 'react'
 
-import { KashiPair } from '../../.graphclient'
-
 interface MarketInformation {
   pair: KashiMediumRiskLendingPairV1
 }
