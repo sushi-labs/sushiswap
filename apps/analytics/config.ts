@@ -1,6 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.METIS, ChainId.KAVA]
+export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+  ChainId.METIS,
+  ChainId.KAVA,
+  ChainId.BTTC,
+]
 
 export const AMM_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -14,7 +20,7 @@ export const AMM_ENABLED_NETWORKS = [
   ChainId.FUSE,
   ChainId.MOONBEAM,
   ChainId.ARBITRUM_NOVA,
-  // ChainId.HARMONY,
+  ChainId.HARMONY,
   ChainId.POLYGON,
   ChainId.BOBA,
 ]

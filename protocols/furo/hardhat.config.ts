@@ -66,11 +66,11 @@ const config: HardhatUserConfig = {
   //     },
   //   ],
   // },
-  namedAccounts: {
-    deployer: {
-      default: 4,
-    },
-  },
+  // namedAccounts: {
+  //   deployer: {
+  //     default: 4,
+  //   },
+  // },
 }
 
 export default config

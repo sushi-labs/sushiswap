@@ -1,7 +1,7 @@
-import { BENTOBOX_ADDRESS, WNATIVE_ADDRESS } from '@sushiswap/core-sdk'
+import bentoBoxExports from '@sushiswap/bentobox/exports.json'
+import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
-
 const func: DeployFunction = async ({
   getNamedAccounts,
   deployments,
@@ -13,9 +13,17 @@ const func: DeployFunction = async ({
   const { deployer } = await getNamedAccounts()
   const { deploy } = deployments
 
-  const chainId = Number(await getChainId())
+  const chainId = (await getChainId()) as keyof Omit<typeof bentoBoxExports, '31337'>
 
-  const args = [BENTOBOX_ADDRESS[chainId], WNATIVE_ADDRESS[chainId]]
+  if (!bentoBoxExports?.[chainId]) {
+    throw Error(`No BentoBox deployed on chain ${chainId}`)
+  }
+
+  if (!WNATIVE_ADDRESS?.[chainId]) {
+    throw Error(`No WNATIVE_ADDRESS for chain ${chainId}`)
+  }
+
+  const args = [bentoBoxExports[chainId]?.[0]?.contracts?.BentoBoxV1?.address, WNATIVE_ADDRESS[chainId]]
 
   const { address } = await deploy('FuroStream', {
     from: deployer,
@@ -28,14 +36,12 @@ const func: DeployFunction = async ({
       address,
       constructorArguments: args,
     })
-
     await tenderly.persistArtifacts([
       {
         name: 'FuroStream',
         address,
       },
     ])
-
     // await tenderly.verify([
     //   {
     //     name: 'FuroStream',

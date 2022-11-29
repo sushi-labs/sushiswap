@@ -9,14 +9,7 @@ export const CreateStreamBaseSchema = z.object({
       startDate: z.date(),
       endDate: z.date(),
     })
-    .required()
-    .refine(
-      (data) => {
-        if (!data.startDate || !data.endDate) return true
-        return data.startDate < data.endDate
-      },
-      { message: 'Must be later than start date', path: ['endDate'] }
-    ),
+    .required(),
   recipient: ZAddress,
   currency: ZToken,
   amount: z.string().refine((val) => Number(val) > 0, 'Must be at least 0'),

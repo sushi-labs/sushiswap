@@ -90,9 +90,9 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         _amount.currency,
         new Date(dates.startDate),
         new Date(dates.endDate),
-        _amount,
+        _amount.quotient.toString(),
         _fundSource === FundSource.BENTOBOX,
-        _amount.toShare(rebase).toFixed(),
+        _amount.toShare(rebase).quotient.toString(),
       ])
 
       actions.push(

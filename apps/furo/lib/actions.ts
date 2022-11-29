@@ -70,8 +70,8 @@ export const streamCreationAction = ({
   return contract.interface.encodeFunctionData('createStream', [
     recipient,
     currency.isNative ? AddressZero : currency.wrapped.address,
-    startDate.getTime() / 1000,
-    endDate.getTime() / 1000,
+    Math.floor(startDate.getTime() / 1000),
+    Math.floor(endDate.getTime() / 1000),
     amount.quotient.toString(),
     fromBentobox,
     minShare.quotient.toString(),
@@ -109,7 +109,7 @@ export const vestingCreationAction = ({
     {
       token: currency.isNative ? AddressZero : currency.wrapped.address,
       recipient: recipient,
-      start: startDate.getTime() / 1000,
+      start: Math.floor(startDate.getTime() / 1000),
       cliffDuration: cliffDuration,
       stepDuration: stepDuration,
       steps: steps,

@@ -1,14 +1,31 @@
 import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form } from '@sushiswap/ui'
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { Web3Input } from '@sushiswap/wagmi'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { CreateStreamFormSchemaType } from './schema'
 
 export const GeneralDetailsSection = () => {
-  const { control, watch } = useFormContext<CreateStreamFormSchemaType>()
-  const startDate = watch('dates.startDate')
+  const { control, watch, setError, clearErrors } = useFormContext<CreateStreamFormSchemaType>()
+  const [startDate, endDate] = watch(['dates.startDate', 'dates.endDate'])
+
+  useEffect(() => {
+    if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
+      setError(`dates.startDate`, { type: 'custom', message: 'Must be at least 5 minutes from now' })
+    } else {
+      clearErrors(`dates.startDate`)
+    }
+  }, [clearErrors, setError, startDate])
+
+  useEffect(() => {
+    if (startDate && endDate && endDate < startDate) {
+      setError(`dates.endDate`, { type: 'custom', message: 'Must be later than start date' })
+    } else {
+      clearErrors(`dates.endDate`)
+    }
+  }, [clearErrors, endDate, setError, startDate])
+
   return (
     <Form.Section
       title="General Details"
