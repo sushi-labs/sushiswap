@@ -1,5 +1,5 @@
-import { MultiRoute, RouteLeg, RPool } from "@sushiswap/tines";
-import { BigNumber } from "ethers";
+import { MultiRoute, RouteLeg, RPool } from '@sushiswap/tines'
+import { BigNumber } from 'ethers'
 
 // RPool extention for RP coding
 export abstract class PoolCode {

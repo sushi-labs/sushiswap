@@ -1,8 +1,6 @@
-import { Interface } from '@ethersproject/abi'
 import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/amm'
 import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import stablePoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/stable/StablePool.sol/StablePool.json'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'

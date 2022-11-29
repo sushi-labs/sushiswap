@@ -40,9 +40,9 @@
   "dependencies": {
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
-    "@graphql-mesh/cache-redis": "latest",
     "@graphprotocol/client-auto-type-merging": "latest",
     "@graphprotocol/client-cli": "2.2.15",
+    "@graphql-mesh/cache-redis": "latest",
     "@graphql-mesh/cross-helpers": "latest",
     "@graphql-mesh/graphql": "latest",
     "@graphql-mesh/http": "latest",
@@ -78,12 +78,12 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.2.0",
-    "@types/numeral": "^2.0.2",
     "@types/node": "^16.0.0",
+    "@types/numeral": "^2.0.2",
     "eslint": "^8.20.0",
     "jest": "^29.3.0",
-    "tsup": "6.4.0",
     "ts-jest": "29.0.3",
+    "tsup": "6.4.0",
     "typescript": "4.8.2"
   }
 }

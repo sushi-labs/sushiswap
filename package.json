@@ -18,9 +18,9 @@
     "changeset": "changeset",
     "changeset-publish": "changeset publish",
     "changeset-version": "changeset version",
+    "check": "turbo run check --no-cache --parallel --continue",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "turbo run dev --no-cache --parallel --continue",
-    "check": "turbo run check --no-cache --parallel --continue",
     "disable-remote-caching": "turbo unlink && rm -rf ./node_modules/.cache/turbo",
     "enable-remote-caching": "turbo link",
     "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\"",
@@ -79,14 +79,14 @@
     "node": ">=16.x",
     "pnpm": ">=6.x"
   },
-  "pnpm": {
-    "overrides": {
-      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
-    }
-  },
   "nextBundleAnalysis": {
     "budget": null,
     "budgetPercentIncreaseRed": 20,
     "showDetails": true
+  },
+  "pnpm": {
+    "overrides": {
+      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
+    }
   }
 }

@@ -8,8 +8,8 @@
     "dev": "next dev -p 3005",
     "generate": "graphclient build",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "test": "jest --watch --no-cache",
-    "start": "next start"
+    "start": "next start",
+    "test": "jest --watch --no-cache"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -44,6 +44,7 @@
     "@tanstack/react-table": "8.5.0",
     "@uniswap/redux-multicall": "^1.1.1",
     "@uniswap/token-lists": "^1.0.0-beta.29",
+    "@vercel/analytics": "0.1.5",
     "@visx/curve": "^2.1.0",
     "@visx/gradient": "^2.1.0",
     "@visx/group": "^2.1.0",
@@ -53,7 +54,6 @@
     "@visx/text": "^2.3.0",
     "@visx/tooltip": "^2.8.0",
     "@visx/xychart": "^2.9.0",
-    "@vercel/analytics": "0.1.5",
     "ajv": "^6.12.6",
     "cids": "^1.0.0",
     "date-fns": "^2.28.0",

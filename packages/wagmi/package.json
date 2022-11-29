@@ -25,6 +25,8 @@
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/logger": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
+    "@gnosis.pm/safe-apps-provider": "^0.14.0",
+    "@gnosis.pm/safe-apps-sdk": "^7.8.0",
     "@gnosis.pm/safe-apps-wagmi": "1.1.0",
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.6",
@@ -44,14 +46,12 @@
     "@sushiswap/trident": "1.0.0-canary.51",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
+    "@tanstack/react-query": "^4.14.5",
+    "@tanstack/react-query-persist-client": "^4.14.5",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
-    "wagmi": "0.8.7",
     "@wagmi/core": "0.7.6",
-    "@gnosis.pm/safe-apps-provider": "^0.14.0",
-    "@gnosis.pm/safe-apps-sdk": "^7.8.0",
-    "@tanstack/react-query": "^4.14.5",
-    "@tanstack/react-query-persist-client": "^4.14.5"
+    "wagmi": "0.8.7"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
