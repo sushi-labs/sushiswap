@@ -20,7 +20,7 @@ export const Stats: FC = () => {
               ) : (
                 <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
               )}
-              <Typography variant="sm" weight={400} className="text-neutral-400 -mt-0.5">
+              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
                 Price
               </Typography>
             </div>
@@ -34,7 +34,7 @@ export const Stats: FC = () => {
               ) : (
                 <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
               )}
-              <Typography variant="sm" weight={400} className="text-neutral-400 -mt-0.5">
+              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
                 Total Liquidity
               </Typography>
             </div>
@@ -48,7 +48,7 @@ export const Stats: FC = () => {
               ) : (
                 <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
               )}
-              <Typography variant="sm" weight={400} className="text-neutral-400 -mt-0.5">
+              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
                 Total Volume
               </Typography>
             </div>
@@ -62,7 +62,7 @@ export const Stats: FC = () => {
               ) : (
                 <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
               )}
-              <Typography variant="sm" weight={400} className="text-neutral-400 -mt-0.5">
+              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
                 Total Pairs
               </Typography>
             </div>

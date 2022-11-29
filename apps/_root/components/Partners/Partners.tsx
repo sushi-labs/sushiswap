@@ -1,6 +1,7 @@
 import { Container, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
+import { ArbitrumSVG } from '../SVG/ArbitrumSVG'
 import { BarnBridgeSVG } from '../SVG/BarnBridgeSVG'
 import { BobaSVG } from '../SVG/BobaSVG'
 import { LayerzeroSVG } from '../SVG/LayerzeroSVG'
@@ -29,6 +30,7 @@ export const Partners: FC = () => {
         </div>
         <div className="flex flex-col gap-y-10">
           <div className="flex justify-center items-center flex-wrap gap-10">
+            <ArbitrumSVG width={130} />
             <BarnBridgeSVG width={120} />
             <LayerzeroSVG width={120} />
             <MagnaSVG width={120} />
