@@ -54,7 +54,7 @@ export const Search: FC = () => {
   })
 
   const { data: web3Token, isLoading: web3Loading } = useToken({
-    address: query,
+    address: query as `0x${string}`,
     chainId,
     enabled: isAddress(query),
   })
