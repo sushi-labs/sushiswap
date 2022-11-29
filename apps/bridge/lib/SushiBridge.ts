@@ -244,14 +244,14 @@ export class SushiBridge {
     this.srcCooker = new SrcCooker({
       chainId: this.srcChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).addressOrName,
+      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).address,
       user,
     })
 
     this.dstCooker = new DstCooker({
       chainId: this.dstChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).addressOrName,
+      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).address,
       user,
     })
   }

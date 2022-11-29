@@ -1,4 +1,5 @@
 # Tines
+
 Sushiswap multirouter
 
 ## Current features:
@@ -11,6 +12,7 @@ Sushiswap multirouter
     - Has internal pricing calculation
 
 ## Basics
+
 The main idea of multirouting in Tines is:
 
     1. split input Tokens for several streams (up to 100 in the current implementation)
@@ -49,14 +51,14 @@ Each pool for Tines is presented by an instance that extends RPool
 ```
 class RPool {
   // Calculates pool's output having input amount
-  // amountIn - input amount 
+  // amountIn - input amount
   // direction - direction of swap. true for Token 0 to Token 1, false otherwise
   // Returns {out: output amount, gasSpent: gas consumption estimation for the swap}
   // Must throw if the rest of output liquidity is lesser than minLiquidity
   abstract calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number }
 
   // Calculates pool's input having output amount
-  // amountOut - output amount 
+  // amountOut - output amount
   // direction - direction of swap. true for Token 0 to Token 1, false otherwise
   // Returns {inp: input amount, gasSpent: gas consumption estimation for the swap}
   // Must return Number.POSITIVE_INFINITY if amountOut is more than the pool can return
@@ -75,12 +77,12 @@ Tines interface:
 
 // Creates multiroute with amountIn input tokens
 function findMultiRouteExactIn(
-  from: RToken,                                 // input token 
+  from: RToken,                                 // input token
   to: RToken,                                   // output token
   amountIn: BigNumber | number,                 // amount of input tokens
   pools: RPool[],                               // List of pools that could be used in the multiroute
   baseTokenOrNetworks: RToken | NetworkInfo[],  // If RToken, then the main token of the network, used for gas prices
-                                                // For example, WETH for Ethereum. 
+                                                // For example, WETH for Ethereum.
                                                 // If NetworkInfo[], then info about all used networks.
                                                 // Used for making multiroutes between several networks using bridges
   gasPrice?: number,                            // If baseTokenOrNetworks is RToken, then gasPrice - price of gas,
@@ -120,7 +122,7 @@ function findSingleRouteExactOut(
   gasPrice?: number
 ): MultiRoute
 
-// Calculates all token prices to baseToken, judging by pools' balances 
+// Calculates all token prices to baseToken, judging by pools' balances
 function calcTokenPrices(pools: RPool[], baseToken: RToken): Map<RToken, number>
 
 ```

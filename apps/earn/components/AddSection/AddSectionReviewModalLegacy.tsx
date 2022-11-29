@@ -1,6 +1,6 @@
+import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
@@ -12,7 +12,7 @@ import {
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { Address, useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTransactionDeadline } from '../../lib/hooks'
@@ -174,14 +174,14 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input0}
-                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(chainId).address as Address}
                 />
                 <Approve.Token
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input1}
-                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(chainId).address as Address}
                 />
               </Approve.Components>
             }

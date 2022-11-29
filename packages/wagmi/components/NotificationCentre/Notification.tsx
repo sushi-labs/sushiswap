@@ -46,7 +46,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
   const notification: NotificationData = JSON.parse(data)
   const { status } = useWaitForTransaction({
     chainId: notification.chainId,
-    hash: notification.txHash,
+    hash: notification.txHash as `0x${string}`,
   })
 
   if (!status)
@@ -56,7 +56,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
           <div className="rounded-full bg-slate-600 h-9 w-9" />
         </div>
         <div className="flex flex-col w-full gap-2">
-          <div className="flex flex-col gap-1 w-full">
+          <div className="flex flex-col w-full gap-1">
             <div className="bg-slate-500 w-full h-[12px] animate-pulse rounded-full" />
             <div className="bg-slate-500 w-[60px] h-[12px] animate-pulse rounded-full" />
           </div>
@@ -163,7 +163,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
           </Badge>
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
-              <Typography as="span" variant="sm" weight={500} className="items-center text-slate-50 whitespace-normal">
+              <Typography as="span" variant="sm" weight={500} className="items-center whitespace-normal text-slate-50">
                 {notification.summary.info ? (
                   notification.summary.info
                 ) : ['loading'].includes(status) ? (

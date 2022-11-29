@@ -4,12 +4,10 @@ import { createErrorToast } from '@sushiswap/ui'
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
 import { ProviderRpcError, usePrepareSendTransaction, useSendTransaction as useSendTransaction_ } from 'wagmi'
 import { SendTransactionArgs, SendTransactionResult } from 'wagmi/actions'
-import {
-  UseSendTransactionArgs,
-  UseSendTransactionConfig,
-} from 'wagmi/dist/declarations/src/hooks/transactions/useSendTransaction'
 
-export function useSendTransaction<Args extends UseSendTransactionArgs = UseSendTransactionArgs>({
+type Args = Parameters<typeof useSendTransaction_>['0']
+
+export function useSendTransaction({
   chainId,
   onError,
   onMutate,
@@ -17,11 +15,11 @@ export function useSendTransaction<Args extends UseSendTransactionArgs = UseSend
   onSettled,
   prepare,
   enabled = true,
-}: Omit<Args & UseSendTransactionConfig, 'request' | 'mode'> & {
-  prepare: (request: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => void
+}: Omit<NonNullable<Args>, 'request' | 'mode'> & {
+  prepare: (request: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => void
   enabled?: boolean
 }) {
-  const [request, setRequest] = useState<Partial<TransactionRequest & { to: string }>>({})
+  const [request, setRequest] = useState<(TransactionRequest & { to: string }) | undefined>()
   const { config } = usePrepareSendTransaction({
     request,
     chainId,

@@ -257,9 +257,9 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
-                  address={getTridentRouterContractConfig(chainId).addressOrName}
+                  address={getTridentRouterContractConfig(chainId).address}
                   onSignature={setPermit}
-                  enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
+                  enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                 />
                 <Approve.Token
                   id="add-liquidity-trident-approve-token0"

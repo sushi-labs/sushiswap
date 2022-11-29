@@ -7,7 +7,7 @@ import { ApprovalType, ApproveDefinition } from '@sushiswap/wagmi/systems/Approv
 import { useRouters } from 'lib/hooks/useRouters'
 import { useNotifications, useSettings } from 'lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { Address, useAccount } from 'wagmi'
 
 import { TradeExecuteProvider } from '../TradeExecuteProvider'
 import { useTrade } from '../TradeProvider'
@@ -35,7 +35,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
 
   const approveTokenTo = useMemo(() => {
     if (trade?.isV1()) {
-      return chainId === ChainId.POLYGON && carbonOffset ? sushiSwapKlimaRouter?.address : sushiSwapRouter?.address
+      return chainId === ChainId.POLYGON && carbonOffset
+        ? (sushiSwapKlimaRouter?.address as Address)
+        : (sushiSwapRouter?.address as Address)
     } else if (trade?.isV2()) {
       return chainId && chainId in BENTOBOX_ADDRESS ? BENTOBOX_ADDRESS[chainId] : undefined
     }
@@ -53,7 +55,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
     if (trade?.isV2()) {
       definition.push({
         type: ApprovalType.Bentobox,
-        masterContract: getTridentRouterContractConfig(chainId).addressOrName,
+        masterContract: getTridentRouterContractConfig(chainId).address,
         buttonProps: {
           className: 'whitespace-nowrap',
           size: 'md',

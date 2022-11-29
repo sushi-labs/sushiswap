@@ -1,10 +1,11 @@
+import { bentoBoxV1Abi } from '@sushiswap/abi'
 import bentoBoxExports from '@sushiswap/bentobox/exports.json'
-import { BentoBoxV1 } from '@sushiswap/bentobox/typechain'
 import { ChainId } from '@sushiswap/chain'
+import { Contract } from 'ethers'
 import { useContract, useProvider } from 'wagmi'
 
 // TODO: Move to deployments
-export const BENTOBOX_ADDRESS: Record<number, string> = {
+export const BENTOBOX_ADDRESS: Record<number, `0x${string}`> = {
   [ChainId.ETHEREUM]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
   [ChainId.ROPSTEN]: '0x6BdD85290001C8Aef74f35A7606065FA15aD5ACF',
   [ChainId.RINKEBY]: '0xF5BCE5077908a1b7370B9ae04AdC565EBd643966',
@@ -30,16 +31,14 @@ export const BENTOBOX_ADDRESS: Record<number, string> = {
 }
 
 export const getBentoBoxContractConfig = (chainId: number | undefined) => ({
-  addressOrName:
+  address:
     bentoBoxExports[chainId?.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
       ?.address ?? '',
-  contractInterface:
-    bentoBoxExports[chainId?.toString() as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1
-      ?.abi ?? [],
+  abi: bentoBoxV1Abi,
 })
 
-export function useBentoBoxContract(chainId: number | undefined) {
-  return useContract<BentoBoxV1>({
+export function useBentoBoxContract(chainId: number | undefined): Contract | null {
+  return useContract({
     ...getBentoBoxContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
   })

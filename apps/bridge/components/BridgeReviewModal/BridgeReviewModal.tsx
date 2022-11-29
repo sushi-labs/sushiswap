@@ -43,9 +43,9 @@ export const BridgeReviewModal: FC<BridgeReviewModal> = ({ children }) => {
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
-                address={getSushiXSwapContractConfig(srcChainId).addressOrName}
+                address={getSushiXSwapContractConfig(srcChainId).address}
                 onSignature={onSig}
-                enabled={Boolean(getSushiXSwapContractConfig(srcChainId).addressOrName)}
+                enabled={Boolean(getSushiXSwapContractConfig(srcChainId).address)}
               />
               <Approve.Token
                 id="bridge-review-token"

@@ -12,7 +12,7 @@ import { isAddress } from 'ethers/lib/utils'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useConnect, useNetwork } from 'wagmi'
+import { Address, useConnect, useNetwork } from 'wagmi'
 
 import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade, WrapReviewModal } from '../components'
 import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
@@ -196,7 +196,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   }, [])
 
   const checkIfImportedTokens = useMemo(() => {
-    const tokens: { address: string; chainId: number }[] = []
+    const tokens: { address: Address; chainId: number }[] = []
     if (initialState.token0 && isAddress(initialState.token0))
       tokens.push({ address: initialState.token0, chainId: Number(initialState.chainId) })
     if (initialState.token1 && isAddress(initialState.token1))

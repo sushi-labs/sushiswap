@@ -162,15 +162,15 @@ const _VestingPage: FC = () => {
               <div className="flex gap-2">
                 <TransferModal
                   stream={vesting}
-                  abi={getFuroVestingContractConfig(chainId)?.contractInterface}
-                  address={getFuroVestingContractConfig(chainId)?.addressOrName}
+                  abi={getFuroVestingContractConfig(chainId)?.abi}
+                  address={getFuroVestingContractConfig(chainId)?.address}
                   chainId={chainId}
                 />
                 <CancelModal
                   title="Cancel Vesting"
                   stream={vesting}
-                  abi={getFuroVestingContractConfig(chainId)?.contractInterface}
-                  address={getFuroVestingContractConfig(chainId)?.addressOrName}
+                  abi={getFuroVestingContractConfig(chainId)?.abi}
+                  address={getFuroVestingContractConfig(chainId)?.address}
                   fn="stopVesting"
                   chainId={chainId}
                 />

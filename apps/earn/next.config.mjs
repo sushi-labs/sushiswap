@@ -13,11 +13,14 @@ const nextConfig = {
   basePath: '/earn',
   reactStrictMode: true,
   swcMinify: false,
+  productionBrowserSourceMaps: true,
+  experimental: {
+    esmExternals: 'loose',
+  },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {

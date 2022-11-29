@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK } from '../dist/.graphclient'
+import { getBuiltGraphSDK } from '..'
 
 describe('Pairs', () => {
   const sdk = getBuiltGraphSDK()

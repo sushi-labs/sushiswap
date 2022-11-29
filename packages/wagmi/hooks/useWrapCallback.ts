@@ -55,7 +55,7 @@ export const useWrapCallback: UseWrapCallback = ({ chainId, wrapType, amount, on
   )
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!contract || !chainId || !address || !amount || !amount.greaterThan(ZERO)) return
 
       if (wrapType === WrapType.Wrap) {
@@ -82,6 +82,6 @@ export const useWrapCallback: UseWrapCallback = ({ chainId, wrapType, amount, on
     chainId,
     prepare,
     onSettled,
-    enabled: contract && chainId && address && amount && amount?.greaterThan(ZERO),
+    enabled: !!contract && chainId && address && amount && amount?.greaterThan(ZERO),
   })
 }

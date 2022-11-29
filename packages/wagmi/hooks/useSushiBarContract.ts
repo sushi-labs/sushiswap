@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { XSUSHI_ADDRESS } from '@sushiswap/currency'
 import { useContract, useProvider } from 'wagmi'
 
@@ -144,14 +145,14 @@ const BAR_ABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-]
+] as const
 
 export const getSushiBarContractConfig = (chainId: number | undefined) => ({
-  addressOrName: XSUSHI_ADDRESS[chainId as number],
-  contractInterface: BAR_ABI,
+  address: XSUSHI_ADDRESS[ChainId.ETHEREUM],
+  abi: BAR_ABI,
 })
 
-export function useSushiBarContract(chainId: number | undefined) {
+export function useSushiBarContract(chainId: number | undefined): ReturnType<typeof useContract> {
   return useContract({
     ...getSushiBarContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
