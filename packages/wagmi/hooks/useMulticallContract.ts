@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Address, useContract, useProvider } from 'wagmi'
 
-import { multicall3Abi } from '../abis'
+import { multicallAbi } from '../abis'
 
 export const MULTICALL_ADDRESS: Record<number, string> = {
   [ChainId.ETHEREUM]: '0x1F98415757620B543A52E61c46B32eB19261F984',
@@ -33,7 +33,7 @@ export const MULTICALL_ADDRESS: Record<number, string> = {
 
 export const getMulticallContractConfig = (chainId: number | undefined) => ({
   address: (chainId && chainId in MULTICALL_ADDRESS ? MULTICALL_ADDRESS[chainId] : '') as Address,
-  abi: multicall3Abi,
+  abi: multicallAbi,
 })
 
 export function useMulticallContract(chainId: number): ReturnType<typeof useContract> {

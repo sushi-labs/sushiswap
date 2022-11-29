@@ -43,7 +43,7 @@
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "0.7.5",
+    "@wagmi/core": "0.7.6",
     "express": "^4.18.1"
   },
   "devDependencies": {

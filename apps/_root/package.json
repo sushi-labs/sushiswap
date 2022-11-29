@@ -39,7 +39,7 @@
     "react-ticker": "^1.3.2",
     "react-transition-group": "^4.4.2",
     "use-count-up": "^3.0.1",
-    "wagmi": "0.8.6"
+    "wagmi": "0.8.7"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
