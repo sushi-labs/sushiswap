@@ -16,6 +16,8 @@ env:
   CI: true
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+  ALCHEMY_POLYGON_API_KEY: ${{ secrets.ALCHEMY_POLYGON_API_KEY }}
 
 jobs:
   ci:
