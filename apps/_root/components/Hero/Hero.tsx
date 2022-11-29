@@ -65,8 +65,8 @@ export const Hero: FC = () => {
                   initial={{ opacity: 0.08 }}
                   animate={{ opacity: 0 }}
                   transition={{
-                    duration: 1.4,
-                    delay: 0.5,
+                    duration: 0.8,
+                    delay: 0.7,
                   }}
                   className="bg-white absolute inset-0 z-[10]"
                 />
