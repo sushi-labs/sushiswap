@@ -1,5 +1,7 @@
 {
   "name": "router",
+  "version": "0.0.0",
+  "private": true,
   "description": "Router",
   "license": "MIT",
   "author": "Ilya Lyalin",
