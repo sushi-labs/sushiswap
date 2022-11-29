@@ -31,7 +31,7 @@ describe('Tokens', () => {
   })
   it.skip('should return 2000 tokens for multiple chain ids', async () => {
     const { tokens } = await sdk.TokensByChainIds({ chainIds, first: 1000 })
-    console.log({ tokens })
+    // console.log({ tokens })
     expect(tokens.length).toBe(2000)
   })
 })

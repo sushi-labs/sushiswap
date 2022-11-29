@@ -1,18 +1,10 @@
-// import nextPwa from 'next-pwa'
 import transpileModules from 'next-transpile-modules'
-import { withAxiom } from 'next-axiom'
-
-// const withPwa = nextPwa({
-//   dest: 'public',
-// })
 
 const withTranspileModules = transpileModules([
-  '@sushiswap/ui',
   '@sushiswap/redux-localstorage',
   '@sushiswap/redux-token-lists',
-  '@sushiswap/chain',
+  '@sushiswap/ui',
   '@sushiswap/wagmi',
-  '@sushiswap/graph-client',
 ])
 
 // @ts-check
@@ -21,6 +13,9 @@ const nextConfig = {
   basePath: '/furo',
   reactStrictMode: true,
   swcMinify: false,
+  experimental: {
+    esmExternals: 'loose',
+  },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
@@ -38,5 +33,4 @@ const nextConfig = {
   },
 }
 
-// export default withAxiom(withPwa(withTranspileModules(nextConfig)))
-export default withAxiom(withTranspileModules(nextConfig))
+export default withTranspileModules(nextConfig)

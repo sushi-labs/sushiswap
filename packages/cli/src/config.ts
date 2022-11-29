@@ -1,4 +1,5 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
+import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 
 export const WETH_MAKER_SUPPORTED_CHAINS = [
   ChainId.ETHEREUM,
@@ -40,6 +41,12 @@ export const REVENUES_SUPPORTED_CHAIN_NAMES = [
   ChainKey.CELO,
   ChainKey.HARMONY,
 ] as const
+
+export const FURO_SUPPORTED_CHAIN_NAMES = Object.keys(FURO_SUBGRAPH_NAME)
+  .filter((key) => {
+    return Number(key) !== ChainId.GÖRLI
+  })
+  .map((key) => ChainId[Number(key)].toLowerCase())
 
 export const CHAIN_NAME_TO_CHAIN_ID = {
   [ChainKey.ETHEREUM]: ChainId.ETHEREUM,

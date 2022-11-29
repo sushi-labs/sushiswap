@@ -289,7 +289,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth
-                        address={getTridentRouterContractConfig(pair.chainId).addressOrName}
+                        address={getTridentRouterContractConfig(pair.chainId).address}
                         onSignature={setPermit}
                       />
                       <Approve.Token
@@ -297,7 +297,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                         className="whitespace-nowrap"
                         fullWidth
                         amount={slpAmountToRemove}
-                        address={getTridentRouterContractConfig(pair.chainId).addressOrName}
+                        address={getTridentRouterContractConfig(pair.chainId).address}
                       />
                     </Approve.Components>
                   }

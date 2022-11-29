@@ -1,5 +1,4 @@
 import transpileModules from 'next-transpile-modules'
-import { withAxiom } from 'next-axiom'
 
 const withTranspileModules = transpileModules(['@sushiswap/ui'])
 
@@ -9,6 +8,9 @@ const nextConfig = {
   basePath: '/blog',
   reactStrictMode: true,
   swcMinify: false,
+  experimental: {
+    esmExternals: 'loose',
+  },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
@@ -26,4 +28,4 @@ const nextConfig = {
   },
 }
 
-export default withAxiom(withTranspileModules(nextConfig))
+export default withTranspileModules(nextConfig)

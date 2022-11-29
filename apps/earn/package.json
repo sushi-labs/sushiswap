@@ -37,6 +37,7 @@
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@tanstack/react-table": "8.5.0",
+    "@vercel/analytics": "0.1.5",
     "lodash.sortby": "4.7.0",
     "lodash.take": "4.1.1",
     "lodash.orderby": "4.6.0",
@@ -46,7 +47,6 @@
     "ethers": "^5.7.0",
     "fast-json-stable-stringify": "^2.1.0",
     "next": "^12.3.1",
-    "next-axiom": "^0.14.0",
     "next-pwa": "^5.6.0",
     "next-seo": "^5.5.0",
     "next-sitemap": "^3.1.20",
@@ -54,7 +54,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
-    "wagmi": "0.6.8"
+    "wagmi": "0.8.6"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

@@ -16,7 +16,7 @@ interface TransactionProgressStepper {
   outputAmount?: Amount<Type>
   srcBridgeToken: Token
   dstBridgeToken: Token
-  srcTxHash: string
+  srcTxHash: `0x${string}`
   crossChain: boolean
 }
 

@@ -1,12 +1,13 @@
 import { Interface } from '@ethersproject/abi'
-import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { computeStablePoolAddress, Fee, StablePool } from '@sushiswap/amm'
+import { Amount, Currency, Token, Type } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import stablePoolArtifact from '@sushiswap/trident/artifacts/contracts/pool/stable/StablePool.sol/StablePool.json'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { useContractReads } from 'wagmi'
-import { UseContractReadsConfig } from 'wagmi/dist/declarations/src/hooks/contracts/useContractReads'
+import { Address, useContractReads } from 'wagmi'
 
+import { stablePoolAbi, stablePoolFactoryAbi } from '../abis'
 import { useBentoBoxTotals } from './useBentoBoxTotals'
 import { getStablePoolFactoryContract, useStablePoolFactoryContract } from './useStablePoolFactoryContract'
 
@@ -16,8 +17,6 @@ export enum StablePoolState {
   EXISTS,
   INVALID,
 }
-
-const POOL_INTERFACE = new Interface(stablePoolArtifact.abi)
 
 interface Rebase {
   base: JSBI
@@ -32,10 +31,12 @@ interface PoolData {
   token1: Token
 }
 
+type Config = Omit<NonNullable<Parameters<typeof useContractReads>['0']>, 'contracts'>
+
 export function useGetStablePools(
   chainId: number | undefined,
   currencies: [Currency | undefined, Currency | undefined][],
-  config: Omit<UseContractReadsConfig, 'contracts'> = { enabled: true }
+  config: Config = { enabled: true }
 ): {
   isLoading: boolean
   isError: boolean
@@ -73,10 +74,10 @@ export function useGetStablePools(
   } = useContractReads({
     contracts: pairsUniqueAddr.map((el) => ({
       chainId,
-      addressOrName: contract.address,
-      contractInterface: contract.interface,
+      address: contract?.address as Address,
+      abi: stablePoolFactoryAbi,
       functionName: 'poolsCount',
-      args: el,
+      args: el as [Address, Address],
     })),
     enabled: Boolean(pairsUniqueAddr.length > 0 && config?.enabled),
     watch: !config?.enabled,
@@ -86,7 +87,15 @@ export function useGetStablePools(
     return callStatePoolsCount
       ?.map((s, i) => [i, s ? parseInt(s.toString()) : 0] as [number, number])
       .filter(([, length]) => length)
-      .map(([i, length]) => [pairsUniqueAddr[i][0], pairsUniqueAddr[i][1], 0, length])
+      .map(
+        ([i, length]) =>
+          [
+            pairsUniqueAddr[i][0] as Address,
+            pairsUniqueAddr[i][1] as Address,
+            BigNumber.from(0),
+            BigNumber.from(length),
+          ] as const
+      )
   }, [callStatePoolsCount, pairsUniqueAddr])
 
   const pairsUniqueProcessed = useMemo(() => {
@@ -105,12 +114,12 @@ export function useGetStablePools(
       if (!callStatePoolsCountProcessed) return []
       return callStatePoolsCountProcessed.map((args) => ({
         chainId,
-        addressOrName: contract.address,
-        contractInterface: contract.interface,
+        address: contract?.address as Address,
+        abi: stablePoolFactoryAbi,
         functionName: 'getPools',
         args,
       }))
-    }, [callStatePoolsCountProcessed, chainId, contract.address, contract.interface]),
+    }, [callStatePoolsCountProcessed, chainId, contract?.address]),
     enabled: Boolean(callStatePoolsCountProcessed && callStatePoolsCountProcessed?.length > 0 && config?.enabled),
     watch: !config?.enabled,
   })
@@ -133,24 +142,31 @@ export function useGetStablePools(
   const poolsAddresses = useMemo(() => pools.map((p) => p.address), [pools])
 
   const {
-    data: reservesAndFees,
-    isLoading: reservesAndFeesLoading,
-    isError: reservesAndFeesError,
+    data: reserves,
+    isLoading: reservesLoading,
+    isError: reservesError,
   } = useContractReads({
-    contracts: [
-      ...poolsAddresses.map((addressOrName) => ({
-        chainId,
-        addressOrName,
-        contractInterface: POOL_INTERFACE,
-        functionName: 'getReserves',
-      })),
-      ...poolsAddresses.map((addressOrName) => ({
-        chainId,
-        addressOrName,
-        contractInterface: POOL_INTERFACE,
-        functionName: 'swapFee',
-      })),
-    ],
+    contracts: poolsAddresses.map((address) => ({
+      chainId,
+      address,
+      abi: stablePoolAbi,
+      functionName: 'getReserves',
+    })),
+    enabled: poolsAddresses.length > 0 && config?.enabled,
+    watch: !config?.enabled,
+  })
+
+  const {
+    data: fees,
+    isLoading: feesLoading,
+    isError: feesError,
+  } = useContractReads({
+    contracts: poolsAddresses.map((address) => ({
+      chainId,
+      address,
+      abi: stablePoolAbi,
+      functionName: 'swapFee',
+    })),
     enabled: poolsAddresses.length > 0 && config?.enabled,
     watch: !config?.enabled,
   })
@@ -159,12 +175,12 @@ export function useGetStablePools(
 
   return useMemo(() => {
     return {
-      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesAndFeesLoading,
-      isError: callStatePoolsCountError || callStatePoolsError || reservesAndFeesError,
+      isLoading: callStatePoolsCountLoading || callStatePoolsLoading || reservesLoading || feesLoading,
+      isError: callStatePoolsCountError || callStatePoolsError || reservesError || feesError,
       data: pools.map((p, i) => {
         if (
-          !reservesAndFees?.[i] ||
-          !reservesAndFees?.[i + poolsAddresses.length] ||
+          !reserves?.[i] ||
+          !fees?.[i] ||
           !totals ||
           !(p.token0.wrapped.address in totals) ||
           !(p.token1.wrapped.address in totals)
@@ -173,9 +189,9 @@ export function useGetStablePools(
         return [
           StablePoolState.EXISTS,
           new StablePool(
-            Amount.fromRawAmount(p.token0, reservesAndFees[i]._reserve0.toString()),
-            Amount.fromRawAmount(p.token1, reservesAndFees[i]._reserve1.toString()),
-            parseInt(reservesAndFees[i + poolsAddresses.length].toString()),
+            Amount.fromRawAmount(p.token0, reserves[i]._reserve0.toString()),
+            Amount.fromRawAmount(p.token1, reserves[i]._reserve1.toString()),
+            parseInt(fees[i].toString()),
             totals[p.token0.wrapped.address],
             totals[p.token1.wrapped.address]
           ),
@@ -187,11 +203,13 @@ export function useGetStablePools(
     callStatePoolsCountLoading,
     callStatePoolsError,
     callStatePoolsLoading,
+    fees,
+    feesError,
+    feesLoading,
     pools,
-    poolsAddresses.length,
-    reservesAndFees,
-    reservesAndFeesError,
-    reservesAndFeesLoading,
+    reserves,
+    reservesError,
+    reservesLoading,
     totals,
   ])
 }
@@ -229,28 +247,30 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [StablePool
 
   const poolsAddresses = useMemo(
     () =>
-      input.reduce<string[]>((acc, [tokenA, tokenB, fee]) => {
-        acc.push(
-          computeStablePoolAddress({
-            factoryAddress: stablePoolFactory.address,
-            tokenA,
-            tokenB,
-            fee,
-          })
-        )
-        return acc
-      }, []),
-    [stablePoolFactory.address, input]
+      stablePoolFactory
+        ? input.reduce<string[]>((acc, [tokenA, tokenB, fee]) => {
+            acc.push(
+              computeStablePoolAddress({
+                factoryAddress: stablePoolFactory.address,
+                tokenA,
+                tokenB,
+                fee,
+              })
+            )
+            return acc
+          }, [])
+        : [],
+    [stablePoolFactory, input]
   )
 
   const { data } = useContractReads({
-    contracts: poolsAddresses.map((addressOrName) => ({
+    contracts: poolsAddresses.map((address) => ({
       chainId,
-      addressOrName,
-      contractInterface: POOL_INTERFACE,
+      address,
+      abi: stablePoolAbi,
       functionName: 'getReserves',
     })),
-    enabled: poolsAddresses.length > 0 && getStablePoolFactoryContract(chainId).addressOrName,
+    enabled: poolsAddresses.length > 0 && getStablePoolFactoryContract(chainId)?.address,
     watch: true,
     keepPreviousData: true,
   })

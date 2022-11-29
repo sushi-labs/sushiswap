@@ -1,14 +1,14 @@
+import { QueryFunction } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 import { fetchToken, FetchTokenArgs, FetchTokenResult } from 'wagmi/actions'
-import { QueryConfig, QueryFunctionArgs } from 'wagmi/dist/declarations/src/types'
 
 export type FetchTokensArgs = { tokens: FetchTokenArgs[] }
 export type FetchTokensResult = FetchTokenResult[]
 export type UseTokensArgs = Partial<FetchTokensArgs>
-export type UseTokensConfig = QueryConfig<FetchTokensResult, Error>
+export type UseTokensConfig = Partial<Parameters<typeof useQuery>['2']>
 
-export const queryKey = ({ tokens }: Partial<FetchTokensArgs>) => {
+export const queryKey = (tokens?: FetchTokensArgs['tokens']) => {
   return (
     tokens?.map((token) => ({
       entity: 'token',
@@ -19,7 +19,7 @@ export const queryKey = ({ tokens }: Partial<FetchTokensArgs>) => {
   )
 }
 
-const queryFn = ({ queryKey: tokens }: QueryFunctionArgs<typeof queryKey>) => {
+const queryFn: QueryFunction<FetchTokensResult, ReturnType<typeof queryKey>> = ({ queryKey: tokens }) => {
   if (tokens.filter((el) => !el.address).length > 0) throw new Error('address is required')
 
   return Promise.all(
@@ -38,18 +38,22 @@ export function useTokens({
   onError,
   onSettled,
   onSuccess,
-}: UseTokensArgs & UseTokensConfig = {}) {
+}: UseTokensArgs & UseTokensConfig) {
   const _enabled = useMemo(() => {
     return Boolean(tokens && tokens?.length > 0 && enabled && tokens.map((el) => el.address && el.chainId))
   }, [enabled, tokens])
 
-  return useQuery(queryKey({ tokens }), queryFn, {
-    cacheTime,
-    enabled: _enabled,
-    staleTime,
-    suspense,
-    onError,
-    onSettled,
-    onSuccess,
-  })
+  return useQuery<FetchTokensResult, unknown, FetchTokensResult, ReturnType<typeof queryKey>>(
+    queryKey(tokens),
+    queryFn,
+    {
+      cacheTime,
+      enabled: _enabled,
+      staleTime,
+      suspense,
+      onError,
+      onSettled,
+      onSuccess,
+    }
+  )
 }

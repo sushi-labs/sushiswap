@@ -18,7 +18,7 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount } from 'wagmi'
+import { useNetwork } from 'wagmi'
 
 import { ChartHover } from '../../types'
 import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
@@ -63,7 +63,7 @@ const LINKS = (id: string) => [
 ]
 
 const _Streams: FC = () => {
-  const { address } = useAccount()
+  const { chain } = useNetwork()
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
@@ -144,25 +144,25 @@ const _Streams: FC = () => {
           </div>
           <div className="flex flex-col gap-2">
             <WithdrawModal stream={stream} chainId={chainId} />
-            {address && (
+            {chain?.id === chainId && (
               <div className="flex gap-2">
                 <TransferModal
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   chainId={chainId}
                 />
                 <UpdateModal
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   chainId={chainId}
                 />
                 <CancelModal
                   title="Cancel Stream"
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   fn="cancelStream"
                   chainId={chainId}
                 />
