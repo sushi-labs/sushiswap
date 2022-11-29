@@ -8893,11 +8893,11 @@ packages:
       extract-files: 11.0.0
       graphql: 16.6.0
       graphql-ws: 5.11.2_graphql@16.6.0
-      isomorphic-ws: 5.0.0_ws@8.9.0
+      isomorphic-ws: 5.0.0_ws@8.11.0
       meros: 1.2.0_@types+node@17.0.30
       tslib: 2.4.1
       value-or-promise: 1.0.11
-      ws: 8.9.0
+      ws: 8.11.0
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -8970,11 +8970,11 @@ packages:
       dset: 3.1.2
       extract-files: 11.0.0
       graphql-ws: 5.11.2
-      isomorphic-ws: 5.0.0_ws@8.9.0
+      isomorphic-ws: 5.0.0_ws@8.11.0
       meros: 1.2.0_@types+node@17.0.45
       tslib: 2.4.1
       value-or-promise: 1.0.11
-      ws: 8.9.0
+      ws: 8.11.0
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -8997,11 +8997,11 @@ packages:
       extract-files: 11.0.0
       graphql: 16.6.0
       graphql-ws: 5.11.2_graphql@16.6.0
-      isomorphic-ws: 5.0.0_ws@8.9.0
+      isomorphic-ws: 5.0.0_ws@8.11.0
       meros: 1.2.0
       tslib: 2.4.1
       value-or-promise: 1.0.11
-      ws: 8.9.0
+      ws: 8.11.0
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -9024,11 +9024,11 @@ packages:
       extract-files: 11.0.0
       graphql: 16.6.0
       graphql-ws: 5.11.2_graphql@16.6.0
-      isomorphic-ws: 5.0.0_ws@8.9.0
+      isomorphic-ws: 5.0.0_ws@8.11.0
       meros: 1.2.0_@types+node@16.11.45
       tslib: 2.4.1
       value-or-promise: 1.0.11
-      ws: 8.9.0
+      ws: 8.11.0
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -9051,11 +9051,11 @@ packages:
       extract-files: 11.0.0
       graphql: 16.6.0
       graphql-ws: 5.11.2_graphql@16.6.0
-      isomorphic-ws: 5.0.0_ws@8.9.0
+      isomorphic-ws: 5.0.0_ws@8.11.0
       meros: 1.2.0_@types+node@17.0.30
       tslib: 2.4.1
       value-or-promise: 1.0.11
-      ws: 8.9.0
+      ws: 8.11.0
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -9078,11 +9078,11 @@ packages:
       extract-files: 11.0.0
       graphql: 16.6.0
       graphql-ws: 5.11.2_graphql@16.6.0
-      isomorphic-ws: 5.0.0_ws@8.9.0
+      isomorphic-ws: 5.0.0_ws@8.11.0
       meros: 1.2.0_@types+node@17.0.45
       tslib: 2.4.1
       value-or-promise: 1.0.11
-      ws: 8.9.0
+      ws: 8.11.0
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -9292,15 +9292,6 @@ packages:
       '@repeaterjs/repeater': 3.0.4
       '@whatwg-node/events': 0.0.2
       tslib: 2.4.1
-    dev: false
-
-  /@graphql-yoga/subscription/3.0.0-next.0:
-    resolution: {integrity: sha512-ne+0p7CUHK8XOZRymKzYCLtllKNLqHnL+DiAOMCsvTm7NwgRXBBWiVwN/Bkp/JUTS8+PTssuTSLG8cUTR55p7g==}
-    dependencies:
-      '@graphql-yoga/typed-event-target': 1.0.0-next.0
-      '@repeaterjs/repeater': 3.0.4
-      '@whatwg-node/events': 0.0.2
-      tslib: 2.4.1
 
   /@graphql-yoga/typed-event-target/0.1.1:
     resolution: {integrity: sha512-l23kLKHKhfD7jmv4OUlzxMTihSqgIjGWCSb0KdlLkeiaF2jjuo8pRhX200hFTrtjRHGSYS1fx2lltK/xWci+vw==}
@@ -9311,13 +9302,6 @@ packages:
 
   /@graphql-yoga/typed-event-target/1.0.0:
     resolution: {integrity: sha512-Mqni6AEvl3VbpMtKw+TIjc9qS9a8hKhiAjFtqX488yq5oJtj9TkNlFTIacAVS3vnPiswNsmDiQqvwUOcJgi1DA==}
-    dependencies:
-      '@repeaterjs/repeater': 3.0.4
-      tslib: 2.4.1
-    dev: false
-
-  /@graphql-yoga/typed-event-target/1.0.0-next.0:
-    resolution: {integrity: sha512-OP+6WpeP2eJBdQ4aVdP6m+dhVXPQX1xJ0T2GVmBMiRD3NQeaIMbAP0FPrB3gvh2VGVH0UaAPspQSKsxwEe8YtQ==}
     dependencies:
       '@repeaterjs/repeater': 3.0.4
       tslib: 2.4.1
@@ -9779,13 +9763,6 @@ packages:
 
   /@jridgewell/sourcemap-codec/1.4.14:
     resolution: {integrity: sha512-XPSJHWmi394fuUuzDnGz1wiKqWfo1yXecHQMRf2l6hztTO+nPru658AyDngaBe7isIxEkRsPR3FZh+s7iVa4Uw==}
-
-  /@jridgewell/trace-mapping/0.3.14:
-    resolution: {integrity: sha512-bJWEfQ9lPTvm3SneWwRFVLzrh6nhjwqw7TUFFBEMzwvg7t7PCDenf2lDwqo4NQXzdpgBXyFgDWnQA+2vkruksQ==}
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.0
-      '@jridgewell/sourcemap-codec': 1.4.14
-    dev: false
 
   /@jridgewell/trace-mapping/0.3.17:
     resolution: {integrity: sha512-MCNzAp77qzKca9+W/+I0+sEpaUnZoeasnghNeVc41VZCEKaCH73Vq3BZZ/SzWIgrqE4H4ceI+p+b6C0mHf9T4g==}
@@ -19838,7 +19815,7 @@ packages:
       '@envelop/validation-cache': 5.0.1_@envelop+core@3.0.2
       '@graphql-tools/schema': 9.0.10
       '@graphql-typed-document-node/core': 3.1.1
-      '@graphql-yoga/subscription': 3.0.0-next.0
+      '@graphql-yoga/subscription': 3.0.0
       '@whatwg-node/fetch': 0.4.7
       '@whatwg-node/server': 0.4.11_@types+node@17.0.45
       dset: 3.1.2
@@ -19858,7 +19835,7 @@ packages:
       '@envelop/validation-cache': 5.0.1_axa7s2mrdkjmrnvlx7f5pwyen4
       '@graphql-tools/schema': 9.0.10_graphql@16.6.0
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
-      '@graphql-yoga/subscription': 3.0.0-next.0
+      '@graphql-yoga/subscription': 3.0.0
       '@whatwg-node/fetch': 0.4.7
       '@whatwg-node/server': 0.4.11
       dset: 3.1.2
@@ -19879,7 +19856,7 @@ packages:
       '@envelop/validation-cache': 5.0.1_axa7s2mrdkjmrnvlx7f5pwyen4
       '@graphql-tools/schema': 9.0.10_graphql@16.6.0
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
-      '@graphql-yoga/subscription': 3.0.0-next.0
+      '@graphql-yoga/subscription': 3.0.0
       '@whatwg-node/fetch': 0.4.7
       '@whatwg-node/server': 0.4.11_@types+node@16.11.45
       dset: 3.1.2
@@ -19900,7 +19877,7 @@ packages:
       '@envelop/validation-cache': 5.0.1_axa7s2mrdkjmrnvlx7f5pwyen4
       '@graphql-tools/schema': 9.0.10_graphql@16.6.0
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
-      '@graphql-yoga/subscription': 3.0.0-next.0
+      '@graphql-yoga/subscription': 3.0.0
       '@whatwg-node/fetch': 0.4.7
       '@whatwg-node/server': 0.4.11_@types+node@17.0.30
       dset: 3.1.2
@@ -19921,7 +19898,7 @@ packages:
       '@envelop/validation-cache': 5.0.1_axa7s2mrdkjmrnvlx7f5pwyen4
       '@graphql-tools/schema': 9.0.10_graphql@16.6.0
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
-      '@graphql-yoga/subscription': 3.0.0-next.0
+      '@graphql-yoga/subscription': 3.0.0
       '@whatwg-node/fetch': 0.4.7
       '@whatwg-node/server': 0.4.11_@types+node@17.0.45
       dset: 3.1.2
@@ -21269,14 +21246,6 @@ packages:
       ws: '*'
     dependencies:
       ws: 8.11.0
-    dev: false
-
-  /isomorphic-ws/5.0.0_ws@8.9.0:
-    resolution: {integrity: sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==}
-    peerDependencies:
-      ws: '*'
-    dependencies:
-      ws: 8.9.0
 
   /isstream/0.1.2:
     resolution: {integrity: sha512-Yljz7ffyPbrLpLngrMtZ7NduUgVvi6wG9RJ9IUcyCd59YQ911PBJphODUcbOVbqYfxe1wuYf/LJ8PauMRwsM/g==}
@@ -22358,7 +22327,7 @@ packages:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 10.0.0
-      ws: 8.9.0
+      ws: 8.11.0
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -27744,7 +27713,7 @@ packages:
     resolution: {integrity: sha512-s/fitrbVeEyHKFa7mFdkuQMWlH1Wgw/yEXMt5xACT4ZpzWFluehAxRtUUQKPuWhaLAWhFcVx6w3oC8VKaUfPGA==}
     engines: {node: '>=10.0.0'}
     dependencies:
-      ajv: 8.11.0
+      ajv: 8.11.2
       lodash.truncate: 4.4.2
       slice-ansi: 4.0.0
       string-width: 4.2.3
@@ -27854,7 +27823,7 @@ packages:
       uglify-js:
         optional: true
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.14
+      '@jridgewell/trace-mapping': 0.3.17
       jest-worker: 27.5.1
       schema-utils: 3.1.1
       serialize-javascript: 6.0.0
@@ -30688,7 +30657,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: false
 
   /ws/8.11.0_22kvxa7zeyivx4jp72v2w3pkvy:
     resolution: {integrity: sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg==}

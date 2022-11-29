@@ -11,6 +11,7 @@ import { Contract } from "ethers";
 import { BentoBoxABI } from "../ABI/BentoBoxABI";
 import { ChainKey, ChainId } from "@sushiswap/chain";
 import { SUSHI, Token, WBTC, WNATIVE } from "@sushiswap/currency";
+import { expect } from "chai";
 
 const delay = async (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -62,8 +63,19 @@ async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: T
   console.log(`1. ${chainId} RouteProcessor deployment ...`);  
   // const [_, John] = await ethers.getSigners()
   // const provider = John.provider as Provider
-  //const provider = new ethers.providers.AlchemyProvider(...net.alchemyProviderArgs)   
-  const provider = ethers.getDefaultProvider()
+  //const provider = ethers.getDefaultProvider()
+  let provider
+  switch(chainId) {
+    case ChainId.ETHEREUM: 
+      provider = new ethers.providers.AlchemyProvider("homestead", process.env.ALCHEMY_API_KEY)
+      break
+    case ChainId.POLYGON:
+      provider = new ethers.providers.AlchemyProvider('matic', process.env.ALCHEMY_POLYGON_API_KEY)
+      break
+    default:
+      throw new Error('Unsupported net!')
+  }
+  
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory(
     "RouteProcessor"
   );
@@ -180,6 +192,7 @@ describe("RouteProcessor", async function () {
   it("Ethereum WETH => FEI check", async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url;
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
+      expect(process.env.ALCHEMY_API_KEY).not.undefined
       const FEI = new Token({
         chainId: ChainId.ETHEREUM,
         address: "0x956F47F50A910163D8BF957Cf5846D573E7f87CA",
@@ -194,6 +207,7 @@ describe("RouteProcessor", async function () {
   it("Polygon WMATIC => SUSHI check", async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url;
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
+      expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined
       await testRouteProcessor(ChainId.POLYGON, 1_000_000, SUSHI[ChainId.POLYGON])
     }
   })

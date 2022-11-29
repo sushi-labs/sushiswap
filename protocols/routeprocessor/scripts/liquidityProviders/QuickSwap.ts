@@ -19,9 +19,13 @@ const QUICKSWAP_INIT_CODE_HASH: Record<string | number, string> = {
 }
 
 export class QuickSwapProvider extends LiquidityProvider {
+  poolCodes: PoolCode[]
+  lastPoolCodeNumber: number
 
   constructor(chainDataProvider: ethers.providers.BaseProvider, chainId: ChainId, l: Limited) {
     super(chainDataProvider, chainId, l)
+    this.poolCodes = []
+    this.lastPoolCodeNumber = 0
   }
 
   getPoolProviderName(): string {return 'Quickswap'}
@@ -55,7 +59,9 @@ export class QuickSwapProvider extends LiquidityProvider {
       const rPool = new ConstantProductRPool(
         poolAddress, token0 as RToken, token1 as RToken, 0.003, reserve0, reserve1
       )
-      return new ConstantProductPoolCode(rPool, this.getPoolProviderName())
+      const pc =  new ConstantProductPoolCode(rPool, this.getPoolProviderName())
+      this.poolCodes.push(pc)
+      return pc
     } catch (e) {
       return undefined
     }
@@ -84,5 +90,19 @@ export class QuickSwapProvider extends LiquidityProvider {
      ])
      return Array.from(set)
   }
+
+  startGetherData(t0: Token, t1: Token) {
+    this.poolCodes = []
+    this.lastPoolCodeNumber = 0
+    this.getPools(t0, t1)   // starting the process
+  }
+  poolListWereUpdated(): boolean {
+    return this.lastPoolCodeNumber !== this.poolCodes.length
+  }
+  getCurrentPoolList(): PoolCode[] {
+    this.lastPoolCodeNumber = this.poolCodes.length
+    return this.poolCodes
+  }
+  stopGetherData() {}
 
 }

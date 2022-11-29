@@ -45,10 +45,14 @@ function sortTokens(tokens: Token[]): Token[] {
 
 export class TridentProvider extends LiquidityProvider {
   pools: Map<string, PoolCode>
-  
+  poolCodes: PoolCode[]
+  lastPoolCodeNumber: number
+
   constructor(chainDataProvider: ethers.providers.BaseProvider, chainId: ChainId, l: Limited) {
     super(chainDataProvider, chainId, l)
     this.pools = new Map<string, PoolCode>()
+    this.poolCodes = []
+    this.lastPoolCodeNumber = 0
   }
 
   getPoolProviderName(): string {return 'Trident'}
@@ -93,6 +97,7 @@ export class TridentProvider extends LiquidityProvider {
       )
       const poolCode = new BentoConstantProductPoolCode(pool, this.getPoolProviderName())
       pools.push(poolCode)
+      this.poolCodes.push(poolCode)
     }
     return pools
   }
@@ -159,7 +164,9 @@ export class TridentProvider extends LiquidityProvider {
         totals.base,
         max
       )
-      return new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBox[this.chainId])
+      const br = new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBox[this.chainId])
+      this.poolCodes.push(br)
+      return br
     })
 
     return await Promise.all(promises)
@@ -175,5 +182,19 @@ export class TridentProvider extends LiquidityProvider {
      ])
      return Array.from(set)
   }
+
+  startGetherData(t0: Token, t1: Token) {
+    this.poolCodes = []
+    this.lastPoolCodeNumber = 0
+    this.getPools(t0, t1)   // starting the process
+  }
+  poolListWereUpdated(): boolean {
+    return this.lastPoolCodeNumber !== this.poolCodes.length
+  }
+  getCurrentPoolList(): PoolCode[] {
+    this.lastPoolCodeNumber = this.poolCodes.length
+    return this.poolCodes
+  }
+  stopGetherData() {}
 
 }
