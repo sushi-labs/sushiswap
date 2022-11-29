@@ -372,7 +372,7 @@ export const otherChains: Chain[] = [
   },
   {
     id: ChainId.BOBA_AVAX,
-    name: 'Boba Avalanche Mainnet',
+    name: 'Boba Avax',
     network: 'boba-avax',
     nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
     rpcUrls: {
@@ -391,6 +391,29 @@ export const otherChains: Chain[] = [
     multicall: {
       address: '0x2c46217Fae90D302d1Fb5467ADA504bC2A84f448',
       blockCreated: 3652,
+    },
+  },
+  {
+    id: ChainId.BTTC,
+    name: 'BitTorrent Chain',
+    network: 'btt',
+    nativeCurrency: { name: 'BitTorrent', symbol: 'BTT', decimals: 18 },
+    rpcUrls: {
+      default: 'https://rpc.bittorrentchain.io',
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'BitTorrent Chain Explorer',
+        url: 'https://bttcscan.com/',
+      },
+      default: {
+        name: 'BitTorrent Chain Explorer',
+        url: 'https://bttcscan.com/',
+      },
+    },
+    multicall: {
+      address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287',
+      blockCreated: 13014184,
     },
   },
 ]

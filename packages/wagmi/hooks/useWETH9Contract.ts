@@ -8,7 +8,7 @@ export const getWETH9ContractConfig = (chainId: number | undefined) => ({
   abi: WETH9_ABI,
 })
 
-export function useWETH9Contract(chainId: number | undefined) {
+export function useWETH9Contract(chainId: keyof typeof WNATIVE_ADDRESS | undefined) {
   return useContract({
     ...getWETH9ContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),

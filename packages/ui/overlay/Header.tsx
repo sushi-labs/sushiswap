@@ -19,7 +19,7 @@ export const Header: FC<Header> = ({ className, title, border = true, onBack, on
       className={classNames(
         className,
         border ? 'border-b border-slate-200/5' : '',
-        'grid grid-cols-3 absolute top-0 left-0 right-0 px-3 h-[48px]'
+        'grid grid-cols-[40px_auto_40px] absolute top-0 left-0 right-0 px-3 h-[48px]'
       )}
     >
       {onBack ? (
