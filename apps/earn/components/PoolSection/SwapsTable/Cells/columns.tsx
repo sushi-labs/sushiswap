@@ -1,4 +1,4 @@
-import { Swap } from '@sushiswap/graph-client'
+import { Swap } from '.graphclient'
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import { SwapTxnHashCell } from './SwapTxnHashCell'
@@ -26,7 +26,7 @@ export const TXN_BLOCK_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'txnBlock',
   header: 'Block',
   cell: (props) => <SwapTxnBlockCell row={props.row.original} />,
-  size: 100,
+  size: 90,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
@@ -56,9 +56,8 @@ export const AMOUNT_IN_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'amountIn',
   header: 'Amount In',
   cell: (props) => <SwapAmountInCell row={props.row.original} />,
-  size: 100,
+  size: 110,
   meta: {
-    className: 'justify-end',
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
 }
@@ -67,7 +66,7 @@ export const AMOUNT_OUT_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'amountOut',
   header: 'Amount Out',
   cell: (props) => <SwapAmountOutCell row={props.row.original} />,
-  size: 100,
+  size: 110,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
@@ -77,7 +76,7 @@ export const TXN_AGE_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'txnAge',
   header: 'Age',
   cell: (props) => <SwapTxnAgeCell row={props.row.original} />,
-  size: 140,
+  size: 150,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },

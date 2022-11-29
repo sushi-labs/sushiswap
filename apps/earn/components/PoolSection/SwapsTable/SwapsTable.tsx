@@ -1,4 +1,4 @@
-import { Swap } from '@sushiswap/graph-client'
+import { Swap } from '.graphclient'
 import { ChainId } from '@sushiswap/chain'
 import { Pair } from '@sushiswap/graph-client'
 import { GenericTable, Table, useBreakpoint } from '@sushiswap/ui'

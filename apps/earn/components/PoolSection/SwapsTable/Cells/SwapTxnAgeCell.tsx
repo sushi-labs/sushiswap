@@ -11,7 +11,7 @@ export const SwapTxnAgeCell: FC<CellProps> = ({ row }) => {
   const [day, setDay] = useState<any>(0);
 
   useEffect(() => {
-    let diff = Date.now() - Number(row.timestamp) * 1000;
+    let diff = Date.now() - Number(row.timestamp) * 1000 + new Date().getTimezoneOffset() * 1000;
     diff = Math.floor(diff / 1000);
     setSecond(diff % 60);
     diff = Math.floor(diff / 60);
@@ -20,7 +20,7 @@ export const SwapTxnAgeCell: FC<CellProps> = ({ row }) => {
     setHour(diff % 24);
     diff = Math.floor(diff / 24);
     setDay(diff);
-  }, []);
+  }, [row]);
 
   return (
     <Typography variant="sm" weight={500} className="text-slate-50">
