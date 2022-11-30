@@ -214,7 +214,7 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
                           ['address', 'address', 'bool'],
                           [
                             leg.tokenFrom.address,
-                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).address,
                             false,
                           ]
                         ),
@@ -236,7 +236,7 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
                           ['address', 'address', 'bool'],
                           [
                             leg.tokenFrom.address,
-                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                            getTridentRouterContractConfig(trade.inputAmount.currency.chainId).address,
                             false,
                           ]
                         ),

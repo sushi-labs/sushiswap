@@ -9,7 +9,7 @@ import { TokenSelectorDialog } from './TokenSelectorDialog'
 import { TokenSelectorOverlay } from './TokenSelectorOverlay'
 
 export type TokenSelectorProps = {
-  id: string
+  id?: string
   variant: 'overlay' | 'dialog'
   currency?: Type
   open: boolean

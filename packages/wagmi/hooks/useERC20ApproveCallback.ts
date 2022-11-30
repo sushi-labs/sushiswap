@@ -32,7 +32,7 @@ export enum ApprovalState {
 export function useERC20ApproveCallback(
   watch: boolean,
   amountToApprove?: Amount<Currency>,
-  spender?: Address,
+  spender?: string,
   onSuccess?: (data: NotificationData) => void
 ): [ApprovalState, () => void] {
   const { address } = useAccount()
@@ -114,10 +114,13 @@ export function useERC20ApproveCallback(
       }
 
       let useExact = false
-      const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
+      const estimatedGas = await tokenContract.estimateGas.approve(spender as Address, MaxUint256).catch(() => {
         // General fallback for tokens who restrict approval amounts
         useExact = true
-        return tokenContract.estimateGas.approve(spender, BigNumber.from(amountToApprove.quotient.toString()))
+        return tokenContract.estimateGas.approve(
+          spender as Address,
+          BigNumber.from(amountToApprove.quotient.toString())
+        )
       })
 
       setRequest({

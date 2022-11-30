@@ -13,7 +13,7 @@ export interface CurrencyInputProps
     TokenSelectorProps,
     'onAddToken' | 'onRemoveToken' | 'onSelect' | 'tokenMap' | 'chainId' | 'customTokenMap'
   > {
-  id: string
+  id?: string
   value: string
   disabled?: boolean
   onChange(value: string): void
@@ -168,6 +168,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       focusInput,
       fundSource,
       handleClose,
+      id,
       includeNative,
       isMounted,
       loading,
@@ -187,7 +188,7 @@ type BalancePanel = Pick<
   CurrencyInputProps,
   'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource' | 'loading'
 > & {
-  id: string
+  id?: string
   account: string | undefined
 }
 
