@@ -26,10 +26,10 @@ export function useSendTransaction({
     enabled,
   })
 
-  console.log({
-    request,
-    'config.setrequest': config.request,
-  })
+  // console.log({
+  //   request,
+  //   'config.setrequest': config.request,
+  // })
 
   const _onSettled = useCallback(
     (
