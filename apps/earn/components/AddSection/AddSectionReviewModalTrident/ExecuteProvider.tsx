@@ -13,7 +13,7 @@ import {
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../../lib/actions'
@@ -40,7 +40,6 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
   signature,
 }) => {
   const { address } = useAccount()
-  const { chain } = useNetwork()
   const liquidityToken = useMemo(() => {
     return new Token({
       address: poolAddress.includes(':') ? poolAddress.split(':')[1] : poolAddress,
@@ -117,11 +116,11 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
-      if (!data || !chain?.id || !token0 || !token1) return
+      if (!data || !chainId || !token0 || !token1) return
       const ts = new Date().getTime()
       createNotification({
         type: 'mint',
-        chainId: chain.id,
+        chainId,
         txHash: data.hash,
         promise: data.wait(),
         summary: {
@@ -133,14 +132,14 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
         groupTimestamp: ts,
       })
     },
-    [chain?.id, createNotification, token0, token1]
+    [chainId, createNotification, token0, token1]
   )
 
   const prepare = useCallback(
     async (setRequest) => {
       try {
         if (
-          !chain?.id ||
+          !chainId ||
           !pool ||
           !token0 ||
           !token1 ||
@@ -206,7 +205,7 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
       }
     },
     [
-      chain?.id,
+      chainId,
       pool,
       token0,
       token1,

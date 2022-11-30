@@ -3,7 +3,7 @@ import { Amount } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
 import { calculateGasMargin, PairState, useSendTransaction, useSushiSwapRouterContract } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTransactionDeadline } from '../../../lib/hooks'
@@ -27,7 +27,6 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
 }) => {
   const deadline = useTransactionDeadline(chainId)
   const { address } = useAccount()
-  const { chain } = useNetwork()
 
   const [, { createNotification }] = useNotifications(address)
   const contract = useSushiSwapRouterContract(chainId)
@@ -80,7 +79,7 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
         if (
           !token0 ||
           !token1 ||
-          !chain?.id ||
+          !chainId ||
           !contract ||
           !input0 ||
           !input1 ||
@@ -135,7 +134,7 @@ export const ExecuteProvider: FC<ExecuteProvider> = ({
         //
       }
     },
-    [token0, token1, chain?.id, contract, input0, input1, address, minAmount0, minAmount1, deadline]
+    [token0, token1, chainId, contract, input0, input1, address, minAmount0, minAmount1, deadline]
   )
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
