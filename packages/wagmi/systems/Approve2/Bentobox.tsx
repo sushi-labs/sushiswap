@@ -1,6 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
 import { Badge, BentoboxIcon, Button, classNames, IconButton, Loader, Tooltip, Typography } from '@sushiswap/ui'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
 import { DefaultButton } from '../Approve/DefaultButton'
@@ -22,6 +22,7 @@ export const Bentobox: ApproveBentoboxFn = ({
   onSignature,
   buttonProps: { id, className, variant, size, fullWidth = true },
 }) => {
+  const [_state, _setState] = useState<Signature>()
   const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
     chainId,
     masterContract,
@@ -31,13 +32,14 @@ export const Bentobox: ApproveBentoboxFn = ({
 
   useEffect(() => {
     if (signature) {
-      return onSignature(signature)
+      onSignature(signature)
+      _setState(signature)
     }
   }, [onSignature, signature])
 
   return useMemo(() => {
     return {
-      approvalState: approvalState === ApprovalState.PENDING && signature ? ApprovalState.APPROVED : approvalState,
+      approvalState: approvalState === ApprovalState.PENDING && _state ? ApprovalState.APPROVED : approvalState,
       signature,
       iconButton: (
         <DefaultButton key={index}>
