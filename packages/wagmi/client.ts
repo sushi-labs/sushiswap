@@ -9,7 +9,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
-// import { SafeConnector } from './connectors/safe'
+import { SafeConnector } from './connectors/safe'
 import { getSigners } from './test/utils'
 
 export type Client = ReturnType<typeof createClient>
@@ -102,7 +102,7 @@ export const client: Client = createClient({
           },
         }),
         // @ts-ignore
-        // new SafeConnector({ chains }),
+        new SafeConnector({ chains }),
         // new SafeConnector({ chains }),
       ],
 })

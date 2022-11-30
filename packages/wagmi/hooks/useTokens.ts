@@ -1,36 +1,32 @@
 import { QueryFunction } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useQuery } from 'wagmi'
+import { Address, useQuery } from 'wagmi'
 import { fetchToken, FetchTokenArgs, FetchTokenResult } from 'wagmi/actions'
+
+type QueryKeyArgs = { tokens: Partial<FetchTokenArgs>[] }
+// type QueryKeyConfig = {}
 
 export type FetchTokensArgs = { tokens: FetchTokenArgs[] }
 export type FetchTokensResult = FetchTokenResult[]
 export type UseTokensArgs = Partial<FetchTokensArgs>
 export type UseTokensConfig = Partial<Parameters<typeof useQuery>['2']>
 
-export const queryKey = (tokens?: FetchTokensArgs['tokens']) => {
-  return (
-    tokens?.map((token) => ({
-      entity: 'token',
-      address: token.address,
-      chainId: token.chainId,
-      formatUnits: token.formatUnits,
-    })) || []
-  )
+function queryKey({ tokens }: QueryKeyArgs) {
+  return [{ entity: 'tokens', tokens: tokens || [] }] as const
 }
 
-const queryFn: QueryFunction<FetchTokensResult, ReturnType<typeof queryKey>> = ({ queryKey: tokens }) => {
+const queryFn: QueryFunction<FetchTokensResult, ReturnType<typeof queryKey>> = ({ queryKey: [{ tokens }] }) => {
+  if (!tokens) throw new Error('tokens is required')
   if (tokens.filter((el) => !el.address).length > 0) throw new Error('address is required')
-
   return Promise.all(
     tokens.map((token) => {
-      return fetchToken({ address: token.address, chainId: token.chainId, formatUnits: token.formatUnits })
+      return fetchToken({ address: token.address as Address, chainId: token.chainId, formatUnits: token.formatUnits })
     })
   )
 }
 
 export function useTokens({
-  tokens,
+  tokens = [],
   cacheTime,
   enabled = true,
   staleTime = 1_000 * 60 * 60 * 24, // 24 hours
@@ -44,7 +40,7 @@ export function useTokens({
   }, [enabled, tokens])
 
   return useQuery<FetchTokensResult, unknown, FetchTokensResult, ReturnType<typeof queryKey>>(
-    queryKey(tokens),
+    queryKey({ tokens }),
     queryFn,
     {
       cacheTime,
