@@ -1,7 +1,7 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Button, Dots } from '@sushiswap/ui'
+import { Button } from '@sushiswap/ui'
 import { Checker, PairState, usePair } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
 
@@ -67,7 +67,7 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
         input0={parsedInput0}
         input1={parsedInput1}
       >
-        {({ isWritePending, setOpen }) => (
+        {({ setOpen }) => (
           <AddSectionWidget
             isFarm={!!pair.farm}
             chainId={pair.chainId}
@@ -95,8 +95,8 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
                     fundSource={FundSource.WALLET}
                     amounts={[parsedInput0, parsedInput1]}
                   >
-                    <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                      {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add Liquidity'}
+                    <Button fullWidth onClick={() => setOpen(true)} size="md">
+                      Add Liquidity
                     </Button>
                   </Checker.Amounts>
                 </Checker.Network>
