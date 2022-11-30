@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
 import { ethers } from 'ethers'
 import { Limited } from './Limited'
 import { LiquidityProvider2 } from './liquidityProviders/LiquidityProvider2'
@@ -17,9 +18,10 @@ enum LiquidityProvider2s {
 export class DataFetcher {
   chainId: ChainId
   chainDataProvider: ethers.providers.BaseProvider
-  limited: Limited
-  providers: LiquidityProvider2[]
-  poolCodes: Map<string, PoolCode>
+  limited = new Limited(10, 1000)
+  providers: LiquidityProvider2[] = []
+  poolCodes: Map<string, PoolCode> = new Map()
+  stateId = 0
   
   constructor(
     chainDataProvider: ethers.providers.BaseProvider, 
@@ -27,9 +29,6 @@ export class DataFetcher {
   ) {
     this.chainId = chainId
     this.chainDataProvider = chainDataProvider
-    this.limited = new Limited(10, 1000)
-    this.providers = []
-    this.poolCodes = new Map()
   }
 
   // Starts pool data fetching
@@ -47,6 +46,24 @@ export class DataFetcher {
   // To stop fetch pool data
   stopDataFetching() {
     this.providers.forEach(p =>p.stopFetchPoolsData())
+  }
+
+  fetchPoolsForToken(t: Token) {
+    this.providers.forEach(p =>p.fetchPoolsForToken(t))
+  }
+
+  getCurrentPoolList(): PoolCode[] {
+    if (this.providers.some(p => p.poolListWereUpdated())) {
+      let poolCodes: PoolCode[] = []
+      this.providers.forEach(p => poolCodes = poolCodes.concat(p.getCurrentPoolList()))
+      poolCodes.forEach(pc => this.poolCodes.set(pc.pool.address, pc))
+      this.stateId += 1
+    }
+    return Array.from(this.poolCodes.values())
+  }
+
+  getCurrentPoolStateId() {
+    return this.stateId
   }
 
 }
