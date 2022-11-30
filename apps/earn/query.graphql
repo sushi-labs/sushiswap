@@ -14,15 +14,11 @@ query swapsArray (
     skip: $skip
     where: $where
   ) @live(interval: 5000) {
-    id
     transaction {
       id
       createdAtBlock
     }
     timestamp
-    pair {
-      id
-    }
     sender
     tokenIn {
       id
@@ -35,5 +31,85 @@ query swapsArray (
     amountIn
     amountOut
     to
+  }
+}
+
+query mintsArray (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Mint_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Mint_filter
+) {
+  mints(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) @live(interval: 5000) {
+    transaction {
+      id
+      createdAtBlock
+    }
+    timestamp
+    pair {
+      token0 {
+        id
+        symbol
+      }
+      token1 {
+        id
+        symbol
+      }
+    }
+    to
+    liquidity
+    sender
+    amount0
+    amount1
+    amountUSD
+  }
+}
+ 
+query burnsArray (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Burn_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Burn_filter
+) {
+    burns(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) @live(interval: 5000) {
+    transaction {
+      id
+      createdAtBlock
+    }
+    timestamp
+    pair {
+      token0 {
+        id
+        symbol
+      }
+      token1 {
+        id
+        symbol
+      }
+    }
+    liquidity
+    sender
+    amount0
+    amount1
+    to
+    amountUSD
   }
 }

@@ -1,4 +1,4 @@
-//import { Tab } from '@headlessui/react'
+import { Tab } from '@headlessui/react'
 import { chainShortName } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
 import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
@@ -6,7 +6,7 @@ import { AppearOnMount, BreadcrumbLink, classNames, Typography } from '@sushiswa
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import {
@@ -23,7 +23,9 @@ import {
   PoolPositionStakedProvider,
   PoolRewards,
   PoolStats,
-  SwapsTable
+  SwapsTable,
+  AddLiquidityTable,
+  RemoveLiquidityTable
 } from '../../components'
 import { GET_POOL_TYPE_MAP } from '../../lib/constants'
 
@@ -47,6 +49,7 @@ const _Pool = () => {
   const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
+  const [tab, setTab] = useState<number>(0)
   
   if (!data) return <></>
   const { pair } = data
@@ -80,15 +83,52 @@ const _Pool = () => {
                 </div>
               </div>
             </div>
-            <section className="flex flex-col mt-8">
-              <div className="flex flex-col w-full gap-4">
-                <div className="flex items-center gap-6 px-2">
-                  <Typography weight={600} className="text-slate-50">
+            <section className="flex flex-col mt-10">
+              <Tab.Group selectedIndex={tab} onChange={setTab}>
+                <div className="flex items-center gap-6 mb-4 px-2">
+                  <Tab
+                    className={({ selected }) =>
+                      classNames(
+                        selected ? 'text-slate-200' : 'text-slate-500',
+                        'hover:text-slate-50 focus:text-slate-50 font-semibold !outline-none'
+                      )
+                    }
+                  >
                     Swaps
-                  </Typography>
-                </div>                
-                <SwapsTable pair={pair}/>
-              </div>
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      classNames(
+                        selected ? 'text-slate-200' : 'text-slate-500',
+                        'hover:text-slate-50 focus:text-slate-50 font-semibold !outline-none'
+                      )
+                    }
+                  >
+                    Add Liquidity
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      classNames(
+                        selected ? 'text-slate-200' : 'text-slate-500',
+                        'hover:text-slate-50 focus:text-slate-50 font-semibold !outline-none'
+                      )
+                    }
+                  >
+                    Remove Liquidity
+                  </Tab>
+                </div> 
+                <Tab.Panels>
+                  <Tab.Panel unmount={false}>
+                    <SwapsTable pair={pair}/>
+                  </Tab.Panel>
+                  <Tab.Panel unmount={false}>
+                    <AddLiquidityTable pair={pair}/>
+                  </Tab.Panel>
+                  <Tab.Panel unmount={false}>
+                    <RemoveLiquidityTable pair={pair}/>
+                  </Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
             </section>            
           </Layout>
           <PoolActionBar pair={pair} />

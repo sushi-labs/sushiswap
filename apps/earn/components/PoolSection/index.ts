@@ -8,3 +8,6 @@ export * from './PoolPosition'
 export * from './PoolRewards'
 export * from './PoolStats'
 export * from './SwapsTable'
+export * from './AddLiquidityTable'
+export * from './RemoveLiquidityTable'
+

@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react'
 
 import { CellProps } from './types'
 
-export const SwapTxnAgeCell: FC<CellProps> = ({ row }) => {
+export const BurnTxnAgeCell: FC<CellProps> = ({ row }) => {
 
   const [second, setSecond] = useState<any>(0);
   const [minute, setMinute] = useState<any>(0);

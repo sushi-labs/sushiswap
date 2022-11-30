@@ -54,17 +54,18 @@ export const SWAP_TO_COLUMN: ColumnDef<Swap, unknown> = {
 
 export const AMOUNT_IN_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'amountIn',
-  header: 'Amount In',
+  header: 'Token0',
   cell: (props) => <SwapAmountInCell row={props.row.original} />,
   size: 110,
   meta: {
+    className: 'justify-end',
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },
 }
 
 export const AMOUNT_OUT_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'amountOut',
-  header: 'Amount Out',
+  header: 'Token1',
   cell: (props) => <SwapAmountOutCell row={props.row.original} />,
   size: 110,
   meta: {
@@ -76,7 +77,7 @@ export const TXN_AGE_COLUMN: ColumnDef<Swap, unknown> = {
 	id: 'txnAge',
   header: 'Age',
   cell: (props) => <SwapTxnAgeCell row={props.row.original} />,
-  size: 150,
+  size: 140,
   meta: {
     skeleton: <div className="rounded-full bg-slate-700 w-full h-[20px] animate-pulse" />,
   },

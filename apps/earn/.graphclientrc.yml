@@ -1,5 +1,5 @@
 sources:
-  - name: Swaps
+  - name: Earn
     handler:
       graphql:
         endpoint: https://{context.host:api.thegraph.com}/subgraphs/name/{context.name:sushi-subgraphs/sushiswap-ethereum}
