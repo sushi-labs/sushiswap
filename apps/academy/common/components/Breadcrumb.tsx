@@ -28,7 +28,7 @@ export const Breadcrumb: FC<Breadcrumb> = ({ article }) => {
       maxWidth="6xl"
       className="px-4 mx-auto sm:mt-6 sticky sm:relative top-[54px] bg-slate-900 z-30 h-10 flex justify-between items-center sm:top-0"
     >
-      <Link href="/articles" passHref>
+      <Link href="/articles" passHref legacyBehavior>
         <a className="flex items-center gap-2 group">
           <ArrowLeftIcon width={12} className="text-slate-400 group-hover:text-slate-50" />
           <Typography variant="sm" weight={500} className="cursor-pointer group-hover:text-slate-50 text-slate-400">

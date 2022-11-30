@@ -3,7 +3,7 @@ import { Token as TokenEntity } from '@sushiswap/currency'
 import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
 import { Token, TokenLogo } from 'lib'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
