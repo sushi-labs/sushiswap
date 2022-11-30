@@ -3,7 +3,7 @@ import { isPromiseFulfilled } from '@sushiswap/validate'
 import { otherChains } from '@sushiswap/wagmi-config'
 import { Address, allChains, configureChains, createClient, erc20ABI, readContract } from '@wagmi/core'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+// import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
 import { BigNumber } from 'ethers'
 
@@ -17,16 +17,16 @@ if (!alchemyId) {
 const { provider } = configureChains(
   [...allChains, ...otherChains],
   [
-    jsonRpcProvider({
-      priority: 0,
-      rpc: (chain) => {
-        if (chain.id !== 1) return null
-        return {
-          http: `https://api.securerpc.com/v1`,
-          webSocket: `wss://api.securerpc.com/v1`,
-        }
-      },
-    }),
+    // jsonRpcProvider({
+    //   priority: 0,
+    //   rpc: (chain) => {
+    //     if (chain.id !== 1) return null
+    //     return {
+    //       http: `https://api.securerpc.com/v1`,
+    //       webSocket: `wss://api.securerpc.com/v1`,
+    //     }
+    //   },
+    // }),
     alchemyProvider({ apiKey: alchemyId, priority: 1 }),
     publicProvider({ priority: 2 }),
   ]
