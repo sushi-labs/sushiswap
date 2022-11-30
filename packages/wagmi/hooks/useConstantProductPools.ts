@@ -256,6 +256,8 @@ export function useConstantProductPools(
     keepPreviousData: true,
   })
 
+  console.log('pool data', data)
+
   return useMemo(() => {
     if (poolsAddresses.length === 0) return [[ConstantProductPoolState.INVALID, null]]
     if (!data) return poolsAddresses.map(() => [ConstantProductPoolState.LOADING, null])
