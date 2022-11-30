@@ -1,3 +1,4 @@
+export * from './BridgeBento'
 export * from './CLPool'
 export * from './deprecated/MultiRouterMath'
 export * from './deprecated/MultiRouterTypes'

@@ -146,9 +146,9 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
       className="!items-end"
       components={
         <Approve.Components>
-          <Approve.Bentobox enabled={true} address={contract?.address} onSignature={setSignature} />
+          <Approve.Bentobox id="furo-create-multiple-stream-approve-bentobox" enabled={true} address={contract?.address} onSignature={setSignature} />
           {Object.values(summedAmounts).map((amount, index) => (
-            <Approve.Token enabled={true} key={index} amount={amount} address={BENTOBOX_ADDRESS[chainId]} />
+            <Approve.Token id={`furo-create-multiple-stream-approve-token${index}`} enabled={true} key={index} amount={amount} address={BENTOBOX_ADDRESS[chainId]} />
           ))}
         </Approve.Components>
       }

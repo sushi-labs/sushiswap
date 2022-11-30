@@ -1,78 +1,77 @@
+import { masterChefV2Abi } from '@sushiswap/abi/dist'
 import { ChainId } from '@sushiswap/chain'
-import { MasterChefV2 } from '@sushiswap/core'
-import MasterChefV2ABI from '@sushiswap/core/abi/MasterChefV2.json'
-import { readContract, ReadContractConfig, readContracts, ReadContractsConfig } from '@wagmi/core'
+import { readContract, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config'
 
 export async function getPoolLength() {
-  const poolLengthCall: ReadContractConfig = {
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+  const poolLengthCall = {
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
     chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
+    abi: masterChefV2Abi,
     functionName: 'poolLength',
   }
-  return readContract<MasterChefV2, Awaited<ReturnType<MasterChefV2['poolLength']>>>(poolLengthCall)
+  return readContract(poolLengthCall)
 }
 
 export async function getTotalAllocPoint() {
-  const totalAllocPointCall: ReadContractConfig = {
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+  const totalAllocPointCall = {
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
     chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
+    abi: masterChefV2Abi,
     functionName: 'totalAllocPoint',
   }
-  return readContract<MasterChefV2, Awaited<ReturnType<MasterChefV2['totalAllocPoint']>>>(totalAllocPointCall)
+  return readContract(totalAllocPointCall)
 }
 
 export async function getSushiPerBlock() {
-  const sushiPerBlockCall: ReadContractConfig = {
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+  const sushiPerBlockCall = {
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
     chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
+    abi: masterChefV2Abi,
     functionName: 'sushiPerBlock',
   }
-  return readContract<MasterChefV2, Awaited<ReturnType<MasterChefV2['sushiPerBlock']>>>(sushiPerBlockCall)
+  return readContract(sushiPerBlockCall)
 }
 
 export async function getPoolInfos(poolLength: number) {
-  const poolInfoCalls: ReadContractsConfig['contracts'] = [...Array(poolLength)].map((_, i) => ({
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+  const poolInfoCalls = [...Array(poolLength)].map((_, i) => ({
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
     args: [i],
     chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
+    abi: masterChefV2Abi,
     functionName: 'poolInfo',
   }))
-  return readContracts<Awaited<ReturnType<MasterChefV2['poolInfo']>>[]>({
+  return readContracts({
     allowFailure: true,
     contracts: poolInfoCalls,
   })
 }
 
 export async function getLpTokens(poolLength: number) {
-  const lpTokenCalls: ReadContractsConfig['contracts'] = [...Array(poolLength)].map((_, i) => ({
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+  const lpTokenCalls = [...Array(poolLength)].map((_, i) => ({
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
     args: [i],
     chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
+    abi: masterChefV2Abi,
     functionName: 'lpToken',
   }))
-  return readContracts<Awaited<ReturnType<MasterChefV2['lpToken']>>[]>({
+  return readContracts({
     allowFailure: true,
     contracts: lpTokenCalls,
   })
 }
 
 export async function getRewarders(poolLength: number) {
-  const rewarderCalls: ReadContractsConfig['contracts'] = [...Array(poolLength)].map((_, i) => ({
-    addressOrName: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+  const rewarderCalls = [...Array(poolLength)].map((_, i) => ({
+    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
     args: [i],
     chainId: ChainId.ETHEREUM,
-    contractInterface: MasterChefV2ABI,
+    abi: masterChefV2Abi,
     functionName: 'rewarder',
   }))
-  return readContracts<Awaited<ReturnType<MasterChefV2['rewarder']>>[]>({
+  return readContracts({
     allowFailure: true,
     contracts: rewarderCalls,
   })

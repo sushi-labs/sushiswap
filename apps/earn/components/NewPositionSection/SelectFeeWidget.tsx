@@ -1,6 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
-import { ChainId } from '@sushiswap/chain'
 import { Fee } from '@sushiswap/amm'
+import { ChainId } from '@sushiswap/chain'
 import { Tab, Tooltip, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import React, { FC, memo } from 'react'

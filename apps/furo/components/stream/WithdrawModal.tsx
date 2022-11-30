@@ -61,7 +61,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
   )
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!stream || !amount || !chainId || !contract) return
 
       setRequest({
@@ -170,7 +170,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
                 </div>
               )}
             </div>
-            <div className="pt-2 col-span-2">
+            <div className="col-span-2 pt-2">
               <Checker.Custom
                 showGuardIfTrue={!amount?.greaterThan(0)}
                 guard={

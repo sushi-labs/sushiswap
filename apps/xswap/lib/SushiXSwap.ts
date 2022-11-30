@@ -2,8 +2,8 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
-import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/amm'
+import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { getBigNumber } from '@sushiswap/tines'
@@ -290,7 +290,7 @@ export abstract class Cooker implements Cooker {
                         ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).address,
                           false,
                         ]
                       ),
@@ -312,7 +312,7 @@ export abstract class Cooker implements Cooker {
                         ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).addressOrName,
+                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).address,
                           false,
                         ]
                       ),
@@ -472,14 +472,14 @@ export class SushiXSwap {
     this.srcCooker = new SrcCooker({
       chainId: this.srcChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).addressOrName,
+      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).address,
       user,
     })
 
     this.dstCooker = new DstCooker({
       chainId: this.dstChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).addressOrName,
+      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).address,
       user,
     })
   }

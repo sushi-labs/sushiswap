@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import { classNames, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
-import { ColumnDef, flexRender, RowData, Table as ReactTableType } from '@tanstack/react-table'
+import { ColumnDef, flexRender, Table as ReactTableType } from '@tanstack/react-table'
 import React, { ReactNode, useState } from 'react'
 
 interface GenericTableProps<C> {
