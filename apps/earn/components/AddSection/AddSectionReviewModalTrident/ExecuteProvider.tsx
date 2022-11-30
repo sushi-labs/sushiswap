@@ -1,45 +1,32 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
-import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, Type } from '@sushiswap/currency'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { Button, Dots } from '@sushiswap/ui'
+import { calculateSlippageAmount } from '@sushiswap/amm'
+import { Amount, Token } from '@sushiswap/currency'
+import { JSBI, Percent, ZERO, ZERO_PERCENT } from '@sushiswap/math'
 import {
-  Approve,
-  BENTOBOX_ADDRESS,
   ConstantProductPoolState,
-  getTridentRouterContractConfig,
   StablePoolState,
   useBentoBoxTotals,
   useSendTransaction,
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
-import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../lib/actions'
-import { useNotifications, useSettings } from '../../lib/state/storage'
-import { AddSectionReviewModal } from './AddSectionReviewModal'
+import { approveMasterContractAction, batchAction, getAsEncodedAction, LiquidityInput } from '../../../lib/actions'
+import { useNotifications, useSettings } from '../../../lib/state/storage'
+import { AddSectionReviewModalTridentProps } from './AddSectionReviewModalTrident'
 
-interface AddSectionReviewModalTridentProps {
-  poolAddress: string
-  poolState: ConstantProductPoolState | StablePoolState | undefined
-  pool: ConstantProductPool | StablePool | null | undefined
-  chainId: ChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  input0: Amount<Type> | undefined
-  input1: Amount<Type> | undefined
-  children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
+interface ExecuteProvider extends Omit<AddSectionReviewModalTridentProps, 'children'> {
+  signature: Signature | undefined
+  onSuccess(): void
+  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean })
 }
 
-const ZERO_PERCENT = new Percent('0')
-
-export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps> = ({
+export const ExecuteProvider: FC<ExecuteProvider> = ({
   poolAddress,
   poolState,
   pool,
@@ -49,11 +36,11 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   input0,
   input1,
   children,
+  onSuccess,
+  signature,
 }) => {
-  const [open, setOpen] = useState(false)
   const { address } = useAccount()
   const { chain } = useNetwork()
-  const [permit, setPermit] = useState<Signature>()
   const liquidityToken = useMemo(() => {
     return new Token({
       address: poolAddress.includes(':') ? poolAddress.split(':')[1] : poolAddress,
@@ -204,7 +191,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
           data: batchAction({
             contract,
             actions: [
-              approveMasterContractAction({ router: contract, signature: permit }),
+              approveMasterContractAction({ router: contract, signature }),
               getAsEncodedAction({
                 contract,
                 fn: 'addLiquidity',
@@ -231,7 +218,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
       minAmount0,
       minAmount1,
       liquidityMinted,
-      permit,
+      signature,
     ]
   )
 
@@ -239,59 +226,21 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
     chainId,
     prepare,
     onSettled,
-    onSuccess: () => setOpen(false),
+    onSuccess,
+    enabled: Boolean(
+      chainId &&
+        pool &&
+        token0 &&
+        token1 &&
+        contract &&
+        input0 &&
+        input1 &&
+        address &&
+        minAmount0 &&
+        minAmount1 &&
+        liquidityMinted
+    ),
   })
 
-  return useMemo(
-    () => (
-      <>
-        {children({ isWritePending, setOpen })}
-        <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
-          <Approve
-            onSuccess={createNotification}
-            className="flex-grow !justify-end"
-            components={
-              <Approve.Components>
-                <Approve.Bentobox
-                  id="add-liquidity-trident-approve-bentobox"
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  address={getTridentRouterContractConfig(chainId).address}
-                  onSignature={setPermit}
-                  enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
-                />
-                <Approve.Token
-                  id="add-liquidity-trident-approve-token0"
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={input0}
-                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
-                />
-                <Approve.Token
-                  id="add-liquidity-trident-approve-token1"
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={input1}
-                  address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
-                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
-                />
-              </Approve.Components>
-            }
-            render={({ approved }) => {
-              return (
-                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-                </Button>
-              )
-            }}
-          />
-        </AddSectionReviewModal>
-      </>
-    ),
-    [chain, chainId, children, createNotification, input0, input1, isWritePending, open, sendTransaction]
-  )
+  return children({ execute: sendTransaction, isWritePending })
 }

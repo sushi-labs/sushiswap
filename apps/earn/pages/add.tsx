@@ -322,9 +322,9 @@ const _Add: FC<AddProps> = ({
                           input0={parsedInput0}
                           input1={parsedInput1}
                         >
-                          {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                          {({ setOpen }) => (
+                            <Button fullWidth onClick={() => setOpen(true)} size="md">
+                              {title}
                             </Button>
                           )}
                         </AddSectionReviewModalTrident>
@@ -338,9 +338,9 @@ const _Add: FC<AddProps> = ({
                           input0={parsedInput0}
                           input1={parsedInput1}
                         >
-                          {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                          {({ setOpen }) => (
+                            <Button fullWidth onClick={() => setOpen(true)} size="md">
+                              {title}
                             </Button>
                           )}
                         </AddSectionReviewModalLegacy>

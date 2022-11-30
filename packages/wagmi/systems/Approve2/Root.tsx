@@ -21,29 +21,31 @@ const APPROVE_BUTTON_MAP = {
 }
 
 export const Root: FC<RootProps> = ({ className, children, definition, onSuccess, chainId }) => {
-  const components = definition.map((element, index) => {
-    switch (element.type) {
-      case ApprovalType.Bentobox: {
-        const { masterContract, type, enabled, buttonProps, onSignature } = element
-        return APPROVE_BUTTON_MAP[type]({
-          masterContract,
-          type,
-          enabled,
-          buttonProps,
-          chainId,
-          onSuccess,
-          index,
-          onSignature,
-        })
-      }
+  const components = definition
+    .filter((el) => !(el.type === ApprovalType.Token && el.amount?.currency.isNative))
+    .map((element, index) => {
+      switch (element.type) {
+        case ApprovalType.Bentobox: {
+          const { masterContract, type, enabled, buttonProps, onSignature } = element
+          return APPROVE_BUTTON_MAP[type]({
+            masterContract,
+            type,
+            enabled,
+            buttonProps,
+            chainId,
+            onSuccess,
+            index,
+            onSignature,
+          })
+        }
 
-      default:
-      case ApprovalType.Token: {
-        const { address, amount, type, enabled, buttonProps } = element
-        return APPROVE_BUTTON_MAP[type]({ address, amount, type, enabled, buttonProps, chainId, onSuccess, index })
+        default:
+        case ApprovalType.Token: {
+          const { address, amount, type, enabled, buttonProps } = element
+          return APPROVE_BUTTON_MAP[type]({ address, amount, type, enabled, buttonProps, chainId, onSuccess, index })
+        }
       }
-    }
-  })
+    })
 
   const icons = components.map((component) => component.iconButton)
 

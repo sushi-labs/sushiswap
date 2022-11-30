@@ -1,35 +1,21 @@
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount } from '@sushiswap/currency'
 import { Percent } from '@sushiswap/math'
-import { Button, Dots } from '@sushiswap/ui'
-import {
-  Approve,
-  calculateGasMargin,
-  getSushiSwapRouterContractConfig,
-  PairState,
-  useSendTransaction,
-  useSushiSwapRouterContract,
-} from '@sushiswap/wagmi'
-import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount, useNetwork } from 'wagmi'
+import { calculateGasMargin, PairState, useSendTransaction, useSushiSwapRouterContract } from '@sushiswap/wagmi'
+import { FC, useCallback, useMemo } from 'react'
+import { useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { useTransactionDeadline } from '../../lib/hooks'
-import { useNotifications, useSettings } from '../../lib/state/storage'
-import { AddSectionReviewModal } from './AddSectionReviewModal'
+import { useTransactionDeadline } from '../../../lib/hooks'
+import { useNotifications, useSettings } from '../../../lib/state/storage'
+import { AddSectionReviewModalLegacyProps } from './AddSectionReviewModalLegacy'
 
-interface AddSectionReviewModalLegacyProps {
-  poolState: PairState
-  chainId: ChainId
-  token0: Type | undefined
-  token1: Type | undefined
-  input0: Amount<Type> | undefined
-  input1: Amount<Type> | undefined
-  children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
+interface ExecuteProvider extends Omit<AddSectionReviewModalLegacyProps, 'children'> {
+  onSuccess(): void
+  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean })
 }
 
-export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> = ({
+export const ExecuteProvider: FC<ExecuteProvider> = ({
   poolState,
   chainId,
   token0,
@@ -37,9 +23,9 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   input0,
   input1,
   children,
+  onSuccess,
 }) => {
   const deadline = useTransactionDeadline(chainId)
-  const [open, setOpen] = useState(false)
   const { address } = useAccount()
   const { chain } = useNetwork()
 
@@ -156,46 +142,8 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     chainId,
     prepare,
     onSettled,
-    onSuccess: () => setOpen(false),
+    onSuccess,
   })
 
-  return useMemo(
-    () => (
-      <>
-        {children({ isWritePending, setOpen })}
-        <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
-          <Approve
-            onSuccess={createNotification}
-            className="flex-grow !justify-end"
-            components={
-              <Approve.Components>
-                <Approve.Token
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={input0}
-                  address={getSushiSwapRouterContractConfig(chainId).address as Address}
-                />
-                <Approve.Token
-                  size="md"
-                  className="whitespace-nowrap"
-                  fullWidth
-                  amount={input1}
-                  address={getSushiSwapRouterContractConfig(chainId).address as Address}
-                />
-              </Approve.Components>
-            }
-            render={({ approved }) => {
-              return (
-                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
-                </Button>
-              )
-            }}
-          />
-        </AddSectionReviewModal>
-      </>
-    ),
-    [chainId, children, createNotification, input0, input1, isWritePending, open, sendTransaction]
-  )
+  return children({ execute: sendTransaction, isWritePending })
 }
