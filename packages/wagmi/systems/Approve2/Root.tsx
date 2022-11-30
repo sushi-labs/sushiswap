@@ -48,13 +48,19 @@ export const Root: FC<RootProps> = ({ className, children, definition, onSuccess
   const icons = components.map((component) => component.iconButton)
 
   const indexOfNextApproval = components.findIndex((component) => {
-    return [ApprovalState.LOADING, ApprovalState.PENDING, ApprovalState.NOT_APPROVED].includes(component.approvalState)
+    return [ApprovalState.PENDING, ApprovalState.NOT_APPROVED].includes(component.approvalState)
   }, [])
 
   return (
     <div className={classNames(className, 'flex flex-col justify-center items-center w-full')}>
-      <div className="flex">{icons}</div>
-      {indexOfNextApproval === -1 ? children : components[indexOfNextApproval].button}
+      {indexOfNextApproval === -1 ? (
+        children
+      ) : (
+        <>
+          <div className="flex">{icons}</div>
+          {components[indexOfNextApproval].button}
+        </>
+      )}
     </div>
   )
 }
