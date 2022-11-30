@@ -68,7 +68,7 @@ export const useMasterChef: UseMasterChef = ({
         } as const,
         {
           chainId: ChainId.ETHEREUM,
-          address: MASTERCHEF_ADDRESS[chainId],
+          address: Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId],
           abi: [
             chef === Chef.MASTERCHEF
               ? ({
