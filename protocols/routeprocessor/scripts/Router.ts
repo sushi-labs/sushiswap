@@ -97,6 +97,19 @@ export class Router {
     }    
   }
 
+  changeRouteParams(
+    fromToken: Token,
+    amountIn: BigNumber,
+    toToken: Token,
+    gasPrice: number
+  ) {
+    this.fromToken = fromToken
+    this.amountIn = amountIn
+    this.toToken = toToken
+    this.gasPrice = gasPrice
+    this._checkRouteUpdate()    // Recalc route immediately
+  }
+
   // Human-readable route printing
   routeToString(route: MultiRoute, fromToken: Token, toToken: Token, shiftPrimary = '', shiftSub = '    '): string {
     const poolCodesMap = this.dataFetcher.getCurrentPoolCodeMap()
