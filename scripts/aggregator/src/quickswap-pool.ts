@@ -2,11 +2,11 @@ import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, PairsQuery, V2PairsQuery } from '../.graphclient'
-import { GRAPH_HOST, QUICKSWAP_SUPPORTED_CHAINS } from './config'
-import { mergePools } from './entity/pool/load'
-import { filterPools } from './entity/pool/transform'
-import { createTokens } from './entity/token/load'
-import { filterTokensToCreate } from './entity/token/transform'
+import { GRAPH_HOST, QUICKSWAP_SUBGRAPH_NAME, QUICKSWAP_SUPPORTED_CHAINS } from './config'
+import { mergePools } from './etl/pool/load'
+import { filterPools } from './etl/pool/transform'
+import { createTokens } from './etl/token/load'
+import { filterTokensToCreate } from './etl/token/transform'
 
 const client = new PrismaClient()
 
@@ -26,8 +26,18 @@ async function main() {
   const { tokens, pools } = await transform(exchanges)
 
   // LOAD
-  await createTokens(client, tokens)
-  await mergePools(client, PROTOCOL, pools)
+  const batchSize = 250
+  for (let i = 0; i < pools.length; i += batchSize) {
+    const batch = pools.slice(i, i + batchSize)
+    const filteredPools = await filterPools(client, batch)
+    await mergePools(client, PROTOCOL, [VERSION], filteredPools)
+  }
+
+  for (let i = 0; i < tokens.length; i += batchSize) {
+    const batch = tokens.slice(i, i + batchSize)
+    const filteredTokens = await filterTokensToCreate(client, batch)
+    await createTokens(client, filteredTokens)
+  }
   const endTime = performance.now()
 
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -35,34 +45,52 @@ async function main() {
 
 async function extract() {
   console.log(
-    `Fetching pools from ${PROTOCOL}, chains: ${QUICKSWAP_SUPPORTED_CHAINS.map((chainId) => chainName[chainId]).join(
-      ', '
-    )}`
+    `Fetching pools from ${PROTOCOL} ${VERSION}, chains: ${QUICKSWAP_SUPPORTED_CHAINS.map(
+      (chainId) => chainName[chainId]
+    ).join(', ')}`
   )
-  const v2Requests = QUICKSWAP_SUPPORTED_CHAINS.map((chainId) => {
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: QUICKSWAP_SUPPORTED_CHAINS[chainId] })
-    const data = []
-    const size = 1000
-    // TODO: use auto pagination when it works, currently skip only works up to 5000, and theres 40k pools on qs
-    for (let i = 0; i < 6; i++) {
-      data.push(sdk.V2Pairs({ first: size, skip: i * size, where: {
-        reserveUSD_gt: 50
-      },
-      orderBy: 'reserveUSD',
-      orderDirection: 'desc'
-    }).catch(() => undefined))
-    }
-    return { chainId, data }
-  })
+  const result: { chainId: ChainId; data: V2PairsQuery[] }[] = []
 
-  return await Promise.all(
-    [...v2Requests].map((request) =>
-      Promise.all(request.data).then((data) => {
-        const pairs = data.filter((d) => d !== undefined).flat()
-        return { chainId: request.chainId, data: pairs }
-      })
-    )
-  )
+  for (const chainId of QUICKSWAP_SUPPORTED_CHAINS) {
+    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: QUICKSWAP_SUBGRAPH_NAME[chainId] })
+    if (!QUICKSWAP_SUBGRAPH_NAME[chainId]) {
+      console.log(`Subgraph not found: ${chainId} ${GRAPH_HOST[chainId]}, Skipping`)
+      continue
+    }
+    console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${QUICKSWAP_SUBGRAPH_NAME[chainId]}`)
+    let pairCount = 0
+    let cursor: string = ''
+    const data: V2PairsQuery[] = []
+
+    do {
+      const where = cursor !== '' ? { id_gt: cursor } : {}
+      const request = await sdk
+        .V2Pairs({
+          first: 1000,
+          where,
+        })
+        .catch((e: string) => {
+          console.log({ e })
+          return undefined
+        })
+        .catch(() => undefined)
+      const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''
+      cursor = newCursor
+      pairCount += request?.V2_pairs.length ?? 0
+      if (request) {
+        data.push(request)
+      }
+
+      if (pairCount % 10000 === 0) {
+        console.log(`Fetched ${pairCount} pairs in total so far`)
+      }
+    } while (cursor !== '')
+
+    console.log('Pair count:', pairCount)
+    result.push({ chainId, data })
+  }
+
+  return result
 }
 
 async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefined)[] }[]): Promise<{
@@ -80,7 +108,6 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat('_').concat(pair.token0.id),
                 address: pair.token0.id,
-                network: chainName[exchange.chainId],
                 chainId: exchange.chainId.toString(),
                 name: pair.token0.name,
                 symbol: pair.token0.symbol,
@@ -91,7 +118,6 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat('_').concat(pair.token1.id),
                 address: pair.token1.id,
-                network: chainName[exchange.chainId],
                 chainId: exchange.chainId.toString(),
                 name: pair.token1.name,
                 symbol: pair.token1.symbol,
@@ -105,7 +131,6 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
               protocol: PROTOCOL,
               version: VERSION,
               type: CONSTANT_PRODUCT_POOL,
-              network: chainName[exchange.chainId],
               chainId: exchange.chainId.toString(),
               swapFee: 0.003,
               twapEnabled: false,
@@ -115,11 +140,6 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
               reserve1: pair.reserve1,
               totalSupply: pair.liquidity,
               liquidityUSD: pair.liquidityUSD,
-              liquidityNative: pair.liquidityNative,
-              volumeUSD: pair.volumeUSD,
-              volumeNative: '0',
-              token0Price: pair.token0Price,
-              token1Price: pair.token1Price,
               createdAtBlockNumber: BigInt(pair.createdAtBlock),
             })
           })

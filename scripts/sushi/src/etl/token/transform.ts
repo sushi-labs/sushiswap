@@ -13,16 +13,26 @@ export async function filterTokensToCreate(
     return false
   })
 
-  const tokensFound = await client.token.findMany({
-    where: {
-      id: { in: uniqueTokens.map((token) => token.id) },
-    },
-    select: {
-      id: true,
-    },
-  })
+  const batchSize = 500
+  const tokensFound: { id: string }[] = []
+  for (let i = 0; i < tokens.length; i += batchSize) {
+    tokensFound.push(
+      ...(await client.token.findMany({
+        where: {
+          id: { in: uniqueTokens.slice(i, i + batchSize).map((token) => token.id) },
+        },
+        select: {
+          id: true,
+        },
+      }))
+    )
+  }
 
-  return uniqueTokens.filter((token) => !tokensFound.find((t) => t.id === token.id))
+  const tokensToCreate =  uniqueTokens.filter((token) => !tokensFound.find((t) => t.id === token.id))
+  console.log(
+    `TRANSFORM - Filtered tokens, ${tokensToCreate.length} should be created.`
+  )
+  return tokensToCreate
 }
 
 /**

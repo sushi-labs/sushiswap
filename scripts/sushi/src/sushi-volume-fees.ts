@@ -5,7 +5,7 @@ import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/grap
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK } from '../.graphclient'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
-import { PairMinimal, updatePoolsWithVolumeAndFee } from './entity/pool'
+import { PairMinimal, updatePoolsWithVolumeAndFee } from './etl/pool'
 
 const client = new PrismaClient()
 

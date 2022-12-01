@@ -1,0 +1,104 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Token {
+  id       String   @id // chainId_address
+  address  String
+  chainId  String
+  name     String
+  symbol   String
+  decimals Int
+  usdPrice Decimal?
+
+  generatedAt    DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  priceUpdatedAt DateTime?
+
+  pools0     Pool[]      @relation("token0")
+  pools1     Pool[]      @relation("token1")
+  incentives Incentive[]
+
+  @@unique([chainId, address])
+  @@index(fields: [id])
+  @@index(fields: [address, chainId, name])
+  @@index(fields: [address, chainId, symbol])
+}
+
+model Pool {
+  id       String @id // chainId_address
+  address  String
+  name     String
+  chainId  String
+  protocol String
+  version  String
+  type     String
+  token0   Token  @relation("token0", fields: [chainId, token0Id], references: [chainId, address])
+  token0Id String
+  token1   Token  @relation("token1", fields: [chainId, token1Id], references: [chainId, address])
+  token1Id String
+
+  swapFee     Float?
+  twapEnabled Boolean?
+
+  reserve0        String // Liquidity of token0
+  reserve1        String // Liquidity of token1 
+  totalSupply     String // Liquidity, Total supply of all LP in this pool
+  liquidityUSD    Decimal // liquidity in USD
+  liquidityNative Decimal // liquidity in native
+
+  volumeUSD    Decimal // volume in USD
+  volumeNative Decimal // volume in native
+
+  token0Price String
+  token1Price String
+
+  apr            Float?
+  totalApr       Float?
+  isIncentivized Boolean     @default(false)
+  incentives     Incentive[] @relation()
+  volume1d       Decimal?
+  fees1d         Decimal?
+  volume1w       Decimal?
+  fees1w         Decimal?
+
+  createdAtBlockNumber BigInt @db.UnsignedBigInt
+  generatedAt          DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  // TODO: add more composite indexes once we have decided which queries we'll need
+  // @@index(fields: [chainId, protocol, type, volumeUSD]) 
+  // @@index(fields: [chainId, protocol, type, liquidityUSD])
+  // @@index(fields: [chainId, protocol, type, totalApr])
+
+  @@unique([chainId, address])
+  @@index(fields: [id])
+  @@index(fields: [id, token0Id, token1Id])
+  @@index(fields: [chainId, token0Id])
+  @@index(fields: [chainId, token1Id])
+}
+
+model Incentive {
+  id      String @id // poolAddress_rewarderAddress
+  chainId String
+  type    String
+
+  apr             Float
+  rewarderAddress String
+  rewardPerDay    Float
+  rewardToken     Token  @relation(fields: [chainId, rewardTokenId], references: [chainId, address])
+  rewardTokenId   String
+
+  pool        Pool   @relation(fields: [chainId, poolAddress], references: [chainId, address])
+  poolAddress String
+
+  @@index(fields: [id])
+  @@index(fields: [chainId, poolAddress])
+  @@index(fields: [chainId, rewardTokenId])
+}

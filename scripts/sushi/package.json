@@ -1,5 +1,5 @@
 {
-  "name": "prisma",
+  "name": "sushi",
   "version": "0.0.0",
   "private": true,
   "description": "Prisma",
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "scripts/prisma"
+    "directory": "scripts/sushi"
   },
   "license": "MIT",
   "main": "dist/index.js",

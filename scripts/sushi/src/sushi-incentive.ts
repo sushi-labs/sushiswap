@@ -8,12 +8,12 @@ import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
 
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
-import { mergeIncentives } from './entity/incentive/load'
-import { filterIncentives } from './entity/incentive/transform'
-import { createTokens } from './entity/token/load'
-import { filterTokensToCreate } from './entity/token/transform'
+import { mergeIncentives } from './etl/incentive/load'
+import { filterIncentives } from './etl/incentive/transform'
+import { createTokens } from './etl/token/load'
+import { filterTokensToCreate } from './etl/token/transform'
 import { Farm } from './lib/types'
-import { updatePoolsWithIncentivesTotalApr } from './entity/pool/load'
+import { updatePoolsWithIncentivesTotalApr } from './etl/pool/load'
 
 const client = new PrismaClient()
 

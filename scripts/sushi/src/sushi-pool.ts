@@ -5,10 +5,10 @@ import { request } from 'http'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, PairsQuery } from '../.graphclient'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
-import { mergePools } from './entity/pool/load'
-import { filterPools } from './entity/pool/transform'
-import { createTokens } from './entity/token/load'
-import { filterTokensToCreate } from './entity/token/transform'
+import { mergePools } from './etl/pool/load'
+import { filterPools } from './etl/pool/transform'
+import { createTokens } from './etl/token/load'
+import { filterTokensToCreate } from './etl/token/transform'
 
 const client = new PrismaClient()
 
@@ -27,7 +27,7 @@ async function main() {
 
   // LOAD
   await createTokens(client, tokens)
-  await mergePools(client, PROTOCOL, pools)
+  await mergePools(client, PROTOCOL, ['LEGACY', 'TRIDENT'], pools, true)
   const endTime = performance.now()
 
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -96,7 +96,6 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat('_').concat(pair.token0.id),
                 address: pair.token0.id,
-                network: chainName[exchange.chainId],
                 chainId: exchange.chainId.toString(),
                 name: pair.token0.name,
                 symbol: pair.token0.symbol,
@@ -107,7 +106,6 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat('_').concat(pair.token1.id),
                 address: pair.token1.id,
-                network: chainName[exchange.chainId],
                 chainId: exchange.chainId.toString(),
                 name: pair.token1.name,
                 symbol: pair.token1.symbol,
@@ -123,14 +121,13 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               protocol: PROTOCOL,
               version: pair.source,
               type: pair.type,
-              network: chainName[exchange.chainId],
               chainId: exchange.chainId.toString(),
               swapFee: Number(pair.swapFee) / 10000,
               twapEnabled: pair.twapEnabled,
               token0Id: pair.token0.id,
               token1Id: pair.token1.id,
-              reserve0:  pair.reserve0,
-              reserve1:  pair.reserve1,
+              reserve0: pair.reserve0,
+              reserve1: pair.reserve1,
               totalSupply: pair.liquidity,
               apr,
               liquidityUSD: pair.liquidityUSD,

@@ -4,8 +4,8 @@ import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/grap
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, TokenPricesQuery } from '../.graphclient'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
-import { createTokens, updateTokenPrices } from './entity/token/load'
-import { filterTokensByUsdPrice } from './entity/token/transform'
+import { createTokens, updateTokenPrices } from './etl/token/load'
+import { filterTokensByUsdPrice } from './etl/token/transform'
 
 const client = new PrismaClient()
 
