@@ -6,7 +6,7 @@ import { LiquidityProvider2 } from './liquidityProviders/LiquidityProvider2'
 import { SushiProvider2 } from './liquidityProviders/Sushi2'
 import { PoolCode } from './pools/PoolCode'
 
-enum LiquidityProvider2s {
+enum LiquidityProviders {
     Sushiswap = 'Sushiswap',
     UniswapV2 = 'UniswapV2',
     Trident = 'Trident',
@@ -33,7 +33,7 @@ export class DataFetcher {
 
   // Starts pool data fetching
   startDataFetching(
-    liquidity?: LiquidityProvider2s[]    // all providers if undefined
+    liquidity?: LiquidityProvider2[]    // all providers if undefined
   ) {
     this.stopDataFetching()
     this.poolCodes = new Map()
@@ -52,13 +52,18 @@ export class DataFetcher {
     this.providers.forEach(p =>p.fetchPoolsForToken(t))
   }
 
-  getCurrentPoolList(): PoolCode[] {
+  getCurrentPoolCodeMap(): Map<string, PoolCode> {
     if (this.providers.some(p => p.poolListWereUpdated())) {
       let poolCodes: PoolCode[] = []
       this.providers.forEach(p => poolCodes = poolCodes.concat(p.getCurrentPoolList()))
       poolCodes.forEach(pc => this.poolCodes.set(pc.pool.address, pc))
       this.stateId += 1
     }
+    return this.poolCodes
+  }
+
+  getCurrentPoolCodeList(): PoolCode[] {
+    this.getCurrentPoolCodeMap()
     return Array.from(this.poolCodes.values())
   }
 
