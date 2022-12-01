@@ -4,6 +4,13 @@ import { Limited } from "../Limited"
 import { PoolCode } from "../pools/PoolCode"
 import { Token } from "@sushiswap/currency"
 
+export enum LiquidityProviders {
+    Sushiswap = 'Sushiswap',
+    UniswapV2 = 'UniswapV2',
+    Trident = 'Trident',
+    Quickswap = 'Quickswap'
+}
+
 export abstract class LiquidityProvider2 {
     limited: Limited
     chainDataProvider: ethers.providers.BaseProvider
@@ -18,6 +25,8 @@ export abstract class LiquidityProvider2 {
         this.chainDataProvider = chainDataProvider
         this.chainId = chainId
     }
+
+    abstract getType(): LiquidityProviders;
 
     // The name of liquidity provider to be used for pool naming. For example, 'Sushiswap'
     abstract getPoolProviderName(): string;

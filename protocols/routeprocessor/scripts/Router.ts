@@ -2,14 +2,8 @@ import { Token, WNATIVE } from '@sushiswap/currency'
 import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 import { DataFetcher } from './DataFetcher'
+import { LiquidityProviders } from './liquidityProviders/LiquidityProvider2'
 import { convertTokenToBento, getBentoChainId } from './liquidityProviders/Trident'
-
-enum LiquidityProviders {
-  Sushiswap = 'Sushiswap',
-  UniswapV2 = 'UniswapV2',
-  Trident = 'Trident',
-  Quickswap = 'Quickswap'
-}
 
 type RouteCallBack = (r: MultiRoute) => void
 
@@ -19,7 +13,7 @@ export class Router {
   amountIn: BigNumber
   toToken: Token
   gasPrice: number
-  liquidity?: LiquidityProviders[]    // all providers if undefined
+  providers?: LiquidityProviders[]    // all providers if undefined
   minUpdateDelay: number
 
   dataFetcherPreviousState = 0
@@ -33,7 +27,7 @@ export class Router {
     amountIn: BigNumber,
     toToken: Token,
     gasPrice: number,
-    liquidity?: LiquidityProviders[],    // all providers if undefined
+    providers?: LiquidityProviders[],    // all providers if undefined
     minUpdateDelay = 1000   // Minimal delay between routing update
   ) {
     this.dataFetcher = dataFetcher
@@ -41,7 +35,7 @@ export class Router {
     this.amountIn = amountIn
     this.toToken = toToken
     this.gasPrice = gasPrice
-    this.liquidity = liquidity,
+    this.providers = providers,
     this.minUpdateDelay = minUpdateDelay
   }
 
@@ -84,7 +78,7 @@ export class Router {
         this.fromToken as RToken, 
         this.toToken as RToken, 
         this.amountIn,
-        this.dataFetcher.getCurrentPoolCodeList().map(pc => pc.pool), 
+        this.dataFetcher.getCurrentPoolCodeList(this.providers).map(pc => pc.pool), 
         networks,
         this.gasPrice
       )

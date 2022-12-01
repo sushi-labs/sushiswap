@@ -10,7 +10,7 @@ import { ConstantProductPoolCode } from "../pools/ConstantProductPool";
 import { ChainId } from "@sushiswap/chain";
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from "@sushiswap/currency";
 import { FACTORY_ADDRESS, INIT_CODE_HASH } from "@sushiswap/amm";
-import { LiquidityProvider2 } from "./LiquidityProvider2";
+import { LiquidityProvider2, LiquidityProviders } from "./LiquidityProvider2";
 
 export class SushiProvider2 extends LiquidityProvider2 {
   fetchedPools: Set<string>
@@ -22,6 +22,10 @@ export class SushiProvider2 extends LiquidityProvider2 {
     this.poolCodes = []
     this.lastPoolCodeNumber = 0
     this.fetchedPools = new Set()
+  }
+
+  getType(): LiquidityProviders {
+    return LiquidityProviders.Sushiswap
   }
 
   getPoolProviderName(): string {return 'Sushiswap'}
