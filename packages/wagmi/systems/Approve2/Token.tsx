@@ -70,9 +70,7 @@ export const Token: ApproveTokenFn = ({
                     )}
                     onClick={onApprove}
                   >
-                    {amount && (
-                      <CurrencyFromUi.Icon disableLink currency={amount?.currency} width="100%" height="100%" />
-                    )}
+                    {amount && <CurrencyFromUi.Icon disableLink currency={amount?.currency} width={24} height={24} />}
                   </IconButton>
                 </Badge>
               </div>

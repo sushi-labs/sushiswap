@@ -50,13 +50,15 @@ export const useBridgeFees = ({
   const { data: getFeesResults, isLoading: isFeeResultLoading } = useContractRead({
     address: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
-    args: [
-      BigNumber.from(STARGATE_POOL_ID[srcChainId][(srcToken as Type).wrapped.address]),
-      BigNumber.from(STARGATE_POOL_ID[dstChainId][(dstToken as Type).wrapped.address]),
-      STARGATE_CHAIN_ID[dstChainId],
-      getSushiXSwapContractConfig(srcChainId).address as Address,
-      BigNumber.from(amount?.quotient?.toString()),
-    ],
+    args: amount
+      ? [
+          BigNumber.from(STARGATE_POOL_ID[srcChainId][(srcToken as Type).wrapped.address]),
+          BigNumber.from(STARGATE_POOL_ID[dstChainId][(dstToken as Type).wrapped.address]),
+          STARGATE_CHAIN_ID[dstChainId],
+          getSushiXSwapContractConfig(srcChainId).address as Address,
+          BigNumber.from(amount?.quotient?.toString()),
+        ]
+      : undefined,
     abi: stargateFeeLibraryV03Abi,
     chainId: srcChainId,
     enabled: Boolean(
