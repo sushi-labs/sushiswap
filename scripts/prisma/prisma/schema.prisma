@@ -59,8 +59,8 @@ model Pool {
   volumeUSD    Decimal // volume in USD
   volumeNative Decimal // volume in native
 
-  token0Price Decimal // Price of token0 in token1
-  token1Price Decimal // Price of token1 in token0
+  token0Price String
+  token1Price String
 
   apr            Float?
   totalApr       Float?
@@ -82,6 +82,8 @@ model Pool {
   @@unique([chainId, address])
   @@index(fields: [id])
   @@index(fields: [id, token0Id, token1Id])
+  @@index(fields: [chainId, token0Id])
+  @@index(fields: [chainId, token1Id])
 }
 
 model Incentive {
@@ -99,5 +101,6 @@ model Incentive {
   poolAddress String
 
   @@index(fields: [id])
-  @@index(fields: [poolAddress, chainId])
+  @@index(fields: [chainId, poolAddress])
+  @@index(fields: [chainId, rewardTokenId])
 }

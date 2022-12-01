@@ -1,8 +1,8 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
-import { getBuiltGraphSDK, PairsQuery, V2PairsQuery } from '../.graphclient'
-import { GRAPH_HOST, QUICKSWAP_SUPPORTED_CHAINS, UNISWAP_V2_SUBGRAPH_NAME, UNISWAP_SUPPORTED_CHAINS } from './config'
+import { getBuiltGraphSDK, V2PairsQuery, } from '../.graphclient'
+import { GRAPH_HOST, UNISWAP_V3_SUBGRAPH_NAME, UNISWAP_V3_SUPPORTED_CHAINS } from './config'
 import { mergePools } from './entity/pool/load'
 import { filterPools } from './entity/pool/transform'
 import { createTokens } from './entity/token/load'
@@ -11,12 +11,12 @@ import { filterTokensToCreate } from './entity/token/transform'
 const client = new PrismaClient()
 
 const PROTOCOL = 'UniSwap'
-const VERSION = 'V2'
+const VERSION = 'V3'
 const CONSTANT_PRODUCT_POOL = 'CONSTANT_PRODUCT_POOL'
 
 async function main() {
   const startTime = performance.now()
-  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
+  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL} ${VERSION}`)
 
   // EXTRACT
   const exchanges = await extract()
@@ -35,23 +35,23 @@ async function main() {
 
 async function extract() {
   console.log(
-    `Fetching pools from ${PROTOCOL}, chains: ${UNISWAP_SUPPORTED_CHAINS.map((chainId) => chainName[chainId]).join(
+    `Fetching pools from ${PROTOCOL} ${VERSION}, chains: ${UNISWAP_V3_SUPPORTED_CHAINS.map((chainId) => chainName[chainId]).join(
       ', '
     )}`
   )
   const chainId = ChainId.ETHEREUM
-  const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: UNISWAP_V2_SUBGRAPH_NAME[chainId] })
-  if (!UNISWAP_V2_SUBGRAPH_NAME[chainId]) {
-    throw new Error(`Subgraph not found: ${chainId} ${UNISWAP_V2_SUBGRAPH_NAME[chainId]}`)
+  const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: UNISWAP_V3_SUBGRAPH_NAME[chainId] })
+  if (!UNISWAP_V3_SUBGRAPH_NAME[chainId]) {
+    throw new Error(`Subgraph not found: ${chainId} ${UNISWAP_V3_SUBGRAPH_NAME[chainId]}`)
   }
-  console.log(UNISWAP_V2_SUBGRAPH_NAME[chainId])
+  console.log(UNISWAP_V3_SUBGRAPH_NAME[chainId])
   const data: (V2PairsQuery | undefined)[] = []
   let pairCount = 0
   let cursor: string = ''
   do {
-    const where = cursor !== '' ? { reserveUSD_gt: 250, id_gt: cursor } : { reserveUSD_gt: 250 }
+    const where = cursor !== '' ? { id_gt: cursor } : {}
     const request = await sdk
-      .V2Pairs({
+      .V3Pairs({
         first: 1000,
         where,
       })
@@ -61,7 +61,7 @@ async function extract() {
       })
     const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''
     cursor = newCursor
-    console.log(`New cursor: ${newCursor}`)
+    // console.log(`New cursor: ${newCursor}`)
     pairCount += request?.V2_pairs.length ?? 0
     data.push(request)
   } while (cursor !== '')
