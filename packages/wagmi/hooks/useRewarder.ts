@@ -6,7 +6,6 @@ import { Address, useContractRead, useContractReads } from 'wagmi'
 import { RewarderType } from './useFarmRewards'
 import { Chef } from './useMasterChef'
 import { getMasterChefContractConfig } from './useMasterChefContract'
-import { getRewarderConfig } from './useRewarderContract'
 
 interface UseRewarderPayload {
   account: string | undefined
@@ -78,7 +77,8 @@ export const useRewarder: UseRewarder = ({
             args: [BigNumber.from(farmId), account as Address],
           } as const)
         : ({
-            ...getRewarderConfig(rewarderAddresses[i]),
+            // ...getRewarderConfig(rewarderAddresses[i]),
+            address: rewarderAddresses[i] as Address,
             chainId,
             abi: [
               {
@@ -142,7 +142,7 @@ export const useRewarder: UseRewarder = ({
 
     return {
       data: _data
-        .filter((el): el is NonNullable<typeof _data['0']> => el !== undefined)
+        .filter((el): el is NonNullable<typeof _data['0']> => !!el)
         .reduce<(Amount<Token> | undefined)[]>((acc, result, index) => {
           if (BigNumber.isBigNumber(result)) {
             acc.push(result ? Amount.fromRawAmount(rewardTokens[index], result.toString()) : undefined)
