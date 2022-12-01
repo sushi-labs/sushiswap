@@ -47,7 +47,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
         if (!dispatch || index === undefined) return
         dispatch({ type: 'remove', payload: { index } })
       }
-    }, [])
+    }, [dispatch, index])
 
     useEffect(() => {
       if (!dispatch || index === undefined || amount === undefined || !enabled) return
@@ -84,7 +84,6 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
       approvalState,
       disabled,
       dispatch,
-      enabled,
       index,
       onApprove,
       props,
@@ -137,9 +136,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
                     )}
                     onClick={onApprove}
                   >
-                    {amount && (
-                      <CurrencyFromUi.Icon disableLink currency={amount?.currency} width="100%" height="100%" />
-                    )}
+                    {amount && <CurrencyFromUi.Icon disableLink currency={amount?.currency} width={24} height={24} />}
                   </IconButton>
                 </Badge>
               </div>

@@ -9,7 +9,7 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./dist/index.js",
-  "source": "./index.ts",
+  "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
@@ -18,7 +18,7 @@
     "build": "tsc",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "generate": "ls chains.json || curl 'https://chainid.network/chains.json' > chains.json",
+    "generate": "ls src/chains.json || curl 'https://chainid.network/chains.json' > src/chains.json",
     "preinstall": "pnpm run generate",
     "lint": "TIMING=1 eslint ./index.ts --fix",
     "test": "jest --passWithNoTests"

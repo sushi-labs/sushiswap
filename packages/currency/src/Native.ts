@@ -1,4 +1,4 @@
-import CHAIN from '@sushiswap/chain'
+import { chains } from '@sushiswap/chain'
 import invariant from 'tiny-invariant'
 
 import { WNATIVE } from './constants'
@@ -29,9 +29,9 @@ export class Native extends Currency {
       return this.cache[chainId]
     }
 
-    invariant(!!(chainId in CHAIN), 'CHAINS')
+    invariant(!!(chainId in chains), 'CHAINS')
 
-    const { nativeCurrency } = CHAIN[chainId]
+    const { nativeCurrency } = chains[chainId]
 
     invariant(!!nativeCurrency, 'NATIVE_CURRENCY')
 
