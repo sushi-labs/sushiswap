@@ -81,6 +81,8 @@ export class DataFetcher {
   }
 
   getCurrentPoolStateId() {
+    if (this.providers.some(p => p.poolListWereUpdated())) 
+      this.stateId += 1
     return this.stateId
   }
 
