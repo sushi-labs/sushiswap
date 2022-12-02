@@ -26,7 +26,7 @@ async function main() {
   const { tokens, pools } = await transform(exchanges)
 
   // LOAD
-  const batchSize = 250
+  const batchSize = 350
 
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
@@ -130,7 +130,7 @@ async function transform(data: { chainId: ChainId; data: V3PairsQuery[] }[]): Pr
               version: VERSION,
               type: CONCENTRATED_LIQUIDITY_POOL,
               chainId: exchange.chainId.toString(),
-              swapFee: 0.003,
+              swapFee: Number(pair.feeTier) / 1000000,
               twapEnabled: false,
               token0Id: pair.token0.id,
               token1Id: pair.token1.id,

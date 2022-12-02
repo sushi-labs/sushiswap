@@ -99,6 +99,7 @@ query V3Pairs(
       symbol
       decimals
     }
+    feeTier
     reserve0: totalValueLockedToken0
     reserve1: totalValueLockedToken1
     liquidity
