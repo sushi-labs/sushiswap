@@ -25,8 +25,7 @@ model Token {
   pools1     Pool[]      @relation("token1")
 
   @@unique([chainId, address])
-  @@index(fields: [id])
-  @@index(fields: [address, chainId, name])
+  @@index(fields: [address])
   @@index(fields: [address, chainId, symbol])
 }
 
@@ -58,7 +57,8 @@ model Pool {
   // TODO: add more composite indexes once we have decided which queries we'll need
 
   @@unique([chainId, address])
-  @@index(fields: [id])
+  @@index(fields: [address])
+  @@index(fields: [chainId, protocol, token0Id, token1Id])
   @@index(fields: [id, token0Id, token1Id])
   @@index(fields: [chainId, token0Id])
   @@index(fields: [chainId, token1Id])

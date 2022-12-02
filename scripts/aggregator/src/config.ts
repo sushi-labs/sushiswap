@@ -44,6 +44,8 @@ export const GRAPH_HOST: Record<number | string, string> = {
   [ChainId.KAVA]: 'pvt.graph.kava.io',
   [ChainId.METIS]: 'andromeda.thegraph.metis.io',
   [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com',
+  // [ChainId.BTTC]: 'arbitrum-nova-subgraph.sushi.com',
+  // [ChainId.BOBA_AVAX]: 'arbitrum-nova-subgraph.sushi.com',
   [ChainId.BOBA]: GRAPH_HOST_ENDPOINT,
 }
 
@@ -60,6 +62,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
   [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
+  // [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
 }

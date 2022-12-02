@@ -23,6 +23,7 @@ export async function mergePools(
 
 async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
   console.log(`LOAD - Preparing to update ${pools.length} pools`)
+
   const upsertManyPools = pools.map((pool) =>
     client.pool.upsert({
       where: { id: pool.id },

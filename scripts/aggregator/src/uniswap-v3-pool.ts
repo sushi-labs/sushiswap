@@ -27,17 +27,19 @@ async function main() {
 
   // LOAD
   const batchSize = 250
-  for (let i = 0; i < pools.length; i += batchSize) {
-    const batch = pools.slice(i, i + batchSize)
-    const filteredPools = await filterPools(client, batch)
-    await mergePools(client, PROTOCOL, [VERSION], filteredPools)
-  }
 
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
     const filteredTokens = await filterTokensToCreate(client, batch)
     await createTokens(client, filteredTokens)
   }
+
+  for (let i = 0; i < pools.length; i += batchSize) {
+    const batch = pools.slice(i, i + batchSize)
+    const filteredPools = await filterPools(client, batch)
+    await mergePools(client, PROTOCOL, [VERSION], filteredPools)
+  }
+
   const endTime = performance.now()
 
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
@@ -119,10 +121,11 @@ async function transform(data: { chainId: ChainId; data: V3PairsQuery[] }[]): Pr
                 decimals: Number(pair.token1.decimals),
               })
             )
+            const name = pair.token0.symbol.slice(0,15).concat('-').concat(pair.token1.symbol.slice(0,15))
             return Prisma.validator<Prisma.PoolCreateManyInput>()({
               id: exchange.chainId.toString().concat('_').concat(pair.id),
               address: pair.id,
-              name: pair.token0.symbol.concat('-').concat(pair.token1.symbol),
+              name: name,
               protocol: PROTOCOL,
               version: VERSION,
               type: CONCENTRATED_LIQUIDITY_POOL,
@@ -134,7 +137,7 @@ async function transform(data: { chainId: ChainId; data: V3PairsQuery[] }[]): Pr
               reserve0: pair.reserve0,
               reserve1: pair.reserve1,
               totalSupply: pair.liquidity,
-              liquidityUSD: pair.liquidityUSD.toFixed(30),
+              liquidityUSD: pair.liquidityUSD,
               createdAtBlockNumber: BigInt(pair.createdAtBlock),
             })
           })
