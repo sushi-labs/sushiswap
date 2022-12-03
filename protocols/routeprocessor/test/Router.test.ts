@@ -79,8 +79,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   const backCounter = new BackCounter(8)
   const dataFetcher = new DataFetcher(provider, chainId)
   dataFetcher.startDataFetching()
-  dataFetcher.fetchPoolsForToken(baseWrappedToken)
-  dataFetcher.fetchPoolsForToken(toToken)
+  dataFetcher.fetchPoolsForToken(baseWrappedToken, toToken)
   const router = new Router(dataFetcher, baseWrappedToken, amountInBN, toToken, 30e9)
   router.startRouting(r => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))

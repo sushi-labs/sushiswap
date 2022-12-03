@@ -50,8 +50,8 @@ export class DataFetcher {
     this.providers.forEach(p =>p.stopFetchPoolsData())
   }
 
-  fetchPoolsForToken(t: Token) {
-    this.providers.forEach(p =>p.fetchPoolsForToken(t))
+  fetchPoolsForToken(t0: Token, t1: Token) {
+    this.providers.forEach(p =>p.fetchPoolsForToken(t0, t1))
   }
 
   getCurrentPoolCodeMap(providers?: LiquidityProviders[]): Map<string, PoolCode> {
