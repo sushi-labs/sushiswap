@@ -88,7 +88,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
               </div>
             </Drawer.Button>
             <Drawer.Panel>
-              <div className="flex justify-between py-4 items-center">
+              <div className="flex items-center justify-between py-4">
                 <Typography variant="lg" weight={500}>
                   Vesting Details
                 </Typography>
@@ -171,6 +171,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                           fieldState: { error: validationError },
                         }) => (
                           <CurrencyInput
+                            id="create-multiple-vest"
                             name={name}
                             onBlur={onBlur}
                             className="ring-offset-slate-900"
@@ -289,7 +290,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         </Typography>
                       )}
                     </Form.Control>
-                    <Button type="button" onClick={() => setOpen(false)} size="md" className="block sm:hidden px-6">
+                    <Button type="button" onClick={() => setOpen(false)} size="md" className="block px-6 sm:hidden">
                       Close
                     </Button>
                   </div>

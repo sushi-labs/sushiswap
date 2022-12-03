@@ -15,9 +15,6 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "files": [
-    "node.js"
-  ],
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@types/node": "^17.0.34"

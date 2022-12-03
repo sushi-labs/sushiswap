@@ -205,7 +205,7 @@ const Widget: FC<Swap> = ({
 
   const feeRef = useRef<Amount<Native>>()
   const [nanoId] = useState(nanoid())
-  const [srcTxHash, setSrcTxHash] = useState<string>()
+  const [srcTxHash, setSrcTxHash] = useState<`0x${string}`>()
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
@@ -524,7 +524,7 @@ const Widget: FC<Swap> = ({
       .cook(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
       .then((res) => {
         if (res) {
-          setSrcTxHash(res.hash)
+          setSrcTxHash(res.hash as `0x${string}`)
         }
         console.debug('then cooked', res)
         setSignature(undefined)
@@ -1272,7 +1272,7 @@ const Widget: FC<Swap> = ({
                                       size="md"
                                       className="whitespace-nowrap"
                                       fullWidth
-                                      address={getSushiXSwapContractConfig(srcChainId).addressOrName}
+                                      address={getSushiXSwapContractConfig(srcChainId).address}
                                       onSignature={setSignature}
                                     />
                                     <Approve.Token

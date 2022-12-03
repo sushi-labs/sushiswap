@@ -91,6 +91,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
               </Select.Button>
               <Form.Error message={error?.message} />
               <TokenSelector
+                id={'create-single-stream'}
                 open={dialogOpen}
                 variant="dialog"
                 chainId={chainId}

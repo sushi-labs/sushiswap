@@ -46,7 +46,7 @@ export const useMasterChefWithdraw: UseMasterChefWithdraw = ({ chainId, onSucces
   )
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!address || !chainId || !amount || !contract) return
 
       setRequest({

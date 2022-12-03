@@ -286,18 +286,20 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                   components={
                     <Approve.Components>
                       <Approve.Bentobox
+                        id="remove-liquidity-trident-approve-bentobox"
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth
-                        address={getTridentRouterContractConfig(pair.chainId).addressOrName}
+                        address={getTridentRouterContractConfig(pair.chainId).address}
                         onSignature={setPermit}
                       />
                       <Approve.Token
+                        id="remove-liquidity-trident-approve-token"
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth
                         amount={slpAmountToRemove}
-                        address={getTridentRouterContractConfig(pair.chainId).addressOrName}
+                        address={getTridentRouterContractConfig(pair.chainId).address}
                       />
                     </Approve.Components>
                   }

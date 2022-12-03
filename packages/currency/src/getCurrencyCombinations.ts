@@ -224,7 +224,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
       name: 'Avax',
     }),
   ],
-  // [ChainId.BOBA_AVAX]: [WNATIVE[ChainId.BOBA_AVAX]],
+  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC]],
 }
 
 export const ADDITIONAL_BASES: {

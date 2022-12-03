@@ -1,11 +1,7 @@
+import { masterChefV1Abi, masterChefV2Abi, miniChefAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
-import { useMemo } from 'react'
-import { useProvider } from 'wagmi'
-import { getContract, ReadContractConfig } from 'wagmi/actions'
+import { Address, useContract, useProvider } from 'wagmi'
 
-import MASTERCHEF_ABI from '../abis/masterchef.json'
-import MASTERCHEF_ABI_V2 from '../abis/masterchef-v2.json'
-import MINICHEF_ABI from '../abis/minichef-v2.json'
 import { Chef } from './useMasterChef'
 
 // TODO move to package
@@ -36,48 +32,42 @@ export const MINICHEF_ADDRESS = {
   [ChainId.BOBA]: '0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3',
 } as const
 
-export const _getMasterChefContractConfig = (
-  chainId: keyof typeof MASTERCHEF_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => ({
-  chainId,
-  addressOrName: MASTERCHEF_ADDRESS[chainId],
-  contractInterface: MASTERCHEF_ABI,
-})
+export const _getMasterChefContractConfig = (chainId: keyof typeof MASTERCHEF_ADDRESS) =>
+  ({
+    chainId,
+    address: MASTERCHEF_ADDRESS[chainId] as Address,
+    abi: masterChefV1Abi,
+  } as const)
 
-export const getMasterChefContractV2Config = (
-  chainId: keyof typeof MASTERCHEF_V2_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => ({
-  chainId,
-  addressOrName: MASTERCHEF_V2_ADDRESS[chainId],
-  contractInterface: MASTERCHEF_ABI_V2,
-})
+export const getMasterChefContractV2Config = (chainId: keyof typeof MASTERCHEF_V2_ADDRESS) =>
+  ({
+    chainId,
+    address: MASTERCHEF_V2_ADDRESS[chainId] as Address,
+    abi: masterChefV2Abi,
+  } as const)
 
-export const getMiniChefContractConfig = (
-  chainId: keyof typeof MINICHEF_ADDRESS
-): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => {
+export const getMiniChefContractConfig = (chainId: keyof typeof MINICHEF_ADDRESS) => {
   return {
     chainId,
-    addressOrName: MINICHEF_ADDRESS[chainId],
-    contractInterface: MINICHEF_ABI,
-  }
+    address: MINICHEF_ADDRESS[chainId] as Address,
+    abi: miniChefAbi,
+  } as const
 }
 
 export const getMasterChefContractConfig = (
-  chainId: number,
+  chainId: keyof typeof MASTERCHEF_ADDRESS | keyof typeof MASTERCHEF_V2_ADDRESS | keyof typeof MINICHEF_ADDRESS,
   chef: Chef
-): Pick<ReadContractConfig, 'chainId' | 'addressOrName' | 'contractInterface'> => {
-  if (chef === Chef.MASTERCHEF) return _getMasterChefContractConfig(chainId)
-  if (chef === Chef.MASTERCHEF_V2) return getMasterChefContractV2Config(chainId)
-  return getMiniChefContractConfig(chainId)
+) => {
+  if (chef === Chef.MASTERCHEF) return _getMasterChefContractConfig(chainId as keyof typeof MASTERCHEF_ADDRESS)
+  if (chef === Chef.MASTERCHEF_V2) return getMasterChefContractV2Config(chainId as keyof typeof MASTERCHEF_V2_ADDRESS)
+  if (chef === Chef.MINICHEF) return getMiniChefContractConfig(chainId as keyof typeof MINICHEF_ADDRESS)
 }
 
-// TODO ADD TYPECHAIN
-export function useMasterChefContract(chainId: number, chef: Chef) {
+export function useMasterChefContract(chainId: number, chef: Chef): ReturnType<typeof useContract> {
   const signerOrProvider = useProvider({ chainId })
-  return useMemo(() => {
-    if (!chainId) return
-    const config = getMasterChefContractConfig(chainId, chef)
-    if (!config) return
-    return getContract({ ...config, signerOrProvider })
-  }, [chainId, chef, signerOrProvider])
+  // @ts-ignore - Workaround for TS#4058
+  return useContract({
+    ...getMasterChefContractConfig(chainId, chef),
+    signerOrProvider,
+  })
 }

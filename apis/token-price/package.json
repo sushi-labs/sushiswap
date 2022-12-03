@@ -7,9 +7,9 @@
   },
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
-    "@vercel/node": "^2.2.0",
-    "date-fns": "2.x",
-    "ioredis": "5.x"
+    "@vercel/node": "2.7.0",
+    "date-fns": "2.29.3",
+    "ioredis": "5.2.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

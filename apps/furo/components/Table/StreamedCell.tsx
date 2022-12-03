@@ -13,7 +13,7 @@ export const StreamedCell: FC<CellProps> = ({ row }) => {
         color={ProgressColor.BLUE}
       />
       <Typography variant="sm" weight={500} className="text-slate-200">
-        {row.streamedPercentage?.toSignificant(4)}%
+        {row.streamedPercentage?.toPercentageString(2)}
       </Typography>
     </div>
   )

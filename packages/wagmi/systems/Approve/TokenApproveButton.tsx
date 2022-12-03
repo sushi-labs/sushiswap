@@ -2,6 +2,7 @@ import { Transition } from '@headlessui/react'
 import { Amount, Currency } from '@sushiswap/currency'
 import { Badge, Button, classNames, Currency as CurrencyFromUi, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
+import { Address } from 'wagmi'
 
 import { ApprovalState, useERC20ApproveCallback } from '../../hooks'
 import { DefaultButton } from './DefaultButton'
@@ -12,11 +13,12 @@ type RenderPropPayload = ApprovalButtonRenderProp
 export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
   watch?: boolean
   amount?: Amount<Currency>
-  address?: string
+  address?: Address
 }
 
 export const TokenApproveButton: FC<TokenApproveButton> = memo(
   ({
+    id,
     watch = true,
     amount,
     address,
@@ -45,7 +47,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
         if (!dispatch || index === undefined) return
         dispatch({ type: 'remove', payload: { index } })
       }
-    }, [])
+    }, [dispatch, index])
 
     useEffect(() => {
       if (!dispatch || index === undefined || amount === undefined || !enabled) return
@@ -57,6 +59,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
             approvalState,
             !amount?.currency.isNative ? (
               <Button
+                testdata-id={`${id}-button`}
                 {...props}
                 type="button"
                 key={1}
@@ -73,6 +76,8 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
         },
       })
     }, [
+      id,
+      enabled,
       amount,
       amount?.currency.isNative,
       amount?.currency.symbol,
@@ -131,9 +136,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
                     )}
                     onClick={onApprove}
                   >
-                    {amount && (
-                      <CurrencyFromUi.Icon disableLink currency={amount?.currency} width="100%" height="100%" />
-                    )}
+                    {amount && <CurrencyFromUi.Icon disableLink currency={amount?.currency} width={24} height={24} />}
                   </IconButton>
                 </Badge>
               </div>

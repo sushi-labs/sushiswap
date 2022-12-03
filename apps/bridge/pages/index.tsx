@@ -3,8 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
-import { Button, Loader, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Button, Loader, Typography, Widget } from '@sushiswap/ui'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import {
   BridgeReviewModal,
@@ -20,7 +19,7 @@ import {
 import { nanoid } from 'nanoid'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import React, { FC, useCallback, useMemo } from 'react'
+import { FC, useCallback, useMemo } from 'react'
 
 import { useCustomTokens } from '../lib/state/storage'
 

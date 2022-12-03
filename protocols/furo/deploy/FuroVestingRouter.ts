@@ -1,4 +1,5 @@
-import { BENTOBOX_ADDRESS, WNATIVE_ADDRESS } from '@sushiswap/core-sdk'
+import bentoBoxExports from '@sushiswap/bentobox/exports.json'
+import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
 
@@ -13,11 +14,27 @@ const func: DeployFunction = async ({
   const { deployer } = await getNamedAccounts()
   const { deploy } = deployments
 
-  const chainId = Number(await getChainId())
+  const chainId = (await getChainId()) as keyof Omit<typeof bentoBoxExports, '31337'>
 
   const { address: furoVestingAddress } = await deployments.get('FuroVesting')
 
-  const args = [BENTOBOX_ADDRESS[chainId], furoVestingAddress, WNATIVE_ADDRESS[chainId]]
+  if (!bentoBoxExports?.[chainId]) {
+    throw Error(`No BentoBox deployed on chain ${chainId}`)
+  }
+
+  if (!WNATIVE_ADDRESS?.[chainId]) {
+    throw Error(`No WNATIVE_ADDRESS for chain ${chainId}`)
+  }
+
+  if (!furoVestingAddress) {
+    throw Error(`No FuroStream deployed on chain ${chainId}`)
+  }
+
+  const args = [
+    bentoBoxExports[chainId]?.[0]?.contracts?.BentoBoxV1?.address,
+    furoVestingAddress,
+    WNATIVE_ADDRESS[chainId],
+  ]
 
   const { address } = await deploy('FuroVestingRouter', {
     from: deployer,

@@ -1,7 +1,7 @@
+import { Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, Typography, useBreakpoint } from '@sushiswap/ui'
 import { FC, Fragment, useState } from 'react'
 
-import { Pair } from '@sushiswap/graph-client'
 import { PoolActionBarPositionDialog } from './PoolActionBarPositionDialog'
 import { PoolActionBarPositionRewards } from './PoolActionBarPositionRewards'
 

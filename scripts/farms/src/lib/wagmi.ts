@@ -5,6 +5,10 @@ import { publicProvider } from '@wagmi/core/providers/public'
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 
+if (!alchemyId) {
+  throw Error('NO ALCHEMY ID SET')
+}
+
 createClient(
   configureChains([...allChains, ...otherChains], [publicProvider(), alchemyProvider({ apiKey: alchemyId })])
 )

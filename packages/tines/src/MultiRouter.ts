@@ -43,7 +43,7 @@ function getBetterRouteExactIn(route1: MultiRoute, route2: MultiRoute): MultiRou
 
 function deduplicatePools(pools: RPool[]): RPool[] {
   const poolMap = new Map<string, RPool>()
-  pools.forEach(p => {
+  pools.forEach((p) => {
     const chId0 = p.token0.chainId || 0
     const chId1 = p.token1.chainId || 0
     const chainInfo = chId0 < chId1 ? `_${chId0}_${chId1}` : `_${chId1}_${chId0}`

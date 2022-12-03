@@ -1,3 +1,4 @@
+import { AddressZero } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource, useInViewport } from '@sushiswap/hooks'
 import { Fraction, ZERO } from '@sushiswap/math'
@@ -6,6 +7,7 @@ import { Icon } from '@sushiswap/ui/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback, useRef } from 'react'
 
 interface TokenSelectorRow {
+  id: string
   account?: string
   currency: Type
   style?: CSSProperties
@@ -17,7 +19,7 @@ interface TokenSelectorRow {
 }
 
 export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
-  ({ price, balance, currency, fundSource, style, className, onCurrency }) => {
+  ({ id, price, balance, currency, fundSource, style, className, onCurrency }) => {
     const onClick = useCallback(() => {
       onCurrency(currency)
     }, [currency, onCurrency])
@@ -25,6 +27,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
     const inViewport = useInViewport(ref)
     return (
       <div
+        testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
         onClick={onClick}
         className={classNames(
           className,

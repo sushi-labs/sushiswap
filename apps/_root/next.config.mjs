@@ -27,11 +27,17 @@ const {
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
+  experimental: {
+    esmExternals: 'loose',
+  },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
   productionBrowserSourceMaps: true,
+  experimental: {
+    esmExternals: 'loose',
+  },
   async redirects() {
     return [
       {

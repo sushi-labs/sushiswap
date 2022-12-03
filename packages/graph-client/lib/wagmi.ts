@@ -1,28 +1,32 @@
 import { ChainId } from '@sushiswap/chain'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { otherChains } from '@sushiswap/wagmi-config'
-import { allChains, configureChains, createClient, erc20ABI, readContract } from '@wagmi/core'
+import { Address, allChains, configureChains, createClient, erc20ABI, readContract } from '@wagmi/core'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+// import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
 import { BigNumber } from 'ethers'
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
+if (!alchemyId) {
+  throw Error('NO ALCHEMY ID SET')
+}
+
 const { provider } = configureChains(
   [...allChains, ...otherChains],
   [
-    jsonRpcProvider({
-      priority: 0,
-      rpc: (chain) => {
-        if (chain.id !== 1) return null
-        return {
-          http: `https://api.securerpc.com/v1`,
-          webSocket: `wss://api.securerpc.com/v1`,
-        }
-      },
-    }),
+    // jsonRpcProvider({
+    //   priority: 0,
+    //   rpc: (chain) => {
+    //     if (chain.id !== 1) return null
+    //     return {
+    //       http: `https://api.securerpc.com/v1`,
+    //       webSocket: `wss://api.securerpc.com/v1`,
+    //     }
+    //   },
+    // }),
     alchemyProvider({ apiKey: alchemyId, priority: 1 }),
     publicProvider({ priority: 2 }),
   ]
@@ -36,11 +40,11 @@ export async function fetchBalances(
   return Promise.allSettled<BigNumber>(
     args.map(({ token, user, chainId }) =>
       readContract({
-        addressOrName: token,
+        address: token,
         functionName: 'balanceOf',
-        args: [user],
+        args: [user as Address],
         chainId,
-        contractInterface: erc20ABI,
+        abi: erc20ABI,
       })
     )
   ).then((results) => {

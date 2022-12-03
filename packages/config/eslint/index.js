@@ -31,7 +31,7 @@ const eslintConfig = {
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-non-null-assertion': 'warn',
     '@typescript-eslint/ban-ts-comment': 'warn',
-    '@typescript-eslint/no-empty-function': 'warn',
+    '@typescript-eslint/no-empty-function': 'off',
   },
 }
 

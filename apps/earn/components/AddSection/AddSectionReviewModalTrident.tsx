@@ -253,14 +253,16 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
             components={
               <Approve.Components>
                 <Approve.Bentobox
+                  id="add-liquidity-trident-approve-bentobox"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
-                  address={getTridentRouterContractConfig(chainId).addressOrName}
+                  address={getTridentRouterContractConfig(chainId).address}
                   onSignature={setPermit}
-                  enabled={Boolean(getTridentRouterContractConfig(chainId).addressOrName)}
+                  enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                 />
                 <Approve.Token
+                  id="add-liquidity-trident-approve-token0"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
@@ -269,6 +271,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
                   enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
                 />
                 <Approve.Token
+                  id="add-liquidity-trident-approve-token1"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
