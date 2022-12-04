@@ -56,7 +56,6 @@ export const resolvers: Resolvers = {
       ).then((kpis) => kpis.flat()),
     subgraphs: async (root, args) => {
       const fetch = async ({ subgraphName, nodeUrl }: SubgraphWithNode) => {
-        console.log(nodeUrl, subgraphName)
         const sdk = getBuiltGraphSDK({ node: nodeUrl })
 
         switch (args.type) {

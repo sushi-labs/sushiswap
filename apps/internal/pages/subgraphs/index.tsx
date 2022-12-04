@@ -19,8 +19,6 @@ const fetcher = async ({
 }) => {
   const _url = new URL(url, window.location.origin)
 
-  console.log(args)
-
   return fetch(_url.href + '?' + new URLSearchParams(args))
     .then((res) => res.json())
     .then((data: Subgraph[]) => data)

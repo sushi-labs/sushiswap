@@ -61,8 +61,6 @@ interface GetSubgraphs {
 export async function getSubgraphs({ filter }: GetSubgraphs = {}) {
   const sdk = getBuiltGraphSDK()
 
-  console.log('fetching', filter)
-
   const subgraphs = parseCategories()
 
   const subgraphInputs = subgraphs
