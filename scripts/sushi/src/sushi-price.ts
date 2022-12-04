@@ -24,76 +24,74 @@ async function main() {
   const { tokensToCreate, tokensToUpdate } = await transform(exchanges)
 
   // LOAD
-  await createTokens(client, tokensToCreate)
-  await updateTokenPrices(client, tokensToUpdate)
+  const batchSize = 500
+  for (let i = 0; i < tokensToCreate.length; i += batchSize) {
+    const batch = tokensToCreate.slice(i, i + batchSize)
+    await createTokens(client, batch)
+  }
+
+  for (let i = 0; i < tokensToUpdate.length; i += batchSize) {
+    const batch = tokensToUpdate.slice(i, i + batchSize)
+    await updateTokenPrices(client, batch)
+  }
 
   const endTime = performance.now()
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
 
 async function extract() {
-  console.log(
-    `Fetching pools from sushiswap from chains: `,
-    SUSHISWAP_CHAINS.map((chainId) => chainName[chainId]).join(', ')
-  )
-  const size = 1000
-  const legacyRequests = SUSHISWAP_CHAINS.map((chainId) => {
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] })
-    const data = []
-    // TODO: use auto pagination when it works, currently skip only works up to 5000, and we have more than 6k pools on polygon
-    for (let i = 0; i < 6; i++) {
-      data.push(
-        sdk.TokenPrices({ first: 1000, skip: i * size }).catch((reason) => {
-          console.log(
-            `Fetch failed: Exchange - ${GRAPH_HOST[chainId]}${EXCHANGE_SUBGRAPH_NAME[chainId]}. Reason: ${reason}`
-          )
-          return undefined
-        })
-      )
-    }
-    return { chainId, data }
-  })
-  const tridentRequests = TRIDENT_CHAINS.map((chainId) => {
-    const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] })
-    const data = []
-    for (let i = 0; i < 6; i++) {
-      data.push(
-        sdk.TokenPrices({ first: 1000, skip: i * size }).catch((reason) => {
-          console.log(
-            `Fetch failed: Exchange - ${GRAPH_HOST[chainId]}${EXCHANGE_SUBGRAPH_NAME[chainId]}. Reason: ${reason}`
-          )
-          return undefined
-        })
-      )
-    }
-    return { chainId, data }
-  })
-  // OLD TRIDENT POLYGON
-  const polygon = [ChainId.POLYGON].map((chainId) => {
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: 'sushi-0m/trident-polygon' })
-    const data = []
-    for (let i = 0; i < 6; i++) {
-      data.push(
-        sdk.TokenPrices({ first: 1000, skip: i * size }).catch((reason) => {
-          console.log(
-            `Fetch failed: Exchange - ${GRAPH_HOST[chainId]}${EXCHANGE_SUBGRAPH_NAME[chainId]}. Reason: ${reason}`
-          )
-          return undefined
-        })
-      )
-    }
-    return { chainId, data }
-  })
+  const result: { chainId: ChainId; data: TokenPricesQuery[] }[] = []
 
-  return await Promise.all(
-    [...legacyRequests, ...tridentRequests, ...polygon].map((request) =>
-      Promise.all(request.data).then((data) => {
-        const tokenPrices = data.filter((d) => d !== undefined).flat()
-        return { chainId: request.chainId, data: tokenPrices }
-      })
-    )
-  )
+  const subgraphs = [
+    TRIDENT_CHAINS.map((chainId) => {
+      const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
+      return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] }
+    }),
+    SUSHISWAP_CHAINS.map((chainId) => {
+      return { chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] }
+    }),
+    // [{ chainId: ChainId.POLYGON, host: GRAPH_HOST[ChainId.POLYGON], name: 'sushi-0m/trident-polygon' }],
+  ].flat()
+
+  const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
+  console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
+
+  let totalPairCount = 0
+  for (const subgraph of subgraphs) {
+    const chainId = subgraph.chainId
+    const sdk = getBuiltGraphSDK({ chainId, host: subgraph.host, name: subgraph.name })
+
+    console.log(`Loading data from ${subgraph.host} ${subgraph.name}`)
+    let pairCount = 0
+    let cursor: string = ''
+    const data: TokenPricesQuery[] = []
+
+    do {
+      const where = cursor !== '' ? { id_gt: cursor } : {}
+      const request = await sdk
+        .TokenPrices({
+          first: 1000,
+          where,
+        })
+        .catch((e: string) => {
+          console.log({ e })
+          return undefined
+        })
+        .catch(() => undefined)
+      const newCursor = request?.tokenPrices[request.tokenPrices.length - 1]?.id ?? ''
+      cursor = newCursor
+      pairCount += request?.tokenPrices.length ?? 0
+      if (request) {
+        data.push(request)
+      }
+    } while (cursor !== '')
+
+    console.log(`${subgraph.name}, pair count: ${pairCount}`)
+    totalPairCount += pairCount
+    result.push({ chainId, data })
+  }
+  console.log(`Total pair count across all subgraphs: ${totalPairCount}`)
+  return result
 }
 
 async function transform(
@@ -119,7 +117,6 @@ async function transform(
         const price = Prisma.validator<Prisma.TokenCreateManyInput>()({
           id: id,
           address: tokenPrice.id,
-          network: chainName[chainId],
           chainId: chainId.toString(),
           name: tokenPrice.token.name,
           symbol: tokenPrice.token.symbol,
@@ -142,7 +139,16 @@ async function transform(
 
   const tokens = Object.values(tokensIncludingLiquidity).map((pricesWithLiquidity) => pricesWithLiquidity.token)
   console.log(`TRANSFORM - mapped ${tokens.length} tokens`)
-  const { tokensToCreate, tokensToUpdate } = await filterTokensByUsdPrice(client, tokens)
+
+  const batchSize = 500
+  const tokensToCreate: Prisma.TokenCreateManyInput[] = []
+  const tokensToUpdate: Prisma.TokenUpdateArgs[] = []
+  for (let i = 0; i < tokens.length; i += batchSize) {
+    const batch = tokens.slice(i, i + batchSize)
+    const { tokensToCreate: toCreate, tokensToUpdate: toUpdate } = await filterTokensByUsdPrice(client, batch)
+    tokensToCreate.push(...toCreate)
+    tokensToUpdate.push(...toUpdate)
+  }
 
   return { tokensToCreate, tokensToUpdate }
 }

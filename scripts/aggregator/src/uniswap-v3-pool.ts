@@ -121,7 +121,12 @@ async function transform(data: { chainId: ChainId; data: V3PairsQuery[] }[]): Pr
                 decimals: Number(pair.token1.decimals),
               })
             )
-            const name = pair.token0.symbol.slice(0,15).concat('-').concat(pair.token1.symbol.slice(0,15))
+            const regex = /([^\w ]|_|-)/g
+            const name = pair.token0.symbol
+              .replace(regex, '')
+              .slice(0, 15)
+              .concat('-')
+              .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
             return Prisma.validator<Prisma.PoolCreateManyInput>()({
               id: exchange.chainId.toString().concat('_').concat(pair.id),
               address: pair.id,

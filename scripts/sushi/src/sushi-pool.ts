@@ -26,57 +26,77 @@ async function main() {
   const { tokens, pools } = await transform(exchanges)
 
   // LOAD
-  await createTokens(client, tokens)
-  await mergePools(client, PROTOCOL, ['LEGACY', 'TRIDENT'], pools, true)
+  const batchSize = 500
+
+  for (let i = 0; i < tokens.length; i += batchSize) {
+    const batch = tokens.slice(i, i + batchSize)
+    const filteredTokens = await filterTokensToCreate(client, batch)
+    await createTokens(client, filteredTokens)
+  }
+
+  for (let i = 0; i < pools.length; i += batchSize) {
+    const batch = pools.slice(i, i + batchSize)
+    const filteredPools = await filterPools(client, batch)
+    await mergePools(client, PROTOCOL, ['LEGACY', 'TRIDENT'], filteredPools)
+  }
   const endTime = performance.now()
 
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
 
 async function extract() {
-  console.log(
-    `Fetching pools from sushiswap from chains: `,
-    SUSHISWAP_CHAINS.map((chainId) => chainName[chainId]).join(', ')
-  )
-  const legacyRequests = SUSHISWAP_CHAINS.map((chainId) => {
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] })
-    const data = []
-    const size = 1000
-    // TODO: use auto pagination when it works, currently skip only works up to 5000, and we have more than 6k pools on polygon
-    for (let i = 0; i < 6; i++) {
-      data.push(sdk.Pairs({ first: size, skip: i * size }).catch(() => undefined))
-    }
-    return { chainId, data }
-  })
-  const tridentRequests = TRIDENT_CHAINS.map((chainId) => {
-    const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] })
-    const data = []
-    const size = 1000
-    for (let i = 0; i < 6; i++) {
-      data.push(sdk.Pairs({ first: size, skip: i * size }).catch(() => undefined))
-    }
-    return { chainId, data }
-  })
-  // OLD TRIDENT POLYGON
-  const polygon = [ChainId.POLYGON].map((chainId) => {
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: 'sushi-0m/trident-polygon' })
-    const data = []
-    const size = 1000
-    for (let i = 0; i < 6; i++) {
-      data.push(sdk.Pairs({ first: size, skip: i * size }).catch(() => undefined))
-    }
-    return { chainId, data }
-  })
+  const result: { chainId: ChainId; data: PairsQuery[] }[] = []
 
-  return await Promise.all(
-    [...legacyRequests, ...tridentRequests, ...polygon].map((request) =>
-      Promise.all(request.data).then((data) => {
-        const pairs = data.filter((d) => d !== undefined).flat()
-        return { chainId: request.chainId, data: pairs }
-      })
-    )
-  )
+  const subgraphs = [
+    TRIDENT_CHAINS.map((chainId) => {
+      const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
+      return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] }
+    }),
+    SUSHISWAP_CHAINS.map((chainId) => {
+      return { chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] }
+    }),
+    [{ chainId: ChainId.POLYGON, host: GRAPH_HOST[ChainId.POLYGON], name: 'sushi-0m/trident-polygon' }],
+  ].flat()
+
+  const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
+  console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
+
+  let totalPairCount = 0
+  for (const subgraph of subgraphs) {
+    const chainId = subgraph.chainId
+    const sdk = getBuiltGraphSDK({ chainId, host: subgraph.host, name: subgraph.name })
+
+    console.log(`Loading data from ${subgraph.host} ${subgraph.name}`)
+    let pairCount = 0
+    let cursor: string = ''
+    const data: PairsQuery[] = []
+
+    do {
+      const where = cursor !== '' ? { id_gt: cursor } : {}
+      const request = await sdk
+        .Pairs({
+          first: 1000,
+          where,
+        })
+        .catch((e: string) => {
+          console.log({ e })
+          return undefined
+        })
+        .catch(() => undefined)
+      const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''
+      cursor = newCursor
+      pairCount += request?.pairs.length ?? 0
+      if (request) {
+        data.push(request)
+      }
+    } while (cursor !== '')
+
+    console.log(`${subgraph.name}, pair count: ${pairCount}`)
+    totalPairCount += pairCount
+    result.push({ chainId, data })
+  }
+  console.log(`Total pair count across all subgraphs: ${totalPairCount}`)
+  return result
 }
 
 async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined)[] }[]): Promise<{
@@ -114,10 +134,16 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
             )
             const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo
             const apr = isAprValid ? Number(pair.apr) : 0
+            const regex = /([^\w ]|_|-)/g
+            const name = pair.token0.symbol
+              .replace(regex, '')
+              .slice(0, 15)
+              .concat('-')
+              .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
             return Prisma.validator<Prisma.PoolCreateManyInput>()({
               id: exchange.chainId.toString().concat('_').concat(pair.id),
               address: pair.id,
-              name: pair.name,
+              name: name,
               protocol: PROTOCOL,
               version: pair.source,
               type: pair.type,
@@ -145,10 +171,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
     })
     .flat()
 
-  const filteredPools = await filterPools(client, poolsTransformed)
-  const filteredTokens = await filterTokensToCreate(client, tokens)
-
-  return { pools: filteredPools, tokens: filteredTokens }
+  return { pools: poolsTransformed, tokens }
 }
 
 main()

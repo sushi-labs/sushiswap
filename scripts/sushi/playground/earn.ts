@@ -11,7 +11,7 @@ async function main() {
 
   result.forEach((result) => {
     console.log(
-      `${result.network}~${result.name}~${result.liquidityUSD.toFixed(2)}~${result.fees1d?.toFixed(2)}~${result.fees1w?.toFixed(2)}~${result.volume1w}~${((result.totalApr ?? 0) * 100).toFixed(2)}%`
+      `${result.name}~${result.liquidityUSD.toFixed(2)}~${result.fees1d?.toFixed(2)}~${result.fees1w?.toFixed(2)}~${result.volume1w}~${((result.totalApr ?? 0) * 100).toFixed(2)}%`
     )
   })
 
@@ -21,7 +21,7 @@ async function main() {
   console.log('NEXT PAGE')
   nextResult.forEach((result) => {
     console.log(
-      `${result.network}~${result.name}~${result.liquidityUSD.toFixed(2)}~${result.fees1d?.toFixed(2)}~${result.fees1w?.toFixed(2)}~${result.volume1w}~${((result.totalApr ?? 0) * 100).toFixed(2)}%`
+      `~${result.name}~${result.liquidityUSD.toFixed(2)}~${result.fees1d?.toFixed(2)}~${result.fees1w?.toFixed(2)}~${result.volume1w}~${((result.totalApr ?? 0) * 100).toFixed(2)}%`
     )
   })
 }

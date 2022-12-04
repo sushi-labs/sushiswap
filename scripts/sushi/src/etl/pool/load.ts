@@ -102,10 +102,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
   }
 
   const startTime = performance.now()
-  const batchSize = 500
-  for (let i = 0; i < pools.length; i += batchSize) {
-    const updatedPools = await Promise.all(upsertManyPools.slice(i, i + batchSize))
-  }
+  const updatedPools = await Promise.all(upsertManyPools)
   const endTime = performance.now()
 
   console.log(`LOAD - Updated ${upsertManyPools.length} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
@@ -113,17 +110,14 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
 
 async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
   let count = 0
-  const batchSize = 500
-  // const batchSize = 1
   const startTime = performance.now()
-  for (let i = 0; i < pools.length; i += batchSize) {
-    const created = await client.pool.createMany({
-      data: pools.slice(i, i + batchSize),
-      skipDuplicates: true,
-    })
-    console.log(`LOAD - Batched and created ${created.count} pools`)
-    count += created.count
-  }
+  const created = await client.pool.createMany({
+    data: pools,
+    skipDuplicates: true,
+  })
+  console.log(`LOAD - Batched and created ${created.count} pools`)
+  count += created.count
+
   const endTime = performance.now()
   console.log(`LOAD - Created ${count} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
 }

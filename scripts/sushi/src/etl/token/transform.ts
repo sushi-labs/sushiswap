@@ -13,27 +13,18 @@ export async function filterTokensToCreate(
     return false
   })
 
-  const batchSize = 500
-  const tokensFound: { id: string }[] = []
-  for (let i = 0; i < tokens.length; i += batchSize) {
-    tokensFound.push(
-      ...(await client.token.findMany({
-        where: {
-          id: { in: uniqueTokens.slice(i, i + batchSize).map((token) => token.id) },
-        },
-        select: {
-          id: true,
-        },
-      }))
-    )
-  }
+  const tokensFound = await client.token.findMany({
+    where: {
+      id: { in: uniqueTokens.map((token) => token.id) },
+    },
+    select: {
+      id: true,
+    },
+  })
 
-  const tokensToCreate =  uniqueTokens.filter((token) => !tokensFound.find((t) => t.id === token.id))
-  console.log(
-    `TRANSFORM - Filtered tokens, ${tokensToCreate.length} should be created.`
-  )
-  return tokensToCreate
+  return uniqueTokens.filter((token) => !tokensFound.find((t) => t.id === token.id))
 }
+
 
 /**
  * Filters tokens, return only the ones that are new or tokens that should have their usd price updated.

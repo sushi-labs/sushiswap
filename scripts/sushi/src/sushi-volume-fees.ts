@@ -26,8 +26,11 @@ async function main() {
   const transformed = transform(pairs, pairs1d, pairs1w)
 
   // LOAD
-  await updatePoolsWithVolumeAndFee(client, transformed)
-
+  const batchSize = 500
+  for (let i = 0; i < transformed.length; i += batchSize) {
+    const batch = transformed.slice(i, i + batchSize)
+    await updatePoolsWithVolumeAndFee(client, batch)
+  }
   const endTime = performance.now()
   console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
@@ -58,14 +61,18 @@ async function extractPairs(blocks?: Pick<Block, 'number' | 'id' | 'timestamp' |
     return { chainId, requests }
   })
   // OLD TRIDENT POLYGON
-  const firstPolygonTrident = [ChainId.POLYGON].map((chainId) => {
-    const blockNumber = blocks ? Number(blocks.find((block) => block.chainId === chainId)?.number) : undefined
-    const requests = createQuery(chainId, GRAPH_HOST[chainId], 'sushi-0m/trident-polygon', blockNumber)
-    return { chainId, requests }
-  })
+  // const firstPolygonTrident = [ChainId.POLYGON].map((chainId) => {
+  //   const blockNumber = blocks ? Number(blocks.find((block) => block.chainId === chainId)?.number) : undefined
+  //   const requests = createQuery(chainId, GRAPH_HOST[chainId], 'sushi-0m/trident-polygon', blockNumber)
+  //   return { chainId, requests }
+  // })
 
   return await Promise.all(
-    [...legacyRequests, ...tridentRequests, ...firstPolygonTrident].map((request) =>
+    [
+      ...legacyRequests,
+      ...tridentRequests,
+      // ...firstPolygonTrident
+    ].map((request) =>
       Promise.resolve(request.requests).then((response) => {
         const responses = response?.pairs.filter((d) => d !== undefined).flat()
         return { chainId: request.chainId, responses }

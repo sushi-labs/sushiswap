@@ -1,5 +1,4 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-import { performance } from 'perf_hooks'
 
 export async function createTokens(client: PrismaClient, tokens: Prisma.TokenCreateManyInput[]) {
   if (tokens.length === 0) {

@@ -5,17 +5,12 @@ export async function createTokens(client: PrismaClient, tokens: Prisma.TokenCre
   if (tokens.length === 0) {
     return
   }
-  let count = 0
-  const batchSize = 500
-  for (let i = 0; i < tokens.length; i += batchSize) {
-    const created = await client.token.createMany({
-      data: tokens.slice(i, i + batchSize),
-      skipDuplicates: true,
-    })
-    console.log(`LOAD - Batched and created ${created.count} tokens`)
-    count += created.count
-  }
-  console.log(`LOAD - Created ${count} tokens. `)
+  const created = await client.token.createMany({
+    data: tokens,
+    skipDuplicates: true,
+  })
+
+  console.log(`LOAD - Created ${created.count} tokens. `)
 }
 
 export async function updateTokenPrices(client: PrismaClient, prices: Prisma.TokenUpdateArgs[]) {

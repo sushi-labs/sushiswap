@@ -17,7 +17,7 @@ import { updatePoolsWithIncentivesTotalApr } from './etl/pool/load'
 
 const client = new PrismaClient()
 
-async function main() {
+ async function main() {
   console.log(`Preparing to load farms`)
   const startTime = performance.now()
 
@@ -88,7 +88,6 @@ async function transform(data: { chainId: ChainId; farms: Record<string, Farm> }
                 Prisma.validator<Prisma.TokenCreateManyInput>()({
                   id: chainId.toString().concat('_').concat(incentive.rewardToken.address.toLowerCase()),
                   address: incentive.rewardToken.address.toLowerCase(),
-                  network: chainName[chainId],
                   chainId: chainId.toString(),
                   name: incentive.rewardToken.name,
                   symbol: incentive.rewardToken.symbol,
