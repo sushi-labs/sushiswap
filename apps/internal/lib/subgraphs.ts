@@ -30,6 +30,14 @@ const CATEGORIES = {
   OTHER: {},
 } as const
 
+const NODE_URLS: Record<number, string> = {
+  ...Object.keys(SUBGRAPH_HOST)
+    .filter((chainId) => SUBGRAPH_HOST[chainId] === GRAPH_HOST)
+    .reduce((acc, chainId) => ({ ...acc, [Number(chainId)]: 'api.thegraph.com/index-node/graphql' }), {}),
+  [ChainId.KAVA]: 'pvt-metrics.graph.kava.io/graphql',
+  // [ChainId.METIS]: '',
+}
+
 const lowerCaseAllWordsExceptFirstLetters = (string: string): string =>
   string.replaceAll(/\S*/g, (word) => `${word.slice(0, 1)}${word.slice(1).toLowerCase()}`)
 
@@ -43,7 +51,7 @@ const parseCategories = () => {
         category: lowerCaseAllWordsExceptFirstLetters(categoryKey),
       }))
     )
-    .filter(({ chainId }) => SUBGRAPH_HOST[chainId] === GRAPH_HOST)
+    .filter(({ chainId }) => Object.keys(NODE_URLS).includes(String(chainId)))
 }
 
 interface GetSubgraphs {
@@ -53,14 +61,16 @@ interface GetSubgraphs {
 export async function getSubgraphs({ filter }: GetSubgraphs = {}) {
   const sdk = getBuiltGraphSDK()
 
+  console.log('fetching', filter)
+
   const subgraphs = parseCategories()
 
-  const subgraphNames = subgraphs
-    .map((subgraph) => subgraph.subgraphName)
-    .filter((name) => (filter ? name.includes(filter) : true))
+  const subgraphInputs = subgraphs
+    .map(({ subgraphName, chainId }) => ({ subgraphName, nodeUrl: NODE_URLS[chainId] }))
+    .filter(({ subgraphName }) => (filter ? subgraphName.includes(filter) : true))
 
   async function fetch(type: 'Current' | 'Pending') {
-    return sdk.Subgraphs({ subgraphNames: subgraphNames, type })
+    return sdk.Subgraphs({ subgraphs: subgraphInputs, type })
   }
 
   return (await Promise.all((['Current', 'Pending'] as const).map((type) => fetch(type))))

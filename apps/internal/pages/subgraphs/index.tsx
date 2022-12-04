@@ -19,7 +19,9 @@ const fetcher = async ({
 }) => {
   const _url = new URL(url, window.location.origin)
 
-  return fetch(_url.href + args.filter)
+  console.log(args)
+
+  return fetch(_url.href + '?' + new URLSearchParams(args))
     .then((res) => res.json())
     .then((data: Subgraph[]) => data)
     .catch((e) => console.log(stringify(e)))
