@@ -70,8 +70,11 @@ export const resolvers: Resolvers = {
 
       return (
         await Promise.all(
-          args.subgraphNames.map(async (subgraphName) =>
-            fetch(subgraphName).then((statusObject) => {
+          args.subgraphNames.map(async (subgraphName, i) => {
+            // artificial delay to prevent 429s, probably helps
+            await new Promise((resolve) => setTimeout(resolve, i * 10))
+
+            return fetch(subgraphName).then((statusObject) => {
               const data = Object.values(statusObject)[0]
 
               if (!data) return undefined
@@ -95,7 +98,7 @@ export const resolvers: Resolvers = {
                 entityCount: data.entityCount as number,
               }
             })
-          )
+          })
         )
       ).filter(Boolean)
     },
