@@ -100,5 +100,8 @@
     "ts-node": "^10.4.0",
     "typechain": "^6.1.0",
     "typescript": "^4.5.0"
+  },
+  "dependencies": {
+    "ethereum-multicall": "^2.15.0"
   }
 }

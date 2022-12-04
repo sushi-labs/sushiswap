@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 import { Limited } from './Limited'
 import { LiquidityProvider2, LiquidityProviders } from './liquidityProviders/LiquidityProvider2'
 import { SushiProvider2 } from './liquidityProviders/Sushi2'
+import { SushiProvider3 } from './liquidityProviders/Sushi3'
 import { PoolCode } from './pools/PoolCode'
 
 
@@ -40,7 +41,7 @@ export class DataFetcher {
 
     this.providers = []
     if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
-      this.providers.push(new SushiProvider2(this.chainDataProvider, this.chainId, this.limited))
+      this.providers.push(new SushiProvider3(this.chainDataProvider, this.chainId, this.limited))
 
     this.providers.forEach(p => p.startFetchPoolsData())
   }
