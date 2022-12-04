@@ -46,6 +46,7 @@
       ],
       "env": [
         "ROOT_URL",
+        "ACADEMY_URL",
         "ANALYTICS_URL",
         "BLOG_URL",
         "BRIDGE_URL",
@@ -73,6 +74,12 @@
     },
     "validate": {
       "cache": false
+    },
+    "anvil": {
+      "cache": false,
+      "env": [
+        "ANVIL_FORK_URL"
+      ]
     },
     "export": {
       "dependsOn": [

@@ -1,13 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
-import { useEnsAvatar } from 'wagmi'
+import { Address, useEnsAvatar } from 'wagmi'
 
 export type Props = {
-  address?: string
+  address?: `0x${string}`
 }
 
 export function Avatar({ address }: Props): JSX.Element {
   const { data } = useEnsAvatar({
-    addressOrName: address,
+    address: address as Address,
     chainId: ChainId.ETHEREUM,
     enabled: !!address,
   })

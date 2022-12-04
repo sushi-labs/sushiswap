@@ -1,6 +1,4 @@
-// Export pre-configured client for now
-// TODO: Configurable version
-export * from './calculateGasMargin'
+// Export pre-configured client
 export { client } from './client'
 // Export components
 export * from './components'
@@ -14,3 +12,5 @@ export * from './systems'
 
 // Re-export wagmi
 // export * from '@wagmi/core'
+
+export * from './calculateGasMargin'

@@ -1,9 +1,9 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
+import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
-import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
@@ -253,25 +253,31 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
             components={
               <Approve.Components>
                 <Approve.Bentobox
+                  id="add-liquidity-trident-approve-bentobox"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
-                  address={getTridentRouterContractConfig(chainId).addressOrName}
+                  address={getTridentRouterContractConfig(chainId).address}
                   onSignature={setPermit}
+                  enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
                 />
                 <Approve.Token
+                  id="add-liquidity-trident-approve-token0"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input0}
                   address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
                 />
                 <Approve.Token
+                  id="add-liquidity-trident-approve-token1"
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input1}
                   address={chain ? BENTOBOX_ADDRESS[chain?.id] : undefined}
+                  enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
                 />
               </Approve.Components>
             }

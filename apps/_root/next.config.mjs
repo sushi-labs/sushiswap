@@ -19,6 +19,7 @@ const {
   PARTNER_URL,
   SWAP_URL,
   XSWAP_URL,
+  ACADEMY_URL,
 } = process.env
 
 // @ts-check
@@ -26,11 +27,17 @@ const {
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
+  experimental: {
+    esmExternals: 'loose',
+  },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
   productionBrowserSourceMaps: true,
+  experimental: {
+    esmExternals: 'loose',
+  },
   async redirects() {
     return [
       {
@@ -67,6 +74,14 @@ const nextConfig = {
         destination: `/:path*`,
       },
       {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
+      },
+      {
         source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
       },
@@ -101,6 +116,14 @@ const nextConfig = {
       {
         source: '/swap',
         destination: `${SWAP_URL}/swap`,
+      },
+      {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
       },
       {
         source: '/swap/:path*',

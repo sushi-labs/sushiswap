@@ -5,7 +5,6 @@ import {
   CancelModal,
   HistoryPopover,
   Layout,
-  Overlay,
   ProgressBarCard,
   StreamDetailsPopover,
   TransferModal,
@@ -17,7 +16,7 @@ import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useAccount, useConnect } from 'wagmi'
+import { useConnect, useNetwork } from 'wagmi'
 
 import VestingChart2 from '../../components/vesting/VestingChart2'
 import { ChartHover } from '../../types'
@@ -63,7 +62,7 @@ const LINKS = (id: string): BreadcrumbLink[] => [
 ]
 
 const _VestingPage: FC = () => {
-  const { address } = useAccount()
+  const { chain } = useNetwork()
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
@@ -104,8 +103,6 @@ const _VestingPage: FC = () => {
   //   vesting.balance = balance
   // }
 
-  if (connecting || reconnecting) return <Overlay />
-
   return (
     <>
       <NextSeo title={`Vesting #${id}`} />
@@ -126,7 +123,7 @@ const _VestingPage: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Unlocked"
-                value={`${vesting?.streamedPercentage?.toSignificant(4)}%`}
+                value={`${vesting?.streamedPercentage?.toPercentageString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.STREAMED)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
@@ -139,7 +136,7 @@ const _VestingPage: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Withdrawn"
-                value={`${vesting?.withdrawnPercentage?.toSignificant(4)}%`}
+                value={`${vesting?.withdrawnPercentage?.toPercentageString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
@@ -161,19 +158,19 @@ const _VestingPage: FC = () => {
           </div>
           <div className="flex flex-col gap-2">
             <WithdrawModal vesting={vesting} chainId={chainId} />
-            {address && (
+            {chain?.id === chainId && (
               <div className="flex gap-2">
                 <TransferModal
                   stream={vesting}
-                  abi={getFuroVestingContractConfig(chainId)?.contractInterface}
-                  address={getFuroVestingContractConfig(chainId)?.addressOrName}
+                  abi={getFuroVestingContractConfig(chainId)?.abi}
+                  address={getFuroVestingContractConfig(chainId)?.address}
                   chainId={chainId}
                 />
                 <CancelModal
                   title="Cancel Vesting"
                   stream={vesting}
-                  abi={getFuroVestingContractConfig(chainId)?.contractInterface}
-                  address={getFuroVestingContractConfig(chainId)?.addressOrName}
+                  abi={getFuroVestingContractConfig(chainId)?.abi}
+                  address={getFuroVestingContractConfig(chainId)?.address}
                   fn="stopVesting"
                   chainId={chainId}
                 />

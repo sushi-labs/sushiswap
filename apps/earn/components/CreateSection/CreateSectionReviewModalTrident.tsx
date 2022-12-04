@@ -10,6 +10,7 @@ import {
 } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
+import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
@@ -33,7 +34,7 @@ import {
   getAsEncodedAction,
   LiquidityInput,
 } from '../../lib/actions'
-import { useNotifications } from '../../lib/state/storage'
+import { useNotifications, useSettings } from '../../lib/state/storage'
 import { AddSectionReviewModal } from '../AddSection'
 
 interface CreateSectionReviewModalTridentProps {
@@ -66,7 +67,16 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const stablePoolFactory = useStablePoolFactoryContract(chainId)
   const [, { createNotification }] = useNotifications(address)
 
-  const totals = useBentoBoxTotals(chainId, [token0, token1])
+  const [{ slippageTolerance }] = useSettings()
+
+  const slippagePercent = useMemo(() => {
+    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
+  }, [slippageTolerance])
+
+  const totals = useBentoBoxTotals(
+    chainId,
+    useMemo(() => [token0, token1], [token0, token1])
+  )
 
   const pool = useMemo(() => {
     if (!token0 || !token1 || !fee) return
@@ -80,15 +90,15 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
     } else if (
       poolType === PoolFinderType.Stable &&
       totals &&
-      token0?.wrapped?.address in totals &&
-      token1?.wrapped?.address in totals
+      token0.wrapped.address in totals &&
+      token1.wrapped.address in totals
     ) {
       return new StablePool(
         Amount.fromRawAmount(token0.wrapped, 0),
         Amount.fromRawAmount(token1.wrapped, 0),
         fee,
-        totals[token0?.wrapped?.address],
-        totals[token1?.wrapped?.address]
+        totals[token0.wrapped.address],
+        totals[token1.wrapped.address]
       )
     }
   }, [fee, token0, token1, poolType, totals])
@@ -148,8 +158,22 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
   const prepare = useCallback(
     async (setRequest) => {
       try {
-        if (!chain?.id || !factory || !token0 || !token1 || !poolAddress || !input0 || !input1 || !totalSupply || !pool)
+        if (
+          !chain?.id ||
+          !factory ||
+          !token0 ||
+          !token1 ||
+          !poolAddress ||
+          !input0 ||
+          !input1 ||
+          !totalSupply ||
+          !pool ||
+          !contract ||
+          !totals?.[token0.wrapped.address] ||
+          !totals?.[token1.wrapped.address]
+        ) {
           return
+        }
 
         let value
         const liquidityInput: LiquidityInput[] = []
@@ -199,7 +223,13 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 args: [
                   liquidityInput,
                   poolAddress,
-                  pool.getLiquidityMinted(totalSupply, input0.wrapped, input1.wrapped).quotient.toString(),
+                  pool
+                    .getLiquidityMinted(
+                      totalSupply,
+                      input0.wrapped.toShare(totals?.[token0.wrapped.address]),
+                      input1.wrapped.toShare(totals?.[token1.wrapped.address])
+                    )
+                    .quotient.toString(),
                   encoded,
                 ],
               }),
@@ -211,10 +241,31 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
         //
       }
     },
-    [address, chain?.id, contract, factory, fee, input0, input1, permit, pool, poolAddress, token0, token1, totalSupply]
+    [
+      address,
+      chain?.id,
+      contract,
+      factory,
+      fee,
+      input0,
+      input1,
+      permit,
+      pool,
+      poolAddress,
+      token0,
+      token1,
+      totalSupply,
+      totals,
+    ]
   )
 
-  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+  const {
+    sendTransaction,
+    isLoading: isWritePending,
+    error,
+    data,
+    isSuccess,
+  } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
@@ -231,13 +282,16 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           components={
             <Approve.Components>
               <Approve.Bentobox
+                id="create-trident-approve-bentobox"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
-                address={getTridentRouterContractConfig(chainId).addressOrName}
+                address={getTridentRouterContractConfig(chainId).address}
                 onSignature={setPermit}
+                enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
               />
               <Approve.Token
+                id="create-trident-approve-token0"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
@@ -246,6 +300,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
               />
               <Approve.Token
+                id="create-trident-approve-token1"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
@@ -257,7 +312,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           }
           render={({ approved }) => {
             return (
-              <Button size="md" disabled={!approved} fullWidth onClick={() => sendTransaction?.()}>
+              <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                 {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
               </Button>
             )

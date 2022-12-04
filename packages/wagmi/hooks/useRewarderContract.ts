@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
-import { useProvider } from 'wagmi'
-import { getContract, GetContractArgs } from 'wagmi/actions'
+import { Address, useProvider } from 'wagmi'
+import { getContract } from 'wagmi/actions'
 
-export const getRewarderConfig = (addressOrName: string): GetContractArgs => {
+export const getRewarderConfig = (address: string) => {
   return {
-    addressOrName,
-    contractInterface: [
+    address: address as Address,
+    abi: [
       {
         inputs: [
           {
@@ -40,17 +40,20 @@ export const getRewarderConfig = (addressOrName: string): GetContractArgs => {
         stateMutability: 'view',
         type: 'function',
       },
-    ],
+    ] as const,
   }
 }
 
-export function useRewarderContract(chainId: number, addressOrName: string | undefined) {
+export function useRewarderContract(
+  chainId: number,
+  address: string | undefined
+): ReturnType<typeof getContract> | undefined {
   const provider = useProvider({ chainId })
   return useMemo(() => {
-    if (!addressOrName) return undefined
+    if (!address) return undefined
     return getContract({
-      ...getRewarderConfig(addressOrName),
+      ...getRewarderConfig(address),
       signerOrProvider: provider,
     })
-  }, [addressOrName, provider])
+  }, [address, provider])
 }

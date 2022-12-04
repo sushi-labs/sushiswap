@@ -1,11 +1,10 @@
 import furoExports from '@sushiswap/furo/exports.json'
-import { useContract, useProvider } from 'wagmi'
+import { Address, useContract, useProvider } from 'wagmi'
 
 export const getFuroStreamContractConfig = (chainId: number | undefined) => ({
-  addressOrName:
-    furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream?.address ??
-    '',
-  contractInterface:
+  address: (furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream
+    ?.address ?? '') as Address,
+  abi:
     furoExports[chainId as unknown as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStream?.abi ?? [],
 })
 

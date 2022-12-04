@@ -20,13 +20,13 @@ export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedN
   return (
     <Select
       button={
-        <Listbox.Button type="button" className="flex items-center">
+        <Listbox.Button type="button" className="flex items-center" testdata-id="network-selector-button">
           {children}
         </Listbox.Button>
       }
     >
       <Select.Options className="!w-[max-content] right-0 !mt-[16px] !fixed !bg-slate-700">
-        <div className="grid grid-cols-1 px-2 py-2 md:grid-cols-2 gap-x-4">
+        <div className="grid grid-cols-1 px-2 py-2 md:grid-cols-2 gap-x-4" testdata-id="network-selector-list">
           {networks.map((el) => (
             <div
               onClick={() => {

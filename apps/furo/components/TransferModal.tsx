@@ -1,4 +1,3 @@
-import { ContractInterface } from '@ethersproject/contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
@@ -16,7 +15,7 @@ import { useNotifications } from '../lib/state/storage'
 
 interface TransferModalProps {
   stream?: Stream | Vesting
-  abi: ContractInterface
+  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
   address: string
   fn?: string
   chainId: ChainId
@@ -35,8 +34,8 @@ export const TransferModal: FC<TransferModalProps> = ({
   const [, { createNotification }] = useNotifications(address)
 
   const contract = useContract({
-    addressOrName: contractAddress,
-    contractInterface: abi,
+    address: contractAddress,
+    abi: abi,
   })
   const { data: resolvedAddress } = useEnsAddress({
     name: recipient,
@@ -44,16 +43,16 @@ export const TransferModal: FC<TransferModalProps> = ({
   })
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!stream || !address || !recipient || !resolvedAddress) return
 
       setRequest({
         from: address,
         to: contractAddress,
-        data: contract.interface.encodeFunctionData(fn, [address, resolvedAddress, stream?.id]),
+        data: contract?.interface.encodeFunctionData(fn, [address, resolvedAddress, stream?.id]),
       })
     },
-    [stream, address, recipient, resolvedAddress, contractAddress, contract.interface, fn]
+    [stream, address, recipient, resolvedAddress, contractAddress, contract?.interface, fn]
   )
 
   const onSettled = useCallback(

@@ -16,6 +16,7 @@ export abstract class Furo {
   public readonly status: FuroStatus
   public readonly remainingShares: Amount<Token>
   public readonly _remainingAmount: Amount<Token>
+  public readonly initialShares: Amount<Token>
   public readonly inititalAmount: Amount<Token>
   public readonly startTime: Date
   public readonly endTime: Date
@@ -37,6 +38,7 @@ export abstract class Furo {
     // @ts-ignore
     this.type = furo.__typename
     this.token = toToken(furo.token, chainId)
+    this.initialShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialShares))
     this.inititalAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialAmount))
     this.remainingShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.remainingShares))
     this._remainingAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.remainingShares), this.rebase)

@@ -13,6 +13,7 @@ export interface CurrencyInputProps
     TokenSelectorProps,
     'onAddToken' | 'onRemoveToken' | 'onSelect' | 'tokenMap' | 'chainId' | 'customTokenMap'
   > {
+  id?: string
   value: string
   disabled?: boolean
   onChange(value: string): void
@@ -26,6 +27,7 @@ export interface CurrencyInputProps
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
+  id,
   disabled,
   value,
   onChange,
@@ -67,6 +69,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             </div>
           ) : (
             <Input.Numeric
+              testdata-id={`${id}-input`}
               ref={inputRef}
               variant="unstyled"
               disabled={disabled}
@@ -83,6 +86,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
                 e.stopPropagation()
               },
             })}
+            data-testid={`${id}-button`}
             className={classNames(
               onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
               (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
@@ -123,6 +127,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           <PricePanel value={value} currency={currency} usdPctChange={usdPctChange} />
           <div className="h-6">
             <BalancePanel
+              id={id}
+              loading={loading}
               chainId={chainId}
               account={address}
               onChange={onChange}
@@ -134,6 +140,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         </div>
         {onSelect && (
           <TokenSelector
+            id={id}
             variant="dialog"
             onClose={handleClose}
             open={tokenSelectorOpen}
@@ -161,6 +168,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       focusInput,
       fundSource,
       handleClose,
+      id,
       includeNative,
       isMounted,
       loading,
@@ -178,28 +186,31 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
 
 type BalancePanel = Pick<
   CurrencyInputProps,
-  'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource'
+  'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource' | 'loading'
 > & {
+  id?: string
   account: string | undefined
 }
 
 const BalancePanel: FC<BalancePanel> = ({
+  id,
   chainId,
   account,
   onChange,
   currency,
   disableMaxButton,
   fundSource = FundSource.WALLET,
+  loading,
 }) => {
   const isMounted = useIsMounted()
-  const { data: balance } = useBalance({
+  const { data: balance, isLoading } = useBalance({
     chainId,
     currency,
     account,
     enabled: Boolean(currency),
   })
 
-  if (!balance && isMounted) {
+  if ((isLoading || loading) && isMounted) {
     return (
       <div className="h-[24px] w-[60px] flex items-center">
         <Skeleton.Box className="bg-white/[0.06] h-[12px] w-full" />
@@ -209,12 +220,13 @@ const BalancePanel: FC<BalancePanel> = ({
 
   return (
     <button
+      data-testid={`${id}-balance-button`}
       type="button"
       onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
       className="py-1 text-xs text-slate-400 hover:text-slate-300"
       disabled={disableMaxButton}
     >
-      {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : ''}
+      {isMounted && balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : 'Balance: 0'}
     </button>
   )
 }

@@ -3,8 +3,8 @@ import transpileModules from 'next-transpile-modules'
 const withTranspileModules = transpileModules([
   '@sushiswap/redux-token-lists',
   '@sushiswap/redux-localstorage',
-  '@sushiswap/wagmi',
   '@sushiswap/ui',
+  '@sushiswap/wagmi',
 ])
 
 // @ts-check
@@ -14,6 +14,10 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
   productionBrowserSourceMaps: true,
+  poweredByHeader: false,
+  experimental: {
+    esmExternals: 'loose',
+  },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',

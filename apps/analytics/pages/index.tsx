@@ -1,31 +1,20 @@
 import { SUPPORTED_CHAIN_IDS } from 'config'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { ChartSection, Layout, PoolsFiltersProvider, TableSection } from '../components'
-import {
-  getBundles,
-  getCharts,
-  getPoolCount,
-  getPools,
-  GetPoolsQuery,
-  getTokenCount,
-  getTokens,
-  GetTokensQuery,
-} from '../lib/api'
+import { getBundles, getCharts, getPoolCount, getPools, getTokenCount, getTokens } from '../lib/api'
 
-export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
+export const getStaticProps: GetStaticProps = async () => {
   const [pairs, tokens, charts, poolCount, tokenCount, bundles] = await Promise.all([
-    getPools(query as unknown as GetPoolsQuery),
-    getTokens(query as unknown as GetTokensQuery),
-    getCharts(query as { networks: string }),
+    getPools(),
+    getTokens(),
+    getCharts(),
     getPoolCount(),
     getTokenCount(),
     getBundles(),
   ])
-
   return {
     props: {
       fallback: {
@@ -80,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
   }
 }
 
-const Index: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const Index: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_Index />

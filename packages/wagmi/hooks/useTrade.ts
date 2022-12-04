@@ -129,7 +129,7 @@ export const useTrade: UseTrade = ({
       filteredPools.length > 0
     ) {
       if (tradeType === TradeType.EXACT_INPUT) {
-        if (chainId in FACTORY_ADDRESS && getConstantProductPoolFactoryContract(chainId).addressOrName) {
+        if (chainId in FACTORY_ADDRESS && getConstantProductPoolFactoryContract(chainId).address) {
           const legacyRoute = findSingleRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,

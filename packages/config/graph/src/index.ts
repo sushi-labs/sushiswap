@@ -1,6 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.KAVA, ChainId.METIS] as const
+export const TRIDENT_ENABLED_NETWORKS = [
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+  ChainId.KAVA,
+  ChainId.METIS,
+  ChainId.BTTC,
+] as const
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
@@ -55,6 +61,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BOBA]: 'Boba',
   [ChainId.ARBITRUM_NOVA]: 'Arbitrum Nova',
   [ChainId.BOBA_AVAX]: 'Boba Avax',
+  [ChainId.BTTC]: 'BitTorrent',
 }
 
 export const SUBGRAPH_HOST: Record<number, string> = {
@@ -76,6 +83,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
+  [ChainId.BTTC]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
@@ -95,6 +103,7 @@ export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.OPTIMISM]: 'sushiswap/bentobox-optimism',
   [ChainId.HARMONY]: 'sushiswap/bentobox-harmony',
   [ChainId.KAVA]: 'sushiswap/bentobox-kava',
+  [ChainId.BTTC]: 'sushiswap/bentobox-bttc',
 } as const
 
 export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
@@ -118,6 +127,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
   [ChainId.BOBA]: 'sushiswap/blocks-boba',
+  [ChainId.BTTC]: 'sushiswap/blocks-bttc',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
@@ -160,6 +170,7 @@ export const TRIDENT_SUBGRAPH_NAME = {
   [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
   [ChainId.KAVA]: 'sushi-qa/trident-kava',
   [ChainId.METIS]: 'sushi-qa/trident-metis',
+  [ChainId.BTTC]: 'sushi-0m/trident-bttc',
 } as const
 
 export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_NAME, number> = {
@@ -167,6 +178,7 @@ export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_
   [ChainId.OPTIMISM]: 7464195,
   [ChainId.KAVA]: 162097,
   [ChainId.METIS]: 3030678,
+  [ChainId.BTTC]: 13304596,
 }
 
 export const MINICHEF_SUBGRAPH_NAME = {
@@ -200,7 +212,7 @@ export const FURO_SUBGRAPH_NAME: Record<string, string> = {
   [ChainId.MOONRIVER]: 'sushi-subgraphs/furo-moonriver',
   [ChainId.OPTIMISM]: 'sushi-subgraphs/furo-optimism',
   [ChainId.POLYGON]: 'sushi-subgraphs/furo-polygon',
-}
+} as const
 
 export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: 'sushiswap/kashi-arbitrum',

@@ -54,7 +54,7 @@ export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
 
   return (
     <div className={classNames('flex flex-col gap-20')}>
-      <Link href="/stream/create" passHref={true}>
+      <Link href="/stream/create" passHref={true} legacyBehavior>
         <a>
           <button className="flex gap-3 font-medium group hover:text-white text-slate-200">
             <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Stream</span>
@@ -65,7 +65,7 @@ export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
         <div className="flex flex-col gap-14">
           <ImportErrorProvider<CreateMultipleStreamFormSchemaType>>
             <ImportZoneSection chainId={chainId} />
-            <div className="border-b border-slate-200/5 w-full" />
+            <div className="w-full border-b border-slate-200/5" />
             <div className={review ? 'hidden' : ''}>
               <CreateStreamsTableSection chainId={chainId} onReview={onReview} />
             </div>

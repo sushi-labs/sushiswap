@@ -120,10 +120,10 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
                 }
               >
                 <Menu.Items unmount={false} className="!min-w-0">
-                  <Link passHref={true} href="/stream/create">
+                  <Link passHref={true} href="/stream/create" legacyBehavior>
                     <Menu.Item as="a">Stream</Menu.Item>
                   </Link>
-                  <Link passHref={true} href="/vesting/create">
+                  <Link passHref={true} href="/vesting/create" legacyBehavior>
                     <Menu.Item as="a">Vesting</Menu.Item>
                   </Link>
                 </Menu.Items>

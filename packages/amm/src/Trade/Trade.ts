@@ -121,9 +121,9 @@ export class Trade<
     this.currencyInRebase = currencyInRebase
     this.currencyOutRebase = currencyOutRebase
 
-    const amountIn = Amount.fromShare(route.fromToken as TInput, route.amountInBN.toString(), currencyInRebase)
+    const amountIn = Amount.fromShare(route.fromToken as TInput, route.amountInBN.toString(), currencyInRebase, tradeVersion===Version.V2)
 
-    const amountOut = Amount.fromShare(route.toToken as TOutput, route.amountOutBN.toString(), currencyOutRebase)
+    const amountOut = Amount.fromShare(route.toToken as TOutput, route.amountOutBN.toString(), currencyOutRebase, tradeVersion===Version.V2)
 
     if (tradeType === Type.EXACT_INPUT) {
       this.inputAmount = Amount.fromFractionalAmount(amountIn.currency, amountIn.numerator, amountIn.denominator)

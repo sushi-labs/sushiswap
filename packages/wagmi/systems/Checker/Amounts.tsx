@@ -49,7 +49,15 @@ export const Amounts: FC<AmountsProps> = ({
   return useMemo(() => {
     if (!amountsAreDefined)
       return (
-        <Button disabled className={className} variant={variant} as={as} fullWidth={fullWidth} size={size}>
+        <Button
+          id="amount-checker"
+          disabled
+          className={className}
+          variant={variant}
+          as={as}
+          fullWidth={fullWidth}
+          size={size}
+        >
           Enter Amount
         </Button>
       )
