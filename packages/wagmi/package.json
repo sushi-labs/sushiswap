@@ -43,7 +43,7 @@
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/trident": "1.0.0-canary.51",
+    "@sushiswap/trident": "1.0.0-canary.53",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
     "@tanstack/react-query": "latest",
