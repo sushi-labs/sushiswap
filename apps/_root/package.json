@@ -28,6 +28,7 @@
     "nanoid": "^4.0.0",
     "next": "^13.0.5",
     "next-seo": "^5.5.0",
+    "next-sitemap": "^3.1.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
