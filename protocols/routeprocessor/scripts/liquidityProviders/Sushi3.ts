@@ -67,17 +67,24 @@ export class SushiProvider3 extends LiquidityProvider2 {
       return
     }
 
+    // tokens deduplication
+    const tokenMap = new Map<string, Token>
+    tokens.forEach(t => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
+    const tokensDedup = Array.from(tokenMap.values())
+    // tokens sorting
+    const tok0:[string, Token][] = 
+      tokensDedup.map(t => [t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t])
+    tokens = tok0.sort((a, b) => b[0] > a[0] ? -1 : 1).map(([_, t]) => t)
+
     const poolAddr: Map<string, [Token, Token]> = new Map()
     for (let i = 0; i < tokens.length; ++i) {
-      const t1 = tokens[i]
+      const t0 = tokens[i]
       for (let j = i + 1; j < tokens.length; ++j) {
-        const t2 = tokens[j]
-        // TODO: if it is correct ??? + make sorting !!!
-        const toks: [Token, Token] = t1.address.toLowerCase() < t2.address.toLowerCase() ? [t1, t2] : [t2, t1]
-
-        const addr = this._getPoolAddress(toks[0], toks[1])
+        const t1 = tokens[j]
+        
+        const addr = this._getPoolAddress(t0, t1)
         if (this.fetchedPools.get(addr) === undefined) {
-          poolAddr.set(addr, toks)
+          poolAddr.set(addr, [t0, t1])
           this.fetchedPools.set(addr, 0)
         }
       }
