@@ -10,7 +10,7 @@ import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
-import { LiquidityProvider2 } from './LiquidityProvider2'
+import { LiquidityProvider2, LiquidityProviders } from './LiquidityProvider2'
 
 export class SushiProvider2 extends LiquidityProvider2 {
   fetchedPools: Set<string>
@@ -24,9 +24,11 @@ export class SushiProvider2 extends LiquidityProvider2 {
     this.fetchedPools = new Set()
   }
 
-  getPoolProviderName(): string {
-    return 'Sushiswap'
+  getType(): LiquidityProviders {
+    return LiquidityProviders.Sushiswap
   }
+
+  getPoolProviderName(): string {return 'Sushiswap'}
 
   async getPools(tokens: Token[]): Promise<PoolCode[]> {
     if (FACTORY_ADDRESS[this.chainId] === undefined) {
@@ -74,13 +76,15 @@ export class SushiProvider2 extends LiquidityProvider2 {
     return pools.filter((p) => p !== undefined) as PoolCode[]
   }
 
-  _getProspectiveTokens(t: Token) {
+  _getProspectiveTokens(t0: Token, t1:Token) {
     const set = new Set<Token>([
-      t,
-      ...BASES_TO_CHECK_TRADES_AGAINST[this.chainId],
-      ...(ADDITIONAL_BASES[this.chainId][t.address] || []),
-    ])
-    return Array.from(set)
+      t0,
+      t1,
+      ...BASES_TO_CHECK_TRADES_AGAINST[this.chainId], 
+      ...(ADDITIONAL_BASES[this.chainId][t0.address] || []),
+      ...(ADDITIONAL_BASES[this.chainId][t1.address] || []),
+     ])
+     return Array.from(set)
   }
 
   startFetchPoolsData() {
@@ -89,8 +93,8 @@ export class SushiProvider2 extends LiquidityProvider2 {
     this.fetchedPools.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
   }
-  fetchPoolsForToken(t: Token): void {
-    this.getPools(this._getProspectiveTokens(t))
+  fetchPoolsForToken(t0: Token, t1: Token): void {
+    this.getPools(this._getProspectiveTokens(t0, t1))
   }
   poolListWereUpdated(): boolean {
     return this.lastPoolCodeNumber !== this.poolCodes.length
