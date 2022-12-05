@@ -75,7 +75,7 @@ const _Archive: FC = () => {
   return (
     <>
       <Container maxWidth="5xl" className="mx-auto px-4 h-[86px] flex items-center justify-between">
-        <Link href="/" passHref={true}>
+        <Link href="/" passHref={true} legacyBehavior>
           <a className="flex items-center gap-3 group">
             <ChevronLeftIcon width={18} className="text-slate-400 group-hover:text-slate-50" />
             <Typography variant="lg" weight={500} className="text-lg group-hover:text-slate-50 text-slate-200">

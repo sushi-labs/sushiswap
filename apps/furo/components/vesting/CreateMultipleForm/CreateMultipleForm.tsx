@@ -42,7 +42,7 @@ export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
 
   return (
     <div className={classNames('flex flex-col gap-10')}>
-      <Link href="/vesting/create" passHref={true}>
+      <Link href="/vesting/create" passHref={true} legacyBehavior>
         <a>
           <button className="flex gap-3 font-medium group hover:text-white text-slate-200">
             <ArrowCircleLeftIcon width={24} height={24} /> <span>Create Vesting</span>
@@ -53,7 +53,7 @@ export const CreateMultipleForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
         <div className="flex flex-col gap-14">
           <ImportErrorProvider<CreateMultipleVestingFormSchemaType>>
             <ImportZoneSection chainId={chainId} />
-            <div className="border-b border-slate-200/5 w-full" />
+            <div className="w-full border-b border-slate-200/5" />
             <div className={review ? 'hidden' : ''}>
               <CreateVestingsTableSection chainId={chainId} onReview={onReview} />
             </div>

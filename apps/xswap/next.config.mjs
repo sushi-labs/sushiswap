@@ -14,6 +14,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
   productionBrowserSourceMaps: true,
+  poweredByHeader: false,
   experimental: {
     esmExternals: 'loose',
   },

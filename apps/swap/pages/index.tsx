@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { FundSource, useIsMounted, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
-import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
+import { App, Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
 import { Widget } from '@sushiswap/ui/widget'
 import { Checker, TokenListImportChecker, useWalletState, WrapType } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
@@ -230,6 +230,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 </div>
               </div>
               <CurrencyInput
+                id={'swap-input-currency0'}
                 className="p-3"
                 value={input0}
                 onChange={onInput0}
@@ -257,6 +258,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </div>
               <div className="bg-slate-800">
                 <CurrencyInput
+                  id={'swap-output-currency1'}
                   disabled={true}
                   className="p-3"
                   value={isWrap ? input0 : input1}
@@ -286,6 +288,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                       <Checker.Network fullWidth size="md" chainId={chainId}>
                         {isWrap ? (
                           <WrapReviewModal
+                            id="swap-wrap-review-modal"
                             chainId={chainId}
                             input0={parsedInput0}
                             input1={parsedInput1}
@@ -293,7 +296,13 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                           >
                             {({ isWritePending, setOpen }) => {
                               return (
-                                <Button disabled={isWritePending} fullWidth size="md" onClick={() => setOpen(true)}>
+                                <Button
+                                  testdata-id={'open-wrap-review-modal-button'}
+                                  disabled={isWritePending}
+                                  fullWidth
+                                  size="md"
+                                  onClick={() => setOpen(true)}
+                                >
                                   {wrap ? 'Wrap' : 'Unwrap'}
                                 </Button>
                               )
@@ -301,8 +310,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                           </WrapReviewModal>
                         ) : (
                           <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
-                            {({ isWritePending, setOpen }) => {
-                              return <SwapButton isWritePending={isWritePending} setOpen={setOpen} />
+                            {({ setOpen }) => {
+                              return <SwapButton setOpen={setOpen} />
                             }}
                           </SwapReviewModalLegacy>
                         )}
@@ -336,9 +345,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 }
 
 const SwapButton: FC<{
-  isWritePending: boolean
   setOpen(open: boolean): void
-}> = ({ isWritePending, setOpen }) => {
+}> = ({ setOpen }) => {
   const { isLoading: isLoadingTrade, trade, route } = useTrade()
   const [{ expertMode, slippageTolerance }] = useSettings()
   const swapSlippage = useMemo(
@@ -363,10 +371,10 @@ const SwapButton: FC<{
       }
     >
       <Button
+        testdata-id="swap-button"
         fullWidth
         onClick={onClick}
         disabled={
-          isWritePending ||
           priceImpactTooHigh ||
           trade?.minimumAmountOut(swapSlippage)?.equalTo(ZERO) ||
           Boolean(!trade && priceImpactSeverity > 2 && !expertMode)
@@ -377,17 +385,13 @@ const SwapButton: FC<{
           title: 'Enable expert mode to swap with high price impact',
         })}
       >
-        {isLoadingTrade ? (
-          'Finding Best Price'
-        ) : isWritePending ? (
-          <Dots>Confirm transaction</Dots>
-        ) : priceImpactTooHigh ? (
-          'High Price Impact'
-        ) : trade && priceImpactSeverity > 2 ? (
-          'Swap Anyway'
-        ) : (
-          'Swap'
-        )}
+        {isLoadingTrade
+          ? 'Finding Best Price'
+          : priceImpactTooHigh
+          ? 'High Price Impact'
+          : trade && priceImpactSeverity > 2
+          ? 'Swap Anyway'
+          : 'Swap'}
       </Button>
     </Checker.Custom>
   )

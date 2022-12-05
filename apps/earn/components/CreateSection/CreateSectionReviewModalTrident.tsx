@@ -282,6 +282,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
           components={
             <Approve.Components>
               <Approve.Bentobox
+                id="create-trident-approve-bentobox"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
@@ -290,6 +291,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 enabled={Boolean(getTridentRouterContractConfig(chainId).address)}
               />
               <Approve.Token
+                id="create-trident-approve-token0"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth
@@ -298,6 +300,7 @@ export const CreateSectionReviewModalTrident: FC<CreateSectionReviewModalTrident
                 enabled={Boolean(chain && BENTOBOX_ADDRESS[chain?.id])}
               />
               <Approve.Token
+                id="create-trident-approve-token1"
                 size="md"
                 className="whitespace-nowrap"
                 fullWidth

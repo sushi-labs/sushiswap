@@ -228,7 +228,7 @@ export function useConstantProductPools(
 
   const poolsAddresses = useMemo(
     () =>
-      input.reduce<string[]>((acc, [tokenA, tokenB, fee, twap]) => {
+      input.reduce<Address[]>((acc, [tokenA, tokenB, fee, twap]) => {
         if (!constantProductPoolFactory) return acc
         acc.push(
           computeConstantProductPoolAddress({
@@ -244,7 +244,7 @@ export function useConstantProductPools(
     [constantProductPoolFactory, input]
   )
 
-  const { data } = useContractReads({
+  const { data, isLoading, isError } = useContractReads({
     contracts: poolsAddresses.map((address) => ({
       chainId,
       address,
@@ -258,13 +258,12 @@ export function useConstantProductPools(
 
   return useMemo(() => {
     if (poolsAddresses.length === 0) return [[ConstantProductPoolState.INVALID, null]]
-    if (!data) return poolsAddresses.map(() => [ConstantProductPoolState.LOADING, null])
+    if (!data || !data.length) return poolsAddresses.map(() => [ConstantProductPoolState.LOADING, null])
     return data.map((result, i) => {
       const tokenA = pools[i][0]?.wrapped
       const tokenB = pools[i][1]?.wrapped
       const fee = pools[i]?.[2]
       const twap = pools[i]?.[3]
-
       if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [ConstantProductPoolState.INVALID, null]
       if (!result) return [ConstantProductPoolState.NOT_EXISTS, null]
       const [reserve0, reserve1] = result

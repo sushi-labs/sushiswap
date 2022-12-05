@@ -4,8 +4,112 @@ import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
 import { Token } from './Token'
 
+export const rETH2_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x20BC832ca081b91433ff6c17f85701B6e92486c5',
+} as const
+
+export const rETH2 = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'rETH2',
+    name: 'StakeWise Reward ETH2',
+  },
+  rETH2_ADDRESS
+)
+
+export const sETH2_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xFe2e637202056d30016725477c5da089Ab0A043A',
+} as const
+
+export const sETH2 = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'sETH2',
+    name: 'StakeWise Staked ETH2',
+  },
+  sETH2_ADDRESS
+)
+
+export const SWISE_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x48C3399719B582dD63eB5AADf12A40B4C3f52FA2',
+} as const
+
+export const SWISE = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'SWISE',
+    name: 'StakeWise',
+  },
+  SWISE_ADDRESS
+)
+
+export const FEI_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x956F47F50A910163D8BF957Cf5846D573E7f87CA',
+} as const
+
+export const FEI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'FEI',
+    name: 'Fei USD',
+  },
+  FEI_ADDRESS
+)
+
+export const TRIBE_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xc7283b66Eb1EB5FB86327f08e1B5816b0720212B',
+} as const
+
+export const TRIBE = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'TRIBE',
+    name: 'Tribe',
+  },
+  TRIBE_ADDRESS
+)
+
+export const renBTC_ADDRESS = {
+  [ChainId.ETHEREUM]: '',
+} as const
+
+export const renBTC = addressMapToTokenMap(
+  {
+    decimals: 8,
+    symbol: 'renBTC',
+    name: 'renBTC',
+  },
+  renBTC_ADDRESS
+)
+
+export const NFTX_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x87d73E916D7057945c9BcD8cdd94e42A6F47f776',
+} as const
+
+export const NFTX = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'NFTX',
+    name: 'NFTX',
+  },
+  NFTX_ADDRESS
+)
+
+export const OHM_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5',
+} as const
+
+export const OHM = addressMapToTokenMap(
+  {
+    decimals: 9,
+    symbol: 'OHM',
+    name: 'Olympus',
+  },
+  OHM_ADDRESS
+)
+
 export const SNX_ADDRESS = {
-  [ChainId.ETHEREUM]: '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f',
+  [ChainId.ETHEREUM]: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
 } as const
 
 export const FTM_ADDRESS = {

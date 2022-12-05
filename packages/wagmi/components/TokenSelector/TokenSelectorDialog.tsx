@@ -27,6 +27,7 @@ import { TokenSelectorRow } from './TokenSelectorRow'
 import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
 
 type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
+  id: string
   account?: string
   balancesMap?: BalanceMap
   tokenMap: Record<string, Token>
@@ -36,6 +37,7 @@ type TokenSelectorDialog = Omit<TokenSelectorProps, 'variant' | 'tokenMap'> & {
 }
 
 export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
+  id,
   account,
   currency,
   open,
@@ -94,8 +96,9 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                 )}
               >
                 <Input.Address
+                  id={`${id}-address-input`}
+                  testdata-id={`${id}-address-input`}
                   variant="unstyled"
-                  id="token-search"
                   ref={inputRef}
                   placeholder="Search token by address"
                   value={query}
@@ -136,6 +139,7 @@ export const TokenSelectorDialog: FC<TokenSelectorDialog> = ({
                       currencies={currencies}
                       rowRenderer={({ currency, style }) => (
                         <TokenSelectorRow
+                          id={id}
                           account={account}
                           currency={currency}
                           style={style}

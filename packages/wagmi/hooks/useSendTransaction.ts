@@ -26,6 +26,11 @@ export function useSendTransaction({
     enabled,
   })
 
+  // console.log({
+  //   request,
+  //   'config.setrequest': config.request,
+  // })
+
   const _onSettled = useCallback(
     (
       data: SendTransactionResult | undefined,
@@ -59,5 +64,6 @@ export function useSendTransaction({
     // TODO: ignore until wagmi workaround on ethers error
     // @ts-ignore
     onSettled: _onSettled,
+    mode: 'prepared',
   })
 }

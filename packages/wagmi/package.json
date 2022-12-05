@@ -43,15 +43,14 @@
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@sushiswap/trident": "1.0.0-canary.51",
+    "@sushiswap/trident": "1.0.0-canary.53",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@tanstack/react-query": "^4.14.5",
-    "@tanstack/react-query-persist-client": "^4.14.5",
+    "@tanstack/react-query": "latest",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
-    "@wagmi/core": "0.7.6",
-    "wagmi": "0.8.7"
+    "@wagmi/core": "latest",
+    "wagmi": "latest"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -65,7 +64,7 @@
     "ethers": "^5.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tsup": "6.4.0",
+    "tsup": "6.5.0",
     "typechain": "^8.0.0",
     "typescript": "4.8.2"
   },

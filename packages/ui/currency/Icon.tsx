@@ -2,7 +2,7 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
-import Image, { ImageProps } from 'next/image'
+import Image, { ImageProps } from 'next/legacy/image'
 import { FC, useEffect, useMemo, useState } from 'react'
 
 import { GradientCircleIcon } from '../icons'

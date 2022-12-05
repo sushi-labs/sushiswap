@@ -21,6 +21,7 @@ import { calculateGasMargin } from '../calculateGasMargin'
 import { useERC20Allowance } from './useERC20Allowance'
 
 export enum ApprovalState {
+  LOADING = 'LOADING',
   UNKNOWN = 'UNKNOWN',
   NOT_APPROVED = 'NOT_APPROVED',
   PENDING = 'PENDING',
@@ -31,7 +32,7 @@ export enum ApprovalState {
 export function useERC20ApproveCallback(
   watch: boolean,
   amountToApprove?: Amount<Currency>,
-  spender?: Address,
+  spender?: string,
   onSuccess?: (data: NotificationData) => void
 ): [ApprovalState, () => void] {
   const { address } = useAccount()
@@ -77,10 +78,11 @@ export function useERC20ApproveCallback(
   })
 
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined
-  const currentAllowance = useERC20Allowance(watch, token, address ?? undefined, spender)
+  const { data: currentAllowance, isLoading } = useERC20Allowance(watch, token, address ?? undefined, spender)
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
+    if (isLoading) return ApprovalState.LOADING
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN
     if (amountToApprove.currency.isNative) return ApprovalState.APPROVED
     if (isWritePending) return ApprovalState.PENDING
@@ -90,7 +92,7 @@ export function useERC20ApproveCallback(
 
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove) ? ApprovalState.NOT_APPROVED : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, isWritePending, spender])
+  }, [amountToApprove, currentAllowance, isLoading, isWritePending, spender])
 
   const tokenContract = useContract({
     address: token?.address ?? AddressZero,
@@ -112,10 +114,13 @@ export function useERC20ApproveCallback(
       }
 
       let useExact = false
-      const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
+      const estimatedGas = await tokenContract.estimateGas.approve(spender as Address, MaxUint256).catch(() => {
         // General fallback for tokens who restrict approval amounts
         useExact = true
-        return tokenContract.estimateGas.approve(spender, BigNumber.from(amountToApprove.quotient.toString()))
+        return tokenContract.estimateGas.approve(
+          spender as Address,
+          BigNumber.from(amountToApprove.quotient.toString())
+        )
       })
 
       setRequest({

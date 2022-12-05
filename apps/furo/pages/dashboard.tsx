@@ -43,7 +43,11 @@ export default function DashboardPage() {
               >
                 Connect Wallet
               </Wallet.Button> */}
-              <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
+              <Link
+                passHref={true}
+                href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet"
+                legacyBehavior
+              >
                 <Typography
                   as="a"
                   target="_blank"

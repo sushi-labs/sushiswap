@@ -123,7 +123,7 @@ const _VestingPage: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Unlocked"
-                value={`${vesting?.streamedPercentage?.toSignificant(4)}%`}
+                value={`${vesting?.streamedPercentage?.toPercentageString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.STREAMED)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
@@ -136,7 +136,7 @@ const _VestingPage: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Withdrawn"
-                value={`${vesting?.withdrawnPercentage?.toSignificant(4)}%`}
+                value={`${vesting?.withdrawnPercentage?.toPercentageString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >

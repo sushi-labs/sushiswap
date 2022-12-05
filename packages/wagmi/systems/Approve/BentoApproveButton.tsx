@@ -3,6 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Transition } from '@headlessui/react'
 import { Badge, BentoboxIcon, Button, classNames, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
+import { useNetwork } from 'wagmi'
 
 import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
 import { DefaultButton } from './DefaultButton'
@@ -20,6 +21,7 @@ export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
 
 export const BentoApproveButton: FC<BentoApproveButton> = memo(
   ({
+    id,
     watch = true,
     address: masterContract,
     render,
@@ -34,7 +36,9 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     enabled = true,
     ...props
   }) => {
+    const { chain } = useNetwork()
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
+      chainId: chain?.id,
       watch,
       masterContract,
       onSignature,
@@ -65,6 +69,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           state: [
             approvalState,
             <Button
+              testdata-id={`${id}-button`}
               {...props}
               type="button"
               key={1}
@@ -79,7 +84,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           index,
         },
       })
-    }, [approvalState, disabled, dispatch, enabled, index, onApprove, props, signature])
+    }, [id, approvalState, disabled, dispatch, enabled, index, onApprove, props, signature])
 
     if (render) return render({ approvalState, signature, onApprove })
     if (hideIcon) return <></>

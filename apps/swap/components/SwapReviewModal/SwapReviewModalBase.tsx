@@ -1,5 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Amount, Price, Type } from '@sushiswap/currency'
+import { ZERO } from '@sushiswap/math'
 import { Dialog, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import { FC, ReactNode, useMemo } from 'react'
@@ -21,6 +22,7 @@ export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({ chainId, children
 
   const price = useMemo(() => {
     if (!input0 || !input1) return undefined
+    if (!input1.greaterThan(ZERO)) return undefined
     return new Price({ baseAmount: input0, quoteAmount: input1 })
   }, [input0, input1])
 

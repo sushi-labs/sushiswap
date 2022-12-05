@@ -6,9 +6,11 @@ import "../interfaces/IERC20.sol";
 import "../interfaces/IUniswapV2Pair.sol";
 import "../interfaces/IBentoBoxMinimal.sol";
 import "../interfaces/IPool.sol";
+import "./StreamReader.sol";
 import "hardhat/console.sol";
 
-contract RouteProcessor {
+
+contract RouteProcessor is StreamReader {
   IBentoBoxMinimal immutable BentoBox;
 
   constructor(address _BentoBox) {
@@ -180,83 +182,6 @@ contract RouteProcessor {
         amountTotal -= amount;
         BentoBox.transfer(token, address(this), to, amount);
       }
-    }
-  }
-
-
-// ===================== Stream operations ======================
-
-  function createStream(bytes memory data) private pure returns (uint stream) {
-    assembly {
-      stream := mload(0x40)
-      mstore(0x40, add(stream, 64))
-      mstore(stream, data)
-      let length := mload(data)
-      mstore(add(stream, 32), add(data, length))
-    }
-  }
-
-  function isNotEmpty(uint stream) private pure returns (bool) {
-    uint pos;
-    uint finish;
-    assembly {
-      pos := mload(stream)
-      finish := mload(add(stream, 32))
-    }
-    return pos < finish;
-  }
-
-  function readUint8(uint stream) private pure returns (uint8 res) {
-    assembly {
-      let pos := mload(stream)
-      pos := add(pos, 1)
-      res := mload(pos)
-      mstore(stream, pos)
-    }
-  }
-
-  function readUint16(uint stream) private pure returns (uint16 res) {
-    assembly {
-      let pos := mload(stream)
-      pos := add(pos, 2)
-      res := mload(pos)
-      mstore(stream, pos)
-    }
-  }
-
-  function readUint32(uint stream) private pure returns (uint32 res) {
-    assembly {
-      let pos := mload(stream)
-      pos := add(pos, 4)
-      res := mload(pos)
-      mstore(stream, pos)
-    }
-  }
-
-  function readUint(uint stream) private pure returns (uint res) {
-    assembly {
-      let pos := mload(stream)
-      pos := add(pos, 32)
-      res := mload(pos)
-      mstore(stream, pos)
-    }
-  }
-
-  function readAddress(uint stream) public pure returns (address res) {
-    assembly {
-      let pos := mload(stream)
-      pos := add(pos, 20)
-      res := mload(pos)
-      mstore(stream, pos)
-    }
-  }
-
-  function readBytes(uint stream) public pure returns (bytes memory res) {
-    assembly {
-      let pos := mload(stream)
-      res := add(pos, 32)
-      let length := mload(res)
-      mstore(stream, add(res, length))
     }
   }
 

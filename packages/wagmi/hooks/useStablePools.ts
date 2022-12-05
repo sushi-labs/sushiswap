@@ -275,7 +275,7 @@ export function useStablePools(chainId: number, pools: PoolInput[]): [StablePool
 
   return useMemo(() => {
     if (poolsAddresses.length === 0) return [[StablePoolState.INVALID, null]]
-    if (!data) return poolsAddresses.map(() => [StablePoolState.LOADING, null])
+    if (!data || !data.length) return poolsAddresses.map(() => [StablePoolState.LOADING, null])
     return data.map((result, i) => {
       const tokenA = pools[i][0]?.wrapped
       const tokenB = pools[i][1]?.wrapped

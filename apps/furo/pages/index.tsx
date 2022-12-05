@@ -124,7 +124,7 @@ export default function Index() {
             ) : (
               <>
                 <div>
-                  <Link passHref={true} href="/stream/create">
+                  <Link passHref={true} href="/stream/create" legacyBehavior>
                     <Button
                       color="blue"
                       variant="filled"
@@ -136,7 +136,7 @@ export default function Index() {
                   </Link>
                 </div>
                 <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
-                  <Link passHref={true} href="/dashboard">
+                  <Link passHref={true} href="/dashboard" legacyBehavior>
                     <Button
                       fullWidth
                       color="gray"

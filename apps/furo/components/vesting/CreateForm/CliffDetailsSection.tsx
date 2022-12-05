@@ -103,6 +103,7 @@ export const CliffDetailsSection: FC = () => {
             shouldUnregister={true}
             render={({ field: { onChange, value, onBlur, name }, fieldState: { error: validationError } }) => (
               <CurrencyInput
+                id="create-single-vest"
                 name={name}
                 onBlur={onBlur}
                 className="ring-offset-slate-900"

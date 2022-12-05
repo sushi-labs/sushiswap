@@ -286,6 +286,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                   components={
                     <Approve.Components>
                       <Approve.Bentobox
+                        id="remove-liquidity-trident-approve-bentobox"
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth
@@ -293,6 +294,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                         onSignature={setPermit}
                       />
                       <Approve.Token
+                        id="remove-liquidity-trident-approve-token"
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth

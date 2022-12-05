@@ -7,5 +7,5 @@ export type InternalLinkProps = LinkProps & {
 }
 
 export const Internal: FC<InternalLinkProps> = ({ href, ...rest }) => {
-  return <Link href={href} {...rest} />
+  return <Link href={href} {...rest} legacyBehavior />
 }

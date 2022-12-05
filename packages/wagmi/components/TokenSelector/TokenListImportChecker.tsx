@@ -50,7 +50,7 @@ const _TokenListImportChecker: FC<
   }, [])
 
   const { data: currencies } = useTokens({
-    tokens: tokens.map((el) => ({ address: el.address, chainId: el.chainId })),
+    tokens: useMemo(() => tokens.map((el) => ({ address: el.address, chainId: el.chainId })), [tokens]),
   })
 
   const _currencies = useMemo(() => {
