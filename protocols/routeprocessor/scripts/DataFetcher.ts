@@ -15,6 +15,7 @@ export class DataFetcher {
   chainDataProvider: ethers.providers.BaseProvider
   limited = new Limited(10, 1000)
   providers: LiquidityProvider2[] = []
+  lastProviderStates: Map<LiquidityProviders, number> = new Map()
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
   stateId = 0
@@ -59,7 +60,8 @@ export class DataFetcher {
     const result:Map<string, PoolCode> = new Map()
     this.providers.forEach(p => {
       if (!this._providerIsIncluded(p.getType(), providers)) return
-      if (p.poolListWereUpdated()) {
+      if (p.getCurrentPoolStateId() !== this.lastProviderStates.get(p.getType())) {
+        this.lastProviderStates.set(p.getType(), p.getCurrentPoolStateId())
         const poolCodes = p.getCurrentPoolList()
         let pcMap = this.poolCodes.get(p.getType())
         if (pcMap === undefined) {
@@ -82,8 +84,8 @@ export class DataFetcher {
   }
 
   getCurrentPoolStateId() {
-    if (this.providers.some(p => p.poolListWereUpdated())) 
-      this.stateId += 1
+    const currentStateId = this.providers.reduce((a, b) => a += b.getCurrentPoolStateId(), 0)
+    this.stateId = currentStateId
     return this.stateId
   }
 

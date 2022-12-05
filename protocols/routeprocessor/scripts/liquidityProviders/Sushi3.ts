@@ -41,17 +41,16 @@ const getReservesABI = [{
   type: 'function',
 }]
 
+const callsGetReserves = [{ reference: '', methodName: 'getReserves', methodParameters: [] }]
+
 export class SushiProvider3 extends LiquidityProvider2 {
-  fetchedPools: Map<string, number>
-  poolCodes: PoolCode[]
-  lastPoolCodeNumber: number
+  fetchedPools: Map<string, number> = new Map()
+  poolCodes: PoolCode[] = []
   multicall: Multicall
+  blockListener: any
 
   constructor(chainDataProvider: ethers.providers.BaseProvider, chainId: ChainId, l: Limited) {
     super(chainDataProvider, chainId, l)
-    this.poolCodes = []
-    this.lastPoolCodeNumber = 0
-    this.fetchedPools = new Map()
     this.multicall = new Multicall({ ethersProvider: chainDataProvider, tryAggregate: true });
   }
 
@@ -81,7 +80,7 @@ export class SushiProvider3 extends LiquidityProvider2 {
       const t0 = tokens[i]
       for (let j = i + 1; j < tokens.length; ++j) {
         const t1 = tokens[j]
-        
+
         const addr = this._getPoolAddress(t0, t1)
         if (this.fetchedPools.get(addr) === undefined) {
           poolAddr.set(addr, [t0, t1])
@@ -94,7 +93,7 @@ export class SushiProvider3 extends LiquidityProvider2 {
       reference: p,
       contractAddress: p,
       abi: getReservesABI,
-      calls: [{ reference: '', methodName: 'getReserves', methodParameters: [] }]
+      calls: callsGetReserves
     }))
     const results: ContractCallResults = await this.multicall.call(getReservesCalls);
     const res = results.results
@@ -111,6 +110,37 @@ export class SushiProvider3 extends LiquidityProvider2 {
         const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, 0.003, res0, res1)
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.poolCodes.push(pc)   
+        ++this.stateId
+      }
+    }
+  }
+
+  // TODO: remove too often updates if the network generates too many blocks
+  async updatePoolsData() {
+    const poolCodes = new Map<string, PoolCode>()
+    this.poolCodes.forEach(p => poolCodes.set(p.pool.address, p))
+    const poolAddr = this.poolCodes.map(p => p.pool.address)
+    const getReservesCalls: ContractCallContext[] = this.poolCodes.map(p => ({
+      reference: p.pool.address,
+      contractAddress: p.pool.address,
+      abi: getReservesABI,
+      calls: callsGetReserves
+    }))
+    const results: ContractCallResults = await this.multicall.call(getReservesCalls);
+    const res = results.results
+    for (let r in res) {
+      const addr = res[r].originalContractCallContext.reference
+      const ret = res[r].callsReturnContext[0]
+      if (ret.success) {
+        const poolCode = poolCodes.get(addr)
+        if (poolCode) {
+          const res0 = BigNumber.from(ret.returnValues[0].hex)
+          const res1 = BigNumber.from(ret.returnValues[1].hex)
+          if (!res0.eq(poolCode.pool.reserve0) || !res1.eq(poolCode.pool.reserve1)) {
+            poolCode.pool.updateReserves(res0, res1)
+            ++this.stateId
+          }
+        } 
       }
     }
   }
@@ -135,20 +165,24 @@ export class SushiProvider3 extends LiquidityProvider2 {
   }
 
   startFetchPoolsData() {
+    this.stopFetchPoolsData()
     this.poolCodes = []
-    this.lastPoolCodeNumber = 0
     this.fetchedPools.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
+    this.blockListener = (_blockNumber: number) => {
+      this.updatePoolsData()
+    }
+    this.chainDataProvider.on('block', this.blockListener)
   }
   fetchPoolsForToken(t0: Token, t1: Token): void {
     this.getPools(this._getProspectiveTokens(t0, t1))
   }
-  poolListWereUpdated(): boolean {
-    return this.lastPoolCodeNumber !== this.poolCodes.length
-  }
   getCurrentPoolList(): PoolCode[] {
-    this.lastPoolCodeNumber = this.poolCodes.length
     return this.poolCodes
   }
-  stopFetchPoolsData() {}
+  stopFetchPoolsData() {
+    if (this.blockListener)
+      this.chainDataProvider.off('block', this.blockListener)
+    this.blockListener = undefined
+  }
 }

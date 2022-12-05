@@ -15,6 +15,7 @@ export abstract class LiquidityProvider2 {
   limited: Limited
   chainDataProvider: ethers.providers.BaseProvider
   chainId: ChainId
+  stateId = 0
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
@@ -42,8 +43,8 @@ export abstract class LiquidityProvider2 {
   // Returns current pools data
   abstract getCurrentPoolList(): PoolCode[];
 
-  // If pools data were chabged since last getCurrentPoolList() call
-  abstract poolListWereUpdated(): boolean;
+  // If pools data were changed then stateId should be increased
+  getCurrentPoolStateId() { return this.stateId }
 
   // Stops all network activity
   abstract stopFetchPoolsData(): void;
