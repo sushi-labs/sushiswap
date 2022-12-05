@@ -8,7 +8,7 @@ import { CellProps } from './types'
 export const PairAPRCell: FC<CellProps> = ({ row }) => {
   return (
     <Typography variant="sm" weight={600} className="flex items-center justify-end gap-1 text-slate-50">
-      {!!row.farm && row.farm.incentives.length > 0 && <FarmRewardsAvailableTooltip />}
+      {!!row.farm && row.incentiveApr > 0 && <FarmRewardsAvailableTooltip />}
       {formatPercent(row.apr)}
       {/* {row.utilisation1dChange > 0 ? (
         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 ml-2" viewBox="0 0 20 20" fill="currentColor">

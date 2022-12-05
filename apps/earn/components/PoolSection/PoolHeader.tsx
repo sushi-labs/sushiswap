@@ -60,9 +60,11 @@ export const PoolHeader: FC<PoolHeader> = ({ pair }) => {
               {pair.incentiveApr > 0 ? <FarmRewardsAvailableTooltip /> : ''}
             </Typography>
             <div className="flex gap-2">
-              <Typography variant="sm" weight={400} as="span" className="text-slate-400">
-                Rewards: {formatPercent(pair.incentiveApr)}
-              </Typography>
+              {pair.incentiveApr > 0 && (
+                <Typography variant="sm" weight={400} as="span" className="text-slate-400">
+                  Rewards: {formatPercent(pair.incentiveApr)}
+                </Typography>
+              )}
               <Typography variant="sm" weight={400} as="span" className="text-slate-400">
                 Fees: {formatPercent(pair.feeApr)}
               </Typography>
