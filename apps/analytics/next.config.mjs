@@ -19,6 +19,7 @@ const nextConfig = {
     esmExternals: 'loose',
   },
   productionBrowserSourceMaps: true,
+  staticPageGenerationTimeout: 180,
   async redirects() {
     return [
       {

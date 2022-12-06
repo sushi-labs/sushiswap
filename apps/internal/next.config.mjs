@@ -16,6 +16,7 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose',
   },
+  staticPageGenerationTimeout: 180,
   async redirects() {
     return [
       {
