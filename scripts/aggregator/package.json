@@ -31,7 +31,8 @@
     "lint": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"
-  },
+  },  
+  "type": "module",
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
@@ -41,6 +42,10 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/abi": "workspace:*",
+    "@wagmi/core": "0.7.9",
+    "@ethersproject/abi": "^5.7.0",
+    "@uniswap/v2-core": "^1.0.1",
     "express": "^4.18.1"
   },
   "devDependencies": {

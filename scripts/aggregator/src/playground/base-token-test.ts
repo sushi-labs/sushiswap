@@ -9,6 +9,7 @@ import {
   USDC_ADDRESS,
   USDT_ADDRESS,
 } from '@sushiswap/currency'
+
 import { ChainId, chainName, chainShortName, chainShortNameToChainId } from '@sushiswap/chain'
 
 const prisma = new PrismaClient()
@@ -73,6 +74,7 @@ async function getBaseCount(chainId: ChainId.ARBITRUM | ChainId.ETHEREUM | Chain
   })
   console.log('-----------------------')
 }
+
 // const exoticPairs = await prisma.pool.findMany({
 //   where: {
 //     AND: {
