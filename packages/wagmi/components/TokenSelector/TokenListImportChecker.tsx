@@ -1,6 +1,7 @@
 import { Token } from '@sushiswap/currency'
 import { Dialog } from '@sushiswap/ui'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { Address } from 'wagmi'
 
 import { useTokens } from '../../hooks/useTokens'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
@@ -8,7 +9,7 @@ import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 interface TokenListImportCheckerProps {
   children: ReactNode
   onAddTokens: (tokens: Token[]) => void
-  tokens?: { address: string; chainId: number }[]
+  tokens?: { address: Address; chainId: number }[]
   tokenMap: Record<string, Token>
   customTokensMap: Record<string, Token>
 }
@@ -39,13 +40,9 @@ export const TokenListImportChecker: FC<TokenListImportCheckerProps> = ({
   )
 }
 
-const _TokenListImportChecker: FC<TokenListImportCheckerProps & { tokens: { address: string; chainId: number }[] }> = ({
-  children,
-  tokens,
-  onAddTokens,
-  tokenMap,
-  customTokensMap,
-}) => {
+const _TokenListImportChecker: FC<
+  TokenListImportCheckerProps & { tokens: { address: Address; chainId: number }[] }
+> = ({ children, tokens, onAddTokens, tokenMap, customTokensMap }) => {
   const [open, setOpen] = useState(false)
 
   const onClose = useCallback(() => {
@@ -53,7 +50,7 @@ const _TokenListImportChecker: FC<TokenListImportCheckerProps & { tokens: { addr
   }, [])
 
   const { data: currencies } = useTokens({
-    tokens: tokens.map((el) => ({ address: el.address, chainId: el.chainId })),
+    tokens: useMemo(() => tokens.map((el) => ({ address: el.address, chainId: el.chainId })), [tokens]),
   })
 
   const _currencies = useMemo(() => {

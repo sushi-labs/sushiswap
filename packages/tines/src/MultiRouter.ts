@@ -41,6 +41,17 @@ function getBetterRouteExactIn(route1: MultiRoute, route2: MultiRoute): MultiRou
   return route1.totalAmountOut > route2.totalAmountOut ? route1 : route2
 }
 
+function deduplicatePools(pools: RPool[]): RPool[] {
+  const poolMap = new Map<string, RPool>()
+  pools.forEach((p) => {
+    const chId0 = p.token0.chainId || 0
+    const chId1 = p.token1.chainId || 0
+    const chainInfo = chId0 < chId1 ? `_${chId0}_${chId1}` : `_${chId1}_${chId0}`
+    poolMap.set(p.address + chainInfo, p)
+  })
+  return Array.from(poolMap.values())
+}
+
 export function findMultiRouteExactIn(
   from: RToken,
   to: RToken,
@@ -50,6 +61,7 @@ export function findMultiRouteExactIn(
   gasPrice?: number,
   flows?: number | number[]
 ): MultiRoute {
+  pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
   const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
@@ -87,6 +99,7 @@ export function findMultiRouteExactOut(
   gasPrice?: number,
   flows?: number | number[]
 ): MultiRoute {
+  pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
   if (amountOut instanceof BigNumber) {
@@ -118,6 +131,7 @@ export function findSingleRouteExactIn(
   baseTokenOrNetworks: RToken | NetworkInfo[],
   gasPrice?: number
 ): MultiRoute {
+  pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
   const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)
@@ -134,6 +148,7 @@ export function findSingleRouteExactOut(
   baseTokenOrNetworks: RToken | NetworkInfo[],
   gasPrice?: number
 ): MultiRoute {
+  pools = deduplicatePools(pools)
   checkChainId(pools, baseTokenOrNetworks)
   setTokenId(from, to)
   const g = new Graph(pools, from, baseTokenOrNetworks, gasPrice)

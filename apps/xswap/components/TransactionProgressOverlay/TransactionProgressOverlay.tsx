@@ -8,7 +8,7 @@ import { TransactionProgressStepper } from './TransactionProgressStepper'
 interface TransactionProgressOverlay {
   onClose(): void
   id: string
-  srcTxHash: string
+  srcTxHash: `0x${string}`
   inputAmount?: Amount<Type>
   outputAmount?: Amount<Type>
   srcBridgeToken: Token

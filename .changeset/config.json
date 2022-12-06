@@ -16,7 +16,6 @@
       "earn",
       "furo",
       "internal",
-      "kashi",
       "partner",
       "swap",
       "xswap",
@@ -31,11 +30,11 @@
       "@sushiswap/next",
       "@sushiswap/redux-token-lists",
       "@sushiswap/redux-localstorage",
-      "@sushiswap/redux-logs",
       "@sushiswap/token-lists",
       "@sushiswap/ui",
       "@sushiswap/wagmi",
       "@sushiswap/furo",
-      "@sushiswap/kashi"
+      "@sushiswap/kashi",
+      "router"
     ]
   }

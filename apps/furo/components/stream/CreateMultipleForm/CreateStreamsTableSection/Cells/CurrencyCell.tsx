@@ -67,6 +67,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
               <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
             </Button>
             <TokenSelector
+              id={`create-multiple-streams-${index}`}
               open={open}
               variant="dialog"
               chainId={chainId}

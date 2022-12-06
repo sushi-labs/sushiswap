@@ -1,7 +1,48 @@
 import { ChainId } from '@sushiswap/chain'
 import flatMap from 'lodash.flatmap'
 
-import { BCT, DAI, FRAX, FXS, KLIMA, LUSD, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
+import {
+  APE,
+  APE_ADDRESS,
+  BCT,
+  BCT_ADDRESS,
+  DAI,
+  FEI,
+  FEI_ADDRESS,
+  FRAX,
+  FRAX_ADDRESS,
+  FXS,
+  FXS_ADDRESS,
+  KLIMA,
+  KLIMA_ADDRESS,
+  KP3R,
+  KP3R_ADDRESS,
+  LDO,
+  LDO_ADDRESS,
+  LUSD,
+  MIM,
+  NFTX,
+  OHM,
+  PRIMATE,
+  PRIMATE_ADDRESS,
+  renBTC,
+  renBTC_ADDRESS,
+  rETH2_ADDRESS,
+  sETH2,
+  SUSHI,
+  SUSHI_ADDRESS,
+  SWISE_ADDRESS,
+  TRIBE,
+  TRIBE_ADDRESS,
+  USDC,
+  USDT,
+  WBTC,
+  WBTC_ADDRESS,
+  WETH9,
+  WNATIVE,
+  XSUSHI,
+  XSUSHI_ADDRESS,
+} from './constants'
 import { Token } from './Token'
 import { Type } from './Type'
 
@@ -14,13 +55,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     DAI[ChainId.ETHEREUM],
     MIM[ChainId.ETHEREUM],
     FRAX[ChainId.ETHEREUM],
-    new Token({
-      chainId: ChainId.ETHEREUM,
-      address: '0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5',
-      decimals: 9,
-      name: 'Olympus',
-      symbol: 'OHM',
-    }),
+    OHM[ChainId.ETHEREUM],
+    NFTX[ChainId.ETHEREUM],
   ],
 
   [ChainId.RINKEBY]: [WNATIVE[ChainId.RINKEBY], USDC[ChainId.RINKEBY]],
@@ -224,61 +260,69 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
       name: 'Avax',
     }),
   ],
-  // [ChainId.BOBA_AVAX]: [WNATIVE[ChainId.BOBA_AVAX]],
+  [ChainId.BTTC]: [WNATIVE[ChainId.BTTC]],
 }
 
 export const ADDITIONAL_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }
 } = {
   [ChainId.ETHEREUM]: {
-    [FRAX[ChainId.ETHEREUM].address]: [FRAX[ChainId.ETHEREUM]],
-    [FXS[ChainId.ETHEREUM].address]: [FXS[ChainId.ETHEREUM]],
+    [rETH2_ADDRESS[ChainId.ETHEREUM]]: [sETH2[ChainId.ETHEREUM]],
+    [SWISE_ADDRESS[ChainId.ETHEREUM]]: [sETH2[ChainId.ETHEREUM]],
+    [FEI_ADDRESS[ChainId.ETHEREUM]]: [TRIBE[ChainId.ETHEREUM]],
+    [TRIBE_ADDRESS[ChainId.ETHEREUM]]: [FEI[ChainId.ETHEREUM]],
+    [FRAX_ADDRESS[ChainId.ETHEREUM]]: [FXS[ChainId.ETHEREUM]],
+    [FXS_ADDRESS[ChainId.ETHEREUM]]: [FRAX[ChainId.ETHEREUM]],
+    [WBTC_ADDRESS[ChainId.ETHEREUM]]: [renBTC[ChainId.ETHEREUM]],
+    [renBTC_ADDRESS[ChainId.ETHEREUM]]: [WBTC[ChainId.ETHEREUM]],
+    [APE_ADDRESS[ChainId.ETHEREUM]]: [PRIMATE[ChainId.ETHEREUM]],
+    [PRIMATE_ADDRESS[ChainId.ETHEREUM]]: [APE[ChainId.ETHEREUM]],
+    [SUSHI_ADDRESS[ChainId.ETHEREUM]]: [XSUSHI[ChainId.ETHEREUM]],
+    [XSUSHI_ADDRESS[ChainId.ETHEREUM]]: [SUSHI[ChainId.ETHEREUM]],
+    [KP3R_ADDRESS[ChainId.ETHEREUM]]: [LDO[ChainId.ETHEREUM]],
+    [LDO_ADDRESS[ChainId.ETHEREUM]]: [KP3R[ChainId.ETHEREUM]],
   },
   [ChainId.POLYGON]: {
-    [FRAX[ChainId.POLYGON].address]: [FRAX[ChainId.POLYGON]],
-    [FXS[ChainId.POLYGON].address]: [FXS[ChainId.POLYGON]],
+    [FRAX_ADDRESS[ChainId.POLYGON]]: [FXS[ChainId.POLYGON]],
+    [FXS_ADDRESS[ChainId.POLYGON]]: [FRAX[ChainId.POLYGON]],
+    [BCT_ADDRESS[ChainId.POLYGON]]: [KLIMA[ChainId.POLYGON]],
+    [KLIMA_ADDRESS[ChainId.POLYGON]]: [BCT[ChainId.POLYGON]],
   },
   [ChainId.ARBITRUM]: {
-    [FRAX[ChainId.ARBITRUM].address]: [FRAX[ChainId.ARBITRUM]],
-    [FXS[ChainId.ARBITRUM].address]: [FXS[ChainId.ARBITRUM]],
+    [FRAX_ADDRESS[ChainId.ARBITRUM]]: [FXS[ChainId.ARBITRUM]],
+    [FXS_ADDRESS[ChainId.ARBITRUM]]: [FRAX[ChainId.ARBITRUM]],
   },
   [ChainId.FANTOM]: {
-    [FRAX[ChainId.FANTOM].address]: [FRAX[ChainId.FANTOM]],
-    [FXS[ChainId.FANTOM].address]: [FXS[ChainId.FANTOM]],
+    [FRAX_ADDRESS[ChainId.FANTOM]]: [FXS[ChainId.FANTOM]],
+    [FXS_ADDRESS[ChainId.FANTOM]]: [FRAX[ChainId.FANTOM]],
   },
   [ChainId.BSC]: {
-    [FRAX[ChainId.BSC].address]: [FRAX[ChainId.BSC]],
-    [FXS[ChainId.BSC].address]: [FXS[ChainId.BSC]],
+    [FRAX_ADDRESS[ChainId.BSC]]: [FXS[ChainId.BSC]],
+    [FXS_ADDRESS[ChainId.BSC]]: [FRAX[ChainId.BSC]],
   },
   [ChainId.AVALANCHE]: {
-    [FRAX[ChainId.AVALANCHE].address]: [FRAX[ChainId.AVALANCHE]],
-    [FXS[ChainId.AVALANCHE].address]: [FXS[ChainId.AVALANCHE]],
+    [FRAX_ADDRESS[ChainId.AVALANCHE]]: [FXS[ChainId.AVALANCHE]],
+    [FXS_ADDRESS[ChainId.AVALANCHE]]: [FRAX[ChainId.AVALANCHE]],
   },
   [ChainId.MOONRIVER]: {
-    [FRAX[ChainId.MOONRIVER].address]: [FRAX[ChainId.MOONRIVER]],
-    [FXS[ChainId.MOONRIVER].address]: [FXS[ChainId.MOONRIVER]],
+    [FRAX_ADDRESS[ChainId.MOONRIVER]]: [FXS[ChainId.MOONRIVER]],
+    [FXS_ADDRESS[ChainId.MOONRIVER]]: [FRAX[ChainId.MOONRIVER]],
   },
   [ChainId.MOONBEAM]: {
-    [FRAX[ChainId.MOONBEAM].address]: [FRAX[ChainId.MOONBEAM]],
-    [FXS[ChainId.MOONBEAM].address]: [FXS[ChainId.MOONBEAM]],
+    [FRAX_ADDRESS[ChainId.MOONBEAM]]: [FXS[ChainId.MOONBEAM]],
+    [FXS_ADDRESS[ChainId.MOONBEAM]]: [FRAX[ChainId.MOONBEAM]],
   },
   [ChainId.HARMONY]: {
-    [FRAX[ChainId.HARMONY].address]: [FRAX[ChainId.HARMONY]],
-    [FXS[ChainId.HARMONY].address]: [FXS[ChainId.HARMONY]],
+    [FRAX_ADDRESS[ChainId.HARMONY]]: [FXS[ChainId.HARMONY]],
+    [FXS_ADDRESS[ChainId.HARMONY]]: [FRAX[ChainId.HARMONY]],
   },
   [ChainId.BOBA]: {
-    [FRAX[ChainId.BOBA].address]: [FRAX[ChainId.BOBA]],
-    [FXS[ChainId.BOBA].address]: [FXS[ChainId.BOBA]],
+    [FRAX_ADDRESS[ChainId.BOBA]]: [FXS[ChainId.BOBA]],
+    [FXS_ADDRESS[ChainId.BOBA]]: [FRAX[ChainId.BOBA]],
   },
   [ChainId.OPTIMISM]: {
-    [FRAX[ChainId.OPTIMISM].address]: [FRAX[ChainId.OPTIMISM]],
-    [FXS[ChainId.OPTIMISM].address]: [FXS[ChainId.OPTIMISM]],
-  },
-  [ChainId.POLYGON]: {
-    [BCT[ChainId.POLYGON].address]: [KLIMA[ChainId.POLYGON]],
-    [KLIMA[ChainId.POLYGON].address]: [BCT[ChainId.POLYGON]],
-    [FRAX[ChainId.POLYGON].address]: [FRAX[ChainId.POLYGON]],
-    [FXS[ChainId.POLYGON].address]: [FXS[ChainId.POLYGON]],
+    [FRAX_ADDRESS[ChainId.OPTIMISM]]: [FXS[ChainId.OPTIMISM]],
+    [FXS_ADDRESS[ChainId.OPTIMISM]]: [FRAX[ChainId.OPTIMISM]],
   },
 }
 

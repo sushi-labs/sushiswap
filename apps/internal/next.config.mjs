@@ -13,6 +13,10 @@ const nextConfig = {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
+  experimental: {
+    esmExternals: 'loose',
+  },
+  staticPageGenerationTimeout: 180,
   async redirects() {
     return [
       {

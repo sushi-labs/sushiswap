@@ -61,7 +61,12 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
             info
           )
         )
-    ).then((value) => value.flat()),
+    ).then((value) => {
+      if (!Array.isArray(value)) {
+        console.error('PairsWithFarms query failed for 1d pools ', value)
+      }
+      return value.flat()
+    }),
     Promise.all(
       args.chainIds
         .filter((chainId) => twoDayBlocks.some((block) => block.chainId === chainId))
@@ -80,7 +85,12 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
             info
           )
         )
-    ).then((value) => value.flat()),
+    ).then((value) => {
+      if (!Array.isArray(value)) {
+        console.error('PairsWithFarms query failed for 2d pools ', value)
+      }
+      return value.flat()
+    }),
     Promise.all(
       args.chainIds
         .filter((chainId) => oneWeekBlocks.some((block) => block.chainId === chainId))
@@ -99,7 +109,12 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
             info
           )
         )
-    ).then((value) => value.flat()),
+    ).then((value) => {
+      if (!Array.isArray(value)) {
+        console.error('PairsWithFarms query failed for 1w pools', value)
+      }
+      return value.flat()
+    }),
   ])
 
   return page(

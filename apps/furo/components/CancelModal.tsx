@@ -1,4 +1,3 @@
-import { ContractInterface } from '@ethersproject/contracts'
 import { TransactionRequest } from '@ethersproject/providers'
 import { TrashIcon } from '@heroicons/react/outline'
 import { CheckCircleIcon } from '@heroicons/react/solid'
@@ -17,7 +16,7 @@ import { useNotifications } from '../lib/state/storage'
 interface CancelModalProps {
   title: string
   stream?: Stream | Vesting
-  abi: ContractInterface
+  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
   address: string
   fn: string
   chainId: ChainId
@@ -29,21 +28,21 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
   const { address } = useAccount()
   const [, { createNotification }] = useNotifications(address)
   const contract = useContract({
-    addressOrName: contractAddress,
-    contractInterface: abi,
+    address: contractAddress,
+    abi: abi,
   })
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<Partial<TransactionRequest & { to: string }>>>) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!stream || !address) return
 
       setRequest({
         from: address,
         to: contractAddress,
-        data: contract.interface.encodeFunctionData(fn, [stream.id, fundSource === FundSource.BENTOBOX]),
+        data: contract?.interface.encodeFunctionData(fn, [stream.id, fundSource === FundSource.BENTOBOX]),
       })
     },
-    [stream, address, contractAddress, contract.interface, fn, fundSource]
+    [stream, address, contractAddress, contract?.interface, fn, fundSource]
   )
 
   const onSettled = useCallback(

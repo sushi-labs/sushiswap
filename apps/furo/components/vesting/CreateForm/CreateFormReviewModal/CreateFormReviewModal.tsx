@@ -214,12 +214,14 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
             components={
               <Approve.Components>
                 <Approve.Bentobox
+                  id="furo-create-single-vest-approve-bentobox"
                   fullWidth
                   enabled={isValid && !isValidating}
                   address={contract?.address}
                   onSignature={setSignature}
                 />
                 <Approve.Token
+                  id="furo-create-single-vest-approve-token"
                   fullWidth
                   enabled={isValid && !isValidating && !!_totalAmount}
                   amount={_totalAmount}

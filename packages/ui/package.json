@@ -59,10 +59,11 @@
     "@types/react-window": "^1.8.5",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.20.0",
-    "next": "^12.3.1",
+    "next": "^13.0.5",
     "postcss": "^8.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tsup": "6.5.0",
     "typescript": "4.8.2"
   },
   "peerDependencies": {
@@ -70,6 +71,6 @@
     "react-dom": "^18.2.0"
   },
   "optionalDependencies": {
-    "next": "^12.3.1"
+    "next": "^13.0.5"
   }
 }

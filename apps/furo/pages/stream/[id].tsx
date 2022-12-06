@@ -108,7 +108,7 @@ const _Streams: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Streamed"
-                value={`${stream?.streamedPercentage?.toSignificant(4)}%`}
+                value={`${stream?.streamedPercentage?.toPercentageString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.STREAMED)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
@@ -123,7 +123,7 @@ const _Streams: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Withdrawn"
-                value={`${stream?.withdrawnPercentage?.toSignificant(4)}%`}
+                value={`${stream?.withdrawnPercentage?.toPercentageString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
@@ -148,21 +148,21 @@ const _Streams: FC = () => {
               <div className="flex gap-2">
                 <TransferModal
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   chainId={chainId}
                 />
                 <UpdateModal
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   chainId={chainId}
                 />
                 <CancelModal
                   title="Cancel Stream"
                   stream={stream}
-                  abi={getFuroStreamContractConfig(chainId)?.contractInterface}
-                  address={getFuroStreamContractConfig(chainId)?.addressOrName}
+                  abi={getFuroStreamContractConfig(chainId)?.abi}
+                  address={getFuroStreamContractConfig(chainId)?.address}
                   fn="cancelStream"
                   chainId={chainId}
                 />

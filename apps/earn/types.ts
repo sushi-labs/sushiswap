@@ -7,4 +7,3 @@ export interface PairWithFarmRewards extends Pair {
   farmId: number | undefined
   chefType: Chef | undefined
 }
-

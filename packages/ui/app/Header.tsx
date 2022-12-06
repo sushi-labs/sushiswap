@@ -45,6 +45,7 @@ export interface HeaderProps extends React.HTMLProps<HTMLElement> {
   withScrollBackground?: boolean
   appType: AppType
   maxWidth?: MaxWidth
+  bgColor?: string
 }
 
 export function Header({
@@ -53,6 +54,7 @@ export function Header({
   className,
   nav,
   withScrollBackground = false,
+  bgColor = 'bg-slate-900',
   maxWidth = '5xl',
   ...props
 }: HeaderProps): JSX.Element {
@@ -85,7 +87,7 @@ export function Header({
         leaveFrom="translate-y-0"
         leaveTo="translate-y-[-100%]"
       >
-        <div className="absolute inset-0 border-b pointer-events-none bg-slate-900 border-slate-200/10" />
+        <div className={classNames(bgColor, 'absolute inset-0 border-b pointer-events-none border-slate-200/10')} />
       </Transition>
       <div className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}>
         <div className="flex items-center gap-3">

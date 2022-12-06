@@ -17,7 +17,7 @@ import {
   useTotalSupply,
 } from '@sushiswap/wagmi'
 import { FC, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { Address, useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTokensFromPair, useTransactionDeadline, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
@@ -274,7 +274,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
                         className="whitespace-nowrap"
                         fullWidth
                         amount={amountToRemove}
-                        address={getSushiSwapRouterContractConfig(pair.chainId).addressOrName}
+                        address={getSushiSwapRouterContractConfig(pair.chainId).address as Address}
                       />
                     </Approve.Components>
                   }

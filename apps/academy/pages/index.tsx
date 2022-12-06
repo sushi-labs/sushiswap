@@ -297,6 +297,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                   ...(selectedTopic && { topic: selectedTopic.attributes?.slug }),
                 },
               }}
+              legacyBehavior
             >
               <ViewAllButton />
             </Link>

@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import NextImage from 'next/image'
+import NextImage from 'next/legacy/image'
 import { FC } from 'react'
 
 import { UploadFileEntity } from '../.mesh'
@@ -16,7 +16,7 @@ interface ImageProps {
 }
 
 export const Image: FC<ImageProps> = ({
-  quality = '100',
+  quality = 100,
   width,
   height,
   image,
@@ -50,8 +50,8 @@ export const Image: FC<ImageProps> = ({
       quality={quality}
       className={className}
       layout={layout}
-      width={width || _width || '640'}
-      height={height || _height || '400'}
+      width={width || _width || 640}
+      height={height || _height || 400}
       objectFit={objectFit}
       src={getOptimizedMedia({ metadata: image.attributes.provider_metadata, width, height })}
       alt={alternativeText || ''}

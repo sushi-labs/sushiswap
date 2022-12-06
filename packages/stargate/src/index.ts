@@ -167,7 +167,7 @@ export const STARGATE_USDC: Record<keyof typeof STARGATE_USDC_ADDRESS, Token> = 
     symbol: 'USDC',
     name: 'USD Coin',
   }),
-}
+} as const
 
 export const STARGATE_USDT_ADDRESS = {
   [ChainId.ETHEREUM]: USDT_ADDRESS[ChainId.ETHEREUM],
@@ -187,7 +187,7 @@ export const STARGATE_USDT: Record<keyof typeof STARGATE_USDT_ADDRESS, Token> = 
   [ChainId.BSC_TESTNET]: USDT[ChainId.BSC_TESTNET],
   [ChainId.ARBITRUM]: USDT[ChainId.ARBITRUM],
   [ChainId.FANTOM]: USDT[ChainId.FANTOM],
-}
+} as const
 
 export const STARGATE_BUSD_ADDRESS = {
   [ChainId.BSC]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
@@ -203,7 +203,8 @@ export const STARGATE_BUSD: Record<keyof typeof STARGATE_BUSD_ADDRESS, Token> = 
   }),
 }
 
-export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
+// export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
+export const STARGATE_BRIDGE_TOKENS = {
   [ChainId.ETHEREUM]: [
     // STARGATE_ETH[ChainId.ETHEREUM],
     STARGATE_USDC[ChainId.ETHEREUM],
@@ -222,7 +223,7 @@ export const STARGATE_BRIDGE_TOKENS: Record<number, Token[]> = {
     STARGATE_USDC[ChainId.ARBITRUM],
     STARGATE_USDT[ChainId.ARBITRUM],
   ],
-}
+} as const
 
 export const STARGATE_BRIDGE_TOKEN_ADDRESSES: Record<number, string[]> = {
   [ChainId.ETHEREUM]: [

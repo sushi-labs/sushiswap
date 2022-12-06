@@ -77,7 +77,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType
                     className="whitespace-nowrap"
                     fullWidth
                     amount={amount}
-                    address={getMasterChefContractConfig(pair.chainId, chefType).addressOrName}
+                    address={getMasterChefContractConfig(pair.chainId, chefType)?.address}
+                    enabled={Boolean(getMasterChefContractConfig(pair.chainId, chefType)?.address)}
                   />
                 </Approve.Components>
               }

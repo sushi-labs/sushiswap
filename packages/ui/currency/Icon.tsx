@@ -2,7 +2,7 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Currency } from '@sushiswap/currency'
 import { WrappedTokenInfo } from '@sushiswap/token-lists'
-import Image, { ImageProps } from 'next/image'
+import Image, { ImageProps } from 'next/legacy/image'
 import { FC, useEffect, useMemo, useState } from 'react'
 
 import { GradientCircleIcon } from '../icons'
@@ -52,6 +52,7 @@ const TelosLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos
 const KavaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/kava.svg'
 const MetisLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/metis.svg'
 const BobaLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/boba.svg'
+const BttcLogo = 'https://raw.githubusercontent.com/sushiswap/list/master/logos/native-currency-logos/bttc.svg'
 
 const LOGO: Record<number, string> = {
   [ChainId.ETHEREUM]: EthereumLogo,
@@ -88,6 +89,7 @@ const LOGO: Record<number, string> = {
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
   [ChainId.BOBA_AVAX]: BobaLogo,
+  [ChainId.BTTC]: BttcLogo,
 }
 
 export interface IconProps extends Omit<ImageProps, 'src'> {
@@ -123,6 +125,10 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
   }, [src])
 
   if (error) {
+    if (disableLink) {
+      return <GradientCircleIcon width={rest.width} height={rest.height} />
+    }
+
     return (
       <Link.External className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
         <GradientCircleIcon width={rest.width} height={rest.height} />

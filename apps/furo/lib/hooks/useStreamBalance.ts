@@ -9,7 +9,7 @@ import {
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
 import { useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
-import { useBlockNumber, useContractRead } from 'wagmi'
+import { Address, useBlockNumber, useContractRead } from 'wagmi'
 
 import { ErrorState, LoadingState, SuccessState } from './types'
 export function useStreamBalance(chainId?: number, streamId?: string, token?: Token): Amount<Token> | undefined {
@@ -35,7 +35,7 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     functionName: 'totals',
     chainId,
     enabled: !!chainId && !!token?.address,
-    args: [token?.address],
+    args: token ? [token.address as Address] : undefined,
     watch: true,
   })
 
