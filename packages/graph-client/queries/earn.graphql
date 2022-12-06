@@ -1,0 +1,115 @@
+query Swaps (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Swap_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Swap_filter
+) {
+  swaps(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) @live(interval: 5000) {
+    transaction {
+      id
+      createdAtBlock
+    }
+    timestamp
+    sender
+    tokenIn {
+      id
+      symbol
+    }
+    tokenOut {
+      id
+      symbol
+    }
+    amountIn
+    amountOut
+    to
+  }
+}
+
+query Mints (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Mint_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Mint_filter
+) {
+  mints(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) @live(interval: 5000) {
+    transaction {
+      id
+      createdAtBlock
+    }
+    timestamp
+    pair {
+      token0 {
+        id
+        symbol
+      }
+      token1 {
+        id
+        symbol
+      }
+    }
+    to
+    liquidity
+    sender
+    amount0
+    amount1
+    amountUSD
+  }
+}
+ 
+query Burns (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Burn_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Burn_filter
+) {
+    burns(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+  ) @live(interval: 5000) {
+    transaction {
+      id
+      createdAtBlock
+    }
+    timestamp
+    pair {
+      token0 {
+        id
+        symbol
+      }
+      token1 {
+        id
+        symbol
+      }
+    }
+    liquidity
+    sender
+    amount0
+    amount1
+    to
+    amountUSD
+  }
+}
