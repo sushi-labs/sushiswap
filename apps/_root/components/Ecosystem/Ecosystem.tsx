@@ -1,7 +1,7 @@
 import { ChevronRightIcon } from '@heroicons/react/solid'
 import { Button, Container, Tab, Typography } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import React, { FC, useState } from 'react'
 
 import { ExpandableCard, ExpendableCardData } from '../ExpandableCard/ExpandableCard'
@@ -114,9 +114,9 @@ export const Ecosystem: FC = () => {
   const [_index, setIndex] = useState(0)
 
   return (
-    <section className="py-20 sm:py-40 px-1 overflow-x-hidden">
+    <section className="px-1 py-20 overflow-x-hidden sm:py-40">
       <Container maxWidth="5xl" className="mx-auto">
-        <div className="border-2 border-neutral-800 rounded-xl overflow-hidden">
+        <div className="overflow-hidden border-2 border-neutral-800 rounded-xl">
           <div className="h-[28px] flex items-center px-[10px] border-b-2 border-neutral-800 flex gap-2">
             <div className="rounded-full w-[10px] h-[10px] bg-red" />
             <div className="rounded-full w-[10px] h-[10px] bg-yellow" />
@@ -133,7 +133,7 @@ export const Ecosystem: FC = () => {
               <Tab.Panels>
                 <div className="flex items-center p-10 min-h-[420px]">
                   {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
-                    <Tab.Panel key={title} className="items-center grid grid-cols-1 md:grid-cols-2 gap-20">
+                    <Tab.Panel key={title} className="grid items-center grid-cols-1 gap-20 md:grid-cols-2">
                       <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
                         <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
                         <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
@@ -146,11 +146,11 @@ export const Ecosystem: FC = () => {
                               layoutId={titleId}
                               variant="h1"
                               weight={600}
-                              className="flex flex-col items-center lg:items-start text-center lg:text-left"
+                              className="flex flex-col items-center text-center lg:items-start lg:text-left"
                             >
                               {title}
                             </Typography>
-                            <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
+                            <Typography variant="lg" weight={400} className="mt-2 text-center lg:text-left">
                               {summary}
                             </Typography>
                             <Button

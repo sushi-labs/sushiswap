@@ -1,5 +1,5 @@
 import { Container, Typography } from '@sushiswap/ui'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import React, { FC } from 'react'
 
 import { AnimatedTitle } from '../AnimatedTitle/AnimatedTitle'
@@ -7,14 +7,14 @@ import { ExpandableCard } from '../ExpandableCard/ExpandableCard'
 
 export const BuildWealth: FC = () => {
   return (
-    <section className="py-20 sm:py-40 px-4">
+    <section className="px-4 py-20 sm:py-40">
       <Container maxWidth="5xl" className="mx-auto">
         <div className="flex flex-col gap-[120px]">
           <AnimatedTitle className="text-center !max-w-full">
             Build <span className="text-blue">wealth</span> with Sushi. <br />
             <span className="text-neutral-400">{`It doesnt stop at trading.`}</span>
           </AnimatedTitle>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center justify-items-center">
+          <div className="grid items-center grid-cols-1 gap-20 md:grid-cols-2 justify-items-center">
             <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
               <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
               <Image
@@ -28,7 +28,7 @@ export const BuildWealth: FC = () => {
               <Typography variant="h1" weight={600} className="text-center md:text-left">
                 Earn passive income with <br /> your coins.
               </Typography>
-              <Typography variant="lg" weight={400} className="text-center md:text-left mt-2">
+              <Typography variant="lg" weight={400} className="mt-2 text-center md:text-left">
                 With multiple ways to passively earn yield on your coins, you can choose your own yield stack and make
                 your money work for you, all in the background, 24/7.
               </Typography>

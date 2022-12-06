@@ -1,6 +1,6 @@
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { useRef } from 'react'
 
 function transformTemplate(transformProps) {
