@@ -2,6 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 import flatMap from 'lodash.flatmap'
 
 import {
+  APE,
+  APE_ADDRESS,
   BCT,
   BCT_ADDRESS,
   DAI,
@@ -13,14 +15,22 @@ import {
   FXS_ADDRESS,
   KLIMA,
   KLIMA_ADDRESS,
+  KP3R,
+  KP3R_ADDRESS,
+  LDO,
+  LDO_ADDRESS,
   LUSD,
   MIM,
   NFTX,
   OHM,
+  PRIMATE,
+  PRIMATE_ADDRESS,
   renBTC,
   renBTC_ADDRESS,
   rETH2_ADDRESS,
   sETH2,
+  SUSHI,
+  SUSHI_ADDRESS,
   SWISE_ADDRESS,
   TRIBE,
   TRIBE_ADDRESS,
@@ -30,6 +40,8 @@ import {
   WBTC_ADDRESS,
   WETH9,
   WNATIVE,
+  XSUSHI,
+  XSUSHI_ADDRESS,
 } from './constants'
 import { Token } from './Token'
 import { Type } from './Type'
@@ -263,6 +275,12 @@ export const ADDITIONAL_BASES: {
     [FXS_ADDRESS[ChainId.ETHEREUM]]: [FRAX[ChainId.ETHEREUM]],
     [WBTC_ADDRESS[ChainId.ETHEREUM]]: [renBTC[ChainId.ETHEREUM]],
     [renBTC_ADDRESS[ChainId.ETHEREUM]]: [WBTC[ChainId.ETHEREUM]],
+    [APE_ADDRESS[ChainId.ETHEREUM]]: [PRIMATE[ChainId.ETHEREUM]],
+    [PRIMATE_ADDRESS[ChainId.ETHEREUM]]: [APE[ChainId.ETHEREUM]],
+    [SUSHI_ADDRESS[ChainId.ETHEREUM]]: [XSUSHI[ChainId.ETHEREUM]],
+    [XSUSHI_ADDRESS[ChainId.ETHEREUM]]: [SUSHI[ChainId.ETHEREUM]],
+    [KP3R_ADDRESS[ChainId.ETHEREUM]]: [LDO[ChainId.ETHEREUM]],
+    [LDO_ADDRESS[ChainId.ETHEREUM]]: [KP3R[ChainId.ETHEREUM]],
   },
   [ChainId.POLYGON]: {
     [FRAX_ADDRESS[ChainId.POLYGON]]: [FXS[ChainId.POLYGON]],
