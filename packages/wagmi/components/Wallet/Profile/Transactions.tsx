@@ -2,7 +2,7 @@ import { ChevronLeftIcon } from '@heroicons/react/solid'
 import { Button, IconButton, Typography } from '@sushiswap/ui'
 import React, { Dispatch, FC, SetStateAction } from 'react'
 
-import { NotificationGroup } from '../../NotificationCentre/NotificationGroup'
+import { NotificationGroup } from '../../NotificationCentre'
 import { ProfileView } from './Profile'
 
 interface TransactionsProps {

@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames, DEFAULT_INPUT_UNSTYLED, useBreakpoint } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import React, { FC, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useAccount, useEnsAvatar, useNetwork } from 'wagmi'
@@ -32,7 +32,7 @@ export const Profile: FC<ProfileProps> = ({ notifications, clearNotifications, s
   const chainId = chain?.id || ChainId.ETHEREUM
 
   const { data: avatar } = useEnsAvatar({
-    addressOrName: address,
+    address,
   })
 
   if (!address) {

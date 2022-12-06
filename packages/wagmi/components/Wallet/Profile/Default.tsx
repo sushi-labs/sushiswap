@@ -6,7 +6,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { BuyCrypto, IconButton, Typography } from '@sushiswap/ui'
 import CopyHelper from '@sushiswap/ui/copy/Copy'
 import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
 
@@ -15,18 +15,18 @@ import { ProfileView } from './Profile'
 
 interface DefaultProps {
   chainId: ChainId
-  address: string
+  address: `0x${string}`
   setView: Dispatch<SetStateAction<ProfileView>>
 }
 
 export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
   const { data: prices } = usePrices({ chainId })
   const { data: avatar } = useEnsAvatar({
-    addressOrName: address,
+    address: address,
   })
 
   const { data: _balance } = useBalance({
-    addressOrName: address,
+    address: address,
     chainId,
   })
 
