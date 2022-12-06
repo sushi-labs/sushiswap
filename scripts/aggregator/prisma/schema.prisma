@@ -26,6 +26,7 @@ model Token {
 
   @@unique([chainId, address])
   @@index(fields: [address])
+  @@index(fields: [chainId])
   @@index(fields: [address, chainId, symbol])
 }
 

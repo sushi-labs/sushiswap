@@ -8,6 +8,8 @@ import {
   SUSHI_ADDRESS,
   USDC_ADDRESS,
   USDT_ADDRESS,
+  WBTC_ADDRESS,
+  WETH9_ADDRESS,
 } from '@sushiswap/currency'
 
 import { ChainId, chainName, chainShortName, chainShortNameToChainId } from '@sushiswap/chain'
@@ -15,63 +17,122 @@ import { ChainId, chainName, chainShortName, chainShortNameToChainId } from '@su
 const prisma = new PrismaClient()
 
 async function main() {
-    await getBaseCount(ChainId.ETHEREUM, 100)
-    await getBaseCount(ChainId.ARBITRUM, 100)
-    await getBaseCount(ChainId.POLYGON, 100)
-  
+  const protocols = ['SushiSwap']
+  // await getBaseCount(ChainId.ETHEREUM, 100, protocols)
+  // await getBaseCount(ChainId.ARBITRUM, 100, protocols)
+  // await getBaseCount(ChainId.POLYGON, 100, protocols)
+  await getBaseCount(ChainId.AVALANCHE, 100, protocols)
 }
 
-async function getBaseCount(chainId: ChainId.ARBITRUM | ChainId.ETHEREUM | ChainId.POLYGON, minimumLiquidity: number) {
-  // const bases = [
-  //   USDC_ADDRESS[chainId],
-  //   Native.onChain(chainId).wrapped.address,
-  //   USDT_ADDRESS[chainId],
-  //   DAI_ADDRESS[chainId],
-  //   SUSHI_ADDRESS[chainId],
-  //   MIM_ADDRESS[chainId],
-  //   // FRAX_ADDRESS[chainId],
-  //   // FXS_ADDRESS[chainId],
-  // ]
-  const bases: string[] = []
-  if (USDC_ADDRESS[chainId]) bases.push(USDC_ADDRESS[chainId])
-  if (Native.onChain(chainId).wrapped.address) bases.push(Native.onChain(chainId).wrapped.address)
-  if (USDT_ADDRESS[chainId]) bases.push(USDT_ADDRESS[chainId])
-  if (DAI_ADDRESS[chainId]) bases.push(DAI_ADDRESS[chainId])
-  if (SUSHI_ADDRESS[chainId]) bases.push(SUSHI_ADDRESS[chainId])
-  if (MIM_ADDRESS[chainId]) bases.push(MIM_ADDRESS[chainId])
-  if (FRAX_ADDRESS[chainId]) bases.push(FRAX_ADDRESS[chainId])
-  if (FXS_ADDRESS[chainId]) bases.push(FXS_ADDRESS[chainId])
+async function getBaseCount(
+  chainId: ChainId.ARBITRUM | ChainId.ETHEREUM | ChainId.POLYGON | ChainId.AVALANCHE,
+  minimumLiquidity: number,
+  protocols: string[]
+) {
 
-  const request = bases.map((base) =>
-    prisma.token.findFirst({
+  const bases: string[] = []
+  if (USDC_ADDRESS[chainId]) bases.push(USDC_ADDRESS[chainId].toLowerCase())
+  if (Native.onChain(chainId).wrapped.address) bases.push(Native.onChain(chainId).wrapped.address.toLowerCase())
+  if (WETH9_ADDRESS[chainId]) bases.push(WETH9_ADDRESS[chainId].toLowerCase())
+  if (USDT_ADDRESS[chainId]) bases.push(USDT_ADDRESS[chainId].toLowerCase())
+  if (DAI_ADDRESS[chainId]) bases.push(DAI_ADDRESS[chainId].toLowerCase())
+  if (WBTC_ADDRESS[chainId]) bases.push(WBTC_ADDRESS[chainId].toLowerCase())
+  if (SUSHI_ADDRESS[chainId]) bases.push(SUSHI_ADDRESS[chainId].toLowerCase())
+  if (MIM_ADDRESS[chainId]) bases.push(MIM_ADDRESS[chainId].toLowerCase())
+  if (FRAX_ADDRESS[chainId]) bases.push(FRAX_ADDRESS[chainId].toLowerCase())
+  if (FXS_ADDRESS[chainId]) bases.push(FXS_ADDRESS[chainId].toLowerCase())
+
+  const include = {
+    pools0: {
       where: {
         AND: {
-          address: base.toLowerCase(),
+          protocol: { in: protocols },
+          liquidityUSD: { gt: minimumLiquidity },
+        },
+      },
+    },
+    pools1: {
+      where: {
+        AND: {
+          protocol: { in: protocols },
+          liquidityUSD: { gt: minimumLiquidity },
+        },
+      },
+    },
+  }
+  const batch = 20000
+  const firstRequest = 
+      await prisma.token.findMany({
+        where: {
           chainId: chainId.toString(),
         },
-      },
-      include: {
-        pools0: {
-          where: {
-            liquidityUSD: { gt: minimumLiquidity },
-          },
+        include,
+        take: batch,
+      })
+    const results = [firstRequest]
+    
+    let cursor = firstRequest[firstRequest.length - 1].id
+    let run = true
+    while (run) {
+     const cursorResponse = await prisma.token.findMany({
+        where: {
+          chainId: chainId.toString(),
         },
-        pools1: {
-          where: {
-            liquidityUSD: { gt: minimumLiquidity },
-          },
+        cursor: {
+          id: cursor,
         },
-      },
-    })
-  )
-
-  const results = await Promise.all(request)
+        include,
+        skip: 1,
+        take: batch,
+      })
+      if (cursorResponse.length === batch) {
+        results.push(cursorResponse)
+        cursor = cursorResponse[cursorResponse.length - 1].id
+        console.log("new cursor", cursor)
+      } else {
+        console.log("stop running")
+        run = false
+      }
+    }
+  
   console.log(`Chain: ${chainShortName[chainId]}, minimumLiquidity: ${minimumLiquidity}`)
-  results.forEach((result) => {
-    if (!result) return
-    const pools = [...result.pools0, ...result.pools1]
-    console.log(`Token: ${result.symbol}, pool count: ${pools.length}`)
+
+  const mapped = results.flat()
+    .map((result) => {
+      const pools = [...result.pools0, ...result.pools1]
+      const totalLiquidity = pools.reduce((acc, pool) => acc + Number(pool.liquidityUSD), 0)
+      return {
+        address: result.address,
+        symbol: result.symbol,
+        poolCount: pools.length,
+        pools: pools,
+        totalLiquidity,
+      }
+    })
+
+    .sort((a, b) => b.totalLiquidity - a.totalLiquidity)
+
+  mapped.slice(0, 150).forEach((result) => {
+    let hasLoggedTokenLabel = false
+      if (!bases.includes(result.address)) {
+      for( const pool of result.pools) {
+        if (Number(pool.liquidityUSD) > 1000) {
+          const otherToken = pool.token0Id === result.address ? pool.token1Id : pool.token0Id
+          if (!bases.includes(otherToken)) {
+            if (!hasLoggedTokenLabel) { 
+              console.log(`Token: ${result.symbol} ${result.address}, pool count: ${result.poolCount}, totalLiquidity: ${result.totalLiquidity}`)
+
+              hasLoggedTokenLabel = true
+            }
+            console.log(`Pool: ${pool.name}, ${pool.address} liquidityUSD: ${pool.liquidityUSD}, otherToken: ${otherToken}`)
+          }
+        }
+      }
+    }
+
   })
+
+  
   console.log('-----------------------')
 }
 
