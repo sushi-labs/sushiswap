@@ -4,8 +4,9 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
   ChainId.METIS,
-  // ChainId.KAVA,
+  ChainId.KAVA,
   ChainId.BTTC,
+  ChainId.ARBITRUM,
 ]
 
 export const AMM_ENABLED_NETWORKS: ChainId[] = [

@@ -637,7 +637,7 @@ export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
     symbol: 'USDC',
     name: 'USD Coin',
   }),
-}
+} as const
 
 export const USDT_ADDRESS = {
   [ChainId.ETHEREUM]: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
