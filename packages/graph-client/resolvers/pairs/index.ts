@@ -113,7 +113,6 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
       if (!Array.isArray(value)) {
         console.error('PairsWithFarms query failed for 1w pools', value)
       }
-
       return value.flat()
     }),
   ])

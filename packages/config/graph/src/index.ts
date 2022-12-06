@@ -67,7 +67,7 @@ export const CHAIN_NAME: Record<number, string> = {
 
 export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
-  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com/subgraphs/name',
+  [ChainId.ARBITRUM_NOVA]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
   [ChainId.BSC]: GRAPH_HOST,
   [ChainId.CELO]: GRAPH_HOST,
@@ -160,7 +160,7 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
-  [ChainId.HARMONY]: 'sushi-0m/sushiswap-harmony',
+  [ChainId.HARMONY]: 'olastenberg/sushiswap-harmony-fix',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
