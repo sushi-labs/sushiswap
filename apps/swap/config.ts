@@ -1,6 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const TRIDENT_ENABLED_NETWORKS = [ChainId.OPTIMISM, ChainId.POLYGON, ChainId.METIS, ChainId.KAVA, ChainId.BTTC]
+export const TRIDENT_ENABLED_NETWORKS = [
+  ChainId.OPTIMISM,
+  ChainId.POLYGON,
+  ChainId.METIS,
+  ChainId.KAVA,
+  ChainId.BTTC,
+  ChainId.ARBITRUM,
+]
 
 export const AMM_ENABLED_NETWORKS = [
   ChainId.ETHEREUM,
@@ -31,6 +38,7 @@ export const STABLE_POOL_FACTORY_ADDRESS: Record<number, string> = {
   [ChainId.POLYGON]: '0x2A0Caa28331bC6a18FF195f06694f90671dE70f2',
   [ChainId.OPTIMISM]: '0x827179dD56d07A7eeA32e3873493835da2866976',
   [ChainId.BTTC]: '0x120140d0c1EBC938befc84840575EcDc5fE55aFe',
+  [ChainId.ARBITRUM]: '0xc2fB256ABa36852DCcEA92181eC6b355f09A0288',
 }
 
 export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {
@@ -39,4 +47,5 @@ export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Record<number, string> = {
   [ChainId.METIS]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   [ChainId.KAVA]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   [ChainId.BTTC]: '0x752Dc00ABa9c930c84aC81D288dB5E2a02Afe633',
+  [ChainId.ARBITRUM]: '0xc79Ae87E9f55761c08e346B98dDdf070C9872787',
 }
