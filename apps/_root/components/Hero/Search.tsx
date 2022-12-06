@@ -98,7 +98,7 @@ export const Search: FC = () => {
   }, [selectNetwork])
   return (
     <div className="relative flex flex-col gap-3">
-      <div className="absolute w-full flex gap-4">
+      <div className="absolute w-full flex gap-4 z-10">
         <div ref={ref} onFocus={() => setOpen(true)} className="w-full relative bg-neutral-800 rounded-xl">
           <div className="pl-4 pr-3 flex gap-2 items-center h-14">
             <div
@@ -115,6 +115,8 @@ export const Search: FC = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by token or address"
                 className={classNames('!text-lg w-full placeholder:text-neutral-500', DEFAULT_INPUT_UNSTYLED)}
+                autoComplete="new-password"
+                autoCorrect="off"
               />
             </div>
             <Typography
