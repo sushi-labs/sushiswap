@@ -9,7 +9,7 @@ const random = (min: number, max: number) => {
 export function Shell({ children }: ShellProps): JSX.Element {
   return (
     <div>
-      <div className="fixed inset-0">
+      <div className="fixed inset-0 pointer-events-none">
         {Array.from(Array(50)).map((el, idx) => {
           const size = random(1, 5) * 0.06
 
