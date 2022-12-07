@@ -129,11 +129,12 @@ contract RouteProcessor is StreamReader, ReentrancyGuard {
   function distributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
     uint8 num = readUint8(stream);
     amountTotal = 0;
+    bool wrap = msg.value > 0 && token == address(wNATIVE);
     for (uint256 i = 0; i < num; ++i) {
       address to = readAddress(stream);
       uint256 amount = readUint(stream);
       amountTotal += amount;
-      if (msg.value >= amount && token == address(wNATIVE)) {
+      if (wrap) {
         wNATIVE.deposit{value: amount}();
         IERC20(token).transfer(to, amount);
       } else {
