@@ -114,7 +114,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
           return batch?.pairs.map((pair) => {
             tokens.push(
               Prisma.validator<Prisma.TokenCreateManyInput>()({
-                id: exchange.chainId.toString().concat('_').concat(pair.token0.id),
+                id: exchange.chainId.toString().concat(':').concat(pair.token0.id),
                 address: pair.token0.id,
                 chainId: exchange.chainId.toString(),
                 name: pair.token0.name,
@@ -124,7 +124,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
             )
             tokens.push(
               Prisma.validator<Prisma.TokenCreateManyInput>()({
-                id: exchange.chainId.toString().concat('_').concat(pair.token1.id),
+                id: exchange.chainId.toString().concat(':').concat(pair.token1.id),
                 address: pair.token1.id,
                 chainId: exchange.chainId.toString(),
                 name: pair.token1.name,
@@ -141,7 +141,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               .concat('-')
               .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
             return Prisma.validator<Prisma.PoolCreateManyInput>()({
-              id: exchange.chainId.toString().concat('_').concat(pair.id),
+              id: exchange.chainId.toString().concat(':').concat(pair.id),
               address: pair.id,
               name: name,
               protocol: PROTOCOL,

@@ -13,9 +13,6 @@ export async function filterPools(
   const poolSelect = Prisma.validator<Prisma.PoolSelect>()({
     id: true,
     address: true,
-    reserve0: true,
-    reserve1: true,
-    totalSupply: true,
     liquidityUSD: true,
   })
 
@@ -36,9 +33,6 @@ export async function filterPools(
         return true
       }
       if (
-        pool.reserve0 !== poolExists.reserve0 ||
-        pool.reserve1 !== poolExists.reserve1 ||
-        pool.totalSupply !== poolExists.totalSupply ||
         Number(pool.liquidityUSD).toFixed(2) !== poolExists.liquidityUSD.toFixed(2).toString()
       ) {
         poolsToUpdate++

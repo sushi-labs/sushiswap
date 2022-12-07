@@ -28,9 +28,6 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
     client.pool.upsert({
       where: { id: pool.id },
       update: {
-        reserve0: pool.reserve0,
-        reserve1: pool.reserve1,
-        totalSupply: pool.totalSupply,
         liquidityUSD: pool.liquidityUSD,
       },
       create: pool,

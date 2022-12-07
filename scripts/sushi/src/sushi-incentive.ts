@@ -86,7 +86,7 @@ async function transform(data: { chainId: ChainId; farms: Record<string, Farm> }
             .map((incentive) => {
               tokens.push(
                 Prisma.validator<Prisma.TokenCreateManyInput>()({
-                  id: chainId.toString().concat('_').concat(incentive.rewardToken.address.toLowerCase()),
+                  id: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
                   address: incentive.rewardToken.address.toLowerCase(),
                   chainId: chainId.toString(),
                   name: incentive.rewardToken.name,
@@ -95,7 +95,7 @@ async function transform(data: { chainId: ChainId; farms: Record<string, Farm> }
                 })
               )
               return Prisma.validator<Prisma.IncentiveCreateManyInput>()({
-                id: poolAddress.concat('_').concat(incentive.rewarder.address),
+                id: poolAddress.concat(':').concat(incentive.rewarder.address),
                 chainId: chainId.toString(),
                 type: farm.chefType,
                 apr: isNaN(incentive.apr) || incentive.apr === Infinity ? 0 : incentive.apr,

@@ -34,7 +34,7 @@ export async function filterIncentives(
   const foundPools = poolsFound.map((pool) => pool.address)
 
   const rewardTokensFound = await client.token.findMany({
-    where: { id: { in: incentives.map((incentive) => incentive.chainId.concat('_').concat(incentive.rewardTokenId)) } },
+    where: { id: { in: incentives.map((incentive) => incentive.chainId.concat(':').concat(incentive.rewardTokenId)) } },
     select: { address: true },
   })
   const foundRewardTokens = rewardTokensFound.map((token) => token.address)

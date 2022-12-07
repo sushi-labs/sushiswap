@@ -32,7 +32,6 @@
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"
   },  
-  "type": "module",
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
@@ -40,7 +39,6 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^2.0.0-canary.1",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/abi": "workspace:*",
     "@wagmi/core": "0.7.9",

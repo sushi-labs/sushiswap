@@ -113,7 +113,7 @@ function transform(
       const { chainId, responses } = result
       if (responses) {
         responses.forEach((pair) => {
-          acc[chainId.toString().concat('_').concat(pair.id)] = {
+          acc[chainId.toString().concat(':').concat(pair.id)] = {
             volumeUSD: pair.volumeUSD,
             feesUSD: pair.feesUSD,
           }
@@ -128,7 +128,7 @@ function transform(
       const { chainId, responses } = result
       if (responses) {
         responses.forEach((pair) => {
-          acc[chainId.toString().concat('_').concat(pair.id)] = {
+          acc[chainId.toString().concat(':').concat(pair.id)] = {
             volumeUSD: pair.volumeUSD,
             feesUSD: pair.feesUSD,
           }
@@ -143,7 +143,7 @@ function transform(
       const { chainId, responses } = result
       if (responses) {
         responses.forEach((pair) => {
-          acc[chainId.toString().concat('_').concat(pair.id)] = {
+          acc[chainId.toString().concat(':').concat(pair.id)] = {
             volumeUSD: pair.volumeUSD,
             feesUSD: pair.feesUSD,
           }

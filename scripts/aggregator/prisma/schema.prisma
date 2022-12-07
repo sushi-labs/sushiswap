@@ -9,17 +9,23 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+enum TokenStatus {
+  APPROVED
+  UNKNOWN
+  DISAPPROVED
+}
+
 model Token {
-  id       String   @id // chainId_address
+  id       String   @id // chainId:address
   address  String
   chainId  String
   name     String
   symbol   String
   decimals Int
+  status   TokenStatus @default(UNKNOWN)
 
   generatedAt    DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  priceUpdatedAt DateTime?
 
   pools0     Pool[]      @relation("token0")
   pools1     Pool[]      @relation("token1")
@@ -27,11 +33,11 @@ model Token {
   @@unique([chainId, address])
   @@index(fields: [address])
   @@index(fields: [chainId])
-  @@index(fields: [address, chainId, symbol])
+  @@index(fields: [address, chainId])
 }
 
 model Pool {
-  id       String @id // chainId_address
+  id       String @id // chainId:address
   address  String
   name     String
   chainId  String
@@ -45,22 +51,15 @@ model Pool {
 
   swapFee     Float?
   twapEnabled Boolean?
-
-  reserve0        String // Liquidity of token0
-  reserve1        String // Liquidity of token1 
-  totalSupply     String // Liquidity, Total supply of all LP in this pool
   liquidityUSD    Decimal // liquidity in USD
 
-  createdAtBlockNumber BigInt @db.UnsignedBigInt
   generatedAt          DateTime @default(now())
   updatedAt            DateTime @updatedAt
-
-  // TODO: add more composite indexes once we have decided which queries we'll need
 
   @@unique([chainId, address])
   @@index(fields: [address])
   @@index(fields: [chainId, protocol, token0Id, token1Id])
-  @@index(fields: [id, token0Id, token1Id])
+  @@index(fields: [chainId, protocol, version, type])
   @@index(fields: [chainId, token0Id])
   @@index(fields: [chainId, token1Id])
 }

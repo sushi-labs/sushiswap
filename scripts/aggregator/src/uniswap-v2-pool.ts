@@ -99,7 +99,7 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
           return batch?.V2_pairs.map((pair) => {
             tokens.push(
               Prisma.validator<Prisma.TokenCreateManyInput>()({
-                id: exchange.chainId.toString().concat('_').concat(pair.token0.id),
+                id: exchange.chainId.toString().concat(':').concat(pair.token0.id),
                 address: pair.token0.id,
                 chainId: exchange.chainId.toString(),
                 name: pair.token0.name,
@@ -109,7 +109,7 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
             )
             tokens.push(
               Prisma.validator<Prisma.TokenCreateManyInput>()({
-                id: exchange.chainId.toString().concat('_').concat(pair.token1.id),
+                id: exchange.chainId.toString().concat(':').concat(pair.token1.id),
                 address: pair.token1.id,
                 chainId: exchange.chainId.toString(),
                 name: pair.token1.name,
@@ -124,7 +124,7 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
               .concat('-')
               .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
             return Prisma.validator<Prisma.PoolCreateManyInput>()({
-              id: exchange.chainId.toString().concat('_').concat(pair.id),
+              id: exchange.chainId.toString().concat(':').concat(pair.id),
               address: pair.id,
               name,
               protocol: PROTOCOL,
@@ -135,11 +135,7 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
               twapEnabled: false,
               token0Id: pair.token0.id,
               token1Id: pair.token1.id,
-              reserve0: pair.reserve0,
-              reserve1: pair.reserve1,
-              totalSupply: pair.liquidity,
               liquidityUSD: pair.liquidityUSD,
-              createdAtBlockNumber: BigInt(pair.createdAtBlock),
             })
           })
         })

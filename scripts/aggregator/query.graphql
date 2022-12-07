@@ -18,12 +18,7 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
     source
     swapFee
     twapEnabled
-    reserve0
-    reserve1
-    liquidity
     liquidityUSD
-    createdAtTimestamp
-    createdAtBlock
   }
 
   bundle(id: 1, block: $block) {
@@ -60,12 +55,7 @@ query V2Pairs(
       symbol
       decimals
     }
-    reserve0
-    reserve1
-    liquidity: totalSupply
     liquidityUSD: reserveUSD
-    createdAtTimestamp
-    createdAtBlock: createdAtBlockNumber
   }
 }
 
@@ -100,11 +90,6 @@ query V3Pairs(
       decimals
     }
     feeTier
-    reserve0: totalValueLockedToken0
-    reserve1: totalValueLockedToken1
-    liquidity
     liquidityUSD: totalValueLockedUSD
-    createdAtTimestamp
-    createdAtBlock: createdAtBlockNumber
   }
 }

@@ -112,7 +112,7 @@ async function transform(
       if (data == undefined || !data?.tokenPrices) return
       const nativePrice = Number(data?.bundle?.nativePrice)
       data.tokenPrices.forEach((tokenPrice) => {
-        const id = chainId.toString().concat('_').concat(tokenPrice.id)
+        const id = chainId.toString().concat(':').concat(tokenPrice.id)
         const usdPrice = nativePrice ? nativePrice * Number(tokenPrice.derivedNative) : null
         const price = Prisma.validator<Prisma.TokenCreateManyInput>()({
           id: id,
