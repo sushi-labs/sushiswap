@@ -61,6 +61,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@types/lodash.orderby": "4.6.7",
     "@types/lodash.sortby": "4.7.7",
     "@types/lodash.take": "4.1.7",
