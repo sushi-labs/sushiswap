@@ -49,8 +49,8 @@
     "@tanstack/react-query": "latest",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
-    "@wagmi/core": "latest",
-    "wagmi": "latest"
+    "@wagmi/core": "^0.7.0",
+    "wagmi": "^0.8.0"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
