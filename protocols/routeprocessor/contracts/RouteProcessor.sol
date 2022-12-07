@@ -9,8 +9,9 @@ import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import './StreamReader.sol';
 import 'hardhat/console.sol';
+import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
-contract RouteProcessor is StreamReader {
+contract RouteProcessor is StreamReader, ReentrancyGuard {
   IBentoBoxMinimal immutable BentoBox;
   IWETH public immutable wNATIVE;
 
@@ -19,7 +20,6 @@ contract RouteProcessor is StreamReader {
     wNATIVE = IWETH(_wNATIVE);
   }
 
-  // To be used in UI. For External Owner Accounts only
   function processRoute(
     address tokenIn,
     uint256 amountIn,
@@ -27,9 +27,7 @@ contract RouteProcessor is StreamReader {
     uint256 amountOutMin,
     address to,
     bytes memory route
-  ) external payable returns (uint256 amountOut) {
-    require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
-
+  ) external payable nonReentrant returns (uint256 amountOut) {
     uint256 amountInAcc = 0;
     uint256 balanceInitial = IERC20(tokenOut).balanceOf(to);
 

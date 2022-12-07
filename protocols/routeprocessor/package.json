@@ -55,6 +55,7 @@
   "devDependencies": {
     "@commitlint/cli": "^16.0.0",
     "@commitlint/config-conventional": "^16.0.0",
+    "@openzeppelin/contracts": "4.8.0",
     "@nomiclabs/hardhat-ethers": "yarn:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-etherscan": "^2.1.0",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
