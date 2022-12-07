@@ -135,7 +135,12 @@ contract RouteProcessor is StreamReader {
       address to = readAddress(stream);
       uint256 amount = readUint(stream);
       amountTotal += amount;
-      IERC20(token).transferFrom(msg.sender, to, amount);
+      if (msg.value >= amount && token == address(wNATIVE)) {
+        wNATIVE.deposit{value: amount}();
+        IERC20(token).transfer(to, amount);
+      } else {
+        IERC20(token).transferFrom(msg.sender, to, amount);
+      }
     }
   }
 
