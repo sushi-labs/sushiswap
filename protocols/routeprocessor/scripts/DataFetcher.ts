@@ -5,6 +5,7 @@ import { Limited } from './Limited'
 import { LiquidityProvider2, LiquidityProviders } from './liquidityProviders/LiquidityProvider2'
 import { SushiProvider2 } from './liquidityProviders/Sushi2'
 import { SushiProvider3 } from './liquidityProviders/Sushi3'
+import { MultiCallProvider } from './MulticallProvider'
 import { PoolCode } from './pools/PoolCode'
 
 
@@ -13,6 +14,7 @@ import { PoolCode } from './pools/PoolCode'
 export class DataFetcher {
   chainId: ChainId
   chainDataProvider: ethers.providers.BaseProvider
+  multiCallProvider: MultiCallProvider
   limited = new Limited(10, 1000)
   providers: LiquidityProvider2[] = []
   lastProviderStates: Map<LiquidityProviders, number> = new Map()
@@ -26,6 +28,7 @@ export class DataFetcher {
   ) {
     this.chainId = chainId
     this.chainDataProvider = chainDataProvider
+    this.multiCallProvider = new MultiCallProvider(chainDataProvider)
   }
 
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
@@ -42,7 +45,7 @@ export class DataFetcher {
 
     this.providers = []
     if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
-      this.providers.push(new SushiProvider3(this.chainDataProvider, this.chainId, this.limited))
+      this.providers.push(new SushiProvider3(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
 
     this.providers.forEach(p => p.startFetchPoolsData())
   }

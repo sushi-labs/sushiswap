@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Limited } from '../Limited'
 import { PoolCode } from '../pools/PoolCode'
 import { Token } from '@sushiswap/currency'
+import { MultiCallProvider } from '../MulticallProvider'
 
 export enum LiquidityProviders {
     Sushiswap = 'Sushiswap',
@@ -14,16 +15,19 @@ export enum LiquidityProviders {
 export abstract class LiquidityProvider2 {
   limited: Limited
   chainDataProvider: ethers.providers.BaseProvider
+  multiCallProvider: MultiCallProvider
   chainId: ChainId
   stateId = 0
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
+    multiCallProvider: MultiCallProvider,
     chainId: ChainId,
     l: Limited
   ) {
     this.limited = l
     this.chainDataProvider = chainDataProvider
+    this.multiCallProvider = multiCallProvider
     this.chainId = chainId
   }
 
