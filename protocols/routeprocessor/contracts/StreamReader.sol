@@ -1,8 +1,9 @@
+// SPDX-License-Identifier: UNLICENSED
 
+pragma solidity 0.8.10;
 
 contract StreamReader {
-  
-  function createStream(bytes memory data) internal pure returns (uint stream) {
+  function createStream(bytes memory data) internal pure returns (uint256 stream) {
     assembly {
       stream := mload(0x40)
       mstore(0x40, add(stream, 64))
@@ -12,9 +13,9 @@ contract StreamReader {
     }
   }
 
-  function isNotEmpty(uint stream) internal pure returns (bool) {
-    uint pos;
-    uint finish;
+  function isNotEmpty(uint256 stream) internal pure returns (bool) {
+    uint256 pos;
+    uint256 finish;
     assembly {
       pos := mload(stream)
       finish := mload(add(stream, 32))
@@ -22,7 +23,7 @@ contract StreamReader {
     return pos < finish;
   }
 
-  function readUint8(uint stream) internal pure returns (uint8 res) {
+  function readUint8(uint256 stream) internal pure returns (uint8 res) {
     assembly {
       let pos := mload(stream)
       pos := add(pos, 1)
@@ -31,7 +32,7 @@ contract StreamReader {
     }
   }
 
-  function readUint16(uint stream) internal pure returns (uint16 res) {
+  function readUint16(uint256 stream) internal pure returns (uint16 res) {
     assembly {
       let pos := mload(stream)
       pos := add(pos, 2)
@@ -40,7 +41,7 @@ contract StreamReader {
     }
   }
 
-  function readUint32(uint stream) internal pure returns (uint32 res) {
+  function readUint32(uint256 stream) internal pure returns (uint32 res) {
     assembly {
       let pos := mload(stream)
       pos := add(pos, 4)
@@ -49,7 +50,7 @@ contract StreamReader {
     }
   }
 
-  function readUint(uint stream) internal pure returns (uint res) {
+  function readUint(uint256 stream) internal pure returns (uint256 res) {
     assembly {
       let pos := mload(stream)
       pos := add(pos, 32)
@@ -58,7 +59,7 @@ contract StreamReader {
     }
   }
 
-  function readAddress(uint stream) internal pure returns (address res) {
+  function readAddress(uint256 stream) internal pure returns (address res) {
     assembly {
       let pos := mload(stream)
       pos := add(pos, 20)
@@ -67,7 +68,7 @@ contract StreamReader {
     }
   }
 
-  function readBytes(uint stream) internal pure returns (bytes memory res) {
+  function readBytes(uint256 stream) internal pure returns (bytes memory res) {
     assembly {
       let pos := mload(stream)
       res := add(pos, 32)
@@ -75,5 +76,4 @@ contract StreamReader {
       mstore(stream, add(res, length))
     }
   }
-
 }

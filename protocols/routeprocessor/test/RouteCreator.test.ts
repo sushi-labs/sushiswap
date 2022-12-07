@@ -88,7 +88,10 @@ async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Tok
   console.log(`2. ChainId=${chainId} RouteProcessor deployment ...`)
 
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(BentoBox[chainId] || '0x0000000000000000000000000000000000000000')
+  const routeProcessor = await RouteProcessor.deploy(
+    BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
+    WRAPPED_NATIVE[chainId].address
+  )
   await routeProcessor.deployed()
 
   console.log('3. User creation ...')
