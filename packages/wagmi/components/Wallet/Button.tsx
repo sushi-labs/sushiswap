@@ -1,25 +1,21 @@
-import { ChevronDoubleDownIcon, LogoutIcon } from '@heroicons/react/outline'
+import { ChevronDoubleDownIcon } from '@heroicons/react/outline'
 import { ChainId } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
 import {
   AppearOnMount,
   Button as UIButton,
   ButtonProps,
-  classNames,
   CoinbaseWalletIcon,
   GnosisSafeIcon,
   Loader,
   Menu,
   MetamaskIcon,
   TrustWalletIcon,
-  Typography,
   WalletConnectIcon,
 } from '@sushiswap/ui'
 import React, { ReactNode } from 'react'
-import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi'
+import { useConnect } from 'wagmi'
 
 import { useAutoConnect, useWalletState } from '../../hooks'
-import { Account } from '..'
 
 const Icons: Record<string, ReactNode> = {
   Injected: <ChevronDoubleDownIcon width={16} height={16} />,
@@ -44,10 +40,6 @@ export const Button = <C extends React.ElementType>({
   appearOnMount = true,
   ...rest
 }: Props<C>) => {
-  const { address } = useAccount()
-  const { chain } = useNetwork()
-  const { disconnect } = useDisconnect()
-
   // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { connectors, connect, pendingConnector } = useConnect()
@@ -103,62 +95,6 @@ export const Button = <C extends React.ElementType>({
                 </div>
               </Menu.Items>
             </Menu>
-          )
-        }
-
-        // Connected state
-        // Show account name and balance if no children provided to button
-        if (isMounted && !children) {
-          return (
-            <Account.AddressToEnsResolver address={address}>
-              {({ data: ens }) => (
-                <Account.Balance supportedNetworks={supportedNetworks} address={address}>
-                  {({ content, isLoading }) => (
-                    <div
-                      className={classNames(
-                        'z-10 flex items-center border-[3px] border-slate-900 bg-slate-800 rounded-xl',
-                        rest.className
-                      )}
-                    >
-                      <div className="px-3">{content}</div>
-                      <Menu
-                        className="right-0"
-                        button={
-                          <Menu.Button color="gray" className="!h-[36px] !px-3 !rounded-xl flex gap-3">
-                            <Typography variant="sm" weight={500} className="tracking-wide text-slate-50">
-                              {ens ? ens : address ? shortenAddress(address) : ''}
-                            </Typography>
-                          </Menu.Button>
-                        }
-                      >
-                        <Menu.Items>
-                          <div>
-                            {/* {address && chain?.id && (
-                              <Menu.Item
-                                as="a"
-                                target="_blank"
-                                href={`https://app.sushi.com/account?account=${address}&chainId=${chain.id}`}
-                                className="flex items-center gap-3 group text-blue hover:text-white justify-between !pr-4"
-                              >
-                                View Portfolio
-                                <ExternalLinkIcon width={16} height={16} />
-                              </Menu.Item>
-                            )} */}
-                            <Menu.Item
-                              className="flex items-center gap-3 group justify-between !pr-4"
-                              onClick={() => disconnect()}
-                            >
-                              Disconnect
-                              <LogoutIcon height={16} />
-                            </Menu.Item>
-                          </div>
-                        </Menu.Items>
-                      </Menu>
-                    </div>
-                  )}
-                </Account.Balance>
-              )}
-            </Account.AddressToEnsResolver>
           )
         }
 

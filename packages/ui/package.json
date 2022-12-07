@@ -40,11 +40,9 @@
     "rc-tooltip": "^5.2.2",
     "react-datepicker": "^4.8.0",
     "react-dropzone": "^14.2.2",
-    "react-popper": "^2.2.5",
+    "react-jazzicon": "^1.0.4",
     "react-spring": "^9.4.4",
-    "react-tiny-popover": "^7.1.0",
     "react-toastify": "^8.2.0",
-    "react-tooltip": "^4.2.21",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-window": "^1.8.7",
     "use-resize-observer": "^9.0.2"
