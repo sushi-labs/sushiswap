@@ -5,7 +5,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import Image from 'next/legacy/image'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, IconButton, Link, MaxWidth, Select, Typography, useBreakpoint } from '..'
+import { classNames, IconButton, Link, MaxWidth, Select, Typography, useBreakpoint } from '..'
 
 export enum AppType {
   Root = 'Explore Apps',
@@ -90,10 +90,7 @@ export function Header({
       >
         <div className={classNames(bgColor, 'absolute inset-0 border-b pointer-events-none border-slate-200/10')} />
       </Transition>
-      <Container
-        maxWidth={maxWidth}
-        className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}
-      >
+      <div className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}>
         <div className="flex items-center gap-3">
           <a className="flex flex-row items-center gap-1.5" href="/">
             <div className="w-7 h-7">
@@ -113,7 +110,7 @@ export function Header({
                 type="button"
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
-                <span className="hidden sm:block text-sm truncate">{AppType.Root}</span>
+                <span className="hidden text-sm truncate sm:block">{AppType.Root}</span>
                 <IconButton as="div" className="p-1">
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
                 </IconButton>
@@ -254,7 +251,7 @@ export function Header({
         </div>
         <div className="flex justify-center">{nav}</div>
         <div className="flex justify-end">{children}</div>
-      </Container>
+      </div>
     </header>
   )
 }

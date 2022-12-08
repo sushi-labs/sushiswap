@@ -54,7 +54,7 @@ export const SingleRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
           button={
             <div
               key={i}
-              className="py-1 px-1.5 flex items-center gap-1.5 bg-white bg-slate-700 cursor-pointer hover:bg-slate-600 rounded-lg overflow-hidden"
+              className="py-1 px-1.5 flex items-center gap-1.5 bg-slate-700 cursor-pointer hover:bg-slate-600 rounded-lg overflow-hidden"
             >
               <Currency.Icon currency={tokenFromRToken(leg.tokenFrom)} width={20} height={20} />
               {legs < 3 ? (
