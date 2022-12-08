@@ -1,5 +1,4 @@
 import { keccak256, pack } from '@ethersproject/solidity'
-import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
@@ -15,6 +14,14 @@ import { MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider2, LiquidityProviders } from './LiquidityProvider2'
+
+const QUICKSWAP_FACTORY: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
+}
+
+const QUICKSWAP_INIT_CODE_HASH: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+}
 
 const getReservesABI = [{
   inputs: [],
@@ -42,7 +49,7 @@ const getReservesABI = [{
 
 const callsGetReserves = [{ reference: '', methodName: 'getReserves', methodParameters: [] }]
 
-export class SushiProvider3 extends LiquidityProvider2 {
+export class QuickSwapProvider3 extends LiquidityProvider2 {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener: any
@@ -60,10 +67,10 @@ export class SushiProvider3 extends LiquidityProvider2 {
     return LiquidityProviders.Sushiswap
   }
 
-  getPoolProviderName(): string {return 'Sushiswap'}
+  getPoolProviderName(): string {return 'Quickswap'}
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (FACTORY_ADDRESS[this.chainId] === undefined) {
+    if (QUICKSWAP_FACTORY[this.chainId] === undefined) {
       // No sushiswap for this network
       return
     }
@@ -153,9 +160,9 @@ export class SushiProvider3 extends LiquidityProvider2 {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      FACTORY_ADDRESS[this.chainId],
+      QUICKSWAP_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      INIT_CODE_HASH[this.chainId]
+      QUICKSWAP_INIT_CODE_HASH[this.chainId]
     )
   }
 
