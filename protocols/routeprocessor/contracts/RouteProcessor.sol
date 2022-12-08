@@ -9,9 +9,8 @@ import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import './StreamReader.sol';
 import 'hardhat/console.sol';
-import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
-contract RouteProcessor is StreamReader, ReentrancyGuard {
+contract RouteProcessor is StreamReader {
   IBentoBoxMinimal immutable BentoBox;
   IWETH public immutable wNATIVE;
 
@@ -27,7 +26,9 @@ contract RouteProcessor is StreamReader, ReentrancyGuard {
     uint256 amountOutMin,
     address to,
     bytes memory route
-  ) external payable nonReentrant returns (uint256 amountOut) {
+  ) external payable returns (uint256 amountOut) {
+    require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
+
     uint256 amountInAcc = 0;
     uint256 balanceInitial = IERC20(tokenOut).balanceOf(to);
 
