@@ -6,9 +6,9 @@ export const getArticleAndMoreArticles = async (slug: string, preview: Record<st
   return await sdk.articleAndMoreArticles({
     filters: {
       slug: { eq: slug },
-      articleType: { eq: 'academy' },
+      articleTypes: { type: { eq: 'academy' } },
     },
-    filters_ne: { slug: { not: { eq: slug } }, articleType: { eq: 'academy' } },
+    filters_ne: { slug: { not: { eq: slug } }, articleTypes: { type: { eq: 'academy' } } },
     publicationState: preview ? 'PREVIEW' : 'LIVE',
   })
 }
@@ -36,7 +36,7 @@ export const getArticles = async (variables?: {
   const sdk = getMeshSDK()
   return await sdk.getArticles({
     ...variables,
-    filters: { ...variables.filters, articleType: { eq: 'academy' } },
+    filters: { ...variables.filters, articleTypes: { type: { eq: 'academy' } } },
     sort: variables.sort ?? ['publishedAt:desc'],
   })
 }
@@ -64,11 +64,11 @@ export const getLatestAndRelevantArticles = async (productSlug: string, relevant
       products: {
         slug: { eq: productSlug },
       },
-      articleType: { eq: 'academy' },
+      articleTypes: { type: { eq: 'academy' } },
     },
     filters_ne: {
       id: { in: relevantArticleIds },
-      articleType: { eq: 'academy' },
+      articleTypes: { type: { eq: 'academy' } },
     },
   })
 }
