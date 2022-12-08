@@ -11,11 +11,10 @@
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.8.0",
-    "@headlessui/react": "^1.6.6",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tailwindcss/typography": "^0.5.2",
-    "classnames": "^2.3.1",
+    "@vercel/analytics": "0.1.5",
     "date-fns": "^2.28.0",
     "graphql": "16.6.0",
     "next": "13.0.5",
@@ -28,9 +27,9 @@
     "swr": "^1.3.0"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "^0.75.3",
-    "@graphql-mesh/graphql": "^0.29.5",
-    "@heroicons/react": "^2.0.11",
+    "@graphql-mesh/cli": "0.78.39",
+    "@graphql-mesh/graphql": "0.31.25",
+    "@heroicons/react": "^1.0.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -45,6 +44,11 @@
     "next-transpile-modules": "10.0.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.1.0",
-    "typescript": "^4.8.2"
+    "typescript": "4.8.2"
+  },
+  "nextBundleAnalysis": {
+    "budget": 460800,
+    "budgetPercentIncreaseRed": 20,
+    "showDetails": true
   }
 }

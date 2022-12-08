@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build-academy-app": "turbo run build --filter=academy[HEAD^1]",
     "build-analytics-app": "turbo run build --filter=analytics[HEAD^1]",
     "build-apps": "turbo run build --filter={./apps/*}[HEAD^1]...",
     "build-blog-app": "turbo run build --filter=blog[HEAD^1]",
