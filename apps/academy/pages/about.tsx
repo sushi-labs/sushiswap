@@ -16,7 +16,7 @@ const About: NextPage = () => {
         <Container maxWidth="6xl" className="mx-auto grid gap-5 sm:gap-[60px]">
           <div className="grid gap-4">
             <p className="sm:text-base text-slate-400">About Us</p>
-            <h1 className="text-2xl sm:text-[52px] font-medium">Be a Crypto Chef with Sushi</h1>
+            <h1 className="text-2xl sm:text-5xl font-medium">Be a Crypto Chef with Sushi</h1>
             <p className="text-slate-50 sm:text-lg">
               Sushi is one of the most widely used decentralized cryptocurrency exchange, deployed on 10+ blockchains,
               and supporting thousands of tokens. You can trade, earn, stack yields, lend, borrow, leverage all on one
@@ -60,7 +60,7 @@ const About: NextPage = () => {
               for
               <Link.External
                 href="https://mirror.xyz/0x4bb4c1B0745ef7B4642fEECcd0740deC417ca0a0/dFUiMYBl_xp2aN_F_Hc1abgP8NMv5Js5UYnup77MN0k"
-                className="mx-2 underline"
+                className="mx-2 underline !whitespace-normal"
               >
                 {"Sushi 2.0 'A Restructure for the Road Ahead'"}
               </Link.External>
