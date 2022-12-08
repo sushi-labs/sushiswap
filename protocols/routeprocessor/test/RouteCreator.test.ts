@@ -135,7 +135,7 @@ async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Tok
   console.log(`    gas use: ${receipt.gasUsed.toString()}`)
 }
 
-describe('RouteCreator', async function () {
+describe.skip('RouteCreator', async function () {
   it('Ethereum WETH => FEI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
