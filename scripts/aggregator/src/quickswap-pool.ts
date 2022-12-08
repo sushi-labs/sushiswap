@@ -140,7 +140,7 @@ async function transform(data: { chainId: ChainId; data: (V2PairsQuery | undefin
               type: CONSTANT_PRODUCT_POOL,
               chainId: exchange.chainId,
               swapFee: 0.003,
-              twapEnabled: false,
+              twapEnabled: true,
               token0Id: pair.token0.id,
               token1Id: pair.token1.id,
               liquidityUSD: pair.liquidityUSD,

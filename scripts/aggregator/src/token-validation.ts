@@ -20,26 +20,27 @@ async function main() {
 
   // TRANSFORM
   const transformedTokens = await transform(tokenLists)
+  console.log(`TRANSFORM - ${transformedTokens.length} is transformed and ready for approval.`)
 
-  // // LOAD
-  // const batchSize = 500
-  // let count = 0
-  // for (let i = 0; i < transformedTokens.length; i += batchSize) {
-  //   const batch = transformedTokens.slice(i, i + batchSize)
-  //   const updates = batch.map((token) => client.token.update(token))
-  //   const results = await Promise.allSettled(updates)
+  // LOAD
+  const batchSize = 200
+  let count = 0
+  for (let i = 0; i < transformedTokens.length; i += batchSize) {
+    const batch = transformedTokens.slice(i, i + batchSize)
+    const updates = batch.map((token) => client.token.update(token))
+    const results = await Promise.allSettled(updates)
 
-  //   const fulfilled = results.filter((result) => result.status === 'fulfilled')
-  //   console.log(fulfilled.length)
+    // const fulfilled = results.filter((result) => result.status === 'fulfilled')
+    // console.log(fulfilled.length)
 
-  //   const rejected = results.filter((result) => result.status === 'rejected')
-  //   console.log(rejected)
-  //   count += fulfilled.length
-  // }
-  // console.log(`LOAD - ${count} tokens updated`)
-  // const endTime = performance.now()
+    // const rejected = results.filter((result) => result.status === 'rejected')
+    console.log(`LOAD - ${results.length} tokens approved.`)
+    count += results.length
+  }
+  console.log(`LOAD - ${count} tokens updated`)
+  const endTime = performance.now()
 
-  // console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+  console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
 
 async function extract() {
@@ -83,12 +84,12 @@ async function extract() {
   })
 
   const combined = [
-    // uniswap_eth,
+    uniswap_eth,
     sushiswap_all,
-     quickswap_polygon
+    quickswap_polygon,
   ].flat()
   const unique = [
-    ...new Map(combined.map((item) => [item.chainId.toString().concat(':').concat(item.address), item])).values(),
+    ...new Map(combined.map((item) => [item.chainId.toString().concat(':').concat(item.address.toLowerCase()), item])).values(),
   ]
   if (unique.length !== combined.length) console.log(`${combined.length - unique.length} Duplicate tokens found`)
   return unique.flat()
@@ -97,63 +98,48 @@ async function extract() {
 async function transform(data: TokenResponse[]): Promise<Prisma.TokenUpdateArgs[]> {
   const existingTokens = await client.token.findMany({
     where: {
-        id: {
-          in: data.map((token) => token.chainId.toString().concat(':').concat(token.address.toLowerCase())),
-        },
+      id: {
+        in: data.map((token) => token.chainId.toString().concat(':').concat(token.address.toLowerCase())),
+      },
     },
   })
   let tokensToApproveCount = 0
   let tokensAlreadyApprovedCount = 0
-  let tokensToCreateCount = 0
-  const tokensToCreate = []
+  let tokensNotDiscoveredCount = 0
+
+  const tokensToApprove: Prisma.TokenUpdateArgs[] = []
   for (const token of data) {
+
     const id = token.chainId.toString().concat(':').concat(token.address.toLowerCase())
     const existingToken = existingTokens.find((token) => token.id === id)
     if (existingToken) {
       if (existingToken.status !== 'APPROVED') {
-        if (existingToken.decimals !== token.decimals)
-          console.log(
-            `Token ${id} ${token.symbol} decimals mismatch. DB: ${existingToken.decimals}, SOURCE: ${token.decimals}`
-          )
-        // if (existingToken.name !== token.name)
-        //   console.log(`Token ${id} ${token.symbol} name mismatch. DB: ${existingToken.name}, SOURCE: ${token.name}`)
-        if (existingToken.symbol !== token.symbol)
-          console.log(
-            `Token ${id} ${token.symbol} symbol mismatch. DB: ${existingToken.symbol}, SOURCE: ${token.symbol}`
-          )
+        // if (existingToken.decimals !== token.decimals)
+        // console.log(
+        //   `Token ${id} ${token.symbol} decimals mismatch. DB: ${existingToken.decimals}, SOURCE: ${token.decimals}`
+        // )
+        tokensToApprove.push({
+          where: {
+            id: id,
+          },
+          data: {
+            status: 'APPROVED',
+          },
+        })
         tokensToApproveCount += 1
       } else {
         tokensAlreadyApprovedCount += 1
-        // console.log(`Token ${id} ${token.symbol} already approved`)
       }
     } else {
-      tokensToCreateCount += 1
-      // console.log(`Token ${id} ${token.symbol} not found in the db`)
-      tokensToCreate.push(token)
+      tokensNotDiscoveredCount += 1
     }
   }
-  console.log(
-    `${tokensToApproveCount} needs approval, ${tokensAlreadyApprovedCount} already approved, ${tokensToCreateCount} should be created.`
-  )
-  // console.log("Tokens to create:")
-  // for(const token of tokensToCreate) {
-  //   console.log(`${token.symbol}, ${token.address}, ${token.chainId}, ${token.decimals}, ${token.name}`)
-  // }
 
-  return data.map(
-    (token) =>
-      ({
-        where: {
-          id: token.chainId.toString().concat(':').concat(token.address.toLowerCase()),
-        },
-        data: {
-          decimals: token.decimals,
-          name: token.name,
-          symbol: token.symbol,
-          status: 'APPROVED',
-        },
-      } as Prisma.TokenUpdateArgs)
+  console.log(
+    `${tokensToApproveCount} needs approval, ${tokensAlreadyApprovedCount} already approved, ${tokensNotDiscoveredCount} tokens are not discovered in any pools.`
   )
+
+  return tokensToApprove
 }
 
 interface TokenResponse {

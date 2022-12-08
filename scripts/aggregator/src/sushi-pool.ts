@@ -54,7 +54,6 @@ async function extract() {
     SUSHISWAP_CHAINS.map((chainId) => {
       return { chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] }
     }),
-    [{ chainId: ChainId.POLYGON, host: GRAPH_HOST[ChainId.POLYGON], name: 'sushi-0m/trident-polygon' }],
   ].flat()
 
   const chains = Array.from(new Set(subgraphs.map(subgraph => subgraph.chainId.toString())))
