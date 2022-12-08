@@ -49,10 +49,10 @@ const _Pool = () => {
   const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
+  const [tab, setTab] = useState<number>(0)
+
   if (!data) return <></>
   const { pair } = data
-
-  const [tab, setTab] = useState<number>(0)
 
   return (
     <PoolPositionProvider pair={pair}>

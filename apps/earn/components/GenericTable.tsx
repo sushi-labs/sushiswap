@@ -6,11 +6,11 @@ import React, { ReactNode, useState } from 'react'
 interface GenericTableProps<C> {
   table: ReactTableType<C>
   columns: ColumnDef<C>[]
-  HoverElement?: React.FunctionComponent<{ row: C }>
+  //HoverElement?: React.FunctionComponent<{ row: C }>
   loading?: boolean
   placeholder: ReactNode
   pageSize: number
-  linkFormatter?(path: string): string
+  // linkFormatter?(path: string): string
 }
 
 declare module '@tanstack/react-table' {
@@ -22,7 +22,8 @@ declare module '@tanstack/react-table' {
 
 export const GenericTable = <T extends { id: string }>({
   table,
-  HoverElement,
+  columns,
+  //HoverElement,
   loading,
   placeholder,
   pageSize,
@@ -70,51 +71,51 @@ export const GenericTable = <T extends { id: string }>({
           <Table.tbody>
             {!loading &&
               table.getRowModel().rows.map((row) => {
-                if (HoverElement) {
-                  return (
-                    <Tooltip
-                      {...(popupInvisible && { popupVisible: false })}
-                      destroyTooltipOnHide={true}
-                      key={row.id}
-                      trigger="hover"
-                      mouseEnterDelay={0.5}
-                      placement="top"
-                      button={
-                        <Table.tr
-                          onClick={(e) => {
-                            // if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
-                            //   setPopupInvisible(true)
-                            //   setTimeout(() => setShowOverlay(true), 250)
-                            // }
-                          }}
-                          className="cursor-pointer"
-                        >
-                          {row.getVisibleCells().map((cell, i) => {
-                            return (
-                              <Table.td
-                                className="!px-0 relative"
-                                style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
-                                key={cell.id}
-                              >
-                                {/* <Link.Internal href={linkFormatter ? linkFormatter(row.original.id) : ``} passHref={true}> */}
-                                  <p
-                                    className={classNames(
-                                      'absolute inset-0 flex items-center px-3 sm:px-4',
-                                      cell.column.columnDef.meta?.className
-                                    )}
-                                  >
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                  </p>
-                                {/* </Link.Internal> */}
-                              </Table.td>
-                            )
-                          })}
-                        </Table.tr>
-                      }
-                      panel={<HoverElement row={row.original} />}
-                    />
-                  )
-                }
+                // if (HoverElement) {
+                //   return (
+                //     <Tooltip
+                //       {...(popupInvisible && { popupVisible: false })}
+                //       destroyTooltipOnHide={true}
+                //       key={row.id}
+                //       trigger="hover"
+                //       mouseEnterDelay={0.5}
+                //       placement="top"
+                //       button={
+                //         <Table.tr
+                //           onClick={(e) => {
+                //             // if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+                //             //   setPopupInvisible(true)
+                //             //   setTimeout(() => setShowOverlay(true), 250)
+                //             // }
+                //           }}
+                //           className="cursor-pointer"
+                //         >
+                //           {row.getVisibleCells().map((cell, i) => {
+                //             return (
+                //               <Table.td
+                //                 className="!px-0 relative"
+                //                 style={{ maxWidth: headers[i].getSize(), width: headers[i].getSize() }}
+                //                 key={cell.id}
+                //               >
+                //                 {/* <Link.Internal href={linkFormatter ? linkFormatter(row.original.id) : ``} passHref={true}> */}
+                //                   <p
+                //                     className={classNames(
+                //                       'absolute inset-0 flex items-center px-3 sm:px-4',
+                //                       cell.column.columnDef.meta?.className
+                //                     )}
+                //                   >
+                //                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                //                   </p>
+                //                 {/* </Link.Internal> */}
+                //               </Table.td>
+                //             )
+                //           })}
+                //         </Table.tr>
+                //       }
+                //       panel={<HoverElement row={row.original} />}
+                //     />
+                //   )
+                // }
 
                 return (
                   <Table.tr
