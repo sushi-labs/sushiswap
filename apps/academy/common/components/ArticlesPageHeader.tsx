@@ -35,8 +35,8 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
           <LooperBg height={bgHeight} width={bgWidth} />
         </div>
         <div className="z-10">
-          <p className="text-sm sm:text-[22px] sm:font-medium">Articles</p>
-          <p className="text-[28px] sm:text-[52px] sm:font-medium">{title}</p>
+          <p className="text-sm sm:text-xl sm:font-medium">Articles</p>
+          <p className="text-3xl sm:text-5xl sm:font-medium">{title}</p>
         </div>
 
         <Select

@@ -23,7 +23,7 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
         <>
           <Disclosure.Button className="flex items-center justify-between w-full h-12 gap-1 text-slate-40 outline-0">
             <Typography variant="sm" weight={500}>
-              {selectedHeader || tableOfContents?.[0].text}
+              {selectedHeader || 'Table of Contents'}
             </Typography>
             <ChevronDownIcon width={12} height={12} className={classNames('transition', open && 'rotate-180')} />
           </Disclosure.Button>
