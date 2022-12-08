@@ -63,7 +63,7 @@
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/validate": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "^0.7.0",
+    "@wagmi/core": "0.7.9",
     "@whatwg-node/fetch": "latest",
     "date-fns": "^2.29.3",
     "ethers": "^5.7.0",
