@@ -105,7 +105,7 @@ async function transform(data: { chainId: ChainId; data: V3PairsQuery[] }[]): Pr
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat(':').concat(pair.token0.id),
                 address: pair.token0.id,
-                chainId: exchange.chainId.toString(),
+                chainId: exchange.chainId,
                 name: pair.token0.name,
                 symbol: pair.token0.symbol,
                 decimals: Number(pair.token0.decimals),
@@ -115,7 +115,7 @@ async function transform(data: { chainId: ChainId; data: V3PairsQuery[] }[]): Pr
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat(':').concat(pair.token1.id),
                 address: pair.token1.id,
-                chainId: exchange.chainId.toString(),
+                chainId: exchange.chainId,
                 name: pair.token1.name,
                 symbol: pair.token1.symbol,
                 decimals: Number(pair.token1.decimals),
@@ -134,7 +134,7 @@ async function transform(data: { chainId: ChainId; data: V3PairsQuery[] }[]): Pr
               protocol: PROTOCOL,
               version: VERSION,
               type: CONCENTRATED_LIQUIDITY_POOL,
-              chainId: exchange.chainId.toString(),
+              chainId: exchange.chainId,
               swapFee: Number(pair.feeTier) / 1000000,
               twapEnabled: false,
               token0Id: pair.token0.id,

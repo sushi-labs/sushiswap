@@ -1,10 +1,9 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainIds, chainName } from '@sushiswap/chain'
-import { SUSHISWAP_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { request } from 'http'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, PairsQuery, V2PairsQuery } from '../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
+import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS, TRIDENT_SUBGRAPH_NAME } from './config'
 import { mergePools } from './etl/pool/load'
 import { filterPools } from './etl/pool/transform'
 import { createTokens } from './etl/token/load'
@@ -50,8 +49,7 @@ async function extract() {
 
   const subgraphs = [
     TRIDENT_CHAINS.map((chainId) => {
-      const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
-      return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] }
+      return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId] }
     }),
     SUSHISWAP_CHAINS.map((chainId) => {
       return { chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] }
@@ -115,7 +113,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat(':').concat(pair.token0.id),
                 address: pair.token0.id,
-                chainId: exchange.chainId.toString(),
+                chainId: exchange.chainId,
                 name: pair.token0.name,
                 symbol: pair.token0.symbol,
                 decimals: Number(pair.token0.decimals),
@@ -125,7 +123,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat(':').concat(pair.token1.id),
                 address: pair.token1.id,
-                chainId: exchange.chainId.toString(),
+                chainId: exchange.chainId,
                 name: pair.token1.name,
                 symbol: pair.token1.symbol,
                 decimals: Number(pair.token1.decimals),
@@ -144,7 +142,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               protocol: PROTOCOL,
               version: pair.source,
               type: pair.type,
-              chainId: exchange.chainId.toString(),
+              chainId: exchange.chainId,
               swapFee: Number(pair.swapFee) / 10000,
               twapEnabled: pair.twapEnabled,
               token0Id: pair.token0.id,

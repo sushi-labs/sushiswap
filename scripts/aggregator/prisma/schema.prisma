@@ -4,9 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 enum TokenStatus {
@@ -16,19 +16,19 @@ enum TokenStatus {
 }
 
 model Token {
-  id       String   @id // chainId:address
+  id       String      @id // chainId:address
   address  String
-  chainId  String
+  chainId  Int
   name     String
   symbol   String
   decimals Int
   status   TokenStatus @default(UNKNOWN)
 
-  generatedAt    DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  pools0     Pool[]      @relation("token0")
-  pools1     Pool[]      @relation("token1")
+  pools0 Pool[] @relation("token0")
+  pools1 Pool[] @relation("token1")
 
   @@unique([chainId, address])
   @@index(fields: [address])
@@ -40,7 +40,7 @@ model Pool {
   id       String @id // chainId:address
   address  String
   name     String
-  chainId  String
+  chainId  Int
   protocol String
   version  String
   type     String
@@ -49,12 +49,12 @@ model Pool {
   token1   Token  @relation("token1", fields: [chainId, token1Id], references: [chainId, address])
   token1Id String
 
-  swapFee     Float?
-  twapEnabled Boolean?
-  liquidityUSD    Decimal // liquidity in USD
+  swapFee      Float?
+  twapEnabled  Boolean?
+  liquidityUSD Decimal // liquidity in USD
 
-  generatedAt          DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@unique([chainId, address])
   @@index(fields: [address])

@@ -17,7 +17,15 @@ export const SUSHISWAP_CHAINS = [
   ChainId.BOBA,
 ]
 
-export const TRIDENT_CHAINS = [ChainId.POLYGON, ChainId.OPTIMISM, ChainId.METIS, ChainId.KAVA]
+export const TRIDENT_CHAINS = [
+  ChainId.POLYGON,
+  ChainId.OPTIMISM,
+  ChainId.METIS,
+  ChainId.KAVA,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+]
 
 export const UNISWAP_V2_SUPPORTED_CHAINS = [ChainId.ETHEREUM]
 export const UNISWAP_V3_SUPPORTED_CHAINS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM]
@@ -40,13 +48,13 @@ export const GRAPH_HOST: Record<number | string, string> = {
   [ChainId.GNOSIS]: GRAPH_HOST_ENDPOINT,
   [ChainId.MOONBEAM]: GRAPH_HOST_ENDPOINT,
   [ChainId.MOONRIVER]: GRAPH_HOST_ENDPOINT,
+  [ChainId.HARMONY]: GRAPH_HOST_ENDPOINT,
   [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
   [ChainId.KAVA]: 'pvt.graph.kava.io',
   [ChainId.METIS]: 'andromeda.thegraph.metis.io',
-  [ChainId.ARBITRUM_NOVA]: 'arbitrum-nova-subgraph.sushi.com',
-  // [ChainId.BTTC]: 'arbitrum-nova-subgraph.sushi.com',
-  // [ChainId.BOBA_AVAX]: 'arbitrum-nova-subgraph.sushi.com',
+  [ChainId.ARBITRUM_NOVA]: 'subgraphs.sushi.com',
   [ChainId.BOBA]: GRAPH_HOST_ENDPOINT,
+  [ChainId.BTTC]: 'subgraphs.sushi.com',
 }
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -60,11 +68,22 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.GNOSIS]: 'sushi-0m/sushiswap-gnosis',
   [ChainId.MOONBEAM]: 'sushi-0m/sushiswap-moonbeam',
   [ChainId.MOONRIVER]: 'sushi-0m/sushiswap-moonriver',
-  [ChainId.HARMONY]: 'subgraph-qa/sushiswap-harmony',
+  [ChainId.HARMONY]: 'olastenberg/sushiswap-harmony-fix',
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   // [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
+}
+
+export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.POLYGON]: 'sushi-qa/trident-polygon',
+  [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
+  [ChainId.METIS]: 'sushi-qa/trident-metis',
+  [ChainId.KAVA]: 'sushi-qa/trident-kava',
+  [ChainId.ARBITRUM]: 'sushi-qa/trident-arbitrum',
+  [ChainId.AVALANCHE]: 'sushi-qa/trident-avalanche',
+  [ChainId.BSC]: 'sushi-qa/trident-bsc',
+  [ChainId.BTTC]: 'sushi-qa/trident-bttc',
 }
 
 export const UNISWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {

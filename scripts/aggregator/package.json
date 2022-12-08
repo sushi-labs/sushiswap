@@ -41,6 +41,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/abi": "workspace:*",
+    "isomorphic-unfetch": "3.1.0",
     "@wagmi/core": "0.7.9",
     "@ethersproject/abi": "^5.7.0",
     "@uniswap/v2-core": "^1.0.1",
