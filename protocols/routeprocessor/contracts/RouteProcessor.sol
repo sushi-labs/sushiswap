@@ -13,11 +13,11 @@ import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 contract RouteProcessor is StreamReader {
   using SafeERC20 for IERC20;
 
-  IBentoBoxMinimal immutable BentoBox;
+  IBentoBoxMinimal immutable bentoBox;
   IWETH public immutable wNATIVE;
 
-  constructor(address _BentoBox, address _wNATIVE) {
-    BentoBox = IBentoBoxMinimal(_BentoBox);
+  constructor(address _bentoBox, address _wNATIVE) {
+    bentoBox = IBentoBoxMinimal(_bentoBox);
     wNATIVE = IWETH(_wNATIVE);
   }
 
@@ -73,7 +73,7 @@ contract RouteProcessor is StreamReader {
   function bentoDepositAmountFromBento(uint256 stream, address token) private {
     address to = readAddress(stream);
     uint256 amount = readUint(stream);
-    BentoBox.deposit(token, address(BentoBox), to, amount, 0);
+    bentoBox.deposit(token, address(bentoBox), to, amount, 0);
   }
 
   // Transfers all input tokens from BentoBox to a pool
@@ -81,25 +81,25 @@ contract RouteProcessor is StreamReader {
     address to = readAddress(stream);
     address token = readAddress(stream);
 
-    uint256 amount = IERC20(token).balanceOf(address(BentoBox)) +
-      BentoBox.strategyData(token).balance -
-      BentoBox.totals(token).elastic;
-    BentoBox.deposit(token, address(BentoBox), to, amount, 0);
+    uint256 amount = IERC20(token).balanceOf(address(bentoBox)) +
+      bentoBox.strategyData(token).balance -
+      bentoBox.totals(token).elastic;
+    bentoBox.deposit(token, address(bentoBox), to, amount, 0);
   }
 
   // Withdraw Bento tokens from Bento to an address.
   function bentoWithdrawShareFromRP(uint256 stream, address token) private {
     address to = readAddress(stream);
     uint256 amount = readUint(stream);
-    BentoBox.withdraw(token, address(this), to, amount, 0);
+    bentoBox.withdraw(token, address(this), to, amount, 0);
   }
 
   // Withdraw all Bento tokens from Bento to an address.
   function bentoWithdrawAllFromRP(uint256 stream) private {
     address token = readAddress(stream);
     address to = readAddress(stream);
-    uint256 amount = BentoBox.balanceOf(token, address(this));
-    BentoBox.withdraw(token, address(this), to, 0, amount);
+    uint256 amount = bentoBox.balanceOf(token, address(this));
+    bentoBox.withdraw(token, address(this), to, 0, amount);
   }
 
   // Trident pool swap
@@ -155,7 +155,7 @@ contract RouteProcessor is StreamReader {
       address to = readAddress(stream);
       uint256 share = readUint(stream);
       sharesTotal += share;
-      BentoBox.transfer(token, msg.sender, to, share);
+      bentoBox.transfer(token, msg.sender, to, share);
     }
   }
 
@@ -186,7 +186,7 @@ contract RouteProcessor is StreamReader {
   function distributeBentoPortions(uint256 stream) private {
     address token = readAddress(stream);
     uint8 num = readUint8(stream);
-    uint256 amountTotal = BentoBox.balanceOf(token, address(this));
+    uint256 amountTotal = bentoBox.balanceOf(token, address(this));
 
     for (uint256 i = 0; i < num; ++i) {
       address to = readAddress(stream);
@@ -194,7 +194,7 @@ contract RouteProcessor is StreamReader {
       unchecked {
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
-        BentoBox.transfer(token, address(this), to, amount);
+        bentoBox.transfer(token, address(this), to, amount);
       }
     }
   }
