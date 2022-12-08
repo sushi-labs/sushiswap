@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "lint": "TIMING=1 eslint --fix .",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@sushiswap/chainlink-token-list": "^0.1.0",
