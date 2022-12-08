@@ -14,7 +14,9 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
   context,
   info
 ): Promise<Query['pairsWithFarms']> => {
-  const { farms } = await sdk.FarmsV0()
+  // const { farms } = await sdk.FarmsV0()
+
+  const farms = await fetch('https://farm.sushi.com/api/v0').then((res) => res.json())
 
   const pools = await (args?.farmsOnly
     ? Promise.all(

@@ -137,11 +137,11 @@ sources:
   - name: FarmsV0
     handler:
       jsonSchema:
-        baseUrl: https://farm.sushi.com/api/v0
+        baseUrl: https://farm.sushi.com
         operations:
           - type: Query
             field: farmsv0
-            path: /
+            path: /api/v0
             method: GET
             responseSample: ./json-samples/farms-v0.json
             responseSchema: ./json-schemas/farms-v0.json

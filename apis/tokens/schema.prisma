@@ -1,0 +1,32 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+enum TokenStatus {
+  APPROVED
+  UNKNOWN
+  DISAPPROVED
+}
+
+model Token {
+  id       String   @id // chainId:address
+  address  String
+  chainId  String
+  name     String
+  symbol   String
+  decimals Int
+  status   TokenStatus @default(UNKNOWN)
+  generatedAt    DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  @@unique([chainId, address])
+  @@index(fields: [address])
+  @@index(fields: [chainId])
+  @@index(fields: [address, chainId])
+}
