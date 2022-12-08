@@ -2,15 +2,17 @@
 
 pragma solidity 0.8.10;
 
-import '../interfaces/IERC20.sol';
 import '../interfaces/IUniswapV2Pair.sol';
 import '../interfaces/IBentoBoxMinimal.sol';
 import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import './StreamReader.sol';
 import 'hardhat/console.sol';
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 contract RouteProcessor is StreamReader {
+  using SafeERC20 for IERC20;
+
   IBentoBoxMinimal immutable BentoBox;
   IWETH public immutable wNATIVE;
 
@@ -137,9 +139,9 @@ contract RouteProcessor is StreamReader {
       amountTotal += amount;
       if (wrap) {
         wNATIVE.deposit{value: amount}();
-        IERC20(token).transfer(to, amount);
+        IERC20(token).safeTransfer(to, amount);
       } else {
-        IERC20(token).transferFrom(msg.sender, to, amount);
+        IERC20(token).safeTransferFrom(msg.sender, to, amount);
       }
     }
   }
@@ -172,7 +174,7 @@ contract RouteProcessor is StreamReader {
       unchecked {
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
-        IERC20(token).transfer(to, amount);
+        IERC20(token).safeTransfer(to, amount);
       }
     }
   }
