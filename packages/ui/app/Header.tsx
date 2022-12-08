@@ -2,9 +2,10 @@ import { Listbox, Transition } from '@headlessui/react'
 import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
 import { useIsMounted } from '@sushiswap/hooks'
+import Image from 'next/legacy/image'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, IconButton, Link, MaxWidth, Select, SushiIcon, Typography, useBreakpoint } from '..'
+import { classNames, IconButton, Link, MaxWidth, Select, Typography, useBreakpoint } from '..'
 
 export enum AppType {
   Root = 'Explore Apps',
@@ -89,14 +90,17 @@ export function Header({
       >
         <div className={classNames(bgColor, 'absolute inset-0 border-b pointer-events-none border-slate-200/10')} />
       </Transition>
-      <Container
-        maxWidth={maxWidth}
-        className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}
-      >
+      <div className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}>
         <div className="flex items-center gap-3">
           <a className="flex flex-row items-center gap-1.5" href="/">
-            <div className="w-6 h-6">
-              <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
+            <div className="w-7 h-7">
+              <Image
+                src="https://res.cloudinary.com/sushi-cdn/image/upload/v1670419151/xmaslogo1-trimmy_puyjsw.png"
+                layout="responsive"
+                width={28}
+                height={28}
+              />
+              {/*<SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />*/}
             </div>
           </a>
           <div className="bg-slate-200/10 w-0.5 h-[20px]" />
@@ -106,7 +110,7 @@ export function Header({
                 type="button"
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
-                <span className="hidden sm:block text-sm truncate">{AppType.Root}</span>
+                <span className="hidden text-sm truncate sm:block">{AppType.Root}</span>
                 <IconButton as="div" className="p-1">
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
                 </IconButton>
@@ -247,7 +251,7 @@ export function Header({
         </div>
         <div className="flex justify-center">{nav}</div>
         <div className="flex justify-end">{children}</div>
-      </Container>
+      </div>
     </header>
   )
 }

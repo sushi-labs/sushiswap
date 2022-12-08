@@ -7,6 +7,8 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
   ChainId.KAVA,
   ChainId.BTTC,
   ChainId.ARBITRUM,
+  // ChainId.AVALANCHE,
+  // ChainId.BSC,
 ]
 
 export const AMM_ENABLED_NETWORKS: ChainId[] = [

@@ -1,0 +1,25 @@
+{
+  "name": "@sushiswap/tokens-api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "TIMING=1 eslint --fix .",
+    "generate": "prisma generate",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@sushiswap/chainlink-token-list": "^0.1.0",
+    "@sushiswap/default-token-list": "^39.3.0",
+    "@vercel/node": "^2.2.0",
+    "@prisma/client": "^4.7.1",
+    "ioredis": "^5.2.4",
+    "prisma-redis-middleware": "^4.3.0"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "prisma": "^4.7.1"
+  }
+}
