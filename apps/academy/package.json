@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.8.0",
+    "@headlessui/react": "^1.7.3",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tailwindcss/typography": "^0.5.2",
@@ -29,7 +30,7 @@
   "devDependencies": {
     "@graphql-mesh/cli": "0.78.39",
     "@graphql-mesh/graphql": "0.31.25",
-    "@heroicons/react": "^1.0.0",
+    "@heroicons/react": "^2.0.13",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",

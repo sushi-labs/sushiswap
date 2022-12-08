@@ -20,7 +20,7 @@ export const AdditionalArticles: FC<AdditionalArticles> = ({ title, children, cl
 
       <div
         className={classNames(
-          'overflow-x-auto pb-2 gap-5 pt-6 sm:pt-10 sm:gap-6 grid grid-cols-[repeat(auto-fill,minmax(286px,1fr))] scroll',
+          'overflow-x-auto pb-6 gap-5 pt-6 sm:pt-10 sm:gap-6 grid grid-cols-[repeat(auto-fill,minmax(286px,1fr))] scroll',
           DEFAULT_SIDE_PADDING
         )}
       >

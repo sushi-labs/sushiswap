@@ -251,7 +251,8 @@ importers:
       '@cloudinary/url-gen': ^1.8.0
       '@graphql-mesh/cli': 0.78.39
       '@graphql-mesh/graphql': 0.31.25
-      '@heroicons/react': ^1.0.0
+      '@headlessui/react': ^1.7.3
+      '@heroicons/react': ^2.0.13
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -283,6 +284,7 @@ importers:
       typescript: 4.8.2
     dependencies:
       '@cloudinary/url-gen': 1.8.0
+      '@headlessui/react': 1.7.3_biqbaboplfbrettd7655fr4n2y
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/ui': link:../../packages/ui
       '@tailwindcss/typography': 0.5.4_tailwindcss@3.1.6
@@ -300,7 +302,7 @@ importers:
     devDependencies:
       '@graphql-mesh/cli': 0.78.39_jelggnc5b4b3hu7o6odhvrmlsa
       '@graphql-mesh/graphql': 0.31.25_jelggnc5b4b3hu7o6odhvrmlsa
-      '@heroicons/react': 1.0.6_react@18.2.0
+      '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
@@ -5819,6 +5821,7 @@ packages:
       - react-native-windows
       - supports-color
       - utf-8-validate
+    dev: false
 
   /@graphprotocol/client-polling-live/1.0.1_graphql@16.6.0:
     resolution: {integrity: sha512-lTeHCYQfF54i2P25YQbo20E1ZK1xnBTcjaZKwFPv83Xrkrc4mvYyjfbOSNMFhzjRjpGoabOewrKu4Kv9+WLl4w==}
@@ -7783,6 +7786,14 @@ packages:
       react: '>= 16'
     dependencies:
       react: 18.2.0
+
+  /@heroicons/react/2.0.13_react@18.2.0:
+    resolution: {integrity: sha512-iSN5XwmagrnirWlYEWNPdCDj9aRYVD/lnK3JlsC9/+fqGF80k8C7rl+1HCvBX0dBoagKqOFBs6fMhJJ1hOg1EQ==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
+    dev: true
 
   /@hookform/devtools/4.2.3_bb2bxwco6ptpubzwpazr52qf6i:
     resolution: {integrity: sha512-lC1OeFDvB5XFNS/felSi6MuOz9ya2ggOFU/PwOCfYZ0Puhm7VOPsD648ZfbO2dCmHPOZkRwPjv31WRIIhT0A2g==}
