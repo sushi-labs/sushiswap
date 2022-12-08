@@ -29,7 +29,7 @@ export async function getTokens(chainId = 1) {
     },
     where: {
       AND: {
-        chainId,
+        chainId: Number(chainId),
         status: 'APPROVED',
       },
     },
