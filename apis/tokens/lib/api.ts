@@ -17,7 +17,7 @@ const cacheMiddleware = createPrismaRedisCache({
 
 prisma.$use(cacheMiddleware)
 
-export async function getTokens() {
+export async function getTokens(chainId = 1) {
   const tokens = await prisma.token.findMany({
     select: {
       id: true,
@@ -29,7 +29,7 @@ export async function getTokens() {
     },
     where: {
       AND: {
-        chainId: '1',
+        chainId,
         status: 'APPROVED',
       },
     },

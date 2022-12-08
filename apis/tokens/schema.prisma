@@ -16,15 +16,15 @@ enum TokenStatus {
 }
 
 model Token {
-  id       String   @id // chainId:address
+  id       String      @id // chainId:address
   address  String
-  chainId  String
+  chainId  Int
   name     String
   symbol   String
   decimals Int
   status   TokenStatus @default(UNKNOWN)
-  generatedAt    DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   @@unique([chainId, address])
   @@index(fields: [address])
   @@index(fields: [chainId])
