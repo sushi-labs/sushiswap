@@ -12,6 +12,16 @@ const nextConfig = {
   basePath: '/academy',
   reactStrictMode: true,
   swcMinify: false,
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/academy',
+        permanent: true,
+        basePath: false,
+      },
+    ]
+  },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
