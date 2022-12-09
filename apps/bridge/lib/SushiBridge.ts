@@ -4,7 +4,7 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero, Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
-import { STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
+import { StargateChainId, STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { formatBytes32String } from 'ethers/lib/utils'
@@ -196,8 +196,8 @@ export class SushiBridge {
 
   readonly crossChain: boolean
 
-  readonly srcChainId: number
-  readonly dstChainId: number
+  readonly srcChainId: StargateChainId
+  readonly dstChainId: StargateChainId
 
   readonly srcToken: Currency
   readonly dstToken: Currency
@@ -231,8 +231,8 @@ export class SushiBridge {
     this.srcUseBentoBox = srcUseBentoBox
     this.dstUseBentoBox = dstUseBentoBox
 
-    this.srcChainId = this.srcToken.chainId
-    this.dstChainId = this.dstToken.chainId
+    this.srcChainId = this.srcToken.chainId as StargateChainId
+    this.dstChainId = this.dstToken.chainId as StargateChainId
 
     this.crossChain = this.srcChainId !== this.dstChainId
 

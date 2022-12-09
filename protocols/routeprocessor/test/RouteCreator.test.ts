@@ -133,7 +133,7 @@ async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Tok
 }
 
 describe('RouteCreator', async function () {
-  it('Ethereum WETH => FEI check', async function () {
+  it.skip('Ethereum WETH => FEI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined
@@ -148,7 +148,7 @@ describe('RouteCreator', async function () {
     }
   })
 
-  it('Polygon WMATIC => SUSHI check', async function () {
+  it.skip('Polygon WMATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
       expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined

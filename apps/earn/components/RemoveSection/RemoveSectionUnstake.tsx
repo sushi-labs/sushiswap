@@ -29,7 +29,11 @@ export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress 
 
   return (
     <AppearOnMount show={true}>
-      <_RemoveSectionUnstake pair={pair} chefType={CHEF_TYPE_MAP[pair.farm.chefType]} farmId={Number(pair.farm.id)} />
+      <_RemoveSectionUnstake
+        pair={pair}
+        chefType={CHEF_TYPE_MAP[pair.farm.chefType as keyof typeof CHEF_TYPE_MAP]}
+        farmId={Number(pair.farm.id)}
+      />
     </AppearOnMount>
   )
 }

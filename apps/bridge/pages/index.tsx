@@ -2,7 +2,7 @@ import { ArrowRightIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
+import { StargateChainId, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
 import { Button, Loader, Typography, Widget } from '@sushiswap/ui'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import {
@@ -44,8 +44,8 @@ export default function Bridge({
   dstToken,
   srcTypedAmount,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const srcTokens = useMemo(() => STARGATE_BRIDGE_TOKENS[srcChainId], [srcChainId])
-  const dstTokens = useMemo(() => STARGATE_BRIDGE_TOKENS[dstChainId], [dstChainId])
+  const srcTokens = useMemo(() => STARGATE_BRIDGE_TOKENS[srcChainId as StargateChainId], [srcChainId])
+  const dstTokens = useMemo(() => STARGATE_BRIDGE_TOKENS[dstChainId as StargateChainId], [dstChainId])
   return (
     <Layout>
       <Head>
@@ -55,8 +55,8 @@ export default function Bridge({
       <BridgeStateProvider
         initialState={{
           id: nanoid(),
-          srcChainId: Number(srcChainId),
-          dstChainId: Number(dstChainId),
+          srcChainId: Number(srcChainId) as StargateChainId,
+          dstChainId: Number(dstChainId) as StargateChainId,
           srcToken: srcTokens.includes(srcToken) ? srcTokens[srcTokens.indexOf(srcToken)] : srcTokens[0],
           dstToken: dstTokens.includes(dstToken) ? dstTokens[dstTokens.indexOf(dstToken)] : dstTokens[0],
           srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
@@ -97,7 +97,7 @@ const _Bridge: FC = () => {
   }, [srcToken, srcTypedAmount])
 
   const onSrcNetworkSelect = useCallback(
-    (chainId: number) => {
+    (chainId: StargateChainId) => {
       setSrcChainId(chainId)
       setSrcToken(STARGATE_BRIDGE_TOKENS[chainId][0])
     },
@@ -105,7 +105,7 @@ const _Bridge: FC = () => {
   )
 
   const onDstNetworkSelect = useCallback(
-    (chainId: number) => {
+    (chainId: StargateChainId) => {
       setDstChainId(chainId)
       setDstToken(STARGATE_BRIDGE_TOKENS[chainId][0])
     },

@@ -40,7 +40,7 @@ export default function BentoBoxStrategiesPage({ data }: InferGetServerSideProps
           BentoBox Strategies
         </Typography>
         <div className="grid grid-cols-1 gap-5 mt-5">
-          {data.map((kpi) => (
+          {data.map((kpi: any) => (
             <pre key={kpi.chainId} className="p-4 bg-slate-700 rounded-3xl">
               {JSON.stringify(kpi, null, 2)}
             </pre>

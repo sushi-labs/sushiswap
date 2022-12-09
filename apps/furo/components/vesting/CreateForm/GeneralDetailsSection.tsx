@@ -11,6 +11,7 @@ import { useCustomTokens } from '../../../lib/state/storage'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
 import { CreateVestingFormSchemaType } from './schema'
+import { Type } from '@sushiswap/currency'
 
 export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const tokenMap = useTokens(chainId)
@@ -25,7 +26,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
   }, [])
 
   const onSelect = useCallback(
-    (onChange, currency) => {
+    (onChange: (...event: any[]) => void, currency: Type) => {
       if (currency.isNative) {
         const { chainId, decimals, symbol, name, isNative } = currency
         onChange({ chainId, decimals, address: undefined, symbol, name, isNative })

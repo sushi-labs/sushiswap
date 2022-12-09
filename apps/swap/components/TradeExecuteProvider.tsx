@@ -15,10 +15,10 @@ import {
   useBentoBoxTotal,
   useSendTransaction,
 } from '@sushiswap/wagmi'
-import { FC, useCallback, useMemo } from 'react'
+import { Dispatch, FC, ReactElement, ReactNode, SetStateAction, useCallback, useMemo } from 'react'
 import { useAccount, useProvider, UserRejectedRequestError } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
-
+import { TransactionRequest } from '@ethersproject/providers'
 import { approveMasterContractAction, batchAction, unwrapWETHAction } from '../lib/actions'
 import { useTransactionDeadline } from '../lib/hooks'
 import { useRouters } from '../lib/hooks/useRouters'
@@ -39,7 +39,7 @@ interface TradeExecuteProvider {
   onSuccess?(data: SendTransactionResult): void
   chainId: number | undefined
   approved: boolean | undefined
-  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean })
+  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean }): ReactElement
 }
 
 export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
@@ -66,7 +66,7 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
   )
 
   const prepare = useCallback(
-    async (setRequest) => {
+    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!trade || !account || !chainId || !deadline || !approved) return
       try {
         let call: SwapCall | null = null

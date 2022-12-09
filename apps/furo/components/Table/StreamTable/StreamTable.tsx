@@ -46,7 +46,6 @@ export const StreamTable: FC<FuroTableProps> = ({
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const [columns] = useState([
     STREAMED_COLUMN,
@@ -70,7 +69,7 @@ export const StreamTable: FC<FuroTableProps> = ({
               furo: stream,
               rebase: rebases.find((rebase) =>
                 stream.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
+                  ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
                   : rebase.id === stream.token.id
               ) as RebaseDTO,
             })
@@ -84,7 +83,7 @@ export const StreamTable: FC<FuroTableProps> = ({
               furo: vesting,
               rebase: rebases.find((rebase) =>
                 vesting.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
+                  ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
                   : rebase.id === vesting.token.id
               ) as RebaseDTO,
             })

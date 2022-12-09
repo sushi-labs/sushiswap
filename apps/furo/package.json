@@ -9,7 +9,8 @@
     "generate": "graphclient build",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
-    "test": "jest --watch --no-cache"
+    "test": "jest --watch --no-cache",
+    "check": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",

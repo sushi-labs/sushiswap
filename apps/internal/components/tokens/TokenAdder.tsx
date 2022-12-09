@@ -36,6 +36,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
       event.stopPropagation()
       setAddState('submitting')
       try {
+        if (!selectedLogoURI) throw new Error('No logo URI')
         const logo = await fetch(selectedLogoURI)
           .then((response) => response.blob())
           .then((blob) => {

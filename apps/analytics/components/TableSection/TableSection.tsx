@@ -12,7 +12,7 @@ export const TableSection: FC = () => {
   const { selectedNetworks, setFilters } = usePoolFilters()
 
   const onChange = useCallback(
-    (val) => {
+    (val: number) => {
       setFilters({ selectedTable: val === 0 ? SelectedTable.Markets : SelectedTable.Tokens })
     },
     [setFilters]

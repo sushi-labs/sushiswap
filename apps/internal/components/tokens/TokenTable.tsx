@@ -98,6 +98,7 @@ export const TokenTable: FC<TokenTable> = ({ tokens }) => {
   return (
     <GenericTable
       table={table}
+      // @ts-ignore
       columns={columns}
       // getLink={(row) => chains[row.chainId].getTokenUrl(row.id.split(':')[1])}
     />

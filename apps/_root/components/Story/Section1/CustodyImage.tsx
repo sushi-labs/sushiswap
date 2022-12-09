@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import Image from 'next/legacy/image'
 import { useRef } from 'react'
 
-function transformTemplate(transformProps) {
+function transformTemplate(transformProps: any) {
   return `perspective(${transformProps.y.toString()}) rotateX(${transformProps.rotateX.toString()}) scale(${transformProps.scale.toString()})`
 }
 

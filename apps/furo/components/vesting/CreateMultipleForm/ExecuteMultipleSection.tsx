@@ -6,7 +6,7 @@ import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotals, useFuroVestingRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -16,6 +16,7 @@ import { useNotifications } from '../../../lib/state/storage'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingFormSchemaType } from './schema'
+import { TransactionRequest } from '@ethersproject/providers'
 
 export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
@@ -80,7 +81,7 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
   )
 
   const prepare = useCallback(
-    (setRequest) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!isReview || !isValid || isValidating || !contract || !address || !chainId || !vestings || !rebases) return
 
       const summedValue = summedAmounts[AddressZero] || Amount.fromRawAmount(Native.onChain(chainId), '0')
@@ -157,9 +158,20 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
       className="!items-end"
       components={
         <Approve.Components>
-          <Approve.Bentobox id="furo-create-multiple-vest-approve-bentobox" enabled={true} address={contract?.address} onSignature={setSignature} />
+          <Approve.Bentobox
+            id="furo-create-multiple-vest-approve-bentobox"
+            enabled={true}
+            address={contract?.address}
+            onSignature={setSignature}
+          />
           {Object.values(summedAmounts).map((amount, index) => (
-            <Approve.Token id={`furo-create-multiple-vest-approve-token${index}`} enabled={true} key={index} amount={amount} address={BENTOBOX_ADDRESS[chainId]} />
+            <Approve.Token
+              id={`furo-create-multiple-vest-approve-token${index}`}
+              enabled={true}
+              key={index}
+              amount={amount}
+              address={BENTOBOX_ADDRESS[chainId]}
+            />
           ))}
         </Approve.Components>
       }

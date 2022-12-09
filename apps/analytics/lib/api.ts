@@ -1,5 +1,6 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import {
+  Bundle,
   getBuiltGraphSDK,
   Pagination,
   QuerypairsWithFarmsArgs,
@@ -15,7 +16,7 @@ export const getBundles = async () => {
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
-  return bundles.reduce((acc, cur) => {
+  return bundles.reduce<Record<number, Pick<Bundle, 'id' | 'chainId' | 'nativePrice'>>>((acc, cur) => {
     acc[cur.chainId] = cur
     return acc
   }, {})
@@ -72,7 +73,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     })
 
     return pairs
-  } catch (error) {
+  } catch (error: any) {
     console.log(error)
     throw new Error(error)
   }
@@ -108,7 +109,7 @@ export const getTokens = async (query?: GetTokensQuery) => {
       chainIds,
     })
     return tokens
-  } catch (error) {
+  } catch (error: any) {
     console.log(error)
     throw new Error(error)
   }

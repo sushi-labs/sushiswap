@@ -28,7 +28,7 @@ export const CurrencyCell: FC<CellProps> = ({ row, index, chainId = ChainId.ETHE
   }, [])
 
   const onSelect = useCallback(
-    (onChange, currency: Type) => {
+    (onChange: (...event: any[]) => void, currency: Type) => {
       if (currency.isNative) {
         const { chainId, decimals, symbol, name, isNative } = currency
         onChange({ chainId, decimals, address: undefined, symbol, name, isNative })

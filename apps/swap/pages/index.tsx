@@ -65,23 +65,23 @@ const DEAFAULT_TOKEN_1 = {
     symbol: 'AVAX',
     name: 'Avax',
   }),
-}
+} as const
 
 const getDefaultToken1 = (chainId: number) => {
   if (chainId in DEAFAULT_TOKEN_1) {
-    return DEAFAULT_TOKEN_1[chainId]
+    return DEAFAULT_TOKEN_1[chainId as keyof typeof DEAFAULT_TOKEN_1]
   }
-  if (chainId in WETH9 && chainId in WNATIVE && WNATIVE[chainId] !== WETH9[chainId]) {
+  if (chainId in WETH9 && chainId in WNATIVE && WNATIVE[chainId as keyof typeof WNATIVE] !== WETH9[chainId]) {
     return WETH9[chainId]
   }
   if (chainId in WBTC) {
-    return WBTC[chainId]
+    return WBTC[chainId as keyof typeof WBTC]
   }
   if (chainId in USDC) {
-    return USDC[chainId]
+    return USDC[chainId as keyof typeof USDC]
   }
   if (chainId in USDT) {
-    return USDT[chainId]
+    return USDT[chainId as keyof typeof USDT]
   }
 }
 
