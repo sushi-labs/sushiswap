@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { tryParseAmount } from '@sushiswap/currency'
+import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Form, Select } from '@sushiswap/ui'
 import { TokenSelector, useBalance } from '@sushiswap/wagmi'
@@ -45,7 +45,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
   }, [])
 
   const onSelect = useCallback(
-    (onChange, currency) => {
+    (onChange: (...event: any[]) => void, currency: Type) => {
       if (currency.isNative) {
         const { chainId, decimals, symbol, name, isNative } = currency
         onChange({ chainId, decimals, address: undefined, symbol, name, isNative })
@@ -62,7 +62,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
 
   useEffect(() => {
     const cAmount = tryParseAmount(amount, _currency)
-    if (!balance?.[_fundSource] || !cAmount) return
+    if (!_fundSource || !balance?.[_fundSource] || !cAmount) return
     if (balance[_fundSource].lessThan(cAmount)) {
       setError('FORM_ERROR', { type: 'min', message: 'Insufficient Balance' })
     } else {

@@ -8,6 +8,7 @@ import { useAccount } from 'wagmi'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CreateVestingFormSchemaType } from './schema'
+import { FundSource } from '@sushiswap/hooks'
 
 export const CliffDetailsSection: FC = () => {
   const { address } = useAccount()
@@ -107,7 +108,7 @@ export const CliffDetailsSection: FC = () => {
                 name={name}
                 onBlur={onBlur}
                 className="ring-offset-slate-900"
-                fundSource={_fundSource}
+                fundSource={_fundSource || FundSource.WALLET}
                 account={address}
                 onError={onCurrencyInputError}
                 errorMessage={validationError?.message}

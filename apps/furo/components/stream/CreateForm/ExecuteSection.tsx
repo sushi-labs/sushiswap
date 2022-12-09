@@ -7,7 +7,7 @@ import { ZERO } from '@sushiswap/math'
 import { Button, Dots, Form } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotal, useFuroStreamRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -16,6 +16,7 @@ import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../
 import { useNotifications } from '../../../lib/state/storage'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
+import { TransactionRequest } from '@ethersproject/providers'
 
 export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
@@ -66,7 +67,7 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   )
 
   const prepare = useCallback(
-    async (setRequest) => {
+    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (
         !_amount ||
         !contract ||
@@ -148,9 +149,14 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         className="!items-end"
         components={
           <Approve.Components>
-            <Approve.Bentobox id="furo-create-single-stream-approve-bentobox" enabled={formValid} address={contract?.address} onSignature={setSignature} />
+            <Approve.Bentobox
+              id="furo-create-single-stream-approve-bentobox"
+              enabled={formValid}
+              address={contract?.address}
+              onSignature={setSignature}
+            />
             <Approve.Token
-              id="furo-create-single-stream-approve-token" 
+              id="furo-create-single-stream-approve-token"
               enabled={formValid && _amount?.greaterThan(ZERO)}
               amount={_amount}
               address={BENTOBOX_ADDRESS[chainId]}
