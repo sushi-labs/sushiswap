@@ -2,7 +2,10 @@
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
     "db:pull": {
-      "cache": false
+      "cache": false,
+      "env": [
+        "DATABASE_URL"
+      ]
     },
     "db:generate": {
       "dependsOn": [
@@ -69,7 +72,9 @@
         "KASHI_URL",
         "PARTNER_URL",
         "SWAP_URL",
-        "XSWAP_URL"
+        "XSWAP_URL",
+        "DATABASE_URL",
+        "REDIS_URL"
       ]
     },
     "clean": {
