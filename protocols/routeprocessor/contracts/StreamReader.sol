@@ -1,4 +1,4 @@
-
+// SPDX-License-Identifier: UNLICENSED
 
 contract StreamReader {
   
