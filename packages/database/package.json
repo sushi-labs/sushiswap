@@ -28,7 +28,7 @@
     "lint": "TIMING=1 eslint src --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests",
-    "db:init": "prisma init --datasource-provider mysql && rm .gitignore && rm .env",
+    "db:init": "ls prisma/schema.prisma || (prisma init --datasource-provider mysql && rm .gitignore && rm .env)",
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
     "db:pull": "prisma db pull"

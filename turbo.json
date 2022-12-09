@@ -2,11 +2,17 @@
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
     "db:init": {
+      "outputs": [
+        "prisma/**"
+      ],
       "cache": false
     },
     "db:pull": {
+      "outputs": [
+        "prisma/**"
+      ],
       "dependsOn": [
-        "^db:init"
+        "db:init"
       ],
       "cache": false,
       "env": [
@@ -15,7 +21,7 @@
     },
     "db:generate": {
       "dependsOn": [
-        "^db:pull"
+        "db:pull"
       ],
       "cache": false
     },
@@ -65,6 +71,7 @@
       "dependsOn": [
         "^build",
         "^db:generate",
+        "db:generate",
         "generate"
       ],
       "env": [
