@@ -1,6 +1,7 @@
 import { chainShortName } from '@sushiswap/chain'
+import { Farm } from '../lib/farms'
 
-import { Farm, Pair } from '../.graphclient'
+import { Pair } from '../.graphclient'
 import { transformFarm } from './transformFarm'
 
 export function transformPair({

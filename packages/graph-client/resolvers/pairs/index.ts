@@ -1,3 +1,4 @@
+import { getFarms } from '../../lib/farms'
 import { getBuiltGraphSDK, Query, QueryResolvers, Resolvers } from '../../.graphclient'
 import { page } from '../../lib/page'
 import { transformPair } from '../../transformers'
@@ -16,7 +17,9 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
 ): Promise<Query['pairsWithFarms']> => {
   // const { farms } = await sdk.FarmsV0()
 
-  const farms = await fetch('https://farm.sushi.com/api/v0').then((res) => res.json())
+  const farms = await getFarms()
+
+  console.log({ farms })
 
   const pools = await (args?.farmsOnly
     ? Promise.all(

@@ -2,6 +2,7 @@ import { chainShortName } from '@sushiswap/chain'
 
 import { getBuiltGraphSDK, Pair, Query, QueryResolvers, UserWithFarm } from '../../.graphclient'
 import { fetchBalances } from '../../lib/wagmi'
+import { getFarms } from '../../lib/farms'
 import { transformPair } from '../../transformers'
 // import { userWithLiquidityPositions } from './userWithLiquidityPositions'
 
@@ -14,7 +15,7 @@ export const crossChainUserWithFarms: QueryResolvers['crossChainUserWithFarms'] 
   const sdk = getBuiltGraphSDK()
 
   const [farms, { liquidityPositions }, { crossChainChefUser: chefUser }] = await Promise.all([
-    context.FarmsV0.Query.farmsv0(root, args, context, info),
+    getFarms(),
     sdk.LiquidityPositions({
       chainIds: args.chainIds,
       where: {
