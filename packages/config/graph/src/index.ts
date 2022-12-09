@@ -11,6 +11,8 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.BSC,
 ] as const
 
+export type TridentChainId = typeof TRIDENT_ENABLED_NETWORKS[number]
+
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
@@ -30,6 +32,8 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   // ChainId.HECO,
   // ChainId.OKEX
 ] as const
+
+export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
 
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
@@ -67,7 +71,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BTTC]: 'BitTorrent',
 }
 
-export const SUBGRAPH_HOST: Record<number, string> = {
+export const SUBGRAPH_HOST = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
   [ChainId.ARBITRUM_NOVA]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
@@ -90,7 +94,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
-}
+} as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.ETHEREUM]: 'sushiswap/bentobox-ethereum',
@@ -108,6 +112,8 @@ export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.KAVA]: 'sushiswap/bentobox-kava',
   [ChainId.BTTC]: 'sushiswap/bentobox-bttc',
 } as const
+
+export type BentoBoxChainId = keyof typeof BENTOBOX_SUBGRAPH_NAME
 
 export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ETHEREUM]: 'blocklytics/ethereum-blocks',

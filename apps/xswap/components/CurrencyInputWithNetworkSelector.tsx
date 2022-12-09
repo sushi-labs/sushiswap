@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import chains, { ChainId } from '@sushiswap/chain'
+import chains, { ChainId, chainName } from '@sushiswap/chain'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
@@ -43,14 +43,14 @@ export const CurrencyInputWithNetworkSelector: FC<CurrencyInputWithNetworkSelect
         <div className="flex flex-row justify-between">
           <button
             type="button"
-            className="text-slate-400 hover:text-slate-300 relative flex items-center gap-1 py-1 text-xs font-medium"
+            className="relative flex items-center gap-1 py-1 text-xs font-medium text-slate-400 hover:text-slate-300"
             onClick={(e) => {
               setNetworkSelectorOpen(true)
               e.stopPropagation()
             }}
           >
-            <NetworkIcon chainId={chainId} width="16px" height="16px" className="mr-1" />
-            {chains[chainId].name} <ChevronDownIcon width={16} height={16} />
+            <NetworkIcon chainId={chainId as ChainId} width="16px" height="16px" className="mr-1" />
+            {chainName[chainId as ChainId]} <ChevronDownIcon width={16} height={16} />
           </button>
         </div>
         <Web3Input.Currency
@@ -73,7 +73,7 @@ export const CurrencyInputWithNetworkSelector: FC<CurrencyInputWithNetworkSelect
           open={networkSelectorOpen}
           onClose={handleClose}
           onSelect={onNetworkSelect}
-          selected={chainId}
+          selected={chainId as ChainId}
         />
       </div>
     ),

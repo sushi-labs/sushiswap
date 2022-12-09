@@ -1,7 +1,7 @@
 {
   "extends": "@sushiswap/typescript-config/nextjs.json",
   "include": ["next-env.d.ts", "furo-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "__tests__"],
   "compilerOptions": {
     "baseUrl": ".",
     "strictNullChecks": true

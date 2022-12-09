@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Pair } from '@sushiswap/graph-client'
+import { Pair, PairType, QuerypairArgs, QuerypairsArgs, QuerytokenPairsArgs } from '@sushiswap/graph-client'
 import { GenericTable, Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
@@ -45,9 +45,9 @@ const fetcher = ({
     _url.searchParams.set('networks', stringify(args.selectedNetworks))
   }
 
-  const where = {}
+  const where: QuerypairsArgs['where'] = {}
   if (args.query) where['name_contains_nocase'] = args.query
-  if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes
+  if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes as PairType[]
 
   if (Object.keys(where).length > 0) {
     _url.searchParams.set('where', JSON.stringify(where))

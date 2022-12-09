@@ -106,9 +106,9 @@ const TABS: TabsExpendableCardData[] = [
   // },
 ]
 
-function transformTemplate(transformProps) {
-  return `perspective(${transformProps.y.toString()}) rotateX(${transformProps.rotateX.toString()}) scale(${transformProps.scale.toString()})`
-}
+// function transformTemplate(transformProps) {
+//   return `perspective(${transformProps.y.toString()}) rotateX(${transformProps.rotateX.toString()}) scale(${transformProps.scale.toString()})`
+// }
 
 export const Ecosystem: FC = () => {
   const [_index, setIndex] = useState(0)

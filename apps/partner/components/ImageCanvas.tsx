@@ -1,5 +1,5 @@
 import { FormType } from 'pages'
-import { HTMLAttributes, MutableRefObject } from 'react'
+import { HTMLAttributes, RefObject } from 'react'
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import Resizer from 'react-image-file-resizer'
@@ -17,7 +17,7 @@ function adjust(color: string, amount: number) {
 
 interface ImageCanvas extends HTMLAttributes<HTMLCanvasElement> {
   size: number
-  canvasRef: MutableRefObject<HTMLCanvasElement> | null
+  canvasRef: RefObject<HTMLCanvasElement>
 }
 
 export const ImageCanvas: FC<ImageCanvas> = ({ size, canvasRef, ...props }) => {
@@ -25,8 +25,11 @@ export const ImageCanvas: FC<ImageCanvas> = ({ size, canvasRef, ...props }) => {
   const [logoUri, logoFile, logoSize, background] = watch(['logoUri', 'logoFile', 'logoSize', 'background'])
 
   useEffect(() => {
-    if (canvasRef.current && background) {
+    if (canvasRef?.current && background) {
       const ctx = canvasRef.current.getContext('2d')
+
+      if (!ctx) return
+
       const grd = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size)
       grd.addColorStop(0, background)
       grd.addColorStop(1, adjust(background, -100))
@@ -53,7 +56,7 @@ export const ImageCanvas: FC<ImageCanvas> = ({ size, canvasRef, ...props }) => {
         'PNG',
         100,
         0,
-        (uri: string) => setValue('logoUri', uri),
+        (uri) => setValue('logoUri', uri as string),
         'base64',
         0,
         0

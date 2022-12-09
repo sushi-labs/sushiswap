@@ -1,4 +1,4 @@
-import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { BentoBoxChainId, BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
 import { pager } from '../pager'
 import { bentoTokensQuery } from '../queries/bentobox'
@@ -6,7 +6,10 @@ import { getNativePrice, getTokenPrices } from './exchange'
 
 export default async function getBentoTVL() {
   const bentoTVLQueries: Promise<number>[] = []
-  for (const chainId of Object.keys(BENTOBOX_SUBGRAPH_NAME) as unknown as number[]) {
+
+  const chainIds = Object.keys(BENTOBOX_SUBGRAPH_NAME).map((chainId) => Number(chainId) as BentoBoxChainId)
+
+  for (const chainId of chainIds) {
     bentoTVLQueries.push(
       (async function () {
         try {
@@ -16,18 +19,19 @@ export default async function getBentoTVL() {
             bentoTokensQuery
           )
           const tokenPrices = await getTokenPrices(
-            bentoTokens.map((bentoToken) => bentoToken.id),
+            bentoTokens.map((bentoToken: any) => bentoToken.id),
             chainId
           )
 
           return bentoTokens
-            .map((bentoToken) => {
+            .map((bentoToken: any) => {
               const tokenPriceUSD =
-                Number(tokenPrices.find((tokenPrice) => tokenPrice.id === bentoToken.id)?.derivedETH ?? 0) * nativePrice
+                Number(tokenPrices.find((tokenPrice: any) => tokenPrice.id === bentoToken.id)?.derivedETH ?? 0) *
+                nativePrice
 
               return Number((bentoToken.rebase.elastic / 10 ** bentoToken.decimals) * tokenPriceUSD)
             })
-            .reduce((acc, cur) => Number(acc) + Number(cur), 0)
+            .reduce((acc: any, cur: any) => Number(acc) + Number(cur), 0)
         } catch {
           return 0
         }

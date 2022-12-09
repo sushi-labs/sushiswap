@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
+
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import tailwindConfig from '../../tailwind.config.js'
@@ -69,7 +70,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
 
   // Transient update for performance
   const onMouseOver = useCallback(
-    ({ name, value }) => {
+    ({ name, value }: { name: number; value: number }) => {
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
       const nameNodes = document.getElementsByClassName('hoveredItemName')
 
@@ -99,7 +100,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           fontSize: 12,
           fontWeight: 600,
         },
-        formatter: (params) => {
+        formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
           const date = new Date(Number(params[0].name * 1000))
@@ -166,7 +167,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: function (idx) {
+          animationDelayUpdate: function (idx: number) {
             return idx * 2
           },
           data: yData,

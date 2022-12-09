@@ -29,11 +29,17 @@ interface Props {
   }
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
-  const vesting = (await getVesting(chainId as string, id as string)) as VestingDTO
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (!query?.chainId) throw new Error('No chainId provided')
+  if (!query?.id) throw new Error('No id provided')
+
+  const chainId = query.chainId as string
+  const id = query.id as string
+
+  const vesting = (await getVesting(chainId, id)) as VestingDTO
   const [transactions, rebases] = await Promise.all([
-    getVestingTransactions(chainId as string, id as string),
-    getRebase(chainId as string, vesting.token.id),
+    getVestingTransactions(chainId, id),
+    getRebase(chainId, vesting.token.id),
   ])
   return {
     props: {

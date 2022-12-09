@@ -1,16 +1,12 @@
 import { ethers, network } from 'hardhat'
 import { RouteProcessor__factory } from '../typechain'
-import { Swapper } from '../scripts/Swapper'
-import { getBigNumber, MultiRoute, RouteStatus } from '@sushiswap/tines'
+import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { WETH9ABI } from '../ABI/WETH9'
-import { HardhatNetworkConfig, ProviderConnectInfo } from 'hardhat/types'
-import { HEXer } from '../scripts/HEXer'
-import { ERC20ABI } from '../ABI/ERC20'
+import { HardhatNetworkConfig } from 'hardhat/types'
+
 import { BentoBox } from '../scripts/liquidityProviders/Trident'
-import { Contract } from 'ethers'
-import { BentoBoxABI } from '../ABI/BentoBoxABI'
-import { ChainKey, ChainId } from '@sushiswap/chain'
-import { SUSHI, Token, WBTC, WNATIVE } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
+import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
 import { expect } from 'chai'
 import { RouteCreator } from '../scripts/RouteCreator'
 
@@ -135,8 +131,8 @@ async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Tok
   console.log(`    gas use: ${receipt.gasUsed.toString()}`)
 }
 
-describe.skip('RouteCreator', async function () {
-  it('Ethereum WETH => FEI check', async function () {
+describe('RouteCreator', async function () {
+  it.skip('Ethereum WETH => FEI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined
@@ -151,7 +147,7 @@ describe.skip('RouteCreator', async function () {
     }
   })
 
-  it('Polygon WMATIC => SUSHI check', async function () {
+  it.skip('Polygon WMATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
       expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined

@@ -45,7 +45,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
 }
 
 const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback, selectedNetworks }) => {
-  const parsedSelectedNetworks = useMemo(() => selectedNetworks.map(Number), [selectedNetworks])
+  const parsedSelectedNetworks = useMemo(
+    () => selectedNetworks.map(Number) as typeof SUPPORTED_CHAIN_IDS,
+    [selectedNetworks]
+  )
   return (
     <SWRConfig value={{ fallback }}>
       <_Pools selectedNetworks={parsedSelectedNetworks} />
@@ -53,7 +56,7 @@ const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback, s
   )
 }
 
-const _Pools = ({ selectedNetworks }) => {
+const _Pools = ({ selectedNetworks }: { selectedNetworks: typeof SUPPORTED_CHAIN_IDS }) => {
   return (
     <Layout>
       <div className="flex flex-col gap-10 md:gap-16">

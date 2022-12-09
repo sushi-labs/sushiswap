@@ -1,4 +1,5 @@
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
+import { FundSource } from '@sushiswap/hooks'
 import {
   Button,
   classNames,
@@ -37,7 +38,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
   } = useFormContext<CreateMultipleVestingFormSchemaType>()
   const formData = watch(`vestings.${index}`)
   const { currency, fundSource, stepConfig, startDate, cliff } = formData
-  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
+  const _fundSource = ZFundSourceToFundSource.parse(fundSource) as FundSource
   const _currency = useTokenFromZToken(currency)
   const endDate = calculateEndDate(formData)
   const cliffEndDate = cliff.cliffEnabled ? cliff.cliffEndDate : undefined
@@ -259,7 +260,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                   </Select.Button>
                                 }
                                 value={value}
-                                onChange={(val) => {
+                                onChange={(val: any) => {
                                   onChange(val)
                                   onBlur()
                                 }}

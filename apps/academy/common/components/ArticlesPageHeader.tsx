@@ -49,7 +49,9 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
                 type="button"
                 className="flex items-center justify-between w-full h-full gap-2 px-6 rounded-lg bg-slate-800 text-slate-50"
               >
-                <span className="text-lg min-w-max">{selectedDifficulty?.attributes.label ?? 'Select Difficulty'}</span>
+                <span className="text-lg min-w-max">
+                  {selectedDifficulty?.attributes?.label ?? 'Select Difficulty'}
+                </span>
                 <ChevronDownIcon width={12} height={12} aria-hidden="true" />
               </Listbox.Button>
             </GradientWrapper>
@@ -61,7 +63,7 @@ export const ArticlesPageHeader: FC<ArticlesPagesHeader> = ({ title, difficultie
                 key={i}
                 value={difficulty}
                 isSelected={difficulty.id === selectedDifficulty?.id}
-                title={difficulty.attributes?.name}
+                title={difficulty?.attributes?.name as string}
                 className="px-4 text-base"
               />
             ))}

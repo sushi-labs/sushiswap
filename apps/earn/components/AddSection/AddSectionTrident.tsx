@@ -40,7 +40,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   }, [input0, input1, token0, token1])
 
   const onChangeToken0TypedAmount = useCallback(
-    (value) => {
+    (value: string) => {
       if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
@@ -58,7 +58,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   )
 
   const onChangeToken1TypedAmount = useCallback(
-    (value) => {
+    (value: string) => {
       if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,

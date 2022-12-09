@@ -192,7 +192,7 @@ const _Add: FC<AddProps> = ({
   }, [input0, input1, token0, token1])
 
   const onChangeToken0TypedAmount = useCallback(
-    (value) => {
+    (value: string) => {
       if (
         poolState === PairState.NOT_EXISTS ||
         poolState === ConstantProductPoolState.NOT_EXISTS ||
@@ -214,7 +214,7 @@ const _Add: FC<AddProps> = ({
   )
 
   const onChangeToken1TypedAmount = useCallback(
-    (value) => {
+    (value: string) => {
       if (
         poolState === PairState.NOT_EXISTS ||
         poolState === ConstantProductPoolState.NOT_EXISTS ||

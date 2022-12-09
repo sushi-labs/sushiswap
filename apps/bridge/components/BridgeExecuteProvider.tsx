@@ -1,7 +1,8 @@
+import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native } from '@sushiswap/currency'
 import { useBentoBoxTotal, useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { FC, useCallback } from 'react'
+import { Dispatch, FC, ReactElement, SetStateAction, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
@@ -11,7 +12,7 @@ import { useBridgeState, useBridgeStateActions } from './BridgeStateProvider'
 
 interface BridgeExecuteProvider {
   approved: boolean | undefined
-  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean })
+  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean }): ReactElement
 }
 
 export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, children }) => {
@@ -87,13 +88,13 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
   }, [address, amount, contract, dstToken, id, setGasFee, signature, srcChainId, srcInputCurrencyRebase, srcToken])
 
   const prepare = useCallback(
-    (setRequest) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       const bridge = prepareBridge()
       if (bridge && approved) {
         bridge
           .cook(1000000)
           .then((request) => {
-            if (request) setRequest(request)
+            if (request) setRequest(request as (TransactionRequest & { to: string }) | undefined)
           })
           .catch((err) => {
             console.error('catch err', err)

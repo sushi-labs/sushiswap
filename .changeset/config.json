@@ -22,6 +22,7 @@
       "node-16-example",
       "farm-api",
       "path-finder-api",
+      "@sushiswap/tokens-api",
       "token-list-api",
       "token-logo-api",
       "token-price-api",
