@@ -146,32 +146,20 @@ importers:
 
   apis/tokens:
     specifiers:
-      '@prisma/client': ^4.7.1
-      '@sushiswap/chainlink-token-list': ^0.1.0
       '@sushiswap/database': workspace:*
-      '@sushiswap/default-token-list': ^39.3.0
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@vercel/node': ^2.2.0
-      ioredis: ^5.2.4
-      prisma: ^4.7.1
-      prisma-redis-middleware: ^4.3.0
     dependencies:
-      '@prisma/client': 4.7.1_prisma@4.7.1
-      '@sushiswap/chainlink-token-list': 0.1.0
       '@sushiswap/database': link:../../packages/database
-      '@sushiswap/default-token-list': 39.3.0
       '@vercel/node': 2.7.0
-      ioredis: 5.2.4
-      prisma-redis-middleware: 4.3.0
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
-      prisma: 4.7.1
 
   apps/_root:
     specifiers:
