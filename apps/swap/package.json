@@ -9,7 +9,8 @@
     "dev": "next dev -p 3009",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
-    "test:e2e": "npx playwright test"
+    "test:e2e": "npx playwright test",
+    "check": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",

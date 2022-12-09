@@ -8,7 +8,8 @@
     "dev": "next dev -p 3008",
     "generate": "graphclient build",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "start": "next start"
+    "start": "next start",
+    "check": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",

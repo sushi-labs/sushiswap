@@ -8,7 +8,8 @@
     "dev": "next dev --port 3002",
     "generate": "graphql-mesh build",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "start": "next start"
+    "start": "next start",
+    "check": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.8.0",
