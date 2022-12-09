@@ -63,7 +63,7 @@ async function getReserves(chainId: ChainId, poolAddresses: string[]): Promise<P
     chainId,
     abi: IUniswapV2PairArtifact.abi,
     functionName: 'getReserves',
-    // allowFailure: true,
+    allowFailure: true,
   }))
   const startTime = performance.now()
   const batchSize = 1000
@@ -76,21 +76,22 @@ async function getReserves(chainId: ChainId, poolAddresses: string[]): Promise<P
     })
     requests.push(request)
   }
-  // TODO: allowFailure, handle failure
-
   const data = await Promise.all(requests)
-  
-  // TODO: close wagmi connection
   const reserves: any = data.flat()
 
-  // MATT, TODO: this is a hack, index safe? what if one fails does it still return in order?
-  const mappedPairs = poolAddresses.map((address, i) => {
-    return {
-      address,
-      reserve0: reserves[i].reserve0.toString() as string,
-      reserve1: reserves[i].reserve1.toString() as string,
+  const mappedPairs = poolAddresses.reduce<PoolWithReserve[]>((prev, address, i) => {
+    if (!reserves[i]) {
+      return prev
     }
-  })
+    return [
+      ...prev,
+      {
+        address,
+        reserve0: reserves[i].reserve0.toString() as string,
+        reserve1: reserves[i].reserve1.toString() as string,
+      },
+    ]
+  }, [])
 
   const endTime = performance.now()
   console.log(`Fetched reserves for ${mappedPairs.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)

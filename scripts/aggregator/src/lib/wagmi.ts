@@ -10,6 +10,12 @@ if (!alchemyId) {
 } else {
   console.log(`Using Alchemy ID: ${alchemyId}`)
 }
-createClient(
-  configureChains([...allChains, ...otherChains], [publicProvider(), alchemyProvider({ apiKey: alchemyId })])
+
+const { provider } = configureChains(
+  [...allChains, ...otherChains],
+  [publicProvider(), alchemyProvider({ apiKey: alchemyId })]
 )
+createClient({
+  autoConnect: true,
+  provider,
+})

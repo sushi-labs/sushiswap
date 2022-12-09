@@ -34,6 +34,7 @@ model Token {
   pools1 Pool[] @relation("token1")
 
   @@unique([chainId, address])
+  @@index(fields: [id])
   @@index(fields: [address])
   @@index(fields: [chainId])
   @@index(fields: [address, chainId])
@@ -62,6 +63,7 @@ model Pool {
   updatedAt   DateTime @updatedAt
 
   @@unique([chainId, address])
+  @@index(fields: [id])
   @@index(fields: [address])
   @@index(fields: [chainId, protocol, token0Id, token1Id])
   @@index(fields: [chainId, protocol, version, type])
