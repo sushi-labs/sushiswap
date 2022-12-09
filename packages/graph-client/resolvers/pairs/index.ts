@@ -1,3 +1,4 @@
+import { getFarms } from '../../lib/farms'
 import { getBuiltGraphSDK, Query, QueryResolvers, Resolvers } from '../../.graphclient'
 import { page } from '../../lib/page'
 import { transformPair } from '../../transformers'
@@ -14,7 +15,11 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
   context,
   info
 ): Promise<Query['pairsWithFarms']> => {
-  const { farms } = await sdk.FarmsV0()
+  // const { farms } = await sdk.FarmsV0()
+
+  const farms = await getFarms()
+
+  console.log({ farms })
 
   const pools = await (args?.farmsOnly
     ? Promise.all(

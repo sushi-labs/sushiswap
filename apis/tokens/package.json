@@ -1,0 +1,18 @@
+{
+  "name": "@sushiswap/tokens-api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "TIMING=1 eslint --fix ."
+  },
+  "dependencies": {
+    "@vercel/node": "^2.2.0",
+    "@sushiswap/database": "workspace:*"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*"
+  }
+}

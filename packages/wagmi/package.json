@@ -49,8 +49,8 @@
     "@tanstack/react-query": "latest",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
-    "@wagmi/core": "latest",
-    "wagmi": "latest"
+    "@wagmi/core": "0.7.9",
+    "wagmi": "0.8.10"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
@@ -63,7 +63,7 @@
     "ethers": "^5.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "next": "^13.0.5",
+    "next": "13.0.5",
     "tsup": "6.5.0",
     "typechain": "^8.0.0",
     "typescript": "4.8.2"
@@ -72,6 +72,6 @@
     "ethers": "^5.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "next": "^13.0.5"
+    "next": "13.0.5"
   }
 }

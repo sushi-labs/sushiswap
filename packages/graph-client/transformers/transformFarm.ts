@@ -1,4 +1,4 @@
-import { Farm } from '../.graphclient'
+import { Farm } from '../lib/farms'
 
 export function transformFarm(farm?: Farm) {
   return farm
