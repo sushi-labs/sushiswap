@@ -1,6 +1,33 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
+    "db:init": {
+      "outputs": [
+        "prisma/**"
+      ],
+      "cache": false
+    },
+    "db:pull": {
+      "outputs": [
+        "prisma/**"
+      ],
+      "dependsOn": [
+        "db:init"
+      ],
+      "cache": false,
+      "env": [
+        "DATABASE_URL"
+      ]
+    },
+    "db:generate": {
+      "dependsOn": [
+        "db:pull"
+      ],
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
     "test": {
       "dependsOn": ["build"],
       "outputs": [
@@ -16,6 +43,7 @@
     "start": {
       "dependsOn": [
         "^build",
+        "^db:generate",
         "generate"
       ],
       "cache": false
@@ -42,6 +70,8 @@
       ],
       "dependsOn": [
         "^build",
+        "^db:generate",
+        "db:generate",
         "generate"
       ],
       "env": [
@@ -56,7 +86,9 @@
         "KASHI_URL",
         "PARTNER_URL",
         "SWAP_URL",
-        "XSWAP_URL"
+        "XSWAP_URL",
+        "DATABASE_URL",
+        "REDIS_URL"
       ]
     },
     "clean": {
@@ -68,6 +100,7 @@
     "dev": {
       "dependsOn": [
         "^build",
+        "^db:generate",
         "generate"
       ],
       "cache": false
