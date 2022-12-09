@@ -1,7 +1,13 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
+    "db:init": {
+      "cache": false
+    },
     "db:pull": {
+      "dependsOn": [
+        "^db:init"
+      ],
       "cache": false,
       "env": [
         "DATABASE_URL"
@@ -31,6 +37,7 @@
     "start": {
       "dependsOn": [
         "^build",
+        "^db:generate",
         "generate"
       ],
       "cache": false
