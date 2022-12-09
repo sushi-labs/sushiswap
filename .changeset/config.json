@@ -35,6 +35,7 @@
       "@sushiswap/wagmi",
       "@sushiswap/furo",
       "@sushiswap/kashi",
+      "@sushiswap/database",
       "router"
     ]
   }
