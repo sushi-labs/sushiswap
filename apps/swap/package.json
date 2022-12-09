@@ -18,6 +18,7 @@
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/providers": "^5.7.0",
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
