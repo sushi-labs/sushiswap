@@ -45,11 +45,11 @@ jobs:
         - name: Install dependencies
           run: pnpm install
 
-        - name: Lint protocols
+        - name: Lint packages
           run: pnpm lint-packages
 
-        - name: Build protocols
+        - name: Build packages
           run: pnpm build-packages
 
-        - name: Test protocols
+        - name: Test packages
           run: pnpm test-packages
