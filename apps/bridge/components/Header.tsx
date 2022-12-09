@@ -1,7 +1,9 @@
 import { App, AppType } from '@sushiswap/ui'
-import { NotificationCentre, Wallet } from '@sushiswap/wagmi'
+import { NetworkSelector } from '@sushiswap/wagmi'
+import { Profile } from '@sushiswap/wagmi/components/Wallet/Profile'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { useNotifications } from 'lib/state/storage'
+import React from 'react'
 import { useAccount } from 'wagmi'
 
 export const Header = () => {
@@ -20,12 +22,12 @@ export const Header = () => {
       }
     >
       <div className="flex items-center gap-2">
-        <Wallet.Button
-          size="sm"
-          className="border-none shadow-md whitespace-nowrap"
+        <NetworkSelector supportedNetworks={SUPPORTED_CHAIN_IDS} />
+        <Profile
           supportedNetworks={SUPPORTED_CHAIN_IDS}
+          notifications={notifications}
+          clearNotifications={clearNotifications}
         />
-        <NotificationCentre notifications={notifications} clearNotifications={clearNotifications} />
       </div>
     </App.Header>
   )

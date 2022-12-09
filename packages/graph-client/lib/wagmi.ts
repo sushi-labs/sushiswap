@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { otherChains } from '@sushiswap/wagmi-config'
-import { Address, allChains, configureChains, createClient, erc20ABI, readContract } from '@wagmi/core'
+import { Address, allChains, configureChains, createClient, erc20ABI, readContracts, readContract } from '@wagmi/core'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
 // import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
@@ -37,25 +37,20 @@ createClient({ provider })
 export async function fetchBalances(
   args: { token: string; user: string; chainId: ChainId }[]
 ): Promise<Record<string, string>> {
-  return Promise.allSettled<BigNumber>(
-    args.map(({ token, user, chainId }) =>
-      readContract({
-        address: token,
-        functionName: 'balanceOf',
-        args: [user as Address],
-        chainId,
-        abi: erc20ABI,
-      })
-    )
-  ).then((results) => {
-    return Object.fromEntries(
-      results
-        .filter(isPromiseFulfilled)
-        // Ideally can filter out early, even at query level, but can't for now
-        // .filter((result) => !result.value.isZero())
-        .map((result, i) => [`${args[i].chainId}:${args[i].token}`, result.value.toString()])
-        // So we filter afterwards
-        .filter(([_, value]) => Number(value) > 0)
-    )
-  })
+  const balances = await readContracts({
+    allowFailure: true,
+    contracts: args.map(({ token, user, chainId }) => ({
+      address: token as Address,
+      functionName: 'balanceOf',
+      args: [user as Address] as const,
+      chainId,
+      abi: erc20ABI,
+    })),
+  }).then((values) => values.map((value, i) => ({ ...args[i], value })))
+
+  return Object.fromEntries(
+    balances
+      .filter(({ value }) => value !== null && value.gt(0))
+      .map((balance) => [`${balance.chainId}:${balance.token}`, balance.value.toString()])
+  )
 }

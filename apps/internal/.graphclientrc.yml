@@ -22,7 +22,7 @@ sources:
   - name: TheGraph
     handler:
       graphql:
-        endpoint: https://api.thegraph.com/index-node/graphql
+        endpoint: https://{context.node:api.thegraph.com/index-node/graphql}
 
 additionalTypeDefs: |
   extend type BentoBoxKpi {
@@ -68,8 +68,12 @@ additionalTypeDefs: |
     nonFatalErrorCount: BigInt
     entityCount: BigInt
   }
+  input SubgraphWithNode {
+    subgraphName: String!
+    nodeUrl: String!
+  }
   extend type Query {
-    subgraphs(subgraphNames: [String!]!, type: SubgraphType!): [Subgraph!]!
+    subgraphs(subgraphs: [SubgraphWithNode!]!, type: SubgraphType!): [Subgraph!]!
   }
 
 additionalResolvers:

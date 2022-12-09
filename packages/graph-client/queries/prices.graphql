@@ -2,6 +2,6 @@ query PricesV0($chainId: Int!) {
   prices: pricesv0(chainId: $chainId)
 }
 
-query PricesV1 {
-  prices: pricesv1
-}
+# query PricesV1 {
+#   prices: pricesv1
+# }

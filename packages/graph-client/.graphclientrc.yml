@@ -137,11 +137,11 @@ sources:
   - name: FarmsV0
     handler:
       jsonSchema:
-        baseUrl: https://farm.sushi.com/api/v0
+        baseUrl: https://farm.sushi.com
         operations:
           - type: Query
             field: farmsv0
-            path: /
+            path: /api/v0
             method: GET
             responseSample: ./json-samples/farms-v0.json
             responseSchema: ./json-schemas/farms-v0.json
@@ -177,18 +177,18 @@ sources:
                 nullable: false
     transforms:
 
-  - name: PricesV1
-    handler:
-      jsonSchema:
-        baseUrl: http://localhost:3001/api/v1/1
-        operations:
-          - type: Query
-            field: pricesv1
-            path: /
-            method: GET
-            responseSample: ./json-samples/prices-v1.json
-            responseSchema: ./json-schemas/prices-v1.json
-    transforms:
+  # - name: PricesV1
+  #   handler:
+  #     jsonSchema:
+  #       baseUrl: http://localhost:3001/api/v1/1
+  #       operations:
+  #         - type: Query
+  #           field: pricesv1
+  #           path: /
+  #           method: GET
+  #           responseSample: ./json-samples/prices-v1.json
+  #           responseSchema: ./json-schemas/prices-v1.json
+  #   transforms:
 
 # Had to disable global transforms since we have a jsonSchema handler in here now...
 transforms:

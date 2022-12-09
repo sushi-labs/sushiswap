@@ -104,7 +104,8 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                       <Table.td>
                         <Link.External href={`/earn/${pair.id}`} className="!no-underline">
                           <Typography weight={600} variant="sm" className="text-slate-100">
-                            {formatPercent(pair.apr)} {pair.farm && <FarmRewardsAvailableTooltip />}
+                            {formatPercent(pair.apr)}{' '}
+                            {!!pair.farm && pair.incentiveApr > 0 && <FarmRewardsAvailableTooltip />}
                           </Typography>
                         </Link.External>
                       </Table.td>

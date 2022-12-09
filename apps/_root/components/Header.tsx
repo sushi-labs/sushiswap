@@ -3,7 +3,7 @@ import { App, AppType, Button, Link, Menu } from '@sushiswap/ui'
 import React, { FC } from 'react'
 export const Header: FC = () => {
   return (
-    <App.Header withScrollBackground={true} appType={AppType.Root}>
+    <App.Header withScrollBackground={true} appType={AppType.Root} bgColor="bg-black">
       <div className="flex items-center gap-2">
         <div className="items-center hidden gap-2 md:flex">
           <Link.Internal href="/blog" passHref={true}>
