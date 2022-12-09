@@ -128,16 +128,16 @@ export function Footer(props: FooterProps): JSX.Element {
             Copyright © 2022 Sushi. All rights reserved.
           </Typography>
           <div className="flex divide-x divide-slate-200/20 gap-">
-            <Link.Internal href="https://www.sushi.com/terms-of-use" passHref={true}>
+            <Link.Internal href="https://www.sushi.com/terms-of-service" passHref={true}>
               <Typography as="a" variant="xs" weight={500} className="px-3 text-slate-300">
-                Terms of Use
+                Terms of Service
               </Typography>
             </Link.Internal>
-            {/*<Link.Internal href="/privacy-policy" passHref={true}>*/}
-            {/*  <Typography as="a" variant="xs" weight={500} className="pl-3 text-slate-300">*/}
-            {/*    Privacy Policy*/}
-            {/*  </Typography>*/}
-            {/*</Link.Internal>*/}
+            <Link.Internal href="/privacy-policy" passHref={true}>
+              <Typography as="a" variant="xs" weight={500} className="pl-3 text-slate-300">
+                Privacy Policy
+              </Typography>
+            </Link.Internal>
           </div>
         </div>
       </Container>
