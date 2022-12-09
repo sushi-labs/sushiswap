@@ -8,7 +8,8 @@
     "dev": "next dev -p 3006",
     "generate": "graphclient build",
     "lint": "TIMING=1 eslint --fix . && next lint",
-    "start": "next start"
+    "start": "next start",
+    "check": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.3",

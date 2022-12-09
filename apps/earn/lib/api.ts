@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
+import { Bundle, getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
@@ -22,7 +22,7 @@ export const getPoolCount = async (query?: GetPoolCountQuery) => {
       }
       return previousValue
     }, 0)
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error)
   }
 }
@@ -32,11 +32,11 @@ export const getBundles = async () => {
     const { bundles } = await sdk.Bundles({
       chainIds: SUPPORTED_CHAIN_IDS,
     })
-    return bundles.reduce((acc, cur) => {
+    return bundles.reduce<Record<number, Pick<Bundle, 'id' | 'chainId' | 'nativePrice'>>>((acc, cur) => {
       acc[cur.chainId] = cur
       return acc
     }, {})
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error)
   }
 }
@@ -92,7 +92,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     })
     console.log('after pairs', pairs)
     return pairs
-  } catch (error) {
+  } catch (error: any) {
     console.log('here', error)
     throw new Error(error)
   }
@@ -120,7 +120,7 @@ export const getSushiBar = async () => {
   try {
     const { xsushi } = await sdk.Bar()
     return xsushi
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error)
   }
 }

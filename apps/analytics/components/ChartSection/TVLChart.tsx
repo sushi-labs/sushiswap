@@ -60,7 +60,7 @@ export const TVLChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
   }, [chartPeriod, stats])
 
   // Transient update for performance
-  const onMouseOver = useCallback(({ name, value }) => {
+  const onMouseOver = useCallback(({ name, value }: { name: number; value: number }) => {
     const valueNodes = document.getElementsByClassName('hoveredItemValueTVL')
     const nameNodes = document.getElementsByClassName('hoveredItemNameTVL')
 
@@ -80,7 +80,7 @@ export const TVLChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
           fontSize: 12,
           fontWeight: 600,
         },
-        formatter: (params) => {
+        formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
           const date = new Date(Number(params[0].name * 1000))
@@ -145,7 +145,7 @@ export const TVLChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: function (idx) {
+          animationDelayUpdate: function (idx: number) {
             return idx * 2
           },
           data: yData,
