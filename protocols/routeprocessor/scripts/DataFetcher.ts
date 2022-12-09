@@ -3,10 +3,10 @@ import { Token } from '@sushiswap/currency'
 import { ethers } from 'ethers'
 
 import { Limited } from './Limited'
-import { LiquidityProvider2, LiquidityProviders } from './liquidityProviders/LiquidityProvider2'
-import { QuickSwapProvider3 } from './liquidityProviders/QuickSwap3'
-import { SushiProvider3 } from './liquidityProviders/Sushi3'
-import { UniSwapV2Provider3 } from './liquidityProviders/UniSwap3V2'
+import { LiquidityProviderMC, LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
+import { QuickSwapProviderMC } from './liquidityProviders/QuickSwapMC'
+import { SushiProviderMC } from './liquidityProviders/SushiMC'
+import { UniSwapV2ProviderMC } from './liquidityProviders/UniswapV2MC'
 import { MultiCallProvider } from './MulticallProvider'
 import { PoolCode } from './pools/PoolCode'
 
@@ -17,7 +17,7 @@ export class DataFetcher {
   chainDataProvider: ethers.providers.BaseProvider
   multiCallProvider: MultiCallProvider
   limited = new Limited(10, 1000)
-  providers: LiquidityProvider2[] = []
+  providers: LiquidityProviderMC[] = []
   lastProviderStates: Map<LiquidityProviders, number> = new Map()
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
@@ -44,15 +44,15 @@ export class DataFetcher {
     this.providers = []
     if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
       this.providers.push(
-        new SushiProvider3(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+        new SushiProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers))
       this.providers.push(
-        new UniSwapV2Provider3(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+        new UniSwapV2ProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
     if (this._providerIsIncluded(LiquidityProviders.Quickswap, providers))
       this.providers.push(
-        new QuickSwapProvider3(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+        new QuickSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
 
     this.providers.forEach((p) => p.startFetchPoolsData())

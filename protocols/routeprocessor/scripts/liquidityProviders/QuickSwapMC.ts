@@ -13,14 +13,14 @@ import { Limited } from '../Limited'
 import { MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import { PoolCode } from '../pools/PoolCode'
-import { LiquidityProvider2, LiquidityProviders } from './LiquidityProvider2'
+import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
 
-const UNISWAP_V2_FACTORY: Record<string | number, string> = {
-  [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
+const QUICKSWAP_FACTORY: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
 }
 
-const UNISWAP_INIT_CODE_HASH: Record<string | number, string> = {
-  [ChainId.ETHEREUM]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+const QUICKSWAP_INIT_CODE_HASH: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
 }
 
 const getReservesABI = [{
@@ -49,7 +49,7 @@ const getReservesABI = [{
 
 const callsGetReserves = [{ reference: '', methodName: 'getReserves', methodParameters: [] }]
 
-export class UniSwapV2Provider3 extends LiquidityProvider2 {
+export class QuickSwapProviderMC extends LiquidityProviderMC {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener: any
@@ -67,10 +67,10 @@ export class UniSwapV2Provider3 extends LiquidityProvider2 {
     return LiquidityProviders.Sushiswap
   }
 
-  getPoolProviderName(): string {return 'Uniswap'}
+  getPoolProviderName(): string {return 'Quickswap'}
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (UNISWAP_V2_FACTORY[this.chainId] === undefined) {
+    if (QUICKSWAP_FACTORY[this.chainId] === undefined) {
       // No sushiswap for this network
       return
     }
@@ -160,9 +160,9 @@ export class UniSwapV2Provider3 extends LiquidityProvider2 {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      UNISWAP_V2_FACTORY[this.chainId],
+      QUICKSWAP_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      UNISWAP_INIT_CODE_HASH[this.chainId]
+      QUICKSWAP_INIT_CODE_HASH[this.chainId]
     )
   }
 
