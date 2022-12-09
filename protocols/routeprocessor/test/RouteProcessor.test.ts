@@ -1,5 +1,5 @@
 import { ethers, network } from 'hardhat'
-import { RouteProcessor__factory } from '../types/index'
+import { RouteProcessor__factory } from '../typechain'
 import { Swapper } from '../scripts/Swapper'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { WETH9ABI } from '../ABI/WETH9'
@@ -10,27 +10,10 @@ import { BentoBox } from '../scripts/liquidityProviders/Trident'
 import { Contract } from 'ethers'
 import { BentoBoxABI } from '../ABI/BentoBoxABI'
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI, Token, WBTC, WNATIVE } from '@sushiswap/currency'
+import { SUSHI, Token, WBTC, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { expect } from 'chai'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-const WRAPPED_NATIVE: Record<number, Token> = {
-  [ChainId.ETHEREUM]: new Token({
-    chainId: ChainId.ETHEREUM,
-    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    decimals: 18,
-    symbol: 'WETH',
-    name: 'Wrapped Ether',
-  }),
-  [ChainId.POLYGON]: new Token({
-    chainId: ChainId.POLYGON,
-    address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-    decimals: 18,
-    symbol: 'WMATIC',
-    name: 'Wrapped Matic',
-  }),
-}
 
 async function BentoMakeTokenStrategyPercentage(chainId: ChainId, token: string, percentage: number) {
   await network.provider.request({
@@ -78,7 +61,7 @@ async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: T
   console.log('2. User creation ...')
   const amountInBN = getBigNumber(amountIn * 1e18)
   const [Alice] = await ethers.getSigners()
-  const baseWrappedToken = WRAPPED_NATIVE[chainId]
+  const baseWrappedToken = WNATIVE[chainId]
 
   console.log(`3. Deposit user's ${amountIn} ${WNATIVE[chainId].symbol} to ${baseWrappedToken.symbol}`)
   await Alice.sendTransaction({
@@ -165,7 +148,7 @@ describe('RouteProcessor', async function () {
         .toString0x()
 
       const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
-      const routeProcessor = await RouteProcessor.deploy(BentoBox[ChainId.POLYGON])
+      const routeProcessor = await RouteProcessor.deploy(BentoBox[ChainId.POLYGON], WNATIVE_ADDRESS[ChainId.POLYGON])
       await routeProcessor.deployed()
 
       console.log(code)
@@ -174,7 +157,7 @@ describe('RouteProcessor', async function () {
     }
   })
 
-  it('Ethereum WETH => FEI check', async function () {
+  it.skip('Ethereum WETH => FEI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined

@@ -53,7 +53,7 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.13",
     "@types/node": "^17.0.33",
-    "eslint": "^8.20.0",
+    "eslint": "8.29.0",
     "ethers": "^5.7.0",
     "hardhat": "^2.10.1",
     "hardhat-deploy": "0.11.20",

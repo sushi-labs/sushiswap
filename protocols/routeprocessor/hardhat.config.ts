@@ -1,21 +1,12 @@
 import '@nomiclabs/hardhat-ethers'
-import 'hardhat-deploy'
-import '@tenderly/hardhat-tenderly'
+// import 'hardhat-deploy'
+// import '@tenderly/hardhat-tenderly'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'
+
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
 import { HardhatUserConfig, subtask } from 'hardhat/config'
 import path from 'path'
-
-let accounts
-
-if (process.env.PRIVATE_KEY) {
-  accounts = [process.env.PRIVATE_KEY]
-} else {
-  accounts = {
-    mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
-  }
-}
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
   if (solcVersion === '0.8.10') {
@@ -44,68 +35,6 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVers
 })
 
 const config: HardhatUserConfig = {
-  ...defaultConfig,
-  defaultNetwork: 'hardhat',
-  namedAccounts: {
-    deployer: {
-      default: 0,
-    },
-    alice: {
-      default: 1,
-    },
-    bob: {
-      default: 2,
-    },
-    carol: {
-      default: 3,
-    },
-  },
-  networks: {
-    localhost: {
-      live: false,
-      saveDeployments: true,
-      tags: ['local'],
-    },
-    hardhat: {
-      forking: {
-        enabled: true,
-        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-        //blockNumber: 34445477,
-        //url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      },
-      live: false,
-      saveDeployments: true,
-      tags: ['test', 'local'],
-      accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
-      },
-    },
-    ethereum: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts,
-      chainId: 1,
-      live: true,
-      saveDeployments: true,
-      tags: ['mainnet'],
-      hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 3,
-      live: true,
-      saveDeployments: true,
-      tags: ['staging'],
-    },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 5,
-      live: true,
-      saveDeployments: true,
-      tags: ['staging'],
-    },
-  },
   solidity: {
     compilers: [
       {
@@ -128,11 +57,10 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  ...defaultConfig,
   mocha: {
     timeout: 3600_000,
   },
 }
 
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
 export default config

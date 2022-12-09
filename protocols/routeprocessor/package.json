@@ -1,5 +1,5 @@
 {
-  "name": "router",
+  "name": "@sushiswap/route-processor",
   "version": "0.0.0",
   "private": true,
   "description": "Router",
@@ -54,8 +54,8 @@
     "@types/node": "18.11.12",
     "chai": "4.3.7",
     "cross-env": "^7.0.0",
-    "dotenv": "^10.0.0",
-    "eslint": "^8.20.0",
+    "dotenv": "16.0.3",
+    "eslint": "8.29.0",
     "ethereum-waffle": "3.4.4",
     "ethers": "^5.7.0",
     "hardhat": "2.12.4",

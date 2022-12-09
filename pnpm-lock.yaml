@@ -16,7 +16,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@types/jest': 29.2.4
       '@types/node': ^18.11.12
-      eslint: ^8.20.0
+      eslint: 8.29.0
       husky: ^8.0.0
       jest: ^29.3.0
       lint-staged: ^13.0.0
@@ -130,7 +130,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@vercel/node': 2.7.0
       date-fns: 2.29.3
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ioredis: 5.2.4
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
@@ -181,7 +181,7 @@ importers:
       '@uniswap/token-lists': 1.0.0-beta.30
       '@vercel/analytics': 0.1.5
       autoprefixer: ^10.4.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       fast-json-stable-stringify: ^2.1.0
       framer-motion: ^7.6.5
@@ -260,7 +260,7 @@ importers:
       autoprefixer: ^10.4.0
       classnames: ^2.3.1
       date-fns: ^2.28.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       graphql: 16.6.0
       next: 13.0.5
       next-seo: ^5.5.0
@@ -339,7 +339,7 @@ importers:
       date-fns: ^2.29.1
       echarts: ^5.3.3
       echarts-for-react: ^3.0.2
-      eslint: ^8.20.0
+      eslint: 8.29.0
       fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
       isomorphic-fetch: ^3.0.0
@@ -423,7 +423,7 @@ importers:
       and: ^0.0.3
       autoprefixer: ^10.4.0
       date-fns: ^2.28.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
       next: 13.0.5
@@ -514,7 +514,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@uniswap/v2-core': ^1.0.1
       autoprefixer: ^10.4.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       nanoid: ^4.0.0
       next: 13.0.5
@@ -627,7 +627,7 @@ importers:
       date-fns: ^2.29.1
       echarts: ^5.3.3
       echarts-for-react: ^3.0.2
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
@@ -780,7 +780,7 @@ importers:
       autoprefixer: ^10.4.0
       cids: ^1.0.0
       date-fns: ^2.28.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       graphql: 16.6.0
       jest: ^29.3.0
@@ -923,7 +923,7 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       autoprefixer: ^10.4.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
       next: 13.0.5
@@ -1006,7 +1006,7 @@ importers:
       autoprefixer: ^10.4.2
       cookie-cutter: ^0.2.0
       cors: ^2.8.5
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
@@ -1125,7 +1125,7 @@ importers:
       '@vercel/analytics': 0.1.5
       autoprefixer: ^10.4.0
       date-fns: ^2.29.1
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       next: 13.0.5
       next-seo: ^5.5.0
@@ -1235,7 +1235,7 @@ importers:
       '@uniswap/v2-core': ^1.0.1
       '@vercel/analytics': 0.1.5
       autoprefixer: ^10.4.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       nanoid: ^4.0.0
       next: 13.0.5
@@ -1310,9 +1310,9 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      eslint: 8.x
-      hardhat: 2.x
-      prettier: 2.x
+      eslint: 8.29.0
+      hardhat: 2.12.4
+      prettier: 2.8.1
       tsup: 6.5.0
       typescript: 4.8.2
     devDependencies:
@@ -1333,7 +1333,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       tsup: 6.5.0
       typescript: 4.8.2
@@ -1364,7 +1364,7 @@ importers:
       '@sushiswap/trident': 1.0.0-canary.53
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^17.0.33
-      eslint: ^8.20.0
+      eslint: 8.29.0
       tiny-invariant: ^1.2.0
       tiny-warning: ^1.0.3
       tsup: 6.5.0
@@ -1398,7 +1398,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       typescript: 4.8.2
     devDependencies:
@@ -1420,7 +1420,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       tsup: 6.5.0
       typescript: 4.8.2
@@ -1457,7 +1457,7 @@ importers:
       cli-table3: 0.6.3
       commander: 9.4.1
       date-fns: 2.29.3
-      eslint: ^8.20.0
+      eslint: 8.29.0
       isomorphic-unfetch: 3.1.0
       jest: ^29.3.0
       listr: 0.14.3
@@ -1502,7 +1502,7 @@ importers:
       '@types/node': ^16.0.0
       '@typescript-eslint/eslint-plugin': latest
       '@typescript-eslint/parser': latest
-      eslint: latest
+      eslint: 8.29.0
       eslint-config-next: latest
       eslint-config-prettier: latest
       eslint-plugin-cypress: latest
@@ -1546,25 +1546,25 @@ importers:
   packages/config/hardhat:
     specifiers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.13
-      '@nomiclabs/hardhat-etherscan': ^3.0.0
-      '@nomiclabs/hardhat-solhint': 2.x
-      '@nomiclabs/hardhat-waffle': 2.x
+      '@nomiclabs/hardhat-etherscan': 3.1.3
+      '@nomiclabs/hardhat-solhint': 2.0.1
+      '@nomiclabs/hardhat-waffle': 2.0.3
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@tenderly/hardhat-tenderly': 1.x
-      '@typechain/ethers-v5': 10.x
-      '@typechain/hardhat': 6.x
-      '@types/node': 17.x
-      dotenv: 16.x
-      ethereum-waffle: 3.x
+      '@tenderly/hardhat-tenderly': 1.3.2
+      '@typechain/ethers-v5': 10.1.1
+      '@typechain/hardhat': 6.1.4
+      '@types/node': 18.11.12
+      dotenv: 16.0.3
+      ethereum-waffle: 3.4.4
       ethers: ^5.7.0
-      hardhat: 2.x
-      hardhat-deploy: 0.11.20
+      hardhat: 2.12.4
+      hardhat-deploy: 0.11.22
       hardhat-deploy-ethers: 0.3.0-beta.13
       tsup: 6.5.0
-      typechain: 8.x
+      typechain: 8.1.1
       typescript: 4.8.2
     dependencies:
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_yab2ug5tvye2kp6e24l5x3z7uy
@@ -1576,7 +1576,7 @@ importers:
       '@typechain/hardhat': 6.1.4_6ex4tjvar7ja7e72etiivldtsa
       dotenv: 16.0.3
       ethereum-waffle: 3.4.4_typescript@4.8.2
-      hardhat-deploy: 0.11.20
+      hardhat-deploy: 0.11.22
       hardhat-deploy-ethers: 0.3.0-beta.13_yab2ug5tvye2kp6e24l5x3z7uy
       typechain: 8.1.1_typescript@4.8.2
     devDependencies:
@@ -1584,7 +1584,7 @@ importers:
       '@sushiswap/jest-config': link:../jest
       '@sushiswap/prettier-config': link:../prettier
       '@sushiswap/typescript-config': link:../typescript
-      '@types/node': 17.0.45
+      '@types/node': 18.11.12
       ethers: 5.7.2
       hardhat: 2.12.4_typescript@4.8.2
       tsup: 6.5.0_typescript@4.8.2
@@ -1652,7 +1652,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       tsup: 6.5.0
       typescript: 4.8.2
@@ -1683,7 +1683,7 @@ importers:
       '@types/lodash.flatmap': ^4.5.7
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       lodash.flatmap: ^4.5.0
       react: ^18.2.0
@@ -1722,7 +1722,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ioredis: ^5.2.4
       jest: ^29.3.0
       prisma: ^4.7.1
@@ -1754,7 +1754,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
       '@types/numeral': ^2.0.2
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       millify: ^4.0.0
       numeral: ^2.0.6
@@ -1813,7 +1813,7 @@ importers:
       '@wagmi/core': 0.7.9
       '@whatwg-node/fetch': latest
       date-fns: ^2.29.3
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       graphql: 16.6.0
       ioredis: 5.2.4
@@ -1885,7 +1885,7 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       copy-to-clipboard: ^3.3.1
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -1922,7 +1922,7 @@ importers:
       '@types/jest': ^29.2.0
       '@types/node': ^16.11.33
       chalk: ^4.0.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       isomorphic-unfetch: ^3.1.0
       jest: ^29.3.0
       tsup: 6.5.0
@@ -1954,7 +1954,7 @@ importers:
       '@types/jest': ^29.2.0
       big.js: ^6.1.1
       decimal.js-light: ^2.5.1
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       jsbi: ^4.1.0
       tiny-invariant: ^1.2.0
@@ -1988,7 +1988,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       next: 13.0.5
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -2022,7 +2022,7 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       '@uniswap/token-lists': ^1.0.0-beta.29
-      eslint: ^8.20.0
+      eslint: 8.29.0
       fast-json-stable-stringify: ^2.1.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -2069,7 +2069,7 @@ importers:
       '@uniswap/token-lists': ^1.0.0-beta.29
       ajv: ^6.12.3
       cids: ^1.1.9
-      eslint: ^8.20.0
+      eslint: 8.29.0
       fast-json-stable-stringify: ^2.1.0
       multicodec: ^3.2.1
       multihashes: ^4.0.3
@@ -2117,7 +2117,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       tiny-invariant: ^1.2.0
       tsup: 6.5.0
@@ -2147,7 +2147,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^17.0.35
       '@types/seedrandom': ^3.0.1
-      eslint: ^8.20.0
+      eslint: 8.29.0
       seedrandom: ^3.0.5
       tsup: 6.5.0
       typescript: 4.8.2
@@ -2177,7 +2177,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
       '@uniswap/token-lists': ^1.0.0-beta.29
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       tiny-invariant: ^1.2.0
       typescript: 4.8.2
@@ -2224,7 +2224,7 @@ importers:
       autoprefixer: ^10.4.0
       classnames: ^2.3.1
       date-fns: ^2.29.1
-      eslint: ^8.20.0
+      eslint: 8.29.0
       nanoid: ^4.0.0
       next: 13.0.5
       postcss: ^8.4.0
@@ -2297,7 +2297,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/jest': ^29.2.0
-      eslint: ^8.20.0
+      eslint: 8.29.0
       jest: ^29.3.0
       tsup: 6.5.0
       typescript: 4.8.2
@@ -2353,7 +2353,7 @@ importers:
       '@uniswap/v2-core': ^1.0.1
       '@uniswap/v3-periphery': 1.4.1
       '@wagmi/core': 0.7.9
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       next: 13.0.5
       react: ^18.2.0
@@ -2424,7 +2424,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^17.0.33
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       hardhat: ^2.9.5
       hardhat-deploy: 0.11.20
@@ -2471,7 +2471,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': ^17.0.33
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       hardhat: ^2.10.1
       hardhat-deploy: 0.11.20
@@ -2521,7 +2521,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^17.0.33
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       hardhat: ^2.9.5
       hardhat-deploy: 0.11.20
@@ -2563,7 +2563,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': ^17.0.33
-      eslint: ^8.20.0
+      eslint: 8.29.0
       hardhat: ^2.9.5
       hardhat-deploy: 0.11.20
       ts-node: ^10.7.0
@@ -2610,8 +2610,8 @@ importers:
       '@types/node': 18.11.12
       chai: 4.3.7
       cross-env: ^7.0.0
-      dotenv: ^10.0.0
-      eslint: ^8.20.0
+      dotenv: 16.0.3
+      eslint: 8.29.0
       ethereum-multicall: ^2.15.0
       ethereum-waffle: 3.4.4
       ethers: ^5.7.0
@@ -2655,7 +2655,7 @@ importers:
       '@types/node': 18.11.12
       chai: 4.3.7
       cross-env: 7.0.3
-      dotenv: 10.0.0
+      dotenv: 16.0.3
       eslint: 8.29.0
       ethereum-waffle: 3.4.4_typescript@4.8.2
       ethers: 5.7.2
@@ -2687,7 +2687,7 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.13
       '@types/node': ^17.0.33
-      eslint: ^8.20.0
+      eslint: 8.29.0
       hardhat: ^2.9.5
       hardhat-deploy: 0.11.22
       ts-node: ^10.7.0
@@ -2735,7 +2735,7 @@ importers:
       '@types/node': ^17.0.33
       '@types/seedrandom': ^3.0.1
       chai: ^4.3.6
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       hardhat: ^2.9.5
       hardhat-deploy: 0.11.20
@@ -2801,7 +2801,7 @@ importers:
       '@wagmi/core': 0.7.9
       date-fns: ^2.29.1
       dotenv: ^16.0.1
-      eslint: ^8.20.0
+      eslint: 8.29.0
       ethers: ^5.7.0
       express: ^4.18.1
       fast-json-stable-stringify: ^2.1.0
@@ -2876,7 +2876,7 @@ importers:
       '@types/express': ^4.17.13
       date-fns: ^2.28.0
       dotenv: ^16.0.1
-      eslint: ^8.20.0
+      eslint: 8.29.0
       express: ^4.18.1
       fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
@@ -10431,7 +10431,7 @@ packages:
       ethers: 5.7.2
       fs-extra: 10.1.0
       hardhat: 2.12.4_typescript@4.8.2
-      hardhat-deploy: 0.11.20
+      hardhat-deploy: 0.11.22
       js-yaml: 4.1.0
       tenderly: 0.0.3_typescript@4.8.2
     transitivePeerDependencies:
@@ -10454,7 +10454,7 @@ packages:
       ethers: 5.7.2
       fs-extra: 10.1.0
       hardhat: 2.12.4_s5ojjbx2isjkawqptqpitvy25q
-      hardhat-deploy: 0.11.20
+      hardhat-deploy: 0.11.22
       js-yaml: 4.1.0
       tenderly: 0.0.3_s5ojjbx2isjkawqptqpitvy25q
     transitivePeerDependencies:
@@ -15602,11 +15602,6 @@ packages:
       is-obj: 2.0.0
     dev: true
 
-  /dotenv/10.0.0:
-    resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
-    engines: {node: '>=10'}
-    dev: true
-
   /dotenv/16.0.1:
     resolution: {integrity: sha512-1K6hR6wtk2FviQ4kEiSjFiH5rpzEVi8WW0x96aztHVMhEspNpc4DVOUTEHtEva5VThQ8IaBX1Pe4gSzpVVUsKQ==}
     engines: {node: '>=12'}
@@ -18809,6 +18804,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /hardhat-deploy/0.11.22:
     resolution: {integrity: sha512-ZhHVNB7Jo2l8Is+KIAk9F8Q3d7pptyiX+nsNbIFXztCz81kaP+6kxNODRBqRCy7SOD3It4+iKCL6tWsPAA/jVQ==}
@@ -18830,7 +18826,6 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
-    dev: true
 
   /hardhat-gas-reporter/1.0.9_hardhat@2.12.4:
     resolution: {integrity: sha512-INN26G3EW43adGKBNzYWOlI3+rlLnasXTwW79YNnUhXPDa+yHESgt639dJEs37gCjhkbNKcRRJnomXEuMFBXJg==}
