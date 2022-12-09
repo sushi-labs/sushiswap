@@ -14,9 +14,9 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
   const cover = getOptimizedMedia({ metadata: article.cover?.data?.attributes?.provider_metadata })
   const coverAlt = article.cover?.data?.attributes?.alternativeText
 
-  const authors = article.authors.data.map(({ attributes }) => ({
-    name: attributes.name,
-    url: `https://twitter.com/${attributes.handle}`,
+  const authors = article?.authors?.data.map(({ attributes }) => ({
+    name: attributes?.name as string,
+    url: `https://twitter.com/${attributes?.handle}`,
   }))
 
   return (

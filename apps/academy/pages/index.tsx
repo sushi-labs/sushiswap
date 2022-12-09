@@ -268,7 +268,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             </Typography>
             <div className="flex flex-wrap gap-6">
               <Difficulties
-                selected={selectedDifficulty}
+                selected={selectedDifficulty as DifficultyEntity}
                 onSelect={handleSelectDifficulty}
                 difficulties={difficulties}
               />

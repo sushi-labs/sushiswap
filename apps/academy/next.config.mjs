@@ -12,6 +12,13 @@ const nextConfig = {
   basePath: '/academy',
   reactStrictMode: true,
   swcMinify: false,
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
 }
 
 export default withTranspileModules(nextConfig)

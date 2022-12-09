@@ -8,7 +8,7 @@ interface RichText {
 }
 
 export const RichTextBlock: FC<RichText> = ({ block }) => {
-  if (!block.body) return <></>
+  if (!block.key || !block.body) return <></>
   return (
     <div id={block.key}>
       <ReactMarkdown>{block.body}</ReactMarkdown>

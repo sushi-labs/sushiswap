@@ -11,7 +11,7 @@ import {
 import { DEFAULT_SIDE_PADDING } from 'common/helpers'
 import { PRODUCTS_DATA } from 'common/productsData'
 import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
-import { InferGetStaticPropsType } from 'next'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC } from 'react'
 import useSWR from 'swr'
 
@@ -20,11 +20,11 @@ import { ArticleEntity } from '.mesh'
 const PRODUCT_SLUG = 'miso'
 const { color, usps, productStats, buttonText, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
   const product = data?.products?.data?.[0].attributes
-
-  return { props: product }
+  if (!product) throw new Error(`Product not found`)
+  return { props: product, revalidate: 60 }
 }
 
 const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
@@ -70,7 +70,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
           }
         />
 
-        <div className="mt-8 grid sm:grid-cols-2 gap-6">
+        <div className="grid gap-6 mt-8 sm:grid-cols-2">
           {usps.map((usp, i) => (
             <div key={i} className="flex gap-4 sm:gap-6 sm:p-4">
               <div className="bg-slate-800 rounded-full min-w-[32px] sm:min-w-[56px] h-8 sm:h-14 flex items-center justify-center">
@@ -93,10 +93,10 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
               <div className="p-8 md:p-12 h-full bg-[#212939] rounded-3xl">
                 <card.Icon />
                 <div className="mt-6 sm:mt-10">
-                  <h3 className="text-xl sm:text-2xl font-bold">{card.title}</h3>
+                  <h3 className="text-xl font-bold sm:text-2xl">{card.title}</h3>
                 </div>
                 <div className="mt-2 sm:mt-4">
-                  <p className="text-slate-400 text-xs sm:text-sm">{card.subtitle}</p>
+                  <p className="text-xs text-slate-400 sm:text-sm">{card.subtitle}</p>
                 </div>
               </div>
             </div>
