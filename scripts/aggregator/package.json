@@ -42,6 +42,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
+    "@sushiswap/tines": "workspace:*",
     "@sushiswap/abi": "workspace:*",
     "isomorphic-unfetch": "3.1.0",
     "@wagmi/core": "0.7.9",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@graphprotocol/client-cli": "2.2.15",
     "@graphprotocol/client-add-source-name": "latest",
+    "@ethersproject/bignumber": "^5.7.0",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphql-mesh/transform-filter-schema": "latest",
     "@graphql-mesh/transform-prefix": "latest",

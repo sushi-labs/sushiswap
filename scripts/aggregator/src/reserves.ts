@@ -15,12 +15,12 @@ async function main() {
   const chainId = ChainId.POLYGON
   const protocol = 'SushiSwap'
   const version = 'LEGACY'
-  const pools = await getPairAddresses(chainId, protocol, version)
+  const pools = await getPoolAddresses(chainId, protocol, version)
   const poolWithReserves = await getReserves(chainId, pools)
-  await updatePairsWithReserve(chainId, poolWithReserves)
+  await updatePoolsWithReserve(chainId, poolWithReserves)
 }
 
-async function getPairAddresses(chainId: ChainId, protocol: string, version: string) {
+async function getPoolAddresses(chainId: ChainId, protocol: string, version: string) {
   const startTime = performance.now()
   const count = await prisma.pool.count({
     where: {
@@ -79,7 +79,7 @@ async function getReserves(chainId: ChainId, poolAddresses: string[]): Promise<P
   const data = await Promise.all(requests)
   const reserves: any = data.flat()
 
-  const mappedPairs = poolAddresses.reduce<PoolWithReserve[]>((prev, address, i) => {
+  const mappedPools = poolAddresses.reduce<PoolWithReserve[]>((prev, address, i) => {
     if (!reserves[i]) {
       return prev
     }
@@ -94,11 +94,11 @@ async function getReserves(chainId: ChainId, poolAddresses: string[]): Promise<P
   }, [])
 
   const endTime = performance.now()
-  console.log(`Fetched reserves for ${mappedPairs.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-  return mappedPairs
+  console.log(`Fetched reserves for ${mappedPools.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  return mappedPools
 }
 
-async function updatePairsWithReserve(chainId: ChainId, pools: PoolWithReserve[]) {
+async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]) {
   const startTime = performance.now()
   const batchSize = 250
   let updatedCount = 0
