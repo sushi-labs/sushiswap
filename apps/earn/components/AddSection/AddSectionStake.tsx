@@ -47,7 +47,7 @@ export const AddSectionStake: FC<{ poolAddress: string; title?: string }> = ({ p
     >
       <_AddSectionStake
         pair={pair}
-        chefType={CHEF_TYPE_MAP[pair.farm.chefType]}
+        chefType={CHEF_TYPE_MAP[pair.farm.chefType as keyof typeof CHEF_TYPE_MAP]}
         title={title}
         farmId={Number(pair.farm.id)}
       />

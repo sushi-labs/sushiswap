@@ -23,7 +23,9 @@ import { GET_POOL_TYPE_MAP } from '../../lib/constants'
 const LINKS = ({ pair }: { pair: Pair }): BreadcrumbLink[] => [
   {
     href: `/${pair.id}`,
-    label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type]} - ${formatPercent(pair.swapFee / 10000)}`,
+    label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type as keyof typeof GET_POOL_TYPE_MAP]} - ${formatPercent(
+      pair.swapFee / 10000
+    )}`,
   },
   {
     href: `/${pair.id}/add`,
