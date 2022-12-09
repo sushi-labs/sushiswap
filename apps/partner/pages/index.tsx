@@ -49,7 +49,7 @@ export default function Home() {
     'background',
     'listType',
   ])
-  const canvasRef = useRef<HTMLCanvasElement | null>()
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const [submitState, setSubmitState] = useState<{
     state: SubmitState

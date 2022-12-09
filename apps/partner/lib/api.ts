@@ -1,6 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native } from '@sushiswap/currency'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import {
+  EXCHANGE_SUBGRAPH_NAME,
+  GRAPH_HOST,
+  SushiSwapChainId,
+  TridentChainId,
+  TRIDENT_SUBGRAPH_NAME,
+} from '@sushiswap/graph-config'
+import { isTridentChain, isSushiSwapChain } from '@sushiswap/validate'
 import { getProvider } from '@sushiswap/wagmi'
 import { Contract } from 'ethers'
 import { erc20ABI } from 'wagmi'
@@ -12,7 +19,7 @@ interface TokenKPI {
   volumeUSD: number
 }
 
-export const getExchangeTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
+export const getExchangeTokenKPI = async (id: string, chainId: SushiSwapChainId): Promise<TokenKPI | undefined> => {
   const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], EXCHANGE_SUBGRAPH_NAME[chainId]]
 
   if (!subgraphHost || !subgraphName) return
@@ -32,7 +39,7 @@ export const getExchangeTokenKPI = async (id: string, chainId: ChainId): Promise
   }
 }
 
-export const getTridentTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
+export const getTridentTokenKPI = async (id: string, chainId: TridentChainId): Promise<TokenKPI | undefined> => {
   const [subgraphHost, subgraphName] = [GRAPH_HOST[chainId], TRIDENT_SUBGRAPH_NAME[chainId]]
 
   if (!subgraphHost || !subgraphName) return
@@ -55,10 +62,10 @@ export const getTridentTokenKPI = async (id: string, chainId: ChainId): Promise<
   }
 }
 
-export const getTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI> => {
+export const getTokenKPI = async (id: string, chainId: ChainId): Promise<TokenKPI | undefined> => {
   const [exchangeToken, tridentToken] = await Promise.all([
-    getExchangeTokenKPI(id, chainId),
-    getTridentTokenKPI(id, chainId),
+    isSushiSwapChain(chainId) ? getExchangeTokenKPI(id, chainId) : undefined,
+    isTridentChain(chainId) ? getTridentTokenKPI(id, chainId) : undefined,
   ])
 
   if (exchangeToken && tridentToken) {
