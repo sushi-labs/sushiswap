@@ -1,46 +1,41 @@
-import { Popover } from '@headlessui/react'
-import { ChevronDownIcon, SearchIcon } from '@heroicons/react/solid'
+import { Listbox } from '@headlessui/react'
 import chains, { ChainId } from '@sushiswap/chain'
-import { classNames, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Typography } from '@sushiswap/ui'
-import React, { FC, useState } from 'react'
+import { classNames, NetworkIcon, Select, Typography } from '@sushiswap/ui'
+import React, { FC, ReactNode, useMemo } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
-interface NetworkSelectorNewProps {
+interface NetworkSelectorProps {
+  children: ReactNode
   supportedNetworks?: ChainId[]
 }
 
-export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks = [] }) => {
-  const [query, setQuery] = useState('')
+export const NetworkSelector: FC<NetworkSelectorProps> = ({ children, supportedNetworks }) => {
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
-  if (!chain) return <></>
+  const networks = useMemo(() => Array.from(new Set(supportedNetworks)), [supportedNetworks])
 
-  const chainId = chain.id
+  if (!networks.length) return <>{children}</>
 
-  const panel = (
-    <Popover.Panel className="flex flex-col w-full sm:w-[320px] fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] mt-4 sm:rounded-xl rounded-b-none shadow-md shadow-black/[0.3] bg-slate-900 border border-slate-200/20">
-      <div className="flex gap-2 items-center p-4 pb-3">
-        <SearchIcon width={20} height={20} className="text-slate-500" />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-full bg-transparent placeholder:font-medium text-base')}
-          placeholder="Search networks"
-        />
-      </div>
-      <div className="mx-4 border-b border-slate-200/10" />
-      <div className="p-2 max-h-[300px] scroll">
-        {supportedNetworks
-          .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))
-          .map((el) => (
+  return (
+    <Select
+      button={
+        <Listbox.Button type="button" className="flex items-center" testdata-id="network-selector-button">
+          {children}
+        </Listbox.Button>
+      }
+    >
+      <Select.Options className="!w-[max-content] right-0 !mt-[16px] !fixed !bg-slate-700">
+        <div className="grid grid-cols-1 px-2 py-2 md:grid-cols-2 gap-x-4" testdata-id="network-selector-list">
+          {networks.map((el) => (
             <div
               onClick={() => {
                 switchNetwork && switchNetwork(el)
               }}
               key={el}
               className={classNames(
-                'hover:bg-white/[0.08] px-1 flex rounded-lg justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
+                chain?.id === el ? 'bg-slate-800' : 'hover:opacity-80',
+                'px-2 flex rounded-xl justify-between gap-2 items-center cursor-pointer transform-all h-[40px]'
               )}
             >
               <div className="flex items-center gap-2">
@@ -52,33 +47,8 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
               {chain?.id === el && <div className="w-2 h-2 mr-1 rounded-full bg-green" />}
             </div>
           ))}
-      </div>
-    </Popover.Panel>
-  )
-
-  return (
-    <Popover className="relative">
-      {({ open }) => {
-        return (
-          <>
-            <Popover.Button
-              className={classNames(
-                DEFAULT_INPUT_UNSTYLED,
-                'flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-slate-200'
-              )}
-            >
-              <NetworkIcon chainId={chainId} width={20} height={20} />
-              <div className="hidden sm:block">{chains[chainId].name.split(' ')[0]}</div>
-              <ChevronDownIcon
-                width={20}
-                height={20}
-                className={classNames(open ? 'rotate-180' : 'rotate-0', 'transition-transform')}
-              />
-            </Popover.Button>
-            {panel}
-          </>
-        )
-      }}
-    </Popover>
+        </div>
+      </Select.Options>
+    </Select>
   )
 }

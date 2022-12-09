@@ -12,6 +12,7 @@ import { resolvers as masterchef } from './masterchef'
 import { resolvers as pairs } from './pairs'
 import { resolvers as tokens } from './tokens'
 import { resolvers as user } from './user'
+import { resolvers as earn } from './earn'
 
 // export const resolvers: Resolvers = mergeResolvers<MeshResolvedSource, MeshContext>([
 export const resolvers: Resolvers = mergeResolvers([
@@ -26,4 +27,5 @@ export const resolvers: Resolvers = mergeResolvers([
   tokens,
   user,
   furo,
+  earn,
 ])

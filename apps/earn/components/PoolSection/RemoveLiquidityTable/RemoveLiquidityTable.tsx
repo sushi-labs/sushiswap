@@ -1,5 +1,4 @@
 import { Burn } from '@sushiswap/graph-client'
-import { ChainId } from '@sushiswap/chain'
 import { Pair } from '@sushiswap/graph-client'
 import { Table, useBreakpoint } from '@sushiswap/ui'
 import { GenericTable } from 'components'
@@ -22,7 +21,7 @@ const fetcher = ({
   args: {
     sorting: SortingState
     pagination: PaginationState
-    chainId: ChainId
+    chainId: number
     pairId: string
   }
 }) => {
@@ -51,7 +50,7 @@ const fetcher = ({
 
 export const RemoveLiquidityTable: FC<{ pair: Pair }> = ({ pair }) => {
   const chainId = pair.chainId
-  const pairId = pair.id.includes(':') ? pair.id.split(':')[1] : pair.id
+  const pairId = pair.address
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 

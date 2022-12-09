@@ -8,6 +8,7 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { getSwaps, getSwapsCount, getMints, getMintsCount, getBurns, getBurnsCount } from '../../lib/api'
 
 import {
   Layout,
@@ -174,11 +175,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     // until the next successful request.
     throw new Error(`Failed to fetch pair, received ${pair}`)
   }
-
+  const [swaps, swapsCount, mints, mintsCount, burns, burnsCount ] = await Promise.all([getSwaps(pair.chainId, pair.address), getSwapsCount(pair.chainId, pair.address), getMints(pair.chainId, pair.address), getMintsCount(pair.chainId, pair.address), getBurns(pair.chainId, pair.address), getBurnsCount(pair.chainId, pair.address)])
+  
   return {
     props: {
       fallback: {
         [`/earn/api/pool/${id}`]: { pair },
+        [`/earn/api/swaps`]: swaps,
+        [`/earn/api/swapsCount`]: swapsCount,
+        [`/earn/api/mints`]: mints,
+        [`/earn/api/mintsCount`]: mintsCount,
+        [`/earn/api/burns`]: burns,
+        [`/earn/api/burnsCount`]: burnsCount,
       },
     },
     revalidate: 60,

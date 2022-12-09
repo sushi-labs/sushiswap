@@ -5,9 +5,13 @@ sources:
         endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:sushi-subgraphs/sushiswap-ethereum}
         retry: 3
     transforms:
-      - addSourceName: true
-      - autoPagination:
-          validateSchema: true
+      #- addSourceName: true
+      # - autoPagination:
+      #     validateSchema: false
+      # - prefix:
+      #     value: deprecated_
+      #     includeRootOperations: true
+      #     includeTypes: true
 
   - name: xSUSHI
     handler:
@@ -304,6 +308,15 @@ additionalTypeDefs: |
   extend type FactoryDaySnapshot {
     chainId: Int!
   }
+  extend type Swap {
+    chainId: Int!
+  }
+  extend type Mint {
+    chainId: Int!
+  }
+  extend type Burn {
+    chainId: Int!
+  }
   extend type Pair {
     chainId: Int!
     address: String!
@@ -349,6 +362,33 @@ additionalTypeDefs: |
       orderDirection: OrderDirection
       chainIds: [Int!]!
     ): [Block!]!
+    swapsByChainId(
+      skip: Int = 0
+      first: Int = 100
+      where: Swap_filter
+      orderBy: Swap_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainId: Int!
+    ): [Swap!]!
+    mintsByChainId(
+      skip: Int = 0
+      first: Int = 100
+      where: Mint_filter
+      orderBy: Mint_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainId: Int!
+    ): [Mint!]!
+    burnsByChainId(
+      skip: Int = 0
+      first: Int = 100
+      where: Burn_filter
+      orderBy: Burn_orderBy
+      orderDirection: OrderDirection
+      block: Block_height
+      chainId: Int!
+    ): [Burn!]!
     factoriesByChainIds(
       chainIds: [Int!]!
     ): [Factory!]!

@@ -1,8 +1,8 @@
-import { getSwapsCount, GetSwapsCountQuery } from "lib/api"
+import { getSwapsCount } from "lib/api"
 import type { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const query = req.query as unknown
-	const swapsCount = await getSwapsCount(query as GetSwapsCountQuery)
+  const { chainId, pairId } = req.query
+	const swapsCount = await getSwapsCount(Number(chainId), pairId as string)
 	res.status(200).send(swapsCount)
 }

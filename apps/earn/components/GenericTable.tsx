@@ -13,12 +13,12 @@ interface GenericTableProps<C> {
   // linkFormatter?(path: string): string
 }
 
-declare module '@tanstack/react-table' {
-  interface ColumnMeta<TData extends RowData, TValue> {
-    className?: string
-    skeleton: ReactNode
-  }
-}
+// declare module '@tanstack/react-table' {
+//   interface ColumnMeta<TData extends RowData, TValue> {
+//     className?: string
+//     skeleton: ReactNode
+//   }
+// }
 
 export const GenericTable = <T extends { id: string }>({
   table,

@@ -1,4 +1,3 @@
-import { SUSHISWAP_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs, QueryswapsArgs, QuerymintsArgs, QueryburnsArgs } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
@@ -51,7 +50,6 @@ export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
-    console.log('get pools')
     const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
     const start = getUnixTime(date)
 
@@ -71,16 +69,6 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
     const farmsOnly = query?.farmsOnly === 'true'
 
-    console.log('before pairs', {
-      first,
-      skip,
-      pagination,
-      where,
-      orderBy,
-      orderDirection,
-      chainIds,
-      farmsOnly,
-    })
     const { pairs } = await sdk.PairsWithFarms({
       first,
       skip,
@@ -91,10 +79,9 @@ export const getPools = async (query?: GetPoolsQuery) => {
       chainIds,
       farmsOnly,
     })
-    console.log('after pairs', pairs)
     return pairs
   } catch (error) {
-    console.log('here', error)
+    console.log(error)
     throw new Error(error)
   }
 }
@@ -141,145 +128,123 @@ export const getUser = async (query: GetUserQuery) => {
 }
 
 export type GetSwapsQuery = Omit<QueryswapsArgs, 'where' | 'pagination'> & {
-	chainId: string
 	pagination: string
-	pairId: string
 }
 
-export const getSwaps = async (query?: GetSwapsQuery) => {
-	if (!query?.chainId || !query?.pairId) {
-		throw Error('Invalid pair id or chain id')
-	}
-	const pagination: Pagination = query?.pagination ? JSON.parse(query.pagination) : { pageIndex: 0, pageSize: 20 }
-	const first = 20
-	const skip = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 0;
-	const orderBy = query?.orderBy || 'timestamp'
-	const orderDirection = query?.orderDirection || 'desc'
-	const chainId = query?.chainId
-	const pairId = query?.pairId
-	const where = {
-		pair_: {
-			id: pairId,
-		}
-	}
-	const sdk = await getBuiltGraphSDK({ chainId, subgraphHost: SUBGRAPH_HOST[chainId], subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId]})
-  const result = (await sdk.Swaps({ first, skip, where, orderBy, orderDirection })).swaps ?? []
-	return result === undefined ? [] : result;
+export const getSwaps = async (chainId: number, pairId: string, query?: GetSwapsQuery) => {
+  try {
+    if (!chainId || !pairId) {
+      throw Error('Invalid pair id or chain id')
+    }
+    const pagination: Pagination = query?.pagination ? JSON.parse(query.pagination) : { pageIndex: 0, pageSize: 20 }
+    const first = 20
+    const skip = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 0;
+    const orderBy = query?.orderBy || 'timestamp'
+    const orderDirection = query?.orderDirection || 'desc'
+    const where = {
+      pair_: {
+        id: pairId,
+      }
+    }
+    const { swaps } = await sdk.SwapsByChainId({ first, skip, where, orderBy, orderDirection, chainId})
+    return swaps === undefined ? [] : swaps;
+  } catch (error) {
+    console.log(error)
+    throw new Error(error)
+  }
 }
 
-export type GetSwapsCountQuery = Partial<{
-	chainId: string
-	pairId: string
-}>
-
-export const getSwapsCount = async (query: GetSwapsCountQuery) => {
-	if (!query.chainId || !query.pairId) {
+export const getSwapsCount = async (chainId: number, pairId: string) => {
+	if (!chainId || !pairId) {
 		throw Error('Invalid pair id or chain id')
 	}
-	const chainId = query.chainId
-	const pairId = query.pairId
 	const where = {
 		pair_ : {
 			id: pairId,
 		}
 	}
-	const sdk = await getBuiltGraphSDK({ chainId, subgraphHost: SUBGRAPH_HOST[chainId], subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId]})
-	const result = ((await sdk.Swaps({where})).swaps ?? []).length
+	const result = ((await sdk.SwapsByChainId({where, chainId})).swaps ?? []).length
 	return result === undefined ? 0 : result;
 }
 
 export type GetMintsQuery = Omit<QuerymintsArgs, 'where' | 'pagination'> & {
-  chainId: string
   pagination: string
-  pairId: string
 }
 
-export const getMints = async (query?: GetMintsQuery) => {
-  if (!query?.chainId || !query?.pairId) {
+export const getMints = async (chainId: number, pairId: string, query?: GetMintsQuery) => {
+  try {
+    if (!chainId || !pairId) {
+      throw Error('Invalid pair id or chain id')
+    }
+    const pagination: Pagination = query?.pagination ? JSON.parse(query.pagination) : { pageIndex: 0, pageSize: 20 }
+    const first = 20
+    const skip = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 0;
+    const orderBy = query?.orderBy || 'timestamp'
+    const orderDirection = query?.orderDirection || 'desc'
+     const where = {
+      pair_: {
+        id: pairId,
+      }
+    }
+    const { mints } = await sdk.MintsByChainId({ first, skip, where, orderBy, orderDirection, chainId})
+    return mints === undefined ? [] : mints;
+    return mints === undefined ? [] : mints; 
+  } catch (error) {
+    console.log(error)
+    throw new Error(error)
+  }
+}
+
+export const getMintsCount = async (chainId: number, pairId: string) => {
+	if (!chainId || !pairId) {
     throw Error('Invalid pair id or chain id')
   }
-  const pagination: Pagination = query?.pagination ? JSON.parse(query.pagination) : { pageIndex: 0, pageSize: 20 }
-  const first = 20
-  const skip = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 0;
-  const orderBy = query?.orderBy || 'timestamp'
-  const orderDirection = query?.orderDirection || 'desc'
-  const chainId = query?.chainId
-  const pairId = query?.pairId
-  const where = {
-    pair_: {
-      id: pairId,
-    }
-  }
-  const sdk = await getBuiltGraphSDK({ chainId, subgraphHost: SUBGRAPH_HOST[chainId], subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId]})
-	const result = (await sdk.Mints({ first, skip, where, orderBy, orderDirection })).mints ?? []
-	return result === undefined ? [] : result;
-}
-
-export type GetMintsCountQuery = Partial<{
-	chainId: string
-	pairId: string
-}>
-
-export const getMintsCount = async (query: GetMintsCountQuery) => {
-	if (!query.chainId || !query.pairId) {
-		throw Error('Invalid pair id or chain id')
-	}
-	const chainId = query.chainId
-	const pairId = query.pairId
 	const where = {
 		pair_ : {
 			id: pairId,
 		}
 	}
-	const sdk = await getBuiltGraphSDK({ chainId, subgraphHost: SUBGRAPH_HOST[chainId], subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId]})
-	const result = ((await sdk.Mints({where})).mints ?? []).length
+	const result = ((await sdk.MintsByChainId({where, chainId})).mints ?? []).length
 	return result === undefined ? 0 : result;
 }
 
 export type GetBurnsQuery = Omit<QueryburnsArgs, 'where' | 'pagination'> & {
-  chainId: string
   pagination: string
-  pairId: string
 }
 
-export const getBurns = async (query?: GetBurnsQuery) => {
-  if (!query?.chainId || !query?.pairId) {
+export const getBurns = async (chainId: number, pairId: string, query?: GetBurnsQuery) => {
+  try {
+    if (!chainId || !pairId) {
+      throw Error('Invalid pair id or chain id')
+    }
+    const pagination: Pagination = query?.pagination ? JSON.parse(query.pagination) : { pageIndex: 0, pageSize: 20 }
+    const first = 20
+    const skip = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 0;
+    const orderBy = query?.orderBy || 'timestamp'
+    const orderDirection = query?.orderDirection || 'desc'
+    const where = {
+      pair_: {
+        id: pairId,
+      }
+    }
+    const { burns } = await sdk.BurnsByChainId({ first, skip, where, orderBy, orderDirection, chainId})
+    return burns === undefined ? [] : burns;
+    return burns === undefined ? [] : burns; 
+  } catch (error) {
+    console.log(error)
+    throw new Error(error)
+  }
+}
+
+export const getBurnsCount = async (chainId: number, pairId: string) => {
+	if (!chainId || !pairId) {
     throw Error('Invalid pair id or chain id')
   }
-  const pagination: Pagination = query?.pagination ? JSON.parse(query.pagination) : { pageIndex: 0, pageSize: 20 }
-  const first = 20
-  const skip = pagination?.pageIndex && pagination?.pageSize ? pagination.pageIndex * pagination.pageSize : 0;
-  const orderBy = query?.orderBy || 'timestamp'
-  const orderDirection = query?.orderDirection || 'desc'
-  const chainId = query?.chainId
-  const pairId = query?.pairId
-  const where = {
-    pair_: {
-      id: pairId,
-    }
-  }
-  const sdk = await getBuiltGraphSDK({ chainId, subgraphHost: SUBGRAPH_HOST[chainId], subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId]})
-	const result = (await sdk.Burns({ first, skip, where, orderBy, orderDirection })).burns ?? []
-	return result === undefined ? [] : result;
-}
-
-export type GetBurnsCountQuery = Partial<{
-	chainId: string
-	pairId: string
-}>
-
-export const getBurnsCount = async (query: GetBurnsCountQuery) => {
-	if (!query.chainId || !query.pairId) {
-		throw Error('Invalid pair id or chain id')
-	}
-	const chainId = query.chainId
-	const pairId = query.pairId
 	const where = {
 		pair_ : {
 			id: pairId,
 		}
 	}
-	const sdk = await getBuiltGraphSDK({ chainId, subgraphHost: SUBGRAPH_HOST[chainId], subgraphName: SUSHISWAP_SUBGRAPH_NAME[chainId]})
-	const result = ((await sdk.Burns({where})).burns ?? []).length
+	const result = ((await sdk.BurnsByChainId({where, chainId})).burns ?? []).length
 	return result === undefined ? 0 : result;
 }

@@ -1,5 +1,5 @@
 import { useInterval } from '@sushiswap/hooks'
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { formatDistanceToNow } from 'date-fns'
 import React, { FC, useState } from 'react'
 
 export const TimeAgo: FC<{ date: Date }> = ({ date }) => {
