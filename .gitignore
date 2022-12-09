@@ -71,4 +71,4 @@ artifacts
 **/public/worker-*.js.map
 
 # prisma
-prisma/schema.prisma
+prisma
