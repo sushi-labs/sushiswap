@@ -38,7 +38,7 @@ export const ZTokenToToken = ZToken.transform(({ address, decimals, chainId, sym
 
 export const ZFundSourceToFundSource = ZFundSource.optional().transform((fundSource) => {
   if (fundSource) {
-    return FundSource[fundSource]
+    return FundSource[fundSource as FundSource]
   }
 
   return undefined

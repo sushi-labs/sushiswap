@@ -32,7 +32,7 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
 
 export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()
-  const methods = useForm<CreateVestingFormSchemaType>({
+  const methods = useForm<CreateVestingFormSchemaType & FormErrors>({
     resolver: zodResolver(CreateVestingModelSchema),
     defaultValues: CREATE_VEST_DEFAULT_VALUES,
     mode: 'onBlur',
