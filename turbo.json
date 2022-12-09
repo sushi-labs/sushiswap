@@ -1,6 +1,18 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
+    "db:pull": {
+      "cache": false
+    },
+    "db:generate": {
+      "dependsOn": [
+        "^db:pull"
+      ],
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
     "test": {
       "dependsOn": ["build"],
       "outputs": [
@@ -42,6 +54,7 @@
       ],
       "dependsOn": [
         "^build",
+        "^db:generate",
         "generate"
       ],
       "env": [
@@ -68,6 +81,7 @@
     "dev": {
       "dependsOn": [
         "^build",
+        "^db:generate",
         "generate"
       ],
       "cache": false

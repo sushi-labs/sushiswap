@@ -1,0 +1,57 @@
+{
+  "name": "@sushiswap/database",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Database",
+  "keywords": [
+    "sushi",
+    "database"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/database"
+  },
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "generate": "prisma generate",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
+    "lint": "TIMING=1 eslint src --fix",
+    "postinstall": "pnpm db:generate",
+    "prepublishOnly": "pnpm build",
+    "test": "jest --passWithNoTests",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate",
+    "db:pull": "prisma db pull"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.7.1",
+    "ioredis": "^5.2.4",
+    "prisma-redis-middleware": "^4.3.0"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/jest": "^29.2.0",
+    "eslint": "^8.20.0",
+    "jest": "^29.3.0",
+    "tsup": "6.5.0",
+    "typescript": "4.8.2",
+    "prisma": "^4.7.1"
+  }
+}
