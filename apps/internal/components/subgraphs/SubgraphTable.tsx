@@ -26,8 +26,8 @@ const columns = [
 
       return (
         <div className="flex space-x-2">
-          <NetworkIcon type="circle" chainId={chainId} width={20} height={20} />
-          <div>{CHAIN_NAME[chainId] ?? ChainId[chainId]}</div>
+          <NetworkIcon type="circle" chainId={chainId as ChainId} width={20} height={20} />
+          <div>{CHAIN_NAME[chainId as ChainId] ?? ChainId[chainId as ChainId]}</div>
         </div>
       )
     },
@@ -113,6 +113,7 @@ export function SubgraphTable({ subgraphs, groupBy }: SubgraphTable) {
   return (
     <GenericTable
       table={table}
+      // @ts-ignore
       columns={columns}
       getLink={(row) => `https://thegraph.com/hosted-service/subgraph/${row.subgraphName}`}
     />

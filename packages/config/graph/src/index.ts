@@ -71,7 +71,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BTTC]: 'BitTorrent',
 }
 
-export const SUBGRAPH_HOST: Record<number, string> = {
+export const SUBGRAPH_HOST = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
   [ChainId.ARBITRUM_NOVA]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.AVALANCHE]: GRAPH_HOST,
@@ -94,7 +94,7 @@ export const SUBGRAPH_HOST: Record<number, string> = {
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
-}
+} as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
   [ChainId.ETHEREUM]: 'sushiswap/bentobox-ethereum',
