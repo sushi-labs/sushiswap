@@ -27,7 +27,6 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint src --fix",
-    "postinstall": "ls prisma/schema.prisma || (prisma init --datasource-provider mysql && rm .gitignore .env && prisma db pull && prisma generate)",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests",
     "db:init": "prisma init --datasource-provider mysql && rm .gitignore && rm .env",
