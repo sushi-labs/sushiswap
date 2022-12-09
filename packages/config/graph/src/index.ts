@@ -7,8 +7,6 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.METIS,
   ChainId.BTTC,
   ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.BSC,
 ] as const
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
@@ -175,8 +173,6 @@ export const TRIDENT_SUBGRAPH_NAME = {
   [ChainId.METIS]: 'sushi-qa/trident-metis',
   [ChainId.BTTC]: 'sushi-qa/trident-bttc',
   [ChainId.ARBITRUM]: 'sushi-qa/trident-arbitrum',
-  [ChainId.BSC]: 'sushi-qa/trident-bsc',
-  [ChainId.AVALANCHE]: 'sushi-qa/trident-avalanche',
 } as const
 
 export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_NAME, number> = {
@@ -186,8 +182,6 @@ export const TRIDENT_SUBGRAPH_START_BLOCK: Record<keyof typeof TRIDENT_SUBGRAPH_
   [ChainId.METIS]: 3030678,
   [ChainId.BTTC]: 13304596,
   [ChainId.ARBITRUM]: 43756724,
-  [ChainId.BSC]: 23136876,
-  [ChainId.AVALANCHE]: 22495996,
 }
 
 export const MINICHEF_SUBGRAPH_NAME = {

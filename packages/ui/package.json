@@ -40,9 +40,11 @@
     "rc-tooltip": "^5.2.2",
     "react-datepicker": "^4.8.0",
     "react-dropzone": "^14.2.2",
-    "react-jazzicon": "^1.0.4",
+    "react-popper": "^2.2.5",
     "react-spring": "^9.4.4",
+    "react-tiny-popover": "^7.1.0",
     "react-toastify": "^8.2.0",
+    "react-tooltip": "^4.2.21",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-window": "^1.8.7",
     "use-resize-observer": "^9.0.2"
@@ -59,7 +61,7 @@
     "@types/react-window": "^1.8.5",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.20.0",
-    "next": "13.0.5",
+    "next": "^13.0.5",
     "postcss": "^8.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -71,6 +73,6 @@
     "react-dom": "^18.2.0"
   },
   "optionalDependencies": {
-    "next": "13.0.5"
+    "next": "^13.0.5"
   }
 }

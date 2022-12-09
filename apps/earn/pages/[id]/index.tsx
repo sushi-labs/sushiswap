@@ -1,12 +1,14 @@
+import { Tab } from '@headlessui/react'
 import { chainShortName } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
 import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
-import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
+import { AppearOnMount, BreadcrumbLink, classNames } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { getSwaps, getSwapsCount, getMints, getMintsCount, getBurns, getBurnsCount } from '../../lib/api'
 
 import {
   Layout,
@@ -22,6 +24,9 @@ import {
   PoolPositionStakedProvider,
   PoolRewards,
   PoolStats,
+  SwapsTable,
+  AddLiquidityTable,
+  RemoveLiquidityTable,
 } from '../../components'
 import { GET_POOL_TYPE_MAP } from '../../lib/constants'
 
@@ -45,8 +50,11 @@ const _Pool = () => {
   const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${router.query.id}`, (url) =>
     fetch(url).then((response) => response.json())
   )
+  const [tab, setTab] = useState<number>(0)
+
   if (!data) return <></>
   const { pair } = data
+
   return (
     <PoolPositionProvider pair={pair}>
       <PoolPositionStakedProvider pair={pair}>
@@ -76,6 +84,53 @@ const _Pool = () => {
                 </div>
               </div>
             </div>
+            <section className="flex flex-col mt-10">
+              <Tab.Group selectedIndex={tab} onChange={setTab}>
+                <div className="flex items-center gap-6 mb-4 px-2">
+                  <Tab
+                    className={({ selected }) =>
+                      classNames(
+                        selected ? 'text-slate-200' : 'text-slate-500',
+                        'hover:text-slate-50 focus:text-slate-50 font-semibold !outline-none'
+                      )
+                    }
+                  >
+                    Swaps
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      classNames(
+                        selected ? 'text-slate-200' : 'text-slate-500',
+                        'hover:text-slate-50 focus:text-slate-50 font-semibold !outline-none'
+                      )
+                    }
+                  >
+                    Add Liquidity
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      classNames(
+                        selected ? 'text-slate-200' : 'text-slate-500',
+                        'hover:text-slate-50 focus:text-slate-50 font-semibold !outline-none'
+                      )
+                    }
+                  >
+                    Remove Liquidity
+                  </Tab>
+                </div> 
+                <Tab.Panels>
+                  <Tab.Panel unmount={false}>
+                    <SwapsTable pair={pair}/>
+                  </Tab.Panel>
+                  <Tab.Panel unmount={false}>
+                    <AddLiquidityTable pair={pair}/>
+                  </Tab.Panel>
+                  <Tab.Panel unmount={false}>
+                    <RemoveLiquidityTable pair={pair}/>
+                  </Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
+            </section>
           </Layout>
           <PoolActionBar pair={pair} />
         </PoolPositionRewardsProvider>
@@ -120,11 +175,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     // until the next successful request.
     throw new Error(`Failed to fetch pair, received ${pair}`)
   }
-
+  const [swaps, swapsCount, mints, mintsCount, burns, burnsCount ] = await Promise.all([getSwaps(pair.chainId, pair.address), getSwapsCount(pair.chainId, pair.address), getMints(pair.chainId, pair.address), getMintsCount(pair.chainId, pair.address), getBurns(pair.chainId, pair.address), getBurnsCount(pair.chainId, pair.address)])
+  
   return {
     props: {
       fallback: {
         [`/earn/api/pool/${id}`]: { pair },
+        [`/earn/api/swaps`]: swaps,
+        [`/earn/api/swapsCount`]: swapsCount,
+        [`/earn/api/mints`]: mints,
+        [`/earn/api/mintsCount`]: mintsCount,
+        [`/earn/api/burns`]: burns,
+        [`/earn/api/burnsCount`]: burnsCount,
       },
     },
     revalidate: 60,

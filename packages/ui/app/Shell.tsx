@@ -5,10 +5,6 @@ export interface ShellProps {
   children?: React.ReactNode
 }
 
-const random = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
 export function Shell({ children }: ShellProps): JSX.Element {
   const isMounted = useIsMounted()
 

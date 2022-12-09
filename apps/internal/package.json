@@ -24,7 +24,7 @@
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "^8.5.13",
     "fast-json-stable-stringify": "^2.1.0",
-    "next": "13.0.5",
+    "next": "^13.0.5",
     "octokit": "^2.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

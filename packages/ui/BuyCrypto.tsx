@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { App } from './app'
 
@@ -14,11 +14,7 @@ const TRANSAK_NETWORKS = [
   'moonriver',
 ]
 
-interface BuyCryptoProps {
-  address: string | undefined
-  children?: (buyUrl: string) => ReactNode
-}
-export const BuyCrypto: FC<BuyCryptoProps> = ({ address, children }) => {
+export const BuyCrypto = ({ address }: { address: string | undefined }) => {
   const buyUrl = useMemo(() => {
     const params = new URLSearchParams()
     params.append('apiKey', '5baa5495-64a5-4bcb-af71-febf3e54b07e')
@@ -33,7 +29,5 @@ export const BuyCrypto: FC<BuyCryptoProps> = ({ address, children }) => {
     // params.append('themeColor', '#3B82F6')
     return `https://global.transak.com/?${params.toString()}`
   }, [address])
-
-  if (typeof children === 'function') return <>{children(buyUrl)}</>
   return <App.NavItem href={buyUrl} label="Buy Crypto" external />
 }

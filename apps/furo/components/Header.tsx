@@ -2,8 +2,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
 import { App, Link, Menu } from '@sushiswap/ui'
 import { AppType } from '@sushiswap/ui/app/Header'
-import { NetworkSelector } from '@sushiswap/wagmi'
-import { Profile } from '@sushiswap/wagmi/components/Wallet/Profile'
+import { NotificationCentre, Wallet } from '@sushiswap/wagmi'
 import { SUPPORTED_CHAINS } from 'config'
 import { useRouter } from 'next/router'
 import React, { FC } from 'react'
@@ -32,12 +31,13 @@ export const Header: FC = () => {
       withScrollBackground={router.pathname === '/'}
     >
       <div className="flex items-center gap-2 whitespace-nowrap">
-        <NetworkSelector supportedNetworks={SUPPORTED_CHAINS} />
-        <Profile
+        <Wallet.Button
+          size="sm"
+          hack={connect}
           supportedNetworks={SUPPORTED_CHAINS}
-          notifications={notifications}
-          clearNotifications={clearNotifications}
+          className="border-none shadow-md"
         />
+        <NotificationCentre notifications={notifications} clearNotifications={clearNotifications} />
         {address && isMounted && isConnected && (
           <Menu
             button={
