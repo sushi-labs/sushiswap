@@ -35,11 +35,13 @@
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
+  "type": "module",
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/core": "^2.0.0-canary.1",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/abi": "workspace:*",
     "isomorphic-unfetch": "3.1.0",
     "@wagmi/core": "0.7.9",

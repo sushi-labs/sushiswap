@@ -24,6 +24,9 @@ model Token {
   decimals Int
   status   TokenStatus @default(UNKNOWN)
 
+  derivedUSD Decimal?
+  derivedNative Decimal?
+
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -49,8 +52,10 @@ model Pool {
   token1   Token  @relation("token1", fields: [chainId, token1Id], references: [chainId, address])
   token1Id String
 
-  swapFee      Float?
-  twapEnabled  Boolean?
+  swapFee      Float
+  twapEnabled  Boolean
+  reserve0     String @default("0")
+  reserve1     String @default("0")
   liquidityUSD Decimal // liquidity in USD
 
   generatedAt DateTime @default(now())
