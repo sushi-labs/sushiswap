@@ -32,7 +32,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
-    "wagmi": "0.8.10"
+    "wagmi": "0.8.10",
+    "@uniswap/token-lists": "1.0.0-beta.30"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
