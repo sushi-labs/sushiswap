@@ -64,11 +64,11 @@ export const useMasterChef: UseMasterChef = ({
           address: SUSHI_ADDRESS[chainId],
           abi: erc20ABI,
           functionName: 'balanceOf',
-          args: [Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]],
+          args: [chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
-          address: Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId],
+          address: chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId],
           abi: [
             chef === Chef.MASTERCHEF
               ? ({
@@ -165,6 +165,8 @@ export const useMasterChef: UseMasterChef = ({
     keepPreviousData: true,
     enabled: contracts.length > 0 && enabled,
   })
+
+  console.log({ data })
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined

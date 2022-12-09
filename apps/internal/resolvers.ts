@@ -1,6 +1,6 @@
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
-import { Resolvers, SubgraphStatus } from '.graphclient'
+import { Resolvers, SubgraphStatus, SubgraphWithNode } from '.graphclient'
 import { getBuiltGraphSDK } from '.graphclient'
 
 export const resolvers: Resolvers = {
@@ -55,9 +55,9 @@ export const resolvers: Resolvers = {
         )
       ).then((kpis) => kpis.flat()),
     subgraphs: async (root, args) => {
-      const sdk = getBuiltGraphSDK()
+      const fetch = async ({ subgraphName, nodeUrl }: SubgraphWithNode) => {
+        const sdk = getBuiltGraphSDK({ node: nodeUrl })
 
-      const fetch = async (subgraphName: string) => {
         switch (args.type) {
           case 'Current': {
             return sdk.CurrentSubgraphIndexingStatus({ subgraphName })
@@ -70,8 +70,11 @@ export const resolvers: Resolvers = {
 
       return (
         await Promise.all(
-          args.subgraphNames.map(async (subgraphName) =>
-            fetch(subgraphName).then((statusObject) => {
+          args.subgraphs.map(async (subgraph, i) => {
+            // artificial delay to prevent 429s, probably helps
+            await new Promise((resolve) => setTimeout(resolve, i * 10))
+
+            return fetch(subgraph).then((statusObject) => {
               const data = Object.values(statusObject)[0]
 
               if (!data) return undefined
@@ -83,7 +86,7 @@ export const resolvers: Resolvers = {
                 : 'Syncing'
 
               return {
-                subgraphName,
+                subgraphName: subgraph.subgraphName,
                 subgraphId: data.subgraph,
                 type: args.type,
                 status,
@@ -95,7 +98,7 @@ export const resolvers: Resolvers = {
                 entityCount: data.entityCount as number,
               }
             })
-          )
+          })
         )
       ).filter(Boolean)
     },

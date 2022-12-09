@@ -1,31 +1,14 @@
 import { CHAIN_NAME } from '@sushiswap/graph-config'
 import { useDebounce } from '@sushiswap/hooks'
+import { Loader } from '@sushiswap/ui'
 import Checkbox from '@sushiswap/ui/checkbox/Checkbox'
 import { SubgraphTable } from 'components/subgraphs/SubgraphTable'
 import stringify from 'fast-json-stable-stringify'
-import { getSubgraphs, Subgraph } from 'lib'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { FC, useMemo, useState } from 'react'
-import useSWR, { SWRConfig, unstable_serialize } from 'swr'
+import { Subgraph } from 'lib'
+import { useMemo, useState } from 'react'
+import useSWR from 'swr'
 
-export const getServerSideProps: GetServerSideProps<{ fallback: { [key: string]: Subgraph[] } }> = async ({ res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const data = await getSubgraphs()
-  return {
-    props: {
-      fallback: {
-        [unstable_serialize({
-          url: '/internal/api/subgraphs',
-          args: {
-            filter: '',
-          },
-        })]: data,
-      },
-    },
-  }
-}
-
-const fetcher = ({
+const fetcher = async ({
   url,
   args,
 }: {
@@ -36,30 +19,22 @@ const fetcher = ({
 }) => {
   const _url = new URL(url, window.location.origin)
 
-  return fetch(_url.href + args.filter)
+  return fetch(_url.href + '?' + new URLSearchParams(args))
     .then((res) => res.json())
+    .then((data: Subgraph[]) => data)
     .catch((e) => console.log(stringify(e)))
 }
 
-const SubgraphsPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
-  return (
-    <SWRConfig value={{ fallback }}>
-      <_SubgraphsPage />
-    </SWRConfig>
-  )
-}
-
-const _SubgraphsPage = () => {
+const SubgraphsPage = () => {
   const [filterBy, setFilter] = useState<string>('')
   const debouncedFilterBy = useDebounce(filterBy, 400)
   const [groupBy, setGroupBy] = useState<keyof Subgraph>('category')
   const [blocks, setBlocks] = useState<{ title: string; subgraphs: Subgraph[] }[]>([])
 
-  // const { data } = useSWR<Subgraph[]>(`/internal/api/subgraphs${debouncedFilterBy}`, () =>
-  //   getSubgraphs({ filter: debouncedFilterBy })
-  // )
-
-  const { data } = useSWR<Subgraph[]>({ url: '/internal/api/subgraphs', args: { filter: debouncedFilterBy } }, fetcher)
+  const { data, isValidating } = useSWR(
+    { url: '/internal/api/subgraphs', args: { filter: debouncedFilterBy } },
+    fetcher
+  )
 
   const subgraphs = useMemo(() => data || [], [data])
 
@@ -77,8 +52,8 @@ const _SubgraphsPage = () => {
   }, [subgraphs, groupBy])
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="max-w-7xl">
+    <div className="flex flex-col items-center justify-center py-4">
+      <div className="w-full max-w-7xl">
         <div className="space-y-6">
           <div className="space-y-2">
             <div>Filters and other things</div>
@@ -106,13 +81,21 @@ const _SubgraphsPage = () => {
               <div></div>
             </div>
           </div>
-          <div className="space-y-6">
+          <div className="flex flex-col items-center w-full space-y-6">
             {blocks.map((block) => (
               <div key={block.title} className="space-y-2">
                 <div>{block.title}</div>
                 <SubgraphTable subgraphs={block.subgraphs} groupBy={groupBy} />
               </div>
             ))}
+            {!data && !isValidating && (
+              <div className="">Error loading data. Probably 429d. Wait a bit and refresh.</div>
+            )}
+            {!data && isValidating && (
+              <div className="p-2 bg-slate-800 rounded-xl w-min">
+                <Loader />
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,8 +1,6 @@
 import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules([
-  '@sushiswap/redux-token-lists',
-  '@sushiswap/redux-localstorage',
   '@sushiswap/ui',
   '@sushiswap/wagmi',
 ])
@@ -136,14 +134,6 @@ const nextConfig = {
       {
         source: '/xswap/:path*',
         destination: `${XSWAP_URL}/xswap/:path*`,
-      },
-      {
-        source: '/invest',
-        destination: `${EARN_URL}/earn`,
-      },
-      {
-        source: '/invest/:path*',
-        destination: `${EARN_URL}/earn/:path*`,
       },
       {
         source: '/earn',
