@@ -1,6 +1,6 @@
 import { AddressZero } from '@ethersproject/constants'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { BentoBoxChainId, FURO_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { SUPPORTED_CHAINS } from 'config'
 
 import { getBuiltGraphSDK } from '.graphclient'
@@ -13,11 +13,15 @@ export const getRebase = async (chainId: string, id: string) => {
   }
   const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
   return (
-    (await sdk.bentoBoxRebase({ id: id === AddressZero ? WNATIVE_ADDRESS[chainId].toLowerCase() : id })).rebase ?? []
+    (
+      await sdk.bentoBoxRebase({
+        id: id === AddressZero ? WNATIVE_ADDRESS[Number(chainId) as BentoBoxChainId].toLowerCase() : id,
+      })
+    ).rebase ?? []
   )
 }
 
-export const getRebases = async (chainId: string | number, tokens: string[]) => {
+export const getRebases = async (chainId: string, tokens: string[]) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
@@ -26,14 +30,16 @@ export const getRebases = async (chainId: string | number, tokens: string[]) => 
     (
       await sdk.bentoBoxRebases({
         where: {
-          token_in: tokens.map((token) => (token === AddressZero ? WNATIVE_ADDRESS[chainId].toLowerCase() : token)),
+          token_in: tokens.map((token) =>
+            token === AddressZero ? WNATIVE_ADDRESS[Number(chainId) as BentoBoxChainId].toLowerCase() : token
+          ),
         },
       })
     ).rebases ?? []
   )
 }
 
-export const getUserStreams = async (chainId: string | number, id: string) => {
+export const getUserStreams = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }

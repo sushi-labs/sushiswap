@@ -1,6 +1,7 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import { getBentoBoxContractConfig, getFuroVestingContractConfig } from '@sushiswap/wagmi'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractRead } from 'wagmi'
 export function useVestingBalance(chainId?: number, vestingId?: string, token?: Token): Amount<Token> | undefined {
@@ -13,7 +14,7 @@ export function useVestingBalance(chainId?: number, vestingId?: string, token?: 
     functionName: 'vestBalance',
     chainId,
     enabled: !!chainId && !!vestingId,
-    args: [vestingId],
+    args: vestingId ? [BigNumber.from(vestingId)] : undefined,
     watch: true,
   })
 

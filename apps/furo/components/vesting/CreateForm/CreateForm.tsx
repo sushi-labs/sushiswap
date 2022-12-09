@@ -86,7 +86,7 @@ export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
               <div className="flex justify-end pt-4">
                 <Button
                   type="button"
-                  disabled={isWritePending || !isValid || isValidating || errors?.[FORM_ERROR]}
+                  disabled={isWritePending || !isValid || isValidating || Boolean(errors?.[FORM_ERROR])}
                   onClick={() => setOpen(true)}
                 >
                   Review Vesting
