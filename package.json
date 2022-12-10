@@ -13,7 +13,7 @@
     "build-protocols": "turbo run build --filter={./protocols/*}[HEAD^1]...",
     "build-root-app": "turbo run build --filter=root[HEAD^1]",
     "build-swap-app": "turbo run build --filter=swap[HEAD^1]",
-    "test-swap-app": "turbo run test --filter=swap[HEAD^1]",
+    "test-swap-app": "turbo run test --filter=swap",
     "build-xswap-app": "turbo run build --filter=xswap[HEAD^1]",
     "build:ci": "turbo run build --filter=[HEAD^1]",
     "changeset": "changeset",
