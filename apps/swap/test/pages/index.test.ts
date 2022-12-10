@@ -26,27 +26,27 @@ test.beforeEach(async ({ page }) => {
   page.on('pageerror', (err) => {
     console.log(err)
   })
-  await page.goto(process.env.PLAYWRIGHT_URL as string, { timeout: 120000 })
+  await page.goto(process.env.PLAYWRIGHT_URL as string)
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  test.slow()
-  const trade1: Trade = { input: nativeToken, output: usdc, amount: '10' }
+  // test.slow()
+  const trade1: Trade = { input: nativeToken, output: usdc, amount: '1' }
   await swap(trade1, page)
   const trade2: Trade = { input: usdc, output: nativeToken }
   await swap(trade2, page, true)
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
-  test.slow()
-  const trade1: Trade = { input: nativeToken, output: sushi, amount: '10' }
+  // test.slow()
+  const trade1: Trade = { input: nativeToken, output: sushi, amount: '1' }
   await swap(trade1, page)
   const trade2: Trade = { input: sushi, output: nativeToken }
   await swap(trade2, page, true)
 })
 
 test(`Wrap and unwrap`, async ({ page }) => {
-  test.slow()
+  // test.slow()
   const nativeToWrapped = {
     input: nativeToken,
     output: wNativeToken,
