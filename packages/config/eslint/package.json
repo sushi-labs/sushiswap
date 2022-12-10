@@ -20,7 +20,7 @@
     "@graphql-eslint/eslint-plugin": "latest",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
-    "eslint": "latest",
+    "eslint": "8.29.0",
     "eslint-config-next": "latest",
     "eslint-config-prettier": "latest",
     "eslint-plugin-cypress": "latest",

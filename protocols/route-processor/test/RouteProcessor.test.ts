@@ -1,36 +1,19 @@
 import { ethers, network } from 'hardhat'
-import { RouteProcessor__factory } from '../types/index'
+import { RouteProcessor__factory } from '../typechain'
 import { Swapper } from '../scripts/Swapper'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { WETH9ABI } from '../ABI/WETH9'
-import { HardhatNetworkConfig, ProviderConnectInfo } from 'hardhat/types'
+import { HardhatNetworkConfig } from 'hardhat/types'
 import { HEXer } from '../scripts/HEXer'
 import { ERC20ABI } from '../ABI/ERC20'
 import { BentoBox } from '../scripts/liquidityProviders/Trident'
 import { Contract } from 'ethers'
 import { BentoBoxABI } from '../ABI/BentoBoxABI'
-import { ChainKey, ChainId } from '@sushiswap/chain'
-import { SUSHI, Token, WBTC, WNATIVE } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
+import { SUSHI, Token, WBTC, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { expect } from 'chai'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-const WRAPPED_NATIVE: Record<number, Token> = {
-  [ChainId.ETHEREUM]: new Token({
-    chainId: ChainId.ETHEREUM,
-    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    decimals: 18,
-    symbol: 'WETH',
-    name: 'Wrapped Ether',
-  }),
-  [ChainId.POLYGON]: new Token({
-    chainId: ChainId.POLYGON,
-    address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-    decimals: 18,
-    symbol: 'WMATIC',
-    name: 'Wrapped Matic',
-  }),
-}
 
 async function BentoMakeTokenStrategyPercentage(chainId: ChainId, token: string, percentage: number) {
   await network.provider.request({
@@ -69,21 +52,24 @@ async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: T
   }
 
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(BentoBox[chainId] || '0x0000000000000000000000000000000000000000')
+  const routeProcessor = await RouteProcessor.deploy(
+    BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
+    WNATIVE_ADDRESS[chainId]
+  )
   await routeProcessor.deployed()
 
   console.log('2. User creation ...')
   const amountInBN = getBigNumber(amountIn * 1e18)
   const [Alice] = await ethers.getSigners()
-  const baseWrappedToken = WRAPPED_NATIVE[chainId]
+  const baseWrappedToken = WNATIVE[chainId]
 
-  console.log(`3. Deposit user's ${amountIn} ${WNATIVE[chainId].symbol} to ${baseWrappedToken.symbol}`)
+  console.log(`3. Deposit user's ${amountIn} ${baseWrappedToken.symbol} to ${baseWrappedToken.symbol}`)
   await Alice.sendTransaction({
     to: baseWrappedToken.address,
     value: amountInBN.mul(swaps),
   })
 
-  console.log(`4. Approve user's ${baseWrappedToken.symbol} to the route processor ...`)
+  console.log(`4. Approve user's ${amountIn} ${baseWrappedToken.symbol} to the route processor ...`)
   const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
   await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
 
@@ -153,25 +139,31 @@ describe('RouteProcessor', async function () {
       const erc20 = new ethers.utils.Interface(ERC20ABI)
       const callDataHex: string = erc20.encodeFunctionData('symbol', [])
 
-      const WMATIC = WRAPPED_NATIVE[ChainId.POLYGON]
       const code = new HEXer()
         .uint8(10)
-        .address(WMATIC.address)
+        .address(WNATIVE_ADDRESS[ChainId.POLYGON])
         .uint16(callDataHex.length / 2 - 1) // -1 for 0x
         .hexData(callDataHex)
         .toString0x()
 
       const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
-      const routeProcessor = await RouteProcessor.deploy(BentoBox[ChainId.POLYGON])
+      const routeProcessor = await RouteProcessor.deploy(BentoBox[ChainId.POLYGON], WNATIVE_ADDRESS[ChainId.POLYGON])
       await routeProcessor.deployed()
 
       console.log(code)
 
-      await routeProcessor.processRoute(WMATIC.address, 0, WMATIC.address, 0, WMATIC.address, code)
+      await routeProcessor.processRoute(
+        WNATIVE_ADDRESS[ChainId.POLYGON],
+        0,
+        WNATIVE_ADDRESS[ChainId.POLYGON],
+        0,
+        WNATIVE_ADDRESS[ChainId.POLYGON],
+        code
+      )
     }
   })
 
-  it('Ethereum WETH => FEI check', async function () {
+  it.skip('Ethereum WETH => FEI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined

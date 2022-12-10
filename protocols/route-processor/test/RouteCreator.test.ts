@@ -1,16 +1,14 @@
-import { ChainId } from '@sushiswap/chain'
-import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
-import { getBigNumber, MultiRoute } from '@sushiswap/tines'
-import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
+import { RouteProcessor__factory } from '../typechain'
+import { getBigNumber, MultiRoute } from '@sushiswap/tines'
+import { WETH9ABI } from '../ABI/WETH9'
 import { HardhatNetworkConfig } from 'hardhat/types'
 
-import { WETH9ABI } from '../ABI/WETH9'
-import { DataFetcher } from '../scripts/DataFetcher'
 import { BentoBox } from '../scripts/liquidityProviders/Trident'
-import { Router } from '../scripts/Router'
-import { getRouteProcessorCode } from '../scripts/TinesToRouteProcessor'
-import { RouteProcessor__factory } from '../typechain/index'
+import { ChainId } from '@sushiswap/chain'
+import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
+import { expect } from 'chai'
+import { RouteCreator } from '../scripts/RouteCreator'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -53,7 +51,7 @@ class BackCounter {
   }
 }
 
-async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, swaps = 1) {
+async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Token, swaps = 1) {
   let provider
   switch (chainId) {
     case ChainId.ETHEREUM:
@@ -70,26 +68,26 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   const baseWrappedToken = WRAPPED_NATIVE[chainId]
 
   console.log(`1. ${chainId} Find best route ...`)
-  const backCounter = new BackCounter(3)
-  const dataFetcher = new DataFetcher(provider, chainId)
-  dataFetcher.startDataFetching()
-  dataFetcher.fetchPoolsForToken(baseWrappedToken, toToken)
-  const router = new Router(dataFetcher, baseWrappedToken, amountInBN, toToken, 30e9)
-  router.startRouting((r) => {
-    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-    const printed = router.routeToString(r, baseWrappedToken, toToken)
+  const backCounter = new BackCounter(8)
+  const routeCreator = new RouteCreator(provider, chainId)
+  routeCreator.startRouting(baseWrappedToken, amountInBN, toToken, 30e9)
+  routeCreator.onRouteUpdate((r) => {
+    console.log('Known Pools:', routeCreator.poolCodes.size)
+    const printed = routeCreator.routeToString(r, baseWrappedToken, toToken)
     console.log(printed)
     backCounter.reset()
   })
 
   await backCounter.wait()
-  router.stopRouting()
-  dataFetcher.stopDataFetching()
+  routeCreator.stopRouting()
 
   console.log(`2. ChainId=${chainId} RouteProcessor deployment ...`)
 
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(BentoBox[chainId] || '0x0000000000000000000000000000000000000000')
+  const routeProcessor = await RouteProcessor.deploy(
+    BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
+    WRAPPED_NATIVE[chainId].address
+  )
   await routeProcessor.deployed()
 
   console.log('3. User creation ...')
@@ -106,10 +104,10 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
 
   console.log('6. Create route processor code ...')
-  const route = router.getBestRoute() as MultiRoute
-  const code = getRouteProcessorCode(route, routeProcessor.address, Alice.address, dataFetcher.getCurrentPoolCodeMap())
+  const code = routeCreator.getRouteProcessorCodeForBestRoute(routeProcessor.address, Alice.address, 0.5)
 
   console.log('7. Call route processor ...')
+  const route = routeCreator.getBestRoute() as MultiRoute
   const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - 0.005) * 1_000_000)).div(1_000_000)
 
   const toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, Alice)
@@ -134,7 +132,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
 }
 
 describe('RouteCreator', async function () {
-  it('Ethereum WETH => FEI check', async function () {
+  it.skip('Ethereum WETH => FEI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined
@@ -145,15 +143,15 @@ describe('RouteCreator', async function () {
         symbol: 'FEI',
         name: 'Fei USD',
       })
-      await testRouter(ChainId.ETHEREUM, 10, FEI)
+      await testRouteCreator(ChainId.ETHEREUM, 10, FEI)
     }
   })
 
-  it('Polygon WMATIC => SUSHI check', async function () {
+  it.skip('Polygon WMATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
       expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined
-      await testRouter(ChainId.POLYGON, 1_000_000, SUSHI[ChainId.POLYGON])
+      await testRouteCreator(ChainId.POLYGON, 1_000_000, SUSHI[ChainId.POLYGON])
     }
   })
 })
