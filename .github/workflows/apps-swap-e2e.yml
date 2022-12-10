@@ -69,6 +69,10 @@ jobs:
           run: pnpm install && npx playwright install && npx playwright install-deps
           working-directory: .
 
-        - name: Test swap app
-          run: pnpm test-swap-app
-          working-directory: .
+        - name: Launch anvil
+          run: pnpm anvil && sleep 60
+          working-directory: ./apps/swap
+
+        # - name: Test swap app
+        #   run: pnpm test-swap-app
+        #   working-directory: .
