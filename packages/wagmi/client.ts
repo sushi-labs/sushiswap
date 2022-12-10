@@ -122,7 +122,7 @@ export const client: Client = createClient({
   },
   autoConnect: false,
   connectors: isTest
-    ? [new MockConnector({ options: { chainId: 137, signer: getSigners()[0] } })]
+    ? [new MockConnector({ options: { signer: getSigners()[0] } })]
     : [
         new InjectedConnector({
           chains,

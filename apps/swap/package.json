@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "anvil": "anvil --fork-url $ANVIL_FORK_URL --fork-block-number 35896301",
+    "anvil": "anvil --fork-url $ANVIL_FORK_URL --fork-block-number 16155884",
     "build": "next build",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev -p 3009",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
-    "test": "concurrently \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number 35896301\" \"next build && next start\"",
+    "test": "concurrently \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number 16155884\" \"next build && next start\"",
     "playwright": "npx playwright test",
     "check": "tsc --pretty --noEmit"
   },

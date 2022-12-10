@@ -24,6 +24,7 @@ class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
 
 export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
   const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
+  console.log('CHAIN', { chain })
   const url = foundryMainnet.rpcUrls.default.http[0]
   const provider = new EthersProviderWrapper(url, getNetwork(chain))
   provider.pollingInterval = 1_000
