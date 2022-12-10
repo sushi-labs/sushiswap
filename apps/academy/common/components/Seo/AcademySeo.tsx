@@ -14,7 +14,7 @@ export const AcademySeo: FC<BlogSeo> = ({ seo }) => (
     title={seo.siteName}
     description={seo.siteDescription}
     authorName="Sushi"
-    images={[seo.defaultSeo.shareImage.data.attributes.url]}
+    images={[seo?.defaultSeo?.shareImage?.data?.attributes?.url as string]}
     datePublished={seo.createdAt}
     dateModified={seo.updatedAt}
   />
