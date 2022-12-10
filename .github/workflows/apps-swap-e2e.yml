@@ -93,8 +93,7 @@ jobs:
         with:
           path: |
             node_modules
-            docs/node_modules
-            examples/**/node_modules
+            apps/swap/node_modules
             packages/**/node_modules
             packages/**/dist
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
@@ -102,7 +101,7 @@ jobs:
         run: pnpm build-swap-app
 
   e2e:
-      name: Continuous integration
+      name: Test e2e
       needs: build
       timeout-minutes: 15
       runs-on: ubuntu-latest
