@@ -61,6 +61,10 @@ jobs:
             node-version: 16
             cache: 'pnpm'
  
+        - name: Install foundry
+          run: curl -L https://foundry.paradigm.xyz | bash
+          working-directory: .
+
         - name: Install dependencies
           run: pnpm install
           working-directory: .
