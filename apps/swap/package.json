@@ -9,7 +9,7 @@
     "dev": "next dev -p 3009",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
-    "test": "concurrently \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number 35896301\" \"next build && next start\" \"npx playwright test\"",
+    "test": "concurrently \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number 35896301\" \"next build && next start\"",
     "check": "tsc --pretty --noEmit"
   },
   "dependencies": {
