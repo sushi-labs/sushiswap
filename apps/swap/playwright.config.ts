@@ -77,7 +77,7 @@ const config: PlaywrightTestConfig = {
   outputDir: 'test/results/',
 
   // webServer: {
-  //   command: 'pnpm run start',
+  //   command: 'npm run start',
   //   port: 3000,
   // },
 
