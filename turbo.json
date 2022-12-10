@@ -39,14 +39,16 @@
     },
     "test": {
       "dependsOn": [
-        "build",
+        "build"
+      ],
+      "outputs": [
+        "coverage/**"
+      ],
+      "env": [
         "ANVIL_FORK_URL",
         "PLAYWRIGHT_URL",
         "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
         "CHAIN_ID"
-      ],
-      "outputs": [
-        "coverage/**"
       ]
     },
     "lint": {
