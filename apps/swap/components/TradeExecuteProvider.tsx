@@ -67,6 +67,8 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+      console.log('Prepare function called wtih setRequest', setRequest)
+
       // console.log({
       //   trade,
       //   account,
@@ -303,7 +305,9 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
           }
         }
 
-        // console.log(call)
+        if (!call) {
+          console.log('No call...')
+        }
 
         if (call) {
           if (!isAddress(call.address)) new Error('call address has to be an address')
@@ -318,6 +322,8 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
                   data: call.calldata,
                   value,
                 }
+
+          console.log({ call, tx })
 
           const estimatedCall = await provider
             .estimateGas(tx)
@@ -348,6 +354,11 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
                   }
                 })
             })
+
+          console.log('About to actually setRequest with...', {
+            ...tx,
+            ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
+          })
 
           setRequest({
             ...tx,
@@ -412,6 +423,12 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
     enabled:
       trade && (trade.route.status === RouteStatus.Success || trade.route.status === RouteStatus.Partial) && approved,
     onSuccess,
+  })
+
+  console.log({
+    sendTransaction,
+    enabled:
+      trade && (trade.route.status === RouteStatus.Success || trade.route.status === RouteStatus.Partial) && approved,
   })
 
   return children({ execute: sendTransaction, isWritePending })

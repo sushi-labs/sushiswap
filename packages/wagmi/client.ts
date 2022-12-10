@@ -145,8 +145,6 @@ export const client: Client = createClient({
             appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
           },
         }),
-        // @ts-ignore
         new SafeConnector({ chains }),
-        // new SafeConnector({ chains }),
       ],
 })
