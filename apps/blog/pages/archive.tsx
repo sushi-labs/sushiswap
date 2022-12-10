@@ -6,8 +6,8 @@ import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { Article, Category, Collection } from 'types'
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection } from '../.mesh'
 import { ArticleList, ArticleListItem, Categories, Pagination } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 
@@ -40,8 +40,8 @@ const _Archive: FC = () => {
   const debouncedQuery = useDebounce(query, 200)
 
   const [selected, setSelected] = useState<string[]>([])
-  const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
-  const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
+  const { data: articlesData } = useSWR<Collection<Article>>('/articles')
+  const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
   const { data: filterData, isValidating } = useSWR(
     [`/articles`, selected, debouncedQuery, page],
     async (url, selected, debouncedQuery, page) => {
@@ -104,7 +104,7 @@ const _Archive: FC = () => {
             <div className="border-t border-b divide-y divide-slate-200/5 border-slate-200/5">
               {articleList && (
                 <ArticleList
-                  articles={articleList as ArticleEntity[]}
+                  articles={articleList as Article[]}
                   loading={loading}
                   render={(article) => (
                     <ArticleListItem article={article} key={`article__left__${article?.attributes?.slug}`} />

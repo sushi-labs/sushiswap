@@ -1,12 +1,11 @@
 import { Button } from '@sushiswap/ui'
 import { Dispatch, FC, SetStateAction, useCallback } from 'react'
-
-import { CategoryEntity } from '../.mesh'
+import { Category } from 'types'
 
 interface Categories {
   selected: string[]
   onSelect: Dispatch<SetStateAction<string[]>>
-  categories: CategoryEntity[]
+  categories: Category[]
 }
 
 export const Categories: FC<Categories> = ({ categories, selected, onSelect }) => {
