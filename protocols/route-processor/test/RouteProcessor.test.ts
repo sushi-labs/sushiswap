@@ -54,7 +54,7 @@ async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: T
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
   const routeProcessor = await RouteProcessor.deploy(
     BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
-    WRAPPED_NATIVE[chainId].address
+    WNATIVE_ADDRESS[chainId]
   )
   await routeProcessor.deployed()
 
@@ -63,13 +63,13 @@ async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: T
   const [Alice] = await ethers.getSigners()
   const baseWrappedToken = WNATIVE[chainId]
 
-  console.log(`3. Deposit user's ${amountIn} ${WNATIVE[chainId].symbol} to ${baseWrappedToken.symbol}`)
+  console.log(`3. Deposit user's ${amountIn} ${baseWrappedToken.symbol} to ${baseWrappedToken.symbol}`)
   await Alice.sendTransaction({
     to: baseWrappedToken.address,
     value: amountInBN.mul(swaps),
   })
 
-  console.log(`4. Approve user's ${baseWrappedToken.symbol} to the route processor ...`)
+  console.log(`4. Approve user's ${amountIn} ${baseWrappedToken.symbol} to the route processor ...`)
   const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
   await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
 
@@ -139,10 +139,9 @@ describe('RouteProcessor', async function () {
       const erc20 = new ethers.utils.Interface(ERC20ABI)
       const callDataHex: string = erc20.encodeFunctionData('symbol', [])
 
-      const WMATIC = WRAPPED_NATIVE[ChainId.POLYGON]
       const code = new HEXer()
         .uint8(10)
-        .address(WMATIC.address)
+        .address(WNATIVE_ADDRESS[ChainId.POLYGON])
         .uint16(callDataHex.length / 2 - 1) // -1 for 0x
         .hexData(callDataHex)
         .toString0x()
@@ -153,7 +152,14 @@ describe('RouteProcessor', async function () {
 
       console.log(code)
 
-      await routeProcessor.processRoute(WMATIC.address, 0, WMATIC.address, 0, WMATIC.address, code)
+      await routeProcessor.processRoute(
+        WNATIVE_ADDRESS[ChainId.POLYGON],
+        0,
+        WNATIVE_ADDRESS[ChainId.POLYGON],
+        0,
+        WNATIVE_ADDRESS[ChainId.POLYGON],
+        code
+      )
     }
   })
 
