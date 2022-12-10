@@ -104,7 +104,7 @@ jobs:
   #       working-directory: .
   e2e:
       name: Test e2e
-      needs: build
+      # needs: build
       timeout-minutes: 15
       runs-on: ubuntu-latest
       strategy:
@@ -167,8 +167,7 @@ jobs:
         #       packages/**/node_modules
         #       packages/**/dist
         #     key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-        # - name: Install dependencies
-        #   run: pnpm i
+c
           # working-directory: .
         - name: Install rust
           uses: actions-rs/toolchain@v1
