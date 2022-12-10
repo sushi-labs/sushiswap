@@ -134,13 +134,20 @@ jobs:
         - uses: pnpm/action-setup@v2
           with:
             version: ${{ matrix.pnpm-version }}
-        - name: Setup Node.js
+        - name: Set up Node ${{ matrix.node-version }}
           uses: actions/setup-node@v3
           with:
             cache: 'pnpm'
             node-version: ${{ matrix.node-version }}
+        - name: Cache pnpm
+          uses: actions/cache@v3
+          with:
+            path: ~/.pnpm-store
+            key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-
         - name: Cache node_modules
           uses: actions/cache@v3
+          id: cache-node-modules
           with:
             path: |
               node_modules
@@ -148,8 +155,20 @@ jobs:
               packages/**/node_modules
               packages/**/dist
             key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-        - name: Install dependencies
-          run: pnpm i && npx playwright install --with-deps
+        - name: Install Dependencies
+          if: steps.cache-node-modules.outputs.cache-hit != 'true'
+          run: pnpm i
+        # - name: Cache node_modules
+        #   uses: actions/cache@v3
+        #   with:
+        #     path: |
+        #       node_modules
+        #       apps/swap/node_modules
+        #       packages/**/node_modules
+        #       packages/**/dist
+        #     key: modules-${{ hashFiles('pnpm-lock.yaml') }}
+        # - name: Install dependencies
+        #   run: pnpm i
           # working-directory: .
         - name: Install rust
           uses: actions-rs/toolchain@v1
