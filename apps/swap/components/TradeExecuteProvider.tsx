@@ -67,6 +67,19 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+      // console.log({
+      //   trade,
+      //   account,
+      //   chainId,
+      //   deadline,
+      //   approved,
+      //   sushiSwapRouter,
+      //   isV1: trade?.isV1(),
+      //   isV2: trade?.isV2(),
+      //   isComplex: trade?.isComplex(),
+      //   isSingle: trade?.isSingle(),
+      //   isNotFound: trade?.isNotFound(),
+      // })
       if (!trade || !account || !chainId || !deadline || !approved) return
       try {
         let call: SwapCall | null = null
@@ -288,9 +301,9 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
             }),
             value,
           }
-
-          console.log(call)
         }
+
+        // console.log(call)
 
         if (call) {
           if (!isAddress(call.address)) new Error('call address has to be an address')

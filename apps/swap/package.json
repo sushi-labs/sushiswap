@@ -9,7 +9,7 @@
     "dev": "next dev -p 3009",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
-    "test:e2e": "npx playwright test",
+    "test": "concurrently \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number 35896301\" \"next build && next start\" \"npx playwright test\"",
     "check": "tsc --pretty --noEmit"
   },
   "dependencies": {
@@ -65,6 +65,7 @@
     "@types/workbox-sw": "^4.3.2",
     "autoprefixer": "^10.4.0",
     "eslint": "8.29.0",
+    "concurrently": "7.6.0",
     "next-transpile-modules": "10.0.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.1.0",

@@ -125,8 +125,9 @@ export function useGetStablePools(
   const pools = useMemo(() => {
     const pools: PoolData[] = []
     callStatePools?.forEach((s, i) => {
-      if (s !== undefined)
-        s.forEach((address: string) =>
+      console.log({ s })
+      if (s)
+        s.forEach((address) =>
           pools.push({
             address,
             token0: pairsUniqueProcessed?.[i][0] as Token,

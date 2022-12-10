@@ -19,6 +19,8 @@ const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_PLAYWR
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
+console.log({ isTest })
+
 const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
   ? configureChains(
       [chain.foundry],

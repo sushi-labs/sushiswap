@@ -26,10 +26,12 @@ export function useSendTransaction({
     enabled,
   })
 
-  // console.log({
-  //   request,
-  //   'config.setrequest': config.request,
-  // })
+  console.log({
+    request,
+    enabled,
+    chainId,
+    'config.setrequest': config.request,
+  })
 
   const _onSettled = useCallback(
     (

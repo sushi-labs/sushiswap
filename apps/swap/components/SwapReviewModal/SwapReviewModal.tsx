@@ -86,6 +86,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         <Approve2.Root chainId={chainId} onSuccess={createNotification} definition={definition}>
           <TradeExecuteProvider chainId={chainId} approved={true} signature={signature} onSuccess={onSwapSuccess}>
             {({ isWritePending, execute }) => {
+              console.log({ isWritePending, execute })
               return (
                 <Button
                   size="md"
