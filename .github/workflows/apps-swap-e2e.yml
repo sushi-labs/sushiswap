@@ -99,7 +99,7 @@ jobs:
             packages/**/dist
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Build
-        run: build-swap-app
+        run: pnpm build-swap-app
 
   e2e:
       name: Continuous integration
