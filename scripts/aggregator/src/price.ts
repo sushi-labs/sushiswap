@@ -1,59 +1,33 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { PrismaClient, Token } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import { readContracts, watchReadContracts } from '@wagmi/core'
+import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
 import { performance } from 'perf_hooks'
-import { BigNumber } from '@ethersproject/bignumber'
 import './lib/wagmi.js'
-import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json' assert { type: 'json' }
-import { ConstantProductRPool, calcTokenPrices } from '@sushiswap/tines'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  // TODO: pass in params, e.g. chainId
+  const startTime = performance.now()
+  // TODO: pass in params, e.g. chainId, baseToken, priceType (enum, USD or ETH?)
   // Hardcoded for now.
-  // Limitations: only works for constant product pools
-  // const chainId = ChainId.POLYGON
-  const chainId = ChainId.OPTIMISM
-  
-  const baseToken = await getBaseToken(chainId, '0x7f5c764cbc14f9669b88837ca1490cca17c31607') // USDC
+  // Limitations: this only works for constant product pools
+  const chainId = ChainId.POLYGON
 
-
-  // const baseToken = await getBaseToken(chainId, '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063') // DAI
-  // const baseToken = await getBaseToken(chainId, '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270') // WNATIVE
-  // const baseToken = await getBaseToken(chainId, '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619') // WETH
-  // const baseToken = await getBaseToken(chainId, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174') // USDC
-  // const baseToken = await getBaseToken(chainId, '0xc2132d05d31c914a87c6611c10748aeb04b58e8f') // USDT
-  if (!baseToken) throw new Error(`${baseToken} not found in database, check the address and chainId.`)
-
+  const baseToken = await getBaseToken(chainId, '0x2791bca1f2de4661ed88a30c99a7a9449aa84174') // USDC
   const pools = await getPools(chainId)
-  const constantProductPools = transformToConstantProductPool(pools)
-  const results = calcTokenPrices(constantProductPools, baseToken)
 
+  const { constantProductPools, tokens } = transform(pools)
+  const tokensToUpdate = calculatePrices(constantProductPools, baseToken, tokens)
 
-  const test2 = []
+  await updateTokenPrices(tokensToUpdate)
 
-  for (const [token, value] of results.entries()) {
-
-    const foundPool = pools.find((pool) => (pool.token0.address == token.address || pool.token1.address == token.address) )
-    if (!foundPool) continue
-    const decimal = foundPool.token0.address == token.address ? foundPool.token0.decimals : foundPool.token1.decimals
-    const price = value / Math.pow(10, baseToken.decimals - decimal)
-    test2.push({token, price})
-  }
-
-  for (const result of test2) {
-
-    // const price = result[1]
-    const price = result.price
-    // if (price > 0.01) console.log(`${result.token.symbol} price: ${price.toFixed(2)}`)
-    console.log(`${result.token.address}\t${result.token.symbol}\t${price.toFixed(2)}`)
-    // if (symbol == "MIM") console.log(`${symbol} price: ${(price).toFixed(2)}`)
-  }
+  const endTime = performance.now()
+  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 }
 
 async function getBaseToken(chainId: ChainId, address: string) {
-  return await prisma.token.findFirst({
+  const baseToken = await prisma.token.findFirst({
     select: {
       address: true,
       name: true,
@@ -65,6 +39,9 @@ async function getBaseToken(chainId: ChainId, address: string) {
       address: address.toLowerCase(),
     },
   })
+
+  if (!baseToken) throw new Error(`${baseToken} not found in database, check the address and chainId.`)
+  return baseToken
 }
 
 async function getPools(chainId: ChainId) {
@@ -106,12 +83,6 @@ async function getPools(chainId: ChainId) {
         reserve1: {
           not: '0',
         },
-        // token0: {
-        //   status: 'APPROVED',
-        // },
-        // token1: {
-        //   status: 'APPROVED',
-        // },
       },
       take: batchSize,
       skip: i * batchSize,
@@ -127,8 +98,9 @@ async function getPools(chainId: ChainId) {
   return flatResponse
 }
 
-function transformToConstantProductPool(pools: Pool[]) {
-  return pools.map((pool) => {
+function transform(pools: Pool[]) {
+  const tokens: Map<string, Token> = new Map()
+  const constantProductPools = pools.map((pool) => {
     const token0 = {
       address: pool.token0.address,
       name: pool.token0.name,
@@ -139,7 +111,9 @@ function transformToConstantProductPool(pools: Pool[]) {
       name: pool.token1.name,
       symbol: pool.token1.symbol,
     }
-    
+    if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
+    if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
+
     return new ConstantProductRPool(
       pool.address,
       token0,
@@ -149,6 +123,50 @@ function transformToConstantProductPool(pools: Pool[]) {
       BigNumber.from(pool.reserve1)
     )
   })
+  return { constantProductPools, tokens }
+}
+
+function calculatePrices(
+  constantProductPools: ConstantProductRPool[],
+  baseToken: { symbol: string; address: string; name: string; decimals: number },
+  tokens: Map<string, Token>
+) {
+  const results = calcTokenPrices(constantProductPools, baseToken)
+  const tokensWithPrices = []
+
+  for (const [rToken, value] of results.entries()) {
+    const token = tokens.get(rToken.address)
+    if (!token || value === 0) continue
+    const price = Number((value / Math.pow(10, baseToken.decimals - token.decimals)).toFixed(12))
+    if (price > Number.MAX_SAFE_INTEGER) continue
+    tokensWithPrices.push({ id: token.id, price })
+  }
+
+  return tokensWithPrices
+}
+
+async function updateTokenPrices(tokens: { id: string; price: number }[]) {
+  const startTime = performance.now()
+  const batchSize = 250
+  let updatedCount = 0
+  // 64 bit signed integer
+  for (let i = 0; i < tokens.length; i += batchSize) {
+    const batch = tokens.slice(i, i + batchSize)
+    const requests = batch.map((token) => {
+      return prisma.token.update({
+        select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
+        where: { id: token.id },
+        data: {
+          derivedUSD: token.price,
+        },
+      })
+    })
+    const responses = await Promise.all(requests)
+    console.log(`BATCH: Updated ${responses.length} prices.`)
+    updatedCount += responses.length
+  }
+  const endTime = performance.now()
+  console.log(`Updated ${updatedCount} prices (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 }
 
 interface Pool {
