@@ -167,7 +167,8 @@ jobs:
         #       packages/**/node_modules
         #       packages/**/dist
         #     key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-c
+        # - name: Install dependencies
+        #   run: pnpm i
           # working-directory: .
         - name: Install rust
           uses: actions-rs/toolchain@v1
