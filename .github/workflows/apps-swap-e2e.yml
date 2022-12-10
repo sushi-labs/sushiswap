@@ -12,10 +12,10 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-defaults:
-  run:
-    # change this if your nextjs app does not live at the root of the repo
-    working-directory: ./apps/swap
+# defaults:
+#   run:
+#     # change this if your nextjs app does not live at the root of the repo
+#     working-directory: ./apps/swap
 
 env:
   CI: true
@@ -179,7 +179,7 @@ jobs:
 
         - name: Test swap app
           run: pnpm test-swap-app
-          working-directory: .
+          # working-directory: .
 
         - name: Upload test results
           if: always()
@@ -187,4 +187,4 @@ jobs:
           with:
             name: playwright-report
             path: test/results
-            working-directory: .
+            working-directory: ./apps/swap
