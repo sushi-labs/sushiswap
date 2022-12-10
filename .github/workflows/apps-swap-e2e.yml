@@ -31,7 +31,7 @@ env:
 jobs:
   ci:
       name: Continuous integration
-      timeout-minutes: 5
+      timeout-minutes: 15
       runs-on: ubuntu-latest
       env:
         # TURBO
@@ -64,6 +64,16 @@ jobs:
           with:
             node-version: 16
             cache: 'pnpm'
+
+        - name: Cache node_modules
+          uses: actions/cache@v3
+          with:
+            path: |
+              node_modules
+              apps/swap/node_modules
+              packages/**/node_modules
+              packages/**/dist
+            key: modules-${{ hashFiles('pnpm-lock.yaml') }}
 
         - name: Install dependencies
           run: pnpm install && npx playwright install --with-deps
