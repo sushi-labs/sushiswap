@@ -62,13 +62,13 @@ jobs:
             cache: 'pnpm'
  
         - name: Install foundry
-          run: curl -L https://foundry.paradigm.xyz | bash
+          run: curl -L https://foundry.paradigm.xyz | bash && source /home/runner/.bashrc
           working-directory: .
 
         - name: Install dependencies
-          run: pnpm install
+          run: pnpm install && npx playwright install && npx playwright install-deps
           working-directory: .
 
         - name: Test swap app
-          run: npx playwright install && npx playwright install-deps && pnpm test-swap-app
+          run: pnpm test-swap-app
           working-directory: .
