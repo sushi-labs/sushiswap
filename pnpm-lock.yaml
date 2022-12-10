@@ -1134,7 +1134,6 @@ importers:
       next-sitemap: ^3.1.16
       next-transpile-modules: 10.0.0
       numeral: ^2.0.6
-      playwright: 1.28.1
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -1198,7 +1197,6 @@ importers:
       concurrently: 7.6.0
       eslint: 8.29.0
       next-transpile-modules: 10.0.0
-      playwright: 1.28.1
       postcss: 8.4.19
       tailwindcss: 3.2.4_postcss@8.4.19
       typescript: 4.8.2
@@ -23914,15 +23912,6 @@ packages:
     resolution: {integrity: sha512-3PixLnGPno0E8rSBJjtwqTwJe3Yw72QwBBBxNoukIj3lEeBNXwbNiKrNuB1oyQgTBw5QHUhNO3SteEtHaMK6ag==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: true
-
-  /playwright/1.28.1:
-    resolution: {integrity: sha512-92Sz6XBlfHlb9tK5UCDzIFAuIkHHpemA9zwUaqvo+w7sFMSmVMGmvKcbptof/eJObq63PGnMhM75x7qxhTR78Q==}
-    engines: {node: '>=14'}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      playwright-core: 1.28.1
     dev: true
 
   /pngjs/3.4.0:

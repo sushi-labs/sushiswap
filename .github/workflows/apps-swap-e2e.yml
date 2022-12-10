@@ -10,14 +10,12 @@ on:
     paths:
       - "apps/swap/**"
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-# defaults:
-#   run:
-#     # change this if your nextjs app does not live at the root of the repo
-#     working-directory: ./apps/swap
+defaults:
+  run:
+    # change this if your nextjs app does not live at the root of the repo
+    working-directory: ./apps/swap
 
 env:
   CI: true
@@ -31,90 +29,15 @@ env:
   NODE_ENV: test
 
 jobs:
-
-  # install:
-  #   name: Install
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       node-version: [16]
-  #       pnpm-version: [7]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: pnpm/action-setup@v2.2.4
-  #       with:
-  #         version: ${{ matrix.pnpm-version }}
-  #     - name: Set up Node ${{ matrix.node-version }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         cache: 'pnpm'
-  #         node-version: ${{ matrix.node-version }}
-  #     - name: Cache pnpm
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ~/.pnpm-store
-  #         key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-  #         restore-keys: pnpm-
-  #     - name: Cache node_modules
-  #       uses: actions/cache@v3
-  #       id: cache-node-modules
-  #       with:
-  #         path: |
-  #           node_modules
-  #           apps/swap/node_modules
-  #           packages/**/node_modules
-  #           packages/**/dist
-  #         key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-  #     - name: Install Dependencies
-  #       if: steps.cache-node-modules.outputs.cache-hit != 'true'
-  #       run: pnpm i
-  #     - name: Link Dependencies
-  #       if: steps.cache-node-modules.outputs.cache-hit == 'true'
-  #       run: pnpm dev
-
-  # build:
-  #   name: Build
-  #   needs: install
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       node-version: [16]
-  #       pnpm-version: [7]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: pnpm/action-setup@v2
-  #       with:
-  #         version: 7
-  #     - name: Set up Node ${{ matrix.node-version }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         cache: 'pnpm'
-  #         node-version: ${{ matrix.node-version }}
-  #     - name: Cache node_modules
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: |
-  #           node_modules
-  #           apps/swap/node_modules
-  #           packages/**/node_modules
-  #           packages/**/dist
-  #         key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-  #     - name: Build
-  #       run: pnpm build-swap-app
-  #       working-directory: .
-  e2e:
-      name: Test e2e
-      # needs: build
+  ci:
+      name: Continuous integration
       timeout-minutes: 15
       runs-on: ubuntu-latest
-      strategy:
-        matrix:
-          node-version: [16]
-          pnpm-version: [7]
       env:
-        CI: true
+        # TURBO
         TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+        # RPC
         NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
         NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
         INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
@@ -131,33 +54,17 @@ jobs:
           uses: actions/checkout@v3
           with:
             fetch-depth: 2
+ 
         - uses: pnpm/action-setup@v2
           with:
-            version: ${{ matrix.pnpm-version }}
-        - name: Set up Node ${{ matrix.node-version }}
+            version: 7
+ 
+        - name: Setup Node.js
           uses: actions/setup-node@v3
           with:
+            node-version: 16
             cache: 'pnpm'
-            node-version: ${{ matrix.node-version }}
-        - name: Cache pnpm
-          uses: actions/cache@v3
-          with:
-            path: ~/.pnpm-store
-            key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-
-        - name: Cache node_modules
-          uses: actions/cache@v3
-          id: cache-node-modules
-          with:
-            path: |
-              node_modules
-              apps/swap/node_modules
-              packages/**/node_modules
-              packages/**/dist
-            key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-        - name: Install Dependencies
-          if: steps.cache-node-modules.outputs.cache-hit != 'true'
-          run: pnpm i
+
         # - name: Cache node_modules
         #   uses: actions/cache@v3
         #   with:
@@ -167,9 +74,15 @@ jobs:
         #       packages/**/node_modules
         #       packages/**/dist
         #     key: modules-${{ hashFiles('pnpm-lock.yaml') }}
-        # - name: Install dependencies
-        #   run: pnpm i
-          # working-directory: .
+
+        - name: Install dependencies
+          run: pnpm install
+          working-directory: .
+
+        - name: Install playwright
+          run: npx playwright install --with-deps
+          working-directory: .
+
         - name: Install rust
           uses: actions-rs/toolchain@v1
           with:
@@ -177,10 +90,12 @@ jobs:
             target: wasm32-unknown-unknown
             profile: minimal
             override: true
+
         - name: Install Anvil
           uses: foundry-rs/foundry-toolchain@v1
           with:
             version: nightly
+            
         # TODO: Cache Anvil RPC calls between runs to speed up tests
         - name: Launch Anvil
           run: anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER &
@@ -188,17 +103,13 @@ jobs:
             ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
             ANVIL_BLOCK_NUMBER: 16155884
 
-        # - name: Install foundry
-        #   run: curl -L https://foundry.paradigm.xyz | bash && source /home/runner/.bashrc
-        #   working-directory: .
-
         # - name: Build swap app
         #   run: pnpm build-swap-app
         #   working-directory: .
 
         - name: Test swap app
           run: pnpm test-swap-app
-          # working-directory: .
+          working-directory: .
 
         - name: Upload test results
           if: always()
@@ -206,4 +117,4 @@ jobs:
           with:
             name: playwright-report
             path: test/results
-            working-directory: ./apps/swap
+            # working-directory: .
