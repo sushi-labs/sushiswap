@@ -1,4 +1,4 @@
-import { ArticleFiltersInput, getMeshSDK, GetProductsQueryVariables, PaginationArg } from '../mesh'
+import { getMeshSDK } from '../.mesh'
 
 const sdk = getMeshSDK()
 
