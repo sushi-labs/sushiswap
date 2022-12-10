@@ -26,26 +26,28 @@
     "export": "hardhat export --export-all exports.json",
     "node": "hardhat node"
   },
-  "resolutions": {
-    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
+  "dependencies": {
+    "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
+    "@nomiclabs/hardhat-etherscan": "3.1.3",
+    "@nomiclabs/hardhat-solhint": "2.0.1",
+    "@nomiclabs/hardhat-waffle": "2.0.3",
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc",
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
-    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
-    "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "^17.0.33",
+    "@types/node": "18.11.12",
     "eslint": "8.29.0",
     "ethers": "^5.7.0",
-    "hardhat": "^2.9.5",
-    "hardhat-deploy": "0.11.20",
-    "ts-node": "^10.7.0",
+    "hardhat": "2.12.4",
+    "hardhat-deploy": "0.11.22",
+    "ts-node": "10.9.1",
     "typescript": "4.8.2"
   }
 }
