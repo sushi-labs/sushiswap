@@ -9,8 +9,6 @@ if (!process.env.CHAIN_ID) {
 
 const CHAIN_ID = parseInt(process.env.CHAIN_ID)
 
-let page: Page
-
 const nativeToken = {
   address: AddressZero,
   symbol: Native.onChain(CHAIN_ID).symbol,
@@ -32,9 +30,14 @@ test.beforeEach(async ({ page }) => {
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   // test.slow()
   const trade1: Trade = { input: nativeToken, output: usdc, amount: '1' }
+  console.log('Swapping', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(trade1, page)
+  console.log('Swapped', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
+
   const trade2: Trade = { input: usdc, output: nativeToken }
+  console.log('Swapping', trade2.input.symbol, 'to', trade2.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(trade2, page, true)
+  console.log('Swapped', trade2.input.symbol, 'to', trade2.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
