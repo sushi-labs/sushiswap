@@ -25,8 +25,7 @@ declare global {
   }
 }
 
-// @ts-ignore
-const MyApp: FC<AppProps> = ({ Component, pageProps, err }) => {
+const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
   useEffect(() => {
     const handler = (page: any) => {
@@ -76,7 +75,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps, err }) => {
               <Header />
               {/* <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} /> */}
               <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} err={err} />
+              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
               <App.Footer />
               <ToastContainer className="mt-[50px]" />
             </App.Shell>

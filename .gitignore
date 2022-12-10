@@ -72,3 +72,14 @@ artifacts
 
 # prisma
 prisma
+
+# screenshots
+screenshots
+
+# playwright
+playwright-report
+
+# Sentry
+.sentryclirc
+
+results/
