@@ -1,5 +1,5 @@
 import { otherChains } from '@sushiswap/wagmi-config'
-import { allChains, Chain, chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
+import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MockConnector } from 'wagmi/connectors/mock'
@@ -9,8 +9,30 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
-import { SafeConnector } from './connectors/safe'
+// import { SafeConnector } from './connectors/safe'
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { getSigners } from './test/utils'
+
+import {
+  arbitrum,
+  arbitrumGoerli,
+  avalanche,
+  avalancheFuji,
+  bsc,
+  bscTestnet,
+  fantom,
+  fantomTestnet,
+  foundry,
+  goerli,
+  hardhat,
+  localhost,
+  mainnet,
+  optimism,
+  optimismGoerli,
+  polygon,
+  polygonMumbai,
+  sepolia,
+} from 'wagmi/chains'
 
 export type Client = ReturnType<typeof createClient>
 
@@ -23,17 +45,37 @@ console.log({ isTest })
 
 const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
   ? configureChains(
-      [chain.foundry],
+      [foundry],
       [
         jsonRpcProvider({
           rpc: (chain_) => ({
-            http: chain_.rpcUrls.default,
+            http: chain_.rpcUrls.default.http[0],
           }),
         }),
       ]
     )
   : configureChains(
-      [...allChains, ...otherChains],
+      [
+        arbitrum,
+        // arbitrumGoerli,
+        avalanche,
+        // avalancheFuji,
+        bsc,
+        // bscTestnet,
+        fantom,
+        // fantomTestnet,
+        foundry,
+        goerli,
+        hardhat,
+        localhost,
+        mainnet,
+        optimism,
+        // optimismGoerli,
+        polygon,
+        // polygonMumbai,
+        // sepolia,
+        ...otherChains,
+      ],
       [
         // jsonRpcProvider({
         //   priority: 0,
@@ -80,7 +122,7 @@ export const client: Client = createClient({
   },
   autoConnect: false,
   connectors: isTest
-    ? [new MockConnector({ options: { signer: getSigners()[0] } })]
+    ? [new MockConnector({ options: { chainId: 137, signer: getSigners()[0] } })]
     : [
         new InjectedConnector({
           chains,

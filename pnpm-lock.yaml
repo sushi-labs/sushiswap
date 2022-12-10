@@ -1634,8 +1634,8 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@wagmi/core': 0.7.9
-      tsup: 6.x
+      '@wagmi/core': 0.8.2
+      tsup: 6.5.0
       typescript: 4.8.2
     dependencies:
       '@sushiswap/chain': link:../../chain
@@ -1644,7 +1644,7 @@ importers:
       '@sushiswap/jest-config': link:../jest
       '@sushiswap/prettier-config': link:../prettier
       '@sushiswap/typescript-config': link:../typescript
-      '@wagmi/core': 0.7.9_typescript@4.8.2
+      '@wagmi/core': 0.8.2_typescript@4.8.2
       tsup: 6.5.0_typescript@4.8.2
       typescript: 4.8.2
 
@@ -1814,7 +1814,7 @@ importers:
       '@types/jest': ^29.2.0
       '@types/node': ^16.0.0
       '@types/numeral': ^2.0.2
-      '@wagmi/core': 0.7.9
+      '@wagmi/core': 0.8.2
       '@whatwg-node/fetch': latest
       date-fns: ^2.29.3
       eslint: 8.29.0
@@ -1853,7 +1853,7 @@ importers:
       '@sushiswap/graph-config': link:../config/graph
       '@sushiswap/validate': link:../validate
       '@sushiswap/wagmi-config': link:../config/wagmi
-      '@wagmi/core': 0.7.9_sglzjgxn6t7xmy4e4infv7ofj4
+      '@wagmi/core': 0.8.2_sglzjgxn6t7xmy4e4infv7ofj4
       '@whatwg-node/fetch': 0.5.3
       date-fns: 2.29.3
       ethers: 5.7.2
@@ -2328,7 +2328,7 @@ importers:
       '@ethersproject/providers': ^5.7.0
       '@gnosis.pm/safe-apps-provider': ^0.14.0
       '@gnosis.pm/safe-apps-sdk': ^7.8.0
-      '@gnosis.pm/safe-apps-wagmi': 1.1.0
+      '@gnosis.pm/safe-apps-wagmi': 1.2.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.6
       '@sushiswap/abi': workspace:*
@@ -2356,7 +2356,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@uniswap/v2-core': ^1.0.1
       '@uniswap/v3-periphery': 1.4.1
-      '@wagmi/core': 0.7.9
+      '@wagmi/core': 0.8.2
       eslint: 8.29.0
       ethers: ^5.7.0
       next: 13.0.5
@@ -2365,7 +2365,7 @@ importers:
       tsup: 6.5.0
       typechain: ^8.0.0
       typescript: 4.8.2
-      wagmi: 0.8.10
+      wagmi: 0.9.2
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -2375,7 +2375,7 @@ importers:
       '@ethersproject/providers': 5.7.2
       '@gnosis.pm/safe-apps-provider': 0.14.0
       '@gnosis.pm/safe-apps-sdk': 7.8.0
-      '@gnosis.pm/safe-apps-wagmi': 1.1.0_@wagmi+core@0.7.9
+      '@gnosis.pm/safe-apps-wagmi': 1.2.0_@wagmi+core@0.8.2
       '@headlessui/react': 1.7.5_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@sushiswap/abi': link:../abi
@@ -2397,8 +2397,8 @@ importers:
       '@tanstack/react-query': 4.19.1_biqbaboplfbrettd7655fr4n2y
       '@uniswap/v2-core': 1.0.1
       '@uniswap/v3-periphery': 1.4.1
-      '@wagmi/core': 0.7.9_lwwfvot6x4ur7zddr2vq5ognvm
-      wagmi: 0.8.10_ywutn3mwpahtnm73vhpfdiqd3e
+      '@wagmi/core': 0.8.2_lwwfvot6x4ur7zddr2vq5ognvm
+      wagmi: 0.9.2_ywutn3mwpahtnm73vhpfdiqd3e
     devDependencies:
       '@sushiswap/eslint-config': link:../config/eslint
       '@sushiswap/jest-config': link:../config/jest
@@ -2808,7 +2808,7 @@ importers:
       '@swc/core': ^1.2.249
       '@swc/helpers': ^0.4.11
       '@types/express': ^4.17.13
-      '@wagmi/core': 0.7.9
+      '@wagmi/core': 0.8.2
       date-fns: ^2.29.1
       dotenv: ^16.0.1
       eslint: 8.29.0
@@ -2831,7 +2831,7 @@ importers:
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../packages/config/graph
       '@sushiswap/wagmi-config': link:../../packages/config/wagmi
-      '@wagmi/core': 0.7.9_sglzjgxn6t7xmy4e4infv7ofj4
+      '@wagmi/core': 0.8.2_sglzjgxn6t7xmy4e4infv7ofj4
       express: 4.18.2
     devDependencies:
       '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
@@ -5418,6 +5418,17 @@ packages:
       - utf-8-validate
     dev: false
 
+  /@gnosis.pm/safe-apps-provider/0.15.1:
+    resolution: {integrity: sha512-jVU0jpXf30HFdLHSHkmscIm04BYSwfoddjcHI4uPolP+u4F+tHRgfah1xo4XNRSCDqs4GTq38d7YAipGTj0CLA==}
+    dependencies:
+      '@gnosis.pm/safe-apps-sdk': 7.8.0
+      events: 3.3.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
+
   /@gnosis.pm/safe-apps-sdk/7.8.0:
     resolution: {integrity: sha512-kO8fJi1ebiKN9qH1NdDToVBuDQQ0U9NkL467U+84LtNTx5PzUJIu6O7tb4nZD24e/OItinf5W8GDWhhfZeiqOA==}
     dependencies:
@@ -5429,14 +5440,14 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@gnosis.pm/safe-apps-wagmi/1.1.0_@wagmi+core@0.7.9:
-    resolution: {integrity: sha512-M1b9BpazaxGvBwM9/nu4nLYJyITDEKIJl6JucFQM7a5rkYrYLI2FWYTnaQSK/bcKcqWJxz+u9i58aE9PYLjm1Q==}
+  /@gnosis.pm/safe-apps-wagmi/1.2.0_@wagmi+core@0.8.2:
+    resolution: {integrity: sha512-ecDiNMkQ01m2yM/eKKtt08bTvYjWfacG+vwAeb4Lpiitm8RBI8wkW1jUoOgvd9tNhHZtdykgGETUZGmMo1XDuw==}
     peerDependencies:
-      '@wagmi/core': '>= 0.3.8 < 0.7.0'
+      '@wagmi/core': '>= 0.3.8 < 0.8.0'
     dependencies:
-      '@gnosis.pm/safe-apps-provider': 0.14.0
+      '@gnosis.pm/safe-apps-provider': 0.15.1
       '@gnosis.pm/safe-apps-sdk': 7.8.0
-      '@wagmi/core': 0.7.9_lwwfvot6x4ur7zddr2vq5ognvm
+      '@wagmi/core': 0.8.2_lwwfvot6x4ur7zddr2vq5ognvm
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -11821,6 +11832,9 @@ packages:
       - react-dom
     dev: false
 
+  /@wagmi/chains/0.1.0:
+    resolution: {integrity: sha512-seQVLZRHG2id8xqG+VnieFQ2gdavwa5Do+90lxbm/5EqiBo0S9LPFns6BKsSjW8o8T6UnmqzqhZwd4Q6cz8fFg==}
+
   /@wagmi/core/0.7.9_3i4ar5pjud6mwt6oylonex5xmu:
     resolution: {integrity: sha512-97KCELUP5Q1AagRyE7SmpLh4/v3xdcy/XMbybLvvtQbgmi3y5oEzy4h/wJMY1hEZlmicqyWZAHHm6xIr1tP5HA==}
     peerDependencies:
@@ -11844,71 +11858,6 @@ packages:
       - typescript
     dev: false
 
-  /@wagmi/core/0.7.9_lwwfvot6x4ur7zddr2vq5ognvm:
-    resolution: {integrity: sha512-97KCELUP5Q1AagRyE7SmpLh4/v3xdcy/XMbybLvvtQbgmi3y5oEzy4h/wJMY1hEZlmicqyWZAHHm6xIr1tP5HA==}
-    peerDependencies:
-      '@coinbase/wallet-sdk': '>=3.3.0'
-      '@walletconnect/ethereum-provider': '>=1.7.5'
-      ethers: '>=5.5.1'
-    peerDependenciesMeta:
-      '@coinbase/wallet-sdk':
-        optional: true
-      '@walletconnect/ethereum-provider':
-        optional: true
-    dependencies:
-      abitype: 0.1.8_typescript@4.8.2
-      ethers: 5.7.2
-      eventemitter3: 4.0.7
-      zustand: 4.1.5_react@18.2.0
-    transitivePeerDependencies:
-      - immer
-      - react
-      - typescript
-    dev: false
-
-  /@wagmi/core/0.7.9_sglzjgxn6t7xmy4e4infv7ofj4:
-    resolution: {integrity: sha512-97KCELUP5Q1AagRyE7SmpLh4/v3xdcy/XMbybLvvtQbgmi3y5oEzy4h/wJMY1hEZlmicqyWZAHHm6xIr1tP5HA==}
-    peerDependencies:
-      '@coinbase/wallet-sdk': '>=3.3.0'
-      '@walletconnect/ethereum-provider': '>=1.7.5'
-      ethers: '>=5.5.1'
-    peerDependenciesMeta:
-      '@coinbase/wallet-sdk':
-        optional: true
-      '@walletconnect/ethereum-provider':
-        optional: true
-    dependencies:
-      abitype: 0.1.8_typescript@4.8.2
-      ethers: 5.7.2
-      eventemitter3: 4.0.7
-      zustand: 4.1.5
-    transitivePeerDependencies:
-      - immer
-      - react
-      - typescript
-    dev: false
-
-  /@wagmi/core/0.7.9_typescript@4.8.2:
-    resolution: {integrity: sha512-97KCELUP5Q1AagRyE7SmpLh4/v3xdcy/XMbybLvvtQbgmi3y5oEzy4h/wJMY1hEZlmicqyWZAHHm6xIr1tP5HA==}
-    peerDependencies:
-      '@coinbase/wallet-sdk': '>=3.3.0'
-      '@walletconnect/ethereum-provider': '>=1.7.5'
-      ethers: '>=5.5.1'
-    peerDependenciesMeta:
-      '@coinbase/wallet-sdk':
-        optional: true
-      '@walletconnect/ethereum-provider':
-        optional: true
-    dependencies:
-      abitype: 0.1.8_typescript@4.8.2
-      eventemitter3: 4.0.7
-      zustand: 4.1.5
-    transitivePeerDependencies:
-      - immer
-      - react
-      - typescript
-    dev: true
-
   /@wagmi/core/0.7.9_yft2e77onulbjwwwhbvks5cqxq:
     resolution: {integrity: sha512-97KCELUP5Q1AagRyE7SmpLh4/v3xdcy/XMbybLvvtQbgmi3y5oEzy4h/wJMY1hEZlmicqyWZAHHm6xIr1tP5HA==}
     peerDependencies:
@@ -11931,6 +11880,103 @@ packages:
       - immer
       - react
       - typescript
+    dev: false
+
+  /@wagmi/core/0.8.2_lwwfvot6x4ur7zddr2vq5ognvm:
+    resolution: {integrity: sha512-AQzHbGWfYcFb9VPnKH/61MXNjBHJX1o7M7enK5d4qefqbBkhxBiHBjQH+D1YfA4w0dJgriRZo9FsHJj8X2jjDA==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.6.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      '@wagmi/chains': 0.1.0
+      abitype: 0.2.5_typescript@4.8.2
+      ethers: 5.7.2
+      eventemitter3: 4.0.7
+      zustand: 4.1.5_react@18.2.0
+    transitivePeerDependencies:
+      - immer
+      - react
+      - typescript
+      - zod
+    dev: false
+
+  /@wagmi/core/0.8.2_sglzjgxn6t7xmy4e4infv7ofj4:
+    resolution: {integrity: sha512-AQzHbGWfYcFb9VPnKH/61MXNjBHJX1o7M7enK5d4qefqbBkhxBiHBjQH+D1YfA4w0dJgriRZo9FsHJj8X2jjDA==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.6.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      '@wagmi/chains': 0.1.0
+      abitype: 0.2.5_typescript@4.8.2
+      ethers: 5.7.2
+      eventemitter3: 4.0.7
+      zustand: 4.1.5
+    transitivePeerDependencies:
+      - immer
+      - react
+      - typescript
+      - zod
+    dev: false
+
+  /@wagmi/core/0.8.2_typescript@4.8.2:
+    resolution: {integrity: sha512-AQzHbGWfYcFb9VPnKH/61MXNjBHJX1o7M7enK5d4qefqbBkhxBiHBjQH+D1YfA4w0dJgriRZo9FsHJj8X2jjDA==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.6.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      '@wagmi/chains': 0.1.0
+      abitype: 0.2.5_typescript@4.8.2
+      eventemitter3: 4.0.7
+      zustand: 4.1.5
+    transitivePeerDependencies:
+      - immer
+      - react
+      - typescript
+      - zod
+    dev: true
+
+  /@wagmi/core/0.8.2_yft2e77onulbjwwwhbvks5cqxq:
+    resolution: {integrity: sha512-AQzHbGWfYcFb9VPnKH/61MXNjBHJX1o7M7enK5d4qefqbBkhxBiHBjQH+D1YfA4w0dJgriRZo9FsHJj8X2jjDA==}
+    peerDependencies:
+      '@coinbase/wallet-sdk': '>=3.6.0'
+      '@walletconnect/ethereum-provider': '>=1.7.5'
+      ethers: '>=5.5.1'
+    peerDependenciesMeta:
+      '@coinbase/wallet-sdk':
+        optional: true
+      '@walletconnect/ethereum-provider':
+        optional: true
+    dependencies:
+      '@coinbase/wallet-sdk': 3.6.2
+      '@wagmi/chains': 0.1.0
+      '@walletconnect/ethereum-provider': 1.8.0
+      abitype: 0.2.5_typescript@4.8.2
+      ethers: 5.7.2
+      eventemitter3: 4.0.7
+      zustand: 4.1.5_react@18.2.0
+    transitivePeerDependencies:
+      - immer
+      - react
+      - typescript
+      - zod
     dev: false
 
   /@walletconnect/browser-utils/1.8.0:
@@ -12317,6 +12363,19 @@ packages:
     engines: {pnpm: '>=7'}
     peerDependencies:
       typescript: '>=4.7.4'
+    dependencies:
+      typescript: 4.8.2
+    dev: false
+
+  /abitype/0.2.5_typescript@4.8.2:
+    resolution: {integrity: sha512-t1iiokWYpkrziu4WL2Gb6YdGvaP9ZKs7WnA39TI8TsW2E99GVRgDPW/xOKhzoCdyxOYt550CNYEFluCwGaFHaA==}
+    engines: {pnpm: '>=7'}
+    peerDependencies:
+      typescript: '>=4.7.4'
+      zod: '>=3.19.1'
+    peerDependenciesMeta:
+      zod:
+        optional: true
     dependencies:
       typescript: 4.8.2
 
@@ -28370,6 +28429,37 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
+    dev: false
+
+  /wagmi/0.9.2_ywutn3mwpahtnm73vhpfdiqd3e:
+    resolution: {integrity: sha512-ZHmVXQ0U2650pBf0k168CZJ5pAotqefy5d5P9HpoW4oMaHoQ9+BvUjLcA0L2SEeUUY6L3MYRrOmoHHrcyTsToQ==}
+    peerDependencies:
+      ethers: '>=5.5.1'
+      react: '>=17.0.0'
+    dependencies:
+      '@coinbase/wallet-sdk': 3.6.2
+      '@tanstack/query-sync-storage-persister': 4.19.1
+      '@tanstack/react-query': 4.19.1_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-persist-client': 4.19.1_tbzjkhe5jt5eajidrzbcozbyna
+      '@wagmi/core': 0.8.2_yft2e77onulbjwwwhbvks5cqxq
+      '@walletconnect/ethereum-provider': 1.8.0
+      abitype: 0.2.5_typescript@4.8.2
+      ethers: 5.7.2
+      react: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@tanstack/query-core'
+      - bufferutil
+      - debug
+      - encoding
+      - immer
+      - react-dom
+      - react-native
+      - supports-color
+      - typescript
+      - utf-8-validate
+      - zod
     dev: false
 
   /walker/1.0.8:
