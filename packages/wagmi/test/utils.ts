@@ -1,7 +1,7 @@
 import { providers, Wallet } from 'ethers'
-import { allChains, Chain, chain as chainLookup } from 'wagmi'
-
-function getNetwork(chain: Chain) {
+import { Chain } from 'wagmi'
+import { foundry, goerli, mainnet, optimism, polygon } from 'wagmi/chains'
+export function getNetwork(chain: Chain) {
   return {
     chainId: chain.id,
     ensAddress: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
@@ -9,15 +9,22 @@ function getNetwork(chain: Chain) {
   }
 }
 
+const foundryMainnet: Chain = {
+  ...mainnet,
+  rpcUrls: foundry.rpcUrls,
+}
+
+export const testChains = [foundryMainnet, mainnet, goerli, optimism, polygon]
+
 class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
   toJSON() {
     return `<Provider network={${this.network.chainId}} />`
   }
 }
 
-export function getProvider({ chains = allChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = allChains.find((x) => x.id === chainId) ?? chainLookup.foundry
-  const url = chainLookup.foundry.rpcUrls.default
+export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
+  const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
+  const url = foundryMainnet.rpcUrls.default.http[0]
   const provider = new EthersProviderWrapper(url, getNetwork(chain))
   provider.pollingInterval = 1_000
   return Object.assign(provider, { chains })
@@ -29,9 +36,9 @@ class EthersWebSocketProviderWrapper extends providers.WebSocketProvider {
   }
 }
 
-export function getWebSocketProvider({ chains = allChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = allChains.find((x) => x.id === chainId) ?? chainLookup.foundry
-  const url = chainLookup.foundry.rpcUrls.default.replace('http', 'ws')
+export function getWebSocketProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
+  const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
+  const url = foundryMainnet.rpcUrls.default.http[0]!.replace('http', 'ws')
   const webSocketProvider = Object.assign(new EthersWebSocketProviderWrapper(url, getNetwork(chain)), { chains })
   // Clean up WebSocketProvider immediately
   // so handle doesn't stay open in test environment
@@ -127,7 +134,7 @@ export const accounts = [
 
 export class WalletSigner extends Wallet {
   connectUnchecked(): providers.JsonRpcSigner {
-    const uncheckedSigner = (<EthersProviderWrapper>this.provider).getUncheckedSigner(this.address)
+    const uncheckedSigner = (this.provider as EthersProviderWrapper).getUncheckedSigner(this.address)
     return uncheckedSigner
   }
 }

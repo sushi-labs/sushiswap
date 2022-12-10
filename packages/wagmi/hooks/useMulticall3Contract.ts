@@ -1,16 +1,59 @@
 import { otherChains } from '@sushiswap/wagmi-config'
-import { Address, allChains, useContract, useProvider } from 'wagmi'
+import { Address, Chain, useContract, useProvider } from 'wagmi'
+
+import {
+  arbitrum,
+  arbitrumGoerli,
+  avalanche,
+  avalancheFuji,
+  bsc,
+  bscTestnet,
+  fantom,
+  fantomTestnet,
+  foundry,
+  goerli,
+  hardhat,
+  localhost,
+  mainnet,
+  optimism,
+  optimismGoerli,
+  polygon,
+  polygonMumbai,
+  sepolia,
+} from 'wagmi/chains'
 
 import { multicall3Abi } from '../abis'
 
-const chains = [...allChains, ...otherChains]
+const chains: Chain[] = [
+  arbitrum,
+  arbitrumGoerli,
+  avalanche,
+  avalancheFuji,
+  bsc,
+  bscTestnet,
+  fantom,
+  fantomTestnet,
+  foundry,
+  goerli,
+  hardhat,
+  localhost,
+  mainnet,
+  optimism,
+  optimismGoerli,
+  polygon,
+  polygonMumbai,
+  sepolia,
+  ...otherChains,
+]
 
-export const getMulticall3ContractConfig = (chainId: number | undefined) => ({
-  address: (chains.find((chain) => chain.id === chainId)?.multicall?.address || '') as Address,
+type Multicall3ChainId = typeof chains[number]['id']
+
+export const getMulticall3ContractConfig = (chainId: Multicall3ChainId | undefined) => ({
+  address: (chains.find((chain) => chain?.id === chainId)?.contracts?.multicall3?.address || '') as Address,
   abi: multicall3Abi,
 })
 
-export function useMulticall3Contract(chainId: number): ReturnType<typeof useContract> {
+export function useMulticall3Contract(chainId: Multicall3ChainId): ReturnType<typeof useContract> {
   return useContract({
     ...getMulticall3ContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
