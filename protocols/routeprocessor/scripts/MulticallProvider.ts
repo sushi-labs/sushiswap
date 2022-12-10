@@ -1,5 +1,5 @@
 import { ContractCallContext, ContractCallResults, Multicall } from 'ethereum-multicall'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 
 export class MultiCallProvider {
   multicall: Multicall
@@ -36,7 +36,7 @@ export class MultiCallProvider {
 
     const seria = '' + this.nextSeriaId++
     const getReservesCalls: ContractCallContext[] = contracts.map((contract, i) => ({
-      reference: `${seria}_i`,
+      reference: `${seria}_${i}`,
       contractAddress: contract,
       abi,
       calls: [{ reference: '', methodName: method, methodParameters }],
@@ -56,7 +56,7 @@ export class MultiCallProvider {
   async multiDataCall(contract: string, abi: any[], method: string, methodParameters: any[]): Promise<any[]> {
     const seria = '' + this.nextSeriaId++
     const getReservesCalls: ContractCallContext[] = methodParameters.map((data, i) => ({
-      reference: `${seria}_i`,
+      reference: `${seria}_${i}`,
       contractAddress: contract,
       abi,
       calls: [{ reference: '', methodName: method, methodParameters: methodParameters[i] }],
@@ -72,4 +72,19 @@ export class MultiCallProvider {
     }
     return res
   }
+}
+
+export function convertToNumbers(arr: any[]): number[] {
+  return arr.map((a) => {
+    if (a === undefined) return 0
+    return parseInt(a[0].hex, 16)
+  })
+}
+
+const ZERO = BigNumber.from(0)
+export function convertToBigNumberPair(arr: any[]): [BigNumber, BigNumber][] {
+  return arr.map((a) => {
+    if (a === undefined) return [ZERO, ZERO]
+    return [BigNumber.from(a[0].hex), BigNumber.from(a[1].hex)]
+  })
 }
