@@ -29,10 +29,22 @@
       "cache": false
     },
     "playwright": {
-      "cache": false
+      "cache": false,
+      "env": [
+        "ANVIL_FORK_URL",
+        "PLAYWRIGHT_URL",
+        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
+        "CHAIN_ID"
+      ]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build",
+        "ANVIL_FORK_URL",
+        "PLAYWRIGHT_URL",
+        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
+        "CHAIN_ID"
+      ],
       "outputs": [
         "coverage/**"
       ]
