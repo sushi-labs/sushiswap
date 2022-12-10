@@ -1,4 +1,4 @@
-name: Sushi - apps/swap/e2e
+name: Sushi - apps / swap / e2e
 
 on:
   push:
@@ -70,5 +70,5 @@ jobs:
           working-directory: .
 
         - name: Test swap app
-          run: pnpm test-swap-app
+          run: npx playwright install && npx playwright install-deps && pnpm test-swap-app
           working-directory: .
