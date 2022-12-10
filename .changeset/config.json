@@ -37,6 +37,6 @@
       "@sushiswap/furo",
       "@sushiswap/kashi",
       "@sushiswap/database",
-      "router"
+      "@sushiswap/route-processor"
     ]
   }
