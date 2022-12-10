@@ -20,6 +20,7 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+  ANVIL_BLOCK_NUMBER: 16155884
   NEXT_PUBLIC_PLAYWRIGHT_ENABLED: true
   PLAYWRIGHT_URL: http://localhost:3000/swap
   CHAIN_ID: 1
@@ -40,6 +41,7 @@ jobs:
         INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
         ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
         ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+        ANVIL_BLOCK_NUMBER: 16155884
         NEXT_PUBLIC_PLAYWRIGHT_ENABLED: true
         PLAYWRIGHT_URL: http://localhost:3000/swap
         CHAIN_ID: 1
@@ -60,19 +62,39 @@ jobs:
           with:
             node-version: 16
             cache: 'pnpm'
- 
-        - name: Install foundry
-          run: curl -L https://foundry.paradigm.xyz | bash && source /home/runner/.bashrc
-          working-directory: .
 
         - name: Install dependencies
           run: pnpm install && npx playwright install && npx playwright install-deps
           working-directory: .
 
-        - name: Launch anvil
-          run: pnpm anvil && sleep 60
-          working-directory: ./apps/swap
+        - name: Install rust
+          uses: actions-rs/toolchain@v1
+          with:
+            toolchain: stable
+            target: wasm32-unknown-unknown
+            profile: minimal
+            override: true
 
-        # - name: Test swap app
-        #   run: pnpm test-swap-app
+        - name: Install Anvil
+          uses: foundry-rs/foundry-toolchain@v1
+          with:
+            version: nightly
+            
+        # TODO: Cache Anvil RPC calls between runs to speed up tests
+        - name: Launch Anvil
+          run: anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER &
+          env:
+            ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+            ANVIL_BLOCK_NUMBER: 16155884
+
+        # - name: Install foundry
+        #   run: curl -L https://foundry.paradigm.xyz | bash && source /home/runner/.bashrc
         #   working-directory: .
+
+        # - name: Build swap app
+        #   run: pnpm build-swap-app
+        #   working-directory: .
+
+        - name: Test swap app
+          run: pnpm test-swap-app
+          working-directory: .
