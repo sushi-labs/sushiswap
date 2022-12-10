@@ -64,7 +64,7 @@ jobs:
             cache: 'pnpm'
 
         - name: Install dependencies
-          run: pnpm install && npx playwright install && npx playwright install-deps
+          run: pnpm install && npx playwright install --with-deps
           working-directory: .
 
         - name: Install rust
