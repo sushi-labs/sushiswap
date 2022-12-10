@@ -1093,6 +1093,7 @@ importers:
       '@ethersproject/constants': ^5.7.0
       '@ethersproject/contracts': ^5.7.0
       '@ethersproject/providers': ^5.7.0
+      '@ethersproject/solidity': ^5.7.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@playwright/test': ^1.25.0
@@ -1148,6 +1149,7 @@ importers:
       '@ethersproject/constants': 5.7.0
       '@ethersproject/contracts': 5.7.0
       '@ethersproject/providers': 5.7.2
+      '@ethersproject/solidity': 5.7.0
       '@headlessui/react': 1.7.5_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
