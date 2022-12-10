@@ -10,7 +10,9 @@ on:
     paths:
       - "apps/swap/**"
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 # defaults:
 #   run:
@@ -99,7 +101,7 @@ jobs:
           key: modules-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Build
         run: pnpm build-swap-app
-
+        working-directory: .
   e2e:
       name: Test e2e
       needs: build
@@ -149,7 +151,7 @@ jobs:
             key: modules-${{ hashFiles('pnpm-lock.yaml') }}
         - name: Install dependencies
           run: npx playwright install --with-deps
-          working-directory: .
+          # working-directory: .
         - name: Install rust
           uses: actions-rs/toolchain@v1
           with:
@@ -178,7 +180,7 @@ jobs:
 
         - name: Test swap app
           run: pnpm test-swap-app
-          # working-directory: .
+          working-directory: .
 
         - name: Upload test results
           if: always()
