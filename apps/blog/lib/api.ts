@@ -2,8 +2,8 @@ import { ArticleFiltersInput, CategoryFiltersInput, getMeshSDK, PaginationArg } 
 
 const sdk = getMeshSDK()
 
-export const getArticleAndMoreArticles = async (slug: string, preview: boolean) => {
-  return sdk.articleAndMoreArticles({
+export const getArticleAndMoreArticles = async (slug: string, preview: boolean) =>
+  sdk.articleAndMoreArticles({
     locale: 'all',
     filters: {
       slug: { eq: slug },
@@ -11,7 +11,6 @@ export const getArticleAndMoreArticles = async (slug: string, preview: boolean) 
     filters_ne: { slug: { not: { eq: slug } } },
     publicationState: preview ? 'PREVIEW' : 'LIVE',
   })
-}
 
 export const getAllArticlesBySlug = async () => {
   return sdk.getAllArticlesWithSlug()

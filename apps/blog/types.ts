@@ -37,7 +37,7 @@ export type DividerBlock = {
 export type Block = RichTextBlock | MediaBlock | DividerBlock
 
 export type Category = {
-  id: number
+  id: string
   attributes: {
     description: string
     name: string
@@ -102,5 +102,10 @@ export type Author = {
 
 export type Data<T> = {
   data: T
+  meta: Meta
+}
+
+export type Collection<T> = {
+  data: Array<T>
   meta: Meta
 }

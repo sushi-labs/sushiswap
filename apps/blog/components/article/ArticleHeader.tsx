@@ -1,10 +1,9 @@
 import { format } from 'date-fns'
 import { FC } from 'react'
-
-import { ArticleEntity } from '../../.mesh'
+import { Article } from 'types'
 
 interface ArticleHeader {
-  article?: ArticleEntity
+  article?: Article
 }
 
 export const ArticleHeader: FC<ArticleHeader> = ({ article }) => {

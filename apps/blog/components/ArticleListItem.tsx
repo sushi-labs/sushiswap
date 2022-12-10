@@ -1,12 +1,12 @@
 import { Chip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
+import { Article } from 'types'
 
-import { ArticleEntity } from '../.mesh'
 import { Image } from './Image'
 
 interface ArticleListItem {
-  article: ArticleEntity
+  article: Article
 }
 
 export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {

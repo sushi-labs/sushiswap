@@ -2,10 +2,10 @@ import { ChevronRightIcon } from '@heroicons/react/solid'
 import { Button } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
+import { Article } from 'types'
 
-import { ArticleEntity } from '../../.mesh'
 interface ArticleFooter {
-  articles?: ArticleEntity[]
+  articles?: Article[]
 }
 
 export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
