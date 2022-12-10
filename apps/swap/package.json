@@ -9,7 +9,7 @@
     "dev": "next dev -p 3009",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
-    "test": "concurrently --kill-others \"next build && next start\" \"wait-on http-get://localhost:3000/swap && npx playwright test && exit 0\"",
+    "test": "next start & npx playwright test",
     "test:dev": "concurrently --kill-others \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number 16155884\" \"next build && next start\" \"wait-on http-get://localhost:3000/swap && npx playwright test\"",
     "playwright": "npx playwright test",
     "check": "tsc --pretty --noEmit"
