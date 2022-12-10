@@ -28,6 +28,8 @@ export const TRIDENT_CHAINS = [
   ChainId.BTTC
 ]
 
+export const PANCAKESWAP_V2_SUPPORTED_CHAINS = [ChainId.BSC]
+
 export const UNISWAP_V2_SUPPORTED_CHAINS = [ChainId.ETHEREUM]
 export const UNISWAP_V3_SUPPORTED_CHAINS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM]
 
@@ -101,4 +103,8 @@ export const UNISWAP_V3_SUBGRAPH_NAME: Record<number | string, string> = {
 
 export const QUICKSWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.POLYGON]: 'sameepsi/quickswap06',
+}
+
+export const PANCAKESWAP_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.POLYGON]: 'pancakeswap/pairs',
 }

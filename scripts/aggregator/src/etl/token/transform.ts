@@ -24,3 +24,14 @@ export async function filterTokensToCreate(
 
   return uniqueTokens.filter((token) => !tokensFound.find((t) => t.id === token.id))
 }
+
+export async function filterUniqueTokens(tokens: Prisma.TokenCreateManyInput[]) {
+  const uniqueIds: Set<string> = new Set()
+  return tokens.filter((token) => {
+    if (!uniqueIds.has(token.id)) {
+      uniqueIds.add(token.id)
+      return true
+    }
+    return false
+  }) 
+}
