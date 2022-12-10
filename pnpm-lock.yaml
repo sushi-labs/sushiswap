@@ -1096,7 +1096,7 @@ importers:
       '@ethersproject/solidity': ^5.7.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
-      '@playwright/test': ^1.25.0
+      '@playwright/test': 1.28.1
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
@@ -9645,7 +9645,7 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.11.12
       playwright-core: 1.28.1
     dev: true
 

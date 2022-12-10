@@ -20,21 +20,21 @@ const wNativeToken = {
 const usdc = { address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS].toLowerCase(), symbol: 'USDC' }
 const sushi = { address: SUSHI_ADDRESS[CHAIN_ID as keyof typeof SUSHI_ADDRESS].toLowerCase(), symbol: 'SUSHI' }
 
-test.beforeEach(async ({ page }) => {
-  page.on('pageerror', (err) => {
-    console.log(err)
-  })
-  await page.goto(process.env.PLAYWRIGHT_URL as string)
-  await page.locator(`[testdata-id=network-selector-button]`).click()
-  const networkList = page.locator(`[testdata-id=network-selector-list]`)
-  const desiredNetwork = networkList.getByText(chainName[CHAIN_ID])
-  expect(desiredNetwork).toBeVisible()
-  await desiredNetwork.click()
+// test.beforeEach(async ({ page }) => {
+//   page.on('pageerror', (err) => {
+//     console.log(err)
+//   })
+//   await page.goto(process.env.PLAYWRIGHT_URL as string)
+//   await page.locator(`[testdata-id=network-selector-button]`).click()
+//   const networkList = page.locator(`[testdata-id=network-selector-list]`)
+//   const desiredNetwork = networkList.getByText(chainName[CHAIN_ID])
+//   expect(desiredNetwork).toBeVisible()
+//   await desiredNetwork.click()
 
-  if (await desiredNetwork.isVisible()) {
-    await page.locator(`[testdata-id=network-selector-button]`).click()
-  }
-})
+//   if (await desiredNetwork.isVisible()) {
+//     await page.locator(`[testdata-id=network-selector-button]`).click()
+//   }
+// })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   test.slow()
