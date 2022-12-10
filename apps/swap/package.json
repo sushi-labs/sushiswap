@@ -9,7 +9,7 @@
     "dev": "next dev -p 3009",
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
-    "test": "concurrently \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number 16155884\" \"next build && next start\"",
+    "test": "concurrently \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number 16155884\" \"next build && next start\" \"wait-on http-get://localhost:3000/swap && npx playwright test\"",
     "playwright": "npx playwright test",
     "check": "tsc --pretty --noEmit"
   },
@@ -48,7 +48,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
-    "wagmi": "0.9.2"
+    "wagmi": "0.9.2",
+    "wait-on": "6.0.1"
   },
   "devDependencies": {
     "@playwright/test": "1.28.1",

@@ -28,6 +28,9 @@
     "db:push": {
       "cache": false
     },
+    "playwright": {
+      "cache": false
+    },
     "test": {
       "dependsOn": ["build"],
       "outputs": [

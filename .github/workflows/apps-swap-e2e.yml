@@ -1,0 +1,74 @@
+name: Sushi - apps/swap/e2e
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "apps/swap/**"
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "apps/swap/**"
+
+defaults:
+  run:
+    # change this if your nextjs app does not live at the root of the repo
+    working-directory: ./apps/swap
+
+env:
+  CI: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+  NEXT_PUBLIC_PLAYWRIGHT_ENABLED: true
+  PLAYWRIGHT_URL: http://localhost:3000/swap
+  CHAIN_ID: 1
+  NODE_ENV: test
+
+jobs:
+  ci:
+      name: Continuous integration
+      timeout-minutes: 30
+      runs-on: ubuntu-latest
+      env:
+        # TURBO
+        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+        # RPC
+        NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+        NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+        INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
+        ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
+        ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+        NEXT_PUBLIC_PLAYWRIGHT_ENABLED: true
+        PLAYWRIGHT_URL: http://localhost:3000/swap
+        CHAIN_ID: 1
+        NODE_ENV: test
+
+      steps:
+        - name: Check out
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 2
+ 
+        - uses: pnpm/action-setup@v2
+          with:
+            version: 7
+ 
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: 16
+            cache: 'pnpm'
+ 
+        - name: Install dependencies
+          run: pnpm install
+          working-directory: .
+
+        - name: Build swap app
+          run: pnpm build-swap-app
+          working-directory: .
+
+        - name: Test swap app
+          run: pnpm test-swap-app
+          working-directory: .
