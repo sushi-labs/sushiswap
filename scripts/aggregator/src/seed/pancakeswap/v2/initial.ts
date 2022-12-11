@@ -58,11 +58,9 @@ async function start() {
       const currentResultCount = request?.MINIMAL_pairs.length ?? 0
       const endTime = performance.now()
 
-      const newCursor = request?.MINIMAL_pairs[request.MINIMAL_pairs.length - 1]?.id ?? ''
-      cursor = newCursor
       pairCount += currentResultCount
       console.log(
-        `EXTRACT - extracted ${currentResultCount} pools, total: ${pairCount} (${((endTime - startTime) / 1000).toFixed(
+        `EXTRACT - extracted ${currentResultCount} pools, total: ${pairCount}, cursor: ${cursor} (${((endTime - startTime) / 1000).toFixed(
           1
         )}s) `
       )
@@ -74,6 +72,10 @@ async function start() {
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
         await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
+
+      const newCursor = request?.MINIMAL_pairs[request.MINIMAL_pairs.length - 1]?.id ?? ''
+      cursor = newCursor
+      
     } while (cursor !== '')
     totalPairCount += pairCount
     console.log(

@@ -65,11 +65,9 @@ async function start() {
       const currentResultCount = request?.pairs.length ?? 0
       const endTime = performance.now()
 
-      const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''
-      cursor = newCursor
       subgraphPairCount += currentResultCount
       console.log(
-        `EXTRACT - extracted ${currentResultCount} pools, current total: ${subgraphPairCount} (${(
+        `EXTRACT - extracted ${currentResultCount} pools, current total: ${subgraphPairCount}, cursor: ${cursor} (${(
           (endTime - startTime) /
           1000
         ).toFixed(1)}s) `
@@ -82,6 +80,9 @@ async function start() {
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
         await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
+
+      const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''
+      cursor = newCursor
     } while (cursor !== '')
     totalPairCount += subgraphPairCount
     console.log(`Finished loading pairs from ${subgraph.host}/${subgraph.name}, ${subgraphPairCount} pairs`)

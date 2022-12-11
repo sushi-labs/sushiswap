@@ -4,19 +4,22 @@ import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json' assert { type: 'json' }
-import './lib/wagmi.js'
+import '../lib/wagmi.js'
+import { ProtocolName, ProtocolVersion } from '../config.js'
 
 const prisma = new PrismaClient()
 
 async function main() {
   // TODO: pass in params, e.g. chainId, protocol, version
   // Hardcoded for now.
+  // const chainId = ChainId.BSC
+  // const protocol = ProtocolName.PANCAKESWAP
   const chainId = ChainId.POLYGON
-  const protocol = 'SushiSwap'
-  const version = 'LEGACY'
+  const protocol = ProtocolName.QUICKSWAP
+  const version = ProtocolVersion.V2
   const pools = await getPoolAddresses(chainId, protocol, version)
   const poolWithReserves = await getReserves(chainId, pools)
-  await updatePoolsWithReserve(chainId, poolWithReserves)
+  // await updatePoolsWithReserve(chainId, poolWithReserves)
 }
 
 async function getPoolAddresses(chainId: ChainId, protocol: string, version: string) {
@@ -29,8 +32,10 @@ async function getPoolAddresses(chainId: ChainId, protocol: string, version: str
     },
   })
 
-  const batchSize = 10000
-  const requestCount = Math.ceil(count / batchSize)
+  // const batchSize = 10000
+  const batchSize = 8000
+  // const requestCount = Math.ceil(count / batchSize)
+  const requestCount = 1
 
   const requests = [...Array(requestCount).keys()].map((i) =>
     prisma.pool.findMany({
@@ -64,22 +69,37 @@ async function getReserves(chainId: ChainId, poolAddresses: string[]): Promise<P
     functionName: 'getReserves',
     allowFailure: true,
   }))
-  const startTime = performance.now()
-  const batchSize = 1000
-
   const requests = []
-  for (let i = 0; i < contracts.length; i += batchSize) {
-    const batch = contracts.slice(i, i + batchSize)
-    const request = readContracts({
-      contracts: batch,
-    })
-    requests.push(request)
+  const startTime = performance.now()
+  const contractsPerRequest = 1000
+
+  for (let i = 0; i < contracts.length; i+= contractsPerRequest) {
+    const to = i + contractsPerRequest < contracts.length ? i + contractsPerRequest : contracts.length
+    const batch = contracts.slice(i, to)
+    requests.push(
+      readContracts({
+        contracts: batch,
+      })
+    )
   }
-  const data = await Promise.all(requests)
+
+  const data = []
+  // run concurrent requests
+  const concurrent = requests.length > 5 ? 5 : requests.length
+
+  for (let i = 0; i < requests.length; i += concurrent) {
+    const max = i + concurrent < requests.length ? i + concurrent : i + requests.length % concurrent
+    const batch = requests.slice(i, max)
+    const responses = await Promise.all(batch)
+    data.push(responses.flat())
+  }
+
   const reserves: any = data.flat()
 
+  let failures = 0
   const mappedPools = poolAddresses.reduce<PoolWithReserve[]>((prev, address, i) => {
-    if (!reserves[i]) {
+    if (!reserves[i] || !reserves[i].reserve0 || !reserves[i].reserve1) {
+      failures++
       return prev
     }
     return [
@@ -93,6 +113,9 @@ async function getReserves(chainId: ChainId, poolAddresses: string[]): Promise<P
   }, [])
 
   const endTime = performance.now()
+  if (failures > 0) {
+    console.log(`Failed to fetch reserves for ${failures} pools.`)
+  }
   console.log(`Fetched reserves for ${mappedPools.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
   return mappedPools
 }

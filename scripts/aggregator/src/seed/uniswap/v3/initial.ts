@@ -7,9 +7,8 @@ import {
   PoolType,
   ProtocolName,
   ProtocolVersion,
-  UNISWAP_V2_SUBGRAPH_NAME,
-  UNISWAP_V3_SUBGRAPH_NAME,
-  UNISWAP_V3_SUPPORTED_CHAINS,
+  UNISWAP_V2_SUBGRAPH_NAME, UNISWAP_V3_SUBGRAPH_NAME,
+  UNISWAP_V3_SUPPORTED_CHAINS
 } from '../../../config.js'
 import { createPools } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
@@ -67,11 +66,9 @@ async function start() {
       const currentResultCount = request?.V3_pools.length ?? 0
       const endTime = performance.now()
 
-      const newCursor = request?.V3_pools[request.V3_pools.length - 1]?.id ?? ''
-      cursor = newCursor
       pairCount += currentResultCount
       console.log(
-        `EXTRACT - extracted ${currentResultCount} pools, total: ${pairCount} (${((endTime - startTime) / 1000).toFixed(
+        `EXTRACT - extracted ${currentResultCount} pools, total: ${pairCount}, cursor: ${cursor} (${((endTime - startTime) / 1000).toFixed(
           1
         )}s) `
       )
@@ -83,6 +80,10 @@ async function start() {
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
         await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
+
+      const newCursor = request?.V3_pools[request.V3_pools.length - 1]?.id ?? ''
+      cursor = newCursor
+      
     } while (cursor !== '')
     totalPairCount += pairCount
     console.log(
