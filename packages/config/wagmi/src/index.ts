@@ -1,6 +1,41 @@
 import { ChainId } from '@sushiswap/chain'
 import { Chain } from '@wagmi/core'
 
+import {
+  arbitrum,
+  avalanche,
+  bsc,
+  fantom,
+  foundry,
+  goerli,
+  hardhat,
+  localhost,
+  mainnet,
+  optimism,
+  polygon,
+} from '@wagmi/core/chains'
+
+export const defaultChains: Chain[] = [
+  arbitrum,
+  // arbitrumGoerli,
+  avalanche,
+  // avalancheFuji,
+  bsc,
+  // bscTestnet,
+  fantom,
+  // fantomTestnet,
+  foundry,
+  goerli,
+  hardhat,
+  localhost,
+  mainnet,
+  optimism,
+  // optimismGoerli,
+  polygon,
+  // polygonMumbai,
+  // sepolia,
+]
+
 export const otherChains: Chain[] = [
   {
     id: ChainId.AVALANCHE,
@@ -489,3 +524,5 @@ export const otherChains: Chain[] = [
     },
   },
 ]
+
+export const allChains = [...defaultChains, ...otherChains]

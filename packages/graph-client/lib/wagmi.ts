@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { otherChains } from '@sushiswap/wagmi-config'
-import { Address, allChains, configureChains, createClient, erc20ABI,readContracts } from '@wagmi/core'
+import { allChains } from '@sushiswap/wagmi-config'
+import { Address, configureChains, createClient, erc20ABI, readContracts } from '@wagmi/core'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
 // import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
@@ -12,23 +12,20 @@ if (!alchemyId) {
   throw Error('NO ALCHEMY ID SET')
 }
 
-const { provider } = configureChains(
-  [...allChains, ...otherChains],
-  [
-    // jsonRpcProvider({
-    //   priority: 0,
-    //   rpc: (chain) => {
-    //     if (chain.id !== 1) return null
-    //     return {
-    //       http: `https://api.securerpc.com/v1`,
-    //       webSocket: `wss://api.securerpc.com/v1`,
-    //     }
-    //   },
-    // }),
-    alchemyProvider({ apiKey: alchemyId, priority: 1 }),
-    publicProvider({ priority: 2 }),
-  ]
-)
+const { provider } = configureChains(allChains, [
+  // jsonRpcProvider({
+  //   priority: 0,
+  //   rpc: (chain) => {
+  //     if (chain.id !== 1) return null
+  //     return {
+  //       http: `https://api.securerpc.com/v1`,
+  //       webSocket: `wss://api.securerpc.com/v1`,
+  //     }
+  //   },
+  // }),
+  alchemyProvider({ apiKey: alchemyId, priority: 1 }),
+  publicProvider({ priority: 2 }),
+])
 
 createClient({ provider })
 
