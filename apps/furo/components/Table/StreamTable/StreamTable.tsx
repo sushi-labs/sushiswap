@@ -1,6 +1,7 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { useBreakpoint } from '@sushiswap/ui'
+
+import { useBreakpoint } from '@sushiswap/hooks'
 import { Column, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
 

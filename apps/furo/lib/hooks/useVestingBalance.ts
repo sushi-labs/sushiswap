@@ -1,6 +1,7 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
-import { getBentoBoxContractConfig, getFuroVestingContractConfig } from '@sushiswap/wagmi'
+import { getFuroVestingContractConfig } from '@sushiswap/wagmi'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useContractRead } from 'wagmi'

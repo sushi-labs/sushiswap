@@ -41,7 +41,7 @@
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphprotocol/client-auto-type-merging": "latest",
-    "@graphprotocol/client-cli": "2.2.15",
+    "@graphprotocol/client-cli": "2.2.16",
     "@graphql-mesh/cache-redis": "latest",
     "@graphql-mesh/cross-helpers": "latest",
     "@graphql-mesh/graphql": "latest",
