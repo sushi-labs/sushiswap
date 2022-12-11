@@ -31,6 +31,7 @@
     "playwright": {
       "cache": false,
       "env": [
+        "ANVIL_BLOCK_NUMBER",
         "ANVIL_FORK_URL",
         "PLAYWRIGHT_URL",
         "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
@@ -45,6 +46,7 @@
         "coverage/**"
       ],
       "env": [
+        "ANVIL_BLOCK_NUMBER",
         "ANVIL_FORK_URL",
         "PLAYWRIGHT_URL",
         "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
@@ -128,6 +130,7 @@
     "anvil": {
       "cache": false,
       "env": [
+        "ANVIL_BLOCK_NUMBER",
         "ANVIL_FORK_URL"
       ]
     },
