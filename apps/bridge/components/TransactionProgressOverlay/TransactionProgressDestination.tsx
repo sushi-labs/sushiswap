@@ -1,4 +1,3 @@
-import chain from '@sushiswap/chain'
 import chains from '@sushiswap/chain'
 import { NetworkIcon } from '@sushiswap/ui'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
@@ -134,7 +133,7 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
       subheader={
         <TransactionProgressStep.SubHeader
           icon={<NetworkIcon chainId={dstAmountOut.currency.chainId} width={16} height={16} />}
-          caption={chain[dstAmountOut.currency.chainId].name}
+          caption={chains[dstAmountOut.currency.chainId].name}
         />
       }
     />

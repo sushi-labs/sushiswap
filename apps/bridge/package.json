@@ -24,6 +24,7 @@
     "@layerzerolabs/scan-client": "0.0.0-beta.6",
     "@reduxjs/toolkit": "^1.8.1",
     "@sushiswap/abi": "workspace:*",
+    "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
