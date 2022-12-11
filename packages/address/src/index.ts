@@ -45,3 +45,5 @@ export const BENTOBOX_ADDRESS: Partial<Record<BentoBoxChainId, `0x${string}`>> =
   [ChainId.METIS]: '0xc35DADB65012eC5796536bD9864eD8773aBc74C4',
   [ChainId.BTTC]: '0x8dacffa7F69Ce572992132697252E16254225D38',
 } as const
+
+export { addressMapToTokenMap } from './addressMapToTokenMap'

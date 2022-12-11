@@ -37,6 +37,7 @@
   "dependencies": {
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "zod": "3.19.1"
   },

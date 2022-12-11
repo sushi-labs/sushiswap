@@ -485,6 +485,7 @@ importers:
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/abi': workspace:*
+      '@sushiswap/address': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
@@ -537,6 +538,7 @@ importers:
       '@layerzerolabs/scan-client': 0.0.0-beta.6
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
       '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/address': link:../../packages/address
       '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
@@ -1351,6 +1353,7 @@ importers:
     specifiers:
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -1365,6 +1368,7 @@ importers:
     dependencies:
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../chain
+      '@sushiswap/currency': link:../currency
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       zod: 3.19.1
     devDependencies:
@@ -1690,12 +1694,12 @@ importers:
       '@tailwindcss/forms': 0.5.3_tailwindcss@3.2.4
       '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.2.4
       '@tailwindcss/typography': 0.5.8_tailwindcss@3.2.4
+      tailwindcss: 3.2.4
     devDependencies:
       '@sushiswap/eslint-config': link:../eslint
       '@sushiswap/jest-config': link:../jest
       '@sushiswap/prettier-config': link:../prettier
       '@sushiswap/typescript-config': link:../typescript
-      tailwindcss: 3.2.4
       tsup: 6.5.0_typescript@4.8.2
       typescript: 4.8.2
 
@@ -2233,6 +2237,7 @@ importers:
 
   packages/stargate:
     specifiers:
+      '@sushiswap/address': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -2247,6 +2252,7 @@ importers:
       tsup: 6.5.0
       typescript: 4.8.2
     devDependencies:
+      '@sushiswap/address': link:../address
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/eslint-config': link:../config/eslint
@@ -23842,6 +23848,7 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
+    dev: false
 
   /postcss-import/14.1.0_postcss@8.4.19:
     resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
@@ -23861,6 +23868,7 @@ packages:
       postcss: ^8.3.3
     dependencies:
       camelcase-css: 2.0.1
+    dev: false
 
   /postcss-js/4.0.0_postcss@8.4.19:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -23926,6 +23934,7 @@ packages:
       postcss: ^8.2.14
     dependencies:
       postcss-selector-parser: 6.0.11
+    dev: false
 
   /postcss-nested/6.0.0_postcss@8.4.19:
     resolution: {integrity: sha512-0DkamqrPcmkBDsLn+vQDIrtkSbNkv5AD/M322ySo9kqFkCIYklym2xEmWkwo+Y3/qZo34tzEPNUw4y7yMCdv5w==}
@@ -26486,6 +26495,7 @@ packages:
       resolve: 1.22.1
     transitivePeerDependencies:
       - ts-node
+    dev: false
 
   /tailwindcss/3.2.4_postcss@8.4.19:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
