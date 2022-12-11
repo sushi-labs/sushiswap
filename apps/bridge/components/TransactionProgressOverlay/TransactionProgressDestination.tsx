@@ -32,11 +32,10 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
     ...getSushiXSwapContractConfig(dstAmountOut?.currency.chainId),
     chainId: dstAmountOut?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
-    listener: (event) => {
-      const [context, success, { transactionHash }] = event
+    listener: (context, success, { transactionHash }) => {
       if (context === formatBytes32String(id)) {
         setDstTxState({
-          txHash: transactionHash,
+          txHash: transactionHash as `0x${string}`,
           isSuccess: !success,
         })
       }
@@ -89,7 +88,19 @@ export const TransactionProgressDestination: FC<TransactionProgressDestination> 
         setTimeout(() => setSourceTx(undefined), 1000)
       }
     }
-  }, [isSuccess, isError])
+  }, [
+    isSuccess,
+    isError,
+    dstTxState,
+    timestamp,
+    createSuccessNotification,
+    dstChainId,
+    amount,
+    srcToken?.symbol,
+    onClose,
+    setSourceTx,
+    createFailedNotification,
+  ])
 
   if (!dstAmountOut) return <></>
 

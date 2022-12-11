@@ -46,11 +46,10 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
     ...getSushiXSwapContractConfig(dstAmountOut?.currency.chainId),
     chainId: dstAmountOut?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
-    listener: (event) => {
-      const [context, success, { transactionHash }] = event
+    listener: (context, success, { transactionHash }) => {
       if (context === formatBytes32String(id)) {
         setDstTxState({
-          txHash: transactionHash,
+          txHash: transactionHash as `0x${string}`,
           isSuccess: !success,
         })
       }
