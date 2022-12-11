@@ -1,0 +1,162 @@
+import { Prisma, PrismaClient } from '@prisma/client'
+import { ChainId } from '@sushiswap/chain'
+import { performance } from 'perf_hooks'
+import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
+import {
+  LEGACY_SUBGRAPH_NAME,
+  GRAPH_HOST,
+  SUSHISWAP_CHAINS,
+  TRIDENT_CHAINS,
+  TRIDENT_SUBGRAPH_NAME,
+  ProtocolName,
+} from '../../config.js'
+import { createPools } from '../../etl/pool/load.js'
+import { createTokens } from '../../etl/token/load.js'
+
+const client = new PrismaClient()
+
+const PROTOCOL = ProtocolName.SUSHISWAP
+
+async function main() {
+  const startTime = performance.now()
+  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
+
+  await start()
+
+  const endTime = performance.now()
+  console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+}
+
+async function start() {
+  const subgraphs = [
+    TRIDENT_CHAINS.map((chainId) => {
+      return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId] }
+    }),
+    SUSHISWAP_CHAINS.map((chainId) => {
+      return { chainId, host: GRAPH_HOST[chainId], name: LEGACY_SUBGRAPH_NAME[chainId] }
+    }),
+  ].flat()
+
+  const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
+  console.log(`EXTRACT - Extracting from ${chains.length} different chains, ${chains.join(', ')}`)
+
+  let totalPairCount = 0
+  for (const subgraph of subgraphs) {
+    const chainId = subgraph.chainId
+    const sdk = getBuiltGraphSDK({ chainId, host: subgraph.host, name: subgraph.name })
+
+    console.log(`Loading data from ${subgraph.host} ${subgraph.name}`)
+    let subgraphPairCount = 0
+    let cursor: string = ''
+
+    do {
+      const startTime = performance.now()
+      const where = cursor !== '' ? { id_gt: cursor } : {}
+      const request = await sdk
+        .Pairs({
+          first: 1000,
+          where,
+        })
+        .catch((e: string) => {
+          console.log({ e })
+          return undefined
+        })
+        .catch(() => undefined)
+      const currentResultCount = request?.pairs.length ?? 0
+      const endTime = performance.now()
+
+      const newCursor = request?.pairs[request.pairs.length - 1]?.id ?? ''
+      cursor = newCursor
+      subgraphPairCount += currentResultCount
+      console.log(
+        `EXTRACT - extracted ${currentResultCount} pools, current total: ${subgraphPairCount} (${(
+          (endTime - startTime) /
+          1000
+        ).toFixed(1)}s) `
+      )
+
+      if (request) {
+        const { tokens, pools } = transform(chainId, request)
+        // NOTE: This shouldn't have to be async, but was seeing this error:
+        // (unlocked closed connection) (CallerID: planetscale-admin)'
+        // this script doesn't have to be super fast, so keeping it async to not throttle the db
+        await Promise.all([createTokens(client, tokens), createPools(client, pools)])
+      }
+    } while (cursor !== '')
+    totalPairCount += subgraphPairCount
+    console.log(`Finished loading pairs from ${subgraph.host}/${subgraph.name}, ${subgraphPairCount} pairs`)
+  }
+  console.log(`Finished loading pairs for ${PROTOCOL} from all subgraphs, ${totalPairCount} pairs`)
+}
+
+function transform(
+  chainId: ChainId,
+  data: PairsQuery
+): {
+  pools: Prisma.PoolCreateManyInput[]
+  tokens: Prisma.TokenCreateManyInput[]
+} {
+  const tokens: Prisma.TokenCreateManyInput[] = []
+  const uniqueTokens: Set<string> = new Set()
+  const poolsTransformed = data.pairs.map((pair) => {
+    if (!uniqueTokens.has(pair.token0.id)) {
+      uniqueTokens.add(pair.token0.id)
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: chainId.toString().concat(':').concat(pair.token0.id),
+          address: pair.token0.id,
+          chainId,
+          name: pair.token0.name,
+          symbol: pair.token0.symbol,
+          decimals: Number(pair.token0.decimals),
+        })
+      )
+    }
+    if (!uniqueTokens.has(pair.token1.id)) {
+      uniqueTokens.add(pair.token1.id)
+      tokens.push(
+        Prisma.validator<Prisma.TokenCreateManyInput>()({
+          id: chainId.toString().concat(':').concat(pair.token1.id),
+          address: pair.token1.id,
+          chainId: chainId,
+          name: pair.token1.name,
+          symbol: pair.token1.symbol,
+          decimals: Number(pair.token1.decimals),
+        })
+      )
+    }
+
+    const regex = /([^\w ]|_|-)/g
+    const name = pair.token0.symbol
+      .replace(regex, '')
+      .slice(0, 15)
+      .concat('-')
+      .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
+    return Prisma.validator<Prisma.PoolCreateManyInput>()({
+      id: chainId.toString().concat(':').concat(pair.id),
+      address: pair.id,
+      name,
+      protocol: PROTOCOL,
+      version: pair.source,
+      type: pair.type,
+      chainId,
+      swapFee: Number(pair.swapFee) / 10000,
+      twapEnabled: pair.twapEnabled,
+      token0Id: pair.token0.id,
+      token1Id: pair.token1.id,
+      liquidityUSD: pair.liquidityUSD,
+    })
+  })
+
+  return { pools: poolsTransformed, tokens }
+}
+
+main()
+  .then(async () => {
+    await client.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await client.$disconnect()
+    process.exit(1)
+  })

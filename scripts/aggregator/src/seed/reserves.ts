@@ -1,11 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import { readContracts, watchReadContracts } from '@wagmi/core'
+import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
-import './lib/wagmi.js'
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json' assert { type: 'json' }
-import { Amount } from '@sushiswap/currency'
+import './lib/wagmi.js'
 
 const prisma = new PrismaClient()
 

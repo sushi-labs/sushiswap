@@ -1,12 +1,6 @@
-import { prisma, Prisma, PrismaClient } from '@prisma/client'
-import { ChainId } from '@sushiswap/chain'
-import { performance } from 'perf_hooks'
-import { PairsQuery } from '../.graphclient'
-import { mergePools } from './etl/pool/load'
-import { filterPools } from './etl/pool/transform'
-import { createTokens } from './etl/token/load'
-import { filterTokensToCreate } from './etl/token/transform'
+import { Prisma, PrismaClient } from '@prisma/client'
 import fetch from 'isomorphic-unfetch'
+import { performance } from 'perf_hooks'
 
 const client = new PrismaClient()
 
@@ -83,13 +77,11 @@ async function extract() {
     return json
   })
 
-  const combined = [
-    uniswap_eth,
-    sushiswap_all,
-    quickswap_polygon,
-  ].flat()
+  const combined = [uniswap_eth, sushiswap_all, quickswap_polygon].flat()
   const unique = [
-    ...new Map(combined.map((item) => [item.chainId.toString().concat(':').concat(item.address.toLowerCase()), item])).values(),
+    ...new Map(
+      combined.map((item) => [item.chainId.toString().concat(':').concat(item.address.toLowerCase()), item])
+    ).values(),
   ]
   if (unique.length !== combined.length) console.log(`${combined.length - unique.length} Duplicate tokens found`)
   return unique.flat()
@@ -109,7 +101,6 @@ async function transform(data: TokenResponse[]): Promise<Prisma.TokenUpdateArgs[
 
   const tokensToApprove: Prisma.TokenUpdateArgs[] = []
   for (const token of data) {
-
     const id = token.chainId.toString().concat(':').concat(token.address.toLowerCase())
     const existingToken = existingTokens.find((token) => token.id === id)
     if (existingToken) {

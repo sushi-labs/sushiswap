@@ -30,6 +30,17 @@ sources:
           value: V3_
           includeRootOperations: true
           includeTypes: true
+          
+  - name: PancakeSwap
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:pancakeswap/pairs}
+        retry: 3
+    transforms:
+      - prefix:
+          value: MINIMAL_
+          includeRootOperations: true
+          includeTypes: true
 documents:
   - ./query.graphql
 

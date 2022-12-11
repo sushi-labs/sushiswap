@@ -93,3 +93,22 @@ query V3Pairs(
     liquidityUSD: totalValueLockedUSD
   }
 }
+
+query PCSPairs($first: Int = 1000, $skip: Int = 0, $where: MINIMAL_Pair_filter, $block: MINIMAL_Block_height) {
+  MINIMAL_pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    name
+  }
+}

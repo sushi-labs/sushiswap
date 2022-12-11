@@ -1,41 +1,24 @@
 import { ChainId } from '@sushiswap/chain'
 
-export const SUSHISWAP_CHAINS = [
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.BSC,
-  ChainId.CELO,
-  ChainId.ETHEREUM,
-  ChainId.FANTOM,
-  ChainId.FUSE,
-  ChainId.GNOSIS,
-  ChainId.MOONBEAM,
-  ChainId.MOONRIVER,
-  ChainId.POLYGON,
-  ChainId.HARMONY,
-  ChainId.ARBITRUM_NOVA,
-  ChainId.BOBA,
-]
+export enum ProtocolVersion {
+  V2 = 'V2',
+  LEGACY = 'LEGACY',
+  TRIDENT = 'TRIDENT',
+  V3 = 'V3',
+}
 
-export const TRIDENT_CHAINS = [
-  ChainId.POLYGON,
-  ChainId.OPTIMISM,
-  ChainId.METIS,
-  ChainId.KAVA,
-  ChainId.ARBITRUM,
-  ChainId.AVALANCHE,
-  ChainId.BSC,
-  ChainId.BTTC
-]
+export enum ProtocolName {
+  SUSHISWAP = 'SushiSwap',
+  UNISWAP = 'UniSwap',
+  PANCAKESWAP = 'PancakeSwap',
+  QUICKSWAP = 'QuickSwap',
+}
 
-export const PANCAKESWAP_V2_SUPPORTED_CHAINS = [ChainId.BSC]
-
-export const UNISWAP_V2_SUPPORTED_CHAINS = [ChainId.ETHEREUM]
-export const UNISWAP_V3_SUPPORTED_CHAINS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM]
-
-export const QUICKSWAP_SUPPORTED_CHAINS = [ChainId.POLYGON]
-
-export const SUSHI_SUPPORTED_CHAINS = Array.from(new Set([...SUSHISWAP_CHAINS, ...TRIDENT_CHAINS]))
+export enum PoolType {
+  CONSTANT_PRODUCT_POOL = 'CONSTANT_PRODUCT_POOL',
+  STABLE_POOL = 'STABLE_POOL',
+  CONCENTRATED_LIQUIDITY_POOL = 'CONCENTRATED_LIQUIDITY_POOL',
+}
 
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
 const SUSHI_HOST_ENDPOINT = 'subgraphs.sushi.com'
@@ -61,7 +44,36 @@ export const GRAPH_HOST: Record<number | string, string> = {
   [ChainId.BTTC]: SUSHI_HOST_ENDPOINT,
 }
 
-export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
+// SUSHISWAP
+export const SUSHISWAP_CHAINS = [
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.CELO,
+  ChainId.ETHEREUM,
+  ChainId.FANTOM,
+  ChainId.FUSE,
+  ChainId.GNOSIS,
+  ChainId.MOONBEAM,
+  ChainId.MOONRIVER,
+  ChainId.POLYGON,
+  ChainId.HARMONY,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.BOBA,
+]
+
+export const TRIDENT_CHAINS = [
+  ChainId.POLYGON,
+  ChainId.OPTIMISM,
+  ChainId.METIS,
+  ChainId.KAVA,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.BTTC,
+]
+
+export const LEGACY_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushiswap-subgraphs/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
@@ -90,10 +102,24 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.BTTC]: 'sushi-qa/trident-bttc',
 }
 
+export const SUSHI_SUPPORTED_CHAINS = Array.from(new Set([...SUSHISWAP_CHAINS, ...TRIDENT_CHAINS]))
+
+// PANCAKESWAP
+
+export const PANCAKESWAP_V2_SUPPORTED_CHAINS = [ChainId.BSC]
+
+export const PANCAKESWAP_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.BSC]: 'pancakeswap/pairs',
+}
+
+// UNISWAP
+
+export const UNISWAP_V2_SUPPORTED_CHAINS = [ChainId.ETHEREUM]
 export const UNISWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'uniswap/uniswap-v2',
 }
 
+export const UNISWAP_V3_SUPPORTED_CHAINS = [ChainId.ETHEREUM, ChainId.POLYGON, ChainId.ARBITRUM]
 export const UNISWAP_V3_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'uniswap/uniswap-v3',
   [ChainId.ARBITRUM]: 'ianlapham/arbitrum-minimal',
@@ -101,10 +127,8 @@ export const UNISWAP_V3_SUBGRAPH_NAME: Record<number | string, string> = {
   //messari/uniswap-v3-optimism
 }
 
+// QUICKSWAP
+export const QUICKSWAP_SUPPORTED_CHAINS = [ChainId.POLYGON]
 export const QUICKSWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.POLYGON]: 'sameepsi/quickswap06',
-}
-
-export const PANCAKESWAP_SUBGRAPH_NAME: Record<number | string, string> = {
-  [ChainId.POLYGON]: 'pancakeswap/pairs',
 }

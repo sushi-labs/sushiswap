@@ -1,10 +1,7 @@
 import { PrismaClient, Token as PrismaToken } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Token } from '@sushiswap/currency'
-import { Fraction, JSBI, MAX_SAFE_INTEGER } from '@sushiswap/math'
-import { parseUnits } from '@ethersproject/units'
 import { performance } from 'perf_hooks'
-import './lib/wagmi.js'
+import '../lib/wagmi.js'
 
 const prisma = new PrismaClient()
 
@@ -16,7 +13,7 @@ async function main() {
   const chainId = ChainId.POLYGON
 
   const pools = await getPools(chainId)
-  const poolsToUpdate = transform(pools) 
+  const poolsToUpdate = transform(pools)
   await updatePools(poolsToUpdate)
 
   const endTime = performance.now()
@@ -111,17 +108,16 @@ function transform(pools: Pool[]) {
       pool.token1.derivedUSD !== null &&
       pool.token1.derivedUSD.gt(0)
     ) {
-
-      const amount0 = Number(pool.reserve0) / 10 ** pool.token0.decimals * Number(pool.token0.derivedUSD)
-      const amount1 = Number(pool.reserve1) / 10 ** pool.token1.decimals * Number(pool.token1.derivedUSD)
+      const amount0 = (Number(pool.reserve0) / 10 ** pool.token0.decimals) * Number(pool.token0.derivedUSD)
+      const amount1 = (Number(pool.reserve1) / 10 ** pool.token1.decimals) * Number(pool.token1.derivedUSD)
       const liquidityUSD = amount0 + amount1
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
     } else if (pool.token0.derivedUSD !== null && pool.token0.derivedUSD.gt(0)) {
-      const amount0 = Number(pool.reserve0) / 10 ** pool.token0.decimals * Number(pool.token0.derivedUSD)
+      const amount0 = (Number(pool.reserve0) / 10 ** pool.token0.decimals) * Number(pool.token0.derivedUSD)
       const liquidityUSD = amount0 * 2
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
-    } else if (pool.token1.derivedUSD !== null  && pool.token1.derivedUSD.gt(0)) {
-      const amount1 = Number(pool.reserve1) / 10 ** pool.token1.decimals * Number(pool.token1.derivedUSD)
+    } else if (pool.token1.derivedUSD !== null && pool.token1.derivedUSD.gt(0)) {
+      const amount1 = (Number(pool.reserve1) / 10 ** pool.token1.decimals) * Number(pool.token1.derivedUSD)
       const liquidityUSD = amount1 * 2
       poolsToUpdate.push({ id: pool.id, liquidityUSD: liquidityUSD.toString() })
     }
