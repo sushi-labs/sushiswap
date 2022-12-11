@@ -28,8 +28,8 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  // test.slow()
-  const trade1: Trade = { input: nativeToken, output: usdc, amount: '1' }
+  test.slow()
+  const trade1: Trade = { input: nativeToken, output: usdc, amount: '10' }
   console.log('Swapping', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(trade1, page)
   console.log('Swapped', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
@@ -41,15 +41,15 @@ test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
-  // test.slow()
-  const trade1: Trade = { input: nativeToken, output: sushi, amount: '1' }
+  test.slow()
+  const trade1: Trade = { input: nativeToken, output: sushi, amount: '10' }
   await swap(trade1, page)
   const trade2: Trade = { input: sushi, output: nativeToken }
   await swap(trade2, page, true)
 })
 
 test(`Wrap and unwrap`, async ({ page }) => {
-  // test.slow()
+  test.slow()
   const nativeToWrapped = {
     input: nativeToken,
     output: wNativeToken,
@@ -125,10 +125,12 @@ async function handleToken(token: Token, page: Page, type: InputType, amount?: s
   await tokenOutputList.click()
 
   await page.fill(`[testdata-id=swap-${selectorInfix}-token-selector-dialog-address-input]`, token.symbol)
-  await timeout(1000) // TODO: wait for the list to load instead of using timeout
+  // TODO: for a way to "await" the discovery of the list instead of arbitrary timeout
+  await timeout(1000)
   await page.locator(`[testdata-id=swap-${selectorInfix}-token-selector-dialog-row-${token.address}]`).click()
 
   if (useMax && type === InputType.INPUT) {
+    // TODO: for a way to "await" the discovery of the balance instead of arbitrary timeout
     await timeout(3000) // wait for the balance to be set before continuing.
     await page.getByTestId('swap-input-currency0-balance-button').click()
   } else if (amount && type === InputType.INPUT) {
