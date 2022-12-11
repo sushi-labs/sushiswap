@@ -3,11 +3,11 @@ import { expect, Page, test } from '@playwright/test'
 import { chainName } from '@sushiswap/chain'
 import { Native, SUSHI_ADDRESS, USDC_ADDRESS } from '@sushiswap/currency'
 
-if (!process.env.CHAIN_ID) {
-  throw new Error('CHAIN_ID env var not set')
-}
+if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
+if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set')
 
-const CHAIN_ID = parseInt(process.env.CHAIN_ID)
+const CHAIN_ID = Number(process.env.CHAIN_ID)
+const PLAYWRIGHT_URL = String(process.env.PLAYWRIGHT_URL)
 
 const nativeToken = {
   address: AddressZero,
@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
   page.on('pageerror', (err) => {
     console.log(err)
   })
-  await page.goto(process.env.PLAYWRIGHT_URL as string)
+  await page.goto(PLAYWRIGHT_URL)
 })
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
