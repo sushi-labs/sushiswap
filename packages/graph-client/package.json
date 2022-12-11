@@ -60,10 +60,7 @@
     "@graphql-mesh/utils": "latest",
     "@graphql-tools/merge": "latest",
     "@sushiswap/chain": "workspace:*",
-    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/validate": "workspace:*",
-    "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "0.8.2",
     "@whatwg-node/fetch": "latest",
     "date-fns": "^2.29.3",
     "ethers": "^5.7.0",
@@ -74,16 +71,22 @@
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
     "@types/jest": "^29.2.0",
     "@types/node": "^16.0.0",
     "@types/numeral": "^2.0.2",
+    "@wagmi/core": "0.8.2",
     "eslint": "8.29.0",
     "jest": "^29.3.0",
     "ts-jest": "29.0.3",
     "tsup": "6.5.0",
     "typescript": "4.8.2"
+  },
+  "peerDependencies": {
+    "@wagmi/core": "0.8.2"
   }
 }

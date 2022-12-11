@@ -8,10 +8,10 @@ import {
 } from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
 import { BigNumber } from 'ethers'
-import { useSingleContractMultipleData } from 'lib/state/multicall'
 import { useMemo } from 'react'
 import { Address, useBlockNumber, useContractRead } from 'wagmi'
 
+import { useSingleContractMultipleData } from '../../lib/state/multicall'
 import { ErrorState, LoadingState, SuccessState } from './types'
 export function useStreamBalance(chainId?: number, streamId?: string, token?: Token): Amount<Token> | undefined {
   const {

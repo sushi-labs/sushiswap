@@ -2,10 +2,9 @@ import { Amount, Currency, tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_PADDING } from '@sushiswap/ui'
 import { useBalance } from '@sushiswap/wagmi'
-import { BottomPanel } from 'components/CurrencyInput/BottomPanel'
-import { CurrencyInputBase } from 'components/CurrencyInput/CurrencyInputBase'
-import { HelperTextPanel } from 'components/CurrencyInput/HelperTextPanel'
 import React, { FC, useEffect, useMemo } from 'react'
+
+import { BottomPanel, CurrencyInputBase, HelperTextPanel } from '.'
 
 type BottomPanelRenderProps = {
   onChange(value: string): void

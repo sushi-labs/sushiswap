@@ -1,7 +1,7 @@
 // @ts-check
 /** @type {import('eslint').ESLint.ConfigData} */
 const eslintConfig = {
-  extends: ['@sushiswap/eslint-config', 'next/core-web-vitals'],
+  extends: ['@sushiswap/eslint-config', 'turbo', 'prettier', 'next/core-web-vitals'],
   plugins: ['testing-library', 'simple-import-sort', 'unused-imports'],
   settings: {
     next: {
@@ -9,7 +9,6 @@ const eslintConfig = {
     },
   },
   ignorePatterns: [
-    '**/__tests__/*.test.ts',
     '**/dist/**',
     '**/.next/**',
     '**/node_modules/**',
@@ -20,11 +19,14 @@ const eslintConfig = {
     '**/coverage/**',
     '**/exports/**',
     '**/playwright-report/**',
+    '**/__tests__/*.test.ts',
+    '**/test/*.test.ts',
   ],
   rules: {
     '@next/next/no-html-link-for-pages': 'warn',
     'react/display-name': 'warn',
     'testing-library/prefer-screen-queries': 'warn',
+    'turbo/no-undeclared-env-vars': 'warn',
   },
   overrides: [
     // Only uses Testing Library lint rules in test files

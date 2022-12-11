@@ -1,7 +1,8 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero, HashZero } from '@ethersproject/constants'
-import { ChainId } from '@sushiswap/chain'
+import { BentoBoxChainId, BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { NotificationData } from '@sushiswap/ui'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { useCallback, useMemo, useState } from 'react'
 import {
   Address,
@@ -13,7 +14,6 @@ import {
   useSignTypedData,
 } from 'wagmi'
 
-import { BENTOBOX_ADDRESS, getBentoBoxContractConfig } from './useBentoBoxContract'
 import { ApprovalState } from './useERC20ApproveCallback'
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
@@ -25,8 +25,8 @@ export function useBentoBoxApproveCallback({
   onSuccess,
   enabled = true,
 }: {
-  chainId: ChainId | undefined
-  masterContract?: string
+  chainId: number | undefined
+  masterContract?: Address
   watch?: boolean
   onSignature?(payload: Signature): void
   onSuccess?(data: NotificationData): void
@@ -37,8 +37,8 @@ export function useBentoBoxApproveCallback({
   const { config } = usePrepareContractWrite({
     ...getBentoBoxContractConfig(chainId),
     functionName: 'setMasterContractApproval',
-    args: [address as Address, masterContract as Address, true, 0, HashZero, HashZero],
-    enabled,
+    args: !!masterContract && !!address ? [address, masterContract, true, 0, HashZero, HashZero] : undefined,
+    enabled: enabled && !!masterContract && !!address,
   })
 
   const { writeAsync } = useContractWrite(config)
@@ -46,17 +46,17 @@ export function useBentoBoxApproveCallback({
   const { data: isBentoBoxApproved, isLoading } = useContractRead({
     ...getBentoBoxContractConfig(chainId),
     functionName: 'masterContractApproved',
-    args: [masterContract as Address, address as Address],
+    args: !!masterContract && !!address ? [masterContract, address] : undefined,
     // This should probably always be true anyway...
     watch,
-    enabled: enabled && Boolean(address && masterContract !== AddressZero),
+    enabled: enabled && !!masterContract && !!address && masterContract !== AddressZero,
   })
 
   const { refetch: getNonces } = useContractRead({
     ...getBentoBoxContractConfig(chainId),
     functionName: 'nonces',
-    args: [address ? address : AddressZero],
-    enabled: false,
+    args: address ? [address] : undefined,
+    enabled: !!address,
   })
 
   const [signature, setSignature] = useState<Signature>()
@@ -138,7 +138,7 @@ export function useBentoBoxApproveCallback({
         domain: {
           name: 'BentoBox V1',
           chainId,
-          verifyingContract: BENTOBOX_ADDRESS[chainId] as Address,
+          verifyingContract: BENTOBOX_ADDRESS[chainId],
         },
         types: {
           SetMasterContractApproval: [

@@ -1,7 +1,8 @@
 import { useInterval } from '@sushiswap/hooks'
 import { Typography } from '@sushiswap/ui'
-import { FuroStatus, Vesting } from 'lib'
 import { FC, useState } from 'react'
+
+import { FuroStatus, Vesting } from '../../lib'
 
 interface NextPaymentTimerState {
   days: string

@@ -23,6 +23,7 @@
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@sushiswap/abi": "workspace:*",
+    "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",

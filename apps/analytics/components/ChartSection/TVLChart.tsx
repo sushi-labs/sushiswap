@@ -74,8 +74,10 @@ export const TVLChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
         trigger: 'axis',
         extraCssText: 'z-index: 1000',
         responsive: true,
+        // @ts-ignore
         backgroundColor: tailwind.theme.colors.slate['700'],
         textStyle: {
+          // @ts-ignore
           color: tailwind.theme.colors.slate['50'],
           fontSize: 12,
           fontWeight: 600,
@@ -109,6 +111,7 @@ export const TVLChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
       },
       visualMap: {
         show: false,
+        // @ts-ignore
         color: [tailwind.theme.colors.blue['500']],
       },
       xAxis: [
@@ -142,6 +145,7 @@ export const TVLChart: FC<{ stats?: Pair[] }> = ({ stats }) => {
             },
           },
           areaStyle: {
+            // @ts-ignore
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',

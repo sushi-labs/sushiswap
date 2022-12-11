@@ -26,6 +26,7 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
+    "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",

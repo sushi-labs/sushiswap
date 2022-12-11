@@ -2,9 +2,14 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
+import {
+  type Rebase,
+  type Stream as StreamDTO,
+  type User as UserDTO,
+  type Vesting as VestingDTO,
+} from '../.graphclient'
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
-import { type Rebase, type Stream as StreamDTO, type User as UserDTO, type Vesting as VestingDTO } from '.graphclient'
 
 export abstract class Furo {
   public _balance: Amount<Token>

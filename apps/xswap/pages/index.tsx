@@ -2,6 +2,7 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { TradeType } from '@sushiswap/amm'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
@@ -17,7 +18,6 @@ import { App, Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, To
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import {
   Approve,
-  BENTOBOX_ADDRESS,
   getSushiXSwapContractConfig,
   useBalance,
   useBentoBoxTotal,
