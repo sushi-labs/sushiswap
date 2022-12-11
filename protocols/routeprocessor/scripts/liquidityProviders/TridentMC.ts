@@ -173,6 +173,11 @@ const balanceOfABI = [
   },
 ]
 
+function closeValues(a: number, b: number, precision: number) {
+  if (a == 0 || b == 0) return Math.abs(a - b) < precision
+  return Math.abs(a / b - 1) < precision
+}
+
 export function getBentoChainId(chainId: string | number | undefined): string {
   return `Bento ${chainId}`
 }
@@ -189,9 +194,8 @@ export function convertTokenToBento(token: Token): RToken {
 export class TridentProviderMC extends LiquidityProviderMC {
   fetchedPairs: Set<string> = new Set()
   fetchedTokens: Set<string> = new Set()
-
-  //pools: Map<string, PoolCode> = new Map()
   poolCodes: PoolCode[] = []
+  blockListener: any
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
@@ -349,6 +353,58 @@ export class TridentProviderMC extends LiquidityProviderMC {
     return poolCodes
   }
 
+  async updatePoolsData() {
+    if (this.poolCodes.length == 0) return
+
+    const BentoBoxAddr = BentoBox[this.chainId]
+    const pools: PoolCode[] = []
+    const bridges: PoolCode[] = []
+    this.poolCodes.forEach((pc) => (pc instanceof BentoConstantProductPoolCode ? pools.push(pc) : bridges.push(pc)))
+
+    const reservesPromise = this.multiCallProvider.multiContractCall(
+      pools.map((pc) => pc.pool.address),
+      getReservesABI,
+      'getReserves',
+      []
+    )
+    const totalsPromise = this.multiCallProvider.multiDataCall(
+      BentoBoxAddr,
+      totalsABI,
+      'totals',
+      bridges.map((b) => [b.pool.token0.address])
+    )
+    const balancesPromise = this.multiCallProvider.multiContractCall(
+      bridges.map((b) => b.pool.token0.address),
+      balanceOfABI,
+      'balanceOf',
+      [BentoBoxAddr]
+    )
+
+    const [reserves0, totals0, balances0] = await Promise.all([reservesPromise, totalsPromise, balancesPromise])
+    const reserves = convertToBigNumberPair(reserves0)
+    const totals = convertToBigNumberPair(totals0)
+    const balances = convertToNumbers(balances0)
+
+    pools.forEach((pc, i) => {
+      if (!pc.pool.reserve0.eq(reserves[i][0]) || !pc.pool.reserve1.eq(reserves[i][1])) {
+        pc.pool.updateReserves(reserves[i][0], reserves[i][1])
+        ++this.stateId
+      }
+    })
+
+    bridges.forEach((pc, i) => {
+      if (!pc.pool.reserve0.eq(totals[i][0]) || !pc.pool.reserve1.eq(totals[i][1])) {
+        pc.pool.updateReserves(totals[i][0], totals[i][1])
+        ++this.stateId
+      }
+      const freeLiquidity = (pc.pool as BridgeBento).freeLiquidity || 0
+      if (!closeValues(freeLiquidity, balances[i], 1e-6)) {
+        ;(pc.pool as BridgeBento).freeLiquidity = balances[i]
+        ++this.stateId
+      }
+    })
+  }
+
   _getProspectiveTokens(t0: Token, t1: Token) {
     const set = new Set<Token>([
       t0,
@@ -366,6 +422,10 @@ export class TridentProviderMC extends LiquidityProviderMC {
     this.fetchedPairs.clear()
     this.fetchedTokens.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
+    this.blockListener = (_blockNumber: number) => {
+      this.updatePoolsData()
+    }
+    this.chainDataProvider.on('block', this.blockListener)
   }
   fetchPoolsForToken(t0: Token, t1: Token): void {
     this.getPools(this._getProspectiveTokens(t0, t1))
@@ -373,5 +433,8 @@ export class TridentProviderMC extends LiquidityProviderMC {
   getCurrentPoolList(): PoolCode[] {
     return this.poolCodes
   }
-  stopFetchPoolsData() {}
+  stopFetchPoolsData() {
+    if (this.blockListener) this.chainDataProvider.off('block', this.blockListener)
+    this.blockListener = undefined
+  }
 }
