@@ -1,13 +1,18 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+import { Config } from 'tailwindcss'
+import defaultTheme from 'tailwindcss/defaultTheme'
 
-// @ts-check
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const config: Config = {
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/line-clamp'),
     require('@tailwindcss/typography'),
+  ],
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    '../../packages/wagmi/{components,systems}/**/*.{js,ts,jsx,tsx}',
+    '../../packages/ui/{,!(node_modules)/**/}*.{js,ts,jsx,tsx}',
   ],
   theme: {
     screens: {
@@ -79,3 +84,5 @@ module.exports = {
     },
   },
 }
+
+export default config
