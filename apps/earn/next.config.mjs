@@ -1,33 +1,35 @@
-// import transpileModules from 'next-transpile-modules'
+import transpileModules from 'next-transpile-modules'
 
-// const withTranspileModules = transpileModules([
-//   '@sushiswap/redux-token-lists',
-//   '@sushiswap/redux-localstorage',
-//   '@sushiswap/wagmi',
-//   '@sushiswap/ui',
-// ])
+const withTranspileModules = transpileModules([
+  '@sushiswap/redux-token-lists',
+  '@sushiswap/redux-localstorage',
+  '@sushiswap/wagmi',
+  '@sushiswap/ui',
+])
 
 // @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: '/earn',
   reactStrictMode: true,
-  swcMinify: false,
   productionBrowserSourceMaps: true,
+  swcMinify: false,
+  poweredByHeader: false,
+  staticPageGenerationTimeout: 180,
   experimental: {
     esmExternals: 'loose',
-    transpilePackages: [
-      '@sushiswap/redux-token-lists',
-      '@sushiswap/redux-localstorage',
-      '@sushiswap/wagmi',
-      '@sushiswap/ui',
-    ],
+    // transpilePackages: [
+    //   '@sushiswap/redux-token-lists',
+    //   '@sushiswap/redux-localstorage',
+    //   '@sushiswap/wagmi',
+    //   '@sushiswap/ui',
+    // ],
   },
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  staticPageGenerationTimeout: 180,
+
   async redirects() {
     return [
       {
@@ -40,5 +42,5 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
-// export default withTranspileModules(nextConfig)
+// export default nextConfig
+export default withTranspileModules(nextConfig)
