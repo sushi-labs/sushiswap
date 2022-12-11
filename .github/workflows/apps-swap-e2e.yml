@@ -64,12 +64,14 @@ jobs:
             cache: 'pnpm'
 
         - name: Install dependencies
-          run: pnpm install
+          run: |
+            pnpm install
+            npx playwright install --with-deps
           working-directory: .
 
-        - name: Install playwright
-          run: npx playwright install --with-deps
-          working-directory: .
+        # - name: Install playwright
+        #   run: npx playwright install --with-deps
+        #   working-directory: .
 
         - name: Install rust
           uses: actions-rs/toolchain@v1
