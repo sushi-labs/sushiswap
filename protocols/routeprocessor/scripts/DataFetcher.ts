@@ -6,6 +6,7 @@ import { Limited } from './Limited'
 import { LiquidityProviderMC, LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
 import { QuickSwapProviderMC } from './liquidityProviders/QuickSwapMC'
 import { SushiProviderMC } from './liquidityProviders/SushiMC'
+import { TridentProviderMC } from './liquidityProviders/TridentMC'
 import { UniSwapV2ProviderMC } from './liquidityProviders/UniswapV2MC'
 import { MultiCallProvider } from './MulticallProvider'
 import { PoolCode } from './pools/PoolCode'
@@ -53,6 +54,10 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.Quickswap, providers))
       this.providers.push(
         new QuickSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers))
+      this.providers.push(
+        new TridentProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
 
     this.providers.forEach((p) => p.startFetchPoolsData())

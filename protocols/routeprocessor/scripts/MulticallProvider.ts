@@ -82,6 +82,13 @@ export function convertToNumbers(arr: any[]): number[] {
 }
 
 const ZERO = BigNumber.from(0)
+export function convertToBigNumber(arr: any[]): BigNumber[] {
+  return arr.map((a) => {
+    if (a === undefined) return ZERO
+    return BigNumber.from(a[0].hex)
+  })
+}
+
 export function convertToBigNumberPair(arr: any[]): [BigNumber, BigNumber][] {
   return arr.map((a) => {
     if (a === undefined) return [ZERO, ZERO]

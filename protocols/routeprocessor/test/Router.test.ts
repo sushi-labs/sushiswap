@@ -70,7 +70,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   const baseWrappedToken = WRAPPED_NATIVE[chainId]
 
   console.log(`1. ${chainId} Find best route ...`)
-  const backCounter = new BackCounter(3)
+  const backCounter = new BackCounter(5)
   const dataFetcher = new DataFetcher(provider, chainId)
   dataFetcher.startDataFetching()
   dataFetcher.fetchPoolsForToken(baseWrappedToken, toToken)

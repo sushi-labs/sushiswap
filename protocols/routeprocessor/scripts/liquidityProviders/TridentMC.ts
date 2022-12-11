@@ -1,14 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { BigNumber, Contract, ethers } from 'ethers'
+import { ethers } from 'ethers'
 
-import { BentoBoxABI } from '../../ABI/BentoBoxABI'
-import { ConstantProductPoolABI } from '../../ABI/ConstantProductPoolABI'
-import { ConstantProductPoolFactoryABI } from '../../ABI/ConstantProductPoolFactoryABI'
-import { ERC20ABI } from '../../ABI/ERC20'
 import { Limited } from '../Limited'
-import { convertToBigNumberPair, convertToNumbers, MultiCallProvider } from '../MulticallProvider'
+import { convertToBigNumber, convertToBigNumberPair, convertToNumbers, MultiCallProvider } from '../MulticallProvider'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoConstantProductPoolCode } from '../pools/BentoconstantProductPool'
 import { PoolCode } from '../pools/PoolCode'
@@ -128,6 +124,55 @@ const swapFeeABI = [
   },
 ]
 
+const totalsABI = [
+  {
+    inputs: [
+      {
+        internalType: 'contract IERC20',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'totals',
+    outputs: [
+      {
+        internalType: 'uint128',
+        name: 'elastic',
+        type: 'uint128',
+      },
+      {
+        internalType: 'uint128',
+        name: 'base',
+        type: 'uint128',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
+const balanceOfABI = [
+  {
+    constant: true,
+    inputs: [
+      {
+        name: '_owner',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        name: 'balance',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
 export function getBentoChainId(chainId: string | number | undefined): string {
   return `Bento ${chainId}`
 }
@@ -141,18 +186,9 @@ export function convertTokenToBento(token: Token): RToken {
   return t
 }
 
-// function sortTokens(tokens: Token[]): Token[] {
-//   const t1: [Token, BigNumber][] = tokens.map((t) => [t, BigNumber.from(t.address)])
-//   t1.sort(([, a0], [, a1]) => {
-//     if (a0.lt(a1)) return -1
-//     if (a0.eq(a1)) return 0
-//     return 1
-//   })
-//   return t1.map(([t]) => t)
-// }
-
 export class TridentProviderMC extends LiquidityProviderMC {
   fetchedPairs: Set<string> = new Set()
+  fetchedTokens: Set<string> = new Set()
 
   //pools: Map<string, PoolCode> = new Map()
   poolCodes: PoolCode[] = []
@@ -174,7 +210,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
     return 'Trident'
   }
 
-  getPools(tokens: Token[]) {
+  async getPools(tokens: Token[]) {
     if (ConstantProductPoolFactory[this.chainId] === undefined) {
       // No trident for this network
       return []
@@ -191,36 +227,15 @@ export class TridentProviderMC extends LiquidityProviderMC {
     ])
     const tokensSorted = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
 
-    const tridentPools = this.getAllTridentPools(tokensSorted)
-    //const bridges = this.getAllBridges(tokensSorted)
+    const [pools, bridges] = await Promise.all([
+      this.getAllTridentPools(tokensSorted),
+      this.getAllBridges(tokensSorted),
+    ])
+    if (pools.length || bridges.length) {
+      this.poolCodes = [...this.poolCodes, ...pools, ...bridges]
+      ++this.stateId
+    }
   }
-
-  // async _getTokenPaiPoolCodes(t0: Token, t1: Token, factory: Contract): Promise<PoolCode[]> {
-  //   const pools: PoolCode[] = []
-  //   const paiPoolCodesCount = await this.limited.call(() => factory.poolsCount(t0.address, t1.address))
-  //   if (paiPoolCodesCount == 0) return []
-  //   const paiPoolCodes: string[] = await this.limited.call(() =>
-  //     factory.getPools(t0.address, t1.address, 0, paiPoolCodesCount)
-  //   )
-  //   for (let k = 0; k < paiPoolCodes.length; ++k) {
-  //     const poolAddress = paiPoolCodes[k]
-  //     const poolContract = await new ethers.Contract(poolAddress, ConstantProductPoolABI, this.chainDataProvider)
-  //     const [res0, res1]: [BigNumber, BigNumber] = await this.limited.call(() => poolContract.getReserves())
-  //     const fee: BigNumber = await this.limited.call(() => poolContract.swapFee())
-  //     const pool = new ConstantProductRPool(
-  //       poolAddress,
-  //       convertTokenToBento(t0),
-  //       convertTokenToBento(t1),
-  //       parseInt(fee.toString()) / 10_000,
-  //       res0,
-  //       res1
-  //     )
-  //     const poolCode = new BentoConstantProductPoolCode(pool, this.getPoolProviderName())
-  //     pools.push(poolCode)
-  //     this.poolCodes.push(poolCode)
-  //   }
-  //   return pools
-  // }
 
   async getAllTridentPools(tokensSorted: Token[]): Promise<PoolCode[]> {
     // create token map: token address => token
@@ -294,48 +309,45 @@ export class TridentProviderMC extends LiquidityProviderMC {
     return poolCodes
   }
 
-  /*_getAllBentoTokens(pools: PoolCode[]): RToken[] {
-    const tokenBentoMap = new Map<string, RToken>()
-    pools.forEach((p) => {
-      tokenBentoMap.set(p.pool.token0.tokenId as string, p.pool.token0)
-      tokenBentoMap.set(p.pool.token1.tokenId as string, p.pool.token1)
+  async getAllBridges(tokensSorted: Token[]): Promise<PoolCode[]> {
+    const tokens: Token[] = []
+    tokensSorted.forEach((t) => {
+      if (this.fetchedTokens.has(t.address)) return
+      tokens.push(t)
+      this.fetchedTokens.add(t.address)
     })
 
-    return Array.from(tokenBentoMap.values())
-  }
+    const BentoBoxAddr = BentoBox[this.chainId]
+    const totalsPromise = this.multiCallProvider.multiDataCall(
+      BentoBoxAddr,
+      totalsABI,
+      'totals',
+      tokens.map((t) => [t.address])
+    )
+    const balancesPromise = this.multiCallProvider.multiContractCall(
+      tokens.map((t) => t.address),
+      balanceOfABI,
+      'balanceOf',
+      [BentoBoxAddr]
+    )
+    const [totals0, balances0] = await Promise.all([totalsPromise, balancesPromise])
+    const totals = convertToBigNumberPair(totals0)
+    const balances = convertToBigNumber(balances0)
 
-  async _getAllBridges(tokens: Token[], poolCodes: PoolCode[]): Promise<PoolCode[]> {
-    const tokenBentoMap = new Map<string, RToken>()
-    poolCodes.forEach((p) => {
-      tokenBentoMap.set(p.pool.token0.tokenId as string, p.pool.token0)
-      tokenBentoMap.set(p.pool.token1.tokenId as string, p.pool.token1)
-    })
-
-    const tokenOutputMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenOutputMap.set(t.address, t))
-
-    const BentoContract = await new Contract(BentoBox[this.chainId], BentoBoxABI, this.chainDataProvider)
-    const promises = Array.from(tokenBentoMap.values()).map(async (t) => {
-      const totals: { elastic: BigNumber; base: BigNumber } = await this.limited.call(() =>
-        BentoContract.totals(t.address)
-      )
-      const TokenContract = await new Contract(t.address, ERC20ABI, this.chainDataProvider)
-      const max: BigNumber = await this.limited.call(() => TokenContract.balanceOf(BentoBox[this.chainId]))
+    const poolCodes = tokens.map((t, i) => {
       const pool = new BridgeBento(
         `Bento bridge for ${t.symbol}`,
-        tokenOutputMap.get(t.address) as RToken,
-        t,
-        totals.elastic,
-        totals.base,
-        max
+        t as RToken,
+        convertTokenToBento(t),
+        totals[i][0], // elastic
+        totals[i][1], // base
+        balances[i]
       )
-      const br = new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBox[this.chainId])
-      this.poolCodes.push(br)
-      return br
+      return new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBoxAddr)
     })
 
-    return await Promise.all(promises)
-  }*/
+    return poolCodes
+  }
 
   _getProspectiveTokens(t0: Token, t1: Token) {
     const set = new Set<Token>([
@@ -352,6 +364,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
     this.stopFetchPoolsData()
     this.poolCodes = []
     this.fetchedPairs.clear()
+    this.fetchedTokens.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
   }
   fetchPoolsForToken(t0: Token, t1: Token): void {
