@@ -1,8 +1,8 @@
 import { chainShortName } from '@sushiswap/chain'
 
 import { getBuiltGraphSDK, Pair, Query, QueryResolvers, UserWithFarm } from '../../.graphclient'
-import { fetchBalances } from '../../lib/wagmi'
 import { getFarms } from '../../lib/farms'
+import { fetchBalances } from '../../lib/wagmi'
 import { transformPair } from '../../transformers'
 // import { userWithLiquidityPositions } from './userWithLiquidityPositions'
 

@@ -4,10 +4,10 @@ import {
   EXCHANGE_SUBGRAPH_NAME,
   GRAPH_HOST,
   SushiSwapChainId,
-  TridentChainId,
   TRIDENT_SUBGRAPH_NAME,
+  TridentChainId,
 } from '@sushiswap/graph-config'
-import { isTridentChain, isSushiSwapChain } from '@sushiswap/validate'
+import { isSushiSwapChain,isTridentChain } from '@sushiswap/validate'
 import { getProvider } from '@sushiswap/wagmi'
 import { Contract } from 'ethers'
 import { erc20ABI } from 'wagmi'

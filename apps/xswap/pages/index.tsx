@@ -9,10 +9,9 @@ import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import {
   isStargateBridgeToken,
-  StargateChainId,
-  StargateToken,
   STARGATE_BRIDGE_TOKENS,
   STARGATE_CONFIRMATION_SECONDS,
+  StargateChainId,
 } from '@sushiswap/stargate'
 import { App, Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'

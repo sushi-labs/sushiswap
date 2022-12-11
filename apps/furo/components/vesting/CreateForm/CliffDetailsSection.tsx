@@ -1,4 +1,5 @@
 import { CheckIcon, XIcon } from '@heroicons/react/outline'
+import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Switch } from '@sushiswap/ui'
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
 import { CurrencyInput } from 'components'
@@ -8,7 +9,6 @@ import { useAccount } from 'wagmi'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { CreateVestingFormSchemaType } from './schema'
-import { FundSource } from '@sushiswap/hooks'
 
 export const CliffDetailsSection: FC = () => {
   const { address } = useAccount()

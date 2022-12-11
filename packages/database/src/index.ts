@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
-import { createPrismaRedisCache } from 'prisma-redis-middleware'
 import Redis from 'ioredis'
+import { createPrismaRedisCache } from 'prisma-redis-middleware'
 
 if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is required')
 if (!process.env.REDIS_URL) throw new Error('REDIS_URL is required')

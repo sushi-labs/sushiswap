@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Pair, PairType, QuerypairArgs, QuerypairsArgs, QuerytokenPairsArgs } from '@sushiswap/graph-client'
+import { Pair, PairType, QuerypairsArgs } from '@sushiswap/graph-client'
 import { GenericTable, Table, useBreakpoint } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'

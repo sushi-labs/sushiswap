@@ -5,7 +5,6 @@ import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
-
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import tailwindConfig from '../../tailwind.config.js'

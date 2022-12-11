@@ -1,5 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
+import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Dots, Typography } from '@sushiswap/ui'
@@ -16,7 +17,6 @@ import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../lib/zod
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../../utils'
 import { CreateVestingFormSchemaType } from '../schema'
 import CreateFormReviewModalBase from './CreateFormReviewModalBase'
-import { TransactionRequest } from '@ethersproject/providers'
 
 interface Item {
   title: string

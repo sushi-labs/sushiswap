@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import chains, { ChainId, chainName } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, NetworkIcon } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'

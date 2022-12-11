@@ -102,21 +102,6 @@ importers:
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
 
-  apis/token-logo:
-    specifiers:
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@vercel/node': ^2.2.0
-    dependencies:
-      '@vercel/node': 2.8.0
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../packages/config/eslint
-      '@sushiswap/jest-config': link:../../packages/config/jest
-      '@sushiswap/prettier-config': link:../../packages/config/prettier
-      '@sushiswap/typescript-config': link:../../packages/config/typescript
-
   apis/token-price:
     specifiers:
       '@sushiswap/chain': workspace:*

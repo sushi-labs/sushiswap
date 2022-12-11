@@ -1,5 +1,20 @@
+// import { SafeConnector } from './connectors/safe'
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { otherChains } from '@sushiswap/wagmi-config'
 import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
+import {
+  arbitrum,
+  avalanche,
+  bsc,
+  fantom,
+  foundry,
+  goerli,
+  hardhat,
+  localhost,
+  mainnet,
+  optimism,
+  polygon,
+} from 'wagmi/chains'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MockConnector } from 'wagmi/connectors/mock'
@@ -9,30 +24,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
-// import { SafeConnector } from './connectors/safe'
-import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { getSigners } from './test/utils'
-
-import {
-  arbitrum,
-  arbitrumGoerli,
-  avalanche,
-  avalancheFuji,
-  bsc,
-  bscTestnet,
-  fantom,
-  fantomTestnet,
-  foundry,
-  goerli,
-  hardhat,
-  localhost,
-  mainnet,
-  optimism,
-  optimismGoerli,
-  polygon,
-  polygonMumbai,
-  sepolia,
-} from 'wagmi/chains'
 
 export type Client = ReturnType<typeof createClient>
 

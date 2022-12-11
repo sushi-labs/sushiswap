@@ -1,11 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
-import { isPromiseFulfilled } from '@sushiswap/validate'
 import { otherChains } from '@sushiswap/wagmi-config'
-import { Address, allChains, configureChains, createClient, erc20ABI, readContracts, readContract } from '@wagmi/core'
+import { Address, allChains, configureChains, createClient, erc20ABI,readContracts } from '@wagmi/core'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
 // import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
-import { BigNumber } from 'ethers'
 
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID

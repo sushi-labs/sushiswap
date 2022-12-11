@@ -1,5 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
+import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
@@ -16,7 +17,6 @@ import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../
 import { useNotifications } from '../../../lib/state/storage'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
-import { TransactionRequest } from '@ethersproject/providers'
 
 export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
