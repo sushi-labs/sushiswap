@@ -23,10 +23,10 @@
     "eslint": "8.29.0",
     "eslint-config-next": "latest",
     "eslint-config-prettier": "latest",
-    "eslint-plugin-cypress": "latest",
     "eslint-plugin-simple-import-sort": "latest",
     "eslint-plugin-testing-library": "latest",
-    "eslint-plugin-unused-imports": "latest"
+    "eslint-plugin-unused-imports": "latest",
+    "eslint-config-turbo": "latest"
   },
   "devDependencies": {
     "@types/eslint": "latest",

@@ -9,7 +9,7 @@ const eslintConfig = {
   },
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'simple-import-sort', 'unused-imports'],
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier', 'turbo'],
   ignorePatterns: [
     '**/__tests__/*.test.ts',
     '**/dist/**',
