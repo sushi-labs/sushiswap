@@ -72,7 +72,15 @@
     "sort-package-json": "2.1.0",
     "ts-jest": "29.0.3",
     "ts-node": "10.9.1",
-    "turbo": "latest"
+    "turbo": "latest",
+    "@graphql-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint-config-next": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-simple-import-sort": "latest",
+    "eslint-plugin-testing-library": "latest",
+    "eslint-plugin-unused-imports": "latest"
   },
   "packageManager": "pnpm@7.6.0",
   "engines": {

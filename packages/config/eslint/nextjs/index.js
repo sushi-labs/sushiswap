@@ -1,8 +1,8 @@
 // @ts-check
 /** @type {import('eslint').ESLint.ConfigData} */
 const eslintConfig = {
-  extends: ['@sushiswap/eslint-config', 'plugin:cypress/recommended', 'next/core-web-vitals'],
-  plugins: ['cypress', 'testing-library'],
+  extends: ['@sushiswap/eslint-config', 'next/core-web-vitals'],
+  plugins: ['testing-library'],
   settings: {
     next: {
       rootDir: ['apps/*/', 'packages/*/'],
