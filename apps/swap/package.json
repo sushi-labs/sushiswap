@@ -10,7 +10,7 @@
     "lint": "TIMING=1 eslint --fix . && next lint",
     "start": "next start",
     "test2": "concurrently --kill-others \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER\" \"next dev\" \"wait-on http-get://localhost:3000/swap && npx playwright test\"",
-    "test": "concurrently \"next start\" \"wait-on http-get://localhost:3000/swap && npx playwright test\"",
+    "test": "concurrently \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER\" \"next start\" \"wait-on http-get://localhost:3000/swap && npx playwright test\"",
     "playwright": "npx playwright test",
     "check": "tsc --pretty --noEmit"
   },
