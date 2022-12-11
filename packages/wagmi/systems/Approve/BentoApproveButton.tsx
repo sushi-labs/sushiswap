@@ -3,7 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Transition } from '@headlessui/react'
 import { Badge, BentoboxIcon, Button, classNames, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
-import { useNetwork } from 'wagmi'
+import { Address, useNetwork } from 'wagmi'
 
 import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
 import { DefaultButton } from './DefaultButton'
@@ -16,7 +16,7 @@ interface RenderPropPayload extends ApprovalButtonRenderProp {
 export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
   onSignature(sig?: Signature): void
   watch?: boolean
-  address?: string
+  address?: Address
 }
 
 export const BentoApproveButton: FC<BentoApproveButton> = memo(

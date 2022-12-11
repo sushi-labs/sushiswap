@@ -2,8 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI, Percent } from '@sushiswap/math'
 
+import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '../.graphclient'
 import { Furo } from './Furo'
-import { type Rebase as RebaseDTO, type Stream as StreamDTO } from '.graphclient'
 
 export class Stream extends Furo {
   public readonly totalAmount: Amount<Token>

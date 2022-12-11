@@ -30,20 +30,34 @@ const CATEGORIES = {
   OTHER: {},
 } as const
 
+const NODE_URLS: Record<number, string> = {
+  ...Object.keys(SUBGRAPH_HOST)
+    .map(Number)
+    .filter((chainId): chainId is keyof typeof SUBGRAPH_HOST => chainId in SUBGRAPH_HOST)
+    .filter((chainId) => SUBGRAPH_HOST[chainId] === GRAPH_HOST)
+    .reduce((acc, chainId) => ({ ...acc, [Number(chainId)]: 'api.thegraph.com/index-node/graphql' }), {}),
+  [ChainId.KAVA]: 'pvt-metrics.graph.kava.io/graphql',
+  // [ChainId.METIS]: '',
+}
+
 const lowerCaseAllWordsExceptFirstLetters = (string: string): string =>
   string.replaceAll(/\S*/g, (word) => `${word.slice(0, 1)}${word.slice(1).toLowerCase()}`)
 
 const parseCategories = () => {
-  return Object.keys(CATEGORIES)
-    .flatMap((categoryKey: keyof typeof CATEGORIES) =>
+  return (
+    Object.keys(CATEGORIES)
       // @ts-ignore
-      Object.keys(CATEGORIES[categoryKey]).map((chainKey: keyof typeof CATEGORIES['BENTOBOX']) => ({
-        chainId: Number(String(chainKey).split('-')[0]),
-        subgraphName: CATEGORIES[categoryKey][chainKey] as string,
-        category: lowerCaseAllWordsExceptFirstLetters(categoryKey),
-      }))
-    )
-    .filter(({ chainId }) => SUBGRAPH_HOST[chainId] === GRAPH_HOST)
+      .flatMap((categoryKey: keyof typeof CATEGORIES) =>
+        // @ts-ignore
+        Object.keys(CATEGORIES[categoryKey]).map((chainKey: keyof typeof CATEGORIES['BENTOBOX']) => ({
+          chainId: Number(String(chainKey).split('-')[0]),
+          // @ts-ignore
+          subgraphName: CATEGORIES[categoryKey][chainKey] as string,
+          category: lowerCaseAllWordsExceptFirstLetters(categoryKey),
+        }))
+      )
+      .filter(({ chainId }) => Object.keys(NODE_URLS).includes(String(chainId)))
+  )
 }
 
 interface GetSubgraphs {
@@ -55,12 +69,12 @@ export async function getSubgraphs({ filter }: GetSubgraphs = {}) {
 
   const subgraphs = parseCategories()
 
-  const subgraphNames = subgraphs
-    .map((subgraph) => subgraph.subgraphName)
-    .filter((name) => (filter ? name.includes(filter) : true))
+  const subgraphInputs = subgraphs
+    .map(({ subgraphName, chainId }) => ({ subgraphName, nodeUrl: NODE_URLS[chainId] }))
+    .filter(({ subgraphName }) => (filter ? subgraphName.includes(filter) : true))
 
   async function fetch(type: 'Current' | 'Pending') {
-    return sdk.Subgraphs({ subgraphNames: subgraphNames, type })
+    return sdk.Subgraphs({ subgraphs: subgraphInputs, type })
   }
 
   return (await Promise.all((['Current', 'Pending'] as const).map((type) => fetch(type))))

@@ -1,11 +1,12 @@
 import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
+import { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@sushiswap/chain'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Dots, Typography } from '@sushiswap/ui'
 import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotal, useFuroVestingRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { FC, Fragment, ReactNode, useCallback, useMemo, useState } from 'react'
+import React, { Dispatch, FC, Fragment, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -109,7 +110,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
   )
 
   const prepare = useCallback(
-    (setRequest) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (
         !isValid ||
         isValidating ||

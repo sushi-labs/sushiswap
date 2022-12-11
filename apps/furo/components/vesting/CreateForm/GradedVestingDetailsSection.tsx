@@ -1,7 +1,5 @@
 import { Form, Input, Select, Typography } from '@sushiswap/ui'
 import { useBalance } from '@sushiswap/wagmi'
-import { CurrencyInput } from 'components'
-import { CreateVestingFormSchemaType, FormErrors, stepConfigurations } from 'components/vesting'
 import { format } from 'date-fns'
 import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -9,6 +7,8 @@ import { useAccount } from 'wagmi'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
+import { CurrencyInput } from '../../CurrencyInput'
+import { CreateVestingFormSchemaType, FormErrors, StepConfig, stepConfigurations } from '../../vesting'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
 
 export const GradedVestingDetailsSection = () => {
@@ -40,7 +40,7 @@ export const GradedVestingDetailsSection = () => {
   })
 
   useEffect(() => {
-    if (!totalAmount || !balance || !balance[_fundSource]) return
+    if (!_fundSource || !totalAmount || !balance || !balance[_fundSource]) return
     if (totalAmount.greaterThan(balance[_fundSource])) {
       setError('FORM_ERROR', { type: 'custom', message: 'Insufficient Balance' })
     } else {
@@ -121,7 +121,7 @@ export const GradedVestingDetailsSection = () => {
                     </Select.Button>
                   }
                   value={value}
-                  onChange={(val) => {
+                  onChange={(val: StepConfig) => {
                     onChange(val)
                     onBlur()
                   }}
@@ -145,7 +145,7 @@ export const GradedVestingDetailsSection = () => {
           <Typography
             variant="sm"
             className={
-              balance?.[_fundSource] && totalAmount?.greaterThan(balance[_fundSource])
+              _fundSource && balance?.[_fundSource] && totalAmount?.greaterThan(balance[_fundSource])
                 ? 'text-red'
                 : totalAmount
                 ? 'text-slate-50'

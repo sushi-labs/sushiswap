@@ -30,6 +30,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
+    "@sushiswap/address": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
@@ -38,7 +39,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.2.0",
-    "eslint": "^8.20.0",
+    "eslint": "8.29.0",
     "jest": "^29.3.0",
     "tiny-invariant": "^1.2.0",
     "tsup": "6.5.0",

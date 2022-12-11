@@ -1,9 +1,9 @@
 import { Button, HistoryIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { Stream, Transaction, Vesting } from 'lib'
 import { FC, memo, useMemo } from 'react'
 
-import { type Transaction as TransactionDTO } from '.graphclient'
+import { type Transaction as TransactionDTO } from '../.graphclient'
+import { Stream, Transaction, Vesting } from '../lib'
 
 interface Props {
   stream: Stream | Vesting | undefined

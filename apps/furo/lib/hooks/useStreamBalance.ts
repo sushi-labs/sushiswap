@@ -7,10 +7,11 @@ import {
   useFuroStreamContract,
 } from '@sushiswap/wagmi'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
-import { useSingleContractMultipleData } from 'lib/state/multicall'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useBlockNumber, useContractRead } from 'wagmi'
 
+import { useSingleContractMultipleData } from '../../lib/state/multicall'
 import { ErrorState, LoadingState, SuccessState } from './types'
 export function useStreamBalance(chainId?: number, streamId?: string, token?: Token): Amount<Token> | undefined {
   const {
@@ -22,7 +23,7 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     functionName: 'streamBalanceOf',
     chainId,
     enabled: !!chainId && !!streamId,
-    args: [streamId],
+    args: streamId ? [BigNumber.from(streamId)] : undefined,
     watch: true,
   })
 

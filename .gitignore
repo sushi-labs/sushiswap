@@ -69,3 +69,18 @@ artifacts
 **/public/sw.js.map
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
+
+# prisma
+prisma
+
+# screenshots
+screenshots
+
+# playwright
+playwright-report
+
+# Sentry
+.sentryclirc
+
+test-results/
+results/

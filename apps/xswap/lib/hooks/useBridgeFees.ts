@@ -77,7 +77,7 @@ export const useBridgeFees = ({
   })
 
   return useMemo(() => {
-    if (!getFeesResults || !stargatePoolResults?.[2]) {
+    if (!amount || !getFeesResults || !stargatePoolResults?.[2]) {
       return [undefined, undefined, undefined, undefined]
     }
     const localDecimals = amount.currency.decimals

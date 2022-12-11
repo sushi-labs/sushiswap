@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
+import { Bundle, getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
@@ -11,26 +11,34 @@ export type GetPoolCountQuery = Partial<{
 }>
 
 export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  const { factories } = await sdk.Factories({
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
-  const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-  return factories.reduce((previousValue, currentValue) => {
-    if (chainIds.includes(currentValue.chainId)) {
-      previousValue = previousValue + Number(currentValue.pairCount)
-    }
-    return previousValue
-  }, 0)
+  try {
+    const { factories } = await sdk.Factories({
+      chainIds: SUPPORTED_CHAIN_IDS,
+    })
+    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+    return factories.reduce((previousValue, currentValue) => {
+      if (chainIds.includes(currentValue.chainId)) {
+        previousValue = previousValue + Number(currentValue.pairCount)
+      }
+      return previousValue
+    }, 0)
+  } catch (error: any) {
+    throw new Error(error)
+  }
 }
 
 export const getBundles = async () => {
-  const { bundles } = await sdk.Bundles({
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
-  return bundles.reduce((acc, cur) => {
-    acc[cur.chainId] = cur
-    return acc
-  }, {})
+  try {
+    const { bundles } = await sdk.Bundles({
+      chainIds: SUPPORTED_CHAIN_IDS,
+    })
+    return bundles.reduce<Record<number, Pick<Bundle, 'id' | 'chainId' | 'nativePrice'>>>((acc, cur) => {
+      acc[cur.chainId] = cur
+      return acc
+    }, {})
+  } catch (error: any) {
+    throw new Error(error)
+  }
 }
 
 export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'> & {
@@ -42,6 +50,7 @@ export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
+    console.log('get pools')
     const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
     const start = getUnixTime(date)
 
@@ -61,6 +70,16 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
     const farmsOnly = query?.farmsOnly === 'true'
 
+    console.log('before pairs', {
+      first,
+      skip,
+      pagination,
+      where,
+      orderBy,
+      orderDirection,
+      chainIds,
+      farmsOnly,
+    })
     const { pairs } = await sdk.PairsWithFarms({
       first,
       skip,
@@ -71,9 +90,10 @@ export const getPools = async (query?: GetPoolsQuery) => {
       chainIds,
       farmsOnly,
     })
+    console.log('after pairs', pairs)
     return pairs
-  } catch (error) {
-    console.log(error)
+  } catch (error: any) {
+    console.log('here', error)
     throw new Error(error)
   }
 }
@@ -97,8 +117,12 @@ export const getOneYearBlock = async () => {
 }
 
 export const getSushiBar = async () => {
-  const { xsushi } = await sdk.Bar()
-  return xsushi
+  try {
+    const { xsushi } = await sdk.Bar()
+    return xsushi
+  } catch (error: any) {
+    throw new Error(error)
+  }
 }
 
 export type GetUserQuery = {

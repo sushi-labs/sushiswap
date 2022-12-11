@@ -31,7 +31,7 @@ export const SushiBarSectionDesktop: FC = () => {
 
   const { data: stats } = useSWR<XSushi>(`/earn/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
-  const onSettled = useCallback(
+  const onSettled: any = useCallback(
     (data: SendTransactionResult | undefined, e: Error) => {
       // TODO: ignore until wagmi workaround on ethers error
       // @ts-ignore

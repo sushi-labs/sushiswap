@@ -1,4 +1,5 @@
 import { Signature } from '@ethersproject/bytes'
+import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'
@@ -18,7 +19,7 @@ import {
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
@@ -143,7 +144,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
   )
 
   const prepare = useCallback(
-    async (setRequest) => {
+    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
         if (
           !chain?.id ||

@@ -1,12 +1,9 @@
 import { useMediaQuery } from '@sushiswap/hooks' // Your tailwind config
+import defaultTheme from 'tailwindcss/defaultTheme'
 
-import tailwindConfig from './tailwind.js'
-
-const breakpoints = tailwindConfig.theme.screens
-
-export function useBreakpoint<K extends string>(breakpointKey: K) {
+export function useBreakpoint<K extends keyof typeof defaultTheme.screens>(breakpointKey: K) {
   const bool = useMediaQuery({
-    query: `(min-width: ${breakpoints[breakpointKey]})`,
+    query: `(min-width: ${defaultTheme.screens[breakpointKey]})`,
   })
   const capitalizedKey = breakpointKey[0].toUpperCase() + breakpointKey.substring(1)
   type Key = `is${Capitalize<K>}`

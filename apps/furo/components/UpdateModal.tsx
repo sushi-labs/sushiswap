@@ -2,21 +2,21 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionRequest } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI } from '@sushiswap/math'
-import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Switch, Typography } from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import { Approve, BENTOBOX_ADDRESS, Checker } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { CurrencyInput } from 'components'
-import { Stream } from 'lib'
-import { useNotifications } from 'lib/state/storage'
+import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Input, Switch, Typography } from '@sushiswap/ui'
+import { Approve, Checker, useSendTransaction } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useContract } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
+
+import { CurrencyInput } from '../components'
+import { Stream } from '../lib'
+import { useNotifications } from '../lib/state/storage'
 
 interface UpdateModalProps {
   stream?: Stream
@@ -204,7 +204,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
                 checkedIcon={<CheckIcon />}
               />
             </div>
-            <DatePicker
+            <Input.DatePicker
               className={classNames(
                 DEFAULT_INPUT_CLASSNAME,
                 '!ring-offset-slate-900',

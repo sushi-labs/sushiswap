@@ -32,7 +32,7 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
 
 export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const isMounted = useIsMounted()
-  const methods = useForm<CreateVestingFormSchemaType>({
+  const methods = useForm<CreateVestingFormSchemaType & FormErrors>({
     resolver: zodResolver(CreateVestingModelSchema),
     defaultValues: CREATE_VEST_DEFAULT_VALUES,
     mode: 'onBlur',
@@ -86,7 +86,7 @@ export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
               <div className="flex justify-end pt-4">
                 <Button
                   type="button"
-                  disabled={isWritePending || !isValid || isValidating || errors?.[FORM_ERROR]}
+                  disabled={isWritePending || !isValid || isValidating || Boolean(errors?.[FORM_ERROR])}
                   onClick={() => setOpen(true)}
                 >
                   Review Vesting

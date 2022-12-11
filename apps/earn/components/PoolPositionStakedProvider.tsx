@@ -56,7 +56,7 @@ export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = (
       watch={watch}
       pair={pair}
       farmId={Number(pair.farm.id)}
-      chefType={CHEF_TYPE_MAP[pair.farm.chefType]}
+      chefType={CHEF_TYPE_MAP[pair.farm.chefType as keyof typeof CHEF_TYPE_MAP]}
     >
       {children}
     </_PoolPositionStakedProvider>

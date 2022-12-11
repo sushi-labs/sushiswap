@@ -1,8 +1,8 @@
 import { classNames } from '@sushiswap/ui'
 import { LinearGradient } from '@visx/gradient'
-import { Stream } from 'lib'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
+import { Stream } from '../../lib'
 import { ChartHover } from '../../types'
 
 interface Props {

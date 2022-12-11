@@ -4,9 +4,9 @@ import { curveStepAfter } from '@visx/curve'
 // @ts-ignore
 import { ParentSize } from '@visx/responsive'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, buildChartTheme, Tooltip, XYChart } from '@visx/xychart'
-import { Vesting } from 'lib'
 import React, { FC, useEffect, useState } from 'react'
 
+import { Vesting } from '../../lib'
 import { Schedule } from './createScheduleRepresentation'
 
 interface Props {

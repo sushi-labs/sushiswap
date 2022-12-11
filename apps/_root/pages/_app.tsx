@@ -1,19 +1,17 @@
 import '@sushiswap/ui/index.css'
 import 'styles/index.css'
 
-import { ChainId } from '@sushiswap/chain'
+import { useIsSmScreen } from '@sushiswap/hooks'
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
 import { Analytics } from '@vercel/analytics/react'
-import { Updater as TokenListsUpdater } from 'lib/state/TokenListsUpdater'
+import { MotionConfig } from 'framer-motion'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import React, { FC, useEffect } from 'react'
-import { Provider } from 'react-redux'
-import { store } from 'store'
 import { WagmiConfig } from 'wagmi'
 
 import { Header } from '../components'
@@ -26,9 +24,11 @@ declare global {
 }
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
+  const isSmallScreen = useIsSmScreen()
   const router = useRouter()
+
   useEffect(() => {
-    const handler = (page) => {
+    const handler = (page: any) => {
       window.dataLayer.push({
         event: 'pageview',
         page,
@@ -68,18 +68,17 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         }}
       />
       <WagmiConfig client={client}>
-        <Provider store={store}>
-          <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <Header />
-              <TokenListsUpdater chainId={ChainId.ETHEREUM} />
+        <ThemeProvider>
+          <App.Shell>
+            <DefaultSeo {...SEO} />
+            <Header />
+            <MotionConfig reducedMotion={isSmallScreen ? 'always' : 'user'}>
               <Component {...pageProps} />
-              <App.Footer />
-              <ToastContainer className="mt-[50px]" />
-            </App.Shell>
-          </ThemeProvider>
-        </Provider>
+            </MotionConfig>
+            <App.Footer />
+            <ToastContainer className="mt-[50px]" />
+          </App.Shell>
+        </ThemeProvider>
       </WagmiConfig>
       <Analytics />
     </>

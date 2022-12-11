@@ -26,12 +26,12 @@ You need to run three terminal sessions:
 
 Start Anvil in terminal session
 ```
-ANVIL_FORK_URL=<URL> pnpm exec turbo run anvil --filter=swap
+ANVIL_FORK_URL=<URL> pnpm exec turbo run anvil --filter=swap --force
 ```
 
 In a new terminal, run
 ``` 
-NODE_ENV=test pnpm exec turbo run build --filter=swap
+NODE_ENV=test pnpm exec turbo run build --filter=swap --force
 ```
 
 follwed by:

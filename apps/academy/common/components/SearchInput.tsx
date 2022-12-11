@@ -19,7 +19,7 @@ export const SearchInput = forwardRef(
     const { isSm } = useBreakpoint('sm')
     const [isMobileAndSticky, setIsMobileAndSticky] = useState(isSticky)
     const { data } = useSWR(showTopics && '/trending-search', async () => await getTrendingSearch())
-    const trendingTopics: string[] | undefined = data?.trendingSearch.data.attributes.topics
+    const trendingTopics: string[] | undefined = data?.trendingSearch?.data?.attributes?.topics
 
     const [input, setInput] = useState('')
 
@@ -105,12 +105,12 @@ export const SearchInput = forwardRef(
             <div className="mt-2 ml-2 sm:ml-0 sm:mt-0 sm:inline">
               {!trendingTopics ? (
                 <>
-                  <div className="rounded-full w-20 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
-                  <div className="rounded-full w-14 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
-                  <div className="rounded-full w-28 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
-                  <div className="rounded-full w-12 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
-                  <div className="rounded-full w-20 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
-                  <div className="rounded-full w-14 h-4 bg-slate-700 animate-pulse inline-block align-middle ml-2" />
+                  <div className="inline-block w-20 h-4 ml-2 align-middle rounded-full bg-slate-700 animate-pulse" />
+                  <div className="inline-block h-4 ml-2 align-middle rounded-full w-14 bg-slate-700 animate-pulse" />
+                  <div className="inline-block h-4 ml-2 align-middle rounded-full w-28 bg-slate-700 animate-pulse" />
+                  <div className="inline-block w-12 h-4 ml-2 align-middle rounded-full bg-slate-700 animate-pulse" />
+                  <div className="inline-block w-20 h-4 ml-2 align-middle rounded-full bg-slate-700 animate-pulse" />
+                  <div className="inline-block h-4 ml-2 align-middle rounded-full w-14 bg-slate-700 animate-pulse" />
                 </>
               ) : (
                 trendingTopics.map((topic, i, a) => (

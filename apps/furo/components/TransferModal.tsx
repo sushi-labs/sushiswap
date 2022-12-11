@@ -4,13 +4,12 @@ import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, DEFAULT_INPUT_CLASSNAME, Dialog, Dots, Form, Typography } from '@sushiswap/ui'
-import { Checker, Web3Input } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Stream, Vesting } from 'lib'
+import { Checker, useSendTransaction, Web3Input } from '@sushiswap/wagmi'
 import React, { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract, useEnsAddress } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
+import { Stream, Vesting } from '../lib'
 import { useNotifications } from '../lib/state/storage'
 
 interface TransferModalProps {

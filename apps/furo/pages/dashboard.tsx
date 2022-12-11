@@ -1,11 +1,12 @@
 import { XCircleIcon } from '@heroicons/react/outline'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
-import { BackgroundVector, Dashboard, Layout } from 'components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
+
+import { BackgroundVector, Dashboard, Layout } from '../components'
 
 export default function DashboardPage() {
   const router = useRouter()

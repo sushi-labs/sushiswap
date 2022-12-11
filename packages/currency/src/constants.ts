@@ -4,8 +4,164 @@ import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
 import { Token } from './Token'
 
+export const KP3R_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x1cEB5cB57C4D4E2b2433641b95Dd330A33185A44',
+} as const
+
+export const KP3R = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'KP3R',
+    name: 'Keep3rV1',
+  },
+  KP3R_ADDRESS
+)
+
+export const LDO_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
+} as const
+
+export const LDO = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'LDO',
+    name: 'Lido DAO Token',
+  },
+  LDO_ADDRESS
+)
+
+export const APE_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x4d224452801ACEd8B2F0aebE155379bb5D594381',
+} as const
+
+export const APE = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'APE',
+    name: 'ApeCoin',
+  },
+  APE_ADDRESS
+)
+
+export const PRIMATE_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x46e98FFE40E408bA6412bEb670507e083C8B95ff',
+} as const
+
+export const PRIMATE = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'PRIMATE',
+    name: 'PRIMATE',
+  },
+  PRIMATE_ADDRESS
+)
+
+export const rETH2_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x20BC832ca081b91433ff6c17f85701B6e92486c5',
+} as const
+
+export const rETH2 = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'rETH2',
+    name: 'StakeWise Reward ETH2',
+  },
+  rETH2_ADDRESS
+)
+
+export const sETH2_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xFe2e637202056d30016725477c5da089Ab0A043A',
+} as const
+
+export const sETH2 = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'sETH2',
+    name: 'StakeWise Staked ETH2',
+  },
+  sETH2_ADDRESS
+)
+
+export const SWISE_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x48C3399719B582dD63eB5AADf12A40B4C3f52FA2',
+} as const
+
+export const SWISE = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'SWISE',
+    name: 'StakeWise',
+  },
+  SWISE_ADDRESS
+)
+
+export const FEI_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x956F47F50A910163D8BF957Cf5846D573E7f87CA',
+} as const
+
+export const FEI = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'FEI',
+    name: 'Fei USD',
+  },
+  FEI_ADDRESS
+)
+
+export const TRIBE_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xc7283b66Eb1EB5FB86327f08e1B5816b0720212B',
+} as const
+
+export const TRIBE = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'TRIBE',
+    name: 'Tribe',
+  },
+  TRIBE_ADDRESS
+)
+
+export const renBTC_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D',
+} as const
+
+export const renBTC = addressMapToTokenMap(
+  {
+    decimals: 8,
+    symbol: 'renBTC',
+    name: 'renBTC',
+  },
+  renBTC_ADDRESS
+)
+
+export const NFTX_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x87d73E916D7057945c9BcD8cdd94e42A6F47f776',
+} as const
+
+export const NFTX = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'NFTX',
+    name: 'NFTX',
+  },
+  NFTX_ADDRESS
+)
+
+export const OHM_ADDRESS = {
+  [ChainId.ETHEREUM]: '0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5',
+} as const
+
+export const OHM = addressMapToTokenMap(
+  {
+    decimals: 9,
+    symbol: 'OHM',
+    name: 'Olympus',
+  },
+  OHM_ADDRESS
+)
+
 export const SNX_ADDRESS = {
-  [ChainId.ETHEREUM]: '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f',
+  [ChainId.ETHEREUM]: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
 } as const
 
 export const FTM_ADDRESS = {
@@ -255,7 +411,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.BTTC]: '0x23181F21DEa5936e24163FFABa4Ea3B316B57f3C',
 } as const
 
-export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
+export const WNATIVE = {
   [ChainId.ETHEREUM]: WETH9[ChainId.ETHEREUM],
   [ChainId.ROPSTEN]: WETH9[ChainId.ROPSTEN],
   [ChainId.RINKEBY]: WETH9[ChainId.RINKEBY],
@@ -441,7 +597,7 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     symbol: 'WBTT',
     name: 'Wrapped BitTorrent Token',
   }),
-}
+} as const
 
 export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
@@ -533,7 +689,7 @@ export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
     symbol: 'USDC',
     name: 'USD Coin',
   }),
-}
+} as const
 
 export const USDT_ADDRESS = {
   [ChainId.ETHEREUM]: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
