@@ -96,10 +96,10 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
           </div>
         </div>
         <div className="flex flex-col gap-2 justify-center items-center">
-          <h1 className="whitespace-nowrap">
+          <p className="text-3xl font-medium whitespace-nowrap">
             {balance.toSignificant(3)} {Native.onChain(chainId).symbol}
-          </h1>
-          <p className="font-semibold text-slate-400">${balanceAsUsd?.toFixed(2)}</p>
+          </p>
+          <p className="font-medium text-slate-400">${balanceAsUsd?.toFixed(2)}</p>
         </div>
       </div>
       <div className="px-2">
