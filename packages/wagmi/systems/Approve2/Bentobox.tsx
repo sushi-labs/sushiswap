@@ -134,5 +134,5 @@ export const Bentobox: ApproveBentoboxFn = ({
         </Button>
       ),
     }
-  }, [approvalState, className, fullWidth, id, index, onApprove, signature, size, variant])
+  }, [_state, approvalState, className, fullWidth, id, index, onApprove, signature, size, variant])
 }
