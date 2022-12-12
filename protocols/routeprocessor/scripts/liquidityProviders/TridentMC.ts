@@ -297,17 +297,22 @@ export class TridentProviderMC extends LiquidityProviderMC {
     const poolFee = convertToNumbers(poolFee0)
 
     // create poolCodes
-    const poolCodes = poolAddr.map((addr, i) => {
-      const tokens = poolMap.get(addr) as [Token, Token]
-      const pool = new ConstantProductRPool(
-        addr,
-        convertTokenToBento(tokens[0]),
-        convertTokenToBento(tokens[1]),
-        parseInt(poolFee[i].toString()) / 10_000,
-        poolRes[i][0],
-        poolRes[i][1]
-      )
-      return new BentoConstantProductPoolCode(pool, this.getPoolProviderName())
+    const poolCodes: PoolCode[] = []
+    poolAddr.forEach((addr, i) => {
+      const res = poolRes[i]
+      const fee = poolFee[i]
+      if (res !== undefined && fee !== undefined) {
+        const tokens = poolMap.get(addr) as [Token, Token]
+        const pool = new ConstantProductRPool(
+          addr,
+          convertTokenToBento(tokens[0]),
+          convertTokenToBento(tokens[1]),
+          parseInt(fee.toString()) / 10_000,
+          res[0],
+          res[1]
+        )
+        poolCodes.push(new BentoConstantProductPoolCode(pool, this.getPoolProviderName()))
+      }
     })
 
     return poolCodes
@@ -338,16 +343,21 @@ export class TridentProviderMC extends LiquidityProviderMC {
     const totals = convertToBigNumberPair(totals0)
     const balances = convertToBigNumber(balances0)
 
-    const poolCodes = tokens.map((t, i) => {
-      const pool = new BridgeBento(
-        `Bento bridge for ${t.symbol}`,
-        t as RToken,
-        convertTokenToBento(t),
-        totals[i][0], // elastic
-        totals[i][1], // base
-        balances[i]
-      )
-      return new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBoxAddr)
+    const poolCodes: PoolCode[] = []
+    tokens.forEach((t, i) => {
+      const total = totals[i]
+      const balance = balances[i]
+      if (total !== undefined && balance !== undefined) {
+        const pool = new BridgeBento(
+          `Bento bridge for ${t.symbol}`,
+          t as RToken,
+          convertTokenToBento(t),
+          total[0], // elastic
+          total[1], // base
+          balance
+        )
+        poolCodes.push(new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBoxAddr))
+      }
     })
 
     return poolCodes
@@ -386,20 +396,26 @@ export class TridentProviderMC extends LiquidityProviderMC {
     const balances = convertToNumbers(balances0)
 
     pools.forEach((pc, i) => {
-      if (!pc.pool.reserve0.eq(reserves[i][0]) || !pc.pool.reserve1.eq(reserves[i][1])) {
-        pc.pool.updateReserves(reserves[i][0], reserves[i][1])
+      const res = reserves[i]
+      if (res === undefined) return
+      if (!pc.pool.reserve0.eq(res[0]) || !pc.pool.reserve1.eq(res[1])) {
+        pc.pool.updateReserves(res[0], res[1])
         ++this.stateId
       }
     })
 
     bridges.forEach((pc, i) => {
-      if (!pc.pool.reserve0.eq(totals[i][0]) || !pc.pool.reserve1.eq(totals[i][1])) {
-        pc.pool.updateReserves(totals[i][0], totals[i][1])
+      const total = totals[i]
+      if (total == undefined) return
+      if (!pc.pool.reserve0.eq(total[0]) || !pc.pool.reserve1.eq(total[1])) {
+        pc.pool.updateReserves(total[0], total[1])
         ++this.stateId
       }
+      const balance = balances[i]
+      if (balance === undefined) return
       const freeLiquidity = (pc.pool as BridgeBento).freeLiquidity || 0
-      if (!closeValues(freeLiquidity, balances[i], 1e-6)) {
-        ;(pc.pool as BridgeBento).freeLiquidity = balances[i]
+      if (!closeValues(freeLiquidity, balance, 1e-6)) {
+        ;(pc.pool as BridgeBento).freeLiquidity = balance
         ++this.stateId
       }
     })

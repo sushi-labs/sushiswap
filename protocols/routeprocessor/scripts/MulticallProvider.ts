@@ -74,24 +74,23 @@ export class MultiCallProvider {
   }
 }
 
-export function convertToNumbers(arr: any[]): number[] {
+export function convertToNumbers(arr: any[]): (number | undefined)[] {
   return arr.map((a) => {
-    if (a === undefined) return 0
+    if (a === undefined) return undefined
     return parseInt(a[0].hex, 16)
   })
 }
 
-const ZERO = BigNumber.from(0)
-export function convertToBigNumber(arr: any[]): BigNumber[] {
+export function convertToBigNumber(arr: any[]): (BigNumber | undefined)[] {
   return arr.map((a) => {
-    if (a === undefined) return ZERO
+    if (a === undefined) return undefined
     return BigNumber.from(a[0].hex)
   })
 }
 
-export function convertToBigNumberPair(arr: any[]): [BigNumber, BigNumber][] {
+export function convertToBigNumberPair(arr: any[]): ([BigNumber, BigNumber] | undefined)[] {
   return arr.map((a) => {
-    if (a === undefined) return [ZERO, ZERO]
+    if (a === undefined) return undefined
     return [BigNumber.from(a[0].hex), BigNumber.from(a[1].hex)]
   })
 }
