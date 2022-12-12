@@ -1,5 +1,5 @@
 import { ethers, network } from 'hardhat'
-import { RouteProcessor__factory } from '../types/index'
+import { RouteProcessor__factory } from '../typechain/index'
 import { Swapper } from '../scripts/Swapper'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { WETH9ABI } from '../ABI/WETH9'
