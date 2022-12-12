@@ -1,7 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { otherChains } from '@sushiswap/wagmi-config'
-import { Address, allChains, configureChains, createClient, erc20ABI, readContracts, readContract } from '@wagmi/core'
+import { Address, configureChains, createClient, erc20ABI, readContracts, readContract } from '@wagmi/core'
+import * as allChains from '@wagmi/core/chains'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
 // import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { publicProvider } from '@wagmi/core/providers/public'
@@ -15,7 +16,29 @@ if (!alchemyId) {
 }
 
 const { provider } = configureChains(
-  [...allChains, ...otherChains],
+  [
+    allChains.arbitrum,
+    allChains.arbitrumGoerli,
+    allChains.avalanche,
+    allChains.avalancheFuji,
+    allChains.avalancheFuji,
+    allChains.bsc,
+    allChains.bscTestnet,
+    allChains.fantom,
+    allChains.fantom,
+    allChains.fantomTestnet,
+    allChains.foundry,
+    allChains.goerli,
+    allChains.hardhat,
+    allChains.localhost,
+    allChains.mainnet,
+    allChains.optimism,
+    allChains.optimismGoerli,
+    allChains.polygon,
+    allChains.polygonMumbai,
+    allChains.sepolia,
+    ...otherChains,
+  ],
   [
     // jsonRpcProvider({
     //   priority: 0,

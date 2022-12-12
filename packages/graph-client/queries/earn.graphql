@@ -1,0 +1,137 @@
+fragment SwapFields on Swap {
+  chainId
+  transaction {
+    id
+    createdAtBlock
+  }
+  timestamp
+  sender
+  tokenIn {
+    id
+    symbol
+  }
+  tokenOut {
+    id
+    symbol
+  }
+  amountIn
+  amountOut
+  to
+}
+
+fragment MintFields on Mint {
+  chainId
+  transaction {
+      id
+      createdAtBlock
+    }
+    timestamp
+    pair {
+      token0 {
+        id
+        symbol
+      }
+      token1 {
+        id
+        symbol
+      }
+    }
+    to
+    liquidity
+    sender
+    amount0
+    amount1
+    amountUSD
+}
+
+fragment BurnFields on Burn {
+  chainId
+  transaction {
+      id
+      createdAtBlock
+    }
+    timestamp
+    pair {
+      token0 {
+        id
+        symbol
+      }
+      token1 {
+        id
+        symbol
+      }
+    }
+    liquidity
+    sender
+    amount0
+    amount1
+    to
+    amountUSD
+}
+
+query SwapsByChainId (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Swap_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Swap_filter
+  $chainId: Int!
+) {
+  swaps: swapsByChainId(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+    chainId: $chainId
+  ) @live(interval: 5000) {
+    ...SwapFields
+  }    
+}
+
+query MintsByChainId (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Mint_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Mint_filter
+  $chainId: Int!
+) {
+  mints: mintsByChainId(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+    chainId: $chainId
+  ) @live(interval: 5000) {
+    ...MintFields
+  }    
+}
+
+query BurnsByChainId (
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: Burn_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $skip: Int
+  $where: Burn_filter
+  $chainId: Int!
+) {
+  burns: burnsByChainId(
+    block: $block
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    skip: $skip
+    where: $where
+    chainId: $chainId
+  ) @live(interval: 5000) {
+    ...BurnFields
+  }    
+}
+
