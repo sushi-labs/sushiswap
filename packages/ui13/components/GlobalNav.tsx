@@ -48,7 +48,7 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
         className
       )}
     >
-      <div className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}>
+      <div className="grid grid-cols-2 md:grid-cols-3 items-center w-full mx-auto z-[101] px-4">
         <div className="flex items-center">
           <a className="flex flex-row items-center pr-4" href="/">
             <div className="w-7 h-7">
@@ -93,7 +93,7 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
             </Transition>
           </Menu>
         </div>
-        <div className="flex justify-center">{children}</div>
+        <div className="hidden md:flex justify-center">{children}</div>
         <div className="flex justify-end gap-2">{rightElement}</div>
       </div>
     </header>

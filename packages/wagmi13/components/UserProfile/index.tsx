@@ -48,41 +48,39 @@ export const UserProfile: FC<ProfileProps> = ({ notifications, clearNotification
     )
   }
 
-  if (address) {
-    const panel = (
-      <Popover.Panel className="w-full sm:w-[320px] fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] mt-4 sm:rounded-xl rounded-b-none shadow-md shadow-black/[0.3] bg-slate-900 border border-slate-200/20">
-        {view === ProfileView.Default && <DefaultView chainId={chainId} address={address} setView={setView} />}
-        {view === ProfileView.Transactions && (
-          <TransactionsView setView={setView} notifications={notifications} clearNotifications={clearNotifications} />
-        )}
-      </Popover.Panel>
-    )
+  const panel = (
+    <Popover.Panel className="w-full sm:w-[320px] fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] mt-4 sm:rounded-xl rounded-b-none shadow-md shadow-black/[0.3] bg-slate-900 border border-slate-200/20">
+      {view === ProfileView.Default && <DefaultView chainId={chainId} address={address} setView={setView} />}
+      {view === ProfileView.Transactions && (
+        <TransactionsView setView={setView} notifications={notifications} clearNotifications={clearNotifications} />
+      )}
+    </Popover.Panel>
+  )
 
-    return (
-      <Popover className="relative">
-        {({ open }) => {
-          return (
-            <>
-              <Popover.Button className="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-slate-200">
+  return (
+    <Popover className="relative">
+      {({ open }) => {
+        return (
+          <>
+            <Popover.Button className="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-slate-200">
+              <div className="hidden md:flex">
                 {avatar ? (
                   <Image alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
                 ) : (
                   <JazzIcon diameter={20} address={address} />
                 )}
-                {shortenAddress(address)}{' '}
-                <ChevronDownIcon
-                  width={20}
-                  height={20}
-                  className={classNames(open ? 'rotate-180' : 'rotate-0', 'transition-transform')}
-                />
-              </Popover.Button>
-              {!isSm ? ReactDOM.createPortal(panel, document.body) : panel}
-            </>
-          )
-        }}
-      </Popover>
-    )
-  }
-
-  return <span />
+              </div>
+              {shortenAddress(address, isSm ? 3 : 2)}{' '}
+              <ChevronDownIcon
+                width={20}
+                height={20}
+                className={classNames(open ? 'rotate-180' : 'rotate-0', 'transition-transform')}
+              />
+            </Popover.Button>
+            {!isSm ? ReactDOM.createPortal(panel, document.body) : panel}
+          </>
+        )
+      }}
+    </Popover>
+  )
 }
