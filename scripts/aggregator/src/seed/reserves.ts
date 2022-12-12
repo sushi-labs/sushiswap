@@ -1,59 +1,54 @@
-import { PrismaClient } from '@prisma/client'
+import { Pool, Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
 import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json' assert { type: 'json' }
 import '../lib/wagmi.js'
-import { ProtocolName, ProtocolVersion } from '../config.js'
+import { PoolType, ProtocolName, ProtocolVersion } from '../config.js'
 
 const prisma = new PrismaClient()
 
 async function main() {
   // TODO: pass in params, e.g. chainId, protocol, version
   // Hardcoded for now.
-  // const chainId = ChainId.BSC
-  // const protocol = ProtocolName.PANCAKESWAP
-  const chainId = ChainId.POLYGON
-  const protocol = ProtocolName.QUICKSWAP
+  const chainId = ChainId.BSC
+  const protocol = ProtocolName.PANCAKESWAP
   const version = ProtocolVersion.V2
-  const pools = await getPoolAddresses(chainId, protocol, version)
-  const poolWithReserves = await getReserves(chainId, pools)
-  // await updatePoolsWithReserve(chainId, poolWithReserves)
+  const type = PoolType.CONSTANT_PRODUCT_POOL
+  const pools = await getPools(chainId, protocol, version, type)
+  const poolsWithReserve = await getReserves(chainId, pools)
+  await updatePoolsWithReserve(chainId, poolsWithReserve)
+
 }
 
-async function getPoolAddresses(chainId: ChainId, protocol: string, version: string) {
+async function getPools(chainId: ChainId, protocol: string, version: string, type: string) {
   const startTime = performance.now()
-  const count = await prisma.pool.count({
-    where: {
-      chainId,
-      protocol,
-      version,
-    },
-  })
 
-  // const batchSize = 10000
-  const batchSize = 8000
-  // const requestCount = Math.ceil(count / batchSize)
-  const requestCount = 1
+  const batchSize = 25000
+  let cursor = null
+  const results = []
+  let totalCount = 0
+  do {
+    const requestStartTime = performance.now()
+    let result = []
+    if (!cursor) {
+      result = await getPoolsAddresses(chainId, protocol, version, type, batchSize)
+    } else {
+      result = await getPoolsAddresses(chainId, protocol, version, type, batchSize, 1, { id: cursor })
+    }
+    cursor = result.length > 0 ? result[result.length - 1].id : null
+    totalCount += result.length
+    results.push(result)
+    const requestEndTime = performance.now()
+    console.log(
+      `Fetched a batch of pool addresses with ${result.length} (${((requestEndTime - requestStartTime) / 1000).toFixed(
+        1
+      )}s). cursor: ${cursor}, total: ${totalCount}`
+    )
+  } while (cursor != null)
 
-  const requests = [...Array(requestCount).keys()].map((i) =>
-    prisma.pool.findMany({
-      select: {
-        address: true,
-      },
-      where: {
-        chainId,
-        protocol,
-        version,
-      },
-      take: batchSize,
-      skip: i * batchSize,
-    })
-  )
-
-  const responses = await Promise.all(requests)
-  const poolAddresses = responses.flat().map((pool) => pool.address)
+  const poolAddresses = results.flat().map((pool) => pool.address)
 
   const endTime = performance.now()
 
@@ -61,63 +56,92 @@ async function getPoolAddresses(chainId: ChainId, protocol: string, version: str
   return poolAddresses
 }
 
-async function getReserves(chainId: ChainId, poolAddresses: string[]): Promise<PoolWithReserve[]> {
-  const contracts = poolAddresses.map((address) => ({
-    address,
-    chainId,
-    abi: IUniswapV2PairArtifact.abi,
-    functionName: 'getReserves',
-    allowFailure: true,
-  }))
-  const requests = []
+async function getPoolsAddresses(
+  chainId: ChainId,
+  protocol: string,
+  version: string,
+  type: string,
+  take?: number,
+  skip?: number,
+  cursor?: Prisma.PoolWhereUniqueInput
+): Promise<{ id: string; address: string }[]> {
+  return prisma.pool.findMany({
+    take,
+    skip,
+    cursor,
+    select: {
+      id: true,
+      address: true,
+    },
+    where: {
+      chainId,
+      protocol,
+      version,
+      type,
+      // token0: {
+      //   status: "APPROVED"
+      // },
+      // token1: {
+      //   status: "APPROVED"
+      // }
+    },
+  })
+}
+
+async function getReserves(chainId: ChainId, poolAddresses: string[]) {
   const startTime = performance.now()
-  const contractsPerRequest = 1000
+  const poolsWithReserve: PoolWithReserve[] = []
+  const batchSize = poolAddresses.length > 2500 ? 2500 : poolAddresses.length
 
-  for (let i = 0; i < contracts.length; i+= contractsPerRequest) {
-    const to = i + contractsPerRequest < contracts.length ? i + contractsPerRequest : contracts.length
-    const batch = contracts.slice(i, to)
-    requests.push(
-      readContracts({
-        contracts: batch,
-      })
-    )
-  }
+  let totalSuccessCount = 0
+  let totalFailedCount = 0
+  for (let i = 0; i < poolAddresses.length; i += batchSize) {
+    const max = i + batchSize <= poolAddresses.length ? i + batchSize : i + (poolAddresses.length % batchSize)
+    const batch = poolAddresses.slice(i, max).map((address) => ({
+      address,
+      chainId,
+      abi: IUniswapV2PairArtifact.abi,
+      functionName: 'getReserves',
+      allowFailure: true,
+    }))
+    const batchStartTime = performance.now()
+    const reserves: any = await readContracts({
+      contracts: batch,
+    })
 
-  const data = []
-  // run concurrent requests
-  const concurrent = requests.length > 5 ? 5 : requests.length
 
-  for (let i = 0; i < requests.length; i += concurrent) {
-    const max = i + concurrent < requests.length ? i + concurrent : i + requests.length % concurrent
-    const batch = requests.slice(i, max)
-    const responses = await Promise.all(batch)
-    data.push(responses.flat())
-  }
+    let failures = 0
+    const mappedPools = poolAddresses.slice(i, max).reduce<PoolWithReserve[]>((prev, address, i) => {
+      if (!reserves[i] || !reserves[i].reserve0 || !reserves[i].reserve1) {
+        failures++
+        return prev
+      }
+      return [
+        ...prev,
+        {
+          address,
+          reserve0: reserves[i].reserve0.toString() as string,
+          reserve1: reserves[i].reserve1.toString() as string,
+        },
+      ]
+    }, [])
 
-  const reserves: any = data.flat()
 
-  let failures = 0
-  const mappedPools = poolAddresses.reduce<PoolWithReserve[]>((prev, address, i) => {
-    if (!reserves[i] || !reserves[i].reserve0 || !reserves[i].reserve1) {
-      failures++
-      return prev
+    if (failures > 0) {
+      console.log(`Failed to fetch reserves for ${failures} pools.`)
     }
-    return [
-      ...prev,
-      {
-        address,
-        reserve0: reserves[i].reserve0.toString() as string,
-        reserve1: reserves[i].reserve1.toString() as string,
-      },
-    ]
-  }, [])
+    const batchEndTime = performance.now()
+    totalFailedCount += failures
+    totalSuccessCount += mappedPools.length
+    console.log(`Fetched reserves, ${totalSuccessCount}/${poolAddresses.length} (${((batchEndTime - batchStartTime) / 1000).toFixed(1)}s). `)
+
+    poolsWithReserve.push(...mappedPools)
+  }
 
   const endTime = performance.now()
-  if (failures > 0) {
-    console.log(`Failed to fetch reserves for ${failures} pools.`)
-  }
-  console.log(`Fetched reserves for ${mappedPools.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-  return mappedPools
+
+  console.log(`Successfully fetched reserves for ${totalSuccessCount} pools, fails: ${totalFailedCount} (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  return poolsWithReserve
 }
 
 async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]) {
@@ -138,12 +162,14 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
         },
       })
     })
+    const startTime = performance.now()
     const responses = await Promise.all(requests)
-    console.log(`Updated ${responses.length} pools.`)
+    const endTime = performance.now()
+    console.log(`Updated ${responses.length} pools, ${updatedCount}/${pools.length} (${((endTime - startTime) / 1000).toFixed(1)}s).`)
     updatedCount += responses.length
   }
   const endTime = performance.now()
-  console.log(`Updated ${updatedCount} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  console.log(`LOAD - Updated a total of ${updatedCount} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 }
 
 interface PoolWithReserve {

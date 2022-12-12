@@ -10,7 +10,7 @@ import {
   UNISWAP_V2_SUBGRAPH_NAME,
   UNISWAP_V2_SUPPORTED_CHAINS,
 } from '../../../config.js'
-import { createPools } from '../../../etl/pool/load.js'
+import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
 
 const client = new PrismaClient()
@@ -20,6 +20,11 @@ const VERSION = ProtocolVersion.V2
 const CONSTANT_PRODUCT_POOL = PoolType.CONSTANT_PRODUCT_POOL
 const SWAP_FEE = 0.003
 const TWAP_ENABLED = true
+
+const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
+if (FIRST_TIME_SEED) {
+  console.log('FIRST_TIME_SEED is true')
+}
 
 async function main() {
   const startTime = performance.now()
@@ -40,6 +45,10 @@ async function start() {
 
   let totalPairCount = 0
   for (const chainId of UNISWAP_V2_SUPPORTED_CHAINS) {
+    let latestPoolTimestamp: string | null = null
+    if (!FIRST_TIME_SEED) {
+      latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
+    }
     const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: UNISWAP_V2_SUBGRAPH_NAME[chainId] })
     if (!UNISWAP_V2_SUBGRAPH_NAME[chainId]) {
       console.log(`Subgraph not found: ${chainId} ${UNISWAP_V2_SUBGRAPH_NAME[chainId]}, Skipping`)
@@ -51,7 +60,15 @@ async function start() {
 
     do {
       const startTime = performance.now()
-      const where = cursor !== '' ? { id_gt: cursor } : {}
+      let where = {}
+      if (latestPoolTimestamp) {
+        where =
+          cursor !== ''
+            ? { id_gt: cursor, createdAtTimestamp_gt: latestPoolTimestamp }
+            : { createdAtTimestamp_gt: latestPoolTimestamp }
+      } else {
+        where = cursor !== '' ? { id_gt: cursor } : {}
+      }
       const request = await sdk
         .V2Pairs({
           first: 1000,
@@ -67,9 +84,10 @@ async function start() {
 
       pairCount += currentResultCount
       console.log(
-        `EXTRACT - extracted ${currentResultCount} pools, total: ${pairCount}, cursor: ${cursor} (${((endTime - startTime) / 1000).toFixed(
-          1
-        )}s) `
+        `EXTRACT - extracted ${currentResultCount} pools, total: ${pairCount}, cursor: ${cursor} (${(
+          (endTime - startTime) /
+          1000
+        ).toFixed(1)}s) `
       )
 
       if (request) {
@@ -77,12 +95,11 @@ async function start() {
         // NOTE: This shouldn't have to be async, but was seeing this error:
         // (unlocked closed connection) (CallerID: planetscale-admin)'
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
-        await Promise.all([createTokens(client, tokens), createPools(client, pools)])
+        // await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
 
       const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''
       cursor = newCursor
-
     } while (cursor !== '')
     totalPairCount += pairCount
     console.log(

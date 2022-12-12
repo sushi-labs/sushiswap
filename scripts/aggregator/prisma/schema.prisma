@@ -38,6 +38,7 @@ model Token {
   @@index(fields: [address])
   @@index(fields: [chainId])
   @@index(fields: [address, chainId])
+  @@index(fields: [chainId, status])
 }
 
 model Pool {
@@ -69,4 +70,5 @@ model Pool {
   @@index(fields: [chainId, protocol, version, type])
   @@index(fields: [chainId, token0Id])
   @@index(fields: [chainId, token1Id])
+  @@index(fields: [generatedAt])
 }

@@ -1,18 +1,30 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
-import { getBuiltGraphSDK, V2PairsQuery } from '../../../../.graphclient/index.js'
-import { GRAPH_HOST, PoolType, ProtocolName, ProtocolVersion, QUICKSWAP_SUBGRAPH_NAME, QUICKSWAP_SUPPORTED_CHAINS } from '../../../config.js'
-import { createPools } from '../../../etl/pool/load.js'
-import { createTokens } from '../../../etl/token/load.js'
+import { createTokens } from 'src/etl/token/load.js'
+import { getBuiltGraphSDK, PCSPairsQuery } from '../../../../.graphclient/index.js'
+import {
+  GRAPH_HOST,
+  PANCAKESWAP_SUBGRAPH_NAME,
+  PANCAKESWAP_V2_SUPPORTED_CHAINS,
+  PoolType,
+  ProtocolName,
+  ProtocolVersion,
+} from '../../../config.js'
+import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 
 const client = new PrismaClient()
 
-const PROTOCOL = ProtocolName.QUICKSWAP
+const PROTOCOL = ProtocolName.PANCAKESWAP
 const VERSION = ProtocolVersion.V2
 const CONSTANT_PRODUCT_POOL = PoolType.CONSTANT_PRODUCT_POOL
-const SWAP_FEE = 0.003
+const SWAP_FEE = 0.0025
 const TWAP_ENABLED = true
+
+const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
+if (FIRST_TIME_SEED) {
+  console.log('FIRST_TIME_SEED is true')
+}
 
 async function main() {
   const startTime = performance.now()
@@ -26,27 +38,38 @@ async function main() {
 
 async function start() {
   console.log(
-    `Fetching pools from ${PROTOCOL} ${VERSION}, chains: ${QUICKSWAP_SUPPORTED_CHAINS.map(
+    `Fetching pools from ${PROTOCOL} ${VERSION}, chains: ${PANCAKESWAP_V2_SUPPORTED_CHAINS.map(
       (chainId) => chainName[chainId]
     ).join(', ')}`
   )
 
   let totalPairCount = 0
-  for (const chainId of QUICKSWAP_SUPPORTED_CHAINS) {
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: QUICKSWAP_SUBGRAPH_NAME[chainId] })
-    if (!QUICKSWAP_SUBGRAPH_NAME[chainId]) {
-      console.log(`Subgraph not found: ${chainId} ${QUICKSWAP_SUBGRAPH_NAME[chainId]}, Skipping`)
+  for (const chainId of PANCAKESWAP_V2_SUPPORTED_CHAINS) {
+    let latestPoolTimestamp: string | null = null
+    if (!FIRST_TIME_SEED) {
+      latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
+    }
+    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: PANCAKESWAP_SUBGRAPH_NAME[chainId] })
+    if (!PANCAKESWAP_SUBGRAPH_NAME[chainId]) {
+      console.log(`Subgraph not found: ${chainId} ${PANCAKESWAP_SUBGRAPH_NAME[chainId]}, Skipping`)
       continue
     }
-    console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${QUICKSWAP_SUBGRAPH_NAME[chainId]}`)
+    console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${PANCAKESWAP_SUBGRAPH_NAME[chainId]}`)
     let pairCount = 0
     let cursor: string = ''
 
     do {
       const startTime = performance.now()
-      const where = cursor !== '' ? { id_gt: cursor } : {}
+      let where = {}
+      if (latestPoolTimestamp) {
+        where =
+          cursor !== '' ? { id_gt: cursor, timestamp_gt: latestPoolTimestamp } : { timestamp_gt: latestPoolTimestamp }
+      } else {
+        where = cursor !== '' ? { id_gt: cursor } : {}
+      }
+
       const request = await sdk
-        .V2Pairs({
+        .PCSPairs({
           first: 1000,
           where,
         })
@@ -55,14 +78,15 @@ async function start() {
           return undefined
         })
         .catch(() => undefined)
-      const currentResultCount = request?.V2_pairs.length ?? 0
+      const currentResultCount = request?.MINIMAL_pairs.length ?? 0
       const endTime = performance.now()
 
       pairCount += currentResultCount
       console.log(
-        `EXTRACT - extracted ${currentResultCount} pools, total: ${pairCount}, cursor: ${cursor} (${((endTime - startTime) / 1000).toFixed(
-          1
-        )}s) `
+        `EXTRACT - extracted ${currentResultCount} pools, total: ${pairCount}, cursor: ${cursor} (${(
+          (endTime - startTime) /
+          1000
+        ).toFixed(1)}s) `
       )
 
       if (request) {
@@ -73,26 +97,27 @@ async function start() {
         await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
 
-      const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''
+      const newCursor = request?.MINIMAL_pairs[request.MINIMAL_pairs.length - 1]?.id ?? ''
       cursor = newCursor
-
     } while (cursor !== '')
     totalPairCount += pairCount
-    console.log(`Finished loading pairs from ${GRAPH_HOST[chainId]}/${QUICKSWAP_SUBGRAPH_NAME[chainId]}, ${pairCount} pairs`)
+    console.log(
+      `Finished loading pairs from ${GRAPH_HOST[chainId]}/${PANCAKESWAP_SUBGRAPH_NAME[chainId]}, ${pairCount} pairs`
+    )
   }
   console.log(`Finished loading pairs for ${PROTOCOL} from all subgraphs, ${totalPairCount} pairs`)
 }
 
 function transform(
   chainId: ChainId,
-  data: V2PairsQuery
+  data: PCSPairsQuery
 ): {
   pools: Prisma.PoolCreateManyInput[]
   tokens: Prisma.TokenCreateManyInput[]
 } {
   const tokens: Prisma.TokenCreateManyInput[] = []
   const uniqueTokens: Set<string> = new Set()
-  const poolsTransformed = data.V2_pairs.map((pair) => {
+  const poolsTransformed = data.MINIMAL_pairs.map((pair) => {
     if (!uniqueTokens.has(pair.token0.id)) {
       uniqueTokens.add(pair.token0.id)
       tokens.push(
@@ -138,7 +163,7 @@ function transform(
       twapEnabled: TWAP_ENABLED,
       token0Id: pair.token0.id,
       token1Id: pair.token1.id,
-      liquidityUSD: pair.liquidityUSD,
+      liquidityUSD: 0,
     })
   })
 

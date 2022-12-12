@@ -3,19 +3,25 @@ import { ChainId } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
 import {
-  LEGACY_SUBGRAPH_NAME,
   GRAPH_HOST,
+  LEGACY_SUBGRAPH_NAME,
+  ProtocolName,
   SUSHISWAP_CHAINS,
   TRIDENT_CHAINS,
-  TRIDENT_SUBGRAPH_NAME,
-  ProtocolName,
+  TRIDENT_SUBGRAPH_NAME
 } from '../../config.js'
-import { createPools } from '../../etl/pool/load.js'
+import { createPools, getLatestPoolTimestamp } from '../../etl/pool/load.js'
 import { createTokens } from '../../etl/token/load.js'
 
 const client = new PrismaClient()
 
 const PROTOCOL = ProtocolName.SUSHISWAP
+const VERSIONS = ['LEGACY', 'TRIDENT']
+
+const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
+if (FIRST_TIME_SEED) {
+  console.log('FIRST_TIME_SEED is true')
+}
 
 async function main() {
   const startTime = performance.now()
@@ -43,6 +49,12 @@ async function start() {
   let totalPairCount = 0
   for (const subgraph of subgraphs) {
     const chainId = subgraph.chainId
+
+    let latestPoolTimestamp: string | null = null
+    if (!FIRST_TIME_SEED) {
+      latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, VERSIONS)
+    }
+
     const sdk = getBuiltGraphSDK({ chainId, host: subgraph.host, name: subgraph.name })
 
     console.log(`Loading data from ${subgraph.host} ${subgraph.name}`)
@@ -51,7 +63,15 @@ async function start() {
 
     do {
       const startTime = performance.now()
-      const where = cursor !== '' ? { id_gt: cursor } : {}
+      let where = {}
+      if (latestPoolTimestamp) {
+        where =
+          cursor !== ''
+            ? { id_gt: cursor, createdAtTimestamp_gt: latestPoolTimestamp }
+            : { createdAtTimestamp_gt: latestPoolTimestamp }
+      } else {
+        where = cursor !== '' ? { id_gt: cursor } : {}
+      }
       const request = await sdk
         .Pairs({
           first: 1000,
