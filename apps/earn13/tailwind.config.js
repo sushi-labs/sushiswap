@@ -6,6 +6,7 @@ const tailwindConfig = {
     './app/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
     '../../packages/ui13/{,!(node_modules)/**/}*.{js,ts,jsx,tsx}',
+    '../../packages/wagmi13/{,!(node_modules)/**/}*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {},

@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@sushiswap/ui13": "workspace:*",
-    "@sushiswap/wagmi": "workspace:*",
+    "@sushiswap/wagmi13": "workspace:*",
     "@heroicons/react": "1.0.6",
     "date-fns": "2.29.3",
     "next": "13.0.7-canary.4",

@@ -739,7 +739,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui13': workspace:*
-      '@sushiswap/wagmi': workspace:*
+      '@sushiswap/wagmi13': workspace:*
       '@types/ms': 0.7.31
       '@types/node': 18.11.9
       '@types/react': 18.0.25
@@ -762,7 +762,7 @@ importers:
     dependencies:
       '@heroicons/react': 1.0.6_react@18.2.0
       '@sushiswap/ui13': link:../../packages/ui13
-      '@sushiswap/wagmi': link:../../packages/wagmi
+      '@sushiswap/wagmi13': link:../../packages/wagmi13
       date-fns: 2.29.3
       next: 13.0.7-canary.4_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
@@ -2556,6 +2556,103 @@ importers:
       '@sushiswap/tines': link:../tines
       '@sushiswap/trident': 1.0.0-canary.53
       '@sushiswap/ui': link:../ui
+      '@sushiswap/wagmi-config': link:../config/wagmi
+      '@tanstack/react-query': 4.19.1_biqbaboplfbrettd7655fr4n2y
+      '@uniswap/v2-core': 1.0.1
+      '@uniswap/v3-periphery': 1.4.1
+      '@wagmi/core': 0.8.2_lwwfvot6x4ur7zddr2vq5ognvm
+      wagmi: 0.9.2_ywutn3mwpahtnm73vhpfdiqd3e
+    devDependencies:
+      '@sushiswap/eslint-config': link:../config/eslint
+      '@sushiswap/jest-config': link:../config/jest
+      '@sushiswap/prettier-config': link:../config/prettier
+      '@sushiswap/typescript-config': link:../config/typescript
+      '@types/react': 18.0.26
+      '@types/react-dom': 18.0.9
+      eslint: 8.29.0
+      ethers: 5.7.2
+      next: 13.0.5_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      tsup: 6.5.0_typescript@4.8.2
+      typechain: 8.1.1_typescript@4.8.2
+      typescript: 4.8.2
+
+  packages/wagmi13:
+    specifiers:
+      '@ethersproject/abi': ^5.7.0
+      '@ethersproject/address': ^5.7.0
+      '@ethersproject/bytes': ^5.7.0
+      '@ethersproject/constants': ^5.7.0
+      '@ethersproject/logger': ^5.7.0
+      '@ethersproject/providers': ^5.7.0
+      '@gnosis.pm/safe-apps-provider': ^0.14.0
+      '@gnosis.pm/safe-apps-sdk': ^7.8.0
+      '@gnosis.pm/safe-apps-wagmi': 1.2.0
+      '@headlessui/react': ^1.7.3
+      '@heroicons/react': ^1.0.6
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/format': workspace:*
+      '@sushiswap/furo': workspace:*
+      '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/kashi': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/sushiswap': workspace:*
+      '@sushiswap/sushixswap': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/trident': 1.0.0-canary.53
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/ui13': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
+      '@tanstack/react-query': latest
+      '@types/react': ^18.0.0
+      '@types/react-dom': ^18.0.0
+      '@uniswap/v2-core': ^1.0.1
+      '@uniswap/v3-periphery': 1.4.1
+      '@wagmi/core': 0.8.2
+      eslint: 8.29.0
+      ethers: ^5.7.0
+      next: 13.0.5
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      tsup: 6.5.0
+      typechain: ^8.0.0
+      typescript: 4.8.2
+      wagmi: 0.9.2
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/logger': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@gnosis.pm/safe-apps-provider': 0.14.0
+      '@gnosis.pm/safe-apps-sdk': 7.8.0
+      '@gnosis.pm/safe-apps-wagmi': 1.2.0_@wagmi+core@0.8.2
+      '@headlessui/react': 1.7.5_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 1.0.6_react@18.2.0
+      '@sushiswap/abi': link:../abi
+      '@sushiswap/amm': link:../amm
+      '@sushiswap/bentobox': link:../../protocols/bentobox
+      '@sushiswap/chain': link:../chain
+      '@sushiswap/currency': link:../currency
+      '@sushiswap/format': link:../format
+      '@sushiswap/furo': link:../../protocols/furo
+      '@sushiswap/hooks': link:../hooks
+      '@sushiswap/kashi': link:../../protocols/kashi
+      '@sushiswap/math': link:../math
+      '@sushiswap/sushiswap': link:../../protocols/sushiswap
+      '@sushiswap/sushixswap': link:../../protocols/sushixswap
+      '@sushiswap/tines': link:../tines
+      '@sushiswap/trident': 1.0.0-canary.53
+      '@sushiswap/ui13': link:../ui13
       '@sushiswap/wagmi-config': link:../config/wagmi
       '@tanstack/react-query': 4.19.1_biqbaboplfbrettd7655fr4n2y
       '@uniswap/v2-core': 1.0.1

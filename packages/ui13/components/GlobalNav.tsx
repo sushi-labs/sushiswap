@@ -94,7 +94,7 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
           </Menu>
         </div>
         <div className="flex justify-center">{children}</div>
-        {rightElement}
+        <div className="flex justify-end gap-2">{rightElement}</div>
       </div>
     </header>
   )
