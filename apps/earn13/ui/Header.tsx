@@ -7,14 +7,16 @@ import { NetworkSelector } from '@sushiswap/wagmi13/components/NetworkSelector'
 import { UserProfile } from '@sushiswap/wagmi13/components/UserProfile'
 import React, { FC } from 'react'
 
+import { SUPPORTED_CHAIN_IDS } from '../config'
+
 export const Header: FC = () => {
   return (
     <GlobalNav
       appType={AppType.Earn}
       rightElement={
         <>
-          <NetworkSelector />
-          <UserProfile clearNotifications={() => {}} notifications={{}} supportedNetworks={[]} />
+          <NetworkSelector supportedNetworks={SUPPORTED_CHAIN_IDS} />
+          <UserProfile clearNotifications={() => {}} notifications={{}} supportedNetworks={SUPPORTED_CHAIN_IDS} />
         </>
       }
     >

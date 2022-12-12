@@ -734,6 +734,7 @@ importers:
   apps/earn13:
     specifiers:
       '@heroicons/react': 1.0.6
+      '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -761,6 +762,7 @@ importers:
       wagmi: 0.9.2
     dependencies:
       '@heroicons/react': 1.0.6_react@18.2.0
+      '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/ui13': link:../../packages/ui13
       '@sushiswap/wagmi13': link:../../packages/wagmi13
       date-fns: 2.29.3

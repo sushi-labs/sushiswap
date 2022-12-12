@@ -11,6 +11,7 @@
     "check": "tsc --pretty --noEmit"
   },
   "dependencies": {
+    "@sushiswap/chain": "workspace:*",
     "@sushiswap/ui13": "workspace:*",
     "@sushiswap/wagmi13": "workspace:*",
     "@heroicons/react": "1.0.6",
