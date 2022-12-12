@@ -1,13 +1,12 @@
 import { keccak256, pack } from '@ethersproject/solidity'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { ContractCallContext, ContractCallResults } from 'ethereum-multicall'
-import { BigNumber, ethers } from 'ethers'
+import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
+import { ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
 import { Limited } from '../Limited'
-import { MultiCallProvider } from '../MulticallProvider'
+import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
@@ -96,69 +95,50 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
         const addr = this._getPoolAddress(t0, t1)
         if (this.fetchedPools.get(addr) === undefined) {
           poolAddr.set(addr, [t0, t1])
-          this.fetchedPools.set(addr, 0)
+          this.fetchedPools.set(addr, 1)
         }
       }
     }
 
-    const getReservesCalls: ContractCallContext[] = Array.from(poolAddr.keys()).map((p) => ({
-      reference: p,
-      contractAddress: p,
-      abi: getReservesABI,
-      calls: callsGetReserves,
-    }))
-    const results: ContractCallResults = await this.multiCallProvider.call(getReservesCalls)
-    const res = results.results
-    for (const r in res) {
-      if (!poolAddr.has(r)) continue
-      const addr = res[r].originalContractCallContext.contractAddress
-      const ret = res[r].callsReturnContext[0]
-      if (ret.success === false) {
-        this.fetchedPools.set(addr, -1)
-      } else {
-        this.fetchedPools.set(addr, results.blockNumber)
-        const res0 = BigNumber.from(ret.returnValues[0].hex)
-        const res1 = BigNumber.from(ret.returnValues[1].hex)
+    const addrs = Array.from(poolAddr.keys())
+    const reserves = convertToBigNumberPair(
+      await this.multiCallProvider.multiContractCall(addrs, getReservesABI, 'getReserves', [])
+    )
+
+    addrs.forEach((addr, i) => {
+      const res = reserves[i]
+      if (res !== undefined) {
         const toks = poolAddr.get(addr) as [Token, Token]
-        const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, 0.003, res0, res1)
+        const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, 0.003, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.poolCodes.push(pc)
         ++this.stateId
-        //console.log(this.stateId, toks[0].symbol, toks[1].symbol, res0.toString(), res1.toString())
       }
-    }
+    })
   }
 
   // TODO: remove too often updates if the network generates too many blocks
   async updatePoolsData() {
     if (this.poolCodes.length == 0) return
 
-    const poolCodes = new Map<string, PoolCode>()
-    this.poolCodes.forEach((p) => poolCodes.set(p.pool.address, p))
-    const poolAddr = this.poolCodes.map((p) => p.pool.address)
-    const getReservesCalls: ContractCallContext[] = this.poolCodes.map((p) => ({
-      reference: p.pool.address,
-      contractAddress: p.pool.address,
-      abi: getReservesABI,
-      calls: callsGetReserves,
-    }))
-    const results: ContractCallResults = await this.multiCallProvider.call(getReservesCalls)
-    const res = results.results
-    for (const r in res) {
-      const addr = res[r].originalContractCallContext.contractAddress
-      const ret = res[r].callsReturnContext[0]
-      if (ret.success) {
-        const poolCode = poolCodes.get(addr)
-        if (poolCode) {
-          const res0 = BigNumber.from(ret.returnValues[0].hex)
-          const res1 = BigNumber.from(ret.returnValues[1].hex)
-          if (!res0.eq(poolCode.pool.reserve0) || !res1.eq(poolCode.pool.reserve1)) {
-            poolCode.pool.updateReserves(res0, res1)
-            ++this.stateId
-          }
+    const poolAddr = new Map<string, RPool>()
+    this.poolCodes.forEach((p) => poolAddr.set(p.pool.address, p.pool))
+    const addrs = this.poolCodes.map((p) => p.pool.address)
+
+    const reserves = convertToBigNumberPair(
+      await this.multiCallProvider.multiContractCall(addrs, getReservesABI, 'getReserves', [])
+    )
+
+    addrs.forEach((addr, i) => {
+      const res = reserves[i]
+      if (res !== undefined) {
+        const pool = poolAddr.get(addr) as RPool
+        if (!res[0].eq(pool.reserve0) || !res[1].eq(pool.reserve1)) {
+          pool.updateReserves(res[0], res[1])
+          ++this.stateId
         }
       }
-    }
+    })
   }
 
   _getPoolAddress(t1: Token, t2: Token): string {
