@@ -4,7 +4,7 @@ import { Token } from '@sushiswap/currency'
 import { RToken } from '@sushiswap/tines'
 import { AppearOnMount, Chip, Currency, Link, Tooltip, Typography } from '@sushiswap/ui'
 import { TradeOutput } from '@sushiswap/wagmi'
-import { FC } from 'react'
+import { FC, useLayoutEffect, useRef, useState } from 'react'
 
 import { useTrade } from './TradeProvider'
 
@@ -127,108 +127,51 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
   )
 
   return (
-    <Typography variant="xs" className="text-center text-slate-400 italic">
-      Complex route view coming soon
-    </Typography>
+    <div className="h-full overflow-y-scroll">
+      <div className="flex flex-col gap-4">
+        {directPaths.map((directPath, i) => (
+          <ComplexRoutePath
+            key={i}
+            fromToken={tokenFromRToken(directPath.tokenFrom)}
+            toToken={tokenFromRToken(directPath.tokenTo)}
+            poolType={directPath.poolType}
+            poolFee={directPath.poolFee}
+            portion={directPath.absolutePortion}
+          />
+        ))}
+        {initialPaths.map((initialPath, i) => (
+          <ComplexRoutePath
+            key={i}
+            fromToken={tokenFromRToken(initialPath.tokenFrom)}
+            toToken={tokenFromRToken(initialPath.tokenTo)}
+            poolType={initialPath.poolType}
+            poolFee={initialPath.poolFee}
+            portion={initialPath.absolutePortion}
+          />
+        ))}
+        {percentPaths.map((percentagePath, i) => (
+          <ComplexRoutePath
+            key={i}
+            fromToken={tokenFromRToken(percentagePath.tokenFrom)}
+            toToken={tokenFromRToken(percentagePath.tokenTo)}
+            poolType={percentagePath.poolType}
+            poolFee={percentagePath.poolFee}
+            portion={percentagePath.absolutePortion}
+          />
+        ))}
+        {finalPaths.map((finalPath, i) => (
+          <ComplexRoutePath
+            key={i}
+            fromToken={tokenFromRToken(finalPath.tokenFrom)}
+            toToken={tokenFromRToken(finalPath.tokenTo)}
+            poolType={finalPath.poolType}
+            poolFee={finalPath.poolFee}
+            portion={finalPath.absolutePortion}
+          />
+        ))}
+      </div>
+    </div>
   )
-  //
-  // return (
-  //   <>
-  //     <div className="grid items-center grid-flow-col gap-4">
-  //       <div className="space-y-2">
-  //         <div className="z-10 flex items-center gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl">
-  //           <div className="w-6 h-6">
-  //             <Currency.Icon currency={trade.inputAmount.currency} width={24} height={24} />
-  //           </div>
-  //         </div>
-  //       </div>
-  //       <div className="grid items-center grid-flow-row gap-4">
-  //         <div>
-  //           <div className="grid items-center grid-flow-col gap-4 grid-col-4">
-  //             <div className="space-y-2">
-  //               {initialPaths.map((initialPath, i) => (
-  //                 <div
-  //                   key={i}
-  //                   className="z-10 flex items-center justify-between gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap"
-  //                 >
-  //                   {Number(initialPath.absolutePortion * 100).toFixed(2)}%
-  //                   <DotsHorizontalIcon width={12} className="text-slate-600" />
-  //                   <Typography variant="xs" weight={500}>
-  //                     {initialPath.poolType} {initialPath.tokenFrom.symbol}/{initialPath.tokenTo.symbol}{' '}
-  //                     {initialPath.poolFee * 100}%
-  //                   </Typography>
-  //                   <DotsHorizontalIcon width={12} className="text-slate-600" />
-  //                   <Typography variant="xs" weight={500}>
-  //                     {initialPath.tokenTo.symbol}
-  //                   </Typography>
-  //                 </div>
-  //               ))}
-  //             </div>
-  //             <div className="space-y-2">
-  //               {percentPaths.map((percentagePath, i) => (
-  //                 <div
-  //                   key={i}
-  //                   className="z-10 grid items-center justify-between grid-flow-col gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap"
-  //                 >
-  //                   {Number(percentagePath.absolutePortion * 100).toFixed(2)}%
-  //                   <DotsHorizontalIcon width={12} className="text-slate-600" />
-  //                   <Typography variant="xs" weight={500}>
-  //                     {percentagePath.poolType} {percentagePath.tokenFrom.symbol}/{percentagePath.tokenTo.symbol}{' '}
-  //                     {percentagePath.poolFee * 100}%
-  //                   </Typography>
-  //                 </div>
-  //               ))}
-  //             </div>
-  //             <div className="space-y-2">
-  //               {finalPaths.map((finalPath, i) => (
-  //                 <div
-  //                   key={i}
-  //                   className="z-10 grid items-center justify-between grid-flow-col gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap"
-  //                 >
-  //                   {Number(finalPath.absolutePortion * 100).toFixed(2)}%
-  //                   <DotsHorizontalIcon width={12} className="text-slate-600" />
-  //                   <Typography variant="xs" weight={500}>
-  //                     {finalPath.poolType} {finalPath.tokenFrom.symbol}/{finalPath.tokenTo.symbol}{' '}
-  //                     {finalPath.poolFee * 100}%
-  //                   </Typography>
-  //                   <DotsHorizontalIcon width={12} className="text-slate-600" />
-  //                   <Typography variant="xs" weight={500}>
-  //                     {finalPath.tokenTo.symbol}
-  //                   </Typography>
-  //                 </div>
-  //               ))}
-  //             </div>
-  //           </div>
-  //         </div>
-  //         <div className="flex flex-col w-full gap-4">
-  //           {directPaths.map((directPath, i) => (
-  //             <div key={i} className="flex flex-grow gap-4">
-  //               <div className="z-10 flex items-center justify-between flex-grow p-2 mx-auto text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl whitespace-nowrap">
-  //                 {Number(directPath.absolutePortion * 100).toFixed(2)}%
-  //                 <DotsHorizontalIcon width={12} className="text-slate-600" />
-  //                 <Typography variant="xs" weight={500}>
-  //                   {directPath.poolType} {directPath.tokenFrom.symbol}/{directPath.tokenTo.symbol}{' '}
-  //                   {directPath.poolFee * 100}%
-  //                 </Typography>
-  //                 <DotsHorizontalIcon width={12} className="text-slate-600" />
-  //                 <Typography variant="xs" weight={500}>
-  //                   {directPath.tokenTo.symbol}
-  //                 </Typography>
-  //               </div>
-  //             </div>
-  //           ))}
-  //         </div>
-  //       </div>
-  //       <div>
-  //         <div className="z-10 flex items-center gap-4 p-2 text-xs font-medium leading-4 shadow shadow-slate-900 text-slate-300 bg-slate-800 rounded-2xl">
-  //           <div className="w-6 h-6">
-  //             <Currency.Icon currency={trade.outputAmount.currency} width={24} height={24} />
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </>
-  // )
 }
 
 export const Route: FC = () => {
@@ -257,5 +200,83 @@ export const Route: FC = () => {
       </Typography> */}
       </div>
     </AppearOnMount>
+  )
+}
+
+interface ComplexRoutePathProps {
+  fromToken: Token
+  toToken: Token
+  poolType: 'Stable' | 'Classic' | 'Unknown'
+  poolFee: number
+  portion: number
+}
+
+const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolType, poolFee, portion }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(0)
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      setWidth((ref.current.offsetWidth - 28) * Number(portion))
+    }
+  }, [portion])
+
+  return (
+    <div className="relative grid grid-cols-10">
+      <div className="absolute inset-0 flex items-center pointer-events-none z-0">
+        <svg viewBox="850 0 300 200" width="100%" height="35" className="text-slate-700">
+          <line
+            x1="0"
+            x2="3000"
+            y1="100"
+            y2="100"
+            stroke="currentColor"
+            strokeWidth="20"
+            strokeLinecap="round"
+            strokeDasharray="1, 45"
+          />
+        </svg>
+      </div>
+      <div className="z-[10] col-span-4 flex justify-start items-center">
+        <div
+          ref={ref}
+          className="flex relative justify-between gap-2 items-center overflow-hidden rounded-full p-2 bg-slate-900"
+        >
+          <div className="absolute bg-slate-800 pointer-events-none top-0.5 left-0.5 w-[28px] bottom-0.5 rounded-full" />
+          <div
+            className="absolute bg-slate-800 pointer-events-none top-0.5 left-0.5 bottom-0.5 rounded-full"
+            style={{ width: `calc(28px + ${width}px)` }}
+          />
+          <div className="z-[10] flex items-center gap-1">
+            <Currency.Icon disableLink currency={fromToken} width={16} height={16} />
+            <Typography variant="xs" weight={600} className="text-slate-200">
+              {fromToken.symbol}
+            </Typography>
+          </div>
+          <Typography variant="xs" weight={600} className="z-[10] text-slate-400">
+            {Number(portion * 100).toFixed(2)}%
+          </Typography>
+        </div>
+      </div>
+      <div className="z-[10] col-span-3 flex justify-center items-center">
+        <Typography
+          variant="xs"
+          weight={500}
+          className="bg-slate-800 text-slate-200 flex items-center border border-slate-200/10 rounded-lg h-[36px] px-2"
+        >
+          {poolType} {Number(poolFee * 100).toFixed(2)}%
+        </Typography>
+      </div>
+      <div className="z-[10] col-span-3 flex justify-end items-center">
+        <div className="p-0.5 rounded-full bg-slate-900">
+          <div className="px-2 bg-slate-700 h-[36px] rounded-full flex items-center gap-1">
+            <Currency.Icon disableLink currency={toToken} width={16} height={16} />
+            <Typography variant="xs" weight={600} className="text-slate-200">
+              {toToken.symbol}
+            </Typography>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

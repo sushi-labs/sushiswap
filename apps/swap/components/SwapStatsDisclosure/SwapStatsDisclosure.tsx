@@ -2,7 +2,7 @@ import { Disclosure, Transition } from '@headlessui/react'
 import { InformationCircleIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Percent } from '@sushiswap/math'
-import { classNames, Tooltip, Typography } from '@sushiswap/ui'
+import { classNames, Dialog, Tooltip, Typography } from '@sushiswap/ui'
 import { Rate, Route, useTrade } from 'components'
 import React, { FC, useMemo, useState } from 'react'
 
@@ -54,21 +54,14 @@ export const SwapStatsDisclosure: FC = () => {
       >
         {showRoute ? 'Hide' : 'Show'}
       </Typography>
-      <Transition
-        show={showRoute}
-        unmount={false}
-        className="col-span-2 transition-[max-height] overflow-hidden"
-        enter="duration-300 ease-in-out"
-        enterFrom="transform max-h-0"
-        enterTo="transform max-h-[380px]"
-        leave="transition-[max-height] duration-250 ease-in-out"
-        leaveFrom="transform max-h-[380px]"
-        leaveTo="transform max-h-0"
-      >
-        <div className="col-span-2">
-          <Route />
-        </div>
-      </Transition>
+      <Dialog open={showRoute} onClose={() => setShowRoute(false)}>
+        <Dialog.Content className="!pb-4">
+          <Dialog.Header border={false} title="Optimized Route" onClose={() => setShowRoute(false)} />
+          <div className="max-h-[400px] overflow-y-scroll rounded-xl bg-black/[0.24] p-2 border border-slate-200/10">
+            <Route />
+          </div>
+        </Dialog.Content>
+      </Dialog>
     </>
   )
 
