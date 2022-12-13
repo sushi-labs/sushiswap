@@ -130,8 +130,6 @@ async function getPoolsByPagination(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<Pool[]> {
-
-
   return prisma.pool.findMany({
     take,
     skip,
@@ -159,7 +157,9 @@ async function getPoolsByPagination(
 
 function transform(pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
-  const constantProductPools = pools.map((pool) => {
+  const constantProductPools: ConstantProductRPool[] = []
+  pools.forEach((pool) => {
+
     const token0 = {
       address: pool.token0.address,
       name: pool.token0.name,
@@ -172,14 +172,21 @@ function transform(pools: Pool[]) {
     }
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
-
-    return new ConstantProductRPool(
-      pool.address,
-      token0,
-      token1,
-      pool.swapFee,
-      BigNumber.from(pool.reserve0),
-      BigNumber.from(pool.reserve1)
+    
+    const amount0 = (Number(pool.reserve0) / 10 ** pool.token0.decimals)
+    const amount1 = (Number(pool.reserve1) / 10 ** pool.token1.decimals)
+    if (amount0 < 0.001 || amount1 < 0.001) {
+      return
+    }
+    constantProductPools.push(
+      new ConstantProductRPool(
+        pool.address,
+        token0,
+        token1,
+        pool.swapFee,
+        BigNumber.from(pool.reserve0),
+        BigNumber.from(pool.reserve1)
+      )
     )
   })
   return { constantProductPools, tokens }
