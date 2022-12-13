@@ -11,7 +11,8 @@ interface SeriaCall {
 export class MultiCallProvider {
   multicall: Multicall
   prepairingCallcontext?: ContractCallContext[]
-  prepairingCall?: Promise<ContractCallResults>
+  prepairingCall?: Promise<any[][]>
+  seriaLength: Map<number, number> = new Map()
   nextSeriaId = 0
 
   constructor(chainDataProvider: ethers.providers.BaseProvider) {
@@ -19,43 +20,46 @@ export class MultiCallProvider {
   }
 
   // aggregate several multicalls in one
-  async call(inp: ContractCallContext[]): Promise<ContractCallResults> {
+  async call(inp: ContractCallContext[]): Promise<any[][]> {
     //console.log('Multicall order', inp.length)
     if (!this.prepairingCallcontext) {
       this.prepairingCallcontext = inp
-      this.prepairingCall = new Promise<ContractCallResults>((res, _rej) => {
+      this.prepairingCall = new Promise<any[][]>((res, _rej) => {
         setTimeout(async () => {
           //console.log('Multicall call', this.prepairingCallcontext?.length)
           const input = this.prepairingCallcontext as ContractCallContext[]
           this.prepairingCallcontext = undefined
           this.prepairingCall = undefined
-          res(await this.multicall.call(input))
+          this.nextSeriaId = 0
+          const { results } = await this.multicall.call(input)
+          const serias: any[][] = []
+          for (const r in results) {
+            const [elementSeria, index] = r.split('_')
+            const seria = parseInt(elementSeria)
+            const retContext = results[r].callsReturnContext[0]
+            if (serias[seria] === undefined) serias[seria] = new Array(this.seriaLength.get(seria) || 0)
+            serias[parseInt(elementSeria)][parseInt(index)] = retContext.success ? retContext.returnValues : undefined
+          }
+          res(serias)
         }, 0)
       })
     } else {
       this.prepairingCallcontext = this.prepairingCallcontext.concat(inp)
     }
-    return this.prepairingCall as Promise<ContractCallResults>
+    return this.prepairingCall as Promise<any[][]>
   }
 
   async seriaCall(calls: SeriaCall[]): Promise<any[]> {
-    const seria = '' + this.nextSeriaId++
+    const seria = this.nextSeriaId++
     const getReservesCalls: ContractCallContext[] = calls.map((call, i) => ({
       reference: `${seria}_${i}`,
       contractAddress: call.contract,
       abi: call.abi,
       calls: [{ reference: '', methodName: call.method, methodParameters: call.methodParameters }],
     }))
-    const { results }: ContractCallResults = await this.call(getReservesCalls) // can be mixed with other calls
-    const res = new Array(calls.length)
-    for (const r in results) {
-      const [elementSeria, index] = r.split('_')
-      if (elementSeria !== seria || index == undefined) continue
-
-      const retContext = results[r].callsReturnContext[0]
-      res[parseInt(index)] = retContext.success ? retContext.returnValues : undefined
-    }
-    return res
+    this.seriaLength.set(seria, getReservesCalls.length)
+    const serias = await this.call(getReservesCalls) // can be mixed with other calls
+    return serias[seria] || []
   }
 
   async multiContractCall(contracts: string[], abi: any[], method: string, methodParameters: any): Promise<any[]> {
