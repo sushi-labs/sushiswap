@@ -1,18 +1,45 @@
-import { PrismaClient, Token as PrismaToken } from '@prisma/client'
+import { Prisma, PrismaClient, Token as PrismaToken } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
+import { PoolType, ProtocolVersion } from '../config.js'
 import '../lib/wagmi.js'
 
 const prisma = new PrismaClient()
 
+if (process.env.CHAIN_ID === undefined) {
+  throw new Error('CHAIN_ID env var not set')
+}
+
+if (process.env.VERSION === undefined || process.env.TYPE === undefined) {
+  throw new Error('VERSION, and TYPE env vars must be set, e.g. VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL.')
+}
+
+const CHAIN_ID = Number(process.env.CHAIN_ID) as ChainId
+const TYPE = process.env.TYPE
+
+if (TYPE !== PoolType.CONSTANT_PRODUCT_POOL) {
+  throw new Error(
+    `Pool type not supported, ${TYPE}. Current implementation only supports ${PoolType.CONSTANT_PRODUCT_POOL}`
+  )
+}
+
+const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2,
+  ProtocolVersion.LEGACY,
+  ProtocolVersion.TRIDENT]
+  
+if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(process.env.VERSION as ProtocolVersion)) {
+  throw new Error(
+    `Protocol version (${process.env.VERSION}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
+  )
+}
+
+const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
+
 async function main() {
   const startTime = performance.now()
-  // TODO: pass in params, e.g. chainId
-  // Hardcoded for now.
-  // Limitations: this only works for constant product pools
-  const chainId = ChainId.POLYGON
+  console.log(`CHAIN_ID: ${CHAIN_ID}, VERSIONS: ${VERSIONS}, TYPE: ${TYPE}`)
 
-  const pools = await getPools(chainId)
+  const pools = await getPools(CHAIN_ID)
   const poolsToUpdate = transform(pools)
   await updatePools(poolsToUpdate)
 
@@ -22,7 +49,58 @@ async function main() {
 
 async function getPools(chainId: ChainId) {
   const startTime = performance.now()
-  const count = await prisma.pool.count({
+  const batchSize = 2500
+  let cursor = null
+  const results: Pool[] = []
+  let totalCount = 0
+  do {
+    const requestStartTime = performance.now()
+    let result = []
+    if (!cursor) {
+      result = await getPoolsByPagination(chainId, batchSize)
+    } else {
+      result = await getPoolsByPagination(chainId, batchSize, 1, { id: cursor })
+    }
+    cursor = result.length == batchSize ? result[result.length - 1].id : null
+    totalCount += result.length
+    results.push(...result)
+    const requestEndTime = performance.now()
+    console.log(
+      `Fetched a batch of pool addresses with ${result.length} (${((requestEndTime - requestStartTime) / 1000).toFixed(
+        1
+      )}s). cursor: ${cursor}, total: ${totalCount}`
+    )
+  } while (cursor != null)
+
+
+  const endTime = performance.now()
+
+  console.log(`Fetched ${results.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  return results
+}
+
+async function getPoolsByPagination(
+  chainId: ChainId,
+  take?: number,
+  skip?: number,
+  cursor?: Prisma.PoolWhereUniqueInput
+): Promise<Pool[]> {
+
+  return prisma.pool.findMany({
+    take,
+    skip,
+    cursor,
+    select: {
+      id: true,
+      chainId: true,
+      address: true,
+      token0: true,
+      token1: true,
+      swapFee: true,
+      type: true,
+      reserve0: true,
+      reserve1: true,
+    },
     where: {
       chainId,
       type: 'CONSTANT_PRODUCT_POOL',
@@ -44,55 +122,6 @@ async function getPools(chainId: ChainId) {
       },
     },
   })
-
-  const batchSize = 2500
-  const requestCount = Math.ceil(count / batchSize)
-
-  const requests = [...Array(requestCount).keys()].map((i) =>
-    prisma.pool.findMany({
-      select: {
-        id: true,
-        chainId: true,
-        address: true,
-        token0: true,
-        token1: true,
-        swapFee: true,
-        type: true,
-        reserve0: true,
-        reserve1: true,
-      },
-      where: {
-        chainId,
-        type: 'CONSTANT_PRODUCT_POOL',
-        reserve0: {
-          not: '0',
-        },
-        reserve1: {
-          not: '0',
-        },
-        token0: {
-          derivedUSD: {
-            not: null,
-          },
-        },
-        token1: {
-          derivedUSD: {
-            not: null,
-          },
-        },
-      },
-      take: batchSize,
-      skip: i * batchSize,
-    })
-  )
-
-  const responses = await Promise.all(requests)
-  const flatResponse = responses.flat()
-
-  const endTime = performance.now()
-
-  console.log(`Fetched ${flatResponse.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
-  return flatResponse
 }
 
 function transform(pools: Pool[]) {
@@ -151,15 +180,15 @@ async function updatePools(pools: PoolWithLiquidity[]) {
 }
 
 interface Pool {
-  type: string
-  id: string
-  chainId: number
-  address: string
-  token0: PrismaToken
-  token1: PrismaToken
-  swapFee: number
-  reserve0: string
-  reserve1: string
+  id: string;
+  chainId: number;
+  address: string;
+  token0: PrismaToken;
+  token1: PrismaToken;
+  swapFee: number;
+  type: string;
+  reserve0: string;
+  reserve1: string;
 }
 
 interface PoolWithLiquidity {

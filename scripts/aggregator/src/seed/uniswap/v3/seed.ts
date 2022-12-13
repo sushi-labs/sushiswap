@@ -163,8 +163,8 @@ function transform(
       chainId,
       swapFee: SWAP_FEE,
       twapEnabled: TWAP_ENABLED,
-      token0Id: pair.token0.id,
-      token1Id: pair.token1.id,
+      token0Id: chainId.toString().concat(':').concat(pair.token0.id),
+      token1Id: chainId.toString().concat(':').concat(pair.token1.id),
       liquidityUSD: pair.liquidityUSD,
     })
   })

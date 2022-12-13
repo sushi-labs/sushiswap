@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
-import { createTokens } from 'src/etl/token/load.js'
+import { createTokens } from '../../../etl/token/load.js'
 import { getBuiltGraphSDK, V2PairsQuery } from '../../../../.graphclient/index.js'
 import {
   GRAPH_HOST,
@@ -162,8 +162,8 @@ function transform(
       chainId,
       swapFee: SWAP_FEE,
       twapEnabled: TWAP_ENABLED,
-      token0Id: pair.token0.id,
-      token1Id: pair.token1.id,
+      token0Id: chainId.toString().concat(':').concat(pair.token0.id),
+      token1Id: chainId.toString().concat(':').concat(pair.token1.id),
       liquidityUSD: pair.liquidityUSD,
     })
   })

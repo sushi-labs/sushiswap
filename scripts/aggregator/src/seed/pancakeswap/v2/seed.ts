@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
-import { createTokens } from 'src/etl/token/load.js'
+import { createTokens } from '../../../etl/token/load.js'
 import { getBuiltGraphSDK, PCSPairsQuery } from '../../../../.graphclient/index.js'
 import {
   GRAPH_HOST,
@@ -56,7 +56,7 @@ async function start() {
     }
     console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${PANCAKESWAP_SUBGRAPH_NAME[chainId]}`)
     let pairCount = 0
-    let cursor: string = ''
+    let cursor: string = '0xad275c9330db6e5c5edfea53297ad513c136211c'
 
     do {
       const startTime = performance.now()
@@ -161,8 +161,8 @@ function transform(
       chainId,
       swapFee: SWAP_FEE,
       twapEnabled: TWAP_ENABLED,
-      token0Id: pair.token0.id,
-      token1Id: pair.token1.id,
+      token0Id: chainId.toString().concat(':').concat(pair.token0.id),
+      token1Id: chainId.toString().concat(':').concat(pair.token1.id),
       liquidityUSD: 0,
     })
   })

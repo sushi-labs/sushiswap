@@ -25,13 +25,13 @@ if (TYPE !== PoolType.CONSTANT_PRODUCT_POOL) {
   )
 }
 
-if (!Object.values(ProtocolVersion).includes(process.env.VERSION as ProtocolVersion)) {
+const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2,
+  ProtocolVersion.LEGACY,
+  ProtocolVersion.TRIDENT]
+  
+if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(process.env.VERSION as ProtocolVersion)) {
   throw new Error(
-    `Protocol version (${process.env.VERSION}) not supported, supported versions: ${[
-      ProtocolVersion.V2,
-      ProtocolVersion.LEGACY,
-      ProtocolVersion.TRIDENT,
-    ].join(',')}`
+    `Protocol version (${process.env.VERSION}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
   )
 }
 
@@ -59,7 +59,7 @@ async function getPools(chainId: ChainId, versions: string[], type: string) {
     } else {
       result = await getPoolsAddresses(chainId, versions, type, batchSize, 1, { id: cursor })
     }
-    cursor = result.length > batchSize ? result[result.length - 1].id : null
+    cursor = result.length == batchSize ? result[result.length - 1].id : null
     totalCount += result.length
     results.push(result)
     const requestEndTime = performance.now()
@@ -86,32 +86,6 @@ async function getPoolsAddresses(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<{ id: string; address: string }[]> {
-  // const tokensWithPools = await prisma.token.findMany({
-  //   take,
-  //   skip,
-  //   cursor,
-  //   include: {
-  //     pools0: {
-
-  //     },
-  //     pools1: {
-
-  //     },
-  //   },
-  //   where: {
-  //     chainId,
-  //     status: 'APPROVED',
-  //   },
-  // })
-  // const pools = [tokensWithPools.flatMap((token) => token.pools0), tokensWithPools.flatMap((token) => token.pools1)].flat()
-  // const unique = new Set(pools.map((pool) => pool))
-
-  // return Array.from(unique).map((pool) => {
-  //   return {
-  //     id: pool.id,
-  //     address: pool.address,
-  //   }
-  // })
 
   return prisma.pool.findMany({
     take,
@@ -127,12 +101,13 @@ async function getPoolsAddresses(
         in: versions,
       },
       type,
-      token0: {
-        status: 'APPROVED',
-      },
-      token1: {
-        status: 'APPROVED',
-      },
+      isWhitelisted: true,
+      // token0: {
+      //   status: 'APPROVED',
+      // },
+      // token1: {
+      //   status: 'APPROVED',
+      // },
     },
   })
 }

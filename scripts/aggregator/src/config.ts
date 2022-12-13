@@ -20,6 +20,11 @@ export enum PoolType {
   CONCENTRATED_LIQUIDITY_POOL = 'CONCENTRATED_LIQUIDITY_POOL',
 }
 
+export enum Price {
+  USD = 'USD',
+  NATIVE = 'NATIVE',
+}
+
 const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
 const SUSHI_HOST_ENDPOINT = 'subgraphs.sushi.com'
 

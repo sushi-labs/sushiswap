@@ -95,7 +95,7 @@ async function start() {
         // NOTE: This shouldn't have to be async, but was seeing this error:
         // (unlocked closed connection) (CallerID: planetscale-admin)'
         // this script doesn't have to be super fast, so keeping it async to not throttle the db
-        // await Promise.all([createTokens(client, tokens), createPools(client, pools)])
+        await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
 
       const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''
@@ -162,8 +162,8 @@ function transform(
       chainId,
       swapFee: SWAP_FEE,
       twapEnabled: TWAP_ENABLED,
-      token0Id: pair.token0.id,
-      token1Id: pair.token1.id,
+      token0Id: chainId.toString().concat(':').concat(pair.token0.id),
+      token1Id: chainId.toString().concat(':').concat(pair.token1.id),
       liquidityUSD: pair.liquidityUSD,
     })
   })

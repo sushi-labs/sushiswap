@@ -55,6 +55,7 @@
     "@graphprotocol/client-add-source-name": "latest",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
+    "@ethersproject/address": "^5.7.0",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphql-mesh/transform-filter-schema": "latest",
     "@graphql-mesh/transform-prefix": "latest",

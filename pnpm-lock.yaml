@@ -2961,6 +2961,7 @@ importers:
   scripts/aggregator:
     specifiers:
       '@ethersproject/abi': ^5.7.0
+      '@ethersproject/address': ^5.7.0
       '@ethersproject/bignumber': ^5.7.0
       '@ethersproject/units': ^5.7.0
       '@graphprotocol/client-add-source-name': latest
@@ -2977,7 +2978,6 @@ importers:
       '@sushiswap/core': ^2.0.0-canary.1
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/graph-client': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
@@ -3019,6 +3019,7 @@ importers:
       express: 4.18.2
       isomorphic-unfetch: 3.1.0
     devDependencies:
+      '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/units': 5.7.0
       '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
@@ -3031,7 +3032,6 @@ importers:
       '@graphql-mesh/transform-type-merging': 0.5.3_graphql@16.6.0
       '@prisma/client': 4.7.1_prisma@4.7.1
       '@sushiswap/eslint-config': link:../../packages/config/eslint
-      '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/prettier-config': link:../../packages/config/prettier

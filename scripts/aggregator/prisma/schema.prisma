@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -24,7 +23,7 @@ model Token {
   decimals Int
   status   TokenStatus @default(UNKNOWN)
 
-  derivedUSD Decimal?
+  derivedUSD    Decimal?
   derivedNative Decimal?
 
   generatedAt DateTime @default(now())
@@ -39,36 +38,40 @@ model Token {
   @@index(fields: [chainId])
   @@index(fields: [address, chainId])
   @@index(fields: [chainId, status])
+  @@index(fields: [chainId, status, derivedUSD])
+  @@index(fields: [chainId, status, derivedNative])
 }
 
 model Pool {
-  id       String @id // chainId:address
-  address  String
-  name     String
-  chainId  Int
-  protocol String
-  version  String
-  type     String
-  token0   Token  @relation("token0", fields: [chainId, token0Id], references: [chainId, address])
-  token0Id String
-  token1   Token  @relation("token1", fields: [chainId, token1Id], references: [chainId, address])
-  token1Id String
+  id            String  @id // chainId:address
+  address       String
+  name          String
+  chainId       Int
+  protocol      String
+  version       String
+  type          String
+  isWhitelisted Boolean @default(false)
+  token0        Token   @relation("token0", fields: [token0Id], references: [id])
+  token0Id      String
+  token1        Token   @relation("token1", fields: [token1Id], references: [id])
+  token1Id      String
 
   swapFee      Float
   twapEnabled  Boolean
-  reserve0     String @default("0")
-  reserve1     String @default("0")
-  liquidityUSD Decimal // liquidity in USD
+  reserve0     String  @default("0")
+  reserve1     String  @default("0")
+  liquidityUSD Decimal
 
   generatedAt DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([chainId, address])
   @@index(fields: [id])
+  @@index(fields: [isWhitelisted])
+  @@index(fields: [chainId])
   @@index(fields: [address])
-  @@index(fields: [chainId, protocol, token0Id, token1Id])
+  @@index(fields: [chainId, version, type])
   @@index(fields: [chainId, protocol, version, type])
-  @@index(fields: [chainId, token0Id])
-  @@index(fields: [chainId, token1Id])
+  @@index(fields: [token0Id])
+  @@index(fields: [token1Id])
   @@index(fields: [generatedAt])
 }
