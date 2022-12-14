@@ -20,7 +20,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../../lib/zod'
-import { CurrencyInput } from '../../../../CurrencyInput'
+import { CurrencyInput, CurrencyInputBase, HelperTextPanel } from '../../../../CurrencyInput'
 import { stepConfigurations } from '../../../CreateForm'
 import { calculateEndDate } from '../../../utils'
 import { CreateMultipleVestingFormSchemaType } from '../../schema'
@@ -194,7 +194,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         control={control}
                         name={`vestings.${index}.stepAmount`}
                         render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
-                          <CurrencyInput.Base
+                          <CurrencyInputBase
                             className="ring-offset-slate-900"
                             onChange={onChange}
                             value={value || ''}
@@ -203,7 +203,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                             name={name}
                             onBlur={onBlur}
                             helperTextPanel={
-                              <CurrencyInput.HelperTextPanel
+                              <HelperTextPanel
                                 text={
                                   error?.message ? (
                                     error.message
