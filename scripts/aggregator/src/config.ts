@@ -13,6 +13,7 @@ export enum ProtocolName {
   PANCAKESWAP = 'PancakeSwap',
   QUICKSWAP = 'QuickSwap',
   SWAPFISH = 'SwapFish',
+  TRADERJOE = 'TraderJoe',
 }
 
 export enum PoolType {
@@ -111,7 +112,6 @@ export const TRIDENT_SUBGRAPH_NAME: Record<number | string, string> = {
 export const SUSHI_SUPPORTED_CHAINS = Array.from(new Set([...SUSHISWAP_CHAINS, ...TRIDENT_CHAINS]))
 
 // PANCAKESWAP
-
 export const PANCAKESWAP_V2_SUPPORTED_CHAINS = [ChainId.BSC]
 
 export const PANCAKESWAP_SUBGRAPH_NAME: Record<number | string, string> = {
@@ -119,7 +119,6 @@ export const PANCAKESWAP_SUBGRAPH_NAME: Record<number | string, string> = {
 }
 
 // UNISWAP
-
 export const UNISWAP_V2_SUPPORTED_CHAINS = [ChainId.ETHEREUM]
 export const UNISWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'uniswap/uniswap-v2',
@@ -143,4 +142,10 @@ export const QUICKSWAP_SUBGRAPH_NAME: Record<number | string, string> = {
 export const SWAPFISH_SUPPORTED_CHAINS = [ChainId.ARBITRUM]
 export const SWAPFISH_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ARBITRUM]: 'swapfish/swapfish',
+}
+
+// TRADERJOE
+export const TRADERJOE_V2_SUPPORTED_CHAINS = [ChainId.AVALANCHE]
+export const TRADERJOE_V2_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.AVALANCHE]: 'traderjoe-xyz/exchange',
 }
