@@ -98,9 +98,11 @@ export class DataFetcher {
     return Array.from(pcMap.values())
   }
 
-  getCurrentPoolStateId() {
-    const currentStateId = this.providers.reduce((a, b) => (a += b.getCurrentPoolStateId()), 0)
-    this.stateId = currentStateId
-    return this.stateId
+  getCurrentPoolStateId(providers?: LiquidityProviders[]) {
+    let state = 0
+    this.providers.forEach((p) => {
+      if (this._providerIsIncluded(p.getType(), providers)) state += p.getCurrentPoolStateId()
+    })
+    return state
   }
 }

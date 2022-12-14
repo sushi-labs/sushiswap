@@ -35,7 +35,8 @@ export class Router {
     this.amountIn = amountIn
     this.toToken = toToken
     this.gasPrice = gasPrice
-    ;(this.providers = providers), (this.minUpdateDelay = minUpdateDelay)
+    this.providers = providers
+    this.minUpdateDelay = minUpdateDelay
   }
 
   startRouting(p: RouteCallBack) {
@@ -58,7 +59,7 @@ export class Router {
   }
 
   _checkRouteUpdate() {
-    const currentDataFetcherStateId = this.dataFetcher.getCurrentPoolStateId()
+    const currentDataFetcherStateId = this.dataFetcher.getCurrentPoolStateId(this.providers)
     if (this.dataFetcherPreviousState != currentDataFetcherStateId) {
       this.dataFetcherPreviousState = currentDataFetcherStateId
 
