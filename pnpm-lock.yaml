@@ -10174,8 +10174,8 @@ packages:
     resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
     dev: false
 
-  /@sushiswap/default-token-list/39.3.0:
-    resolution: {integrity: sha512-dINezQaTuNhh/mttZhYtSvcfxjre+tFW9TmDCnRSdCbL9CXZV9NtOKIBaQwmqgQ8cTpCcnRQdsC3XfDczYexsA==}
+  /@sushiswap/default-token-list/39.4.0:
+    resolution: {integrity: sha512-XKw5CVGNUqtZs/OiMkTAkJFmpjdaphVLQijOBREGnATZNZpvexgm4tSO6YtA1uSyHCPHIzuyIn0eWblbz5ZjiQ==}
     dev: false
 
   /@sushiswap/sushi-data/1.0.26:
