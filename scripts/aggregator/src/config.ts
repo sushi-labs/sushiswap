@@ -17,6 +17,7 @@ export enum ProtocolName {
   SPOOKYSWAP = 'SpookySwap',
   UBESWAP = 'UbeSwap',
   HONEYSWAP = 'HoneySwap',
+  NETSWAP = 'NetSwap',
 }
 
 export enum PoolType {
