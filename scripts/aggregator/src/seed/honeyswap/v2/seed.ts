@@ -2,14 +2,10 @@ import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, V2PairsQuery } from '../../../../.graphclient/index.js'
-import {
-  GRAPH_HOST,
-  HONEYSWAP_V2_SUBGRAPH_NAME,
-  HONEYSWAP_V2_SUPPORTED_CHAINS,
-  PoolType,
-  ProtocolName,
-  ProtocolVersion,
-} from '../../../config.js'
+import { GRAPH_HOST, HONEYSWAP_V2_SUBGRAPH_NAME, HONEYSWAP_V2_SUPPORTED_CHAINS } from '../config.js'
+
+import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
+
 import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
 

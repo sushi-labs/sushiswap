@@ -2,17 +2,10 @@ import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
 import { getBuiltGraphSDK, V3PairsQuery } from '../../../../.graphclient/index.js'
-import {
-  GRAPH_HOST,
-  PoolType,
-  ProtocolName,
-  ProtocolVersion,
-  UNISWAP_V2_SUBGRAPH_NAME,
-  UNISWAP_V3_SUBGRAPH_NAME,
-  UNISWAP_V3_SUPPORTED_CHAINS,
-} from '../../../config.js'
+import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
 import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
+import { GRAPH_HOST, UNISWAP_V3_SUBGRAPH_NAME, UNISWAP_V3_SUPPORTED_CHAINS } from '../config.js'
 
 const client = new PrismaClient()
 
@@ -104,7 +97,7 @@ async function start() {
     } while (cursor !== '')
     totalPairCount += pairCount
     console.log(
-      `Finished loading pairs from ${GRAPH_HOST[chainId]}/${UNISWAP_V2_SUBGRAPH_NAME[chainId]}, ${pairCount} pairs`
+      `Finished loading pairs from ${GRAPH_HOST[chainId]}/${UNISWAP_V3_SUBGRAPH_NAME[chainId]}, ${pairCount} pairs`
     )
   }
   console.log(`Finished loading pairs for ${PROTOCOL} from all subgraphs, ${totalPairCount} pairs`)

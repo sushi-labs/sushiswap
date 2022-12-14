@@ -3,14 +3,9 @@ import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
 import { createTokens } from '../../../etl/token/load.js'
 import { getBuiltGraphSDK, V2PairsQuery } from '../../../../.graphclient/index.js'
-import {
-  GRAPH_HOST,
-  PoolType,
-  ProtocolName,
-  ProtocolVersion,
-  QUICKSWAP_SUBGRAPH_NAME,
-  QUICKSWAP_SUPPORTED_CHAINS,
-} from '../../../config.js'
+import { GRAPH_HOST, QUICKSWAP_SUBGRAPH_NAME, QUICKSWAP_SUPPORTED_CHAINS } from '../config.js'
+import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
+
 import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 
 const client = new PrismaClient()

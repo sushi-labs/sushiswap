@@ -5,13 +5,13 @@ import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
 import {
   GRAPH_HOST,
   LEGACY_SUBGRAPH_NAME,
-  ProtocolName,
   SUSHISWAP_CHAINS,
   TRIDENT_CHAINS,
   TRIDENT_SUBGRAPH_NAME
-} from '../../config.js'
+} from './config.js'
 import { createPools, getLatestPoolTimestamp } from '../../etl/pool/load.js'
 import { createTokens } from '../../etl/token/load.js'
+import { ProtocolName } from '../../config.js'
 
 const client = new PrismaClient()
 
