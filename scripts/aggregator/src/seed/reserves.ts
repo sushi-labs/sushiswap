@@ -102,12 +102,6 @@ async function getPoolsAddresses(
       },
       type,
       isWhitelisted: true,
-      // token0: {
-      //   status: 'APPROVED',
-      // },
-      // token1: {
-      //   status: 'APPROVED',
-      // },
     },
   })
 }

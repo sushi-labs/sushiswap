@@ -12,6 +12,7 @@ export enum ProtocolName {
   UNISWAP = 'UniSwap',
   PANCAKESWAP = 'PancakeSwap',
   QUICKSWAP = 'QuickSwap',
+  SWAPFISH = 'SwapFish',
 }
 
 export enum PoolType {
@@ -136,4 +137,10 @@ export const UNISWAP_V3_SUBGRAPH_NAME: Record<number | string, string> = {
 export const QUICKSWAP_SUPPORTED_CHAINS = [ChainId.POLYGON]
 export const QUICKSWAP_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.POLYGON]: 'sameepsi/quickswap06',
+}
+
+// SWAPFISH
+export const SWAPFISH_SUPPORTED_CHAINS = [ChainId.ARBITRUM]
+export const SWAPFISH_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.ARBITRUM]: 'swapfish/swapfish',
 }
