@@ -16,6 +16,7 @@ export enum ProtocolName {
   TRADERJOE = 'TraderJoe',
   SPOOKYSWAP = 'SpookySwap',
   UBESWAP = 'UbeSwap',
+  HONEYSWAP = 'HoneySwap',
 }
 
 export enum PoolType {
@@ -163,4 +164,11 @@ export const UBESWAP_V2_SUPPORTED_CHAINS = [ChainId.CELO]
 export const UBESWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.CELO]: 'ubeswap/ubeswap',
 }
+
+// HONEYSWAP
+export const HONEYSWAP_V2_SUPPORTED_CHAINS = [ChainId.GNOSIS]
+export const HONEYSWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.GNOSIS]: '1hive/honeyswap-xdai',
+}
+
 
