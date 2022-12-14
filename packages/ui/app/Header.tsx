@@ -5,7 +5,7 @@ import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import Image from 'next/legacy/image'
 import React, { Fragment } from 'react'
 
-import { classNames, Container, IconButton, Link, MaxWidth, Select, Typography, useBreakpoint } from '..'
+import { classNames, Container, IconButton, Link, MaxWidth, Select, Typography } from '..'
 
 export enum AppType {
   Root = 'Explore Apps',
