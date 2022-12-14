@@ -39,7 +39,8 @@ const config: PlaywrightTestConfig = {
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retain-on-failure',
+    // trace: 'retain-on-failure',
+    trace: 'on',
   },
 
   /* Configure projects for major browsers */
@@ -70,7 +71,6 @@ const config: PlaywrightTestConfig = {
     //     ...devices['iPhone 12'],
     //   },
     // },
-
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */

@@ -67,6 +67,21 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
 
   const prepare = useCallback(
     async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+      console.log('Prepare function called wtih setRequest', setRequest)
+
+      // console.log({
+      //   trade,
+      //   account,
+      //   chainId,
+      //   deadline,
+      //   approved,
+      //   sushiSwapRouter,
+      //   isV1: trade?.isV1(),
+      //   isV2: trade?.isV2(),
+      //   isComplex: trade?.isComplex(),
+      //   isSingle: trade?.isSingle(),
+      //   isNotFound: trade?.isNotFound(),
+      // })
       if (!trade || !account || !chainId || !deadline || !approved) return
       try {
         let call: SwapCall | null = null
@@ -288,8 +303,10 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
             }),
             value,
           }
+        }
 
-          console.log(call)
+        if (!call) {
+          console.log('No call...')
         }
 
         if (call) {
@@ -305,6 +322,8 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
                   data: call.calldata,
                   value,
                 }
+
+          console.log({ call, tx })
 
           const estimatedCall = await provider
             .estimateGas(tx)
@@ -335,6 +354,11 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
                   }
                 })
             })
+
+          console.log('About to actually setRequest with...', {
+            ...tx,
+            ...('gasEstimate' in estimatedCall ? { gasLimit: calculateGasMargin(estimatedCall.gasEstimate) } : {}),
+          })
 
           setRequest({
             ...tx,
@@ -399,6 +423,12 @@ export const TradeExecuteProvider: FC<TradeExecuteProvider> = ({
     enabled:
       trade && (trade.route.status === RouteStatus.Success || trade.route.status === RouteStatus.Partial) && approved,
     onSuccess,
+  })
+
+  console.log({
+    sendTransaction,
+    enabled:
+      trade && (trade.route.status === RouteStatus.Success || trade.route.status === RouteStatus.Partial) && approved,
   })
 
   return children({ execute: sendTransaction, isWritePending })

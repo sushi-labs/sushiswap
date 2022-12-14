@@ -1,5 +1,5 @@
 import { otherChains } from '@sushiswap/wagmi-config'
-import { allChains, Chain, chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
+import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MockConnector } from 'wagmi/connectors/mock'
@@ -9,8 +9,30 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
-import { SafeConnector } from './connectors/safe'
+// import { SafeConnector } from './connectors/safe'
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { getSigners } from './test/utils'
+
+import {
+  arbitrum,
+  arbitrumGoerli,
+  avalanche,
+  avalancheFuji,
+  bsc,
+  bscTestnet,
+  fantom,
+  fantomTestnet,
+  foundry,
+  goerli,
+  hardhat,
+  localhost,
+  mainnet,
+  optimism,
+  optimismGoerli,
+  polygon,
+  polygonMumbai,
+  sepolia,
+} from 'wagmi/chains'
 
 export type Client = ReturnType<typeof createClient>
 
@@ -19,19 +41,41 @@ const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_PLAYWR
 const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
 const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
+console.log({ isTest })
+
 const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
   ? configureChains(
-      [chain.foundry],
+      [foundry],
       [
         jsonRpcProvider({
           rpc: (chain_) => ({
-            http: chain_.rpcUrls.default,
+            http: chain_.rpcUrls.default.http[0],
           }),
         }),
       ]
     )
   : configureChains(
-      [...allChains, ...otherChains],
+      [
+        arbitrum,
+        // arbitrumGoerli,
+        avalanche,
+        // avalancheFuji,
+        bsc,
+        // bscTestnet,
+        fantom,
+        // fantomTestnet,
+        foundry,
+        goerli,
+        hardhat,
+        localhost,
+        mainnet,
+        optimism,
+        // optimismGoerli,
+        polygon,
+        // polygonMumbai,
+        // sepolia,
+        ...otherChains,
+      ],
       [
         // jsonRpcProvider({
         //   priority: 0,
@@ -101,8 +145,6 @@ export const client: Client = createClient({
             appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
           },
         }),
-        // @ts-ignore
         new SafeConnector({ chains }),
-        // new SafeConnector({ chains }),
       ],
 })

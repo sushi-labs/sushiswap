@@ -1,16 +1,15 @@
+import { ethers, network } from 'hardhat'
+import { RouteProcessor__factory } from '../types/index'
+import { getBigNumber, MultiRoute } from '@sushiswap/tines'
+import { WETH9ABI } from '../ABI/WETH9'
+import { HardhatNetworkConfig } from 'hardhat/types'
+import { BentoBox } from '../scripts/liquidityProviders/Trident'
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
-import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { expect } from 'chai'
-import { ethers, network } from 'hardhat'
-import { HardhatNetworkConfig } from 'hardhat/types'
-
-import { WETH9ABI } from '../ABI/WETH9'
 import { DataFetcher } from '../scripts/DataFetcher'
-import { BentoBox } from '../scripts/liquidityProviders/Trident'
 import { Router } from '../scripts/Router'
 import { getRouteProcessorCode } from '../scripts/TinesToRouteProcessor'
-import { RouteProcessor__factory } from '../typechain/index'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -89,7 +88,10 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   console.log(`2. ChainId=${chainId} RouteProcessor deployment ...`)
 
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(BentoBox[chainId] || '0x0000000000000000000000000000000000000000')
+  const routeProcessor = await RouteProcessor.deploy(
+    BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
+    WRAPPED_NATIVE[chainId].address
+  )
   await routeProcessor.deployed()
 
   console.log('3. User creation ...')

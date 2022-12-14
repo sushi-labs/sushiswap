@@ -33,7 +33,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
-    "wagmi": "0.8.10",
+    "wagmi": "0.9.2",
     "@uniswap/token-lists": "1.0.0-beta.30"
   },
   "devDependencies": {
@@ -43,7 +43,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "autoprefixer": "^10.4.0",
-    "eslint": "^8.20.0",
+    "eslint": "8.29.0",
     "next-transpile-modules": "10.0.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.1.0",

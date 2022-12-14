@@ -1,12 +1,16 @@
 import { keccak256, pack } from '@ethersproject/solidity'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
-import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
-import { ethers } from 'ethers'
+import { ConstantProductRPool, RToken } from '@sushiswap/tines'
+import {
+  ContractCallContext,
+  ContractCallResults,
+} from 'ethereum-multicall';
+import { BigNumber, ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
 import { Limited } from '../Limited'
-import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
+import { MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
@@ -19,31 +23,29 @@ const QUICKSWAP_INIT_CODE_HASH: Record<string | number, string> = {
   [ChainId.POLYGON]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
 }
 
-const getReservesABI = [
-  {
-    inputs: [],
-    name: 'getReserves',
-    outputs: [
-      {
-        internalType: 'uint112',
-        name: '_reserve0',
-        type: 'uint112',
-      },
-      {
-        internalType: 'uint112',
-        name: '_reserve1',
-        type: 'uint112',
-      },
-      {
-        internalType: 'uint32',
-        name: '_blockTimestampLast',
-        type: 'uint32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
+const getReservesABI = [{
+  inputs: [],
+  name: 'getReserves',
+  outputs: [
+    {
+      internalType: 'uint112',
+      name: '_reserve0',
+      type: 'uint112',
+    },
+    {
+      internalType: 'uint112',
+      name: '_reserve1',
+      type: 'uint112',
+    },
+    {
+      internalType: 'uint32',
+      name: '_blockTimestampLast',
+      type: 'uint32',
+    },
+  ],
+  stateMutability: 'view',
+  type: 'function',
+}]
 
 const callsGetReserves = [{ reference: '', methodName: 'getReserves', methodParameters: [] }]
 
@@ -53,9 +55,9 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
   blockListener: any
 
   constructor(
-    chainDataProvider: ethers.providers.BaseProvider,
+    chainDataProvider: ethers.providers.BaseProvider, 
     multiCallProvider: MultiCallProvider,
-    chainId: ChainId,
+    chainId: ChainId, 
     l: Limited
   ) {
     super(chainDataProvider, multiCallProvider, chainId, l)
@@ -65,9 +67,7 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
     return LiquidityProviders.Sushiswap
   }
 
-  getPoolProviderName(): string {
-    return 'Quickswap'
-  }
+  getPoolProviderName(): string {return 'Quickswap'}
 
   async getPools(tokens: Token[]): Promise<void> {
     if (QUICKSWAP_FACTORY[this.chainId] === undefined) {
@@ -76,15 +76,13 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
     }
 
     // tokens deduplication
-    const tokenMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
+    const tokenMap = new Map<string, Token>
+    tokens.forEach(t => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
     const tokensDedup = Array.from(tokenMap.values())
     // tokens sorting
-    const tok0: [string, Token][] = tokensDedup.map((t) => [
-      t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
-      t,
-    ])
-    tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
+    const tok0:[string, Token][] = 
+      tokensDedup.map(t => [t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t])
+    tokens = tok0.sort((a, b) => b[0] > a[0] ? -1 : 1).map(([_, t]) => t)
 
     const poolAddr: Map<string, [Token, Token]> = new Map()
     for (let i = 0; i < tokens.length; ++i) {
@@ -95,50 +93,69 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
         const addr = this._getPoolAddress(t0, t1)
         if (this.fetchedPools.get(addr) === undefined) {
           poolAddr.set(addr, [t0, t1])
-          this.fetchedPools.set(addr, 1)
+          this.fetchedPools.set(addr, 0)
         }
       }
     }
-
-    const addrs = Array.from(poolAddr.keys())
-    const reserves = convertToBigNumberPair(
-      await this.multiCallProvider.multiContractCall(addrs, getReservesABI, 'getReserves', [])
-    )
-
-    addrs.forEach((addr, i) => {
-      const res = reserves[i]
-      if (res !== undefined) {
+    
+    const getReservesCalls: ContractCallContext[] = Array.from(poolAddr.keys()).map(p => ({
+      reference: p,
+      contractAddress: p,
+      abi: getReservesABI,
+      calls: callsGetReserves
+    }))
+    const results: ContractCallResults = await this.multiCallProvider.call(getReservesCalls); 
+    const res = results.results
+    for (const r in res) {
+      if (!poolAddr.has(r)) continue
+      const addr = res[r].originalContractCallContext.contractAddress
+      const ret = res[r].callsReturnContext[0]
+      if (ret.success === false) {
+        this.fetchedPools.set(addr, -1)
+      } else {
+        this.fetchedPools.set(addr, results.blockNumber)
+        const res0 = BigNumber.from(ret.returnValues[0].hex)
+        const res1 = BigNumber.from(ret.returnValues[1].hex)
         const toks = poolAddr.get(addr) as [Token, Token]
-        const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, 0.003, res[0], res[1])
+        const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, 0.003, res0, res1)
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-        this.poolCodes.push(pc)
+        this.poolCodes.push(pc)   
         ++this.stateId
+        //console.log(this.stateId, toks[0].symbol, toks[1].symbol, res0.toString(), res1.toString())        
       }
-    })
+    }
   }
 
   // TODO: remove too often updates if the network generates too many blocks
   async updatePoolsData() {
-    if (this.poolCodes.length == 0) return
+    if (this.poolCodes.length == 0) return 
 
-    const poolAddr = new Map<string, RPool>()
-    this.poolCodes.forEach((p) => poolAddr.set(p.pool.address, p.pool))
-    const addrs = this.poolCodes.map((p) => p.pool.address)
-
-    const reserves = convertToBigNumberPair(
-      await this.multiCallProvider.multiContractCall(addrs, getReservesABI, 'getReserves', [])
-    )
-
-    addrs.forEach((addr, i) => {
-      const res = reserves[i]
-      if (res !== undefined) {
-        const pool = poolAddr.get(addr) as RPool
-        if (!res[0].eq(pool.reserve0) || !res[1].eq(pool.reserve1)) {
-          pool.updateReserves(res[0], res[1])
-          ++this.stateId
-        }
+    const poolCodes = new Map<string, PoolCode>()
+    this.poolCodes.forEach(p => poolCodes.set(p.pool.address, p))
+    const poolAddr = this.poolCodes.map(p => p.pool.address)
+    const getReservesCalls: ContractCallContext[] = this.poolCodes.map(p => ({
+      reference: p.pool.address,
+      contractAddress: p.pool.address,
+      abi: getReservesABI,
+      calls: callsGetReserves
+    }))
+    const results: ContractCallResults = await this.multiCallProvider.call(getReservesCalls);
+    const res = results.results
+    for (const r in res) {
+      const addr = res[r].originalContractCallContext.contractAddress
+      const ret = res[r].callsReturnContext[0]
+      if (ret.success) {
+        const poolCode = poolCodes.get(addr)
+        if (poolCode) {
+          const res0 = BigNumber.from(ret.returnValues[0].hex)
+          const res1 = BigNumber.from(ret.returnValues[1].hex)
+          if (!res0.eq(poolCode.pool.reserve0) || !res1.eq(poolCode.pool.reserve1)) {
+            poolCode.pool.updateReserves(res0, res1)
+            ++this.stateId
+          }
+        } 
       }
-    })
+    }
   }
 
   _getPoolAddress(t1: Token, t2: Token): string {
@@ -149,15 +166,15 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
     )
   }
 
-  _getProspectiveTokens(t0: Token, t1: Token) {
+  _getProspectiveTokens(t0: Token, t1:Token) {
     const set = new Set<Token>([
       t0,
       t1,
-      ...BASES_TO_CHECK_TRADES_AGAINST[this.chainId],
+      ...BASES_TO_CHECK_TRADES_AGAINST[this.chainId], 
       ...(ADDITIONAL_BASES[this.chainId][t0.address] || []),
       ...(ADDITIONAL_BASES[this.chainId][t1.address] || []),
-    ])
-    return Array.from(set)
+     ])
+     return Array.from(set)
   }
 
   startFetchPoolsData() {
@@ -177,7 +194,8 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
     return this.poolCodes
   }
   stopFetchPoolsData() {
-    if (this.blockListener) this.chainDataProvider.off('block', this.blockListener)
+    if (this.blockListener)
+      this.chainDataProvider.off('block', this.blockListener)
     this.blockListener = undefined
   }
 }

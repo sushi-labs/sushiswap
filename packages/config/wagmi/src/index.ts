@@ -8,7 +8,9 @@ export const otherChains: Chain[] = [
     network: 'avalanche',
     nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
     rpcUrls: {
-      default: 'https://api.avax.network/ext/bc/C/rpc',
+      default: {
+        http: ['https://api.avax.network/ext/bc/C/rpc'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -20,9 +22,11 @@ export const otherChains: Chain[] = [
         url: 'https://snowtrace.io/',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 11907934,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 11907934,
+      },
     },
   },
   {
@@ -31,7 +35,9 @@ export const otherChains: Chain[] = [
     network: 'bsc',
     nativeCurrency: { name: 'Binance Chain Native Token', symbol: 'BNB', decimals: 18 },
     rpcUrls: {
-      default: 'https://bsc-dataseed1.binance.org',
+      default: {
+        http: ['https://bsc-dataseed1.binance.org'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -43,9 +49,11 @@ export const otherChains: Chain[] = [
         url: 'https://bscscan.com',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 15921452,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 15921452,
+      },
     },
   },
   {
@@ -54,7 +62,9 @@ export const otherChains: Chain[] = [
     network: 'fantom',
     nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
     rpcUrls: {
-      default: 'https://rpcapi.fantom.network',
+      default: {
+        http: ['https://rpcapi.fantom.network'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -66,9 +76,11 @@ export const otherChains: Chain[] = [
         url: 'https://ftmscan.com',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 33001987,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 33001987,
+      },
     },
   },
   {
@@ -77,7 +89,9 @@ export const otherChains: Chain[] = [
     network: 'gnosis',
     nativeCurrency: { name: 'xDAI', symbol: 'xDAI', decimals: 18 },
     rpcUrls: {
-      default: 'https://rpc.gnosischain.com',
+      default: {
+        http: ['https://rpc.gnosischain.com'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -89,9 +103,11 @@ export const otherChains: Chain[] = [
         url: 'https://blockscout.com/xdai/mainnet',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 21022491,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 21022491,
+      },
     },
   },
   {
@@ -100,7 +116,9 @@ export const otherChains: Chain[] = [
     network: 'gnosis',
     nativeCurrency: { name: 'ONE', symbol: 'ONE', decimals: 18 },
     rpcUrls: {
-      default: 'https://api.harmony.one',
+      default: {
+        http: ['https://api.harmony.one'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -112,9 +130,11 @@ export const otherChains: Chain[] = [
         url: 'https://explorer.harmony.one',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 24185753,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 24185753,
+      },
     },
   },
   {
@@ -123,7 +143,9 @@ export const otherChains: Chain[] = [
     network: 'moonbeam',
     nativeCurrency: { name: 'Glimmer', symbol: 'GLMR', decimals: 18 },
     rpcUrls: {
-      default: 'https://rpc.api.moonbeam.network',
+      default: {
+        http: ['https://rpc.api.moonbeam.network'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -135,9 +157,11 @@ export const otherChains: Chain[] = [
         url: 'https://moonbeam.moonscan.io',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 609002,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 609002,
+      },
     },
   },
   {
@@ -146,7 +170,9 @@ export const otherChains: Chain[] = [
     network: 'moonriver',
     nativeCurrency: { name: 'Moonriver', symbol: 'MOVR', decimals: 18 },
     rpcUrls: {
-      default: 'https://rpc.api.moonriver.moonbeam.network',
+      default: {
+        http: ['https://rpc.api.moonriver.moonbeam.network'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -158,9 +184,11 @@ export const otherChains: Chain[] = [
         url: 'https://moonriver.moonscan.io',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 1597904,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 1597904,
+      },
     },
   },
   {
@@ -169,7 +197,9 @@ export const otherChains: Chain[] = [
     network: 'kava',
     nativeCurrency: { name: 'Kava', symbol: 'KAVA', decimals: 18 },
     rpcUrls: {
-      default: 'https://evm.kava.io',
+      default: {
+        http: ['https://evm.kava.io'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -181,9 +211,11 @@ export const otherChains: Chain[] = [
         url: 'https://explorer.kava.io/',
       },
     },
-    multicall: {
-      address: '0x1578f6d2D3168acF41b506AA666A521994F6BAB6',
-      blockCreated: 1176602,
+    contracts: {
+      multicall3: {
+        address: '0x1578f6d2D3168acF41b506AA666A521994F6BAB6',
+        blockCreated: 1176602,
+      },
     },
   },
   {
@@ -192,7 +224,9 @@ export const otherChains: Chain[] = [
     network: 'metis',
     nativeCurrency: { name: 'Metis', symbol: 'METIS', decimals: 18 },
     rpcUrls: {
-      default: 'https://andromeda.metis.io/?owner=1088',
+      default: {
+        http: ['https://andromeda.metis.io/?owner=1088'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -204,9 +238,11 @@ export const otherChains: Chain[] = [
         url: 'https://andromeda-explorer.metis.io/',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 2338552,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 2338552,
+      },
     },
   },
   {
@@ -215,7 +251,9 @@ export const otherChains: Chain[] = [
     network: 'celo',
     nativeCurrency: { name: 'Celo', symbol: 'CELO', decimals: 18 },
     rpcUrls: {
-      default: 'https://rpc.ankr.com/celo',
+      default: {
+        http: ['https://rpc.ankr.com/celo'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -227,9 +265,11 @@ export const otherChains: Chain[] = [
         url: 'https://celoscan.io/',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 13112599,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 13112599,
+      },
     },
   },
   {
@@ -238,7 +278,9 @@ export const otherChains: Chain[] = [
     network: 'fuse',
     nativeCurrency: { name: 'Fuse', symbol: 'FUSE', decimals: 18 },
     rpcUrls: {
-      default: 'https://rpc.fuse.io',
+      default: {
+        http: ['https://rpc.fuse.io'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -250,9 +292,11 @@ export const otherChains: Chain[] = [
         url: 'https://explorer.fuse.io/',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 16146628,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 16146628,
+      },
     },
   },
   {
@@ -261,7 +305,9 @@ export const otherChains: Chain[] = [
     network: 'arbitrumnova',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     rpcUrls: {
-      default: 'https://nova.arbitrum.io/rpc',
+      default: {
+        http: ['https://nova.arbitrum.io/rpc'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -273,9 +319,11 @@ export const otherChains: Chain[] = [
         url: 'https://nova-explorer.arbitrum.io/',
       },
     },
-    multicall: {
-      address: '0x4d81f45fcde2B1C9A93Bde5495dc3553bbEC8EFa',
-      blockCreated: 400008,
+    contracts: {
+      multicall3: {
+        address: '0x4d81f45fcde2B1C9A93Bde5495dc3553bbEC8EFa',
+        blockCreated: 400008,
+      },
     },
   },
   {
@@ -284,7 +332,9 @@ export const otherChains: Chain[] = [
     network: 'okxchain',
     nativeCurrency: { name: 'OKC Token', symbol: 'OKT', decimals: 18 },
     rpcUrls: {
-      default: 'https://exchainrpc.okex.org',
+      default: {
+        http: ['https://exchainrpc.okex.org'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -296,9 +346,11 @@ export const otherChains: Chain[] = [
         url: 'https://www.oklink.com/en/okc/',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 10364792,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 10364792,
+      },
     },
   },
   {
@@ -307,7 +359,9 @@ export const otherChains: Chain[] = [
     network: 'huobieco',
     nativeCurrency: { name: 'Huobi Token', symbol: 'HT', decimals: 18 },
     rpcUrls: {
-      default: 'https://http-mainnet.hecochain.com',
+      default: {
+        http: ['https://http-mainnet.hecochain.com'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -319,9 +373,11 @@ export const otherChains: Chain[] = [
         url: 'https://www.hecoinfo.com/',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 14413501,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 14413501,
+      },
     },
   },
   {
@@ -330,7 +386,9 @@ export const otherChains: Chain[] = [
     network: 'palm',
     nativeCurrency: { name: 'Palm', symbol: 'PALM', decimals: 18 },
     rpcUrls: {
-      default: 'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b',
+      default: {
+        http: ['https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -342,9 +400,11 @@ export const otherChains: Chain[] = [
         url: 'https://explorer.palm.io/',
       },
     },
-    multicall: {
-      address: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
-      blockCreated: 8005532,
+    contracts: {
+      multicall3: {
+        address: '0x80C7DD17B01855a6D2347444a0FCC36136a314de',
+        blockCreated: 8005532,
+      },
     },
   },
   {
@@ -353,7 +413,9 @@ export const otherChains: Chain[] = [
     network: 'boba',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     rpcUrls: {
-      default: 'https://mainnet.boba.network',
+      default: {
+        http: ['https://mainnet.boba.network'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -365,9 +427,11 @@ export const otherChains: Chain[] = [
         url: 'https://bobascan.com/',
       },
     },
-    multicall: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-      blockCreated: 446859,
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 446859,
+      },
     },
   },
   {
@@ -376,7 +440,9 @@ export const otherChains: Chain[] = [
     network: 'boba-avax',
     nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
     rpcUrls: {
-      default: 'https://avax.boba.network',
+      default: {
+        http: ['https://avax.boba.network'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -388,9 +454,11 @@ export const otherChains: Chain[] = [
         url: 'https://blockexplorer.avax.boba.network/',
       },
     },
-    multicall: {
-      address: '0x2c46217Fae90D302d1Fb5467ADA504bC2A84f448',
-      blockCreated: 3652,
+    contracts: {
+      multicall3: {
+        address: '0x2c46217Fae90D302d1Fb5467ADA504bC2A84f448',
+        blockCreated: 3652,
+      },
     },
   },
   {
@@ -399,7 +467,9 @@ export const otherChains: Chain[] = [
     network: 'btt',
     nativeCurrency: { name: 'BitTorrent', symbol: 'BTT', decimals: 18 },
     rpcUrls: {
-      default: 'https://rpc.bittorrentchain.io',
+      default: {
+        http: ['https://rpc.bittorrentchain.io'],
+      },
     },
     blockExplorers: {
       etherscan: {
@@ -411,9 +481,11 @@ export const otherChains: Chain[] = [
         url: 'https://bttcscan.com/',
       },
     },
-    multicall: {
-      address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287',
-      blockCreated: 13014184,
+    contracts: {
+      multicall3: {
+        address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287',
+        blockCreated: 13014184,
+      },
     },
   },
 ]

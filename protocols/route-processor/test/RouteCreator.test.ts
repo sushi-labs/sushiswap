@@ -1,11 +1,12 @@
 import { ethers, network } from 'hardhat'
 import { RouteProcessor__factory } from '../typechain'
-import { getBigNumber, MultiRoute, RouteStatus } from '@sushiswap/tines'
+import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { WETH9ABI } from '../ABI/WETH9'
-import { HardhatNetworkConfig, ProviderConnectInfo } from 'hardhat/types'
+import { HardhatNetworkConfig } from 'hardhat/types'
+
 import { BentoBox } from '../scripts/liquidityProviders/Trident'
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI, Token, WBTC, WNATIVE } from '@sushiswap/currency'
+import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
 import { expect } from 'chai'
 import { RouteCreator } from '../scripts/RouteCreator'
 
@@ -83,7 +84,10 @@ async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Tok
   console.log(`2. ChainId=${chainId} RouteProcessor deployment ...`)
 
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(BentoBox[chainId] || '0x0000000000000000000000000000000000000000')
+  const routeProcessor = await RouteProcessor.deploy(
+    BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
+    WRAPPED_NATIVE[chainId].address
+  )
   await routeProcessor.deployed()
 
   console.log('3. User creation ...')
