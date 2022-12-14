@@ -15,6 +15,7 @@ export enum ProtocolName {
   SWAPFISH = 'SwapFish',
   TRADERJOE = 'TraderJoe',
   SPOOKYSWAP = 'SpookySwap',
+  UBESWAP = 'UbeSwap',
 }
 
 export enum PoolType {
@@ -155,5 +156,11 @@ export const TRADERJOE_V2_SUBGRAPH_NAME: Record<number | string, string> = {
 export const SPOOKYSWAP_V2_SUPPORTED_CHAINS = [ChainId.FANTOM]
 export const SPOOKYSWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.FANTOM]: 'int3grtor/spooky-exchange',
+}
+
+// UBESWAP
+export const UBESWAP_V2_SUPPORTED_CHAINS = [ChainId.CELO]
+export const UBESWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.CELO]: 'ubeswap/ubeswap',
 }
 
