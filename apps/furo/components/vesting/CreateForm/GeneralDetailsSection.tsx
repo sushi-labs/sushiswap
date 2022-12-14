@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Select } from '@sushiswap/ui'
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
@@ -11,7 +12,6 @@ import { useCustomTokens } from '../../../lib/state/storage'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
 import { FundSourceOption } from '../../stream/CreateForm/FundSourceOption'
 import { CreateVestingFormSchemaType } from './schema'
-import { Type } from '@sushiswap/currency'
 
 export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const tokenMap = useTokens(chainId)

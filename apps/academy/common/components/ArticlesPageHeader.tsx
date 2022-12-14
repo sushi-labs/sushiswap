@@ -1,6 +1,7 @@
 import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { classNames, Container, Select, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { classNames, Container, Select } from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
 import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 

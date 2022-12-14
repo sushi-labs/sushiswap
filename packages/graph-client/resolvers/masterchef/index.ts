@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
   MASTERCHEF_V1_SUBGRAPH_NAME,

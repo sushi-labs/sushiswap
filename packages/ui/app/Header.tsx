@@ -1,7 +1,7 @@
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
-import { useIsMounted } from '@sushiswap/hooks'
+import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import Image from 'next/legacy/image'
 import React, { Fragment } from 'react'
 

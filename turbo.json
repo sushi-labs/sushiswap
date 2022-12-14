@@ -1,6 +1,22 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "globalDependencies": [
+    "ALCHEMY_ID", 
+    "NEXT_PUBLIC_INFURA_ID", 
+    "ALCHEMY_ID", 
+    "NEXT_PUBLIC_INFURA_ID"
+  ],
   "pipeline": {
+    "furo:build": {
+      "outputs": [
+        ".next/**",
+        "public/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ]
+    },
     "db:init": {
       "outputs": [
         "prisma/**"
@@ -28,10 +44,29 @@
     "db:push": {
       "cache": false
     },
+    "playwright": {
+      "cache": false,
+      "env": [
+        "ANVIL_BLOCK_NUMBER",
+        "ANVIL_FORK_URL",
+        "PLAYWRIGHT_URL",
+        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
+        "CHAIN_ID"
+      ]
+    },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "outputs": [
         "coverage/**"
+      ],
+      "env": [
+        "ANVIL_BLOCK_NUMBER",
+        "ANVIL_FORK_URL",
+        "PLAYWRIGHT_URL",
+        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
+        "CHAIN_ID"
       ]
     },
     "lint": {
@@ -111,6 +146,7 @@
     "anvil": {
       "cache": false,
       "env": [
+        "ANVIL_BLOCK_NUMBER",
         "ANVIL_FORK_URL"
       ]
     },

@@ -1,11 +1,12 @@
 import { XCircleIcon } from '@heroicons/react/outline'
 import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
 import { useWalletState } from '@sushiswap/wagmi'
-import { BackgroundVector, Dashboard, Layout } from 'components'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
+
+import { BackgroundVector, Dashboard, Layout } from '../components'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -82,7 +83,11 @@ export default function DashboardPage() {
                   Furo requires access to your wallet, please authorize access to your wallet to continue
                 </Typography>
               </div>
-              <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
+              <Link
+                legacyBehavior
+                passHref={true}
+                href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet"
+              >
                 <Typography
                   as="a"
                   target="_blank"

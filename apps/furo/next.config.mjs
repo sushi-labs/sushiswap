@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import transpileModules from 'next-transpile-modules'
 
 const withTranspileModules = transpileModules([
@@ -21,6 +22,22 @@ const nextConfig = {
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
   productionBrowserSourceMaps: true,
+  serverRuntimeConfig: {},
+  publicRuntimeConfig: {
+    supportedChainIds: [
+      ChainId.ETHEREUM,
+      ChainId.ARBITRUM,
+      ChainId.AVALANCHE,
+      ChainId.BSC,
+      ChainId.FANTOM,
+      ChainId.GNOSIS,
+      ChainId.HARMONY,
+      ChainId.MOONBEAM,
+      ChainId.MOONRIVER,
+      ChainId.OPTIMISM,
+      ChainId.POLYGON,
+    ],
+  },
   async redirects() {
     return [
       {

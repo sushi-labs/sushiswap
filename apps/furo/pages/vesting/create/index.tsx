@@ -1,7 +1,8 @@
 import { Breadcrumb, BreadcrumbLink, Button, Typography } from '@sushiswap/ui'
-import { Layout } from 'components'
 import Link from 'next/link'
 import { NextSeo } from 'next-seo'
+
+import { Layout } from '../../../components'
 
 const LINKS: BreadcrumbLink[] = [
   {

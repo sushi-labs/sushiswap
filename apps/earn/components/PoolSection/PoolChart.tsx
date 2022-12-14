@@ -5,7 +5,6 @@ import { format } from 'date-fns'
 import ReactECharts from 'echarts-for-react'
 import { EChartsOption } from 'echarts-for-react/lib/types'
 import { FC, useCallback, useMemo, useState } from 'react'
-
 import resolveConfig from 'tailwindcss/resolveConfig'
 
 import tailwindConfig from '../../tailwind.config.js'
@@ -94,8 +93,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
         trigger: 'axis',
         extraCssText: 'z-index: 1000',
         responsive: true,
+        // @ts-ignore
         backgroundColor: tailwind.theme.colors.slate['700'],
         textStyle: {
+          // @ts-ignore
           color: tailwind.theme.colors.slate['50'],
           fontSize: 12,
           fontWeight: 600,
@@ -131,6 +132,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       },
       visualMap: {
         show: false,
+        // @ts-ignore
         color: [tailwind.theme.colors.blue['500']],
       },
       xAxis: [
@@ -164,6 +166,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             },
           },
           areaStyle: {
+            // @ts-ignore
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',

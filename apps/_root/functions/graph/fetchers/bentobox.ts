@@ -1,4 +1,4 @@
-import { BentoBoxChainId, BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { BENTOBOX_SUBGRAPH_NAME, BentoBoxChainId, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
 import { pager } from '../pager'
 import { bentoTokensQuery } from '../queries/bentobox'

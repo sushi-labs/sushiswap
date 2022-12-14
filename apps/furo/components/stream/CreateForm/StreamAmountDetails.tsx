@@ -3,14 +3,14 @@ import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Form, Select } from '@sushiswap/ui'
 import { TokenSelector, useBalance } from '@sushiswap/wagmi'
-import { CurrencyInput } from 'components'
-import { useTokens } from 'lib/state/token-lists'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { useCustomTokens } from '../../../lib/state/storage'
+import { useTokens } from '../../../lib/state/token-lists'
 import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
+import { CurrencyInputBase } from '../../CurrencyInput'
 import { FormErrors } from './CreateForm'
 import { FundSourceOption } from './FundSourceOption'
 import { CreateStreamFormSchemaType } from './schema'
@@ -148,7 +148,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>
-                <CurrencyInput.Base
+                <CurrencyInputBase
                   onBlur={onBlur}
                   name={name}
                   className="ring-offset-slate-900"

@@ -82,4 +82,5 @@ playwright-report
 # Sentry
 .sentryclirc
 
+test-results/
 results/

@@ -2,6 +2,7 @@ import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import {
   computeConstantProductPoolAddress,
   computeStablePoolAddress,
@@ -15,7 +16,6 @@ import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
-  BENTOBOX_ADDRESS,
   getTridentRouterContractConfig,
   PoolFinderType,
   useBentoBoxTotals,

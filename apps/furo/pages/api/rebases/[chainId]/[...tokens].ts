@@ -1,8 +1,8 @@
 import { isAddress } from '@ethersproject/address'
-import { getRebases } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import type { Rebase as RebaseDTO } from '.graphclient'
+import type { Rebase as RebaseDTO } from '../../../../.graphclient'
+import { getRebases } from '../../../../lib'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, tokens } = req.query

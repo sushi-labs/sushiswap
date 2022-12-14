@@ -1,10 +1,12 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { GenericTable, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { GenericTable } from '@sushiswap/ui'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { FuroStatus, Stream, Vesting } from 'lib'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
 
+import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '../../../.graphclient'
+import { FuroStatus, Stream, Vesting } from '../../../lib'
 import {
   AMOUNT_COLUMN,
   FROM_COLUMN,
@@ -13,7 +15,6 @@ import {
   STREAMED_COLUMN,
   TYPE_COLUMN,
 } from '../constants'
-import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
 
 export enum FuroTableType {
   INCOMING,

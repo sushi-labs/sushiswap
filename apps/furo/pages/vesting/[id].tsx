@@ -1,5 +1,13 @@
 import { Breadcrumb, BreadcrumbLink, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { getFuroVestingContractConfig, useWalletState } from '@sushiswap/wagmi'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
+import { NextSeo } from 'next-seo'
+import { FC, useMemo, useState } from 'react'
+import useSWR, { SWRConfig } from 'swr'
+import { useConnect, useNetwork } from 'wagmi'
+
+import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '../../.graphclient'
 import {
   BackgroundVector,
   CancelModal,
@@ -8,19 +16,16 @@ import {
   ProgressBarCard,
   StreamDetailsPopover,
   TransferModal,
-} from 'components'
-import { createScheduleRepresentation, NextPaymentTimer, SchedulePopover, WithdrawModal } from 'components/vesting'
-import { getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/router'
-import { NextSeo } from 'next-seo'
-import { FC, useMemo, useState } from 'react'
-import useSWR, { SWRConfig } from 'swr'
-import { useConnect, useNetwork } from 'wagmi'
-
+} from '../../components'
+import {
+  createScheduleRepresentation,
+  NextPaymentTimer,
+  SchedulePopover,
+  WithdrawModal,
+} from '../../components/vesting'
 import VestingChart2 from '../../components/vesting/VestingChart2'
+import { getRebase, getVesting, getVestingTransactions, Vesting } from '../../lib'
 import { ChartHover } from '../../types'
-import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '.graphclient'
 
 interface Props {
   fallback?: {

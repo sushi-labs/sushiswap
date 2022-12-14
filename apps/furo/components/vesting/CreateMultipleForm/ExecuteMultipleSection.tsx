@@ -1,11 +1,14 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
+import { TransactionRequest } from '@ethersproject/providers'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotals, useFuroVestingRouterContract } from '@sushiswap/wagmi'
+import { Approve, useBentoBoxTotals, useFuroVestingRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
+import { Address } from '@wagmi/core'
 import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -16,7 +19,6 @@ import { useNotifications } from '../../../lib/state/storage'
 import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingFormSchemaType } from './schema'
-import { TransactionRequest } from '@ethersproject/providers'
 
 export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }> = ({ chainId, isReview }) => {
   const { address } = useAccount()
@@ -160,14 +162,14 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
         <Approve.Components>
           <Approve.Bentobox
             id="furo-create-multiple-vest-approve-bentobox"
-            enabled={true}
-            address={contract?.address}
+            enabled={!!contract}
+            address={contract ? (contract.address as Address) : undefined}
             onSignature={setSignature}
           />
           {Object.values(summedAmounts).map((amount, index) => (
             <Approve.Token
               id={`furo-create-multiple-vest-approve-token${index}`}
-              enabled={true}
+              enabled={!!amount}
               key={index}
               amount={amount}
               address={BENTOBOX_ADDRESS[chainId]}

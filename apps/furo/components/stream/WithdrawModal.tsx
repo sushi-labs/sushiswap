@@ -5,15 +5,14 @@ import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Checker, useFuroStreamContract, Web3Input } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { CurrencyInput } from 'components/CurrencyInput'
-import { Stream } from 'lib'
-import { useStreamBalance } from 'lib/hooks'
+import { Checker, useFuroStreamContract, useSendTransaction, Web3Input } from '@sushiswap/wagmi'
 import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
+import { CurrencyInput, CurrencyInputBase } from '../../components'
+import { Stream } from '../../lib'
+import { useStreamBalance } from '../../lib'
 import { useNotifications } from '../../lib/state/storage'
 
 interface WithdrawModalProps {
@@ -86,7 +85,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
     onSuccess() {
       setOpen(false)
     },
-    enabled: Boolean(stream && amount && chainId && contract),
+    enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
   })
 
   return (
@@ -110,7 +109,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         <Dialog.Content className="space-y-4 !max-w-xs !pb-3">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="flex flex-col gap-2">
-            <CurrencyInput.Base
+            <CurrencyInputBase
               inputClassName="pb-2"
               className="ring-offset-slate-800"
               currency={stream?.token}

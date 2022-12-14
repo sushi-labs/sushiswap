@@ -4,15 +4,15 @@ import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Typography } from '@sushiswap/ui'
 import { Account, Wallet } from '@sushiswap/wagmi'
-import { BackgroundVector, Layout } from 'components'
-import { SUPPORTED_CHAINS } from 'config'
-import { FuroStatus, FuroType, Stream } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
+import { BackgroundVector, Layout } from '../components'
 import { BalanceChart } from '../components/stream'
+import { SUPPORTED_CHAINS } from '../config'
+import { FuroStatus, FuroType, Stream } from '../lib'
 import { ChartHover } from '../types'
 
 const now = new Date().getTime()

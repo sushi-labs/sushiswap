@@ -8,8 +8,8 @@ const eslintConfig = {
     es6: true,
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'simple-import-sort', 'unused-imports'],
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  plugins: ['@typescript-eslint', 'testing-library', 'simple-import-sort', 'unused-imports'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'next', 'prettier', 'turbo'],
   ignorePatterns: [
     '**/__tests__/*.test.ts',
     '**/dist/**',
@@ -20,19 +20,32 @@ const eslintConfig = {
     '**/typechain/**',
     '**/coverage/**',
     '**/exports/**',
+    '**/playwright-report/**',
   ],
   rules: {
     'simple-import-sort/exports': 'warn',
     'simple-import-sort/imports': 'warn',
     'unused-imports/no-unused-imports': 'warn',
-    'unused-imports/no-unused-vars': 'off',
-    'no-unused-vars': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-vars': 'warn',
+    'no-unused-vars': 'warn',
+    'testing-library/prefer-screen-queries': 'warn',
+    'turbo/no-undeclared-env-vars': 'warn',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'warn',
     '@typescript-eslint/ban-ts-comment': 'warn',
-    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-empty-function': 'warn',
   },
+  overrides: [
+    // Only uses Testing Library lint rules in test files
+    {
+      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+      extends: ['plugin:testing-library/react'],
+      rules: {
+        'testing-library/prefer-screen-queries': 'warn',
+      },
+    },
+  ],
 }
 
 module.exports = eslintConfig
