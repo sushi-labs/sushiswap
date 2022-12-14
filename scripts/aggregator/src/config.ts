@@ -14,6 +14,7 @@ export enum ProtocolName {
   QUICKSWAP = 'QuickSwap',
   SWAPFISH = 'SwapFish',
   TRADERJOE = 'TraderJoe',
+  SPOOKYSWAP = 'SpookySwap',
 }
 
 export enum PoolType {
@@ -149,3 +150,10 @@ export const TRADERJOE_V2_SUPPORTED_CHAINS = [ChainId.AVALANCHE]
 export const TRADERJOE_V2_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.AVALANCHE]: 'traderjoe-xyz/exchange',
 }
+
+// SPOOKYSWAP
+export const SPOOKYSWAP_V2_SUPPORTED_CHAINS = [ChainId.FANTOM]
+export const SPOOKYSWAP_V2_SUBGRAPH_NAME: Record<number | string, string> = {
+  [ChainId.FANTOM]: 'int3grtor/spooky-exchange',
+}
+
