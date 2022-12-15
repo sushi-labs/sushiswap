@@ -60,7 +60,7 @@ export const Hero: FC = () => {
                 delay: 0.7,
               }}
             >
-              <Widget id="test" maxWidth={400} className="pointer-events-none relative">
+              <Widget id="test" maxWidth={400} className="relative">
                 <motion.div
                   initial={{ opacity: 0.08 }}
                   animate={{ opacity: 0 }}
@@ -87,7 +87,7 @@ export const Hero: FC = () => {
                     </div>
                   </motion.div>
                   <CurrencyInput
-                    className="p-3"
+                    className="p-3  "
                     value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
                     onChange={() => {}}
                     onSelect={() => {}}
@@ -99,7 +99,7 @@ export const Hero: FC = () => {
                   <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
                     <button
                       type="button"
-                      className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full hover:ring-2 hover:ring-slate-500 cursor-pointer"
+                      className=" group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full hover:ring-2 hover:ring-slate-500 cursor-pointer"
                     >
                       <div className="transition-all rotate-0 group-hover:rotate-180 group-hover:delay-200">
                         <ChevronDownIcon width={16} height={16} />
@@ -108,7 +108,7 @@ export const Hero: FC = () => {
                   </div>
                   <div className="bg-slate-800">
                     <CurrencyInput
-                      className="p-3"
+                      className=" p-3"
                       value={valueIndex >= 0 ? VALUES[valueIndex].value1 : ''}
                       onChange={() => {}}
                       onSelect={() => {}}
@@ -126,8 +126,8 @@ export const Hero: FC = () => {
                           delay: 3,
                         }}
                       >
-                        <Button size="md" fullWidth disabled={valueIndex === -1}>
-                          Swap
+                        <Button as="a" href="https://sushi.com/swap" size="md" fullWidth className="relative z-10">
+                          Trade Now
                         </Button>
                       </motion.div>
                     </div>

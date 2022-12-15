@@ -1,12 +1,14 @@
 import { isAddress } from '@ethersproject/address'
 import { Signature } from '@ethersproject/bytes'
 import { TransactionRequest } from '@ethersproject/providers'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Dots, Typography } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotal, useFuroVestingRouterContract } from '@sushiswap/wagmi'
+import { Approve, useBentoBoxTotal, useFuroVestingRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { Dispatch, FC, Fragment, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { Address } from '@wagmi/core'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -218,7 +220,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
                   id="furo-create-single-vest-approve-bentobox"
                   fullWidth
                   enabled={isValid && !isValidating}
-                  address={contract?.address}
+                  address={contract ? (contract.address as Address) : undefined}
                   onSignature={setSignature}
                 />
                 <Approve.Token

@@ -1,5 +1,6 @@
-import { useMediaQuery } from '@sushiswap/hooks' // Your tailwind config
 import defaultTheme from 'tailwindcss/defaultTheme'
+
+import { useMediaQuery } from './useMediaQuery' // Your tailwind config
 
 export function useBreakpoint<K extends keyof typeof defaultTheme.screens>(breakpointKey: K) {
   const bool = useMediaQuery({

@@ -1,5 +1,6 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
-import { classNames, IconButton, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { classNames, IconButton } from '@sushiswap/ui'
 import { getTrendingSearch } from 'lib/api'
 import { ChangeEvent, FormEvent, forwardRef, MutableRefObject, useLayoutEffect, useState } from 'react'
 import useSWR from 'swr'

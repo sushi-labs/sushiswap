@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { chainShortName } from '@sushiswap/chain'
 
 import { getBuiltGraphSDK, Pair, Query, QueryResolvers, UserWithFarm } from '../../.graphclient'

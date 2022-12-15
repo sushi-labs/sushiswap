@@ -1,8 +1,8 @@
 import { Dialog as HeadlessDialog, Transition } from '@headlessui/react'
+import { useBreakpoint } from '@sushiswap/hooks'
 import React, { FC, Fragment, FunctionComponent, useEffect } from 'react'
 
 import { ExtractProps } from '../types'
-import { useBreakpoint } from '../useBreakpoint'
 import DialogActions, { DialogActionProps } from './DialogActions'
 import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
@@ -54,8 +54,8 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
           <div className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu" />
         </Transition.Child>
 
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end sm:items-center justify-center min-h-full text-center">
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-full text-center sm:items-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

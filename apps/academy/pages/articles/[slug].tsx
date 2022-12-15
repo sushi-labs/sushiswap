@@ -1,4 +1,5 @@
-import { classNames, Container, LoadingOverlay, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { classNames, Container, LoadingOverlay } from '@sushiswap/ui'
 import { APP_HEADER_HEIGHT, DEFAULT_SIDE_PADDING } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'

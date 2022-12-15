@@ -1,11 +1,11 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import {
-  getBentoBoxContractConfig,
   getFuroStreamContractConfig,
   useBentoBoxContract,
   useFuroStreamContract,
 } from '@sushiswap/wagmi'
+import { getBentoBoxContractConfig} from '@sushiswap/wagmi-config'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'

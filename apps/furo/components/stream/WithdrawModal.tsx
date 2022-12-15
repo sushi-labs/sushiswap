@@ -10,9 +10,9 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 're
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { CurrencyInput } from '../../components'
+import { BottomPanel, CurrencyInputBase } from '../../components'
 import { Stream } from '../../lib'
-import { useStreamBalance } from '../../lib/hooks'
+import { useStreamBalance } from '../../lib'
 import { useNotifications } from '../../lib/state/storage'
 
 interface WithdrawModalProps {
@@ -85,7 +85,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
     onSuccess() {
       setOpen(false)
     },
-    enabled: Boolean(stream && amount && chainId && contract),
+    enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
   })
 
   return (
@@ -109,14 +109,14 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         <Dialog.Content className="space-y-4 !max-w-xs !pb-3">
           <Dialog.Header title="Withdraw" onClose={() => setOpen(false)} />
           <div className="flex flex-col gap-2">
-            <CurrencyInput.Base
+            <CurrencyInputBase
               inputClassName="pb-2"
               className="ring-offset-slate-800"
               currency={stream?.token}
               onChange={setInput}
               value={input}
               error={amount && stream?.balance && amount.greaterThan(stream.balance)}
-              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
+              bottomPanel={<BottomPanel loading={false} label="Available" amount={balance} />}
             />
           </div>
           <div className="flex flex-col">

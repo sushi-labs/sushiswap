@@ -43,13 +43,13 @@
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@wagmi/core": "0.8.2",
+    "@wagmi/core": "0.8.1",
     "express": "^4.18.1"
   },
   "devDependencies": {
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
-    "@graphprotocol/client-cli": "2.2.15",
+    "@graphprotocol/client-cli": "2.2.16",
     "@graphql-mesh/transform-filter-schema": "latest",
     "@graphql-mesh/transform-prefix": "latest",
     "@graphql-mesh/transform-prune": "latest",

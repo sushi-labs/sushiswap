@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_ENABLED_NETWORKS,

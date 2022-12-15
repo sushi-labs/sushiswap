@@ -1,25 +1,24 @@
 import { bentoBoxV1Abi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { BENTOBOX_ADDRESS, BentoBoxChainId} from '@sushiswap/address';
-import { Address, erc20ABI, readContracts } from '@wagmi/core'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
+import { Address, readContracts } from '@wagmi/core'
 
-export async function fetchTotals(
-  args: { token: Address; user: Address; chainId: BentoBoxChainId }[]
-) {
-  return readContracts({
+export async function fetchTotals(args: { token: Address; user: Address; chainId: number }[]) {
+  const contracts = args.map(({ token, chainId }) => ({
+    chainId,
+    address: BENTOBOX_ADDRESS[chainId] as Address,
+    functionName: 'totals' as const,
+    args: [token as Address] as const,
+    abi: bentoBoxV1Abi,
+  }))
+
+  const totals = await readContracts({
     allowFailure: true,
-    contracts: args.map(
-      ({ token, user, chainId }) =>
-        ({
-          address: BENTOBOX_ADDRESS[chainId],
-          functionName: 'totals',
-          args: [user],
-          chainId,
-          abi: bentoBoxV1Abi,
-        } as const)
-    ),
-  }).then((values) => Object.fromEntries(
-    values.filter((balance) => !!balance && balance[0].gt(0) && balance[1].gt(0))
-      .map((balance, i) => [`${args[i].chainId}:${args[i].token}`, balance])
-  ) 
+    contracts,
+  })
+
+  return Object.fromEntries(
+    totals
+      .filter((value) => !!value && value[0].gt(0) && value[1].gt(0))
+      .map((value, i) => [`${args[i].chainId}:${args[i].token}`, value])
+  )
 }

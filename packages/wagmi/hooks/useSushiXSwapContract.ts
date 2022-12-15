@@ -1,6 +1,5 @@
-import sushiXSwapExports from '@sushiswap/sushixswap/exports.json'
 import { sushiXSwapAbi } from '@sushiswap/abi'
-import { SushiXSwap } from '@sushiswap/sushixswap/typechain'
+import sushiXSwapExports from '@sushiswap/sushixswap/exports.json'
 import { Address, useContract, useProvider, useSigner } from 'wagmi'
 
 export type SushiXSwapChainId = keyof Omit<typeof sushiXSwapExports, '31337'>

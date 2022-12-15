@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { chainName, chainShortName } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,

@@ -9,6 +9,7 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "source": "./index.ts",
   "types": "./dist/index.d.ts",
   "files": [
