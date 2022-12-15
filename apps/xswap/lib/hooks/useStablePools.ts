@@ -49,7 +49,9 @@ export function useStablePools(
 
   const tokensUnique = useMemo(
     () =>
-      Array.from(new Set(pairsUnique.reduce((previousValue, currentValue) => [...previousValue, ...currentValue], []))),
+      Array.from(
+        new Set(pairsUnique.reduce<Token[]>((previousValue, currentValue) => [...previousValue, ...currentValue], []))
+      ),
     [pairsUnique]
   )
 

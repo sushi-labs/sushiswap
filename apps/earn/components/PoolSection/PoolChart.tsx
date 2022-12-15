@@ -69,7 +69,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
 
   // Transient update for performance
   const onMouseOver = useCallback(
-    ({ name, value }) => {
+    ({ name, value }: { name: number; value: number }) => {
       const valueNodes = document.getElementsByClassName('hoveredItemValue')
       const nameNodes = document.getElementsByClassName('hoveredItemName')
 
@@ -93,13 +93,15 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
         trigger: 'axis',
         extraCssText: 'z-index: 1000',
         responsive: true,
+        // @ts-ignore
         backgroundColor: tailwind.theme.colors.slate['700'],
         textStyle: {
+          // @ts-ignore
           color: tailwind.theme.colors.slate['50'],
           fontSize: 12,
           fontWeight: 600,
         },
-        formatter: (params) => {
+        formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
           const date = new Date(Number(params[0].name * 1000))
@@ -130,6 +132,7 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       },
       visualMap: {
         show: false,
+        // @ts-ignore
         color: [tailwind.theme.colors.blue['500']],
       },
       xAxis: [
@@ -163,10 +166,11 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             },
           },
           areaStyle: {
+            // @ts-ignore
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: function (idx) {
+          animationDelayUpdate: function (idx: number) {
             return idx * 2
           },
           data: yData,

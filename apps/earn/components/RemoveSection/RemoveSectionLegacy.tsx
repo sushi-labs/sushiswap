@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native } from '@sushiswap/currency'
 import { Pair } from '@sushiswap/graph-client'
@@ -16,7 +17,7 @@ import {
   useSushiSwapRouterContract,
   useTotalSupply,
 } from '@sushiswap/wagmi'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Address, useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
@@ -133,7 +134,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
   )
 
   const prepare = useCallback(
-    async (setRequest) => {
+    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
         if (
           !token0 ||
@@ -157,7 +158,7 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> = ({ pair }) => {
           Native.onChain(pair.chainId).wrapped.address === pool.token1.address
 
         let methodNames
-        let args
+        let args: any
 
         if (withNative) {
           const token1IsNative = Native.onChain(pair.chainId).wrapped.address === pool.token1.wrapped.address

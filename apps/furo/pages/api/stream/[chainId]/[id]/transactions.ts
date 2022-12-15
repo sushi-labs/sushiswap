@@ -1,7 +1,7 @@
-import { getStreamTransactions } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import type { Transaction as TransactionDTO } from '.graphclient'
+import type { Transaction as TransactionDTO } from '../../../../../.graphclient'
+import { getStreamTransactions } from '../../../../../lib'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, id } = req.query

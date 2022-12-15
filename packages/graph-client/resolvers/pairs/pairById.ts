@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { chainName, chainShortNameToChainId } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,
@@ -11,6 +13,7 @@ import { isPromiseFulfilled } from '@sushiswap/validate'
 import { getBuiltGraphSDK, Pair, QueryResolvers } from '../../.graphclient'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types'
+import { getFarms } from '../../lib/farms'
 import { transformPair } from '../../transformers'
 
 const sdk = getBuiltGraphSDK()
@@ -104,7 +107,8 @@ export const pairById: QueryResolvers['pairById'] = async (root, args, context, 
   if (!pair) return null
 
   // TODO: should be able to get a single farm for this case...
-  const farms = await context.FarmsV0.Query.farmsv0(root, args, context, info)
+  // const farms = await context.FarmsV0.Query.farmsv0(root, args, context, info)
+  const farms = await getFarms()
 
   return transformPair({ pair, pair1d, pair2d, pair1w, farm: farms?.[chainId]?.farms?.[address.toLowerCase()] })
 }

@@ -1,7 +1,8 @@
 import { render, RenderOptions } from '@testing-library/react'
 import { default as userEvent } from '@testing-library/user-event'
 import * as React from 'react'
-import { createClient, CreateClientConfig, defaultChains, WagmiConfig, WagmiConfigProps } from 'wagmi'
+import { createClient, CreateClientConfig, WagmiConfig, WagmiConfigProps } from 'wagmi'
+import { arbitrum, mainnet, optimism,polygon } from 'wagmi/chains'
 import { MockConnector } from 'wagmi/connectors/mock'
 
 import { getProvider, getSigners, WalletSigner } from './utils'
@@ -10,7 +11,7 @@ type SetupClient = Partial<CreateClientConfig> & { signer?: WalletSigner }
 export function setupClient({ signer = getSigners()[0], ...config }: SetupClient = {}) {
   return createClient({
     connectors: [new MockConnector({ options: { signer } })],
-    provider: ({ chainId }) => getProvider({ chainId, chains: defaultChains }),
+    provider: ({ chainId }) => getProvider({ chainId, chains: [mainnet, polygon, arbitrum, optimism] }),
     ...config,
   })
 }

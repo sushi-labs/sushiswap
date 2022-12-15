@@ -4,8 +4,9 @@ import { shortenAddress } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
 import { Button, NotepadIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { FuroStatus, Stream, Vesting } from 'lib'
 import { FC, useState } from 'react'
+
+import { FuroStatus, Stream, Vesting } from '../lib'
 
 interface StreamTimerState {
   days: string

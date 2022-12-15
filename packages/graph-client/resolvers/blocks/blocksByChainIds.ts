@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 
@@ -12,7 +13,10 @@ export const _blocksByChainIds = async (
 ): Promise<Query['blocksByChainIds']> => {
   return Promise.all<Query['blocksByChainIds'][]>(
     args.chainIds
-      .filter((chainId) => chainId in BLOCKS_SUBGRAPH_NAME)
+      .filter(
+        (chainId): chainId is keyof typeof BLOCKS_SUBGRAPH_NAME & keyof typeof SUBGRAPH_HOST =>
+          chainId in BLOCKS_SUBGRAPH_NAME
+      )
       .map((chainId) => {
         return context.Blocks.Query.blocks({
           root,

@@ -1,5 +1,13 @@
 import { Breadcrumb, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { getFuroStreamContractConfig } from '@sushiswap/wagmi'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
+import { NextSeo } from 'next-seo'
+import { FC, useMemo, useState } from 'react'
+import useSWR, { SWRConfig } from 'swr'
+import { useNetwork } from 'wagmi'
+
+import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '../../.graphclient'
 import {
   BackgroundVector,
   CancelModal,
@@ -10,18 +18,10 @@ import {
   StreamDetailsPopover,
   TransferModal,
   UpdateModal,
-} from 'components'
-import { BalanceChart, WithdrawModal } from 'components/stream'
-import { getRebase, getStream, getStreamTransactions, Stream } from 'lib'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/router'
-import { NextSeo } from 'next-seo'
-import { FC, useMemo, useState } from 'react'
-import useSWR, { SWRConfig } from 'swr'
-import { useNetwork } from 'wagmi'
-
+} from '../../components'
+import { BalanceChart, WithdrawModal } from '../../components/stream'
+import { getRebase, getStream, getStreamTransactions, Stream } from '../../lib'
 import { ChartHover } from '../../types'
-import type { Rebase as RebaseDTO, Stream as StreamDTO, Transaction as TransactionDTO } from '.graphclient'
 
 interface Props {
   fallback?: {

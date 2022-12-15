@@ -1,8 +1,9 @@
 import { ChevronDownIcon, SearchIcon, StarIcon } from '@heroicons/react/solid'
-import chains, { ChainId } from '@sushiswap/chain'
+import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
 import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Skeleton, Typography } from '@sushiswap/ui'
+import type { TokenList } from '@uniswap/token-lists'
 import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useToken } from 'wagmi'
@@ -59,7 +60,7 @@ export const Search: FC = () => {
     enabled: isAddress(query),
   })
 
-  const { data: tokenList } = useQuery(
+  const { data: tokenList } = useQuery<TokenList>(
     ['https://token-list.sushi.com'],
     () => fetch(`https://token-list.sushi.com`).then((response) => response.json()),
     {
@@ -76,7 +77,7 @@ export const Search: FC = () => {
   const skeleton = useMemo(() => {
     return (
       <div className="flex flex-col gap-2">
-        <div className="px-4 py-2 flex items-center gap-2 hover:bg-neutral-700">
+        <div className="flex items-center gap-2 px-4 py-2 hover:bg-neutral-700">
           <div className="w-[36px] h-[36px]">
             <Skeleton.Circle radius={36} className="bg-neutral-600" />
           </div>
@@ -98,9 +99,9 @@ export const Search: FC = () => {
   }, [selectNetwork])
   return (
     <div className="relative flex flex-col gap-3">
-      <div className="absolute w-full flex gap-4 z-10">
-        <div ref={ref} onFocus={() => setOpen(true)} className="w-full relative bg-neutral-800 rounded-xl">
-          <div className="pl-4 pr-3 flex gap-2 items-center h-14">
+      <div className="absolute z-10 flex w-full gap-4">
+        <div ref={ref} onFocus={() => setOpen(true)} className="relative w-full bg-neutral-800 rounded-xl">
+          <div className="flex items-center gap-2 pl-4 pr-3 h-14">
             <div
               className={classNames(
                 selectNetwork ? 'opacity-40 pointer-events-none' : '',
@@ -124,9 +125,9 @@ export const Search: FC = () => {
               as="button"
               weight={600}
               variant="sm"
-              className="flex items-center gap-1 bg-neutral-700 hover:bg-neutral-600 pl-3 pr-2 py-2 rounded-lg text-neutral-300 hover:text-neutral-200 cursor-pointer"
+              className="flex items-center gap-1 py-2 pl-3 pr-2 rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 text-neutral-300 hover:text-neutral-200"
             >
-              {chains[chainId].shortName.toUpperCase()} <ChevronDownIcon width={16} height={16} />
+              {chainShortName[chainId].toUpperCase()} <ChevronDownIcon width={16} height={16} />
             </Typography>
           </div>
           <div
@@ -220,7 +221,7 @@ const Row: FC<{ currency: Type; onClick?(): void; isNetwork?: boolean }> = ({
 }) => {
   const content = (
     <div
-      className="cursor-pointer px-4 py-2 flex items-center gap-2 hover:bg-neutral-700"
+      className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-neutral-700"
       key={currency.wrapped.address}
     >
       <div className="w-[36px] h-[36px]">

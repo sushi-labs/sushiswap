@@ -1,5 +1,13 @@
 import { Breadcrumb, BreadcrumbLink, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { getFuroVestingContractConfig, useWalletState } from '@sushiswap/wagmi'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
+import { NextSeo } from 'next-seo'
+import { FC, useMemo, useState } from 'react'
+import useSWR, { SWRConfig } from 'swr'
+import { useConnect, useNetwork } from 'wagmi'
+
+import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '../../.graphclient'
 import {
   BackgroundVector,
   CancelModal,
@@ -8,19 +16,16 @@ import {
   ProgressBarCard,
   StreamDetailsPopover,
   TransferModal,
-} from 'components'
-import { createScheduleRepresentation, NextPaymentTimer, SchedulePopover, WithdrawModal } from 'components/vesting'
-import { getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/router'
-import { NextSeo } from 'next-seo'
-import { FC, useMemo, useState } from 'react'
-import useSWR, { SWRConfig } from 'swr'
-import { useConnect, useNetwork } from 'wagmi'
-
+} from '../../components'
+import {
+  createScheduleRepresentation,
+  NextPaymentTimer,
+  SchedulePopover,
+  WithdrawModal,
+} from '../../components/vesting'
 import VestingChart2 from '../../components/vesting/VestingChart2'
+import { getRebase, getVesting, getVestingTransactions, Vesting } from '../../lib'
 import { ChartHover } from '../../types'
-import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '.graphclient'
 
 interface Props {
   fallback?: {
@@ -29,11 +34,17 @@ interface Props {
   }
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
-  const vesting = (await getVesting(chainId as string, id as string)) as VestingDTO
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (!query?.chainId) throw new Error('No chainId provided')
+  if (!query?.id) throw new Error('No id provided')
+
+  const chainId = query.chainId as string
+  const id = query.id as string
+
+  const vesting = (await getVesting(chainId, id)) as VestingDTO
   const [transactions, rebases] = await Promise.all([
-    getVestingTransactions(chainId as string, id as string),
-    getRebase(chainId as string, vesting.token.id),
+    getVestingTransactions(chainId, id),
+    getRebase(chainId, vesting.token.id),
   ])
   return {
     props: {

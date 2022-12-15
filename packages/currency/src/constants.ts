@@ -411,7 +411,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.BTTC]: '0x23181F21DEa5936e24163FFABa4Ea3B316B57f3C',
 } as const
 
-export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
+export const WNATIVE = {
   [ChainId.ETHEREUM]: WETH9[ChainId.ETHEREUM],
   [ChainId.ROPSTEN]: WETH9[ChainId.ROPSTEN],
   [ChainId.RINKEBY]: WETH9[ChainId.RINKEBY],
@@ -597,7 +597,7 @@ export const WNATIVE: Record<keyof typeof WNATIVE_ADDRESS, Token> = {
     symbol: 'WBTT',
     name: 'Wrapped BitTorrent Token',
   }),
-}
+} as const
 
 export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.ETHEREUM]: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',

@@ -1,10 +1,12 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { GenericTable, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { GenericTable } from '@sushiswap/ui'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { FuroStatus, Stream, Vesting } from 'lib'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
 
+import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '../../../.graphclient'
+import { FuroStatus, Stream, Vesting } from '../../../lib'
 import {
   AMOUNT_COLUMN,
   FROM_COLUMN,
@@ -13,7 +15,6 @@ import {
   STREAMED_COLUMN,
   TYPE_COLUMN,
 } from '../constants'
-import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '.graphclient'
 
 export enum FuroTableType {
   INCOMING,
@@ -46,7 +47,6 @@ export const StreamTable: FC<FuroTableProps> = ({
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const [columns] = useState([
     STREAMED_COLUMN,
@@ -70,7 +70,7 @@ export const StreamTable: FC<FuroTableProps> = ({
               furo: stream,
               rebase: rebases.find((rebase) =>
                 stream.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
+                  ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
                   : rebase.id === stream.token.id
               ) as RebaseDTO,
             })
@@ -84,7 +84,7 @@ export const StreamTable: FC<FuroTableProps> = ({
               furo: vesting,
               rebase: rebases.find((rebase) =>
                 vesting.token.id === AddressZero
-                  ? WNATIVE_ADDRESS[chainId].toLowerCase() === rebase.id
+                  ? WNATIVE_ADDRESS[Number(chainId) as keyof typeof WNATIVE_ADDRESS].toLowerCase() === rebase.id
                   : rebase.id === vesting.token.id
               ) as RebaseDTO,
             })

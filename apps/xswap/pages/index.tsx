@@ -2,17 +2,23 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { TradeType } from '@sushiswap/amm'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
+import {
+  isStargateBridgeToken,
+  STARGATE_BRIDGE_TOKENS,
+  STARGATE_CONFIRMATION_SECONDS,
+  StargateChainId,
+} from '@sushiswap/stargate'
+import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { App, Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import {
   Approve,
-  BENTOBOX_ADDRESS,
   getSushiXSwapContractConfig,
   useBalance,
   useBentoBoxTotal,
@@ -122,8 +128,8 @@ export default function Swap({
       <Widget
         theme={theme}
         initialState={{
-          srcChainId: Number(srcChainId),
-          dstChainId: Number(dstChainId),
+          srcChainId: Number(srcChainId) as StargateChainId,
+          dstChainId: Number(dstChainId) as StargateChainId,
           srcToken: srcToken in srcTokens ? srcTokens[srcToken] : Native.onChain(srcChainId),
           dstToken: dstToken in dstTokens ? dstTokens[dstToken] : Native.onChain(dstChainId),
           srcTypedAmount,
@@ -140,8 +146,8 @@ interface Swap {
   maxWidth?: number | string
   theme?: Theme
   initialState: {
-    srcChainId: number
-    dstChainId: number
+    srcChainId: StargateChainId
+    dstChainId: StargateChainId
     srcTypedAmount: string
     srcToken: Currency
     dstToken: Currency
@@ -177,8 +183,8 @@ const Widget: FC<Swap> = ({
     [slippageTolerance]
   )
 
-  const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
-  const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
+  const [srcChainId, setSrcChainId] = useState<StargateChainId>(initialState.srcChainId)
+  const [dstChainId, setDstChainId] = useState<StargateChainId>(initialState.dstChainId)
   const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
   const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
   const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
@@ -472,7 +478,7 @@ const Widget: FC<Swap> = ({
     setIsWritePending(true)
 
     const sushiXSwap = new SushiXSwap({
-      contract,
+      contract: contract as SushiXSwapContract,
       srcToken,
       dstToken,
       srcTrade,
@@ -671,7 +677,7 @@ const Widget: FC<Swap> = ({
       const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
 
       const sushiXSwap = new SushiXSwap({
-        contract: contractWithProvider,
+        contract: contractWithProvider as SushiXSwapContract,
         srcToken,
         dstToken,
         srcTrade,
@@ -829,12 +835,12 @@ const Widget: FC<Swap> = ({
     bridgeFee,
   ])
 
-  const onSrcNetworkSelect = useCallback((chainId: number) => {
+  const onSrcNetworkSelect = useCallback((chainId: StargateChainId) => {
     setSrcChainId(chainId)
     setSrcToken(Native.onChain(chainId))
   }, [])
 
-  const onDstNetworkSelect = useCallback((chainId: number) => {
+  const onDstNetworkSelect = useCallback((chainId: StargateChainId) => {
     setDstChainId(chainId)
     setDstToken(Native.onChain(chainId))
   }, [])

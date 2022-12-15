@@ -22,7 +22,7 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
   }, [input0, input1, token0, token1])
 
   const onChangeToken0TypedAmount = useCallback(
-    (value) => {
+    (value: string) => {
       if (poolState === PairState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
@@ -40,7 +40,7 @@ export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
   )
 
   const onChangeToken1TypedAmount = useCallback(
-    (value) => {
+    (value: string) => {
       if (poolState === PairState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,

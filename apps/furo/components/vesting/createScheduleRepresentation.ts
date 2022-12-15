@@ -1,5 +1,6 @@
 import { Amount, Currency } from '@sushiswap/currency'
-import { PeriodType } from 'lib'
+
+import { PeriodType } from '../../lib'
 
 export type Schedule = Period[]
 export type Period = {

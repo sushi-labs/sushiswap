@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Select } from '@sushiswap/ui'
 import { DatePicker } from '@sushiswap/ui/input/DatePicker'
@@ -25,7 +26,7 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
   }, [])
 
   const onSelect = useCallback(
-    (onChange, currency) => {
+    (onChange: (...event: any[]) => void, currency: Type) => {
       if (currency.isNative) {
         const { chainId, decimals, symbol, name, isNative } = currency
         onChange({ chainId, decimals, address: undefined, symbol, name, isNative })

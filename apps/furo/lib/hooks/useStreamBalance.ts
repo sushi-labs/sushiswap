@@ -1,16 +1,17 @@
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 import {
-  getBentoBoxContractConfig,
   getFuroStreamContractConfig,
   useBentoBoxContract,
   useFuroStreamContract,
 } from '@sushiswap/wagmi'
+import { getBentoBoxContractConfig} from '@sushiswap/wagmi-config'
 import { ListenerOptions } from '@uniswap/redux-multicall/dist/types'
-import { useSingleContractMultipleData } from 'lib/state/multicall'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, useBlockNumber, useContractRead } from 'wagmi'
 
+import { useSingleContractMultipleData } from '../../lib/state/multicall'
 import { ErrorState, LoadingState, SuccessState } from './types'
 export function useStreamBalance(chainId?: number, streamId?: string, token?: Token): Amount<Token> | undefined {
   const {
@@ -22,7 +23,7 @@ export function useStreamBalance(chainId?: number, streamId?: string, token?: To
     functionName: 'streamBalanceOf',
     chainId,
     enabled: !!chainId && !!streamId,
-    args: [streamId],
+    args: streamId ? [BigNumber.from(streamId)] : undefined,
     watch: true,
   })
 

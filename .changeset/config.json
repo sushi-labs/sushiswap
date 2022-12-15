@@ -22,6 +22,7 @@
       "node-16-example",
       "farm-api",
       "path-finder-api",
+      "@sushiswap/tokens-api",
       "token-list-api",
       "token-logo-api",
       "token-price-api",
@@ -35,6 +36,7 @@
       "@sushiswap/wagmi",
       "@sushiswap/furo",
       "@sushiswap/kashi",
-      "router"
+      "@sushiswap/database",
+      "@sushiswap/route-processor"
     ]
   }

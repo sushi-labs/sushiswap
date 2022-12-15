@@ -9,7 +9,7 @@ import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
-import { getBentoBoxContractConfig } from '../useBentoBoxContract'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { BalanceMap } from './types'
 
 type UseBalancesParams = {

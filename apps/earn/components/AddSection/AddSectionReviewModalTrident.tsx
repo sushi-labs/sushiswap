@@ -1,6 +1,8 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
+import { TransactionRequest } from '@ethersproject/providers'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { calculateSlippageAmount, ConstantProductPool, StablePool } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
@@ -8,7 +10,6 @@ import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
-  BENTOBOX_ADDRESS,
   ConstantProductPoolState,
   getTridentRouterContractConfig,
   StablePoolState,
@@ -17,7 +18,7 @@ import {
   useTotalSupply,
   useTridentRouterContract,
 } from '@sushiswap/wagmi'
-import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
@@ -150,7 +151,7 @@ export const AddSectionReviewModalTrident: FC<AddSectionReviewModalTridentProps>
   )
 
   const prepare = useCallback(
-    async (setRequest) => {
+    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       try {
         if (
           !chain?.id ||

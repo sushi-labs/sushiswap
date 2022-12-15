@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FURO_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { GraphQLResolveInfo } from 'graphql'
@@ -13,9 +15,10 @@ export const _furoTokensByChainIds = async (
 ): Promise<Query['furoTokensByChainIds']> => {
   return Promise.allSettled<Query['furoTokensByChainIds'][]>(
     args.chainIds
-      .filter((chainId) => {
-        return chainId in FURO_SUBGRAPH_NAME
-      })
+      .filter(
+        (chainId): chainId is keyof typeof FURO_SUBGRAPH_NAME & keyof typeof SUBGRAPH_HOST =>
+          chainId in FURO_SUBGRAPH_NAME
+      )
       .map((chainId) => {
         return context.FuroStream.Query.tokens({
           root,

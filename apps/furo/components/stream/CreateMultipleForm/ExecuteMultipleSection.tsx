@@ -1,12 +1,15 @@
 import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
+import { TransactionRequest } from '@ethersproject/providers'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, Dots } from '@sushiswap/ui'
-import { Approve, BENTOBOX_ADDRESS, useBentoBoxTotals, useFuroStreamRouterContract } from '@sushiswap/wagmi'
+import { Approve, useBentoBoxTotals, useFuroStreamRouterContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import { Address } from '@wagmi/core'
+import React, { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -79,7 +82,7 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
   )
 
   const prepare = useCallback(
-    (setRequest) => {
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
       if (!isReview || !contract || !address || !chainId || !streams || streams?.length === 0 || !rebases) return
 
       const summedValue = summedAmounts[AddressZero] || Amount.fromRawAmount(Native.onChain(chainId), '0')
@@ -146,9 +149,20 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
       className="!items-end"
       components={
         <Approve.Components>
-          <Approve.Bentobox id="furo-create-multiple-stream-approve-bentobox" enabled={true} address={contract?.address} onSignature={setSignature} />
+          <Approve.Bentobox
+            id="furo-create-multiple-stream-approve-bentobox"
+            enabled={!!contract}
+            address={contract ? (contract.address as Address) : undefined}
+            onSignature={setSignature}
+          />
           {Object.values(summedAmounts).map((amount, index) => (
-            <Approve.Token id={`furo-create-multiple-stream-approve-token${index}`} enabled={true} key={index} amount={amount} address={BENTOBOX_ADDRESS[chainId]} />
+            <Approve.Token
+              id={`furo-create-multiple-stream-approve-token${index}`}
+              enabled={!!amount}
+              key={index}
+              amount={amount}
+              address={BENTOBOX_ADDRESS[chainId]}
+            />
           ))}
         </Approve.Components>
       }

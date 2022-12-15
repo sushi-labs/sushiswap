@@ -1,4 +1,5 @@
 import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
+import { FundSource } from '@sushiswap/hooks'
 import {
   Button,
   classNames,
@@ -19,7 +20,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../../lib/zod'
-import { CurrencyInput } from '../../../../CurrencyInput'
+import { CurrencyInput, CurrencyInputBase, HelperTextPanel } from '../../../../CurrencyInput'
 import { stepConfigurations } from '../../../CreateForm'
 import { calculateEndDate } from '../../../utils'
 import { CreateMultipleVestingFormSchemaType } from '../../schema'
@@ -37,7 +38,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
   } = useFormContext<CreateMultipleVestingFormSchemaType>()
   const formData = watch(`vestings.${index}`)
   const { currency, fundSource, stepConfig, startDate, cliff } = formData
-  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
+  const _fundSource = ZFundSourceToFundSource.parse(fundSource) as FundSource
   const _currency = useTokenFromZToken(currency)
   const endDate = calculateEndDate(formData)
   const cliffEndDate = cliff.cliffEnabled ? cliff.cliffEndDate : undefined
@@ -193,7 +194,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         control={control}
                         name={`vestings.${index}.stepAmount`}
                         render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
-                          <CurrencyInput.Base
+                          <CurrencyInputBase
                             className="ring-offset-slate-900"
                             onChange={onChange}
                             value={value || ''}
@@ -202,7 +203,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                             name={name}
                             onBlur={onBlur}
                             helperTextPanel={
-                              <CurrencyInput.HelperTextPanel
+                              <HelperTextPanel
                                 text={
                                   error?.message ? (
                                     error.message
@@ -259,7 +260,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                   </Select.Button>
                                 }
                                 value={value}
-                                onChange={(val) => {
+                                onChange={(val: any) => {
                                   onChange(val)
                                   onBlur()
                                 }}

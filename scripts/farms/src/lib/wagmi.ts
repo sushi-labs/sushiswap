@@ -1,5 +1,5 @@
-import { otherChains } from '@sushiswap/wagmi-config'
-import { allChains, configureChains, createClient } from '@wagmi/core'
+import { allChains } from '@sushiswap/wagmi-config'
+import { configureChains, createClient } from '@wagmi/core'
 import { alchemyProvider } from '@wagmi/core/providers/alchemy'
 import { publicProvider } from '@wagmi/core/providers/public'
 
@@ -9,6 +9,4 @@ if (!alchemyId) {
   throw Error('NO ALCHEMY ID SET')
 }
 
-createClient(
-  configureChains([...allChains, ...otherChains], [publicProvider(), alchemyProvider({ apiKey: alchemyId })])
-)
+createClient(configureChains(allChains, [publicProvider(), alchemyProvider({ apiKey: alchemyId })]))

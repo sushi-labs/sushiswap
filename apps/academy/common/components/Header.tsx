@@ -33,7 +33,10 @@ export const Header: FC = () => {
   const products = useMemo(() => productsData?.data ?? [], [productsData?.data])
   const difficulties = useMemo(() => difficultiesData?.data ?? [], [difficultiesData?.data])
   const sortedProducts = products.sort((a, b) =>
-    PRODUCTS_ORDER.indexOf(a.attributes.slug) > PRODUCTS_ORDER.indexOf(b.attributes.slug) ? 1 : -1
+    PRODUCTS_ORDER.indexOf(a?.attributes?.slug as typeof PRODUCTS_ORDER[number]) >
+    PRODUCTS_ORDER.indexOf(b?.attributes?.slug as typeof PRODUCTS_ORDER[number])
+      ? 1
+      : -1
   )
 
   const navData: HeaderSection[] = useMemo(
@@ -48,18 +51,18 @@ export const Header: FC = () => {
       },
       {
         title: 'Products',
-        links: sortedProducts.map(({ attributes: { longName, slug } }) => ({
-          name: longName,
-          href: `/products/${slug}`,
+        links: sortedProducts.map(({ attributes }) => ({
+          name: attributes?.longName as string,
+          href: `/products/${attributes?.slug}`,
         })),
       },
       {
         title: 'Learn',
-        links: difficulties?.map(({ attributes: { shortDescription, slug } }) => {
-          const isTechnical = slug === 'technical'
+        links: difficulties?.map(({ attributes }) => {
+          const isTechnical = attributes?.slug === 'technical'
           return {
-            name: shortDescription,
-            href: isTechnical ? DOCS_URL : `/articles?difficulty=${slug}`,
+            name: attributes?.shortDescription as string,
+            href: isTechnical ? DOCS_URL : `/articles?difficulty=${attributes?.slug}`,
             isExternal: isTechnical,
           }
         }),
@@ -74,7 +77,7 @@ export const Header: FC = () => {
   )
 
   return (
-    <App.Header appType={AppType.Academy} maxWidth="6xl" withScrollBackground>
+    <App.Header appType={AppType.Academy} withScrollBackground maxWidth="6xl">
       <nav className="items-center hidden sm:flex gap-14">
         {navData.map(({ title, href, links, isExternal }, i, a) => {
           if (href && !links) {

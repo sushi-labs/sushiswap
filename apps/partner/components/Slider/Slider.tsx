@@ -3,16 +3,16 @@ import { classNames, Typography } from '@sushiswap/ui'
 import { FC, forwardRef, Key } from 'react'
 import ReactSlider, { ReactSliderProps } from 'react-slider'
 
-const Track: FC<React.ComponentProps<'div'>> = (props) => (
+const Track: React.ComponentProps<typeof ReactSlider>['renderTrack'] = (props) => (
   <div {...props} className={classNames(props.key === 'track-0' ? 'bg-blue/100' : 'bg-blue/30', 'h-2 rounded')} />
 )
 
-const Thumb: FC<React.ComponentProps<'div'>> = (props) => (
+const Thumb: React.ComponentProps<typeof ReactSlider>['renderThumb'] = (props) => (
   <div key={props.key}>
-    <div className="absolute top-0 flex items-center justify-center w-4 h-4 -ml-2" style={{ left: props.style.left }}>
+    <div className="absolute top-0 flex items-center justify-center w-4 h-4 -ml-2" style={{ left: props?.style?.left }}>
       <div className="z-40 min-w-full">
         <Transition
-          show={props.style.willChange !== ''}
+          show={props?.style?.willChange !== ''}
           enter="transition duration-75 ease-out"
           enterFrom="transform scale-50"
           enterTo="transform scale-100"

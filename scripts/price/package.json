@@ -36,7 +36,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
-    "@graphprotocol/client-cli": "2.2.15",
+    "@graphprotocol/client-cli": "2.2.16",
     "@graphprotocol/client-add-source-name": "latest",
     "@graphprotocol/client-auto-pagination": "latest",
     "@graphql-mesh/transform-filter-schema": "latest",
@@ -58,7 +58,7 @@
     "fast-json-stable-stringify": "^2.1.0",
     "date-fns": "^2.28.0",
     "dotenv": "^16.0.1",
-    "eslint": "^8.20.0",
+    "eslint": "8.29.0",
     "express": "^4.18.1",
     "graphql": "16.6.0",
     "hardhat": "^2.10.0",

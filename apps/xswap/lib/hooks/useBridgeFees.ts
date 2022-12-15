@@ -60,15 +60,16 @@ export const useBridgeFees = ({
   const { data: getFeesResults } = useContractRead({
     address: String(stargatePoolResults?.[1]),
     functionName: 'getFees',
-    args: adjusted
-      ? [
-          BigNumber.from(STARGATE_POOL_ID[srcChainId][srcBridgeToken.address]),
-          BigNumber.from(STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]),
-          STARGATE_CHAIN_ID[dstChainId],
-          contract.address as Address,
-          BigNumber.from(adjusted?.quotient?.toString()),
-        ]
-      : undefined,
+    args:
+      contract && adjusted
+        ? [
+            BigNumber.from(STARGATE_POOL_ID[srcChainId][srcBridgeToken.address]),
+            BigNumber.from(STARGATE_POOL_ID[dstChainId][dstBridgeToken.address]),
+            STARGATE_CHAIN_ID[dstChainId],
+            contract.address as Address,
+            BigNumber.from(adjusted?.quotient?.toString()),
+          ]
+        : undefined,
     abi: stargateFeeLibraryV03Abi,
     chainId: srcChainId,
     enabled: Boolean(
@@ -77,7 +78,7 @@ export const useBridgeFees = ({
   })
 
   return useMemo(() => {
-    if (!getFeesResults || !stargatePoolResults?.[2]) {
+    if (!amount || !getFeesResults || !stargatePoolResults?.[2]) {
       return [undefined, undefined, undefined, undefined]
     }
     const localDecimals = amount.currency.decimals
@@ -122,5 +123,5 @@ export const useBridgeFees = ({
       Amount.fromRawAmount(srcBridgeToken, _lpFee),
       Amount.fromRawAmount(srcBridgeToken, _protocolFee),
     ]
-  }, [amount?.currency?.decimals, getFeesResults, srcBridgeToken, stargatePoolResults])
+  }, [amount, getFeesResults, srcBridgeToken, stargatePoolResults])
 }

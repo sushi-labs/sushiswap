@@ -1,10 +1,72 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "globalDependencies": [
+    "ALCHEMY_ID", 
+    "NEXT_PUBLIC_INFURA_ID", 
+    "ALCHEMY_ID", 
+    "NEXT_PUBLIC_INFURA_ID"
+  ],
   "pipeline": {
+    "furo:build": {
+      "outputs": [
+        ".next/**",
+        "public/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ]
+    },
+    "db:init": {
+      "outputs": [
+        "prisma/**"
+      ],
+      "cache": false
+    },
+    "db:pull": {
+      "outputs": [
+        "prisma/**"
+      ],
+      "dependsOn": [
+        "db:init"
+      ],
+      "cache": false,
+      "env": [
+        "DATABASE_URL"
+      ]
+    },
+    "db:generate": {
+      "dependsOn": [
+        "db:pull"
+      ],
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
+    "playwright": {
+      "cache": false,
+      "env": [
+        "ANVIL_BLOCK_NUMBER",
+        "ANVIL_FORK_URL",
+        "PLAYWRIGHT_URL",
+        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
+        "CHAIN_ID"
+      ]
+    },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "outputs": [
         "coverage/**"
+      ],
+      "env": [
+        "ANVIL_BLOCK_NUMBER",
+        "ANVIL_FORK_URL",
+        "PLAYWRIGHT_URL",
+        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
+        "CHAIN_ID"
       ]
     },
     "lint": {
@@ -16,6 +78,7 @@
     "start": {
       "dependsOn": [
         "^build",
+        "^db:generate",
         "generate"
       ],
       "cache": false
@@ -42,6 +105,8 @@
       ],
       "dependsOn": [
         "^build",
+        "^db:generate",
+        "db:generate",
         "generate"
       ],
       "env": [
@@ -56,7 +121,9 @@
         "KASHI_URL",
         "PARTNER_URL",
         "SWAP_URL",
-        "XSWAP_URL"
+        "XSWAP_URL",
+        "DATABASE_URL",
+        "REDIS_URL"
       ]
     },
     "clean": {
@@ -68,6 +135,7 @@
     "dev": {
       "dependsOn": [
         "^build",
+        "^db:generate",
         "generate"
       ],
       "cache": false
@@ -78,6 +146,7 @@
     "anvil": {
       "cache": false,
       "env": [
+        "ANVIL_BLOCK_NUMBER",
         "ANVIL_FORK_URL"
       ]
     },

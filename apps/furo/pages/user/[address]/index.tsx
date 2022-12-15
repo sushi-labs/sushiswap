@@ -1,17 +1,18 @@
 import { ChainId } from '@sushiswap/chain'
-import { BackgroundVector, Layout } from 'components'
-import { getUserStreams, getUserVestings } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { SWRConfig } from 'swr'
 
+import { BackgroundVector, Layout } from '../../../components'
+import { getUserStreams, getUserVestings } from '../../../lib'
+
 const Dashboard = dynamic(() => import('../../../components/Dashboard').then((mod) => mod.Dashboard), { ssr: false })
 
 import { NextSeo } from 'next-seo'
 
-import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '.graphclient'
+import { type Stream as StreamDTO, type Transaction as TransactionDTO } from '../../../.graphclient'
 
 interface Props {
   fallback?: {
