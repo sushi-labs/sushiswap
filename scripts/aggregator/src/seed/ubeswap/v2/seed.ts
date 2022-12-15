@@ -13,7 +13,7 @@ const client = new PrismaClient()
 const PROTOCOL = ProtocolName.UBESWAP
 const VERSION = ProtocolVersion.V2
 const CONSTANT_PRODUCT_POOL = PoolType.CONSTANT_PRODUCT_POOL
-const SWAP_FEE = 0.0025
+const SWAP_FEE = 0.003
 const TWAP_ENABLED = true
 
 const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'

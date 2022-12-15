@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 async function main() {
   const startTime = performance.now()
 
-  const pools = await start()
+  await start()
 
   const endTime = performance.now()
   console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
@@ -45,9 +45,10 @@ async function start() {
     const requestEndTime = performance.now()
     if (result.length > 0) {
       console.log(
-        `Fetched a batch of pool addresses with ${result.length} (${((requestEndTime - requestStartTime) / 1000).toFixed(
-          1
-        )}s). cursor: ${cursor}, pool count that needs whitelisting: ${result.length}`
+        `Fetched a batch of pool addresses with ${result.length} (${(
+          (requestEndTime - requestStartTime) /
+          1000
+        ).toFixed(1)}s). cursor: ${cursor}, pool count that needs whitelisting: ${result.length}`
       )
     } else {
       console.log(`No pools needs whitelisting.`)
@@ -58,22 +59,22 @@ async function start() {
   let updatePoolCount = 0
   for (let i = 0; i < poolsToUpdate.length; i += updatePoolsBatchSize) {
     const batch = poolsToUpdate.slice(i, i + updatePoolsBatchSize)
-    const batchToUpdate = batch.map((id) => prisma.pool.update({
-      where: {
-        id
-      },
-      data: {
-        isWhitelisted: true
-      }
-    }))
+    const batchToUpdate = batch.map((id) =>
+      prisma.pool.update({
+        where: {
+          id,
+        },
+        data: {
+          isWhitelisted: true,
+        },
+      })
+    )
     const poolsUpdated = await Promise.allSettled(batchToUpdate)
 
     console.log(`LOAD - ${poolsUpdated.length} pools whitelisted.`)
     updatePoolCount += poolsUpdated.length
   }
   console.log(`LOAD - COMPLETE, ${updatePoolCount} pools whitelisted.`)
-
-
 }
 
 async function getPoolsAddresses(
