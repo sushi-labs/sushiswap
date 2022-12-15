@@ -5,23 +5,17 @@ export async function createTokens(client: PrismaClient, tokens: Prisma.TokenCre
   if (tokens.length === 0) {
     return
   }
+  const startTime = performance.now()
   const created = await client.token.createMany({
     data: tokens,
     skipDuplicates: true,
   })
-
-  console.log(`LOAD - Created ${created.count} tokens. `)
-}
-
-export async function updateTokenPrices(client: PrismaClient, prices: Prisma.TokenUpdateArgs[]) {
-  if (prices.length === 0) {
-    return
-  }
-  console.log(`LOAD - Preparing to update usd price for ${prices.length} tokens`)
-  const requests = prices.map((price) => client.token.update(price))
-  const startTime = performance.now()
-  const updatedPools = await Promise.all(requests)
+ 
   const endTime = performance.now()
-
-  console.log(`LOAD - Updated ${updatedPools.length} prices. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
+  const duration = ((endTime - startTime) / 1000).toFixed(1)
+  if (created.count > 0) {
+    console.log(`LOAD - Created ${created.count} tokens. (${duration}s) `)
+  } else {
+    console.log(`LOAD - No tokens created, already exist. (${duration}s) `)
+  }
 }
