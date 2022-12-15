@@ -1,14 +1,12 @@
 import { PaperAirplaneIcon } from '@heroicons/react/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import { App, Link, Menu } from '@sushiswap/ui'
-import { AppType } from '@sushiswap/ui/app/Header'
-import { NetworkSelector } from '@sushiswap/wagmi'
-import { Profile } from '@sushiswap/wagmi/components/Wallet/Profile'
-import { SUPPORTED_CHAINS } from 'config'
+import { App, AppType, Link, Menu } from '@sushiswap/ui'
+import { NetworkSelector, Profile } from '@sushiswap/wagmi'
 import { useRouter } from 'next/router'
 import React, { FC } from 'react'
 import { useAccount, useConnect } from 'wagmi'
 
+import { SUPPORTED_CHAINS } from '../config'
 import { useNotifications } from '../lib/state/storage'
 
 export const Header: FC = () => {

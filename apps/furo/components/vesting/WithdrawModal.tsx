@@ -6,11 +6,11 @@ import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
 import { Checker, useFuroVestingContract } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { useVestingBalance, Vesting } from 'lib'
 import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
+import { useVestingBalance, Vesting } from '../../lib'
 import { useNotifications } from '../../lib/state/storage'
 
 interface WithdrawModalProps {

@@ -12,7 +12,8 @@ import { useDeepCompareMemoize } from '../../../../lib'
 import { useTokenFromZToken } from '../../../../lib/zod'
 import { createScheduleRepresentation } from '../../createScheduleRepresentation'
 import { calculateEndDate, calculateTotalAmount } from '../../utils'
-import { CreateVestingFormSchemaType, ScheduleReview } from '..'
+import { ScheduleReview } from '../ScheduleReview'
+import { CreateVestingFormSchemaType } from '../schema'
 
 interface Item {
   title: string

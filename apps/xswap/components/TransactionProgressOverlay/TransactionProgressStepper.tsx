@@ -42,8 +42,7 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
     ...getSushiXSwapContractConfig(outputAmount?.currency.chainId),
     chainId: outputAmount?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
-    listener: (event) => {
-      const [context, success, { transactionHash }] = event
+    listener: (context, success, { transactionHash }) => {
       // console.log(event, formatBytes32String(id), context === formatBytes32String(id))
       if (context === formatBytes32String(id)) {
         setDstTxState({

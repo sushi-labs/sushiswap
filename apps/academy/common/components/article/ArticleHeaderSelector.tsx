@@ -3,13 +3,13 @@ import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { classNames, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { ComponentSharedTableOfContentsEntry } from '.mesh'
+import { ComponentSharedTableOfContentsEntry, Maybe } from '.mesh'
 
 interface ArticleHeaderSelector {
-  selectedHeader: string
-  setSelectedHeader: (header: string) => void
-  tableOfContents: ComponentSharedTableOfContentsEntry[]
-  scrollToHeader: (id: string) => void
+  selectedHeader: Maybe<string> | undefined
+  setSelectedHeader: (header: Maybe<string> | undefined) => void
+  tableOfContents: Maybe<ComponentSharedTableOfContentsEntry>[] | undefined
+  scrollToHeader: (id: Maybe<string> | undefined) => void
 }
 export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
   selectedHeader,
@@ -23,7 +23,7 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
         <>
           <Disclosure.Button className="flex items-center justify-between w-full h-12 gap-1 text-slate-40 outline-0">
             <Typography variant="sm" weight={500}>
-              {selectedHeader || tableOfContents?.[0].text}
+              {selectedHeader || tableOfContents?.[0]?.text}
             </Typography>
             <ChevronDownIcon width={12} height={12} className={classNames('transition', open && 'rotate-180')} />
           </Disclosure.Button>
@@ -37,21 +37,21 @@ export const ArticleHeaderSelector: FC<ArticleHeaderSelector> = ({
           >
             <Disclosure.Panel className="grid gap-3 pb-6 mt-2">
               <ol className="grid gap-3 list-decimal list-inside">
-                {tableOfContents?.map(({ key, text }) => (
+                {tableOfContents?.map((el) => (
                   <li
-                    key={key}
+                    key={el?.key}
                     className={classNames(
                       'cursor-pointer',
-                      selectedHeader === text ? 'text-slate-50' : 'text-slate-400'
+                      selectedHeader === el?.text ? 'text-slate-50' : 'text-slate-400'
                     )}
                     onClick={() => {
                       close()
-                      scrollToHeader(key)
-                      setSelectedHeader(text)
+                      scrollToHeader(el?.key)
+                      setSelectedHeader(el?.text)
                     }}
                   >
                     <Typography variant="sm" weight={500} as="span">
-                      {text}
+                      {el?.text}
                     </Typography>
                   </li>
                 ))}

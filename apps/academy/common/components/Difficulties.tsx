@@ -1,6 +1,6 @@
 import { CircleIcon } from '@sushiswap/ui'
 import { DIFFICULTY_ELEMENTS } from 'common/helpers'
-import { Dispatch, FC, SetStateAction } from 'react'
+import { FC } from 'react'
 
 import { DifficultyEntity } from '../../.mesh'
 

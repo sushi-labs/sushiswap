@@ -1,5 +1,5 @@
-import { getFarms } from '../../lib/farms'
 import { getBuiltGraphSDK, Query, QueryResolvers, Resolvers } from '../../.graphclient'
+import { getFarms } from '../../lib/farms'
 import { page } from '../../lib/page'
 import { transformPair } from '../../transformers'
 import { pairById } from './pairById'

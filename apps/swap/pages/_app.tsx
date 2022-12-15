@@ -73,7 +73,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Shell>
               <DefaultSeo {...SEO} />
               <Header />
-              {/* <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} /> */}
               <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
               <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
               <App.Footer />

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { BLOCKS_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { GraphQLResolveInfo } from 'graphql'
 

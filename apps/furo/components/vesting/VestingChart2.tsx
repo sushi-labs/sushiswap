@@ -5,9 +5,9 @@ import { useInterval } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { classNames, ProgressBar, ProgressColor, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { FuroStatus, PeriodType, Vesting } from 'lib'
 import { FC, useState } from 'react'
 
+import { FuroStatus, PeriodType, Vesting } from '../../lib'
 import { ChartHover } from '../../types'
 import { Period, Schedule } from './createScheduleRepresentation'
 

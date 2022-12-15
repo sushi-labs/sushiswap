@@ -1,5 +1,6 @@
-import { getUserVestings } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { getUserVestings } from '../../../../../../lib'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, id } = req.query

@@ -2,6 +2,7 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { TradeType } from '@sushiswap/amm'
 import chains, { Chain, ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
@@ -9,16 +10,15 @@ import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import {
   isStargateBridgeToken,
-  StargateChainId,
-  StargateToken,
   STARGATE_BRIDGE_TOKENS,
   STARGATE_CONFIRMATION_SECONDS,
+  StargateChainId,
 } from '@sushiswap/stargate'
+import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { App, Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
 import { Icon } from '@sushiswap/ui/currency/Icon'
 import {
   Approve,
-  BENTOBOX_ADDRESS,
   getSushiXSwapContractConfig,
   useBalance,
   useBentoBoxTotal,
@@ -478,7 +478,7 @@ const Widget: FC<Swap> = ({
     setIsWritePending(true)
 
     const sushiXSwap = new SushiXSwap({
-      contract,
+      contract: contract as SushiXSwapContract,
       srcToken,
       dstToken,
       srcTrade,
@@ -677,7 +677,7 @@ const Widget: FC<Swap> = ({
       const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
 
       const sushiXSwap = new SushiXSwap({
-        contract: contractWithProvider,
+        contract: contractWithProvider as SushiXSwapContract,
         srcToken,
         dstToken,
         srcTrade,

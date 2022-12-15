@@ -1,5 +1,4 @@
 import { Signature } from '@ethersproject/bytes'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Token, tryParseAmount, Type as Currency, Type } from '@sushiswap/currency'
 import { StargateChainId } from '@sushiswap/stargate'
 import { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'

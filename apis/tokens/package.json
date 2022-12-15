@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "@vercel/node": "^2.2.0",
-    "@sushiswap/database": "workspace:*"
+    "@sushiswap/database": "workspace:*",
+    "zod": "3.19.1"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

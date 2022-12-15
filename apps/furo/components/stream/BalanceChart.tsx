@@ -1,8 +1,9 @@
+import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
 import { LinearGradient } from '@visx/gradient'
-import { Stream } from 'lib'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 
+import { Stream } from '../../lib'
 import { ChartHover } from '../../types'
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHover }) => {
+  const isMounted = useIsMounted()
   const [, updateState] = useState<unknown>()
 
   useEffect(() => {
@@ -173,7 +175,10 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
               dx={2}
               className="text-slate-300"
             >
-              .{stream?.withdrawnAmount.greaterThan(0) ? stream?.withdrawnAmount.toFixed(6).split('.')[1] : '000000'}
+              .
+              {isMounted && stream?.withdrawnAmount.greaterThan(0)
+                ? stream.withdrawnAmount.toFixed(6).split('.')[1]
+                : '000000'}
             </tspan>
           </text>
           <text
@@ -186,7 +191,8 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             className="text-slate-500"
             fontWeight={500}
           >
-            / {stream?.withdrawnAmount ? stream.totalAmount.toSignificant(6) : '0'} {stream?.token.symbol} Total
+            / {isMounted && stream?.withdrawnAmount ? stream.totalAmount.toSignificant(6) : '0'} {stream?.token.symbol}{' '}
+            Total
           </text>
         </>
       )}
@@ -225,7 +231,10 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
               dx={2}
               className="text-slate-300"
             >
-              .{stream?.streamedAmount?.greaterThan(0) ? stream?.streamedAmount.toFixed(6).split('.')[1] : '000000'}
+              .
+              {isMounted && stream?.streamedAmount?.greaterThan(0)
+                ? stream?.streamedAmount.toFixed(6).split('.')[1]
+                : '000000'}
             </tspan>
           </text>
           <text
@@ -238,7 +247,7 @@ export const BalanceChart: FC<Props> = ({ stream, hover = ChartHover.NONE, setHo
             className="text-slate-500"
             fontWeight={500}
           >
-            / {stream?.balance ? stream?.totalAmount.toSignificant(6) : '0'} {stream?.token.symbol} Total
+            / {isMounted && stream?.balance ? stream?.totalAmount.toSignificant(6) : '0'} {stream?.token.symbol} Total
           </text>
         </>
       )}

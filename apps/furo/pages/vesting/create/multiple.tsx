@@ -1,9 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
-import { Layout } from 'components'
-import { CreateMultipleForm } from 'components/vesting/CreateMultipleForm'
 import { NextSeo } from 'next-seo'
 import { useNetwork } from 'wagmi'
+
+import { Layout } from '../../../components'
+import { CreateMultipleForm } from '../../../components/vesting/CreateMultipleForm'
 
 const LINKS: BreadcrumbLink[] = [
   {

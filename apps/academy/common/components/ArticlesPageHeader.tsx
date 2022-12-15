@@ -1,18 +1,19 @@
 import { Listbox } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { classNames, Container, Select, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { classNames, Container, Select } from '@sushiswap/ui'
 import { LooperBg } from 'common/assets/LooperBg'
-import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
+import { FC, useLayoutEffect, useState } from 'react'
 
 import { DEFAULT_SIDE_PADDING } from '../helpers'
 import { GradientWrapper, SelectOption } from './'
-import { DifficultyEntity } from '.mesh'
+import { DifficultyEntity, Maybe } from '.mesh'
 
 interface ArticlesPagesHeader {
-  title: string
+  title: Maybe<string> | undefined
   difficulties: DifficultyEntity[]
-  selectedDifficulty: DifficultyEntity
-  onSelect: Dispatch<SetStateAction<DifficultyEntity>>
+  selectedDifficulty: Maybe<DifficultyEntity> | undefined
+  onSelect(difficulty: DifficultyEntity): void
 }
 
 const baseBg = [113, 285]

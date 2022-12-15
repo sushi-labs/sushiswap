@@ -4,17 +4,16 @@ import { Token } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
-import { toToken } from 'lib'
-import { useStreamBalances } from 'lib/hooks'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { Streams, Vestings } from 'types'
 import { useAccount } from 'wagmi'
 
+import { Rebase } from '../.graphclient'
+import { toToken, useStreamBalances } from '../lib'
+import { Streams, Vestings } from '../types'
 import { FuroTableType, StreamTable } from './Table'
-import { Rebase } from '.graphclient'
 
 const fetcher = (params: any) =>
   fetch(params)

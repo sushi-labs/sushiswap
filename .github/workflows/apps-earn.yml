@@ -10,6 +10,8 @@ on:
     paths:
       - "apps/earn/**"
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 defaults:
   run:
     # change this if your nextjs app does not live at the root of the repo

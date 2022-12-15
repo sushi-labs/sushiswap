@@ -1,7 +1,8 @@
-import { SUPPORTED_CHAINS } from 'config'
-import { getVestingIds } from 'lib'
 import { GetServerSideProps } from 'next'
 import { getServerSideSitemap, ISitemapField } from 'next-sitemap'
+
+import { SUPPORTED_CHAINS } from '../../../config'
+import { getVestingIds } from '../../../lib'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const networks = await Promise.all(

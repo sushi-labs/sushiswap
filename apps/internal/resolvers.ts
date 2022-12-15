@@ -1,6 +1,8 @@
+// @ts-nocheck
+
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 
-import { Resolvers, SubgraphStatus, SubgraphWithNode, getBuiltGraphSDK } from '.graphclient'
+import { getBuiltGraphSDK, Resolvers, SubgraphStatus, SubgraphWithNode } from '.graphclient'
 
 export const resolvers: Resolvers = {
   BentoBoxKpi: {

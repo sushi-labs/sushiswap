@@ -19,15 +19,18 @@ export const _tokensByChainIds = async (
   context: SushiSwapTypes.Context & TridentTypes.Context,
   info: GraphQLResolveInfo
 ): Promise<Query['tokensByChainIds']> => {
+  // @ts-ignore
   return Promise.all<Query['tokensByChainIds'][]>([
     ...args.chainIds
       .filter((el) => TRIDENT_ENABLED_NETWORKS.includes(el))
       .map((chainId: typeof TRIDENT_ENABLED_NETWORKS[number]) =>
         context.Trident.Query.tokens({
           root,
+          // @ts-ignore
           args,
           context: {
             ...context,
+            // @ts-ignore
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
@@ -35,6 +38,7 @@ export const _tokensByChainIds = async (
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
+          // @ts-ignore
         }).then((tokens: Token[]) => {
           if (!Array.isArray(tokens)) {
             console.error(`Trident tokens query failed on ${chainId}`, tokens)
@@ -57,9 +61,11 @@ export const _tokensByChainIds = async (
       .map((chainId: typeof SUSHISWAP_ENABLED_NETWORKS[number]) =>
         context.SushiSwap.Query.tokens({
           root,
+          // @ts-ignore
           args,
           context: {
             ...context,
+            // @ts-ignore
             chainId,
             chainName: chainName[chainId],
             chainShortName: chainShortName[chainId],
@@ -67,6 +73,7 @@ export const _tokensByChainIds = async (
             subgraphHost: SUBGRAPH_HOST[chainId],
           },
           info,
+          // @ts-ignore
         }).then((tokens: Token[]) => {
           if (!Array.isArray(tokens)) {
             console.error(`SushiSwap tokens query failed on ${chainId}`, tokens)

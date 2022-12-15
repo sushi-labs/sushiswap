@@ -4,13 +4,13 @@ import { CheckCircleIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
 import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Checker } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Stream, Vesting } from 'lib'
+import { Checker } from '@sushiswap/wagmi/systems'
 import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
 import { useAccount, useContract } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
+import { Stream, Vesting } from '../lib'
 import { useNotifications } from '../lib/state/storage'
 
 interface CancelModalProps {

@@ -3,10 +3,11 @@ import chains, { ChainId, chainShortName } from '@sushiswap/chain'
 import { Native, Token, Type } from '@sushiswap/currency'
 import { useDebounce, useOnClickOutside } from '@sushiswap/hooks'
 import { classNames, Currency, DEFAULT_INPUT_UNSTYLED, NetworkIcon, Skeleton, Typography } from '@sushiswap/ui'
+import type { TokenList } from '@uniswap/token-lists'
 import { isAddress } from 'ethers/lib/utils'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery, useToken } from 'wagmi'
-import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
+
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 
 const EXAMPLE_CURRENCIES = [
