@@ -1,5 +1,4 @@
 import '@nomiclabs/hardhat-ethers'
-import 'hardhat-deploy'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
@@ -45,26 +44,8 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVers
 const config: HardhatUserConfig = {
   ...defaultConfig,
   defaultNetwork: 'hardhat',
-  namedAccounts: {
-    deployer: {
-      default: 0,
-    },
-    alice: {
-      default: 1,
-    },
-    bob: {
-      default: 2,
-    },
-    carol: {
-      default: 3,
-    },
-  },
   networks: {
-    localhost: {
-      live: false,
-      saveDeployments: true,
-      tags: ['local'],
-    },
+    localhost: {},
     hardhat: {
       forking: {
         enabled: true,
@@ -72,9 +53,6 @@ const config: HardhatUserConfig = {
         //blockNumber: 34445477,
         //url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       },
-      live: false,
-      saveDeployments: true,
-      tags: ['test', 'local'],
       accounts: {
         accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
       },
@@ -83,26 +61,17 @@ const config: HardhatUserConfig = {
       url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 1,
-      live: true,
-      saveDeployments: true,
-      tags: ['mainnet'],
       hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
       chainId: 3,
-      live: true,
-      saveDeployments: true,
-      tags: ['staging'],
     },
     goerli: {
       url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
       chainId: 5,
-      live: true,
-      saveDeployments: true,
-      tags: ['staging'],
     },
   },
   solidity: {

@@ -45,8 +45,6 @@ const getReservesABI = [
   },
 ]
 
-const callsGetReserves = [{ reference: '', methodName: 'getReserves', methodParameters: [] }]
-
 export class UniSwapV2ProviderMC extends LiquidityProviderMC {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []

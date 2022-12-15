@@ -38,8 +38,6 @@ const getReservesABI = [
   },
 ]
 
-const callsGetReserves = [{ reference: '', methodName: 'getReserves', methodParameters: [] }]
-
 export class SushiProviderMC extends LiquidityProviderMC {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
