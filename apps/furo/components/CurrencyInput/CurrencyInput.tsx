@@ -29,7 +29,7 @@ type CurrencyInput = Omit<CurrencyInputBase, 'bottomPanel' | 'error' | 'helperTe
     | ((props: HelperTextPanelRenderProps) => React.ReactElement<typeof HelperTextPanel>)
 }
 
-const Component: FC<CurrencyInput> = ({
+export const CurrencyInput: FC<CurrencyInput> = ({
   account,
   fundSource,
   value,
@@ -85,12 +85,7 @@ const Component: FC<CurrencyInput> = ({
               bottomPanel
             )
           ) : (
-            <CurrencyInput.BottomPanel
-              onChange={onChange}
-              loading={loading}
-              label="Balance"
-              amount={balance?.[fundSource]}
-            />
+            <BottomPanel onChange={onChange} loading={loading} label="Balance" amount={balance?.[fundSource]} />
           )
         }
         helperTextPanel={
@@ -123,13 +118,3 @@ const Component: FC<CurrencyInput> = ({
     ]
   )
 }
-
-export const CurrencyInput: typeof Component & {
-  Base: typeof CurrencyInputBase
-  BottomPanel: typeof BottomPanel
-  HelperTextPanel: typeof HelperTextPanel
-} = Object.assign(Component, {
-  Base: CurrencyInputBase,
-  BottomPanel: BottomPanel,
-  HelperTextPanel: HelperTextPanel,
-})

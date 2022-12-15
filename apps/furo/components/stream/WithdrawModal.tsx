@@ -10,7 +10,7 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 're
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { CurrencyInput, CurrencyInputBase } from '../../components'
+import { BottomPanel, CurrencyInputBase } from '../../components'
 import { Stream } from '../../lib'
 import { useStreamBalance } from '../../lib'
 import { useNotifications } from '../../lib/state/storage'
@@ -116,7 +116,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
               onChange={setInput}
               value={input}
               error={amount && stream?.balance && amount.greaterThan(stream.balance)}
-              bottomPanel={<CurrencyInput.BottomPanel loading={false} label="Available" amount={balance} />}
+              bottomPanel={<BottomPanel loading={false} label="Available" amount={balance} />}
             />
           </div>
           <div className="flex flex-col">
