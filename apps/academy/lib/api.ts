@@ -36,8 +36,8 @@ export const getArticles = async (variables?: {
   const sdk = getMeshSDK()
   return await sdk.getArticles({
     ...variables,
-    filters: { ...variables.filters, articleTypes: { type: { eq: 'academy' } } },
-    sort: variables.sort ?? ['publishedAt:desc'],
+    filters: { ...variables?.filters, articleTypes: { type: { eq: 'academy' } } },
+    sort: variables?.sort ?? ['publishedAt:desc'],
   })
 }
 

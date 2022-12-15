@@ -49,7 +49,7 @@ export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
             leaveTo="translate-x-[20px] opacity-0"
             unmount={false}
           >
-            <div className="absolute top-0 bottom-0 right-0 flex items-center justify-center">
+            <div className="absolute inset-y-0 right-0 flex items-center justify-center">
               <div className="bg-[#3B7EF6] rounded-full p-3">
                 <ArrowRightIcon className="w-4 h-4 " />
               </div>
