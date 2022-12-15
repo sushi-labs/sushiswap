@@ -1,5 +1,5 @@
 {
-  "name": "aggregator",
+  "name": "sushi",
   "version": "0.0.0",
   "private": true,
   "description": "Prisma",
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "scripts/aggregator"
+    "directory": "scripts/sushi"
   },
   "license": "MIT",
   "main": "dist/index.js",
@@ -32,7 +32,6 @@
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"
   },  
-  "type": "module",
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
@@ -41,11 +40,10 @@
     "@sushiswap/core": "^2.0.0-canary.1",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/graph-config": "workspace:*",
-    "@sushiswap/wagmi-config": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/abi": "workspace:*",
     "isomorphic-unfetch": "3.1.0",
-    "@wagmi/core": "0.8.2",
+    "@sushiswap/wagmi-config": "workspace:*",
     "@ethersproject/abi": "^5.7.0",
     "@uniswap/v2-core": "^1.0.1",
     "express": "^4.18.1"
@@ -83,7 +81,11 @@
     "prisma": "^4.6.1",
     "ts-node": "^10.9.0",
     "tsup": "^6.2.0",
-    "typescript": "4.8.2"
+    "typescript": "4.8.2",
+    "@wagmi/core": "0.8.1"
+  },
+  "peerDependencies": {
+    "@wagmi/core": "0.8.1"
   },
   "engines": {
     "node": ">=16"

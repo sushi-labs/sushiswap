@@ -18,8 +18,7 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "source": "src/index.ts",
-  "typings": "dist/index.d.ts",  
-  "type": "module",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
