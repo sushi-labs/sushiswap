@@ -130,15 +130,18 @@ const _Articles: FC = () => {
   const topics = topicsData?.data || []
   const articlesMeta = articlesData?.meta
 
+  const clearInput = () => setQuery('')
   const handleSelectDifficulty = (difficulty: DifficultyEntity) => {
     setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
   }
   const handleSelectTopic = (topic: TopicEntity) => {
     if (selectedProduct) setSelectedProduct(undefined)
+    clearInput()
     setSelectedTopic((current) => (current?.id === topic.id ? undefined : topic))
   }
   const handleSelectProduct = (product: ProductEntity) => {
     if (selectedTopic) setSelectedTopic(undefined)
+    clearInput()
     setSelectedProduct((current) => (current?.id === product.id ? undefined : product))
   }
 
