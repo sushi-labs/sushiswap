@@ -136,7 +136,11 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
-      <ProductTechnicalDoc color={color} secondaryColor="#FEC464" />
+      <ProductTechnicalDoc
+        color={color}
+        secondaryColor="#FEC464"
+        url="https://dev.sushi.com/docs/Products/Yield%20Farming/What%20Is%20The%20Onsen"
+      />
       <ProductFaq faq={faq} />
     </Container>
   )

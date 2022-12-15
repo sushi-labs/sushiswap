@@ -76,7 +76,11 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
-      <ProductTechnicalDoc color="#5F82FF" secondaryColor={accentColor} />
+      <ProductTechnicalDoc
+        color="#5F82FF"
+        secondaryColor={accentColor}
+        url="https://dev.sushi.com/docs/Developers/Kashi%20Lending/Overview"
+      />
       <ProductFaq faq={faq} />
     </Container>
   )

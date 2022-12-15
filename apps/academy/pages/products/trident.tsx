@@ -102,7 +102,11 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
-      <ProductTechnicalDoc color={color} secondaryColor="#FEC464" />
+      <ProductTechnicalDoc
+        color={color}
+        secondaryColor="#FEC464"
+        url="https://dev.sushi.com/docs/Developers/Trident/TridentRouter"
+      />
       <ProductFaq faq={faq} />
     </Container>
   )

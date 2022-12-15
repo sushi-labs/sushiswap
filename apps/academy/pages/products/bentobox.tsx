@@ -74,7 +74,11 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
-      <ProductTechnicalDoc color={color} secondaryColor="#FFBCFE" />
+      <ProductTechnicalDoc
+        color={color}
+        secondaryColor="#FFBCFE"
+        url="https://dev.sushi.com/docs/Developers/Bentobox/Overview"
+      />
       <ProductFaq faq={faq} />
     </Container>
   )

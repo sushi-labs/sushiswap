@@ -118,7 +118,11 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         productName={PRODUCT_SLUG}
         isLoading={isValidating}
       />
-      <ProductTechnicalDoc color="#FF855F" secondaryColor={color} />
+      <ProductTechnicalDoc
+        color="#FF855F"
+        secondaryColor={color}
+        url="https://dev.sushi.com/docs/Developers/Miso/Overview"
+      />
       <ProductFaq faq={faq} />
     </Container>
   )
