@@ -2,10 +2,12 @@ import { Listbox } from '@headlessui/react'
 import { classNames } from '@sushiswap/ui'
 import { FC } from 'react'
 
+import { Maybe } from '../../.mesh'
+
 interface SelectOption {
   value: unknown
   isSelected: boolean
-  title: string
+  title: Maybe<string> | undefined
   className?: string
 }
 
