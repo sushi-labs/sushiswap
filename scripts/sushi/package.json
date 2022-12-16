@@ -2,7 +2,7 @@
   "name": "sushi",
   "version": "0.0.0",
   "private": true,
-  "description": "Prisma",
+  "description": "Seed scripts for Sushi DB",
   "keywords": [
     "sushi",
     "script"
@@ -32,6 +32,7 @@
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"
   },  
+  "type": "module",
   "jest": {
     "preset": "@sushiswap/jest-config/node"
   },
@@ -43,12 +44,12 @@
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/abi": "workspace:*",
     "isomorphic-unfetch": "3.1.0",
-    "@sushiswap/wagmi-config": "workspace:*",
     "@ethersproject/abi": "^5.7.0",
     "@uniswap/v2-core": "^1.0.1",
     "express": "^4.18.1"
   },
   "devDependencies": {
+    "@sushiswap/wagmi-config": "workspace:*",
     "@graphprotocol/client-cli": "2.2.16",
     "@graphprotocol/client-add-source-name": "latest",
     "@ethersproject/bignumber": "^5.7.0",

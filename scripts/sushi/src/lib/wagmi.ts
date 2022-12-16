@@ -1,4 +1,7 @@
-import { allChains,allProviders } from '@sushiswap/wagmi-config'
+// import {allChains, allProviders } from '@sushiswap/wagmi-config'
+import {allProviders} from '@sushiswap/wagmi-config/src/providers.js'
+import {allChains} from '@sushiswap/wagmi-config/src/chains.js'
+
 
 import { configureChains, createClient } from '@wagmi/core'
 
