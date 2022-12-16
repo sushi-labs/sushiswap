@@ -10,6 +10,8 @@ import './StreamReader.sol';
 import 'hardhat/console.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
+address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
 contract RouteProcessor is StreamReader {
   using SafeERC20 for IERC20;
 
@@ -32,7 +34,8 @@ contract RouteProcessor is StreamReader {
     require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
 
     uint256 amountInAcc = 0;
-    uint256 balanceInitial = IERC20(tokenOut).balanceOf(to);
+    uint256 balanceInitial = tokenOut == NATIVE_ADDRESS ? 
+      address(to).balance : IERC20(tokenOut).balanceOf(to);
 
     uint256 stream = createStream(route);
     while (isNotEmpty(stream)) {
@@ -62,7 +65,8 @@ contract RouteProcessor is StreamReader {
     }
 
     require(amountInAcc == amountIn, 'Wrong amountIn value');
-    uint256 balanceFinal = IERC20(tokenOut).balanceOf(to);
+    uint256 balanceFinal = tokenOut == NATIVE_ADDRESS ? 
+      address(to).balance : IERC20(tokenOut).balanceOf(to);
     require(balanceFinal >= balanceInitial + amountOutMin, 'Minimal ouput balance violation');
 
     amountOut = balanceFinal - balanceInitial;
