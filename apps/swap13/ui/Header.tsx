@@ -15,7 +15,7 @@ export const Header: FC = () => {
     <Search>
       <GlobalNav
         className="bg-slate-900"
-        appType={AppType.Earn}
+        appType={AppType.Swap}
         rightElement={
           <>
             <Search.Button />

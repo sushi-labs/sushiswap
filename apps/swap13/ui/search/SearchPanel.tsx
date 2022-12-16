@@ -60,6 +60,10 @@ export const SearchPanel: FC = () => {
     (e: MouseEvent<HTMLDivElement> | MouseEvent<SVGSVGElement>) => {
       e.stopPropagation()
       setOpen(false)
+
+      setTimeout(() => {
+        setQuery('')
+      }, 1500)
     },
     [setOpen]
   )
