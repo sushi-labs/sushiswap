@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
 import { ButtonProps, NotificationData } from '@sushiswap/ui'
 import { ReactNode } from 'react'
+import { Address } from 'wagmi'
 
 import { ApprovalState } from '../../hooks'
 
@@ -29,7 +30,7 @@ interface ApprovalTypeBase {
 
 export interface ApprovalTypeBentobox extends ApprovalTypeBase {
   type: ApprovalType.Bentobox
-  masterContract: string | undefined
+  masterContract: Address | undefined
   enabled?: boolean
   buttonProps: Omit<ButtonProps<'button'>, 'onClick'>
   onSignature(signature: Signature): void
@@ -37,7 +38,7 @@ export interface ApprovalTypeBentobox extends ApprovalTypeBase {
 
 export interface ApprovalTypeToken extends ApprovalTypeBase {
   type: ApprovalType.Token
-  address: string | undefined
+  address: Address | undefined
   amount: Amount<Type> | undefined
 }
 

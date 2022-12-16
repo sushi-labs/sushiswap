@@ -30,6 +30,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "devDependencies": {
+    "@sushiswap/address": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",

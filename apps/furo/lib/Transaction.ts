@@ -2,8 +2,8 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
+import { type Transaction as TransactionDTO, type User, Maybe, TransactionType } from '../.graphclient'
 import { toToken } from './mapper'
-import { type Transaction as TransactionDTO, type User, Maybe, TransactionType } from '.graphclient'
 
 export class Transaction {
   public readonly id: string

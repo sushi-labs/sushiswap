@@ -1,10 +1,17 @@
-import { classNames, Container, LoadingOverlay, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { classNames, Container, LoadingOverlay } from '@sushiswap/ui'
 import { APP_HEADER_HEIGHT, DEFAULT_SIDE_PADDING } from 'common/helpers'
 import ErrorPage from 'next/error'
 import { useRouter } from 'next/router'
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 
-import { ArticleBlocksDynamicZone, ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../../.mesh'
+import {
+  ArticleBlocksDynamicZone,
+  ArticleEntity,
+  ComponentSharedMedia,
+  ComponentSharedRichText,
+  Maybe,
+} from '../../.mesh'
 import {
   ArticleFooter,
   ArticleHeader,
@@ -16,7 +23,7 @@ import {
   PreviewBanner,
   RichTextBlock,
 } from '../../common/components'
-import { Image } from '../../common/components/Image'
+import { Image } from '../../common/components'
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
 
 export async function getStaticPaths() {
@@ -58,24 +65,29 @@ interface ArticlePage {
 const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
   const router = useRouter()
   const tableOfContents = article?.attributes?.staticTableOfContents?.entries
-  const tableOfContentsFiltered = tableOfContents?.filter(({ key }) =>
-    article?.attributes?.blocks.some((block) => 'key' in block && block.key === key)
+  const tableOfContentsFiltered = tableOfContents?.filter((el) =>
+    article?.attributes?.blocks?.some((block) => block && 'key' in block && block.key === el?.key)
   )
   const { isSm } = useBreakpoint('sm')
-  const [selectedHeader, setSelectedHeader] = useState('')
+  const [selectedHeader, setSelectedHeader] = useState<Maybe<string> | undefined>()
+
+  const scrollToHeader = useCallback(
+    (id: Maybe<string> | undefined) => {
+      const el = id ? document.getElementById(id) : undefined
+      if (el) {
+        const padding = isSm ? 24 : 180
+        const offset = el.getBoundingClientRect().top + window.scrollY - APP_HEADER_HEIGHT - padding
+        window.scrollTo({
+          top: offset,
+          behavior: 'smooth',
+        })
+      }
+    },
+    [isSm]
+  )
+
   if (!router.isFallback && !article?.attributes?.slug) {
     return <ErrorPage statusCode={404} />
-  }
-  const scrollToHeader = (id: string) => {
-    const el = document.getElementById(id)
-    if (el) {
-      const padding = isSm ? 24 : 180
-      const offset = el.getBoundingClientRect().top + window.scrollY - APP_HEADER_HEIGHT - padding
-      window.scrollTo({
-        top: offset,
-        behavior: 'smooth',
-      })
-    }
   }
 
   return (
@@ -110,19 +122,19 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
               <ArticleLinks article={article} />
               <hr className="border border-slate-200/5" />
               <ol className="grid gap-8 list-decimal list-inside">
-                {tableOfContentsFiltered?.map(({ text, key }) => (
+                {tableOfContentsFiltered?.map((el) => (
                   <li
-                    key={key}
+                    key={el?.key}
                     className={classNames(
                       'hover:text-slate-50 font-medium text-base cursor-pointer',
-                      selectedHeader === key ? 'text-slate-50' : 'text-slate-400'
+                      selectedHeader === el?.key ? 'text-slate-50' : 'text-slate-400'
                     )}
                     onClick={() => {
-                      scrollToHeader(key)
-                      setSelectedHeader(text)
+                      scrollToHeader(el?.key)
+                      setSelectedHeader(el?.text)
                     }}
                   >
-                    {text}
+                    {el?.text}
                   </li>
                 ))}
               </ol>

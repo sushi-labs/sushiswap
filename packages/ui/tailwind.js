@@ -1,5 +1,6 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 
+// @ts-check
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   plugins: [

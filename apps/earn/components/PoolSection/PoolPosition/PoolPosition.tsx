@@ -1,6 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pair } from '@sushiswap/graph-client'
-import { Typography, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { usePoolPosition } from '../../PoolPositionProvider'

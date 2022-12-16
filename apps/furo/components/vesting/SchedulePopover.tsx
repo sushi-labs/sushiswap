@@ -3,9 +3,9 @@ import { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { Button, CalendarIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { PeriodType, Vesting, VestingType } from 'lib'
 import { FC, memo } from 'react'
 
+import { PeriodType, Vesting, VestingType } from '../../lib'
 import { Period, Schedule } from './createScheduleRepresentation'
 
 interface Props {
@@ -108,7 +108,7 @@ const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ v
           {format(period.date, 'hh:mmaaa')}
         </Typography>
       </Typography>
-      <Typography variant="xs" className="flex flex-col text-right text-slate-200 truncate" weight={500}>
+      <Typography variant="xs" className="flex flex-col text-right truncate text-slate-200" weight={500}>
         {period.type === PeriodType.START
           ? `0`
           : period.type === PeriodType.CLIFF
@@ -123,7 +123,7 @@ const SchedulePopoverItem: FC<{ vesting?: Vesting; period: Period }> = memo(({ v
           {period?.amount.currency?.symbol}
         </Typography>
       </Typography>
-      <Typography variant="xs" className="flex flex-col text-right text-slate-200 truncate" weight={500}>
+      <Typography variant="xs" className="flex flex-col text-right truncate text-slate-200" weight={500}>
         <span>
           {period?.total.toSignificant(6)}{' '}
           <span className="text-slate-500">/ {vesting?.remainingAmount.toSignificant(6)}</span>

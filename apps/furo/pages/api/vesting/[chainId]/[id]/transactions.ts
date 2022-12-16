@@ -1,5 +1,6 @@
-import { getVestingTransactions } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { getVestingTransactions } from '../../../../../lib'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const chainId = req.query.chainId as string

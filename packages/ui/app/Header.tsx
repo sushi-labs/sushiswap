@@ -1,11 +1,11 @@
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import useScrollPosition from '@react-hook/window-scroll'
-import { useIsMounted } from '@sushiswap/hooks'
+import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
 import Image from 'next/legacy/image'
 import React, { Fragment } from 'react'
 
-import { classNames, IconButton, Link, MaxWidth, Select, Typography, useBreakpoint } from '..'
+import { classNames, Container, IconButton, Link, MaxWidth, Select, Typography } from '..'
 
 export enum AppType {
   Root = 'Explore Apps',
@@ -56,7 +56,7 @@ export function Header({
   nav,
   withScrollBackground = false,
   bgColor = 'bg-slate-900',
-  maxWidth = '5xl',
+  maxWidth = 'full',
   ...props
 }: HeaderProps): JSX.Element {
   const isMounted = useIsMounted()
@@ -90,8 +90,11 @@ export function Header({
       >
         <div className={classNames(bgColor, 'absolute inset-0 border-b pointer-events-none border-slate-200/10')} />
       </Transition>
-      <div className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4')}>
-        <div className="flex items-center gap-3">
+      <Container
+        maxWidth={maxWidth}
+        className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4 row-full')}
+      >
+        <div className="flex items-center flex-grow gap-3">
           <a className="flex flex-row items-center gap-1.5" href="/">
             <div className="w-7 h-7">
               <Image
@@ -249,9 +252,9 @@ export function Header({
             </Select.Options>
           </Select>
         </div>
-        <div className="flex justify-center">{nav}</div>
-        <div className="flex justify-end">{children}</div>
-      </div>
+        <div className="flex justify-center flex-grow">{nav}</div>
+        <div className="flex justify-end flex-grow">{children}</div>
+      </Container>
     </header>
   )
 }

@@ -1,6 +1,7 @@
 import { formatUSD } from '@sushiswap/format'
 import { Pair } from '@sushiswap/graph-client'
-import { Button, Currency, Typography, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { Button, Currency, Typography } from '@sushiswap/ui'
 import { Checker } from '@sushiswap/wagmi'
 import { FC } from 'react'
 

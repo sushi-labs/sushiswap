@@ -1,9 +1,11 @@
 import { Button, classNames } from '@sushiswap/ui'
 import { FC } from 'react'
 
+import { Maybe } from '../../.mesh'
+
 interface FilterButton {
   isSelected: boolean
-  title: string
+  title: Maybe<string> | undefined
   onClick: () => void
 }
 

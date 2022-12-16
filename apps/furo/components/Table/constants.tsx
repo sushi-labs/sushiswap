@@ -1,8 +1,8 @@
 import { Skeleton } from '@sushiswap/ui'
 import { ColumnDef } from '@tanstack/react-table'
-import { Stream, Vesting } from 'lib'
 import React from 'react'
 
+import { Stream, Vesting } from '../../lib'
 import { AmountCell } from './AmountCell'
 import { FromCell } from './FromCell'
 import { StartDateCell } from './StartDateCell'

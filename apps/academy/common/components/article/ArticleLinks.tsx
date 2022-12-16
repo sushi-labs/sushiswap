@@ -10,7 +10,7 @@ interface ArticleLinks {
 }
 
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {
-  const shareText = getShareText(article?.attributes.title)
+  const shareText = getShareText(article?.attributes?.title)
   const url = `https://sushi.com/academy/articles/${article?.attributes?.slug}`
 
   const [showTooltip, setShowTooltip] = useState(false)

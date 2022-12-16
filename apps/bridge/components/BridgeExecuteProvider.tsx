@@ -1,5 +1,6 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Native } from '@sushiswap/currency'
+import { SushiXSwap } from '@sushiswap/sushixswap/typechain'
 import { useBentoBoxTotal, useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
 import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
 import { Dispatch, FC, ReactElement, SetStateAction, useCallback } from 'react'
@@ -20,7 +21,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
   const [, { createInlineNotification }] = useNotifications(address)
   const { setSourceTx, setSignature, setTimestamp, setGasFee } = useBridgeStateActions()
   const { id, signature, srcChainId, amount, srcToken, dstToken } = useBridgeState()
-  const contract = useSushiXSwapContractWithProvider(srcChainId)
+  const contract = useSushiXSwapContractWithProvider(srcChainId) as SushiXSwap
   const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
 
   const onSettled = useCallback(

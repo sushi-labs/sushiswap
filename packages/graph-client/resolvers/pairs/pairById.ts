@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { chainName, chainShortNameToChainId } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,
@@ -7,11 +9,11 @@ import {
   TRIDENT_SUBGRAPH_NAME,
 } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
-import { getFarms } from '../../lib/farms'
 
 import { getBuiltGraphSDK, Pair, QueryResolvers } from '../../.graphclient'
 import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
 import { TridentTypes } from '../../.graphclient/sources/Trident/types'
+import { getFarms } from '../../lib/farms'
 import { transformPair } from '../../transformers'
 
 const sdk = getBuiltGraphSDK()

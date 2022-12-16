@@ -1,15 +1,12 @@
+// @ts-nocheck
+
 import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 
-import { Query, QueryResolvers } from '../../.graphclient'
+import { Query } from '../../.graphclient'
 import { BentoBoxTypes } from '../../.graphclient/sources/BentoBox/types'
 
-export const rebasesByChainIds: QueryResolvers['rebasesByChainIds'] = async (
-  root,
-  args,
-  context,
-  info
-): Promise<Query['rebasesByChainIds']> => {
+export const rebasesByChainIds = async (root, args, context, info): Promise<Query['rebasesByChainIds']> => {
   return Promise.allSettled<Query['rebasesByChainIds'][]>(
     args.chainIds
       .filter((chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME => chainId in BENTOBOX_SUBGRAPH_NAME)

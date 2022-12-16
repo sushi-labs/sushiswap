@@ -3,11 +3,11 @@ import { expect, Page, test } from '@playwright/test'
 import { chainName } from '@sushiswap/chain'
 import { Native, SUSHI_ADDRESS, USDC_ADDRESS } from '@sushiswap/currency'
 
-if (!process.env.CHAIN_ID) {
-  throw new Error('CHAIN_ID env var not set')
-}
+if (!process.env.CHAIN_ID) throw new Error('CHAIN_ID env var not set')
+if (!process.env.PLAYWRIGHT_URL) throw new Error('PLAYWRIGHT_URL env var not set')
 
-const CHAIN_ID = parseInt(process.env.CHAIN_ID)
+const CHAIN_ID = Number(process.env.CHAIN_ID)
+const PLAYWRIGHT_URL = String(process.env.PLAYWRIGHT_URL)
 
 const nativeToken = {
   address: AddressZero,
@@ -20,28 +20,24 @@ const wNativeToken = {
 const usdc = { address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS].toLowerCase(), symbol: 'USDC' }
 const sushi = { address: SUSHI_ADDRESS[CHAIN_ID as keyof typeof SUSHI_ADDRESS].toLowerCase(), symbol: 'SUSHI' }
 
-// test.beforeEach(async ({ page }) => {
-//   page.on('pageerror', (err) => {
-//     console.log(err)
-//   })
-//   await page.goto(process.env.PLAYWRIGHT_URL as string)
-//   await page.locator(`[testdata-id=network-selector-button]`).click()
-//   const networkList = page.locator(`[testdata-id=network-selector-list]`)
-//   const desiredNetwork = networkList.getByText(chainName[CHAIN_ID])
-//   expect(desiredNetwork).toBeVisible()
-//   await desiredNetwork.click()
-
-//   if (await desiredNetwork.isVisible()) {
-//     await page.locator(`[testdata-id=network-selector-button]`).click()
-//   }
-// })
+test.beforeEach(async ({ page }) => {
+  page.on('pageerror', (err) => {
+    console.log(err)
+  })
+  await page.goto(PLAYWRIGHT_URL)
+})
 
 test('Swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   test.slow()
   const trade1: Trade = { input: nativeToken, output: usdc, amount: '10' }
+  console.log('Swapping', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(trade1, page)
+  console.log('Swapped', trade1.input.symbol, 'to', trade1.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
+
   const trade2: Trade = { input: usdc, output: nativeToken }
+  console.log('Swapping', trade2.input.symbol, 'to', trade2.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
   await swap(trade2, page, true)
+  console.log('Swapped', trade2.input.symbol, 'to', trade2.output.symbol, 'on', chainName[CHAIN_ID], 'chain')
 })
 
 test('Swap Native to SUSHI, then SUSHI to NATIVE', async ({ page }) => {
@@ -92,13 +88,13 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   const swapButton = page.locator('[testdata-id=swap-button]')
   await expect(swapButton).toBeEnabled()
-  await swapButton.click()
+  await swapButton.click({ timeout: 15000 })
 
-  await timeout(1500) // wait for rpc calls to figure out if approvals are needed
+  // await timeout(1500) // wait for rpc calls to figure out if approvals are needed
 
   await page
     .locator('[testdata-id=swap-review-approve-bentobox-button]')
-    .click({ timeout: 1500 })
+    .click({ timeout: 15000 })
     .then(async () => {
       console.log(`BentoBox Approved`)
     })
@@ -106,7 +102,7 @@ async function swap(trade: Trade, page: Page, useMaxBalances?: boolean) {
 
   await page
     .locator('[testdata-id=swap-review-approve-token-button]')
-    .click({ timeout: 1500 })
+    .click({ timeout: 15000 })
     .then(async () => {
       console.log(`Approved ${trade.input.symbol}`)
     })
@@ -129,10 +125,12 @@ async function handleToken(token: Token, page: Page, type: InputType, amount?: s
   await tokenOutputList.click()
 
   await page.fill(`[testdata-id=swap-${selectorInfix}-token-selector-dialog-address-input]`, token.symbol)
-  await timeout(1000) // TODO: wait for the list to load instead of using timeout
+  // TODO: for a way to "await" the discovery of the list instead of arbitrary timeout
+  await timeout(1000)
   await page.locator(`[testdata-id=swap-${selectorInfix}-token-selector-dialog-row-${token.address}]`).click()
 
   if (useMax && type === InputType.INPUT) {
+    // TODO: for a way to "await" the discovery of the balance instead of arbitrary timeout
     await timeout(3000) // wait for the balance to be set before continuing.
     await page.getByTestId('swap-input-currency0-balance-button').click()
   } else if (amount && type === InputType.INPUT) {

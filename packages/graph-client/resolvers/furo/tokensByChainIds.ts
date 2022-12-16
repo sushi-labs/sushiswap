@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FURO_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
 import { isPromiseFulfilled } from '@sushiswap/validate'
 import { GraphQLResolveInfo } from 'graphql'

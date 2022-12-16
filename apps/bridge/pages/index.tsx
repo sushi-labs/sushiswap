@@ -2,7 +2,7 @@ import { ArrowRightIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { StargateChainId, STARGATE_BRIDGE_TOKENS } from '@sushiswap/stargate'
+import { STARGATE_BRIDGE_TOKENS,StargateChainId } from '@sushiswap/stargate'
 import { Button, Loader, Typography, Widget } from '@sushiswap/ui'
 import { Checker, Web3Input } from '@sushiswap/wagmi'
 import {

@@ -12,9 +12,10 @@ const withTranspileModules = transpileModules([
 const nextConfig = {
   basePath: '/bridge',
   reactStrictMode: true,
-  swcMinify: false,
   productionBrowserSourceMaps: true,
+  swcMinify: false,
   poweredByHeader: false,
+  staticPageGenerationTimeout: 180,
   experimental: {
     esmExternals: 'loose',
   },

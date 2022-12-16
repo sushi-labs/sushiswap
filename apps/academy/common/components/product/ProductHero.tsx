@@ -1,4 +1,5 @@
-import { Button, classNames, Link, Typography, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { Button, classNames, Link, Typography } from '@sushiswap/ui'
 import { FC, ReactNode, useLayoutEffect, useState } from 'react'
 
 import { ProductStat, ProductStats } from './'
@@ -60,7 +61,7 @@ export const ProductHero: FC<ProductHero> = ({
             </Button>
           </Link.External>
         </div>
-        {image && <div className="md:block hidden">{image}</div>}
+        {image && <div className="hidden md:block">{image}</div>}
       </div>
 
       {productStats && <ProductStats productStats={productStats} isCentered={isCentered} />}

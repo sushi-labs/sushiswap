@@ -2,8 +2,8 @@ import { render, RenderOptions } from '@testing-library/react'
 import { default as userEvent } from '@testing-library/user-event'
 import * as React from 'react'
 import { createClient, CreateClientConfig, WagmiConfig, WagmiConfigProps } from 'wagmi'
+import { arbitrum, mainnet, optimism,polygon } from 'wagmi/chains'
 import { MockConnector } from 'wagmi/connectors/mock'
-import { mainnet, polygon, arbitrum, optimism } from 'wagmi/chains'
 
 import { getProvider, getSigners, WalletSigner } from './utils'
 

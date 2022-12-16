@@ -13,6 +13,7 @@
     "build-protocols": "turbo run build --filter={./protocols/*}[HEAD^1]...",
     "build-root-app": "turbo run build --filter=root[HEAD^1]",
     "build-swap-app": "turbo run build --filter=swap[HEAD^1]",
+    "test-swap-app": "turbo run test --filter=swap",
     "build-xswap-app": "turbo run build --filter=xswap[HEAD^1]",
     "build:ci": "turbo run build --filter=[HEAD^1]",
     "changeset": "changeset",
@@ -31,7 +32,6 @@
     "lint-packages": "turbo run lint --filter={./packages/*}[HEAD^1]...",
     "lint-protocols": "turbo run lint --filter={./protocols/*}[HEAD^1]...",
     "lint:ci": "turbo run lint --parallel --filter=[HEAD^1]",
-    "prepare": "husky install ",
     "publish-packages": "turbo run build --filter=./packages/* && changeset version && changeset publish",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' --check",
@@ -42,32 +42,24 @@
     "test:ci": "turbo run test --parallel --filter=[HEAD^1]",
     "version-packages": "turbo run build --filter=./packages/* && changeset version"
   },
-  "lint-staged": {
-    "*.ts": [
-      "eslint --cache --fix",
-      "prettier --write"
-    ],
-    "*.sol": [
-      "solhint -c .solhint.json",
-      "prettier --write",
-      "pnpm test"
-    ],
-    "*.md": "prettier --write"
-  },
   "devDependencies": {
     "@changesets/cli": "2.25.2",
-    "@commitlint/cli": "17.3.0",
-    "@commitlint/config-conventional": "17.3.0",
-    "@commitlint/types": "17.0.0",
+    "@graphql-eslint/eslint-plugin": "latest",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
     "@types/jest": "29.2.4",
     "@types/node": "^18.11.12",
     "eslint": "8.29.0",
-    "husky": "^8.0.0",
+    "eslint-config-next": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-config-turbo": "latest",
+    "eslint-plugin-simple-import-sort": "latest",
+    "eslint-plugin-testing-library": "latest",
+    "eslint-plugin-unused-imports": "latest",
     "jest": "^29.3.0",
-    "lint-staged": "^13.0.0",
     "prettier": "2.8.1",
     "sort-package-json": "2.1.0",
     "ts-jest": "29.0.3",
@@ -94,7 +86,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
+      "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
+      "graphql": "16.6.0"
     }
   }
 }

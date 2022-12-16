@@ -96,8 +96,8 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
         {/*@ts-ignore*/}
         <GenericTable table={table} loading={false} placeholder="No positions found" pageSize={fields?.length || 0} />
         {Array.isArray(errors?.streams) && errors.streams.length > 0 && (
-          <div className="border border-slate-200/5 rounded-xl px-5 py-3 text-sm flex flex-col gap-3">
-            <div className="flex justify-between items-center border-b border-slate-200/5 pb-3">
+          <div className="flex flex-col gap-3 px-5 py-3 text-sm border border-slate-200/5 rounded-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200/5">
               <Typography variant="sm" weight={600}>
                 Import Errors
               </Typography>
@@ -109,8 +109,8 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
           </div>
         )}
         {Array.isArray(_formErrors?.streams) && _formErrors.streams.length > 0 && (
-          <div className="border border-slate-200/5 rounded-xl px-5 py-3 text-sm flex flex-col gap-3">
-            <Typography variant="sm" weight={600} className="border-b border-slate-200/5 pb-3">
+          <div className="flex flex-col gap-3 px-5 py-3 text-sm border border-slate-200/5 rounded-xl">
+            <Typography variant="sm" weight={600} className="pb-3 border-b border-slate-200/5">
               Form Errors
             </Typography>
             <FieldErrorRenderer errors={_formErrors} />
@@ -140,7 +140,7 @@ const Error: FC<{ k: string; v: FieldError }> = ({ k, v }) => {
     <li className="list-item">
       <div className="inline-flex items-center gap-1 text-sm font-medium text-slate-200">
         <div className="uppercase text-[10px] font-semibold text-slate-400">{k.toLowerCase()}</div>
-        <div className="h-3 w-3">
+        <div className="w-3 h-3">
           <MinusIcon width={12} height={12} className="text-slate-500" />
         </div>
         {v.message}
@@ -158,7 +158,7 @@ const FieldErrorRenderer: FC<{ errors: FieldErrors<CreateMultipleStreamFormSchem
           if (!el) return
           return (
             <div key={idx}>
-              <Typography variant="xs" weight={400} className="text-slate-300 mb-1">
+              <Typography variant="xs" weight={400} className="mb-1 text-slate-300">
                 Stream {idx + 1}
               </Typography>
               <ul className="!list-disc !list-inside">
