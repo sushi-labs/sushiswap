@@ -201,7 +201,7 @@ contract RouteProcessor is StreamReader {
 
   // Wrap the Native Token
   function wrapNative() private returns (uint256 amount) {
-    amount = address(this).balance;
+    amount = msg.value;
     wNATIVE.deposit{value: amount}();
   }
 
