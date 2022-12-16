@@ -1,5 +1,7 @@
 import { AppType } from './types'
 
+export const HEADER_HEIGHT = 56
+
 export const APP_TYPE_LINKS = {
   [AppType.Root]: '/',
   [AppType.Legacy]: '/',

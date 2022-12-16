@@ -91,20 +91,12 @@ body {
     -webkit-appearance: none;
   }
 
-  .without-ring:focus:not(:focus-visible) {
-    @apply focus:ring-0 focus:ring-offset-0 outline-none;
+  .without-ring:focus, .without-ring:focus-within, .without-ring:focus-visible {
+    @apply ring-0 ring-offset-0 outline-none shadow-none;
   }
 
-  .without-ring:focus-visible {
-    @apply ring-2 ring-offset-2;
-  }
-
-  [type="checkbox"]:focus:not(:focus-visible) {
-     @apply focus:ring-0 focus:ring-offset-0 outline-none;
-   }
-
-  [type="checkbox"]:focus-visible {
-    @apply ring-2 ring-offset-2;
+  [type="checkbox"]:focus, [type="checkbox"]:focus-within, [type="checkbox"]:focus-visible {
+    @apply focus:ring-0 focus:ring-offset-0 focus-within:outline-none;
   }
 
 }

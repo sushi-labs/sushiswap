@@ -1,11 +1,8 @@
-'use client'
-
 import { Menu, Transition } from '@headlessui/react'
 import classNames from 'classnames'
-import Image from 'next/legacy/image'
 import React, { FC, Fragment, ReactElement, ReactNode } from 'react'
 
-import { APP_TYPE_LINKS } from '../constants'
+import { APP_TYPE_LINKS, HEADER_HEIGHT } from '../constants'
 import { AppType } from '../types'
 
 const ITEMS = [
@@ -43,8 +40,9 @@ export interface HeaderProps extends React.HTMLProps<HTMLElement> {
 export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, rightElement }) => {
   return (
     <header
+      style={{ height: HEADER_HEIGHT }}
       className={classNames(
-        'fixed flex items-center left-0 right-0 top-0 z-[1070] h-[54px] border-b border-slate-200/5',
+        'fixed flex items-center left-0 right-0 top-0 z-[1070] border-b border-slate-200/5',
         className
       )}
     >
@@ -52,10 +50,9 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
         <div className="flex items-center">
           <a className="flex flex-row items-center pr-4" href="/">
             <div className="w-7 h-7">
-              <Image
-                alt="sushi_icon"
+              <img
+                alt="logo"
                 src="https://res.cloudinary.com/sushi-cdn/image/upload/v1670419151/xmaslogo1-trimmy_puyjsw.png"
-                layout="responsive"
                 width={28}
                 height={28}
               />
@@ -93,8 +90,8 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
             </Transition>
           </Menu>
         </div>
-        <div className="hidden md:flex justify-center">{children}</div>
-        <div className="flex justify-end gap-2">{rightElement}</div>
+        <div className="hidden md:flex justify-center relative h-[38px]">{children}</div>
+        <div className="flex items-center justify-end gap-2">{rightElement}</div>
       </div>
     </header>
   )

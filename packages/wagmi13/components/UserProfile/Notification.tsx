@@ -20,9 +20,9 @@ import { classNames } from '@sushiswap/ui13'
 import { Badge } from '@sushiswap/ui13/components/Badge'
 import { Currency as UICurrency } from '@sushiswap/ui13/components/currency'
 import { Dots } from '@sushiswap/ui13/components/Dots'
+import { ExternalLink } from '@sushiswap/ui13/components/ExternalLink'
 import { IconButton } from '@sushiswap/ui13/components/IconButton'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
-import { Link } from '@sushiswap/ui13/components/Link'
 import { Loader } from '@sushiswap/ui13/components/Loader'
 import { TimeAgo } from '@sushiswap/ui13/components/TimeAgo'
 import { NotificationData } from '@sushiswap/ui13/components/toast'
@@ -81,7 +81,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
           }}
         </Disclosure.Button>
       )}
-      <Link.External
+      <ExternalLink
         href={notification.href ? notification.href : chains[notification.chainId].getTxUrl(notification.txHash)}
         className="!no-underline"
       >
@@ -179,7 +179,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
             </span>
           </div>
         </div>
-      </Link.External>
+      </ExternalLink>
     </div>
   )
 }

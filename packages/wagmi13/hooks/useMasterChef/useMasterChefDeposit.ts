@@ -1,6 +1,6 @@
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Token } from '@sushiswap/currency'
-import { NotificationData } from '@sushiswap/ui'
+import { NotificationData } from '@sushiswap/ui13/components/toast'
 import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'

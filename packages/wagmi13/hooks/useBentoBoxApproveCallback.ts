@@ -1,7 +1,7 @@
 import { Signature, splitSignature } from '@ethersproject/bytes'
 import { AddressZero, HashZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { NotificationData } from '@sushiswap/ui'
+import { NotificationData } from '@sushiswap/ui13/components/toast'
 import { useCallback, useMemo, useState } from 'react'
 import {
   Address,
