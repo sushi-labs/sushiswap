@@ -158,7 +158,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
 }
 
 export const SUSHISWAP_SUBGRAPH_NAME = {
-  [ChainId.ETHEREUM]: 'sushiswap-subgraphs/sushiswap-ethereum',
+  [ChainId.ETHEREUM]: 'subgraph-qa/sushiswap-ethereum',
   [ChainId.AVALANCHE]: 'sushi-0m/sushiswap-avalanche',
   [ChainId.ARBITRUM]: 'sushi-0m/sushiswap-arbitrum',
   [ChainId.BSC]: 'sushi-0m/sushiswap-bsc',
