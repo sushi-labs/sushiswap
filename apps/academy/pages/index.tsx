@@ -101,7 +101,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const topics = topicsData?.data || []
   const products = productsData?.data || []
 
-  const articleList: ArticleEntity[] = useMemo(() => {
+  const articleList: ArticleEntity[] | undefined = useMemo(() => {
     if (filterData?.data && (selectedTopic || selectedDifficulty || selectedProduct)) return filterData.data
     return articles
   }, [articles, filterData?.data, selectedDifficulty, selectedTopic, selectedProduct])
@@ -170,7 +170,9 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             >
               <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9 sm:hidden">
                 <Select
-                  onChange={(value) => (value.isProduct ? handleSelectProduct(value) : handleSelectTopic(value))}
+                  onChange={(value: TopicEntity & { isProduct?: boolean }) =>
+                    value.isProduct ? handleSelectProduct(value) : handleSelectTopic(value)
+                  }
                   button={
                     <Listbox.Button
                       type="button"
@@ -244,7 +246,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                   <FilterButton
                     key={`product_${product.id}`}
                     isSelected={selectedProduct?.id === product.id}
-                    title={product.attributes.name}
+                    title={product.attributes?.name}
                     onClick={() => handleSelectProduct(product)}
                   />
                 )
@@ -255,7 +257,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                   <FilterButton
                     key={`topic_${topic.id}`}
                     isSelected={selectedTopic?.id === topic.id}
-                    title={topic.attributes.name}
+                    title={topic.attributes?.name}
                     onClick={() => handleSelectTopic(topic)}
                   />
                 )

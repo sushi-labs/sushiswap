@@ -67,10 +67,10 @@
     "ts-node": "10.9.1",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@7.6.0",
+  "packageManager": "pnpm@7.18.2",
   "engines": {
     "node": ">=16.x",
-    "pnpm": ">=6.x"
+    "pnpm": ">=7.x"
   },
   "nextBundleAnalysis": {
     "budget": null,

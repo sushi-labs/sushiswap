@@ -24,4 +24,5 @@ export const SORTING_OPTIONS = [
   { key: 'title:asc', name: 'Sort Title A-Z' },
 ]
 
-export const getShareText = (title: string) => `Check out this Sushi article: ${title}`
+export const getShareText = (title: string | undefined) =>
+  title ? `Check out this Sushi article: ${title}` : undefined

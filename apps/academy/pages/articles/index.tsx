@@ -11,6 +11,7 @@ import useSWR, { SWRConfig } from 'swr'
 import {
   DifficultyEntity,
   DifficultyEntityResponseCollection,
+  Maybe,
   ProductEntity,
   ProductEntityResponseCollection,
   TopicEntity,
@@ -147,9 +148,9 @@ const _Articles: FC = () => {
 
   const articlesAmount = articlesMeta?.pagination?.total ?? 0
   const headerTitle = useMemo(() => {
-    let title = 'Latest releases'
+    let title: Maybe<string> | undefined = 'Latest releases'
     if (router.isReady) {
-      if (selectedDifficulty) title = selectedDifficulty.attributes.shortDescription
+      if (selectedDifficulty) title = selectedDifficulty.attributes?.shortDescription
       if (searchQuery || selectedTopic || selectedProduct) title = 'Search results'
     }
     return title
@@ -309,7 +310,7 @@ const _Articles: FC = () => {
               </>
             )}
             <div className="flex justify-center mt-12">
-              {articlesMeta?.pagination?.pageCount > 0 && (
+              {articlesMeta?.pagination?.pageCount && articlesMeta?.pagination?.pageCount > 0 && (
                 <Pagination
                   page={articlesMeta.pagination.page}
                   onPage={setPage}
