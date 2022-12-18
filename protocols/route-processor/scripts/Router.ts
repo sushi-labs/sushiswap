@@ -1,17 +1,29 @@
-import { Token, WNATIVE } from '@sushiswap/currency'
+import { Token, Type, WNATIVE } from '@sushiswap/currency'
 import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
+
 import { DataFetcher } from './DataFetcher'
 import { LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
 import { convertTokenToBento, getBentoChainId } from './liquidityProviders/Trident'
 
 type RouteCallBack = (r: MultiRoute) => void
 
+function TokenToRToken(t: Type): RToken {
+  if (t instanceof Token) return t as RToken
+  const nativeRToken: RToken = {
+    address: '',
+    name: t.name,
+    symbol: t.symbol,
+    chainId: t.chainId,
+  }
+  return nativeRToken
+}
+
 export class Router {
   dataFetcher: DataFetcher
-  fromToken: Token
+  fromToken: RToken
   amountIn: BigNumber
-  toToken: Token
+  toToken: RToken
   gasPrice: number
   providers?: LiquidityProviders[] // all providers if undefined
   minUpdateDelay: number
@@ -19,21 +31,22 @@ export class Router {
   dataFetcherPreviousState = 0
   routeCallBack?: RouteCallBack
   currentBestRoute?: MultiRoute
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   timer?: any // timer from setInterval
 
   constructor(
     dataFetcher: DataFetcher,
-    fromToken: Token,
+    fromToken: Type,
     amountIn: BigNumber,
-    toToken: Token,
+    toToken: Type,
     gasPrice: number,
     providers?: LiquidityProviders[], // all providers if undefined
     minUpdateDelay = 1000 // Minimal delay between routing update
   ) {
     this.dataFetcher = dataFetcher
-    this.fromToken = fromToken
+    this.fromToken = TokenToRToken(fromToken)
     this.amountIn = amountIn
-    this.toToken = toToken
+    this.toToken = TokenToRToken(toToken)
     this.gasPrice = gasPrice
     this.providers = providers
     this.minUpdateDelay = minUpdateDelay
@@ -77,8 +90,8 @@ export class Router {
       ]
 
       const route = findMultiRouteExactIn(
-        this.fromToken as RToken,
-        this.toToken as RToken,
+        this.fromToken,
+        this.toToken,
         this.amountIn,
         this.dataFetcher.getCurrentPoolCodeList(this.providers).map((pc) => pc.pool),
         networks,
@@ -92,16 +105,16 @@ export class Router {
     }
   }
 
-  changeRouteParams(fromToken: Token, amountIn: BigNumber, toToken: Token, gasPrice: number) {
-    this.fromToken = fromToken
+  changeRouteParams(fromToken: Type, amountIn: BigNumber, toToken: Type, gasPrice: number) {
+    this.fromToken = TokenToRToken(fromToken)
     this.amountIn = amountIn
-    this.toToken = toToken
+    this.toToken = TokenToRToken(toToken)
     this.gasPrice = gasPrice
     this._checkRouteUpdate() // Recalc route immediately
   }
 
   // Human-readable route printing
-  routeToString(route: MultiRoute, fromToken: Token, toToken: Token, shiftPrimary = '', shiftSub = '    '): string {
+  routeToString(route: MultiRoute, fromToken: Type, toToken: Type, shiftPrimary = '', shiftSub = '    '): string {
     const poolCodesMap = this.dataFetcher.getCurrentPoolCodeMap()
     let res = ''
     res += shiftPrimary + 'Route Status: ' + route.status + '\n'

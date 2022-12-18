@@ -40,7 +40,11 @@ export class TinesToRouteProcessor {
     res += initialCode
 
     const distributedTokens = new Set([route.fromToken.tokenId])
-    route.legs.forEach((l) => {
+    route.legs.forEach((l, i) => {
+      if (i == 0 && l.tokenFrom.address == '')
+        // Native - processed by codeDistributeInitial
+        return
+
       // 2. Transfer tokens from the routeProcessor contract to the pool if it is neccessary
       if (!distributedTokens.has(l.tokenFrom.tokenId)) {
         res += this.codeDistributeTokenShares(l.tokenFrom, route)
@@ -86,7 +90,13 @@ export class TinesToRouteProcessor {
 
   // Distributes tokens from msg.sender to pools
   codeDistributeInitial(route: MultiRoute): [string, Map<string, BigNumber>] {
-    const legs = this.tokenOutputLegs.get(route.fromToken.tokenId as string) as RouteLeg[]
+    let fromToken = route.fromToken
+    if (fromToken.address == '') {
+      // Native
+      fromToken = route.legs[0].tokenTo // Change to wrapped Native
+    }
+
+    const legs = this.tokenOutputLegs.get(fromToken.tokenId as string) as RouteLeg[]
     const legsAddr: [RouteLeg, string][] = legs.map((l) => {
       const pc = this.getPoolCode(l)
       const startPoint = pc.getStartPoint(l, route)
@@ -94,7 +104,7 @@ export class TinesToRouteProcessor {
     })
 
     const command =
-      getTokenType(route.fromToken) == TokenType.ERC20
+      getTokenType(fromToken) == TokenType.ERC20
         ? 3 // distributeERC20Amounts
         : 24 // distributeBentoShares
 

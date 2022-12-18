@@ -1,15 +1,16 @@
-import { ethers, network } from 'hardhat'
-import { RouteProcessor__factory } from '../types/index'
-import { getBigNumber, MultiRoute } from '@sushiswap/tines'
-import { WETH9ABI } from '../ABI/WETH9'
-import { HardhatNetworkConfig } from 'hardhat/types'
-import { BentoBox } from '../scripts/liquidityProviders/Trident'
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
+import { Native, SUSHI, Token, WNATIVE } from '@sushiswap/currency'
+import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { expect } from 'chai'
+import { ethers, network } from 'hardhat'
+import { HardhatNetworkConfig } from 'hardhat/types'
+
+import { WETH9ABI } from '../ABI/WETH9'
 import { DataFetcher } from '../scripts/DataFetcher'
+import { BentoBox } from '../scripts/liquidityProviders/Trident'
 import { Router } from '../scripts/Router'
 import { getRouteProcessorCode } from '../scripts/TinesToRouteProcessor'
+import { RouteProcessor__factory } from '../typechain/index'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -52,7 +53,7 @@ class BackCounter {
   }
 }
 
-async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, swaps = 1) {
+async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, swapFromWrapped = true, swaps = 1) {
   let provider
   switch (chainId) {
     case ChainId.ETHEREUM:
@@ -67,13 +68,14 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
 
   const amountInBN = getBigNumber(amountIn * 1e18)
   const baseWrappedToken = WRAPPED_NATIVE[chainId]
+  const native = Native.onChain(chainId)
 
   console.log(`1. ${chainId} Find best route ...`)
   const backCounter = new BackCounter(4)
   const dataFetcher = new DataFetcher(provider, chainId)
   dataFetcher.startDataFetching()
   dataFetcher.fetchPoolsForToken(baseWrappedToken, toToken)
-  const router = new Router(dataFetcher, baseWrappedToken, amountInBN, toToken, 30e9)
+  const router = new Router(dataFetcher, swapFromWrapped ? baseWrappedToken : native, amountInBN, toToken, 30e9)
   router.startRouting((r) => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.routeToString(r, baseWrappedToken, toToken)
