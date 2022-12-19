@@ -14,23 +14,6 @@ import { RouteProcessor__factory } from '../typechain/index'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-const WRAPPED_NATIVE: Record<number, Token> = {
-  [ChainId.ETHEREUM]: new Token({
-    chainId: ChainId.ETHEREUM,
-    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    decimals: 18,
-    symbol: 'WETH',
-    name: 'Wrapped Ether',
-  }),
-  [ChainId.POLYGON]: new Token({
-    chainId: ChainId.POLYGON,
-    address: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-    decimals: 18,
-    symbol: 'WMATIC',
-    name: 'Wrapped Matic',
-  }),
-}
-
 class BackCounter {
   start: number
   current: number
@@ -69,18 +52,19 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   }
 
   const amountInBN = getBigNumber(amountIn * 1e18)
-  const baseWrappedToken = WRAPPED_NATIVE[chainId]
+  const baseWrappedToken = WNATIVE[chainId]
   const native = Native.onChain(chainId)
+  const fromToken = swapFromWrapped ? baseWrappedToken : native
 
   console.log(`1. ${chainId} Find best route ...`)
   const backCounter = new BackCounter(4)
   const dataFetcher = new DataFetcher(provider, chainId)
   dataFetcher.startDataFetching()
-  dataFetcher.fetchPoolsForToken(baseWrappedToken, toToken)
-  const router = new Router(dataFetcher, swapFromWrapped ? baseWrappedToken : native, amountInBN, toToken, 30e9)
+  dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const router = new Router(dataFetcher, fromToken, amountInBN, toToken, 30e9)
   router.startRouting((r) => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-    const printed = router.routeToString(r, swapFromWrapped ? baseWrappedToken : native, toToken)
+    const printed = router.routeToString(r, fromToken, toToken)
     console.log(printed)
     backCounter.reset(-1)
   })
@@ -94,7 +78,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
   const routeProcessor = await RouteProcessor.deploy(
     BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
-    WRAPPED_NATIVE[chainId].address
+    WNATIVE[chainId].address
   )
   await routeProcessor.deployed()
 
@@ -181,7 +165,7 @@ describe('RouteCreator', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined
-      await testRouter(ChainId.POLYGON, 1_000_000, WRAPPED_NATIVE[ChainId.POLYGON], false)
+      await testRouter(ChainId.POLYGON, 1_000_000, WNATIVE[ChainId.POLYGON], false)
     }
   })
 

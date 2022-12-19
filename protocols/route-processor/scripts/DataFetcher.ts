@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 import { ethers } from 'ethers'
 
 import { Limited } from './Limited'
@@ -72,8 +72,10 @@ export class DataFetcher {
     this.providers.forEach((p) => p.stopFetchPoolsData())
   }
 
-  fetchPoolsForToken(t0: Token, t1: Token) {
-    this.providers.forEach((p) => p.fetchPoolsForToken(t0, t1))
+  fetchPoolsForToken(t0: Type, t1: Type) {
+    if (t0 instanceof Native) t0 = WNATIVE[t0.chainId]
+    if (t1 instanceof Native) t1 = WNATIVE[t1.chainId]
+    this.providers.forEach((p) => p.fetchPoolsForToken(t0 as Token, t1 as Token))
   }
 
   getCurrentPoolCodeMap(providers?: LiquidityProviders[]): Map<string, PoolCode> {
