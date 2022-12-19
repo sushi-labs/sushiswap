@@ -1,5 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import { tryParseAmount, Type } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
+import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui13'
 import { Currency as UICurrency } from '@sushiswap/ui13/components/currency'
@@ -10,11 +11,7 @@ import { useAccount } from 'wagmi'
 
 import { useBalance, usePrices } from '../../hooks'
 
-export interface CurrencyInputProps
-  extends Pick<
-    TokenSelectorProps,
-    'onAddToken' | 'onRemoveToken' | 'onSelect' | 'tokenMap' | 'chainId' | 'customTokenMap'
-  > {
+export interface CurrencyInputProps {
   id?: string
   value: string
   disabled?: boolean
@@ -26,6 +23,12 @@ export interface CurrencyInputProps
   fundSource?: FundSource
   loading?: boolean
   includeNative?: boolean
+  chainId: ChainId | undefined
+  tokenMap: Record<string, Token>
+  customTokenMap?: Record<string, Token>
+  onSelect?(currency: Type): void
+  onAddToken?(token: Token): void
+  onRemoveToken?({ chainId, address }: { chainId: ChainId; address: string }): void
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
