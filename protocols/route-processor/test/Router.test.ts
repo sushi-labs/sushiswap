@@ -48,7 +48,9 @@ class BackCounter {
     }
   }
 
-  reset() {
+  reset(startdiff = 0) {
+    this.start += startdiff
+    if (this.start < 0) this.start = 0
     this.current = this.start
   }
 }
@@ -80,7 +82,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.routeToString(r, swapFromWrapped ? baseWrappedToken : native, toToken)
     console.log(printed)
-    backCounter.reset()
+    backCounter.reset(-1)
   })
 
   await backCounter.wait()
@@ -167,7 +169,7 @@ describe('RouteCreator', async function () {
     }
   })
 
-  it.skip('Polygon WMATIC => SUSHI check', async function () {
+  it('Polygon WMATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined
@@ -175,7 +177,15 @@ describe('RouteCreator', async function () {
     }
   })
 
-  it('Polygon MATIC => SUSHI check', async function () {
+  it.skip('Polygon MATIC => WMATIC check', async function () {
+    const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
+    if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
+      expect(process.env.ALCHEMY_API_KEY).not.undefined
+      await testRouter(ChainId.POLYGON, 1_000_000, WRAPPED_NATIVE[ChainId.POLYGON], false)
+    }
+  })
+
+  it.skip('Polygon MATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined

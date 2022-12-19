@@ -1,8 +1,8 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token, WNATIVE } from '@sushiswap/currency'
-import { BigintIsh } from '@sushiswap/math'
 import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'
-import { BigNumber, BigNumberish, ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
+
 import { Limited } from './Limited'
 import { LiquidityProvider } from './liquidityProviders/LiquidityProvider'
 import { QuickSwapProvider } from './liquidityProviders/QuickSwap'
@@ -10,7 +10,7 @@ import { SushiProvider } from './liquidityProviders/Sushi'
 import { convertTokenToBento, getBentoChainId, TridentProvider } from './liquidityProviders/Trident'
 import { UniswapProvider } from './liquidityProviders/UniswapV2'
 import { PoolCode } from './pools/PoolCode'
-import { getRouteProcessorCode } from './TinesToRouteProcessor'
+import { getRouteProcessorCode } from './TinesToRouteProcessor2'
 
 enum LiquidityProviders {
   Sushiswap = 'Sushiswap',
