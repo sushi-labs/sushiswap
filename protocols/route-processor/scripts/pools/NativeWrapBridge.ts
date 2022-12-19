@@ -5,7 +5,7 @@ import { PoolCode } from './PoolCode'
 
 export class NativeWrapBridgePoolCode extends PoolCode {
   constructor(pool: BridgeUnlimited) {
-    super(pool, `NativeWrapBridge`)
+    super(pool, `Wrap Native`)
   }
 
   getStartPoint(): string {

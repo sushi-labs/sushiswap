@@ -62,9 +62,9 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   dataFetcher.startDataFetching()
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const router = new Router(dataFetcher, fromToken, amountInBN, toToken, 30e9)
-  router.startRouting((r) => {
+  router.startRouting(() => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-    const printed = router.routeToString(r, fromToken, toToken)
+    const printed = router.getCurrentRouteHumanString()
     console.log(printed)
     backCounter.reset(-1)
   })
@@ -75,7 +75,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
 
   console.log(`2. ChainId=${chainId} RouteProcessor deployment ...`)
 
-  const RouteProcessor: RouteProcessor__factory = await ethers.getContractFactory('RouteProcessor')
+  const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
   const routeProcessor = await RouteProcessor.deploy(
     BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
     WNATIVE[chainId].address
@@ -99,32 +99,33 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
 
   console.log('6. Create route processor code ...')
   const route = router.getBestRoute() as MultiRoute
-  const code = getRouteProcessorCode(route, routeProcessor.address, Alice.address, dataFetcher.getCurrentPoolCodeMap())
+  const rpParams = router.getCurrentRouteRPParams(Alice.address, routeProcessor.address)
+  if (rpParams === undefined) {
+    throw new Error('route is not created')
+  }
 
   console.log('7. Call route processor ...')
-  const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - 0.005) * 1_000_000)).div(1_000_000)
-
   const toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, Alice)
   const balanceOutBNBefore = await toTokenContract.connect(Alice).balanceOf(Alice.address)
   let tx
-  if (swapFromWrapped)
+  if (rpParams.value)
     tx = await routeProcessor.processRoute(
-      baseWrappedToken.address,
-      route.amountInBN,
-      toToken.address,
-      amountOutMin,
-      Alice.address,
-      code
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode,
+      { value: rpParams.value }
     )
   else
     tx = await routeProcessor.processRoute(
-      baseWrappedToken.address,
-      route.amountInBN,
-      toToken.address,
-      amountOutMin,
-      Alice.address,
-      code,
-      { value: route.amountInBN }
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode
     )
   const receipt = await tx.wait()
 
@@ -153,7 +154,7 @@ describe('RouteCreator', async function () {
     }
   })
 
-  it('Polygon WMATIC => SUSHI check', async function () {
+  it.skip('Polygon WMATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined
@@ -169,7 +170,7 @@ describe('RouteCreator', async function () {
     }
   })
 
-  it.skip('Polygon MATIC => SUSHI check', async function () {
+  it('Polygon MATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined
