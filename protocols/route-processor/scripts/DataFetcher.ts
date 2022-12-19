@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 
 import { Limited } from './Limited'
 import { LiquidityProviderMC, LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
+import { NativeWrapProvider } from './liquidityProviders/NativeWrapProvider'
 import { QuickSwapProviderMC } from './liquidityProviders/QuickSwapMC'
 import { SushiProviderMC } from './liquidityProviders/SushiMC'
 import { TridentProviderMC } from './liquidityProviders/TridentMC'
@@ -43,6 +44,9 @@ export class DataFetcher {
     this.poolCodes = new Map()
 
     this.providers = []
+    this.providers.push(
+      new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+    )
     if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
       this.providers.push(
         new SushiProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)

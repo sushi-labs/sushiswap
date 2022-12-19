@@ -78,7 +78,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   const router = new Router(dataFetcher, swapFromWrapped ? baseWrappedToken : native, amountInBN, toToken, 30e9)
   router.startRouting((r) => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
-    const printed = router.routeToString(r, baseWrappedToken, toToken)
+    const printed = router.routeToString(r, swapFromWrapped ? baseWrappedToken : native, toToken)
     console.log(printed)
     backCounter.reset()
   })
@@ -99,15 +99,17 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   console.log('3. User creation ...')
   const [Alice] = await ethers.getSigners()
 
-  console.log(`4. Deposit user's ${amountIn} ${WNATIVE[chainId].symbol} to ${baseWrappedToken.symbol}`)
-  await Alice.sendTransaction({
-    to: baseWrappedToken.address,
-    value: amountInBN.mul(swaps),
-  })
+  if (swapFromWrapped) {
+    console.log(`4. Deposit user's ${amountIn} ${WNATIVE[chainId].symbol} to ${baseWrappedToken.symbol}`)
+    await Alice.sendTransaction({
+      to: baseWrappedToken.address,
+      value: amountInBN.mul(swaps),
+    })
 
-  console.log(`5. Approve user's ${baseWrappedToken.symbol} to the route processor ...`)
-  const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
-  await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
+    console.log(`5. Approve user's ${baseWrappedToken.symbol} to the route processor ...`)
+    const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
+    await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
+  }
 
   console.log('6. Create route processor code ...')
   const route = router.getBestRoute() as MultiRoute
@@ -118,14 +120,26 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
 
   const toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, Alice)
   const balanceOutBNBefore = await toTokenContract.connect(Alice).balanceOf(Alice.address)
-  const tx = await routeProcessor.processRoute(
-    baseWrappedToken.address,
-    route.amountInBN,
-    toToken.address,
-    amountOutMin,
-    Alice.address,
-    code
-  )
+  let tx
+  if (swapFromWrapped)
+    tx = await routeProcessor.processRoute(
+      baseWrappedToken.address,
+      route.amountInBN,
+      toToken.address,
+      amountOutMin,
+      Alice.address,
+      code
+    )
+  else
+    tx = await routeProcessor.processRoute(
+      baseWrappedToken.address,
+      route.amountInBN,
+      toToken.address,
+      amountOutMin,
+      Alice.address,
+      code,
+      { value: route.amountInBN }
+    )
   const receipt = await tx.wait()
 
   console.log("8. Fetching user's output balance ...")
@@ -153,11 +167,19 @@ describe('RouteCreator', async function () {
     }
   })
 
-  it('Polygon WMATIC => SUSHI check', async function () {
+  it.skip('Polygon WMATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
-      expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined
+      expect(process.env.ALCHEMY_API_KEY).not.undefined
       await testRouter(ChainId.POLYGON, 1_000_000, SUSHI[ChainId.POLYGON])
+    }
+  })
+
+  it('Polygon MATIC => SUSHI check', async function () {
+    const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
+    if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
+      expect(process.env.ALCHEMY_API_KEY).not.undefined
+      await testRouter(ChainId.POLYGON, 1_000_000, SUSHI[ChainId.POLYGON], false)
     }
   })
 })
