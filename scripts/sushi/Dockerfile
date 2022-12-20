@@ -3,16 +3,16 @@ FROM node:16-alpine
 ARG SCRIPT_PATH="./"
 ENV SCRIPT_PATH ${SCRIPT_PATH}
 
+# Install git and pnpm
+RUN apk add --no-cache git libc6-compat
 RUN npm install -g pnpm
 
 WORKDIR /workdir
 
 COPY . .
-RUN echo "$PWD"
-
 WORKDIR /workdir/scripts/sushi
+
 RUN pnpm install
-RUN echo "$PWD"
 RUN pnpm generate
 RUN pnpm prisma generate
 
