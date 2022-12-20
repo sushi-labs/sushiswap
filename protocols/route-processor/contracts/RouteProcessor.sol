@@ -23,6 +23,9 @@ contract RouteProcessor is StreamReader {
     wNATIVE = IWETH(_wNATIVE);
   }
 
+  // for native unwrapping
+  receive() external payable {}
+
   function processRoute(
     address tokenIn,
     uint256 amountIn,

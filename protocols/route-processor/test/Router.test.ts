@@ -1,16 +1,17 @@
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Token, WNATIVE } from '@sushiswap/currency'
+import { Native, SUSHI, Token, Type, WNATIVE } from '@sushiswap/currency'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { expect } from 'chai'
+import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import { HardhatNetworkConfig } from 'hardhat/types'
+import { ERC20ABI } from '../ABI/ERC20'
 
 import { WETH9ABI } from '../ABI/WETH9'
 import { DataFetcher } from '../scripts/DataFetcher'
 import { BentoBox } from '../scripts/liquidityProviders/Trident'
 import { Router } from '../scripts/Router'
-import { getRouteProcessorCode } from '../scripts/TinesToRouteProcessor'
-import { RouteProcessor__factory } from '../typechain/index'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -138,6 +139,133 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   console.log(`    gas use: ${receipt.gasUsed.toString()}`)
 }
 
+interface TestEnvironment {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  provider: any
+  rp: Contract
+  user: SignerWithAddress
+  dataFetcher: DataFetcher
+}
+
+async function getTestEnvironment(chainId: ChainId): Promise<TestEnvironment> {
+  console.log('Prepare Environment:')
+
+  console.log('    Create Provider ...')
+  let provider
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      provider = new ethers.providers.AlchemyProvider('homestead', process.env.ALCHEMY_API_KEY)
+      break
+    case ChainId.POLYGON:
+      provider = new ethers.providers.AlchemyProvider('matic', process.env.ALCHEMY_POLYGON_API_KEY)
+      break
+    default:
+      throw new Error('Unsupported net!')
+  }
+
+  console.log('    Create DataFetcher ...')
+
+  const dataFetcher = new DataFetcher(provider, chainId)
+  dataFetcher.startDataFetching()
+
+  console.log(`    ChainId=${chainId} RouteProcessor deployment ...`)
+  const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
+  const routeProcessor = await RouteProcessor.deploy(
+    BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
+    WNATIVE[chainId].address
+  )
+  await routeProcessor.deployed()
+
+  console.log('    User creation ...')
+  const [Alice] = await ethers.getSigners()
+
+  return {
+    provider,
+    rp: routeProcessor,
+    user: Alice,
+    dataFetcher,
+  }
+}
+
+async function makeSwap(
+  env: TestEnvironment,
+  fromToken: Type,
+  amountIn: BigNumber,
+  toToken: Type
+): Promise<BigNumber | undefined> {
+  console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
+
+  if (fromToken instanceof Token) {
+    console.log(`    Approve user's ${fromToken.symbol} to the route processor ...`)
+    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, ERC20ABI, env.user)
+    await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
+  }
+
+  console.log('    Create Route ...')
+  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const backCounter = new BackCounter(3)
+  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
+  router.startRouting(() => {
+    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
+    const printed = router.getCurrentRouteHumanString()
+    console.log(printed)
+    backCounter.reset(-1)
+  })
+  await backCounter.wait()
+  router.stopRouting()
+
+  console.log('    Create route processor code ...')
+  const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address)
+  if (rpParams === undefined) return
+
+  console.log('    Call route processor ...')
+  const route = router.getBestRoute() as MultiRoute
+  let balanceOutBNBefore: BigNumber
+  let toTokenContract: Contract | undefined = undefined
+  if (toToken instanceof Token) {
+    toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, env.user)
+    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+  } else {
+    balanceOutBNBefore = await env.user.getBalance()
+  }
+  let tx
+  if (rpParams.value)
+    tx = await env.rp.processRoute(
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode,
+      { value: rpParams.value }
+    )
+  else
+    tx = await env.rp.processRoute(
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode
+    )
+  const receipt = await tx.wait()
+
+  console.log("    Fetching user's output balance ...")
+  let balanceOutBN: BigNumber
+  if (toTokenContract) {
+    balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+  } else {
+    balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
+  }
+  console.log(`        expected amountOut: ${route.amountOutBN.toString()}`)
+  console.log(`        real amountOut:     ${balanceOutBN.toString()}`)
+  const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
+  console.log(`        slippage: ${slippage / 100}%`)
+  console.log(`        gas use: ${receipt.gasUsed.toString()}`)
+
+  return balanceOutBN
+}
+
 describe('RouteCreator', async function () {
   it('Ethereum WETH => FEI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
@@ -157,7 +285,7 @@ describe('RouteCreator', async function () {
   it.skip('Polygon WMATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
-      expect(process.env.ALCHEMY_API_KEY).not.undefined
+      expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined
       await testRouter(ChainId.POLYGON, 1_000_000, SUSHI[ChainId.POLYGON])
     }
   })
@@ -165,16 +293,32 @@ describe('RouteCreator', async function () {
   it.skip('Polygon MATIC => WMATIC check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
-      expect(process.env.ALCHEMY_API_KEY).not.undefined
+      expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined
       await testRouter(ChainId.POLYGON, 1_000_000, WNATIVE[ChainId.POLYGON], false)
     }
   })
 
-  it('Polygon MATIC => SUSHI check', async function () {
+  it.skip('Polygon MATIC => SUSHI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
-      expect(process.env.ALCHEMY_API_KEY).not.undefined
+      expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined
       await testRouter(ChainId.POLYGON, 1_000_000, SUSHI[ChainId.POLYGON], false)
+    }
+  })
+
+  it('Polygon MATIC => SUSHI => MATIC check', async function () {
+    const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
+    if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
+      expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined
+      const env = await getTestEnvironment(ChainId.POLYGON)
+      const amountOut1 = await makeSwap(
+        env,
+        Native.onChain(ChainId.POLYGON),
+        getBigNumber(1 * 1e18),
+        SUSHI[ChainId.POLYGON]
+      )
+      if (amountOut1 === undefined) return
+      const amountOut2 = await makeSwap(env, SUSHI[ChainId.POLYGON], amountOut1, Native.onChain(ChainId.POLYGON))
     }
   })
 })
