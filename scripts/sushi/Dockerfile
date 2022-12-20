@@ -18,4 +18,4 @@ RUN pnpm install
 RUN pnpm generate
 RUN pnpm prisma generate
 
-CMD pnpm ts-node "./$SCRIPT_PATH"
+CMD pnpm ts-node --swc --esm "./$SCRIPT_PATH"
