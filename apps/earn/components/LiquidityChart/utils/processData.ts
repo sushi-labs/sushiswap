@@ -1,7 +1,7 @@
-import { tickToPrice } from '@muffinfi/muffin-sdk'
+import { tickToPrice } from '@sushiswap/amm'
 import { Token } from '@sushiswap/currency'
-import type { TickData } from 'hooks/usePoolTickData'
 
+import { TickData } from '../hooks/usePoolTickData'
 import { Datum } from './types'
 
 /*

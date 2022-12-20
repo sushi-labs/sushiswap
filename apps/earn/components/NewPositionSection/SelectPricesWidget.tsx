@@ -1,9 +1,11 @@
 import { RadioGroup } from '@headlessui/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
+import { Amount, Native, Price, SUSHI, Type } from '@sushiswap/currency'
 import { classNames, Widget } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
+
+import { LiquidityChart } from '../LiquidityChart'
 
 enum ChartType {
   Liquidity = 'Liquidity',
@@ -29,6 +31,21 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({ token0, token1, cha
   const [chartType, setChartType] = useState<ChartType>(ChartType.Liquidity)
   const [minPrice, setMinPrice] = useState<number>(525.15)
   const [maxPrice, setMaxPrice] = useState<number>(1515.17)
+  const [independentRangeField, setIndependentRangeField] = useState<'LOWER' | 'UPPER'>('LOWER')
+
+  const [priceLower] = useState(
+    new Price({
+      baseAmount: Amount.fromRawAmount(Native.onChain(chainId).wrapped, '100000000'),
+      quoteAmount: Amount.fromRawAmount(SUSHI[chainId], '1000000'),
+    })
+  )
+
+  const [priceUpper] = useState(
+    new Price({
+      baseAmount: Amount.fromRawAmount(Native.onChain(chainId).wrapped, '200000000'),
+      quoteAmount: Amount.fromRawAmount(SUSHI[chainId], '1000000'),
+    })
+  )
 
   return (
     <Widget id="setPrices" maxWidth={400} className="!bg-slate-800">
@@ -52,6 +69,18 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({ token0, token1, cha
             ))}
           </RadioGroup>
         </Widget.Header>
+        <LiquidityChart
+          currencyBase={token0}
+          currencyQuote={token1}
+          tierId={0}
+          priceLower={priceLower}
+          priceUpper={priceUpper}
+          weightLockedCurrencyBase={undefined}
+          onLeftRangeInput={() => {}}
+          onRightRangeInput={() => {}}
+          setIndependentRangeField={setIndependentRangeField}
+          resetRangeNonce={99975}
+        />
         <div className="flex flex-col gap-3 p-4 pt-0">
           <RadioGroup value={range} onChange={setRange} className="flex gap-2">
             {Object.keys(Range)

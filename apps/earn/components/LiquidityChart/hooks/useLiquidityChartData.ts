@@ -1,15 +1,15 @@
-import { useMuffinPool } from '@muffinfi/hooks/usePools'
 import { Type } from '@sushiswap/currency'
-import { useAllV3Ticks } from 'hooks/usePoolTickData'
+import { useConcentratedLiquidityPool } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
 
 import { processTicksData } from '../utils/processData'
+import { useAllV3Ticks } from './usePoolTickData'
 
 export const useLiquidityChartData = (currencyBase: Type | undefined, currencyQuote: Type | undefined) => {
-  const [poolState, pool] = useMuffinPool(currencyBase, currencyQuote)
+  const [poolState, pool] = useConcentratedLiquidityPool(currencyBase, currencyQuote)
   const { token0, token1 } = pool || {}
 
-  const { data: rawData, ...queryState } = useAllV3Ticks(pool)
+  const { data: rawData, ...queryState } = useAllV3Ticks()
 
   const invertPrice = token0 && currencyBase ? token0 !== currencyBase.wrapped : undefined
 
@@ -19,11 +19,14 @@ export const useLiquidityChartData = (currencyBase: Type | undefined, currencyQu
       : undefined
   }, [rawData, token0, token1, invertPrice])
 
-  return {
-    invertPrice,
-    queryState,
-    priceLiquidityDataList,
-    poolState,
-    pool,
-  }
+  return useMemo(
+    () => ({
+      invertPrice,
+      queryState,
+      priceLiquidityDataList,
+      poolState,
+      pool,
+    }),
+    [invertPrice, pool, poolState, priceLiquidityDataList, queryState]
+  )
 }

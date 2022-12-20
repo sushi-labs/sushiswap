@@ -1,7 +1,4 @@
 import { BanIcon, ChartBarIcon, InboxIcon } from '@heroicons/react/outline'
-import { PoolState } from '@muffinfi/hooks/usePools'
-import { priceToNumber } from '@muffinfi/muffin-sdk'
-import { getPriceRangeWithTokenRatio } from '@muffinfi/utils/getPriceRangeWithTokenRatio'
 import { Price, Token, Type } from '@sushiswap/currency'
 import { formatPercent } from '@sushiswap/format'
 import { Loader } from '@sushiswap/ui'
@@ -9,14 +6,24 @@ import * as d3 from 'd3'
 import { FC, ReactNode, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { batch } from 'react-redux'
 
-import { TIER_COLORS } from '../LiquidityChartRangeInput'
+import theme from '../../tailwind.config'
 import { Chart } from './Chart'
 import { useIsChanging } from './hooks/useIsChanging'
 import { useLiquidityChartData } from './hooks/useLiquidityChartData'
 import { VisiblilitySelector } from './periphery/VisibilitySelector'
 import { ZoomControl } from './periphery/ZoomControl'
+import { getPriceRangeWithTokenRatio } from './utils/getPriceRangeWithTokenRatio'
 import { toFixed } from './utils/processData'
-import { HandleType, ZoomLevel } from './utils/types'
+import { HandleType, PoolState, ZoomLevel } from './utils/types'
+
+const TIER_COLORS = [
+  theme.colors().blue,
+  theme.colors().yellow,
+  theme.colors().red,
+  theme.colors().green,
+  theme.colors(400).yellow,
+  theme.colors(400).red,
+]
 
 const SIZE = {
   width: 464,
@@ -97,7 +104,7 @@ export const LiquidityChart: FC<LiquidityChartProps> = ({
     // Fallback the first tier's price if tier is not found (i.e. creating tier)
     const token0Price = (pool.tiers[tierId] ?? pool.tiers[0])?.token0Price
     if (!token0Price) return undefined
-    return priceToNumber(invertPrice ? token0Price.invert() : token0Price)
+    return invertPrice ? token0Price.invert().toSignificant(4) : token0Price.toSignificant(4)
   }, [pool, tierId, invertPrice])
 
   const onSelectedRangeChange = useCallback(
@@ -127,7 +134,7 @@ export const LiquidityChart: FC<LiquidityChartProps> = ({
 
   const priceRange = useMemo(() => {
     return priceLower && priceUpper
-      ? ([priceToNumber(priceLower), priceToNumber(priceUpper)] as [number, number])
+      ? ([+priceLower.toSignificant(4), +priceUpper.toSignificant(4)] as [number, number])
       : null
   }, [priceLower, priceUpper])
 

@@ -1,3 +1,11 @@
+// TODO REMOVE
+export enum PoolState {
+  LOADING,
+  NOT_EXISTS,
+  EXISTS,
+  INVALID,
+}
+
 export type Datum = {
   vx: number
   vy: number
