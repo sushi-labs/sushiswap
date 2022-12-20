@@ -1,4 +1,6 @@
 FROM node:16-alpine
+# Line below needed for prisma generate, https://github.com/prisma/prisma/issues/14073#issuecomment-1348534199
+RUN apk add --update openssl1.1-compat 
 
 ARG SCRIPT_PATH="./"
 ENV SCRIPT_PATH ${SCRIPT_PATH}
