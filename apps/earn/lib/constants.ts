@@ -18,3 +18,8 @@ export const AVAILABLE_POOL_TYPE_MAP = {
   CONSTANT_PRODUCT_POOL: 'Classic Pool',
   STABLE_POOL: 'Stable Pool',
 }
+
+export enum Bound {
+  LOWER = 'LOWER',
+  UPPER = 'UPPER',
+}

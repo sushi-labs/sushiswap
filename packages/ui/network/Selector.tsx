@@ -11,7 +11,7 @@ export interface SelectorProps {
   selectedNetworks: ChainId[]
   onChange(selectedNetworks: ChainId[]): void
   exclusive?: boolean
-  renderer?: (node: JSX.Element) => ReactElement
+  renderer?: (node: JSX.Element, value?: ChainId) => ReactElement
 }
 
 export const Selector: FC<SelectorProps> = ({
@@ -64,7 +64,7 @@ export const Selector: FC<SelectorProps> = ({
           <Tooltip
             mouseEnterDelay={0.5}
             key={chainId}
-            button={typeof renderer === 'function' ? renderer(button) : button}
+            button={typeof renderer === 'function' ? renderer(button, chainId) : button}
             panel={<div>{chainName[chainId]}</div>}
           />
         )

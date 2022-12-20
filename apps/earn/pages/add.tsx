@@ -24,15 +24,16 @@ import {
   Layout,
   PoolPositionProvider,
   PoolPositionStakedProvider,
-  SelectFeeWidget,
   SelectNetworkWidget,
-  SelectPoolTypeWidget,
+  SelectPoolDetailsWidget,
+  SelectPoolTokensWidget,
   SettingsOverlay,
 } from 'components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
 import { CreateSectionReviewModalTrident } from '../components/CreateSection'
+import { SelectPricesWidget } from '../components/NewPositionSection/SelectPricesWidget'
 import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
@@ -246,23 +247,37 @@ const _Add: FC<AddProps> = ({
   return (
     <>
       <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-        <SelectNetworkWidget selectedNetwork={chainId} onSelect={setChainId} />
-        <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
-          <SelectPoolTypeWidget
-            selectedNetwork={chainId}
+        <SelectNetworkWidget chainId={chainId} onSelect={setChainId} />
+        <SelectPoolTokensWidget
+          token0={token0}
+          token1={token1}
+          chainId={chainId}
+          customTokenMap={customTokensMap}
+          tokenMap={tokenMap}
+          onAddToken={addCustomToken}
+          onRemoveToken={removeCustomToken}
+          onSelectToken0={setToken0}
+          onSelectToken1={setToken1}
+        />
+        {TRIDENT_ENABLED_NETWORKS.includes(chainId) && (
+          <SelectPoolDetailsWidget
+            chainId={chainId}
             poolType={poolType}
+            fee={fee}
+            setFee={setFee}
             setPoolType={(type) => {
               setPoolType(type)
             }}
           />
-        </div>
-        <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
-          <SelectFeeWidget selectedNetwork={chainId} fee={fee} setFee={setFee} />
-        </div>
-
+        )}
+        {poolType === PoolFinderType.ConcentratedLiquidity && (
+          <SelectPricesWidget token0={token0} token1={token1} chainId={chainId} />
+        )}
         <Widget id="addLiquidity" maxWidth={400}>
           <Widget.Content>
-            <Widget.Header title="4. Add Liquidity">
+            <Widget.Header
+              title={poolType === PoolFinderType.ConcentratedLiquidity ? '5. Add Liquidity' : '4. Add Liquidity'}
+            >
               <SettingsOverlay />
             </Widget.Header>
             <Web3Input.Currency
@@ -270,7 +285,6 @@ const _Add: FC<AddProps> = ({
               value={input0}
               onChange={onChangeToken0TypedAmount}
               currency={token0}
-              onSelect={setToken0}
               customTokenMap={customTokensMap}
               onAddToken={addCustomToken}
               onRemoveToken={removeCustomToken}
@@ -288,7 +302,6 @@ const _Add: FC<AddProps> = ({
                 value={input1}
                 onChange={onChangeToken1TypedAmount}
                 currency={token1}
-                onSelect={setToken1}
                 customTokenMap={customTokensMap}
                 onAddToken={addCustomToken}
                 onRemoveToken={removeCustomToken}

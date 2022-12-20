@@ -1,3 +1,4 @@
 export * from './SelectFeeWidget'
 export * from './SelectNetworkWidget'
-export * from './SelectPoolTypeWidget'
+export * from './SelectPoolDetailsWidget'
+export * from './SelectPoolTokensWidget'
