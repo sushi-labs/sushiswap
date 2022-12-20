@@ -11,12 +11,11 @@ RUN npm install -g pnpm
 
 WORKDIR /workdir
 COPY . .
-RUN pnpm exec turbo run build --filter=chain
+RUN pnpm install
+RUN pnpm exec turbo run build --filter=sushi
 
 WORKDIR /workdir/scripts/sushi
 
-RUN pnpm install
-RUN pnpm generate
 RUN pnpm prisma generate
 
 CMD pnpm ts-node --swc --esm "./$SCRIPT_PATH"
