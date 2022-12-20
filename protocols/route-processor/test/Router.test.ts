@@ -267,7 +267,7 @@ async function makeSwap(
 }
 
 describe('RouteCreator', async function () {
-  it('Ethereum WETH => FEI check', async function () {
+  it.skip('Ethereum WETH => FEI check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
       expect(process.env.ALCHEMY_API_KEY).not.undefined
@@ -306,19 +306,22 @@ describe('RouteCreator', async function () {
     }
   })
 
-  it('Polygon MATIC => SUSHI => MATIC check', async function () {
+  it('Native => SUSHI => Native check', async function () {
+    let chainId
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
+      chainId = ChainId.POLYGON
       expect(process.env.ALCHEMY_POLYGON_API_KEY).not.undefined
-      const env = await getTestEnvironment(ChainId.POLYGON)
-      const amountOut1 = await makeSwap(
-        env,
-        Native.onChain(ChainId.POLYGON),
-        getBigNumber(1 * 1e18),
-        SUSHI[ChainId.POLYGON]
-      )
-      if (amountOut1 === undefined) return
-      const amountOut2 = await makeSwap(env, SUSHI[ChainId.POLYGON], amountOut1, Native.onChain(ChainId.POLYGON))
+    } else if (forking_url !== undefined && forking_url.search('eth-mainnet') >= 0) {
+      chainId = ChainId.ETHEREUM
+      expect(process.env.ALCHEMY_API_KEY).not.undefined
+    } else {
+      return
     }
+
+    const env = await getTestEnvironment(chainId)
+    const amountOut1 = await makeSwap(env, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI[chainId])
+    if (amountOut1 === undefined) return
+    await makeSwap(env, SUSHI[chainId], amountOut1, Native.onChain(chainId))
   })
 })
