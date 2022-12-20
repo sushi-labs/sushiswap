@@ -10,8 +10,9 @@ RUN apk add --no-cache git libc6-compat
 RUN npm install -g pnpm
 
 WORKDIR /workdir
-
 COPY . .
+RUN pnpm exec turbo run build --filter=chain
+
 WORKDIR /workdir/scripts/sushi
 
 RUN pnpm install
