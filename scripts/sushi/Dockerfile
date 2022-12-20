@@ -8,11 +8,11 @@ RUN npm install -g pnpm
 WORKDIR /workdir
 
 COPY . .
-
-RUN pnpm install
+RUN echo "$PWD"
 
 WORKDIR /workdir/scripts/sushi
-
+RUN pnpm install
+RUN echo "$PWD"
 RUN pnpm generate
 RUN pnpm prisma generate
 
