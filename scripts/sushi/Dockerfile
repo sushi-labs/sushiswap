@@ -9,8 +9,10 @@ WORKDIR /workdir
 
 COPY . .
 
-WORKDIR /workdir/scripts/sushi
 RUN pnpm install
+
+WORKDIR /workdir/scripts/sushi
+
 RUN pnpm generate
 RUN pnpm prisma generate
 
