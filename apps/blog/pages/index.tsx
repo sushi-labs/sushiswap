@@ -1,12 +1,12 @@
 import { SearchIcon } from '@heroicons/react/outline'
 import { useDebounce } from '@sushiswap/hooks'
 import { Button, Container } from '@sushiswap/ui'
-import { BlogSeo } from 'components/Seo/BlogSeo'
+import BlogSeo from 'components/Seo/BlogSeo'
 import { InferGetServerSidePropsType } from 'next'
 import { FC, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
+import { Article, Category, Collection } from 'types'
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
 import { ArticleList, Card, Categories, Hero } from '../components'
 import { getArticles, getCategories } from '../lib/api'
 
@@ -23,21 +23,21 @@ export async function getStaticProps() {
   }
 }
 
-const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Global }> = ({ fallback, seo }) => {
+const Home: FC<InferGetServerSidePropsType<typeof getStaticProps>> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
-      <_Home seo={seo} />
+      <_Home />
     </SWRConfig>
   )
 }
 
-const _Home: FC<{ seo: Global }> = ({ seo }) => {
+const _Home: FC = () => {
   const [query, setQuery] = useState<string>()
   const debouncedQuery = useDebounce(query, 200)
 
   const [selected, setSelected] = useState<string[]>([])
-  const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
-  const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
+  const { data: articlesData } = useSWR<Collection<Article>>('/articles')
+  const { data: categoriesData } = useSWR<Collection<Category>>('/categories')
 
   const { data: filterData, isValidating } = useSWR(
     [`/articles`, selected, debouncedQuery],
@@ -67,7 +67,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
   return (
     <>
-      <BlogSeo seo={seo} />
+      <BlogSeo />
       <div className="flex flex-col divide-y divide-slate-800">
         {articles?.[0] && <Hero article={articles[0]} />}
         <section className="py-10 pb-60">
@@ -91,7 +91,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             {articleList && (
               <div className="grid grid-cols-1 gap-4 transition-all sm:grid-cols-2 md:grid-cols-3">
                 <ArticleList
-                  articles={articleList as ArticleEntity[]}
+                  articles={articleList as Article[]}
                   loading={loading}
                   render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
                 />

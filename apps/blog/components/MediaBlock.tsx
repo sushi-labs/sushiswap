@@ -1,10 +1,10 @@
 import { FC } from 'react'
+import { MediaBlock as MediaBlockType } from 'types'
 
-import { ComponentSharedMedia } from '../.mesh'
 import { Image } from './Image'
 
 interface MediaBlock {
-  block: ComponentSharedMedia
+  block: MediaBlockType
 }
 
 export const MediaBlock: FC<MediaBlock> = ({ block }) => {
