@@ -5,8 +5,8 @@ import { Loader } from '@sushiswap/ui'
 import * as d3 from 'd3'
 import { FC, ReactNode, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { batch } from 'react-redux'
+import colors from 'tailwindcss/colors'
 
-import theme from '../../tailwind.config'
 import { Chart } from './Chart'
 import { useIsChanging } from './hooks/useIsChanging'
 import { useLiquidityChartData } from './hooks/useLiquidityChartData'
@@ -17,12 +17,12 @@ import { toFixed } from './utils/processData'
 import { HandleType, PoolState, ZoomLevel } from './utils/types'
 
 const TIER_COLORS = [
-  theme.colors().blue,
-  theme.colors().yellow,
-  theme.colors().red,
-  theme.colors().green,
-  theme.colors(400).yellow,
-  theme.colors(400).red,
+  colors.blue[500],
+  colors.yellow[500],
+  colors.red[500],
+  colors.green[500],
+  colors.yellow[300],
+  colors.red[300],
 ]
 
 const SIZE = {
@@ -155,6 +155,7 @@ export const LiquidityChart: FC<LiquidityChartProps> = ({
   const poolIdChanged = useIsChanging(pool?.poolId)
   const tierIdChanged = useIsChanging(tierId)
   const resetRangeNonceChanged = useIsChanging(resetRangeNonce)
+
   useEffect(() => {
     if (!poolIdChanged && !tierIdChanged && !resetRangeNonceChanged) return
     resetRange()
