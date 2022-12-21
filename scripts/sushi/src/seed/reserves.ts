@@ -38,10 +38,15 @@ if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(process.env.VERSION as P
 const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
 
 async function main() {
+  const startTime = performance.now()
+  
   console.log(`CHAIN_ID: ${CHAIN_ID}, VERSIONS: ${VERSIONS}, TYPE: ${TYPE}`)
   const pools = await getPools(CHAIN_ID, VERSIONS, TYPE)
   const poolsWithReserve = await getReserves(CHAIN_ID, pools)
   await updatePoolsWithReserve(CHAIN_ID, poolsWithReserve)
+  
+  const endTime = performance.now()
+  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 }
 
 async function getPools(chainId: ChainId, versions: string[], type: string) {
