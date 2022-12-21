@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@prisma/client": "^4.7.1",
+    "dotenv": "^16.0.0",
     "ioredis": "^5.2.4",
     "prisma-redis-middleware": "^4.3.0"
   },
