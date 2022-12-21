@@ -193,6 +193,7 @@ async function makeSwap(
   amountIn: BigNumber,
   toToken: Type
 ): Promise<BigNumber | undefined> {
+  console.log('')
   console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token) {
@@ -320,8 +321,13 @@ describe('RouteCreator', async function () {
     }
 
     const env = await getTestEnvironment(chainId)
+
     const amountOut1 = await makeSwap(env, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI[chainId])
     if (amountOut1 === undefined) return
     await makeSwap(env, SUSHI[chainId], amountOut1, Native.onChain(chainId))
+
+    const amountOut2 = await makeSwap(env, Native.onChain(chainId), getBigNumber(1 * 1e18), WNATIVE[chainId])
+    if (amountOut2 === undefined) return
+    await makeSwap(env, WNATIVE[chainId], amountOut2, Native.onChain(chainId))
   })
 })

@@ -32,6 +32,11 @@ export class TinesToRouteProcessor {
     // 0. Check for no route
     if (route.status == RouteStatus.NoWay || route.legs.length == 0) return ''
 
+    if (route.legs.length == 1 && route.fromToken.address == '') {
+      // very special case
+      return this.getRPCodeForsimpleWrapRoute(route, toAddress)
+    }
+
     this.calcTokenOutputLegs(route)
     let res = '0x'
 
@@ -59,6 +64,15 @@ export class TinesToRouteProcessor {
     })
 
     return res
+  }
+
+  getRPCodeForsimpleWrapRoute(route: MultiRoute, toAddress: string): string {
+    const hex = new HEXer()
+      .uint8(3) // distributeERC20Amounts
+      .uint8(1)
+      .address(toAddress)
+      .uint(route.amountInBN)
+    return hex.toString0x()
   }
 
   getPoolOutputAddress(l: RouteLeg, route: MultiRoute, toAddress: string): string {
