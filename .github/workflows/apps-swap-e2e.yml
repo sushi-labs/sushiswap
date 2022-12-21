@@ -66,8 +66,7 @@ jobs:
             cache: 'pnpm'
 
         - name: Install dependencies
-          run: |
-            pnpm install
+          run: pnpm install
           working-directory: .
 
         - name: Install playwright
@@ -86,11 +85,11 @@ jobs:
           with:
             version: nightly
 
-        - name: "Cache RPC Responses"
-          uses: "actions/cache@v3"
-          with:
-            path: "~/.foundry/cache/rpc/mainnet/${{ secrets.ANVIL_BLOCK_NUMBER }}"
-            key: "${{ runner.os }}-mainnet-${{ secrets.ANVIL_BLOCK_NUMBER }}"            
+        # - name: "Cache RPC Responses"
+        #   uses: "actions/cache@v3"
+        #   with:
+        #     path: "~/.foundry/cache/rpc/mainnet/${{ secrets.ANVIL_BLOCK_NUMBER }}"
+        #     key: "${{ runner.os }}-mainnet-${{ secrets.ANVIL_BLOCK_NUMBER }}"            
 
         # TODO: Cache Anvil RPC calls between runs to speed up tests
         - name: Launch Anvil
