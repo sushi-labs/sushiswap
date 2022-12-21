@@ -65,15 +65,12 @@ jobs:
             node-version: 16
             cache: 'pnpm'
 
-        - name: Install dependencies
-          run: |
-            pnpm install
-            npx playwright install --with-deps
-          working-directory: .
+       - name: Install playwright
+          run: pnpx playwright install-deps chromium
 
-        # - name: Install playwright
-        #   run: npx playwright install --with-deps
-        #   working-directory: .
+        - name: Install dependencies
+          run: pnpm install
+          working-directory: .
 
         - name: Install rust
           uses: actions-rs/toolchain@v1
