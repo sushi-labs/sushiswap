@@ -1,47 +1,27 @@
 import 'dotenv/config'
 
 import { ChainId } from '@sushiswap/chain'
-import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import {
+  SUBGRAPH_HOST,
+  SUSHISWAP_ENABLED_NETWORKS,
+  SUSHISWAP_SUBGRAPH_NAME,
+  TRIDENT_ENABLED_NETWORKS,
+  TRIDENT_SUBGRAPH_NAME,
+} from '@sushiswap/graph-config'
 import { getUnixTime } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
-import { getBuiltGraphSDK } from '../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS } from './config'
+import { pager } from './pager'
 import redis from './redis'
+
 async function getSushiSwapResults() {
   const results = await Promise.all(
-    SUSHISWAP_CHAINS.map((chainId) => {
-      const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] })
-
-      // temporary until new subgraph syncs
-      if (chainId === ChainId.POLYGON) {
-        return sdk
-          .PolygonTokens({ first: 100000, where: { derivedETH_gt: 0 } })
-          .then((res) => ({
-            tokenPrices: res.Polygon_tokens.map((token) => ({
-              id: token.id,
-              derivedNative: token.derivedETH,
-              token: {
-                liquidity: token.liquidity,
-              },
-            })),
-            bundle: {
-              nativePrice: res.Polygon_bundle?.ethPrice,
-            },
-            _meta: res._meta,
-          }))
-          .catch((e) => {
-            console.log(e)
-            console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
-            return undefined
-          })
-      } else {
-        return sdk.Tokens({ first: 100000, where: { derivedNative_gt: 0 } }).catch(() => {
-          console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
-          return undefined
-        })
-      }
-    })
+    SUSHISWAP_ENABLED_NETWORKS.map((chainId) =>
+      pager(SUBGRAPH_HOST[chainId], SUSHISWAP_SUBGRAPH_NAME[chainId]).catch(() => {
+        console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
+        return undefined
+      })
+    )
   )
 
   return results
@@ -51,7 +31,7 @@ async function getSushiSwapResults() {
       const updatedAtBlock = Number(result._meta?.block.number)
 
       return {
-        chainId: SUSHISWAP_CHAINS[i],
+        chainId: SUSHISWAP_ENABLED_NETWORKS[i],
         updatedAtBlock,
         tokens: result.tokenPrices.map((token) => ({
           id: token.id,
@@ -64,21 +44,12 @@ async function getSushiSwapResults() {
 
 async function getTridentResults() {
   const results = await Promise.all(
-    TRIDENT_ENABLED_NETWORKS.map((chainId) => {
-      const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[chainId] })
-      return sdk
-        .Tokens({
-          first: 100000,
-          where: {
-            derivedNative_gt: 0,
-          },
-        })
-        .catch((e) => {
-          console.log(e)
-          console.log(`Fetch failed: Trident - ${ChainId[chainId]}`)
-          return undefined
-        })
-    })
+    TRIDENT_ENABLED_NETWORKS.map((chainId) =>
+      pager(SUBGRAPH_HOST[chainId], TRIDENT_SUBGRAPH_NAME[chainId]).catch(() => {
+        console.log(`Fetch failed: Exchange - ${ChainId[chainId]}`)
+        return undefined
+      })
+    )
   )
 
   return results
@@ -102,7 +73,7 @@ async function getTridentResults() {
 
 export async function execute() {
   console.log(
-    `Updating prices for chains: ${[...SUSHISWAP_CHAINS, ...TRIDENT_ENABLED_NETWORKS]
+    `Updating prices for chains: ${[...SUSHISWAP_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]
       .map((chainId) => ChainId[chainId])
       .join(', ')}`
   )
