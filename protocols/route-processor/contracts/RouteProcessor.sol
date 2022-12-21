@@ -46,10 +46,13 @@ contract RouteProcessor is StreamReader {
       if (commandCode < 20) {
         if (commandCode == 10)
           swapUniswapPool(stream); // Sushi/Uniswap pool swap
-        else if (commandCode == 3)
-          amountInAcc += distributeERC20Amounts(stream, tokenIn); // initial distribution
         else if (commandCode == 4)
           distributeERC20Shares(stream); // distribute ERC20 tokens from this router to pools
+        else if (commandCode == 3)
+          amountInAcc += distributeERC20Amounts(stream, tokenIn); // initial distribution
+        else if (commandCode == 5)
+          amountInAcc += wrapAndDistributeERC20Amounts(stream, tokenIn); // wrap natives and initial distribution        
+        else if (commandCode == 6) unwrapNative(to);
         else revert('Unknown command code');
       } else if (commandCode < 24) {
         if (commandCode == 20) bentoDepositAmountFromBento(stream, tokenIn);
@@ -61,7 +64,6 @@ contract RouteProcessor is StreamReader {
         else if (commandCode == 25) distributeBentoPortions(stream);
         else if (commandCode == 26) bentoDepositAllFromBento(stream);
         else if (commandCode == 27) bentoWithdrawAllFromRP(stream);
-        else if (commandCode == 28) unwrapNative(to);
         else revert('Unknown command code');
       }
     }
@@ -136,20 +138,27 @@ contract RouteProcessor is StreamReader {
   // Distributes input ERC20 tokens from msg.sender to addresses. Tokens should be approved
   // Expected to be launched for initial liquidity distribution from user to pools, so we know exact amounts
   function distributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
-    bool wrap = msg.value > 0 && token == address(wNATIVE);
-    if (wrap) 
-      wNATIVE.deposit{value: msg.value}();
     uint8 num = readUint8(stream);
     amountTotal = 0;
     for (uint256 i = 0; i < num; ++i) {
       address to = readAddress(stream);
       uint256 amount = readUint(stream);
       amountTotal += amount;
-      if (wrap) {
-        IERC20(token).safeTransfer(to, amount);
-      } else {
-        IERC20(token).safeTransferFrom(msg.sender, to, amount);
-      }
+      IERC20(token).safeTransferFrom(msg.sender, to, amount);
+    }
+  }
+
+  // Wrap all input native and Distributes wrapped ERC20 tokens from RP to addresses
+  // Expected to be launched for initial liquidity distribution from user to pools, so we know exact amounts
+  function wrapAndDistributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
+    wNATIVE.deposit{value: msg.value}();
+    uint8 num = readUint8(stream);
+    amountTotal = 0;
+    for (uint256 i = 0; i < num; ++i) {
+      address to = readAddress(stream);
+      uint256 amount = readUint(stream);
+      amountTotal += amount;
+      IERC20(token).safeTransfer(to, amount);
     }
   }
 

@@ -68,7 +68,7 @@ export class TinesToRouteProcessor {
 
   getRPCodeForsimpleWrapRoute(route: MultiRoute, toAddress: string): string {
     const hex = new HEXer()
-      .uint8(3) // distributeERC20Amounts
+      .uint8(5) // wrapAndDistributeERC20Amounts
       .uint8(1)
       .address(toAddress)
       .uint(route.amountInBN)
@@ -118,9 +118,11 @@ export class TinesToRouteProcessor {
     })
 
     const command =
-      getTokenType(fromToken) == TokenType.ERC20
-        ? 3 // distributeERC20Amounts
-        : 24 // distributeBentoShares
+      getTokenType(fromToken) == TokenType.BENTO
+        ? 24 // distributeBentoShares
+        : route.fromToken.address == ''
+        ? 5 // wrapAndDistributeERC20Amounts
+        : 3 // distributeERC20Amounts
 
     const hex = new HEXer().uint8(command).uint8(legsAddr.length)
 
