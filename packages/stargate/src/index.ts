@@ -470,4 +470,5 @@ export const STARGATE_TOKEN = new Token({
 })
 
 export type StargateChainId = keyof typeof STARGATE_BRIDGE_TOKENS
+
 export type StargateToken = typeof STARGATE_BRIDGE_TOKENS[StargateChainId]
