@@ -61,8 +61,7 @@ contract RouteProcessor is StreamReader {
         else if (commandCode == 25) distributeBentoPortions(stream);
         else if (commandCode == 26) bentoDepositAllFromBento(stream);
         else if (commandCode == 27) bentoWithdrawAllFromRP(stream);
-        else if (commandCode == 28) amountInAcc += wrapNative();
-        else if (commandCode == 29) unwrapNative(to);
+        else if (commandCode == 28) unwrapNative(to);
         else revert('Unknown command code');
       }
     }
@@ -205,12 +204,6 @@ contract RouteProcessor is StreamReader {
         bentoBox.transfer(token, address(this), to, amount);
       }
     }
-  }
-
-  // Wrap the Native Token
-  function wrapNative() private returns (uint256 amount) {
-    amount = msg.value;
-    wNATIVE.deposit{value: amount}();
   }
 
   // Unwrap the Native Token
