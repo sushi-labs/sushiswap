@@ -1,10 +1,10 @@
 import { RadioGroup } from '@headlessui/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Price, SUSHI, Type } from '@sushiswap/currency'
 import { classNames, Widget } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 
+import { useAddPositionState } from '../AddPositionProvider'
 import { LiquidityChart } from '../LiquidityChart'
 
 enum ChartType {
@@ -20,13 +20,8 @@ enum Range {
   One = 'x ÷ 1.01',
 }
 
-interface SelectPricesWidget {
-  token0: Type | undefined
-  token1: Type | undefined
-  chainId: ChainId
-}
-
-export const SelectPricesWidget: FC<SelectPricesWidget> = ({ token0, token1, chainId }) => {
+export const SelectPricesWidget: FC = () => {
+  const { token0, token1, chainId } = useAddPositionState()
   const [range, setRange] = useState<Range>(Range.Unset)
   const [chartType, setChartType] = useState<ChartType>(ChartType.Liquidity)
   const [minPrice, setMinPrice] = useState<number>(525.15)

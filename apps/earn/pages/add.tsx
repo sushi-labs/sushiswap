@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
-import { ChainId, chainShortName } from '@sushiswap/chain'
-import { tryParseAmount, Type } from '@sushiswap/currency'
+import { chainShortName } from '@sushiswap/chain'
+import { tryParseAmount } from '@sushiswap/currency'
 import { Pair as PairDTO } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
 import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
@@ -10,7 +10,6 @@ import {
   Checker,
   ConstantProductPoolState,
   PairState,
-  PoolFinder,
   PoolFinderType,
   StablePoolState,
   Web3Input,
@@ -20,21 +19,19 @@ import {
   AddSectionReviewModalLegacy,
   AddSectionReviewModalTrident,
   AddSectionStake,
-  FEE_MAP,
   Layout,
   PoolPositionProvider,
   PoolPositionStakedProvider,
-  SelectNetworkWidget,
   SelectPoolDetailsWidget,
-  SelectPoolTokensWidget,
   SettingsOverlay,
 } from 'components'
-import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 
+import { AddPositionProvider, useAddPositionActions, useAddPositionState } from '../components/AddPositionProvider'
 import { CreateSectionReviewModalTrident } from '../components/CreateSection'
 import { SelectPricesWidget } from '../components/NewPositionSection/SelectPricesWidget'
-import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
+import { TRIDENT_ENABLED_NETWORKS } from '../config'
 import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
 import { useCustomTokens } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
@@ -47,97 +44,14 @@ const LINKS: BreadcrumbLink[] = [
 ]
 
 const Add = () => {
-  const [chainId, setChainId] = useState(ChainId.ETHEREUM)
-  const [fee, setFee] = useState(2)
-  const [poolType, setPoolType] = useState(PoolFinderType.Classic)
-
-  const [token0, setToken0] = useState<Type | undefined>()
-  const [token1, setToken1] = useState<Type | undefined>()
-
-  useEffect(() => {
-    setToken0(undefined)
-    setToken1(undefined)
-  }, [chainId])
-
-  // Reset default fee if switching networks and not on a trident enabled network
-  useEffect(() => {
-    if (!TRIDENT_ENABLED_NETWORKS.includes(chainId)) {
-      setFee(2)
-      setPoolType(PoolFinderType.Classic)
-    }
-  }, [chainId])
-
-  const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId)
-
   return (
     <SWRConfig>
       <Layout breadcrumbs={LINKS}>
         <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
           <div className="hidden md:block" />
-          <PoolFinder
-            components={
-              <PoolFinder.Components>
-                <PoolFinder.LegacyPool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={AMM_ENABLED_NETWORKS.includes(chainId)}
-                />
-                <PoolFinder.ConstantProductPool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Classic}
-                  fee={FEE_MAP[fee]}
-                  twap={false}
-                />
-                <PoolFinder.StablePool
-                  chainId={chainId}
-                  token0={token0}
-                  token1={token1}
-                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Stable}
-                  fee={FEE_MAP[fee]}
-                  twap={false}
-                />
-              </PoolFinder.Components>
-            }
-          >
-            {({ pool: [poolState, pool] }) => {
-              const title =
-                !token0 || !token1 ? (
-                  'Select Tokens'
-                ) : [PairState.LOADING, ConstantProductPoolState.LOADING, StablePoolState.LOADING].includes(
-                    poolState
-                  ) ? (
-                  <div className="h-[20px] flex items-center justify-center">
-                    <Loader width={14} />
-                  </div>
-                ) : [PairState.EXISTS, ConstantProductPoolState.EXISTS, StablePoolState.EXISTS].includes(poolState) ? (
-                  'Add Liquidity'
-                ) : (
-                  'Create Pool'
-                )
-
-              return (
-                <_Add
-                  chainId={chainId}
-                  setChainId={setChainId}
-                  fee={fee}
-                  setFee={setFee}
-                  pool={pool}
-                  poolState={poolState}
-                  tridentPoolIfCreate={tridentPoolIfCreate}
-                  title={title}
-                  token0={token0}
-                  token1={token1}
-                  setToken0={setToken0}
-                  setToken1={setToken1}
-                  poolType={poolType}
-                  setPoolType={setPoolType}
-                />
-              )
-            }}
-          </PoolFinder>
+          <AddPositionProvider>
+            {({ pool: [poolState, pool] }) => <_Add pool={pool} poolState={poolState} />}
+          </AddPositionProvider>
         </div>
       </Layout>
     </SWRConfig>
@@ -145,38 +59,18 @@ const Add = () => {
 }
 
 interface AddProps {
-  chainId: ChainId
-  setChainId(chainId: ChainId): void
-  fee: number
-  setFee(fee: number): void
   pool: Pair | ConstantProductPool | StablePool | null
   poolState: PairState | ConstantProductPoolState | StablePoolState
-  tridentPoolIfCreate: boolean
-  title: ReactNode
-  token0: Type | undefined
-  token1: Type | undefined
-  setToken0(token: Type): void
-  setToken1(token: Type): void
-  poolType: PoolFinderType
-  setPoolType(type: PoolFinderType): void
 }
 
-const _Add: FC<AddProps> = ({
-  chainId,
-  setChainId,
-  fee,
-  setFee,
-  pool,
-  poolState,
-  tridentPoolIfCreate,
-  title,
-  token0,
-  token1,
-  setToken0,
-  setToken1,
-  poolType,
-  setPoolType,
-}) => {
+const _Add: FC<AddProps> = ({ pool, poolState }) => {
+  const { chainId, token0, token1, fee, poolType } = useAddPositionState()
+  const { setChainId } = useAddPositionActions()
+  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
+  const tokenMap = useTokens(chainId)
+
+  const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId)
+
   const { data } = useSWR<{ pair: PairDTO }>(
     pool?.liquidityToken.address
       ? `/earn/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
@@ -184,8 +78,6 @@ const _Add: FC<AddProps> = ({
     (url) => fetch(url).then((response) => response.json())
   )
 
-  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
-  const tokenMap = useTokens(chainId)
   const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
@@ -244,144 +136,151 @@ const _Add: FC<AddProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onChangeToken0TypedAmount])
 
+  const title =
+    !token0 || !token1 ? (
+      'Select Tokens'
+    ) : [PairState.LOADING, ConstantProductPoolState.LOADING, StablePoolState.LOADING].includes(poolState) ? (
+      <div className="h-[20px] flex items-center justify-center">
+        <Loader width={14} />
+      </div>
+    ) : [PairState.EXISTS, ConstantProductPoolState.EXISTS, StablePoolState.EXISTS].includes(poolState) ? (
+      'Add Liquidity'
+    ) : (
+      'Create Pool'
+    )
+
   return (
     <>
       <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-        <SelectNetworkWidget chainId={chainId} onSelect={setChainId} />
-        <SelectPoolTokensWidget
-          token0={token0}
-          token1={token1}
-          chainId={chainId}
+        <SelectPoolDetailsWidget
           customTokenMap={customTokensMap}
           tokenMap={tokenMap}
           onAddToken={addCustomToken}
           onRemoveToken={removeCustomToken}
-          onSelectToken0={setToken0}
-          onSelectToken1={setToken1}
         />
-        {TRIDENT_ENABLED_NETWORKS.includes(chainId) && (
-          <SelectPoolDetailsWidget
-            chainId={chainId}
-            poolType={poolType}
-            fee={fee}
-            setFee={setFee}
-            setPoolType={(type) => {
-              setPoolType(type)
-            }}
-          />
-        )}
-        {poolType === PoolFinderType.ConcentratedLiquidity && (
-          <SelectPricesWidget token0={token0} token1={token1} chainId={chainId} />
-        )}
-        <Widget id="addLiquidity" maxWidth={400}>
-          <Widget.Content>
-            <Widget.Header
-              title={poolType === PoolFinderType.ConcentratedLiquidity ? '5. Add Liquidity' : '4. Add Liquidity'}
-            >
-              <SettingsOverlay />
-            </Widget.Header>
-            <Web3Input.Currency
-              className="p-3"
-              value={input0}
-              onChange={onChangeToken0TypedAmount}
-              currency={token0}
-              customTokenMap={customTokensMap}
-              onAddToken={addCustomToken}
-              onRemoveToken={removeCustomToken}
-              chainId={chainId}
-              tokenMap={tokenMap}
-            />
-            <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
-              <div className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full">
-                <PlusIcon width={16} height={16} />
-              </div>
-            </div>
-            <div className="bg-slate-800">
-              <Web3Input.Currency
-                className="p-3 !pb-1"
-                value={input1}
-                onChange={onChangeToken1TypedAmount}
-                currency={token1}
-                customTokenMap={customTokensMap}
-                onAddToken={addCustomToken}
-                onRemoveToken={removeCustomToken}
-                chainId={chainId}
-                tokenMap={tokenMap}
-                loading={
-                  poolState === PairState.LOADING ||
-                  poolState === ConstantProductPoolState.LOADING ||
-                  poolState === StablePoolState.LOADING
-                }
-              />
-              <div className="p-3">
-                <Checker.Connected fullWidth size="md">
-                  <Checker.Network fullWidth size="md" chainId={chainId}>
-                    <Checker.Amounts
-                      fullWidth
-                      size="md"
+        {poolType === PoolFinderType.ConcentratedLiquidity && <SelectPricesWidget />}
+        {token0 && token1 && (
+          <AppearOnMount>
+            <Widget id="addLiquidity" maxWidth={400}>
+              <Widget.Content>
+                <Widget.Header
+                  title={poolType === PoolFinderType.ConcentratedLiquidity ? '5. Add Liquidity' : '4. Add Liquidity'}
+                >
+                  <SettingsOverlay />
+                </Widget.Header>
+                <>
+                  <Web3Input.Currency
+                    className="p-3"
+                    value={input0}
+                    onChange={onChangeToken0TypedAmount}
+                    currency={token0}
+                    customTokenMap={customTokensMap}
+                    onAddToken={addCustomToken}
+                    onRemoveToken={removeCustomToken}
+                    chainId={chainId}
+                    tokenMap={tokenMap}
+                  />
+                  <div className="flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
+                    <div className="group bg-slate-700 p-0.5 border-2 border-slate-800 transition-all rounded-full">
+                      <PlusIcon width={16} height={16} />
+                    </div>
+                  </div>
+                  <div className="bg-slate-800">
+                    <Web3Input.Currency
+                      className="p-3 !pb-1"
+                      value={input1}
+                      onChange={onChangeToken1TypedAmount}
+                      currency={token1}
+                      customTokenMap={customTokensMap}
+                      onAddToken={addCustomToken}
+                      onRemoveToken={removeCustomToken}
                       chainId={chainId}
-                      fundSource={FundSource.WALLET}
-                      amounts={[parsedInput0, parsedInput1]}
-                    >
-                      {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
-                        <AddSectionReviewModalTrident
-                          poolAddress={pool.liquidityToken.address}
-                          // TODO: Shouldnt need to cast if this is done right
-                          poolState={poolState as ConstantProductPoolState | StablePoolState}
-                          pool={pool as ConstantProductPool | StablePool}
-                          chainId={chainId}
-                          token0={token0}
-                          token1={token1}
-                          input0={parsedInput0}
-                          input1={parsedInput1}
-                        >
-                          {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                            </Button>
-                          )}
-                        </AddSectionReviewModalTrident>
+                      tokenMap={tokenMap}
+                      loading={
+                        poolState === PairState.LOADING ||
+                        poolState === ConstantProductPoolState.LOADING ||
+                        poolState === StablePoolState.LOADING
+                      }
+                    />
+                    <div className="p-3">
+                      {title === 'Create Pool' && (
+                        <div className="mb-3 text-[10px] leading-[16px] text-center text-slate-300 font-medium border border-slate-200/5 rounded-2xl p-3">
+                          This pool does not yet exist. <br /> Adding liquidity will create and set the initial price
+                          for this pool.
+                        </div>
                       )}
-                      {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
-                        <AddSectionReviewModalLegacy
-                          poolState={poolState as PairState}
-                          chainId={chainId}
-                          token0={token0}
-                          token1={token1}
-                          input0={parsedInput0}
-                          input1={parsedInput1}
-                        >
-                          {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                            </Button>
-                          )}
-                        </AddSectionReviewModalLegacy>
-                      )}
-                      {!pool && tridentPoolIfCreate && (
-                        <CreateSectionReviewModalTrident
-                          chainId={chainId}
-                          token0={token0}
-                          token1={token1}
-                          input0={parsedInput0}
-                          input1={parsedInput1}
-                          fee={FEE_MAP[fee]}
-                          poolType={poolType}
-                        >
-                          {({ isWritePending, setOpen }) => (
-                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                            </Button>
-                          )}
-                        </CreateSectionReviewModalTrident>
-                      )}
-                    </Checker.Amounts>
-                  </Checker.Network>
-                </Checker.Connected>
-              </div>
-            </div>
-          </Widget.Content>
-        </Widget>
+                      <Checker.Connected fullWidth size="md">
+                        <Checker.Network fullWidth size="md" chainId={chainId}>
+                          <Checker.Amounts
+                            fullWidth
+                            size="md"
+                            chainId={chainId}
+                            fundSource={FundSource.WALLET}
+                            amounts={[parsedInput0, parsedInput1]}
+                          >
+                            {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
+                              <AddSectionReviewModalTrident
+                                poolAddress={pool.liquidityToken.address}
+                                // TODO: Shouldnt need to cast if this is done right
+                                poolState={poolState as ConstantProductPoolState | StablePoolState}
+                                pool={pool as ConstantProductPool | StablePool}
+                                chainId={chainId}
+                                token0={token0}
+                                token1={token1}
+                                input0={parsedInput0}
+                                input1={parsedInput1}
+                              >
+                                {({ isWritePending, setOpen }) => (
+                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                                  </Button>
+                                )}
+                              </AddSectionReviewModalTrident>
+                            )}
+                            {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
+                              <AddSectionReviewModalLegacy
+                                poolState={poolState as PairState}
+                                chainId={chainId}
+                                token0={token0}
+                                token1={token1}
+                                input0={parsedInput0}
+                                input1={parsedInput1}
+                              >
+                                {({ isWritePending, setOpen }) => (
+                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                                  </Button>
+                                )}
+                              </AddSectionReviewModalLegacy>
+                            )}
+                            {!pool && tridentPoolIfCreate && (
+                              <CreateSectionReviewModalTrident
+                                chainId={chainId}
+                                token0={token0}
+                                token1={token1}
+                                input0={parsedInput0}
+                                input1={parsedInput1}
+                                fee={fee}
+                                poolType={poolType}
+                              >
+                                {({ isWritePending, setOpen }) => (
+                                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                                  </Button>
+                                )}
+                              </CreateSectionReviewModalTrident>
+                            )}
+                          </Checker.Amounts>
+                        </Checker.Network>
+                      </Checker.Connected>
+                    </div>
+                  </div>
+                </>
+              </Widget.Content>
+            </Widget>
+          </AppearOnMount>
+        )}
+
         {pool && data?.pair && (
           <PoolPositionProvider pair={data.pair}>
             <PoolPositionStakedProvider pair={data.pair}>
