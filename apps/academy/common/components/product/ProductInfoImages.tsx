@@ -1,4 +1,4 @@
-import classNames from 'classnames'
+import { classNames } from '@sushiswap/ui'
 import { RouterImg, TokensBoardImg, TokensPanelImg } from 'common/assets'
 import { FC } from 'react'
 

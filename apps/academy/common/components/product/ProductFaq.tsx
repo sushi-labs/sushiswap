@@ -1,7 +1,6 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
-import { Typography } from '@sushiswap/ui'
-import classNames from 'classnames'
+import { classNames, Typography } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 import { ProductSectionTitle } from './ProductSectionTitle'

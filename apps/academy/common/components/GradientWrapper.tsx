@@ -1,4 +1,4 @@
-import classNames from 'classnames'
+import { classNames } from '@sushiswap/ui'
 import { FC, ReactNode } from 'react'
 
 interface GradientWrapper {
