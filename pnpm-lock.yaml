@@ -145,17 +145,19 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@vercel/node': ^2.2.0
+      '@vercel/node': 2.8.1
+      typescript: 4.9.4
       zod: 3.20.2
     dependencies:
       '@sushiswap/database': link:../../packages/database
-      '@vercel/node': 2.8.0
+      '@vercel/node': 2.8.1
       zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
+      typescript: 4.9.4
 
   apps/_root:
     specifiers:
@@ -14693,7 +14695,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@typescript-eslint/parser/5.46.0_td6yqss6ra3qoebludh4ctrhym:
+  /@typescript-eslint/parser/5.46.0_yfqovispp7u7jaktymfaqwl2py:
     resolution: {integrity: sha512-joNO6zMGUZg+C73vwrKXCd8usnsmOYmgW/w5ZW0pG0RGvqeznjtGDk61EqqTpNrFLUYBW2RSBFrxdAZMqA4OZA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -14705,10 +14707,10 @@ packages:
     dependencies:
       '@typescript-eslint/scope-manager': 5.46.0
       '@typescript-eslint/types': 5.46.0
-      '@typescript-eslint/typescript-estree': 5.46.0_typescript@4.8.2
+      '@typescript-eslint/typescript-estree': 5.46.0_typescript@4.9.4
       debug: 4.3.4
       eslint: 7.32.0
-      typescript: 4.8.2
+      typescript: 4.9.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -14773,7 +14775,7 @@ packages:
     resolution: {integrity: sha512-eslFG0Qy8wpGzDdYKu58CEr3WLkjwC5Usa6XbuV89ce/yN5RITLe1O8e+WFEuxnfftHiJImkkOBADj58ahRxSg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  /@typescript-eslint/typescript-estree/5.46.0_typescript@4.8.2:
+  /@typescript-eslint/typescript-estree/5.46.0_typescript@4.9.4:
     resolution: {integrity: sha512-kDLNn/tQP+Yp8Ro2dUpyyVV0Ksn2rmpPpB0/3MO874RNmXtypMwSeazjEN/Q6CTp8D7ExXAAekPEcCEB/vtJkw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -14788,8 +14790,8 @@ packages:
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.3.8
-      tsutils: 3.21.0_typescript@4.8.2
-      typescript: 4.8.2
+      tsutils: 3.21.0_typescript@4.9.4
+      typescript: 4.9.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -14915,6 +14917,10 @@ packages:
     resolution: {integrity: sha512-hOcb7HxYza5LtZLcmh9VkShV3hLaLlZarLBqQmMR/oTlvgIybeW6LjrPpFiu2hCCf9VbkdBR1OFmDh8EydFswQ==}
     dev: false
 
+  /@vercel/build-utils/5.7.1:
+    resolution: {integrity: sha512-JilBlPlqwH/d4dbRLyxbhr4y3Yb41cfyypGyCFOpdgXo1ie3v2wkNZWNyWpDHSocSS4PpdIGJ1OdnzULd2fdBQ==}
+    dev: false
+
   /@vercel/node-bridge/2.2.2:
     resolution: {integrity: sha512-haGBC8noyA5BfjCRXRH+VIkHCDVW5iD5UX24P2nOdilwUxI4qWsattS/co8QBGq64XsNLRAMdM5pQUE3zxkF9Q==}
     dev: false
@@ -14956,6 +14962,24 @@ packages:
       '@edge-runtime/vm': 2.0.0
       '@types/node': 14.18.33
       '@vercel/build-utils': 5.7.0
+      '@vercel/node-bridge': 3.1.2
+      '@vercel/static-config': 2.0.6
+      edge-runtime: 2.0.0
+      esbuild: 0.14.47
+      exit-hook: 2.2.1
+      node-fetch: 2.6.7
+      ts-node: 8.9.1_typescript@4.3.4
+      typescript: 4.3.4
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@vercel/node/2.8.1:
+    resolution: {integrity: sha512-hLp/Q9MBkYeLqVz1KPiWWae9bTfI/ouEFGhsKQSurUZRBK+FaAJC9k4T59cIfvxgdXHEr801ga3IPfhe7tpQ5A==}
+    dependencies:
+      '@edge-runtime/vm': 2.0.0
+      '@types/node': 14.18.33
+      '@vercel/build-utils': 5.7.1
       '@vercel/node-bridge': 3.1.2
       '@vercel/static-config': 2.0.6
       edge-runtime: 2.0.0
@@ -33642,14 +33666,14 @@ packages:
     dependencies:
       tslib: 1.14.1
 
-  /tsutils/3.21.0_typescript@4.8.2:
+  /tsutils/3.21.0_typescript@4.9.4:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}
     engines: {node: '>= 6'}
     peerDependencies:
       typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
     dependencies:
       tslib: 1.14.1
-      typescript: 4.8.2
+      typescript: 4.9.4
     dev: true
 
   /tty-browserify/0.0.0:
@@ -34005,8 +34029,8 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
-      '@typescript-eslint/parser': 5.46.0_td6yqss6ra3qoebludh4ctrhym
-      '@typescript-eslint/typescript-estree': 5.46.0_typescript@4.8.2
+      '@typescript-eslint/parser': 5.46.0_yfqovispp7u7jaktymfaqwl2py
+      '@typescript-eslint/typescript-estree': 5.46.0_typescript@4.9.4
       chalk: 4.1.2
       debug: 4.3.4
       eslint: 7.32.0
@@ -34019,7 +34043,7 @@ packages:
       resolve: 1.22.1
       simple-git: 3.15.1
       term-size: 2.2.1
-      typescript: 4.8.2
+      typescript: 4.9.4
       yargs: 16.2.0
     transitivePeerDependencies:
       - supports-color
