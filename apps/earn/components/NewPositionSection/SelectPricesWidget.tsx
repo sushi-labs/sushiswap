@@ -2,8 +2,9 @@ import { RadioGroup } from '@headlessui/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { Amount, Native, Price, SUSHI, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui'
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 
+import { Bound } from '../../lib/constants'
 import { useAddPositionState } from '../AddPositionProvider'
 
 enum ChartType {
@@ -20,29 +21,38 @@ enum Range {
 }
 
 export const SelectPricesWidget: FC = () => {
-  const { token0, token1, chainId } = useAddPositionState()
+  const { token0, token1, chainId, fee } = useAddPositionState()
   const [range, setRange] = useState<Range>(Range.Unset)
   const [chartType, setChartType] = useState<ChartType>(ChartType.Liquidity)
   const [minPrice, setMinPrice] = useState<number>(525.15)
   const [maxPrice, setMaxPrice] = useState<number>(1515.17)
   const [independentRangeField, setIndependentRangeField] = useState<'LOWER' | 'UPPER'>('LOWER')
 
+  // TODO
   const [priceLower] = useState(
     new Price({
       baseAmount: Amount.fromRawAmount(Native.onChain(chainId).wrapped, '100000000'),
       quoteAmount: Amount.fromRawAmount(SUSHI[chainId], '1000000'),
     })
   )
-
   const [priceUpper] = useState(
     new Price({
       baseAmount: Amount.fromRawAmount(Native.onChain(chainId).wrapped, '200000000'),
       quoteAmount: Amount.fromRawAmount(SUSHI[chainId], '1000000'),
     })
   )
+  const invertPrice = false
+  const price = undefined
+  const onLeftRangeInput = useCallback((val: string) => {}, [])
+  const onRightRangeInput = useCallback((val: string) => {}, [])
+  const hasExistingPosition = false
+  const ticksAtLimit = {
+    [Bound.LOWER]: false,
+    [Bound.UPPER]: false,
+  }
 
   return (
-    <>
+    <div>
       <div className="flex justify-between">
         <span className="text-sm font-bold text-slate-200 flex-grow px-3">Prices</span>
         <RadioGroup
@@ -67,17 +77,17 @@ export const SelectPricesWidget: FC = () => {
       <div className="flex items-center justify-center h-[200px] border border-slate-200/10 rounded-lg mt-4">
         <span className="text-[10px] italic text-slate-500">Liquidity chart here</span>
       </div>
-      {/*<LiquidityChart*/}
-      {/*  currencyBase={token0}*/}
-      {/*  currencyQuote={token1}*/}
-      {/*  tierId={0}*/}
+      {/*<LiquidityChartRangeInput*/}
+      {/*  currencyA={token0 ?? undefined}*/}
+      {/*  currencyB={token1 ?? undefined}*/}
+      {/*  feeAmount={fee}*/}
+      {/*  ticksAtLimit={ticksAtLimit}*/}
+      {/*  price={price ? parseFloat((invertPrice ? price.invert() : price).toSignificant(8)) : undefined}*/}
       {/*  priceLower={priceLower}*/}
       {/*  priceUpper={priceUpper}*/}
-      {/*  weightLockedCurrencyBase={undefined}*/}
-      {/*  onLeftRangeInput={() => {}}*/}
-      {/*  onRightRangeInput={() => {}}*/}
-      {/*  setIndependentRangeField={setIndependentRangeField}*/}
-      {/*  resetRangeNonce={99975}*/}
+      {/*  onLeftRangeInput={onLeftRangeInput}*/}
+      {/*  onRightRangeInput={onRightRangeInput}*/}
+      {/*  interactive={!hasExistingPosition}*/}
       {/*/>*/}
       <div className="flex flex-col gap-3 pt-4">
         <RadioGroup value={range} onChange={setRange} className="flex gap-2">
@@ -121,7 +131,7 @@ export const SelectPricesWidget: FC = () => {
           />
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
