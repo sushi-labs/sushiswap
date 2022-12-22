@@ -14,13 +14,6 @@
     "directory": "scripts/sushi"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "start": "ts-node --swc src/run.ts",
     "server": "ts-node --swc src/server.ts",
