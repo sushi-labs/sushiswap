@@ -1,6 +1,5 @@
 import 'dotenv/config'
 
-
 import { PrismaClient } from '@prisma/client'
 import Redis from 'ioredis'
 import { createPrismaRedisCache } from 'prisma-redis-middleware'
