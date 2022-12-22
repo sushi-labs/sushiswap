@@ -137,11 +137,11 @@ const _Add: FC<AddProps> = ({ pool, poolState }) => {
   const widget = (
     <>
       {title === 'Create Pool' && (
-        <div className="mb-3 text-[10px] leading-[16px] text-center text-slate-300 font-medium border border-slate-200/10 rounded-2xl p-3">
+        <div className="mb-3 text-[10px] leading-[16px] text-center text-slate-300 font-medium border border-slate-200/[0.05] rounded-lg p-3">
           This pool does not yet exist. <br /> Adding liquidity will create and set the initial price for this pool.
         </div>
       )}
-      <div className="border border-slate-200/10 rounded-xl overflow-hidden bg-slate-700">
+      <div className="border border-slate-200/10 rounded-xl overflow-hidden bg-white/[0.04]">
         <Web3Input.Currency
           className="p-3"
           value={input0}
@@ -175,83 +175,85 @@ const _Add: FC<AddProps> = ({ pool, poolState }) => {
             poolState === StablePoolState.LOADING
           }
         />
-        <div className="p-3">
-          <Checker.Connected fullWidth size="md">
-            <Checker.Network fullWidth size="md" chainId={chainId}>
-              <Checker.Amounts
-                fullWidth
-                size="md"
-                chainId={chainId}
-                fundSource={FundSource.WALLET}
-                amounts={[parsedInput0, parsedInput1]}
-              >
-                {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
-                  <AddSectionReviewModalTrident
-                    poolAddress={pool.liquidityToken.address}
-                    // TODO: Shouldnt need to cast if this is done right
-                    poolState={poolState as ConstantProductPoolState | StablePoolState}
-                    pool={pool as ConstantProductPool | StablePool}
-                    chainId={chainId}
-                    token0={token0}
-                    token1={token1}
-                    input0={parsedInput0}
-                    input1={parsedInput1}
-                  >
-                    {({ isWritePending, setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                      </Button>
-                    )}
-                  </AddSectionReviewModalTrident>
-                )}
-                {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
-                  <AddSectionReviewModalLegacy
-                    poolState={poolState as PairState}
-                    chainId={chainId}
-                    token0={token0}
-                    token1={token1}
-                    input0={parsedInput0}
-                    input1={parsedInput1}
-                  >
-                    {({ isWritePending, setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                      </Button>
-                    )}
-                  </AddSectionReviewModalLegacy>
-                )}
-                {!pool && tridentPoolIfCreate && (
-                  <CreateSectionReviewModalTrident
-                    chainId={chainId}
-                    token0={token0}
-                    token1={token1}
-                    input0={parsedInput0}
-                    input1={parsedInput1}
-                    fee={fee}
-                    poolType={poolType}
-                  >
-                    {({ isWritePending, setOpen }) => (
-                      <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : title}
-                      </Button>
-                    )}
-                  </CreateSectionReviewModalTrident>
-                )}
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connected>
-        </div>
       </div>
+      <Checker.Connected fullWidth size="md">
+        <Checker.Network fullWidth size="md" chainId={chainId}>
+          <Checker.Amounts
+            fullWidth
+            size="md"
+            chainId={chainId}
+            fundSource={FundSource.WALLET}
+            amounts={[parsedInput0, parsedInput1]}
+          >
+            {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
+              <AddSectionReviewModalTrident
+                poolAddress={pool.liquidityToken.address}
+                // TODO: Shouldnt need to cast if this is done right
+                poolState={poolState as ConstantProductPoolState | StablePoolState}
+                pool={pool as ConstantProductPool | StablePool}
+                chainId={chainId}
+                token0={token0}
+                token1={token1}
+                input0={parsedInput0}
+                input1={parsedInput1}
+              >
+                {({ isWritePending, setOpen }) => (
+                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                  </Button>
+                )}
+              </AddSectionReviewModalTrident>
+            )}
+            {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
+              <AddSectionReviewModalLegacy
+                poolState={poolState as PairState}
+                chainId={chainId}
+                token0={token0}
+                token1={token1}
+                input0={parsedInput0}
+                input1={parsedInput1}
+              >
+                {({ isWritePending, setOpen }) => (
+                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                  </Button>
+                )}
+              </AddSectionReviewModalLegacy>
+            )}
+            {!pool && tridentPoolIfCreate && (
+              <CreateSectionReviewModalTrident
+                chainId={chainId}
+                token0={token0}
+                token1={token1}
+                input0={parsedInput0}
+                input1={parsedInput1}
+                fee={fee}
+                poolType={poolType}
+              >
+                {({ isWritePending, setOpen }) => (
+                  <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                    {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                  </Button>
+                )}
+              </CreateSectionReviewModalTrident>
+            )}
+          </Checker.Amounts>
+        </Checker.Network>
+      </Checker.Connected>
     </>
   )
 
   return (
     <Widget id="add-liquidity-widget" maxWidth={520} className="!bg-slate-800">
+      <div className="grid grid-cols-3 mx-4 py-4">
+        <div />
+        <span className="flex justify-center flex-grow font-semibold ">Add Liquidity</span>
+        <div className="flex justify-end">
+          <SettingsOverlay />
+        </div>
+      </div>
       <Widget.Content className="flex flex-col">
         <SelectPoolDetailsWidget />
-        <div className="mx-4">
-          <div className="h-px bg-slate-200/[0.05] w-full my-8" />
-        </div>
         <div
           className={classNames(
             token0 && token1 ? '' : 'opacity-20 pointer-events-none',
@@ -263,11 +265,8 @@ const _Add: FC<AddProps> = ({ pool, poolState }) => {
               <SelectPricesWidget />
             </div>
           )}
-          <div>
-            <div className="flex justify-between pb-3">
-              <span className="text-[10px] uppercase font-bold text-slate-400 flex-grow">Set Amounts</span>
-              <SettingsOverlay />
-            </div>
+          <div className="flex flex-col gap-3">
+            <span className="text-sm font-bold text-slate-200 flex-grow px-3">Amounts</span>
             {widget}
           </div>
         </div>

@@ -44,17 +44,17 @@ export const SelectPricesWidget: FC = () => {
   return (
     <>
       <div className="flex justify-between">
-        <span className="text-[10px] uppercase font-bold text-slate-400">Set Price</span>
-        <RadioGroup value={chartType} onChange={setChartType} className="flex cursor-pointer">
+        <span className="text-sm font-bold text-slate-200 flex-grow px-3">Prices</span>
+        <RadioGroup
+          value={chartType}
+          onChange={setChartType}
+          className="flex cursor-pointer border border-slate-200/10 rounded-lg overflow-hidden"
+        >
           {Object.keys(ChartType).map((val, i) => (
             <RadioGroup.Option
               key={val}
               className={({ checked }) =>
-                classNames(
-                  checked ? 'bg-slate-700' : 'bg-slate-900 opacity-40',
-                  'text-[10px] px-2 py-1',
-                  i === 0 ? 'rounded-l-lg' : 'rounded-r-lg'
-                )
+                classNames(checked ? 'bg-white/[0.04]' : 'bg-slate-900 opacity-40', 'text-[10px] px-2 py-1')
               }
               value={val}
             >
@@ -89,8 +89,8 @@ export const SelectPricesWidget: FC = () => {
                   key={val}
                   className={({ checked }) =>
                     classNames(
-                      checked ? 'ring-2 ring-blue' : 'hover:ring-2 hover:ring-slate-500',
-                      'cursor-pointer rounded-full px-3 bg-slate-600 text-xs py-1.5 font-semibold w-full whitespace-nowrap flex justify-center'
+                      checked ? 'ring-1 ring-blue' : 'hover:ring-1 hover:ring-slate-200/20',
+                      'cursor-pointer rounded-full px-3 bg-white/[0.04] text-xs py-1.5 font-semibold w-full whitespace-nowrap flex justify-center'
                     )
                   }
                   value={val}
@@ -137,7 +137,7 @@ interface PriceBlockProps {
 
 export const PriceBlock: FC<PriceBlockProps> = ({ token0, token1, label, value, subtitle, onMin, onPlus }) => {
   return (
-    <div className="flex flex-col gap-2 w-full bg-slate-900 rounded-lg p-3">
+    <div className="flex flex-col gap-2 w-full bg-white/[0.04] border border-slate-200/10 rounded-lg p-3">
       <p className="font-medium text-xs text-slate-300">
         {label} <span className="text-slate-500">({subtitle})</span>
       </p>

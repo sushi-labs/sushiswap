@@ -40,7 +40,9 @@ const reducer = (state: AddPositionState, action: Actions): AddPositionState => 
         chainId: action.chainId,
         token0: undefined,
         token1: undefined,
-        poolType: !TRIDENT_ENABLED_NETWORKS.includes(action.chainId) ? PoolFinderType.Classic : state.poolType,
+        poolType: !TRIDENT_ENABLED_NETWORKS.includes(action.chainId)
+          ? PoolFinderType.V2
+          : PoolFinderType.ConcentratedLiquidity,
         fee: !TRIDENT_ENABLED_NETWORKS.includes(action.chainId) ? Fee.DEFAULT : state.fee,
       }
     case 'setToken0':

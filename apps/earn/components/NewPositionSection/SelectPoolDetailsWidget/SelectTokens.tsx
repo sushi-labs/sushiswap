@@ -1,4 +1,3 @@
-import { PlusIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Currency } from '@sushiswap/ui'
@@ -22,27 +21,32 @@ export const SelectTokens: FC = () => {
   const close1 = useCallback(() => setOpen1(false), [])
 
   return (
-    <div className="flex flex-col gap-3">
-      <span className="text-[10px] uppercase font-bold text-slate-400">Tokens</span>
-      <div className="flex gap-2 items-center">
+    <div className="flex justify-between gap-3 py-3">
+      <p className="text-sm font-medium text-slate-300">Tokens</p>
+      <div className="flex flex-col gap-2 items-center">
         <Button
+          size="sm"
           fullWidth
-          color="gray"
+          color={token0 ? 'gray' : 'blue'}
           {...(token0 && { startIcon: <Currency.Icon currency={token0} width={24} height={24} /> })}
-          className={classNames('!font-semibold justify-between', token0 ? '!bg-slate-700' : '')}
+          className={classNames(
+            '!font-semibold justify-between !rounded-lg',
+            token0 ? '!bg-white/[0.04] border border-slate-200/10' : ''
+          )}
           endIcon={<ChevronDownIcon width={20} height={20} />}
           onClick={() => setOpen0(true)}
         >
           {token0?.symbol ?? `Token A`}
         </Button>
-        <div className="flex items-center">
-          <PlusIcon width={16} height={16} className="text-slate-500" />
-        </div>
         <Button
+          size="sm"
           fullWidth
-          color="gray"
+          color={token1 ? 'gray' : 'blue'}
           {...(token1 && { startIcon: <Currency.Icon currency={token1} width={24} height={24} /> })}
-          className={classNames('!font-semibold justify-between', token1 ? '!bg-slate-700' : '')}
+          className={classNames(
+            '!font-semibold justify-between !rounded-lg',
+            token1 ? '!bg-white/[0.04] border border-slate-200/10' : ''
+          )}
           endIcon={<ChevronDownIcon width={20} height={20} />}
           onClick={() => setOpen1(true)}
         >

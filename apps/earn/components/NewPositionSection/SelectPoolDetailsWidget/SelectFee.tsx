@@ -1,5 +1,5 @@
 import { RadioGroup } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/solid'
+import { CheckIcon, PencilIcon } from '@heroicons/react/solid'
 import { Fee } from '@sushiswap/amm'
 import { classNames } from '@sushiswap/ui'
 import React, { FC, useCallback, useState } from 'react'
@@ -16,7 +16,7 @@ const FEE_OPTIONS = [
 
 export const SelectFee: FC = () => {
   const [edit, setEdit] = useState(false)
-  const { fee, token0, token1, chainId } = useAddPositionState()
+  const { fee, chainId } = useAddPositionState()
   const { setFee } = useAddPositionActions()
   const selected = FEE_OPTIONS.find((el) => el.value === fee)
 
@@ -24,25 +24,27 @@ export const SelectFee: FC = () => {
     setEdit(false)
   }, [])
 
+  const editable = TRIDENT_ENABLED_NETWORKS.includes(chainId)
+
   return (
-    <div className={classNames(token0 && token1 ? '' : 'opacity-20 pointer-events-none', 'flex flex-col gap-3')}>
-      <span className="text-[10px] uppercase font-bold text-slate-400">Fee</span>
+    <div className="flex flex-col gap-3">
       {!edit ? (
-        <div className="group border border-slate-200/10 rounded-xl flex items-center p-4">
-          <div className="flex flex-col gap-1 flex-grow items-start">
-            <p className="flex gap-0.5 items-center text-sm font-semibold text-slate-50">{selected?.title}</p>
-            <p className="text-xs font-medium text-slate-300">{selected?.subtitle}</p>
-          </div>
+        <div className="flex justify-between py-3">
+          <p className="text-sm font-medium text-slate-300">Fee</p>
           <button
-            className="py-1.5 px-3 font-semibold bg-slate-700 hover:bg-slate-600 rounded-xl text-xs"
-            onClick={() => setEdit(true)}
+            className={classNames(
+              editable ? 'cursor-pointer hover:text-slate-300' : 'cursor-default',
+              'flex gap-1 items-center text-sm font-semibold text-slate-50'
+            )}
+            onClick={() => (editable ? setEdit(true) : undefined)}
           >
-            Edit
+            {selected?.title} {editable && <PencilIcon width={16} height={16} />}
           </button>
         </div>
       ) : (
         <RadioGroup value={fee} onChange={setFee}>
-          <div className="grid grid-cols-2 gap-2">
+          <p className="text-sm font-medium text-slate-300 py-3">Fee</p>
+          <div className="grid grid-cols-2 gap-2 pb-3">
             {FEE_OPTIONS.filter((el) =>
               TRIDENT_ENABLED_NETWORKS.includes(chainId) ? true : el.value === Fee.DEFAULT
             ).map(({ value, title, subtitle }) => (
