@@ -33,6 +33,7 @@ export type PoolStateUnion = [
 ]
 
 export enum PoolFinderType {
+  V2,
   Classic,
   Stable,
   ConcentratedLiquidity,

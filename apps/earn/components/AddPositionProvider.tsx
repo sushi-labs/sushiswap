@@ -60,9 +60,9 @@ interface AddPositionProviderProps {
 
 export const AddPositionProvider: FC<AddPositionProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, {
-    chainId: ChainId.ETHEREUM,
-    fee: Fee.DEFAULT,
-    poolType: PoolFinderType.Classic,
+    chainId: ChainId.ARBITRUM,
+    fee: Fee.LOW,
+    poolType: PoolFinderType.ConcentratedLiquidity,
     token0: undefined,
     token1: undefined,
   })
@@ -93,7 +93,7 @@ export const AddPositionProvider: FC<AddPositionProviderProps> = ({ children }) 
             chainId={chainId}
             token0={token0}
             token1={token1}
-            enabled={AMM_ENABLED_NETWORKS.includes(chainId)}
+            enabled={AMM_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.V2}
           />
           <PoolFinder.ConstantProductPool
             chainId={chainId}

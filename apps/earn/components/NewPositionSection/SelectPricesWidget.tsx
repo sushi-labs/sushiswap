@@ -1,11 +1,10 @@
 import { RadioGroup } from '@headlessui/react'
 import { MinusIcon, PlusIcon } from '@heroicons/react/solid'
 import { Amount, Native, Price, SUSHI, Type } from '@sushiswap/currency'
-import { classNames, Widget } from '@sushiswap/ui'
+import { classNames } from '@sushiswap/ui'
 import React, { FC, useState } from 'react'
 
 import { useAddPositionState } from '../AddPositionProvider'
-import { LiquidityChart } from '../LiquidityChart'
 
 enum ChartType {
   Liquidity = 'Liquidity',
@@ -43,83 +42,86 @@ export const SelectPricesWidget: FC = () => {
   )
 
   return (
-    <Widget id="setPrices" maxWidth={400} className="!bg-slate-800">
-      <Widget.Content>
-        <Widget.Header title="4. Set Prices" className="!pb-3">
-          <RadioGroup value={chartType} onChange={setChartType} className="flex cursor-pointer">
-            {Object.keys(ChartType).map((val, i) => (
-              <RadioGroup.Option
-                key={val}
-                className={({ checked }) =>
-                  classNames(
-                    checked ? 'bg-slate-700' : 'bg-slate-900 opacity-40',
-                    'text-[10px] px-2 py-1',
-                    i === 0 ? 'rounded-l-lg' : 'rounded-r-lg'
-                  )
-                }
-                value={val}
-              >
-                {val}
-              </RadioGroup.Option>
-            ))}
-          </RadioGroup>
-        </Widget.Header>
-        <LiquidityChart
-          currencyBase={token0}
-          currencyQuote={token1}
-          tierId={0}
-          priceLower={priceLower}
-          priceUpper={priceUpper}
-          weightLockedCurrencyBase={undefined}
-          onLeftRangeInput={() => {}}
-          onRightRangeInput={() => {}}
-          setIndependentRangeField={setIndependentRangeField}
-          resetRangeNonce={99975}
-        />
-        <div className="flex flex-col gap-3 p-4 pt-0">
-          <RadioGroup value={range} onChange={setRange} className="flex gap-2">
-            {Object.keys(Range)
-              .slice(1)
-              .map((val) => {
-                return (
-                  <RadioGroup.Option
-                    key={val}
-                    className={({ checked }) =>
-                      classNames(
-                        checked ? 'ring-2 ring-blue' : 'hover:ring-2 hover:ring-slate-500',
-                        'cursor-pointer rounded-full px-3 bg-slate-600 text-xs py-1.5 font-semibold w-full whitespace-nowrap flex justify-center'
-                      )
-                    }
-                    value={val}
-                  >
-                    {Object.values(Range)[Object.keys(Range).indexOf(val)]}
-                  </RadioGroup.Option>
+    <>
+      <div className="flex justify-between">
+        <span className="text-[10px] uppercase font-bold text-slate-400">Set Price</span>
+        <RadioGroup value={chartType} onChange={setChartType} className="flex cursor-pointer">
+          {Object.keys(ChartType).map((val, i) => (
+            <RadioGroup.Option
+              key={val}
+              className={({ checked }) =>
+                classNames(
+                  checked ? 'bg-slate-700' : 'bg-slate-900 opacity-40',
+                  'text-[10px] px-2 py-1',
+                  i === 0 ? 'rounded-l-lg' : 'rounded-r-lg'
                 )
-              })}
-          </RadioGroup>
-          <div className="flex gap-2">
-            <PriceBlock
-              token0={token0}
-              token1={token1}
-              label="Min Price."
-              subtitle="-50%"
-              value={minPrice}
-              onMin={() => setMinPrice((prev) => prev - 1)}
-              onPlus={() => setMinPrice((prev) => prev + 1)}
-            />
-            <PriceBlock
-              token0={token0}
-              token1={token1}
-              label="Max Price."
-              subtitle="+100%"
-              value={maxPrice}
-              onMin={() => setMaxPrice((prev) => prev - 1)}
-              onPlus={() => setMaxPrice((prev) => prev + 1)}
-            />
-          </div>
+              }
+              value={val}
+            >
+              {val}
+            </RadioGroup.Option>
+          ))}
+        </RadioGroup>
+      </div>
+
+      <div className="flex items-center justify-center h-[200px] border border-slate-200/10 rounded-lg mt-4">
+        <span className="text-[10px] italic text-slate-500">Liquidity chart here</span>
+      </div>
+      {/*<LiquidityChart*/}
+      {/*  currencyBase={token0}*/}
+      {/*  currencyQuote={token1}*/}
+      {/*  tierId={0}*/}
+      {/*  priceLower={priceLower}*/}
+      {/*  priceUpper={priceUpper}*/}
+      {/*  weightLockedCurrencyBase={undefined}*/}
+      {/*  onLeftRangeInput={() => {}}*/}
+      {/*  onRightRangeInput={() => {}}*/}
+      {/*  setIndependentRangeField={setIndependentRangeField}*/}
+      {/*  resetRangeNonce={99975}*/}
+      {/*/>*/}
+      <div className="flex flex-col gap-3 pt-4">
+        <RadioGroup value={range} onChange={setRange} className="flex gap-2">
+          {Object.keys(Range)
+            .slice(1)
+            .map((val) => {
+              return (
+                <RadioGroup.Option
+                  key={val}
+                  className={({ checked }) =>
+                    classNames(
+                      checked ? 'ring-2 ring-blue' : 'hover:ring-2 hover:ring-slate-500',
+                      'cursor-pointer rounded-full px-3 bg-slate-600 text-xs py-1.5 font-semibold w-full whitespace-nowrap flex justify-center'
+                    )
+                  }
+                  value={val}
+                >
+                  {Object.values(Range)[Object.keys(Range).indexOf(val)]}
+                </RadioGroup.Option>
+              )
+            })}
+        </RadioGroup>
+        <div className="flex gap-2">
+          <PriceBlock
+            token0={token0}
+            token1={token1}
+            label="Min Price."
+            subtitle="-50%"
+            value={minPrice}
+            onMin={() => setMinPrice((prev) => prev - 1)}
+            onPlus={() => setMinPrice((prev) => prev + 1)}
+          />
+          <PriceBlock
+            token0={token0}
+            token1={token1}
+            label="Max Price."
+            subtitle="+100%"
+            value={maxPrice}
+            onMin={() => setMaxPrice((prev) => prev - 1)}
+            onPlus={() => setMaxPrice((prev) => prev + 1)}
+          />
         </div>
-      </Widget.Content>
-    </Widget>
+      </div>
+    </>
   )
 }
 
