@@ -180,3 +180,12 @@ export class Router {
     }
   }
 }
+
+export function tokenQuantityString(token: Type, amount: BigNumber) {
+  const denominator = BigNumber.from(10).pow(token.decimals)
+  const integer = amount.div(denominator)
+  const fractional = amount.sub(integer.mul(denominator))
+  if (fractional.isZero()) return `${integer} ${token.symbol}`
+  const paddedFractional = fractional.toString().padStart(token.decimals, '0')
+  return `${integer}.${paddedFractional} ${token.symbol}`
+}

@@ -6,8 +6,8 @@ import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import { HardhatNetworkConfig } from 'hardhat/types'
-import { ERC20ABI } from '../ABI/ERC20'
 
+import { ERC20ABI } from '../ABI/ERC20'
 import { WETH9ABI } from '../ABI/WETH9'
 import { DataFetcher } from '../scripts/DataFetcher'
 import { BentoBox } from '../scripts/liquidityProviders/Trident'
@@ -151,6 +151,7 @@ async function getTestEnvironment(chainId: ChainId): Promise<TestEnvironment> {
   console.log('Prepare Environment:')
 
   console.log('    Create Provider ...')
+  // const provider = ethers.getDefaultProvider()
   let provider
   switch (chainId) {
     case ChainId.ETHEREUM:
@@ -163,6 +164,7 @@ async function getTestEnvironment(chainId: ChainId): Promise<TestEnvironment> {
       throw new Error('Unsupported net!')
   }
 
+  console.log('    Block Number:', provider.blockNumber)
   console.log('    Create DataFetcher ...')
 
   const dataFetcher = new DataFetcher(provider, chainId)
@@ -257,6 +259,7 @@ async function makeSwap(
     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
   } else {
     balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
+    balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
   }
   console.log(`        expected amountOut: ${route.amountOutBN.toString()}`)
   console.log(`        real amountOut:     ${balanceOutBN.toString()}`)
