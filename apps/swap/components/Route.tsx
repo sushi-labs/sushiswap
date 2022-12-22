@@ -127,7 +127,7 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
   )
 
   return (
-    <div className="h-full overflow-y-scroll">
+    <div className="h-full overflow-y-auto scroll">
       <div className="flex flex-col gap-4">
         {directPaths.map((directPath, i) => (
           <ComplexRoutePath
@@ -180,10 +180,8 @@ export const Route: FC = () => {
 
   return (
     <AppearOnMount>
-      <div className="pt-2">
-        {trade.isSingle() && <SingleRoute trade={trade} />}
-        {trade.isComplex() && <ComplexRoute trade={trade} />}
-      </div>
+      {trade.isSingle() && <SingleRoute trade={trade} />}
+      {trade.isComplex() && <ComplexRoute trade={trade} />}
       <div className="flex flex-col gap-4">
         {/* {trade.isComplex() && (
           <Tooltip
