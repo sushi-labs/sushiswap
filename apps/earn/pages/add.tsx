@@ -135,13 +135,14 @@ const _Add: FC<AddProps> = ({ pool, poolState }) => {
     )
 
   const widget = (
-    <>
+    <div className="flex flex-col gap-3">
+      <span className="text-sm font-bold text-slate-200 flex-grow px-3">Amounts</span>
       {title === 'Create Pool' && (
         <div className="mb-3 text-[10px] leading-[16px] text-center text-slate-300 font-medium border border-slate-200/[0.05] rounded-lg p-3">
           This pool does not yet exist. <br /> Adding liquidity will create and set the initial price for this pool.
         </div>
       )}
-      <div className="border border-slate-200/10 rounded-xl overflow-hidden bg-white/[0.04]">
+      <div className="border border-slate-200/10 rounded-xl overflow-hidden bg-white/[0.04] mb-1">
         <Web3Input.Currency
           className="p-3"
           value={input0}
@@ -152,6 +153,7 @@ const _Add: FC<AddProps> = ({ pool, poolState }) => {
           onRemoveToken={removeCustomToken}
           chainId={chainId}
           tokenMap={tokenMap}
+          showSelect={false}
         />
         <div className="relative flex items-center justify-center -mt-[12px] -mb-[12px] z-10">
           <div className="absolute h-px bg-slate-200/10 inset-0 top-[50%]" />
@@ -170,10 +172,13 @@ const _Add: FC<AddProps> = ({ pool, poolState }) => {
           chainId={chainId}
           tokenMap={tokenMap}
           loading={
-            poolState === PairState.LOADING ||
-            poolState === ConstantProductPoolState.LOADING ||
-            poolState === StablePoolState.LOADING
+            token0 &&
+            token1 &&
+            (poolState === PairState.LOADING ||
+              poolState === ConstantProductPoolState.LOADING ||
+              poolState === StablePoolState.LOADING)
           }
+          showSelect={false}
         />
       </div>
       <Checker.Connected fullWidth size="md">
@@ -240,7 +245,7 @@ const _Add: FC<AddProps> = ({ pool, poolState }) => {
           </Checker.Amounts>
         </Checker.Network>
       </Checker.Connected>
-    </>
+    </div>
   )
 
   return (
@@ -265,10 +270,7 @@ const _Add: FC<AddProps> = ({ pool, poolState }) => {
               <SelectPricesWidget />
             </div>
           )}
-          <div className="flex flex-col gap-3">
-            <span className="text-sm font-bold text-slate-200 flex-grow px-3">Amounts</span>
-            {widget}
-          </div>
+          {widget}
         </div>
       </Widget.Content>
     </Widget>

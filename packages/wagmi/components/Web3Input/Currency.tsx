@@ -24,6 +24,7 @@ export interface CurrencyInputProps
   fundSource?: FundSource
   loading?: boolean
   includeNative?: boolean
+  showSelect?: boolean
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -44,6 +45,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   fundSource = FundSource.WALLET,
   includeNative = true,
   loading,
+  showSelect = true,
 }) => {
   const isMounted = useIsMounted()
   const { address } = useAccount()
@@ -80,17 +82,18 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             />
           )}
           <button
-            {...(onSelect && {
-              onClick: (e) => {
-                setTokenSelectorOpen(true)
-                e.stopPropagation()
-              },
-            })}
+            {...(onSelect &&
+              showSelect && {
+                onClick: (e) => {
+                  setTokenSelectorOpen(true)
+                  e.stopPropagation()
+                },
+              })}
             data-testid={`${id}-button`}
             className={classNames(
-              onSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
-              (currency || loading) && onSelect ? 'bg-white bg-opacity-[0.12]' : '',
-              currency || loading ? 'ring-slate-500' : 'bg-blue ring-blue-700',
+              onSelect && showSelect ? 'shadow-md hover:ring-2' : 'cursor-default text-2xl',
+              (currency || loading) && onSelect && showSelect ? 'bg-white bg-opacity-[0.12]' : '',
+              currency || loading ? 'ring-slate-500' : showSelect ? 'bg-blue ring-blue-700' : '',
               'h-[36px] text-slate-200 hover:text-slate-100 transition-all flex flex-row items-center gap-1 text-xl font-semibold rounded-full px-2 py-1'
             )}
           >
@@ -113,10 +116,12 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
                 </div>
                 <div className="ml-0.5 -mr-0.5">{currency.symbol}</div>
               </>
-            ) : (
+            ) : showSelect ? (
               <div className="ml-0.5 -mr-0.5 pl-1">Select</div>
+            ) : (
+              <div className="ml-0.5 -mr-0.5 pl-1" />
             )}
-            {onSelect && (
+            {onSelect && showSelect && (
               <div className="w-5 h-5">
                 <ChevronDownIcon width={20} height={20} />
               </div>
@@ -176,6 +181,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       onChange,
       onRemoveToken,
       onSelect,
+      showSelect,
       tokenMap,
       tokenSelectorOpen,
       usdPctChange,
