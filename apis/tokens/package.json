@@ -6,7 +6,7 @@
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
-    "@vercel/node": "^2.2.0",
+    "@vercel/node": "2.8.1",
     "@sushiswap/database": "workspace:*",
     "zod": "3.20.2"
   },
@@ -14,6 +14,8 @@
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
-    "@sushiswap/typescript-config": "workspace:*"
+    "@sushiswap/typescript-config": "workspace:*",
+    "typescript": "4.9.4",
+    "vercel": "28.10.0"
   }
 }

@@ -31,7 +31,10 @@
     "db:init": "ls prisma/schema.prisma || (prisma init --datasource-provider mysql && rm .gitignore && rm .env)",
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
-    "db:pull": "prisma db pull"
+    "db:pull": "prisma db pull",
+    "prebuild": "npm run db:generate",
+    "predev": "npm run db:generate",
+    "studio": "prisma studio"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
