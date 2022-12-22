@@ -26,13 +26,15 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint src --fix",
-    "postinstall": "pnpm db:init && pnpm db:pull && pnpm db:generate && pnpm build",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests",
     "db:init": "ls prisma/schema.prisma || (prisma init --datasource-provider mysql && rm .gitignore && rm .env)",
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
-    "db:pull": "prisma db pull"
+    "db:pull": "prisma db pull",
+    "prebuild": "npm run db:generate",
+    "predev": "npm run db:generate",
+    "studio": "prisma studio"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
