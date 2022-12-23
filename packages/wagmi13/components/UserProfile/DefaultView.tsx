@@ -1,11 +1,16 @@
 'use client'
 
-import { CreditCardIcon, DuplicateIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
-import { ChevronRightIcon } from '@heroicons/react/solid'
+import {
+  ArrowLeftOnRectangleIcon,
+  ChevronRightIcon,
+  CreditCardIcon,
+  DocumentDuplicateIcon,
+  LinkIcon,
+} from '@heroicons/react/24/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { ClipboardController } from '@sushiswap/ui13/components/CopyHelper'
+import { ClipboardController } from '@sushiswap/ui13/components/ClipboardController'
 import { IconButton } from '@sushiswap/ui13/components/IconButton'
 import { JazzIcon } from '@sushiswap/ui13/components/icons/JazzIcon'
 import { getOnrampURL, OnRampProvider } from '@sushiswap/ui13/lib/getOnrampURL'
@@ -77,7 +82,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
                   className="p-0.5"
                   description={isCopied ? 'Copied!' : 'Copy'}
                 >
-                  <DuplicateIcon width={18} height={18} />
+                  <DocumentDuplicateIcon width={18} height={18} />
                 </IconButton>
               )}
             </ClipboardController>
@@ -88,10 +93,10 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
               className="p-0.5"
               description="Explore"
             >
-              <ExternalLinkIcon width={18} height={18} />
+              <LinkIcon width={18} height={18} />
             </IconButton>
             <IconButton as="button" onClick={() => disconnect()} className="p-0.5" description="Disconnect">
-              <LogoutIcon width={18} height={18} />
+              <ArrowLeftOnRectangleIcon width={18} height={18} />
             </IconButton>
           </div>
         </div>

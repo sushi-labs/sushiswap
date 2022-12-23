@@ -1,12 +1,13 @@
 'use client'
 
 import { Disclosure } from '@headlessui/react'
+import { NotificationData } from '@sushiswap/ui13/components/toast'
 import { FC } from 'react'
 
 import { Notification } from './Notification'
 
 interface NotificationGroupProps {
-  notifications: string[]
+  notifications: NotificationData[]
 }
 
 export const NotificationGroup: FC<NotificationGroupProps> = ({ notifications }) => {

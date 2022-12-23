@@ -1,7 +1,7 @@
 'use client'
 
 import { Popover } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { classNames } from '@sushiswap/ui13'
@@ -51,9 +51,7 @@ export const UserProfile: FC<ProfileProps> = ({ notifications, clearNotification
   const panel = (
     <Popover.Panel className="w-full sm:w-[320px] fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] mt-4 sm:rounded-xl rounded-b-none shadow-md shadow-black/[0.3] bg-slate-900 border border-slate-200/20">
       {view === ProfileView.Default && <DefaultView chainId={chainId} address={address} setView={setView} />}
-      {view === ProfileView.Transactions && (
-        <TransactionsView setView={setView} notifications={notifications} clearNotifications={clearNotifications} />
-      )}
+      {view === ProfileView.Transactions && <TransactionsView setView={setView} address={address} />}
     </Popover.Panel>
   )
 

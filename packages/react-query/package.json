@@ -18,9 +18,12 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@tanstack/react-query": "4.19.1",
-    "@tanstack/react-query-devtools": "4.19.1",
-    "@tanstack/react-query-persist-client": "4.19.1",
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/ui13": "workspace:*",
+    "@tanstack/react-query": "4.20.4",
+    "@tanstack/react-query-devtools": "4.20.4",
+    "@tanstack/react-query-persist-client": "4.20.4",
     "idb-keyval": "6.2.0"
   },
   "devDependencies": {

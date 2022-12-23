@@ -1,6 +1,7 @@
 'use client'
 
-import { ChevronLeftIcon } from '@heroicons/react/solid'
+import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { useClearNotifications, useNotifications } from '@sushiswap/react-query/src/hooks/notifications'
 import { Button } from '@sushiswap/ui13/components/button'
 import { IconButton } from '@sushiswap/ui13/components/IconButton'
 import React, { Dispatch, FC, SetStateAction } from 'react'
@@ -9,12 +10,14 @@ import { ProfileView } from './index'
 import { NotificationGroup } from './NotificationGroup'
 
 interface TransactionsProps {
+  address: `0x${string}`
   setView: Dispatch<SetStateAction<ProfileView>>
-  notifications: Record<number, string[]>
-  clearNotifications(): void
 }
 
-export const TransactionsView: FC<TransactionsProps> = ({ setView, notifications, clearNotifications }) => {
+export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) => {
+  const { data: notifications } = useNotifications({ account: address })
+  const { mutate: clearNotifications } = useClearNotifications({ account: address })
+
   return (
     <div className="">
       <div className="grid grid-cols-3 items-center h-12 border-b border-slate-200/20 px-2">
@@ -25,13 +28,13 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, notifications
         </div>
         <p className="font-semibold text-slate-400">Transactions</p>
         <div className="flex items-end justify-end">
-          <Button onClick={clearNotifications} variant="empty" size="sm" className="!p-0">
+          <Button onClick={() => clearNotifications()} variant="empty" size="sm" className="!p-0">
             Clear all
           </Button>
         </div>
       </div>
       <div className="flex flex-col gap-3 max-h-[300px] scroll">
-        {Object.entries(notifications).length > 0 ? (
+        {notifications ? (
           Object.entries(notifications)
             .reverse()
             .map(([, notifications], index) => {

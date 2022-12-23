@@ -2,18 +2,18 @@
 
 import { Disclosure } from '@headlessui/react'
 import {
+  ArrowDownTrayIcon,
   ArrowRightIcon,
-  CashIcon,
+  ArrowsUpDownIcon,
+  ArrowUpTrayIcon,
+  BanknotesIcon,
   CheckIcon,
   ChevronDownIcon,
-  DownloadIcon,
   FireIcon,
   LockOpenIcon,
   PlusIcon,
-  SwitchVerticalIcon,
-  UploadIcon,
-  XIcon,
-} from '@heroicons/react/solid'
+  XMarkIcon,
+} from '@heroicons/react/24/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui13'
@@ -37,12 +37,11 @@ export const STARGATE_TOKEN = new Token({
   name: 'StargateToken',
 })
 
-export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: boolean }> = ({
-  data,
+export const Notification: FC<{ data: NotificationData; showExtra?: boolean; hideStatus?: boolean }> = ({
+  data: notification,
   showExtra = false,
   hideStatus = false,
 }) => {
-  const notification: NotificationData = JSON.parse(data)
   const { status } = useWaitForTransaction({
     chainId: notification.chainId,
     hash: notification.txHash as `0x${string}`,
@@ -97,7 +96,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
                 (status === 'loading' ? (
                   <Loader size={18} />
                 ) : status === 'error' ? (
-                  <XIcon width={20} height={20} className="text-red-400" />
+                  <XMarkIcon width={20} height={20} className="text-red-400" />
                 ) : (
                   <></>
                 ))}
@@ -108,7 +107,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
                 <UICurrency.Icon currency={STARGATE_TOKEN} width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'swap' && (
-                <SwitchVerticalIcon width={20} height={20} />
+                <ArrowsUpDownIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'approval' && (
                 <LockOpenIcon width={20} height={20} />
@@ -120,7 +119,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
                 <FireIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'enterBar' && (
-                <DownloadIcon width={20} height={20} />
+                <ArrowDownTrayIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'transferStream' && (
                 <ArrowRightIcon width={20} height={20} />
@@ -144,19 +143,19 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
                 <CheckIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'updateStream' && (
-                <DownloadIcon width={20} height={20} />
+                <ArrowDownTrayIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'withdrawStream' && (
-                <UploadIcon width={20} height={20} />
+                <ArrowUpTrayIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'withdrawVesting' && (
-                <UploadIcon width={20} height={20} />
+                <ArrowUpTrayIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'leaveBar' && (
-                <UploadIcon width={20} height={20} />
+                <ArrowUpTrayIcon width={20} height={20} />
               )}
               {(status === 'success' || notification.summary.info) && notification.type === 'claimRewards' && (
-                <CashIcon width={20} height={20} />
+                <BanknotesIcon width={20} height={20} />
               )}
             </div>
           </Badge>
