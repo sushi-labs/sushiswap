@@ -184,6 +184,4 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
     if (this.blockListener) this.chainDataProvider.off('block', this.blockListener)
     this.blockListener = undefined
   }
-
-  getLastUpdateBlock(): number {}
 }

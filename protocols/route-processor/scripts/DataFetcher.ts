@@ -47,22 +47,22 @@ export class DataFetcher {
     this.providers.push(
       new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
     )
-    // if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
-    //   this.providers.push(
-    //     new SushiProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-    //   )
-    // if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers))
-    //   this.providers.push(
-    //     new UniSwapV2ProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-    //   )
+    if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
+      this.providers.push(
+        new SushiProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers))
+      this.providers.push(
+        new UniSwapV2ProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
     if (this._providerIsIncluded(LiquidityProviders.Quickswap, providers))
       this.providers.push(
         new QuickSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
-    // if (this._providerIsIncluded(LiquidityProviders.Trident, providers))
-    //   this.providers.push(
-    //     new TridentProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-    //   )
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers))
+      this.providers.push(
+        new TridentProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
 
     this.providers.forEach((p) => p.startFetchPoolsData())
   }
@@ -114,14 +114,15 @@ export class DataFetcher {
 
   // returns the last processed by all LP block number
   getLastUpdateBlock(providers?: LiquidityProviders[]): number {
-    let lastUpdateBlock = 0
+    let lastUpdateBlock: number | undefined
     this.providers.forEach((p) => {
       if (this._providerIsIncluded(p.getType(), providers)) {
         const last = p.getLastUpdateBlock()
         if (last < 0) return
-        lastUpdateBlock = Math.min(lastUpdateBlock, last)
+        if (lastUpdateBlock === undefined) lastUpdateBlock = last
+        else lastUpdateBlock = Math.min(lastUpdateBlock, last)
       }
     })
-    return lastUpdateBlock
+    return lastUpdateBlock === undefined ? 0 : lastUpdateBlock
   }
 }

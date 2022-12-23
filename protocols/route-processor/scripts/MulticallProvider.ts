@@ -33,7 +33,7 @@ export class MultiCallProvider {
           this.prepairingCall = undefined
           this.nextSeriaId = 0
           const { results, blockNumber } = await this.multicall.call(input)
-          //console.log('Multicall response received')
+          //console.log('Multicall response received', blockNumber)
           this.lastCallBlockNumber = blockNumber
           const serias: any[][] = []
           for (const r in results) {

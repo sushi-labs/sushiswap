@@ -217,6 +217,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
   async getPools(tokens: Token[]) {
     if (ConstantProductPoolFactory[this.chainId] === undefined) {
       // No trident for this network
+      this.lastUpdateBlock = -1
       return []
     }
 
@@ -239,6 +240,9 @@ export class TridentProviderMC extends LiquidityProviderMC {
       this.poolCodes = [...this.poolCodes, ...pools, ...bridges]
       ++this.stateId
     }
+
+    // if it is the first obtained pool list
+    if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
 
   async getAllTridentPools(tokensSorted: Token[]): Promise<PoolCode[]> {
@@ -419,6 +423,8 @@ export class TridentProviderMC extends LiquidityProviderMC {
         ++this.stateId
       }
     })
+
+    this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
 
   _getProspectiveTokens(t0: Token, t1: Token) {
@@ -438,7 +444,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
     this.fetchedPairs.clear()
     this.fetchedTokens.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
-    this.blockListener = (_blockNumber: number) => {
+    this.blockListener = () => {
       this.updatePoolsData()
     }
     this.chainDataProvider.on('block', this.blockListener)

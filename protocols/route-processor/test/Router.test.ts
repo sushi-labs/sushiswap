@@ -14,27 +14,17 @@ import { Router } from '../scripts/Router'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-class BackCounter {
-  start: number
-  current: number
-
-  constructor(start: number) {
-    this.start = start
-    this.current = start
-  }
+class Waiter {
+  resolved = false
 
   async wait() {
-    while (this.current > 0) {
-      console.log(`Wait ${this.current} sec ...`)
-      this.current--
-      await delay(1000)
+    while (!this.resolved) {
+      await delay(500)
     }
   }
 
-  reset(startdiff = 0) {
-    this.start += startdiff
-    if (this.start < 0) this.start = 0
-    this.current = this.start
+  resolve() {
+    this.resolved = true
   }
 }
 
@@ -77,13 +67,13 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   }
 }
 
+// all pool data assumed to be updated
 async function makeSwap(
   env: TestEnvironment,
   fromToken: Type,
   amountIn: BigNumber,
   toToken: Type
-): Promise<BigNumber | undefined> {
-  console.log('')
+): Promise<[BigNumber, number] | undefined> {
   console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token) {
@@ -94,15 +84,15 @@ async function makeSwap(
 
   console.log('    Create Route ...')
   env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const backCounter = new BackCounter(50)
+  const waiter = new Waiter()
   const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
   router.startRouting(() => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.getCurrentRouteHumanString()
     console.log(printed)
-    backCounter.reset(-50)
+    waiter.resolve()
   })
-  await backCounter.wait()
+  await waiter.wait()
   router.stopRouting()
 
   console.log('    Create route processor code ...')
@@ -155,7 +145,32 @@ async function makeSwap(
   console.log(`        slippage: ${slippage / 100}%`)
   console.log(`        gas use: ${receipt.gasUsed.toString()}`)
 
-  return balanceOutBN
+  return [balanceOutBN, receipt.blockNumber]
+}
+
+async function dataUpdated(env: TestEnvironment, minBlockNumber: number) {
+  for (;;) {
+    if (env.dataFetcher.getLastUpdateBlock() >= minBlockNumber) return
+    await delay(500)
+  }
+}
+
+async function updMakeSwap(
+  env: TestEnvironment,
+  fromToken: Type,
+  toToken: Type,
+  lastCallResult: BigNumber | [BigNumber | undefined, number]
+): Promise<[BigNumber | undefined, number]> {
+  const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
+  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+
+  console.log('')
+  console.log('Wait data update for min block', waitBlock)
+  await dataUpdated(env, waitBlock)
+  const res = await makeSwap(env, fromToken, amountIn, toToken)
+  expect(res).not.undefined
+  if (res === undefined) return [undefined, waitBlock]
+  else return res
 }
 
 describe('End-to-end Router test', async function () {
@@ -163,23 +178,9 @@ describe('End-to-end Router test', async function () {
     const env = await getTestEnvironment()
     const chainId = env.chainId
 
-    console.log(env.dataFetcher.getLastUpdateBlock())
-    const amountOut1 = await makeSwap(env, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI[chainId])
-    expect(amountOut1).not.undefined
-    if (amountOut1 === undefined) return
-    await delay(3000)
-    console.log(env.dataFetcher.getLastUpdateBlock())
-    await makeSwap(env, SUSHI[chainId], amountOut1, Native.onChain(chainId))
-    console.log(env.dataFetcher.getLastUpdateBlock())
-
-    await delay(1000)
-    console.log(env.dataFetcher.getLastUpdateBlock())
-    const amountOut2 = await makeSwap(env, Native.onChain(chainId), getBigNumber(1 * 1e18), WNATIVE[chainId])
-    console.log(env.dataFetcher.getLastUpdateBlock())
-    expect(amountOut2).not.undefined
-    if (amountOut2 === undefined) return
-    await delay(1000)
-    await makeSwap(env, WNATIVE[chainId], amountOut2, Native.onChain(chainId))
-    console.log(env.dataFetcher.getLastUpdateBlock())
+    const res1 = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], getBigNumber(1000000 * 1e18))
+    const res2 = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), res1)
+    const res3 = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], [getBigNumber(1 * 1e18), res2[1]])
+    await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), res3)
   })
 })

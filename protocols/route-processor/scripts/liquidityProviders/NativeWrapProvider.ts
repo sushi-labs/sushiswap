@@ -38,6 +38,7 @@ export class NativeWrapProvider extends LiquidityProviderMC {
     )
     this.poolCodes = [new NativeWrapBridgePoolCode(bridge)]
     this.stateId = 1
+    this.lastUpdateBlock = -1
   }
 
   getType(): LiquidityProviders {

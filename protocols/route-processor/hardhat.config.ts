@@ -63,10 +63,10 @@ const config: HardhatUserConfig = {
     //   forking: {
     //     enabled: true,
     //     url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-    //     //blockNumber: 16240000,
+    //     blockNumber: 37180000,
     //   },
     //   accounts: {
-    //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
     //   },
     //   chainId: 137,
     // },
