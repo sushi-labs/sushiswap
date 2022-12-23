@@ -10,7 +10,7 @@ import { SushiProvider } from './liquidityProviders/Sushi'
 import { convertTokenToBento, getBentoChainId, TridentProvider } from './liquidityProviders/Trident'
 import { UniswapProvider } from './liquidityProviders/UniswapV2'
 import { PoolCode } from './pools/PoolCode'
-import { getRouteProcessorCode } from './TinesToRouteProcessor2'
+import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
 enum LiquidityProviders {
   Sushiswap = 'Sushiswap',

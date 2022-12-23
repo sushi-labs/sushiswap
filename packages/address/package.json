@@ -39,7 +39,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
-    "zod": "3.19.1"
+    "zod": "3.20.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

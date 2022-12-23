@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Pool {
+  id            String   @id
+  address       String
+  name          String
+  chainId       Int
+  protocol      String
+  version       String
+  type          String
+  token0Id      String
+  token1Id      String
+  swapFee       Float
+  twapEnabled   Boolean
+  liquidityUSD  Decimal
+  generatedAt   DateTime @default(now())
+  updatedAt     DateTime
+  reserve0      String   @default("0")
+  reserve1      String   @default("0")
+  isWhitelisted Boolean  @default(false)
+
+  @@index([address])
+  @@index([chainId])
+  @@index([chainId, protocol, version, type])
+  @@index([chainId, version, type])
+  @@index([generatedAt])
+  @@index([id])
+  @@index([isWhitelisted])
+  @@index([token0Id])
+  @@index([token1Id])
+}
+
+model Token {
+  id            String       @id
+  address       String
+  chainId       Int
+  name          String
+  symbol        String
+  decimals      Int
+  status        Token_status @default(UNKNOWN)
+  generatedAt   DateTime     @default(now())
+  updatedAt     DateTime
+  derivedNative Decimal?
+  derivedUSD    Decimal?
+
+  @@unique([chainId, address])
+  @@index([address, chainId])
+  @@index([address])
+  @@index([chainId])
+  @@index([chainId, status, derivedNative])
+  @@index([chainId, status, derivedUSD])
+  @@index([chainId, status])
+  @@index([id])
+}
+
+enum Token_status {
+  APPROVED
+  UNKNOWN
+  DISAPPROVED
+}

@@ -1,18 +1,14 @@
 import '@nomiclabs/hardhat-ethers'
+import 'hardhat-deploy'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
 import { HardhatUserConfig, subtask } from 'hardhat/config'
 import path from 'path'
 
-let accounts
-
-if (process.env.PRIVATE_KEY) {
-  accounts = [process.env.PRIVATE_KEY]
-} else {
-  accounts = {
-    mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
-  }
+const accounts = {
+  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
+  accountsBalance: '10000000000000000000000000',
 }
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
@@ -84,7 +80,6 @@ const config: HardhatUserConfig = {
     goerli: {
       url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
-      chainId: 5,
     },
   },
   solidity: {
