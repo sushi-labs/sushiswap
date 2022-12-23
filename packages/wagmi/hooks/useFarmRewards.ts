@@ -1,6 +1,5 @@
 import { chainShortName } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { UseQueryOptions } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
@@ -48,23 +47,19 @@ export enum PoolType {
   Legacy = 'Legacy',
 }
 
-export const useFarmRewards = ({
-  options,
-}: {
-  options?: Omit<
-    UseQueryOptions<Record<number, FarmMap<RewardToken>>, unknown, Record<number, FarmMap<RewardToken>>, string[]>,
-    'queryKey' | 'queryFn' | 'initialData'
-  >
-}) => {
+export const useFarmRewards = () => {
   const queryKey = useMemo(() => ['https://farm.sushi.com/v0'], [])
   const {
     data: farmsMap,
     isError,
     isLoading,
-  } = useQuery(queryKey, () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()), {
-    staleTime: 2000,
-    ...options,
-  })
+  } = useQuery<Record<number, FarmMap<RewardToken>>>(
+    queryKey,
+    () => fetch(`https://farm.sushi.com/v0`).then((response) => response.json()),
+    {
+      staleTime: 2000,
+    }
+  )
 
   return useMemo(() => {
     return {
