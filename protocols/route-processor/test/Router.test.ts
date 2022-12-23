@@ -173,7 +173,8 @@ async function updMakeSwap(
   else return res
 }
 
-describe('End-to-end Router test', async function () {
+// skipped because took too long time. Unskip to check the RP
+describe.skip('End-to-end Router test', async function () {
   it('Native => SUSHI => Native + Native => WrappedNative => Native', async function () {
     const env = await getTestEnvironment()
     const chainId = env.chainId
