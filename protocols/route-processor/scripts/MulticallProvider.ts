@@ -32,6 +32,7 @@ export class MultiCallProvider {
           this.prepairingCall = undefined
           this.nextSeriaId = 0
           const { results } = await this.multicall.call(input)
+          //console.log('Multicall response received')
           const serias: any[][] = []
           for (const r in results) {
             const [elementSeria, index] = r.split('_')
