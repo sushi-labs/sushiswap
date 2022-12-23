@@ -70,6 +70,7 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
   async getPools(tokens: Token[]): Promise<void> {
     if (QUICKSWAP_FACTORY[this.chainId] === undefined) {
       // No sushiswap for this network
+      this.lastUpdateBlock = -1
       return
     }
 
@@ -113,6 +114,9 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
         ++this.stateId
       }
     })
+
+    // if it is the first obtained pool list
+    if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
 
   // TODO: remove too often updates if the network generates too many blocks
@@ -137,6 +141,8 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
         }
       }
     })
+
+    this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
 
   _getPoolAddress(t1: Token, t2: Token): string {
@@ -163,7 +169,7 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
     this.poolCodes = []
     this.fetchedPools.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
-    this.blockListener = (_blockNumber: number) => {
+    this.blockListener = () => {
       this.updatePoolsData()
     }
     this.chainDataProvider.on('block', this.blockListener)
@@ -178,4 +184,6 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
     if (this.blockListener) this.chainDataProvider.off('block', this.blockListener)
     this.blockListener = undefined
   }
+
+  getLastUpdateBlock(): number {}
 }

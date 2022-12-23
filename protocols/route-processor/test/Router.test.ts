@@ -163,17 +163,23 @@ describe('End-to-end Router test', async function () {
     const env = await getTestEnvironment()
     const chainId = env.chainId
 
+    console.log(env.dataFetcher.getLastUpdateBlock())
     const amountOut1 = await makeSwap(env, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI[chainId])
     expect(amountOut1).not.undefined
     if (amountOut1 === undefined) return
     await delay(3000)
+    console.log(env.dataFetcher.getLastUpdateBlock())
     await makeSwap(env, SUSHI[chainId], amountOut1, Native.onChain(chainId))
+    console.log(env.dataFetcher.getLastUpdateBlock())
 
     await delay(1000)
+    console.log(env.dataFetcher.getLastUpdateBlock())
     const amountOut2 = await makeSwap(env, Native.onChain(chainId), getBigNumber(1 * 1e18), WNATIVE[chainId])
+    console.log(env.dataFetcher.getLastUpdateBlock())
     expect(amountOut2).not.undefined
     if (amountOut2 === undefined) return
     await delay(1000)
     await makeSwap(env, WNATIVE[chainId], amountOut2, Native.onChain(chainId))
+    console.log(env.dataFetcher.getLastUpdateBlock())
   })
 })

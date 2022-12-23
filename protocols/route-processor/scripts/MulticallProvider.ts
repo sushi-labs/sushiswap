@@ -14,6 +14,7 @@ export class MultiCallProvider {
   prepairingCall?: Promise<any[][]>
   seriaLength: Map<number, number> = new Map()
   nextSeriaId = 0
+  lastCallBlockNumber = 0
 
   constructor(chainDataProvider: ethers.providers.BaseProvider) {
     this.multicall = new Multicall({ ethersProvider: chainDataProvider, tryAggregate: true })
@@ -31,8 +32,9 @@ export class MultiCallProvider {
           this.prepairingCallcontext = undefined
           this.prepairingCall = undefined
           this.nextSeriaId = 0
-          const { results } = await this.multicall.call(input)
+          const { results, blockNumber } = await this.multicall.call(input)
           //console.log('Multicall response received')
+          this.lastCallBlockNumber = blockNumber
           const serias: any[][] = []
           for (const r in results) {
             const [elementSeria, index] = r.split('_')
