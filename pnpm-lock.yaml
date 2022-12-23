@@ -41,7 +41,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.47.0_4rm457sbmpckphlrug3bvwyp24
       '@typescript-eslint/parser': 5.47.0_eslint@8.29.0
       eslint: 8.29.0
-      eslint-config-next: 13.0.7_eslint@8.29.0
+      eslint-config-next: 13.1.0_eslint@8.29.0
       eslint-config-prettier: 8.5.0_eslint@8.29.0
       eslint-config-turbo: 0.0.7_eslint@8.29.0
       eslint-plugin-simple-import-sort: 8.0.0_eslint@8.29.0
@@ -1594,7 +1594,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.47.0_4rm457sbmpckphlrug3bvwyp24
       '@typescript-eslint/parser': 5.47.0_eslint@8.29.0
       eslint: 8.29.0
-      eslint-config-next: 13.0.7_eslint@8.29.0
+      eslint-config-next: 13.1.0_eslint@8.29.0
       eslint-config-prettier: 8.5.0_eslint@8.29.0
       eslint-config-turbo: 0.0.7_eslint@8.29.0
       eslint-plugin-simple-import-sort: 8.0.0_eslint@8.29.0
@@ -3170,7 +3170,7 @@ importers:
       '@graphql-mesh/transform-rename': latest
       '@graphql-mesh/transform-type-merging': latest
       '@graphql-mesh/utils': latest
-      '@prisma/client': ^4.6.1
+      '@prisma/client': ^4.8.0
       '@sushiswap/abi': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^2.0.0-canary.1
@@ -3200,7 +3200,7 @@ importers:
       isomorphic-unfetch: 3.1.0
       jest: ^28.1.0
       prettier: ^2.7.0
-      prisma: ^4.6.1
+      prisma: ^4.8.0
       ts-node: ^10.9.0
       tsup: ^6.2.0
       typescript: 4.8.2
@@ -3238,7 +3238,7 @@ importers:
       '@graphql-mesh/transform-rename': 0.14.4_graphql@16.6.0
       '@graphql-mesh/transform-type-merging': 0.5.3_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.3_graphql@16.6.0
-      '@prisma/client': 4.7.1_prisma@4.7.1
+      '@prisma/client': 4.8.0_prisma@4.8.0
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/math': link:../../packages/math
@@ -3259,7 +3259,7 @@ importers:
       ioredis: 5.2.4
       jest: 28.1.3_ts-node@10.9.1
       prettier: 2.8.1
-      prisma: 4.7.1
+      prisma: 4.8.0
       ts-node: 10.9.1_nmx7aiv3osvtzps2hlmhycqz7m
       tsup: 6.5.0_ze2u24a2nm4phns4kq2ynprvwe
       typescript: 4.8.2
@@ -11232,8 +11232,8 @@ packages:
   /@next/env/13.0.5:
     resolution: {integrity: sha512-F3KLtiDrUslAZhTYTh8Zk5ZaavbYwLUn3NYPBnOjAXU8hWm0QVGVzKIOuURQ098ofRU4e9oglf3Sj9pFx5nI5w==}
 
-  /@next/eslint-plugin-next/13.0.7:
-    resolution: {integrity: sha512-Q/Z0V3D3UpKhhzFU6/s17wD4rqJ+ZDGded8UpqNyzX1nUdD+/PnsZexPhSIZ2Yf/c8QESeirmJVRb3eAfCQkRQ==}
+  /@next/eslint-plugin-next/13.1.0:
+    resolution: {integrity: sha512-LGh0iqcEwxs0HmEK96cXXuhofcOGSUGl8Zms279JW8Zq/6GJkXo87gtRpfJrwD+a77nEIdRaORPM91Us3xW0Qw==}
     dependencies:
       glob: 7.1.7
 
@@ -12062,13 +12062,38 @@ packages:
     dependencies:
       '@prisma/engines-version': 4.7.1-1.272861e07ab64f234d3ffc4094e32bd61775599c
       prisma: 4.7.1
+    dev: false
+
+  /@prisma/client/4.8.0_prisma@4.8.0:
+    resolution: {integrity: sha512-Y1riB0p2W52kh3zgssP/YAhln3RjBFcJy3uwEiyjmU+TQYh6QTZDRFBo3JtBWuq2FyMOl1Rye8jxzUP+n0l5Cg==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe
+      prisma: 4.8.0
+    dev: true
 
   /@prisma/engines-version/4.7.1-1.272861e07ab64f234d3ffc4094e32bd61775599c:
     resolution: {integrity: sha512-Bd4LZ+WAnUHOq31e9X/ihi5zPlr4SzTRwUZZYxvWOxlerIZ7HJlVa9zXpuKTKLpI9O1l8Ec4OYCKsivWCs5a3Q==}
+    dev: false
+
+  /@prisma/engines-version/4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe:
+    resolution: {integrity: sha512-MHSOSexomRMom8QN4t7bu87wPPD+pa+hW9+71JnVcF3DqyyO/ycCLhRL1we3EojRpZxKvuyGho2REQsMCvxcJw==}
+    dev: true
 
   /@prisma/engines/4.7.1:
     resolution: {integrity: sha512-zWabHosTdLpXXlMefHmnouhXMoTB1+SCbUU3t4FCmdrtIOZcarPKU3Alto7gm/pZ9vHlGOXHCfVZ1G7OIrSbog==}
     requiresBuild: true
+
+  /@prisma/engines/4.8.0:
+    resolution: {integrity: sha512-A1Asn2rxZMlLAj1HTyfaCv0VQrLUv034jVay05QlqZg1qiHPeA3/pGTfNMijbsMYCsGVxfWEJuaZZuNxXGMCrA==}
+    requiresBuild: true
+    dev: true
 
   /@rari-capital/solmate/6.2.0:
     resolution: {integrity: sha512-g94F+Ra9ixyJyNgvnOIufNjUz488uEG0nxIEEtJ7+g+tA1XGUupRB2kB5b+VO7WYO26RNOVD2fW6xE4e14iWpg==}
@@ -21252,8 +21277,8 @@ packages:
     optionalDependencies:
       source-map: 0.6.1
 
-  /eslint-config-next/13.0.7_eslint@8.29.0:
-    resolution: {integrity: sha512-X7DB7iDJ9iHi5DAZbnFdWm4M0dwarj5h5y6Vpm9INCYzFgAwSWslq3v0qjYEjtUO5IQ8n1WK6IU5FkOQ2HBhOA==}
+  /eslint-config-next/13.1.0_eslint@8.29.0:
+    resolution: {integrity: sha512-UdZm8GTR8PWys1dw+gJY+aLR/etkbTTsrRxiQ57nxqAE4Fw6PGZ2prLjqV6IhNkFve3c8ZgbCrUolfGad2mryA==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0
       typescript: '>=3.3.1'
@@ -21261,7 +21286,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@next/eslint-plugin-next': 13.0.7
+      '@next/eslint-plugin-next': 13.1.0
       '@rushstack/eslint-patch': 1.2.0
       '@typescript-eslint/parser': 5.47.0_eslint@8.29.0
       eslint: 8.29.0
@@ -30370,6 +30395,15 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 4.7.1
+
+  /prisma/4.8.0:
+    resolution: {integrity: sha512-DWIhxvxt8f4h6MDd35mz7BJff+fu7HItW3WPDIEpCR3RzcOWyiHBbLQW5/DOgmf+pRLTjwXQob7kuTZVYUAw5w==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@prisma/engines': 4.8.0
+    dev: true
 
   /private/0.1.8:
     resolution: {integrity: sha512-VvivMrbvd2nKkiG38qjULzlc+4Vx4wm/whI9pQD35YrARNnhxeiRktSOhSukRLFNlzg6Br/cJPet5J/u19r/mg==}
