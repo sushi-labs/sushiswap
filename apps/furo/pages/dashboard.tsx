@@ -83,7 +83,11 @@ export default function DashboardPage() {
                   Furo requires access to your wallet, please authorize access to your wallet to continue
                 </Typography>
               </div>
-              <Link passHref={true} href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet">
+              <Link
+                legacyBehavior
+                passHref={true}
+                href="https://docs.sushi.com/how-to-get-started-on-sushi/setting-up-your-wallet"
+              >
                 <Typography
                   as="a"
                   target="_blank"

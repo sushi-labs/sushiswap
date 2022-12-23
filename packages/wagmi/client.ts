@@ -1,4 +1,3 @@
-import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import { foundry } from 'wagmi/chains'
@@ -8,6 +7,7 @@ import { MockConnector } from 'wagmi/connectors/mock'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
+import { SafeConnector } from './connectors/safe'
 import { getSigners } from './test/utils'
 
 export type Client = ReturnType<typeof createClient>

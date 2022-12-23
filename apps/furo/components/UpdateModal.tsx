@@ -75,7 +75,7 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
 
   const prepare = useCallback(
     (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !chainId) return
+      if (!stream?.canUpdate(address) || !stream || !chainId || !contractAddress) return
       if (topUp && !amount) return
       if (changeEndDate && !endDate) return
 
@@ -115,7 +115,16 @@ export const UpdateModal: FC<UpdateModalProps> = ({ stream, abi, address: contra
     onSuccess() {
       setOpen(false)
     },
-    enabled: Boolean(stream && chainId && !(topUp && !amount) && !(changeEndDate && !endDate)),
+    enabled: Boolean(
+      !(
+        !stream?.canUpdate(address) ||
+        !contractAddress ||
+        !stream ||
+        !chainId ||
+        (topUp && !amount) ||
+        (changeEndDate && !endDate)
+      )
+    ),
   })
 
   if (!stream || !address || !stream?.canUpdate(address)) return null

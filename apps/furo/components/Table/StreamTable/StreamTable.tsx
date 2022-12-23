@@ -1,12 +1,20 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Token, WNATIVE_ADDRESS } from '@sushiswap/currency'
-
 import { useBreakpoint } from '@sushiswap/hooks'
-import { Column, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { GenericTable } from '@sushiswap/ui'
+import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Dispatch, FC, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react'
 
 import { type Stream as StreamDTO, type Vesting as VestingDTO, Rebase as RebaseDTO } from '../../../.graphclient'
 import { FuroStatus, Stream, Vesting } from '../../../lib'
+import {
+  AMOUNT_COLUMN,
+  FROM_COLUMN,
+  START_DATE_COLUMN,
+  STATUS_COLUMN,
+  STREAMED_COLUMN,
+  TYPE_COLUMN,
+} from '../constants'
 
 export enum FuroTableType {
   INCOMING,
@@ -26,16 +34,6 @@ interface FuroTableProps {
   loading: boolean
 }
 
-const getDefaultColumns = (type: FuroTableType): Array<Column<Stream | Vesting, FuroTableType>> => []
-// const getDefaultColumns = (type: FuroTableType): Array<Column<Stream | Vesting>> => [
-//   STREAMED_COLUMN,
-//   STATUS_COLUMN,
-//   TYPE_COLUMN,
-//   AMOUNT_COLUMN,
-//   FROM_COLUMN(type),
-//   START_DATE_COLUMN,
-// ]
-
 export const StreamTable: FC<FuroTableProps> = ({
   chainId,
   streams,
@@ -49,7 +47,15 @@ export const StreamTable: FC<FuroTableProps> = ({
   const { isSm } = useBreakpoint('sm')
   const { isMd } = useBreakpoint('md')
 
-  // const [columns] = useState(() => getDefaultColumns(type))
+  // @ts-ignore
+  const [columns] = useState([
+    STREAMED_COLUMN,
+    STATUS_COLUMN,
+    TYPE_COLUMN,
+    AMOUNT_COLUMN,
+    FROM_COLUMN(type),
+    START_DATE_COLUMN,
+  ])
 
   const [columnVisibility, setColumnVisibility] = useState({})
 
@@ -89,7 +95,7 @@ export const StreamTable: FC<FuroTableProps> = ({
 
   const table = useReactTable<Stream | Vesting>({
     data: data,
-    columns: [],
+    columns,
     state: {
       columnVisibility,
     },
@@ -109,15 +115,15 @@ export const StreamTable: FC<FuroTableProps> = ({
     }
   }, [isMd, isSm])
 
-  return null
-
-  // return (
-  //   <GenericTable<Stream | Vesting>
-  //     loading={loading}
-  //     table={table}
-  //     placeholder={placeholder}
-  //     pageSize={Math.max(data.length, 5)}
-  //     linkFormatter={(row) => `/${row instanceof Stream ? 'stream' : 'vesting'}/${row.id}?chainId=${row.chainId}`}
-  //   />
-  // )
+  return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    <GenericTable<Stream | Vesting>
+      loading={loading}
+      table={table}
+      placeholder={placeholder}
+      pageSize={Math.max(data.length, 5)}
+      linkFormatter={(row) => `/${row instanceof Stream ? 'stream' : 'vesting'}/${row.id}?chainId=${row.chainId}`}
+    />
+  )
 }

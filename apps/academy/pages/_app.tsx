@@ -28,7 +28,7 @@ declare global {
 const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
   const router = useRouter()
   useEffect(() => {
-    const handler = (page) =>
+    const handler = (page: any) =>
       window.dataLayer.push({
         event: 'pageview',
         page,
@@ -78,7 +78,7 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
   // Fetch global site settings from Strapi
   const globalSEO = await getGlobalSEO()
   // Pass the data to our page via props
-  return { ...appProps, seo: globalSEO.global?.data.attributes }
+  return { ...appProps, seo: globalSEO.global?.data?.attributes }
 }
 
 export default MyApp

@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi'
 
 import { useDeepCompareMemoize } from '../../../lib'
 import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CurrencyInput } from '../../CurrencyInput'
+import { CurrencyInputBase, HelperTextPanel } from '../../CurrencyInput'
 import { CreateVestingFormSchemaType, FormErrors, StepConfig, stepConfigurations } from '../../vesting'
 import { calculateEndDate, calculateTotalAmount } from '../utils'
 
@@ -55,7 +55,7 @@ export const GradedVestingDetailsSection = () => {
           control={control}
           name="stepAmount"
           render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
-            <CurrencyInput.Base
+            <CurrencyInputBase
               className="ring-offset-slate-900"
               onChange={onChange}
               value={value || ''}
@@ -64,7 +64,7 @@ export const GradedVestingDetailsSection = () => {
               name={name}
               onBlur={onBlur}
               helperTextPanel={
-                <CurrencyInput.HelperTextPanel
+                <HelperTextPanel
                   text={
                     error?.message ? (
                       error.message

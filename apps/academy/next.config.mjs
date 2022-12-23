@@ -12,6 +12,9 @@ const nextConfig = {
   basePath: '/academy',
   reactStrictMode: true,
   swcMinify: false,
+  typescript: {
+    ignoreBuildErrors: true
+  },
   async redirects() {
     return [
       {
@@ -21,13 +24,6 @@ const nextConfig = {
         basePath: false,
       },
     ]
-  },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
   },
 }
 

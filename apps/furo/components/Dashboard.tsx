@@ -132,7 +132,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
         </div>
       </div>
       <Tab.Group as="div" className="space-y-6" defaultIndex={showOutgoing ? 1 : 0}>
-        <div className="flex justify-between px-2">
+        <div className="flex flex-wrap justify-between px-2 gap-y-4">
           <Tab.List className="flex gap-10">
             <Tab
               as={Typography}

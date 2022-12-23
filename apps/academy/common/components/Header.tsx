@@ -77,7 +77,7 @@ export const Header: FC = () => {
   )
 
   return (
-    <App.Header appType={AppType.Academy} maxWidth="6xl" withScrollBackground>
+    <App.Header appType={AppType.Academy} withScrollBackground maxWidth="6xl">
       <nav className="items-center hidden sm:flex gap-14">
         {navData.map(({ title, href, links, isExternal }, i, a) => {
           if (href && !links) {
