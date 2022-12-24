@@ -73,7 +73,28 @@ importers:
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
 
-  apis/path-finder:
+  apis/route-processor:
+    specifiers:
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@vercel/node': 2.8.1
+      typescript: 4.9.4
+      vercel: 28.10.0
+      zod: 3.20.2
+    dependencies:
+      '@vercel/node': 2.8.1
+      zod: 3.20.2
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../packages/config/eslint
+      '@sushiswap/jest-config': link:../../packages/config/jest
+      '@sushiswap/prettier-config': link:../../packages/config/prettier
+      '@sushiswap/typescript-config': link:../../packages/config/typescript
+      typescript: 4.9.4
+      vercel: 28.10.0
+
+  apis/tines:
     specifiers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -82,19 +103,25 @@ importers:
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/lodash.flatmap': ^4.5.7
-      '@vercel/node': ^1.14.1
+      '@vercel/node': 2.8.1
       lodash.flatmap: ^4.5.0
+      typescript: 4.9.4
+      vercel: 28.10.0
+      zod: 3.20.2
     dependencies:
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/tines': link:../../packages/tines
-      '@vercel/node': 1.15.4
+      '@vercel/node': 2.8.1
       lodash.flatmap: 4.5.0
+      zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../packages/config/eslint
       '@sushiswap/jest-config': link:../../packages/config/jest
       '@sushiswap/prettier-config': link:../../packages/config/prettier
       '@sushiswap/typescript-config': link:../../packages/config/typescript
       '@types/lodash.flatmap': 4.5.7
+      typescript: 4.9.4
+      vercel: 28.10.0
 
   apis/token-list:
     specifiers:
@@ -14967,21 +14994,8 @@ packages:
       - supports-color
     dev: true
 
-  /@vercel/node-bridge/2.2.2:
-    resolution: {integrity: sha512-haGBC8noyA5BfjCRXRH+VIkHCDVW5iD5UX24P2nOdilwUxI4qWsattS/co8QBGq64XsNLRAMdM5pQUE3zxkF9Q==}
-    dev: false
-
   /@vercel/node-bridge/3.1.2:
     resolution: {integrity: sha512-dgcLXug0IqUeRsywf0G8IrhUFcgw+GYj+EZB4JneglKSofFBh3Xy/t7KfBUxLlKnoq6kyGYJvTmAVB1YBt11qw==}
-
-  /@vercel/node/1.15.4:
-    resolution: {integrity: sha512-45fV7qVVw1cWCD6tWBXH0i4pSfYck4yF2qNKlJb1gmbO9JHWRqMYm0uxNWISD6E6Z69Pl1KDvfa+l48w/qEkaw==}
-    dependencies:
-      '@types/node': 18.11.12
-      '@vercel/node-bridge': 2.2.2
-      ts-node: 8.9.1_typescript@4.3.4
-      typescript: 4.3.4
-    dev: false
 
   /@vercel/node/2.7.0:
     resolution: {integrity: sha512-/BtpP/S+VX4Fpklj5vC/k9Tfsak2qpN7x3Lio9K8SoM/N0fzfqnYqU9URixLxpx9GYGJe7uKjorD+D9nY3HBzA==}
