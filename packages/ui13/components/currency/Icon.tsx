@@ -149,6 +149,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
     return (
       <img
         key={src}
+        onError={() => setError(true)}
         placeholder={rest?.width && rest?.height && rest?.width >= 40 && rest?.height >= 40 ? 'blur' : 'empty'}
         src={src}
         alt={currency.name}
@@ -162,6 +163,7 @@ export const Icon: FC<IconProps> = ({ currency, disableLink, ...rest }) => {
     <ExternalLink className="flex" href={chains[currency.chainId].getTokenUrl(currency.wrapped.address)}>
       <img
         key={src}
+        onError={() => setError(true)}
         placeholder={rest?.width && rest?.height && rest?.width >= 40 && rest?.height >= 40 ? 'blur' : 'empty'}
         src={src}
         alt={currency.name}
