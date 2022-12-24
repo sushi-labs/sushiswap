@@ -19,7 +19,7 @@ interface RenderProps {
 
 interface Props {
   chainId?: ChainId
-  tokenMap: Record<string, Token>
+  tokenMap: Record<string, Token> | undefined
   pricesMap?: Record<string, Fraction>
   balancesMap?: BalanceMap
   children(props: RenderProps): JSX.Element
@@ -36,7 +36,7 @@ export const TokenSelectorListFilterByQuery: FC<Props> = ({
   fundSource,
   includeNative = true,
 }) => {
-  const tokenMapValues = useMemo(() => Object.values(tokenMap), [tokenMap])
+  const tokenMapValues = useMemo(() => (tokenMap ? Object.values(tokenMap) : []), [tokenMap])
   const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState<string>('')
   const debouncedQuery = useDebounce(query, 400)
@@ -53,7 +53,7 @@ export const TokenSelectorListFilterByQuery: FC<Props> = ({
   }, [query])
 
   const { data: searchTokenResult, isLoading } = useToken({
-    address: isAddress(debouncedQuery) && !tokenMap[debouncedQuery.toLowerCase()] ? debouncedQuery : undefined,
+    address: isAddress(debouncedQuery) && !tokenMap?.[debouncedQuery.toLowerCase()] ? debouncedQuery : undefined,
     chainId,
   })
 
@@ -67,7 +67,7 @@ export const TokenSelectorListFilterByQuery: FC<Props> = ({
     const filtered = filterTokens(tokenMapValues, debouncedQuery)
     searching.current = false
     return filtered
-  }, [tokenMapValues, debouncedQuery])
+  }, [debouncedQuery, tokenMapValues])
 
   const sortedTokens: Token[] = useMemo(() => {
     return [...filteredTokens].sort(tokenComparator(balancesMap, pricesMap, fundSource))

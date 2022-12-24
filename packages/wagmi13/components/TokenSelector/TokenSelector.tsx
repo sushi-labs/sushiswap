@@ -6,6 +6,7 @@ import { ChainId, chains } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useAddCustomToken } from '@sushiswap/react-query'
+import { useTokens } from '@sushiswap/react-query'
 import { classNames } from '@sushiswap/ui13'
 import { SlideIn } from '@sushiswap/ui13/components/animation'
 import { Currency } from '@sushiswap/ui13/components/currency'
@@ -13,7 +14,7 @@ import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import { DEFAULT_INPUT_PADDING, DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui13/components/input'
 import { Loader } from '@sushiswap/ui13/components/Loader'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalances, usePrices } from '../../hooks'
@@ -45,15 +46,18 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   const [open, setOpen] = useState(false)
   const handleClose = useCallback(() => setOpen(false), [])
 
+  const { data: tokenMap, isSuccess } = useTokens({ chainId })
+  const { data: pricesMap } = usePrices({ chainId })
+
+  // TODO SLOW, CHANGE CURRENCIES TO TOKENVALUES TO TEST
+  const tokenValues = useMemo(() => (tokenMap ? Object.values(tokenMap) : []), [tokenMap])
   const { data: balancesMap } = useBalances({
     account: address,
     chainId,
     currencies: [],
     loadBentobox: false,
-    enabled: open,
+    enabled: open && isSuccess,
   })
-
-  const { data: pricesMap } = usePrices({ chainId })
 
   const handleImport = useCallback(
     (currency: Token) => {
@@ -68,7 +72,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     <>
       {children({ open, setOpen })}
       <TokenSelectorListFilterByQuery
-        tokenMap={{}}
+        tokenMap={tokenMap}
         pricesMap={pricesMap}
         balancesMap={balancesMap}
         fundSource={fundSource}
