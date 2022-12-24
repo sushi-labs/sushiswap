@@ -1,17 +1,40 @@
-import { Token, WNATIVE } from '@sushiswap/currency'
-import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'
+import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { findMultiRouteExactIn, getBigNumber, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
+
 import { DataFetcher } from './DataFetcher'
 import { LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
 import { convertTokenToBento, getBentoChainId } from './liquidityProviders/Trident'
+import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
 type RouteCallBack = (r: MultiRoute) => void
 
+function TokenToRToken(t: Type): RToken {
+  if (t instanceof Token) return t as RToken
+  const nativeRToken: RToken = {
+    address: '',
+    name: t.name,
+    symbol: t.symbol,
+    chainId: t.chainId,
+  }
+  return nativeRToken
+}
+
+export interface RPParams {
+  tokenIn: string
+  amountIn: BigNumber
+  tokenOut: string
+  amountOutMin: BigNumber
+  to: string
+  routeCode: string
+  value?: BigNumber
+}
+
 export class Router {
   dataFetcher: DataFetcher
-  fromToken: Token
+  fromToken: Type
   amountIn: BigNumber
-  toToken: Token
+  toToken: Type
   gasPrice: number
   providers?: LiquidityProviders[] // all providers if undefined
   minUpdateDelay: number
@@ -19,13 +42,14 @@ export class Router {
   dataFetcherPreviousState = 0
   routeCallBack?: RouteCallBack
   currentBestRoute?: MultiRoute
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   timer?: any // timer from setInterval
 
   constructor(
     dataFetcher: DataFetcher,
-    fromToken: Token,
+    fromToken: Type,
     amountIn: BigNumber,
-    toToken: Token,
+    toToken: Type,
     gasPrice: number,
     providers?: LiquidityProviders[], // all providers if undefined
     minUpdateDelay = 1000 // Minimal delay between routing update
@@ -35,7 +59,8 @@ export class Router {
     this.amountIn = amountIn
     this.toToken = toToken
     this.gasPrice = gasPrice
-    ;(this.providers = providers), (this.minUpdateDelay = minUpdateDelay)
+    this.providers = providers
+    this.minUpdateDelay = minUpdateDelay
   }
 
   startRouting(p: RouteCallBack) {
@@ -58,7 +83,7 @@ export class Router {
   }
 
   _checkRouteUpdate() {
-    const currentDataFetcherStateId = this.dataFetcher.getCurrentPoolStateId()
+    const currentDataFetcherStateId = this.dataFetcher.getCurrentPoolStateId(this.providers)
     if (this.dataFetcherPreviousState != currentDataFetcherStateId) {
       this.dataFetcherPreviousState = currentDataFetcherStateId
 
@@ -76,8 +101,8 @@ export class Router {
       ]
 
       const route = findMultiRouteExactIn(
-        this.fromToken as RToken,
-        this.toToken as RToken,
+        TokenToRToken(this.fromToken),
+        TokenToRToken(this.toToken),
         this.amountIn,
         this.dataFetcher.getCurrentPoolCodeList(this.providers).map((pc) => pc.pool),
         networks,
@@ -91,16 +116,46 @@ export class Router {
     }
   }
 
-  changeRouteParams(fromToken: Token, amountIn: BigNumber, toToken: Token, gasPrice: number) {
+  changeRouteParams(fromToken: Type, amountIn: BigNumber, toToken: Type, gasPrice: number) {
     this.fromToken = fromToken
     this.amountIn = amountIn
     this.toToken = toToken
     this.gasPrice = gasPrice
+    this.currentBestRoute = undefined
     this._checkRouteUpdate() // Recalc route immediately
   }
 
+  getRPParams(
+    route: MultiRoute,
+    fromToken: Type,
+    toToken: Type,
+    to: string,
+    RPAddr: string,
+    maxPriceImpact = 0.005
+  ): RPParams {
+    const tokenIn = fromToken instanceof Token ? fromToken.address : WNATIVE_ADDRESS[fromToken.chainId]
+    const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - maxPriceImpact) * 1_000_000)).div(1_000_000)
+
+    return {
+      tokenIn,
+      amountIn: route.amountInBN,
+      tokenOut,
+      amountOutMin,
+      to,
+      routeCode: getRouteProcessorCode(route, RPAddr, to, this.dataFetcher.getCurrentPoolCodeMap()),
+      value: fromToken instanceof Token ? undefined : route.amountInBN,
+    }
+  }
+
+  getCurrentRouteRPParams(to: string, RPAddr: string, maxPriceImpact = 0.005): RPParams | undefined {
+    if (this.currentBestRoute !== undefined) {
+      return this.getRPParams(this.currentBestRoute, this.fromToken, this.toToken, to, RPAddr, maxPriceImpact)
+    }
+  }
+
   // Human-readable route printing
-  routeToString(route: MultiRoute, fromToken: Token, toToken: Token, shiftPrimary = '', shiftSub = '    '): string {
+  routeToHumanString(route: MultiRoute, fromToken: Type, toToken: Type, shiftPrimary = '', shiftSub = '    '): string {
     const poolCodesMap = this.dataFetcher.getCurrentPoolCodeMap()
     let res = ''
     res += shiftPrimary + 'Route Status: ' + route.status + '\n'
@@ -117,5 +172,11 @@ export class Router {
     res += shiftPrimary + `Output: ${output} ${route.toToken.name}\n`
 
     return res
+  }
+
+  getCurrentRouteHumanString(shiftPrimary = '', shiftSub = '    '): string | undefined {
+    if (this.currentBestRoute !== undefined) {
+      return this.routeToHumanString(this.currentBestRoute, this.fromToken, this.toToken, shiftPrimary, shiftSub)
+    }
   }
 }
