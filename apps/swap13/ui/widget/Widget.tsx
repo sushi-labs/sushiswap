@@ -2,14 +2,17 @@
 
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI, Type } from '@sushiswap/currency'
+import { Native, SUSHI, Type } from '@sushiswap/currency'
 import { Widget as UIWidget } from '@sushiswap/ui13/components/widget'
 import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
 import React, { FC, useState } from 'react'
 
 export const Widget: FC = () => {
-  const [currencyA, setCurrencyA] = useState<Type>(SUSHI[ChainId.ETHEREUM])
+  const [currencyA, setCurrencyA] = useState<Type>(Native.onChain(ChainId.ETHEREUM))
+  const [currencyB, setCurrencyB] = useState<Type>(SUSHI[ChainId.ETHEREUM])
+
   const [valueA, setValueA] = useState<string>('')
+  const [valueB, setValueB] = useState<string>('')
 
   return (
     <UIWidget id="swap-widget" maxWidth={400} className="relative bg-slate-700">
@@ -36,10 +39,10 @@ export const Widget: FC = () => {
           <Web3Input.Currency
             className="p-3"
             chainId={ChainId.ETHEREUM}
-            onSelect={setCurrencyA}
-            value={valueA}
-            onChange={setValueA}
-            currency={currencyA}
+            onSelect={setCurrencyB}
+            value={valueB}
+            onChange={setValueB}
+            currency={currencyB}
           />
         </div>
       </UIWidget.Content>
