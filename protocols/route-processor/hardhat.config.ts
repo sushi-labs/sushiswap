@@ -1,18 +1,14 @@
 import '@nomiclabs/hardhat-ethers'
+import 'hardhat-deploy'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
 import { HardhatUserConfig, subtask } from 'hardhat/config'
 import path from 'path'
 
-let accounts
-
-if (process.env.PRIVATE_KEY) {
-  accounts = [process.env.PRIVATE_KEY]
-} else {
-  accounts = {
-    mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
-  }
+const accounts = {
+  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
+  accountsBalance: '10000000000000000000000000',
 }
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
@@ -53,25 +49,7 @@ const config: HardhatUserConfig = {
         //blockNumber: 34445477,
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       },
-      accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
-      },
-    },
-    ethereum: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
-      chainId: 1,
-      hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 3,
-    },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 5,
     },
   },
   solidity: {
