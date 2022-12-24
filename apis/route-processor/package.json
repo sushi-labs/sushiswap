@@ -1,13 +1,23 @@
 {
-  "name": "@sushiswap/tokens-api",
+  "name": "@sushiswap/route-processor-api",
   "version": "0.0.0",
   "private": true,
-  "description": "Sushi Tokens API",
+  "description": "Sushi Route Processor API",
   "keywords": [
     "sushi",
-    "tokens",
+    "route",
+    "processor",
     "api"
   ],
+  "homepage": "https://github.com/sushiswap/sushiswap/apis/route-processor#readme",
+  "bugs": {
+    "url": "https://github.com/sushiswap/sushiswap/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "apis/route-processor"
+  },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
@@ -15,7 +25,6 @@
   },
   "dependencies": {
     "@vercel/node": "2.8.1",
-    "@sushiswap/database": "workspace:*",
     "zod": "3.20.2"
   },
   "devDependencies": {
