@@ -94,7 +94,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
                   {currency ? (
                     <>
                       <div className="w-[28px] h-[28px] mr-0.5">
-                        <Currency.Icon currency={currency} width={28} height={28} />
+                        <Currency.Icon disableLink currency={currency} width={28} height={28} />
                       </div>
                       {currency.symbol}
                       <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />

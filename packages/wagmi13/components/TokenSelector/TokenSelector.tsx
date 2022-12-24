@@ -59,13 +59,20 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
     enabled: open && isSuccess,
   })
 
-  const handleImport = useCallback(
+  const _onSelect = useCallback(
     (currency: Token) => {
-      onAddCustomToken(currency)
       onSelect && onSelect(currency)
       setOpen(false)
     },
-    [onAddCustomToken, onSelect]
+    [onSelect]
+  )
+
+  const handleImport = useCallback(
+    (currency: Token) => {
+      onAddCustomToken(currency)
+      _onSelect(currency)
+    },
+    [_onSelect, onAddCustomToken]
   )
 
   return (
@@ -133,7 +140,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                             account={address}
                             currency={currency}
                             style={style}
-                            onCurrency={onSelect}
+                            onCurrency={_onSelect}
                             className="!px-6"
                             fundSource={fundSource}
                             balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}

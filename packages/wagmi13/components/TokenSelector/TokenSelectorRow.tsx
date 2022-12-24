@@ -44,7 +44,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
       <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
         <div className="flex flex-row items-center flex-grow gap-2">
           <div className="w-7 h-7">
-            <Icon currency={currency} width={28} height={28} />
+            <Icon disableLink currency={currency} width={28} height={28} />
           </div>
           <div className="flex flex-col items-start">
             <span className="text-xs font-medium text-slate-200 group-hover:text-slate-50">{currency.symbol}</span>
