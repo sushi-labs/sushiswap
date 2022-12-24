@@ -127,7 +127,7 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
   )
 
   return (
-    <div className="h-full overflow-y-auto scroll">
+    <div className="h-full">
       <div className="flex flex-col gap-4">
         {directPaths.map((directPath, i) => (
           <ComplexRoutePath
@@ -215,7 +215,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
 
   useLayoutEffect(() => {
     if (ref.current) {
-      setWidth((ref.current.offsetWidth - 28) * Number(portion))
+      setWidth((ref.current.offsetWidth - 32) * Number(portion))
     }
   }, [portion])
 
@@ -238,11 +238,10 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
       <div className="z-[10] col-span-4 flex justify-start items-center">
         <div
           ref={ref}
-          className="flex relative justify-between gap-2 items-center overflow-hidden rounded-full p-2 bg-slate-900"
+          className="flex relative justify-between gap-2 items-center overflow-hidden rounded-full p-2 border-2 border-slate-900 bg-slate-900"
         >
-          <div className="absolute bg-slate-800 pointer-events-none top-0.5 left-0.5 w-[28px] bottom-0.5 rounded-full" />
           <div
-            className="absolute bg-slate-800 pointer-events-none top-0.5 left-0.5 bottom-0.5 rounded-full"
+            className="absolute bg-slate-800 pointer-events-none inset-0 rounded-full"
             style={{ width: `calc(28px + ${width}px)` }}
           />
           <div className="z-[10] flex items-center gap-1">
