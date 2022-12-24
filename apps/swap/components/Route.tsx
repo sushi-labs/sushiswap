@@ -4,7 +4,7 @@ import { Token } from '@sushiswap/currency'
 import { RToken } from '@sushiswap/tines'
 import { AppearOnMount, Chip, Currency, Link, Tooltip, Typography } from '@sushiswap/ui'
 import { TradeOutput } from '@sushiswap/wagmi'
-import { FC, useLayoutEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import { useTrade } from './TradeProvider'
 
@@ -213,9 +213,9 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
   const ref = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(0)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (ref.current) {
-      setWidth((ref.current.offsetWidth - 32) * Number(portion))
+      setWidth((ref.current.offsetWidth - 28) * Number(portion))
     }
   }, [portion])
 
