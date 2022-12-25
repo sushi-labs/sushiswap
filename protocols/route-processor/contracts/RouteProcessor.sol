@@ -7,7 +7,6 @@ import '../interfaces/IBentoBoxMinimal.sol';
 import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
 import './StreamReader.sol';
-import 'hardhat/console.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;

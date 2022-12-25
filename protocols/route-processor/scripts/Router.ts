@@ -163,13 +163,12 @@ export class Router {
     route.legs.forEach((l, i) => {
       res +=
         shiftSub +
-        shiftSub +
         `${i + 1}. ${l.tokenFrom.symbol} ${Math.round(l.absolutePortion * 100)}%` +
         ` -> [${poolCodesMap.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.symbol}\n`
       //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
     })
     const output = parseInt(route.amountOutBN.toString()) / Math.pow(10, toToken.decimals)
-    res += shiftPrimary + `Output: ${output} ${route.toToken.name}\n`
+    res += shiftPrimary + `Output: ${output} ${route.toToken.name}`
 
     return res
   }

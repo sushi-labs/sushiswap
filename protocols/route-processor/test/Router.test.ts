@@ -46,7 +46,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const dataFetcher = new DataFetcher(provider, chainId)
   dataFetcher.startDataFetching()
 
-  console.log(`    ChainId=${chainId} RouteProcessor deployment ...`)
+  console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
   const routeProcessor = await RouteProcessor.deploy(
     BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
@@ -77,12 +77,12 @@ async function makeSwap(
   console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token) {
-    console.log(`    Approve user's ${fromToken.symbol} to the route processor ...`)
+    console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
     const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, ERC20ABI, env.user)
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  console.log('    Create Route ...')
+  console.log('Create Route ...')
   env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const waiter = new Waiter()
   const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
@@ -95,11 +95,11 @@ async function makeSwap(
   await waiter.wait()
   router.stopRouting()
 
-  console.log('    Create route processor code ...')
+  console.log('Create route processor code ...')
   const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address)
   if (rpParams === undefined) return
 
-  console.log('    Call route processor ...')
+  console.log('Call route processor (may take long time for the first launch)...')
   const route = router.getBestRoute() as MultiRoute
   let balanceOutBNBefore: BigNumber
   let toTokenContract: Contract | undefined = undefined
@@ -131,7 +131,7 @@ async function makeSwap(
     )
   const receipt = await tx.wait()
 
-  console.log("    Fetching user's output balance ...")
+  console.log("Fetching user's output balance ...")
   let balanceOutBN: BigNumber
   if (toTokenContract) {
     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
@@ -139,11 +139,11 @@ async function makeSwap(
     balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
     balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
   }
-  console.log(`        expected amountOut: ${route.amountOutBN.toString()}`)
-  console.log(`        real amountOut:     ${balanceOutBN.toString()}`)
+  console.log(`    expected amountOut: ${route.amountOutBN.toString()}`)
+  console.log(`    real amountOut:     ${balanceOutBN.toString()}`)
   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
-  console.log(`        slippage: ${slippage / 100}%`)
-  console.log(`        gas use: ${receipt.gasUsed.toString()}`)
+  console.log(`    slippage: ${slippage / 100}%`)
+  console.log(`    gas use: ${receipt.gasUsed.toString()}`)
 
   return [balanceOutBN, receipt.blockNumber]
 }
@@ -174,7 +174,7 @@ async function updMakeSwap(
 }
 
 // skipped because took too long time. Unskip to check the RP
-describe.skip('End-to-end Router test', async function () {
+describe('End-to-end Router test', async function () {
   it('Native => SUSHI => Native + Native => WrappedNative => Native', async function () {
     const env = await getTestEnvironment()
     const chainId = env.chainId
