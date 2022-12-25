@@ -11,6 +11,9 @@ export const SearchButton: FC = () => {
   }, [setOpen])
 
   return (
-    <MagnifyingGlassIcon onClick={onClick} className="w-5 h-5 text-slate-300 hover:text-white cursor-pointer mr-2" />
+    <MagnifyingGlassIcon
+      onClick={onClick}
+      className="w-5 h-5 text-gray-700 hover:text-gray-900 dark:text-slate-300 hover:dark:text-white cursor-pointer mr-2"
+    />
   )
 }

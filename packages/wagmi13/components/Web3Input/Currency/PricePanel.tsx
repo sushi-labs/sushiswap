@@ -11,11 +11,14 @@ import { CurrencyInputProps } from './index'
 type PricePanel = Pick<CurrencyInputProps, 'currency' | 'value' | 'usdPctChange'>
 
 export const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) => {
-  const { data: tokenPrices } = usePrices({ chainId: currency?.chainId })
+  const { data: tokenPrices, isLoading } = usePrices({ chainId: currency?.chainId })
   const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
   const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
+  const [big, portion] = (parsedValue && price ? `${parsedValue.multiply(price.asFraction).toFixed(2)}` : '0.00').split(
+    '.'
+  )
 
-  if (!tokenPrices)
+  if (isLoading)
     return (
       <div className="h-[24px] w-[60px] flex items-center">
         <Skeleton.Box className="bg-white/[0.06] h-[12px] w-full" />
@@ -23,11 +26,12 @@ export const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) =>
     )
 
   return (
-    <p className="text-xs py-1 select-none text-slate-400">
-      {parsedValue && price ? `$${parsedValue.multiply(price.asFraction).toFixed(2)}` : '$0.00'}
+    <p className="font-medium text-lg py-1 select-none text-gray-500 dark:text-slate-400">
+      $ {big}.<span className="text-sm font-semibold">{portion}</span>
       {usdPctChange && (
         <span
           className={classNames(
+            'text-sm',
             usdPctChange === 0
               ? ''
               : usdPctChange > 0

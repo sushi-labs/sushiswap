@@ -54,7 +54,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
 
   return useMemo(
     () => (
-      <div className={className} onClick={focusInput}>
+      <div className={classNames('transition-all duration-[400ms]', className)} onClick={focusInput}>
         <div className="relative flex items-center gap-1">
           {loading ? (
             <div className="flex flex-col gap-1 justify-center flex-grow h-[44px]">
@@ -69,7 +69,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               onUserInput={onChange}
               className={classNames(
                 DEFAULT_INPUT_UNSTYLED,
-                'without-ring !text-3xl py-1 text-slate-200 hover:text-slate-100'
+                'without-ring !text-3xl py-1 text-gray-900 dark:text-slate-200 hover:dark:text-slate-100'
               )}
               value={value}
               readOnly={disabled}
@@ -88,7 +88,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
                   id={`${id}-button`}
                   onClick={() => setOpen(true)}
                   className={classNames(
-                    'flex items-center gap-1 text-xl py-0.5 pl-0.5 pr-2 rounded-full font-medium bg-white/[0.06] hover:bg-white/[0.12]'
+                    'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12]'
                   )}
                 >
                   {currency ? (

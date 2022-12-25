@@ -1,5 +1,6 @@
 import { Transition } from '@headlessui/react'
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ArrowLongRightIcon } from '@heroicons/react/24/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { useDebounce } from '@sushiswap/hooks'
@@ -108,7 +109,7 @@ export const SearchPanel: FC = () => {
             leaveFrom="transform opacity-100"
             leaveTo="transform opacity-0"
           >
-            <div className="z-[1081] fixed left-0 right-0 top-0 h-[55px] bg-slate-900" />
+            <div className="z-[1081] fixed left-0 right-0 top-0 h-[55px] bg-gray-900 dark:bg-slate-900" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -120,18 +121,18 @@ export const SearchPanel: FC = () => {
             leaveTo="transform opacity-0"
           >
             <div className="z-[1082] flex gap-2 absolute inset-0 items-center">
-              <MagnifyingGlassIcon className="absolute left-3 w-4 h-4 text-slate-300" />
+              <MagnifyingGlassIcon className="absolute left-3 w-5 h-5 text-white dark:text-slate-300" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by token or address"
-                className="without-ring w-full placeholder:text-slate-500 bg-transparent mx-11"
+                className="without-ring w-full text-white dark:text-slate-300 placeholder:text-gray-500 placeholder:dark:text-slate-500 bg-transparent mx-11"
                 autoComplete="new-password"
                 autoCorrect="off"
               />
               <XMarkIcon
                 onClick={onClose}
-                className="absolute right-3 w-4 h-4 text-slate-300 hover:text-white cursor-pointer"
+                className="absolute right-3 w-5 h-5 text-white dark:text-slate-300 hover:text-white cursor-pointer"
               />
             </div>
           </Transition.Child>
@@ -145,22 +146,26 @@ export const SearchPanel: FC = () => {
             leaveTo="transform opacity-0"
           >
             <div
-              className="z-[1083] relative h-[320px] w-full bg-slate-200 rounded-b-2xl py-2 overflow-y-scroll scroll"
-              style={{ marginTop: HEADER_HEIGHT - 8 }}
+              className="z-[1083] relative h-[320px] w-full bg-gray-50 dark:bg-slate-50 rounded-b-2xl py-2 overflow-y-scroll scroll"
+              style={{ marginTop: HEADER_HEIGHT - 10 }}
             >
               {query ? (
                 <>
-                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-slate-600">SEARCH RESULTS</p>
+                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-gray-600 dark:text-slate-600">
+                    SEARCH RESULTS
+                  </p>
                   <div className="flex flex-col gap-2 p-2">
                     {filteredTokens?.map((el, i) => (
                       <Row currency={el} key={`example-${i}-${el.address}`} />
                     ))}
                   </div>
                   <div className="my-3 mx-8">
-                    <div className="h-px bg-slate-300 w-full" />
+                    <div className="h-px bg-gray-300 dark:bg-slate-300 w-full" />
                   </div>
-                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-slate-600">POPULAR TOKENS</p>
-                  <div className="flex flex-col gap-2 p-2">
+                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-gray-600 dark:text-slate-600">
+                    POPULAR TOKENS
+                  </p>
+                  <div className="flex flex-col p-2">
                     {EXAMPLE_CURRENCIES.map((el) => (
                       <Row currency={el} key={`example-${el.address}`} />
                     ))}
@@ -169,17 +174,21 @@ export const SearchPanel: FC = () => {
               ) : (
                 <>
                   {/*TODO RAMIN REACT_QUERY*/}
-                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-slate-600">RECENT SEARCHES</p>
-                  <div className="flex flex-col gap-2 p-2">
+                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-gray-600 dark:text-slate-600">
+                    RECENT SEARCHES
+                  </p>
+                  <div className="flex flex-col p-2">
                     {EXAMPLE_CURRENCIES.map((el) => (
                       <Row currency={el} key={`example-${el.address}`} />
                     ))}
                   </div>
                   <div className="my-3 mx-8">
-                    <div className="h-px bg-slate-300 w-full" />
+                    <div className="h-px bg-gray-300 dark:bg-slate-300 w-full" />
                   </div>
-                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-slate-600">POPULAR TOKENS</p>
-                  <div className="flex flex-col gap-2 p-2">
+                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-gray-600 dark:text-slate-600">
+                    POPULAR TOKENS
+                  </p>
+                  <div className="flex flex-col p-2">
                     {EXAMPLE_CURRENCIES.map((el) => (
                       <Row currency={el} key={`example-${el.address}`} />
                     ))}
@@ -195,18 +204,40 @@ export const SearchPanel: FC = () => {
 }
 
 const Row: FC<{ currency: Type; onClick?(): void }> = ({ currency, onClick }) => {
+  const [hover, setHover] = useState(false)
+
   const content = (
     <div
-      className="flex items-center gap-2 cursor-pointer py-1 hover:bg-slate-300 px-10"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className="mr-2 overflow-hidden relative group rounded-lg flex items-center gap-2 cursor-pointer py-2 hover:bg-gray-100 hover:dark:bg-slate-200 px-10"
       key={currency.wrapped.address}
     >
       <div className="w-5 h-5">
         <Currency.Icon disableLink currency={currency} width={20} height={20} />
       </div>
       <div className="flex flex-col">
-        <p className="font-semibold text-slate-900">
-          {currency.name} <span className="text-xs text-slate-600">{currency.symbol}</span>
+        <p className="font-semibold text-slate-900 group-hover:text-blue group-hover:dark:text-blue">
+          {currency.name}{' '}
+          <span className="text-xs text-slate-600 group-hover:text-blue group-hover:dark:text-blue">
+            {currency.symbol}
+          </span>
         </p>
+        <Transition
+          as={Fragment}
+          show={hover}
+          enter="ease-in-out duration-300"
+          enterFrom="translate-x-[10px] opacity-0"
+          enterTo="translate-x-[-10px] opacity-100"
+          leave="ease-in-out duration-300"
+          leaveFrom="translate-x-[-10px] opacity-100"
+          leaveTo="translate-x-[10px] opacity-0"
+          unmount={false}
+        >
+          <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
+            <ArrowLongRightIcon width={20} height={20} strokeWidth={5} className="text-blue" />
+          </div>
+        </Transition>
       </div>
     </div>
   )

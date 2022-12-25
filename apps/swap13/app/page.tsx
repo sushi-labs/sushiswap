@@ -4,7 +4,7 @@ import { Widget } from '../ui/widget/Widget'
 
 export default function Page() {
   return (
-    <div className="space-y-8 p-10">
+    <div className="space-y-8 p-4">
       <Widget />
     </div>
   )

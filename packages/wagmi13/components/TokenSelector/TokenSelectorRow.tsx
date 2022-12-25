@@ -37,7 +37,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
       onClick={onClick}
       className={classNames(
         className,
-        `group flex items-center w-full hover:bg-blue-600 px-4 h-[48px] token-${currency?.symbol}`
+        `group flex items-center w-full hover:bg-white hover:dark:bg-slate-800 rounded-lg px-2 h-[48px] token-${currency?.symbol}`
       )}
       style={style}
     >
@@ -47,8 +47,12 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
             <Icon disableLink currency={currency} width={28} height={28} />
           </div>
           <div className="flex flex-col items-start">
-            <span className="text-xs font-medium text-slate-200 group-hover:text-slate-50">{currency.symbol}</span>
-            <span className="text-[10px] text-slate-500 group-hover:text-blue-100">{currency.name}</span>
+            <span className="text-xs font-medium text-gray-700 group-hover:text-gray-900 dark:text-slate-200 group-hover:dark:text-slate-50">
+              {currency.symbol}
+            </span>
+            <span className="text-[10px] text-gray-600 dark:text-slate-500 group-hover:dark:text-blue-100">
+              {currency.name}
+            </span>
           </div>
         </div>
 

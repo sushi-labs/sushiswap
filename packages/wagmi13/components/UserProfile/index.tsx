@@ -42,7 +42,7 @@ export const UserProfile: FC<ProfileProps> = ({ notifications, clearNotification
     return (
       <ConnectButton
         size="sm"
-        className="cursor-pointer flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-slate-200"
+        className="cursor-pointer flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-gray-700 dark:text-slate-200"
         supportedNetworks={supportedNetworks}
       />
     )
@@ -60,7 +60,7 @@ export const UserProfile: FC<ProfileProps> = ({ notifications, clearNotification
       {({ open }) => {
         return (
           <>
-            <Popover.Button className="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-slate-200">
+            <Popover.Button className="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-gray-700 dark:text-slate-200">
               <div className="hidden md:flex">
                 {avatar ? (
                   <Image alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />

@@ -1,5 +1,6 @@
 'use client'
 
+import { CreditCardIcon } from '@heroicons/react/20/solid'
 import { FundSource } from '@sushiswap/hooks'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import React, { FC } from 'react'
@@ -32,6 +33,8 @@ export const BalancePanel: FC<BalancePanel> = ({
     enabled: Boolean(currency),
   })
 
+  const [big, portion] = (balance ? `${balance?.[fundSource]?.toSignificant(6)}` : '0.00').split('.')
+
   if (isLoading || loading) {
     return (
       <div className="h-[24px] w-[60px] flex items-center">
@@ -45,10 +48,13 @@ export const BalancePanel: FC<BalancePanel> = ({
       data-testid={`${id}-balance-button`}
       type="button"
       onClick={() => onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')}
-      className="py-1 text-xs text-slate-400 hover:text-slate-300"
+      className="font-medium flex gap-1 items-center py-1 text-blue hover:text-blue-600 active:text-blue-700 dark:text-slate-400 hover:dark:text-slate-300 px-2 rounded-md"
       disabled={disableMaxButton}
     >
-      {balance ? `Balance: ${balance?.[fundSource]?.toSignificant(6)}` : 'Balance: 0'}
+      <CreditCardIcon width={20} height={20} />
+      <span className="text-lg">
+        {big}.<span className="text-sm font-semibold">{portion ?? '00'}</span>
+      </span>
     </button>
   )
 }

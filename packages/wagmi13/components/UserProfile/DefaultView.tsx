@@ -55,7 +55,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
     <>
       <div className="flex flex-col gap-8 p-4">
         <div className="flex justify-between gap-3">
-          <p className="text-sm font-semibold flex items-center gap-1.5 text-slate-50">
+          <p className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
             {avatar ? (
               <div className="w-4 h-4">
                 <Image alt="ens-avatar" src={avatar} width={16} height={16} className="rounded-full" />

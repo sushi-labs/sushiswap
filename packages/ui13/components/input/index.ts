@@ -16,11 +16,13 @@ export const DEFAULT_INPUT_RING =
 export const DEFAULT_INPUT_PADDING = 'py-3 px-4'
 export const ERROR_INPUT_CLASSNAME = '!ring-red/70 !ring-2 !ring-offset-2'
 export const DEFAULT_INPUT_APPEARANCE = 'rounded-xl shadow-md min-h-[44px] w-full truncate'
+export const DEFAULT_INPUT_NO_RINGS = 'border-none focus:outline-none focus:ring-0'
 
 // Unstyled input
 export const DEFAULT_INPUT_UNSTYLED = classNames(
   DEFAULT_INPUT_FONT,
-  'p-0 bg-transparent border-none focus:outline-none focus:ring-0 w-full truncate font-medium'
+  DEFAULT_INPUT_NO_RINGS,
+  'p-0 bg-transparent w-full truncate font-='
 )
 
 // Default class without padding

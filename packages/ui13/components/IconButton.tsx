@@ -27,7 +27,7 @@ export const IconButton: IconButtonComponent = React.forwardRef(
         {...rest}
         className={classNames(className, 'group relative focus:outline-none border:none')}
       >
-        <span className="rounded-full absolute inset-0 -ml-1 -mr-1 -mb-1 -mt-1 group-hover:bg-white group-hover:bg-opacity-[0.08]" />
+        <span className="rounded-full absolute inset-0 -ml-1 -mr-1 -mb-1 -mt-1 group-hover:dark:bg-white group-hover:dark:bg-opacity-[0.08]" />
         {children}
         {description && (
           <span className="whitespace-nowrap text-xs group-hover:flex hidden absolute mt-2 w-full justify-center">
