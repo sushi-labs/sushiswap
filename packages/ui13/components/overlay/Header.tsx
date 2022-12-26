@@ -1,9 +1,9 @@
-import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 import { FC } from 'react'
 
-import { IconButton } from '../IconButton'
+import { Button } from '../button'
 
 export interface Header {
   title: string
@@ -15,33 +15,49 @@ export interface Header {
 
 export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDirection = 'left' }) => {
   return (
-    <div className={classNames(className, 'grid grid-cols-[40px_auto_40px] top-0 left-0 right-0 h-[48px] mb-6')}>
+    <div className={classNames(className, 'grid grid-cols-[40px_auto_40px] py-3 mb-3')}>
       {onBack ? (
-        <IconButton className="flex items-center justify-center gap-2 cursor-pointer" onClick={onBack}>
+        <Button
+          variant="outlined"
+          color="default"
+          size="md"
+          className="!px-0 !w-[38px] flex items-center justify-center gap-2 cursor-pointer"
+          onClick={onBack}
+        >
           {arrowDirection === 'left' && (
-            <ArrowLeftIcon width={20} height={20} className={classNames('cursor-pointer ')} />
+            <ArrowLeftIcon strokeWidth={3} width={20} height={20} className={classNames('cursor-pointer ')} />
           )}
           {arrowDirection === 'bottom' && (
-            <ChevronDownIcon width={24} height={24} className={classNames('cursor-pointer ')} />
+            <ChevronDownIcon strokeWidth={3} width={24} height={24} className={classNames('cursor-pointer ')} />
           )}
           {arrowDirection === 'top' && (
-            <ChevronUpIcon width={24} height={24} className={classNames('cursor-pointer ')} />
+            <ChevronUpIcon strokeWidth={3} width={24} height={24} className={classNames('cursor-pointer ')} />
           )}
           {arrowDirection === 'right' && (
-            <ChevronRightIcon width={24} height={24} className={classNames('cursor-pointer ')} />
+            <ChevronRightIcon strokeWidth={3} width={24} height={24} className={classNames('cursor-pointer ')} />
           )}
-        </IconButton>
+        </Button>
       ) : (
         <div />
       )}
-      <h3 className={classNames('font-medium flex items-center justify-center gap-4 text-lg font-medium leading-6')}>
+      <h3
+        className={classNames(
+          'font-medium flex-grow flex items-center justify-center gap-4 text-lg font-medium leading-6'
+        )}
+      >
         {title}
       </h3>
       {onClose ? (
-        <div className="flex items-center justify-center">
-          <IconButton className="flex items-center justify-end cursor-pointer" onClick={onClose}>
+        <div className="flex justify-end">
+          <Button
+            variant="outlined"
+            color="default"
+            size="md"
+            className="!px-0 !w-[38px] flex items-center justify-center gap-2 cursor-pointer"
+            onClick={onBack}
+          >
             <XMarkIcon width={24} height={24} />
-          </IconButton>
+          </Button>
         </div>
       ) : (
         <div />

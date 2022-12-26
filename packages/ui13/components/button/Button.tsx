@@ -5,8 +5,8 @@ import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../../types'
 import { Loader } from '../Loader'
 import { BUTTON_CLASSES, BUTTON_SIZES, BUTTON_STYLES, BUTTON_STYLES_VARIANT } from './styles'
 
-export type ButtonColor = 'red' | 'blue' | 'pink' | 'purple' | 'gradient' | 'gray'
-export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'default'
+export type ButtonColor = 'red' | 'blue' | 'default'
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type ButtonVariant = 'outlined' | 'filled' | 'empty'
 
 interface Props {
@@ -33,7 +33,7 @@ export const Button: ButtonComponent = React.forwardRef(
       children,
       className,
       color = 'blue',
-      size = 'default',
+      size = 'md',
       variant = 'filled',
       startIcon = undefined,
       endIcon = undefined,

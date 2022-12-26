@@ -1,10 +1,9 @@
 'use client'
 
 import { Popover } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
-import { classNames } from '@sushiswap/ui13'
+import { Button } from '@sushiswap/ui13/components/button'
 import { JazzIcon } from '@sushiswap/ui13/components/icons/JazzIcon'
 import { useBreakpoint } from '@sushiswap/ui13/lib/useBreakpoint'
 import Image from 'next/legacy/image'
@@ -60,7 +59,7 @@ export const UserProfile: FC<ProfileProps> = ({ notifications, clearNotification
       {({ open }) => {
         return (
           <>
-            <Popover.Button className="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-gray-700 dark:text-slate-200">
+            <Popover.Button as={Button} variant="outlined" color="default" size="md">
               <div className="hidden md:flex">
                 {avatar ? (
                   <Image alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
@@ -69,11 +68,6 @@ export const UserProfile: FC<ProfileProps> = ({ notifications, clearNotification
                 )}
               </div>
               {shortenAddress(address, isSm ? 3 : 2)}{' '}
-              <ChevronDownIcon
-                width={20}
-                height={20}
-                className={classNames(open ? 'rotate-180' : 'rotate-0', 'transition-transform')}
-              />
             </Popover.Button>
             {!isSm ? ReactDOM.createPortal(panel, document.body) : panel}
           </>

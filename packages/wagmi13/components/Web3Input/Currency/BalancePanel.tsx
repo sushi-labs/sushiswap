@@ -1,11 +1,11 @@
 'use client'
 
 import { CreditCardIcon } from '@heroicons/react/20/solid'
+import { Amount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import React, { FC } from 'react'
 
-import { useBalance } from '../../../hooks'
 import { CurrencyInputProps } from './index'
 
 type BalancePanel = Pick<
@@ -14,28 +14,20 @@ type BalancePanel = Pick<
 > & {
   id?: string
   account: string | undefined
+  balance: Record<FundSource, Amount<Type>> | undefined
 }
 
 export const BalancePanel: FC<BalancePanel> = ({
   id,
-  chainId,
-  account,
+  balance,
   onChange,
-  currency,
   disableMaxButton,
   fundSource = FundSource.WALLET,
   loading,
 }) => {
-  const { data: balance, isLoading } = useBalance({
-    chainId,
-    currency,
-    account,
-    enabled: Boolean(currency),
-  })
-
   const [big, portion] = (balance ? `${balance?.[fundSource]?.toSignificant(6)}` : '0.00').split('.')
 
-  if (isLoading || loading) {
+  if (loading) {
     return (
       <div className="h-[24px] w-[60px] flex items-center">
         <Skeleton.Box className="bg-white/[0.06] h-[12px] w-full" />

@@ -1,10 +1,14 @@
+'use client'
+
 import { Menu, Transition } from '@headlessui/react'
 import { ArrowLongRightIcon, ArrowRightIcon } from '@heroicons/react/24/solid'
+import useScrollPosition from '@react-hook/window-scroll'
 import classNames from 'classnames'
 import React, { FC, Fragment, ReactElement, ReactNode, useState } from 'react'
 
 import { APP_TYPE_LINKS, HEADER_HEIGHT } from '../constants'
 import { AppType } from '../types'
+import { Button } from './button'
 import { SushiIcon } from './icons'
 
 const ITEMS = [
@@ -41,12 +45,18 @@ export interface HeaderProps extends React.HTMLProps<HTMLElement> {
 
 export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, rightElement }) => {
   const [open, setOpen] = useState(false)
+  const scrollY = useScrollPosition()
+
+  const showBackground = scrollY > HEADER_HEIGHT - 10
 
   return (
     <header
       style={{ height: HEADER_HEIGHT }}
       className={classNames(
-        'fixed flex items-center left-0 right-0 top-0 z-[1070] border-b border-gray-300/70 dark:border-slate-200/5 bg-gray-200/70 dark:bg-slate-900 backdrop-blur-md backdrop-saturate-[3]',
+        showBackground
+          ? 'bg-gray-200/70 dark:bg-slate-900 border-b dark:border-slate-200/5 border-gray-300/70 backdrop-blur-md backdrop-saturate-[3]'
+          : '',
+        'fixed flex items-center left-0 right-0 top-0 z-[1070]',
         className
       )}
     >
@@ -58,12 +68,7 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
             </div>
           </a>
           <Menu as="div" className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-            <Menu.Button
-              className={classNames(
-                open ? 'bg-white' : '',
-                'hover:bg-white hover:dark:bg-slate-800 py-1.5 px-4 font-medium rounded-lg dark:text-slate-300 text-gray-900 hover:dark:text-white'
-              )}
-            >
+            <Menu.Button color="default" as={Button} variant="empty" size="md">
               Explore
             </Menu.Button>
             <Transition

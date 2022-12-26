@@ -2,7 +2,7 @@
 
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
+import { tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui13'
 import { Currency } from '@sushiswap/ui13/components/currency'
@@ -11,6 +11,7 @@ import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import React, { FC, useCallback, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
+import { useBalance } from '../../../hooks'
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
@@ -19,7 +20,7 @@ export interface CurrencyInputProps {
   id?: string
   disabled?: boolean
   value: string
-  onChange(value: string): void
+  onChange?(value: string): void
   currency: Type | undefined
   onSelect?(currency: Type): void
   chainId: ChainId
@@ -52,9 +53,26 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     inputRef.current?.focus()
   }, [disabled])
 
+  const { data: balance, isLoading } = useBalance({
+    chainId,
+    currency,
+    account: address,
+    enabled: Boolean(currency),
+  })
+
+  const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
+  const insufficientBalance = balance && _value && balance[fundSource].lessThan(_value)
+
   return useMemo(
     () => (
-      <div className={classNames('transition-all duration-[400ms]', className)} onClick={focusInput}>
+      <div
+        className={classNames(
+          'transition-all duration-[400ms]',
+          insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+          className
+        )}
+        onClick={focusInput}
+      >
         <div className="relative flex items-center gap-1">
           {loading ? (
             <div className="flex flex-col gap-1 justify-center flex-grow h-[44px]">
@@ -110,17 +128,23 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           )}
         </div>
         <div className="flex flex-row justify-between h-[24px]">
-          <PricePanel value={value} currency={currency} usdPctChange={usdPctChange} />
+          <PricePanel
+            value={value}
+            currency={currency}
+            usdPctChange={usdPctChange}
+            error={insufficientBalance ? 'Exceeds Balance' : undefined}
+          />
           <div className="h-6">
             <BalancePanel
               id={id}
-              loading={loading}
+              loading={loading || isLoading}
               chainId={chainId}
               account={address}
               onChange={onChange}
               currency={currency}
               fundSource={fundSource}
               disableMaxButton={disableMaxButton}
+              balance={balance}
             />
           </div>
         </div>
@@ -128,6 +152,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     ),
     [
       address,
+      balance,
       chainId,
       className,
       currency,
@@ -136,6 +161,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       focusInput,
       fundSource,
       id,
+      insufficientBalance,
+      isLoading,
       loading,
       onChange,
       onSelect,

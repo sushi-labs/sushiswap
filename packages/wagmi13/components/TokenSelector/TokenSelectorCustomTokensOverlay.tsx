@@ -44,24 +44,23 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
           <List>
             <List.Label>Tokens</List.Label>
             <List.Control>
-              {tokens.map((token) => (
-                <List.Item
-                  key={token.address}
-                  title={token.symbol || ''}
-                  subtitle={chains[token.chainId].name}
-                  onClick={() => onRemoveToken(token.wrapped)}
-                  hoverIcon={TrashIcon}
-                />
-              ))}
+              {tokens.length > 0 ? (
+                tokens.map((token) => (
+                  <List.Item
+                    key={token.address}
+                    title={token.symbol || ''}
+                    subtitle={chains[token.chainId].name}
+                    onClick={() => onRemoveToken(token.wrapped)}
+                    hoverIcon={TrashIcon}
+                  />
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-1">
+                  <span className="text-xs flex text-slate-500 py-10">No custom tokens found</span>
+                </div>
+              )}
             </List.Control>
           </List>
-          {tokens.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="flex flex-col items-center justify-center gap-1">
-                <span className="text-xs flex text-slate-500">No custom tokens found</span>
-              </div>
-            </div>
-          )}
         </Overlay.Content>
       </SlideIn.FromRight>
     </>

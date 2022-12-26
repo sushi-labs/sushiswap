@@ -8,9 +8,11 @@ import React, { FC, useMemo } from 'react'
 import { usePrices } from '../../../hooks'
 import { CurrencyInputProps } from './index'
 
-type PricePanel = Pick<CurrencyInputProps, 'currency' | 'value' | 'usdPctChange'>
+type PricePanel = Pick<CurrencyInputProps, 'currency' | 'value' | 'usdPctChange'> & {
+  error?: string
+}
 
-export const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) => {
+export const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange, error }) => {
   const { data: tokenPrices, isLoading } = usePrices({ chainId: currency?.chainId })
   const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
   const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
@@ -24,6 +26,10 @@ export const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange }) =>
         <Skeleton.Box className="bg-white/[0.06] h-[12px] w-full" />
       </div>
     )
+
+  if (error) {
+    return <p className="font-medium text-lg py-1 select-none text-red">{error}</p>
+  }
 
   return (
     <p className="font-medium text-lg py-1 select-none text-gray-500 dark:text-slate-400">

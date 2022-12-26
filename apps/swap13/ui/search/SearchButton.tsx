@@ -1,4 +1,5 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { Button } from '@sushiswap/ui13/components/button'
 import React, { FC, useCallback } from 'react'
 
 import { useSearchContext } from './SearchProvider'
@@ -11,9 +12,8 @@ export const SearchButton: FC = () => {
   }, [setOpen])
 
   return (
-    <MagnifyingGlassIcon
-      onClick={onClick}
-      className="w-5 h-5 text-gray-700 hover:text-gray-900 dark:text-slate-300 hover:dark:text-white cursor-pointer mr-2"
-    />
+    <Button variant="empty" size="md" color="default" onClick={onClick}>
+      <MagnifyingGlassIcon className="w-5 h-5 text-gray-700 dark:text-slate-200" />
+    </Button>
   )
 }

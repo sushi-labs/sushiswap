@@ -58,10 +58,10 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
 
         {balance && balance?.[fundSource]?.greaterThan(ZERO) && (
           <div className="flex flex-col">
-            <span className="text-xs font-medium text-right text-slate-200">
+            <span className="text-xs font-medium text-right text-gray-700 dark:text-slate-200">
               {balance?.[fundSource]?.toSignificant(6)}
             </span>
-            <span className="text-[10px] text-right text-slate-400">
+            <span className="text-[10px] text-right text-gray-500 dark:text-slate-400">
               {price ? `$${balance[fundSource]?.multiply(price).toFixed(2)}` : '-'}
             </span>
           </div>

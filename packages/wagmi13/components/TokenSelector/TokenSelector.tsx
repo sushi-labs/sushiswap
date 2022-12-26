@@ -1,21 +1,17 @@
 'use client'
 
 import { AddressZero } from '@ethersproject/constants'
-import { XMarkIcon } from '@heroicons/react/20/solid'
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { ChainId, chains } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useAddCustomToken } from '@sushiswap/react-query'
 import { useTokens } from '@sushiswap/react-query'
-import { classNames } from '@sushiswap/ui13'
 import { SlideIn } from '@sushiswap/ui13/components/animation'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
-import { IconButton } from '@sushiswap/ui13/components/IconButton'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
-import { DEFAULT_INPUT_NO_RINGS, Input } from '@sushiswap/ui13/components/input'
-import { Loader } from '@sushiswap/ui13/components/Loader'
+import { Input } from '@sushiswap/ui13/components/input'
+import { Search } from '@sushiswap/ui13/components/input/Search'
 import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -92,41 +88,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
             <Dialog.Content className="!max-w-md overflow-hidden h-[75vh] sm:h-[640px] !pt-4 !pb-4 rounded-2xl">
               <SlideIn>
                 <div className="flex gap-2 items-center">
-                  <div className="rounded-xl flex gap-2 flex-grow items-center bg-white dark:bg-slate-800 p-3">
-                    <MagnifyingGlassIcon
-                      strokeWidth={2}
-                      width={20}
-                      height={20}
-                      className="text-gray-700 dark:text-slate-500"
-                    />
-                    <Input.Address
-                      id={`${id}-address-input`}
-                      testdata-id={`${id}-address-input`}
-                      variant="unstyled"
-                      placeholder="Search token by address"
-                      value={query}
-                      onChange={onInput}
-                      className={classNames(
-                        'w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-sm text-gray-900 dark:text-slate-200',
-                        DEFAULT_INPUT_NO_RINGS
-                      )}
-                    />
-                    {searching ? (
-                      <div className="relative left-[-2px]">
-                        <Loader size={14} strokeWidth={3} className="animate-spin-slow text-slate-500" />
-                      </div>
-                    ) : query ? (
-                      <IconButton onClick={() => onInput('')}>
-                        <XMarkIcon
-                          width={20}
-                          height={20}
-                          className="cursor-pointer text-slate-500 hover:text-slate-300"
-                        />
-                      </IconButton>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
+                  <Search id={id} input={Input.Address} value={query} loading={searching} onChange={onInput} />
                   <TokenSelectorSettingsOverlay />
                 </div>
 

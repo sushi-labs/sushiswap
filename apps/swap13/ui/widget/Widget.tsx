@@ -3,56 +3,66 @@
 import { RadioGroup } from '@headlessui/react'
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import { ArrowDownIcon } from '@heroicons/react/24/outline'
-import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Type } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui13'
 import { Button } from '@sushiswap/ui13/components/button'
 import Container from '@sushiswap/ui13/components/Container'
 import { Widget as UIWidget } from '@sushiswap/ui13/components/widget'
 import { AppType } from '@sushiswap/ui13/types'
 import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
+
+import { NetworkSelectorDialog } from '../NetworkSelectorDialog'
+import { useSwapActions, useSwapState } from '../TradeProvider'
 
 export const Widget: FC = () => {
-  const [currencyA, setCurrencyA] = useState<Type>(Native.onChain(ChainId.ETHEREUM))
-  const [currencyB, setCurrencyB] = useState<Type>(SUSHI[ChainId.ETHEREUM])
-
-  const [valueA, setValueA] = useState<string>('')
-  const [valueB, setValueB] = useState<string>('')
+  const { appType, token0, token1, value, otherValue, network0, network1 } = useSwapState()
+  const { setAppType, setToken0, setToken1, setNetwork0, setNetwork1, setValue } = useSwapActions()
 
   return (
     <>
-      <Container maxWidth={520} className="mx-auto mt-16 flex flex-col gap-4">
+      <Container maxWidth={520} className="mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <div className="flex flex-col gap-2 mb-4">
-          <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200">Sell {currencyA.symbol}</h1>
-          <span className="text-sm flex items-center gap-1 font-semibold text-blue-600">
-            <ArrowTrendingUpIcon width={16} height={16} />1 {currencyA.symbol} = 0.05 {currencyB.symbol}
+          {appType === AppType.Swap ? (
+            <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200">Sell {token0.symbol}</h1>
+          ) : (
+            <>
+              <h1 className="flex items-center gap-3 text-4xl font-semibold text-gray-900 dark:text-slate-200">
+                Sell {token0.symbol} on <NetworkSelectorDialog selected={network0} onSelect={setNetwork0} />
+              </h1>
+              <h1 className="flex items-center gap-3 text-4xl font-semibold text-gray-900 dark:text-slate-200">
+                Receive {token1.symbol} on <NetworkSelectorDialog selected={network1} onSelect={setNetwork1} />
+              </h1>
+            </>
+          )}
+          <span className="text-sm flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800 cursor-pointer">
+            <ArrowTrendingUpIcon width={16} height={16} />1 {token0.symbol} = 0.05 {token1.symbol}
           </span>
         </div>
-        <RadioGroup defaultValue={AppType.Swap} className="flex gap-2">
+        <RadioGroup value={appType} onChange={setAppType} className="flex gap-2">
           <RadioGroup.Option
+            as={Button}
+            variant={appType === AppType.Swap ? 'outlined' : 'empty'}
+            size="sm"
             value={AppType.Swap}
-            className={({ checked }) =>
-              classNames(
-                checked
-                  ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white'
-                  : 'dark:text-slate-600 text-gray-400 hover:text-gray-900 hover:dark:text-white',
-                'transition-all cursor-pointer text-sm rounded-lg px-4 py-1.5 font-medium'
-              )
+            color="default"
+            className={({ checked }: { checked: boolean }) =>
+              checked
+                ? 'text-gray-900 dark:text-slate-200'
+                : 'dark:text-slate-600 text-gray-400 hover:text-gray-900 hover:dark:text-white'
             }
           >
             {AppType.Swap}
           </RadioGroup.Option>
           <RadioGroup.Option
-            className={({ checked }) =>
-              classNames(
-                checked
-                  ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white'
-                  : 'dark:text-slate-600 text-gray-400 hover:text-gray-900 hover:dark:text-white',
-                'transition-all cursor-pointer text-sm rounded-lg px-4 py-1.5 font-medium'
-              )
-            }
+            as={Button}
+            variant={appType === AppType.xSwap ? 'outlined' : 'empty'}
+            size="sm"
             value={AppType.xSwap}
+            color="default"
+            className={({ checked }: { checked: boolean }) =>
+              checked
+                ? 'text-gray-900 dark:text-white'
+                : 'dark:text-slate-600 text-gray-400 hover:text-gray-900 hover:dark:text-white'
+            }
           >
             {AppType.xSwap}
           </RadioGroup.Option>
@@ -61,11 +71,11 @@ export const Widget: FC = () => {
           <UIWidget.Content>
             <Web3Input.Currency
               className="p-3 pb-6 dark:bg-slate-800 bg-white rounded-xl"
-              chainId={ChainId.ETHEREUM}
-              onSelect={setCurrencyA}
-              value={valueA}
-              onChange={setValueA}
-              currency={currencyA}
+              chainId={network0}
+              onSelect={setToken0}
+              value={value}
+              onChange={setValue}
+              currency={token0}
             />
             <div className="left-0 right-0 mt-[-9px] mb-[-9px] flex items-center justify-center z-10">
               <button
@@ -79,19 +89,20 @@ export const Widget: FC = () => {
             </div>
             <Web3Input.Currency
               className="p-3 pb-6 dark:bg-slate-800 bg-white rounded-xl"
-              chainId={ChainId.ETHEREUM}
-              onSelect={setCurrencyB}
-              value={valueB}
-              onChange={setValueB}
-              currency={currencyB}
+              chainId={network1}
+              onSelect={setToken1}
+              value={otherValue}
+              currency={token1}
               usdPctChange={1.12}
             />
           </UIWidget.Content>
         </div>
       </Container>
+
+      {/*spacer*/}
       <Container maxWidth={500} className="fixed bottom-6 mx-auto left-4 right-4 w-[unset]">
-        <Button fullWidth size="md">
-          Swap {currencyA.symbol} for {currencyB.symbol}
+        <Button fullWidth size="xl">
+          Swap {token0.symbol} for {token1.symbol}
         </Button>
       </Container>
     </>
