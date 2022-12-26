@@ -8,12 +8,14 @@ import Container from '@sushiswap/ui13/components/Container'
 import { Widget as UIWidget } from '@sushiswap/ui13/components/widget'
 import { AppType } from '@sushiswap/ui13/types'
 import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 
+import { ConfirmationDialog } from '../ConfirmationDialog'
 import { NetworkSelectorDialog } from '../NetworkSelectorDialog'
 import { useSwapActions, useSwapState } from '../TradeProvider'
 
 export const Widget: FC = () => {
+  const [open, setOpen] = useState(false)
   const { appType, token0, token1, value, otherValue, network0, network1 } = useSwapState()
   const { setAppType, setToken0, setToken1, setNetwork0, setNetwork1, setValue } = useSwapActions()
 
@@ -89,6 +91,7 @@ export const Widget: FC = () => {
             </div>
             <Web3Input.Currency
               className="p-3 pb-6 dark:bg-slate-800 bg-white rounded-xl"
+              disabled
               chainId={network1}
               onSelect={setToken1}
               value={otherValue}
@@ -101,10 +104,11 @@ export const Widget: FC = () => {
 
       {/*spacer*/}
       <Container maxWidth={500} className="fixed bottom-6 mx-auto left-4 right-4 w-[unset]">
-        <Button fullWidth size="xl">
+        <Button fullWidth size="xl" onClick={() => setOpen(true)}>
           Swap {token0.symbol} for {token1.symbol}
         </Button>
       </Container>
+      <ConfirmationDialog open={open} setOpen={setOpen} />
     </>
   )
 }
