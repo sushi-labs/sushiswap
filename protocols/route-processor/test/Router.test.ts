@@ -175,13 +175,25 @@ async function updMakeSwap(
 
 // skipped because took too long time. Unskip to check the RP
 describe('End-to-end Router test', async function () {
-  it('Native => SUSHI => Native + Native => WrappedNative => Native', async function () {
-    const env = await getTestEnvironment()
-    const chainId = env.chainId
+  let env: TestEnvironment
+  let chainId: ChainId
+  let intermidiateResult: [BigNumber | undefined, number]
 
+  before(async () => {
+    env = await getTestEnvironment()
+    chainId = env.chainId
+  })
+
+  it('Native => SUSHI => Native', async function () {
     const res1 = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], getBigNumber(1000000 * 1e18))
-    const res2 = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), res1)
-    const res3 = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], [getBigNumber(1 * 1e18), res2[1]])
+    intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), res1)
+  })
+
+  it('Native => WrappedNative => Native', async function () {
+    const res3 = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], [
+      getBigNumber(1 * 1e18),
+      intermidiateResult[1],
+    ])
     await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), res3)
   })
 })
