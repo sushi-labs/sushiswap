@@ -85,15 +85,15 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
       >
         {({ currencies, query, onInput, searching, queryToken }) => (
           <Dialog open={open} unmount={false} onClose={handleClose}>
-            <Dialog.Content className="!max-w-md overflow-hidden h-[75vh] sm:h-[640px] !pt-4 !pb-4 rounded-2xl">
+            <Dialog.Content className="!max-w-md overflow-hidden h-[75vh] !pb-0 sm:h-[640px] !pt-4 !pb-4 rounded-2xl">
               <SlideIn>
                 <div className="flex gap-2 items-center">
                   <Search id={id} input={Input.Address} value={query} loading={searching} onChange={onInput} />
                   <TokenSelectorSettingsOverlay />
                 </div>
 
-                <div className="flex flex-col gap-6 relative h-full mt-3">
-                  <div className="relative h-[calc(100%-32px)] pt-5">
+                <div className="flex flex-col gap-6 relative h-[320px] sm:h-full mt-3">
+                  <div className="relative h-[320px] sm:h-[calc(100%-32px)] pt-5">
                     <div className="absolute inset-0 h-full rounded-t-none rounded-xl">
                       {queryToken[0] && (
                         <TokenSelectorImportRow
