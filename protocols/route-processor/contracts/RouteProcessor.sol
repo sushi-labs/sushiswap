@@ -14,7 +14,7 @@ address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 contract RouteProcessor is StreamReader {
   using SafeERC20 for IERC20;
 
-  IBentoBoxMinimal immutable bentoBox;
+  IBentoBoxMinimal public immutable bentoBox;
   IWETH public immutable wNATIVE;
 
   constructor(address _bentoBox, address _wNATIVE) {
