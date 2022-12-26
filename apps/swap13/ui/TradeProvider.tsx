@@ -22,6 +22,7 @@ type SwapApi = {
   setToken0(currency: Type): void
   setToken1(currency: Type): void
   setValue(value: string): void
+  switchTokens(): void
 }
 
 const DataContext = createContext<SwapState>({} as SwapState)
@@ -34,6 +35,7 @@ type Actions =
   | { type: 'setToken1'; currency: Type }
   | { type: 'setAppType'; appType: AppType }
   | { type: 'setValue'; value: string }
+  | { type: 'switchTokens' }
 
 const reducer = (state: SwapState, action: Actions): SwapState => {
   switch (action.type) {
@@ -63,6 +65,14 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
     }
     case 'setValue':
       return { ...state, value: action.value }
+    case 'switchTokens':
+      return {
+        ...state,
+        token0: state.token1,
+        token1: state.token0,
+        network0: state.network1,
+        network1: state.network0,
+      }
   }
 }
 
@@ -88,6 +98,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setToken1 = (currency: Type) => dispatch({ type: 'setToken1', currency })
     const setAppType = (appType: AppType) => dispatch({ type: 'setAppType', appType })
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
+    const switchTokens = () => dispatch({ type: 'switchTokens' })
 
     return {
       setNetwork0,
@@ -96,6 +107,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setToken1,
       setAppType,
       setValue,
+      switchTokens,
     }
   }, [])
 
