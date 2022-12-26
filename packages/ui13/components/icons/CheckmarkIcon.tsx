@@ -9,12 +9,11 @@ export const CheckMarkIcon = (props: React.ComponentProps<'svg'>) => {
         strokeDasharray={1000}
         strokeDashoffset={0}
         stroke="currentColor"
-        strokeWidth="6"
-        strokeMiterlimit="10"
+        strokeWidth="8"
         strokeLinecap="round"
         cx="65.1"
         cy="65.1"
-        r="62.1"
+        r="60.1"
       />
       <polyline
         strokeDasharray={1000}
@@ -22,9 +21,8 @@ export const CheckMarkIcon = (props: React.ComponentProps<'svg'>) => {
         className="animate-[dash-check_2s_0.5s_ease-in_forwards] text-blue"
         fill="none"
         stroke="currentColor"
-        strokeWidth="6"
+        strokeWidth="8"
         strokeLinecap="round"
-        strokeMiterlimit="10"
         points="100.2,40.2 51.5,88.8 29.8,67.5 "
       />
     </svg>

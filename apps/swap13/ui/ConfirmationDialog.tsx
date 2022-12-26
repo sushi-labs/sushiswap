@@ -27,16 +27,16 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ open, setOpen 
 
   // TODO: For testing remove
   useEffect(() => {
-    if (state === ConfirmationDialogState.Pending && open) {
+    if (state === ConfirmationDialogState.Sign && open) {
       setTimeout(() => {
-        setState(ConfirmationDialogState.Failed)
+        setState(ConfirmationDialogState.Pending)
       }, 2000)
     }
   }, [open, state])
   useEffect(() => {
-    if (state === ConfirmationDialogState.Sign && open) {
+    if (state === ConfirmationDialogState.Pending && open) {
       setTimeout(() => {
-        setState(ConfirmationDialogState.Pending)
+        setState(ConfirmationDialogState.Success)
       }, 2000)
     }
   }, [open, state])
@@ -52,7 +52,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ open, setOpen 
           )}
           <div className="py-5">
             {[ConfirmationDialogState.Pending, ConfirmationDialogState.Sign].includes(state) ? (
-              <Loader size={100} strokeWidth={1} />
+              <Loader size={100} strokeWidth={1} className="!text-blue" />
             ) : state === ConfirmationDialogState.Success ? (
               <CheckMarkIcon width={100} height={100} />
             ) : (
