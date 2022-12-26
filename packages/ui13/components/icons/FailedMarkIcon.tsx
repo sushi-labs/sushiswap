@@ -23,10 +23,11 @@ export const FailedMarkIcon = (props: React.ComponentProps<'svg'>) => {
         stroke="currentColor"
         strokeWidth="8"
         strokeLinecap="round"
-        x1="34.4"
-        y1="37.9"
-        x2="95.8"
-        y2="92.3"
+        strokeLinejoin="round"
+        x1="38.4"
+        y1="41.9"
+        x2="91.8"
+        y2="88.3"
       />
       <line
         className="animate-[dash_1.5s_ease-in_forwards] text-red"
@@ -34,13 +35,13 @@ export const FailedMarkIcon = (props: React.ComponentProps<'svg'>) => {
         strokeDashoffset={1000}
         fill="none"
         stroke="currentColor"
-        strokeWidth="6"
+        strokeWidth="8"
         strokeLinecap="round"
-        strokeMiterlimit="10"
-        x1="95.8"
-        y1="38"
-        x2="34.4"
-        y2="92.2"
+        strokeLinejoin="round"
+        x1="91.8"
+        y1="41.9"
+        x2="38.4"
+        y2="88.3"
       />
     </svg>
   )

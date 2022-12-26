@@ -36,7 +36,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ open, setOpen 
   useEffect(() => {
     if (state === ConfirmationDialogState.Pending && open) {
       setTimeout(() => {
-        setState(ConfirmationDialogState.Success)
+        setState(ConfirmationDialogState.Failed)
       }, 2000)
     }
   }, [open, state])

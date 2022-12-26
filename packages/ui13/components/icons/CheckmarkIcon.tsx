@@ -23,6 +23,7 @@ export const CheckMarkIcon = (props: React.ComponentProps<'svg'>) => {
         stroke="currentColor"
         strokeWidth="8"
         strokeLinecap="round"
+        strokeLinejoin="round"
         points="100.2,40.2 51.5,88.8 29.8,67.5 "
       />
     </svg>
