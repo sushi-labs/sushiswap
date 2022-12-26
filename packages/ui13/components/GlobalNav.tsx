@@ -60,11 +60,11 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
         className
       )}
     >
-      <div className="grid grid-cols-2 md:grid-cols-3 items-center w-full mx-auto z-[101] px-4">
-        <div className="flex items-center">
-          <a className="flex flex-row items-center pr-4" href="/">
-            <div className="w-7 h-7">
-              <SushiIcon width="100%" height="100%" className="mr-2 hover:animate-heartbeat" />
+      <div className="grid grid-cols-2 items-center w-full mx-auto z-[101] px-4">
+        <div className="flex items-center gap-2">
+          <a className="flex flex-row items-center sm:pl-2 pr-4 sm:pr-6" href="/">
+            <div className="w-8 h-8">
+              <SushiIcon width="100%" height="100%" className="mr-2" />
             </div>
           </a>
           <Menu as="div" className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
@@ -104,8 +104,8 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
               </div>
             </Transition>
           </Menu>
+          <div className="hidden md:flex justify-center gap-2 relative h-[38px]">{children}</div>
         </div>
-        <div className="hidden md:flex justify-center relative h-[38px]">{children}</div>
         <div className="flex items-center justify-end gap-2">{rightElement}</div>
       </div>
     </header>
@@ -151,11 +151,8 @@ type NavLinkProps = { title: string; href: string }
 
 export const NavLink: FC<NavLinkProps> = ({ title, href }) => {
   return (
-    <a
-      href={href}
-      className="hover:bg-white text-md hover:dark:bg-slate-800 py-1.5 px-4 rounded-lg dark:text-slate-300 text-gray-900 hover:dark:text-white"
-    >
+    <Button as="a" color="default" href={href} variant="empty" size="md">
       {title}
-    </a>
+    </Button>
   )
 }

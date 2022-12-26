@@ -1,6 +1,6 @@
 'use client'
 
-import { GlobalNav } from '@sushiswap/ui13/components/GlobalNav'
+import { GlobalNav, NavLink } from '@sushiswap/ui13/components/GlobalNav'
 import { AppType } from '@sushiswap/ui13/types'
 import { NetworkSelector } from '@sushiswap/wagmi13/components/NetworkSelector'
 import { UserProfile } from '@sushiswap/wagmi13/components/UserProfile'
@@ -21,7 +21,10 @@ export const Header: FC = () => {
             <UserProfile clearNotifications={() => {}} notifications={{}} supportedNetworks={SUPPORTED_CHAIN_IDS} />
           </>
         }
-      />
+      >
+        <NavLink title="Tokens" href="https://sushi.com/analytics" />
+        <NavLink title="Pools" href="https://sushi.com/earn" />
+      </GlobalNav>
       <Search.Panel />
     </Search>
   )
