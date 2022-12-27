@@ -1,20 +1,18 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
 import { Fraction, ZERO } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui13'
 import { Icon } from '@sushiswap/ui13/components/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
 
-interface TokenSelectorRow {
+export interface TokenSelectorRow {
   id: string
-  account?: string
+  account?: `0x${string}`
   currency: Type
   style?: CSSProperties
   className?: string
-  onCurrency(currency: Type): void
-  fundSource: FundSource
-  balance?: Record<FundSource, Amount<Type> | undefined>
+  onSelect(currency: Type): void
+  balance?: Amount<Type> | undefined
   price?: Fraction
 }
 
@@ -23,14 +21,13 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
   price,
   balance,
   currency,
-  fundSource,
   style,
   className,
-  onCurrency,
+  onSelect,
 }) {
   const onClick = useCallback(() => {
-    onCurrency(currency)
-  }, [currency, onCurrency])
+    onSelect(currency)
+  }, [currency, onSelect])
   return (
     <div
       testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
@@ -56,13 +53,13 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
           </div>
         </div>
 
-        {balance && balance?.[fundSource]?.greaterThan(ZERO) && (
+        {balance?.greaterThan(ZERO) && (
           <div className="flex flex-col">
             <span className="text-xs font-medium text-right text-gray-700 dark:text-slate-200">
-              {balance?.[fundSource]?.toSignificant(6)}
+              {balance?.toSignificant(6)}
             </span>
             <span className="text-[10px] text-right text-gray-500 dark:text-slate-400">
-              {price ? `$${balance[fundSource]?.multiply(price).toFixed(2)}` : '-'}
+              {price ? `$${balance?.multiply(price).toFixed(2)}` : '-'}
             </span>
           </div>
         )}

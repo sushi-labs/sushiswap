@@ -1,49 +1,39 @@
-import { Type } from '@sushiswap/currency'
-import React, { CSSProperties, FC, memo, ReactElement, useCallback } from 'react'
+import React, { CSSProperties, FC, ReactElement, useCallback } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 
-interface RendererPayload {
-  currency: Type
-  style: CSSProperties
-}
+type RowCallback<TData> = (row: { index: number; style: CSSProperties }) => ReactElement
 
-export interface ListProps {
+export interface ListProps<TData> {
   className?: string
-  currencies: Type[]
   rowHeight?: number
-  rowRenderer(payload: RendererPayload): ReactElement
-  deps?: any[]
+  rowRenderer: FC<TData>
+  rowData: TData[]
 }
 
-export const List: FC<ListProps> = memo(
-  ({ className, currencies, rowHeight, rowRenderer }) => {
-    const Row = useCallback(
-      ({ index, style }: { index: number; style: CSSProperties }) => {
-        const currency = currencies[index]
-        return rowRenderer({ currency, style })
-      },
-      [currencies, rowRenderer]
-    )
+export type ListComponent = <TData>(props: ListProps<TData>) => React.ReactElement | null
 
-    return (
-      <AutoSizer disableWidth>
-        {({ height }: { height: number }) => (
-          <FixedSizeList
-            width="100%"
-            height={height}
-            itemCount={currencies.length}
-            itemSize={rowHeight || 48}
-            className={className}
-          >
-            {Row}
-          </FixedSizeList>
-        )}
-      </AutoSizer>
-    )
-  },
-  (prevProps, nextProps) =>
-    prevProps.className === nextProps.className &&
-    prevProps.currencies === nextProps.currencies &&
-    prevProps.rowHeight === nextProps.rowHeight
-)
+export function List<TData>({ className, rowHeight, rowData, rowRenderer: RowComponent }: ListProps<TData>) {
+  const Row = useCallback<RowCallback<TData>>(
+    ({ index, style }) => {
+      return <RowComponent style={style} {...rowData[index]} />
+    },
+    [RowComponent, rowData]
+  )
+
+  return (
+    <AutoSizer disableWidth>
+      {({ height }: { height: number }) => (
+        <FixedSizeList
+          width="100%"
+          height={height}
+          itemCount={rowData.length}
+          itemSize={rowHeight || 48}
+          className={className}
+        >
+          {Row}
+        </FixedSizeList>
+      )}
+    </AutoSizer>
+  )
+}

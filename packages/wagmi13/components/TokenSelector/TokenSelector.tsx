@@ -1,24 +1,21 @@
 'use client'
 
-import { AddressZero } from '@ethersproject/constants'
 import { ChainId, chains } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { useAddCustomToken } from '@sushiswap/react-query'
 import { useTokens } from '@sushiswap/react-query'
 import { SlideIn } from '@sushiswap/ui13/components/animation'
-import { Currency } from '@sushiswap/ui13/components/currency'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import { Input } from '@sushiswap/ui13/components/input'
 import { Search } from '@sushiswap/ui13/components/input/Search'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 
-import { useBalances, usePrices } from '../../hooks'
+import { usePrices } from '../../hooks'
+import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { TokenSelectorListFilterByQuery } from './TokenSelectorListFilterByQuery'
-import { TokenSelectorRow } from './TokenSelectorRow'
 import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
 
 interface TokenSelectorProps {
@@ -38,24 +35,16 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   children,
   fundSource = FundSource.WALLET,
 }) => {
-  const { address } = useAccount()
   const { mutate: onAddCustomToken } = useAddCustomToken()
 
   const [open, setOpen] = useState(false)
   const handleClose = useCallback(() => setOpen(false), [])
 
-  const { data: tokenMap, isSuccess } = useTokens({ chainId })
+  const { data: tokenMap } = useTokens({ chainId })
   const { data: pricesMap } = usePrices({ chainId })
 
-  // TODO SLOW, CHANGE CURRENCIES TO TOKENVALUES TO TEST
-  const tokenValues = useMemo(() => (tokenMap ? Object.values(tokenMap) : []), [tokenMap])
-  const { data: balancesMap } = useBalances({
-    account: address,
-    chainId,
-    currencies: [],
-    loadBentobox: false,
-    enabled: open && isSuccess,
-  })
+  console.log(tokenMap)
+  const balancesMap = undefined
 
   const _onSelect = useCallback(
     (currency: Token) => {
@@ -102,21 +91,11 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                           onImport={() => queryToken[0] && handleImport(queryToken[0])}
                         />
                       )}
-                      <Currency.List
-                        className="divide-y hide-scrollbar divide-slate-700"
+                      <TokenSelectorCurrencyList
+                        onSelect={onSelect}
+                        id={id}
                         currencies={currencies}
-                        rowRenderer={({ currency, style }) => (
-                          <TokenSelectorRow
-                            id={id}
-                            account={address}
-                            currency={currency}
-                            style={style}
-                            onCurrency={_onSelect}
-                            fundSource={fundSource}
-                            balance={balancesMap?.[currency.isNative ? AddressZero : currency.wrapped.address]}
-                            price={pricesMap?.[currency.wrapped.address]}
-                          />
-                        )}
+                        chainId={chainId}
                       />
                       {currencies.length === 0 && !queryToken && chainId && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

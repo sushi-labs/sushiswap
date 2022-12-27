@@ -1,8 +1,9 @@
 'use client'
 
-import { Listbox } from '@headlessui/react'
-import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline'
-import { ChainId } from '@sushiswap/chain'
+import { Popover, Transition } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChevronDoubleDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { classNames } from '@sushiswap/ui13'
 import { Button, ButtonProps } from '@sushiswap/ui13/components/button'
 import {
   CoinbaseWalletIcon,
@@ -11,33 +12,28 @@ import {
   TrustWalletIcon,
   WalletConnectIcon,
 } from '@sushiswap/ui13/components/icons'
+import { List } from '@sushiswap/ui13/components/list/List'
 import { Loader } from '@sushiswap/ui13/components/Loader'
-import React, { ReactNode, useCallback } from 'react'
+import React, { SVGProps, useCallback } from 'react'
 import { useConnect } from 'wagmi'
 
 import { useAutoConnect } from '../hooks'
 
-const Icons: Record<string, ReactNode> = {
-  Injected: <ChevronDoubleDownIcon width={16} height={16} />,
-  MetaMask: <MetamaskIcon width={16} height={16} />,
-  'Trust Wallet': <TrustWalletIcon width={16} height={16} />,
-  WalletConnect: <WalletConnectIcon width={16} height={16} />,
-  'Coinbase Wallet': <CoinbaseWalletIcon width={16} height={16} />,
-  Safe: <GnosisSafeIcon width={16} height={16} />,
+const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element> = {
+  Injected: ChevronDoubleDownIcon,
+  MetaMask: MetamaskIcon,
+  'Trust Wallet': TrustWalletIcon,
+  WalletConnect: WalletConnectIcon,
+  'Coinbase Wallet': CoinbaseWalletIcon,
+  Safe: GnosisSafeIcon,
 }
 
 export type Props<C extends React.ElementType> = ButtonProps<C> & {
   // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
   hack?: ReturnType<typeof useConnect>
-  supportedNetworks?: ChainId[]
 }
 
-export const ConnectButton = <C extends React.ElementType>({
-  hack,
-  children,
-  supportedNetworks,
-  ...rest
-}: Props<C>) => {
+export const ConnectButton = <C extends React.ElementType>({ hack, children, ...rest }: Props<C>) => {
   const { connectors, connect, pendingConnector } = useConnect()
   useAutoConnect()
 
@@ -59,28 +55,48 @@ export const ConnectButton = <C extends React.ElementType>({
   }
 
   return (
-    <Listbox as="div" onChange={onSelect} className={rest.fullWidth ? 'w-full' : ''}>
-      <Listbox.Button {...rest} as="div">
-        {children || 'Connect Wallet'}
-      </Listbox.Button>
-      <Listbox.Options
-        as="div"
-        className="p-2 min-w-[240px] fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] mt-4 sm:rounded-xl rounded-b-none shadow-md shadow-black/[0.3] bg-slate-900 border border-slate-200/20"
-      >
-        <p className="text-[10px] p-2 font-semibold uppercase text-slate-400">Connectors</p>
-        {connectors.map((connector) => (
-          <Listbox.Option
-            key={connector.id}
-            value={connector.id}
-            className="cursor-pointer gap-2 flex text-sm font-semibold hover:text-slate-50 w-full text-slate-400 items-center hover:bg-white/[0.04] rounded-xl p-2 pr-1 py-2.5"
+    <Popover className={rest.fullWidth ? 'w-full' : ''}>
+      {({ open }) => (
+        <>
+          <Popover.Button as={Button} {...rest} variant="outlined" color="default" size="md">
+            <span className="hidden md:block">{children || 'Connect Wallet'}</span>
+            <span className="block md:hidden">{children || 'Connect'}</span>
+            <ChevronDownIcon
+              width={24}
+              height={24}
+              className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
+            />
+          </Popover.Button>
+          <Transition
+            show={open}
+            enter="transition duration-300 ease-out"
+            enterFrom="transform translate-y-[-16px] opacity-0"
+            enterTo="transform translate-y-0 opacity-100"
+            leave="transition duration-300 ease-out"
+            leaveFrom="transform translate-y-0 opacity-100"
+            leaveTo="transform translate-y-[-16px] opacity-0"
           >
-            <div className="group-hover:bg-blue-100 rounded-full group-hover:ring-[5px] group-hover:ring-blue-100">
-              {Icons[connector.name] && Icons[connector.name]}
-            </div>{' '}
-            {connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
-          </Listbox.Option>
-        ))}
-      </Listbox.Options>
-    </Listbox>
+            <div className="absolute pt-2 -top-[-1] right-0 sm:w-[320px]">
+              <Popover.Panel className="p-4 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
+                <List className="pt-0">
+                  <List.Label>Wallet</List.Label>
+                  <List.Control className="bg-gray-100 dark:!bg-slate-700">
+                    {connectors.map((connector) => (
+                      <List.Item
+                        onClick={() => onSelect(connector.id)}
+                        icon={Icons[connector.name]}
+                        title={connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
+                        key={connector.id}
+                        hoverIcon={ChevronRightIcon}
+                      />
+                    ))}
+                  </List.Control>
+                </List>
+              </Popover.Panel>
+            </div>
+          </Transition>
+        </>
+      )}
+    </Popover>
   )
 }

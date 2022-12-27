@@ -37,13 +37,7 @@ export const UserProfile: FC<ProfileProps> = ({ networks }) => {
   })
 
   if (!address) {
-    return (
-      <ConnectButton
-        size="sm"
-        className="cursor-pointer flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] hover:text-white h-[38px] rounded-xl px-2 pl-3 !font-semibold !text-sm text-gray-700 dark:text-slate-200"
-        supportedNetworks={networks}
-      />
-    )
+    return <ConnectButton size="sm" supportedNetworks={networks} />
   }
 
   return (

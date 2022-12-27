@@ -2,10 +2,10 @@ import { FC } from 'react'
 
 import { Icon, IconProps } from './Icon'
 import { IconList, IconListProps } from './IconList'
-import { List, ListProps } from './List'
+import { List, ListComponent } from './List'
 
 type Currency = {
-  List: FC<ListProps>
+  List: ListComponent
   Icon: FC<IconProps>
   IconList: FC<IconListProps>
 }

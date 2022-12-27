@@ -67,7 +67,15 @@ export const ListItem: ListItemComponent = ({
         unmount={false}
       >
         <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
-          {HoverIcon ? <HoverIcon {...hoverIconProps} /> : <ArrowLongRightIcon {...hoverIconProps} />}
+          {HoverIcon ? (
+            <HoverIcon {...hoverIconProps} width={hoverIconProps?.width ?? 20} height={hoverIconProps?.height ?? 20} />
+          ) : (
+            <ArrowLongRightIcon
+              {...hoverIconProps}
+              width={hoverIconProps?.width ?? 20}
+              height={hoverIconProps?.height ?? 20}
+            />
+          )}
         </div>
       </Transition>
     </Component>

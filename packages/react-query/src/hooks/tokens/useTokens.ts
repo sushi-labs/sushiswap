@@ -17,9 +17,7 @@ export const useTokens = ({ chainId }: UseTokensParams) => {
     queryKey: ['tokens', { chainId }],
     queryFn: async () => {
       const res = await fetch(`https://tokens.sushi.com/v0/${chainId}`)
-      return res.json()
-    },
-    select: (data: Data) => {
+      const data: Data = await res.json()
       return data.reduce<Record<string, Token>>((acc, { address, id, name, symbol, decimals }) => {
         const [chainId] = id.split(':')
 
