@@ -12,12 +12,6 @@ import { PAGE_SIZE } from '../contants'
 import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
 import { PairQuickHoverTooltip } from './PairQuickHoverTooltip'
 
-const BLACKLIST = [
-  'arb1:0xb0f550f8b437ed614bb3105ab781c9428c40e8eb',
-  'arb1:0xe74066750e339c8347d961c625f0ebbc64155b20',
-  'arb1:0x82439e9471b724b595b4812ef5f5feac417b8131',
-]
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
@@ -97,7 +91,7 @@ export const PoolsTable: FC = () => {
   )
 
   const table = useReactTable<Pair>({
-    data: pools?.filter((pool) => !BLACKLIST.includes(pool.id)) || [],
+    data: pools || [],
     columns: COLUMNS,
     state: {
       sorting,
