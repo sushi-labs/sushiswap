@@ -1,45 +1,57 @@
 import { Menu } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { ChainId, chains } from '@sushiswap/chain'
+import { classNames } from '@sushiswap/ui13'
 import { Button } from '@sushiswap/ui13/components/button'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
-import { NetworkSelector } from '@sushiswap/ui13/components/networkselector'
+import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui13/components/networkselector'
+import { createErrorToast } from '@sushiswap/ui13/components/toast'
 import { useBreakpoint } from '@sushiswap/ui13/lib/useBreakpoint'
 import React, { FC, useCallback } from 'react'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwork } from 'wagmi'
 
 export const HeaderNetworkSelector: FC<{ networks: ChainId[] }> = ({ networks }) => {
-  const { switchNetwork } = useSwitchNetwork()
+  const { switchNetworkAsync } = useSwitchNetwork()
   const { chain } = useNetwork()
   const { isMd } = useBreakpoint('md')
-  const onSwitchNetwork = useCallback(
-    (el: ChainId) => {
-      if (switchNetwork) {
-        switchNetwork(el)
+
+  const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
+    async (el, close) => {
+      if (switchNetworkAsync) {
+        try {
+          await switchNetworkAsync(el)
+          close()
+        } catch (e) {
+          if (e instanceof UserRejectedRequestError) return
+          if (e instanceof ProviderRpcError) {
+            createErrorToast(e.message, true)
+          }
+        }
       }
     },
-    [switchNetwork]
+    [switchNetworkAsync]
   )
+
+  const selected = chain?.id || ChainId.ETHEREUM
 
   return (
     <NetworkSelector
-      selected={chain?.id || ChainId.ETHEREUM}
+      selected={selected}
       variant={isMd ? 'dialog' : 'menu'}
       onSelect={onSwitchNetwork}
       networks={networks}
     >
-      {({ selected, setOpen }) =>
-        isMd ? (
-          <Button onClick={() => setOpen(true)} variant="outlined" color="default" size="md">
-            <NetworkIcon chainId={selected} width={20} height={20} />
-            <div className="hidden xl:block">{chains[selected].name.split(' ')[0]}</div>
-          </Button>
-        ) : (
-          <Menu.Button onClick={() => setOpen(true)} as={Button} variant="outlined" color="default" size="md">
-            <NetworkIcon chainId={selected} width={20} height={20} />
-            <div className="hidden xl:block">{chains[selected].name.split(' ')[0]}</div>
-          </Menu.Button>
-        )
-      }
+      {({ open }) => (
+        <Menu.Button as={Button} variant="outlined" color="default" size="md">
+          <NetworkIcon chainId={selected} width={20} height={20} />
+          <div className="hidden xl:block">{chains[selected].name.split(' ')[0]}</div>
+          <ChevronDownIcon
+            width={24}
+            height={24}
+            className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
+          />
+        </Menu.Button>
+      )}
     </NetworkSelector>
   )
 }

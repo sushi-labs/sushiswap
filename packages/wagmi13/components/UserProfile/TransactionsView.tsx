@@ -1,9 +1,9 @@
 'use client'
 
-import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 import { useClearNotifications, useNotifications } from '@sushiswap/react-query/src/hooks/notifications'
 import { Button } from '@sushiswap/ui13/components/button'
-import { IconButton } from '@sushiswap/ui13/components/IconButton'
+import { List } from '@sushiswap/ui13/components/list/List'
 import React, { Dispatch, FC, SetStateAction } from 'react'
 
 import { ProfileView } from './index'
@@ -19,31 +19,35 @@ export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) =>
   const { mutate: clearNotifications } = useClearNotifications({ account: address })
 
   return (
-    <div className="">
-      <div className="grid grid-cols-3 items-center h-12 border-b border-slate-200/20 px-2">
-        <div className="flex items-center">
-          <IconButton onClick={() => setView(ProfileView.Default)}>
-            <ChevronLeftIcon width={24} height={24} className="text-slate-400" />
-          </IconButton>
-        </div>
-        <p className="font-semibold text-slate-400">Transactions</p>
-        <div className="flex items-end justify-end">
-          <Button onClick={() => clearNotifications()} variant="empty" size="sm" className="!p-0">
-            Clear all
-          </Button>
-        </div>
+    <div className="p-2">
+      <div className="flex justify-between items-center mb-3">
+        <ArrowLeftIcon
+          onClick={() => setView(ProfileView.Default)}
+          strokeWidth={3}
+          width={20}
+          height={20}
+          className="cursor-pointer"
+        />
+        <Button onClick={() => clearNotifications()} variant="empty" size="sm" className="!px-2">
+          Clear all
+        </Button>
       </div>
-      <div className="flex flex-col gap-3 max-h-[300px] scroll">
-        {notifications ? (
-          Object.entries(notifications)
-            .reverse()
-            .map(([, notifications], index) => {
-              return <NotificationGroup key={index} notifications={notifications} />
-            })
-        ) : (
-          <p className="text-sm text-slate-500 text-center py-5">Your transactions will appear here</p>
-        )}
-      </div>
+      <List>
+        <List.Label>Transactions</List.Label>
+        <List.Control className="bg-gray-100 dark:bg-slate-700">
+          <div className="flex flex-col gap-3 max-h-[300px] scroll">
+            {notifications ? (
+              Object.entries(notifications)
+                .reverse()
+                .map(([, notifications], index) => {
+                  return <NotificationGroup key={index} notifications={notifications} />
+                })
+            ) : (
+              <p className="text-xs text-slate-500 text-center py-10">Your transactions will appear here</p>
+            )}
+          </div>
+        </List.Control>
+      </List>
     </div>
   )
 }

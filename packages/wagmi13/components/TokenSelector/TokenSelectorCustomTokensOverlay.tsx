@@ -1,4 +1,4 @@
-import { CurrencyDollarIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import chains from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
@@ -33,7 +33,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
   return (
     <>
       <List.Item
-        icon={<CurrencyDollarIcon width={24} height={24} />}
+        icon={PlusIcon}
         title="Custom Tokens"
         subtitle={`${ids.length || '0'} Tokens`}
         onClick={() => setOpen(true)}

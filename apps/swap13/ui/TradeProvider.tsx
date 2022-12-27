@@ -44,9 +44,19 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
     case 'setNetwork1':
       return { ...state, network1: action.chainId, token1: Native.onChain(action.chainId) }
     case 'setToken0':
-      return { ...state, token0: action.currency }
+      return {
+        ...state,
+        token0: action.currency,
+        // if token1 is set to whatever token token0 is about to be set too, set token1 to token0
+        token1: state.token1.wrapped.address === action.currency.wrapped.address ? state.token0 : state.token1,
+      }
     case 'setToken1':
-      return { ...state, token1: action.currency }
+      return {
+        ...state,
+        // if token0 is set to whatever token token1 is about to be set too, set token0 to token1
+        token0: state.token0.wrapped.address === action.currency.wrapped.address ? state.token1 : state.token0,
+        token1: action.currency,
+      }
     case 'setAppType': {
       const network1 =
         action.appType === AppType.Swap

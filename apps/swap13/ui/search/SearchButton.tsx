@@ -13,7 +13,7 @@ export const SearchButton: FC = () => {
 
   return (
     <Button variant="empty" size="md" color="default" onClick={onClick}>
-      <MagnifyingGlassIcon className="w-5 h-5 text-gray-700 dark:text-slate-200" />
+      <MagnifyingGlassIcon strokeWidth={2} className="w-5 h-5 text-gray-700 dark:text-slate-200" />
     </Button>
   )
 }

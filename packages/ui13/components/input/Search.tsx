@@ -20,10 +20,10 @@ export const Search: FC<Search> = ({ className, id, loading, input: Input, value
     <div
       className={classNames(
         className,
-        '!focus-within:bg-gray-200 relative pb-r-10 rounded-xl flex gap-2 flex-grow items-center bg-white dark:bg-slate-800 px-3 py-2.5'
+        '!focus-within:bg-gray-200 relative pb-r-10 rounded-xl flex gap-2.5 flex-grow items-center bg-white dark:bg-slate-800 px-3 py-2.5'
       )}
     >
-      <MagnifyingGlassIcon strokeWidth={2} width={24} height={24} className="text-gray-700 dark:text-slate-500" />
+      <MagnifyingGlassIcon strokeWidth={2} width={24} height={24} className="text-gray-500 dark:text-slate-500" />
       {Input ? (
         <Input
           id={`${id}-address-input`}
@@ -33,7 +33,7 @@ export const Search: FC<Search> = ({ className, id, loading, input: Input, value
           value={value}
           onChange={onChange}
           className={classNames(
-            'font-semibold w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200',
+            'font-medium w-full bg-transparent !p-0 placeholder:font-medium placeholder:text-gray-400 placeholder:dark:text-slate-500 text-gray-900 dark:text-slate-200',
             DEFAULT_INPUT_NO_RINGS
           )}
         />

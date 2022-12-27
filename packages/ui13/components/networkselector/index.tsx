@@ -6,12 +6,14 @@ import { FC, ReactNode } from 'react'
 import { NetworkSelectorDialog } from './NetworkSelectorDialog'
 import { NetworkSelectorMenu } from './NetworkSelectorMenu'
 
+export type NetworkSelectorOnSelectCallback = (chainId: ChainId, close: () => void) => void
+
 export interface NetworkSelectorProps {
   networks: ChainId[]
   selected: ChainId
-  onSelect(chainId: ChainId): void
+  onSelect: NetworkSelectorOnSelectCallback
   variant: 'menu' | 'dialog'
-  children(props: { selected: ChainId; setOpen(open: boolean): void }): ReactNode
+  children: ((props: { open: boolean; close(): void }) => ReactNode) | ReactNode
 }
 
 export const NetworkSelector: FC<NetworkSelectorProps> = ({ networks, variant, selected, onSelect, children }) => {

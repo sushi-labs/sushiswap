@@ -5,6 +5,7 @@ import {
   ChevronRightIcon,
   CreditCardIcon,
   DocumentDuplicateIcon,
+  InboxArrowDownIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
 import chains, { ChainId } from '@sushiswap/chain'
@@ -13,6 +14,7 @@ import { shortenAddress } from '@sushiswap/format'
 import { ClipboardController } from '@sushiswap/ui13/components/ClipboardController'
 import { IconButton } from '@sushiswap/ui13/components/IconButton'
 import { JazzIcon } from '@sushiswap/ui13/components/icons/JazzIcon'
+import { List } from '@sushiswap/ui13/components/list/List'
 import { getOnrampURL, OnRampProvider } from '@sushiswap/ui13/lib/getOnrampURL'
 import Image from 'next/legacy/image'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
@@ -63,41 +65,47 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
             ) : (
               <JazzIcon diameter={16} address={address} />
             )}
-            {shortenAddress(address)}
+            <ClipboardController>
+              {({ setCopied }) => (
+                <span className="cursor-pointer" onClick={() => setCopied(address)}>
+                  {shortenAddress(address)}
+                </span>
+              )}
+            </ClipboardController>
           </p>
-          <div className="flex gap-3">
+          <div className="flex gap-5">
             <IconButton
               as="a"
               target="_blank"
+              icon={CreditCardIcon}
+              iconProps={{ width: 18, height: 18 }}
               href={getOnrampURL(OnRampProvider.Transak, address)}
-              className="p-0.5"
               description="Buy Crypto"
-            >
-              <CreditCardIcon width={18} height={18} />
-            </IconButton>
-            <ClipboardController>
-              {({ isCopied, setCopied }) => (
+            />
+            <ClipboardController hideTooltip>
+              {({ setCopied, isCopied }) => (
                 <IconButton
+                  icon={DocumentDuplicateIcon}
+                  iconProps={{ width: 18, height: 18 }}
                   onClick={() => setCopied(address)}
-                  className="p-0.5"
                   description={isCopied ? 'Copied!' : 'Copy'}
-                >
-                  <DocumentDuplicateIcon width={18} height={18} />
-                </IconButton>
+                />
               )}
             </ClipboardController>
             <IconButton
+              icon={LinkIcon}
+              iconProps={{ width: 18, height: 18 }}
               as="a"
               target="_blank"
               href={chains[chainId].getAccountUrl(address)}
-              className="p-0.5"
               description="Explore"
-            >
-              <LinkIcon width={18} height={18} />
-            </IconButton>
-            <IconButton as="button" onClick={() => disconnect()} className="p-0.5" description="Disconnect">
-              <ArrowLeftOnRectangleIcon width={18} height={18} />
-            </IconButton>
+            />
+            <IconButton
+              icon={ArrowLeftOnRectangleIcon}
+              iconProps={{ width: 18, height: 18 }}
+              onClick={() => disconnect()}
+              description="Disconnect"
+            />
           </div>
         </div>
         <div className="flex flex-col gap-2 justify-center items-center">
@@ -107,17 +115,26 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
           <p className="font-medium text-slate-400">${balanceAsUsd?.toFixed(2)}</p>
         </div>
       </div>
-      <div className="px-2">
-        <div className="h-px bg-slate-200/10 w-full mt-3" />
-      </div>
-      <div className="p-2">
-        <button
-          onClick={() => setView(ProfileView.Transactions)}
-          className="flex text-sm font-semibold hover:text-slate-50 w-full text-slate-400 justify-between items-center hover:bg-white/[0.04] rounded-xl p-2 pr-1 py-2.5"
-        >
-          Transactions <ChevronRightIcon width={20} height={20} />
-        </button>
-      </div>
+      <List>
+        <List.Control className="bg-gray-100 dark:!bg-slate-700">
+          <List.Item
+            icon={InboxArrowDownIcon}
+            title="Transactions"
+            onClick={() => setView(ProfileView.Transactions)}
+            hoverIcon={ChevronRightIcon}
+            hoverIconProps={{ width: 20, height: 20 }}
+          />
+          <List.Item
+            icon={CreditCardIcon}
+            target="_blank"
+            as="a"
+            href={getOnrampURL(OnRampProvider.Transak, address)}
+            title="Buy Crypto"
+            hoverIcon={LinkIcon}
+            hoverIconProps={{ width: 20, height: 20, className: 'text-blue' }}
+          />
+        </List.Control>
+      </List>
     </>
   )
 }

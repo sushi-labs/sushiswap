@@ -1,25 +1,56 @@
 import { Transition } from '@headlessui/react'
 import { ArrowLongRightIcon } from '@heroicons/react/24/solid'
-import React, { FC, Fragment, ReactNode, SVGProps, useState } from 'react'
+import classNames from 'classnames'
+import React, { Fragment, SVGProps, useState } from 'react'
 
-export interface ListItemProps {
-  icon?: ReactNode
+import { PolymorphicComponentProps } from '../../types'
+
+export interface Props {
+  icon?: (props: SVGProps<SVGSVGElement>) => JSX.Element
+  iconProps?: React.ComponentProps<'svg'>
   title: string
   subtitle?: string
-  onClick(): void
+  onClick?(): void
   hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element
+  hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
+    width: number
+    height: number
+  }
 }
 
-export const ListItem: FC<ListItemProps> = ({ icon, subtitle, title, onClick, hoverIcon: HoverIcon }) => {
+export type ListItemProps<C extends React.ElementType> = PolymorphicComponentProps<C, Props>
+export type ListItemComponent = <C extends React.ElementType = 'button'>(
+  props: ListItemProps<C>
+) => React.ReactElement | null
+
+export const ListItem: ListItemComponent = ({
+  as,
+  icon: Icon,
+  iconProps,
+  subtitle,
+  title,
+  onClick,
+  hoverIcon: HoverIcon,
+  hoverIconProps,
+  className,
+  ...rest
+}) => {
+  const Component = as || 'button'
+
   const [hover, setHover] = useState(false)
   return (
-    <button
+    <Component
+      type="button"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={onClick}
-      className="relative flex gap-3 px-4 py-3 hover:bg-black/[0.12] w-full items-center"
+      {...rest}
+      className={classNames(
+        className,
+        'relative flex gap-3 px-4 py-3 hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] w-full items-center cursor-pointer'
+      )}
     >
-      {icon}
+      {Icon && <Icon {...iconProps} width={iconProps?.width ?? 20} height={iconProps?.height ?? 20} />}
       <div className="flex flex-col gap-0.5 items-start">
         <span className="text-sm font-medium dark:text-slate-200">{title}</span>
         {subtitle && <span className="text-[10px] text-slate-400">{subtitle}</span>}
@@ -36,13 +67,9 @@ export const ListItem: FC<ListItemProps> = ({ icon, subtitle, title, onClick, ho
         unmount={false}
       >
         <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
-          {HoverIcon ? (
-            <HoverIcon width={20} height={20} className="text-red" />
-          ) : (
-            <ArrowLongRightIcon width={20} height={20} strokeWidth={5} className="text-blue" />
-          )}
+          {HoverIcon ? <HoverIcon {...hoverIconProps} /> : <ArrowLongRightIcon {...hoverIconProps} />}
         </div>
       </Transition>
-    </button>
+    </Component>
   )
 }

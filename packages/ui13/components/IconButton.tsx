@@ -1,12 +1,17 @@
 import classNames from 'classnames'
-import React, { ReactNode } from 'react'
+import React from 'react'
 
 import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'
 
 interface Props {
-  children: ReactNode
   className?: string
   description?: string
+  padding?: number
+  icon(props: React.ComponentProps<'svg'>): JSX.Element
+  iconProps: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
+    width: number
+    height: number
+  }
 }
 
 export type IconButtonProps<C extends React.ElementType> = PolymorphicComponentPropsWithRef<C, Props>
@@ -16,7 +21,7 @@ export type IconButtonComponent = <C extends React.ElementType = 'button'>(
 
 export const IconButton: IconButtonComponent = React.forwardRef(
   <Tag extends React.ElementType = 'button'>(
-    { as, children, className, description, ...rest }: IconButtonProps<Tag>,
+    { as, icon: Icon, iconProps, className, padding = 16, description, ...rest }: IconButtonProps<Tag>,
     ref?: PolymorphicRef<Tag>
   ) => {
     const Component = as || 'button'
@@ -25,15 +30,29 @@ export const IconButton: IconButtonComponent = React.forwardRef(
         ref={ref}
         type="button"
         {...rest}
-        className={classNames(className, 'group relative focus:outline-none border:none')}
-      >
-        <span className="rounded-full absolute inset-0 -ml-1 -mr-1 -mb-1 -mt-1 bg-black" />
-        {children}
-        {description && (
-          <span className="whitespace-nowrap text-xs group-hover:flex hidden absolute mt-2 w-full justify-center">
-            {description}
-          </span>
+        className={classNames(
+          className,
+          'group relative focus:outline-none border:none flex justify-center items-center'
         )}
+      >
+        <span
+          className="absolute rounded-full bg-black/[0.08] dark:bg-white/[0.08] hover:bg-black/[0.12] hover:dark:bg-white/[0.12]"
+          style={{ width: iconProps.width, height: iconProps.height, padding }}
+        >
+          {description && (
+            <div
+              className="relative hidden group-hover:block"
+              style={{ height: iconProps.height, paddingTop: padding, paddingBottom: padding }}
+            >
+              <div className="left-0 right-0 absolute flex justify-center mt-1">
+                <span className="bg-gray-600 text-white px-2 py-0.5 rounded-xl whitespace-nowrap text-[10px]">
+                  {description}
+                </span>
+              </div>
+            </div>
+          )}
+        </span>
+        <Icon {...iconProps} />
       </Component>
     )
   }

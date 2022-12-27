@@ -5,5 +5,5 @@ export interface ListLabelProps {
 }
 
 export const ListLabel: FC<ListLabelProps> = ({ children }) => {
-  return <span className="text-sm font-medium text-gray-600 dark:text-slate-400">{children}</span>
+  return <span className="text-xs font-medium text-gray-500 dark:text-slate-500">{children}</span>
 }

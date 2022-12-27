@@ -1,12 +1,12 @@
 import classNames from 'classnames'
-import { FC, ReactNode } from 'react'
+import React, { FC, ReactNode } from 'react'
 
 import { ListControl, ListControlProps } from './ListControl'
-import { ListItem, ListItemProps } from './ListItem'
+import { ListItem, ListItemComponent } from './ListItem'
 import { ListLabel, ListLabelProps } from './ListLabel'
 
 type List<T> = FC<T> & {
-  Item: FC<ListItemProps>
+  Item: ListItemComponent
   Label: FC<ListLabelProps>
   Control: FC<ListControlProps>
 }
@@ -17,7 +17,7 @@ export interface ListProps {
 }
 
 export const List: List<ListProps> = ({ children, className }) => {
-  return <div className={classNames('flex flex-col gap-3', className)}>{children}</div>
+  return <div className={classNames('flex flex-col gap-3 pt-3', className)}>{children}</div>
 }
 
 List.Item = ListItem

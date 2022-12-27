@@ -18,7 +18,7 @@ export const Header: FC = () => {
           <>
             <Search.Button />
             <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} />
-            <UserProfile clearNotifications={() => {}} notifications={{}} supportedNetworks={SUPPORTED_CHAIN_IDS} />
+            <UserProfile networks={SUPPORTED_CHAIN_IDS} />
           </>
         }
       >
