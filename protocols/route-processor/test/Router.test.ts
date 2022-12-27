@@ -131,6 +131,9 @@ async function makeSwap(
     )
   const receipt = await tx.wait()
 
+  // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
+  // printGasUsage(trace)
+
   console.log("Fetching user's output balance ...")
   let balanceOutBN: BigNumber
   if (toTokenContract) {
@@ -171,6 +174,53 @@ async function updMakeSwap(
   expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function printGasUsage(trace: any) {
+  printGasUsageRecursive(trace.structLogs as CodeTraceInfo[], 0, '')
+}
+
+interface CodeTraceInfo {
+  op: string
+  depth: number
+  gas: number
+  gasCost: number
+  pc: number
+}
+
+// Returns the last processed code index
+function printGasUsageRecursive(trace: CodeTraceInfo[], start: number, prefix: string, gasBefore = -1): number {
+  const depth = trace[start].depth
+  const gasStart = trace[start].gas
+  let lastPrintedGas = gasStart
+  if (gasBefore > 0) console.log(`${prefix}gas before function execution ${gasBefore - gasStart}`)
+
+  for (let i = start; i < trace.length; ) {
+    const info = trace[i]
+    if (info.depth !== depth) {
+      console.log(`${prefix}ERROR: UNEXPECTED DEPTH ${info.pc}: ${depth} -> ${info.depth}`)
+      return i - 1
+    }
+    if (info.op.endsWith('CALL')) {
+      console.log(`${prefix}${lastPrintedGas - info.gas} gas`)
+      console.log(`${prefix}${info.op}(pc=${info.pc}, index=${i})`)
+      i = printGasUsageRecursive(trace, i + 1, prefix + '  ', info.gasCost) + 1
+      console.log(`${prefix + '  '}call total ${info.gas - trace[i].gas} gas`)
+      lastPrintedGas = trace[i].gas
+      continue
+    }
+    if (info.op == 'RETURN' || info.op == 'REVERT' || info.op == 'STOP') {
+      if (lastPrintedGas !== gasStart) console.log(`${prefix}${lastPrintedGas - info.gas} gas`)
+      console.log(`${prefix}${info.op}(pc=${info.pc}, index=${i}) function execution ${gasStart - info.gas} gas`)
+      return i
+    }
+    if (info.gasCost >= 100) {
+      console.log(`${prefix}${info.op} - ${info.gasCost}`)
+    }
+    ++i
+  }
+  return -1
 }
 
 // skipped because took too long time. Unskip to check the RP
