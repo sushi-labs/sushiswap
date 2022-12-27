@@ -67,15 +67,18 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 >
                   View on Explorer <LinkIcon width={16} height={16} />
                 </a>
-                <ClipboardController>
+                <ClipboardController hideTooltip={true}>
                   {({ isCopied, setCopied }) => (
                     <IconButton
+                      icon={DocumentDuplicateIcon}
                       onClick={() => setCopied(currency?.wrapped.address)}
                       className="p-0.5"
                       description={isCopied ? 'Copied!' : 'Copy'}
-                    >
-                      <DocumentDuplicateIcon width={18} height={18} />
-                    </IconButton>
+                      iconProps={{
+                        width: 18,
+                        height: 18,
+                      }}
+                    />
                   )}
                 </ClipboardController>
               </div>
