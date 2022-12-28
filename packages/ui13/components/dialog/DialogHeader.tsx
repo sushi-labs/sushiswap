@@ -24,9 +24,12 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, border = 
       )}
     >
       {onBack ? (
-        <IconButton className="flex items-center justify-center w-6 h-6 gap-2 cursor-pointer" onClick={onBack}>
-          <ChevronLeftIcon width={24} height={24} className="cursor-pointer text-slate-100 hover:text-slate-50" />
-        </IconButton>
+        <IconButton
+          icon={ChevronLeftIcon}
+          iconProps={{ width: 24, height: 24, className: 'cursor-pointer text-slate-100 hover:text-slate-50' }}
+          className="flex items-center justify-center w-6 h-6 gap-2 cursor-pointer"
+          onClick={onBack}
+        />
       ) : (
         <div />
       )}
@@ -37,9 +40,12 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, border = 
         {children ? (
           children
         ) : onClose ? (
-          <IconButton className="cursor-pointer" onClick={onClose}>
-            <XMarkIcon width={24} height={24} className="hover:text-slate-50 text-slate-100" />
-          </IconButton>
+          <IconButton
+            icon={XMarkIcon}
+            iconProps={{ width: 24, height: 24, className: 'hover:text-slate-50 text-slate-100' }}
+            className="cursor-pointer"
+            onClick={onClose}
+          />
         ) : (
           <span />
         )}

@@ -30,6 +30,7 @@
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
+    "@sushiswap/format": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",

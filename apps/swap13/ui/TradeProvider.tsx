@@ -4,8 +4,10 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
+import { useAccount } from 'wagmi'
 
 interface SwapState {
+  recipient: string | undefined
   token0: Type
   token1: Type
   network0: ChainId
@@ -16,6 +18,7 @@ interface SwapState {
 }
 
 type SwapApi = {
+  setRecipient(recipient: string): void
   setNetwork0(chainId: ChainId): void
   setNetwork1(chainId: ChainId): void
   setAppType(appType: AppType): void
@@ -36,9 +39,12 @@ type Actions =
   | { type: 'setAppType'; appType: AppType }
   | { type: 'setValue'; value: string }
   | { type: 'switchTokens' }
+  | { type: 'setRecipient'; recipient: string }
 
 const reducer = (state: SwapState, action: Actions): SwapState => {
   switch (action.type) {
+    case 'setRecipient':
+      return { ...state, recipient: action.recipient }
     case 'setNetwork0':
       return { ...state, network0: action.chainId, token0: Native.onChain(action.chainId) }
     case 'setNetwork1':
@@ -91,7 +97,9 @@ interface SwapProviderProps {
 }
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
+  const { address } = useAccount()
   const [state, dispatch] = useReducer(reducer, {
+    recipient: undefined,
     appType: AppType.Swap,
     token0: Native.onChain(ChainId.ETHEREUM),
     token1: SUSHI[ChainId.ETHEREUM],
@@ -109,6 +117,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setAppType = (appType: AppType) => dispatch({ type: 'setAppType', appType })
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
     const switchTokens = () => dispatch({ type: 'switchTokens' })
+    const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
 
     return {
       setNetwork0,
@@ -118,12 +127,17 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setAppType,
       setValue,
       switchTokens,
+      setRecipient,
     }
   }, [])
 
   return (
     <APIContext.Provider value={api}>
-      <DataContext.Provider value={state}>{children}</DataContext.Provider>
+      <DataContext.Provider
+        value={useMemo(() => ({ ...state, recipient: state.recipient ?? address }), [address, state])}
+      >
+        {children}
+      </DataContext.Provider>
     </APIContext.Provider>
   )
 }
