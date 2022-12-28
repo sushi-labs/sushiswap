@@ -216,7 +216,7 @@ contract RouteProcessor is StreamReader {
 
   // Unwrap the Native Token
   function unwrapNative(address receiver) private {
-    wNATIVE.withdraw(IERC20(address(wNATIVE)).balanceOf(address(this)));
+    wNATIVE.withdraw(IERC20(address(wNATIVE)).balanceOf(address(this)) - 1); // -1 is a slot undrain protection
     payable(receiver).transfer(address(this).balance);
   }
 }
