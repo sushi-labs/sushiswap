@@ -1,6 +1,7 @@
 'use client'
 
 import { Popover } from '@headlessui/react'
+import { CheckIcon } from '@heroicons/react/24/outline'
 import chains from '@sushiswap/chain'
 import classNames from 'classnames'
 import React, { FC, useState } from 'react'
@@ -10,7 +11,12 @@ import { NetworkIcon } from '../icons'
 import { Search } from '../input/Search'
 import { NetworkSelectorProps } from './index'
 
-export const NetworkSelectorDialog: FC<Omit<NetworkSelectorProps, 'variant'>> = ({ networks, onSelect, children }) => {
+export const NetworkSelectorDialog: FC<Omit<NetworkSelectorProps, 'variant'>> = ({
+  networks,
+  onSelect,
+  selected,
+  children,
+}) => {
   const [query, setQuery] = useState<string>('')
 
   return (
@@ -41,10 +47,16 @@ export const NetworkSelectorDialog: FC<Omit<NetworkSelectorProps, 'variant'>> = 
                             height={24}
                             className="text-gray-600 group-hover:text-gray-900 dark:text-slate-50"
                           />
-                          <p className="text-sm font-medium text-gray-600 group-hover:text-gray-900 dark:text-slate-300 group-hover:dark:text-slate-50">
+                          <p
+                            className={classNames(
+                              selected === el ? 'font-semibold text-gray-900' : 'font-medium text-gray-500',
+                              'text-sm group-hover:text-gray-900 dark:text-slate-300 group-hover:dark:text-slate-50'
+                            )}
+                          >
                             {chains[el].name}
                           </p>
                         </div>
+                        {selected === el && <CheckIcon width={20} height={20} strokeWidth={2} className="text-blue" />}
                       </button>
                     ))}
                 </div>

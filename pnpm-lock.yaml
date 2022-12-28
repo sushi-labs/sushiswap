@@ -2724,6 +2724,7 @@ importers:
       react-dom: ^18.2.0
       react-dropzone: ^14.2.2
       react-jazzicon: ^1.0.4
+      react-popper: ^2.3.0
       react-spring: ^9.4.4
       react-toastify: ^8.2.0
       react-virtualized-auto-sizer: ^1.0.6
@@ -2753,6 +2754,7 @@ importers:
       react-datepicker: 4.8.0_biqbaboplfbrettd7655fr4n2y
       react-dropzone: 14.2.3_react@18.2.0
       react-jazzicon: 1.0.4_biqbaboplfbrettd7655fr4n2y
+      react-popper: 2.3.0_r6q5zrenym2zg7je7hgi674bti
       react-spring: 9.5.5_biqbaboplfbrettd7655fr4n2y
       react-toastify: 8.2.0_biqbaboplfbrettd7655fr4n2y
       react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y

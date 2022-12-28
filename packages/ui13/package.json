@@ -41,6 +41,7 @@
     "react-datepicker": "^4.8.0",
     "react-dropzone": "^14.2.2",
     "react-jazzicon": "^1.0.4",
+    "react-popper": "^2.3.0",
     "react-spring": "^9.4.4",
     "react-toastify": "^8.2.0",
     "react-virtualized-auto-sizer": "^1.0.6",
