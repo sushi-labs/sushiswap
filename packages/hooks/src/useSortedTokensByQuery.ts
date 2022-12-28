@@ -13,7 +13,6 @@ const alwaysTrue = () => true
  */
 export function createTokenFilterFunction<T extends Token>(search: string): (tokens: T) => boolean {
   const validAddress = isAddress(search)
-  console.log(validAddress, search)
 
   if (validAddress) {
     const lower = search.toLowerCase()

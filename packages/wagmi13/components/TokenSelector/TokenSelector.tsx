@@ -48,7 +48,10 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
   const _onSelect = useCallback(
     (currency: Token) => {
-      onSelect && onSelect(currency)
+      if (onSelect) {
+        onSelect(currency)
+      }
+
       setOpen(false)
     },
     [onSelect]
@@ -98,7 +101,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                           <List.Label className="px-2">Tokens</List.Label>
                         </List>
                         <TokenSelectorCurrencyList
-                          onSelect={onSelect}
+                          onSelect={_onSelect}
                           id={id}
                           currencies={currencies}
                           chainId={chainId}

@@ -20,9 +20,9 @@ export const NetworkSelectorDialog: FC<Omit<NetworkSelectorProps, 'variant'>> = 
           {typeof children === 'function' ? children({ open, close }) : children}
           <Dialog open={open} onClose={() => close()}>
             <Dialog.Content className="flex flex-col gap-2 scroll sm:overflow-hidden !pb-0 !h-[75vh] sm:!h-[640px]">
-              <Popover.Panel>
+              <Popover.Panel className="overflow-hidden">
                 <Search id="" value={query} loading={false} onChange={setQuery} />
-                <div className="h-full scroll overflow-auto pb-3">
+                <div className="h-[calc(100%-44px)] scroll overflow-auto py-3">
                   {networks
                     .filter((el) => (query ? chains[el].name.toLowerCase().includes(query.toLowerCase()) : Boolean))
                     .map((el) => (
