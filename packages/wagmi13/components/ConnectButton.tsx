@@ -17,8 +17,6 @@ import { Loader } from '@sushiswap/ui13/components/Loader'
 import React, { SVGProps, useCallback } from 'react'
 import { useConnect } from 'wagmi'
 
-import { useAutoConnect } from '../hooks'
-
 const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element> = {
   Injected: ChevronDoubleDownIcon,
   MetaMask: MetamaskIcon,
@@ -35,7 +33,6 @@ export type Props<C extends React.ElementType> = ButtonProps<C> & {
 
 export const ConnectButton = <C extends React.ElementType>({ hack, children, ...rest }: Props<C>) => {
   const { connectors, connect, pendingConnector } = useConnect()
-  useAutoConnect()
 
   const onSelect = useCallback(
     (connectorId: string) => {

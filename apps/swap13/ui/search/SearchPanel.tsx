@@ -126,7 +126,7 @@ export const SearchPanel: FC = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by token or address"
-                className="without-ring w-full text-white dark:text-slate-300 placeholder:text-gray-500 placeholder:dark:text-slate-500 bg-transparent mx-11"
+                className="w-full text-white dark:text-slate-300 placeholder:text-gray-500 placeholder:dark:text-slate-500 bg-transparent mx-11"
                 autoComplete="new-password"
                 autoCorrect="off"
               />

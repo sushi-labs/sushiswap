@@ -27,17 +27,19 @@ export const TokenSelectorCustomTokenRow: FC<{ style: CSSProperties; currency: T
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <IconButton onClick={onRemove}>
-            <XCircleIcon width={20} height={20} className="text-slate-500" />
-          </IconButton>
           <IconButton
+            icon={XCircleIcon}
+            iconProps={{ width: 20, height: 20, className: 'text-gray-500 dark:text-slate-500' }}
+            onClick={onRemove}
+          />
+          <IconButton
+            icon={LinkIcon}
+            iconProps={{ width: 20, height: 20, className: 'text-blue' }}
             as="a"
             rel="noopener noreffer"
             target="_blank"
             href={chain[currency.chainId].getTokenUrl(currency.wrapped.address)}
-          >
-            <LinkIcon width={20} height={20} className="text-blue" />
-          </IconButton>
+          />
         </div>
       </div>
     </div>

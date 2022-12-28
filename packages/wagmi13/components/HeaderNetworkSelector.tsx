@@ -1,4 +1,4 @@
-import { Menu } from '@headlessui/react'
+import { Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { ChainId, chains } from '@sushiswap/chain'
 import { classNames } from '@sushiswap/ui13'
@@ -13,7 +13,7 @@ import { ProviderRpcError, useNetwork, UserRejectedRequestError, useSwitchNetwor
 export const HeaderNetworkSelector: FC<{ networks: ChainId[] }> = ({ networks }) => {
   const { switchNetworkAsync } = useSwitchNetwork()
   const { chain } = useNetwork()
-  const { isMd } = useBreakpoint('md')
+  const { isSm } = useBreakpoint('sm')
 
   const onSwitchNetwork = useCallback<NetworkSelectorOnSelectCallback>(
     async (el, close) => {
@@ -37,12 +37,12 @@ export const HeaderNetworkSelector: FC<{ networks: ChainId[] }> = ({ networks })
   return (
     <NetworkSelector
       selected={selected}
-      variant={isMd ? 'dialog' : 'menu'}
+      variant={isSm ? 'menu' : 'dialog'}
       onSelect={onSwitchNetwork}
       networks={networks}
     >
       {({ open }) => (
-        <Menu.Button as={Button} variant="outlined" color="default" size="md">
+        <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">
           <NetworkIcon chainId={selected} width={20} height={20} />
           <div className="hidden xl:block">{chains[selected].name.split(' ')[0]}</div>
           <ChevronDownIcon
@@ -50,7 +50,7 @@ export const HeaderNetworkSelector: FC<{ networks: ChainId[] }> = ({ networks })
             height={24}
             className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
           />
-        </Menu.Button>
+        </Popover.Button>
       )}
     </NetworkSelector>
   )

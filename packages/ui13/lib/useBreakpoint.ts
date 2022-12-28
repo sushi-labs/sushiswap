@@ -6,7 +6,7 @@ const breakpoints = tailwindConfig.theme.screens
 
 export function useBreakpoint<K extends string>(breakpointKey: K) {
   const bool = useMediaQuery({
-    query: `(max-width: ${breakpoints[breakpointKey]})`,
+    query: `(min-width: ${breakpoints[breakpointKey]})`,
   })
   const capitalizedKey = breakpointKey[0].toUpperCase() + breakpointKey.substring(1)
   type Key = `is${Capitalize<K>}`

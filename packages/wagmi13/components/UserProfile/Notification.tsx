@@ -67,17 +67,17 @@ export const Notification: FC<{ data: NotificationData; showExtra?: boolean; hid
     <div className="relative hover:opacity-80">
       {showExtra && (
         <Disclosure.Button className="absolute right-3 top-0 bottom-0 z-[100]">
-          {({ open }) => {
-            return (
-              <IconButton as="div">
-                <ChevronDownIcon
-                  width={20}
-                  height={20}
-                  className={classNames(open ? 'rotate-180' : 'rotate-0', 'rounded-full transition-all delay-200')}
-                />
-              </IconButton>
-            )
-          }}
+          {({ open }) => (
+            <IconButton
+              icon={ChevronDownIcon}
+              iconProps={{
+                width: 20,
+                height: 20,
+                className: classNames(open ? 'rotate-180' : 'rotate-0', 'rounded-full transition-all delay-200'),
+              }}
+              as="div"
+            />
+          )}
         </Disclosure.Button>
       )}
       <ExternalLink

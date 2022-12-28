@@ -5,9 +5,12 @@ import React, { Fragment, SVGProps, useState } from 'react'
 
 import { PolymorphicComponentProps } from '../../types'
 
-export interface Props {
-  icon?: (props: SVGProps<SVGSVGElement>) => JSX.Element
-  iconProps?: React.ComponentProps<'svg'>
+interface ExtraProps<T> {
+  icon?: React.FC<T>
+  iconProps?: T & { width: number; height: number }
+}
+
+interface Props {
   title: string
   subtitle?: string
   onClick?(): void
@@ -18,9 +21,10 @@ export interface Props {
   }
 }
 
-export type ListItemProps<C extends React.ElementType> = PolymorphicComponentProps<C, Props>
-export type ListItemComponent = <C extends React.ElementType = 'button'>(
-  props: ListItemProps<C>
+export type ListItemProps<T, C extends React.ElementType> = PolymorphicComponentProps<C, Props & ExtraProps<T>>
+
+export type ListItemComponent = <T, C extends React.ElementType = 'button'>(
+  props: ListItemProps<T, C>
 ) => React.ReactElement | null
 
 export const ListItem: ListItemComponent = ({
@@ -50,6 +54,8 @@ export const ListItem: ListItemComponent = ({
         'relative flex gap-3 px-4 py-3 hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] w-full items-center cursor-pointer'
       )}
     >
+      {/*// TODO RAMIN*/}
+      {/*// @ts-ignore*/}
       {Icon && <Icon {...iconProps} width={iconProps?.width ?? 20} height={iconProps?.height ?? 20} />}
       <div className="flex flex-col gap-0.5 items-start">
         <span className="text-sm font-medium dark:text-slate-200">{title}</span>

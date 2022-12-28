@@ -32,7 +32,8 @@ interface DefaultProps {
 export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => {
   const { data: prices } = usePrices({ chainId })
   const { data: avatar } = useEnsAvatar({
-    address: address,
+    chainId: ChainId.ETHEREUM,
+    address,
   })
 
   const { data: _balance } = useBalance({
@@ -57,7 +58,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
     <>
       <div className="flex flex-col gap-8 p-4">
         <div className="flex justify-between gap-3">
-          <p className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
+          <div className="text-sm font-semibold flex items-center gap-1.5 text-gray-700 dark:text-slate-200">
             {avatar ? (
               <div className="w-4 h-4">
                 <Image alt="ens-avatar" src={avatar} width={16} height={16} className="rounded-full" />
@@ -72,7 +73,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
                 </span>
               )}
             </ClipboardController>
-          </p>
+          </div>
           <div className="flex gap-5">
             <IconButton
               as="a"
@@ -88,7 +89,7 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
                   icon={DocumentDuplicateIcon}
                   iconProps={{ width: 18, height: 18 }}
                   onClick={() => setCopied(address)}
-                  description={isCopied ? 'Copied!' : 'Copy'}
+                  description={isCopied ? 'Copied!' : 'Copy Address'}
                 />
               )}
             </ClipboardController>
@@ -98,13 +99,13 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
               as="a"
               target="_blank"
               href={chains[chainId].getAccountUrl(address)}
-              description="Explore"
+              description="View on Explorer"
             />
             <IconButton
               icon={ArrowLeftOnRectangleIcon}
               iconProps={{ width: 18, height: 18 }}
               onClick={() => disconnect()}
-              description="Disconnect"
+              description="Disconnect Wallet"
             />
           </div>
         </div>

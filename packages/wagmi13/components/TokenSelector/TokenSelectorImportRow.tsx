@@ -1,131 +1,92 @@
-import { DocumentDuplicateIcon, ExclamationTriangleIcon, LinkIcon } from '@heroicons/react/24/outline'
+import { ExclamationTriangleIcon, LinkIcon, PlusIcon } from '@heroicons/react/24/outline'
 import chain from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
-import { classNames } from '@sushiswap/ui13'
 import { SlideIn } from '@sushiswap/ui13/components/animation'
 import { Button } from '@sushiswap/ui13/components/button'
-import { ClipboardController } from '@sushiswap/ui13/components/ClipboardController'
 import { Icon } from '@sushiswap/ui13/components/currency/Icon'
-import { IconButton } from '@sushiswap/ui13/components/IconButton'
+import { List } from '@sushiswap/ui13/components/list/List'
 import { Overlay } from '@sushiswap/ui13/components/overlay'
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 
 interface TokenSelectorImportRow {
-  hideIcons?: boolean
   currencies: (Token | undefined)[]
-  className?: string
   onImport(): void
   slideIn?: boolean
 }
 
-export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
-  currencies,
-  className,
-  onImport,
-  hideIcons = false,
-  slideIn = true,
-}) => {
+export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies, onImport, slideIn = true }) => {
   const [open, setOpen] = useState<boolean>(false)
+
+  const onClick = useCallback(() => {
+    onImport()
+
+    setTimeout(() => {
+      setOpen(false)
+    }, 250)
+  }, [onImport])
 
   const content = useMemo(
     () => (
       <div className="space-y-3 my-3">
         <div className="rounded-2xl p-3 flex flex-col gap-2 items-center">
-          {!hideIcons && (
-            <div className="w-10 h-10 bg-white rounded-full overflow-hidden">
-              <div className="flex items-center justify-center w-full h-full bg-red/10">
-                <div className="w-5 h-5">
-                  <ExclamationTriangleIcon width={20} height={20} className="text-red" />
-                </div>
-              </div>
-            </div>
-          )}
-          <span className="font-medium text-lg text-slate-200">Trade at your own risk!</span>
-          <span className="text-sm text-slate-400 text-center">
+          <ExclamationTriangleIcon width={26} height={26} className="text-red" />
+          <span className="font-medium text-lg text-gray-900 dark:text-slate-200">Trade at your own risk!</span>
+          <span className="text-sm text-gray-600 dark:text-slate-400 text-center">
             {currencies.length > 1 ? "These tokens don't" : "This token doesn't"} appear on the active token list(s).
             Anyone can create a token, including creating fake versions of existing tokens that claim to represent
             projects
           </span>
         </div>
-        {currencies.map((currency) => {
-          if (!currency) return
-          return (
-            <div
-              key={currency.wrapped.address}
-              className="flex justify-between px-4 p-3 items-center bg-slate-700 rounded-2xl"
-            >
-              <div className="flex flex-col">
-                <span className="font-medium text-slate-200">{currency.symbol}</span>
-                <span className="text-xs font-medium text-slate-400">{currency.name}</span>
-              </div>
-              <div className="flex-flex-col">
-                <a
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  className="text-sm font-medium text-blue hover:text-blue-400 flex gap-1 items-center"
-                  href={chain[currency.chainId].getTokenUrl(currency.wrapped.address)}
-                >
-                  View on Explorer <LinkIcon width={16} height={16} />
-                </a>
-                <ClipboardController hideTooltip={true}>
-                  {({ isCopied, setCopied }) => (
-                    <IconButton
-                      icon={DocumentDuplicateIcon}
-                      onClick={() => setCopied(currency?.wrapped.address)}
-                      className="p-0.5"
-                      description={isCopied ? 'Copied!' : 'Copy'}
-                      iconProps={{
-                        width: 18,
-                        height: 18,
-                      }}
-                    />
-                  )}
-                </ClipboardController>
-              </div>
-            </div>
-          )
-        })}
-        <Button size="md" as="div" onClick={onImport}>
-          Import
-        </Button>
+        <List>
+          <List.Control>
+            {currencies.reduce<ReactNode[]>((acc, cur) => {
+              if (cur) {
+                acc.push(
+                  <List.Item
+                    as="a"
+                    href={chain[cur.chainId].getTokenUrl(cur.wrapped.address)}
+                    target="_blank"
+                    icon={Icon}
+                    iconProps={{ currency: cur, width: 28, height: 28 }}
+                    title={cur.symbol || ''}
+                    hoverIcon={LinkIcon}
+                    hoverIconProps={{ width: 20, height: 20, className: 'text-blue' }}
+                  />
+                )
+              }
+
+              return acc
+            }, [])}
+          </List.Control>
+        </List>
+        <div className="absolute bottom-3 left-3 right-3">
+          <Button fullWidth size="xl" variant="outlined" color="blue" onClick={onClick}>
+            Import
+          </Button>
+        </div>
       </div>
     ),
-    [currencies, hideIcons, onImport]
+    [currencies, onImport]
   )
 
   return (
     <>
       {slideIn && currencies[0] ? (
         <>
-          <button
-            type="button"
+          <List.Item
+            className="!px-2 rounded-xl hover:!bg-white hover:dark:!bg-slate-800"
+            icon={Icon}
+            iconProps={{ currency: currencies[0], width: 28, height: 28 }}
+            title={currencies[0].symbol || ''}
             onClick={() => setOpen(true)}
-            className={classNames(
-              className,
-              `group flex items-center w-full px-6 py-2.5 token-${currencies[0]?.symbol}`
-            )}
-          >
-            <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
-              <div className="flex flex-row items-center flex-grow gap-2">
-                <div className="w-7 h-7">
-                  <Icon currency={currencies[0]} width={28} height={28} />
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-xs font-medium text-slate-200">{currencies[0].symbol}</span>
-                  <span className="text-[10px] text-slate-500">{currencies[0].name}</span>
-                </div>
-              </div>
-              <Button as="div" color="blue" size="xs">
-                Import
-              </Button>
-            </div>
-          </button>
-          <SlideIn.FromLeft show={open} onClose={() => setOpen(false)}>
-            <Overlay.Content className="bg-slate-800 !pb-0">
-              <Overlay.Header onClose={() => setOpen(false)} title="Import Token" />
+            hoverIcon={PlusIcon}
+          />
+          <SlideIn.FromRight show={open} onClose={() => setOpen(false)}>
+            <Overlay.Content className="bg-white dark:bg-slate-800 !pb-0">
+              <Overlay.Header onBack={() => setOpen(false)} title="" />
               {content}
             </Overlay.Content>
-          </SlideIn.FromLeft>
+          </SlideIn.FromRight>
         </>
       ) : (
         content

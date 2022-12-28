@@ -15,7 +15,7 @@ export interface Header {
 
 export const Header: FC<Header> = ({ className, title, onBack, onClose, arrowDirection = 'left' }) => {
   return (
-    <div className={classNames(className, 'grid grid-cols-[40px_auto_40px] py-3 mb-3')}>
+    <div className={classNames(className, 'grid grid-cols-[40px_auto_40px] mb-3')}>
       {onBack ? (
         <Button
           variant="outlined"

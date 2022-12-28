@@ -91,14 +91,17 @@ body {
     -webkit-appearance: none;
   }
 
-  .without-ring:focus, .without-ring:focus-within, .without-ring:focus-visible {
-    @apply ring-0 ring-offset-0 outline-none shadow-none;
+  button:focus, input:focus, a:focus, img:focus {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0
   }
 
-  [type="checkbox"]:focus, [type="checkbox"]:focus-within, [type="checkbox"]:focus-visible {
-    @apply focus:ring-0 focus:ring-offset-0 focus-within:outline-none;
+  button:focus-within, input:focus-within, a:focus-within, img:focus-within {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0
   }
 
+  button:focus-visible, input:focus-visible, a:focus-visible, img:focus-visible {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0
+  }
 }
 
 @keyframes snowfall {
