@@ -1,7 +1,11 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
+
 import { getBuiltGraphSDK, PairsQuery } from '../../../.graphclient/index.js'
+import { ProtocolName } from '../../config.js'
+import { createPools, getLatestPoolTimestamp } from '../../etl/pool/load.js'
+import { createTokens } from '../../etl/token/load.js'
 import {
   GRAPH_HOST,
   LEGACY_SUBGRAPH_NAME,
@@ -9,9 +13,6 @@ import {
   TRIDENT_CHAINS,
   TRIDENT_SUBGRAPH_NAME
 } from './config.js'
-import { createPools, getLatestPoolTimestamp } from '../../etl/pool/load.js'
-import { createTokens } from '../../etl/token/load.js'
-import { ProtocolName } from '../../config.js'
 
 const client = new PrismaClient()
 

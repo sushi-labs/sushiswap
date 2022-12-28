@@ -1,5 +1,6 @@
 import { ChainId } from "@sushiswap/chain"
-import { GRAPH_HOST_ENDPOINT, SUSHI_HOST_ENDPOINT } from "src/config.js"
+
+import { GRAPH_HOST_ENDPOINT, SUSHI_HOST_ENDPOINT } from "../../config.js"
 
 export const GRAPH_HOST: Record<number | string, string> = {
     [ChainId.OPTIMISM]: GRAPH_HOST_ENDPOINT,
