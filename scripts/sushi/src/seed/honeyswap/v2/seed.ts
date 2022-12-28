@@ -52,7 +52,7 @@ async function start() {
     }
     console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${HONEYSWAP_V2_SUBGRAPH_NAME[chainId]}`)
     let pairCount = 0
-    let cursor: string = ''
+    let cursor = ''
 
     do {
       const startTime = performance.now()

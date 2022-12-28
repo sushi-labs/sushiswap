@@ -41,6 +41,16 @@ sources:
           value: MINIMAL_
           includeRootOperations: true
           includeTypes: true
+  - name: TraderJoe
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:traderjoe-xyz/exchange}
+        retry: 3
+    transforms:
+      - prefix:
+          value: TJ_
+          includeRootOperations: true
+          includeTypes: true
 documents:
   - ./query.graphql
 

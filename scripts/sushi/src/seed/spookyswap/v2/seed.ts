@@ -1,7 +1,8 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
-import { getBuiltGraphSDK, V2PairsQuery } from '../../../../.graphclient/index.js'
+
+import { getBuiltGraphSDK, TraderJoePairsQuery } from '../../../../.graphclient/index.js'
 import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
 import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
@@ -50,21 +51,19 @@ async function start() {
     }
     console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${SPOOKYSWAP_V2_SUBGRAPH_NAME[chainId]}`)
     let pairCount = 0
-    let cursor: string = ''
+    let cursor = ''
 
     do {
       const startTime = performance.now()
       let where = {}
       if (latestPoolTimestamp) {
         where =
-          cursor !== ''
-            ? { id_gt: cursor, createdAtTimestamp_gt: latestPoolTimestamp }
-            : { createdAtTimestamp_gt: latestPoolTimestamp }
+          cursor !== '' ? { id_gt: cursor, timestamp_gt: latestPoolTimestamp } : { timestamp_gt: latestPoolTimestamp }
       } else {
         where = cursor !== '' ? { id_gt: cursor } : {}
       }
       const request = await sdk
-        .V2Pairs({
+        .TraderJoePairs({
           first: 1000,
           where,
         })
@@ -73,7 +72,7 @@ async function start() {
           return undefined
         })
         .catch(() => undefined)
-      const currentResultCount = request?.V2_pairs.length ?? 0
+      const currentResultCount = request?.TJ_pairs.length ?? 0
       const endTime = performance.now()
 
       pairCount += currentResultCount
@@ -92,7 +91,7 @@ async function start() {
         await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
 
-      const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''
+      const newCursor = request?.TJ_pairs[request.TJ_pairs.length - 1]?.id ?? ''
       cursor = newCursor
     } while (cursor !== '')
     totalPairCount += pairCount
@@ -105,14 +104,14 @@ async function start() {
 
 function transform(
   chainId: ChainId,
-  data: V2PairsQuery
+  data: TraderJoePairsQuery
 ): {
   pools: Prisma.PoolCreateManyInput[]
   tokens: Prisma.TokenCreateManyInput[]
 } {
   const tokens: Prisma.TokenCreateManyInput[] = []
   const uniqueTokens: Set<string> = new Set()
-  const poolsTransformed = data.V2_pairs.map((pair) => {
+  const poolsTransformed = data.TJ_pairs.map((pair) => {
     if (!uniqueTokens.has(pair.token0.id)) {
       uniqueTokens.add(pair.token0.id)
       tokens.push(

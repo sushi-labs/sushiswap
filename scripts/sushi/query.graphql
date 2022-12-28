@@ -20,10 +20,6 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
     twapEnabled
     liquidityUSD
   }
-
-  bundle(id: 1, block: $block) {
-    nativePrice
-  }
 }
 
 query V2Pairs(
@@ -110,5 +106,29 @@ query PCSPairs($first: Int = 1000, $skip: Int = 0, $where: MINIMAL_Pair_filter, 
       decimals
     }
     name
+  }
+}
+
+query TraderJoePairs($first: Int = 1000, $skip: Int = 0, $where: TJ_Pair_filter, $block: TJ_Block_height) {
+  TJ_pairs(
+    first: $first
+    skip: $skip
+    where: $where
+    block: $block
+  ) {
+    id
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    liquidityUSD: reserveUSD
   }
 }

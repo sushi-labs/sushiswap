@@ -60,7 +60,7 @@ async function start() {
 
     console.log(`Loading data from ${subgraph.host} ${subgraph.name}`)
     let subgraphPairCount = 0
-    let cursor: string = ''
+    let cursor = ''
 
     do {
       const startTime = performance.now()

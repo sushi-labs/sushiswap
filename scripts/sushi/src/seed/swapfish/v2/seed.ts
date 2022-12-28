@@ -49,7 +49,7 @@
 //     }
 //     console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${SWAPFISH_SUBGRAPH_NAME[chainId]}`)
 //     let pairCount = 0
-//     let cursor: string = ''
+//     let cursor = ''
 
 //     do {
 //       const startTime = performance.now()
