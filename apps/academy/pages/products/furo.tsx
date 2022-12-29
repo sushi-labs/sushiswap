@@ -18,7 +18,7 @@ import Image from 'next/legacy/image'
 import { FC } from 'react'
 import useSWR from 'swr'
 
-import { ArticleEntity } from '.mesh'
+import { ProductSeo } from '../../common/components/Seo/ProductSeo'
 
 const PRODUCT_SLUG = 'furo'
 const { color, cards, buttonText, productStats, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
@@ -30,25 +30,21 @@ export const getStaticProps: GetStaticProps = async () => {
   return { props: product, revalidate: 60 }
 }
 
-const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
-  name,
-  longName,
-  url,
-  description,
-  slug,
-  relevantArticleIds,
-}) => {
+const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product) => {
+  const { name, longName, url, description, slug, relevantArticleIds } = product
+
   const { data, isValidating } = useSWR(
     [`/furo-articles`],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
     { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false }
   )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles?.data ?? []
+  const relevantArticles = data?.relevantArticles?.data ?? []
 
   return (
     <>
+      <ProductSeo product={product} />
       <Container maxWidth="6xl" className={classNames('mx-auto pt-10', DEFAULT_SIDE_PADDING)}>
         <ProductBackground color={color} />
         <ProductHero

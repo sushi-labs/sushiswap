@@ -2,8 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Amount, Type } from '@sushiswap/currency'
 import { FundSource, useInViewport } from '@sushiswap/hooks'
 import { Fraction, ZERO } from '@sushiswap/math'
-import { classNames, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import { classNames, Currency, Typography } from '@sushiswap/ui'
 import React, { CSSProperties, FC, memo, useCallback, useRef } from 'react'
 
 interface TokenSelectorRow {
@@ -38,7 +37,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(
         <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
           <div className="flex flex-row items-center flex-grow gap-2">
             <div className="w-7 h-7">
-              <Icon currency={currency} width={28} height={28} priority={inViewport} />
+              <Currency.Icon currency={currency} width={28} height={28} priority={inViewport} />
             </div>
             <div className="flex flex-col items-start">
               <Typography variant="xs" weight={500} className="text-slate-200 group-hover:text-slate-50">

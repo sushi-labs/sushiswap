@@ -1,4 +1,4 @@
-import { Chain } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui'
 import { FC, ReactElement } from 'react'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
@@ -18,7 +18,7 @@ export const Network: FC<NetworkProps> = ({ chainId, children, ...rest }): React
   if (chain?.id !== chainId)
     return (
       <Button onClick={() => switchNetwork && switchNetwork(chainId)} {...rest}>
-        Switch to {Chain.from(chainId).name}
+        Switch to {chainName[chainId]}
       </Button>
     )
 

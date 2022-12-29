@@ -1,8 +1,7 @@
 import { DotsHorizontalIcon } from '@heroicons/react/solid'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { STARGATE_TOKEN } from '@sushiswap/stargate'
-import { Badge, Chip, NetworkIcon, Tooltip, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import { Badge, Chip, Currency, NetworkIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { UseTradeOutput } from '../lib/hooks'
@@ -46,7 +45,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     }
                   >
                     <div className="w-5 h-5">
-                      <Icon currency={inputAmount.currency} width={20} height={20} />
+                      <Currency.Icon currency={inputAmount.currency} width={20} height={20} />
                     </div>
                   </Badge>
                 </div>
@@ -84,13 +83,13 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     }
                   >
                     <div className="w-[18px] h-[18px]">
-                      <Icon currency={srcBridgeToken.wrapped} width={18} height={18} />
+                      <Currency.Icon currency={srcBridgeToken.wrapped} width={18} height={18} />
                     </div>
                   </Badge>
 
                   <DotsHorizontalIcon width={12} className="text-slate-600" />
                   <div className="flex items-center justify-center">
-                    <Icon currency={STARGATE_TOKEN} width={18} height={18} />
+                    <Currency.Icon currency={STARGATE_TOKEN} width={18} height={18} />
                   </div>
                   <DotsHorizontalIcon width={12} className="text-slate-600" />
                   <Badge
@@ -106,7 +105,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     }
                   >
                     <div className="w-[18px] h-[18px]">
-                      <Icon currency={dstBridgeToken.wrapped} width={18} height={18} />
+                      <Currency.Icon currency={dstBridgeToken.wrapped} width={18} height={18} />
                     </div>
                   </Badge>
                 </div>
@@ -138,7 +137,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     }
                   >
                     <div className="w-5 h-5">
-                      <Icon currency={outputAmount.currency} width={20} height={20} />
+                      <Currency.Icon currency={outputAmount.currency} width={20} height={20} />
                     </div>
                   </Badge>
                 </div>

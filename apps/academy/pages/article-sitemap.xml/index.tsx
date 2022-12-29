@@ -4,18 +4,15 @@ import { getServerSideSitemap, ISitemapField } from 'next-sitemap'
 import { getAllArticlesBySlug } from '../../lib/api'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const {
-    articles: { data: articles },
-  } = await getAllArticlesBySlug()
+  const { articles } = await getAllArticlesBySlug()
+  const slugs = articles?.data.map((article) => article.attributes?.slug)
 
-  const slugs = articles.map((article) => article.attributes.slug)
-
-  const fields = slugs.map<ISitemapField>((slug) => ({
+  const fields = slugs?.map<ISitemapField>((slug) => ({
     loc: `https://sushi.com/academy/articles/${slug}`,
     changefreq: 'never',
   }))
 
-  return getServerSideSitemap(ctx, fields)
+  return getServerSideSitemap(ctx, fields || [])
 }
 
 export default function Sitemap() {

@@ -1,8 +1,9 @@
-import { ethers } from 'ethers'
 import { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
+import { ethers } from 'ethers'
+
 import { Limited } from '../Limited'
 import { PoolCode } from '../pools/PoolCode'
-import { Token } from '@sushiswap/currency'
 
 export abstract class LiquidityProvider {
   limited: Limited

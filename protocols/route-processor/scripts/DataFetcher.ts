@@ -1,11 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
+import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 import { ethers } from 'ethers'
 
 import { Limited } from './Limited'
 import { LiquidityProviderMC, LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
+import { NativeWrapProvider } from './liquidityProviders/NativeWrapProvider'
 import { QuickSwapProviderMC } from './liquidityProviders/QuickSwapMC'
 import { SushiProviderMC } from './liquidityProviders/SushiMC'
+import { TridentProviderMC } from './liquidityProviders/TridentMC'
 import { UniSwapV2ProviderMC } from './liquidityProviders/UniswapV2MC'
 import { MultiCallProvider } from './MulticallProvider'
 import { PoolCode } from './pools/PoolCode'
@@ -42,6 +44,9 @@ export class DataFetcher {
     this.poolCodes = new Map()
 
     this.providers = []
+    this.providers.push(
+      new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+    )
     if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
       this.providers.push(
         new SushiProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
@@ -54,6 +59,10 @@ export class DataFetcher {
       this.providers.push(
         new QuickSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers))
+      this.providers.push(
+        new TridentProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
 
     this.providers.forEach((p) => p.startFetchPoolsData())
   }
@@ -63,8 +72,10 @@ export class DataFetcher {
     this.providers.forEach((p) => p.stopFetchPoolsData())
   }
 
-  fetchPoolsForToken(t0: Token, t1: Token) {
-    this.providers.forEach((p) => p.fetchPoolsForToken(t0, t1))
+  fetchPoolsForToken(t0: Type, t1: Type) {
+    if (t0 instanceof Native) t0 = WNATIVE[t0.chainId]
+    if (t1 instanceof Native) t1 = WNATIVE[t1.chainId]
+    this.providers.forEach((p) => p.fetchPoolsForToken(t0 as Token, t1 as Token))
   }
 
   getCurrentPoolCodeMap(providers?: LiquidityProviders[]): Map<string, PoolCode> {
@@ -93,9 +104,11 @@ export class DataFetcher {
     return Array.from(pcMap.values())
   }
 
-  getCurrentPoolStateId() {
-    const currentStateId = this.providers.reduce((a, b) => (a += b.getCurrentPoolStateId()), 0)
-    this.stateId = currentStateId
-    return this.stateId
+  getCurrentPoolStateId(providers?: LiquidityProviders[]) {
+    let state = 0
+    this.providers.forEach((p) => {
+      if (this._providerIsIncluded(p.getType(), providers)) state += p.getCurrentPoolStateId()
+    })
+    return state
   }
 }

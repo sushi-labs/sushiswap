@@ -1,10 +1,21 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "globalEnv": [
+    "CI",
+    "NODE_ENV",
+    "ALCHEMY_ID", 
+    "GITHUB_TOKEN",
+    "NEXT_PUBLIC_ALCHEMY_ID"
+  ],
   "globalDependencies": [
-    "ALCHEMY_ID", 
-    "NEXT_PUBLIC_INFURA_ID", 
-    "ALCHEMY_ID", 
-    "NEXT_PUBLIC_INFURA_ID"
+    ".eslintignore",
+    ".npmrc",
+    ".nvmrc",
+    ".prettierignore",
+    ".eslint.js",
+    ".mocharc.js",
+    ".prettierrc.js",
+    "tsconfig.json"
   ],
   "pipeline": {
     "furo:build": {
@@ -94,6 +105,7 @@
     },
     "build": {
       "outputs": [
+        ".vercel/**",
         ".next/**",
         ".graphclient/**",
         ".mesh/**",
@@ -101,12 +113,11 @@
         "typechain/**",
         "artifacts/**",
         "cache/**",
-        "public/**"
+        "public/**",
+        "storybook-static/**"
       ],
       "dependsOn": [
         "^build",
-        "^db:generate",
-        "db:generate",
         "generate"
       ],
       "env": [

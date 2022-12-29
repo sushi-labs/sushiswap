@@ -1,11 +1,11 @@
 import { ArticleJsonLd, NextSeo } from 'next-seo'
 import { FC } from 'react'
 
-import { Article } from '../../../.mesh'
+import { Article, Maybe } from '../../../.mesh'
 import { getOptimizedMedia, isMediaVideo } from '../../../lib/media'
 
 interface ArticleSeo {
-  article?: Article
+  article?: Maybe<Article> | undefined
 }
 
 export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
@@ -25,18 +25,20 @@ export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
         title={article.title}
         description={article.description}
         openGraph={{
-          ...(isMediaVideo(article.cover.data.attributes.provider_metadata)
+          ...(isMediaVideo(article.cover.data?.attributes?.provider_metadata)
             ? {
                 videos: [{ url: cover }],
               }
             : {
-                images: [{ url: cover, alt: coverAlt }],
+                images: [{ url: cover, alt: coverAlt || '' }],
               }),
           article: {
             publishedTime: article.publishedAt,
             modifiedTime: article.updatedAt,
-            authors: authors.map((author) => author.name),
-            tags: article.topics?.data.reduce<string[]>((acc, el) => [...acc, el.attributes.name], []),
+            authors: authors?.map((author) => author.name),
+            tags: article.topics?.data
+              .reduce<(Maybe<string> | undefined)[]>((acc, el) => [...acc, el.attributes?.name], [])
+              .filter(Boolean) as string[],
           },
         }}
         twitter={{

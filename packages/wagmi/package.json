@@ -37,6 +37,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/format": "workspace:*",
     "@sushiswap/furo": "workspace:*",
+    "@sushiswap/gas": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/kashi": "workspace:*",
     "@sushiswap/math": "workspace:*",
@@ -46,7 +47,7 @@
     "@sushiswap/trident": "1.0.0-canary.53",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi-config": "workspace:*",
-    "@tanstack/react-query": "4.19.1",
+    "@tanstack/react-query": "4.20.4",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1"
   },
@@ -62,7 +63,7 @@
     "ethers": "^5.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "next": "13.0.5",
+    "next": "13.0.7",
     "tsup": "6.5.0",
     "typechain": "^8.0.0",
     "typescript": "4.8.2",
@@ -76,6 +77,6 @@
     "@wagmi/core": "0.8.1"
   },
   "optionalDependencies": {
-    "next": "13.0.5"
+    "next": "13.0.7"
   }
 }

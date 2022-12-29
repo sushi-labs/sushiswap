@@ -1,14 +1,15 @@
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { BigNumber, ethers } from 'ethers'
-import { LiquidityProvider } from './LiquidityProvider'
-import { getCreate2Address } from 'ethers/lib/utils'
 import { keccak256, pack } from '@ethersproject/solidity'
-import { SushiPoolABI } from '../../ABI/SushiPool'
-import { Limited } from '../Limited'
-import { PoolCode } from '../pools/PoolCode'
-import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
+import { ConstantProductRPool, RToken } from '@sushiswap/tines'
+import { BigNumber, ethers } from 'ethers'
+import { getCreate2Address } from 'ethers/lib/utils'
+
+import { SushiPoolABI } from '../../ABI/SushiPool'
+import { Limited } from '../Limited'
+import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
+import { PoolCode } from '../pools/PoolCode'
+import { LiquidityProvider } from './LiquidityProvider'
 
 const QUICKSWAP_FACTORY: Record<string | number, string> = {
   [ChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
