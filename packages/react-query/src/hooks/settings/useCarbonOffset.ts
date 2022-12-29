@@ -7,6 +7,7 @@ interface UseCarbonOffset {
 export const useCarbonOffset = ({ account }: UseCarbonOffset) => {
   const queryClient = useQueryClient()
   return useQuery<unknown, unknown, boolean>({
+    initialData: false,
     queryKey: ['carbonOffset', { account }],
     queryFn: () => queryClient.getQueryData<boolean>(['carbonOffset', { account }]),
   })

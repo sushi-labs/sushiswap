@@ -14,6 +14,7 @@ interface Props {
   title: string
   subtitle?: ReactNode
   onClick?(): void
+  hover?: boolean
   hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element
   hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
     width: number
@@ -39,6 +40,7 @@ export const ListItem: ListItemComponent = ({
   hoverIconProps,
   className,
   value,
+  hover: hoverProp,
   ...rest
 }) => {
   const Component = as || 'button'
@@ -54,11 +56,16 @@ export const ListItem: ListItemComponent = ({
       className={classNames(
         className,
         subtitle ? 'items-start' : 'items-center',
-        'relative flex gap-4 px-4 py-3 hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] w-full cursor-pointer'
+        hoverProp
+          ? 'hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03]'
+          : '',
+        'relative flex gap-4 px-4 py-3 w-full cursor-pointer'
       )}
     >
       {Icon && (
-        <div style={{ minWidth: iconProps?.width ?? 18, minHeight: iconProps?.height ?? 18 }}>
+        <div
+          style={{ minWidth: iconProps?.width ?? 18, minHeight: iconProps?.height ?? 18, paddingTop: subtitle ? 1 : 0 }}
+        >
           {/*// TODO ramin
           // @ts-ignore*/}
           <Icon
@@ -75,7 +82,7 @@ export const ListItem: ListItemComponent = ({
         {subtitle && <span className="text-[10px] text-gray-700 dark:text-slate-400 text-left">{subtitle}</span>}
       </div>
       {typeof value === 'string' ? <span className="text-xs text-gray-500 dark:text-slate-500">{value}</span> : value}
-      {!value && (
+      {!value && hoverProp && (
         <Transition
           as={Fragment}
           show={hover}

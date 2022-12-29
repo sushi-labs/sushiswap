@@ -6,6 +6,7 @@ type SwitchColor = 'default'
 
 type SwitchProps = {
   checked: boolean
+  className?: ((checked: boolean) => string) | string
   onChange(checked: boolean): void
   size?: 'xs' | 'sm' | 'md'
   checkedIcon?: ReactNode
@@ -43,6 +44,7 @@ export const Switch: FC<SwitchProps> = ({
   size = 'md',
   checked,
   onChange,
+  className,
   checkedIcon = '',
   uncheckedIcon = '',
   id = '',
@@ -55,6 +57,7 @@ export const Switch: FC<SwitchProps> = ({
       checked={checked}
       onChange={onChange}
       className={classNames(
+        typeof className === 'function' ? className(checked) : className,
         checked ? 'bg-blue' : 'bg-gray-300 dark:bg-white/[0.12]',
         `flex items-center relative inline-flex flex-shrink-0 rounded-full cursor-pointer ease-in-out duration-200 ${id}`
       )}

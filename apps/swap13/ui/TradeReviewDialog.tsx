@@ -63,7 +63,7 @@ export const TradeReviewDialog: FC = () => {
                 <List.KeyValue title="Recipient">
                   <a
                     target="_blank"
-                    href={Chain.fromChainId(network0).getAccountUrl(recipient)}
+                    href={Chain.fromChainId(network0)?.getAccountUrl(recipient) ?? '#'}
                     className="flex gap-2 items-center text-blue transition-all cursor-pointer"
                     rel="noreferrer"
                   >

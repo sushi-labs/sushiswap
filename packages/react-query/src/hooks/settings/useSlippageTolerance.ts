@@ -6,8 +6,9 @@ interface UseSlippageTolerance {
 
 export const useSlippageTolerance = ({ account }: UseSlippageTolerance) => {
   const queryClient = useQueryClient()
-  return useQuery<unknown, unknown, boolean>({
-    queryKey: ['carbonOffset', { account }],
-    queryFn: () => queryClient.getQueryData<boolean>(['carbonOffset', { account }]),
+  return useQuery<unknown, unknown, 'AUTO' | string>({
+    initialData: 'AUTO',
+    queryKey: ['slippageTolerance', { account }],
+    queryFn: () => queryClient.getQueryData<'AUTO' | string>(['slippageTolerance', { account }]),
   })
 }

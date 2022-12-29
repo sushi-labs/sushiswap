@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export interface UseSetSlippageTolerancePayload {
-  value: boolean
+  value: 'AUTO' | string
 }
 
 export const useSetSlippageTolerance = ({ account }: { account?: string }) => {
@@ -9,9 +9,9 @@ export const useSetSlippageTolerance = ({ account }: { account?: string }) => {
   return useMutation({
     // TODO why ts error?
     // @ts-ignore
-    mutationKey: ['carbonOffset', { account }],
+    mutationKey: ['slippageTolerance', { account }],
     mutationFn: ({ value }: UseSetSlippageTolerancePayload) => {
-      queryClient.setQueryData<boolean>(['carbonOffset', { account }], () => {
+      queryClient.setQueryData<'AUTO' | string>(['slippageTolerance', { account }], () => {
         return value
       })
     },

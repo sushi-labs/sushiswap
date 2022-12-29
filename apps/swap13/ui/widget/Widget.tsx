@@ -19,7 +19,9 @@ export const Widget: FC = () => {
       <WidgetTitle />
       <div className="flex justify-between items-center">
         <SwitchAppType />
-        <SettingsOverlay2 modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
+        <SettingsOverlay2
+          modules={[SettingsModule.SlippageTolerance, SettingsModule.ExpertMode, SettingsModule.CarbonOffset]}
+        />
       </div>
       <UIWidget.Content>
         <Web3Input.Currency

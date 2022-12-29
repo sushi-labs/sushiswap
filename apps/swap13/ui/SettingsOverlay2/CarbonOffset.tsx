@@ -1,7 +1,6 @@
 'use client'
 
-import { useCarbonOffset } from '@sushiswap/react-query/src/hooks/settings/useCarbonOffset'
-import { useSetCarbonOffset } from '@sushiswap/react-query/src/hooks/settings/useSetCarbonOffset'
+import { useCarbonOffset, useSetCarbonOffset } from '@sushiswap/react-query'
 import { CarbonIcon } from '@sushiswap/ui13/components/icons'
 import { List } from '@sushiswap/ui13/components/list/List'
 import Switch from '@sushiswap/ui13/components/Switch'
@@ -21,7 +20,7 @@ export const CarbonOffset: FC<CarbonOffsetProps> = ({ account }) => {
       as="div"
       icon={CarbonIcon}
       iconProps={{ width: 20, height: 20 }}
-      title="Carbon Offset"
+      title="Carbon offset (Polygon)"
       subtitle={
         <>
           Make transactions climate positive by offsetting them with{' '}

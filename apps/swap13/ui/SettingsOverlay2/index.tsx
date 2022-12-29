@@ -5,13 +5,14 @@ import React, { FC, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { CarbonOffset } from './CarbonOffset'
+import { ExpertMode } from './ExpertMode'
 import { SlippageTolerance } from './SlippageTolerance'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',
   CustomTokens = 'CustomTokens',
   SlippageTolerance = 'SlippageTolerance',
-  ExperMode = 'ExpertMode',
+  ExpertMode = 'ExpertMode',
 }
 
 interface SettingsOverlayProps {
@@ -42,6 +43,7 @@ export const SettingsOverlay2: FC<SettingsOverlayProps> = ({ modules }) => {
           <List className="!pt-0">
             <List.Control>
               {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset account={account} />}
+              {modules.includes(SettingsModule.ExpertMode) && <ExpertMode account={account} />}
             </List.Control>
           </List>
         </Dialog.Content>

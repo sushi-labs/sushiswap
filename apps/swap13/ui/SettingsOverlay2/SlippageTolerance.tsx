@@ -1,9 +1,9 @@
-import { QrCodeIcon } from '@heroicons/react/24/outline'
-import { useSetSlippageTolerance } from '@sushiswap/react-query/src/hooks/settings/useSetSlippageTolerance'
-import { useSlippageTolerance } from '@sushiswap/react-query/src/hooks/settings/useSlippageTolerance'
+import { useSetSlippageTolerance, useSlippageTolerance } from '@sushiswap/react-query'
+import { FormInputNumeric } from '@sushiswap/ui13/components/form/FormInputNumeric'
+import { WaterIcon } from '@sushiswap/ui13/components/icons/WaterIcon'
 import { List } from '@sushiswap/ui13/components/list/List'
-import Switch from '@sushiswap/ui13/components/Switch'
-import React, { FC } from 'react'
+import { Tab } from '@sushiswap/ui13/components/tabs'
+import React, { FC, useCallback } from 'react'
 
 interface SlippageToleranceProps {
   account?: string
@@ -13,26 +13,48 @@ export const SlippageTolerance: FC<SlippageToleranceProps> = ({ account }) => {
   const { data: slippageTolerance } = useSlippageTolerance({ account })
   const { mutate: updateSlippageTolerance } = useSetSlippageTolerance({ account })
 
+  const onChange = useCallback(
+    (value: number) => {
+      if (value === 0) {
+        updateSlippageTolerance({ value: 'AUTO' })
+      }
+    },
+    [updateSlippageTolerance]
+  )
+
   return (
     <List.Item
       className="!bg-transparent cursor-default"
       as="div"
-      title="Slippage Tolerance"
-      icon={QrCodeIcon}
+      title="Slippage tolerance"
+      icon={WaterIcon}
       iconProps={{ width: 20, height: 20 }}
+      hover={false}
       subtitle={
-        <>
-          Slippage is the difference between the expected value of output from a trade and the actual value due to asset
-          volatility and liquidity depth. If the actual slippage falls outside of the user-designated range, the
-          transaction will revert.
-        </>
-      }
-      value={
-        <div className="flex items-center flex-col">
-          <Switch
-            checked={slippageTolerance ?? false}
-            onChange={(checked) => updateSlippageTolerance({ value: checked })}
-          />
+        <div className="flex flex-col gap-4">
+          <p>
+            Slippage is the difference between the expected value of output from a trade and the actual value due to
+            asset volatility and liquidity depth. If the actual slippage falls outside of the user-designated range, the
+            transaction will revert.
+          </p>
+          <Tab.Group defaultIndex={slippageTolerance === 'AUTO' ? 0 : 1} onChange={onChange}>
+            <Tab.List>
+              <Tab>Auto</Tab>
+              <Tab>Custom</Tab>
+            </Tab.List>
+            <Tab.Panels>
+              <Tab.Panel />
+              <Tab.Panel className="pb-1">
+                <FormInputNumeric
+                  className="bg-gray-100 dark:bg-slate-700"
+                  label="Slippage percentage"
+                  placeholder="1.0"
+                  value={slippageTolerance === 'AUTO' ? '' : slippageTolerance}
+                  onChange={(value) => updateSlippageTolerance({ value })}
+                />
+              </Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
         </div>
       }
     />

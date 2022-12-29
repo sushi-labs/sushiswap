@@ -2,7 +2,7 @@
 
 import { Transition } from '@headlessui/react'
 import { shortenAddress } from '@sushiswap/format'
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 import { useSwapState } from './TradeProvider'
 
