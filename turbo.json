@@ -101,12 +101,11 @@
         "typechain/**",
         "artifacts/**",
         "cache/**",
-        "public/**"
+        "public/**",
+        "storybook-static/**"
       ],
       "dependsOn": [
         "^build",
-        "^db:generate",
-        "db:generate",
         "generate"
       ],
       "env": [

@@ -13,6 +13,7 @@
       "analytics",
       "blog",
       "bridge",
+      "@sushiswap/dojo",
       "earn",
       "furo",
       "internal",
