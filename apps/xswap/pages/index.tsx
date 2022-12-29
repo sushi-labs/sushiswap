@@ -4,8 +4,9 @@ import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { TradeType } from '@sushiswap/amm'
-import chains, { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Type, Native, Price, tryParseAmount } from '@sushiswap/currency'
+import chains, { ChainId } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
+import { Amount, Native, Price, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import {
@@ -18,8 +19,8 @@ import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechai
 import {
   App,
   Button,
-  Currency,
   classNames,
+  Currency,
   Dialog,
   Dots,
   Loader,
@@ -1071,7 +1072,7 @@ const Widget: FC<Swap> = ({
                 </Wallet.Button>
               ) : isMounted && chain && chain.id !== srcChainId ? (
                 <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-                  Switch to {Chain.from(srcChainId).name}
+                  Switch to {chainName[srcChainId]}
                 </Button>
               ) : showWrap ? (
                 <Button size="md" fullWidth>

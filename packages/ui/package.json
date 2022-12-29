@@ -13,32 +13,10 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
   "sideEffects": false,
   "license": "MIT",
-  "files": [
-    "dist/**"
-  ],
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "default": "./dist/index.js"
-      },
-      "default": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "default": "./dist/index.js"
-      }
-    },
-    "./index.css": "./src/index.css",
-    "./variables.css": "./src/variables.css",
-    "./tailwind": "./src/tailwind.cjs",
-    "./package.json": "./package.json"
-  },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react,next,wagmi,tailwindcss",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react,next,wagmi,tailwindcss",
     "lint": "TIMING=1 eslint \"src/**/*.ts*\"",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "test": "jest --passWithNoTests"

@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "turbo run build --filter=!@sushiswap/dojo",
+    "build": "turbo run build",
     "build-analytics-app": "turbo run build --filter=analytics[HEAD^1]",
-    "build-apps": "turbo run build --filter={./apps/*}[HEAD^1]...",
+    "build-apps": "turbo run build --filter={./apps/*}[HEAD^1]... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13",
     "build-blog-app": "turbo run build --filter=blog[HEAD^1]",
     "build-earn-app": "turbo run build --filter=earn[HEAD^1]",
     "build-furo-app": "turbo run build --filter=furo[HEAD^1]",

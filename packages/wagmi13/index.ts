@@ -9,5 +9,3 @@ export * from './provider'
 
 // Re-export wagmi
 // export * from '@wagmi/core'
-
-export * from './calculateGasMargin'

@@ -1,5 +1,5 @@
 {
-    "name": "@sushiswap/dojo",
+    "name": "dojo",
     "version": "0.0.0",
     "private": true,
     "description": "Sushi Dojo (Storybook)",
@@ -42,6 +42,6 @@
       "vite": "4.0.3"
     },
     "engines": {
-      "node": "16"
+      "node": ">=16.x"
     }
   }

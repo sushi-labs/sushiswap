@@ -4,8 +4,6 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": ".",
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true
+    "resolveJsonModule": true
   }
 }

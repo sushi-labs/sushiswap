@@ -13,6 +13,7 @@ interface TokenInformation {
 
 export const TokenInformation: FC<TokenInformation> = ({ token }) => {
   const _token = useTokenFromToken(token)
+  const chain = Chain.from(_token.chainId) as Chain
 
   return (
     <div className="flex flex-col w-full gap-4">
@@ -61,7 +62,7 @@ export const TokenInformation: FC<TokenInformation> = ({ token }) => {
               </Table.td>
               <Table.td>
                 <Link.External
-                  href={Chain.from(_token.chainId).getTokenUrl(_token.wrapped.address)}
+                  href={chain.getTokenUrl(_token.wrapped.address)}
                   className="flex items-center gap-1 !no-underline"
                 >
                   <Typography weight={500} variant="sm" className="text-slate-100">
