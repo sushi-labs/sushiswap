@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 export * from './animation'
 export * from './app'
 export * from './backdrop'
@@ -19,7 +17,6 @@ export * from './dots'
 export * from './drawer'
 export * from './dropzone'
 export * from './form'
-export * from './getLayout'
 export * from './iconbutton'
 export * from './icons'
 export * from './input'
