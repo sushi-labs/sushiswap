@@ -26,12 +26,12 @@ export const TradeReviewDialog: FC = () => {
         <button onClick={onClose} className="-ml-2 p-2">
           <ArrowLeftIcon strokeWidth={3} width={20} height={20} />
         </button>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between gap-4 items-start">
           <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-semibold dark:text-slate-50">You receive 8.38338 {token1.symbol}</h1>
-            <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">for 0.05 {token0.symbol}</h1>
+            <h1 className="text-3xl font-semibold dark:text-slate-50">Receive 8.38338 {token1.symbol}</h1>
+            <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">Sell 0.05 {token0.symbol}</h1>
           </div>
-          <div className="w-[56px] h-[56px]">
+          <div className="min-w-[56px] min-h-[56px]">
             <Currency.Icon currency={token1} width={56} height={56} />
           </div>
         </div>
