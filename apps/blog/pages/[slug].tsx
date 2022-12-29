@@ -18,6 +18,16 @@ import {
 import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
 
 export async function getStaticPaths() {
+  // When this is true (in preview environments) don't
+  // prerender any static pages
+  // (faster builds, but slower initial page load)
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    }
+  }
+
   const allArticles = await getAllArticlesBySlug()
 
   return {
@@ -50,7 +60,7 @@ export async function getStaticProps({
   return {
     props: {
       article: data.articles.data[0],
-      latestArticles: data.moreArticles.data,
+      latestArticles: data?.moreArticles?.data,
       preview: !!preview,
     },
     revalidate: 60,

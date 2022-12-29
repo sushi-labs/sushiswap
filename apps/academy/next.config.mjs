@@ -5,16 +5,23 @@ const withTranspileModules = transpileModules(['@sushiswap/ui'])
 // @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    ignoreBuildErrors: true,
   },
   basePath: '/academy',
   reactStrictMode: true,
   swcMinify: false,
-  typescript: {
-    ignoreBuildErrors: true,
+  experimental: {
+    esmExternals: false,
   },
+  images: {
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
+  },
+  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {

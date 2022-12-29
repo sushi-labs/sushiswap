@@ -1,9 +1,9 @@
 import { ArticleFiltersInput, getMeshSDK, GetProductsQueryVariables, PaginationArg } from '../.mesh'
 
-export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
-  const sdk = getMeshSDK()
+const sdk = getMeshSDK()
 
-  return await sdk.articleAndMoreArticles({
+export const getArticleAndMoreArticles = async (slug: string, preview: Record<string, unknown> | null) => {
+  return sdk.articleAndMoreArticles({
     filters: {
       slug: { eq: slug },
       articleType: { eq: 'academy' },
@@ -14,18 +14,15 @@ export const getArticleAndMoreArticles = async (slug: string, preview: Record<st
 }
 
 export const getAllArticlesBySlug = async () => {
-  const sdk = getMeshSDK()
-  return await sdk.getAllArticlesWithSlug()
+  return sdk.getAllArticlesWithSlug()
 }
 
 export const getGlobalSEO = async () => {
-  const sdk = getMeshSDK()
-  return await sdk.getGlobalSEO()
+  return sdk.getGlobalSEO()
 }
 
 export const getPreviewPostBySlug = async (slug: string) => {
-  const sdk = getMeshSDK()
-  return await sdk.getPreviewPostBySlug({ slug })
+  return sdk.getPreviewPostBySlug({ slug })
 }
 
 export const getArticles = async (variables?: {
@@ -33,8 +30,7 @@ export const getArticles = async (variables?: {
   pagination?: PaginationArg
   sort?: string[]
 }) => {
-  const sdk = getMeshSDK()
-  return await sdk.getArticles({
+  return sdk.getArticles({
     ...variables,
     filters: { ...variables?.filters, articleType: { eq: 'academy' } },
     sort: variables?.sort ?? ['publishedAt:desc'],
@@ -42,24 +38,19 @@ export const getArticles = async (variables?: {
 }
 
 export const getTopics = async () => {
-  const sdk = getMeshSDK()
-  return await sdk.GetTopics()
+  return sdk.GetTopics()
 }
 
 export const getDifficulties = async () => {
-  const sdk = getMeshSDK()
-  return await sdk.GetDifficulties()
+  return sdk.GetDifficulties()
 }
 
 export const getProducts = async (variables?: GetProductsQueryVariables) => {
-  const sdk = getMeshSDK()
-  return await sdk.GetProducts(variables)
+  return sdk.GetProducts(variables)
 }
 
 export const getLatestAndRelevantArticles = async (productSlug: string, relevantArticleIds: string[]) => {
-  const sdk = getMeshSDK()
-
-  return await sdk.GetLatestAndRelevantArticles({
+  return sdk.GetLatestAndRelevantArticles({
     filters: {
       products: {
         slug: { eq: productSlug },
@@ -74,6 +65,5 @@ export const getLatestAndRelevantArticles = async (productSlug: string, relevant
 }
 
 export const getTrendingSearch = async () => {
-  const sdk = getMeshSDK()
-  return await sdk.GetTrendingSearch()
+  return sdk.GetTrendingSearch()
 }
