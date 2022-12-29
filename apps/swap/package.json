@@ -30,6 +30,7 @@
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/gas": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/redux-localstorage": "workspace:*",

@@ -1,10 +1,9 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Type as Currency } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { useMemo } from 'react'
 import { Address, useContractReads } from 'wagmi'
-
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 
 type UseBentoBoxTotals = (
   chainId: number | undefined,

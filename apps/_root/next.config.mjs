@@ -1,9 +1,6 @@
 import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules([
-  '@sushiswap/ui',
-  '@sushiswap/wagmi',
-])
+const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/wagmi'])
 
 const {
   ROOT_URL,
@@ -33,9 +30,6 @@ const nextConfig = {
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
   productionBrowserSourceMaps: true,
-  experimental: {
-    esmExternals: 'loose',
-  },
   async redirects() {
     return [
       {
