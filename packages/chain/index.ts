@@ -1,6 +1,6 @@
-import json from './chains.json'
+import raw from './chains.json'
 
-const CHAINS = json.concat({
+const CHAINS = raw.concat({
   name: 'Boba Avax',
   chain: 'Boba Avax',
   rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
@@ -21,7 +21,7 @@ const CHAINS = json.concat({
       standard: 'none',
     },
   ],
-}) as Chain[]
+})
 
 export interface Chain {
   name: string
@@ -170,12 +170,14 @@ export class Chain implements Chain {
     return chains[chainId]
   }
   public static fromShortName(shortName: string) {
-    return chains[chainShortName[shortName]]
+    const _shortName = chainShortName[shortName]
+    if (!_shortName) throw new Error(`Unknown chain short name: ${shortName}`)
+    return chains[_shortName]
   }
   public static fromChainId(chainId: number) {
     return chains[chainId]
   }
-  constructor(data: Chain) {
+  constructor(data: typeof CHAINS[number]) {
     Object.assign(this, data)
   }
   getTxUrl(txHash: string): string {
