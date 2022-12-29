@@ -69,7 +69,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: "Arbitrum Nova",
   [ChainId.BOBA_AVAX]: "Boba Avax",
   [ChainId.BTTC]: "BitTorrent",
-};
+} as const;
 
 export const SUBGRAPH_HOST = {
   [ChainId.ARBITRUM]: GRAPH_HOST,
@@ -137,7 +137,7 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: "sushiswap/blocks-arbitrum-nova",
   [ChainId.BOBA]: "sushiswap/blocks-boba",
   [ChainId.BTTC]: "sushiswap/blocks-bttc",
-};
+} as const;
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.AVALANCHE]: "sushiswap/exchange-avalanche",
@@ -155,7 +155,7 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: "sushi-0m/sushiswap-arbitrum-nova",
   [ChainId.POLYGON]: "sushiswap/exchange-polygon",
   [ChainId.BOBA]: "sushi-0m/sushiswap-boba",
-};
+} as const;
 
 export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.ETHEREUM]: "sushi-0m/sushiswap-ethereum-v2",
@@ -197,7 +197,7 @@ export const TRIDENT_SUBGRAPH_START_BLOCK: Record<
   [ChainId.ARBITRUM]: 43756724,
   [ChainId.BSC]: 23136876,
   [ChainId.AVALANCHE]: 22495996,
-};
+} as const;
 
 export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.POLYGON]: "jiro-ono/minichef-staging-updates", // new trident subgraph not synced yet
@@ -235,7 +235,7 @@ export const FURO_SUBGRAPH_NAME: Record<string, string> = {
 
 export const KASHI_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM]: "sushiswap/kashi-arbitrum",
-};
+} as const;
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM;
 export const DEFAULT_CHAIN_NAME = CHAIN_NAME[DEFAULT_CHAIN_ID];

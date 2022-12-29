@@ -30,6 +30,10 @@ const CATEGORIES = {
   OTHER: {},
 } as const;
 
+type CategoryKey = keyof typeof CATEGORIES
+type Category = typeof CATEGORIES[CategoryKey]
+
+
 const NODE_URLS: Record<number, string> = {
   ...Object.keys(SUBGRAPH_HOST)
     .map(Number)
@@ -62,6 +66,7 @@ const parseCategories = () => {
       .flatMap((categoryKey: keyof typeof CATEGORIES) =>
         // @ts-ignore
         Object.keys(CATEGORIES[categoryKey]).map(
+        // @ts-ignore
           (chainKey: keyof typeof CATEGORIES["BENTOBOX"]) => ({
             chainId: Number(String(chainKey).split("-")[0]),
             // @ts-ignore
