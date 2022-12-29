@@ -1,20 +1,19 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "globalEnv": [
+    "CI",
+    "NODE_ENV",
     "ALCHEMY_ID", 
     "GITHUB_TOKEN",
-    "INFURA_ID",
-    "NEXT_PUBLIC_ALCHEMY_ID", 
-    "NEXT_PUBLIC_INFURA_ID",
-    "NODE_ENV"
+    "NEXT_PUBLIC_ALCHEMY_ID"
   ],
   "globalDependencies": [
-    ".eslint.js",
     ".eslintignore",
-    ".mocharc.js",
     ".npmrc",
     ".nvmrc",
     ".prettierignore",
+    ".eslint.js",
+    ".mocharc.js",
     ".prettierrc.js",
     "tsconfig.json"
   ],
@@ -114,12 +113,11 @@
         "typechain/**",
         "artifacts/**",
         "cache/**",
-        "public/**"
+        "public/**",
+        "storybook-static/**"
       ],
       "dependsOn": [
         "^build",
-        "^db:generate",
-        "db:generate",
         "generate"
       ],
       "env": [

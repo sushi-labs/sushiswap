@@ -5,7 +5,7 @@ import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WN
 import { FundSource, useIsMounted, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
 import { App, Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import { Checker, TokenListImportChecker, useWalletState, WrapType } from '@sushiswap/wagmi'
 import { CurrencyInput } from 'components/CurrencyInput'
 import { isAddress } from 'ethers/lib/utils'

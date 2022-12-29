@@ -2,7 +2,7 @@ import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Amount, Price, Type } from '@sushiswap/currency'
 import { ZERO } from '@sushiswap/math'
 import { Dialog, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import { Currency } from '@sushiswap/ui'
 import { FC, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues } from '../../lib/hooks'
@@ -40,7 +40,7 @@ export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({ chainId, children
                 <div className="flex items-center justify-end gap-2 text-right">
                   {input0 && (
                     <div className="w-5 h-5">
-                      <Icon currency={input0.currency} width={20} height={20} />
+                      <Currency.Icon currency={input0.currency} width={20} height={20} />
                     </div>
                   )}
                   <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -67,7 +67,7 @@ export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({ chainId, children
                 <div className="flex items-center justify-end gap-2 text-right">
                   {input1 && (
                     <div className="w-5 h-5">
-                      <Icon currency={input1.currency} width={20} height={20} />
+                      <Currency.Icon currency={input1.currency} width={20} height={20} />
                     </div>
                   )}
                   <Typography variant="h3" weight={500} className="text-right text-slate-50">
