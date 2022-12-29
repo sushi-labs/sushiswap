@@ -33,6 +33,7 @@
     "@sushiswap/format": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/tines": "workspace:*",
+    "@sushiswap/types": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/ui13": "workspace:*",
     "@sushiswap/validate": "workspace:*",
