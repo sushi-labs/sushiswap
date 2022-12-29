@@ -181,12 +181,13 @@ contract RouteProcessor is StreamReader {
   function distributeERC20Shares(uint256 stream) private {
     address token = readAddress(stream);
     uint8 num = readUint8(stream);
-    uint256 amountTotal = IERC20(token).balanceOf(address(this));
+    uint256 amountTotal = IERC20(token).balanceOf(address(this))
+      - 1;     // slot undrain protection
 
-    for (uint256 i = 0; i < num; ++i) {
-      address to = readAddress(stream);
-      uint16 share = readUint16(stream);
-      unchecked {
+    unchecked {
+      for (uint256 i = 0; i < num; ++i) {
+        address to = readAddress(stream);
+        uint16 share = readUint16(stream);
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
         IERC20(token).safeTransfer(to, amount);
@@ -201,12 +202,13 @@ contract RouteProcessor is StreamReader {
   function distributeBentoPortions(uint256 stream) private {
     address token = readAddress(stream);
     uint8 num = readUint8(stream);
-    uint256 amountTotal = bentoBox.balanceOf(token, address(this));
+    uint256 amountTotal = bentoBox.balanceOf(token, address(this))
+      - 1;     // slot undrain protection
 
-    for (uint256 i = 0; i < num; ++i) {
-      address to = readAddress(stream);
-      uint16 share = readUint16(stream);
-      unchecked {
+    unchecked {
+      for (uint256 i = 0; i < num; ++i) {
+        address to = readAddress(stream);
+        uint16 share = readUint16(stream);
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
         bentoBox.transfer(token, address(this), to, amount);
@@ -216,7 +218,8 @@ contract RouteProcessor is StreamReader {
 
   // Unwrap the Native Token
   function unwrapNative(address receiver) private {
-    wNATIVE.withdraw(IERC20(address(wNATIVE)).balanceOf(address(this)) - 1); // -1 is a slot undrain protection
+    wNATIVE.withdraw(IERC20(address(wNATIVE)).balanceOf(address(this))
+      - 1);     // slot undrain protection
     payable(receiver).transfer(address(this).balance);
   }
 }
