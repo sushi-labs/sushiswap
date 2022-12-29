@@ -17,6 +17,7 @@ import {
   DifficultyEntityResponseCollection,
   Global,
   ProductEntity,
+  ProductEntityResponseCollection,
   TopicEntity,
   TopicEntityResponseCollection,
 } from '../.mesh'
@@ -74,7 +75,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
 
   const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
   const { data: difficultiesData } = useSWR<DifficultyEntityResponseCollection>('/difficulties')
-  const { data: productsData } = useSWR<TopicEntityResponseCollection>('/products')
+  const { data: productsData } = useSWR<ProductEntityResponseCollection>('/products')
   const { data: topicsData } = useSWR<TopicEntityResponseCollection>('/topics')
   const { data: filterData, isValidating } = useSWR(
     [`/articles`, selectedTopic, selectedDifficulty, selectedProduct],
@@ -170,7 +171,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             >
               <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9 sm:hidden">
                 <Select
-                  onChange={(value: TopicEntity & { isProduct?: boolean }) =>
+                  onChange={(value: ({ isProduct?: true } & ProductEntity) | (TopicEntity & { isProduct?: false })) =>
                     value.isProduct ? handleSelectProduct(value) : handleSelectTopic(value)
                   }
                   button={
