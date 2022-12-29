@@ -4,10 +4,12 @@ on:
   push:
     branches: ["master"]
     paths:
+      - ".github/workflows/apps-earn.yml"
       - "apps/earn/**"
   pull_request:
     types: [opened, synchronize]
     paths:
+      - ".github/workflows/apps-earn.yml"
       - "apps/earn/**"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}

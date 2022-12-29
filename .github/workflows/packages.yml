@@ -4,10 +4,12 @@ on:
   push:
     branches: ["master"]
     paths:
+      - ".github/workflows/packages.yml"
       - "packages/**"
   pull_request:
     types: [opened, synchronize]
     paths:
+      - ".github/workflows/packages.yml"
       - "packages/**"
       
 concurrency: ${{ github.workflow }}-${{ github.ref }}

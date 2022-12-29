@@ -4,10 +4,12 @@ on:
   push:
     branches: ["master"]
     paths:
+      - ".github/workflows/apps-swap-e2e.yml"
       - "apps/swap/**"
   pull_request:
     types: [opened, synchronize]
     paths:
+      - ".github/workflows/apps-swap-e2e.yml"
       - "apps/swap/**"
 
 defaults:
