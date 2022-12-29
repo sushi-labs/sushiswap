@@ -33,6 +33,7 @@
     "price-script",
     "@sushiswap/database",
     "@sushiswap/next",
+    "@sushiswap/react-query",
     "@sushiswap/redux-token-lists",
     "@sushiswap/redux-localstorage",
     "@sushiswap/token-lists",
