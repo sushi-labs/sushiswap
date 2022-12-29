@@ -11,9 +11,10 @@ import DialogHeader, { DialogHeaderProps } from './DialogHeader'
 export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
   afterLeave?(): void
   children?: React.ReactNode
+  variant?: 'transparent' | 'opaque'
 }
 
-const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, ...rest }) => {
+const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, variant = 'transparent', ...rest }) => {
   const { unmount } = rest
   const { isMd } = useBreakpoint('md')
 
@@ -41,35 +42,55 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
   return (
     <Transition show={open} as={Fragment} afterLeave={afterLeave} unmount={unmount}>
       <HeadlessDialog className="relative z-[1080]" onClose={onClose} {...rest}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-          unmount={unmount}
-        >
-          <div className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-full text-center sm:items-center">
+        {variant === 'transparent' && (
+          <>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
               leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
               unmount={unmount}
             >
-              <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">{children}</HeadlessDialog.Panel>
+              <div className="fixed inset-0 bg-black/50 backdrop-blur transform-gpu" />
             </Transition.Child>
-          </div>
-        </div>
+
+            <div className="fixed inset-0 z-10 overflow-y-auto">
+              <div className="flex items-end justify-center min-h-full text-center sm:items-center">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                  enterTo="opacity-100 translate-y-0 sm:scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                  leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                  unmount={unmount}
+                >
+                  <HeadlessDialog.Panel className="w-full h-full max-w-md px-1">{children}</HeadlessDialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </>
+        )}
+        {variant === 'opaque' && (
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            unmount={unmount}
+          >
+            <HeadlessDialog.Panel className="fixed inset-0 dark:bg-slate-900 bg-gray-100 p-4">
+              {children}
+            </HeadlessDialog.Panel>
+          </Transition.Child>
+        )}
       </HeadlessDialog>
     </Transition>
   )

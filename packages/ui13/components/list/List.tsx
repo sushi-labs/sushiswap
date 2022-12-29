@@ -3,12 +3,14 @@ import React, { FC, ReactNode } from 'react'
 
 import { ListControl, ListControlProps } from './ListControl'
 import { ListItem, ListItemComponent } from './ListItem'
+import { ListKeyValue, ListKeyValueProps } from './ListKeyValue'
 import { ListLabel, ListLabelProps } from './ListLabel'
 
 type List<T> = FC<T> & {
   Item: ListItemComponent
   Label: FC<ListLabelProps>
   Control: FC<ListControlProps>
+  KeyValue: FC<ListKeyValueProps>
 }
 
 export interface ListProps {
@@ -23,3 +25,4 @@ export const List: List<ListProps> = ({ children, className }) => {
 List.Item = ListItem
 List.Label = ListLabel
 List.Control = ListControl
+List.KeyValue = ListKeyValue
