@@ -7,11 +7,13 @@ export const getFuroStreamRouterContractConfig = (
 ) => ({
   // @ts-ignore
   address: (furoExports[chainId as keyof Omit<typeof furoExports, "31337">]?.[0]
+  // @ts-ignore
     ?.contracts?.FuroStreamRouter?.address || "") as Address,
   abi:
     // @ts-ignore
     furoExports[
       chainId as unknown as keyof Omit<typeof furoExports, "31337">
+    // @ts-ignore
     ]?.[0]?.contracts?.FuroStreamRouter?.abi ?? [],
 });
 

@@ -9,11 +9,13 @@ export const getFuroVestingRouterContractConfig = (
     // @ts-ignore
     (furoExports[
       chainId as unknown as keyof Omit<typeof furoExports, "31337">
+    // @ts-ignore
     ]?.[0]?.contracts?.FuroVestingRouter?.address ?? "") as Address,
   abi:
     // @ts-ignore
     furoExports[
       chainId as unknown as keyof Omit<typeof furoExports, "31337">
+    // @ts-ignore
     ]?.[0]?.contracts?.FuroVestingRouter?.abi ?? [],
 });
 

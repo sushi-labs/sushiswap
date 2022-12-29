@@ -6,12 +6,14 @@ export const getStablePoolFactoryContract = (chainId: number | undefined) => ({
     // @ts-ignore
     tridentExports[
       chainId?.toString() as keyof Omit<typeof tridentExports, "31337">
+    // @ts-ignore
     ]?.[0]?.contracts?.StablePoolFactory?.address ?? "",
 
   abi:
     // @ts-ignore
     tridentExports[
       chainId?.toString() as keyof Omit<typeof tridentExports, "31337">
+    // @ts-ignore
     ]?.[0]?.contracts?.StablePoolFactory?.abi ?? [],
 });
 

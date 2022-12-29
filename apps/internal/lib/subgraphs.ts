@@ -109,6 +109,7 @@ export async function getSubgraphs({ filter }: GetSubgraphs = {}) {
     .flat(1)
     .flatMap(({ subgraphs: res }) =>
       res
+        // @ts-ignore
         .map((data) => ({
           ...data,
           ...subgraphs.find(

@@ -30,7 +30,7 @@ declare global {
 const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
   const router = useRouter();
   useEffect(() => {
-    const handler = (page) => {
+    const handler = (page: any) => {
       window.dataLayer.push({
         event: "pageview",
         page,

@@ -17,6 +17,7 @@ export const ToastCompleted: FC<ToastCompleted> = ({
   onDismiss,
   summary,
 }) => {
+  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? "";
   return (
     <>
       <ToastContent
@@ -25,7 +26,7 @@ export const ToastCompleted: FC<ToastCompleted> = ({
         summary={summary.completed}
       />
       <ToastButtons
-        href={href ? href : Chain.from(chainId).getTxUrl(txHash)}
+        href={txUrl}
         onDismiss={onDismiss}
       />
     </>

@@ -124,6 +124,7 @@
       "cache": false
     },
     "check": {
+      "dependsOn": ["generate"],
       "cache": false
     },
     "dev": {

@@ -17,6 +17,7 @@ export const ToastPending: FC<ToastPending> = ({
   onDismiss,
   summary,
 }) => {
+  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? "";
   return (
     <>
       <ToastContent
@@ -25,7 +26,7 @@ export const ToastPending: FC<ToastPending> = ({
         summary={summary.pending}
       />
       <ToastButtons
-        href={href ? href : Chain.from(chainId).getTxUrl(txHash)}
+        href={txUrl}
         onDismiss={onDismiss}
       />
     </>

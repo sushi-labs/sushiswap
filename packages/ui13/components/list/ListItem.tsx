@@ -58,8 +58,8 @@ export const ListItem: ListItemComponent = ({
       )}
     >
       {/*// TODO RAMIN*/}
-      {/*// @ts-ignore*/}
       {Icon && (
+        // @ts-ignore
         <Icon
           {...iconProps}
           width={iconProps?.width ?? 20}
