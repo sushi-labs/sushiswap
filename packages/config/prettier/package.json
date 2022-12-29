@@ -15,15 +15,20 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/index.d.ts"
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build": "tsup src/*.ts --format esm,cjs --dts --external prettier,prettier-plugin-solidity,prettier-plugin-tailwindcss",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "postinstall": "pnpm build"
   },
@@ -35,10 +40,15 @@
     "@types/prettier": "2.7.1",
     "prettier": "2.8.1",
     "prettier-plugin-solidity": "1.0.0",
+    "prettier-plugin-tailwindcss": "0.2.1",
     "tsup": "6.5.0",
     "typescript": "4.8.2"
   },
   "peerDependencies": {
-    "prettier": "2.8.1"
+    "prettier": "*"
+  },
+  "optionalDependencies": {
+    "prettier-plugin-solidity": "*",
+    "prettier-plugin-tailwindcss": "*"
   }
 }
