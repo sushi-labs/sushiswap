@@ -42,7 +42,8 @@
     "test-protocols": "dotenv -- turbo run test --filter={./protocols/*}[HEAD^1]...",
     "test-swap-app": "dotenv -- turbo run test --filter=swap",
     "test:ci": "dotenv -- turbo run test --parallel --filter=[HEAD^1]",
-    "version-packages": "dotenv -- turbo run build --filter=./packages/* && changeset version"
+    "version-packages": "dotenv -- turbo run build --filter=./packages/* && changeset version",
+    "prepare": "is-ci || husky install"
   },
   "devDependencies": {
     "@changesets/cli": "2.25.2",
@@ -58,6 +59,8 @@
     "dotenv-cli": "6.0.0",
     "jest": "^29.3.0",
     "prettier": "2.8.1",
+    "husky": "^8.0.0",
+    "is-ci": "3.0.1",
     "sort-package-json": "2.1.0",
     "ts-jest": "29.0.3",
     "ts-node": "10.9.1",

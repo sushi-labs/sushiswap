@@ -34,6 +34,7 @@
   },
   "scripts": {
     "build": "tsup index.ts --format esm,cjs --dts",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup index.ts --format esm,cjs --watch --dts",
     "generate": "ls chains.json || curl 'https://chainid.network/chains.json' > chains.json",

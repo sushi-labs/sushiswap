@@ -18,6 +18,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "TIMING=1 eslint \"./**/*.ts*\"",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "test": "jest --passWithNoTests"
   },

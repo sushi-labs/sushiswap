@@ -11,6 +11,12 @@
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "./index.ts",
   "source": "./index.ts",
+  "scripts": {
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "lint": "TIMING=1 eslint ./**/*.ts* --fix",
+    "test": "jest --passWithNoTests"
+  },
   "dependencies": {
     "@ethersproject/address": "^5.7.0",
     "@ethersproject/contracts": "^5.7.0",
