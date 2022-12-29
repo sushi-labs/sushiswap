@@ -1,24 +1,36 @@
-import { Combobox as HeadlessCombobox, Menu as HeadlessMenu, Transition } from '@headlessui/react'
-import classNames from 'classnames'
-import { FC, Fragment, FunctionComponent, ReactElement } from 'react'
+import {
+  Combobox as HeadlessCombobox,
+  Menu as HeadlessMenu,
+  Transition,
+} from "@headlessui/react";
+import classNames from "classnames";
+import { FC, Fragment, FunctionComponent, ReactElement } from "react";
 
-import { ExtractProps } from '../types'
-import ComboboxInput, { ComboboxInputProps } from './ComboboxInput'
-import ComboboxLabel, { ComboboxLabelProps } from './ComboboxLabel'
-import ComboboxOption, { ComboboxOptionProps } from './ComboboxOption'
-import ComboboxOptions, { ComboboxOptionsProps } from './ComboboxOptions'
+import { ExtractProps } from "../types";
+import ComboboxInput, { ComboboxInputProps } from "./ComboboxInput";
+import ComboboxLabel, { ComboboxLabelProps } from "./ComboboxLabel";
+import ComboboxOption, { ComboboxOptionProps } from "./ComboboxOption";
+import ComboboxOptions, { ComboboxOptionsProps } from "./ComboboxOptions";
 
 type ComboboxProps = ExtractProps<typeof HeadlessMenu.Button> & {
-  input: ReactElement<ExtractProps<typeof HeadlessCombobox.Input>>
-  label: ReactElement<ExtractProps<typeof HeadlessCombobox.Label>>
-  children: ReactElement<ExtractProps<typeof HeadlessCombobox.Options>>
-}
+  input: ReactElement<ExtractProps<typeof HeadlessCombobox.Input>>;
+  label: ReactElement<ExtractProps<typeof HeadlessCombobox.Label>>;
+  children: ReactElement<ExtractProps<typeof HeadlessCombobox.Options>>;
+};
 
-const ComboboxRoot: FC<ComboboxProps> = ({ className, value, onChange, disabled, input, children, label }) => {
+const ComboboxRoot: FC<ComboboxProps> = ({
+  className,
+  value,
+  onChange,
+  disabled,
+  input,
+  children,
+  label,
+}) => {
   return (
     <HeadlessCombobox value={value} onChange={onChange} disabled={disabled}>
       {({ open }) => (
-        <div className={classNames('space-y-2', className)}>
+        <div className={classNames("space-y-2", className)}>
           {label}
           <div className="relative mt-2">
             {input}
@@ -35,17 +47,17 @@ const ComboboxRoot: FC<ComboboxProps> = ({ className, value, onChange, disabled,
         </div>
       )}
     </HeadlessCombobox>
-  )
-}
+  );
+};
 
 export const Combobox: FunctionComponent<ComboboxProps> & {
-  Input: FC<ComboboxInputProps>
-  Label: FC<ComboboxLabelProps>
-  Option: FC<ComboboxOptionProps>
-  Options: FC<ComboboxOptionsProps>
+  Input: FC<ComboboxInputProps>;
+  Label: FC<ComboboxLabelProps>;
+  Option: FC<ComboboxOptionProps>;
+  Options: FC<ComboboxOptionsProps>;
 } = Object.assign(ComboboxRoot, {
   Input: ComboboxInput,
   Label: ComboboxLabel,
   Option: ComboboxOption,
   Options: ComboboxOptions,
-})
+});

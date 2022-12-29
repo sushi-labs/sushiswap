@@ -1,8 +1,8 @@
-import { Currency } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
-import invariant from 'tiny-invariant'
+import { Currency } from "@sushiswap/currency";
+import { Percent } from "@sushiswap/math";
+import invariant from "tiny-invariant";
 
-import { Trade, TradeType, Version } from './Trade'
+import { Trade, TradeType, Version } from "./Trade";
 
 /**
  * Options for producing the arguments to send call to the router.
@@ -11,11 +11,11 @@ export interface TradeOptions {
   /**
    * How much the execution price is allowed to move unfavorably from the trade execution price.
    */
-  allowedSlippage: Percent
+  allowedSlippage: Percent;
   /**
    * The account that should receive the output of the swap.
    */
-  recipient: string
+  recipient: string;
 }
 
 /**
@@ -25,15 +25,15 @@ export interface SwapParameters {
   /**
    * The method to call on the Uniswap V2 Router.
    */
-  methodName: string
+  methodName: string;
   /**
    * The arguments to pass to the method, all hex encoded.
    */
-  args: (string | string[])[]
+  args: (string | string[])[];
   /**
    * The amount of wei to send in hex.
    */
-  value: string
+  value: string;
 }
 
 /**
@@ -54,14 +54,14 @@ export abstract class TridentRouter {
     trade: Trade<Currency, Currency, TradeType, Version.V2>,
     options: TradeOptions
   ): SwapParameters {
-    const etherIn = trade.inputAmount.currency.isNative
-    const etherOut = trade.outputAmount.currency.isNative
+    const etherIn = trade.inputAmount.currency.isNative;
+    const etherOut = trade.outputAmount.currency.isNative;
     // the router does not support both ether in and out
-    invariant(!(etherIn && etherOut), 'ETHER_IN_OUT')
+    invariant(!(etherIn && etherOut), "ETHER_IN_OUT");
 
-    let methodName: string
-    let args: (string | string[])[]
-    let value: string
+    let methodName: string;
+    let args: (string | string[])[];
+    let value: string;
 
     if (trade.isSinglePool()) {
       //
@@ -72,9 +72,9 @@ export abstract class TridentRouter {
     }
 
     return {
-      methodName: '',
+      methodName: "",
       args: [],
-      value: '0x0',
-    }
+      value: "0x0",
+    };
   }
 }

@@ -1,30 +1,35 @@
-import chains from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import chains from "@sushiswap/chain";
+import { Token } from "@sushiswap/currency";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useAddCustomToken = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     // TODO why ts error?
     // @ts-ignore
-    mutationKey: ['customTokens'],
+    mutationKey: ["customTokens"],
     mutationFn: (currency: Token) => {
-      queryClient.setQueryData<Record<string, Token>>(['customTokens'], (prevData) => {
-        if (prevData !== undefined) {
-          if (prevData[currency.address]) {
-            throw new Error('You already added this token')
+      queryClient.setQueryData<Record<string, Token>>(
+        ["customTokens"],
+        (prevData) => {
+          if (prevData !== undefined) {
+            if (prevData[currency.address]) {
+              throw new Error("You already added this token");
+            } else {
+              return {
+                ...prevData,
+                [`${chains[currency.chainId].shortName}:${currency.address}`]:
+                  currency,
+              };
+            }
           } else {
             return {
-              ...prevData,
-              [`${chains[currency.chainId].shortName}:${currency.address}`]: currency,
-            }
-          }
-        } else {
-          return {
-            [`${chains[currency.chainId].shortName}:${currency.address}`]: currency,
+              [`${chains[currency.chainId].shortName}:${currency.address}`]:
+                currency,
+            };
           }
         }
-      })
+      );
     },
-  })
-}
+  });
+};

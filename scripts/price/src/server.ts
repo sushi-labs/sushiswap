@@ -1,16 +1,16 @@
-import express from 'express'
+import express from "express";
 
-import { execute } from './index'
+import { execute } from "./index";
 
-const app = express()
+const app = express();
 
-app.get('/', async (req, res) => {
+app.get("/", async (req, res) => {
   try {
-    await execute()
-    res.sendStatus(200)
+    await execute();
+    res.sendStatus(200);
   } catch (err) {
-    res.status(500).send(err)
+    res.status(500).send(err);
   }
-})
+});
 
-app.listen(8080)
+app.listen(8080);

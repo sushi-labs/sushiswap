@@ -238,7 +238,11 @@ query getPreviewPostBySlug($slug: String) {
   }
 }
 
-query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg, $sort: [String]) {
+query getArticles(
+  $filters: ArticleFiltersInput
+  $pagination: PaginationArg
+  $sort: [String]
+) {
   articles(pagination: $pagination, sort: $sort, filters: $filters) {
     meta {
       pagination {
@@ -365,8 +369,15 @@ query GetProducts($filters: ProductFiltersInput) {
   }
 }
 
-query GetLatestAndRelevantArticles($filters: ArticleFiltersInput, $filters_ne: ArticleFiltersInput) {
-  articles(filters: $filters, sort: "publishedAt:desc", pagination: { limit: 3 }) {
+query GetLatestAndRelevantArticles(
+  $filters: ArticleFiltersInput
+  $filters_ne: ArticleFiltersInput
+) {
+  articles(
+    filters: $filters
+    sort: "publishedAt:desc"
+    pagination: { limit: 3 }
+  ) {
     data {
       attributes {
         title

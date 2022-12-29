@@ -1,61 +1,94 @@
-import { TransactionRequest } from '@ethersproject/providers'
-import { Amount, Native } from '@sushiswap/currency'
-import { SushiXSwap } from '@sushiswap/sushixswap/typechain'
-import { useBentoBoxTotal, useSushiXSwapContractWithProvider } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Dispatch, FC, ReactElement, SetStateAction, useCallback } from 'react'
-import { useAccount } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { TransactionRequest } from "@ethersproject/providers";
+import { Amount, Native } from "@sushiswap/currency";
+import { SushiXSwap } from "@sushiswap/sushixswap/typechain";
+import {
+  useBentoBoxTotal,
+  useSushiXSwapContractWithProvider,
+} from "@sushiswap/wagmi";
+import { useSendTransaction } from "@sushiswap/wagmi/hooks/useSendTransaction";
+import { Dispatch, FC, ReactElement, SetStateAction, useCallback } from "react";
+import { useAccount } from "wagmi";
+import { SendTransactionResult } from "wagmi/actions";
 
-import { useNotifications } from '../lib/state/storage'
-import { SushiBridge } from '../lib/SushiBridge'
-import { useBridgeState, useBridgeStateActions } from './BridgeStateProvider'
+import { useNotifications } from "../lib/state/storage";
+import { SushiBridge } from "../lib/SushiBridge";
+import { useBridgeState, useBridgeStateActions } from "./BridgeStateProvider";
 
 interface BridgeExecuteProvider {
-  approved: boolean | undefined
-  children({ execute, isWritePending }: { execute: (() => void) | undefined; isWritePending: boolean }): ReactElement
+  approved: boolean | undefined;
+  children({
+    execute,
+    isWritePending,
+  }: {
+    execute: (() => void) | undefined;
+    isWritePending: boolean;
+  }): ReactElement;
 }
 
-export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, children }) => {
-  const { address } = useAccount()
-  const [, { createInlineNotification }] = useNotifications(address)
-  const { setSourceTx, setSignature, setTimestamp, setGasFee } = useBridgeStateActions()
-  const { id, signature, srcChainId, amount, srcToken, dstToken } = useBridgeState()
-  const contract = useSushiXSwapContractWithProvider(srcChainId) as SushiXSwap
-  const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
+export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({
+  approved,
+  children,
+}) => {
+  const { address } = useAccount();
+  const [, { createInlineNotification }] = useNotifications(address);
+  const { setSourceTx, setSignature, setTimestamp, setGasFee } =
+    useBridgeStateActions();
+  const { id, signature, srcChainId, amount, srcToken, dstToken } =
+    useBridgeState();
+  const contract = useSushiXSwapContractWithProvider(srcChainId) as SushiXSwap;
+  const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken);
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data || !srcToken || !amount) return
+      if (!data || !srcToken || !amount) return;
 
-      const ts = new Date().getTime()
+      const ts = new Date().getTime();
 
-      setTimestamp(ts)
-      setSourceTx(data)
+      setTimestamp(ts);
+      setSourceTx(data);
 
       createInlineNotification({
-        type: 'send',
+        type: "send",
         chainId: srcChainId,
         txHash: data.hash,
         promise: data.wait(),
         summary: {
-          pending: `Sending ${amount?.toSignificant(6)} ${srcToken.symbol} to Stargate Router`,
-          completed: `Send ${amount?.toSignificant(6)} ${srcToken.symbol} to Stargate Router`,
-          failed: 'Something went wrong when sending tokens to Stargate Router',
+          pending: `Sending ${amount?.toSignificant(6)} ${
+            srcToken.symbol
+          } to Stargate Router`,
+          completed: `Send ${amount?.toSignificant(6)} ${
+            srcToken.symbol
+          } to Stargate Router`,
+          failed: "Something went wrong when sending tokens to Stargate Router",
         },
         timestamp: ts,
         groupTimestamp: ts,
-      })
+      });
     },
-    [amount, createInlineNotification, setSourceTx, setTimestamp, srcChainId, srcToken]
-  )
+    [
+      amount,
+      createInlineNotification,
+      setSourceTx,
+      setTimestamp,
+      srcChainId,
+      srcToken,
+    ]
+  );
 
   const prepareBridge = useCallback(() => {
-    if (!srcChainId || !amount || !address || !srcInputCurrencyRebase || !contract || !srcToken || !dstToken) {
-      return
+    if (
+      !srcChainId ||
+      !amount ||
+      !address ||
+      !srcInputCurrencyRebase ||
+      !contract ||
+      !srcToken ||
+      !dstToken
+    ) {
+      return;
     }
 
-    const srcShare = amount.toShare(srcInputCurrencyRebase)
+    const srcShare = amount.toShare(srcInputCurrencyRebase);
     const bridge = new SushiBridge({
       contract,
       srcToken,
@@ -64,56 +97,84 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
       dstUseBentoBox: false,
       user: address,
       debug: true,
-    })
+    });
     if (signature) {
-      bridge.srcCooker.setMasterContractApproval(signature)
+      bridge.srcCooker.setMasterContractApproval(signature);
     }
-    bridge.transfer(amount, srcShare)
+    bridge.transfer(amount, srcShare);
     bridge.teleport(
       srcToken.wrapped,
       dstToken.wrapped,
       1000000, // TODO: figure out exact extra gas required
       id
-    )
+    );
 
     bridge
       .getFee(1000000)
       .then(([fee]) => {
-        setGasFee(Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString()))
+        setGasFee(
+          Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
+        );
       })
       .catch((e) => {
-        console.log(e)
-      })
+        console.log(e);
+      });
 
-    return bridge
-  }, [address, amount, contract, dstToken, id, setGasFee, signature, srcChainId, srcInputCurrencyRebase, srcToken])
+    return bridge;
+  }, [
+    address,
+    amount,
+    contract,
+    dstToken,
+    id,
+    setGasFee,
+    signature,
+    srcChainId,
+    srcInputCurrencyRebase,
+    srcToken,
+  ]);
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      const bridge = prepareBridge()
+    (
+      setRequest: Dispatch<
+        SetStateAction<(TransactionRequest & { to: string }) | undefined>
+      >
+    ) => {
+      const bridge = prepareBridge();
       if (bridge && approved) {
         bridge
           .cook(1000000)
           .then((request) => {
-            if (request) setRequest(request as (TransactionRequest & { to: string }) | undefined)
+            if (request)
+              setRequest(
+                request as (TransactionRequest & { to: string }) | undefined
+              );
           })
           .catch((err) => {
-            console.error('catch err', err)
-          })
+            console.error("catch err", err);
+          });
       }
     },
     [approved, prepareBridge]
-  )
+  );
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     chainId: srcChainId,
     prepare,
     onSettled,
     onSuccess: () => {
-      setSignature(undefined)
+      setSignature(undefined);
     },
-    enabled: Boolean(srcChainId && amount && address && srcInputCurrencyRebase && contract && srcToken && dstToken),
-  })
+    enabled: Boolean(
+      srcChainId &&
+        amount &&
+        address &&
+        srcInputCurrencyRebase &&
+        contract &&
+        srcToken &&
+        dstToken
+    ),
+  });
 
-  return children({ execute: sendTransaction, isWritePending })
-}
+  return children({ execute: sendTransaction, isWritePending });
+};

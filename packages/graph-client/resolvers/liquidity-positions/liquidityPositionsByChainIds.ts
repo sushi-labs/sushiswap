@@ -5,23 +5,35 @@ import {
   SUSHISWAP_SUBGRAPH_NAME,
   TRIDENT_ENABLED_NETWORKS,
   TRIDENT_SUBGRAPH_NAME,
-} from '@sushiswap/graph-config'
-import { isPromiseFulfilled } from '@sushiswap/validate'
-import { GraphQLResolveInfo } from 'graphql'
+} from "@sushiswap/graph-config";
+import { isPromiseFulfilled } from "@sushiswap/validate";
+import { GraphQLResolveInfo } from "graphql";
 
-import { Query, QueryliquidityPositionsByChainIdsArgs, QueryResolvers, RequireFields } from '../../.graphclient'
-import { SushiSwapTypes } from '../../.graphclient/sources/SushiSwap/types'
-import { TridentTypes } from '../../.graphclient/sources/Trident/types'
+import {
+  Query,
+  QueryliquidityPositionsByChainIdsArgs,
+  QueryResolvers,
+  RequireFields,
+} from "../../.graphclient";
+import { SushiSwapTypes } from "../../.graphclient/sources/SushiSwap/types";
+import { TridentTypes } from "../../.graphclient/sources/Trident/types";
 
 export const _liquidityPositionsByChainIds = async (
   root = {},
-  args: RequireFields<QueryliquidityPositionsByChainIdsArgs, 'skip' | 'first' | 'chainIds'>,
+  args: RequireFields<
+    QueryliquidityPositionsByChainIdsArgs,
+    "skip" | "first" | "chainIds"
+  >,
   context: SushiSwapTypes.Context & TridentTypes.Context,
   info: GraphQLResolveInfo
 ) => {
-  const liquidityPositions = await Promise.allSettled<Query['liquidityPositionsByChainIds'][]>([
+  const liquidityPositions = await Promise.allSettled<
+    Query["liquidityPositionsByChainIds"][]
+  >([
     ...args.chainIds
-      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] => SUSHISWAP_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof SUSHISWAP_ENABLED_NETWORKS[number] =>
+        SUSHISWAP_ENABLED_NETWORKS.includes(el)
+      )
       .map((chainId) =>
         context.SushiSwap.Query.liquidityPositions({
           root,
@@ -35,14 +47,22 @@ export const _liquidityPositionsByChainIds = async (
           info,
         }).then((liquidityPositions: SushiSwapTypes.LiquidityPosition[]) => {
           if (!Array.isArray(liquidityPositions)) {
-            console.error(`SushiSwap liquidityPositions query failed on ${chainId}`, liquidityPositions)
-            return []
+            console.error(
+              `SushiSwap liquidityPositions query failed on ${chainId}`,
+              liquidityPositions
+            );
+            return [];
           }
-          return liquidityPositions.map((liquidityPosition) => ({ ...liquidityPosition, chainId }))
+          return liquidityPositions.map((liquidityPosition) => ({
+            ...liquidityPosition,
+            chainId,
+          }));
         })
       ),
     ...args.chainIds
-      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] => TRIDENT_ENABLED_NETWORKS.includes(el))
+      .filter((el): el is typeof TRIDENT_ENABLED_NETWORKS[number] =>
+        TRIDENT_ENABLED_NETWORKS.includes(el)
+      )
       .map((chainId) =>
         context.Trident.Query.liquidityPositions({
           root,
@@ -56,31 +76,33 @@ export const _liquidityPositionsByChainIds = async (
           info,
         }).then((liquidityPositions: TridentTypes.LiquidityPosition[]) => {
           if (!Array.isArray(liquidityPositions)) {
-            console.error(`Trident liquidityPositions query failed on ${chainId}`, liquidityPositions)
-            return []
+            console.error(
+              `Trident liquidityPositions query failed on ${chainId}`,
+              liquidityPositions
+            );
+            return [];
           }
-          return liquidityPositions.map((liquidityPosition) => ({ ...liquidityPosition, chainId }))
+          return liquidityPositions.map((liquidityPosition) => ({
+            ...liquidityPosition,
+            chainId,
+          }));
         })
       ),
   ]).then((promiseSettledResults) => {
     if (!Array.isArray(promiseSettledResults)) {
-      console.error('crossChainLiquidityPositions query failed')
-      return []
+      console.error("crossChainLiquidityPositions query failed");
+      return [];
     }
     return promiseSettledResults
       .flat()
       .filter(isPromiseFulfilled)
-      .flatMap((promiseFulfilled) => promiseFulfilled.value)
-  })
+      .flatMap((promiseFulfilled) => promiseFulfilled.value);
+  });
 
-  return liquidityPositions
-}
+  return liquidityPositions;
+};
 
-export const liquidityPositionsByChainIds: QueryResolvers['liquidityPositionsByChainIds'] = async (
-  root,
-  args,
-  context,
-  info
-) => {
-  return _liquidityPositionsByChainIds(root, args, context, info)
-}
+export const liquidityPositionsByChainIds: QueryResolvers["liquidityPositionsByChainIds"] =
+  async (root, args, context, info) => {
+    return _liquidityPositionsByChainIds(root, args, context, info);
+  };

@@ -1,5 +1,5 @@
-import { ChainId } from '@sushiswap/chain'
-import flatMap from 'lodash.flatmap'
+import { ChainId } from "@sushiswap/chain";
+import flatMap from "lodash.flatmap";
 
 import {
   APE,
@@ -42,11 +42,13 @@ import {
   WNATIVE,
   XSUSHI,
   XSUSHI_ADDRESS,
-} from './constants'
-import { Token } from './Token'
-import { Type } from './Type'
+} from "./constants";
+import { Token } from "./Token";
+import { Type } from "./Type";
 
-export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[] } = {
+export const BASES_TO_CHECK_TRADES_AGAINST: {
+  readonly [chainId: number]: Token[];
+} = {
   [ChainId.ETHEREUM]: [
     WNATIVE[ChainId.ETHEREUM],
     WBTC[ChainId.ETHEREUM],
@@ -72,13 +74,16 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     FRAX[ChainId.POLYGON],
     new Token({
       chainId: ChainId.POLYGON,
-      address: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
+      address: "0x2F800Db0fdb5223b3C3f354886d907A671414A7F",
       decimals: 18,
-      name: 'Toucan Protocol: Base Carbon Tonne',
-      symbol: 'BCT',
+      name: "Toucan Protocol: Base Carbon Tonne",
+      symbol: "BCT",
     }),
   ],
-  [ChainId.POLYGON_TESTNET]: [WNATIVE[ChainId.POLYGON_TESTNET], USDC[ChainId.POLYGON_TESTNET]],
+  [ChainId.POLYGON_TESTNET]: [
+    WNATIVE[ChainId.POLYGON_TESTNET],
+    USDC[ChainId.POLYGON_TESTNET],
+  ],
   [ChainId.FANTOM]: [
     WNATIVE[ChainId.FANTOM],
     WETH9[ChainId.FANTOM],
@@ -89,7 +94,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     MIM[ChainId.FANTOM],
     FRAX[ChainId.FANTOM],
   ],
-  [ChainId.GNOSIS]: [WNATIVE[ChainId.GNOSIS], USDC[ChainId.GNOSIS], USDT[ChainId.GNOSIS], DAI[ChainId.GNOSIS]],
+  [ChainId.GNOSIS]: [
+    WNATIVE[ChainId.GNOSIS],
+    USDC[ChainId.GNOSIS],
+    USDT[ChainId.GNOSIS],
+    DAI[ChainId.GNOSIS],
+  ],
   [ChainId.BSC]: [
     WNATIVE[ChainId.BSC],
     WETH9[ChainId.BSC],
@@ -109,17 +119,17 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     FRAX[ChainId.ARBITRUM],
     new Token({
       chainId: ChainId.ARBITRUM,
-      address: '0x539bdE0d7Dbd336b79148AA742883198BBF60342',
+      address: "0x539bdE0d7Dbd336b79148AA742883198BBF60342",
       decimals: 18,
-      symbol: 'MAGIC',
-      name: 'MAGIC',
+      symbol: "MAGIC",
+      name: "MAGIC",
     }),
     new Token({
       chainId: ChainId.ARBITRUM,
-      address: '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
+      address: "0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1",
       decimals: 18,
-      symbol: 'gOHM',
-      name: 'Governance OHM',
+      symbol: "gOHM",
+      name: "Governance OHM",
     }),
   ],
   [ChainId.ARBITRUM_NOVA]: [
@@ -135,33 +145,38 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     WBTC[ChainId.AVALANCHE],
     new Token({
       chainId: ChainId.AVALANCHE,
-      address: '0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664',
+      address: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
       decimals: 18,
-      symbol: 'USDC.e',
-      name: 'USD Coin',
+      symbol: "USDC.e",
+      name: "USD Coin",
     }),
     USDC[ChainId.AVALANCHE],
     USDT[ChainId.AVALANCHE],
     new Token({
       chainId: ChainId.AVALANCHE,
-      address: '0xc7198437980c041c805A1EDcbA50c1Ce5db95118',
+      address: "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
       decimals: 18,
-      symbol: 'USDT.e',
-      name: 'Tether USD',
+      symbol: "USDT.e",
+      name: "Tether USD",
     }),
     DAI[ChainId.AVALANCHE],
     MIM[ChainId.AVALANCHE],
     FRAX[ChainId.AVALANCHE],
     new Token({
       chainId: ChainId.AVALANCHE,
-      address: '0x0da67235dD5787D67955420C84ca1cEcd4E5Bb3b',
+      address: "0x0da67235dD5787D67955420C84ca1cEcd4E5Bb3b",
       decimals: 18,
-      name: 'Wrapped MEMO',
-      symbol: 'WMEMO',
+      name: "Wrapped MEMO",
+      symbol: "WMEMO",
     }),
   ],
 
-  [ChainId.HECO]: [WNATIVE[ChainId.HECO], USDC[ChainId.HECO], USDT[ChainId.HECO], DAI[ChainId.HECO]],
+  [ChainId.HECO]: [
+    WNATIVE[ChainId.HECO],
+    USDC[ChainId.HECO],
+    USDT[ChainId.HECO],
+    DAI[ChainId.HECO],
+  ],
   [ChainId.HARMONY]: [
     WNATIVE[ChainId.HARMONY],
     USDC[ChainId.HARMONY],
@@ -169,7 +184,12 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     DAI[ChainId.HARMONY],
     FRAX[ChainId.HARMONY],
   ],
-  [ChainId.OKEX]: [WNATIVE[ChainId.OKEX], USDC[ChainId.OKEX], USDT[ChainId.OKEX], DAI[ChainId.OKEX]],
+  [ChainId.OKEX]: [
+    WNATIVE[ChainId.OKEX],
+    USDC[ChainId.OKEX],
+    USDT[ChainId.OKEX],
+    DAI[ChainId.OKEX],
+  ],
   [ChainId.CELO]: [
     WNATIVE[ChainId.CELO],
     USDC[ChainId.CELO],
@@ -177,31 +197,31 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     DAI[ChainId.CELO],
     new Token({
       chainId: ChainId.CELO,
-      address: '0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73',
+      address: "0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73",
       decimals: 18,
-      symbol: 'cEUR',
-      name: 'Celo Euro',
+      symbol: "cEUR",
+      name: "Celo Euro",
     }),
     new Token({
       chainId: ChainId.CELO,
-      address: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
+      address: "0x765DE816845861e75A25fCA122bb6898B8B1282a",
       decimals: 18,
-      symbol: 'cUSD',
-      name: 'Celo Dollar',
+      symbol: "cUSD",
+      name: "Celo Dollar",
     }),
     new Token({
       chainId: ChainId.CELO,
-      address: '0x2DEf4285787d58a2f811AF24755A8150622f4361',
+      address: "0x2DEf4285787d58a2f811AF24755A8150622f4361",
       decimals: 18,
-      symbol: 'cETH',
-      name: 'Celo Ether',
+      symbol: "cETH",
+      name: "Celo Ether",
     }),
     new Token({
       chainId: ChainId.CELO,
-      address: '0xD629eb00dEced2a080B7EC630eF6aC117e614f1b',
+      address: "0xD629eb00dEced2a080B7EC630eF6aC117e614f1b",
       decimals: 18,
-      symbol: 'cBTC',
-      name: 'Celo Bitcoin',
+      symbol: "cBTC",
+      name: "Celo Bitcoin",
     }),
   ],
   [ChainId.PALM]: [WNATIVE[ChainId.PALM]],
@@ -213,8 +233,17 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     MIM[ChainId.MOONRIVER],
     FRAX[ChainId.MOONRIVER],
   ],
-  [ChainId.FUSE]: [WNATIVE[ChainId.FUSE], USDC[ChainId.FUSE], USDT[ChainId.FUSE], DAI[ChainId.FUSE]],
-  [ChainId.TELOS]: [WNATIVE[ChainId.TELOS], USDC[ChainId.TELOS], USDT[ChainId.TELOS]],
+  [ChainId.FUSE]: [
+    WNATIVE[ChainId.FUSE],
+    USDC[ChainId.FUSE],
+    USDT[ChainId.FUSE],
+    DAI[ChainId.FUSE],
+  ],
+  [ChainId.TELOS]: [
+    WNATIVE[ChainId.TELOS],
+    USDC[ChainId.TELOS],
+    USDT[ChainId.TELOS],
+  ],
   [ChainId.MOONBEAM]: [
     WNATIVE[ChainId.MOONBEAM],
     USDC[ChainId.MOONBEAM],
@@ -254,17 +283,17 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[
     WNATIVE[ChainId.BOBA_AVAX],
     new Token({
       chainId: ChainId.BOBA_AVAX,
-      address: '0x4200000000000000000000000000000000000023',
+      address: "0x4200000000000000000000000000000000000023",
       decimals: 18,
-      symbol: 'AVAX',
-      name: 'Avax',
+      symbol: "AVAX",
+      name: "Avax",
     }),
   ],
   [ChainId.BTTC]: [WNATIVE[ChainId.BTTC]],
-}
+};
 
 export const ADDITIONAL_BASES: {
-  [chainId: number]: { [tokenAddress: string]: Token[] }
+  [chainId: number]: { [tokenAddress: string]: Token[] };
 } = {
   [ChainId.ETHEREUM]: {
     [rETH2_ADDRESS[ChainId.ETHEREUM]]: [sETH2[ChainId.ETHEREUM]],
@@ -324,11 +353,11 @@ export const ADDITIONAL_BASES: {
     [FRAX_ADDRESS[ChainId.OPTIMISM]]: [FXS[ChainId.OPTIMISM]],
     [FXS_ADDRESS[ChainId.OPTIMISM]]: [FRAX[ChainId.OPTIMISM]],
   },
-}
+};
 
 export const CUSTOM_BASES: {
-  [chainId: number]: { [tokenAddress: string]: Token[] }
-} = {}
+  [chainId: number]: { [tokenAddress: string]: Token[] };
+} = {};
 
 export const COMMON_BASES: { readonly [chainId: number]: Token[] } = {
   [ChainId.AVALANCHE]: [
@@ -355,23 +384,36 @@ export const COMMON_BASES: { readonly [chainId: number]: Token[] } = {
     FRAX[ChainId.BOBA],
     WBTC[ChainId.BOBA],
   ],
-}
+};
 
-export function getCurrencyCombinations(chainId: number, currencyA: Type, currencyB: Type) {
-  const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
+export function getCurrencyCombinations(
+  chainId: number,
+  currencyA: Type,
+  currencyB: Type
+) {
+  const [tokenA, tokenB] = chainId
+    ? [currencyA?.wrapped, currencyB?.wrapped]
+    : [undefined, undefined];
 
-  const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
-  const additionalA = tokenA ? ADDITIONAL_BASES[chainId]?.[tokenA.address] ?? [] : []
-  const additionalB = tokenB ? ADDITIONAL_BASES[chainId]?.[tokenB.address] ?? [] : []
+  const common =
+    chainId in BASES_TO_CHECK_TRADES_AGAINST
+      ? BASES_TO_CHECK_TRADES_AGAINST[chainId]
+      : [];
+  const additionalA = tokenA
+    ? ADDITIONAL_BASES[chainId]?.[tokenA.address] ?? []
+    : [];
+  const additionalB = tokenB
+    ? ADDITIONAL_BASES[chainId]?.[tokenB.address] ?? []
+    : [];
 
-  const bases: Token[] = [...common, ...additionalA, ...additionalB]
+  const bases: Token[] = [...common, ...additionalA, ...additionalB];
 
   const basePairs: [Token, Token][] = flatMap(bases, (base): [Token, Token][] =>
     bases.map((otherBase) => [base, otherBase])
-  )
+  );
 
   if (!tokenA || !tokenB) {
-    return []
+    return [];
   }
 
   return [
@@ -384,20 +426,24 @@ export function getCurrencyCombinations(chainId: number, currencyA: Type, curren
     // each base against all bases
     ...basePairs,
   ]
-    .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
+    .filter((tokens): tokens is [Token, Token] =>
+      Boolean(tokens[0] && tokens[1])
+    )
     .filter(([t0, t1]) => t0.address !== t1.address)
     .filter(([tokenA, tokenB]) => {
-      if (!chainId) return true
-      const customBases = CUSTOM_BASES[chainId]
+      if (!chainId) return true;
+      const customBases = CUSTOM_BASES[chainId];
 
-      const customBasesA: Token[] | undefined = customBases?.[tokenA.address]
-      const customBasesB: Token[] | undefined = customBases?.[tokenB.address]
+      const customBasesA: Token[] | undefined = customBases?.[tokenA.address];
+      const customBasesB: Token[] | undefined = customBases?.[tokenB.address];
 
-      if (!customBasesA && !customBasesB) return true
+      if (!customBasesA && !customBasesB) return true;
 
-      if (customBasesA && !customBasesA.find((base) => tokenB.equals(base))) return false
-      if (customBasesB && !customBasesB.find((base) => tokenA.equals(base))) return false
+      if (customBasesA && !customBasesA.find((base) => tokenB.equals(base)))
+        return false;
+      if (customBasesB && !customBasesB.find((base) => tokenA.equals(base)))
+        return false;
 
-      return true
-    })
+      return true;
+    });
 }

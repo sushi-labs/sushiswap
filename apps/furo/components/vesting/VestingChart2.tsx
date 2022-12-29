@@ -1,42 +1,55 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
-import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/solid'
-import { formatNumber } from '@sushiswap/format'
-import { useInterval } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
-import { classNames, ProgressBar, ProgressColor, Tooltip, Typography } from '@sushiswap/ui'
-import { format } from 'date-fns'
-import { FC, useState } from 'react'
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
+import { LockClosedIcon, LockOpenIcon } from "@heroicons/react/solid";
+import { formatNumber } from "@sushiswap/format";
+import { useInterval } from "@sushiswap/hooks";
+import { ZERO } from "@sushiswap/math";
+import {
+  classNames,
+  ProgressBar,
+  ProgressColor,
+  Tooltip,
+  Typography,
+} from "@sushiswap/ui";
+import { format } from "date-fns";
+import { FC, useState } from "react";
 
-import { FuroStatus, PeriodType, Vesting } from '../../lib'
-import { ChartHover } from '../../types'
-import { Period, Schedule } from './createScheduleRepresentation'
+import { FuroStatus, PeriodType, Vesting } from "../../lib";
+import { ChartHover } from "../../types";
+import { Period, Schedule } from "./createScheduleRepresentation";
 
 interface VestingChart {
-  vesting?: Vesting
-  schedule?: Schedule
-  hover?: ChartHover
-  setHover?(x: ChartHover): void
+  vesting?: Vesting;
+  schedule?: Schedule;
+  hover?: ChartHover;
+  setHover?(x: ChartHover): void;
 }
 
 const Timer: FC<{ date: Date }> = ({ date }) => {
-  const [remaining, setRemaining] = useState<{ days: string; hours: string; minutes: string; seconds: string }>()
+  const [remaining, setRemaining] = useState<{
+    days: string;
+    hours: string;
+    minutes: string;
+    seconds: string;
+  }>();
 
   useInterval(() => {
-    const now = Date.now()
-    const interval = date.getTime() - now
+    const now = Date.now();
+    const interval = date.getTime() - now;
 
-    const days = Math.floor(interval / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((interval % (1000 * 60)) / 1000)
+    const days = Math.floor(interval / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (interval % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((interval % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((interval % (1000 * 60)) / 1000);
 
     setRemaining({
-      days: String(Math.max(days, 0)).padStart(2, '0'),
-      hours: String(Math.max(hours, 0)).padStart(2, '0'),
-      minutes: String(Math.max(minutes, 0)).padStart(2, '0'),
-      seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
-    })
-  }, 1000)
+      days: String(Math.max(days, 0)).padStart(2, "0"),
+      hours: String(Math.max(hours, 0)).padStart(2, "0"),
+      minutes: String(Math.max(minutes, 0)).padStart(2, "0"),
+      seconds: String(Math.max(seconds, 0)).padStart(2, "0"),
+    });
+  }, 1000);
 
   return (
     <div className="flex justify-center gap-4 text-slate-200">
@@ -73,41 +86,61 @@ const Timer: FC<{ date: Date }> = ({ date }) => {
         </Typography>
       </div>
     </div>
-  )
-}
+  );
+};
 
-const Block: FC<{ vesting: Vesting; period: Period; length: number; className: string }> = ({
-  vesting,
-  period,
-  length,
-}) => {
-  const now = vesting.status === FuroStatus.CANCELLED ? vesting.modifiedAtTimestamp.getTime() : Date.now()
-  const unlocked = period.date.getTime() < now
-  const end = period.date.getTime()
-  const start = end - length
+const Block: FC<{
+  vesting: Vesting;
+  period: Period;
+  length: number;
+  className: string;
+}> = ({ vesting, period, length }) => {
+  const now =
+    vesting.status === FuroStatus.CANCELLED
+      ? vesting.modifiedAtTimestamp.getTime()
+      : Date.now();
+  const unlocked = period.date.getTime() < now;
+  const end = period.date.getTime();
+  const start = end - length;
 
-  const progress = Math.min(Math.max(now - start, 0) / (end - start), 1)
+  const progress = Math.min(Math.max(now - start, 0) / (end - start), 1);
 
   return (
     <Tooltip
       button={
         <div
           className={classNames(
-            'w-full hover:ring-2 ring-offset-2 ring-offset-slate-900 ring-slate-700 relative bg-slate-800 rounded-xl flex flex-col gap-1 items-center justify-center h-30 p-4 pt-8'
+            "w-full hover:ring-2 ring-offset-2 ring-offset-slate-900 ring-slate-700 relative bg-slate-800 rounded-xl flex flex-col gap-1 items-center justify-center h-30 p-4 pt-8"
           )}
         >
-          <Typography variant="xxs" weight={500} className="absolute uppercase text-slate-500 top-2 left-3">
-            {[PeriodType.STEP, PeriodType.END].includes(period.type) ? 'Payout' : 'Cliff End'}
+          <Typography
+            variant="xxs"
+            weight={500}
+            className="absolute uppercase text-slate-500 top-2 left-3"
+          >
+            {[PeriodType.STEP, PeriodType.END].includes(period.type)
+              ? "Payout"
+              : "Cliff End"}
           </Typography>
-          {unlocked ? <LockOpenIcon width={24} /> : <LockClosedIcon width={24} />}
-          <Typography variant="sm" weight={500} className="w-full text-center truncate text-slate-200">
-            {formatNumber(+period.amount.toSignificant(4)) === 'NaN'
-              ? '0.00'
-              : formatNumber(+period.amount.toSignificant(4))}{' '}
-            <span className="text-sm text-slate-400">{period.amount.currency.symbol}</span>
+          {unlocked ? (
+            <LockOpenIcon width={24} />
+          ) : (
+            <LockClosedIcon width={24} />
+          )}
+          <Typography
+            variant="sm"
+            weight={500}
+            className="w-full text-center truncate text-slate-200"
+          >
+            {formatNumber(+period.amount.toSignificant(4)) === "NaN"
+              ? "0.00"
+              : formatNumber(+period.amount.toSignificant(4))}{" "}
+            <span className="text-sm text-slate-400">
+              {period.amount.currency.symbol}
+            </span>
           </Typography>
           <Typography variant="xs" className="text-slate-500">
-            {format(period.date, 'dd MMM yyyy')}
+            {format(period.date, "dd MMM yyyy")}
           </Typography>
           <div className="w-full mt-2">
             <ProgressBar
@@ -121,23 +154,32 @@ const Block: FC<{ vesting: Vesting; period: Period; length: number; className: s
       panel={
         <div className="flex flex-col gap-3">
           <Typography variant="xxs" weight={500} className="text-slate-300">
-            {vesting.status === FuroStatus.CANCELLED ? 'Cancelled' : 'Unlocks In'}
+            {vesting.status === FuroStatus.CANCELLED
+              ? "Cancelled"
+              : "Unlocks In"}
           </Typography>
           <Timer
             date={
-              vesting.status === FuroStatus.CANCELLED ? vesting.modifiedAtTimestamp : new Date(period.date.getTime())
+              vesting.status === FuroStatus.CANCELLED
+                ? vesting.modifiedAtTimestamp
+                : new Date(period.date.getTime())
             }
           />
         </div>
       }
     />
-  )
-}
+  );
+};
 
-const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover.NONE, setHover }) => {
-  const PAGE_SIZE = 3
+const VestingChart2: FC<VestingChart> = ({
+  vesting,
+  schedule,
+  hover = ChartHover.NONE,
+  setHover,
+}) => {
+  const PAGE_SIZE = 3;
 
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(0);
 
   return (
     <div className="flex flex-col w-full gap-4">
@@ -145,42 +187,76 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
         <div className="flex flex-col bg-gradient-to-b from-slate-800 via-slate-800 to-blue/25 h-[228px] items-center justify-center w-full">
           {[ChartHover.STREAMED, ChartHover.NONE].includes(hover) && (
             <div className="flex flex-col gap-3">
-              <Typography variant="xs" className="uppercase text-center tracking-[0.2rem]">
+              <Typography
+                variant="xs"
+                className="uppercase text-center tracking-[0.2rem]"
+              >
                 Unlocked
               </Typography>
               <div className="flex flex-col gap-1">
-                <Typography variant="h1" weight={500} className="text-center text-slate-50">
-                  {vesting?.streamedAmount?.toSignificant(6).split('.')[0]}
-                  <Typography variant="h3" weight={500} className="text-slate-300" as="span">
+                <Typography
+                  variant="h1"
+                  weight={500}
+                  className="text-center text-slate-50"
+                >
+                  {vesting?.streamedAmount?.toSignificant(6).split(".")[0]}
+                  <Typography
+                    variant="h3"
+                    weight={500}
+                    className="text-slate-300"
+                    as="span"
+                  >
                     .
                     {vesting?.streamedAmount?.greaterThan(ZERO)
-                      ? vesting?.streamedAmount.toFixed(6).split('.')[1]
-                      : '000000'}
+                      ? vesting?.streamedAmount.toFixed(6).split(".")[1]
+                      : "000000"}
                   </Typography>
                 </Typography>
-                <Typography variant="sm" className="text-slate-500" weight={500}>
-                  / {formatNumber(vesting?.totalAmount.toSignificant(6))} {vesting?.token.symbol} Total
+                <Typography
+                  variant="sm"
+                  className="text-slate-500"
+                  weight={500}
+                >
+                  / {formatNumber(vesting?.totalAmount.toSignificant(6))}{" "}
+                  {vesting?.token.symbol} Total
                 </Typography>
               </div>
             </div>
           )}
           {hover === ChartHover.WITHDRAW && (
             <div className="flex flex-col justify-center gap-3">
-              <Typography variant="xs" className="uppercase text-center tracking-[0.2rem]">
+              <Typography
+                variant="xs"
+                className="uppercase text-center tracking-[0.2rem]"
+              >
                 Withdrawn
               </Typography>
               <div className="flex flex-col gap-1">
-                <Typography variant="h1" weight={500} className="text-center text-slate-50">
-                  {vesting?.withdrawnAmount?.toSignificant(6).split('.')[0]}
-                  <Typography variant="h3" weight={500} className="text-slate-300" as="span">
+                <Typography
+                  variant="h1"
+                  weight={500}
+                  className="text-center text-slate-50"
+                >
+                  {vesting?.withdrawnAmount?.toSignificant(6).split(".")[0]}
+                  <Typography
+                    variant="h3"
+                    weight={500}
+                    className="text-slate-300"
+                    as="span"
+                  >
                     .
                     {vesting?.withdrawnAmount?.greaterThan(ZERO)
-                      ? vesting?.withdrawnAmount.toFixed(6).split('.')[1]
-                      : '000000'}
+                      ? vesting?.withdrawnAmount.toFixed(6).split(".")[1]
+                      : "000000"}
                   </Typography>
                 </Typography>
-                <Typography variant="sm" className="text-slate-500" weight={500}>
-                  / {formatNumber(vesting?.remainingAmount.toSignificant(6))} {vesting?.token.symbol} Total
+                <Typography
+                  variant="sm"
+                  className="text-slate-500"
+                  weight={500}
+                >
+                  / {formatNumber(vesting?.remainingAmount.toSignificant(6))}{" "}
+                  {vesting?.token.symbol} Total
                 </Typography>
               </div>
             </div>
@@ -210,7 +286,10 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                   vesting={vesting}
                   period={period}
                   key={_index}
-                  length={period.date.getTime() - schedule[index + _index].date.getTime()}
+                  length={
+                    period.date.getTime() -
+                    schedule[index + _index].date.getTime()
+                  }
                   className="translate"
                 />
               ))}
@@ -232,7 +311,13 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
               <ChevronLeftIcon
                 className="text-slate-200 group-hover:text-white"
                 width={24}
-                onClick={() => setIndex((prevState) => (prevState - PAGE_SIZE < 0 ? prevState : prevState - PAGE_SIZE))}
+                onClick={() =>
+                  setIndex((prevState) =>
+                    prevState - PAGE_SIZE < 0
+                      ? prevState
+                      : prevState - PAGE_SIZE
+                  )
+                }
               />
             </button>
           </div>
@@ -243,13 +328,15 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
                 width={24}
                 onClick={() =>
                   setIndex((prevState) => {
-                    if (!schedule) return prevState
+                    if (!schedule) return prevState;
 
                     // set to start of next page to prevent jankiness
-                    const previousPage = Math.floor(prevState / PAGE_SIZE)
-                    const nextIndex = previousPage * PAGE_SIZE + PAGE_SIZE
+                    const previousPage = Math.floor(prevState / PAGE_SIZE);
+                    const nextIndex = previousPage * PAGE_SIZE + PAGE_SIZE;
 
-                    return schedule.length - 1 < nextIndex ? prevState : nextIndex
+                    return schedule.length - 1 < nextIndex
+                      ? prevState
+                      : nextIndex;
                   })
                 }
               />
@@ -258,7 +345,7 @@ const VestingChart2: FC<VestingChart> = ({ vesting, schedule, hover = ChartHover
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VestingChart2
+export default VestingChart2;

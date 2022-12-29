@@ -1,52 +1,60 @@
-import { Listbox, Transition } from '@headlessui/react'
-import { ChevronDownIcon, ExternalLinkIcon } from '@heroicons/react/outline'
-import useScrollPosition from '@react-hook/window-scroll'
-import { useBreakpoint, useIsMounted } from '@sushiswap/hooks'
-import Image from 'next/legacy/image'
-import React, { Fragment } from 'react'
+import { Listbox, Transition } from "@headlessui/react";
+import { ChevronDownIcon, ExternalLinkIcon } from "@heroicons/react/outline";
+import useScrollPosition from "@react-hook/window-scroll";
+import { useBreakpoint, useIsMounted } from "@sushiswap/hooks";
+import Image from "next/legacy/image";
+import React, { Fragment } from "react";
 
-import { classNames, Container, IconButton, Link, MaxWidth, Select, Typography } from '..'
+import {
+  classNames,
+  Container,
+  IconButton,
+  Link,
+  MaxWidth,
+  Select,
+  Typography,
+} from "..";
 
 export enum AppType {
-  Root = 'Explore Apps',
-  Blog = 'Blog',
-  Bridge = 'Bridge',
-  Swap = 'Swap',
-  xSwap = 'xSwap',
-  Furo = 'Streaming',
-  Legacy = 'Sushi 1.0',
-  Internal = 'Internal',
-  Kashi = 'Lend & Borrow',
-  Analytics = 'Analytics',
-  Invest = 'Earn',
-  Partner = 'Partner',
-  Widget = 'Widget',
-  Academy = 'Academy',
+  Root = "Explore Apps",
+  Blog = "Blog",
+  Bridge = "Bridge",
+  Swap = "Swap",
+  xSwap = "xSwap",
+  Furo = "Streaming",
+  Legacy = "Sushi 1.0",
+  Internal = "Internal",
+  Kashi = "Lend & Borrow",
+  Analytics = "Analytics",
+  Invest = "Earn",
+  Partner = "Partner",
+  Widget = "Widget",
+  Academy = "Academy",
 }
 
 const LINK = {
-  [AppType.Root]: '/',
-  [AppType.Legacy]: '/',
-  [AppType.Blog]: '/blog',
-  [AppType.Bridge]: '/bridge',
-  [AppType.Swap]: '/swap',
-  [AppType.xSwap]: '/xswap',
-  [AppType.Furo]: '/furo',
-  [AppType.Internal]: '/internal',
-  [AppType.Kashi]: '/kashi',
-  [AppType.Analytics]: '/analytics',
-  [AppType.Invest]: '/earn',
-  [AppType.Partner]: '/partner',
-  [AppType.Widget]: '/widget',
-  [AppType.Academy]: '/academy',
-}
+  [AppType.Root]: "/",
+  [AppType.Legacy]: "/",
+  [AppType.Blog]: "/blog",
+  [AppType.Bridge]: "/bridge",
+  [AppType.Swap]: "/swap",
+  [AppType.xSwap]: "/xswap",
+  [AppType.Furo]: "/furo",
+  [AppType.Internal]: "/internal",
+  [AppType.Kashi]: "/kashi",
+  [AppType.Analytics]: "/analytics",
+  [AppType.Invest]: "/earn",
+  [AppType.Partner]: "/partner",
+  [AppType.Widget]: "/widget",
+  [AppType.Academy]: "/academy",
+};
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
-  nav?: JSX.Element
-  withScrollBackground?: boolean
-  appType: AppType
-  maxWidth?: MaxWidth
-  bgColor?: string
+  nav?: JSX.Element;
+  withScrollBackground?: boolean;
+  appType: AppType;
+  maxWidth?: MaxWidth;
+  bgColor?: string;
 }
 
 export function Header({
@@ -55,27 +63,30 @@ export function Header({
   className,
   nav,
   withScrollBackground = false,
-  bgColor = 'bg-slate-900',
-  maxWidth = 'full',
+  bgColor = "bg-slate-900",
+  maxWidth = "full",
   ...props
 }: HeaderProps): JSX.Element {
-  const isMounted = useIsMounted()
-  const scrollY = useScrollPosition()
+  const isMounted = useIsMounted();
+  const scrollY = useScrollPosition();
 
-  const { isMd } = useBreakpoint('md')
+  const { isMd } = useBreakpoint("md");
 
   // Show when:
   // 1. We scroll down for 45px
   // 2. When body has a negative top set for body lock for Dialogs on small screens
   const showBackground =
     (scrollY > 45 && withScrollBackground && isMounted) ||
-    (typeof window !== 'undefined' && !isMd
+    (typeof window !== "undefined" && !isMd
       ? Number(document.body.style.top.slice(0, -2)) < 0 && withScrollBackground
-      : false)
+      : false);
 
   return (
     <header
-      className={classNames('sticky mt-0 flex items-center left-0 right-0 top-0 w-full z-[1070] h-[54px]', className)}
+      className={classNames(
+        "sticky mt-0 flex items-center left-0 right-0 top-0 w-full z-[1070] h-[54px]",
+        className
+      )}
       {...props}
     >
       <Transition
@@ -88,11 +99,18 @@ export function Header({
         leaveFrom="translate-y-0"
         leaveTo="translate-y-[-100%]"
       >
-        <div className={classNames(bgColor, 'absolute inset-0 border-b pointer-events-none border-slate-200/10')} />
+        <div
+          className={classNames(
+            bgColor,
+            "absolute inset-0 border-b pointer-events-none border-slate-200/10"
+          )}
+        />
       </Transition>
       <Container
         maxWidth={maxWidth}
-        className={classNames('grid grid-cols-3 items-center w-full mx-auto z-[101] px-4 row-full')}
+        className={classNames(
+          "grid grid-cols-3 items-center w-full mx-auto z-[101] px-4 row-full"
+        )}
       >
         <div className="flex items-center flex-grow gap-3">
           <a className="flex flex-row items-center gap-1.5" href="/">
@@ -113,7 +131,9 @@ export function Header({
                 type="button"
                 className="flex items-center gap-2 font-semibold hover:text-slate-200 text-slate-300"
               >
-                <span className="hidden text-sm truncate sm:block">{AppType.Root}</span>
+                <span className="hidden text-sm truncate sm:block">
+                  {AppType.Root}
+                </span>
                 <IconButton as="div" className="p-1">
                   <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
                 </IconButton>
@@ -123,7 +143,11 @@ export function Header({
             <Select.Options className="w-[max-content] !bg-slate-700 -ml-5 mt-5 !max-h-[unset]">
               <div className="grid grid-cols-1 gap-1 px-2 py-2 md:grid-cols-3">
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-2 mb-1 uppercase md:block text-slate-400">
+                  <Typography
+                    variant="xs"
+                    weight={600}
+                    className="hidden px-2 mb-1 uppercase md:block text-slate-400"
+                  >
                     Core
                   </Typography>
                   <Select.Option
@@ -134,7 +158,10 @@ export function Header({
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
                     {AppType.Swap}
-                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                    <Typography
+                      variant="xs"
+                      className="text-slate-400 group-hover:text-blue-100"
+                    >
                       The easiest way to trade
                     </Typography>
                   </Select.Option>
@@ -146,7 +173,10 @@ export function Header({
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
                     {AppType.xSwap}
-                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                    <Typography
+                      variant="xs"
+                      className="text-slate-400 group-hover:text-blue-100"
+                    >
                       Cross-chain swapping made easy
                     </Typography>
                   </Select.Option>
@@ -158,13 +188,20 @@ export function Header({
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
                     {AppType.Invest}
-                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                    <Typography
+                      variant="xs"
+                      className="text-slate-400 group-hover:text-blue-100"
+                    >
                       Earn fees by providing liquidity
                     </Typography>
                   </Select.Option>
                 </div>
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-2 mb-1 uppercase md:block text-slate-400">
+                  <Typography
+                    variant="xs"
+                    weight={600}
+                    className="hidden px-2 mb-1 uppercase md:block text-slate-400"
+                  >
                     Products
                   </Typography>
                   {/* <Select.Option
@@ -187,7 +224,10 @@ export function Header({
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
                     {AppType.Furo}
-                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                    <Typography
+                      variant="xs"
+                      className="text-slate-400 group-hover:text-blue-100"
+                    >
                       Automate DAO salaries and vesting schedules
                     </Typography>
                   </Select.Option>
@@ -199,13 +239,20 @@ export function Header({
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
                     {AppType.Analytics}
-                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                    <Typography
+                      variant="xs"
+                      className="text-slate-400 group-hover:text-blue-100"
+                    >
                       Find the best opportunities
                     </Typography>
                   </Select.Option>
                 </div>
                 <div>
-                  <Typography variant="xs" weight={600} className="hidden px-2 mb-1 uppercase md:block text-slate-400">
+                  <Typography
+                    variant="xs"
+                    weight={600}
+                    className="hidden px-2 mb-1 uppercase md:block text-slate-400"
+                  >
                     Links
                   </Typography>
                   <Select.Option
@@ -216,7 +263,10 @@ export function Header({
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
                     {AppType.Blog}
-                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                    <Typography
+                      variant="xs"
+                      className="text-slate-400 group-hover:text-blue-100"
+                    >
                       Stay up to date with Sushi
                     </Typography>
                   </Select.Option>
@@ -228,7 +278,10 @@ export function Header({
                     className="!border-slate-700 !cursor-pointer px-2 flex flex-col gap-0 !items-start group"
                   >
                     {AppType.Academy}
-                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                    <Typography
+                      variant="xs"
+                      className="text-slate-400 group-hover:text-blue-100"
+                    >
                       Demystifying DeFi
                     </Typography>
                   </Select.Option>
@@ -243,7 +296,10 @@ export function Header({
                       <span>{AppType.Legacy}</span>
                       <ExternalLinkIcon width={14} height={14} />
                     </div>
-                    <Typography variant="xs" className="text-slate-400 group-hover:text-blue-100">
+                    <Typography
+                      variant="xs"
+                      className="text-slate-400 group-hover:text-blue-100"
+                    >
                       Prefer the old app?
                     </Typography>
                   </Select.Option>
@@ -256,7 +312,7 @@ export function Header({
         <div className="flex justify-end flex-grow">{children}</div>
       </Container>
     </header>
-  )
+  );
 }
 
-export default Header
+export default Header;

@@ -1,25 +1,29 @@
-import { useEffect } from 'react'
-import { useClient, useConnect } from 'wagmi'
+import { useEffect } from "react";
+import { useClient, useConnect } from "wagmi";
 
-const AUTOCONNECTED_CONNECTOR_IDS = ['safe']
+const AUTOCONNECTED_CONNECTOR_IDS = ["safe"];
 
 export const useAutoConnect = () => {
-  const client = useClient()
-  const { connect, connectors } = useConnect()
+  const client = useClient();
+  const { connect, connectors } = useConnect();
 
   useEffect(() => {
-    const ready = connectors.filter((c) => AUTOCONNECTED_CONNECTOR_IDS.includes(c.id)).some((c) => c.ready)
+    const ready = connectors
+      .filter((c) => AUTOCONNECTED_CONNECTOR_IDS.includes(c.id))
+      .some((c) => c.ready);
     if (ready) {
       AUTOCONNECTED_CONNECTOR_IDS.forEach((connectorId) => {
-        const connector = connectors.find((c) => c.id === connectorId && c.ready)
+        const connector = connectors.find(
+          (c) => c.id === connectorId && c.ready
+        );
         if (connector) {
-          connect({ connector })
+          connect({ connector });
         }
-      })
+      });
     } else {
-      ;(async () => {
-        await client.autoConnect()
-      })()
+      (async () => {
+        await client.autoConnect();
+      })();
     }
-  }, [client, connect, connectors])
-}
+  }, [client, connect, connectors]);
+};

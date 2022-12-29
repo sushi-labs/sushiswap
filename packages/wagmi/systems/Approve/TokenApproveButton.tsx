@@ -1,19 +1,27 @@
-import { Transition } from '@headlessui/react'
-import { Amount, Currency } from '@sushiswap/currency'
-import { Badge, Button, classNames, Currency as CurrencyFromUi, IconButton, Tooltip, Typography } from '@sushiswap/ui'
-import { FC, memo, useEffect } from 'react'
-import { Address } from 'wagmi'
+import { Transition } from "@headlessui/react";
+import { Amount, Currency } from "@sushiswap/currency";
+import {
+  Badge,
+  Button,
+  classNames,
+  Currency as CurrencyFromUi,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@sushiswap/ui";
+import { FC, memo, useEffect } from "react";
+import { Address } from "wagmi";
 
-import { ApprovalState, useERC20ApproveCallback } from '../../hooks'
-import { DefaultButton } from './DefaultButton'
-import { ApprovalButtonRenderProp, ApproveButton } from './types'
+import { ApprovalState, useERC20ApproveCallback } from "../../hooks";
+import { DefaultButton } from "./DefaultButton";
+import { ApprovalButtonRenderProp, ApproveButton } from "./types";
 
-type RenderPropPayload = ApprovalButtonRenderProp
+type RenderPropPayload = ApprovalButtonRenderProp;
 
 export interface TokenApproveButton extends ApproveButton<RenderPropPayload> {
-  watch?: boolean
-  amount?: Amount<Currency>
-  address?: Address
+  watch?: boolean;
+  amount?: Amount<Currency>;
+  address?: Address;
 }
 
 export const TokenApproveButton: FC<TokenApproveButton> = memo(
@@ -33,27 +41,36 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
     enabled = true,
     ...props
   }) => {
-    const [approvalState, onApprove] = useERC20ApproveCallback(watch, amount, address, onSuccess)
+    const [approvalState, onApprove] = useERC20ApproveCallback(
+      watch,
+      amount,
+      address,
+      onSuccess
+    );
 
     useEffect(() => {
       if (!enabled && dispatch && index !== undefined) {
-        dispatch({ type: 'update', payload: { state: [ApprovalState.APPROVED, undefined, false], index } })
+        dispatch({
+          type: "update",
+          payload: { state: [ApprovalState.APPROVED, undefined, false], index },
+        });
       }
-    }, [dispatch, enabled, index])
+    }, [dispatch, enabled, index]);
 
     // Set to undefined on unmount
     useEffect(() => {
       return () => {
-        if (!dispatch || index === undefined) return
-        dispatch({ type: 'remove', payload: { index } })
-      }
-    }, [dispatch, index])
+        if (!dispatch || index === undefined) return;
+        dispatch({ type: "remove", payload: { index } });
+      };
+    }, [dispatch, index]);
 
     useEffect(() => {
-      if (!dispatch || index === undefined || amount === undefined || !enabled) return
+      if (!dispatch || index === undefined || amount === undefined || !enabled)
+        return;
 
       dispatch({
-        type: 'update',
+        type: "update",
         payload: {
           state: [
             approvalState,
@@ -63,7 +80,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
                 {...props}
                 type="button"
                 key={1}
-                className={classNames('whitespace-nowrap', props.className)}
+                className={classNames("whitespace-nowrap", props.className)}
                 onClick={onApprove}
                 disabled={disabled || approvalState === ApprovalState.PENDING}
               >
@@ -74,7 +91,7 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
           ],
           index,
         },
-      })
+      });
     }, [
       id,
       enabled,
@@ -87,10 +104,10 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
       index,
       onApprove,
       props,
-    ])
+    ]);
 
-    if (render) return render({ approvalState, onApprove })
-    if (hideIcon) return <></>
+    if (render) return render({ approvalState, onApprove });
+    if (hideIcon) return <></>;
 
     return (
       <Transition
@@ -119,11 +136,11 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
                     <div
                       className={classNames(
                         approvalState === ApprovalState.PENDING
-                          ? 'bg-yellow'
+                          ? "bg-yellow"
                           : approvalState === ApprovalState.APPROVED
-                          ? 'bg-green'
-                          : 'bg-red',
-                        'w-2 h-2 rounded-full shadow-md'
+                          ? "bg-green"
+                          : "bg-red",
+                        "w-2 h-2 rounded-full shadow-md"
                       )}
                     />
                   }
@@ -131,12 +148,21 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
                   <IconButton
                     as="div"
                     className={classNames(
-                      disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
-                      'flex items-center justify-center hover:scale-[1.10] transition-all'
+                      disabled || approvalState === ApprovalState.PENDING
+                        ? "pointer-events-none saturate-[0]"
+                        : "",
+                      "flex items-center justify-center hover:scale-[1.10] transition-all"
                     )}
                     onClick={onApprove}
                   >
-                    {amount && <CurrencyFromUi.Icon disableLink currency={amount?.currency} width={24} height={24} />}
+                    {amount && (
+                      <CurrencyFromUi.Icon
+                        disableLink
+                        currency={amount?.currency}
+                        width={24}
+                        height={24}
+                      />
+                    )}
                   </IconButton>
                 </Badge>
               </div>
@@ -147,26 +173,31 @@ export const TokenApproveButton: FC<TokenApproveButton> = memo(
                   Status:
                   <span
                     className={classNames(
-                      'ml-1 capitalize',
+                      "ml-1 capitalize",
                       approvalState === ApprovalState.PENDING
-                        ? 'text-yellow'
+                        ? "text-yellow"
                         : approvalState === ApprovalState.APPROVED
-                        ? 'text-green'
-                        : 'text-red'
+                        ? "text-green"
+                        : "text-red"
                     )}
                   >
-                    {approvalState.toLowerCase().replace('_', ' ')}
+                    {approvalState.toLowerCase().replace("_", " ")}
                   </span>
                 </Typography>
-                <Typography variant="xs" weight={500} className="text-slate-400">
-                  We need your approval first to execute this transaction on your behalf; you will only have to approve
-                  the {amount?.currency.symbol} contract once.
+                <Typography
+                  variant="xs"
+                  weight={500}
+                  className="text-slate-400"
+                >
+                  We need your approval first to execute this transaction on
+                  your behalf; you will only have to approve the{" "}
+                  {amount?.currency.symbol} contract once.
                 </Typography>
               </div>
             }
           />
         </DefaultButton>
       </Transition>
-    )
+    );
   }
-)
+);

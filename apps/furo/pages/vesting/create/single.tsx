@@ -1,25 +1,25 @@
-import { ChainId } from '@sushiswap/chain'
-import { Breadcrumb, BreadcrumbLink } from '@sushiswap/ui'
-import { NextSeo } from 'next-seo'
-import { useNetwork } from 'wagmi'
+import { ChainId } from "@sushiswap/chain";
+import { Breadcrumb, BreadcrumbLink } from "@sushiswap/ui";
+import { NextSeo } from "next-seo";
+import { useNetwork } from "wagmi";
 
-import { Layout } from '../../../components'
-import { CreateForm } from '../../../components/vesting'
+import { Layout } from "../../../components";
+import { CreateForm } from "../../../components/vesting";
 
 const LINKS: BreadcrumbLink[] = [
   {
-    href: '/vesting/create',
-    label: 'Create Vesting',
+    href: "/vesting/create",
+    label: "Create Vesting",
   },
   {
-    href: '/vesting/create/single',
-    label: 'Single',
+    href: "/vesting/create/single",
+    label: "Single",
   },
-]
+];
 
 const SingleVesting = () => {
-  const { chain } = useNetwork()
-  const chainId = chain?.id || ChainId.ETHEREUM
+  const { chain } = useNetwork();
+  const chainId = chain?.id || ChainId.ETHEREUM;
 
   return (
     <>
@@ -31,7 +31,7 @@ const SingleVesting = () => {
         </div>
       </Layout>
     </>
-  )
-}
+  );
+};
 
-export default SingleVesting
+export default SingleVesting;

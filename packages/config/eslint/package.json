@@ -10,8 +10,17 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "index.js",
+  ".": {
+    "types": "./index.d.ts",
+    "default": "./index.js"
+  },
+  "./chains": {
+    "types": "./dist/chains.d.ts",
+    "default": "./dist/chains.js"
+  },
   "files": [
     "index.js",
+    "base/index.js",
     "hardhat/index.js",
     "nextjs/index.js",
     "react/index.js"

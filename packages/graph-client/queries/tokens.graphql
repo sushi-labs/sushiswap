@@ -23,14 +23,14 @@ query TokensByChainIds(
   $chainIds: [Int!]!
 ) {
   tokens: tokensByChainIds(
-    first: $first,
-    skip: $skip,
-    pagination: $pagination,
-    where: $where,
-    orderBy: $orderBy,
-    orderDirection: $orderDirection,
-    block: $block,
-    chainIds: $chainIds,
+    first: $first
+    skip: $skip
+    pagination: $pagination
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    block: $block
+    chainIds: $chainIds
   ) {
     ...TokenFields
     source

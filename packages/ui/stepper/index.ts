@@ -1,7 +1,7 @@
-import { VerticalStepper } from './vertical'
+import { VerticalStepper } from "./vertical";
 
 export type Stepper = {
-  Vertical: typeof VerticalStepper
-}
+  Vertical: typeof VerticalStepper;
+};
 
-export const Stepper: Stepper = { Vertical: VerticalStepper }
+export const Stepper: Stepper = { Vertical: VerticalStepper };

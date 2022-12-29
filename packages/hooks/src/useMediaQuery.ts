@@ -1,6 +1,6 @@
-import { useMediaQuery } from 'react-responsive'
-export { useMediaQuery } from 'react-responsive'
+import { useMediaQuery } from "react-responsive";
+export { useMediaQuery } from "react-responsive";
 
 export const useIsSmScreen = () => {
-  return useMediaQuery({ query: '(max-width: 640px)' })
-}
+  return useMediaQuery({ query: "(max-width: 640px)" });
+};

@@ -1,1 +1,1 @@
-declare module 'big.js'
+declare module "big.js";

@@ -1,31 +1,34 @@
-import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outline'
-import { CurrencyDollarIcon } from '@heroicons/react/solid'
-import { Token } from '@sushiswap/currency'
-import { useIsMounted } from '@sushiswap/hooks'
-import { Currency, Overlay, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
-import { TokenSelectorCustomTokenRow } from '@sushiswap/wagmi'
-import React, { FC, useMemo, useState } from 'react'
+import {
+  ChevronRightIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/outline";
+import { CurrencyDollarIcon } from "@heroicons/react/solid";
+import { Token } from "@sushiswap/currency";
+import { useIsMounted } from "@sushiswap/hooks";
+import { Currency, Overlay, SlideIn, Tooltip, Typography } from "@sushiswap/ui";
+import { TokenSelectorCustomTokenRow } from "@sushiswap/wagmi";
+import React, { FC, useMemo, useState } from "react";
 
-import { useAllCustomTokens } from '../../lib/state/storage'
+import { useAllCustomTokens } from "../../lib/state/storage";
 
 export const CustomTokensOverlay: FC = () => {
-  const isMounted = useIsMounted()
-  const [open, setOpen] = useState<boolean>(false)
-  const [customTokens, { removeCustomToken }] = useAllCustomTokens()
+  const isMounted = useIsMounted();
+  const [open, setOpen] = useState<boolean>(false);
+  const [customTokens, { removeCustomToken }] = useAllCustomTokens();
   const [ids, tokens] = useMemo(() => {
-    const ids: string[] = []
-    const tokens: Token[] = []
+    const ids: string[] = [];
+    const tokens: Token[] = [];
     Object.values(customTokens).forEach((customTokensPerChain) =>
       Object.entries(customTokensPerChain).forEach(([k, v]) => {
-        ids.push(k)
-        tokens.push(v)
+        ids.push(k);
+        tokens.push(v);
       })
-    )
+    );
 
-    return [ids, tokens]
-  }, [customTokens])
+    return [ids, tokens];
+  }, [customTokens]);
 
-  if (!isMounted) return <></>
+  if (!isMounted) return <></>;
 
   return (
     <div className="border-b border-slate-200/5">
@@ -34,7 +37,11 @@ export const CustomTokensOverlay: FC = () => {
         className="group items-center relative rounded-xl flex justify-between gap-3 w-full"
       >
         <div className="w-5 h-5 flex items-center justify-center">
-          <CurrencyDollarIcon width={20} height={20} className="-ml-0.5 text-slate-500" />
+          <CurrencyDollarIcon
+            width={20}
+            height={20}
+            className="-ml-0.5 text-slate-500"
+          />
         </div>
         <div className="flex gap-1 w-full justify-between items-center py-4">
           <div className="flex gap-1 items-center">
@@ -46,26 +53,42 @@ export const CustomTokensOverlay: FC = () => {
               panel={
                 <div className="w-80 flex flex-col gap-2">
                   <Typography variant="xs" weight={500}>
-                    Import a token that is not currently on the list by pasting its address here to add it. Custom
-                    tokens are stored locally in your browser.
+                    Import a token that is not currently on the list by pasting
+                    its address here to add it. Custom tokens are stored locally
+                    in your browser.
                   </Typography>
                 </div>
               }
             />
           </div>
           <div className="flex gap-1">
-            <Typography variant="sm" weight={500} className="group-hover:text-slate-200 text-slate-400">
-              {ids.length || '0'} Tokens
+            <Typography
+              variant="sm"
+              weight={500}
+              className="group-hover:text-slate-200 text-slate-400"
+            >
+              {ids.length || "0"} Tokens
             </Typography>
             <div className="w-5 h-5 -mr-1.5 flex items-center">
-              <ChevronRightIcon width={16} height={16} className="group-hover:text-slate-200 text-slate-300" />
+              <ChevronRightIcon
+                width={16}
+                height={16}
+                className="group-hover:text-slate-200 text-slate-300"
+              />
             </div>
           </div>
         </div>
       </div>
-      <SlideIn.FromLeft show={open} onClose={() => setOpen(false)} className="!mt-0">
+      <SlideIn.FromLeft
+        show={open}
+        onClose={() => setOpen(false)}
+        className="!mt-0"
+      >
         <Overlay.Content className="!bg-slate-800">
-          <Overlay.Header onClose={() => setOpen(false)} title="Custom Tokens" />
+          <Overlay.Header
+            onClose={() => setOpen(false)}
+            title="Custom Tokens"
+          />
           <div className="border-t border-slate-200/5 -ml-3 -mr-3 relative min-h-[320px] rounded-t-none lg:max-h-[calc(100%-108px)] rounded-xl overflow-hidden h-full">
             <Currency.List
               className="h-full"
@@ -74,7 +97,12 @@ export const CustomTokensOverlay: FC = () => {
                 <TokenSelectorCustomTokenRow
                   style={style}
                   currency={currency}
-                  onRemove={() => removeCustomToken({ chainId: currency.chainId, address: currency.wrapped.address })}
+                  onRemove={() =>
+                    removeCustomToken({
+                      chainId: currency.chainId,
+                      address: currency.wrapped.address,
+                    })
+                  }
                 />
               )}
             />
@@ -91,5 +119,5 @@ export const CustomTokensOverlay: FC = () => {
         </Overlay.Content>
       </SlideIn.FromLeft>
     </div>
-  )
-}
+  );
+};

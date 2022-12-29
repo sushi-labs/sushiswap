@@ -1,5 +1,9 @@
 query userVestings($block: Block_height, $id: String!) {
-  incomingVestings: vestings(where: { recipient: $id }, orderBy: startedAt, block: $block) {
+  incomingVestings: vestings(
+    where: { recipient: $id }
+    orderBy: startedAt
+    block: $block
+  ) {
     id
     __typename
     status
@@ -29,7 +33,11 @@ query userVestings($block: Block_height, $id: String!) {
       id
     }
   }
-  outgoingVestings: vestings(where: { createdBy: $id }, orderBy: startedAt, block: $block) {
+  outgoingVestings: vestings(
+    where: { createdBy: $id }
+    orderBy: startedAt
+    block: $block
+  ) {
     id
     __typename
     status
@@ -61,7 +69,12 @@ query userVestings($block: Block_height, $id: String!) {
   }
 }
 
-query vestingIds($first: Int = 1000, $skip: Int = 0, $where: Vesting_filter, $block: Block_height) {
+query vestingIds(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: Vesting_filter
+  $block: Block_height
+) {
   vestings(first: $first, skip: $skip, where: $where, block: $block) {
     id
   }
@@ -138,7 +151,11 @@ query vestingTransactions(
 }
 
 query userStreams($block: Block_height, $id: String!) {
-  incomingStreams: streams(where: { recipient: $id }, orderBy: startedAt, block: $block) {
+  incomingStreams: streams(
+    where: { recipient: $id }
+    orderBy: startedAt
+    block: $block
+  ) {
     id
     __typename
     status
@@ -166,7 +183,11 @@ query userStreams($block: Block_height, $id: String!) {
       decimals
     }
   }
-  outgoingStreams: streams(where: { createdBy: $id }, orderBy: startedAt, block: $block) {
+  outgoingStreams: streams(
+    where: { createdBy: $id }
+    orderBy: startedAt
+    block: $block
+  ) {
     id
     __typename
     status
@@ -196,8 +217,13 @@ query userStreams($block: Block_height, $id: String!) {
   }
 }
 
-query streamIds($first: Int = 1000, $skip: Int = 0, $where: Stream_filter, $block: Block_height) {
-  streams(first: $first, skip: $skip, where: $where,, block: $block) {
+query streamIds(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: Stream_filter
+  $block: Block_height
+) {
+  streams(first: $first, skip: $skip, where: $where, block: $block) {
     id
   }
 }

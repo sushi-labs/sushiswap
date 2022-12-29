@@ -1,7 +1,17 @@
-export const GradientCircleIcon = (props: React.ComponentProps<'svg'>) => {
+export const GradientCircleIcon = (props: React.ComponentProps<"svg">) => {
   return (
-    <svg {...props} viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="30" height="30" rx="15" fill="url(#paint0_linear_13084_19043)" />
+    <svg
+      {...props}
+      viewBox="0 0 30 30"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        width="30"
+        height="30"
+        rx="15"
+        fill="url(#paint0_linear_13084_19043)"
+      />
       <defs>
         <linearGradient
           id="paint0_linear_13084_19043"
@@ -16,5 +26,5 @@ export const GradientCircleIcon = (props: React.ComponentProps<'svg'>) => {
         </linearGradient>
       </defs>
     </svg>
-  )
-}
+  );
+};

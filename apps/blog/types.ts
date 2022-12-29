@@ -1,106 +1,106 @@
 export type Article = {
-  id: number
+  id: number;
   attributes: {
-    authors: Data<Author[]>
-    title: string
-    description: string
-    slug: string
-    cover: Data<Image>
-    categories: Data<Category[]>
-    createdAt: string
-    updatedAt: string
-    publishedAt: string
-    blocks: Block[]
-  }
-}
+    authors: Data<Author[]>;
+    title: string;
+    description: string;
+    slug: string;
+    cover: Data<Image>;
+    categories: Data<Category[]>;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    blocks: Block[];
+  };
+};
 
 export type RichTextBlock = {
-  id: number
-  body: string
-  __component: 'shared.rich-text'
-}
+  id: number;
+  body: string;
+  __component: "shared.rich-text";
+};
 
 export type MediaBlock = {
-  id: number
-  caption: string
-  __component: 'shared.media'
+  id: number;
+  caption: string;
+  __component: "shared.media";
   file: {
-    data: Image
-  }
-}
+    data: Image;
+  };
+};
 
 export type DividerBlock = {
-  id: number
-  __component: 'shared.divider'
-}
+  id: number;
+  __component: "shared.divider";
+};
 
-export type Block = RichTextBlock | MediaBlock | DividerBlock
+export type Block = RichTextBlock | MediaBlock | DividerBlock;
 
 export type Category = {
-  id: number
+  id: number;
   attributes: {
-    description: string
-    name: string
-    slug: string
-    createdAt: string
-    updatedAt: string
-  }
-}
+    description: string;
+    name: string;
+    slug: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
 
 export type Image = {
-  id: number
+  id: number;
   attributes: {
-    name: string
-    alternativeText: string
-    caption: string
-    width: number
-    height: number
-    hash: string
-    ext: string
-    mime: string
-    size: number
-    url: string
-    previewUrl: string | null
-    provider: string
-    provider_metadata: { public_id: string; resource_type: string }
-    createdAt: string
-    updatedAt: string
-  }
-}
+    name: string;
+    alternativeText: string;
+    caption: string;
+    width: number;
+    height: number;
+    hash: string;
+    ext: string;
+    mime: string;
+    size: number;
+    url: string;
+    previewUrl: string | null;
+    provider: string;
+    provider_metadata: { public_id: string; resource_type: string };
+    createdAt: string;
+    updatedAt: string;
+  };
+};
 
 export type Meta = {
-  pagination: Pagination
-}
+  pagination: Pagination;
+};
 
 export type Pagination = {
-  page: number
-  pageSize: number
-  pageCount: number
-  total: number
-}
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+};
 
 export type Seo = {
-  id: number
-  metaDescription: string
-  metaTitle: string
-  shareImage: Data<Image>
-  article: boolean
-  slug: string
-  tags: string[]
-}
+  id: number;
+  metaDescription: string;
+  metaTitle: string;
+  shareImage: Data<Image>;
+  article: boolean;
+  slug: string;
+  tags: string[];
+};
 
 export type Author = {
-  id: number
+  id: number;
   attributes: {
-    avatar: Data<Image>
-    name: string
-    handle: string
-    createdAt: string
-    updatedAt: string
-  }
-}
+    avatar: Data<Image>;
+    name: string;
+    handle: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
 
 export type Data<T> = {
-  data: T
-  meta: Meta
-}
+  data: T;
+  meta: Meta;
+};

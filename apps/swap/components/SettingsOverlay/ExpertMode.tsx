@@ -1,10 +1,10 @@
-import { InformationCircleIcon } from '@heroicons/react/outline'
-import { Switch, Tooltip, Typography } from '@sushiswap/ui'
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import { Switch, Tooltip, Typography } from "@sushiswap/ui";
 
-import { useSettings } from '../../lib/state/storage'
+import { useSettings } from "../../lib/state/storage";
 
 export const ExpertMode = () => {
-  const [{ expertMode }, { updateExpertMode }] = useSettings()
+  const [{ expertMode }, { updateExpertMode }] = useSettings();
 
   return (
     <div className="h-[52px] flex items-center border-b border-slate-200/5">
@@ -32,18 +32,28 @@ export const ExpertMode = () => {
             <Tooltip
               button={<InformationCircleIcon width={14} height={14} />}
               panel={
-                <Typography variant="xs" weight={500} className="w-80 text-slate-300">
-                  WARNING: Enabling Expert Mode will bypass all confirmation messages and will allow for high slippage
-                  trades. ONLY use if you are an advanced user and know what you are doing. Use at your own risk.
+                <Typography
+                  variant="xs"
+                  weight={500}
+                  className="w-80 text-slate-300"
+                >
+                  WARNING: Enabling Expert Mode will bypass all confirmation
+                  messages and will allow for high slippage trades. ONLY use if
+                  you are an advanced user and know what you are doing. Use at
+                  your own risk.
                 </Typography>
               }
             />
           </div>
           <div className="flex gap-1">
-            <Switch checked={expertMode} onChange={() => updateExpertMode(!expertMode)} size="sm" />
+            <Switch
+              checked={expertMode}
+              onChange={() => updateExpertMode(!expertMode)}
+              size="sm"
+            />
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

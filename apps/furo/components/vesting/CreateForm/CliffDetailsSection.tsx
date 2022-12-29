@@ -1,36 +1,48 @@
-import { CheckIcon, XIcon } from '@heroicons/react/outline'
-import { FundSource } from '@sushiswap/hooks'
-import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form, Switch } from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import React, { FC, useCallback } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+import { CheckIcon, XIcon } from "@heroicons/react/outline";
+import { FundSource } from "@sushiswap/hooks";
+import {
+  classNames,
+  DEFAULT_INPUT_CLASSNAME,
+  ERROR_INPUT_CLASSNAME,
+  Form,
+  Switch,
+} from "@sushiswap/ui";
+import { DatePicker } from "@sushiswap/ui/input/DatePicker";
+import React, { FC, useCallback } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import { useAccount } from "wagmi";
 
-import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
-import { CurrencyInput } from '../../CurrencyInput'
-import { CreateVestingFormSchemaType } from './schema'
+import { useTokenFromZToken, ZFundSourceToFundSource } from "../../../lib/zod";
+import { CurrencyInput } from "../../CurrencyInput";
+import { CreateVestingFormSchemaType } from "./schema";
 
 export const CliffDetailsSection: FC = () => {
-  const { address } = useAccount()
-  const { control, watch, setError, clearErrors, setValue } = useFormContext<CreateVestingFormSchemaType>()
+  const { address } = useAccount();
+  const { control, watch, setError, clearErrors, setValue } =
+    useFormContext<CreateVestingFormSchemaType>();
   const [startDate, currency, cliffEnabled, fundSource] = watch([
-    'startDate',
-    'currency',
-    'cliff.cliffEnabled',
-    'fundSource',
-  ])
-  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
-  const _currency = useTokenFromZToken(currency)
+    "startDate",
+    "currency",
+    "cliff.cliffEnabled",
+    "fundSource",
+  ]);
+  const _fundSource = ZFundSourceToFundSource.parse(fundSource);
+  const _currency = useTokenFromZToken(currency);
 
   const onCurrencyInputError = useCallback(
     (message?: string) => {
-      message ? setError('cliff.cliffAmount', { type: 'custom', message }) : clearErrors('cliff.cliffAmount')
+      message
+        ? setError("cliff.cliffAmount", { type: "custom", message })
+        : clearErrors("cliff.cliffAmount");
     },
     [clearErrors, setError]
-  )
+  );
 
   return (
-    <Form.Section title="Cliff details" description="Optionally provide cliff details for your vesting">
+    <Form.Section
+      title="Cliff details"
+      description="Optionally provide cliff details for your vesting"
+    >
       <Form.Control label="Enable Cliff">
         <Controller
           name="cliff.cliffEnabled"
@@ -40,15 +52,15 @@ export const CliffDetailsSection: FC = () => {
               checked={value}
               onChange={(val) => {
                 if (val) {
-                  setValue('cliff', {
+                  setValue("cliff", {
                     cliffEnabled: true,
-                    cliffAmount: '',
+                    cliffAmount: "",
                     cliffEndDate: null,
-                  })
+                  });
                 } else {
-                  setValue('cliff', {
+                  setValue("cliff", {
                     cliffEnabled: false,
-                  })
+                  });
                 }
               }}
               size="sm"
@@ -64,15 +76,18 @@ export const CliffDetailsSection: FC = () => {
             name="cliff.cliffEndDate"
             shouldUnregister={true}
             control={control}
-            render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
+            render={({
+              field: { onChange, value, name, onBlur },
+              fieldState: { error },
+            }) => (
               <>
                 <DatePicker
                   name={name}
                   onBlur={onBlur}
                   className={classNames(
                     DEFAULT_INPUT_CLASSNAME,
-                    error ? ERROR_INPUT_CLASSNAME : '',
-                    '!ring-offset-slate-900'
+                    error ? ERROR_INPUT_CLASSNAME : "",
+                    "!ring-offset-slate-900"
                   )}
                   onChange={onChange}
                   selected={value}
@@ -82,7 +97,9 @@ export const CliffDetailsSection: FC = () => {
                   timeIntervals={15}
                   timeCaption="time"
                   minDate={
-                    startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
+                    startDate
+                      ? new Date(startDate.getTime() + 5 * 60 * 1000)
+                      : new Date(Date.now() + 10 * 60 * 1000)
                   }
                   dateFormat="MMM d, yyyy HH:mm"
                   placeholderText="Select date"
@@ -102,7 +119,10 @@ export const CliffDetailsSection: FC = () => {
             control={control}
             name="cliff.cliffAmount"
             shouldUnregister={true}
-            render={({ field: { onChange, value, onBlur, name }, fieldState: { error: validationError } }) => (
+            render={({
+              field: { onChange, value, onBlur, name },
+              fieldState: { error: validationError },
+            }) => (
               <CurrencyInput
                 id="create-single-vest"
                 name={name}
@@ -112,7 +132,7 @@ export const CliffDetailsSection: FC = () => {
                 account={address}
                 onError={onCurrencyInputError}
                 errorMessage={validationError?.message}
-                value={value || ''}
+                value={value || ""}
                 onChange={onChange}
                 currency={_currency}
               />
@@ -123,5 +143,5 @@ export const CliffDetailsSection: FC = () => {
         <></>
       )}
     </Form.Section>
-  )
-}
+  );
+};

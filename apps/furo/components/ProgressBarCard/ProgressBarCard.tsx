@@ -1,12 +1,17 @@
-import { Typography } from '@sushiswap/ui'
-import { FC, HTMLAttributes } from 'react'
+import { Typography } from "@sushiswap/ui";
+import { FC, HTMLAttributes } from "react";
 
 interface ProgressBarCard extends HTMLAttributes<HTMLDivElement> {
-  label: string
-  value: string
+  label: string;
+  value: string;
 }
 
-export const ProgressBarCard: FC<ProgressBarCard> = ({ label, value, children, ...props }) => {
+export const ProgressBarCard: FC<ProgressBarCard> = ({
+  label,
+  value,
+  children,
+  ...props
+}) => {
   return (
     <div
       {...props}
@@ -22,5 +27,5 @@ export const ProgressBarCard: FC<ProgressBarCard> = ({ label, value, children, .
       </div>
       {children}
     </div>
-  )
-}
+  );
+};

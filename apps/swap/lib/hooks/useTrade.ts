@@ -8,9 +8,9 @@ import {
   Trade,
   TradeType,
   Version as TradeVersion,
-} from '@sushiswap/amm'
-import { Amount, Type as Currency, WNATIVE } from '@sushiswap/currency'
-import { MultiRoute, RouteStatus } from '@sushiswap/tines'
+} from "@sushiswap/amm";
+import { Amount, Type as Currency, WNATIVE } from "@sushiswap/currency";
+import { MultiRoute, RouteStatus } from "@sushiswap/tines";
 import {
   PairState,
   useBentoBoxTotals,
@@ -18,26 +18,31 @@ import {
   useGetConstantProductPools,
   useGetStablePools,
   usePairs,
-} from '@sushiswap/wagmi'
+} from "@sushiswap/wagmi";
 import {
   AMM_ENABLED_NETWORKS,
   CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
   STABLE_POOL_FACTORY_ADDRESS,
   TRIDENT_ENABLED_NETWORKS,
-} from 'config'
-import { BigNumber } from 'ethers'
-import { useMemo } from 'react'
-import { useFeeData } from 'wagmi'
+} from "config";
+import { BigNumber } from "ethers";
+import { useMemo } from "react";
+import { useFeeData } from "wagmi";
 
-import { ConstantProductPoolState } from './useConstantProductPools'
-import { StablePoolState } from './useStablePools'
+import { ConstantProductPoolState } from "./useConstantProductPools";
+import { StablePoolState } from "./useStablePools";
 
 export type UseTradeOutput = {
   trade:
-    | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
-    | undefined
-  route: MultiRoute | undefined
-}
+    | Trade<
+        Currency,
+        Currency,
+        TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
+        TradeVersion.V1 | TradeVersion.V2
+      >
+    | undefined;
+  route: MultiRoute | undefined;
+};
 
 /**
  * Returns trade for a desired swap.
@@ -56,30 +61,43 @@ export function useTrade(
 ): UseTradeOutput {
   const { data: feeData } = useFeeData({
     chainId,
-  })
+  });
 
   const [currencyIn, currencyOut] = useMemo(
-    () => (tradeType === TradeType.EXACT_INPUT ? [mainCurrency, otherCurrency] : [otherCurrency, mainCurrency]),
+    () =>
+      tradeType === TradeType.EXACT_INPUT
+        ? [mainCurrency, otherCurrency]
+        : [otherCurrency, mainCurrency],
     [tradeType, mainCurrency, otherCurrency]
-  )
+  );
 
   // Generate currency combinations of input and output token based on configured bases
-  const currencyCombinations = useCurrencyCombinations(chainId, currencyIn, currencyOut)
+  const currencyCombinations = useCurrencyCombinations(
+    chainId,
+    currencyIn,
+    currencyOut
+  );
 
   // Legacy SushiSwap pairs
   const { data: pairs } = usePairs(chainId, currencyCombinations, {
     enabled: Boolean(chainId && AMM_ENABLED_NETWORKS.includes(chainId)),
-  })
+  });
 
   // Trident constant product pools
-  const { data: constantProductPools } = useGetConstantProductPools(chainId, currencyCombinations)
-  const { data: stablePools } = useGetStablePools(chainId, currencyCombinations)
+  const { data: constantProductPools } = useGetConstantProductPools(
+    chainId,
+    currencyCombinations
+  );
+  const { data: stablePools } = useGetStablePools(
+    chainId,
+    currencyCombinations
+  );
 
   // Combined legacy and trident pools
   const pools = useMemo(
     () => [...pairs, ...constantProductPools, ...stablePools],
     [pairs, constantProductPools, stablePools]
-  )
+  );
 
   // Filter legacy and trident pools by existance
   const filteredPools = useMemo(
@@ -95,13 +113,15 @@ export function useTrade(
               | [ConstantProductPoolState.EXISTS, ConstantProductPool]
               | [StablePoolState.EXISTS, StablePool] =>
               Boolean(result[0] === PairState.EXISTS && result[1]) ||
-              Boolean(result[0] === ConstantProductPoolState.EXISTS && result[1]) ||
+              Boolean(
+                result[0] === ConstantProductPoolState.EXISTS && result[1]
+              ) ||
               Boolean(result[0] === StablePoolState.EXISTS && result[1])
           )
           .map(([, pair]) => pair)
       ),
     [pools]
-  )
+  );
 
   // console.log(
   //   filteredPools.reduce<any[]>((previousValue, currentValue) => {
@@ -120,7 +140,7 @@ export function useTrade(
   const totals = useBentoBoxTotals(
     chainId,
     useMemo(() => [currencyIn, currencyOut], [currencyIn, currencyOut])
-  )
+  );
 
   // console.log([
   //   feeData,
@@ -158,7 +178,8 @@ export function useTrade(
       if (tradeType === TradeType.EXACT_INPUT) {
         if (
           chainId in FACTORY_ADDRESS &&
-          (chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS || chainId in STABLE_POOL_FACTORY_ADDRESS) &&
+          (chainId in CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS ||
+            chainId in STABLE_POOL_FACTORY_ADDRESS) &&
           TRIDENT_ENABLED_NETWORKS.includes(chainId) &&
           totals &&
           currencyIn.wrapped.address in totals &&
@@ -171,7 +192,7 @@ export function useTrade(
             filteredPools.filter((pool): pool is Pair => pool instanceof Pair),
             WNATIVE[amountSpecified.currency.chainId],
             feeData.gasPrice.toNumber()
-          )
+          );
 
           // console.log([
           //   currencyIn.wrapped,
@@ -187,22 +208,34 @@ export function useTrade(
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.toShare(totals[currencyIn.wrapped.address]).quotient.toString()),
+            BigNumber.from(
+              amountSpecified
+                .toShare(totals[currencyIn.wrapped.address])
+                .quotient.toString()
+            ),
             [
-              ...filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
-              ...filteredPools.filter((pool): pool is StablePool => pool instanceof StablePool),
+              ...filteredPools.filter(
+                (pool): pool is ConstantProductPool =>
+                  pool instanceof ConstantProductPool
+              ),
+              ...filteredPools.filter(
+                (pool): pool is StablePool => pool instanceof StablePool
+              ),
             ],
             WNATIVE[amountSpecified.currency.chainId],
             feeData.gasPrice.toNumber()
-          )
+          );
 
-          const useLegacy = Amount.fromRawAmount(currencyOut.wrapped, legacyRoute.amountOutBN.toString()).greaterThan(
+          const useLegacy = Amount.fromRawAmount(
+            currencyOut.wrapped,
+            legacyRoute.amountOutBN.toString()
+          ).greaterThan(
             Amount.fromShare(
               currencyOut.wrapped,
               tridentRoute.amountOutBN.toString(),
               totals[currencyOut.wrapped.address]
             )
-          )
+          );
 
           return {
             trade: Trade.exactIn(
@@ -214,7 +247,7 @@ export function useTrade(
               !useLegacy ? totals[currencyOut.wrapped.address] : undefined
             ),
             route: useLegacy ? legacyRoute : tridentRoute,
-          }
+          };
         }
 
         if (AMM_ENABLED_NETWORKS.includes(chainId)) {
@@ -240,16 +273,21 @@ export function useTrade(
             filteredPools.filter((pool): pool is Pair => pool instanceof Pair),
             WNATIVE[amountSpecified.currency.chainId],
             feeData.gasPrice.toNumber()
-          )
+          );
 
           if (legacyRoute.status === RouteStatus.Success) {
-            console.debug('Found legacy route', legacyRoute)
+            console.debug("Found legacy route", legacyRoute);
             return {
-              trade: Trade.exactIn(legacyRoute, amountSpecified, currencyOut, TradeVersion.V1),
+              trade: Trade.exactIn(
+                legacyRoute,
+                amountSpecified,
+                currencyOut,
+                TradeVersion.V1
+              ),
               route: legacyRoute,
-            }
+            };
           } else {
-            console.debug('No legacy route', legacyRoute)
+            console.debug("No legacy route", legacyRoute);
           }
         }
 
@@ -262,16 +300,25 @@ export function useTrade(
           const tridentRoute = findMultiRouteExactIn(
             currencyIn.wrapped,
             currencyOut.wrapped,
-            BigNumber.from(amountSpecified.toShare(totals[currencyIn.wrapped.address]).quotient.toString()),
+            BigNumber.from(
+              amountSpecified
+                .toShare(totals[currencyIn.wrapped.address])
+                .quotient.toString()
+            ),
             [
-              ...filteredPools.filter((pool): pool is ConstantProductPool => pool instanceof ConstantProductPool),
-              ...filteredPools.filter((pool): pool is StablePool => pool instanceof StablePool),
+              ...filteredPools.filter(
+                (pool): pool is ConstantProductPool =>
+                  pool instanceof ConstantProductPool
+              ),
+              ...filteredPools.filter(
+                (pool): pool is StablePool => pool instanceof StablePool
+              ),
             ],
             WNATIVE[amountSpecified.currency.chainId],
             feeData.gasPrice.toNumber()
-          )
+          );
           if (tridentRoute.status === RouteStatus.Success) {
-            console.debug('Found trident route', tridentRoute)
+            console.debug("Found trident route", tridentRoute);
             return {
               trade: Trade.exactIn(
                 tridentRoute,
@@ -282,9 +329,9 @@ export function useTrade(
                 totals[currencyOut.wrapped.address]
               ),
               route: tridentRoute,
-            }
+            };
           } else {
-            console.debug('No trident route', tridentRoute)
+            console.debug("No trident route", tridentRoute);
           }
         }
 
@@ -297,6 +344,16 @@ export function useTrade(
     return {
       trade: undefined,
       route: undefined,
-    }
-  }, [amountSpecified, chainId, currencyIn, currencyOut, feeData, filteredPools, otherCurrency, totals, tradeType])
+    };
+  }, [
+    amountSpecified,
+    chainId,
+    currencyIn,
+    currencyOut,
+    feeData,
+    filteredPools,
+    otherCurrency,
+    totals,
+    tradeType,
+  ]);
 }

@@ -1,16 +1,24 @@
-import { ExclamationIcon, ExternalLinkIcon } from '@heroicons/react/outline'
-import chain from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
-import { shortenAddress } from '@sushiswap/format'
-import { Button, classNames, CopyHelper, Currency, Overlay, SlideIn, Typography } from '@sushiswap/ui'
-import React, { FC, useMemo, useState } from 'react'
+import { ExclamationIcon, ExternalLinkIcon } from "@heroicons/react/outline";
+import chain from "@sushiswap/chain";
+import { Token } from "@sushiswap/currency";
+import { shortenAddress } from "@sushiswap/format";
+import {
+  Button,
+  classNames,
+  CopyHelper,
+  Currency,
+  Overlay,
+  SlideIn,
+  Typography,
+} from "@sushiswap/ui";
+import React, { FC, useMemo, useState } from "react";
 
 interface TokenSelectorImportRow {
-  hideIcons?: boolean
-  currencies: (Token | undefined)[]
-  className?: string
-  onImport(): void
-  slideIn?: boolean
+  hideIcons?: boolean;
+  currencies: (Token | undefined)[];
+  className?: string;
+  onImport(): void;
+  slideIn?: boolean;
 }
 
 export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
@@ -20,7 +28,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
   hideIcons = false,
   slideIn = true,
 }) => {
-  const [open, setOpen] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false);
 
   const content = useMemo(
     () => (
@@ -30,7 +38,11 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             <div className="w-10 h-10 overflow-hidden bg-white rounded-full">
               <div className="flex items-center justify-center w-full h-full bg-red/10">
                 <div className="w-5 h-5">
-                  <ExclamationIcon width={20} height={20} className="text-red" />
+                  <ExclamationIcon
+                    width={20}
+                    height={20}
+                    className="text-red"
+                  />
                 </div>
               </div>
             </div>
@@ -38,14 +50,21 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
           <Typography weight={500} variant="lg" className="text-slate-200">
             Trade at your own risk!
           </Typography>
-          <Typography variant="sm" weight={400} className="text-center text-slate-400">
-            {currencies.length > 1 ? "These tokens don't" : "This token doesn't"} appear on the active token list(s).
-            Anyone can create a token, including creating fake versions of existing tokens that claim to represent
-            projects
+          <Typography
+            variant="sm"
+            weight={400}
+            className="text-center text-slate-400"
+          >
+            {currencies.length > 1
+              ? "These tokens don't"
+              : "This token doesn't"}{" "}
+            appear on the active token list(s). Anyone can create a token,
+            including creating fake versions of existing tokens that claim to
+            represent projects
           </Typography>
         </div>
         {currencies.map((currency) => {
-          if (!currency) return
+          if (!currency) return;
           return (
             <div
               key={currency.wrapped.address}
@@ -55,7 +74,11 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                 <Typography weight={500} className="text-slate-200">
                   {currency.symbol}
                 </Typography>
-                <Typography weight={500} variant="xs" className="text-slate-400">
+                <Typography
+                  weight={500}
+                  variant="xs"
+                  className="text-slate-400"
+                >
                   {currency.name}
                 </Typography>
               </div>
@@ -67,18 +90,24 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
                   rel="noopener noreferrer"
                   target="_blank"
                   className="flex items-center gap-1 text-blue hover:text-blue-400"
-                  href={chain[currency.chainId].getTokenUrl(currency.wrapped.address)}
+                  href={chain[currency.chainId].getTokenUrl(
+                    currency.wrapped.address
+                  )}
                 >
                   View on Explorer <ExternalLinkIcon width={16} height={16} />
                 </Typography>
-                <Typography weight={500} variant="xs" className="flex justify-end text-slate-400">
+                <Typography
+                  weight={500}
+                  variant="xs"
+                  className="flex justify-end text-slate-400"
+                >
                   <CopyHelper toCopy={shortenAddress(currency.wrapped.address)}>
                     {shortenAddress(currency.wrapped.address)}
                   </CopyHelper>
                 </Typography>
               </div>
             </div>
-          )
+          );
         })}
         <Button size="md" as="div" onClick={onImport}>
           Import
@@ -86,7 +115,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
       </div>
     ),
     [currencies, hideIcons, onImport]
-  )
+  );
 
   return (
     <>
@@ -103,10 +132,18 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
             <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
               <div className="flex flex-row items-center flex-grow gap-2">
                 <div className="w-7 h-7">
-                  <Currency.Icon currency={currencies[0]} width={28} height={28} />
+                  <Currency.Icon
+                    currency={currencies[0]}
+                    width={28}
+                    height={28}
+                  />
                 </div>
                 <div className="flex flex-col items-start">
-                  <Typography variant="xs" weight={500} className="text-slate-200">
+                  <Typography
+                    variant="xs"
+                    weight={500}
+                    className="text-slate-200"
+                  >
                     {currencies[0].symbol}
                   </Typography>
                   <Typography variant="xxs" className="text-slate-500">
@@ -121,7 +158,10 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
           </button>
           <SlideIn.FromLeft show={open} onClose={() => setOpen(false)}>
             <Overlay.Content className="bg-slate-800 !pb-0">
-              <Overlay.Header onClose={() => setOpen(false)} title="Import Token" />
+              <Overlay.Header
+                onClose={() => setOpen(false)}
+                title="Import Token"
+              />
               {content}
             </Overlay.Content>
           </SlideIn.FromLeft>
@@ -130,5 +170,5 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({
         content
       )}
     </>
-  )
-}
+  );
+};

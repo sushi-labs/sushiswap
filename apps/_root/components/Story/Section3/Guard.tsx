@@ -1,32 +1,38 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
-import { Button, Container, Typography } from '@sushiswap/ui'
-import { motion } from 'framer-motion'
-import { FC } from 'react'
+import { ChevronRightIcon } from "@heroicons/react/solid";
+import { Button, Container, Typography } from "@sushiswap/ui";
+import { motion } from "framer-motion";
+import { FC } from "react";
 
-import { ExpandableCard, ExpendableCardData } from '../../ExpandableCard/ExpandableCard'
-import { GuardImage } from './GuardImage'
+import {
+  ExpandableCard,
+  ExpendableCardData,
+} from "../../ExpandableCard/ExpandableCard";
+import { GuardImage } from "./GuardImage";
 
 const DATA: ExpendableCardData = {
-  title: 'Keep more profts and earn gas refunds',
-  caption: 'For Retail Users',
+  title: "Keep more profts and earn gas refunds",
+  caption: "For Retail Users",
   content: (
     <>
       <p>
-        SushiGuard is a way of protecting Sushi users from a predatory process known as MEV. MEV stands for “Maximal
-        Extractable Value” and in essence plays the same role in web3 as arbitrage trading does in traditional finance.
-        Automated bots will monitor the network and “sandwich” your trades by reordering transactions in a block,
-        leaving users with a less-optimal trade than they originally thought.
+        SushiGuard is a way of protecting Sushi users from a predatory process
+        known as MEV. MEV stands for “Maximal Extractable Value” and in essence
+        plays the same role in web3 as arbitrage trading does in traditional
+        finance. Automated bots will monitor the network and “sandwich” your
+        trades by reordering transactions in a block, leaving users with a
+        less-optimal trade than they originally thought.
       </p>
       <p>
-        SushiGuard can easily be toggled on in the swap interface for trades, giving users the ability to protect their
-        trades from these “sandwich attacks” and refund an amount of the gas fees to users that they spent to make the
-        trade, improving the experience and saving them money.
+        SushiGuard can easily be toggled on in the swap interface for trades,
+        giving users the ability to protect their trades from these “sandwich
+        attacks” and refund an amount of the gas fees to users that they spent
+        to make the trade, improving the experience and saving them money.
       </p>
     </>
   ),
-  link: 'https://manifoldfinance.com',
-  linkText: 'Visit Manifold',
-}
+  link: "https://manifoldfinance.com",
+  linkText: "Visit Manifold",
+};
 
 export const Guard: FC = () => {
   return (
@@ -45,7 +51,10 @@ export const Guard: FC = () => {
               linkText={DATA.linkText}
             >
               {({ setOpen, containerId, titleId }) => (
-                <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">
+                <motion.div
+                  layoutId={containerId}
+                  className="flex flex-col items-center lg:items-start"
+                >
                   <Typography
                     as={motion.h1}
                     layoutId={titleId}
@@ -55,8 +64,13 @@ export const Guard: FC = () => {
                   >
                     {DATA.title}
                   </Typography>
-                  <Typography variant="lg" weight={400} className="text-center lg:text-left mt-2">
-                    Enable SushiGuard and earn gas refunds on all of your transactions.
+                  <Typography
+                    variant="lg"
+                    weight={400}
+                    className="text-center lg:text-left mt-2"
+                  >
+                    Enable SushiGuard and earn gas refunds on all of your
+                    transactions.
                   </Typography>
                   <Button
                     onClick={() => setOpen(true)}
@@ -73,5 +87,5 @@ export const Guard: FC = () => {
         </div>
       </Container>
     </section>
-  )
-}
+  );
+};

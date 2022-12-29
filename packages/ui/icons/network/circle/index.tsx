@@ -1,53 +1,56 @@
-import { ChainId } from '@sushiswap/chain'
-import * as React from 'react'
+import { ChainId } from "@sushiswap/chain";
+import * as React from "react";
 
-import { ArbitrumCircle } from './ArbitrumCircle'
-import { ArbitrumNovaCircle } from './ArbitrumNovaCircle'
-import { AvalancheCircle } from './AvalancheCircle'
-import { BinanceCircle } from './BinanceCircle'
-import { BobaCircle } from './BobaCircle'
-import { BttcCircle } from './BttcCircle'
-import { CeloCircle } from './CeloCircle'
-import { EthereumCircle } from './EthereumCircle'
-import { FantomCircle } from './FantomCircle'
-import { FuseCircle } from './FuseCircle'
-import { GnosisCircle } from './GnosisCircle'
-import { HarmonyCircle } from './HarmonyCircle'
-import { HecoCircle } from './HecoCircle'
-import { KavaCircle } from './KavaCircle'
-import { MetisCircle } from './MetisCircle'
-import { MoonbeamCircle } from './MoonbeamCircle'
-import { MoonriverCircle } from './MoonriverCircle'
-import { OkexCircle } from './OkexCircle'
-import { OptimismCircle } from './OptimismCircle'
-import { PalmCircle } from './PalmCircle'
-import { PolygonCircle } from './PolygonCircle'
-import { TelosCircle } from './TelosCircle'
+import { ArbitrumCircle } from "./ArbitrumCircle";
+import { ArbitrumNovaCircle } from "./ArbitrumNovaCircle";
+import { AvalancheCircle } from "./AvalancheCircle";
+import { BinanceCircle } from "./BinanceCircle";
+import { BobaCircle } from "./BobaCircle";
+import { BttcCircle } from "./BttcCircle";
+import { CeloCircle } from "./CeloCircle";
+import { EthereumCircle } from "./EthereumCircle";
+import { FantomCircle } from "./FantomCircle";
+import { FuseCircle } from "./FuseCircle";
+import { GnosisCircle } from "./GnosisCircle";
+import { HarmonyCircle } from "./HarmonyCircle";
+import { HecoCircle } from "./HecoCircle";
+import { KavaCircle } from "./KavaCircle";
+import { MetisCircle } from "./MetisCircle";
+import { MoonbeamCircle } from "./MoonbeamCircle";
+import { MoonriverCircle } from "./MoonriverCircle";
+import { OkexCircle } from "./OkexCircle";
+import { OptimismCircle } from "./OptimismCircle";
+import { PalmCircle } from "./PalmCircle";
+import { PolygonCircle } from "./PolygonCircle";
+import { TelosCircle } from "./TelosCircle";
 
-export * from './ArbitrumCircle'
-export * from './ArbitrumNovaCircle'
-export * from './AvalancheCircle'
-export * from './BinanceCircle'
-export * from './BobaCircle'
-export * from './BttcCircle'
-export * from './CeloCircle'
-export * from './EthereumCircle'
-export * from './FantomCircle'
-export * from './FuseCircle'
-export * from './GnosisCircle'
-export * from './HarmonyCircle'
-export * from './HecoCircle'
-export * from './KavaCircle'
-export * from './MetisCircle'
-export * from './MoonbeamCircle'
-export * from './MoonriverCircle'
-export * from './OkexCircle'
-export * from './OptimismCircle'
-export * from './PalmCircle'
-export * from './PolygonCircle'
-export * from './TelosCircle'
+export * from "./ArbitrumCircle";
+export * from "./ArbitrumNovaCircle";
+export * from "./AvalancheCircle";
+export * from "./BinanceCircle";
+export * from "./BobaCircle";
+export * from "./BttcCircle";
+export * from "./CeloCircle";
+export * from "./EthereumCircle";
+export * from "./FantomCircle";
+export * from "./FuseCircle";
+export * from "./GnosisCircle";
+export * from "./HarmonyCircle";
+export * from "./HecoCircle";
+export * from "./KavaCircle";
+export * from "./MetisCircle";
+export * from "./MoonbeamCircle";
+export * from "./MoonriverCircle";
+export * from "./OkexCircle";
+export * from "./OptimismCircle";
+export * from "./PalmCircle";
+export * from "./PolygonCircle";
+export * from "./TelosCircle";
 
-export const NETWORK_CIRCLE_ICON: Record<number, (props: React.ComponentProps<'svg'>) => JSX.Element> = {
+export const NETWORK_CIRCLE_ICON: Record<
+  number,
+  (props: React.ComponentProps<"svg">) => JSX.Element
+> = {
   [ChainId.ETHEREUM]: EthereumCircle,
   [ChainId.FANTOM]: FantomCircle,
   [ChainId.POLYGON]: PolygonCircle,
@@ -71,4 +74,4 @@ export const NETWORK_CIRCLE_ICON: Record<number, (props: React.ComponentProps<'s
   [ChainId.BOBA]: BobaCircle,
   [ChainId.BOBA_AVAX]: BobaCircle,
   [ChainId.BTTC]: BttcCircle,
-}
+};

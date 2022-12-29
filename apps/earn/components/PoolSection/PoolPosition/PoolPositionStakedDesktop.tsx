@@ -1,20 +1,23 @@
-import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
-import { Currency, Typography } from '@sushiswap/ui'
-import { FC } from 'react'
+import { formatUSD } from "@sushiswap/format";
+import { Pair } from "@sushiswap/graph-client";
+import { Currency, Typography } from "@sushiswap/ui";
+import { FC } from "react";
 
-import { useTokensFromPair } from '../../../lib/hooks'
-import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
+import { useTokensFromPair } from "../../../lib/hooks";
+import { usePoolPositionStaked } from "../../PoolPositionStakedProvider";
 
 interface PoolPositionStakedDesktopProps {
-  pair: Pair
+  pair: Pair;
 }
 
-export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ pair }) => {
-  const { token0, token1 } = useTokensFromPair(pair)
-  const { value1, value0, underlying1, underlying0, isLoading, isError } = usePoolPositionStaked()
+export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({
+  pair,
+}) => {
+  const { token0, token1 } = useTokensFromPair(pair);
+  const { value1, value0, underlying1, underlying0, isLoading, isError } =
+    usePoolPositionStaked();
 
-  if (!pair.farm) return <></>
+  if (!pair.farm) return <></>;
 
   if (isLoading && !isError) {
     return (
@@ -32,7 +35,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
           <div className="h-[16px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
         </div>
       </div>
-    )
+    );
   }
 
   if (!isLoading && !isError)
@@ -69,7 +72,7 @@ export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ 
           </Typography>
         </div>
       </div>
-    )
+    );
 
-  return <></>
-}
+  return <></>;
+};

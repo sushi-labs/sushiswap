@@ -1,29 +1,37 @@
-import { QueryFunction } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import { Address, useQuery } from 'wagmi'
-import { fetchToken, FetchTokenArgs, FetchTokenResult } from 'wagmi/actions'
+import { QueryFunction } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { Address, useQuery } from "wagmi";
+import { fetchToken, FetchTokenArgs, FetchTokenResult } from "wagmi/actions";
 
-type QueryKeyArgs = { tokens: Partial<FetchTokenArgs>[] }
+type QueryKeyArgs = { tokens: Partial<FetchTokenArgs>[] };
 // type QueryKeyConfig = {}
 
-export type FetchTokensArgs = { tokens: FetchTokenArgs[] }
-export type FetchTokensResult = FetchTokenResult[]
-export type UseTokensArgs = Partial<FetchTokensArgs>
-export type UseTokensConfig = Partial<Parameters<typeof useQuery>['2']>
+export type FetchTokensArgs = { tokens: FetchTokenArgs[] };
+export type FetchTokensResult = FetchTokenResult[];
+export type UseTokensArgs = Partial<FetchTokensArgs>;
+export type UseTokensConfig = Partial<Parameters<typeof useQuery>["2"]>;
 
 function queryKey({ tokens }: QueryKeyArgs) {
-  return [{ entity: 'tokens', tokens: tokens || [] }] as const
+  return [{ entity: "tokens", tokens: tokens || [] }] as const;
 }
 
-const queryFn: QueryFunction<FetchTokensResult, ReturnType<typeof queryKey>> = ({ queryKey: [{ tokens }] }) => {
-  if (!tokens) throw new Error('tokens is required')
-  if (tokens.filter((el) => !el.address).length > 0) throw new Error('address is required')
+const queryFn: QueryFunction<
+  FetchTokensResult,
+  ReturnType<typeof queryKey>
+> = ({ queryKey: [{ tokens }] }) => {
+  if (!tokens) throw new Error("tokens is required");
+  if (tokens.filter((el) => !el.address).length > 0)
+    throw new Error("address is required");
   return Promise.all(
     tokens.map((token) => {
-      return fetchToken({ address: token.address as Address, chainId: token.chainId, formatUnits: token.formatUnits })
+      return fetchToken({
+        address: token.address as Address,
+        chainId: token.chainId,
+        formatUnits: token.formatUnits,
+      });
     })
-  )
-}
+  );
+};
 
 export function useTokens({
   tokens = [],
@@ -36,20 +44,26 @@ export function useTokens({
   onSuccess,
 }: UseTokensArgs & UseTokensConfig) {
   const _enabled = useMemo(() => {
-    return Boolean(tokens && tokens?.length > 0 && enabled && tokens.map((el) => el.address && el.chainId))
-  }, [enabled, tokens])
+    return Boolean(
+      tokens &&
+        tokens?.length > 0 &&
+        enabled &&
+        tokens.map((el) => el.address && el.chainId)
+    );
+  }, [enabled, tokens]);
 
-  return useQuery<FetchTokensResult, unknown, FetchTokensResult, ReturnType<typeof queryKey>>(
-    queryKey({ tokens }),
-    queryFn,
-    {
-      cacheTime,
-      enabled: _enabled,
-      staleTime,
-      suspense,
-      onError,
-      onSettled,
-      onSuccess,
-    }
-  )
+  return useQuery<
+    FetchTokensResult,
+    unknown,
+    FetchTokensResult,
+    ReturnType<typeof queryKey>
+  >(queryKey({ tokens }), queryFn, {
+    cacheTime,
+    enabled: _enabled,
+    staleTime,
+    suspense,
+    onError,
+    onSettled,
+    onSuccess,
+  });
 }

@@ -1,5 +1,5 @@
-import { App, AppType } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import { App, AppType } from "@sushiswap/ui";
+import React, { FC } from "react";
 
 export const Header: FC = () => {
   return (
@@ -16,5 +16,5 @@ export const Header: FC = () => {
         </App.NavItemList>
       }
     ></App.Header>
-  )
-}
+  );
+};

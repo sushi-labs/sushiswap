@@ -1,29 +1,53 @@
-import { isAddress } from '@ethersproject/address'
-import { Signature } from '@ethersproject/bytes'
-import { TransactionRequest } from '@ethersproject/providers'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
-import { FundSource } from '@sushiswap/hooks'
-import { Button, classNames, Dots, Typography } from '@sushiswap/ui'
-import { Approve, useBentoBoxTotal, useFuroVestingRouterContract } from '@sushiswap/wagmi'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Address } from '@wagmi/core'
-import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { isAddress } from "@ethersproject/address";
+import { Signature } from "@ethersproject/bytes";
+import { TransactionRequest } from "@ethersproject/providers";
+import { BENTOBOX_ADDRESS } from "@sushiswap/address";
+import { ChainId } from "@sushiswap/chain";
+import { FundSource } from "@sushiswap/hooks";
+import { Button, classNames, Dots, Typography } from "@sushiswap/ui";
+import {
+  Approve,
+  useBentoBoxTotal,
+  useFuroVestingRouterContract,
+} from "@sushiswap/wagmi";
+import { useSendTransaction } from "@sushiswap/wagmi/hooks/useSendTransaction";
+import { Address } from "@wagmi/core";
+import React, {
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useFormContext } from "react-hook-form";
+import { useAccount } from "wagmi";
+import { SendTransactionResult } from "wagmi/actions";
 
-import { approveBentoBoxAction, batchAction, useDeepCompareMemoize, vestingCreationAction } from '../../../../lib'
-import { useNotifications } from '../../../../lib/state/storage'
-import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../lib/zod'
-import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../../utils'
-import { CreateVestingFormSchemaType } from '../schema'
-import CreateFormReviewModalBase from './CreateFormReviewModalBase'
+import {
+  approveBentoBoxAction,
+  batchAction,
+  useDeepCompareMemoize,
+  vestingCreationAction,
+} from "../../../../lib";
+import { useNotifications } from "../../../../lib/state/storage";
+import {
+  useTokenFromZToken,
+  ZFundSourceToFundSource,
+} from "../../../../lib/zod";
+import {
+  calculateCliffDuration,
+  calculateStepPercentage,
+  calculateTotalAmount,
+} from "../../utils";
+import { CreateVestingFormSchemaType } from "../schema";
+import CreateFormReviewModalBase from "./CreateFormReviewModalBase";
 
 interface Item {
-  title: string
-  value: ReactNode | Array<ReactNode>
-  className?: string
+  title: string;
+  value: ReactNode | Array<ReactNode>;
+  className?: string;
 }
 
 const Item: FC<Item> = ({ title, value, className }) => {
@@ -32,87 +56,123 @@ const Item: FC<Item> = ({ title, value, className }) => {
       <Typography variant="xs" className="whitespace-nowrap text-slate-500">
         {title}
       </Typography>
-      <Typography variant="xs" weight={500} className={classNames(className, 'whitespace-nowrap text-slate-200')}>
+      <Typography
+        variant="xs"
+        weight={500}
+        className={classNames(className, "whitespace-nowrap text-slate-200")}
+      >
         {value}
       </Typography>
     </div>
-  )
-}
+  );
+};
 
 const Table: FC<{
-  title: string
-  className?: string
-  children: React.ReactElement<typeof Item> | React.ReactElement<typeof Item>[]
+  title: string;
+  className?: string;
+  children: React.ReactElement<typeof Item> | React.ReactElement<typeof Item>[];
 }> = ({ children, title, className }) => {
   return (
-    <div className={classNames(className, 'flex flex-col pb-3 gap-2')}>
-      <Typography variant="xxs" className="!leading-5 tracking-widest text-slate-50 font-medium uppercase">
+    <div className={classNames(className, "flex flex-col pb-3 gap-2")}>
+      <Typography
+        variant="xxs"
+        className="!leading-5 tracking-widest text-slate-50 font-medium uppercase"
+      >
         {title}
       </Typography>
       <div className="flex flex-wrap gap-2">{children}</div>
     </div>
-  )
-}
+  );
+};
 
 interface CreateFormReviewModal {
-  chainId: ChainId
-  children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
+  chainId: ChainId;
+  children({
+    isWritePending,
+    setOpen,
+  }: {
+    isWritePending: boolean;
+    setOpen(open: boolean): void;
+  }): ReactNode;
 }
 
-const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children }) => {
-  const { address } = useAccount()
-  const [, { createNotification }] = useNotifications(address)
-  const contract = useFuroVestingRouterContract(chainId)
+const CreateFormReviewModal: FC<CreateFormReviewModal> = ({
+  chainId,
+  children,
+}) => {
+  const { address } = useAccount();
+  const [, { createNotification }] = useNotifications(address);
+  const contract = useFuroVestingRouterContract(chainId);
   const {
     watch,
     formState: { isValid, isValidating },
-  } = useFormContext<CreateVestingFormSchemaType>()
+  } = useFormContext<CreateVestingFormSchemaType>();
 
-  const [open, setOpen] = useState(false)
-  const [signature, setSignature] = useState<Signature>()
+  const [open, setOpen] = useState(false);
+  const [signature, setSignature] = useState<Signature>();
 
-  const formData = watch()
-  const _formData = useDeepCompareMemoize(formData)
+  const formData = watch();
+  const _formData = useDeepCompareMemoize(formData);
 
-  const { recipient, startDate, stepConfig, stepPayouts, fundSource, currency, cliff, stepAmount } = _formData
-  const _fundSource = ZFundSourceToFundSource.parse(fundSource)
-  const _currency = useTokenFromZToken(formData.currency)
+  const {
+    recipient,
+    startDate,
+    stepConfig,
+    stepPayouts,
+    fundSource,
+    currency,
+    cliff,
+    stepAmount,
+  } = _formData;
+  const _fundSource = ZFundSourceToFundSource.parse(fundSource);
+  const _currency = useTokenFromZToken(formData.currency);
   const _totalAmount = useMemo(
     () => calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts }),
     [cliff, currency, stepAmount, stepPayouts]
-  )
-  const _cliffDuration = useMemo(() => calculateCliffDuration({ cliff, startDate }), [cliff, startDate])
+  );
+  const _cliffDuration = useMemo(
+    () => calculateCliffDuration({ cliff, startDate }),
+    [cliff, startDate]
+  );
   const _stepPercentage = useMemo(
     () => calculateStepPercentage({ currency, cliff, stepAmount, stepPayouts }),
     [cliff, currency, stepAmount, stepPayouts]
-  )
-  const rebase = useBentoBoxTotal(chainId, _currency)
+  );
+  const rebase = useBentoBoxTotal(chainId, _currency);
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data || !_totalAmount) return
+      if (!data || !_totalAmount) return;
 
-      const ts = new Date().getTime()
+      const ts = new Date().getTime();
 
       createNotification({
-        type: 'createVesting',
+        type: "createVesting",
         chainId: chainId,
         txHash: data.hash,
         promise: data.wait(),
         summary: {
-          pending: `Creating ${_totalAmount.toSignificant(6)} ${_totalAmount.currency.symbol} vesting`,
-          completed: `Created ${_totalAmount.toSignificant(6)} ${_totalAmount.currency.symbol} vesting`,
-          failed: 'Something went wrong trying to create a vesting',
+          pending: `Creating ${_totalAmount.toSignificant(6)} ${
+            _totalAmount.currency.symbol
+          } vesting`,
+          completed: `Created ${_totalAmount.toSignificant(6)} ${
+            _totalAmount.currency.symbol
+          } vesting`,
+          failed: "Something went wrong trying to create a vesting",
         },
         timestamp: ts,
         groupTimestamp: ts,
-      })
+      });
     },
     [_totalAmount, chainId, createNotification]
-  )
+  );
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+    (
+      setRequest: Dispatch<
+        SetStateAction<(TransactionRequest & { to: string }) | undefined>
+      >
+    ) => {
       if (
         !isValid ||
         isValidating ||
@@ -130,12 +190,14 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
         !stepPayouts ||
         !rebase
       ) {
-        return
+        return;
       }
 
-      const actions: string[] = []
+      const actions: string[] = [];
       if (signature) {
-        actions.push(approveBentoBoxAction({ contract, user: address, signature }))
+        actions.push(
+          approveBentoBoxAction({ contract, user: address, signature })
+        );
       }
 
       actions.push(
@@ -152,14 +214,14 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
           fromBentobox: _fundSource === FundSource.BENTOBOX,
           minShare: _totalAmount.toShare(rebase),
         })
-      )
+      );
 
       setRequest({
         from: address,
         to: contract.address,
         data: batchAction({ contract, actions }),
-        value: _currency.isNative ? _totalAmount.quotient.toString() : '0',
-      })
+        value: _currency.isNative ? _totalAmount.quotient.toString() : "0",
+      });
     },
     [
       isValid,
@@ -179,14 +241,14 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
       signature,
       _fundSource,
     ]
-  )
+  );
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
     onSuccess: () => {
-      setSignature(undefined)
+      setSignature(undefined);
     },
     enabled: Boolean(
       isValid &&
@@ -205,13 +267,17 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
         stepPayouts &&
         rebase
     ),
-  })
+  });
 
   return useMemo(
     () => (
       <>
         {children({ setOpen, isWritePending })}
-        <CreateFormReviewModalBase chainId={chainId} open={open} setOpen={setOpen}>
+        <CreateFormReviewModalBase
+          chainId={chainId}
+          open={open}
+          setOpen={setOpen}
+        >
           <Approve
             onSuccess={createNotification}
             components={
@@ -239,12 +305,18 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
                   size="md"
                   variant="filled"
                   color="blue"
-                  disabled={isWritePending || !approved || !isValid || isValidating}
+                  disabled={
+                    isWritePending || !approved || !isValid || isValidating
+                  }
                   onClick={() => sendTransaction?.()}
                 >
-                  {isWritePending ? <Dots>Confirm transaction</Dots> : 'Create Vesting'}
+                  {isWritePending ? (
+                    <Dots>Confirm transaction</Dots>
+                  ) : (
+                    "Create Vesting"
+                  )}
                 </Button>
-              )
+              );
             }}
           />
         </CreateFormReviewModalBase>
@@ -262,7 +334,7 @@ const CreateFormReviewModal: FC<CreateFormReviewModal> = ({ chainId, children })
       open,
       sendTransaction,
     ]
-  )
-}
+  );
+};
 
-export default CreateFormReviewModal
+export default CreateFormReviewModal;

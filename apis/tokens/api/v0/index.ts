@@ -1,10 +1,10 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node'
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-import { getTokens } from '../../lib/api'
+import { getTokens } from "../../lib/api";
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
-  const tokens = await getTokens()
-  return response.status(200).json(tokens)
-}
+  const tokens = await getTokens();
+  return response.status(200).json(tokens);
+};
 
-export default handler
+export default handler;

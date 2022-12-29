@@ -1,8 +1,13 @@
-import React from 'react'
+import React from "react";
 
-export const ZkSyncSVG = (props: React.ComponentProps<'svg'>) => {
+export const ZkSyncSVG = (props: React.ComponentProps<"svg">) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 240 48">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+      fill="none"
+      viewBox="0 0 240 48"
+    >
       <g clipPath="url(#clip0_180_26899)">
         <path
           fill="#4E529A"
@@ -33,5 +38,5 @@ export const ZkSyncSVG = (props: React.ComponentProps<'svg'>) => {
         </clipPath>
       </defs>
     </svg>
-  )
-}
+  );
+};

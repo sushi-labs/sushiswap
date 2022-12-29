@@ -1,2 +1,2 @@
-export * from './Placeholder'
-export * from './StreamTable'
+export * from "./Placeholder";
+export * from "./StreamTable";

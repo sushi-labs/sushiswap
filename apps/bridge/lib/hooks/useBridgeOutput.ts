@@ -1,27 +1,37 @@
-import { Price, tryParseAmount } from '@sushiswap/currency'
-import { useMemo } from 'react'
+import { Price, tryParseAmount } from "@sushiswap/currency";
+import { useMemo } from "react";
 
-import { BridgeState } from '../../components'
-import { useBridgeFees } from './useBridgeFees'
+import { BridgeState } from "../../components";
+import { useBridgeFees } from "./useBridgeFees";
 
 export const useBridgeOutput = (state: BridgeState) => {
-  const { amount, dstToken } = state
-  const { bridgeFee, isLoading } = useBridgeFees(state)
+  const { amount, dstToken } = state;
+  const { bridgeFee, isLoading } = useBridgeFees(state);
 
-  const srcAmountOut = useMemo(() => (bridgeFee ? amount?.subtract(bridgeFee) : undefined), [bridgeFee, amount])
+  const srcAmountOut = useMemo(
+    () => (bridgeFee ? amount?.subtract(bridgeFee) : undefined),
+    [bridgeFee, amount]
+  );
 
   const dstAmountOut = useMemo(() => {
-    if (!srcAmountOut || !dstToken) return
+    if (!srcAmountOut || !dstToken) return;
     return tryParseAmount(
-      srcAmountOut.toFixed(srcAmountOut.currency.decimals > dstToken.decimals ? dstToken.decimals : undefined),
+      srcAmountOut.toFixed(
+        srcAmountOut.currency.decimals > dstToken.decimals
+          ? dstToken.decimals
+          : undefined
+      ),
       dstToken
-    )
-  }, [dstToken, srcAmountOut])
+    );
+  }, [dstToken, srcAmountOut]);
 
   const price = useMemo(
-    () => (amount && dstAmountOut ? new Price({ baseAmount: amount, quoteAmount: dstAmountOut }) : undefined),
+    () =>
+      amount && dstAmountOut
+        ? new Price({ baseAmount: amount, quoteAmount: dstAmountOut })
+        : undefined,
     [amount, dstAmountOut]
-  )
+  );
 
   return useMemo(
     () => ({
@@ -32,5 +42,5 @@ export const useBridgeOutput = (state: BridgeState) => {
       isLoading,
     }),
     [bridgeFee, dstAmountOut, isLoading, price, srcAmountOut]
-  )
-}
+  );
+};

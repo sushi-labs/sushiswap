@@ -1,17 +1,17 @@
-import { formatNumber, formatUSD } from '@sushiswap/format'
-import { Token as GraphToken } from '@sushiswap/graph-client'
-import { Typography } from '@sushiswap/ui'
-import { FC } from 'react'
+import { formatNumber, formatUSD } from "@sushiswap/format";
+import { Token as GraphToken } from "@sushiswap/graph-client";
+import { Typography } from "@sushiswap/ui";
+import { FC } from "react";
 
 interface TokenStatsProps {
-  token: GraphToken
+  token: GraphToken;
 }
 
 export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
-  const tvl = formatUSD(token.liquidityUSD)
-  const volume = formatUSD(token.volumeUSD)
-  const fees = formatUSD(token.feesUSD)
-  const reserveChange = 10
+  const tvl = formatUSD(token.liquidityUSD);
+  const volume = formatUSD(token.volumeUSD);
+  const fees = formatUSD(token.feesUSD);
+  const reserveChange = 10;
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -20,10 +20,14 @@ export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
           Liquidity
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {tvl.includes('NaN') ? '$0.00' : tvl}
+          {tvl.includes("NaN") ? "$0.00" : tvl}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
-          {reserveChange > 0 ? '+' : '-'}
+        <Typography
+          variant="xs"
+          weight={500}
+          className={reserveChange > 0 ? "text-green" : "text-red"}
+        >
+          {reserveChange > 0 ? "+" : "-"}
           {formatNumber(Math.abs(reserveChange))}%
         </Typography>
       </div>
@@ -32,10 +36,14 @@ export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
           Volume
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {volume.includes('NaN') ? '$0.00' : volume}
+          {volume.includes("NaN") ? "$0.00" : volume}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
-          {reserveChange > 0 ? '+' : '-'}
+        <Typography
+          variant="xs"
+          weight={500}
+          className={reserveChange > 0 ? "text-green" : "text-red"}
+        >
+          {reserveChange > 0 ? "+" : "-"}
           {formatNumber(Math.abs(reserveChange))}%
         </Typography>
       </div>
@@ -44,10 +52,14 @@ export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
           Fees
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {fees.includes('NaN') ? '$0.00' : fees}
+          {fees.includes("NaN") ? "$0.00" : fees}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
-          {reserveChange > 0 ? '+' : '-'}
+        <Typography
+          variant="xs"
+          weight={500}
+          className={reserveChange > 0 ? "text-green" : "text-red"}
+        >
+          {reserveChange > 0 ? "+" : "-"}
           {formatNumber(Math.abs(reserveChange))}%
         </Typography>
       </div>
@@ -56,13 +68,17 @@ export const TokenStats: FC<TokenStatsProps> = ({ token }) => {
           Market Cap
         </Typography>
         <Typography weight={500} className="text-slate-50">
-          {fees.includes('NaN') ? '$0.00' : fees}
+          {fees.includes("NaN") ? "$0.00" : fees}
         </Typography>
-        <Typography variant="xs" weight={500} className={reserveChange > 0 ? 'text-green' : 'text-red'}>
-          {reserveChange > 0 ? '+' : '-'}
+        <Typography
+          variant="xs"
+          weight={500}
+          className={reserveChange > 0 ? "text-green" : "text-red"}
+        >
+          {reserveChange > 0 ? "+" : "-"}
           {formatNumber(Math.abs(reserveChange))}%
         </Typography>
       </div>
     </div>
-  )
-}
+  );
+};

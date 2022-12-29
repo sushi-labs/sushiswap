@@ -1,10 +1,10 @@
-import { DefaultSeo as NextDefaultSeo } from 'next-seo'
-import { FC } from 'react'
+import { DefaultSeo as NextDefaultSeo } from "next-seo";
+import { FC } from "react";
 
-import { Global } from '.mesh'
+import { Global } from ".mesh";
 
 interface DefaultSeo {
-  seo: Global
+  seo: Global;
 }
 
 export const DefaultSeo: FC<DefaultSeo> = ({ seo }) => (
@@ -15,7 +15,7 @@ export const DefaultSeo: FC<DefaultSeo> = ({ seo }) => (
     description={seo.defaultSeo.metaDescription}
     openGraph={{
       site_name: seo.siteName,
-      locale: 'en_US',
+      locale: "en_US",
       title: seo.defaultSeo.metaTitle,
       description: seo.defaultSeo.metaDescription,
       images: [
@@ -23,16 +23,16 @@ export const DefaultSeo: FC<DefaultSeo> = ({ seo }) => (
           url: seo.defaultSeo.shareImage.data.attributes.url,
           width: seo.defaultSeo.shareImage.data.attributes.width,
           height: seo.defaultSeo.shareImage.data.attributes.height,
-          type: 'image/jpeg',
+          type: "image/jpeg",
           alt: seo.defaultSeo.metaDescription,
         },
       ],
     }}
     twitter={{
-      handle: '@sushiswap',
-      cardType: 'summary_large_image',
+      handle: "@sushiswap",
+      cardType: "summary_large_image",
     }}
   />
-)
+);
 
-export default DefaultSeo
+export default DefaultSeo;

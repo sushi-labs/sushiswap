@@ -1,34 +1,65 @@
-import { Big, BigintIsh, Fraction, JSBI, MAX_UINT128, Rounding, ZERO } from '@sushiswap/math'
-import invariant from 'tiny-invariant'
+import {
+  Big,
+  BigintIsh,
+  Fraction,
+  JSBI,
+  MAX_UINT128,
+  Rounding,
+  ZERO,
+} from "@sushiswap/math";
+import invariant from "tiny-invariant";
 
-import { Amount } from './Amount'
-import { Type } from './Type'
+import { Amount } from "./Amount";
+import { Type } from "./Type";
 
 export class Share<T extends Type> extends Fraction {
-  public readonly currency: T
-  public readonly scale: JSBI
+  public readonly currency: T;
+  public readonly scale: JSBI;
 
-  public static fromRawShare<T extends Type>(currency: T, rawShare: BigintIsh = 0): Share<T> {
-    return new Share(currency, rawShare)
+  public static fromRawShare<T extends Type>(
+    currency: T,
+    rawShare: BigintIsh = 0
+  ): Share<T> {
+    return new Share(currency, rawShare);
   }
 
-  protected constructor(currency: T, numerator: BigintIsh, denominator?: BigintIsh) {
-    super(numerator, denominator)
-    invariant(JSBI.lessThanOrEqual(this.quotient, MAX_UINT128), 'SHARE')
-    this.currency = currency
-    this.scale = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(currency.decimals))
+  protected constructor(
+    currency: T,
+    numerator: BigintIsh,
+    denominator?: BigintIsh
+  ) {
+    super(numerator, denominator);
+    invariant(JSBI.lessThanOrEqual(this.quotient, MAX_UINT128), "SHARE");
+    this.currency = currency;
+    this.scale = JSBI.exponentiate(
+      JSBI.BigInt(10),
+      JSBI.BigInt(currency.decimals)
+    );
   }
 
   public toAmount(rebase: { base: JSBI; elastic: JSBI }, roundUp = false) {
-    if (JSBI.EQ(rebase.base, ZERO)) return Amount.fromRawAmount(this.currency, this.quotient)
+    if (JSBI.EQ(rebase.base, ZERO))
+      return Amount.fromRawAmount(this.currency, this.quotient);
 
-    const elastic = JSBI.divide(JSBI.multiply(this.quotient, rebase.elastic), rebase.base)
+    const elastic = JSBI.divide(
+      JSBI.multiply(this.quotient, rebase.elastic),
+      rebase.base
+    );
 
-    if (roundUp && JSBI.LT(JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic), this.quotient)) {
-      return Amount.fromRawAmount(this.currency, JSBI.add(elastic, JSBI.BigInt(1)))
+    if (
+      roundUp &&
+      JSBI.LT(
+        JSBI.divide(JSBI.multiply(elastic, rebase.base), rebase.elastic),
+        this.quotient
+      )
+    ) {
+      return Amount.fromRawAmount(
+        this.currency,
+        JSBI.add(elastic, JSBI.BigInt(1))
+      );
     }
 
-    return Amount.fromRawAmount(this.currency, elastic)
+    return Amount.fromRawAmount(this.currency, elastic);
   }
 
   /**
@@ -42,33 +73,55 @@ export class Share<T extends Type> extends Fraction {
     numerator: BigintIsh,
     denominator: BigintIsh
   ): Share<T> {
-    return new Share(currency, numerator, denominator)
+    return new Share(currency, numerator, denominator);
   }
 
   public add(other: Share<T>): Share<T> {
-    invariant(this.currency.equals(other.currency), 'CURRENCY')
-    const added = super.add(other)
-    return Share.fromFractionalShare(this.currency, added.numerator, added.denominator)
+    invariant(this.currency.equals(other.currency), "CURRENCY");
+    const added = super.add(other);
+    return Share.fromFractionalShare(
+      this.currency,
+      added.numerator,
+      added.denominator
+    );
   }
 
   public subtract(other: Share<T>): Share<T> {
-    invariant(this.currency.equals(other.currency), 'CURRENCY')
-    const subtracted = super.subtract(other)
-    return Share.fromFractionalShare(this.currency, subtracted.numerator, subtracted.denominator)
+    invariant(this.currency.equals(other.currency), "CURRENCY");
+    const subtracted = super.subtract(other);
+    return Share.fromFractionalShare(
+      this.currency,
+      subtracted.numerator,
+      subtracted.denominator
+    );
   }
 
   public multiply(other: Fraction | BigintIsh): Share<T> {
-    const multiplied = super.multiply(other)
-    return Share.fromFractionalShare(this.currency, multiplied.numerator, multiplied.denominator)
+    const multiplied = super.multiply(other);
+    return Share.fromFractionalShare(
+      this.currency,
+      multiplied.numerator,
+      multiplied.denominator
+    );
   }
 
   public divide(other: Fraction | BigintIsh): Share<T> {
-    const divided = super.divide(other)
-    return Share.fromFractionalShare(this.currency, divided.numerator, divided.denominator)
+    const divided = super.divide(other);
+    return Share.fromFractionalShare(
+      this.currency,
+      divided.numerator,
+      divided.denominator
+    );
   }
 
-  public toSignificant(significantDigits = 6, format?: object, rounding: Rounding = Rounding.ROUND_DOWN): string {
-    return super.divide(this.scale).toSignificant(significantDigits, format, rounding)
+  public toSignificant(
+    significantDigits = 6,
+    format?: object,
+    rounding: Rounding = Rounding.ROUND_DOWN
+  ): string {
+    return super
+      .divide(this.scale)
+      .toSignificant(significantDigits, format, rounding);
   }
 
   public toFixed(
@@ -76,12 +129,14 @@ export class Share<T extends Type> extends Fraction {
     format?: object,
     rounding: Rounding = Rounding.ROUND_DOWN
   ): string {
-    invariant(decimalPlaces <= this.currency.decimals, 'DECIMALS')
-    return super.divide(this.scale).toFixed(decimalPlaces, format, rounding)
+    invariant(decimalPlaces <= this.currency.decimals, "DECIMALS");
+    return super.divide(this.scale).toFixed(decimalPlaces, format, rounding);
   }
 
-  public toExact(format: object = { groupSeparator: '' }): string {
-    Big.DP = this.currency.decimals
-    return new Big(this.quotient.toString()).div(this.scale.toString()).toFormat(format)
+  public toExact(format: object = { groupSeparator: "" }): string {
+    Big.DP = this.currency.decimals;
+    return new Big(this.quotient.toString())
+      .div(this.scale.toString())
+      .toFormat(format);
   }
 }

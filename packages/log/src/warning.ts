@@ -1,6 +1,6 @@
-import chalk from 'chalk'
+import chalk from "chalk";
 
 const warning = (message: any, ...optionalParams: any[]) =>
-  console.warn(chalk.yellow(message), chalk.yellow(optionalParams))
+  console.warn(chalk.yellow(message), chalk.yellow(optionalParams));
 
-export default warning
+export default warning;

@@ -1,15 +1,15 @@
-import chains from '@sushiswap/chain'
-import { Native, Token } from '@sushiswap/currency'
-import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Token as GraphToken } from '@sushiswap/graph-client'
-import { Currency, Link, Table, Tooltip, Typography } from '@sushiswap/ui'
-import { FC } from 'react'
+import chains from "@sushiswap/chain";
+import { Native, Token } from "@sushiswap/currency";
+import { formatPercent, formatUSD } from "@sushiswap/format";
+import { Token as GraphToken } from "@sushiswap/graph-client";
+import { Currency, Link, Table, Tooltip, Typography } from "@sushiswap/ui";
+import { FC } from "react";
 
-import { FarmRewardsAvailableTooltip } from '../FarmRewardsAvailableTooltip'
-import { PairQuickHoverTooltip } from '../PairTable'
+import { FarmRewardsAvailableTooltip } from "../FarmRewardsAvailableTooltip";
+import { PairQuickHoverTooltip } from "../PairTable";
 
 interface TokenPairs {
-  token: GraphToken
+  token: GraphToken;
 }
 
 export const TokenPairs: FC<TokenPairs> = ({ token }) => {
@@ -55,10 +55,10 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                       decimals: Number(pair.token1.decimals),
                       symbol: pair.token1.symbol,
                     }),
-              ]
+              ];
 
-              const liquidityUSD = formatUSD(pair.liquidityUSD)
-              const volume1w = formatUSD(pair.volume1w)
+              const liquidityUSD = formatUSD(pair.liquidityUSD);
+              const volume1w = formatUSD(pair.volume1w);
 
               return (
                 <Tooltip
@@ -70,7 +70,10 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                   button={
                     <Table.tr>
                       <Table.td>
-                        <Link.External href={`/earn/${pair.id}`} className="!no-underline">
+                        <Link.External
+                          href={`/earn/${pair.id}`}
+                          className="!no-underline"
+                        >
                           <div className="flex items-center">
                             <Currency.IconList iconWidth={24} iconHeight={24}>
                               <Currency.Icon currency={token0} />
@@ -78,34 +81,63 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                             </Currency.IconList>
                             <Link.External
                               className="flex flex-col !no-underline group"
-                              href={chains[token.chainId].getTokenUrl(pair.id.split(':')[0])}
+                              href={chains[token.chainId].getTokenUrl(
+                                pair.id.split(":")[0]
+                              )}
                             >
                               <Typography variant="sm" weight={600}>
-                                {token0.symbol} <span className="text-slate-400">/</span> {token1.symbol}
+                                {token0.symbol}{" "}
+                                <span className="text-slate-400">/</span>{" "}
+                                {token1.symbol}
                               </Typography>
                             </Link.External>
                           </div>
                         </Link.External>
                       </Table.td>
                       <Table.td>
-                        <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                          <Typography weight={600} variant="sm" className="text-slate-100">
-                            {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
+                        <Link.External
+                          href={`/earn/${pair.id}`}
+                          className="!no-underline"
+                        >
+                          <Typography
+                            weight={600}
+                            variant="sm"
+                            className="text-slate-100"
+                          >
+                            {liquidityUSD.includes("NaN")
+                              ? "$0.00"
+                              : liquidityUSD}
                           </Typography>
                         </Link.External>
                       </Table.td>
                       <Table.td>
-                        <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                          <Typography weight={600} variant="sm" className="text-slate-100">
-                            {volume1w.includes('NaN') ? '$0.00' : volume1w}
+                        <Link.External
+                          href={`/earn/${pair.id}`}
+                          className="!no-underline"
+                        >
+                          <Typography
+                            weight={600}
+                            variant="sm"
+                            className="text-slate-100"
+                          >
+                            {volume1w.includes("NaN") ? "$0.00" : volume1w}
                           </Typography>
                         </Link.External>
                       </Table.td>
                       <Table.td>
-                        <Link.External href={`/earn/${pair.id}`} className="!no-underline">
-                          <Typography weight={600} variant="sm" className="text-slate-100">
-                            {formatPercent(pair.apr)}{' '}
-                            {!!pair.farm && pair.incentiveApr > 0 && <FarmRewardsAvailableTooltip />}
+                        <Link.External
+                          href={`/earn/${pair.id}`}
+                          className="!no-underline"
+                        >
+                          <Typography
+                            weight={600}
+                            variant="sm"
+                            className="text-slate-100"
+                          >
+                            {formatPercent(pair.apr)}{" "}
+                            {!!pair.farm && pair.incentiveApr > 0 && (
+                              <FarmRewardsAvailableTooltip />
+                            )}
                           </Typography>
                         </Link.External>
                       </Table.td>
@@ -113,11 +145,11 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                   }
                   panel={<PairQuickHoverTooltip row={pair} />}
                 />
-              )
+              );
             })}
           </Table.tbody>
         </Table.table>
       </Table.container>
     </div>
-  )
-}
+  );
+};

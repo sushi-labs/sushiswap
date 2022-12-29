@@ -40,16 +40,14 @@ fragment deprecated_LiquidityPositionFields on deprecated_LiquidityPosition {
 }
 
 query deprecated_Pairs(
-  $skip: Int = 0, 
-  $first: Int = 100,
-  $where: deprecated_Pair_filter, 
-  # $block: Block_height
+  $skip: Int = 0
+  $first: Int = 100
+  $where: deprecated_Pair_filter # $block: Block_height
 ) {
   pairs: deprecated_pairs(
-    skip: $skip,
-    first: $first, 
-    where: $where,
-    # block: $block
+    skip: $skip
+    first: $first
+    where: $where # block: $block
   ) {
     ...deprecated_PairFields
   }
@@ -60,29 +58,27 @@ query deprecated_LiquidityPositions(
   $first: Int = 100
   # $orderBy: deprecated_LiquidityPosition_orderBy,
   # $orderDirection:  OrderDirection,
-  $where: deprecated_LiquidityPosition_filter
-  # $block: Block_height
+  $where: deprecated_LiquidityPosition_filter # $block: Block_height
 ) {
   liquidityPositions: deprecated_liquidityPositions(
-    skip: $skip,
-    first: $first,
+    skip: $skip
+    first: $first
     # orderBy: $orderBy,
     # orderDirection: $orderDirection,
-    where: $where,
-    # block: $block,
+    where: $where # block: $block,
   ) {
     ...deprecated_LiquidityPositionFields
   }
 }
 # query ExchangeTokens(
-#   $skip: Int = 0, 
+#   $skip: Int = 0,
 #   $first: Int = 100,
-#   $where: deprecated_Token_filter, 
+#   $where: deprecated_Token_filter,
 #   # $block: Block_height
 # ) {
 #   tokens: deprecated_tokens(
 #     skip: $skip,
-#     first: $first, 
+#     first: $first,
 #     where: $where,
 #     # block: $block
 #   ) {
@@ -93,14 +89,12 @@ query deprecated_LiquidityPositions(
 query deprecated_TokensAndBundle(
   $skip: Int = 0
   $first: Int = 100
-  $where: deprecated_Token_filter
-  # $block: Block_height
+  $where: deprecated_Token_filter # $block: Block_height
 ) {
   tokens: deprecated_tokens(
-    first: $first, 
-    skip: $skip,
-    where: $where
-    # block: $block
+    first: $first
+    skip: $skip
+    where: $where # block: $block
   ) {
     id
     name
@@ -109,30 +103,27 @@ query deprecated_TokensAndBundle(
     derivedETH
   }
   bundle: deprecated_bundle(
-    id: 1, 
-    # block: $block
+    id: 1 # block: $block
   ) {
     ethPrice
   }
 }
 
 # query ExchangeBundle(
-#   $skip: Int = 0, 
+#   $skip: Int = 0,
 #   $first: Int = 100,
-#   $where: deprecated_Bundle_filter, 
+#   $where: deprecated_Bundle_filter,
 #   # $block: Block_height
 # ) {
 #   bundles: deprecated_bundles(
 #     skip: $skip,
-#     first: $first, 
+#     first: $first,
 #     where: $where,
 #     # block: $block
 #   ) {
 #     ethPrice
 #   }
 # }
-
-
 
 query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
   crossChainToken(id: $id, now: $now, chainId: $chainId) {
@@ -170,7 +161,13 @@ query CrossChainToken($id: ID!, $now: Int!, $chainId: Int!) {
         apr
         feeApr
         incentiveApr
-        daySnapshots(skip: 1, first: 7, orderBy: date, orderDirection: desc, where: { date_lt: $now }) {
+        daySnapshots(
+          skip: 1
+          first: 7
+          orderBy: date
+          orderDirection: desc
+          where: { date_lt: $now }
+        ) {
           id
           date
           volumeUSD
@@ -208,15 +205,15 @@ query CrossChainStats(
   $now: Int!
 ) {
   crossChainStats(
-    first: $first,
-    skip: $skip,
-    where: $where,
-    orderBy: $orderBy, 
-    orderDirection: $orderDirection,
-    block: $block,
-    chainIds: $chainIds, 
+    first: $first
+    skip: $skip
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    block: $block
+    chainIds: $chainIds
     now: $now
-) {
+  ) {
     chainId
     hourSnapshots(skip: 1, first: 168, orderBy: date, orderDirection: desc) {
       id

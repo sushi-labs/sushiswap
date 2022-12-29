@@ -1,23 +1,29 @@
-import { ArrowRightIcon } from '@heroicons/react/24/solid'
-import { Button, classNames, Link, Typography } from '@sushiswap/ui'
-import { DOCS_URL } from 'common/helpers'
-import { DocsIcon } from 'common/icons'
-import { FC } from 'react'
+import { ArrowRightIcon } from "@heroicons/react/24/solid";
+import { Button, classNames, Link, Typography } from "@sushiswap/ui";
+import { DOCS_URL } from "common/helpers";
+import { DocsIcon } from "common/icons";
+import { FC } from "react";
 
 interface ProductTechnicalDoc {
-  color: string
-  secondaryColor: string
+  color: string;
+  secondaryColor: string;
 }
 
 const DocsButton: FC<{ className: string }> = ({ className }) => (
   <Link.External href={DOCS_URL}>
-    <Button className={classNames('w-12 h-12 ml-6', className)} variant="outlined">
+    <Button
+      className={classNames("w-12 h-12 ml-6", className)}
+      variant="outlined"
+    >
       <ArrowRightIcon width={20} height={20} />
     </Button>
   </Link.External>
-)
+);
 
-export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({ color, secondaryColor }) => {
+export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({
+  color,
+  secondaryColor,
+}) => {
   return (
     <div className="py-10 sm:py-[75px]">
       <div className="flex items-center p-6 sm:p-10 rounded-3xl bg-slate-800">
@@ -38,5 +44,5 @@ export const ProductTechnicalDoc: FC<ProductTechnicalDoc> = ({ color, secondaryC
         <DocsButton className="hidden sm:block" />
       </div>
     </div>
-  )
-}
+  );
+};

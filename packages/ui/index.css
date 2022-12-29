@@ -1,14 +1,14 @@
 @tailwind base;
 
 @import "react-datepicker/dist/react-datepicker.css";
-@import '@fontsource/inter/variable.css';
+@import "@fontsource/inter/variable.css";
 
 @tailwind components;
 @tailwind utilities;
 
 @import "./variables.css";
-@import './tooltip/Tooltip.css';
-@import './input/Input.css';
+@import "./tooltip/Tooltip.css";
+@import "./input/Input.css";
 @import "./skeleton/Skeleton.css";
 @import "./input/DatePicker.css";
 
@@ -68,7 +68,7 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
   -webkit-border-radius: 7px;
   -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05),
-  inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+    inset 1px 1px 0px rgba(0, 0, 0, 0.05);
 }
 
 *.scroll::-webkit-scrollbar-button {

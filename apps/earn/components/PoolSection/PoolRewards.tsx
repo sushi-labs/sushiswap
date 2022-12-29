@@ -1,12 +1,12 @@
-import { formatNumber, formatPercent } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
-import { Currency, Table, Typography } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import { formatNumber, formatPercent } from "@sushiswap/format";
+import { Pair } from "@sushiswap/graph-client";
+import { Currency, Table, Typography } from "@sushiswap/ui";
+import React, { FC } from "react";
 
-import { incentiveRewardToToken } from '../../lib/functions'
+import { incentiveRewardToToken } from "../../lib/functions";
 
 export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
-  if (!pair?.farm?.incentives?.length) return <></>
+  if (!pair?.farm?.incentives?.length) return <></>;
 
   return (
     <>
@@ -16,9 +16,9 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
             Rewards
           </Typography>
           <Typography variant="sm" weight={400} className="text-slate-400">
-            Reward APR:{' '}
+            Reward APR:{" "}
             <span className="font-semibold text-slate-50">
-              {pair.incentiveApr > 0 ? formatPercent(pair.incentiveApr) : 'n/a'}
+              {pair.incentiveApr > 0 ? formatPercent(pair.incentiveApr) : "n/a"}
             </span>
           </Typography>
         </div>
@@ -41,18 +41,30 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
                     <Table.td>
                       <div className="flex items-center gap-3">
                         <Currency.Icon
-                          currency={incentiveRewardToToken(pair.chainId, incentive)}
+                          currency={incentiveRewardToToken(
+                            pair.chainId,
+                            incentive
+                          )}
                           width={24}
                           height={24}
                         />
-                        <Typography weight={600} variant="sm" className="text-slate-50">
+                        <Typography
+                          weight={600}
+                          variant="sm"
+                          className="text-slate-50"
+                        >
                           {incentive.rewardToken.symbol}
                         </Typography>
                       </div>
                     </Table.td>
                     <Table.td>
-                      <Typography variant="sm" weight={600} className="text-slate-50">
-                        {formatNumber(incentive.rewardPerDay)} {incentive.rewardToken.symbol} per day
+                      <Typography
+                        variant="sm"
+                        weight={600}
+                        className="text-slate-50"
+                      >
+                        {formatNumber(incentive.rewardPerDay)}{" "}
+                        {incentive.rewardToken.symbol} per day
                       </Typography>
                     </Table.td>
                   </Table.tr>
@@ -60,7 +72,10 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
               ) : (
                 <Table.tr>
                   <Table.td colSpan={2}>
-                    <Typography variant="xs" className="w-full italic text-center text-slate-400">
+                    <Typography
+                      variant="xs"
+                      className="w-full italic text-center text-slate-400"
+                    >
                       No rewards found
                     </Typography>
                   </Table.td>
@@ -71,5 +86,5 @@ export const PoolRewards: FC<{ pair: Pair }> = ({ pair }) => {
         </Table.container>
       </div>
     </>
-  )
-}
+  );
+};

@@ -1,6 +1,6 @@
-import { StorageActions } from './slice'
+import { StorageActions } from "./slice";
 
 export interface StorageContext {
-  reducerPath: string
-  actions: StorageActions
+  reducerPath: string;
+  actions: StorageActions;
 }

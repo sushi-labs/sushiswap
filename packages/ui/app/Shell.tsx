@@ -1,21 +1,21 @@
-import { useIsMounted } from '@sushiswap/hooks'
-import { useMemo } from 'react'
+import { useIsMounted } from "@sushiswap/hooks";
+import { useMemo } from "react";
 
 export interface ShellProps {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 const random = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
 
 export function Shell({ children }: ShellProps): JSX.Element {
-  const isMounted = useIsMounted()
+  const isMounted = useIsMounted();
 
   const snowFlakes = useMemo(() => {
     if (isMounted)
       return Array.from(Array(50)).map((el, idx) => {
-        const size = random(1, 4) * 0.06
+        const size = random(1, 4) * 0.06;
 
         return (
           <div
@@ -32,16 +32,16 @@ export function Shell({ children }: ShellProps): JSX.Element {
               animationDelay: `-${random(1, 10)}s`,
             }}
           />
-        )
-      })
+        );
+      });
 
-    return undefined
-  }, [isMounted])
+    return undefined;
+  }, [isMounted]);
 
   return (
     <div>
       <div className="fixed inset-0 pointer-events-none">{snowFlakes}</div>
       {children}
     </div>
-  )
+  );
 }

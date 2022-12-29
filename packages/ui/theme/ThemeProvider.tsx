@@ -1,7 +1,7 @@
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode } from "react";
 
 interface ThemeProvider {
-  children: ReactNode | Array<ReactNode>
+  children: ReactNode | Array<ReactNode>;
 }
 
 export const ThemeProvider: FC<ThemeProvider> = ({ children }) => {
@@ -10,5 +10,5 @@ export const ThemeProvider: FC<ThemeProvider> = ({ children }) => {
       {children}
       <div id="popover-portal" />
     </>
-  )
-}
+  );
+};

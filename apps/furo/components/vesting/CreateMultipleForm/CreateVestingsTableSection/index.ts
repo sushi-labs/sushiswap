@@ -1,1 +1,1 @@
-export * from './CreateVestingsTableSection'
+export * from "./CreateVestingsTableSection";

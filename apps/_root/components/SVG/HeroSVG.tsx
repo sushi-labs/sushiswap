@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-export const HeroSVG = (props: React.ComponentProps<'svg'>) => {
+export const HeroSVG = (props: React.ComponentProps<"svg">) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -105,8 +105,16 @@ export const HeroSVG = (props: React.ComponentProps<'svg'>) => {
         fill="#97A3B7"
         d="M48.448 250.593c-.015-.491.054-.895.208-1.21.156-.315.367-.548.633-.699.266-.153.56-.23.88-.23.284 0 .548.061.79.183.243.12.52.316.832.588.194.168.353.29.476.367.122.074.26.111.41.111.23 0 .412-.086.547-.256.138-.173.203-.429.194-.767h1.078c.016.494-.055.899-.211 1.214a1.543 1.543 0 01-.634.699 1.742 1.742 0 01-.876.226c-.287 0-.551-.061-.794-.183a4.416 4.416 0 01-.827-.588c-.2-.174-.36-.296-.48-.367a.756.756 0 00-.406-.11.7.7 0 00-.544.238c-.14.156-.206.418-.198.784h-1.078zm10.599 4.492l-.09-10.909h.7l.089 10.909h-.7zm2.124-7.526a1.256 1.256 0 00-.57-.937c-.331-.225-.747-.337-1.247-.337-.358 0-.667.057-.928.171-.26.11-.462.264-.605.46-.14.193-.21.413-.208.66a.976.976 0 00.15.537c.1.151.23.277.39.379.163.1.337.184.522.252.185.065.363.119.534.162l.854.221c.28.069.566.161.86.277.293.117.565.27.817.461.251.19.455.426.61.707.16.281.24.618.243 1.01.004.494-.12.933-.372 1.317-.25.383-.615.686-1.097.907-.478.222-1.058.333-1.74.333-.653 0-1.22-.104-1.698-.312a2.637 2.637 0 01-1.128-.882c-.273-.383-.426-.838-.459-1.363h1.321c.028.315.133.578.313.788.184.208.417.362.699.465.285.099.596.149.934.149.372 0 .703-.058.992-.175.291-.119.52-.284.686-.494.166-.213.248-.462.245-.746a.923.923 0 00-.227-.635 1.653 1.653 0 00-.595-.409 5.779 5.779 0 00-.842-.285l-1.034-.282c-.7-.19-1.256-.47-1.668-.839-.41-.369-.617-.858-.622-1.466a2.165 2.165 0 01.398-1.317c.27-.375.637-.666 1.101-.873.465-.211.99-.316 1.574-.316.591 0 1.113.104 1.567.311a2.67 2.67 0 011.08.857c.265.361.405.775.42 1.244h-1.27zm5.936 6.58c-.673-.003-1.25-.181-1.73-.533-.48-.352-.85-.865-1.108-1.538-.259-.674-.392-1.485-.4-2.434-.007-.946.113-1.754.36-2.424.25-.671.612-1.182 1.087-1.534.477-.352 1.05-.529 1.717-.529.668 0 1.242.178 1.722.533.48.352.85.864 1.108 1.534.26.668.395 1.474.403 2.42.008.952-.112 1.765-.36 2.438-.247.67-.608 1.183-1.082 1.538-.474.352-1.047.529-1.717.529zm-.01-1.138c.592 0 1.05-.289 1.378-.865.33-.577.492-1.411.483-2.502-.006-.724-.088-1.336-.245-1.836-.155-.503-.376-.884-.662-1.142a1.435 1.435 0 00-1.009-.392c-.588 0-1.047.29-1.377.869-.331.58-.493 1.413-.487 2.501.006.728.086 1.343.24 1.846.158.5.379.879.662 1.137.284.256.623.384 1.018.384zm5.257 1.074a.834.834 0 01-.603-.248.83.83 0 01-.256-.605.799.799 0 01.246-.596.813.813 0 01.6-.252c.232 0 .433.084.602.252a.812.812 0 01.257.596.808.808 0 01-.116.431.871.871 0 01-.305.307.814.814 0 01-.425.115zm5.265.064c-.674-.003-1.25-.181-1.73-.533-.48-.352-.85-.865-1.108-1.538-.259-.674-.392-1.485-.4-2.434-.007-.946.112-1.754.36-2.424.25-.671.612-1.182 1.087-1.534.477-.352 1.05-.529 1.717-.529.668 0 1.241.178 1.722.533.48.352.849.864 1.107 1.534.261.668.396 1.474.404 2.42.007.952-.112 1.765-.36 2.438-.247.67-.608 1.183-1.082 1.538-.474.352-1.047.529-1.717.529zm-.01-1.138c.591 0 1.05-.289 1.378-.865.33-.577.491-1.411.483-2.502-.007-.724-.088-1.336-.246-1.836-.154-.503-.375-.884-.661-1.142a1.435 1.435 0 00-1.009-.392c-.588 0-1.047.29-1.378.869-.33.58-.493 1.413-.486 2.501.006.728.086 1.343.24 1.846.158.5.379.879.662 1.137.283.256.622.384 1.017.384zm7.756 1.138c-.674-.003-1.25-.181-1.73-.533-.48-.352-.85-.865-1.108-1.538-.259-.674-.392-1.485-.4-2.434-.007-.946.113-1.754.36-2.424.25-.671.612-1.182 1.087-1.534.477-.352 1.05-.529 1.717-.529.668 0 1.242.178 1.722.533.48.352.85.864 1.107 1.534.262.668.396 1.474.404 2.42.008.952-.112 1.765-.36 2.438-.247.67-.608 1.183-1.082 1.538-.474.352-1.047.529-1.717.529zm-.01-1.138c.591 0 1.05-.289 1.378-.865.33-.577.492-1.411.483-2.502-.006-.724-.088-1.336-.246-1.836-.154-.503-.375-.884-.661-1.142a1.435 1.435 0 00-1.009-.392c-.588 0-1.047.29-1.378.869-.33.58-.492 1.413-.486 2.501.006.728.086 1.343.24 1.846.158.5.379.879.662 1.137.283.256.623.384 1.017.384zm7.956-7.734l.071 8.727h-1.32L92 246.588h-.052l-2.076 1.363-.01-1.261 2.165-1.423h1.283zm5.472 8.872c-.674-.003-1.25-.181-1.73-.533-.48-.352-.85-.865-1.108-1.538-.259-.674-.392-1.485-.4-2.434-.007-.946.112-1.754.36-2.424.25-.671.612-1.182 1.087-1.534.477-.352 1.05-.529 1.717-.529s1.241.178 1.722.533c.48.352.849.864 1.107 1.534.262.668.396 1.474.404 2.42.008.952-.112 1.765-.36 2.438-.247.67-.608 1.183-1.082 1.538-.474.352-1.047.529-1.717.529zm-.01-1.138c.591 0 1.05-.289 1.378-.865.331-.577.491-1.411.483-2.502-.006-.724-.088-1.336-.246-1.836-.154-.503-.375-.884-.661-1.142a1.435 1.435 0 00-1.009-.392c-.588 0-1.047.29-1.378.869-.33.58-.492 1.413-.486 2.501.006.728.086 1.343.24 1.846.158.5.379.879.662 1.137.283.256.623.384 1.017.384zm4.716.993l-.008-.955 2.928-3.059c.313-.333.571-.624.773-.874.205-.253.358-.493.459-.72.1-.227.149-.469.147-.725a1.344 1.344 0 00-.773-1.24 1.791 1.791 0 00-.798-.174c-.313 0-.585.064-.817.192a1.29 1.29 0 00-.532.541 1.69 1.69 0 00-.181.818h-1.257c-.004-.531.114-.996.355-1.394a2.46 2.46 0 01.998-.924 3.081 3.081 0 011.45-.333c.549 0 1.033.11 1.452.328.422.216.753.512.992.887.238.372.36.792.364 1.261.002.324-.056.641-.176.95-.117.31-.323.655-.618 1.036-.295.378-.706.836-1.233 1.376l-1.719 1.816v.063h3.929l.01 1.13h-5.745zm10.399.145c-.673-.003-1.25-.181-1.73-.533-.48-.352-.849-.865-1.108-1.538-.258-.674-.391-1.485-.399-2.434-.008-.946.112-1.754.359-2.424.25-.671.613-1.182 1.087-1.534.477-.352 1.05-.529 1.717-.529.668 0 1.242.178 1.722.533.48.352.85.864 1.108 1.534.261.668.395 1.474.403 2.42.008.952-.112 1.765-.359 2.438-.247.67-.608 1.183-1.083 1.538-.474.352-1.046.529-1.717.529zm-.009-1.138c.591 0 1.05-.289 1.378-.865.33-.577.491-1.411.482-2.502-.006-.724-.088-1.336-.245-1.836-.155-.503-.375-.884-.662-1.142a1.433 1.433 0 00-1.008-.392c-.589 0-1.048.29-1.378.869-.331.58-.493 1.413-.487 2.501.006.728.086 1.343.241 1.846.158.5.378.879.661 1.137.284.256.623.384 1.018.384z"
       ></path>
-      <circle r="21" fill="#212939" transform="matrix(1 0 .0082 .99997 215.083 171.997)"></circle>
-      <circle r="18.667" fill="#364154" transform="matrix(1 0 .0082 .99997 215.083 171.997)"></circle>
+      <circle
+        r="21"
+        fill="#212939"
+        transform="matrix(1 0 .0082 .99997 215.083 171.997)"
+      ></circle>
+      <circle
+        r="18.667"
+        fill="#364154"
+        transform="matrix(1 0 .0082 .99997 215.083 171.997)"
+      ></circle>
       <path
         fill="url(#paint2_linear_1533_1919)"
         fillRule="evenodd"
@@ -202,7 +210,12 @@ export const HeroSVG = (props: React.ComponentProps<'svg'>) => {
         ></rect>
       </g>
       <defs>
-        <pattern id="pattern0" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern0"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.03125)" xlinkHref="#image0_1533_1919"></use>
         </pattern>
         <filter
@@ -215,8 +228,15 @@ export const HeroSVG = (props: React.ComponentProps<'svg'>) => {
           filterUnits="userSpaceOnUse"
         >
           <feFlood floodOpacity="0" result="BackgroundImageFix"></feFlood>
-          <feGaussianBlur in="BackgroundImageFix" stdDeviation="8"></feGaussianBlur>
-          <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1533_1919"></feComposite>
+          <feGaussianBlur
+            in="BackgroundImageFix"
+            stdDeviation="8"
+          ></feGaussianBlur>
+          <feComposite
+            in2="SourceAlpha"
+            operator="in"
+            result="effect1_backgroundBlur_1533_1919"
+          ></feComposite>
           <feColorMatrix
             in="SourceAlpha"
             result="hardAlpha"
@@ -226,37 +246,94 @@ export const HeroSVG = (props: React.ComponentProps<'svg'>) => {
           <feGaussianBlur stdDeviation="9"></feGaussianBlur>
           <feComposite in2="hardAlpha" operator="out"></feComposite>
           <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix>
-          <feBlend in2="effect1_backgroundBlur_1533_1919" result="effect2_dropShadow_1533_1919"></feBlend>
-          <feBlend in="SourceGraphic" in2="effect2_dropShadow_1533_1919" result="shape"></feBlend>
+          <feBlend
+            in2="effect1_backgroundBlur_1533_1919"
+            result="effect2_dropShadow_1533_1919"
+          ></feBlend>
+          <feBlend
+            in="SourceGraphic"
+            in2="effect2_dropShadow_1533_1919"
+            result="shape"
+          ></feBlend>
         </filter>
-        <pattern id="pattern1" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern1"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image1_1533_1919"></use>
         </pattern>
-        <pattern id="pattern2" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern2"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image2_1533_1919"></use>
         </pattern>
-        <pattern id="pattern3" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern3"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image3_1533_1919"></use>
         </pattern>
-        <pattern id="pattern4" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern4"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image4_1533_1919"></use>
         </pattern>
-        <pattern id="pattern5" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern5"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image5_1533_1919"></use>
         </pattern>
-        <pattern id="pattern6" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern6"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image6_1533_1919"></use>
         </pattern>
-        <pattern id="pattern7" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern7"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image7_1533_1919"></use>
         </pattern>
-        <pattern id="pattern8" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern8"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image8_1533_1919"></use>
         </pattern>
-        <pattern id="pattern9" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern9"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image9_1533_1919"></use>
         </pattern>
-        <pattern id="pattern10" width="1" height="1" patternContentUnits="objectBoundingBox">
+        <pattern
+          id="pattern10"
+          width="1"
+          height="1"
+          patternContentUnits="objectBoundingBox"
+        >
           <use transform="scale(.00781)" xlinkHref="#image10_1533_1919"></use>
         </pattern>
         <linearGradient
@@ -402,5 +479,5 @@ export const HeroSVG = (props: React.ComponentProps<'svg'>) => {
         ></image>
       </defs>
     </svg>
-  )
-}
+  );
+};

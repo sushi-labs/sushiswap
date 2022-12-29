@@ -1,10 +1,11 @@
 // @ts-check
 /** @type {import('next-seo').DefaultSeoProps} */
 export default {
-  titleTemplate: '%s | Sushi',
-  title: 'Earn',
-  defaultTitle: 'Earn',
-  description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI.',
+  titleTemplate: "%s | Sushi",
+  title: "Earn",
+  defaultTitle: "Earn",
+  description:
+    "Earn fees by providing liquidity and staking SUSHI into xSUSHI.",
   //   canonical: 'https://www.sushi.com/pool',
   //   mobileAlternate: {
   //     media: '',
@@ -12,25 +13,26 @@ export default {
   //   },
   //   languageAlternates: [{ hrefLang: "en", href: "https://www.sushi.com/pool" }],
   twitter: {
-    handle: '@sushiswap',
-    site: '@sushiswap',
-    cardType: 'summary_large_image',
+    handle: "@sushiswap",
+    site: "@sushiswap",
+    cardType: "summary_large_image",
   },
   openGraph: {
-    url: 'https://www.sushi.com/earn',
-    type: 'website',
-    title: 'Earn',
-    description: 'Earn fees by providing liquidity and staking SUSHI into xSUSHI.',
+    url: "https://www.sushi.com/earn",
+    type: "website",
+    title: "Earn",
+    description:
+      "Earn fees by providing liquidity and staking SUSHI into xSUSHI.",
     images: [
       {
-        url: 'https://www.sushi.com/earn/og-image.jpg',
+        url: "https://www.sushi.com/earn/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: 'Earn',
+        alt: "Earn",
       },
     ],
     // videos: [],
     // locale: 'en_IE',
-    site_name: 'Sushi',
+    site_name: "Sushi",
   },
-}
+};

@@ -1,25 +1,30 @@
-import { getBuiltGraphSDK, Query, QueryResolvers, Resolvers } from '../../.graphclient'
-import { getFarms } from '../../lib/farms'
-import { page } from '../../lib/page'
-import { transformPair } from '../../transformers'
-import { pairById } from './pairById'
-import { _pairsByChainId, pairsByChainId } from './pairsByChainId'
-import { _pairsByChainIds, pairsByChainIds } from './pairsByChainIds'
-import { pairsByIds } from './pairsByIds'
+import {
+  getBuiltGraphSDK,
+  Query,
+  QueryResolvers,
+  Resolvers,
+} from "../../.graphclient";
+import { getFarms } from "../../lib/farms";
+import { page } from "../../lib/page";
+import { transformPair } from "../../transformers";
+import { pairById } from "./pairById";
+import { _pairsByChainId, pairsByChainId } from "./pairsByChainId";
+import { _pairsByChainIds, pairsByChainIds } from "./pairsByChainIds";
+import { pairsByIds } from "./pairsByIds";
 
-const sdk = getBuiltGraphSDK()
+const sdk = getBuiltGraphSDK();
 
-export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
+export const pairsWithFarms: QueryResolvers["pairsWithFarms"] = async (
   root,
   args,
   context,
   info
-): Promise<Query['pairsWithFarms']> => {
+): Promise<Query["pairsWithFarms"]> => {
   // const { farms } = await sdk.FarmsV0()
 
-  const farms = await getFarms()
+  const farms = await getFarms();
 
-  console.log({ farms })
+  console.log({ farms });
 
   const pools = await (args?.farmsOnly
     ? Promise.all(
@@ -39,18 +44,21 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
             )
           )
       ).then((value) => value.flat())
-    : _pairsByChainIds(root, args, context, info))
+    : _pairsByChainIds(root, args, context, info));
 
-  const [{ oneDayBlocks }, { twoDayBlocks }, { oneWeekBlocks }] = await Promise.all([
-    sdk.OneDayBlocks({ chainIds: args.chainIds }),
-    sdk.TwoDayBlocks({ chainIds: args.chainIds }),
-    sdk.OneWeekBlocks({ chainIds: args.chainIds }),
-  ])
+  const [{ oneDayBlocks }, { twoDayBlocks }, { oneWeekBlocks }] =
+    await Promise.all([
+      sdk.OneDayBlocks({ chainIds: args.chainIds }),
+      sdk.TwoDayBlocks({ chainIds: args.chainIds }),
+      sdk.OneWeekBlocks({ chainIds: args.chainIds }),
+    ]);
 
   const [pools1d, pools2d, pools1w] = await Promise.all([
     Promise.all(
       args.chainIds
-        .filter((chainId) => oneDayBlocks.some((block) => block.chainId === chainId))
+        .filter((chainId) =>
+          oneDayBlocks.some((block) => block.chainId === chainId)
+        )
         .map((chainId) =>
           _pairsByChainId(
             root,
@@ -58,9 +66,16 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
               ...args,
               chainId,
               where: {
-                id_in: pools.filter((pool) => pool.chainId === chainId).map(({ id }) => id),
+                id_in: pools
+                  .filter((pool) => pool.chainId === chainId)
+                  .map(({ id }) => id),
               },
-              block: { number: Number(oneDayBlocks?.find((block) => block.chainId === chainId)?.number) },
+              block: {
+                number: Number(
+                  oneDayBlocks?.find((block) => block.chainId === chainId)
+                    ?.number
+                ),
+              },
             },
             context,
             info
@@ -68,13 +83,15 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
         )
     ).then((value) => {
       if (!Array.isArray(value)) {
-        console.error('PairsWithFarms query failed for 1d pools ', value)
+        console.error("PairsWithFarms query failed for 1d pools ", value);
       }
-      return value.flat()
+      return value.flat();
     }),
     Promise.all(
       args.chainIds
-        .filter((chainId) => twoDayBlocks.some((block) => block.chainId === chainId))
+        .filter((chainId) =>
+          twoDayBlocks.some((block) => block.chainId === chainId)
+        )
         .map((chainId) =>
           _pairsByChainId(
             root,
@@ -82,9 +99,16 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
               ...args,
               chainId,
               where: {
-                id_in: pools.filter((pool) => pool.chainId === chainId).map(({ id }) => id),
+                id_in: pools
+                  .filter((pool) => pool.chainId === chainId)
+                  .map(({ id }) => id),
               },
-              block: { number: Number(twoDayBlocks?.find((block) => block.chainId === chainId)?.number) },
+              block: {
+                number: Number(
+                  twoDayBlocks?.find((block) => block.chainId === chainId)
+                    ?.number
+                ),
+              },
             },
             context,
             info
@@ -92,13 +116,15 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
         )
     ).then((value) => {
       if (!Array.isArray(value)) {
-        console.error('PairsWithFarms query failed for 2d pools ', value)
+        console.error("PairsWithFarms query failed for 2d pools ", value);
       }
-      return value.flat()
+      return value.flat();
     }),
     Promise.all(
       args.chainIds
-        .filter((chainId) => oneWeekBlocks.some((block) => block.chainId === chainId))
+        .filter((chainId) =>
+          oneWeekBlocks.some((block) => block.chainId === chainId)
+        )
         .map((chainId) =>
           _pairsByChainId(
             root,
@@ -106,9 +132,16 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
               ...args,
               chainId,
               where: {
-                id_in: pools.filter((pool) => pool.chainId === chainId).map(({ id }) => id),
+                id_in: pools
+                  .filter((pool) => pool.chainId === chainId)
+                  .map(({ id }) => id),
               },
-              block: { number: Number(oneWeekBlocks?.find((block) => block.chainId === chainId)?.number) },
+              block: {
+                number: Number(
+                  oneWeekBlocks?.find((block) => block.chainId === chainId)
+                    ?.number
+                ),
+              },
             },
             context,
             info
@@ -116,34 +149,46 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
         )
     ).then((value) => {
       if (!Array.isArray(value)) {
-        console.error('PairsWithFarms query failed for 1w pools', value)
+        console.error("PairsWithFarms query failed for 1w pools", value);
       }
-      return value.flat()
+      return value.flat();
     }),
-  ])
+  ]);
 
   return page(
     pools
       .map((pool) =>
         transformPair({
           pair: pool,
-          pair1d: Array.isArray(pools1d) ? pools1d?.find((pool1d) => pool1d.id === pool.id) : undefined,
-          pair2d: Array.isArray(pools2d) ? pools2d?.find((pool2d) => pool2d.id === pool.id) : undefined,
-          pair1w: Array.isArray(pools1w) ? pools1w?.find((pool1w) => pool1w.id === pool.id) : undefined,
+          pair1d: Array.isArray(pools1d)
+            ? pools1d?.find((pool1d) => pool1d.id === pool.id)
+            : undefined,
+          pair2d: Array.isArray(pools2d)
+            ? pools2d?.find((pool2d) => pool2d.id === pool.id)
+            : undefined,
+          pair1w: Array.isArray(pools1w)
+            ? pools1w?.find((pool1w) => pool1w.id === pool.id)
+            : undefined,
           farm: farms?.[pool.chainId]?.farms?.[pool.id.toLowerCase()],
         })
       )
       .sort((a, b) => {
-        if (args.orderDirection === 'asc') {
-          return a[args.orderBy || 'liquidityUSD'] - b[args.orderBy || 'liquidityUSD']
-        } else if (args.orderDirection === 'desc') {
-          return b[args.orderBy || 'liquidityUSD'] - a[args.orderBy || 'liquidityUSD']
+        if (args.orderDirection === "asc") {
+          return (
+            a[args.orderBy || "liquidityUSD"] -
+            b[args.orderBy || "liquidityUSD"]
+          );
+        } else if (args.orderDirection === "desc") {
+          return (
+            b[args.orderBy || "liquidityUSD"] -
+            a[args.orderBy || "liquidityUSD"]
+          );
         }
-        return 0
+        return 0;
       }),
     args.pagination
-  )
-}
+  );
+};
 
 // Farm only
 // export const incentivisedPairsByChainIds: QueryResolvers['incentivisedPairsByChainIds'] = async (
@@ -187,7 +232,8 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
 
 export const resolvers: Resolvers = {
   Pair: {
-    chainId: (root, args, context, info) => Number(root.chainId || context.chainId || 1),
+    chainId: (root, args, context, info) =>
+      Number(root.chainId || context.chainId || 1),
     // address: (root, args, context, info) => String(root.address || context.address),
   },
   Query: {
@@ -197,4 +243,4 @@ export const resolvers: Resolvers = {
     pairsByChainIds,
     pairsWithFarms,
   },
-}
+};

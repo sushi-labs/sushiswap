@@ -1,10 +1,14 @@
-import { classNames, Table } from '@sushiswap/ui'
-import { ColumnDef, flexRender, Table as TableType } from '@tanstack/react-table'
+import { classNames, Table } from "@sushiswap/ui";
+import {
+  ColumnDef,
+  flexRender,
+  Table as TableType,
+} from "@tanstack/react-table";
 
 interface GenericTable<T> {
-  table: TableType<T>
-  columns: ColumnDef<T>[]
-  getLink?: (row: T) => string
+  table: TableType<T>;
+  columns: ColumnDef<T>[];
+  getLink?: (row: T) => string;
 }
 
 export function GenericTable<T>({ table, columns, getLink }: GenericTable<T>) {
@@ -18,18 +22,26 @@ export function GenericTable<T>({ table, columns, getLink }: GenericTable<T>) {
                 <Table.th
                   key={header.id}
                   colSpan={header.colSpan}
-                  style={{ maxWidth: header.column.getSize(), width: header.column.getSize() }}
+                  style={{
+                    maxWidth: header.column.getSize(),
+                    width: header.column.getSize(),
+                  }}
                 >
                   <div
                     {...{
                       className: classNames(
-                        header.column.getCanSort() ? 'cursor-pointer select-none' : '',
-                        'h-full flex items-center gap-2'
+                        header.column.getCanSort()
+                          ? "cursor-pointer select-none"
+                          : "",
+                        "h-full flex items-center gap-2"
                       ),
                       onClick: header.column.getToggleSortingHandler(),
                     }}
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                   </div>
                 </Table.th>
               ))}
@@ -42,22 +54,38 @@ export function GenericTable<T>({ table, columns, getLink }: GenericTable<T>) {
               <Table.tr key={row.id} className="cursor-pointer">
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <Table.td key={cell.id} style={{ maxWidth: columns[0].size, width: columns[0].size }}>
+                    <Table.td
+                      key={cell.id}
+                      style={{
+                        maxWidth: columns[0].size,
+                        width: columns[0].size,
+                      }}
+                    >
                       {getLink ? (
-                        <a href={getLink(row.original)} target="_blank" rel="noreferrer">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        <a
+                          href={getLink(row.original)}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </a>
                       ) : (
-                        flexRender(cell.column.columnDef.cell, cell.getContext())
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )
                       )}
                     </Table.td>
-                  )
+                  );
                 })}
               </Table.tr>
-            )
+            );
           })}
         </Table.tbody>
       </Table.table>
     </Table.container>
-  )
+  );
 }

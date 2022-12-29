@@ -1,10 +1,10 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, Type } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { ZERO } from '@sushiswap/math'
+import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/outline";
+import { ChainId } from "@sushiswap/chain";
+import { Amount, Native, Type } from "@sushiswap/currency";
+import { formatUSD } from "@sushiswap/format";
+import { FundSource, useIsMounted } from "@sushiswap/hooks";
+import { ZERO } from "@sushiswap/math";
 import {
   AppearOnMount,
   Button,
@@ -13,24 +13,24 @@ import {
   DEFAULT_INPUT_UNSTYLED,
   Input,
   Typography,
-} from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
-import { FC, Fragment, ReactNode, useState } from 'react'
-import { useAccount } from 'wagmi'
+} from "@sushiswap/ui";
+import { Widget } from "@sushiswap/ui";
+import { FC, Fragment, ReactNode, useState } from "react";
+import { useAccount } from "wagmi";
 
-import { usePoolPosition } from '../PoolPositionProvider'
-import { SettingsOverlay } from '../SettingsOverlay'
+import { usePoolPosition } from "../PoolPositionProvider";
+import { SettingsOverlay } from "../SettingsOverlay";
 
 interface RemoveSectionWidgetProps {
-  isFarm: boolean
-  chainId: ChainId
-  percentage: string
-  token0: Type
-  token1: Type
-  token0Minimum?: Amount<Type>
-  token1Minimum?: Amount<Type>
-  setPercentage(percentage: string): void
-  children: ReactNode
+  isFarm: boolean;
+  chainId: ChainId;
+  percentage: string;
+  token0: Type;
+  token1: Type;
+  token0Minimum?: Amount<Type>;
+  token1Minimum?: Amount<Type>;
+  setPercentage(percentage: string): void;
+  children: ReactNode;
 }
 
 export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
@@ -44,15 +44,21 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   token1Minimum,
   children,
 }) => {
-  const isMounted = useIsMounted()
-  const [hover, setHover] = useState(false)
-  const { address } = useAccount()
-  const { balance, value0, value1 } = usePoolPosition()
+  const isMounted = useIsMounted();
+  const [hover, setHover] = useState(false);
+  const { address } = useAccount();
+  const { balance, value0, value1 } = usePoolPosition();
 
   return (
-    <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+    <div
+      className="relative"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
       <Transition
-        show={Boolean(hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address)}
+        show={Boolean(
+          hover && !balance?.[FundSource.WALLET]?.greaterThan(ZERO) && address
+        )}
         as={Fragment}
         enter="transition duration-300 origin-center ease-out"
         enterFrom="transform opacity-0"
@@ -62,8 +68,12 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
         leaveTo="transform opacity-0"
       >
         <div className="border border-slate-200/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
-          <Typography variant="xs" weight={600} className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
-            No liquidity tokens found {isFarm && ', did you unstake?'}
+          <Typography
+            variant="xs"
+            weight={600}
+            className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3"
+          >
+            No liquidity tokens found {isFarm && ", did you unstake?"}
           </Typography>
         </div>
       </Transition>
@@ -80,8 +90,8 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         <div className="flex items-center justify-between">
                           <div
                             className={classNames(
-                              open ? 'rotate-180' : 'rotate-0',
-                              'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
+                              open ? "rotate-180" : "rotate-0",
+                              "transition-all w-5 h-5 -mr-1.5 flex items-center delay-300"
                             )}
                           >
                             <ChevronDownIcon
@@ -112,31 +122,47 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                       <div className="flex items-center gap-4">
                         <div className="flex items-center justify-between flex-grow">
                           <Input.Percent
-                            onUserInput={(val) => setPercentage(val ? Math.min(+val, 100).toString() : '')}
+                            onUserInput={(val) =>
+                              setPercentage(
+                                val ? Math.min(+val, 100).toString() : ""
+                              )
+                            }
                             value={percentage}
                             placeholder="100%"
                             variant="unstyled"
-                            className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-2xl')}
+                            className={classNames(
+                              DEFAULT_INPUT_UNSTYLED,
+                              "!text-2xl"
+                            )}
                           />
                         </div>
                         <div className="flex gap-2">
-                          <Button size="xs" onClick={() => setPercentage('25')}>
+                          <Button size="xs" onClick={() => setPercentage("25")}>
                             25%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage('50')}>
+                          <Button size="xs" onClick={() => setPercentage("50")}>
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage('75')}>
+                          <Button size="xs" onClick={() => setPercentage("75")}>
                             75%
                           </Button>
-                          <Button size="xs" onClick={() => setPercentage('100')}>
+                          <Button
+                            size="xs"
+                            onClick={() => setPercentage("100")}
+                          >
                             MAX
                           </Button>
                         </div>
                       </div>
                       <div className="grid items-center justify-between grid-cols-3 pb-2">
-                        <AppearOnMount show={Boolean(balance?.[FundSource.WALLET])}>
-                          <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
+                        <AppearOnMount
+                          show={Boolean(balance?.[FundSource.WALLET])}
+                        >
+                          <Typography
+                            variant="sm"
+                            weight={500}
+                            className="text-slate-300 hover:text-slate-20"
+                          >
                             {formatUSD((value0 + value1) * (+percentage / 100))}
                           </Typography>
                         </AppearOnMount>
@@ -145,18 +171,21 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                           show={Boolean(balance?.[FundSource.WALLET])}
                         >
                           <Typography
-                            onClick={() => setPercentage('100')}
+                            onClick={() => setPercentage("100")}
                             as="button"
                             variant="sm"
                             weight={500}
                             className="truncate text-slate-300 hover:text-slate-200"
                           >
-                            Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
+                            Balance:{" "}
+                            {balance?.[FundSource.WALLET].toSignificant(6)}
                           </Typography>
                         </AppearOnMount>
                       </div>
                       <Transition
-                        show={Boolean(+percentage > 0 && token0Minimum && token1Minimum)}
+                        show={Boolean(
+                          +percentage > 0 && token0Minimum && token1Minimum
+                        )}
                         unmount={false}
                         className="transition-[max-height] overflow-hidden"
                         enter="duration-300 ease-in-out"
@@ -167,16 +196,33 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                         leaveTo="transform max-h-0"
                       >
                         <div className="flex flex-col gap-3 py-3 pt-5 border-t border-slate-200/5">
-                          <Typography variant="sm" weight={400} className="pb-1 text-slate-400">
+                          <Typography
+                            variant="sm"
+                            weight={400}
+                            className="pb-1 text-slate-400"
+                          >
                             You&apos;ll receive at least:
                           </Typography>
 
                           <div className="flex items-center justify-between">
-                            <Typography variant="sm" weight={500} className="flex items-center gap-2 text-slate-50">
-                              {token0 && <UICurrency.Icon currency={token0} width={20} height={20} />}
+                            <Typography
+                              variant="sm"
+                              weight={500}
+                              className="flex items-center gap-2 text-slate-50"
+                            >
+                              {token0 && (
+                                <UICurrency.Icon
+                                  currency={token0}
+                                  width={20}
+                                  height={20}
+                                />
+                              )}
                               <span className="text-slate-400">
-                                <span className="text-slate-50">{token0Minimum?.toSignificant(6)}</span>{' '}
-                                {Native.onChain(chainId).wrapped.address === token0.wrapped.address
+                                <span className="text-slate-50">
+                                  {token0Minimum?.toSignificant(6)}
+                                </span>{" "}
+                                {Native.onChain(chainId).wrapped.address ===
+                                token0.wrapped.address
                                   ? Native.onChain(chainId).symbol
                                   : token0Minimum?.currency.symbol}
                               </span>
@@ -186,11 +232,24 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                             </Typography>
                           </div>
                           <div className="flex items-center justify-between">
-                            <Typography variant="sm" weight={500} className="flex items-center gap-2 text-slate-50">
-                              {token1 && <UICurrency.Icon currency={token1} width={20} height={20} />}
+                            <Typography
+                              variant="sm"
+                              weight={500}
+                              className="flex items-center gap-2 text-slate-50"
+                            >
+                              {token1 && (
+                                <UICurrency.Icon
+                                  currency={token1}
+                                  width={20}
+                                  height={20}
+                                />
+                              )}
                               <span className="text-slate-400">
-                                <span className="text-slate-50">{token1Minimum?.toSignificant(6)}</span>{' '}
-                                {Native.onChain(chainId).wrapped.address === token1.wrapped.address
+                                <span className="text-slate-50">
+                                  {token1Minimum?.toSignificant(6)}
+                                </span>{" "}
+                                {Native.onChain(chainId).wrapped.address ===
+                                token1.wrapped.address
                                   ? Native.onChain(chainId).symbol
                                   : token1Minimum?.currency.symbol}
                               </span>
@@ -211,5 +270,5 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
         </Widget.Content>
       </Widget>
     </div>
-  )
-}
+  );
+};

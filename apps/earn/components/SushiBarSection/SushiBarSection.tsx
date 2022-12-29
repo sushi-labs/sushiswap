@@ -1,5 +1,5 @@
-import { SushiBarSectionDesktop } from './SushiBarSectionDesktop'
-import { SushiBarSectionMobile } from './SushiBarSectionMobile'
+import { SushiBarSectionDesktop } from "./SushiBarSectionDesktop";
+import { SushiBarSectionMobile } from "./SushiBarSectionMobile";
 
 export const SushiBarSection = () => {
   return (
@@ -7,5 +7,5 @@ export const SushiBarSection = () => {
       <SushiBarSectionDesktop />
       <SushiBarSectionMobile />
     </>
-  )
-}
+  );
+};

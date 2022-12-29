@@ -1,7 +1,12 @@
-import * as React from 'react'
+import * as React from "react";
 
-export const PalmNaked = (props: React.ComponentProps<'svg'>) => (
-  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+export const PalmNaked = (props: React.ComponentProps<"svg">) => (
+  <svg
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -26,4 +31,4 @@ export const PalmNaked = (props: React.ComponentProps<'svg'>) => (
       </linearGradient>
     </defs>
   </svg>
-)
+);

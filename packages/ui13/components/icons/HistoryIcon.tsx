@@ -1,8 +1,13 @@
-import React from 'react'
+import React from "react";
 
-export const HistoryIcon = (props: React.ComponentProps<'svg'>) => {
+export const HistoryIcon = (props: React.ComponentProps<"svg">) => {
   return (
-    <svg {...props} viewBox="0 0 21 20" fill="transparent" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      {...props}
+      viewBox="0 0 21 20"
+      fill="transparent"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M10.7991 4.9095V9.60089"
         stroke="currentColor"
@@ -32,5 +37,5 @@ export const HistoryIcon = (props: React.ComponentProps<'svg'>) => {
         strokeLinejoin="round"
       />
     </svg>
-  )
-}
+  );
+};

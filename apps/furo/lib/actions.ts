@@ -1,12 +1,12 @@
-import { Signature } from '@ethersproject/bytes'
-import { AddressZero } from '@ethersproject/constants'
-import { BaseContract } from '@ethersproject/contracts'
-import { Amount, Share, Type } from '@sushiswap/currency'
-import { FuroStreamRouter, FuroVestingRouter } from '@sushiswap/furo/typechain'
+import { Signature } from "@ethersproject/bytes";
+import { AddressZero } from "@ethersproject/constants";
+import { BaseContract } from "@ethersproject/contracts";
+import { Amount, Share, Type } from "@sushiswap/currency";
+import { FuroStreamRouter, FuroVestingRouter } from "@sushiswap/furo/typechain";
 
 interface Batch<T> {
-  contract: T
-  actions: (string | undefined)[]
+  contract: T;
+  actions: (string | undefined)[];
 }
 
 /**
@@ -15,26 +15,29 @@ interface Batch<T> {
  * @param contract should contain batch function
  * @param actions array of encoded function data
  */
-export const batchAction = <T extends BaseContract>({ contract, actions = [] }: Batch<T>): string | undefined => {
-  const validated = actions.filter(Boolean)
+export const batchAction = <T extends BaseContract>({
+  contract,
+  actions = [],
+}: Batch<T>): string | undefined => {
+  const validated = actions.filter(Boolean);
 
-  if (validated.length === 0) throw new Error('No valid actions')
+  if (validated.length === 0) throw new Error("No valid actions");
 
   // Call action directly to save gas
   if (validated.length === 1) {
-    return validated[0]
+    return validated[0];
   }
 
   // Call batch function with valid actions
   if (validated.length > 1) {
-    return contract.interface.encodeFunctionData('multicall', [validated])
+    return contract.interface.encodeFunctionData("multicall", [validated]);
   }
-}
+};
 
 export interface ApproveBentoBoxActionProps<T> {
-  contract: T
-  user: string
-  signature: Signature
+  contract: T;
+  user: string;
+  signature: Signature;
 }
 
 export const approveBentoBoxAction = <T extends BaseContract>({
@@ -42,19 +45,25 @@ export const approveBentoBoxAction = <T extends BaseContract>({
   user,
   signature,
 }: ApproveBentoBoxActionProps<T>) => {
-  const { v, r, s } = signature
-  return contract.interface.encodeFunctionData('setBentoBoxApproval', [user, true, v, r, s])
-}
+  const { v, r, s } = signature;
+  return contract.interface.encodeFunctionData("setBentoBoxApproval", [
+    user,
+    true,
+    v,
+    r,
+    s,
+  ]);
+};
 
 export interface StreamCreationActionProps {
-  contract: FuroStreamRouter
-  recipient: string
-  currency: Type
-  startDate: Date
-  endDate: Date
-  amount: Amount<Type>
-  fromBentobox: boolean
-  minShare: Share<Type>
+  contract: FuroStreamRouter;
+  recipient: string;
+  currency: Type;
+  startDate: Date;
+  endDate: Date;
+  amount: Amount<Type>;
+  fromBentobox: boolean;
+  minShare: Share<Type>;
 }
 
 export const streamCreationAction = ({
@@ -67,7 +76,7 @@ export const streamCreationAction = ({
   fromBentobox,
   minShare,
 }: StreamCreationActionProps): string => {
-  return contract.interface.encodeFunctionData('createStream', [
+  return contract.interface.encodeFunctionData("createStream", [
     recipient,
     currency.isNative ? AddressZero : currency.wrapped.address,
     Math.floor(startDate.getTime() / 1000),
@@ -75,21 +84,21 @@ export const streamCreationAction = ({
     amount.quotient.toString(),
     fromBentobox,
     minShare.quotient.toString(),
-  ])
-}
+  ]);
+};
 
 export interface VestingCreationProps {
-  contract: FuroVestingRouter
-  recipient: string
-  currency: Type
-  startDate: Date
-  cliffDuration: string
-  stepDuration: string
-  steps: string
-  stepPercentage: string
-  amount: string
-  fromBentobox: boolean
-  minShare: Share<Type>
+  contract: FuroVestingRouter;
+  recipient: string;
+  currency: Type;
+  startDate: Date;
+  cliffDuration: string;
+  stepDuration: string;
+  steps: string;
+  stepPercentage: string;
+  amount: string;
+  fromBentobox: boolean;
+  minShare: Share<Type>;
 }
 
 export const vestingCreationAction = ({
@@ -105,7 +114,7 @@ export const vestingCreationAction = ({
   fromBentobox,
   minShare,
 }: VestingCreationProps): string => {
-  return contract.interface.encodeFunctionData('createVesting', [
+  return contract.interface.encodeFunctionData("createVesting", [
     {
       token: currency.isNative ? AddressZero : currency.wrapped.address,
       recipient: recipient,
@@ -118,5 +127,5 @@ export const vestingCreationAction = ({
       fromBentoBox: fromBentobox,
     },
     minShare.quotient.toString(),
-  ])
-}
+  ]);
+};

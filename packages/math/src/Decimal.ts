@@ -1,4 +1,4 @@
-import Decimal from 'decimal.js-light'
-import toFormat from 'toformat'
+import Decimal from "decimal.js-light";
+import toFormat from "toformat";
 
-export default toFormat(Decimal)
+export default toFormat(Decimal);

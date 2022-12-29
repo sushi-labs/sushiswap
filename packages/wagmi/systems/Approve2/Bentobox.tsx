@@ -1,17 +1,28 @@
-import { Signature } from '@ethersproject/bytes'
-import { Badge, BentoboxIcon, Button, classNames, IconButton, Loader, Tooltip, Typography } from '@sushiswap/ui'
-import { useEffect, useMemo, useState } from 'react'
+import { Signature } from "@ethersproject/bytes";
+import {
+  Badge,
+  BentoboxIcon,
+  Button,
+  classNames,
+  IconButton,
+  Loader,
+  Tooltip,
+  Typography,
+} from "@sushiswap/ui";
+import { useEffect, useMemo, useState } from "react";
 
-import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
-import { DefaultButton } from '../Approve/DefaultButton'
-import { ApprovalTypeBentobox, ApproveButtonReturnType } from './types'
+import { ApprovalState, useBentoBoxApproveCallback } from "../../hooks";
+import { DefaultButton } from "../Approve/DefaultButton";
+import { ApprovalTypeBentobox, ApproveButtonReturnType } from "./types";
 
 interface ApproveButtonBentoboxFnReturn extends ApproveButtonReturnType {
-  approvalState: ApprovalState
-  signature: Signature | undefined
+  approvalState: ApprovalState;
+  signature: Signature | undefined;
 }
 
-export type ApproveBentoboxFn = (params: ApprovalTypeBentobox) => ApproveButtonBentoboxFnReturn
+export type ApproveBentoboxFn = (
+  params: ApprovalTypeBentobox
+) => ApproveButtonBentoboxFnReturn;
 
 export const Bentobox: ApproveBentoboxFn = ({
   index,
@@ -22,24 +33,27 @@ export const Bentobox: ApproveBentoboxFn = ({
   onSignature,
   buttonProps: { id, className, variant, size, fullWidth = true },
 }) => {
-  const [_state, _setState] = useState<Signature>()
+  const [_state, _setState] = useState<Signature>();
   const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
     chainId,
     masterContract,
     enabled: enabled && Boolean(!!masterContract && !!chainId),
     onSuccess,
-  })
+  });
 
   useEffect(() => {
     if (signature) {
-      onSignature(signature)
-      _setState(signature)
+      onSignature(signature);
+      _setState(signature);
     }
-  }, [onSignature, signature])
+  }, [onSignature, signature]);
 
   return useMemo(() => {
     return {
-      approvalState: approvalState === ApprovalState.PENDING && _state ? ApprovalState.APPROVED : approvalState,
+      approvalState:
+        approvalState === ApprovalState.PENDING && _state
+          ? ApprovalState.APPROVED
+          : approvalState,
       signature,
       iconButton: (
         <DefaultButton key={index}>
@@ -55,13 +69,13 @@ export const Bentobox: ApproveBentoboxFn = ({
                       <div
                         className={classNames(
                           approvalState === ApprovalState.PENDING && signature
-                            ? 'bg-green'
+                            ? "bg-green"
                             : approvalState === ApprovalState.PENDING
-                            ? 'bg-yellow'
+                            ? "bg-yellow"
                             : approvalState === ApprovalState.APPROVED
-                            ? 'bg-green'
-                            : 'bg-red',
-                          'w-2 h-2 rounded-full shadow-md'
+                            ? "bg-green"
+                            : "bg-red",
+                          "w-2 h-2 rounded-full shadow-md"
                         )}
                       />
                     )
@@ -70,8 +84,10 @@ export const Bentobox: ApproveBentoboxFn = ({
                   <IconButton
                     as="div"
                     className={classNames(
-                      approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
-                      'flex items-center justify-center bg-slate-700 rounded-full overflow-hidden hover:scale-[1.10] transition-all'
+                      approvalState === ApprovalState.PENDING
+                        ? "pointer-events-none saturate-[0]"
+                        : "",
+                      "flex items-center justify-center bg-slate-700 rounded-full overflow-hidden hover:scale-[1.10] transition-all"
                     )}
                     onClick={onApprove}
                   >
@@ -88,30 +104,42 @@ export const Bentobox: ApproveBentoboxFn = ({
                   Status:
                   <span
                     className={classNames(
-                      'ml-1 capitalize',
+                      "ml-1 capitalize",
                       approvalState === ApprovalState.PENDING && signature
-                        ? 'text-green'
+                        ? "text-green"
                         : approvalState === ApprovalState.PENDING
-                        ? 'text-yellow'
+                        ? "text-yellow"
                         : approvalState === ApprovalState.APPROVED
-                        ? 'text-green'
-                        : 'text-red'
+                        ? "text-green"
+                        : "text-red"
                     )}
                   >
                     {approvalState === ApprovalState.PENDING && signature
-                      ? 'Approved'
-                      : approvalState.toLowerCase().replace('_', ' ')}
+                      ? "Approved"
+                      : approvalState.toLowerCase().replace("_", " ")}
                   </span>
                 </Typography>
-                <Typography variant="xs" weight={500} className="text-slate-400">
-                  We need your approval first to access your wallet using BentoBox; you will only have to approve this
-                  master contract once.
+                <Typography
+                  variant="xs"
+                  weight={500}
+                  className="text-slate-400"
+                >
+                  We need your approval first to access your wallet using
+                  BentoBox; you will only have to approve this master contract
+                  once.
                 </Typography>
-                <Typography variant="xs" weight={500} className="flex flex-col gap-1 text-slate-400">
-                  <span className="text-slate-200">Why should I approve this?</span>
+                <Typography
+                  variant="xs"
+                  weight={500}
+                  className="flex flex-col gap-1 text-slate-400"
+                >
+                  <span className="text-slate-200">
+                    Why should I approve this?
+                  </span>
                   <span>
-                    BentoBox is a token vault that provides its users with passive income on their deposits from yield
-                    strategies while reducing gas costs.
+                    BentoBox is a token vault that provides its users with
+                    passive income on their deposits from yield strategies while
+                    reducing gas costs.
                   </span>
                 </Typography>
               </div>
@@ -133,6 +161,17 @@ export const Bentobox: ApproveBentoboxFn = ({
           Approve Bentobox
         </Button>
       ),
-    }
-  }, [_state, approvalState, className, fullWidth, id, index, onApprove, signature, size, variant])
-}
+    };
+  }, [
+    _state,
+    approvalState,
+    className,
+    fullWidth,
+    id,
+    index,
+    onApprove,
+    signature,
+    size,
+    variant,
+  ]);
+};

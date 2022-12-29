@@ -1,20 +1,28 @@
-import { Transition } from '@headlessui/react'
-import { useIsMounted } from '@sushiswap/hooks'
-import { ElementType, FC, Fragment, ReactNode } from 'react'
+import { Transition } from "@headlessui/react";
+import { useIsMounted } from "@sushiswap/hooks";
+import { ElementType, FC, Fragment, ReactNode } from "react";
 
 interface AppearOnMount {
-  as?: ElementType<any>
-  show?: boolean
-  children: ((mounted: boolean) => ReactNode) | ReactNode
-  enabled?: boolean
-  className?: string
+  as?: ElementType<any>;
+  show?: boolean;
+  children: ((mounted: boolean) => ReactNode) | ReactNode;
+  enabled?: boolean;
+  className?: string;
 }
 
-export const AppearOnMount: FC<AppearOnMount> = ({ as = 'div', show, children, enabled = true, className }) => {
-  const isMounted = useIsMounted()
+export const AppearOnMount: FC<AppearOnMount> = ({
+  as = "div",
+  show,
+  children,
+  enabled = true,
+  className,
+}) => {
+  const isMounted = useIsMounted();
 
   if (!enabled) {
-    return <>{typeof children === 'function' ? children(isMounted) : children}</>
+    return (
+      <>{typeof children === "function" ? children(isMounted) : children}</>
+    );
   }
 
   if (isMounted)
@@ -31,9 +39,9 @@ export const AppearOnMount: FC<AppearOnMount> = ({ as = 'div', show, children, e
         leaveFrom="transform opacity-100"
         leaveTo="transform opacity-0"
       >
-        {typeof children === 'function' ? children(isMounted) : children}
+        {typeof children === "function" ? children(isMounted) : children}
       </Transition>
-    )
+    );
 
-  return <></>
-}
+  return <></>;
+};

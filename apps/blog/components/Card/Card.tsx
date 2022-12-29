@@ -1,14 +1,14 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
-import { Chip, classNames, Typography } from '@sushiswap/ui'
-import { format } from 'date-fns'
-import { FC } from 'react'
+import { ChevronRightIcon } from "@heroicons/react/solid";
+import { Chip, classNames, Typography } from "@sushiswap/ui";
+import { format } from "date-fns";
+import { FC } from "react";
 
-import { ArticleEntity } from '../../.mesh'
-import { isMediaVideo } from '../../lib/media'
-import { Image } from '../Image'
+import { ArticleEntity } from "../../.mesh";
+import { isMediaVideo } from "../../lib/media";
+import { Image } from "../Image";
 
 interface Card {
-  article: ArticleEntity
+  article: ArticleEntity;
 }
 
 export const Card: FC<Card> = ({ article }) => {
@@ -22,9 +22,11 @@ export const Card: FC<Card> = ({ article }) => {
               quality={100}
               image={article?.attributes.cover.data}
               className={classNames(
-                isMediaVideo(article?.attributes.cover.data?.attributes?.provider_metadata)
-                  ? ''
-                  : 'group-hover:scale-[1.06] scale-[1.01] transition duration-[400ms]'
+                isMediaVideo(
+                  article?.attributes.cover.data?.attributes?.provider_metadata
+                )
+                  ? ""
+                  : "group-hover:scale-[1.06] scale-[1.01] transition duration-[400ms]"
               )}
             />
           )}
@@ -33,12 +35,20 @@ export const Card: FC<Card> = ({ article }) => {
           {(article?.attributes?.categories?.data || []).length > 0 && (
             <div className="flex gap-1 pt-3">
               {article?.attributes?.categories?.data.map((category) => (
-                <Chip key={category.id} label={category?.attributes?.name} className="capitalize" />
+                <Chip
+                  key={category.id}
+                  label={category?.attributes?.name}
+                  className="capitalize"
+                />
               ))}
             </div>
           )}
           <div className="flex flex-col gap-1">
-            <Typography variant="sm" weight={500} className="text-slate-200 line-clamp-1">
+            <Typography
+              variant="sm"
+              weight={500}
+              className="text-slate-200 line-clamp-1"
+            >
               {article?.attributes?.title}
             </Typography>
             <Typography variant="sm" className="text-slate-400 line-clamp-2">
@@ -46,9 +56,16 @@ export const Card: FC<Card> = ({ article }) => {
             </Typography>
             <div className="absolute bottom-3 left-4 right-4">
               <div className="flex items-center justify-between">
-                <Typography variant="xs" weight={500} className="text-slate-400 line-clamp-2">
+                <Typography
+                  variant="xs"
+                  weight={500}
+                  className="text-slate-400 line-clamp-2"
+                >
                   {article?.attributes?.publishedAt &&
-                    format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
+                    format(
+                      new Date(article?.attributes.publishedAt),
+                      "dd MMM, yyyy"
+                    )}
                 </Typography>
                 <div className="flex items-center text-sm font-medium text-blue">
                   Read more <ChevronRightIcon width={16} height={16} />
@@ -59,5 +76,5 @@ export const Card: FC<Card> = ({ article }) => {
         </div>
       </div>
     </a>
-  )
-}
+  );
+};

@@ -1,4 +1,4 @@
 export type StepConfig = {
-  label: string
-  time: number
-}
+  label: string;
+  time: number;
+};

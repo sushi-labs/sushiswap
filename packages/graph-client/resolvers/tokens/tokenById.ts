@@ -1,9 +1,18 @@
-import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import {
+  SUBGRAPH_HOST,
+  SUSHISWAP_SUBGRAPH_NAME,
+  TRIDENT_SUBGRAPH_NAME,
+} from "@sushiswap/graph-config";
 
-import { QueryResolvers, Token } from '../../.graphclient'
+import { QueryResolvers, Token } from "../../.graphclient";
 
-export const tokenById: QueryResolvers['tokenById'] = async (root, args, context, info): Promise<Token> => {
-  const [chainId, address] = args.id.split(':')
+export const tokenById: QueryResolvers["tokenById"] = async (
+  root,
+  args,
+  context,
+  info
+): Promise<Token> => {
+  const [chainId, address] = args.id.split(":");
 
   const sushiSwapToken = await context.SushiSwap.Query.token(
     root,
@@ -18,7 +27,7 @@ export const tokenById: QueryResolvers['tokenById'] = async (root, args, context
       subgraphHost: SUBGRAPH_HOST[chainId],
     },
     info
-  )
+  );
 
   const tridentToken = await context.Trident.Query.token(
     root,
@@ -33,7 +42,7 @@ export const tokenById: QueryResolvers['tokenById'] = async (root, args, context
       subgraphHost: SUBGRAPH_HOST[chainId],
     },
     info
-  )
+  );
 
   // const bentoBoxToken = await context.BentoBox.Query.rebase(
   //   root,
@@ -50,5 +59,5 @@ export const tokenById: QueryResolvers['tokenById'] = async (root, args, context
   //   info
   // )
 
-  return {} as Token
-}
+  return {} as Token;
+};

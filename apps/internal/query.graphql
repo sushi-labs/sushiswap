@@ -22,10 +22,9 @@ query CrossChainStrategyKpis(
   $first: Int = 100
   $where: StrategyKpi_filter
   $orderBy: StrategyKpi_orderBy = apr
-  $orderDirection:  OrderDirection = desc
+  $orderDirection: OrderDirection = desc
   $block: Block_height
   $chainIds: [Int!]!
-  
 ) {
   crossChainStrategyKpis(
     skip: $skip
@@ -66,26 +65,26 @@ query PendingSubgraphIndexingStatus($subgraphName: String!) {
 }
 
 fragment Subgraph on SubgraphIndexingStatus {
-    subgraph
-    entityCount
-    fatalError {
-      message
+  subgraph
+  entityCount
+  fatalError {
+    message
+  }
+  nonFatalErrors {
+    message
+  }
+  chains {
+    chainHeadBlock {
+      number
     }
-    nonFatalErrors {
-      message
+    earliestBlock {
+      number
     }
-    chains {
-      chainHeadBlock {
-        number
-      }
-      earliestBlock {
-        number
-      }
-      latestBlock {
-        number
-      }
+    latestBlock {
+      number
     }
-    health
+  }
+  health
 }
 
 query Subgraphs($subgraphs: [SubgraphWithNode!]!, $type: SubgraphType!) {

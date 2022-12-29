@@ -1,18 +1,25 @@
-import { DotsHorizontalIcon } from '@heroicons/react/solid'
-import { Amount, Token, Type } from '@sushiswap/currency'
-import { STARGATE_TOKEN } from '@sushiswap/stargate'
-import { Badge, Chip, Currency, NetworkIcon, Tooltip, Typography } from '@sushiswap/ui'
-import { FC } from 'react'
+import { DotsHorizontalIcon } from "@heroicons/react/solid";
+import { Amount, Token, Type } from "@sushiswap/currency";
+import { STARGATE_TOKEN } from "@sushiswap/stargate";
+import {
+  Badge,
+  Chip,
+  Currency,
+  NetworkIcon,
+  Tooltip,
+  Typography,
+} from "@sushiswap/ui";
+import { FC } from "react";
 
-import { UseTradeOutput } from '../lib/hooks'
+import { UseTradeOutput } from "../lib/hooks";
 
 interface CrossChainRoute {
-  srcTrade?: UseTradeOutput
-  dstTrade?: UseTradeOutput
-  inputAmount?: Amount<Type>
-  outputAmount?: Amount<Type>
-  srcBridgeToken: Token
-  dstBridgeToken: Token
+  srcTrade?: UseTradeOutput;
+  dstTrade?: UseTradeOutput;
+  inputAmount?: Amount<Type>;
+  outputAmount?: Amount<Type>;
+  srcBridgeToken: Token;
+  dstBridgeToken: Token;
 }
 
 export const CrossChainRoute: FC<CrossChainRoute> = ({
@@ -23,7 +30,7 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
   srcBridgeToken,
   dstBridgeToken,
 }) => {
-  if (!inputAmount || !outputAmount) return <></>
+  if (!inputAmount || !outputAmount) return <></>;
 
   return (
     <>
@@ -40,12 +47,20 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                   <Badge
                     badgeContent={
                       <div className="rounded-full shadow-md ring-1 ring-black/20">
-                        <NetworkIcon chainId={inputAmount.currency.chainId} width={16} height={16} />
+                        <NetworkIcon
+                          chainId={inputAmount.currency.chainId}
+                          width={16}
+                          height={16}
+                        />
                       </div>
                     }
                   >
                     <div className="w-5 h-5">
-                      <Currency.Icon currency={inputAmount.currency} width={20} height={20} />
+                      <Currency.Icon
+                        currency={inputAmount.currency}
+                        width={20}
+                        height={20}
+                      />
                     </div>
                   </Badge>
                 </div>
@@ -56,14 +71,18 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                       button={
                         <Chip
                           color="gray"
-                          label={srcTrade.isV1() ? 'SushiSwap' : 'Trident'}
+                          label={srcTrade.isV1() ? "SushiSwap" : "Trident"}
                           size="sm"
                           className="!px-2 h-full"
                         />
                       }
                       panel={
                         <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
-                          {srcTrade.isSingle() ? <SingleRoute trade={srcTrade} /> : <ComplexRoute trade={srcTrade} />}
+                          {srcTrade.isSingle() ? (
+                            <SingleRoute trade={srcTrade} />
+                          ) : (
+                            <ComplexRoute trade={srcTrade} />
+                          )}
                         </div>
                       }
                     />
@@ -83,13 +102,21 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     }
                   >
                     <div className="w-[18px] h-[18px]">
-                      <Currency.Icon currency={srcBridgeToken.wrapped} width={18} height={18} />
+                      <Currency.Icon
+                        currency={srcBridgeToken.wrapped}
+                        width={18}
+                        height={18}
+                      />
                     </div>
                   </Badge>
 
                   <DotsHorizontalIcon width={12} className="text-slate-600" />
                   <div className="flex items-center justify-center">
-                    <Currency.Icon currency={STARGATE_TOKEN} width={18} height={18} />
+                    <Currency.Icon
+                      currency={STARGATE_TOKEN}
+                      width={18}
+                      height={18}
+                    />
                   </div>
                   <DotsHorizontalIcon width={12} className="text-slate-600" />
                   <Badge
@@ -105,7 +132,11 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                     }
                   >
                     <div className="w-[18px] h-[18px]">
-                      <Currency.Icon currency={dstBridgeToken.wrapped} width={18} height={18} />
+                      <Currency.Icon
+                        currency={dstBridgeToken.wrapped}
+                        width={18}
+                        height={18}
+                      />
                     </div>
                   </Badge>
                 </div>
@@ -115,14 +146,18 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                       button={
                         <Chip
                           color="gray"
-                          label={dstTrade.isV1() ? 'SushiSwap' : 'Trident'}
+                          label={dstTrade.isV1() ? "SushiSwap" : "Trident"}
                           size="sm"
                           className="!px-2 h-full"
                         />
                       }
                       panel={
                         <div className="flex flex-col gap-1 p-2 bg-slate-700 !rounded-md">
-                          {dstTrade.isSingle() ? <SingleRoute trade={dstTrade} /> : <ComplexRoute trade={dstTrade} />}
+                          {dstTrade.isSingle() ? (
+                            <SingleRoute trade={dstTrade} />
+                          ) : (
+                            <ComplexRoute trade={dstTrade} />
+                          )}
                         </div>
                       }
                     />
@@ -132,12 +167,20 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
                   <Badge
                     badgeContent={
                       <div className="rounded-full shadow-md ring-1 ring-black/20">
-                        <NetworkIcon chainId={dstBridgeToken.wrapped.chainId} width={16} height={16} />
+                        <NetworkIcon
+                          chainId={dstBridgeToken.wrapped.chainId}
+                          width={16}
+                          height={16}
+                        />
                       </div>
                     }
                   >
                     <div className="w-5 h-5">
-                      <Currency.Icon currency={outputAmount.currency} width={20} height={20} />
+                      <Currency.Icon
+                        currency={outputAmount.currency}
+                        width={20}
+                        height={20}
+                      />
                     </div>
                   </Badge>
                 </div>
@@ -146,27 +189,34 @@ export const CrossChainRoute: FC<CrossChainRoute> = ({
             </div>
           }
           button={
-            <Typography variant="sm" weight={500} className="text-right cursor-pointer text-blue">
+            <Typography
+              variant="sm"
+              weight={500}
+              className="text-right cursor-pointer text-blue"
+            >
               View Route
             </Typography>
           }
         />
       </div>
     </>
-  )
-}
+  );
+};
 
 interface SameChainRoute {
-  trade: UseTradeOutput
+  trade: UseTradeOutput;
 }
 
 // Can render an entire tines single route with dots between
 export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
-  if (!trade) return <></>
+  if (!trade) return <></>;
   return (
     <div className="relative flex">
       {trade.route.legs.map((leg, i) => (
-        <div key={i} className="z-10 flex items-center gap-1 text-sm font-medium leading-4 text-slate-400">
+        <div
+          key={i}
+          className="z-10 flex items-center gap-1 text-sm font-medium leading-4 text-slate-400"
+        >
           {i === 0 ? (
             <Typography variant="xs" weight={500}>
               {leg.tokenFrom.symbol}
@@ -181,25 +231,30 @@ export const SingleRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
 // Can render a tines multi route
 export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
-  if (!trade) return <></>
+  if (!trade) return <></>;
   const initialPaths = trade.route.legs.filter(
-    (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-  )
+    (leg) =>
+      leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
+  );
   const percentPaths = trade.route.legs.filter(
-    (leg) => leg.tokenFrom.address !== trade.inputAmount.currency.wrapped.address
-  )
+    (leg) =>
+      leg.tokenFrom.address !== trade.inputAmount.currency.wrapped.address
+  );
   // console.log('initial paths length', initialPaths.length)
   // console.log('remaining paths length', trade.route.legs.length - initialPaths.length)
   // TODO: Figure out what would make sense here...
   return (
     <>
       {initialPaths.map((initialPath, i) => (
-        <div key={i} className="z-10 flex items-center gap-1 text-xs font-medium leading-4 text-slate-300">
+        <div
+          key={i}
+          className="z-10 flex items-center gap-1 text-xs font-medium leading-4 text-slate-300"
+        >
           {Number(initialPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           <Typography variant="xs" weight={500}>
@@ -214,7 +269,10 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
         </div>
       ))}
       {percentPaths.map((percentPath, i) => (
-        <div key={i} className="z-10 flex items-center gap-1 text-xs font-medium leading-4 text-slate-300">
+        <div
+          key={i}
+          className="z-10 flex items-center gap-1 text-xs font-medium leading-4 text-slate-300"
+        >
           {Number(percentPath.absolutePortion * 100).toFixed(2)}%
           <DotsHorizontalIcon width={12} className="text-slate-600" />
           <Typography variant="xs" weight={500}>
@@ -229,11 +287,11 @@ export const ComplexRoute: FC<{ trade: UseTradeOutput }> = ({ trade }) => {
         </div>
       ))}
     </>
-  )
-}
+  );
+};
 
 export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
-  if (!trade) return <></>
+  if (!trade) return <></>;
 
   return (
     <>
@@ -244,9 +302,17 @@ export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
         {trade.isSingle() && <SingleRoute trade={trade} />}
         {trade.isComplex() && (
           <Tooltip
-            panel={<div className="flex flex-col gap-1">{<ComplexRoute trade={trade} />}</div>}
+            panel={
+              <div className="flex flex-col gap-1">
+                {<ComplexRoute trade={trade} />}
+              </div>
+            }
             button={
-              <Typography variant="sm" weight={500} className="text-right cursor-pointer text-blue">
+              <Typography
+                variant="sm"
+                weight={500}
+                className="text-right cursor-pointer text-blue"
+              >
                 View Route
               </Typography>
             }
@@ -254,5 +320,5 @@ export const SameChainRoute: FC<SameChainRoute> = ({ trade }) => {
         )}
       </div>
     </>
-  )
-}
+  );
+};

@@ -1,13 +1,13 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/24/solid'
-import { Typography } from '@sushiswap/ui'
-import classNames from 'classnames'
-import { FC, ReactNode } from 'react'
+import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import { Typography } from "@sushiswap/ui";
+import classNames from "classnames";
+import { FC, ReactNode } from "react";
 
-import { ProductSectionTitle } from './ProductSectionTitle'
+import { ProductSectionTitle } from "./ProductSectionTitle";
 
 interface ProductFaq {
-  faq: { question: string; answer: ReactNode }[]
+  faq: { question: string; answer: ReactNode }[];
 }
 
 export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
@@ -28,7 +28,10 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
                       strokeWidth={4}
                       width={12}
                       height={12}
-                      className={classNames('transition', open && 'transform rotate-180')}
+                      className={classNames(
+                        "transition",
+                        open && "transform rotate-180"
+                      )}
                     />
                   </div>
                 </Disclosure.Button>
@@ -53,5 +56,5 @@ export const ProductFaq: FC<ProductFaq> = ({ faq }) => {
         ))}
       </div>
     </section>
-  )
-}
+  );
+};

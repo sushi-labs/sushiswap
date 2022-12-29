@@ -1,30 +1,37 @@
-import { ChainId } from '@sushiswap/chain'
-import { classNames, NotificationData } from '@sushiswap/ui'
-import React, { FC, ReactNode } from 'react'
+import { ChainId } from "@sushiswap/chain";
+import { classNames, NotificationData } from "@sushiswap/ui";
+import React, { FC, ReactNode } from "react";
 
-import { ApprovalState } from '../../hooks'
-import { Bentobox } from './Bentobox'
-import { Token } from './Token'
-import { ApprovalType, ApproveDefinition } from './types'
+import { ApprovalState } from "../../hooks";
+import { Bentobox } from "./Bentobox";
+import { Token } from "./Token";
+import { ApprovalType, ApproveDefinition } from "./types";
 
 export interface RootProps {
-  chainId: ChainId | undefined
-  className?: string
-  children: ReactNode
-  definition: ApproveDefinition
-  onSuccess(data: NotificationData): void
+  chainId: ChainId | undefined;
+  className?: string;
+  children: ReactNode;
+  definition: ApproveDefinition;
+  onSuccess(data: NotificationData): void;
 }
 
 const APPROVE_BUTTON_MAP = {
   [ApprovalType.Bentobox]: Bentobox,
   [ApprovalType.Token]: Token,
-}
+};
 
-export const Root: FC<RootProps> = ({ className, children, definition, onSuccess, chainId }) => {
+export const Root: FC<RootProps> = ({
+  className,
+  children,
+  definition,
+  onSuccess,
+  chainId,
+}) => {
   const components = definition.map((element, index) => {
     switch (element.type) {
       case ApprovalType.Bentobox: {
-        const { masterContract, type, enabled, buttonProps, onSignature } = element
+        const { masterContract, type, enabled, buttonProps, onSignature } =
+          element;
         return APPROVE_BUTTON_MAP[type]({
           masterContract,
           type,
@@ -34,25 +41,41 @@ export const Root: FC<RootProps> = ({ className, children, definition, onSuccess
           onSuccess,
           index,
           onSignature,
-        })
+        });
       }
 
       default:
       case ApprovalType.Token: {
-        const { address, amount, type, enabled, buttonProps } = element
-        return APPROVE_BUTTON_MAP[type]({ address, amount, type, enabled, buttonProps, chainId, onSuccess, index })
+        const { address, amount, type, enabled, buttonProps } = element;
+        return APPROVE_BUTTON_MAP[type]({
+          address,
+          amount,
+          type,
+          enabled,
+          buttonProps,
+          chainId,
+          onSuccess,
+          index,
+        });
       }
     }
-  })
+  });
 
-  const icons = components.map((component) => component.iconButton)
+  const icons = components.map((component) => component.iconButton);
 
   const indexOfNextApproval = components.findIndex((component) => {
-    return [ApprovalState.PENDING, ApprovalState.NOT_APPROVED].includes(component.approvalState)
-  }, [])
+    return [ApprovalState.PENDING, ApprovalState.NOT_APPROVED].includes(
+      component.approvalState
+    );
+  }, []);
 
   return (
-    <div className={classNames(className, 'flex flex-col justify-center items-center w-full')}>
+    <div
+      className={classNames(
+        className,
+        "flex flex-col justify-center items-center w-full"
+      )}
+    >
       {indexOfNextApproval === -1 ? (
         children
       ) : (
@@ -62,5 +85,5 @@ export const Root: FC<RootProps> = ({ className, children, definition, onSuccess
         </>
       )}
     </div>
-  )
-}
+  );
+};

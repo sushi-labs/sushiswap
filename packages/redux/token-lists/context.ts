@@ -1,6 +1,6 @@
-import type { TokenListsActions } from './slice'
+import type { TokenListsActions } from "./slice";
 
 export interface TokenListsContext {
-  reducerPath: string
-  actions: TokenListsActions
+  reducerPath: string;
+  actions: TokenListsActions;
 }

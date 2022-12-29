@@ -1,7 +1,7 @@
 @tailwind base;
 
 @import "react-datepicker/dist/react-datepicker.css";
-@import '@fontsource/inter/variable.css';
+@import "@fontsource/inter/variable.css";
 
 @tailwind components;
 @tailwind utilities;
@@ -64,7 +64,7 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
   -webkit-border-radius: 7px;
   -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05),
-  inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+    inset 1px 1px 0px rgba(0, 0, 0, 0.05);
 }
 
 *.scroll::-webkit-scrollbar-button {
@@ -91,16 +91,25 @@ body {
     -webkit-appearance: none;
   }
 
-  button:focus, input:focus, a:focus, img:focus {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0
+  button:focus,
+  input:focus,
+  a:focus,
+  img:focus {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
   }
 
-  button:focus-within, input:focus-within, a:focus-within, img:focus-within {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0
+  button:focus-within,
+  input:focus-within,
+  a:focus-within,
+  img:focus-within {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
   }
 
-  button:focus-visible, input:focus-visible, a:focus-visible, img:focus-visible {
-    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0
+  button:focus-visible,
+  input:focus-visible,
+  a:focus-visible,
+  img:focus-visible {
+    @apply ring-offset-0 ring-0 outline-offset-0 outline-0 outline-none shadow-none border-0;
   }
 }
 

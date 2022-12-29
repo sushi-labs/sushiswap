@@ -1,24 +1,26 @@
-import { getAddress } from '@ethersproject/address'
-import { formatUSD } from '@sushiswap/format'
-import { Bundle, Token as GraphToken } from '@sushiswap/graph-client'
-import { Button, Chip, Currency, Typography } from '@sushiswap/ui'
-import { useRouter } from 'next/router'
-import { FC } from 'react'
-import useSWR from 'swr'
+import { getAddress } from "@ethersproject/address";
+import { formatUSD } from "@sushiswap/format";
+import { Bundle, Token as GraphToken } from "@sushiswap/graph-client";
+import { Button, Chip, Currency, Typography } from "@sushiswap/ui";
+import { useRouter } from "next/router";
+import { FC } from "react";
+import useSWR from "swr";
 
-import { useTokenFromToken } from '../../lib/hooks'
+import { useTokenFromToken } from "../../lib/hooks";
 
 interface TokenHeader {
-  token: GraphToken
+  token: GraphToken;
 }
 export const TokenHeader: FC<TokenHeader> = ({ token }) => {
-  const router = useRouter()
-  const _token = useTokenFromToken(token)
-  const { data: bundles } = useSWR<Bundle[]>('/analytics/api/bundles', (url) =>
+  const router = useRouter();
+  const _token = useTokenFromToken(token);
+  const { data: bundles } = useSWR<Bundle[]>("/analytics/api/bundles", (url) =>
     fetch(url).then((response) => response.json())
-  )
+  );
 
-  const price = formatUSD(token.price.derivedNative * bundles?.[token.chainId]?.nativePrice)
+  const price = formatUSD(
+    token.price.derivedNative * bundles?.[token.chainId]?.nativePrice
+  );
 
   return (
     <div className="grid grid-cols-[auto_180px]">
@@ -33,13 +35,15 @@ export const TokenHeader: FC<TokenHeader> = ({ token }) => {
           <Chip label={_token.symbol} />
         </div>
         <Typography variant="h3" className="text-slate-200" weight={600}>
-          {price.includes('NaN') ? '$0.00' : price}
+          {price.includes("NaN") ? "$0.00" : price}
         </Typography>
       </div>
       <Button
         onClick={() =>
           router.push(
-            `https://www.sushi.com/swap?chainId=${token.chainId}&token0=${getAddress(token.id.split(':')[1])}`
+            `https://www.sushi.com/swap?chainId=${
+              token.chainId
+            }&token0=${getAddress(token.id.split(":")[1])}`
           )
         }
         size="md"
@@ -48,5 +52,5 @@ export const TokenHeader: FC<TokenHeader> = ({ token }) => {
         Trade
       </Button>
     </div>
-  )
-}
+  );
+};

@@ -1,13 +1,22 @@
-import { useIsMounted } from '@sushiswap/hooks'
-import { FC } from 'react'
-import { useAccount } from 'wagmi'
+import { useIsMounted } from "@sushiswap/hooks";
+import { FC } from "react";
+import { useAccount } from "wagmi";
 
-import { Wallet } from '../../components'
-import { CheckerButton } from './types'
+import { Wallet } from "../../components";
+import { CheckerButton } from "./types";
 
-export const Connected: FC<CheckerButton> = ({ children, className, variant, fullWidth, size, name, onBlur, as }) => {
-  const isMounted = useIsMounted()
-  const { address } = useAccount()
+export const Connected: FC<CheckerButton> = ({
+  children,
+  className,
+  variant,
+  fullWidth,
+  size,
+  name,
+  onBlur,
+  as,
+}) => {
+  const isMounted = useIsMounted();
+  const { address } = useAccount();
 
   if (isMounted && !address)
     return (
@@ -23,7 +32,7 @@ export const Connected: FC<CheckerButton> = ({ children, className, variant, ful
       >
         Connect Wallet
       </Wallet.Button>
-    )
+    );
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};

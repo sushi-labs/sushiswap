@@ -1,16 +1,16 @@
-import { CheckIcon } from '@heroicons/react/outline'
-import chains, { ChainId } from '@sushiswap/chain'
-import { classNames, Dialog, NetworkIcon, Typography } from '@sushiswap/ui'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import React, { FC, useCallback } from 'react'
+import { CheckIcon } from "@heroicons/react/outline";
+import chains, { ChainId } from "@sushiswap/chain";
+import { classNames, Dialog, NetworkIcon, Typography } from "@sushiswap/ui";
+import { SUPPORTED_CHAIN_IDS } from "config";
+import React, { FC, useCallback } from "react";
 
 interface NetworkSelectorOverlay {
-  open: boolean
-  onClose(): void
-  onSelect(network: ChainId): void
-  selected: ChainId
-  className?: string
-  networks?: ChainId[]
+  open: boolean;
+  onClose(): void;
+  onSelect(network: ChainId): void;
+  selected: ChainId;
+  className?: string;
+  networks?: ChainId[];
 }
 
 export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
@@ -22,11 +22,11 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
 }) => {
   const handleSelect = useCallback(
     (chainId: ChainId) => {
-      onSelect(chainId)
-      onClose()
+      onSelect(chainId);
+      onClose();
     },
     [onClose, onSelect]
-  )
+  );
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -39,17 +39,28 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
             key={chainId}
             variant="sm"
             className={classNames(
-              selected === chainId ? 'text-slate-200 !font-medium hover:text-white' : 'text-slate-400 hover:text-white',
-              'flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue py-1'
+              selected === chainId
+                ? "text-slate-200 !font-medium hover:text-white"
+                : "text-slate-400 hover:text-white",
+              "flex w-full items-center gap-1.5 cursor-pointer pr-3 pl-1.5 group hover:bg-blue py-1"
             )}
           >
             {selected === chainId ? (
               <div className="flex items-center justify-center w-8 h-8">
-                <CheckIcon width={24} height={24} className="group-hover:text-white text-blue" />
+                <CheckIcon
+                  width={24}
+                  height={24}
+                  className="group-hover:text-white text-blue"
+                />
               </div>
             ) : (
               <div className="flex items-center justify-center w-8 h-8">
-                <NetworkIcon type="naked" chainId={chainId} width={24} height={24} />
+                <NetworkIcon
+                  type="naked"
+                  chainId={chainId}
+                  width={24}
+                  height={24}
+                />
               </div>
             )}
             {chains[chainId].name}
@@ -57,5 +68,5 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
         ))}
       </Dialog.Content>
     </Dialog>
-  )
-}
+  );
+};

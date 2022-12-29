@@ -1,12 +1,15 @@
-import { Typography } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import { Typography } from "@sushiswap/ui";
+import React, { FC } from "react";
 
 export interface FormSectionHeaderProps {
-  header: string
-  subheader?: string
+  header: string;
+  subheader?: string;
 }
 
-const FormSectionHeader: FC<FormSectionHeaderProps> = ({ header, subheader }) => {
+const FormSectionHeader: FC<FormSectionHeaderProps> = ({
+  header,
+  subheader,
+}) => {
   return (
     <div>
       <div className="flex flex-col gap-1">
@@ -20,7 +23,7 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({ header, subheader }) =>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FormSectionHeader
+export default FormSectionHeader;

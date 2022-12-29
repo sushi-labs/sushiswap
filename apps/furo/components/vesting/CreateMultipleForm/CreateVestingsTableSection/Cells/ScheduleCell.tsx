@@ -1,5 +1,5 @@
-import { CheckIcon, PencilIcon, XIcon } from '@heroicons/react/outline'
-import { FundSource } from '@sushiswap/hooks'
+import { CheckIcon, PencilIcon, XIcon } from "@heroicons/react/outline";
+import { FundSource } from "@sushiswap/hooks";
 import {
   Button,
   classNames,
@@ -12,22 +12,29 @@ import {
   Select,
   Switch,
   Typography,
-} from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import { format } from 'date-fns'
-import React, { FC, useCallback, useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { useAccount } from 'wagmi'
+} from "@sushiswap/ui";
+import { DatePicker } from "@sushiswap/ui/input/DatePicker";
+import { format } from "date-fns";
+import React, { FC, useCallback, useEffect } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import { useAccount } from "wagmi";
 
-import { useTokenFromZToken, ZFundSourceToFundSource } from '../../../../../lib/zod'
-import { CurrencyInput, CurrencyInputBase, HelperTextPanel } from '../../../../CurrencyInput'
-import { stepConfigurations } from '../../../CreateForm'
-import { calculateEndDate } from '../../../utils'
-import { CreateMultipleVestingFormSchemaType } from '../../schema'
-import { CellProps } from './types'
+import {
+  useTokenFromZToken,
+  ZFundSourceToFundSource,
+} from "../../../../../lib/zod";
+import {
+  CurrencyInput,
+  CurrencyInputBase,
+  HelperTextPanel,
+} from "../../../../CurrencyInput";
+import { stepConfigurations } from "../../../CreateForm";
+import { calculateEndDate } from "../../../utils";
+import { CreateMultipleVestingFormSchemaType } from "../../schema";
+import { CellProps } from "./types";
 
 export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
-  const { address } = useAccount()
+  const { address } = useAccount();
   const {
     watch,
     control,
@@ -35,34 +42,40 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
     setError,
     clearErrors,
     formState: { errors },
-  } = useFormContext<CreateMultipleVestingFormSchemaType>()
-  const formData = watch(`vestings.${index}`)
-  const { currency, fundSource, stepConfig, startDate, cliff } = formData
-  const _fundSource = ZFundSourceToFundSource.parse(fundSource) as FundSource
-  const _currency = useTokenFromZToken(currency)
-  const endDate = calculateEndDate(formData)
-  const cliffEndDate = cliff.cliffEnabled ? cliff.cliffEndDate : undefined
+  } = useFormContext<CreateMultipleVestingFormSchemaType>();
+  const formData = watch(`vestings.${index}`);
+  const { currency, fundSource, stepConfig, startDate, cliff } = formData;
+  const _fundSource = ZFundSourceToFundSource.parse(fundSource) as FundSource;
+  const _currency = useTokenFromZToken(currency);
+  const endDate = calculateEndDate(formData);
+  const cliffEndDate = cliff.cliffEnabled ? cliff.cliffEndDate : undefined;
 
   const onCurrencyInputError = useCallback(
     (message?: string) => {
       message
-        ? setError(`vestings.${index}.cliff.cliffAmount`, { type: 'custom', message })
-        : clearErrors(`vestings.${index}.cliff.cliffAmount`)
+        ? setError(`vestings.${index}.cliff.cliffAmount`, {
+            type: "custom",
+            message,
+          })
+        : clearErrors(`vestings.${index}.cliff.cliffAmount`);
     },
     [clearErrors, index, setError]
-  )
+  );
 
   // Temporary solution for when Zod fixes conditional validation
   // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
     if (startDate && cliffEndDate) {
       if (cliffEndDate < startDate) {
-        setError(`vestings.${index}.cliff.cliffEndDate`, { type: 'custom', message: 'Must be later than start date' })
+        setError(`vestings.${index}.cliff.cliffEndDate`, {
+          type: "custom",
+          message: "Must be later than start date",
+        });
       } else {
-        clearErrors(`vestings.${index}.cliff.cliffEndDate`)
+        clearErrors(`vestings.${index}.cliff.cliffEndDate`);
       }
     }
-  }, [clearErrors, cliffEndDate, index, setError, startDate])
+  }, [clearErrors, cliffEndDate, index, setError, startDate]);
 
   return (
     <Drawer.Root>
@@ -72,17 +85,22 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
             <Drawer.Button>
               <div
                 className={classNames(
-                  errors?.vestings?.[index]?.cliff ? 'border-red' : 'border-transparent',
-                  'border-0 !border-b-[1px] h-[37px] flex items-center'
+                  errors?.vestings?.[index]?.cliff
+                    ? "border-red"
+                    : "border-transparent",
+                  "border-0 !border-b-[1px] h-[37px] flex items-center"
                 )}
               >
-                <IconButton as="div" className={classNames('py-0.5 px-1 flex items-center gap-2')}>
+                <IconButton
+                  as="div"
+                  className={classNames("py-0.5 px-1 flex items-center gap-2")}
+                >
                   <span className="text-sm font-medium">
                     {row.cliff.cliffEnabled
                       ? `Cliff, ${row.stepConfig?.label}`
                       : row.stepConfig?.label
                       ? row.stepConfig?.label
-                      : 'Edit'}
+                      : "Edit"}
                   </span>
                   <PencilIcon width={16} height={16} />
                 </IconButton>
@@ -111,26 +129,36 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                             <Switch
                               checked={value}
                               onChange={(val) => {
-                                onChange(val)
+                                onChange(val);
 
                                 if (!val) {
-                                  resetField(`vestings.${index}.cliff.cliffEndDate`)
-                                  resetField(`vestings.${index}.cliff.cliffAmount`)
+                                  resetField(
+                                    `vestings.${index}.cliff.cliffEndDate`
+                                  );
+                                  resetField(
+                                    `vestings.${index}.cliff.cliffAmount`
+                                  );
                                 }
                               }}
                               size="sm"
                               uncheckedIcon={<XIcon />}
                               checkedIcon={<CheckIcon />}
                             />
-                          )
+                          );
                         }}
                       />
                     </Form.Control>
-                    <Form.Control disabled={!cliff.cliffEnabled} label="Cliff End Date">
+                    <Form.Control
+                      disabled={!cliff.cliffEnabled}
+                      label="Cliff End Date"
+                    >
                       <Controller
                         name={`vestings.${index}.cliff.cliffEndDate`}
                         control={control}
-                        render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
+                        render={({
+                          field: { onChange, value, name, onBlur },
+                          fieldState: { error },
+                        }) => {
                           return (
                             <>
                               <DatePicker
@@ -138,8 +166,8 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                 onBlur={onBlur}
                                 className={classNames(
                                   DEFAULT_INPUT_CLASSNAME,
-                                  error ? ERROR_INPUT_CLASSNAME : '',
-                                  '!ring-offset-slate-900'
+                                  error ? ERROR_INPUT_CLASSNAME : "",
+                                  "!ring-offset-slate-900"
                                 )}
                                 onChange={onChange}
                                 selected={value}
@@ -150,7 +178,9 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                 timeCaption="time"
                                 minDate={
                                   startDate
-                                    ? new Date(startDate.getTime() + 5 * 60 * 1000)
+                                    ? new Date(
+                                        startDate.getTime() + 5 * 60 * 1000
+                                      )
                                     : new Date(Date.now() + 10 * 60 * 1000)
                                 }
                                 dateFormat="MMM d, yyyy HH:mm"
@@ -159,11 +189,14 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                               />
                               <Form.Error message={error?.message} />
                             </>
-                          )
+                          );
                         }}
                       />
                     </Form.Control>
-                    <Form.Control disabled={!cliff.cliffEnabled} label="Cliff Amount">
+                    <Form.Control
+                      disabled={!cliff.cliffEnabled}
+                      label="Cliff Amount"
+                    >
                       <Controller
                         control={control}
                         name={`vestings.${index}.cliff.cliffAmount`}
@@ -180,7 +213,7 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                             account={address}
                             onError={onCurrencyInputError}
                             errorMessage={validationError?.message}
-                            value={value || ''}
+                            value={value || ""}
                             onChange={onChange}
                             currency={_currency}
                           />
@@ -193,11 +226,14 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                       <Controller
                         control={control}
                         name={`vestings.${index}.stepAmount`}
-                        render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => (
+                        render={({
+                          field: { onChange, value, name, onBlur },
+                          fieldState: { error },
+                        }) => (
                           <CurrencyInputBase
                             className="ring-offset-slate-900"
                             onChange={onChange}
-                            value={value || ''}
+                            value={value || ""}
                             currency={_currency}
                             error={!!error?.message}
                             name={name}
@@ -209,9 +245,12 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                     error.message
                                   ) : (
                                     <>
-                                      The amount the recipient receives after every period. For a value of {value} and a{' '}
-                                      {stepConfig?.label.toLowerCase()} period length, the user will receive {value}{' '}
-                                      {currency?.symbol} {stepConfig?.label.toLowerCase()}.
+                                      The amount the recipient receives after
+                                      every period. For a value of {value} and a{" "}
+                                      {stepConfig?.label.toLowerCase()} period
+                                      length, the user will receive {value}{" "}
+                                      {currency?.symbol}{" "}
+                                      {stepConfig?.label.toLowerCase()}.
                                     </>
                                   )
                                 }
@@ -227,7 +266,10 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         <Controller
                           control={control}
                           name={`vestings.${index}.stepPayouts`}
-                          render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
+                          render={({
+                            field: { onChange, value, name, onBlur },
+                            fieldState: { error },
+                          }) => {
                             return (
                               <>
                                 <Input.Counter
@@ -236,14 +278,16 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                                   step={1}
                                   min={0}
                                   max={100}
-                                  onChange={(val) => onChange(Number(val) > 0 ? Number(val) : 1)}
+                                  onChange={(val) =>
+                                    onChange(Number(val) > 0 ? Number(val) : 1)
+                                  }
                                   value={value}
                                   error={!!error?.message}
                                   className="ring-offset-slate-900"
                                 />
                                 <Form.Error message={error?.message} />
                               </>
-                            )
+                            );
                           }}
                         />
                       </Form.Control>
@@ -251,26 +295,37 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                         <Controller
                           control={control}
                           name={`vestings.${index}.stepConfig`}
-                          render={({ field: { onChange, value, onBlur }, fieldState: { error } }) => (
+                          render={({
+                            field: { onChange, value, onBlur },
+                            fieldState: { error },
+                          }) => (
                             <>
                               <Select
                                 button={
-                                  <Select.Button error={!!error?.message} className="ring-offset-slate-900">
+                                  <Select.Button
+                                    error={!!error?.message}
+                                    className="ring-offset-slate-900"
+                                  >
                                     {value.label}
                                   </Select.Button>
                                 }
                                 value={value}
                                 onChange={(val: any) => {
-                                  onChange(val)
-                                  onBlur()
+                                  onChange(val);
+                                  onBlur();
                                 }}
                               >
                                 <Select.Options>
-                                  {Object.values(stepConfigurations).map((stepConfig) => (
-                                    <Select.Option key={stepConfig.label} value={stepConfig}>
-                                      {stepConfig.label}
-                                    </Select.Option>
-                                  ))}
+                                  {Object.values(stepConfigurations).map(
+                                    (stepConfig) => (
+                                      <Select.Option
+                                        key={stepConfig.label}
+                                        value={stepConfig}
+                                      >
+                                        {stepConfig.label}
+                                      </Select.Option>
+                                    )
+                                  )}
                                 </Select.Options>
                               </Select>
                               <Form.Error message={error?.message} />
@@ -282,16 +337,28 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
                     <div className="border-b border-slate-200/5" />
                     <Form.Control label="End Date">
                       {endDate instanceof Date && !isNaN(endDate?.getTime()) ? (
-                        <Typography variant="sm" className="text-slate-50" weight={500}>
-                          {format(endDate, 'dd MMM yyyy hh:mmaaa')}
+                        <Typography
+                          variant="sm"
+                          className="text-slate-50"
+                          weight={500}
+                        >
+                          {format(endDate, "dd MMM yyyy hh:mmaaa")}
                         </Typography>
                       ) : (
-                        <Typography variant="sm" className="italic text-slate-500">
+                        <Typography
+                          variant="sm"
+                          className="italic text-slate-500"
+                        >
                           Not available
                         </Typography>
                       )}
                     </Form.Control>
-                    <Button type="button" onClick={() => setOpen(false)} size="md" className="block px-6 sm:hidden">
+                    <Button
+                      type="button"
+                      onClick={() => setOpen(false)}
+                      size="md"
+                      className="block px-6 sm:hidden"
+                    >
                       Close
                     </Button>
                   </div>
@@ -299,8 +366,8 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
               </div>
             </Drawer.Panel>
           </>
-        )
+        );
       }}
     </Drawer.Root>
-  )
-}
+  );
+};

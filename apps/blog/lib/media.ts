@@ -1,22 +1,22 @@
-import { Transformation } from '@cloudinary/url-gen'
-import { edit } from '@cloudinary/url-gen/actions/animated'
-import { ifCondition } from '@cloudinary/url-gen/actions/conditional'
-import { quality } from '@cloudinary/url-gen/actions/delivery'
-import { fill, scale } from '@cloudinary/url-gen/actions/resize'
-import { toAnimated } from '@cloudinary/url-gen/actions/transcode'
-import { auto } from '@cloudinary/url-gen/qualifiers/quality'
+import { Transformation } from "@cloudinary/url-gen";
+import { edit } from "@cloudinary/url-gen/actions/animated";
+import { ifCondition } from "@cloudinary/url-gen/actions/conditional";
+import { quality } from "@cloudinary/url-gen/actions/delivery";
+import { fill, scale } from "@cloudinary/url-gen/actions/resize";
+import { toAnimated } from "@cloudinary/url-gen/actions/transcode";
+import { auto } from "@cloudinary/url-gen/qualifiers/quality";
 
-import { cld } from '../pages/_app'
+import { cld } from "../pages/_app";
 
 type Metadata =
   | {
-      public_id?: string
-      resource_type?: string
+      public_id?: string;
+      resource_type?: string;
     }
-  | undefined
+  | undefined;
 
 export function isMediaVideo(metadata: Metadata) {
-  return metadata?.resource_type == 'video'
+  return metadata?.resource_type == "video";
 }
 
 export function getOptimizedMedia({
@@ -25,12 +25,12 @@ export function getOptimizedMedia({
   height,
   asImage = false,
 }: {
-  metadata: Metadata
-  width?: number
-  height?: number
-  asImage?: boolean
+  metadata: Metadata;
+  width?: number;
+  height?: number;
+  asImage?: boolean;
 }) {
-  if (!metadata?.public_id) return ''
+  if (!metadata?.public_id) return "";
 
   if (isMediaVideo(metadata) && asImage) {
     return cld
@@ -39,46 +39,61 @@ export function getOptimizedMedia({
       .animated(edit().loop())
       .transcode(toAnimated().sampling(40))
       .animated(edit().delay(200))
-      .format('gif')
+      .format("gif")
       .delivery(quality(auto()))
-      .toURL()
+      .toURL();
   }
 
   if (isMediaVideo(metadata)) {
     return cld
       .video(metadata.public_id)
-      .format('webm')
-      .conditional(ifCondition('height > 1280', new Transformation().resize(fill().height('1280'))))
+      .format("webm")
+      .conditional(
+        ifCondition(
+          "height > 1280",
+          new Transformation().resize(fill().height("1280"))
+        )
+      )
       .delivery(quality(auto()))
-      .toURL()
+      .toURL();
   } else {
     if (height && width) {
       return cld
         .image(metadata.public_id)
-        .format('webp')
+        .format("webp")
         .resize(fill().width(width).height(height))
         .delivery(quality(auto()))
-        .toURL()
+        .toURL();
     }
 
     if (height) {
       return cld
         .image(metadata.public_id)
-        .format('webp')
+        .format("webp")
         .resize(fill().height(height))
         .delivery(quality(auto()))
-        .toURL()
+        .toURL();
     }
 
     if (width) {
-      return cld.image(metadata.public_id).format('webp').resize(fill().width(width)).delivery(quality(auto())).toURL()
+      return cld
+        .image(metadata.public_id)
+        .format("webp")
+        .resize(fill().width(width))
+        .delivery(quality(auto()))
+        .toURL();
     }
 
     return cld
       .image(metadata.public_id)
-      .format('webp')
-      .conditional(ifCondition('height > 1280', new Transformation().resize(fill().height('1280'))))
+      .format("webp")
+      .conditional(
+        ifCondition(
+          "height > 1280",
+          new Transformation().resize(fill().height("1280"))
+        )
+      )
       .delivery(quality(auto()))
-      .toURL()
+      .toURL();
   }
 }

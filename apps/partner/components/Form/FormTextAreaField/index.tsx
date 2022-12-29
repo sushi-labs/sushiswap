@@ -1,31 +1,39 @@
-import { classNames, Typography } from '@sushiswap/ui'
-import { FormType } from 'pages'
-import React, { FC, ReactElement, useEffect } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { classNames, Typography } from "@sushiswap/ui";
+import { FormType } from "pages";
+import React, { FC, ReactElement, useEffect } from "react";
+import { useFormContext } from "react-hook-form";
 
-import { DEFAULT_FORM_FIELD_CLASSNAMES } from '../'
-import FormFieldHelperText from '../FormFieldHelperText'
+import { DEFAULT_FORM_FIELD_CLASSNAMES } from "../";
+import FormFieldHelperText from "../FormFieldHelperText";
 
-export interface FormTextAreaFieldProps extends React.HTMLProps<HTMLTextAreaElement> {
-  name: keyof FormType
-  error?: string
-  helperText?: string
-  children?: ReactElement<HTMLInputElement>
+export interface FormTextAreaFieldProps
+  extends React.HTMLProps<HTMLTextAreaElement> {
+  name: keyof FormType;
+  error?: string;
+  helperText?: string;
+  children?: ReactElement<HTMLInputElement>;
 }
 
-const FormTextAreaField: FC<FormTextAreaFieldProps> = ({ name, label, children, helperText, error, ...rest }) => {
+const FormTextAreaField: FC<FormTextAreaFieldProps> = ({
+  name,
+  label,
+  children,
+  helperText,
+  error,
+  ...rest
+}) => {
   const {
     unregister,
     register,
     formState: { errors },
-  } = useFormContext<FormType>()
+  } = useFormContext<FormType>();
 
   // Unregister on unmount
   useEffect(() => {
     return () => {
-      unregister(name)
-    }
-  }, [name, unregister])
+      unregister(name);
+    };
+  }, [name, unregister]);
 
   return (
     <>
@@ -34,16 +42,21 @@ const FormTextAreaField: FC<FormTextAreaFieldProps> = ({ name, label, children, 
         <textarea
           {...register(name)}
           {...rest}
-          className={classNames(DEFAULT_FORM_FIELD_CLASSNAMES, errors[name] ? '!border-red' : '')}
+          className={classNames(
+            DEFAULT_FORM_FIELD_CLASSNAMES,
+            errors[name] ? "!border-red" : ""
+          )}
         />
       </div>
       {errors[name] ? (
-        <FormFieldHelperText className="!text-red">{errors[name]?.message}</FormFieldHelperText>
+        <FormFieldHelperText className="!text-red">
+          {errors[name]?.message}
+        </FormFieldHelperText>
       ) : (
         <FormFieldHelperText>{helperText}</FormFieldHelperText>
       )}
     </>
-  )
-}
+  );
+};
 
-export default FormTextAreaField
+export default FormTextAreaField;

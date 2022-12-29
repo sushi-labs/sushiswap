@@ -1,4 +1,4 @@
 module.exports = {
-  require: 'ts-node/register/files',
+  require: "ts-node/register/files",
   timeout: 20000,
-}
+};

@@ -1,26 +1,36 @@
-import { PlusIcon } from '@heroicons/react/solid'
-import { Button, Link, OnsenIcon, Typography } from '@sushiswap/ui'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import { FC, useMemo } from 'react'
-import { SWRConfig, unstable_serialize } from 'swr'
+import { PlusIcon } from "@heroicons/react/solid";
+import { Button, Link, OnsenIcon, Typography } from "@sushiswap/ui";
+import { SUPPORTED_CHAIN_IDS } from "config";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
+import { FC, useMemo } from "react";
+import { SWRConfig, unstable_serialize } from "swr";
 
-import { Layout, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
-import { getBundles, getPoolCount, getPools, getSushiBar } from '../lib/api'
-import { AVAILABLE_POOL_TYPE_MAP } from '../lib/constants'
+import {
+  Layout,
+  PoolsFiltersProvider,
+  PoolsSection,
+  SushiBarSection,
+} from "../components";
+import { getBundles, getPoolCount, getPools, getSushiBar } from "../lib/api";
+import { AVAILABLE_POOL_TYPE_MAP } from "../lib/constants";
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const [pairs, bundles, poolCount, bar] = await Promise.all([getPools(), getBundles(), getPoolCount(), getSushiBar()])
+  const [pairs, bundles, poolCount, bar] = await Promise.all([
+    getPools(),
+    getBundles(),
+    getPoolCount(),
+    getSushiBar(),
+  ]);
   return {
     props: {
       selectedNetworks: SUPPORTED_CHAIN_IDS,
       fallback: {
         [unstable_serialize({
-          url: '/earn/api/pools',
+          url: "/earn/api/pools",
           args: {
             sorting: [
               {
-                id: 'liquidityUSD',
+                id: "liquidityUSD",
                 desc: true,
               },
             ],
@@ -31,8 +41,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
               pageIndex: 0,
               pageSize: 20,
             },
-            query: '',
-            extraQuery: '',
+            query: "",
+            extraQuery: "",
           },
         })]: pairs,
         [`/earn/api/bundles`]: bundles,
@@ -41,22 +51,29 @@ export const getStaticProps: GetStaticProps = async (context) => {
       },
       revalidate: 60,
     },
-  }
-}
+  };
+};
 
-const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback, selectedNetworks }) => {
+const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
+  fallback,
+  selectedNetworks,
+}) => {
   const parsedSelectedNetworks = useMemo(
     () => selectedNetworks.map(Number) as typeof SUPPORTED_CHAIN_IDS,
     [selectedNetworks]
-  )
+  );
   return (
     <SWRConfig value={{ fallback }}>
       <_Pools selectedNetworks={parsedSelectedNetworks} />
     </SWRConfig>
-  )
-}
+  );
+};
 
-const _Pools = ({ selectedNetworks }: { selectedNetworks: typeof SUPPORTED_CHAIN_IDS }) => {
+const _Pools = ({
+  selectedNetworks,
+}: {
+  selectedNetworks: typeof SUPPORTED_CHAIN_IDS;
+}) => {
   return (
     <Layout>
       <div className="flex flex-col gap-10 md:gap-16">
@@ -65,17 +82,29 @@ const _Pools = ({ selectedNetworks }: { selectedNetworks: typeof SUPPORTED_CHAIN
             <Typography variant="hero" weight={600} className="text-slate-50">
               Earn
             </Typography>
-            <p className="text-slate-300">Earn fees by providing liquidity and staking SUSHI into xSUSHI.</p>
+            <p className="text-slate-300">
+              Earn fees by providing liquidity and staking SUSHI into xSUSHI.
+            </p>
           </div>
           <div className="flex justify-end flex-grow not-prose">
             <div className="flex flex-col gap-3 w-full lg:w-[200px]">
               {/* <Link.Internal href="/add" passHref={true}> */}
-              <Button as="a" href="/earn/add" fullWidth color="blue" startIcon={<PlusIcon width={16} height={16} />}>
+              <Button
+                as="a"
+                href="/earn/add"
+                fullWidth
+                color="blue"
+                startIcon={<PlusIcon width={16} height={16} />}
+              >
                 New Position
               </Button>
               {/* </Link.Internal> */}
               <Link.External href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
-                <Button fullWidth color="gray" startIcon={<OnsenIcon width={16} height={16} />}>
+                <Button
+                  fullWidth
+                  color="gray"
+                  startIcon={<OnsenIcon width={16} height={16} />}
+                >
                   Join Onsen
                 </Button>
               </Link.External>
@@ -88,7 +117,7 @@ const _Pools = ({ selectedNetworks }: { selectedNetworks: typeof SUPPORTED_CHAIN
         </PoolsFiltersProvider>
       </div>
     </Layout>
-  )
-}
+  );
+};
 
-export default Pools
+export default Pools;

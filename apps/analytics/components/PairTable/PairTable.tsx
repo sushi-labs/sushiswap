@@ -1,13 +1,19 @@
-import { ChainId } from '@sushiswap/chain'
-import { Pair } from '@sushiswap/graph-client'
-import { useBreakpoint } from '@sushiswap/hooks'
-import { Table } from '@sushiswap/ui'
-import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import stringify from 'fast-json-stable-stringify'
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import useSWR from 'swr'
+import { ChainId } from "@sushiswap/chain";
+import { Pair } from "@sushiswap/graph-client";
+import { useBreakpoint } from "@sushiswap/hooks";
+import { Table } from "@sushiswap/ui";
+import {
+  getCoreRowModel,
+  getSortedRowModel,
+  PaginationState,
+  SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
+import stringify from "fast-json-stable-stringify";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 
-import { usePoolFilters } from '../PoolsFiltersProvider'
+import { usePoolFilters } from "../PoolsFiltersProvider";
 import {
   APR_COLUMN,
   FEES_7_COLUMN,
@@ -19,8 +25,8 @@ import {
   TVL_COLUMN,
   VOLUME_7_COLUMN,
   VOLUME_24_COLUMN,
-} from '../Table'
-import { PairQuickHoverTooltip } from './PairTableQuickHoverTooltip'
+} from "../Table";
+import { PairQuickHoverTooltip } from "./PairTableQuickHoverTooltip";
 
 // @ts-ignore
 const COLUMNS = [
@@ -32,82 +38,92 @@ const COLUMNS = [
   FEES_24_COLUMN,
   FEES_7_COLUMN,
   APR_COLUMN,
-]
+];
 
 const fetcher = ({
   url,
   args,
 }: {
-  url: string
+  url: string;
   args: {
-    sorting: SortingState
-    pagination: PaginationState
-    query: string
-    extraQuery: string
-    selectedNetworks: ChainId[]
-  }
+    sorting: SortingState;
+    pagination: PaginationState;
+    query: string;
+    extraQuery: string;
+    selectedNetworks: ChainId[];
+  };
 }) => {
-  const _url = new URL(url, window.location.origin)
+  const _url = new URL(url, window.location.origin);
 
   if (args.sorting[0]) {
-    _url.searchParams.set('orderBy', args.sorting[0].id)
-    _url.searchParams.set('orderDirection', args.sorting[0].desc ? 'desc' : 'asc')
+    _url.searchParams.set("orderBy", args.sorting[0].id);
+    _url.searchParams.set(
+      "orderDirection",
+      args.sorting[0].desc ? "desc" : "asc"
+    );
   }
 
   if (args.pagination) {
-    _url.searchParams.set('pagination', stringify(args.pagination))
+    _url.searchParams.set("pagination", stringify(args.pagination));
   }
 
   if (args.selectedNetworks) {
-    _url.searchParams.set('networks', stringify(args.selectedNetworks))
+    _url.searchParams.set("networks", stringify(args.selectedNetworks));
   }
 
-  let where = {}
+  let where = {};
   if (args.query) {
     where = {
       name_contains_nocase: args.query,
-    }
+    };
 
-    _url.searchParams.set('where', stringify(where))
+    _url.searchParams.set("where", stringify(where));
   }
 
   if (args.extraQuery) {
     where = {
       ...where,
       token1_: { symbol_contains_nocase: args.extraQuery },
-    }
+    };
 
-    _url.searchParams.set('where', stringify(where))
+    _url.searchParams.set("where", stringify(where));
   }
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
-}
+    .catch((e) => console.log(stringify(e)));
+};
 
 export const PairTable: FC = () => {
-  const { query, extraQuery, selectedNetworks } = usePoolFilters()
-  const { isSm } = useBreakpoint('sm')
-  const { isMd } = useBreakpoint('md')
-  const { isLg } = useBreakpoint('lg')
+  const { query, extraQuery, selectedNetworks } = usePoolFilters();
+  const { isSm } = useBreakpoint("sm");
+  const { isMd } = useBreakpoint("md");
+  const { isLg } = useBreakpoint("lg");
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
-  const [columnVisibility, setColumnVisibility] = useState({})
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "liquidityUSD", desc: true },
+  ]);
+  const [columnVisibility, setColumnVisibility] = useState({});
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: PAGE_SIZE,
-  })
+  });
 
   const args = useMemo(
     () => ({ sorting, pagination, selectedNetworks, query, extraQuery }),
     [sorting, pagination, selectedNetworks, query, extraQuery]
-  )
+  );
 
-  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/analytics/api/pools', args }, fetcher)
+  const { data: pools, isValidating } = useSWR<Pair[]>(
+    { url: "/analytics/api/pools", args },
+    fetcher
+  );
   const { data: poolCount } = useSWR<number>(
-    `/analytics/api/pools/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
+    `/analytics/api/pools/count${
+      selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ""
+    }`,
     (url) => fetch(url).then((response) => response.json())
-  )
+  );
 
   const table = useReactTable<Pair>({
     data: pools || [],
@@ -123,19 +139,31 @@ export const PairTable: FC = () => {
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
     manualPagination: true,
-  })
+  });
 
   useEffect(() => {
     if (isSm && !isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, fees7d: false, network: false })
+      setColumnVisibility({
+        fees24h: false,
+        volume24h: false,
+        fees7d: false,
+        network: false,
+      });
     } else if (isSm && isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false })
+      setColumnVisibility({ fees24h: false, volume24h: false, network: false });
     } else if (isSm) {
-      setColumnVisibility({})
+      setColumnVisibility({});
     } else {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false, fees7d: false, tvl: false, apr: false })
+      setColumnVisibility({
+        fees24h: false,
+        volume24h: false,
+        network: false,
+        fees7d: false,
+        tvl: false,
+        apr: false,
+      });
     }
-  }, [isLg, isMd, isSm])
+  }, [isLg, isMd, isSm]);
 
   return (
     <div>
@@ -159,5 +187,5 @@ export const PairTable: FC = () => {
         pageSize={PAGE_SIZE}
       />
     </div>
-  )
-}
+  );
+};

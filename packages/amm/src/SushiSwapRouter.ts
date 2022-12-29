@@ -1,19 +1,19 @@
-import { getAddress } from '@ethersproject/address'
-import { Currency } from '@sushiswap/currency'
-import { Percent } from '@sushiswap/math'
-import invariant from 'tiny-invariant'
-import warning from 'tiny-warning'
+import { getAddress } from "@ethersproject/address";
+import { Currency } from "@sushiswap/currency";
+import { Percent } from "@sushiswap/math";
+import invariant from "tiny-invariant";
+import warning from "tiny-warning";
 
-import { Trade, TradeType, Version } from './Trade'
+import { Trade, TradeType, Version } from "./Trade";
 
 // warns if addresses are not checksummed
 function validateAndParseAddress(address: string): string {
   try {
-    const checksummedAddress = getAddress(address)
-    warning(address === checksummedAddress, `${address} is not checksummed.`)
-    return checksummedAddress
+    const checksummedAddress = getAddress(address);
+    warning(address === checksummedAddress, `${address} is not checksummed.`);
+    return checksummedAddress;
   } catch (error) {
-    invariant(false, `${address} is not a valid address.`)
+    invariant(false, `${address} is not a valid address.`);
   }
 }
 
@@ -24,30 +24,30 @@ export interface TradeOptions {
   /**
    * How much the execution price is allowed to move unfavorably from the trade execution price.
    */
-  allowedSlippage: Percent
+  allowedSlippage: Percent;
   /**
    * How long the swap is valid until it expires, in seconds.
    * This will be used to produce a `deadline` parameter which is computed from when the swap call parameters
    * are generated.
    */
-  ttl: number
+  ttl: number;
   /**
    * The account that should receive the output of the swap.
    */
-  recipient: string
+  recipient: string;
 
   /**
    * Whether any of the tokens in the path are fee on transfer tokens, which should be handled with special methods
    */
-  feeOnTransfer?: boolean
+  feeOnTransfer?: boolean;
 }
 
-export interface TradeOptionsDeadline extends Omit<TradeOptions, 'ttl'> {
+export interface TradeOptionsDeadline extends Omit<TradeOptions, "ttl"> {
   /**
    * When the transaction expires.
    * This is an atlernate to specifying the ttl, for when you do not want to use local time.
    */
-  deadline: number
+  deadline: number;
 }
 
 /**
@@ -57,18 +57,18 @@ export interface SwapParameters {
   /**
    * The method to call on the Uniswap V2 Router.
    */
-  methodName: string
+  methodName: string;
   /**
    * The arguments to pass to the method, all hex encoded.
    */
-  args: (string | string[])[]
+  args: (string | string[])[];
   /**
    * The amount of wei to send in hex.
    */
-  value: string
+  value: string;
 }
 
-const ZERO_HEX = '0x0'
+const ZERO_HEX = "0x0";
 
 /**
  * Represents the Uniswap V2 Router, and has static methods for helping execute trades.
@@ -88,74 +88,87 @@ export abstract class SushiSwapRouter {
     trade: Trade<Currency, Currency, TradeType, Version.V1>,
     options: TradeOptions | TradeOptionsDeadline
   ): SwapParameters {
-    const etherIn = trade.inputAmount.currency.isNative
-    const etherOut = trade.outputAmount.currency.isNative
+    const etherIn = trade.inputAmount.currency.isNative;
+    const etherOut = trade.outputAmount.currency.isNative;
     // the router does not support both ether in and out
-    invariant(!(etherIn && etherOut), 'ETHER_IN_OUT')
-    invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
+    invariant(!(etherIn && etherOut), "ETHER_IN_OUT");
+    invariant(!("ttl" in options) || options.ttl > 0, "TTL");
 
-    const to: string = validateAndParseAddress(options.recipient)
-    const amountIn: string = trade.maximumAmountIn(options.allowedSlippage).toHex()
-    const amountOut: string = trade.minimumAmountOut(options.allowedSlippage).toHex()
+    const to: string = validateAndParseAddress(options.recipient);
+    const amountIn: string = trade
+      .maximumAmountIn(options.allowedSlippage)
+      .toHex();
+    const amountOut: string = trade
+      .minimumAmountOut(options.allowedSlippage)
+      .toHex();
     const path: string[] = trade.route.legs.reduce<string[]>(
-      (previousValue, currentValue) => [...previousValue, currentValue.tokenTo.address],
+      (previousValue, currentValue) => [
+        ...previousValue,
+        currentValue.tokenTo.address,
+      ],
       [trade.route.legs[0].tokenFrom.address]
-    )
+    );
     const deadline =
-      'ttl' in options
-        ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
-        : `0x${options.deadline.toString(16)}`
+      "ttl" in options
+        ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(
+            16
+          )}`
+        : `0x${options.deadline.toString(16)}`;
 
-    const useFeeOnTransfer = Boolean(options.feeOnTransfer)
+    const useFeeOnTransfer = Boolean(options.feeOnTransfer);
 
-    let methodName: string
-    let args: (string | string[])[]
-    let value: string
+    let methodName: string;
+    let args: (string | string[])[];
+    let value: string;
     switch (trade.tradeType) {
       case TradeType.EXACT_INPUT:
         if (etherIn) {
-          methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
+          methodName = useFeeOnTransfer
+            ? "swapExactETHForTokensSupportingFeeOnTransferTokens"
+            : "swapExactETHForTokens";
           // (uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountOut, path, to, deadline]
-          value = amountIn
+          args = [amountOut, path, to, deadline];
+          value = amountIn;
         } else if (etherOut) {
-          methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
+          methodName = useFeeOnTransfer
+            ? "swapExactTokensForETHSupportingFeeOnTransferTokens"
+            : "swapExactTokensForETH";
           // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, path, to, deadline]
-          value = ZERO_HEX
+          args = [amountIn, amountOut, path, to, deadline];
+          value = ZERO_HEX;
         } else {
           methodName = useFeeOnTransfer
-            ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
-            : 'swapExactTokensForTokens'
+            ? "swapExactTokensForTokensSupportingFeeOnTransferTokens"
+            : "swapExactTokensForTokens";
           // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, path, to, deadline]
-          value = ZERO_HEX
+          args = [amountIn, amountOut, path, to, deadline];
+          value = ZERO_HEX;
         }
-        break
+        break;
       case TradeType.EXACT_OUTPUT:
-        invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
+        invariant(!useFeeOnTransfer, "EXACT_OUT_FOT");
         if (etherIn) {
-          methodName = 'swapETHForExactTokens'
+          methodName = "swapETHForExactTokens";
           // (uint amountOut, address[] calldata path, address to, uint deadline)
-          args = [amountOut, path, to, deadline]
-          value = amountIn
+          args = [amountOut, path, to, deadline];
+          value = amountIn;
         } else if (etherOut) {
-          methodName = 'swapTokensForExactETH'
+          methodName = "swapTokensForExactETH";
           // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-          args = [amountOut, amountIn, path, to, deadline]
-          value = ZERO_HEX
+          args = [amountOut, amountIn, path, to, deadline];
+          value = ZERO_HEX;
         } else {
-          methodName = 'swapTokensForExactTokens'
+          methodName = "swapTokensForExactTokens";
           // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-          args = [amountOut, amountIn, path, to, deadline]
-          value = ZERO_HEX
+          args = [amountOut, amountIn, path, to, deadline];
+          value = ZERO_HEX;
         }
-        break
+        break;
     }
     return {
       methodName,
       args,
       value,
-    }
+    };
   }
 }

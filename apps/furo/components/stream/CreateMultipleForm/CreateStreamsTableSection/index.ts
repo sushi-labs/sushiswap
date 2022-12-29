@@ -1,1 +1,1 @@
-export * from './CreateStreamsTableSection'
+export * from "./CreateStreamsTableSection";

@@ -1,21 +1,26 @@
-'use client'
+"use client";
 
-import { CreditCardIcon } from '@heroicons/react/20/solid'
-import { Amount, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import React, { FC, useCallback } from 'react'
+import { CreditCardIcon } from "@heroicons/react/20/solid";
+import { Amount, Type } from "@sushiswap/currency";
+import { FundSource } from "@sushiswap/hooks";
+import { Skeleton } from "@sushiswap/ui13/components/skeleton";
+import React, { FC, useCallback } from "react";
 
-import { CurrencyInputProps } from './index'
+import { CurrencyInputProps } from "./index";
 
 type BalancePanel = Pick<
   CurrencyInputProps,
-  'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource' | 'loading'
+  | "chainId"
+  | "onChange"
+  | "currency"
+  | "disableMaxButton"
+  | "fundSource"
+  | "loading"
 > & {
-  id?: string
-  account: string | undefined
-  balance: Record<FundSource, Amount<Type>> | undefined
-}
+  id?: string;
+  account: string | undefined;
+  balance: Record<FundSource, Amount<Type>> | undefined;
+};
 
 export const BalancePanel: FC<BalancePanel> = ({
   id,
@@ -25,20 +30,26 @@ export const BalancePanel: FC<BalancePanel> = ({
   fundSource = FundSource.WALLET,
   loading,
 }) => {
-  const [big, portion] = (balance ? `${balance?.[fundSource]?.toSignificant(6)}` : '0.00').split('.')
+  const [big, portion] = (
+    balance ? `${balance?.[fundSource]?.toSignificant(6)}` : "0.00"
+  ).split(".");
 
   const onClick = useCallback(() => {
     if (onChange) {
-      onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')
+      onChange(
+        balance?.[fundSource]?.greaterThan(0)
+          ? balance[fundSource].toFixed()
+          : ""
+      );
     }
-  }, [balance, fundSource, onChange])
+  }, [balance, fundSource, onChange]);
 
   if (loading) {
     return (
       <div className="h-[24px] w-[60px] flex items-center">
         <Skeleton.Box className="bg-white/[0.06] h-[12px] w-full" />
       </div>
-    )
+    );
   }
 
   return (
@@ -51,8 +62,8 @@ export const BalancePanel: FC<BalancePanel> = ({
     >
       <CreditCardIcon width={20} height={20} />
       <span className="text-lg">
-        {big}.<span className="text-sm font-semibold">{portion ?? '00'}</span>
+        {big}.<span className="text-sm font-semibold">{portion ?? "00"}</span>
       </span>
     </button>
-  )
-}
+  );
+};

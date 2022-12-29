@@ -1,5 +1,4 @@
 sources:
-
   - name: xSUSHI
     handler:
       graphql:
@@ -54,31 +53,31 @@ sources:
       # - autoPagination:
       #     validateSchema: true
       # transforms:
-        # Rename type names and field names to let stitching merger merges them
-        # - rename:
-        #     renames:
-        #       - from:
-        #           type: PairWithIncentives
-        #         to:
-        #           type: Pair
-        #       - from:
-        #           type: Query
-        #           field: pairWithIncentives
-        #         to:
-        #           type: Query
-        #           field: pair
-        #       - from:
-        #           type: Query
-        #           field: pairsWithIncentives
-        #         to:
-        #           type: Query
-        #           field: pairs
-        # - typeMerging:
-        #     queryFields:
-        #       - queryFieldName: incentives
-        #         keyField: id
-        #       - queryFieldName: pairs
-        #         keyField: id
+      # Rename type names and field names to let stitching merger merges them
+      # - rename:
+      #     renames:
+      #       - from:
+      #           type: PairWithIncentives
+      #         to:
+      #           type: Pair
+      #       - from:
+      #           type: Query
+      #           field: pairWithIncentives
+      #         to:
+      #           type: Query
+      #           field: pair
+      #       - from:
+      #           type: Query
+      #           field: pairsWithIncentives
+      #         to:
+      #           type: Query
+      #           field: pairs
+      # - typeMerging:
+      #     queryFields:
+      #       - queryFieldName: incentives
+      #         keyField: id
+      #       - queryFieldName: pairs
+      #         keyField: id
 
   - name: Trident
     handler:
@@ -100,23 +99,23 @@ sources:
           value: MASTERCHEF_V1_
           includeRootOperations: true
           includeTypes: false
-          ignore: 
-            - _SubgraphErrorPolicy_  
+          ignore:
+            - _SubgraphErrorPolicy_
       - rename:
           mode: wrap
           renames:
             - from:
-                type:   Pool
-                field:  owner
+                type: Pool
+                field: owner
               to:
-                type:   Pool
-                field:  masterChef
+                type: Pool
+                field: masterChef
             - from:
-                type:   Pool
-                field:  balance
+                type: Pool
+                field: balance
               to:
-                type:   Pool
-                field:  slpBalance
+                type: Pool
+                field: slpBalance
 
   - name: MasterChefV2
     handler:
@@ -131,7 +130,7 @@ sources:
           value: MASTERCHEF_V2_
           includeRootOperations: true
           includeTypes: false
-          ignore: 
+          ignore:
             - _SubgraphErrorPolicy_
 
   - name: FarmsV0
@@ -504,7 +503,7 @@ additionalTypeDefs: |
 
 additionalResolvers:
   - ./resolvers/index.js
-  
+
 documents:
   - ./queries/*.graphql
 
@@ -513,7 +512,7 @@ serve:
   playground: true
 
 codegen:
-  contextType: 'MeshContext & { chainId: string; subgraphName: string; subgraphHost: string }'
+  contextType: "MeshContext & { chainId: string; subgraphName: string; subgraphHost: string }"
 
 cache:
   redis:

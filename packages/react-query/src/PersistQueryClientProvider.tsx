@@ -1,8 +1,11 @@
-'use client'
+"use client";
 
-import { QueryClient } from '@tanstack/react-query'
-import { PersistedClient, Persister } from '@tanstack/react-query-persist-client'
-import { del, get, set } from 'idb-keyval'
+import { QueryClient } from "@tanstack/react-query";
+import {
+  PersistedClient,
+  Persister,
+} from "@tanstack/react-query-persist-client";
+import { del, get, set } from "idb-keyval";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -10,24 +13,24 @@ export const queryClient = new QueryClient({
       cacheTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
-})
+});
 
 /**
  * Creates an Indexed DB persister
  * @see https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
  */
-const createIndexedDBPersister = (idbValidKey: IDBValidKey = 'reactQuery') => {
+const createIndexedDBPersister = (idbValidKey: IDBValidKey = "reactQuery") => {
   return {
     persistClient: async (client: PersistedClient) => {
-      await set(idbValidKey, client)
+      await set(idbValidKey, client);
     },
     restoreClient: async () => {
-      return await get<PersistedClient>(idbValidKey)
+      return await get<PersistedClient>(idbValidKey);
     },
     removeClient: async () => {
-      await del(idbValidKey)
+      await del(idbValidKey);
     },
-  } as Persister
-}
+  } as Persister;
+};
 
-export const persister = createIndexedDBPersister('sushi')
+export const persister = createIndexedDBPersister("sushi");

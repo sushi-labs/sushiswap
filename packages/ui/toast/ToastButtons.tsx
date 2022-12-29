@@ -1,16 +1,21 @@
-import { FC } from 'react'
+import { FC } from "react";
 
-import { classNames } from '../index'
-import { Typography } from '../typography'
+import { classNames } from "../index";
+import { Typography } from "../typography";
 
 interface ToastButtons {
-  href?: string
-  onDismiss(): void
+  href?: string;
+  onDismiss(): void;
 }
 
 export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
   return (
-    <div className={classNames(href ? 'grid-cols-2' : 'grid-cols-auto', 'grid divide-x divide-slate-200/5')}>
+    <div
+      className={classNames(
+        href ? "grid-cols-2" : "grid-cols-auto",
+        "grid divide-x divide-slate-200/5"
+      )}
+    >
       {href && (
         <Typography
           as="a"
@@ -32,5 +37,5 @@ export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
         Dismiss
       </Typography>
     </div>
-  )
-}
+  );
+};

@@ -1,7 +1,12 @@
-import * as React from 'react'
+import * as React from "react";
 
-export const TelosCircle = (props: React.ComponentProps<'svg'>) => (
-  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+export const TelosCircle = (props: React.ComponentProps<"svg">) => (
+  <svg
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <rect width={128} height={128} rx={64} fill="#5613FF" />
     <path
       clipRule="evenodd"
@@ -10,4 +15,4 @@ export const TelosCircle = (props: React.ComponentProps<'svg'>) => (
       strokeWidth={5.5}
     />
   </svg>
-)
+);

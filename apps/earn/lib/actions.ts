@@ -1,30 +1,30 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
-import { Signature } from '@ethersproject/bytes'
-import { Contract } from '@ethersproject/contracts'
-import { Fee } from '@sushiswap/amm'
-import { Type } from '@sushiswap/currency'
+import { defaultAbiCoder } from "@ethersproject/abi";
+import { Signature } from "@ethersproject/bytes";
+import { Contract } from "@ethersproject/contracts";
+import { Fee } from "@sushiswap/amm";
+import { Type } from "@sushiswap/currency";
 
 interface Batch {
-  contract: Contract
-  actions: (string | undefined)[]
+  contract: Contract;
+  actions: (string | undefined)[];
 }
 
 interface Action {
-  contract: Contract
-  fn: string
-  args: ReadonlyArray<unknown>
+  contract: Contract;
+  fn: string;
+  args: ReadonlyArray<unknown>;
 }
 
 export type LiquidityInput = {
-  token: string
-  native: boolean
-  amount: string
-}
+  token: string;
+  native: boolean;
+  amount: string;
+};
 
 export type LiquidityOutput = {
-  token: string
-  amount: string
-}
+  token: string;
+  amount: string;
+};
 
 enum PermitType {
   AMOUNT = 1,
@@ -32,20 +32,20 @@ enum PermitType {
 }
 
 interface BaseSignatureData {
-  v: number
-  r: string
-  s: string
-  deadline: number
-  nonce: number
-  owner: string
-  spender: string
-  chainId: number
-  tokenAddress: string
-  permitType: PermitType
+  v: number;
+  r: string;
+  s: string;
+  deadline: number;
+  nonce: number;
+  owner: string;
+  spender: string;
+  chainId: number;
+  tokenAddress: string;
+  permitType: PermitType;
 }
 
 export interface StandardSignatureData extends BaseSignatureData {
-  amount: string
+  amount: string;
 }
 
 /**
@@ -55,8 +55,8 @@ export interface StandardSignatureData extends BaseSignatureData {
  * @param args
  */
 export const getAsEncodedAction = ({ contract, fn, args }: Action): string => {
-  return contract.interface.encodeFunctionData(fn, args)
-}
+  return contract.interface.encodeFunctionData(fn, args);
+};
 
 /**
  * Make sure provided contract has a batch function.
@@ -64,29 +64,32 @@ export const getAsEncodedAction = ({ contract, fn, args }: Action): string => {
  * @param contract should contain batch function
  * @param actions array of encoded function data
  */
-export const batchAction = ({ contract, actions = [] }: Batch): string | undefined => {
-  const validated = actions.filter(Boolean)
+export const batchAction = ({
+  contract,
+  actions = [],
+}: Batch): string | undefined => {
+  const validated = actions.filter(Boolean);
 
-  if (validated.length === 0) throw new Error('No valid actions')
+  if (validated.length === 0) throw new Error("No valid actions");
 
   // Call action directly to save gas
   if (validated.length === 1) {
-    return validated[0]
+    return validated[0];
   }
 
   // Call batch function with valid actions
   if (validated.length > 1) {
-    return contract.interface.encodeFunctionData('multicall', [validated])
+    return contract.interface.encodeFunctionData("multicall", [validated]);
   }
-}
+};
 
 interface BurnLiquidityAction {
-  router: Contract
-  address: string
-  amount: string
-  recipient: string
-  receiveToWallet: boolean
-  liquidityOutput: LiquidityOutput[]
+  router: Contract;
+  address: string;
+  amount: string;
+  recipient: string;
+  receiveToWallet: boolean;
+  liquidityOutput: LiquidityOutput[];
 }
 
 /**
@@ -106,22 +109,22 @@ export const burnLiquidityAction = ({
   receiveToWallet,
   liquidityOutput,
 }: BurnLiquidityAction) => {
-  return router.interface.encodeFunctionData('burnLiquidity', [
+  return router.interface.encodeFunctionData("burnLiquidity", [
     address,
     amount,
-    defaultAbiCoder.encode(['address', 'bool'], [recipient, receiveToWallet]),
+    defaultAbiCoder.encode(["address", "bool"], [recipient, receiveToWallet]),
     liquidityOutput,
-  ])
-}
+  ]);
+};
 
 interface BurnLiquiditySingleAction {
-  router: Contract
-  token: string
-  address: string
-  amount: string
-  recipient: string
-  receiveToWallet: boolean
-  minWithdrawal: string
+  router: Contract;
+  token: string;
+  address: string;
+  amount: string;
+  recipient: string;
+  receiveToWallet: boolean;
+  minWithdrawal: string;
 }
 
 export const burnLiquiditySingleAction = ({
@@ -133,17 +136,20 @@ export const burnLiquiditySingleAction = ({
   receiveToWallet,
   minWithdrawal,
 }: BurnLiquiditySingleAction) => {
-  return router.interface.encodeFunctionData('burnLiquiditySingle', [
+  return router.interface.encodeFunctionData("burnLiquiditySingle", [
     address,
     amount,
-    defaultAbiCoder.encode(['address', 'address', 'bool'], [token, recipient, receiveToWallet]),
+    defaultAbiCoder.encode(
+      ["address", "address", "bool"],
+      [token, recipient, receiveToWallet]
+    ),
     minWithdrawal,
-  ])
-}
+  ]);
+};
 
 interface UnwrapETHAction {
-  router: Contract
-  recipient: string
+  router: Contract;
+  recipient: string;
 }
 
 /**
@@ -153,14 +159,14 @@ interface UnwrapETHAction {
  * @param liquidityOutput array with minimum output amounts for underlying tokens
  */
 export const unwrapWETHAction = ({ router, recipient }: UnwrapETHAction) => {
-  return router.interface.encodeFunctionData('unwrapWETH', [recipient])
-}
+  return router.interface.encodeFunctionData("unwrapWETH", [recipient]);
+};
 
 interface Sweep {
-  router: Contract
-  token: string
-  recipient: string
-  fromBento: boolean
+  router: Contract;
+  token: string;
+  recipient: string;
+  fromBento: boolean;
 }
 
 /**
@@ -169,25 +175,41 @@ interface Sweep {
  * @param token address of token
  * @param recipient address to sent funds to
  */
-export const sweep = ({ router, token, recipient, fromBento = false }: Sweep) => {
-  return router.interface.encodeFunctionData('sweep', [token, recipient, fromBento])
-}
+export const sweep = ({
+  router,
+  token,
+  recipient,
+  fromBento = false,
+}: Sweep) => {
+  return router.interface.encodeFunctionData("sweep", [
+    token,
+    recipient,
+    fromBento,
+  ]);
+};
 
 export interface ApproveMasterContractActionProps {
-  router: Contract
-  signature?: Signature
+  router: Contract;
+  signature?: Signature;
 }
 
-export const approveMasterContractAction = ({ router, signature }: ApproveMasterContractActionProps) => {
-  if (!signature) return undefined
+export const approveMasterContractAction = ({
+  router,
+  signature,
+}: ApproveMasterContractActionProps) => {
+  if (!signature) return undefined;
 
-  const { v, r, s } = signature
-  return router.interface.encodeFunctionData('approveMasterContract', [v, r, s])
-}
+  const { v, r, s } = signature;
+  return router.interface.encodeFunctionData("approveMasterContract", [
+    v,
+    r,
+    s,
+  ]);
+};
 
 export interface ApproveSLPActionProps {
-  router: Contract
-  signatureData?: StandardSignatureData
+  router: Contract;
+  signatureData?: StandardSignatureData;
 }
 
 /**
@@ -195,28 +217,47 @@ export interface ApproveSLPActionProps {
  * @param router router contract
  * @param signatureData SLP approval signature data
  */
-export const approveSLPAction = ({ router, signatureData }: ApproveSLPActionProps) => {
-  if (!signatureData) return undefined
-  const { tokenAddress, amount, deadline, v, r, s } = signatureData
-  return router.interface.encodeFunctionData('selfPermit', [tokenAddress, amount, deadline, v, r, s])
-}
+export const approveSLPAction = ({
+  router,
+  signatureData,
+}: ApproveSLPActionProps) => {
+  if (!signatureData) return undefined;
+  const { tokenAddress, amount, deadline, v, r, s } = signatureData;
+  return router.interface.encodeFunctionData("selfPermit", [
+    tokenAddress,
+    amount,
+    deadline,
+    v,
+    r,
+    s,
+  ]);
+};
 
 export interface DeployNewPoolActionProps {
-  assets: [Type, Type]
-  factory: string
-  router: Contract
-  feeTier: Fee
-  twap: boolean
+  assets: [Type, Type];
+  factory: string;
+  router: Contract;
+  feeTier: Fee;
+  twap: boolean;
 }
 
-export const deployNewPoolAction = ({ assets, factory, router, feeTier, twap }: DeployNewPoolActionProps): string => {
+export const deployNewPoolAction = ({
+  assets,
+  factory,
+  router,
+  feeTier,
+  twap,
+}: DeployNewPoolActionProps): string => {
   const [tokenA, tokenB] = assets[0].wrapped.sortsBefore(assets[1].wrapped)
     ? [assets[0], assets[1]]
-    : [assets[1], assets[0]]
+    : [assets[1], assets[0]];
   const deployData = defaultAbiCoder.encode(
-    ['address', 'address', 'uint8', 'bool'],
+    ["address", "address", "uint8", "bool"],
     [tokenA.wrapped.address, tokenB.wrapped.address, feeTier, twap]
-  )
+  );
 
-  return router.interface.encodeFunctionData('deployPool', [factory, deployData])
-}
+  return router.interface.encodeFunctionData("deployPool", [
+    factory,
+    deployData,
+  ]);
+};

@@ -1,16 +1,19 @@
-import { ChainId } from '@sushiswap/chain'
-import { formatNumber } from '@sushiswap/format'
-import { Typography } from '@sushiswap/ui'
-import { Layout } from 'components'
-import { Kpis } from 'components/Kpi'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { ChainId } from "@sushiswap/chain";
+import { formatNumber } from "@sushiswap/format";
+import { Typography } from "@sushiswap/ui";
+import { Layout } from "components";
+import { Kpis } from "components/Kpi";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-import { getBuiltGraphSDK } from '.graphclient'
+import { getBuiltGraphSDK } from ".graphclient";
 
 // @ts-ignore
 const bentoBoxKpiReducer = (previousValue, currentValue, i, array) => {
   if (i === array.length - 1) {
-    return previousValue.map((kpi: any) => ({ ...kpi, value: formatNumber(kpi.value) }))
+    return previousValue.map((kpi: any) => ({
+      ...kpi,
+      value: formatNumber(kpi.value),
+    }));
   }
 
   const [
@@ -27,67 +30,73 @@ const bentoBoxKpiReducer = (previousValue, currentValue, i, array) => {
     strategyCount,
     activeStrategyCount,
     pendingStrategyCount,
-  ] = previousValue
+  ] = previousValue;
 
   return [
     {
-      name: 'Deposit Count',
+      name: "Deposit Count",
       value: depositCount.value + Number(currentValue.depositCount),
     },
     {
-      name: 'Withdraw Count',
+      name: "Withdraw Count",
       value: withdrawCount.value + Number(currentValue.withdrawCount),
     },
     {
-      name: 'Transfer Count',
+      name: "Transfer Count",
       value: transferCount.value + Number(currentValue.transferCount),
     },
     {
-      name: 'Protocol Count',
+      name: "Protocol Count",
       value: protocolCount.value + Number(currentValue.protocolCount),
     },
     {
-      name: 'User Count',
+      name: "User Count",
       value: userCount.value + Number(currentValue.userCount),
     },
     {
-      name: 'Token Count',
+      name: "Token Count",
       value: tokenCount.value + Number(currentValue.tokenCount),
     },
     {
-      name: 'Master Contract Count',
-      value: masterContractCount.value + Number(currentValue.masterContractCount),
+      name: "Master Contract Count",
+      value:
+        masterContractCount.value + Number(currentValue.masterContractCount),
     },
     {
-      name: 'Clone Count',
+      name: "Clone Count",
       value: cloneCount.value + Number(currentValue.cloneCount),
     },
     {
-      name: 'Flashloan Count',
+      name: "Flashloan Count",
       value: flashloanCount.value + Number(currentValue.flashloanCount),
     },
     {
-      name: 'Transaction Count',
+      name: "Transaction Count",
       value: transactionCount.value + Number(currentValue.transactionCount),
     },
     {
-      name: 'Strategy Count',
+      name: "Strategy Count",
       value: strategyCount.value + Number(currentValue.strategyCount),
     },
     {
-      name: 'Active Strategy Count',
-      value: activeStrategyCount.value + Number(currentValue.activeStrategyCount),
+      name: "Active Strategy Count",
+      value:
+        activeStrategyCount.value + Number(currentValue.activeStrategyCount),
     },
     {
-      name: 'Pending Strategy Count',
-      value: pendingStrategyCount.value + Number(currentValue.pendingStrategyCount),
+      name: "Pending Strategy Count",
+      value:
+        pendingStrategyCount.value + Number(currentValue.pendingStrategyCount),
     },
-  ]
-}
+  ];
+};
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const sdk = getBuiltGraphSDK()
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
+  const sdk = getBuiltGraphSDK();
   const { crossChainBentoBoxKpis: data } = await sdk.CrossChainBentoBoxKpis({
     chainIds: [
       ChainId.ETHEREUM,
@@ -104,21 +113,23 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       ChainId.HARMONY,
       // ChainId.KAVA,
     ],
-  })
+  });
   return {
     props: {
       data,
     },
-  }
-}
+  };
+};
 
-export default function BentoBoxPage({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function BentoBoxPage({
+  data,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const kpis: { name: string; value: string }[] = data.reduce(
     bentoBoxKpiReducer,
     Array(13).fill({
       value: 0,
     })
-  )
+  );
   return (
     <Layout>
       <div className="max-w-full px-4 py-12 mx-auto sm:px-6 lg:px-8">
@@ -126,10 +137,12 @@ export default function BentoBoxPage({ data }: InferGetServerSidePropsType<typeo
           BentoBox KPIs
         </Typography>
         <div>
-          <h3 className="text-lg font-medium leading-6 text-gray-900">Cross Chain BentoBox Kpis</h3>
+          <h3 className="text-lg font-medium leading-6 text-gray-900">
+            Cross Chain BentoBox Kpis
+          </h3>
           <Kpis kpis={kpis} />
         </div>
       </div>
     </Layout>
-  )
+  );
 }

@@ -1,30 +1,30 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
-import { PlusIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
-import { useIsMounted } from '@sushiswap/hooks'
-import { classNames } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi'
-import { FC, ReactNode } from 'react'
+import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/outline";
+import { PlusIcon } from "@heroicons/react/solid";
+import { ChainId } from "@sushiswap/chain";
+import { Type } from "@sushiswap/currency";
+import { useIsMounted } from "@sushiswap/hooks";
+import { classNames } from "@sushiswap/ui";
+import { Widget } from "@sushiswap/ui";
+import { Web3Input } from "@sushiswap/wagmi";
+import { FC, ReactNode } from "react";
 
-import { useCustomTokens } from '../../lib/state/storage'
-import { useTokens } from '../../lib/state/token-lists'
-import { SettingsOverlay } from '../SettingsOverlay'
+import { useCustomTokens } from "../../lib/state/storage";
+import { useTokens } from "../../lib/state/token-lists";
+import { SettingsOverlay } from "../SettingsOverlay";
 
 interface AddSectionWidgetProps {
-  isFarm: boolean
-  chainId: ChainId
-  input0: string
-  input1: string
-  token0: Type | undefined
-  token1: Type | undefined
-  onSelectToken0?(currency: Type): void
-  onSelectToken1?(currency: Type): void
-  onInput0(value: string): void
-  onInput1(value: string): void
-  children: ReactNode
+  isFarm: boolean;
+  chainId: ChainId;
+  input0: string;
+  input1: string;
+  token0: Type | undefined;
+  token1: Type | undefined;
+  onSelectToken0?(currency: Type): void;
+  onSelectToken1?(currency: Type): void;
+  onInput0(value: string): void;
+  onInput1(value: string): void;
+  children: ReactNode;
 }
 
 export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
@@ -40,9 +40,10 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
   onInput1,
   children,
 }) => {
-  const isMounted = useIsMounted()
-  const tokenMap = useTokens(chainId)
-  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
+  const isMounted = useIsMounted();
+  const tokenMap = useTokens(chainId);
+  const [customTokensMap, { addCustomToken, removeCustomToken }] =
+    useCustomTokens(chainId);
   return (
     <Widget id="addLiquidity" maxWidth={400}>
       <Widget.Content>
@@ -57,8 +58,8 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
                       <div className="flex items-center justify-between">
                         <div
                           className={classNames(
-                            open ? 'rotate-180' : 'rotate-0',
-                            'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
+                            open ? "rotate-180" : "rotate-0",
+                            "transition-all w-5 h-5 -mr-1.5 flex items-center delay-300"
                           )}
                         >
                           <ChevronDownIcon
@@ -125,5 +126,5 @@ export const AddSectionWidget: FC<AddSectionWidgetProps> = ({
         </Disclosure>
       </Widget.Content>
     </Widget>
-  )
-}
+  );
+};

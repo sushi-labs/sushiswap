@@ -1,13 +1,22 @@
-import { Breadcrumb, BreadcrumbLink, ProgressBar, ProgressColor } from '@sushiswap/ui'
-import { getFuroVestingContractConfig, useWalletState } from '@sushiswap/wagmi'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/router'
-import { NextSeo } from 'next-seo'
-import { FC, useMemo, useState } from 'react'
-import useSWR, { SWRConfig } from 'swr'
-import { useConnect, useNetwork } from 'wagmi'
+import {
+  Breadcrumb,
+  BreadcrumbLink,
+  ProgressBar,
+  ProgressColor,
+} from "@sushiswap/ui";
+import { getFuroVestingContractConfig, useWalletState } from "@sushiswap/wagmi";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
+import { FC, useMemo, useState } from "react";
+import useSWR, { SWRConfig } from "swr";
+import { useConnect, useNetwork } from "wagmi";
 
-import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '../../.graphclient'
+import type {
+  Rebase,
+  Transaction as TransactionDTO,
+  Vesting as VestingDTO,
+} from "../../.graphclient";
 import {
   BackgroundVector,
   CancelModal,
@@ -16,97 +25,116 @@ import {
   ProgressBarCard,
   StreamDetailsPopover,
   TransferModal,
-} from '../../components'
+} from "../../components";
 import {
   createScheduleRepresentation,
   NextPaymentTimer,
   SchedulePopover,
   WithdrawModal,
-} from '../../components/vesting'
-import VestingChart2 from '../../components/vesting/VestingChart2'
-import { getRebase, getVesting, getVestingTransactions, Vesting } from '../../lib'
-import { ChartHover } from '../../types'
+} from "../../components/vesting";
+import VestingChart2 from "../../components/vesting/VestingChart2";
+import {
+  getRebase,
+  getVesting,
+  getVestingTransactions,
+  Vesting,
+} from "../../lib";
+import { ChartHover } from "../../types";
 
 interface Props {
   fallback?: {
-    vesting?: VestingDTO
-    transactions?: TransactionDTO[]
-  }
+    vesting?: VestingDTO;
+    transactions?: TransactionDTO[];
+  };
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
-  if (!query?.chainId) throw new Error('No chainId provided')
-  if (!query?.id) throw new Error('No id provided')
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  query,
+}) => {
+  if (!query?.chainId) throw new Error("No chainId provided");
+  if (!query?.id) throw new Error("No id provided");
 
-  const chainId = query.chainId as string
-  const id = query.id as string
+  const chainId = query.chainId as string;
+  const id = query.id as string;
 
-  const vesting = (await getVesting(chainId, id)) as VestingDTO
+  const vesting = (await getVesting(chainId, id)) as VestingDTO;
   const [transactions, rebases] = await Promise.all([
     getVestingTransactions(chainId, id),
     getRebase(chainId, vesting.token.id),
-  ])
+  ]);
   return {
     props: {
       fallback: {
         [`/furo/api/vesting/${chainId}/${id}`]: vesting,
-        [`/furo/api/vesting/${chainId}/${id}/transactions`]: transactions as TransactionDTO[],
+        [`/furo/api/vesting/${chainId}/${id}/transactions`]:
+          transactions as TransactionDTO[],
         [`/furo/api/rebase/${chainId}/${vesting.token.id}`]: rebases as Rebase,
       },
     },
-  }
-}
+  };
+};
 
-const VestingPage: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback }) => {
+const VestingPage: FC<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ fallback }) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_VestingPage />
     </SWRConfig>
-  )
-}
+  );
+};
 
 const LINKS = (id: string): BreadcrumbLink[] => [
   {
     href: `/vesting/${id}`,
     label: `Vesting ${id}`,
   },
-]
+];
 
 const _VestingPage: FC = () => {
-  const { chain } = useNetwork()
-  const router = useRouter()
-  const chainId = Number(router.query.chainId as string)
-  const id = Number(router.query.id as string)
-  const connect = useConnect()
-  const { connecting, reconnecting } = useWalletState(!!connect.pendingConnector)
-  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
+  const { chain } = useNetwork();
+  const router = useRouter();
+  const chainId = Number(router.query.chainId as string);
+  const id = Number(router.query.id as string);
+  const connect = useConnect();
+  const { connecting, reconnecting } = useWalletState(
+    !!connect.pendingConnector
+  );
+  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE);
 
-  const { data: furo } = useSWR<VestingDTO>(`/furo/api/vesting/${chainId}/${id}`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
-  const { data: transactions } = useSWR<TransactionDTO[]>(`/furo/api/vesting/${chainId}/${id}/transactions`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const { data: furo } = useSWR<VestingDTO>(
+    `/furo/api/vesting/${chainId}/${id}`,
+    (url) => fetch(url).then((response) => response.json())
+  );
+  const { data: transactions } = useSWR<TransactionDTO[]>(
+    `/furo/api/vesting/${chainId}/${id}/transactions`,
+    (url) => fetch(url).then((response) => response.json())
+  );
   const { data: rebase } = useSWR<Rebase>(
     () => (furo ? `/furo/api/rebase/${chainId}/${furo.token.id}` : null),
     (url) => fetch(url).then((response) => response.json())
-  )
+  );
   const vesting = useMemo(
-    () => (chainId && furo && rebase ? new Vesting({ chainId, furo, rebase }) : undefined),
+    () =>
+      chainId && furo && rebase
+        ? new Vesting({ chainId, furo, rebase })
+        : undefined,
     [chainId, furo, rebase]
-  )
+  );
 
   const schedule = vesting
     ? createScheduleRepresentation({
         currency: vesting.token,
-        cliffEndDate: new Date(vesting.startTime.getTime() + vesting.cliffDuration * 1000),
+        cliffEndDate: new Date(
+          vesting.startTime.getTime() + vesting.cliffDuration * 1000
+        ),
         cliffAmount: vesting.cliffAmount,
         stepAmount: vesting.stepAmount,
         stepDuration: vesting.stepDuration * 1000,
         startDate: vesting.startTime,
         stepPayouts: vesting.steps,
       })
-    : undefined
+    : undefined;
 
   // Sync balance to Vesting entity
   // const balance = useVestingBalance(chainId, vesting?.id, vesting?.token)
@@ -124,10 +152,18 @@ const _VestingPage: FC = () => {
           </div>
         }
       >
-        <Breadcrumb home="/dashboard" links={LINKS(router.query.id as string)} />
+        <Breadcrumb
+          home="/dashboard"
+          links={LINKS(router.query.id as string)}
+        />
         <div className="flex flex-col md:grid md:grid-cols-[430px_280px] justify-center gap-8 lg:gap-x-16 md:gap-y-8 pt-6 md:pt-24">
           <div className="flex justify-center">
-            <VestingChart2 vesting={vesting} schedule={schedule} hover={hover} setHover={setHover} />
+            <VestingChart2
+              vesting={vesting}
+              schedule={schedule}
+              hover={hover}
+              setHover={setHover}
+            />
           </div>
           <div>
             <div className="flex flex-col justify-center gap-5">
@@ -139,7 +175,11 @@ const _VestingPage: FC = () => {
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
                 <ProgressBar
-                  progress={vesting ? vesting.streamedPercentage.divide(100).toSignificant(4) : 0}
+                  progress={
+                    vesting
+                      ? vesting.streamedPercentage.divide(100).toSignificant(4)
+                      : 0
+                  }
                   color={ProgressColor.BLUE}
                   showLabel={false}
                 />
@@ -152,7 +192,11 @@ const _VestingPage: FC = () => {
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
                 <ProgressBar
-                  progress={vesting ? vesting.withdrawnPercentage.divide(100).toSignificant(4) : 0}
+                  progress={
+                    vesting
+                      ? vesting.withdrawnPercentage.divide(100).toSignificant(4)
+                      : 0
+                  }
                   color={ProgressColor.PINK}
                   showLabel={false}
                 />
@@ -164,7 +208,10 @@ const _VestingPage: FC = () => {
           </div>
           <div className="flex items-end justify-center gap-2">
             <StreamDetailsPopover stream={vesting} />
-            <HistoryPopover stream={vesting} transactionRepresentations={transactions} />
+            <HistoryPopover
+              stream={vesting}
+              transactionRepresentations={transactions}
+            />
             <SchedulePopover vesting={vesting} schedule={schedule} />
           </div>
           <div className="flex flex-col gap-2">
@@ -191,7 +238,7 @@ const _VestingPage: FC = () => {
         </div>
       </Layout>
     </>
-  )
-}
+  );
+};
 
-export default VestingPage
+export default VestingPage;

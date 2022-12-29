@@ -1,15 +1,19 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 const jestConfig = {
   verbose: true,
-  roots: ['<rootDir>'],
+  roots: ["<rootDir>"],
 
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  modulePathIgnorePatterns: ['<rootDir>/test/__fixtures__', '<rootDir>/node_modules', '<rootDir>/dist'],
-  testEnvironment: 'jest-environment-jsdom',
-  preset: 'ts-jest',
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+  modulePathIgnorePatterns: [
+    "<rootDir>/test/__fixtures__",
+    "<rootDir>/node_modules",
+    "<rootDir>/dist",
+  ],
+  testEnvironment: "jest-environment-jsdom",
+  preset: "ts-jest",
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { useESM: true }],
+    "^.+\\.tsx?$": ["ts-jest", { useESM: true }],
   },
-}
+};
 
-module.exports = jestConfig
+module.exports = jestConfig;

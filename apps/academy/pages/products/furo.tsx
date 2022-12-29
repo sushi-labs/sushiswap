@@ -1,6 +1,6 @@
-import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
-import furoImg from 'common/assets/furo-img.png'
+import { LinkIcon } from "@heroicons/react/24/outline";
+import { classNames, Container } from "@sushiswap/ui";
+import furoImg from "common/assets/furo-img.png";
 import {
   ProductArticles,
   ProductBackground,
@@ -9,43 +9,54 @@ import {
   ProductHero,
   ProductInfoImages,
   ProductTechnicalDoc,
-} from 'common/components'
-import { DEFAULT_SIDE_PADDING } from 'common/helpers'
-import { PRODUCTS_DATA } from 'common/productsData'
-import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
-import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/legacy/image'
-import { FC } from 'react'
-import useSWR from 'swr'
+} from "common/components";
+import { DEFAULT_SIDE_PADDING } from "common/helpers";
+import { PRODUCTS_DATA } from "common/productsData";
+import { getLatestAndRelevantArticles, getProducts } from "lib/api";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
+import Image from "next/legacy/image";
+import { FC } from "react";
+import useSWR from "swr";
 
-import { ProductSeo } from '../../common/components/Seo/ProductSeo'
+import { ProductSeo } from "../../common/components/Seo/ProductSeo";
 
-const PRODUCT_SLUG = 'furo'
-const { color, cards, buttonText, productStats, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
+const PRODUCT_SLUG = "furo";
+const { color, cards, buttonText, productStats, faq } =
+  PRODUCTS_DATA[PRODUCT_SLUG];
 
 export const getStaticProps: GetStaticProps = async () => {
-  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
-  const product = data?.products?.data?.[0].attributes
-  if (!product) throw new Error(`Product not found`)
-  return { props: product, revalidate: 60 }
-}
+  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } });
+  const product = data?.products?.data?.[0].attributes;
+  if (!product) throw new Error(`Product not found`);
+  return { props: product, revalidate: 60 };
+};
 
-const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product) => {
-  const { name, longName, url, description, slug, relevantArticleIds } = product
+const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (
+  product
+) => {
+  const { name, longName, url, description, slug, relevantArticleIds } =
+    product;
 
   const { data, isValidating } = useSWR(
     [`/furo-articles`],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false }
-  )
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
-  const latestArticles = data?.articles?.data ?? []
-  const relevantArticles = data?.relevantArticles?.data ?? []
+  const latestArticles = data?.articles?.data ?? [];
+  const relevantArticles = data?.relevantArticles?.data ?? [];
 
   return (
     <>
       <ProductSeo product={product} />
-      <Container maxWidth="6xl" className={classNames('mx-auto pt-10', DEFAULT_SIDE_PADDING)}>
+      <Container
+        maxWidth="6xl"
+        className={classNames("mx-auto pt-10", DEFAULT_SIDE_PADDING)}
+      >
         <ProductBackground color={color} />
         <ProductHero
           productName={longName}
@@ -58,25 +69,28 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
         />
       </Container>
 
-      <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>
+      <Container
+        maxWidth="6xl"
+        className={classNames("mx-auto pb-24", DEFAULT_SIDE_PADDING)}
+      >
         <ProductInfoImages
           color="#64C7FE"
           secondaryColor="#B084E9"
           infoSections={[
             {
-              title: 'Payments & Salaries',
+              title: "Payments & Salaries",
               description:
-                'Automate your DAO salaries securely with Furo. Furo lets you set up payment and salary streams for all your contributors.',
+                "Automate your DAO salaries securely with Furo. Furo lets you set up payment and salary streams for all your contributors.",
             },
             {
-              title: 'Token Vesting',
+              title: "Token Vesting",
               description:
-                'Traditionally, DAOs have to recreate and redeploy their own vesting contracts. With Furo we aim to free projects and DAOs from this heavy lifting.',
+                "Traditionally, DAOs have to recreate and redeploy their own vesting contracts. With Furo we aim to free projects and DAOs from this heavy lifting.",
             },
             {
-              title: 'Multichain',
+              title: "Multichain",
               description:
-                'Furo is multichain, like all Sushi products, catering to users across all EVM compatible chains like Ethereum, Arbitrum, Polygon and Avalanche.',
+                "Furo is multichain, like all Sushi products, catering to users across all EVM compatible chains like Ethereum, Arbitrum, Polygon and Avalanche.",
             },
           ]}
         />
@@ -106,7 +120,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = (product
         <ProductFaq faq={faq} />
       </Container>
     </>
-  )
-}
+  );
+};
 
-export default ProductPage
+export default ProductPage;

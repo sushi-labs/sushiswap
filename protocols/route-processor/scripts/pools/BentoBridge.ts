@@ -1,27 +1,36 @@
-import { BridgeBento, MultiRoute, RouteLeg } from '@sushiswap/tines'
-import { BigNumber } from 'ethers'
+import { BridgeBento, MultiRoute, RouteLeg } from "@sushiswap/tines";
+import { BigNumber } from "ethers";
 
-import { HEXer } from '../HEXer'
-import { PoolCode } from './PoolCode'
+import { HEXer } from "../HEXer";
+import { PoolCode } from "./PoolCode";
 
 export class BentoBridgePoolCode extends PoolCode {
-  BentoBoxAddress: string
+  BentoBoxAddress: string;
 
-  constructor(pool: BridgeBento, providerName: string, BentoBoxAddress: string) {
-    super(pool, `BentoBridge`)
-    this.BentoBoxAddress = BentoBoxAddress
+  constructor(
+    pool: BridgeBento,
+    providerName: string,
+    BentoBoxAddress: string
+  ) {
+    super(pool, `BentoBridge`);
+    this.BentoBoxAddress = BentoBoxAddress;
   }
 
   getStartPoint(leg: RouteLeg): string {
     if (leg.tokenFrom.chainId == this.pool.token0.chainId) {
       // bento deposit
-      return this.BentoBoxAddress
+      return this.BentoBoxAddress;
     } else {
-      return 'RouteProcessor'
+      return "RouteProcessor";
     }
   }
 
-  getSwapCodeForRouteProcessor(leg: RouteLeg, route: MultiRoute, to: string, exactAmount?: BigNumber): string {
+  getSwapCodeForRouteProcessor(
+    leg: RouteLeg,
+    route: MultiRoute,
+    to: string,
+    exactAmount?: BigNumber
+  ): string {
     if (leg.tokenFrom.chainId == this.pool.token0.chainId) {
       // bento deposit
       if (leg.tokenFrom.tokenId === route.fromToken.tokenId) {
@@ -31,11 +40,16 @@ export class BentoBridgePoolCode extends PoolCode {
             .uint8(20) // bentoDepositAmountFromBento
             .address(to)
             .uint(exactAmount)
-            .toString()
-          console.assert(code.length == 53 * 2, 'BentoBridge deposit unexpected code length')
-          return code
+            .toString();
+          console.assert(
+            code.length == 53 * 2,
+            "BentoBridge deposit unexpected code length"
+          );
+          return code;
         } else {
-          throw new Error("Bento deposit from input token can't work without exact  amount")
+          throw new Error(
+            "Bento deposit from input token can't work without exact  amount"
+          );
         }
       } else {
         // deposit in the middle of a route
@@ -43,9 +57,12 @@ export class BentoBridgePoolCode extends PoolCode {
           .uint8(26) // bentoDepositAllFromBento
           .address(to)
           .address(leg.tokenFrom.address)
-          .toString()
-        console.assert(code.length == 41 * 2, 'BentoBridge deposit unexpected code length')
-        return code
+          .toString();
+        console.assert(
+          code.length == 41 * 2,
+          "BentoBridge deposit unexpected code length"
+        );
+        return code;
       }
     } else {
       // bento withdraw
@@ -56,11 +73,16 @@ export class BentoBridgePoolCode extends PoolCode {
             .uint8(23) // bentoWithdrawShareFromRP
             .address(to)
             .uint(exactAmount)
-            .toString()
-          console.assert(code.length == 53 * 2, 'BentoBridge withdraw unexpected code length')
-          return code
+            .toString();
+          console.assert(
+            code.length == 53 * 2,
+            "BentoBridge withdraw unexpected code length"
+          );
+          return code;
         } else {
-          throw new Error("Bento withdraw from input token can't work without exact  amount")
+          throw new Error(
+            "Bento withdraw from input token can't work without exact  amount"
+          );
         }
       } else {
         // withdraw in the middle of a route
@@ -68,9 +90,12 @@ export class BentoBridgePoolCode extends PoolCode {
           .uint8(27) // bentoWithdrawAllFromRP
           .address(leg.tokenFrom.address)
           .address(to)
-          .toString()
-        console.assert(code.length == 41 * 2, 'BentoBridge deposit unexpected code length')
-        return code
+          .toString();
+        console.assert(
+          code.length == 41 * 2,
+          "BentoBridge deposit unexpected code length"
+        );
+        return code;
       }
     }
   }

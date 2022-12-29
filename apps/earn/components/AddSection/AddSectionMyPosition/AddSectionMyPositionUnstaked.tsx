@@ -1,11 +1,19 @@
-import { formatUSD } from '@sushiswap/format'
-import { Currency, Typography } from '@sushiswap/ui'
-import React, { FC } from 'react'
+import { formatUSD } from "@sushiswap/format";
+import { Currency, Typography } from "@sushiswap/ui";
+import React, { FC } from "react";
 
-import { usePoolPosition } from '../../PoolPositionProvider'
+import { usePoolPosition } from "../../PoolPositionProvider";
 
 export const AddSectionMyPositionUnstaked: FC = () => {
-  const { balance, value0, value1, underlying1, underlying0, isError, isLoading } = usePoolPosition()
+  const {
+    balance,
+    value0,
+    value1,
+    underlying1,
+    underlying0,
+    isError,
+    isLoading,
+  } = usePoolPosition();
 
   if (isLoading && !isError && !balance) {
     return (
@@ -27,7 +35,7 @@ export const AddSectionMyPositionUnstaked: FC = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -43,21 +51,43 @@ export const AddSectionMyPositionUnstaked: FC = () => {
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4">
-            {underlying0 && <Currency.Icon currency={underlying0.currency} width={16} height={16} />}
+            {underlying0 && (
+              <Currency.Icon
+                currency={underlying0.currency}
+                width={16}
+                height={16}
+              />
+            )}
           </div>
-          <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
-            {balance && underlying0?.toSignificant(3)} {underlying0?.currency.symbol}
+          <Typography
+            variant="xs"
+            weight={500}
+            className="flex items-center gap-1 text-slate-400"
+          >
+            {balance && underlying0?.toSignificant(3)}{" "}
+            {underlying0?.currency.symbol}
           </Typography>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4">
-            {underlying1 && <Currency.Icon currency={underlying1.currency} width={16} height={16} />}
+            {underlying1 && (
+              <Currency.Icon
+                currency={underlying1.currency}
+                width={16}
+                height={16}
+              />
+            )}
           </div>
-          <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-400">
-            {balance && underlying1?.toSignificant(3)} {underlying1?.currency.symbol}
+          <Typography
+            variant="xs"
+            weight={500}
+            className="flex items-center gap-1 text-slate-400"
+          >
+            {balance && underlying1?.toSignificant(3)}{" "}
+            {underlying1?.currency.symbol}
           </Typography>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

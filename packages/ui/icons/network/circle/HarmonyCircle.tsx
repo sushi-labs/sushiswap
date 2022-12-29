@@ -1,7 +1,12 @@
-import * as React from 'react'
+import * as React from "react";
 
-export const HarmonyCircle = (props: React.ComponentProps<'svg'>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
+export const HarmonyCircle = (props: React.ComponentProps<"svg">) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 128 128"
+    {...props}
+  >
     <rect width="128" height="128" fill="#fff" rx="64" />
     <rect width="128" height="128" fill="url(#paint0_linear_301_2)" rx="64" />
     <path
@@ -22,4 +27,4 @@ export const HarmonyCircle = (props: React.ComponentProps<'svg'>) => (
       </linearGradient>
     </defs>
   </svg>
-)
+);

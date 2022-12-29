@@ -1,4 +1,4 @@
-import { Farm } from '../lib/farms'
+import { Farm } from "../lib/farms";
 
 export function transformFarm(farm?: Farm) {
   return farm
@@ -18,5 +18,5 @@ export function transformFarm(farm?: Farm) {
         chefType: String(farm.chefType),
         poolType: String(farm.poolType),
       }
-    : null
+    : null;
 }

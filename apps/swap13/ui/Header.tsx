@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import { GlobalNav, NavLink } from '@sushiswap/ui13/components/GlobalNav'
-import { AppType } from '@sushiswap/ui13/types'
-import { HeaderNetworkSelector } from '@sushiswap/wagmi13/components/HeaderNetworkSelector'
-import { UserProfile } from '@sushiswap/wagmi13/components/UserProfile'
-import React, { FC } from 'react'
+import { GlobalNav, NavLink } from "@sushiswap/ui13/components/GlobalNav";
+import { AppType } from "@sushiswap/ui13/types";
+import { HeaderNetworkSelector } from "@sushiswap/wagmi13/components/HeaderNetworkSelector";
+import { UserProfile } from "@sushiswap/wagmi13/components/UserProfile";
+import React, { FC } from "react";
 
-import { SUPPORTED_CHAIN_IDS } from '../config'
-import { Search } from './search/SearchProvider'
+import { SUPPORTED_CHAIN_IDS } from "../config";
+import { Search } from "./search/SearchProvider";
 
 export const Header: FC = () => {
   return (
@@ -27,5 +27,5 @@ export const Header: FC = () => {
       </GlobalNav>
       <Search.Panel />
     </Search>
-  )
-}
+  );
+};

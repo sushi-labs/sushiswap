@@ -1,1 +1,1 @@
-export * from './NetworkSelector'
+export * from "./NetworkSelector";

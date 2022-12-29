@@ -1,11 +1,11 @@
-import { Signature } from '@ethersproject/bytes'
-import { TransactionRequest } from '@ethersproject/providers'
-import { calculateSlippageAmount } from '@sushiswap/amm'
-import { Amount, Native } from '@sushiswap/currency'
-import { Pair } from '@sushiswap/graph-client'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { Percent } from '@sushiswap/math'
-import { Button, Dots } from '@sushiswap/ui'
+import { Signature } from "@ethersproject/bytes";
+import { TransactionRequest } from "@ethersproject/providers";
+import { calculateSlippageAmount } from "@sushiswap/amm";
+import { Amount, Native } from "@sushiswap/currency";
+import { Pair } from "@sushiswap/graph-client";
+import { FundSource, useIsMounted } from "@sushiswap/hooks";
+import { Percent } from "@sushiswap/math";
+import { Button, Dots } from "@sushiswap/ui";
 import {
   Approve,
   Checker,
@@ -18,10 +18,17 @@ import {
   useStablePool,
   useTotalSupply,
   useTridentRouterContract,
-} from '@sushiswap/wagmi'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+} from "@sushiswap/wagmi";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useAccount, useNetwork } from "wagmi";
+import { SendTransactionResult } from "wagmi/actions";
 
 import {
   approveMasterContractAction,
@@ -30,79 +37,107 @@ import {
   LiquidityOutput,
   sweep,
   unwrapWETHAction,
-} from '../../lib/actions'
-import { useTokensFromPair, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
-import { useNotifications, useSettings } from '../../lib/state/storage'
-import { usePoolPosition } from '../PoolPositionProvider'
-import { RemoveSectionWidget } from './RemoveSectionWidget'
+} from "../../lib/actions";
+import {
+  useTokensFromPair,
+  useUnderlyingTokenBalanceFromPair,
+} from "../../lib/hooks";
+import { useNotifications, useSettings } from "../../lib/state/storage";
+import { usePoolPosition } from "../PoolPositionProvider";
+import { RemoveSectionWidget } from "./RemoveSectionWidget";
 
 interface RemoveSectionTridentProps {
-  pair: Pair
+  pair: Pair;
 }
 
-export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) => {
-  const { address } = useAccount()
-  const { chain } = useNetwork()
-  const { token0, token1, liquidityToken } = useTokensFromPair(pair)
-  const isMounted = useIsMounted()
-  const contract = useTridentRouterContract(pair.chainId)
-  const [{ slippageTolerance }] = useSettings()
-  const [permit, setPermit] = useState<Signature>()
+export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({
+  pair,
+}) => {
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+  const { token0, token1, liquidityToken } = useTokensFromPair(pair);
+  const isMounted = useIsMounted();
+  const contract = useTridentRouterContract(pair.chainId);
+  const [{ slippageTolerance }] = useSettings();
+  const [permit, setPermit] = useState<Signature>();
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
+    return new Percent(Math.floor(slippageTolerance * 100), 10_000);
+  }, [slippageTolerance]);
 
-  const [percentage, setPercentage] = useState<string>('')
-  const percentToRemove = useMemo(() => new Percent(percentage, 100), [percentage])
-  const tokens = useMemo(() => [token0, token1], [token0, token1])
-  const rebases = useBentoBoxTotals(pair.chainId, tokens)
-  const { balance } = usePoolPosition()
+  const [percentage, setPercentage] = useState<string>("");
+  const percentToRemove = useMemo(
+    () => new Percent(percentage, 100),
+    [percentage]
+  );
+  const tokens = useMemo(() => [token0, token1], [token0, token1]);
+  const rebases = useBentoBoxTotals(pair.chainId, tokens);
+  const { balance } = usePoolPosition();
 
   const slpAmountToRemove = useMemo(() => {
-    return balance?.[FundSource.WALLET].multiply(percentToRemove)
-  }, [balance, percentToRemove])
+    return balance?.[FundSource.WALLET].multiply(percentToRemove);
+  }, [balance, percentToRemove]);
 
-  const [constantProductPoolState, constantProductPool] = useConstantProductPool(
+  const [constantProductPoolState, constantProductPool] =
+    useConstantProductPool(
+      pair.chainId,
+      token0,
+      token1,
+      pair.swapFee,
+      pair.twapEnabled
+    );
+
+  const [stablePoolState, stablePool] = useStablePool(
     pair.chainId,
     token0,
     token1,
     pair.swapFee,
     pair.twapEnabled
-  )
-
-  const [stablePoolState, stablePool] = useStablePool(pair.chainId, token0, token1, pair.swapFee, pair.twapEnabled)
+  );
 
   const [poolState, pool] = useMemo(() => {
-    if (pair.type === 'STABLE_POOL') return [stablePoolState, stablePool]
-    if (pair.type === 'CONSTANT_PRODUCT_POOL') return [constantProductPoolState, constantProductPool]
+    if (pair.type === "STABLE_POOL") return [stablePoolState, stablePool];
+    if (pair.type === "CONSTANT_PRODUCT_POOL")
+      return [constantProductPoolState, constantProductPool];
 
-    return [undefined, undefined]
-  }, [constantProductPool, constantProductPoolState, pair.type, stablePool, stablePoolState])
+    return [undefined, undefined];
+  }, [
+    constantProductPool,
+    constantProductPoolState,
+    pair.type,
+    stablePool,
+    stablePoolState,
+  ]);
 
-  const totalSupply = useTotalSupply(liquidityToken)
+  const totalSupply = useTotalSupply(liquidityToken);
 
-  const [, { createNotification }] = useNotifications(address)
+  const [, { createNotification }] = useNotifications(address);
 
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0: pool?.reserve0,
     reserve1: pool?.reserve1,
     totalSupply,
     balance: balance?.[FundSource.WALLET],
-  })
+  });
 
-  const [underlying0, underlying1] = underlying
+  const [underlying0, underlying1] = underlying;
 
   const currencyAToRemove = token0
-    ? percentToRemove && percentToRemove.greaterThan('0') && underlying0
-      ? Amount.fromRawAmount(token0, percentToRemove.multiply(underlying0.quotient).quotient || '0')
-      : Amount.fromRawAmount(token0, '0')
-    : undefined
+    ? percentToRemove && percentToRemove.greaterThan("0") && underlying0
+      ? Amount.fromRawAmount(
+          token0,
+          percentToRemove.multiply(underlying0.quotient).quotient || "0"
+        )
+      : Amount.fromRawAmount(token0, "0")
+    : undefined;
 
   const currencyBToRemove = token1
-    ? percentToRemove && percentToRemove.greaterThan('0') && underlying1
-      ? Amount.fromRawAmount(token1, percentToRemove.multiply(underlying1.quotient).quotient || '0')
-      : Amount.fromRawAmount(token1, '0')
-    : undefined
+    ? percentToRemove && percentToRemove.greaterThan("0") && underlying1
+      ? Amount.fromRawAmount(
+          token1,
+          percentToRemove.multiply(underlying1.quotient).quotient || "0"
+        )
+      : Amount.fromRawAmount(token1, "0")
+    : undefined;
 
   const [minAmount0, minAmount1] = useMemo(() => {
     return [
@@ -118,33 +153,37 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
             calculateSlippageAmount(currencyBToRemove, slippagePercent)[0]
           )
         : undefined,
-    ]
-  }, [slippagePercent, currencyAToRemove, currencyBToRemove])
+    ];
+  }, [slippagePercent, currencyAToRemove, currencyBToRemove]);
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
-      if (!data || !chain?.id) return
+      if (!data || !chain?.id) return;
 
-      const ts = new Date().getTime()
+      const ts = new Date().getTime();
       createNotification({
-        type: 'burn',
+        type: "burn",
         chainId: chain.id,
         txHash: data.hash,
         promise: data.wait(),
         summary: {
           pending: `Removing liquidity from the ${token0.symbol}/${token1.symbol} pair`,
           completed: `Successfully removed liquidity from the ${token0.symbol}/${token1.symbol} pair`,
-          failed: 'Something went wrong when removing liquidity',
+          failed: "Something went wrong when removing liquidity",
         },
         timestamp: ts,
         groupTimestamp: ts,
-      })
+      });
     },
     [chain?.id, createNotification, token0.symbol, token1.symbol]
-  )
+  );
 
   const prepare = useCallback(
-    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+    async (
+      setRequest: Dispatch<
+        SetStateAction<(TransactionRequest & { to: string }) | undefined>
+      >
+    ) => {
       try {
         if (
           !chain?.id ||
@@ -162,24 +201,34 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
           !rebases?.[token1.wrapped.address] ||
           !slpAmountToRemove
         )
-          return
+          return;
 
         const liquidityOutput: LiquidityOutput[] = [
           {
             token: minAmount0.wrapped.currency.address,
-            amount: minAmount0.toShare(rebases?.[token0.wrapped.address]).quotient.toString(),
+            amount: minAmount0
+              .toShare(rebases?.[token0.wrapped.address])
+              .quotient.toString(),
           },
           {
             token: minAmount1.wrapped.currency.address,
-            amount: minAmount1.toShare(rebases?.[token1.wrapped.address]).quotient.toString(),
+            amount: minAmount1
+              .toShare(rebases?.[token1.wrapped.address])
+              .quotient.toString(),
           },
-        ]
+        ];
 
-        let indexOfWETH = -1
+        let indexOfWETH = -1;
         indexOfWETH =
-          minAmount0.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 0 : indexOfWETH
+          minAmount0.wrapped.currency.address ===
+          Native.onChain(pair.chainId).wrapped.address
+            ? 0
+            : indexOfWETH;
         indexOfWETH =
-          minAmount1.wrapped.currency.address === Native.onChain(pair.chainId).wrapped.address ? 1 : indexOfWETH
+          minAmount1.wrapped.currency.address ===
+          Native.onChain(pair.chainId).wrapped.address
+            ? 1
+            : indexOfWETH;
 
         const actions = [
           approveMasterContractAction({ router: contract, signature: permit }),
@@ -191,7 +240,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
             liquidityOutput,
             receiveToWallet: true,
           }),
-        ]
+        ];
 
         if (indexOfWETH >= 0) {
           actions.push(
@@ -205,7 +254,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
               recipient: address,
               fromBento: false,
             })
-          )
+          );
         }
 
         setRequest({
@@ -215,7 +264,7 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
             contract,
             actions,
           }),
-        })
+        });
       } catch (e: unknown) {
         //
       }
@@ -234,13 +283,13 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
       slpAmountToRemove,
       permit,
     ]
-  )
+  );
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     chainId: pair.chainId,
     prepare,
     onSettled,
-  })
+  });
 
   return (
     <div>
@@ -291,7 +340,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                         size="md"
                         className="whitespace-nowrap"
                         fullWidth
-                        address={getTridentRouterContractConfig(pair.chainId).address}
+                        address={
+                          getTridentRouterContractConfig(pair.chainId).address
+                        }
                         onSignature={setPermit}
                       />
                       <Approve.Token
@@ -300,7 +351,9 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                         className="whitespace-nowrap"
                         fullWidth
                         amount={slpAmountToRemove}
-                        address={getTridentRouterContractConfig(pair.chainId).address}
+                        address={
+                          getTridentRouterContractConfig(pair.chainId).address
+                        }
                       />
                     </Approve.Components>
                   }
@@ -313,9 +366,13 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
                         variant="filled"
                         disabled={!approved || isWritePending}
                       >
-                        {isWritePending ? <Dots>Confirm transaction</Dots> : 'Remove Liquidity'}
+                        {isWritePending ? (
+                          <Dots>Confirm transaction</Dots>
+                        ) : (
+                          "Remove Liquidity"
+                        )}
                       </Button>
-                    )
+                    );
                   }}
                 />
               </Checker.Custom>
@@ -324,5 +381,5 @@ export const RemoveSectionTrident: FC<RemoveSectionTridentProps> = ({ pair }) =>
         </Checker.Connected>
       </RemoveSectionWidget>
     </div>
-  )
-}
+  );
+};

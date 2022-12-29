@@ -1,11 +1,21 @@
-import * as React from 'react'
+import * as React from "react";
 
-export const FuseCircle = (props: React.ComponentProps<'svg'>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
-    <rect width="128" height="128" fill="url(#paint0_linear_101_1987)" rx="64"></rect>
+export const FuseCircle = (props: React.ComponentProps<"svg">) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 128 128"
+    {...props}
+  >
+    <rect
+      width="128"
+      height="128"
+      fill="url(#paint0_linear_101_1987)"
+      rx="64"
+    ></rect>
     <mask
       id="mask0_101_1987"
-      style={{ maskType: 'alpha' }}
+      style={{ maskType: "alpha" }}
       width="80"
       height="32"
       x="24"
@@ -35,7 +45,14 @@ export const FuseCircle = (props: React.ComponentProps<'svg'>) => (
       clipRule="evenodd"
     ></path>
     <defs>
-      <linearGradient id="paint0_linear_101_1987" x1="64" x2="64" y1="0" y2="128" gradientUnits="userSpaceOnUse">
+      <linearGradient
+        id="paint0_linear_101_1987"
+        x1="64"
+        x2="64"
+        y1="0"
+        y2="128"
+        gradientUnits="userSpaceOnUse"
+      >
         <stop stopColor="#5F5F5F"></stop>
         <stop offset="1" stopColor="#858585"></stop>
       </linearGradient>
@@ -74,4 +91,4 @@ export const FuseCircle = (props: React.ComponentProps<'svg'>) => (
       </linearGradient>
     </defs>
   </svg>
-)
+);

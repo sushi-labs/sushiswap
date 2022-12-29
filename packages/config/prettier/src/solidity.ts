@@ -1,11 +1,11 @@
-import { Options } from 'prettier'
+import { Options } from "prettier";
 
 export const options: Options = {
-  endOfLine: 'lf',
+  endOfLine: "lf",
   printWidth: 120,
   tabWidth: 2,
   singleQuote: true,
   semi: false,
-}
+};
 
-export default options
+export default options;

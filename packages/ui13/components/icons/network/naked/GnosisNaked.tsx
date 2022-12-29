@@ -1,6 +1,6 @@
-import * as React from 'react'
+import * as React from "react";
 
-export const GnosisNaked = (props: React.ComponentProps<'svg'>) => (
+export const GnosisNaked = (props: React.ComponentProps<"svg">) => (
   <svg
     viewBox="0 0 128 128"
     fill="none"
@@ -15,8 +15,12 @@ export const GnosisNaked = (props: React.ComponentProps<'svg'>) => (
     </g>
     <defs>
       <clipPath id="a">
-        <path fill="currenColor" transform="translate(24 24)" d="M0 0h80v81H0z" />
+        <path
+          fill="currenColor"
+          transform="translate(24 24)"
+          d="M0 0h80v81H0z"
+        />
       </clipPath>
     </defs>
   </svg>
-)
+);

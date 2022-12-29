@@ -1,19 +1,21 @@
-import { ChevronDownIcon } from '@heroicons/react/solid'
-import { ChainId, chainName } from '@sushiswap/chain'
-import { FundSource } from '@sushiswap/hooks'
-import { classNames, NetworkIcon } from '@sushiswap/ui'
-import { Web3Input } from '@sushiswap/wagmi'
-import { CurrencyInputProps } from '@sushiswap/wagmi/components/Web3Input/Currency'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { ChevronDownIcon } from "@heroicons/react/solid";
+import { ChainId, chainName } from "@sushiswap/chain";
+import { FundSource } from "@sushiswap/hooks";
+import { classNames, NetworkIcon } from "@sushiswap/ui";
+import { Web3Input } from "@sushiswap/wagmi";
+import { CurrencyInputProps } from "@sushiswap/wagmi/components/Web3Input/Currency";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import { NetworkSelectorOverlay } from './NetworkSelectorOverlay'
+import { NetworkSelectorOverlay } from "./NetworkSelectorOverlay";
 
 interface CurrencyInputWithNetworkSelectorProps extends CurrencyInputProps {
-  onNetworkSelect(chainId: ChainId): void
-  className?: string
+  onNetworkSelect(chainId: ChainId): void;
+  className?: string;
 }
 
-export const CurrencyInputWithNetworkSelector: FC<CurrencyInputWithNetworkSelectorProps> = ({
+export const CurrencyInputWithNetworkSelector: FC<
+  CurrencyInputWithNetworkSelectorProps
+> = ({
   onNetworkSelect,
   disabled,
   value,
@@ -31,26 +33,32 @@ export const CurrencyInputWithNetworkSelector: FC<CurrencyInputWithNetworkSelect
   fundSource = FundSource.WALLET,
   loading,
 }) => {
-  const [networkSelectorOpen, setNetworkSelectorOpen] = useState(false)
+  const [networkSelectorOpen, setNetworkSelectorOpen] = useState(false);
 
   const handleClose = useCallback(() => {
-    setNetworkSelectorOpen(false)
-  }, [])
+    setNetworkSelectorOpen(false);
+  }, []);
 
   return useMemo(
     () => (
-      <div className={classNames('flex flex-col p-3', className)}>
+      <div className={classNames("flex flex-col p-3", className)}>
         <div className="flex flex-row justify-between">
           <button
             type="button"
             className="relative flex items-center gap-1 py-1 text-xs font-medium text-slate-400 hover:text-slate-300"
             onClick={(e) => {
-              setNetworkSelectorOpen(true)
-              e.stopPropagation()
+              setNetworkSelectorOpen(true);
+              e.stopPropagation();
             }}
           >
-            <NetworkIcon chainId={chainId as ChainId} width="16px" height="16px" className="mr-1" />
-            {chainName[chainId as ChainId]} <ChevronDownIcon width={16} height={16} />
+            <NetworkIcon
+              chainId={chainId as ChainId}
+              width="16px"
+              height="16px"
+              className="mr-1"
+            />
+            {chainName[chainId as ChainId]}{" "}
+            <ChevronDownIcon width={16} height={16} />
           </button>
         </div>
         <Web3Input.Currency
@@ -97,5 +105,5 @@ export const CurrencyInputWithNetworkSelector: FC<CurrencyInputWithNetworkSelect
       usdPctChange,
       value,
     ]
-  )
-}
+  );
+};

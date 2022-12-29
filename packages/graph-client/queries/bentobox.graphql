@@ -7,16 +7,8 @@ query Rebase($id: ID!) {
   }
 }
 
-query Rebases(
-  $skip: Int = 0
-  $first: Int = 100
-  $where: Rebase_filter
-) {
-  rebases(
-    skip: $skip,
-    first: $first
-    where: $where
-  ) {
+query Rebases($skip: Int = 0, $first: Int = 100, $where: Rebase_filter) {
+  rebases(skip: $skip, first: $first, where: $where) {
     id
     chainId
     base

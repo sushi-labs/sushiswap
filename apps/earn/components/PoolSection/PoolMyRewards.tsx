@@ -1,21 +1,23 @@
-import { formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
-import { useBreakpoint } from '@sushiswap/hooks'
-import { Button, Currency, Typography } from '@sushiswap/ui'
-import { Checker } from '@sushiswap/wagmi'
-import { FC } from 'react'
+import { formatUSD } from "@sushiswap/format";
+import { Pair } from "@sushiswap/graph-client";
+import { useBreakpoint } from "@sushiswap/hooks";
+import { Button, Currency, Typography } from "@sushiswap/ui";
+import { Checker } from "@sushiswap/wagmi";
+import { FC } from "react";
 
-import { usePoolPositionRewards } from '../PoolPositionRewardsProvider'
+import { usePoolPositionRewards } from "../PoolPositionRewardsProvider";
 
 interface PoolMyRewardsProps {
-  pair: Pair
+  pair: Pair;
 }
 
 export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
-  const { pendingRewards, rewardTokens, harvest, isError, values, isLoading } = usePoolPositionRewards()
-  const { isLg } = useBreakpoint('lg')
+  const { pendingRewards, rewardTokens, harvest, isError, values, isLoading } =
+    usePoolPositionRewards();
+  const { isLg } = useBreakpoint("lg");
 
-  if (!isLg || (!pair?.farm?.incentives?.length && !pendingRewards?.length)) return <></>
+  if (!isLg || (!pair?.farm?.incentives?.length && !pendingRewards?.length))
+    return <></>;
 
   return (
     <div className="flex flex-col gap-3">
@@ -25,7 +27,11 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
             My Rewards
           </Typography>
           <div className="flex flex-col">
-            <Typography variant="sm" weight={600} className="text-right text-slate-50">
+            <Typography
+              variant="sm"
+              weight={600}
+              className="text-right text-slate-50"
+            >
               {formatUSD(values.reduce((sum, value) => sum + value, 0))}
             </Typography>
           </div>
@@ -34,25 +40,40 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
           {pendingRewards?.map((reward, index) => {
             if (!reward && isLoading && !isError)
               return (
-                <div className="grid justify-between grid-cols-10 gap-2" key={index}>
+                <div
+                  className="grid justify-between grid-cols-10 gap-2"
+                  key={index}
+                >
                   <div className="h-[20px] bg-slate-700 animate-pulse col-span-8 rounded-full" />
                   <div className="h-[20px] bg-slate-700 animate-pulse col-span-2 rounded-full" />
                 </div>
-              )
+              );
 
             return (
               <div className="flex items-center justify-between" key={index}>
                 <div className="flex items-center gap-2">
-                  <Currency.Icon currency={rewardTokens[index]} width={20} height={20} />
-                  <Typography variant="sm" weight={600} className="text-slate-300">
+                  <Currency.Icon
+                    currency={rewardTokens[index]}
+                    width={20}
+                    height={20}
+                  />
+                  <Typography
+                    variant="sm"
+                    weight={600}
+                    className="text-slate-300"
+                  >
                     {reward?.toSignificant(6)} {rewardTokens[index].symbol}
                   </Typography>
                 </div>
-                <Typography variant="xs" weight={500} className="text-slate-400">
+                <Typography
+                  variant="xs"
+                  weight={500}
+                  className="text-slate-400"
+                >
                   {formatUSD(values[index])}
                 </Typography>
               </div>
-            )
+            );
           })}
         </div>
       </div>
@@ -64,5 +85,5 @@ export const PoolMyRewards: FC<PoolMyRewardsProps> = ({ pair }) => {
         </Checker.Network>
       </Checker.Connected>
     </div>
-  )
-}
+  );
+};

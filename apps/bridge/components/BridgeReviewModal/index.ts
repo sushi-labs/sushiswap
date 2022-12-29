@@ -1,2 +1,2 @@
-export * from './BridgeReviewModal'
-export * from './BridgeReviewModalBase'
+export * from "./BridgeReviewModal";
+export * from "./BridgeReviewModalBase";

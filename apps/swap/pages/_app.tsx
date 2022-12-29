@@ -1,58 +1,79 @@
-import '@sushiswap/ui/index.css'
+import "@sushiswap/ui/index.css";
 
-import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
-import { client } from '@sushiswap/wagmi'
-import { Analytics } from '@vercel/analytics/react'
-import { SUPPORTED_CHAIN_IDS } from 'config'
+import { App, ThemeProvider, ToastContainer } from "@sushiswap/ui";
+import { client } from "@sushiswap/wagmi";
+import { Analytics } from "@vercel/analytics/react";
+import { SUPPORTED_CHAIN_IDS } from "config";
 // import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
-import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
-import type { AppProps } from 'next/app'
-import Head from 'next/head'
-import { useRouter } from 'next/router'
-import Script from 'next/script'
-import { DefaultSeo } from 'next-seo'
-import React, { FC, useEffect } from 'react'
-import { Provider } from 'react-redux'
-import { store } from 'store'
-import { WagmiConfig } from 'wagmi'
+import { Updaters as TokenListsUpdaters } from "lib/state/TokenListsUpdaters";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import Script from "next/script";
+import { DefaultSeo } from "next-seo";
+import React, { FC, useEffect } from "react";
+import { Provider } from "react-redux";
+import { store } from "store";
+import { WagmiConfig } from "wagmi";
 
-import { Header } from '../components'
-import SEO from '../next-seo.config.mjs'
+import { Header } from "../components";
+import SEO from "../next-seo.config.mjs";
 
 declare global {
   interface Window {
-    dataLayer: Record<string, any>[]
+    dataLayer: Record<string, any>[];
   }
 }
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
-  const router = useRouter()
+  const router = useRouter();
   useEffect(() => {
     const handler = (page: any) => {
       window.dataLayer.push({
-        event: 'pageview',
+        event: "pageview",
         page,
-      })
-    }
-    router.events.on('routeChangeComplete', handler)
-    router.events.on('hashChangeComplete', handler)
+      });
+    };
+    router.events.on("routeChangeComplete", handler);
+    router.events.on("hashChangeComplete", handler);
     return () => {
-      router.events.off('routeChangeComplete', handler)
-      router.events.off('hashChangeComplete', handler)
-    }
-  }, [router.events])
+      router.events.off("routeChangeComplete", handler);
+      router.events.off("hashChangeComplete", handler);
+    };
+  }, [router.events]);
 
   return (
     <>
       <Head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/swap/apple-touch-icon.png?v=1" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/swap/favicon-32x32.png?v=1" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/swap/favicon-16x16.png?v=1" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/swap/apple-touch-icon.png?v=1"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/swap/favicon-32x32.png?v=1"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/swap/favicon-16x16.png?v=1"
+        />
         <link rel="manifest" href="/swap/manifest.json?v=1" />
-        <link rel="mask-icon" href="/swap/safari-pinned-tab.svg?v=1" color="#fa52a0" />
+        <link
+          rel="mask-icon"
+          href="/swap/safari-pinned-tab.svg?v=1"
+          color="#fa52a0"
+        />
         <link rel="shortcut icon" href="/swap/favicon.ico?v=1" />
       </Head>
-      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`}
+      />
       <Script
         id="gtag-init"
         strategy="afterInteractive"
@@ -84,7 +105,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       </WagmiConfig>
       <Analytics />
     </>
-  )
-}
+  );
+};
 
-export default MyApp
+export default MyApp;

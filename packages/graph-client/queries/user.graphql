@@ -7,11 +7,7 @@ query CrossChainUserWithFarms(
   $chainIds: [Int!]!
   $block: Block_height
 ) {
-  crossChainUserWithFarms(
-    id: $id
-    chainIds: $chainIds
-    block: $block
-  ) {
+  crossChainUserWithFarms(id: $id, chainIds: $chainIds, block: $block) {
     id
     chainId
     valueUSD

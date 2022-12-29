@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import { FC } from "react";
 
-import { Custody } from './Section1/Custody'
-import { Move } from './Section2/Move'
+import { Custody } from "./Section1/Custody";
+import { Move } from "./Section2/Move";
 
 export const Story: FC = () => {
   return (
@@ -10,5 +10,5 @@ export const Story: FC = () => {
       <Move />
       {/*<Guard />*/}
     </>
-  )
-}
+  );
+};

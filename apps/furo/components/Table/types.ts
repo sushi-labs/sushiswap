@@ -1,7 +1,7 @@
-import { Stream, Vesting } from '../../lib'
-import { FuroTableType } from './StreamTable'
+import { Stream, Vesting } from "../../lib";
+import { FuroTableType } from "./StreamTable";
 
 export interface CellProps {
-  row: Stream | Vesting
-  tableType?: FuroTableType
+  row: Stream | Vesting;
+  tableType?: FuroTableType;
 }

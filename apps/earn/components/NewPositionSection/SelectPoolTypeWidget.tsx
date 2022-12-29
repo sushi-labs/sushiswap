@@ -1,16 +1,16 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import { ChainId } from '@sushiswap/chain'
-import { Tab, Tooltip, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
-import { PoolFinderType } from '@sushiswap/wagmi'
-import React, { FC, memo } from 'react'
+import { Disclosure, Transition } from "@headlessui/react";
+import { ChainId } from "@sushiswap/chain";
+import { Tab, Tooltip, Typography } from "@sushiswap/ui";
+import { Widget } from "@sushiswap/ui";
+import { PoolFinderType } from "@sushiswap/wagmi";
+import React, { FC, memo } from "react";
 
-import { TRIDENT_ENABLED_NETWORKS } from '../../config'
+import { TRIDENT_ENABLED_NETWORKS } from "../../config";
 
 interface SelectPoolTypeWidgetProps {
-  selectedNetwork: ChainId
-  poolType: PoolFinderType
-  setPoolType(type: PoolFinderType): void
+  selectedNetwork: ChainId;
+  poolType: PoolFinderType;
+  setPoolType(type: PoolFinderType): void;
 }
 
 export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
@@ -26,15 +26,23 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
                     mouseEnterDelay={0.3}
                     button={
                       <div className="flex items-center justify-between pr-3">
-                        <Widget.Header title="2. Select Type" className="!pb-3" />
-                        <Typography variant="sm" weight={700} className="px-2 py-1 rounded-lg bg-slate-900">
+                        <Widget.Header
+                          title="2. Select Type"
+                          className="!pb-3"
+                        />
+                        <Typography
+                          variant="sm"
+                          weight={700}
+                          className="px-2 py-1 rounded-lg bg-slate-900"
+                        >
                           Classic
                         </Typography>
                       </div>
                     }
                     panel={
                       <Typography variant="xs" className="max-w-[220px]">
-                        This network does not allow changing the default pool type
+                        This network does not allow changing the default pool
+                        type
                       </Typography>
                     }
                   ></Tooltip>
@@ -42,7 +50,11 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
                   <Disclosure.Button className="w-full pr-3">
                     <div className="flex items-center justify-between">
                       <Widget.Header title="2. Select Type" className="!pb-3" />
-                      <Typography variant="sm" weight={700} className="px-2 py-1 rounded-lg bg-slate-900">
+                      <Typography
+                        variant="sm"
+                        weight={700}
+                        className="px-2 py-1 rounded-lg bg-slate-900"
+                      >
                         {PoolFinderType[poolType]}
                       </Typography>
                     </div>
@@ -60,15 +72,26 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
                 >
                   <Disclosure.Panel unmount={false}>
                     <div className="p-3 pt-0">
-                      <Tab.Group selectedIndex={poolType} onChange={setPoolType}>
+                      <Tab.Group
+                        selectedIndex={poolType}
+                        onChange={setPoolType}
+                      >
                         <Tab.List className="grid grid-cols-2 mt-2">
                           <Disclosure.Button>
                             <Tab as="div" className="!h-[unset] p-2">
                               <div className="flex flex-col gap-0.5">
-                                <Typography variant="xs" weight={500} className="text-slate-200">
+                                <Typography
+                                  variant="xs"
+                                  weight={500}
+                                  className="text-slate-200"
+                                >
                                   Classic
                                 </Typography>
-                                <Typography variant="xxs" weight={500} className="text-slate-400">
+                                <Typography
+                                  variant="xxs"
+                                  weight={500}
+                                  className="text-slate-400"
+                                >
                                   Suitable for regular pairs
                                 </Typography>
                               </div>
@@ -77,10 +100,18 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
                           <Disclosure.Button>
                             <Tab as="div" className="!h-[unset] p-2">
                               <div className="flex flex-col gap-0.5 ">
-                                <Typography variant="xs" weight={500} className="text-slate-200">
+                                <Typography
+                                  variant="xs"
+                                  weight={500}
+                                  className="text-slate-200"
+                                >
                                   Stable
                                 </Typography>
-                                <Typography variant="xxs" weight={500} className="text-slate-400">
+                                <Typography
+                                  variant="xxs"
+                                  weight={500}
+                                  className="text-slate-400"
+                                >
                                   Suitable for stable pairs
                                 </Typography>
                               </div>
@@ -108,6 +139,6 @@ export const SelectPoolTypeWidget: FC<SelectPoolTypeWidgetProps> = memo(
           </Disclosure>
         </Widget.Content>
       </Widget>
-    )
+    );
   }
-)
+);

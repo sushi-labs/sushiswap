@@ -1,43 +1,53 @@
-import { ChevronRightIcon } from '@heroicons/react/solid'
-import { Button, Container, Tab, Typography } from '@sushiswap/ui'
-import { motion } from 'framer-motion'
-import Image from 'next/legacy/image'
-import React, { FC, useState } from 'react'
+import { ChevronRightIcon } from "@heroicons/react/solid";
+import { Button, Container, Tab, Typography } from "@sushiswap/ui";
+import { motion } from "framer-motion";
+import Image from "next/legacy/image";
+import React, { FC, useState } from "react";
 
-import { ExpandableCard, ExpendableCardData } from '../ExpandableCard/ExpandableCard'
+import {
+  ExpandableCard,
+  ExpendableCardData,
+} from "../ExpandableCard/ExpandableCard";
 
 interface TabsExpendableCardData extends ExpendableCardData {
-  summary: string
-  image: string
+  summary: string;
+  image: string;
 }
 
 const TABS: TabsExpendableCardData[] = [
   {
-    title: 'Furo Streaming',
-    summary: 'Automate your DAO salaries and vesting schedules while earning interest from yield strategies.',
-    image: 'https://res.cloudinary.com/sushi-cdn/image/upload/v1669286681/Frame_38656_lci5if.webp',
+    title: "Furo Streaming",
+    summary:
+      "Automate your DAO salaries and vesting schedules while earning interest from yield strategies.",
+    image:
+      "https://res.cloudinary.com/sushi-cdn/image/upload/v1669286681/Frame_38656_lci5if.webp",
     content: (
       <>
         <p>
-          Furo is Sushi’s payment streaming and token vesting application, a useful and efficient way of setting up
-          automatic payments for contributors to your protocol or DAO, or for executing a company payroll.
+          Furo is Sushi’s payment streaming and token vesting application, a
+          useful and efficient way of setting up automatic payments for
+          contributors to your protocol or DAO, or for executing a company
+          payroll.
         </p>
         <h3>Fully customizable</h3>
         <p>
-          With Furo’s easy to use interface, set any number of parameters you’d like: the asset to be paid in, the
-          frequency with which to pay them that asset, when to start paying it, when to stop paying it, etc. Or, set up
-          traditional token vestings with optional cliffs, complete with an array of options for paying out as well.
+          With Furo’s easy to use interface, set any number of parameters you’d
+          like: the asset to be paid in, the frequency with which to pay them
+          that asset, when to start paying it, when to stop paying it, etc. Or,
+          set up traditional token vestings with optional cliffs, complete with
+          an array of options for paying out as well.
         </p>
         <h3>Completely under your control</h3>
         <p>
-          Additionally, choose to keep your funds in the Sushi Vault to accrue more yield, making your direct deposits
-          even larger without you having to do a thing.
+          Additionally, choose to keep your funds in the Sushi Vault to accrue
+          more yield, making your direct deposits even larger without you having
+          to do a thing.
         </p>
       </>
     ),
-    link: 'https://sushi.com/furo',
-    linkText: 'Pay Someone',
-    caption: 'For Retail Users',
+    link: "https://sushi.com/furo",
+    linkText: "Pay Someone",
+    caption: "For Retail Users",
   },
   // {
   //   title: 'Kashi Lending',
@@ -104,14 +114,14 @@ const TABS: TabsExpendableCardData[] = [
   //   linkText: 'Visit Launchpad',
   //   caption: 'For Retail Users',
   // },
-]
+];
 
 // function transformTemplate(transformProps) {
 //   return `perspective(${transformProps.y.toString()}) rotateX(${transformProps.rotateX.toString()}) scale(${transformProps.scale.toString()})`
 // }
 
 export const Ecosystem: FC = () => {
-  const [_index, setIndex] = useState(0)
+  const [_index, setIndex] = useState(0);
 
   return (
     <section className="px-1 py-20 overflow-x-hidden sm:py-40">
@@ -126,46 +136,85 @@ export const Ecosystem: FC = () => {
             <Typography weight={400} className="text-center text-slate-400">
               Ecosystem
             </Typography>
-            <Typography variant="hero" weight={600} className="!text-4xl !md:text-5xl px-4 text-center">
-              Explore our <span className="text-blue">DeFi</span> Payment Solution
+            <Typography
+              variant="hero"
+              weight={600}
+              className="!text-4xl !md:text-5xl px-4 text-center"
+            >
+              Explore our <span className="text-blue">DeFi</span> Payment
+              Solution
             </Typography>
             <Tab.Group selectedIndex={_index} onChange={setIndex}>
               <Tab.Panels>
                 <div className="flex items-center p-10 min-h-[420px]">
-                  {TABS.map(({ title, content, image, summary, link, linkText, caption }) => (
-                    <Tab.Panel key={title} className="grid items-center grid-cols-1 gap-20 md:grid-cols-2">
-                      <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
-                        <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
-                        <Image alt="stellar" objectFit="contain" src={image} width={420} height={420} />
-                      </div>
-                      <ExpandableCard title={title} caption={caption} content={content} link={link} linkText={linkText}>
-                        {({ setOpen, containerId, titleId }) => (
-                          <motion.div layoutId={containerId} className="flex flex-col items-center lg:items-start">
-                            <Typography
-                              as={motion.h1}
-                              layoutId={titleId}
-                              variant="h1"
-                              weight={600}
-                              className="flex flex-col items-center text-center lg:items-start lg:text-left"
+                  {TABS.map(
+                    ({
+                      title,
+                      content,
+                      image,
+                      summary,
+                      link,
+                      linkText,
+                      caption,
+                    }) => (
+                      <Tab.Panel
+                        key={title}
+                        className="grid items-center grid-cols-1 gap-20 md:grid-cols-2"
+                      >
+                        <div className="relative h-[420px] md:max-w-[420px] md:max-h-[420px] w-full h-full flex items-center justify-center">
+                          <div className="absolute w-[210px] h-[210px] bg-pink rounded-full blur-[200px]" />
+                          <Image
+                            alt="stellar"
+                            objectFit="contain"
+                            src={image}
+                            width={420}
+                            height={420}
+                          />
+                        </div>
+                        <ExpandableCard
+                          title={title}
+                          caption={caption}
+                          content={content}
+                          link={link}
+                          linkText={linkText}
+                        >
+                          {({ setOpen, containerId, titleId }) => (
+                            <motion.div
+                              layoutId={containerId}
+                              className="flex flex-col items-center lg:items-start"
                             >
-                              {title}
-                            </Typography>
-                            <Typography variant="lg" weight={400} className="mt-2 text-center lg:text-left">
-                              {summary}
-                            </Typography>
-                            <Button
-                              onClick={() => setOpen(true)}
-                              className="!p-0 mt-3"
-                              variant="empty"
-                              endIcon={<ChevronRightIcon width={16} height={16} />}
-                            >
-                              Learn More
-                            </Button>
-                          </motion.div>
-                        )}
-                      </ExpandableCard>
-                    </Tab.Panel>
-                  ))}
+                              <Typography
+                                as={motion.h1}
+                                layoutId={titleId}
+                                variant="h1"
+                                weight={600}
+                                className="flex flex-col items-center text-center lg:items-start lg:text-left"
+                              >
+                                {title}
+                              </Typography>
+                              <Typography
+                                variant="lg"
+                                weight={400}
+                                className="mt-2 text-center lg:text-left"
+                              >
+                                {summary}
+                              </Typography>
+                              <Button
+                                onClick={() => setOpen(true)}
+                                className="!p-0 mt-3"
+                                variant="empty"
+                                endIcon={
+                                  <ChevronRightIcon width={16} height={16} />
+                                }
+                              >
+                                Learn More
+                              </Button>
+                            </motion.div>
+                          )}
+                        </ExpandableCard>
+                      </Tab.Panel>
+                    )
+                  )}
                 </div>
               </Tab.Panels>
             </Tab.Group>
@@ -173,5 +222,5 @@ export const Ecosystem: FC = () => {
         </div>
       </Container>
     </section>
-  )
-}
+  );
+};

@@ -1,10 +1,14 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { Token } from '@sushiswap/currency'
-import { findSingleRouteExactIn as TinesFindSingleRouteExactIn, MultiRoute, RToken } from '@sushiswap/tines'
+import { BigNumber } from "@ethersproject/bignumber";
+import { Token } from "@sushiswap/currency";
+import {
+  findSingleRouteExactIn as TinesFindSingleRouteExactIn,
+  MultiRoute,
+  RToken,
+} from "@sushiswap/tines";
 
-import { Pair } from '../Pair'
-import { Pool } from '../Pool'
-import { convertPoolOrPairtoRPool } from './convertPoolOrPairtoRPool'
+import { Pair } from "../Pair";
+import { Pool } from "../Pool";
+import { convertPoolOrPairtoRPool } from "./convertPoolOrPairtoRPool";
 
 export function findSingleRouteExactIn(
   from: Token,
@@ -21,5 +25,5 @@ export function findSingleRouteExactIn(
     pools.map(convertPoolOrPairtoRPool),
     baseToken as RToken,
     gasPrice
-  )
+  );
 }

@@ -1,35 +1,35 @@
-import { useInterval } from '@sushiswap/hooks'
-import { Typography } from '@sushiswap/ui'
-import { FC, useState } from 'react'
+import { useInterval } from "@sushiswap/hooks";
+import { Typography } from "@sushiswap/ui";
+import { FC, useState } from "react";
 
-import { FuroStatus, Vesting } from '../../lib'
+import { FuroStatus, Vesting } from "../../lib";
 
 interface NextPaymentTimerState {
-  days: string
-  hours: string
-  minutes: string
-  seconds: string
+  days: string;
+  hours: string;
+  minutes: string;
+  seconds: string;
 }
 
 interface NextPaymentTimerProps {
-  vesting?: Vesting
+  vesting?: Vesting;
 }
 
 export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
-  const [remaining, setRemaining] = useState<NextPaymentTimerState>()
+  const [remaining, setRemaining] = useState<NextPaymentTimerState>();
 
   useInterval(() => {
-    if (!vesting || !vesting.nextPaymentTimeRemaining) return
+    if (!vesting || !vesting.nextPaymentTimeRemaining) return;
 
-    const { days, hours, minutes, seconds } = vesting.nextPaymentTimeRemaining
+    const { days, hours, minutes, seconds } = vesting.nextPaymentTimeRemaining;
 
     setRemaining({
-      days: String(Math.max(days, 0)).padStart(2, '0'),
-      hours: String(Math.max(hours, 0)).padStart(2, '0'),
-      minutes: String(Math.max(minutes, 0)).padStart(2, '0'),
-      seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
-    })
-  }, 1000)
+      days: String(Math.max(days, 0)).padStart(2, "0"),
+      hours: String(Math.max(hours, 0)).padStart(2, "0"),
+      minutes: String(Math.max(minutes, 0)).padStart(2, "0"),
+      seconds: String(Math.max(seconds, 0)).padStart(2, "0"),
+    });
+  }, 1000);
 
   if (remaining) {
     return (
@@ -68,17 +68,21 @@ export const NextPaymentTimer: FC<NextPaymentTimerProps> = ({ vesting }) => {
             </Typography>
           </div>
         </div>
-        <Typography variant="xs" weight={400} className="tracking-[0.4em] text-slate-200 text-center">
+        <Typography
+          variant="xs"
+          weight={400}
+          className="tracking-[0.4em] text-slate-200 text-center"
+        >
           {vesting?.status === FuroStatus.CANCELLED
-            ? 'CANCELLED'
+            ? "CANCELLED"
             : vesting?.status === FuroStatus.COMPLETED
-            ? 'COMPLETED'
-            : 'NEXT PAYMENT IN'}
+            ? "COMPLETED"
+            : "NEXT PAYMENT IN"}
         </Typography>
       </div>
-    )
+    );
   }
 
   // No data available
-  return <></>
-}
+  return <></>;
+};

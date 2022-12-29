@@ -1,5 +1,5 @@
 {
-  "headers":[
+  "headers": [
     {
       "source": "/(.*)",
       "headers": [
@@ -9,7 +9,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/v0", "destination": "/api/v0" }, 
+    { "source": "/v0", "destination": "/api/v0" },
     { "source": "/v0/:chainId", "destination": "/api/v0/:chainId" }
   ]
 }

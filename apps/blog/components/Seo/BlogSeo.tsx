@@ -1,10 +1,10 @@
-import { ArticleJsonLd } from 'next-seo'
-import { FC } from 'react'
+import { ArticleJsonLd } from "next-seo";
+import { FC } from "react";
 
-import { Global } from '.mesh'
+import { Global } from ".mesh";
 
 interface BlogSeo {
-  seo: Global
+  seo: Global;
 }
 
 export const BlogSeo: FC<BlogSeo> = ({ seo }) => (
@@ -18,6 +18,6 @@ export const BlogSeo: FC<BlogSeo> = ({ seo }) => (
     datePublished={seo.createdAt}
     dateModified={seo.updatedAt}
   />
-)
+);
 
-export default BlogSeo
+export default BlogSeo;

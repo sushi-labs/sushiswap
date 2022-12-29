@@ -1,5 +1,5 @@
-import { UserWithFarm } from '@sushiswap/graph-client'
+import { UserWithFarm } from "@sushiswap/graph-client";
 
 export interface CellProps {
-  row: UserWithFarm
+  row: UserWithFarm;
 }

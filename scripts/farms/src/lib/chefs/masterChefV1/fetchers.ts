@@ -1,17 +1,17 @@
-import { masterChefAbi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
-import { readContract, readContracts } from '@wagmi/core'
+import { masterChefAbi } from "@sushiswap/abi";
+import { ChainId } from "@sushiswap/chain";
+import { readContract, readContracts } from "@wagmi/core";
 
-import { MASTERCHEF_ADDRESS } from '../../../config'
+import { MASTERCHEF_ADDRESS } from "../../../config";
 
 export async function getPoolLength() {
   const poolLengthCall = {
     address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
     chainId: ChainId.ETHEREUM,
     abi: masterChefAbi,
-    functionName: 'poolLength',
-  }
-  return readContract(poolLengthCall)
+    functionName: "poolLength",
+  };
+  return readContract(poolLengthCall);
 }
 
 export async function getTotalAllocPoint() {
@@ -19,9 +19,9 @@ export async function getTotalAllocPoint() {
     address: MASTERCHEF_ADDRESS[ChainId.ETHEREUM],
     chainId: ChainId.ETHEREUM,
     abi: masterChefAbi,
-    functionName: 'totalAllocPoint',
-  }
-  return readContract(totalAllocPointCall)
+    functionName: "totalAllocPoint",
+  };
+  return readContract(totalAllocPointCall);
 }
 
 export async function getPoolInfos(poolLength: number) {
@@ -30,10 +30,10 @@ export async function getPoolInfos(poolLength: number) {
     args: [i],
     chainId: ChainId.ETHEREUM,
     abi: masterChefAbi,
-    functionName: 'poolInfo',
-  }))
+    functionName: "poolInfo",
+  }));
   return readContracts({
     allowFailure: true,
     contracts: poolInfoCalls,
-  })
+  });
 }

@@ -1,11 +1,13 @@
-import { ChevronDownIcon } from '@heroicons/react/solid'
-import { FC } from 'react'
+import { ChevronDownIcon } from "@heroicons/react/solid";
+import { FC } from "react";
 
 interface SwitchCurrenciesButton {
-  onClick(): void
+  onClick(): void;
 }
 
-export const SwitchCurrenciesButton: FC<SwitchCurrenciesButton> = ({ onClick }) => {
+export const SwitchCurrenciesButton: FC<SwitchCurrenciesButton> = ({
+  onClick,
+}) => {
   return (
     <button
       type="button"
@@ -16,5 +18,5 @@ export const SwitchCurrenciesButton: FC<SwitchCurrenciesButton> = ({ onClick }) 
         <ChevronDownIcon width={16} height={16} />
       </div>
     </button>
-  )
-}
+  );
+};

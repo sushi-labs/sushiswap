@@ -1,92 +1,121 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { TransactionRequest } from '@ethersproject/providers'
-import { CheckCircleIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
-import { tryParseAmount } from '@sushiswap/currency'
-import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { Checker, useFuroStreamContract, useSendTransaction, Web3Input } from '@sushiswap/wagmi'
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { BigNumber } from "@ethersproject/bignumber";
+import { TransactionRequest } from "@ethersproject/providers";
+import { CheckCircleIcon } from "@heroicons/react/solid";
+import { ChainId } from "@sushiswap/chain";
+import { tryParseAmount } from "@sushiswap/currency";
+import { FundSource, useFundSourceToggler } from "@sushiswap/hooks";
+import {
+  Button,
+  classNames,
+  DEFAULT_INPUT_BG,
+  Dialog,
+  Dots,
+  Typography,
+} from "@sushiswap/ui";
+import {
+  Checker,
+  useFuroStreamContract,
+  useSendTransaction,
+  Web3Input,
+} from "@sushiswap/wagmi";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useAccount } from "wagmi";
+import { SendTransactionResult } from "wagmi/actions";
 
-import { BottomPanel, CurrencyInputBase } from '../../components'
-import { Stream } from '../../lib'
-import { useStreamBalance } from '../../lib'
-import { useNotifications } from '../../lib/state/storage'
+import { BottomPanel, CurrencyInputBase } from "../../components";
+import { Stream } from "../../lib";
+import { useStreamBalance } from "../../lib";
+import { useNotifications } from "../../lib/state/storage";
 
 interface WithdrawModalProps {
-  stream?: Stream
-  chainId: ChainId
+  stream?: Stream;
+  chainId: ChainId;
 }
 
 export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
-  const { address } = useAccount()
-  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const balance = useStreamBalance(chainId, stream?.id, stream?.token)
-  const contract = useFuroStreamContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
+  const { address } = useAccount();
+  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(
+    FundSource.WALLET
+  );
+  const balance = useStreamBalance(chainId, stream?.id, stream?.token);
+  const contract = useFuroStreamContract(chainId);
+  const [, { createNotification }] = useNotifications(address);
 
-  const [open, setOpen] = useState(false)
-  const [input, setInput] = useState<string>('')
-  const [withdrawTo, setWithdrawTo] = useState<string>()
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState<string>("");
+  const [withdrawTo, setWithdrawTo] = useState<string>();
 
   const amount = useMemo(() => {
-    if (!stream?.token) return undefined
-    return tryParseAmount(input, stream.token)
-  }, [input, stream?.token])
+    if (!stream?.token) return undefined;
+    return tryParseAmount(input, stream.token);
+  }, [input, stream?.token]);
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data || !amount) return
+      if (!data || !amount) return;
 
-      const ts = new Date().getTime()
+      const ts = new Date().getTime();
 
       createNotification({
-        type: 'withdrawStream',
+        type: "withdrawStream",
         txHash: data.hash,
         chainId: chainId,
         timestamp: ts,
         groupTimestamp: ts,
         promise: data.wait(),
         summary: {
-          pending: `Withdrawing ${amount.toSignificant(6)} ${amount.currency.symbol}`,
-          completed: `Successfully withdrawn ${amount.toSignificant(6)} ${amount.currency.symbol}`,
-          failed: 'Something went wrong withdrawing from stream',
+          pending: `Withdrawing ${amount.toSignificant(6)} ${
+            amount.currency.symbol
+          }`,
+          completed: `Successfully withdrawn ${amount.toSignificant(6)} ${
+            amount.currency.symbol
+          }`,
+          failed: "Something went wrong withdrawing from stream",
         },
-      })
+      });
     },
     [amount, chainId, createNotification]
-  )
+  );
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !amount || !chainId || !contract) return
+    (
+      setRequest: Dispatch<
+        SetStateAction<(TransactionRequest & { to: string }) | undefined>
+      >
+    ) => {
+      if (!stream || !amount || !chainId || !contract) return;
 
       setRequest({
         from: address,
         to: contract.address,
-        data: contract.interface.encodeFunctionData('withdrawFromStream', [
+        data: contract.interface.encodeFunctionData("withdrawFromStream", [
           BigNumber.from(stream.id),
           BigNumber.from(amount.toShare(stream.rebase).quotient.toString()),
           withdrawTo ?? stream.recipient.id,
           fundSource === FundSource.BENTOBOX,
-          '0x',
+          "0x",
         ]),
-      })
+      });
     },
     [stream, amount, chainId, contract, address, withdrawTo, fundSource]
-  )
+  );
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
     onSuccess() {
-      setOpen(false)
+      setOpen(false);
     },
     enabled: Boolean(!!stream && !!amount && !!chainId && !!contract),
-  })
+  });
 
   return (
     <>
@@ -98,7 +127,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
             variant="filled"
             disabled={!stream?.canWithdraw(address)}
             onClick={() => {
-              setOpen(true)
+              setOpen(true);
             }}
           >
             Withdraw
@@ -115,8 +144,16 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
               currency={stream?.token}
               onChange={setInput}
               value={input}
-              error={amount && stream?.balance && amount.greaterThan(stream.balance)}
-              bottomPanel={<BottomPanel loading={false} label="Available" amount={balance} />}
+              error={
+                amount && stream?.balance && amount.greaterThan(stream.balance)
+              }
+              bottomPanel={
+                <BottomPanel
+                  loading={false}
+                  label="Available"
+                  amount={balance}
+                />
+              }
             />
           </div>
           <div className="flex flex-col">
@@ -132,12 +169,18 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
               className={classNames(
-                fundSource === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
+                fundSource === FundSource.WALLET
+                  ? "ring-green/70"
+                  : "ring-transparent",
                 DEFAULT_INPUT_BG,
-                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                "ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]"
               )}
             >
-              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography
+                weight={500}
+                variant="sm"
+                className="!leading-5 tracking-widest text-slate-200"
+              >
                 Wallet
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -152,12 +195,18 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
             <div
               onClick={() => setFundSource(FundSource.BENTOBOX)}
               className={classNames(
-                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                fundSource === FundSource.BENTOBOX
+                  ? "ring-green/70"
+                  : "ring-transparent",
                 DEFAULT_INPUT_BG,
-                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                "ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]"
               )}
             >
-              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography
+                weight={500}
+                variant="sm"
+                className="!leading-5 tracking-widest text-slate-200"
+              >
                 BentoBox
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -179,7 +228,9 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
                 }
               >
                 <Checker.Custom
-                  showGuardIfTrue={Boolean(stream?.balance && amount?.greaterThan(stream.balance))}
+                  showGuardIfTrue={Boolean(
+                    stream?.balance && amount?.greaterThan(stream.balance)
+                  )}
                   guard={
                     <Button size="md" fullWidth>
                       Not enough available
@@ -194,11 +245,11 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
                     onClick={() => sendTransaction?.()}
                   >
                     {!stream?.token ? (
-                      'Invalid stream token'
+                      "Invalid stream token"
                     ) : isWritePending ? (
                       <Dots>Confirm Withdraw</Dots>
                     ) : (
-                      'Withdraw'
+                      "Withdraw"
                     )}
                   </Button>
                 </Checker.Custom>
@@ -208,5 +259,5 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ stream, chainId }) => {
         </Dialog.Content>
       </Dialog>
     </>
-  )
-}
+  );
+};

@@ -1,16 +1,25 @@
-import { Transition } from '@headlessui/react'
-import classNames from 'classnames'
-import { FC } from 'react'
+import { Transition } from "@headlessui/react";
+import classNames from "classnames";
+import { FC } from "react";
 
 interface BarLoader {
-  onComplete?(): void
-  transitionDuration: number
-  className?: string
+  onComplete?(): void;
+  transitionDuration: number;
+  className?: string;
 }
 
-export const BarLoader: FC<BarLoader> = ({ transitionDuration, className, onComplete }) => {
+export const BarLoader: FC<BarLoader> = ({
+  transitionDuration,
+  className,
+  onComplete,
+}) => {
   return (
-    <div className={classNames(className, 'relative rounded-full h-1 bg-gray-300 w-full overflow-hidden w-10')}>
+    <div
+      className={classNames(
+        className,
+        "relative rounded-full h-1 bg-gray-300 w-full overflow-hidden w-10"
+      )}
+    >
       <Transition
         appear
         enter="transition ease-linear"
@@ -25,5 +34,5 @@ export const BarLoader: FC<BarLoader> = ({ transitionDuration, className, onComp
         <div className="rounded-full inset-0 h-1 bg-gray-400 w-full" />
       </Transition>
     </div>
-  )
-}
+  );
+};

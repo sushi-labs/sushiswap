@@ -1,6 +1,6 @@
-import { Chain, chains } from '@sushiswap/chain'
-import { useMemo } from 'react'
+import { Chain, chains } from "@sushiswap/chain";
+import { useMemo } from "react";
 
 export const useChain = (chainId: number): Chain => {
-  return useMemo(() => chains[chainId], [chainId])
-}
+  return useMemo(() => chains[chainId], [chainId]);
+};

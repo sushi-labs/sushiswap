@@ -1,13 +1,16 @@
-import { ChainId } from '@sushiswap/chain'
-import { Typography } from '@sushiswap/ui'
-import { Layout } from 'components'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { ChainId } from "@sushiswap/chain";
+import { Typography } from "@sushiswap/ui";
+import { Layout } from "components";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-import { getBuiltGraphSDK } from '.graphclient'
+import { getBuiltGraphSDK } from ".graphclient";
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const sdk = getBuiltGraphSDK()
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
+  const sdk = getBuiltGraphSDK();
   const { crossChainStrategyKpis: data } = await sdk.CrossChainStrategyKpis({
     chainIds: [
       ChainId.ETHEREUM,
@@ -24,15 +27,17 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       ChainId.HARMONY,
       // ChainId.KAVA,
     ],
-  })
+  });
   return {
     props: {
       data,
     },
-  }
-}
+  };
+};
 
-export default function BentoBoxStrategiesPage({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function BentoBoxStrategiesPage({
+  data,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Layout>
       <div className="max-w-full px-4 py-12 mx-auto sm:px-6 lg:px-8">
@@ -48,5 +53,5 @@ export default function BentoBoxStrategiesPage({ data }: InferGetServerSideProps
         </div>
       </div>
     </Layout>
-  )
+  );
 }

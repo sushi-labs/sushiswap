@@ -1,10 +1,10 @@
-import { ArrowRightIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
-import { tryParseAmount } from '@sushiswap/currency'
-import { FundSource, useIsMounted } from '@sushiswap/hooks'
-import { STARGATE_BRIDGE_TOKENS,StargateChainId } from '@sushiswap/stargate'
-import { Button, Loader, Typography, Widget } from '@sushiswap/ui'
-import { Checker, Web3Input } from '@sushiswap/wagmi'
+import { ArrowRightIcon } from "@heroicons/react/solid";
+import { ChainId } from "@sushiswap/chain";
+import { tryParseAmount } from "@sushiswap/currency";
+import { FundSource, useIsMounted } from "@sushiswap/hooks";
+import { STARGATE_BRIDGE_TOKENS, StargateChainId } from "@sushiswap/stargate";
+import { Button, Loader, Typography, Widget } from "@sushiswap/ui";
+import { Checker, Web3Input } from "@sushiswap/wagmi";
 import {
   BridgeReviewModal,
   BridgeStateProvider,
@@ -15,27 +15,33 @@ import {
   useBridgeState,
   useBridgeStateActions,
   useDerivedBridgeState,
-} from 'components'
-import { nanoid } from 'nanoid'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import Head from 'next/head'
-import { FC, useCallback, useMemo } from 'react'
+} from "components";
+import { nanoid } from "nanoid";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import Head from "next/head";
+import { FC, useCallback, useMemo } from "react";
 
-import { useCustomTokens } from '../lib/state/storage'
+import { useCustomTokens } from "../lib/state/storage";
 
-export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
-  const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query
+export const getServerSideProps: GetServerSideProps = async ({
+  query,
+  res,
+}) => {
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
+  const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query;
   return {
     props: {
       srcToken: srcToken ?? null,
       dstToken: dstToken ?? null,
       srcChainId: srcChainId ?? ChainId.ETHEREUM,
       dstChainId: dstChainId ?? ChainId.ARBITRUM,
-      srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
+      srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : "",
     },
-  }
-}
+  };
+};
 
 export default function Bridge({
   srcChainId,
@@ -44,8 +50,14 @@ export default function Bridge({
   dstToken,
   srcTypedAmount,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const srcTokens = useMemo(() => STARGATE_BRIDGE_TOKENS[srcChainId as StargateChainId], [srcChainId])
-  const dstTokens = useMemo(() => STARGATE_BRIDGE_TOKENS[dstChainId as StargateChainId], [dstChainId])
+  const srcTokens = useMemo(
+    () => STARGATE_BRIDGE_TOKENS[srcChainId as StargateChainId],
+    [srcChainId]
+  );
+  const dstTokens = useMemo(
+    () => STARGATE_BRIDGE_TOKENS[dstChainId as StargateChainId],
+    [dstChainId]
+  );
   return (
     <Layout>
       <Head>
@@ -57,17 +69,23 @@ export default function Bridge({
           id: nanoid(),
           srcChainId: Number(srcChainId) as StargateChainId,
           dstChainId: Number(dstChainId) as StargateChainId,
-          srcToken: srcTokens.includes(srcToken) ? srcTokens[srcTokens.indexOf(srcToken)] : srcTokens[0],
-          dstToken: dstTokens.includes(dstToken) ? dstTokens[dstTokens.indexOf(dstToken)] : dstTokens[0],
-          srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
-          dstTypedAmount: '',
-          amount: !isNaN(Number(srcTypedAmount)) ? tryParseAmount(srcTypedAmount, srcToken) : undefined,
+          srcToken: srcTokens.includes(srcToken)
+            ? srcTokens[srcTokens.indexOf(srcToken)]
+            : srcTokens[0],
+          dstToken: dstTokens.includes(dstToken)
+            ? dstTokens[dstTokens.indexOf(dstToken)]
+            : dstTokens[0],
+          srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : "",
+          dstTypedAmount: "",
+          amount: !isNaN(Number(srcTypedAmount))
+            ? tryParseAmount(srcTypedAmount, srcToken)
+            : undefined,
         }}
       >
         <_Bridge />
       </BridgeStateProvider>
     </Layout>
-  )
+  );
 }
 
 const STARGATE_TOKEN_MAP = Object.fromEntries(
@@ -75,42 +93,59 @@ const STARGATE_TOKEN_MAP = Object.fromEntries(
     chainId,
     Object.fromEntries(tokens.map((token) => [token.address, token])),
   ])
-)
+);
 
 const _Bridge: FC = () => {
-  const isMounted = useIsMounted()
-  const { srcChainId, dstChainId, srcToken, dstToken, srcTypedAmount } = useBridgeState()
-  const { dstAmountOut, isLoading } = useDerivedBridgeState()
-  const { setSrcChainId, setDstChainId, setSrcToken, setDstToken, setSrcTypedAmount, switchChainIds } =
-    useBridgeStateActions()
+  const isMounted = useIsMounted();
+  const { srcChainId, dstChainId, srcToken, dstToken, srcTypedAmount } =
+    useBridgeState();
+  const { dstAmountOut, isLoading } = useDerivedBridgeState();
+  const {
+    setSrcChainId,
+    setDstChainId,
+    setSrcToken,
+    setDstToken,
+    setSrcTypedAmount,
+    switchChainIds,
+  } = useBridgeStateActions();
 
-  const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
-    useCustomTokens(srcChainId)
-  const [dstCustomTokenMap, { addCustomToken: onAddDstCustomToken, removeCustomToken: onRemoveDstCustomToken }] =
-    useCustomTokens(dstChainId)
+  const [
+    srcCustomTokenMap,
+    {
+      addCustomToken: onAddSrcCustomToken,
+      removeCustomToken: onRemoveSrcCustomToken,
+    },
+  ] = useCustomTokens(srcChainId);
+  const [
+    dstCustomTokenMap,
+    {
+      addCustomToken: onAddDstCustomToken,
+      removeCustomToken: onRemoveDstCustomToken,
+    },
+  ] = useCustomTokens(dstChainId);
 
-  const srcTokens = useMemo(() => STARGATE_TOKEN_MAP[srcChainId], [srcChainId])
-  const dstTokens = useMemo(() => STARGATE_TOKEN_MAP[dstChainId], [dstChainId])
+  const srcTokens = useMemo(() => STARGATE_TOKEN_MAP[srcChainId], [srcChainId]);
+  const dstTokens = useMemo(() => STARGATE_TOKEN_MAP[dstChainId], [dstChainId]);
 
   const inputAmounts = useMemo(() => {
-    return [tryParseAmount(srcTypedAmount, srcToken)]
-  }, [srcToken, srcTypedAmount])
+    return [tryParseAmount(srcTypedAmount, srcToken)];
+  }, [srcToken, srcTypedAmount]);
 
   const onSrcNetworkSelect = useCallback(
     (chainId: StargateChainId) => {
-      setSrcChainId(chainId)
-      setSrcToken(STARGATE_BRIDGE_TOKENS[chainId][0])
+      setSrcChainId(chainId);
+      setSrcToken(STARGATE_BRIDGE_TOKENS[chainId][0]);
     },
     [setSrcChainId, setSrcToken]
-  )
+  );
 
   const onDstNetworkSelect = useCallback(
     (chainId: StargateChainId) => {
-      setDstChainId(chainId)
-      setDstToken(STARGATE_BRIDGE_TOKENS[chainId][0])
+      setDstChainId(chainId);
+      setDstToken(STARGATE_BRIDGE_TOKENS[chainId][0]);
     },
     [setDstChainId, setDstToken]
-  )
+  );
 
   return (
     <Widget id="bridge" maxWidth={400}>
@@ -121,7 +156,11 @@ const _Bridge: FC = () => {
           </div>
         </Widget.Header>
         <div className="grid grid-cols-[176px_24px_176px] items-center p-3">
-          <NetworkSelector label="From" value={srcChainId} onChange={onSrcNetworkSelect} />
+          <NetworkSelector
+            label="From"
+            value={srcChainId}
+            onChange={onSrcNetworkSelect}
+          />
           <div className="flex items-center justify-center">
             <button
               onClick={() => switchChainIds()}
@@ -131,7 +170,11 @@ const _Bridge: FC = () => {
             </button>
           </div>
           <div className="flex justify-end">
-            <NetworkSelector label="To" value={dstChainId} onChange={onDstNetworkSelect} />
+            <NetworkSelector
+              label="To"
+              value={dstChainId}
+              onChange={onDstNetworkSelect}
+            />
           </div>
         </div>
         <div className="flex flex-col gap-3 p-3 bg-slate-800">
@@ -160,7 +203,7 @@ const _Bridge: FC = () => {
             <Web3Input.Currency
               disabled
               disableMaxButton
-              value={dstAmountOut?.toExact() || ''}
+              value={dstAmountOut?.toExact() || ""}
               onChange={() => {}}
               onSelect={setDstToken}
               currency={dstToken}
@@ -197,10 +240,14 @@ const _Bridge: FC = () => {
                     <BridgeReviewModal>
                       {({ setOpen }) => {
                         return (
-                          <Button fullWidth size="md" onClick={() => setOpen(true)}>
+                          <Button
+                            fullWidth
+                            size="md"
+                            onClick={() => setOpen(true)}
+                          >
                             Bridge
                           </Button>
-                        )
+                        );
                       }}
                     </BridgeReviewModal>
                   </Checker.Network>
@@ -211,5 +258,5 @@ const _Bridge: FC = () => {
         </div>
       </Widget.Content>
     </Widget>
-  )
-}
+  );
+};

@@ -1,43 +1,55 @@
-import { SearchIcon } from '@heroicons/react/outline'
-import { useDebounce } from '@sushiswap/hooks'
-import { Button, Container } from '@sushiswap/ui'
-import { BlogSeo } from 'components/Seo/BlogSeo'
-import { InferGetServerSidePropsType } from 'next'
-import { FC, useState } from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import { SearchIcon } from "@heroicons/react/outline";
+import { useDebounce } from "@sushiswap/hooks";
+import { Button, Container } from "@sushiswap/ui";
+import { BlogSeo } from "components/Seo/BlogSeo";
+import { InferGetServerSidePropsType } from "next";
+import { FC, useState } from "react";
+import useSWR, { SWRConfig } from "swr";
 
-import { ArticleEntity, ArticleEntityResponseCollection, CategoryEntityResponseCollection, Global } from '../.mesh'
-import { ArticleList, Card, Categories, Hero } from '../components'
-import { getArticles, getCategories } from '../lib/api'
+import {
+  ArticleEntity,
+  ArticleEntityResponseCollection,
+  CategoryEntityResponseCollection,
+  Global,
+} from "../.mesh";
+import { ArticleList, Card, Categories, Hero } from "../components";
+import { getArticles, getCategories } from "../lib/api";
 
 export async function getStaticProps() {
-  const [articles, categories] = await Promise.all([getArticles({ pagination: { limit: 10 } }), getCategories()])
+  const [articles, categories] = await Promise.all([
+    getArticles({ pagination: { limit: 10 } }),
+    getCategories(),
+  ]);
   return {
     props: {
       fallback: {
-        ['/articles']: articles?.articles || [],
-        ['/categories']: categories?.categories || [],
+        ["/articles"]: articles?.articles || [],
+        ["/categories"]: categories?.categories || [],
       },
     },
     revalidate: 60,
-  }
+  };
 }
 
-const Home: FC<InferGetServerSidePropsType<typeof getStaticProps> & { seo: Global }> = ({ fallback, seo }) => {
+const Home: FC<
+  InferGetServerSidePropsType<typeof getStaticProps> & { seo: Global }
+> = ({ fallback, seo }) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_Home seo={seo} />
     </SWRConfig>
-  )
-}
+  );
+};
 
 const _Home: FC<{ seo: Global }> = ({ seo }) => {
-  const [query, setQuery] = useState<string>()
-  const debouncedQuery = useDebounce(query, 200)
+  const [query, setQuery] = useState<string>();
+  const debouncedQuery = useDebounce(query, 200);
 
-  const [selected, setSelected] = useState<string[]>([])
-  const { data: articlesData } = useSWR<ArticleEntityResponseCollection>('/articles')
-  const { data: categoriesData } = useSWR<CategoryEntityResponseCollection>('/categories')
+  const [selected, setSelected] = useState<string[]>([]);
+  const { data: articlesData } =
+    useSWR<ArticleEntityResponseCollection>("/articles");
+  const { data: categoriesData } =
+    useSWR<CategoryEntityResponseCollection>("/categories");
 
   const { data: filterData, isValidating } = useSWR(
     [`/articles`, selected, debouncedQuery],
@@ -55,15 +67,25 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             }),
           },
         })
-      )?.articles
+      )?.articles;
     },
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: false }
-  )
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+      revalidateOnMount: false,
+    }
+  );
 
-  const loading = useDebounce(isValidating, 400)
-  const articles = articlesData?.data
-  const categories = categoriesData?.data
-  const articleList = selected && filterData?.data ? filterData?.data : articles ? articles : undefined
+  const loading = useDebounce(isValidating, 400);
+  const articles = articlesData?.data;
+  const categories = categoriesData?.data;
+  const articleList =
+    selected && filterData?.data
+      ? filterData?.data
+      : articles
+      ? articles
+      : undefined;
 
   return (
     <>
@@ -75,7 +97,11 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             <div className="flex flex-col items-center justify-between gap-y-8 md:flex-row">
               <div className="order-2 w-full p-1 -ml-1 overflow-hidden md:order-1">
                 <div className="flex flex-wrap gap-3">
-                  <Categories selected={selected} onSelect={setSelected} categories={categories || []} />
+                  <Categories
+                    selected={selected}
+                    onSelect={setSelected}
+                    categories={categories || []}
+                  />
                 </div>
               </div>
               <div className="flex items-center order-1 w-full gap-3 px-3 md:w-auto md:order-2 rounded-xl bg-slate-800 focus-within:ring-2 ring-slate-700 ring-offset-2 ring-offset-slate-900">
@@ -93,12 +119,23 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                 <ArticleList
                   articles={articleList as ArticleEntity[]}
                   loading={loading}
-                  render={(article) => <Card article={article} key={`article__left__${article?.attributes?.slug}`} />}
+                  render={(article) => (
+                    <Card
+                      article={article}
+                      key={`article__left__${article?.attributes?.slug}`}
+                    />
+                  )}
                 />
               </div>
             )}
             <div className="flex justify-center">
-              <Button as="a" href="/blog/archive" color="gray" variant="outlined" className="px-6">
+              <Button
+                as="a"
+                href="/blog/archive"
+                color="gray"
+                variant="outlined"
+                className="px-6"
+              >
                 View Archive
               </Button>
             </div>
@@ -106,7 +143,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         </section>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

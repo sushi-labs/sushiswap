@@ -1,28 +1,28 @@
-import { Transition } from '@headlessui/react'
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
-import { Chip, CircleIcon } from '@sushiswap/ui'
-import { DIFFICULTY_ELEMENTS, DOCS_URL } from 'common/helpers'
-import { AcademyIcon } from 'common/icons'
-import { FC, Fragment, useState } from 'react'
+import { Transition } from "@headlessui/react";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { Chip, CircleIcon } from "@sushiswap/ui";
+import { DIFFICULTY_ELEMENTS, DOCS_URL } from "common/helpers";
+import { AcademyIcon } from "common/icons";
+import { FC, Fragment, useState } from "react";
 
-import { DifficultyEntity } from '.mesh'
+import { DifficultyEntity } from ".mesh";
 
 interface DifficultyCard {
-  difficulty: DifficultyEntity
+  difficulty: DifficultyEntity;
 }
 
 export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
-  const [hover, setHover] = useState(false)
+  const [hover, setHover] = useState(false);
 
-  const slug = difficulty?.attributes?.slug as keyof typeof DIFFICULTY_ELEMENTS
+  const slug = difficulty?.attributes?.slug as keyof typeof DIFFICULTY_ELEMENTS;
 
-  const { color, Icon } = DIFFICULTY_ELEMENTS[slug]
-  const isTechnicalCard = slug === 'technical'
+  const { color, Icon } = DIFFICULTY_ELEMENTS[slug];
+  const isTechnicalCard = slug === "technical";
 
   return (
     <a
       href={isTechnicalCard ? DOCS_URL : `/academy/articles?difficulty=${slug}`}
-      target={isTechnicalCard ? '_blank' : '_self'}
+      target={isTechnicalCard ? "_blank" : "_self"}
       rel="noreferrer"
       className="h-[405px] py-[50px] px-[30px] bg-slate-800 rounded-[30px] flex flex-col justify-between hover:ring-1 ring-slate-600 transition duration-300"
       onMouseEnter={() => setHover(true)}
@@ -36,7 +36,9 @@ export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
             label={difficulty?.attributes?.label}
             color="default"
             className="h-7 sm:text-sm sm:font-normal pl-[14px] pr-[14px]"
-            icon={<CircleIcon width={8} height={8} fill={color} stroke={color} />}
+            icon={
+              <CircleIcon width={8} height={8} fill={color} stroke={color} />
+            }
           />
           <Transition
             as={Fragment}
@@ -56,8 +58,10 @@ export const DifficultyCard: FC<DifficultyCard> = ({ difficulty }) => {
             </div>
           </Transition>
         </div>
-        <p className="text-xl font-bold sm:text-2xl">{difficulty?.attributes?.longDescription}</p>
+        <p className="text-xl font-bold sm:text-2xl">
+          {difficulty?.attributes?.longDescription}
+        </p>
       </div>
     </a>
-  )
-}
+  );
+};

@@ -1,16 +1,16 @@
-import { getAddress } from '@ethersproject/address'
-import { JSBI } from '@sushiswap/math'
-import invariant from 'tiny-invariant'
+import { getAddress } from "@ethersproject/address";
+import { JSBI } from "@sushiswap/math";
+import invariant from "tiny-invariant";
 
-import { Currency } from './Currency'
-import { Type } from './Type'
+import { Currency } from "./Currency";
+import { Type } from "./Type";
 
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
 export class Token extends Currency {
-  public readonly isNative = false as const
-  public readonly isToken = true as const
+  public readonly isNative = false as const;
+  public readonly isToken = true as const;
 
   // TODO:
   // /**
@@ -21,15 +21,15 @@ export class Token extends Currency {
   /**
    * The contract address on the chain on which this token lives
    */
-  public readonly address: string
+  public readonly address: string;
 
   /**
    * The rebase
    */
   readonly rebase: {
-    base: JSBI
-    elastic: JSBI
-  }
+    base: JSBI;
+    elastic: JSBI;
+  };
   public constructor({
     // TODO:
     // id,
@@ -40,29 +40,29 @@ export class Token extends Currency {
     name,
     rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
   }: {
-    chainId: number | string
-    address: string
-    decimals: number
-    symbol?: string
-    name?: string
-    rebase?: { base: JSBI; elastic: JSBI }
+    chainId: number | string;
+    address: string;
+    decimals: number;
+    symbol?: string;
+    name?: string;
+    rebase?: { base: JSBI; elastic: JSBI };
   }) {
     super({
       chainId,
       decimals,
       symbol,
       name,
-    })
+    });
     try {
-      this.address = getAddress(address)
+      this.address = getAddress(address);
     } catch {
-      throw `${address} is not a valid address`
+      throw `${address} is not a valid address`;
     }
     try {
       // TODO: No rebase?
-      this.rebase = rebase
+      this.rebase = rebase;
     } catch {
-      throw `${rebase} is not a valid rebase`
+      throw `${rebase} is not a valid rebase`;
     }
   }
 
@@ -71,7 +71,11 @@ export class Token extends Currency {
    * @param other other token to compare
    */
   public equals(other: Type): boolean {
-    return other.isToken && this.chainId === other.chainId && this.address === other.address
+    return (
+      other.isToken &&
+      this.chainId === other.chainId &&
+      this.address === other.address
+    );
   }
 
   /**
@@ -81,15 +85,15 @@ export class Token extends Currency {
    * @throws if the tokens are on different chains
    */
   public sortsBefore(other: Token): boolean {
-    invariant(this.chainId === other.chainId, 'CHAIN_IDS')
-    invariant(this.address !== other.address, 'ADDRESSES')
-    return this.address.toLowerCase() < other.address.toLowerCase()
+    invariant(this.chainId === other.chainId, "CHAIN_IDS");
+    invariant(this.address !== other.address, "ADDRESSES");
+    return this.address.toLowerCase() < other.address.toLowerCase();
   }
 
   /**
    * Return this token, which does not need to be wrapped
    */
   public get wrapped(): Token {
-    return this
+    return this;
   }
 }

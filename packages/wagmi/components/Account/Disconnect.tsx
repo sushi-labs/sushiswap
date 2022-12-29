@@ -1,15 +1,15 @@
-import { classNames } from '@sushiswap/ui'
-import { useDisconnect } from 'wagmi'
+import { classNames } from "@sushiswap/ui";
+import { useDisconnect } from "wagmi";
 
 export type Props = {
-  className?: string
-}
+  className?: string;
+};
 
 export function Disconnect({ className }: Props): JSX.Element {
-  const { disconnect } = useDisconnect()
+  const { disconnect } = useDisconnect();
   return (
     <button className={classNames(className)} onClick={() => disconnect()}>
       Disconnect
     </button>
-  )
+  );
 }

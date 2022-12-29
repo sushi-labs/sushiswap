@@ -1,37 +1,44 @@
-import { ChevronRightIcon, ExternalLinkIcon } from '@heroicons/react/solid'
-import { Button, Link, Typography } from '@sushiswap/ui'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { nanoid } from 'nanoid'
-import React, { FC, ReactNode, useCallback, useState } from 'react'
+import { ChevronRightIcon, ExternalLinkIcon } from "@heroicons/react/solid";
+import { Button, Link, Typography } from "@sushiswap/ui";
+import { AnimatePresence, AnimateSharedLayout, motion } from "framer-motion";
+import { nanoid } from "nanoid";
+import React, { FC, ReactNode, useCallback, useState } from "react";
 
 interface ExpandableCardRenderProps {
-  open: boolean
-  setOpen(open: boolean): void
-  containerId: string
-  titleId: string
+  open: boolean;
+  setOpen(open: boolean): void;
+  containerId: string;
+  titleId: string;
 }
 
 export interface ExpendableCardData {
-  title: string
-  caption: string
-  content: ReactNode
-  link: string
-  linkText: string
+  title: string;
+  caption: string;
+  content: ReactNode;
+  link: string;
+  linkText: string;
 }
 
 interface ExpandableCardProps extends ExpendableCardData {
-  children?(payload: ExpandableCardRenderProps): ReactNode
+  children?(payload: ExpandableCardRenderProps): ReactNode;
 }
 
-export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, caption, content, linkText, link }) => {
-  const [id] = useState(nanoid())
-  const [open, setOpen] = useState(false)
-  const containerId = `container-${id}`
-  const titleId = `container-title-${id}`
+export const ExpandableCard: FC<ExpandableCardProps> = ({
+  children,
+  title,
+  caption,
+  content,
+  linkText,
+  link,
+}) => {
+  const [id] = useState(nanoid());
+  const [open, setOpen] = useState(false);
+  const containerId = `container-${id}`;
+  const titleId = `container-title-${id}`;
 
   const handleClose = useCallback(() => {
-    setOpen(false)
-  }, [])
+    setOpen(false);
+  }, []);
 
   return (
     <AnimateSharedLayout>
@@ -72,7 +79,11 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
                 layoutId={`container-${id}`}
                 className="bg-neutral-800 p-4 md:p-[36px] max-h-[80vh] overflow-y-scroll scroll overflow-x-hidden rounded-xl flex flex-col gap-2 items-start"
               >
-                <Typography variant="xs" weight={600} className="text-neutral-400 uppercase mb-1">
+                <Typography
+                  variant="xs"
+                  weight={600}
+                  className="text-neutral-400 uppercase mb-1"
+                >
                   {caption}
                 </Typography>
                 <Typography
@@ -105,5 +116,5 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({ children, title, capti
         )}
       </AnimatePresence>
     </AnimateSharedLayout>
-  )
-}
+  );
+};

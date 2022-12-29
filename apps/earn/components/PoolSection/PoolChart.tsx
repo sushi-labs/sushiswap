@@ -1,18 +1,18 @@
-import { formatPercent, formatUSD } from '@sushiswap/format'
-import { Pair } from '@sushiswap/graph-client'
-import { AppearOnMount, classNames, Typography } from '@sushiswap/ui'
-import { format } from 'date-fns'
-import ReactECharts from 'echarts-for-react'
-import { EChartsOption } from 'echarts-for-react/lib/types'
-import { FC, useCallback, useMemo, useState } from 'react'
-import resolveConfig from 'tailwindcss/resolveConfig'
+import { formatPercent, formatUSD } from "@sushiswap/format";
+import { Pair } from "@sushiswap/graph-client";
+import { AppearOnMount, classNames, Typography } from "@sushiswap/ui";
+import { format } from "date-fns";
+import ReactECharts from "echarts-for-react";
+import { EChartsOption } from "echarts-for-react/lib/types";
+import { FC, useCallback, useMemo, useState } from "react";
+import resolveConfig from "tailwindcss/resolveConfig";
 
-import tailwindConfig from '../../tailwind.config.js'
+import tailwindConfig from "../../tailwind.config.js";
 
-const tailwind = resolveConfig(tailwindConfig)
+const tailwind = resolveConfig(tailwindConfig);
 
 interface PoolChartProps {
-  pair: Pair
+  pair: Pair;
 }
 
 enum PoolChartType {
@@ -36,83 +36,102 @@ const chartTimespans: Record<PoolChartPeriod, number> = {
   [PoolChartPeriod.Month]: 2629746 * 1000,
   [PoolChartPeriod.Year]: 31556952 * 1000,
   [PoolChartPeriod.All]: Infinity,
-}
+};
 
 export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
-  const [chartType, setChartType] = useState<PoolChartType>(PoolChartType.Volume)
-  const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Week)
+  const [chartType, setChartType] = useState<PoolChartType>(
+    PoolChartType.Volume
+  );
+  const [chartPeriod, setChartPeriod] = useState<PoolChartPeriod>(
+    PoolChartPeriod.Week
+  );
   const [xData, yData] = useMemo(() => {
     const data =
-      chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week] ? pair.hourSnapshots : pair.daySnapshots
-    const currentDate = Math.round(Date.now())
+      chartTimespans[chartPeriod] <= chartTimespans[PoolChartPeriod.Week]
+        ? pair.hourSnapshots
+        : pair.daySnapshots;
+    const currentDate = Math.round(Date.now());
     const [x, y] = data.reduce<[number[], number[]]>(
       (acc, cur) => {
         if (cur.date * 1000 >= currentDate - chartTimespans[chartPeriod]) {
-          acc[0].push(cur.date)
+          acc[0].push(cur.date);
           if (chartType === PoolChartType.Fees) {
-            acc[1].push(Number(cur.volumeUSD * (pair.swapFee / 10000)))
+            acc[1].push(Number(cur.volumeUSD * (pair.swapFee / 10000)));
           } else if (chartType === PoolChartType.Volume) {
-            acc[1].push(Number(cur.volumeUSD))
+            acc[1].push(Number(cur.volumeUSD));
           } else if (chartType === PoolChartType.TVL) {
-            acc[1].push(Number(cur.liquidityUSD))
+            acc[1].push(Number(cur.liquidityUSD));
           } else if (chartType === PoolChartType.APR) {
-            acc[1].push(Number(cur.apr))
+            acc[1].push(Number(cur.apr));
           }
         }
-        return acc
+        return acc;
       },
       [[], []]
-    )
+    );
 
-    return [x.reverse(), y.reverse()]
-  }, [chartPeriod, pair.hourSnapshots, pair.daySnapshots, pair.swapFee, chartType])
+    return [x.reverse(), y.reverse()];
+  }, [
+    chartPeriod,
+    pair.hourSnapshots,
+    pair.daySnapshots,
+    pair.swapFee,
+    chartType,
+  ]);
 
   // Transient update for performance
   const onMouseOver = useCallback(
     ({ name, value }: { name: number; value: number }) => {
-      const valueNodes = document.getElementsByClassName('hoveredItemValue')
-      const nameNodes = document.getElementsByClassName('hoveredItemName')
+      const valueNodes = document.getElementsByClassName("hoveredItemValue");
+      const nameNodes = document.getElementsByClassName("hoveredItemName");
 
       if (chartType === PoolChartType.APR) {
-        valueNodes[0].innerHTML = formatPercent(value)
+        valueNodes[0].innerHTML = formatPercent(value);
       } else {
-        valueNodes[0].innerHTML = formatUSD(value)
+        valueNodes[0].innerHTML = formatUSD(value);
       }
 
       if (chartType === PoolChartType.Volume) {
-        valueNodes[1].innerHTML = formatUSD(value * (pair.swapFee / 10000))
+        valueNodes[1].innerHTML = formatUSD(value * (pair.swapFee / 10000));
       }
-      nameNodes[0].innerHTML = format(new Date(name * 1000), 'dd MMM yyyy HH:mm')
+      nameNodes[0].innerHTML = format(
+        new Date(name * 1000),
+        "dd MMM yyyy HH:mm"
+      );
     },
     [chartType, pair.swapFee]
-  )
+  );
 
   const DEFAULT_OPTION: EChartsOption = useMemo(
     () => ({
       tooltip: {
-        trigger: 'axis',
-        extraCssText: 'z-index: 1000',
+        trigger: "axis",
+        extraCssText: "z-index: 1000",
         responsive: true,
         // @ts-ignore
-        backgroundColor: tailwind.theme.colors.slate['700'],
+        backgroundColor: tailwind.theme.colors.slate["700"],
         textStyle: {
           // @ts-ignore
-          color: tailwind.theme.colors.slate['50'],
+          color: tailwind.theme.colors.slate["50"],
           fontSize: 12,
           fontWeight: 600,
         },
         formatter: (params: any) => {
-          onMouseOver({ name: params[0].name, value: params[0].value })
+          onMouseOver({ name: params[0].name, value: params[0].value });
 
-          const date = new Date(Number(params[0].name * 1000))
+          const date = new Date(Number(params[0].name * 1000));
           return `<div class="flex flex-col gap-0.5">
             <span class="text-sm text-slate-50 font-semibold">${
-              chartType === PoolChartType.APR ? formatPercent(params[0].value) : formatUSD(params[0].value)
+              chartType === PoolChartType.APR
+                ? formatPercent(params[0].value)
+                : formatUSD(params[0].value)
             }</span>
             <span class="text-xs text-slate-400 font-medium">${
-              date instanceof Date && !isNaN(date?.getTime()) ? format(date, 'dd MMM yyyy HH:mm') : ''
+              date instanceof Date && !isNaN(date?.getTime())
+                ? format(date, "dd MMM yyyy HH:mm")
+                : ""
             }</span>
-          </div>`
+          </div>`;
         },
         borderWidth: 0,
       },
@@ -133,12 +152,12 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       visualMap: {
         show: false,
         // @ts-ignore
-        color: [tailwind.theme.colors.blue['500']],
+        color: [tailwind.theme.colors.blue["500"]],
       },
       xAxis: [
         {
           show: false,
-          type: 'category',
+          type: "category",
           boundaryGap: true,
           data: xData,
         },
@@ -146,39 +165,42 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
       yAxis: [
         {
           show: false,
-          type: 'value',
+          type: "value",
           scale: true,
-          name: 'Volume',
-          max: 'dataMax',
-          min: 'dataMin',
+          name: "Volume",
+          max: "dataMax",
+          min: "dataMin",
         },
       ],
       series: [
         {
-          name: 'Volume',
-          type: chartType === PoolChartType.TVL || chartType === PoolChartType.APR ? 'line' : 'bar',
+          name: "Volume",
+          type:
+            chartType === PoolChartType.TVL || chartType === PoolChartType.APR
+              ? "line"
+              : "bar",
           xAxisIndex: 0,
           yAxisIndex: 0,
           itemStyle: {
-            color: 'blue',
+            color: "blue",
             normal: {
               barBorderRadius: 2,
             },
           },
           areaStyle: {
             // @ts-ignore
-            color: tailwind.theme.colors.blue['500'],
+            color: tailwind.theme.colors.blue["500"],
           },
-          animationEasing: 'elasticOut',
+          animationEasing: "elasticOut",
           animationDelayUpdate: function (idx: number) {
-            return idx * 2
+            return idx * 2;
           },
           data: yData,
         },
       ],
     }),
     [onMouseOver, chartType, xData, yData]
-  )
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -187,8 +209,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartType(PoolChartType.Volume)}
             className={classNames(
-              'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.Volume ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
+              "border-b-[3px] pb-2 font-semibold text-sm",
+              chartType === PoolChartType.Volume
+                ? "text-slate-50 border-blue"
+                : "text-slate-500 border-transparent"
             )}
           >
             Volume
@@ -196,8 +220,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartType(PoolChartType.TVL)}
             className={classNames(
-              'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.TVL ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
+              "border-b-[3px] pb-2 font-semibold text-sm",
+              chartType === PoolChartType.TVL
+                ? "text-slate-50 border-blue"
+                : "text-slate-500 border-transparent"
             )}
           >
             TVL
@@ -205,8 +231,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartType(PoolChartType.Fees)}
             className={classNames(
-              'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.Fees ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
+              "border-b-[3px] pb-2 font-semibold text-sm",
+              chartType === PoolChartType.Fees
+                ? "text-slate-50 border-blue"
+                : "text-slate-500 border-transparent"
             )}
           >
             Fees
@@ -214,8 +242,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartType(PoolChartType.APR)}
             className={classNames(
-              'border-b-[3px] pb-2 font-semibold text-sm',
-              chartType === PoolChartType.APR ? 'text-slate-50 border-blue' : 'text-slate-500 border-transparent'
+              "border-b-[3px] pb-2 font-semibold text-sm",
+              chartType === PoolChartType.APR
+                ? "text-slate-50 border-blue"
+                : "text-slate-500 border-transparent"
             )}
           >
             APR
@@ -225,8 +255,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartPeriod(PoolChartPeriod.Day)}
             className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.Day ? 'text-blue' : 'text-slate-500'
+              "font-semibold text-sm",
+              chartPeriod === PoolChartPeriod.Day
+                ? "text-blue"
+                : "text-slate-500"
             )}
           >
             1D
@@ -234,8 +266,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartPeriod(PoolChartPeriod.Week)}
             className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.Week ? 'text-blue' : 'text-slate-500'
+              "font-semibold text-sm",
+              chartPeriod === PoolChartPeriod.Week
+                ? "text-blue"
+                : "text-slate-500"
             )}
           >
             1W
@@ -243,8 +277,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartPeriod(PoolChartPeriod.Month)}
             className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.Month ? 'text-blue' : 'text-slate-500'
+              "font-semibold text-sm",
+              chartPeriod === PoolChartPeriod.Month
+                ? "text-blue"
+                : "text-slate-500"
             )}
           >
             1M
@@ -252,8 +288,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartPeriod(PoolChartPeriod.Year)}
             className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.Year ? 'text-blue' : 'text-slate-500'
+              "font-semibold text-sm",
+              chartPeriod === PoolChartPeriod.Year
+                ? "text-blue"
+                : "text-slate-500"
             )}
           >
             1Y
@@ -261,8 +299,10 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
           <button
             onClick={() => setChartPeriod(PoolChartPeriod.All)}
             className={classNames(
-              'font-semibold text-sm',
-              chartPeriod === PoolChartPeriod.All ? 'text-blue' : 'text-slate-500'
+              "font-semibold text-sm",
+              chartPeriod === PoolChartPeriod.All
+                ? "text-blue"
+                : "text-slate-500"
             )}
           >
             ALL
@@ -275,22 +315,29 @@ export const PoolChart: FC<PoolChartProps> = ({ pair }) => {
             {chartType === PoolChartType.APR
               ? formatPercent(yData[yData.length - 1])
               : formatUSD(yData[yData.length - 1])}
-          </span>{' '}
+          </span>{" "}
           {chartType === PoolChartType.Volume && (
             <span className="text-sm font-medium text-slate-300">
-              <span className="text-xs top-[-2px] relative">•</span>{' '}
-              <span className="hoveredItemValue">{formatUSD(yData[yData.length - 1] * (pair.swapFee / 10000))}</span>{' '}
+              <span className="text-xs top-[-2px] relative">•</span>{" "}
+              <span className="hoveredItemValue">
+                {formatUSD(yData[yData.length - 1] * (pair.swapFee / 10000))}
+              </span>{" "}
               earned
             </span>
           )}
         </Typography>
         {xData.length && (
           <Typography variant="sm" className="text-slate-500 hoveredItemName">
-            <AppearOnMount>{format(new Date(xData[xData.length - 1] * 1000), 'dd MMM yyyy HH:mm')}</AppearOnMount>
+            <AppearOnMount>
+              {format(
+                new Date(xData[xData.length - 1] * 1000),
+                "dd MMM yyyy HH:mm"
+              )}
+            </AppearOnMount>
           </Typography>
         )}
       </div>
       <ReactECharts option={DEFAULT_OPTION} style={{ height: 400 }} />
     </div>
-  )
-}
+  );
+};

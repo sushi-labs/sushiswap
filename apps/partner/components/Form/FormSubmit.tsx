@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import React, { FC } from "react";
 
 export interface FormSubmitProps {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 export const FormSubmit: FC<FormSubmitProps> = ({ children }) => {
@@ -9,7 +9,7 @@ export const FormSubmit: FC<FormSubmitProps> = ({ children }) => {
     <div className="pt-8">
       <div className="flex justify-end">{children}</div>
     </div>
-  )
-}
+  );
+};
 
-export default FormSubmit
+export default FormSubmit;

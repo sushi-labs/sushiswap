@@ -1,10 +1,10 @@
-import { FC } from 'react'
+import { FC } from "react";
 
-import { Typography } from '../../typography'
-import { StepDetails } from './Stepper'
+import { Typography } from "../../typography";
+import { StepDetails } from "./Stepper";
 
 export interface StepDescriptionInterface extends StepDetails {
-  children: string
+  children: string;
 }
 
 export const StepDescription: FC<StepDescriptionInterface> = ({ children }) => {
@@ -12,5 +12,5 @@ export const StepDescription: FC<StepDescriptionInterface> = ({ children }) => {
     <Typography variant="sm" className="text-slate-500">
       {children}
     </Typography>
-  )
-}
+  );
+};

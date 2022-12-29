@@ -1,54 +1,58 @@
-import { CHAIN_NAME } from '@sushiswap/graph-config'
-import { useDebounce } from '@sushiswap/hooks'
-import { Checkbox, Loader } from '@sushiswap/ui'
-import { SubgraphTable } from 'components/subgraphs/SubgraphTable'
-import stringify from 'fast-json-stable-stringify'
-import { Subgraph } from 'lib'
-import { useMemo, useState } from 'react'
-import useSWR from 'swr'
+import { CHAIN_NAME } from "@sushiswap/graph-config";
+import { useDebounce } from "@sushiswap/hooks";
+import { Checkbox, Loader } from "@sushiswap/ui";
+import { SubgraphTable } from "components/subgraphs/SubgraphTable";
+import stringify from "fast-json-stable-stringify";
+import { Subgraph } from "lib";
+import { useMemo, useState } from "react";
+import useSWR from "swr";
 
 const fetcher = async ({
   url,
   args,
 }: {
-  url: string
+  url: string;
   args: {
-    filter: string
-  }
+    filter: string;
+  };
 }) => {
-  const _url = new URL(url, window.location.origin)
+  const _url = new URL(url, window.location.origin);
 
-  return fetch(_url.href + '?' + new URLSearchParams(args))
+  return fetch(_url.href + "?" + new URLSearchParams(args))
     .then((res) => res.json())
     .then((data: Subgraph[]) => data)
-    .catch((e) => console.log(stringify(e)))
-}
+    .catch((e) => console.log(stringify(e)));
+};
 
 const SubgraphsPage = () => {
-  const [filterBy, setFilter] = useState<string>('')
-  const debouncedFilterBy = useDebounce(filterBy, 400)
-  const [groupBy, setGroupBy] = useState<keyof Subgraph>('category')
-  const [blocks, setBlocks] = useState<{ title: string; subgraphs: Subgraph[] }[]>([])
+  const [filterBy, setFilter] = useState<string>("");
+  const debouncedFilterBy = useDebounce(filterBy, 400);
+  const [groupBy, setGroupBy] = useState<keyof Subgraph>("category");
+  const [blocks, setBlocks] = useState<
+    { title: string; subgraphs: Subgraph[] }[]
+  >([]);
 
   const { data, isValidating } = useSWR(
-    { url: '/internal/api/subgraphs', args: { filter: debouncedFilterBy } },
+    { url: "/internal/api/subgraphs", args: { filter: debouncedFilterBy } },
     fetcher
-  )
+  );
 
-  const subgraphs = useMemo(() => data || [], [data])
+  const subgraphs = useMemo(() => data || [], [data]);
 
   useMemo(() => {
     const groups = (subgraphs ?? [])
       .map((subgraph) => subgraph[groupBy])
-      .filter((value, index, self) => self.indexOf(value) === index) // remove duplicates
+      .filter((value, index, self) => self.indexOf(value) === index); // remove duplicates
 
     setBlocks(
       groups.map((group) => ({
-        title: String(groupBy === 'chainId' ? CHAIN_NAME[group as number] : group),
+        title: String(
+          groupBy === "chainId" ? CHAIN_NAME[group as number] : group
+        ),
         subgraphs: subgraphs.filter((subgraph) => subgraph[groupBy] === group),
       }))
-    )
-  }, [subgraphs, groupBy])
+    );
+  }, [subgraphs, groupBy]);
 
   return (
     <div className="flex flex-col items-center justify-center py-4">
@@ -61,12 +65,17 @@ const SubgraphsPage = () => {
                 <div>Group by</div>
                 <div className="h-px -m-4 bg-slate-700 w-parent" />
                 <div className="inline-grid grid-cols-2 gap-2 min-con">
-                  {(['chainId', 'category', 'type', 'status'] as const).map((group) => (
-                    <>
-                      <div>{group}</div>
-                      <Checkbox set={() => setGroupBy(group)} checked={groupBy === group} />
-                    </>
-                  ))}
+                  {(["chainId", "category", "type", "status"] as const).map(
+                    (group) => (
+                      <>
+                        <div>{group}</div>
+                        <Checkbox
+                          set={() => setGroupBy(group)}
+                          checked={groupBy === group}
+                        />
+                      </>
+                    )
+                  )}
                 </div>
               </div>
               <div className="flex flex-col justify-center p-4 space-y-4 text-sm bg-slate-800 bg-opacity-70 rounded-xl w-fit h-fit">
@@ -88,7 +97,9 @@ const SubgraphsPage = () => {
               </div>
             ))}
             {!data && !isValidating && (
-              <div className="">Error loading data. Probably 429d. Wait a bit and refresh.</div>
+              <div className="">
+                Error loading data. Probably 429d. Wait a bit and refresh.
+              </div>
             )}
             {!data && isValidating && (
               <div className="p-2 bg-slate-800 rounded-xl w-min">
@@ -99,7 +110,7 @@ const SubgraphsPage = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SubgraphsPage
+export default SubgraphsPage;

@@ -1,8 +1,8 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { DeployFunction } from 'hardhat-deploy/dist/types'
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeployFunction } from "hardhat-deploy/dist/types";
 
 // Defining bytecode and abi from original contract on mainnet to ensure bytecode matches and it produces the same pair code hash
-import { abi, bytecode } from '../deployments/ethereum/UniswapV2Factory.json'
+import { abi, bytecode } from "../deployments/ethereum/UniswapV2Factory.json";
 
 const func: DeployFunction = async function ({
   ethers,
@@ -10,11 +10,11 @@ const func: DeployFunction = async function ({
   deployments,
   getChainId,
 }: HardhatRuntimeEnvironment) {
-  const { deploy } = deployments
+  const { deploy } = deployments;
 
-  const { deployer, dev } = await getNamedAccounts()
+  const { deployer, dev } = await getNamedAccounts();
 
-  await deploy('UniswapV2Factory', {
+  await deploy("UniswapV2Factory", {
     contract: {
       abi,
       bytecode,
@@ -23,9 +23,9 @@ const func: DeployFunction = async function ({
     args: [dev],
     log: true,
     deterministicDeployment: false,
-  })
-}
+  });
+};
 
-func.tags = ['UniswapV2Factory', 'AMM']
+func.tags = ["UniswapV2Factory", "AMM"];
 
-export default func
+export default func;

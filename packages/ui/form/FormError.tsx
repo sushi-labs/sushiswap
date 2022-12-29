@@ -1,13 +1,13 @@
-import { FC } from 'react'
+import { FC } from "react";
 
-import { FormHelperText } from './FormHelperText'
+import { FormHelperText } from "./FormHelperText";
 
 interface FormError {
-  message?: string
+  message?: string;
 }
 
 export const FormError: FC<FormError> = ({ message }) => {
-  if (!message) return null
+  if (!message) return null;
 
-  return <FormHelperText isError={true} message={message} />
-}
+  return <FormHelperText isError={true} message={message} />;
+};

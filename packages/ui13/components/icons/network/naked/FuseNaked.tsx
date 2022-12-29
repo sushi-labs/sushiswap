@@ -1,11 +1,16 @@
-import * as React from 'react'
+import * as React from "react";
 
-export const FuseNaked = (props: React.ComponentProps<'svg'>) => (
-  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+export const FuseNaked = (props: React.ComponentProps<"svg">) => (
+  <svg
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <mask
       id="a"
       style={{
-        maskType: 'alpha',
+        maskType: "alpha",
       }}
       maskUnits="userSpaceOnUse"
       x={24}
@@ -36,18 +41,39 @@ export const FuseNaked = (props: React.ComponentProps<'svg'>) => (
       fill="url(#d)"
     />
     <defs>
-      <linearGradient id="b" x1={64.115} y1={25.108} x2={64.115} y2={105.373} gradientUnits="userSpaceOnUse">
+      <linearGradient
+        id="b"
+        x1={64.115}
+        y1={25.108}
+        x2={64.115}
+        y2={105.373}
+        gradientUnits="userSpaceOnUse"
+      >
         <stop stopColor="#B3F9BA" />
         <stop offset={1} stopColor="#F6FB8C" />
       </linearGradient>
-      <linearGradient id="c" x1={64.219} y1={25.17} x2={64.219} y2={103.527} gradientUnits="userSpaceOnUse">
+      <linearGradient
+        id="c"
+        x1={64.219}
+        y1={25.17}
+        x2={64.219}
+        y2={103.527}
+        gradientUnits="userSpaceOnUse"
+      >
         <stop stopColor="#B1FFBF" />
         <stop offset={1} stopColor="#FFF16D" />
       </linearGradient>
-      <linearGradient id="d" x1={64.219} y1={22.441} x2={64.219} y2={103.752} gradientUnits="userSpaceOnUse">
+      <linearGradient
+        id="d"
+        x1={64.219}
+        y1={22.441}
+        x2={64.219}
+        y2={103.752}
+        gradientUnits="userSpaceOnUse"
+      >
         <stop stopColor="#B3F9BA" />
         <stop offset={1} stopColor="#F6FB8C" />
       </linearGradient>
     </defs>
   </svg>
-)
+);

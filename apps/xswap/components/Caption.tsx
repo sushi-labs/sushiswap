@@ -1,11 +1,11 @@
-import { classNames, Link, SushiIcon } from '@sushiswap/ui'
-import { FC } from 'react'
+import { classNames, Link, SushiIcon } from "@sushiswap/ui";
+import { FC } from "react";
 
-import { Theme } from '../types'
+import { Theme } from "../types";
 
 interface Caption {
-  className?: string
-  theme: Theme
+  className?: string;
+  theme: Theme;
 }
 
 export const Caption: FC<Caption> = ({ className, theme }) => {
@@ -15,7 +15,7 @@ export const Caption: FC<Caption> = ({ className, theme }) => {
         className,
         theme.secondary.default,
         theme.secondary.hover,
-        'flex items-center justify-center gap-2 cursor-pointer'
+        "flex items-center justify-center gap-2 cursor-pointer"
       )}
     >
       <Link.Internal href="https://app.sushi.com" passHref={true}>
@@ -23,13 +23,17 @@ export const Caption: FC<Caption> = ({ className, theme }) => {
           className={classNames(
             theme.secondary.default,
             theme.secondary.hover,
-            'text-xs select-none w-full flex justify-center mt-1.5 -mb-1.5'
+            "text-xs select-none w-full flex justify-center mt-1.5 -mb-1.5"
           )}
         >
-          <SushiIcon width={16} height={16} className="mr-1 hover:animate-spin hover:text-pink" />
+          <SushiIcon
+            width={16}
+            height={16}
+            className="mr-1 hover:animate-spin hover:text-pink"
+          />
           Powered by <span className="ml-1 font-bold">Sushi</span>
         </a>
       </Link.Internal>
     </div>
-  )
-}
+  );
+};

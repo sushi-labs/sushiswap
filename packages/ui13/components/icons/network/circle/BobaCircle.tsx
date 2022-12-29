@@ -1,7 +1,12 @@
-import * as React from 'react'
+import * as React from "react";
 
-export const BobaCircle = (props: React.ComponentProps<'svg'>) => (
-  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+export const BobaCircle = (props: React.ComponentProps<"svg">) => (
+  <svg
+    viewBox="0 0 128 128"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <rect rx={64} fill="url(#a)" />
     <path
       d="M50.418 79.438a3.005 3.005 0 0 1-2.971-2.512L39.044 27.52a2.977 2.977 0 0 1 .515-2.25 3.014 3.014 0 0 1 1.955-1.228c1.64-.276 3.2.83 3.482 2.47l8.403 49.406a2.977 2.977 0 0 1-.516 2.25 3.014 3.014 0 0 1-2.465 1.27Z"
@@ -20,10 +25,17 @@ export const BobaCircle = (props: React.ComponentProps<'svg'>) => (
       fill="#000"
     />
     <defs>
-      <linearGradient id="a" x1="0" y1="0" x2="128" y2="140.5" gradientUnits="userSpaceOnUse">
+      <linearGradient
+        id="a"
+        x1="0"
+        y1="0"
+        x2="128"
+        y2="140.5"
+        gradientUnits="userSpaceOnUse"
+      >
         <stop stopColor="#1CD8D2" />
         <stop offset="1" stopColor="#CF0" />
       </linearGradient>
     </defs>
   </svg>
-)
+);

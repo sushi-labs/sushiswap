@@ -1,19 +1,37 @@
-import { Transition } from '@headlessui/react'
-import classNames from 'classnames'
-import React, { Children, cloneElement, FC, Fragment, isValidElement, ReactElement } from 'react'
+import { Transition } from "@headlessui/react";
+import classNames from "classnames";
+import React, {
+  Children,
+  cloneElement,
+  FC,
+  Fragment,
+  isValidElement,
+  ReactElement,
+} from "react";
 
-import { StepDescriptionInterface } from './StepDescription'
-import { StepDetails } from './Stepper'
+import { StepDescriptionInterface } from "./StepDescription";
+import { StepDetails } from "./Stepper";
 
 export interface StepContentInterface extends StepDetails {
-  description: React.ReactElement<StepDescriptionInterface>
-  children: ReactElement | ReactElement[]
+  description: React.ReactElement<StepDescriptionInterface>;
+  children: ReactElement | ReactElement[];
 }
 
-export const StepContent: FC<StepContentInterface> = ({ children, description, _index, _active, _last }) => {
+export const StepContent: FC<StepContentInterface> = ({
+  children,
+  description,
+  _index,
+  _active,
+  _last,
+}) => {
   return (
     <div className="flex gap-3">
-      <div className={classNames(_last ? '' : 'bg-slate-700', 'flex flex-grow-col min-h-[16px] mx-3 w-px')} />
+      <div
+        className={classNames(
+          _last ? "" : "bg-slate-700",
+          "flex flex-grow-col min-h-[16px] mx-3 w-px"
+        )}
+      />
       <Transition
         as={Fragment}
         show={_active}
@@ -35,12 +53,12 @@ export const StepContent: FC<StepContentInterface> = ({ children, description, _
                 _index,
                 _active,
                 _last,
-              })
+              });
             }
           })}
           <div />
         </div>
       </Transition>
     </div>
-  )
-}
+  );
+};

@@ -1,25 +1,31 @@
-import '@nomiclabs/hardhat-ethers'
-import 'hardhat-deploy'
+import "@nomiclabs/hardhat-ethers";
+import "hardhat-deploy";
 
-import { defaultConfig } from '@sushiswap/hardhat-config'
-import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
-import { HardhatUserConfig, subtask } from 'hardhat/config'
-import path from 'path'
+import { defaultConfig } from "@sushiswap/hardhat-config";
+import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from "hardhat/builtin-tasks/task-names";
+import { HardhatUserConfig, subtask } from "hardhat/config";
+import path from "path";
 
-subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
-  if (solcVersion === '0.8.11') {
-    const compilerPath = path.join(__dirname, 'soljson-v0.8.11+commit.d7f03943.js')
-    return {
-      compilerPath,
-      isSolcJs: true, // if you are using a native compiler, set this to false
-      version: solcVersion,
-      // this is used as extra information in the build-info files, but other than
-      // that is not important
-      longVersion: '0.8.11+commit.d7f03943',
+subtask(
+  TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD,
+  async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
+    if (solcVersion === "0.8.11") {
+      const compilerPath = path.join(
+        __dirname,
+        "soljson-v0.8.11+commit.d7f03943.js"
+      );
+      return {
+        compilerPath,
+        isSolcJs: true, // if you are using a native compiler, set this to false
+        version: solcVersion,
+        // this is used as extra information in the build-info files, but other than
+        // that is not important
+        longVersion: "0.8.11+commit.d7f03943",
+      };
     }
+    return runSuper();
   }
-  return runSuper()
-})
+);
 
 // task('approve', 'Approve to router').setAction(async function (_, { ethers, getChainId }) {
 //   const chainId = Number(await getChainId())
@@ -36,7 +42,7 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVers
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: '0.8.11',
+    version: "0.8.11",
     settings: {
       optimizer: {
         enabled: true,
@@ -67,6 +73,6 @@ const config: HardhatUserConfig = {
   // mocha: {
   //   timeout: 3_600_000,
   // },
-}
+};
 
-export default config
+export default config;

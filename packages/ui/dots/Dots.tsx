@@ -1,10 +1,10 @@
-import { FC } from 'react'
+import { FC } from "react";
 
-import { classNames } from '../index'
+import { classNames } from "../index";
 
 interface DotsProps {
-  children?: any
-  className?: string
+  children?: any;
+  className?: string;
 }
 
 export const Dots: FC<DotsProps> = ({ children = <span />, className }) => {
@@ -17,7 +17,7 @@ export const Dots: FC<DotsProps> = ({ children = <span />, className }) => {
     >
       {children}
     </span>
-  )
-}
+  );
+};
 
-export default Dots
+export default Dots;

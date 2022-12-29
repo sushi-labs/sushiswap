@@ -1,9 +1,9 @@
-import classNames from 'classnames'
-import { FC } from 'react'
+import classNames from "classnames";
+import { FC } from "react";
 
 interface DotsProps {
-  children?: any
-  className?: string
+  children?: any;
+  className?: string;
 }
 
 export const Dots: FC<DotsProps> = ({ children = <span />, className }) => {
@@ -16,5 +16,5 @@ export const Dots: FC<DotsProps> = ({ children = <span />, className }) => {
     >
       {children}
     </span>
-  )
-}
+  );
+};

@@ -1,30 +1,39 @@
-import classNames from 'classnames'
-import React from 'react'
+import classNames from "classnames";
+import React from "react";
 
-import { PolymorphicComponentPropsWithRef, PolymorphicRef } from '../types'
+import { PolymorphicComponentPropsWithRef, PolymorphicRef } from "../types";
 
 interface Props {
-  className?: string
-  description?: string
-  padding?: number
-  icon(props: React.ComponentProps<'svg'>): JSX.Element
-  iconProps: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
-    width: number
-    height: number
-  }
+  className?: string;
+  description?: string;
+  padding?: number;
+  icon(props: React.ComponentProps<"svg">): JSX.Element;
+  iconProps: Omit<React.ComponentProps<"svg">, "width" | "height"> & {
+    width: number;
+    height: number;
+  };
 }
 
-export type IconButtonProps<C extends React.ElementType> = PolymorphicComponentPropsWithRef<C, Props>
-export type IconButtonComponent = <C extends React.ElementType = 'button'>(
+export type IconButtonProps<C extends React.ElementType> =
+  PolymorphicComponentPropsWithRef<C, Props>;
+export type IconButtonComponent = <C extends React.ElementType = "button">(
   props: IconButtonProps<C>
-) => React.ReactElement | null
+) => React.ReactElement | null;
 
 export const IconButton: IconButtonComponent = React.forwardRef(
-  <Tag extends React.ElementType = 'button'>(
-    { as, icon: Icon, iconProps, className, padding = 16, description, ...rest }: IconButtonProps<Tag>,
+  <Tag extends React.ElementType = "button">(
+    {
+      as,
+      icon: Icon,
+      iconProps,
+      className,
+      padding = 16,
+      description,
+      ...rest
+    }: IconButtonProps<Tag>,
     ref?: PolymorphicRef<Tag>
   ) => {
-    const Component = as || 'button'
+    const Component = as || "button";
     return (
       <Component
         ref={ref}
@@ -32,7 +41,7 @@ export const IconButton: IconButtonComponent = React.forwardRef(
         {...rest}
         className={classNames(
           className,
-          'group relative focus:outline-none border:none flex justify-center items-center'
+          "group relative focus:outline-none border:none flex justify-center items-center"
         )}
       >
         <span
@@ -42,7 +51,11 @@ export const IconButton: IconButtonComponent = React.forwardRef(
           {description && (
             <div
               className="relative hidden group-hover:block"
-              style={{ height: iconProps.height, paddingTop: padding, paddingBottom: padding }}
+              style={{
+                height: iconProps.height,
+                paddingTop: padding,
+                paddingBottom: padding,
+              }}
             >
               <div className="left-0 right-0 absolute flex justify-center mt-1">
                 <span className="bg-gray-600 text-white px-2 py-0.5 rounded-xl whitespace-nowrap text-[10px]">
@@ -54,6 +67,6 @@ export const IconButton: IconButtonComponent = React.forwardRef(
         </span>
         <Icon {...iconProps} />
       </Component>
-    )
+    );
   }
-)
+);

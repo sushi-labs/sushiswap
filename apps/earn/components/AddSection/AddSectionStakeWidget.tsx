@@ -1,26 +1,36 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
-import { FundSource } from '@sushiswap/hooks'
-import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
-import { useTotalSupply } from '@sushiswap/wagmi'
-import { FC, Fragment, ReactNode, useMemo } from 'react'
+import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/outline";
+import { ChainId } from "@sushiswap/chain";
+import { Amount, Token, tryParseAmount, Type } from "@sushiswap/currency";
+import { formatUSD } from "@sushiswap/format";
+import { FundSource } from "@sushiswap/hooks";
+import {
+  Button,
+  classNames,
+  Currency,
+  DEFAULT_INPUT_UNSTYLED,
+  Input,
+  Typography,
+} from "@sushiswap/ui";
+import { Widget } from "@sushiswap/ui";
+import { useTotalSupply } from "@sushiswap/wagmi";
+import { FC, Fragment, ReactNode, useMemo } from "react";
 
-import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
-import { usePoolPosition } from '../PoolPositionProvider'
+import {
+  useTokenAmountDollarValues,
+  useUnderlyingTokenBalanceFromPair,
+} from "../../lib/hooks";
+import { usePoolPosition } from "../PoolPositionProvider";
 
 interface AddSectionStakeWidgetProps {
-  title?: string
-  chainId: ChainId
-  value: string
-  setValue(value: string): void
-  reserve0: Amount<Type>
-  reserve1: Amount<Type>
-  liquidityToken: Token
-  children: ReactNode
+  title?: string;
+  chainId: ChainId;
+  value: string;
+  setValue(value: string): void;
+  reserve0: Amount<Type>;
+  reserve1: Amount<Type>;
+  liquidityToken: Token;
+  children: ReactNode;
 }
 
 export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
@@ -33,21 +43,24 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
   reserve0,
   children,
 }) => {
-  const { balance } = usePoolPosition()
-  const totalSupply = useTotalSupply(liquidityToken)
+  const { balance } = usePoolPosition();
+  const totalSupply = useTotalSupply(liquidityToken);
 
   const amount = useMemo(() => {
-    return tryParseAmount(value, liquidityToken)
-  }, [liquidityToken, value])
+    return tryParseAmount(value, liquidityToken);
+  }, [liquidityToken, value]);
 
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0,
     reserve1,
     totalSupply,
     balance: amount,
-  })
+  });
 
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: underlying,
+  });
 
   return useMemo(
     () => (
@@ -58,14 +71,21 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
               <>
                 <Disclosure.Button className="w-full pr-4">
                   <div className="flex justify-between items-center">
-                    <Widget.Header title={title || '2. Stake Liquidity'} className="!pb-3 " />
+                    <Widget.Header
+                      title={title || "2. Stake Liquidity"}
+                      className="!pb-3 "
+                    />
                     <div
                       className={classNames(
-                        open ? 'rotate-180' : 'rotate-0',
-                        'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
+                        open ? "rotate-180" : "rotate-0",
+                        "transition-all w-5 h-5 -mr-1.5 flex items-center delay-300"
                       )}
                     >
-                      <ChevronDownIcon width={24} height={24} className="group-hover:text-slate-200 text-slate-300" />
+                      <ChevronDownIcon
+                        width={24}
+                        height={24}
+                        className="group-hover:text-slate-200 text-slate-300"
+                      />
                     </div>
                   </div>
                 </Disclosure.Button>
@@ -80,8 +100,12 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <Typography variant="sm" className="text-slate-400 px-3 pb-5">
-                      Stake your liquidity tokens to receive incentive rewards on top of your pool fee rewards
+                    <Typography
+                      variant="sm"
+                      className="text-slate-400 px-3 pb-5"
+                    >
+                      Stake your liquidity tokens to receive incentive rewards
+                      on top of your pool fee rewards
                     </Typography>
                     <div className="flex flex-col gap-3 p-3">
                       <div className="flex items-center gap-2">
@@ -91,23 +115,45 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                             value={value}
                             placeholder="0"
                             variant="unstyled"
-                            className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-2xl')}
+                            className={classNames(
+                              DEFAULT_INPUT_UNSTYLED,
+                              "!text-2xl"
+                            )}
                           />
                         </div>
                         <div className="flex gap-2">
                           <Button
                             size="xs"
-                            onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(4)?.toExact() || '')}
+                            onClick={() =>
+                              setValue(
+                                balance?.[FundSource.WALLET]
+                                  ?.divide(4)
+                                  ?.toExact() || ""
+                              )
+                            }
                           >
                             25%
                           </Button>
                           <Button
                             size="xs"
-                            onClick={() => setValue(balance?.[FundSource.WALLET]?.divide(2)?.toExact() || '')}
+                            onClick={() =>
+                              setValue(
+                                balance?.[FundSource.WALLET]
+                                  ?.divide(2)
+                                  ?.toExact() || ""
+                              )
+                            }
                           >
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}>
+                          <Button
+                            size="xs"
+                            onClick={() =>
+                              setValue(
+                                balance?.[FundSource.WALLET]?.toExact() || ""
+                              )
+                            }
+                          >
                             MAX
                           </Button>
                         </div>
@@ -130,7 +176,11 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           leaveFrom="transform opacity-100"
                           leaveTo="transform opacity-0"
                         >
-                          <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
+                          <Typography
+                            variant="sm"
+                            weight={500}
+                            className="text-slate-300 hover:text-slate-20"
+                          >
                             {formatUSD(value0 + value1)}
                           </Typography>
                         </Transition>
@@ -146,13 +196,18 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                           leaveTo="transform opacity-0"
                         >
                           <Typography
-                            onClick={() => setValue(balance?.[FundSource.WALLET]?.toExact() || '')}
+                            onClick={() =>
+                              setValue(
+                                balance?.[FundSource.WALLET]?.toExact() || ""
+                              )
+                            }
                             as="button"
                             variant="sm"
                             weight={500}
                             className="col-span-2 justify-end flex text-slate-300 hover:text-slate-200 truncate"
                           >
-                            Balance: {balance?.[FundSource.WALLET].toSignificant(6)}
+                            Balance:{" "}
+                            {balance?.[FundSource.WALLET].toSignificant(6)}
                           </Typography>
                         </Transition>
                       </div>
@@ -166,6 +221,16 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
         </Widget.Content>
       </Widget>
     ),
-    [balance, children, reserve0.currency, reserve1.currency, setValue, title, value, value0, value1]
-  )
-}
+    [
+      balance,
+      children,
+      reserve0.currency,
+      reserve1.currency,
+      setValue,
+      title,
+      value,
+      value0,
+      value1,
+    ]
+  );
+};

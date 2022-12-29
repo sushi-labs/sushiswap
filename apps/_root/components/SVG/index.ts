@@ -1,1 +1,1 @@
-export * from './SwitchSVG'
+export * from "./SwitchSVG";

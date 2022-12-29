@@ -1,6 +1,6 @@
-import * as React from 'react'
+import * as React from "react";
 
-export const OkexNaked = (props: React.ComponentProps<'svg'>) => (
+export const OkexNaked = (props: React.ComponentProps<"svg">) => (
   <svg
     viewBox="0 0 128 128"
     fill="none"
@@ -29,4 +29,4 @@ export const OkexNaked = (props: React.ComponentProps<'svg'>) => (
       fill="currentColor"
     />
   </svg>
-)
+);

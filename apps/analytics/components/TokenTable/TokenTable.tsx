@@ -1,13 +1,19 @@
-import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/graph-client'
-import { useBreakpoint } from '@sushiswap/hooks'
-import { Table } from '@sushiswap/ui'
-import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import stringify from 'fast-json-stable-stringify'
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import useSWR from 'swr'
+import { ChainId } from "@sushiswap/chain";
+import { Token } from "@sushiswap/graph-client";
+import { useBreakpoint } from "@sushiswap/hooks";
+import { Table } from "@sushiswap/ui";
+import {
+  getCoreRowModel,
+  getSortedRowModel,
+  PaginationState,
+  SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
+import stringify from "fast-json-stable-stringify";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 
-import { usePoolFilters } from '../PoolsFiltersProvider'
+import { usePoolFilters } from "../PoolsFiltersProvider";
 import {
   GenericTable,
   PAGE_SIZE,
@@ -16,76 +22,92 @@ import {
   TOKEN_NAME_COLUMN,
   TOKEN_PRICE_COLUMN,
   TOKEN_VOLUME_COLUMN,
-} from '../Table'
+} from "../Table";
 
 // @ts-ignore
-const COLUMNS = [TOKEN_CHAIN_COLUMN, TOKEN_NAME_COLUMN, TOKEN_PRICE_COLUMN, TOKEN_LIQUIDITY_COLUMN, TOKEN_VOLUME_COLUMN]
+const COLUMNS = [
+  TOKEN_CHAIN_COLUMN,
+  TOKEN_NAME_COLUMN,
+  TOKEN_PRICE_COLUMN,
+  TOKEN_LIQUIDITY_COLUMN,
+  TOKEN_VOLUME_COLUMN,
+];
 
 const fetcher = ({
   url,
   args,
 }: {
-  url: string
+  url: string;
   args: {
-    sorting: SortingState
-    pagination: PaginationState
-    query: string
-    extraQuery: string
-    selectedNetworks: ChainId[]
-  }
+    sorting: SortingState;
+    pagination: PaginationState;
+    query: string;
+    extraQuery: string;
+    selectedNetworks: ChainId[];
+  };
 }) => {
-  const _url = new URL(url, window.location.origin)
+  const _url = new URL(url, window.location.origin);
 
   if (args.sorting[0]) {
-    _url.searchParams.set('orderBy', args.sorting[0].id)
-    _url.searchParams.set('orderDirection', args.sorting[0].desc ? 'desc' : 'asc')
+    _url.searchParams.set("orderBy", args.sorting[0].id);
+    _url.searchParams.set(
+      "orderDirection",
+      args.sorting[0].desc ? "desc" : "asc"
+    );
   }
 
   if (args.pagination) {
-    _url.searchParams.set('pagination', stringify(args.pagination))
+    _url.searchParams.set("pagination", stringify(args.pagination));
   }
 
   if (args.selectedNetworks) {
-    _url.searchParams.set('networks', stringify(args.selectedNetworks))
+    _url.searchParams.set("networks", stringify(args.selectedNetworks));
   }
 
-  let where = {}
+  let where = {};
   if (args.query) {
     where = {
       symbol_contains_nocase: args.query,
-    }
+    };
 
-    _url.searchParams.set('where', stringify(where))
+    _url.searchParams.set("where", stringify(where));
   }
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
-}
+    .catch((e) => console.log(stringify(e)));
+};
 
 export const TokenTable: FC = () => {
-  const { query, selectedNetworks } = usePoolFilters()
-  const { isSm } = useBreakpoint('sm')
-  const { isMd } = useBreakpoint('md')
-  const { isLg } = useBreakpoint('lg')
+  const { query, selectedNetworks } = usePoolFilters();
+  const { isSm } = useBreakpoint("sm");
+  const { isMd } = useBreakpoint("md");
+  const { isLg } = useBreakpoint("lg");
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
-  const [columnVisibility, setColumnVisibility] = useState({})
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "liquidityUSD", desc: true },
+  ]);
+  const [columnVisibility, setColumnVisibility] = useState({});
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: PAGE_SIZE,
-  })
+  });
 
   const args = useMemo(
     () => ({ sorting, pagination, selectedNetworks, query }),
     [sorting, pagination, selectedNetworks, query]
-  )
+  );
 
-  const { data: tokens, isValidating } = useSWR<Token[]>({ url: '/analytics/api/tokens', args }, fetcher)
+  const { data: tokens, isValidating } = useSWR<Token[]>(
+    { url: "/analytics/api/tokens", args },
+    fetcher
+  );
   const { data: tokenCount } = useSWR<number>(
-    `/analytics/api/tokens/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
+    `/analytics/api/tokens/count${
+      selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ""
+    }`,
     (url) => fetch(url).then((response) => response.json())
-  )
+  );
 
   const table = useReactTable<Token>({
     data: tokens || [],
@@ -101,17 +123,17 @@ export const TokenTable: FC = () => {
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
     manualPagination: true,
-  })
+  });
 
   useEffect(() => {
     if (isSm && !isMd && !isLg) {
-      setColumnVisibility({ price: false })
+      setColumnVisibility({ price: false });
     } else if (isSm) {
-      setColumnVisibility({})
+      setColumnVisibility({});
     } else {
-      setColumnVisibility({ price: false, volume: false })
+      setColumnVisibility({ price: false, volume: false });
     }
-  }, [isLg, isMd, isSm])
+  }, [isLg, isMd, isSm]);
 
   return (
     <div>
@@ -134,5 +156,5 @@ export const TokenTable: FC = () => {
         pageSize={PAGE_SIZE}
       />
     </div>
-  )
-}
+  );
+};

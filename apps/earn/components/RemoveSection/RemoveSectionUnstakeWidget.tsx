@@ -1,25 +1,35 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
-import { ChainId } from '@sushiswap/chain'
-import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
-import { formatUSD } from '@sushiswap/format'
-import { ZERO } from '@sushiswap/math'
-import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui'
-import { useTotalSupply } from '@sushiswap/wagmi'
-import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
+import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/outline";
+import { ChainId } from "@sushiswap/chain";
+import { Amount, Token, tryParseAmount, Type } from "@sushiswap/currency";
+import { formatUSD } from "@sushiswap/format";
+import { ZERO } from "@sushiswap/math";
+import {
+  Button,
+  classNames,
+  Currency,
+  DEFAULT_INPUT_UNSTYLED,
+  Input,
+  Typography,
+} from "@sushiswap/ui";
+import { Widget } from "@sushiswap/ui";
+import { useTotalSupply } from "@sushiswap/wagmi";
+import { FC, Fragment, ReactNode, useMemo, useState } from "react";
 
-import { useTokenAmountDollarValues, useUnderlyingTokenBalanceFromPair } from '../../lib/hooks'
-import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
+import {
+  useTokenAmountDollarValues,
+  useUnderlyingTokenBalanceFromPair,
+} from "../../lib/hooks";
+import { usePoolPositionStaked } from "../PoolPositionStakedProvider";
 
 interface RemoveSectionUnstakeWidget {
-  chainId: ChainId
-  value: string
-  setValue(value: string): void
-  reserve0: Amount<Type>
-  reserve1: Amount<Type>
-  liquidityToken: Token
-  children: ReactNode
+  chainId: ChainId;
+  value: string;
+  setValue(value: string): void;
+  reserve0: Amount<Type>;
+  reserve1: Amount<Type>;
+  liquidityToken: Token;
+  children: ReactNode;
 }
 
 export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
@@ -31,25 +41,32 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
   reserve0,
   children,
 }) => {
-  const [hover, setHover] = useState(false)
-  const totalSupply = useTotalSupply(liquidityToken)
-  const { balance } = usePoolPositionStaked()
+  const [hover, setHover] = useState(false);
+  const totalSupply = useTotalSupply(liquidityToken);
+  const { balance } = usePoolPositionStaked();
 
   const amount = useMemo(() => {
-    return tryParseAmount(value, liquidityToken)
-  }, [liquidityToken, value])
+    return tryParseAmount(value, liquidityToken);
+  }, [liquidityToken, value]);
 
   const underlying = useUnderlyingTokenBalanceFromPair({
     reserve0,
     reserve1,
     totalSupply,
     balance: amount,
-  })
+  });
 
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: underlying,
+  });
 
   return (
-    <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+    <div
+      className="relative"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
       <Transition
         show={Boolean(hover && !balance?.greaterThan(ZERO))}
         as={Fragment}
@@ -61,7 +78,11 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
         leaveTo="transform opacity-0"
       >
         <div className="border border-slate-200/5 flex justify-center items-center z-[100] absolute inset-0 backdrop-blur bg-black bg-opacity-[0.24] rounded-2xl">
-          <Typography variant="xs" weight={600} className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3">
+          <Typography
+            variant="xs"
+            weight={600}
+            className="bg-white bg-opacity-[0.12] rounded-full p-2 px-3"
+          >
             No staked tokens found
           </Typography>
         </div>
@@ -73,14 +94,21 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
               <>
                 <Disclosure.Button className="w-full pr-4">
                   <div className="flex justify-between items-center">
-                    <Widget.Header title="Unstake Liquidity" className="!pb-3" />
+                    <Widget.Header
+                      title="Unstake Liquidity"
+                      className="!pb-3"
+                    />
                     <div
                       className={classNames(
-                        open ? 'rotate-180' : 'rotate-0',
-                        'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
+                        open ? "rotate-180" : "rotate-0",
+                        "transition-all w-5 h-5 -mr-1.5 flex items-center delay-300"
                       )}
                     >
-                      <ChevronDownIcon width={24} height={24} className="group-hover:text-slate-200 text-slate-300" />
+                      <ChevronDownIcon
+                        width={24}
+                        height={24}
+                        className="group-hover:text-slate-200 text-slate-300"
+                      />
                     </div>
                   </div>
                 </Disclosure.Button>
@@ -95,8 +123,12 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                   leaveTo="transform max-h-0"
                 >
                   <Disclosure.Panel unmount={false}>
-                    <Typography variant="sm" className="text-slate-400 px-3 pb-5">
-                      Unstake your liquidity tokens first if you mean to remove your liquidity position
+                    <Typography
+                      variant="sm"
+                      className="text-slate-400 px-3 pb-5"
+                    >
+                      Unstake your liquidity tokens first if you mean to remove
+                      your liquidity position
                     </Typography>
                     <div className="flex flex-col gap-3 p-3">
                       <div className="flex items-center gap-2">
@@ -106,17 +138,33 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                             value={value}
                             placeholder="0"
                             variant="unstyled"
-                            className={classNames(DEFAULT_INPUT_UNSTYLED, '!text-2xl')}
+                            className={classNames(
+                              DEFAULT_INPUT_UNSTYLED,
+                              "!text-2xl"
+                            )}
                           />
                         </div>
                         <div className="flex gap-2">
-                          <Button size="xs" onClick={() => setValue(balance?.divide(4)?.toExact() || '')}>
+                          <Button
+                            size="xs"
+                            onClick={() =>
+                              setValue(balance?.divide(4)?.toExact() || "")
+                            }
+                          >
                             25%
                           </Button>
-                          <Button size="xs" onClick={() => setValue(balance?.divide(2)?.toExact() || '')}>
+                          <Button
+                            size="xs"
+                            onClick={() =>
+                              setValue(balance?.divide(2)?.toExact() || "")
+                            }
+                          >
                             50%
                           </Button>
-                          <Button size="xs" onClick={() => setValue(balance?.toExact() || '')}>
+                          <Button
+                            size="xs"
+                            onClick={() => setValue(balance?.toExact() || "")}
+                          >
                             MAX
                           </Button>
                         </div>
@@ -139,7 +187,11 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                           leaveFrom="transform opacity-100"
                           leaveTo="transform opacity-0"
                         >
-                          <Typography variant="sm" weight={500} className="text-slate-300 hover:text-slate-20">
+                          <Typography
+                            variant="sm"
+                            weight={500}
+                            className="text-slate-300 hover:text-slate-20"
+                          >
                             {formatUSD(value0 + value1)}
                           </Typography>
                         </Transition>
@@ -155,7 +207,7 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                           leaveTo="transform opacity-0"
                         >
                           <Typography
-                            onClick={() => setValue(balance?.toExact() || '')}
+                            onClick={() => setValue(balance?.toExact() || "")}
                             as="button"
                             variant="sm"
                             weight={500}
@@ -175,5 +227,5 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
         </Widget.Content>
       </Widget>
     </div>
-  )
-}
+  );
+};

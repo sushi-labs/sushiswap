@@ -1,1 +1,1 @@
-export type AddressMap = Record<number | string, string>
+export type AddressMap = Record<number | string, string>;

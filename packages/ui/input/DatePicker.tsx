@@ -1,3 +1,3 @@
-import { default as ReactDatePicker } from 'react-datepicker'
+import { default as ReactDatePicker } from "react-datepicker";
 
-export const DatePicker = ReactDatePicker
+export const DatePicker = ReactDatePicker;

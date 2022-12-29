@@ -1,8 +1,8 @@
-import { execute } from './'
+import { execute } from "./";
 
 async function main() {
-  await execute()
-  process.exit()
+  await execute();
+  process.exit();
 }
 
-main()
+main();

@@ -57,12 +57,8 @@ query BlocksByChainIds(
   }
 }
 
-query OneDayBlocks(
-  $chainIds: [Int!]!
-) {
-  oneDayBlocks(
-    chainIds: $chainIds
-  ) {
+query OneDayBlocks($chainIds: [Int!]!) {
+  oneDayBlocks(chainIds: $chainIds) {
     id
     chainId
     number
@@ -70,12 +66,8 @@ query OneDayBlocks(
   }
 }
 
-query TwoDayBlocks(
-  $chainIds: [Int!]!
-) {
-  twoDayBlocks(
-    chainIds: $chainIds
-  ) {
+query TwoDayBlocks($chainIds: [Int!]!) {
+  twoDayBlocks(chainIds: $chainIds) {
     id
     chainId
     number
@@ -83,12 +75,8 @@ query TwoDayBlocks(
   }
 }
 
-query OneWeekBlocks(
-  $chainIds: [Int!]!
-) {
-  oneWeekBlocks(
-    chainIds: $chainIds
-  ) {
+query OneWeekBlocks($chainIds: [Int!]!) {
+  oneWeekBlocks(chainIds: $chainIds) {
     id
     chainId
     number
@@ -96,14 +84,8 @@ query OneWeekBlocks(
   }
 }
 
-query CustomBlocks(
-  $timestamp: Int!
-  $chainIds: [Int!]!
-) {
-  customBlocks(
-    timestamp: $timestamp
-    chainIds: $chainIds
-  ) {
+query CustomBlocks($timestamp: Int!, $chainIds: [Int!]!) {
+  customBlocks(timestamp: $timestamp, chainIds: $chainIds) {
     id
     chainId
     number

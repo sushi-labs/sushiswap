@@ -1,12 +1,17 @@
-import React, { FC } from 'react'
+import React, { FC } from "react";
 
-type BackgroundVector = Omit<React.ComponentProps<'svg'>, 'width'> & {
-  width: string | number
-}
+type BackgroundVector = Omit<React.ComponentProps<"svg">, "width"> & {
+  width: string | number;
+};
 
 export const BackgroundVector: FC<BackgroundVector> = (props) => {
   return (
-    <svg viewBox="0 0 1437 459" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      viewBox="0 0 1437 459"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <g opacity={0.3} strokeLinecap="round">
         <path
           d="M1164.62-184.379c-21.13 14.864-66.6 58.682-79.37 115.042l-44.76 239.982"
@@ -196,7 +201,7 @@ export const BackgroundVector: FC<BackgroundVector> = (props) => {
       <mask
         id="a"
         style={{
-          maskType: 'alpha',
+          maskType: "alpha",
         }}
         maskUnits="userSpaceOnUse"
         x={-27}
@@ -1311,5 +1316,5 @@ export const BackgroundVector: FC<BackgroundVector> = (props) => {
         </linearGradient>
       </defs>
     </svg>
-  )
-}
+  );
+};

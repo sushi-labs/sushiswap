@@ -4,7 +4,11 @@ query articleAndMoreArticles(
   $filters_ne: ArticleFiltersInput
   $publicationState: PublicationState
 ) {
-  articles(locale: $locale, filters: $filters, publicationState: $publicationState) {
+  articles(
+    locale: $locale
+    filters: $filters
+    publicationState: $publicationState
+  ) {
     data {
       attributes {
         title
@@ -167,7 +171,11 @@ query articleAndMoreArticles(
 }
 
 query getAllArticlesWithSlug {
-  articles(pagination: { pageSize: 10000 }, filters: { articleTypes: { type: { eq: "blog" } } }, locale: "all") {
+  articles(
+    pagination: { pageSize: 10000 }
+    filters: { articleTypes: { type: { eq: "blog" } } }
+    locale: "all"
+  ) {
     data {
       id
       attributes {
@@ -234,7 +242,11 @@ query getPreviewPostBySlug($slug: String) {
 }
 
 query getArticles($filters: ArticleFiltersInput, $pagination: PaginationArg) {
-  articles(pagination: $pagination, sort: "publishedAt:desc", filters: $filters) {
+  articles(
+    pagination: $pagination
+    sort: "publishedAt:desc"
+    filters: $filters
+  ) {
     meta {
       pagination {
         page

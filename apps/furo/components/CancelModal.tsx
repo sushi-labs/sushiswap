@@ -1,57 +1,80 @@
-import { TransactionRequest } from '@ethersproject/providers'
-import { TrashIcon } from '@heroicons/react/outline'
-import { CheckCircleIcon } from '@heroicons/react/solid'
-import { ChainId } from '@sushiswap/chain'
-import { FundSource, useFundSourceToggler } from '@sushiswap/hooks'
-import { Button, classNames, DEFAULT_INPUT_BG, Dialog, Dots, Typography } from '@sushiswap/ui'
-import { useSendTransaction } from '@sushiswap/wagmi/hooks/useSendTransaction'
-import { Checker } from '@sushiswap/wagmi/systems'
-import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react'
-import { useAccount, useContract } from 'wagmi'
-import { SendTransactionResult } from 'wagmi/actions'
+import { TransactionRequest } from "@ethersproject/providers";
+import { TrashIcon } from "@heroicons/react/outline";
+import { CheckCircleIcon } from "@heroicons/react/solid";
+import { ChainId } from "@sushiswap/chain";
+import { FundSource, useFundSourceToggler } from "@sushiswap/hooks";
+import {
+  Button,
+  classNames,
+  DEFAULT_INPUT_BG,
+  Dialog,
+  Dots,
+  Typography,
+} from "@sushiswap/ui";
+import { useSendTransaction } from "@sushiswap/wagmi/hooks/useSendTransaction";
+import { Checker } from "@sushiswap/wagmi/systems";
+import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
+import { useAccount, useContract } from "wagmi";
+import { SendTransactionResult } from "wagmi/actions";
 
-import { Stream, Vesting } from '../lib'
-import { useNotifications } from '../lib/state/storage'
+import { Stream, Vesting } from "../lib";
+import { useNotifications } from "../lib/state/storage";
 
 interface CancelModalProps {
-  title: string
-  stream?: Stream | Vesting
-  abi: NonNullable<Parameters<typeof useContract>['0']>['abi']
-  address: string
-  fn: string
-  chainId: ChainId
+  title: string;
+  stream?: Stream | Vesting;
+  abi: NonNullable<Parameters<typeof useContract>["0"]>["abi"];
+  address: string;
+  fn: string;
+  chainId: ChainId;
 }
 
-export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contractAddress, fn, title, chainId }) => {
-  const [open, setOpen] = useState(false)
-  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(FundSource.WALLET)
-  const { address } = useAccount()
-  const [, { createNotification }] = useNotifications(address)
+export const CancelModal: FC<CancelModalProps> = ({
+  stream,
+  abi,
+  address: contractAddress,
+  fn,
+  title,
+  chainId,
+}) => {
+  const [open, setOpen] = useState(false);
+  const { value: fundSource, setValue: setFundSource } = useFundSourceToggler(
+    FundSource.WALLET
+  );
+  const { address } = useAccount();
+  const [, { createNotification }] = useNotifications(address);
   const contract = useContract({
     address: contractAddress,
     abi: abi,
-  })
+  });
 
   const prepare = useCallback(
-    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
-      if (!stream || !address) return
+    (
+      setRequest: Dispatch<
+        SetStateAction<(TransactionRequest & { to: string }) | undefined>
+      >
+    ) => {
+      if (!stream || !address) return;
 
       setRequest({
         from: address,
         to: contractAddress,
-        data: contract?.interface.encodeFunctionData(fn, [stream.id, fundSource === FundSource.BENTOBOX]),
-      })
+        data: contract?.interface.encodeFunctionData(fn, [
+          stream.id,
+          fundSource === FundSource.BENTOBOX,
+        ]),
+      });
     },
     [stream, address, contractAddress, contract?.interface, fn, fundSource]
-  )
+  );
 
   const onSettled = useCallback(
     async (data: SendTransactionResult | undefined) => {
-      if (!data) return
+      if (!data) return;
 
-      const ts = new Date().getTime()
+      const ts = new Date().getTime();
       createNotification({
-        type: 'cancelStream',
+        type: "cancelStream",
         txHash: data.hash,
         chainId,
         timestamp: ts,
@@ -60,24 +83,24 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         summary: {
           pending: `Cancelling stream`,
           completed: `Successfully cancelled stream`,
-          failed: 'Something went wrong cancelling the stream',
+          failed: "Something went wrong cancelling the stream",
         },
-      })
+      });
     },
     [chainId, createNotification]
-  )
+  );
 
   const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
     chainId,
     prepare,
     onSettled,
     onSuccess() {
-      setOpen(false)
+      setOpen(false);
     },
     enabled: Boolean(stream && address),
-  })
+  });
 
-  if (!address || !stream?.canCancel(address)) return <></>
+  if (!address || !stream?.canCancel(address)) return <></>;
 
   return (
     <>
@@ -86,7 +109,9 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
           <Button
             fullWidth
             color="gray"
-            startIcon={<TrashIcon className="text-red-400" width={18} height={18} />}
+            startIcon={
+              <TrashIcon className="text-red-400" width={18} height={18} />
+            }
             onClick={() => setOpen(true)}
           />
         </Checker.Network>
@@ -98,12 +123,18 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
             <div
               onClick={() => setFundSource(FundSource.WALLET)}
               className={classNames(
-                fundSource === FundSource.WALLET ? 'ring-green/70' : 'ring-transparent',
+                fundSource === FundSource.WALLET
+                  ? "ring-green/70"
+                  : "ring-transparent",
                 DEFAULT_INPUT_BG,
-                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                "ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]"
               )}
             >
-              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography
+                weight={500}
+                variant="sm"
+                className="!leading-5 tracking-widest text-slate-200"
+              >
                 Wallet
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -118,12 +149,18 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
             <div
               onClick={() => setFundSource(FundSource.BENTOBOX)}
               className={classNames(
-                fundSource === FundSource.BENTOBOX ? 'ring-green/70' : 'ring-transparent',
+                fundSource === FundSource.BENTOBOX
+                  ? "ring-green/70"
+                  : "ring-transparent",
                 DEFAULT_INPUT_BG,
-                'ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]'
+                "ring-2 ring-offset-2 ring-offset-slate-800 rounded-xl px-5 py-3 cursor-pointer relative flex flex-col justify-center gap-3 min-w-[140px]"
               )}
             >
-              <Typography weight={500} variant="sm" className="!leading-5 tracking-widest text-slate-200">
+              <Typography
+                weight={500}
+                variant="sm"
+                className="!leading-5 tracking-widest text-slate-200"
+              >
                 BentoBox
               </Typography>
               <Typography variant="xs" className="text-slate-400">
@@ -136,14 +173,19 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
               )}
             </div>
           </div>
-          <Typography variant="xs" weight={400} className="italic text-center text-slate-400">
-            This will send the remaining amount of <br />{' '}
+          <Typography
+            variant="xs"
+            weight={400}
+            className="italic text-center text-slate-400"
+          >
+            This will send the remaining amount of <br />{" "}
             <span className="font-medium text-slate-200">
-              {stream?.remainingAmount?.toSignificant(6)} {stream?.remainingAmount?.currency.symbol}
-            </span>{' '}
-            to your{' '}
+              {stream?.remainingAmount?.toSignificant(6)}{" "}
+              {stream?.remainingAmount?.currency.symbol}
+            </span>{" "}
+            to your{" "}
             <span className="font-medium text-slate-200">
-              {fundSource === FundSource.BENTOBOX ? 'BentoBox' : 'Wallet'}
+              {fundSource === FundSource.BENTOBOX ? "BentoBox" : "Wallet"}
             </span>
           </Typography>
           <Button
@@ -158,5 +200,5 @@ export const CancelModal: FC<CancelModalProps> = ({ stream, abi, address: contra
         </Dialog.Content>
       </Dialog>
     </>
-  )
-}
+  );
+};

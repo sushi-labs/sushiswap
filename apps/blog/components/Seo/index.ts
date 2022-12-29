@@ -1,2 +1,2 @@
-export * from './ArticleSeo'
-export * from './DefaultSeo'
+export * from "./ArticleSeo";
+export * from "./DefaultSeo";

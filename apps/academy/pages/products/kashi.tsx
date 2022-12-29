@@ -1,6 +1,6 @@
-import { LinkIcon } from '@heroicons/react/24/outline'
-import { classNames, Container } from '@sushiswap/ui'
-import kashiImg from 'common/assets/kashi-img.png'
+import { LinkIcon } from "@heroicons/react/24/outline";
+import { classNames, Container } from "@sushiswap/ui";
+import kashiImg from "common/assets/kashi-img.png";
 import {
   ProductArticles,
   ProductBackground,
@@ -8,26 +8,26 @@ import {
   ProductFaq,
   ProductHero,
   ProductTechnicalDoc,
-} from 'common/components'
-import { DEFAULT_SIDE_PADDING } from 'common/helpers'
-import { PRODUCTS_DATA } from 'common/productsData'
-import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
-import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import Image from 'next/legacy/image'
-import { FC } from 'react'
-import useSWR from 'swr'
+} from "common/components";
+import { DEFAULT_SIDE_PADDING } from "common/helpers";
+import { PRODUCTS_DATA } from "common/productsData";
+import { getLatestAndRelevantArticles, getProducts } from "lib/api";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
+import Image from "next/legacy/image";
+import { FC } from "react";
+import useSWR from "swr";
 
-import { ArticleEntity } from '.mesh'
+import { ArticleEntity } from ".mesh";
 
-const PRODUCT_SLUG = 'kashi'
-const { color, accentColor, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
+const PRODUCT_SLUG = "kashi";
+const { color, accentColor, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG];
 
 export const getStaticProps: GetStaticProps = async () => {
-  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
-  const product = data?.products?.data?.[0].attributes
-  if (!product) throw new Error(`Product not found`)
-  return { props: product, revalidate: 60 }
-}
+  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } });
+  const product = data?.products?.data?.[0].attributes;
+  if (!product) throw new Error(`Product not found`);
+  return { props: product, revalidate: 60 };
+};
 
 const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   name,
@@ -40,14 +40,21 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const { data, isValidating } = useSWR(
     [`/bentobox-articles`],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false }
-  )
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
+  const latestArticles: ArticleEntity[] = data?.articles?.data ?? [];
+  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? [];
 
   return (
-    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
+    <Container
+      maxWidth="6xl"
+      className={classNames("mx-auto pt-10 pb-24", DEFAULT_SIDE_PADDING)}
+    >
       <ProductBackground color={color} />
       <ProductHero
         productName={longName}
@@ -79,7 +86,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       <ProductTechnicalDoc color="#5F82FF" secondaryColor={accentColor} />
       <ProductFaq faq={faq} />
     </Container>
-  )
-}
+  );
+};
 
-export default ProductPage
+export default ProductPage;

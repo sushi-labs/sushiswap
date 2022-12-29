@@ -1,8 +1,12 @@
-import { AddressMap } from './AddressMap'
-import { Token } from './Token'
+import { AddressMap } from "./AddressMap";
+import { Token } from "./Token";
 
 export function addressMapToTokenMap(
-  { decimals, symbol, name }: { decimals: number; symbol?: string; name?: string },
+  {
+    decimals,
+    symbol,
+    name,
+  }: { decimals: number; symbol?: string; name?: string },
   map: AddressMap
 ) {
   return Object.fromEntries(
@@ -16,5 +20,5 @@ export function addressMapToTokenMap(
         name,
       }),
     ])
-  )
+  );
 }

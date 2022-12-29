@@ -1,7 +1,7 @@
-import { Transition } from '@headlessui/react'
-import React, { FC, Fragment } from 'react'
+import { Transition } from "@headlessui/react";
+import React, { FC, Fragment } from "react";
 
-import { LogoLoader } from './LogoLoader'
+import { LogoLoader } from "./LogoLoader";
 
 export const LoadingOverlay: FC<{ show?: boolean }> = ({ show }) => {
   return (
@@ -19,5 +19,5 @@ export const LoadingOverlay: FC<{ show?: boolean }> = ({ show }) => {
         <LogoLoader width={36} height={36} />
       </div>
     </Transition>
-  )
-}
+  );
+};

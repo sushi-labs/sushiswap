@@ -1,34 +1,37 @@
-import { ChainId } from '@sushiswap/chain'
-import { usePoolFilters } from 'components/PoolsFiltersProvider'
-import stringify from 'fast-json-stable-stringify'
-import { FC, useMemo } from 'react'
-import useSWR from 'swr'
+import { ChainId } from "@sushiswap/chain";
+import { usePoolFilters } from "components/PoolsFiltersProvider";
+import stringify from "fast-json-stable-stringify";
+import { FC, useMemo } from "react";
+import useSWR from "swr";
 
-import { TVLChart } from './TVLChart2'
-import { VolumeChart } from './VolumeChart2'
+import { TVLChart } from "./TVLChart2";
+import { VolumeChart } from "./VolumeChart2";
 
 const fetcher = ({
   url,
   args,
 }: {
-  url: string
+  url: string;
   args: {
-    selectedNetworks: ChainId[]
-  }
+    selectedNetworks: ChainId[];
+  };
 }) => {
-  const _url = new URL(url, window.location.origin)
+  const _url = new URL(url, window.location.origin);
   if (args.selectedNetworks) {
-    _url.searchParams.set('networks', stringify(args.selectedNetworks))
+    _url.searchParams.set("networks", stringify(args.selectedNetworks));
   }
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)))
-}
+    .catch((e) => console.log(stringify(e)));
+};
 
 export const ChartSection: FC = () => {
-  const { selectedNetworks } = usePoolFilters()
-  const args = useMemo(() => ({ selectedNetworks }), [selectedNetworks])
-  const { data, isValidating } = useSWR({ url: '/analytics/api/charts', args }, fetcher)
+  const { selectedNetworks } = usePoolFilters();
+  const args = useMemo(() => ({ selectedNetworks }), [selectedNetworks]);
+  const { data, isValidating } = useSWR(
+    { url: "/analytics/api/charts", args },
+    fetcher
+  );
   // const { data } = useSWR('/analytics/api/charts', fetcher)
   return (
     <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -39,5 +42,5 @@ export const ChartSection: FC = () => {
         <VolumeChart x={data?.[1]?.[0]} y={data?.[1]?.[1]} />
       </div>
     </section>
-  )
-}
+  );
+};

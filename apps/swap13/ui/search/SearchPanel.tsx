@@ -1,90 +1,105 @@
-import { Transition } from '@headlessui/react'
+import { Transition } from "@headlessui/react";
 import {
   ArrowPathRoundedSquareIcon,
   ArrowTrendingUpIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline'
-import { ArrowLongRightIcon } from '@heroicons/react/24/solid'
-import { ChainId } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
-import { useDebounce } from '@sushiswap/hooks'
-import { Currency } from '@sushiswap/ui13/components/currency'
-import { HEADER_HEIGHT } from '@sushiswap/ui13/constants'
-import type { TokenList } from '@uniswap/token-lists'
-import React, { FC, Fragment, MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
-import { useQuery } from 'wagmi'
+} from "@heroicons/react/24/outline";
+import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
+import { ChainId } from "@sushiswap/chain";
+import { Token, Type } from "@sushiswap/currency";
+import { useDebounce } from "@sushiswap/hooks";
+import { Currency } from "@sushiswap/ui13/components/currency";
+import { HEADER_HEIGHT } from "@sushiswap/ui13/constants";
+import type { TokenList } from "@uniswap/token-lists";
+import React, {
+  FC,
+  Fragment,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useQuery } from "wagmi";
 
-import { useSearchContext } from './SearchProvider'
+import { useSearchContext } from "./SearchProvider";
 
 const EXAMPLE_CURRENCIES = [
   new Token({
     chainId: ChainId.ETHEREUM,
-    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+    address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
     decimals: 18,
-    symbol: 'ETH',
-    name: 'Ether',
+    symbol: "ETH",
+    name: "Ether",
   }),
   new Token({
     chainId: ChainId.ETHEREUM,
-    address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
+    address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
     decimals: 18,
-    symbol: 'WBTC',
-    name: 'Wrapped BTC',
+    symbol: "WBTC",
+    name: "Wrapped BTC",
   }),
   new Token({
     chainId: ChainId.ETHEREUM,
-    address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
     decimals: 18,
-    symbol: 'USDT',
-    name: 'Tether USD',
+    symbol: "USDT",
+    name: "Tether USD",
   }),
   new Token({
     chainId: ChainId.BSC,
-    address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+    address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
     decimals: 18,
-    symbol: 'BNB',
-    name: 'Binance',
+    symbol: "BNB",
+    name: "Binance",
   }),
-]
+];
 
 export const SearchPanel: FC = () => {
-  const [query, setQuery] = useState<string>('')
-  const { open, setOpen } = useSearchContext()
-  const debouncedQuery = useDebounce(query, 250)
+  const [query, setQuery] = useState<string>("");
+  const { open, setOpen } = useSearchContext();
+  const debouncedQuery = useDebounce(query, 250);
 
   // Body scroll lock
   useEffect(() => {
     if (open) {
-      document.querySelector('html')?.classList?.add('overflow-hidden')
+      document.querySelector("html")?.classList?.add("overflow-hidden");
     } else {
-      document.querySelector('html')?.classList?.remove('overflow-hidden')
+      document.querySelector("html")?.classList?.remove("overflow-hidden");
     }
-  }, [open])
+  }, [open]);
 
   const onClose = useCallback(
     (e: MouseEvent<HTMLDivElement> | MouseEvent<SVGSVGElement>) => {
-      e.stopPropagation()
-      setOpen(false)
+      e.stopPropagation();
+      setOpen(false);
 
       setTimeout(() => {
-        setQuery('')
-      }, 1500)
+        setQuery("");
+      }, 1500);
     },
     [setOpen]
-  )
+  );
 
-  const { data: tokenList } = useQuery<TokenList>(['https://token-list.sushi.com'], () =>
-    fetch(`https://token-list.sushi.com`).then((response) => response.json())
-  )
+  const { data: tokenList } = useQuery<TokenList>(
+    ["https://token-list.sushi.com"],
+    () =>
+      fetch(`https://token-list.sushi.com`).then((response) => response.json())
+  );
 
   const filteredTokens = useMemo(() => {
-    if (debouncedQuery.length <= 2) return []
+    if (debouncedQuery.length <= 2) return [];
 
     return tokenList?.tokens
-      ?.filter((el) => el.symbol.toLowerCase().includes(debouncedQuery.toLowerCase()))
-      .map(({ address, name, symbol, chainId, decimals }) => new Token({ address, name, symbol, chainId, decimals }))
-  }, [debouncedQuery, tokenList?.tokens])
+      ?.filter((el) =>
+        el.symbol.toLowerCase().includes(debouncedQuery.toLowerCase())
+      )
+      .map(
+        ({ address, name, symbol, chainId, decimals }) =>
+          new Token({ address, name, symbol, chainId, decimals })
+      );
+  }, [debouncedQuery, tokenList?.tokens]);
 
   return (
     <Transition.Root
@@ -103,7 +118,10 @@ export const SearchPanel: FC = () => {
             leaveFrom="transform opacity-100"
             leaveTo="transform opacity-0"
           >
-            <div onClick={onClose} className="z-[1080] fixed inset-0 bg-black/[0.5]" />
+            <div
+              onClick={onClose}
+              className="z-[1080] fixed inset-0 bg-black/[0.5]"
+            />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -161,7 +179,9 @@ export const SearchPanel: FC = () => {
                   </p>
                   <div className="flex flex-col gap-2 p-2">
                     {filteredTokens && filteredTokens?.length > 0 ? (
-                      filteredTokens?.map((el, i) => <Row currency={el} key={`example-${i}-${el.address}`} />)
+                      filteredTokens?.map((el, i) => (
+                        <Row currency={el} key={`example-${i}-${el.address}`} />
+                      ))
                     ) : (
                       <span className="pl-2 py-2 italic text-[10px] font-normal text-gray-500 dark:text-slate-500">
                         No results found
@@ -206,11 +226,14 @@ export const SearchPanel: FC = () => {
         </div>
       </div>
     </Transition.Root>
-  )
-}
+  );
+};
 
-const Row: FC<{ currency: Type; onClick?(): void }> = ({ currency, onClick }) => {
-  const [hover, setHover] = useState(false)
+const Row: FC<{ currency: Type; onClick?(): void }> = ({
+  currency,
+  onClick,
+}) => {
+  const [hover, setHover] = useState(false);
 
   const content = (
     <div
@@ -224,8 +247,10 @@ const Row: FC<{ currency: Type; onClick?(): void }> = ({ currency, onClick }) =>
       </div>
       <div className="flex flex-col">
         <p className="font-semibold text-gray-700 dark:text-slate-300">
-          {currency.symbol}{' '}
-          <span className="font-normal text-xs text-gray-500 dark:text-slate-500">{currency.name}</span>
+          {currency.symbol}{" "}
+          <span className="font-normal text-xs text-gray-500 dark:text-slate-500">
+            {currency.name}
+          </span>
         </p>
         <Transition
           as={Fragment}
@@ -239,15 +264,20 @@ const Row: FC<{ currency: Type; onClick?(): void }> = ({ currency, onClick }) =>
           unmount={false}
         >
           <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
-            <ArrowLongRightIcon width={20} height={20} strokeWidth={5} className="text-blue" />
+            <ArrowLongRightIcon
+              width={20}
+              height={20}
+              strokeWidth={5}
+              className="text-blue"
+            />
           </div>
         </Transition>
       </div>
     </div>
-  )
+  );
 
   if (onClick) {
-    return <button onClick={onClick}>{content}</button>
+    return <button onClick={onClick}>{content}</button>;
   }
 
   return (
@@ -256,5 +286,5 @@ const Row: FC<{ currency: Type; onClick?(): void }> = ({ currency, onClick }) =>
     >
       {content}
     </a>
-  )
-}
+  );
+};

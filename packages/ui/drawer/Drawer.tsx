@@ -1,6 +1,6 @@
-import { Transition } from '@headlessui/react'
-import { useIsMounted } from '@sushiswap/hooks'
-import classNames from 'classnames'
+import { Transition } from "@headlessui/react";
+import { useIsMounted } from "@sushiswap/hooks";
+import classNames from "classnames";
 import React, {
   createContext,
   Dispatch,
@@ -14,85 +14,98 @@ import React, {
   useEffect,
   useRef,
   useState,
-} from 'react'
-import ReactDOM from 'react-dom'
+} from "react";
+import ReactDOM from "react-dom";
 
-import { ButtonComponent } from '../button'
+import { ButtonComponent } from "../button";
 
 interface DrawerContext {
-  open: boolean
-  setOpen: Dispatch<SetStateAction<boolean>>
-  element: HTMLDivElement | null
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  element: HTMLDivElement | null;
 }
 
-const DrawerContext = createContext<DrawerContext | undefined>(undefined)
+const DrawerContext = createContext<DrawerContext | undefined>(undefined);
 
 interface ProviderProps {
-  children: (({ open, setOpen }: { open: boolean; setOpen(open: boolean): void }) => ReactNode) | ReactNode
+  children:
+    | (({
+        open,
+        setOpen,
+      }: {
+        open: boolean;
+        setOpen(open: boolean): void;
+      }) => ReactNode)
+    | ReactNode;
 }
 
 export const DrawerRoot: FC<ProviderProps> = ({ children }) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const [open, setOpen] = useState(false)
-  const [, setRender] = useState(false)
+  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [, setRender] = useState(false);
 
   // Force render
   useEffect(() => {
-    if (ref.current) setRender(true)
-  }, [])
+    if (ref.current) setRender(true);
+  }, []);
 
   useEffect(() => {
     if (open) {
-      document.body.parentElement?.classList.add('overflow-hidden')
+      document.body.parentElement?.classList.add("overflow-hidden");
     } else {
-      document.body.parentElement?.classList.remove('overflow-hidden')
+      document.body.parentElement?.classList.remove("overflow-hidden");
     }
-  }, [open])
+  }, [open]);
 
   return (
     <DrawerContext.Provider value={{ element: ref?.current, open, setOpen }}>
-      {typeof children === 'function' ? children({ open, setOpen }) : children}
+      {typeof children === "function" ? children({ open, setOpen }) : children}
     </DrawerContext.Provider>
-  )
-}
+  );
+};
 
 export const useDrawer = () => {
-  const context = useContext(DrawerContext)
+  const context = useContext(DrawerContext);
   if (!context) {
-    throw new Error('Hook can only be used inside Drawer Context')
+    throw new Error("Hook can only be used inside Drawer Context");
   }
 
-  return context
-}
+  return context;
+};
 
 interface PanelProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 export const DrawerButton: ButtonComponent = (props) => {
-  const { setOpen } = useDrawer()
+  const { setOpen } = useDrawer();
 
   const onClick = useCallback<MouseEventHandler<HTMLDivElement>>(
     (e) => {
-      setOpen((prev) => !prev)
-      props.onClick && props.onClick(e)
+      setOpen((prev) => !prev);
+      props.onClick && props.onClick(e);
     },
     [props, setOpen]
-  )
+  );
 
-  return <div className="flex items-center" onClick={onClick} {...props} />
-}
+  return <div className="flex items-center" onClick={onClick} {...props} />;
+};
 
 export const Panel: FC<PanelProps> = ({ children, className }) => {
-  const { open, setOpen } = useDrawer()
-  const isMounted = useIsMounted()
+  const { open, setOpen } = useDrawer();
+  const isMounted = useIsMounted();
 
-  if (!isMounted) return <></>
+  if (!isMounted) return <></>;
 
   return ReactDOM.createPortal(
     <Transition.Root appear show={open} unmount={false} as={Fragment}>
-      <div className={classNames(className, 'fixed right-0 top-0 bottom-0 w-full translate-x-[100%] z-[1080] ')}>
+      <div
+        className={classNames(
+          className,
+          "fixed right-0 top-0 bottom-0 w-full translate-x-[100%] z-[1080] "
+        )}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -124,7 +137,7 @@ export const Panel: FC<PanelProps> = ({ children, className }) => {
       </div>
     </Transition.Root>,
     document.body
-  )
-}
+  );
+};
 
-export const Drawer = { Root: DrawerRoot, Panel, Button: DrawerButton }
+export const Drawer = { Root: DrawerRoot, Panel, Button: DrawerButton };

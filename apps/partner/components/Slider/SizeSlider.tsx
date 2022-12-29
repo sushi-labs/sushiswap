@@ -1,14 +1,14 @@
-import { Typography } from '@sushiswap/ui'
-import { Form } from 'components/Form'
-import { FormType } from 'pages'
-import React, { FC } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { Typography } from "@sushiswap/ui";
+import { Form } from "components/Form";
+import { FormType } from "pages";
+import React, { FC } from "react";
+import { useFormContext } from "react-hook-form";
 
-import { Slider } from './Slider'
+import { Slider } from "./Slider";
 
 export const SizeSlider: FC = () => {
-  const { setValue, watch } = useFormContext<FormType>()
-  const logoSize = watch('logoSize')
+  const { setValue, watch } = useFormContext<FormType>();
+  const logoSize = watch("logoSize");
 
   return (
     <div className="flex flex-col">
@@ -20,13 +20,17 @@ export const SizeSlider: FC = () => {
             max={128}
             value={logoSize}
             markFormatter={(val) => `${val}`}
-            onChange={(newSize) => setValue('logoSize', newSize)}
+            onChange={(newSize) => setValue("logoSize", newSize)}
           />
           <div>
-            <Form.TextField name="logoSize" helperText="Enter background size in pixel value" placeholder="32" />
+            <Form.TextField
+              name="logoSize"
+              helperText="Enter background size in pixel value"
+              placeholder="32"
+            />
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

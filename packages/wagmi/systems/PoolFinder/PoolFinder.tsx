@@ -1,39 +1,52 @@
-import { Children, cloneElement, FC, isValidElement, ReactElement, ReactNode, useMemo, useReducer } from 'react'
+import {
+  Children,
+  cloneElement,
+  FC,
+  isValidElement,
+  ReactElement,
+  ReactNode,
+  useMemo,
+  useReducer,
+} from "react";
 
-import { PairState } from '../../hooks'
-import { ComponentsWrapper } from './ComponentsWrapper'
-import { ConstantProductPool } from './ConstantProductPool'
-import { LegacyPool } from './LegacyPool'
-import { StablePool } from './StablePool'
+import { PairState } from "../../hooks";
+import { ComponentsWrapper } from "./ComponentsWrapper";
+import { ConstantProductPool } from "./ConstantProductPool";
+import { LegacyPool } from "./LegacyPool";
+import { StablePool } from "./StablePool";
 import {
   ComponentsWrapperProps,
   LegacyPoolFinderProps,
   PoolExistenceStateAction,
   PoolStateUnion,
   TridentPoolFinderProps,
-} from './types'
+} from "./types";
 
 interface Props {
-  components: ReactElement<ComponentsWrapperProps<LegacyPoolFinderProps | TridentPoolFinderProps>>
-  children({ pool }: { pool: PoolStateUnion }): ReactNode
+  components: ReactElement<
+    ComponentsWrapperProps<LegacyPoolFinderProps | TridentPoolFinderProps>
+  >;
+  children({ pool }: { pool: PoolStateUnion }): ReactNode;
 }
 
 export interface PoolFinderState {
-  pool: PoolStateUnion
+  pool: PoolStateUnion;
 }
 
 const reducer = (state: PoolFinderState, action: PoolExistenceStateAction) => {
   switch (action.type) {
-    case 'update': {
+    case "update": {
       return {
         pool: action.payload.state,
-      }
+      };
     }
   }
-}
+};
 
 const Controller: FC<Props> = ({ components, children }) => {
-  const [state, dispatch] = useReducer(reducer, { pool: [PairState.LOADING, null] })
+  const [state, dispatch] = useReducer(reducer, {
+    pool: [PairState.LOADING, null],
+  });
 
   const childrenComponents = useMemo(() => {
     return cloneElement(
@@ -44,28 +57,28 @@ const Controller: FC<Props> = ({ components, children }) => {
           return cloneElement(component, {
             dispatch,
             index,
-          })
+          });
         }
       })
-    )
-  }, [components])
+    );
+  }, [components]);
 
   return (
     <>
       {children(state)}
       {childrenComponents}
     </>
-  )
-}
+  );
+};
 
 export const PoolFinder: typeof Controller & {
-  Components: typeof ComponentsWrapper
-  LegacyPool: typeof LegacyPool
-  ConstantProductPool: typeof ConstantProductPool
-  StablePool: typeof StablePool
+  Components: typeof ComponentsWrapper;
+  LegacyPool: typeof LegacyPool;
+  ConstantProductPool: typeof ConstantProductPool;
+  StablePool: typeof StablePool;
 } = Object.assign(Controller, {
   Components: ComponentsWrapper,
   LegacyPool,
   ConstantProductPool,
   StablePool,
-})
+});

@@ -1,24 +1,27 @@
-import { Disclosure, Transition } from '@headlessui/react'
-import { InformationCircleIcon } from '@heroicons/react/outline'
-import { ChevronDownIcon } from '@heroicons/react/solid'
-import { Percent } from '@sushiswap/math'
-import { classNames, Dialog, Tooltip, Typography } from '@sushiswap/ui'
-import { Rate, Route, useTrade } from 'components'
-import React, { FC, useMemo, useState } from 'react'
+import { Disclosure, Transition } from "@headlessui/react";
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/solid";
+import { Percent } from "@sushiswap/math";
+import { classNames, Dialog, Tooltip, Typography } from "@sushiswap/ui";
+import { Rate, Route, useTrade } from "components";
+import React, { FC, useMemo, useState } from "react";
 
-import { warningSeverity } from '../../lib/functions'
-import { useSettings } from '../../lib/state/storage'
+import { warningSeverity } from "../../lib/functions";
+import { useSettings } from "../../lib/state/storage";
 
 export const SwapStatsDisclosure: FC = () => {
-  const { trade } = useTrade()
-  const [showRoute, setShowRoute] = useState(false)
+  const { trade } = useTrade();
+  const [showRoute, setShowRoute] = useState(false);
 
-  const [{ slippageTolerance }] = useSettings()
-  const priceImpactSeverity = useMemo(() => warningSeverity(trade?.priceImpact), [trade?.priceImpact])
+  const [{ slippageTolerance }] = useSettings();
+  const priceImpactSeverity = useMemo(
+    () => warningSeverity(trade?.priceImpact),
+    [trade?.priceImpact]
+  );
 
   const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
+    return new Percent(Math.floor(slippageTolerance * 100), 10_000);
+  }, [slippageTolerance]);
 
   const stats = (
     <>
@@ -29,8 +32,12 @@ export const SwapStatsDisclosure: FC = () => {
         variant="sm"
         weight={500}
         className={classNames(
-          priceImpactSeverity === 2 ? 'text-yellow' : priceImpactSeverity > 2 ? 'text-red' : 'text-slate-200',
-          'text-right truncate'
+          priceImpactSeverity === 2
+            ? "text-yellow"
+            : priceImpactSeverity > 2
+            ? "text-red"
+            : "text-slate-200",
+          "text-right truncate"
         )}
       >
         {trade?.priceImpact?.multiply(-1).toFixed(2)}%
@@ -39,8 +46,12 @@ export const SwapStatsDisclosure: FC = () => {
       <Typography variant="sm" className="text-slate-400">
         Min. Received
       </Typography>
-      <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
-        {trade?.minimumAmountOut(slippagePercent)?.toSignificant(6)}{' '}
+      <Typography
+        variant="sm"
+        weight={500}
+        className="text-right truncate text-slate-400"
+      >
+        {trade?.minimumAmountOut(slippagePercent)?.toSignificant(6)}{" "}
         {trade?.minimumAmountOut(slippagePercent)?.currency.symbol}
       </Typography>
       <Typography variant="sm" className="text-slate-400">
@@ -52,18 +63,22 @@ export const SwapStatsDisclosure: FC = () => {
         weight={500}
         className="cursor-pointer text-blue hover:text-blue-400 text-right"
       >
-        {showRoute ? 'Hide' : 'Show'}
+        {showRoute ? "Hide" : "Show"}
       </Typography>
       <Dialog open={showRoute} onClose={() => setShowRoute(false)}>
         <Dialog.Content className="!pb-4">
-          <Dialog.Header border={false} title="Optimized Route" onClose={() => setShowRoute(false)} />
+          <Dialog.Header
+            border={false}
+            title="Optimized Route"
+            onClose={() => setShowRoute(false)}
+          />
           <div className="max-h-[400px] overflow-y-auto scroll rounded-xl bg-black/[0.24] p-2 border border-slate-200/10">
             <Route />
           </div>
         </Dialog.Content>
       </Dialog>
     </>
-  )
+  );
 
   return (
     <>
@@ -89,10 +104,19 @@ export const SwapStatsDisclosure: FC = () => {
                       onClick={toggleInvert}
                     >
                       <Tooltip
-                        panel={<div className="grid grid-cols-2 gap-1">{stats}</div>}
-                        button={<InformationCircleIcon width={16} height={16} />}
-                      />{' '}
-                      {content} {usdPrice && <span className="font-medium text-slate-500">(${usdPrice})</span>}
+                        panel={
+                          <div className="grid grid-cols-2 gap-1">{stats}</div>
+                        }
+                        button={
+                          <InformationCircleIcon width={16} height={16} />
+                        }
+                      />{" "}
+                      {content}{" "}
+                      {usdPrice && (
+                        <span className="font-medium text-slate-500">
+                          (${usdPrice})
+                        </span>
+                      )}
                     </div>
                   )}
                 </Rate>
@@ -101,8 +125,8 @@ export const SwapStatsDisclosure: FC = () => {
                     width={24}
                     height={24}
                     className={classNames(
-                      open ? '!rotate-180' : '',
-                      'rotate-0 transition-[transform] duration-300 ease-in-out delay-200'
+                      open ? "!rotate-180" : "",
+                      "rotate-0 transition-[transform] duration-300 ease-in-out delay-200"
                     )}
                   />
                 </Disclosure.Button>
@@ -130,5 +154,5 @@ export const SwapStatsDisclosure: FC = () => {
         </Disclosure>
       </Transition>
     </>
-  )
-}
+  );
+};

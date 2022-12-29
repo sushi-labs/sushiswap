@@ -1,41 +1,49 @@
-import { Amount, Token } from '@sushiswap/currency'
-import { Incentive, Pair } from '@sushiswap/graph-client'
-import { Chef, RewarderType, useMasterChef } from '@sushiswap/wagmi'
-import { useRewarder } from '@sushiswap/wagmi/hooks/useRewarder'
-import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
-import { useAccount } from 'wagmi'
+import { Amount, Token } from "@sushiswap/currency";
+import { Incentive, Pair } from "@sushiswap/graph-client";
+import { Chef, RewarderType, useMasterChef } from "@sushiswap/wagmi";
+import { useRewarder } from "@sushiswap/wagmi/hooks/useRewarder";
+import { createContext, FC, ReactNode, useContext, useMemo } from "react";
+import { useAccount } from "wagmi";
 
-import { CHEF_TYPE_MAP } from '../lib/constants'
-import { incentiveRewardToToken } from '../lib/functions'
-import { useTokenAmountDollarValues, useTokensFromPair } from '../lib/hooks'
-import { useNotifications } from '../lib/state/storage'
+import { CHEF_TYPE_MAP } from "../lib/constants";
+import { incentiveRewardToToken } from "../lib/functions";
+import { useTokenAmountDollarValues, useTokensFromPair } from "../lib/hooks";
+import { useNotifications } from "../lib/state/storage";
 
 interface PoolPositionRewardsContext {
-  pendingRewards: (Amount<Token> | undefined)[]
-  rewardTokens: Token[]
-  values: number[]
-  isLoading: boolean
-  isError: boolean
-  harvest: undefined | (() => void)
+  pendingRewards: (Amount<Token> | undefined)[];
+  rewardTokens: Token[];
+  values: number[];
+  isLoading: boolean;
+  isError: boolean;
+  harvest: undefined | (() => void);
 }
 
-const Context = createContext<PoolPositionRewardsContext | undefined>(undefined)
+const Context = createContext<PoolPositionRewardsContext | undefined>(
+  undefined
+);
 
 interface PoolPositionRewardsProviderProps {
-  pair: Pair
-  farmId: number
-  chefType: Chef
-  children: ReactNode
-  incentives: Incentive[]
+  pair: Pair;
+  farmId: number;
+  chefType: Chef;
+  children: ReactNode;
+  incentives: Incentive[];
 }
 
 interface PoolPositionStakedProviderProps {
-  pair: Pair
-  children: ReactNode
+  pair: Pair;
+  children: ReactNode;
 }
 
-export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children }) => {
-  if (pair?.farm?.id === undefined || !pair?.farm?.chefType || !pair?.farm?.incentives)
+export const PoolPositionRewardsProvider: FC<
+  PoolPositionStakedProviderProps
+> = ({ pair, children }) => {
+  if (
+    pair?.farm?.id === undefined ||
+    !pair?.farm?.chefType ||
+    !pair?.farm?.incentives
+  )
     return (
       <Context.Provider
         value={{
@@ -49,7 +57,7 @@ export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = 
       >
         {children}
       </Context.Provider>
-    )
+    );
 
   return (
     <_PoolPositionRewardsProvider
@@ -60,31 +68,31 @@ export const PoolPositionRewardsProvider: FC<PoolPositionStakedProviderProps> = 
     >
       {children}
     </_PoolPositionRewardsProvider>
-  )
-}
+  );
+};
 
-export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> = ({
-  farmId,
-  chefType,
-  incentives,
-  pair,
-  children,
-}) => {
-  const { address: account } = useAccount()
-  const { liquidityToken } = useTokensFromPair(pair)
+export const _PoolPositionRewardsProvider: FC<
+  PoolPositionRewardsProviderProps
+> = ({ farmId, chefType, incentives, pair, children }) => {
+  const { address: account } = useAccount();
+  const { liquidityToken } = useTokensFromPair(pair);
 
-  const [, { createNotification }] = useNotifications(account)
+  const [, { createNotification }] = useNotifications(account);
   const [rewardTokens, rewarderAddresses, types] = useMemo(() => {
     return incentives.reduce<[Token[], string[], RewarderType[]]>(
       (acc, incentive) => {
-        acc[0].push(incentiveRewardToToken(pair.chainId, incentive))
-        acc[1].push(incentive.rewarderAddress)
-        acc[2].push(incentive.rewarderType === 'Primary' ? RewarderType.Primary : RewarderType.Secondary)
-        return acc
+        acc[0].push(incentiveRewardToToken(pair.chainId, incentive));
+        acc[1].push(incentive.rewarderAddress);
+        acc[2].push(
+          incentive.rewarderType === "Primary"
+            ? RewarderType.Primary
+            : RewarderType.Secondary
+        );
+        return acc;
       },
       [[], [], []]
-    )
-  }, [incentives, pair.chainId])
+    );
+  }, [incentives, pair.chainId]);
 
   const {
     data: pendingRewards,
@@ -98,7 +106,7 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
     rewarderAddresses,
     types,
     chef: chefType,
-  })
+  });
 
   const { harvest } = useMasterChef({
     chainId: pair.chainId,
@@ -106,9 +114,12 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
     pid: farmId,
     token: liquidityToken,
     onSuccess: createNotification,
-  })
+  });
 
-  const values = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: pendingRewards })
+  const values = useTokenAmountDollarValues({
+    chainId: pair.chainId,
+    amounts: pendingRewards,
+  });
 
   return (
     <Context.Provider
@@ -126,14 +137,14 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
     >
       {children}
     </Context.Provider>
-  )
-}
+  );
+};
 
 export const usePoolPositionRewards = () => {
-  const context = useContext(Context)
+  const context = useContext(Context);
   if (!context) {
-    throw new Error('Hook can only be used inside Pool Position Context')
+    throw new Error("Hook can only be used inside Pool Position Context");
   }
 
-  return context
-}
+  return context;
+};

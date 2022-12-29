@@ -1,1 +1,1 @@
-export * from './toHex'
+export * from "./toHex";

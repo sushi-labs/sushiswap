@@ -1,8 +1,13 @@
-import React from 'react'
+import React from "react";
 
-export const WalletIcon = (props: React.ComponentProps<'svg'>) => {
+export const WalletIcon = (props: React.ComponentProps<"svg">) => {
   return (
-    <svg {...props} viewBox="0 0 43 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      {...props}
+      viewBox="0 0 43 32"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -10,5 +15,5 @@ export const WalletIcon = (props: React.ComponentProps<'svg'>) => {
         fill="#currentColor"
       />
     </svg>
-  )
-}
+  );
+};

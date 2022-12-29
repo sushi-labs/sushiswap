@@ -1,30 +1,45 @@
-import { classNames, DEFAULT_INPUT_CLASSNAME, ERROR_INPUT_CLASSNAME, Form } from '@sushiswap/ui'
-import { DatePicker } from '@sushiswap/ui/input/DatePicker'
-import { Web3Input } from '@sushiswap/wagmi'
-import React, { useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import {
+  classNames,
+  DEFAULT_INPUT_CLASSNAME,
+  ERROR_INPUT_CLASSNAME,
+  Form,
+} from "@sushiswap/ui";
+import { DatePicker } from "@sushiswap/ui/input/DatePicker";
+import { Web3Input } from "@sushiswap/wagmi";
+import React, { useEffect } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 
-import { CreateStreamFormSchemaType } from './schema'
+import { CreateStreamFormSchemaType } from "./schema";
 
 export const GeneralDetailsSection = () => {
-  const { control, watch, setError, clearErrors } = useFormContext<CreateStreamFormSchemaType>()
-  const [startDate, endDate] = watch(['dates.startDate', 'dates.endDate'])
+  const { control, watch, setError, clearErrors } =
+    useFormContext<CreateStreamFormSchemaType>();
+  const [startDate, endDate] = watch(["dates.startDate", "dates.endDate"]);
 
   useEffect(() => {
-    if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`dates.startDate`, { type: 'custom', message: 'Must be at least 5 minutes from now' })
+    if (
+      startDate &&
+      startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()
+    ) {
+      setError(`dates.startDate`, {
+        type: "custom",
+        message: "Must be at least 5 minutes from now",
+      });
     } else {
-      clearErrors(`dates.startDate`)
+      clearErrors(`dates.startDate`);
     }
-  }, [clearErrors, setError, startDate])
+  }, [clearErrors, setError, startDate]);
 
   useEffect(() => {
     if (startDate && endDate && endDate < startDate) {
-      setError(`dates.endDate`, { type: 'custom', message: 'Must be later than start date' })
+      setError(`dates.endDate`, {
+        type: "custom",
+        message: "Must be later than start date",
+      });
     } else {
-      clearErrors(`dates.endDate`)
+      clearErrors(`dates.endDate`);
     }
-  }, [clearErrors, endDate, setError, startDate])
+  }, [clearErrors, endDate, setError, startDate]);
 
   return (
     <Form.Section
@@ -36,7 +51,10 @@ export const GeneralDetailsSection = () => {
           <Controller
             control={control}
             name="dates.startDate"
-            render={({ field: { name, onChange, value, onBlur }, fieldState: { error } }) => {
+            render={({
+              field: { name, onChange, value, onBlur },
+              fieldState: { error },
+            }) => {
               return (
                 <>
                   <DatePicker
@@ -44,8 +62,8 @@ export const GeneralDetailsSection = () => {
                     onBlur={onBlur}
                     className={classNames(
                       DEFAULT_INPUT_CLASSNAME,
-                      error ? ERROR_INPUT_CLASSNAME : '',
-                      '!ring-offset-slate-900'
+                      error ? ERROR_INPUT_CLASSNAME : "",
+                      "!ring-offset-slate-900"
                     )}
                     onChange={onChange}
                     selected={value}
@@ -61,7 +79,7 @@ export const GeneralDetailsSection = () => {
                   />
                   <Form.Error message={error?.message} />
                 </>
-              )
+              );
             }}
           />
         </Form.Control>
@@ -69,7 +87,10 @@ export const GeneralDetailsSection = () => {
           <Controller
             control={control}
             name="dates.endDate"
-            render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+            render={({
+              field: { onChange, value, onBlur, name },
+              fieldState: { error },
+            }) => {
               return (
                 <>
                   <DatePicker
@@ -77,8 +98,8 @@ export const GeneralDetailsSection = () => {
                     onBlur={onBlur}
                     className={classNames(
                       DEFAULT_INPUT_CLASSNAME,
-                      error ? ERROR_INPUT_CLASSNAME : '',
-                      '!ring-offset-slate-900'
+                      error ? ERROR_INPUT_CLASSNAME : "",
+                      "!ring-offset-slate-900"
                     )}
                     onChange={onChange}
                     selected={value}
@@ -88,7 +109,9 @@ export const GeneralDetailsSection = () => {
                     timeIntervals={15}
                     timeCaption="time"
                     minDate={
-                      startDate ? new Date(startDate.getTime() + 5 * 60 * 1000) : new Date(Date.now() + 10 * 60 * 1000)
+                      startDate
+                        ? new Date(startDate.getTime() + 5 * 60 * 1000)
+                        : new Date(Date.now() + 10 * 60 * 1000)
                     }
                     dateFormat="MMM d, yyyy HH:mm"
                     placeholderText="Select date"
@@ -96,7 +119,7 @@ export const GeneralDetailsSection = () => {
                   />
                   <Form.Error message={error?.message} />
                 </>
-              )
+              );
             }}
           />
         </Form.Control>
@@ -105,7 +128,10 @@ export const GeneralDetailsSection = () => {
         <Controller
           control={control}
           name="recipient"
-          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
+          render={({
+            field: { onChange, value, onBlur, name },
+            fieldState: { error },
+          }) => {
             return (
               <>
                 <Web3Input.Ens
@@ -118,16 +144,16 @@ export const GeneralDetailsSection = () => {
                   placeholder="Address or ENS Name"
                   className={classNames(
                     DEFAULT_INPUT_CLASSNAME,
-                    error ? ERROR_INPUT_CLASSNAME : '',
-                    'ring-offset-slate-900'
+                    error ? ERROR_INPUT_CLASSNAME : "",
+                    "ring-offset-slate-900"
                   )}
                 />
                 <Form.Error message={error?.message} />
               </>
-            )
+            );
           }}
         />
       </Form.Control>
     </Form.Section>
-  )
-}
+  );
+};
