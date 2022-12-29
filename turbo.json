@@ -64,9 +64,7 @@
       ]
     },
     "db:generate": {
-      "dependsOn": [
-        "db:pull"
-      ],
+      "dependsOn": [],
       "cache": false
     },
     "db:push": {
@@ -135,6 +133,9 @@
       ],
       "dependsOn": [
         "^build",
+        "^db:generate",
+        "db:generate",
+        "build-graphql",
         "generate"
       ],
       "env": [
@@ -198,6 +199,37 @@
     "server": {
       "dependsOn": [
         "^build"
+      ]
+    },
+    "build-graphql": {
+      "outputs": [
+        ".graphclient/**",
+        ".mesh/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ]
+    },
+    "build-protocol": {
+      "outputs": [
+        "typechain/**",
+        "artifacts/**",
+        "cache/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ]
+    },
+    "build-subgraph": {
+      "outputs": [
+        "build/**",
+        "generated/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
       ]
     }
   }

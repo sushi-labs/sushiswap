@@ -5,8 +5,8 @@
   "scripts": {
     "build": "dotenv -- turbo run build",
     "build-analytics-app": "dotenv -- turbo run build --filter=analytics[HEAD^1]",
-    "build-apps": "dotenv -- turbo run build --filter={./apps/*}[HEAD^1]... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13",
-    "build-apps2": "dotenv -- turbo run build --filter={./apps/*}... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13",
+    "build-apps": "dotenv -- turbo run build --filter={./apps/*}[HEAD^1]... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13 --filter=!furo",
+    "build-apps2": "dotenv -- turbo run build --filter={./apps/*}... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13 --filter=!furo",
     "build-blog-app": "dotenv -- turbo run build --filter=blog[HEAD^1]",
     "build-earn-app": "dotenv -- turbo run build --filter=earn[HEAD^1]",
     "build-furo-app": "dotenv -- turbo run build --filter=furo[HEAD^1]",
