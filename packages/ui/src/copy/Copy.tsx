@@ -3,14 +3,14 @@ import { useCopyClipboard } from '@sushiswap/hooks'
 import classNames from 'classnames'
 import React, { FC } from 'react'
 
-interface CopyHelperProps {
+export interface CopyHelperProps {
   className?: string
   toCopy: string
   children?: React.ReactNode | ((isCopied: boolean) => React.ReactNode)
   hideIcon?: boolean
 }
 
-const CopyHelper: FC<CopyHelperProps> = ({ className, toCopy, hideIcon = false, children }) => {
+export const CopyHelper: FC<CopyHelperProps> = ({ className, toCopy, hideIcon = false, children }) => {
   const [isCopied, setCopied] = useCopyClipboard()
 
   return (

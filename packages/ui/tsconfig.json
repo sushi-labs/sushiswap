@@ -1,8 +1,4 @@
 {
   "extends": "@sushiswap/typescript-config/react-library.json",
-  "include": ["."],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "baseUrl": "."
-  }
+  "include": ["src"]
 }
