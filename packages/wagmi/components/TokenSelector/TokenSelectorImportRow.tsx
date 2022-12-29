@@ -2,8 +2,7 @@ import { ExclamationIcon, ExternalLinkIcon } from '@heroicons/react/outline'
 import chain from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { Button, classNames, Currency, CopyHelper, Overlay, SlideIn, Typography } from '@sushiswap/ui'
-
+import { Button, classNames, CopyHelper, Currency, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
 
 interface TokenSelectorImportRow {

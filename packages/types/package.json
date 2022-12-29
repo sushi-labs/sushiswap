@@ -28,7 +28,7 @@
   },
   "typings": "./index.d.ts",
   "scripts": {
-    "lint": "TIMING=1 eslint src --fix",
+    "lint": "TIMING=1 eslint . --fix",
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests"
   },

@@ -5,11 +5,11 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { JSBI, ZERO } from '@sushiswap/math'
+import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
 import { Address, erc20ABI, useBalance as useWagmiBalance, useContractReads } from 'wagmi'
 
-import { getBentoBoxContractConfig } from '@sushiswap/wagmi-config'
 import { BalanceMap } from './types'
 
 type UseBalancesParams = {

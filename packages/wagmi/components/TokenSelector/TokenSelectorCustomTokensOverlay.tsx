@@ -4,7 +4,6 @@ import chain from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Currency, IconButton, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
-
 import React, { CSSProperties, FC, useMemo, useState } from 'react'
 
 import { TokenSelectorProps } from './TokenSelector'

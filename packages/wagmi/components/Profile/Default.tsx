@@ -4,7 +4,6 @@ import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
 import { BuyCrypto, CopyHelper, IconButton, JazzIcon, Typography } from '@sushiswap/ui'
-
 import Image from 'next/legacy/image'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'

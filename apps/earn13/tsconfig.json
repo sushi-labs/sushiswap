@@ -11,11 +11,6 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
-    "strictNullChecks": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "strictNullChecks": true
   }
 }

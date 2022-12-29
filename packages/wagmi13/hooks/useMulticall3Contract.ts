@@ -1,6 +1,5 @@
 import { otherChains } from '@sushiswap/wagmi-config'
 import { Address, Chain, useContract, useProvider } from 'wagmi'
-
 import {
   arbitrum,
   arbitrumGoerli,

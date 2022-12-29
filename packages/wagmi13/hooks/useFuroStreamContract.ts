@@ -1,5 +1,5 @@
-import furoExports from '@sushiswap/furo/exports.json'
 import { furoStreamAbi } from '@sushiswap/abi'
+import furoExports from '@sushiswap/furo/exports.json'
 import { Address, useContract, useProvider } from 'wagmi'
 
 export const getFuroStreamContractConfig = (chainId: number | undefined) => ({
