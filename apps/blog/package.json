@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build-blog": "next build && next-sitemap --config next-sitemap.config.mjs",
     "build": "next build && next-sitemap --config next-sitemap.config.mjs",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev --port 3002",
@@ -27,11 +28,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.3",
-    "swr": "^1.3.0"
+    "swr": "^1.3.0",
+    "tiny-lru": "10.0.1"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.78.39",
-    "@graphql-mesh/graphql": "0.31.25",
+    "@graphql-mesh/cli": "0.82.3",
+    "@graphql-mesh/graphql": "0.33.3",
     "@heroicons/react": "^1.0.0",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

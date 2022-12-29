@@ -26,11 +26,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.3",
-    "swr": "^1.3.0"
+    "swr": "^1.3.0",
+    "tiny-lru": "10.0.1"
   },
   "devDependencies": {
-    "@graphql-mesh/cli": "0.75.3",
-    "@graphql-mesh/graphql": "0.29.5",
+    "@graphql-mesh/cli": "0.82.3",
+    "@graphql-mesh/graphql": "0.33.3",
     "@heroicons/react": "^2.0.11",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

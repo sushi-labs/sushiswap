@@ -5,7 +5,8 @@
     "NODE_ENV",
     "ALCHEMY_ID", 
     "GITHUB_TOKEN",
-    "NEXT_PUBLIC_ALCHEMY_ID"
+    "NEXT_PUBLIC_ALCHEMY_ID",
+    "SKIP_BUILD_STATIC_GENERATION"
   ],
   "globalDependencies": [
     ".eslintignore",
@@ -18,6 +19,22 @@
     "tsconfig.json"
   ],
   "pipeline": {
+    "build-blog": {
+      "outputs": [
+        ".mesh/**",
+        ".next/**",
+        ".turbo/**",
+        "public/**"
+      ],
+      "dependsOn": [
+        "^build",
+        "generate"
+      ],
+      "env": [
+        "NEXT_PUBLIC_STRAPI_API_URL",
+        "STRAPI_PREVIEW_SECRET"
+      ]
+    },
     "furo:build": {
       "outputs": [
         ".next/**",
