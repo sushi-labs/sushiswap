@@ -231,7 +231,32 @@ function getCallFuncSelector(data: CodeTraceInfo): string {
       throw new Error('Unknown call code: ') + op
   }
   const addr = getNumber(data, dataAddrDepth)
-  return getMemory(data, addr, 4)
+  const selector = getMemory(data, addr, 4)
+  switch (selector) {
+    // some often values
+    case '70a08231':
+      return 'balanceOf(address)'
+    case 'd0e30db0':
+      return 'deposit()'
+    case 'a9059cbb':
+      return 'transfer(address dst, uint256 wad)'
+    case '022c0d9f':
+      return 'Uni:swap(uint256 amount0Out, uint256 amount1Out, address to, bytes data)'
+    case '4ffe34db':
+      return 'Bento:totals(address)'
+    case 'f18d03cc':
+      return 'Bento:transfer(address token, address from, address to, uint256 share)'
+    case '0902f1ac':
+      return 'getReserves()'
+    case 'df23b45b':
+      return 'StratageData'
+    case '02b9446c':
+      return 'Bento:Deposit()'
+    case 'f7888aec':
+      return 'Bento:BalanceOf()'
+    default:
+      return selector
+  }
 }
 
 // Returns the last processed code index
@@ -265,8 +290,9 @@ function printGasUsageRecursive(trace: CodeTraceInfo[], start: number, prefix: s
       console.log(`${prefix}${info.op}(pc=${info.pc}, index=${i}) function execution ${gasStart - info.gas} gas`)
       return i
     }
-    if (info.gasCost >= 100) {
-      console.log(`${prefix}${info.op} - ${info.gasCost}`)
+    if (i < trace.length - 1) {
+      const gas = info.gas - trace[i + 1].gas
+      if (gas >= 100) console.log(`${prefix}${info.op} - ${gas}`)
     }
     ++i
   }
