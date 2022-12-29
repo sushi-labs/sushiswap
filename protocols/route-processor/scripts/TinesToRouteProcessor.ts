@@ -1,5 +1,6 @@
 import { getBigNumber, MultiRoute, RouteLeg, RouteStatus, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
+
 import { HEXer } from './HEXer'
 import { PoolCode } from './pools/PoolCode'
 
@@ -31,6 +32,11 @@ export class TinesToRouteProcessor {
     // 0. Check for no route
     if (route.status == RouteStatus.NoWay || route.legs.length == 0) return ''
 
+    if (route.legs.length == 1 && route.fromToken.address == '') {
+      // very special case
+      return this.getRPCodeForsimpleWrapRoute(route, toAddress)
+    }
+
     this.calcTokenOutputLegs(route)
     let res = '0x'
 
@@ -39,7 +45,11 @@ export class TinesToRouteProcessor {
     res += initialCode
 
     const distributedTokens = new Set([route.fromToken.tokenId])
-    route.legs.forEach((l) => {
+    route.legs.forEach((l, i) => {
+      if (i == 0 && l.tokenFrom.address == '')
+        // Native - processed by codeDistributeInitial
+        return
+
       // 2. Transfer tokens from the routeProcessor contract to the pool if it is neccessary
       if (!distributedTokens.has(l.tokenFrom.tokenId)) {
         res += this.codeDistributeTokenShares(l.tokenFrom, route)
@@ -54,6 +64,15 @@ export class TinesToRouteProcessor {
     })
 
     return res
+  }
+
+  getRPCodeForsimpleWrapRoute(route: MultiRoute, toAddress: string): string {
+    const hex = new HEXer()
+      .uint8(5) // wrapAndDistributeERC20Amounts
+      .uint8(1)
+      .address(toAddress)
+      .uint(route.amountInBN)
+    return hex.toString0x()
   }
 
   getPoolOutputAddress(l: RouteLeg, route: MultiRoute, toAddress: string): string {
@@ -85,7 +104,13 @@ export class TinesToRouteProcessor {
 
   // Distributes tokens from msg.sender to pools
   codeDistributeInitial(route: MultiRoute): [string, Map<string, BigNumber>] {
-    const legs = this.tokenOutputLegs.get(route.fromToken.tokenId as string) as RouteLeg[]
+    let fromToken = route.fromToken
+    if (fromToken.address == '') {
+      // Native
+      fromToken = route.legs[0].tokenTo // Change to wrapped Native
+    }
+
+    const legs = this.tokenOutputLegs.get(fromToken.tokenId as string) as RouteLeg[]
     const legsAddr: [RouteLeg, string][] = legs.map((l) => {
       const pc = this.getPoolCode(l)
       const startPoint = pc.getStartPoint(l, route)
@@ -93,9 +118,11 @@ export class TinesToRouteProcessor {
     })
 
     const command =
-      getTokenType(route.fromToken) == TokenType.ERC20
-        ? 3 // distributeERC20Amounts
-        : 24 // distributeBentoShares
+      getTokenType(fromToken) == TokenType.BENTO
+        ? 24 // distributeBentoShares
+        : route.fromToken.address == ''
+        ? 5 // wrapAndDistributeERC20Amounts
+        : 3 // distributeERC20Amounts
 
     const hex = new HEXer().uint8(command).uint8(legsAddr.length)
 

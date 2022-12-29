@@ -57,7 +57,7 @@ jobs:
 
         - uses: pnpm/action-setup@v2
           with:
-            version: 7
+            version: 7.11.0
 
         - name: Setup Node.js
           uses: actions/setup-node@v3
@@ -66,14 +66,11 @@ jobs:
             cache: 'pnpm'
 
         - name: Install dependencies
-          run: |
-            pnpm install
-            npx playwright install --with-deps
+          run: pnpm install
           working-directory: .
 
-        # - name: Install playwright
-        #   run: npx playwright install --with-deps
-        #   working-directory: .
+        - name: Install playwright
+          run: pnpm exec playwright install --with-deps chromium
 
         - name: Install rust
           uses: actions-rs/toolchain@v1
@@ -87,7 +84,13 @@ jobs:
           uses: foundry-rs/foundry-toolchain@v1
           with:
             version: nightly
-            
+
+        # - name: "Cache RPC Responses"
+        #   uses: "actions/cache@v3"
+        #   with:
+        #     path: "~/.foundry/cache/rpc/mainnet/${{ secrets.ANVIL_BLOCK_NUMBER }}"
+        #     key: "${{ runner.os }}-mainnet-${{ secrets.ANVIL_BLOCK_NUMBER }}"            
+
         # TODO: Cache Anvil RPC calls between runs to speed up tests
         - name: Launch Anvil
           run: anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER &

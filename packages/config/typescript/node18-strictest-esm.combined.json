@@ -23,6 +23,8 @@
       "noUnusedLocals": true,
       "noUnusedParameters": true,
       "importsNotUsedAsValues": "error",
-      "checkJs": true
+      "checkJs": true,
+      "declaration": true,
+      "declarationMap": true
     }
   }

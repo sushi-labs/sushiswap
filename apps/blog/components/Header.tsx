@@ -1,5 +1,4 @@
-import { App } from '@sushiswap/ui'
-import { AppType } from '@sushiswap/ui/app'
+import { App, AppType } from '@sushiswap/ui'
 import { FC } from 'react'
 
 export const Header: FC = () => {

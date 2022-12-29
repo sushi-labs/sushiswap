@@ -3,9 +3,8 @@ import { ChevronRightIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { Amount, Native } from '@sushiswap/currency'
 import { shortenAddress } from '@sushiswap/format'
-import { BuyCrypto, IconButton, Typography } from '@sushiswap/ui'
-import CopyHelper from '@sushiswap/ui/copy/Copy'
-import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
+import { BuyCrypto, CopyHelper, IconButton, JazzIcon, Typography } from '@sushiswap/ui'
+
 import Image from 'next/legacy/image'
 import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
 import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
@@ -86,7 +85,7 @@ export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
             </IconButton>
           </div>
         </div>
-        <div className="flex flex-col gap-2 justify-center items-center">
+        <div className="flex flex-col items-center justify-center gap-2">
           <Typography variant="h1" className="whitespace-nowrap">
             {balance.toSignificant(3)} {Native.onChain(chainId).symbol}
           </Typography>
@@ -96,7 +95,7 @@ export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
         </div>
       </div>
       <div className="px-2">
-        <div className="h-px bg-slate-200/10 w-full mt-3" />
+        <div className="w-full h-px mt-3 bg-slate-200/10" />
       </div>
       <div className="p-2">
         <button

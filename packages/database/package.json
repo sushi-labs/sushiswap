@@ -30,7 +30,10 @@
     "test": "jest --passWithNoTests",
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
-    "db:pull": "prisma db pull"
+    "db:pull": "prisma db pull",
+    "prebuild": "npm run db:generate",
+    "predev": "npm run db:generate",
+    "studio": "prisma studio"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"

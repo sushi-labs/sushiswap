@@ -32,7 +32,7 @@
     "cors": "^2.8.5",
     "ethers": "^5.7.0",
     "fast-json-stable-stringify": "^2.1.0",
-    "next": "13.0.5",
+    "next": "13.0.7",
     "next-seo": "^5.5.0",
     "octokit": "^2.0.4",
     "react": "^18.2.0",

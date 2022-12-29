@@ -1,14 +1,15 @@
-import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RToken } from '@sushiswap/tines'
-import { BigNumber, ethers } from 'ethers'
-import { SushiProvider } from './liquidityProviders/Sushi'
-import { getRouteProcessorCode } from './TinesToRouteProcessor'
-import { UniswapProvider } from './liquidityProviders/UniswapV2'
-import { convertTokenToBento, getBentoChainId, TridentProvider } from './liquidityProviders/Trident'
-import { Limited } from './Limited'
-import { PoolCode } from './pools/PoolCode'
-import { QuickSwapProvider } from './liquidityProviders/QuickSwap'
 import { ChainId } from '@sushiswap/chain'
 import { Token, WNATIVE } from '@sushiswap/currency'
+import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RToken } from '@sushiswap/tines'
+import { BigNumber, ethers } from 'ethers'
+
+import { Limited } from './Limited'
+import { QuickSwapProvider } from './liquidityProviders/QuickSwap'
+import { SushiProvider } from './liquidityProviders/Sushi'
+import { convertTokenToBento, getBentoChainId, TridentProvider } from './liquidityProviders/Trident'
+import { UniswapProvider } from './liquidityProviders/UniswapV2'
+import { PoolCode } from './pools/PoolCode'
+import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
 export class Swapper {
   routeProcessor: string

@@ -342,6 +342,24 @@ query GetProducts($filters: ProductFiltersInput) {
         slug
         url
         relevantArticleIds
+        shareImage {
+          data {
+            id
+            attributes {
+              alternativeText
+              height
+              width
+              caption
+              name
+              url
+              provider_metadata
+              hash
+              mime
+              size
+              provider
+            }
+          }
+        }
       }
     }
   }

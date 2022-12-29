@@ -115,11 +115,11 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
   const handleSelectDifficulty = (difficulty: DifficultyEntity) => {
     setSelectedDifficulty((current) => (current?.id === difficulty.id ? undefined : difficulty))
   }
-  const handleSelectTopic = (topic: TopicEntity) => {
+  const handleSelectTopic = (topic: TopicEntity & { isProduct?: boolean }) => {
     if (selectedProduct) setSelectedProduct(undefined)
     setSelectedTopic((current) => (current?.id === topic.id ? undefined : topic))
   }
-  const handleSelectProduct = (product: ProductEntity) => {
+  const handleSelectProduct = (product: ProductEntity & { isProduct?: boolean }) => {
     if (selectedTopic) setSelectedTopic(undefined)
     setSelectedProduct((current) => (current?.id === product.id ? undefined : product))
   }
@@ -171,8 +171,8 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
             >
               <Disclosure.Panel className="grid grid-cols-2 gap-3 mt-9 sm:hidden">
                 <Select
-                  onChange={(value: ({ isProduct?: true } & ProductEntity) | (TopicEntity & { isProduct?: false })) =>
-                    value.isProduct ? handleSelectProduct(value) : handleSelectTopic(value)
+                  onChange={([value, isProduct]: [TopicEntity, false] | [ProductEntity, true]) =>
+                    isProduct ? handleSelectProduct(value) : handleSelectTopic(value)
                   }
                   button={
                     <Listbox.Button
@@ -191,7 +191,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                       <SelectOption
                         className="text-xs"
                         key={`product_${product.id}`}
-                        value={{ ...product, isProduct: true }}
+                        value={[product, true]}
                         title={product.attributes?.name}
                         isSelected={selectedProduct?.id === product.id}
                       />
@@ -200,7 +200,7 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
                       <SelectOption
                         className="text-xs"
                         key={`topic_${topic.id}`}
-                        value={topic}
+                        value={[topic, false]}
                         title={topic.attributes?.name}
                         isSelected={selectedTopic?.id === topic.id}
                       />

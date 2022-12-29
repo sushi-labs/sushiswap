@@ -1,12 +1,15 @@
 import '@nomiclabs/hardhat-ethers'
-// import 'hardhat-deploy'
-// import '@tenderly/hardhat-tenderly'
+import 'hardhat-deploy'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'
-
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
 import { HardhatUserConfig, subtask } from 'hardhat/config'
 import path from 'path'
+
+const accounts = {
+  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
+  accountsBalance: '10000000000000000000000000',
+}
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
   if (solcVersion === '0.8.10') {
@@ -35,6 +38,20 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVers
 })
 
 const config: HardhatUserConfig = {
+  ...defaultConfig,
+  defaultNetwork: 'hardhat',
+  networks: {
+    localhost: {},
+    hardhat: {
+      forking: {
+        enabled: true,
+        //url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+        //blockNumber: 34445477,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      },
+      accounts,
+    },
+  },
   solidity: {
     compilers: [
       {
@@ -57,10 +74,11 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  ...defaultConfig,
   mocha: {
     timeout: 3600_000,
   },
 }
 
+// You need to export an object to set up your config
+// Go to https://hardhat.org/config/ to learn more
 export default config
