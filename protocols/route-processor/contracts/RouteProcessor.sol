@@ -10,6 +10,8 @@ import './StreamReader.sol';
 import 'hardhat/console.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
+address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
 contract RouteProcessor is StreamReader {
   using SafeERC20 for IERC20;
 
@@ -20,6 +22,9 @@ contract RouteProcessor is StreamReader {
     bentoBox = IBentoBoxMinimal(_bentoBox);
     wNATIVE = IWETH(_wNATIVE);
   }
+
+  // for native unwrapping
+  receive() external payable {}
 
   function processRoute(
     address tokenIn,
@@ -32,7 +37,8 @@ contract RouteProcessor is StreamReader {
     require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
 
     uint256 amountInAcc = 0;
-    uint256 balanceInitial = IERC20(tokenOut).balanceOf(to);
+    uint256 balanceInitial = tokenOut == NATIVE_ADDRESS ? 
+      address(to).balance : IERC20(tokenOut).balanceOf(to);
 
     uint256 stream = createStream(route);
     while (isNotEmpty(stream)) {
@@ -40,10 +46,13 @@ contract RouteProcessor is StreamReader {
       if (commandCode < 20) {
         if (commandCode == 10)
           swapUniswapPool(stream); // Sushi/Uniswap pool swap
-        else if (commandCode == 3)
-          amountInAcc += distributeERC20Amounts(stream, tokenIn); // initial distribution
         else if (commandCode == 4)
           distributeERC20Shares(stream); // distribute ERC20 tokens from this router to pools
+        else if (commandCode == 3)
+          amountInAcc += distributeERC20Amounts(stream, tokenIn); // initial distribution
+        else if (commandCode == 5)
+          amountInAcc += wrapAndDistributeERC20Amounts(stream, tokenIn); // wrap natives and initial distribution        
+        else if (commandCode == 6) unwrapNative(to);
         else revert('Unknown command code');
       } else if (commandCode < 24) {
         if (commandCode == 20) bentoDepositAmountFromBento(stream, tokenIn);
@@ -55,14 +64,13 @@ contract RouteProcessor is StreamReader {
         else if (commandCode == 25) distributeBentoPortions(stream);
         else if (commandCode == 26) bentoDepositAllFromBento(stream);
         else if (commandCode == 27) bentoWithdrawAllFromRP(stream);
-        else if (commandCode == 28) wrapNative(stream);
-        else if (commandCode == 29) unwrapNative(stream);
         else revert('Unknown command code');
       }
     }
 
     require(amountInAcc == amountIn, 'Wrong amountIn value');
-    uint256 balanceFinal = IERC20(tokenOut).balanceOf(to);
+    uint256 balanceFinal = tokenOut == NATIVE_ADDRESS ? 
+      address(to).balance : IERC20(tokenOut).balanceOf(to);
     require(balanceFinal >= balanceInitial + amountOutMin, 'Minimal ouput balance violation');
 
     amountOut = balanceFinal - balanceInitial;
@@ -132,17 +140,25 @@ contract RouteProcessor is StreamReader {
   function distributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
     uint8 num = readUint8(stream);
     amountTotal = 0;
-    bool wrap = msg.value > 0 && token == address(wNATIVE);
     for (uint256 i = 0; i < num; ++i) {
       address to = readAddress(stream);
       uint256 amount = readUint(stream);
       amountTotal += amount;
-      if (wrap) {
-        wNATIVE.deposit{value: amount}();
-        IERC20(token).safeTransfer(to, amount);
-      } else {
-        IERC20(token).safeTransferFrom(msg.sender, to, amount);
-      }
+      IERC20(token).safeTransferFrom(msg.sender, to, amount);
+    }
+  }
+
+  // Wrap all input native and Distributes wrapped ERC20 tokens from RP to addresses
+  // Expected to be launched for initial liquidity distribution from user to pools, so we know exact amounts
+  function wrapAndDistributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
+    wNATIVE.deposit{value: msg.value}();
+    uint8 num = readUint8(stream);
+    amountTotal = 0;
+    for (uint256 i = 0; i < num; ++i) {
+      address to = readAddress(stream);
+      uint256 amount = readUint(stream);
+      amountTotal += amount;
+      IERC20(token).safeTransfer(to, amount);
     }
   }
 
@@ -199,15 +215,8 @@ contract RouteProcessor is StreamReader {
     }
   }
 
-  // Wrap the Native Token
-  function wrapNative(uint256 stream) private {
-    uint256 amount = readUint(stream);
-    wNATIVE.deposit{value: amount}();
-  }
-
   // Unwrap the Native Token
-  function unwrapNative(uint256 stream) private {
-    address receiver = readAddress(stream);
+  function unwrapNative(address receiver) private {
     wNATIVE.withdraw(IERC20(address(wNATIVE)).balanceOf(address(this)));
     payable(receiver).transfer(address(this).balance);
   }

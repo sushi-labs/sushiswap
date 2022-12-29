@@ -71,7 +71,7 @@ artifacts
 **/public/worker-*.js.map
 
 # prisma
-prisma
+# prisma
 
 # screenshots
 screenshots

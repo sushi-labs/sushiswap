@@ -59,7 +59,7 @@
     "@types/react-window": "^1.8.5",
     "autoprefixer": "^10.4.0",
     "eslint": "8.29.0",
-    "next": "13.0.5",
+    "next": "13.0.7",
     "postcss": "^8.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -74,7 +74,7 @@
     "tailwindcss": "3.2.4"
   },
   "optionalDependencies": {
-    "next": "13.0.5",
+    "next": "13.0.7",
     "wagmi": "0.9.1"
   }
 }

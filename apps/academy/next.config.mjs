@@ -12,6 +12,9 @@ const nextConfig = {
   basePath: '/academy',
   reactStrictMode: true,
   swcMinify: false,
+  typescript: {
+    ignoreBuildErrors: true
+  },
   async redirects() {
     return [
       {

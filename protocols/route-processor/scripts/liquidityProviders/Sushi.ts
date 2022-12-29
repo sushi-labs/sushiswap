@@ -1,15 +1,16 @@
-import { ConstantProductRPool, RToken } from '@sushiswap/tines'
-import { BigNumber, ethers } from 'ethers'
-import { LiquidityProvider } from './LiquidityProvider'
-import { getCreate2Address } from 'ethers/lib/utils'
 import { keccak256, pack } from '@ethersproject/solidity'
-import { SushiPoolABI } from '../../ABI/SushiPool'
-import { Limited } from '../Limited'
-import { PoolCode } from '../pools/PoolCode'
-import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
+import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
-import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
+import { ConstantProductRPool, RToken } from '@sushiswap/tines'
+import { BigNumber, ethers } from 'ethers'
+import { getCreate2Address } from 'ethers/lib/utils'
+
+import { SushiPoolABI } from '../../ABI/SushiPool'
+import { Limited } from '../Limited'
+import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
+import { PoolCode } from '../pools/PoolCode'
+import { LiquidityProvider } from './LiquidityProvider'
 
 export class SushiProvider extends LiquidityProvider {
   poolCodes: PoolCode[]
