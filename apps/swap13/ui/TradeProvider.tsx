@@ -7,6 +7,7 @@ import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } 
 import { useAccount } from 'wagmi'
 
 interface SwapState {
+  review: boolean
   recipient: string | undefined
   token0: Type
   token1: Type
@@ -18,6 +19,7 @@ interface SwapState {
 }
 
 type SwapApi = {
+  setReview(value: boolean): void
   setRecipient(recipient: string): void
   setNetwork0(chainId: ChainId): void
   setNetwork1(chainId: ChainId): void
@@ -40,9 +42,12 @@ type Actions =
   | { type: 'setValue'; value: string }
   | { type: 'switchTokens' }
   | { type: 'setRecipient'; recipient: string }
+  | { type: 'setReview'; value: boolean }
 
 const reducer = (state: SwapState, action: Actions): SwapState => {
   switch (action.type) {
+    case 'setReview':
+      return { ...state, review: action.value }
     case 'setRecipient':
       return { ...state, recipient: action.recipient }
     case 'setNetwork0':
@@ -99,6 +104,7 @@ interface SwapProviderProps {
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const [state, dispatch] = useReducer(reducer, {
+    review: false,
     recipient: undefined,
     appType: AppType.Swap,
     token0: Native.onChain(ChainId.ETHEREUM),
@@ -118,6 +124,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
     const switchTokens = () => dispatch({ type: 'switchTokens' })
     const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
+    const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
 
     return {
       setNetwork0,
@@ -128,6 +135,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setValue,
       switchTokens,
       setRecipient,
+      setReview,
     }
   }, [])
 

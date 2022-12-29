@@ -1,5 +1,10 @@
 import { Transition } from '@headlessui/react'
-import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {
+  ArrowPathRoundedSquareIcon,
+  ArrowTrendingUpIcon,
+  MagnifyingGlassIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline'
 import { ArrowLongRightIcon } from '@heroicons/react/24/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Token, Type } from '@sushiswap/currency'
@@ -121,7 +126,7 @@ export const SearchPanel: FC = () => {
             leaveTo="transform opacity-0"
           >
             <div className="z-[1082] flex gap-2 absolute inset-0 items-center">
-              <MagnifyingGlassIcon className="absolute left-3 w-5 h-5 text-white dark:text-slate-300" />
+              <MagnifyingGlassIcon className="absolute left-4 w-5 h-5 text-white dark:text-slate-300" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -146,24 +151,26 @@ export const SearchPanel: FC = () => {
             leaveTo="transform opacity-0"
           >
             <div
-              className="z-[1083] relative h-[320px] w-full bg-gray-50 dark:bg-slate-50 rounded-b-2xl py-2 overflow-y-scroll scroll"
+              className="z-[1083] relative h-[320px] w-full bg-gray-50 dark:bg-slate-800 rounded-b-2xl pt-2 overflow-y-scroll scroll"
               style={{ marginTop: HEADER_HEIGHT - 10 }}
             >
               {query ? (
                 <>
-                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-gray-600 dark:text-slate-600">
-                    SEARCH RESULTS
+                  <p className="flex items-center gap-2 pl-4 pt-2 pb-2 text-sm font-medium text-gray-700 dark:text-slate-500">
+                    Search results
                   </p>
                   <div className="flex flex-col gap-2 p-2">
-                    {filteredTokens?.map((el, i) => (
-                      <Row currency={el} key={`example-${i}-${el.address}`} />
-                    ))}
+                    {filteredTokens && filteredTokens?.length > 0 ? (
+                      filteredTokens?.map((el, i) => <Row currency={el} key={`example-${i}-${el.address}`} />)
+                    ) : (
+                      <span className="pl-2 py-2 italic text-[10px] font-normal text-gray-500 dark:text-slate-500">
+                        No results found
+                      </span>
+                    )}
                   </div>
-                  <div className="my-3 mx-8">
-                    <div className="h-px bg-gray-300 dark:bg-slate-300 w-full" />
-                  </div>
-                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-gray-600 dark:text-slate-600">
-                    POPULAR TOKENS
+                  <p className="flex items-center gap-2 pl-4 pt-4 pb-2 text-sm font-medium text-gray-700 dark:text-slate-500">
+                    <ArrowTrendingUpIcon width={24} height={24} />
+                    Popular tokens
                   </p>
                   <div className="flex flex-col p-2">
                     {EXAMPLE_CURRENCIES.map((el) => (
@@ -174,19 +181,18 @@ export const SearchPanel: FC = () => {
               ) : (
                 <>
                   {/*TODO RAMIN REACT_QUERY*/}
-                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-gray-600 dark:text-slate-600">
-                    RECENT SEARCHES
+                  <p className="flex items-center gap-2 pl-4 pt-4 pb-2 text-sm font-medium text-gray-700 dark:text-slate-500">
+                    <ArrowPathRoundedSquareIcon width={20} height={20} />
+                    Recent searches
                   </p>
                   <div className="flex flex-col p-2">
                     {EXAMPLE_CURRENCIES.map((el) => (
                       <Row currency={el} key={`example-${el.address}`} />
                     ))}
                   </div>
-                  <div className="my-3 mx-8">
-                    <div className="h-px bg-gray-300 dark:bg-slate-300 w-full" />
-                  </div>
-                  <p className="text-[10px] flex items-center gap-2 pl-11 pt-3 text-gray-600 dark:text-slate-600">
-                    POPULAR TOKENS
+                  <p className="flex items-center gap-2 pl-4 pt-4 pb-2 text-sm font-medium text-gray-700 dark:text-slate-500">
+                    <ArrowTrendingUpIcon width={20} height={20} />
+                    Popular tokens
                   </p>
                   <div className="flex flex-col p-2">
                     {EXAMPLE_CURRENCIES.map((el) => (
@@ -210,18 +216,16 @@ const Row: FC<{ currency: Type; onClick?(): void }> = ({ currency, onClick }) =>
     <div
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className="mr-2 overflow-hidden relative group rounded-lg flex items-center gap-2 cursor-pointer py-2 hover:bg-gray-100 hover:dark:bg-slate-200 px-10"
+      className="mr-2 overflow-hidden relative group rounded-xl flex items-center gap-2 cursor-pointer py-2 hover:bg-gray-100 hover:dark:bg-slate-700 px-2"
       key={currency.wrapped.address}
     >
       <div className="w-5 h-5">
         <Currency.Icon disableLink currency={currency} width={20} height={20} />
       </div>
       <div className="flex flex-col">
-        <p className="font-semibold text-slate-900 group-hover:text-blue group-hover:dark:text-blue">
-          {currency.name}{' '}
-          <span className="text-xs text-slate-600 group-hover:text-blue group-hover:dark:text-blue">
-            {currency.symbol}
-          </span>
+        <p className="font-semibold text-gray-700 dark:text-slate-300">
+          {currency.symbol}{' '}
+          <span className="font-normal text-xs text-gray-500 dark:text-slate-500">{currency.name}</span>
         </p>
         <Transition
           as={Fragment}
