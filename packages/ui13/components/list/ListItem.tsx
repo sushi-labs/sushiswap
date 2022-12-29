@@ -1,24 +1,25 @@
 import { Transition } from '@headlessui/react'
 import { ArrowLongRightIcon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
-import React, { Fragment, SVGProps, useState } from 'react'
+import React, { Fragment, ReactNode, SVGProps, useState } from 'react'
 
 import { PolymorphicComponentProps } from '../../types'
 
 interface ExtraProps<T> {
   icon?: React.FC<T>
-  iconProps?: T & { width: number; height: number }
+  iconProps?: T & { width: number; height: number; className?: string }
 }
 
 interface Props {
   title: string
-  subtitle?: string
+  subtitle?: ReactNode
   onClick?(): void
   hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element
   hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
     width: number
     height: number
   }
+  value?: ReactNode
 }
 
 export type ListItemProps<T, C extends React.ElementType> = PolymorphicComponentProps<C, Props & ExtraProps<T>>
@@ -37,6 +38,7 @@ export const ListItem: ListItemComponent = ({
   hoverIcon: HoverIcon,
   hoverIconProps,
   className,
+  value,
   ...rest
 }) => {
   const Component = as || 'button'
@@ -51,39 +53,57 @@ export const ListItem: ListItemComponent = ({
       {...rest}
       className={classNames(
         className,
-        'relative flex gap-3 px-4 py-3 hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] w-full items-center cursor-pointer'
+        subtitle ? 'items-start' : 'items-center',
+        'relative flex gap-4 px-4 py-3 hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] w-full cursor-pointer'
       )}
     >
-      {/*// TODO RAMIN*/}
-      {/*// @ts-ignore*/}
-      {Icon && <Icon {...iconProps} width={iconProps?.width ?? 20} height={iconProps?.height ?? 20} />}
+      {Icon && (
+        <div style={{ minWidth: iconProps?.width ?? 18, minHeight: iconProps?.height ?? 18 }}>
+          {/*// TODO ramin
+          // @ts-ignore*/}
+          <Icon
+            {...iconProps}
+            width={iconProps?.width ?? 18}
+            height={iconProps?.height ?? 18}
+            strokeWidth={2}
+            className={classNames(iconProps?.className, 'text-blue-500')}
+          />
+        </div>
+      )}
       <div className="flex flex-col gap-0.5 items-start">
         <span className="text-sm font-medium dark:text-slate-200">{title}</span>
-        {subtitle && <span className="text-[10px] text-slate-400">{subtitle}</span>}
+        {subtitle && <span className="text-[10px] text-gray-700 dark:text-slate-400 text-left">{subtitle}</span>}
       </div>
-      <Transition
-        as={Fragment}
-        show={hover}
-        enter="ease-in-out duration-300"
-        enterFrom="translate-x-[10px] opacity-0"
-        enterTo="translate-x-[-16px] opacity-100"
-        leave="ease-in-out duration-300"
-        leaveFrom="translate-x-[-16px] opacity-100"
-        leaveTo="translate-x-[10px] opacity-0"
-        unmount={false}
-      >
-        <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
-          {HoverIcon ? (
-            <HoverIcon {...hoverIconProps} width={hoverIconProps?.width ?? 20} height={hoverIconProps?.height ?? 20} />
-          ) : (
-            <ArrowLongRightIcon
-              {...hoverIconProps}
-              width={hoverIconProps?.width ?? 20}
-              height={hoverIconProps?.height ?? 20}
-            />
-          )}
-        </div>
-      </Transition>
+      {typeof value === 'string' ? <span className="text-xs text-gray-500 dark:text-slate-500">{value}</span> : value}
+      {!value && (
+        <Transition
+          as={Fragment}
+          show={hover}
+          enter="ease-in-out duration-300"
+          enterFrom="translate-x-[10px] opacity-0"
+          enterTo="translate-x-[-16px] opacity-100"
+          leave="ease-in-out duration-300"
+          leaveFrom="translate-x-[-16px] opacity-100"
+          leaveTo="translate-x-[10px] opacity-0"
+          unmount={false}
+        >
+          <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
+            {HoverIcon ? (
+              <HoverIcon
+                {...hoverIconProps}
+                width={hoverIconProps?.width ?? 20}
+                height={hoverIconProps?.height ?? 20}
+              />
+            ) : (
+              <ArrowLongRightIcon
+                {...hoverIconProps}
+                width={hoverIconProps?.width ?? 20}
+                height={hoverIconProps?.height ?? 20}
+              />
+            )}
+          </div>
+        </Transition>
+      )}
     </Component>
   )
 }

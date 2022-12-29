@@ -3,6 +3,7 @@
 import { Widget as UIWidget } from '@sushiswap/ui13/components/widget'
 import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
 import React, { FC } from 'react'
+import { SettingsModule, SettingsOverlay2 } from 'ui/SettingsOverlay2'
 
 import { useSwapActions, useSwapState } from '../TradeProvider'
 import { SwitchAppType } from './SwitchAppType'
@@ -16,7 +17,10 @@ export const Widget: FC = () => {
   return (
     <div className="flex flex-col gap-4">
       <WidgetTitle />
-      <SwitchAppType />
+      <div className="flex justify-between items-center">
+        <SwitchAppType />
+        <SettingsOverlay2 modules={[SettingsModule.SlippageTolerance, SettingsModule.CarbonOffset]} />
+      </div>
       <UIWidget.Content>
         <Web3Input.Currency
           className="p-3 pb-6 dark:bg-slate-800 bg-white rounded-xl"
