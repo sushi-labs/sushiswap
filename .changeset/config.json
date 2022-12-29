@@ -31,6 +31,7 @@
     "token-price-api",
     "farms-script",
     "price-script",
+    "@sushiswap/database",
     "@sushiswap/next",
     "@sushiswap/redux-token-lists",
     "@sushiswap/redux-localstorage",
