@@ -6,7 +6,7 @@
     "build": "next build && next-sitemap --config next-sitemap.config.mjs",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev --port 3001",
-    "lint": "TIMING=1 eslint --fix . && next lint",
+    "lint": "next lint",
     "start": "next start",
     "check": "tsc --pretty --noEmit"
   },

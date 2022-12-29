@@ -10,14 +10,6 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "main": "index.js",
-  ".": {
-    "types": "./index.d.ts",
-    "default": "./index.js"
-  },
-  "./chains": {
-    "types": "./dist/chains.d.ts",
-    "default": "./dist/chains.js"
-  },
   "files": [
     "index.js",
     "base/index.js",
@@ -26,19 +18,19 @@
     "react/index.js"
   ],
   "dependencies": {
-    "@graphql-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/parser": "latest",
+    "@graphql-eslint/eslint-plugin": "3.14.3",
+    "@typescript-eslint/eslint-plugin": "5.47.1",
+    "@typescript-eslint/parser": "5.47.1",
     "eslint": "8.29.0",
-    "eslint-config-next": "latest",
-    "eslint-config-prettier": "latest",
-    "eslint-config-turbo": "latest",
-    "eslint-plugin-simple-import-sort": "latest",
-    "eslint-plugin-testing-library": "latest",
-    "eslint-plugin-unused-imports": "latest"
+    "eslint-config-next": "13.1.1",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-config-turbo": "0.0.7",
+    "eslint-plugin-simple-import-sort": "8.0.0",
+    "eslint-plugin-testing-library": "5.9.1",
+    "eslint-plugin-unused-imports": "2.0.0"
   },
   "devDependencies": {
-    "@types/eslint": "latest",
+    "@types/eslint": "8.4.10",
     "@types/node": "^16.0.0"
   }
 }

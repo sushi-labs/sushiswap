@@ -8,7 +8,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient && rm -rf .mesh",
     "dev": "next dev --port 3002",
     "generate": "graphql-mesh build",
-    "lint": "TIMING=1 eslint --fix . && next lint",
+    "lint": "next lint",
     "start": "next start",
     "check": "tsc --pretty --noEmit"
   },

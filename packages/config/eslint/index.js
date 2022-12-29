@@ -3,8 +3,8 @@
 const eslintConfig = {
   root: true,
   env: {
-    node: true,
     browser: true,
+    node: true,
     es6: true,
   },
   parser: "@typescript-eslint/parser",
