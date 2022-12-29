@@ -5,6 +5,12 @@ const withTranspileModules = transpileModules(['@sushiswap/ui'])
 // @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    ignoreBuildErrors: true,
+  },
   basePath: '/blog',
   reactStrictMode: true,
   swcMinify: false,
@@ -25,12 +31,6 @@ const nextConfig = {
         basePath: false,
       },
     ]
-  },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    ignoreBuildErrors: true,
   },
 }
 

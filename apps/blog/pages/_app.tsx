@@ -93,7 +93,7 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
     getGlobalSEO(),
   ])
   // Pass the data to our page via props
-  return { ...appProps, seo: globalSEO.global?.data.attributes }
+  return { ...appProps, seo: globalSEO.global?.data?.attributes }
 }
 
 export default MyApp
