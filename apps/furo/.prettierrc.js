@@ -1,1 +1,3 @@
-module.exports = require("@sushiswap/prettier-config").default;
+const { default: config } = require('@sushiswap/prettier-config')
+
+module.exports = config

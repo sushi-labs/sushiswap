@@ -1,40 +1,24 @@
-// This file sets a custom webpack configuration to use your Next.js app
-// with Sentry.
-// https://nextjs.org/docs/api-reference/next.config.js/introduction
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/
-import transpileModules from 'next-transpile-modules'
-
-const withTranspileModules = transpileModules([
-  '@sushiswap/redux-token-lists',
-  '@sushiswap/redux-localstorage',
-  '@sushiswap/ui',
-  '@sushiswap/wagmi',
-])
-
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: '/swap',
   reactStrictMode: true,
-  swcMinify: false,
   productionBrowserSourceMaps: true,
+  swcMinify: false,
   poweredByHeader: false,
+  staticPageGenerationTimeout: 180,
   experimental: {
     esmExternals: 'loose',
   },
+  transpilePackages: [
+    '@sushiswap/redux-token-lists',
+    '@sushiswap/redux-localstorage',
+    '@sushiswap/wagmi',
+    '@sushiswap/ui',
+  ],
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: '/',
-  //       destination: '/swap',
-  //       basePath: false,
-  //     },
-  //   ]
-  // },
   async redirects() {
     return [
       {
@@ -75,6 +59,5 @@ const nextConfig = {
   },
 }
 
-// Make sure adding Sentry options is the last code to run before exporting, to
-// ensure that your source maps include changes from all other Webpack plugins
-export default withTranspileModules(nextConfig)
+export default nextConfig
+// export default withTranspileModules(nextConfig)

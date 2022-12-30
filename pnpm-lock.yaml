@@ -1164,14 +1164,17 @@ importers:
       '@ethersproject/bytes': ^5.7.0
       '@ethersproject/constants': ^5.7.0
       '@ethersproject/contracts': ^5.7.0
+      '@ethersproject/experimental': ^5.7.0
       '@ethersproject/providers': ^5.7.0
       '@ethersproject/solidity': ^5.7.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@playwright/test': 1.28.1
       '@reduxjs/toolkit': ^1.8.1
+      '@sushiswap/abi': workspace:*
       '@sushiswap/address': workspace:*
       '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -1179,6 +1182,7 @@ importers:
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
@@ -1196,11 +1200,12 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       '@types/workbox-sw': ^4.3.2
-      '@uniswap/v2-core': ^1.0.1
+      '@uniswap/v2-core': 1.0.1
       '@vercel/analytics': 0.1.5
       autoprefixer: ^10.4.0
       concurrently: 7.6.0
       date-fns: ^2.29.1
+      dotenv-cli: 6.0.0
       eslint: 8.29.0
       ethers: ^5.7.0
       next: 13.1.1
@@ -1223,13 +1228,16 @@ importers:
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@ethersproject/contracts': 5.7.0
+      '@ethersproject/experimental': 5.7.0
       '@ethersproject/providers': 5.7.2
       '@ethersproject/solidity': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
+      '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/address': link:../../packages/address
       '@sushiswap/amm': link:../../packages/amm
+      '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/gas': link:../../packages/gas
@@ -1259,6 +1267,7 @@ importers:
       '@playwright/test': 1.28.1
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@testing-library/jest-dom': 5.16.5
@@ -1271,6 +1280,7 @@ importers:
       '@types/workbox-sw': 4.3.2
       autoprefixer: 10.4.13_postcss@8.4.20
       concurrently: 7.6.0
+      dotenv-cli: 6.0.0
       eslint: 8.29.0
       next-transpile-modules: 10.0.0
       postcss: 8.4.20
@@ -1410,6 +1420,7 @@ importers:
       '@ethersproject/contracts': ^5.7.0
       '@ethersproject/experimental': ^5.7.0
       '@ethersproject/providers': ^5.7.0
+      '@ethersproject/solidity': ^5.7.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': ^1.0.0
       '@reduxjs/toolkit': ^1.8.1
@@ -1421,6 +1432,7 @@ importers:
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/format': workspace:*
+      '@sushiswap/gas': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
@@ -1464,6 +1476,7 @@ importers:
       '@ethersproject/contracts': 5.7.0
       '@ethersproject/experimental': 5.7.0
       '@ethersproject/providers': 5.7.2
+      '@ethersproject/solidity': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 1.0.6_react@18.2.0
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
@@ -1474,6 +1487,7 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/format': link:../../packages/format
+      '@sushiswap/gas': link:../../packages/gas
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
@@ -1543,9 +1557,8 @@ importers:
       '@sushiswap/typescript-config': workspace:*
       tsup: 6.5.0
       typescript: 4.9.4
-    dependencies:
-      '@sushiswap/chain': link:../../packages/chain
     devDependencies:
+      '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/eslint-config': link:../eslint
       '@sushiswap/jest-config': link:../jest
       '@sushiswap/prettier-config': link:../prettier
@@ -2416,7 +2429,7 @@ importers:
 
   packages/redux/localstorage:
     specifiers:
-      '@reduxjs/toolkit': 1.9.1
+      '@reduxjs/toolkit': ^1.8.1
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -2432,7 +2445,7 @@ importers:
       fast-json-stable-stringify: 2.1.0
       react: ^18.2.0
       react-dom: ^18.2.0
-      react-redux: 8.0.5
+      react-redux: ^8.0.1
       typescript: 4.9.4
     devDependencies:
       '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
@@ -2820,7 +2833,7 @@ importers:
 
   packages/validate:
     specifiers:
-      '@sushiswap/chain': workspace:*
+      '@sushiswap/chain': workspace*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -2831,9 +2844,8 @@ importers:
       jest: ^29.3.0
       tsup: 6.5.0
       typescript: 4.9.4
-    dependencies:
-      '@sushiswap/chain': link:../chain
     devDependencies:
+      '@sushiswap/chain': link:../chain
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/jest-config': link:../../config/jest

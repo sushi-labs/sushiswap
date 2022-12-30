@@ -1,6 +1,6 @@
 // @ts-check
 /** @type {import('next-seo').DefaultSeoProps} */
-export default {
+const config = {
   titleTemplate: '%s | Sushi',
   title: 'Swap',
   defaultTitle: 'Swap',
@@ -33,3 +33,4 @@ export default {
     // locale: 'en_IE',
   },
 }
+export default config

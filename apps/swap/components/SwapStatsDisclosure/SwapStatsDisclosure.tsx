@@ -3,9 +3,9 @@ import { InformationCircleIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Percent } from '@sushiswap/math'
 import { classNames, Dialog, Tooltip, Typography } from '@sushiswap/ui'
-import { Rate, Route, useTrade } from 'components'
 import React, { FC, useMemo, useState } from 'react'
 
+import { Rate, Route, useTrade } from '../../components'
 import { warningSeverity } from '../../lib/functions'
 import { useSettings } from '../../lib/state/storage'
 
