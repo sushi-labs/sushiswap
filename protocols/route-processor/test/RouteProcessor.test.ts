@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI, Token, WBTC, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { BentoBox, HEXer, Swapper } from '@sushiswap/router'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Contract } from 'ethers'
@@ -9,9 +10,6 @@ import { HardhatNetworkConfig } from 'hardhat/types'
 import { BentoBoxABI } from '../ABI/BentoBoxABI'
 import { ERC20ABI } from '../ABI/ERC20'
 import { WETH9ABI } from '../ABI/WETH9'
-import { HEXer } from '../scripts/HEXer'
-import { BentoBox } from '../scripts/liquidityProviders/Trident'
-import { Swapper } from '../scripts/Swapper'
 import { RouteProcessor__factory } from '../typechain'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))

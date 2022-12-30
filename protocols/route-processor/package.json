@@ -45,6 +45,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.0",

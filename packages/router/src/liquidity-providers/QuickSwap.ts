@@ -1,20 +1,27 @@
 // @ts-nocheck
 
 import { keccak256, pack } from '@ethersproject/solidity'
-import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { BigNumber, ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
-import { SushiPoolABI } from '../../ABI/SushiPool'
+import { SushiPoolABI } from '../ABI/SushiPool'
 import type { Limited } from '../Limited'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider } from './LiquidityProvider'
 
-export class SushiProvider extends LiquidityProvider {
+const QUICKSWAP_FACTORY: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
+}
+
+const QUICKSWAP_INIT_CODE_HASH: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+}
+
+export class QuickSwapProvider extends LiquidityProvider {
   poolCodes: PoolCode[]
   lastPoolCodeNumber: number
 
@@ -25,12 +32,12 @@ export class SushiProvider extends LiquidityProvider {
   }
 
   getPoolProviderName(): string {
-    return 'Sushiswap'
+    return 'Quickswap'
   }
 
   async getPools(t0: Token, t1: Token): Promise<PoolCode[]> {
-    if (FACTORY_ADDRESS[this.chainId] === undefined) {
-      // No sushiswap for this network
+    if (QUICKSWAP_FACTORY[this.chainId] === undefined) {
+      // No pools for this network
       return []
     }
     const tokens = this._getAllRouteTokens(t0, t1)
@@ -41,9 +48,9 @@ export class SushiProvider extends LiquidityProvider {
   _getPoolAddress(t1: Token, t2: Token): string {
     const [token0, token1] = t1.address.toLowerCase() < t2.address.toLowerCase() ? [t1, t2] : [t2, t1]
     return getCreate2Address(
-      FACTORY_ADDRESS[this.chainId],
+      QUICKSWAP_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [token0.address, token1.address])]),
-      INIT_CODE_HASH[this.chainId]
+      QUICKSWAP_INIT_CODE_HASH[this.chainId]
     )
   }
 

@@ -4,8 +4,8 @@ import { findMultiRouteExactIn, getBigNumber, MultiRoute, NetworkInfo, RouteStat
 import type { BigNumber } from 'ethers'
 
 import type { DataFetcher } from './DataFetcher'
-import type { LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
-import { convertTokenToBento, getBentoChainId } from './liquidityProviders/Trident'
+import type { LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
+import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
 type RouteCallBack = (r: MultiRoute) => void

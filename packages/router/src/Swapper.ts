@@ -5,10 +5,10 @@ import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RToken } from '@sushisw
 import type { BigNumber, ethers } from 'ethers'
 
 import { Limited } from './Limited'
-import { QuickSwapProvider } from './liquidityProviders/QuickSwap'
-import { SushiProvider } from './liquidityProviders/Sushi'
-import { convertTokenToBento, getBentoChainId, TridentProvider } from './liquidityProviders/Trident'
-import { UniswapProvider } from './liquidityProviders/UniswapV2'
+import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
+import { SushiProvider } from './liquidity-providers/Sushi'
+import { convertTokenToBento, getBentoChainId, TridentProvider } from './liquidity-providers/Trident'
+import { UniswapProvider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 

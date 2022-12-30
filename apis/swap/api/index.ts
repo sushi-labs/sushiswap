@@ -1,11 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import { Native, USDC } from '@sushiswap/currency'
+import { DataFetcher, Router } from '@sushiswap/router'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
 import { z } from 'zod'
-
-import { DataFetcher } from '../scripts/DataFetcher'
-import { Router } from '../scripts/Router'
 
 const schema = z.object({
   chainId: z.coerce

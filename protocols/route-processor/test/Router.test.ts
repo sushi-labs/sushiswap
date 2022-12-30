@@ -1,6 +1,7 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, Type, WNATIVE } from '@sushiswap/currency'
+import { BentoBox, DataFetcher, Router } from '@sushiswap/router'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
@@ -9,9 +10,6 @@ import { HardhatNetworkConfig } from 'hardhat/types'
 
 import { ERC20ABI } from '../ABI/ERC20'
 import { WETH9ABI } from '../ABI/WETH9'
-import { DataFetcher } from '../scripts/DataFetcher'
-import { BentoBox } from '../scripts/liquidityProviders/Trident'
-import { Router } from '../scripts/Router'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 

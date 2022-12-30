@@ -1,13 +1,12 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
+import { BentoBox, RouteCreator } from '@sushiswap/router'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { HardhatNetworkConfig } from 'hardhat/types'
 
 import { WETH9ABI } from '../ABI/WETH9'
-import { BentoBox } from '../scripts/liquidityProviders/Trident'
-import { RouteCreator } from '../scripts/RouteCreator'
 import { RouteProcessor__factory } from '../typechain'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
