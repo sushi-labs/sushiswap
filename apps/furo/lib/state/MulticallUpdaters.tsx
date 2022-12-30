@@ -1,10 +1,9 @@
-import { ChainId } from '@sushiswap/chain'
-
-import { Updater } from './MulticallUpdater'
+import { SupportedChainIds } from "config";
+import { Updater } from "./MulticallUpdater";
 
 interface Props {
-  chainIds: ChainId[]
-  isDebug?: boolean
+  chainIds: SupportedChainIds;
+  isDebug?: boolean;
 }
 
 export function Updaters({ chainIds, isDebug = true }: Props) {
@@ -14,5 +13,5 @@ export function Updaters({ chainIds, isDebug = true }: Props) {
         <Updater key={chainId} chainId={chainId} isDebug={isDebug} />
       ))}
     </>
-  )
+  );
 }

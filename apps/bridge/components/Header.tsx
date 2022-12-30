@@ -1,8 +1,8 @@
 import { App, AppType } from '@sushiswap/ui'
 import { NetworkSelector } from '@sushiswap/wagmi'
 import { Profile } from '@sushiswap/wagmi/components/Wallet/Profile'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { useNotifications } from 'lib/state/storage'
+import { SUPPORTED_CHAIN_IDS } from '../config'
+import { useNotifications } from '../lib/state/storage'
 import React from 'react'
 import { useAccount } from 'wagmi'
 

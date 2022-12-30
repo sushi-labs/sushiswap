@@ -3,17 +3,22 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "dotenv -- turbo run build",
+    "build": "dotenv -- turbo run build --filter=!bridge",
     "build-analytics-app": "dotenv -- turbo run build --filter=analytics[HEAD^1]",
     "build-apps": "dotenv -- turbo run build --filter={./apps/*}[HEAD^1]... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13 --filter=!furo",
     "build-apps2": "dotenv -- turbo run build --filter={./apps/*}... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13 --filter=!furo",
     "build-blog-app": "dotenv -- turbo run build --filter=blog[HEAD^1]",
+    "build-bridge-app": "dotenv -- turbo run build --filter=bridge[HEAD^1]",
+    "build-config": "dotenv -- turbo run build --filter={./config/*}[HEAD^1]...",
     "build-earn-app": "dotenv -- turbo run build --filter=earn[HEAD^1]",
     "build-furo-app": "dotenv -- turbo run build --filter=furo[HEAD^1]",
     "build-packages": "dotenv -- turbo run build --filter={./packages/*}[HEAD^1]...",
     "build-protocols": "dotenv -- turbo run build --filter={./protocols/*}[HEAD^1]...",
     "build-root-app": "dotenv -- turbo run build --filter=root[HEAD^1]",
+    "build-route-processor": "dotenv -- turbo run build --filter=route-processor[HEAD^1]",
+    "build-scripts": "dotenv -- turbo run build --filter={./scripts/*}[HEAD^1]...",
     "build-swap-app": "dotenv -- turbo run build --filter=swap[HEAD^1]",
+    "build-tines": "dotenv -- turbo run build --filter=@sushiswap/tines[HEAD^1]",
     "build-xswap-app": "dotenv -- turbo run build --filter=xswap[HEAD^1]",
     "build:ci": "turbo run build --filter=[HEAD^1]",
     "changeset": "changeset",
@@ -30,6 +35,7 @@
     "generate:ci": "dotenv -- turbo run generate --filter=[HEAD^1]",
     "lint": "turbo run lint --parallel",
     "lint-apps": "turbo run lint --filter={./apps/*}[HEAD^1]...",
+    "lint-config": "turbo run lint --filter={./config/*}[HEAD^1]...",
     "lint-packages": "turbo run lint --filter={./packages/*}[HEAD^1]...",
     "lint-protocols": "turbo run lint --filter={./protocols/*}[HEAD^1]...",
     "lint:ci": "turbo run lint --parallel --filter=[HEAD^1]",
@@ -39,10 +45,12 @@
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'examples/*/package.json' 'packages/{,!(node_modules)/}**/package.json' 'protocols/{,!(node_modules)/}**/package.json' --check",
     "test": "dotenv -- turbo run test --parallel",
     "test-apps": "dotenv -- turbo run test --filter={./apps/*}[HEAD^1]...",
+    "test-config": "dotenv -- turbo run test --filter={./config/*}[HEAD^1]...",
     "test-packages": "dotenv -- turbo run test --filter={./packages/*}[HEAD^1]...",
     "test-protocols": "dotenv -- turbo run test --filter={./protocols/*}[HEAD^1]...",
     "test-swap-app": "dotenv -- turbo run test --filter=swap",
     "test:ci": "dotenv -- turbo run test --parallel --filter=[HEAD^1]",
+    "version-config": "dotenv -- turbo run build --filter=./config/* && changeset version",
     "version-packages": "dotenv -- turbo run build --filter=./packages/* && changeset version"
   },
   "devDependencies": {
@@ -90,7 +98,7 @@
     "overrides": {
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
       "graphql": "16.6.0",
-      "typescript": "4.8.2"
+      "typescript": "4.9.4"
     }
   }
 }

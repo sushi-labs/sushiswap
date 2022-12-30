@@ -2,8 +2,9 @@ import { stargateFeeLibraryV03Abi, stargatePoolAbi } from '@sushiswap/abi'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { STARGATE_CHAIN_ID, STARGATE_POOL_ADDRESS, STARGATE_POOL_ID } from '@sushiswap/stargate'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
-import { BigNumber } from 'ethers'
-import { isAddress } from 'ethers/lib/utils'
+
+import { BigNumber } from '@ethersproject/bignumber'
+import { isAddress } from '@ethersproject/address'
 import { useMemo } from 'react'
 import { Address, useContractRead, useContractReads } from 'wagmi'
 

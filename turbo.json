@@ -78,7 +78,7 @@
         "public/**",
         "storybook-static/**"
       ],
-      "dependsOn": ["^build", "^db:generate", "db:generate", "build-graphql", "generate"],
+      "dependsOn": ["^db:generate", "^build", "db:generate", "generate"],
       "env": [
         "ROOT_URL",
         "ACADEMY_URL",
@@ -100,7 +100,7 @@
       "cache": false
     },
     "check": {
-      "dependsOn": ["generate"],
+      "dependsOn": ["^build", "generate"],
       "cache": false
     },
     "dev": {
