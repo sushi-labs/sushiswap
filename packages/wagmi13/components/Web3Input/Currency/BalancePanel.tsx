@@ -1,7 +1,7 @@
 'use client'
 
 import { CreditCardIcon } from '@heroicons/react/20/solid'
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, Native, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import React, { FC, useCallback } from 'react'
@@ -28,8 +28,13 @@ export const BalancePanel: FC<BalancePanel> = ({
   const [big, portion] = (balance ? `${balance?.[fundSource]?.toSignificant(6)}` : '0.00').split('.')
 
   const onClick = useCallback(() => {
-    if (onChange) {
-      onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')
+    if (onChange && balance?.[fundSource]?.greaterThan(0)) {
+      if (balance?.[fundSource].currency.isNative && balance?.[fundSource].greaterThan('1000000000000000')) {
+        const hundred = Amount.fromRawAmount(Native.onChain(balance[fundSource].currency.chainId), '1000000000000000')
+        onChange(balance[fundSource].subtract(hundred).toFixed())
+      } else {
+        onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')
+      }
     }
   }, [balance, fundSource, onChange])
 
