@@ -15,22 +15,15 @@ const schema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256),
+  srcToken: z.coerce.string(),
+  dstToken: z.coerce.string(),
+  gasPrice: z.coerce.number().int().gte(0),
+  amount: z.coerce.number().int().gte(0),
 })
 
 const handler = (request: VercelRequest, response: VercelResponse) => {
-  const { srcChainId, dstChainId } = schema.parse(request.query)
-
-  // const amount = request.query.amount
-
-  // const gasPrice = request.query.gasPrice
-
-  // const srcChainId = request.query.srcChainId
-  // const srcToken = request.query.srcToken
-
-  // const dstChainId = request.query.dstChainId
-  // const dstToken = request.query.dstToken
-
-  return response.status(200).json({ srcChainId, dstChainId })
+  const { srcChainId, dstChainId, srcToken, dstToken, gasPrice, amount } = schema.parse(request.query)
+  return response.status(200).json({ srcChainId, dstChainId, srcToken, dstToken, gasPrice, amount })
 }
 
 export default handler

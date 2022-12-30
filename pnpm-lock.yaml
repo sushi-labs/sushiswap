@@ -94,47 +94,34 @@ importers:
       typescript: 4.9.4
       vercel: 28.10.0
 
-  apis/route-processor:
+  apis/swap:
     specifiers:
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@vercel/node': 2.8.1
-      eslint: 8.29.0
-      typescript: 4.9.4
-      vercel: 28.10.0
-      zod: 3.20.2
-    dependencies:
-      '@vercel/node': 2.8.1
-      zod: 3.20.2
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      eslint: 8.29.0
-      typescript: 4.9.4
-      vercel: 28.10.0
-
-  apis/tines:
-    specifiers:
+      '@ethersproject/solidity': ^5.7.0
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/route-processor': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@vercel/node': 2.8.1
       eslint: 8.29.0
+      ethers: ^5.7.0
       typescript: 4.9.4
       vercel: 28.10.0
       zod: 3.20.2
     dependencies:
+      '@ethersproject/solidity': 5.7.0
+      '@sushiswap/amm': link:../../packages/amm
+      '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/tines': link:../../packages/tines
       '@vercel/node': 2.8.1
+      ethers: 5.7.2
       zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint

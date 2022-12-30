@@ -359,7 +359,7 @@ export const COMMON_BASES: { readonly [chainId: number]: Token[] } = {
   ],
 }
 
-export function getCurrencyCombinations(chainId: number, currencyA: Type, currencyB: Type) {
+export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, currencyB: Type) {
   const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
 
   const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
@@ -403,3 +403,5 @@ export function getCurrencyCombinations(chainId: number, currencyA: Type, curren
       return true
     })
 }
+
+export type Bases = typeof BASES_TO_CHECK_TRADES_AGAINST | typeof COMMON_BASES | typeof CUSTOM_BASES
