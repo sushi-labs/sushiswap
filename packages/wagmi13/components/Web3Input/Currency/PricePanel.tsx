@@ -13,7 +13,9 @@ type PricePanel = Pick<CurrencyInputProps, 'currency' | 'value' | 'usdPctChange'
 }
 
 export const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange, error }) => {
-  const { data: tokenPrices, isLoading } = usePrices({ chainId: currency?.chainId })
+  const { data: tokenPrices, isLoading } = usePrices({
+    chainId: currency?.chainId,
+  })
   const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
   const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
   const [big, portion] = (parsedValue && price ? `${parsedValue.multiply(price.asFraction).toFixed(2)}` : '0.00').split(

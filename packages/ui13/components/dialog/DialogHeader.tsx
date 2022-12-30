@@ -26,7 +26,11 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, border = 
       {onBack ? (
         <IconButton
           icon={ChevronLeftIcon}
-          iconProps={{ width: 24, height: 24, className: 'cursor-pointer text-slate-100 hover:text-slate-50' }}
+          iconProps={{
+            width: 24,
+            height: 24,
+            className: 'cursor-pointer text-slate-100 hover:text-slate-50',
+          }}
           className="flex items-center justify-center w-6 h-6 gap-2 cursor-pointer"
           onClick={onBack}
         />
@@ -42,7 +46,11 @@ const DialogHeader: FC<DialogHeaderProps> = ({ title, onBack, onClose, border = 
         ) : onClose ? (
           <IconButton
             icon={XMarkIcon}
-            iconProps={{ width: 24, height: 24, className: 'hover:text-slate-50 text-slate-100' }}
+            iconProps={{
+              width: 24,
+              height: 24,
+              className: 'hover:text-slate-50 text-slate-100',
+            }}
             className="cursor-pointer"
             onClick={onClose}
           />

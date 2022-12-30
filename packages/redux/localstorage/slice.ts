@@ -87,7 +87,13 @@ const reducers = {
       state.customTokens[chainId] = {}
     }
 
-    state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
+    state.customTokens[chainId][address.toLowerCase()] = {
+      address,
+      symbol,
+      name,
+      chainId,
+      decimals,
+    }
   },
   addCustomTokens: (state: StorageState, action: PayloadAction<AddCustomTokens>) => {
     for (const item of action.payload) {
@@ -97,7 +103,13 @@ const reducers = {
         state.customTokens[chainId] = {}
       }
 
-      state.customTokens[chainId][address.toLowerCase()] = { address, symbol, name, chainId, decimals }
+      state.customTokens[chainId][address.toLowerCase()] = {
+        address,
+        symbol,
+        name,
+        chainId,
+        decimals,
+      }
     }
   },
   removeCustomToken: (state: StorageState, action: PayloadAction<RemoveCustomToken>) => {

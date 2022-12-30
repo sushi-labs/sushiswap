@@ -20,11 +20,11 @@ const fetcher = (params: any) =>
     .then((res) => res.json())
     .catch((e) => console.log(stringify(e)))
 
-export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boolean }> = ({
-  chainId,
-  address,
-  showOutgoing,
-}) => {
+export const Dashboard: FC<{
+  chainId: number
+  address: string
+  showOutgoing: boolean
+}> = ({ chainId, address, showOutgoing }) => {
   const isMounted = useIsMounted()
   const router = useRouter()
   const { address: account, isConnected } = useAccount()

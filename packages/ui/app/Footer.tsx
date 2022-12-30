@@ -12,36 +12,100 @@ const config: Record<
   Services: {
     Swap: { href: 'https://www.sushi.com/swap' },
     Earn: { href: 'https://www.sushi.com/earn' },
-    'Lending & Borrowing': { href: 'https://app.sushi.com/kashi', target: '_blank', rel: 'noopener noreferrer' },
-    'Miso Launchpad': { href: 'https://app.sushi.com/miso', target: '_blank', rel: 'noopener noreferrer' },
-    'Shoyu NFT': { href: 'https://shoyunft.com', target: '_blank', rel: 'noopener noreferrer' },
+    'Lending & Borrowing': {
+      href: 'https://app.sushi.com/kashi',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    'Miso Launchpad': {
+      href: 'https://app.sushi.com/miso',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    'Shoyu NFT': {
+      href: 'https://shoyunft.com',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
     Payments: { href: 'https://www.sushi.com/furo' },
     Analytics: { href: 'https://www.sushi.com/analytics' },
   },
   Help: {
-    Academy: { href: 'https://sushi.com/academy', target: '_blank', rel: 'noopener noreferrer' },
-    'About Us': { href: 'https://docs.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
-    'Discord Support': { href: 'https://discord.gg/NVPXN4e', target: '_blank', rel: 'noopener noreferrer' },
-    'Twitter Support': { href: 'https://twitter.com/sushiswap', target: '_blank', rel: 'noopener noreferrer' },
-    'Forum Support': { href: 'https://forum.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
+    Academy: {
+      href: 'https://sushi.com/academy',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    'About Us': {
+      href: 'https://docs.sushi.com',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    'Discord Support': {
+      href: 'https://discord.gg/NVPXN4e',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    'Twitter Support': {
+      href: 'https://twitter.com/sushiswap',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    'Forum Support': {
+      href: 'https://forum.sushi.com',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
   },
   Developers: {
-    GitBook: { href: 'https://docs.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
-    GitHub: { href: 'https://github.com/sushiswap', target: '_blank', rel: 'noopener noreferrer' },
-    Development: { href: 'https://dev.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
-    SushiGuard: { href: 'https://docs.openmev.org', target: '_blank', rel: 'noopener noreferrer' },
+    GitBook: {
+      href: 'https://docs.sushi.com',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    GitHub: {
+      href: 'https://github.com/sushiswap',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    Development: {
+      href: 'https://dev.sushi.com',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
+    SushiGuard: {
+      href: 'https://docs.openmev.org',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    },
   },
   Items: [
     {
       Governance: {
-        'Forum & Proposals': { href: 'https://forum.sushi.com', target: '_blank', rel: 'noopener noreferrer' },
-        Vote: { href: 'https://snapshot.org/#/sushigov.eth', target: '_blank', rel: 'noopener noreferrer' },
+        'Forum & Proposals': {
+          href: 'https://forum.sushi.com',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
+        Vote: {
+          href: 'https://snapshot.org/#/sushigov.eth',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
       },
     },
     {
       Partners: {
-        KlimaDAO: { href: 'https://www.klimadao.finance/', target: '_blank', rel: 'noopener noreferrer' },
-        'Manifold Finance': { href: 'https://www.manifoldfinance.com/', target: '_blank', rel: 'noopener noreferrer' },
+        KlimaDAO: {
+          href: 'https://www.klimadao.finance/',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
+        'Manifold Finance': {
+          href: 'https://www.manifoldfinance.com/',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
       },
     },
   ],

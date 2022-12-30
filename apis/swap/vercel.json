@@ -1,0 +1,16 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/", "destination": "/api" },
+    { "source": "/singlechain", "destination": "/api/singlechain" },
+    { "source": "/multichain", "destination": "/api/multichain" }
+  ]
+}

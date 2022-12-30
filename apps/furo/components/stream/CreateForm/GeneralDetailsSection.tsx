@@ -12,7 +12,10 @@ export const GeneralDetailsSection = () => {
 
   useEffect(() => {
     if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`dates.startDate`, { type: 'custom', message: 'Must be at least 5 minutes from now' })
+      setError(`dates.startDate`, {
+        type: 'custom',
+        message: 'Must be at least 5 minutes from now',
+      })
     } else {
       clearErrors(`dates.startDate`)
     }
@@ -20,7 +23,10 @@ export const GeneralDetailsSection = () => {
 
   useEffect(() => {
     if (startDate && endDate && endDate < startDate) {
-      setError(`dates.endDate`, { type: 'custom', message: 'Must be later than start date' })
+      setError(`dates.endDate`, {
+        type: 'custom',
+        message: 'Must be later than start date',
+      })
     } else {
       clearErrors(`dates.endDate`)
     }

@@ -2,7 +2,7 @@ import { chainShortName } from '@sushiswap/chain'
 import { formatPercent } from '@sushiswap/format'
 import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
 import { AppearOnMount, BreadcrumbLink } from '@sushiswap/ui'
-import { SUPPORTED_CHAIN_IDS } from 'config'
+import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -87,6 +87,16 @@ const _Pool = () => {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  // When this is true (in preview environments) don't
+  // prerender any static pages
+  // (faster builds, but slower initial page load)
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    }
+  }
+
   const sdk = getBuiltGraphSDK()
   const { pairs } = await sdk.PairsByChainIds({
     first: 250,

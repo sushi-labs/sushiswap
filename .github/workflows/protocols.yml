@@ -4,10 +4,12 @@ on:
   push:
     branches: ["master"]
     paths:
+      - ".github/workflows/protocols.yml"
       - "protocols/**"
   pull_request:
     types: [opened, synchronize]
     paths:
+      - ".github/workflows/protocols.yml"
       - "protocols/**"
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
@@ -36,7 +38,7 @@ jobs:
  
         - uses: pnpm/action-setup@v2
           with:
-            version: 7.11.0
+            version: 7.9.5
  
         - name: Setup Node.js
           uses: actions/setup-node@v3

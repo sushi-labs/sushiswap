@@ -15,7 +15,10 @@ import {
   getTotalAllocPoint,
 } from './fetchers'
 
-export async function getMasterChefV2(): Promise<{ chainId: ChainId; farms: Record<string, Farm> }> {
+export async function getMasterChefV2(): Promise<{
+  chainId: ChainId
+  farms: Record<string, Farm>
+}> {
   const [poolLength, totalAllocPoint, sushiPerBlock, rewarderInfos, averageBlockTime] = await Promise.all([
     getPoolLength(),
     getTotalAllocPoint(),

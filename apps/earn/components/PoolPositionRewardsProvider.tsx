@@ -108,7 +108,10 @@ export const _PoolPositionRewardsProvider: FC<PoolPositionRewardsProviderProps> 
     onSuccess: createNotification,
   })
 
-  const values = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: pendingRewards })
+  const values = useTokenAmountDollarValues({
+    chainId: pair.chainId,
+    amounts: pendingRewards,
+  })
 
   return (
     <Context.Provider

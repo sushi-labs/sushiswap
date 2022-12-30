@@ -51,7 +51,10 @@ export const _pairsByChainIds = async (
                   type_in: args.where.type_in.filter((el) => el === 'CONSTANT_PRODUCT_POOL'),
                   id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
                 }
-              : { ...args.where, id_not_in: getBlacklist(chainId, args?.where?.id_not_in) },
+              : {
+                  ...args.where,
+                  id_not_in: getBlacklist(chainId, args?.where?.id_not_in),
+                },
           },
           context: {
             ...context,

@@ -78,8 +78,16 @@ export const useMasterChef: UseMasterChef = ({
                   ],
                   name: 'userInfo',
                   outputs: [
-                    { internalType: 'uint256', name: 'amount', type: 'uint256' },
-                    { internalType: 'uint256', name: 'rewardDebt', type: 'uint256' },
+                    {
+                      internalType: 'uint256',
+                      name: 'amount',
+                      type: 'uint256',
+                    },
+                    {
+                      internalType: 'uint256',
+                      name: 'rewardDebt',
+                      type: 'uint256',
+                    },
                   ],
                   stateMutability: 'view',
                   type: 'function',
@@ -91,8 +99,16 @@ export const useMasterChef: UseMasterChef = ({
                   ],
                   name: 'userInfo',
                   outputs: [
-                    { internalType: 'uint256', name: 'amount', type: 'uint256' },
-                    { internalType: 'int256', name: 'rewardDebt', type: 'int256' },
+                    {
+                      internalType: 'uint256',
+                      name: 'amount',
+                      type: 'uint256',
+                    },
+                    {
+                      internalType: 'int256',
+                      name: 'rewardDebt',
+                      type: 'int256',
+                    },
                   ],
                   stateMutability: 'view',
                   type: 'function',
@@ -166,7 +182,7 @@ export const useMasterChef: UseMasterChef = ({
     enabled: contracts.length > 0 && enabled,
   })
 
-  console.log({ data })
+  // console.log({ data })
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined

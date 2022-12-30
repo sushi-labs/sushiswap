@@ -16,7 +16,9 @@ interface TransactionsProps {
 
 export const TransactionsView: FC<TransactionsProps> = ({ setView, address }) => {
   const { data: notifications } = useNotifications({ account: address })
-  const { mutate: clearNotifications } = useClearNotifications({ account: address })
+  const { mutate: clearNotifications } = useClearNotifications({
+    account: address,
+  })
 
   return (
     <div className="p-2">

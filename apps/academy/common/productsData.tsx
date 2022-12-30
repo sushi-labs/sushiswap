@@ -333,13 +333,37 @@ export const PRODUCTS_DATA = {
     ],
     // TODO: links to be reviewed by team
     chains: [
-      { Icon: EthereumCircle, name: 'Ethereum', url: 'https://app.sushi.com/miso' },
+      {
+        Icon: EthereumCircle,
+        name: 'Ethereum',
+        url: 'https://app.sushi.com/miso',
+      },
       { Icon: OptimismCircle, name: 'Optimism', url: '' },
-      { Icon: ArbitrumCircle, name: 'Arbitrum', url: 'https://arbitrum.sushi.com/miso' },
-      { Icon: FantomCircle, name: 'Fantom', url: 'https://fantom.sushi.com/miso' },
-      { Icon: BinanceCircle, name: 'Binance', url: 'https://bsc.sushi.com/miso' },
-      { Icon: AvalancheCircle, name: 'Avalanche', url: 'https://avalanche.sushi.com/miso' },
-      { Icon: PolygonCircle, name: 'Polygon', url: 'https://polygon.sushi.com/miso' },
+      {
+        Icon: ArbitrumCircle,
+        name: 'Arbitrum',
+        url: 'https://arbitrum.sushi.com/miso',
+      },
+      {
+        Icon: FantomCircle,
+        name: 'Fantom',
+        url: 'https://fantom.sushi.com/miso',
+      },
+      {
+        Icon: BinanceCircle,
+        name: 'Binance',
+        url: 'https://bsc.sushi.com/miso',
+      },
+      {
+        Icon: AvalancheCircle,
+        name: 'Avalanche',
+        url: 'https://avalanche.sushi.com/miso',
+      },
+      {
+        Icon: PolygonCircle,
+        name: 'Polygon',
+        url: 'https://polygon.sushi.com/miso',
+      },
     ],
     faq: [
       {

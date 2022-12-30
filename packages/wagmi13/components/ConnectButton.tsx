@@ -36,7 +36,9 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, ...
 
   const onSelect = useCallback(
     (connectorId: string) => {
-      return connect({ connector: connectors.find((el) => el.id === connectorId) })
+      return connect({
+        connector: connectors.find((el) => el.id === connectorId),
+      })
     },
     [connect, connectors]
   )

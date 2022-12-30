@@ -42,7 +42,11 @@ export const IconButton: IconButtonComponent = React.forwardRef(
           {description && (
             <div
               className="relative hidden group-hover:block"
-              style={{ height: iconProps.height, paddingTop: padding, paddingBottom: padding }}
+              style={{
+                height: iconProps.height,
+                paddingTop: padding,
+                paddingBottom: padding,
+              }}
             >
               <div className="left-0 right-0 absolute flex justify-center mt-1">
                 <span className="bg-gray-600 text-white px-2 py-0.5 rounded-xl whitespace-nowrap text-[10px]">

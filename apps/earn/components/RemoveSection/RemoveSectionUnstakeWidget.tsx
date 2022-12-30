@@ -46,7 +46,10 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
     balance: amount,
   })
 
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: underlying,
+  })
 
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>

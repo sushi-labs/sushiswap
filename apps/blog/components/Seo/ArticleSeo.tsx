@@ -1,17 +1,19 @@
 import { ArticleJsonLd, NextSeo } from 'next-seo'
 import { FC } from 'react'
 
-import { Article } from '../../.mesh'
 import { getOptimizedMedia, isMediaVideo } from '../../lib/media'
+import { Article } from '../../types'
 
 interface ArticleSeo {
-  article?: Article
+  article?: Article['attributes']
 }
 
 export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
   if (!article) return <></>
 
-  const cover = getOptimizedMedia({ metadata: article.cover?.data?.attributes?.provider_metadata })
+  const cover = getOptimizedMedia({
+    metadata: article.cover?.data?.attributes?.provider_metadata,
+  })
   const coverAlt = article.cover?.data?.attributes?.alternativeText
 
   const authors = article.authors.data.map(({ attributes }) => ({

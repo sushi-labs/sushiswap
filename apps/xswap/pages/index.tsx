@@ -620,7 +620,11 @@ const Widget: FC<Swap> = ({
     currency: Native.onChain(srcChainId),
   })
 
-  const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
+  const { data: srcBalance } = useBalance({
+    chainId: srcChainId,
+    account: address,
+    currency: srcToken,
+  })
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })

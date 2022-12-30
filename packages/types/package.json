@@ -1,20 +1,21 @@
 {
   "name": "@sushiswap/types",
   "version": "0.0.0",
-  "type": "module",
   "private": true,
   "description": "Sushi Types",
   "keywords": [
     "sushi",
     "types"
   ],
-  "license": "MIT",
-  "author": "Matthew Lilley <hello@matthewLilley.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
     "directory": "packages/types"
   },
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
       "import": {
@@ -32,9 +33,6 @@
     "prepublishOnly": "pnpm build",
     "test": "jest --passWithNoTests"
   },
-  "peerDependencies": {
-    "@wagmi/core": "0.8.1 | 0.8.2"
-  },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
@@ -45,13 +43,15 @@
     "eslint": "8.29.0",
     "jest": "^29.3.0",
     "tsup": "6.5.0",
-    "typescript": "4.8.2"
+    "typescript": "4.9.4"
+  },
+  "peerDependencies": {
+    "@wagmi/core": "0.8.1"
   },
   "publishConfig": {
     "access": "public",
     "directory": "dist"
   },
-  "sideEffects": false,
   "typescript": {
     "definition": "./index.d.ts"
   }

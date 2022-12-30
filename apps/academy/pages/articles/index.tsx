@@ -121,7 +121,12 @@ const _Articles: FC = () => {
         })
       )?.articles
     },
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: true }
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+      revalidateOnMount: true,
+    }
   )
 
   const loading = useDebounce(isValidating, 400)

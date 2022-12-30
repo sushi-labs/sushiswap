@@ -46,7 +46,10 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
   const onCurrencyInputError = useCallback(
     (message?: string) => {
       message
-        ? setError(`vestings.${index}.cliff.cliffAmount`, { type: 'custom', message })
+        ? setError(`vestings.${index}.cliff.cliffAmount`, {
+            type: 'custom',
+            message,
+          })
         : clearErrors(`vestings.${index}.cliff.cliffAmount`)
     },
     [clearErrors, index, setError]
@@ -57,7 +60,10 @@ export const ScheduleCell: FC<CellProps> = ({ row, index }) => {
   useEffect(() => {
     if (startDate && cliffEndDate) {
       if (cliffEndDate < startDate) {
-        setError(`vestings.${index}.cliff.cliffEndDate`, { type: 'custom', message: 'Must be later than start date' })
+        setError(`vestings.${index}.cliff.cliffEndDate`, {
+          type: 'custom',
+          message: 'Must be later than start date',
+        })
       } else {
         clearErrors(`vestings.${index}.cliff.cliffEndDate`)
       }

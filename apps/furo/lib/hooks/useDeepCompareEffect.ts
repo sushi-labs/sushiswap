@@ -16,5 +16,5 @@ export function useDeepCompareMemoize<T>(value: T) {
     signalRef.current += 1
   }
 
-  return React.useMemo(() => ref.current, [signalRef.current])
+  return ref.current
 }

@@ -38,7 +38,11 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const { data, isValidating } = useSWR(
     [`/trident-articles`],
     async () => await getLatestAndRelevantArticles(slug, relevantArticleIds),
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false }
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+    }
   )
 
   const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
