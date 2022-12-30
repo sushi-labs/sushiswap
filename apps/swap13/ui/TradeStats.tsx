@@ -2,12 +2,14 @@
 
 import { Transition } from '@headlessui/react'
 import { shortenAddress } from '@sushiswap/format'
+import { useSlippageTolerance } from '@sushiswap/react-query'
 import React, { FC } from 'react'
 
 import { useSwapState } from './TradeProvider'
 
 export const TradeStats: FC = () => {
   const { value, token1, recipient } = useSwapState()
+  const { data: slippageTolerance } = useSlippageTolerance()
 
   return (
     <Transition
@@ -29,7 +31,9 @@ export const TradeStats: FC = () => {
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">~$1.18</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Minimum received after slippage</span>
+          <span className="text-sm text-gray-700 dark:text-slate-400">
+            Minimum received after slippage ({slippageTolerance === 'AUTO' ? '0.50' : ''}%)
+          </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             8.21408 {token1.symbol}
           </span>
@@ -41,7 +45,7 @@ export const TradeStats: FC = () => {
             <span className="text-xl font-semibold text-gray-900 dark:text-slate-100">8.38338 {token1.symbol}</span>
             {recipient && (
               <span className="text-xs font-medium text-gray-900 text-right dark:text-slate-100">
-                {shortenAddress(recipient)}
+                to: {shortenAddress(recipient)}
               </span>
             )}
           </div>

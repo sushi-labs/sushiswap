@@ -18,6 +18,9 @@ export const SlippageTolerance: FC = () => {
     [updateSlippageTolerance]
   )
 
+  const isWarning = !isNaN(+slippageTolerance) && +slippageTolerance >= 1.2
+  const isDangerous = !isNaN(+slippageTolerance) && +slippageTolerance >= 2.5
+
   return (
     <List.Item
       className="!bg-transparent cursor-default"
@@ -41,11 +44,13 @@ export const SlippageTolerance: FC = () => {
               <Tab.Panel />
               <Tab.Panel className="pb-1">
                 <FormInputNumeric
+                  color={isDangerous ? 'red' : isWarning ? 'yellow' : 'default'}
                   className="bg-gray-100 dark:bg-slate-700"
                   label="Slippage percentage"
                   placeholder="1.0"
                   value={slippageTolerance === 'AUTO' ? '' : slippageTolerance}
                   onChange={(value) => updateSlippageTolerance({ value })}
+                  caption={isDangerous || isWarning ? 'Your transaction may be frontrun' : undefined}
                 />
               </Tab.Panel>
             </Tab.Panels>

@@ -3,6 +3,7 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import chains, { Chain } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
+import { useSlippageTolerance } from '@sushiswap/react-query'
 import Container from '@sushiswap/ui13/components/Container'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
@@ -15,6 +16,7 @@ import { SwapButton } from './widget/SwapButton'
 export const TradeReviewDialog: FC = () => {
   const { review, token0, token1, recipient, network0 } = useSwapState()
   const { setReview } = useSwapActions()
+  const { data: slippageTolerance } = useSlippageTolerance()
 
   const onClose = useCallback(() => {
     setReview(false)
@@ -50,7 +52,7 @@ export const TradeReviewDialog: FC = () => {
                 -0.08%
               </List.KeyValue>
               <List.KeyValue
-                title="Minimum received after slippage"
+                title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.50' : slippageTolerance}%)`}
                 subtitle="The minimum amount you are guaranteed to receive."
               >
                 8.21408 {token1.symbol}
