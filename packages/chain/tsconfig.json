@@ -1,6 +1,7 @@
 {
-  "extends": "@sushiswap/typescript-config/node18-strictest-esm.combined.json",
-  "include": ["index.ts"],
+  "extends": "@sushiswap/typescript-config/node16.json",
+  "include": ["."],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": ".",

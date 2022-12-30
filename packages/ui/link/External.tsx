@@ -1,27 +1,28 @@
-import classNames from 'classnames'
-import React, { FC, HTMLProps, useCallback } from 'react'
+import classNames from "classnames";
+import React, { FC, HTMLProps, useCallback } from "react";
 
 const COLOR = {
-  primary: 'hover:text-white hover:underline focus:text-white active:text-white',
-  blue: 'text-blue',
-}
+  primary:
+    "hover:text-white hover:underline focus:text-white active:text-white",
+  blue: "text-blue",
+};
 
-export type Color = 'primary' | 'blue'
+export type Color = "primary" | "blue";
 
-export interface ExternalLinkProps extends Omit<HTMLProps<HTMLAnchorElement>, 'as' | 'ref' | 'onClick'> {
-  href: string
-  color?: Color
-  startIcon?: JSX.Element
-  endIcon?: JSX.Element
+export interface ExternalLinkProps
+  extends Omit<HTMLProps<HTMLAnchorElement>, "as" | "ref" | "onClick"> {
+  color?: Color;
+  startIcon?: JSX.Element;
+  endIcon?: JSX.Element;
 }
 
 export const External: FC<ExternalLinkProps> = ({
-  target = '_blank',
+  target = "_blank",
   href,
   children,
-  rel = 'noopener noreferrer',
-  className = '',
-  color = 'primary',
+  rel = "noopener noreferrer",
+  className = "",
+  color = "primary",
   startIcon = undefined,
   endIcon = undefined,
   ...rest
@@ -29,8 +30,8 @@ export const External: FC<ExternalLinkProps> = ({
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       // don't prevent default, don't redirect if it's a new tab
-      if (target === '_blank' || event.ctrlKey || event.metaKey) {
-        event.stopPropagation()
+      if (target === "_blank" || event.ctrlKey || event.metaKey) {
+        event.stopPropagation();
         // window.gtag('event', href, {
         //   event_category: 'Outbound Link',
         //   event_label: href,
@@ -39,7 +40,7 @@ export const External: FC<ExternalLinkProps> = ({
         //   },
         // })
       } else {
-        event.preventDefault()
+        event.preventDefault();
         // send a gtag event and then trigger a location change
 
         // window.gtag('event', href, {
@@ -52,7 +53,7 @@ export const External: FC<ExternalLinkProps> = ({
       }
     },
     [target]
-  )
+  );
   return (
     <a
       target={target}
@@ -60,9 +61,9 @@ export const External: FC<ExternalLinkProps> = ({
       href={href}
       onClick={handleClick}
       className={classNames(
-        ' whitespace-nowrap',
+        " whitespace-nowrap",
         COLOR[color],
-        (startIcon || endIcon) && 'space-x-1 flex items-center justify-center',
+        (startIcon || endIcon) && "space-x-1 flex items-center justify-center",
         className
       )}
       {...rest}
@@ -71,5 +72,5 @@ export const External: FC<ExternalLinkProps> = ({
       {children}
       {endIcon && endIcon}
     </a>
-  )
-}
+  );
+};

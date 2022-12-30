@@ -45,5 +45,3 @@ storybook-static
 
 # Playwright
 playwright-report
-
-.eslintrc.js

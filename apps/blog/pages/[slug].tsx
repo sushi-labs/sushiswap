@@ -1,9 +1,13 @@
-import { Container } from '@sushiswap/ui'
-import ErrorPage from 'next/error'
-import { useRouter } from 'next/router'
-import { FC } from 'react'
+import { Container } from "@sushiswap/ui";
+import ErrorPage from "next/error";
+import { useRouter } from "next/router";
+import { FC } from "react";
+import {
+  Article,
+  MediaBlock as MediaBlockType,
+  RichTextBlock as RichTextBlockType,
+} from "types";
 
-import { ArticleEntity, ComponentSharedMedia, ComponentSharedRichText } from '../.mesh'
 import {
   ArticleAuthors,
   ArticleFooter,
@@ -14,47 +18,47 @@ import {
   MediaBlock,
   PreviewBanner,
   RichTextBlock,
-} from '../components'
-import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../lib/api'
+} from "../components";
+import { getAllArticlesBySlug, getArticleAndMoreArticles } from "../lib/api";
 
 export async function getStaticPaths() {
   // When this is true (in preview environments) don't
   // prerender any static pages
   // (faster builds, but slower initial page load)
-  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === "true") {
     return {
       paths: [],
-      fallback: 'blocking',
-    }
+      fallback: "blocking",
+    };
   }
 
-  const allArticles = await getAllArticlesBySlug()
+  const allArticles = await getAllArticlesBySlug();
 
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
-      if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`)
+      if (article?.attributes?.slug) acc.push(`/${article?.attributes.slug}`);
 
       // console.log(acc)
-      return acc
+      return acc;
     }, []),
     fallback: true,
-  }
+  };
 }
 
 export async function getStaticProps({
   params,
   preview = null,
 }: {
-  params: { slug: string }
-  preview: Record<string, unknown> | null
+  params: { slug: string };
+  preview: Record<string, unknown> | null;
 }) {
-  const data = await getArticleAndMoreArticles(params.slug, !!preview)
+  const data = await getArticleAndMoreArticles(params.slug, !!preview);
 
   if (!data?.articles?.data?.[0]) {
     return {
       props: {},
       notFound: true,
-    }
+    };
   }
 
   return {
@@ -64,19 +68,19 @@ export async function getStaticProps({
       preview: !!preview,
     },
     revalidate: 60,
-  }
+  };
 }
 
 interface ArticlePage {
-  article?: ArticleEntity
-  latestArticles?: ArticleEntity[]
-  preview: boolean
+  article?: Article;
+  latestArticles?: Article[];
+  preview: boolean;
 }
 
 const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
-  const router = useRouter()
+  const router = useRouter();
   if (!router.isFallback && !article?.attributes?.slug) {
-    return <ErrorPage statusCode={404} />
+    return <ErrorPage statusCode={404} />;
   }
 
   return (
@@ -92,18 +96,22 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
             <div className="mt-12 prose !prose-invert prose-slate">
               {article?.attributes?.blocks?.map((block, i) => {
                 // @ts-ignore
-                if (block?.__typename === 'ComponentSharedRichText') {
-                  return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
+                if (block?.__typename === "ComponentSharedRichText") {
+                  return (
+                    <RichTextBlock block={block as RichTextBlockType} key={i} />
+                  );
                 }
 
                 // @ts-ignore
-                if (block?.__typename === 'ComponentSharedMedia') {
-                  return <MediaBlock block={block as ComponentSharedMedia} key={i} />
+                if (block?.__typename === "ComponentSharedMedia") {
+                  return <MediaBlock block={block as MediaBlockType} key={i} />;
                 }
 
                 // @ts-ignore
-                if (block?.__typename === 'ComponentSharedDivider') {
-                  return <hr key={i} className="my-12 border border-slate-200/5" />
+                if (block?.__typename === "ComponentSharedDivider") {
+                  return (
+                    <hr key={i} className="my-12 border border-slate-200/5" />
+                  );
                 }
               })}
             </div>
@@ -113,7 +121,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
         </main>
       </Container>
     </>
-  )
-}
+  );
+};
 
-export default ArticlePage
+export default ArticlePage;

@@ -3,8 +3,8 @@ import { Pair, PairType, QuerypairsArgs } from '@sushiswap/graph-client'
 import { useBreakpoint } from '@sushiswap/hooks'
 import { GenericTable, Table } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import stringify from 'fast-json-stable-stringify'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import stringify from 'fast-json-stable-stringify'
 import useSWR from 'swr'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
@@ -51,7 +51,7 @@ const fetcher = ({
   if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes as PairType[]
 
   if (Object.keys(where).length > 0) {
-    _url.searchParams.set('where', JSON.stringify(where))
+    _url.searchParams.set('where', stringify(where))
   }
 
   if (args.farmsOnly) {

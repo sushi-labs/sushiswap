@@ -1,5 +1,5 @@
 import { App, AppType, BuyCrypto } from '@sushiswap/ui'
-import { NetworkSelector } from '@sushiswap/wagmi/components/NetworkSelector/'
+import { NetworkSelector } from '@sushiswap/wagmi'
 import { Profile } from '@sushiswap/wagmi/components/Wallet/Profile'
 import React, { FC } from 'react'
 import { useAccount } from 'wagmi'

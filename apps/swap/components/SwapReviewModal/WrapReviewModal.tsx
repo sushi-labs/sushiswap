@@ -1,7 +1,7 @@
 import { Amount, Type } from '@sushiswap/currency'
 import { Button, Dots } from '@sushiswap/ui'
 import { useWrapCallback, WrapType } from '@sushiswap/wagmi'
-import { useNotifications } from 'lib/state/storage'
+import { useNotifications } from '../../lib/state/storage'
 import React, { FC, ReactNode, useState } from 'react'
 import { useAccount } from 'wagmi'
 

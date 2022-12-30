@@ -11,6 +11,7 @@
     "deploy",
     "deployments",
     "exports",
+    "scripts",
     "typechain"
   ],
   "scripts": {
@@ -72,6 +73,6 @@
     "ts-generator": "0.1.1",
     "ts-node": "10.9.1",
     "typechain": "8.1.1",
-    "typescript": "4.8.2"
+    "typescript": "4.9.4"
   }
 }

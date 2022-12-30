@@ -28,7 +28,7 @@ import {
   SelectNetworkWidget,
   SelectPoolTypeWidget,
   SettingsOverlay,
-} from 'components'
+} from '../components'
 import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
 

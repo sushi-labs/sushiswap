@@ -4,11 +4,12 @@ import {
   getSushiSwapRouterContractConfig,
   getTridentRouterContractConfig,
 } from '@sushiswap/wagmi'
-import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from 'config'
 import { Contract } from 'ethers'
 import { useMemo } from 'react'
 import { useSigner } from 'wagmi'
 import { getContract } from 'wagmi/actions'
+
+import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../../config'
 
 export function useRouters(
   chainId: number | undefined

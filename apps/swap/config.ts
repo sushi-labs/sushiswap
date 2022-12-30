@@ -1,5 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
+export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
+
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,
