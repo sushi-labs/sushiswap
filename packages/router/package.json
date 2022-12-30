@@ -47,6 +47,7 @@
     "@ethersproject/address": "^5.7.0",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/solidity": "^5.7.0",
+    "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/chain": "workspace:*",

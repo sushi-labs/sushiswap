@@ -1,13 +1,13 @@
 // @ts-nocheck
 
 import { keccak256, pack } from '@ethersproject/solidity'
+import { uniswapV2PairAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { BigNumber, ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
-import { SushiPoolABI } from '../abi/SushiPool'
 import type { Limited } from '../Limited'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
@@ -58,7 +58,7 @@ export class QuickSwapProvider extends LiquidityProvider {
     const [token0, token1] = t0.address.toLowerCase() < t1.address.toLowerCase() ? [t0, t1] : [t1, t0]
     const poolAddress = this._getPoolAddress(token0, token1)
     try {
-      const pool = await new ethers.Contract(poolAddress, SushiPoolABI, this.chainDataProvider)
+      const pool = await new ethers.Contract(poolAddress, uniswapV2PairAbi, this.chainDataProvider)
       const [reserve0, reserve1]: [BigNumber, BigNumber] = await this.limited.callOnce(() => pool.getReserves())
       const rPool = new ConstantProductRPool(poolAddress, token0 as RToken, token1 as RToken, 0.003, reserve0, reserve1)
       const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())

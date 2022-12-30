@@ -1,14 +1,11 @@
 // @ts-nocheck
 
+import { bentoBoxV1Abi, constantProductPoolAbi, erc20Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { BigNumber, Contract, ethers } from 'ethers'
 
-import { BentoBoxABI } from '../abi/BentoBoxABI'
-import { ConstantProductPoolABI } from '../abi/ConstantProductPoolABI'
-import { ConstantProductPoolFactoryABI } from '../abi/ConstantProductPoolFactoryABI'
-import { ERC20ABI } from '../abi/ERC20'
 import type { Limited } from '../Limited'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoConstantProductPoolCode } from '../pools/BentoconstantProductPool'
@@ -85,7 +82,7 @@ export class TridentProvider extends LiquidityProvider {
     )
     for (let k = 0; k < paiPoolCodes.length; ++k) {
       const poolAddress = paiPoolCodes[k]
-      const poolContract = await new ethers.Contract(poolAddress, ConstantProductPoolABI, this.chainDataProvider)
+      const poolContract = await new ethers.Contract(poolAddress, constantProductPoolAbi, this.chainDataProvider)
       const [res0, res1]: [BigNumber, BigNumber] = await this.limited.call(() => poolContract.getReserves())
       const fee: BigNumber = await this.limited.call(() => poolContract.swapFee())
       const pool = new ConstantProductRPool(
@@ -106,7 +103,7 @@ export class TridentProvider extends LiquidityProvider {
   async _getAllPools(tokens: Token[]): Promise<PoolCode[]> {
     const factory = await new Contract(
       ConstantProductPoolFactory[this.chainId],
-      ConstantProductPoolFactoryABI,
+      constantProductPoolAbi,
       this.chainDataProvider
     )
     const promises: Promise<PoolCode[]>[] = []
@@ -141,12 +138,12 @@ export class TridentProvider extends LiquidityProvider {
     const tokenOutputMap = new Map<string, Token>()
     tokens.forEach((t) => tokenOutputMap.set(t.address, t))
 
-    const BentoContract = await new Contract(BentoBox[this.chainId], BentoBoxABI, this.chainDataProvider)
+    const BentoContract = await new Contract(BentoBox[this.chainId], bentoBoxV1Abi, this.chainDataProvider)
     const promises = Array.from(tokenBentoMap.values()).map(async (t) => {
       const totals: { elastic: BigNumber; base: BigNumber } = await this.limited.call(() =>
         BentoContract.totals(t.address)
       )
-      const TokenContract = await new Contract(t.address, ERC20ABI, this.chainDataProvider)
+      const TokenContract = await new Contract(t.address, erc20Abi, this.chainDataProvider)
       const max: BigNumber = await this.limited.call(() => TokenContract.balanceOf(BentoBox[this.chainId]))
       const pool = new BridgeBento(
         `Bento bridge for ${t.symbol}`,
