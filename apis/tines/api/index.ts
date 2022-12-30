@@ -1,6 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
+// const srcChainIds = SWAP_ENABLED_NETWORKS.map((chainId) => chainId)
+// const dstChainIds = SWAP_ENABLED_NETWORKS.map((chainId) => chainId)
+
 const schema = z.object({
   srcChainId: z.coerce
     .number()

@@ -1,5 +1,5 @@
 {
-  "name": "token-price-api",
+  "name": "@sushiswap/token-price-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
