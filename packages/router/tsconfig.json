@@ -1,6 +1,6 @@
 {
   "extends": "@sushiswap/typescript-config/node16.json",
-  "include": ["src"],
+  "include": ["src/**/*.ts"],
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"

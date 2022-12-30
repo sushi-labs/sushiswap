@@ -1,4 +1,3 @@
-// @ts-nocheck
 import type { ChainId } from '@sushiswap/chain'
 import { Token, WNATIVE } from '@sushiswap/currency'
 import { findMultiRouteExactIn, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'

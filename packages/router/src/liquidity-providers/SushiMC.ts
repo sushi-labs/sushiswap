@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { keccak256, pack } from '@ethersproject/solidity'
 import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import type { ChainId } from '@sushiswap/chain'

@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { keccak256, pack } from '@ethersproject/solidity'
 import { uniswapV2PairAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'

@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import type { ChainId } from '@sushiswap/chain'
 import type { Token } from '@sushiswap/currency'
 import type { ethers } from 'ethers'

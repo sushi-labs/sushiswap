@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { ChainId } from '@sushiswap/chain'
 import { Native, WNATIVE } from '@sushiswap/currency'

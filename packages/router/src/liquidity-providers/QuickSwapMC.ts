@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { keccak256, pack } from '@ethersproject/solidity'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'

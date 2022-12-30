@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { ContractCallContext, Multicall } from 'ethereum-multicall'
 import { BigNumber, ethers } from 'ethers'
 

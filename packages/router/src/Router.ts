@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { findMultiRouteExactIn, getBigNumber, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'
 import type { BigNumber } from 'ethers'

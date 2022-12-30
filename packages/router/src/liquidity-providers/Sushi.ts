@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { keccak256, pack } from '@ethersproject/solidity'
 import { uniswapV2PairAbi } from '@sushiswap/abi'
 import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
