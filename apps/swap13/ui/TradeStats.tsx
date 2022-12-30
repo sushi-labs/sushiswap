@@ -32,7 +32,7 @@ export const TradeStats: FC = () => {
         </div>
         <div className="flex justify-between">
           <span className="text-sm text-gray-700 dark:text-slate-400">
-            Minimum received after slippage ({slippageTolerance === 'AUTO' ? '0.50' : ''}%)
+            Minimum received after slippage ({slippageTolerance === 'AUTO' ? '0.50' : slippageTolerance}%)
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             8.21408 {token1.symbol}
