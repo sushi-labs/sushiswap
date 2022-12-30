@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { SUSHI, USDC } from '@sushiswap/currency'
+import { DAI, FRAX, MIM, Native, SUSHI, USDC, USDT, WBTC, WNATIVE } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
@@ -11,10 +11,11 @@ const schema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256),
-  fromToken: z.coerce.string(),
-  toToken: z.coerce.string(),
-  gasPrice: z.coerce.number().int().gte(0),
+  fromTokenId: z.coerce.string(),
+  toTokenId: z.coerce.string(),
+  gasPrice: z.coerce.number().int().gte(1),
   amount: z.coerce.bigint(),
+  to: z.coerce.string(),
 })
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -43,20 +44,33 @@ class BackCounter {
   }
 }
 
+const SHORT_CURRENCY_NAME_TO_CURRENCY = {
+  ETH: Native.onChain(ChainId.ETHEREUM),
+  WNATIVE: WNATIVE[ChainId.ETHEREUM],
+  WBTC: WBTC[ChainId.ETHEREUM],
+  USDC: USDC[ChainId.ETHEREUM],
+  USDT: USDT[ChainId.ETHEREUM],
+  DAI: DAI[ChainId.ETHEREUM],
+  FRAX: FRAX[ChainId.ETHEREUM],
+  MIM: MIM[ChainId.ETHEREUM],
+  SUSHI: SUSHI[ChainId.ETHEREUM],
+} as const
+
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   console.log('query', request.query)
-  const {
-    chainId,
-    // fromToken,
-    // toToken,
-    amount,
-    // gasPrice
-  } = schema.parse(request.query)
+  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
 
   // TODO: Dummy tokens
   // const fromToken = Native.onChain(ChainId.ETHEREUM)
-  const fromToken = SUSHI[ChainId.ETHEREUM]
-  const toToken = USDC[ChainId.ETHEREUM]
+  const fromToken =
+    fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
+      ? SHORT_CURRENCY_NAME_TO_CURRENCY[fromTokenId as keyof typeof SHORT_CURRENCY_NAME_TO_CURRENCY]
+      : SUSHI[ChainId.ETHEREUM]
+
+  const toToken =
+    toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
+      ? SHORT_CURRENCY_NAME_TO_CURRENCY[toTokenId as keyof typeof SHORT_CURRENCY_NAME_TO_CURRENCY]
+      : USDC[ChainId.ETHEREUM]
 
   const backCounter = new BackCounter(4)
 
@@ -66,7 +80,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   )
   dataFetcher.startDataFetching()
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, 30e9)
+  const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
   router.startRouting(() => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.getCurrentRouteHumanString()
@@ -81,7 +95,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   return response.status(200).json({
     getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
     // TODO: Dummy addresses
-    getCurrentRouteRPParams: router.getCurrentRouteRPParams('0x0', '0x0'),
+    getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0'),
     getBestRoute: router.getBestRoute(),
   })
 }
