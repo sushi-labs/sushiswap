@@ -14,7 +14,7 @@ const nextConfig = {
       '@sushiswap/redux-localstorage',
       '@sushiswap/ui13',
       '@sushiswap/wagmi13',
-    ]
+    ],
   },
   images: {
     loader: 'cloudinary',

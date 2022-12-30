@@ -37,11 +37,11 @@
     "@rari-capital/solmate": "6.2.0",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/core": "^1.4.2",
+    "@sushiswap/core-sdk": "1.0.0-canary.110",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/sushiswap": "workspace:*",
-    "@sushiswap/core": "^1.4.2",
-    "@sushiswap/core-sdk": "1.0.0-canary.110"
+    "@sushiswap/sushiswap": "workspace:*"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",

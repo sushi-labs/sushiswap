@@ -1,7 +1,7 @@
-import { request } from 'graphql-request'
+import { request, Variables } from 'graphql-request'
 
 // @ts-ignore TYPE NEEDS FIXING
-export async function pager(endpoint: string, query, variables = {}) {
+export async function pager(endpoint: string, query, variables: Variables = {}) {
   if (endpoint.includes('undefined')) return {}
 
   const data: any = {}

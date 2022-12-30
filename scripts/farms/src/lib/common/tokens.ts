@@ -17,10 +17,15 @@ const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({
+    host: SUBGRAPH_HOST[chainId],
+    name: subgraphName,
+  })
 
   // waiting for new subgraph to sync
-  const { tokens, bundle } = await sdk.Tokens({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
+  const { tokens, bundle } = await sdk.Tokens({
+    where: { id_in: ids.map((id) => id.toLowerCase()) },
+  })
 
   return tokens.map((token) => ({
     id: token.id,
@@ -35,7 +40,10 @@ const getTridentTokens = async (ids: string[], chainId: ChainId): Promise<Token[
   const { getBuiltGraphSDK } = await import('../../../.graphclient')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({
+    host: SUBGRAPH_HOST[chainId],
+    name: subgraphName,
+  })
 
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },

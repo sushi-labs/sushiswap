@@ -88,7 +88,9 @@ export const useTrade: UseTrade = ({
     data: constantProductPools,
     isLoading: isCppLoading,
     isError: isCppError,
-  } = useGetConstantProductPools(chainId, currencyCombinations, { enabled: tridentEnabled })
+  } = useGetConstantProductPools(chainId, currencyCombinations, {
+    enabled: tridentEnabled,
+  })
 
   // Combined legacy and trident pools
   const pools = useMemo(() => [...pairs, ...constantProductPools], [pairs, constantProductPools])

@@ -197,9 +197,15 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   const checkIfImportedTokens = useMemo(() => {
     const tokens: { address: Address; chainId: number }[] = []
     if (initialState.token0 && isAddress(initialState.token0))
-      tokens.push({ address: initialState.token0, chainId: Number(initialState.chainId) })
+      tokens.push({
+        address: initialState.token0,
+        chainId: Number(initialState.chainId),
+      })
     if (initialState.token1 && isAddress(initialState.token1))
-      tokens.push({ address: initialState.token1, chainId: Number(initialState.chainId) })
+      tokens.push({
+        address: initialState.token1,
+        chainId: Number(initialState.chainId),
+      })
     return tokens
   }, [initialState.chainId, initialState.token0, initialState.token1])
 

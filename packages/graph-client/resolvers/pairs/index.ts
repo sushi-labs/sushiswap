@@ -60,7 +60,9 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
               where: {
                 id_in: pools.filter((pool) => pool.chainId === chainId).map(({ id }) => id),
               },
-              block: { number: Number(oneDayBlocks?.find((block) => block.chainId === chainId)?.number) },
+              block: {
+                number: Number(oneDayBlocks?.find((block) => block.chainId === chainId)?.number),
+              },
             },
             context,
             info
@@ -84,7 +86,9 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
               where: {
                 id_in: pools.filter((pool) => pool.chainId === chainId).map(({ id }) => id),
               },
-              block: { number: Number(twoDayBlocks?.find((block) => block.chainId === chainId)?.number) },
+              block: {
+                number: Number(twoDayBlocks?.find((block) => block.chainId === chainId)?.number),
+              },
             },
             context,
             info
@@ -108,7 +112,9 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
               where: {
                 id_in: pools.filter((pool) => pool.chainId === chainId).map(({ id }) => id),
               },
-              block: { number: Number(oneWeekBlocks?.find((block) => block.chainId === chainId)?.number) },
+              block: {
+                number: Number(oneWeekBlocks?.find((block) => block.chainId === chainId)?.number),
+              },
             },
             context,
             info

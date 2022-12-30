@@ -91,7 +91,10 @@ export async function execute() {
     if (sources.length === 1) {
       const uniqueTokens = new Map()
       sources[0].tokens.forEach((token) => uniqueTokens.set(token.id, token.priceUSD))
-      tokens = Array.from(uniqueTokens.entries()).map(([id, priceUSD]) => ({ id, priceUSD }))
+      tokens = Array.from(uniqueTokens.entries()).map(([id, priceUSD]) => ({
+        id,
+        priceUSD,
+      }))
     } else {
       const allTokens = sources.flatMap((result) => result.tokens)
       const seenTokens = new Map<string, { priceUSD: number; liquidity: number }>()
@@ -100,16 +103,30 @@ export async function execute() {
 
         if (previousBestToken) {
           if (previousBestToken.liquidity < token.liquidity) {
-            seenTokens.set(token.id, { priceUSD: token.priceUSD, liquidity: token.liquidity })
+            seenTokens.set(token.id, {
+              priceUSD: token.priceUSD,
+              liquidity: token.liquidity,
+            })
           }
         } else {
-          seenTokens.set(token.id, { priceUSD: token.priceUSD, liquidity: token.liquidity })
+          seenTokens.set(token.id, {
+            priceUSD: token.priceUSD,
+            liquidity: token.liquidity,
+          })
         }
       })
-      tokens = Array.from(seenTokens.entries()).map(([id, { priceUSD }]) => ({ id, priceUSD }))
+      tokens = Array.from(seenTokens.entries()).map(([id, { priceUSD }]) => ({
+        id,
+        priceUSD,
+      }))
     }
 
-    return { chainId, updatedAtBlock: sources[0].updatedAtBlock, updatedAtTimestamp: getUnixTime(Date.now()), tokens }
+    return {
+      chainId,
+      updatedAtBlock: sources[0].updatedAtBlock,
+      updatedAtTimestamp: getUnixTime(Date.now()),
+      tokens,
+    }
   })
 
   await redis.hset(

@@ -33,7 +33,9 @@ const reducer = (state: PoolFinderState, action: PoolExistenceStateAction) => {
 }
 
 const Controller: FC<Props> = ({ components, children }) => {
-  const [state, dispatch] = useReducer(reducer, { pool: [PairState.LOADING, null] })
+  const [state, dispatch] = useReducer(reducer, {
+    pool: [PairState.LOADING, null],
+  })
 
   const childrenComponents = useMemo(() => {
     return cloneElement(

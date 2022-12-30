@@ -40,8 +40,12 @@ export async function furo(args: Arguments) {
     tokenAddresses.push(token.id)
   })
 
-  const rebasesArray = (await sdk.RebasesByChainIds({ chainIds: chainIds, where: { token_in: tokenAddresses } }))
-    .rebases
+  const rebasesArray = (
+    await sdk.RebasesByChainIds({
+      chainIds: chainIds,
+      where: { token_in: tokenAddresses },
+    })
+  ).rebases
   const rebases: { [id: string]: number } = {}
   rebasesArray.map((rebase) => {
     rebases[rebase.id] = Number(rebase.elastic) / Number(rebase.base)

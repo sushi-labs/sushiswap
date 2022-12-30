@@ -66,7 +66,9 @@ export const CreateStreamsTableSection: FC<CreateStreamsTableSection> = ({ chain
   const _memoizedErrors = useDeepCompareMemoize(formErrors)
   const _formErrors = useMemo(() => {
     const length = fields?.length || 0
-    const data: FieldErrors<CreateMultipleStreamFormSchemaType> = { streams: [] }
+    const data: FieldErrors<CreateMultipleStreamFormSchemaType> = {
+      streams: [],
+    }
     for (let i = 0; i < length; i++) {
       if (data.streams && _memoizedErrors.streams?.[i]) {
         data.streams[i] = _memoizedErrors.streams[i]
@@ -149,7 +151,9 @@ const Error: FC<{ k: string; v: FieldError }> = ({ k, v }) => {
   )
 }
 
-const FieldErrorRenderer: FC<{ errors: FieldErrors<CreateMultipleStreamFormSchemaType> }> = ({ errors }) => {
+const FieldErrorRenderer: FC<{
+  errors: FieldErrors<CreateMultipleStreamFormSchemaType>
+}> = ({ errors }) => {
   return (
     <>
       {Array.isArray(errors?.streams) &&

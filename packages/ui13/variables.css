@@ -1,7 +1,8 @@
 :root,
 ::before,
 ::after {
-  --font-sans: "InterVariable",-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+  --font-sans: 'InterVariable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   color-scheme: light;
   --background-color: #f4f5f6;
   --color: #000;

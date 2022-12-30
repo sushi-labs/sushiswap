@@ -8,9 +8,9 @@ export default async (request: VercelRequest, response: VercelResponse) => {
   const chainId = request.query.chainId as string
 
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
-    response
-      .status(422)
-      .json({ message: 'Unsupported network. Supported chain ids: '.concat(SUPPORTED_CHAINS.join(', ')) })
+    response.status(422).json({
+      message: 'Unsupported network. Supported chain ids: '.concat(SUPPORTED_CHAINS.join(', ')),
+    })
   }
 
   const data = await redis.hget('prices', chainId)

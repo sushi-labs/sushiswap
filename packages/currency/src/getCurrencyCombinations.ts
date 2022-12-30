@@ -46,7 +46,9 @@ import {
 import { Token } from './Token'
 import { Type } from './Type'
 
-export const BASES_TO_CHECK_TRADES_AGAINST: { readonly [chainId: number]: Token[] } = {
+export const BASES_TO_CHECK_TRADES_AGAINST: {
+  readonly [chainId: number]: Token[]
+} = {
   [ChainId.ETHEREUM]: [
     WNATIVE[ChainId.ETHEREUM],
     WBTC[ChainId.ETHEREUM],

@@ -111,7 +111,12 @@ export const StreamTable: FC<FuroTableProps> = ({
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ status: false, from: false, type: false, startDate: false })
+      setColumnVisibility({
+        status: false,
+        from: false,
+        type: false,
+        startDate: false,
+      })
     }
   }, [isMd, isSm])
 

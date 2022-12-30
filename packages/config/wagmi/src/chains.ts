@@ -67,7 +67,11 @@ export const otherChains: Chain[] = [
     id: ChainId.BSC,
     name: 'Binance Smart Chain',
     network: 'bsc',
-    nativeCurrency: { name: 'Binance Chain Native Token', symbol: 'BNB', decimals: 18 },
+    nativeCurrency: {
+      name: 'Binance Chain Native Token',
+      symbol: 'BNB',
+      decimals: 18,
+    },
     rpcUrls: {
       default: {
         http: ['https://bsc-dataseed1.binance.org'],

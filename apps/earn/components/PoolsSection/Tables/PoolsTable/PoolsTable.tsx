@@ -77,7 +77,15 @@ export const PoolsTable: FC = () => {
   })
 
   const args = useMemo(
-    () => ({ sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery }),
+    () => ({
+      sorting,
+      pagination,
+      selectedNetworks,
+      selectedPoolTypes,
+      farmsOnly,
+      query,
+      extraQuery,
+    }),
     [sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery]
   )
 
@@ -108,11 +116,22 @@ export const PoolsTable: FC = () => {
 
   useEffect(() => {
     if (isSm && !isMd) {
-      setColumnVisibility({ volume: false, network: false, rewards: false, fees: false })
+      setColumnVisibility({
+        volume: false,
+        network: false,
+        rewards: false,
+        fees: false,
+      })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ volume: false, network: false, rewards: false, liquidityUSD: false, fees: false })
+      setColumnVisibility({
+        volume: false,
+        network: false,
+        rewards: false,
+        liquidityUSD: false,
+        fees: false,
+      })
     }
   }, [isMd, isSm])
 

@@ -1,1 +1,4 @@
-module.exports = require('@sushiswap/eslint-config')
+module.exports = {
+  root: true,
+  extends: ['@sushiswap/eslint-config'],
+}

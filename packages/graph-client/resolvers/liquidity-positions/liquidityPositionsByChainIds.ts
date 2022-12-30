@@ -38,7 +38,10 @@ export const _liquidityPositionsByChainIds = async (
             console.error(`SushiSwap liquidityPositions query failed on ${chainId}`, liquidityPositions)
             return []
           }
-          return liquidityPositions.map((liquidityPosition) => ({ ...liquidityPosition, chainId }))
+          return liquidityPositions.map((liquidityPosition) => ({
+            ...liquidityPosition,
+            chainId,
+          }))
         })
       ),
     ...args.chainIds
@@ -59,7 +62,10 @@ export const _liquidityPositionsByChainIds = async (
             console.error(`Trident liquidityPositions query failed on ${chainId}`, liquidityPositions)
             return []
           }
-          return liquidityPositions.map((liquidityPosition) => ({ ...liquidityPosition, chainId }))
+          return liquidityPositions.map((liquidityPosition) => ({
+            ...liquidityPosition,
+            chainId,
+          }))
         })
       ),
   ]).then((promiseSettledResults) => {

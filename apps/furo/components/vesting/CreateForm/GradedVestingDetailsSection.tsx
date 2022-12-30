@@ -42,7 +42,10 @@ export const GradedVestingDetailsSection = () => {
   useEffect(() => {
     if (!_fundSource || !totalAmount || !balance || !balance[_fundSource]) return
     if (totalAmount.greaterThan(balance[_fundSource])) {
-      setError('FORM_ERROR', { type: 'custom', message: 'Insufficient Balance' })
+      setError('FORM_ERROR', {
+        type: 'custom',
+        message: 'Insufficient Balance',
+      })
     } else {
       clearErrors('FORM_ERROR')
     }

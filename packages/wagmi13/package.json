@@ -14,6 +14,7 @@
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "format": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\"",
     "generate": "typechain --target ethers-v5 --out-dir typechain './node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/UniswapInterfaceMulticall.sol/UniswapInterfaceMulticall.json'",
     "lint": "TIMING=1 eslint . --fix",
     "test": "jest --passWithNoTests"
@@ -41,9 +42,9 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/kashi": "workspace:*",
     "@sushiswap/math": "workspace:*",
+    "@sushiswap/react-query": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
-    "@sushiswap/react-query": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/trident": "1.0.0-canary.53",
     "@sushiswap/ui13": "workspace:*",
@@ -63,17 +64,17 @@
     "@types/react-dom": "^18.0.0",
     "eslint": "8.29.0",
     "ethers": "^5.7.0",
+    "next": "13.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "next": "13.0.5",
     "tsup": "6.5.0",
     "typechain": "^8.0.0",
     "typescript": "4.8.2"
   },
   "peerDependencies": {
     "ethers": "^5.7.0",
+    "next": "13.0.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "next": "13.0.5"
+    "react-dom": "^18.2.0"
   }
 }

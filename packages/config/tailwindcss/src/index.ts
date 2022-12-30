@@ -56,10 +56,23 @@ const config = {
           '66%': { content: '"..."' },
         },
         heartbeat: {
-          '0%': { transform: 'scale(1)', transformOrigin: 'center center', animationTimingFunction: 'ease-out' },
-          '10%': { animationTimingFunction: 'ease-out', transform: 'scale(0.91)' },
-          '17%': { animationTimingFunction: 'ease-out', transform: 'scale(0.98)' },
-          '33%': { animationTimingFunction: 'ease-out', transform: 'scale(0.87)' },
+          '0%': {
+            transform: 'scale(1)',
+            transformOrigin: 'center center',
+            animationTimingFunction: 'ease-out',
+          },
+          '10%': {
+            animationTimingFunction: 'ease-out',
+            transform: 'scale(0.91)',
+          },
+          '17%': {
+            animationTimingFunction: 'ease-out',
+            transform: 'scale(0.98)',
+          },
+          '33%': {
+            animationTimingFunction: 'ease-out',
+            transform: 'scale(0.87)',
+          },
           '45%': { animationTimingFunction: 'ease-out', transform: 'scale(1)' },
         },
         rotate360: {

@@ -25,7 +25,13 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
   const _onSelect = useCallback(
     (connectorId: string) => {
       onSelect()
-      setTimeout(() => connect({ connector: connectors.find((el) => el.id === connectorId) }), 250)
+      setTimeout(
+        () =>
+          connect({
+            connector: connectors.find((el) => el.id === connectorId),
+          }),
+        250
+      )
     },
     [connect, connectors, onSelect]
   )

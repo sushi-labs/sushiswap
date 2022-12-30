@@ -1,15 +1,27 @@
 // @ts-check
 /** @type {import('eslint').ESLint.ConfigData} */
-const eslintConfig = {
+module.exports = {
   root: true,
   env: {
-    node: true,
     browser: true,
+    node: true,
     es6: true,
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'testing-library', 'simple-import-sort', 'unused-imports'],
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'next', 'prettier', 'turbo'],
+  plugins: ['@typescript-eslint', 'testing-library', 'simple-import-sort', 'unused-imports', 'prettier'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'next',
+    'prettier',
+    'turbo',
+  ],
+  settings: {
+    next: {
+      rootDir: ['apps/*/'],
+    },
+  },
   ignorePatterns: [
     '**/__tests__/*.test.ts',
     '**/dist/**',
@@ -35,6 +47,7 @@ const eslintConfig = {
     '@typescript-eslint/no-non-null-assertion': 'warn',
     '@typescript-eslint/ban-ts-comment': 'warn',
     '@typescript-eslint/no-empty-function': 'warn',
+    'react/display-name': 'warn',
   },
   overrides: [
     // Only uses Testing Library lint rules in test files
@@ -47,5 +60,3 @@ const eslintConfig = {
     },
   ],
 }
-
-module.exports = eslintConfig

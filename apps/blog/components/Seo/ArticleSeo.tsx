@@ -11,7 +11,9 @@ interface ArticleSeo {
 export const ArticleSeo: FC<ArticleSeo> = ({ article }) => {
   if (!article) return <></>
 
-  const cover = getOptimizedMedia({ metadata: article.cover?.data?.attributes?.provider_metadata })
+  const cover = getOptimizedMedia({
+    metadata: article.cover?.data?.attributes?.provider_metadata,
+  })
   const coverAlt = article.cover?.data?.attributes?.alternativeText
 
   const authors = article.authors.data.map(({ attributes }) => ({

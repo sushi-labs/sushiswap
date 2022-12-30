@@ -12,7 +12,10 @@ import { AddSectionWidget } from './AddSectionWidget'
 export const AddSectionLegacy: FC<{ pair: Pair }> = ({ pair }) => {
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPair(pair)
-  const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
+  const [{ input0, input1 }, setTypedAmounts] = useState<{
+    input0: string
+    input1: string
+  }>({ input0: '', input1: '' })
   const {
     data: [poolState, pool],
   } = usePair(pair.chainId, token0, token1)

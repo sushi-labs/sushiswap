@@ -65,11 +65,26 @@ type Actions =
 const reducer = (state: BridgeState, action: Actions): BridgeState => {
   switch (action.type) {
     case 'setSrcChainId':
-      return { ...state, srcChainId: action.chainId, srcToken: undefined, srcTypedAmount: '', amount: undefined }
+      return {
+        ...state,
+        srcChainId: action.chainId,
+        srcToken: undefined,
+        srcTypedAmount: '',
+        amount: undefined,
+      }
     case 'setDstChainId':
-      return { ...state, dstChainId: action.chainId, dstToken: undefined, dstTypedAmount: '' }
+      return {
+        ...state,
+        dstChainId: action.chainId,
+        dstToken: undefined,
+        dstTypedAmount: '',
+      }
     case 'setSrcToken':
-      return { ...state, srcToken: action.currency, amount: tryParseAmount(state.srcTypedAmount, action.currency) }
+      return {
+        ...state,
+        srcToken: action.currency,
+        amount: tryParseAmount(state.srcTypedAmount, action.currency),
+      }
     case 'setDstToken':
       return { ...state, dstToken: action.currency }
     case 'setSrcTypedAmount':

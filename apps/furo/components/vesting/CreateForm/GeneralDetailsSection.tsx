@@ -29,11 +29,25 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
     (onChange: (...event: any[]) => void, currency: Type) => {
       if (currency.isNative) {
         const { chainId, decimals, symbol, name, isNative } = currency
-        onChange({ chainId, decimals, address: undefined, symbol, name, isNative })
+        onChange({
+          chainId,
+          decimals,
+          address: undefined,
+          symbol,
+          name,
+          isNative,
+        })
         setValue('fundSource', FundSource.WALLET)
       } else {
         const { chainId, decimals, symbol, name, isNative, wrapped } = currency
-        onChange({ chainId, decimals, address: wrapped.address, symbol, name, isNative })
+        onChange({
+          chainId,
+          decimals,
+          address: wrapped.address,
+          symbol,
+          name,
+          isNative,
+        })
       }
 
       onClose()
@@ -45,7 +59,10 @@ export const GeneralDetailsSection: FC<{ chainId: ChainId }> = ({ chainId }) => 
   // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
     if (startDate && startDate.getTime() <= new Date(Date.now() + 5 * 60 * 1000).getTime()) {
-      setError(`startDate`, { type: 'custom', message: 'Must be at least 5 minutes from now' })
+      setError(`startDate`, {
+        type: 'custom',
+        message: 'Must be at least 5 minutes from now',
+      })
     } else {
       clearErrors(`startDate`)
     }
