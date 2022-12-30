@@ -60,8 +60,8 @@
   "devDependencies": {
     "@playwright/test": "1.28.1",
     "@sushiswap/eslint-config": "workspace:*",
-    "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@testing-library/jest-dom": "^5.16.5",

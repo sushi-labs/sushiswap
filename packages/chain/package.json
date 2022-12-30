@@ -6,7 +6,7 @@
     "sushi",
     "chain"
   ],
-    "repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
     "directory": "packages/validate"
