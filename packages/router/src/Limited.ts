@@ -1,4 +1,3 @@
-// @ts-nocheck
 function getTrottle(times: number, intervalMS: number): () => void {
   const lastTrorrledCalls: number[] = []
   const trottle = async () => {
@@ -30,8 +29,9 @@ export class Limited {
   }
 
   async call<T>(func: () => Promise<T>): Promise<T> {
+    // eslint-disable-next-line no-constant-condition
     while (1) {
-      await this.trottle()
+      this.trottle()
       ++this.counterTotalCall
       //console.log(this.counterTotalCall);
       try {
@@ -45,7 +45,7 @@ export class Limited {
   }
 
   async callOnce<T>(func: () => Promise<T>): Promise<T> {
-    await this.trottle()
+    this.trottle()
     ++this.counterTotalCall
     return await func()
   }
