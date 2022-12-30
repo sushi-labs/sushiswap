@@ -20,13 +20,17 @@ export function useSendTransaction({
   enabled?: boolean
 }) {
   const [request, setRequest] = useState<(TransactionRequest & { to: string }) | undefined>()
-  console.log('useSendTransaction (wrapper) re-runing with', { request, chainId, enabled })
+  // console.log('useSendTransaction (wrapper) re-runing with', {
+  //   request,
+  //   chainId,
+  //   enabled,
+  // })
   const { config } = usePrepareSendTransaction({
     request,
     chainId,
     enabled,
   })
-  console.log('usePrepareSendTransaction returned config', { config })
+  // console.log('usePrepareSendTransaction returned config', { config })
 
   const _onSettled = useCallback(
     (
@@ -35,7 +39,7 @@ export function useSendTransaction({
       variables: SendTransactionArgs,
       context: unknown
     ) => {
-      console.log('onSettled callback', { data, e, variables, context })
+      // console.log('onSettled callback', { data, e, variables, context })
       // TODO: ignore until wagmi workaround on ethers error
       // @ts-ignore
       if (e?.code !== ErrorCode.ACTION_REJECTED) {
@@ -50,7 +54,7 @@ export function useSendTransaction({
   )
 
   useEffect(() => {
-    console.log('Prepare effect called with setRequest', setRequest)
+    // console.log('Prepare effect called with setRequest', setRequest)
     prepare(setRequest)
   }, [prepare])
 

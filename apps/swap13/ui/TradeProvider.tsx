@@ -51,9 +51,17 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
     case 'setRecipient':
       return { ...state, recipient: action.recipient }
     case 'setNetwork0':
-      return { ...state, network0: action.chainId, token0: Native.onChain(action.chainId) }
+      return {
+        ...state,
+        network0: action.chainId,
+        token0: Native.onChain(action.chainId),
+      }
     case 'setNetwork1':
-      return { ...state, network1: action.chainId, token1: Native.onChain(action.chainId) }
+      return {
+        ...state,
+        network1: action.chainId,
+        token1: Native.onChain(action.chainId),
+      }
     case 'setToken0':
       return {
         ...state,

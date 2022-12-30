@@ -102,7 +102,9 @@ describe('CreateForm', () => {
   it('should not display an alert if recipient is valid', async () => {
     setup()
 
-    const recipientInput = screen.getByRole('textbox', { name: /dates.recipient/i })
+    const recipientInput = screen.getByRole('textbox', {
+      name: /dates.recipient/i,
+    })
     fireEvent.input(recipientInput, {
       target: {
         value: '0x4ab2fc6e258a0ca7175d05ff10c5cf798a672cae',

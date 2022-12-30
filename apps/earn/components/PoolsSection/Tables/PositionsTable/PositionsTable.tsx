@@ -50,7 +50,12 @@ export const PositionsTable: FC = () => {
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ volume: false, network: false, apr: false, liquidityUSD: false })
+      setColumnVisibility({
+        volume: false,
+        network: false,
+        apr: false,
+        liquidityUSD: false,
+      })
     }
   }, [isMd, isSm])
 

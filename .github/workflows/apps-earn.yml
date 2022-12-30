@@ -25,6 +25,7 @@ env:
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   REDIS_URL: ${{ secrets.REDIS_URL }}
+  SKIP_BUILD_STATIC_GENERATION: true
 
 jobs:
   ci:

@@ -5,8 +5,8 @@ import { Button, Dots } from '@sushiswap/ui'
 import { getTridentRouterContractConfig } from '@sushiswap/wagmi'
 import { Approve2 } from '@sushiswap/wagmi/systems/Approve2'
 import { ApprovalType, ApproveDefinition } from '@sushiswap/wagmi/systems/Approve2/types'
-import { useRouters } from 'lib/hooks/useRouters'
-import { useNotifications, useSettings } from 'lib/state/storage'
+import { useRouters } from '../../lib/hooks/useRouters'
+import { useNotifications, useSettings } from '../../lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
 import { Address, useAccount } from 'wagmi'
 
@@ -87,7 +87,9 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
         <Approve2.Root chainId={chainId} onSuccess={createNotification} definition={definition}>
           <TradeExecuteProvider chainId={chainId} approved={true} signature={signature} onSuccess={onSwapSuccess}>
             {({ isWritePending, execute }) => {
-              console.log('sendTransaction function to exec', { sendTrasaction: execute })
+              console.log('sendTransaction function to exec', {
+                sendTrasaction: execute,
+              })
               return (
                 <Button
                   size="md"

@@ -1,10 +1,10 @@
 import { FC } from 'react'
+import { Article } from 'types'
 
-import { ArticleEntity } from '../../.mesh'
 import { Image } from '../Image'
 
 interface ArticleAuthors {
-  article?: ArticleEntity
+  article?: Article
 }
 
 export const ArticleAuthors: FC<ArticleAuthors> = ({ article }) => {

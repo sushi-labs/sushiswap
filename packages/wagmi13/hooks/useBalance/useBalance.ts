@@ -114,7 +114,10 @@ export const useBalances: UseBalances = ({
           elastic: BigNumber
         }
         if (base && elastic && data[i + 2 * validatedTokenAddresses.length]) {
-          const rebase = { base: JSBI.BigInt(base.toString()), elastic: JSBI.BigInt(elastic.toString()) }
+          const rebase = {
+            base: JSBI.BigInt(base.toString()),
+            elastic: JSBI.BigInt(elastic.toString()),
+          }
           const amount = Amount.fromShare(
             validatedTokens[i],
             (data[i + 2 * validatedTokenAddresses.length] as unknown as BigNumber).toString(),
@@ -192,7 +195,14 @@ export const useBalance: UseBalance = ({
   loadBentobox = false,
 }) => {
   const currencies = useMemo(() => [currency], [currency])
-  const { data, isLoading, isError } = useBalances({ watch, chainId, currencies, account, enabled, loadBentobox })
+  const { data, isLoading, isError } = useBalances({
+    watch,
+    chainId,
+    currencies,
+    account,
+    enabled,
+    loadBentobox,
+  })
 
   return useMemo(() => {
     const walletBalance = currency

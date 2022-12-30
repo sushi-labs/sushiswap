@@ -43,7 +43,10 @@ export const GenericTable = <T extends { id: string }>({
                   <Table.th
                     key={header.id}
                     colSpan={header.colSpan}
-                    style={{ maxWidth: header.column.getSize(), width: header.column.getSize() }}
+                    style={{
+                      maxWidth: header.column.getSize(),
+                      width: header.column.getSize(),
+                    }}
                   >
                     <div
                       {...{
@@ -88,7 +91,13 @@ export const GenericTable = <T extends { id: string }>({
                         >
                           {row.getVisibleCells().map((cell) => {
                             return (
-                              <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                              <Table.td
+                                style={{
+                                  maxWidth: columns[0].size,
+                                  width: columns[0].size,
+                                }}
+                                key={cell.id}
+                              >
                                 <a href={linkFormatter ? linkFormatter(row.original.id) : `/${row.original.id}`}>
                                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </a>
@@ -114,7 +123,13 @@ export const GenericTable = <T extends { id: string }>({
                   >
                     {row.getVisibleCells().map((cell) => {
                       return (
-                        <Table.td style={{ maxWidth: columns[0].size, width: columns[0].size }} key={cell.id}>
+                        <Table.td
+                          style={{
+                            maxWidth: columns[0].size,
+                            width: columns[0].size,
+                          }}
+                          key={cell.id}
+                        >
                           <a href={linkFormatter ? linkFormatter(row.original.id) : `/${row.original.id}`}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </a>
@@ -140,7 +155,10 @@ export const GenericTable = <T extends { id: string }>({
                     return (
                       <Table.td
                         key={column.id}
-                        style={{ maxWidth: column.columnDef.size, width: column.columnDef.size }}
+                        style={{
+                          maxWidth: column.columnDef.size,
+                          width: column.columnDef.size,
+                        }}
                       >
                         {column.columnDef.meta?.skeleton}
                       </Table.td>

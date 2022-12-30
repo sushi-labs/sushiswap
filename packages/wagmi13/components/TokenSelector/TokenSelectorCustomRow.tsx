@@ -6,11 +6,11 @@ import { IconButton } from '@sushiswap/ui13/components/IconButton'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import React, { CSSProperties, FC } from 'react'
 
-export const TokenSelectorCustomTokenRow: FC<{ style: CSSProperties; currency: Type; onRemove(): void }> = ({
-  style,
-  currency,
-  onRemove,
-}) => {
+export const TokenSelectorCustomTokenRow: FC<{
+  style: CSSProperties
+  currency: Type
+  onRemove(): void
+}> = ({ style, currency, onRemove }) => {
   return (
     <div className="flex items-center w-full p-4" style={style}>
       <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
@@ -29,7 +29,11 @@ export const TokenSelectorCustomTokenRow: FC<{ style: CSSProperties; currency: T
         <div className="flex items-center gap-3">
           <IconButton
             icon={XCircleIcon}
-            iconProps={{ width: 20, height: 20, className: 'text-gray-500 dark:text-slate-500' }}
+            iconProps={{
+              width: 20,
+              height: 20,
+              className: 'text-gray-500 dark:text-slate-500',
+            }}
             onClick={onRemove}
           />
           <IconButton

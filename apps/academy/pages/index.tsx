@@ -81,8 +81,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
     [`/articles`, selectedTopic, selectedDifficulty, selectedProduct],
     async (_url, searchTopic, searchDifficulty, searchProduct) => {
       const filters = {
-        ...(searchDifficulty?.id && { difficulty: { id: { eq: searchDifficulty?.id } } }),
-        ...(searchProduct?.id && { products: { id: { eq: searchProduct?.id } } }),
+        ...(searchDifficulty?.id && {
+          difficulty: { id: { eq: searchDifficulty?.id } },
+        }),
+        ...(searchProduct?.id && {
+          products: { id: { eq: searchProduct?.id } },
+        }),
         ...(searchTopic?.id && { topics: { id: { eq: searchTopic?.id } } }),
       }
 
@@ -93,7 +97,12 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
         })
       )?.articles
     },
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: false }
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+      revalidateOnMount: false,
+    }
   )
 
   const loading = useDebounce(isValidating, 400)
@@ -295,9 +304,15 @@ const _Home: FC<{ seo: Global }> = ({ seo }) => {
               href={{
                 pathname: '/articles',
                 query: {
-                  ...(selectedDifficulty && { difficulty: selectedDifficulty.attributes?.slug }),
-                  ...(selectedProduct && { product: selectedProduct.attributes?.slug }),
-                  ...(selectedTopic && { topic: selectedTopic.attributes?.slug }),
+                  ...(selectedDifficulty && {
+                    difficulty: selectedDifficulty.attributes?.slug,
+                  }),
+                  ...(selectedProduct && {
+                    product: selectedProduct.attributes?.slug,
+                  }),
+                  ...(selectedTopic && {
+                    topic: selectedTopic.attributes?.slug,
+                  }),
                 },
               }}
               legacyBehavior

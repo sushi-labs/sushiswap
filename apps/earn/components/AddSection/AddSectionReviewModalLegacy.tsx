@@ -118,7 +118,9 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             deadline.toHexString(),
           ]
 
-          const gasLimit = await contract.estimateGas.addLiquidityETH(...args, { value })
+          const gasLimit = await contract.estimateGas.addLiquidityETH(...args, {
+            value,
+          })
           setRequest({
             from: address,
             to: contract.address,

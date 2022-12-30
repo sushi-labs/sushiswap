@@ -1,0 +1,56 @@
+{
+  "name": "@sushiswap/wagmi-config",
+  "version": "0.1.0",
+  "description": "Sushi Wagmi Config",
+  "keywords": [
+    "sushi",
+    "wagmi",
+    "config"
+  ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/config/wagmi"
+  },
+  "license": "MIT",
+  "author": "LufyCZ <me@lufy.cz>",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "type": "module",
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@sushiswap/abi": "workspace:*",
+    "@sushiswap/address": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@wagmi/core": "0.8.1",
+    "tsup": "6.5.0",
+    "typescript": "4.9.4",
+    "wagmi": "0.9.1"
+  },
+  "peerDependencies": {
+    "@sushiswap/abi": "workspace:*",
+    "@sushiswap/address": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/bentobox": "workspace:*",
+    "@wagmi/core": "0.8.1",
+    "wagmi": "0.9.1"
+  }
+}

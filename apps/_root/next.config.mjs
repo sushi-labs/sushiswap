@@ -1,6 +1,4 @@
-import transpileModules from 'next-transpile-modules'
-
-const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/wagmi'])
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
 const {
   ROOT_URL,
@@ -17,19 +15,10 @@ const {
   ACADEMY_URL,
 } = process.env
 
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: false,
-  experimental: {
-    esmExternals: 'loose',
-  },
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
-  productionBrowserSourceMaps: true,
+  ...defaultNextConfig,
+  transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
   async redirects() {
     return [
       {
@@ -141,4 +130,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default nextConfig

@@ -17,8 +17,14 @@ const wNativeToken = {
   address: Native.onChain(CHAIN_ID).wrapped.address.toLowerCase(),
   symbol: Native.onChain(CHAIN_ID).wrapped.symbol ?? 'WETH',
 }
-const usdc = { address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS].toLowerCase(), symbol: 'USDC' }
-const sushi = { address: SUSHI_ADDRESS[CHAIN_ID as keyof typeof SUSHI_ADDRESS].toLowerCase(), symbol: 'SUSHI' }
+const usdc = {
+  address: USDC_ADDRESS[CHAIN_ID as keyof typeof USDC_ADDRESS].toLowerCase(),
+  symbol: 'USDC',
+}
+const sushi = {
+  address: SUSHI_ADDRESS[CHAIN_ID as keyof typeof SUSHI_ADDRESS].toLowerCase(),
+  symbol: 'SUSHI',
+}
 
 test.beforeEach(async ({ page }) => {
   page.on('pageerror', (err) => {

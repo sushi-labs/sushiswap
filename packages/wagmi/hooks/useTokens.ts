@@ -20,7 +20,11 @@ const queryFn: QueryFunction<FetchTokensResult, ReturnType<typeof queryKey>> = (
   if (tokens.filter((el) => !el.address).length > 0) throw new Error('address is required')
   return Promise.all(
     tokens.map((token) => {
-      return fetchToken({ address: token.address as Address, chainId: token.chainId, formatUnits: token.formatUnits })
+      return fetchToken({
+        address: token.address as Address,
+        chainId: token.chainId,
+        formatUnits: token.formatUnits,
+      })
     })
   )
 }

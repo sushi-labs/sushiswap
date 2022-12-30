@@ -8,11 +8,11 @@ import React, { CSSProperties, FC, useMemo, useState } from 'react'
 
 import { TokenSelectorProps } from './TokenSelector'
 
-export const TokenSelectorCustomTokenRow: FC<{ style: CSSProperties; currency: Type; onRemove(): void }> = ({
-  style,
-  currency,
-  onRemove,
-}) => {
+export const TokenSelectorCustomTokenRow: FC<{
+  style: CSSProperties
+  currency: Type
+  onRemove(): void
+}> = ({ style, currency, onRemove }) => {
   return (
     <div className="flex items-center w-full p-4" style={style}>
       <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
@@ -108,7 +108,11 @@ export const TokenSelectorCustomTokensOverlay: FC<TokenSelectorSettingsOverlayPr
                   style={style}
                   currency={currency}
                   onRemove={() =>
-                    onRemoveToken && onRemoveToken({ chainId: currency.chainId, address: currency.wrapped.address })
+                    onRemoveToken &&
+                    onRemoveToken({
+                      chainId: currency.chainId,
+                      address: currency.wrapped.address,
+                    })
                   }
                 />
               )}

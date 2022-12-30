@@ -3,7 +3,7 @@
   "globalEnv": [
     "CI",
     "NODE_ENV",
-    "ALCHEMY_ID", 
+    "ALCHEMY_ID",
     "GITHUB_TOKEN",
     "NEXT_PUBLIC_ALCHEMY_ID",
     "SKIP_BUILD_STATIC_GENERATION"
@@ -20,53 +20,26 @@
   ],
   "pipeline": {
     "build-blog": {
-      "outputs": [
-        ".mesh/**",
-        ".next/**",
-        ".turbo/**",
-        "public/**"
-      ],
-      "dependsOn": [
-        "^build",
-        "generate"
-      ],
-      "env": [
-        "NEXT_PUBLIC_STRAPI_API_URL",
-        "STRAPI_PREVIEW_SECRET"
-      ]
+      "outputs": [".mesh/**", ".next/**", ".turbo/**", "public/**"],
+      "dependsOn": ["^build", "generate"],
+      "env": ["NEXT_PUBLIC_STRAPI_API_URL", "STRAPI_PREVIEW_SECRET"]
     },
     "furo:build": {
-      "outputs": [
-        ".next/**",
-        "public/**"
-      ],
-      "dependsOn": [
-        "^build",
-        "generate"
-      ]
+      "outputs": [".next/**", "public/**"],
+      "dependsOn": ["^build", "generate"]
     },
     "db:init": {
-      "outputs": [
-        "prisma/**"
-      ],
+      "outputs": ["prisma/**"],
       "cache": false
     },
     "db:pull": {
-      "outputs": [
-        "prisma/**"
-      ],
-      "dependsOn": [
-        "db:init"
-      ],
+      "outputs": ["prisma/**"],
+      "dependsOn": ["db:init"],
       "cache": false,
-      "env": [
-        "DATABASE_URL"
-      ]
+      "env": ["DATABASE_URL"]
     },
     "db:generate": {
-      "dependsOn": [
-        "db:pull"
-      ],
+      "dependsOn": [],
       "cache": false
     },
     "db:push": {
@@ -74,51 +47,23 @@
     },
     "playwright": {
       "cache": false,
-      "env": [
-        "ANVIL_BLOCK_NUMBER",
-        "ANVIL_FORK_URL",
-        "PLAYWRIGHT_URL",
-        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
-        "CHAIN_ID"
-      ]
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
     "test": {
-      "dependsOn": [
-        "build"
-      ],
-      "outputs": [
-        "coverage/**"
-      ],
-      "env": [
-        "ANVIL_BLOCK_NUMBER",
-        "ANVIL_FORK_URL",
-        "PLAYWRIGHT_URL",
-        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
-        "CHAIN_ID"
-      ]
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
     "lint": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "start": {
-      "dependsOn": [
-        "^build",
-        "^db:generate",
-        "generate"
-      ],
+      "dependsOn": ["^build", "^db:generate", "generate"],
       "cache": false
     },
     "generate": {
-      "outputs": [
-        ".graphclient/**",
-        ".mesh/**",
-        "typechain/**",
-        "artifacts/**",
-        "cache/**"
-      ]
+      "outputs": [".graphclient/**", ".mesh/**", "typechain/**", "artifacts/**", "cache/**"]
     },
     "build": {
       "outputs": [
@@ -133,10 +78,7 @@
         "public/**",
         "storybook-static/**"
       ],
-      "dependsOn": [
-        "^build",
-        "generate"
-      ],
+      "dependsOn": ["^db:generate", "^build", "db:generate", "generate"],
       "env": [
         "ROOT_URL",
         "ACADEMY_URL",
@@ -158,14 +100,11 @@
       "cache": false
     },
     "check": {
+      "dependsOn": ["^build", "generate"],
       "cache": false
     },
     "dev": {
-      "dependsOn": [
-        "^build",
-        "^db:generate",
-        "generate"
-      ],
+      "dependsOn": ["^build", "^db:generate", "generate"],
       "cache": false
     },
     "validate": {
@@ -173,32 +112,31 @@
     },
     "anvil": {
       "cache": false,
-      "env": [
-        "ANVIL_BLOCK_NUMBER",
-        "ANVIL_FORK_URL"
-      ]
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"]
     },
     "export": {
-      "dependsOn": [
-        "build"
-      ],
-      "outputs": [
-        "exports.json"
-      ],
+      "dependsOn": ["build"],
+      "outputs": ["exports.json"],
       "cache": true
     },
     "node": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "deployments/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["deployments/**"]
     },
     "server": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
+    },
+    "build-graphql": {
+      "outputs": [".graphclient/**", ".mesh/**"],
+      "dependsOn": ["^build", "generate"]
+    },
+    "build-protocol": {
+      "outputs": ["typechain/**", "artifacts/**", "cache/**"],
+      "dependsOn": ["^build", "generate"]
+    },
+    "build-subgraph": {
+      "outputs": ["build/**", "generated/**"],
+      "dependsOn": ["^build", "generate"]
     }
   }
 }

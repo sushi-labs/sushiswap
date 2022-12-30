@@ -127,13 +127,25 @@ export const PairTable: FC = () => {
 
   useEffect(() => {
     if (isSm && !isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, fees7d: false, network: false })
+      setColumnVisibility({
+        fees24h: false,
+        volume24h: false,
+        fees7d: false,
+        network: false,
+      })
     } else if (isSm && isMd && !isLg) {
       setColumnVisibility({ fees24h: false, volume24h: false, network: false })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false, fees7d: false, tvl: false, apr: false })
+      setColumnVisibility({
+        fees24h: false,
+        volume24h: false,
+        network: false,
+        fees7d: false,
+        tvl: false,
+        apr: false,
+      })
     }
   }, [isLg, isMd, isSm])
 

@@ -55,8 +55,10 @@ export const ListItem: ListItemComponent = ({
       )}
     >
       {/*// TODO RAMIN*/}
-      {/*// @ts-ignore*/}
-      {Icon && <Icon {...iconProps} width={iconProps?.width ?? 20} height={iconProps?.height ?? 20} />}
+      {Icon && (
+        // @ts-ignore
+        <Icon {...iconProps} width={iconProps?.width ?? 20} height={iconProps?.height ?? 20} />
+      )}
       <div className="flex flex-col gap-0.5 items-start">
         <span className="text-sm font-medium dark:text-slate-200">{title}</span>
         {subtitle && <span className="text-[10px] text-slate-400">{subtitle}</span>}

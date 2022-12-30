@@ -50,7 +50,11 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
                     iconProps={{ currency: cur, width: 28, height: 28 }}
                     title={cur.symbol || ''}
                     hoverIcon={LinkIcon}
-                    hoverIconProps={{ width: 20, height: 20, className: 'text-blue' }}
+                    hoverIconProps={{
+                      width: 20,
+                      height: 20,
+                      className: 'text-blue',
+                    }}
                   />
                 )
               }

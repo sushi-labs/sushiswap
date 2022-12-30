@@ -45,4 +45,11 @@ export const DEFAULT_INPUT_CLASSNAME = classNames(
   DEFAULT_INPUT_PADDING
 )
 
-export const Input = { Address, DatetimeLocal, DatePicker, Counter, Numeric, Percent }
+export const Input = {
+  Address,
+  DatetimeLocal,
+  DatePicker,
+  Counter,
+  Numeric,
+  Percent,
+}

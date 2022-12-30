@@ -1,4 +1,4 @@
-import { SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME,TridentChainId } from '@sushiswap/graph-config'
+import { SUBGRAPH_HOST, TRIDENT_SUBGRAPH_NAME, TridentChainId } from '@sushiswap/graph-config'
 import request from 'graphql-request'
 
 import { tridentFactoryQuery } from '../fetchers/trident'

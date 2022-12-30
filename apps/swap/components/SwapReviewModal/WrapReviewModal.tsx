@@ -1,7 +1,7 @@
 import { Amount, Type } from '@sushiswap/currency'
 import { Button, Dots } from '@sushiswap/ui'
 import { useWrapCallback, WrapType } from '@sushiswap/wagmi'
-import { useNotifications } from 'lib/state/storage'
+import { useNotifications } from '../../lib/state/storage'
 import React, { FC, ReactNode, useState } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -16,7 +16,7 @@ interface WrapReviewModal {
   children({ isWritePending, setOpen }: { isWritePending: boolean; setOpen(open: boolean): void }): ReactNode
 }
 
-export const WrapReviewModal: FC<WrapReviewModal> = ({id, input0, input1, wrapType, chainId, children }) => {
+export const WrapReviewModal: FC<WrapReviewModal> = ({ id, input0, input1, wrapType, chainId, children }) => {
   const { address } = useAccount()
   const [, { createNotification }] = useNotifications(address)
   const [open, setOpen] = useState(false)
@@ -37,7 +37,13 @@ export const WrapReviewModal: FC<WrapReviewModal> = ({id, input0, input1, wrapTy
     <>
       {children({ isWritePending, setOpen })}
       <SwapReviewModalBase chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
-        <Button size="md" testdata-id={`${id}-confirm-button`} disabled={isWritePending} fullWidth onClick={() => sendTransaction?.()}>
+        <Button
+          size="md"
+          testdata-id={`${id}-confirm-button`}
+          disabled={isWritePending}
+          fullWidth
+          onClick={() => sendTransaction?.()}
+        >
           {isWritePending ? (
             <Dots>Confirm {wrapType === WrapType.Wrap ? 'Wrap' : 'Unwrap'}</Dots>
           ) : wrapType === WrapType.Wrap ? (
