@@ -2,7 +2,14 @@
 /** @type {import('eslint').ESLint.ConfigData} */
 const eslintConfig = {
   root: true,
-  extends: ['next', 'turbo', 'prettier'],
+  extends: [
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'next',
+    'turbo',
+    'prettier',
+  ],
+  plugins: ['testing-library'],
   // extends: ["@sushiswap/eslint-config", "turbo", "prettier", "next"],
   // plugins: ["testing-library", "simple-import-sort", "unused-imports"],
   // settings: {
@@ -24,12 +31,17 @@ const eslintConfig = {
   //   "**/__tests__/*.test.ts",
   //   "**/test/*.test.ts",
   // ],
-  // rules: {
-  //   "@next/next/no-html-link-for-pages": "warn",
-  //   "react/display-name": "warn",
-  //   "testing-library/prefer-screen-queries": "warn",
-  //   "turbo/no-undeclared-env-vars": "warn",
-  // },
+  rules: {
+    '@next/next/no-html-link-for-pages': 'warn',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-non-null-assertion': 'warn',
+    '@typescript-eslint/ban-ts-comment': 'warn',
+    '@typescript-eslint/no-empty-function': 'warn',
+    'react/display-name': 'warn',
+    'testing-library/prefer-screen-queries': 'warn',
+    'turbo/no-undeclared-env-vars': 'warn',
+  },
   // overrides: [
   //   // Only uses Testing Library lint rules in test files
   //   {
