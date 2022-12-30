@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Native, USDC } from '@sushiswap/currency'
+import { SUSHI, USDC } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
@@ -14,7 +14,7 @@ const schema = z.object({
   fromToken: z.coerce.string(),
   toToken: z.coerce.string(),
   gasPrice: z.coerce.number().int().gte(0),
-  amount: z.coerce.number().int().gte(0),
+  amount: z.coerce.bigint(),
 })
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -54,7 +54,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   } = schema.parse(request.query)
 
   // TODO: Dummy tokens
-  const fromToken = Native.onChain(ChainId.ETHEREUM)
+  // const fromToken = Native.onChain(ChainId.ETHEREUM)
+  const fromToken = SUSHI[ChainId.ETHEREUM]
   const toToken = USDC[ChainId.ETHEREUM]
 
   const backCounter = new BackCounter(4)
