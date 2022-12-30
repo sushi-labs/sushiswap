@@ -14,8 +14,8 @@ const schema = z.object({
 })
 
 const handler = (request: VercelRequest, response: VercelResponse) => {
-  console.log('query', request.query)
   const { chainId, fromToken, toToken, amount, gasPrice } = schema.parse(request.query)
+
   return response.status(200).json({ chainId, fromToken, toToken, amount, gasPrice })
 }
 

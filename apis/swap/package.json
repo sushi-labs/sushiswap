@@ -1,22 +1,21 @@
 {
-  "name": "@sushiswap/route-processor-api",
+  "name": "@sushiswap/swap-api",
   "version": "0.0.0",
   "private": true,
-  "description": "Sushi Route Processor API",
+  "description": "Sushi Swap API",
   "keywords": [
     "sushi",
-    "route",
-    "processor",
+    "swap",
     "api"
   ],
-  "homepage": "https://github.com/sushiswap/sushiswap/apis/route-processor#readme",
+  "homepage": "https://github.com/sushiswap/sushiswap/apis/swap#readme",
   "bugs": {
     "url": "https://github.com/sushiswap/sushiswap/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "apis/route-processor"
+    "directory": "apis/tines"
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
@@ -24,11 +23,19 @@
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
+    "@ethersproject/solidity": "^5.7.0",
+    "@sushiswap/amm": "workspace:*",
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/tines": "workspace:*",
     "@vercel/node": "2.8.1",
+    "ethers": "^5.7.0",
     "zod": "3.20.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",

@@ -11,6 +11,7 @@
     "deploy",
     "deployments",
     "exports",
+    "scripts",
     "typechain"
   ],
   "scripts": {
