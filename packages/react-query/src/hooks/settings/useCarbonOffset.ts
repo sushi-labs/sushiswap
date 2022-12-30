@@ -1,14 +1,10 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-interface UseCarbonOffset {
-  account?: string
-}
-
-export const useCarbonOffset = ({ account }: UseCarbonOffset) => {
+export const useCarbonOffset = () => {
   const queryClient = useQueryClient()
   return useQuery<unknown, unknown, boolean>({
     initialData: false,
-    queryKey: ['carbonOffset', { account }],
-    queryFn: () => queryClient.getQueryData<boolean>(['carbonOffset', { account }]),
+    queryKey: ['carbonOffset'],
+    queryFn: () => queryClient.getQueryData<boolean>(['carbonOffset']),
   })
 }

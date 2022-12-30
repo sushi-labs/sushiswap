@@ -4,14 +4,12 @@ export interface UseSetSlippageTolerancePayload {
   value: 'AUTO' | string
 }
 
-export const useSetSlippageTolerance = ({ account }: { account?: string }) => {
+export const useSetSlippageTolerance = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    // TODO why ts error?
-    // @ts-ignore
-    mutationKey: ['slippageTolerance', { account }],
-    mutationFn: ({ value }: UseSetSlippageTolerancePayload) => {
-      queryClient.setQueryData<'AUTO' | string>(['slippageTolerance', { account }], () => {
+    mutationKey: ['slippageTolerance'],
+    mutationFn: async ({ value }: UseSetSlippageTolerancePayload) => {
+      queryClient.setQueryData<'AUTO' | string>(['slippageTolerance'], () => {
         return value
       })
     },

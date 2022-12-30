@@ -14,10 +14,10 @@ import {
 } from '@sushiswap/ui13/components/icons'
 import { List } from '@sushiswap/ui13/components/list/List'
 import { Loader } from '@sushiswap/ui13/components/Loader'
-import React, { SVGProps, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useConnect } from 'wagmi'
 
-const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element> = {
+const Icons: Record<string, React.ElementType> = {
   Injected: ChevronDoubleDownIcon,
   MetaMask: MetamaskIcon,
   'Trust Wallet': TrustWalletIcon,
@@ -79,7 +79,7 @@ export const ConnectButton = <C extends React.ElementType>({ hack, children, ...
                   <List.Label>Wallet</List.Label>
                   <List.Control className="bg-gray-100 dark:!bg-slate-700">
                     {connectors.map((connector) => (
-                      <List.Item
+                      <List.MenuItem
                         onClick={() => onSelect(connector.id)}
                         icon={Icons[connector.name]}
                         title={connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}

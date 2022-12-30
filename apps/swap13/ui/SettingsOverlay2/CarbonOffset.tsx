@@ -6,13 +6,9 @@ import { List } from '@sushiswap/ui13/components/list/List'
 import Switch from '@sushiswap/ui13/components/Switch'
 import React, { FC } from 'react'
 
-interface CarbonOffsetProps {
-  account?: string
-}
-
-export const CarbonOffset: FC<CarbonOffsetProps> = ({ account }) => {
-  const { data: carbonOffset } = useCarbonOffset({ account })
-  const { mutate: updateCarbonOffset } = useSetCarbonOffset({ account })
+export const CarbonOffset: FC = () => {
+  const { data: carbonOffset } = useCarbonOffset()
+  const { mutate: updateCarbonOffset } = useSetCarbonOffset()
 
   return (
     <List.Item

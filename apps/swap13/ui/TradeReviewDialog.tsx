@@ -22,7 +22,7 @@ export const TradeReviewDialog: FC = () => {
 
   return (
     <Dialog open={review} onClose={onClose} variant="opaque">
-      <Container maxWidth={520} className="mx-auto flex flex-col mt-4 gap-4">
+      <Container maxWidth={520} className="mx-auto flex flex-col mt-4 gap-4 sm:p-4">
         <button onClick={onClose} className="-ml-2 p-2">
           <ArrowLeftIcon strokeWidth={3} width={20} height={20} />
         </button>

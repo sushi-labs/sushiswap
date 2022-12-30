@@ -4,14 +4,12 @@ export interface UseSetExpertModePayload {
   value: boolean
 }
 
-export const useSetExpertMode = ({ account }: { account?: string }) => {
+export const useSetExpertMode = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    // TODO why ts error?
-    // @ts-ignore
-    mutationKey: ['expertMode', { account }],
-    mutationFn: ({ value }: UseSetExpertModePayload) => {
-      queryClient.setQueryData<boolean>(['expertMode', { account }], () => {
+    mutationKey: ['expertMode'],
+    mutationFn: async ({ value }: UseSetExpertModePayload) => {
+      queryClient.setQueryData<boolean>(['expertMode'], () => {
         return value
       })
     },

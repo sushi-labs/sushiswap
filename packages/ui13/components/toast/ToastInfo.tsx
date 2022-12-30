@@ -18,7 +18,7 @@ export const ToastInfo: FC<ToastInfo> = ({ href, chainId, txHash, onDismiss, sum
         title="Transaction Info"
         summary={summary?.info}
       />
-      <ToastButtons href={href ? href : Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
+      <ToastButtons href={href ? href : Chain.from(chainId)?.getTxUrl(txHash)} onDismiss={onDismiss} />
     </>
   )
 }

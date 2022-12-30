@@ -4,14 +4,12 @@ export interface UseSetCarbonOffsetPayload {
   value: boolean
 }
 
-export const useSetCarbonOffset = ({ account }: { account?: string }) => {
+export const useSetCarbonOffset = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    // TODO why ts error?
-    // @ts-ignore
-    mutationKey: ['carbonOffset', { account }],
-    mutationFn: ({ value }: UseSetCarbonOffsetPayload) => {
-      queryClient.setQueryData<boolean>(['carbonOffset', { account }], () => {
+    mutationKey: ['carbonOffset'],
+    mutationFn: async ({ value }: UseSetCarbonOffsetPayload) => {
+      queryClient.setQueryData<boolean>(['carbonOffset'], () => {
         return value
       })
     },

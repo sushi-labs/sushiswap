@@ -42,7 +42,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
             {currencies.reduce<ReactNode[]>((acc, cur) => {
               if (cur) {
                 acc.push(
-                  <List.Item
+                  <List.MenuItem
                     as="a"
                     href={chain[cur.chainId].getTokenUrl(cur.wrapped.address)}
                     target="_blank"
@@ -73,7 +73,7 @@ export const TokenSelectorImportRow: FC<TokenSelectorImportRow> = ({ currencies,
     <>
       {slideIn && currencies[0] ? (
         <>
-          <List.Item
+          <List.MenuItem
             className="!px-2 rounded-xl hover:!bg-white hover:dark:!bg-slate-800"
             icon={Icon}
             iconProps={{ currency: currencies[0], width: 28, height: 28 }}

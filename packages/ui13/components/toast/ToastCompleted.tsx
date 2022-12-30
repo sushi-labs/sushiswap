@@ -18,7 +18,7 @@ export const ToastCompleted: FC<ToastCompleted> = ({ href, chainId, txHash, onDi
         title="Transaction Completed"
         summary={summary.completed}
       />
-      <ToastButtons href={href ? href : Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
+      <ToastButtons href={href ? href : Chain.from(chainId)?.getTxUrl(txHash)} onDismiss={onDismiss} />
     </>
   )
 }

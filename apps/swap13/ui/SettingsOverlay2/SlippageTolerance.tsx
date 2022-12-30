@@ -5,13 +5,9 @@ import { List } from '@sushiswap/ui13/components/list/List'
 import { Tab } from '@sushiswap/ui13/components/tabs'
 import React, { FC, useCallback } from 'react'
 
-interface SlippageToleranceProps {
-  account?: string
-}
-
-export const SlippageTolerance: FC<SlippageToleranceProps> = ({ account }) => {
-  const { data: slippageTolerance } = useSlippageTolerance({ account })
-  const { mutate: updateSlippageTolerance } = useSetSlippageTolerance({ account })
+export const SlippageTolerance: FC = () => {
+  const { data: slippageTolerance } = useSlippageTolerance()
+  const { mutate: updateSlippageTolerance } = useSetSlippageTolerance()
 
   const onChange = useCallback(
     (value: number) => {
@@ -29,7 +25,6 @@ export const SlippageTolerance: FC<SlippageToleranceProps> = ({ account }) => {
       title="Slippage tolerance"
       icon={WaterIcon}
       iconProps={{ width: 20, height: 20 }}
-      hover={false}
       subtitle={
         <div className="flex flex-col gap-4">
           <p>

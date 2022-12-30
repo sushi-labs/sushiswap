@@ -9,10 +9,8 @@ export interface UseCreateNotificationPayload {
 export const useCreateNotification = ({ account }: { account: string }) => {
   const queryClient = useQueryClient()
   return useMutation({
-    // TODO why ts error?
-    // @ts-ignore
     mutationKey: ['notifications', { account }],
-    mutationFn: ({ notification, timestamp }: UseCreateNotificationPayload) => {
+    mutationFn: async ({ notification, timestamp }: UseCreateNotificationPayload) => {
       queryClient.setQueryData<Record<string, NotificationData[]>>(['notifications', { account }], (prevData) => {
         if (!prevData) {
           return {

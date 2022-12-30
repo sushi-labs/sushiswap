@@ -32,7 +32,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
 
   return (
     <>
-      <List.Item
+      <List.MenuItem
         icon={PlusIcon}
         title="Custom Tokens"
         subtitle={`${ids.length || '0'} Tokens`}
@@ -46,7 +46,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
             <List.Control>
               {tokens.length > 0 ? (
                 tokens.map((token) => (
-                  <List.Item
+                  <List.MenuItem
                     key={token.address}
                     title={token.symbol || ''}
                     subtitle={chains[token.chainId].name}

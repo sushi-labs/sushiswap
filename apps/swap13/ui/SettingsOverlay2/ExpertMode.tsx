@@ -6,13 +6,9 @@ import { List } from '@sushiswap/ui13/components/list/List'
 import Switch from '@sushiswap/ui13/components/Switch'
 import React, { FC } from 'react'
 
-interface ExpertModeProps {
-  account?: string
-}
-
-export const ExpertMode: FC<ExpertModeProps> = ({ account }) => {
-  const { data: expertMode } = useExpertMode({ account })
-  const { mutate: updateExpertMode } = useSetExpertMode({ account })
+export const ExpertMode: FC = () => {
+  const { data: expertMode } = useExpertMode()
+  const { mutate: updateExpertMode } = useSetExpertMode()
 
   return (
     <List.Item

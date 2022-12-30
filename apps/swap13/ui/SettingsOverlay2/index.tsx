@@ -2,7 +2,6 @@ import { CogIcon } from '@heroicons/react/24/outline'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { List } from '@sushiswap/ui13/components/list/List'
 import React, { FC, useState } from 'react'
-import { useAccount } from 'wagmi'
 
 import { CarbonOffset } from './CarbonOffset'
 import { ExpertMode } from './ExpertMode'
@@ -20,7 +19,6 @@ interface SettingsOverlayProps {
 }
 
 export const SettingsOverlay2: FC<SettingsOverlayProps> = ({ modules }) => {
-  const { address: account } = useAccount()
   const [open, setOpen] = useState(false)
 
   return (
@@ -36,14 +34,14 @@ export const SettingsOverlay2: FC<SettingsOverlayProps> = ({ modules }) => {
           {modules.includes(SettingsModule.SlippageTolerance) && (
             <List className="!pt-0">
               <List.Control>
-                <SlippageTolerance account={account} />
+                <SlippageTolerance />
               </List.Control>
             </List>
           )}
           <List className="!pt-0">
             <List.Control>
-              {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset account={account} />}
-              {modules.includes(SettingsModule.ExpertMode) && <ExpertMode account={account} />}
+              {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
+              {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
             </List.Control>
           </List>
         </Dialog.Content>

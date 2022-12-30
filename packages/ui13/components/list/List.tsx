@@ -5,9 +5,11 @@ import { ListControl, ListControlProps } from './ListControl'
 import { ListItem, ListItemComponent } from './ListItem'
 import { ListKeyValue, ListKeyValueProps } from './ListKeyValue'
 import { ListLabel, ListLabelProps } from './ListLabel'
+import { ListMenuItem, ListMenuItemComponent } from './ListMenuItem'
 
 type List<T> = FC<T> & {
   Item: ListItemComponent
+  MenuItem: ListMenuItemComponent
   Label: FC<ListLabelProps>
   Control: FC<ListControlProps>
   KeyValue: FC<ListKeyValueProps>
@@ -23,6 +25,7 @@ export const List: List<ListProps> = ({ children, className }) => {
 }
 
 List.Item = ListItem
+List.MenuItem = ListMenuItem
 List.Label = ListLabel
 List.Control = ListControl
 List.KeyValue = ListKeyValue
