@@ -8,5 +8,9 @@
       ]
     }
   ],
-  "rewrites": [{ "source": "/", "destination": "/api" }]
+  "rewrites": [
+    { "source": "/", "destination": "/api" },
+    { "source": "/singlechain", "destination": "/api/singlechain" }
+    { "source": "/multichain", "destination": "/api/multichain" }
+  ]
 }

@@ -1,36 +1,22 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-// const srcChainIds = SWAP_ENABLED_NETWORKS.map((chainId) => chainId)
-// const dstChainIds = SWAP_ENABLED_NETWORKS.map((chainId) => chainId)
-
 const schema = z.object({
-  srcChainId: z.coerce
+  chainId: z.coerce
     .number()
     .int()
     .gte(0)
     .lte(2 ** 256),
-  dstChainId: z.coerce
-    .number()
-    .int()
-    .gte(0)
-    .lte(2 ** 256),
+  fromToken: z.coerce.string(),
+  toToken: z.coerce.string(),
+  gasPrice: z.coerce.number().int().gte(0),
+  amount: z.coerce.number().int().gte(0),
 })
 
 const handler = (request: VercelRequest, response: VercelResponse) => {
-  const { srcChainId, dstChainId } = schema.parse(request.query)
-
-  // const amount = request.query.amount
-
-  // const gasPrice = request.query.gasPrice
-
-  // const srcChainId = request.query.srcChainId
-  // const srcToken = request.query.srcToken
-
-  // const dstChainId = request.query.dstChainId
-  // const dstToken = request.query.dstToken
-
-  return response.status(200).json({ srcChainId, dstChainId })
+  console.log('query', request.query)
+  const { chainId, fromToken, toToken, amount, gasPrice } = schema.parse(request.query)
+  return response.status(200).json({ chainId, fromToken, toToken, amount, gasPrice })
 }
 
 export default handler
