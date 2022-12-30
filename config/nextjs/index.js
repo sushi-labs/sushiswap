@@ -8,12 +8,6 @@ const defaultNextConfig = {
   experimental: {
     esmExternals: 'loose',
   },
-  transpilePackages: [
-    '@sushiswap/redux-token-lists',
-    '@sushiswap/redux-localstorage',
-    '@sushiswap/wagmi',
-    '@sushiswap/ui',
-  ],
   images: {
     loader: 'cloudinary',
     path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',

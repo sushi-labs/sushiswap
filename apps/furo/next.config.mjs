@@ -1,36 +1,25 @@
-import transpileModules from "next-transpile-modules";
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
-const withTranspileModules = transpileModules([
-  "@sushiswap/redux-localstorage",
-  "@sushiswap/redux-token-lists",
-  "@sushiswap/ui",
-  "@sushiswap/wagmi",
-]);
-
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: "/furo",
-  reactStrictMode: true,
-  swcMinify: false,
-  experimental: {
-    esmExternals: "loose",
-  },
-  images: {
-    loader: "cloudinary",
-    path: "https://res.cloudinary.com/sushi-cdn/image/fetch/",
-  },
-  productionBrowserSourceMaps: true,
+  ...defaultNextConfig,
+  basePath: '/furo',
+  transpilePackages: [
+    '@sushiswap/redux-token-lists',
+    '@sushiswap/redux-localstorage',
+    '@sushiswap/wagmi',
+    '@sushiswap/ui',
+  ],
   async redirects() {
     return [
       {
-        source: "/",
-        destination: "/furo",
+        source: '/',
+        destination: '/furo',
         permanent: true,
         basePath: false,
       },
-    ];
+    ]
   },
-};
+}
 
-export default withTranspileModules(nextConfig);
+export default nextConfig

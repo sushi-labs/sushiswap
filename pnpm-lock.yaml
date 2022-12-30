@@ -231,6 +231,9 @@ importers:
       '@sushiswap/format': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/hooks': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
       '@sushiswap/sushi-data': 1.0.26
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -250,7 +253,6 @@ importers:
       next: 13.1.1
       next-seo: 5.15.0
       next-sitemap: 3.1.43
-      next-transpile-modules: 10.0.0
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -286,13 +288,15 @@ importers:
       wagmi: 0.9.1_5fkdkfy2bkgsnhvxgn477z7iae
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
+      '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 17.0.31
       '@types/react': 18.0.26
       '@types/react-dom': 18.0.10
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       tailwindcss: 3.2.4_postcss@8.4.20
       typescript: 4.9.4
@@ -308,6 +312,7 @@ importers:
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -325,7 +330,6 @@ importers:
       next: 13.1.1
       next-seo: 5.15.0
       next-sitemap: 3.1.43
-      next-transpile-modules: 10.0.0
       postcss: ^8.4.0
       qs: ^6.10.3
       react: ^18.2.0
@@ -358,6 +362,7 @@ importers:
       '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 17.0.30
@@ -367,7 +372,6 @@ importers:
       and: 0.0.3
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       sharp: 0.31.3
       tailwindcss: 3.2.4_postcss@8.4.20
@@ -386,6 +390,7 @@ importers:
       '@sushiswap/graph-client': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -409,7 +414,6 @@ importers:
       next-pwa: ^5.6.0
       next-seo: 5.15.0
       next-sitemap: 3.1.43
-      next-transpile-modules: 10.0.0
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -451,6 +455,7 @@ importers:
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 17.0.45
@@ -458,7 +463,6 @@ importers:
       '@types/react-dom': 18.0.10
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       swr: 1.3.0_react@18.2.0
       tailwindcss: 3.2.4_postcss@8.4.20
@@ -473,6 +477,7 @@ importers:
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -491,7 +496,6 @@ importers:
       next: 13.1.1
       next-seo: 5.15.0
       next-sitemap: 3.1.43
-      next-transpile-modules: 10.0.0
       postcss: ^8.4.0
       qs: ^6.10.3
       react: ^18.2.0
@@ -524,6 +528,7 @@ importers:
       '@heroicons/react': 1.0.6_react@18.2.0
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 17.0.30
@@ -533,7 +538,6 @@ importers:
       and: 0.0.3
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       sharp: 0.31.3
       tailwindcss: 3.2.4_postcss@8.4.20
@@ -565,6 +569,7 @@ importers:
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
@@ -586,7 +591,6 @@ importers:
       nanoid: 4.0.0
       next: 13.1.1
       next-seo: 5.15.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.19
       react: 18.2.0
       react-dom: 18.2.0
@@ -640,6 +644,7 @@ importers:
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 18.11.12
@@ -647,7 +652,6 @@ importers:
       '@types/react-dom': 18.0.9
       autoprefixer: 10.4.13_postcss@8.4.19
       eslint: 8.29.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.19
       tailwindcss: 3.2.4_postcss@8.4.19
       typescript: 4.9.4
@@ -680,6 +684,7 @@ importers:
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
@@ -711,7 +716,6 @@ importers:
       next: 13.1.1
       next-seo: 5.15.0
       next-sitemap: 3.1.43
-      next-transpile-modules: 10.0.0
       numeral: ^2.0.6
       postcss: ^8.4.0
       react: ^18.2.0
@@ -772,6 +776,7 @@ importers:
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/tailwindcss-config': link:../../config/tailwindcss
       '@sushiswap/typescript-config': link:../../config/typescript
@@ -785,7 +790,6 @@ importers:
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
       graphql: 16.6.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       swr: 1.3.0_react@18.2.0
       tailwindcss: 3.2.4_postcss@8.4.20
@@ -827,6 +831,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/log': workspace:*
       '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
@@ -864,7 +869,6 @@ importers:
       next: 13.1.1
       next-seo: 5.15.0
       next-sitemap: 3.1.43
-      next-transpile-modules: 10.0.0
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -953,6 +957,7 @@ importers:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@sushiswap/wagmi-config': link:../../config/wagmi
@@ -963,7 +968,6 @@ importers:
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
       jest: 29.3.1_@types+node@17.0.30
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       tailwindcss: 3.2.4_postcss@8.4.20
       ts-jest: 29.0.3_p6ekqnroyms5nhqbfxosryz7rm
@@ -986,6 +990,7 @@ importers:
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -999,7 +1004,6 @@ importers:
       fast-json-stable-stringify: ^2.1.0
       graphql: 16.6.0
       next: 13.1.1
-      next-transpile-modules: 10.0.0
       octokit: ^2.0.4
       postcss: ^8.4.0
       react: ^18.2.0
@@ -1033,6 +1037,7 @@ importers:
       '@graphprotocol/client-cli': 2.2.16_onug3sa4ph53e46o3zvxbixsym
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 17.0.45
@@ -1040,7 +1045,6 @@ importers:
       '@types/react-dom': 18.0.10
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       tailwindcss: 3.2.4_postcss@8.4.20
       typescript: 4.9.4
@@ -1065,6 +1069,7 @@ importers:
       '@sushiswap/format': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
@@ -1084,7 +1089,6 @@ importers:
       graphql: 16.6.0
       next: 13.1.1
       next-seo: 5.15.0
-      next-transpile-modules: 10.0.0
       octokit: ^2.0.4
       postcss: ^8.4.0
       react: ^18.2.0
@@ -1140,6 +1144,7 @@ importers:
       '@graphprotocol/client-cli': 2.2.16_onug3sa4ph53e46o3zvxbixsym
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/cors': 2.8.13
@@ -1150,7 +1155,6 @@ importers:
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
       graphql: 16.6.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       react-hook-form: 7.41.2_react@18.2.0
       tailwindcss: 3.2.4_postcss@8.4.20
@@ -1211,7 +1215,6 @@ importers:
       next: 13.1.1
       next-seo: 5.15.0
       next-sitemap: 3.1.43
-      next-transpile-modules: 10.0.0
       numeral: ^2.0.6
       postcss: ^8.4.0
       react: ^18.2.0
@@ -1282,7 +1285,6 @@ importers:
       concurrently: 7.6.0
       dotenv-cli: 6.0.0
       eslint: 8.29.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       tailwindcss: 3.2.4_postcss@8.4.20
       typescript: 4.9.4
@@ -1309,6 +1311,7 @@ importers:
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
       '@sushiswap/tines': workspace:*
@@ -1393,6 +1396,7 @@ importers:
       '@playwright/test': 1.28.1
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@testing-library/jest-dom': 5.16.5
@@ -1436,6 +1440,7 @@ importers:
       '@sushiswap/hooks': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
+      '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
@@ -1458,7 +1463,6 @@ importers:
       nanoid: ^4.0.0
       next: 13.1.1
       next-seo: 5.15.0
-      next-transpile-modules: 10.0.0
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -1513,6 +1517,7 @@ importers:
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/nextjs-config': link:../../config/nextjs
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/node': 17.0.45
@@ -1520,7 +1525,6 @@ importers:
       '@types/react-dom': 18.0.10
       autoprefixer: 10.4.13_postcss@8.4.20
       eslint: 8.29.0
-      next-transpile-modules: 10.0.0
       postcss: 8.4.20
       tailwindcss: 3.2.4_postcss@8.4.20
       typescript: 4.9.4
@@ -23067,13 +23071,6 @@ packages:
 
   /next-tick/1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==}
-
-  /next-transpile-modules/10.0.0:
-    resolution: {integrity: sha512-FyeJ++Lm2Fq31gbThiRCrJlYpIY9QaI7A3TjuhQLzOix8ChQrvn5ny4MhfIthS5cy6+uK1AhDRvxVdW17y3Xdw==}
-    deprecated: All features of next-transpile-modules are now natively built-in Next.js 13.1. Please use Next's transpilePackages option :)
-    dependencies:
-      enhanced-resolve: 5.12.0
-    dev: true
 
   /next/13.0.5_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-awpc3DkphyKydwCotcBnuKwh6hMqkT5xdiBK4OatJtOZurDPBYLP62jtM2be/4OunpmwIbsS0Eyv+ZGU97ciEg==}

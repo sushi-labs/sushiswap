@@ -62,6 +62,7 @@
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/nextjs-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
@@ -75,7 +76,6 @@
     "autoprefixer": "^10.4.0",
     "eslint": "8.29.0",
     "graphql": "16.6.0",
-    "next-transpile-modules": "10.0.0",
     "postcss": "^8.4.0",
     "swr": "^1.3.0",
     "tailwindcss": "3.2.4",
