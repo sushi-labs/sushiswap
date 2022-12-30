@@ -1,13 +1,8 @@
-import React from "react";
+import React from 'react'
 
-export const BarnBridgeSVG = (props: React.ComponentProps<"svg">) => {
+export const BarnBridgeSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-      fill="none"
-      viewBox="0 0 189 32"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 189 32">
       <g clipPath="url(#clip0)">
         <path
           fill="#fff"
@@ -28,5 +23,5 @@ export const BarnBridgeSVG = (props: React.ComponentProps<"svg">) => {
         </clipPath>
       </defs>
     </svg>
-  );
-};
+  )
+}

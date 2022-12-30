@@ -1,12 +1,12 @@
-import { Chip, Typography } from "@sushiswap/ui";
-import { format } from "date-fns";
-import { FC } from "react";
+import { Chip, Typography } from '@sushiswap/ui'
+import { format } from 'date-fns'
+import { FC } from 'react'
 
-import { ArticleEntity } from "../.mesh";
-import { Image } from "./Image";
+import { ArticleEntity } from '../.mesh'
+import { Image } from './Image'
 
 interface ArticleListItem {
-  article: ArticleEntity;
+  article: ArticleEntity
 }
 
 export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {
@@ -28,25 +28,18 @@ export const ArticleListItem: FC<ArticleListItem> = ({ article }) => {
         {(article?.attributes?.categories?.data || []).length > 0 && (
           <div className="flex gap-1 md:pt-3">
             {article?.attributes?.categories?.data.map((category) => (
-              <Chip
-                key={category.id}
-                label={category?.attributes?.name}
-                className="capitalize"
-              />
+              <Chip key={category.id} label={category?.attributes?.name} className="capitalize" />
             ))}
           </div>
         )}
         <div className="flex flex-col gap-2 lg:gap-3">
-          <div className="text-base font-medium md:text-2xl text-slate-200">
-            {article?.attributes?.title}
-          </div>
+          <div className="text-base font-medium md:text-2xl text-slate-200">{article?.attributes?.title}</div>
           {/*<Typography className="text-slate-400 line-clamp-2">{article?.attributes.description}</Typography>*/}
           <Typography variant="sm" weight={500} className="text-slate-400">
-            {article?.attributes?.publishedAt &&
-              format(new Date(article?.attributes.publishedAt), "dd MMM, yyyy")}
+            {article?.attributes?.publishedAt && format(new Date(article?.attributes.publishedAt), 'dd MMM, yyyy')}
           </Typography>
         </div>
       </div>
     </a>
-  );
-};
+  )
+}

@@ -1,39 +1,37 @@
-import { Amount, Currency, Token } from "@sushiswap/currency";
-import { Pair } from "@sushiswap/graph-client";
-import { Chef, useMasterChef } from "@sushiswap/wagmi";
-import { createContext, FC, ReactNode, useContext, useMemo } from "react";
+import { Amount, Currency, Token } from '@sushiswap/currency'
+import { Pair } from '@sushiswap/graph-client'
+import { Chef, useMasterChef } from '@sushiswap/wagmi'
+import { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
-import { CHEF_TYPE_MAP } from "../lib/constants";
+import { CHEF_TYPE_MAP } from '../lib/constants'
 import {
   useCreateNotification,
   useTokenAmountDollarValues,
   useTokensFromPair,
   useUnderlyingTokenBalanceFromPair,
-} from "../lib/hooks";
+} from '../lib/hooks'
 
 interface PoolPositionStakedContext {
-  balance: Amount<Token> | undefined;
-  value0: number;
-  value1: number;
-  underlying0: Amount<Currency> | undefined;
-  underlying1: Amount<Currency> | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  isWritePending: boolean;
-  isWriteError: boolean;
+  balance: Amount<Token> | undefined
+  value0: number
+  value1: number
+  underlying0: Amount<Currency> | undefined
+  underlying1: Amount<Currency> | undefined
+  isLoading: boolean
+  isError: boolean
+  isWritePending: boolean
+  isWriteError: boolean
 }
 
-const Context = createContext<PoolPositionStakedContext | undefined>(undefined);
+const Context = createContext<PoolPositionStakedContext | undefined>(undefined)
 
 interface PoolPositionStakedProviderProps {
-  pair: Pair;
-  children: ReactNode;
-  watch?: boolean;
+  pair: Pair
+  children: ReactNode
+  watch?: boolean
 }
 
-export const PoolPositionStakedProvider: FC<
-  PoolPositionStakedProviderProps
-> = ({ pair, children, watch = true }) => {
+export const PoolPositionStakedProvider: FC<PoolPositionStakedProviderProps> = ({ pair, children, watch = true }) => {
   if (pair?.farm?.id === undefined || !pair?.farm?.chefType)
     return (
       <Context.Provider
@@ -51,7 +49,7 @@ export const PoolPositionStakedProvider: FC<
       >
         {children}
       </Context.Provider>
-    );
+    )
 
   return (
     <_PoolPositionStakedProvider
@@ -62,15 +60,15 @@ export const PoolPositionStakedProvider: FC<
     >
       {children}
     </_PoolPositionStakedProvider>
-  );
-};
+  )
+}
 
 interface _PoolPositionStakedProviderProps {
-  pair: Pair;
-  children: ReactNode;
-  farmId: number;
-  chefType: Chef;
-  watch: boolean;
+  pair: Pair
+  children: ReactNode
+  farmId: number
+  chefType: Chef
+  watch: boolean
 }
 
 const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
@@ -80,31 +78,29 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
   chefType,
   children,
 }) => {
-  const createNotification = useCreateNotification();
-  const { reserve0, reserve1, totalSupply, liquidityToken } =
-    useTokensFromPair(pair);
-  const { balance, isLoading, isError, isWritePending, isWriteError } =
-    useMasterChef({
-      chainId: pair.chainId,
-      chef: chefType,
-      pid: farmId,
-      token: liquidityToken,
-      onSuccess: createNotification,
-      watch,
-    });
+  const createNotification = useCreateNotification()
+  const { reserve0, reserve1, totalSupply, liquidityToken } = useTokensFromPair(pair)
+  const { balance, isLoading, isError, isWritePending, isWriteError } = useMasterChef({
+    chainId: pair.chainId,
+    chef: chefType,
+    pid: farmId,
+    token: liquidityToken,
+    onSuccess: createNotification,
+    watch,
+  })
 
   const stakedUnderlying = useUnderlyingTokenBalanceFromPair({
     reserve0: reserve0,
     reserve1: reserve1,
     totalSupply,
     balance,
-  });
+  })
 
-  const [underlying0, underlying1] = stakedUnderlying;
+  const [underlying0, underlying1] = stakedUnderlying
   const [value0, value1] = useTokenAmountDollarValues({
     chainId: pair.chainId,
     amounts: stakedUnderlying,
-  });
+  })
 
   return (
     <Context.Provider
@@ -120,31 +116,19 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
           isWritePending,
           isWriteError,
         }),
-        [
-          balance,
-          isError,
-          isLoading,
-          isWriteError,
-          isWritePending,
-          underlying0,
-          underlying1,
-          value0,
-          value1,
-        ]
+        [balance, isError, isLoading, isWriteError, isWritePending, underlying0, underlying1, value0, value1]
       )}
     >
       {children}
     </Context.Provider>
-  );
-};
+  )
+}
 
 export const usePoolPositionStaked = () => {
-  const context = useContext(Context);
+  const context = useContext(Context)
   if (!context) {
-    throw new Error(
-      "Hook can only be used inside Pool Position Staked Context"
-    );
+    throw new Error('Hook can only be used inside Pool Position Staked Context')
   }
 
-  return context;
-};
+  return context
+}

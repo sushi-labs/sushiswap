@@ -21,13 +21,7 @@ query Blocks(
   $orderBy: Block_orderBy = timestamp
   $orderDirection: OrderDirection = desc
 ) {
-  blocks(
-    first: $first
-    skip: $skip
-    where: $where
-    orderBy: $orderBy
-    orderDirection: $orderDirection
-  ) {
+  blocks(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection) {
     id
     number
     timestamp

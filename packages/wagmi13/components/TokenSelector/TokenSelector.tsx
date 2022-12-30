@@ -1,44 +1,31 @@
-"use client";
+'use client'
 
-import { ChainId, chains } from "@sushiswap/chain";
-import { Token, Type } from "@sushiswap/currency";
-import { FundSource } from "@sushiswap/hooks";
-import { useAddCustomToken } from "@sushiswap/react-query";
-import { useTokens } from "@sushiswap/react-query";
-import { SlideIn } from "@sushiswap/ui13/components/animation";
-import { Dialog } from "@sushiswap/ui13/components/dialog";
-import { NetworkIcon } from "@sushiswap/ui13/components/icons";
-import { Input } from "@sushiswap/ui13/components/input";
-import { Search } from "@sushiswap/ui13/components/input/Search";
-import { List } from "@sushiswap/ui13/components/list/List";
-import React, {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useState,
-} from "react";
+import { ChainId, chains } from '@sushiswap/chain'
+import { Token, Type } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
+import { useAddCustomToken } from '@sushiswap/react-query'
+import { useTokens } from '@sushiswap/react-query'
+import { SlideIn } from '@sushiswap/ui13/components/animation'
+import { Dialog } from '@sushiswap/ui13/components/dialog'
+import { NetworkIcon } from '@sushiswap/ui13/components/icons'
+import { Input } from '@sushiswap/ui13/components/input'
+import { Search } from '@sushiswap/ui13/components/input/Search'
+import { List } from '@sushiswap/ui13/components/list/List'
+import React, { Dispatch, FC, ReactNode, SetStateAction, useCallback, useState } from 'react'
 
-import { usePrices } from "../../hooks";
-import { TokenSelectorCurrencyList } from "./TokenSelectorCurrencyList";
-import { TokenSelectorImportRow } from "./TokenSelectorImportRow";
-import { TokenSelectorListFilterByQuery } from "./TokenSelectorListFilterByQuery";
-import { TokenSelectorSettingsOverlay } from "./TokenSelectorSettingsOverlay";
+import { usePrices } from '../../hooks'
+import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
+import { TokenSelectorImportRow } from './TokenSelectorImportRow'
+import { TokenSelectorListFilterByQuery } from './TokenSelectorListFilterByQuery'
+import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
 
 interface TokenSelectorProps {
-  id: string;
-  selected: Type | undefined;
-  chainId: ChainId;
-  onSelect(currency: Type): void;
-  children({
-    open,
-    setOpen,
-  }: {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-  }): ReactNode;
-  fundSource?: FundSource;
+  id: string
+  selected: Type | undefined
+  chainId: ChainId
+  onSelect(currency: Type): void
+  children({ open, setOpen }: { open: boolean; setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
+  fundSource?: FundSource
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = ({
@@ -49,34 +36,34 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
   children,
   fundSource = FundSource.WALLET,
 }) => {
-  const { mutate: onAddCustomToken } = useAddCustomToken();
+  const { mutate: onAddCustomToken } = useAddCustomToken()
 
-  const [open, setOpen] = useState(false);
-  const handleClose = useCallback(() => setOpen(false), []);
+  const [open, setOpen] = useState(false)
+  const handleClose = useCallback(() => setOpen(false), [])
 
-  const { data: tokenMap } = useTokens({ chainId });
-  const { data: pricesMap } = usePrices({ chainId });
+  const { data: tokenMap } = useTokens({ chainId })
+  const { data: pricesMap } = usePrices({ chainId })
 
-  const balancesMap = undefined;
+  const balancesMap = undefined
 
   const _onSelect = useCallback(
     (currency: Token) => {
       if (onSelect) {
-        onSelect(currency);
+        onSelect(currency)
       }
 
-      setOpen(false);
+      setOpen(false)
     },
     [onSelect]
-  );
+  )
 
   const handleImport = useCallback(
     (currency: Token) => {
-      onAddCustomToken(currency);
-      _onSelect(currency);
+      onAddCustomToken(currency)
+      _onSelect(currency)
     },
     [_onSelect, onAddCustomToken]
-  );
+  )
 
   return (
     <>
@@ -93,13 +80,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
             <Dialog.Content className="!pb-0 h-[75vh] sm:h-[640px]">
               <SlideIn>
                 <div className="flex gap-2 items-center">
-                  <Search
-                    id={id}
-                    input={Input.Address}
-                    value={query}
-                    loading={searching}
-                    onChange={onInput}
-                  />
+                  <Search id={id} input={Input.Address} value={query} loading={searching} onChange={onInput} />
                   <TokenSelectorSettingsOverlay />
                 </div>
 
@@ -109,14 +90,10 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                       <div className="flex flex-col gap-3 h-full">
                         {queryToken[0] && (
                           <List>
-                            <List.Label className="px-2">
-                              Search results
-                            </List.Label>
+                            <List.Label className="px-2">Search results</List.Label>
                             <TokenSelectorImportRow
                               currencies={queryToken}
-                              onImport={() =>
-                                queryToken[0] && handleImport(queryToken[0])
-                              }
+                              onImport={() => queryToken[0] && handleImport(queryToken[0])}
                             />
                           </List>
                         )}
@@ -133,16 +110,9 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
                       {currencies.length === 0 && !queryToken && chainId && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                           <div className="flex flex-col items-center justify-center gap-1">
-                            <span className="text-xs flex italic text-slate-500">
-                              No tokens found on
-                            </span>
+                            <span className="text-xs flex italic text-slate-500">No tokens found on</span>
                             <span className="text-xs font-medium flex gap-1 italic text-slate-500">
-                              <NetworkIcon
-                                width={14}
-                                height={14}
-                                chainId={chainId}
-                              />{" "}
-                              {chains[chainId].name}
+                              <NetworkIcon width={14} height={14} chainId={chainId} /> {chains[chainId].name}
                             </span>
                           </div>
                         </div>
@@ -156,5 +126,5 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         )}
       </TokenSelectorListFilterByQuery>
     </>
-  );
-};
+  )
+}

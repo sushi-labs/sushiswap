@@ -1,7 +1,7 @@
 // @ts-check
 /** @type {import('eslint').ESLint.ConfigData} */
 const eslintConfig = {
-  extends: ["@sushiswap/eslint-config"],
-};
+  extends: ['@sushiswap/eslint-config'],
+}
 
-module.exports = eslintConfig;
+module.exports = eslintConfig

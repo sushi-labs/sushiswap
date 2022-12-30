@@ -1,23 +1,15 @@
 // @ts-nocheck
 
-import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from "@sushiswap/graph-config";
-import { isPromiseFulfilled } from "@sushiswap/validate";
+import { BENTOBOX_SUBGRAPH_NAME, SUBGRAPH_HOST } from '@sushiswap/graph-config'
+import { isPromiseFulfilled } from '@sushiswap/validate'
 
-import { Query } from "../../.graphclient";
-import { BentoBoxTypes } from "../../.graphclient/sources/BentoBox/types";
+import { Query } from '../../.graphclient'
+import { BentoBoxTypes } from '../../.graphclient/sources/BentoBox/types'
 
-export const rebasesByChainIds = async (
-  root,
-  args,
-  context,
-  info
-): Promise<Query["rebasesByChainIds"]> => {
-  return Promise.allSettled<Query["rebasesByChainIds"][]>(
+export const rebasesByChainIds = async (root, args, context, info): Promise<Query['rebasesByChainIds']> => {
+  return Promise.allSettled<Query['rebasesByChainIds'][]>(
     args.chainIds
-      .filter(
-        (chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME =>
-          chainId in BENTOBOX_SUBGRAPH_NAME
-      )
+      .filter((chainId): chainId is keyof typeof BENTOBOX_SUBGRAPH_NAME => chainId in BENTOBOX_SUBGRAPH_NAME)
       .map((chainId) => {
         return context.BentoBox.Query.rebases({
           root,
@@ -31,16 +23,16 @@ export const rebasesByChainIds = async (
           info,
         }).then((rebases: BentoBoxTypes.Rebase[]) => {
           if (!Array.isArray(rebases)) {
-            console.error("rebases query failed...", rebases);
-            return [];
+            console.error('rebases query failed...', rebases)
+            return []
           }
-          return rebases.map((rebase) => ({ ...rebase, chainId }));
-        });
+          return rebases.map((rebase) => ({ ...rebase, chainId }))
+        })
       })
   ).then((promiseSettledResults) =>
     promiseSettledResults
       .flat()
       .filter(isPromiseFulfilled)
       .flatMap((promiseFulfilled) => promiseFulfilled.value)
-  );
-};
+  )
+}

@@ -1,1 +1,1 @@
-export { default as classNames } from "classnames";
+export { default as classNames } from 'classnames'

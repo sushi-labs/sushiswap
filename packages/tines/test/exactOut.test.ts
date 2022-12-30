@@ -7,9 +7,9 @@ import {
   RouteStatus,
   RPool,
   RToken,
-} from "../src";
+} from '../src'
 
-const gasPrice = 1 * 200 * 1e-9;
+const gasPrice = 1 * 200 * 1e-9
 
 function getPool(
   tokens: RToken[],
@@ -27,16 +27,16 @@ function getPool(
     fee,
     getBigNumber(reserve),
     getBigNumber(Math.round(reserve / (price[t1] / price[t0]) - imbalance))
-  );
+  )
 }
 
 // ====================== Env 1 ==================
-const price = [1, 1, 1, 1, 1];
+const price = [1, 1, 1, 1, 1]
 const tokens = price.map((_, i) => ({
-  name: "" + (i + 1),
-  address: "token_addres " + (i + 1),
-  symbol: "" + (i + 1),
-}));
+  name: '' + (i + 1),
+  address: 'token_addres ' + (i + 1),
+  symbol: '' + (i + 1),
+}))
 
 //const testPool0_1 = getPool(tokens, 0, 1, price, 1_500_0)
 // const testPool0_2 = getPool(tokens, 0, 2, price, 1_000_0)
@@ -54,63 +54,31 @@ function checkExactOut(
   tokenBase: RToken,
   gasPrice: number
 ) {
-  const resOut = findMultiRouteExactIn(
-    tokensFrom,
-    tokensTo,
-    amountIn,
-    poolList,
-    tokenBase,
-    gasPrice
-  );
+  const resOut = findMultiRouteExactIn(tokensFrom, tokensTo, amountIn, poolList, tokenBase, gasPrice)
 
-  expect(resOut).toBeDefined();
-  expect(resOut?.status).toEqual(RouteStatus.Success);
+  expect(resOut).toBeDefined()
+  expect(resOut?.status).toEqual(RouteStatus.Success)
 
-  const resIn = findMultiRouteExactOut(
-    tokensFrom,
-    tokensTo,
-    resOut.amountOut,
-    poolList,
-    tokenBase,
-    gasPrice
-  );
+  const resIn = findMultiRouteExactOut(tokensFrom, tokensTo, resOut.amountOut, poolList, tokenBase, gasPrice)
 
-  expect(resIn).toBeDefined();
-  expect(resIn?.status).toEqual(RouteStatus.Success);
-  expect(resIn?.legs.length).toEqual(1);
-  expect(
-    closeValues(resIn.amountIn as number, resOut.amountIn as number, 1e-12)
-  ).toBeTruthy();
-  expect(
-    closeValues(resIn.amountOut as number, resOut.amountOut as number, 1e-12)
-  ).toBeTruthy();
-  expect(
-    closeValues(
-      resIn.priceImpact as number,
-      resOut.priceImpact as number,
-      1e-12
-    )
-  ).toBeTruthy();
-  expect(
-    closeValues(
-      resIn.primaryPrice as number,
-      resOut.primaryPrice as number,
-      1e-12
-    )
-  ).toBeTruthy();
-  expect(
-    closeValues(resIn.swapPrice as number, resOut.swapPrice as number, 1e-12)
-  ).toBeTruthy();
+  expect(resIn).toBeDefined()
+  expect(resIn?.status).toEqual(RouteStatus.Success)
+  expect(resIn?.legs.length).toEqual(1)
+  expect(closeValues(resIn.amountIn as number, resOut.amountIn as number, 1e-12)).toBeTruthy()
+  expect(closeValues(resIn.amountOut as number, resOut.amountOut as number, 1e-12)).toBeTruthy()
+  expect(closeValues(resIn.priceImpact as number, resOut.priceImpact as number, 1e-12)).toBeTruthy()
+  expect(closeValues(resIn.primaryPrice as number, resOut.primaryPrice as number, 1e-12)).toBeTruthy()
+  expect(closeValues(resIn.swapPrice as number, resOut.swapPrice as number, 1e-12)).toBeTruthy()
 }
 
-describe("ExactOut", () => {
-  it("1 CP pool direction=true", () => {
-    const pool = getPool(tokens, 0, 1, price, 1_500_0);
-    checkExactOut(tokens[0], tokens[1], 10000, [pool], tokens[1], gasPrice);
-  });
+describe('ExactOut', () => {
+  it('1 CP pool direction=true', () => {
+    const pool = getPool(tokens, 0, 1, price, 1_500_0)
+    checkExactOut(tokens[0], tokens[1], 10000, [pool], tokens[1], gasPrice)
+  })
 
-  it("1 CP pool direction=false", () => {
-    const pool = getPool(tokens, 1, 0, price, 1_500_0);
-    checkExactOut(tokens[0], tokens[1], 10000, [pool], tokens[1], gasPrice);
-  });
-});
+  it('1 CP pool direction=false', () => {
+    const pool = getPool(tokens, 1, 0, price, 1_500_0)
+    checkExactOut(tokens[0], tokens[1], 10000, [pool], tokens[1], gasPrice)
+  })
+})

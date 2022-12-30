@@ -1,9 +1,9 @@
-import { ChainId } from "@sushiswap/chain";
+import { ChainId } from '@sushiswap/chain'
 
-import { Updater } from "./TokenListsUpdater";
+import { Updater } from './TokenListsUpdater'
 
 interface Props {
-  chainIds: ChainId[];
+  chainIds: ChainId[]
 }
 
 export function Updaters({ chainIds }: Props) {
@@ -13,5 +13,5 @@ export function Updaters({ chainIds }: Props) {
         <Updater key={chainId} chainId={chainId} />
       ))}
     </>
-  );
+  )
 }

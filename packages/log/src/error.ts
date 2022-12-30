@@ -1,6 +1,5 @@
-import chalk from "chalk";
+import chalk from 'chalk'
 
-const error = (message: any, ...optionalParams: any[]) =>
-  console.error(chalk.red(message), chalk.red(optionalParams));
+const error = (message: any, ...optionalParams: any[]) => console.error(chalk.red(message), chalk.red(optionalParams))
 
-export default error;
+export default error

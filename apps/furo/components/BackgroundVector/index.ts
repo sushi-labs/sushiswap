@@ -1,1 +1,1 @@
-export * from "./BackgroundVector";
+export * from './BackgroundVector'

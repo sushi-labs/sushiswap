@@ -1,20 +1,17 @@
-import { Button, Container, Typography } from "@sushiswap/ui";
-import Link from "next/link";
-import { FC } from "react";
+import { Button, Container, Typography } from '@sushiswap/ui'
+import Link from 'next/link'
+import { FC } from 'react'
 
 interface PreviewBanner {
-  show: boolean;
+  show: boolean
 }
 
 export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
-  if (!show) return <></>;
+  if (!show) return <></>
 
   return (
     <div className="flex items-center py-3 border-t border-b bg-slate-700 border-slate-600">
-      <Container
-        maxWidth="2xl"
-        className="flex items-center justify-between px-4 mx-auto"
-      >
+      <Container maxWidth="2xl" className="flex items-center justify-between px-4 mx-auto">
         <div className="flex flex-col gap-1">
           <Typography variant="base" weight={500} className="text-white">
             Preview Mode
@@ -30,5 +27,5 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
         </Link>
       </Container>
     </div>
-  );
-};
+  )
+}

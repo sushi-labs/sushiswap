@@ -1,1 +1,1 @@
-export * from "./CreateSectionReviewModalTrident";
+export * from './CreateSectionReviewModalTrident'

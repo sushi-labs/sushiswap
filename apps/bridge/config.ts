@@ -1,4 +1,4 @@
-import { ChainId } from "@sushiswap/chain";
+import { ChainId } from '@sushiswap/chain'
 
 export const SUPPORTED_CHAIN_IDS = [
   ChainId.ETHEREUM,
@@ -8,4 +8,4 @@ export const SUPPORTED_CHAIN_IDS = [
   ChainId.FANTOM,
   ChainId.BSC,
   ChainId.OPTIMISM,
-];
+]

@@ -1,24 +1,20 @@
-import { DevTool } from "@hookform/devtools";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { nanoid } from "@reduxjs/toolkit";
-import { ChainId } from "@sushiswap/chain";
-import { FundSource, useIsMounted } from "@sushiswap/hooks";
-import { Button, Form } from "@sushiswap/ui";
-import { FC, useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { DevTool } from '@hookform/devtools'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { nanoid } from '@reduxjs/toolkit'
+import { ChainId } from '@sushiswap/chain'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { Button, Form } from '@sushiswap/ui'
+import { FC, useEffect } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 
-import { CliffDetailsSection } from "./CliffDetailsSection";
-import CreateFormReviewModal from "./CreateFormReviewModal/CreateFormReviewModal";
-import { GeneralDetailsSection } from "./GeneralDetailsSection";
-import { GradedVestingDetailsSection } from "./GradedVestingDetailsSection";
-import {
-  CreateVestingFormSchemaType,
-  CreateVestingModelSchema,
-  stepConfigurations,
-} from "./schema";
+import { CliffDetailsSection } from './CliffDetailsSection'
+import CreateFormReviewModal from './CreateFormReviewModal/CreateFormReviewModal'
+import { GeneralDetailsSection } from './GeneralDetailsSection'
+import { GradedVestingDetailsSection } from './GradedVestingDetailsSection'
+import { CreateVestingFormSchemaType, CreateVestingModelSchema, stepConfigurations } from './schema'
 
-export const FORM_ERROR = "FORM_ERROR" as const;
-export type FormErrors = { [FORM_ERROR]?: never };
+export const FORM_ERROR = 'FORM_ERROR' as const
+export type FormErrors = { [FORM_ERROR]?: never }
 
 export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   id: nanoid(),
@@ -32,15 +28,15 @@ export const CREATE_VEST_DEFAULT_VALUES: CreateVestingFormSchemaType = {
   cliff: {
     cliffEnabled: false,
   },
-};
+}
 
 export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
-  const isMounted = useIsMounted();
+  const isMounted = useIsMounted()
   const methods = useForm<CreateVestingFormSchemaType & FormErrors>({
     resolver: zodResolver(CreateVestingModelSchema),
     defaultValues: CREATE_VEST_DEFAULT_VALUES,
-    mode: "onBlur",
-  });
+    mode: 'onBlur',
+  })
 
   const {
     watch,
@@ -49,28 +45,24 @@ export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
     reset,
     formState: { isValid, isValidating, errors },
     control,
-  } = methods;
+  } = methods
 
-  const [startDate, cliffEnabled, cliffEndDate] = watch([
-    "startDate",
-    "cliff.cliffEnabled",
-    "cliff.cliffEndDate",
-  ]);
+  const [startDate, cliffEnabled, cliffEndDate] = watch(['startDate', 'cliff.cliffEnabled', 'cliff.cliffEndDate'])
 
   // Temporary solution for when Zod fixes conditional validation
   // https://github.com/colinhacks/zod/issues/1394
   useEffect(() => {
     if (startDate && cliffEnabled && cliffEndDate) {
       if (cliffEndDate < startDate) {
-        setError("cliff.cliffEndDate", {
-          type: "custom",
-          message: "Must be later than start date",
-        });
+        setError('cliff.cliffEndDate', {
+          type: 'custom',
+          message: 'Must be later than start date',
+        })
       } else {
-        clearErrors("cliff.cliffEndDate");
+        clearErrors('cliff.cliffEndDate')
       }
     }
-  }, [clearErrors, cliffEnabled, cliffEndDate, setError, startDate]);
+  }, [clearErrors, cliffEnabled, cliffEndDate, setError, startDate])
 
   // useEffect(() => {
   //   try {
@@ -82,8 +74,8 @@ export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
   // }, [formData])
 
   useEffect(() => {
-    reset();
-  }, [chainId, reset]);
+    reset()
+  }, [chainId, reset])
 
   return (
     <FormProvider {...methods}>
@@ -97,24 +89,17 @@ export const CreateForm: FC<{ chainId: ChainId }> = ({ chainId }) => {
               <div className="flex justify-end pt-4">
                 <Button
                   type="button"
-                  disabled={
-                    isWritePending ||
-                    !isValid ||
-                    isValidating ||
-                    Boolean(errors?.[FORM_ERROR])
-                  }
+                  disabled={isWritePending || !isValid || isValidating || Boolean(errors?.[FORM_ERROR])}
                   onClick={() => setOpen(true)}
                 >
                   Review Vesting
                 </Button>
               </div>
-            );
+            )
           }}
         </CreateFormReviewModal>
       </Form>
-      {process.env.NODE_ENV === "development" && isMounted && (
-        <DevTool control={control} />
-      )}
+      {process.env.NODE_ENV === 'development' && isMounted && <DevTool control={control} />}
     </FormProvider>
-  );
-};
+  )
+}

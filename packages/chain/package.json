@@ -8,13 +8,6 @@
   ],
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "source": "./index.ts",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
   "exports": {
     ".": {
       "require": {
@@ -32,6 +25,13 @@
     },
     "./package.json": "./package.json"
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "source": "./index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "build": "tsup index.ts --format esm,cjs --dts",
     "check": "tsc --pretty --noEmit",

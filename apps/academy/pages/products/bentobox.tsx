@@ -1,5 +1,5 @@
-import { LinkIcon } from "@heroicons/react/24/outline";
-import { classNames, Container } from "@sushiswap/ui";
+import { LinkIcon } from '@heroicons/react/24/outline'
+import { classNames, Container } from '@sushiswap/ui'
 import {
   ProductArticles,
   ProductBackground,
@@ -7,25 +7,25 @@ import {
   ProductFaq,
   ProductHero,
   ProductTechnicalDoc,
-} from "common/components";
-import { DEFAULT_SIDE_PADDING } from "common/helpers";
-import { PRODUCTS_DATA } from "common/productsData";
-import { getLatestAndRelevantArticles, getProducts } from "lib/api";
-import { GetStaticProps, InferGetStaticPropsType } from "next";
-import { FC } from "react";
-import useSWR from "swr";
+} from 'common/components'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
+import { PRODUCTS_DATA } from 'common/productsData'
+import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
+import { FC } from 'react'
+import useSWR from 'swr'
 
-import { ArticleEntity, GetLatestAndRelevantArticlesQuery } from ".mesh";
+import { ArticleEntity, GetLatestAndRelevantArticlesQuery } from '.mesh'
 
-const PRODUCT_SLUG = "bentobox";
-const { color, cards, buttonText, faq } = PRODUCTS_DATA[PRODUCT_SLUG];
+const PRODUCT_SLUG = 'bentobox'
+const { color, cards, buttonText, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
 export const getStaticProps: GetStaticProps = async () => {
-  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } });
-  const product = data?.products?.data?.[0].attributes;
-  if (!product) throw new Error(`Product not found`);
-  return { props: product, revalidate: 60 };
-};
+  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
+  const product = data?.products?.data?.[0].attributes
+  if (!product) throw new Error(`Product not found`)
+  return { props: product, revalidate: 60 }
+}
 
 const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   name,
@@ -43,16 +43,13 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       revalidateIfStale: false,
       revalidateOnReconnect: false,
     }
-  );
+  )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? [];
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? [];
+  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
+  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
 
   return (
-    <Container
-      maxWidth="6xl"
-      className={classNames("mx-auto pb-24", DEFAULT_SIDE_PADDING)}
-    >
+    <Container maxWidth="6xl" className={classNames('mx-auto pb-24', DEFAULT_SIDE_PADDING)}>
       <ProductBackground color={color} isCentered />
       <ProductHero
         productName={longName}
@@ -84,7 +81,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       <ProductTechnicalDoc color={color} secondaryColor="#FFBCFE" />
       <ProductFaq faq={faq} />
     </Container>
-  );
-};
+  )
+}
 
-export default ProductPage;
+export default ProductPage

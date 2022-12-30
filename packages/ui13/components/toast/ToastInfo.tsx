@@ -1,23 +1,17 @@
-import { Chain } from "@sushiswap/chain";
-import { FC } from "react";
+import { Chain } from '@sushiswap/chain'
+import { FC } from 'react'
 
-import { HalfCircleIcon } from "../icons";
-import { NotificationData } from "./index";
-import { ToastButtons } from "./ToastButtons";
-import { ToastContent } from "./ToastContent";
+import { HalfCircleIcon } from '../icons'
+import { NotificationData } from './index'
+import { ToastButtons } from './ToastButtons'
+import { ToastContent } from './ToastContent'
 
-interface ToastInfo extends Omit<NotificationData, "promise"> {
-  onDismiss(): void;
+interface ToastInfo extends Omit<NotificationData, 'promise'> {
+  onDismiss(): void
 }
 
-export const ToastInfo: FC<ToastInfo> = ({
-  href,
-  chainId,
-  txHash,
-  onDismiss,
-  summary,
-}) => {
-  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? "";
+export const ToastInfo: FC<ToastInfo> = ({ href, chainId, txHash, onDismiss, summary }) => {
+  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? ''
   return (
     <>
       <ToastContent
@@ -25,10 +19,7 @@ export const ToastInfo: FC<ToastInfo> = ({
         title="Transaction Info"
         summary={summary?.info}
       />
-      <ToastButtons
-        href={txUrl}
-        onDismiss={onDismiss}
-      />
+      <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
-  );
-};
+  )
+}

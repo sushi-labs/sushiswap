@@ -1,15 +1,15 @@
-import { Breadcrumb, BreadcrumbLink, Button, Typography } from "@sushiswap/ui";
-import Link from "next/link";
-import { NextSeo } from "next-seo";
+import { Breadcrumb, BreadcrumbLink, Button, Typography } from '@sushiswap/ui'
+import Link from 'next/link'
+import { NextSeo } from 'next-seo'
 
-import { Layout } from "../../../components";
+import { Layout } from '../../../components'
 
 const LINKS: BreadcrumbLink[] = [
   {
-    href: "/stream/create",
-    label: "Create Stream",
+    href: '/stream/create',
+    label: 'Create Stream',
   },
-];
+]
 
 const StreamingCreate = () => {
   return (
@@ -29,11 +29,7 @@ const StreamingCreate = () => {
                   <Button size="sm">One</Button>
                 </a>
               </Link>
-              <Link
-                href="/stream/create/multiple"
-                passHref={true}
-                legacyBehavior
-              >
+              <Link href="/stream/create/multiple" passHref={true} legacyBehavior>
                 <a className="flex flex-col items-center gap-7">
                   <div className="w-[86px] h-[86px] group-hover:bg-blue rounded-lg">
                     <div className="grid grid-cols-2 gap-1">
@@ -51,7 +47,7 @@ const StreamingCreate = () => {
         </div>
       </Layout>
     </>
-  );
-};
+  )
+}
 
-export default StreamingCreate;
+export default StreamingCreate

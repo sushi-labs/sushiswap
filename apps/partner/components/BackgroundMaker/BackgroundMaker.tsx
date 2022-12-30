@@ -1,19 +1,19 @@
-import { FormType } from "pages";
-import { FC, useEffect } from "react";
-import { HexColorPicker } from "react-colorful";
-import { useFormContext } from "react-hook-form";
+import { FormType } from 'pages'
+import { FC, useEffect } from 'react'
+import { HexColorPicker } from 'react-colorful'
+import { useFormContext } from 'react-hook-form'
 
 export const BackgroundMaker: FC = () => {
-  const { setValue, watch } = useFormContext<FormType>();
-  const colorValue = watch("background");
+  const { setValue, watch } = useFormContext<FormType>()
+  const colorValue = watch('background')
 
   useEffect(() => {
     if (/^#[0-9A-F]{6}$/i.test(colorValue)) {
-      setValue("background", colorValue);
+      setValue('background', colorValue)
     } else {
-      setValue("background", "#000000");
+      setValue('background', '#000000')
     }
-  }, [colorValue, setValue]);
+  }, [colorValue, setValue])
 
   return (
     <div className="flex w-full px-1 ">
@@ -29,10 +29,7 @@ export const BackgroundMaker: FC = () => {
           }
         `}
       </style>
-      <HexColorPicker
-        color={colorValue}
-        onChange={(newColor) => setValue("background", newColor)}
-      />
+      <HexColorPicker color={colorValue} onChange={(newColor) => setValue('background', newColor)} />
     </div>
-  );
-};
+  )
+}

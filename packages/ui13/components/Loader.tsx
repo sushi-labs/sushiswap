@@ -1,22 +1,18 @@
-import classNames from "classnames";
-import React, { FC } from "react";
+import classNames from 'classnames'
+import React, { FC } from 'react'
 
-interface LoaderProps extends React.ComponentProps<"svg"> {
-  size?: number;
-  stroke?: string;
-  strokeWidth?: number;
-  className?: string;
+interface LoaderProps extends React.ComponentProps<'svg'> {
+  size?: number
+  stroke?: string
+  strokeWidth?: number
+  className?: string
 }
 
 /**
  * Takes in custom size and stroke for circle color, default to primary color as fill,
  * need ...rest for layered styles on top
  */
-export const Loader: FC<LoaderProps> = ({
-  size = 16,
-  strokeWidth = 2,
-  className,
-}) => {
+export const Loader: FC<LoaderProps> = ({ size = 16, strokeWidth = 2, className }) => {
   return (
     <svg
       className="animate-rotate"
@@ -39,8 +35,8 @@ export const Loader: FC<LoaderProps> = ({
         stroke="currentColor"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
-        className={classNames(className, "text-gray-700 dark:text-slate-500")}
+        className={classNames(className, 'text-gray-700 dark:text-slate-500')}
       />
     </svg>
-  );
-};
+  )
+}

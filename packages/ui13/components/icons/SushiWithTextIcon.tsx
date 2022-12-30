@@ -1,13 +1,8 @@
-import React from "react";
+import React from 'react'
 
-export const SushiWithTextIcon = (props: React.ComponentProps<"svg">) => {
+export const SushiWithTextIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-      fill="none"
-      viewBox="0 0 116 28"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 116 28">
       <path
         fill="url(#paint0_linear_12919_18029)"
         fillRule="evenodd"
@@ -47,5 +42,5 @@ export const SushiWithTextIcon = (props: React.ComponentProps<"svg">) => {
         </linearGradient>
       </defs>
     </svg>
-  );
-};
+  )
+}

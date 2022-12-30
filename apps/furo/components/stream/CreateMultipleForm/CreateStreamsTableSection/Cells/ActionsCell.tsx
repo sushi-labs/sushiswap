@@ -1,32 +1,31 @@
-import { DuplicateIcon, TrashIcon } from "@heroicons/react/solid";
-import { IconButton } from "@sushiswap/ui";
-import React, { FC, useCallback } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { DuplicateIcon, TrashIcon } from '@heroicons/react/solid'
+import { IconButton } from '@sushiswap/ui'
+import React, { FC, useCallback } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 
-import { useImportErrorContext } from "../../../../vesting/CreateMultipleForm/ImportErrorContext";
-import { CreateMultipleStreamFormSchemaType } from "../../schema";
-import { CellProps } from "./types";
+import { useImportErrorContext } from '../../../../vesting/CreateMultipleForm/ImportErrorContext'
+import { CreateMultipleStreamFormSchemaType } from '../../schema'
+import { CellProps } from './types'
 
 export const ActionsCell: FC<CellProps> = ({ row, index }) => {
-  const { errors, setErrors } =
-    useImportErrorContext<CreateMultipleStreamFormSchemaType>();
-  const { control } = useFormContext<CreateMultipleStreamFormSchemaType>();
+  const { errors, setErrors } = useImportErrorContext<CreateMultipleStreamFormSchemaType>()
+  const { control } = useFormContext<CreateMultipleStreamFormSchemaType>()
   const { append, remove } = useFieldArray({
     control,
-    name: "streams",
-  });
+    name: 'streams',
+  })
 
   const onRemove = useCallback(() => {
     if (remove) {
-      remove(index);
+      remove(index)
     }
 
-    const _errors = { ...errors };
+    const _errors = { ...errors }
     if (_errors?.streams?.[index]) {
-      delete _errors.streams[index];
-      setErrors(_errors);
+      delete _errors.streams[index]
+      setErrors(_errors)
     }
-  }, [errors, index, remove, setErrors]);
+  }, [errors, index, remove, setErrors])
 
   return (
     <div className="flex items-center gap-2">
@@ -41,5 +40,5 @@ export const ActionsCell: FC<CellProps> = ({ row, index }) => {
         </IconButton>
       </div>
     </div>
-  );
-};
+  )
+}

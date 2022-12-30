@@ -1,94 +1,69 @@
-"use client";
+'use client'
 
-import { Popover, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import {
-  ChevronDoubleDownIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/24/outline";
-import { classNames } from "@sushiswap/ui13";
-import { Button, ButtonProps } from "@sushiswap/ui13/components/button";
+import { Popover, Transition } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChevronDoubleDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { classNames } from '@sushiswap/ui13'
+import { Button, ButtonProps } from '@sushiswap/ui13/components/button'
 import {
   CoinbaseWalletIcon,
   GnosisSafeIcon,
   MetamaskIcon,
   TrustWalletIcon,
   WalletConnectIcon,
-} from "@sushiswap/ui13/components/icons";
-import { List } from "@sushiswap/ui13/components/list/List";
-import { Loader } from "@sushiswap/ui13/components/Loader";
-import React, { SVGProps, useCallback } from "react";
-import { useConnect } from "wagmi";
+} from '@sushiswap/ui13/components/icons'
+import { List } from '@sushiswap/ui13/components/list/List'
+import { Loader } from '@sushiswap/ui13/components/Loader'
+import React, { SVGProps, useCallback } from 'react'
+import { useConnect } from 'wagmi'
 
 const Icons: Record<string, (props: SVGProps<SVGSVGElement>) => JSX.Element> = {
   Injected: ChevronDoubleDownIcon,
   MetaMask: MetamaskIcon,
-  "Trust Wallet": TrustWalletIcon,
+  'Trust Wallet': TrustWalletIcon,
   WalletConnect: WalletConnectIcon,
-  "Coinbase Wallet": CoinbaseWalletIcon,
+  'Coinbase Wallet': CoinbaseWalletIcon,
   Safe: GnosisSafeIcon,
-};
+}
 
 export type Props<C extends React.ElementType> = ButtonProps<C> & {
   // TODO ramin: remove param when wagmi adds onConnecting callback to useAccount
-  hack?: ReturnType<typeof useConnect>;
-};
+  hack?: ReturnType<typeof useConnect>
+}
 
-export const ConnectButton = <C extends React.ElementType>({
-  hack,
-  children,
-  ...rest
-}: Props<C>) => {
-  const { connectors, connect, pendingConnector } = useConnect();
+export const ConnectButton = <C extends React.ElementType>({ hack, children, ...rest }: Props<C>) => {
+  const { connectors, connect, pendingConnector } = useConnect()
 
   const onSelect = useCallback(
     (connectorId: string) => {
       return connect({
         connector: connectors.find((el) => el.id === connectorId),
-      });
+      })
     },
     [connect, connectors]
-  );
+  )
 
   // Pending confirmation state
   // Awaiting wallet confirmation
   if (pendingConnector) {
     return (
-      <Button
-        endIcon={<Loader />}
-        variant="filled"
-        color="blue"
-        disabled
-        {...rest}
-      >
+      <Button endIcon={<Loader />} variant="filled" color="blue" disabled {...rest}>
         Authorize Wallet
       </Button>
-    );
+    )
   }
 
   return (
-    <Popover className={rest.fullWidth ? "w-full" : ""}>
+    <Popover className={rest.fullWidth ? 'w-full' : ''}>
       {({ open }) => (
         <>
-          <Popover.Button
-            as={Button}
-            {...rest}
-            variant="outlined"
-            color="default"
-            size="md"
-          >
-            <span className="hidden md:block">
-              {children || "Connect Wallet"}
-            </span>
-            <span className="block md:hidden">{children || "Connect"}</span>
+          <Popover.Button as={Button} {...rest} variant="outlined" color="default" size="md">
+            <span className="hidden md:block">{children || 'Connect Wallet'}</span>
+            <span className="block md:hidden">{children || 'Connect'}</span>
             <ChevronDownIcon
               width={24}
               height={24}
-              className={classNames(
-                "transition-all",
-                open ? "rotate-180" : "rotate-0",
-                "hidden sm:block"
-              )}
+              className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
             />
           </Popover.Button>
           <Transition
@@ -109,11 +84,7 @@ export const ConnectButton = <C extends React.ElementType>({
                       <List.Item
                         onClick={() => onSelect(connector.id)}
                         icon={Icons[connector.name]}
-                        title={
-                          connector.name == "Safe"
-                            ? "Gnosis Safe"
-                            : connector.name
-                        }
+                        title={connector.name == 'Safe' ? 'Gnosis Safe' : connector.name}
                         key={connector.id}
                         hoverIcon={ChevronRightIcon}
                       />
@@ -126,5 +97,5 @@ export const ConnectButton = <C extends React.ElementType>({
         </>
       )}
     </Popover>
-  );
-};
+  )
+}

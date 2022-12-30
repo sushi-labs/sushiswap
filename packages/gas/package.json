@@ -15,11 +15,11 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "sideEffects": false,
   "files": [
     "dist"
   ],

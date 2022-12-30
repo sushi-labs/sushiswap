@@ -1,5 +1,5 @@
-import { Pair } from "@sushiswap/graph-client";
+import { Pair } from '@sushiswap/graph-client'
 
 export interface CellProps {
-  row: Pair;
+  row: Pair
 }

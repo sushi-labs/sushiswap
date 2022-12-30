@@ -1,24 +1,18 @@
-import { CogIcon } from "@heroicons/react/24/outline";
-import { SlideIn } from "@sushiswap/ui13/components/animation";
-import { Button } from "@sushiswap/ui13/components/button";
-import { List } from "@sushiswap/ui13/components/list/List";
-import { Overlay } from "@sushiswap/ui13/components/overlay";
-import React, { FC, useState } from "react";
+import { CogIcon } from '@heroicons/react/24/outline'
+import { SlideIn } from '@sushiswap/ui13/components/animation'
+import { Button } from '@sushiswap/ui13/components/button'
+import { List } from '@sushiswap/ui13/components/list/List'
+import { Overlay } from '@sushiswap/ui13/components/overlay'
+import React, { FC, useState } from 'react'
 
-import { TokenSelectorCustomTokensOverlay } from "./TokenSelectorCustomTokensOverlay";
+import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
 
 export const TokenSelectorSettingsOverlay: FC = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <>
-      <Button
-        variant="filled"
-        color="default"
-        size="lg"
-        className="!px-0 !w-[44px]"
-        onClick={() => setOpen(true)}
-      >
+      <Button variant="filled" color="default" size="lg" className="!px-0 !w-[44px]" onClick={() => setOpen(true)}>
         <CogIcon
           width={24}
           height={24}
@@ -37,5 +31,5 @@ export const TokenSelectorSettingsOverlay: FC = () => {
         </Overlay.Content>
       </SlideIn.FromRight>
     </>
-  );
-};
+  )
+}

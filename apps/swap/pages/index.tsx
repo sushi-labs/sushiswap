@@ -1,294 +1,213 @@
-import { ChevronDownIcon } from "@heroicons/react/solid";
-import { TradeType } from "@sushiswap/amm";
-import { ChainId } from "@sushiswap/chain";
-import {
-  Native,
-  SUSHI,
-  Token,
-  tryParseAmount,
-  Type,
-  USDC,
-  USDT,
-  WBTC,
-  WETH9,
-  WNATIVE,
-} from "@sushiswap/currency";
-import { FundSource, useIsMounted, usePrevious } from "@sushiswap/hooks";
-import { Percent, ZERO } from "@sushiswap/math";
-import {
-  App,
-  Button,
-  classNames,
-  Container,
-  Link,
-  Typography,
-} from "@sushiswap/ui";
-import { Widget } from "@sushiswap/ui";
-import {
-  Checker,
-  TokenListImportChecker,
-  useWalletState,
-  WrapType,
-} from "@sushiswap/wagmi";
-import { CurrencyInput } from "components/CurrencyInput";
-import { isAddress } from "ethers/lib/utils";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { useRouter } from "next/router";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { Address, useConnect, useNetwork } from "wagmi";
+import { ChevronDownIcon } from '@heroicons/react/solid'
+import { TradeType } from '@sushiswap/amm'
+import { ChainId } from '@sushiswap/chain'
+import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
+import { FundSource, useIsMounted, usePrevious } from '@sushiswap/hooks'
+import { Percent, ZERO } from '@sushiswap/math'
+import { App, Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
+import { Widget } from '@sushiswap/ui'
+import { Checker, TokenListImportChecker, useWalletState, WrapType } from '@sushiswap/wagmi'
+import { CurrencyInput } from 'components/CurrencyInput'
+import { isAddress } from 'ethers/lib/utils'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { Address, useConnect, useNetwork } from 'wagmi'
 
-import {
-  Layout,
-  SettingsOverlay,
-  SwapReviewModalLegacy,
-  TradeProvider,
-  useTrade,
-  WrapReviewModal,
-} from "../components";
-import { SwapStatsDisclosure } from "../components/SwapStatsDisclosure";
-import { warningSeverity } from "../lib/functions";
-import { useCustomTokens, useSettings } from "../lib/state/storage";
-import { useTokens } from "../lib/state/token-lists";
+import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade, WrapReviewModal } from '../components'
+import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
+import { warningSeverity } from '../lib/functions'
+import { useCustomTokens, useSettings } from '../lib/state/storage'
+import { useTokens } from '../lib/state/token-lists'
 
-export const getServerSideProps: GetServerSideProps = async ({
-  query,
-  res,
-}) => {
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
-  );
-  const { chainId, token0, token1, input0 } = query;
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  const { chainId, token0, token1, input0 } = query
   return {
     props: {
       chainId: chainId ?? null,
       token0: token0 ?? null,
       token1: token1 ?? null,
-      input0: !isNaN(Number(input0)) ? input0 : "",
+      input0: !isNaN(Number(input0)) ? input0 : '',
     },
-  };
-};
+  }
+}
 
-const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000); // 0.50%
+const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
 const DEAFAULT_TOKEN_1 = {
   [ChainId.ETHEREUM]: SUSHI[ChainId.ETHEREUM],
   [ChainId.GNOSIS]: new Token({
-    address: "0x9C58BAcC331c9aa871AFD802DB6379a98e80CEdb",
+    address: '0x9C58BAcC331c9aa871AFD802DB6379a98e80CEdb',
     chainId: ChainId.GNOSIS,
-    symbol: "GNO",
-    name: "Gnosis Token",
+    symbol: 'GNO',
+    name: 'Gnosis Token',
     decimals: 18,
   }),
   [ChainId.OPTIMISM]: new Token({
-    address: "0x4200000000000000000000000000000000000042",
+    address: '0x4200000000000000000000000000000000000042',
     chainId: ChainId.OPTIMISM,
-    symbol: "OP",
-    name: "Optimism",
+    symbol: 'OP',
+    name: 'Optimism',
     decimals: 18,
   }),
   [ChainId.BOBA]: new Token({
-    address: "0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7",
+    address: '0xa18bF3994C0Cc6E3b63ac420308E5383f53120D7',
     chainId: ChainId.BOBA,
-    symbol: "BOBA",
-    name: "Boba",
+    symbol: 'BOBA',
+    name: 'Boba',
     decimals: 18,
   }),
   [ChainId.BOBA_AVAX]: new Token({
     chainId: ChainId.BOBA_AVAX,
-    address: "0x4200000000000000000000000000000000000023",
+    address: '0x4200000000000000000000000000000000000023',
     decimals: 18,
-    symbol: "AVAX",
-    name: "Avax",
+    symbol: 'AVAX',
+    name: 'Avax',
   }),
-} as const;
+} as const
 
 const getDefaultToken1 = (chainId: number) => {
   if (chainId in DEAFAULT_TOKEN_1) {
-    return DEAFAULT_TOKEN_1[chainId as keyof typeof DEAFAULT_TOKEN_1];
+    return DEAFAULT_TOKEN_1[chainId as keyof typeof DEAFAULT_TOKEN_1]
   }
-  if (
-    chainId in WETH9 &&
-    chainId in WNATIVE &&
-    WNATIVE[chainId as keyof typeof WNATIVE] !== WETH9[chainId]
-  ) {
-    return WETH9[chainId];
+  if (chainId in WETH9 && chainId in WNATIVE && WNATIVE[chainId as keyof typeof WNATIVE] !== WETH9[chainId]) {
+    return WETH9[chainId]
   }
   if (chainId in WBTC) {
-    return WBTC[chainId as keyof typeof WBTC];
+    return WBTC[chainId as keyof typeof WBTC]
   }
   if (chainId in USDC) {
-    return USDC[chainId as keyof typeof USDC];
+    return USDC[chainId as keyof typeof USDC]
   }
   if (chainId in USDT) {
-    return USDT[chainId as keyof typeof USDT];
+    return USDT[chainId as keyof typeof USDT]
   }
-};
+}
 
-function Swap(
-  initialState: InferGetServerSidePropsType<typeof getServerSideProps>
-) {
-  const { chain } = useNetwork();
-  const isMounted = useIsMounted();
-  const connect = useConnect();
-  const { connecting, notConnected } = useWalletState(
-    !!connect.pendingConnector
-  );
-  const router = useRouter();
+function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { chain } = useNetwork()
+  const isMounted = useIsMounted()
+  const connect = useConnect()
+  const { connecting, notConnected } = useWalletState(!!connect.pendingConnector)
+  const router = useRouter()
 
-  const defaultChainId = ChainId.ETHEREUM;
-  const activeChainId = chain ? chain.id : undefined;
-  const queryChainId = router.query.chainId
-    ? Number(router.query.chainId)
-    : undefined;
+  const defaultChainId = ChainId.ETHEREUM
+  const activeChainId = chain ? chain.id : undefined
+  const queryChainId = router.query.chainId ? Number(router.query.chainId) : undefined
   const chainId = queryChainId
     ? queryChainId
     : activeChainId
     ? activeChainId
     : !connecting && notConnected
     ? defaultChainId
-    : undefined;
+    : undefined
 
-  const previousChain = usePrevious(chain);
+  const previousChain = usePrevious(chain)
 
   useEffect(() => {
-    if (
-      chain &&
-      previousChain &&
-      chain.id !== previousChain.id &&
-      chain.id !== Number(router?.query?.chainId)
-    ) {
+    if (chain && previousChain && chain.id !== previousChain.id && chain.id !== Number(router?.query?.chainId)) {
       // Clear up the query string if user changes network
       // whilst there is a chainId parameter in the query...
-      delete router.query["chainId"];
-      delete router.query["token0"];
-      delete router.query["token1"];
-      delete router.query["input0"];
+      delete router.query['chainId']
+      delete router.query['token0']
+      delete router.query['token1']
+      delete router.query['input0']
       void router.replace(
         {
           pathname: router.pathname,
           query: router.query,
         },
         undefined
-      );
+      )
     }
-  }, [router, chain, previousChain]);
+  }, [router, chain, previousChain])
 
-  const tokenMap = useTokens(chainId);
-  const [
-    customTokensMap,
-    { addCustomToken, removeCustomToken, addCustomTokens },
-  ] = useCustomTokens(chainId);
+  const tokenMap = useTokens(chainId)
+  const [customTokensMap, { addCustomToken, removeCustomToken, addCustomTokens }] = useCustomTokens(chainId)
 
   const inputToken = useMemo(() => {
-    if (!chainId || !isMounted || Object.keys(tokenMap).length === 0) return;
-    if (initialState.token0 && initialState.token0 in tokenMap)
-      return tokenMap[initialState.token0];
-    if (
-      initialState.token0 &&
-      initialState.token0.toLowerCase() in customTokensMap
-    )
-      return customTokensMap[initialState.token0.toLowerCase()];
-    return Native.onChain(chainId);
-  }, [chainId, customTokensMap, initialState.token0, isMounted, tokenMap]);
+    if (!chainId || !isMounted || Object.keys(tokenMap).length === 0) return
+    if (initialState.token0 && initialState.token0 in tokenMap) return tokenMap[initialState.token0]
+    if (initialState.token0 && initialState.token0.toLowerCase() in customTokensMap)
+      return customTokensMap[initialState.token0.toLowerCase()]
+    return Native.onChain(chainId)
+  }, [chainId, customTokensMap, initialState.token0, isMounted, tokenMap])
 
   const outputToken = useMemo(() => {
-    if (!chainId || !isMounted || Object.keys(tokenMap).length === 0) return;
-    if (initialState.token1 && initialState.token1 in tokenMap)
-      return tokenMap[initialState.token1];
-    if (
-      initialState.token1 &&
-      initialState.token1.toLowerCase() in customTokensMap
-    )
-      return customTokensMap[initialState.token1.toLowerCase()];
-    return getDefaultToken1(chainId);
-  }, [chainId, customTokensMap, initialState.token1, isMounted, tokenMap]);
+    if (!chainId || !isMounted || Object.keys(tokenMap).length === 0) return
+    if (initialState.token1 && initialState.token1 in tokenMap) return tokenMap[initialState.token1]
+    if (initialState.token1 && initialState.token1.toLowerCase() in customTokensMap)
+      return customTokensMap[initialState.token1.toLowerCase()]
+    return getDefaultToken1(chainId)
+  }, [chainId, customTokensMap, initialState.token1, isMounted, tokenMap])
 
-  const [input0, setInput0] = useState<string>(initialState.input0);
-  const [[token0, token1], setTokens] = useState<
-    [Type | undefined, Type | undefined]
-  >([inputToken, outputToken]);
-  const [input1, setInput1] = useState<string>("");
-  const [tradeType, setTradeType] = useState<TradeType>(TradeType.EXACT_INPUT);
+  const [input0, setInput0] = useState<string>(initialState.input0)
+  const [[token0, token1], setTokens] = useState<[Type | undefined, Type | undefined]>([inputToken, outputToken])
+  const [input1, setInput1] = useState<string>('')
+  const [tradeType, setTradeType] = useState<TradeType>(TradeType.EXACT_INPUT)
 
-  const wrap = Boolean(
-    token0 &&
-      token1 &&
-      token0.isNative &&
-      token1.equals(Native.onChain(token1.chainId).wrapped)
-  );
-  const unwrap = Boolean(
-    token0 &&
-      token1 &&
-      token1.isNative &&
-      token0.equals(Native.onChain(token0.chainId).wrapped)
-  );
-  const isWrap = wrap || unwrap;
+  const wrap = Boolean(token0 && token1 && token0.isNative && token1.equals(Native.onChain(token1.chainId).wrapped))
+  const unwrap = Boolean(token0 && token1 && token1.isNative && token0.equals(Native.onChain(token0.chainId).wrapped))
+  const isWrap = wrap || unwrap
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
-    return [
-      tryParseAmount(input0, token0),
-      tryParseAmount(isWrap ? input0 : input1, token1),
-    ];
-  }, [input0, input1, isWrap, token0, token1]);
+    return [tryParseAmount(input0, token0), tryParseAmount(isWrap ? input0 : input1, token1)]
+  }, [input0, input1, isWrap, token0, token1])
 
   const onInput0 = useCallback((val: string) => {
-    setTradeType(TradeType.EXACT_INPUT);
-    setInput0(val);
-  }, []);
+    setTradeType(TradeType.EXACT_INPUT)
+    setInput0(val)
+  }, [])
 
   const onInput1 = useCallback((val: string) => {
-    setTradeType(TradeType.EXACT_OUTPUT);
-    setInput1(val);
-  }, []);
+    setTradeType(TradeType.EXACT_OUTPUT)
+    setInput1(val)
+  }, [])
 
   const switchCurrencies = useCallback(() => {
-    setTokens(([prevSrc, prevDst]) => [prevDst, prevSrc]);
-  }, []);
+    setTokens(([prevSrc, prevDst]) => [prevDst, prevSrc])
+  }, [])
 
-  const amounts = useMemo(() => [parsedInput0], [parsedInput0]);
+  const amounts = useMemo(() => [parsedInput0], [parsedInput0])
 
   useEffect(() => {
-    setTokens([inputToken, outputToken]);
-    setInput0(initialState.input0);
-    setInput1("");
-  }, [chainId, initialState.input0, inputToken, outputToken]);
+    setTokens([inputToken, outputToken])
+    setInput0(initialState.input0)
+    setInput1('')
+  }, [chainId, initialState.input0, inputToken, outputToken])
 
   const onSuccess = useCallback(() => {
-    setInput0("");
-    setInput1("");
-  }, []);
+    setInput0('')
+    setInput1('')
+  }, [])
 
   const _setToken0 = useCallback((currency: Type) => {
     setTokens(([prevSrc, prevDst]) => {
-      return prevDst && currency.equals(prevDst)
-        ? [prevDst, prevSrc]
-        : [currency, prevDst];
-    });
-  }, []);
+      return prevDst && currency.equals(prevDst) ? [prevDst, prevSrc] : [currency, prevDst]
+    })
+  }, [])
 
   const _setToken1 = useCallback((currency: Type) => {
     setTokens(([prevSrc, prevDst]) => {
-      return prevSrc && currency.equals(prevSrc)
-        ? [prevDst, prevSrc]
-        : [prevSrc, currency];
-    });
-  }, []);
+      return prevSrc && currency.equals(prevSrc) ? [prevDst, prevSrc] : [prevSrc, currency]
+    })
+  }, [])
 
   const checkIfImportedTokens = useMemo(() => {
-    const tokens: { address: Address; chainId: number }[] = [];
+    const tokens: { address: Address; chainId: number }[] = []
     if (initialState.token0 && isAddress(initialState.token0))
       tokens.push({
         address: initialState.token0,
         chainId: Number(initialState.chainId),
-      });
+      })
     if (initialState.token1 && isAddress(initialState.token1))
       tokens.push({
         address: initialState.token1,
         chainId: Number(initialState.chainId),
-      });
-    return tokens;
-  }, [initialState.chainId, initialState.token0, initialState.token1]);
+      })
+    return tokens
+  }, [initialState.chainId, initialState.token0, initialState.token1])
 
   return (
     <TokenListImportChecker
@@ -300,33 +219,24 @@ function Swap(
       <TradeProvider
         chainId={chainId}
         tradeType={tradeType}
-        amountSpecified={
-          tradeType === TradeType.EXACT_INPUT ? parsedInput0 : parsedInput1
-        }
+        amountSpecified={tradeType === TradeType.EXACT_INPUT ? parsedInput0 : parsedInput1}
         mainCurrency={token0}
         otherCurrency={token1}
       >
         <Layout>
           <Widget id="swap" maxWidth={400}>
             <Widget.Content>
-              <div
-                className={classNames(
-                  "p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium"
-                )}
-              >
+              <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
                 <App.NavItemList hideOnMobile={false}>
                   <App.NavItem href="https://www.sushi.com/swap" label="Swap" />
-                  <App.NavItem
-                    href="https://www.sushi.com/xswap"
-                    label="xSwap"
-                  />
+                  <App.NavItem href="https://www.sushi.com/xswap" label="xSwap" />
                 </App.NavItemList>
                 <div className="flex justify-end">
                   <SettingsOverlay chainId={chainId} />
                 </div>
               </div>
               <CurrencyInput
-                id={"swap-input-currency0"}
+                id={'swap-input-currency0'}
                 className="p-3"
                 value={input0}
                 onChange={onInput0}
@@ -354,7 +264,7 @@ function Swap(
               </div>
               <div className="bg-slate-800">
                 <CurrencyInput
-                  id={"swap-output-currency1"}
+                  id={'swap-output-currency1'}
                   disabled={true}
                   className="p-3"
                   value={isWrap ? input0 : input1}
@@ -393,24 +303,21 @@ function Swap(
                             {({ isWritePending, setOpen }) => {
                               return (
                                 <Button
-                                  testdata-id={"open-wrap-review-modal-button"}
+                                  testdata-id={'open-wrap-review-modal-button'}
                                   disabled={isWritePending}
                                   fullWidth
                                   size="md"
                                   onClick={() => setOpen(true)}
                                 >
-                                  {wrap ? "Wrap" : "Unwrap"}
+                                  {wrap ? 'Wrap' : 'Unwrap'}
                                 </Button>
-                              );
+                              )
                             }}
                           </WrapReviewModal>
                         ) : (
-                          <SwapReviewModalLegacy
-                            chainId={chainId}
-                            onSuccess={onSuccess}
-                          >
+                          <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
                             {({ setOpen }) => {
-                              return <SwapButton setOpen={setOpen} />;
+                              return <SwapButton setOpen={setOpen} />
                             }}
                           </SwapReviewModalLegacy>
                         )}
@@ -440,31 +347,25 @@ function Swap(
         </Layout>
       </TradeProvider>
     </TokenListImportChecker>
-  );
+  )
 }
 
 const SwapButton: FC<{
-  setOpen(open: boolean): void;
+  setOpen(open: boolean): void
 }> = ({ setOpen }) => {
-  const { isLoading: isLoadingTrade, trade, route } = useTrade();
-  const [{ expertMode, slippageTolerance }] = useSettings();
+  const { isLoading: isLoadingTrade, trade, route } = useTrade()
+  const [{ expertMode, slippageTolerance }] = useSettings()
   const swapSlippage = useMemo(
-    () =>
-      slippageTolerance
-        ? new Percent(slippageTolerance * 100, 10_000)
-        : SWAP_DEFAULT_SLIPPAGE,
+    () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
     [slippageTolerance]
-  );
+  )
 
-  const priceImpactSeverity = useMemo(
-    () => warningSeverity(trade?.priceImpact),
-    [trade]
-  );
-  const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode;
+  const priceImpactSeverity = useMemo(() => warningSeverity(trade?.priceImpact), [trade])
+  const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
 
   const onClick = useCallback(() => {
-    setOpen(true);
-  }, [setOpen]);
+    setOpen(true)
+  }, [setOpen])
 
   return (
     <Checker.Custom
@@ -485,21 +386,21 @@ const SwapButton: FC<{
           Boolean(!trade && priceImpactSeverity > 2 && !expertMode)
         }
         size="md"
-        color={priceImpactTooHigh || priceImpactSeverity > 2 ? "red" : "blue"}
+        color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
         {...(Boolean(!trade && priceImpactSeverity > 2 && !expertMode) && {
-          title: "Enable expert mode to swap with high price impact",
+          title: 'Enable expert mode to swap with high price impact',
         })}
       >
         {isLoadingTrade
-          ? "Finding Best Price"
+          ? 'Finding Best Price'
           : priceImpactTooHigh
-          ? "High Price Impact"
+          ? 'High Price Impact'
           : trade && priceImpactSeverity > 2
-          ? "Swap Anyway"
-          : "Swap"}
+          ? 'Swap Anyway'
+          : 'Swap'}
       </Button>
     </Checker.Custom>
-  );
-};
+  )
+}
 
-export default Swap;
+export default Swap

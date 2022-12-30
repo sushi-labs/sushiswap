@@ -24,7 +24,10 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "lint": "TIMING=1 eslint ./**/*.ts* --fix",
+    "test": "jest --passWithNoTests"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"

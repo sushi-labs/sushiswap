@@ -1,12 +1,7 @@
-import * as React from "react";
+import * as React from 'react'
 
-export const PolygonCircle = (props: React.ComponentProps<"svg">) => (
-  <svg
-    viewBox="0 0 128 128"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+export const PolygonCircle = (props: React.ComponentProps<'svg'>) => (
+  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect width={128} height={128} rx={64} fill="#8247E5" />
     <g clipPath="url(#a)">
       <path
@@ -20,4 +15,4 @@ export const PolygonCircle = (props: React.ComponentProps<"svg">) => (
       </clipPath>
     </defs>
   </svg>
-);
+)

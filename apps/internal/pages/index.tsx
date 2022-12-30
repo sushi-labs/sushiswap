@@ -1,16 +1,13 @@
-import { ChainId } from "@sushiswap/chain";
-import { Typography } from "@sushiswap/ui";
-import { Layout } from "components";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { ChainId } from '@sushiswap/chain'
+import { Typography } from '@sushiswap/ui'
+import { Layout } from 'components'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
-import { getBuiltGraphSDK } from ".graphclient";
+import { getBuiltGraphSDK } from '.graphclient'
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
-  );
-  const sdk = getBuiltGraphSDK();
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  const sdk = getBuiltGraphSDK()
   const { crossChainBentoBoxKpis: data } = await sdk.CrossChainBentoBoxKpis({
     chainIds: [
       ChainId.ETHEREUM,
@@ -27,17 +24,15 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       ChainId.HARMONY,
       // ChainId.KAVA,
     ],
-  });
+  })
   return {
     props: {
       data,
     },
-  };
-};
+  }
+}
 
-export default function IndexPage({
-  data,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function IndexPage({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Layout>
       <div className="max-w-md space-y-4">
@@ -46,5 +41,5 @@ export default function IndexPage({
         </Typography>
       </div>
     </Layout>
-  );
+  )
 }

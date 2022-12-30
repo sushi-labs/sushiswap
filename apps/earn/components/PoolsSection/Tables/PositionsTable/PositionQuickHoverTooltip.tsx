@@ -1,30 +1,19 @@
-import { formatPercent, formatUSD } from "@sushiswap/format";
-import { UserWithFarm } from "@sushiswap/graph-client";
-import { Button, Chip, Currency, Link, Typography } from "@sushiswap/ui";
-import { FC } from "react";
+import { formatPercent, formatUSD } from '@sushiswap/format'
+import { UserWithFarm } from '@sushiswap/graph-client'
+import { Button, Chip, Currency, Link, Typography } from '@sushiswap/ui'
+import { FC } from 'react'
 
-import { useTokensFromPair } from "../../../../lib/hooks";
-import {
-  PoolPositionProvider,
-  usePoolPosition,
-} from "../../../PoolPositionProvider";
-import {
-  PoolPositionRewardsProvider,
-  usePoolPositionRewards,
-} from "../../../PoolPositionRewardsProvider";
-import {
-  PoolPositionStakedProvider,
-  usePoolPositionStaked,
-} from "../../../PoolPositionStakedProvider";
-import { ICON_SIZE } from "../contants";
+import { useTokensFromPair } from '../../../../lib/hooks'
+import { PoolPositionProvider, usePoolPosition } from '../../../PoolPositionProvider'
+import { PoolPositionRewardsProvider, usePoolPositionRewards } from '../../../PoolPositionRewardsProvider'
+import { PoolPositionStakedProvider, usePoolPositionStaked } from '../../../PoolPositionStakedProvider'
+import { ICON_SIZE } from '../contants'
 
 interface PositionQuickHoverTooltipProps {
-  row: UserWithFarm;
+  row: UserWithFarm
 }
 
-export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
-  row,
-}) => {
+export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
   return (
     <PoolPositionProvider watch={false} pair={row.pair}>
       <PoolPositionStakedProvider watch={false} pair={row.pair}>
@@ -33,23 +22,21 @@ export const PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
         </PoolPositionRewardsProvider>
       </PoolPositionStakedProvider>
     </PoolPositionProvider>
-  );
-};
+  )
+}
 
-const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
-  row,
-}) => {
-  const { token0, token1 } = useTokensFromPair(row.pair);
+const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({ row }) => {
+  const { token0, token1 } = useTokensFromPair(row.pair)
 
-  const { underlying0, underlying1, value1, value0 } = usePoolPosition();
+  const { underlying0, underlying1, value1, value0 } = usePoolPosition()
   const {
     underlying1: stakedUnderlying1,
     underlying0: stakedUnderlying0,
     value0: stakedValue0,
     value1: stakedValue1,
-  } = usePoolPositionStaked();
+  } = usePoolPositionStaked()
 
-  const { pendingRewards, rewardTokens, values } = usePoolPositionRewards();
+  const { pendingRewards, rewardTokens, values } = usePoolPositionRewards()
 
   return (
     <div className="flex flex-col p-2 !pb-0">
@@ -61,65 +48,41 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
               <Currency.Icon currency={token1} />
             </Currency.IconList>
             <div className="flex flex-col">
-              <Typography
-                variant="sm"
-                weight={500}
-                className="flex gap-1 text-slate-50"
-              >
-                {token0.symbol} <span className="text-slate-500">/</span>{" "}
-                {token1.symbol}
+              <Typography variant="sm" weight={500} className="flex gap-1 text-slate-50">
+                {token0.symbol} <span className="text-slate-500">/</span> {token1.symbol}
               </Typography>
               <Typography variant="xxs" className="text-slate-400">
                 SushiSwap Farm
               </Typography>
             </div>
           </div>
-          <Typography
-            variant="xs"
-            weight={600}
-            className="flex gap-1.5 items-end text-slate-400"
-          >
+          <Typography variant="xs" weight={600} className="flex gap-1.5 items-end text-slate-400">
             <Chip
               color="gray"
               size="sm"
               label={
-                row.pair.type === "CONSTANT_PRODUCT_POOL"
-                  ? "Classic"
-                  : row.pair.type === "STABLE_POOL"
-                  ? "Stable"
+                row.pair.type === 'CONSTANT_PRODUCT_POOL'
+                  ? 'Classic'
+                  : row.pair.type === 'STABLE_POOL'
+                  ? 'Stable'
                   : // @ts-ignore
-                  row.pair.type === "CONCENTRATED_LIQUIDITY_POOL"
-                  ? "Concentrated"
-                  : ""
+                  row.pair.type === 'CONCENTRATED_LIQUIDITY_POOL'
+                  ? 'Concentrated'
+                  : ''
               }
             />
             Fee {row.pair.swapFee / 100}%
           </Typography>
         </div>
         <div className="flex flex-col gap-1">
-          <Typography
-            variant="sm"
-            weight={600}
-            className="flex gap-3 text-slate-50"
-          >
-            <span className="text-slate-400">APR:</span>{" "}
-            {formatPercent(row.pair.apr)}
+          <Typography variant="sm" weight={600} className="flex gap-3 text-slate-50">
+            <span className="text-slate-400">APR:</span> {formatPercent(row.pair.apr)}
           </Typography>
-          <Typography
-            variant="xxs"
-            weight={600}
-            className="flex justify-end gap-1 text-slate-50"
-          >
-            <span className="text-slate-400">Rewards:</span>{" "}
-            {formatPercent(row.pair.incentiveApr)}
+          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
+            <span className="text-slate-400">Rewards:</span> {formatPercent(row.pair.incentiveApr)}
           </Typography>
-          <Typography
-            variant="xxs"
-            weight={600}
-            className="flex justify-end gap-1 text-slate-50"
-          >
-            <span className="text-slate-400">Fees:</span>{" "}
-            {formatPercent(row.pair.feeApr)}
+          <Typography variant="xxs" weight={600} className="flex justify-end gap-1 text-slate-50">
+            <span className="text-slate-400">Fees:</span> {formatPercent(row.pair.feeApr)}
           </Typography>
         </div>
       </div>
@@ -132,7 +95,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
           <div className="flex items-center gap-2">
             <Currency.Icon currency={token0} width={18} height={18} />
             <Typography variant="sm" weight={600} className="text-slate-50">
-              {underlying0?.toSignificant(6) || "0.00"} {token0?.symbol}
+              {underlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
             </Typography>
           </div>
           <Typography variant="xs" className="text-slate-400">
@@ -143,7 +106,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
           <div className="flex items-center gap-2">
             <Currency.Icon currency={token1} width={18} height={18} />
             <Typography variant="sm" weight={600} className="text-slate-50">
-              {underlying1?.toSignificant(6) || "0.00"} {token1?.symbol}
+              {underlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
             </Typography>
           </div>
           <Typography variant="xs" className="text-slate-400">
@@ -160,7 +123,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
             <div className="flex items-center gap-2">
               <Currency.Icon currency={token0} width={18} height={18} />
               <Typography variant="sm" weight={600} className="text-slate-50">
-                {stakedUnderlying0?.toSignificant(6) || "0.00"} {token0?.symbol}
+                {stakedUnderlying0?.toSignificant(6) || '0.00'} {token0?.symbol}
               </Typography>
             </div>
             <Typography variant="xs" className="text-slate-400">
@@ -171,7 +134,7 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
             <div className="flex items-center gap-2">
               <Currency.Icon currency={token1} width={18} height={18} />
               <Typography variant="sm" weight={600} className="text-slate-50">
-                {stakedUnderlying1?.toSignificant(6) || "0.00"} {token1?.symbol}
+                {stakedUnderlying1?.toSignificant(6) || '0.00'} {token1?.symbol}
               </Typography>
             </div>
             <Typography variant="xs" className="text-slate-400">
@@ -186,19 +149,11 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
             Farmed Rewards
           </Typography>
           {pendingRewards.map((reward, index) => (
-            <div
-              className="flex items-center justify-between gap-2"
-              key={index}
-            >
+            <div className="flex items-center justify-between gap-2" key={index}>
               <div className="flex items-center gap-2">
-                <Currency.Icon
-                  currency={rewardTokens[index]}
-                  width={18}
-                  height={18}
-                />
+                <Currency.Icon currency={rewardTokens[index]} width={18} height={18} />
                 <Typography variant="sm" weight={600} className="text-slate-50">
-                  {reward?.toSignificant(6) || "0.00"}{" "}
-                  {rewardTokens[index]?.symbol}
+                  {reward?.toSignificant(6) || '0.00'} {rewardTokens[index]?.symbol}
                 </Typography>
               </div>
               <Typography variant="xs" className="text-slate-400">
@@ -221,5 +176,5 @@ const _PositionQuickHoverTooltip: FC<PositionQuickHoverTooltipProps> = ({
         </Link.Internal>
       </div>
     </div>
-  );
-};
+  )
+}

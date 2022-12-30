@@ -1,46 +1,39 @@
-import { useInterval } from "@sushiswap/hooks";
-import { Typography } from "@sushiswap/ui";
-import { FC, useState } from "react";
+import { useInterval } from '@sushiswap/hooks'
+import { Typography } from '@sushiswap/ui'
+import { FC, useState } from 'react'
 
-import { FuroStatus, Stream, Vesting } from "../lib";
+import { FuroStatus, Stream, Vesting } from '../lib'
 
 interface FuroTimerState {
-  days: string;
-  hours: string;
-  minutes: string;
-  seconds: string;
+  days: string
+  hours: string
+  minutes: string
+  seconds: string
 }
 
 interface FuroTimerProps {
-  furo?: Stream | Vesting;
+  furo?: Stream | Vesting
 }
 
 export const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
-  const [remaining, setRemaining] = useState<FuroTimerState>();
+  const [remaining, setRemaining] = useState<FuroTimerState>()
 
   useInterval(() => {
-    if (
-      !furo ||
-      furo.status === FuroStatus.CANCELLED ||
-      furo.status === FuroStatus.COMPLETED
-    )
-      return;
-    const times = [FuroStatus.ACTIVE, FuroStatus.EXTENDED].includes(
-      furo?.status
-    )
+    if (!furo || furo.status === FuroStatus.CANCELLED || furo.status === FuroStatus.COMPLETED) return
+    const times = [FuroStatus.ACTIVE, FuroStatus.EXTENDED].includes(furo?.status)
       ? furo.remainingTime
-      : furo.startingInTime;
+      : furo.startingInTime
 
     if (times) {
-      const { days, hours, minutes, seconds } = times;
+      const { days, hours, minutes, seconds } = times
       setRemaining({
-        days: String(Math.max(days, 0)).padStart(2, "0"),
-        hours: String(Math.max(hours, 0)).padStart(2, "0"),
-        minutes: String(Math.max(minutes, 0)).padStart(2, "0"),
-        seconds: String(Math.max(seconds, 0)).padStart(2, "0"),
-      });
+        days: String(Math.max(days, 0)).padStart(2, '0'),
+        hours: String(Math.max(hours, 0)).padStart(2, '0'),
+        minutes: String(Math.max(minutes, 0)).padStart(2, '0'),
+        seconds: String(Math.max(seconds, 0)).padStart(2, '0'),
+      })
     }
-  }, 1000);
+  }, 1000)
 
   // Render normally
   if (remaining) {
@@ -80,15 +73,11 @@ export const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
             </Typography>
           </div>
         </div>
-        <Typography
-          variant="xs"
-          weight={400}
-          className="tracking-[0.4em] text-slate-200 text-center"
-        >
+        <Typography variant="xs" weight={400} className="tracking-[0.4em] text-slate-200 text-center">
           {furo?.isStarted ? `REMAINING` : `TILL STREAM STARTS`}
         </Typography>
       </div>
-    );
+    )
   }
 
   // No data available
@@ -128,13 +117,9 @@ export const FuroTimer: FC<FuroTimerProps> = ({ furo }) => {
           </Typography>
         </div>
       </div>
-      <Typography
-        variant="xs"
-        weight={400}
-        className="tracking-[0.4em] text-slate-200 text-center"
-      >
-        {furo?.status === FuroStatus.CANCELLED ? `CANCELLED` : "COMPLETED"}
+      <Typography variant="xs" weight={400} className="tracking-[0.4em] text-slate-200 text-center">
+        {furo?.status === FuroStatus.CANCELLED ? `CANCELLED` : 'COMPLETED'}
       </Typography>
     </div>
-  );
-};
+  )
+}

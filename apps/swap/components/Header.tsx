@@ -1,15 +1,15 @@
-import { App, AppType, BuyCrypto } from "@sushiswap/ui";
-import { NetworkSelector } from "@sushiswap/wagmi/components/NetworkSelector/";
-import { Profile } from "@sushiswap/wagmi/components/Wallet/Profile";
-import React, { FC } from "react";
-import { useAccount } from "wagmi";
+import { App, AppType, BuyCrypto } from '@sushiswap/ui'
+import { NetworkSelector } from '@sushiswap/wagmi/components/NetworkSelector/'
+import { Profile } from '@sushiswap/wagmi/components/Wallet/Profile'
+import React, { FC } from 'react'
+import { useAccount } from 'wagmi'
 
-import { SUPPORTED_CHAIN_IDS } from "../config";
-import { useNotifications } from "../lib/state/storage";
+import { SUPPORTED_CHAIN_IDS } from '../config'
+import { useNotifications } from '../lib/state/storage'
 
 export const Header: FC = () => {
-  const { address } = useAccount();
-  const [notifications, { clearNotifications }] = useNotifications(address);
+  const { address } = useAccount()
+  const [notifications, { clearNotifications }] = useNotifications(address)
   return (
     <App.Header
       withScrollBackground={true}
@@ -32,5 +32,5 @@ export const Header: FC = () => {
         />
       </div>
     </App.Header>
-  );
-};
+  )
+}

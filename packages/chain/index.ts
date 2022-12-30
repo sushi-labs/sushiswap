@@ -1,92 +1,88 @@
-import raw from "./chains.json";
+import raw from './chains.json'
 
 const CHAINS = raw.concat({
-  name: "Boba Avax",
-  chain: "Boba Avax",
-  rpc: [
-    "https://avax.boba.network",
-    "wss://wss.avax.boba.network",
-    "https://replica.avax.boba.network",
-  ],
+  name: 'Boba Avax',
+  chain: 'Boba Avax',
+  rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
   faucets: [],
   nativeCurrency: {
-    name: "Boba Token",
-    symbol: "BOBA",
+    name: 'Boba Token',
+    symbol: 'BOBA',
     decimals: 18,
   },
-  infoURL: "https://boba.network",
-  shortName: "bobaavax",
+  infoURL: 'https://boba.network',
+  shortName: 'bobaavax',
   chainId: 43288,
   networkId: 43288,
   explorers: [
     {
-      name: "Boba Avax Explorer",
-      url: "https://blockexplorer.avax.boba.network",
-      standard: "none",
+      name: 'Boba Avax Explorer',
+      url: 'https://blockexplorer.avax.boba.network',
+      standard: 'none',
     },
   ],
-});
+})
 
 export interface Chain {
-  name: string;
-  chain: string;
-  icon?: string;
-  rpc: string[];
-  faucets: string[];
-  nativeCurrency: NativeCurrency;
-  infoURL: string;
-  shortName: string;
-  chainId: number;
-  networkId: number;
-  slip44?: number;
-  ens?: Ens;
-  explorers?: Explorer[];
-  title?: string;
-  parent?: Parent;
-  network?: Network;
+  name: string
+  chain: string
+  icon?: string
+  rpc: string[]
+  faucets: string[]
+  nativeCurrency: NativeCurrency
+  infoURL: string
+  shortName: string
+  chainId: number
+  networkId: number
+  slip44?: number
+  ens?: Ens
+  explorers?: Explorer[]
+  title?: string
+  parent?: Parent
+  network?: Network
 }
 
 export interface Ens {
-  registry: string;
+  registry: string
 }
 
 export interface Explorer {
-  name: string;
-  url: string;
-  standard: Standard;
-  icon?: string;
+  name: string
+  url: string
+  standard: Standard
+  icon?: string
 }
 
 export enum Standard {
-  Eip3091 = "EIP3091",
-  None = "none",
+  Eip3091 = 'EIP3091',
+  None = 'none',
 }
 
 export interface NativeCurrency {
-  name: string;
-  symbol: string;
-  decimals: number;
+  name: string
+  symbol: string
+  decimals: number
 }
 
 export enum Network {
-  Iorachain = "iorachain",
-  Mainnet = "mainnet",
-  Testnet = "testnet",
+  Iorachain = 'iorachain',
+  Mainnet = 'mainnet',
+  Testnet = 'testnet',
 }
 
 export interface Parent {
-  type: Type;
-  chain: string;
-  bridges?: Bridge[];
+  type: Type
+  chain: string
+  bridges?: Bridge[]
 }
 
 export interface Bridge {
-  url: string;
+  url: string
 }
 
 export enum Type {
-  L2 = "L2",
-  Shard = "shard",
+  L2 = 'L2',
+  Shard = 'shard',
 }
 
 export enum ChainId {
@@ -128,139 +124,124 @@ export enum ChainId {
 }
 
 export enum ChainKey {
-  ARBITRUM = "arbitrum",
-  ARBITRUM_NOVA = "arbitrum-nova",
-  ARBITRUM_TESTNET = "arbitrum-testnet",
-  AVALANCHE = "avalanche",
-  AVALANCHE_TESTNET = "avalance-testnet",
-  BSC = "bsc",
-  BSC_TESTNET = "bsc-testnet",
-  CELO = "celo",
-  ETHEREUM = "ethereum",
-  FANTOM = "fantom",
-  FANTOM_TESTNET = "fantom-testnet",
-  FUSE = "fuse",
-  GÖRLI = "goerli",
-  HARMONY = "harmony",
-  HARMONY_TESTNET = "harmony-testnet",
-  HECO = "heco",
-  HECO_TESTNET = "heco-testnet",
-  KOVAN = "kovan",
-  ROPSTEN = "ropsten",
-  POLYGON = "polygon",
-  POLYGON_TESTNET = "matic-testnet",
-  MOONBEAM = "moonbeam",
-  MOONBEAM_TESTNET = "moonbeam-testnet",
-  MOONRIVER = "moonriver",
-  OKEX = "okex",
-  OKEX_TESTNET = "okex-testnet",
-  PALM = "palm",
-  PALM_TESTNET = "palm-testnet",
-  RINKEBY = "rinkeby",
-  TELOS = "telos",
-  GNOSIS = "gnosis",
-  OPTIMISM = "optimism",
-  KAVA = "kava",
-  METIS = "metis",
-  BOBA = "boba",
-  BOBA_AVAX = "boba-avax",
-  BTTC = "bttc",
+  ARBITRUM = 'arbitrum',
+  ARBITRUM_NOVA = 'arbitrum-nova',
+  ARBITRUM_TESTNET = 'arbitrum-testnet',
+  AVALANCHE = 'avalanche',
+  AVALANCHE_TESTNET = 'avalance-testnet',
+  BSC = 'bsc',
+  BSC_TESTNET = 'bsc-testnet',
+  CELO = 'celo',
+  ETHEREUM = 'ethereum',
+  FANTOM = 'fantom',
+  FANTOM_TESTNET = 'fantom-testnet',
+  FUSE = 'fuse',
+  GÖRLI = 'goerli',
+  HARMONY = 'harmony',
+  HARMONY_TESTNET = 'harmony-testnet',
+  HECO = 'heco',
+  HECO_TESTNET = 'heco-testnet',
+  KOVAN = 'kovan',
+  ROPSTEN = 'ropsten',
+  POLYGON = 'polygon',
+  POLYGON_TESTNET = 'matic-testnet',
+  MOONBEAM = 'moonbeam',
+  MOONBEAM_TESTNET = 'moonbeam-testnet',
+  MOONRIVER = 'moonriver',
+  OKEX = 'okex',
+  OKEX_TESTNET = 'okex-testnet',
+  PALM = 'palm',
+  PALM_TESTNET = 'palm-testnet',
+  RINKEBY = 'rinkeby',
+  TELOS = 'telos',
+  GNOSIS = 'gnosis',
+  OPTIMISM = 'optimism',
+  KAVA = 'kava',
+  METIS = 'metis',
+  BOBA = 'boba',
+  BOBA_AVAX = 'boba-avax',
+  BTTC = 'bttc',
 }
 
-const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA];
+const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
 
 export class Chain implements Chain {
   public static from(chainId: number) {
-    return chains[chainId];
+    return chains[chainId]
   }
   public static fromShortName(shortName: string) {
-    const _shortName = chainShortName[shortName];
-    if (!_shortName) throw new Error(`Unknown chain short name: ${shortName}`);
-    return chains[_shortName];
+    const _shortName = chainShortName[shortName]
+    if (!_shortName) throw new Error(`Unknown chain short name: ${shortName}`)
+    return chains[_shortName]
   }
   public static fromChainId(chainId: number) {
-    return chains[chainId];
+    return chains[chainId]
   }
   constructor(data: typeof CHAINS[number]) {
-    Object.assign(this, data);
+    Object.assign(this, data)
   }
   getTxUrl(txHash: string): string {
-    if (!this.explorers) return "";
+    if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (
-        explorer.standard === Standard.Eip3091 ||
-        EIP3091_OVERRIDE.includes(this.chainId)
-      ) {
-        return `${explorer.url}/tx/${txHash}`;
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
+        return `${explorer.url}/tx/${txHash}`
       }
     }
-    return "";
+    return ''
   }
   getBlockUrl(blockHashOrHeight: string): string {
-    if (!this.explorers) return "";
+    if (!this.explorers) return ''
     for (const explorer of this.explorers) {
       if (explorer.standard === Standard.Eip3091) {
-        return `${explorer.url}/block/${blockHashOrHeight}`;
+        return `${explorer.url}/block/${blockHashOrHeight}`
       }
     }
-    return "";
+    return ''
   }
   getTokenUrl(tokenAddress: string): string {
-    if (!this.explorers) return "";
+    if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (
-        explorer.standard === Standard.Eip3091 ||
-        EIP3091_OVERRIDE.includes(this.chainId)
-      ) {
-        return `${explorer.url}/token/${tokenAddress}`;
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
+        return `${explorer.url}/token/${tokenAddress}`
       }
     }
-    return "";
+    return ''
   }
   getAccountUrl(accountAddress: string): string {
-    if (!this.explorers) return "";
+    if (!this.explorers) return ''
     for (const explorer of this.explorers) {
-      if (
-        explorer.standard === Standard.Eip3091 ||
-        EIP3091_OVERRIDE.includes(this.chainId)
-      ) {
-        return `${explorer.url}/address/${accountAddress}`;
+      if (explorer.standard === Standard.Eip3091 || EIP3091_OVERRIDE.includes(this.chainId)) {
+        return `${explorer.url}/address/${accountAddress}`
       }
     }
-    return "";
+    return ''
   }
 }
 
 // ChainId array
-export const chainIds = CHAINS.map((chain) => chain.chainId);
+export const chainIds = CHAINS.map((chain) => chain.chainId)
 
 // Chain Short Name => Chain Id mapping
 export const chainShortNameToChainId = Object.fromEntries(
   CHAINS.map((data): [string, number] => [data.shortName, data.chainId])
-);
+)
 
 // Chain Id => Short Name mapping
-export const chainShortName = Object.fromEntries(
-  CHAINS.map((data): [number, string] => [data.chainId, data.shortName])
-);
+export const chainShortName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.shortName]))
 
 // Chain Id => Chain Name mapping
-export const chainName = Object.fromEntries(
-  CHAINS.map((data): [number, string] => [data.chainId, data.name])
-);
+export const chainName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.name]))
 
 // Chain Id => Chain mapping
 export const chains = Object.fromEntries(
-  CHAINS.map((data): [number, Chain] => [
+  CHAINS.map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
+)
+
+export const chainsL2 = Object.fromEntries(
+  CHAINS.filter((data) => data.parent?.type === Type.L2).map((data): [number, Chain] => [
     data.chainId,
     new Chain(data) as Chain,
   ])
-);
+)
 
-export const chainsL2 = Object.fromEntries(
-  CHAINS.filter((data) => data.parent?.type === Type.L2).map(
-    (data): [number, Chain] => [data.chainId, new Chain(data) as Chain]
-  )
-);
-
-export default chains;
+export default chains

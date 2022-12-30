@@ -1,21 +1,19 @@
-import { XCircleIcon } from "@heroicons/react/outline";
-import { Dots, Loader, Typography, WalletIcon } from "@sushiswap/ui";
-import { useWalletState } from "@sushiswap/wagmi";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { NextSeo } from "next-seo";
-import { useAccount, useConnect, useNetwork } from "wagmi";
+import { XCircleIcon } from '@heroicons/react/outline'
+import { Dots, Loader, Typography, WalletIcon } from '@sushiswap/ui'
+import { useWalletState } from '@sushiswap/wagmi'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { NextSeo } from 'next-seo'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 
-import { BackgroundVector, Dashboard, Layout } from "../components";
+import { BackgroundVector, Dashboard, Layout } from '../components'
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { chain: activeChain } = useNetwork();
-  const { address } = useAccount();
-  const connect = useConnect();
-  const { connecting, notConnected } = useWalletState(
-    !!connect.pendingConnector
-  );
+  const router = useRouter()
+  const { chain: activeChain } = useNetwork()
+  const { address } = useAccount()
+  const connect = useConnect()
+  const { connecting, notConnected } = useWalletState(!!connect.pendingConnector)
   if (notConnected) {
     return (
       <>
@@ -25,16 +23,9 @@ export default function DashboardPage() {
             <div className="max-w-[410px] w-full px-10 border border-slate-800 rounded-xl py-10 text-center flex flex-col gap-6">
               <div className="flex justify-center">
                 <div className="relative p-5 rounded-full bg-slate-800">
-                  <WalletIcon
-                    width={38}
-                    height={38}
-                    className="text-slate-300"
-                  />
+                  <WalletIcon width={38} height={38} className="text-slate-300" />
                   <div className="absolute top-0 right-0 flex items-center justify-center rounded-full text-slate-900">
-                    <XCircleIcon
-                      width={24}
-                      className="rounded-full text-slate-400 bg-slate-800"
-                    />
+                    <XCircleIcon width={24} className="rounded-full text-slate-400 bg-slate-800" />
                   </div>
                 </div>
               </div>
@@ -71,7 +62,7 @@ export default function DashboardPage() {
           </div>
         </Layout>
       </>
-    );
+    )
   }
 
   if (connecting) {
@@ -89,8 +80,7 @@ export default function DashboardPage() {
                   <Dots>Authorize Your Wallet</Dots>
                 </Typography>
                 <Typography variant="sm" className="text-slate-400">
-                  Furo requires access to your wallet, please authorize access
-                  to your wallet to continue
+                  Furo requires access to your wallet, please authorize access to your wallet to continue
                 </Typography>
               </div>
               <Link
@@ -111,7 +101,7 @@ export default function DashboardPage() {
           </div>
         </Layout>
       </>
-    );
+    )
   }
 
   return (
@@ -125,13 +115,9 @@ export default function DashboardPage() {
         }
       >
         {activeChain && address && (
-          <Dashboard
-            chainId={activeChain.id}
-            address={address}
-            showOutgoing={router.query.show === "outgoing"}
-          />
+          <Dashboard chainId={activeChain.id} address={address} showOutgoing={router.query.show === 'outgoing'} />
         )}
       </Layout>
     </>
-  );
+  )
 }

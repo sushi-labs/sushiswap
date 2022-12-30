@@ -1,1 +1,1 @@
-export { Route as RouteV1 } from "./RouteV1";
+export { Route as RouteV1 } from './RouteV1'

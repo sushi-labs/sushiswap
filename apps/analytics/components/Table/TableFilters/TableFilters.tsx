@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC } from 'react'
 
-import { TableFiltersSearchToken } from "./TableFiltersSearchToken";
+import { TableFiltersSearchToken } from './TableFiltersSearchToken'
 
 export const TableFilters: FC = () => {
   return (
@@ -9,5 +9,5 @@ export const TableFilters: FC = () => {
         <TableFiltersSearchToken />
       </div>
     </>
-  );
-};
+  )
+}

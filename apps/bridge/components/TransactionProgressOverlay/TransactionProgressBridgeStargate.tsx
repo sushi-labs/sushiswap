@@ -1,108 +1,105 @@
-import { createClient } from "@layerzerolabs/scan-client";
-import chains from "@sushiswap/chain";
-import { STARGATE_CHAIN_ID, STARGATE_TOKEN } from "@sushiswap/stargate";
-import { Link, Typography } from "@sushiswap/ui";
-import { Currency } from "@sushiswap/ui";
-import { getSushiXSwapContractConfig } from "@sushiswap/wagmi";
-import { formatBytes32String } from "ethers/lib/utils";
-import { FC, ReactNode, useEffect, useState } from "react";
-import { useAccount, useContractEvent, useWaitForTransaction } from "wagmi";
+import { createClient } from '@layerzerolabs/scan-client'
+import chains from '@sushiswap/chain'
+import { STARGATE_CHAIN_ID, STARGATE_TOKEN } from '@sushiswap/stargate'
+import { Link, Typography } from '@sushiswap/ui'
+import { Currency } from '@sushiswap/ui'
+import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { formatBytes32String } from 'ethers/lib/utils'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import { useAccount, useContractEvent, useWaitForTransaction } from 'wagmi'
 
-import { useNotifications } from "../../lib/state/storage";
-import { useBridgeState, useDerivedBridgeState } from "../BridgeStateProvider";
-import { TransactionProgressStep } from "./TransactionProgressStep";
+import { useNotifications } from '../../lib/state/storage'
+import { useBridgeState, useDerivedBridgeState } from '../BridgeStateProvider'
+import { TransactionProgressStep } from './TransactionProgressStep'
 
-const client = createClient("mainnet");
+const client = createClient('mainnet')
 
 interface TransactionProgressBridgeStargate {
-  isPrevLoading: boolean;
-  isPrevError: boolean;
-  isPrevSuccess: boolean;
+  isPrevLoading: boolean
+  isPrevError: boolean
+  isPrevSuccess: boolean
   children({
     isPrevSuccess,
     isPrevError,
     isPrevLoading,
   }: {
-    isPrevSuccess: boolean;
-    isPrevError: boolean;
-    isPrevLoading: boolean;
-  }): ReactNode;
+    isPrevSuccess: boolean
+    isPrevError: boolean
+    isPrevLoading: boolean
+  }): ReactNode
 }
 
-export const TransactionProgressBridgeStargate: FC<
-  TransactionProgressBridgeStargate
-> = ({ isPrevLoading, isPrevError, isPrevSuccess, children }) => {
-  const { address } = useAccount();
-  const { srcChainId, dstChainId, srcToken, amount, sourceTx, timestamp, id } =
-    useBridgeState();
-  const { dstAmountOut } = useDerivedBridgeState();
-  const [dstTxState, setDstTxState] = useState<
-    { txHash: `0x${string}`; isSuccess: boolean } | undefined
-  >();
-  const [, { createInfoNotification }] = useNotifications(address);
-  const [lzLink, setLzLink] = useState<string>();
+export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStargate> = ({
+  isPrevLoading,
+  isPrevError,
+  isPrevSuccess,
+  children,
+}) => {
+  const { address } = useAccount()
+  const { srcChainId, dstChainId, srcToken, amount, sourceTx, timestamp, id } = useBridgeState()
+  const { dstAmountOut } = useDerivedBridgeState()
+  const [dstTxState, setDstTxState] = useState<{ txHash: `0x${string}`; isSuccess: boolean } | undefined>()
+  const [, { createInfoNotification }] = useNotifications(address)
+  const [lzLink, setLzLink] = useState<string>()
 
   useContractEvent({
     ...getSushiXSwapContractConfig(dstAmountOut?.currency.chainId),
     chainId: dstAmountOut?.currency.chainId,
-    eventName: "StargateSushiXSwapDst",
+    eventName: 'StargateSushiXSwapDst',
     listener: (context, success, { transactionHash }) => {
       if (context === formatBytes32String(id)) {
         setDstTxState({
           txHash: transactionHash as `0x${string}`,
           isSuccess: !success,
-        });
+        })
       }
     },
-  });
+  })
 
   const { isError, isSuccess } = useWaitForTransaction({
     hash: dstTxState?.txHash,
     chainId: dstChainId,
     enabled: Boolean(dstTxState?.txHash) && Boolean(amount),
-  });
+  })
 
   useEffect(() => {
     if (isPrevSuccess && sourceTx?.hash && timestamp) {
-      let notificationSent = false;
+      let notificationSent = false
 
-      const ts = new Date().getTime();
+      const ts = new Date().getTime()
 
       const getMessages = () => {
         if (lzLink && !notificationSent) {
-          notificationSent = true;
+          notificationSent = true
           createInfoNotification({
-            type: "stargate",
+            type: 'stargate',
             chainId: srcChainId,
-            txHash: "0x",
+            txHash: '0x',
             href: lzLink,
             summary: {
-              pending: "",
-              completed: "",
-              failed: "",
-              info: `Bridging ${amount?.toSignificant(6)} ${
-                srcToken?.symbol
-              } to ${chains[dstChainId].name}`,
+              pending: '',
+              completed: '',
+              failed: '',
+              info: `Bridging ${amount?.toSignificant(6)} ${srcToken?.symbol} to ${chains[dstChainId].name}`,
             },
             timestamp: ts,
             groupTimestamp: timestamp,
-          });
+          })
         }
 
         client.getMessagesBySrcTxHash(sourceTx.hash).then((result) => {
           if (result.messages.length > 0 && !lzLink) {
-            const { srcUaAddress, dstUaAddress, srcUaNonce } =
-              result.messages[0];
+            const { srcUaAddress, dstUaAddress, srcUaNonce } = result.messages[0]
             setLzLink(
               `https://layerzeroscan.com/${STARGATE_CHAIN_ID[srcChainId]}/address/${srcUaAddress}/message/${STARGATE_CHAIN_ID[dstChainId]}/address/${dstUaAddress}/nonce/${srcUaNonce}`
-            );
+            )
           } else {
-            setTimeout(getMessages, 1000);
+            setTimeout(getMessages, 1000)
           }
-        });
-      };
+        })
+      }
 
-      getMessages();
+      getMessages()
     }
   }, [
     amount,
@@ -114,21 +111,13 @@ export const TransactionProgressBridgeStargate: FC<
     srcChainId,
     srcToken?.symbol,
     timestamp,
-  ]);
+  ])
 
   return (
     <>
       <TransactionProgressStep
         link={lzLink}
-        status={
-          isSuccess
-            ? "success"
-            : isError
-            ? "skipped"
-            : lzLink
-            ? "pending"
-            : "idle"
-        }
+        status={isSuccess ? 'success' : isError ? 'skipped' : lzLink ? 'pending' : 'idle'}
         header={
           <TransactionProgressStep.Header>
             Send <b>{srcToken?.symbol}</b> to destination chain
@@ -136,16 +125,11 @@ export const TransactionProgressBridgeStargate: FC<
         }
         subheader={
           <TransactionProgressStep.SubHeader
-            icon={
-              <Currency.Icon currency={STARGATE_TOKEN} width={16} height={16} />
-            }
+            icon={<Currency.Icon currency={STARGATE_TOKEN} width={16} height={16} />}
             caption={
               <Typography variant="xs">
-                Powered by{" "}
-                <Link.External
-                  href="https://stargate.finance"
-                  className="underline"
-                >
+                Powered by{' '}
+                <Link.External href="https://stargate.finance" className="underline">
                   Stargate Finance
                 </Link.External>
               </Typography>
@@ -159,5 +143,5 @@ export const TransactionProgressBridgeStargate: FC<
         isPrevLoading: isPrevLoading || !!lzLink,
       })}
     </>
-  );
-};
+  )
+}

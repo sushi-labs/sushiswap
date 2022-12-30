@@ -1,2 +1,2 @@
-export * from "./fetchFarms";
-export * from "./fetchPrices";
+export * from './fetchFarms'
+export * from './fetchPrices'

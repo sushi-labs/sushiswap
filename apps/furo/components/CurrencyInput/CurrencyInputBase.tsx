@@ -1,4 +1,4 @@
-import { Type } from "@sushiswap/currency";
+import { Type } from '@sushiswap/currency'
 import {
   classNames,
   DEFAULT_INPUT_CLASSNAME,
@@ -6,35 +6,29 @@ import {
   ERROR_INPUT_CLASSNAME,
   Input,
   Typography,
-} from "@sushiswap/ui";
-import React, { FC, forwardRef } from "react";
+} from '@sushiswap/ui'
+import React, { FC, forwardRef } from 'react'
 
-export type CurrencyInputBase = Omit<
-  React.HTMLProps<HTMLInputElement>,
-  "ref" | "onChange"
-> & {
-  value: string | number;
-  onChange(value: string): void;
-  currency: Type | undefined;
-  className?: string;
-  inputClassName?: string;
-  error?: boolean;
-  bottomPanel?: JSX.Element;
-  helperTextPanel?: JSX.Element;
-  hideSymbol?: boolean;
-};
+export type CurrencyInputBase = Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange'> & {
+  value: string | number
+  onChange(value: string): void
+  currency: Type | undefined
+  className?: string
+  inputClassName?: string
+  error?: boolean
+  bottomPanel?: JSX.Element
+  helperTextPanel?: JSX.Element
+  hideSymbol?: boolean
+}
 
-export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<
-  HTMLInputElement,
-  CurrencyInputBase
->(
+export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<HTMLInputElement, CurrencyInputBase>(
   (
     {
       value,
       onChange,
       currency,
-      className = "",
-      inputClassName = "",
+      className = '',
+      inputClassName = '',
       error,
       bottomPanel,
       helperTextPanel,
@@ -50,8 +44,8 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<
           className={classNames(
             className,
             DEFAULT_INPUT_CLASSNAME,
-            error ? ERROR_INPUT_CLASSNAME : "",
-            "relative flex flex-col justify-center"
+            error ? ERROR_INPUT_CLASSNAME : '',
+            'relative flex flex-col justify-center'
           )}
         >
           <Input.Numeric
@@ -60,12 +54,7 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<
             value={value}
             type="text"
             placeholder="0.00"
-            className={classNames(
-              inputClassName,
-              DEFAULT_INPUT_UNSTYLED,
-              "h-full",
-              hideSymbol ? "" : "!pr-[60px]"
-            )}
+            className={classNames(inputClassName, DEFAULT_INPUT_UNSTYLED, 'h-full', hideSymbol ? '' : '!pr-[60px]')}
             onUserInput={(val) => onChange(val)}
             {...rest}
           />
@@ -90,6 +79,6 @@ export const CurrencyInputBase: FC<CurrencyInputBase> = forwardRef<
         </div>
         {helperTextPanel}
       </>
-    );
+    )
   }
-);
+)

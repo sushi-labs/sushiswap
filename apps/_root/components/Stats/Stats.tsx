@@ -1,13 +1,11 @@
-import { useIsMounted } from "@sushiswap/hooks";
-import { Container, Skeleton, Typography } from "@sushiswap/ui";
-import React, { FC } from "react";
-import { useQuery } from "wagmi";
+import { useIsMounted } from '@sushiswap/hooks'
+import { Container, Skeleton, Typography } from '@sushiswap/ui'
+import React, { FC } from 'react'
+import { useQuery } from 'wagmi'
 
 export const Stats: FC = () => {
-  const isMounted = useIsMounted();
-  const { data } = useQuery(["api/stats"], () =>
-    fetch(`api/stats`).then((response) => response.json())
-  );
+  const isMounted = useIsMounted()
+  const { data } = useQuery(['api/stats'], () => fetch(`api/stats`).then((response) => response.json()))
 
   return (
     <section className="overflow-x-hidden">
@@ -22,11 +20,7 @@ export const Stats: FC = () => {
               ) : (
                 <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
               )}
-              <Typography
-                variant="xs"
-                weight={600}
-                className="uppercase text-neutral-400 -mt-0.5"
-              >
+              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
                 Price
               </Typography>
             </div>
@@ -40,11 +34,7 @@ export const Stats: FC = () => {
               ) : (
                 <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
               )}
-              <Typography
-                variant="xs"
-                weight={600}
-                className="uppercase text-neutral-400 -mt-0.5"
-              >
+              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
                 Total Liquidity
               </Typography>
             </div>
@@ -58,11 +48,7 @@ export const Stats: FC = () => {
               ) : (
                 <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
               )}
-              <Typography
-                variant="xs"
-                weight={600}
-                className="uppercase text-neutral-400 -mt-0.5"
-              >
+              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
                 Total Volume
               </Typography>
             </div>
@@ -76,11 +62,7 @@ export const Stats: FC = () => {
               ) : (
                 <Skeleton.Box className="bg-neutral-800 w-[120px] h-[28px] my-1" />
               )}
-              <Typography
-                variant="xs"
-                weight={600}
-                className="uppercase text-neutral-400 -mt-0.5"
-              >
+              <Typography variant="xs" weight={600} className="uppercase text-neutral-400 -mt-0.5">
                 Total Pairs
               </Typography>
             </div>
@@ -88,5 +70,5 @@ export const Stats: FC = () => {
         </div>
       </Container>
     </section>
-  );
-};
+  )
+}

@@ -1,20 +1,15 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode } from 'react'
 
-import { Typography } from "../typography";
+import { Typography } from '../typography'
 
 interface ToastContent {
-  icon?: ReactNode;
-  title: string;
-  summary: ReactNode | Array<ReactNode>;
-  code?: boolean;
+  icon?: ReactNode
+  title: string
+  summary: ReactNode | Array<ReactNode>
+  code?: boolean
 }
 
-export const ToastContent: FC<ToastContent> = ({
-  icon,
-  title,
-  summary,
-  code = false,
-}) => {
+export const ToastContent: FC<ToastContent> = ({ icon, title, summary, code = false }) => {
   return (
     <div className="p-4 flex gap-4 items-start">
       {icon && <div className="mt-0.5">{icon}</div>}
@@ -33,5 +28,5 @@ export const ToastContent: FC<ToastContent> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}

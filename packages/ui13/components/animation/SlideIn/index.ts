@@ -1,1 +1,1 @@
-export * from "./SlideIn";
+export * from './SlideIn'

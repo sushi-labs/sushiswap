@@ -1,2 +1,2 @@
-export * from "./circle";
-export * from "./naked";
+export * from './circle'
+export * from './naked'

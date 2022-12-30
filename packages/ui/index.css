@@ -1,16 +1,16 @@
 @tailwind base;
 
-@import "react-datepicker/dist/react-datepicker.css";
-@import "@fontsource/inter/variable.css";
+@import 'react-datepicker/dist/react-datepicker.css';
+@import '@fontsource/inter/variable.css';
 
 @tailwind components;
 @tailwind utilities;
 
-@import "./variables.css";
-@import "./tooltip/Tooltip.css";
-@import "./input/Input.css";
-@import "./skeleton/Skeleton.css";
-@import "./input/DatePicker.css";
+@import './variables.css';
+@import './tooltip/Tooltip.css';
+@import './input/Input.css';
+@import './skeleton/Skeleton.css';
+@import './input/DatePicker.css';
 
 *,
 *:before,
@@ -67,8 +67,7 @@ body {
   background-clip: padding-box;
   background-color: rgba(255, 255, 255, 0.2);
   -webkit-border-radius: 7px;
-  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05),
-    inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
 }
 
 *.scroll::-webkit-scrollbar-button {
@@ -86,12 +85,12 @@ body {
 }
 
 @layer utilities {
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  input[type="search"]::-webkit-search-cancel-button {
+  input[type='search']::-webkit-search-cancel-button {
     -webkit-appearance: none;
   }
 }

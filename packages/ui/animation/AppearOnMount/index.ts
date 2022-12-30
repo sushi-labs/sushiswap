@@ -1,1 +1,1 @@
-export * from "./AppearOnMount";
+export * from './AppearOnMount'

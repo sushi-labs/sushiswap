@@ -1,4 +1,4 @@
-export const DiscordIcon = (props: React.ComponentProps<"svg">) => {
+export const DiscordIcon = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg
       viewBox="0 0 256 199"
@@ -15,5 +15,5 @@ export const DiscordIcon = (props: React.ComponentProps<"svg">) => {
         ></path>
       </g>
     </svg>
-  );
-};
+  )
+}

@@ -1,30 +1,21 @@
-import { Signature } from "@ethersproject/bytes";
-import { AddressZero } from "@ethersproject/constants";
-import { Disclosure, Transition } from "@headlessui/react";
-import {
-  ChevronDownIcon,
-  InformationCircleIcon,
-} from "@heroicons/react/outline";
-import { BENTOBOX_ADDRESS } from "@sushiswap/address";
-import { TradeType } from "@sushiswap/amm";
-import chains, { ChainId } from "@sushiswap/chain";
-import { chainName } from "@sushiswap/chain";
-import {
-  Amount,
-  Native,
-  Price,
-  tryParseAmount,
-  Type,
-} from "@sushiswap/currency";
-import { FundSource, useIsMounted } from "@sushiswap/hooks";
-import { JSBI, Percent, ZERO } from "@sushiswap/math";
+import { Signature } from '@ethersproject/bytes'
+import { AddressZero } from '@ethersproject/constants'
+import { Disclosure, Transition } from '@headlessui/react'
+import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
+import { TradeType } from '@sushiswap/amm'
+import chains, { ChainId } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
+import { Amount, Native, Price, tryParseAmount, Type } from '@sushiswap/currency'
+import { FundSource, useIsMounted } from '@sushiswap/hooks'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import {
   isStargateBridgeToken,
   STARGATE_BRIDGE_TOKENS,
   STARGATE_CONFIRMATION_SECONDS,
   StargateChainId,
-} from "@sushiswap/stargate";
-import { SushiXSwap as SushiXSwapContract } from "@sushiswap/sushixswap/typechain";
+} from '@sushiswap/stargate'
+import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import {
   App,
   Button,
@@ -37,7 +28,7 @@ import {
   SlideIn,
   Tooltip,
   Typography,
-} from "@sushiswap/ui";
+} from '@sushiswap/ui'
 import {
   Approve,
   getSushiXSwapContractConfig,
@@ -47,7 +38,7 @@ import {
   useSushiXSwapContract,
   useSushiXSwapContractWithProvider,
   Wallet,
-} from "@sushiswap/wagmi";
+} from '@sushiswap/wagmi'
 import {
   Caption,
   ConfirmationComponentController,
@@ -59,89 +50,62 @@ import {
   SettingsOverlay,
   SwitchCurrenciesButton,
   TransactionProgressOverlay,
-} from "components";
-import { defaultTheme } from "config";
-import { useTrade } from "lib/hooks";
-import { useBridgeFees } from "lib/hooks/useBridgeFees";
-import { useTokens } from "lib/state/token-lists";
-import { SushiXSwap } from "lib/SushiXSwap";
-import { nanoid } from "nanoid";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Theme } from "types";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+} from 'components'
+import { defaultTheme } from 'config'
+import { useTrade } from 'lib/hooks'
+import { useBridgeFees } from 'lib/hooks/useBridgeFees'
+import { useTokens } from 'lib/state/token-lists'
+import { SushiXSwap } from 'lib/SushiXSwap'
+import { nanoid } from 'nanoid'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Theme } from 'types'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
-import {
-  useCustomTokens,
-  useNotifications,
-  useSettings,
-} from "../lib/state/storage";
+import { useCustomTokens, useNotifications, useSettings } from '../lib/state/storage'
 
-const BIPS_BASE = JSBI.BigInt(10000);
+const BIPS_BASE = JSBI.BigInt(10000)
 
 // used for warning states
-export const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(
-  JSBI.BigInt(100),
-  BIPS_BASE
-); // 1%
-export const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(
-  JSBI.BigInt(300),
-  BIPS_BASE
-); // 3%
-export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(
-  JSBI.BigInt(500),
-  BIPS_BASE
-); // 5%
+export const ALLOWED_PRICE_IMPACT_LOW: Percent = new Percent(JSBI.BigInt(100), BIPS_BASE) // 1%
+export const ALLOWED_PRICE_IMPACT_MEDIUM: Percent = new Percent(JSBI.BigInt(300), BIPS_BASE) // 3%
+export const ALLOWED_PRICE_IMPACT_HIGH: Percent = new Percent(JSBI.BigInt(500), BIPS_BASE) // 5%
 // if the price slippage exceeds this number, force the user to type 'confirm' to execute
-export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(
-  JSBI.BigInt(1000),
-  BIPS_BASE
-); // 10%
+export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(JSBI.BigInt(1000), BIPS_BASE) // 10%
 // for non expert mode disable swaps above this
-export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(
-  JSBI.BigInt(1500),
-  BIPS_BASE
-); // 15%
+export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(JSBI.BigInt(1500), BIPS_BASE) // 15%
 
 const IMPACT_TIERS = [
   BLOCKED_PRICE_IMPACT_NON_EXPERT,
   ALLOWED_PRICE_IMPACT_HIGH,
   ALLOWED_PRICE_IMPACT_MEDIUM,
   ALLOWED_PRICE_IMPACT_LOW,
-];
+]
 
-type WarningSeverity = 0 | 1 | 2 | 3 | 4;
+type WarningSeverity = 0 | 1 | 2 | 3 | 4
 
-export function warningSeverity(
-  priceImpact: Percent | undefined
-): WarningSeverity {
-  if (!priceImpact) return 4;
-  let impact: WarningSeverity = IMPACT_TIERS.length as WarningSeverity;
+export function warningSeverity(priceImpact: Percent | undefined): WarningSeverity {
+  if (!priceImpact) return 4
+  let impact: WarningSeverity = IMPACT_TIERS.length as WarningSeverity
   for (const impactLevel of IMPACT_TIERS) {
-    if (impactLevel.lessThan(priceImpact)) return impact;
-    impact--;
+    if (impactLevel.lessThan(priceImpact)) return impact
+    impact--
   }
-  return 0;
+  return 0
 }
 
-const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000); // 0.50%
+const SWAP_DEFAULT_SLIPPAGE = new Percent(50, 10_000) // 0.50%
 
 const theme: Theme = {
   ...defaultTheme,
-};
+}
 
-export const getServerSideProps: GetServerSideProps = async ({
-  query,
-  res,
-}) => {
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
-  );
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
 
-  const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query;
+  const { srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount } = query
 
   // TODO: Need to fetch srcToken & dstToken if they're address and pass down basic object to client
   // { chainId, name, symbol, decimals }, to avoid delay from fetching from token list
@@ -152,10 +116,10 @@ export const getServerSideProps: GetServerSideProps = async ({
       dstToken: dstToken ?? null,
       srcChainId: srcChainId ?? ChainId.ETHEREUM,
       dstChainId: dstChainId ?? ChainId.ARBITRUM,
-      srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : "",
+      srcTypedAmount: !isNaN(Number(srcTypedAmount)) ? srcTypedAmount : '',
     },
-  };
-};
+  }
+}
 
 export default function Swap({
   srcChainId,
@@ -164,8 +128,8 @@ export default function Swap({
   dstToken,
   srcTypedAmount,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const srcTokens = useTokens(srcChainId);
-  const dstTokens = useTokens(dstChainId);
+  const srcTokens = useTokens(srcChainId)
+  const dstTokens = useTokens(dstChainId)
   return (
     <Layout>
       <Head>
@@ -178,14 +142,8 @@ export default function Swap({
         initialState={{
           srcChainId: Number(srcChainId) as StargateChainId,
           dstChainId: Number(dstChainId) as StargateChainId,
-          srcToken:
-            srcToken in srcTokens
-              ? srcTokens[srcToken]
-              : Native.onChain(srcChainId),
-          dstToken:
-            dstToken in dstTokens
-              ? dstTokens[dstToken]
-              : Native.onChain(dstChainId),
+          srcToken: srcToken in srcTokens ? srcTokens[srcToken] : Native.onChain(srcChainId),
+          dstToken: dstToken in dstTokens ? dstTokens[dstToken] : Native.onChain(dstChainId),
           srcTypedAmount,
         }}
         // swapCache={data}
@@ -193,20 +151,20 @@ export default function Swap({
       />
       {/* <Widget header={<>Swap</>} /> */}
     </Layout>
-  );
+  )
 }
 
 interface Swap {
-  maxWidth?: number | string;
-  theme?: Theme;
+  maxWidth?: number | string
+  theme?: Theme
   initialState: {
-    srcChainId: StargateChainId;
-    dstChainId: StargateChainId;
-    srcTypedAmount: string;
-    srcToken: Type;
-    dstToken: Type;
-  };
-  caption?: boolean;
+    srcChainId: StargateChainId
+    dstChainId: StargateChainId
+    srcTypedAmount: string
+    srcToken: Type
+    dstToken: Type
+  }
+  caption?: boolean
   // swapCache: SwapCache
   // mutateSwapCache: (cache: SwapCache) => void
 }
@@ -219,123 +177,85 @@ const Widget: FC<Swap> = ({
   // swapCache,
   // mutateSwapCache,
 }) => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
-  const [, { createNotification }] = useNotifications(address);
+  const { address } = useAccount()
+  const { chain } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork()
+  const [, { createNotification }] = useNotifications(address)
 
-  const [isWritePending, setIsWritePending] = useState<boolean>(false);
+  const [isWritePending, setIsWritePending] = useState<boolean>(false)
 
-  const [signature, setSignature] = useState<Signature>();
+  const [signature, setSignature] = useState<Signature>()
 
-  const router = useRouter();
+  const router = useRouter()
 
-  const [{ expertMode, slippageTolerance }] = useSettings();
+  const [{ expertMode, slippageTolerance }] = useSettings()
 
   const swapSlippage = useMemo(
-    () =>
-      slippageTolerance
-        ? new Percent(slippageTolerance * 100, 10_000)
-        : SWAP_DEFAULT_SLIPPAGE,
+    () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
     [slippageTolerance]
-  );
+  )
 
-  const [srcChainId, setSrcChainId] = useState<StargateChainId>(
-    initialState.srcChainId
-  );
-  const [dstChainId, setDstChainId] = useState<StargateChainId>(
-    initialState.dstChainId
-  );
-  const [srcToken, setSrcToken] = useState<Type>(initialState.srcToken);
-  const [dstToken, setDstToken] = useState<Type>(initialState.dstToken);
-  const [
-    srcCustomTokenMap,
-    {
-      addCustomToken: onAddSrcCustomToken,
-      removeCustomToken: onRemoveSrcCustomToken,
-    },
-  ] = useCustomTokens(srcChainId);
-  const [
-    dstCustomTokenMap,
-    {
-      addCustomToken: onAddDstCustomToken,
-      removeCustomToken: onRemoveDstCustomToken,
-    },
-  ] = useCustomTokens(dstChainId);
+  const [srcChainId, setSrcChainId] = useState<StargateChainId>(initialState.srcChainId)
+  const [dstChainId, setDstChainId] = useState<StargateChainId>(initialState.dstChainId)
+  const [srcToken, setSrcToken] = useState<Type>(initialState.srcToken)
+  const [dstToken, setDstToken] = useState<Type>(initialState.dstToken)
+  const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
+    useCustomTokens(srcChainId)
+  const [dstCustomTokenMap, { addCustomToken: onAddDstCustomToken, removeCustomToken: onRemoveDstCustomToken }] =
+    useCustomTokens(dstChainId)
 
   useEffect(() => {
-    setSrcToken(initialState.srcToken);
-  }, [initialState.srcToken]);
+    setSrcToken(initialState.srcToken)
+  }, [initialState.srcToken])
   useEffect(() => {
-    setDstToken(initialState.dstToken);
-  }, [initialState.dstToken]);
+    setDstToken(initialState.dstToken)
+  }, [initialState.dstToken])
 
   // First we'll check if bridge tokens for srcChainId includes srcToken, if so use srcToken as srcBridgeToken,
   // else take first stargate bridge token as srcBridgeToken
   const srcBridgeToken =
-    srcToken.isToken && isStargateBridgeToken(srcToken)
-      ? srcToken
-      : STARGATE_BRIDGE_TOKENS[srcChainId][0];
+    srcToken.isToken && isStargateBridgeToken(srcToken) ? srcToken : STARGATE_BRIDGE_TOKENS[srcChainId][0]
 
   // First we'll check if bridge tokens for dstChainId includes dstToken, if so use dstToken as dstBridgeToken,
   // else take first stargate bridge token as dstBridgeToken
   const dstBridgeToken =
-    dstToken.isToken && isStargateBridgeToken(dstToken)
-      ? dstToken
-      : STARGATE_BRIDGE_TOKENS[dstChainId][0];
+    dstToken.isToken && isStargateBridgeToken(dstToken) ? dstToken : STARGATE_BRIDGE_TOKENS[dstChainId][0]
 
-  const feeRef = useRef<Amount<Native>>();
-  const [nanoId] = useState(nanoid());
-  const [srcTxHash, setSrcTxHash] = useState<`0x${string}`>();
+  const feeRef = useRef<Amount<Native>>()
+  const [nanoId] = useState(nanoid())
+  const [srcTxHash, setSrcTxHash] = useState<`0x${string}`>()
 
-  const [srcTypedAmount, setSrcTypedAmount] = useState<string>(
-    initialState.srcTypedAmount
-  );
-  const [dstTypedAmount, setDstTypedAmount] = useState<string>("");
+  const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
+  const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
 
-  const srcTokens = useTokens(srcChainId);
-  const dstTokens = useTokens(dstChainId);
+  const srcTokens = useTokens(srcChainId)
+  const dstTokens = useTokens(dstChainId)
 
   // Computed
 
   // Same chain
-  const sameChainSwap = srcChainId === dstChainId;
+  const sameChainSwap = srcChainId === dstChainId
 
   // Cross chain
-  const crossChain = srcChainId !== dstChainId;
+  const crossChain = srcChainId !== dstChainId
 
   // A cross chain swap, a swap on the source and a swap on the destination
-  const crossChainSwap =
-    crossChain &&
-    !isStargateBridgeToken(srcToken) &&
-    !isStargateBridgeToken(dstToken);
+  const crossChainSwap = crossChain && !isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken)
 
   // A regular bridge transfer, no swaps on either end
-  const transfer =
-    crossChain &&
-    isStargateBridgeToken(srcToken) &&
-    isStargateBridgeToken(dstToken);
+  const transfer = crossChain && isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)
 
   // A swap transfer, a swap on the source, but not swap on the destination
-  const swapTransfer =
-    crossChain &&
-    !isStargateBridgeToken(srcToken) &&
-    isStargateBridgeToken(dstToken);
+  const swapTransfer = crossChain && !isStargateBridgeToken(srcToken) && isStargateBridgeToken(dstToken)
 
   // A transfer swap, no swap on the source, but a swap on the destination
-  const transferSwap =
-    crossChain &&
-    isStargateBridgeToken(srcToken) &&
-    !isStargateBridgeToken(dstToken);
+  const transferSwap = crossChain && isStargateBridgeToken(srcToken) && !isStargateBridgeToken(dstToken)
 
-  const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken);
-  const srcOutputCurrencyRebase = useBentoBoxTotal(
-    srcChainId,
-    sameChainSwap ? dstToken : srcBridgeToken
-  );
+  const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
+  const srcOutputCurrencyRebase = useBentoBoxTotal(srcChainId, sameChainSwap ? dstToken : srcBridgeToken)
 
-  const dstInputCurrencyRebase = useBentoBoxTotal(dstChainId, dstBridgeToken);
-  const dstOutputCurrencyRebase = useBentoBoxTotal(dstChainId, dstToken);
+  const dstInputCurrencyRebase = useBentoBoxTotal(dstChainId, dstBridgeToken)
+  const dstOutputCurrencyRebase = useBentoBoxTotal(dstChainId, dstToken)
 
   // console.log('INDEX', srcTokenRebase?.base?.toString(), srcTokenRebase?.elastic?.toString())
 
@@ -355,13 +275,11 @@ const Widget: FC<Swap> = ({
     if (
       srcChainId === Number(router.query.srcChainId) &&
       dstChainId === Number(router.query.dstChainId) &&
-      (srcToken.symbol === router.query.srcToken ||
-        srcToken.wrapped.address === router.query.srcToken) &&
-      (dstToken.symbol === router.query.dstToken ||
-        dstToken.wrapped.address === router.query.dstToken) &&
+      (srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken) &&
+      (dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken) &&
       srcTypedAmount === router.query.srcTypedAmount
     ) {
-      return;
+      return
     }
 
     void router.replace(
@@ -369,10 +287,8 @@ const Widget: FC<Swap> = ({
         pathname: router.pathname,
         query: {
           ...router.query,
-          srcToken:
-            srcToken && srcToken.isToken ? srcToken.address : srcToken.symbol,
-          dstToken:
-            dstToken && dstToken.isToken ? dstToken.address : dstToken.symbol,
+          srcToken: srcToken && srcToken.isToken ? srcToken.address : srcToken.symbol,
+          dstToken: dstToken && dstToken.isToken ? dstToken.address : dstToken.symbol,
           srcChainId,
           dstChainId,
           srcTypedAmount,
@@ -380,22 +296,22 @@ const Widget: FC<Swap> = ({
       },
       undefined,
       { shallow: true }
-    );
-  }, [srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, router]);
+    )
+  }, [srcToken, dstToken, srcChainId, dstChainId, srcTypedAmount, router])
 
-  const contract = useSushiXSwapContract(srcChainId);
+  const contract = useSushiXSwapContract(srcChainId)
 
-  const contractWithProvider = useSushiXSwapContractWithProvider(srcChainId);
+  const contractWithProvider = useSushiXSwapContractWithProvider(srcChainId)
 
   // Parse the srcTypedAmount into a srcAmount
   const srcAmount = useMemo<Amount<Type> | undefined>(() => {
-    return tryParseAmount(srcTypedAmount, srcToken);
-  }, [srcToken, srcTypedAmount]);
+    return tryParseAmount(srcTypedAmount, srcToken)
+  }, [srcToken, srcTypedAmount])
 
   // Parse the dstTypedAmount into a dstAmount
   const dstAmount = useMemo<Amount<Type> | undefined>(() => {
-    return tryParseAmount(dstTypedAmount, dstToken);
-  }, [dstToken, dstTypedAmount]);
+    return tryParseAmount(dstTypedAmount, dstToken)
+  }, [dstToken, dstTypedAmount])
 
   // srcTrade
   const srcTrade = useTrade(
@@ -404,12 +320,9 @@ const Widget: FC<Swap> = ({
     sameChainSwap || crossChainSwap || swapTransfer ? srcAmount : undefined,
     sameChainSwap || crossChainSwap || swapTransfer ? srcToken : undefined,
     crossChainSwap || swapTransfer ? srcBridgeToken : dstToken
-  );
+  )
 
-  const srcMinimumAmountOut = useMemo(
-    () => srcTrade?.minimumAmountOut(swapSlippage),
-    [srcTrade, swapSlippage]
-  );
+  const srcMinimumAmountOut = useMemo(() => srcTrade?.minimumAmountOut(swapSlippage), [srcTrade, swapSlippage])
 
   const [eqFee, eqReward, lpFee, protocolFee] = useBridgeFees({
     srcChainId,
@@ -417,42 +330,36 @@ const Widget: FC<Swap> = ({
     srcBridgeToken,
     dstBridgeToken,
     amount: crossChainSwap || swapTransfer ? srcMinimumAmountOut : srcAmount,
-  });
+  })
 
   const bridgeFee = useMemo(() => {
     if (!eqFee || !eqReward || !lpFee || !protocolFee) {
-      return undefined;
+      return undefined
     }
-    return eqFee.subtract(eqReward).add(lpFee).add(protocolFee);
-  }, [eqFee, eqReward, lpFee, protocolFee]);
+    return eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
+  }, [eqFee, eqReward, lpFee, protocolFee])
 
   const srcAmountMinusStargateFee = useMemo(
-    () =>
-      (transfer || transferSwap) && bridgeFee
-        ? srcAmount?.subtract(bridgeFee)
-        : undefined,
+    () => ((transfer || transferSwap) && bridgeFee ? srcAmount?.subtract(bridgeFee) : undefined),
     [bridgeFee, srcAmount, transfer, transferSwap]
-  );
+  )
 
   const srcMinimumAmountOutMinusStargateFee = useMemo(
-    () =>
-      (crossChainSwap || swapTransfer) && bridgeFee
-        ? srcMinimumAmountOut?.subtract(bridgeFee)
-        : undefined,
+    () => ((crossChainSwap || swapTransfer) && bridgeFee ? srcMinimumAmountOut?.subtract(bridgeFee) : undefined),
     [bridgeFee, crossChainSwap, srcMinimumAmountOut, swapTransfer]
-  );
+  )
 
   const srcAmountOut = useMemo(() => {
     if (sameChainSwap) {
-      return srcMinimumAmountOut;
+      return srcMinimumAmountOut
     } else if (transfer) {
-      return srcAmountMinusStargateFee;
+      return srcAmountMinusStargateFee
     } else if (transferSwap) {
-      return srcAmountMinusStargateFee;
+      return srcAmountMinusStargateFee
     } else if (swapTransfer) {
-      return srcMinimumAmountOutMinusStargateFee;
+      return srcMinimumAmountOutMinusStargateFee
     } else if (crossChainSwap) {
-      return srcMinimumAmountOutMinusStargateFee;
+      return srcMinimumAmountOutMinusStargateFee
     }
   }, [
     sameChainSwap,
@@ -463,19 +370,17 @@ const Widget: FC<Swap> = ({
     srcMinimumAmountOut,
     srcAmountMinusStargateFee,
     srcMinimumAmountOutMinusStargateFee,
-  ]);
+  ])
 
   const dstAmountIn = useMemo(() => {
-    if (!srcAmountOut) return;
+    if (!srcAmountOut) return
     return tryParseAmount(
       srcAmountOut.toFixed(
-        srcAmountOut.currency.decimals > dstBridgeToken.decimals
-          ? dstBridgeToken.decimals
-          : undefined
+        srcAmountOut.currency.decimals > dstBridgeToken.decimals ? dstBridgeToken.decimals : undefined
       ),
       dstBridgeToken
-    );
-  }, [dstBridgeToken, srcAmountOut]);
+    )
+  }, [dstBridgeToken, srcAmountOut])
 
   const dstTrade = useTrade(
     dstChainId,
@@ -483,22 +388,22 @@ const Widget: FC<Swap> = ({
     crossChainSwap || transferSwap ? dstAmountIn : undefined,
     crossChainSwap || transferSwap ? dstBridgeToken : undefined,
     crossChainSwap || transferSwap ? dstToken : undefined
-  );
+  )
 
   // const dstMinimumAmountOut = dstTrade?.minimumAmountOut(swapSlippage)
 
   // Output amount displayed... not including slippage for sameChainSwap, transferSwap, crossChainSwap
   const dstAmountOut = useMemo(() => {
     if (sameChainSwap) {
-      return srcTrade?.outputAmount;
+      return srcTrade?.outputAmount
     } else if (transfer) {
-      return dstAmountIn;
+      return dstAmountIn
     } else if (swapTransfer) {
-      return dstAmountIn;
+      return dstAmountIn
     } else if (transferSwap) {
-      return dstTrade?.outputAmount;
+      return dstTrade?.outputAmount
     } else if (crossChainSwap) {
-      return dstTrade?.outputAmount;
+      return dstTrade?.outputAmount
     }
   }, [
     crossChainSwap,
@@ -509,19 +414,19 @@ const Widget: FC<Swap> = ({
     swapTransfer,
     transfer,
     transferSwap,
-  ]);
+  ])
 
   const dstMinimumAmountOut = useMemo(() => {
     if (sameChainSwap) {
-      return srcTrade?.minimumAmountOut(swapSlippage);
+      return srcTrade?.minimumAmountOut(swapSlippage)
     } else if (transfer) {
-      return dstAmountIn;
+      return dstAmountIn
     } else if (swapTransfer) {
-      return dstAmountIn;
+      return dstAmountIn
     } else if (transferSwap) {
-      return dstTrade?.minimumAmountOut(swapSlippage);
+      return dstTrade?.minimumAmountOut(swapSlippage)
     } else if (crossChainSwap) {
-      return dstTrade?.minimumAmountOut(swapSlippage);
+      return dstTrade?.minimumAmountOut(swapSlippage)
     }
   }, [
     crossChainSwap,
@@ -533,32 +438,26 @@ const Widget: FC<Swap> = ({
     swapTransfer,
     transfer,
     transferSwap,
-  ]);
+  ])
 
-  useEffect(
-    () => setDstTypedAmount(dstAmountOut?.toFixed() ?? ""),
-    [dstAmountOut]
-  );
+  useEffect(() => setDstTypedAmount(dstAmountOut?.toFixed() ?? ''), [dstAmountOut])
 
   const price = useMemo(
-    () =>
-      srcAmount && dstAmountOut
-        ? new Price({ baseAmount: srcAmount, quoteAmount: dstAmountOut })
-        : undefined,
+    () => (srcAmount && dstAmountOut ? new Price({ baseAmount: srcAmount, quoteAmount: dstAmountOut }) : undefined),
     [dstAmountOut, srcAmount]
-  );
+  )
 
   const switchCurrencies = useCallback(() => {
-    const _srcChainId = srcChainId;
-    const _srcToken = srcToken;
-    const _dstChainId = dstChainId;
-    const _dstToken = dstToken;
+    const _srcChainId = srcChainId
+    const _srcToken = srcToken
+    const _dstChainId = dstChainId
+    const _dstToken = dstToken
 
-    setSrcChainId(_dstChainId);
-    setSrcToken(_dstToken);
-    setDstChainId(_srcChainId);
-    setDstToken(_srcToken);
-  }, [dstChainId, dstToken, srcChainId, srcToken]);
+    setSrcChainId(_dstChainId)
+    setSrcToken(_dstToken)
+    setDstChainId(_srcChainId)
+    setDstToken(_srcToken)
+  }, [dstChainId, dstToken, srcChainId, srcToken])
 
   const execute = useCallback(() => {
     // console.log([
@@ -583,12 +482,12 @@ const Widget: FC<Swap> = ({
       !dstOutputCurrencyRebase ||
       !contract
     ) {
-      return;
+      return
     }
 
-    const srcShare = srcAmount.toShare(srcInputCurrencyRebase);
+    const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
 
-    setIsWritePending(true);
+    setIsWritePending(true)
 
     const sushiXSwap = new SushiXSwap({
       contract: contract as SushiXSwapContract,
@@ -600,26 +499,16 @@ const Widget: FC<Swap> = ({
       dstUseBentoBox: false,
       user: address,
       debug: true,
-    });
+    })
 
     if (signature) {
-      sushiXSwap.srcCooker.setMasterContractApproval(signature);
+      sushiXSwap.srcCooker.setMasterContractApproval(signature)
     }
 
     if (transfer) {
-      sushiXSwap.transfer(srcAmount, srcShare);
-    } else if (
-      sameChainSwap &&
-      srcTrade &&
-      srcTrade.route.legs.length &&
-      srcMinimumAmountOut
-    ) {
-      sushiXSwap.swap(
-        srcAmount,
-        srcShare,
-        srcMinimumAmountOut,
-        srcMinimumAmountOut.toShare(srcOutputCurrencyRebase)
-      );
+      sushiXSwap.transfer(srcAmount, srcShare)
+    } else if (sameChainSwap && srcTrade && srcTrade.route.legs.length && srcMinimumAmountOut) {
+      sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumAmountOut.toShare(srcOutputCurrencyRebase))
     } else if (
       crossChain &&
       ((srcTrade && srcTrade.route.legs.length && srcMinimumAmountOut) ||
@@ -629,14 +518,10 @@ const Widget: FC<Swap> = ({
         srcAmount,
         srcShare,
         srcMinimumAmountOut,
-        srcMinimumShareOut: srcMinimumAmountOut?.toShare(
-          srcOutputCurrencyRebase
-        ),
+        srcMinimumShareOut: srcMinimumAmountOut?.toShare(srcOutputCurrencyRebase),
         dstMinimumAmountOut,
-        dstMinimumShareOut: dstMinimumAmountOut?.toShare(
-          dstOutputCurrencyRebase
-        ),
-      });
+        dstMinimumShareOut: dstMinimumAmountOut?.toShare(dstOutputCurrencyRebase),
+      })
     }
 
     if (crossChain && srcAmountOut && dstAmountIn) {
@@ -649,25 +534,25 @@ const Widget: FC<Swap> = ({
         // .add(new Percent(100, 10_000))
         // .invert()
         // .multiply(srcAmountOut).quotient)
-      );
+      )
     }
 
-    console.debug("attempt cook");
+    console.debug('attempt cook')
     sushiXSwap
       .cook(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
       .then((res) => {
         if (res) {
-          setSrcTxHash(res.hash as `0x${string}`);
+          setSrcTxHash(res.hash as `0x${string}`)
         }
-        console.debug("then cooked", res);
-        setSignature(undefined);
+        console.debug('then cooked', res)
+        setSignature(undefined)
       })
       .catch((err) => {
-        console.error("catch err", err);
+        console.error('catch err', err)
       })
       .finally(() => {
-        setIsWritePending(false);
-      });
+        setIsWritePending(false)
+      })
   }, [
     address,
     contract,
@@ -692,7 +577,7 @@ const Widget: FC<Swap> = ({
     srcToken,
     srcTrade,
     transfer,
-  ]);
+  ])
 
   // uint256 _srcPoolId,
   // uint256 _dstPoolId,
@@ -709,109 +594,74 @@ const Widget: FC<Swap> = ({
 
   const bridgeImpact = useMemo(() => {
     if (!bridgeFee || !srcAmount || !srcMinimumAmountOut) {
-      return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000));
+      return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
     }
-    return new Percent(
-      bridgeFee.quotient,
-      srcMinimumAmountOut ? srcMinimumAmountOut.quotient : srcAmount.quotient
-    );
-  }, [bridgeFee, srcMinimumAmountOut, srcAmount]);
+    return new Percent(bridgeFee.quotient, srcMinimumAmountOut ? srcMinimumAmountOut.quotient : srcAmount.quotient)
+  }, [bridgeFee, srcMinimumAmountOut, srcAmount])
 
   const priceImpact = useMemo(() => {
     if (transfer) {
-      return bridgeImpact;
+      return bridgeImpact
     } else if (sameChainSwap && srcTrade) {
-      return srcTrade.priceImpact;
+      return srcTrade.priceImpact
     } else if (crossChainSwap && srcTrade && dstTrade) {
-      return srcTrade.priceImpact.add(dstTrade.priceImpact).add(bridgeImpact);
+      return srcTrade.priceImpact.add(dstTrade.priceImpact).add(bridgeImpact)
     } else if (transferSwap && !srcTrade && dstTrade) {
-      return dstTrade.priceImpact.add(bridgeImpact);
+      return dstTrade.priceImpact.add(bridgeImpact)
     } else if (swapTransfer && srcTrade && !dstTrade) {
-      return srcTrade.priceImpact.add(bridgeImpact);
+      return srcTrade.priceImpact.add(bridgeImpact)
     }
-    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000));
-  }, [
-    sameChainSwap,
-    srcTrade,
-    transfer,
-    crossChainSwap,
-    dstTrade,
-    transferSwap,
-    swapTransfer,
-    bridgeImpact,
-  ]);
+    return new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
+  }, [sameChainSwap, srcTrade, transfer, crossChainSwap, dstTrade, transferSwap, swapTransfer, bridgeImpact])
 
   const { data: nativeBalance } = useBalance({
     chainId: srcChainId,
     account: address,
     currency: Native.onChain(srcChainId),
-  });
+  })
 
   const { data: srcBalance } = useBalance({
     chainId: srcChainId,
     account: address,
     currency: srcToken,
-  });
+  })
 
-  const { data: srcPrices } = usePrices({ chainId: srcChainId });
-  const { data: dstPrices } = usePrices({ chainId: dstChainId });
+  const { data: srcPrices } = usePrices({ chainId: srcChainId })
+  const { data: dstPrices } = usePrices({ chainId: dstChainId })
 
-  const srcTokenPrice = srcPrices?.[srcToken.wrapped.address];
-  const dstTokenPrice = dstPrices?.[dstToken.wrapped.address];
+  const srcTokenPrice = srcPrices?.[srcToken.wrapped.address]
+  const dstTokenPrice = dstPrices?.[dstToken.wrapped.address]
 
   const routeNotFound = useMemo(() => {
     if (swapTransfer || transferSwap) {
       return (
-        (isStargateBridgeToken(srcToken) &&
-          (!dstTrade || !dstTrade.route.legs.length)) ||
-        (isStargateBridgeToken(dstToken) &&
-          (!srcTrade || !srcTrade.route.legs.length))
-      );
+        (isStargateBridgeToken(srcToken) && (!dstTrade || !dstTrade.route.legs.length)) ||
+        (isStargateBridgeToken(dstToken) && (!srcTrade || !srcTrade.route.legs.length))
+      )
     } else if (sameChainSwap && srcTrade && srcTrade.route.legs.length) {
-      return !srcTrade;
+      return !srcTrade
     } else if (
       crossChainSwap &&
-      ((srcTrade && srcTrade.route.legs.length) ||
-        (dstTrade && dstTrade.route.legs.length))
+      ((srcTrade && srcTrade.route.legs.length) || (dstTrade && dstTrade.route.legs.length))
     ) {
-      return !srcTrade || !dstTrade;
+      return !srcTrade || !dstTrade
     }
-    return false;
-  }, [
-    swapTransfer,
-    transferSwap,
-    sameChainSwap,
-    srcTrade,
-    crossChainSwap,
-    dstTrade,
-    srcToken,
-    dstToken,
-  ]);
+    return false
+  }, [swapTransfer, transferSwap, sameChainSwap, srcTrade, crossChainSwap, dstTrade, srcToken, dstToken])
 
-  const priceImpactSeverity = useMemo(
-    () => warningSeverity(priceImpact),
-    [priceImpact]
-  );
+  const priceImpactSeverity = useMemo(() => warningSeverity(priceImpact), [priceImpact])
 
-  const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode;
+  const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
 
   const [inputUsd, outputUsd, usdPctChange] = useMemo(() => {
-    const inputUSD =
-      srcAmount && srcTokenPrice
-        ? srcAmount.multiply(srcTokenPrice.asFraction)
-        : undefined;
-    const outputUSD =
-      dstAmountOut && dstTokenPrice
-        ? dstAmountOut.multiply(dstTokenPrice.asFraction)
-        : undefined;
+    const inputUSD = srcAmount && srcTokenPrice ? srcAmount.multiply(srcTokenPrice.asFraction) : undefined
+    const outputUSD = dstAmountOut && dstTokenPrice ? dstAmountOut.multiply(dstTokenPrice.asFraction) : undefined
     const usdPctChange =
       inputUSD && outputUSD && inputUSD?.greaterThan(ZERO)
-        ? ((Number(outputUSD?.toExact()) - Number(inputUSD?.toExact())) /
-            Number(inputUSD?.toExact())) *
-          100
-        : undefined;
-    return [inputUSD, outputUSD, usdPctChange];
-  }, [dstAmountOut, dstTokenPrice, srcAmount, srcTokenPrice]);
+        ? ((Number(outputUSD?.toExact()) - Number(inputUSD?.toExact())) / Number(inputUSD?.toExact())) * 100
+        : undefined
+    return [inputUSD, outputUSD, usdPctChange]
+  }, [dstAmountOut, dstTokenPrice, srcAmount, srcTokenPrice])
 
   useEffect(() => {
     // console.log('getFee escape hatch', [
@@ -836,11 +686,11 @@ const Widget: FC<Swap> = ({
       !dstOutputCurrencyRebase ||
       !contractWithProvider
     ) {
-      return;
+      return
     }
 
     const getFee = async () => {
-      const srcShare = srcAmount.toShare(srcInputCurrencyRebase);
+      const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
 
       const sushiXSwap = new SushiXSwap({
         contract: contractWithProvider as SushiXSwapContract,
@@ -852,22 +702,12 @@ const Widget: FC<Swap> = ({
         dstUseBentoBox: false,
         user: AddressZero,
         debug: false,
-      });
+      })
 
       if (transfer) {
-        sushiXSwap.transfer(srcAmount, srcShare);
-      } else if (
-        sameChainSwap &&
-        srcTrade &&
-        srcTrade.route.legs.length &&
-        srcMinimumAmountOut
-      ) {
-        sushiXSwap.swap(
-          srcAmount,
-          srcShare,
-          srcMinimumAmountOut,
-          srcMinimumAmountOut.toShare(srcOutputCurrencyRebase)
-        );
+        sushiXSwap.transfer(srcAmount, srcShare)
+      } else if (sameChainSwap && srcTrade && srcTrade.route.legs.length && srcMinimumAmountOut) {
+        sushiXSwap.swap(srcAmount, srcShare, srcMinimumAmountOut, srcMinimumAmountOut.toShare(srcOutputCurrencyRebase))
       } else if (
         crossChain &&
         ((srcTrade && srcTrade.route.legs.length && srcMinimumAmountOut) ||
@@ -877,14 +717,10 @@ const Widget: FC<Swap> = ({
           srcAmount,
           srcShare,
           srcMinimumAmountOut,
-          srcMinimumShareOut: srcMinimumAmountOut?.toShare(
-            srcOutputCurrencyRebase
-          ),
+          srcMinimumShareOut: srcMinimumAmountOut?.toShare(srcOutputCurrencyRebase),
           dstMinimumAmountOut,
-          dstMinimumShareOut: dstMinimumAmountOut?.toShare(
-            dstOutputCurrencyRebase
-          ),
-        });
+          dstMinimumShareOut: dstMinimumAmountOut?.toShare(dstOutputCurrencyRebase),
+        })
       }
 
       if (crossChain && srcAmountOut && dstAmountIn) {
@@ -897,23 +733,18 @@ const Widget: FC<Swap> = ({
           // .add(new Percent(100, 10_000))
           // .invert()
           // .multiply(srcAmountOut).quotient)
-        );
+        )
       }
 
       try {
-        const [fee] = await sushiXSwap.getFee(
-          dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined
-        );
-        feeRef.current = Amount.fromRawAmount(
-          Native.onChain(srcChainId),
-          fee.toString()
-        );
+        const [fee] = await sushiXSwap.getFee(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
+        feeRef.current = Amount.fromRawAmount(Native.onChain(srcChainId), fee.toString())
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
-    };
+    }
 
-    void getFee();
+    void getFee()
   }, [
     address,
     contractWithProvider,
@@ -939,7 +770,7 @@ const Widget: FC<Swap> = ({
     srcTrade,
     swapSlippage,
     transfer,
-  ]);
+  ])
 
   const stats = useMemo(() => {
     return (
@@ -951,12 +782,8 @@ const Widget: FC<Swap> = ({
           variant="sm"
           weight={500}
           className={classNames(
-            priceImpactSeverity === 2
-              ? "text-yellow"
-              : priceImpactSeverity > 2
-              ? "text-red"
-              : "text-slate-200",
-            "text-right truncate"
+            priceImpactSeverity === 2 ? 'text-yellow' : priceImpactSeverity > 2 ? 'text-red' : 'text-slate-200',
+            'text-right truncate'
           )}
         >
           {priceImpact?.multiply(-1).toFixed(2)}%
@@ -966,17 +793,8 @@ const Widget: FC<Swap> = ({
             <Typography variant="sm" className="text-slate-400">
               Est. Processing Time
             </Typography>
-            <Typography
-              variant="sm"
-              weight={500}
-              className="text-right truncate text-slate-200"
-            >
-              ~
-              {Math.ceil(
-                STARGATE_CONFIRMATION_SECONDS[
-                  srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS
-                ] / 60
-              )}{" "}
+            <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
+              ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
               minutes
             </Typography>
           </>
@@ -985,13 +803,8 @@ const Widget: FC<Swap> = ({
         <Typography variant="sm" className="text-slate-400">
           Min. Received
         </Typography>
-        <Typography
-          variant="sm"
-          weight={500}
-          className="text-right truncate text-slate-400"
-        >
-          {dstMinimumAmountOut?.toSignificant(6)}{" "}
-          {dstMinimumAmountOut?.currency.symbol}
+        <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
+          {dstMinimumAmountOut?.toSignificant(6)} {dstMinimumAmountOut?.currency.symbol}
         </Typography>
         {crossChain && (
           <>
@@ -999,18 +812,10 @@ const Widget: FC<Swap> = ({
               Bridge Fee
             </Typography>
             {bridgeFee && srcPrices?.[srcBridgeToken.wrapped.address] ? (
-              <Typography
-                variant="sm"
-                weight={500}
-                className="text-right truncate text-slate-400"
-              >
+              <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
                 ~$
                 {bridgeFee?.greaterThan(0)
-                  ? bridgeFee
-                      ?.multiply(
-                        srcPrices[srcBridgeToken.wrapped.address].asFraction
-                      )
-                      ?.toSignificant(6)
+                  ? bridgeFee?.multiply(srcPrices[srcBridgeToken.wrapped.address].asFraction)?.toSignificant(6)
                   : 0}
               </Typography>
             ) : (
@@ -1021,15 +826,9 @@ const Widget: FC<Swap> = ({
             <Typography variant="sm" className="text-slate-400">
               Gas Cost
             </Typography>
-            {feeRef.current &&
-            srcPrices?.[Native.onChain(srcChainId).wrapped.address] ? (
-              <Typography
-                variant="sm"
-                weight={500}
-                className="text-right truncate text-slate-400"
-              >
-                {feeRef.current.toSignificant(6)}{" "}
-                {Native.onChain(srcChainId).symbol}
+            {feeRef.current && srcPrices?.[Native.onChain(srcChainId).wrapped.address] ? (
+              <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
+                {feeRef.current.toSignificant(6)} {Native.onChain(srcChainId).symbol}
                 {/* ~${feeRef.current.multiply(srcPrices[Native.onChain(srcChainId).wrapped.address].asFraction)?.toFixed(2)} */}
               </Typography>
             ) : (
@@ -1040,7 +839,7 @@ const Widget: FC<Swap> = ({
           </>
         )}
       </>
-    );
+    )
   }, [
     priceImpactSeverity,
     priceImpact,
@@ -1050,21 +849,21 @@ const Widget: FC<Swap> = ({
     srcPrices,
     srcBridgeToken.wrapped.address,
     bridgeFee,
-  ]);
+  ])
 
   const onSrcNetworkSelect = useCallback((chainId: StargateChainId) => {
-    setSrcChainId(chainId);
-    setSrcToken(Native.onChain(chainId));
-  }, []);
+    setSrcChainId(chainId)
+    setSrcToken(Native.onChain(chainId))
+  }, [])
 
   const onDstNetworkSelect = useCallback((chainId: StargateChainId) => {
-    setDstChainId(chainId);
-    setDstToken(Native.onChain(chainId));
-  }, []);
+    setDstChainId(chainId)
+    setDstToken(Native.onChain(chainId))
+  }, [])
 
-  const isMounted = useIsMounted();
+  const isMounted = useIsMounted()
 
-  const showWrap = false;
+  const showWrap = false
 
   // DEBUG
   // useEffect(() => {
@@ -1146,15 +945,11 @@ const Widget: FC<Swap> = ({
           id="sushixswap"
           className={classNames(
             theme.background.primary,
-            "flex flex-col mx-auto rounded-2xl relative overflow-hidden min-w-[320px] shadow shadow-slate-900"
+            'flex flex-col mx-auto rounded-2xl relative overflow-hidden min-w-[320px] shadow shadow-slate-900'
           )}
           style={{ maxWidth }}
         >
-          <div
-            className={classNames(
-              "p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium"
-            )}
-          >
+          <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
             <App.NavItemList hideOnMobile={false}>
               <App.NavItem href="https://www.sushi.com/swap" label="Swap" />
               <App.NavItem href="https://www.sushi.com/xswap" label="xSwap" />
@@ -1219,25 +1014,12 @@ const Widget: FC<Swap> = ({
                               onClick={toggleInvert}
                             >
                               <Tooltip
-                                panel={
-                                  <div className="grid grid-cols-2 gap-1">
-                                    {stats}
-                                  </div>
-                                }
-                                button={
-                                  <InformationCircleIcon
-                                    width={16}
-                                    height={16}
-                                  />
-                                }
-                              />{" "}
+                                panel={<div className="grid grid-cols-2 gap-1">{stats}</div>}
+                                button={<InformationCircleIcon width={16} height={16} />}
+                              />{' '}
                               <>
-                                {content}{" "}
-                                {usdPrice && (
-                                  <span className="font-medium text-slate-500">
-                                    (${usdPrice})
-                                  </span>
-                                )}
+                                {content}{' '}
+                                {usdPrice && <span className="font-medium text-slate-500">(${usdPrice})</span>}
                               </>
                             </div>
                             <Disclosure.Button className="flex items-center justify-end flex-grow cursor-pointer">
@@ -1245,8 +1027,8 @@ const Widget: FC<Swap> = ({
                                 width={24}
                                 height={24}
                                 className={classNames(
-                                  open ? "!rotate-180" : "",
-                                  "rotate-0 transition-[transform] duration-300 ease-in-out delay-200"
+                                  open ? '!rotate-180' : '',
+                                  'rotate-0 transition-[transform] duration-300 ease-in-out delay-200'
                                 )}
                               />
                             </Disclosure.Button>
@@ -1289,20 +1071,11 @@ const Widget: FC<Swap> = ({
               </Transition>
 
               {isMounted && !address ? (
-                <Wallet.Button
-                  appearOnMount={false}
-                  fullWidth
-                  color="blue"
-                  size="md"
-                >
+                <Wallet.Button appearOnMount={false} fullWidth color="blue" size="md">
                   Connect Wallet
                 </Wallet.Button>
               ) : isMounted && chain && chain.id !== srcChainId ? (
-                <Button
-                  size="md"
-                  fullWidth
-                  onClick={() => switchNetwork && switchNetwork(srcChainId)}
-                >
+                <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
                   Switch to {chainName[srcChainId]}
                 </Button>
               ) : showWrap ? (
@@ -1317,11 +1090,8 @@ const Widget: FC<Swap> = ({
                 ((srcAmount?.greaterThan(0) &&
                   feeRef.current &&
                   nativeBalance &&
-                  feeRef.current.greaterThan(
-                    nativeBalance[FundSource.WALLET]
-                  )) ||
-                  (srcBalance &&
-                    srcAmount?.greaterThan(srcBalance[FundSource.WALLET]))) ? (
+                  feeRef.current.greaterThan(nativeBalance[FundSource.WALLET])) ||
+                  (srcBalance && srcAmount?.greaterThan(srcBalance[FundSource.WALLET]))) ? (
                 <Button size="md" fullWidth disabled>
                   Insufficient Balance
                 </Button>
@@ -1329,26 +1099,15 @@ const Widget: FC<Swap> = ({
                 <>
                   <ConfirmationComponentController
                     variant="dialog"
-                    onClose={() =>
-                      setTimeout(() => setSrcTxHash(undefined), 1000)
-                    }
+                    onClose={() => setTimeout(() => setSrcTxHash(undefined), 1000)}
                     trigger={({ setOpen }) => (
                       <Button
                         fullWidth
                         size="md"
                         variant="filled"
-                        color={
-                          priceImpactTooHigh || priceImpactSeverity > 2
-                            ? "red"
-                            : "blue"
-                        }
-                        {...(Boolean(
-                          !routeNotFound &&
-                            priceImpactSeverity > 2 &&
-                            !expertMode
-                        ) && {
-                          title:
-                            "Enable expert mode to swap with high price impact",
+                        color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
+                        {...(Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode) && {
+                          title: 'Enable expert mode to swap with high price impact',
                         })}
                         disabled={
                           isWritePending ||
@@ -1357,22 +1116,18 @@ const Widget: FC<Swap> = ({
                           priceImpactTooHigh ||
                           !dstMinimumAmountOut ||
                           dstMinimumAmountOut?.equalTo(ZERO) ||
-                          Boolean(
-                            !routeNotFound &&
-                              priceImpactSeverity > 2 &&
-                              !expertMode
-                          )
+                          Boolean(!routeNotFound && priceImpactSeverity > 2 && !expertMode)
                         }
                         onClick={() => setOpen(true)}
                       >
                         {isWritePending ? (
                           <Dots>Confirm transaction</Dots>
                         ) : priceImpactTooHigh ? (
-                          "High Price Impact"
+                          'High Price Impact'
                         ) : !routeNotFound && priceImpactSeverity > 2 ? (
-                          "Swap Anyway"
+                          'Swap Anyway'
                         ) : (
-                          "Swap"
+                          'Swap'
                         )}
                       </Button>
                     )}
@@ -1393,51 +1148,29 @@ const Widget: FC<Swap> = ({
                         ) : (
                           <SlideIn>
                             <>
-                              <Dialog.Header
-                                border={false}
-                                title="Confirm Swap"
-                                onClose={() => setOpen(false)}
-                              />
+                              <Dialog.Header border={false} title="Confirm Swap" onClose={() => setOpen(false)} />
                               <div className="!my-0 grid grid-cols-12 items-center">
                                 <div className="relative flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
                                   <div className="flex items-center gap-2">
                                     <div className="flex items-center justify-between w-full gap-2">
-                                      <Typography
-                                        variant="h3"
-                                        weight={500}
-                                        className="truncate text-slate-50"
-                                      >
-                                        {srcAmount?.toSignificant(6)}{" "}
+                                      <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                                        {srcAmount?.toSignificant(6)}{' '}
                                       </Typography>
                                       <div className="flex items-center justify-end gap-2 text-right">
                                         {srcAmount && (
                                           <div className="w-5 h-5">
-                                            <Currency.Icon
-                                              currency={srcAmount.currency}
-                                              width={20}
-                                              height={20}
-                                            />
+                                            <Currency.Icon currency={srcAmount.currency} width={20} height={20} />
                                           </div>
                                         )}
-                                        <Typography
-                                          variant="h3"
-                                          weight={500}
-                                          className="text-right text-slate-50"
-                                        >
+                                        <Typography variant="h3" weight={500} className="text-right text-slate-50">
                                           {srcAmount?.currency.symbol}
                                         </Typography>
                                       </div>
                                     </div>
                                   </div>
                                   <div className="flex justify-between gap-2">
-                                    <Typography
-                                      variant="sm"
-                                      weight={500}
-                                      className="text-slate-500"
-                                    >
-                                      {inputUsd
-                                        ? `$${inputUsd.toFixed(2)}`
-                                        : "-"}
+                                    <Typography variant="sm" weight={500} className="text-slate-500">
+                                      {inputUsd ? `$${inputUsd.toFixed(2)}` : '-'}
                                     </Typography>
                                     {srcAmount && (
                                       <Typography
@@ -1451,89 +1184,54 @@ const Widget: FC<Swap> = ({
                                           width={16}
                                           height={16}
                                         />
-                                        <span>
-                                          {
-                                            chains[srcAmount.currency.chainId]
-                                              .name
-                                          }
-                                        </span>
+                                        <span>{chains[srcAmount.currency.chainId].name}</span>
                                       </Typography>
                                     )}
                                   </div>
                                 </div>
                                 <div className="flex items-center justify-center col-span-12 -mt-2.5 -mb-2.5">
                                   <div className="p-0.5 bg-slate-700 border-2 border-slate-800 ring-1 ring-slate-200/5 z-10 rounded-full">
-                                    <ChevronDownIcon
-                                      width={18}
-                                      height={18}
-                                      className="text-slate-200"
-                                    />
+                                    <ChevronDownIcon width={18} height={18} className="text-slate-200" />
                                   </div>
                                 </div>
                                 <div className="flex flex-col col-span-12 gap-1 p-2 border sm:p-4 rounded-2xl bg-slate-700/40 border-slate-200/5">
                                   <div className="flex items-center gap-2">
                                     <div className="flex items-center justify-between w-full gap-2">
-                                      <Typography
-                                        variant="h3"
-                                        weight={500}
-                                        className="truncate text-slate-50"
-                                      >
-                                        {dstAmountOut?.toSignificant(6)}{" "}
+                                      <Typography variant="h3" weight={500} className="truncate text-slate-50">
+                                        {dstAmountOut?.toSignificant(6)}{' '}
                                       </Typography>
                                       <div className="flex items-center justify-end gap-2 text-right">
                                         {dstAmountOut && (
                                           <div className="w-5 h-5">
-                                            <Currency.Icon
-                                              currency={dstAmountOut.currency}
-                                              width={20}
-                                              height={20}
-                                            />
+                                            <Currency.Icon currency={dstAmountOut.currency} width={20} height={20} />
                                           </div>
                                         )}
-                                        <Typography
-                                          variant="h3"
-                                          weight={500}
-                                          className="text-right text-slate-50"
-                                        >
+                                        <Typography variant="h3" weight={500} className="text-right text-slate-50">
                                           {dstAmountOut?.currency.symbol}
                                         </Typography>
                                       </div>
                                     </div>
                                   </div>
                                   <div className="flex justify-between gap-2">
-                                    <Typography
-                                      variant="sm"
-                                      weight={500}
-                                      className="text-slate-500"
-                                    >
-                                      {outputUsd
-                                        ? `$${outputUsd.toFixed(2)}`
-                                        : ""}
+                                    <Typography variant="sm" weight={500} className="text-slate-500">
+                                      {outputUsd ? `$${outputUsd.toFixed(2)}` : ''}
                                       {usdPctChange && (
                                         <span
                                           className={classNames(
                                             usdPctChange === 0
-                                              ? ""
+                                              ? ''
                                               : usdPctChange > 0
-                                              ? "text-green"
+                                              ? 'text-green'
                                               : usdPctChange < -3
-                                              ? "text-red"
+                                              ? 'text-red'
                                               : usdPctChange < -2
-                                              ? "text-yellow"
-                                              : "text-slate-500"
+                                              ? 'text-yellow'
+                                              : 'text-slate-500'
                                           )}
                                         >
-                                          {" "}
-                                          {`${
-                                            usdPctChange === 0
-                                              ? ""
-                                              : usdPctChange > 0
-                                              ? "(+"
-                                              : "("
-                                          }${
-                                            usdPctChange === 0
-                                              ? "0.00"
-                                              : usdPctChange?.toFixed(2)
+                                          {' '}
+                                          {`${usdPctChange === 0 ? '' : usdPctChange > 0 ? '(+' : '('}${
+                                            usdPctChange === 0 ? '0.00' : usdPctChange?.toFixed(2)
                                           }%)`}
                                         </span>
                                       )}
@@ -1546,19 +1244,11 @@ const Widget: FC<Swap> = ({
                                       >
                                         <NetworkIcon
                                           type="naked"
-                                          chainId={
-                                            dstAmountOut.currency.chainId
-                                          }
+                                          chainId={dstAmountOut.currency.chainId}
                                           width={16}
                                           height={16}
                                         />
-                                        <span>
-                                          {
-                                            chains[
-                                              dstAmountOut.currency.chainId
-                                            ].name
-                                          }
-                                        </span>
+                                        <span>{chains[dstAmountOut.currency.chainId].name}</span>
                                       </Typography>
                                     )}
                                   </div>
@@ -1574,12 +1264,8 @@ const Widget: FC<Swap> = ({
                                       weight={600}
                                       className="flex items-center gap-1 text-slate-100"
                                     >
-                                      {content}{" "}
-                                      {usdPrice && (
-                                        <span className="font-normal text-slate-300">
-                                          (${usdPrice})
-                                        </span>
-                                      )}
+                                      {content}{' '}
+                                      {usdPrice && <span className="font-normal text-slate-300">(${usdPrice})</span>}
                                     </Typography>
                                   )}
                                 </Rate>
@@ -1608,10 +1294,7 @@ const Widget: FC<Swap> = ({
                                       size="md"
                                       className="whitespace-nowrap"
                                       fullWidth
-                                      address={
-                                        getSushiXSwapContractConfig(srcChainId)
-                                          .address
-                                      }
+                                      address={getSushiXSwapContractConfig(srcChainId).address}
                                       onSignature={setSignature}
                                     />
                                     <Approve.Token
@@ -1625,16 +1308,10 @@ const Widget: FC<Swap> = ({
                                 }
                                 render={({ approved }) => {
                                   return (
-                                    <Button
-                                      size="md"
-                                      disabled={!approved}
-                                      fullWidth
-                                      color="gradient"
-                                      onClick={execute}
-                                    >
+                                    <Button size="md" disabled={!approved} fullWidth color="gradient" onClick={execute}>
                                       Confirm Swap
                                     </Button>
-                                  );
+                                  )
                                 }}
                               />
                             </>
@@ -1708,5 +1385,5 @@ const Widget: FC<Swap> = ({
       transfer,
       usdPctChange,
     ]
-  );
-};
+  )
+}

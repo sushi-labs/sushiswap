@@ -1,17 +1,13 @@
-import { formatPercent } from "@sushiswap/format";
-import { Typography } from "@sushiswap/ui";
-import { FC } from "react";
+import { formatPercent } from '@sushiswap/format'
+import { Typography } from '@sushiswap/ui'
+import { FC } from 'react'
 
-import { FarmRewardsAvailableTooltip } from "../../../../FarmRewardsAvailableTooltip";
-import { CellProps } from "./types";
+import { FarmRewardsAvailableTooltip } from '../../../../FarmRewardsAvailableTooltip'
+import { CellProps } from './types'
 
 export const PairAPRCell: FC<CellProps> = ({ row }) => {
   return (
-    <Typography
-      variant="sm"
-      weight={600}
-      className="flex items-center justify-end gap-1 text-slate-50"
-    >
+    <Typography variant="sm" weight={600} className="flex items-center justify-end gap-1 text-slate-50">
       {!!row.farm && row.incentiveApr > 0 && <FarmRewardsAvailableTooltip />}
       {formatPercent(row.apr)}
       {/* {row.utilisation1dChange > 0 ? (
@@ -32,5 +28,5 @@ export const PairAPRCell: FC<CellProps> = ({ row }) => {
         </svg>
       )} */}
     </Typography>
-  );
-};
+  )
+}

@@ -1,25 +1,13 @@
-import { Disclosure, Transition } from "@headlessui/react";
-import {
-  ChevronRightIcon,
-  InformationCircleIcon,
-} from "@heroicons/react/outline";
-import {
-  classNames,
-  DEFAULT_INPUT_UNSTYLED,
-  Input,
-  Tab,
-  Tooltip,
-  Typography,
-} from "@sushiswap/ui";
-import { FC } from "react";
+import { Disclosure, Transition } from '@headlessui/react'
+import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { classNames, DEFAULT_INPUT_UNSTYLED, Input, Tab, Tooltip, Typography } from '@sushiswap/ui'
+import { FC } from 'react'
 
-import { useSettings } from "../../lib/state/storage";
+import { useSettings } from '../../lib/state/storage'
 
 export const SlippageToleranceDisclosure: FC = () => {
-  const [
-    { slippageTolerance, slippageToleranceType },
-    { updateSlippageTolerance, updateSlippageToleranceType },
-  ] = useSettings();
+  const [{ slippageTolerance, slippageToleranceType }, { updateSlippageTolerance, updateSlippageToleranceType }] =
+    useSettings()
 
   return (
     <Disclosure>
@@ -53,50 +41,30 @@ export const SlippageToleranceDisclosure: FC = () => {
                   button={<InformationCircleIcon width={14} height={14} />}
                   panel={
                     <div className="flex flex-col gap-2 w-80">
-                      <Typography
-                        variant="xs"
-                        weight={500}
-                        className="text-slate-300"
-                      >
-                        Slippage tolerance is the utmost percentage of slippage
-                        a user is willing to execute a trade with; if the actual
-                        slippage falls outside of the user-designated range, the
-                        transaction will revert.
+                      <Typography variant="xs" weight={500} className="text-slate-300">
+                        Slippage tolerance is the utmost percentage of slippage a user is willing to execute a trade
+                        with; if the actual slippage falls outside of the user-designated range, the transaction will
+                        revert.
                       </Typography>
-                      <Typography
-                        variant="xs"
-                        weight={500}
-                        className="text-slate-300"
-                      >
-                        Slippage is the difference between the expected value of
-                        output from a trade and the actual value due to asset
-                        volatility and liquidity depth.
+                      <Typography variant="xs" weight={500} className="text-slate-300">
+                        Slippage is the difference between the expected value of output from a trade and the actual
+                        value due to asset volatility and liquidity depth.
                       </Typography>
                     </div>
                   }
                 />
               </div>
               <div className="flex gap-1">
-                <Typography
-                  variant="sm"
-                  weight={500}
-                  className="group-hover:text-slate-200 text-slate-400"
-                >
-                  {slippageToleranceType === "auto"
-                    ? "Auto"
-                    : `Custom (${slippageTolerance}%)`}
+                <Typography variant="sm" weight={500} className="group-hover:text-slate-200 text-slate-400">
+                  {slippageToleranceType === 'auto' ? 'Auto' : `Custom (${slippageTolerance}%)`}
                 </Typography>
                 <div
                   className={classNames(
-                    open ? "rotate-90" : "rotate-0",
-                    "transition-all w-5 h-5 -mr-1.5 flex items-center delay-300"
+                    open ? 'rotate-90' : 'rotate-0',
+                    'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
                   )}
                 >
-                  <ChevronRightIcon
-                    width={16}
-                    height={16}
-                    className="group-hover:text-slate-200 text-slate-300"
-                  />
+                  <ChevronRightIcon width={16} height={16} className="group-hover:text-slate-200 text-slate-300" />
                 </div>
               </div>
             </div>
@@ -114,10 +82,8 @@ export const SlippageToleranceDisclosure: FC = () => {
           >
             <Disclosure.Panel>
               <Tab.Group
-                selectedIndex={slippageToleranceType === "auto" ? 0 : 1}
-                onChange={(index) =>
-                  updateSlippageToleranceType(index === 0 ? "auto" : "custom")
-                }
+                selectedIndex={slippageToleranceType === 'auto' ? 0 : 1}
+                onChange={(index) => updateSlippageToleranceType(index === 0 ? 'auto' : 'custom')}
               >
                 <Tab.List>
                   <Tab>Auto</Tab>
@@ -127,26 +93,18 @@ export const SlippageToleranceDisclosure: FC = () => {
                   <Tab.Panel />
                   <Tab.Panel>
                     <div className="flex flex-col gap-2 px-3 py-2 mt-2 bg-slate-900 rounded-xl">
-                      <Typography
-                        variant="xs"
-                        weight={500}
-                        className="flex items-center gap-1 text-slate-300"
-                      >
+                      <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                         Custom Slippage
                       </Typography>
                       <div className="flex items-center gap-2">
                         <Input.Numeric
                           variant="unstyled"
-                          value={slippageTolerance ?? ""}
+                          value={slippageTolerance ?? ''}
                           onUserInput={(val) => updateSlippageTolerance(+val)}
                           placeholder="1"
-                          className={classNames(DEFAULT_INPUT_UNSTYLED, "")}
+                          className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                         />
-                        <Typography
-                          variant="xs"
-                          weight={500}
-                          className="text-slate-400"
-                        >
+                        <Typography variant="xs" weight={500} className="text-slate-400">
                           %
                         </Typography>
                       </div>
@@ -159,5 +117,5 @@ export const SlippageToleranceDisclosure: FC = () => {
         </div>
       )}
     </Disclosure>
-  );
-};
+  )
+}

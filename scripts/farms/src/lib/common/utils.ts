@@ -1,9 +1,7 @@
-import { BigNumber, utils } from "ethers";
+import { BigNumber, utils } from 'ethers'
 
-export const divBigNumberToNumber = (
-  value: BigNumber,
-  decimals: number
-): number => Number(utils.formatUnits(value, decimals));
+export const divBigNumberToNumber = (value: BigNumber, decimals: number): number =>
+  Number(utils.formatUnits(value, decimals))
 
 /**
  * Formula source: http://www.linked8.com/blog/158-apy-to-apr-and-apr-to-apy-calculation-methodologies
@@ -13,4 +11,4 @@ export const divBigNumberToNumber = (
  * @returns {Number} APY as percentage (ie. 6 for APR of 5.82%)
  */
 export const aprToApy = (apr: number | string, frequency: number) =>
-  ((1 + Number(apr) / 100 / frequency) ** frequency - 1) * 100;
+  ((1 + Number(apr) / 100 / frequency) ** frequency - 1) * 100

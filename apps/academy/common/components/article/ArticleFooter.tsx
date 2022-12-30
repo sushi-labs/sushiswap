@@ -1,11 +1,11 @@
-import { AdditionalArticles } from "common/components/AdditionalArticles";
-import { FC } from "react";
+import { AdditionalArticles } from 'common/components/AdditionalArticles'
+import { FC } from 'react'
 
-import { ArticleEntity } from "../../../.mesh";
-import { Card } from "../Card";
+import { ArticleEntity } from '../../../.mesh'
+import { Card } from '../Card'
 
 interface ArticleFooter {
-  articles?: ArticleEntity[];
+  articles?: ArticleEntity[]
 }
 
 export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
@@ -15,5 +15,5 @@ export const ArticleFooter: FC<ArticleFooter> = ({ articles }) => {
         <Card key={i} article={a} />
       ))}
     </AdditionalArticles>
-  );
-};
+  )
+}

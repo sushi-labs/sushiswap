@@ -1,133 +1,103 @@
-import { BigNumber } from "@ethersproject/bignumber";
-import { ErrorCode } from "@ethersproject/logger";
-import { ExternalLinkIcon } from "@heroicons/react/outline";
-import chains, { ChainId } from "@sushiswap/chain";
-import { SUSHI, tryParseAmount, XSUSHI } from "@sushiswap/currency";
-import { formatPercent } from "@sushiswap/format";
-import { XSushi } from "@sushiswap/graph-client";
-import { FundSource } from "@sushiswap/hooks";
-import {
-  Button,
-  createErrorToast,
-  Currency as UICurrency,
-  Dialog,
-  Dots,
-  Link,
-  Tab,
-  Typography,
-} from "@sushiswap/ui";
-import { Approve, Checker, useBalances } from "@sushiswap/wagmi";
-import { getSushiBarContractConfig } from "@sushiswap/wagmi/hooks/useSushiBarContract";
-import { FC, useCallback, useMemo, useState } from "react";
-import useSWR from "swr";
-import {
-  useAccount,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-} from "wagmi";
-import { SendTransactionResult } from "wagmi/actions";
+import { BigNumber } from '@ethersproject/bignumber'
+import { ErrorCode } from '@ethersproject/logger'
+import { ExternalLinkIcon } from '@heroicons/react/outline'
+import chains, { ChainId } from '@sushiswap/chain'
+import { SUSHI, tryParseAmount, XSUSHI } from '@sushiswap/currency'
+import { formatPercent } from '@sushiswap/format'
+import { XSushi } from '@sushiswap/graph-client'
+import { FundSource } from '@sushiswap/hooks'
+import { Button, createErrorToast, Currency as UICurrency, Dialog, Dots, Link, Tab, Typography } from '@sushiswap/ui'
+import { Approve, Checker, useBalances } from '@sushiswap/wagmi'
+import { getSushiBarContractConfig } from '@sushiswap/wagmi/hooks/useSushiBarContract'
+import { FC, useCallback, useMemo, useState } from 'react'
+import useSWR from 'swr'
+import { useAccount, useContractWrite, useNetwork, usePrepareContractWrite } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
-import { useNotifications } from "../../lib/state/storage";
-import { SushiBarInput } from "./SushiBarInput";
+import { useNotifications } from '../../lib/state/storage'
+import { SushiBarInput } from './SushiBarInput'
 
-const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM];
-const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM];
+const SUSHI_TOKEN = SUSHI[ChainId.ETHEREUM]
+const XSUSHI_TOKEN = XSUSHI[ChainId.ETHEREUM]
 
 export const SushiBarSectionMobile: FC = () => {
-  const { address } = useAccount();
-  const { chain: activeChain } = useNetwork();
-  const [, { createNotification }] = useNotifications(address);
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const [, { createNotification }] = useNotifications(address)
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState('')
 
-  const { data: stats } = useSWR<XSushi>(`/earn/api/bar`, (url) =>
-    fetch(url).then((response) => response.json())
-  );
+  const { data: stats } = useSWR<XSushi>(`/earn/api/bar`, (url) => fetch(url).then((response) => response.json()))
 
   const onSettled: any = useCallback(
     (data: SendTransactionResult | undefined, e: Error) => {
       // TODO: ignore until wagmi workaround on ethers error
       // @ts-ignore
       if (e?.code !== ErrorCode.ACTION_REJECTED) {
-        createErrorToast(e?.message, true);
+        createErrorToast(e?.message, true)
       }
 
       if (data && activeChain?.id) {
-        const ts = new Date().getTime();
+        const ts = new Date().getTime()
         createNotification({
-          type: selectedIndex === 0 ? "enterBar" : "leaveBar",
+          type: selectedIndex === 0 ? 'enterBar' : 'leaveBar',
           chainId: activeChain.id,
           txHash: data.hash,
           promise: data.wait(),
           summary: {
-            pending: `${selectedIndex === 0 ? "Entering" : "Exiting"} the Bar`,
-            completed: `Successfully ${
-              selectedIndex === 0 ? "entered" : "exited"
-            } the Bar`,
-            failed: `Something went wrong ${
-              selectedIndex === 0 ? "entering" : "exiting"
-            } the Bar`,
+            pending: `${selectedIndex === 0 ? 'Entering' : 'Exiting'} the Bar`,
+            completed: `Successfully ${selectedIndex === 0 ? 'entered' : 'exited'} the Bar`,
+            failed: `Something went wrong ${selectedIndex === 0 ? 'entering' : 'exiting'} the Bar`,
           },
           timestamp: ts,
           groupTimestamp: ts,
-        });
+        })
       }
     },
     [activeChain?.id, createNotification, selectedIndex]
-  );
+  )
 
   const amount = useMemo(
-    () =>
-      tryParseAmount(value, selectedIndex === 0 ? SUSHI_TOKEN : XSUSHI_TOKEN),
+    () => tryParseAmount(value, selectedIndex === 0 ? SUSHI_TOKEN : XSUSHI_TOKEN),
     [selectedIndex, value]
-  );
+  )
 
   const { config } = usePrepareContractWrite({
     ...getSushiBarContractConfig(ChainId.ETHEREUM),
-    functionName: selectedIndex === 0 ? "enter" : "leave",
+    functionName: selectedIndex === 0 ? 'enter' : 'leave',
     args: amount ? [BigNumber.from(amount.quotient.toString())] : undefined,
     enabled: !!amount?.quotient,
-  });
+  })
 
   const { write, isLoading: isWritePending } = useContractWrite({
     ...config,
     onSettled,
-  });
+  })
 
   const { data: balances } = useBalances({
     currencies: [SUSHI_TOKEN, XSUSHI_TOKEN],
     chainId: ChainId.ETHEREUM,
     account: address,
-  });
+  })
 
   const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
+    setOpen(false)
+  }, [])
 
   return (
     <section className="flex md:hidden">
       <div className="flex flex-col w-full gap-6 rounded-2xl bg-white bg-opacity-[0.02] p-6">
         <div className="flex gap-3">
           <div className="min-w-[44px] min-h-[44px] mt-1">
-            <UICurrency.Icon
-              currency={XSUSHI_TOKEN}
-              width={44}
-              height={44}
-              priority={true}
-            />
+            <UICurrency.Icon currency={XSUSHI_TOKEN} width={44} height={44} priority={true} />
           </div>
           <div className="flex flex-col">
             <Typography variant="lg" weight={600} className="text-slate-100">
               Sushi Bar
             </Typography>
-            <Typography
-              variant="sm"
-              weight={400}
-              className="-mt-1 text-slate-400"
-            >
+            <Typography variant="sm" weight={400} className="-mt-1 text-slate-400">
               Stake to earn trading fee from all pools on Sushi!
             </Typography>
           </div>
@@ -137,28 +107,18 @@ export const SushiBarSectionMobile: FC = () => {
           <Dialog.Content className="pb-[84px]">
             <Dialog.Header title="Sushi Bar" onClose={handleClose} />
             <div className="flex flex-col gap-3 py-3">
-              <Tab.Group
-                selectedIndex={selectedIndex}
-                onChange={setSelectedIndex}
-              >
+              <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
                 <Tab.List>
                   <Tab size="default">Stake</Tab>
                   <Tab size="default">Unstake</Tab>
                 </Tab.List>
                 <div className="flex flex-col justify-center gap-10 p-3">
                   <div className="flex flex-col items-center">
-                    <Typography
-                      variant="sm"
-                      weight={400}
-                      className="text-center text-slate-300"
-                    >
+                    <Typography variant="sm" weight={400} className="text-center text-slate-300">
                       Stake to earn trading fee from all pools on Sushi!
                     </Typography>
                     <div className="flex items-center gap-2 mt-1">
-                      <Typography
-                        variant="xs"
-                        className="text-center text-slate-400"
-                      >
+                      <Typography variant="xs" className="text-center text-slate-400">
                         APR (1y)
                       </Typography>
                       <Typography
@@ -166,16 +126,8 @@ export const SushiBarSectionMobile: FC = () => {
                         className="flex items-center gap-1 text-transparent bg-gradient-to-r from-red to-yellow bg-clip-text"
                       >
                         {formatPercent(stats?.apr12m)}
-                        <Link.External
-                          href={chains[ChainId.ETHEREUM].getTokenUrl(
-                            XSUSHI_TOKEN.address
-                          )}
-                        >
-                          <ExternalLinkIcon
-                            width={12}
-                            height={12}
-                            className="text-slate-200 hover:text-blue"
-                          />
+                        <Link.External href={chains[ChainId.ETHEREUM].getTokenUrl(XSUSHI_TOKEN.address)}>
+                          <ExternalLinkIcon width={12} height={12} className="text-slate-200 hover:text-blue" />
                         </Link.External>
                       </Typography>
                     </div>
@@ -185,9 +137,7 @@ export const SushiBarSectionMobile: FC = () => {
                   <Tab.Panel>
                     <SushiBarInput
                       currency={SUSHI_TOKEN}
-                      balance={
-                        balances?.[SUSHI_TOKEN.address]?.[FundSource.WALLET]
-                      }
+                      balance={balances?.[SUSHI_TOKEN.address]?.[FundSource.WALLET]}
                       value={value}
                       onChange={setValue}
                     />
@@ -195,9 +145,7 @@ export const SushiBarSectionMobile: FC = () => {
                   <Tab.Panel>
                     <SushiBarInput
                       currency={XSUSHI_TOKEN}
-                      balance={
-                        balances?.[XSUSHI_TOKEN.address]?.[FundSource.WALLET]
-                      }
+                      balance={balances?.[XSUSHI_TOKEN.address]?.[FundSource.WALLET]}
                       value={value}
                       onChange={setValue}
                     />
@@ -214,20 +162,13 @@ export const SushiBarSectionMobile: FC = () => {
                             size="md"
                             className="whitespace-nowrap min-h-[48px]"
                             amount={amount}
-                            address={
-                              getSushiBarContractConfig(ChainId.ETHEREUM)
-                                .address
-                            }
+                            address={getSushiBarContractConfig(ChainId.ETHEREUM).address}
                           />
                         </Approve.Components>
                       }
                       render={({ approved }) => {
                         return (
-                          <Checker.Connected
-                            size="md"
-                            fullWidth
-                            className="whitespace-nowrap"
-                          >
+                          <Checker.Connected size="md" fullWidth className="whitespace-nowrap">
                             <Checker.Network
                               size="md"
                               fullWidth
@@ -251,15 +192,15 @@ export const SushiBarSectionMobile: FC = () => {
                                   {isWritePending ? (
                                     <Dots>Confirm transaction</Dots>
                                   ) : selectedIndex === 0 ? (
-                                    "Stake"
+                                    'Stake'
                                   ) : (
-                                    "Unstake"
+                                    'Unstake'
                                   )}
                                 </Button>
                               </Checker.Amounts>
                             </Checker.Network>
                           </Checker.Connected>
-                        );
+                        )
                       }}
                     />
                   </Dialog.Actions>
@@ -270,5 +211,5 @@ export const SushiBarSectionMobile: FC = () => {
         </Dialog>
       </div>
     </section>
-  );
-};
+  )
+}

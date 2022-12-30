@@ -1,18 +1,15 @@
-import { CogIcon } from "@heroicons/react/outline";
-import { IconButton, Overlay, SlideIn } from "@sushiswap/ui";
-import { FC, useState } from "react";
+import { CogIcon } from '@heroicons/react/outline'
+import { IconButton, Overlay, SlideIn } from '@sushiswap/ui'
+import { FC, useState } from 'react'
 
-import { ExpertMode } from "./ExpertMode";
-import { SlippageToleranceDisclosure } from "./SlippageToleranceDisclosure";
+import { ExpertMode } from './ExpertMode'
+import { SlippageToleranceDisclosure } from './SlippageToleranceDisclosure'
 
 export const SettingsOverlay: FC = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   return (
     <>
-      <IconButton
-        className="hover:animate-spin-slow"
-        onClick={() => setOpen(true)}
-      >
+      <IconButton className="hover:animate-spin-slow" onClick={() => setOpen(true)}>
         <CogIcon width={20} height={20} />
       </IconButton>
       <SlideIn>
@@ -29,5 +26,5 @@ export const SettingsOverlay: FC = () => {
         </SlideIn.FromLeft>
       </SlideIn>
     </>
-  );
-};
+  )
+}

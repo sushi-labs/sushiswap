@@ -1,12 +1,8 @@
-import React from "react";
+import React from 'react'
 
-import { HEADER_HEIGHT } from "../constants";
+import { HEADER_HEIGHT } from '../constants'
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="[color-scheme:dark]">
       <head />
@@ -17,5 +13,5 @@ export default function RootLayout({
         {children}
       </body>
     </html>
-  );
+  )
 }

@@ -1,2 +1,2 @@
-export * from "./TokenAdder";
-export * from "./TokenTable";
+export * from './TokenAdder'
+export * from './TokenTable'

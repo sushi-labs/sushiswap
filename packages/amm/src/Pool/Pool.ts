@@ -1,10 +1,10 @@
-import { Amount, Token } from "@sushiswap/currency";
-import { JSBI } from "@sushiswap/math";
+import { Amount, Token } from '@sushiswap/currency'
+import { JSBI } from '@sushiswap/math'
 
-import { Fee } from "../Fee";
+import { Fee } from '../Fee'
 
 export abstract class Pool {
-  public abstract readonly liquidityToken: Token;
+  public abstract readonly liquidityToken: Token
 
   // Swap gas cost, could be different depending on source & dest,
   // wallet->wallet, bento->wallet/wallet->bento, bento->bento
@@ -12,30 +12,26 @@ export abstract class Pool {
   // wallet->wallet: ???
   // bento->wallet/wallet->bento: ???
   // bento->bento: ???
-  public abstract readonly swapGasCost: JSBI;
+  public abstract readonly swapGasCost: JSBI
 
   // Minimum pool liquidity, typically 1000
-  public abstract readonly minLiquidity: JSBI;
+  public abstract readonly minLiquidity: JSBI
 
-  public abstract get chainId(): number;
+  public abstract get chainId(): number
 
-  public abstract get fee(): Fee;
+  public abstract get fee(): Fee
 
-  public abstract get assets(): Token[];
+  public abstract get assets(): Token[]
 
-  public abstract get reserves(): Amount<Token>[];
+  public abstract get reserves(): Amount<Token>[]
 
   public abstract getLiquidityMinted(
     totalSupply: Amount<Token>,
     tokenAmountA: Amount<Token>,
     tokenAmountB: Amount<Token>
-  ): Amount<Token>;
+  ): Amount<Token>
 
-  public abstract getLiquidityValue(
-    token: Token,
-    totalSupply: Amount<Token>,
-    liquidity: Amount<Token>
-  ): Amount<Token>;
+  public abstract getLiquidityValue(token: Token, totalSupply: Amount<Token>, liquidity: Amount<Token>): Amount<Token>
 
-  public abstract involvesToken(token: Token): boolean;
+  public abstract involvesToken(token: Token): boolean
 }

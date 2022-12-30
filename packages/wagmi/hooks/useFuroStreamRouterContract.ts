@@ -1,27 +1,23 @@
-import furoExports from "@sushiswap/furo/exports.json";
-import { FuroStreamRouter } from "@sushiswap/furo/typechain";
-import { Address, useContract, useProvider } from "wagmi";
+import furoExports from '@sushiswap/furo/exports.json'
+import { FuroStreamRouter } from '@sushiswap/furo/typechain'
+import { Address, useContract, useProvider } from 'wagmi'
 
-export const getFuroStreamRouterContractConfig = (
-  chainId: number | undefined
-) => ({
+export const getFuroStreamRouterContractConfig = (chainId: number | undefined) => ({
   // @ts-ignore
-  address: (furoExports[chainId as keyof Omit<typeof furoExports, "31337">]?.[0]
   // @ts-ignore
-    ?.contracts?.FuroStreamRouter?.address || "") as Address,
+  address: (furoExports[chainId as keyof Omit<typeof furoExports, '31337'>]?.[0]?.contracts?.FuroStreamRouter
+    ?.address || '') as Address,
   abi:
     // @ts-ignore
     furoExports[
-      chainId as unknown as keyof Omit<typeof furoExports, "31337">
-    // @ts-ignore
+      chainId as unknown as keyof Omit<typeof furoExports, '31337'>
+      // @ts-ignore
     ]?.[0]?.contracts?.FuroStreamRouter?.abi ?? [],
-});
+})
 
-export function useFuroStreamRouterContract(
-  chainId: number | undefined
-): FuroStreamRouter | null {
+export function useFuroStreamRouterContract(chainId: number | undefined): FuroStreamRouter | null {
   return useContract({
     ...getFuroStreamRouterContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
-  }) as FuroStreamRouter;
+  }) as FuroStreamRouter
 }

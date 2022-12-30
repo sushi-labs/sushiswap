@@ -1,27 +1,27 @@
-import { Signature } from "@ethersproject/bytes";
-import { Contract } from "@ethersproject/contracts";
+import { Signature } from '@ethersproject/bytes'
+import { Contract } from '@ethersproject/contracts'
 
 interface Batch {
-  contract: Contract;
-  actions: (string | undefined)[];
+  contract: Contract
+  actions: (string | undefined)[]
 }
 
 interface Action {
-  contract: Contract;
-  fn: string;
-  args: ReadonlyArray<unknown>;
+  contract: Contract
+  fn: string
+  args: ReadonlyArray<unknown>
 }
 
 export type LiquidityInput = {
-  token: string;
-  native: boolean;
-  amount: string;
-};
+  token: string
+  native: boolean
+  amount: string
+}
 
 export type LiquidityOutput = {
-  token: string;
-  amount: string;
-};
+  token: string
+  amount: string
+}
 
 enum PermitType {
   AMOUNT = 1,
@@ -29,20 +29,20 @@ enum PermitType {
 }
 
 interface BaseSignatureData {
-  v: number;
-  r: string;
-  s: string;
-  deadline: number;
-  nonce: number;
-  owner: string;
-  spender: string;
-  chainId: number;
-  tokenAddress: string;
-  permitType: PermitType;
+  v: number
+  r: string
+  s: string
+  deadline: number
+  nonce: number
+  owner: string
+  spender: string
+  chainId: number
+  tokenAddress: string
+  permitType: PermitType
 }
 
 export interface StandardSignatureData extends BaseSignatureData {
-  amount: string;
+  amount: string
 }
 
 /**
@@ -52,8 +52,8 @@ export interface StandardSignatureData extends BaseSignatureData {
  * @param args
  */
 export const getAsEncodedAction = ({ contract, fn, args }: Action): string => {
-  return contract.interface.encodeFunctionData(fn, args);
-};
+  return contract.interface.encodeFunctionData(fn, args)
+}
 
 /**
  * Make sure provided contract has a batch function.
@@ -62,24 +62,24 @@ export const getAsEncodedAction = ({ contract, fn, args }: Action): string => {
  * @param actions array of encoded function data
  */
 export const batchAction = ({ contract, actions = [] }: Batch): string => {
-  const validated = actions.filter(Boolean);
+  const validated = actions.filter(Boolean)
 
   // Call action directly to save gas
   if (validated.length === 1 && validated[0]) {
-    return validated[0];
+    return validated[0]
   }
 
   // Call batch function with valid actions
   if (validated.length > 1) {
-    return contract.interface.encodeFunctionData("multicall", [validated]);
+    return contract.interface.encodeFunctionData('multicall', [validated])
   }
 
-  throw new Error("Invalid actions");
-};
+  throw new Error('Invalid actions')
+}
 
 interface UnwrapETHAction {
-  router: Contract;
-  recipient: string;
+  router: Contract
+  recipient: string
 }
 
 /**
@@ -89,24 +89,17 @@ interface UnwrapETHAction {
  * @param liquidityOutput array with minimum output amounts for underlying tokens
  */
 export const unwrapWETHAction = ({ router, recipient }: UnwrapETHAction) => {
-  return router.interface.encodeFunctionData("unwrapWETH", [recipient]);
-};
-
-export interface ApproveMasterContractActionProps {
-  router: Contract;
-  signature?: Signature;
+  return router.interface.encodeFunctionData('unwrapWETH', [recipient])
 }
 
-export const approveMasterContractAction = ({
-  router,
-  signature,
-}: ApproveMasterContractActionProps) => {
-  if (!signature) return undefined;
+export interface ApproveMasterContractActionProps {
+  router: Contract
+  signature?: Signature
+}
 
-  const { v, r, s } = signature;
-  return router.interface.encodeFunctionData("approveMasterContract", [
-    v,
-    r,
-    s,
-  ]);
-};
+export const approveMasterContractAction = ({ router, signature }: ApproveMasterContractActionProps) => {
+  if (!signature) return undefined
+
+  const { v, r, s } = signature
+  return router.interface.encodeFunctionData('approveMasterContract', [v, r, s])
+}

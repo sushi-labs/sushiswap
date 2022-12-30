@@ -1,4 +1,4 @@
-import { ChainId } from "@sushiswap/chain";
+import { ChainId } from '@sushiswap/chain'
 
 export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
   ChainId.OPTIMISM,
@@ -9,7 +9,7 @@ export const TRIDENT_ENABLED_NETWORKS: ChainId[] = [
   ChainId.ARBITRUM,
   // ChainId.AVALANCHE,
   // ChainId.BSC,
-];
+]
 
 export const AMM_ENABLED_NETWORKS: ChainId[] = [
   ChainId.ETHEREUM,
@@ -26,8 +26,8 @@ export const AMM_ENABLED_NETWORKS: ChainId[] = [
   ChainId.HARMONY,
   ChainId.BOBA,
   ChainId.POLYGON,
-];
+]
 
 export const SUPPORTED_CHAIN_IDS: ChainId[] = Array.from(
   new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS])
-);
+)

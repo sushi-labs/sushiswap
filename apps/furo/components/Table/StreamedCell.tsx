@@ -1,7 +1,7 @@
-import { ProgressBar, ProgressColor, Typography } from "@sushiswap/ui";
-import React, { FC } from "react";
+import { ProgressBar, ProgressColor, Typography } from '@sushiswap/ui'
+import React, { FC } from 'react'
 
-import { CellProps } from "./types";
+import { CellProps } from './types'
 
 export const StreamedCell: FC<CellProps> = ({ row }) => {
   return (
@@ -16,5 +16,5 @@ export const StreamedCell: FC<CellProps> = ({ row }) => {
         {row.streamedPercentage?.toPercentageString(2)}
       </Typography>
     </div>
-  );
-};
+  )
+}

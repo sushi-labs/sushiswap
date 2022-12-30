@@ -1,20 +1,20 @@
-import { Zero } from "@ethersproject/constants";
-import { TransactionRequest } from "@ethersproject/providers";
-import { ChainId } from "@sushiswap/chain";
-import { Amount, SUSHI, SUSHI_ADDRESS, Token } from "@sushiswap/currency";
-import { NotificationData } from "@sushiswap/ui13/components/toast";
-import { BigNumber } from "ethers";
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
-import { erc20ABI, useAccount, useContractReads } from "wagmi";
-import { SendTransactionResult } from "wagmi/actions";
+import { Zero } from '@ethersproject/constants'
+import { TransactionRequest } from '@ethersproject/providers'
+import { ChainId } from '@sushiswap/chain'
+import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
+import { NotificationData } from '@sushiswap/ui13/components/toast'
+import { BigNumber } from 'ethers'
+import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
+import { erc20ABI, useAccount, useContractReads } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import {
   MASTERCHEF_ADDRESS,
   MASTERCHEF_V2_ADDRESS,
   MINICHEF_ADDRESS,
   useMasterChefContract,
-} from "../useMasterChefContract";
-import { useSendTransaction } from "../useSendTransaction";
+} from '../useMasterChefContract'
+import { useSendTransaction } from '../useSendTransaction'
 
 export enum Chef {
   MASTERCHEF,
@@ -22,26 +22,25 @@ export enum Chef {
   MINICHEF,
 }
 
-interface UseMasterChefReturn
-  extends Pick<ReturnType<typeof useContractReads>, "isLoading" | "isError"> {
-  balance: Amount<Token> | undefined;
-  harvest: undefined | (() => void);
-  pendingSushi: Amount<Token> | undefined;
-  isWritePending: boolean;
-  isWriteError: boolean;
+interface UseMasterChefReturn extends Pick<ReturnType<typeof useContractReads>, 'isLoading' | 'isError'> {
+  balance: Amount<Token> | undefined
+  harvest: undefined | (() => void)
+  pendingSushi: Amount<Token> | undefined
+  isWritePending: boolean
+  isWriteError: boolean
 }
 
 interface UseMasterChefParams {
-  chainId: number;
-  chef: Chef;
-  pid: number;
-  token: Token;
-  enabled?: boolean;
-  onSuccess?(data: NotificationData): void;
-  watch?: boolean;
+  chainId: number
+  chef: Chef
+  pid: number
+  token: Token
+  enabled?: boolean
+  onSuccess?(data: NotificationData): void
+  watch?: boolean
 }
 
-type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn;
+type UseMasterChef = (params: UseMasterChefParams) => UseMasterChefReturn
 
 export const useMasterChef: UseMasterChef = ({
   chainId,
@@ -52,11 +51,11 @@ export const useMasterChef: UseMasterChef = ({
   enabled = true,
   onSuccess,
 }) => {
-  const { address } = useAccount();
-  const contract = useMasterChefContract(chainId, chef);
+  const { address } = useAccount()
+  const contract = useMasterChefContract(chainId, chef)
 
   const contracts = useMemo(() => {
-    if (!chainId || !enabled || !address) return [];
+    if (!chainId || !enabled || !address) return []
 
     if (chainId === ChainId.ETHEREUM) {
       return [
@@ -64,65 +63,58 @@ export const useMasterChef: UseMasterChef = ({
           chainId: ChainId.ETHEREUM,
           address: SUSHI_ADDRESS[chainId],
           abi: erc20ABI,
-          functionName: "balanceOf",
-          args: [
-            chef === Chef.MASTERCHEF
-              ? MASTERCHEF_ADDRESS[chainId]
-              : MASTERCHEF_V2_ADDRESS[chainId],
-          ],
+          functionName: 'balanceOf',
+          args: [chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
-          address:
-            chef === Chef.MASTERCHEF
-              ? MASTERCHEF_ADDRESS[chainId]
-              : MASTERCHEF_V2_ADDRESS[chainId],
+          address: chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId],
           abi: [
             chef === Chef.MASTERCHEF
               ? ({
                   inputs: [
-                    { internalType: "uint256", name: "", type: "uint256" },
-                    { internalType: "address", name: "", type: "address" },
+                    { internalType: 'uint256', name: '', type: 'uint256' },
+                    { internalType: 'address', name: '', type: 'address' },
                   ],
-                  name: "userInfo",
+                  name: 'userInfo',
                   outputs: [
                     {
-                      internalType: "uint256",
-                      name: "amount",
-                      type: "uint256",
+                      internalType: 'uint256',
+                      name: 'amount',
+                      type: 'uint256',
                     },
                     {
-                      internalType: "uint256",
-                      name: "rewardDebt",
-                      type: "uint256",
+                      internalType: 'uint256',
+                      name: 'rewardDebt',
+                      type: 'uint256',
                     },
                   ],
-                  stateMutability: "view",
-                  type: "function",
+                  stateMutability: 'view',
+                  type: 'function',
                 } as const)
               : ({
                   inputs: [
-                    { internalType: "uint256", name: "", type: "uint256" },
-                    { internalType: "address", name: "", type: "address" },
+                    { internalType: 'uint256', name: '', type: 'uint256' },
+                    { internalType: 'address', name: '', type: 'address' },
                   ],
-                  name: "userInfo",
+                  name: 'userInfo',
                   outputs: [
                     {
-                      internalType: "uint256",
-                      name: "amount",
-                      type: "uint256",
+                      internalType: 'uint256',
+                      name: 'amount',
+                      type: 'uint256',
                     },
                     {
-                      internalType: "int256",
-                      name: "rewardDebt",
-                      type: "int256",
+                      internalType: 'int256',
+                      name: 'rewardDebt',
+                      type: 'int256',
                     },
                   ],
-                  stateMutability: "view",
-                  type: "function",
+                  stateMutability: 'view',
+                  type: 'function',
                 } as const),
           ] as const,
-          functionName: "userInfo",
+          functionName: 'userInfo',
           args: [BigNumber.from(pid), address],
         } as const,
         {
@@ -131,21 +123,19 @@ export const useMasterChef: UseMasterChef = ({
           abi: [
             {
               inputs: [
-                { internalType: "uint256", name: "_pid", type: "uint256" },
-                { internalType: "address", name: "_user", type: "address" },
+                { internalType: 'uint256', name: '_pid', type: 'uint256' },
+                { internalType: 'address', name: '_user', type: 'address' },
               ],
-              name: "pendingSushi",
-              outputs: [
-                { internalType: "uint256", name: "pending", type: "uint256" },
-              ],
-              stateMutability: "view",
-              type: "function",
+              name: 'pendingSushi',
+              outputs: [{ internalType: 'uint256', name: 'pending', type: 'uint256' }],
+              stateMutability: 'view',
+              type: 'function',
             },
           ] as const,
-          functionName: "pendingSushi",
+          functionName: 'pendingSushi',
           args: [BigNumber.from(pid), address],
         } as const,
-      ];
+      ]
     }
 
     if (chainId in MINICHEF_ADDRESS && chainId in SUSHI_ADDRESS) {
@@ -154,7 +144,7 @@ export const useMasterChef: UseMasterChef = ({
           chainId,
           address: SUSHI_ADDRESS[chainId],
           abi: erc20ABI,
-          functionName: "balanceOf",
+          functionName: 'balanceOf',
           args: [MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS]],
         } as const,
         {
@@ -163,26 +153,26 @@ export const useMasterChef: UseMasterChef = ({
           abi: [
             {
               inputs: [
-                { internalType: "uint256", name: "", type: "uint256" },
-                { internalType: "address", name: "", type: "address" },
+                { internalType: 'uint256', name: '', type: 'uint256' },
+                { internalType: 'address', name: '', type: 'address' },
               ],
-              name: "userInfo",
+              name: 'userInfo',
               outputs: [
-                { internalType: "uint256", name: "amount", type: "uint256" },
-                { internalType: "int256", name: "rewardDebt", type: "int256" },
+                { internalType: 'uint256', name: 'amount', type: 'uint256' },
+                { internalType: 'int256', name: 'rewardDebt', type: 'int256' },
               ],
-              stateMutability: "view",
-              type: "function",
+              stateMutability: 'view',
+              type: 'function',
             } as const,
           ] as const,
-          functionName: "userInfo",
+          functionName: 'userInfo',
           args: [BigNumber.from(pid), address],
         } as const,
-      ] as const;
+      ] as const
     }
 
-    return [];
-  }, [address, chainId, chef, enabled, pid]);
+    return []
+  }, [address, chainId, chef, enabled, pid])
 
   // Can't type runtime...
   const { data, isLoading, isError } = useContractReads({
@@ -190,46 +180,37 @@ export const useMasterChef: UseMasterChef = ({
     watch,
     keepPreviousData: true,
     enabled: contracts.length > 0 && enabled,
-  });
+  })
 
-  console.log({ data });
+  console.log({ data })
 
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
-    const _sushiBalance = data?.[0] ? data?.[0] : undefined;
+    const _sushiBalance = data?.[0] ? data?.[0] : undefined
     const _balance = data?.[1]
       ? (
           data?.[1] as {
-            amount: BigNumber;
-            rewardDebt: BigNumber;
+            amount: BigNumber
+            rewardDebt: BigNumber
           }
         ).amount
-      : undefined;
-    const _pendingSushi = data?.[2] ? data?.[2] : undefined;
-    const balance = Amount.fromRawAmount(
-      token,
-      _balance ? _balance.toString() : 0
-    );
+      : undefined
+    const _pendingSushi = data?.[2] ? data?.[2] : undefined
+    const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
     const pendingSushi = SUSHI[chainId]
-      ? Amount.fromRawAmount(
-          SUSHI[chainId],
-          _pendingSushi ? _pendingSushi.toString() : 0
-        )
-      : undefined;
+      ? Amount.fromRawAmount(SUSHI[chainId], _pendingSushi ? _pendingSushi.toString() : 0)
+      : undefined
     const sushiBalance = SUSHI[chainId]
-      ? Amount.fromRawAmount(
-          SUSHI[chainId],
-          _sushiBalance ? _sushiBalance.toString() : 0
-        )
-      : undefined;
-    return [sushiBalance, balance, pendingSushi];
-  }, [chainId, data, token]);
+      ? Amount.fromRawAmount(SUSHI[chainId], _sushiBalance ? _sushiBalance.toString() : 0)
+      : undefined
+    return [sushiBalance, balance, pendingSushi]
+  }, [chainId, data, token])
 
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
       if (onSuccess && data) {
-        const ts = new Date().getTime();
+        const ts = new Date().getTime()
         onSuccess({
-          type: "claimRewards",
+          type: 'claimRewards',
           chainId,
           txHash: data.hash,
           promise: data.wait(),
@@ -240,62 +221,48 @@ export const useMasterChef: UseMasterChef = ({
           },
           groupTimestamp: ts,
           timestamp: ts,
-        });
+        })
       }
     },
     [chainId, onSuccess]
-  );
+  )
 
   const prepare = useCallback(
-    (
-      setRequest: Dispatch<
-        SetStateAction<(TransactionRequest & { to: string }) | undefined>
-      >
-    ) => {
-      if (!address || !chainId || !data || !contract) return;
+    (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+      if (!address || !chainId || !data || !contract) return
       if (chef === Chef.MASTERCHEF) {
         setRequest({
           from: address,
           to: contract.address,
-          data: contract.interface.encodeFunctionData("deposit", [pid, Zero]),
-        });
+          data: contract.interface.encodeFunctionData('deposit', [pid, Zero]),
+        })
       } else if (chef === Chef.MASTERCHEF_V2) {
-        if (
-          pendingSushi &&
-          sushiBalance &&
-          pendingSushi.greaterThan(sushiBalance)
-        ) {
+        if (pendingSushi && sushiBalance && pendingSushi.greaterThan(sushiBalance)) {
           setRequest({
             from: address,
             to: contract.address,
-            data: contract.interface.encodeFunctionData("batch", [
-              contract.interface.encodeFunctionData("harvestFromMasterChef"),
-              contract.interface.encodeFunctionData("harvest", [pid, address]),
+            data: contract.interface.encodeFunctionData('batch', [
+              contract.interface.encodeFunctionData('harvestFromMasterChef'),
+              contract.interface.encodeFunctionData('harvest', [pid, address]),
             ]),
-          });
+          })
         } else {
           setRequest({
             from: address,
             to: contract.address,
-            data: contract.interface.encodeFunctionData("harvest", [
-              pid,
-              address,
-            ]),
-          });
+            data: contract.interface.encodeFunctionData('harvest', [pid, address]),
+          })
         }
       } else if (chef === Chef.MINICHEF) {
         setRequest({
           from: address,
           to: contract.address,
-          data: contract.interface.encodeFunctionData("harvest", [
-            pid,
-            address,
-          ]),
-        });
+          data: contract.interface.encodeFunctionData('harvest', [pid, address]),
+        })
       }
     },
     [address, chainId, chef, contract, data, pendingSushi, pid, sushiBalance]
-  );
+  )
 
   const {
     sendTransaction: harvest,
@@ -305,7 +272,7 @@ export const useMasterChef: UseMasterChef = ({
     chainId,
     onSettled,
     prepare,
-  });
+  })
 
   return useMemo(() => {
     return {
@@ -316,14 +283,6 @@ export const useMasterChef: UseMasterChef = ({
       pendingSushi,
       isWritePending,
       isWriteError,
-    };
-  }, [
-    balance,
-    harvest,
-    isError,
-    isLoading,
-    isWriteError,
-    isWritePending,
-    pendingSushi,
-  ]);
-};
+    }
+  }, [balance, harvest, isError, isLoading, isWriteError, isWritePending, pendingSushi])
+}

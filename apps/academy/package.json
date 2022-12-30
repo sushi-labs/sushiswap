@@ -3,14 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build-academy": "next build && next-sitemap --config next-sitemap.config.mjs",
     "build": "next build && next-sitemap --config next-sitemap.config.mjs",
+    "build-academy": "next build && next-sitemap --config next-sitemap.config.mjs",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient && rm -rf .mesh",
     "dev": "next dev --port 3009",
     "generate": "graphql-mesh build",
     "lint": "next lint",
-    "start": "next start",
-    "check": "tsc --pretty --noEmit"
+    "start": "next start"
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.8.0",

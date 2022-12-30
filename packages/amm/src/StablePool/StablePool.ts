@@ -1,81 +1,61 @@
-import { Amount, Price, Share, Token } from "@sushiswap/currency";
-import { JSBI, sqrt, ZERO } from "@sushiswap/math";
-import EXPORTS from "@sushiswap/trident/exports/all.json";
-import invariant from "tiny-invariant";
+import { Amount, Price, Share, Token } from '@sushiswap/currency'
+import { JSBI, sqrt, ZERO } from '@sushiswap/math'
+import EXPORTS from '@sushiswap/trident/exports/all.json'
+import invariant from 'tiny-invariant'
 
-import {
-  InsufficientInputAmountError,
-  InsufficientReservesError,
-} from "../errors";
-import { Fee } from "../Fee";
-import { Pool } from "../Pool";
-import { computeStablePoolAddress } from "./computeStablePoolAddress";
+import { InsufficientInputAmountError, InsufficientReservesError } from '../errors'
+import { Fee } from '../Fee'
+import { Pool } from '../Pool'
+import { computeStablePoolAddress } from './computeStablePoolAddress'
 
 interface Rebase {
-  elastic: JSBI;
-  base: JSBI;
+  elastic: JSBI
+  base: JSBI
 }
 
 export class StablePool implements Pool {
-  public readonly liquidityToken: Token;
-  public readonly swapGasCost = JSBI.BigInt(60000);
-  public readonly minLiquidity = JSBI.BigInt(1000);
-  public readonly fee: Fee;
-  public readonly total0: Rebase;
-  public readonly total1: Rebase;
-  private readonly tokenAmounts: [Amount<Token>, Amount<Token>];
-  private readonly decimals0: JSBI;
-  private readonly decimals1: JSBI;
-  private readonly MAX_FEE = JSBI.BigInt(10000);
+  public readonly liquidityToken: Token
+  public readonly swapGasCost = JSBI.BigInt(60000)
+  public readonly minLiquidity = JSBI.BigInt(1000)
+  public readonly fee: Fee
+  public readonly total0: Rebase
+  public readonly total1: Rebase
+  private readonly tokenAmounts: [Amount<Token>, Amount<Token>]
+  private readonly decimals0: JSBI
+  private readonly decimals1: JSBI
+  private readonly MAX_FEE = JSBI.BigInt(10000)
 
   public static getAddress(tokenA: Token, tokenB: Token, fee: Fee): string {
     return computeStablePoolAddress({
-      factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts
-        .StablePoolFactory.address,
+      factoryAddress: (EXPORTS as any)[tokenA.chainId][0].contracts.StablePoolFactory.address,
       tokenA,
       tokenB,
       fee,
-    });
+    })
   }
 
-  public constructor(
-    amountA: Amount<Token>,
-    amountB: Amount<Token>,
-    fee: Fee,
-    total0: Rebase,
-    total1: Rebase
-  ) {
+  public constructor(amountA: Amount<Token>, amountB: Amount<Token>, fee: Fee, total0: Rebase, total1: Rebase) {
     const tokenAmounts = amountA.currency.sortsBefore(amountB.currency) // does safety checks
       ? [amountA, amountB]
-      : [amountB, amountA];
+      : [amountB, amountA]
     this.liquidityToken = new Token({
       chainId: tokenAmounts[0].currency.chainId,
-      address: StablePool.getAddress(
-        tokenAmounts[0].currency,
-        tokenAmounts[1].currency,
-        fee
-      ),
+      address: StablePool.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency, fee),
       decimals: 18,
-      symbol: "SSLP",
-      name: "Sushi Stable LP Token",
-    });
-    this.fee = fee;
-    this.tokenAmounts = tokenAmounts as [Amount<Token>, Amount<Token>];
+      symbol: 'SSLP',
+      name: 'Sushi Stable LP Token',
+    })
+    this.fee = fee
+    this.tokenAmounts = tokenAmounts as [Amount<Token>, Amount<Token>]
 
     // decimals0 = uint256(10)**(ERC20(_token0).decimals());
     // decimals1 = uint256(10)**(ERC20(_token1).decimals());
 
-    this.decimals0 = JSBI.exponentiate(
-      JSBI.BigInt(10),
-      JSBI.BigInt(this.tokenAmounts[0].currency.decimals)
-    );
-    this.decimals1 = JSBI.exponentiate(
-      JSBI.BigInt(10),
-      JSBI.BigInt(this.tokenAmounts[1].currency.decimals)
-    );
+    this.decimals0 = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.tokenAmounts[0].currency.decimals))
+    this.decimals1 = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(this.tokenAmounts[1].currency.decimals))
 
-    this.total0 = total0;
-    this.total1 = total1;
+    this.total0 = total0
+    this.total1 = total1
   }
 
   /**
@@ -83,33 +63,23 @@ export class StablePool implements Pool {
    * @param token to check
    */
   public involvesToken(token: Token): boolean {
-    return token.equals(this.token0) || token.equals(this.token1);
+    return token.equals(this.token0) || token.equals(this.token1)
   }
 
   /**
    * Returns the current mid price of the pair in terms of token0, i.e. the ratio of reserve1 to reserve0
    */
   public get token0Price(): Price<Token, Token> {
-    const result = this.tokenAmounts[1].divide(this.tokenAmounts[0]);
-    return new Price(
-      this.token0,
-      this.token1,
-      result.denominator,
-      result.numerator
-    );
+    const result = this.tokenAmounts[1].divide(this.tokenAmounts[0])
+    return new Price(this.token0, this.token1, result.denominator, result.numerator)
   }
 
   /**
    * Returns the current mid price of the pair in terms of token1, i.e. the ratio of reserve0 to reserve1
    */
   public get token1Price(): Price<Token, Token> {
-    const result = this.tokenAmounts[0].divide(this.tokenAmounts[1]);
-    return new Price(
-      this.token1,
-      this.token0,
-      result.denominator,
-      result.numerator
-    );
+    const result = this.tokenAmounts[0].divide(this.tokenAmounts[1])
+    return new Price(this.token1, this.token0, result.denominator, result.numerator)
   }
 
   /**
@@ -117,51 +87,48 @@ export class StablePool implements Pool {
    * @param token token to return price of
    */
   public priceOf(token: Token): Price<Token, Token> {
-    invariant(this.involvesToken(token), "TOKEN");
-    return token.equals(this.token0) ? this.token0Price : this.token1Price;
+    invariant(this.involvesToken(token), 'TOKEN')
+    return token.equals(this.token0) ? this.token0Price : this.token1Price
   }
 
   /**
    * Returns the chain ID of the tokens in the pair.
    */
   public get chainId(): number {
-    return this.token0.chainId;
+    return this.token0.chainId
   }
 
   public get token0(): Token {
-    return this.tokenAmounts[0].currency;
+    return this.tokenAmounts[0].currency
   }
 
   public get token1(): Token {
-    return this.tokenAmounts[1].currency;
+    return this.tokenAmounts[1].currency
   }
 
   public get reserve0(): Amount<Token> {
-    return this.tokenAmounts[0];
+    return this.tokenAmounts[0]
   }
 
   public get reserve1(): Amount<Token> {
-    return this.tokenAmounts[1];
+    return this.tokenAmounts[1]
   }
 
   public get assets(): Token[] {
-    return [this.tokenAmounts[0].currency, this.tokenAmounts[1].currency];
+    return [this.tokenAmounts[0].currency, this.tokenAmounts[1].currency]
   }
 
   public get reserves(): Amount<Token>[] {
-    return [this.reserve0, this.reserve1];
+    return [this.reserve0, this.reserve1]
   }
 
   public get kLast(): JSBI {
-    return this.computeLiquidity(
-      this.reserve0.quotient,
-      this.reserve1.quotient
-    );
+    return this.computeLiquidity(this.reserve0.quotient, this.reserve1.quotient)
   }
 
   public reserveOf(token: Token): Amount<Token> {
-    invariant(this.involvesToken(token), "TOKEN");
-    return token.equals(this.token0) ? this.reserve0 : this.reserve1;
+    invariant(this.involvesToken(token), 'TOKEN')
+    return token.equals(this.token0) ? this.reserve0 : this.reserve1
   }
 
   private _f(x0: JSBI, y: JSBI) {
@@ -172,30 +139,18 @@ export class StablePool implements Pool {
       JSBI.divide(
         JSBI.multiply(
           x0,
-          JSBI.divide(
-            JSBI.multiply(
-              JSBI.divide(JSBI.multiply(y, y), JSBI.BigInt(1e12)),
-              y
-            ),
-            JSBI.BigInt(1e12)
-          )
+          JSBI.divide(JSBI.multiply(JSBI.divide(JSBI.multiply(y, y), JSBI.BigInt(1e12)), y), JSBI.BigInt(1e12))
         ),
         JSBI.BigInt(1e12)
       ),
       JSBI.divide(
         JSBI.multiply(
-          JSBI.divide(
-            JSBI.multiply(
-              JSBI.divide(JSBI.multiply(x0, x0), JSBI.BigInt(1e12)),
-              x0
-            ),
-            JSBI.BigInt(1e12)
-          ),
+          JSBI.divide(JSBI.multiply(JSBI.divide(JSBI.multiply(x0, x0), JSBI.BigInt(1e12)), x0), JSBI.BigInt(1e12)),
           y
         ),
         JSBI.BigInt(1e12)
       )
-    );
+    )
   }
 
   private _d(x0: JSBI, y: JSBI) {
@@ -211,70 +166,45 @@ export class StablePool implements Pool {
 
     return JSBI.add(
       JSBI.divide(
-        JSBI.multiply(
-          JSBI.multiply(JSBI.BigInt(3), x0),
-          JSBI.divide(JSBI.multiply(y, y), JSBI.BigInt(1e12))
-        ),
+        JSBI.multiply(JSBI.multiply(JSBI.BigInt(3), x0), JSBI.divide(JSBI.multiply(y, y), JSBI.BigInt(1e12))),
         JSBI.BigInt(1e12)
       ),
-      JSBI.divide(
-        JSBI.multiply(
-          JSBI.divide(JSBI.multiply(x0, x0), JSBI.BigInt(1e12)),
-          x0
-        ),
-        JSBI.BigInt(1e12)
-      )
-    );
+      JSBI.divide(JSBI.multiply(JSBI.divide(JSBI.multiply(x0, x0), JSBI.BigInt(1e12)), x0), JSBI.BigInt(1e12))
+    )
   }
 
   private _get_y(x0: JSBI, xy: JSBI, y: JSBI): JSBI {
     for (let i = 0; i < 255; i++) {
-      const yPrev = y;
-      const k = this._f(x0, y);
+      const yPrev = y
+      const k = this._f(x0, y)
       if (JSBI.lessThan(k, xy)) {
-        const dy = JSBI.divide(
-          JSBI.multiply(JSBI.subtract(xy, k), JSBI.BigInt(1e12)),
-          this._d(x0, y)
-        );
-        y = JSBI.add(y, dy);
+        const dy = JSBI.divide(JSBI.multiply(JSBI.subtract(xy, k), JSBI.BigInt(1e12)), this._d(x0, y))
+        y = JSBI.add(y, dy)
       } else {
-        const dy = JSBI.divide(
-          JSBI.multiply(JSBI.subtract(k, xy), JSBI.BigInt(1e12)),
-          this._d(x0, y)
-        );
-        y = JSBI.subtract(y, dy);
+        const dy = JSBI.divide(JSBI.multiply(JSBI.subtract(k, xy), JSBI.BigInt(1e12)), this._d(x0, y))
+        y = JSBI.subtract(y, dy)
       }
       if (JSBI.greaterThan(y, yPrev)) {
         if (JSBI.lessThanOrEqual(JSBI.subtract(y, yPrev), JSBI.BigInt(1))) {
-          return y;
+          return y
         }
       } else {
         if (JSBI.lessThanOrEqual(JSBI.subtract(yPrev, y), JSBI.BigInt(1))) {
-          return y;
+          return y
         }
       }
     }
-    return y;
+    return y
   }
 
-  private _getOutputAmount(
-    inputAmount: Amount<Token>,
-    reserve0: JSBI,
-    reserve1: JSBI
-  ) {
-    const adjustedReserve0 = JSBI.divide(
-      JSBI.multiply(reserve0, JSBI.BigInt(1e12)),
-      this.decimals0
-    );
-    const adjustedReserve1 = JSBI.divide(
-      JSBI.multiply(reserve1, JSBI.BigInt(1e12)),
-      this.decimals1
-    );
+  private _getOutputAmount(inputAmount: Amount<Token>, reserve0: JSBI, reserve1: JSBI) {
+    const adjustedReserve0 = JSBI.divide(JSBI.multiply(reserve0, JSBI.BigInt(1e12)), this.decimals0)
+    const adjustedReserve1 = JSBI.divide(JSBI.multiply(reserve1, JSBI.BigInt(1e12)), this.decimals1)
     const feeDeductedAmountIn = JSBI.subtract(
       inputAmount.quotient,
       JSBI.multiply(inputAmount.quotient, JSBI.BigInt(this.fee))
-    );
-    const xy = this._k(adjustedReserve0, adjustedReserve1);
+    )
+    const xy = this._k(adjustedReserve0, adjustedReserve1)
 
     // Input is using token0
     if (inputAmount.currency.equals(this.token0)) {
@@ -284,14 +214,11 @@ export class StablePool implements Pool {
       // dy = (dy * decimals1) / 1e12;
       const x0 = JSBI.add(
         adjustedReserve0,
-        JSBI.divide(
-          JSBI.multiply(feeDeductedAmountIn, JSBI.BigInt(1e12)),
-          this.decimals0
-        )
-      );
-      const y = this._get_y(x0, xy, adjustedReserve1);
-      const dy = JSBI.subtract(adjustedReserve1, y);
-      return JSBI.divide(JSBI.multiply(dy, this.decimals1), JSBI.BigInt(1e12));
+        JSBI.divide(JSBI.multiply(feeDeductedAmountIn, JSBI.BigInt(1e12)), this.decimals0)
+      )
+      const y = this._get_y(x0, xy, adjustedReserve1)
+      const dy = JSBI.subtract(adjustedReserve1, y)
+      return JSBI.divide(JSBI.multiply(dy, this.decimals1), JSBI.BigInt(1e12))
     } else {
       // uint256 x0 = adjustedReserve1 + ((feeDeductedAmountIn * 1e12) / decimals1);
       // uint256 y = _get_y(x0, xy, adjustedReserve0);
@@ -299,14 +226,11 @@ export class StablePool implements Pool {
       // dy = (dy * decimals0) / 1e12;
       const x0 = JSBI.add(
         adjustedReserve1,
-        JSBI.divide(
-          JSBI.multiply(feeDeductedAmountIn, JSBI.BigInt(1e12)),
-          this.decimals1
-        )
-      );
-      const y = this._get_y(x0, xy, adjustedReserve0);
-      const dy = JSBI.subtract(adjustedReserve0, y);
-      return JSBI.divide(JSBI.multiply(dy, this.decimals0), JSBI.BigInt(1e12));
+        JSBI.divide(JSBI.multiply(feeDeductedAmountIn, JSBI.BigInt(1e12)), this.decimals1)
+      )
+      const y = this._get_y(x0, xy, adjustedReserve0)
+      const dy = JSBI.subtract(adjustedReserve0, y)
+      return JSBI.divide(JSBI.multiply(dy, this.decimals0), JSBI.BigInt(1e12))
     }
   }
 
@@ -315,21 +239,16 @@ export class StablePool implements Pool {
     inputRebase: Rebase
     // outputRebase: Rebase
   ): [Amount<Token>, StablePool] {
-    invariant(this.involvesToken(inputShare.currency), "TOKEN");
-    if (
-      JSBI.equal(this.reserve0.quotient, ZERO) ||
-      JSBI.equal(this.reserve1.quotient, ZERO)
-    ) {
-      throw new InsufficientReservesError();
+    invariant(this.involvesToken(inputShare.currency), 'TOKEN')
+    if (JSBI.equal(this.reserve0.quotient, ZERO) || JSBI.equal(this.reserve1.quotient, ZERO)) {
+      throw new InsufficientReservesError()
     }
 
-    const inputAmount = inputShare.toAmount(inputRebase, false);
-    const outputCurrency = inputAmount.currency.equals(this.token0)
-      ? this.token1
-      : this.token0;
+    const inputAmount = inputShare.toAmount(inputRebase, false)
+    const outputCurrency = inputAmount.currency.equals(this.token0) ? this.token1 : this.token0
 
-    const inputReserve = this.reserveOf(inputAmount.currency);
-    const outputReserve = this.reserveOf(outputCurrency);
+    const inputReserve = this.reserveOf(inputAmount.currency)
+    const outputReserve = this.reserveOf(outputCurrency)
 
     // uint256 adjustedReserve0 = (_reserve0 * 1e12) / decimals0;
     // uint256 adjustedReserve1 = (_reserve1 * 1e12) / decimals1;
@@ -358,15 +277,11 @@ export class StablePool implements Pool {
     // TODO: Incomplete...
     const outputAmount = Amount.fromRawAmount(
       outputCurrency,
-      this._getOutputAmount(
-        inputAmount,
-        inputReserve.quotient,
-        outputReserve.quotient
-      )
-    );
+      this._getOutputAmount(inputAmount, inputReserve.quotient, outputReserve.quotient)
+    )
 
     if (JSBI.equal(outputAmount.quotient, ZERO)) {
-      throw new InsufficientInputAmountError();
+      throw new InsufficientInputAmountError()
     }
 
     return [
@@ -378,7 +293,7 @@ export class StablePool implements Pool {
         this.total0,
         this.total1
       ),
-    ];
+    ]
   }
 
   // public getInputAmount(outputAmount: Amount<Token>): [Amount<Token>, StablePool] {
@@ -405,46 +320,29 @@ export class StablePool implements Pool {
   //   return [inputAmount, new StablePool(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), this.fee)]
   // }
 
-  public getNonOptimalMintFee(
-    amount0: JSBI,
-    amount1: JSBI,
-    reserve0: JSBI,
-    reserve1: JSBI
-  ): [JSBI, JSBI] {
+  public getNonOptimalMintFee(amount0: JSBI, amount1: JSBI, reserve0: JSBI, reserve1: JSBI): [JSBI, JSBI] {
     if (JSBI.equal(reserve0, ZERO) || JSBI.equal(reserve1, ZERO)) {
-      return [ZERO, ZERO];
+      return [ZERO, ZERO]
     }
-    const amount1Optimal = JSBI.divide(
-      JSBI.multiply(amount0, reserve1),
-      reserve0
-    );
+    const amount1Optimal = JSBI.divide(JSBI.multiply(amount0, reserve1), reserve0)
 
     if (JSBI.lessThanOrEqual(amount1Optimal, amount1)) {
       return [
         ZERO,
         JSBI.divide(
-          JSBI.multiply(
-            JSBI.BigInt(this.fee),
-            JSBI.subtract(amount1, amount1Optimal)
-          ),
+          JSBI.multiply(JSBI.BigInt(this.fee), JSBI.subtract(amount1, amount1Optimal)),
           JSBI.multiply(JSBI.BigInt(2), JSBI.BigInt(10000))
         ),
-      ];
+      ]
     } else {
-      const amount0Optimal = JSBI.divide(
-        JSBI.multiply(amount1, reserve0),
-        reserve1
-      );
+      const amount0Optimal = JSBI.divide(JSBI.multiply(amount1, reserve0), reserve1)
       return [
         JSBI.divide(
-          JSBI.multiply(
-            JSBI.BigInt(this.fee),
-            JSBI.subtract(amount0, amount0Optimal)
-          ),
+          JSBI.multiply(JSBI.BigInt(this.fee), JSBI.subtract(amount0, amount0Optimal)),
           JSBI.multiply(JSBI.BigInt(2), JSBI.BigInt(10000))
         ),
         ZERO,
-      ];
+      ]
     }
   }
 
@@ -455,55 +353,43 @@ export class StablePool implements Pool {
   // }
 
   private _k(x: JSBI, y: JSBI): JSBI {
-    const a = JSBI.divide(JSBI.multiply(x, y), JSBI.BigInt(1e12));
+    const a = JSBI.divide(JSBI.multiply(x, y), JSBI.BigInt(1e12))
     const b = JSBI.add(
       JSBI.divide(JSBI.multiply(x, x), JSBI.BigInt(1e12)),
       JSBI.divide(JSBI.multiply(y, y), JSBI.BigInt(1e12))
-    );
-    return JSBI.divide(JSBI.multiply(a, b), JSBI.BigInt(1e12));
+    )
+    return JSBI.divide(JSBI.multiply(a, b), JSBI.BigInt(1e12))
   }
 
   private computeLiquidityFromAdjustedBalances(x: JSBI, y: JSBI): JSBI {
-    return sqrt(sqrt(this._k(x, y)));
+    return sqrt(sqrt(this._k(x, y)))
   }
 
   private computeLiquidity(reserve0: JSBI, reserve1: JSBI): JSBI {
-    const adjustedReserve0 = JSBI.divide(
-      JSBI.multiply(reserve0, JSBI.BigInt(1e12)),
-      this.decimals0
-    );
-    const adjustedReserve1 = JSBI.divide(
-      JSBI.multiply(reserve1, JSBI.BigInt(1e12)),
-      this.decimals1
-    );
+    const adjustedReserve0 = JSBI.divide(JSBI.multiply(reserve0, JSBI.BigInt(1e12)), this.decimals0)
+    const adjustedReserve1 = JSBI.divide(JSBI.multiply(reserve1, JSBI.BigInt(1e12)), this.decimals1)
 
-    return this.computeLiquidityFromAdjustedBalances(
-      adjustedReserve0,
-      adjustedReserve1
-    );
+    return this.computeLiquidityFromAdjustedBalances(adjustedReserve0, adjustedReserve1)
   }
 
   public getMintFee(reserve0: JSBI, reserve1: JSBI, totalSupply: JSBI): JSBI {
     if (JSBI.notEqual(this.kLast, ZERO)) {
-      const computed = this.computeLiquidity(reserve0, reserve1);
+      const computed = this.computeLiquidity(reserve0, reserve1)
       if (JSBI.greaterThan(computed, this.kLast)) {
         const liquidity = JSBI.divide(
           JSBI.divide(
-            JSBI.multiply(
-              JSBI.multiply(totalSupply, JSBI.subtract(computed, this.kLast)),
-              JSBI.BigInt(5)
-            ),
+            JSBI.multiply(JSBI.multiply(totalSupply, JSBI.subtract(computed, this.kLast)), JSBI.BigInt(5)),
             computed
           ),
           JSBI.BigInt(10000)
-        );
+        )
         if (JSBI.notEqual(liquidity, ZERO)) {
-          return liquidity;
+          return liquidity
         }
       }
     }
 
-    return ZERO;
+    return ZERO
   }
 
   public getLiquidityMinted(
@@ -511,94 +397,65 @@ export class StablePool implements Pool {
     tokenAmountA: Amount<Token> | Share<Token>,
     tokenAmountB: Amount<Token> | Share<Token>
   ): Amount<Token> {
-    invariant(totalSupply.currency.equals(this.liquidityToken), "LIQUIDITY");
-    const tokenAmounts = tokenAmountA.currency.sortsBefore(
-      tokenAmountB.currency
-    ) // does safety checks
+    invariant(totalSupply.currency.equals(this.liquidityToken), 'LIQUIDITY')
+    const tokenAmounts = tokenAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
       ? [tokenAmountA, tokenAmountB]
-      : [tokenAmountB, tokenAmountA];
-    invariant(
-      tokenAmounts[0].currency.equals(this.token0) &&
-        tokenAmounts[1].currency.equals(this.token1),
-      "TOKEN"
-    );
+      : [tokenAmountB, tokenAmountA]
+    invariant(tokenAmounts[0].currency.equals(this.token0) && tokenAmounts[1].currency.equals(this.token1), 'TOKEN')
 
-    let liquidity: JSBI;
+    let liquidity: JSBI
 
     // Expected balances after minting
-    const balance0 = JSBI.add(tokenAmounts[0].quotient, this.reserve0.quotient);
-    const balance1 = JSBI.add(tokenAmounts[1].quotient, this.reserve1.quotient);
+    const balance0 = JSBI.add(tokenAmounts[0].quotient, this.reserve0.quotient)
+    const balance1 = JSBI.add(tokenAmounts[1].quotient, this.reserve1.quotient)
 
-    const computed = this.computeLiquidity(balance0, balance1);
+    const computed = this.computeLiquidity(balance0, balance1)
 
     if (JSBI.equal(totalSupply.quotient, ZERO)) {
-      liquidity = JSBI.subtract(computed, this.minLiquidity);
+      liquidity = JSBI.subtract(computed, this.minLiquidity)
     } else {
       const [fee0, fee1] = this.getNonOptimalMintFee(
         tokenAmounts[0].quotient,
         tokenAmounts[1].quotient,
         this.reserve0.quotient,
         this.reserve1.quotient
-      );
+      )
 
-      const reserve0 = JSBI.add(this.reserve0.quotient, fee0);
-      const reserve1 = JSBI.add(this.reserve1.quotient, fee1);
+      const reserve0 = JSBI.add(this.reserve0.quotient, fee0)
+      const reserve1 = JSBI.add(this.reserve1.quotient, fee1)
 
-      const k = this.computeLiquidity(reserve0, reserve1);
+      const k = this.computeLiquidity(reserve0, reserve1)
 
-      const mintFee = this.getMintFee(reserve0, reserve1, totalSupply.quotient);
+      const mintFee = this.getMintFee(reserve0, reserve1, totalSupply.quotient)
 
-      liquidity = JSBI.divide(
-        JSBI.multiply(
-          JSBI.subtract(computed, k),
-          JSBI.add(totalSupply.quotient, mintFee)
-        ),
-        k
-      );
+      liquidity = JSBI.divide(JSBI.multiply(JSBI.subtract(computed, k), JSBI.add(totalSupply.quotient, mintFee)), k)
     }
 
     if (!JSBI.greaterThan(liquidity, ZERO)) {
-      throw new InsufficientInputAmountError();
+      throw new InsufficientInputAmountError()
     }
 
-    return Amount.fromRawAmount(this.liquidityToken, liquidity);
+    return Amount.fromRawAmount(this.liquidityToken, liquidity)
   }
 
-  public getLiquidityValue(
-    token: Token,
-    totalSupply: Amount<Token>,
-    liquidity: Amount<Token>
-  ): Amount<Token> {
-    invariant(this.involvesToken(token), "TOKEN");
-    invariant(totalSupply.currency.equals(this.liquidityToken), "TOTAL_SUPPLY");
-    invariant(liquidity.currency.equals(this.liquidityToken), "LIQUIDITY");
-    invariant(
-      JSBI.lessThanOrEqual(liquidity.quotient, totalSupply.quotient),
-      "LIQUIDITY"
-    );
+  public getLiquidityValue(token: Token, totalSupply: Amount<Token>, liquidity: Amount<Token>): Amount<Token> {
+    invariant(this.involvesToken(token), 'TOKEN')
+    invariant(totalSupply.currency.equals(this.liquidityToken), 'TOTAL_SUPPLY')
+    invariant(liquidity.currency.equals(this.liquidityToken), 'LIQUIDITY')
+    invariant(JSBI.lessThanOrEqual(liquidity.quotient, totalSupply.quotient), 'LIQUIDITY')
     return Amount.fromRawAmount(
       token,
-      JSBI.divide(
-        JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient),
-        totalSupply.quotient
-      )
-    );
+      JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient), totalSupply.quotient)
+    )
   }
 
   // TODO: unsure if this should change... I guess not.
-  public getAmountOut(
-    amountIn: JSBI,
-    reserveAmountIn: JSBI,
-    reserveAmountOut: JSBI
-  ): JSBI {
-    const amountInWithFee = JSBI.multiply(
-      amountIn,
-      JSBI.subtract(this.MAX_FEE, JSBI.BigInt(this.fee))
-    );
+  public getAmountOut(amountIn: JSBI, reserveAmountIn: JSBI, reserveAmountOut: JSBI): JSBI {
+    const amountInWithFee = JSBI.multiply(amountIn, JSBI.subtract(this.MAX_FEE, JSBI.BigInt(this.fee)))
     return JSBI.divide(
       JSBI.multiply(amountInWithFee, reserveAmountOut),
       JSBI.add(JSBI.multiply(reserveAmountIn, this.MAX_FEE), amountInWithFee)
-    );
+    )
   }
 
   public getLiquidityValueSingleToken(
@@ -606,30 +463,17 @@ export class StablePool implements Pool {
     totalSupply: Amount<Token>,
     liquidity: Amount<Token>
   ): Amount<Token> {
-    invariant(this.involvesToken(token), "TOKEN");
-    invariant(totalSupply.currency.equals(this.liquidityToken), "TOTAL_SUPPLY");
-    invariant(liquidity.currency.equals(this.liquidityToken), "LIQUIDITY");
-    invariant(
-      JSBI.lessThanOrEqual(liquidity.quotient, totalSupply.quotient),
-      "LIQUIDITY"
-    );
+    invariant(this.involvesToken(token), 'TOKEN')
+    invariant(totalSupply.currency.equals(this.liquidityToken), 'TOTAL_SUPPLY')
+    invariant(liquidity.currency.equals(this.liquidityToken), 'LIQUIDITY')
+    invariant(JSBI.lessThanOrEqual(liquidity.quotient, totalSupply.quotient), 'LIQUIDITY')
 
     const _totalSupply = JSBI.add(
       totalSupply.quotient,
-      this.getMintFee(
-        this.reserve0.quotient,
-        this.reserve1.quotient,
-        totalSupply.quotient
-      )
-    );
-    const amount0 = JSBI.divide(
-      JSBI.multiply(liquidity.quotient, this.reserve0.quotient),
-      _totalSupply
-    );
-    const amount1 = JSBI.divide(
-      JSBI.multiply(liquidity.quotient, this.reserve1.quotient),
-      _totalSupply
-    );
+      this.getMintFee(this.reserve0.quotient, this.reserve1.quotient, totalSupply.quotient)
+    )
+    const amount0 = JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserve0.quotient), _totalSupply)
+    const amount1 = JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserve1.quotient), _totalSupply)
 
     if (token === this.token1) {
       return Amount.fromRawAmount(
@@ -642,7 +486,7 @@ export class StablePool implements Pool {
             JSBI.subtract(this.reserve1.quotient, amount1)
           )
         )
-      );
+      )
     }
 
     return Amount.fromRawAmount(
@@ -655,6 +499,6 @@ export class StablePool implements Pool {
           JSBI.subtract(this.reserve0.quotient, amount0)
         )
       )
-    );
+    )
   }
 }

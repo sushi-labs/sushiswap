@@ -7,20 +7,18 @@ import {
   Loader,
   Tooltip,
   Typography,
-} from "@sushiswap/ui";
-import { useMemo } from "react";
+} from '@sushiswap/ui'
+import { useMemo } from 'react'
 
-import { ApprovalState, useERC20ApproveCallback } from "../../hooks";
-import { DefaultButton } from "../Approve/DefaultButton";
-import { ApprovalTypeToken, ApproveButtonReturnType } from "./types";
+import { ApprovalState, useERC20ApproveCallback } from '../../hooks'
+import { DefaultButton } from '../Approve/DefaultButton'
+import { ApprovalTypeToken, ApproveButtonReturnType } from './types'
 
 interface ApproveButtonTokenReturn extends ApproveButtonReturnType {
-  approvalState: ApprovalState;
+  approvalState: ApprovalState
 }
 
-export type ApproveTokenFn = (
-  params: ApprovalTypeToken
-) => ApproveButtonTokenReturn;
+export type ApproveTokenFn = (params: ApprovalTypeToken) => ApproveButtonTokenReturn
 
 export const Token: ApproveTokenFn = ({
   index,
@@ -35,7 +33,7 @@ export const Token: ApproveTokenFn = ({
     amount,
     address,
     onSuccess
-  );
+  )
 
   return useMemo(() => {
     return {
@@ -54,11 +52,11 @@ export const Token: ApproveTokenFn = ({
                       <div
                         className={classNames(
                           approvalState === ApprovalState.PENDING
-                            ? "bg-yellow"
+                            ? 'bg-yellow'
                             : approvalState === ApprovalState.APPROVED
-                            ? "bg-green"
-                            : "bg-red",
-                          "w-2 h-2 rounded-full shadow-md"
+                            ? 'bg-green'
+                            : 'bg-red',
+                          'w-2 h-2 rounded-full shadow-md'
                         )}
                       />
                     )
@@ -67,21 +65,12 @@ export const Token: ApproveTokenFn = ({
                   <IconButton
                     as="div"
                     className={classNames(
-                      approvalState === ApprovalState.PENDING
-                        ? "pointer-events-none saturate-[0]"
-                        : "",
-                      "flex items-center justify-center hover:scale-[1.10] transition-all"
+                      approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
+                      'flex items-center justify-center hover:scale-[1.10] transition-all'
                     )}
                     onClick={onApprove}
                   >
-                    {amount && (
-                      <CurrencyFromUi.Icon
-                        disableLink
-                        currency={amount?.currency}
-                        width={24}
-                        height={24}
-                      />
-                    )}
+                    {amount && <CurrencyFromUi.Icon disableLink currency={amount?.currency} width={24} height={24} />}
                   </IconButton>
                 </Badge>
               </div>
@@ -92,25 +81,20 @@ export const Token: ApproveTokenFn = ({
                   Status:
                   <span
                     className={classNames(
-                      "ml-1 capitalize",
+                      'ml-1 capitalize',
                       approvalState === ApprovalState.PENDING
-                        ? "text-yellow"
+                        ? 'text-yellow'
                         : approvalState === ApprovalState.APPROVED
-                        ? "text-green"
-                        : "text-red"
+                        ? 'text-green'
+                        : 'text-red'
                     )}
                   >
-                    {approvalState.toLowerCase().replace("_", " ")}
+                    {approvalState.toLowerCase().replace('_', ' ')}
                   </span>
                 </Typography>
-                <Typography
-                  variant="xs"
-                  weight={500}
-                  className="text-slate-400"
-                >
-                  We need your approval first to execute this transaction on
-                  your behalf; you will only have to approve the{" "}
-                  {amount?.currency.symbol} contract once.
+                <Typography variant="xs" weight={500} className="text-slate-400">
+                  We need your approval first to execute this transaction on your behalf; you will only have to approve
+                  the {amount?.currency.symbol} contract once.
                 </Typography>
               </div>
             }
@@ -120,9 +104,7 @@ export const Token: ApproveTokenFn = ({
       button: (
         <Button
           key={index}
-          loading={[ApprovalState.LOADING, ApprovalState.PENDING].includes(
-            approvalState
-          )}
+          loading={[ApprovalState.LOADING, ApprovalState.PENDING].includes(approvalState)}
           testdata-id={id}
           variant={variant}
           size={size}
@@ -133,16 +115,6 @@ export const Token: ApproveTokenFn = ({
           Approve {amount?.currency.symbol}
         </Button>
       ),
-    };
-  }, [
-    amount,
-    approvalState,
-    className,
-    fullWidth,
-    id,
-    index,
-    onApprove,
-    size,
-    variant,
-  ]);
-};
+    }
+  }, [amount, approvalState, className, fullWidth, id, index, onApprove, size, variant])
+}

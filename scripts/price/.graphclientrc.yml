@@ -17,4 +17,4 @@ documents:
   - ./query.graphql
 
 codegen:
-  contextType: "MeshContext & { name: string; host: string; path: string; }"
+  contextType: 'MeshContext & { name: string; host: string; path: string; }'

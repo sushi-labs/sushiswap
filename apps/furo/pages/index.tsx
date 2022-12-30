@@ -1,91 +1,85 @@
-import { AddressZero } from "@ethersproject/constants";
-import { Chain, ChainId } from "@sushiswap/chain";
-import { shortenAddress } from "@sushiswap/format";
-import { useIsMounted } from "@sushiswap/hooks";
-import { Button, Typography } from "@sushiswap/ui";
-import { Account, Wallet } from "@sushiswap/wagmi";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { useAccount, useConnect, useNetwork } from "wagmi";
+import { AddressZero } from '@ethersproject/constants'
+import { Chain, ChainId } from '@sushiswap/chain'
+import { shortenAddress } from '@sushiswap/format'
+import { useIsMounted } from '@sushiswap/hooks'
+import { Button, Typography } from '@sushiswap/ui'
+import { Account, Wallet } from '@sushiswap/wagmi'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { useAccount, useConnect, useNetwork } from 'wagmi'
 
-import { BackgroundVector, Layout } from "../components";
-import { BalanceChart } from "../components/stream";
-import { SUPPORTED_CHAINS } from "../config";
-import { FuroStatus, FuroType, Stream } from "../lib";
-import { ChartHover } from "../types";
+import { BackgroundVector, Layout } from '../components'
+import { BalanceChart } from '../components/stream'
+import { SUPPORTED_CHAINS } from '../config'
+import { FuroStatus, FuroType, Stream } from '../lib'
+import { ChartHover } from '../types'
 
-const now = new Date().getTime();
+const now = new Date().getTime()
 
 const exampleStream = new Stream({
   chainId: ChainId.ETHEREUM,
   furo: {
-    id: "0",
+    id: '0',
     __typename: FuroType.STREAM,
     status: FuroStatus.ACTIVE,
-    remainingShares: "50000000000",
-    initialShares: "119940000000",
-    initialAmount: "117994000000",
-    initialSharesExtended: "0",
-    extendedShares: "0",
-    withdrawnAmount: "69308282750",
-    withdrawnAmountAfterExtension: "0",
+    remainingShares: '50000000000',
+    initialShares: '119940000000',
+    initialAmount: '117994000000',
+    initialSharesExtended: '0',
+    extendedShares: '0',
+    withdrawnAmount: '69308282750',
+    withdrawnAmountAfterExtension: '0',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     recipient: { id: AddressZero },
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     createdBy: { id: AddressZero },
-    expiresAt: Math.floor(
-      new Date(now + 60 * 60 * 24 * 3).getTime() / 1000
-    ).toString(),
-    startedAt: Math.floor(
-      new Date(now - 60 * 60 * 24 * 7).getTime() / 1000
-    ).toString(),
-    modifiedAtTimestamp: Math.floor(
-      new Date(now - 60 * 60 * 24 * 3).getTime() / 1000
-    ).toString(),
+    expiresAt: Math.floor(new Date(now + 60 * 60 * 24 * 3).getTime() / 1000).toString(),
+    startedAt: Math.floor(new Date(now - 60 * 60 * 24 * 7).getTime() / 1000).toString(),
+    modifiedAtTimestamp: Math.floor(new Date(now - 60 * 60 * 24 * 3).getTime() / 1000).toString(),
     extendedAtTimestamp: Math.floor(new Date().getTime() / 1000).toString(),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     token: {
-      name: "USDC",
-      decimals: "6",
-      symbol: "USDC",
-      id: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      name: 'USDC',
+      decimals: '6',
+      symbol: 'USDC',
+      id: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     },
-    txHash: "",
+    txHash: '',
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   rebase: {
-    base: "1",
-    elastic: "1",
+    base: '1',
+    elastic: '1',
   },
-});
+})
 
 export default function Index() {
-  const router = useRouter();
-  const isMounted = useIsMounted();
-  const { address } = useAccount();
-  const { chain: activeChain } = useNetwork();
-  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE);
+  const router = useRouter()
+  const isMounted = useIsMounted()
+  const { address } = useAccount()
+  const { chain: activeChain } = useNetwork()
+  const [hover, setHover] = useState<ChartHover>(ChartHover.NONE)
 
   const paySomeone = useConnect({
     onSuccess: ({ chain }) => {
       if (SUPPORTED_CHAINS.includes(chain.id)) {
-        void router.push("/stream/create");
+        void router.push('/stream/create')
       }
     },
-  });
+  })
 
   const viewEarnings = useConnect({
     onSuccess: ({ chain }) => {
       if (SUPPORTED_CHAINS.includes(chain.id)) {
-        void router.push("/dashboard");
+        void router.push('/dashboard')
       }
     },
-  });
+  })
 
   return (
     <Layout
@@ -104,8 +98,7 @@ export default function Index() {
               <span className="text-blue">Furo</span> Streaming
             </div>
             <div className="text-lg text-center sm:text-left sm:text-xl text-slate-400 md:w-1/2">
-              Automate your DAO salaries and vesting schedules while earning
-              interest from yield strategies.
+              Automate your DAO salaries and vesting schedules while earning interest from yield strategies.
             </div>
           </div>
           <div className="flex flex-col gap-4 sm:items-center sm:flex-row">
@@ -159,14 +152,12 @@ export default function Index() {
                         <Typography
                           as="a"
                           target="_blank"
-                          href={Chain.from(activeChain.id)?.getAccountUrl(
-                            address ?? ""
-                          )}
+                          href={Chain.from(activeChain.id)?.getAccountUrl(address ?? '')}
                           variant="sm"
                           weight={500}
                           className="text-sm tracking-wide hover:text-blue-400 text-slate-50 sm:text-base"
                         >
-                          {data ? data : address ? shortenAddress(address) : ""}
+                          {data ? data : address ? shortenAddress(address) : ''}
                         </Typography>
                       )}
                     </Account.AddressToEnsResolver>
@@ -177,15 +168,9 @@ export default function Index() {
           </div>
         </div>
         <div className="scale-[0.9] lg:block flex justify-center">
-          {isMounted && (
-            <BalanceChart
-              stream={exampleStream}
-              hover={hover}
-              setHover={setHover}
-            />
-          )}
+          {isMounted && <BalanceChart stream={exampleStream} hover={hover} setHover={setHover} />}
         </div>
       </div>
     </Layout>
-  );
+  )
 }

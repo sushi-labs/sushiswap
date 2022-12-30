@@ -1,33 +1,24 @@
-import chains from "@sushiswap/chain";
-import { Token } from "@sushiswap/currency";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import chains from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export const useRemoveCustomToken = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation({
     // TODO why ts error?
     // @ts-ignore
-    mutationKey: ["customTokens"],
+    mutationKey: ['customTokens'],
     mutationFn: (currency: Token) => {
-      queryClient.setQueryData<Record<string, Token>>(
-        ["customTokens"],
-        (prevData) => {
-          if (!prevData) return {};
-          return Object.entries(prevData).reduce<Record<string, Token>>(
-            (acc, [k, v]) => {
-              if (
-                k !==
-                `${chains[currency.chainId].shortName}:${currency.address}`
-              ) {
-                acc[k] = v;
-              }
+      queryClient.setQueryData<Record<string, Token>>(['customTokens'], (prevData) => {
+        if (!prevData) return {}
+        return Object.entries(prevData).reduce<Record<string, Token>>((acc, [k, v]) => {
+          if (k !== `${chains[currency.chainId].shortName}:${currency.address}`) {
+            acc[k] = v
+          }
 
-              return acc;
-            },
-            {}
-          );
-        }
-      );
+          return acc
+        }, {})
+      })
     },
-  });
-};
+  })
+}

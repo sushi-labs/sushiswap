@@ -1,23 +1,23 @@
-import { Transition } from "@headlessui/react";
-import { useIsSmScreen } from "@sushiswap/hooks";
-import classNames from "classnames";
-import React, { FC, Fragment, ReactElement } from "react";
-import ReactDOM from "react-dom";
+import { Transition } from '@headlessui/react'
+import { useIsSmScreen } from '@sushiswap/hooks'
+import classNames from 'classnames'
+import React, { FC, Fragment, ReactElement } from 'react'
+import ReactDOM from 'react-dom'
 
-import { Dialog } from "../../dialog";
-import { useSlideInContext } from "./SlideIn";
-import { useEscapeClose } from "./useEscapeClose";
+import { Dialog } from '../../dialog'
+import { useSlideInContext } from './SlideIn'
+import { useEscapeClose } from './useEscapeClose'
 
 export type FromLeft = {
-  show: boolean;
-  onClose(): void;
-  afterEnter?(): void;
-  beforeEnter?(): void;
-  beforeLeave?(): void;
-  afterLeave?(): void;
-  children: ReactElement;
-  className?: string;
-};
+  show: boolean
+  onClose(): void
+  afterEnter?(): void
+  beforeEnter?(): void
+  beforeLeave?(): void
+  afterLeave?(): void
+  children: ReactElement
+  className?: string
+}
 
 export const FromLeft: FC<FromLeft> = ({
   show,
@@ -29,33 +29,23 @@ export const FromLeft: FC<FromLeft> = ({
   children,
   className,
 }) => {
-  const isSmallScreen = useIsSmScreen();
-  useEscapeClose(onClose);
+  const isSmallScreen = useIsSmScreen()
+  useEscapeClose(onClose)
 
-  const portal = useSlideInContext();
-  if (!portal) return <></>;
+  const portal = useSlideInContext()
+  if (!portal) return <></>
 
   if (isSmallScreen) {
     return (
-      <Dialog
-        open={show}
-        onClose={onClose}
-        unmount={false}
-        initialFocus={undefined}
-      >
+      <Dialog open={show} onClose={onClose} unmount={false} initialFocus={undefined}>
         <div className="!rounded-t-2xl overflow-hidden">{children}</div>
       </Dialog>
-    );
+    )
   }
 
   return ReactDOM.createPortal(
     <Transition.Root appear show={show} unmount={false} as={Fragment}>
-      <div
-        className={classNames(
-          className,
-          "absolute left-0 top-0 bottom-0 w-full translate-x-[-100%] z-[50]"
-        )}
-      >
+      <div className={classNames(className, 'absolute left-0 top-0 bottom-0 w-full translate-x-[-100%] z-[50]')}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -91,5 +81,5 @@ export const FromLeft: FC<FromLeft> = ({
       </div>
     </Transition.Root>,
     portal
-  );
-};
+  )
+}

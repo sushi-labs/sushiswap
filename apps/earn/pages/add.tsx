@@ -1,18 +1,11 @@
-import { PlusIcon } from "@heroicons/react/solid";
-import { ConstantProductPool, Pair, StablePool } from "@sushiswap/amm";
-import { ChainId, chainShortName } from "@sushiswap/chain";
-import { tryParseAmount, Type } from "@sushiswap/currency";
-import { Pair as PairDTO } from "@sushiswap/graph-client";
-import { FundSource } from "@sushiswap/hooks";
-import {
-  AppearOnMount,
-  BreadcrumbLink,
-  Button,
-  Container,
-  Dots,
-  Loader,
-} from "@sushiswap/ui";
-import { Widget } from "@sushiswap/ui";
+import { PlusIcon } from '@heroicons/react/solid'
+import { ConstantProductPool, Pair, StablePool } from '@sushiswap/amm'
+import { ChainId, chainShortName } from '@sushiswap/chain'
+import { tryParseAmount, Type } from '@sushiswap/currency'
+import { Pair as PairDTO } from '@sushiswap/graph-client'
+import { FundSource } from '@sushiswap/hooks'
+import { AppearOnMount, BreadcrumbLink, Button, Container, Dots, Loader } from '@sushiswap/ui'
+import { Widget } from '@sushiswap/ui'
 import {
   Checker,
   ConstantProductPoolState,
@@ -21,7 +14,7 @@ import {
   PoolFinderType,
   StablePoolState,
   Web3Input,
-} from "@sushiswap/wagmi";
+} from '@sushiswap/wagmi'
 import {
   AddSectionMyPosition,
   AddSectionReviewModalLegacy,
@@ -35,56 +28,45 @@ import {
   SelectNetworkWidget,
   SelectPoolTypeWidget,
   SettingsOverlay,
-} from "components";
-import React, {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import useSWR, { SWRConfig } from "swr";
+} from 'components'
+import React, { FC, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import useSWR, { SWRConfig } from 'swr'
 
-import { CreateSectionReviewModalTrident } from "../components/CreateSection";
-import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from "../config";
-import {
-  isConstantProductPool,
-  isLegacyPool,
-  isStablePool,
-} from "../lib/functions";
-import { useCustomTokens } from "../lib/state/storage";
-import { useTokens } from "../lib/state/token-lists";
+import { CreateSectionReviewModalTrident } from '../components/CreateSection'
+import { AMM_ENABLED_NETWORKS, TRIDENT_ENABLED_NETWORKS } from '../config'
+import { isConstantProductPool, isLegacyPool, isStablePool } from '../lib/functions'
+import { useCustomTokens } from '../lib/state/storage'
+import { useTokens } from '../lib/state/token-lists'
 
 const LINKS: BreadcrumbLink[] = [
   {
     href: `/add`,
     label: `Add`,
   },
-];
+]
 
 const Add = () => {
-  const [chainId, setChainId] = useState(ChainId.ETHEREUM);
-  const [fee, setFee] = useState(2);
-  const [poolType, setPoolType] = useState(PoolFinderType.Classic);
+  const [chainId, setChainId] = useState(ChainId.ETHEREUM)
+  const [fee, setFee] = useState(2)
+  const [poolType, setPoolType] = useState(PoolFinderType.Classic)
 
-  const [token0, setToken0] = useState<Type | undefined>();
-  const [token1, setToken1] = useState<Type | undefined>();
+  const [token0, setToken0] = useState<Type | undefined>()
+  const [token1, setToken1] = useState<Type | undefined>()
 
   useEffect(() => {
-    setToken0(undefined);
-    setToken1(undefined);
-  }, [chainId]);
+    setToken0(undefined)
+    setToken1(undefined)
+  }, [chainId])
 
   // Reset default fee if switching networks and not on a trident enabled network
   useEffect(() => {
     if (!TRIDENT_ENABLED_NETWORKS.includes(chainId)) {
-      setFee(2);
-      setPoolType(PoolFinderType.Classic);
+      setFee(2)
+      setPoolType(PoolFinderType.Classic)
     }
-  }, [chainId]);
+  }, [chainId])
 
-  const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId);
+  const tridentPoolIfCreate = TRIDENT_ENABLED_NETWORKS.includes(chainId)
 
   return (
     <SWRConfig>
@@ -104,10 +86,7 @@ const Add = () => {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId) &&
-                    poolType === PoolFinderType.Classic
-                  }
+                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Classic}
                   fee={FEE_MAP[fee]}
                   twap={false}
                 />
@@ -115,10 +94,7 @@ const Add = () => {
                   chainId={chainId}
                   token0={token0}
                   token1={token1}
-                  enabled={
-                    TRIDENT_ENABLED_NETWORKS.includes(chainId) &&
-                    poolType === PoolFinderType.Stable
-                  }
+                  enabled={TRIDENT_ENABLED_NETWORKS.includes(chainId) && poolType === PoolFinderType.Stable}
                   fee={FEE_MAP[fee]}
                   twap={false}
                 />
@@ -128,24 +104,18 @@ const Add = () => {
             {({ pool: [poolState, pool] }) => {
               const title =
                 !token0 || !token1 ? (
-                  "Select Tokens"
-                ) : [
-                    PairState.LOADING,
-                    ConstantProductPoolState.LOADING,
-                    StablePoolState.LOADING,
-                  ].includes(poolState) ? (
+                  'Select Tokens'
+                ) : [PairState.LOADING, ConstantProductPoolState.LOADING, StablePoolState.LOADING].includes(
+                    poolState
+                  ) ? (
                   <div className="h-[20px] flex items-center justify-center">
                     <Loader width={14} />
                   </div>
-                ) : [
-                    PairState.EXISTS,
-                    ConstantProductPoolState.EXISTS,
-                    StablePoolState.EXISTS,
-                  ].includes(poolState) ? (
-                  "Add Liquidity"
+                ) : [PairState.EXISTS, ConstantProductPoolState.EXISTS, StablePoolState.EXISTS].includes(poolState) ? (
+                  'Add Liquidity'
                 ) : (
-                  "Create Pool"
-                );
+                  'Create Pool'
+                )
 
               return (
                 <_Add
@@ -164,30 +134,30 @@ const Add = () => {
                   poolType={poolType}
                   setPoolType={setPoolType}
                 />
-              );
+              )
             }}
           </PoolFinder>
         </div>
       </Layout>
     </SWRConfig>
-  );
-};
+  )
+}
 
 interface AddProps {
-  chainId: ChainId;
-  setChainId(chainId: ChainId): void;
-  fee: number;
-  setFee(fee: number): void;
-  pool: Pair | ConstantProductPool | StablePool | null;
-  poolState: PairState | ConstantProductPoolState | StablePoolState;
-  tridentPoolIfCreate: boolean;
-  title: ReactNode;
-  token0: Type | undefined;
-  token1: Type | undefined;
-  setToken0(token: Type): void;
-  setToken1(token: Type): void;
-  poolType: PoolFinderType;
-  setPoolType(type: PoolFinderType): void;
+  chainId: ChainId
+  setChainId(chainId: ChainId): void
+  fee: number
+  setFee(fee: number): void
+  pool: Pair | ConstantProductPool | StablePool | null
+  poolState: PairState | ConstantProductPoolState | StablePoolState
+  tridentPoolIfCreate: boolean
+  title: ReactNode
+  token0: Type | undefined
+  token1: Type | undefined
+  setToken0(token: Type): void
+  setToken1(token: Type): void
+  poolType: PoolFinderType
+  setPoolType(type: PoolFinderType): void
 }
 
 const _Add: FC<AddProps> = ({
@@ -208,24 +178,21 @@ const _Add: FC<AddProps> = ({
 }) => {
   const { data } = useSWR<{ pair: PairDTO }>(
     pool?.liquidityToken.address
-      ? `/earn/api/pool/${
-          chainShortName[chainId]
-        }:${pool.liquidityToken.address.toLowerCase()}`
+      ? `/earn/api/pool/${chainShortName[chainId]}:${pool.liquidityToken.address.toLowerCase()}`
       : null,
     (url) => fetch(url).then((response) => response.json())
-  );
+  )
 
-  const [customTokensMap, { addCustomToken, removeCustomToken }] =
-    useCustomTokens(chainId);
-  const tokenMap = useTokens(chainId);
+  const [customTokensMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
+  const tokenMap = useTokens(chainId)
   const [{ input0, input1 }, setTypedAmounts] = useState<{
-    input0: string;
-    input1: string;
-  }>({ input0: "", input1: "" });
+    input0: string
+    input1: string
+  }>({ input0: '', input1: '' })
 
   const [parsedInput0, parsedInput1] = useMemo(() => {
-    return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)];
-  }, [input0, input1, token0, token1]);
+    return [tryParseAmount(input0, token0), tryParseAmount(input1, token1)]
+  }, [input0, input1, token0, token1])
 
   const onChangeToken0TypedAmount = useCallback(
     (value: string) => {
@@ -237,19 +204,17 @@ const _Add: FC<AddProps> = ({
         setTypedAmounts((prev) => ({
           ...prev,
           input0: value,
-        }));
+        }))
       } else if (token0 && pool) {
-        const parsedAmount = tryParseAmount(value, token0);
+        const parsedAmount = tryParseAmount(value, token0)
         setTypedAmounts({
           input0: value,
-          input1: parsedAmount
-            ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact()
-            : "",
-        });
+          input1: parsedAmount ? pool.priceOf(token0.wrapped).quote(parsedAmount.wrapped).toExact() : '',
+        })
       }
     },
     [pool, poolState, token0]
-  );
+  )
 
   const onChangeToken1TypedAmount = useCallback(
     (value: string) => {
@@ -261,55 +226,41 @@ const _Add: FC<AddProps> = ({
         setTypedAmounts((prev) => ({
           ...prev,
           input1: value,
-        }));
+        }))
       } else if (token1 && pool) {
-        const parsedAmount = tryParseAmount(value, token1);
+        const parsedAmount = tryParseAmount(value, token1)
         setTypedAmounts({
-          input0: parsedAmount
-            ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact()
-            : "",
+          input0: parsedAmount ? pool.priceOf(token1.wrapped).quote(parsedAmount.wrapped).toExact() : '',
           input1: value,
-        });
+        })
       }
     },
     [pool, poolState, token1]
-  );
+  )
 
   useEffect(() => {
     if (pool) {
-      onChangeToken0TypedAmount(input0);
+      onChangeToken0TypedAmount(input0)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onChangeToken0TypedAmount]);
+  }, [onChangeToken0TypedAmount])
 
   return (
     <>
       <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
         <SelectNetworkWidget selectedNetwork={chainId} onSelect={setChainId} />
-        <div
-          className={
-            !TRIDENT_ENABLED_NETWORKS.includes(chainId) ? "opacity-40" : ""
-          }
-        >
+        <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
           <SelectPoolTypeWidget
             selectedNetwork={chainId}
             poolType={poolType}
             setPoolType={(type) => {
-              setPoolType(type);
+              setPoolType(type)
             }}
           />
         </div>
-        <div
-          className={
-            !TRIDENT_ENABLED_NETWORKS.includes(chainId) ? "opacity-40" : ""
-          }
-        >
-          <SelectFeeWidget
-            selectedNetwork={chainId}
-            fee={fee}
-            setFee={setFee}
-          />
+        <div className={!TRIDENT_ENABLED_NETWORKS.includes(chainId) ? 'opacity-40' : ''}>
+          <SelectFeeWidget selectedNetwork={chainId} fee={fee} setFee={setFee} />
         </div>
 
         <Widget id="addLiquidity" maxWidth={400}>
@@ -362,41 +313,26 @@ const _Add: FC<AddProps> = ({
                       fundSource={FundSource.WALLET}
                       amounts={[parsedInput0, parsedInput1]}
                     >
-                      {pool &&
-                        (isConstantProductPool(pool) || isStablePool(pool)) && (
-                          <AddSectionReviewModalTrident
-                            poolAddress={pool.liquidityToken.address}
-                            // TODO: Shouldnt need to cast if this is done right
-                            poolState={
-                              poolState as
-                                | ConstantProductPoolState
-                                | StablePoolState
-                            }
-                            pool={pool as ConstantProductPool | StablePool}
-                            chainId={chainId}
-                            token0={token0}
-                            token1={token1}
-                            input0={parsedInput0}
-                            input1={parsedInput1}
-                          >
-                            {({ isWritePending, setOpen }) => (
-                              <Button
-                                fullWidth
-                                onClick={() => setOpen(true)}
-                                disabled={isWritePending}
-                                size="md"
-                              >
-                                {isWritePending ? (
-                                  <Dots>Confirm transaction</Dots>
-                                ) : (
-                                  title
-                                )}
-                              </Button>
-                            )}
-                          </AddSectionReviewModalTrident>
-                        )}
-                      {((pool && isLegacyPool(pool)) ||
-                        (!pool && !tridentPoolIfCreate)) && (
+                      {pool && (isConstantProductPool(pool) || isStablePool(pool)) && (
+                        <AddSectionReviewModalTrident
+                          poolAddress={pool.liquidityToken.address}
+                          // TODO: Shouldnt need to cast if this is done right
+                          poolState={poolState as ConstantProductPoolState | StablePoolState}
+                          pool={pool as ConstantProductPool | StablePool}
+                          chainId={chainId}
+                          token0={token0}
+                          token1={token1}
+                          input0={parsedInput0}
+                          input1={parsedInput1}
+                        >
+                          {({ isWritePending, setOpen }) => (
+                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
+                            </Button>
+                          )}
+                        </AddSectionReviewModalTrident>
+                      )}
+                      {((pool && isLegacyPool(pool)) || (!pool && !tridentPoolIfCreate)) && (
                         <AddSectionReviewModalLegacy
                           poolState={poolState as PairState}
                           chainId={chainId}
@@ -406,17 +342,8 @@ const _Add: FC<AddProps> = ({
                           input1={parsedInput1}
                         >
                           {({ isWritePending, setOpen }) => (
-                            <Button
-                              fullWidth
-                              onClick={() => setOpen(true)}
-                              disabled={isWritePending}
-                              size="md"
-                            >
-                              {isWritePending ? (
-                                <Dots>Confirm transaction</Dots>
-                              ) : (
-                                title
-                              )}
+                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                             </Button>
                           )}
                         </AddSectionReviewModalLegacy>
@@ -432,17 +359,8 @@ const _Add: FC<AddProps> = ({
                           poolType={poolType}
                         >
                           {({ isWritePending, setOpen }) => (
-                            <Button
-                              fullWidth
-                              onClick={() => setOpen(true)}
-                              disabled={isWritePending}
-                              size="md"
-                            >
-                              {isWritePending ? (
-                                <Dots>Confirm transaction</Dots>
-                              ) : (
-                                title
-                              )}
+                            <Button fullWidth onClick={() => setOpen(true)} disabled={isWritePending} size="md">
+                              {isWritePending ? <Dots>Confirm transaction</Dots> : title}
                             </Button>
                           )}
                         </CreateSectionReviewModalTrident>
@@ -480,7 +398,7 @@ const _Add: FC<AddProps> = ({
         </PoolPositionProvider>
       )}
     </>
-  );
-};
+  )
+}
 
-export default Add;
+export default Add

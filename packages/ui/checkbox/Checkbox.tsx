@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react'
 
 export interface CheckboxProps {
-  set?: (value: boolean) => void;
+  set?: (value: boolean) => void
 }
 
 export function Checkbox({
   set,
-  className = "",
+  className = '',
   checked,
   ...rest
 }: CheckboxProps & React.InputHTMLAttributes<HTMLInputElement>): JSX.Element {
@@ -20,7 +20,7 @@ export function Checkbox({
         {...rest}
       />
     </div>
-  );
+  )
 }
 
-export default Checkbox;
+export default Checkbox

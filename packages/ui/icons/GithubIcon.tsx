@@ -1,4 +1,4 @@
-export const GithubIcon = (props: React.ComponentProps<"svg">) => {
+export const GithubIcon = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg
       viewBox="0 0 256 250"
@@ -14,5 +14,5 @@ export const GithubIcon = (props: React.ComponentProps<"svg">) => {
         ></path>
       </g>
     </svg>
-  );
-};
+  )
+}

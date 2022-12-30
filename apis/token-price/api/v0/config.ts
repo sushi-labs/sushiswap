@@ -1,4 +1,4 @@
-import { ChainId } from "@sushiswap/chain";
+import { ChainId } from '@sushiswap/chain'
 
 export const SUPPORTED_CHAINS = [
   ChainId.ARBITRUM,
@@ -21,6 +21,6 @@ export const SUPPORTED_CHAINS = [
   ChainId.OPTIMISM,
   ChainId.KAVA,
   ChainId.METIS,
-];
+]
 
-export const GRAPH_HOST = "api.thegraph.com";
+export const GRAPH_HOST = 'api.thegraph.com'

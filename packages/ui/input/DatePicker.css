@@ -49,8 +49,7 @@
   background-clip: padding-box;
   background-color: rgba(255, 255, 255, 0.2);
   -webkit-border-radius: 7px;
-  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05),
-    inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
 }
 
 .react-datepicker__time-list::-webkit-scrollbar-button {
@@ -102,22 +101,18 @@
   @apply text-slate-500;
 }
 
-.react-datepicker-popper[data-placement^="bottom"]
-  .react-datepicker__triangle::before {
+.react-datepicker-popper[data-placement^='bottom'] .react-datepicker__triangle::before {
   @apply !border-b-slate-700;
 }
 
-.react-datepicker-popper[data-placement^="bottom"]
-  .react-datepicker__triangle::after {
+.react-datepicker-popper[data-placement^='bottom'] .react-datepicker__triangle::after {
   @apply !border-b-slate-900;
 }
 
-.react-datepicker-popper[data-placement^="top"]
-  .react-datepicker__triangle::before {
+.react-datepicker-popper[data-placement^='top'] .react-datepicker__triangle::before {
   @apply !border-t-slate-700;
 }
 
-.react-datepicker-popper[data-placement^="top"]
-  .react-datepicker__triangle::after {
+.react-datepicker-popper[data-placement^='top'] .react-datepicker__triangle::after {
   @apply !border-t-slate-900;
 }

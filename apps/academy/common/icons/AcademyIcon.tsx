@@ -1,10 +1,10 @@
-import { ComponentType, FC } from "react";
+import { ComponentType, FC } from 'react'
 
-import { SquareIcon } from "./SquareIcon";
+import { SquareIcon } from './SquareIcon'
 
 interface AcademyIcon {
-  color: string;
-  Icon: ComponentType<React.ComponentProps<"svg">>;
+  color: string
+  Icon: ComponentType<React.ComponentProps<'svg'>>
 }
 
 export const AcademyIcon: FC<AcademyIcon> = ({ color, Icon }) => (
@@ -14,4 +14,4 @@ export const AcademyIcon: FC<AcademyIcon> = ({ color, Icon }) => (
       <Icon className="w-16 h-16 sm:w-[102px] sm:h-[102px]" />
     </div>
   </div>
-);
+)

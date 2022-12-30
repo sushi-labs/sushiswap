@@ -1,43 +1,43 @@
-import { defaultAbiCoder } from "@ethersproject/abi";
-import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
-import { Signature } from "@ethersproject/bytes";
-import { AddressZero, Zero } from "@ethersproject/constants";
-import { Trade, TradeType, Version as TradeVersion } from "@sushiswap/amm";
-import { Amount, Currency, Native, Share, Token } from "@sushiswap/currency";
+import { defaultAbiCoder } from '@ethersproject/abi'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+import { Signature } from '@ethersproject/bytes'
+import { AddressZero, Zero } from '@ethersproject/constants'
+import { Trade, TradeType, Version as TradeVersion } from '@sushiswap/amm'
+import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import {
   isStargateBridgeToken,
   STARGATE_BRIDGE_TOKENS,
   STARGATE_CHAIN_ID,
   STARGATE_POOL_ID,
   StargateChainId,
-} from "@sushiswap/stargate";
-import { SushiXSwap as SushiXSwapContract } from "@sushiswap/sushixswap/typechain";
-import { getBigNumber } from "@sushiswap/tines";
-import { getSushiXSwapContractConfig } from "@sushiswap/wagmi";
-import { ContractTransaction } from "ethers";
-import { formatBytes32String } from "ethers/lib/utils";
+} from '@sushiswap/stargate'
+import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
+import { getBigNumber } from '@sushiswap/tines'
+import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
+import { ContractTransaction } from 'ethers'
+import { formatBytes32String } from 'ethers/lib/utils'
 
 export type Complex = [
   {
-    tokenIn: string;
-    pool: string;
-    native: boolean;
-    amount: BigNumberish;
-    data: string;
+    tokenIn: string
+    pool: string
+    native: boolean
+    amount: BigNumberish
+    data: string
   }[],
   {
-    tokenIn: string;
-    pool: string;
-    balancePercentage: BigNumberish;
-    data: string;
+    tokenIn: string
+    pool: string
+    balancePercentage: BigNumberish
+    data: string
   }[],
   {
-    token: string;
-    to: string;
-    unwrapBento: boolean;
-    minAmount: BigNumberish;
+    token: string
+    to: string
+    unwrapBento: boolean
+    minAmount: BigNumberish
   }[]
-];
+]
 
 export enum Action {
   // Master contract approval
@@ -68,40 +68,40 @@ export enum Action {
 }
 
 export interface Cooker {
-  readonly actions: Action[];
-  readonly values: BigNumber[];
-  readonly datas: string[];
-  add(action: Action, data: string, value: BigNumberish): void;
+  readonly actions: Action[]
+  readonly values: BigNumber[]
+  readonly datas: string[]
+  add(action: Action, data: string, value: BigNumberish): void
 }
 
 export abstract class Cooker implements Cooker {
-  readonly actions: Action[] = [];
-  readonly values: BigNumber[] = [];
-  readonly datas: string[] = [];
-  readonly chainId: number;
-  readonly debug: boolean;
-  readonly masterContract: string;
-  readonly user: string;
+  readonly actions: Action[] = []
+  readonly values: BigNumber[] = []
+  readonly datas: string[] = []
+  readonly chainId: number
+  readonly debug: boolean
+  readonly masterContract: string
+  readonly user: string
   constructor({
     chainId,
     debug = false,
     masterContract,
     user,
   }: {
-    chainId: number;
-    debug?: boolean;
-    masterContract: string;
-    user: string;
+    chainId: number
+    debug?: boolean
+    masterContract: string
+    user: string
   }) {
-    this.chainId = chainId;
-    this.debug = debug;
-    this.masterContract = masterContract;
-    this.user = user;
+    this.chainId = chainId
+    this.debug = debug
+    this.masterContract = masterContract
+    this.user = user
   }
   add(action: Action, data: string, value: BigNumberish = Zero): void {
-    this.actions.push(action);
-    this.datas.push(data);
-    this.values.push(BigNumber.from(value));
+    this.actions.push(action)
+    this.datas.push(data)
+    this.values.push(BigNumber.from(value))
   }
 
   srcDepositToBentoBox(
@@ -111,25 +111,20 @@ export abstract class Cooker implements Cooker {
     share: BigNumberish = Zero
   ): void {
     if (this.debug)
-      console.debug("cook src depoit to bentobox", {
+      console.debug('cook src depoit to bentobox', {
         currency,
         recipient,
         amount,
         share,
-      });
+      })
     const data = defaultAbiCoder.encode(
-      ["address", "address", "uint256", "uint256"],
-      [
-        currency.isToken ? currency.address : AddressZero,
-        recipient,
-        BigNumber.from(amount),
-        BigNumber.from(share),
-      ]
-    );
+      ['address', 'address', 'uint256', 'uint256'],
+      [currency.isToken ? currency.address : AddressZero, recipient, BigNumber.from(amount), BigNumber.from(share)]
+    )
 
-    const value = currency.isNative ? amount : Zero;
+    const value = currency.isNative ? amount : Zero
 
-    this.add(Action.SRC_DEPOSIT_TO_BENTOBOX, data, value);
+    this.add(Action.SRC_DEPOSIT_TO_BENTOBOX, data, value)
   }
 
   srcTransferFromBentoBox(
@@ -140,26 +135,20 @@ export abstract class Cooker implements Cooker {
     unwrap: boolean
   ): void {
     if (this.debug)
-      console.debug("cook src transfer from bentobox", {
+      console.debug('cook src transfer from bentobox', {
         token,
         to,
         amount,
         share,
         unwrap,
-      });
+      })
     this.add(
       Action.SRC_TRANSFER_FROM_BENTOBOX,
       defaultAbiCoder.encode(
-        ["address", "address", "uint256", "uint256", "bool"],
-        [
-          token.wrapped.address,
-          to,
-          BigNumber.from(amount),
-          BigNumber.from(share),
-          unwrap,
-        ]
+        ['address', 'address', 'uint256', 'uint256', 'bool'],
+        [token.wrapped.address, to, BigNumber.from(amount), BigNumber.from(share), unwrap]
       )
-    );
+    )
   }
 
   dstDepositToBentoBox(
@@ -171,26 +160,18 @@ export abstract class Cooker implements Cooker {
     this.add(
       Action.DST_DEPOSIT_TO_BENTOBOX,
       defaultAbiCoder.encode(
-        ["address", "address", "uint256", "uint256"],
-        [
-          token.isToken ? token.address : AddressZero,
-          to,
-          BigNumber.from(amount),
-          BigNumber.from(share),
-        ]
+        ['address', 'address', 'uint256', 'uint256'],
+        [token.isToken ? token.address : AddressZero, to, BigNumber.from(amount), BigNumber.from(share)]
       ),
       token.isNative ? amount : Zero
-    );
+    )
   }
 
   dstWithdraw(token: Currency, to: string = this.user, amount = Zero): void {
     this.add(
       Action.DST_WITHDRAW,
-      defaultAbiCoder.encode(
-        ["address", "address", "uint256"],
-        [token.wrapped.address, to, amount]
-      )
-    );
+      defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, amount])
+    )
   }
 
   dstWithdrawFromBentoBox(
@@ -201,26 +182,15 @@ export abstract class Cooker implements Cooker {
     unwrap: boolean
   ): void {
     const data = defaultAbiCoder.encode(
-      ["address", "address", "uint256", "uint256", "bool"],
-      [
-        token.isToken ? token.address : AddressZero,
-        to,
-        BigNumber.from(amount),
-        BigNumber.from(share),
-        unwrap,
-      ]
-    );
-    const value = token.isNative ? amount : Zero;
-    this.add(Action.DST_WITHDRAW_FROM_BENTOBOX, data, value);
+      ['address', 'address', 'uint256', 'uint256', 'bool'],
+      [token.isToken ? token.address : AddressZero, to, BigNumber.from(amount), BigNumber.from(share), unwrap]
+    )
+    const value = token.isNative ? amount : Zero
+    this.add(Action.DST_WITHDRAW_FROM_BENTOBOX, data, value)
   }
 
   legacyExactInput(
-    trade: Trade<
-      Currency,
-      Currency,
-      TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-      TradeVersion.V1 | TradeVersion.V2
-    >,
+    trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
     amountIn: BigNumberish,
     amountOutMin: BigNumberish,
     recipient: string = this.user
@@ -228,30 +198,22 @@ export abstract class Cooker implements Cooker {
     this.add(
       Action.LEGACY_EXACT_INPUT,
       defaultAbiCoder.encode(
-        ["uint256", "uint256", "address[]", "address"],
+        ['uint256', 'uint256', 'address[]', 'address'],
         [
           BigNumber.from(amountIn),
           BigNumber.from(amountOutMin),
           trade.route.legs.reduce<string[]>(
-            (previousValue, currentValue) => [
-              ...previousValue,
-              currentValue.tokenTo.address,
-            ],
+            (previousValue, currentValue) => [...previousValue, currentValue.tokenTo.address],
             [trade.route.legs[0].tokenFrom.address]
           ),
           recipient,
         ]
       )
-    );
+    )
   }
 
   tridentExactInput(
-    trade: Trade<
-      Currency,
-      Currency,
-      TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-      TradeVersion.V1 | TradeVersion.V2
-    >,
+    trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
     to: string,
     shareIn: BigNumberish = Zero,
     shareOutMinimum: BigNumberish,
@@ -260,14 +222,14 @@ export abstract class Cooker implements Cooker {
     this.add(
       Action.TRIDENT_EXACT_INPUT,
       defaultAbiCoder.encode(
-        ["tuple(address, uint256, uint256, tuple(address pool, bytes data)[])"],
+        ['tuple(address, uint256, uint256, tuple(address pool, bytes data)[])'],
         [
           [
             trade.inputAmount.currency.wrapped.address,
             BigNumber.from(shareIn),
             BigNumber.from(shareOutMinimum),
             trade.route.legs.map((leg, i) => {
-              const isLastLeg = i === trade.route.legs.length - 1;
+              const isLastLeg = i === trade.route.legs.length - 1
               // console.log({
               //   pool: leg.poolAddress,
               //   data: [
@@ -279,48 +241,40 @@ export abstract class Cooker implements Cooker {
               return {
                 pool: leg.poolAddress,
                 data: defaultAbiCoder.encode(
-                  ["address", "address", "bool"],
+                  ['address', 'address', 'bool'],
                   [
                     leg.tokenFrom.address,
                     isLastLeg ? to : trade.route.legs[i + 1].poolAddress,
                     isLastLeg && unwrapBento,
                   ]
                 ),
-              };
+              }
             }),
           ],
         ]
       )
-    );
+    )
   }
 
   tridentComplex(
-    trade: Trade<
-      Currency,
-      Currency,
-      TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-      TradeVersion.V1 | TradeVersion.V2
-    >,
+    trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
     to: string,
     minAmount: BigNumberish,
     unwrapBento: boolean
   ): void {
     const initialPathCount = trade.route.legs.filter(
-      (leg) =>
-        leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
-    ).length;
+      (leg) => leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
+    ).length
     this.add(
       Action.TRIDENT_COMPLEX,
       defaultAbiCoder.encode(
         [
-          "tuple(tuple(address tokenIn, address pool, bool native, uint256 amount, bytes data)[], tuple(address tokenIn, address pool, uint64 balancePercentage, bytes data)[], tuple(address token, address to, bool unwrapBento, uint256 minAmount)[])",
+          'tuple(tuple(address tokenIn, address pool, bool native, uint256 amount, bytes data)[], tuple(address tokenIn, address pool, uint64 balancePercentage, bytes data)[], tuple(address token, address to, bool unwrapBento, uint256 minAmount)[])',
         ],
         [
           trade.route.legs.reduce<Complex>(
             ([initialPath, percentagePath, output], leg, i) => {
-              const isInitialPath =
-                leg.tokenFrom.address ===
-                trade.inputAmount.currency.wrapped.address;
+              const isInitialPath = leg.tokenFrom.address === trade.inputAmount.currency.wrapped.address
               if (isInitialPath) {
                 return [
                   [
@@ -332,22 +286,17 @@ export abstract class Cooker implements Cooker {
                         initialPathCount > 1 && i === initialPathCount - 1
                           ? trade.route.amountInBN.sub(
                               initialPath.reduce(
-                                (previousValue, currentValue) =>
-                                  previousValue.add(currentValue.amount),
+                                (previousValue, currentValue) => previousValue.add(currentValue.amount),
                                 Zero
                               )
                             )
-                          : getBigNumber(
-                              trade.route.amountIn * leg.absolutePortion
-                            ),
+                          : getBigNumber(trade.route.amountIn * leg.absolutePortion),
                       native: false,
                       data: defaultAbiCoder.encode(
-                        ["address", "address", "bool"],
+                        ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(
-                            trade.inputAmount.currency.chainId
-                          ).address,
+                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).address,
                           false,
                         ]
                       ),
@@ -355,7 +304,7 @@ export abstract class Cooker implements Cooker {
                   ],
                   percentagePath,
                   output,
-                ];
+                ]
               } else {
                 return [
                   initialPath,
@@ -364,23 +313,19 @@ export abstract class Cooker implements Cooker {
                     {
                       tokenIn: leg.tokenFrom.address,
                       pool: leg.poolAddress,
-                      balancePercentage: getBigNumber(
-                        leg.swapPortion * 10 ** 8
-                      ),
+                      balancePercentage: getBigNumber(leg.swapPortion * 10 ** 8),
                       data: defaultAbiCoder.encode(
-                        ["address", "address", "bool"],
+                        ['address', 'address', 'bool'],
                         [
                           leg.tokenFrom.address,
-                          getSushiXSwapContractConfig(
-                            trade.inputAmount.currency.chainId
-                          ).address,
+                          getSushiXSwapContractConfig(trade.inputAmount.currency.chainId).address,
                           false,
                         ]
                       ),
                     },
                   ],
                   output,
-                ];
+                ]
               }
             },
             [
@@ -398,68 +343,52 @@ export abstract class Cooker implements Cooker {
           ),
         ]
       )
-    );
+    )
   }
 
   unwrapAndTransfer(token: Currency, to: string = this.user): void {
-    this.add(
-      Action.UNWRAP_AND_TRANSFER,
-      defaultAbiCoder.encode(
-        ["address", "address"],
-        [token.wrapped.address, to]
-      )
-    );
+    this.add(Action.UNWRAP_AND_TRANSFER, defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to]))
   }
 }
 
 export class SrcCooker extends Cooker {
   setMasterContractApproval(signature: Signature): void {
-    if (this.debug) console.log("cook set master contract address", signature);
+    if (this.debug) console.log('cook set master contract address', signature)
     this.add(
       Action.SET_MASTER_CONTRACT_APPROVAL,
       defaultAbiCoder.encode(
-        ["address", "bool", "uint8", "bytes32", "bytes32"],
+        ['address', 'bool', 'uint8', 'bytes32', 'bytes32'],
         [this.user, true, signature.v, signature.r, signature.s]
       )
-    );
+    )
   }
 
   legacyExactInput(
-    trade: Trade<
-      Currency,
-      Currency,
-      TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-      TradeVersion.V1 | TradeVersion.V2
-    >,
+    trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
     amountIn: BigNumberish,
     amountOutMinimum: BigNumberish,
     recipient: string = this.user
   ): void {
-    if (this.debug) console.debug("cook src legacy exact input");
-    super.legacyExactInput(trade, amountIn, amountOutMinimum, recipient);
+    if (this.debug) console.debug('cook src legacy exact input')
+    super.legacyExactInput(trade, amountIn, amountOutMinimum, recipient)
   }
 
   tridentExactInput(
-    trade: Trade<
-      Currency,
-      Currency,
-      TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-      TradeVersion.V1 | TradeVersion.V2
-    >,
+    trade: Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>,
     to: string,
     shareIn: BigNumberish,
     shareOutMinimum: BigNumberish,
     unwrapBento: boolean
   ): void {
-    if (this.debug) console.debug("cook src trident exact input");
-    super.tridentExactInput(trade, to, shareIn, shareOutMinimum, unwrapBento);
+    if (this.debug) console.debug('cook src trident exact input')
+    super.tridentExactInput(trade, to, shareIn, shareOutMinimum, unwrapBento)
   }
 }
 
 export class DstCooker extends Cooker {}
 
 export interface Adapter {
-  teleport(): void;
+  teleport(): void
 }
 
 export class StargateAdapter implements Adapter {
@@ -472,45 +401,35 @@ export class StargateAdapter implements Adapter {
 
 // SushiXSwap
 export class SushiXSwap {
-  readonly adapter: Adapter = new StargateAdapter();
+  readonly adapter: Adapter = new StargateAdapter()
 
-  readonly srcCooker: SrcCooker;
+  readonly srcCooker: SrcCooker
 
-  readonly dstCooker: DstCooker;
+  readonly dstCooker: DstCooker
 
-  readonly contract: SushiXSwapContract;
+  readonly contract: SushiXSwapContract
 
-  readonly crossChain: boolean;
+  readonly crossChain: boolean
 
-  readonly srcChainId: StargateChainId;
-  readonly dstChainId: StargateChainId;
+  readonly srcChainId: StargateChainId
+  readonly dstChainId: StargateChainId
 
-  readonly srcToken: Currency;
-  readonly dstToken: Currency;
+  readonly srcToken: Currency
+  readonly dstToken: Currency
 
   readonly srcTrade:
-    | Trade<
-        Currency,
-        Currency,
-        TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-        TradeVersion.V1 | TradeVersion.V2
-      >
-    | undefined;
+    | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
+    | undefined
 
   readonly dstTrade:
-    | Trade<
-        Currency,
-        Currency,
-        TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-        TradeVersion.V1 | TradeVersion.V2
-      >
-    | undefined;
+    | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
+    | undefined
 
-  readonly srcUseBentoBox: boolean;
-  readonly dstUseBentoBox: boolean;
+  readonly srcUseBentoBox: boolean
+  readonly dstUseBentoBox: boolean
 
-  readonly user: string;
-  readonly debug: boolean;
+  readonly user: string
+  readonly debug: boolean
 
   constructor({
     srcToken,
@@ -523,64 +442,52 @@ export class SushiXSwap {
     contract,
     debug = false,
   }: {
-    srcToken: Currency;
-    dstToken: Currency;
+    srcToken: Currency
+    dstToken: Currency
     srcTrade:
-      | Trade<
-          Currency,
-          Currency,
-          TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-          TradeVersion.V1 | TradeVersion.V2
-        >
-      | undefined;
+      | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
+      | undefined
     dstTrade:
-      | Trade<
-          Currency,
-          Currency,
-          TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT,
-          TradeVersion.V1 | TradeVersion.V2
-        >
-      | undefined;
-    srcUseBentoBox: boolean;
-    dstUseBentoBox: boolean;
-    user: string;
-    contract: SushiXSwapContract;
-    debug?: boolean;
+      | Trade<Currency, Currency, TradeType.EXACT_INPUT | TradeType.EXACT_OUTPUT, TradeVersion.V1 | TradeVersion.V2>
+      | undefined
+    srcUseBentoBox: boolean
+    dstUseBentoBox: boolean
+    user: string
+    contract: SushiXSwapContract
+    debug?: boolean
   }) {
-    this.srcToken = srcToken;
-    this.dstToken = dstToken;
+    this.srcToken = srcToken
+    this.dstToken = dstToken
 
-    this.srcUseBentoBox = srcUseBentoBox;
-    this.dstUseBentoBox = dstUseBentoBox;
+    this.srcUseBentoBox = srcUseBentoBox
+    this.dstUseBentoBox = dstUseBentoBox
 
-    this.srcChainId = this.srcToken.chainId as StargateChainId;
-    this.dstChainId = this.dstToken.chainId as StargateChainId;
+    this.srcChainId = this.srcToken.chainId as StargateChainId
+    this.dstChainId = this.dstToken.chainId as StargateChainId
 
-    this.srcTrade = srcTrade;
-    this.dstTrade = dstTrade;
+    this.srcTrade = srcTrade
+    this.dstTrade = dstTrade
 
-    this.crossChain = this.srcChainId !== this.dstChainId;
+    this.crossChain = this.srcChainId !== this.dstChainId
 
-    this.contract = contract;
+    this.contract = contract
 
-    this.user = user;
-    this.debug = debug;
+    this.user = user
+    this.debug = debug
 
     this.srcCooker = new SrcCooker({
       chainId: this.srcChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId)
-        .address,
+      masterContract: getSushiXSwapContractConfig(this.srcToken.chainId).address,
       user,
-    });
+    })
 
     this.dstCooker = new DstCooker({
       chainId: this.dstChainId,
       debug,
-      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId)
-        .address,
+      masterContract: getSushiXSwapContractConfig(this.dstToken.chainId).address,
       user,
-    });
+    })
   }
 
   // Transfers Scenarios
@@ -591,12 +498,7 @@ export class SushiXSwap {
   transfer(amountIn: Amount<Currency>, shareIn: Share<Currency>): void {
     // T1-T4
     if (!this.srcUseBentoBox) {
-      this.srcCooker.srcDepositToBentoBox(
-        this.srcToken,
-        this.user,
-        0,
-        shareIn.quotient.toString()
-      );
+      this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, shareIn.quotient.toString())
     }
     this.srcCooker.srcTransferFromBentoBox(
       this.srcToken,
@@ -604,10 +506,8 @@ export class SushiXSwap {
       0,
       shareIn.quotient.toString(),
       true
-    );
-    this.dstCooker[
-      this.dstUseBentoBox ? "dstDepositToBentoBox" : "dstWithdraw"
-    ](this.dstToken);
+    )
+    this.dstCooker[this.dstUseBentoBox ? 'dstDepositToBentoBox' : 'dstWithdraw'](this.dstToken)
   }
 
   // Regular Swap Scenarios
@@ -624,12 +524,7 @@ export class SushiXSwap {
     // S1-S4
     if (this.srcTrade && this.srcTrade.isV1()) {
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(
-          this.srcToken,
-          this.user,
-          amountIn.quotient.toString(),
-          0
-        );
+        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, amountIn.quotient.toString(), 0)
       }
       this.srcCooker.srcTransferFromBentoBox(
         this.srcToken,
@@ -637,30 +532,24 @@ export class SushiXSwap {
         0,
         shareIn.quotient.toString(),
         true
-      );
+      )
       this.srcCooker.legacyExactInput(
         this.srcTrade,
         0,
         minimumAmountOut.quotient.toString(),
-        this.dstToken.isNative || this.dstUseBentoBox
-          ? this.srcCooker.masterContract
-          : this.user
-      );
+        this.dstToken.isNative || this.dstUseBentoBox ? this.srcCooker.masterContract : this.user
+      )
       if (this.dstUseBentoBox) {
-        this.srcCooker.dstDepositToBentoBox(this.dstToken.wrapped);
+        this.srcCooker.dstDepositToBentoBox(this.dstToken.wrapped)
       }
-    } else if (
-      this.srcTrade &&
-      this.srcTrade.isV2() &&
-      this.srcTrade.isSingle()
-    ) {
+    } else if (this.srcTrade && this.srcTrade.isV2() && this.srcTrade.isSingle()) {
       if (!this.srcUseBentoBox) {
         this.srcCooker.srcDepositToBentoBox(
           this.srcToken,
           this.srcTrade.route.legs[0].poolAddress,
           amountIn.quotient.toString(),
           0
-        );
+        )
       } else {
         this.srcCooker.srcTransferFromBentoBox(
           this.srcToken,
@@ -668,29 +557,23 @@ export class SushiXSwap {
           0,
           shareIn.quotient.toString(),
           false
-        );
+        )
       }
       this.srcCooker.tridentExactInput(
         this.srcTrade,
-        this.dstToken.isNative && !this.dstUseBentoBox
-          ? this.srcCooker.masterContract
-          : this.user,
+        this.dstToken.isNative && !this.dstUseBentoBox ? this.srcCooker.masterContract : this.user,
         shareIn.quotient.toString(),
         minimumShareOut.quotient.toString(),
         (this.dstToken.isNative && !this.dstUseBentoBox) || !this.dstUseBentoBox
-      );
-    } else if (
-      this.srcTrade &&
-      this.srcTrade.isV2() &&
-      this.srcTrade.isComplex()
-    ) {
+      )
+    } else if (this.srcTrade && this.srcTrade.isV2() && this.srcTrade.isComplex()) {
       if (!this.srcUseBentoBox) {
         this.srcCooker.srcDepositToBentoBox(
           this.srcToken,
           this.srcCooker.masterContract,
           amountIn.quotient.toString(),
           0
-        );
+        )
       } else {
         this.srcCooker.srcTransferFromBentoBox(
           this.srcToken,
@@ -698,19 +581,17 @@ export class SushiXSwap {
           0,
           shareIn.quotient.toString(),
           false
-        );
+        )
       }
       this.srcCooker.tridentComplex(
         this.srcTrade,
-        this.dstToken.isNative && !this.dstUseBentoBox
-          ? this.srcCooker.masterContract
-          : this.user,
+        this.dstToken.isNative && !this.dstUseBentoBox ? this.srcCooker.masterContract : this.user,
         minimumShareOut.quotient.toString(),
         (this.dstToken.isNative && !this.dstUseBentoBox) || !this.dstUseBentoBox
-      );
+      )
     }
     if (this.dstToken.isNative && !this.dstUseBentoBox) {
-      this.srcCooker.unwrapAndTransfer(this.dstToken);
+      this.srcCooker.unwrapAndTransfer(this.dstToken)
     }
   }
 
@@ -727,12 +608,12 @@ export class SushiXSwap {
     dstMinimumAmountOut,
     dstMinimumShareOut,
   }: {
-    srcAmount: Amount<Currency>;
-    srcShare: Share<Currency>;
-    srcMinimumAmountOut?: Amount<Currency>;
-    srcMinimumShareOut?: Share<Currency>;
-    dstMinimumAmountOut: Amount<Currency>;
-    dstMinimumShareOut: Share<Currency>;
+    srcAmount: Amount<Currency>
+    srcShare: Share<Currency>
+    srcMinimumAmountOut?: Amount<Currency>
+    srcMinimumShareOut?: Share<Currency>
+    dstMinimumAmountOut: Amount<Currency>
+    dstMinimumShareOut: Share<Currency>
   }) {
     // X1-X4
     // Src operations...
@@ -740,12 +621,7 @@ export class SushiXSwap {
       // If cross chain & src token is stargate bridge token, there's no need for a src trade
       // so deposit to bentobox (if neccasasry) and transfer shares to SushiXSwap Router
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(
-          this.srcToken,
-          this.user,
-          0,
-          srcShare.quotient.toString()
-        );
+        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, 0, srcShare.quotient.toString())
       }
       this.srcCooker.srcTransferFromBentoBox(
         this.srcToken,
@@ -753,20 +629,10 @@ export class SushiXSwap {
         0,
         srcShare.quotient.toString(),
         true
-      );
-    } else if (
-      this.srcTrade &&
-      this.srcTrade.isV1() &&
-      this.srcTrade.route.legs.length &&
-      srcMinimumAmountOut
-    ) {
+      )
+    } else if (this.srcTrade && this.srcTrade.isV1() && this.srcTrade.route.legs.length && srcMinimumAmountOut) {
       if (!this.srcUseBentoBox) {
-        this.srcCooker.srcDepositToBentoBox(
-          this.srcToken,
-          this.user,
-          srcAmount.quotient.toString(),
-          0
-        );
+        this.srcCooker.srcDepositToBentoBox(this.srcToken, this.user, srcAmount.quotient.toString(), 0)
       }
       this.srcCooker.srcTransferFromBentoBox(
         this.srcToken,
@@ -774,13 +640,13 @@ export class SushiXSwap {
         0,
         srcShare.quotient.toString(),
         true
-      );
+      )
       this.srcCooker.legacyExactInput(
         this.srcTrade,
         0,
         srcMinimumAmountOut.quotient.toString(),
         this.srcCooker.masterContract
-      );
+      )
     } else if (
       this.srcTrade &&
       this.srcTrade.isV2() &&
@@ -789,14 +655,14 @@ export class SushiXSwap {
       srcMinimumShareOut
     ) {
       if (this.srcTrade.isSingle()) {
-        console.debug("cook trident exact input");
+        console.debug('cook trident exact input')
         if (!this.srcUseBentoBox) {
           this.srcCooker.srcDepositToBentoBox(
             this.srcToken,
             this.srcTrade.route.legs[0].poolAddress,
             srcAmount.quotient.toString(),
             0
-          );
+          )
         } else {
           this.srcCooker.srcTransferFromBentoBox(
             this.srcToken,
@@ -804,7 +670,7 @@ export class SushiXSwap {
             0,
             srcShare.quotient.toString(),
             false
-          );
+          )
         }
         this.srcCooker.tridentExactInput(
           this.srcTrade,
@@ -812,16 +678,16 @@ export class SushiXSwap {
           srcShare.quotient.toString(),
           srcMinimumShareOut.quotient.toString(),
           true
-        );
+        )
       } else if (this.srcTrade.isComplex()) {
-        console.debug("cook trident complex");
+        console.debug('cook trident complex')
         if (!this.srcUseBentoBox) {
           this.srcCooker.srcDepositToBentoBox(
             this.srcToken,
             this.srcCooker.masterContract,
             srcAmount.quotient.toString(),
             0
-          );
+          )
         } else {
           this.srcCooker.srcTransferFromBentoBox(
             this.srcToken,
@@ -829,14 +695,14 @@ export class SushiXSwap {
             0,
             srcShare.quotient.toString(),
             false
-          );
+          )
         }
         this.srcCooker.tridentComplex(
           this.srcTrade,
           this.srcCooker.masterContract,
           srcMinimumShareOut.quotient.toString(),
           true
-        );
+        )
       }
     }
 
@@ -844,69 +710,48 @@ export class SushiXSwap {
     if (isStargateBridgeToken(this.dstToken)) {
       // If cross chain & dst token is stargate bridge token, there's no need for a dst trade
       // so either deposit to the users bentboxbox or withdraw to users wallet
-      this.dstCooker[
-        this.dstUseBentoBox ? "dstDepositToBentoBox" : "dstWithdraw"
-      ](this.dstToken);
-    } else if (
-      this.dstTrade &&
-      this.dstTrade.isV1() &&
-      this.dstTrade.route.legs.length
-    ) {
-      console.debug("cook teleport legacy exact in");
+      this.dstCooker[this.dstUseBentoBox ? 'dstDepositToBentoBox' : 'dstWithdraw'](this.dstToken)
+    } else if (this.dstTrade && this.dstTrade.isV1() && this.dstTrade.route.legs.length) {
+      console.debug('cook teleport legacy exact in')
       this.dstCooker.legacyExactInput(
         this.dstTrade,
         0,
         dstMinimumAmountOut.quotient.toString(),
-        this.dstToken.isNative || this.dstUseBentoBox
-          ? this.dstCooker.masterContract
-          : this.user
-      );
+        this.dstToken.isNative || this.dstUseBentoBox ? this.dstCooker.masterContract : this.user
+      )
 
       if (this.dstUseBentoBox) {
-        this.dstCooker.dstDepositToBentoBox(this.dstToken.wrapped);
+        this.dstCooker.dstDepositToBentoBox(this.dstToken.wrapped)
       }
 
       if (this.dstToken.isNative && !this.dstUseBentoBox) {
-        this.dstCooker.unwrapAndTransfer(this.dstToken);
+        this.dstCooker.unwrapAndTransfer(this.dstToken)
       }
-    } else if (
-      this.dstTrade &&
-      this.dstTrade.isV2() &&
-      this.dstTrade.route.legs.length
-    ) {
+    } else if (this.dstTrade && this.dstTrade.isV2() && this.dstTrade.route.legs.length) {
       if (this.dstTrade.isSingle()) {
-        console.debug("dst cook teleport trident exact input");
+        console.debug('dst cook teleport trident exact input')
         this.dstCooker.tridentExactInput(
           this.dstTrade,
-          this.dstToken.isNative && !this.dstUseBentoBox
-            ? this.dstCooker.masterContract
-            : this.user,
+          this.dstToken.isNative && !this.dstUseBentoBox ? this.dstCooker.masterContract : this.user,
           0,
           dstMinimumShareOut.quotient.toString(),
-          (this.dstToken.isNative && !this.dstUseBentoBox) ||
-            !this.dstUseBentoBox
-        );
+          (this.dstToken.isNative && !this.dstUseBentoBox) || !this.dstUseBentoBox
+        )
         if (this.dstToken.isNative && !this.dstUseBentoBox) {
-          this.dstCooker.unwrapAndTransfer(this.dstToken);
+          this.dstCooker.unwrapAndTransfer(this.dstToken)
         }
       } else if (this.dstTrade.isComplex()) {
-        console.debug("dst cook teleport trident complex");
-        this.dstCooker.dstDepositToBentoBox(
-          this.dstTrade.inputAmount.currency,
-          this.dstCooker.masterContract
-        );
+        console.debug('dst cook teleport trident complex')
+        this.dstCooker.dstDepositToBentoBox(this.dstTrade.inputAmount.currency, this.dstCooker.masterContract)
         this.dstCooker.tridentComplex(
           this.dstTrade,
-          this.dstToken.isNative && !this.dstUseBentoBox
-            ? this.dstCooker.masterContract
-            : this.user,
+          this.dstToken.isNative && !this.dstUseBentoBox ? this.dstCooker.masterContract : this.user,
           dstMinimumShareOut.quotient.toString(),
-          (this.dstToken.isNative && !this.dstUseBentoBox) ||
-            !this.dstUseBentoBox
-        );
+          (this.dstToken.isNative && !this.dstUseBentoBox) || !this.dstUseBentoBox
+        )
 
         if (this.dstToken.isNative && !this.dstUseBentoBox) {
-          this.dstCooker.unwrapAndTransfer(this.dstToken);
+          this.dstCooker.unwrapAndTransfer(this.dstToken)
         }
 
         // If any excess input tokens remain, withdraw from bentobox
@@ -916,7 +761,7 @@ export class SushiXSwap {
           0,
           0,
           !this.dstUseBentoBox
-        );
+        )
       }
     }
   }
@@ -927,10 +772,7 @@ export class SushiXSwap {
     gasSpent = 1000000,
     id: string,
     amountMin: Amount<Currency> = Amount.fromRawAmount(dstBridgeToken, 0),
-    dustAmount: Amount<Currency> = Amount.fromRawAmount(
-      Native.onChain(this.dstChainId),
-      0
-    )
+    dustAmount: Amount<Currency> = Amount.fromRawAmount(Native.onChain(this.dstChainId), 0)
   ): void {
     // uint16 dstChainId; // stargate dst chain id
     // address token; // token getting bridged
@@ -946,20 +788,20 @@ export class SushiXSwap {
 
     const data = defaultAbiCoder.encode(
       [
-        "uint16",
-        "address",
-        "uint256",
-        "uint256",
-        "uint256",
-        "uint256",
-        "uint256",
-        "address",
-        "address",
-        "uint256",
-        "bytes32",
-        "uint8[]",
-        "uint256[]",
-        "bytes[]",
+        'uint16',
+        'address',
+        'uint256',
+        'uint256',
+        'uint256',
+        'uint256',
+        'uint256',
+        'address',
+        'address',
+        'uint256',
+        'bytes32',
+        'uint8[]',
+        'uint256[]',
+        'bytes[]',
       ],
       [
         STARGATE_CHAIN_ID[this.dstCooker.chainId],
@@ -977,10 +819,10 @@ export class SushiXSwap {
         this.dstCooker.values.map((value) => BigNumber.from(value)),
         this.dstCooker.datas,
       ]
-    );
+    )
 
     if (this.debug) {
-      console.debug("cook teleport", [
+      console.debug('cook teleport', [
         STARGATE_CHAIN_ID[this.dstCooker.chainId],
         srcBridgeToken.address,
         STARGATE_POOL_ID[this.srcCooker.chainId][srcBridgeToken.address],
@@ -995,10 +837,10 @@ export class SushiXSwap {
         this.dstCooker.actions,
         this.dstCooker.values.map((value) => BigNumber.from(value)),
         this.dstCooker.datas,
-      ]);
+      ])
     }
 
-    this.srcCooker.add(Action.STARGATE_TELEPORT, data);
+    this.srcCooker.add(Action.STARGATE_TELEPORT, data)
   }
 
   async getFee(gasSpent = 1000000) {
@@ -1010,29 +852,24 @@ export class SushiXSwap {
           gasSpent,
           0,
           defaultAbiCoder.encode(
-            ["address", "uint8[]", "uint256[]", "bytes[]"],
-            [
-              this.user,
-              this.dstCooker.actions,
-              this.dstCooker.values,
-              this.dstCooker.datas,
-            ]
+            ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
+            [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
           )
         )
-      : [Zero, Zero];
+      : [Zero, Zero]
   }
 
   async cook(gasSpent = 1000000): Promise<ContractTransaction | undefined> {
     if (!this.contract) {
-      return;
+      return
     }
 
     if (!this.srcCooker.actions.length) {
-      return;
+      return
     }
 
     if (this.crossChain && !this.dstCooker.actions.length) {
-      return;
+      return
     }
 
     // Add more validation, e.g. if teleport action is given, ensure src & dst chain are different
@@ -1041,27 +878,22 @@ export class SushiXSwap {
       console.debug(
         [this.srcCooker.actions, this.srcCooker.values, this.srcCooker.datas],
         [this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
-      );
+      )
     }
 
     try {
       // console.log('Before fee')
 
-      const [fee] = await this.getFee(gasSpent);
+      const [fee] = await this.getFee(gasSpent)
 
       // console.log(`Successful Fee`, fee)
 
-      const value = this.srcCooker.values.reduce((a, b) => a.add(b), fee);
-      return this.contract.cook(
-        this.srcCooker.actions,
-        this.srcCooker.values,
-        this.srcCooker.datas,
-        {
-          value,
-        }
-      );
+      const value = this.srcCooker.values.reduce((a, b) => a.add(b), fee)
+      return this.contract.cook(this.srcCooker.actions, this.srcCooker.values, this.srcCooker.datas, {
+        value,
+      })
     } catch (error) {
-      console.error("SushiXSwap Fee Error", error);
+      console.error('SushiXSwap Fee Error', error)
     }
   }
 }

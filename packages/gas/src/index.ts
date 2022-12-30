@@ -1,1 +1,1 @@
-export { calculateGasMargin } from "./calculateGasMargin";
+export { calculateGasMargin } from './calculateGasMargin'

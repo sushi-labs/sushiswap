@@ -1,4 +1,4 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
-const jestConfig = {};
+const jestConfig = {}
 
-module.exports = jestConfig;
+module.exports = jestConfig

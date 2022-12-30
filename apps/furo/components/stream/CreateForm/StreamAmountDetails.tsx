@@ -1,30 +1,25 @@
-import { ChainId } from "@sushiswap/chain";
-import { tryParseAmount, Type } from "@sushiswap/currency";
-import { FundSource } from "@sushiswap/hooks";
-import { Form, Select } from "@sushiswap/ui";
-import { TokenSelector, useBalance } from "@sushiswap/wagmi";
-import { FC, useCallback, useEffect, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
-import { useAccount } from "wagmi";
+import { ChainId } from '@sushiswap/chain'
+import { tryParseAmount, Type } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
+import { Form, Select } from '@sushiswap/ui'
+import { TokenSelector, useBalance } from '@sushiswap/wagmi'
+import { FC, useCallback, useEffect, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { useAccount } from 'wagmi'
 
-import { useCustomTokens } from "../../../lib/state/storage";
-import { useTokens } from "../../../lib/state/token-lists";
-import {
-  useFundSourceFromZFundSource,
-  useTokenFromZToken,
-  ZFundSourceToFundSource,
-} from "../../../lib/zod";
-import { CurrencyInputBase } from "../../CurrencyInput";
-import { FormErrors } from "./CreateForm";
-import { FundSourceOption } from "./FundSourceOption";
-import { CreateStreamFormSchemaType } from "./schema";
+import { useCustomTokens } from '../../../lib/state/storage'
+import { useTokens } from '../../../lib/state/token-lists'
+import { useFundSourceFromZFundSource, useTokenFromZToken, ZFundSourceToFundSource } from '../../../lib/zod'
+import { CurrencyInputBase } from '../../CurrencyInput'
+import { FormErrors } from './CreateForm'
+import { FundSourceOption } from './FundSourceOption'
+import { CreateStreamFormSchemaType } from './schema'
 
 export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
-  const { address } = useAccount();
-  const tokenMap = useTokens(chainId);
-  const [customTokenMap, { addCustomToken, removeCustomToken }] =
-    useCustomTokens(chainId);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { address } = useAccount()
+  const tokenMap = useTokens(chainId)
+  const [customTokenMap, { addCustomToken, removeCustomToken }] = useCustomTokens(chainId)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const {
     control,
@@ -33,30 +28,26 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
     setError,
     clearErrors,
     formState: { errors },
-  } = useFormContext<CreateStreamFormSchemaType & FormErrors>();
+  } = useFormContext<CreateStreamFormSchemaType & FormErrors>()
 
-  const [amount, currency, fundSource] = watch([
-    "amount",
-    "currency",
-    "fundSource",
-  ]);
-  const _currency = useTokenFromZToken(currency);
-  const _fundSource = useFundSourceFromZFundSource(fundSource);
+  const [amount, currency, fundSource] = watch(['amount', 'currency', 'fundSource'])
+  const _currency = useTokenFromZToken(currency)
+  const _fundSource = useFundSourceFromZFundSource(fundSource)
   const { data: balance } = useBalance({
     account: address,
     currency: _currency,
     chainId,
     loadBentobox: true,
-  });
+  })
 
   const onClose = useCallback(() => {
-    setDialogOpen(false);
-  }, []);
+    setDialogOpen(false)
+  }, [])
 
   const onSelect = useCallback(
     (onChange: (...event: any[]) => void, currency: Type) => {
       if (currency.isNative) {
-        const { chainId, decimals, symbol, name, isNative } = currency;
+        const { chainId, decimals, symbol, name, isNative } = currency
         onChange({
           chainId,
           decimals,
@@ -64,10 +55,10 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           symbol,
           name,
           isNative,
-        });
-        setValue("fundSource", FundSource.WALLET);
+        })
+        setValue('fundSource', FundSource.WALLET)
       } else {
-        const { chainId, decimals, symbol, name, isNative, wrapped } = currency;
+        const { chainId, decimals, symbol, name, isNative, wrapped } = currency
         onChange({
           chainId,
           decimals,
@@ -75,23 +66,23 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           symbol,
           name,
           isNative,
-        });
+        })
       }
 
-      onClose();
+      onClose()
     },
     [onClose, setValue]
-  );
+  )
 
   useEffect(() => {
-    const cAmount = tryParseAmount(amount, _currency);
-    if (!_fundSource || !balance?.[_fundSource] || !cAmount) return;
+    const cAmount = tryParseAmount(amount, _currency)
+    if (!_fundSource || !balance?.[_fundSource] || !cAmount) return
     if (balance[_fundSource].lessThan(cAmount)) {
-      setError("FORM_ERROR", { type: "min", message: "Insufficient Balance" });
+      setError('FORM_ERROR', { type: 'min', message: 'Insufficient Balance' })
     } else {
-      clearErrors("FORM_ERROR");
+      clearErrors('FORM_ERROR')
     }
-  }, [_currency, _fundSource, amount, balance, clearErrors, setError]);
+  }, [_currency, _fundSource, amount, balance, clearErrors, setError])
 
   return (
     <Form.Section
@@ -110,13 +101,11 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                 className="!cursor-pointer ring-offset-slate-900"
                 onClick={() => setDialogOpen(true)}
               >
-                {value?.symbol || (
-                  <span className="text-slate-500">Select a currency</span>
-                )}
+                {value?.symbol || <span className="text-slate-500">Select a currency</span>}
               </Select.Button>
               <Form.Error message={error?.message} />
               <TokenSelector
-                id={"create-single-stream"}
+                id={'create-single-stream'}
                 open={dialogOpen}
                 variant="dialog"
                 chainId={chainId}
@@ -137,7 +126,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
           control={control}
           name="fundSource"
           render={({ field: { onChange, value }, fieldState: { error } }) => {
-            const _value = ZFundSourceToFundSource.parse(value);
+            const _value = ZFundSourceToFundSource.parse(value)
             return (
               <div className="flex flex-col">
                 <div className="flex items-center gap-3">
@@ -162,7 +151,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                 </div>
                 <Form.Error message={error?.message} />
               </div>
-            );
+            )
           }}
         />
       </Form.Control>
@@ -170,10 +159,7 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
         <Controller
           control={control}
           name="amount"
-          render={({
-            field: { onChange, value, onBlur, name },
-            fieldState: { error },
-          }) => {
+          render={({ field: { onChange, value, onBlur, name }, fieldState: { error } }) => {
             return (
               <>
                 <CurrencyInputBase
@@ -181,17 +167,15 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
                   name={name}
                   className="ring-offset-slate-900"
                   onChange={onChange}
-                  value={value || ""}
+                  value={value || ''}
                   currency={_currency}
                 />
-                <Form.Error
-                  message={error?.message || errors["FORM_ERROR"]?.message}
-                />
+                <Form.Error message={error?.message || errors['FORM_ERROR']?.message} />
               </>
-            );
+            )
           }}
         />
       </Form.Control>
     </Form.Section>
-  );
-};
+  )
+}

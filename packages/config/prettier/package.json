@@ -15,22 +15,22 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "type": "module",
+  "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "sideEffects": false,
-  "typescript": {
-    "definition": "dist/index.d.ts"
-  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/*.ts --format esm,cjs --dts --external prettier,prettier-plugin-solidity,prettier-plugin-tailwindcss",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build2": "tsup src/index.ts --format esm,cjs --dts --external prettier,prettier-plugin-solidity,prettier-plugin-tailwindcss",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "postinstall": "pnpm build"
+    "postinstall": "pnpm build",
+    "lint": "TIMING=1 eslint ./**/*.ts* --fix",
+    "test": "jest --passWithNoTests"
   },
   "jest": {
     "preset": "@sushiswap/jest-config/node"
@@ -50,5 +50,8 @@
   "optionalDependencies": {
     "prettier-plugin-solidity": "*",
     "prettier-plugin-tailwindcss": "*"
+  },
+  "typescript": {
+    "definition": "dist/index.d.ts"
   }
 }

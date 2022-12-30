@@ -1,25 +1,25 @@
-import { ChainId } from "@sushiswap/chain";
+import { ChainId } from '@sushiswap/chain'
 
-import ARBITRUM from "./arbitrum";
-import AVALANCHE from "./avalanche";
-import BSC from "./bsc";
-import ETHEREUM from "./ethereum";
-import GNOSIS from "./gnosis";
-import HECO from "./heco";
-import KOVAN from "./kovan";
-import POLYGON from "./polygon";
+import ARBITRUM from './arbitrum'
+import AVALANCHE from './avalanche'
+import BSC from './bsc'
+import ETHEREUM from './ethereum'
+import GNOSIS from './gnosis'
+import HECO from './heco'
+import KOVAN from './kovan'
+import POLYGON from './polygon'
 
 export interface ChainlinkPriceFeedEntry {
-  from: string;
-  to: string;
-  decimals: number;
-  fromDecimals: number;
-  toDecimals: number;
+  from: string
+  to: string
+  decimals: number
+  fromDecimals: number
+  toDecimals: number
 }
 
 export type ChainlinkPriceFeedMap = {
-  readonly [address: string]: ChainlinkPriceFeedEntry;
-};
+  readonly [address: string]: ChainlinkPriceFeedEntry
+}
 
 export const CHAINLINK_SUPPORTED_CHAIN_IDS = [
   ChainId.ETHEREUM,
@@ -30,10 +30,10 @@ export const CHAINLINK_SUPPORTED_CHAIN_IDS = [
   ChainId.GNOSIS,
   ChainId.ARBITRUM,
   ChainId.AVALANCHE,
-] as const;
+] as const
 
 export const CHAINLINK_PRICE_FEED_MAP: {
-  readonly [key in typeof CHAINLINK_SUPPORTED_CHAIN_IDS[number]]: ChainlinkPriceFeedMap;
+  readonly [key in typeof CHAINLINK_SUPPORTED_CHAIN_IDS[number]]: ChainlinkPriceFeedMap
 } = {
   [ChainId.ETHEREUM]: ETHEREUM,
   [ChainId.KOVAN]: KOVAN,
@@ -43,4 +43,4 @@ export const CHAINLINK_PRICE_FEED_MAP: {
   [ChainId.GNOSIS]: GNOSIS,
   [ChainId.ARBITRUM]: ARBITRUM,
   [ChainId.AVALANCHE]: AVALANCHE,
-};
+}

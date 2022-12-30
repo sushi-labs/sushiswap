@@ -1,22 +1,19 @@
-import React, { FC } from "react";
+import React, { FC } from 'react'
 
-import { classNames } from "..";
+import { classNames } from '..'
 
 const HeadCell: FC<
-  React.DetailedHTMLProps<
-    React.ThHTMLAttributes<HTMLTableHeaderCellElement>,
-    HTMLTableHeaderCellElement
-  >
+  React.DetailedHTMLProps<React.ThHTMLAttributes<HTMLTableHeaderCellElement>, HTMLTableHeaderCellElement>
 > = ({ children, className, ...props }) => (
   <th
     {...props}
     className={classNames(
       className,
-      "h-[52px] px-3 sm:px-4 text-sm font-medium text-slate-400 hover:text-high-emphesis whitespace-nowrap"
+      'h-[52px] px-3 sm:px-4 text-sm font-medium text-slate-400 hover:text-high-emphesis whitespace-nowrap'
     )}
   >
     {children}
   </th>
-);
+)
 
-export default HeadCell;
+export default HeadCell

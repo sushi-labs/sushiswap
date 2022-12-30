@@ -1,10 +1,10 @@
-import { FC } from "react";
+import { FC } from 'react'
 
-import { ComponentSharedMedia } from "../.mesh";
-import { Image } from "./Image";
+import { ComponentSharedMedia } from '../.mesh'
+import { Image } from './Image'
 
 interface MediaBlock {
-  block: ComponentSharedMedia;
+  block: ComponentSharedMedia
 }
 
 export const MediaBlock: FC<MediaBlock> = ({ block }) => {
@@ -20,11 +20,7 @@ export const MediaBlock: FC<MediaBlock> = ({ block }) => {
           />
         </div>
       )}
-      {block.caption && (
-        <span className="text-xs font-medium text-slate-400">
-          {block.caption}
-        </span>
-      )}
+      {block.caption && <span className="text-xs font-medium text-slate-400">{block.caption}</span>}
     </div>
-  );
-};
+  )
+}

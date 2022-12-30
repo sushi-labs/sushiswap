@@ -1,3 +1,3 @@
-import Page from "../../../../../../swap/page";
+import Page from '../../../../../../swap/page'
 
-export default Page;
+export default Page

@@ -1,15 +1,15 @@
-import { App, AppType, BuyCrypto } from "@sushiswap/ui";
-import { NetworkSelector } from "@sushiswap/wagmi";
-import { Profile } from "@sushiswap/wagmi/components/Wallet/Profile";
-import { useNotifications } from "lib/state/storage";
-import React from "react";
-import { useAccount } from "wagmi";
+import { App, AppType, BuyCrypto } from '@sushiswap/ui'
+import { NetworkSelector } from '@sushiswap/wagmi'
+import { Profile } from '@sushiswap/wagmi/components/Wallet/Profile'
+import { useNotifications } from 'lib/state/storage'
+import React from 'react'
+import { useAccount } from 'wagmi'
 
-import { SUPPORTED_CHAIN_IDS } from "../config";
+import { SUPPORTED_CHAIN_IDS } from '../config'
 
 export const Header = () => {
-  const { address } = useAccount();
-  const [notifications, { clearNotifications }] = useNotifications(address);
+  const { address } = useAccount()
+  const [notifications, { clearNotifications }] = useNotifications(address)
   return (
     <App.Header
       appType={AppType.xSwap}
@@ -31,5 +31,5 @@ export const Header = () => {
         />
       </div>
     </App.Header>
-  );
-};
+  )
+}

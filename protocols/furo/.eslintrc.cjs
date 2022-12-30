@@ -1,3 +1,3 @@
-const { default: config } = require("@sushiswap/eslint-config/hardhat");
+const { default: config } = require('@sushiswap/eslint-config/hardhat')
 
-module.exports = config;
+module.exports = config

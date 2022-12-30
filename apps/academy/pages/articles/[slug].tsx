@@ -1,9 +1,9 @@
-import { useBreakpoint } from "@sushiswap/hooks";
-import { classNames, Container, LoadingOverlay } from "@sushiswap/ui";
-import { APP_HEADER_HEIGHT, DEFAULT_SIDE_PADDING } from "common/helpers";
-import ErrorPage from "next/error";
-import { useRouter } from "next/router";
-import { FC, useCallback, useState } from "react";
+import { useBreakpoint } from '@sushiswap/hooks'
+import { classNames, Container, LoadingOverlay } from '@sushiswap/ui'
+import { APP_HEADER_HEIGHT, DEFAULT_SIDE_PADDING } from 'common/helpers'
+import ErrorPage from 'next/error'
+import { useRouter } from 'next/router'
+import { FC, useCallback, useState } from 'react'
 
 import {
   ArticleBlocksDynamicZone,
@@ -11,7 +11,7 @@ import {
   ComponentSharedMedia,
   ComponentSharedRichText,
   Maybe,
-} from "../../.mesh";
+} from '../../.mesh'
 import {
   ArticleFooter,
   ArticleHeader,
@@ -22,40 +22,39 @@ import {
   MediaBlock,
   PreviewBanner,
   RichTextBlock,
-} from "../../common/components";
-import { Image } from "../../common/components";
-import { getAllArticlesBySlug, getArticleAndMoreArticles } from "../../lib/api";
+} from '../../common/components'
+import { Image } from '../../common/components'
+import { getAllArticlesBySlug, getArticleAndMoreArticles } from '../../lib/api'
 
 export async function getStaticPaths() {
   // When this is true (in preview environments) don't
   // prerender any static pages
   // (faster builds, but slower initial page load)
-  if (process.env.SKIP_BUILD_STATIC_GENERATION === "true") {
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === 'true') {
     return {
       paths: [],
-      fallback: "blocking",
-    };
+      fallback: 'blocking',
+    }
   }
 
-  const allArticles = await getAllArticlesBySlug();
+  const allArticles = await getAllArticlesBySlug()
   return {
     paths: allArticles.articles?.data.reduce<string[]>((acc, article) => {
-      if (article?.attributes?.slug)
-        acc.push(`/articles/${article?.attributes.slug}`);
-      return acc;
+      if (article?.attributes?.slug) acc.push(`/articles/${article?.attributes.slug}`)
+      return acc
     }, []),
     fallback: true,
-  };
+  }
 }
 
 export async function getStaticProps({
   params,
   preview = null,
 }: {
-  params: { slug: string };
-  preview: Record<string, unknown> | null;
+  params: { slug: string }
+  preview: Record<string, unknown> | null
 }) {
-  const data = await getArticleAndMoreArticles(params.slug, preview);
+  const data = await getArticleAndMoreArticles(params.slug, preview)
 
   return {
     props: {
@@ -64,49 +63,41 @@ export async function getStaticProps({
       preview: !!preview,
     },
     revalidate: 1,
-  };
+  }
 }
 
 interface ArticlePage {
-  article?: ArticleEntity;
-  latestArticles?: ArticleEntity[];
-  preview: boolean;
+  article?: ArticleEntity
+  latestArticles?: ArticleEntity[]
+  preview: boolean
 }
 
 const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
-  const router = useRouter();
-  const tableOfContents = article?.attributes?.staticTableOfContents?.entries;
+  const router = useRouter()
+  const tableOfContents = article?.attributes?.staticTableOfContents?.entries
   const tableOfContentsFiltered = tableOfContents?.filter((el) =>
-    article?.attributes?.blocks?.some(
-      (block) => block && "key" in block && block.key === el?.key
-    )
-  );
-  const { isSm } = useBreakpoint("sm");
-  const [selectedHeader, setSelectedHeader] = useState<
-    Maybe<string> | undefined
-  >();
+    article?.attributes?.blocks?.some((block) => block && 'key' in block && block.key === el?.key)
+  )
+  const { isSm } = useBreakpoint('sm')
+  const [selectedHeader, setSelectedHeader] = useState<Maybe<string> | undefined>()
 
   const scrollToHeader = useCallback(
     (id: Maybe<string> | undefined) => {
-      const el = id ? document.getElementById(id) : undefined;
+      const el = id ? document.getElementById(id) : undefined
       if (el) {
-        const padding = isSm ? 24 : 180;
-        const offset =
-          el.getBoundingClientRect().top +
-          window.scrollY -
-          APP_HEADER_HEIGHT -
-          padding;
+        const padding = isSm ? 24 : 180
+        const offset = el.getBoundingClientRect().top + window.scrollY - APP_HEADER_HEIGHT - padding
         window.scrollTo({
           top: offset,
-          behavior: "smooth",
-        });
+          behavior: 'smooth',
+        })
       }
     },
     [isSm]
-  );
+  )
 
   if (!router.isFallback && !article?.attributes?.slug) {
-    return <ErrorPage statusCode={404} />;
+    return <ErrorPage statusCode={404} />
   }
 
   return (
@@ -133,7 +124,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
 
           <div
             className={classNames(
-              "sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]",
+              'sm:grid grid-cols-[min-content,1fr] justify-items-center gap-16 sm:pt-[50px]',
               DEFAULT_SIDE_PADDING
             )}
           >
@@ -145,14 +136,12 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
                   <li
                     key={el?.key}
                     className={classNames(
-                      "hover:text-slate-50 font-medium text-base cursor-pointer",
-                      selectedHeader === el?.key
-                        ? "text-slate-50"
-                        : "text-slate-400"
+                      'hover:text-slate-50 font-medium text-base cursor-pointer',
+                      selectedHeader === el?.key ? 'text-slate-50' : 'text-slate-400'
                     )}
                     onClick={() => {
-                      scrollToHeader(el?.key);
-                      setSelectedHeader(el?.text);
+                      scrollToHeader(el?.key)
+                      setSelectedHeader(el?.text)
                     }}
                   >
                     {el?.text}
@@ -162,36 +151,18 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
             </aside>
             <article className="prose !prose-invert prose-slate">
               {article?.attributes?.blocks?.map((b, i) => {
-                if (b && "__typename" in b) {
+                if (b && '__typename' in b) {
                   const block = b as ArticleBlocksDynamicZone & {
-                    __typename:
-                      | "ComponentSharedDivider"
-                      | "ComponentSharedMedia"
-                      | "ComponentSharedRichText";
-                  };
+                    __typename: 'ComponentSharedDivider' | 'ComponentSharedMedia' | 'ComponentSharedRichText'
+                  }
 
                   switch (block.__typename) {
-                    case "ComponentSharedDivider":
-                      return (
-                        <hr
-                          key={i}
-                          className="my-12 border border-slate-200/5"
-                        />
-                      );
-                    case "ComponentSharedMedia":
-                      return (
-                        <MediaBlock
-                          block={block as ComponentSharedMedia}
-                          key={i}
-                        />
-                      );
+                    case 'ComponentSharedDivider':
+                      return <hr key={i} className="my-12 border border-slate-200/5" />
+                    case 'ComponentSharedMedia':
+                      return <MediaBlock block={block as ComponentSharedMedia} key={i} />
                     default:
-                      return (
-                        <RichTextBlock
-                          block={block as ComponentSharedRichText}
-                          key={i}
-                        />
-                      );
+                      return <RichTextBlock block={block as ComponentSharedRichText} key={i} />
                   }
                 }
               })}
@@ -202,7 +173,7 @@ const ArticlePage: FC<ArticlePage> = ({ article, latestArticles, preview }) => {
         </div>
       </Container>
     </>
-  );
-};
+  )
+}
 
-export default ArticlePage;
+export default ArticlePage

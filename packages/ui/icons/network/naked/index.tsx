@@ -1,56 +1,53 @@
-import { ChainId } from "@sushiswap/chain";
-import React from "react";
+import { ChainId } from '@sushiswap/chain'
+import React from 'react'
 
-import { ArbitrumNaked } from "./ArbitrumNaked";
-import { ArbitrumNovaNaked } from "./ArbitrumNovaNaked";
-import { AvalancheNaked } from "./AvalancheNaked";
-import { BinanceNaked } from "./BinanceNaked";
-import { BobaNaked } from "./BobaNaked";
-import { BttcNaked } from "./BttcNaked";
-import { CeloNaked } from "./CeloNaked";
-import { EthereumNaked } from "./EthereumNaked";
-import { FantomNaked } from "./FantomNaked";
-import { FuseNaked } from "./FuseNaked";
-import { GnosisNaked } from "./GnosisNaked";
-import { HarmonyNaked } from "./HarmonyNaked";
-import { HecoNaked } from "./HecoNaked";
-import { KavaNaked } from "./KavaNaked";
-import { MetisNaked } from "./MetisNaked";
-import { MoonbeamNaked } from "./MoonbeamNaked";
-import { MoonriverNaked } from "./MoonriverNaked";
-import { OkexNaked } from "./OkexNaked";
-import { OptimismNaked } from "./OptimismNaked";
-import { PalmNaked } from "./PalmNaked";
-import { PolygonNaked } from "./PolygonNaked";
-import { TelosNaked } from "./TelosNaked";
+import { ArbitrumNaked } from './ArbitrumNaked'
+import { ArbitrumNovaNaked } from './ArbitrumNovaNaked'
+import { AvalancheNaked } from './AvalancheNaked'
+import { BinanceNaked } from './BinanceNaked'
+import { BobaNaked } from './BobaNaked'
+import { BttcNaked } from './BttcNaked'
+import { CeloNaked } from './CeloNaked'
+import { EthereumNaked } from './EthereumNaked'
+import { FantomNaked } from './FantomNaked'
+import { FuseNaked } from './FuseNaked'
+import { GnosisNaked } from './GnosisNaked'
+import { HarmonyNaked } from './HarmonyNaked'
+import { HecoNaked } from './HecoNaked'
+import { KavaNaked } from './KavaNaked'
+import { MetisNaked } from './MetisNaked'
+import { MoonbeamNaked } from './MoonbeamNaked'
+import { MoonriverNaked } from './MoonriverNaked'
+import { OkexNaked } from './OkexNaked'
+import { OptimismNaked } from './OptimismNaked'
+import { PalmNaked } from './PalmNaked'
+import { PolygonNaked } from './PolygonNaked'
+import { TelosNaked } from './TelosNaked'
 
-export * from "./ArbitrumNaked";
-export * from "./ArbitrumNovaNaked";
-export * from "./AvalancheNaked";
-export * from "./BinanceNaked";
-export * from "./BobaNaked";
-export * from "./BttcNaked";
-export * from "./CeloNaked";
-export * from "./EthereumNaked";
-export * from "./FantomNaked";
-export * from "./FuseNaked";
-export * from "./GnosisNaked";
-export * from "./HarmonyNaked";
-export * from "./HecoNaked";
-export * from "./KavaNaked";
-export * from "./MetisNaked";
-export * from "./MoonbeamNaked";
-export * from "./MoonriverNaked";
-export * from "./OkexNaked";
-export * from "./OptimismNaked";
-export * from "./PalmNaked";
-export * from "./PolygonNaked";
-export * from "./TelosNaked";
+export * from './ArbitrumNaked'
+export * from './ArbitrumNovaNaked'
+export * from './AvalancheNaked'
+export * from './BinanceNaked'
+export * from './BobaNaked'
+export * from './BttcNaked'
+export * from './CeloNaked'
+export * from './EthereumNaked'
+export * from './FantomNaked'
+export * from './FuseNaked'
+export * from './GnosisNaked'
+export * from './HarmonyNaked'
+export * from './HecoNaked'
+export * from './KavaNaked'
+export * from './MetisNaked'
+export * from './MoonbeamNaked'
+export * from './MoonriverNaked'
+export * from './OkexNaked'
+export * from './OptimismNaked'
+export * from './PalmNaked'
+export * from './PolygonNaked'
+export * from './TelosNaked'
 
-export const NETWORK_NAKED_ICON: Record<
-  number,
-  (props: React.ComponentProps<"svg">) => JSX.Element
-> = {
+export const NETWORK_NAKED_ICON: Record<number, (props: React.ComponentProps<'svg'>) => JSX.Element> = {
   [ChainId.ETHEREUM]: EthereumNaked,
   [ChainId.FANTOM]: FantomNaked,
   [ChainId.POLYGON]: PolygonNaked,
@@ -74,4 +71,4 @@ export const NETWORK_NAKED_ICON: Record<
   [ChainId.BOBA]: BobaNaked,
   [ChainId.BOBA_AVAX]: BobaNaked,
   [ChainId.BTTC]: BttcNaked,
-};
+}

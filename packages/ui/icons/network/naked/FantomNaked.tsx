@@ -1,12 +1,7 @@
-import * as React from "react";
+import * as React from 'react'
 
-export const FantomNaked = (props: React.ComponentProps<"svg">) => (
-  <svg
-    viewBox="0 0 128 128"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+export const FantomNaked = (props: React.ComponentProps<'svg'>) => (
+  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -14,4 +9,4 @@ export const FantomNaked = (props: React.ComponentProps<"svg">) => (
       fill="#13B5EC"
     />
   </svg>
-);
+)

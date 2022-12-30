@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { ArrowDownIcon } from "@heroicons/react/24/outline";
-import React, { FC } from "react";
+import { ArrowDownIcon } from '@heroicons/react/24/outline'
+import React, { FC } from 'react'
 
-import { useSwapActions } from "../TradeProvider";
+import { useSwapActions } from '../TradeProvider'
 
 export const SwitchTokensButton: FC = () => {
-  const { switchTokens } = useSwapActions();
+  const { switchTokens } = useSwapActions()
 
   return (
     <div className="left-0 right-0 mt-[-9px] mb-[-9px] flex items-center justify-center z-10">
@@ -20,5 +20,5 @@ export const SwitchTokensButton: FC = () => {
         </div>
       </button>
     </div>
-  );
-};
+  )
+}

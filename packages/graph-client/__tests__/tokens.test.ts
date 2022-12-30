@@ -1,4 +1,4 @@
-import { getBuiltGraphSDK } from "..";
+import { getBuiltGraphSDK } from '..'
 
 // TOKENS BY CHAIN IDS
 // ;(async () => {
@@ -22,20 +22,16 @@ import { getBuiltGraphSDK } from "..";
 //   console.log(`Token by id ${id}`, token)
 // })()
 
-describe("Tokens", () => {
-  const sdk = getBuiltGraphSDK();
-  const chainIds = [1, 137];
-  it.skip("should return tokens for multiple chain ids", async () => {
-    const { tokens } = await sdk.TokensByChainIds({ chainIds });
-    expect(
-      chainIds.every((chainId) =>
-        tokens.find((token) => chainId === token.chainId)
-      )
-    ).toBe(true);
-  });
-  it.skip("should return 2000 tokens for multiple chain ids", async () => {
-    const { tokens } = await sdk.TokensByChainIds({ chainIds, first: 1000 });
+describe('Tokens', () => {
+  const sdk = getBuiltGraphSDK()
+  const chainIds = [1, 137]
+  it.skip('should return tokens for multiple chain ids', async () => {
+    const { tokens } = await sdk.TokensByChainIds({ chainIds })
+    expect(chainIds.every((chainId) => tokens.find((token) => chainId === token.chainId))).toBe(true)
+  })
+  it.skip('should return 2000 tokens for multiple chain ids', async () => {
+    const { tokens } = await sdk.TokensByChainIds({ chainIds, first: 1000 })
     // console.log({ tokens })
-    expect(tokens.length).toBe(2000);
-  });
-});
+    expect(tokens.length).toBe(2000)
+  })
+})

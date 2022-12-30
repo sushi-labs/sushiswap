@@ -1,79 +1,54 @@
-import {
-  CreditCardIcon,
-  DuplicateIcon,
-  ExternalLinkIcon,
-  LogoutIcon,
-} from "@heroicons/react/outline";
-import { ChevronRightIcon } from "@heroicons/react/solid";
-import chains, { ChainId } from "@sushiswap/chain";
-import { Amount, Native } from "@sushiswap/currency";
-import { shortenAddress } from "@sushiswap/format";
-import {
-  BuyCrypto,
-  CopyHelper,
-  IconButton,
-  JazzIcon,
-  Typography,
-} from "@sushiswap/ui";
-import Image from "next/legacy/image";
-import React, { Dispatch, FC, SetStateAction, useMemo } from "react";
-import { useBalance, useDisconnect, useEnsAvatar } from "wagmi";
+import { CreditCardIcon, DuplicateIcon, ExternalLinkIcon, LogoutIcon } from '@heroicons/react/outline'
+import { ChevronRightIcon } from '@heroicons/react/solid'
+import chains, { ChainId } from '@sushiswap/chain'
+import { Amount, Native } from '@sushiswap/currency'
+import { shortenAddress } from '@sushiswap/format'
+import { BuyCrypto, CopyHelper, IconButton, JazzIcon, Typography } from '@sushiswap/ui'
+import Image from 'next/legacy/image'
+import React, { Dispatch, FC, SetStateAction, useMemo } from 'react'
+import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
 
-import { usePrices } from "../../../hooks";
-import { ProfileView } from "./Profile";
+import { usePrices } from '../../../hooks'
+import { ProfileView } from './Profile'
 
 interface DefaultProps {
-  chainId: ChainId;
-  address: `0x${string}`;
-  setView: Dispatch<SetStateAction<ProfileView>>;
+  chainId: ChainId
+  address: `0x${string}`
+  setView: Dispatch<SetStateAction<ProfileView>>
 }
 
 export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
-  const { data: prices } = usePrices({ chainId });
+  const { data: prices } = usePrices({ chainId })
   const { data: avatar } = useEnsAvatar({
     address: address,
-  });
+  })
 
   const { data: _balance } = useBalance({
     address: address,
     chainId,
-  });
+  })
 
   const balance = useMemo(
-    () =>
-      Amount.fromRawAmount(
-        Native.onChain(chainId),
-        _balance ? _balance?.value.toString() : "0"
-      ),
+    () => Amount.fromRawAmount(Native.onChain(chainId), _balance ? _balance?.value.toString() : '0'),
     [_balance, chainId]
-  );
+  )
 
-  const { disconnect } = useDisconnect();
+  const { disconnect } = useDisconnect()
 
   const balanceAsUsd = useMemo(() => {
     return balance && prices?.[Native.onChain(chainId).wrapped.address]
       ? balance.multiply(prices?.[Native.onChain(chainId).wrapped.address])
-      : undefined;
-  }, [balance, chainId, prices]);
+      : undefined
+  }, [balance, chainId, prices])
 
   return (
     <>
       <div className="flex flex-col gap-8 p-4">
         <div className="flex justify-between gap-3">
-          <Typography
-            variant="sm"
-            weight={600}
-            className="flex items-center gap-1.5 text-slate-50"
-          >
+          <Typography variant="sm" weight={600} className="flex items-center gap-1.5 text-slate-50">
             {avatar ? (
               <div className="w-4 h-4">
-                <Image
-                  alt="ens-avatar"
-                  src={avatar}
-                  width={16}
-                  height={16}
-                  className="rounded-full"
-                />
+                <Image alt="ens-avatar" src={avatar} width={16} height={16} className="rounded-full" />
               </div>
             ) : (
               <JazzIcon diameter={16} address={address} />
@@ -83,23 +58,14 @@ export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
           <div className="flex gap-3">
             <BuyCrypto address={address}>
               {(buyUrl) => (
-                <IconButton
-                  as="a"
-                  target="_blank"
-                  href={buyUrl}
-                  className="p-0.5"
-                  description="Buy Crypto"
-                >
+                <IconButton as="a" target="_blank" href={buyUrl} className="p-0.5" description="Buy Crypto">
                   <CreditCardIcon width={18} height={18} />
                 </IconButton>
               )}
             </BuyCrypto>
             <CopyHelper toCopy={address} hideIcon>
               {(isCopied) => (
-                <IconButton
-                  className="p-0.5"
-                  description={isCopied ? "Copied!" : "Copy"}
-                >
+                <IconButton className="p-0.5" description={isCopied ? 'Copied!' : 'Copy'}>
                   <DuplicateIcon width={18} height={18} />
                 </IconButton>
               )}
@@ -113,12 +79,7 @@ export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
             >
               <ExternalLinkIcon width={18} height={18} />
             </IconButton>
-            <IconButton
-              as="button"
-              onClick={() => disconnect()}
-              className="p-0.5"
-              description="Disconnect"
-            >
+            <IconButton as="button" onClick={() => disconnect()} className="p-0.5" description="Disconnect">
               <LogoutIcon width={18} height={18} />
             </IconButton>
           </div>
@@ -144,5 +105,5 @@ export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
         </button>
       </div>
     </>
-  );
-};
+  )
+}

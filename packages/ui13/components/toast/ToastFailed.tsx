@@ -1,23 +1,17 @@
-import { XCircleIcon } from "@heroicons/react/24/outline";
-import { Chain } from "@sushiswap/chain";
-import { FC } from "react";
+import { XCircleIcon } from '@heroicons/react/24/outline'
+import { Chain } from '@sushiswap/chain'
+import { FC } from 'react'
 
-import { NotificationData } from "./index";
-import { ToastButtons } from "./ToastButtons";
-import { ToastContent } from "./ToastContent";
+import { NotificationData } from './index'
+import { ToastButtons } from './ToastButtons'
+import { ToastContent } from './ToastContent'
 
-interface ToastFailed extends Omit<NotificationData, "promise"> {
-  onDismiss(): void;
+interface ToastFailed extends Omit<NotificationData, 'promise'> {
+  onDismiss(): void
 }
 
-export const ToastFailed: FC<ToastFailed> = ({
-  href,
-  chainId,
-  txHash,
-  onDismiss,
-  summary,
-}) => {
-  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? "";
+export const ToastFailed: FC<ToastFailed> = ({ href, chainId, txHash, onDismiss, summary }) => {
+  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? ''
   return (
     <>
       <ToastContent
@@ -25,10 +19,7 @@ export const ToastFailed: FC<ToastFailed> = ({
         title="Transaction Failed"
         summary={summary.failed}
       />
-      <ToastButtons
-        href={txUrl}
-        onDismiss={onDismiss}
-      />
+      <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
-  );
-};
+  )
+}

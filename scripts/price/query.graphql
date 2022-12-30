@@ -1,9 +1,4 @@
-query Tokens(
-  $first: Int = 1000
-  $skip: Int
-  $where: TokenPrice_filter
-  $block: Block_height
-) {
+query Tokens($first: Int = 1000, $skip: Int, $where: TokenPrice_filter, $block: Block_height) {
   tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
     id
     token {

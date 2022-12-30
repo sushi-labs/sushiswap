@@ -1,42 +1,35 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { ChainId } from "@sushiswap/chain";
-import { Button, classNames, Loader, Typography } from "@sushiswap/ui";
-import {
-  BackgroundImageMakerField,
-  Form,
-  ImageCanvas,
-  NetworkModal,
-  SizeSlider,
-  UploadImageField,
-} from "components";
-import stringify from "fast-json-stable-stringify";
-import { addressValidator, useTokenData } from "lib";
-import React, { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup'
+import { ChainId } from '@sushiswap/chain'
+import { Button, classNames, Loader, Typography } from '@sushiswap/ui'
+import { BackgroundImageMakerField, Form, ImageCanvas, NetworkModal, SizeSlider, UploadImageField } from 'components'
+import stringify from 'fast-json-stable-stringify'
+import { addressValidator, useTokenData } from 'lib'
+import React, { useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
 
 enum SubmitState {
-  Nothing = "nothing",
-  Loading = "Loading",
-  Error = "error",
-  Success = "success",
+  Nothing = 'nothing',
+  Loading = 'Loading',
+  Error = 'error',
+  Success = 'success',
 }
 
 const schema = yup.object().shape({
-  tokenAddress: addressValidator.required("Please enter a valid ERC20-address"),
+  tokenAddress: addressValidator.required('Please enter a valid ERC20-address'),
   background: yup.string(),
   logoSize: yup.number(),
   logoFile: yup.string(),
   listType: yup.string(),
-});
+})
 
 export interface FormType {
-  tokenAddress: string;
-  background: string;
-  logoUri: string;
-  logoFile: Blob;
-  logoSize: number;
-  listType: "default-token-list" | "community-token-list";
+  tokenAddress: string
+  background: string
+  logoUri: string
+  logoFile: Blob
+  logoSize: number
+  listType: 'default-token-list' | 'community-token-list'
 }
 
 export default function Home() {
@@ -44,40 +37,37 @@ export default function Home() {
     resolver: yupResolver(schema),
     defaultValues: {
       logoSize: 86,
-      listType: "default-token-list",
+      listType: 'default-token-list',
     },
-  });
-  const { watch } = methods;
-  const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM);
+  })
+  const { watch } = methods
+  const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
   const [tokenAddress, logoUri, logoFile, background, listType] = watch([
-    "tokenAddress",
-    "logoUri",
-    "logoFile",
-    "background",
-    "listType",
-  ]);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+    'tokenAddress',
+    'logoUri',
+    'logoFile',
+    'background',
+    'listType',
+  ])
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const [submitState, setSubmitState] = useState<{
-    state: SubmitState;
-    data?: { listPr: string };
-    error?: string;
-  }>({ state: SubmitState.Nothing });
+    state: SubmitState
+    data?: { listPr: string }
+    error?: string
+  }>({ state: SubmitState.Nothing })
 
-  const { data: tokenData, isValidating: tokenDataLoading } = useTokenData(
-    tokenAddress,
-    chainId
-  );
+  const { data: tokenData, isValidating: tokenDataLoading } = useTokenData(tokenAddress, chainId)
 
   const onSubmit = async () => {
-    setSubmitState({ state: SubmitState.Loading });
+    setSubmitState({ state: SubmitState.Loading })
 
-    const result = await fetch("/partner/api/submitToken", {
+    const result = await fetch('/partner/api/submitToken', {
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-      method: "POST",
+      method: 'POST',
       body: stringify({
         tokenAddress,
         tokenData,
@@ -85,37 +75,34 @@ export default function Home() {
         chainId,
         listType,
       }),
-    });
+    })
 
-    const data = await result.json();
+    const data = await result.json()
 
     switch (result.status) {
       case 200:
-        setSubmitState({ state: SubmitState.Success, data });
-        break;
+        setSubmitState({ state: SubmitState.Success, data })
+        break
       case 500:
         setSubmitState({
           state: SubmitState.Error,
-          error: data?.error ?? "Unknown error.",
-        });
+          error: data?.error ?? 'Unknown error.',
+        })
     }
-  };
+  }
 
   const errors = [
-    tokenAddress && !tokenData?.symbol ? "Token not found" : undefined,
-    !logoUri ? "No logo uploaded" : undefined,
-    !background ? "No background color provided" : undefined,
-  ].filter((el) => !!el);
+    tokenAddress && !tokenData?.symbol ? 'Token not found' : undefined,
+    !logoUri ? 'No logo uploaded' : undefined,
+    !background ? 'No background color provided' : undefined,
+  ].filter((el) => !!el)
 
   return (
     <div className="flex justify-center p-8">
       <div className="flex flex-col w-full max-w-lg gap-10">
         <Form {...(methods as any)} onSubmit={() => {}}>
-          <Form.Card className={submitState?.error ? "!border-red/40" : ""}>
-            <Form.Section
-              columns={6}
-              header={<Form.Section.Header header="Submit your request" />}
-            >
+          <Form.Card className={submitState?.error ? '!border-red/40' : ''}>
+            <Form.Section columns={6} header={<Form.Section.Header header="Submit your request" />}>
               <div className="col-span-6">
                 <Typography weight={600} className="mb-2">
                   Network
@@ -129,19 +116,16 @@ export default function Home() {
                   helperText={
                     tokenAddress && tokenData?.symbol ? (
                       <Form.HelperText className="!text-green">
-                        Found token {tokenData.symbol} ({tokenData.decimals}{" "}
-                        decimals)
+                        Found token {tokenData.symbol} ({tokenData.decimals} decimals)
                       </Form.HelperText>
                     ) : tokenDataLoading ? (
                       <Form.HelperText className="!text-green">
                         <Loader />
                       </Form.HelperText>
                     ) : tokenAddress ? (
-                      <Form.HelperText className="!text-red">
-                        Token not found
-                      </Form.HelperText>
+                      <Form.HelperText className="!text-red">Token not found</Form.HelperText>
                     ) : (
-                      "Please enter the address of your token"
+                      'Please enter the address of your token'
                     )
                   }
                   placeholder="0x..."
@@ -166,52 +150,34 @@ export default function Home() {
               </div>
               <div
                 className={classNames(
-                  "col-span-3 border-l border-slate-700 pl-7 space-y-3",
-                  !logoFile ? "hidden" : "block"
+                  'col-span-3 border-l border-slate-700 pl-7 space-y-3',
+                  !logoFile ? 'hidden' : 'block'
                 )}
               >
                 <Typography weight={600}>Preview</Typography>
-                <ImageCanvas
-                  size={128}
-                  canvasRef={canvasRef}
-                  className="rounded-xl"
-                />
+                <ImageCanvas size={128} canvasRef={canvasRef} className="rounded-xl" />
               </div>
               <div className="flex col-span-6">
                 <Button
                   fullWidth
                   color="gray"
-                  className={classNames(
-                    "rounded-r-none",
-                    listType !== "default-token-list" && "opacity-40"
-                  )}
-                  onClick={() =>
-                    methods.setValue("listType", "default-token-list")
-                  }
+                  className={classNames('rounded-r-none', listType !== 'default-token-list' && 'opacity-40')}
+                  onClick={() => methods.setValue('listType', 'default-token-list')}
                 >
                   Default List
                 </Button>
                 <Button
                   fullWidth
                   color="gray"
-                  className={classNames(
-                    "rounded-l-none",
-                    listType !== "community-token-list" && "opacity-40"
-                  )}
-                  onClick={() =>
-                    methods.setValue("listType", "community-token-list")
-                  }
+                  className={classNames('rounded-l-none', listType !== 'community-token-list' && 'opacity-40')}
+                  onClick={() => methods.setValue('listType', 'community-token-list')}
                 >
                   Community List
                 </Button>
               </div>
               <div className="flex justify-end col-span-6">
                 <Button
-                  disabled={
-                    (tokenAddress && !tokenData?.symbol) ||
-                    !logoUri ||
-                    !background
-                  }
+                  disabled={(tokenAddress && !tokenData?.symbol) || !logoUri || !background}
                   loading={submitState.state === SubmitState.Loading}
                   variant="filled"
                   color="gray"
@@ -219,17 +185,11 @@ export default function Home() {
                   type="button"
                   fullWidth
                 >
-                  {errors.length === 0 || errors.length > 1
-                    ? "Submit"
-                    : errors[0]}
+                  {errors.length === 0 || errors.length > 1 ? 'Submit' : errors[0]}
                 </Button>
               </div>
               {submitState?.error && (
-                <Typography
-                  weight={600}
-                  variant="sm"
-                  className="col-span-6 text-center text-red"
-                >
+                <Typography weight={600} variant="sm" className="col-span-6 text-center text-red">
                   {submitState?.error}
                 </Typography>
               )}
@@ -239,15 +199,8 @@ export default function Home() {
                     <Typography variant="sm" weight={600}>
                       List pull request
                     </Typography>
-                    <Typography
-                      variant="sm"
-                      className="text-blue-400 cursor-pointer hover:text-blue-600"
-                    >
-                      <a
-                        target="_blank"
-                        rel="noreferrer"
-                        href={submitState.data?.listPr}
-                      >
+                    <Typography variant="sm" className="text-blue-400 cursor-pointer hover:text-blue-600">
+                      <a target="_blank" rel="noreferrer" href={submitState.data?.listPr}>
                         {submitState.data?.listPr}
                       </a>
                     </Typography>
@@ -257,16 +210,11 @@ export default function Home() {
             </Form.Section>
           </Form.Card>
         </Form>
-        <Typography
-          variant="xs"
-          weight={300}
-          className="flex justify-center text-center"
-        >
-          I understand that filing an issue or adding liquidity does not
-          guarantee addition to the Sushi default token list. I will not ping
-          the Discord about this listing request.
+        <Typography variant="xs" weight={300} className="flex justify-center text-center">
+          I understand that filing an issue or adding liquidity does not guarantee addition to the Sushi default token
+          list. I will not ping the Discord about this listing request.
         </Typography>
       </div>
     </div>
-  );
+  )
 }

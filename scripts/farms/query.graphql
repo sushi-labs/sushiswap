@@ -1,9 +1,4 @@
-query Tokens(
-  $first: Int = 1000
-  $skip: Int = 0
-  $where: Token_filter
-  $block: Block_height
-) {
+query Tokens($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
   tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
     symbol
@@ -20,18 +15,8 @@ query Tokens(
   }
 }
 
-query PolygonTokens(
-  $first: Int = 1000
-  $skip: Int = 0
-  $where: Polygon_Token_filter
-  $block: Polygon_Block_height
-) {
-  tokens: Polygon_tokens(
-    first: $first
-    skip: $skip
-    where: $where
-    block: $block
-  ) {
+query PolygonTokens($first: Int = 1000, $skip: Int = 0, $where: Polygon_Token_filter, $block: Polygon_Block_height) {
+  tokens: Polygon_tokens(first: $first, skip: $skip, where: $where, block: $block) {
     id
     symbol
     decimals
@@ -44,12 +29,7 @@ query PolygonTokens(
   }
 }
 
-query Pairs(
-  $first: Int = 1000
-  $skip: Int = 0
-  $where: Pair_filter
-  $block: Block_height
-) {
+query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
   pairs(first: $first, skip: $skip, where: $where, block: $block) {
     id
     liquidity
@@ -62,18 +42,8 @@ query Pairs(
   }
 }
 
-query PolygonPairs(
-  $first: Int = 1000
-  $skip: Int = 0
-  $where: Polygon_Pair_filter
-  $block: Polygon_Block_height
-) {
-  pairs: Polygon_pairs(
-    first: $first
-    skip: $skip
-    where: $where
-    block: $block
-  ) {
+query PolygonPairs($first: Int = 1000, $skip: Int = 0, $where: Polygon_Pair_filter, $block: Polygon_Block_height) {
+  pairs: Polygon_pairs(first: $first, skip: $skip, where: $where, block: $block) {
     id
     liquidity: totalSupply
     volumeUSD
@@ -92,12 +62,7 @@ query MasterChefV2Rewarders(
   $where: MasterChef_MasterChefV2Rewarder_filter
   $block: MasterChef_Block_height
 ) {
-  rewarders: MasterChef_masterChefV2Rewarders(
-    first: $first
-    skip: $skip
-    where: $where
-    block: $block
-  ) {
+  rewarders: MasterChef_masterChefV2Rewarders(first: $first, skip: $skip, where: $where, block: $block) {
     id
     rewardToken
     rewardPerSecond
@@ -110,12 +75,7 @@ query MiniChefRewarders(
   $where: MiniChef_Rewarder_filter
   $block: MiniChef_Block_height
 ) {
-  rewarders: MiniChef_rewarders(
-    first: $first
-    skip: $skip
-    where: $where
-    block: $block
-  ) {
+  rewarders: MiniChef_rewarders(first: $first, skip: $skip, where: $where, block: $block) {
     id
     rewardToken
     rewardPerSecond

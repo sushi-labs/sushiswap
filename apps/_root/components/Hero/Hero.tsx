@@ -1,57 +1,51 @@
-import { ChevronDownIcon } from "@heroicons/react/solid";
-import { ChainId } from "@sushiswap/chain";
-import { Native, SUSHI } from "@sushiswap/currency";
-import { useInterval } from "@sushiswap/hooks";
-import { App, Button, classNames, Container, Typography } from "@sushiswap/ui";
-import { Widget } from "@sushiswap/ui";
-import { CurrencyInput } from "@sushiswap/wagmi/components/Web3Input/Currency";
-import { motion } from "framer-motion";
-import React, { FC, useEffect, useState } from "react";
+import { ChevronDownIcon } from '@heroicons/react/solid'
+import { ChainId } from '@sushiswap/chain'
+import { Native, SUSHI } from '@sushiswap/currency'
+import { useInterval } from '@sushiswap/hooks'
+import { App, Button, classNames, Container, Typography } from '@sushiswap/ui'
+import { Widget } from '@sushiswap/ui'
+import { CurrencyInput } from '@sushiswap/wagmi/components/Web3Input/Currency'
+import { motion } from 'framer-motion'
+import React, { FC, useEffect, useState } from 'react'
 
-import { Search } from "./Search";
+import { Search } from './Search'
 
-const TITLES = ["Whenever", "Wherever", "Whoever"];
+const TITLES = ['Whenever', 'Wherever', 'Whoever']
 const VALUES = [
-  { value0: "1", value1: "867.5" },
-  { value0: "1.", value1: "867.5" },
-  { value0: "1.4", value1: "1214.448" },
-  { value0: "1.43", value1: "1240.464" },
-  { value0: "1.435", value1: "1244.80654" },
-];
+  { value0: '1', value1: '867.5' },
+  { value0: '1.', value1: '867.5' },
+  { value0: '1.4', value1: '1214.448' },
+  { value0: '1.43', value1: '1240.464' },
+  { value0: '1.435', value1: '1244.80654' },
+]
 
 export const Hero: FC = () => {
-  const [index, setIndex] = useState(0);
-  const [valueIndex, setValueIndex] = useState<number>(-1);
+  const [index, setIndex] = useState(0)
+  const [valueIndex, setValueIndex] = useState<number>(-1)
 
-  useInterval(() => setIndex((prev) => (prev + 1) % 3), 1500);
+  useInterval(() => setIndex((prev) => (prev + 1) % 3), 1500)
 
   useEffect(() => {
     const setIndex = (i: number) => {
       if (i < 5) {
-        setValueIndex(i);
-        setTimeout(() => setIndex(i + 1), 100);
+        setValueIndex(i)
+        setTimeout(() => setIndex(i + 1), 100)
       }
-    };
+    }
 
-    setTimeout(() => setIndex(0), 2400);
-  }, []);
+    setTimeout(() => setIndex(0), 2400)
+  }, [])
 
   return (
     <section className="relative">
       <Container maxWidth="5xl" className="px-4 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[auto_400px] flex justify-between gap-[100px]">
           <div className="flex flex-col">
-            <Typography
-              variant="hero"
-              weight={800}
-              className="text-neutral-50 leading-[3.5rem]"
-            >
-              Buy and Sell Instantly on Sushi. <br />{" "}
-              <span className="text-blue"> {TITLES[index]}.</span>
+            <Typography variant="hero" weight={800} className="text-neutral-50 leading-[3.5rem]">
+              Buy and Sell Instantly on Sushi. <br /> <span className="text-blue"> {TITLES[index]}.</span>
             </Typography>
             <Typography variant="lg" className="mt-3 text-neutral-400">
-              No registration needed. Over 400 tokens to trade at your
-              fingertips.
+              No registration needed. Over 400 tokens to trade at your fingertips.
             </Typography>
             <div className="mt-10">
               <Search />
@@ -85,26 +79,16 @@ export const Hero: FC = () => {
                       delay: 1.6,
                     }}
                   >
-                    <div
-                      className={classNames(
-                        "p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium"
-                      )}
-                    >
+                    <div className={classNames('p-3 mx-0.5 grid grid-cols-2 items-center pb-4 font-medium')}>
                       <App.NavItemList hideOnMobile={false}>
-                        <App.NavItem
-                          href="https://www.sushi.com/swap"
-                          label="Swap"
-                        />
-                        <App.NavItem
-                          href="https://www.sushi.com/xswap"
-                          label="xSwap"
-                        />
+                        <App.NavItem href="https://www.sushi.com/swap" label="Swap" />
+                        <App.NavItem href="https://www.sushi.com/xswap" label="xSwap" />
                       </App.NavItemList>
                     </div>
                   </motion.div>
                   <CurrencyInput
                     className="p-3 "
-                    value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ""}
+                    value={valueIndex >= 0 ? VALUES[valueIndex].value0 : ''}
                     onChange={() => {}}
                     onSelect={() => {}}
                     currency={Native.onChain(ChainId.ETHEREUM)}
@@ -125,7 +109,7 @@ export const Hero: FC = () => {
                   <div className="bg-slate-800">
                     <CurrencyInput
                       className="p-3 "
-                      value={valueIndex >= 0 ? VALUES[valueIndex].value1 : ""}
+                      value={valueIndex >= 0 ? VALUES[valueIndex].value1 : ''}
                       onChange={() => {}}
                       onSelect={() => {}}
                       currency={SUSHI[ChainId.ETHEREUM]}
@@ -142,13 +126,7 @@ export const Hero: FC = () => {
                           delay: 3,
                         }}
                       >
-                        <Button
-                          as="a"
-                          href="https://sushi.com/swap"
-                          size="md"
-                          fullWidth
-                          className="relative z-10"
-                        >
+                        <Button as="a" href="https://sushi.com/swap" size="md" fullWidth className="relative z-10">
                           Trade Now
                         </Button>
                       </motion.div>
@@ -161,5 +139,5 @@ export const Hero: FC = () => {
         </div>
       </Container>
     </section>
-  );
-};
+  )
+}

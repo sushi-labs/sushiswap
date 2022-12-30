@@ -1,1 +1,1 @@
-export * from "./SubgraphTable";
+export * from './SubgraphTable'

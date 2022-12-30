@@ -1,13 +1,9 @@
-import React, { FC } from "react";
+import React, { FC } from 'react'
 
-import {
-  ComponentsWrapperProps,
-  LegacyPoolFinderProps,
-  TridentPoolFinderProps,
-} from "./types";
+import { ComponentsWrapperProps, LegacyPoolFinderProps, TridentPoolFinderProps } from './types'
 
-export const ComponentsWrapper: FC<
-  ComponentsWrapperProps<LegacyPoolFinderProps | TridentPoolFinderProps>
-> = ({ children }) => {
-  return <>{children}</>;
-};
+export const ComponentsWrapper: FC<ComponentsWrapperProps<LegacyPoolFinderProps | TridentPoolFinderProps>> = ({
+  children,
+}) => {
+  return <>{children}</>
+}

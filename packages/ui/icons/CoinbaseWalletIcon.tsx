@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react'
 
-export const CoinbaseWalletIcon = (props: React.ComponentProps<"svg">) => {
+export const CoinbaseWalletIcon = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg
       {...props}
@@ -25,5 +25,5 @@ export const CoinbaseWalletIcon = (props: React.ComponentProps<"svg">) => {
 	C675,627,601.2,692,512.1,692z"
       />
     </svg>
-  );
-};
+  )
+}

@@ -1,11 +1,6 @@
-import { SafeConnector } from "@gnosis.pm/safe-apps-wagmi";
-import { otherChains } from "@sushiswap/wagmi-config";
-import {
-  Chain,
-  configureChains,
-  createClient,
-  CreateClientConfig,
-} from "wagmi";
+import { SafeConnector } from '@gnosis.pm/safe-apps-wagmi'
+import { otherChains } from '@sushiswap/wagmi-config'
+import { Chain, configureChains, createClient, CreateClientConfig } from 'wagmi'
 import {
   arbitrum,
   avalanche,
@@ -18,27 +13,25 @@ import {
   mainnet,
   optimism,
   polygon,
-} from "wagmi/chains";
-import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
-import { InjectedConnector } from "wagmi/connectors/injected";
-import { MockConnector } from "wagmi/connectors/mock";
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import { publicProvider } from "wagmi/providers/public";
+} from 'wagmi/chains'
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MockConnector } from 'wagmi/connectors/mock'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+import { publicProvider } from 'wagmi/providers/public'
 
-import { getSigners } from "./test/utils";
+import { getSigners } from './test/utils'
 
-export type Client = ReturnType<typeof createClient>;
+export type Client = ReturnType<typeof createClient>
 
-const isTest =
-  process.env.NODE_ENV === "test" ||
-  process.env.NEXT_PUBLIC_PLAYWRIGHT_ENABLED === "true";
+const isTest = process.env.NODE_ENV === 'test' || process.env.NEXT_PUBLIC_PLAYWRIGHT_ENABLED === 'true'
 
-const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID;
-const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID;
+const alchemyId = process.env.ALCHEMY_ID || process.env.NEXT_PUBLIC_ALCHEMY_ID
+const infuraId = process.env.INFURA_ID || process.env.NEXT_PUBLIC_INFURA_ID
 
-console.log({ isTest });
+console.log({ isTest })
 
 const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
   ? configureChains(
@@ -109,7 +102,7 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
         // infuraProvider({ infuraId }),
       ],
       { pollingInterval: 8_000 }
-    );
+    )
 
 export const client: Client = createClient({
   provider,
@@ -138,11 +131,10 @@ export const client: Client = createClient({
           // TODO: Flesh out coinbase wallet connect options?
           chains,
           options: {
-            appName: "Sushi 2.0",
-            appLogoUrl:
-              "https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg",
+            appName: 'Sushi 2.0',
+            appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/sushi.jpg',
           },
         }),
         new SafeConnector({ chains }),
       ],
-});
+})

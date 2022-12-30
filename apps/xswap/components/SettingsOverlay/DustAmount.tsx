@@ -1,9 +1,9 @@
-import { CashIcon, InformationCircleIcon } from "@heroicons/react/outline";
-import { Switch, Tooltip, Typography } from "@sushiswap/ui";
-import { useState } from "react";
+import { CashIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { Switch, Tooltip, Typography } from '@sushiswap/ui'
+import { useState } from 'react'
 
 export const DustAmount = () => {
-  const [dustAmount, setDustAmount] = useState(0);
+  const [dustAmount, setDustAmount] = useState(0)
   return (
     <div className="h-[52px] flex items-center">
       <div className="relative flex items-center justify-between w-full gap-3 group rounded-xl">
@@ -26,14 +26,10 @@ export const DustAmount = () => {
             />
           </div>
           <div className="flex gap-1">
-            <Switch
-              checked={dustAmount > 0}
-              onChange={() => setDustAmount(dustAmount > 0 ? 0 : 1000)}
-              size="sm"
-            />
+            <Switch checked={dustAmount > 0} onChange={() => setDustAmount(dustAmount > 0 ? 0 : 1000)} size="sm" />
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { Disclosure } from "@headlessui/react";
+import { Disclosure } from '@headlessui/react'
 import {
   ArrowDownTrayIcon,
   ArrowRightIcon,
@@ -13,39 +13,39 @@ import {
   LockOpenIcon,
   PlusIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
-import chains, { ChainId } from "@sushiswap/chain";
-import { Token } from "@sushiswap/currency";
-import { classNames } from "@sushiswap/ui13";
-import { Badge } from "@sushiswap/ui13/components/Badge";
-import { Currency as UICurrency } from "@sushiswap/ui13/components/currency";
-import { Dots } from "@sushiswap/ui13/components/Dots";
-import { ExternalLink } from "@sushiswap/ui13/components/ExternalLink";
-import { IconButton } from "@sushiswap/ui13/components/IconButton";
-import { NetworkIcon } from "@sushiswap/ui13/components/icons";
-import { Loader } from "@sushiswap/ui13/components/Loader";
-import { TimeAgo } from "@sushiswap/ui13/components/TimeAgo";
-import { NotificationData } from "@sushiswap/ui13/components/toast";
-import React, { FC } from "react";
-import { useWaitForTransaction } from "wagmi";
+} from '@heroicons/react/24/outline'
+import chains, { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
+import { classNames } from '@sushiswap/ui13'
+import { Badge } from '@sushiswap/ui13/components/Badge'
+import { Currency as UICurrency } from '@sushiswap/ui13/components/currency'
+import { Dots } from '@sushiswap/ui13/components/Dots'
+import { ExternalLink } from '@sushiswap/ui13/components/ExternalLink'
+import { IconButton } from '@sushiswap/ui13/components/IconButton'
+import { NetworkIcon } from '@sushiswap/ui13/components/icons'
+import { Loader } from '@sushiswap/ui13/components/Loader'
+import { TimeAgo } from '@sushiswap/ui13/components/TimeAgo'
+import { NotificationData } from '@sushiswap/ui13/components/toast'
+import React, { FC } from 'react'
+import { useWaitForTransaction } from 'wagmi'
 
 export const STARGATE_TOKEN = new Token({
   chainId: ChainId.ETHEREUM,
-  address: "0xaf5191b0de278c7286d6c7cc6ab6bb8a73ba2cd6",
+  address: '0xaf5191b0de278c7286d6c7cc6ab6bb8a73ba2cd6',
   decimals: 18,
-  symbol: "STG",
-  name: "StargateToken",
-});
+  symbol: 'STG',
+  name: 'StargateToken',
+})
 
 export const Notification: FC<{
-  data: NotificationData;
-  showExtra?: boolean;
-  hideStatus?: boolean;
+  data: NotificationData
+  showExtra?: boolean
+  hideStatus?: boolean
 }> = ({ data: notification, showExtra = false, hideStatus = false }) => {
   const { status } = useWaitForTransaction({
     chainId: notification.chainId,
     hash: notification.txHash as `0x${string}`,
-  });
+  })
 
   if (!status)
     return (
@@ -61,7 +61,7 @@ export const Notification: FC<{
           <div className="bg-slate-600 w-[120px] h-[10px] animate-pulse rounded-full" />
         </div>
       </div>
-    );
+    )
 
   return (
     <div className="relative hover:opacity-80">
@@ -73,10 +73,7 @@ export const Notification: FC<{
               iconProps={{
                 width: 20,
                 height: 20,
-                className: classNames(
-                  open ? "rotate-180" : "rotate-0",
-                  "rounded-full transition-all delay-200"
-                ),
+                className: classNames(open ? 'rotate-180' : 'rotate-0', 'rounded-full transition-all delay-200'),
               }}
               as="div"
             />
@@ -84,117 +81,82 @@ export const Notification: FC<{
         </Disclosure.Button>
       )}
       <ExternalLink
-        href={
-          notification.href
-            ? notification.href
-            : chains[notification.chainId].getTxUrl(notification.txHash)
-        }
+        href={notification.href ? notification.href : chains[notification.chainId].getTxUrl(notification.txHash)}
         className="!no-underline"
       >
         <div
           className={classNames(
-            showExtra ? "pr-10" : "pr-4",
-            "relative cursor-pointer flex items-center gap-5 rounded-2xl px-4 py-3"
+            showExtra ? 'pr-10' : 'pr-4',
+            'relative cursor-pointer flex items-center gap-5 rounded-2xl px-4 py-3'
           )}
         >
-          <Badge
-            badgeContent={
-              <NetworkIcon
-                chainId={notification.chainId}
-                width={18}
-                height={18}
-              />
-            }
-          >
+          <Badge badgeContent={<NetworkIcon chainId={notification.chainId} width={18} height={18} />}>
             <div className="p-2 bg-slate-600 rounded-full h-[36px] w-[36px] flex justify-center items-center">
               {!hideStatus &&
-                (status === "loading" ? (
+                (status === 'loading' ? (
                   <Loader size={18} />
-                ) : status === "error" ? (
+                ) : status === 'error' ? (
                   <XMarkIcon width={20} height={20} className="text-red-400" />
                 ) : (
                   <></>
                 ))}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "send" && (
-                  <ArrowRightIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "stargate" && (
-                  <UICurrency.Icon
-                    currency={STARGATE_TOKEN}
-                    width={20}
-                    height={20}
-                  />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "swap" && (
-                  <ArrowsUpDownIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "approval" && (
-                  <LockOpenIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "mint" && (
-                  <PlusIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "burn" && (
-                  <FireIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "enterBar" && (
-                  <ArrowDownTrayIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "transferStream" && (
-                  <ArrowRightIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "transferVesting" && (
-                  <ArrowRightIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "createMultipleStream" && (
-                  <CheckIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "createMultipleVesting" && (
-                  <CheckIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "cancelStream" && (
-                  <CheckIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "createVesting" && (
-                  <CheckIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "createStream" && (
-                  <CheckIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "updateStream" && (
-                  <ArrowDownTrayIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "withdrawStream" && (
-                  <ArrowUpTrayIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "withdrawVesting" && (
-                  <ArrowUpTrayIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "leaveBar" && (
-                  <ArrowUpTrayIcon width={20} height={20} />
-                )}
-              {(status === "success" || notification.summary.info) &&
-                notification.type === "claimRewards" && (
-                  <BanknotesIcon width={20} height={20} />
-                )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'send' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'stargate' && (
+                <UICurrency.Icon currency={STARGATE_TOKEN} width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'swap' && (
+                <ArrowsUpDownIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'approval' && (
+                <LockOpenIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'mint' && (
+                <PlusIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'burn' && (
+                <FireIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'enterBar' && (
+                <ArrowDownTrayIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'transferStream' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'transferVesting' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createMultipleStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createMultipleVesting' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'cancelStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createVesting' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'updateStream' && (
+                <ArrowDownTrayIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'withdrawStream' && (
+                <ArrowUpTrayIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'withdrawVesting' && (
+                <ArrowUpTrayIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'leaveBar' && (
+                <ArrowUpTrayIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'claimRewards' && (
+                <BanknotesIcon width={20} height={20} />
+              )}
             </div>
           </Badge>
           <div className="flex flex-col gap-0.5">
@@ -202,9 +164,9 @@ export const Notification: FC<{
               <span className="text-sm font-medium items-center whitespace-normal text-slate-50">
                 {notification.summary.info ? (
                   notification.summary.info
-                ) : ["loading"].includes(status) ? (
+                ) : ['loading'].includes(status) ? (
                   <Dots>{notification.summary.pending}</Dots>
-                ) : status === "error" ? (
+                ) : status === 'error' ? (
                   notification.summary.failed
                 ) : (
                   notification.summary.completed
@@ -218,5 +180,5 @@ export const Notification: FC<{
         </div>
       </ExternalLink>
     </div>
-  );
-};
+  )
+}

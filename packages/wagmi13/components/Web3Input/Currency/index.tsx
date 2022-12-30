@@ -1,37 +1,34 @@
-"use client";
+'use client'
 
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { ChainId } from "@sushiswap/chain";
-import { tryParseAmount, Type } from "@sushiswap/currency";
-import { FundSource } from "@sushiswap/hooks";
-import { classNames } from "@sushiswap/ui13";
-import { Currency } from "@sushiswap/ui13/components/currency";
-import {
-  DEFAULT_INPUT_UNSTYLED,
-  Input,
-} from "@sushiswap/ui13/components/input";
-import { Skeleton } from "@sushiswap/ui13/components/skeleton";
-import React, { FC, useCallback, useMemo, useRef } from "react";
-import { useAccount } from "wagmi";
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import { ChainId } from '@sushiswap/chain'
+import { tryParseAmount, Type } from '@sushiswap/currency'
+import { FundSource } from '@sushiswap/hooks'
+import { classNames } from '@sushiswap/ui13'
+import { Currency } from '@sushiswap/ui13/components/currency'
+import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui13/components/input'
+import { Skeleton } from '@sushiswap/ui13/components/skeleton'
+import React, { FC, useCallback, useMemo, useRef } from 'react'
+import { useAccount } from 'wagmi'
 
-import { useBalance } from "../../../hooks";
-import { TokenSelector } from "../../TokenSelector/TokenSelector";
-import { BalancePanel } from "./BalancePanel";
-import { PricePanel } from "./PricePanel";
+import { useBalance } from '../../../hooks'
+import { TokenSelector } from '../../TokenSelector/TokenSelector'
+import { BalancePanel } from './BalancePanel'
+import { PricePanel } from './PricePanel'
 
 export interface CurrencyInputProps {
-  id?: string;
-  disabled?: boolean;
-  value: string;
-  onChange?(value: string): void;
-  currency: Type | undefined;
-  onSelect?(currency: Type): void;
-  chainId: ChainId;
-  className?: string;
-  loading?: boolean;
-  usdPctChange?: number;
-  fundSource?: FundSource;
-  disableMaxButton?: boolean;
+  id?: string
+  disabled?: boolean
+  value: string
+  onChange?(value: string): void
+  currency: Type | undefined
+  onSelect?(currency: Type): void
+  chainId: ChainId
+  className?: string
+  loading?: boolean
+  usdPctChange?: number
+  fundSource?: FundSource
+  disableMaxButton?: boolean
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -48,34 +45,30 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   fundSource = FundSource.WALLET,
   disableMaxButton = false,
 }) => {
-  const { address } = useAccount();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { address } = useAccount()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const focusInput = useCallback(() => {
-    if (disabled) return;
-    inputRef.current?.focus();
-  }, [disabled]);
+    if (disabled) return
+    inputRef.current?.focus()
+  }, [disabled])
 
   const { data: balance, isLoading } = useBalance({
     chainId,
     currency,
     account: address,
     enabled: Boolean(currency),
-  });
+  })
 
-  const _value = useMemo(
-    () => tryParseAmount(value, currency),
-    [value, currency]
-  );
-  const insufficientBalance =
-    balance && _value && balance[fundSource].lessThan(_value);
+  const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
+  const insufficientBalance = balance && _value && balance[fundSource].lessThan(_value)
 
   return useMemo(
     () => (
       <div
         className={classNames(
-          "transition-all duration-[400ms]",
-          insufficientBalance ? "!bg-red-500/20 !dark:bg-red-900/30" : "",
+          'transition-all duration-[400ms]',
+          insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
           className
         )}
         onClick={focusInput}
@@ -94,7 +87,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               onUserInput={onChange}
               className={classNames(
                 DEFAULT_INPUT_UNSTYLED,
-                "without-ring !text-3xl py-1 text-gray-900 dark:text-slate-200 hover:dark:text-slate-100"
+                'without-ring !text-3xl py-1 text-gray-900 dark:text-slate-200 hover:dark:text-slate-100'
               )}
               value={value}
               readOnly={disabled}
@@ -113,29 +106,19 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
                   id={`${id}-button`}
                   onClick={() => setOpen(true)}
                   className={classNames(
-                    "flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12]"
+                    'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium bg-black/[0.06] hover:bg-black/[0.12] dark:bg-white/[0.06] hover:dark:bg-white/[0.12]'
                   )}
                 >
                   {currency ? (
                     <>
                       <div className="w-[28px] h-[28px] mr-0.5">
-                        <Currency.Icon
-                          disableLink
-                          currency={currency}
-                          width={28}
-                          height={28}
-                        />
+                        <Currency.Icon disableLink currency={currency} width={28} height={28} />
                       </div>
                       {currency.symbol}
-                      <ChevronDownIcon
-                        className="ml-1"
-                        strokeWidth={3}
-                        width={16}
-                        height={16}
-                      />
+                      <ChevronDownIcon className="ml-1" strokeWidth={3} width={16} height={16} />
                     </>
                   ) : (
-                    "Select"
+                    'Select'
                   )}
                 </button>
               )}
@@ -149,7 +132,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             value={value}
             currency={currency}
             usdPctChange={usdPctChange}
-            error={insufficientBalance ? "Exceeds Balance" : undefined}
+            error={insufficientBalance ? 'Exceeds Balance' : undefined}
           />
           <div className="h-6">
             <BalancePanel
@@ -186,5 +169,5 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       usdPctChange,
       value,
     ]
-  );
-};
+  )
+}

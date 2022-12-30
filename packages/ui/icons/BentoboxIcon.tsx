@@ -1,13 +1,8 @@
-import React from "react";
+import React from 'react'
 
-export const BentoboxIcon = (props: React.ComponentProps<"svg">) => {
+export const BentoboxIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg
-      {...props}
-      viewBox="0 0 42 32"
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg {...props} viewBox="0 0 42 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -15,5 +10,5 @@ export const BentoboxIcon = (props: React.ComponentProps<"svg">) => {
         fill="currentColor"
       />
     </svg>
-  );
-};
+  )
+}

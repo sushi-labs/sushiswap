@@ -1,10 +1,10 @@
-import { Amount, Price, Type as Currency } from "@sushiswap/currency";
-import { Fraction, JSBI, ONE, Percent, ZERO } from "@sushiswap/math";
-import { MultiRoute, RToken } from "@sushiswap/tines";
-import invariant from "tiny-invariant";
+import { Amount, Price, Type as Currency } from '@sushiswap/currency'
+import { Fraction, JSBI, ONE, Percent, ZERO } from '@sushiswap/math'
+import { MultiRoute, RToken } from '@sushiswap/tines'
+import invariant from 'tiny-invariant'
 
-import { TradeType as Type } from "./TradeType";
-import { Version } from "./Version";
+import { TradeType as Type } from './TradeType'
+import { Version } from './Version'
 
 /**
  * Represents a trade executed against a list of pools.
@@ -19,26 +19,26 @@ export class Trade<
   /**
    * The route of the trade, i.e. which pools the trade goes through and the input/output currencies.
    */
-  public readonly route: MultiRoute;
+  public readonly route: MultiRoute
 
   /**
    * The type of the trade, either exact in or exact out.
    */
-  public readonly tradeType: TradeType;
+  public readonly tradeType: TradeType
 
   /**
    * The version of the trade, either v1 or v2.
    */
-  public readonly tradeVersion: TradeVersion;
+  public readonly tradeVersion: TradeVersion
 
   /**
    * The input amount for the trade assuming no slippage.
    */
-  public readonly inputAmount: Amount<TInput>;
+  public readonly inputAmount: Amount<TInput>
   /**
    * The output amount for the trade assuming no slippage.
    */
-  public readonly outputAmount: Amount<TOutput>;
+  public readonly outputAmount: Amount<TOutput>
 
   /**
    * The input share for the trade assuming no slippage.
@@ -52,24 +52,21 @@ export class Trade<
   /**
    * The price expressed in terms of output amount/input amount.
    */
-  public readonly executionPrice: Price<TInput, TOutput>;
+  public readonly executionPrice: Price<TInput, TOutput>
 
   /**
    * The percent difference between the mid price before the trade and the trade execution price.
    */
-  public readonly priceImpact: Percent = new Percent(
-    JSBI.BigInt(0),
-    JSBI.BigInt(10000)
-  );
+  public readonly priceImpact: Percent = new Percent(JSBI.BigInt(0), JSBI.BigInt(10000))
 
   public readonly currencyInRebase = {
     base: JSBI.BigInt(0),
     elastic: JSBI.BigInt(0),
-  };
+  }
   public readonly currencyOutRebase = {
     base: JSBI.BigInt(0),
     elastic: JSBI.BigInt(0),
-  };
+  }
 
   /**
    * Constructs an exact in trade with the given amount in and route
@@ -77,11 +74,7 @@ export class Trade<
    * @param amountIn the amount being passed in
    * @param currencyOut the output currency
    */
-  public static exactIn<
-    TInput extends Currency,
-    TOutput extends Currency,
-    TVersion extends Version
-  >(
+  public static exactIn<TInput extends Currency, TOutput extends Currency, TVersion extends Version>(
     route: MultiRoute,
     amountIn: Amount<TInput>,
     currencyOut: TOutput,
@@ -99,7 +92,7 @@ export class Trade<
       version,
       currencyInRebase,
       currencyOutRebase
-    );
+    )
   }
 
   /**
@@ -108,11 +101,7 @@ export class Trade<
    * @param amountOut the amount returned by the trade
    * @param currencyIn the output currency
    */
-  public static exactOut<
-    TInput extends Currency,
-    TOutput extends Currency,
-    TVersion extends Version
-  >(
+  public static exactOut<TInput extends Currency, TOutput extends Currency, TVersion extends Version>(
     route: MultiRoute,
     currencyIn: TInput,
     amountOut: Amount<TOutput>,
@@ -130,7 +119,7 @@ export class Trade<
       version,
       currencyInRebase,
       currencyOutRebase
-    );
+    )
   }
 
   public constructor(
@@ -140,48 +129,32 @@ export class Trade<
     currencyInRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) },
     currencyOutRebase = { base: JSBI.BigInt(0), elastic: JSBI.BigInt(0) }
   ) {
-    this.route = route;
-    this.tradeType = tradeType;
-    this.tradeVersion = tradeVersion;
-    this.currencyInRebase = currencyInRebase;
-    this.currencyOutRebase = currencyOutRebase;
+    this.route = route
+    this.tradeType = tradeType
+    this.tradeVersion = tradeVersion
+    this.currencyInRebase = currencyInRebase
+    this.currencyOutRebase = currencyOutRebase
 
     const amountIn = Amount.fromShare(
       route.fromToken as TInput,
       route.amountInBN.toString(),
       currencyInRebase,
       tradeVersion === Version.V2
-    );
+    )
 
     const amountOut = Amount.fromShare(
       route.toToken as TOutput,
       route.amountOutBN.toString(),
       currencyOutRebase,
       tradeVersion === Version.V2
-    );
+    )
 
     if (tradeType === Type.EXACT_INPUT) {
-      this.inputAmount = Amount.fromFractionalAmount(
-        amountIn.currency,
-        amountIn.numerator,
-        amountIn.denominator
-      );
-      this.outputAmount = Amount.fromFractionalAmount(
-        amountOut.currency,
-        amountOut.numerator,
-        amountOut.denominator
-      );
+      this.inputAmount = Amount.fromFractionalAmount(amountIn.currency, amountIn.numerator, amountIn.denominator)
+      this.outputAmount = Amount.fromFractionalAmount(amountOut.currency, amountOut.numerator, amountOut.denominator)
     } else {
-      this.inputAmount = Amount.fromFractionalAmount(
-        amountIn.currency,
-        amountOut.numerator,
-        amountOut.denominator
-      );
-      this.outputAmount = Amount.fromFractionalAmount(
-        amountOut.currency,
-        amountIn.numerator,
-        amountIn.denominator
-      );
+      this.inputAmount = Amount.fromFractionalAmount(amountIn.currency, amountOut.numerator, amountOut.denominator)
+      this.outputAmount = Amount.fromFractionalAmount(amountOut.currency, amountIn.numerator, amountIn.denominator)
     }
 
     this.executionPrice = new Price(
@@ -189,14 +162,11 @@ export class Trade<
       this.outputAmount.currency,
       this.inputAmount.quotient,
       this.outputAmount.quotient
-    );
+    )
 
     // Shouldn't really have to check this, but tines makes us
     if (this.route.priceImpact) {
-      this.priceImpact = new Percent(
-        JSBI.BigInt(Math.round(this.route.priceImpact * 10000)),
-        JSBI.BigInt(10000)
-      );
+      this.priceImpact = new Percent(JSBI.BigInt(Math.round(this.route.priceImpact * 10000)), JSBI.BigInt(10000))
     }
   }
 
@@ -205,19 +175,16 @@ export class Trade<
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
   public minimumAmountOut(slippageTolerance: Percent): Amount<TOutput> {
-    invariant(!slippageTolerance.lessThan(ZERO), "SLIPPAGE_TOLERANCE");
+    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
 
     if (this.tradeType === Type.EXACT_OUTPUT) {
-      return this.outputAmount;
+      return this.outputAmount
     } else {
       const slippageAdjustedAmountOut = new Fraction(ONE)
         .add(slippageTolerance)
         .invert()
-        .multiply(this.outputAmount.quotient).quotient;
-      return Amount.fromRawAmount(
-        this.outputAmount.currency,
-        slippageAdjustedAmountOut
-      );
+        .multiply(this.outputAmount.quotient).quotient
+      return Amount.fromRawAmount(this.outputAmount.currency, slippageAdjustedAmountOut)
     }
   }
 
@@ -226,17 +193,14 @@ export class Trade<
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
   public maximumAmountIn(slippageTolerance: Percent): Amount<TInput> {
-    invariant(!slippageTolerance.lessThan(ZERO), "SLIPPAGE_TOLERANCE");
+    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === Type.EXACT_INPUT) {
-      return this.inputAmount;
+      return this.inputAmount
     } else {
       const slippageAdjustedAmountIn = new Fraction(ONE)
         .add(slippageTolerance)
-        .multiply(this.inputAmount.quotient).quotient;
-      return Amount.fromRawAmount(
-        this.inputAmount.currency,
-        slippageAdjustedAmountIn
-      );
+        .multiply(this.inputAmount.quotient).quotient
+      return Amount.fromRawAmount(this.inputAmount.currency, slippageAdjustedAmountIn)
     }
   }
 
@@ -244,55 +208,43 @@ export class Trade<
    * Return the execution price after accounting for slippage tolerance
    * @param slippageTolerance the allowed tolerated slippage
    */
-  public worstExecutionPrice(
-    slippageTolerance: Percent
-  ): Price<TInput, TOutput> {
+  public worstExecutionPrice(slippageTolerance: Percent): Price<TInput, TOutput> {
     return new Price(
       this.inputAmount.currency,
       this.outputAmount.currency,
       this.maximumAmountIn(slippageTolerance).quotient,
       this.minimumAmountOut(slippageTolerance).quotient
-    );
+    )
   }
 
   public isV1(): boolean {
-    return this.tradeVersion === Version.V1;
+    return this.tradeVersion === Version.V1
   }
 
   public isV2(): boolean {
-    return this.tradeVersion === Version.V2;
+    return this.tradeVersion === Version.V2
   }
 
-  public routeType():
-    | "Single Pool"
-    | "Single Path"
-    | "Complex Path"
-    | "Not Found" {
-    if (this.isComplex()) return "Complex Path";
-    if (this.isSingle()) return "Single Path";
-    if (this.isSinglePool()) return "Single Pool";
-    return "Not Found";
+  public routeType(): 'Single Pool' | 'Single Path' | 'Complex Path' | 'Not Found' {
+    if (this.isComplex()) return 'Complex Path'
+    if (this.isSingle()) return 'Single Path'
+    if (this.isSinglePool()) return 'Single Pool'
+    return 'Not Found'
   }
 
   public isNotFound(): boolean {
-    return !this.route.legs.length;
+    return !this.route.legs.length
   }
 
   public isComplex(): boolean {
-    return (
-      new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size !==
-      this.route.legs.length
-    );
+    return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size !== this.route.legs.length
   }
 
   public isSinglePool(): boolean {
-    return this.route.legs.length === 1;
+    return this.route.legs.length === 1
   }
 
   public isSingle(): boolean {
-    return (
-      new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size ===
-      this.route.legs.length
-    );
+    return new Set(this.route.legs.map((leg) => leg.tokenFrom.address)).size === this.route.legs.length
   }
 }

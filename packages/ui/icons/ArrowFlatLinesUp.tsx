@@ -1,13 +1,8 @@
-import React from "react";
+import React from 'react'
 
-export const ArrowFlatLinesUp = (props: React.ComponentProps<"svg">) => {
+export const ArrowFlatLinesUp = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg
-      {...props}
-      viewBox="0 0 18 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg {...props} viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M17 10L8.5 18.5L-2.66256e-07 10L4.25 10L4.25 7.16667L12.75 7.16667L12.75 10L17 10Z"
         stroke="currentColor"
@@ -30,5 +25,5 @@ export const ArrowFlatLinesUp = (props: React.ComponentProps<"svg">) => {
         strokeLinejoin="round"
       />
     </svg>
-  );
-};
+  )
+}

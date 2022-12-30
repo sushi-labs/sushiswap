@@ -1,13 +1,8 @@
-import React from "react";
+import React from 'react'
 
-export const MagnaSVG = (props: React.ComponentProps<"svg">) => {
+export const MagnaSVG = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-      fill="none"
-      viewBox="0 0 137 24"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 137 24">
       <g clipPath="url(#clip0_742_4219)">
         <path
           fill="#FFF"
@@ -46,5 +41,5 @@ export const MagnaSVG = (props: React.ComponentProps<"svg">) => {
         </linearGradient>
       </defs>
     </svg>
-  );
-};
+  )
+}

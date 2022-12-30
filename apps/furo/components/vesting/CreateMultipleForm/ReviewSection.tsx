@@ -1,71 +1,61 @@
-import { AddressZero } from "@ethersproject/constants";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
-import { ExternalLinkIcon, TableIcon } from "@heroicons/react/solid";
-import { Chain, ChainId } from "@sushiswap/chain";
-import { Amount, tryParseAmount, Type } from "@sushiswap/currency";
-import { shortenAddress } from "@sushiswap/format";
-import {
-  Button,
-  Currency,
-  IconButton,
-  Link as UILink,
-  Table,
-  Tooltip,
-  Typography,
-} from "@sushiswap/ui";
-import { usePrices } from "@sushiswap/wagmi";
-import { format } from "date-fns";
-import React, { FC, useMemo } from "react";
-import { useFormContext } from "react-hook-form";
+import { AddressZero } from '@ethersproject/constants'
+import { ArrowLeftIcon } from '@heroicons/react/outline'
+import { ExternalLinkIcon, TableIcon } from '@heroicons/react/solid'
+import { Chain, ChainId } from '@sushiswap/chain'
+import { Amount, tryParseAmount, Type } from '@sushiswap/currency'
+import { shortenAddress } from '@sushiswap/format'
+import { Button, Currency, IconButton, Link as UILink, Table, Tooltip, Typography } from '@sushiswap/ui'
+import { usePrices } from '@sushiswap/wagmi'
+import { format } from 'date-fns'
+import React, { FC, useMemo } from 'react'
+import { useFormContext } from 'react-hook-form'
 
-import { useDeepCompareMemoize } from "../../../lib";
-import { useTokenFromZToken } from "../../../lib/zod";
-import { CreateVestingFormSchemaType, ScheduleReview } from "../CreateForm";
-import { createScheduleRepresentation } from "../createScheduleRepresentation";
-import { calculateEndDate, calculateTotalAmount } from "../utils";
-import { CreateMultipleVestingModelSchemaType } from "./schema";
+import { useDeepCompareMemoize } from '../../../lib'
+import { useTokenFromZToken } from '../../../lib/zod'
+import { CreateVestingFormSchemaType, ScheduleReview } from '../CreateForm'
+import { createScheduleRepresentation } from '../createScheduleRepresentation'
+import { calculateEndDate, calculateTotalAmount } from '../utils'
+import { CreateMultipleVestingModelSchemaType } from './schema'
 
 interface ReviewSection {
-  chainId: ChainId;
-  onBack(): void;
+  chainId: ChainId
+  onBack(): void
 }
 
 export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
-  const { data: prices } = usePrices({ chainId });
+  const { data: prices } = usePrices({ chainId })
   const {
     watch,
     formState: { isValid },
-  } = useFormContext<CreateMultipleVestingModelSchemaType>();
+  } = useFormContext<CreateMultipleVestingModelSchemaType>()
 
   // Watch mutates the same object which means effects do not trigger when you're watching an array
-  const vestings = watch("vestings");
-  const _vestings = useDeepCompareMemoize(vestings);
+  const vestings = watch('vestings')
+  const _vestings = useDeepCompareMemoize(vestings)
 
   const amounts = useMemo(() => {
-    if (!_vestings) return [];
-    return _vestings.map(calculateTotalAmount);
-  }, [_vestings]);
+    if (!_vestings) return []
+    return _vestings.map(calculateTotalAmount)
+  }, [_vestings])
 
   const summedAmounts = useMemo(
     () =>
       Object.values(
         amounts.reduce<Record<string, Amount<Type>>>((acc, cur) => {
-          if (!cur) return acc;
-          const address = cur.currency.isNative
-            ? AddressZero
-            : cur.currency.address;
+          if (!cur) return acc
+          const address = cur.currency.isNative ? AddressZero : cur.currency.address
           if (acc[address]) {
-            acc[address] = acc[address].add(cur);
+            acc[address] = acc[address].add(cur)
           } else {
-            acc[address] = cur;
+            acc[address] = cur
           }
-          return acc;
+          return acc
         }, {})
       ),
     [amounts]
-  );
+  )
 
-  if (!isValid) return <></>;
+  if (!isValid) return <></>
 
   return (
     <div className="flex flex-col gap-2">
@@ -96,11 +86,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
                 {summedAmounts.map((el, idx) => (
                   <Table.tr key={idx}>
                     <Table.td className="flex items-center gap-2">
-                      <Currency.Icon
-                        currency={el.currency}
-                        width={20}
-                        height={20}
-                      />
+                      <Currency.Icon currency={el.currency} width={20} height={20} />
                       {el.currency.symbol}
                     </Table.td>
                     <Table.td>
@@ -108,12 +94,8 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
                     </Table.td>
                     <Table.td>
                       {prices && prices?.[el.currency.wrapped.address]
-                        ? `$${el
-                            .multiply(
-                              prices[el.currency.wrapped.address].asFraction
-                            )
-                            .toFixed(2)}`
-                        : "-"}
+                        ? `$${el.multiply(prices[el.currency.wrapped.address].asFraction).toFixed(2)}`
+                        : '-'}
                     </Table.td>
                   </Table.tr>
                 ))}
@@ -139,17 +121,7 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
               <Table.tbody>
                 {vestings?.map(
                   (
-                    {
-                      id,
-                      cliff,
-                      currency,
-                      recipient,
-                      startDate,
-                      stepPayouts,
-                      stepConfig,
-                      stepAmount,
-                      fundSource,
-                    },
+                    { id, cliff, currency, recipient, startDate, stepPayouts, stepConfig, stepAmount, fundSource },
                     idx
                   ) => (
                     <TableRow
@@ -173,18 +145,13 @@ export const ReviewSection: FC<ReviewSection> = ({ chainId, onBack }) => {
         </div>
       </div>
       <div className="flex justify-between">
-        <Button
-          type="button"
-          variant="empty"
-          className="flex items-center gap-1 whitespace-nowrap"
-          onClick={onBack}
-        >
+        <Button type="button" variant="empty" className="flex items-center gap-1 whitespace-nowrap" onClick={onBack}>
           <ArrowLeftIcon width={16} height={16} /> Go Back and Edit
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
   currency,
@@ -196,27 +163,25 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
   stepConfig,
   startDate,
 }) => {
-  const _currency = useTokenFromZToken(currency);
+  const _currency = useTokenFromZToken(currency)
   const totalAmount = calculateTotalAmount({
     currency,
     cliff,
     stepAmount,
     stepPayouts,
-  });
+  })
   const endDate = calculateEndDate({
     cliff,
     startDate,
     stepPayouts,
     stepConfig,
-  });
+  })
   const [_cliffAmount, _stepAmount] = useMemo(() => {
     return [
-      cliff.cliffEnabled
-        ? tryParseAmount(cliff.cliffAmount?.toString(), _currency)
-        : undefined,
+      cliff.cliffEnabled ? tryParseAmount(cliff.cliffAmount?.toString(), _currency) : undefined,
       tryParseAmount(stepAmount?.toString(), _currency),
-    ];
-  }, [cliff.cliffEnabled, _currency, stepAmount]);
+    ]
+  }, [cliff.cliffEnabled, _currency, stepAmount])
 
   return (
     <Table.tr>
@@ -226,8 +191,7 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
             className="flex items-center gap-1 text-blue hover:underline-none hover:text-blue-400"
             href={Chain.from(chainId).getAccountUrl(recipient)}
           >
-            {shortenAddress(recipient)}{" "}
-            <ExternalLinkIcon width={16} height={16} />
+            {shortenAddress(recipient)} <ExternalLinkIcon width={16} height={16} />
           </UILink.External>
         )}
       </Table.td>
@@ -238,7 +202,7 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
       <Table.td>
         {endDate ? (
           <Typography variant="sm" className="text-slate-50" weight={500}>
-            {format(endDate, "dd MMM yyyy hh:mmaaa")}
+            {format(endDate, 'dd MMM yyyy hh:mmaaa')}
           </Typography>
         ) : (
           <Typography variant="sm" className="italic text-slate-500">
@@ -257,26 +221,20 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
           panel={
             currency && stepPayouts ? (
               <div className="p-1 bg-slate-800">
-                {_stepAmount &&
-                  _currency &&
-                  stepConfig &&
-                  startDate &&
-                  stepPayouts && (
-                    <ScheduleReview
-                      currency={_currency}
-                      schedule={createScheduleRepresentation({
-                        currency: _currency,
-                        cliffAmount: _cliffAmount,
-                        stepAmount: _stepAmount,
-                        stepDuration: stepConfig.time * 1000,
-                        startDate,
-                        cliffEndDate: cliff.cliffEnabled
-                          ? cliff?.cliffEndDate
-                          : null,
-                        stepPayouts,
-                      })}
-                    />
-                  )}
+                {_stepAmount && _currency && stepConfig && startDate && stepPayouts && (
+                  <ScheduleReview
+                    currency={_currency}
+                    schedule={createScheduleRepresentation({
+                      currency: _currency,
+                      cliffAmount: _cliffAmount,
+                      stepAmount: _stepAmount,
+                      stepDuration: stepConfig.time * 1000,
+                      startDate,
+                      cliffEndDate: cliff.cliffEnabled ? cliff?.cliffEndDate : null,
+                      stepPayouts,
+                    })}
+                  />
+                )}
               </div>
             ) : (
               <div />
@@ -285,5 +243,5 @@ const TableRow: FC<CreateVestingFormSchemaType & { chainId: ChainId }> = ({
         />
       </Table.td>
     </Table.tr>
-  );
-};
+  )
+}

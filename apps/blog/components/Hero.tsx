@@ -1,11 +1,11 @@
-import { Button, Container } from "@sushiswap/ui";
-import { FC } from "react";
+import { Button, Container } from '@sushiswap/ui'
+import { FC } from 'react'
 
-import { ArticleEntity } from "../.mesh";
-import { ArticleAuthors, ArticleHeader } from "./article";
+import { ArticleEntity } from '../.mesh'
+import { ArticleAuthors, ArticleHeader } from './article'
 
 interface Hero {
-  article: ArticleEntity;
+  article: ArticleEntity
 }
 
 export const Hero: FC<Hero> = ({ article }) => {
@@ -26,5 +26,5 @@ export const Hero: FC<Hero> = ({ article }) => {
         </div>
       </Container>
     </section>
-  );
-};
+  )
+}

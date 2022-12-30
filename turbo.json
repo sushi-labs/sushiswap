@@ -47,24 +47,12 @@
     },
     "playwright": {
       "cache": false,
-      "env": [
-        "ANVIL_BLOCK_NUMBER",
-        "ANVIL_FORK_URL",
-        "PLAYWRIGHT_URL",
-        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
-        "CHAIN_ID"
-      ]
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
     "test": {
       "dependsOn": ["build"],
       "outputs": ["coverage/**"],
-      "env": [
-        "ANVIL_BLOCK_NUMBER",
-        "ANVIL_FORK_URL",
-        "PLAYWRIGHT_URL",
-        "NEXT_PUBLIC_PLAYWRIGHT_ENABLED",
-        "CHAIN_ID"
-      ]
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
     "lint": {
       "dependsOn": ["^build"],
@@ -75,13 +63,7 @@
       "cache": false
     },
     "generate": {
-      "outputs": [
-        ".graphclient/**",
-        ".mesh/**",
-        "typechain/**",
-        "artifacts/**",
-        "cache/**"
-      ]
+      "outputs": [".graphclient/**", ".mesh/**", "typechain/**", "artifacts/**", "cache/**"]
     },
     "build": {
       "outputs": [
@@ -96,13 +78,7 @@
         "public/**",
         "storybook-static/**"
       ],
-      "dependsOn": [
-        "^build",
-        "^db:generate",
-        "db:generate",
-        "build-graphql",
-        "generate"
-      ],
+      "dependsOn": ["^build", "^db:generate", "db:generate", "build-graphql", "generate"],
       "env": [
         "ROOT_URL",
         "ACADEMY_URL",

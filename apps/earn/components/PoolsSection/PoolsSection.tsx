@@ -1,20 +1,19 @@
-import { Tab } from "@headlessui/react";
-import { UserWithFarm } from "@sushiswap/graph-client";
-import { Chip, classNames } from "@sushiswap/ui";
-import { FC, useState } from "react";
-import useSWR from "swr";
-import { useAccount } from "wagmi";
+import { Tab } from '@headlessui/react'
+import { UserWithFarm } from '@sushiswap/graph-client'
+import { Chip, classNames } from '@sushiswap/ui'
+import { FC, useState } from 'react'
+import useSWR from 'swr'
+import { useAccount } from 'wagmi'
 
-import { PoolsTable, PositionsTable } from "./Tables";
-import { TableFilters } from "./Tables/TableFilters";
+import { PoolsTable, PositionsTable } from './Tables'
+import { TableFilters } from './Tables/TableFilters'
 
 export const PoolsSection: FC = () => {
-  const { address } = useAccount();
-  const [tab, setTab] = useState<number>(0);
-  const { data: userWithFarms } = useSWR<UserWithFarm[]>(
-    address ? [`/earn/api/user/${address}`] : null,
-    (url) => fetch(url).then((response) => response.json())
-  );
+  const { address } = useAccount()
+  const [tab, setTab] = useState<number>(0)
+  const { data: userWithFarms } = useSWR<UserWithFarm[]>(address ? [`/earn/api/user/${address}`] : null, (url) =>
+    fetch(url).then((response) => response.json())
+  )
 
   return (
     <section className="flex flex-col">
@@ -23,8 +22,8 @@ export const PoolsSection: FC = () => {
           <Tab
             className={({ selected }) =>
               classNames(
-                selected ? "text-slate-200" : "text-slate-500",
-                "hover:text-slate-50 focus:text-slate-50 font-medium !outline-none"
+                selected ? 'text-slate-200' : 'text-slate-500',
+                'hover:text-slate-50 focus:text-slate-50 font-medium !outline-none'
               )
             }
           >
@@ -35,17 +34,12 @@ export const PoolsSection: FC = () => {
             <Tab
               className={({ selected }) =>
                 classNames(
-                  selected ? "text-slate-200" : "text-slate-500",
-                  "hover:text-slate-50 focus:text-slate-50 flex items-center gap-2 font-medium !outline-none"
+                  selected ? 'text-slate-200' : 'text-slate-500',
+                  'hover:text-slate-50 focus:text-slate-50 flex items-center gap-2 font-medium !outline-none'
                 )
               }
             >
-              My Positions{" "}
-              <Chip
-                label={userWithFarms?.length || "0"}
-                size="sm"
-                color="blue"
-              />
+              My Positions <Chip label={userWithFarms?.length || '0'} size="sm" color="blue" />
             </Tab>
           )}
         </div>
@@ -60,5 +54,5 @@ export const PoolsSection: FC = () => {
         </Tab.Panels>
       </Tab.Group>
     </section>
-  );
-};
+  )
+}

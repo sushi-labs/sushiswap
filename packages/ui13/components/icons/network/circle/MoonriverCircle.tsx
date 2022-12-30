@@ -1,18 +1,8 @@
-import * as React from "react";
+import * as React from 'react'
 
-export const MoonriverCircle = (props: React.ComponentProps<"svg">) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 128 128"
-    {...props}
-  >
-    <rect
-      width="128"
-      height="128"
-      fill="url(#paint0_radial_303_494)"
-      rx="64"
-    ></rect>
+export const MoonriverCircle = (props: React.ComponentProps<'svg'>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 128 128" {...props}>
+    <rect width="128" height="128" fill="url(#paint0_radial_303_494)" rx="64"></rect>
     <g clipPath="url(#clip0_303_494)">
       <path
         fill="#F2B705"
@@ -44,4 +34,4 @@ export const MoonriverCircle = (props: React.ComponentProps<"svg">) => (
       </clipPath>
     </defs>
   </svg>
-);
+)

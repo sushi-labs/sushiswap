@@ -1,1 +1,1 @@
-export * from "./price-feeds";
+export * from './price-feeds'

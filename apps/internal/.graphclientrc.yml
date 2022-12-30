@@ -83,4 +83,4 @@ documents:
   - ./query.graphql
 
 codegen:
-  contextType: "MeshContext & { chainId: string; name: string; host: string }"
+  contextType: 'MeshContext & { chainId: string; name: string; host: string }'

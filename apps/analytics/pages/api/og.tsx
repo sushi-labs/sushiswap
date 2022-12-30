@@ -1,150 +1,144 @@
 // /pages/api/og.tsx
 
-import { ImageResponse } from "@vercel/og";
-import { NextRequest } from "next/server";
+import { ImageResponse } from '@vercel/og'
+import { NextRequest } from 'next/server'
 
 export const config = {
-  runtime: "experimental-edge",
-};
+  runtime: 'experimental-edge',
+}
 
 export default async function handler(req: NextRequest) {
-  const { searchParams } = req.nextUrl;
-  const tvl = searchParams.get("tvl");
-  const volume = searchParams.get("volume");
-  const fee = searchParams.get("fee");
+  const { searchParams } = req.nextUrl
+  const tvl = searchParams.get('tvl')
+  const volume = searchParams.get('volume')
+  const fee = searchParams.get('fee')
   return new ImageResponse(
     (
       <div
         style={{
-          display: "flex",
-          position: "relative",
+          display: 'flex',
+          position: 'relative',
           fontSize: 40,
-          color: "black",
-          background: "white",
-          width: "100%",
-          height: "100%",
-          textAlign: "center",
-          justifyContent: "center",
-          alignItems: "center",
+          color: 'black',
+          background: 'white',
+          width: '100%',
+          height: '100%',
+          textAlign: 'center',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <svg
-          width={1200}
-          height={630}
-          viewBox="0 0 1200 630"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width={1200} height={630} viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
           <div
             style={{
-              whiteSpace: "pre",
-              fontFamily: "Lufga",
+              whiteSpace: 'pre',
+              fontFamily: 'Lufga',
               fontSize: 80,
               fontWeight: 500,
-              position: "absolute",
+              position: 'absolute',
               top: 178,
               left: 94,
-              letterSpacing: "0em",
-              color: "white",
+              letterSpacing: '0em',
+              color: 'white',
               //   zIndex: 100,
             }}
           >
             Sushi Analytics
           </div>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div
                 style={{
-                  position: "absolute",
-                  whiteSpace: "pre",
-                  fontFamily: "Lufga",
+                  position: 'absolute',
+                  whiteSpace: 'pre',
+                  fontFamily: 'Lufga',
                   fontSize: 36,
                   fontWeight: 400,
                   top: 330,
                   left: 94,
-                  letterSpacing: "0em",
-                  color: "#97A3B7",
+                  letterSpacing: '0em',
+                  color: '#97A3B7',
                 }}
               >
                 TVL
               </div>
               <div
                 style={{
-                  position: "absolute",
-                  whiteSpace: "pre",
-                  fontFamily: "Lufga",
+                  position: 'absolute',
+                  whiteSpace: 'pre',
+                  fontFamily: 'Lufga',
                   fontSize: 48,
                   fontWeight: 500,
                   top: 389,
                   left: 94,
-                  letterSpacing: "0em",
-                  color: "white",
+                  letterSpacing: '0em',
+                  color: 'white',
                 }}
               >
                 {/* $9.8B */}
                 {tvl}
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div
                 style={{
-                  position: "absolute",
-                  whiteSpace: "pre",
-                  fontFamily: "Lufga",
+                  position: 'absolute',
+                  whiteSpace: 'pre',
+                  fontFamily: 'Lufga',
                   fontSize: 36,
                   fontWeight: 400,
                   top: 330,
                   left: 359,
-                  letterSpacing: "0em",
-                  color: "#97A3B7",
+                  letterSpacing: '0em',
+                  color: '#97A3B7',
                 }}
               >
                 VOLUME (24H)
               </div>
               <div
                 style={{
-                  position: "absolute",
-                  whiteSpace: "pre",
-                  fontFamily: "Lufga",
+                  position: 'absolute',
+                  whiteSpace: 'pre',
+                  fontFamily: 'Lufga',
                   fontSize: 48,
                   fontWeight: 500,
                   top: 389,
                   left: 359,
-                  letterSpacing: "0em",
-                  color: "white",
+                  letterSpacing: '0em',
+                  color: 'white',
                 }}
               >
                 {/* $100M */}
                 {volume}
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div
                 style={{
-                  position: "absolute",
-                  whiteSpace: "pre",
-                  fontFamily: "Lufga",
+                  position: 'absolute',
+                  whiteSpace: 'pre',
+                  fontFamily: 'Lufga',
                   fontSize: 36,
                   fontWeight: 400,
                   top: 330,
                   left: 749,
-                  letterSpacing: "0em",
-                  color: "#97A3B7",
+                  letterSpacing: '0em',
+                  color: '#97A3B7',
                 }}
               >
                 FEE (24H)
               </div>
               <div
                 style={{
-                  position: "absolute",
-                  whiteSpace: "pre",
-                  fontFamily: "Lufga",
+                  position: 'absolute',
+                  whiteSpace: 'pre',
+                  fontFamily: 'Lufga',
                   fontSize: 48,
                   fontWeight: 500,
                   top: 389,
                   left: 749,
-                  letterSpacing: "0em",
-                  color: "white",
+                  letterSpacing: '0em',
+                  color: 'white',
                 }}
               >
                 {/* $1K */}
@@ -156,20 +150,8 @@ export default async function handler(req: NextRequest) {
             <path fill="#081123" d="M0 0h1200v630H0z" />
             <path fill="url(#b)" fillOpacity={0.2} d="M0 0h1200v630H0z" />
             <g opacity={0.6}>
-              <ellipse
-                cx={949.86}
-                cy={93.234}
-                rx={140.898}
-                ry={141.234}
-                fill="#EF348B"
-              />
-              <ellipse
-                cx={949.86}
-                cy={93.234}
-                rx={140.898}
-                ry={141.234}
-                fill="url(#c)"
-              />
+              <ellipse cx={949.86} cy={93.234} rx={140.898} ry={141.234} fill="#EF348B" />
+              <ellipse cx={949.86} cy={93.234} rx={140.898} ry={141.234} fill="url(#c)" />
             </g>
             <path
               d="m920.514 227.286 86.826-86.824c-15.416 8.808-29.73 19.347-42.68 31.301l-12.845 12.845c-11.954 12.95-22.493 27.264-31.301 42.678Zm-25.9 68.998 181.726-181.722c-5.04.996-9.97 2.202-14.89 3.513L898.127 281.393c-1.311 4.929-2.517 9.857-3.513 14.891ZM890 342.474v1.468L1123.99 110h-1.46c-3.41 0-6.77.105-10.07.21L890.262 332.407c-.157 3.356-.262 6.711-.262 10.067Zm3.618 40.999 269.852-269.856a210 210 0 0 0-9.8-1.52L892.097 373.669c.42 3.251.944 6.554 1.521 9.804Zm8.808 34.238 295.284-295.285c-2.83-.996-5.71-1.887-8.6-2.726L899.699 409.113c.892 2.883 1.783 5.767 2.727 8.598Zm12.845 30.252 312.749-312.744a347.76 347.76 0 0 0-7.66-3.722L911.549 440.308c1.205 2.569 2.411 5.138 3.722 7.655Zm16.149 26.948 323.54-323.544a194.633 194.633 0 0 0-6.81-4.561l-321.292 321.29a192.065 192.065 0 0 0 4.562 6.815Zm19.084 24.012 328.416-328.42c-1.99-1.783-3.98-3.565-6.03-5.295L945.209 492.894a538.945 538.945 0 0 0 5.295 6.029Zm21.968 21.131L1300.11 192.42c-1.73-2.045-3.52-4.09-5.3-6.082l-328.42 328.42c1.993 1.783 3.985 3.566 6.082 5.296Zm24.747 18.298L1318.4 217.167a174.27 174.27 0 0 0-4.56-6.816L990.403 533.843c2.255 1.521 4.509 3.041 6.816 4.509Zm27.841 15.256 308.55-308.55c-1.21-2.569-2.41-5.138-3.72-7.655l-312.54 312.534c2.57 1.259 5.14 2.465 7.71 3.671Zm31.3 11.798 289.1-289.098c-.84-2.884-1.78-5.768-2.73-8.599l-294.97 294.97c2.83.997 5.72 1.888 8.6 2.727Zm35.55 7.55 261.1-261.1c-.42-3.303-.95-6.607-1.52-9.857l-269.44 269.437c3.25.576 6.55 1.101 9.86 1.52Zm30.62 2.045c3.61 0 7.18-.105 10.69-.262l221.52-221.516c.16-3.565.26-7.13.26-10.696v-.891l-233.37 233.365c.27-.052.58 0 .9 0Zm61.86-8.39 162.27-162.27c1.37-4.928 2.57-9.909 3.62-14.943l-180.83 180.831a237.971 237.971 0 0 0 14.94-3.618Z"
@@ -222,20 +204,9 @@ export default async function handler(req: NextRequest) {
               <path fill="#fff" d="M0 0h1200v630H0z" />
             </clipPath>
             <clipPath id="d">
-              <path
-                fill="#fff"
-                transform="translate(965 533)"
-                d="M0 0h158.073v42H0z"
-              />
+              <path fill="#fff" transform="translate(965 533)" d="M0 0h158.073v42H0z" />
             </clipPath>
-            <linearGradient
-              id="e"
-              x1={980.284}
-              y1={532.497}
-              x2={994.746}
-              y2={575.158}
-              gradientUnits="userSpaceOnUse"
-            >
+            <linearGradient id="e" x1={980.284} y1={532.497} x2={994.746} y2={575.158} gradientUnits="userSpaceOnUse">
               <stop stopColor="#27B0E6" />
               <stop offset={0.044} stopColor="#49A1DB" />
               <stop offset={0.118} stopColor="#7D8ACA" />
@@ -256,5 +227,5 @@ export default async function handler(req: NextRequest) {
       width: 1200,
       height: 630,
     }
-  );
+  )
 }

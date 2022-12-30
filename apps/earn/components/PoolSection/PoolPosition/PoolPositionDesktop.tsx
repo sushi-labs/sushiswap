@@ -1,19 +1,18 @@
-import { formatUSD } from "@sushiswap/format";
-import { Pair } from "@sushiswap/graph-client";
-import { Currency, Typography } from "@sushiswap/ui";
-import { FC } from "react";
+import { formatUSD } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client'
+import { Currency, Typography } from '@sushiswap/ui'
+import { FC } from 'react'
 
-import { useTokensFromPair } from "../../../lib/hooks";
-import { usePoolPosition } from "../../PoolPositionProvider";
+import { useTokensFromPair } from '../../../lib/hooks'
+import { usePoolPosition } from '../../PoolPositionProvider'
 
 interface PoolPositionProps {
-  pair: Pair;
+  pair: Pair
 }
 
 export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
-  const { token1, token0 } = useTokensFromPair(pair);
-  const { underlying1, underlying0, value1, value0, isError, isLoading } =
-    usePoolPosition();
+  const { token1, token0 } = useTokensFromPair(pair)
+  const { underlying1, underlying0, value1, value0, isError, isLoading } = usePoolPosition()
 
   if (isLoading && !isError) {
     return (
@@ -31,7 +30,7 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
           <div className="h-[16px] bg-slate-700 animate-pulse w-[60px] rounded-full" />
         </div>
       </div>
-    );
+    )
   }
 
   if (!isLoading && !isError) {
@@ -70,8 +69,8 @@ export const PoolPositionDesktop: FC<PoolPositionProps> = ({ pair }) => {
           </Typography>
         </div>
       </div>
-    );
+    )
   }
 
-  return <></>;
-};
+  return <></>
+}

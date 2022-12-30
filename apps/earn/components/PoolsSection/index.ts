@@ -1,2 +1,2 @@
-export * from "./PoolsSection";
-export * from "./Tables";
+export * from './PoolsSection'
+export * from './Tables'

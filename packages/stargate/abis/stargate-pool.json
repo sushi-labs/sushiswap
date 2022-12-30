@@ -623,9 +623,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "_amountLP", "type": "uint256" }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "_amountLP", "type": "uint256" }],
     "name": "amountLPtoLD",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -839,9 +837,7 @@
       { "internalType": "address", "name": "_to", "type": "address" }
     ],
     "name": "instantRedeemLocal",
-    "outputs": [
-      { "internalType": "uint256", "name": "amountSD", "type": "uint256" }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "amountSD", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -935,9 +931,7 @@
       { "internalType": "bytes", "name": "_to", "type": "bytes" }
     ],
     "name": "redeemLocal",
-    "outputs": [
-      { "internalType": "uint256", "name": "amountSD", "type": "uint256" }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "amountSD", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1029,9 +1023,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "_mintFeeBP", "type": "uint256" }
-    ],
+    "inputs": [{ "internalType": "uint256", "name": "_mintFeeBP", "type": "uint256" }],
     "name": "setFee",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -1145,9 +1137,7 @@
       }
     ],
     "name": "swapRemote",
-    "outputs": [
-      { "internalType": "uint256", "name": "amountLD", "type": "uint256" }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "amountLD", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },

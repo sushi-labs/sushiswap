@@ -1,5 +1,5 @@
-import { LinkIcon } from "@heroicons/react/24/outline";
-import { classNames, Container } from "@sushiswap/ui";
+import { LinkIcon } from '@heroicons/react/24/outline'
+import { classNames, Container } from '@sushiswap/ui'
 import {
   ProductArticles,
   ProductBackground,
@@ -8,25 +8,25 @@ import {
   ProductHero,
   ProductInfoImages,
   ProductTechnicalDoc,
-} from "common/components";
-import { DEFAULT_SIDE_PADDING } from "common/helpers";
-import { PRODUCTS_DATA } from "common/productsData";
-import { getLatestAndRelevantArticles, getProducts } from "lib/api";
-import { GetStaticProps, InferGetStaticPropsType } from "next";
-import React, { FC } from "react";
-import useSWR from "swr";
+} from 'common/components'
+import { DEFAULT_SIDE_PADDING } from 'common/helpers'
+import { PRODUCTS_DATA } from 'common/productsData'
+import { getLatestAndRelevantArticles, getProducts } from 'lib/api'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
+import React, { FC } from 'react'
+import useSWR from 'swr'
 
-import { ArticleEntity } from ".mesh";
+import { ArticleEntity } from '.mesh'
 
-const PRODUCT_SLUG = "trident";
-const { color, productStats, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG];
+const PRODUCT_SLUG = 'trident'
+const { color, productStats, cards, faq } = PRODUCTS_DATA[PRODUCT_SLUG]
 
 export const getStaticProps: GetStaticProps = async () => {
-  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } });
-  const product = data?.products?.data?.[0]?.attributes;
-  if (!product) throw new Error(`Product not found`);
-  return { props: product, revalidate: 60 };
-};
+  const data = await getProducts({ filters: { slug: { eq: PRODUCT_SLUG } } })
+  const product = data?.products?.data?.[0]?.attributes
+  if (!product) throw new Error(`Product not found`)
+  return { props: product, revalidate: 60 }
+}
 
 const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
   name,
@@ -43,16 +43,13 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       revalidateIfStale: false,
       revalidateOnReconnect: false,
     }
-  );
+  )
 
-  const latestArticles: ArticleEntity[] = data?.articles?.data ?? [];
-  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? [];
+  const latestArticles: ArticleEntity[] = data?.articles?.data ?? []
+  const relevantArticles: ArticleEntity[] = data?.relevantArticles?.data ?? []
 
   return (
-    <Container
-      maxWidth="6xl"
-      className={classNames("mx-auto pt-10 pb-24", DEFAULT_SIDE_PADDING)}
-    >
+    <Container maxWidth="6xl" className={classNames('mx-auto pt-10 pb-24', DEFAULT_SIDE_PADDING)}>
       <ProductBackground color={color} />
       <ProductHero
         productName={
@@ -86,19 +83,19 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
         secondaryColor="#84E9DD"
         infoSections={[
           {
-            title: "The BentoBox",
+            title: 'The BentoBox',
             description:
               "All of the funds on Trident are also available to be applied to approved strategies in the BentoBox. This feature is made possible by Bento's empirical accounting method.",
           },
           {
-            title: "The Tines Router",
+            title: 'The Tines Router',
             description:
-              "Tines is a Smart Ordering Router (SOR) that is responsible for managing all the swaps on Trident. When the final phase of Trident is complete, Tines will be the only router in existence.",
+              'Tines is a Smart Ordering Router (SOR) that is responsible for managing all the swaps on Trident. When the final phase of Trident is complete, Tines will be the only router in existence.',
           },
           {
-            title: "The IPool interface",
+            title: 'The IPool interface',
             description:
-              "The IPool interface was developed by the Sushi team in the process of building Trident, which is a system of contracts that supports the four most canonical types of liquidity in DeFi: Constant Product Pool, Stable Swap Pool, Concentrated Liquidity Pool, Index Pool.",
+              'The IPool interface was developed by the Sushi team in the process of building Trident, which is a system of contracts that supports the four most canonical types of liquidity in DeFi: Constant Product Pool, Stable Swap Pool, Concentrated Liquidity Pool, Index Pool.',
           },
         ]}
       />
@@ -112,7 +109,7 @@ const ProductPage: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       <ProductTechnicalDoc color={color} secondaryColor="#FEC464" />
       <ProductFaq faq={faq} />
     </Container>
-  );
-};
+  )
+}
 
-export default ProductPage;
+export default ProductPage

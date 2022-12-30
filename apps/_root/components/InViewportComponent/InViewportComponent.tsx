@@ -1,13 +1,13 @@
-import { useInViewport } from "@sushiswap/hooks";
-import { FC, ReactNode, useRef } from "react";
+import { useInViewport } from '@sushiswap/hooks'
+import { FC, ReactNode, useRef } from 'react'
 
 interface InViewportComponent {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export const InViewportComponent: FC<InViewportComponent> = ({ children }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const inViewport = useInViewport(ref);
+  const ref = useRef<HTMLDivElement>(null)
+  const inViewport = useInViewport(ref)
 
   return (
     <div
@@ -18,5 +18,5 @@ export const InViewportComponent: FC<InViewportComponent> = ({ children }) => {
     >
       {inViewport ? children : null}
     </div>
-  );
-};
+  )
+}

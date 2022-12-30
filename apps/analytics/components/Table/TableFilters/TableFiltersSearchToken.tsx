@@ -1,65 +1,57 @@
-import { Transition } from "@headlessui/react";
-import { PlusIcon, SearchIcon, XCircleIcon } from "@heroicons/react/solid";
-import { useDebounce } from "@sushiswap/hooks";
-import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton } from "@sushiswap/ui";
-import React, { FC, useEffect, useState } from "react";
+import { Transition } from '@headlessui/react'
+import { PlusIcon, SearchIcon, XCircleIcon } from '@heroicons/react/solid'
+import { useDebounce } from '@sushiswap/hooks'
+import { classNames, DEFAULT_INPUT_UNSTYLED, IconButton } from '@sushiswap/ui'
+import React, { FC, useEffect, useState } from 'react'
 
-import { SelectedTable, usePoolFilters } from "../../PoolsFiltersProvider";
+import { SelectedTable, usePoolFilters } from '../../PoolsFiltersProvider'
 
 export const TableFiltersSearchToken: FC = () => {
-  const { setFilters, selectedTable } = usePoolFilters();
+  const { setFilters, selectedTable } = usePoolFilters()
 
-  const [_query, setQuery] = useState<string>("");
-  const [_extraQuery, setExtraQuery] = useState<string>("");
-  const [extra, setExtra] = useState(false);
+  const [_query, setQuery] = useState<string>('')
+  const [_extraQuery, setExtraQuery] = useState<string>('')
+  const [extra, setExtra] = useState(false)
 
-  const debouncedQuery = useDebounce(_query, 400);
-  const debouncedExtraQuery = useDebounce(_extraQuery, 400);
-
-  useEffect(() => {
-    setFilters({ query: debouncedQuery });
-  }, [debouncedQuery, setFilters]);
+  const debouncedQuery = useDebounce(_query, 400)
+  const debouncedExtraQuery = useDebounce(_extraQuery, 400)
 
   useEffect(() => {
-    setFilters({ extraQuery: debouncedExtraQuery });
-  }, [debouncedExtraQuery, setFilters]);
+    setFilters({ query: debouncedQuery })
+  }, [debouncedQuery, setFilters])
+
+  useEffect(() => {
+    setFilters({ extraQuery: debouncedExtraQuery })
+  }, [debouncedExtraQuery, setFilters])
 
   useEffect(() => {
     if (!extra) {
       setTimeout(() => {
-        setExtraQuery("");
-      }, 750);
+        setExtraQuery('')
+      }, 750)
     }
-  }, [extra, setFilters]);
+  }, [extra, setFilters])
 
   return (
     <div
       className={classNames(
-        "flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-3 bg-slate-800 rounded-2xl h-12"
+        'flex flex-grow sm:flex-grow-0 transform-all items-center gap-3 pr-3 bg-slate-800 rounded-2xl h-12'
       )}
     >
       <div
         className={classNames(
-          _query ? "pr-8" : "pr-4",
-          "w-full sm:w-[240px] flex-grow pr-4 transform-all relative flex gap-2 items-center px-4 py-2.5 rounded-2xl"
+          _query ? 'pr-8' : 'pr-4',
+          'w-full sm:w-[240px] flex-grow pr-4 transform-all relative flex gap-2 items-center px-4 py-2.5 rounded-2xl'
         )}
       >
         <div className="min-w-[24px] w-6 h-6 min-h-[24px] flex flex-grow items-center justify-center">
-          <SearchIcon
-            className="text-slate-500"
-            strokeWidth={2}
-            width={20}
-            height={20}
-          />
+          <SearchIcon className="text-slate-500" strokeWidth={2} width={20} height={20} />
         </div>
 
         <input
           value={_query}
           placeholder="Search a token"
-          className={classNames(
-            DEFAULT_INPUT_UNSTYLED,
-            "flex flex-grow !text-base placeholder:text-sm"
-          )}
+          className={classNames(DEFAULT_INPUT_UNSTYLED, 'flex flex-grow !text-base placeholder:text-sm')}
           type="text"
           onInput={(e) => setQuery(e.currentTarget.value)}
         />
@@ -74,12 +66,8 @@ export const TableFiltersSearchToken: FC = () => {
           leaveFrom="transform opacity-100"
           leaveTo="transform opacity-0"
         >
-          <IconButton onClick={() => setQuery("")}>
-            <XCircleIcon
-              width={20}
-              height={20}
-              className="cursor-pointer text-slate-500 hover:text-slate-300"
-            />
+          <IconButton onClick={() => setQuery('')}>
+            <XCircleIcon width={20} height={20} className="cursor-pointer text-slate-500 hover:text-slate-300" />
           </IconButton>
         </Transition>
       </div>
@@ -110,10 +98,7 @@ export const TableFiltersSearchToken: FC = () => {
           <input
             value={_extraQuery}
             placeholder="... other token"
-            className={classNames(
-              DEFAULT_INPUT_UNSTYLED,
-              "w-[200px] !text-base placeholder:text-sm"
-            )}
+            className={classNames(DEFAULT_INPUT_UNSTYLED, 'w-[200px] !text-base placeholder:text-sm')}
             type="text"
             onInput={(e) => setExtraQuery(e.currentTarget.value)}
           />
@@ -123,12 +108,12 @@ export const TableFiltersSearchToken: FC = () => {
             width={20}
             height={20}
             className={classNames(
-              extra ? "rotate-45" : "",
-              "transition-[transform] ease-in-out rotate-0 text-slate-400 group-hover:text-slate-200 delay-[400ms]"
+              extra ? 'rotate-45' : '',
+              'transition-[transform] ease-in-out rotate-0 text-slate-400 group-hover:text-slate-200 delay-[400ms]'
             )}
           />
         </IconButton>
       </Transition>
     </div>
-  );
-};
+  )
+}

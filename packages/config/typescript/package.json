@@ -15,16 +15,6 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "files": [
-    "./base.json",
-    "./esm.json",
-    "./hardhat.json",
-    "./nextjs.json",
-    "./node14.json",
-    "./node16.json",
-    "./node18-strictest-esm.combined.json",
-    "./react-library.json"
-  ],
   "exports": {
     "./base.json": "./hardhat.json",
     "./esm.json": "./esm.json",
@@ -34,5 +24,15 @@
     "./node16.json": "./node16.json",
     "./node18-strictest-esm.combined.json": "./node18-strictest-esm.combined.json",
     "./react-library.json": "./react-library.json"
-  }
+  },
+  "files": [
+    "./base.json",
+    "./esm.json",
+    "./hardhat.json",
+    "./nextjs.json",
+    "./node14.json",
+    "./node16.json",
+    "./node18-strictest-esm.combined.json",
+    "./react-library.json"
+  ]
 }

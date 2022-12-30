@@ -1,18 +1,18 @@
-import { classNames, Typography } from "@sushiswap/ui";
-import { FormType } from "pages";
-import React, { FC, ReactElement, ReactNode, useEffect } from "react";
-import { useFormContext } from "react-hook-form";
+import { classNames, Typography } from '@sushiswap/ui'
+import { FormType } from 'pages'
+import React, { FC, ReactElement, ReactNode, useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
 
-import { DEFAULT_FORM_FIELD_CLASSNAMES } from "../";
-import FormFieldHelperText from "../FormFieldHelperText";
+import { DEFAULT_FORM_FIELD_CLASSNAMES } from '../'
+import FormFieldHelperText from '../FormFieldHelperText'
 
 export interface FormTextFieldProps extends React.HTMLProps<HTMLInputElement> {
-  name: keyof FormType;
-  error?: string;
-  helperText?: any;
-  icon?: ReactNode;
-  endIcon?: ReactNode;
-  children?: ReactElement<HTMLInputElement>;
+  name: keyof FormType
+  error?: string
+  helperText?: any
+  icon?: ReactNode
+  endIcon?: ReactNode
+  children?: ReactElement<HTMLInputElement>
 }
 
 const FormTextField: FC<FormTextFieldProps> = ({
@@ -29,24 +29,24 @@ const FormTextField: FC<FormTextFieldProps> = ({
     register,
     unregister,
     formState: { errors },
-  } = useFormContext<FormType>();
+  } = useFormContext<FormType>()
 
   // Unregister on unmount
   useEffect(() => {
     return () => {
-      unregister(name);
-    };
-  }, [name, unregister]);
+      unregister(name)
+    }
+  }, [name, unregister])
 
   return (
     <>
       {label && <Typography weight={600}>{label}</Typography>}
       <div
         className={classNames(
-          "mt-2 flex rounded-xl shadow-xl border",
+          'mt-2 flex rounded-xl shadow-xl border',
           errors[name]
-            ? "border-red/40 hover:border-red focus:border-red active:focus:border-red"
-            : "border-transparent"
+            ? 'border-red/40 hover:border-red focus:border-red active:focus:border-red'
+            : 'border-transparent'
         )}
       >
         {icon && (
@@ -58,11 +58,11 @@ const FormTextField: FC<FormTextFieldProps> = ({
           {...register(name)}
           {...rest}
           className={classNames(
-            icon && !endIcon ? "rounded-none rounded-r-md" : "rounded",
-            endIcon && !icon ? "rounded-none rounded-l-md" : "rounded",
-            icon && endIcon ? "rounded-none" : "rounded",
+            icon && !endIcon ? 'rounded-none rounded-r-md' : 'rounded',
+            endIcon && !icon ? 'rounded-none rounded-l-md' : 'rounded',
+            icon && endIcon ? 'rounded-none' : 'rounded',
             DEFAULT_FORM_FIELD_CLASSNAMES,
-            errors[name] ? "!border-transparent" : "",
+            errors[name] ? '!border-transparent' : '',
             rest.className
           )}
           // autoComplete="off"
@@ -76,18 +76,16 @@ const FormTextField: FC<FormTextFieldProps> = ({
         )}
       </div>
       {errors[name] ? (
-        <FormFieldHelperText className="!text-red">
-          {errors[name]?.message as unknown as string}
-        </FormFieldHelperText>
+        <FormFieldHelperText className="!text-red">{errors[name]?.message as unknown as string}</FormFieldHelperText>
       ) : error ? (
         <FormFieldHelperText className="!text-red">{error}</FormFieldHelperText>
-      ) : typeof helperText === "string" ? (
+      ) : typeof helperText === 'string' ? (
         <FormFieldHelperText>{helperText}</FormFieldHelperText>
       ) : (
         helperText
       )}
     </>
-  );
-};
+  )
+}
 
-export default FormTextField;
+export default FormTextField

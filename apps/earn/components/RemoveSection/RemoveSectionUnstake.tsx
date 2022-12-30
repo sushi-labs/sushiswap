@@ -1,67 +1,52 @@
-import { tryParseAmount } from "@sushiswap/currency";
-import { Pair } from "@sushiswap/graph-client";
-import { useIsMounted } from "@sushiswap/hooks";
-import { AppearOnMount, Button, Dots } from "@sushiswap/ui";
-import {
-  Approve,
-  Checker,
-  Chef,
-  getMasterChefContractConfig,
-  useMasterChefWithdraw,
-} from "@sushiswap/wagmi";
-import { FC, useMemo, useState } from "react";
-import useSWR from "swr";
+import { tryParseAmount } from '@sushiswap/currency'
+import { Pair } from '@sushiswap/graph-client'
+import { useIsMounted } from '@sushiswap/hooks'
+import { AppearOnMount, Button, Dots } from '@sushiswap/ui'
+import { Approve, Checker, Chef, getMasterChefContractConfig, useMasterChefWithdraw } from '@sushiswap/wagmi'
+import { FC, useMemo, useState } from 'react'
+import useSWR from 'swr'
 
-import { CHEF_TYPE_MAP } from "../../lib/constants";
-import { useCreateNotification, useTokensFromPair } from "../../lib/hooks";
-import { usePoolPositionStaked } from "../PoolPositionStakedProvider";
-import { RemoveSectionUnstakeWidget } from "./RemoveSectionUnstakeWidget";
+import { CHEF_TYPE_MAP } from '../../lib/constants'
+import { useCreateNotification, useTokensFromPair } from '../../lib/hooks'
+import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
+import { RemoveSectionUnstakeWidget } from './RemoveSectionUnstakeWidget'
 
 interface AddSectionStakeProps {
-  pair: Pair;
-  chefType: Chef;
-  farmId: number;
+  pair: Pair
+  chefType: Chef
+  farmId: number
 }
 
-export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({
-  poolAddress,
-}) => {
-  const isMounted = useIsMounted();
-  const { data } = useSWR<{ pair: Pair }>(
-    `/earn/api/pool/${poolAddress}`,
-    (url) => fetch(url).then((response) => response.json())
-  );
+export const RemoveSectionUnstake: FC<{ poolAddress: string }> = ({ poolAddress }) => {
+  const isMounted = useIsMounted()
+  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${poolAddress}`, (url) =>
+    fetch(url).then((response) => response.json())
+  )
 
-  if (!data) return <></>;
-  const { pair } = data;
-  if (!pair?.farm?.chefType || !isMounted || !pair.farm.id) return <></>;
+  if (!data) return <></>
+  const { pair } = data
+  if (!pair?.farm?.chefType || !isMounted || !pair.farm.id) return <></>
 
   return (
     <AppearOnMount show={true}>
       <_RemoveSectionUnstake
         pair={pair}
-        chefType={
-          CHEF_TYPE_MAP[pair.farm.chefType as keyof typeof CHEF_TYPE_MAP]
-        }
+        chefType={CHEF_TYPE_MAP[pair.farm.chefType as keyof typeof CHEF_TYPE_MAP]}
         farmId={Number(pair.farm.id)}
       />
     </AppearOnMount>
-  );
-};
+  )
+}
 
-export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
-  pair,
-  chefType,
-  farmId,
-}) => {
-  const createNotification = useCreateNotification();
-  const [value, setValue] = useState("");
-  const { reserve0, reserve1, liquidityToken } = useTokensFromPair(pair);
-  const { balance } = usePoolPositionStaked();
+export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({ pair, chefType, farmId }) => {
+  const createNotification = useCreateNotification()
+  const [value, setValue] = useState('')
+  const { reserve0, reserve1, liquidityToken } = useTokensFromPair(pair)
+  const { balance } = usePoolPositionStaked()
 
   const amount = useMemo(() => {
-    return tryParseAmount(value, liquidityToken);
-  }, [liquidityToken, value]);
+    return tryParseAmount(value, liquidityToken)
+  }, [liquidityToken, value])
 
   const { sendTransaction, isLoading: isWritePending } = useMasterChefWithdraw({
     chainId: liquidityToken.chainId,
@@ -69,7 +54,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
     pid: farmId,
     chef: chefType,
     onSuccess: createNotification,
-  });
+  })
 
   return (
     <RemoveSectionUnstakeWidget
@@ -83,9 +68,7 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
       <Checker.Connected size="md">
         <Checker.Network size="md" chainId={pair.chainId}>
           <Checker.Custom
-            showGuardIfTrue={Boolean(
-              amount && balance && amount.greaterThan(balance)
-            )}
+            showGuardIfTrue={Boolean(amount && balance && amount.greaterThan(balance))}
             guard={<Button size="md">Insufficient Balance</Button>}
           >
             <Approve
@@ -98,14 +81,8 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
                     className="whitespace-nowrap"
                     fullWidth
                     amount={amount}
-                    address={
-                      getMasterChefContractConfig(pair.chainId, chefType)
-                        ?.address
-                    }
-                    enabled={Boolean(
-                      getMasterChefContractConfig(pair.chainId, chefType)
-                        ?.address
-                    )}
+                    address={getMasterChefContractConfig(pair.chainId, chefType)?.address}
+                    enabled={Boolean(getMasterChefContractConfig(pair.chainId, chefType)?.address)}
                   />
                 </Approve.Components>
               }
@@ -118,18 +95,14 @@ export const _RemoveSectionUnstake: FC<AddSectionStakeProps> = ({
                     variant="filled"
                     disabled={!approved || isWritePending}
                   >
-                    {isWritePending ? (
-                      <Dots>Confirm transaction</Dots>
-                    ) : (
-                      "Unstake Liquidity"
-                    )}
+                    {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake Liquidity'}
                   </Button>
-                );
+                )
               }}
             />
           </Checker.Custom>
         </Checker.Network>
       </Checker.Connected>
     </RemoveSectionUnstakeWidget>
-  );
-};
+  )
+}

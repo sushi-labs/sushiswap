@@ -1,80 +1,59 @@
-import "@sushiswap/ui/index.css";
-import "../index.css";
+import '@sushiswap/ui/index.css'
+import '../index.css'
 
-import { Cloudinary } from "@cloudinary/url-gen";
-import { App, ThemeProvider } from "@sushiswap/ui";
-import { Analytics } from "@vercel/analytics/react";
-import type { AppContext, AppProps } from "next/app";
-import { default as NextApp } from "next/app";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import Script from "next/script";
-import { useEffect } from "react";
+import { Cloudinary } from '@cloudinary/url-gen'
+import { App, ThemeProvider } from '@sushiswap/ui'
+import { Analytics } from '@vercel/analytics/react'
+import type { AppContext, AppProps } from 'next/app'
+import { default as NextApp } from 'next/app'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import Script from 'next/script'
+import { useEffect } from 'react'
 
-import { DefaultSeo, Header } from "../components";
-import { getGlobalSEO } from "../lib/api";
-import { Global } from ".mesh";
+import { DefaultSeo, Header } from '../components'
+import { getGlobalSEO } from '../lib/api'
+import { Global } from '.mesh'
 
 export const cld = new Cloudinary({
   cloud: {
-    cloudName: "sushi-cdn",
+    cloudName: 'sushi-cdn',
   },
-});
+})
 
 declare global {
   interface Window {
-    dataLayer: Record<string, any>[];
+    dataLayer: Record<string, any>[]
   }
 }
 
 const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
-  const router = useRouter();
+  const router = useRouter()
   useEffect(() => {
     const handler = (page: any) => {
       window.dataLayer.push({
-        event: "pageview",
+        event: 'pageview',
         page,
-      });
-    };
-    router.events.on("routeChangeComplete", handler);
-    router.events.on("hashChangeComplete", handler);
+      })
+    }
+    router.events.on('routeChangeComplete', handler)
+    router.events.on('hashChangeComplete', handler)
     return () => {
-      router.events.off("routeChangeComplete", handler);
-      router.events.off("hashChangeComplete", handler);
-    };
-  }, [router.events]);
+      router.events.off('routeChangeComplete', handler)
+      router.events.off('hashChangeComplete', handler)
+    }
+  }, [router.events])
   return (
     <>
       <Head>
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png?v=1"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png?v=1"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png?v=1"
-        />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1" />
         <link rel="manifest" href="/site.webmanifest?v=1" />
-        <link
-          rel="mask-icon"
-          href="/safari-pinned-tab.svg?v=1"
-          color="#fa52a0"
-        />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg?v=1" color="#fa52a0" />
         <link rel="shortcut icon" href="/favicon.ico?v=1" />
       </Head>
-      <Script
-        strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`}
-      />
+      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
         id="gtag-init"
         strategy="afterInteractive"
@@ -99,8 +78,8 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
       </ThemeProvider>
       <Analytics />
     </>
-  );
-};
+  )
+}
 
 // getInitialProps disables automatic static optimization for pages that don't
 // have getStaticProps. So article, category and home pages still get SSG.
@@ -112,9 +91,9 @@ MyApp.getInitialProps = async (ctx: AppContext) => {
     NextApp.getInitialProps(ctx),
     // Fetch global site settings from Strapi
     getGlobalSEO(),
-  ]);
+  ])
   // Pass the data to our page via props
-  return { ...appProps, seo: globalSEO.global?.data?.attributes };
-};
+  return { ...appProps, seo: globalSEO.global?.data?.attributes }
+}
 
-export default MyApp;
+export default MyApp

@@ -1,12 +1,7 @@
-import * as React from "react";
+import * as React from 'react'
 
-export const FantomCircle = (props: React.ComponentProps<"svg">) => (
-  <svg
-    viewBox="0 0 128 128"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+export const FantomCircle = (props: React.ComponentProps<'svg'>) => (
+  <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <rect width={128} height={128} rx={64} fill="#13B5EC" />
     <path
       fillRule="evenodd"
@@ -15,4 +10,4 @@ export const FantomCircle = (props: React.ComponentProps<"svg">) => (
       fill="#fff"
     />
   </svg>
-);
+)

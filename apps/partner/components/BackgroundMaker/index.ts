@@ -1,2 +1,2 @@
-export * from "./BackgroundMaker";
-export * from "./BackgroundMakerFields";
+export * from './BackgroundMaker'
+export * from './BackgroundMakerFields'

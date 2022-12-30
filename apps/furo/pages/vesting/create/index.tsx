@@ -1,15 +1,15 @@
-import { Breadcrumb, BreadcrumbLink, Button, Typography } from "@sushiswap/ui";
-import Link from "next/link";
-import { NextSeo } from "next-seo";
+import { Breadcrumb, BreadcrumbLink, Button, Typography } from '@sushiswap/ui'
+import Link from 'next/link'
+import { NextSeo } from 'next-seo'
 
-import { Layout } from "../../../components";
+import { Layout } from '../../../components'
 
 const LINKS: BreadcrumbLink[] = [
   {
-    href: "/vesting/create",
-    label: "Create Vesting",
+    href: '/vesting/create',
+    label: 'Create Vesting',
   },
-];
+]
 
 const VestingCreate = () => {
   return (
@@ -23,21 +23,13 @@ const VestingCreate = () => {
               How many vests would you like to create?
             </Typography>
             <div className="flex justify-center gap-20">
-              <Link
-                href="/vesting/create/single"
-                passHref={true}
-                legacyBehavior
-              >
+              <Link href="/vesting/create/single" passHref={true} legacyBehavior>
                 <a className="flex flex-col items-center gap-7">
                   <div className="w-[86px] h-[86px] bg-slate-600 group-hover:bg-blue rounded-lg" />
                   <Button size="sm">One</Button>
                 </a>
               </Link>
-              <Link
-                href="/vesting/create/multiple"
-                passHref={true}
-                legacyBehavior
-              >
+              <Link href="/vesting/create/multiple" passHref={true} legacyBehavior>
                 <a className="flex flex-col items-center gap-7">
                   <div className="w-[86px] h-[86px] group-hover:bg-blue rounded-lg">
                     <div className="grid grid-cols-2 gap-1">
@@ -55,7 +47,7 @@ const VestingCreate = () => {
         </div>
       </Layout>
     </>
-  );
-};
+  )
+}
 
-export default VestingCreate;
+export default VestingCreate

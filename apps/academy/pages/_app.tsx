@@ -1,50 +1,47 @@
-import "@sushiswap/ui/index.css";
-import "../index.css";
+import '@sushiswap/ui/index.css'
+import '../index.css'
 
-import { Cloudinary } from "@cloudinary/url-gen";
-import { App, ThemeProvider } from "@sushiswap/ui";
-import type { AppContext, AppProps } from "next/app";
-import { default as NextApp } from "next/app";
-import { useRouter } from "next/router";
-import Script from "next/script";
-import { useEffect } from "react";
+import { Cloudinary } from '@cloudinary/url-gen'
+import { App, ThemeProvider } from '@sushiswap/ui'
+import type { AppContext, AppProps } from 'next/app'
+import { default as NextApp } from 'next/app'
+import { useRouter } from 'next/router'
+import Script from 'next/script'
+import { useEffect } from 'react'
 
-import { DefaultSeo, Header } from "../common/components";
-import { getGlobalSEO } from "../lib/api";
-import { Global } from ".mesh";
+import { DefaultSeo, Header } from '../common/components'
+import { getGlobalSEO } from '../lib/api'
+import { Global } from '.mesh'
 
 export const cld = new Cloudinary({
   cloud: {
-    cloudName: "sushi-cdn",
+    cloudName: 'sushi-cdn',
   },
-});
+})
 
 declare global {
   interface Window {
-    dataLayer: Record<string, any>[];
+    dataLayer: Record<string, any>[]
   }
 }
 
 const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
-  const router = useRouter();
+  const router = useRouter()
   useEffect(() => {
     const handler = (page: any) =>
       window.dataLayer.push({
-        event: "pageview",
+        event: 'pageview',
         page,
-      });
-    router.events.on("routeChangeComplete", handler);
+      })
+    router.events.on('routeChangeComplete', handler)
     return () => {
-      router.events.off("routeChangeComplete", handler);
-    };
-  }, [router.events]);
+      router.events.off('routeChangeComplete', handler)
+    }
+  }, [router.events])
 
   return (
     <>
-      <Script
-        strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`}
-      />
+      <Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF`} />
       <Script
         id="gtag-init"
         strategy="afterInteractive"
@@ -68,8 +65,8 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
         </App.Shell>
       </ThemeProvider>
     </>
-  );
-};
+  )
+}
 
 // getInitialProps disables automatic static optimization for pages that don't
 // have getStaticProps. So article, category and home pages still get SSG.
@@ -77,11 +74,11 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 // https://github.com/vercel/next.js/discussions/10949
 MyApp.getInitialProps = async (ctx: AppContext) => {
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
-  const appProps = await NextApp.getInitialProps(ctx);
+  const appProps = await NextApp.getInitialProps(ctx)
   // Fetch global site settings from Strapi
-  const globalSEO = await getGlobalSEO();
+  const globalSEO = await getGlobalSEO()
   // Pass the data to our page via props
-  return { ...appProps, seo: globalSEO.global?.data?.attributes };
-};
+  return { ...appProps, seo: globalSEO.global?.data?.attributes }
+}
 
-export default MyApp;
+export default MyApp

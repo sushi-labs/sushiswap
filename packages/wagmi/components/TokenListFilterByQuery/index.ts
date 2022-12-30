@@ -1,1 +1,1 @@
-export * from "./TokenListFilterByQuery";
+export * from './TokenListFilterByQuery'

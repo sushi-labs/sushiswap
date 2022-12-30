@@ -1,16 +1,16 @@
-import { Disclosure, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/solid";
-import { Native, WNATIVE_ADDRESS } from "@sushiswap/currency";
-import { useIsMounted } from "@sushiswap/hooks";
-import { STARGATE_CONFIRMATION_SECONDS } from "@sushiswap/stargate";
-import { classNames, Collapsible, Loader, Typography } from "@sushiswap/ui";
-import { usePrices } from "@sushiswap/wagmi";
-import React, { FC } from "react";
+import { Disclosure, Transition } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/solid'
+import { Native, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { useIsMounted } from '@sushiswap/hooks'
+import { STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
+import { classNames, Collapsible, Loader, Typography } from '@sushiswap/ui'
+import { usePrices } from '@sushiswap/wagmi'
+import React, { FC } from 'react'
 
-import { useBridgeState, useDerivedBridgeState } from "./BridgeStateProvider";
+import { useBridgeState, useDerivedBridgeState } from './BridgeStateProvider'
 
 export const SwapStatsDisclosure: FC = () => {
-  const { srcChainId, srcTypedAmount } = useBridgeState();
+  const { srcChainId, srcTypedAmount } = useBridgeState()
   return (
     <Collapsible open={Boolean(srcTypedAmount)}>
       <div className="p-3 pb-1">
@@ -21,17 +21,11 @@ export const SwapStatsDisclosure: FC = () => {
                 <Typography variant="sm" className="text-slate-400">
                   Est. Processing Time
                 </Typography>
-                <Typography
-                  variant="sm"
-                  weight={500}
-                  className="text-right truncate text-slate-200"
-                >
+                <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
                   ~
                   {Math.ceil(
-                    STARGATE_CONFIRMATION_SECONDS[
-                      srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS
-                    ] / 60
-                  )}{" "}
+                    STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60
+                  )}{' '}
                   minutes
                 </Typography>
                 <Disclosure.Button className="flex items-center justify-end flex-grow cursor-pointer">
@@ -39,8 +33,8 @@ export const SwapStatsDisclosure: FC = () => {
                     width={24}
                     height={24}
                     className={classNames(
-                      open ? "!rotate-180" : "",
-                      "rotate-0 transition-[transform] duration-300 ease-in-out delay-200"
+                      open ? '!rotate-180' : '',
+                      'rotate-0 transition-[transform] duration-300 ease-in-out delay-200'
                     )}
                   />
                 </Disclosure.Button>
@@ -69,47 +63,32 @@ export const SwapStatsDisclosure: FC = () => {
         </Disclosure>
       </div>
     </Collapsible>
-  );
-};
+  )
+}
 
 export const Stats: FC = () => {
-  const isMounted = useIsMounted();
-  const { bridgeFee, isLoading } = useDerivedBridgeState();
-  const { srcChainId, srcToken, gasFee } = useBridgeState();
-  const { data: srcPrices } = usePrices({ chainId: srcChainId });
+  const isMounted = useIsMounted()
+  const { bridgeFee, isLoading } = useDerivedBridgeState()
+  const { srcChainId, srcToken, gasFee } = useBridgeState()
+  const { data: srcPrices } = usePrices({ chainId: srcChainId })
 
   return (
     <>
       <Typography variant="sm" className="text-slate-400">
         Est. Processing Time
       </Typography>
-      <Typography
-        variant="sm"
-        weight={500}
-        className="text-right truncate text-slate-200"
-      >
-        ~
-        {Math.ceil(
-          STARGATE_CONFIRMATION_SECONDS[
-            srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS
-          ] / 60
-        )}{" "}
+      <Typography variant="sm" weight={500} className="text-right truncate text-slate-200">
+        ~{Math.ceil(STARGATE_CONFIRMATION_SECONDS[srcChainId as keyof typeof STARGATE_CONFIRMATION_SECONDS] / 60)}{' '}
         minutes
       </Typography>
       <Typography variant="sm" className="text-slate-400">
         Bridge Fee
       </Typography>
       {bridgeFee && srcToken && srcPrices?.[srcToken.wrapped.address] ? (
-        <Typography
-          variant="sm"
-          weight={500}
-          className="text-right truncate text-slate-400"
-        >
+        <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
           ~$
           {bridgeFee?.greaterThan(0)
-            ? bridgeFee
-                ?.multiply(srcPrices[srcToken.wrapped.address].asFraction)
-                ?.toSignificant(6)
+            ? bridgeFee?.multiply(srcPrices[srcToken.wrapped.address].asFraction)?.toSignificant(6)
             : 0}
         </Typography>
       ) : isLoading && isMounted ? (
@@ -117,11 +96,7 @@ export const Stats: FC = () => {
           <Loader size={14} />
         </div>
       ) : (
-        <Typography
-          variant="sm"
-          weight={500}
-          className="text-right truncate text-slate-400"
-        >
+        <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
           $0.00
         </Typography>
       )}
@@ -130,16 +105,8 @@ export const Stats: FC = () => {
       </Typography>
       {gasFee &&
       srcPrices &&
-      Boolean(
-        srcChainId &&
-          srcChainId in WNATIVE_ADDRESS &&
-          WNATIVE_ADDRESS[srcChainId] in srcPrices
-      ) ? (
-        <Typography
-          variant="sm"
-          weight={500}
-          className="text-right truncate text-slate-400"
-        >
+      Boolean(srcChainId && srcChainId in WNATIVE_ADDRESS && WNATIVE_ADDRESS[srcChainId] in srcPrices) ? (
+        <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
           {gasFee.toSignificant(6)} {Native.onChain(srcChainId).symbol}
         </Typography>
       ) : (
@@ -148,5 +115,5 @@ export const Stats: FC = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}

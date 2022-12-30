@@ -1,13 +1,13 @@
-import { Stats } from "components/Stats/Stats";
-import React from "react";
+import { Stats } from 'components/Stats/Stats'
+import React from 'react'
 
-import { BuildFuture } from "../components/BuildFuture/BuildFuture";
-import { BuildWealth } from "../components/BuildWealth/BuildWealth";
-import { Ecosystem } from "../components/Ecosystem/Ecosystem";
-import { Hero } from "../components/Hero/Hero";
-import { NeedHelp } from "../components/NeedHelp/NeedHelp";
-import { Partners } from "../components/Partners/Partners";
-import { Story } from "../components/Story/Story";
+import { BuildFuture } from '../components/BuildFuture/BuildFuture'
+import { BuildWealth } from '../components/BuildWealth/BuildWealth'
+import { Ecosystem } from '../components/Ecosystem/Ecosystem'
+import { Hero } from '../components/Hero/Hero'
+import { NeedHelp } from '../components/NeedHelp/NeedHelp'
+import { Partners } from '../components/Partners/Partners'
+import { Story } from '../components/Story/Story'
 
 const Index = () => {
   return (
@@ -26,7 +26,7 @@ const Index = () => {
         </div>
       </div>
     </article>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index

@@ -5,14 +5,14 @@
   "scripts": {
     "anvil": "anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER",
     "build": "next build",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .next && rm -rf .swc && rm -rf .graphclient",
     "dev": "next dev -p 3009",
     "lint": "next lint",
     "start": "next start",
-    "test2": "concurrently --kill-others -s last --group \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER\" \"next dev\" \"wait-on http-get://localhost:3000/swap && npx playwright test\"",
-    "test3": "concurrently --kill-others -s last --group \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER\" \"npx playwright test\"",
     "test": "npx playwright test",
-    "check": "tsc --pretty --noEmit"
+    "test2": "concurrently --kill-others -s last --group \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER\" \"next dev\" \"wait-on http-get://localhost:3000/swap && npx playwright test\"",
+    "test3": "concurrently --kill-others -s last --group \"anvil --fork-url $ANVIL_FORK_URL --fork-block-number $ANVIL_BLOCK_NUMBER\" \"npx playwright test\""
   },
   "dependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -46,8 +46,8 @@
     "ethers": "^5.7.0",
     "next": "13.0.7",
     "next-seo": "^5.5.0",
-    "numeral": "^2.0.6",
     "next-sitemap": "^3.1.16",
+    "numeral": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1",
@@ -69,8 +69,8 @@
     "@types/react-dom": "^18.0.0",
     "@types/workbox-sw": "^4.3.2",
     "autoprefixer": "^10.4.0",
-    "eslint": "8.29.0",
     "concurrently": "7.6.0",
+    "eslint": "8.29.0",
     "next-transpile-modules": "10.0.0",
     "postcss": "^8.4.0",
     "tailwindcss": "3.2.4",

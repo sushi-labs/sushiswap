@@ -1,30 +1,22 @@
-import { Signature } from "@ethersproject/bytes";
-import { AddressZero } from "@ethersproject/constants";
-import { Transition } from "@headlessui/react";
-import {
-  Badge,
-  BentoboxIcon,
-  Button,
-  classNames,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@sushiswap/ui";
-import { FC, memo, useEffect } from "react";
-import { Address, useNetwork } from "wagmi";
+import { Signature } from '@ethersproject/bytes'
+import { AddressZero } from '@ethersproject/constants'
+import { Transition } from '@headlessui/react'
+import { Badge, BentoboxIcon, Button, classNames, IconButton, Tooltip, Typography } from '@sushiswap/ui'
+import { FC, memo, useEffect } from 'react'
+import { Address, useNetwork } from 'wagmi'
 
-import { ApprovalState, useBentoBoxApproveCallback } from "../../hooks";
-import { DefaultButton } from "./DefaultButton";
-import { ApprovalButtonRenderProp, ApproveButton } from "./types";
+import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
+import { DefaultButton } from './DefaultButton'
+import { ApprovalButtonRenderProp, ApproveButton } from './types'
 
 interface RenderPropPayload extends ApprovalButtonRenderProp {
-  signature: Signature | undefined;
+  signature: Signature | undefined
 }
 
 export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
-  onSignature(sig?: Signature): void;
-  watch?: boolean;
-  address?: Address;
+  onSignature(sig?: Signature): void
+  watch?: boolean
+  address?: Address
 }
 
 export const BentoApproveButton: FC<BentoApproveButton> = memo(
@@ -44,7 +36,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     enabled = true,
     ...props
   }) => {
-    const { chain } = useNetwork();
+    const { chain } = useNetwork()
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
       chainId: chain?.id,
       watch,
@@ -52,30 +44,30 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
       onSignature,
       onSuccess,
       enabled,
-    });
+    })
 
     useEffect(() => {
       if (!enabled && dispatch && index !== undefined) {
         dispatch({
-          type: "update",
+          type: 'update',
           payload: { state: [ApprovalState.APPROVED, undefined, true], index },
-        });
+        })
       }
-    }, [dispatch, enabled, index]);
+    }, [dispatch, enabled, index])
 
     // Set to undefined on unmount
     useEffect(() => {
       return () => {
-        if (!dispatch || index === undefined) return;
-        dispatch({ type: "remove", payload: { index } });
-      };
-    }, [dispatch, index]);
+        if (!dispatch || index === undefined) return
+        dispatch({ type: 'remove', payload: { index } })
+      }
+    }, [dispatch, index])
 
     useEffect(() => {
-      if (!dispatch || index === undefined || !enabled) return;
+      if (!dispatch || index === undefined || !enabled) return
 
       dispatch({
-        type: "update",
+        type: 'update',
         payload: {
           state: [
             approvalState,
@@ -84,7 +76,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
               {...props}
               type="button"
               key={1}
-              className={classNames("whitespace-nowrap", props.className)}
+              className={classNames('whitespace-nowrap', props.className)}
               onClick={onApprove}
               disabled={disabled || approvalState === ApprovalState.PENDING}
             >
@@ -94,21 +86,11 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           ],
           index,
         },
-      });
-    }, [
-      id,
-      approvalState,
-      disabled,
-      dispatch,
-      enabled,
-      index,
-      onApprove,
-      props,
-      signature,
-    ]);
+      })
+    }, [id, approvalState, disabled, dispatch, enabled, index, onApprove, props, signature])
 
-    if (render) return render({ approvalState, signature, onApprove });
-    if (hideIcon) return <></>;
+    if (render) return render({ approvalState, signature, onApprove })
+    if (hideIcon) return <></>
 
     return (
       <Transition
@@ -131,11 +113,11 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
                     <div
                       className={classNames(
                         approvalState === ApprovalState.PENDING
-                          ? "bg-yellow"
+                          ? 'bg-yellow'
                           : approvalState === ApprovalState.APPROVED
-                          ? "bg-green"
-                          : "bg-red",
-                        "w-2 h-2 rounded-full shadow-md"
+                          ? 'bg-green'
+                          : 'bg-red',
+                        'w-2 h-2 rounded-full shadow-md'
                       )}
                     />
                   }
@@ -143,10 +125,8 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
                   <IconButton
                     as="div"
                     className={classNames(
-                      disabled || approvalState === ApprovalState.PENDING
-                        ? "pointer-events-none saturate-[0]"
-                        : "",
-                      "flex items-center justify-center bg-slate-700 rounded-full overflow-hidden hover:scale-[1.10] transition-all"
+                      disabled || approvalState === ApprovalState.PENDING ? 'pointer-events-none saturate-[0]' : '',
+                      'flex items-center justify-center bg-slate-700 rounded-full overflow-hidden hover:scale-[1.10] transition-all'
                     )}
                     onClick={onApprove}
                   >
@@ -163,38 +143,26 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
                   Status:
                   <span
                     className={classNames(
-                      "ml-1 capitalize",
+                      'ml-1 capitalize',
                       approvalState === ApprovalState.PENDING
-                        ? "text-yellow"
+                        ? 'text-yellow'
                         : approvalState === ApprovalState.APPROVED
-                        ? "text-green"
-                        : "text-red"
+                        ? 'text-green'
+                        : 'text-red'
                     )}
                   >
-                    {approvalState.toLowerCase().replace("_", " ")}
+                    {approvalState.toLowerCase().replace('_', ' ')}
                   </span>
                 </Typography>
-                <Typography
-                  variant="xs"
-                  weight={500}
-                  className="text-slate-400"
-                >
-                  We need your approval first to access your wallet using
-                  BentoBox; you will only have to approve this master contract
-                  once.
+                <Typography variant="xs" weight={500} className="text-slate-400">
+                  We need your approval first to access your wallet using BentoBox; you will only have to approve this
+                  master contract once.
                 </Typography>
-                <Typography
-                  variant="xs"
-                  weight={500}
-                  className="flex flex-col gap-1 text-slate-400"
-                >
-                  <span className="text-slate-200">
-                    Why should I approve this?
-                  </span>
+                <Typography variant="xs" weight={500} className="flex flex-col gap-1 text-slate-400">
+                  <span className="text-slate-200">Why should I approve this?</span>
                   <span>
-                    BentoBox is a token vault that provides its users with
-                    passive income on their deposits from yield strategies while
-                    reducing gas costs.
+                    BentoBox is a token vault that provides its users with passive income on their deposits from yield
+                    strategies while reducing gas costs.
                   </span>
                 </Typography>
               </div>
@@ -202,6 +170,6 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           />
         </DefaultButton>
       </Transition>
-    );
+    )
   }
-);
+)

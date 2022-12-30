@@ -1,1 +1,1 @@
-export * from "./MountedController";
+export * from './MountedController'

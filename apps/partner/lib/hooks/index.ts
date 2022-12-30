@@ -1,1 +1,1 @@
-export * from "./useTokenData";
+export * from './useTokenData'

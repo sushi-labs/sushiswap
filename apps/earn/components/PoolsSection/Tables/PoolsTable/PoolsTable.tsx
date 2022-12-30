@@ -1,112 +1,80 @@
-import { ChainId } from "@sushiswap/chain";
-import { Pair, PairType, QuerypairsArgs } from "@sushiswap/graph-client";
-import { useBreakpoint } from "@sushiswap/hooks";
-import { GenericTable, Table } from "@sushiswap/ui";
-import {
-  getCoreRowModel,
-  getSortedRowModel,
-  PaginationState,
-  SortingState,
-  useReactTable,
-} from "@tanstack/react-table";
-import stringify from "fast-json-stable-stringify";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
+import { ChainId } from '@sushiswap/chain'
+import { Pair, PairType, QuerypairsArgs } from '@sushiswap/graph-client'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { GenericTable, Table } from '@sushiswap/ui'
+import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
+import stringify from 'fast-json-stable-stringify'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import useSWR from 'swr'
 
-import { usePoolFilters } from "../../../PoolsFiltersProvider";
-import { PAGE_SIZE } from "../contants";
-import {
-  APR_COLUMN,
-  FEES_COLUMN,
-  NAME_COLUMN,
-  NETWORK_COLUMN,
-  TVL_COLUMN,
-  VOLUME_COLUMN,
-} from "./Cells/columns";
-import { PairQuickHoverTooltip } from "./PairQuickHoverTooltip";
+import { usePoolFilters } from '../../../PoolsFiltersProvider'
+import { PAGE_SIZE } from '../contants'
+import { APR_COLUMN, FEES_COLUMN, NAME_COLUMN, NETWORK_COLUMN, TVL_COLUMN, VOLUME_COLUMN } from './Cells/columns'
+import { PairQuickHoverTooltip } from './PairQuickHoverTooltip'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const COLUMNS = [
-  NETWORK_COLUMN,
-  NAME_COLUMN,
-  TVL_COLUMN,
-  VOLUME_COLUMN,
-  FEES_COLUMN,
-  APR_COLUMN,
-];
+const COLUMNS = [NETWORK_COLUMN, NAME_COLUMN, TVL_COLUMN, VOLUME_COLUMN, FEES_COLUMN, APR_COLUMN]
 
 const fetcher = ({
   url,
   args,
 }: {
-  url: string;
+  url: string
   args: {
-    sorting: SortingState;
-    pagination: PaginationState;
-    query: string;
-    extraQuery: string;
-    selectedNetworks: ChainId[];
-    selectedPoolTypes: string[];
-    farmsOnly: boolean;
-  };
+    sorting: SortingState
+    pagination: PaginationState
+    query: string
+    extraQuery: string
+    selectedNetworks: ChainId[]
+    selectedPoolTypes: string[]
+    farmsOnly: boolean
+  }
 }) => {
-  const _url = new URL(url, window.location.origin);
+  const _url = new URL(url, window.location.origin)
 
   if (args.sorting[0]) {
-    _url.searchParams.set("orderBy", args.sorting[0].id);
-    _url.searchParams.set(
-      "orderDirection",
-      args.sorting[0].desc ? "desc" : "asc"
-    );
+    _url.searchParams.set('orderBy', args.sorting[0].id)
+    _url.searchParams.set('orderDirection', args.sorting[0].desc ? 'desc' : 'asc')
   }
 
   if (args.pagination) {
-    _url.searchParams.set("pagination", stringify(args.pagination));
+    _url.searchParams.set('pagination', stringify(args.pagination))
   }
 
   if (args.selectedNetworks) {
-    _url.searchParams.set("networks", stringify(args.selectedNetworks));
+    _url.searchParams.set('networks', stringify(args.selectedNetworks))
   }
 
-  const where: QuerypairsArgs["where"] = {};
-  if (args.query) where["name_contains_nocase"] = args.query;
-  if (args.selectedPoolTypes)
-    where["type_in"] = args.selectedPoolTypes as PairType[];
+  const where: QuerypairsArgs['where'] = {}
+  if (args.query) where['name_contains_nocase'] = args.query
+  if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes as PairType[]
 
   if (Object.keys(where).length > 0) {
-    _url.searchParams.set("where", JSON.stringify(where));
+    _url.searchParams.set('where', JSON.stringify(where))
   }
 
   if (args.farmsOnly) {
-    _url.searchParams.set("farmsOnly", "true");
+    _url.searchParams.set('farmsOnly', 'true')
   }
 
   return fetch(_url.href)
     .then((res) => res.json())
-    .catch((e) => console.log(stringify(e)));
-};
+    .catch((e) => console.log(stringify(e)))
+}
 
 export const PoolsTable: FC = () => {
-  const {
-    query,
-    extraQuery,
-    selectedNetworks,
-    selectedPoolTypes,
-    farmsOnly,
-    atLeastOneFilterSelected,
-  } = usePoolFilters();
-  const { isSm } = useBreakpoint("sm");
-  const { isMd } = useBreakpoint("md");
+  const { query, extraQuery, selectedNetworks, selectedPoolTypes, farmsOnly, atLeastOneFilterSelected } =
+    usePoolFilters()
+  const { isSm } = useBreakpoint('sm')
+  const { isMd } = useBreakpoint('md')
 
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: "liquidityUSD", desc: true },
-  ]);
-  const [columnVisibility, setColumnVisibility] = useState({});
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'liquidityUSD', desc: true }])
+  const [columnVisibility, setColumnVisibility] = useState({})
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: PAGE_SIZE,
-  });
+  })
 
   const args = useMemo(
     () => ({
@@ -118,30 +86,17 @@ export const PoolsTable: FC = () => {
       query,
       extraQuery,
     }),
-    [
-      sorting,
-      pagination,
-      selectedNetworks,
-      selectedPoolTypes,
-      farmsOnly,
-      query,
-      extraQuery,
-    ]
-  );
+    [sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery]
+  )
 
-  const { data: pools, isValidating } = useSWR<Pair[]>(
-    { url: "/earn/api/pools", args },
-    fetcher
-  );
+  const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher)
 
   // console.log({ pools })
 
   const { data: poolCount } = useSWR<number>(
-    `/earn/api/pools/count${
-      selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ""
-    }`,
+    `/earn/api/pools/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
     (url) => fetch(url).then((response) => response.json())
-  );
+  )
 
   const table = useReactTable<Pair>({
     data: pools || [],
@@ -157,7 +112,7 @@ export const PoolsTable: FC = () => {
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
     manualPagination: true,
-  });
+  })
 
   useEffect(() => {
     if (isSm && !isMd) {
@@ -166,9 +121,9 @@ export const PoolsTable: FC = () => {
         network: false,
         rewards: false,
         fees: false,
-      });
+      })
     } else if (isSm) {
-      setColumnVisibility({});
+      setColumnVisibility({})
     } else {
       setColumnVisibility({
         volume: false,
@@ -176,13 +131,13 @@ export const PoolsTable: FC = () => {
         rewards: false,
         liquidityUSD: false,
         fees: false,
-      });
+      })
     }
-  }, [isMd, isSm]);
+  }, [isMd, isSm])
 
   const rowLink = useCallback((row: Pair) => {
-    return `/${row.id}`;
-  }, []);
+    return `/${row.id}`
+  }, [])
 
   return (
     <>
@@ -197,9 +152,7 @@ export const PoolsTable: FC = () => {
       <Table.Paginator
         hasPrev={pagination.pageIndex > 0}
         hasNext={
-          !atLeastOneFilterSelected
-            ? pagination.pageIndex < table.getPageCount()
-            : (pools?.length || 0) >= PAGE_SIZE
+          !atLeastOneFilterSelected ? pagination.pageIndex < table.getPageCount() : (pools?.length || 0) >= PAGE_SIZE
         }
         nextDisabled={!pools && isValidating}
         onPrev={table.previousPage}
@@ -210,5 +163,5 @@ export const PoolsTable: FC = () => {
         pageSize={PAGE_SIZE}
       />
     </>
-  );
-};
+  )
+}

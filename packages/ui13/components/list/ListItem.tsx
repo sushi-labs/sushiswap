@@ -1,34 +1,31 @@
-import { Transition } from "@headlessui/react";
-import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
-import classNames from "classnames";
-import React, { Fragment, SVGProps, useState } from "react";
+import { Transition } from '@headlessui/react'
+import { ArrowLongRightIcon } from '@heroicons/react/24/solid'
+import classNames from 'classnames'
+import React, { Fragment, SVGProps, useState } from 'react'
 
-import { PolymorphicComponentProps } from "../../types";
+import { PolymorphicComponentProps } from '../../types'
 
 interface ExtraProps<T> {
-  icon?: React.FC<T>;
-  iconProps?: T & { width: number; height: number };
+  icon?: React.FC<T>
+  iconProps?: T & { width: number; height: number }
 }
 
 interface Props {
-  title: string;
-  subtitle?: string;
-  onClick?(): void;
-  hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element;
-  hoverIconProps?: Omit<React.ComponentProps<"svg">, "width" | "height"> & {
-    width: number;
-    height: number;
-  };
+  title: string
+  subtitle?: string
+  onClick?(): void
+  hoverIcon?: (props: SVGProps<SVGSVGElement>) => JSX.Element
+  hoverIconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'> & {
+    width: number
+    height: number
+  }
 }
 
-export type ListItemProps<
-  T,
-  C extends React.ElementType
-> = PolymorphicComponentProps<C, Props & ExtraProps<T>>;
+export type ListItemProps<T, C extends React.ElementType> = PolymorphicComponentProps<C, Props & ExtraProps<T>>
 
-export type ListItemComponent = <T, C extends React.ElementType = "button">(
+export type ListItemComponent = <T, C extends React.ElementType = 'button'>(
   props: ListItemProps<T, C>
-) => React.ReactElement | null;
+) => React.ReactElement | null
 
 export const ListItem: ListItemComponent = ({
   as,
@@ -42,9 +39,9 @@ export const ListItem: ListItemComponent = ({
   className,
   ...rest
 }) => {
-  const Component = as || "button";
+  const Component = as || 'button'
 
-  const [hover, setHover] = useState(false);
+  const [hover, setHover] = useState(false)
   return (
     <Component
       type="button"
@@ -54,23 +51,17 @@ export const ListItem: ListItemComponent = ({
       {...rest}
       className={classNames(
         className,
-        "relative flex gap-3 px-4 py-3 hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] w-full items-center cursor-pointer"
+        'relative flex gap-3 px-4 py-3 hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03] w-full items-center cursor-pointer'
       )}
     >
       {/*// TODO RAMIN*/}
       {Icon && (
         // @ts-ignore
-        <Icon
-          {...iconProps}
-          width={iconProps?.width ?? 20}
-          height={iconProps?.height ?? 20}
-        />
+        <Icon {...iconProps} width={iconProps?.width ?? 20} height={iconProps?.height ?? 20} />
       )}
       <div className="flex flex-col gap-0.5 items-start">
         <span className="text-sm font-medium dark:text-slate-200">{title}</span>
-        {subtitle && (
-          <span className="text-[10px] text-slate-400">{subtitle}</span>
-        )}
+        {subtitle && <span className="text-[10px] text-slate-400">{subtitle}</span>}
       </div>
       <Transition
         as={Fragment}
@@ -85,11 +76,7 @@ export const ListItem: ListItemComponent = ({
       >
         <div className="absolute right-0 top-0 bottom-0 flex justify-center items-center">
           {HoverIcon ? (
-            <HoverIcon
-              {...hoverIconProps}
-              width={hoverIconProps?.width ?? 20}
-              height={hoverIconProps?.height ?? 20}
-            />
+            <HoverIcon {...hoverIconProps} width={hoverIconProps?.width ?? 20} height={hoverIconProps?.height ?? 20} />
           ) : (
             <ArrowLongRightIcon
               {...hoverIconProps}
@@ -100,5 +87,5 @@ export const ListItem: ListItemComponent = ({
         </div>
       </Transition>
     </Component>
-  );
-};
+  )
+}

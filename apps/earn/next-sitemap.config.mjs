@@ -2,7 +2,7 @@
 /** @type {import('next-sitemap').IConfig} */
 const config = {
   siteUrl: `https://www.sushi.com/earn`,
-  changefreq: "daily",
+  changefreq: 'daily',
   generateRobotsTxt: true,
   robotsTxtOptions: {
     additionalSitemaps: [`https://www.sushi.com/earn/pool-sitemap.xml`],
@@ -15,8 +15,8 @@ const config = {
       priority: config.priority,
       lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
       alternateRefs: config.alternateRefs ?? [],
-    };
+    }
   },
-};
+}
 
-export default config;
+export default config

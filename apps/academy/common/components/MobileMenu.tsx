@@ -1,34 +1,31 @@
-import { Disclosure, Transition } from "@headlessui/react";
-import { Bars3Icon } from "@heroicons/react/24/solid";
-import { Link, SushiIcon, Typography } from "@sushiswap/ui";
-import classNames from "classnames";
-import { SushiTransparentIcon, TriangleIcon } from "common/icons";
-import { FC, useCallback, useState } from "react";
+import { Disclosure, Transition } from '@headlessui/react'
+import { Bars3Icon } from '@heroicons/react/24/solid'
+import { Link, SushiIcon, Typography } from '@sushiswap/ui'
+import classNames from 'classnames'
+import { SushiTransparentIcon, TriangleIcon } from 'common/icons'
+import { FC, useCallback, useState } from 'react'
 
-import { Drawer } from "./Drawer";
-import { HeaderSection } from "./Header";
+import { Drawer } from './Drawer'
+import { HeaderSection } from './Header'
 
 interface MobileMenu {
-  navData: HeaderSection[];
+  navData: HeaderSection[]
 }
 export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   const onOpen = useCallback(() => {
-    document.body.className = "scroll-lock";
-    setIsOpen(true);
-  }, []);
+    document.body.className = 'scroll-lock'
+    setIsOpen(true)
+  }, [])
   const onClose = useCallback(() => {
-    document.body.className = "";
-    setIsOpen(false);
-  }, []);
+    document.body.className = ''
+    setIsOpen(false)
+  }, [])
 
   return (
     <nav className="sm:hidden">
-      <button
-        className="p-1.5 bg-slate-900 rounded hover:opacity-80"
-        onClick={onOpen}
-      >
+      <button className="p-1.5 bg-slate-900 rounded hover:opacity-80" onClick={onOpen}>
         <Bars3Icon className="w-5 h-5" aria-hidden="true" />
       </button>
 
@@ -47,44 +44,25 @@ export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
             if (href && !links) {
               return isExternal ? (
                 <Link.External href={href} key={title}>
-                  <Typography
-                    variant="h3"
-                    weight={700}
-                    className="text-slate-50"
-                    onClick={onClose}
-                  >
+                  <Typography variant="h3" weight={700} className="text-slate-50" onClick={onClose}>
                     {title}
                   </Typography>
                 </Link.External>
               ) : (
                 <Link.Internal href={href} key={title}>
-                  <Typography
-                    variant="h3"
-                    weight={700}
-                    className="text-slate-50"
-                    onClick={onClose}
-                  >
+                  <Typography variant="h3" weight={700} className="text-slate-50" onClick={onClose}>
                     {title}
                   </Typography>
                 </Link.Internal>
-              );
+              )
             }
             return (
               <Disclosure key={title} as="div">
                 {({ open }) => (
                   <>
                     <Disclosure.Button className="flex items-center gap-6">
-                      <TriangleIcon
-                        className={classNames(
-                          "transition",
-                          open && "rotate-90"
-                        )}
-                      />
-                      <Typography
-                        variant="h3"
-                        weight={700}
-                        className="text-slate-50"
-                      >
+                      <TriangleIcon className={classNames('transition', open && 'rotate-90')} />
+                      <Typography variant="h3" weight={700} className="text-slate-50">
                         {title}
                       </Typography>
                     </Disclosure.Button>
@@ -100,21 +78,13 @@ export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
                         {links?.map(({ name, href, isExternal }) =>
                           isExternal ? (
                             <Link.External key={href} href={href}>
-                              <Typography
-                                weight={500}
-                                className="text-slate-400"
-                                onClick={onClose}
-                              >
+                              <Typography weight={500} className="text-slate-400" onClick={onClose}>
                                 {name}
                               </Typography>
                             </Link.External>
                           ) : (
                             <Link.Internal key={href} href={href}>
-                              <Typography
-                                weight={500}
-                                className="text-slate-400"
-                                onClick={onClose}
-                              >
+                              <Typography weight={500} className="text-slate-400" onClick={onClose}>
                                 {name}
                               </Typography>
                             </Link.Internal>
@@ -125,7 +95,7 @@ export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
                   </>
                 )}
               </Disclosure>
-            );
+            )
           })}
           <div className="fixed bottom-0 right-0 -z-[1]">
             <SushiTransparentIcon />
@@ -133,5 +103,5 @@ export const MobileMenu: FC<MobileMenu> = ({ navData }) => {
         </div>
       </Drawer>
     </nav>
-  );
-};
+  )
+}

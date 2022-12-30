@@ -21,6 +21,7 @@
     "eslint-config-next": "13.1.1",
     "eslint-config-prettier": "8.5.0",
     "eslint-config-turbo": "0.0.7",
+    "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-simple-import-sort": "8.0.0",
     "eslint-plugin-testing-library": "5.9.1",
     "eslint-plugin-unused-imports": "2.0.0"

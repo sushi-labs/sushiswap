@@ -1,8 +1,8 @@
-import { Fee } from "@sushiswap/amm";
-import { FC, useEffect } from "react";
+import { Fee } from '@sushiswap/amm'
+import { FC, useEffect } from 'react'
 
-import { useConstantProductPool } from "../../hooks";
-import { PoolFinderType, TridentPoolFinderProps } from "./types";
+import { useConstantProductPool } from '../../hooks'
+import { PoolFinderType, TridentPoolFinderProps } from './types'
 
 export const ConstantProductPool: FC<TridentPoolFinderProps> = ({
   chainId,
@@ -13,20 +13,20 @@ export const ConstantProductPool: FC<TridentPoolFinderProps> = ({
   fee = Fee.DEFAULT,
   twap = false,
 }) => {
-  const state = useConstantProductPool(chainId, token0, token1, fee, twap);
+  const state = useConstantProductPool(chainId, token0, token1, fee, twap)
 
   useEffect(() => {
-    if (!dispatch || index === undefined) return;
+    if (!dispatch || index === undefined) return
 
     dispatch({
-      type: "update",
+      type: 'update',
       payload: {
         state,
         index,
         poolType: PoolFinderType.Classic,
       },
-    });
-  }, [dispatch, index, state]);
+    })
+  }, [dispatch, index, state])
 
-  return <></>;
-};
+  return <></>
+}

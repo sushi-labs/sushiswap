@@ -1,13 +1,8 @@
-import React from "react";
+import React from 'react'
 
-export const FailedMarkIcon = (props: React.ComponentProps<"svg">) => {
+export const FailedMarkIcon = (props: React.ComponentProps<'svg'>) => {
   return (
-    <svg
-      {...props}
-      version="1.1"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 130.2 130.2"
-    >
+    <svg {...props} version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
       <circle
         className="animate-[dash_1.5s_ease-in_forwards] text-red"
         fill="none"
@@ -49,5 +44,5 @@ export const FailedMarkIcon = (props: React.ComponentProps<"svg">) => {
         y2="88.3"
       />
     </svg>
-  );
-};
+  )
+}

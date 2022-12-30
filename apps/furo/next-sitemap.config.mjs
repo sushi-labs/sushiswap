@@ -2,7 +2,7 @@
 /** @type {import('next-sitemap').IConfig} */
 const config = {
   siteUrl: `https://www.sushi.com/furo`,
-  changefreq: "daily",
+  changefreq: 'daily',
   generateRobotsTxt: true,
   robotsTxtOptions: {
     additionalSitemaps: [
@@ -18,8 +18,8 @@ const config = {
       priority: config.priority,
       lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
       alternateRefs: config.alternateRefs ?? [],
-    };
+    }
   },
-};
+}
 
-export default config;
+export default config

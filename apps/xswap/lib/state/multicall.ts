@@ -1,7 +1,7 @@
-import { createMulticall } from "@uniswap/redux-multicall";
+import { createMulticall } from '@uniswap/redux-multicall'
 
 // Create a multicall instance with default settings
-export const multicall: ReturnType<typeof createMulticall> = createMulticall();
+export const multicall: ReturnType<typeof createMulticall> = createMulticall()
 
 export const {
   useMultipleContractSingleData,
@@ -10,4 +10,4 @@ export const {
   useSingleContractWithCallData,
   useMultiChainMultiContractSingleData,
   useMultiChainSingleContractSingleData,
-} = multicall.hooks;
+} = multicall.hooks

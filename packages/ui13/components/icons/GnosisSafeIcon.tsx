@@ -1,4 +1,4 @@
-export const GnosisSafeIcon = (props: React.ComponentProps<"svg">) => {
+export const GnosisSafeIcon = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg {...props} viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -6,5 +6,5 @@ export const GnosisSafeIcon = (props: React.ComponentProps<"svg">) => {
         stroke="#fff"
       />
     </svg>
-  );
-};
+  )
+}

@@ -1,18 +1,17 @@
-"use client";
+'use client'
 
-import { Widget as UIWidget } from "@sushiswap/ui13/components/widget";
-import { Web3Input } from "@sushiswap/wagmi13/components/Web3Input";
-import React, { FC } from "react";
+import { Widget as UIWidget } from '@sushiswap/ui13/components/widget'
+import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
+import React, { FC } from 'react'
 
-import { useSwapActions, useSwapState } from "../TradeProvider";
-import { SwitchAppType } from "./SwitchAppType";
-import { SwitchTokensButton } from "./SwitchTokensButton";
-import { WidgetTitle } from "./WidgetTitle";
+import { useSwapActions, useSwapState } from '../TradeProvider'
+import { SwitchAppType } from './SwitchAppType'
+import { SwitchTokensButton } from './SwitchTokensButton'
+import { WidgetTitle } from './WidgetTitle'
 
 export const Widget: FC = () => {
-  const { token0, token1, value, otherValue, network0, network1 } =
-    useSwapState();
-  const { setToken0, setToken1, setValue } = useSwapActions();
+  const { token0, token1, value, otherValue, network0, network1 } = useSwapState()
+  const { setToken0, setToken1, setValue } = useSwapActions()
 
   return (
     <div className="flex flex-col gap-4">
@@ -39,5 +38,5 @@ export const Widget: FC = () => {
         />
       </UIWidget.Content>
     </div>
-  );
-};
+  )
+}

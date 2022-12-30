@@ -1,8 +1,8 @@
-import classNames from "classnames";
-import { FC, HTMLProps } from "react";
+import classNames from 'classnames'
+import { FC, HTMLProps } from 'react'
 
 export interface CircleProps extends HTMLProps<HTMLDivElement> {
-  radius: number;
+  radius: number
 }
 
 export const Circle: FC<CircleProps> = (props) => {
@@ -15,10 +15,7 @@ export const Circle: FC<CircleProps> = (props) => {
         width: props.radius,
         height: props.radius,
       }}
-      className={classNames(
-        props.className,
-        "rounded-full overflow-hidden shimmer"
-      )}
+      className={classNames(props.className, 'rounded-full overflow-hidden shimmer')}
     />
-  );
-};
+  )
+}

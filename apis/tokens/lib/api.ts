@@ -1,4 +1,4 @@
-import prisma from "@sushiswap/database";
+import prisma from '@sushiswap/database'
 
 export async function getTokensByChainId(chainId: number) {
   const tokens = await prisma.token.findMany({
@@ -12,12 +12,12 @@ export async function getTokensByChainId(chainId: number) {
     where: {
       AND: {
         chainId,
-        status: "APPROVED",
+        status: 'APPROVED',
       },
     },
-  });
-  await prisma.$disconnect();
-  return tokens ? tokens : [];
+  })
+  await prisma.$disconnect()
+  return tokens ? tokens : []
 }
 
 export async function getTokens() {
@@ -32,10 +32,10 @@ export async function getTokens() {
     },
     where: {
       AND: {
-        status: "APPROVED",
+        status: 'APPROVED',
       },
     },
-  });
-  await prisma.$disconnect();
-  return tokens ? tokens : [];
+  })
+  await prisma.$disconnect()
+  return tokens ? tokens : []
 }

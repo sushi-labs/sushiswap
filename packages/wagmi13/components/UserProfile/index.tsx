@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import { Popover, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { ChainId } from "@sushiswap/chain";
-import { shortenAddress } from "@sushiswap/format";
-import { classNames } from "@sushiswap/ui13";
-import { Button } from "@sushiswap/ui13/components/button";
-import { Dialog } from "@sushiswap/ui13/components/dialog";
-import { JazzIcon } from "@sushiswap/ui13/components/icons/JazzIcon";
-import { useBreakpoint } from "@sushiswap/ui13/lib/useBreakpoint";
-import Image from "next/legacy/image";
-import React, { FC, useState } from "react";
-import { useAccount, useEnsAvatar, useNetwork } from "wagmi";
+import { Popover, Transition } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChainId } from '@sushiswap/chain'
+import { shortenAddress } from '@sushiswap/format'
+import { classNames } from '@sushiswap/ui13'
+import { Button } from '@sushiswap/ui13/components/button'
+import { Dialog } from '@sushiswap/ui13/components/dialog'
+import { JazzIcon } from '@sushiswap/ui13/components/icons/JazzIcon'
+import { useBreakpoint } from '@sushiswap/ui13/lib/useBreakpoint'
+import Image from 'next/legacy/image'
+import React, { FC, useState } from 'react'
+import { useAccount, useEnsAvatar, useNetwork } from 'wagmi'
 
-import { useAutoConnect } from "../../hooks";
-import { ConnectView } from "./ConnectView";
-import { DefaultView } from "./DefaultView";
-import { TransactionsView } from "./TransactionsView";
+import { useAutoConnect } from '../../hooks'
+import { ConnectView } from './ConnectView'
+import { DefaultView } from './DefaultView'
+import { TransactionsView } from './TransactionsView'
 
 export enum ProfileView {
   Disconnected,
@@ -25,59 +25,43 @@ export enum ProfileView {
 }
 
 interface ProfileProps {
-  networks: ChainId[];
+  networks: ChainId[]
 }
 
 export const UserProfile: FC<ProfileProps> = () => {
-  useAutoConnect();
+  useAutoConnect()
 
-  const { isSm } = useBreakpoint("sm");
-  const [view, setView] = useState<ProfileView>(ProfileView.Default);
-  const { chain } = useNetwork();
-  const { address } = useAccount();
+  const { isSm } = useBreakpoint('sm')
+  const [view, setView] = useState<ProfileView>(ProfileView.Default)
+  const { chain } = useNetwork()
+  const { address } = useAccount()
   const { data: avatar } = useEnsAvatar({
     address,
     chainId: ChainId.ETHEREUM,
-  });
+  })
 
-  const chainId = chain?.id || ChainId.ETHEREUM;
+  const chainId = chain?.id || ChainId.ETHEREUM
 
   if (isSm)
     return (
       <Popover className="relative">
         {({ open, close }) => (
           <>
-            <Popover.Button
-              as={Button}
-              variant="outlined"
-              color="default"
-              size="md"
-              className="!font-medium"
-            >
+            <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">
               {address ? (
                 <>
                   <div className="hidden md:flex">
                     {avatar ? (
-                      <Image
-                        alt="ens-avatar"
-                        src={avatar}
-                        width={20}
-                        height={20}
-                        className="rounded-full"
-                      />
+                      <Image alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
                     ) : (
                       <JazzIcon diameter={20} address={address} />
                     )}
                   </div>
-                  {shortenAddress(address, isSm ? 3 : 2)}{" "}
+                  {shortenAddress(address, isSm ? 3 : 2)}{' '}
                   <ChevronDownIcon
                     width={24}
                     height={24}
-                    className={classNames(
-                      "transition-all",
-                      open ? "rotate-180" : "rotate-0",
-                      "hidden sm:block"
-                    )}
+                    className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
                   />
                 </>
               ) : (
@@ -87,11 +71,7 @@ export const UserProfile: FC<ProfileProps> = () => {
                   <ChevronDownIcon
                     width={24}
                     height={24}
-                    className={classNames(
-                      "transition-all",
-                      open ? "rotate-180" : "rotate-0",
-                      "hidden sm:block"
-                    )}
+                    className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
                   />
                 </>
               )}
@@ -109,11 +89,7 @@ export const UserProfile: FC<ProfileProps> = () => {
                 <Popover.Panel className="p-2 flex flex-col w-full fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] rounded-2xl rounded-b-none sm:rounded-b-xl shadow-md bg-white dark:bg-slate-800">
                   {!address && <ConnectView onSelect={close} />}
                   {view === ProfileView.Default && address && (
-                    <DefaultView
-                      chainId={chainId}
-                      address={address}
-                      setView={setView}
-                    />
+                    <DefaultView chainId={chainId} address={address} setView={setView} />
                   )}
                   {view === ProfileView.Transactions && address && (
                     <TransactionsView setView={setView} address={address} />
@@ -124,43 +100,27 @@ export const UserProfile: FC<ProfileProps> = () => {
           </>
         )}
       </Popover>
-    );
+    )
 
   return (
     <Popover>
       {({ open, close }) => (
         <>
-          <Popover.Button
-            as={Button}
-            variant="outlined"
-            color="default"
-            size="md"
-            className="!font-medium"
-          >
+          <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">
             {address ? (
               <>
                 <div className="hidden md:flex">
                   {avatar ? (
-                    <Image
-                      alt="ens-avatar"
-                      src={avatar}
-                      width={20}
-                      height={20}
-                      className="rounded-full"
-                    />
+                    <Image alt="ens-avatar" src={avatar} width={20} height={20} className="rounded-full" />
                   ) : (
                     <JazzIcon diameter={20} address={address} />
                   )}
                 </div>
-                {shortenAddress(address, isSm ? 3 : 2)}{" "}
+                {shortenAddress(address, isSm ? 3 : 2)}{' '}
                 <ChevronDownIcon
                   width={24}
                   height={24}
-                  className={classNames(
-                    "transition-all",
-                    open ? "rotate-180" : "rotate-0",
-                    "hidden sm:block"
-                  )}
+                  className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
                 />
               </>
             ) : (
@@ -170,11 +130,7 @@ export const UserProfile: FC<ProfileProps> = () => {
                 <ChevronDownIcon
                   width={24}
                   height={24}
-                  className={classNames(
-                    "transition-all",
-                    open ? "rotate-180" : "rotate-0",
-                    "hidden sm:block"
-                  )}
+                  className={classNames('transition-all', open ? 'rotate-180' : 'rotate-0', 'hidden sm:block')}
                 />
               </>
             )}
@@ -184,11 +140,7 @@ export const UserProfile: FC<ProfileProps> = () => {
               <Popover.Panel>
                 {!address && <ConnectView onSelect={close} />}
                 {view === ProfileView.Default && address && (
-                  <DefaultView
-                    chainId={chainId}
-                    address={address}
-                    setView={setView}
-                  />
+                  <DefaultView chainId={chainId} address={address} setView={setView} />
                 )}
                 {view === ProfileView.Transactions && address && (
                   <TransactionsView setView={setView} address={address} />
@@ -199,5 +151,5 @@ export const UserProfile: FC<ProfileProps> = () => {
         </>
       )}
     </Popover>
-  );
-};
+  )
+}

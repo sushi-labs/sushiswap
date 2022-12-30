@@ -1,18 +1,13 @@
-"use client";
+'use client'
 
-import { persister, queryClient } from "@sushiswap/react-query";
-import { PersistQueryClientProvider as _PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { FC, ReactNode } from "react";
+import { persister, queryClient } from '@sushiswap/react-query'
+import { PersistQueryClientProvider as _PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { FC, ReactNode } from 'react'
 
-export const PersistQueryClientProvider: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const PersistQueryClientProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <_PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister }}
-    >
+    <_PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       {children}
     </_PersistQueryClientProvider>
-  );
-};
+  )
+}

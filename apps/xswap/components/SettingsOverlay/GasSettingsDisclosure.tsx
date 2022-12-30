@@ -1,27 +1,16 @@
-import { Disclosure, Transition } from "@headlessui/react";
-import {
-  ChevronRightIcon,
-  InformationCircleIcon,
-} from "@heroicons/react/outline";
-import { ChainId } from "@sushiswap/chain";
-import { useIsMounted } from "@sushiswap/hooks";
-import { GasPrice } from "@sushiswap/redux-localstorage";
-import {
-  classNames,
-  DEFAULT_INPUT_UNSTYLED,
-  GasIcon,
-  Input,
-  Tab,
-  Tooltip,
-  Typography,
-} from "@sushiswap/ui";
-import { FC } from "react";
-import { useFeeData } from "wagmi";
+import { Disclosure, Transition } from '@headlessui/react'
+import { ChevronRightIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { ChainId } from '@sushiswap/chain'
+import { useIsMounted } from '@sushiswap/hooks'
+import { GasPrice } from '@sushiswap/redux-localstorage'
+import { classNames, DEFAULT_INPUT_UNSTYLED, GasIcon, Input, Tab, Tooltip, Typography } from '@sushiswap/ui'
+import { FC } from 'react'
+import { useFeeData } from 'wagmi'
 
-import { useSettings } from "../../lib/state/storage";
+import { useSettings } from '../../lib/state/storage'
 
 interface GasSettingsDisclosure {
-  chainId: ChainId | undefined;
+  chainId: ChainId | undefined
 }
 
 const gasPriceToIndex: Record<GasPrice, number> = {
@@ -29,49 +18,36 @@ const gasPriceToIndex: Record<GasPrice, number> = {
   [GasPrice.MEDIUM]: 2,
   [GasPrice.HIGH]: 1,
   [GasPrice.INSTANT]: 0,
-};
+}
 
 const gasIndexToPrice: Record<number, GasPrice> = {
   0: GasPrice.INSTANT,
   1: GasPrice.HIGH,
   2: GasPrice.MEDIUM,
   3: GasPrice.LOW,
-};
+}
 
-export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({
-  chainId,
-}) => {
-  const isMounted = useIsMounted();
+export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({ chainId }) => {
+  const isMounted = useIsMounted()
   const { data } = useFeeData({
-    formatUnits: "gwei",
+    formatUnits: 'gwei',
     chainId,
     watch: true,
-  });
+  })
 
   const [
     { gasPrice, gasType, maxPriorityFeePerGas, maxFeePerGas },
-    {
-      updateGasPrice,
-      updateGasType,
-      updateMaxPriorityFeePerGas,
-      updateMaxFeePerGas,
-    },
-  ] = useSettings();
+    { updateGasPrice, updateGasType, updateMaxPriorityFeePerGas, updateMaxFeePerGas },
+  ] = useSettings()
 
   const currentGas =
     data &&
     (
       Number(data.formatted.gasPrice) *
-      (gasPrice === GasPrice.LOW
-        ? 0.75
-        : gasPrice === GasPrice.MEDIUM
-        ? 1
-        : gasPrice === GasPrice.HIGH
-        ? 1.5
-        : 2)
-    ).toFixed(1);
+      (gasPrice === GasPrice.LOW ? 0.75 : gasPrice === GasPrice.MEDIUM ? 1 : gasPrice === GasPrice.HIGH ? 1.5 : 2)
+    ).toFixed(1)
 
-  if (!isMounted) return <></>;
+  if (!isMounted) return <></>
 
   return (
     <Disclosure>
@@ -86,26 +62,16 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({
                 Gas Price
               </Typography>
               <div className="flex gap-1">
-                <Typography
-                  variant="sm"
-                  weight={500}
-                  className="group-hover:text-slate-200 text-slate-400"
-                >
-                  {gasType == "preset"
-                    ? `${gasPrice} (${currentGas} Gwei)`
-                    : "Custom"}
+                <Typography variant="sm" weight={500} className="group-hover:text-slate-200 text-slate-400">
+                  {gasType == 'preset' ? `${gasPrice} (${currentGas} Gwei)` : 'Custom'}
                 </Typography>
                 <div
                   className={classNames(
-                    open ? "rotate-90" : "rotate-0",
-                    "transition-all w-5 h-5 -mr-1.5 flex items-center delay-300"
+                    open ? 'rotate-90' : 'rotate-0',
+                    'transition-all w-5 h-5 -mr-1.5 flex items-center delay-300'
                   )}
                 >
-                  <ChevronRightIcon
-                    width={16}
-                    height={16}
-                    className="group-hover:text-slate-200 text-slate-300"
-                  />
+                  <ChevronRightIcon width={16} height={16} className="group-hover:text-slate-200 text-slate-300" />
                 </div>
               </div>
             </div>
@@ -123,10 +89,8 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({
           >
             <Disclosure.Panel>
               <Tab.Group
-                selectedIndex={gasType === "preset" ? 0 : 1}
-                onChange={(index) =>
-                  updateGasType(index === 0 ? "preset" : "custom")
-                }
+                selectedIndex={gasType === 'preset' ? 0 : 1}
+                onChange={(index) => updateGasType(index === 0 ? 'preset' : 'custom')}
               >
                 <Tab.List>
                   <Tab>Basic Setting</Tab>
@@ -136,124 +100,58 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({
                   <Tab.Panel>
                     <Tab.Group
                       selectedIndex={gasPriceToIndex[gasPrice]}
-                      onChange={(index) =>
-                        updateGasPrice(gasIndexToPrice[index])
-                      }
+                      onChange={(index) => updateGasPrice(gasIndexToPrice[index])}
                     >
                       <Tab.List className="mt-2">
                         <Tab as="div" className="!h-[unset] p-2" v>
                           <div className="flex flex-col gap-0.5">
-                            <Typography
-                              variant="xs"
-                              weight={500}
-                              className="text-slate-400"
-                            >
+                            <Typography variant="xs" weight={500} className="text-slate-400">
                               Instant
                             </Typography>
-                            <Typography
-                              variant="sm"
-                              weight={500}
-                              className="text-slate-200"
-                            >
-                              {data &&
-                                (Number(data.formatted.gasPrice) * 2).toFixed(
-                                  1
-                                )}{" "}
-                              Gwei
+                            <Typography variant="sm" weight={500} className="text-slate-200">
+                              {data && (Number(data.formatted.gasPrice) * 2).toFixed(1)} Gwei
                             </Typography>
-                            <Typography
-                              variant="xxs"
-                              weight={500}
-                              className="text-slate-400"
-                            >
-                              {"< 5 Sec"}
+                            <Typography variant="xxs" weight={500} className="text-slate-400">
+                              {'< 5 Sec'}
                             </Typography>
                           </div>
                         </Tab>
                         <Tab as="div" className="!h-[unset] p-2">
                           <div className="flex flex-col gap-0.5">
-                            <Typography
-                              variant="xs"
-                              weight={500}
-                              className="text-slate-400"
-                            >
+                            <Typography variant="xs" weight={500} className="text-slate-400">
                               Fast
                             </Typography>
-                            <Typography
-                              variant="sm"
-                              weight={500}
-                              className="text-slate-200"
-                            >
-                              {data &&
-                                (Number(data.formatted.gasPrice) * 1.5).toFixed(
-                                  1
-                                )}{" "}
-                              Gwei
+                            <Typography variant="sm" weight={500} className="text-slate-200">
+                              {data && (Number(data.formatted.gasPrice) * 1.5).toFixed(1)} Gwei
                             </Typography>
-                            <Typography
-                              variant="xxs"
-                              weight={500}
-                              className="text-slate-400"
-                            >
-                              {"< 30 Sec"}
+                            <Typography variant="xxs" weight={500} className="text-slate-400">
+                              {'< 30 Sec'}
                             </Typography>
                           </div>
                         </Tab>
                         <Tab as="div" className="!h-[unset] p-2">
                           <div className="flex flex-col gap-0.5">
-                            <Typography
-                              variant="xs"
-                              weight={500}
-                              className="text-slate-400"
-                            >
+                            <Typography variant="xs" weight={500} className="text-slate-400">
                               Standard
                             </Typography>
-                            <Typography
-                              variant="sm"
-                              weight={500}
-                              className="text-slate-200"
-                            >
-                              {data &&
-                                (Number(data.formatted.gasPrice) * 1).toFixed(
-                                  1
-                                )}{" "}
-                              Gwei
+                            <Typography variant="sm" weight={500} className="text-slate-200">
+                              {data && (Number(data.formatted.gasPrice) * 1).toFixed(1)} Gwei
                             </Typography>
-                            <Typography
-                              variant="xxs"
-                              weight={500}
-                              className="text-slate-400"
-                            >
-                              {"2 - 3 Min"}
+                            <Typography variant="xxs" weight={500} className="text-slate-400">
+                              {'2 - 3 Min'}
                             </Typography>
                           </div>
                         </Tab>
                         <Tab as="div" className="!h-[unset] p-2">
                           <div className="flex flex-col gap-0.5">
-                            <Typography
-                              variant="xs"
-                              weight={500}
-                              className="text-slate-400"
-                            >
+                            <Typography variant="xs" weight={500} className="text-slate-400">
                               Slow
                             </Typography>
-                            <Typography
-                              variant="sm"
-                              weight={500}
-                              className="text-slate-200"
-                            >
-                              {data &&
-                                (
-                                  Number(data.formatted.gasPrice) * 0.75
-                                ).toFixed(1)}{" "}
-                              Gwei
+                            <Typography variant="sm" weight={500} className="text-slate-200">
+                              {data && (Number(data.formatted.gasPrice) * 0.75).toFixed(1)} Gwei
                             </Typography>
-                            <Typography
-                              variant="xxs"
-                              weight={500}
-                              className="text-slate-400"
-                            >
-                              {"> 5 min"}
+                            <Typography variant="xxs" weight={500} className="text-slate-400">
+                              {'> 5 min'}
                             </Typography>
                           </div>
                         </Tab>
@@ -263,34 +161,18 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({
                   <Tab.Panel>
                     <div className="flex gap-1 mt-2">
                       <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
-                        <Typography
-                          variant="xs"
-                          weight={500}
-                          className="flex items-center gap-1 text-slate-300"
-                        >
+                        <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                           Max Fee
                           <Tooltip
-                            button={
-                              <InformationCircleIcon width={14} height={14} />
-                            }
+                            button={<InformationCircleIcon width={14} height={14} />}
                             panel={
                               <div className="w-80 flex flex-col gap-2">
-                                <Typography
-                                  variant="xs"
-                                  weight={500}
-                                  className="text-slate-300"
-                                >
-                                  The max fee is the utmost amount of gas a user
-                                  can pay for their transaction; you will not
-                                  pay more.
+                                <Typography variant="xs" weight={500} className="text-slate-300">
+                                  The max fee is the utmost amount of gas a user can pay for their transaction; you will
+                                  not pay more.
                                 </Typography>
-                                <Typography
-                                  variant="xs"
-                                  weight={500}
-                                  className="text-slate-300"
-                                >
-                                  It&apos;s calculated as the sum of the base
-                                  fee and priority fee.
+                                <Typography variant="xs" weight={500} className="text-slate-300">
+                                  It&apos;s calculated as the sum of the base fee and priority fee.
                                 </Typography>
                               </div>
                             }
@@ -299,39 +181,24 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({
                         <div className="flex items-center gap-2">
                           <Input.Numeric
                             variant="unstyled"
-                            value={maxFeePerGas ?? ""}
+                            value={maxFeePerGas ?? ''}
                             onUserInput={(val) => updateMaxFeePerGas(val)}
-                            placeholder={data?.formatted.maxFeePerGas || ""}
-                            className={classNames(DEFAULT_INPUT_UNSTYLED, "")}
+                            placeholder={data?.formatted.maxFeePerGas || ''}
+                            className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                           />
-                          <Typography
-                            variant="xs"
-                            weight={500}
-                            className="text-slate-400"
-                          >
+                          <Typography variant="xs" weight={500} className="text-slate-400">
                             Gwei
                           </Typography>
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 px-3 py-2 bg-slate-900 rounded-xl">
-                        <Typography
-                          variant="xs"
-                          weight={500}
-                          className="flex items-center gap-1 text-slate-300"
-                        >
+                        <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-300">
                           Max Priority Fee
                           <Tooltip
-                            button={
-                              <InformationCircleIcon width={14} height={14} />
-                            }
+                            button={<InformationCircleIcon width={14} height={14} />}
                             panel={
-                              <Typography
-                                variant="xs"
-                                weight={500}
-                                className="w-80"
-                              >
-                                This fee can be seen as an extra “tip” to
-                                miners, incentivizing them to prioritize your
+                              <Typography variant="xs" weight={500} className="w-80">
+                                This fee can be seen as an extra “tip” to miners, incentivizing them to prioritize your
                                 transaction
                               </Typography>
                             }
@@ -340,20 +207,12 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({
                         <div className="flex items-center gap-2">
                           <Input.Numeric
                             variant="unstyled"
-                            value={maxPriorityFeePerGas ?? ""}
-                            onUserInput={(val) =>
-                              updateMaxPriorityFeePerGas(val)
-                            }
-                            placeholder={
-                              data?.formatted.maxPriorityFeePerGas || ""
-                            }
-                            className={classNames(DEFAULT_INPUT_UNSTYLED, "")}
+                            value={maxPriorityFeePerGas ?? ''}
+                            onUserInput={(val) => updateMaxPriorityFeePerGas(val)}
+                            placeholder={data?.formatted.maxPriorityFeePerGas || ''}
+                            className={classNames(DEFAULT_INPUT_UNSTYLED, '')}
                           />
-                          <Typography
-                            variant="xs"
-                            weight={500}
-                            className="text-slate-400"
-                          >
+                          <Typography variant="xs" weight={500} className="text-slate-400">
                             Gwei
                           </Typography>
                         </div>
@@ -367,5 +226,5 @@ export const GasSettingsDisclosure: FC<GasSettingsDisclosure> = ({
         </div>
       )}
     </Disclosure>
-  );
-};
+  )
+}

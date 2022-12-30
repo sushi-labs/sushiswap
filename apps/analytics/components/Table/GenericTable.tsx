@@ -1,26 +1,16 @@
-import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/solid";
-import {
-  classNames,
-  LoadingOverlay,
-  Table,
-  Tooltip,
-  Typography,
-} from "@sushiswap/ui";
-import {
-  ColumnDef,
-  flexRender,
-  Table as ReactTableType,
-} from "@tanstack/react-table";
-import React, { ReactNode, useState } from "react";
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
+import { classNames, LoadingOverlay, Table, Tooltip, Typography } from '@sushiswap/ui'
+import { ColumnDef, flexRender, Table as ReactTableType } from '@tanstack/react-table'
+import React, { ReactNode, useState } from 'react'
 
 interface GenericTableProps<C> {
-  table: ReactTableType<C>;
-  columns: ColumnDef<C>[];
-  HoverElement?: React.FunctionComponent<{ row: C }>;
-  loading?: boolean;
-  placeholder: ReactNode;
-  pageSize: number;
-  linkFormatter?(path: string): string;
+  table: ReactTableType<C>
+  columns: ColumnDef<C>[]
+  HoverElement?: React.FunctionComponent<{ row: C }>
+  loading?: boolean
+  placeholder: ReactNode
+  pageSize: number
+  linkFormatter?(path: string): string
 }
 
 // declare module '@tanstack/react-table' {
@@ -39,7 +29,7 @@ export const GenericTable = <T extends { id: string }>({
   pageSize,
   linkFormatter,
 }: GenericTableProps<T>) => {
-  const [showOverlay, setShowOverlay] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false)
 
   return (
     <>
@@ -61,19 +51,14 @@ export const GenericTable = <T extends { id: string }>({
                     <div
                       {...{
                         className: classNames(
-                          header.column.getCanSort()
-                            ? "cursor-pointer select-none"
-                            : "",
+                          header.column.getCanSort() ? 'cursor-pointer select-none' : '',
                           header.column.columnDef?.meta?.className,
-                          "h-full flex items-center gap-2"
+                          'h-full flex items-center gap-2'
                         ),
                         onClick: header.column.getToggleSortingHandler(),
                       }}
                     >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                      {flexRender(header.column.columnDef.header, header.getContext())}
                       {{
                         asc: <ArrowUpIcon width={14} height={14} />,
                         desc: <ArrowDownIcon width={14} height={14} />,
@@ -98,13 +83,8 @@ export const GenericTable = <T extends { id: string }>({
                       button={
                         <Table.tr
                           onClick={(e) => {
-                            if (
-                              !e.ctrlKey &&
-                              !e.shiftKey &&
-                              !e.metaKey &&
-                              !e.altKey
-                            ) {
-                              setShowOverlay(true);
+                            if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+                              setShowOverlay(true)
                             }
                           }}
                           className="cursor-pointer"
@@ -118,39 +98,25 @@ export const GenericTable = <T extends { id: string }>({
                                 }}
                                 key={cell.id}
                               >
-                                <a
-                                  href={
-                                    linkFormatter
-                                      ? linkFormatter(row.original.id)
-                                      : `/${row.original.id}`
-                                  }
-                                >
-                                  {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext()
-                                  )}
+                                <a href={linkFormatter ? linkFormatter(row.original.id) : `/${row.original.id}`}>
+                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                 </a>
                               </Table.td>
-                            );
+                            )
                           })}
                         </Table.tr>
                       }
                       panel={<HoverElement row={row.original} />}
                     />
-                  );
+                  )
                 }
 
                 return (
                   <Table.tr
                     key={row.id}
                     onClick={(e) => {
-                      if (
-                        !e.ctrlKey &&
-                        !e.shiftKey &&
-                        !e.metaKey &&
-                        !e.altKey
-                      ) {
-                        setShowOverlay(true);
+                      if (!e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
+                        setShowOverlay(true)
                       }
                     }}
                     className="cursor-pointer"
@@ -164,35 +130,21 @@ export const GenericTable = <T extends { id: string }>({
                           }}
                           key={cell.id}
                         >
-                          <a
-                            href={
-                              linkFormatter
-                                ? linkFormatter(row.original.id)
-                                : `/${row.original.id}`
-                            }
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
+                          <a href={linkFormatter ? linkFormatter(row.original.id) : `/${row.original.id}`}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </a>
                         </Table.td>
-                      );
+                      )
                     })}
                   </Table.tr>
-                );
+                )
               })}
             {!loading &&
               table.getRowModel().rows.length !== 0 &&
-              Array.from(
-                Array(Math.max(pageSize - table.getRowModel().rows.length, 0))
-              ).map((el, index) => (
+              Array.from(Array(Math.max(pageSize - table.getRowModel().rows.length, 0))).map((el, index) => (
                 <Table.tr key={index}>
                   {columns.map((column) => (
-                    <Table.td
-                      key={column.id}
-                      style={{ maxWidth: column.size, width: column.size }}
-                    />
+                    <Table.td key={column.id} style={{ maxWidth: column.size, width: column.size }} />
                   ))}
                 </Table.tr>
               ))}
@@ -210,20 +162,14 @@ export const GenericTable = <T extends { id: string }>({
                       >
                         {column.columnDef.meta?.skeleton}
                       </Table.td>
-                    );
+                    )
                   })}
                 </Table.tr>
               ))}
             {!loading && table.getRowModel().rows.length === 0 && (
               <Table.tr className="!h-[260px]">
-                <Table.td
-                  colSpan={table.getAllColumns().length}
-                  className="!h-[260px]"
-                >
-                  <Typography
-                    variant="xs"
-                    className="w-full italic text-center text-slate-400"
-                  >
+                <Table.td colSpan={table.getAllColumns().length} className="!h-[260px]">
+                  <Typography variant="xs" className="w-full italic text-center text-slate-400">
                     {placeholder}
                   </Typography>
                 </Table.td>
@@ -233,5 +179,5 @@ export const GenericTable = <T extends { id: string }>({
         </Table.table>
       </Table.container>
     </>
-  );
-};
+  )
+}

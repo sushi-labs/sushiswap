@@ -455,9 +455,7 @@
       { "internalType": "bool", "name": "useCreate2", "type": "bool" }
     ],
     "name": "deploy",
-    "outputs": [
-      { "internalType": "address", "name": "cloneAddress", "type": "address" }
-    ],
+    "outputs": [{ "internalType": "address", "name": "cloneAddress", "type": "address" }],
     "stateMutability": "payable",
     "type": "function"
   },
@@ -552,13 +550,9 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "contract IERC20", "name": "", "type": "address" }
-    ],
+    "inputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
     "name": "pendingStrategy",
-    "outputs": [
-      { "internalType": "contract IStrategy", "name": "", "type": "address" }
-    ],
+    "outputs": [{ "internalType": "contract IStrategy", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -632,20 +626,14 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "contract IERC20", "name": "", "type": "address" }
-    ],
+    "inputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
     "name": "strategy",
-    "outputs": [
-      { "internalType": "contract IStrategy", "name": "", "type": "address" }
-    ],
+    "outputs": [{ "internalType": "contract IStrategy", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "contract IERC20", "name": "", "type": "address" }
-    ],
+    "inputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
     "name": "strategyData",
     "outputs": [
       {
@@ -670,9 +658,7 @@
       { "internalType": "bool", "name": "roundUp", "type": "bool" }
     ],
     "name": "toAmount",
-    "outputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -683,16 +669,12 @@
       { "internalType": "bool", "name": "roundUp", "type": "bool" }
     ],
     "name": "toShare",
-    "outputs": [
-      { "internalType": "uint256", "name": "share", "type": "uint256" }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "share", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "contract IERC20", "name": "", "type": "address" }
-    ],
+    "inputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
     "name": "totals",
     "outputs": [
       { "internalType": "uint128", "name": "elastic", "type": "uint128" },

@@ -1,9 +1,6 @@
-import transpileModules from "next-transpile-modules";
+import transpileModules from 'next-transpile-modules'
 
-const withTranspileModules = transpileModules([
-  "@sushiswap/ui",
-  "@sushiswap/wagmi",
-]);
+const withTranspileModules = transpileModules(['@sushiswap/ui', '@sushiswap/wagmi'])
 
 const {
   ROOT_URL,
@@ -18,7 +15,7 @@ const {
   SWAP_URL,
   XSWAP_URL,
   ACADEMY_URL,
-} = process.env;
+} = process.env
 
 // @ts-check
 /** @type {import('next').NextConfig} */
@@ -26,122 +23,122 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
   experimental: {
-    esmExternals: "loose",
+    esmExternals: 'loose',
   },
   images: {
-    loader: "cloudinary",
-    path: "https://res.cloudinary.com/sushi-cdn/image/fetch/",
+    loader: 'cloudinary',
+    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
   },
   productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {
-        source: "/discord{/}?",
+        source: '/discord{/}?',
         permanent: true,
-        destination: "https://discord.gg/SDPH8SNVZW",
+        destination: 'https://discord.gg/SDPH8SNVZW',
       },
       {
-        source: "/github{/}?",
+        source: '/github{/}?',
         permanent: true,
-        destination: "https://github.com/sushiswap",
+        destination: 'https://github.com/sushiswap',
       },
       {
-        source: "/twitter{/}?",
+        source: '/twitter{/}?',
         permanent: true,
-        destination: "https://twitter.com/sushiswap",
+        destination: 'https://twitter.com/sushiswap',
       },
       {
-        source: "/instagram{/}?",
+        source: '/instagram{/}?',
         permanent: true,
-        destination: "https://instagram.com/instasushiswap",
+        destination: 'https://instagram.com/instasushiswap',
       },
       {
-        source: "/medium{/}?",
+        source: '/medium{/}?',
         permanent: true,
-        destination: "https://medium.com/sushiswap-org",
+        destination: 'https://medium.com/sushiswap-org',
       },
-    ];
+    ]
   },
   async rewrites() {
     return [
       {
-        source: "/:path*",
+        source: '/:path*',
         destination: `/:path*`,
       },
       {
-        source: "/academy",
+        source: '/academy',
         destination: `${ACADEMY_URL}/academy`,
       },
       {
-        source: "/academy/:path*",
+        source: '/academy/:path*',
         destination: `${ACADEMY_URL}/academy/:path*`,
       },
       {
-        source: "/analytics",
+        source: '/analytics',
         destination: `${ANALYTICS_URL}/analytics`,
       },
       {
-        source: "/analytics/:path*",
+        source: '/analytics/:path*',
         destination: `${ANALYTICS_URL}/analytics/:path*`,
       },
       {
-        source: "/blog",
+        source: '/blog',
         destination: `${BLOG_URL}/blog`,
       },
       {
-        source: "/blog/:path*",
+        source: '/blog/:path*',
         destination: `${BLOG_URL}/blog/:path*`,
       },
       {
-        source: "/furo",
+        source: '/furo',
         destination: `${FURO_URL}/furo`,
       },
       {
-        source: "/furo/:path*",
+        source: '/furo/:path*',
         destination: `${FURO_URL}/furo/:path*`,
       },
       {
-        source: "/partner",
+        source: '/partner',
         destination: `${PARTNER_URL}/partner`,
       },
       {
-        source: "/partner/:path*",
+        source: '/partner/:path*',
         destination: `${PARTNER_URL}/partner/:path*`,
       },
       {
-        source: "/swap",
+        source: '/swap',
         destination: `${SWAP_URL}/swap`,
       },
       {
-        source: "/academy",
+        source: '/academy',
         destination: `${ACADEMY_URL}/academy`,
       },
       {
-        source: "/academy/:path*",
+        source: '/academy/:path*',
         destination: `${ACADEMY_URL}/academy/:path*`,
       },
       {
-        source: "/swap/:path*",
+        source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
       },
       {
-        source: "/xswap",
+        source: '/xswap',
         destination: `${XSWAP_URL}/xswap`,
       },
       {
-        source: "/xswap/:path*",
+        source: '/xswap/:path*',
         destination: `${XSWAP_URL}/xswap/:path*`,
       },
       {
-        source: "/earn",
+        source: '/earn',
         destination: `${EARN_URL}/earn`,
       },
       {
-        source: "/earn/:path*",
+        source: '/earn/:path*',
         destination: `${EARN_URL}/earn/:path*`,
       },
-    ];
+    ]
   },
-};
+}
 
-export default withTranspileModules(nextConfig);
+export default withTranspileModules(nextConfig)

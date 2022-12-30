@@ -1,18 +1,18 @@
-import { classNames } from "@sushiswap/ui";
-import NextImage from "next/legacy/image";
-import { FC } from "react";
+import { classNames } from '@sushiswap/ui'
+import NextImage from 'next/legacy/image'
+import { FC } from 'react'
 
-import { UploadFileEntity } from "../.mesh";
-import { getOptimizedMedia, isMediaVideo } from "../lib/media";
+import { UploadFileEntity } from '../.mesh'
+import { getOptimizedMedia, isMediaVideo } from '../lib/media'
 
 interface ImageProps {
-  quality?: number;
-  height?: number;
-  width?: number;
-  layout?: "fill" | "responsive";
-  objectFit?: "cover" | "contain";
-  className?: string;
-  image: UploadFileEntity;
+  quality?: number
+  height?: number
+  width?: number
+  layout?: 'fill' | 'responsive'
+  objectFit?: 'cover' | 'contain'
+  className?: string
+  image: UploadFileEntity
 }
 
 export const Image: FC<ImageProps> = ({
@@ -21,11 +21,11 @@ export const Image: FC<ImageProps> = ({
   height,
   image,
   className,
-  layout = "fill",
-  objectFit = "cover",
+  layout = 'fill',
+  objectFit = 'cover',
 }) => {
   if (!image?.attributes || !image?.attributes.url) {
-    return <></>;
+    return <></>
   }
 
   if (isMediaVideo(image.attributes.provider_metadata)) {
@@ -33,10 +33,10 @@ export const Image: FC<ImageProps> = ({
       <video
         autoPlay={true}
         loop
-        className={classNames(className, "!my-0")}
+        className={classNames(className, '!my-0')}
         {...(width && { width })}
         {...(height && { height })}
-        style={{ objectFit: "cover", height }}
+        style={{ objectFit: 'cover', height }}
       >
         <source
           src={getOptimizedMedia({
@@ -44,10 +44,10 @@ export const Image: FC<ImageProps> = ({
           })}
         />
       </video>
-    );
+    )
   }
 
-  const { width: _width, height: _height, alternativeText } = image.attributes;
+  const { width: _width, height: _height, alternativeText } = image.attributes
 
   return (
     <NextImage
@@ -62,7 +62,7 @@ export const Image: FC<ImageProps> = ({
         width,
         height,
       })}
-      alt={alternativeText || ""}
+      alt={alternativeText || ''}
     />
-  );
-};
+  )
+}

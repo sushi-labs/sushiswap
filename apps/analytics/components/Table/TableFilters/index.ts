@@ -1,2 +1,2 @@
-export * from "./TableFilters";
-export * from "./TableFiltersSearchToken";
+export * from './TableFilters'
+export * from './TableFiltersSearchToken'

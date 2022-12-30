@@ -1,11 +1,7 @@
-import { AddressMap, Token } from "@sushiswap/currency";
+import { AddressMap, Token } from '@sushiswap/currency'
 
 export function addressMapToTokenMap(
-  {
-    decimals,
-    symbol,
-    name,
-  }: { decimals: number; symbol?: string; name?: string },
+  { decimals, symbol, name }: { decimals: number; symbol?: string; name?: string },
   map: AddressMap
 ) {
   return Object.fromEntries(
@@ -19,5 +15,5 @@ export function addressMapToTokenMap(
         name,
       }),
     ])
-  );
+  )
 }
