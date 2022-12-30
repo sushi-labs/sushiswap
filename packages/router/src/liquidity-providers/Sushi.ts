@@ -8,7 +8,7 @@ import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { BigNumber, ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
-import { SushiPoolABI } from '../ABI/SushiPool'
+import { SushiPoolABI } from '../abi/SushiPool'
 import type { Limited } from '../Limited'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'

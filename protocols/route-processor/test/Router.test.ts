@@ -1,4 +1,5 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, Type, WNATIVE } from '@sushiswap/currency'
 import { BentoBox, DataFetcher, Router } from '@sushiswap/router'
@@ -7,9 +8,6 @@ import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import { HardhatNetworkConfig } from 'hardhat/types'
-
-import { ERC20ABI } from '../ABI/ERC20'
-import { WETH9ABI } from '../ABI/WETH9'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -92,7 +90,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
     })
 
     console.log(`5. Approve user's ${baseWrappedToken.symbol} to the route processor ...`)
-    const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
+    const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, weth9Abi, Alice)
     await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
   }
 
@@ -104,7 +102,7 @@ async function testRouter(chainId: ChainId, amountIn: number, toToken: Token, sw
   }
 
   console.log('7. Call route processor ...')
-  const toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, Alice)
+  const toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, Alice)
   const balanceOutBNBefore = await toTokenContract.connect(Alice).balanceOf(Alice.address)
   let tx
   if (rpParams.value)
@@ -196,7 +194,7 @@ async function makeSwap(
 
   if (fromToken instanceof Token) {
     console.log(`    Approve user's ${fromToken.symbol} to the route processor ...`)
-    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, ERC20ABI, env.user)
+    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
@@ -222,7 +220,7 @@ async function makeSwap(
   let balanceOutBNBefore: BigNumber
   let toTokenContract: Contract | undefined = undefined
   if (toToken instanceof Token) {
-    toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, env.user)
+    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
     balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
   } else {
     balanceOutBNBefore = await env.user.getBalance()

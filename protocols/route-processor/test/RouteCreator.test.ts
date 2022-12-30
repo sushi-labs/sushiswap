@@ -1,3 +1,4 @@
+import { weth9Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI, Token, WNATIVE } from '@sushiswap/currency'
 import { BentoBox, RouteCreator } from '@sushiswap/router'
@@ -6,7 +7,6 @@ import { expect } from 'chai'
 import { ethers, network } from 'hardhat'
 import { HardhatNetworkConfig } from 'hardhat/types'
 
-import { WETH9ABI } from '../ABI/WETH9'
 import { RouteProcessor__factory } from '../typechain'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -99,7 +99,7 @@ async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Tok
   })
 
   console.log(`5. Approve user's ${baseWrappedToken.symbol} to the route processor ...`)
-  const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
+  const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, weth9Abi, Alice)
   await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
 
   console.log('6. Create route processor code ...')
@@ -109,7 +109,7 @@ async function testRouteCreator(chainId: ChainId, amountIn: number, toToken: Tok
   const route = routeCreator.getBestRoute() as MultiRoute
   const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - 0.005) * 1_000_000)).div(1_000_000)
 
-  const toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, Alice)
+  const toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, Alice)
   const balanceOutBNBefore = await toTokenContract.connect(Alice).balanceOf(Alice.address)
   const tx = await routeProcessor.processRoute(
     baseWrappedToken.address,

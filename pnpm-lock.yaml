@@ -3292,6 +3292,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@nomiclabs/hardhat-waffle': 2.0.3
       '@openzeppelin/contracts': 4.8.0
+      '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
@@ -3340,6 +3341,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.4
       '@nomiclabs/hardhat-waffle': 2.0.3_j66jb2opxz2i6px6qvf6p2stmq
       '@openzeppelin/contracts': 4.8.0
+      '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency

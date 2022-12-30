@@ -1,4 +1,4 @@
-export const ERC20ABI = [
+export const erc20Abi = [
   {
     constant: true,
     inputs: [],
@@ -219,4 +219,4 @@ export const ERC20ABI = [
     name: 'Transfer',
     type: 'event',
   },
-]
+] as const
