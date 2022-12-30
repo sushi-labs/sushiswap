@@ -35,6 +35,11 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
 
 export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
 
+export const SWAP_ENABLED_NETWORKS = Array.from(new Set([...SUSHISWAP_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))
+
+export type SwapSupportedChainIds = typeof SWAP_ENABLED_NETWORKS
+export type SwapSupportedChainId = SwapSupportedChainIds[number]
+
 export const GRAPH_HOST = 'api.thegraph.com/subgraphs/name'
 export const PENDING_GRAPH_HOST = 'api.thegraph.com/subgraphs/id'
 
