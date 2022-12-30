@@ -1,27 +1,10 @@
-import transpileModules from 'next-transpile-modules'
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
-const withTranspileModules = transpileModules(['@sushiswap/ui'])
-
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    ignoreBuildErrors: true,
-  },
+  ...defaultNextConfig,
   basePath: '/academy',
-  reactStrictMode: true,
-  swcMinify: false,
-  experimental: {
-    esmExternals: false,
-  },
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
-  productionBrowserSourceMaps: true,
+  transpilePackages: ['@sushiswap/ui'],
   async redirects() {
     return [
       {
@@ -34,4 +17,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default nextConfig

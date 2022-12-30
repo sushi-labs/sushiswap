@@ -19,7 +19,7 @@ export const pairsWithFarms: QueryResolvers['pairsWithFarms'] = async (
 
   const farms = await getFarms()
 
-  console.log({ farms })
+  // console.log({ farms })
 
   const pools = await (args?.farmsOnly
     ? Promise.all(

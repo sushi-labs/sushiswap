@@ -15,7 +15,7 @@ import {
   useBridgeState,
   useBridgeStateActions,
   useDerivedBridgeState,
-} from 'components'
+} from '../components'
 import { nanoid } from 'nanoid'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'

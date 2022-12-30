@@ -1,7 +1,7 @@
 import { CheckIcon } from '@heroicons/react/outline'
 import chains, { ChainId } from '@sushiswap/chain'
 import { classNames, Dialog, NetworkIcon, Typography } from '@sushiswap/ui'
-import { SUPPORTED_CHAIN_IDS } from 'config'
+import { SUPPORTED_CHAIN_IDS } from '../config'
 import React, { FC, useCallback } from 'react'
 
 interface NetworkSelectorOverlay {

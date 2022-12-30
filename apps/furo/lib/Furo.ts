@@ -39,7 +39,6 @@ export abstract class Furo {
     }
     this.id = furo.id
     this.chainId = chainId
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.type = furo.__typename
     this.token = toToken(furo.token, chainId)

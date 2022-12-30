@@ -1,6 +1,5 @@
-// @ts-check
 /** @type {import('tailwindcss').Config} */
-const tailwindConfig = {
+module.exports = {
   presets: [require('@sushiswap/ui/tailwind')],
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
@@ -12,5 +11,3 @@ const tailwindConfig = {
     extend: {},
   },
 }
-
-module.exports = tailwindConfig

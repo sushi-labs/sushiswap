@@ -19,16 +19,16 @@ import {
   useGetStablePools,
   usePairs,
 } from '@sushiswap/wagmi'
+import { BigNumber } from 'ethers'
+import { useMemo } from 'react'
+import { useFeeData } from 'wagmi'
+
 import {
   AMM_ENABLED_NETWORKS,
   CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS,
   STABLE_POOL_FACTORY_ADDRESS,
   TRIDENT_ENABLED_NETWORKS,
-} from 'config'
-import { BigNumber } from 'ethers'
-import { useMemo } from 'react'
-import { useFeeData } from 'wagmi'
-
+} from '../../config'
 import { ConstantProductPoolState } from './useConstantProductPools'
 import { StablePoolState } from './useStablePools'
 
