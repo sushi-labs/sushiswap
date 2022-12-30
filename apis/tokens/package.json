@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@sushiswap/database": "workspace:*",
-    "@vercel/node": "2.8.1",
+    "@vercel/node": "2.8.2",
     "zod": "3.20.2"
   },
   "devDependencies": {
@@ -25,6 +25,6 @@
     "@sushiswap/typescript-config": "workspace:*",
     "eslint": "8.29.0",
     "typescript": "4.9.4",
-    "vercel": "28.10.0"
+    "vercel": "28.10.1"
   }
 }
