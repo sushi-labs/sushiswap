@@ -80,9 +80,10 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   dataFetcher.stopDataFetching()
 
   return response.status(200).json({
-    getBestRoute: router.getBestRoute(),
+    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
     // TODO: Dummy addresses
     getCurrentRouteRPParams: router.getCurrentRouteRPParams('0x0', '0x0'),
+    getBestRoute: router.getBestRoute(),
   })
 }
 

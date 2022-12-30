@@ -100,7 +100,7 @@
       "cache": false
     },
     "check": {
-      "dependsOn": ["^build", "generate"],
+      "dependsOn": ["^db:generate", "generate", "db:generate"],
       "cache": false
     },
     "dev": {

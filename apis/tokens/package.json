@@ -11,6 +11,8 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
+    "check": "tsc --pretty --noEmit",
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
