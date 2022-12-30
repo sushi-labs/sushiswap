@@ -1,6 +1,8 @@
+// TODO: Figure out a base to include base?
+
 import { Options } from 'prettier'
 
-const options: Options = {
+export const options: Options = {
   endOfLine: 'lf',
   printWidth: 120,
   tabWidth: 2,
@@ -8,4 +10,4 @@ const options: Options = {
   semi: false,
 }
 
-export = options
+export default options

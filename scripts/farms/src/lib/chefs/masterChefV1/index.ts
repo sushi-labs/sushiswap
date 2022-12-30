@@ -9,7 +9,10 @@ import { getPoolInfos, getPoolLength, getTotalAllocPoint } from './fetchers'
 
 const SUSHI_PER_BLOCK = 100
 
-export async function getMasterChefV1(): Promise<{ chainId: ChainId; farms: Record<string, Farm> }> {
+export async function getMasterChefV1(): Promise<{
+  chainId: ChainId
+  farms: Record<string, Farm>
+}> {
   const [poolLength, totalAllocPoint, [{ derivedUSD: sushiPriceUSD }], averageBlockTime] = await Promise.all([
     getPoolLength(),
     getTotalAllocPoint(),

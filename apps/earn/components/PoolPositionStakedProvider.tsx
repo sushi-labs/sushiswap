@@ -97,7 +97,10 @@ const _PoolPositionStakedProvider: FC<_PoolPositionStakedProviderProps> = ({
   })
 
   const [underlying0, underlying1] = stakedUnderlying
-  const [value0, value1] = useTokenAmountDollarValues({ chainId: pair.chainId, amounts: stakedUnderlying })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId: pair.chainId,
+    amounts: stakedUnderlying,
+  })
 
   return (
     <Context.Provider

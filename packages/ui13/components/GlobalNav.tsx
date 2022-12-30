@@ -23,7 +23,10 @@ const ITEMS = [
   {
     label: 'Products',
     items: [
-      { type: AppType.Furo, subtitle: 'Automate DAO salaries and vesting schedules' },
+      {
+        type: AppType.Furo,
+        subtitle: 'Automate DAO salaries and vesting schedules',
+      },
       { type: AppType.Analytics, subtitle: 'Find the best opportunities' },
     ],
   },

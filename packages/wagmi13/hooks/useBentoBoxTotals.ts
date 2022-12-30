@@ -72,7 +72,10 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
     return totals?.reduce<Record<string, { base: JSBI; elastic: JSBI }>>((previousValue, currentValue, i) => {
       if (!currentValue) return previousValue
       const { base, elastic } = currentValue
-      const rebase = { base: JSBI.BigInt(base), elastic: JSBI.BigInt(elastic) }
+      const rebase = {
+        base: JSBI.BigInt(base),
+        elastic: JSBI.BigInt(elastic),
+      }
       previousValue[addresses[i]] = rebase
       return previousValue
     }, {})

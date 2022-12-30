@@ -1,11 +1,28 @@
-dist
+# Changeset
+.changeset
+
+# GitHub
+.github
+
+# Visual Studio Code
+.vscode
+
+# Vercel output
+.vercel
+
+# Next.js output
 .next
+
+# Compiled output
+dist
+
+# Generated
+.mesh
 .graphclient
-node_modules
 generated
 typechain
-coverage
-exports
+deployments
+artifacts
 
 # workers
 **/public/sw.js
@@ -15,8 +32,18 @@ exports
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
 
+# Node modules
+node_modules
+
+# Solidity compilers
 soljson-v0.6.12+commit.27d51765.js
 soljson-v0.8.10+commit.fc410830.js
 soljson-v0.8.11+commit.d7f03943.js
+
+# Storybook
+storybook-static
+
+# Playwright
+playwright-report
 
 .eslintrc.js

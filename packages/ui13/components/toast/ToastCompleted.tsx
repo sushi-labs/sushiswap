@@ -11,6 +11,7 @@ interface ToastCompleted extends Omit<NotificationData, 'promise'> {
 }
 
 export const ToastCompleted: FC<ToastCompleted> = ({ href, chainId, txHash, onDismiss, summary }) => {
+  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? ''
   return (
     <>
       <ToastContent
@@ -18,7 +19,7 @@ export const ToastCompleted: FC<ToastCompleted> = ({ href, chainId, txHash, onDi
         title="Transaction Completed"
         summary={summary.completed}
       />
-      <ToastButtons href={href ? href : Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
+      <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
   )
 }

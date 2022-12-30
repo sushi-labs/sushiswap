@@ -11,7 +11,11 @@ export const getRebase = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (
     (
       await sdk.bentoBoxRebase({
@@ -25,7 +29,11 @@ export const getRebases = async (chainId: string, tokens: string[]) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (
     (
       await sdk.bentoBoxRebases({
@@ -43,7 +51,11 @@ export const getUserStreams = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
 
   return (await sdk.userStreams({ id })) ?? {}
 }
@@ -52,7 +64,11 @@ export const getUserVestings = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (await sdk.userVestings({ id })) ?? {}
 }
 
@@ -60,7 +76,11 @@ export const getStreamIds = async (chainId: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (await sdk.streamIds()).streams ?? []
 }
 
@@ -68,7 +88,11 @@ export const getStream = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (await sdk.stream({ id })).stream ?? {}
 }
 
@@ -76,7 +100,11 @@ export const getStreamTransactions = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (await sdk.streamTransactions({ where: { stream: id } })).transactions ?? []
 }
 
@@ -84,7 +112,11 @@ export const getVestingIds = async (chainId: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (await sdk.vestingIds()).vestings ?? []
 }
 
@@ -92,7 +124,11 @@ export const getVesting = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (await sdk.vesting({ id })).vesting ?? {}
 }
 
@@ -100,6 +136,10 @@ export const getVestingTransactions = async (chainId: string, id: string) => {
   if (!SUPPORTED_CHAINS.includes(Number(chainId))) {
     throw Error(`Unsupported Chain ${chainId}`)
   }
-  const sdk = await getBuiltGraphSDK({ chainId, host: GRAPH_HOST, name: FURO_SUBGRAPH_NAME[chainId] })
+  const sdk = await getBuiltGraphSDK({
+    chainId,
+    host: GRAPH_HOST,
+    name: FURO_SUBGRAPH_NAME[chainId],
+  })
   return (await sdk.vestingTransactions({ where: { vesting: id } })).transactions ?? []
 }

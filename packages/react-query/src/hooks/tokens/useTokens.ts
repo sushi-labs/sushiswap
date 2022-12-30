@@ -6,7 +6,13 @@ interface UseTokensParams {
   chainId: ChainId
 }
 
-type Data = Array<{ id: string; address: string; name: string; symbol: string; decimals: number }>
+type Data = Array<{
+  id: string
+  address: string
+  name: string
+  symbol: string
+  decimals: number
+}>
 
 const BLACKLIST: Record<number, string[]> = {
   [ChainId.OPTIMISM]: ['0x0000000000000000000000000000000000000000', '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000'],
@@ -22,7 +28,13 @@ export const useTokens = ({ chainId }: UseTokensParams) => {
         const [chainId] = id.split(':')
 
         if (!BLACKLIST[+chainId]?.includes(address)) {
-          acc[address] = new Token({ chainId, name, decimals, symbol, address })
+          acc[address] = new Token({
+            chainId,
+            name,
+            decimals,
+            symbol,
+            address,
+          })
         }
         return acc
       }, {})

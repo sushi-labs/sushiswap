@@ -47,7 +47,10 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
     balance: amount,
   })
 
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: underlying,
+  })
 
   return useMemo(
     () => (

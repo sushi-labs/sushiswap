@@ -20,7 +20,11 @@ export function useSendTransaction({
   enabled?: boolean
 }) {
   const [request, setRequest] = useState<(TransactionRequest & { to: string }) | undefined>()
-  console.log('useSendTransaction (wrapper) re-runing with', { request, chainId, enabled })
+  console.log('useSendTransaction (wrapper) re-runing with', {
+    request,
+    chainId,
+    enabled,
+  })
   const { config } = usePrepareSendTransaction({
     request,
     chainId,

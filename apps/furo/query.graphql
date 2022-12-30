@@ -197,7 +197,7 @@ query userStreams($block: Block_height, $id: String!) {
 }
 
 query streamIds($first: Int = 1000, $skip: Int = 0, $where: Stream_filter, $block: Block_height) {
-  streams(first: $first, skip: $skip, where: $where,, block: $block) {
+  streams(first: $first, skip: $skip, where: $where, block: $block) {
     id
   }
 }

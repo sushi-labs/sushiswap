@@ -9,16 +9,17 @@
     "react",
     "components"
   ],
+  "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "source": "./src/index.ts",
-  "sideEffects": false,
-  "license": "MIT",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "lint": "TIMING=1 eslint \"./**/*.ts*\"",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "lint": "TIMING=1 eslint \"./**/*.ts*\"",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {

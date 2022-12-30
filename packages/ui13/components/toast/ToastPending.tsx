@@ -11,6 +11,7 @@ interface ToastPending extends Omit<NotificationData, 'promise'> {
 }
 
 export const ToastPending: FC<ToastPending> = ({ href, chainId, txHash, onDismiss, summary }) => {
+  const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? ''
   return (
     <>
       <ToastContent
@@ -18,7 +19,7 @@ export const ToastPending: FC<ToastPending> = ({ href, chainId, txHash, onDismis
         title="Transaction Pending"
         summary={summary.pending}
       />
-      <ToastButtons href={href ? href : Chain.from(chainId).getTxUrl(txHash)} onDismiss={onDismiss} />
+      <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
   )
 }

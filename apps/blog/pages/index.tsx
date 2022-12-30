@@ -57,7 +57,12 @@ const _Home: FC = () => {
         })
       )?.articles
     },
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: false }
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+      revalidateOnMount: false,
+    }
   )
 
   const loading = useDebounce(isValidating, 400)

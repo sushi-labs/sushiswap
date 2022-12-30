@@ -41,7 +41,9 @@ export const TokenListImportChecker: FC<TokenListImportCheckerProps> = ({
 }
 
 const _TokenListImportChecker: FC<
-  TokenListImportCheckerProps & { tokens: { address: Address; chainId: number }[] }
+  TokenListImportCheckerProps & {
+    tokens: { address: Address; chainId: number }[]
+  }
 > = ({ children, tokens, onAddTokens, tokenMap, customTokensMap }) => {
   const [open, setOpen] = useState(false)
 
@@ -57,7 +59,13 @@ const _TokenListImportChecker: FC<
     if (!currencies) return
     return currencies.map((el, idx) => {
       const { address, name, symbol, decimals } = el
-      return new Token({ address, name, symbol, decimals, chainId: tokens[idx].chainId })
+      return new Token({
+        address,
+        name,
+        symbol,
+        decimals,
+        chainId: tokens[idx].chainId,
+      })
     })
   }, [currencies, tokens])
 

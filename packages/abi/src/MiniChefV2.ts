@@ -9,7 +9,12 @@ export const miniChefAbi = [
     inputs: [
       { indexed: true, internalType: 'address', name: 'user', type: 'address' },
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
       { indexed: true, internalType: 'address', name: 'to', type: 'address' },
     ],
     name: 'Deposit',
@@ -20,7 +25,12 @@ export const miniChefAbi = [
     inputs: [
       { indexed: true, internalType: 'address', name: 'user', type: 'address' },
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
       { indexed: true, internalType: 'address', name: 'to', type: 'address' },
     ],
     name: 'EmergencyWithdraw',
@@ -31,7 +41,12 @@ export const miniChefAbi = [
     inputs: [
       { indexed: true, internalType: 'address', name: 'user', type: 'address' },
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
     ],
     name: 'Harvest',
     type: 'event',
@@ -40,9 +55,24 @@ export const miniChefAbi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'allocPoint', type: 'uint256' },
-      { indexed: true, internalType: 'contract IERC20', name: 'lpToken', type: 'address' },
-      { indexed: true, internalType: 'contract IRewarder', name: 'rewarder', type: 'address' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'allocPoint',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'contract IERC20',
+        name: 'lpToken',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'contract IRewarder',
+        name: 'rewarder',
+        type: 'address',
+      },
     ],
     name: 'LogPoolAddition',
     type: 'event',
@@ -51,8 +81,18 @@ export const miniChefAbi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'allocPoint', type: 'uint256' },
-      { indexed: true, internalType: 'contract IRewarder', name: 'rewarder', type: 'address' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'allocPoint',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'contract IRewarder',
+        name: 'rewarder',
+        type: 'address',
+      },
       { indexed: false, internalType: 'bool', name: 'overwrite', type: 'bool' },
     ],
     name: 'LogSetPool',
@@ -60,7 +100,14 @@ export const miniChefAbi = [
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'uint256', name: 'sushiPerSecond', type: 'uint256' }],
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'sushiPerSecond',
+        type: 'uint256',
+      },
+    ],
     name: 'LogSushiPerSecond',
     type: 'event',
   },
@@ -68,9 +115,24 @@ export const miniChefAbi = [
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint64', name: 'lastRewardTime', type: 'uint64' },
-      { indexed: false, internalType: 'uint256', name: 'lpSupply', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'accSushiPerShare', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint64',
+        name: 'lastRewardTime',
+        type: 'uint64',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'lpSupply',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'accSushiPerShare',
+        type: 'uint256',
+      },
     ],
     name: 'LogUpdatePool',
     type: 'event',
@@ -78,8 +140,18 @@ export const miniChefAbi = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' },
-      { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'previousOwner',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'newOwner',
+        type: 'address',
+      },
     ],
     name: 'OwnershipTransferred',
     type: 'event',
@@ -89,7 +161,12 @@ export const miniChefAbi = [
     inputs: [
       { indexed: true, internalType: 'address', name: 'user', type: 'address' },
       { indexed: true, internalType: 'uint256', name: 'pid', type: 'uint256' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
       { indexed: true, internalType: 'address', name: 'to', type: 'address' },
     ],
     name: 'Withdraw',
@@ -106,7 +183,11 @@ export const miniChefAbi = [
     inputs: [
       { internalType: 'uint256', name: 'allocPoint', type: 'uint256' },
       { internalType: 'contract IERC20', name: '_lpToken', type: 'address' },
-      { internalType: 'contract IRewarder', name: '_rewarder', type: 'address' },
+      {
+        internalType: 'contract IRewarder',
+        name: '_rewarder',
+        type: 'address',
+      },
     ],
     name: 'add',
     outputs: [],
@@ -126,7 +207,13 @@ export const miniChefAbi = [
     stateMutability: 'payable',
     type: 'function',
   },
-  { inputs: [], name: 'claimOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' },
+  {
+    inputs: [],
+    name: 'claimOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
   {
     inputs: [
       { internalType: 'uint256', name: 'pid', type: 'uint256' },
@@ -255,7 +342,11 @@ export const miniChefAbi = [
     inputs: [
       { internalType: 'uint256', name: '_pid', type: 'uint256' },
       { internalType: 'uint256', name: '_allocPoint', type: 'uint256' },
-      { internalType: 'contract IRewarder', name: '_rewarder', type: 'address' },
+      {
+        internalType: 'contract IRewarder',
+        name: '_rewarder',
+        type: 'address',
+      },
       { internalType: 'bool', name: 'overwrite', type: 'bool' },
     ],
     name: 'set',
@@ -264,7 +355,13 @@ export const miniChefAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'contract IMigratorChef', name: '_migrator', type: 'address' }],
+    inputs: [
+      {
+        internalType: 'contract IMigratorChef',
+        name: '_migrator',
+        type: 'address',
+      },
+    ],
     name: 'setMigrator',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -308,7 +405,11 @@ export const miniChefAbi = [
     outputs: [
       {
         components: [
-          { internalType: 'uint128', name: 'accSushiPerShare', type: 'uint128' },
+          {
+            internalType: 'uint128',
+            name: 'accSushiPerShare',
+            type: 'uint128',
+          },
           { internalType: 'uint64', name: 'lastRewardTime', type: 'uint64' },
           { internalType: 'uint64', name: 'allocPoint', type: 'uint64' },
         ],

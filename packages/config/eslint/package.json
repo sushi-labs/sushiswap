@@ -12,24 +12,39 @@
   "main": "index.js",
   "files": [
     "index.js",
+    "base/index.js",
     "hardhat/index.js",
     "nextjs/index.js",
     "react/index.js"
   ],
   "dependencies": {
-    "@graphql-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/parser": "latest",
-    "eslint": "8.29.0",
-    "eslint-config-next": "latest",
-    "eslint-config-prettier": "latest",
-    "eslint-config-turbo": "latest",
-    "eslint-plugin-simple-import-sort": "latest",
-    "eslint-plugin-testing-library": "latest",
-    "eslint-plugin-unused-imports": "latest"
+    "eslint-config-next": "13.1.1",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-config-turbo": "0.0.7",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-simple-import-sort": "8.0.0",
+    "eslint-plugin-testing-library": "5.9.1",
+    "eslint-plugin-unused-imports": "2.0.0"
   },
   "devDependencies": {
-    "@types/eslint": "latest",
-    "@types/node": "^16.0.0"
+    "@types/eslint": "8.4.10",
+    "@types/node": "^16.0.0",
+    "eslint-config-next": "13.1.1",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-config-turbo": "0.0.7",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-simple-import-sort": "8.0.0",
+    "eslint-plugin-testing-library": "5.9.1",
+    "eslint-plugin-unused-imports": "2.0.0"
+  },
+  "peerDependencies": {
+    "eslint": "*",
+    "eslint-config-next": "*",
+    "eslint-config-prettier": "*",
+    "eslint-config-turbo": "*",
+    "eslint-plugin-prettier": "*",
+    "eslint-plugin-simple-import-sort": "*",
+    "eslint-plugin-testing-library": "*",
+    "eslint-plugin-unused-imports": "*"
   }
 }

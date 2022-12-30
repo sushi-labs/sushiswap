@@ -78,8 +78,16 @@ export const useMasterChef: UseMasterChef = ({
                   ],
                   name: 'userInfo',
                   outputs: [
-                    { internalType: 'uint256', name: 'amount', type: 'uint256' },
-                    { internalType: 'uint256', name: 'rewardDebt', type: 'uint256' },
+                    {
+                      internalType: 'uint256',
+                      name: 'amount',
+                      type: 'uint256',
+                    },
+                    {
+                      internalType: 'uint256',
+                      name: 'rewardDebt',
+                      type: 'uint256',
+                    },
                   ],
                   stateMutability: 'view',
                   type: 'function',
@@ -91,8 +99,16 @@ export const useMasterChef: UseMasterChef = ({
                   ],
                   name: 'userInfo',
                   outputs: [
-                    { internalType: 'uint256', name: 'amount', type: 'uint256' },
-                    { internalType: 'int256', name: 'rewardDebt', type: 'int256' },
+                    {
+                      internalType: 'uint256',
+                      name: 'amount',
+                      type: 'uint256',
+                    },
+                    {
+                      internalType: 'int256',
+                      name: 'rewardDebt',
+                      type: 'int256',
+                    },
                   ],
                   stateMutability: 'view',
                   type: 'function',

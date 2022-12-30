@@ -48,11 +48,25 @@ export const StreamAmountDetails: FC<{ chainId: ChainId }> = ({ chainId }) => {
     (onChange: (...event: any[]) => void, currency: Type) => {
       if (currency.isNative) {
         const { chainId, decimals, symbol, name, isNative } = currency
-        onChange({ chainId, decimals, address: undefined, symbol, name, isNative })
+        onChange({
+          chainId,
+          decimals,
+          address: undefined,
+          symbol,
+          name,
+          isNative,
+        })
         setValue('fundSource', FundSource.WALLET)
       } else {
         const { chainId, decimals, symbol, name, isNative, wrapped } = currency
-        onChange({ chainId, decimals, address: wrapped.address, symbol, name, isNative })
+        onChange({
+          chainId,
+          decimals,
+          address: wrapped.address,
+          symbol,
+          name,
+          isNative,
+        })
       }
 
       onClose()

@@ -61,7 +61,12 @@ const _Archive: FC = () => {
         })
       )?.articles
     },
-    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false, revalidateOnMount: false }
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+      revalidateOnMount: false,
+    }
   )
 
   const loading = useDebounce(isValidating, 300)

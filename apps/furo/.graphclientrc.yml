@@ -7,6 +7,5 @@ sources:
       - autoPagination:
           validateSchema: true
 
-
 documents:
   - ./query.graphql

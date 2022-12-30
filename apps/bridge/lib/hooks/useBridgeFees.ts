@@ -97,6 +97,13 @@ export const useBridgeFees = ({
       bridgeFee = eqFee.subtract(eqReward).add(lpFee).add(protocolFee)
     }
 
-    return { eqFee, eqReward, lpFee, protocolFee, bridgeFee, isLoading: isLoading || isFeeResultLoading }
+    return {
+      eqFee,
+      eqReward,
+      lpFee,
+      protocolFee,
+      bridgeFee,
+      isLoading: isLoading || isFeeResultLoading,
+    }
   }, [getFeesResults, isFeeResultLoading, isLoading, srcToken])
 }

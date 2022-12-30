@@ -11,14 +11,19 @@ const getBlock = async (timestamp: number | undefined = undefined, chainId: Chai
   const { getBuiltGraphSDK } = await import('@sushiswap/graph-client')
   const subgraphName = BLOCKS_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return
-  const sdk = getBuiltGraphSDK({ subgraphHost: SUBGRAPH_HOST[chainId], subgraphName: subgraphName })
+  const sdk = getBuiltGraphSDK({
+    subgraphHost: SUBGRAPH_HOST[chainId],
+    subgraphName: subgraphName,
+  })
 
   let block
 
   if (timestamp) {
     ;({
       blocks: [block],
-    } = await sdk.Blocks({ where: { timestamp_gt: timestamp, timestamp_lt: timestamp + 600 } }))
+    } = await sdk.Blocks({
+      where: { timestamp_gt: timestamp, timestamp_lt: timestamp + 600 },
+    }))
   } else {
     ;({
       blocks: [block],

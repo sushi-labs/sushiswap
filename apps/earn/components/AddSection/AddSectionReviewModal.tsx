@@ -24,7 +24,10 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   setOpen,
   children,
 }) => {
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: [input0, input1] })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: [input0, input1],
+  })
 
   const price = useMemo(() => {
     if (!input0 || !input1) return undefined

@@ -9,7 +9,12 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useTrade } from './TradeProvider'
 
 const tokenFromRToken = (token: RToken) => {
-  return new Token({ address: token.address, symbol: token.symbol, chainId: Number(token.chainId), decimals: 18 })
+  return new Token({
+    address: token.address,
+    symbol: token.symbol,
+    chainId: Number(token.chainId),
+    decimals: 18,
+  })
 }
 
 // Can render an entire tines single route with dots between

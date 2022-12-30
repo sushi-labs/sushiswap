@@ -55,7 +55,12 @@ export const calculateStepPercentage = ({
 }: Pick<CreateVestingFormSchemaType, 'currency' | 'cliff' | 'stepAmount' | 'stepPayouts'>) => {
   if (!currency || !stepAmount) return undefined
   const _currency = ZTokenToToken.parse(currency)
-  const totalAmount = calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts })
+  const totalAmount = calculateTotalAmount({
+    currency,
+    cliff,
+    stepAmount,
+    stepPayouts,
+  })
   const _stepAmount = tryParseAmount(stepAmount.toString(), _currency)
 
   return totalAmount?.greaterThan(ZERO) && _stepAmount

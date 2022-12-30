@@ -20,6 +20,8 @@ export const TradeReviewDialog: FC = () => {
     setReview(false)
   }, [setReview])
 
+  const accountUrl = recipient ? Chain.fromChainId(network0)?.getAccountUrl(recipient) : ''
+
   return (
     <Dialog open={review} onClose={onClose} variant="opaque">
       <Container maxWidth={520} className="mx-auto flex flex-col mt-4 gap-4">
@@ -63,7 +65,7 @@ export const TradeReviewDialog: FC = () => {
                 <List.KeyValue title="Recipient">
                   <a
                     target="_blank"
-                    href={Chain.fromChainId(network0).getAccountUrl(recipient)}
+                    href={accountUrl}
                     className="flex gap-2 items-center text-blue transition-all cursor-pointer"
                     rel="noreferrer"
                   >
