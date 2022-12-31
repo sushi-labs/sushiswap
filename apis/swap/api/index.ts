@@ -150,6 +150,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   router.stopRouting()
   dataFetcher.stopDataFetching()
 
+  return response.status(200).send(router.getCurrentRouteHumanString())
+
   return response.status(200).json({
     getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
     // TODO: Dummy addresses
