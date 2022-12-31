@@ -69,6 +69,41 @@ importers:
       ts-node: 10.9.1_@types+node@18.11.18
       turbo: 1.6.3
 
+  apis/allowances:
+    specifiers:
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/wagmi-config': workspace:*
+      '@types/node': ^18.0.0
+      '@types/node-fetch': 2.6.2
+      '@vercel/node': 2.8.2
+      '@wagmi/core': 0.8.1
+      eslint: 8.29.0
+      node-fetch: 2.6.6
+      typescript: 4.9.4
+      vercel: 28.10.1
+      zod: 3.20.2
+    dependencies:
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/wagmi-config': link:../../config/wagmi
+      '@vercel/node': 2.8.2
+      '@wagmi/core': 0.8.1_typescript@4.9.4
+      node-fetch: 2.6.6
+      zod: 3.20.2
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 18.11.18
+      '@types/node-fetch': 2.6.2
+      eslint: 8.29.0
+      typescript: 4.9.4
+      vercel: 28.10.1
+
   apis/balances:
     specifiers:
       '@sushiswap/chain': workspace:*
