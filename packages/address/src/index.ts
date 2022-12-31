@@ -4,9 +4,9 @@ import { ChainId } from '@sushiswap/chain'
 // TODO: Generate from exports will full type safety
 // import { z } from 'zod'
 // const schema = z.object({
-//   [z.string()]: z.array(
+//   [z.coerce.number().int().gte(0).lte(2 ** 256)]: z.array(
 //     z.object({
-//       chainId: z.string(),
+//       chainId: z.coerce.number().int().gte(0).lte(2 ** 256),
 //       name: z.string(),
 //       contracts: z.object({
 //         [z.string()]: z.object({
@@ -18,8 +18,7 @@ import { ChainId } from '@sushiswap/chain'
 //     })
 //   ),
 // })
-
-// const { chainId } = schema.parse(request.query)
+// type Exports = z.infer(schema) or something like that
 
 export type BentoBoxChainId = keyof typeof bentoBoxExports | number
 
