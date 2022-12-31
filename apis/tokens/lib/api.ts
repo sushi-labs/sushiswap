@@ -21,6 +21,38 @@ export async function getToken(chainId: number, address: string) {
   return token
 }
 
+export async function getTokenIdsByChainId(chainId: number) {
+  const ids = await prisma.token.findMany({
+    select: {
+      id: true,
+    },
+    where: {
+      AND: {
+        chainId,
+        status: 'APPROVED',
+      },
+    },
+  })
+  await prisma.$disconnect()
+  return ids ? ids : []
+}
+
+export async function getTokenAddressesByChainId(chainId: number) {
+  const addresses = await prisma.token.findMany({
+    select: {
+      address: true,
+    },
+    where: {
+      AND: {
+        chainId,
+        status: 'APPROVED',
+      },
+    },
+  })
+  await prisma.$disconnect()
+  return addresses ? addresses : []
+}
+
 export async function getTokensByChainId(chainId: number) {
   const tokens = await prisma.token.findMany({
     select: {
