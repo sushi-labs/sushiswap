@@ -1,18 +1,70 @@
 import { ChainId } from '@sushiswap/chain'
-import { DAI, FRAX, LUSD, MAI, MIM, Native, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
+import {
+  DAI,
+  FRAX,
+  LUSD,
+  MAI,
+  MIM,
+  Native,
+  nativeCurrencyIds,
+  SUSHI,
+  UNI,
+  USDC,
+  USDT,
+  WBTC,
+  WETH9,
+  WNATIVE,
+} from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
 import { z } from 'zod'
+
+const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
+  [ChainId.ETHEREUM]: {
+    NATIVE: Native.onChain(ChainId.ETHEREUM),
+    WNATIVE: WETH9[ChainId.ETHEREUM],
+    WETH: WETH9[ChainId.POLYGON],
+    WBTC: WBTC[ChainId.ETHEREUM],
+    USDC: USDC[ChainId.ETHEREUM],
+    USDT: USDT[ChainId.ETHEREUM],
+    DAI: DAI[ChainId.ETHEREUM],
+    FRAX: FRAX[ChainId.ETHEREUM],
+    MIM: MIM[ChainId.ETHEREUM],
+    SUSHI: SUSHI[ChainId.ETHEREUM],
+    MAI: MAI[ChainId.ETHEREUM],
+    UNI: UNI[ChainId.ETHEREUM],
+    LUSD: LUSD[ChainId.ETHEREUM],
+  },
+  [ChainId.POLYGON]: {
+    NATIVE: Native.onChain(ChainId.POLYGON),
+    WNATIVE: WNATIVE[ChainId.POLYGON],
+    WETH: WETH9[ChainId.POLYGON],
+    WBTC: WBTC[ChainId.POLYGON],
+    USDC: USDC[ChainId.POLYGON],
+    USDT: USDT[ChainId.POLYGON],
+    DAI: DAI[ChainId.POLYGON],
+    FRAX: FRAX[ChainId.POLYGON],
+    MIM: MIM[ChainId.POLYGON],
+    SUSHI: SUSHI[ChainId.POLYGON],
+    MAI: MAI[ChainId.POLYGON],
+    UNI: UNI[ChainId.POLYGON],
+  },
+} as const
+
+type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
+
+type ShortCurrencyName = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[ShortCurrencyNameChainId]
 
 const schema = z.object({
   chainId: z.coerce
     .number()
     .int()
     .gte(0)
-    .lte(2 ** 256),
-  fromTokenId: z.coerce.string(),
-  toTokenId: z.coerce.string(),
+    .lte(2 ** 256)
+    .default(ChainId.ETHEREUM),
+  fromTokenId: z.coerce.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
+  toTokenId: z.coerce.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
   amount: z.coerce.bigint(),
   to: z.coerce.string(),
@@ -63,47 +115,12 @@ class BackCounter {
   }
 }
 
-const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
-  [ChainId.ETHEREUM]: {
-    NATIVE: Native.onChain(ChainId.ETHEREUM),
-    WNATIVE: WETH9[ChainId.ETHEREUM],
-    WETH: WETH9[ChainId.POLYGON],
-    WBTC: WBTC[ChainId.ETHEREUM],
-    USDC: USDC[ChainId.ETHEREUM],
-    USDT: USDT[ChainId.ETHEREUM],
-    DAI: DAI[ChainId.ETHEREUM],
-    FRAX: FRAX[ChainId.ETHEREUM],
-    MIM: MIM[ChainId.ETHEREUM],
-    SUSHI: SUSHI[ChainId.ETHEREUM],
-    MAI: MAI[ChainId.ETHEREUM],
-    UNI: UNI[ChainId.ETHEREUM],
-    LUSD: LUSD[ChainId.ETHEREUM],
-  },
-  [ChainId.POLYGON]: {
-    NATIVE: Native.onChain(ChainId.POLYGON),
-    WNATIVE: WNATIVE[ChainId.POLYGON],
-    WETH: WETH9[ChainId.POLYGON],
-    WBTC: WBTC[ChainId.POLYGON],
-    USDC: USDC[ChainId.POLYGON],
-    USDT: USDT[ChainId.POLYGON],
-    DAI: DAI[ChainId.POLYGON],
-    FRAX: FRAX[ChainId.POLYGON],
-    MIM: MIM[ChainId.POLYGON],
-    SUSHI: SUSHI[ChainId.POLYGON],
-    MAI: MAI[ChainId.POLYGON],
-    UNI: UNI[ChainId.POLYGON],
-  },
-} as const
-
-type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
-
-type ShortCurrencyName = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[ShortCurrencyNameChainId]
-
 const backCounter = new BackCounter(4)
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  console.log('query', request.query)
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
+
+  console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
 
   const SHORT_CURRENCY_NAME_TO_CURRENCY = CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]
 
@@ -138,8 +155,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   return response.status(200).json({
     getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
     // TODO: Dummy addresses
-    getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0'),
     getBestRoute: router.getBestRoute(),
+    // getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0'),
   })
 }
 
