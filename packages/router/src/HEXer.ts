@@ -11,13 +11,13 @@ export class HEXer {
     return this.hex
   }
 
+  toHexString(): `0x${string}` {
+    return `0x${this.hex}`
+  }
+
   toString0x() {
     // for backwards compatibility for now
     return this.toHexString()
-  }
-
-  toHexString() {
-    return '0x' + this.hex
   }
 
   uint8(data: number): HEXer {
