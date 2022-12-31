@@ -61,14 +61,7 @@ const _hydrate = (
 
 export const useTrade = (variables: UseTrade) => {
   const { chainId, fromToken, toToken, amount, gasPrice = 50 } = variables
-
   const { data: prices } = usePrices({ chainId })
-
-  const hydrate = useCallback(
-    (variables: UseTrade, prices: Record<string, Fraction> | undefined) => (data: Trade) =>
-      _hydrate(variables, prices, data),
-    []
-  )
 
   return useQuery<unknown, unknown, UseTradeReturn>(
     ['getTrade', { chainId, fromToken, toToken, amount, gasPrice }],
@@ -84,7 +77,7 @@ export const useTrade = (variables: UseTrade) => {
       staleTime: 2000,
       initialData: INITIAL_DATA,
       enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice),
-      select: (data) => hydrate(variables, prices)(data as Trade),
+      select: (data) => _hydrate(variables, prices, data as Trade),
     }
   )
 }

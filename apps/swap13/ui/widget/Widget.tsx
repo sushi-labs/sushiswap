@@ -10,11 +10,13 @@ import { SwitchAppType } from './SwitchAppType'
 import { SwitchTokensButton } from './SwitchTokensButton'
 import { WidgetTitle } from './WidgetTitle'
 import { useTrade } from '../../lib/useTrade'
-import { CurrencyInput } from '@sushiswap/wagmi13/components/Web3Input/Currency'
+import { usePctChange } from '../../lib/usePctChange'
 
 export const Widget: FC = () => {
   const { token0, token1, value, network0, network1 } = useSwapState()
   const { setToken0, setToken1, setValue } = useSwapActions()
+  const usdPctChange = usePctChange()
+
   const {
     isFetching,
     data: { amountOut },
@@ -48,7 +50,7 @@ export const Widget: FC = () => {
           onSelect={setToken1}
           value={amountOut?.toExact() ?? ''}
           currency={token1}
-          usdPctChange={1.12}
+          usdPctChange={usdPctChange}
           loading={isFetching}
           disableMaxButton
         />
