@@ -29,6 +29,7 @@
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@vercel/node": "2.8.2",
