@@ -122,12 +122,12 @@ class BackCounter {
   }
 }
 
-const backCounter = new BackCounter(4)
+const backCounter = new BackCounter(2)
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
 
-  console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
+  // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
 
   const SHORT_CURRENCY_NAME_TO_CURRENCY = CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]
 
