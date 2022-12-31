@@ -196,7 +196,7 @@ export class Router {
         `Output: ${this.currentBestRoute.amountOutBN.div(BigNumber.from(10).pow(this.toToken.decimals))} ${
           this.toToken.name
         }`,
-        `Price Impact: ${this.currentBestRoute.priceImpact?.toFixed(2)}%`,
+        `Price Impact: ${this.currentBestRoute.priceImpact}%`,
       ]
     }
   }
