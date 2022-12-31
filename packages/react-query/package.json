@@ -18,6 +18,9 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
+    "@ethersproject/address": "^5.7.0",
+    "@ethersproject/units": "^5.7.0",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/ui13": "workspace:*",

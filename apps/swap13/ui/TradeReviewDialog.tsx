@@ -2,7 +2,7 @@
 
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import chains, { Chain } from '@sushiswap/chain'
-import { shortenAddress } from '@sushiswap/format'
+import { formatNumber, formatPercent, shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
 import Container from '@sushiswap/ui13/components/Container'
 import { Currency } from '@sushiswap/ui13/components/currency'
@@ -12,15 +12,20 @@ import { FC, useCallback } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { SwapButton } from './widget/SwapButton'
+import { useTrade } from '../lib/useTrade'
 
 export const TradeReviewDialog: FC = () => {
-  const { review, token0, token1, recipient, network0 } = useSwapState()
+  const { review, token0, token1, recipient, network0, value } = useSwapState()
   const { setReview } = useSwapActions()
   const { data: slippageTolerance } = useSlippageTolerance()
 
   const onClose = useCallback(() => {
     setReview(false)
   }, [setReview])
+
+  const {
+    data: { priceImpact, amountOut, minAmountOut, gasSpent },
+  } = useTrade()
 
   return (
     <Dialog open={review} onClose={onClose} variant="opaque">
@@ -30,8 +35,12 @@ export const TradeReviewDialog: FC = () => {
         </button>
         <div className="flex justify-between gap-4 items-start">
           <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-semibold dark:text-slate-50">Receive 8.38338 {token1.symbol}</h1>
-            <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">Sell 0.05 {token0.symbol}</h1>
+            <h1 className="text-3xl font-semibold dark:text-slate-50">
+              Receive {amountOut?.toSignificant(6)} {token1.symbol}
+            </h1>
+            <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
+              Sell {value} {token0.symbol}
+            </h1>
           </div>
           <div className="min-w-[56px] min-h-[56px]">
             <Currency.Icon currency={token1} width={56} height={56} />
@@ -41,7 +50,7 @@ export const TradeReviewDialog: FC = () => {
           <List>
             <List.Control>
               <List.KeyValue title="Network">{chains[network0].name}</List.KeyValue>
-              <List.KeyValue title="Network fee">~$1.18</List.KeyValue>
+              <List.KeyValue title="Network fee">~${gasSpent ?? '0.00'}</List.KeyValue>
               <List.KeyValue title="Route">
                 <button className="text-blue">View route</button>
               </List.KeyValue>
@@ -49,13 +58,13 @@ export const TradeReviewDialog: FC = () => {
                 title="Price impact"
                 subtitle="The impact your trade has on the market price of this pool."
               >
-                -0.08%
+                -{formatPercent(priceImpact)}
               </List.KeyValue>
               <List.KeyValue
-                title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.50' : slippageTolerance}%)`}
+                title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}
                 subtitle="The minimum amount you are guaranteed to receive."
               >
-                8.21408 {token1.symbol}
+                {minAmountOut?.toSignificant(6)} {token1.symbol}
               </List.KeyValue>
             </List.Control>
           </List>

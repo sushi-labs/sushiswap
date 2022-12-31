@@ -2200,7 +2200,7 @@ importers:
       '@graphql-mesh/cache-redis': 0.11.4_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.3.0_graphql@16.6.0
       '@graphql-mesh/graphql': 0.33.6_yj7ds5aogkvyuxyljhbabepxei
-      '@graphql-mesh/http': 0.3.5_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-mesh/http': 0.3.7_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-mesh/json-schema': 0.37.5_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.6_graphql@16.6.0
       '@graphql-mesh/merger-stitching': 0.18.6_graphql@16.6.0
@@ -2381,10 +2381,13 @@ importers:
 
   packages/react-query:
     specifiers:
+      '@ethersproject/address': ^5.7.0
+      '@ethersproject/units': ^5.7.0
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
@@ -2401,8 +2404,11 @@ importers:
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/units': 5.7.0
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
+      '@sushiswap/math': link:../math
       '@sushiswap/ui13': link:../ui13
       '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme
@@ -5328,6 +5334,18 @@ packages:
       lru-cache: 6.0.0
       tslib: 2.4.1
 
+  /@envelop/validation-cache/5.0.5_a6sekiasy2tqr6d5gj7n2wtjli:
+    resolution: {integrity: sha512-69sq5H7hvxE+7VV60i0bgnOiV1PX9GEJHKrBrVvyEZAXqYojKO3DP9jnLGryiPgVaBjN5yw12ge0l0s2gXbolQ==}
+    peerDependencies:
+      '@envelop/core': ^3.0.4
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      '@envelop/core': 3.0.4
+      graphql: 16.6.0
+      lru-cache: 6.0.0
+      tslib: 2.4.1
+    dev: false
+
   /@esbuild/android-arm/0.15.18:
     resolution: {integrity: sha512-5GT+kcs2WVGjVs7+boataCkO5Fg0y4kCjzkB5bAip7H4jfnOS3dA6KPiww9W1OEKTKeAcUVhdZGvgI65OXmUnw==}
     engines: {node: '>=12'}
@@ -6732,8 +6750,8 @@ packages:
       - react-native-windows
     dev: false
 
-  /@graphql-mesh/http/0.3.5_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-3VDwu40iHT6aPIc62KP3FRaRRmwVKhmO1FNw+J/QmkZXr16kLAuduISBvs0kHOxq/xbZUK3Vk0N/6vjY0T1X+g==}
+  /@graphql-mesh/http/0.3.7_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-glkDRF6SIBtKWAhsDpCaHfYuAZlUF/T8aQnWltri3dC7UvFoOSNEn4g4NxfvavpNj0evWNOrMLt+DjqXwxEx9Q==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6741,9 +6759,9 @@ packages:
       '@graphql-mesh/runtime': 0.46.4_graphql@16.6.0
       '@graphql-mesh/types': 0.89.3_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
-      '@whatwg-node/router': 0.0.2_@types+node@16.18.11
+      '@whatwg-node/router': 0.0.3_@types+node@16.18.11
       graphql: 16.6.0
-      graphql-yoga: 3.1.1_yj7ds5aogkvyuxyljhbabepxei
+      graphql-yoga: 3.2.1_yj7ds5aogkvyuxyljhbabepxei
       itty-router-extras: 0.4.2
       tslib: 2.4.1
     transitivePeerDependencies:
@@ -12069,12 +12087,12 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@whatwg-node/router/0.0.2_@types+node@16.18.11:
-    resolution: {integrity: sha512-JzL9olhli6mC47Mp4KC+ePhuDvazKZuOYFnvIQZPBocbJYWfzjUHpLzTdAVyGevqgV2n/3zIalKcUMKxVy4pAA==}
+  /@whatwg-node/router/0.0.3_@types+node@16.18.11:
+    resolution: {integrity: sha512-D9iB4Fw4VoACOw8sbKDENHoVJBTcfr4wx7reEV8FSEDhOVomjy29cSc8tnxPn3u3USyzV1EBdeJGCbfWhAEe1A==}
     dependencies:
-      '@whatwg-node/fetch': 0.5.3
-      '@whatwg-node/server': 0.5.0_@types+node@16.18.11
-      itty-router: 3.0.10
+      '@whatwg-node/fetch': 0.5.4
+      '@whatwg-node/server': 0.5.1_@types+node@16.18.11
+      itty-router: 3.0.11
       tslib: 2.4.1
     transitivePeerDependencies:
       - '@types/node'
@@ -12128,13 +12146,13 @@ packages:
       - encoding
     dev: true
 
-  /@whatwg-node/server/0.5.0_@types+node@16.18.11:
-    resolution: {integrity: sha512-zvtgGJhuwCtXM0nU/nqDPHjD4QxAl5HK708vJmGdYjETsmB9/JGJaCWjrUuojC14uN4ExoqGaJh34wNopr/jew==}
+  /@whatwg-node/server/0.5.1_@types+node@16.18.11:
+    resolution: {integrity: sha512-0xhGUnMYwRulGduMXSyiZvn182U2ma4V+plM/M4Yg/ZjGu0DbOi/LW4huZlNsDmmxVYpPluX0p7IT4ZzGzbPEA==}
     peerDependencies:
       '@types/node': ^18.0.6
     dependencies:
       '@types/node': 16.18.11
-      '@whatwg-node/fetch': 0.5.3
+      '@whatwg-node/fetch': 0.5.4
       tslib: 2.4.1
     transitivePeerDependencies:
       - encoding
@@ -18840,6 +18858,28 @@ packages:
       - encoding
     dev: false
 
+  /graphql-yoga/3.2.1_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-s2Df2Rr6EqYKqG0FhFscX81wbDqHpA1O9RYsAixOGKj9Ylzd31lf7Y+kEPdPiSj+p3frlwCdB7/gNRKe7GSrMw==}
+    peerDependencies:
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@envelop/core': 3.0.4
+      '@envelop/parser-cache': 5.0.4_a6sekiasy2tqr6d5gj7n2wtjli
+      '@envelop/validation-cache': 5.0.5_a6sekiasy2tqr6d5gj7n2wtjli
+      '@graphql-tools/executor': 0.0.11_graphql@16.6.0
+      '@graphql-tools/schema': 9.0.12_graphql@16.6.0
+      '@graphql-tools/utils': 9.1.3_graphql@16.6.0
+      '@graphql-yoga/subscription': 3.0.0
+      '@whatwg-node/fetch': 0.5.4
+      '@whatwg-node/server': 0.5.1_@types+node@16.18.11
+      dset: 3.1.2
+      graphql: 16.6.0
+      tslib: 2.4.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - encoding
+    dev: false
+
   /graphql/16.6.0:
     resolution: {integrity: sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
@@ -20142,8 +20182,8 @@ packages:
   /itty-router/2.6.6:
     resolution: {integrity: sha512-hIPHtXGymCX7Lzb2I4G6JgZFE4QEEQwst9GORK7sMYUpJvLfy4yZJr95r04e8DzoAnj6HcxM2m4TbK+juu+18g==}
 
-  /itty-router/3.0.10:
-    resolution: {integrity: sha512-HUrB/IlL9FKMaO4ySE9GI8l3KRFiJl520nWi6y0aI6kTn35hSmgNFhNNWEsv2I0EXwk5qMp1g5DB5GujA1/Y3A==}
+  /itty-router/3.0.11:
+    resolution: {integrity: sha512-vWsoHBi2CmU15YzyUeHjRfjdySL2jqZQKA9jP1LXkBcLJAo0KQNVlQMvhtzG0mzABhVYifeBF97UkrrpuTCWYQ==}
     dev: false
 
   /jake/10.8.5:

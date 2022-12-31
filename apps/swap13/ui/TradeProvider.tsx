@@ -1,7 +1,7 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Type } from '@sushiswap/currency'
+import { Amount, Native, SUSHI, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
@@ -14,7 +14,7 @@ interface SwapState {
   network0: ChainId
   network1: ChainId
   value: string
-  otherValue: string
+  valueAsAmount: Amount<Type> | undefined
   appType: AppType
 }
 
@@ -93,7 +93,11 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
       }
     }
     case 'setValue':
-      return { ...state, value: action.value }
+      return {
+        ...state,
+        value: action.value,
+        valueAsAmount: tryParseAmount(action.value, state.token0),
+      }
     case 'switchTokens':
       return {
         ...state,
@@ -120,7 +124,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
     network0: ChainId.ETHEREUM,
     network1: ChainId.ETHEREUM,
     value: '',
-    otherValue: '',
+    valueAsAmount: undefined,
   })
 
   const api = useMemo(() => {

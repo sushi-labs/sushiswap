@@ -7,6 +7,7 @@
 @tailwind utilities;
 
 @import './variables.css';
+@import "./components/skeleton/Skeleton.css";
 
 *,
 *:before,

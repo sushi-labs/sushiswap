@@ -29,6 +29,7 @@ export interface CurrencyInputProps {
   usdPctChange?: number
   fundSource?: FundSource
   disableMaxButton?: boolean
+  type: 'INPUT' | 'OUTPUT'
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -44,6 +45,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   usdPctChange,
   fundSource = FundSource.WALLET,
   disableMaxButton = false,
+  type,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -61,13 +63,13 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
-  const insufficientBalance = balance && _value && balance[fundSource].lessThan(_value)
+  const insufficientBalance = type === 'INPUT' && balance && _value && balance[fundSource].lessThan(_value)
 
   return useMemo(
     () => (
       <div
         className={classNames(
-          'transition-all duration-[400ms]',
+          'transition-all duration-[400ms] space-y-1',
           insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
           className
         )}
@@ -76,7 +78,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         <div className="relative flex items-center gap-1">
           {loading ? (
             <div className="flex flex-col gap-1 justify-center flex-grow h-[44px]">
-              <Skeleton.Box className="w-[120px] h-[22px] bg-white/[0.06] rounded-full" />
+              <Skeleton.Box className="w-2/4 h-[32px] rounded-lg" />
             </div>
           ) : (
             <Input.Numeric
@@ -127,17 +129,18 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             <></>
           )}
         </div>
-        <div className="flex flex-row justify-between h-[24px]">
+        <div className="flex flex-row justify-between">
           <PricePanel
             value={value}
             currency={currency}
             usdPctChange={usdPctChange}
             error={insufficientBalance ? 'Exceeds Balance' : undefined}
+            loading={loading}
           />
           <div className="h-6">
             <BalancePanel
               id={id}
-              loading={loading || isLoading}
+              loading={isLoading}
               chainId={chainId}
               account={address}
               onChange={onChange}
