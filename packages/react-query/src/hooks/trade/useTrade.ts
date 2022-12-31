@@ -38,7 +38,7 @@ const _hydrate = (
 ): UseTradeReturn => {
   if (!data || !amount) return INITIAL_DATA
 
-  const amountOut = Amount.fromRawAmount(toToken, data.getBestRoute.totalAmountOutBN.hex)
+  const amountOut = Amount.fromRawAmount(toToken, Math.floor(data.getBestRoute.totalAmountOut))
   const minAmountOut = Amount.fromRawAmount(
     toToken,
     calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
