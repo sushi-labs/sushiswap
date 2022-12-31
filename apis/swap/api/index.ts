@@ -150,12 +150,20 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   router.stopRouting()
   dataFetcher.stopDataFetching()
 
-  return response.status(200).send(router.getCurrentRouteHumanString())
+  const bestRoute = router.getBestRoute()
 
   return response.status(200).json({
-    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
-    // TODO: Dummy addresses
-    getBestRoute: router.getBestRoute(),
+    currentRouteHumanString: router.getCurrentRouteHumanString(),
+    currentRouteData: {
+      status: bestRoute?.status,
+      primaryPrice: bestRoute?.primaryPrice,
+      swapPrice: bestRoute?.swapPrice,
+      amountIn: bestRoute?.amountIn,
+      amountOut: bestRoute?.amountOut,
+      priceImpact: bestRoute?.priceImpact,
+      totalAmountOut: bestRoute?.totalAmountOut,
+      gasSpent: bestRoute?.gasSpent,
+    },
     // getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0'),
   })
 }
