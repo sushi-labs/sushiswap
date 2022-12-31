@@ -29,5 +29,8 @@
     "eslint": "8.29.0",
     "typescript": "4.9.4",
     "vercel": "28.10.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

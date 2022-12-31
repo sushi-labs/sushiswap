@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { Chain } from '@wagmi/core'
+import type { Chain } from '@wagmi/core'
 import {
   arbitrum,
   avalanche,
@@ -12,7 +12,7 @@ import {
   mainnet,
   optimism,
   polygon,
-} from 'wagmi/chains'
+} from '@wagmi/core/chains'
 
 export const defaultChains: Chain[] = [
   arbitrum,

@@ -1,5 +1,5 @@
 import { bentoBoxV1Abi } from '@sushiswap/abi'
-import { BentoBoxChainId } from '@sushiswap/address'
+import type { BentoBoxChainId } from '@sushiswap/address'
 import bentoBoxExports from '@sushiswap/bentobox/exports.json'
 
 export const getBentoBoxContractConfig = (chainId: BentoBoxChainId | number | undefined) => {

@@ -61,7 +61,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "29.2.4",
-    "@types/node": "^18.11.12",
+    "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
     "dotenv-cli": "6.0.0",
@@ -86,7 +86,7 @@
   },
   "packageManager": "pnpm@7.9.5",
   "engines": {
-    "node": ">=16.x",
+    "node": ">=18.x",
     "pnpm": ">=7.x"
   },
   "nextBundleAnalysis": {

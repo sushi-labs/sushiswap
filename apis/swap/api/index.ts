@@ -46,7 +46,8 @@ class BackCounter {
 }
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  console.log('query', request.query)
+  // Serve from cache, but update it, if requested after 1 second.
+  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   const {
     chainId,
     // fromToken,
