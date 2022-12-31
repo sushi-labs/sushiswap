@@ -1,14 +1,15 @@
 {
-  "name": "@sushiswap/tokens-api",
+  "name": "@sushiswap/balances-api",
   "version": "0.0.0",
   "private": true,
-  "description": "Sushi Tokens API",
+  "description": "Sushi Balances API",
   "keywords": [
     "sushi",
-    "tokens",
+    "balances",
     "api"
   ],
   "license": "MIT",
+  "type": "module",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
@@ -16,8 +17,10 @@
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
-    "@sushiswap/database": "workspace:*",
+    "@sushiswap/wagmi-config": "workspace:*",
     "@vercel/node": "2.8.2",
+    "@wagmi/core": "0.8.1",
+    "node-fetch": "3.3.0",
     "zod": "3.20.2"
   },
   "devDependencies": {
