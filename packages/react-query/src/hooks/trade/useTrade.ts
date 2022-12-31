@@ -66,9 +66,9 @@ export const useTrade = (variables: UseTrade) => {
     ['getTrade', { chainId, fromToken, toToken, amount, gasPrice }],
     () =>
       fetch(
-        `https://swap.sushi.com/?chainId=${chainId}&fromToken=${
+        `https://swap.sushi.com/?chainId=${chainId}&fromTokenId=${
           fromToken.isNative ? 'ETH' : fromToken.wrapped.address
-        }&toToken=${
+        }&toTokenId=${
           toToken.isNative ? 'ETH' : toToken.wrapped.address
         }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}&to=0x8f54C8c2df62c94772ac14CcFc85603742976312`
       ).then((res) => res.json()),
