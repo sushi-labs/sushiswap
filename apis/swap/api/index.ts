@@ -127,12 +127,12 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const fromToken =
     chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
       ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][fromTokenId as ShortCurrencyName]
-      : SUSHI[chainId as ShortCurrencyNameChainId]
+      : CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]['NATIVE']
 
   const toToken =
     chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
       ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][toTokenId as ShortCurrencyName]
-      : USDC[chainId as ShortCurrencyNameChainId]
+      : CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]['USDC']
 
   const dataFetcher = new DataFetcher(
     new providers.AlchemyProvider(getAlchemyNetowrkForChainId(chainId), process.env['ALCHEMY_API_KEY']),
