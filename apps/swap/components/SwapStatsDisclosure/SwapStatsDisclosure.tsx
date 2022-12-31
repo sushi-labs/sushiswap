@@ -3,9 +3,9 @@ import { InformationCircleIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Percent } from '@sushiswap/math'
 import { classNames, Dialog, Tooltip, Typography } from '@sushiswap/ui'
-import { Rate, Route, useTrade } from 'components'
 import React, { FC, useMemo, useState } from 'react'
 
+import { Rate, Route, useTrade } from '../../components'
 import { warningSeverity } from '../../lib/functions'
 import { useSettings } from '../../lib/state/storage'
 
@@ -57,7 +57,7 @@ export const SwapStatsDisclosure: FC = () => {
       <Dialog open={showRoute} onClose={() => setShowRoute(false)}>
         <Dialog.Content className="!pb-4">
           <Dialog.Header border={false} title="Optimized Route" onClose={() => setShowRoute(false)} />
-          <div className="max-h-[400px] overflow-y-scroll rounded-xl bg-black/[0.24] p-2 border border-slate-200/10">
+          <div className="max-h-[400px] overflow-y-auto scroll rounded-xl bg-black/[0.24] p-2 border border-slate-200/10">
             <Route />
           </div>
         </Dialog.Content>

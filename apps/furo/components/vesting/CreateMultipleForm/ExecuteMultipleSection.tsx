@@ -20,7 +20,10 @@ import { useTokensFromZTokens, ZFundSourceToFundSource } from '../../../lib/zod'
 import { calculateCliffDuration, calculateStepPercentage, calculateTotalAmount } from '../utils'
 import { CreateMultipleVestingFormSchemaType } from './schema'
 
-export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }> = ({ chainId, isReview }) => {
+export const ExecuteMultipleSection: FC<{
+  chainId: ChainId
+  isReview: boolean
+}> = ({ chainId, isReview }) => {
   const { address } = useAccount()
   const contract = useFuroVestingRouterContract(chainId)
   const [, { createNotification }] = useNotifications(address)
@@ -98,8 +101,18 @@ export const ExecuteMultipleSection: FC<{ chainId: ChainId; isReview: boolean }>
           (acc, { fundSource, recipient, currency, startDate, cliff, stepConfig, stepPayouts, stepAmount }, idx) => {
             const _currency = _tokens[idx]
             const _fundSource = ZFundSourceToFundSource.parse(fundSource)
-            const stepPercentage = calculateStepPercentage({ currency, cliff, stepAmount, stepPayouts })
-            const totalAmount = calculateTotalAmount({ currency, cliff, stepAmount, stepPayouts })
+            const stepPercentage = calculateStepPercentage({
+              currency,
+              cliff,
+              stepAmount,
+              stepPayouts,
+            })
+            const totalAmount = calculateTotalAmount({
+              currency,
+              cliff,
+              stepAmount,
+              stepPayouts,
+            })
             const cliffDuration = calculateCliffDuration({ cliff, startDate })
 
             if (

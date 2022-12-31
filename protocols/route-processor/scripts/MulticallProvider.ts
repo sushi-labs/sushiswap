@@ -17,7 +17,10 @@ export class MultiCallProvider {
   lastCallBlockNumber = 0
 
   constructor(chainDataProvider: ethers.providers.BaseProvider) {
-    this.multicall = new Multicall({ ethersProvider: chainDataProvider, tryAggregate: true })
+    this.multicall = new Multicall({
+      ethersProvider: chainDataProvider,
+      tryAggregate: true,
+    })
   }
 
   // aggregate several multicalls in one
@@ -58,7 +61,13 @@ export class MultiCallProvider {
       reference: `${seria}_${i}`,
       contractAddress: call.contract,
       abi: call.abi,
-      calls: [{ reference: '', methodName: call.method, methodParameters: call.methodParameters }],
+      calls: [
+        {
+          reference: '',
+          methodName: call.method,
+          methodParameters: call.methodParameters,
+        },
+      ],
     }))
     this.seriaLength.set(seria, getReservesCalls.length)
     const serias = await this.call(getReservesCalls) // can be mixed with other calls

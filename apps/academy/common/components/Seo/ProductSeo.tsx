@@ -11,7 +11,9 @@ interface ProductSeo {
 export const ProductSeo: FC<ProductSeo> = ({ product }) => {
   if (!product) return <></>
 
-  const cover = getOptimizedMedia({ metadata: product.shareImage?.data?.attributes?.provider_metadata })
+  const cover = getOptimizedMedia({
+    metadata: product.shareImage?.data?.attributes?.provider_metadata,
+  })
   const coverAlt = product.shareImage?.data?.attributes?.alternativeText
 
   return (

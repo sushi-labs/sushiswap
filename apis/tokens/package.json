@@ -11,11 +11,13 @@
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
+    "check": "tsc --pretty --noEmit",
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
-    "@vercel/node": "2.8.1",
     "@sushiswap/database": "workspace:*",
+    "@vercel/node": "2.8.2",
     "zod": "3.20.2"
   },
   "devDependencies": {
@@ -23,7 +25,9 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@types/node": "^18.0.0",
+    "eslint": "8.29.0",
     "typescript": "4.9.4",
-    "vercel": "28.10.0"
+    "vercel": "28.10.1"
   }
 }

@@ -7,22 +7,17 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { SushiSwapRouter, Trade, TradeType, Version } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Currency, Native } from '@sushiswap/currency'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { isZero } from '@sushiswap/validate'
-import {
-  calculateGasMargin,
-  getTridentRouterContractConfig,
-  useBentoBoxTotal,
-  useSendTransaction,
-} from '@sushiswap/wagmi'
+import { getTridentRouterContractConfig, useBentoBoxTotal, useSendTransaction } from '@sushiswap/wagmi'
 import { Dispatch, FC, ReactElement, SetStateAction, useCallback, useMemo } from 'react'
 import { useAccount, useProvider, UserRejectedRequestError } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveMasterContractAction, batchAction, unwrapWETHAction } from '../lib/actions'
-import { useTransactionDeadline } from '../lib/hooks'
-import { useRouters } from '../lib/hooks/useRouters'
+import { useTransactionDeadline, useRouters } from '../lib/hooks'
 import { useNotifications, useSettings } from '../lib/state/storage'
 import { useTrade } from './TradeProvider'
 

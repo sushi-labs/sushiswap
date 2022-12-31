@@ -4,8 +4,9 @@ import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { TradeType } from '@sushiswap/amm'
-import chains, { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
+import chains, { ChainId } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
+import { Amount, Native, Price, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import {
@@ -15,8 +16,19 @@ import {
   StargateChainId,
 } from '@sushiswap/stargate'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
-import { App, Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import {
+  App,
+  Button,
+  classNames,
+  Currency,
+  Dialog,
+  Dots,
+  Loader,
+  NetworkIcon,
+  SlideIn,
+  Tooltip,
+  Typography,
+} from '@sushiswap/ui'
 import {
   Approve,
   getSushiXSwapContractConfig,
@@ -149,8 +161,8 @@ interface Swap {
     srcChainId: StargateChainId
     dstChainId: StargateChainId
     srcTypedAmount: string
-    srcToken: Currency
-    dstToken: Currency
+    srcToken: Type
+    dstToken: Type
   }
   caption?: boolean
   // swapCache: SwapCache
@@ -185,8 +197,8 @@ const Widget: FC<Swap> = ({
 
   const [srcChainId, setSrcChainId] = useState<StargateChainId>(initialState.srcChainId)
   const [dstChainId, setDstChainId] = useState<StargateChainId>(initialState.dstChainId)
-  const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
-  const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
+  const [srcToken, setSrcToken] = useState<Type>(initialState.srcToken)
+  const [dstToken, setDstToken] = useState<Type>(initialState.dstToken)
   const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
     useCustomTokens(srcChainId)
   const [dstCustomTokenMap, { addCustomToken: onAddDstCustomToken, removeCustomToken: onRemoveDstCustomToken }] =
@@ -292,12 +304,12 @@ const Widget: FC<Swap> = ({
   const contractWithProvider = useSushiXSwapContractWithProvider(srcChainId)
 
   // Parse the srcTypedAmount into a srcAmount
-  const srcAmount = useMemo<Amount<Currency> | undefined>(() => {
+  const srcAmount = useMemo<Amount<Type> | undefined>(() => {
     return tryParseAmount(srcTypedAmount, srcToken)
   }, [srcToken, srcTypedAmount])
 
   // Parse the dstTypedAmount into a dstAmount
-  const dstAmount = useMemo<Amount<Currency> | undefined>(() => {
+  const dstAmount = useMemo<Amount<Type> | undefined>(() => {
     return tryParseAmount(dstTypedAmount, dstToken)
   }, [dstToken, dstTypedAmount])
 
@@ -608,7 +620,11 @@ const Widget: FC<Swap> = ({
     currency: Native.onChain(srcChainId),
   })
 
-  const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
+  const { data: srcBalance } = useBalance({
+    chainId: srcChainId,
+    account: address,
+    currency: srcToken,
+  })
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
@@ -1060,7 +1076,7 @@ const Widget: FC<Swap> = ({
                 </Wallet.Button>
               ) : isMounted && chain && chain.id !== srcChainId ? (
                 <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-                  Switch to {Chain.from(srcChainId).name}
+                  Switch to {chainName[srcChainId]}
                 </Button>
               ) : showWrap ? (
                 <Button size="md" fullWidth>
@@ -1143,7 +1159,7 @@ const Widget: FC<Swap> = ({
                                       <div className="flex items-center justify-end gap-2 text-right">
                                         {srcAmount && (
                                           <div className="w-5 h-5">
-                                            <Icon currency={srcAmount.currency} width={20} height={20} />
+                                            <Currency.Icon currency={srcAmount.currency} width={20} height={20} />
                                           </div>
                                         )}
                                         <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -1187,7 +1203,7 @@ const Widget: FC<Swap> = ({
                                       <div className="flex items-center justify-end gap-2 text-right">
                                         {dstAmountOut && (
                                           <div className="w-5 h-5">
-                                            <Icon currency={dstAmountOut.currency} width={20} height={20} />
+                                            <Currency.Icon currency={dstAmountOut.currency} width={20} height={20} />
                                           </div>
                                         )}
                                         <Typography variant="h3" weight={500} className="text-right text-slate-50">

@@ -5,17 +5,23 @@ import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WN
 import { FundSource, useIsMounted, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
 import { App, Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import { Checker, TokenListImportChecker, useWalletState, WrapType } from '@sushiswap/wagmi'
-import { CurrencyInput } from 'components/CurrencyInput'
 import { isAddress } from 'ethers/lib/utils'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Address, useConnect, useNetwork } from 'wagmi'
-
-import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade, WrapReviewModal } from '../components'
-import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
+import {
+  CurrencyInput,
+  SwapStatsDisclosure,
+  Layout,
+  SettingsOverlay,
+  SwapReviewModalLegacy,
+  TradeProvider,
+  useTrade,
+  WrapReviewModal,
+} from '../components'
 import { warningSeverity } from '../lib/functions'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
@@ -197,9 +203,15 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   const checkIfImportedTokens = useMemo(() => {
     const tokens: { address: Address; chainId: number }[] = []
     if (initialState.token0 && isAddress(initialState.token0))
-      tokens.push({ address: initialState.token0, chainId: Number(initialState.chainId) })
+      tokens.push({
+        address: initialState.token0,
+        chainId: Number(initialState.chainId),
+      })
     if (initialState.token1 && isAddress(initialState.token1))
-      tokens.push({ address: initialState.token1, chainId: Number(initialState.chainId) })
+      tokens.push({
+        address: initialState.token1,
+        chainId: Number(initialState.chainId),
+      })
     return tokens
   }, [initialState.chainId, initialState.token0, initialState.token1])
 

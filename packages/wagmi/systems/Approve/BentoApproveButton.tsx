@@ -48,7 +48,10 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
 
     useEffect(() => {
       if (!enabled && dispatch && index !== undefined) {
-        dispatch({ type: 'update', payload: { state: [ApprovalState.APPROVED, undefined, true], index } })
+        dispatch({
+          type: 'update',
+          payload: { state: [ApprovalState.APPROVED, undefined, true], index },
+        })
       }
     }, [dispatch, enabled, index])
 

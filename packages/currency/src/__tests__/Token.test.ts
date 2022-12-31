@@ -56,13 +56,29 @@ describe('Token', () => {
     })
 
     it('true on reference equality', () => {
-      const token = new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18 })
+      const token = new Token({
+        chainId: 1,
+        address: ADDRESS_ONE,
+        decimals: 18,
+      })
       expect(token.equals(token)).toBe(true)
     })
 
     it('true even if name/symbol/decimals differ', () => {
-      const tokenA = new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 9, symbol: 'abc', name: 'def' })
-      const tokenB = new Token({ chainId: 1, address: ADDRESS_ONE, decimals: 18, symbol: 'ghi', name: 'jkl' })
+      const tokenA = new Token({
+        chainId: 1,
+        address: ADDRESS_ONE,
+        decimals: 9,
+        symbol: 'abc',
+        name: 'def',
+      })
+      const tokenB = new Token({
+        chainId: 1,
+        address: ADDRESS_ONE,
+        decimals: 18,
+        symbol: 'ghi',
+        name: 'jkl',
+      })
       expect(tokenA.equals(tokenB)).toBe(true)
     })
   })

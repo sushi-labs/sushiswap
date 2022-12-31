@@ -37,11 +37,11 @@
     "@rari-capital/solmate": "6.2.0",
     "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/core": "^1.4.2",
+    "@sushiswap/core-sdk": "1.0.0-canary.110",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/stargate": "workspace:*",
-    "@sushiswap/sushiswap": "workspace:*",
-    "@sushiswap/core": "^1.4.2",
-    "@sushiswap/core-sdk": "1.0.0-canary.110"
+    "@sushiswap/sushiswap": "workspace:*"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -59,7 +59,7 @@
     "hardhat": "2.12.4",
     "hardhat-deploy": "0.11.22",
     "ts-node": "10.9.1",
-    "typescript": "4.8.2"
+    "typescript": "4.9.4"
   },
   "peerDependencies": {
     "@ethersproject/abi": "^5.7.0",

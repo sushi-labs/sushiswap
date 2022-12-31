@@ -84,7 +84,10 @@ function simulateRouting(network: Network, route: MultiRoute) {
   })
   expect(route.gasSpent).toEqual(gasSpentTotal)
 
-  return { out: amounts.get(route.toToken.tokenId as string), gasSpent: gasSpentTotal }
+  return {
+    out: amounts.get(route.toToken.tokenId as string),
+    gasSpent: gasSpentTotal,
+  }
 }
 
 // Just for testing

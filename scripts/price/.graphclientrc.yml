@@ -18,4 +18,3 @@ documents:
 
 codegen:
   contextType: 'MeshContext & { name: string; host: string; path: string; }'
-

@@ -1,0 +1,9 @@
+{
+  "extends": "@sushiswap/typescript-config/react-library.json",
+  "include": ["."],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
+  }
+}

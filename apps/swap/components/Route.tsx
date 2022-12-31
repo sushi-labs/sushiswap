@@ -4,12 +4,17 @@ import { Token } from '@sushiswap/currency'
 import { RToken } from '@sushiswap/tines'
 import { AppearOnMount, Chip, Currency, Link, Tooltip, Typography } from '@sushiswap/ui'
 import { TradeOutput } from '@sushiswap/wagmi'
-import { FC, useLayoutEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import { useTrade } from './TradeProvider'
 
 const tokenFromRToken = (token: RToken) => {
-  return new Token({ address: token.address, symbol: token.symbol, chainId: Number(token.chainId), decimals: 18 })
+  return new Token({
+    address: token.address,
+    symbol: token.symbol,
+    chainId: Number(token.chainId),
+    decimals: 18,
+  })
 }
 
 // Can render an entire tines single route with dots between
@@ -127,7 +132,7 @@ export const ComplexRoute: FC<{ trade: TradeOutput }> = ({ trade }) => {
   )
 
   return (
-    <div className="h-full overflow-y-auto scroll">
+    <div className="h-full">
       <div className="flex flex-col gap-4">
         {directPaths.map((directPath, i) => (
           <ComplexRoutePath
@@ -213,7 +218,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
   const ref = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(0)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       setWidth((ref.current.offsetWidth - 28) * Number(portion))
     }
@@ -238,11 +243,10 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
       <div className="z-[10] col-span-4 flex justify-start items-center">
         <div
           ref={ref}
-          className="flex relative justify-between gap-2 items-center overflow-hidden rounded-full p-2 bg-slate-900"
+          className="flex relative justify-between gap-2 items-center overflow-hidden rounded-full p-2 border-2 border-slate-900 bg-slate-900"
         >
-          <div className="absolute bg-slate-800 pointer-events-none top-0.5 left-0.5 w-[28px] bottom-0.5 rounded-full" />
           <div
-            className="absolute bg-slate-800 pointer-events-none top-0.5 left-0.5 bottom-0.5 rounded-full"
+            className="absolute bg-slate-800 pointer-events-none inset-0 rounded-full"
             style={{ width: `calc(28px + ${width}px)` }}
           />
           <div className="z-[10] flex items-center gap-1">

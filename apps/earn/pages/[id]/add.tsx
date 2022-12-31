@@ -1,13 +1,19 @@
-import { ExternalLinkIcon } from '@heroicons/react/solid'
-import { chainShortName } from '@sushiswap/chain'
-import { formatPercent } from '@sushiswap/format'
-import { getBuiltGraphSDK, Pair } from '@sushiswap/graph-client'
-import { AppearOnMount, BreadcrumbLink, Container, Link, Typography } from '@sushiswap/ui'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
-import { useRouter } from 'next/router'
-import { FC } from 'react'
-import useSWR, { SWRConfig } from 'swr'
+import { ExternalLinkIcon } from "@heroicons/react/solid";
+import { chainShortName } from "@sushiswap/chain";
+import { formatPercent } from "@sushiswap/format";
+import { getBuiltGraphSDK, Pair } from "@sushiswap/graph-client";
+import {
+  AppearOnMount,
+  BreadcrumbLink,
+  Container,
+  Link,
+  Typography,
+} from "@sushiswap/ui";
+import { SUPPORTED_CHAIN_IDS } from "../../config";
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next";
+import { useRouter } from "next/router";
+import { FC } from "react";
+import useSWR, { SWRConfig } from "swr";
 
 import {
   AddSectionLegacy,
@@ -17,21 +23,21 @@ import {
   Layout,
   PoolPositionProvider,
   PoolPositionStakedProvider,
-} from '../../components'
-import { GET_POOL_TYPE_MAP } from '../../lib/constants'
+} from "../../components";
+import { GET_POOL_TYPE_MAP } from "../../lib/constants";
 
 const LINKS = ({ pair }: { pair: Pair }): BreadcrumbLink[] => [
   {
     href: `/${pair.id}`,
-    label: `${pair.name} - ${GET_POOL_TYPE_MAP[pair.type as keyof typeof GET_POOL_TYPE_MAP]} - ${formatPercent(
-      pair.swapFee / 10000
-    )}`,
+    label: `${pair.name} - ${
+      GET_POOL_TYPE_MAP[pair.type as keyof typeof GET_POOL_TYPE_MAP]
+    } - ${formatPercent(pair.swapFee / 10000)}`,
   },
   {
     href: `/${pair.id}/add`,
     label: `Add Liquidity`,
   },
-]
+];
 
 // export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
 //   res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
@@ -45,22 +51,25 @@ const LINKS = ({ pair }: { pair: Pair }): BreadcrumbLink[] => [
 //   }
 // }
 
-const Add: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback }) => {
+const Add: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
+  fallback,
+}) => {
   return (
     <SWRConfig value={{ fallback }}>
       <_Add />
     </SWRConfig>
-  )
-}
+  );
+};
 
 const _Add = () => {
-  const router = useRouter()
-  const { data } = useSWR<{ pair: Pair }>(`/earn/api/pool/${router.query.id}`, (url) =>
-    fetch(url).then((response) => response.json())
-  )
+  const router = useRouter();
+  const { data } = useSWR<{ pair: Pair }>(
+    `/earn/api/pool/${router.query.id}`,
+    (url) => fetch(url).then((response) => response.json())
+  );
 
-  if (!data) return <></>
-  const { pair } = data
+  if (!data) return <></>;
+  const { pair } = data;
 
   return (
     <PoolPositionProvider pair={pair}>
@@ -69,16 +78,28 @@ const _Add = () => {
           <div className="grid grid-cols-1 sm:grid-cols-[340px_auto] md:grid-cols-[auto_396px_264px] gap-10">
             <div className="hidden md:block" />
             <div className="flex flex-col order-3 gap-3 pb-40 sm:order-2">
-              {pair.source === 'TRIDENT' ? <AddSectionTrident pair={pair} /> : <AddSectionLegacy pair={pair} />}
+              {pair.source === "TRIDENT" ? (
+                <AddSectionTrident pair={pair} />
+              ) : (
+                <AddSectionLegacy pair={pair} />
+              )}
               <AddSectionStake poolAddress={pair.id} />
               <Container className="flex justify-center">
                 <Link.External
                   href="https://docs.sushi.com/docs/Products/Sushiswap/Liquidity%20Pools"
                   className="flex justify-center px-6 py-4 decoration-slate-500 hover:bg-opacity-[0.06] cursor-pointer rounded-2xl"
                 >
-                  <Typography variant="xs" weight={500} className="flex items-center gap-1 text-slate-500">
+                  <Typography
+                    variant="xs"
+                    weight={500}
+                    className="flex items-center gap-1 text-slate-500"
+                  >
                     Learn more about liquidity and yield farming
-                    <ExternalLinkIcon width={16} height={16} className="text-slate-500" />
+                    <ExternalLinkIcon
+                      width={16}
+                      height={16}
+                      className="text-slate-500"
+                    />
                   </Typography>
                 </Link.External>
               </Container>
@@ -93,40 +114,50 @@ const _Add = () => {
         </Layout>
       </PoolPositionStakedProvider>
     </PoolPositionProvider>
-  )
-}
+  );
+};
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const sdk = getBuiltGraphSDK()
+  // When this is true (in preview environments) don't
+  // prerender any static pages
+  // (faster builds, but slower initial page load)
+  if (process.env.SKIP_BUILD_STATIC_GENERATION === "true") {
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
+
+  const sdk = getBuiltGraphSDK();
   const { pairs } = await sdk.PairsByChainIds({
     first: 250,
-    orderBy: 'liquidityUSD',
-    orderDirection: 'desc',
+    orderBy: "liquidityUSD",
+    orderDirection: "desc",
     chainIds: SUPPORTED_CHAIN_IDS,
-  })
+  });
 
   // Get the paths we want to pre-render based on pairs
   const paths = pairs
     .sort(({ liquidityUSD: a }, { liquidityUSD: b }) => {
-      return Number(b) - Number(a)
+      return Number(b) - Number(a);
     })
     .slice(0, 250)
     .map((pair, i) => ({
       params: { id: `${chainShortName[pair.chainId]}:${pair.address}` },
-    }))
+    }));
 
   // We'll pre-render only these paths at build time.
   // { fallback: blocking } will server-render pages
   // on-demand if the path doesn't exist.
-  return { paths, fallback: 'blocking' }
-}
+  return { paths, fallback: "blocking" };
+};
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const sdk = getBuiltGraphSDK()
-  const id = params?.id as string
-  const { pair } = await sdk.PairById({ id })
+  const sdk = getBuiltGraphSDK();
+  const id = params?.id as string;
+  const { pair } = await sdk.PairById({ id });
   if (!pair) {
-    throw new Error(`Failed to fetch pair, received ${pair}`)
+    throw new Error(`Failed to fetch pair, received ${pair}`);
   }
   return {
     props: {
@@ -135,7 +166,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       },
     },
     revalidate: 60,
-  }
-}
+  };
+};
 
-export default Add
+export default Add;

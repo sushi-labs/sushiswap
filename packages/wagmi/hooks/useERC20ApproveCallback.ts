@@ -2,6 +2,7 @@ import { AddressZero, MaxUint256 } from '@ethersproject/constants'
 import { ErrorCode } from '@ethersproject/logger'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency } from '@sushiswap/currency'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { createErrorToast, NotificationData } from '@sushiswap/ui'
 import { BigNumber } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -17,7 +18,6 @@ import {
 } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
-import { calculateGasMargin } from '../calculateGasMargin'
 import { useERC20Allowance } from './useERC20Allowance'
 
 export enum ApprovalState {

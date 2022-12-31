@@ -17,7 +17,9 @@ interface Rate {
 
 export const Rate: FC<Rate> = ({ children, price }) => {
   const [invert, setInvert] = useState(false)
-  const { data: prices } = usePrices({ chainId: invert ? price?.quoteCurrency.chainId : price?.baseCurrency.chainId })
+  const { data: prices } = usePrices({
+    chainId: invert ? price?.quoteCurrency.chainId : price?.baseCurrency.chainId,
+  })
   const usdPrice = price
     ? prices?.[invert ? price.quoteCurrency.wrapped.address : price.baseCurrency.wrapped.address]?.toFixed(2)
     : undefined

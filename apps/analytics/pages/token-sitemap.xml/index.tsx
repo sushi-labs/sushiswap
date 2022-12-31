@@ -1,10 +1,11 @@
 import { getTokens, GetTokensQuery } from 'lib/api'
 import { GetServerSideProps } from 'next'
 import { getServerSideSitemap, ISitemapField } from 'next-sitemap'
+import stringify from 'fast-json-stable-stringify'
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const tokens = await getTokens({
-    pagination: JSON.stringify({ pageIndex: 0, pageSize: 1000 }),
+    pagination: stringify({ pageIndex: 0, pageSize: 1000 }),
   } as unknown as GetTokensQuery)
 
   const ids = tokens.map((token) => token.id)

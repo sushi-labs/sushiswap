@@ -1,58 +1,58 @@
 fragment PairFields on Pair {
-    id
-    chainId
-    address
-    type
-    swapFee
-    twapEnabled
+  id
+  chainId
+  address
+  type
+  swapFee
+  twapEnabled
+  name
+  token0 {
     name
-    token0 {
-      name
-      id
-      decimals
-      symbol
-    }     
-    token1 {
-      name
-      id
-      decimals
-      symbol
-    }
-    source
-    createdAtBlock
-    createdAtTimestamp
-    reserve0
-    reserve1
-    liquidity
-    liquidityUSD
-    liquidityNative
-    # token0Price
-    # token1Price
-    volumeUSD
-    volumeNative
-    volumeToken0
-    volumeToken1
-    feesNative
-    feesUSD
-    txCount
-    apr
-    aprUpdatedAtTimestamp
+    id
+    decimals
+    symbol
+  }
+  token1 {
+    name
+    id
+    decimals
+    symbol
+  }
+  source
+  createdAtBlock
+  createdAtTimestamp
+  reserve0
+  reserve1
+  liquidity
+  liquidityUSD
+  liquidityNative
+  # token0Price
+  # token1Price
+  volumeUSD
+  volumeNative
+  volumeToken0
+  volumeToken1
+  feesNative
+  feesUSD
+  txCount
+  apr
+  aprUpdatedAtTimestamp
 }
 
 fragment TimeTravelPairFields on Pair {
-    id
-    reserve0
-    reserve1
-    liquidity
-    liquidityUSD
-    liquidityNative
-    volumeUSD
-    volumeNative
-    volumeToken0
-    volumeToken1
-    feesNative
-    feesUSD
-    apr
+  id
+  reserve0
+  reserve1
+  liquidity
+  liquidityUSD
+  liquidityNative
+  volumeUSD
+  volumeNative
+  volumeToken0
+  volumeToken1
+  feesNative
+  feesUSD
+  apr
 }
 
 query PairsByChainId(
@@ -67,7 +67,7 @@ query PairsByChainId(
   pairs: pairsByChainId(
     first: $first
     skip: $skip
-    where: $where,
+    where: $where
     orderBy: $orderBy
     orderDirection: $orderDirection
     block: $block
@@ -89,7 +89,7 @@ query PairsByChainIds(
   pairs: pairsByChainIds(
     first: $first
     skip: $skip
-    where: $where,
+    where: $where
     orderBy: $orderBy
     orderDirection: $orderDirection
     block: $block
@@ -113,7 +113,7 @@ query PairsWithFarms(
   pairs: pairsWithFarms(
     first: $first
     skip: $skip
-    where: $where,
+    where: $where
     orderBy: $orderBy
     orderDirection: $orderDirection
     block: $block
@@ -148,12 +148,8 @@ query PairsWithFarms(
   }
 }
 
-query PairById(
-  $id: ID!
-) {
-  pair: pairById(
-    id: $id
-  ) {
+query PairById($id: ID!) {
+  pair: pairById(id: $id) {
     ...PairFields
     liquidity1dChange
     liquidity1wChange

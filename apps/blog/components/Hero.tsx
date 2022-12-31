@@ -1,11 +1,11 @@
 import { Button, Container } from '@sushiswap/ui'
 import { FC } from 'react'
+import { Article } from 'types'
 
-import { ArticleEntity } from '../.mesh'
 import { ArticleAuthors, ArticleHeader } from './article'
 
 interface Hero {
-  article: ArticleEntity
+  article: Article
 }
 
 export const Hero: FC<Hero> = ({ article }) => {

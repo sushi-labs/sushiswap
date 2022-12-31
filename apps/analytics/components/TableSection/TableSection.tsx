@@ -13,7 +13,9 @@ export const TableSection: FC = () => {
 
   const onChange = useCallback(
     (val: number) => {
-      setFilters({ selectedTable: val === 0 ? SelectedTable.Markets : SelectedTable.Tokens })
+      setFilters({
+        selectedTable: val === 0 ? SelectedTable.Markets : SelectedTable.Tokens,
+      })
     },
     [setFilters]
   )

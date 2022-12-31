@@ -2,11 +2,11 @@ import { TransactionRequest } from '@ethersproject/providers'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
-  calculateGasMargin,
   getSushiSwapRouterContractConfig,
   PairState,
   useSendTransaction,
@@ -118,7 +118,9 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
             deadline.toHexString(),
           ]
 
-          const gasLimit = await contract.estimateGas.addLiquidityETH(...args, { value })
+          const gasLimit = await contract.estimateGas.addLiquidityETH(...args, {
+            value,
+          })
           setRequest({
             from: address,
             to: contract.address,

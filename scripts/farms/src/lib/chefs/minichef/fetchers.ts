@@ -86,7 +86,10 @@ export async function getRewarderInfos(chainId: ChainId) {
   const { getBuiltGraphSDK } = await import('../../../../.graphclient')
   const subgraphName = MINICHEF_SUBGRAPH_NAME[chainId]
   console.log(chainId, subgraphName)
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({
+    host: SUBGRAPH_HOST[chainId],
+    name: subgraphName,
+  })
 
   const { rewarders } = await sdk.MiniChefRewarders({
     where: {
