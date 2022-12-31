@@ -2,22 +2,22 @@ import { keccak256, pack } from '@ethersproject/solidity'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
-import type { ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
-import type { Limited } from '../Limited'
+import { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
-import type { PoolCode } from '../pools/PoolCode'
+import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
 
-const UNISWAP_V2_FACTORY = {
+const UNISWAP_V2_FACTORY: Record<string | number, string> = {
   [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
-} as const
+}
 
-const UNISWAP_INIT_CODE_HASH = {
+const UNISWAP_INIT_CODE_HASH: Record<string | number, string> = {
   [ChainId.ETHEREUM]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
-} as const
+}
 
 const getReservesABI = [
   {
@@ -68,7 +68,7 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
   }
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (!(this.chainId in UNISWAP_V2_FACTORY)) {
+    if (UNISWAP_V2_FACTORY[this.chainId] === undefined) {
       // No sushiswap for this network
       this.lastUpdateBlock = -1
       return
@@ -147,9 +147,9 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      UNISWAP_V2_FACTORY[this.chainId as keyof typeof UNISWAP_V2_FACTORY],
+      UNISWAP_V2_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      UNISWAP_INIT_CODE_HASH[this.chainId as keyof typeof UNISWAP_INIT_CODE_HASH]
+      UNISWAP_INIT_CODE_HASH[this.chainId]
     )
   }
 

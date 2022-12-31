@@ -2,9 +2,9 @@ import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { findMultiRouteExactIn, getBigNumber, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
-import type { DataFetcher } from './DataFetcher'
-import type { LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
-import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
+import { DataFetcher } from './DataFetcher'
+import { LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
+import { convertTokenToBento, getBentoChainId } from './liquidityProviders/Trident'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
 type RouteCallBack = (r: MultiRoute) => void
@@ -36,12 +36,12 @@ export class Router {
   amountIn: BigNumber
   toToken: Type
   gasPrice: number
-  providers?: LiquidityProviders[] | undefined // all providers if undefined
+  providers?: LiquidityProviders[] // all providers if undefined
   minUpdateDelay: number
 
   dataFetcherPreviousState = 0
   routeCallBack?: RouteCallBack
-  currentBestRoute?: MultiRoute | undefined
+  currentBestRoute?: MultiRoute
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   timer?: any // timer from setInterval
 
@@ -173,7 +173,7 @@ export class Router {
     return res
   }
 
-  getCurrentRouteHumanString(shiftPrimary = '', shiftSub = '    '): string | void {
+  getCurrentRouteHumanString(shiftPrimary = '', shiftSub = '    '): string | undefined {
     if (this.currentBestRoute !== undefined) {
       return this.routeToHumanString(this.currentBestRoute, this.fromToken, this.toToken, shiftPrimary, shiftSub)
     }

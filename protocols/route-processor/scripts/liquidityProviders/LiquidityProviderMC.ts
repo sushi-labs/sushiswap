@@ -1,10 +1,10 @@
-import type { ChainId } from '@sushiswap/chain'
-import type { Token } from '@sushiswap/currency'
-import type { ethers } from 'ethers'
+import { ChainId } from '@sushiswap/chain'
+import { Token } from '@sushiswap/currency'
+import { ethers } from 'ethers'
 
-import type { Limited } from '../Limited'
-import type { MultiCallProvider } from '../MulticallProvider'
-import type { PoolCode } from '../pools/PoolCode'
+import { Limited } from '../Limited'
+import { MultiCallProvider } from '../MulticallProvider'
+import { PoolCode } from '../pools/PoolCode'
 
 export enum LiquidityProviders {
   Sushiswap = 'Sushiswap',

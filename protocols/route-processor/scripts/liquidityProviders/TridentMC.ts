@@ -1,13 +1,13 @@
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, RToken } from '@sushiswap/tines'
-import type { ethers } from 'ethers'
+import { ethers } from 'ethers'
 
-import type { Limited } from '../Limited'
+import { Limited } from '../Limited'
 import { convertToBigNumber, convertToBigNumberPair, convertToNumbers, MultiCallProvider } from '../MulticallProvider'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoConstantProductPoolCode } from '../pools/BentoconstantProductPool'
-import type { PoolCode } from '../pools/PoolCode'
+import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
 
 const ConstantProductPoolFactory: Record<string | number, string> = {

@@ -1,16 +1,16 @@
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
-import type { ethers } from 'ethers'
+import { ethers } from 'ethers'
 
 import { Limited } from './Limited'
-import { LiquidityProviderMC, LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
-import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
-import { QuickSwapProviderMC } from './liquidity-providers/QuickSwapMC'
-import { SushiProviderMC } from './liquidity-providers/SushiMC'
-import { TridentProviderMC } from './liquidity-providers/TridentMC'
-import { UniSwapV2ProviderMC } from './liquidity-providers/UniswapV2MC'
+import { LiquidityProviderMC, LiquidityProviders } from './liquidityProviders/LiquidityProviderMC'
+import { NativeWrapProvider } from './liquidityProviders/NativeWrapProvider'
+import { QuickSwapProviderMC } from './liquidityProviders/QuickSwapMC'
+import { SushiProviderMC } from './liquidityProviders/SushiMC'
+import { TridentProviderMC } from './liquidityProviders/TridentMC'
+import { UniSwapV2ProviderMC } from './liquidityProviders/UniswapV2MC'
 import { MultiCallProvider } from './MulticallProvider'
-import type { PoolCode } from './pools/PoolCode'
+import { PoolCode } from './pools/PoolCode'
 
 // Gathers pools info, creates routing in 'incremental' mode
 // This means that new routing recalculates each time new pool fetching data comes

@@ -1,23 +1,16 @@
 import { keccak256, pack } from '@ethersproject/solidity'
+import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
-import type { ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
-import type { Limited } from '../Limited'
+import { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
-import type { PoolCode } from '../pools/PoolCode'
+import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
-
-const UNISWAP_V2_FACTORY = {
-  [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
-} as const
-
-const UNISWAP_INIT_CODE_HASH = {
-  [ChainId.ETHEREUM]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
-} as const
 
 const getReservesABI = [
   {
@@ -45,7 +38,7 @@ const getReservesABI = [
   },
 ]
 
-export class UniSwapV2ProviderMC extends LiquidityProviderMC {
+export class SushiProviderMC extends LiquidityProviderMC {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener: any
@@ -64,11 +57,11 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
   }
 
   getPoolProviderName(): string {
-    return 'Uniswap'
+    return 'Sushiswap'
   }
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (!(this.chainId in UNISWAP_V2_FACTORY)) {
+    if (FACTORY_ADDRESS[this.chainId] === undefined) {
       // No sushiswap for this network
       this.lastUpdateBlock = -1
       return
@@ -147,9 +140,9 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      UNISWAP_V2_FACTORY[this.chainId as keyof typeof UNISWAP_V2_FACTORY],
+      FACTORY_ADDRESS[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      UNISWAP_INIT_CODE_HASH[this.chainId as keyof typeof UNISWAP_INIT_CODE_HASH]
+      INIT_CODE_HASH[this.chainId]
     )
   }
 

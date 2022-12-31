@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Native, WNATIVE } from '@sushiswap/currency'
 import { BridgeUnlimited, RToken } from '@sushiswap/tines'
-import type { ethers } from 'ethers'
+import { ethers } from 'ethers'
 
-import type { Limited } from '../Limited'
-import type { MultiCallProvider } from '../MulticallProvider'
+import { Limited } from '../Limited'
+import { MultiCallProvider } from '../MulticallProvider'
 import { NativeWrapBridgePoolCode } from '../pools/NativeWrapBridge'
-import type { PoolCode } from '../pools/PoolCode'
+import { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
 
 export class NativeWrapProvider extends LiquidityProviderMC {

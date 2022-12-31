@@ -63,6 +63,7 @@ export class SushiProviderMC extends LiquidityProviderMC {
   async getPools(tokens: Token[]): Promise<void> {
     if (FACTORY_ADDRESS[this.chainId] === undefined) {
       // No sushiswap for this network
+      this.lastUpdateBlock = -1
       return
     }
 
@@ -106,6 +107,9 @@ export class SushiProviderMC extends LiquidityProviderMC {
         ++this.stateId
       }
     })
+
+    // if it is the first obtained pool list
+    if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
 
   // TODO: remove too often updates if the network generates too many blocks
@@ -130,6 +134,8 @@ export class SushiProviderMC extends LiquidityProviderMC {
         }
       }
     })
+
+    this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
 
   _getPoolAddress(t1: Token, t2: Token): string {
@@ -156,7 +162,7 @@ export class SushiProviderMC extends LiquidityProviderMC {
     this.poolCodes = []
     this.fetchedPools.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
-    this.blockListener = (_blockNumber: number) => {
+    this.blockListener = () => {
       this.updatePoolsData()
     }
     this.chainDataProvider.on('block', this.blockListener)

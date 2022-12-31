@@ -2234,7 +2234,7 @@ importers:
       '@graphprotocol/client-cli': 2.2.16_cnwy7duuu7tgtox4og47astedi
       '@graphql-mesh/cache-redis': 0.11.4_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.3.0_graphql@16.6.0
-      '@graphql-mesh/graphql': 0.33.6_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-mesh/graphql': 0.33.7_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-mesh/http': 0.3.7_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-mesh/json-schema': 0.37.5_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.6_graphql@16.6.0
@@ -3744,7 +3744,7 @@ importers:
       '@graphprotocol/client-cli': 2.2.16_j6g4ge4gtnf4g64ywvpaqp6rfm
       '@graphql-mesh/cache-localforage': 0.7.4_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.3.0_graphql@16.6.0
-      '@graphql-mesh/graphql': 0.33.6_graphql@16.6.0
+      '@graphql-mesh/graphql': 0.33.7_graphql@16.6.0
       '@graphql-mesh/http': 0.3.7_graphql@16.6.0
       '@graphql-mesh/json-schema': 0.37.5_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.6_graphql@16.6.0
@@ -6849,8 +6849,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@graphql-mesh/graphql/0.33.6_graphql@16.6.0:
-    resolution: {integrity: sha512-SD6VUTHkSbFHeRDlxjLGAL0CSsmtPVV21/wF2QUt7/iS2AwuDe/BohDMO7vyA69kKzS74YH9J1wyOMNEEKW4zg==}
+  /@graphql-mesh/graphql/0.33.7_graphql@16.6.0:
+    resolution: {integrity: sha512-jc/Wudlx8Hlup06MQULs4ExNZXl0KfTVOjWCbS1fqk44w8MhMKLnG87iuRZzNBEa1Duk1iBWefbDmRlYfYFRyQ==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6860,7 +6860,7 @@ packages:
       '@graphql-mesh/types': 0.89.3_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.21_graphql@16.6.0
-      '@graphql-tools/url-loader': 7.16.28_graphql@16.6.0
+      '@graphql-tools/url-loader': 7.16.29_graphql@16.6.0
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.23_graphql@16.6.0
       graphql: 16.6.0
@@ -6875,8 +6875,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphql-mesh/graphql/0.33.6_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-SD6VUTHkSbFHeRDlxjLGAL0CSsmtPVV21/wF2QUt7/iS2AwuDe/BohDMO7vyA69kKzS74YH9J1wyOMNEEKW4zg==}
+  /@graphql-mesh/graphql/0.33.7_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-jc/Wudlx8Hlup06MQULs4ExNZXl0KfTVOjWCbS1fqk44w8MhMKLnG87iuRZzNBEa1Duk1iBWefbDmRlYfYFRyQ==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6886,7 +6886,7 @@ packages:
       '@graphql-mesh/types': 0.89.3_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.21_graphql@16.6.0
-      '@graphql-tools/url-loader': 7.16.28_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-tools/url-loader': 7.16.29_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.23_graphql@16.6.0
       graphql: 16.6.0
@@ -7646,14 +7646,14 @@ packages:
       - encoding
     dev: true
 
-  /@graphql-tools/executor-http/0.0.7_graphql@16.6.0:
-    resolution: {integrity: sha512-g0NV4HVZVABsylk6SIA/gfjQbMIsy3NjZYW0k0JZmTcp9698J37uG50GZC2mKe0F8pIlDvPLvrPloqdKGX3ZAA==}
+  /@graphql-tools/executor-http/0.0.8_graphql@16.6.0:
+    resolution: {integrity: sha512-Y0WzbBW2dDm68EqjRO7eaCC38H6mNFUCcy8ivwnv0hon/N4GjQJhrR0cApJh/xqn/YqCY0Sn2ScmdGVuSdaCcA==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@repeaterjs/repeater': 3.0.4
-      '@whatwg-node/fetch': 0.5.3
+      '@whatwg-node/fetch': 0.5.4
       dset: 3.1.2
       extract-files: 11.0.0
       graphql: 16.6.0
@@ -7665,14 +7665,14 @@ packages:
       - encoding
     dev: true
 
-  /@graphql-tools/executor-http/0.0.7_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-g0NV4HVZVABsylk6SIA/gfjQbMIsy3NjZYW0k0JZmTcp9698J37uG50GZC2mKe0F8pIlDvPLvrPloqdKGX3ZAA==}
+  /@graphql-tools/executor-http/0.0.8_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-Y0WzbBW2dDm68EqjRO7eaCC38H6mNFUCcy8ivwnv0hon/N4GjQJhrR0cApJh/xqn/YqCY0Sn2ScmdGVuSdaCcA==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@repeaterjs/repeater': 3.0.4
-      '@whatwg-node/fetch': 0.5.3
+      '@whatwg-node/fetch': 0.5.4
       dset: 3.1.2
       extract-files: 11.0.0
       graphql: 16.6.0
@@ -8110,15 +8110,15 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphql-tools/url-loader/7.16.28_graphql@16.6.0:
-    resolution: {integrity: sha512-C3Qmpr5g3aNf7yKbfqSEmNEoPNkY4kpm+K1FyuGQw8N6ZKdq/70VPL8beSfqE1e2CTJua95pLQCpSD9ZsWfUEg==}
+  /@graphql-tools/url-loader/7.16.29_graphql@16.6.0:
+    resolution: {integrity: sha512-e7c0rLH4BIaYxOgglHhWbupTn3JZFXYIHXpY+T1CcTF3nQQCaKy8o59+R2AjtEgx3Az1WNahGn4xgkKUxUwCBw==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@ardatan/sync-fetch': 0.0.1
       '@graphql-tools/delegate': 9.0.21_graphql@16.6.0
       '@graphql-tools/executor-graphql-ws': 0.0.5_graphql@16.6.0
-      '@graphql-tools/executor-http': 0.0.7_graphql@16.6.0
+      '@graphql-tools/executor-http': 0.0.8_graphql@16.6.0
       '@graphql-tools/executor-legacy-ws': 0.0.5_graphql@16.6.0
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.23_graphql@16.6.0
@@ -8136,15 +8136,15 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphql-tools/url-loader/7.16.28_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-C3Qmpr5g3aNf7yKbfqSEmNEoPNkY4kpm+K1FyuGQw8N6ZKdq/70VPL8beSfqE1e2CTJua95pLQCpSD9ZsWfUEg==}
+  /@graphql-tools/url-loader/7.16.29_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-e7c0rLH4BIaYxOgglHhWbupTn3JZFXYIHXpY+T1CcTF3nQQCaKy8o59+R2AjtEgx3Az1WNahGn4xgkKUxUwCBw==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@ardatan/sync-fetch': 0.0.1
       '@graphql-tools/delegate': 9.0.21_graphql@16.6.0
       '@graphql-tools/executor-graphql-ws': 0.0.5_graphql@16.6.0
-      '@graphql-tools/executor-http': 0.0.7_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-tools/executor-http': 0.0.8_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-tools/executor-legacy-ws': 0.0.5_graphql@16.6.0
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.23_graphql@16.6.0
