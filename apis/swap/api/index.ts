@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { DAI, FRAX, MIM, Native, SUSHI, USDC, USDT, WBTC, WNATIVE } from '@sushiswap/currency'
+import { DAI, FRAX, LUSD, MAI, MIM, Native, SUSHI, UNI, USDC, USDT, WBTC, WNATIVE } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
@@ -55,6 +55,9 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     FRAX: FRAX[ChainId.ETHEREUM],
     MIM: MIM[ChainId.ETHEREUM],
     SUSHI: SUSHI[ChainId.ETHEREUM],
+    MAI: MAI[ChainId.ETHEREUM],
+    UNI: UNI[ChainId.ETHEREUM],
+    LUSD: LUSD[ChainId.ETHEREUM],
   },
 } as const
 
