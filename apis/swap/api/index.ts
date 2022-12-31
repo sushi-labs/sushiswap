@@ -44,32 +44,38 @@ class BackCounter {
   }
 }
 
-const SHORT_CURRENCY_NAME_TO_CURRENCY = {
-  ETH: Native.onChain(ChainId.ETHEREUM),
-  WNATIVE: WNATIVE[ChainId.ETHEREUM],
-  WBTC: WBTC[ChainId.ETHEREUM],
-  USDC: USDC[ChainId.ETHEREUM],
-  USDT: USDT[ChainId.ETHEREUM],
-  DAI: DAI[ChainId.ETHEREUM],
-  FRAX: FRAX[ChainId.ETHEREUM],
-  MIM: MIM[ChainId.ETHEREUM],
-  SUSHI: SUSHI[ChainId.ETHEREUM],
+const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
+  [ChainId.ETHEREUM]: {
+    ETH: Native.onChain(ChainId.ETHEREUM),
+    WNATIVE: WNATIVE[ChainId.ETHEREUM],
+    WBTC: WBTC[ChainId.ETHEREUM],
+    USDC: USDC[ChainId.ETHEREUM],
+    USDT: USDT[ChainId.ETHEREUM],
+    DAI: DAI[ChainId.ETHEREUM],
+    FRAX: FRAX[ChainId.ETHEREUM],
+    MIM: MIM[ChainId.ETHEREUM],
+    SUSHI: SUSHI[ChainId.ETHEREUM],
+  },
 } as const
+
+type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
+
+type ShortCurrencyName = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[ShortCurrencyNameChainId]
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   console.log('query', request.query)
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
 
-  // TODO: Dummy tokens
-  // const fromToken = Native.onChain(ChainId.ETHEREUM)
+  const SHORT_CURRENCY_NAME_TO_CURRENCY = CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]
+
   const fromToken =
-    fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
-      ? SHORT_CURRENCY_NAME_TO_CURRENCY[fromTokenId as keyof typeof SHORT_CURRENCY_NAME_TO_CURRENCY]
+    chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
+      ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][fromTokenId as ShortCurrencyName]
       : SUSHI[ChainId.ETHEREUM]
 
   const toToken =
-    toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
-      ? SHORT_CURRENCY_NAME_TO_CURRENCY[toTokenId as keyof typeof SHORT_CURRENCY_NAME_TO_CURRENCY]
+    chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
+      ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][toTokenId as ShortCurrencyName]
       : USDC[ChainId.ETHEREUM]
 
   const backCounter = new BackCounter(4)
