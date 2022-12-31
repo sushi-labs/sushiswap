@@ -20,6 +20,7 @@ export abstract class LiquidityProviderMC {
   multiCallProvider: MultiCallProvider
   chainId: ChainId
   stateId = 0
+  lastUpdateBlock = 0
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
@@ -56,4 +57,9 @@ export abstract class LiquidityProviderMC {
 
   // Stops all network activity
   abstract stopFetchPoolsData(): void
+
+  // returns the last processed block number
+  getLastUpdateBlock(): number {
+    return this.lastUpdateBlock
+  }
 }

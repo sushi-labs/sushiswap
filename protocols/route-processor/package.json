@@ -25,7 +25,8 @@
     "test:coverage": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" hardhat coverage",
     "test:debug": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha --inspect-brk",
     "test:gas": "cross-env REPORT_GAS=true yarn test",
-    "test_render": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha ./test/Rendering.test.ts"
+    "test_render": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha ./test/Rendering.test.ts",
+    "get-deploy-code": "ts-node ./deploy/GetDeployCode.ts"
   },
   "dependencies": {
     "ethereum-multicall": "^2.15.0"

@@ -111,4 +111,18 @@ export class DataFetcher {
     })
     return state
   }
+
+  // returns the last processed by all LP block number
+  getLastUpdateBlock(providers?: LiquidityProviders[]): number {
+    let lastUpdateBlock: number | undefined
+    this.providers.forEach((p) => {
+      if (this._providerIsIncluded(p.getType(), providers)) {
+        const last = p.getLastUpdateBlock()
+        if (last < 0) return
+        if (lastUpdateBlock === undefined) lastUpdateBlock = last
+        else lastUpdateBlock = Math.min(lastUpdateBlock, last)
+      }
+    })
+    return lastUpdateBlock === undefined ? 0 : lastUpdateBlock
+  }
 }
