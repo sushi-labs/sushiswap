@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import { DAI, FRAX, LUSD, MAI, MIM, Native, SUSHI, UNI, USDC, USDT, WBTC, WNATIVE } from '@sushiswap/currency'
+import { DAI, FRAX, LUSD, MAI, MIM, Native, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
@@ -17,6 +17,25 @@ const schema = z.object({
   amount: z.coerce.bigint(),
   to: z.coerce.string(),
 })
+
+export function getAlchemyNetowrkForChainId(chainId: ChainId) {
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      return 'homestead'
+    case ChainId.POLYGON:
+      return 'matic'
+    case ChainId.POLYGON_TESTNET:
+      return 'maticmum'
+    case ChainId.ARBITRUM:
+      return 'arbitrum'
+    case ChainId.OPTIMISM:
+      return 'optimism'
+    case ChainId.GÖRLI:
+      return 'goerli'
+    default:
+      throw new Error(`Unsupported eth alchemy network for ${chainId}`)
+  }
+}
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -46,8 +65,9 @@ class BackCounter {
 
 const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ETHEREUM]: {
-    ETH: Native.onChain(ChainId.ETHEREUM),
-    WNATIVE: WNATIVE[ChainId.ETHEREUM],
+    NATIVE: Native.onChain(ChainId.ETHEREUM),
+    WNATIVE: WETH9[ChainId.ETHEREUM],
+    WETH: WETH9[ChainId.POLYGON],
     WBTC: WBTC[ChainId.ETHEREUM],
     USDC: USDC[ChainId.ETHEREUM],
     USDT: USDT[ChainId.ETHEREUM],
@@ -59,11 +79,27 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     UNI: UNI[ChainId.ETHEREUM],
     LUSD: LUSD[ChainId.ETHEREUM],
   },
+  [ChainId.POLYGON]: {
+    NATIVE: Native.onChain(ChainId.POLYGON),
+    WNATIVE: WNATIVE[ChainId.POLYGON],
+    WETH: WETH9[ChainId.POLYGON],
+    WBTC: WBTC[ChainId.POLYGON],
+    USDC: USDC[ChainId.POLYGON],
+    USDT: USDT[ChainId.POLYGON],
+    DAI: DAI[ChainId.POLYGON],
+    FRAX: FRAX[ChainId.POLYGON],
+    MIM: MIM[ChainId.POLYGON],
+    SUSHI: SUSHI[ChainId.POLYGON],
+    MAI: MAI[ChainId.POLYGON],
+    UNI: UNI[ChainId.POLYGON],
+  },
 } as const
 
 type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
 
 type ShortCurrencyName = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[ShortCurrencyNameChainId]
+
+const backCounter = new BackCounter(4)
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   console.log('query', request.query)
@@ -74,17 +110,15 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const fromToken =
     chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
       ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][fromTokenId as ShortCurrencyName]
-      : SUSHI[ChainId.ETHEREUM]
+      : SUSHI[chainId as ShortCurrencyNameChainId]
 
   const toToken =
     chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
       ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][toTokenId as ShortCurrencyName]
-      : USDC[ChainId.ETHEREUM]
-
-  const backCounter = new BackCounter(4)
+      : USDC[chainId as ShortCurrencyNameChainId]
 
   const dataFetcher = new DataFetcher(
-    new providers.AlchemyProvider('homestead', process.env['ALCHEMY_API_KEY']),
+    new providers.AlchemyProvider(getAlchemyNetowrkForChainId(chainId), process.env['ALCHEMY_API_KEY']),
     chainId
   )
   dataFetcher.startDataFetching()
