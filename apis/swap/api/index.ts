@@ -98,31 +98,19 @@ export function getAlchemyNetowrkForChainId(chainId: ChainId) {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-class BackCounter {
-  start: number
-  current: number
-
-  constructor(start: number) {
-    this.start = start
-    this.current = start
-  }
+class Waiter {
+  resolved = false
 
   async wait() {
-    while (this.current > 0) {
-      console.log(`Wait ${this.current} sec ...`)
-      this.current--
-      await delay(1000)
+    while (!this.resolved) {
+      await delay(500)
     }
   }
 
-  reset(startdiff = 0) {
-    this.start += startdiff
-    if (this.start < 0) this.start = 0
-    this.current = this.start
+  resolve() {
+    this.resolved = true
   }
 }
-
-const backCounter = new BackCounter(2)
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
@@ -149,15 +137,16 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   )
   dataFetcher.startDataFetching()
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const waiter = new Waiter()
   const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
   router.startRouting(() => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.getCurrentRouteHumanString()
     console.log(printed)
-    backCounter.reset(-1)
+    waiter.resolve()
   })
 
-  await backCounter.wait()
+  await waiter.wait()
   router.stopRouting()
   dataFetcher.stopDataFetching()
 
