@@ -140,6 +140,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/route-processor': workspace:*
+      '@sushiswap/router': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@vercel/node': 2.8.2
@@ -155,6 +156,7 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/router': link:../../packages/router
       '@sushiswap/tines': link:../../packages/tines
       '@vercel/node': 2.8.2
       ethereum-multicall: 2.15.0
@@ -2235,8 +2237,8 @@ importers:
       '@graphprotocol/client-cli': 2.2.16_cnwy7duuu7tgtox4og47astedi
       '@graphql-mesh/cache-redis': 0.11.4_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.3.0_graphql@16.6.0
-      '@graphql-mesh/graphql': 0.33.6_yj7ds5aogkvyuxyljhbabepxei
-      '@graphql-mesh/http': 0.3.6_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-mesh/graphql': 0.33.7_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-mesh/http': 0.3.7_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-mesh/json-schema': 0.37.5_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.6_graphql@16.6.0
       '@graphql-mesh/merger-stitching': 0.18.6_graphql@16.6.0
@@ -2555,6 +2557,57 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
+      typescript: 4.9.4
+
+  packages/router:
+    specifiers:
+      '@ethersproject/abi': ^5.7.0
+      '@ethersproject/address': ^5.7.0
+      '@ethersproject/bignumber': ^5.7.0
+      '@ethersproject/solidity': ^5.7.0
+      '@sushiswap/abi': workspace:*
+      '@sushiswap/address': workspace:*
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/math': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node': ^17.0.33
+      eslint: 8.29.0
+      ethereum-multicall: 2.15.0
+      ethers: ^5.7.0
+      tiny-invariant: ^1.2.0
+      tiny-warning: ^1.0.3
+      tsup: 6.5.0
+      typescript: 4.9.4
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/solidity': 5.7.0
+      '@sushiswap/abi': link:../abi
+      '@sushiswap/address': link:../address
+      '@sushiswap/amm': link:../amm
+      '@sushiswap/chain': link:../chain
+      '@sushiswap/currency': link:../currency
+      '@sushiswap/math': link:../math
+      '@sushiswap/tines': link:../tines
+      ethereum-multicall: 2.15.0
+      ethers: 5.7.2
+      tiny-invariant: 1.3.1
+      tiny-warning: 1.0.3
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node': 17.0.45
+      eslint: 8.29.0
+      tsup: 6.5.0_typescript@4.9.4
       typescript: 4.9.4
 
   packages/stargate:
@@ -3279,6 +3332,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1
       '@nomiclabs/hardhat-waffle': 2.0.3
       '@openzeppelin/contracts': 4.8.0
+      '@sushiswap/abi': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
@@ -3287,6 +3341,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/router': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.0
@@ -3326,6 +3381,7 @@ importers:
       '@nomiclabs/hardhat-solhint': 2.0.1_hardhat@2.12.4
       '@nomiclabs/hardhat-waffle': 2.0.3_j66jb2opxz2i6px6qvf6p2stmq
       '@openzeppelin/contracts': 4.8.0
+      '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
@@ -3334,6 +3390,7 @@ importers:
       '@sushiswap/jest-config': link:../../config/jest
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/router': link:../../packages/router
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/typescript-config': link:../../config/typescript
       '@tenderly/hardhat-tenderly': 1.4.1_qvdp3sv3zt6nvy75l5ck5aiq3y
@@ -3690,8 +3747,8 @@ importers:
       '@graphprotocol/client-cli': 2.2.16_j6g4ge4gtnf4g64ywvpaqp6rfm
       '@graphql-mesh/cache-localforage': 0.7.4_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.3.0_graphql@16.6.0
-      '@graphql-mesh/graphql': 0.33.6_graphql@16.6.0
-      '@graphql-mesh/http': 0.3.6_graphql@16.6.0
+      '@graphql-mesh/graphql': 0.33.7_graphql@16.6.0
+      '@graphql-mesh/http': 0.3.7_graphql@16.6.0
       '@graphql-mesh/json-schema': 0.37.5_graphql@16.6.0
       '@graphql-mesh/merger-bare': 0.16.6_graphql@16.6.0
       '@graphql-mesh/merger-stitching': 0.18.6_graphql@16.6.0
@@ -6795,8 +6852,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@graphql-mesh/graphql/0.33.6_graphql@16.6.0:
-    resolution: {integrity: sha512-SD6VUTHkSbFHeRDlxjLGAL0CSsmtPVV21/wF2QUt7/iS2AwuDe/BohDMO7vyA69kKzS74YH9J1wyOMNEEKW4zg==}
+  /@graphql-mesh/graphql/0.33.7_graphql@16.6.0:
+    resolution: {integrity: sha512-jc/Wudlx8Hlup06MQULs4ExNZXl0KfTVOjWCbS1fqk44w8MhMKLnG87iuRZzNBEa1Duk1iBWefbDmRlYfYFRyQ==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6806,7 +6863,7 @@ packages:
       '@graphql-mesh/types': 0.89.3_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.21_graphql@16.6.0
-      '@graphql-tools/url-loader': 7.16.28_graphql@16.6.0
+      '@graphql-tools/url-loader': 7.16.29_graphql@16.6.0
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.23_graphql@16.6.0
       graphql: 16.6.0
@@ -6821,8 +6878,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphql-mesh/graphql/0.33.6_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-SD6VUTHkSbFHeRDlxjLGAL0CSsmtPVV21/wF2QUt7/iS2AwuDe/BohDMO7vyA69kKzS74YH9J1wyOMNEEKW4zg==}
+  /@graphql-mesh/graphql/0.33.7_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-jc/Wudlx8Hlup06MQULs4ExNZXl0KfTVOjWCbS1fqk44w8MhMKLnG87iuRZzNBEa1Duk1iBWefbDmRlYfYFRyQ==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6832,7 +6889,7 @@ packages:
       '@graphql-mesh/types': 0.89.3_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
       '@graphql-tools/delegate': 9.0.21_graphql@16.6.0
-      '@graphql-tools/url-loader': 7.16.28_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-tools/url-loader': 7.16.29_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.23_graphql@16.6.0
       graphql: 16.6.0
@@ -6939,8 +6996,8 @@ packages:
       - react-native-windows
     dev: false
 
-  /@graphql-mesh/http/0.3.6_graphql@16.6.0:
-    resolution: {integrity: sha512-tD/zM5ds4ScfgGJQx7JbexTmjLQPd9NVH5BN+U+0k4CjCDnQZZEhRmeWw8iez2lpxT4AdG0jDtonztcTIWiCJA==}
+  /@graphql-mesh/http/0.3.7_graphql@16.6.0:
+    resolution: {integrity: sha512-glkDRF6SIBtKWAhsDpCaHfYuAZlUF/T8aQnWltri3dC7UvFoOSNEn4g4NxfvavpNj0evWNOrMLt+DjqXwxEx9Q==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6950,7 +7007,7 @@ packages:
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
       '@whatwg-node/router': 0.0.3
       graphql: 16.6.0
-      graphql-yoga: 3.2.0_graphql@16.6.0
+      graphql-yoga: 3.2.1_graphql@16.6.0
       itty-router-extras: 0.4.2
       tslib: 2.4.1
     transitivePeerDependencies:
@@ -6960,8 +7017,8 @@ packages:
       - react-native-windows
     dev: true
 
-  /@graphql-mesh/http/0.3.6_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-tD/zM5ds4ScfgGJQx7JbexTmjLQPd9NVH5BN+U+0k4CjCDnQZZEhRmeWw8iez2lpxT4AdG0jDtonztcTIWiCJA==}
+  /@graphql-mesh/http/0.3.7_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-glkDRF6SIBtKWAhsDpCaHfYuAZlUF/T8aQnWltri3dC7UvFoOSNEn4g4NxfvavpNj0evWNOrMLt+DjqXwxEx9Q==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -6971,7 +7028,7 @@ packages:
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
       '@whatwg-node/router': 0.0.3_@types+node@16.18.11
       graphql: 16.6.0
-      graphql-yoga: 3.2.0_yj7ds5aogkvyuxyljhbabepxei
+      graphql-yoga: 3.2.1_yj7ds5aogkvyuxyljhbabepxei
       itty-router-extras: 0.4.2
       tslib: 2.4.1
     transitivePeerDependencies:
@@ -7592,14 +7649,14 @@ packages:
       - encoding
     dev: true
 
-  /@graphql-tools/executor-http/0.0.7_graphql@16.6.0:
-    resolution: {integrity: sha512-g0NV4HVZVABsylk6SIA/gfjQbMIsy3NjZYW0k0JZmTcp9698J37uG50GZC2mKe0F8pIlDvPLvrPloqdKGX3ZAA==}
+  /@graphql-tools/executor-http/0.0.8_graphql@16.6.0:
+    resolution: {integrity: sha512-Y0WzbBW2dDm68EqjRO7eaCC38H6mNFUCcy8ivwnv0hon/N4GjQJhrR0cApJh/xqn/YqCY0Sn2ScmdGVuSdaCcA==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@repeaterjs/repeater': 3.0.4
-      '@whatwg-node/fetch': 0.5.3
+      '@whatwg-node/fetch': 0.5.4
       dset: 3.1.2
       extract-files: 11.0.0
       graphql: 16.6.0
@@ -7611,14 +7668,14 @@ packages:
       - encoding
     dev: true
 
-  /@graphql-tools/executor-http/0.0.7_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-g0NV4HVZVABsylk6SIA/gfjQbMIsy3NjZYW0k0JZmTcp9698J37uG50GZC2mKe0F8pIlDvPLvrPloqdKGX3ZAA==}
+  /@graphql-tools/executor-http/0.0.8_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-Y0WzbBW2dDm68EqjRO7eaCC38H6mNFUCcy8ivwnv0hon/N4GjQJhrR0cApJh/xqn/YqCY0Sn2ScmdGVuSdaCcA==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@repeaterjs/repeater': 3.0.4
-      '@whatwg-node/fetch': 0.5.3
+      '@whatwg-node/fetch': 0.5.4
       dset: 3.1.2
       extract-files: 11.0.0
       graphql: 16.6.0
@@ -8056,15 +8113,15 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphql-tools/url-loader/7.16.28_graphql@16.6.0:
-    resolution: {integrity: sha512-C3Qmpr5g3aNf7yKbfqSEmNEoPNkY4kpm+K1FyuGQw8N6ZKdq/70VPL8beSfqE1e2CTJua95pLQCpSD9ZsWfUEg==}
+  /@graphql-tools/url-loader/7.16.29_graphql@16.6.0:
+    resolution: {integrity: sha512-e7c0rLH4BIaYxOgglHhWbupTn3JZFXYIHXpY+T1CcTF3nQQCaKy8o59+R2AjtEgx3Az1WNahGn4xgkKUxUwCBw==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@ardatan/sync-fetch': 0.0.1
       '@graphql-tools/delegate': 9.0.21_graphql@16.6.0
       '@graphql-tools/executor-graphql-ws': 0.0.5_graphql@16.6.0
-      '@graphql-tools/executor-http': 0.0.7_graphql@16.6.0
+      '@graphql-tools/executor-http': 0.0.8_graphql@16.6.0
       '@graphql-tools/executor-legacy-ws': 0.0.5_graphql@16.6.0
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.23_graphql@16.6.0
@@ -8082,15 +8139,15 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphql-tools/url-loader/7.16.28_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-C3Qmpr5g3aNf7yKbfqSEmNEoPNkY4kpm+K1FyuGQw8N6ZKdq/70VPL8beSfqE1e2CTJua95pLQCpSD9ZsWfUEg==}
+  /@graphql-tools/url-loader/7.16.29_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-e7c0rLH4BIaYxOgglHhWbupTn3JZFXYIHXpY+T1CcTF3nQQCaKy8o59+R2AjtEgx3Az1WNahGn4xgkKUxUwCBw==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
       '@ardatan/sync-fetch': 0.0.1
       '@graphql-tools/delegate': 9.0.21_graphql@16.6.0
       '@graphql-tools/executor-graphql-ws': 0.0.5_graphql@16.6.0
-      '@graphql-tools/executor-http': 0.0.7_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-tools/executor-http': 0.0.8_yj7ds5aogkvyuxyljhbabepxei
       '@graphql-tools/executor-legacy-ws': 0.0.5_graphql@16.6.0
       '@graphql-tools/utils': 9.1.3_graphql@16.6.0
       '@graphql-tools/wrap': 9.2.23_graphql@16.6.0
@@ -19370,8 +19427,8 @@ packages:
       - encoding
     dev: false
 
-  /graphql-yoga/3.2.0_graphql@16.6.0:
-    resolution: {integrity: sha512-H2cxyCLLDu5S9+HPWzaBaqPAiHFWpUEbLR/jwlO274d0Moq8gi5OPMK5GUNNBuZhG6SuV9tGYRnAHs8N+hSbZA==}
+  /graphql-yoga/3.2.1_graphql@16.6.0:
+    resolution: {integrity: sha512-s2Df2Rr6EqYKqG0FhFscX81wbDqHpA1O9RYsAixOGKj9Ylzd31lf7Y+kEPdPiSj+p3frlwCdB7/gNRKe7GSrMw==}
     peerDependencies:
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
@@ -19392,8 +19449,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-yoga/3.2.0_yj7ds5aogkvyuxyljhbabepxei:
-    resolution: {integrity: sha512-H2cxyCLLDu5S9+HPWzaBaqPAiHFWpUEbLR/jwlO274d0Moq8gi5OPMK5GUNNBuZhG6SuV9tGYRnAHs8N+hSbZA==}
+  /graphql-yoga/3.2.1_yj7ds5aogkvyuxyljhbabepxei:
+    resolution: {integrity: sha512-s2Df2Rr6EqYKqG0FhFscX81wbDqHpA1O9RYsAixOGKj9Ylzd31lf7Y+kEPdPiSj+p3frlwCdB7/gNRKe7GSrMw==}
     peerDependencies:
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
