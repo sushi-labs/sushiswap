@@ -8,6 +8,7 @@ import {
   Native,
   nativeCurrencyIds,
   SUSHI,
+  Token,
   UNI,
   USDC,
   USDT,
@@ -18,7 +19,12 @@ import {
 import { DataFetcher, Router } from '@sushiswap/router'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
+import { getAddress } from 'ethers/lib/utils'
+import { RequestInfo, RequestInit } from 'node-fetch'
 import { z } from 'zod'
+
+const fetch = (url: RequestInfo, init?: RequestInit) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(url, init))
 
 const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ETHEREUM]: {
@@ -112,24 +118,51 @@ class Waiter {
   }
 }
 
+const tokenSchema = z.object({
+  // chainId: z.coerce
+  //   .number()
+  //   .int()
+  //   .gte(0)
+  //   .lte(2 ** 256),
+  address: z.coerce.string(),
+  symbol: z.string(),
+  name: z.string(),
+  decimals: z.coerce.number().int().gte(0),
+})
+
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
 
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
 
+  const isShortNameSupported = chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
+
   const SHORT_CURRENCY_NAME_TO_CURRENCY = CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]
 
-  const fromToken =
-    chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
-      ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][fromTokenId as ShortCurrencyName]
-      : CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][
-          nativeCurrencyIds[chainId as ShortCurrencyNameChainId] as ShortCurrencyName
-        ]
+  const fromTokenIdIsShortName = fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
+  const toTokenIdIsShortName = toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
 
+  // Limited to predefined short names and tokens from our db for now
+  const fromToken =
+    isShortNameSupported && fromTokenIdIsShortName
+      ? SHORT_CURRENCY_NAME_TO_CURRENCY[fromTokenId as ShortCurrencyName]
+      : new Token({
+          chainId,
+          ...tokenSchema.parse(
+            await (await fetch(`https://tokens.sushi.com/v0/${chainId}/${getAddress(fromTokenId)}`)).json()
+          ),
+        })
+
+  // Limited to predefined short names and tokens from our db for now
   const toToken =
-    chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
-      ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][toTokenId as ShortCurrencyName]
-      : CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]['USDC']
+    isShortNameSupported && toTokenIdIsShortName
+      ? SHORT_CURRENCY_NAME_TO_CURRENCY[toTokenId as ShortCurrencyName]
+      : new Token({
+          chainId,
+          ...tokenSchema.parse(
+            await (await fetch(`https://tokens.sushi.com/v0/${chainId}/${getAddress(toTokenId)}`)).json()
+          ),
+        })
 
   const dataFetcher = new DataFetcher(
     new providers.AlchemyProvider(getAlchemyNetowrkForChainId(chainId), process.env['ALCHEMY_API_KEY']),
@@ -153,18 +186,24 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const bestRoute = router.getBestRoute()
 
   return response.status(200).json({
-    currentRouteHumanArray: router.getCurrentRouteHumanArray(),
-    currentRoute: {
+    getCurrentRouteHumanArray: router.getCurrentRouteHumanArray(),
+    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
+    getBestRoute: {
       status: bestRoute?.status,
+      fromToken: bestRoute?.fromToken,
+      toToken: bestRoute?.toToken,
       primaryPrice: bestRoute?.primaryPrice,
       swapPrice: bestRoute?.swapPrice,
       amountIn: bestRoute?.amountIn,
+      amountInBN: bestRoute?.amountInBN.toString(),
       amountOut: bestRoute?.amountOut,
+      amountOutBN: bestRoute?.amountOutBN.toString(),
       priceImpact: bestRoute?.priceImpact,
       totalAmountOut: bestRoute?.totalAmountOut,
+      totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
       gasSpent: bestRoute?.gasSpent,
     },
-    currentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0000000000000000000000000000000000000000'),
+    getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0000000000000000000000000000000000000000'),
   })
 }
 
