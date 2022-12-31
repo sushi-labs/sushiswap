@@ -24,7 +24,8 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ETHEREUM]: {
     NATIVE: Native.onChain(ChainId.ETHEREUM),
     WNATIVE: WETH9[ChainId.ETHEREUM],
-    WETH: WETH9[ChainId.POLYGON],
+    ETH: Native.onChain(ChainId.ETHEREUM),
+    WETH: WETH9[ChainId.ETHEREUM],
     WBTC: WBTC[ChainId.ETHEREUM],
     USDC: USDC[ChainId.ETHEREUM],
     USDT: USDT[ChainId.ETHEREUM],
@@ -39,6 +40,8 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.POLYGON]: {
     NATIVE: Native.onChain(ChainId.POLYGON),
     WNATIVE: WNATIVE[ChainId.POLYGON],
+    MATIC: Native.onChain(ChainId.POLYGON),
+    WMATIC: WNATIVE[ChainId.POLYGON],
     WETH: WETH9[ChainId.POLYGON],
     WBTC: WBTC[ChainId.POLYGON],
     USDC: USDC[ChainId.POLYGON],
@@ -63,11 +66,15 @@ const schema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM),
-  fromTokenId: z.coerce.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
-  toTokenId: z.coerce.string().default('SUSHI'),
+  fromTokenId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
+  toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
-  amount: z.coerce.bigint(),
-  to: z.coerce.string(),
+  amount: z.coerce.bigint({
+    invalid_type_error: 'amount must be a string',
+    required_error: 'amount is required',
+    description: 'amount',
+  }),
+  to: z.string(),
 })
 
 export function getAlchemyNetowrkForChainId(chainId: ChainId) {
@@ -127,7 +134,9 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const fromToken =
     chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
       ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][fromTokenId as ShortCurrencyName]
-      : CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]['NATIVE']
+      : CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][
+          nativeCurrencyIds[chainId as ShortCurrencyNameChainId] as ShortCurrencyName
+        ]
 
   const toToken =
     chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
