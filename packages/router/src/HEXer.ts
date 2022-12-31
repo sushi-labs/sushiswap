@@ -11,6 +11,11 @@ export class HEXer {
     return this.hex
   }
   toString0x() {
+    // for backwards compatibility for now
+    return this.toHexString()
+  }
+
+  toHexString() {
     return '0x' + this.hex
   }
 
