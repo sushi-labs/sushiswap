@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-// ✅ Do this if using TYPESCRIPT
 import { RequestInfo, RequestInit } from 'node-fetch'
 import { z } from 'zod'
 
