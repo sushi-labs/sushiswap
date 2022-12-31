@@ -178,6 +178,26 @@ export class Router {
       return this.routeToHumanString(this.currentBestRoute, this.fromToken, this.toToken, shiftPrimary, shiftSub)
     }
   }
+
+  getCurrentRouteHumanArray(): string[] | void {
+    if (this.currentBestRoute !== undefined) {
+      const poolCodesMap = this.dataFetcher.getCurrentPoolCodeMap()
+      return [
+        `Route Status: ${this.currentBestRoute.status}`,
+        `Input: ${this.currentBestRoute.amountIn / Math.pow(10, this.fromToken.decimals)} ${this.fromToken.symbol}`,
+        ...this.currentBestRoute.legs.map((l, i) => {
+          return (
+            `${i + 1}. ${l.tokenFrom.symbol} ${Math.round(l.absolutePortion * 100)}%` +
+            ` -> [${poolCodesMap.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.symbol}`
+          )
+        }),
+        `Output: ${parseInt(this.currentBestRoute.amountOutBN.toString()) / Math.pow(10, this.toToken.decimals)} ${
+          this.toToken.name
+        }`,
+        `Price Impact: ${this.currentBestRoute.priceImpact}%`,
+      ]
+    }
+  }
 }
 
 export function tokenQuantityString(token: Type, amount: BigNumber) {

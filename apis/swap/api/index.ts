@@ -153,8 +153,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const bestRoute = router.getBestRoute()
 
   return response.status(200).json({
-    currentRouteHumanString: router.getCurrentRouteHumanString(),
-    currentRouteData: {
+    currentRouteHuman: router.getCurrentRouteHumanArray(),
+    currentRoute: {
       status: bestRoute?.status,
       primaryPrice: bestRoute?.primaryPrice,
       swapPrice: bestRoute?.swapPrice,
