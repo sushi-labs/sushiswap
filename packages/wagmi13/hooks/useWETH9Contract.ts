@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Address, useContract, useProvider } from 'wagmi'
 
@@ -8,7 +9,7 @@ export const getWETH9ContractConfig = (chainId: number | undefined) => ({
   abi: WETH9_ABI,
 })
 
-export function useWETH9Contract(chainId: keyof typeof WNATIVE_ADDRESS | undefined) {
+export function useWETH9Contract(chainId: ChainId | undefined) {
   return useContract({
     ...getWETH9ContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),

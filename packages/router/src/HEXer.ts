@@ -10,6 +10,7 @@ export class HEXer {
   toString() {
     return this.hex
   }
+
   toString0x() {
     // for backwards compatibility for now
     return this.toHexString()

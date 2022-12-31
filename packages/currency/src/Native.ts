@@ -17,9 +17,8 @@ export class Native extends Currency {
     this.name = native.name
   }
   public get wrapped(): Token {
-    const wnative = WNATIVE[this.chainId]
-    invariant(!!wnative, 'WRAPPED')
-    return wnative
+    invariant(!(this.chainId in WNATIVE), 'WRAPPED')
+    return WNATIVE[this.chainId as keyof typeof WNATIVE]
   }
 
   private static cache: Record<number, Native> = {}
