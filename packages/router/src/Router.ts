@@ -184,17 +184,19 @@ export class Router {
       const poolCodesMap = this.dataFetcher.getCurrentPoolCodeMap()
       return [
         `Route Status: ${this.currentBestRoute.status}`,
-        `Input: ${this.currentBestRoute.amountIn / Math.pow(10, this.fromToken.decimals)} ${this.fromToken.symbol}`,
+        `Input: ${this.currentBestRoute.amountInBN.div(BigNumber.from(10).pow(this.fromToken.decimals))} ${
+          this.fromToken.symbol
+        }`,
         ...this.currentBestRoute.legs.map((l, i) => {
           return (
             `${i + 1}. ${l.tokenFrom.symbol} ${Math.round(l.absolutePortion * 100)}%` +
             ` -> [${poolCodesMap.get(l.poolAddress)?.poolName}] -> ${l.tokenTo.symbol}`
           )
         }),
-        `Output: ${parseInt(this.currentBestRoute.amountOutBN.toString()) / Math.pow(10, this.toToken.decimals)} ${
+        `Output: ${this.currentBestRoute.amountOutBN.div(BigNumber.from(10).pow(this.toToken.decimals))} ${
           this.toToken.name
         }`,
-        `Price Impact: ${this.currentBestRoute.priceImpact}%`,
+        `Price Impact: ${this.currentBestRoute.priceImpact?.toFixed(2)}%`,
       ]
     }
   }
