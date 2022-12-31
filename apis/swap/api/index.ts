@@ -1,89 +1,170 @@
 import { ChainId } from '@sushiswap/chain'
-import { Native, USDC } from '@sushiswap/currency'
+import {
+  DAI,
+  FRAX,
+  LUSD,
+  MAI,
+  MIM,
+  Native,
+  nativeCurrencyIds,
+  SUSHI,
+  UNI,
+  USDC,
+  USDT,
+  WBTC,
+  WETH9,
+  WNATIVE,
+} from '@sushiswap/currency'
+import { DataFetcher, Router } from '@sushiswap/router'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
 import { z } from 'zod'
 
-import { DataFetcher } from '../scripts/DataFetcher'
-import { Router } from '../scripts/Router'
+const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
+  [ChainId.ETHEREUM]: {
+    NATIVE: Native.onChain(ChainId.ETHEREUM),
+    WNATIVE: WETH9[ChainId.ETHEREUM],
+    ETH: Native.onChain(ChainId.ETHEREUM),
+    WETH: WETH9[ChainId.ETHEREUM],
+    WBTC: WBTC[ChainId.ETHEREUM],
+    USDC: USDC[ChainId.ETHEREUM],
+    USDT: USDT[ChainId.ETHEREUM],
+    DAI: DAI[ChainId.ETHEREUM],
+    FRAX: FRAX[ChainId.ETHEREUM],
+    MIM: MIM[ChainId.ETHEREUM],
+    SUSHI: SUSHI[ChainId.ETHEREUM],
+    MAI: MAI[ChainId.ETHEREUM],
+    UNI: UNI[ChainId.ETHEREUM],
+    LUSD: LUSD[ChainId.ETHEREUM],
+  },
+  [ChainId.POLYGON]: {
+    NATIVE: Native.onChain(ChainId.POLYGON),
+    WNATIVE: WNATIVE[ChainId.POLYGON],
+    MATIC: Native.onChain(ChainId.POLYGON),
+    WMATIC: WNATIVE[ChainId.POLYGON],
+    WETH: WETH9[ChainId.POLYGON],
+    WBTC: WBTC[ChainId.POLYGON],
+    USDC: USDC[ChainId.POLYGON],
+    USDT: USDT[ChainId.POLYGON],
+    DAI: DAI[ChainId.POLYGON],
+    FRAX: FRAX[ChainId.POLYGON],
+    MIM: MIM[ChainId.POLYGON],
+    SUSHI: SUSHI[ChainId.POLYGON],
+    MAI: MAI[ChainId.POLYGON],
+    UNI: UNI[ChainId.POLYGON],
+  },
+} as const
+
+type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
+
+type ShortCurrencyName = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[ShortCurrencyNameChainId]
 
 const schema = z.object({
   chainId: z.coerce
     .number()
     .int()
     .gte(0)
-    .lte(2 ** 256),
-  fromToken: z.coerce.string(),
-  toToken: z.coerce.string(),
-  gasPrice: z.coerce.number().int().gte(0),
-  amount: z.coerce.number().int().gte(0),
+    .lte(2 ** 256)
+    .default(ChainId.ETHEREUM),
+  fromTokenId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
+  toTokenId: z.string().default('SUSHI'),
+  gasPrice: z.coerce.number().int().gte(1),
+  amount: z.coerce.bigint({
+    invalid_type_error: 'amount must be a string',
+    required_error: 'amount is required',
+    description: 'amount',
+  }),
+  to: z.string(),
 })
+
+export function getAlchemyNetowrkForChainId(chainId: ChainId) {
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      return 'homestead'
+    case ChainId.POLYGON:
+      return 'matic'
+    case ChainId.POLYGON_TESTNET:
+      return 'maticmum'
+    case ChainId.ARBITRUM:
+      return 'arbitrum'
+    case ChainId.OPTIMISM:
+      return 'optimism'
+    case ChainId.GÖRLI:
+      return 'goerli'
+    default:
+      throw new Error(`Unsupported eth alchemy network for ${chainId}`)
+  }
+}
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
-class BackCounter {
-  start: number
-  current: number
-
-  constructor(start: number) {
-    this.start = start
-    this.current = start
-  }
+class Waiter {
+  resolved = false
 
   async wait() {
-    while (this.current > 0) {
-      console.log(`Wait ${this.current} sec ...`)
-      this.current--
-      await delay(1000)
+    while (!this.resolved) {
+      await delay(500)
     }
   }
 
-  reset(startdiff = 0) {
-    this.start += startdiff
-    if (this.start < 0) this.start = 0
-    this.current = this.start
+  resolve() {
+    this.resolved = true
   }
 }
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  console.log('query', request.query)
-  const {
-    chainId,
-    // fromToken,
-    // toToken,
-    amount,
-    // gasPrice
-  } = schema.parse(request.query)
+  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
 
-  // TODO: Dummy tokens
-  const fromToken = Native.onChain(ChainId.ETHEREUM)
-  const toToken = USDC[ChainId.ETHEREUM]
+  // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
 
-  const backCounter = new BackCounter(4)
+  const SHORT_CURRENCY_NAME_TO_CURRENCY = CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]
+
+  const fromToken =
+    chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && fromTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
+      ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][fromTokenId as ShortCurrencyName]
+      : CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][
+          nativeCurrencyIds[chainId as ShortCurrencyNameChainId] as ShortCurrencyName
+        ]
+
+  const toToken =
+    chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY && toTokenId in SHORT_CURRENCY_NAME_TO_CURRENCY
+      ? CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId][toTokenId as ShortCurrencyName]
+      : CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[chainId as ShortCurrencyNameChainId]['USDC']
 
   const dataFetcher = new DataFetcher(
-    new providers.AlchemyProvider('homestead', process.env['ALCHEMY_API_KEY']),
+    new providers.AlchemyProvider(getAlchemyNetowrkForChainId(chainId), process.env['ALCHEMY_API_KEY']),
     chainId
   )
   dataFetcher.startDataFetching()
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
-  const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, 30e9)
+  const waiter = new Waiter()
+  const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
   router.startRouting(() => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.getCurrentRouteHumanString()
     console.log(printed)
-    backCounter.reset(-1)
+    waiter.resolve()
   })
 
-  await backCounter.wait()
+  await waiter.wait()
   router.stopRouting()
   dataFetcher.stopDataFetching()
 
+  const bestRoute = router.getBestRoute()
+
   return response.status(200).json({
-    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
-    // TODO: Dummy addresses
-    getCurrentRouteRPParams: router.getCurrentRouteRPParams('0x0', '0x0'),
-    getBestRoute: router.getBestRoute(),
+    currentRouteHumanArray: router.getCurrentRouteHumanArray(),
+    currentRoute: {
+      status: bestRoute?.status,
+      primaryPrice: bestRoute?.primaryPrice,
+      swapPrice: bestRoute?.swapPrice,
+      amountIn: bestRoute?.amountIn,
+      amountOut: bestRoute?.amountOut,
+      priceImpact: bestRoute?.priceImpact,
+      totalAmountOut: bestRoute?.totalAmountOut,
+      gasSpent: bestRoute?.gasSpent,
+    },
+    currentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0000000000000000000000000000000000000000'),
   })
 }
 

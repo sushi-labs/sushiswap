@@ -14,6 +14,12 @@ https://pnpm.io/installation
 
 `pnpm exec turbo run dev --filter=swap`
 
+#### Vercel APIs
+
+These need to be run from their own folder at the moment in development.
+
+`pnpm exec vercel dev`
+
 ### Build
 
 `pnpm run build`

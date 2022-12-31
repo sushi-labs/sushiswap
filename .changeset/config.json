@@ -23,6 +23,7 @@
     "next-13-example",
     "node-16-example",
     "node-18-esm-example",
+    "@sushiswap/balances-api",
     "@sushiswap/farm-api",
     "@sushiswap/tokens-api",
     "@sushiswap/swap-api",

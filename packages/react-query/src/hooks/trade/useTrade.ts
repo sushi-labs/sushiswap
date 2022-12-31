@@ -2,10 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { Amount, Native, Price, Type } from '@sushiswap/currency'
 import { ChainId } from '@sushiswap/chain'
 import { Trade } from './types'
-import { useCallback } from 'react'
 import { usePrices } from '../usePrices'
 import { Fraction, Percent } from '@sushiswap/math'
-import { calculateSlippageAmount } from '../../../../exchange/dist'
+import { calculateSlippageAmount } from '@sushiswap/amm'
 
 interface UseTradeReturn {
   swapPrice: Price<Type, Type> | undefined

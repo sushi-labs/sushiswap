@@ -25,7 +25,8 @@
     "test:coverage": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" hardhat coverage",
     "test:debug": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha --inspect-brk",
     "test:gas": "cross-env REPORT_GAS=true yarn test",
-    "test_render": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha ./test/Rendering.test.ts"
+    "test_render": "cross-env TS_NODE_TRANSPILE_ONLY=1 mocha ./test/Rendering.test.ts",
+    "get-deploy-code": "ts-node ./deploy/GetDeployCode.ts"
   },
   "dependencies": {
     "ethereum-multicall": "^2.15.0"
@@ -37,6 +38,7 @@
     "@nomiclabs/hardhat-solhint": "2.0.1",
     "@nomiclabs/hardhat-waffle": "2.0.3",
     "@openzeppelin/contracts": "4.8.0",
+    "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
@@ -45,6 +47,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@tenderly/hardhat-tenderly": "^1.0.0",
