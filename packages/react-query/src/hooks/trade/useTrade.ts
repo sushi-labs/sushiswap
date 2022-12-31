@@ -38,7 +38,7 @@ const _hydrate = (
 ): UseTradeReturn => {
   if (!data || !amount) return INITIAL_DATA
 
-  const amountOut = Amount.fromRawAmount(toToken, Math.floor(data.getBestRoute.totalAmountOut))
+  const amountOut = Amount.fromRawAmount(toToken, data.getBestRoute.totalAmountOutBN.hex)
   const minAmountOut = Amount.fromRawAmount(
     toToken,
     calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
@@ -70,7 +70,7 @@ export const useTrade = (variables: UseTrade) => {
           fromToken.isNative ? 'ETH' : fromToken.wrapped.address
         }&toToken=${
           toToken.isNative ? 'ETH' : toToken.wrapped.address
-        }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}`
+        }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}&to=0x8f54C8c2df62c94772ac14CcFc85603742976312`
       ).then((res) => res.json()),
     {
       staleTime: 2000,
