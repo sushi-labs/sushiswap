@@ -4,6 +4,7 @@ import React from 'react'
 import { SwapProvider } from '../ui/TradeProvider'
 import { TradeReviewDialog } from '../ui/TradeReviewDialog'
 import { TradeStats } from '../ui/TradeStats'
+import { TradeRoute } from '../ui/TradeRoute'
 import { SwapButton } from '../ui/widget/SwapButton'
 import { Widget } from '../ui/widget/Widget'
 
@@ -15,6 +16,7 @@ export default function Page() {
         <TradeStats />
         <SwapButton />
         <TradeReviewDialog />
+        <TradeRoute />
       </Container>
     </SwapProvider>
   )

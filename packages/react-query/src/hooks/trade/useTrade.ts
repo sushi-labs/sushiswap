@@ -12,6 +12,7 @@ interface UseTradeReturn {
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
+  route: string[]
 }
 
 const INITIAL_DATA: UseTradeReturn = {
@@ -20,6 +21,7 @@ const INITIAL_DATA: UseTradeReturn = {
   amountOut: undefined,
   minAmountOut: undefined,
   gasSpent: undefined,
+  route: [],
 }
 
 interface UseTrade {
@@ -55,6 +57,7 @@ const _hydrate = (
     amountOut,
     minAmountOut,
     gasSpent,
+    route: data.getCurrentRouteHumanArray,
   }
 }
 

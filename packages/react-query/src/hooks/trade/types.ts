@@ -1,5 +1,6 @@
 export interface Trade {
   getCurrentRouteHumanString: string
+  getCurrentRouteHumanArray: string[]
   getBestRoute: GetBestRoute
 }
 
