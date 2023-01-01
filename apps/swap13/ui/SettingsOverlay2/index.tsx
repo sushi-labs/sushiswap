@@ -1,4 +1,4 @@
-import { CogIcon } from '@heroicons/react/24/outline'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { List } from '@sushiswap/ui13/components/list/List'
 import React, { FC, useState } from 'react'
@@ -23,7 +23,7 @@ export const SettingsOverlay2: FC<SettingsOverlayProps> = ({ modules }) => {
 
   return (
     <>
-      <CogIcon
+      <Cog6ToothIcon
         onClick={() => setOpen(true)}
         width={26}
         height={26}
