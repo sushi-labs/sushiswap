@@ -65,20 +65,21 @@ export const useTrade = (variables: UseTrade) => {
   const { chainId, fromToken, toToken, amount, gasPrice = 50 } = variables
   const { data: prices } = usePrices({ chainId })
 
+  // Making first 'unknown' here 'Trade' solves the cast in select
   return useQuery<unknown, unknown, UseTradeReturn>(
     ['getTrade', { chainId, fromToken, toToken, amount, gasPrice }],
     () =>
       fetch(
         `https://swap.sushi.com/?chainId=${chainId}&fromTokenId=${
-          fromToken.isNative ? 'ETH' : fromToken.wrapped.address
+          fromToken.isNative ? 'NATIVE' : fromToken.wrapped.address
         }&toTokenId=${
-          toToken.isNative ? 'ETH' : toToken.wrapped.address
+          toToken.isNative ? 'NATIVE' : toToken.wrapped.address
         }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}&to=0x8f54C8c2df62c94772ac14CcFc85603742976312`
       ).then((res) => res.json()),
     {
-      refetchInterval: 12000,
-      staleTime: 0,
-      keepPreviousData: false,
+      // refetchInterval: 12000,
+      // staleTime: 0,
+      // keepPreviousData: false,
       initialData: INITIAL_DATA,
       enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice),
       select: (data) => _hydrate(variables, prices, data as Trade),

@@ -130,12 +130,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({
     recipient: undefined,
     appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
     token0: Native.onChain(fromChainId ? Number(fromChainId) : ChainId.ETHEREUM),
-    token1: SUSHI[fromChainId ? Number(fromChainId) : ChainId.ETHEREUM],
+    token1: SUSHI[toChainId ? Number(toChainId) : ChainId.ETHEREUM],
     network0: fromChainId ? Number(fromChainId) : ChainId.ETHEREUM,
     network1: toChainId ? Number(toChainId) : ChainId.ETHEREUM,
     value: amount ? amount : '',
     valueAsAmount: undefined,
   })
+  
 
   const api = useMemo(() => {
     const setNetwork0 = (chainId: ChainId) => dispatch({ type: 'setNetwork0', chainId })
