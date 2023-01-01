@@ -111,18 +111,22 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
 
 interface SwapProviderProps {
   children: ReactNode
+  params: { fromChainId: string; toChainId: string; fromCurrencyId: string; toCurrencyId: string }
 }
 
-export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
+export const SwapProvider: FC<SwapProviderProps> = ({
+  children,
+  params: { fromChainId, toChainId, fromCurrencyId, toCurrencyId },
+}) => {
   const { address } = useAccount()
   const [state, dispatch] = useReducer(reducer, {
     review: false,
     recipient: undefined,
-    appType: AppType.Swap,
-    token0: Native.onChain(ChainId.ETHEREUM),
-    token1: SUSHI[ChainId.ETHEREUM],
-    network0: ChainId.ETHEREUM,
-    network1: ChainId.ETHEREUM,
+    appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
+    token0: Native.onChain(fromChainId ? Number(fromChainId) : ChainId.ETHEREUM),
+    token1: SUSHI[fromChainId ? Number(fromChainId) : ChainId.ETHEREUM],
+    network0: Number(fromChainId),
+    network1: Number(toChainId),
     value: '',
     valueAsAmount: undefined,
   })
