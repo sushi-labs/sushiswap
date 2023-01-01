@@ -17,7 +17,6 @@ import {
   XSUSHI_ADDRESS,
 } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
-import { Token } from '@sushiswap/currency'
 import {
   APE,
   BCT,
@@ -36,6 +35,7 @@ import {
   renBTC,
   sETH2,
   SUSHI,
+  Token,
   TRIBE,
   USDC,
   USDT,
@@ -43,7 +43,7 @@ import {
   WETH9,
   WNATIVE,
   XSUSHI,
-} from '@sushiswap/token'
+} from '@sushiswap/currency'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
   readonly [chainId: number]: Token[]

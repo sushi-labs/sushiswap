@@ -36,8 +36,7 @@
   "dependencies": {
     "@sushiswap/address": "workspace:*",
     "@sushiswap/chain": "workspace:*",
-    "@sushiswap/currency": "workspace:*",
-    "@sushiswap/token": "workspace:*"
+    "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

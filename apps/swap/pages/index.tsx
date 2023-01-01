@@ -77,8 +77,12 @@ const getDefaultToken1 = (chainId: number) => {
   if (chainId in DEAFAULT_TOKEN_1) {
     return DEAFAULT_TOKEN_1[chainId as keyof typeof DEAFAULT_TOKEN_1]
   }
-  if (chainId in WETH9 && chainId in WNATIVE && WNATIVE[chainId as keyof typeof WNATIVE] !== WETH9[chainId]) {
-    return WETH9[chainId]
+  if (
+    chainId in WETH9 &&
+    chainId in WNATIVE &&
+    WNATIVE[chainId as keyof typeof WNATIVE] !== WETH9[chainId as keyof typeof WETH9]
+  ) {
+    return WETH9[chainId as keyof typeof WETH9]
   }
   if (chainId in WBTC) {
     return WBTC[chainId as keyof typeof WBTC]

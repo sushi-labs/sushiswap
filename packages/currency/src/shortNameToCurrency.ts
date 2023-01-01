@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { DAI, FRAX, LUSD, MAI, MIM, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './constants'
 import { Native } from './Native'
+import { DAI, FRAX, LUSD, MAI, MIM, SUSHI, UNI, USDC, USDT, WBTC, WETH9, WNATIVE } from './tokens'
 
 export const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
   [ChainId.ETHEREUM]: {

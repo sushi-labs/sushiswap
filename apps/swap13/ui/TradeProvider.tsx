@@ -99,7 +99,7 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
         appType: action.appType,
         network1,
         token0: Native.onChain(state.network0),
-        token1: SUSHI[network1],
+        token1: SUSHI[network1 as keyof typeof SUSHI],
       }
     }
     case 'setValue':

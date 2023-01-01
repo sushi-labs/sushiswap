@@ -1,7 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
+import { DAI, FRAX, MIM, Token, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from '@sushiswap/router-config'
-import { DAI, FRAX, MIM, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/token'
 import flatMap from 'lodash.flatmap'
 
 export const COMMON_BASES = {

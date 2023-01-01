@@ -1,164 +1,52 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { AddressMap } from './AddressMap'
-import { addressMapToTokenMap } from './addressMapToTokenMap'
-import { Token } from './Token'
-
 export const KP3R_ADDRESS = {
   [ChainId.ETHEREUM]: '0x1cEB5cB57C4D4E2b2433641b95Dd330A33185A44',
 } as const
-
-export const KP3R = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'KP3R',
-    name: 'Keep3rV1',
-  },
-  KP3R_ADDRESS
-)
 
 export const LDO_ADDRESS = {
   [ChainId.ETHEREUM]: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
 } as const
 
-export const LDO = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'LDO',
-    name: 'Lido DAO Token',
-  },
-  LDO_ADDRESS
-)
-
 export const APE_ADDRESS = {
   [ChainId.ETHEREUM]: '0x4d224452801ACEd8B2F0aebE155379bb5D594381',
 } as const
-
-export const APE = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'APE',
-    name: 'ApeCoin',
-  },
-  APE_ADDRESS
-)
 
 export const PRIMATE_ADDRESS = {
   [ChainId.ETHEREUM]: '0x46e98FFE40E408bA6412bEb670507e083C8B95ff',
 } as const
 
-export const PRIMATE = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'PRIMATE',
-    name: 'PRIMATE',
-  },
-  PRIMATE_ADDRESS
-)
-
 export const rETH2_ADDRESS = {
   [ChainId.ETHEREUM]: '0x20BC832ca081b91433ff6c17f85701B6e92486c5',
 } as const
-
-export const rETH2 = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'rETH2',
-    name: 'StakeWise Reward ETH2',
-  },
-  rETH2_ADDRESS
-)
 
 export const sETH2_ADDRESS = {
   [ChainId.ETHEREUM]: '0xFe2e637202056d30016725477c5da089Ab0A043A',
 } as const
 
-export const sETH2 = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'sETH2',
-    name: 'StakeWise Staked ETH2',
-  },
-  sETH2_ADDRESS
-)
-
 export const SWISE_ADDRESS = {
   [ChainId.ETHEREUM]: '0x48C3399719B582dD63eB5AADf12A40B4C3f52FA2',
 } as const
-
-export const SWISE = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'SWISE',
-    name: 'StakeWise',
-  },
-  SWISE_ADDRESS
-)
 
 export const FEI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x956F47F50A910163D8BF957Cf5846D573E7f87CA',
 } as const
 
-export const FEI = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'FEI',
-    name: 'Fei USD',
-  },
-  FEI_ADDRESS
-)
-
 export const TRIBE_ADDRESS = {
   [ChainId.ETHEREUM]: '0xc7283b66Eb1EB5FB86327f08e1B5816b0720212B',
 } as const
-
-export const TRIBE = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'TRIBE',
-    name: 'Tribe',
-  },
-  TRIBE_ADDRESS
-)
 
 export const renBTC_ADDRESS = {
   [ChainId.ETHEREUM]: '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D',
 } as const
 
-export const renBTC = addressMapToTokenMap(
-  {
-    decimals: 8,
-    symbol: 'renBTC',
-    name: 'renBTC',
-  },
-  renBTC_ADDRESS
-)
-
 export const NFTX_ADDRESS = {
   [ChainId.ETHEREUM]: '0x87d73E916D7057945c9BcD8cdd94e42A6F47f776',
 } as const
 
-export const NFTX = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'NFTX',
-    name: 'NFTX',
-  },
-  NFTX_ADDRESS
-)
-
 export const OHM_ADDRESS = {
   [ChainId.ETHEREUM]: '0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5',
 } as const
-
-export const OHM = addressMapToTokenMap(
-  {
-    decimals: 9,
-    symbol: 'OHM',
-    name: 'Olympus',
-  },
-  OHM_ADDRESS
-)
 
 export const SNX_ADDRESS = {
   [ChainId.ETHEREUM]: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
@@ -181,15 +69,6 @@ export const WBTC_ADDRESS = {
   [ChainId.METIS]: '0xa5B55ab1dAF0F8e1EFc0eB1931a957fd89B918f4',
 } as const
 
-export const WBTC = addressMapToTokenMap(
-  {
-    decimals: 8,
-    symbol: 'WBTC',
-    name: 'Wrapped BTC',
-  },
-  WBTC_ADDRESS
-)
-
 export const UNI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
   [ChainId.GNOSIS]: '0x4537e328Bf7e4eFA29D05CAeA260D7fE26af9D74',
@@ -202,27 +81,9 @@ export const UNI_ADDRESS = {
   [ChainId.ARBITRUM]: '0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0',
 } as const
 
-export const UNI = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'UNI',
-    name: 'Uniswap',
-  },
-  UNI_ADDRESS
-)
-
 export const BUSD_ADDRESS = {
   [ChainId.BSC]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
 } as const
-
-export const BUSD = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'BUSD',
-    name: 'BUSD Token',
-  },
-  BUSD_ADDRESS
-)
 
 export const MAI_ADDRESS = {
   [ChainId.POLYGON]: '0xa3Fa99A148fA48D14Ed51d610c367C61876997F1',
@@ -242,66 +103,21 @@ export const MAI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8D6CeBD76f18E1558D4DB88138e2DeFB3909fAD6',
 } as const
 
-export const MAI = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'MAI',
-    name: 'Mai Stablecoin',
-  },
-  MAI_ADDRESS
-)
-
 export const TUSD_ADDRESS = {
   [ChainId.ETHEREUM]: '0x0000000000085d4780B73119b644AE5ecd22b376',
 } as const
-
-export const TUSD = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'TUSD',
-    name: 'TrueUSD',
-  },
-  TUSD_ADDRESS
-)
 
 export const ANKR_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8290333ceF9e6D528dD5618Fb97a76f268f3EDD4',
 } as const
 
-export const ANKR = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'ANKR',
-    name: 'Anker Network',
-  },
-  ANKR_ADDRESS
-)
-
 export const AAVE_ADDRESS = {
   [ChainId.ETHEREUM]: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9',
 } as const
 
-export const AAVE = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'AAVE',
-    name: 'Aave Token',
-  },
-  AAVE_ADDRESS
-)
-
 export const COMP_ADDRESS = {
   [ChainId.ETHEREUM]: '0xc00e94Cb662C3520282E6f5717214004A7f26888',
 } as const
-
-export const COMP = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'COMP',
-    name: 'Compound ',
-  },
-  COMP_ADDRESS
-)
 
 export const JPY_ADDRESS = {
   [ChainId.ETHEREUM]: '0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB',
@@ -310,28 +126,10 @@ export const JPY_ADDRESS = {
   [ChainId.GNOSIS]: '0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB',
 } as const
 
-export const JPY = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'JPYC',
-    name: 'JPY Coin',
-  },
-  JPY_ADDRESS
-)
-
 export const LUSD_ADDRESS = {
   [ChainId.ETHEREUM]: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0',
   [ChainId.OPTIMISM]: '0xc40F949F8a4e094D1b49a23ea9241D289B7b2819',
 } as const
-
-export const LUSD = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'LUSD',
-    name: 'LUSD Stablecoin',
-  },
-  LUSD_ADDRESS
-)
 
 export const WETH9_ADDRESS = {
   [ChainId.ETHEREUM]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
@@ -363,15 +161,6 @@ export const WETH9_ADDRESS = {
   [ChainId.ARBITRUM_NOVA]: '0x722E8BdD2ce80A4422E880164f2079488e115365',
   [ChainId.BOBA]: '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000',
 } as const
-
-export const WETH9 = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'WETH',
-    name: 'Wrapped Ether',
-  },
-  WETH9_ADDRESS
-)
 
 export const WNATIVE_ADDRESS = {
   [ChainId.ETHEREUM]: WETH9_ADDRESS[ChainId.ETHEREUM],
@@ -411,195 +200,7 @@ export const WNATIVE_ADDRESS = {
   [ChainId.BTTC]: '0x23181F21DEa5936e24163FFABa4Ea3B316B57f3C',
 } as const
 
-export const WNATIVE = {
-  [ChainId.ETHEREUM]: WETH9[ChainId.ETHEREUM],
-  [ChainId.ROPSTEN]: WETH9[ChainId.ROPSTEN],
-  [ChainId.RINKEBY]: WETH9[ChainId.RINKEBY],
-  [ChainId.GÖRLI]: WETH9[ChainId.GÖRLI],
-  [ChainId.KOVAN]: WETH9[ChainId.KOVAN],
-  [ChainId.OPTIMISM]: WETH9[ChainId.OPTIMISM],
-  [ChainId.FANTOM]: new Token({
-    chainId: ChainId.FANTOM,
-    address: WNATIVE_ADDRESS[ChainId.FANTOM],
-    decimals: 18,
-    symbol: 'WFTM',
-    name: 'Wrapped FTM',
-  }),
-  [ChainId.FANTOM_TESTNET]: new Token({
-    chainId: ChainId.FANTOM_TESTNET,
-    address: WNATIVE_ADDRESS[ChainId.FANTOM_TESTNET],
-    decimals: 18,
-    symbol: 'WFTM',
-    name: 'Wrapped FTM',
-  }),
-  [ChainId.POLYGON]: new Token({
-    chainId: ChainId.POLYGON,
-    address: WNATIVE_ADDRESS[ChainId.POLYGON],
-    decimals: 18,
-    symbol: 'WMATIC',
-    name: 'Wrapped Matic',
-  }),
-  [ChainId.POLYGON_TESTNET]: new Token({
-    chainId: ChainId.POLYGON_TESTNET,
-    address: WNATIVE_ADDRESS[ChainId.POLYGON_TESTNET],
-    decimals: 18,
-    symbol: 'WMATIC',
-    name: 'Wrapped Matic',
-  }),
-  [ChainId.GNOSIS]: new Token({
-    chainId: ChainId.GNOSIS,
-    address: WNATIVE_ADDRESS[ChainId.GNOSIS],
-    decimals: 18,
-    symbol: 'WXDAI',
-    name: 'Wrapped xDai',
-  }),
-  [ChainId.BSC]: new Token({
-    chainId: ChainId.BSC,
-    address: WNATIVE_ADDRESS[ChainId.BSC],
-    decimals: 18,
-    symbol: 'WBNB',
-    name: 'Wrapped BNB',
-  }),
-  [ChainId.BSC_TESTNET]: new Token({
-    chainId: ChainId.BSC_TESTNET,
-    address: WNATIVE_ADDRESS[ChainId.BSC_TESTNET],
-    decimals: 18,
-    symbol: 'WBNB',
-    name: 'Wrapped BNB',
-  }),
-  [ChainId.ARBITRUM]: WETH9[ChainId.ARBITRUM],
-  [ChainId.ARBITRUM_TESTNET]: WETH9[ChainId.ARBITRUM_TESTNET],
-  [ChainId.ARBITRUM_NOVA]: WETH9[ChainId.ARBITRUM_NOVA],
-  [ChainId.AVALANCHE]: new Token({
-    chainId: ChainId.AVALANCHE,
-    address: WNATIVE_ADDRESS[ChainId.AVALANCHE],
-    decimals: 18,
-    symbol: 'WAVAX',
-    name: 'Wrapped AVAX',
-  }),
-  [ChainId.AVALANCHE_TESTNET]: new Token({
-    chainId: ChainId.AVALANCHE_TESTNET,
-    address: WNATIVE_ADDRESS[ChainId.AVALANCHE_TESTNET],
-    decimals: 18,
-    symbol: 'WAVAX',
-    name: 'Wrapped AVAX',
-  }),
-  [ChainId.HECO]: new Token({
-    chainId: ChainId.HECO,
-    address: WNATIVE_ADDRESS[ChainId.HECO],
-    decimals: 18,
-    symbol: 'WHT',
-    name: 'Wrapped HT',
-  }),
-  [ChainId.HECO_TESTNET]: new Token({
-    chainId: ChainId.HECO_TESTNET,
-    address: WNATIVE_ADDRESS[ChainId.HECO_TESTNET],
-    decimals: 18,
-    symbol: 'WHT',
-    name: 'Wrapped HT',
-  }),
-  [ChainId.HARMONY]: new Token({
-    chainId: ChainId.HARMONY,
-    address: WNATIVE_ADDRESS[ChainId.HARMONY],
-    decimals: 18,
-    symbol: 'WONE',
-    name: 'Wrapped ONE',
-  }),
-  [ChainId.HARMONY_TESTNET]: new Token({
-    chainId: ChainId.HARMONY_TESTNET,
-    address: WNATIVE_ADDRESS[ChainId.HARMONY_TESTNET],
-    decimals: 18,
-    symbol: 'WONE',
-    name: 'Wrapped ONE',
-  }),
-  [ChainId.OKEX]: new Token({
-    chainId: ChainId.OKEX,
-    address: WNATIVE_ADDRESS[ChainId.OKEX],
-    decimals: 18,
-    symbol: 'WOKT',
-    name: 'Wrapped OKExChain',
-  }),
-  [ChainId.OKEX_TESTNET]: new Token({
-    chainId: ChainId.OKEX_TESTNET,
-    address: WNATIVE_ADDRESS[ChainId.OKEX_TESTNET],
-    decimals: 18,
-    symbol: 'WOKT',
-    name: 'Wrapped OKExChain',
-  }),
-  [ChainId.CELO]: new Token({
-    chainId: ChainId.CELO,
-    address: WNATIVE_ADDRESS[ChainId.CELO],
-    decimals: 18,
-    symbol: 'CELO',
-    name: 'Celo',
-  }),
-  [ChainId.PALM]: new Token({
-    chainId: ChainId.PALM,
-    address: WNATIVE_ADDRESS[ChainId.PALM],
-    decimals: 18,
-    symbol: 'WPALM',
-    name: 'Wrapped Palm',
-  }),
-  [ChainId.MOONRIVER]: new Token({
-    chainId: ChainId.MOONRIVER,
-    address: WNATIVE_ADDRESS[ChainId.MOONRIVER],
-    decimals: 18,
-    symbol: 'WMOVR',
-    name: 'Wrapped Moonriver',
-  }),
-  [ChainId.FUSE]: new Token({
-    chainId: ChainId.FUSE,
-    address: WNATIVE_ADDRESS[ChainId.FUSE],
-    decimals: 18,
-    symbol: 'WFUSE',
-    name: 'Wrapped Fuse',
-  }),
-  [ChainId.TELOS]: new Token({
-    chainId: ChainId.TELOS,
-    address: WNATIVE_ADDRESS[ChainId.TELOS],
-    decimals: 18,
-    symbol: 'WTLOS',
-    name: 'Wrapped Telos',
-  }),
-  [ChainId.MOONBEAM]: new Token({
-    chainId: ChainId.MOONBEAM,
-    address: WNATIVE_ADDRESS[ChainId.MOONBEAM],
-    decimals: 18,
-    symbol: 'WGLMR',
-    name: 'Wrapped Glimmer',
-  }),
-  [ChainId.KAVA]: new Token({
-    chainId: ChainId.KAVA,
-    address: WNATIVE_ADDRESS[ChainId.KAVA],
-    decimals: 18,
-    symbol: 'WKAVA',
-    name: 'Wrapped Kava',
-  }),
-  [ChainId.METIS]: new Token({
-    chainId: ChainId.METIS,
-    address: WNATIVE_ADDRESS[ChainId.METIS],
-    decimals: 18,
-    symbol: 'WMETIS',
-    name: 'Wrapped Metis',
-  }),
-  [ChainId.BOBA]: WETH9[ChainId.BOBA],
-  [ChainId.BOBA_AVAX]: new Token({
-    chainId: ChainId.BOBA_AVAX,
-    address: WNATIVE_ADDRESS[ChainId.BOBA_AVAX],
-    decimals: 18,
-    symbol: 'WBOBA',
-    name: 'Wrapped Boba',
-  }),
-  [ChainId.BTTC]: new Token({
-    chainId: ChainId.BTTC,
-    address: WNATIVE_ADDRESS[ChainId.BTTC],
-    decimals: 18,
-    symbol: 'WBTT',
-    name: 'Wrapped BitTorrent Token',
-  }),
-} as const
-
-export const SUSHI_ADDRESS: AddressMap = {
+export const SUSHI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
   [ChainId.ROPSTEN]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   [ChainId.RINKEBY]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
@@ -624,27 +225,9 @@ export const SUSHI_ADDRESS: AddressMap = {
   [ChainId.BOBA]: '0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b',
 } as const
 
-export const SUSHI = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'SUSHI',
-    name: 'SushiToken',
-  },
-  SUSHI_ADDRESS
-)
-
 export const XSUSHI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272',
 } as const
-
-export const XSUSHI = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'XSUSHI',
-    name: 'SushiBar',
-  },
-  XSUSHI_ADDRESS
-)
 
 export const USDC_ADDRESS = {
   [ChainId.ETHEREUM]: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -673,24 +256,6 @@ export const USDC_ADDRESS = {
   [ChainId.BOBA]: '0x66a2A913e447d6b4BF33EFbec43aAeF87890FBbc',
 } as const
 
-export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
-  ...(addressMapToTokenMap(
-    {
-      decimals: 6,
-      symbol: 'USDC',
-      name: 'USD Coin',
-    },
-    USDC_ADDRESS
-  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, ChainId.BSC>),
-  [ChainId.BSC]: new Token({
-    chainId: ChainId.BSC,
-    address: USDC_ADDRESS[ChainId.BSC],
-    decimals: 18,
-    symbol: 'USDC',
-    name: 'USD Coin',
-  }),
-} as const
-
 export const USDT_ADDRESS = {
   [ChainId.ETHEREUM]: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
   [ChainId.ROPSTEN]: '0x110a13FC3efE6A245B50102D2d79B3E76125Ae83',
@@ -717,31 +282,6 @@ export const USDT_ADDRESS = {
   [ChainId.BOBA]: '0x5DE1677344D3Cb0D7D465c10b72A8f60699C062d',
 } as const
 
-export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
-  ...(addressMapToTokenMap(
-    {
-      decimals: 6,
-      symbol: 'USDT',
-      name: 'Tether USD',
-    },
-    USDT_ADDRESS
-  ) as Omit<Record<keyof typeof USDC_ADDRESS, Token>, ChainId.BSC>),
-  [ChainId.BSC]: new Token({
-    chainId: ChainId.BSC,
-    address: USDT_ADDRESS[ChainId.BSC],
-    decimals: 18,
-    symbol: 'USDT',
-    name: 'Tether USD',
-  }),
-  [ChainId.BSC_TESTNET]: new Token({
-    chainId: ChainId.BSC_TESTNET,
-    address: USDT_ADDRESS[ChainId.BSC_TESTNET],
-    decimals: 18,
-    symbol: 'USDT',
-    name: 'Tether USD',
-  }),
-}
-
 export const DAI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
   [ChainId.ROPSTEN]: '0xc2118d4d90b274016cB7a54c03EF52E6c537D957',
@@ -767,15 +307,6 @@ export const DAI_ADDRESS = {
   [ChainId.BOBA]: '0xf74195Bb8a5cf652411867c5C2C5b8C2a402be35',
 } as const
 
-export const DAI = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'DAI',
-    name: 'Dai Stablecoin',
-  },
-  DAI_ADDRESS
-)
-
 export const MIM_ADDRESS = {
   [ChainId.ETHEREUM]: '0x99D8a9C45b2ecA8864373A26D1459e3Dff1e17F3',
   [ChainId.FANTOM]: '0x82f0B8B456c1A451378467398982d4834b6829c1',
@@ -785,15 +316,6 @@ export const MIM_ADDRESS = {
   [ChainId.POLYGON]: '0x49a0400587A7F65072c87c4910449fDcC5c47242',
   [ChainId.MOONRIVER]: '0x0caE51e1032e8461f4806e26332c030E34De3aDb',
 } as const
-
-export const MIM = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'MIM',
-    name: 'Magic Internet Money',
-  },
-  MIM_ADDRESS
-)
 
 export const FRAX_ADDRESS = {
   [ChainId.ETHEREUM]: '0x853d955aCEf822Db058eb8505911ED77F175b99e',
@@ -809,15 +331,6 @@ export const FRAX_ADDRESS = {
   [ChainId.OPTIMISM]: '0x2E3D870790dC77A83DD1d18184Acc7439A53f475',
 } as const
 
-export const FRAX = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'FRAX',
-    name: 'Frax',
-  },
-  FRAX_ADDRESS
-)
-
 export const FXS_ADDRESS = {
   [ChainId.ETHEREUM]: '0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0',
   [ChainId.FANTOM]: '0x7d016eec9c25232b01F23EF992D98ca97fc2AF5a',
@@ -832,37 +345,10 @@ export const FXS_ADDRESS = {
   [ChainId.OPTIMISM]: '0x67CCEA5bb16181E7b4109c9c2143c24a1c2205Be',
 } as const
 
-export const FXS = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'FXS',
-    name: 'Frax Share',
-  },
-  FXS_ADDRESS
-)
-
 export const BCT_ADDRESS = {
   [ChainId.POLYGON]: '0x2F800Db0fdb5223b3C3f354886d907A671414A7F',
 } as const
 
-export const BCT = addressMapToTokenMap(
-  {
-    decimals: 18,
-    symbol: 'BCT',
-    name: 'Toucan Protocol: Base Carbon Tonne',
-  },
-  BCT_ADDRESS
-)
-
 export const KLIMA_ADDRESS = {
   [ChainId.POLYGON]: '0x4e78011Ce80ee02d2c3e649Fb657E45898257815',
 } as const
-
-export const KLIMA = addressMapToTokenMap(
-  {
-    decimals: 9,
-    symbol: 'KLIMA',
-    name: 'Klima DAO',
-  },
-  KLIMA_ADDRESS
-)

@@ -1,4 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
+
+import { addressMapToTokenMap } from './addressMapToTokenMap'
+import { Token } from './Token'
 import {
   AAVE_ADDRESS,
   ANKR_ADDRESS,
@@ -34,10 +37,7 @@ import {
   WETH9_ADDRESS,
   WNATIVE_ADDRESS,
   XSUSHI_ADDRESS,
-} from '@sushiswap/currency'
-import { Token } from '@sushiswap/currency'
-
-import { addressMapToTokenMap } from './addressMapToTokenMap'
+} from './token-addresses'
 
 export const KP3R = addressMapToTokenMap(
   {
