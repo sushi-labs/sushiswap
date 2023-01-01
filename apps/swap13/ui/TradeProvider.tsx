@@ -9,12 +9,11 @@ import {
   Type,
   shortNameToCurrency,
   isShortName,
-  ShortNameToCurrencyChainId,
   ShortName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
-import { useAccount, useBlockNumber, useFeeData } from 'wagmi'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useReducer } from 'react'
+import { useAccount, useNetwork } from 'wagmi'
 
 interface SwapState {
   review: boolean
@@ -129,6 +128,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({
   params: { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount },
 }) => {
   const { address } = useAccount()
+  const { chain } = useNetwork()
+
   const [state, dispatch] = useReducer(reducer, {
     review: false,
     recipient: undefined,
@@ -168,6 +169,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({
       setReview,
     }
   }, [])
+
+  // Set network0 to connected network
+  useLayoutEffect(() => {
+    if (chain?.id) {
+      api.setNetwork0(chain?.id)
+    }
+  }, [api, chain?.id])
 
   return (
     <APIContext.Provider value={api}>
