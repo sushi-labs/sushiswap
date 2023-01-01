@@ -4,6 +4,9 @@ import defaultNextConfig from '@sushiswap/nextjs-config'
 const nextConfig = {
   ...defaultNextConfig,
   basePath: '/swap13',
+  eslint: {
+    dirs: ['pages', 'components', 'lib', 'app', 'swap', 'ui'], // Only run ESLint on the 'pages' and 'utils' directories during production builds (next build)
+  },
   transpilePackages: [
     '@sushiswap/redux-token-lists',
     '@sushiswap/redux-localstorage',

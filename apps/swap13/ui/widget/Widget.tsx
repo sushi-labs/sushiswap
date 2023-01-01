@@ -17,6 +17,8 @@ export const Widget: FC = () => {
   const { setToken0, setToken1, setValue } = useSwapActions()
   const usdPctChange = usePctChange()
 
+  console.log({ token0, token1, value, network0, network1 })
+
   const {
     isFetching,
     data: { amountOut },

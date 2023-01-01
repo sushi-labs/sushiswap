@@ -116,7 +116,13 @@ interface SwapProviderProps {
 
 export const SwapProvider: FC<SwapProviderProps> = ({
   children,
-  params: { fromChainId, toChainId, fromCurrencyId, toCurrencyId },
+  params: {
+    fromChainId,
+    toChainId,
+    // fromCurrencyId,
+    // toCurrencyId,
+    // amount
+  },
 }) => {
   const { address } = useAccount()
   const [state, dispatch] = useReducer(reducer, {

@@ -1,7 +1,7 @@
 'use client'
 
 import { Transition } from '@headlessui/react'
-import { formatNumber, formatPercent, shortenAddress } from '@sushiswap/format'
+import { formatPercent, shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
 import React, { FC } from 'react'
 

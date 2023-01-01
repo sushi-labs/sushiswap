@@ -2,7 +2,7 @@
 
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import chains, { Chain } from '@sushiswap/chain'
-import { formatNumber, formatPercent, shortenAddress } from '@sushiswap/format'
+import { formatPercent, shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
 import Container from '@sushiswap/ui13/components/Container'
 import { Currency } from '@sushiswap/ui13/components/currency'
