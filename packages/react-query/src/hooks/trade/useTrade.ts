@@ -76,7 +76,9 @@ export const useTrade = (variables: UseTrade) => {
         }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}&to=0x8f54C8c2df62c94772ac14CcFc85603742976312`
       ).then((res) => res.json()),
     {
-      staleTime: 2000,
+      refetchInterval: 12000,
+      staleTime: 0,
+      keepPreviousData: false,
       initialData: INITIAL_DATA,
       enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice),
       select: (data) => _hydrate(variables, prices, data as Trade),
