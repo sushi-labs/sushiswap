@@ -37,8 +37,8 @@ export const ConnectView: FC<{ onSelect(): void }> = ({ onSelect }) => {
   )
 
   return (
-    <List className="!p-2">
-      <List.Label>Wallet</List.Label>
+    <List className="!p-0">
+      {/* <List.Label>Wallet</List.Label> */}
       <List.Control className="bg-gray-100 dark:!bg-slate-700">
         {connectors.map((connector) => (
           <List.MenuItem
