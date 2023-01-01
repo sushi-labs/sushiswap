@@ -14,7 +14,7 @@ import {
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
-import { useAccount, useFeeData } from 'wagmi'
+import { useAccount, useBlockNumber, useFeeData } from 'wagmi'
 
 interface SwapState {
   review: boolean

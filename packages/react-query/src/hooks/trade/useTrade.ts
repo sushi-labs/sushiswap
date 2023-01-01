@@ -31,6 +31,7 @@ interface UseTrade {
   amount: Amount<Type> | undefined
   gasPrice?: number
   slippagePercentage: string
+  blockNumber: number | undefined
 }
 
 const _hydrate = (
@@ -62,12 +63,12 @@ const _hydrate = (
 }
 
 export const useTrade = (variables: UseTrade) => {
-  const { chainId, fromToken, toToken, amount, gasPrice = 50 } = variables
+  const { chainId, fromToken, toToken, amount, gasPrice = 50, blockNumber } = variables
   const { data: prices } = usePrices({ chainId })
 
   // Making first 'unknown' here 'Trade' solves the cast in select
   return useQuery<unknown, unknown, UseTradeReturn>(
-    ['getTrade', { chainId, fromToken, toToken, amount, gasPrice }],
+    ['getTrade', { chainId, fromToken, toToken, amount, gasPrice, blockNumber }],
     () =>
       fetch(
         `https://swap.sushi.com/?chainId=${chainId}&fromTokenId=${
