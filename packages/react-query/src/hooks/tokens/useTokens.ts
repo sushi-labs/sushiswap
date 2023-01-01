@@ -14,6 +14,8 @@ type Data = Array<{
   decimals: number
 }>
 
+// const BLACKLIST: string[] = ['0x0000000000000000000000000000000000000000', '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000']}
+
 const BLACKLIST: Record<number, string[]> = {
   [ChainId.OPTIMISM]: ['0x0000000000000000000000000000000000000000', '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000'],
 }
@@ -24,9 +26,8 @@ export const useTokens = ({ chainId }: UseTokensParams) => {
     queryFn: async () => {
       const res = await fetch(`https://tokens.sushi.com/v0/${chainId}`)
       const data: Data = await res.json()
-      return data.reduce<Record<string, Token>>((acc, { address, id, name, symbol, decimals }) => {
-        const [chainId] = id.split(':')
-
+      return data.reduce<Record<string, Token>>((acc, { id, name, symbol, decimals }) => {
+        const [chainId, address] = id.split(':')
         if (!BLACKLIST[+chainId]?.includes(address)) {
           acc[address] = new Token({
             chainId,

@@ -1,7 +1,17 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { Amount, Native, SUSHI, tryParseAmount, Type } from '@sushiswap/currency'
+import {
+  Amount,
+  Native,
+  SUSHI,
+  tryParseAmount,
+  Type,
+  shortNameToCurrency,
+  isShortName,
+  ShortNameToCurrencyChainId,
+  ShortName,
+} from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount, useFeeData } from 'wagmi'
@@ -116,27 +126,24 @@ interface SwapProviderProps {
 
 export const SwapProvider: FC<SwapProviderProps> = ({
   children,
-  params: {
-    fromChainId,
-    toChainId,
-    // fromCurrencyId,
-    // toCurrencyId,
-    amount,
-  },
+  params: { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount },
 }) => {
   const { address } = useAccount()
   const [state, dispatch] = useReducer(reducer, {
     review: false,
     recipient: undefined,
     appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
-    token0: Native.onChain(fromChainId ? Number(fromChainId) : ChainId.ETHEREUM),
-    token1: SUSHI[toChainId ? Number(toChainId) : ChainId.ETHEREUM],
-    network0: fromChainId ? Number(fromChainId) : ChainId.ETHEREUM,
-    network1: toChainId ? Number(toChainId) : ChainId.ETHEREUM,
+    token0: isShortName(parseInt(fromChainId), fromCurrencyId)
+      ? shortNameToCurrency(parseInt(fromChainId), fromCurrencyId as ShortName)
+      : Native.onChain(ChainId.ETHEREUM),
+    token1: isShortName(parseInt(toChainId), toCurrencyId)
+      ? shortNameToCurrency(parseInt(toChainId), toCurrencyId as ShortName)
+      : SUSHI[ChainId.ETHEREUM],
+    network0: fromChainId ? parseInt(fromChainId) : ChainId.ETHEREUM,
+    network1: toChainId ? parseInt(toChainId) : ChainId.ETHEREUM,
     value: amount ? amount : '',
     valueAsAmount: undefined,
   })
-  
 
   const api = useMemo(() => {
     const setNetwork0 = (chainId: ChainId) => dispatch({ type: 'setNetwork0', chainId })
