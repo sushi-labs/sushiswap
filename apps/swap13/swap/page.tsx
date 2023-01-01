@@ -12,11 +12,11 @@ export default function Page({
   params,
   searchParams,
 }: {
-  params: { fromChainId: string; toChainId: string; fromCurrencyId: string; toCurrencyId: string }
+  params: { fromChainId: string; toChainId: string; fromCurrencyId: string; toCurrencyId: string; amount: string }
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
-  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId } = params
-  console.log({ fromChainId, toChainId, fromCurrencyId, toCurrencyId, searchParams })
+  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount } = params
+  console.log({ fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, searchParams })
   return (
     <SwapProvider params={params}>
       <Container maxWidth={520} className="space-y-8 p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">

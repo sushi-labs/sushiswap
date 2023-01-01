@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, SUSHI, tryParseAmount, Type } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useFeeData } from 'wagmi'
 
 interface SwapState {
   review: boolean
@@ -111,7 +111,7 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
 
 interface SwapProviderProps {
   children: ReactNode
-  params: { fromChainId: string; toChainId: string; fromCurrencyId: string; toCurrencyId: string }
+  params: { fromChainId: string; toChainId: string; fromCurrencyId: string; toCurrencyId: string; amount: string }
 }
 
 export const SwapProvider: FC<SwapProviderProps> = ({
@@ -121,7 +121,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({
     toChainId,
     // fromCurrencyId,
     // toCurrencyId,
-    // amount
+    amount,
   },
 }) => {
   const { address } = useAccount()
@@ -133,7 +133,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({
     token1: SUSHI[fromChainId ? Number(fromChainId) : ChainId.ETHEREUM],
     network0: fromChainId ? Number(fromChainId) : ChainId.ETHEREUM,
     network1: toChainId ? Number(toChainId) : ChainId.ETHEREUM,
-    value: '',
+    value: amount ? amount : '',
     valueAsAmount: undefined,
   })
 
