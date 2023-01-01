@@ -59,11 +59,11 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     chainId,
     currency,
     account: address,
-    enabled: Boolean(currency),
+    enabled: Boolean(currency) && Boolean(address),
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
-  const insufficientBalance = type === 'INPUT' && balance && _value && balance[fundSource].lessThan(_value)
+  const insufficientBalance = address && type === 'INPUT' && balance && _value && balance[fundSource].lessThan(_value)
 
   return useMemo(
     () => (
