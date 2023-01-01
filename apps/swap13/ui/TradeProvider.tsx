@@ -131,8 +131,8 @@ export const SwapProvider: FC<SwapProviderProps> = ({
     appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
     token0: Native.onChain(fromChainId ? Number(fromChainId) : ChainId.ETHEREUM),
     token1: SUSHI[fromChainId ? Number(fromChainId) : ChainId.ETHEREUM],
-    network0: Number(fromChainId),
-    network1: Number(toChainId),
+    network0: fromChainId ? Number(fromChainId) : ChainId.ETHEREUM,
+    network1: toChainId ? Number(toChainId) : ChainId.ETHEREUM,
     value: '',
     valueAsAmount: undefined,
   })
