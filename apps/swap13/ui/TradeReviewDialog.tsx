@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
-import chains, { Chain } from '@sushiswap/chain'
+import { Chain, chainName } from '@sushiswap/chain'
 import { formatPercent, shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
 import Container from '@sushiswap/ui13/components/Container'
@@ -49,7 +49,7 @@ export const TradeReviewDialog: FC = () => {
         <div className="flex flex-col gap-3">
           <List>
             <List.Control>
-              <List.KeyValue title="Network">{chains[network0].name}</List.KeyValue>
+              <List.KeyValue title="Network">{chainName[network0]}</List.KeyValue>
               <List.KeyValue title="Network fee">~${gasSpent ?? '0.00'}</List.KeyValue>
               <List.KeyValue title="Route">
                 <button className="text-blue">View route</button>
