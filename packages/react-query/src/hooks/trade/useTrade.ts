@@ -81,7 +81,6 @@ export const useTrade = (variables: UseTrade) => {
       // refetchInterval: 12000,
       // staleTime: 0,
       // keepPreviousData: false,
-      keepPreviousData: true,
       initialData: INITIAL_DATA,
       enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice),
       select: (data) => _hydrate(variables, prices, data as Trade),
