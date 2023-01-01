@@ -1,6 +1,15 @@
-import { addressMapToTokenMap } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
-import { Currency, DAI_ADDRESS, FRAX_ADDRESS, Token, USDC, USDC_ADDRESS, USDT, USDT_ADDRESS } from '@sushiswap/currency'
+import {
+  addressMapToTokenMap,
+  Currency,
+  DAI_ADDRESS,
+  FRAX_ADDRESS,
+  Token,
+  USDC,
+  USDC_ADDRESS,
+  USDT,
+  USDT_ADDRESS,
+} from '@sushiswap/currency'
 
 // Ethereum: 101
 // BNB: 102

@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { getCurrencyCombinations, Token, Type } from '@sushiswap/currency'
+import { Token, Type } from '@sushiswap/currency'
+import { getCurrencyCombinations } from '@sushiswap/router'
 import { useMemo } from 'react'
 
 export function useCurrencyCombinations(chainId?: ChainId, currencyA?: Type, currencyB?: Type): [Token, Token][] {

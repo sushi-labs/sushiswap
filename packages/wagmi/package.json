@@ -41,6 +41,7 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/kashi": "workspace:*",
     "@sushiswap/math": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",

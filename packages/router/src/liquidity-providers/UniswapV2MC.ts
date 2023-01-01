@@ -1,6 +1,7 @@
 import { keccak256, pack } from '@ethersproject/solidity'
 import { ChainId } from '@sushiswap/chain'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'

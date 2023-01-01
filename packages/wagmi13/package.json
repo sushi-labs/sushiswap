@@ -42,6 +42,7 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/kashi": "workspace:*",
     "@sushiswap/math": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",

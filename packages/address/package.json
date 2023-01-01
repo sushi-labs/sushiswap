@@ -37,9 +37,11 @@
   },
   "dependencies": {
     "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/trident": "1.0.0-canary.53",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
+    "@sushiswap/types": "workspace:*",
     "zod": "3.20.2"
   },
   "devDependencies": {

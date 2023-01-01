@@ -1,50 +1,49 @@
+import {
+  APE_ADDRESS,
+  BCT_ADDRESS,
+  FEI_ADDRESS,
+  FRAX_ADDRESS,
+  FXS_ADDRESS,
+  KLIMA_ADDRESS,
+  KP3R_ADDRESS,
+  LDO_ADDRESS,
+  PRIMATE_ADDRESS,
+  renBTC_ADDRESS,
+  rETH2_ADDRESS,
+  SUSHI_ADDRESS,
+  SWISE_ADDRESS,
+  TRIBE_ADDRESS,
+  WBTC_ADDRESS,
+  XSUSHI_ADDRESS,
+} from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
-import flatMap from 'lodash.flatmap'
-
+import { Token } from '@sushiswap/currency'
 import {
   APE,
-  APE_ADDRESS,
   BCT,
-  BCT_ADDRESS,
   DAI,
   FEI,
-  FEI_ADDRESS,
   FRAX,
-  FRAX_ADDRESS,
   FXS,
-  FXS_ADDRESS,
   KLIMA,
-  KLIMA_ADDRESS,
   KP3R,
-  KP3R_ADDRESS,
   LDO,
-  LDO_ADDRESS,
   LUSD,
   MIM,
   NFTX,
   OHM,
   PRIMATE,
-  PRIMATE_ADDRESS,
   renBTC,
-  renBTC_ADDRESS,
-  rETH2_ADDRESS,
   sETH2,
   SUSHI,
-  SUSHI_ADDRESS,
-  SWISE_ADDRESS,
   TRIBE,
-  TRIBE_ADDRESS,
   USDC,
   USDT,
   WBTC,
-  WBTC_ADDRESS,
   WETH9,
   WNATIVE,
   XSUSHI,
-  XSUSHI_ADDRESS,
-} from './constants'
-import { Token } from './Token'
-import { Type } from './Type'
+} from '@sushiswap/token'
 
 export const BASES_TO_CHECK_TRADES_AGAINST: {
   readonly [chainId: number]: Token[]
@@ -232,7 +231,6 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     DAI[ChainId.OPTIMISM],
     LUSD[ChainId.OPTIMISM],
     FRAX[ChainId.OPTIMISM],
-    MIM[ChainId.OPTIMISM],
   ],
   [ChainId.KAVA]: [
     WNATIVE[ChainId.KAVA],
@@ -250,7 +248,6 @@ export const BASES_TO_CHECK_TRADES_AGAINST: {
     USDT[ChainId.BOBA],
     DAI[ChainId.BOBA],
     FRAX[ChainId.BOBA],
-    MIM[ChainId.BOBA],
   ],
   [ChainId.BOBA_AVAX]: [
     WNATIVE[ChainId.BOBA_AVAX],
@@ -358,50 +355,3 @@ export const COMMON_BASES: { readonly [chainId: number]: Token[] } = {
     WBTC[ChainId.BOBA],
   ],
 }
-
-export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, currencyB: Type) {
-  const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
-
-  const common = chainId in BASES_TO_CHECK_TRADES_AGAINST ? BASES_TO_CHECK_TRADES_AGAINST[chainId] : []
-  const additionalA = tokenA ? ADDITIONAL_BASES[chainId]?.[tokenA.address] ?? [] : []
-  const additionalB = tokenB ? ADDITIONAL_BASES[chainId]?.[tokenB.address] ?? [] : []
-
-  const bases: Token[] = [...common, ...additionalA, ...additionalB]
-
-  const basePairs: [Token, Token][] = flatMap(bases, (base): [Token, Token][] =>
-    bases.map((otherBase) => [base, otherBase])
-  )
-
-  if (!tokenA || !tokenB) {
-    return []
-  }
-
-  return [
-    // the direct pair
-    [tokenA, tokenB],
-    // token A against all bases
-    ...bases.map((base): [Token, Token] => [tokenA, base]),
-    // token B against all bases
-    ...bases.map((base): [Token, Token] => [tokenB, base]),
-    // each base against all bases
-    ...basePairs,
-  ]
-    .filter((tokens): tokens is [Token, Token] => Boolean(tokens[0] && tokens[1]))
-    .filter(([t0, t1]) => t0.address !== t1.address)
-    .filter(([tokenA, tokenB]) => {
-      if (!chainId) return true
-      const customBases = CUSTOM_BASES[chainId]
-
-      const customBasesA: Token[] | undefined = customBases?.[tokenA.address]
-      const customBasesB: Token[] | undefined = customBases?.[tokenB.address]
-
-      if (!customBasesA && !customBasesB) return true
-
-      if (customBasesA && !customBasesA.find((base) => tokenB.equals(base))) return false
-      if (customBasesB && !customBasesB.find((base) => tokenA.equals(base))) return false
-
-      return true
-    })
-}
-
-export type Bases = typeof BASES_TO_CHECK_TRADES_AGAINST | typeof COMMON_BASES | typeof CUSTOM_BASES

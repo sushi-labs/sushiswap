@@ -1,17 +1,16 @@
 {
-  "name": "@sushiswap/currency",
-  "version": "0.0.3",
-  "description": "Sushi Currency",
+  "name": "@sushiswap/token",
+  "version": "0.0.0",
+  "description": "Sushi Token",
+  "private": true,
   "keywords": [
     "sushi",
-    "currency",
-    "token",
-    "native"
+    "tokens"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "packages/currency"
+    "directory": "packages/token"
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
@@ -37,8 +36,11 @@
   "dependencies": {
     "@ethersproject/address": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
+    "@sushiswap/address": "workspace:*",
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
+    "lodash.flatmap": "^4.5.0",
     "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {
@@ -47,6 +49,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/jest": "^29.2.0",
+    "@types/lodash.flatmap": "^4.5.7",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "eslint": "8.29.0",
