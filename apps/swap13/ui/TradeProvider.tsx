@@ -12,7 +12,7 @@ import {
   ShortName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useEffect, useLayoutEffect, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useLayoutEffect, useMemo, useReducer } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 
 interface SwapState {
@@ -143,7 +143,12 @@ export const SwapProvider: FC<SwapProviderProps> = ({
     network0: fromChainId ? parseInt(fromChainId) : ChainId.ETHEREUM,
     network1: toChainId ? parseInt(toChainId) : ChainId.ETHEREUM,
     value: amount ? amount : '',
-    valueAsAmount: undefined,
+    valueAsAmount: tryParseAmount(
+      amount,
+      isShortName(parseInt(fromChainId), fromCurrencyId)
+        ? shortNameToCurrency(parseInt(fromChainId), fromCurrencyId as ShortName)
+        : Native.onChain(ChainId.ETHEREUM)
+    ),
   })
 
   const api = useMemo(() => {

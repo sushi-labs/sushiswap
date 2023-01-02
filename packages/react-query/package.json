@@ -21,14 +21,15 @@
     "@ethersproject/address": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/math": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/ui13": "workspace:*",
     "@tanstack/react-query": "4.20.4",
     "@tanstack/react-query-devtools": "4.20.4",
     "@tanstack/react-query-persist-client": "4.20.4",
-    "idb-keyval": "6.2.0"
+    "idb-keyval": "6.2.0",
+    "zod": "3.20.2"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

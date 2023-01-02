@@ -16,13 +16,7 @@ export const Widget: FC = () => {
   const { token0, token1, value, network0, network1 } = useSwapState()
   const { setToken0, setToken1, setValue } = useSwapActions()
   const usdPctChange = usePctChange()
-
-  console.log({ token0, token1, value, network0, network1 })
-
-  const {
-    isFetching,
-    data: { amountOut },
-  } = useTrade()
+  const { isFetching, data: trade } = useTrade()
 
   return (
     <div className="flex flex-col gap-4">
@@ -50,7 +44,7 @@ export const Widget: FC = () => {
           disabled
           chainId={network1}
           onSelect={setToken1}
-          value={amountOut?.toExact() ?? ''}
+          value={trade?.amountOut?.toExact() ?? ''}
           currency={token1}
           usdPctChange={usdPctChange}
           loading={isFetching}

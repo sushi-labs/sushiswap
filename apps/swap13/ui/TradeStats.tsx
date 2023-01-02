@@ -12,11 +12,7 @@ import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 export const TradeStats: FC = () => {
   const { value, token1, recipient } = useSwapState()
   const { data: slippageTolerance } = useSlippageTolerance()
-
-  const {
-    isFetching,
-    data: { priceImpact, amountOut, minAmountOut, gasSpent },
-  } = useTrade()
+  const { isFetching, data: trade } = useTrade()
 
   return (
     <Transition
@@ -32,13 +28,13 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">Price Impact</span>
           <span className="text-sm font-semibold text-green text-right">
-            {isFetching ? <Skeleton.Box className="h-4 py-0.5 w-[60px]" /> : `-${formatPercent(priceImpact)}`}
+            {isFetching ? <Skeleton.Box className="h-4 py-0.5 w-[60px]" /> : `-${formatPercent(trade?.priceImpact)}`}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network Fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {isFetching ? <Skeleton.Box className="h-4 py-0.5 w-[60px]" /> : `~$${gasSpent ?? '0.00'}`}
+            {isFetching ? <Skeleton.Box className="h-4 py-0.5 w-[60px]" /> : `~$${trade?.gasSpent ?? '0.00'}`}
           </span>
         </div>
         <div className="flex justify-between items-center gap-2">
@@ -49,7 +45,7 @@ export const TradeStats: FC = () => {
             {isFetching ? (
               <Skeleton.Box className="h-4 py-0.5 w-[60px]" />
             ) : (
-              `${minAmountOut?.toSignificant(6)} ${token1.symbol}`
+              `${trade?.minAmountOut?.toSignificant(6)} ${token1.symbol}`
             )}
           </span>
         </div>
@@ -61,7 +57,7 @@ export const TradeStats: FC = () => {
               {isFetching ? (
                 <Skeleton.Box className="h-[20px] my-[4px] w-full" />
               ) : (
-                `${amountOut?.toSignificant(6)} ${token1.symbol}`
+                `${trade?.amountOut?.toSignificant(6)} ${token1.symbol}`
               )}
             </span>
             {recipient && (

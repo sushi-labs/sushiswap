@@ -2464,6 +2464,7 @@ importers:
       react-dom: ^18.2.0
       tsup: 6.5.0
       typescript: 4.9.4
+      zod: 3.20.2
     dependencies:
       '@ethersproject/address': 5.7.0
       '@ethersproject/units': 5.7.0
@@ -2476,6 +2477,7 @@ importers:
       '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme
       '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       idb-keyval: 6.2.0
+      zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest

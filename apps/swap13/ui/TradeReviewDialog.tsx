@@ -23,9 +23,7 @@ export const TradeReviewDialog: FC = () => {
     setReview(false)
   }, [setReview])
 
-  const {
-    data: { priceImpact, amountOut, minAmountOut, gasSpent },
-  } = useTrade()
+  const { data: trade } = useTrade()
 
   return (
     <Dialog open={review} onClose={onClose} variant="opaque">
@@ -36,7 +34,7 @@ export const TradeReviewDialog: FC = () => {
         <div className="flex justify-between gap-4 items-start">
           <div className="flex flex-col gap-1">
             <h1 className="text-3xl font-semibold dark:text-slate-50">
-              Receive {amountOut?.toSignificant(6)} {token1.symbol}
+              Receive {trade?.amountOut?.toSignificant(6)} {token1.symbol}
             </h1>
             <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
               Sell {value} {token0.symbol}
@@ -50,7 +48,7 @@ export const TradeReviewDialog: FC = () => {
           <List>
             <List.Control>
               <List.KeyValue title="Network">{chainName[network0]}</List.KeyValue>
-              <List.KeyValue title="Network fee">~${gasSpent ?? '0.00'}</List.KeyValue>
+              <List.KeyValue title="Network fee">~${trade?.gasSpent ?? '0.00'}</List.KeyValue>
               <List.KeyValue title="Route">
                 <button className="text-blue">View route</button>
               </List.KeyValue>
@@ -58,13 +56,13 @@ export const TradeReviewDialog: FC = () => {
                 title="Price impact"
                 subtitle="The impact your trade has on the market price of this pool."
               >
-                -{formatPercent(priceImpact)}
+                -{formatPercent(trade?.priceImpact)}
               </List.KeyValue>
               <List.KeyValue
                 title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}
                 subtitle="The minimum amount you are guaranteed to receive."
               >
-                {minAmountOut?.toSignificant(6)} {token1.symbol}
+                {trade?.minAmountOut?.toSignificant(6)} {token1.symbol}
               </List.KeyValue>
             </List.Control>
           </List>

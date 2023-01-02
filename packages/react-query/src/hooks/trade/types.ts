@@ -1,60 +1,27 @@
-export interface Trade {
-  getCurrentRouteHumanString: string
-  getCurrentRouteHumanArray: string[]
-  getBestRoute: GetBestRoute
+import { Amount, Price, Type } from '@sushiswap/currency'
+import { ChainId } from '@sushiswap/chain'
+import { tradeValidator } from './validator'
+import z from 'zod'
+
+export interface UseTradeParams {
+  chainId: ChainId
+  fromToken: Type
+  toToken: Type
+  amount: Amount<Type> | undefined
+  gasPrice?: number
+  slippagePercentage: string
+  blockNumber: number | undefined
+  recipient: string | undefined
 }
 
-export interface GetBestRoute {
-  status: string
-  fromToken: FromToken
-  toToken: FromToken
-  primaryPrice: number
-  swapPrice: number
-  priceImpact: number
-  amountIn: number
-  amountInBN: Bn
-  amountOut: number
-  amountOutBN: Bn
-  legs: Leg[]
-  gasSpent: number
-  totalAmountOut: number
-  totalAmountOutBN: Bn
+export interface UseTradeReturn {
+  swapPrice: Price<Type, Type> | undefined
+  priceImpact: number | undefined
+  amountOut: Amount<Type> | undefined
+  minAmountOut: Amount<Type> | undefined
+  gasSpent: string | undefined
+  route: string[]
 }
 
-export interface Bn {
-  type: string
-  hex: string
-}
-
-export interface FromToken {
-  chainId: number
-  decimals: number
-  symbol: string
-  name: string
-  rebase: Rebase
-  isNative: boolean
-  isToken: boolean
-  address: string
-  tokenId: string
-}
-
-export interface Rebase {
-  base: number[]
-  elastic: number[]
-}
-
-export interface Leg {
-  poolAddress: string
-  poolType: PoolType
-  poolFee: number
-  tokenFrom: FromToken
-  tokenTo: FromToken
-  assumedAmountIn: number
-  assumedAmountOut: number
-  swapPortion: number
-  absolutePortion: number
-}
-
-export enum PoolType {
-  Classic = 'Classic',
-}
+export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
+export type TradeType = z.infer<typeof tradeValidator>
