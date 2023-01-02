@@ -74,6 +74,10 @@ export abstract class RPool {
   granularity1() {
     return 1
   }
+
+  alwaysAppropriateForPricing(): boolean {
+    return false
+  }
 }
 
 export class ConstantProductRPool extends RPool {

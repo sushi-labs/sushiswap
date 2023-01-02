@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.10;
 
-contract StreamReader {
+library InputStream {
   function createStream(bytes memory data) internal pure returns (uint256 stream) {
     assembly {
       stream := mload(0x40)
