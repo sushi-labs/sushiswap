@@ -28,13 +28,21 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">Price Impact</span>
           <span className="text-sm font-semibold text-green text-right">
-            {isFetching ? <Skeleton.Box className="h-4 py-0.5 w-[60px]" /> : `-${formatPercent(trade?.priceImpact)}`}
+            {isFetching ? (
+              <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
+            ) : (
+              `-${formatPercent(trade?.priceImpact) ?? '0.00%'}`
+            )}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network Fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {isFetching ? <Skeleton.Box className="h-4 py-0.5 w-[60px]" /> : `~$${trade?.gasSpent ?? '0.00'}`}
+            {isFetching ? (
+              <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
+            ) : (
+              `~$${trade?.gasSpent ?? '0.00'}`
+            )}
           </span>
         </div>
         <div className="flex justify-between items-center gap-2">
@@ -43,9 +51,9 @@ export const TradeStats: FC = () => {
           </span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {isFetching ? (
-              <Skeleton.Box className="h-4 py-0.5 w-[60px]" />
+              <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
             ) : (
-              `${trade?.minAmountOut?.toSignificant(6)} ${token1.symbol}`
+              `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${token1.symbol}`
             )}
           </span>
         </div>
@@ -55,9 +63,9 @@ export const TradeStats: FC = () => {
           <div className="flex flex-col justify-end">
             <span className="text-xl font-semibold text-gray-900 dark:text-slate-100">
               {isFetching ? (
-                <Skeleton.Box className="h-[20px] my-[4px] w-full" />
+                <Skeleton.Box className="h-[20px] my-[4px] w-full rounded-md" />
               ) : (
-                `${trade?.amountOut?.toSignificant(6)} ${token1.symbol}`
+                `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${token1.symbol}`
               )}
             </span>
             {recipient && (
