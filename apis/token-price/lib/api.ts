@@ -50,8 +50,8 @@ export async function getPricesByChainId(chainId: number, date: Date, currency: 
   if (!prices.length) {
     return []
   }
-  return prices.reduce<Record<string, number>>((acc, token) => {
+  return prices.reduce((acc, token) => {
     acc[token.address] = currency === Currency.USD ? Number(token.derivedUSD) : Number(token.derivedNative)
     return acc
-  }, {})
+  }, {} as Record<string, number>)
 }
