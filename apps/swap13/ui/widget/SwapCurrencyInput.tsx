@@ -9,8 +9,8 @@ export const SwapCurrencyInput: FC = () => {
 
   // To avoid slow input
   useEffect(() => {
-    setValue(value)
-  }, [setValue, value])
+    setValue(localValue)
+  }, [setValue, localValue])
 
   return (
     <Web3Input.Currency
