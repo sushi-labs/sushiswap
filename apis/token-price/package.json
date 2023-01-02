@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@sushiswap/chain": "workspace:*",
+    "@sushiswap/database": "workspace:*",
     "@vercel/node": "2.8.2",
+    "zod": "3.20.2",
     "date-fns": "2.29.3",
     "ioredis": "5.2.4"
   },

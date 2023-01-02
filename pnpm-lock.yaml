@@ -200,6 +200,7 @@ importers:
   apis/token-price:
     specifiers:
       '@sushiswap/chain': workspace:*
+      '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -210,11 +211,14 @@ importers:
       ioredis: 5.2.4
       typescript: 4.9.4
       vercel: 28.10.1
+      zod: 3.20.2
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/database': link:../../packages/database
       '@vercel/node': 2.8.2
       date-fns: 2.29.3
       ioredis: 5.2.4
+      zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
