@@ -55,7 +55,7 @@ if (!Object.values(Price).includes(process.env.PRICE as Price)) {
 
 
 const PRICE = process.env.PRICE as Price
-const MINIMUM_LIQUIDITY = process.env.MINIMUM_LIQUIDITY ? Number(process.env.MINIMUM_LIQUIDITY) : 500000000 // Defaults to 100 USD in USDC, (6 decimals)
+const MINIMUM_LIQUIDITY = process.env.MINIMUM_LIQUIDITY ? Number(process.env.MINIMUM_LIQUIDITY) : 500000000 // Defaults to 500 USD when base is usdc, only base being used atm
 
 
 const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
