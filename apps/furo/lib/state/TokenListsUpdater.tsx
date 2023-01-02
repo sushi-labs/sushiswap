@@ -1,14 +1,14 @@
-import { SupportedChainId } from "config";
-import { useProvider } from "wagmi";
+import { SupportedChainId } from 'config'
+import { useProvider } from 'wagmi'
 
-import { tokenLists } from "./token-lists";
+import { tokenLists } from './token-lists'
 
 interface Props {
-  chainId: SupportedChainId;
+  chainId: SupportedChainId
 }
 
 // Wagmi wrapper for redux token lists
 export function Updater({ chainId }: Props) {
-  const provider = useProvider({ chainId });
-  return <tokenLists.Updater chainId={chainId} provider={provider} />;
+  const provider = useProvider({ chainId })
+  return <tokenLists.Updater chainId={chainId} provider={provider} />
 }
