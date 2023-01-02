@@ -84,6 +84,17 @@ const schema = z.object({
   to: z.string(),
 })
 
+export function getRouteProcessorAddressForChainId(chainId: ChainId) {
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      return '0xf267704dD1393c26B39A6D41F49Bea233B34F722'
+    case ChainId.POLYGON:
+      return '0xf267704dD1393c26B39A6D41F49Bea233B34F722'
+    default:
+      throw new Error(`Unsupported route processor network for ${chainId}`)
+  }
+}
+
 export function getAlchemyNetowrkForChainId(chainId: ChainId) {
   switch (chainId) {
     case ChainId.ETHEREUM:
