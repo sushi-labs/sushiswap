@@ -176,11 +176,11 @@ export const SwapProvider: FC<SwapProviderProps> = ({
   }, [])
 
   // Set network0 to connected network
-  useLayoutEffect(() => {
-    if (chain?.id) {
-      api.setNetwork0(chain?.id)
-    }
-  }, [api, chain?.id])
+  // useLayoutEffect(() => {
+  //   if (chain?.id) {
+  //     api.setNetwork0(chain?.id)
+  //   }
+  // }, [api, chain?.id])
 
   return (
     <APIContext.Provider value={api}>
