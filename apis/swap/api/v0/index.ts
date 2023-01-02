@@ -218,7 +218,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
       gasSpent: bestRoute?.gasSpent,
     },
-    getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0000000000000000000000000000000000000000'),
+    getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, getRouteProcessorAddressForChainId(chainId)),
   })
 }
 

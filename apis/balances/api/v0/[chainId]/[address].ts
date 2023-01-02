@@ -1,6 +1,6 @@
 import { allChains } from '../../../chains'
 import { allProviders } from '../../../providers'
-import { Address, erc20ABI, readContracts, configureChains, createClient, bal } from '@wagmi/core'
+import { Address, erc20ABI, readContracts, configureChains, createClient } from '@wagmi/core'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import fetch from 'node-fetch'
 import { z } from 'zod'
