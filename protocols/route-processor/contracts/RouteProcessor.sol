@@ -6,13 +6,14 @@ import '../interfaces/IUniswapV2Pair.sol';
 import '../interfaces/IBentoBoxMinimal.sol';
 import '../interfaces/IPool.sol';
 import '../interfaces/IWETH.sol';
-import './StreamReader.sol';
+import './InputStream.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 address constant NATIVE_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-contract RouteProcessor is StreamReader {
+contract RouteProcessor {
   using SafeERC20 for IERC20;
+  using InputStream for uint256;
 
   IBentoBoxMinimal public immutable bentoBox;
   IWETH public immutable wNATIVE;
@@ -39,9 +40,9 @@ contract RouteProcessor is StreamReader {
     uint256 balanceInitial = tokenOut == NATIVE_ADDRESS ? 
       address(to).balance : IERC20(tokenOut).balanceOf(to);
 
-    uint256 stream = createStream(route);
-    while (isNotEmpty(stream)) {
-      uint8 commandCode = readUint8(stream);
+    uint256 stream = InputStream.createStream(route);
+    while (stream.isNotEmpty()) {
+      uint8 commandCode = stream.readUint8();
       if (commandCode < 20) {
         if (commandCode == 10)
           swapUniswapPool(stream); // Sushi/Uniswap pool swap
@@ -78,15 +79,15 @@ contract RouteProcessor is StreamReader {
   // Transfers input tokens from BentoBox to a pool.
   // Expected to be launched for initial liquidity distribution from user to Bento, so we know exact amounts
   function bentoDepositAmountFromBento(uint256 stream, address token) private {
-    address to = readAddress(stream);
-    uint256 amount = readUint(stream);
+    address to = stream.readAddress();
+    uint256 amount = stream.readUint();
     bentoBox.deposit(token, address(bentoBox), to, amount, 0);
   }
 
   // Transfers all input tokens from BentoBox to a pool
   function bentoDepositAllFromBento(uint256 stream) private {
-    address to = readAddress(stream);
-    address token = readAddress(stream);
+    address to = stream.readAddress();
+    address token = stream.readAddress();
 
     uint256 amount = IERC20(token).balanceOf(address(bentoBox)) +
       bentoBox.strategyData(token).balance -
@@ -96,32 +97,32 @@ contract RouteProcessor is StreamReader {
 
   // Withdraw Bento tokens from Bento to an address.
   function bentoWithdrawShareFromRP(uint256 stream, address token) private {
-    address to = readAddress(stream);
-    uint256 amount = readUint(stream);
+    address to = stream.readAddress();
+    uint256 amount = stream.readUint();
     bentoBox.withdraw(token, address(this), to, amount, 0);
   }
 
   // Withdraw all Bento tokens from Bento to an address.
   function bentoWithdrawAllFromRP(uint256 stream) private {
-    address token = readAddress(stream);
-    address to = readAddress(stream);
+    address token = stream.readAddress();
+    address to = stream.readAddress();
     uint256 amount = bentoBox.balanceOf(token, address(this));
     bentoBox.withdraw(token, address(this), to, 0, amount);
   }
 
   // Trident pool swap
   function swapTrident(uint256 stream) private {
-    address pool = readAddress(stream);
-    bytes memory swapData = readBytes(stream);
+    address pool = stream.readAddress();
+    bytes memory swapData = stream.readBytes();
     IPool(pool).swap(swapData);
   }
 
   // Sushi/Uniswap pool swap
   function swapUniswapPool(uint256 stream) private returns (uint256 amountOut) {
-    address pool = readAddress(stream);
-    address tokenIn = readAddress(stream);
-    uint8 direction = readUint8(stream);
-    address to = readAddress(stream);
+    address pool = stream.readAddress();
+    address tokenIn = stream.readAddress();
+    uint8 direction = stream.readUint8();
+    address to = stream.readAddress();
 
     (uint256 r0, uint256 r1, ) = IUniswapV2Pair(pool).getReserves();
     require(r0 > 0 && r1 > 0, 'Wrong pool reserves');
@@ -137,11 +138,11 @@ contract RouteProcessor is StreamReader {
   // Distributes input ERC20 tokens from msg.sender to addresses. Tokens should be approved
   // Expected to be launched for initial liquidity distribution from user to pools, so we know exact amounts
   function distributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
-    uint8 num = readUint8(stream);
+    uint8 num = stream.readUint8();
     amountTotal = 0;
     for (uint256 i = 0; i < num; ++i) {
-      address to = readAddress(stream);
-      uint256 amount = readUint(stream);
+      address to = stream.readAddress();
+      uint256 amount = stream.readUint();
       amountTotal += amount;
       IERC20(token).safeTransferFrom(msg.sender, to, amount);
     }
@@ -151,11 +152,11 @@ contract RouteProcessor is StreamReader {
   // Expected to be launched for initial liquidity distribution from user to pools, so we know exact amounts
   function wrapAndDistributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
     wNATIVE.deposit{value: msg.value}();
-    uint8 num = readUint8(stream);
+    uint8 num = stream.readUint8();
     amountTotal = 0;
     for (uint256 i = 0; i < num; ++i) {
-      address to = readAddress(stream);
-      uint256 amount = readUint(stream);
+      address to = stream.readAddress();
+      uint256 amount = stream.readUint();
       amountTotal += amount;
       IERC20(token).safeTransfer(to, amount);
     }
@@ -164,11 +165,11 @@ contract RouteProcessor is StreamReader {
   // Distributes input Bento tokens from msg.sender to addresses. Tokens should be approved
   // Expected to be launched for initial liquidity distribution from user to pools, so we know exact amounts
   function distributeBentoShares(uint256 stream, address token) private returns (uint256 sharesTotal) {
-    uint8 num = readUint8(stream);
+    uint8 num = stream.readUint8();
     sharesTotal = 0;
     for (uint256 i = 0; i < num; ++i) {
-      address to = readAddress(stream);
-      uint256 share = readUint(stream);
+      address to = stream.readAddress();
+      uint256 share = stream.readUint();
       sharesTotal += share;
       bentoBox.transfer(token, msg.sender, to, share);
     }
@@ -179,15 +180,15 @@ contract RouteProcessor is StreamReader {
   // During routing we can't predict in advance the actual value of internal swaps because of slippage,
   // so we have to work with shares - not fixed amounts
   function distributeERC20Shares(uint256 stream) private {
-    address token = readAddress(stream);
-    uint8 num = readUint8(stream);
+    address token = stream.readAddress();
+    uint8 num = stream.readUint8();
     uint256 amountTotal = IERC20(token).balanceOf(address(this))
       - 1;     // slot undrain protection
 
     unchecked {
       for (uint256 i = 0; i < num; ++i) {
-        address to = readAddress(stream);
-        uint16 share = readUint16(stream);
+        address to = stream.readAddress();
+        uint16 share = stream.readUint16();
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
         IERC20(token).safeTransfer(to, amount);
@@ -200,15 +201,15 @@ contract RouteProcessor is StreamReader {
   // During routing we can't predict in advance the actual value of internal swaps because of slippage,
   // so we have to work with portions - not fixed amounts
   function distributeBentoPortions(uint256 stream) private {
-    address token = readAddress(stream);
-    uint8 num = readUint8(stream);
+    address token = stream.readAddress();
+    uint8 num = stream.readUint8();
     uint256 amountTotal = bentoBox.balanceOf(token, address(this))
       - 1;     // slot undrain protection
 
     unchecked {
       for (uint256 i = 0; i < num; ++i) {
-        address to = readAddress(stream);
-        uint16 share = readUint16(stream);
+        address to = stream.readAddress();
+        uint16 share = stream.readUint16();
         uint256 amount = (amountTotal * share) / 65535;
         amountTotal -= amount;
         bentoBox.transfer(token, address(this), to, amount);
