@@ -11,27 +11,24 @@ import { Currency } from './enums'
  * @returns
  */
 export async function getPrice(chainId: number, address: string, date: Date, currency: Currency = Currency.USD) {
-  const where = (
-    currency === Currency.USD
-      ? { AND: { chainId, address, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
-      : { AND: { chainId, address, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } } }
-  ) as any // TODO: fix this, need to export TokenWhereInput from @sushiswap/database
-
-  const token = await prisma.token.findFirst({
+  const price = await prisma.token.findFirst({
     select: { address: true, derivedUSD: true, derivedNative: true },
-    where,
+    where:
+      currency === Currency.USD
+        ? { AND: { chainId, address, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
+        : { AND: { chainId, address, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
   })
   await prisma.$disconnect()
 
   if (
-    !token ||
-    (currency === Currency.USD && !token.derivedUSD) ||
-    (currency === Currency.NATIVE && !token.derivedNative)
+    !price ||
+    (currency === Currency.USD && !price.derivedUSD) ||
+    (currency === Currency.NATIVE && !price.derivedNative)
   ) {
     return undefined
   }
 
-  return currency === Currency.USD ? Number(token.derivedUSD) : Number(token.derivedNative)
+  return currency === Currency.USD ? Number(price.derivedUSD) : Number(price.derivedNative)
 }
 
 /**
@@ -42,26 +39,19 @@ export async function getPrice(chainId: number, address: string, date: Date, cur
  * @returns
  */
 export async function getPricesByChainId(chainId: number, date: Date, currency: Currency = Currency.USD) {
-  const where = (
-    currency === Currency.USD
-      ? { AND: { chainId, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
-      : { AND: { chainId, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } } }
-  ) as any // TODO: fix this, need to export TokenWhereInput from @sushiswap/database
-
-  const tokens = await prisma.token.findMany({
+  const prices = await prisma.token.findMany({
     select: { address: true, derivedUSD: true, derivedNative: true },
-    where,
+    where:
+      currency === Currency.USD
+        ? { AND: { chainId, status: 'APPROVED', derivedUSD: { gt: 0 }, updatedAt: { gt: date } } }
+        : { AND: { chainId, status: 'APPROVED', derivedNative: { gt: 0 }, updatedAt: { gt: date } } },
   })
   await prisma.$disconnect()
-  if (!tokens.length) {
+  if (!prices.length) {
     return []
   }
-  return tokens.reduce<Record<string, number>>((acc, token) => {
+  return prices.reduce<Record<string, number>>((acc, token) => {
     acc[token.address] = currency === Currency.USD ? Number(token.derivedUSD) : Number(token.derivedNative)
     return acc
   }, {})
-
-  // return tokens.map((token) => ({
-  //   [token.address]: currency === Currency.USD ? Number(token.derivedUSD) : Number(token.derivedNative),
-  // })).flat()
 }
