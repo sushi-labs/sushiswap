@@ -1,9 +1,11 @@
+/* eslint-disable turbo/no-undeclared-env-vars */
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Prisma, PrismaClient, Token } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
 import { calcTokenPrices, ConstantProductRPool } from '@sushiswap/tines'
 import { performance } from 'perf_hooks'
+
 import { PoolType, Price, ProtocolVersion } from '../config.js'
 
 const prisma = new PrismaClient()
@@ -50,7 +52,11 @@ if (!Object.values(Price).includes(process.env.PRICE as Price)) {
     `Price (${process.env.PRICE}) not supported, supported price types: ${Object.values(Price).join(',')}`
   )
 }
+
+
 const PRICE = process.env.PRICE as Price
+const MINIMUM_LIQUIDITY = process.env.MINIMUM_LIQUIDITY ? Number(process.env.MINIMUM_LIQUIDITY) : 500000000 // Defaults to 500 USD when base is usdc, only base being used atm
+
 
 const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
 
@@ -67,7 +73,6 @@ async function main() {
 
   const { constantProductPools, tokens } = transform(pools)
   const tokensToUpdate = calculatePrices(constantProductPools, baseToken, tokens)
-
   await updateTokenPrices(tokensToUpdate)
 
   const endTime = performance.now()
@@ -173,11 +178,6 @@ function transform(pools: Pool[]) {
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
     
-    const amount0 = (Number(pool.reserve0) / 10 ** pool.token0.decimals)
-    const amount1 = (Number(pool.reserve1) / 10 ** pool.token1.decimals)
-    if (amount0 < 0.001 || amount1 < 0.001) {
-      return
-    }
     constantProductPools.push(
       new ConstantProductRPool(
         pool.address,
@@ -198,7 +198,7 @@ function calculatePrices(
   tokens: Map<string, Token>
 ) {
   const startTime = performance.now()
-  const results = calcTokenPrices(constantProductPools, baseToken)
+  const results = calcTokenPrices(constantProductPools, baseToken, MINIMUM_LIQUIDITY)
   const endTime = performance.now()
   console.log(`calcTokenPrices() found ${results.size} prices (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 
@@ -206,7 +206,14 @@ function calculatePrices(
 
   for (const [rToken, value] of results.entries()) {
     const token = tokens.get(rToken.address)
-    if (!token || value === 0) continue
+    if (!token){
+      console.log(`Token not found: ${rToken.symbol}~${rToken.address}~${value}`)
+      continue
+    }
+    if (value === 0) {
+      console.log(`Price null: ${rToken.symbol}~${rToken.address}~${value}`)
+    }
+
     const price = Number((value / Math.pow(10, baseToken.decimals - token.decimals)).toFixed(12))
     if (price > Number.MAX_SAFE_INTEGER) continue
     // console.log(`${token.symbol}~${token.address}~${price}`)
