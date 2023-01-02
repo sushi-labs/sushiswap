@@ -45,4 +45,8 @@ export class BridgeStargateV04OneWay extends RPool {
   calcCurrentPriceWithoutFee(_direction: boolean): number {
     return 1
   }
+
+  alwaysAppropriateForPricing() {
+    return true
+  }
 }
