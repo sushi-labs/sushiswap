@@ -48,10 +48,13 @@ export async function getPricesByChainId(chainId: number, date: Date, currency: 
   })
   await prisma.$disconnect()
   if (!prices.length) {
-    return []
+    return {}
   }
+
   return prices.reduce((acc, token) => {
     acc[token.address] = currency === Currency.USD ? Number(token.derivedUSD) : Number(token.derivedNative)
     return acc
   }, {} as Record<string, number>)
+
+  
 }
