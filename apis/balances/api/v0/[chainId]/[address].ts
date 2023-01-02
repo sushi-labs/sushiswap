@@ -1,24 +1,22 @@
+import { allChains } from '../../../chains'
+import { allProviders } from '../../../providers'
+import { Address, erc20ABI, readContracts, configureChains, createClient } from '@wagmi/core'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
+import fetch from 'node-fetch'
+import { z } from 'zod'
+
 const alchemyId = process.env['ALCHEMY_ID']
 
 if (!alchemyId) {
   throw Error('NO ALCHEMY ID SET')
 }
 
-// WAGMI NO WORK...
-// import { allChains } from '@sushiswap/wagmi-config'
-// import { allProviders } from '@sushiswap/wagmi-config'
-// import { configureChains, createClient } from '@wagmi/core'
-// import { Address, erc20ABI, readContracts } from '@wagmi/core'
-// const { provider, webSocketProvider } = configureChains(allChains, allProviders)
-// createClient({
-//   autoConnect: true,
-//   provider,
-//   webSocketProvider,
-// })
-
-import type { VercelRequest, VercelResponse } from '@vercel/node'
-import fetch from 'node-fetch'
-import { z } from 'zod'
+const { provider, webSocketProvider } = configureChains(allChains, allProviders)
+createClient({
+  autoConnect: true,
+  provider,
+  webSocketProvider,
+})
 
 const querySchema = z.object({
   chainId: z.coerce
@@ -44,21 +42,21 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   // const config = await import('@sushiswap/wagmi-config')
 
   // Code below is fine, but wagmi isn't working for some reason...
-  // const results = await readContracts({
-  //   allowFailure: true,
-  //   contracts: tokens.map(
-  //     (address) =>
-  //       ({
-  //         chainId,
-  //         address,
-  //         abi: erc20ABI,
-  //         args: [address as Address],
-  //         functionName: 'balanceOf',
-  //       } as const)
-  //   ),
-  // })
+  const results = await readContracts({
+    allowFailure: true,
+    contracts: tokens.map(
+      (address) =>
+        ({
+          chainId,
+          address: address as Address,
+          abi: erc20ABI,
+          args: [address as Address],
+          functionName: 'balanceOf',
+        } as const)
+    ),
+  })
 
-  return response.status(200).json({ chainId, address, tokens })
+  return response.status(200).json({ chainId, address, results })
 
   // return response.status(200).json(Object.fromEntries(tokens.map((token, i) => [token, results[i]])))
 }

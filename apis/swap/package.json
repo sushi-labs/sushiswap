@@ -35,6 +35,7 @@
     "@vercel/node": "2.8.2",
     "ethers": "^5.7.0",
     "ethereum-multicall": "2.15.0",
+    "node-fetch": "2.x",
     "zod": "3.20.2"
   },
   "devDependencies": {
@@ -43,6 +44,7 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
+    "@types/node-fetch": "2.x",
     "eslint": "8.29.0",
     "typescript": "4.9.4",
     "vercel": "28.10.1"
