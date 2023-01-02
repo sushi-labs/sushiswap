@@ -19,15 +19,7 @@
     "tsconfig.json"
   ],
   "pipeline": {
-    "build-blog": {
-      "outputs": [".mesh/**", ".next/**", ".turbo/**", "public/**"],
-      "dependsOn": ["^build", "generate"],
-      "env": ["NEXT_PUBLIC_STRAPI_API_URL", "STRAPI_PREVIEW_SECRET"]
-    },
-    "furo:build": {
-      "outputs": [".next/**", "public/**"],
-      "dependsOn": ["^build", "generate"]
-    },
+
     "db:init": {
       "outputs": ["prisma/**"],
       "cache": false
@@ -125,6 +117,15 @@
     },
     "server": {
       "dependsOn": ["^build"]
+    },
+    "build-blog": {
+      "outputs": [".mesh/**", ".next/**", ".turbo/**", "public/**"],
+      "dependsOn": ["^build", "generate"],
+      "env": ["NEXT_PUBLIC_STRAPI_API_URL", "STRAPI_PREVIEW_SECRET"]
+    },
+    "build-furo": {
+      "outputs": [".next/**", "public/**"],
+      "dependsOn": ["^build", "generate"]
     },
     "build-graphql": {
       "outputs": [".graphclient/**", ".mesh/**"],
