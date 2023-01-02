@@ -3532,7 +3532,6 @@ importers:
       '@graphql-mesh/transform-type-merging': latest
       '@sushiswap/abi': workspace:*
       '@sushiswap/chain': workspace:*
-      '@sushiswap/core': ^2.0.0-canary.1
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-client': workspace:*
@@ -3540,6 +3539,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@swc/core': ^1.2.249
       '@swc/helpers': ^0.4.11
@@ -3557,15 +3557,14 @@ importers:
       jest: ^29.3.0
       prettier: 2.8.1
       ts-node: ^10.9.0
-      tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/core': 2.0.0-canary.1
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@wagmi/core': 0.8.1_c4tpmuajjwy7vjodfmym27ncri
       express: 4.18.2
@@ -3596,7 +3595,6 @@ importers:
       jest: 29.3.1_ts-node@10.9.1
       prettier: 2.8.1
       ts-node: 10.9.1_q7u3722li5p3s3hvjnne4zfcwq
-      tsup: 6.5.0_4wigyvb26jd7smnp5shbidl5ou
       typescript: 4.9.4
 
   scripts/price:
@@ -10636,7 +10634,7 @@ packages:
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.2.4_postcss@8.4.20
+      tailwindcss: 3.2.4
     dev: false
 
   /@tanstack/match-sorter-utils/8.7.2:
@@ -13360,7 +13358,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
     dev: false
@@ -13368,7 +13366,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -19800,7 +19798,7 @@ packages:
       solc: 0.7.3_debug@4.3.4
       source-map-support: 0.5.21
       stacktrace-parser: 0.1.10
-      ts-node: 10.9.1_r65g46xrm45gbuklnvp6xevc2y
+      ts-node: 10.9.1_zpb5kzpnyozdjq4cwaojlul57u
       tsort: 0.0.1
       typescript: 4.9.4
       undici: 5.14.0
@@ -25097,6 +25095,7 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
+    dev: true
 
   /postcss-js/4.0.0:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -25124,6 +25123,7 @@ packages:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.4.20
+    dev: true
 
   /postcss-load-config/3.1.4:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -25172,6 +25172,7 @@ packages:
       lilconfig: 2.0.6
       postcss: 8.4.20
       yaml: 1.10.2
+    dev: true
 
   /postcss-load-config/3.1.4_ts-node@10.9.1:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -25186,7 +25187,7 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.0.6
-      ts-node: 10.9.1_zpb5kzpnyozdjq4cwaojlul57u
+      ts-node: 10.9.1_q7u3722li5p3s3hvjnne4zfcwq
       yaml: 1.10.2
     dev: true
 
@@ -25216,6 +25217,7 @@ packages:
     dependencies:
       postcss: 8.4.20
       postcss-selector-parser: 6.0.11
+    dev: true
 
   /postcss-selector-parser/6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -27210,7 +27212,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -27915,8 +27917,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -27942,14 +27942,13 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
 
   /tailwindcss/3.2.4_postcss@8.4.19:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -27975,6 +27974,7 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
     dev: true
 
@@ -27982,8 +27982,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -28009,7 +28007,9 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
+    dev: true
 
   /tapable/2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
@@ -28524,7 +28524,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.3.1_@types+node@17.0.30
+      jest: 29.3.1_@types+node@16.18.11
       jest-util: 29.3.1
       json5: 2.2.2
       lodash.memoize: 4.1.2

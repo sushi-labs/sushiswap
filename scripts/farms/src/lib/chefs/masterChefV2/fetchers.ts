@@ -11,7 +11,8 @@ export async function getPoolLength() {
     chainId: ChainId.ETHEREUM,
     abi: masterChefV2Abi,
     functionName: 'poolLength',
-  }
+  } as const
+
   return readContract(poolLengthCall)
 }
 
@@ -21,7 +22,8 @@ export async function getTotalAllocPoint() {
     chainId: ChainId.ETHEREUM,
     abi: masterChefV2Abi,
     functionName: 'totalAllocPoint',
-  }
+  } as const
+
   return readContract(totalAllocPointCall)
 }
 
@@ -31,18 +33,23 @@ export async function getSushiPerBlock() {
     chainId: ChainId.ETHEREUM,
     abi: masterChefV2Abi,
     functionName: 'sushiPerBlock',
-  }
+  } as const
+
   return readContract(sushiPerBlockCall)
 }
 
 export async function getPoolInfos(poolLength: number) {
-  const poolInfoCalls = [...Array(poolLength)].map((_, i) => ({
-    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    args: [i],
-    chainId: ChainId.ETHEREUM,
-    abi: masterChefV2Abi,
-    functionName: 'poolInfo',
-  }))
+  const poolInfoCalls = [...Array(poolLength)].map(
+    (_, i) =>
+      ({
+        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+        args: [BigNumber.from(i)],
+        chainId: ChainId.ETHEREUM,
+        abi: masterChefV2Abi,
+        functionName: 'poolInfo',
+      } as const)
+  )
+
   return readContracts({
     allowFailure: true,
     contracts: poolInfoCalls,
@@ -50,13 +57,17 @@ export async function getPoolInfos(poolLength: number) {
 }
 
 export async function getLpTokens(poolLength: number) {
-  const lpTokenCalls = [...Array(poolLength)].map((_, i) => ({
-    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    args: [i],
-    chainId: ChainId.ETHEREUM,
-    abi: masterChefV2Abi,
-    functionName: 'lpToken',
-  }))
+  const lpTokenCalls = [...Array(poolLength)].map(
+    (_, i) =>
+      ({
+        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+        args: [BigNumber.from(i)],
+        chainId: ChainId.ETHEREUM,
+        abi: masterChefV2Abi,
+        functionName: 'lpToken',
+      } as const)
+  )
+
   return readContracts({
     allowFailure: true,
     contracts: lpTokenCalls,
@@ -64,13 +75,17 @@ export async function getLpTokens(poolLength: number) {
 }
 
 export async function getRewarders(poolLength: number) {
-  const rewarderCalls = [...Array(poolLength)].map((_, i) => ({
-    address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
-    args: [i],
-    chainId: ChainId.ETHEREUM,
-    abi: masterChefV2Abi,
-    functionName: 'rewarder',
-  }))
+  const rewarderCalls = [...Array(poolLength)].map(
+    (_, i) =>
+      ({
+        address: MASTERCHEF_V2_ADDRESS[ChainId.ETHEREUM],
+        args: [BigNumber.from(i)],
+        chainId: ChainId.ETHEREUM,
+        abi: masterChefV2Abi,
+        functionName: 'rewarder',
+      } as const)
+  )
+
   return readContracts({
     allowFailure: true,
     contracts: rewarderCalls,
