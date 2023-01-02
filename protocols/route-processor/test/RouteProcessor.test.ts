@@ -1,17 +1,13 @@
+import { bentoBoxV1Abi, erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI, Token, WBTC, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { BentoBox, HEXer, Swapper } from '@sushiswap/router'
 import { getBigNumber, RouteStatus } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
 import { HardhatNetworkConfig } from 'hardhat/types'
 
-import { BentoBoxABI } from '../ABI/BentoBoxABI'
-import { ERC20ABI } from '../ABI/ERC20'
-import { WETH9ABI } from '../ABI/WETH9'
-import { HEXer } from '../scripts/HEXer'
-import { BentoBox } from '../scripts/liquidityProviders/Trident'
-import { Swapper } from '../scripts/Swapper'
 import { RouteProcessor__factory } from '../typechain'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -29,7 +25,7 @@ async function BentoMakeTokenStrategyPercentage(chainId: ChainId, token: string,
     value: getBigNumber(1e18),
   })
 
-  const BentoContract = await new Contract(BentoBox[chainId], BentoBoxABI, bentoOwner)
+  const BentoContract = await new Contract(BentoBox[chainId], bentoBoxV1Abi, bentoOwner)
   await BentoContract.setStrategyTargetPercentage(token, percentage)
   await BentoContract.harvest(token, true, 0)
 }
@@ -71,7 +67,7 @@ async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: T
   })
 
   console.log(`4. Approve user's ${amountIn} ${baseWrappedToken.symbol} to the route processor ...`)
-  const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, WETH9ABI, Alice)
+  const WrappedBaseTokenContract = await new ethers.Contract(baseWrappedToken.address, weth9Abi, Alice)
   await WrappedBaseTokenContract.connect(Alice).approve(routeProcessor.address, amountInBN.mul(swaps))
 
   console.log("5. Fetch pools' data ...")
@@ -111,7 +107,7 @@ async function testRouteProcessor(chainId: ChainId, amountIn: number, toToken: T
       i > 0 ? getBigNumber(0) : route.amountOutBN.mul(getBigNumber((1 - 0.005) * 1_000_000)).div(1_000_000)
     await delay(1000) // to make Alchemy API rest a while
 
-    const toTokenContract = await new ethers.Contract(toToken.address, WETH9ABI, Alice)
+    const toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, Alice)
     const balanceOutBNBefore = await toTokenContract.connect(Alice).balanceOf(Alice.address)
     const tx = await routeProcessor.processRoute(
       baseWrappedToken.address,
@@ -137,7 +133,7 @@ describe('RouteProcessor', async function () {
   it.skip('Contract call check', async function () {
     const forking_url = (network.config as HardhatNetworkConfig)?.forking?.url
     if (forking_url !== undefined && forking_url.search('polygon') >= 0) {
-      const erc20 = new ethers.utils.Interface(ERC20ABI)
+      const erc20 = new ethers.utils.Interface(erc20Abi)
       const callDataHex: string = erc20.encodeFunctionData('symbol', [])
 
       const code = new HEXer()

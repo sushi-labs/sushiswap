@@ -1,5 +1,4 @@
 import '@nomiclabs/hardhat-ethers'
-import 'hardhat-deploy'
 
 import { defaultConfig } from '@sushiswap/hardhat-config'
 import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from 'hardhat/builtin-tasks/task-names'
@@ -43,12 +42,42 @@ const config: HardhatUserConfig = {
   networks: {
     localhost: {},
     hardhat: {
+      // ethereum
       forking: {
         enabled: true,
-        //url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-        //blockNumber: 34445477,
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+        blockNumber: 16240100,
       },
+      accounts: {
+        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
+      },
+      chainId: 1,
+    },
+    // hardhat: {
+    //   // polygon
+    //   forking: {
+    //     enabled: true,
+    //     url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+    //     blockNumber: 37180000,
+    //   },
+    //   accounts: {
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+    //   },
+    //   chainId: 137,
+    // },
+    ethereum: {
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts,
+      chainId: 1,
+      hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
+    },
+    ropsten: {
+      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      chainId: 3,
+    },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
     },
   },

@@ -1,0 +1,99 @@
+{
+  "name": "sushi",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Seed scripts for Sushi DB",
+  "keywords": [
+    "sushi",
+    "script"
+  ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "scripts/sushi"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node --swc src/run.ts",
+    "server": "ts-node --swc src/server.ts",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "prisma-generate": "prisma generate",
+    "generate": "graphclient build --fileType js --throwOnInvalidConfig",
+    "lint": "TIMING=1 eslint src --fix",
+    "test": "jest --passWithNoTests",
+    "validate": "graphclient validate"
+  },  
+  "type": "module",
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "dependencies": {
+    "@sushiswap/chain": "workspace:*",
+    "@sushiswap/core": "^2.0.0-canary.1",
+    "@sushiswap/currency": "workspace:*",
+    "@sushiswap/graph-config": "workspace:*",
+    "@sushiswap/tines": "workspace:*",
+    "@sushiswap/abi": "workspace:*",
+    "isomorphic-unfetch": "3.1.0",
+    "@ethersproject/abi": "^5.7.0",
+    "@uniswap/v2-core": "^1.0.1",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "@sushiswap/wagmi-config": "workspace:*",
+    "@graphprotocol/client-cli": "2.2.16",
+    "@graphprotocol/client-add-source-name": "latest",
+    "@graphql-mesh/utils": "latest",
+    "@graphql-mesh/cache-localforage": "latest",
+    "@whatwg-node/fetch": "latest",
+    "@graphql-mesh/graphql": "latest",
+    "@graphql-mesh/merger-stitching": "latest",
+    "@graphql-mesh/http": "latest",
+    "@graphql-mesh/runtime": "latest",
+    "@graphql-mesh/store": "latest",
+    "@graphql-mesh/json-schema": "latest",
+    "@graphql-mesh/merger-bare": "latest",
+    "@graphql-mesh/plugin-mock": "latest",
+    "@graphql-mesh/cross-helpers": "latest",
+    "@ethersproject/bignumber": "^5.7.0",
+    "@ethersproject/units": "^5.7.0",
+    "@ethersproject/address": "^5.7.0",
+    "@graphprotocol/client-auto-pagination": "latest",
+    "@graphql-mesh/transform-filter-schema": "latest",
+    "@graphql-mesh/transform-prefix": "latest",
+    "@graphql-mesh/transform-prune": "latest",
+    "@graphql-mesh/transform-rename": "latest",
+    "@graphql-mesh/transform-type-merging": "latest",
+    "@sushiswap/math": "workspace:*",
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@swc/core": "^1.2.249",
+    "@swc/helpers": "^0.4.11",
+    "@types/express": "^4.17.13",
+    "date-fns": "^2.29.1",
+    "dotenv": "^16.0.1",
+    "eslint": "^8.20.0",
+    "ethers": "^5.7.0",
+    "graphql": "16.6.0",
+    "hardhat": "^2.10.0",
+    "ioredis": "^5.2.0",
+    "jest": "^28.1.0",
+    "prettier": "^2.7.0",
+    "@prisma/client": "^4.8.0",
+    "prisma": "^4.8.0",
+    "ts-node": "^10.9.0",
+    "tsup": "^6.2.0",
+    "typescript": "4.8.2",
+    "@wagmi/core": "0.8.1"
+  },
+  "peerDependencies": {
+    "@wagmi/core": "0.8.1"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
