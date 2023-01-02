@@ -4,6 +4,7 @@ import { Address, erc20ABI, readContracts, configureChains, createClient } from 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import fetch from 'node-fetch'
 import { z } from 'zod'
+import zip from 'lodash.zip'
 
 const alchemyId = process.env['ALCHEMY_ID']
 
@@ -31,24 +32,21 @@ const querySchema = z.object({
 const tokensSchema = z.array(z.coerce.string())
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
+  // Serve from cache, but update it, if requested after 1 second.
+  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   const { chainId, address } = querySchema.parse(request.query)
 
-  // Or call DB directly?
   const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
   const data = await res.json()
   const tokens = tokensSchema.parse(data)
 
-  // Even just importing this config is causing an error:
-  // const config = await import('@sushiswap/wagmi-config')
-
-  // Code below is fine, but wagmi isn't working for some reason...
-  const results = await readContracts({
+  const balances = await readContracts({
     allowFailure: true,
     contracts: tokens.map(
-      (address) =>
+      (token) =>
         ({
           chainId,
-          address: address as Address,
+          address: token as Address,
           abi: erc20ABI,
           args: [address as Address],
           functionName: 'balanceOf',
@@ -56,9 +54,15 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     ),
   })
 
-  return response.status(200).json({ chainId, address, results })
+  const zipped = zip(tokens, balances)
 
-  // return response.status(200).json(Object.fromEntries(tokens.map((token, i) => [token, results[i]])))
+  return response
+    .status(200)
+    .json(
+      Object.fromEntries(
+        zipped.filter(([, balance]) => !balance?.isZero()).map(([token, balance]) => [token, balance?.toString()])
+      )
+    )
 }
 
 export default handler
