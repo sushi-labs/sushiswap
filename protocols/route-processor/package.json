@@ -50,7 +50,6 @@
     "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@tenderly/hardhat-tenderly": "^1.0.0",
     "@typechain/ethers-v5": "^10.0.0",
     "@typechain/hardhat": "^6.1.0",
     "@types/chai": "^4.3.0",

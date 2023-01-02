@@ -3345,7 +3345,6 @@ importers:
       '@sushiswap/router': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
-      '@tenderly/hardhat-tenderly': ^1.0.0
       '@typechain/ethers-v5': ^10.0.0
       '@typechain/hardhat': ^6.1.0
       '@types/chai': ^4.3.0
@@ -3394,7 +3393,6 @@ importers:
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/typescript-config': link:../../config/typescript
-      '@tenderly/hardhat-tenderly': 1.4.1_qvdp3sv3zt6nvy75l5ck5aiq3y
       '@typechain/ethers-v5': 10.2.0_53u2xb7yqqknh4abs3avusnjya
       '@typechain/hardhat': 6.1.5_zmyf77wkrp2yciegh3zdz5z77q
       '@types/chai': 4.3.4
