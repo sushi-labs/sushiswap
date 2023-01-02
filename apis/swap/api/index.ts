@@ -48,6 +48,7 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     WNATIVE: WNATIVE[ChainId.POLYGON],
     MATIC: Native.onChain(ChainId.POLYGON),
     WMATIC: WNATIVE[ChainId.POLYGON],
+    ETH: WETH9[ChainId.POLYGON],
     WETH: WETH9[ChainId.POLYGON],
     WBTC: WBTC[ChainId.POLYGON],
     USDC: USDC[ChainId.POLYGON],
@@ -131,6 +132,9 @@ const tokenSchema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
+  // Serve from cache, but update it, if requested after 1 second.
+  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
+
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
 
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
