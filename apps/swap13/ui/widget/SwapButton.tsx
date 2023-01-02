@@ -22,8 +22,8 @@ export const SwapButton: FC = () => {
 
   return (
     <>
-      <Container maxWidth={500} className="fixed bottom-6 mx-auto left-4 right-4 w-[unset]">
-        <Button fullWidth size="xl" onClick={onClick}>
+      <Container maxWidth={520} className="fixed bottom-6 mx-auto sm:p-4 !pb-0 left-4 right-4 w-[unset]">
+        <Button fullWidth size="xl" onClick={onClick} className="z-[1082]">
           {review ? (
             <>
               Swap {token0.symbol} for {token1.symbol}

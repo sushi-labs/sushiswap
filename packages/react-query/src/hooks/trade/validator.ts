@@ -2,7 +2,7 @@ import z from 'zod'
 
 const tokenValidator = z.object({
   chainId: z.number(),
-  decimals: z.number(),
+  decimals: z.number().optional(),
   symbol: z.string(),
   name: z.string(),
   rebase: z
@@ -11,8 +11,8 @@ const tokenValidator = z.object({
       elastic: z.array(z.number()),
     })
     .optional(),
-  isNative: z.boolean(),
-  isToken: z.boolean(),
+  isNative: z.boolean().optional(),
+  isToken: z.boolean().optional(),
   address: z.string(),
   tokenId: z.string(),
 })

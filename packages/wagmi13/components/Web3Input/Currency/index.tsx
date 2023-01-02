@@ -30,6 +30,7 @@ export interface CurrencyInputProps {
   fundSource?: FundSource
   disableMaxButton?: boolean
   type: 'INPUT' | 'OUTPUT'
+  fetching?: boolean
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -46,6 +47,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   fundSource = FundSource.WALLET,
   disableMaxButton = false,
   type,
+  fetching,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -81,19 +83,30 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               <Skeleton.Box className="w-2/4 h-[32px] rounded-lg" />
             </div>
           ) : (
-            <Input.Numeric
-              testdata-id={`${id}-input`}
-              ref={inputRef}
-              variant="unstyled"
-              disabled={disabled}
-              onUserInput={onChange}
-              className={classNames(
-                DEFAULT_INPUT_UNSTYLED,
-                'without-ring !text-3xl py-1 text-gray-900 dark:text-slate-200 hover:dark:text-slate-100'
+            <div className="relative">
+              {type === 'OUTPUT' && (
+                <Input.Numeric
+                  ref={inputRef}
+                  variant="unstyled"
+                  className={classNames(
+                    DEFAULT_INPUT_UNSTYLED,
+                    fetching ? 'shimmer-dark bg-shimmer-gradient-text' : '',
+                    'absolute without-ring !text-3xl py-1 !text-transparent pointer-events-none'
+                  )}
+                  value={value}
+                />
               )}
-              value={value}
-              readOnly={disabled}
-            />
+              <Input.Numeric
+                testdata-id={`${id}-input`}
+                ref={inputRef}
+                variant="unstyled"
+                disabled={disabled}
+                onUserInput={onChange}
+                className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl py-1')}
+                value={value}
+                readOnly={disabled}
+              />
+            </div>
           )}
           {onSelect ? (
             <TokenSelector
@@ -161,6 +174,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       currency,
       disableMaxButton,
       disabled,
+      fetching,
       focusInput,
       fundSource,
       id,

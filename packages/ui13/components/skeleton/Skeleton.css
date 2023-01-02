@@ -1,3 +1,7 @@
 .shimmer {
   @apply relative after:absolute after:inset-0 after:translate-x-[-100%] after:animate-wave after:content-[''] after:bg-shimmer-gradient-dark dark:after:bg-shimmer-gradient;
 }
+
+.shimmer-dark {
+  @apply relative animate-wave-text bg-shimmer-gradient-text bg-clip-text bg-[size:4rem_100%] bg-[position:-4rem_top] bg-no-repeat;
+}

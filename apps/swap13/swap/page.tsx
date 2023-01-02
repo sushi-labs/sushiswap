@@ -22,9 +22,12 @@ export default function Page({
       <Container maxWidth={520} className="space-y-8 p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
         <Widget />
         <TradeStats />
-        <SwapButton />
         <TradeReviewDialog />
         <TradeRoute />
+        <SwapButton />
+
+        {/*spacer for fixed positioned swap button */}
+        <div className="h-[68px] w-full" />
       </Container>
     </SwapProvider>
   )

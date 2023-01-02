@@ -19,6 +19,8 @@ module.exports = {
           'linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 30%, rgba(255, 255, 255, 0.10) 50%, rgba(255, 255, 255, 0.05) 70%, rgba(255, 255, 255, 0) 100%)',
         'shimmer-gradient-dark':
           'linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 30%, rgba(0, 0, 0, 0.10) 50%, rgba(0, 0, 0, 0.05) 70%, rgba(0, 0, 0, 0) 100%)',
+        'shimmer-gradient-text':
+          'linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.25) 30%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.25) 70%, rgba(0, 0, 0, 0) 100%)',
       }),
       boxShadow: {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
@@ -45,11 +47,23 @@ module.exports = {
         'spin-slow': 'spin 2s linear infinite',
         heartbeat: 'heartbeat 1s ease 0.2s infinite normal forwards',
         rotate: 'rotate360 1s cubic-bezier(0.83, 0, 0.17, 1) infinite',
+        'wave-text': 'shimmer-text 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         wave: 'shimmer 1.25s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         dash: 'dash 1.5s 2s ease-out infinite',
         'dash-check': 'dash-check 1.5s 2s ease-out infinite',
       },
       keyframes: {
+        'shimmer-text': {
+          '0%': {
+            backgroundPosition: '-4rem top',
+          },
+          '70%': {
+            backgroundPosition: '12.5rem top',
+          },
+          '100%': {
+            backgroundPosition: '12.5rem top',
+          },
+        },
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },

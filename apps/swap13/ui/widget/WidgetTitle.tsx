@@ -28,25 +28,28 @@ export const WidgetTitle = () => {
       return ['0.00', '0.00', '0.00']
     }
 
-    const token0Price = tryParseAmount('1', token0)?.multiply(prices0[token0.wrapped.address])
-    const token1Price = tryParseAmount('1', token1)?.multiply(prices1[token1.wrapped.address])
+    const token0Price = prices0[token0.wrapped.address]
+      ? tryParseAmount('1', token0)?.multiply(prices0[token0.wrapped.address])
+      : undefined
+    const token1Price = prices1[token1.wrapped.address]
+      ? tryParseAmount('1', token1)?.multiply(prices1[token1.wrapped.address])
+      : undefined
     const dummy0 = new Token({ address: token0.wrapped.address, chainId: 1, decimals: token0.decimals })
     const dummy1 = new Token({ address: token1.wrapped.address, chainId: 1, decimals: token1.decimals })
 
+    let price
     if (token0Price && token1Price) {
-      const price = new Price({
+      price = new Price({
         baseAmount: Amount.fromRawAmount(dummy0, token0Price.quotient.toString()),
         quoteAmount: Amount.fromRawAmount(dummy1, token1Price.quotient.toString()),
       })
-
-      return [
-        token0Price.toFixed(2),
-        token1Price.toFixed(2),
-        invert ? price.invert().toSignificant(4) : price.toSignificant(4),
-      ]
     }
 
-    return ['0.00', '0.00', '0.00']
+    return [
+      token0Price?.toSignificant(6) ?? '0.00',
+      token1Price?.toSignificant(6) ?? '0.00',
+      price ? (invert ? price.invert().toSignificant(4) : price.toSignificant(4)) : '0.00',
+    ]
   }, [invert, prices0, prices1, token0, token1])
 
   const handleSelect0 = useCallback<NetworkSelectorOnSelectCallback>(

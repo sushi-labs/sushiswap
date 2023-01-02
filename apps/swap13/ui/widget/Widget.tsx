@@ -16,7 +16,7 @@ export const Widget: FC = () => {
   const { token0, token1, value, network0, network1 } = useSwapState()
   const { setToken0, setToken1, setValue } = useSwapActions()
   const usdPctChange = usePctChange()
-  const { isFetching, data: trade } = useTrade()
+  const { isLoading, isFetching, data: trade } = useTrade()
 
   return (
     <div className="flex flex-col gap-4">
@@ -47,7 +47,8 @@ export const Widget: FC = () => {
           value={trade?.amountOut?.toExact() ?? ''}
           currency={token1}
           usdPctChange={usdPctChange}
-          loading={isFetching}
+          loading={Boolean(value && !trade && isLoading)}
+          fetching={isFetching}
           disableMaxButton
         />
       </UIWidget.Content>

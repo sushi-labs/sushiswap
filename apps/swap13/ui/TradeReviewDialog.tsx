@@ -13,6 +13,7 @@ import { FC, useCallback } from 'react'
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { SwapButton } from './widget/SwapButton'
 import { useTrade } from '../lib/useTrade'
+import numeral from 'numeral'
 
 export const TradeReviewDialog: FC = () => {
   const { review, token0, token1, recipient, network0, value } = useSwapState()
@@ -56,7 +57,7 @@ export const TradeReviewDialog: FC = () => {
                 title="Price impact"
                 subtitle="The impact your trade has on the market price of this pool."
               >
-                -{formatPercent(trade?.priceImpact)}
+                {numeral(trade?.priceImpact ?? 0).format('0.00%')}
               </List.KeyValue>
               <List.KeyValue
                 title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}
