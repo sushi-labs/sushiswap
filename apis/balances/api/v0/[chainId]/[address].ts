@@ -1,6 +1,6 @@
 import { allChains } from '../../../chains'
 import { allProviders } from '../../../providers'
-import { Address, erc20ABI, readContracts, configureChains, createClient } from '@wagmi/core'
+import { Address, erc20ABI, readContracts, configureChains, createClient, bal } from '@wagmi/core'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import fetch from 'node-fetch'
 import { z } from 'zod'
@@ -39,7 +39,6 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
   const data = await res.json()
   const tokens = tokensSchema.parse(data)
-
   const balances = await readContracts({
     allowFailure: true,
     contracts: tokens.map(
@@ -53,9 +52,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
         } as const)
     ),
   })
-
   const zipped = zip(tokens, balances)
-
   return response
     .status(200)
     .json(

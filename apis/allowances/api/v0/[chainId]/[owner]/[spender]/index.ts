@@ -1,5 +1,5 @@
-import { allChains } from '../../../chains'
-import { allProviders } from '../../../providers'
+import { allChains } from '../../../../../chains'
+import { allProviders } from '../../../../../providers'
 import { Address, erc20ABI, readContracts, configureChains, createClient } from '@wagmi/core'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import fetch from 'node-fetch'
@@ -35,11 +35,9 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   // Serve from cache, but update it, if requested after 1 second.
   response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   const { chainId, owner, spender } = querySchema.parse(request.query)
-
   const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
   const data = await res.json()
   const tokens = tokensSchema.parse(data)
-
   const allowances = await readContracts({
     allowFailure: true,
     contracts: tokens.map(
@@ -53,9 +51,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
         } as const)
     ),
   })
-
   const zipped = zip(tokens, allowances)
-
   return response
     .status(200)
     .json(
