@@ -11,12 +11,14 @@ type RouteCallBack = (r: MultiRoute) => void
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
-  const nativeRToken: RToken = {
+  const nativeRToken = {
+    isNative: true,
+    isToken: false,
     address: '',
     name: t.name,
     symbol: t.symbol,
     chainId: t.chainId,
-  }
+  } as RToken
   return nativeRToken
 }
 
@@ -42,8 +44,7 @@ export class Router {
   dataFetcherPreviousState = 0
   routeCallBack?: RouteCallBack
   currentBestRoute?: MultiRoute | undefined
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  timer?: any // timer from setInterval
+  timer?: NodeJS.Timer // timer from setInterval
 
   constructor(
     dataFetcher: DataFetcher,

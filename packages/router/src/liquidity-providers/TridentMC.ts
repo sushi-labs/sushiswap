@@ -196,7 +196,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
   fetchedPairs: Set<string> = new Set()
   fetchedTokens: Set<string> = new Set()
   poolCodes: PoolCode[] = []
-  blockListener: any
+  blockListener?: () => void | undefined
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,

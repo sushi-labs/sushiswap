@@ -42,7 +42,7 @@ const getReservesABI = [
 export class SushiProviderMC extends LiquidityProviderMC {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
-  blockListener: any
+  blockListener?: () => void | undefined
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,

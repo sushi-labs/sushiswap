@@ -49,7 +49,7 @@ const getReservesABI = [
 export class UniSwapV2ProviderMC extends LiquidityProviderMC {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
-  blockListener: any
+  blockListener?: () => void | undefined
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
@@ -70,7 +70,7 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
 
   async getPools(tokens: Token[]): Promise<void> {
     if (!(this.chainId in UNISWAP_V2_FACTORY)) {
-      // No sushiswap for this network
+      // No uniswap for this network
       this.lastUpdateBlock = -1
       return
     }
@@ -84,6 +84,7 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
       t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
       t,
     ])
+
     tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
 
     const poolAddr: Map<string, [Token, Token]> = new Map()

@@ -1,3 +1,3 @@
-# Swap API
+# Quote API
 
 ...

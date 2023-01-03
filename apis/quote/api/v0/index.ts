@@ -1,10 +1,9 @@
 import { ChainId } from '@sushiswap/chain'
 import {
-  isShortName,
-  isShortNameToCurrencySupported,
+  currencyFromShortCurrencyName,
+  isShortCurrencyName,
+  isShortCurrencyNameSupported,
   nativeCurrencyIds,
-  ShortName,
-  shortNameToCurrency,
   Token,
 } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
@@ -27,13 +26,20 @@ const schema = z.object({
   fromTokenId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
   toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
-  amount: z.coerce.bigint({
-    invalid_type_error: 'amount must be a string',
-    required_error: 'amount is required',
-    description: 'amount',
-  }),
+  amount: z.coerce.bigint(),
   to: z.string(),
 })
+
+export function getRouteProcessorAddressForChainId(chainId: ChainId) {
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      return '0xf267704dD1393c26B39A6D41F49Bea233B34F722'
+    case ChainId.POLYGON:
+      return '0xf267704dD1393c26B39A6D41F49Bea233B34F722'
+    default:
+      throw new Error(`Unsupported route processor network for ${chainId}`)
+  }
+}
 
 export function getAlchemyNetowrkForChainId(chainId: ChainId) {
   switch (chainId) {
@@ -79,20 +85,18 @@ const tokenSchema = z.object({
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   // Serve from cache, but update it, if requested after 1 second.
-  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
+  // response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
 
-  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
+  const { chainId, fromTokenId, toTokenId, amount, gasPrice } = schema.parse(request.query)
 
-  // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
-
-  const isShortNameSupported = isShortNameToCurrencySupported(chainId)
-  const fromTokenIdIsShortName = isShortName(chainId, fromTokenId)
-  const toTokenIdIsShortName = isShortName(chainId, toTokenId)
+  const isShortNameSupported = isShortCurrencyNameSupported(chainId)
+  const fromTokenIdIsShortName = isShortCurrencyName(chainId, fromTokenId)
+  const toTokenIdIsShortName = isShortCurrencyName(chainId, toTokenId)
 
   // Limited to predefined short names and tokens from our db for now
   const fromToken =
     isShortNameSupported && fromTokenIdIsShortName
-      ? shortNameToCurrency(chainId, fromTokenId as ShortName)
+      ? currencyFromShortCurrencyName(chainId, fromTokenId)
       : new Token({
           chainId,
           ...tokenSchema.parse(
@@ -103,7 +107,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   // Limited to predefined short names and tokens from our db for now
   const toToken =
     isShortNameSupported && toTokenIdIsShortName
-      ? shortNameToCurrency(chainId, toTokenId as ShortName)
+      ? currencyFromShortCurrencyName(chainId, toTokenId)
       : new Token({
           chainId,
           ...tokenSchema.parse(
@@ -120,38 +124,14 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const waiter = new Waiter()
   const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
   router.startRouting(() => {
-    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.getCurrentRouteHumanString()
     console.log(printed)
     waiter.resolve()
   })
-
   await waiter.wait()
   router.stopRouting()
   dataFetcher.stopDataFetching()
-
-  const bestRoute = router.getBestRoute()
-
-  return response.status(200).json({
-    getCurrentRouteHumanArray: router.getCurrentRouteHumanArray(),
-    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
-    getBestRoute: {
-      status: bestRoute?.status,
-      fromToken: bestRoute?.fromToken,
-      toToken: bestRoute?.toToken,
-      primaryPrice: bestRoute?.primaryPrice,
-      swapPrice: bestRoute?.swapPrice,
-      amountIn: bestRoute?.amountIn,
-      amountInBN: bestRoute?.amountInBN.toString(),
-      amountOut: bestRoute?.amountOut,
-      amountOutBN: bestRoute?.amountOutBN.toString(),
-      priceImpact: bestRoute?.priceImpact,
-      totalAmountOut: bestRoute?.totalAmountOut,
-      totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
-      gasSpent: bestRoute?.gasSpent,
-    },
-    getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, '0x0000000000000000000000000000000000000000'),
-  })
+  return response.status(200).json(router.getBestRoute())
 }
 
 export default handler

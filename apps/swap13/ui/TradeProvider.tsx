@@ -7,12 +7,13 @@ import {
   SUSHI,
   tryParseAmount,
   Type,
-  shortNameToCurrency,
-  isShortName,
-  ShortName,
+  currencyFromShortCurrencyName,
+  isShortCurrencyNameSupported,
+  isShortCurrencyName,
+  ShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useLayoutEffect, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 
 interface SwapState {
@@ -136,23 +137,25 @@ export const SwapProvider: FC<SwapProviderProps> = ({
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
+  const _fromChainId = fromChainId ? parseInt(fromChainId) : chain?.id ?? ChainId.ETHEREUM
+  const _toChainId = toChainId ? parseInt(toChainId) : chain?.id ?? ChainId.ETHEREUM
   const [state, dispatch] = useReducer(reducer, {
     review: false,
     recipient: recipient ? recipient : address ? address : undefined,
     appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
-    token0: isShortName(parseInt(fromChainId), fromCurrencyId)
-      ? shortNameToCurrency(parseInt(fromChainId), fromCurrencyId as ShortName)
+    token0: isShortCurrencyName(_fromChainId, fromCurrencyId)
+      ? currencyFromShortCurrencyName(_fromChainId, fromCurrencyId)
       : Native.onChain(ChainId.ETHEREUM),
-    token1: isShortName(parseInt(toChainId), toCurrencyId)
-      ? shortNameToCurrency(parseInt(toChainId), toCurrencyId as ShortName)
+    token1: isShortCurrencyName(_toChainId, toCurrencyId)
+      ? currencyFromShortCurrencyName(_toChainId, toCurrencyId)
       : SUSHI[ChainId.ETHEREUM],
     network0: fromChainId ? parseInt(fromChainId) : ChainId.ETHEREUM,
     network1: toChainId ? parseInt(toChainId) : ChainId.ETHEREUM,
     value: amount ? amount : '',
     valueAsAmount: tryParseAmount(
       amount,
-      isShortName(parseInt(fromChainId), fromCurrencyId)
-        ? shortNameToCurrency(parseInt(fromChainId), fromCurrencyId as ShortName)
+      isShortCurrencyName(_fromChainId, fromCurrencyId)
+        ? currencyFromShortCurrencyName(_fromChainId, fromCurrencyId)
         : Native.onChain(ChainId.ETHEREUM)
     ),
   })

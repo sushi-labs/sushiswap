@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import {
-  isShortName,
-  isShortNameToCurrencySupported,
+  currencyFromShortCurrencyName,
+  isShortCurrencyName,
+  isShortCurrencyNameSupported,
+  Native,
   nativeCurrencyIds,
-  ShortName,
-  shortNameToCurrency,
   Token,
 } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
@@ -34,7 +34,7 @@ const schema = z.object({
 export function getRouteProcessorAddressForChainId(chainId: ChainId) {
   switch (chainId) {
     case ChainId.ETHEREUM:
-      return '0xf267704dD1393c26B39A6D41F49Bea233B34F722'
+      return ''
     case ChainId.POLYGON:
       return '0xf267704dD1393c26B39A6D41F49Bea233B34F722'
     default:
@@ -82,24 +82,25 @@ const tokenSchema = z.object({
   symbol: z.string(),
   name: z.string(),
   decimals: z.coerce.number().int().gte(0),
+  to: z.string().optional(),
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   // Serve from cache, but update it, if requested after 1 second.
-  response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
+  // response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
 
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
 
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
 
-  const isShortNameSupported = isShortNameToCurrencySupported(chainId)
-  const fromTokenIdIsShortName = isShortName(chainId, fromTokenId)
-  const toTokenIdIsShortName = isShortName(chainId, toTokenId)
+  const isShortNameSupported = isShortCurrencyNameSupported(chainId)
+  const fromTokenIdIsShortName = isShortCurrencyName(chainId, fromTokenId)
+  const toTokenIdIsShortName = isShortCurrencyName(chainId, toTokenId)
 
   // Limited to predefined short names and tokens from our db for now
   const fromToken =
     isShortNameSupported && fromTokenIdIsShortName
-      ? shortNameToCurrency(chainId, fromTokenId as ShortName)
+      ? currencyFromShortCurrencyName(chainId, fromTokenId)
       : new Token({
           chainId,
           ...tokenSchema.parse(
@@ -110,7 +111,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   // Limited to predefined short names and tokens from our db for now
   const toToken =
     isShortNameSupported && toTokenIdIsShortName
-      ? shortNameToCurrency(chainId, toTokenId as ShortName)
+      ? currencyFromShortCurrencyName(chainId, toTokenId)
       : new Token({
           chainId,
           ...tokenSchema.parse(
@@ -126,8 +127,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const waiter = new Waiter()
   const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
-  router.startRouting(() => {
-    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
+
+  router.startRouting((p) => {
     const printed = router.getCurrentRouteHumanString()
     console.log(printed)
     waiter.resolve()
@@ -144,8 +145,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
     getBestRoute: {
       status: bestRoute?.status,
-      fromToken: bestRoute?.fromToken,
-      toToken: bestRoute?.toToken,
+      fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
+      toToken: bestRoute?.toToken?.address === '' ? Native.onChain(chainId) : bestRoute?.toToken,
       primaryPrice: bestRoute?.primaryPrice,
       swapPrice: bestRoute?.swapPrice,
       amountIn: bestRoute?.amountIn,
@@ -157,7 +158,9 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
       gasSpent: bestRoute?.gasSpent,
     },
-    getCurrentRouteRPParams: router.getCurrentRouteRPParams(to, getRouteProcessorAddressForChainId(chainId)),
+    getCurrentRouteRPParams: to
+      ? router.getCurrentRouteRPParams(to, getRouteProcessorAddressForChainId(chainId))
+      : undefined,
   })
 }
 
