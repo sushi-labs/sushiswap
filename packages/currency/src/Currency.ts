@@ -9,10 +9,6 @@ import { Token } from './Token'
  */
 export abstract class Currency {
   /**
-   * The id of the currency, i.e. 1:native, 1:0x0000000000000000000000000000000000000000, etc.
-   */
-  public readonly id?: string
-  /**
    * Returns whether the currency is native to the chain and must be wrapped (e.g. Ether)
    */
   public abstract readonly isNative: boolean
