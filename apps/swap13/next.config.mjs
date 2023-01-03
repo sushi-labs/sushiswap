@@ -4,8 +4,10 @@ import defaultNextConfig from '@sushiswap/nextjs-config'
 const nextConfig = {
   ...defaultNextConfig,
   basePath: '/swap13',
+  // By default, Next.js only runs ESLint on the 'pages' and 'utils' directories
+  // so we have to add additional directories to the dirs.
   eslint: {
-    dirs: ['pages', 'components', 'lib', 'app', 'swap', 'ui'], // Only run ESLint on the 'pages' and 'utils' directories during production builds (next build)
+    dirs: ['pages', 'components', 'lib', 'app', 'ui'],
   },
   transpilePackages: [
     '@sushiswap/redux-token-lists',

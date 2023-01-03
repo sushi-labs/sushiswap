@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Amount, Native, Price } from '@sushiswap/currency'
+import { Amount, Native, nativeCurrencyIds, Price } from '@sushiswap/currency'
 import { UseTradeParams, UseTradeQuerySelect } from './types'
 import { usePrices } from '../usePrices'
 import { Percent, ZERO } from '@sushiswap/math'
@@ -16,10 +16,10 @@ export const useTradeQuery = (
     queryFn: async () => {
       const res = await (
         await fetch(
-          `https://swap.sushi.com/?chainId=${chainId}&fromTokenId=${
-            fromToken.isNative ? 'NATIVE' : fromToken.wrapped.address
+          `https://swap.sushi.com/v0?chainId=${chainId}&fromTokenId=${
+            fromToken.isNative ? nativeCurrencyIds[chainId] : fromToken.wrapped.address
           }&toTokenId=${
-            toToken.isNative ? 'NATIVE' : toToken.wrapped.address
+            toToken.isNative ? nativeCurrencyIds[chainId] : toToken.wrapped.address
           }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}&to=${recipient}`
         )
       ).json()

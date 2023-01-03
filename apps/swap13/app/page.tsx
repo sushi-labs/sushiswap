@@ -12,11 +12,18 @@ export default function Page({
   params,
   searchParams,
 }: {
-  params: { fromChainId: string; toChainId: string; fromCurrencyId: string; toCurrencyId: string; amount: string }
+  params: {
+    fromChainId: string
+    toChainId: string
+    fromCurrencyId: string
+    toCurrencyId: string
+    amount: string
+    recipient: string
+  }
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
-  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount } = params
-  console.log({ fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, searchParams })
+  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = params
+  console.log({ fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient, searchParams })
   return (
     <SwapProvider params={params}>
       <Container maxWidth={520} className="space-y-8 p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
@@ -25,7 +32,6 @@ export default function Page({
         <TradeReviewDialog />
         <TradeRoute />
         <SwapButton />
-
         {/*spacer for fixed positioned swap button */}
         <div className="h-[68px] w-full" />
       </Container>

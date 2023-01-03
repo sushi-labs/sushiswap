@@ -120,19 +120,25 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
 
 interface SwapProviderProps {
   children: ReactNode
-  params: { fromChainId: string; toChainId: string; fromCurrencyId: string; toCurrencyId: string; amount: string }
+  params: {
+    fromChainId: string
+    toChainId: string
+    fromCurrencyId: string
+    toCurrencyId: string
+    amount: string
+    recipient: string
+  }
 }
 
 export const SwapProvider: FC<SwapProviderProps> = ({
   children,
-  params: { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount },
+  params: { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient },
 }) => {
   const { address } = useAccount()
   const { chain } = useNetwork()
-
   const [state, dispatch] = useReducer(reducer, {
     review: false,
-    recipient: undefined,
+    recipient: recipient ? recipient : address ? address : undefined,
     appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
     token0: isShortName(parseInt(fromChainId), fromCurrencyId)
       ? shortNameToCurrency(parseInt(fromChainId), fromCurrencyId as ShortName)
@@ -176,11 +182,11 @@ export const SwapProvider: FC<SwapProviderProps> = ({
   }, [])
 
   // Set network0 to connected network if no chainId queryParam is present
-  useLayoutEffect(() => {
-    if (chain?.id && !fromChainId) {
-      api.setNetwork0(chain?.id)
-    }
-  }, [api, chain?.id, fromChainId])
+  // useLayoutEffect(() => {
+  //   if (chain?.id && !fromChainId) {
+  //     api.setNetwork0(chain?.id)
+  //   }
+  // }, [api, chain?.id, fromChainId])
 
   return (
     <APIContext.Provider value={api}>
