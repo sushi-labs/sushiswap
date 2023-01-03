@@ -1,5 +1,4 @@
 import { ChainId } from '@sushiswap/chain'
-import { JSBI } from '@sushiswap/math'
 import invariant from 'tiny-invariant'
 
 import { Native } from './Native'
@@ -9,6 +8,10 @@ import { Token } from './Token'
  * A currency is any fungible financial instrument, including Ether, all ERC20 tokens, and other chain-native currencies
  */
 export abstract class Currency {
+  /**
+   * The id of the currency, i.e. 1:native, 1:0x0000000000000000000000000000000000000000, etc.
+   */
+  public readonly id?: string
   /**
    * Returns whether the currency is native to the chain and must be wrapped (e.g. Ether)
    */
@@ -33,10 +36,6 @@ export abstract class Currency {
    * The name of the currency, i.e. a descriptive textual non-unique identifier
    */
   public readonly name?: string
-  /**
-   * The rebase
-   */
-  public readonly rebase?: { base: JSBI; elastic: JSBI }
 
   /**
    * Constructs an instance of the abstract class `Currency`.
@@ -51,13 +50,11 @@ export abstract class Currency {
     decimals,
     symbol,
     name,
-    rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) },
   }: {
     chainId: number | string
     decimals: number | string
     symbol?: string
     name?: string
-    rebase?: { base: JSBI; elastic: JSBI }
   }) {
     invariant(Number.isSafeInteger(Number(chainId)), 'CHAIN_ID')
     invariant(decimals >= 0 && decimals < 255 && Number.isInteger(Number(decimals)), 'DECIMALS')
@@ -66,7 +63,6 @@ export abstract class Currency {
     this.decimals = Number(decimals)
     this.symbol = symbol
     this.name = name
-    this.rebase = rebase
   }
 
   /**
