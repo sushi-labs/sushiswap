@@ -26,9 +26,6 @@
     "export": "hardhat export --export-all exports.json",
     "node": "hardhat node"
   },
-  "dependencies": {
-    "@sushiswap/currency": "workspace:*"
-  },
   "devDependencies": {
     "@boringcrypto/boring-solidity": "boringcrypto/BoringSolidity#8f2b54f645a7844ae266cc50dc3ae4c125c7b9fc",
     "@ethersproject/abi": "^5.7.0",
@@ -37,6 +34,7 @@
     "@nomiclabs/hardhat-etherscan": "3.1.3",
     "@nomiclabs/hardhat-solhint": "2.0.1",
     "@nomiclabs/hardhat-waffle": "2.0.3",
+    "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/hardhat-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",

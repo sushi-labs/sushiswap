@@ -42,6 +42,11 @@
     "ethereum-waffle": "3.4.4",
     "hardhat-deploy": "0.11.22",
     "hardhat-deploy-ethers": "0.3.0-beta.13",
+    "hardhat-gas-reporter": "1.0.9",
+    "hardhat-log-remover": "2.0.2",
+    "hardhat-preprocessor": "0.1.5",
+    "hardhat-spdx-license-identifier": "2.1.0",
+    "hardhat-watcher": "2.5.0",
     "typechain": "8.1.1"
   },
   "devDependencies": {
@@ -49,7 +54,10 @@
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "18.11.12",
+    "@types/chai": "^4.0.0",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^18.0.0",
+    "chai": "^4.3.0",
     "ethers": "^5.7.0",
     "hardhat": "2.12.4",
     "tsup": "6.5.0",
