@@ -14,7 +14,7 @@ describe('DataFetcher', () => {
   describe('#startDataFetching', () => {
     //
   })
-  describe('#startDataFetching', () => {
+  describe('#stopDataFetching', () => {
     //
   })
 })
