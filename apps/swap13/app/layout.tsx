@@ -9,13 +9,13 @@ import { WagmiProvider } from '../ui/WagmiProvider'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProvider>
-      <PersistQueryClientProvider>
-        <RootLayout>
+    <RootLayout>
+      <WagmiProvider>
+        <PersistQueryClientProvider>
           <Header />
           {children}
-        </RootLayout>
-      </PersistQueryClientProvider>
-    </WagmiProvider>
+        </PersistQueryClientProvider>
+      </WagmiProvider>
+    </RootLayout>
   )
 }
