@@ -46,6 +46,12 @@ describe('HEXer', () => {
       const address = '0x00000000000000000000000000000000000000000'
       expect(() => hexer.address(address)).toThrow('Wrong address: ' + address)
     })
+
+    it('throws when address has a length less than 42', () => {
+      // 41 characters
+      const address = '0x000000000000000000000000000000000000000'
+      expect(() => hexer.address(address)).toThrow('Wrong address: ' + address)
+    })
   })
   describe('#hexData', () => {
     //

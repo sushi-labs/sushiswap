@@ -20,7 +20,7 @@ describe('Router', () => {
     it('returns a successful route', () => {
       const fromToken = Native.onChain(ChainId.ETHEREUM)
       const toToken = USDC[ChainId.ETHEREUM]
-      dataFetcher.fetchPoolsForToken(Native.onChain(ChainId.ETHEREUM), USDC[ChainId.ETHEREUM])
+      dataFetcher.fetchPoolsForToken(fromToken, toToken)
       const router = new Router(dataFetcher, fromToken, BigNumber.from(1_000_000), toToken, 50e9)
       router.startRouting((p) => {
         expect(p.status).toEqual(RouteStatus.Success)
