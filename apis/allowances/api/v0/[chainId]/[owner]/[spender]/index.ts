@@ -6,12 +6,6 @@ import fetch from 'node-fetch'
 import { z } from 'zod'
 import zip from 'lodash.zip'
 
-const alchemyId = process.env['ALCHEMY_ID']
-
-if (!alchemyId) {
-  throw Error('NO ALCHEMY ID SET')
-}
-
 const { provider, webSocketProvider } = configureChains(allChains, allProviders)
 createClient({
   autoConnect: true,
