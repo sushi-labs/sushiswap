@@ -1,5 +1,5 @@
 import { bentoBoxV1Abi } from '@sushiswap/abi'
-import bentoBoxExports from '@sushiswap/bentobox/exports.json'
+import bentoBoxExports from '@sushiswap/bentobox/exports'
 import { ChainId } from '@sushiswap/chain'
 import { Contract } from 'ethers'
 import { useContract, useProvider } from 'wagmi'

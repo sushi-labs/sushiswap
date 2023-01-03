@@ -1,5 +1,5 @@
 import { furoVestingAbi } from '@sushiswap/abi'
-import furoExports from '@sushiswap/furo/exports.json'
+import furoExports from '@sushiswap/furo/exports'
 import { Address, useContract, useProvider } from 'wagmi'
 
 export const getFuroVestingContractConfig = (chainId: number | undefined) => ({
@@ -8,9 +8,11 @@ export const getFuroVestingContractConfig = (chainId: number | undefined) => ({
   abi: furoVestingAbi,
 })
 
-export function useFuroVestingContract(chainId: number | undefined): ReturnType<typeof useContract> {
+export function useFuroVestingContract(chainId: number | undefined) {
   return useContract({
     ...getFuroVestingContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
   })
 }
+
+export type FuroVesting = NonNullable<ReturnType<typeof useFuroVestingContract>>
