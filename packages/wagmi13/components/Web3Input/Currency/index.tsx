@@ -109,13 +109,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             </div>
           )}
           {onSelect ? (
-            <TokenSelector
-              id={`${id}-token-selector`}
-              selected={currency}
-              chainId={chainId}
-              onSelect={onSelect}
-              fundSource={fundSource}
-            >
+            <TokenSelector id={`${id}-token-selector`} selected={currency} chainId={chainId} onSelect={onSelect}>
               {({ setOpen }) => (
                 <button
                   id={`${id}-button`}
@@ -183,6 +177,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       loading,
       onChange,
       onSelect,
+      type,
       usdPctChange,
       value,
     ]

@@ -22,17 +22,19 @@ export const SwapButton: FC = () => {
 
   return (
     <>
-      <Container maxWidth={520} className="fixed bottom-6 mx-auto sm:p-4 !pb-0 left-4 right-4 w-[unset]">
-        <Button fullWidth size="xl" onClick={onClick} className="z-[1082]">
-          {review ? (
-            <>
-              Swap {token0.symbol} for {token1.symbol}
-            </>
-          ) : (
-            'Review Swap'
-          )}
-        </Button>
-      </Container>
+      <div className="fixed bottom-6 sm:p-4 !pb-0 left-4 right-4 w-[unset] sm:!mr-[var(--scroll-lock-safe-area)]">
+        <Container maxWidth={520} className="mx-auto">
+          <Button fullWidth size="xl" onClick={onClick} className="z-[1082]">
+            {review ? (
+              <>
+                Swap {token0.symbol} for {token1.symbol}
+              </>
+            ) : (
+              'Review Swap'
+            )}
+          </Button>
+        </Container>
+      </div>
       <ConfirmationDialog open={open} setOpen={setOpen} />
     </>
   )

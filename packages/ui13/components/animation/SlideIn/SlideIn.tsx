@@ -1,4 +1,4 @@
-import { createContext, FC, ReactElement, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, FC, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import { FromBottom } from './FromBottom'
 import { FromLeft } from './FromLeft'
@@ -6,7 +6,7 @@ import { FromRight } from './FromRight'
 import { FromTop } from './FromTop'
 
 interface RootProps {
-  children: ReactElement | Array<ReactElement>
+  children: ReactNode | Array<ReactNode>
 }
 
 const SlideInContext = createContext<HTMLElement | null | undefined>(undefined)

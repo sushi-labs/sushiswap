@@ -20,7 +20,7 @@ export const useTradeQuery = (
             fromToken.isNative ? nativeCurrencyIds[chainId] : fromToken.wrapped.address
           }&toTokenId=${
             toToken.isNative ? nativeCurrencyIds[chainId] : toToken.wrapped.address
-          }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}&to=${recipient}`
+          }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}`
         )
       ).json()
 
@@ -28,7 +28,7 @@ export const useTradeQuery = (
     },
     keepPreviousData: true,
     select,
-    enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice && blockNumber && recipient),
+    enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice && blockNumber),
   })
 
 export const useTrade = (variables: UseTradeParams) => {

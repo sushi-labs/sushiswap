@@ -13,8 +13,8 @@ const tokenValidator = z.object({
     .optional(),
   isNative: z.boolean().optional(),
   isToken: z.boolean().optional(),
-  address: z.string(),
-  tokenId: z.string(),
+  address: z.string().optional(),
+  tokenId: z.string().optional(),
 })
 
 export const tradeValidator = z.object({

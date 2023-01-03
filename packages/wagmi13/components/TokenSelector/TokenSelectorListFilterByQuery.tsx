@@ -1,6 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
-import { Native, Token, Type } from '@sushiswap/currency'
+import { Amount, Native, Token, Type } from '@sushiswap/currency'
 import { filterTokens, FundSource, tokenComparator, useDebounce, useSortedTokensByQuery } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
 import { FC, useMemo, useState } from 'react'
@@ -20,9 +20,8 @@ interface Props {
   chainId?: ChainId
   tokenMap: Record<string, Token> | undefined
   pricesMap?: Record<string, Fraction>
-  balancesMap?: BalanceMap
+  balancesMap?: Record<string, Amount<Token>>
   children(props: RenderProps): JSX.Element
-  fundSource: FundSource
   includeNative?: boolean
 }
 
@@ -32,7 +31,6 @@ export const TokenSelectorListFilterByQuery: FC<Props> = ({
   tokenMap,
   balancesMap,
   pricesMap,
-  fundSource,
   includeNative = true,
 }) => {
   const tokenMapValues = useMemo(() => (tokenMap ? Object.values(tokenMap) : []), [tokenMap])
@@ -56,8 +54,8 @@ export const TokenSelectorListFilterByQuery: FC<Props> = ({
 
   const filteredTokens: Token[] = useMemo(() => filterTokens(tokenMapValues, query), [query, tokenMapValues])
   const sortedTokens: Token[] = useMemo(
-    () => [...filteredTokens].sort(tokenComparator(balancesMap, pricesMap, fundSource)),
-    [filteredTokens, pricesMap, fundSource, balancesMap]
+    () => [...filteredTokens].sort(tokenComparator(balancesMap, pricesMap)),
+    [filteredTokens, pricesMap, balancesMap]
   )
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)

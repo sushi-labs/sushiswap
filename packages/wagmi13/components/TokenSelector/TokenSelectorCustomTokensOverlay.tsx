@@ -7,6 +7,7 @@ import { SlideIn } from '@sushiswap/ui13/components/animation'
 import { List } from '@sushiswap/ui13/components/list/List'
 import { Overlay } from '@sushiswap/ui13/components/overlay'
 import React, { FC, useMemo, useState } from 'react'
+import { Button } from '@sushiswap/ui13/components/button'
 
 export const TokenSelectorCustomTokensOverlay: FC = () => {
   const isMounted = useIsMounted()
@@ -15,7 +16,7 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
 
   const [open, setOpen] = useState<boolean>(false)
 
-  const [ids, tokens] = useMemo(() => {
+  const [, tokens] = useMemo(() => {
     const ids: string[] = []
     const tokens: Token[] = []
     if (customTokens) {
@@ -32,12 +33,9 @@ export const TokenSelectorCustomTokensOverlay: FC = () => {
 
   return (
     <>
-      <List.MenuItem
-        icon={PlusIcon}
-        title="Custom Tokens"
-        subtitle={`${ids.length || '0'} Tokens`}
-        onClick={() => setOpen(true)}
-      />
+      <Button fullWidth variant="outlined" color="blue" size="lg" onClick={() => setOpen(true)}>
+        Manage Tokens
+      </Button>
       <SlideIn.FromRight show={open} onClose={() => setOpen(false)} className="!mt-0">
         <Overlay.Content>
           <Overlay.Header onBack={() => setOpen(false)} title="Custom Tokens" />

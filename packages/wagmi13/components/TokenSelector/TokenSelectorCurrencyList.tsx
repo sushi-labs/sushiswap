@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 
 import { usePrices } from '../../hooks'
 import { TokenSelectorRow } from './TokenSelectorRow'
+import { useBalances } from '@sushiswap/react-query'
 
 interface TokenSelectorCurrencyListProps {
   id: string
@@ -15,33 +16,28 @@ interface TokenSelectorCurrencyListProps {
   onSelect(currency: Type): void
 }
 
-export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = memo(
-  ({ id, onSelect, currencies, chainId }) => {
-    const { address } = useAccount()
-    const { data: pricesMap } = usePrices({ chainId })
+export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = memo(function TokenSelectorCurrencyList({
+  id,
+  onSelect,
+  currencies,
+  chainId,
+}) {
+  const { address } = useAccount()
+  const { data: pricesMap } = usePrices({ chainId })
+  const { data: balancesMap } = useBalances({ chainId, account: address })
 
-    // TODO
-    const balancesMap = undefined
+  const rowData: TokenSelectorRow[] = useMemo(() => {
+    if (!currencies) return []
 
-    const rowData: TokenSelectorRow[] = useMemo(() => {
-      if (!currencies) return []
+    return currencies.map((currency) => ({
+      id: id,
+      account: address,
+      currency,
+      balance: balancesMap?.[currency.isNative ? AddressZero : currency.address],
+      price: pricesMap?.[currency.isNative ? AddressZero : currency.address],
+      onSelect: () => onSelect(currency),
+    }))
+  }, [address, balancesMap, currencies, id, onSelect, pricesMap])
 
-      return currencies.map((currency) => ({
-        id: id,
-        account: address,
-        currency,
-        balance: balancesMap?.[currency.isNative ? AddressZero : currency.address],
-        pricesMap: pricesMap?.[currency.isNative ? AddressZero : currency.address],
-        onSelect: () => onSelect(currency),
-      }))
-    }, [address, balancesMap, currencies, id, onSelect, pricesMap])
-
-    return (
-      <Currency.List
-        className="divide-y hide-scrollbar divide-slate-700"
-        rowRenderer={TokenSelectorRow}
-        rowData={rowData}
-      />
-    )
-  }
-)
+  return <Currency.List className="scroll" rowRenderer={TokenSelectorRow} rowData={rowData} />
+})

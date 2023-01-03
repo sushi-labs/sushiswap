@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
+import { getAddress } from '@ethersproject/address'
 
 interface UseTokensParams {
   chainId: ChainId
@@ -29,7 +30,7 @@ export const useTokens = ({ chainId }: UseTokensParams) => {
       return data.reduce<Record<string, Token>>((acc, { id, name, symbol, decimals }) => {
         const [chainId, address] = id.split(':')
         if (!BLACKLIST[+chainId]?.includes(address)) {
-          acc[address] = new Token({
+          acc[getAddress(address)] = new Token({
             chainId,
             name,
             decimals,

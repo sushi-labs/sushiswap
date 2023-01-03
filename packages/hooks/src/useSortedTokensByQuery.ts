@@ -3,8 +3,6 @@ import { Amount, Token, Type } from '@sushiswap/currency'
 import { Fraction } from '@sushiswap/math'
 import { useMemo } from 'react'
 
-import { FundSource } from './useFundSourceToggler'
-
 const alwaysTrue = () => true
 
 /**
@@ -54,16 +52,15 @@ export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Typ
 }
 
 export const tokenComparator = (
-  balancesMap: Record<string, Record<FundSource, Amount<Type> | undefined>> | undefined,
-  pricesMap: Record<string, Fraction> | undefined,
-  fundSource: FundSource
+  balancesMap: Record<string, Amount<Token>> | undefined,
+  pricesMap: Record<string, Fraction> | undefined
 ) => {
   return (tokenA: Token, tokenB: Token): number => {
     const balanceA = pricesMap?.[tokenA.address]
-      ? balancesMap?.[tokenA.address]?.[fundSource]?.multiply(pricesMap[tokenA.address])
+      ? balancesMap?.[tokenA.address]?.multiply(pricesMap[tokenA.address])
       : undefined
     const balanceB = pricesMap?.[tokenB.address]
-      ? balancesMap?.[tokenB.address]?.[fundSource]?.multiply(pricesMap[tokenB.address])
+      ? balancesMap?.[tokenB.address]?.multiply(pricesMap[tokenB.address])
       : undefined
 
     const balanceComp = balanceComparator(balanceA, balanceB)

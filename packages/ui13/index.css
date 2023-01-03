@@ -20,7 +20,6 @@ html {
   box-sizing: border-box;
   touch-action: manipulation;
   background-color: var(--background-color) !important;
-  overflow-y: scroll;
 }
 
 body {

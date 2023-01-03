@@ -20,7 +20,7 @@ export const Search: FC<Search> = ({ className, id, loading, input: Input, value
     <div
       className={classNames(
         className,
-        '!focus-within:bg-gray-200 relative pr-10 rounded-xl flex gap-2.5 flex-grow items-center bg-white dark:bg-slate-800 px-3 py-2.5'
+        '!focus-within:bg-gray-200 relative pr-10 rounded-xl flex gap-2.5 flex-grow items-center bg-gray-200 dark:bg-slate-800 px-3 py-2.5 h-[44px]'
       )}
     >
       <MagnifyingGlassIcon strokeWidth={2} width={24} height={24} className="text-gray-500 dark:text-slate-500" />

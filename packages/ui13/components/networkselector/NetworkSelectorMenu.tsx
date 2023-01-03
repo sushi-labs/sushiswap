@@ -18,7 +18,7 @@ export const NetworkSelectorMenu: FC<Omit<NetworkSelectorProps, 'variant'>> = ({
   const [query, setQuery] = useState('')
 
   return (
-    <Popover as="div" className="relative">
+    <Popover>
       {({ open, close }) => (
         <>
           {typeof children === 'function' ? children({ open, close }) : children}
