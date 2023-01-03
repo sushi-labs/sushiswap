@@ -4,7 +4,7 @@ describe('TinesToRouteProcessor', () => {
   describe('constructor', () => {
     let tinesToRouteProcessor: TinesToRouteProcessor
     it('instanciates', () => {
-      // tinesToRouteProcessor = new TinesToRouteProcessor()
+      tinesToRouteProcessor = new TinesToRouteProcessor('0x', new Map())
       expect(tinesToRouteProcessor).toBeInstanceOf(TinesToRouteProcessor)
     })
   })
