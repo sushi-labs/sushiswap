@@ -42,8 +42,7 @@ export class Router {
   dataFetcherPreviousState = 0
   routeCallBack?: RouteCallBack
   currentBestRoute?: MultiRoute | undefined
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  timer?: any // timer from setInterval
+  timer?: NodeJS.Timer // timer from setInterval
 
   constructor(
     dataFetcher: DataFetcher,
