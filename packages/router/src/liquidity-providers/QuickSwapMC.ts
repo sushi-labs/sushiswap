@@ -60,7 +60,7 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
   }
 
   getType(): LiquidityProviders {
-    return LiquidityProviders.Sushiswap
+    return LiquidityProviders.Quickswap
   }
 
   getPoolProviderName(): string {

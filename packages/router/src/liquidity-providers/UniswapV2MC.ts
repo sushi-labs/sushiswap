@@ -60,7 +60,7 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
   }
 
   getType(): LiquidityProviders {
-    return LiquidityProviders.Sushiswap
+    return LiquidityProviders.UniswapV2
   }
 
   getPoolProviderName(): string {
