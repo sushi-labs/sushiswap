@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI } from '@sushiswap/currency'
 import { daysInYear, secondsInDay } from 'date-fns'
-import { Farm } from 'src/types'
 
-import { MASTERCHEF_ADDRESS } from '../../../config'
-import { getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common'
-import { getPoolInfos, getPoolLength, getTotalAllocPoint } from './fetchers'
+import { MASTERCHEF_ADDRESS } from '../../../config.js'
+import type { Farm } from '../../../types.js'
+import { getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
+import { getPoolInfos, getPoolLength, getTotalAllocPoint } from './fetchers.js'
 
 const SUSHI_PER_BLOCK = 100
 

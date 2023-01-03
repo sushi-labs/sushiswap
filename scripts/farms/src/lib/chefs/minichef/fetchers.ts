@@ -1,10 +1,10 @@
 import { complexRewarderTimeAbi, miniChefAbi } from '@sushiswap/abi'
-import { ChainId } from '@sushiswap/chain'
+import type { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME, SUBGRAPH_HOST, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { readContract, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
-import { MINICHEF_ADDRESS } from '../../../config'
+import { MINICHEF_ADDRESS } from '../../../config.js'
 
 export async function getPoolLength(chainId: ChainId) {
   const poolLengthCall = {

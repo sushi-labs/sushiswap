@@ -8,7 +8,7 @@ import {
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { BigNumber } from 'ethers'
 
-import type { Farm } from '../../types'
+import type { Farm } from '../../types.js'
 import { divBigNumberToNumber } from './utils.js'
 
 interface Pair {

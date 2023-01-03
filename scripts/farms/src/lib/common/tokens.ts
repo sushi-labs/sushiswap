@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/chain'
+import type { ChainId } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_NAME,
@@ -8,9 +8,9 @@ import {
 } from '@sushiswap/graph-config'
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { erc20ABI, readContracts } from '@wagmi/core'
-import { BigNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 
-import { divBigNumberToNumber } from './utils'
+import { divBigNumberToNumber } from './utils.js'
 
 interface Token {
   id: string

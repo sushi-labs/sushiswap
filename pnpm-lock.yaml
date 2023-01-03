@@ -1843,7 +1843,6 @@ importers:
   config/wagmi:
     specifiers:
       '@sushiswap/abi': workspace:*
-      '@sushiswap/address': workspace:*
       '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -1855,7 +1854,6 @@ importers:
       typescript: 4.9.4
     dependencies:
       '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/address': link:../../packages/address
       '@sushiswap/bentobox': link:../../protocols/bentobox
       '@sushiswap/chain': link:../../packages/chain
     devDependencies:

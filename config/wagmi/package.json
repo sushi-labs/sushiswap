@@ -51,7 +51,6 @@
   },
   "dependencies": {
     "@sushiswap/abi": "workspace:*",
-    "@sushiswap/address": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/bentobox": "workspace:*"
   },

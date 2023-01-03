@@ -1,8 +1,7 @@
 import { bentoBoxV1Abi } from '@sushiswap/abi'
-import type { BentoBoxChainId } from '@sushiswap/address'
-import bentoBoxExports from '@sushiswap/bentobox/exports.json'
+import bentoBoxExports from '@sushiswap/bentobox/exports.json' assert { type: "json" };
 
-export const getBentoBoxContractConfig = (chainId: BentoBoxChainId | number | undefined) => {
+export const getBentoBoxContractConfig = (chainId: keyof Omit<typeof bentoBoxExports, '31337'> | number | undefined) => {
   return {
     address:
       bentoBoxExports?.[chainId as keyof Omit<typeof bentoBoxExports, '31337'>]?.[0]?.contracts?.BentoBoxV1?.address ||

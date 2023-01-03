@@ -1,10 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI } from '@sushiswap/currency'
 import { daysInYear, secondsInDay } from 'date-fns'
-import { Farm } from 'src/types'
 
-import { MASTERCHEF_V2_ADDRESS } from '../../../config'
-import { divBigNumberToNumber, getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common'
+import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
+import type { Farm } from '../../../types.js'
+import { divBigNumberToNumber, getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
 import {
   getLpTokens,
   getPoolInfos,
@@ -13,7 +13,7 @@ import {
   getRewarders,
   getSushiPerBlock,
   getTotalAllocPoint,
-} from './fetchers'
+} from './fetchers.js'
 
 export async function getMasterChefV2(): Promise<{
   chainId: ChainId
