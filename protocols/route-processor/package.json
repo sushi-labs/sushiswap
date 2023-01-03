@@ -39,6 +39,7 @@
     "@nomiclabs/hardhat-waffle": "2.0.3",
     "@openzeppelin/contracts": "4.8.0",
     "@sushiswap/abi": "workspace:*",
+    "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
