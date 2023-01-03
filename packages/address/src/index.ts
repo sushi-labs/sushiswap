@@ -71,5 +71,3 @@ export const ROUTE_PROCESSOR_ADDRESS = {
   [ChainId.ETHEREUM]: '0xf267704dD1393c26B39A6D41F49Bea233B34F722',
   [ChainId.POLYGON]: '0xf267704dD1393c26B39A6D41F49Bea233B34F722',
 } as const
-
-export { addressMapToTokenMap } from './addressMapToTokenMap'

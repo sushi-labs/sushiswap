@@ -78,7 +78,7 @@ export abstract class Cooker implements Cooker {
   readonly actions: Action[] = []
   readonly values: BigNumber[] = []
   readonly datas: string[] = []
-  readonly chainId: number
+  readonly chainId: StargateChainId
   readonly debug: boolean
   readonly masterContract: string
   readonly user: string
@@ -88,7 +88,7 @@ export abstract class Cooker implements Cooker {
     masterContract,
     user,
   }: {
-    chainId: number
+    chainId: StargateChainId
     debug?: boolean
     masterContract: string
     user: string

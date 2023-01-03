@@ -2,7 +2,7 @@ export * from './Amount'
 export * from './constants'
 // dont't export abstract currency
 // export * from './Currency'
-export * from './AddressMap'
+export * from './addressMapToTokenMap'
 export * from './getCurrencyCombinations'
 export * from './Native'
 export * from './nativeCurrencyIds'

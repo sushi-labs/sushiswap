@@ -1,6 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { AddressMap } from './AddressMap'
 import { addressMapToTokenMap } from './addressMapToTokenMap'
 import { Token } from './Token'
 
@@ -599,7 +598,7 @@ export const WNATIVE = {
   }),
 } as const
 
-export const SUSHI_ADDRESS: AddressMap = {
+export const SUSHI_ADDRESS = {
   [ChainId.ETHEREUM]: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
   [ChainId.ROPSTEN]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   [ChainId.RINKEBY]: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
