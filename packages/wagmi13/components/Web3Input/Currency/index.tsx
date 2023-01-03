@@ -71,7 +71,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     () => (
       <div
         className={classNames(
-          'transition-all duration-[400ms] space-y-1',
+          fetching && type === 'OUTPUT' && !loading ? 'shimmer-fast' : '',
+          'transition-all duration-[400ms] space-y-1 overflow-hidden',
           insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
           className
         )}
@@ -83,30 +84,16 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               <Skeleton.Box className="w-2/4 h-[32px] rounded-lg" />
             </div>
           ) : (
-            <div className="relative">
-              {type === 'OUTPUT' && (
-                <Input.Numeric
-                  ref={inputRef}
-                  variant="unstyled"
-                  className={classNames(
-                    DEFAULT_INPUT_UNSTYLED,
-                    fetching ? 'shimmer-dark bg-shimmer-gradient-text-dark dark:bg-shimmer-gradient-text' : '',
-                    'absolute without-ring !text-3xl py-1 !text-transparent pointer-events-none'
-                  )}
-                  value={value}
-                />
-              )}
-              <Input.Numeric
-                testdata-id={`${id}-input`}
-                ref={inputRef}
-                variant="unstyled"
-                disabled={disabled}
-                onUserInput={onChange}
-                className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl py-1')}
-                value={value}
-                readOnly={disabled}
-              />
-            </div>
+            <Input.Numeric
+              testdata-id={`${id}-input`}
+              ref={inputRef}
+              variant="unstyled"
+              disabled={disabled}
+              onUserInput={onChange}
+              className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl py-1')}
+              value={value}
+              readOnly={disabled}
+            />
           )}
           {onSelect ? (
             <TokenSelector id={`${id}-token-selector`} selected={currency} chainId={chainId} onSelect={onSelect}>
