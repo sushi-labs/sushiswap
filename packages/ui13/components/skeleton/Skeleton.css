@@ -3,5 +3,5 @@
 }
 
 .shimmer-dark {
-  @apply relative animate-wave-text bg-shimmer-gradient-text bg-clip-text bg-[size:4rem_100%] bg-[position:-4rem_top] bg-no-repeat;
+  @apply relative animate-wave-text bg-clip-text bg-[size:4rem_100%] bg-[position:-40px_top] bg-no-repeat;
 }

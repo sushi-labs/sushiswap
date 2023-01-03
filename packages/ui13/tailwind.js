@@ -21,6 +21,8 @@ module.exports = {
           'linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 30%, rgba(0, 0, 0, 0.10) 50%, rgba(0, 0, 0, 0.05) 70%, rgba(0, 0, 0, 0) 100%)',
         'shimmer-gradient-text':
           'linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.25) 30%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.25) 70%, rgba(0, 0, 0, 0) 100%)',
+        'shimmer-gradient-text-dark':
+          'linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.25) 30%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.25) 70%, rgba(255, 255, 255, 0) 100%)',
       }),
       boxShadow: {
         'depth-1': '0px 3px 6px rgba(15, 15, 15, 0.5)',
@@ -55,13 +57,13 @@ module.exports = {
       keyframes: {
         'shimmer-text': {
           '0%': {
-            backgroundPosition: '-4rem top',
+            backgroundPosition: '-40px top',
           },
           '70%': {
-            backgroundPosition: '12.5rem top',
+            backgroundPosition: '300px top',
           },
           '100%': {
-            backgroundPosition: '12.5rem top',
+            backgroundPosition: '300px top',
           },
         },
         shimmer: {

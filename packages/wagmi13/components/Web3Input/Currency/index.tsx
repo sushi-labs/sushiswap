@@ -90,7 +90,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
                   variant="unstyled"
                   className={classNames(
                     DEFAULT_INPUT_UNSTYLED,
-                    fetching ? 'shimmer-dark bg-shimmer-gradient-text' : '',
+                    fetching ? 'shimmer-dark bg-shimmer-gradient-text-dark dark:bg-shimmer-gradient-text' : '',
                     'absolute without-ring !text-3xl py-1 !text-transparent pointer-events-none'
                   )}
                   value={value}
