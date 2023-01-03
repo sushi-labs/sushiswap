@@ -19,7 +19,6 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const dateThreshold = new Date(currenDate.setDate(currenDate.getDate() - 3)) // 3 days ago
   dateThreshold.setHours(0, 0, 0, 0) // Needed for the middleware cache to hit
   
-
   const tokens = await getPricesByChainId(chainId, dateThreshold, currency)
   return response.status(200).json(tokens)
 }

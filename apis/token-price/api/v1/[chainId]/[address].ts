@@ -22,7 +22,6 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   dateThreshold.setHours(0, 0, 0, 0) // Needed for the middleware cache to hit
 
   const token = await getPrice(chainId, address, dateThreshold, currency)
-  console.log({token})
   if (token === undefined) return response.status(404).json({})
 
   return response.status(200).json(token)
