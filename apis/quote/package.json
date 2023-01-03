@@ -1,21 +1,21 @@
 {
-  "name": "@sushiswap/swap-api",
+  "name": "@sushiswap/quote-api",
   "version": "0.0.0",
   "private": true,
-  "description": "Sushi Swap API",
+  "description": "Sushi Quote API",
   "keywords": [
     "sushi",
-    "swap",
+    "quote",
     "api"
   ],
-  "homepage": "https://github.com/sushiswap/sushiswap/apis/swap#readme",
+  "homepage": "https://github.com/sushiswap/sushiswap/apis/quote#readme",
   "bugs": {
     "url": "https://github.com/sushiswap/sushiswap/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "apis/swap"
+    "directory": "apis/quote"
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
