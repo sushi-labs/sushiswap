@@ -8,5 +8,8 @@
     "rootDir": ".",
     "resolveJsonModule": true
   },
-  "resolveJsonModule": true
+  "resolveJsonModule": true,
+  "ts-node": {
+    "swc": true
+  },
 }

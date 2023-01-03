@@ -6,12 +6,6 @@ import fetch from 'node-fetch'
 import { z } from 'zod'
 import zip from 'lodash.zip'
 
-const alchemyId = process.env['ALCHEMY_ID']
-
-if (!alchemyId) {
-  throw Error('NO ALCHEMY ID SET')
-}
-
 const { provider, webSocketProvider } = configureChains(allChains, allProviders)
 createClient({
   autoConnect: true,
@@ -39,7 +33,6 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
   const data = await res.json()
   const tokens = tokensSchema.parse(data)
-
   const balances = await readContracts({
     allowFailure: true,
     contracts: tokens.map(
@@ -53,9 +46,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
         } as const)
     ),
   })
-
   const zipped = zip(tokens, balances)
-
   return response
     .status(200)
     .json(

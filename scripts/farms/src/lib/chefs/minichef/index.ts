@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI } from '@sushiswap/currency'
+import { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { daysInYear, secondsInDay } from 'date-fns'
 import { Farm } from 'src/types'
 
@@ -15,7 +16,9 @@ import {
   getTotalAllocPoint,
 } from './fetchers'
 
-export async function getMinichef(chainId: ChainId): Promise<{ chainId: ChainId; farms: Record<string, Farm> }> {
+export async function getMinichef(
+  chainId: SushiSwapChainId | TridentChainId
+): Promise<{ chainId: ChainId; farms: Record<string, Farm> }> {
   try {
     const [poolLength, totalAllocPoint, sushiPerSecond, rewarderInfos, [{ derivedUSD: sushiPriceUSD }]] =
       await Promise.all([

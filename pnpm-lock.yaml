@@ -170,6 +170,53 @@ importers:
       typescript: 4.9.4
       vercel: 28.10.1
 
+  apis/quote:
+    specifiers:
+      '@ethersproject/solidity': ^5.7.0
+      '@sushiswap/amm': workspace:*
+      '@sushiswap/chain': workspace:*
+      '@sushiswap/currency': workspace:*
+      '@sushiswap/eslint-config': workspace:*
+      '@sushiswap/graph-config': workspace:*
+      '@sushiswap/jest-config': workspace:*
+      '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/route-processor': workspace:*
+      '@sushiswap/router': workspace:*
+      '@sushiswap/tines': workspace:*
+      '@sushiswap/typescript-config': workspace:*
+      '@types/node-fetch': 2.x
+      '@vercel/node': 2.8.2
+      eslint: 8.29.0
+      ethereum-multicall: 2.15.0
+      ethers: ^5.7.0
+      node-fetch: 2.x
+      typescript: 4.9.4
+      vercel: 28.10.1
+      zod: 3.20.2
+    dependencies:
+      '@ethersproject/solidity': 5.7.0
+      '@sushiswap/amm': link:../../packages/amm
+      '@sushiswap/chain': link:../../packages/chain
+      '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/route-processor': link:../../protocols/route-processor
+      '@sushiswap/router': link:../../packages/router
+      '@sushiswap/tines': link:../../packages/tines
+      '@vercel/node': 2.8.2
+      ethereum-multicall: 2.15.0
+      ethers: 5.7.2
+      node-fetch: 2.6.7
+      zod: 3.20.2
+    devDependencies:
+      '@sushiswap/eslint-config': link:../../config/eslint
+      '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/jest-config': link:../../config/jest
+      '@sushiswap/prettier-config': link:../../config/prettier
+      '@sushiswap/typescript-config': link:../../config/typescript
+      '@types/node-fetch': 2.6.2
+      eslint: 8.29.0
+      typescript: 4.9.4
+      vercel: 28.10.1
+
   apis/swap:
     specifiers:
       '@ethersproject/solidity': ^5.7.0
@@ -3666,7 +3713,6 @@ importers:
       '@graphql-mesh/transform-type-merging': latest
       '@sushiswap/abi': workspace:*
       '@sushiswap/chain': workspace:*
-      '@sushiswap/core': ^2.0.0-canary.1
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-client': workspace:*
@@ -3674,6 +3720,7 @@ importers:
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
+      '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi-config': workspace:*
       '@swc/core': ^1.2.249
       '@swc/helpers': ^0.4.11
@@ -3691,15 +3738,14 @@ importers:
       jest: ^29.3.0
       prettier: 2.8.1
       ts-node: ^10.9.0
-      tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/core': 2.0.0-canary.1
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/graph-client': link:../../packages/graph-client
       '@sushiswap/graph-config': link:../../config/graph
+      '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi-config': link:../../config/wagmi
       '@wagmi/core': 0.8.1_c4tpmuajjwy7vjodfmym27ncri
       express: 4.18.2
@@ -3730,7 +3776,6 @@ importers:
       jest: 29.3.1_ts-node@10.9.1
       prettier: 2.8.1
       ts-node: 10.9.1_q7u3722li5p3s3hvjnne4zfcwq
-      tsup: 6.5.0_4wigyvb26jd7smnp5shbidl5ou
       typescript: 4.9.4
 
   scripts/price:
