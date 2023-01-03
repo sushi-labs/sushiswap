@@ -127,8 +127,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const waiter = new Waiter()
   const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
-  router.startRouting(() => {
-    //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
+
+  router.startRouting((p) => {
     const printed = router.getCurrentRouteHumanString()
     console.log(printed)
     waiter.resolve()
