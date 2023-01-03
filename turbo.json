@@ -19,7 +19,6 @@
     "tsconfig.json"
   ],
   "pipeline": {
-
     "db:init": {
       "outputs": ["prisma/**"],
       "cache": false

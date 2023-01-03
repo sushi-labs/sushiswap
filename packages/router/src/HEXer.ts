@@ -79,7 +79,7 @@ export class HEXer {
   }
 
   address(addr: string): HEXer {
-    if (addr === 'RouteProcessor' || addr.length > 42 || addr.length < 42) {
+    if (addr.length > 42 || addr === 'RouteProcessor') {
       throw new Error('Wrong address: ' + addr)
     }
     // 0xabcd => 0000abcd
