@@ -24,11 +24,13 @@ export class NativeWrapProvider extends LiquidityProviderMC {
     super(chainDataProvider, multiCallProvider, chainId, l)
     const native = Native.onChain(chainId)
     const nativeRToken: RToken = {
+      isNative: true,
+      isToken: false,
       address: '',
       name: native.name,
       symbol: native.symbol,
       chainId: chainId,
-    }
+    } as RToken
     const bridge = new BridgeUnlimited(
       NativeWrapProvider.NativeWrapPoolAddress,
       nativeRToken,
