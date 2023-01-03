@@ -67,4 +67,9 @@ export const CONSTANT_PRODUCT_POOL_FACTORY_ADDRESS: Partial<Record<BentoBoxChain
   [ChainId.BSC]: '0x3D2f8ae0344d38525d2AE96Ab750B83480c0844F',
 } as const
 
+export const ROUTE_PROCESSOR_ADDRESS = {
+  [ChainId.ETHEREUM]: '0xf267704dD1393c26B39A6D41F49Bea233B34F722',
+  [ChainId.POLYGON]: '0xf267704dD1393c26B39A6D41F49Bea233B34F722',
+} as const
+
 export { addressMapToTokenMap } from './addressMapToTokenMap'

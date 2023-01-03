@@ -76,11 +76,7 @@ const schema = z.object({
   fromTokenId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
   toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
-  amount: z.coerce.bigint({
-    invalid_type_error: 'amount must be a string',
-    required_error: 'amount is required',
-    description: 'amount',
-  }),
+  amount: z.coerce.bigint(),
   to: z.string(),
 })
 
