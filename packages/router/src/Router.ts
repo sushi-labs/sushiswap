@@ -11,12 +11,14 @@ type RouteCallBack = (r: MultiRoute) => void
 
 function TokenToRToken(t: Type): RToken {
   if (t instanceof Token) return t as RToken
-  const nativeRToken: RToken = {
+  const nativeRToken = {
+    isNative: true,
+    isToken: false,
     address: '',
     name: t.name,
     symbol: t.symbol,
     chainId: t.chainId,
-  }
+  } as RToken
   return nativeRToken
 }
 

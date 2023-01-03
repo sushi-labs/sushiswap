@@ -1,6 +1,5 @@
 import { getAddress, isAddress } from '@ethersproject/address'
 import { Token, Type } from '@sushiswap/currency'
-import { JSBI } from '@sushiswap/math'
 import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 
 type TagDetails = Tags[keyof Tags]
@@ -17,8 +16,6 @@ export class WrappedTokenInfo implements Token {
   public readonly list?: TokenList
 
   public readonly tokenInfo: TokenInfo
-
-  readonly rebase = { base: JSBI.BigInt(1), elastic: JSBI.BigInt(1) }
 
   constructor(tokenInfo: TokenInfo, list?: TokenList) {
     this.tokenInfo = tokenInfo
