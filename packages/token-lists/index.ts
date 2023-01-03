@@ -1,12 +1,15 @@
 import { getAddress, isAddress } from '@ethersproject/address'
 import { Token, Type } from '@sushiswap/currency'
-import type { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
+import type { Tags, TokenInfo as _TokenInfo, TokenList } from '@uniswap/token-lists'
 
 type TagDetails = Tags[keyof Tags]
 
 interface TagInfo extends TagDetails {
   id: string
 }
+
+type TokenInfo = _TokenInfo & { readonly id: string }
+
 /**
  * Token instances created from token info on a token list.
  */

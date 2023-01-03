@@ -10,6 +10,7 @@ import { Type } from './Type'
 export class Token extends Currency {
   public readonly isNative = false as const
   public readonly isToken = true as const
+  public readonly id: string
   /**
    * The contract address on the chain on which this token lives
    */
@@ -36,6 +37,7 @@ export class Token extends Currency {
     })
     try {
       this.address = getAddress(address)
+      this.id = `${this.chainId}:${this.address}`
     } catch {
       throw `${address} is not a valid address`
     }
