@@ -6,7 +6,7 @@ describe('DataFetcher', () => {
   describe('constructor', () => {
     let dataFetcher: DataFetcher
     it('instanciates', () => {
-      dataFetcher = new DataFetcher(new providers.AlchemyProvider('homestead', process.env['ALCHEMY_API_KEY']), 1)
+      dataFetcher = new DataFetcher(new providers.JsonRpcProvider('https://api.securerpc.com/v1', 'homestead'), 1)
       dataFetcher.startDataFetching()
       expect(dataFetcher).toBeInstanceOf(DataFetcher)
     })
