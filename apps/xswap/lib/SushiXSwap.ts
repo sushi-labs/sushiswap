@@ -17,6 +17,7 @@ import { ContractTransaction } from 'ethers'
 import { formatBytes32String } from 'ethers/lib/utils'
 import { SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
 import { Address } from 'wagmi'
+import { HexString } from '@sushiswap/types'
 
 export type Complex = [
   {
@@ -148,7 +149,7 @@ export abstract class Cooker implements Cooker {
       defaultAbiCoder.encode(
         ['address', 'address', 'uint256', 'uint256', 'bool'],
         [token.wrapped.address, to, BigNumber.from(amount), BigNumber.from(share), unwrap]
-      ) as Address
+      ) as HexString
     )
   }
 
@@ -171,7 +172,7 @@ export abstract class Cooker implements Cooker {
   dstWithdraw(token: Currency, to: string = this.user, amount = Zero): void {
     this.add(
       Action.DST_WITHDRAW,
-      defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, amount]) as Address
+      defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, amount]) as HexString
     )
   }
 
@@ -209,7 +210,7 @@ export abstract class Cooker implements Cooker {
           ),
           recipient,
         ]
-      ) as Address
+      ) as HexString
     )
   }
 
@@ -253,7 +254,7 @@ export abstract class Cooker implements Cooker {
             }),
           ],
         ]
-      ) as Address
+      ) as HexString
     )
   }
 
@@ -343,14 +344,14 @@ export abstract class Cooker implements Cooker {
             ]
           ),
         ]
-      ) as Address
+      ) as HexString
     )
   }
 
   unwrapAndTransfer(token: Currency, to: string = this.user): void {
     this.add(
       Action.UNWRAP_AND_TRANSFER,
-      defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to]) as Address
+      defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to]) as HexString
     )
   }
 }
@@ -363,7 +364,7 @@ export class SrcCooker extends Cooker {
       defaultAbiCoder.encode(
         ['address', 'bool', 'uint8', 'bytes32', 'bytes32'],
         [this.user, true, signature.v, signature.r, signature.s]
-      ) as Address
+      ) as HexString
     )
   }
 
@@ -823,7 +824,7 @@ export class SushiXSwap {
         this.dstCooker.values.map((value) => BigNumber.from(value)),
         this.dstCooker.datas,
       ]
-    ) as Address
+    ) as HexString
 
     if (this.debug) {
       console.debug('cook teleport', [
@@ -858,7 +859,7 @@ export class SushiXSwap {
           defaultAbiCoder.encode(
             ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
             [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
-          ) as Address
+          ) as HexString
         )
       : [Zero, Zero]
   }

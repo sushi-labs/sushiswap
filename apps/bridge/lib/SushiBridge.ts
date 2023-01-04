@@ -5,6 +5,7 @@ import { AddressZero, Zero } from '@ethersproject/constants'
 import { TransactionRequest } from '@ethersproject/providers'
 import { Amount, Currency, Native, Share, Token } from '@sushiswap/currency'
 import { STARGATE_BRIDGE_TOKENS, STARGATE_CHAIN_ID, STARGATE_POOL_ID, StargateChainId } from '@sushiswap/stargate'
+import { HexString } from '@sushiswap/types'
 import { getSushiXSwapContractConfig, SushiXSwap } from '@sushiswap/wagmi'
 import { Address } from 'abitype'
 import { formatBytes32String } from 'ethers/lib/utils'
@@ -364,7 +365,7 @@ export class SushiBridge {
           defaultAbiCoder.encode(
             ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
             [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
-          ) as Address
+          ) as HexString
         )
       : [Zero, Zero]
   }
