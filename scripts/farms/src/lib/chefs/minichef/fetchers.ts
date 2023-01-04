@@ -95,7 +95,7 @@ export async function getRewarders(poolLength: number, chainId: ChainId) {
 
 // TODO: Fix type
 export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainId) {
-  const { getBuiltGraphSDK } = await import('../../../../.graphclient')
+  const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
   const subgraphName = (MINICHEF_SUBGRAPH_NAME as Record<SushiSwapChainId | TridentChainId, string>)[chainId]
   if (!subgraphName) {
     console.log(chainId, 'does not have a minichef subgraph!')
