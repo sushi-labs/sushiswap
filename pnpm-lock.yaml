@@ -699,6 +699,7 @@ importers:
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/token-lists': workspace:*
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
@@ -750,6 +751,7 @@ importers:
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@uniswap/v2-core': 1.0.1
@@ -1570,6 +1572,7 @@ importers:
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
       '@sushiswap/token-lists': workspace:*
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
       '@sushiswap/wagmi': workspace:*
@@ -1622,6 +1625,7 @@ importers:
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/token-lists': link:../../packages/token-lists
+      '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/wagmi': link:../../packages/wagmi
       '@uniswap/redux-multicall': 1.1.8_h42dxqlbhai3nbvwo53ks2s3ie
