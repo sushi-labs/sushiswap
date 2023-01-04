@@ -149,7 +149,10 @@
     },
     "//#build-packages": {
       "dependsOn": [],
-      "outputs": ["dist/**/*"],
+      "outputs": [
+        ".graphclient/**/*",
+        "dist/**/*"
+      ],
       "inputs": []
     },
     "//#build-protocols": {
