@@ -30,5 +30,10 @@ export * from '@testing-library/react'
 export { customRender as render }
 
 export type UserEvent = ReturnType<typeof userEvent.setup>
-export { addressRegex, getProvider, getSigners, getWebSocketProvider } from './utils'
+export {
+  addressRegex,
+  getProvider,
+  getSigners,
+  // getWebSocketProvider
+} from './utils'
 export { default as userEvent } from '@testing-library/user-event'
