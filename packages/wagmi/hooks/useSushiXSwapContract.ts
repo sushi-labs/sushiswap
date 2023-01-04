@@ -1,5 +1,5 @@
 import { sushiXSwapAbi } from '@sushiswap/abi'
-import sushiXSwapExports from '@sushiswap/sushixswap/exports.json'
+import sushiXSwapExports from '@sushiswap/sushixswap/exports'
 import { Address, useContract, useProvider, useSigner } from 'wagmi'
 
 export type SushiXSwapChainId = keyof Omit<typeof sushiXSwapExports, '31337'>
@@ -12,18 +12,20 @@ export const getSushiXSwapContractConfig = (chainId: number | undefined) =>
     abi: sushiXSwapAbi,
   } as const)
 
-export function useSushiXSwapContract(chainId: number | undefined): ReturnType<typeof useContract> {
+export function useSushiXSwapContract(chainId: number | undefined) {
   const { data: signerOrProvider } = useSigner()
   return useContract({
     ...getSushiXSwapContractConfig(chainId),
     signerOrProvider,
-  } as const)
+  })
 }
 
-export function useSushiXSwapContractWithProvider(chainId: number | undefined): ReturnType<typeof useContract> {
+export function useSushiXSwapContractWithProvider(chainId: number | undefined) {
   const provider = useProvider({ chainId: Number(chainId) })
   return useContract({
     ...getSushiXSwapContractConfig(chainId),
     signerOrProvider: provider,
-  } as const)
+  })
 }
+
+export type SushiXSwap = NonNullable<ReturnType<typeof useSushiXSwapContractWithProvider>>

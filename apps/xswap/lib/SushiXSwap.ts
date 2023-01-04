@@ -11,11 +11,12 @@ import {
   STARGATE_POOL_ID,
   StargateChainId,
 } from '@sushiswap/stargate'
-import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import { getBigNumber } from '@sushiswap/tines'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { ContractTransaction } from 'ethers'
 import { formatBytes32String } from 'ethers/lib/utils'
+import { SushiXSwap as SushiXSwapContract } from '@sushiswap/wagmi'
+import { Address } from 'wagmi'
 
 export type Complex = [
   {
@@ -70,17 +71,17 @@ export enum Action {
 export interface Cooker {
   readonly actions: Action[]
   readonly values: BigNumber[]
-  readonly datas: string[]
+  readonly datas: Address[]
   add(action: Action, data: string, value: BigNumberish): void
 }
 
 export abstract class Cooker implements Cooker {
   readonly actions: Action[] = []
   readonly values: BigNumber[] = []
-  readonly datas: string[] = []
+  readonly datas: Address[] = []
   readonly chainId: StargateChainId
   readonly debug: boolean
-  readonly masterContract: string
+  readonly masterContract: Address
   readonly user: string
   constructor({
     chainId,
@@ -90,7 +91,7 @@ export abstract class Cooker implements Cooker {
   }: {
     chainId: StargateChainId
     debug?: boolean
-    masterContract: string
+    masterContract: Address
     user: string
   }) {
     this.chainId = chainId
@@ -98,7 +99,7 @@ export abstract class Cooker implements Cooker {
     this.masterContract = masterContract
     this.user = user
   }
-  add(action: Action, data: string, value: BigNumberish = Zero): void {
+  add(action: Action, data: Address, value: BigNumberish = Zero): void {
     this.actions.push(action)
     this.datas.push(data)
     this.values.push(BigNumber.from(value))
@@ -147,7 +148,7 @@ export abstract class Cooker implements Cooker {
       defaultAbiCoder.encode(
         ['address', 'address', 'uint256', 'uint256', 'bool'],
         [token.wrapped.address, to, BigNumber.from(amount), BigNumber.from(share), unwrap]
-      )
+      ) as Address
     )
   }
 
@@ -170,7 +171,7 @@ export abstract class Cooker implements Cooker {
   dstWithdraw(token: Currency, to: string = this.user, amount = Zero): void {
     this.add(
       Action.DST_WITHDRAW,
-      defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, amount])
+      defaultAbiCoder.encode(['address', 'address', 'uint256'], [token.wrapped.address, to, amount]) as Address
     )
   }
 
@@ -208,7 +209,7 @@ export abstract class Cooker implements Cooker {
           ),
           recipient,
         ]
-      )
+      ) as Address
     )
   }
 
@@ -252,7 +253,7 @@ export abstract class Cooker implements Cooker {
             }),
           ],
         ]
-      )
+      ) as Address
     )
   }
 
@@ -342,12 +343,15 @@ export abstract class Cooker implements Cooker {
             ]
           ),
         ]
-      )
+      ) as Address
     )
   }
 
   unwrapAndTransfer(token: Currency, to: string = this.user): void {
-    this.add(Action.UNWRAP_AND_TRANSFER, defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to]))
+    this.add(
+      Action.UNWRAP_AND_TRANSFER,
+      defaultAbiCoder.encode(['address', 'address'], [token.wrapped.address, to]) as Address
+    )
   }
 }
 
@@ -359,7 +363,7 @@ export class SrcCooker extends Cooker {
       defaultAbiCoder.encode(
         ['address', 'bool', 'uint8', 'bytes32', 'bytes32'],
         [this.user, true, signature.v, signature.r, signature.s]
-      )
+      ) as Address
     )
   }
 
@@ -819,7 +823,7 @@ export class SushiXSwap {
         this.dstCooker.values.map((value) => BigNumber.from(value)),
         this.dstCooker.datas,
       ]
-    )
+    ) as Address
 
     if (this.debug) {
       console.debug('cook teleport', [
@@ -849,12 +853,12 @@ export class SushiXSwap {
           STARGATE_CHAIN_ID[this.dstCooker.chainId],
           1,
           this.dstCooker.masterContract,
-          gasSpent,
-          0,
+          BigNumber.from(gasSpent),
+          BigNumber.from(0),
           defaultAbiCoder.encode(
             ['address', 'uint8[]', 'uint256[]', 'bytes[]'],
             [this.user, this.dstCooker.actions, this.dstCooker.values, this.dstCooker.datas]
-          )
+          ) as Address
         )
       : [Zero, Zero]
   }

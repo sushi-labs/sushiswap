@@ -111,7 +111,7 @@
     },
     "export": {
       "dependsOn": ["build"],
-      "outputs": ["exports.json"],
+      "outputs": ["exports.json", "exports.ts"],
       "cache": true
     },
     "node": {

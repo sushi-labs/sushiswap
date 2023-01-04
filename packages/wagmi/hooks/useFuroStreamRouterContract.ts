@@ -1,5 +1,4 @@
-import furoExports from '@sushiswap/furo/exports.json'
-import { FuroStreamRouter } from '@sushiswap/furo/typechain'
+import furoExports from '@sushiswap/furo/exports'
 import { Address, useContract, useProvider } from 'wagmi'
 
 export const getFuroStreamRouterContractConfig = (chainId: number | undefined) => ({
@@ -15,9 +14,11 @@ export const getFuroStreamRouterContractConfig = (chainId: number | undefined) =
     ]?.[0]?.contracts?.FuroStreamRouter?.abi ?? [],
 })
 
-export function useFuroStreamRouterContract(chainId: number | undefined): FuroStreamRouter | null {
+export function useFuroStreamRouterContract(chainId: number | undefined) {
   return useContract({
     ...getFuroStreamRouterContractConfig(chainId),
     signerOrProvider: useProvider({ chainId }),
-  }) as FuroStreamRouter
+  })
 }
+
+export type FuroStreamRouter = NonNullable<ReturnType<typeof useFuroStreamRouterContract>>
