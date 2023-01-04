@@ -6,11 +6,10 @@ import fetch from 'node-fetch'
 import { z } from 'zod'
 import zip from 'lodash.zip'
 
-const { provider, webSocketProvider } = configureChains(allChains, allProviders)
+const { provider } = configureChains(allChains, allProviders)
 createClient({
   autoConnect: true,
   provider,
-  webSocketProvider,
 })
 
 const querySchema = z.object({

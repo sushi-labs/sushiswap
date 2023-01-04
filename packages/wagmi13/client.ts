@@ -106,7 +106,6 @@ const { chains, provider }: CreateClientConfig & { chains: Chain[] } = isTest
 
 export const client: Client = createClient({
   provider,
-  // webSocketProvider,
   logger: {
     warn: null,
   },
