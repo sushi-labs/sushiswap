@@ -3457,6 +3457,7 @@ importers:
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@tenderly/hardhat-tenderly': ^1.0.0
+      chai: 4.3.7
       cross-env: ^7.0.0
       dotenv: ^10.0.0
       eslint: 8.29.0
@@ -3495,6 +3496,7 @@ importers:
       '@sushiswap/tines': link:../../packages/tines
       '@sushiswap/typescript-config': link:../../config/typescript
       '@tenderly/hardhat-tenderly': 1.4.1_qvdp3sv3zt6nvy75l5ck5aiq3y
+      chai: 4.3.7
       cross-env: 7.0.3
       dotenv: 10.0.0
       eslint: 8.29.0

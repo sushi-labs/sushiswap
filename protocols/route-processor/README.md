@@ -10,13 +10,13 @@
 ## Install
 
 ```sh
-yarn
+pnpm i
 ```
 
 ## Test
 
 ```sh
-yarn test
+pnpm exec turbo run test --filter=@sushiswap/route-processor
 ```
 
 ## Test Result Example:
