@@ -31,11 +31,10 @@ describe('HEXer', () => {
       expect(HEXER.bool(true).toString()).toEqual('01')
     })
 
-    it('should return hexed value 1 + padding', () => {
+    it('should return the address without 0x prefix', () => {
       expect(HEXER.hexData(address).toString()).toEqual(address.slice(2))
     })
 
-    // bytes
   })
 
   describe('#toHexString', () => {
@@ -159,25 +158,58 @@ describe('HEXer', () => {
       expect(() => HEXER.address(address)).toThrow('Wrong address: ' + address)
     })
     it('throws when address has a length more than 42', () => {
-      // 43 characters
       const address = '0x00000000000000000000000000000000000000000'
       expect(() => HEXER.address(address)).toThrow('Wrong address: ' + address)
     })
 
     it('throws when address has a length less than 42', () => {
-      // 41 characters
       const address = '0x000000000000000000000000000000000000000'
       expect(() => HEXER.address(address)).toThrow('Wrong address: ' + address)
     })
   })
   describe('#hexData', () => {
-    //
+    const address = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+
+    it('throws when input length is odd', () => {
+      const input = '123'
+      expect(() => HEXER.hexData(input)).toThrow('Wrong hex data length: ' + input.length)
+    })
+
+    it('slices the 0x prefix', () => {
+      expect(HEXER.hexData(address).toString()).toEqual(address.slice(2))
+    })
   })
+
   describe('#bytes', () => {
-    //
+    const address = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+
+    it('throws when input length is odd', () => {
+      const input = '123'
+      expect(() => HEXER.bytes(input)).toThrow('Wrong bytes length: ' + input.length)
+    })
+
+    it('adds padding and slices the 0x prefix', () => {
+      const len = '14' // address length after slicing prefix is 20, 20 in decimal is 14 in hex
+      const expected = '00000000000000000000000000000000000000000000000000000000000000' + len + address.slice(2)
+      expect(HEXER.bytes(address).toString()).toEqual(expected)
+    })
+
+    it.each(['10', '1010', '101010'])('adds 0 padding and length info of the bytecode', (n) => {
+      const actual = HEXER.bytes(n).toString()
+      const expected = '000000000000000000000000000000000000000000000000000000000000000' + n.length / 2 + n
+      expect(actual).toEqual(expected)
+    })
   })
 
   describe('#bool', () => {
-    //
+
+    it('should return hexed value 0 + padding', () => {
+      expect(HEXER.bool(false).toString()).toEqual('00')
+    })
+
+    it('should return hexed value 1 + padding', () => {
+      expect(HEXER.bool(true).toString()).toEqual('01')
+    })
+
   })
 })
