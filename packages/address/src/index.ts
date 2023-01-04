@@ -1,4 +1,4 @@
-import bentoBoxExports from '@sushiswap/bentobox/exports.json'
+import bentoBoxExports from '@sushiswap/bentobox/exports'
 import { ChainId } from '@sushiswap/chain'
 
 // TODO: Generate from exports will full type safety
