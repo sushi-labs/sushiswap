@@ -33,7 +33,7 @@ contract RouteProcessor {
   /// @param amountIn Amount of the input token
   /// @param tokenOut Address of the output token
   /// @param amountOutMin Minimum amount of the output token
-  /// @return Actual amount of the output token
+  /// @return amountOut Actual amount of the output token
   function processRoute(
     address tokenIn,
     uint256 amountIn,
@@ -134,7 +134,7 @@ contract RouteProcessor {
 
   /// @notice Performs a Sushi/UniswapV2 pool swap
   /// @param stream [Pool, TokenIn, Direction, To]
-  /// @return Amount of the output token
+  /// @return amountOut Amount of the output token
   function swapUniswapPool(uint256 stream) private returns (uint256 amountOut) {
     address pool = stream.readAddress();
     address tokenIn = stream.readAddress();
@@ -156,7 +156,7 @@ contract RouteProcessor {
   /// @notice Expected to be called for initial liquidity transfer from the user to pools, so we know exact amounts
   /// @param stream [ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
   /// @param token Token to distribute
-  /// @return Total amount distributed
+  /// @return amountTotal Total amount distributed
   function distributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
     uint8 num = stream.readUint8();
     amountTotal = 0;
@@ -172,7 +172,7 @@ contract RouteProcessor {
   /// @notice Expected to be called for initial liquidity transfer from the user to pools, so we know exact amounts
   /// @param stream [ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
   /// @param token Token to distribute
-  /// @return Total amount distributed
+  /// @return amountTotal Total amount distributed
   function wrapAndDistributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
     wNATIVE.deposit{value: msg.value}();
     uint8 num = stream.readUint8();
@@ -189,7 +189,7 @@ contract RouteProcessor {
   /// @notice Expected to be called for initial liquidity transfer from the user to pools, so we know exact amounts
   /// @param stream [ArrayLength, ...[To, ShareAmount][]]. An array of destinations and token share amounts
   /// @param token Token to distribute
-  /// @return Total shares distributed
+  /// @return sharesTotal Total shares distributed
   function distributeBentoShares(uint256 stream, address token) private returns (uint256 sharesTotal) {
     uint8 num = stream.readUint8();
     sharesTotal = 0;
