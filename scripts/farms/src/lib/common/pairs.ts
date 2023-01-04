@@ -19,7 +19,7 @@ interface Pair {
 }
 
 async function getExchangePairs(ids: string[], chainId: SushiSwapChainId): Promise<Pair[]> {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient')
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({
@@ -48,7 +48,7 @@ async function getTridentPairs(
   ids: string[],
   chainId: keyof typeof SUBGRAPH_HOST & keyof typeof TRIDENT_SUBGRAPH_NAME
 ): Promise<Pair[]> {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient')
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({
