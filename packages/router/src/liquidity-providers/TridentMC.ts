@@ -1,10 +1,16 @@
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
-import { BridgeBento, ConstantProductRPool, RToken } from '@sushiswap/tines'
+import { BridgeBento, ConstantProductRPool, Rebase, RToken } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 
 import type { Limited } from '../Limited'
-import { convertToBigNumber, convertToBigNumberPair, convertToNumbers, MultiCallProvider } from '../MulticallProvider'
+import {
+  convertToBigNumber,
+  convertToBigNumberPair,
+  convertToNumbers,
+  convertToRebase,
+  MultiCallProvider,
+} from '../MulticallProvider'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoConstantProductPoolCode } from '../pools/BentoconstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
@@ -12,6 +18,10 @@ import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
 
 const ConstantProductPoolFactory: Record<string | number, string> = {
   [ChainId.POLYGON]: '0x05689fCfeE31FCe4a67FbC7Cab13E74F80A4E288',
+}
+
+const StablePoolFactory: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x2A0Caa28331bC6a18FF195f06694f90671dE70f2',
 }
 
 export const BentoBox: Record<string | number, string> = {
@@ -194,6 +204,7 @@ export function convertTokenToBento(token: Token): RToken {
 export class TridentProviderMC extends LiquidityProviderMC {
   fetchedPairs: Set<string> = new Set()
   fetchedTokens: Set<string> = new Set()
+  lastFetchedTotals: Map<string, Rebase> = new Map()
   poolCodes: PoolCode[] = []
   blockListener?: () => void | undefined
 
@@ -215,7 +226,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
   }
 
   async getPools(tokens: Token[]) {
-    if (ConstantProductPoolFactory[this.chainId] === undefined) {
+    if (ConstantProductPoolFactory[this.chainId] === undefined && StablePoolFactory[this.chainId] === undefined) {
       // No trident for this network
       this.lastUpdateBlock = -1
       return []
@@ -244,6 +255,34 @@ export class TridentProviderMC extends LiquidityProviderMC {
     // if it is the first obtained pool list
     if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
+
+  // Updates this.lastFetchedTotals
+  // async getTotals(tokensSorted: Token[]): Promise<void> {
+  //   const tokens: Token[] = []
+  //   tokensSorted.forEach((t) => {
+  //     if (this.fetchedTokens.has(t.address)) return
+  //     tokens.push(t)
+  //     this.fetchedTokens.add(t.address)
+  //   })
+
+  //   if (tokens.length == 0) return
+
+  //   const BentoBoxAddr = BentoBox[this.chainId]
+  //   const totals = convertToRebase(
+  //     await this.multiCallProvider.multiDataCall(
+  //       BentoBoxAddr,
+  //       totalsABI,
+  //       'totals',
+  //       tokens.map((t) => [t.address])
+  //     )
+  //   )
+
+  //   totals.forEach((t, i) => {
+  //     if (t === undefined) return
+  //     const token = tokens[i]
+  //     this.lastFetchedTotals.set(token.address, t)
+  //   })
+  // }
 
   async getAllTridentPools(tokensSorted: Token[]): Promise<PoolCode[]> {
     // create token map: token address => token
@@ -322,6 +361,85 @@ export class TridentProviderMC extends LiquidityProviderMC {
     return poolCodes
   }
 
+  // async getAllTridentStablePools(tokensSorted: Token[]): Promise<PoolCode[]> {
+  //   // create token map: token address => token
+  //   const tokenMap: Map<string, Token> = new Map()
+  //   tokensSorted.forEach((t) => tokenMap.set(t.address, t))
+
+  //   // create tokens pairs that were not fetched before
+  //   const tokenPairs: [string, string][] = []
+  //   for (let i = 0; i < tokensSorted.length; ++i) {
+  //     for (let j = i + 1; j < tokensSorted.length; ++j) {
+  //       const pair = `${tokensSorted[i].address}_${tokensSorted[j].address}`
+  //       if (this.fetchedPairs.has(pair)) continue
+  //       tokenPairs.push([tokensSorted[i].address, tokensSorted[j].address])
+  //       this.fetchedPairs.add(pair)
+  //     }
+  //   }
+
+  //   // fetch pairs' poolsCount
+  //   const poolCounts = convertToNumbers(
+  //     await this.multiCallProvider.multiDataCall(
+  //       StablePoolFactory[this.chainId],
+  //       poolsCountABI,
+  //       'poolsCount',
+  //       tokenPairs
+  //     )
+  //   )
+
+  //   // fetch poolsList for pairs with not-zero poolCount
+  //   const tokenPairs2 = tokenPairs
+  //     .map(([t0, t1], i) => [t0, t1, poolCounts[i] as number])
+  //     .filter(([_t0, _t1, n]) => n > 0) as [string, string, number][]
+  //   const poolLists = await this.multiCallProvider.multiDataCall(
+  //     StablePoolFactory[this.chainId],
+  //     getPoolsABI,
+  //     'getPools',
+  //     tokenPairs2.map(([t0, t1, n]) => [t0, t1, 0, n])
+  //   )
+
+  //   // Create poolMap
+  //   const poolMap: Map<string, [Token, Token]> = new Map()
+  //   poolLists.forEach((pools, i) => {
+  //     const tokens: [Token, Token] = [
+  //       tokenMap.get(tokenPairs2[i][0]) as Token,
+  //       tokenMap.get(tokenPairs2[i][1]) as Token,
+  //     ]
+  //     pools.forEach((pool: string) => poolMap.set(pool, tokens))
+  //   })
+
+  //   // fetch getReserves and swapFee for all pools
+  //   const poolAddr: string[] = Array.from(poolMap.keys())
+  //   const poolReservePromise = this.multiCallProvider.multiContractCall(poolAddr, getReservesABI, 'getReserves', [])
+  //   const swapFeePromise = this.multiCallProvider.multiContractCall(poolAddr, swapFeeABI, 'swapFee', [])
+  //   const [poolRes0, poolFee0] = await Promise.all([poolReservePromise, swapFeePromise])
+  //   const poolRes = convertToBigNumberPair(poolRes0)
+  //   const poolFee = convertToNumbers(poolFee0)
+
+  //   // create poolCodes
+  //   const poolCodes: PoolCode[] = []
+  //   poolAddr.forEach((addr, i) => {
+  //     const res = poolRes[i]
+  //     const fee = poolFee[i]
+  //     if (res !== undefined && fee !== undefined) {
+  //       const tokens = poolMap.get(addr) as [Token, Token]
+  //       const pool = new StableSwapRPool(
+  //         addr,
+  //         convertTokenToBento(tokens[0]),
+  //         convertTokenToBento(tokens[1]),
+  //         parseInt(fee.toString()) / 10_000,
+  //         res[0],
+  //         res[1],
+  //         tokens[0].decimals,
+  //         tokens[1].decimals
+  //       )
+  //       poolCodes.push(new BentoConstantProductPoolCode(pool, this.getPoolProviderName()))
+  //     }
+  //   })
+
+  //   return poolCodes
+  // }
+
   async getAllBridges(tokensSorted: Token[]): Promise<PoolCode[]> {
     const tokens: Token[] = []
     tokensSorted.forEach((t) => {
@@ -344,7 +462,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
       [BentoBoxAddr]
     )
     const [totals0, balances0] = await Promise.all([totalsPromise, balancesPromise])
-    const totals = convertToBigNumberPair(totals0)
+    const totals = convertToRebase(totals0)
     const balances = convertToBigNumber(balances0)
 
     const poolCodes: PoolCode[] = []
@@ -356,11 +474,12 @@ export class TridentProviderMC extends LiquidityProviderMC {
           `Bento bridge for ${t.symbol}`,
           t as RToken,
           convertTokenToBento(t),
-          total[0], // elastic
-          total[1], // base
+          total.elastic,
+          total.base,
           balance
         )
         poolCodes.push(new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBoxAddr))
+        this.lastFetchedTotals.set(t.address, total)
       }
     })
 
@@ -396,7 +515,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
 
     const [reserves0, totals0, balances0] = await Promise.all([reservesPromise, totalsPromise, balancesPromise])
     const reserves = convertToBigNumberPair(reserves0)
-    const totals = convertToBigNumberPair(totals0)
+    const totals = convertToRebase(totals0)
     const balances = convertToNumbers(balances0)
 
     pools.forEach((pc, i) => {
@@ -411,8 +530,8 @@ export class TridentProviderMC extends LiquidityProviderMC {
     bridges.forEach((pc, i) => {
       const total = totals[i]
       if (total == undefined) return
-      if (!pc.pool.reserve0.eq(total[0]) || !pc.pool.reserve1.eq(total[1])) {
-        pc.pool.updateReserves(total[0], total[1])
+      if (!pc.pool.reserve0.eq(total.elastic) || !pc.pool.reserve1.eq(total.base)) {
+        pc.pool.updateReserves(total.elastic, total.base)
         ++this.stateId
       }
       const balance = balances[i]
@@ -422,6 +541,11 @@ export class TridentProviderMC extends LiquidityProviderMC {
         ;(pc.pool as BridgeBento).freeLiquidity = balance
         ++this.stateId
       }
+    })
+
+    totals.forEach((t, i) => {
+      if (t === undefined) return
+      this.lastFetchedTotals.set(bridges[i].pool.token0.address, t)
     })
 
     this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
