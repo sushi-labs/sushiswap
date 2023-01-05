@@ -20,6 +20,10 @@ export async function getMasterChefV1(): Promise<{
     getAverageBlockTime(ChainId.ETHEREUM),
   ])
 
+  const blocksPerDay = averageBlockTime ? secondsInDay / averageBlockTime : 0
+  const sushiPerDay = SUSHI_PER_BLOCK * blocksPerDay
+  console.log(`MasterChefV1 - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, averageBlockTime: ${averageBlockTime}, totalAllocPoint: ${totalAllocPoint}`)
+
   const poolInfos = await getPoolInfos(poolLength.toNumber())
 
   const [pairs, lpBalances] = await Promise.all([
@@ -34,8 +38,6 @@ export async function getMasterChefV1(): Promise<{
     ),
   ])
 
-  const blocksPerDay = averageBlockTime ? secondsInDay / averageBlockTime : 0
-  const sushiPerDay = SUSHI_PER_BLOCK * blocksPerDay
 
   return {
     chainId: ChainId.ETHEREUM,

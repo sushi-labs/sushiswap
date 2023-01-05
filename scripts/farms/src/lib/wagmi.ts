@@ -10,8 +10,6 @@ if (!alchemyId) {
   throw Error('NO ALCHEMY ID SET')
 }
 
-console.log({allChains})
-
 createClient(configureChains(allChains, [publicProvider(), 
   // alchemyProvider({ apiKey: alchemyId }) 
 ]))

@@ -102,7 +102,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
     return []
   }
 
-  console.log(chainId, subgraphName)
+
   const sdk = getBuiltGraphSDK({
     host: SUBGRAPH_HOST[chainId],
     name: subgraphName,
@@ -114,7 +114,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
       rewardToken_not: '0x0000000000000000000000000000000000000000',
     },
   })
-  console.log('get rewarder infos')
+  console.log(`Retrieved ${rewarders.length} rewarders from ${subgraphName}`)
 
   return Promise.all(
     rewarders.map(async (rewarder) => {

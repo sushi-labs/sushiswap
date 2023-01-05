@@ -27,7 +27,7 @@ export async function getMasterChefV2(): Promise<{
     getAverageBlockTime(ChainId.ETHEREUM),
   ])
 
-  console.log('MasterChefV2 poolLength', poolLength?.toNumber())
+  console.log(`MasterChefV2 - pools: ${poolLength}, sushiPerBlock: ${sushiPerBlock}, averageBlockTime: ${averageBlockTime}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`)
 
   const [poolInfos, lpTokens, rewarders, tokens] = await Promise.all([
     getPoolInfos(poolLength.toNumber()),
