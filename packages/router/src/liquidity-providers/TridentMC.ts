@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
-import { BridgeBento, ConstantProductRPool, Rebase, RToken } from '@sushiswap/tines'
+import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 
 import type { Limited } from '../Limited'
@@ -12,7 +12,7 @@ import {
   MultiCallProvider,
 } from '../MulticallProvider'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
-import { BentoConstantProductPoolCode } from '../pools/BentoconstantProductPool'
+import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
 
@@ -92,7 +92,7 @@ const getPoolsABI = [
   },
 ]
 
-const getReservesABI = [
+const getReservesCPABI = [
   {
     inputs: [],
     name: 'getReserves',
@@ -111,6 +111,27 @@ const getReservesABI = [
         internalType: 'uint32',
         name: '_blockTimestampLast',
         type: 'uint32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+]
+
+const getReservesStableABI = [
+  {
+    inputs: [],
+    name: 'getReserves',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '_reserve0',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_reserve1',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -202,7 +223,8 @@ export function convertTokenToBento(token: Token): RToken {
 }
 
 export class TridentProviderMC extends LiquidityProviderMC {
-  fetchedPairs: Set<string> = new Set()
+  fetchedPairsCP: Set<string> = new Set()
+  fetchedPairsStable: Set<string> = new Set()
   fetchedTokens: Set<string> = new Set()
   lastFetchedTotals: Map<string, Rebase> = new Map()
   poolCodes: PoolCode[] = []
@@ -243,12 +265,14 @@ export class TridentProviderMC extends LiquidityProviderMC {
     ])
     const tokensSorted = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
 
-    const [pools, bridges] = await Promise.all([
-      this.getAllTridentPools(tokensSorted),
-      this.getAllBridges(tokensSorted),
+    const totalsPromise = this.getAllBridges(tokensSorted)
+    const [poolsCP, poolsStable, bridges] = await Promise.all([
+      this.getAllTridentCPPools(tokensSorted),
+      this.getAllTridentStablePools(tokensSorted, totalsPromise),
+      totalsPromise,
     ])
-    if (pools.length || bridges.length) {
-      this.poolCodes = [...this.poolCodes, ...pools, ...bridges]
+    if (poolsCP.length || poolsStable.length || bridges.length) {
+      this.poolCodes = [...this.poolCodes, ...poolsCP, ...poolsStable, ...bridges]
       ++this.stateId
     }
 
@@ -256,35 +280,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
     if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
 
-  // Updates this.lastFetchedTotals
-  // async getTotals(tokensSorted: Token[]): Promise<void> {
-  //   const tokens: Token[] = []
-  //   tokensSorted.forEach((t) => {
-  //     if (this.fetchedTokens.has(t.address)) return
-  //     tokens.push(t)
-  //     this.fetchedTokens.add(t.address)
-  //   })
-
-  //   if (tokens.length == 0) return
-
-  //   const BentoBoxAddr = BentoBox[this.chainId]
-  //   const totals = convertToRebase(
-  //     await this.multiCallProvider.multiDataCall(
-  //       BentoBoxAddr,
-  //       totalsABI,
-  //       'totals',
-  //       tokens.map((t) => [t.address])
-  //     )
-  //   )
-
-  //   totals.forEach((t, i) => {
-  //     if (t === undefined) return
-  //     const token = tokens[i]
-  //     this.lastFetchedTotals.set(token.address, t)
-  //   })
-  // }
-
-  async getAllTridentPools(tokensSorted: Token[]): Promise<PoolCode[]> {
+  async getAllTridentCPPools(tokensSorted: Token[]): Promise<PoolCode[]> {
     // create token map: token address => token
     const tokenMap: Map<string, Token> = new Map()
     tokensSorted.forEach((t) => tokenMap.set(t.address, t))
@@ -294,9 +290,9 @@ export class TridentProviderMC extends LiquidityProviderMC {
     for (let i = 0; i < tokensSorted.length; ++i) {
       for (let j = i + 1; j < tokensSorted.length; ++j) {
         const pair = `${tokensSorted[i].address}_${tokensSorted[j].address}`
-        if (this.fetchedPairs.has(pair)) continue
+        if (this.fetchedPairsCP.has(pair)) continue
         tokenPairs.push([tokensSorted[i].address, tokensSorted[j].address])
-        this.fetchedPairs.add(pair)
+        this.fetchedPairsCP.add(pair)
       }
     }
 
@@ -333,7 +329,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
 
     // fetch getReserves and swapFee for all pools
     const poolAddr: string[] = Array.from(poolMap.keys())
-    const poolReservePromise = this.multiCallProvider.multiContractCall(poolAddr, getReservesABI, 'getReserves', [])
+    const poolReservePromise = this.multiCallProvider.multiContractCall(poolAddr, getReservesCPABI, 'getReserves', [])
     const swapFeePromise = this.multiCallProvider.multiContractCall(poolAddr, swapFeeABI, 'swapFee', [])
     const [poolRes0, poolFee0] = await Promise.all([poolReservePromise, swapFeePromise])
     const poolRes = convertToBigNumberPair(poolRes0)
@@ -354,91 +350,102 @@ export class TridentProviderMC extends LiquidityProviderMC {
           res[0],
           res[1]
         )
-        poolCodes.push(new BentoConstantProductPoolCode(pool, this.getPoolProviderName()))
+        poolCodes.push(new BentoPoolCode(pool, this.getPoolProviderName()))
       }
     })
 
     return poolCodes
   }
 
-  // async getAllTridentStablePools(tokensSorted: Token[]): Promise<PoolCode[]> {
-  //   // create token map: token address => token
-  //   const tokenMap: Map<string, Token> = new Map()
-  //   tokensSorted.forEach((t) => tokenMap.set(t.address, t))
+  async getAllTridentStablePools(tokensSorted: Token[], totalsPromise: Promise<any>): Promise<PoolCode[]> {
+    // create token map: token address => token
+    const tokenMap: Map<string, Token> = new Map()
+    tokensSorted.forEach((t) => tokenMap.set(t.address, t))
 
-  //   // create tokens pairs that were not fetched before
-  //   const tokenPairs: [string, string][] = []
-  //   for (let i = 0; i < tokensSorted.length; ++i) {
-  //     for (let j = i + 1; j < tokensSorted.length; ++j) {
-  //       const pair = `${tokensSorted[i].address}_${tokensSorted[j].address}`
-  //       if (this.fetchedPairs.has(pair)) continue
-  //       tokenPairs.push([tokensSorted[i].address, tokensSorted[j].address])
-  //       this.fetchedPairs.add(pair)
-  //     }
-  //   }
+    // create tokens pairs that were not fetched before
+    const tokenPairs: [string, string][] = []
+    for (let i = 0; i < tokensSorted.length; ++i) {
+      for (let j = i + 1; j < tokensSorted.length; ++j) {
+        const pair = `${tokensSorted[i].address}_${tokensSorted[j].address}`
+        if (this.fetchedPairsStable.has(pair)) continue
+        tokenPairs.push([tokensSorted[i].address, tokensSorted[j].address])
+        this.fetchedPairsStable.add(pair)
+      }
+    }
 
-  //   // fetch pairs' poolsCount
-  //   const poolCounts = convertToNumbers(
-  //     await this.multiCallProvider.multiDataCall(
-  //       StablePoolFactory[this.chainId],
-  //       poolsCountABI,
-  //       'poolsCount',
-  //       tokenPairs
-  //     )
-  //   )
+    // fetch pairs' poolsCount
+    const poolCounts = convertToNumbers(
+      await this.multiCallProvider.multiDataCall(
+        StablePoolFactory[this.chainId],
+        poolsCountABI,
+        'poolsCount',
+        tokenPairs
+      )
+    )
 
-  //   // fetch poolsList for pairs with not-zero poolCount
-  //   const tokenPairs2 = tokenPairs
-  //     .map(([t0, t1], i) => [t0, t1, poolCounts[i] as number])
-  //     .filter(([_t0, _t1, n]) => n > 0) as [string, string, number][]
-  //   const poolLists = await this.multiCallProvider.multiDataCall(
-  //     StablePoolFactory[this.chainId],
-  //     getPoolsABI,
-  //     'getPools',
-  //     tokenPairs2.map(([t0, t1, n]) => [t0, t1, 0, n])
-  //   )
+    // fetch poolsList for pairs with not-zero poolCount
+    const tokenPairs2 = tokenPairs
+      .map(([t0, t1], i) => [t0, t1, poolCounts[i] as number])
+      .filter(([_t0, _t1, n]) => n > 0) as [string, string, number][]
+    const poolLists = await this.multiCallProvider.multiDataCall(
+      StablePoolFactory[this.chainId],
+      getPoolsABI,
+      'getPools',
+      tokenPairs2.map(([t0, t1, n]) => [t0, t1, 0, n])
+    )
 
-  //   // Create poolMap
-  //   const poolMap: Map<string, [Token, Token]> = new Map()
-  //   poolLists.forEach((pools, i) => {
-  //     const tokens: [Token, Token] = [
-  //       tokenMap.get(tokenPairs2[i][0]) as Token,
-  //       tokenMap.get(tokenPairs2[i][1]) as Token,
-  //     ]
-  //     pools.forEach((pool: string) => poolMap.set(pool, tokens))
-  //   })
+    // Create poolMap
+    const poolMap: Map<string, [Token, Token]> = new Map()
+    poolLists.forEach((pools, i) => {
+      const tokens: [Token, Token] = [
+        tokenMap.get(tokenPairs2[i][0]) as Token,
+        tokenMap.get(tokenPairs2[i][1]) as Token,
+      ]
+      pools.forEach((pool: string) => poolMap.set(pool, tokens))
+    })
 
-  //   // fetch getReserves and swapFee for all pools
-  //   const poolAddr: string[] = Array.from(poolMap.keys())
-  //   const poolReservePromise = this.multiCallProvider.multiContractCall(poolAddr, getReservesABI, 'getReserves', [])
-  //   const swapFeePromise = this.multiCallProvider.multiContractCall(poolAddr, swapFeeABI, 'swapFee', [])
-  //   const [poolRes0, poolFee0] = await Promise.all([poolReservePromise, swapFeePromise])
-  //   const poolRes = convertToBigNumberPair(poolRes0)
-  //   const poolFee = convertToNumbers(poolFee0)
+    // fetch getReserves and swapFee for all pools
+    const poolAddr: string[] = Array.from(poolMap.keys())
+    const poolReservePromise = this.multiCallProvider.multiContractCall(
+      poolAddr,
+      getReservesStableABI,
+      'getReserves',
+      []
+    )
+    const swapFeePromise = this.multiCallProvider.multiContractCall(poolAddr, swapFeeABI, 'swapFee', [])
+    const [poolRes0, poolFee0] = await Promise.all([poolReservePromise, swapFeePromise, totalsPromise])
+    const poolRes = convertToBigNumberPair(poolRes0)
+    const poolFee = convertToNumbers(poolFee0)
 
-  //   // create poolCodes
-  //   const poolCodes: PoolCode[] = []
-  //   poolAddr.forEach((addr, i) => {
-  //     const res = poolRes[i]
-  //     const fee = poolFee[i]
-  //     if (res !== undefined && fee !== undefined) {
-  //       const tokens = poolMap.get(addr) as [Token, Token]
-  //       const pool = new StableSwapRPool(
-  //         addr,
-  //         convertTokenToBento(tokens[0]),
-  //         convertTokenToBento(tokens[1]),
-  //         parseInt(fee.toString()) / 10_000,
-  //         res[0],
-  //         res[1],
-  //         tokens[0].decimals,
-  //         tokens[1].decimals
-  //       )
-  //       poolCodes.push(new BentoConstantProductPoolCode(pool, this.getPoolProviderName()))
-  //     }
-  //   })
+    // create poolCodes
+    const poolCodes: PoolCode[] = []
+    poolAddr.forEach((addr, i) => {
+      const res = poolRes[i]
+      const fee = poolFee[i]
+      if (res !== undefined && fee !== undefined) {
+        const tokens = poolMap.get(addr) as [Token, Token]
+        const totals0 = this.lastFetchedTotals.get(tokens[0].address)
+        const totals1 = this.lastFetchedTotals.get(tokens[1].address)
+        if (totals0 && totals1) {
+          const pool = new StableSwapRPool(
+            addr,
+            convertTokenToBento(tokens[0]),
+            convertTokenToBento(tokens[1]),
+            parseInt(fee.toString()) / 10_000,
+            res[0],
+            res[1],
+            tokens[0].decimals,
+            tokens[1].decimals,
+            totals0,
+            totals1
+          )
+          poolCodes.push(new BentoPoolCode(pool, this.getPoolProviderName()))
+        }
+      }
+    })
 
-  //   return poolCodes
-  // }
+    return poolCodes
+  }
 
   async getAllBridges(tokensSorted: Token[]): Promise<PoolCode[]> {
     const tokens: Token[] = []
@@ -492,11 +499,11 @@ export class TridentProviderMC extends LiquidityProviderMC {
     const BentoBoxAddr = BentoBox[this.chainId]
     const pools: PoolCode[] = []
     const bridges: PoolCode[] = []
-    this.poolCodes.forEach((pc) => (pc instanceof BentoConstantProductPoolCode ? pools.push(pc) : bridges.push(pc)))
+    this.poolCodes.forEach((pc) => (pc instanceof BentoPoolCode ? pools.push(pc) : bridges.push(pc)))
 
     const reservesPromise = this.multiCallProvider.multiContractCall(
       pools.map((pc) => pc.pool.address),
-      getReservesABI,
+      getReservesCPABI,
       'getReserves',
       []
     )
@@ -565,7 +572,8 @@ export class TridentProviderMC extends LiquidityProviderMC {
   startFetchPoolsData() {
     this.stopFetchPoolsData()
     this.poolCodes = []
-    this.fetchedPairs.clear()
+    this.fetchedPairsCP.clear()
+    this.fetchedPairsStable.clear()
     this.fetchedTokens.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
     this.blockListener = () => {
