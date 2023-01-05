@@ -28,6 +28,11 @@ export async function execute() {
     },
     ...minichefs,
   ]
+  const totalFarms = combined.reduce((acc, { farms }) => acc + Object.keys(farms).length, 0)
+  for (const combination of combined) {
+    console.log(`Chain ID: ${combination.chainId}. Farms: ${Object.keys(combination.farms).length}`)
+  }
+  console.log(`Total farms: ${totalFarms}`)
 
   // await redis.hset(
   //   'farms',
