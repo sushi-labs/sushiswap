@@ -2,29 +2,31 @@
 
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Chain, chainName } from '@sushiswap/chain'
-import { formatPercent, shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
 import Container from '@sushiswap/ui13/components/Container'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { List } from '@sushiswap/ui13/components/list/List'
-import { FC, useCallback } from 'react'
+import React, { FC, useCallback } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
-import { SwapButton } from './widget/SwapButton'
 import { useTrade } from '../lib/useTrade'
 import numeral from 'numeral'
+import { Button } from '@sushiswap/ui13/components/button'
+import { ConfirmationDialog } from './ConfirmationDialog'
+import { Dots } from '@sushiswap/ui13/components/Dots'
+import { FixedButtonContainer } from './FixedButtonContainer'
+import { CheckMarkIcon } from '@sushiswap/ui13/components/icons/CheckmarkIcon'
+import { FailedMarkIcon } from '@sushiswap/ui13/components/icons/FailedMarkIcon'
 
 export const TradeReviewDialog: FC = () => {
   const { review, token0, token1, recipient, network0, value } = useSwapState()
   const { setReview } = useSwapActions()
   const { data: slippageTolerance } = useSlippageTolerance()
-
-  const onClose = useCallback(() => {
-    setReview(false)
-  }, [setReview])
-
   const { data: trade } = useTrade()
+
+  const onClose = useCallback(() => setReview(false), [setReview])
 
   return (
     <Dialog open={review} onClose={onClose} variant="opaque">
@@ -85,7 +87,21 @@ export const TradeReviewDialog: FC = () => {
           )}
         </div>
       </Container>
-      <SwapButton />
+      <FixedButtonContainer>
+        <ConfirmationDialog>
+          {({ onClick, isWritePending, isConfirming }) => (
+            <Button fullWidth size="xl" onClick={onClick} disabled={isWritePending}>
+              {isConfirming ? (
+                <Dots>Confirming transaction</Dots>
+              ) : isWritePending ? (
+                <Dots>Confirm Swap</Dots>
+              ) : (
+                `Swap ${token0.symbol} for ${token1.symbol}`
+              )}
+            </Button>
+          )}
+        </ConfirmationDialog>
+      </FixedButtonContainer>
     </Dialog>
   )
 }

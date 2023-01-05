@@ -50,4 +50,18 @@ export const tradeValidator = z.object({
     totalAmountOut: z.number(),
     totalAmountOutBN: z.string(),
   }),
+  getCurrentRouteRPParams: z.object({
+    amountIn: z.object({
+      type: z.string(),
+      hex: z.string(),
+    }),
+    amountOutMin: z.object({
+      type: z.string(),
+      hex: z.string(),
+    }),
+    to: z.string(),
+    tokenIn: z.string(),
+    tokenOut: z.string(),
+    routeCode: z.string(),
+  }),
 })

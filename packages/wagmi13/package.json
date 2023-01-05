@@ -54,7 +54,7 @@
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v3-periphery": "1.4.1",
     "@wagmi/core": "0.8.1",
-    "wagmi": "0.9.1"
+    "wagmi": "0.10.4"
   },
   "devDependencies": {
     "@sushiswap/eslint-config": "workspace:*",

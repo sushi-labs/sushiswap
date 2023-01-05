@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Amount, Native, nativeCurrencyIds, Price } from '@sushiswap/currency'
 import { UseTradeParams, UseTradeQuerySelect } from './types'
 import { usePrices } from '../usePrices'
-import { Percent, ZERO } from '@sushiswap/math'
+import { JSBI, Percent, ZERO } from '@sushiswap/math'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { tradeValidator } from './validator'
 import { useCallback } from 'react'
@@ -32,7 +32,7 @@ export const useTradeQuery = (
   })
 
 export const useTrade = (variables: UseTradeParams) => {
-  const { chainId, toToken, amount, slippagePercentage } = variables
+  const { chainId, fromToken, toToken, amount, slippagePercentage } = variables
   const { data: prices } = usePrices({ chainId })
 
   const select: UseTradeQuerySelect = useCallback(
@@ -41,18 +41,22 @@ export const useTrade = (variables: UseTradeParams) => {
         return {
           swapPrice: undefined,
           priceImpact: undefined,
+          amountIn: undefined,
           amountOut: undefined,
           minAmountOut: undefined,
           gasSpent: undefined,
+          writeArgs: undefined,
           route: [],
         }
       }
 
-      const amountOut = Amount.fromRawAmount(toToken, Math.floor(data.getBestRoute.totalAmountOut))
+      const amountIn = Amount.fromRawAmount(fromToken, data.getBestRoute.amountInBN)
+      const amountOut = Amount.fromRawAmount(toToken, data.getBestRoute.amountOutBN)
 
       return {
         swapPrice: amountOut.greaterThan(ZERO) ? new Price({ baseAmount: amount, quoteAmount: amountOut }) : undefined,
         priceImpact: data.getBestRoute.priceImpact,
+        amountIn,
         amountOut,
         minAmountOut: Amount.fromRawAmount(
           toToken,
@@ -64,9 +68,17 @@ export const useTrade = (variables: UseTradeParams) => {
               .toFixed(2)
           : undefined,
         route: data.getCurrentRouteHumanArray,
+        writeArgs: [
+          data.getCurrentRouteRPParams.tokenIn,
+          data.getCurrentRouteRPParams.amountIn,
+          data.getCurrentRouteRPParams.tokenOut,
+          data.getCurrentRouteRPParams.amountOutMin,
+          data.getCurrentRouteRPParams.to,
+          data.getCurrentRouteRPParams.routeCode,
+        ],
       }
     },
-    [amount, chainId, prices, slippagePercentage, toToken]
+    [amount, chainId, fromToken, prices, slippagePercentage, toToken]
   )
 
   return useTradeQuery(variables, select)

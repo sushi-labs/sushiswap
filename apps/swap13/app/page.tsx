@@ -24,6 +24,7 @@ export default function Page({
 }) {
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = params
   console.log({ fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient, searchParams })
+
   return (
     <SwapProvider params={params}>
       <Container maxWidth={520} className="space-y-8 p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">

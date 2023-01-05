@@ -6,7 +6,7 @@ export interface UseCreateNotificationPayload {
   timestamp: string
 }
 
-export const useCreateNotification = ({ account }: { account: string }) => {
+export const useCreateNotification = ({ account }: { account: `0x${string}` | undefined }) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationKey: ['notifications', { account }],

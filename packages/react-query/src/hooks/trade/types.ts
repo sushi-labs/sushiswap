@@ -17,9 +17,11 @@ export interface UseTradeParams {
 export interface UseTradeReturn {
   swapPrice: Price<Type, Type> | undefined
   priceImpact: number | undefined
+  amountIn: Amount<Type> | undefined
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
+  writeArgs: [string, { type: string; hex: string }, string, { type: string; hex: string }, string, string] | undefined
   route: string[]
 }
 
