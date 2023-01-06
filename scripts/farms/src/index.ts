@@ -34,11 +34,11 @@ export async function execute() {
   }
   console.log(`Total farms: ${totalFarms}`)
 
-  // await redis.hset(
-  //   'farms',
-  //   Object.fromEntries(
-  //     combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
-  //   )
-  // )
+  await redis.hset(
+    'farms',
+    Object.fromEntries(
+      combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
+    )
+  )
   console.log(`Finished updating farms`)
 }
