@@ -1,5 +1,6 @@
 export { balanceOfAbi } from './balanceOfAbi'
 export { bentoBoxV1Abi } from './bentoBoxV1Abi'
+export { cloneRewarderTimeAbi } from './cloneRewarderTime'
 export { complexRewarderTimeAbi } from './complexRewarderTimeAbi'
 export { constantProductPoolAbi } from './constantProductPoolAbi'
 export { constantProductPoolFactoryAbi } from './constantProductPoolFactoryAbi'

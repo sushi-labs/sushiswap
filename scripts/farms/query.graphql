@@ -53,3 +53,24 @@ query MiniChefRewarders(
     rewardPerSecond
   }
 }
+query LatestBlock {
+  blocks(first: 1, orderBy: number, orderDirection: desc) {
+    id
+    number
+    timestamp
+  }
+}
+
+query Blocks(
+  $first: Int = 1
+  $skip: Int = 0
+  $where: Block_filter
+  $orderBy: Block_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+) {
+  blocks(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection) {
+    id
+    number
+    timestamp
+  }
+}

@@ -39,9 +39,6 @@
   },
   "sideEffects": false,
   "files": [
-    "/chains",
-    "/config",
-    "/providers",
     "/dist"
   ],
   "peerDependencies": {
@@ -54,7 +51,6 @@
   },
   "dependencies": {
     "@sushiswap/abi": "workspace:*",
-    "@sushiswap/address": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/bentobox": "workspace:*"
   },
