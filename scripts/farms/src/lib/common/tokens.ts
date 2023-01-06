@@ -84,7 +84,10 @@ export const getTokens = async (ids: string[], chainId: SushiSwapChainId | Tride
   return betterTokens
 }
 
-export async function getTokenBalancesOf(tokens: string[], address: string, chainId: ChainId) {
+export async function getTokenBalancesOf(_tokens: string[], address: string, chainId: ChainId) {
+  // not fully erc20, farm not active
+  const tokens = _tokens.filter(token => token !== "0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9")
+
   const balanceOfCalls = tokens.map(
     (token) =>
       ({

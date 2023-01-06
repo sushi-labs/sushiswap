@@ -128,7 +128,7 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'xDAI', symbol: 'xDAI', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://rpc.gnosischain.com'],
+        http: ['https://xdai-rpc.gateway.pokt.network', 'https://rpc.gnosischain.com'],
       },
     },
     blockExplorers: {
@@ -236,7 +236,7 @@ export const otherChains: Chain[] = [
     nativeCurrency: { name: 'Kava', symbol: 'KAVA', decimals: 18 },
     rpcUrls: {
       default: {
-        http: ['https://evm.kava.io'],
+        http: ['https://evm.kava.io', 'https://evm2.kava.io'],
       },
     },
     blockExplorers: {

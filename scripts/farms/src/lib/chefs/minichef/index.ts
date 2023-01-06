@@ -28,9 +28,11 @@ export async function getMinichef(
         getRewarderInfos(chainId),
         getTokens([SUSHI[ChainId.ETHEREUM].address], ChainId.ETHEREUM),
       ])
-      const sushiPerDay = secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId]?.decimals ?? 18)
+    const sushiPerDay = secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId]?.decimals ?? 18)
 
-      console.log(`MiniChef ${chainId} - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`)
+    console.log(
+      `MiniChef ${chainId} - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`
+    )
 
     const [poolInfos, lpTokens, rewarders, tokens] = await Promise.all([
       getPoolInfos(poolLength.toNumber(), chainId),
@@ -54,7 +56,6 @@ export async function getMinichef(
       pair: pairs.find((pair) => pair.id === lpTokens[i].toLowerCase()),
       rewarder: rewarderInfos.find((rewarderInfo) => rewarderInfo.id === rewarders[i].toLowerCase()),
     }))
-
 
     return {
       chainId,

@@ -1,5 +1,5 @@
 import { complexRewarderTimeAbi, miniChefAbi } from '@sushiswap/abi'
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME, SUBGRAPH_HOST, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { readContract, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
@@ -102,7 +102,6 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
     return []
   }
 
-
   const sdk = getBuiltGraphSDK({
     host: SUBGRAPH_HOST[chainId],
     name: subgraphName,
@@ -119,20 +118,18 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
   return Promise.all(
     rewarders.map(async (rewarder) => {
       try {
-        if (chainId === 137) {
-          const blacklist = [
+        const blacklist: Record<number, string[]> = {
+          [ChainId.POLYGON]: [
             '0xb52b4b6779553a89e7f5f6f1d463595d88e88822',
             '0x0fc98e524095f7a0f09eb9786beba120060f8004',
             '0x9e21698426a29c32d7c0fdaeb7723c9856ba9ac7',
             '0x71581bf0ce397f50f87cc2490146d30a1e686461',
             '0x4db1c6364924b90310d68948fc7a3121fa9edf10',
             '0x99246001c6e458c63052fb4e3d04df6bd932a6a7',
-          ]
-
-          if (blacklist.includes(rewarder.id)) throw new Error()
-        }
-        if (chainId === 42161) {
-          const blacklist = [
+            '0x4bb4c1b0745ef7b4642feeccd0740dec417ca0a0',
+            '0x78b8abe9e6bf27d3ea68da096921b77efcfd389c',
+          ],
+          [ChainId.ARBITRUM]: [
             '0x9c37b0b498da78830284afdcb534c3350b52e744',
             '0x948bfbb7bdb7e74ec8ed0859c79502408bee4de1',
             '0xec932d20ba851ac26630835771476dc2d1a3ac8d',
@@ -140,10 +137,11 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
             '0x1a9c20e2b0ac11ebecbdca626bba566c4ce8e606',
             '0xae961a7d116bfd9b2534ad27fe4d178ed188c87a',
             '0x3c61b93b64f59b5091a11a071083598ee8b5cb64',
-          ]
-
-          if (blacklist.includes(rewarder.id)) throw new Error()
+          ],
+          [ChainId.GNOSIS]: ['0xb291149e478dbdd2cd2528ad4088ee5c8376df1e'],
         }
+
+        if (blacklist[chainId]?.includes(rewarder.id)) throw new Error()
 
         const poolLength = await getPoolLength(chainId)
 
