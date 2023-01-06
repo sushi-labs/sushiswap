@@ -7,7 +7,7 @@ RUN npm install -g pnpm@7.18.2
 WORKDIR /workdir
 COPY . .
 RUN pnpm install
-RUN pnpm exec turbo run build --filter=farms
+RUN pnpm exec turbo run build --filter=farms-script
 
 WORKDIR /workdir/scripts/farms
 
