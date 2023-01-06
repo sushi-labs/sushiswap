@@ -12,5 +12,6 @@
   },
   "ts-node": {
     "swc": true,
+    "esm": true
   },
 }
