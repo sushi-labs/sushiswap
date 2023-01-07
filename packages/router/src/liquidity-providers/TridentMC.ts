@@ -263,7 +263,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
       t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
       t,
     ])
-    const tokensSorted = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
+    const tokensSorted = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
 
     const totalsPromise = this.getAllBridges(tokensSorted)
     const [poolsCP, poolsStable, bridges] = await Promise.all([
@@ -309,7 +309,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
     // fetch poolsList for pairs with not-zero poolCount
     const tokenPairs2 = tokenPairs
       .map(([t0, t1], i) => [t0, t1, poolCounts[i] as number])
-      .filter(([_t0, _t1, n]) => n > 0) as [string, string, number][]
+      .filter(([, , n]) => n > 0) as [string, string, number][]
     const poolLists = await this.multiCallProvider.multiDataCall(
       ConstantProductPoolFactory[this.chainId],
       getPoolsABI,
@@ -357,6 +357,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
     return poolCodes
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getAllTridentStablePools(tokensSorted: Token[], totalsPromise: Promise<any>): Promise<PoolCode[]> {
     // create token map: token address => token
     const tokenMap: Map<string, Token> = new Map()
@@ -386,7 +387,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
     // fetch poolsList for pairs with not-zero poolCount
     const tokenPairs2 = tokenPairs
       .map(([t0, t1], i) => [t0, t1, poolCounts[i] as number])
-      .filter(([_t0, _t1, n]) => n > 0) as [string, string, number][]
+      .filter(([, , n]) => n > 0) as [string, string, number][]
     const poolLists = await this.multiCallProvider.multiDataCall(
       StablePoolFactory[this.chainId],
       getPoolsABI,
@@ -525,12 +526,22 @@ export class TridentProviderMC extends LiquidityProviderMC {
     const totals = convertToRebase(totals0)
     const balances = convertToNumbers(balances0)
 
+    totals.forEach((t, i) => {
+      if (t === undefined) return
+      this.lastFetchedTotals.set(bridges[i].pool.token0.address, t)
+    })
+
     pools.forEach((pc, i) => {
       const res = reserves[i]
       if (res === undefined) return
       if (!pc.pool.reserve0.eq(res[0]) || !pc.pool.reserve1.eq(res[1])) {
         pc.pool.updateReserves(res[0], res[1])
         ++this.stateId
+      }
+      if (pc instanceof StableSwapRPool) {
+        const total0 = this.lastFetchedTotals.get(pc.token0.address)
+        const total1 = this.lastFetchedTotals.get(pc.token1.address)
+        if (total0 && total1) pc.updateTotals(total0, total1)
       }
     })
 
@@ -548,11 +559,6 @@ export class TridentProviderMC extends LiquidityProviderMC {
         ;(pc.pool as BridgeBento).freeLiquidity = balance
         ++this.stateId
       }
-    })
-
-    totals.forEach((t, i) => {
-      if (t === undefined) return
-      this.lastFetchedTotals.set(bridges[i].pool.token0.address, t)
     })
 
     this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
