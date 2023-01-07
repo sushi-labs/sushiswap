@@ -44,7 +44,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     functionName: 'processRoute',
     args: trade?.writeArgs,
     enabled: Boolean(trade?.writeArgs),
-    ...(token0.isNative && { overrides: { value: BigNumber.from(trade?.writeArgs?.[1]) } }),
+    overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
   })
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite({
