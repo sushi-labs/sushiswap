@@ -2,7 +2,7 @@
 
 import { Popover } from '@headlessui/react'
 import { ArrowTrendingUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
-import chains from '@sushiswap/chain'
+import chains, { chainName } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui13/components/button'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui13/components/networkselector'
@@ -82,7 +82,7 @@ export const WidgetTitle = () => {
               selected={network0}
               onSelect={handleSelect0}
             >
-              <Tooltip description={chains[network0].name} transitionDelay={300}>
+              <Tooltip description={chainName[network0]} transitionDelay={300}>
                 <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!px-3">
                   <NetworkIcon chainId={network0} width={32} height={32} />
                   <ChevronDownIcon width={36} height={36} />
@@ -98,7 +98,7 @@ export const WidgetTitle = () => {
               selected={network1}
               onSelect={handleSelect1}
             >
-              <Tooltip description={chains[network1].name} transitionDelay={300}>
+              <Tooltip description={chainName[network1]} transitionDelay={300}>
                 <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!px-3">
                   <NetworkIcon chainId={network1} width={32} height={32} />
                   <ChevronDownIcon width={36} height={36} />
