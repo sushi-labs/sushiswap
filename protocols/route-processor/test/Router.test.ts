@@ -3,9 +3,9 @@ import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { DataFetcher, Router } from '@sushiswap/router'
-import { getBigNumber, MultiRoute } from '@sushiswap/tines'
+import { Native, SUSHI, Token, Type, USDC, USDT, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { DataFetcher, PoolFilter, Router } from '@sushiswap/router'
+import { BridgeBento, getBigNumber, MultiRoute, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
@@ -66,7 +66,8 @@ async function makeSwap(
   env: TestEnvironment,
   fromToken: Type,
   amountIn: BigNumber,
-  toToken: Type
+  toToken: Type,
+  poolFilter?: PoolFilter
 ): Promise<[BigNumber, number] | undefined> {
   console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
@@ -79,7 +80,7 @@ async function makeSwap(
   console.log('Create Route ...')
   env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const waiter = new Waiter()
-  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
+  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, undefined, poolFilter)
   router.startRouting(() => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.getCurrentRouteHumanString()
@@ -156,7 +157,8 @@ async function updMakeSwap(
   env: TestEnvironment,
   fromToken: Type,
   toToken: Type,
-  lastCallResult: BigNumber | [BigNumber | undefined, number]
+  lastCallResult: BigNumber | [BigNumber | undefined, number],
+  poolFilter?: PoolFilter
 ): Promise<[BigNumber | undefined, number]> {
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
@@ -164,7 +166,7 @@ async function updMakeSwap(
   console.log('')
   console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
-  const res = await makeSwap(env, fromToken, amountIn, toToken)
+  const res = await makeSwap(env, fromToken, amountIn, toToken, poolFilter)
   expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
@@ -193,9 +195,17 @@ describe('End-to-end Router test', async function () {
     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
-  // it('StabePool Native => USDC => USDT => USDC', async function () {
-  //   const start = intermidiateResult || getBigNumber(1000000 * 1e18)
-  //   intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], start)
-  //   intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult)
-  // })
+  it.skip('StabePool Native => USDC => USDT => USDC (Polygon only)', async function () {
+    if (chainId == ChainId.POLYGON) {
+      intermidiateResult[0] = getBigNumber(10000 * 1e18)
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
+      intermidiateResult = await updMakeSwap(
+        env,
+        USDC[chainId],
+        USDT[chainId],
+        intermidiateResult,
+        (pool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
+      )
+    }
+  })
 })

@@ -1,5 +1,13 @@
 import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { findMultiRouteExactIn, getBigNumber, MultiRoute, NetworkInfo, RouteStatus, RToken } from '@sushiswap/tines'
+import {
+  findMultiRouteExactIn,
+  getBigNumber,
+  MultiRoute,
+  NetworkInfo,
+  RouteStatus,
+  RPool,
+  RToken,
+} from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
 import type { DataFetcher } from './DataFetcher'
@@ -32,6 +40,8 @@ export interface RPParams {
   value?: BigNumber
 }
 
+export type PoolFilter = (list: RPool) => boolean
+
 export class Router {
   dataFetcher: DataFetcher
   fromToken: Type
@@ -40,6 +50,7 @@ export class Router {
   gasPrice: number
   providers?: LiquidityProviders[] | undefined // all providers if undefined
   minUpdateDelay: number
+  poolFilter?: PoolFilter
 
   dataFetcherPreviousState = 0
   routeCallBack?: RouteCallBack
@@ -53,6 +64,7 @@ export class Router {
     toToken: Type,
     gasPrice: number,
     providers?: LiquidityProviders[], // all providers if undefined
+    poolFilter?: PoolFilter,
     minUpdateDelay = 1000 // Minimal delay between routing update
   ) {
     this.dataFetcher = dataFetcher
@@ -62,6 +74,7 @@ export class Router {
     this.gasPrice = gasPrice
     this.providers = providers
     this.minUpdateDelay = minUpdateDelay
+    this.poolFilter = poolFilter
   }
 
   startRouting(p: RouteCallBack) {
@@ -101,11 +114,14 @@ export class Router {
         },
       ]
 
+      let pools = this.dataFetcher.getCurrentPoolCodeList(this.providers).map((pc) => pc.pool)
+      if (this.poolFilter) pools = pools.filter(this.poolFilter)
+
       const route = findMultiRouteExactIn(
         TokenToRToken(this.fromToken),
         TokenToRToken(this.toToken),
         this.amountIn,
-        this.dataFetcher.getCurrentPoolCodeList(this.providers).map((pc) => pc.pool),
+        pools,
         networks,
         this.gasPrice
       )

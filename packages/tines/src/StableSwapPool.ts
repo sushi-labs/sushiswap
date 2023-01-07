@@ -8,12 +8,12 @@ export interface Rebase {
   base: BigNumber
 }
 
-function toAmountBN(share: BigNumber, total: Rebase) {
+export function toAmountBN(share: BigNumber, total: Rebase) {
   if (total.base.isZero() || total.elastic.isZero()) return share
   return share.mul(total.elastic).div(total.base)
 }
 
-function toShareBN(elastic: BigNumber, total: Rebase) {
+export function toShareBN(elastic: BigNumber, total: Rebase) {
   if (total.base.isZero() || total.elastic.isZero()) return elastic
   return elastic.mul(total.base).div(total.elastic)
 }

@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
-import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool } from '@sushiswap/tines'
+import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 
 import type { Limited } from '../Limited'
@@ -433,8 +433,8 @@ export class TridentProviderMC extends LiquidityProviderMC {
             convertTokenToBento(tokens[0]),
             convertTokenToBento(tokens[1]),
             parseInt(fee.toString()) / 10_000,
-            res[0],
-            res[1],
+            toShareBN(res[0], totals0),
+            toShareBN(res[1], totals1),
             tokens[0].decimals,
             tokens[1].decimals,
             totals0,
