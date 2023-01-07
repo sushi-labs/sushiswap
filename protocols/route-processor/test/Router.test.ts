@@ -174,7 +174,7 @@ async function updMakeSwap(
 describe('End-to-end Router test', async function () {
   let env: TestEnvironment
   let chainId: ChainId
-  let intermidiateResult: [BigNumber | undefined, number]
+  let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
 
   before(async () => {
     env = await getTestEnvironment()
@@ -182,15 +182,20 @@ describe('End-to-end Router test', async function () {
   })
 
   it('Native => SUSHI => Native', async function () {
-    const res1 = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], getBigNumber(1000000 * 1e18))
-    intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), res1)
+    intermidiateResult[0] = getBigNumber(1000000 * 1e18)
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
   it('Native => WrappedNative => Native', async function () {
-    const res3 = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], [
-      getBigNumber(1 * 1e18),
-      intermidiateResult[1],
-    ])
-    await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), res3)
+    intermidiateResult[0] = getBigNumber(1 * 1e18)
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), WNATIVE[chainId], intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
+
+  // it('StabePool Native => USDC => USDT => USDC', async function () {
+  //   const start = intermidiateResult || getBigNumber(1000000 * 1e18)
+  //   intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], start)
+  //   intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult)
+  // })
 })
