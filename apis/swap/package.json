@@ -32,7 +32,7 @@
     "@sushiswap/route-processor": "workspace:*",
     "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "@vercel/node": "2.8.2",
+    "@vercel/node": "2.8.4",
     "ethereum-multicall": "2.15.0",
     "ethers": "^5.7.0",
     "node-fetch": "2.x",
@@ -47,6 +47,6 @@
     "@types/node-fetch": "2.x",
     "eslint": "8.29.0",
     "typescript": "4.9.4",
-    "vercel": "28.10.1"
+    "vercel": "28.10.3"
   }
 }

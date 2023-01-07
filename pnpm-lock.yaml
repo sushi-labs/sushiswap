@@ -80,19 +80,19 @@ importers:
       '@types/lodash.zip': 4.2.7
       '@types/node': ^18.0.0
       '@types/node-fetch': 2.6.2
-      '@vercel/node': 2.8.2
-      '@wagmi/core': 0.8.10-cjs
+      '@vercel/node': 2.8.4
+      '@wagmi/core': 0.8.10
       eslint: 8.29.0
       lodash.zip: 4.2.0
       node-fetch: 2.6.6
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.10.3
       zod: 3.20.2
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/wagmi-config': link:../../config/wagmi
-      '@vercel/node': 2.8.2
-      '@wagmi/core': 0.8.10-cjs_4umapwpw55xijlh2mknjgcn4rq
+      '@vercel/node': 2.8.4
+      '@wagmi/core': 0.8.10_4umapwpw55xijlh2mknjgcn4rq
       lodash.zip: 4.2.0
       node-fetch: 2.6.6
       zod: 3.20.2
@@ -106,7 +106,7 @@ importers:
       '@types/node-fetch': 2.6.2
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.10.3
 
   apis/balances:
     specifiers:
@@ -118,18 +118,18 @@ importers:
       '@types/lodash.zip': 4.2.7
       '@types/node': ^18.0.0
       '@types/node-fetch': 2.6.2
-      '@vercel/node': 2.8.2
-      '@wagmi/core': 0.8.10-cjs
+      '@vercel/node': 2.8.4
+      '@wagmi/core': 0.8.10
       eslint: 8.29.0
       lodash.zip: 4.2.0
       node-fetch: 2.6.6
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.10.3
       zod: 3.20.2
     dependencies:
       '@sushiswap/chain': link:../../packages/chain
-      '@vercel/node': 2.8.2
-      '@wagmi/core': 0.8.10-cjs_4umapwpw55xijlh2mknjgcn4rq
+      '@vercel/node': 2.8.4
+      '@wagmi/core': 0.8.10_4umapwpw55xijlh2mknjgcn4rq
       lodash.zip: 4.2.0
       node-fetch: 2.6.6
       zod: 3.20.2
@@ -143,7 +143,7 @@ importers:
       '@types/node-fetch': 2.6.2
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.10.3
 
   apis/farm:
     specifiers:
@@ -232,13 +232,13 @@ importers:
       '@sushiswap/tines': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node-fetch': 2.x
-      '@vercel/node': 2.8.2
+      '@vercel/node': 2.8.4
       eslint: 8.29.0
       ethereum-multicall: 2.15.0
       ethers: ^5.7.0
       node-fetch: 2.x
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.10.3
       zod: 3.20.2
     dependencies:
       '@ethersproject/solidity': 5.7.0
@@ -248,7 +248,7 @@ importers:
       '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../../packages/router
       '@sushiswap/tines': link:../../packages/tines
-      '@vercel/node': 2.8.2
+      '@vercel/node': 2.8.4
       ethereum-multicall: 2.15.0
       ethers: 5.7.2
       node-fetch: 2.6.7
@@ -262,7 +262,7 @@ importers:
       '@types/node-fetch': 2.6.2
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.10.3
 
   apis/token-list:
     specifiers:
@@ -324,14 +324,14 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@types/node': ^18.0.0
-      '@vercel/node': 2.8.2
+      '@vercel/node': 2.8.4
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.10.3
       zod: 3.20.2
     dependencies:
       '@sushiswap/database': link:../../packages/database
-      '@vercel/node': 2.8.2
+      '@vercel/node': 2.8.4
       zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -341,7 +341,7 @@ importers:
       '@types/node': 18.11.18
       eslint: 8.29.0
       typescript: 4.9.4
-      vercel: 28.10.1
+      vercel: 28.10.3
 
   apps/_root:
     specifiers:
@@ -10341,6 +10341,14 @@ packages:
       rollup: 2.79.1
     dev: false
 
+  /@rollup/pluginutils/4.2.1:
+    resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
+    engines: {node: '>= 8.0.0'}
+    dependencies:
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+    dev: true
+
   /@rushstack/eslint-patch/1.2.0:
     resolution: {integrity: sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg==}
 
@@ -12082,16 +12090,31 @@ packages:
   /@vercel/build-utils/5.7.2:
     resolution: {integrity: sha512-4ac8nRGlBzXtl7uJi4qRdfDiE+tVh4I17NIxGV6KmV2DzVAdzeaemBhukBgy1T7e7W40zvLMvlH0kgAK2EmQOQ==}
 
+  /@vercel/build-utils/5.7.3:
+    resolution: {integrity: sha512-Q4Ei4oG+tx4OnENHqqRlfAks6Rp3U/viOTUITnWpLgoej2xQUnnfk16qvHYZeE1ZGpblPoeDwD8ZWsxOkt3wHA==}
+
   /@vercel/go/2.2.21:
     resolution: {integrity: sha512-BnnT7GkC0eF42dyI/VZvGATPzbvRuQplQamgVszuQGKMhOBBhXrpYTc1V/lmHrCUn1RSGe3nRL399kf/sYmXUw==}
+    dev: true
+
+  /@vercel/go/2.2.22:
+    resolution: {integrity: sha512-I4QcFQRN37koxN4E65Wxd/YXsQK+LOLtPXWzFW1QfrRN8LS6RK5rB14OH4A0RY1lJhVNhD0GMYKVSm2CbQlAZg==}
     dev: true
 
   /@vercel/hydrogen/0.0.35:
     resolution: {integrity: sha512-qKE8iwqBLx+kZgsE1hHjf3A/KjyBvAJUAogaKOwdR5EAbxta70LwA3qtWR/NjcnSJTleEeaLX4CGodvLqLI5LQ==}
     dev: true
 
+  /@vercel/hydrogen/0.0.36:
+    resolution: {integrity: sha512-TpcuQLHmWeEeO7TmNsyRp049az04oU5fdmrE1IqiTQU46Wvsfur3YSX0G+CQkFLhHZDDhmsT+ikDxMrPrM115A==}
+    dev: true
+
   /@vercel/next/3.3.5:
     resolution: {integrity: sha512-/eXbxK48ay2C7LaWgzo+xJlXbKaFdOM9ajBRLf/yY/FjutP3qvIhO4VVbUEKVKQkYwVkUxTD6BXX5aSkV3OySg==}
+    dev: true
+
+  /@vercel/next/3.3.7:
+    resolution: {integrity: sha512-2bLVmvT8rgqWjaD1KS3j+oP1QSxeqOuv/toxwPiCDTTWs9F3fiE60izLkxFGXvbDZAaIG7IL4JwZPSd9i+6sLQ==}
     dev: true
 
   /@vercel/nft/0.22.1:
@@ -12114,8 +12137,32 @@ packages:
       - supports-color
     dev: true
 
+  /@vercel/nft/0.22.5:
+    resolution: {integrity: sha512-mug57Wd1BL7GMj9gXMgMeKUjdqO0e4u+0QLPYMFE1rwdJ+55oPy6lp3nIBCS8gOvigT62UI4QKUL2sGqcoW4Hw==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      '@mapbox/node-pre-gyp': 1.0.10
+      '@rollup/pluginutils': 4.2.1
+      acorn: 8.8.1
+      async-sema: 3.1.1
+      bindings: 1.5.0
+      estree-walker: 2.0.2
+      glob: 7.2.3
+      graceful-fs: 4.2.10
+      micromatch: 4.0.5
+      node-gyp-build: 4.5.0
+      resolve-from: 5.0.0
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: true
+
   /@vercel/node-bridge/3.1.2:
     resolution: {integrity: sha512-dgcLXug0IqUeRsywf0G8IrhUFcgw+GYj+EZB4JneglKSofFBh3Xy/t7KfBUxLlKnoq6kyGYJvTmAVB1YBt11qw==}
+
+  /@vercel/node-bridge/3.1.3:
+    resolution: {integrity: sha512-NIuiwktIsvCWZ7aToQ4sFWNYKQbojghJ2OobjTL14nj25cuxP3XsV8LkMarIsiWG/vQxiSADBLwr/7fOh8znGg==}
 
   /@vercel/node/2.8.2:
     resolution: {integrity: sha512-quZzNkn3MhOJ/Z5ugOgmLUXXWq/AMqXsByJPHte/TgnLM+skSpLaOYsB3rT2VUYbx9u3+T6bXQWv8YqJsgjZIQ==}
@@ -12134,6 +12181,25 @@ packages:
     transitivePeerDependencies:
       - encoding
 
+  /@vercel/node/2.8.4:
+    resolution: {integrity: sha512-It65+nyMnWZy0jK5AT/kdPW52lzSd7GZDgV7kbToSekHeNggLj0S35J8u6izGMUjQV3BIvRZinRJnu4Ww0FLnA==}
+    dependencies:
+      '@edge-runtime/vm': 2.0.0
+      '@types/node': 14.18.33
+      '@vercel/build-utils': 5.7.3
+      '@vercel/node-bridge': 3.1.3
+      '@vercel/static-config': 2.0.6
+      edge-runtime: 2.0.0
+      esbuild: 0.14.47
+      exit-hook: 2.2.1
+      node-fetch: 2.6.7
+      ts-node: 10.9.1_rju6pyblifsagdmqm3y74zsi6q
+      typescript: 4.9.4
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - encoding
+
   /@vercel/og/0.0.20:
     resolution: {integrity: sha512-089P+TfqWz0xBxjOvOhkZIDDtfrLcye94H4IZ+SqxoGPWpNGXaBvRJER/z5SoJxJRcCAL8tPiK5zdjRskM6tLw==}
     engines: {node: '>=16'}
@@ -12147,6 +12213,10 @@ packages:
     resolution: {integrity: sha512-xyHnOc6FiM9FDGOntA1ZaYrfymPB75iDjg7QLNECtPr02kc3zTIetdrzhCQJZ3q30yoXvT2Gq8D9rt98xdK6Zg==}
     dev: true
 
+  /@vercel/python/3.1.32:
+    resolution: {integrity: sha512-5iRpClnpG313nrbKJq/yOv9sPkR3a7RRF0XD1zoU5W9bBrEwLc13e4D+DJEyGIK5BkBGQyH+YbRaPY6PDVCbpA==}
+    dev: true
+
   /@vercel/redwood/1.0.41:
     resolution: {integrity: sha512-nxh2mCnzWjJtPiXFqadvO9MO08wEYIJeDAh/6Q/2NQOiE+gPD2LSzWtNZDd9TX9afeymaROqb0UuZsQw3fsrSg==}
     dependencies:
@@ -12158,10 +12228,30 @@ packages:
       - supports-color
     dev: true
 
+  /@vercel/redwood/1.0.43:
+    resolution: {integrity: sha512-78eHk1HuFM7oDwP+/IJfu9FJAk7HAHb93QpdsSM5BupE26mhpRAWFyWDt05U/EjU5ThQd7rozV8pBRV2+FCbdQ==}
+    dependencies:
+      '@vercel/nft': 0.22.5
+      '@vercel/routing-utils': 2.1.3
+      semver: 6.1.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: true
+
   /@vercel/remix/1.1.3:
     resolution: {integrity: sha512-YMID/XI2TpFHXvZYTn++UCQt4yhdo20jrw1GBpjY8Xss+UXPSA9jCOk0JCgHOllWnXqVTowQdJ9LzJTwerSVsA==}
     dependencies:
       '@vercel/nft': 0.22.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: true
+
+  /@vercel/remix/1.1.5:
+    resolution: {integrity: sha512-GlpH30ob3Est20M8JmmekwWoV64PKvJkKVDBQmzwt3cI+8MA/I7nOntfyoMk1bDjBxjA6Kld25mRw52l8D45Dg==}
+    dependencies:
+      '@vercel/nft': 0.22.5
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -12179,8 +12269,16 @@ packages:
     resolution: {integrity: sha512-g1xI9NHMHpJ9v4bW84b1wGlTe+3s8omBirIeR17vjbq9K0GE7VULaPV3gdb5bOe/W+8q1UYa67SjfjMQDKrG9Q==}
     dev: true
 
+  /@vercel/ruby/1.3.48:
+    resolution: {integrity: sha512-/FYO2QC35mD1mphZMA1fQTdRzoFKqA3oX6mvFB3X/qoGiu4fQujnNXvfOK0xZ97OnLIfg+qr2hR/OMBAt2EGpw==}
+    dev: true
+
   /@vercel/static-build/1.0.44:
     resolution: {integrity: sha512-A9+kBGwLTDf9afmoHS084/zkdop+7CWM31cvwzi5xkqksSxX25On/qikxbca/Vre9XGax9PgF1bkPnUn336Rvw==}
+    dev: true
+
+  /@vercel/static-build/1.0.46:
+    resolution: {integrity: sha512-6wW9Yo4+x5JaTBIdZZudDQgkItxJaIXTH5hJajl0BAnHYjfSybIGZkZlIZZ1yR3T34VaCdv2uapSpwOYJWyo5A==}
     dev: true
 
   /@vercel/static-config/2.0.6:
@@ -12458,14 +12556,8 @@ packages:
   /@wagmi/chains/0.1.7:
     resolution: {integrity: sha512-t9qm4FyzwzJhAcLtnh9HUeOmueSEOXwXlR0RCcS/vhtLSUnzaUfEkjAeu4+7AIujYWjrtdS/Zvlc+PwTjuwTUQ==}
 
-  /@wagmi/chains/0.1.7-cjs:
-    resolution: {integrity: sha512-xaUDPqNzNtYD6xSVEootQCR1EWRNzGXjLy5yVZV5T7q216T8DnWruqdznUrkGiRsu/gjXU7kOxpUKMvhzAh62A==}
-    deprecated: this package has been deprecated
-    dev: false
-
-  /@wagmi/connectors/0.1.3-cjs_ec6e5kcnt2i6iej7spiwhhsxzm:
-    resolution: {integrity: sha512-fvnT2Cf2ygsoXyLT/tlva2tw5GPVNu0G/hqVG8hmC/rZmmfnaCmhbM9/vYdMTvQkLeuQd9Av37qjXcu0+2Y3Bg==}
-    deprecated: this package has been deprecated
+  /@wagmi/connectors/0.1.3_kgmcxgju6wa3gq6dhxcbi6vlju:
+    resolution: {integrity: sha512-rNRDJsDdgb4R7n3AP6qbIu5L+3QYJU0raRFkFZLqBpA2dlX4d5RATALiDK6XdWw69iCb/q3BEsyj3Y+uNN/ODA==}
     peerDependencies:
       '@wagmi/core': 0.8.x
       ethers: ^5.0.0
@@ -12475,7 +12567,7 @@ packages:
     dependencies:
       '@coinbase/wallet-sdk': 3.6.3
       '@ledgerhq/connect-kit-loader': 1.0.2
-      '@wagmi/core': 0.8.10-cjs_4umapwpw55xijlh2mknjgcn4rq
+      '@wagmi/core': 0.8.10_4umapwpw55xijlh2mknjgcn4rq
       '@walletconnect/ethereum-provider': 1.8.0
       '@walletconnect/qrcode-modal': 1.8.0
       '@walletconnect/universal-provider': 2.1.5
@@ -12493,8 +12585,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@wagmi/core/0.8.10-cjs_4umapwpw55xijlh2mknjgcn4rq:
-    resolution: {integrity: sha512-yy6RMKvuAFIer5xm3s1mQDI8z0dezg8cDLGZrWgKsZMfNk3cC7Lb4qmDgygLYsuWpxqo4HLFzUNfHI5Eq2OFpQ==}
+  /@wagmi/core/0.8.10_4umapwpw55xijlh2mknjgcn4rq:
+    resolution: {integrity: sha512-TbXaKfZX0GD3LkhGoIWPWaitmwucNPxm0riRYStRncoe9JqSYJ82P3vwLn7zO9f1mwqwnf0EOnmotycH/adTwQ==}
     peerDependencies:
       '@coinbase/wallet-sdk': '>=3.6.0'
       '@walletconnect/ethereum-provider': '>=1.7.5'
@@ -12505,8 +12597,8 @@ packages:
       '@walletconnect/ethereum-provider':
         optional: true
     dependencies:
-      '@wagmi/chains': 0.1.7-cjs
-      '@wagmi/connectors': 0.1.3-cjs_ec6e5kcnt2i6iej7spiwhhsxzm
+      '@wagmi/chains': 0.1.7
+      '@wagmi/connectors': 0.1.3_kgmcxgju6wa3gq6dhxcbi6vlju
       abitype: 0.2.5_4umapwpw55xijlh2mknjgcn4rq
       eventemitter3: 4.0.7
       zustand: 4.1.5
@@ -29668,6 +29760,36 @@ packages:
       yn: 3.1.1
     dev: true
 
+  /ts-node/10.9.1_rju6pyblifsagdmqm3y74zsi6q:
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.3
+      '@types/node': 14.18.33
+      acorn: 8.8.1
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.9.4
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+
   /ts-node/10.9.1_typescript@4.9.4:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
@@ -30642,6 +30764,30 @@ packages:
       '@vercel/static-build': 1.0.44
       update-notifier: 5.1.0
     transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: true
+
+  /vercel/28.10.3:
+    resolution: {integrity: sha512-EQ719acVKTRBo9BBq757tze4BbIGbr4XqWr5cmc/WOAe8T3zPJWvCOjpicFBd9CtLHm82qzD2FF3WWFuAYxQZA==}
+    engines: {node: '>= 14'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@vercel/build-utils': 5.7.3
+      '@vercel/go': 2.2.22
+      '@vercel/hydrogen': 0.0.36
+      '@vercel/next': 3.3.7
+      '@vercel/node': 2.8.4
+      '@vercel/python': 3.1.32
+      '@vercel/redwood': 1.0.43
+      '@vercel/remix': 1.1.5
+      '@vercel/ruby': 1.3.48
+      '@vercel/static-build': 1.0.46
+      update-notifier: 5.1.0
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
       - encoding
       - supports-color
     dev: true
