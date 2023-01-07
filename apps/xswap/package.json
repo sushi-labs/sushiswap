@@ -39,6 +39,7 @@
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
+    "@sushiswap/types": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@sushiswap/wagmi": "workspace:*",
     "@uniswap/redux-multicall": "1.1.8",

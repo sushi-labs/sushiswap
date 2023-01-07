@@ -14,9 +14,6 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "main": "dist/index.js",
-  "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -27,6 +24,9 @@
       "default": "./dist/liquidity-providers/Trident.js"
     }
   },
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "typings": "dist/index.d.ts",
   "files": [
     "dist/**"
   ],
@@ -50,12 +50,12 @@
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",
-    "@sushiswap/math": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
+    "@sushiswap/math": "workspace:*",
     "@sushiswap/tines": "workspace:*",
-    "ethers": "^5.7.0",
     "ethereum-multicall": "2.15.0",
+    "ethers": "^5.7.0",
     "tiny-invariant": "^1.2.0",
     "tiny-warning": "^1.0.3",
     "lodash.flatmap": "^4.5.0"

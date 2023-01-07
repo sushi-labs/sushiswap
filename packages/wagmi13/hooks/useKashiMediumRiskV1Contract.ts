@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import kashiExports from '@sushiswap/kashi/exports.json'
+import kashiExports from '@sushiswap/kashi/exports'
 import { Address, useContract, useProvider } from 'wagmi'
 
 export const KASHI_ADDRESS = {

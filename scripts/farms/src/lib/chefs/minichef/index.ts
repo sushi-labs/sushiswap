@@ -1,11 +1,11 @@
 import { ChainId } from '@sushiswap/chain'
 import { SUSHI } from '@sushiswap/currency'
-import { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
+import type { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { daysInYear, secondsInDay } from 'date-fns'
-import { Farm } from 'src/types'
 
-import { MINICHEF_ADDRESS } from '../../../config'
-import { divBigNumberToNumber, getPairs, getTokenBalancesOf, getTokens } from '../../common'
+import { MINICHEF_ADDRESS } from '../../../config.js'
+import type { Farm } from '../../../types.js'
+import { divBigNumberToNumber, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
 import {
   getLpTokens,
   getPoolInfos,
@@ -14,7 +14,7 @@ import {
   getRewarders,
   getSushiPerSecond,
   getTotalAllocPoint,
-} from './fetchers'
+} from './fetchers.js'
 
 export async function getMinichef(
   chainId: SushiSwapChainId | TridentChainId
@@ -28,6 +28,11 @@ export async function getMinichef(
         getRewarderInfos(chainId),
         getTokens([SUSHI[ChainId.ETHEREUM].address], ChainId.ETHEREUM),
       ])
+    const sushiPerDay = secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId]?.decimals ?? 18)
+
+    console.log(
+      `MiniChef ${chainId} - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`
+    )
 
     const [poolInfos, lpTokens, rewarders, tokens] = await Promise.all([
       getPoolInfos(poolLength.toNumber(), chainId),
@@ -51,8 +56,6 @@ export async function getMinichef(
       pair: pairs.find((pair) => pair.id === lpTokens[i].toLowerCase()),
       rewarder: rewarderInfos.find((rewarderInfo) => rewarderInfo.id === rewarders[i].toLowerCase()),
     }))
-
-    const sushiPerDay = secondsInDay * divBigNumberToNumber(sushiPerSecond, SUSHI[chainId]?.decimals ?? 18)
 
     return {
       chainId,

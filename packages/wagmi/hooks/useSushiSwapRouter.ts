@@ -1,5 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
-import sushiswapExports from '@sushiswap/sushiswap/exports.json'
+import sushiswapExports from '@sushiswap/sushiswap/exports'
 import { useContract, useSigner } from 'wagmi'
 
 type Exports = typeof sushiswapExports
@@ -22,3 +22,5 @@ export function useSushiSwapRouterContract(chainId: number | undefined) {
     signerOrProvider,
   })
 }
+
+export type SushiSwapRouter = NonNullable<ReturnType<typeof useSushiSwapRouterContract>>

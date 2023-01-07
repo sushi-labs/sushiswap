@@ -64,11 +64,11 @@ export const useMasterChef: UseMasterChef = ({
           address: SUSHI_ADDRESS[chainId] as Address,
           abi: erc20ABI,
           functionName: 'balanceOf',
-          args: [chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]],
+          args: [(chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]) as Address],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
-          address: chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId],
+          address: (chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
           abi: [
             chef === Chef.MASTERCHEF
               ? ({
@@ -115,7 +115,7 @@ export const useMasterChef: UseMasterChef = ({
                 } as const),
           ] as const,
           functionName: 'userInfo',
-          args: [BigNumber.from(pid), address],
+          args: [BigNumber.from(pid), address as Address],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
@@ -133,7 +133,7 @@ export const useMasterChef: UseMasterChef = ({
             },
           ] as const,
           functionName: 'pendingSushi',
-          args: [BigNumber.from(pid), address],
+          args: [BigNumber.from(pid), address as Address],
         } as const,
       ]
     }
@@ -145,7 +145,7 @@ export const useMasterChef: UseMasterChef = ({
           address: SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS] as Address,
           abi: erc20ABI,
           functionName: 'balanceOf',
-          args: [MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS]],
+          args: [MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS] as Address],
         } as const,
         {
           chainId,
@@ -166,7 +166,7 @@ export const useMasterChef: UseMasterChef = ({
             } as const,
           ] as const,
           functionName: 'userInfo',
-          args: [BigNumber.from(pid), address],
+          args: [BigNumber.from(pid), address as Address],
         } as const,
       ] as const
     }

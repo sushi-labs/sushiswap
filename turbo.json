@@ -19,7 +19,6 @@
     "tsconfig.json"
   ],
   "pipeline": {
-
     "db:init": {
       "outputs": ["prisma/**"],
       "cache": false
@@ -92,7 +91,12 @@
       "cache": false
     },
     "check": {
-      "dependsOn": ["^db:generate", "^generate", "db:generate", "generate"],
+      "dependsOn": [
+        "//#generate",
+        "//#build-config", 
+        "//#build-packages", 
+        "//#build-protocols"
+      ],
       "cache": false
     },
     "dev": {
@@ -108,7 +112,7 @@
     },
     "export": {
       "dependsOn": ["build"],
-      "outputs": ["exports.json"],
+      "outputs": ["exports.json", "exports.ts"],
       "cache": true
     },
     "node": {
@@ -138,6 +142,31 @@
     "build-subgraph": {
       "outputs": ["build/**", "generated/**"],
       "dependsOn": ["^build", "generate"]
+    },
+    "//#generate": {
+      "outputs": [
+        ".mesh/**",
+        ".graphclient/**/*",
+        "typechain/**"
+      ],
+      "inputs": []
+    },
+    "//#build-config": {
+      "dependsOn": [],
+      "outputs": ["dist/**/*"],
+      "inputs": []
+    },
+    "//#build-packages": {
+      "dependsOn": [],
+      "outputs": [
+        ".graphclient/**/*",
+        "dist/**/*"
+      ],
+      "inputs": []
+    },
+    "//#build-protocols": {
+      "outputs": ["typechain/**", "artifacts/**", "cache/**"],
+      "dependsOn": []
     }
   }
 }

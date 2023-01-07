@@ -1,12 +1,11 @@
 import { isAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Native, Token, Type } from '@sushiswap/currency'
-import { filterTokens, FundSource, tokenComparator, useDebounce, useSortedTokensByQuery } from '@sushiswap/hooks'
+import { useDebounce } from '@sushiswap/hooks'
 import { Fraction } from '@sushiswap/math'
 import { FC, useMemo, useState } from 'react'
 import { useToken } from 'wagmi'
-
-import { BalanceMap } from '../../hooks/useBalance/types'
+import { useSortedTokensByQuery, tokenComparator, filterTokens } from '../../hooks/useSortedTokensByQuery'
 
 interface RenderProps {
   currencies: Type[]

@@ -1,3 +1,3 @@
-export * from './masterChefV1'
-export * from './masterChefV2'
-export * from './minichef'
+export * from './masterChefV1/index.js'
+export * from './masterChefV2/index.js'
+export * from './minichef/index.js'

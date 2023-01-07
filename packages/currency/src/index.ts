@@ -2,7 +2,6 @@ export * from './addressMapToTokenMap'
 export * from './Amount'
 // dont't export abstract currency
 // export * from './Currency'
-export * from './AddressMap'
 export * from './Native'
 export * from './nativeCurrencyIds'
 export * from './Price'
