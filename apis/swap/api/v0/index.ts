@@ -28,7 +28,7 @@ const schema = z.object({
   toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
   amount: z.coerce.bigint(),
-  to: z.string(),
+  to: z.optional(z.string()),
 })
 
 export function getRouteProcessorAddressForChainId(chainId: ChainId) {

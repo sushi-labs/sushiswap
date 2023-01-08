@@ -46,6 +46,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
         } as const)
     ),
   })
+
   const zipped = zip(tokens, balances)
   return response
     .status(200)
