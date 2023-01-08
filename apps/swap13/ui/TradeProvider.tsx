@@ -7,9 +7,10 @@ import {
   SUSHI,
   tryParseAmount,
   Type,
-  shortNameToCurrency,
-  isShortName,
-  ShortName,
+  isShortCurrencyNameSupported,
+  ShortCurrencyName,
+  isShortCurrencyName,
+  currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useLayoutEffect, useMemo, useReducer } from 'react'
@@ -140,19 +141,19 @@ export const SwapProvider: FC<SwapProviderProps> = ({
     review: false,
     recipient: recipient ? recipient : address ? address : undefined,
     appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
-    token0: isShortName(parseInt(fromChainId), fromCurrencyId)
-      ? shortNameToCurrency(parseInt(fromChainId), fromCurrencyId as ShortName)
+    token0: isShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
+      ? currencyFromShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
       : Native.onChain(ChainId.ETHEREUM),
-    token1: isShortName(parseInt(toChainId), toCurrencyId)
-      ? shortNameToCurrency(parseInt(toChainId), toCurrencyId as ShortName)
+    token1: isShortCurrencyName(parseInt(toChainId), toCurrencyId)
+      ? currencyFromShortCurrencyName(parseInt(toChainId), toCurrencyId)
       : SUSHI[ChainId.ETHEREUM],
     network0: fromChainId ? parseInt(fromChainId) : ChainId.ETHEREUM,
     network1: toChainId ? parseInt(toChainId) : ChainId.ETHEREUM,
     value: amount ? amount : '',
     valueAsAmount: tryParseAmount(
       amount,
-      isShortName(parseInt(fromChainId), fromCurrencyId)
-        ? shortNameToCurrency(parseInt(fromChainId), fromCurrencyId as ShortName)
+      isShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
+        ? currencyFromShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
         : Native.onChain(ChainId.ETHEREUM)
     ),
   })

@@ -1,7 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 
-import { addressMapToTokenMap } from './addressMapToTokenMap'
-import { Token } from './Token'
+import { addressMapToTokenMap } from '../addressMapToTokenMap'
+import { Token } from '../Token'
 import {
   AAVE_ADDRESS,
   ANKR_ADDRESS,

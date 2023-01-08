@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant'
 
 import { Currency } from './Currency'
 import { Token } from './Token'
-import { WNATIVE } from './tokens'
+import { WNATIVE } from './constants/tokens'
 import { Type } from './Type'
 
 export class Native extends Currency {

@@ -68,14 +68,16 @@ export const useTrade = (variables: UseTradeParams) => {
               .toFixed(2)
           : undefined,
         route: data.getCurrentRouteHumanArray,
-        writeArgs: [
-          data.getCurrentRouteRPParams.tokenIn,
-          data.getCurrentRouteRPParams.amountIn,
-          data.getCurrentRouteRPParams.tokenOut,
-          data.getCurrentRouteRPParams.amountOutMin,
-          data.getCurrentRouteRPParams.to,
-          data.getCurrentRouteRPParams.routeCode,
-        ],
+        writeArgs: data?.getCurrentRouteRPParams
+          ? [
+              data.getCurrentRouteRPParams.tokenIn,
+              data.getCurrentRouteRPParams.amountIn,
+              data.getCurrentRouteRPParams.tokenOut,
+              data.getCurrentRouteRPParams.amountOutMin,
+              data.getCurrentRouteRPParams.to,
+              data.getCurrentRouteRPParams.routeCode,
+            ]
+          : undefined,
       }
     },
     [amount, chainId, fromToken, prices, slippagePercentage, toToken]
