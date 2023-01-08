@@ -16,7 +16,9 @@ export const useTradeQuery = (
     queryFn: async () => {
       const res = await (
         await fetch(
-          `https://swap.sushi.com/v0?chainId=${chainId}&fromTokenId=${
+          `${
+            process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
+          }?chainId=${chainId}&fromTokenId=${
             fromToken.isNative ? nativeCurrencyIds[chainId] : fromToken.wrapped.address
           }&toTokenId=${
             toToken.isNative ? nativeCurrencyIds[chainId] : toToken.wrapped.address
@@ -65,7 +67,7 @@ export const useTrade = (variables: UseTradeParams) => {
         gasSpent: prices
           ? Amount.fromRawAmount(Native.onChain(chainId), data.getBestRoute.gasSpent * 1e9)
               .multiply(prices?.[Native.onChain(chainId).wrapped.address].asFraction)
-              .toFixed(2)
+              .toSignificant(4)
           : undefined,
         route: data.getCurrentRouteHumanArray,
         writeArgs: data?.getCurrentRouteRPParams
