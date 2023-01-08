@@ -4,6 +4,7 @@ import { useSwapState } from '../ui/TradeProvider'
 
 export const useTrade = () => {
   const { token0, token1, network0, valueAsAmount, recipient } = useSwapState()
+
   const { data: slippageTolerance } = useSlippageTolerance()
   const { data: feeData } = useFeeData()
   const { data: blockNumber } = useBlockNumber({ chainId: network0, watch: true })

@@ -23,10 +23,9 @@ export const useTradeQuery = (
           }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}`
         )
       ).json()
-
       return tradeValidator.parse(res)
     },
-    keepPreviousData: true,
+    keepPreviousData: !!amount,
     select,
     enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice && blockNumber),
   })
@@ -62,6 +61,7 @@ export const useTrade = (variables: UseTradeParams) => {
           toToken,
           calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
         ),
+        // TODO: all prices for just gasSpent? refactor for single price retrieval
         gasSpent: prices
           ? Amount.fromRawAmount(Native.onChain(chainId), data.getBestRoute.gasSpent * 1e9)
               .multiply(prices?.[Native.onChain(chainId).wrapped.address].asFraction)

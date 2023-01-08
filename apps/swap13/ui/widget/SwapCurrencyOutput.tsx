@@ -9,7 +9,6 @@ export const SwapCurrencyOutput: FC = () => {
   const { setToken1 } = useSwapActions()
   const usdPctChange = usePctChange()
   const { isLoading, isFetching, data: trade } = useTrade()
-
   return (
     <Web3Input.Currency
       type="OUTPUT"
