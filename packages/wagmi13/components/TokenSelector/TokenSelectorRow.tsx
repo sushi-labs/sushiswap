@@ -28,13 +28,17 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
   const onClick = useCallback(() => {
     onSelect(currency)
   }, [currency, onSelect])
+
+  if (balance?.greaterThan(ZERO)) {
+    console.log(price)
+  }
   return (
     <div
       testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
       onClick={onClick}
       className={classNames(
         className,
-        `group flex items-center w-full hover:bg-white hover:dark:bg-slate-800 rounded-lg px-2 h-[48px] token-${currency?.symbol}`
+        `group flex items-center w-full hover:bg-black/[0.06] hover:dark:bg-white/[0.06] rounded-lg px-2 h-[48px] token-${currency?.symbol}`
       )}
       style={style}
     >

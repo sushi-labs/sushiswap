@@ -8,7 +8,7 @@ import { Input as Numeric } from './Numeric'
 import { Input as Percent } from './Percent'
 
 // Base classes
-export const DEFAULT_INPUT_FONT = 'text-left text-base md:text-sm placeholder:font-normal font-medium'
+export const DEFAULT_INPUT_FONT = 'text-gray-900 dark:text-slate-50 text-left text-base font-medium'
 export const DEFAULT_INPUT_BG = 'bg-white bg-opacity-[0.06]'
 export const DEFAULT_INPUT_HOVER_BG = 'hover:bg-white hover:bg-opacity-[0.06]'
 export const DEFAULT_INPUT_RING =
@@ -22,7 +22,7 @@ export const DEFAULT_INPUT_NO_RINGS = 'border-none focus:outline-none focus:ring
 export const DEFAULT_INPUT_UNSTYLED = classNames(
   DEFAULT_INPUT_FONT,
   DEFAULT_INPUT_NO_RINGS,
-  'p-0 bg-transparent w-full truncate font-='
+  'p-0 bg-transparent w-full truncate font-medium'
 )
 
 // Default class without padding

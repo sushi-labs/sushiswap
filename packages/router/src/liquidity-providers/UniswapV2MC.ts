@@ -1,6 +1,7 @@
 import { keccak256, pack } from '@ethersproject/solidity'
 import { ChainId } from '@sushiswap/chain'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
@@ -48,7 +49,7 @@ const getReservesABI = [
 export class UniSwapV2ProviderMC extends LiquidityProviderMC {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
-  blockListener?: () => void | undefined
+  blockListener: any
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
@@ -69,7 +70,7 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
 
   async getPools(tokens: Token[]): Promise<void> {
     if (!(this.chainId in UNISWAP_V2_FACTORY)) {
-      // No uniswap for this network
+      // No sushiswap for this network
       this.lastUpdateBlock = -1
       return
     }
@@ -83,7 +84,6 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
       t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
       t,
     ])
-
     tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
 
     const poolAddr: Map<string, [Token, Token]> = new Map()

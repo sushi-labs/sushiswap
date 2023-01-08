@@ -1,9 +1,8 @@
 'use client'
 
 import { ChainId, chains } from '@sushiswap/chain'
-import { Token, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
-import { useAddCustomToken } from '@sushiswap/react-query'
+import { Native, SUSHI, Token, Type, USDC, USDT } from '@sushiswap/currency'
+import { useAddCustomToken, useBalances } from '@sushiswap/react-query'
 import { useTokens } from '@sushiswap/react-query'
 import { SlideIn } from '@sushiswap/ui13/components/animation'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
@@ -17,7 +16,10 @@ import { usePrices } from '../../hooks'
 import { TokenSelectorCurrencyList } from './TokenSelectorCurrencyList'
 import { TokenSelectorImportRow } from './TokenSelectorImportRow'
 import { TokenSelectorListFilterByQuery } from './TokenSelectorListFilterByQuery'
-import { TokenSelectorSettingsOverlay } from './TokenSelectorSettingsOverlay'
+import { useAccount } from 'wagmi'
+import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
+import { Button } from '@sushiswap/ui13/components/button'
+import { Currency } from '@sushiswap/ui13/components/currency'
 
 interface TokenSelectorProps {
   id: string
@@ -25,17 +27,10 @@ interface TokenSelectorProps {
   chainId: ChainId
   onSelect(currency: Type): void
   children({ open, setOpen }: { open: boolean; setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
-  fundSource?: FundSource
 }
 
-export const TokenSelector: FC<TokenSelectorProps> = ({
-  id,
-  selected,
-  onSelect,
-  chainId,
-  children,
-  fundSource = FundSource.WALLET,
-}) => {
+export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, chainId, children }) => {
+  const { address } = useAccount()
   const { mutate: onAddCustomToken } = useAddCustomToken()
 
   const [open, setOpen] = useState(false)
@@ -43,8 +38,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
 
   const { data: tokenMap } = useTokens({ chainId })
   const { data: pricesMap } = usePrices({ chainId })
-
-  const balancesMap = undefined
+  const { data: balancesMap } = useBalances({ chainId, account: address })
 
   const _onSelect = useCallback(
     (currency: Token) => {
@@ -72,54 +66,80 @@ export const TokenSelector: FC<TokenSelectorProps> = ({
         tokenMap={tokenMap}
         pricesMap={pricesMap}
         balancesMap={balancesMap}
-        fundSource={fundSource}
         chainId={chainId}
       >
         {({ currencies, query, onInput, searching, queryToken }) => (
           <Dialog open={open} onClose={handleClose}>
-            <Dialog.Content className="!pb-0 h-[75vh] sm:h-[640px]">
+            <Dialog.Content className="flex flex-col gap-3 !pb-0 min-h-[60vh]">
               <SlideIn>
-                <div className="flex gap-2 items-center">
+                <div>
                   <Search id={id} input={Input.Address} value={query} loading={searching} onChange={onInput} />
-                  <TokenSelectorSettingsOverlay />
                 </div>
 
-                <div className="flex flex-col gap-6 relative h-[320px] sm:h-full mt-3">
-                  <div className="relative h-[320px] sm:h-[calc(100%-32px)] pt-5">
-                    <div className="absolute inset-0 h-full rounded-t-none rounded-xl">
-                      <div className="flex flex-col gap-3 h-full">
-                        {queryToken[0] && (
-                          <List>
-                            <List.Label className="px-2">Search results</List.Label>
-                            <TokenSelectorImportRow
-                              currencies={queryToken}
-                              onImport={() => queryToken[0] && handleImport(queryToken[0])}
-                            />
-                          </List>
-                        )}
-                        <List>
-                          <List.Label className="px-2">Tokens</List.Label>
-                        </List>
-                        <TokenSelectorCurrencyList
-                          onSelect={_onSelect}
-                          id={id}
-                          currencies={currencies}
-                          chainId={chainId}
-                        />
-                      </div>
-                      {currencies.length === 0 && !queryToken && chainId && (
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <div className="flex flex-col items-center justify-center gap-1">
-                            <span className="text-xs flex italic text-slate-500">No tokens found on</span>
-                            <span className="text-xs font-medium flex gap-1 italic text-slate-500">
-                              <NetworkIcon width={14} height={14} chainId={chainId} /> {chains[chainId].name}
-                            </span>
-                          </div>
-                        </div>
-                      )}
+                {/*TODO RAMIN COMMON BASES*/}
+                <div className="flex gap-2">
+                  <Button
+                    // @ts-ignore
+                    startIcon={<Currency.Icon currency={SUSHI[chainId]} width={16} height={16} />}
+                    size="xs"
+                    color="blue"
+                    variant="outlined"
+                  >
+                    SUSHI
+                  </Button>
+                  <Button
+                    startIcon={<Currency.Icon currency={Native.onChain(chainId)} width={16} height={16} />}
+                    size="xs"
+                    color="blue"
+                    variant="outlined"
+                  >
+                    ETH
+                  </Button>
+                  {/*// @ts-ignore*/}
+                  {USDC[chainId] && (
+                    <Button
+                      // @ts-ignore
+                      startIcon={<Currency.Icon currency={USDC[chainId]} width={16} height={16} />}
+                      size="xs"
+                      color="blue"
+                      variant="outlined"
+                    >
+                      USDC
+                    </Button>
+                  )}
+                  {/*// @ts-ignore*/}
+                  {USDT[chainId] && (
+                    <Button
+                      // @ts-ignore
+                      startIcon={<Currency.Icon currency={USDT[chainId]} width={16} height={16} />}
+                      size="xs"
+                      color="blue"
+                      variant="outlined"
+                    >
+                      USDT
+                    </Button>
+                  )}
+                </div>
+                <List.Control className="p-1 flex flex-col flex-grow gap-3">
+                  {queryToken[0] && (
+                    <TokenSelectorImportRow
+                      currencies={queryToken}
+                      onImport={() => queryToken[0] && handleImport(queryToken[0])}
+                    />
+                  )}
+                  <TokenSelectorCurrencyList onSelect={_onSelect} id={id} currencies={currencies} chainId={chainId} />
+                </List.Control>
+                {currencies.length === 0 && !queryToken && chainId && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="flex flex-col items-center justify-center gap-1">
+                      <span className="text-xs flex italic text-slate-500">No tokens found on</span>
+                      <span className="text-xs font-medium flex gap-1 italic text-slate-500">
+                        <NetworkIcon width={14} height={14} chainId={chainId} /> {chains[chainId].name}
+                      </span>
                     </div>
                   </div>
-                </div>
+                )}
+                <TokenSelectorCustomTokensOverlay />
               </SlideIn>
             </Dialog.Content>
           </Dialog>

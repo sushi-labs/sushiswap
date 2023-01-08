@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "dotenv -- turbo run build --filter=!bridge",
+    "build": "dotenv -- turbo run build --filter=!bridge --filter=!academy --filter=!blog",
     "build-analytics-app": "dotenv -- turbo run build --filter=analytics[HEAD^1]",
     "build-apps": "dotenv -- turbo run build --filter={./apps/*}[HEAD^1]... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13 --filter=!furo",
     "build-apps2": "dotenv -- turbo run build --filter={./apps/*}... --filter=!dojo --filter=!earn13 --filter=!bridge --filter=!swap13 --filter=!furo",

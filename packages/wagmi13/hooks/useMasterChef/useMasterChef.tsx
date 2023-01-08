@@ -182,8 +182,6 @@ export const useMasterChef: UseMasterChef = ({
     enabled: contracts.length > 0 && enabled,
   })
 
-  // console.log({ data })
-
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined
     const _balance = data?.[1]
@@ -196,11 +194,11 @@ export const useMasterChef: UseMasterChef = ({
       : undefined
     const _pendingSushi = data?.[2] ? data?.[2] : undefined
     const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
-    const pendingSushi = SUSHI[chainId]
-      ? Amount.fromRawAmount(SUSHI[chainId], _pendingSushi ? _pendingSushi.toString() : 0)
+    const pendingSushi = SUSHI[chainId as keyof typeof SUSHI]
+      ? Amount.fromRawAmount(SUSHI[chainId as keyof typeof SUSHI], _pendingSushi ? _pendingSushi.toString() : 0)
       : undefined
-    const sushiBalance = SUSHI[chainId]
-      ? Amount.fromRawAmount(SUSHI[chainId], _sushiBalance ? _sushiBalance.toString() : 0)
+    const sushiBalance = SUSHI[chainId as keyof typeof SUSHI]
+      ? Amount.fromRawAmount(SUSHI[chainId as keyof typeof SUSHI], _sushiBalance ? _sushiBalance.toString() : 0)
       : undefined
     return [sushiBalance, balance, pendingSushi]
   }, [chainId, data, token])
