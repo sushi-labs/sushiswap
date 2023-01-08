@@ -4,7 +4,7 @@ export const CarbonIcon = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 20 18">
       <path
-        fill="#97A3B7"
+        fill="currentColor"
         stroke="#97A3B7"
         strokeLinejoin="round"
         strokeMiterlimit="2"

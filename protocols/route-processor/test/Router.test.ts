@@ -1,10 +1,8 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { DataFetcher, Router } from '@sushiswap/router'
+import { Native, SUSHI, Token, Type, WNATIVE } from '@sushiswap/currency'
+import { BentoBox, DataFetcher, Router } from '@sushiswap/router'
 import { getBigNumber, MultiRoute } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
@@ -28,7 +26,8 @@ class Waiter {
 
 interface TestEnvironment {
   chainId: ChainId
-  provider: HardhatEthersHelpers['provider']
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  provider: any
   rp: Contract
   user: SignerWithAddress
   dataFetcher: DataFetcher
@@ -45,7 +44,10 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
   console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(BENTOBOX_ADDRESS[chainId], WNATIVE_ADDRESS[chainId])
+  const routeProcessor = await RouteProcessor.deploy(
+    BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
+    WNATIVE[chainId].address
+  )
   await routeProcessor.deployed()
   console.log('    Block Number:', provider.blockNumber)
 

@@ -9,33 +9,7 @@ describe('HEXer', () => {
       expect(hexer.toString()).toEqual('')
     })
   })
-  describe('#toString', () => {
-    //
-  })
-  describe('#toHexString', () => {
-    //
-  })
-  describe('#uint8', () => {
-    //
-  })
-  describe('#bool', () => {
-    //
-  })
-  describe('#uint16', () => {
-    //
-  })
-  describe('#share16', () => {
-    //
-  })
-  describe('#uint32', () => {
-    //
-  })
-  describe('#uint256', () => {
-    //
-  })
-  describe('#uint', () => {
-    //
-  })
+
   describe('#address', () => {
     it('throws when address is RouteProcessor', () => {
       const address = 'RouteProcessor'

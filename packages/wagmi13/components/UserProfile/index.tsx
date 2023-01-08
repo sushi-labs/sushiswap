@@ -44,7 +44,7 @@ export const UserProfile: FC<ProfileProps> = () => {
 
   if (isSm)
     return (
-      <Popover className="relative">
+      <Popover>
         {({ open, close }) => (
           <>
             <Popover.Button as={Button} variant="outlined" color="default" size="md" className="!font-medium">

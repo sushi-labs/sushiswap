@@ -29,6 +29,8 @@ export interface CurrencyInputProps {
   usdPctChange?: number
   fundSource?: FundSource
   disableMaxButton?: boolean
+  type: 'INPUT' | 'OUTPUT'
+  fetching?: boolean
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -44,6 +46,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   usdPctChange,
   fundSource = FundSource.WALLET,
   disableMaxButton = false,
+  type,
+  fetching,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -57,17 +61,18 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     chainId,
     currency,
     account: address,
-    enabled: Boolean(currency),
+    enabled: Boolean(currency) && Boolean(address),
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
-  const insufficientBalance = balance && _value && balance[fundSource].lessThan(_value)
+  const insufficientBalance = address && type === 'INPUT' && balance && _value && balance[fundSource].lessThan(_value)
 
   return useMemo(
     () => (
       <div
         className={classNames(
-          'transition-all duration-[400ms]',
+          fetching && type === 'OUTPUT' && !loading ? 'shimmer-fast' : '',
+          'transition-all duration-[400ms] space-y-1 overflow-hidden',
           insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
           className
         )}
@@ -76,7 +81,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
         <div className="relative flex items-center gap-1">
           {loading ? (
             <div className="flex flex-col gap-1 justify-center flex-grow h-[44px]">
-              <Skeleton.Box className="w-[120px] h-[22px] bg-white/[0.06] rounded-full" />
+              <Skeleton.Box className="w-2/4 h-[32px] rounded-lg" />
             </div>
           ) : (
             <Input.Numeric
@@ -85,22 +90,13 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
               variant="unstyled"
               disabled={disabled}
               onUserInput={onChange}
-              className={classNames(
-                DEFAULT_INPUT_UNSTYLED,
-                'without-ring !text-3xl py-1 text-gray-900 dark:text-slate-200 hover:dark:text-slate-100'
-              )}
+              className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl py-1')}
               value={value}
               readOnly={disabled}
             />
           )}
           {onSelect ? (
-            <TokenSelector
-              id={`${id}-token-selector`}
-              selected={currency}
-              chainId={chainId}
-              onSelect={onSelect}
-              fundSource={fundSource}
-            >
+            <TokenSelector id={`${id}-token-selector`} selected={currency} chainId={chainId} onSelect={onSelect}>
               {({ setOpen }) => (
                 <button
                   id={`${id}-button`}
@@ -127,17 +123,18 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             <></>
           )}
         </div>
-        <div className="flex flex-row justify-between h-[24px]">
+        <div className="flex flex-row justify-between">
           <PricePanel
             value={value}
             currency={currency}
             usdPctChange={usdPctChange}
             error={insufficientBalance ? 'Exceeds Balance' : undefined}
+            loading={loading}
           />
           <div className="h-6">
             <BalancePanel
               id={id}
-              loading={loading || isLoading}
+              loading={isLoading}
               chainId={chainId}
               account={address}
               onChange={onChange}
@@ -158,6 +155,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       currency,
       disableMaxButton,
       disabled,
+      fetching,
       focusInput,
       fundSource,
       id,
@@ -166,6 +164,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       loading,
       onChange,
       onSelect,
+      type,
       usdPctChange,
       value,
     ]

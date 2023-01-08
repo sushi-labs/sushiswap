@@ -118,14 +118,14 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
       </div>
       <List>
         <List.Control className="bg-gray-100 dark:!bg-slate-700">
-          <List.Item
+          <List.MenuItem
             icon={InboxArrowDownIcon}
             title="Transactions"
             onClick={() => setView(ProfileView.Transactions)}
             hoverIcon={ChevronRightIcon}
             hoverIconProps={{ width: 20, height: 20 }}
           />
-          <List.Item
+          <List.MenuItem
             icon={CreditCardIcon}
             target="_blank"
             as="a"

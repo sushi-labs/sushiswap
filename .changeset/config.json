@@ -26,7 +26,6 @@
     "@sushiswap/balances-api",
     "@sushiswap/farm-api",
     "@sushiswap/tokens-api",
-    "@sushiswap/quote-api",
     "@sushiswap/swap-api",
     "@sushiswap/token-list-api",
     "@sushiswap/token-price-api",
