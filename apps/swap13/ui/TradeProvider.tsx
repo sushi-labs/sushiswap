@@ -31,7 +31,7 @@ const schema = z.object({
     .default(ChainId.ETHEREUM),
   fromCurrencyId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
   toCurrencyId: z.string().default('SUSHI'),
-  amount: z.coerce.bigint(),
+  amount: z.optional(z.coerce.bigint()),
   recipient: z.optional(z.string()),
 })
 
@@ -170,7 +170,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
     network1: toChainId,
     value: amount ? amount.toString() : '',
     valueAsAmount: tryParseAmount(
-      amount.toString(),
+      amount ? amount.toString() : undefined,
       isShortCurrencyName(fromChainId, fromCurrencyId)
         ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
         : Native.onChain(ChainId.ETHEREUM)

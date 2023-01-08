@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Amount, Native, nativeCurrencyIds, Price } from '@sushiswap/currency'
 import { UseTradeParams, UseTradeQuerySelect } from './types'
 import { usePrices } from '../usePrices'
-import { JSBI, Percent, ZERO } from '@sushiswap/math'
+import { Percent, ZERO } from '@sushiswap/math'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { tradeValidator } from './validator'
 import { useCallback } from 'react'
@@ -61,7 +61,7 @@ export const useTrade = (variables: UseTradeParams) => {
           toToken,
           calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
         ),
-        // TODO: all prices for just gasSpent? refactor for single price retrieval
+        // TODO: all prices for just gasSpent? refactor for single price retrieval...
         gasSpent: prices
           ? Amount.fromRawAmount(Native.onChain(chainId), data.getBestRoute.gasSpent * 1e9)
               .multiply(prices?.[Native.onChain(chainId).wrapped.address].asFraction)
