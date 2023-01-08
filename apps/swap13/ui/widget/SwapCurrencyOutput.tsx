@@ -8,7 +8,8 @@ export const SwapCurrencyOutput: FC = () => {
   const { token1, value, network1 } = useSwapState()
   const { setToken1 } = useSwapActions()
   // const usdPctChange = usePctChange()
-  const { isLoading, isFetching, isPreviousData, data: trade } = useTrade()
+  const { isLoading, isFetching, isPreviousData, isStale, isInitialLoading, isRefetching, data: trade } = useTrade()
+  // console.log({ isLoading, isFetching, isPreviousData, isStale, isInitialLoading, isRefetching })
   return (
     <Web3Input.Currency
       type="OUTPUT"
@@ -20,7 +21,7 @@ export const SwapCurrencyOutput: FC = () => {
       currency={token1}
       // usdPctChange={usdPctChange}
       loading={Boolean(value && !trade && isLoading)}
-      fetching={isFetching}
+      fetching={isRefetching}
       disableMaxButton
     />
   )
