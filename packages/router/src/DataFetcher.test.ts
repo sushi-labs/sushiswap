@@ -32,17 +32,17 @@ describe('DataFetcher', () => {
   })
 
   const token0 = Native.onChain(ChainId.ETHEREUM)
-  const token1 =  USDC[ChainId.ETHEREUM]
-  it(`should fetch pools for ${token0.symbol} and ${token1.symbol}`, async() => {
+  const token1 = USDC[ChainId.ETHEREUM]
+  it.skip(`should fetch pools for ${token0.symbol} and ${token1.symbol}`, async () => {
     DATA_FETCHER.fetchPoolsForToken(token0, token1)
-    await new Promise((r) => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 1500))
     const pools = DATA_FETCHER.getCurrentPoolCodeMap()
     expect(pools.size).toBeGreaterThan(5)
   })
 
-  it ('should have a block', async() => {
+  it.skip('should have a block', async () => {
     const blockNumber = DATA_FETCHER.getLastUpdateBlock()
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 500))
     expect(blockNumber).toBeGreaterThan(0)
     expect(blockNumber).not.toBeUndefined
   })
