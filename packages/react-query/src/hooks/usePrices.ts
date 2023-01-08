@@ -25,7 +25,7 @@ export const usePrices = ({ chainId }: UsePrices) => {
     queryKey: [`https://token-price.sushi.com/v0/${chainId}`],
     queryFn: async () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
     staleTime: 20000,
-    enabled: Boolean(chainId),
+    enabled: Number.isInteger(chainId),
     select: hydrate,
   })
 }
