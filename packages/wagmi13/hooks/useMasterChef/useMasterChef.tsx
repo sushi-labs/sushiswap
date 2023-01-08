@@ -5,7 +5,7 @@ import { Amount, SUSHI, SUSHI_ADDRESS, Token } from '@sushiswap/currency'
 import { NotificationData } from '@sushiswap/ui13/components/toast'
 import { BigNumber } from 'ethers'
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
-import { erc20ABI, useAccount, useContractReads } from 'wagmi'
+import { Address, erc20ABI, useAccount, useContractReads } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import {
@@ -61,14 +61,14 @@ export const useMasterChef: UseMasterChef = ({
       return [
         {
           chainId: ChainId.ETHEREUM,
-          address: SUSHI_ADDRESS[chainId],
+          address: SUSHI_ADDRESS[chainId] as Address,
           abi: erc20ABI,
           functionName: 'balanceOf',
-          args: [chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]],
+          args: [(chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]) as Address],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
-          address: chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId],
+          address: (chef === Chef.MASTERCHEF ? MASTERCHEF_ADDRESS[chainId] : MASTERCHEF_V2_ADDRESS[chainId]) as Address,
           abi: [
             chef === Chef.MASTERCHEF
               ? ({
@@ -115,11 +115,11 @@ export const useMasterChef: UseMasterChef = ({
                 } as const),
           ] as const,
           functionName: 'userInfo',
-          args: [BigNumber.from(pid), address],
+          args: [BigNumber.from(pid), address as Address],
         } as const,
         {
           chainId: ChainId.ETHEREUM,
-          address: MASTERCHEF_V2_ADDRESS[chainId],
+          address: MASTERCHEF_V2_ADDRESS[chainId] as Address,
           abi: [
             {
               inputs: [
@@ -133,7 +133,7 @@ export const useMasterChef: UseMasterChef = ({
             },
           ] as const,
           functionName: 'pendingSushi',
-          args: [BigNumber.from(pid), address],
+          args: [BigNumber.from(pid), address as Address],
         } as const,
       ]
     }
@@ -142,14 +142,14 @@ export const useMasterChef: UseMasterChef = ({
       return [
         {
           chainId,
-          address: SUSHI_ADDRESS[chainId],
+          address: SUSHI_ADDRESS[chainId as keyof typeof SUSHI_ADDRESS] as Address,
           abi: erc20ABI,
           functionName: 'balanceOf',
-          args: [MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS]],
+          args: [MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS] as Address],
         } as const,
         {
           chainId,
-          address: MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS],
+          address: MINICHEF_ADDRESS[chainId as keyof typeof MINICHEF_ADDRESS] as Address,
           abi: [
             {
               inputs: [
@@ -166,7 +166,7 @@ export const useMasterChef: UseMasterChef = ({
             } as const,
           ] as const,
           functionName: 'userInfo',
-          args: [BigNumber.from(pid), address],
+          args: [BigNumber.from(pid), address as Address],
         } as const,
       ] as const
     }
@@ -182,8 +182,6 @@ export const useMasterChef: UseMasterChef = ({
     enabled: contracts.length > 0 && enabled,
   })
 
-  // console.log({ data })
-
   const [sushiBalance, balance, pendingSushi] = useMemo(() => {
     const _sushiBalance = data?.[0] ? data?.[0] : undefined
     const _balance = data?.[1]
@@ -196,11 +194,11 @@ export const useMasterChef: UseMasterChef = ({
       : undefined
     const _pendingSushi = data?.[2] ? data?.[2] : undefined
     const balance = Amount.fromRawAmount(token, _balance ? _balance.toString() : 0)
-    const pendingSushi = SUSHI[chainId]
-      ? Amount.fromRawAmount(SUSHI[chainId], _pendingSushi ? _pendingSushi.toString() : 0)
+    const pendingSushi = SUSHI[chainId as keyof typeof SUSHI]
+      ? Amount.fromRawAmount(SUSHI[chainId as keyof typeof SUSHI], _pendingSushi ? _pendingSushi.toString() : 0)
       : undefined
-    const sushiBalance = SUSHI[chainId]
-      ? Amount.fromRawAmount(SUSHI[chainId], _sushiBalance ? _sushiBalance.toString() : 0)
+    const sushiBalance = SUSHI[chainId as keyof typeof SUSHI]
+      ? Amount.fromRawAmount(SUSHI[chainId as keyof typeof SUSHI], _sushiBalance ? _sushiBalance.toString() : 0)
       : undefined
     return [sushiBalance, balance, pendingSushi]
   }, [chainId, data, token])

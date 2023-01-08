@@ -59,7 +59,7 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
         showBackground
           ? 'bg-gray-200/70 dark:bg-slate-900 dark:border-slate-200/5 border-gray-300/70 backdrop-blur-md backdrop-saturate-[3]'
           : 'border-transparent',
-        'fixed flex items-center left-0 right-0 top-0 z-[1070] border-b transition-all',
+        'sticky flex items-center top-0 z-[1070] border-b transition-all',
         className
       )}
     >

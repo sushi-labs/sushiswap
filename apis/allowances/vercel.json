@@ -1,0 +1,14 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/v0/:chainId/:owner/:spender", "destination": "/api/v0/:chainId/:owner/:spender" }
+  ]
+}

@@ -15,20 +15,6 @@ query Tokens($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: B
   }
 }
 
-query PolygonTokens($first: Int = 1000, $skip: Int = 0, $where: Polygon_Token_filter, $block: Polygon_Block_height) {
-  tokens: Polygon_tokens(first: $first, skip: $skip, where: $where, block: $block) {
-    id
-    symbol
-    decimals
-    liquidity
-    derivedETH
-  }
-
-  bundle: Polygon_bundle(id: 1, block: $block) {
-    nativePrice: ethPrice
-  }
-}
-
 query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
   pairs(first: $first, skip: $skip, where: $where, block: $block) {
     id
@@ -39,20 +25,6 @@ query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Blo
 
   bundle(id: 1, block: $block) {
     nativePrice
-  }
-}
-
-query PolygonPairs($first: Int = 1000, $skip: Int = 0, $where: Polygon_Pair_filter, $block: Polygon_Block_height) {
-  pairs: Polygon_pairs(first: $first, skip: $skip, where: $where, block: $block) {
-    id
-    liquidity: totalSupply
-    volumeUSD
-    liquidityUSD: reserveUSD
-    liquidityNative: trackedReserveETH
-  }
-
-  bundle: Polygon_bundle(id: 1, block: $block) {
-    nativePrice: ethPrice
   }
 }
 
@@ -79,5 +51,26 @@ query MiniChefRewarders(
     id
     rewardToken
     rewardPerSecond
+  }
+}
+query LatestBlock {
+  blocks(first: 1, orderBy: number, orderDirection: desc) {
+    id
+    number
+    timestamp
+  }
+}
+
+query Blocks(
+  $first: Int = 1
+  $skip: Int = 0
+  $where: Block_filter
+  $orderBy: Block_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+) {
+  blocks(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection) {
+    id
+    number
+    timestamp
   }
 }

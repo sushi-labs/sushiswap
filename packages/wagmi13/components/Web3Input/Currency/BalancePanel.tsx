@@ -1,12 +1,13 @@
 'use client'
 
 import { CreditCardIcon } from '@heroicons/react/20/solid'
-import { Amount, Type } from '@sushiswap/currency'
+import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import React, { FC, useCallback } from 'react'
 
 import { CurrencyInputProps } from './index'
+import { JSBI } from '@sushiswap/math'
 
 type BalancePanel = Pick<
   CurrencyInputProps,
@@ -16,6 +17,8 @@ type BalancePanel = Pick<
   account: string | undefined
   balance: Record<FundSource, Amount<Type>> | undefined
 }
+
+const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .01 ETH
 
 export const BalancePanel: FC<BalancePanel> = ({
   id,
@@ -28,8 +31,16 @@ export const BalancePanel: FC<BalancePanel> = ({
   const [big, portion] = (balance ? `${balance?.[fundSource]?.toSignificant(6)}` : '0.00').split('.')
 
   const onClick = useCallback(() => {
-    if (onChange) {
-      onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')
+    if (onChange && balance?.[fundSource]?.greaterThan(0)) {
+      if (balance?.[fundSource].currency.isNative && balance?.[fundSource].greaterThan(MIN_NATIVE_CURRENCY_FOR_GAS)) {
+        const hundred = Amount.fromRawAmount(
+          Native.onChain(balance[fundSource].currency.chainId),
+          MIN_NATIVE_CURRENCY_FOR_GAS
+        )
+        onChange(balance[fundSource].subtract(hundred).toFixed())
+      } else {
+        onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')
+      }
     }
   }, [balance, fundSource, onChange])
 

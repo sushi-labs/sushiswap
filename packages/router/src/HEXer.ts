@@ -79,7 +79,7 @@ export class HEXer {
   }
 
   address(addr: string): HEXer {
-    if (addr.length > 42 || addr == 'RouteProcessor') {
+    if (addr.length > 42 || addr === 'RouteProcessor') {
       throw new Error('Wrong address: ' + addr)
     }
     // 0xabcd => 0000abcd
@@ -101,9 +101,8 @@ export class HEXer {
 
   bytes(data: string): HEXer {
     if (data.length % 2 != 0) {
-      throw new Error('Wrong hex data length: ' + data.length)
+      throw new Error('Wrong bytes length: ' + data.length)
     }
-
     if (data.startsWith('0x')) data = data.slice(2)
     this.uint(data.length / 2)
     this.hex += data

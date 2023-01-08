@@ -1,6 +1,7 @@
 import { bentoBoxV1Abi, constantProductPoolAbi, erc20Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { BridgeBento, ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { BigNumber, Contract, ethers } from 'ethers'
 

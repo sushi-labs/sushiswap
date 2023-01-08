@@ -5,10 +5,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 export const useRemoveCustomToken = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    // TODO why ts error?
-    // @ts-ignore
     mutationKey: ['customTokens'],
-    mutationFn: (currency: Token) => {
+    mutationFn: async (currency: Token) => {
       queryClient.setQueryData<Record<string, Token>>(['customTokens'], (prevData) => {
         if (!prevData) return {}
         return Object.entries(prevData).reduce<Record<string, Token>>((acc, [k, v]) => {

@@ -9,7 +9,7 @@ export const FailedMarkIcon = (props: React.ComponentProps<'svg'>) => {
         strokeDasharray={1000}
         strokeDashoffset={0}
         stroke="currentColor"
-        strokeWidth="8"
+        strokeWidth="3"
         strokeLinecap="round"
         cx="65.1"
         cy="65.1"
@@ -21,7 +21,7 @@ export const FailedMarkIcon = (props: React.ComponentProps<'svg'>) => {
         strokeDashoffset={1000}
         fill="none"
         stroke="currentColor"
-        strokeWidth="8"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
         x1="38.4"
@@ -35,7 +35,7 @@ export const FailedMarkIcon = (props: React.ComponentProps<'svg'>) => {
         strokeDashoffset={1000}
         fill="none"
         stroke="currentColor"
-        strokeWidth="8"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
         x1="91.8"
