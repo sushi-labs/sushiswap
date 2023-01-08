@@ -1,6 +1,6 @@
 'use client'
 
-import { ChainId, chains } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, SUSHI, Token, Type, USDC, USDT } from '@sushiswap/currency'
 import { useAddCustomToken, useBalances } from '@sushiswap/react-query'
 import { useTokens } from '@sushiswap/react-query'
@@ -134,7 +134,7 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                     <div className="flex flex-col items-center justify-center gap-1">
                       <span className="text-xs flex italic text-slate-500">No tokens found on</span>
                       <span className="text-xs font-medium flex gap-1 italic text-slate-500">
-                        <NetworkIcon width={14} height={14} chainId={chainId} /> {chains[chainId].name}
+                        <NetworkIcon width={14} height={14} chainId={chainId} /> {chainName[chainId]}
                       </span>
                     </div>
                   </div>
