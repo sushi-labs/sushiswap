@@ -7,13 +7,11 @@ import {
   SUSHI,
   tryParseAmount,
   Type,
-  isShortCurrencyNameSupported,
-  ShortCurrencyName,
   isShortCurrencyName,
   currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useLayoutEffect, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 
 interface SwapState {

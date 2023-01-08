@@ -22,6 +22,7 @@ export default function Page({
   }
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
+  // zod parse params immediately?
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = params
   console.log({ fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient, searchParams })
 
