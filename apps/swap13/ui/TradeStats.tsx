@@ -60,7 +60,7 @@ export const TradeStats: FC = () => {
           <div className="flex flex-col justify-end">
             <span className="text-xl font-semibold text-gray-900 dark:text-slate-100">
               {isLoading ? (
-                <Skeleton.Box className="h-[20px] my-[4px] w-full rounded-md" />
+                <Skeleton.Box className="h-[20px] my-[4px] w-[60px] rounded-md" />
               ) : (
                 `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${token1.symbol}`
               )}
