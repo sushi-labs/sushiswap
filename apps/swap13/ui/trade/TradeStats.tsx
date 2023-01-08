@@ -1,15 +1,13 @@
 'use client'
 
 import { Transition } from '@headlessui/react'
-import { formatNumber, formatPercent, shortenAddress } from '@sushiswap/format'
+import { shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
 import React, { FC } from 'react'
 
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import numeral from 'numeral'
-import { Button } from '@sushiswap/ui13/components/button'
 
 export const TradeStats: FC = () => {
   const { value, token0, token1, recipient } = useSwapState()
@@ -53,7 +51,7 @@ export const TradeStats: FC = () => {
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Transaction cost</span>
+          <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {isLoading ? <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" /> : `~$${trade?.gasSpent ?? '0.00'}`}
           </span>

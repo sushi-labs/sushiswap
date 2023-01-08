@@ -2,7 +2,7 @@
 
 import { Popover } from '@headlessui/react'
 import { ArrowTrendingUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
-import chains, { chainName } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui13/components/button'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui13/components/networkselector'
@@ -14,7 +14,6 @@ import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { usePrices } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
-import { formatNumber, formatUSD } from '@sushiswap/format'
 
 export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)

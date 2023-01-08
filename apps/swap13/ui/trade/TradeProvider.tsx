@@ -11,10 +11,11 @@ import {
   currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useLayoutEffect, useMemo, useReducer } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 import { z } from 'zod'
 import { nativeCurrencyIds } from '@sushiswap/currency'
+import { useRouter } from 'next/navigation'
 
 const schema = z.object({
   fromChainId: z.coerce
@@ -29,7 +30,7 @@ const schema = z.object({
     .gte(0)
     .lte(2 ** 256)
     .default(ChainId.ETHEREUM),
-  fromCurrencyId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
+  fromCurrencyId: z.string().default('NATIVE'),
   toCurrencyId: z.string().default('SUSHI'),
   amount: z.optional(z.coerce.bigint()),
   recipient: z.optional(z.string()),
@@ -153,19 +154,21 @@ interface SwapProviderProps {
 }
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
+  const router = useRouter()
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = schema.parse(params)
   const { address } = useAccount()
   const { chain } = useNetwork()
+
   const [state, dispatch] = useReducer(reducer, {
     review: false,
     recipient: recipient ? recipient : address ? address : undefined,
-    appType: fromChainId && toChainId && fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
+    appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
     token0: isShortCurrencyName(fromChainId, fromCurrencyId)
       ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
-      : Native.onChain(ChainId.ETHEREUM),
+      : Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM),
     token1: isShortCurrencyName(toChainId, toCurrencyId)
       ? currencyFromShortCurrencyName(toChainId, toCurrencyId)
-      : SUSHI[ChainId.ETHEREUM],
+      : SUSHI[toChainId && toChainId in SUSHI ? (toChainId as keyof typeof SUSHI) : ChainId.ETHEREUM],
     network0: fromChainId,
     network1: toChainId,
     value: amount ? amount.toString() : '',
@@ -173,7 +176,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
       amount ? amount.toString() : undefined,
       isShortCurrencyName(fromChainId, fromCurrencyId)
         ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
-        : Native.onChain(ChainId.ETHEREUM)
+        : Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
     ),
   })
 
@@ -203,10 +206,10 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
 
   // Set network0 to connected network if no chainId queryParam is present
   // useLayoutEffect(() => {
-  //   if (chain?.id && !fromChainId) {
-  //     api.setNetwork0(chain?.id)
+  //   if (chain?.id && (!params?.fromChainId || !!params?.toChainId)) {
+  //     router.push(`/swap13/${chain.id}/${chain.id}`)
   //   }
-  // }, [api, chain?.id, fromChainId])
+  // }, [router, chain?.id, params])
 
   return (
     <APIContext.Provider value={api}>

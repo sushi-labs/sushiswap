@@ -3,10 +3,10 @@
 import { tryParseAmount } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui13'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import React, { FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 
-import { usePrices } from '../../../hooks'
-import { CurrencyInputProps } from './index'
+import { usePrices } from '../../../hooks/usePrices'
+import { CurrencyInputProps } from './CurrencyInput'
 
 type PricePanel = Pick<CurrencyInputProps, 'loading' | 'currency' | 'value' | 'usdPctChange'> & {
   error?: string

@@ -1,3 +1,5 @@
+'use client'
+
 import React, { FC, useEffect, useState } from 'react'
 import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
