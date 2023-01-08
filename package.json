@@ -34,7 +34,7 @@
     "enable-remote-caching": "turbo link",
     "format": "prettier --write \"**/*.{ts,cts,mts,tsx,md,js,cjs,mjs}\"",
     "formatold": "prettier --write \"**/*.{ts,tsx,md,js,mjs}\"",
-    "generate": "dotenv -- turbo run generate",
+    "generate": "dotenv -- turbo run generate --filter=!price-script",
     "generate:ci": "dotenv -- turbo run generate --filter=[HEAD^1]",
     "lint": "turbo run lint --parallel",
     "lint-apps": "turbo run lint --filter={./apps/*}[HEAD^1]...",

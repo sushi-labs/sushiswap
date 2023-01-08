@@ -20,11 +20,11 @@
   ],
   "pipeline": {
     "db:init": {
-      "outputs": ["prisma/**"],
+      "outputs": ["prisma/**/*"],
       "cache": false
     },
     "db:pull": {
-      "outputs": ["prisma/**"],
+      "outputs": ["prisma/**/*"],
       "dependsOn": ["db:init"],
       "cache": false,
       "env": ["DATABASE_URL"]
@@ -42,7 +42,7 @@
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": ["coverage/**"],
+      "outputs": ["coverage/**/*"],
       "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL", "PLAYWRIGHT_URL", "NEXT_PUBLIC_PLAYWRIGHT_ENABLED", "CHAIN_ID"]
     },
     "lint": {
@@ -54,20 +54,20 @@
       "cache": false
     },
     "generate": {
-      "outputs": [".graphclient/**", ".mesh/**", "typechain/**", "artifacts/**", "cache/**"]
+      "outputs": [".graphclient/**/*", ".mesh/**/*", "typechain/**/*", "artifacts/**/*", "cache/**/*"]
     },
     "build": {
       "outputs": [
-        ".vercel/**",
-        ".next/**",
-        ".graphclient/**",
-        ".mesh/**",
-        "dist/**",
-        "typechain/**",
-        "artifacts/**",
-        "cache/**",
-        "public/**",
-        "storybook-static/**"
+        ".vercel/**/*",
+        ".next/**/*",
+        ".graphclient/**/*",
+        ".mesh/**/*",
+        "dist/**/*",
+        "typechain/**/*",
+        "artifacts/**/*",
+        "cache/**/*",
+        "public/**/*",
+        "storybook-static/**/*"
       ],
       "dependsOn": ["^db:generate", "^build", "db:generate", "generate"],
       "env": [
@@ -92,6 +92,7 @@
     },
     "check": {
       "dependsOn": [
+        "//#generate",
         "//#build-config", 
         "//#build-packages", 
         "//#build-protocols"
@@ -116,31 +117,40 @@
     },
     "node": {
       "dependsOn": ["^build"],
-      "outputs": ["deployments/**"]
+      "outputs": ["deployments/**/*"]
     },
     "server": {
       "dependsOn": ["^build"]
     },
     "build-blog": {
-      "outputs": [".mesh/**", ".next/**", ".turbo/**", "public/**"],
+      "outputs": [".mesh/**/*", ".next/**/*", "public/**/*"],
       "dependsOn": ["^build", "generate"],
       "env": ["NEXT_PUBLIC_STRAPI_API_URL", "STRAPI_PREVIEW_SECRET"]
     },
     "build-furo": {
-      "outputs": [".next/**", "public/**"],
+      "outputs": [".next/**/*", "public/**/*"],
       "dependsOn": ["^build", "generate"]
     },
     "build-graphql": {
-      "outputs": [".graphclient/**", ".mesh/**"],
+      "outputs": [".graphclient/**/*", ".mesh/**/*"],
       "dependsOn": ["^build", "generate"]
     },
     "build-protocol": {
-      "outputs": ["typechain/**", "artifacts/**", "cache/**"],
+      "outputs": ["typechain/**/*", "artifacts/**/*", "cache/**/*"],
       "dependsOn": ["^build", "generate"]
     },
     "build-subgraph": {
-      "outputs": ["build/**", "generated/**"],
+      "outputs": ["build/**/*", "generated/**/*"],
       "dependsOn": ["^build", "generate"]
+    },
+    "//#generate": {
+      "dependsOn": [],
+      "outputs": [
+        "typechain/**/*", 
+        ".graphclient/**/*", 
+        ".mesh/**/*"
+      ],
+      "inputs": []
     },
     "//#build-config": {
       "dependsOn": [],
@@ -156,7 +166,7 @@
       "inputs": []
     },
     "//#build-protocols": {
-      "outputs": ["typechain/**", "artifacts/**", "cache/**"],
+      "outputs": ["typechain/**/*", "artifacts/**/*", "cache/**/*"],
       "dependsOn": []
     }
   }
