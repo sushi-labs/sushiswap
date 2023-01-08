@@ -113,6 +113,7 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
         token1: state.token0,
         network0: state.network1,
         network1: state.network0,
+        valueAsAmount: tryParseAmount(state.value, state.token1),
       }
   }
 }
