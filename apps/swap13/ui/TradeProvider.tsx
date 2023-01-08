@@ -13,6 +13,29 @@ import {
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
+import { z } from 'zod'
+import { nativeCurrencyIds } from '@sushiswap/currency'
+
+const schema = z.object({
+  fromChainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256)
+    .default(ChainId.ETHEREUM),
+  toChainId: z.coerce
+    .number()
+    .int()
+    .gte(0)
+    .lte(2 ** 256)
+    .default(ChainId.ETHEREUM),
+  fromCurrencyId: z.string().default(nativeCurrencyIds[ChainId.ETHEREUM]),
+  toCurrencyId: z.string().default('SUSHI'),
+  amount: z.coerce.bigint(),
+  recipient: z.optional(z.string()),
+})
+
+type Params = z.infer<typeof schema>
 
 interface SwapState {
   review: boolean
@@ -129,29 +152,27 @@ interface SwapProviderProps {
   }
 }
 
-export const SwapProvider: FC<SwapProviderProps> = ({
-  children,
-  params: { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient },
-}) => {
+export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
+  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = schema.parse(params)
   const { address } = useAccount()
   const { chain } = useNetwork()
   const [state, dispatch] = useReducer(reducer, {
     review: false,
     recipient: recipient ? recipient : address ? address : undefined,
-    appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
-    token0: isShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
-      ? currencyFromShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
+    appType: fromChainId && toChainId && fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
+    token0: isShortCurrencyName(fromChainId, fromCurrencyId)
+      ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
       : Native.onChain(ChainId.ETHEREUM),
-    token1: isShortCurrencyName(parseInt(toChainId), toCurrencyId)
-      ? currencyFromShortCurrencyName(parseInt(toChainId), toCurrencyId)
+    token1: isShortCurrencyName(toChainId, toCurrencyId)
+      ? currencyFromShortCurrencyName(toChainId, toCurrencyId)
       : SUSHI[ChainId.ETHEREUM],
-    network0: fromChainId ? parseInt(fromChainId) : ChainId.ETHEREUM,
-    network1: toChainId ? parseInt(toChainId) : ChainId.ETHEREUM,
-    value: amount ? amount : '',
+    network0: fromChainId,
+    network1: toChainId,
+    value: amount ? amount.toString() : '',
     valueAsAmount: tryParseAmount(
-      amount,
-      isShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
-        ? currencyFromShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
+      amount.toString(),
+      isShortCurrencyName(fromChainId, fromCurrencyId)
+        ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
         : Native.onChain(ChainId.ETHEREUM)
     ),
   })
