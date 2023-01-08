@@ -8,11 +8,11 @@ import React, { FC, useMemo } from 'react'
 import { usePrices } from '../../../hooks'
 import { CurrencyInputProps } from './index'
 
-type PricePanel = Pick<CurrencyInputProps, 'currency' | 'value' | 'usdPctChange'> & {
+type PricePanel = Pick<CurrencyInputProps, 'loading' | 'currency' | 'value' | 'usdPctChange'> & {
   error?: string
 }
 
-export const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange, error }) => {
+export const PricePanel: FC<PricePanel> = ({ loading, currency, value, usdPctChange, error }) => {
   const { data: tokenPrices, isLoading } = usePrices({
     chainId: currency?.chainId,
   })
@@ -22,10 +22,10 @@ export const PricePanel: FC<PricePanel> = ({ currency, value, usdPctChange, erro
     '.'
   )
 
-  if (isLoading)
+  if (loading || isLoading)
     return (
-      <div className="h-[24px] w-[60px] flex items-center">
-        <Skeleton.Box className="bg-white/[0.06] h-[12px] w-full" />
+      <div className="h-[36px] w-[60px] flex items-center">
+        <Skeleton.Box className="h-[24px] w-full" />
       </div>
     )
 

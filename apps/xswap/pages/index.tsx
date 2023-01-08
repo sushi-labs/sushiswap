@@ -15,7 +15,6 @@ import {
   STARGATE_CONFIRMATION_SECONDS,
   StargateChainId,
 } from '@sushiswap/stargate'
-import { SushiXSwap as SushiXSwapContract } from '@sushiswap/sushixswap/typechain'
 import {
   App,
   Button,
@@ -490,7 +489,7 @@ const Widget: FC<Swap> = ({
     setIsWritePending(true)
 
     const sushiXSwap = new SushiXSwap({
-      contract: contract as SushiXSwapContract,
+      contract,
       srcToken,
       dstToken,
       srcTrade,
@@ -693,7 +692,7 @@ const Widget: FC<Swap> = ({
       const srcShare = srcAmount.toShare(srcInputCurrencyRebase)
 
       const sushiXSwap = new SushiXSwap({
-        contract: contractWithProvider as SushiXSwapContract,
+        contract: contractWithProvider,
         srcToken,
         dstToken,
         srcTrade,

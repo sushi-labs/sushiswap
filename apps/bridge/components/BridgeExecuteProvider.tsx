@@ -21,7 +21,7 @@ export const BridgeExecuteProvider: FC<BridgeExecuteProvider> = ({ approved, chi
   const [, { createInlineNotification }] = useNotifications(address)
   const { setSourceTx, setSignature, setTimestamp, setGasFee } = useBridgeStateActions()
   const { id, signature, srcChainId, amount, srcToken, dstToken } = useBridgeState()
-  const contract = useSushiXSwapContractWithProvider(srcChainId) as SushiXSwap
+  const contract = useSushiXSwapContractWithProvider(srcChainId)
   const srcInputCurrencyRebase = useBentoBoxTotal(srcChainId, srcToken)
 
   const onSettled = useCallback(

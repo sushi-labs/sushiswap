@@ -1,4 +1,4 @@
-import bentoBoxExports from '@sushiswap/bentobox/exports.json'
+import bentoBoxExports from '@sushiswap/bentobox/exports'
 import { WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'

@@ -31,23 +31,23 @@ export function getProvider({ chains = testChains, chainId }: { chains?: Chain[]
   return Object.assign(provider, { chains })
 }
 
-class EthersWebSocketProviderWrapper extends providers.WebSocketProvider {
-  toJSON() {
-    return `<WebSocketProvider network={${this.network.chainId}} />`
-  }
-}
+// class EthersWebSocketProviderWrapper extends providers.WebSocketProvider {
+//   toJSON() {
+//     return `<WebSocketProvider network={${this.network.chainId}} />`
+//   }
+// }
 
-export function getWebSocketProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
-  const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
-  const url = foundryMainnet.rpcUrls.default.http[0]!.replace('http', 'ws')
-  const webSocketProvider = Object.assign(new EthersWebSocketProviderWrapper(url, getNetwork(chain)), { chains })
-  // Clean up WebSocketProvider immediately
-  // so handle doesn't stay open in test environment
-  webSocketProvider?.destroy().catch(() => {
-    return
-  })
-  return webSocketProvider
-}
+// export function getWebSocketProvider({ chains = testChains, chainId }: { chains?: Chain[]; chainId?: number } = {}) {
+//   const chain = testChains.find((x) => x.id === chainId) ?? foundryMainnet
+//   const url = foundryMainnet.rpcUrls.default.http[0]!.replace('http', 'ws')
+//   const webSocketProvider = Object.assign(new EthersWebSocketProviderWrapper(url, getNetwork(chain)), { chains })
+//   // Clean up WebSocketProvider immediately
+//   // so handle doesn't stay open in test environment
+//   webSocketProvider?.destroy().catch(() => {
+//     return
+//   })
+//   return webSocketProvider
+// }
 
 // Default accounts from Anvil
 export const accounts = [

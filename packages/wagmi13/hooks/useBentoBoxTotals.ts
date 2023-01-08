@@ -65,7 +65,7 @@ export const useBentoBoxTotals: UseBentoBoxTotals = (chainId, currencies, config
     contracts,
     watch: !(typeof config?.enabled !== undefined && !config?.enabled),
     keepPreviousData: true,
-    enabled: Boolean(getBentoBoxContractConfig(chainId).address !== AddressZero),
+    enabled: Boolean((getBentoBoxContractConfig(chainId).address as string) !== AddressZero),
   })
 
   return useMemo(() => {

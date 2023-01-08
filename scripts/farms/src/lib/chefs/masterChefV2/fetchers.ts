@@ -1,9 +1,9 @@
-import { masterChefV2Abi } from '@sushiswap/abi/dist'
+import { masterChefV2Abi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { readContract, readContracts } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
-import { MASTERCHEF_V2_ADDRESS } from '../../../config'
+import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
 
 export async function getPoolLength() {
   const poolLengthCall = {
@@ -93,7 +93,7 @@ export async function getRewarders(poolLength: number) {
 }
 
 export async function getRewarderInfos() {
-  const { getBuiltGraphSDK } = await import('../../../../.graphclient')
+  const { getBuiltGraphSDK } = await import('../../../../.graphclient/index.js')
   const sdk = getBuiltGraphSDK()
 
   const { rewarders } = await sdk.MasterChefV2Rewarders({

@@ -6,11 +6,10 @@ import fetch from 'node-fetch'
 import { z } from 'zod'
 import zip from 'lodash.zip'
 
-const { provider, webSocketProvider } = configureChains(allChains, allProviders)
+const { provider } = configureChains(allChains, allProviders)
 createClient({
   autoConnect: true,
   provider,
-  webSocketProvider,
 })
 
 const querySchema = z.object({
@@ -20,7 +19,7 @@ const querySchema = z.object({
     .gte(0)
     .lte(2 ** 256),
   address: z.coerce.string(),
-  // tokens: z.array(z.coerce.string()),
+  tokens: z.array(z.coerce.string()).optional(),
 })
 
 const tokensSchema = z.array(z.coerce.string())
@@ -33,6 +32,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const res = await fetch(`https://tokens.sushi.com/v0/${chainId}/addresses`)
   const data = await res.json()
   const tokens = tokensSchema.parse(data)
+
   const balances = await readContracts({
     allowFailure: true,
     contracts: tokens.map(
@@ -46,6 +46,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
         } as const)
     ),
   })
+
   const zipped = zip(tokens, balances)
   return response
     .status(200)

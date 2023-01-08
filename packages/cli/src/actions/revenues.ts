@@ -190,7 +190,10 @@ async function processRevenues(lastBlocks: Block[], pastBlocks: Block[], sushiPr
         //process spending
         if (pair.farm) {
           const sushiIncentive = pair.farm.incentives.find((incentive) => {
-            return incentive.rewardToken.address.toLowerCase() == SUSHI_ADDRESS[pair.chainId].toLowerCase()
+            return (
+              incentive.rewardToken.address.toLowerCase() ==
+              SUSHI_ADDRESS[pair.chainId as keyof typeof SUSHI_ADDRESS].toLowerCase()
+            )
           })
           if (sushiIncentive) {
             spent = Number(sushiIncentive.rewardPerDay) * Number(sushiPriceUSD) * days

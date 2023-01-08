@@ -34,7 +34,6 @@ describe('HEXer', () => {
     it('should return the address without 0x prefix', () => {
       expect(HEXER.hexData(address).toString()).toEqual(address.slice(2))
     })
-
   })
 
   describe('#toHexString', () => {
@@ -202,7 +201,6 @@ describe('HEXer', () => {
   })
 
   describe('#bool', () => {
-
     it('should return hexed value 0 + padding', () => {
       expect(HEXER.bool(false).toString()).toEqual('00')
     })
@@ -210,6 +208,5 @@ describe('HEXer', () => {
     it('should return hexed value 1 + padding', () => {
       expect(HEXER.bool(true).toString()).toEqual('01')
     })
-
   })
 })

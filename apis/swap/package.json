@@ -15,13 +15,13 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "apis/swap"
+    "directory": "apis/tines"
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "scripts": {
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
     "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
@@ -29,12 +29,12 @@
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
-    "@sushiswap/router": "workspace:*",
     "@sushiswap/route-processor": "workspace:*",
+    "@sushiswap/router": "workspace:*",
     "@sushiswap/tines": "workspace:*",
     "@vercel/node": "2.8.2",
-    "ethers": "^5.7.0",
     "ethereum-multicall": "2.15.0",
+    "ethers": "^5.7.0",
     "node-fetch": "2.x",
     "zod": "3.20.2"
   },

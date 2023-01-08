@@ -42,6 +42,11 @@ sources:
   #         includeTypes: true
   #     - autoPagination:
   #         validateSchema: true
+  - name: Blocks
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+        retry: 3
 
 documents:
   - ./query.graphql

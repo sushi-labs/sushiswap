@@ -8,7 +8,7 @@ import { CellProps } from './types'
 export const PairRewardsCell: FC<CellProps> = ({ row }) => {
   return (
     <Currency.IconList iconHeight={ICON_SIZE} iconWidth={ICON_SIZE}>
-      <Currency.Icon currency={SUSHI[row.chainId]} />
+      <Currency.Icon currency={SUSHI[row.chainId as keyof typeof SUSHI]} />
     </Currency.IconList>
   )
 }
