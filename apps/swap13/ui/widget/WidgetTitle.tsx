@@ -11,7 +11,7 @@ import { AppType } from '@sushiswap/ui13/types'
 import React, { useCallback, useMemo, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { useSwapActions, useSwapState } from '../TradeProvider'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { usePrices } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
 import { formatNumber, formatUSD } from '@sushiswap/format'

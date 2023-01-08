@@ -6,7 +6,7 @@ import { useSlippageTolerance } from '@sushiswap/react-query'
 import React, { FC } from 'react'
 
 import { useSwapState } from './TradeProvider'
-import { useTrade } from '../lib/useTrade'
+import { useTrade } from '../../lib/useTrade'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import numeral from 'numeral'
 import { Button } from '@sushiswap/ui13/components/button'

@@ -5,7 +5,7 @@ import { Button } from '@sushiswap/ui13/components/button'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { FC } from 'react'
 
-import { useSwapActions, useSwapState } from '../TradeProvider'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 
 export const SwitchAppType: FC = () => {
   const { appType } = useSwapState()

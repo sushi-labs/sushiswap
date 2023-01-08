@@ -26,7 +26,7 @@ const nextConfig = {
         destination: '/swap13',
         permanent: true,
         basePath: false,
-      },
+      }
     ]
   },
 }

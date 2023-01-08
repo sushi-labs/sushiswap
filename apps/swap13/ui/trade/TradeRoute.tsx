@@ -2,7 +2,7 @@
 
 import { Transition } from '@headlessui/react'
 import { FC } from 'react'
-import { useTrade } from '../lib/useTrade'
+import { useTrade } from '../../lib/useTrade'
 
 export const TradeRoute: FC = () => {
   const { data: trade } = useTrade()
