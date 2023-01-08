@@ -28,7 +28,7 @@ const schema = z.object({
   toTokenId: z.string().default('SUSHI'),
   gasPrice: z.coerce.number().int().gte(1),
   amount: z.coerce.bigint(),
-  to: z.string(),
+  to: z.optional(z.string()),
 })
 
 export function getRouteProcessorAddressForChainId(chainId: ChainId) {
@@ -82,7 +82,6 @@ const tokenSchema = z.object({
   symbol: z.string(),
   name: z.string(),
   decimals: z.coerce.number().int().gte(0),
-  to: z.string().optional(),
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
