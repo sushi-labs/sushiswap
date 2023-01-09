@@ -2,7 +2,7 @@ import { CreditCardIcon } from '@heroicons/react/20/solid'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import { FC, useCallback } from 'react'
+import { FC, memo, useCallback } from 'react'
 
 import { CurrencyInputProps } from './CurrencyInput'
 import { JSBI } from '@sushiswap/math'
@@ -18,14 +18,14 @@ type BalancePanel = Pick<
 
 const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .01 ETH
 
-export const BalancePanel: FC<BalancePanel> = ({
+export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   id,
   balance,
   onChange,
   disableMaxButton,
   fundSource = FundSource.WALLET,
   loading,
-}) => {
+}) {
   const [big, portion] = (balance ? `${balance?.[fundSource]?.toSignificant(6)}` : '0.00').split('.')
 
   const onClick = useCallback(() => {
@@ -64,4 +64,4 @@ export const BalancePanel: FC<BalancePanel> = ({
       </span>
     </button>
   )
-}
+})

@@ -70,7 +70,7 @@ export const TradeReviewDialog: FC = () => {
                   <a
                     target="_blank"
                     href={Chain.fromChainId(network0)?.getAccountUrl(recipient) ?? '#'}
-                    className="flex gap-2 items-center text-blue transition-all cursor-pointer"
+                    className="flex gap-2 items-center text-blue cursor-pointer"
                     rel="noreferrer"
                   >
                     {shortenAddress(recipient)}
