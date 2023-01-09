@@ -3,8 +3,14 @@ import { SUSHI } from '@sushiswap/currency'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MASTERCHEF_V2_ADDRESS } from '../../../config.js'
-import type { Farm } from '../../../types.js'
-import { divBigNumberToNumber, getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
+import type { ChefReturn, Farm } from '../../../types.js'
+import {
+  divBigNumberToNumber,
+  getAverageBlockTime,
+  getPairs,
+  getTokenBalancesOf,
+  getTokens,
+} from '../../common/index.js'
 import {
   getLpTokens,
   getPoolInfos,
@@ -15,10 +21,7 @@ import {
   getTotalAllocPoint,
 } from './fetchers.js'
 
-export async function getMasterChefV2(): Promise<{
-  chainId: ChainId
-  farms: Record<string, Farm>
-}> {
+export async function getMasterChefV2(): Promise<ChefReturn> {
   const [poolLength, totalAllocPoint, sushiPerBlock, rewarderInfos, averageBlockTime] = await Promise.all([
     getPoolLength(),
     getTotalAllocPoint(),
@@ -27,7 +30,9 @@ export async function getMasterChefV2(): Promise<{
     getAverageBlockTime(ChainId.ETHEREUM),
   ])
 
-  console.log(`MasterChefV2 - pools: ${poolLength}, sushiPerBlock: ${sushiPerBlock}, averageBlockTime: ${averageBlockTime}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`)
+  console.log(
+    `MasterChefV2 - pools: ${poolLength}, sushiPerBlock: ${sushiPerBlock}, averageBlockTime: ${averageBlockTime}, rewarderInfos: ${rewarderInfos.length}, totalAllocPoint: ${totalAllocPoint}`
+  )
 
   const [poolInfos, lpTokens, rewarders, tokens] = await Promise.all([
     getPoolInfos(poolLength.toNumber()),
