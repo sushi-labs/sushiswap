@@ -82,7 +82,7 @@ export function getAlchemyNetowrkForChainId(chainId: ChainId) {
 }
 
 // Declare a route
-server.get('/v0/swap', async (request) => {
+server.get('/v0', async (request) => {
 
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = querySchema.parse(request.query)
 
