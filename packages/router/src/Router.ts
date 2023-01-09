@@ -185,7 +185,7 @@ export class Router {
       //console.log(l.poolAddress, l.assumedAmountIn, l.assumedAmountOut)
     })
     const output = parseInt(route.amountOutBN.toString()) / Math.pow(10, toToken.decimals)
-    res += shiftPrimary + `Output: ${output} ${route.toToken.name}`
+    res += shiftPrimary + `Output: ${output} ${route.toToken.symbol}`
 
     return res
   }
@@ -211,7 +211,7 @@ export class Router {
           )
         }),
         `Output: ${this.currentBestRoute.amountOutBN.div(BigNumber.from(10).pow(this.toToken.decimals))} ${
-          this.toToken.name
+          this.toToken.symbol
         }`,
         `Price Impact: ${(Number(this.currentBestRoute.priceImpact) * 100).toFixed(2)}%`,
       ]
