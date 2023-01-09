@@ -12,7 +12,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
-import { usePrice, usePrices } from '@sushiswap/react-query'
+import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
 
 export const WidgetTitle = () => {

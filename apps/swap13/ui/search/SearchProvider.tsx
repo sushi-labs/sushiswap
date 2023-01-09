@@ -1,3 +1,5 @@
+'use client'
+
 import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react'
 
 import { SearchButton } from './SearchButton'

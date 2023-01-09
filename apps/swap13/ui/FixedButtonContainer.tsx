@@ -1,5 +1,3 @@
-'use client'
-
 import Container from '@sushiswap/ui13/components/Container'
 import { FC, ReactNode } from 'react'
 
