@@ -4,7 +4,7 @@ import type { SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MINICHEF_ADDRESS } from '../../../config.js'
-import type { Farm } from '../../../types.js'
+import type { ChefReturn, Farm } from '../../../types.js'
 import { divBigNumberToNumber, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
 import {
   getLpTokens,
@@ -16,9 +16,7 @@ import {
   getTotalAllocPoint,
 } from './fetchers.js'
 
-export async function getMinichef(
-  chainId: SushiSwapChainId | TridentChainId
-): Promise<{ chainId: ChainId; farms: Record<string, Farm> }> {
+export async function getMinichef(chainId: SushiSwapChainId | TridentChainId): Promise<ChefReturn> {
   try {
     const [poolLength, totalAllocPoint, sushiPerSecond, rewarderInfos, [{ derivedUSD: sushiPriceUSD }]] =
       await Promise.all([
@@ -143,6 +141,6 @@ export async function getMinichef(
     }
   } catch (e) {
     console.log(chainId, e)
-    return { chainId, farms: {} }
+    return { chainId, farms: null }
   }
 }

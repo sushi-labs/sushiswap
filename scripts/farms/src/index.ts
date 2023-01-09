@@ -28,6 +28,7 @@ export async function execute() {
     },
     ...minichefs,
   ]
+
   const totalFarms = combined.reduce((acc, { farms }) => acc + Object.keys(farms).length, 0)
   for (const combination of combined) {
     console.log(`Chain ID: ${combination.chainId}. Farms: ${Object.keys(combination.farms).length}`)
@@ -37,7 +38,9 @@ export async function execute() {
   await redis.hset(
     'farms',
     Object.fromEntries(
-      combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
+      combined
+        .filter(({ farms }) => farms !== null)
+        .map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
     )
   )
   console.log(`Finished updating farms`)

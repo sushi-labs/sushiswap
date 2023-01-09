@@ -3,16 +3,13 @@ import { SUSHI } from '@sushiswap/currency'
 import { daysInYear, secondsInDay } from 'date-fns'
 
 import { MASTERCHEF_ADDRESS } from '../../../config.js'
-import type { Farm } from '../../../types.js'
+import type { ChefReturn, Farm } from '../../../types.js'
 import { getAverageBlockTime, getPairs, getTokenBalancesOf, getTokens } from '../../common/index.js'
 import { getPoolInfos, getPoolLength, getTotalAllocPoint } from './fetchers.js'
 
 const SUSHI_PER_BLOCK = 100
 
-export async function getMasterChefV1(): Promise<{
-  chainId: ChainId
-  farms: Record<string, Farm>
-}> {
+export async function getMasterChefV1(): Promise<ChefReturn> {
   const [poolLength, totalAllocPoint, [{ derivedUSD: sushiPriceUSD }], averageBlockTime] = await Promise.all([
     getPoolLength(),
     getTotalAllocPoint(),
@@ -22,7 +19,9 @@ export async function getMasterChefV1(): Promise<{
 
   const blocksPerDay = averageBlockTime ? secondsInDay / averageBlockTime : 0
   const sushiPerDay = SUSHI_PER_BLOCK * blocksPerDay
-  console.log(`MasterChefV1 - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, averageBlockTime: ${averageBlockTime}, totalAllocPoint: ${totalAllocPoint}`)
+  console.log(
+    `MasterChefV1 - pools: ${poolLength}, sushiPerDay: ${sushiPerDay}, averageBlockTime: ${averageBlockTime}, totalAllocPoint: ${totalAllocPoint}`
+  )
 
   const poolInfos = await getPoolInfos(poolLength.toNumber())
 
@@ -37,7 +36,6 @@ export async function getMasterChefV1(): Promise<{
       ChainId.ETHEREUM
     ),
   ])
-
 
   return {
     chainId: ChainId.ETHEREUM,
