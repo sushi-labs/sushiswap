@@ -31,7 +31,6 @@ export default function Page({
         <Widget />
         <TradeStats />
         <TradeReviewDialog />
-        <TradeRoute />
         <SwapButton />
         {/*spacer for fixed positioned swap button */}
         <div className="h-[68px] w-full" />

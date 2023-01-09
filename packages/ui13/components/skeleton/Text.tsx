@@ -24,7 +24,7 @@ const STYLES = {
   'text-sm': 'h-5',
   'text-base': 'h-[22px]',
   'text-lg': 'h-6',
-  'text-xl': 'h-[26px]',
+  'text-xl': 'h-[28px]',
   'text-2xl': 'h-7',
   'text-3xl': 'h-[30px]',
   'text-4xl': 'h-8',
