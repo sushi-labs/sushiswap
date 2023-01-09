@@ -10,6 +10,7 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "jsx": "react"
   }
 }

@@ -1,46 +1,27 @@
 'use client'
 
-import { RadioGroup } from '@headlessui/react'
-import { Button } from '@sushiswap/ui13/components/button'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { FC } from 'react'
 
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { Tab } from '@sushiswap/ui13/components/tabs'
 
 export const SwitchAppType: FC = () => {
   const { appType } = useSwapState()
   const { setAppType } = useSwapActions()
 
   return (
-    <RadioGroup value={appType} onChange={setAppType} className="flex gap-2">
-      <RadioGroup.Option
-        as={Button}
-        variant={appType === AppType.Swap ? 'outlined' : 'empty'}
-        size="sm"
-        value={AppType.Swap}
-        color="default"
-        className={({ checked }: { checked: boolean }) =>
-          checked
-            ? 'text-gray-900 dark:text-slate-200'
-            : 'dark:text-slate-600 text-gray-400 hover:text-gray-900 hover:dark:text-white'
-        }
+    <div>
+      <Tab.Group
+        defaultIndex={0}
+        selectedIndex={appType === AppType.Swap ? 0 : 1}
+        onChange={(val) => setAppType(val === 0 ? AppType.Swap : AppType.xSwap)}
       >
-        {AppType.Swap}
-      </RadioGroup.Option>
-      <RadioGroup.Option
-        as={Button}
-        variant={appType === AppType.xSwap ? 'outlined' : 'empty'}
-        size="sm"
-        value={AppType.xSwap}
-        color="default"
-        className={({ checked }: { checked: boolean }) =>
-          checked
-            ? 'text-gray-900 dark:text-white'
-            : 'dark:text-slate-600 text-gray-400 hover:text-gray-900 hover:dark:text-white'
-        }
-      >
-        {AppType.xSwap}
-      </RadioGroup.Option>
-    </RadioGroup>
+        <Tab.List islandClassName="dark:!bg-slate-800" className="dark:!bg-white/[0.04]">
+          <Tab className="px-3 font-medium">Same Chain</Tab>
+          <Tab className="px-3 font-medium">Cross Chain</Tab>
+        </Tab.List>
+      </Tab.Group>
+    </div>
   )
 }
