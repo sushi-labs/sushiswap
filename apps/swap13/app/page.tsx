@@ -1,10 +1,10 @@
 import Container from '@sushiswap/ui13/components/Container'
 import React from 'react'
 
-import { SwapProvider } from '../ui/TradeProvider'
-import { TradeReviewDialog } from '../ui/TradeReviewDialog'
-import { TradeStats } from '../ui/TradeStats'
-import { TradeRoute } from '../ui/TradeRoute'
+import { SwapProvider } from '../ui/trade/TradeProvider'
+import { TradeReviewDialog } from '../ui/trade/TradeReviewDialog'
+import { TradeStats } from '../ui/trade/TradeStats'
+import { TradeRoute } from '../ui/trade/TradeRoute'
 import { SwapButton } from '../ui/widget/SwapButton'
 import { Widget } from '../ui/widget/Widget'
 
@@ -22,7 +22,6 @@ export default function Page({
   }
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
-  // zod parse params immediately?
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = params
   console.log({ fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient, searchParams })
 
@@ -32,7 +31,6 @@ export default function Page({
         <Widget />
         <TradeStats />
         <TradeReviewDialog />
-        <TradeRoute />
         <SwapButton />
         {/*spacer for fixed positioned swap button */}
         <div className="h-[68px] w-full" />

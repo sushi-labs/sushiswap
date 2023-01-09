@@ -1,5 +1,3 @@
-'use client'
-
 import { ChainId } from '@sushiswap/chain'
 import { FC, ReactNode } from 'react'
 

@@ -5,12 +5,6 @@ const tokenValidator = z.object({
   decimals: z.number().optional(),
   symbol: z.string(),
   name: z.string(),
-  rebase: z
-    .object({
-      base: z.array(z.number()),
-      elastic: z.array(z.number()),
-    })
-    .optional(),
   isNative: z.boolean().optional(),
   isToken: z.boolean().optional(),
   address: z.string().optional(),

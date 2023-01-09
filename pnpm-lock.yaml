@@ -1481,6 +1481,7 @@ importers:
       typescript: 4.9.4
       wagmi: 0.9.1
       wait-on: 6.0.1
+      zod: 3.20.2
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/address': 5.7.0
@@ -1522,6 +1523,7 @@ importers:
       react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
       wagmi: 0.9.1_5fkdkfy2bkgsnhvxgn477z7iae
       wait-on: 6.0.1
+      zod: 3.20.2
     devDependencies:
       '@playwright/test': 1.28.1
       '@sushiswap/eslint-config': link:../../config/eslint
@@ -26969,7 +26971,7 @@ packages:
       utf8: 3.0.0
 
   /react-native-path/0.0.5:
-    resolution: {integrity: sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==}
+    resolution: {integrity: sha1-oE5Lc6U1qKfPFcbnYOJ9t3ia+xM=}
 
   /react-onclickoutside/6.12.2_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-NMXGa223OnsrGVp5dJHkuKxQ4czdLmXSp5jSV9OqiCky9LOpPATn3vLldc+q5fK3gKbEHvr7J1u0yhBh/xYkpA==}

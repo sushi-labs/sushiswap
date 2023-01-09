@@ -1,3 +1,5 @@
+'use client'
+
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { List } from '@sushiswap/ui13/components/list/List'
@@ -18,7 +20,7 @@ interface SettingsOverlayProps {
   modules: SettingsModule[]
 }
 
-export const SettingsOverlay2: FC<SettingsOverlayProps> = ({ modules }) => {
+export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
   const [open, setOpen] = useState(false)
 
   return (
