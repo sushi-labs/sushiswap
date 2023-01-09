@@ -109,8 +109,24 @@ export class StableSwapRPool extends RPool {
     this.reserve1 = realReservesToAdjusted(res1, this.total1.rebaseBN, this.decimals1)
   }
 
+  getTotal0() {
+    return this.total0.rebaseBN
+  }
+
+  getTotal1() {
+    return this.total1.rebaseBN
+  }
+
   updateTotals(total0: Rebase, total1: Rebase) {
     this.total0 = new RebaseInternal(total0)
+    this.total1 = new RebaseInternal(total1)
+  }
+
+  updateTotal0(total0: Rebase) {
+    this.total0 = new RebaseInternal(total0)
+  }
+
+  updateTotal1(total1: Rebase) {
     this.total1 = new RebaseInternal(total1)
   }
 

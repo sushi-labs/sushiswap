@@ -195,9 +195,9 @@ describe('End-to-end Router test', async function () {
     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
-  it.skip('StabePool Native => USDC => USDT => USDC (Polygon only)', async function () {
+  it('StabePool Native => USDC => USDT => USDC (Polygon only)', async function () {
     if (chainId == ChainId.POLYGON) {
-      intermidiateResult[0] = getBigNumber(10000 * 1e18)
+      intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
       intermidiateResult = await updMakeSwap(
         env,

@@ -526,11 +526,6 @@ export class TridentProviderMC extends LiquidityProviderMC {
     )
     await totalsPromise
     pools.forEach((pool, i) => {
-      const res = reserves[i]
-      if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
-        pool.updateReserves(res[0], res[1])
-        ++this.stateId
-      }
       const total0 = this.lastFetchedTotals.get(pool.token0.address)
       if (total0) {
         const current = pool.getTotal0()
@@ -546,6 +541,12 @@ export class TridentProviderMC extends LiquidityProviderMC {
           pool.updateTotal1(total1)
           ++this.stateId
         }
+      }
+
+      const res = reserves[i]
+      if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
+        pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
+        ++this.stateId
       }
     })
   }
