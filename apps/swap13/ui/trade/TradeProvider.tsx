@@ -11,10 +11,9 @@ import {
   currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useLayoutEffect, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 import { z } from 'zod'
-import { nativeCurrencyIds } from '@sushiswap/currency'
 import { useRouter } from 'next/navigation'
 
 const schema = z.object({
@@ -137,6 +136,7 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
         token1: state.token0,
         network0: state.network1,
         network1: state.network0,
+        valueAsAmount: tryParseAmount(state.value, state.token1),
       }
   }
 }
