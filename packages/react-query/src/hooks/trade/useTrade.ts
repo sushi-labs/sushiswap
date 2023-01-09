@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { Amount, Native, nativeCurrencyIds, Price } from '@sushiswap/currency'
 import { UseTradeParams, UseTradeQuerySelect } from './types'
-import { usePrices } from '../usePrices'
 import { Percent, ZERO } from '@sushiswap/math'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { tradeValidator } from './validator'
 import { useCallback } from 'react'
+import { usePrice } from '../prices'
 
 export const useTradeQuery = (
   { chainId, fromToken, toToken, amount, gasPrice = 50, blockNumber, recipient }: UseTradeParams,
@@ -34,7 +34,7 @@ export const useTradeQuery = (
 
 export const useTrade = (variables: UseTradeParams) => {
   const { chainId, fromToken, toToken, amount, slippagePercentage } = variables
-  const { data: prices } = usePrices({ chainId })
+  const { data: price } = usePrice({ chainId, address: Native.onChain(chainId).wrapped.address })
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
@@ -64,9 +64,9 @@ export const useTrade = (variables: UseTradeParams) => {
           calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
         ),
         // TODO: all prices for just gasSpent? refactor for single price retrieval...
-        gasSpent: prices
+        gasSpent: price
           ? Amount.fromRawAmount(Native.onChain(chainId), data.getBestRoute.gasSpent * 1e9)
-              .multiply(prices?.[Native.onChain(chainId).wrapped.address].asFraction)
+              .multiply(price.asFraction)
               .toSignificant(4)
           : undefined,
         route: data.getCurrentRouteHumanArray,
@@ -82,7 +82,7 @@ export const useTrade = (variables: UseTradeParams) => {
           : undefined,
       }
     },
-    [amount, chainId, fromToken, prices, slippagePercentage, toToken]
+    [amount, chainId, fromToken, price, slippagePercentage, toToken]
   )
 
   return useTradeQuery(variables, select)

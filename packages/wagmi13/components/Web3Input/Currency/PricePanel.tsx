@@ -7,16 +7,18 @@ import { FC, useMemo } from 'react'
 
 import { usePrices } from '../../../hooks/usePrices'
 import { CurrencyInputProps } from './CurrencyInput'
+import { usePrice } from '@sushiswap/react-query'
 
 type PricePanel = Pick<CurrencyInputProps, 'loading' | 'currency' | 'value' | 'usdPctChange'> & {
   error?: string
 }
 
 export const PricePanel: FC<PricePanel> = ({ loading, currency, value, usdPctChange, error }) => {
-  const { data: tokenPrices, isLoading } = usePrices({
+  const { data: price, isLoading } = usePrice({
     chainId: currency?.chainId,
+    address: currency?.wrapped.address,
   })
-  const price = currency ? tokenPrices?.[currency.wrapped.address] : undefined
+
   const parsedValue = useMemo(() => tryParseAmount(value, currency), [currency, value])
   const [big, portion] = (parsedValue && price ? `${parsedValue.multiply(price.asFraction).toFixed(2)}` : '0.00').split(
     '.'

@@ -12,27 +12,23 @@ import React, { useCallback, useMemo, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
-import { usePrices } from '@sushiswap/react-query'
+import { usePrice, usePrices } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
 
 export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)
   const { appType, network0, network1, token1, token0 } = useSwapState()
   const { setNetwork1, setNetwork0 } = useSwapActions()
-  const { data: prices0 } = usePrices({ chainId: network0 })
-  const { data: prices1 } = usePrices({ chainId: network1 })
+  const { data: prices0 } = usePrice({ chainId: network0, address: token0?.wrapped.address })
+  const { data: prices1 } = usePrice({ chainId: network1, address: token1?.wrapped.address })
 
   const [inputUSD, outputUSD, price] = useMemo(() => {
     if (!prices0 || !prices1) {
       return ['0.00', '0.00', '0.00']
     }
 
-    const token0Price = prices0[token0.wrapped.address]
-      ? tryParseAmount('1', token0)?.multiply(prices0[token0.wrapped.address])
-      : undefined
-    const token1Price = prices1[token1.wrapped.address]
-      ? tryParseAmount('1', token1)?.multiply(prices1[token1.wrapped.address])
-      : undefined
+    const token0Price = prices0 ? tryParseAmount('1', token0)?.multiply(prices0) : undefined
+    const token1Price = prices1 ? tryParseAmount('1', token1)?.multiply(prices1) : undefined
     const dummy0 = new Token({ address: token0.wrapped.address, chainId: 1, decimals: token0.decimals })
     const dummy1 = new Token({ address: token1.wrapped.address, chainId: 1, decimals: token1.decimals })
 

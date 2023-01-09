@@ -49,9 +49,6 @@ export const TradeReviewDialog: FC = () => {
             <List.Control>
               <List.KeyValue title="Network">{chainName[network0]}</List.KeyValue>
               <List.KeyValue title="Network fee">~${trade?.gasSpent ?? '0.00'}</List.KeyValue>
-              <List.KeyValue title="Route">
-                <button className="text-blue">View route</button>
-              </List.KeyValue>
               <List.KeyValue
                 title="Price impact"
                 subtitle="The impact your trade has on the market price of this pool."

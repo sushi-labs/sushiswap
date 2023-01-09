@@ -1,4 +1,4 @@
-import { Chain, ChainId } from '@sushiswap/chain'
+import { Chain } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
 import { Search } from '@sushiswap/ui13/components/input/Search'
 import React, { FC, useCallback, useMemo, useState } from 'react'
@@ -6,11 +6,10 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useSearchContext } from './SearchProvider'
 import { List } from '@sushiswap/ui13/components/list/List'
 import { useTokenList } from '@sushiswap/react-query/src/hooks/tokenlist/useTokenList'
-import { TokenWithLogoURIType, usePrices } from '@sushiswap/react-query'
+import { TokenWithLogoURIType, usePrice } from '@sushiswap/react-query'
 import { Badge } from '@sushiswap/ui13/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import { classNames } from '@sushiswap/ui13'
-import { Fraction } from '@sushiswap/math'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 
@@ -28,9 +27,6 @@ export const SearchPanel: FC = () => {
 
   const { data: tokenList } = useTokenList(filter)
   const { data: popularTokensList } = useTokenList(POPULAR_TOKENS)
-
-  // TODO should be all networks
-  const { data: prices } = usePrices({ chainId: ChainId.ETHEREUM })
   const { open, setOpen } = useSearchContext()
 
   const onClose = useCallback(() => setOpen(false), [setOpen])
@@ -48,9 +44,7 @@ export const SearchPanel: FC = () => {
                 {isLoading ? (
                   <RowSkeleton />
                 ) : tokenList && Object.keys(tokenList).length > 0 ? (
-                  Object.values(tokenList).map((el, i) => (
-                    <Row price={prices?.[el.address]} currency={el} key={`example-${i}-${el.address}`} />
-                  ))
+                  Object.values(tokenList).map((el, i) => <Row currency={el} key={`example-${i}-${el.address}`} />)
                 ) : (
                   <div className="h-[60px] flex items-center justify-center text-xs font-semibold text-gray-400 dark:text-slate-500">
                     No results found
@@ -63,9 +57,7 @@ export const SearchPanel: FC = () => {
             <List.Label className="text-sm">Popular tokens</List.Label>
             <List.Control>
               {popularTokensList &&
-                Object.values(popularTokensList)?.map((el) => (
-                  <Row price={prices?.[el.address]} currency={el} key={`example-${el.address}`} />
-                ))}
+                Object.values(popularTokensList)?.map((el) => <Row currency={el} key={`example-${el.address}`} />)}
             </List.Control>
           </List>
         </div>
@@ -74,8 +66,12 @@ export const SearchPanel: FC = () => {
   )
 }
 
-const Row: FC<{ currency: TokenWithLogoURIType; price?: Fraction }> = ({ currency, price }) => {
+const Row: FC<{ currency: TokenWithLogoURIType }> = ({ currency }) => {
+  const { data: price, isLoading } = usePrice({ address: currency.address, chainId: currency.chainId })
   const change = 0.08
+
+  if (isLoading) return <RowSkeleton />
+
   return (
     <a
       href={`/swap13/${currency.chainId}/${currency.chainId}/ETH/${currency.address.toLowerCase()}`}

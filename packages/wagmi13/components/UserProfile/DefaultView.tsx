@@ -22,6 +22,7 @@ import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
 
 import { usePrices } from '../../hooks'
 import { ProfileView } from './index'
+import { usePrice } from '@sushiswap/react-query'
 
 interface DefaultProps {
   chainId: ChainId
@@ -30,7 +31,8 @@ interface DefaultProps {
 }
 
 export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => {
-  const { data: prices } = usePrices({ chainId })
+  const { disconnect } = useDisconnect()
+  const { data: price } = usePrice({ chainId, address: Native.onChain(chainId).wrapped.address })
   const { data: avatar } = useEnsAvatar({
     chainId: ChainId.ETHEREUM,
     address,
@@ -46,13 +48,9 @@ export const DefaultView: FC<DefaultProps> = ({ chainId, address, setView }) => 
     [_balance, chainId]
   )
 
-  const { disconnect } = useDisconnect()
-
   const balanceAsUsd = useMemo(() => {
-    return balance && prices?.[Native.onChain(chainId).wrapped.address]
-      ? balance.multiply(prices?.[Native.onChain(chainId).wrapped.address])
-      : undefined
-  }, [balance, chainId, prices])
+    return balance && price ? balance.multiply(price) : undefined
+  }, [balance, price])
 
   return (
     <>
