@@ -29,7 +29,7 @@ export async function execute() {
     ...minichefs,
   ]
 
-  const totalFarms = combined.reduce((acc, { farms }) => acc + Object.keys(farms).length, 0)
+  const totalFarms = combined.reduce((acc, { farms }) => acc + (farms ? Object.keys(farms).length : 0), 0)
   for (const combination of combined) {
     if (combination.farms) {
       console.log(`Chain ID: ${combination.chainId}. Farms: ${Object.keys(combination.farms).length}`)
