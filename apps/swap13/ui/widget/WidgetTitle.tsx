@@ -66,7 +66,14 @@ export const WidgetTitle = () => {
   return (
     <div className="flex flex-col gap-2 mb-4">
       {appType === AppType.Swap ? (
-        <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200">Buy {token1.symbol}</h1>
+        <>
+          <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
+            Sell {token0.symbol}
+          </h1>
+          <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
+            Receive {token1.symbol}
+          </h1>
+        </>
       ) : (
         <>
           <h1 className="flex items-center gap-3 text-4xl font-semibold text-gray-900 dark:text-slate-200">
@@ -78,7 +85,7 @@ export const WidgetTitle = () => {
               onSelect={handleSelect0}
             >
               <Tooltip description={chainName[network0]} transitionDelay={300}>
-                <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!px-3">
+                <Popover.Button as={Button} variant="outlined" color="default" size="lg" className="!px-3">
                   <NetworkIcon chainId={network0} width={32} height={32} />
                   <ChevronDownIcon width={36} height={36} />
                 </Popover.Button>
@@ -94,7 +101,7 @@ export const WidgetTitle = () => {
               onSelect={handleSelect1}
             >
               <Tooltip description={chainName[network1]} transitionDelay={300}>
-                <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!px-3">
+                <Popover.Button as={Button} variant="outlined" color="default" size="lg" className="!px-3">
                   <NetworkIcon chainId={network1} width={32} height={32} />
                   <ChevronDownIcon width={36} height={36} />
                 </Popover.Button>
