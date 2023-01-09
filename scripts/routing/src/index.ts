@@ -9,8 +9,10 @@ import { z } from 'zod'
 import { currencyFromShortCurrencyName, isShortCurrencyName, isShortCurrencyNameSupported, Native, nativeCurrencyIds, Token } from '@sushiswap/currency'
 import fetch from 'node-fetch'
 import { getAddress } from 'ethers/lib/utils'
+import cors from '@fastify/cors'
 
 const server = fastify({ logger: true })
+server.register(cors)
 
 let dataFetcher: DataFetcher
 
