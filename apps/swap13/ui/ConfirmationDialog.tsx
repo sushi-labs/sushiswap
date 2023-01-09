@@ -90,7 +90,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   return (
     <>
       {children({ onClick, isWritePending, isConfirming: dialogState === ConfirmationDialogState.Pending })}
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
         <Dialog.Content>
           <div className="flex flex-col gap-5 items-center justify-center">
             {[ConfirmationDialogState.Failed, ConfirmationDialogState.Success].includes(dialogState) ? (

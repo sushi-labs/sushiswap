@@ -8,6 +8,8 @@ import React, { FC } from 'react'
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
+import numeral from 'numeral'
+import { TradeRoute } from './TradeRoute'
 
 export const TradeStats: FC = () => {
   const { value, token0, token1, recipient } = useSwapState()
@@ -59,11 +61,13 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {isLoading ? (
-              <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
-            ) : (
-              <button type="button">{`${token0?.symbol} > ${token1?.symbol}`}</button>
-            )}
+            {isLoading ? <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" /> : <TradeRoute />}
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
+          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            {isLoading ? <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" /> : <TradeRoute />}
           </span>
         </div>
         <div className="h-[2px] bg-gray-200 dark:bg-slate-800 w-full my-3" />
