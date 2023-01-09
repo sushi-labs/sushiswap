@@ -1,3 +1,5 @@
+'use client'
+
 import { Widget as UIWidget } from '@sushiswap/ui13/components/widget'
 import React, { FC } from 'react'
 import { SettingsModule, SettingsOverlay } from 'ui/settings'
