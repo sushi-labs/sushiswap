@@ -494,72 +494,110 @@ export class TridentProviderMC extends LiquidityProviderMC {
     return poolCodes
   }
 
-  async updatePoolsData() {
-    if (this.poolCodes.length == 0) return
-
-    const BentoBoxAddr = BentoBox[this.chainId]
-    const pools: PoolCode[] = []
-    const bridges: PoolCode[] = []
-    this.poolCodes.forEach((pc) => (pc instanceof BentoPoolCode ? pools.push(pc) : bridges.push(pc)))
-
-    const reservesPromise = this.multiCallProvider.multiContractCall(
-      pools.map((pc) => pc.pool.address),
-      getReservesCPABI,
-      'getReserves',
-      []
+  async updateCPPools() {
+    const pools = this.poolCodes.map((pc) => pc.pool).filter((p) => p instanceof ConstantProductRPool)
+    const reserves = convertToBigNumberPair(
+      await this.multiCallProvider.multiContractCall(
+        pools.map((p) => p.address),
+        getReservesCPABI,
+        'getReserves',
+        []
+      )
     )
+    pools.forEach((pool, i) => {
+      const res = reserves[i]
+      if (res === undefined) return
+      if (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1])) {
+        pool.updateReserves(res[0], res[1])
+        ++this.stateId
+      }
+    })
+  }
+
+  async updateStablePools(totalsPromise: Promise<void>) {
+    const pools = this.poolCodes.map((pc) => pc.pool).filter((p) => p instanceof StableSwapRPool) as StableSwapRPool[]
+    const reserves = convertToBigNumberPair(
+      await this.multiCallProvider.multiContractCall(
+        pools.map((p) => p.address),
+        getReservesStableABI,
+        'getReserves',
+        []
+      )
+    )
+    await totalsPromise
+    pools.forEach((pool, i) => {
+      const res = reserves[i]
+      if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
+        pool.updateReserves(res[0], res[1])
+        ++this.stateId
+      }
+      const total0 = this.lastFetchedTotals.get(pool.token0.address)
+      if (total0) {
+        const current = pool.getTotal0()
+        if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
+          pool.updateTotal0(total0)
+          ++this.stateId
+        }
+      }
+      const total1 = this.lastFetchedTotals.get(pool.token1.address)
+      if (total1) {
+        const current = pool.getTotal1()
+        if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
+          pool.updateTotal1(total1)
+          ++this.stateId
+        }
+      }
+    })
+  }
+
+  async updateBridges(): Promise<void> {
+    const BentoBoxAddr = BentoBox[this.chainId]
+    const bridges: BridgeBento[] = this.poolCodes
+      .map((pc) => pc.pool)
+      .filter((p) => p instanceof BridgeBento) as BridgeBento[]
     const totalsPromise = this.multiCallProvider.multiDataCall(
       BentoBoxAddr,
       totalsABI,
       'totals',
-      bridges.map((b) => [b.pool.token0.address])
+      bridges.map((b) => [b.token0.address])
     )
     const balancesPromise = this.multiCallProvider.multiContractCall(
-      bridges.map((b) => b.pool.token0.address),
+      bridges.map((b) => b.token0.address),
       balanceOfABI,
       'balanceOf',
       [BentoBoxAddr]
     )
-
-    const [reserves0, totals0, balances0] = await Promise.all([reservesPromise, totalsPromise, balancesPromise])
-    const reserves = convertToBigNumberPair(reserves0)
+    const [totals0, balances0] = await Promise.all([totalsPromise, balancesPromise])
     const totals = convertToRebase(totals0)
     const balances = convertToNumbers(balances0)
 
     totals.forEach((t, i) => {
       if (t === undefined) return
-      this.lastFetchedTotals.set(bridges[i].pool.token0.address, t)
+      this.lastFetchedTotals.set(bridges[i].token0.address, t)
     })
 
-    pools.forEach((pc, i) => {
-      const res = reserves[i]
-      if (res === undefined) return
-      if (!pc.pool.reserve0.eq(res[0]) || !pc.pool.reserve1.eq(res[1])) {
-        pc.pool.updateReserves(res[0], res[1])
-        ++this.stateId
-      }
-      if (pc instanceof StableSwapRPool) {
-        const total0 = this.lastFetchedTotals.get(pc.token0.address)
-        const total1 = this.lastFetchedTotals.get(pc.token1.address)
-        if (total0 && total1) pc.updateTotals(total0, total1)
-      }
-    })
-
-    bridges.forEach((pc, i) => {
+    bridges.forEach((br, i) => {
       const total = totals[i]
       if (total == undefined) return
-      if (!pc.pool.reserve0.eq(total.elastic) || !pc.pool.reserve1.eq(total.base)) {
-        pc.pool.updateReserves(total.elastic, total.base)
+      if (!br.reserve0.eq(total.elastic) || !br.reserve1.eq(total.base)) {
+        br.updateReserves(total.elastic, total.base)
         ++this.stateId
       }
       const balance = balances[i]
       if (balance === undefined) return
-      const freeLiquidity = (pc.pool as BridgeBento).freeLiquidity || 0
+      const freeLiquidity = br.freeLiquidity || 0
       if (!closeValues(freeLiquidity, balance, 1e-6)) {
-        ;(pc.pool as BridgeBento).freeLiquidity = balance
+        br.freeLiquidity = balance
         ++this.stateId
       }
     })
+  }
+
+  async updatePoolsData() {
+    if (this.poolCodes.length == 0) return
+
+    const totalsPromise = this.updateBridges()
+    await Promise.all([this.updateCPPools(), this.updateStablePools(totalsPromise), totalsPromise])
 
     this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
