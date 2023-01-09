@@ -1,5 +1,3 @@
-'use client'
-
 import { CreditCardIcon } from '@heroicons/react/20/solid'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'

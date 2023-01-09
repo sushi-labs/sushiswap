@@ -98,14 +98,7 @@ const Row: FC<{ currency: TokenWithLogoURIType }> = ({ currency }) => {
         <div className="flex flex-col">
           <span className="font-medium text-gray-900 dark:text-slate-100">{currency.name}</span>
           <div className="flex gap-1 items-center">
-            <a
-              target="_blank"
-              href={Chain.from(currency.chainId).getTokenUrl(currency.address)}
-              className="font-medium text-sm text-gray-500 dark:text-slate-400 hover:text-blue"
-              rel="noreferrer"
-            >
-              {currency.symbol}
-            </a>
+            <span className="font-medium text-sm text-gray-500 dark:text-slate-400">{currency.symbol}</span>
           </div>
         </div>
       </div>

@@ -1,5 +1,3 @@
-'use client'
-
 import { Popover } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import chains from '@sushiswap/chain'

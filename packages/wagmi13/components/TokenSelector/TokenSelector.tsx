@@ -1,5 +1,3 @@
-'use client'
-
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, SUSHI, Token, Type, USDC, USDT } from '@sushiswap/currency'
 import { useAddCustomToken, useBalances } from '@sushiswap/react-query'

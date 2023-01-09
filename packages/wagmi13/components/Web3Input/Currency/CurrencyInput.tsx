@@ -1,5 +1,3 @@
-'use client'
-
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'

@@ -1,5 +1,3 @@
-'use client'
-
 import { Menu, Transition } from '@headlessui/react'
 import { ArrowLongRightIcon, ArrowRightIcon } from '@heroicons/react/24/solid'
 import useScrollPosition from '@react-hook/window-scroll'
