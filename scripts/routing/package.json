@@ -24,6 +24,7 @@
   ],
   "scripts": {
     "start": "ts-node --swc src/index.ts",
+    "server": "ts-node --swc src/index.ts",
     "build": "true",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
