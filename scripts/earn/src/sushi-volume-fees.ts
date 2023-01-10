@@ -1,10 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import { Block, getBuiltGraphSDK as graphClientSDK, Pair } from '@sushiswap/graph-client'
 import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { getBuiltGraphSDK } from '../.graphclient'
+import { Block, getBuiltGraphSDK, Pair } from '../.graphclient'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
 import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool'
 
@@ -37,7 +36,7 @@ async function main() {
 }
 
 async function extract() {
-  const graphClientSdk = graphClientSDK()
+  const graphClientSdk = getBuiltGraphSDK()
   const [{ oneDayBlocks }, { oneWeekBlocks }] = await Promise.all([
     graphClientSdk.OneDayBlocks({ chainIds: SUSHISWAP_CHAINS }),
     graphClientSdk.OneWeekBlocks({ chainIds: SUSHISWAP_CHAINS }),
