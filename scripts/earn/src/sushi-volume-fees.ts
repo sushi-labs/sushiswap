@@ -6,7 +6,7 @@ import { performance } from 'perf_hooks'
 
 import { getBuiltGraphSDK } from '../.graphclient'
 import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
-import { PairMinimal, updatePoolsWithVolumeAndFee } from './etl/pool'
+import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool'
 
 const client = new PrismaClient()
 
@@ -56,7 +56,7 @@ async function extractPairs(blocks?: Pick<Block, 'number' | 'id' | 'timestamp' |
     return { chainId, requests }
   })
   const tridentRequests = TRIDENT_CHAINS.map((chainId) => {
-    const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
+    const _chainId = chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
     const blockNumber = blocks ? Number(blocks.find((block) => block.chainId === chainId)?.number) : undefined
     const requests = createQuery(chainId, GRAPH_HOST[chainId], TRIDENT_SUBGRAPH_NAME[_chainId], blockNumber)
     return { chainId, requests }
@@ -161,7 +161,7 @@ function transform(
       const pair1w = pair1wMap[id]
       return transformPair(id, pair, pair1d, pair1w)
     })
-    .filter((d) => d !== undefined) as PairMinimal[]
+    .filter((d) => d !== undefined) as PoolMinimal[]
   return transformedPairs
 }
 
@@ -170,7 +170,7 @@ export function transformPair(
   pair: { volumeUSD: string; feesUSD: string },
   pair1d: { volumeUSD: string; feesUSD: string },
   pair1w: { volumeUSD: string; feesUSD: string }
-): PairMinimal | undefined {
+): PoolMinimal | undefined {
   if (!pair.volumeUSD && !pair.feesUSD) {
     return undefined
   }

@@ -32,7 +32,6 @@ model Pool {
   address  String
   name     String
   chainId  String
-  protocol String
   version  String
   type     String
   token0        Token   @relation("token0", fields: [token0Id], references: [id])
@@ -59,6 +58,7 @@ model Pool {
   volume1w       Decimal?
   fees1w         Decimal?
   createdAtBlockNumber BigInt @db.UnsignedBigInt
+  isBlacklisted Boolean @default(false)
   generatedAt          DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
@@ -66,7 +66,7 @@ model Pool {
   @@index(fields: [chainId])
   @@index(fields: [address])
   @@index(fields: [chainId, version, type])
-  @@index(fields: [chainId, protocol, version, type])
+  @@index(fields: [liquidityUSD, chainId, isBlacklisted])
   @@index(fields: [token0Id])
   @@index(fields: [token1Id])
   @@index(fields: [generatedAt])

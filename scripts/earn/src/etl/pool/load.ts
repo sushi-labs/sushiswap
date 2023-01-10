@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { performance } from 'perf_hooks'
-import { PairMinimal as PoolMinimal } from '.'
+
+import { PoolMinimal } from '.'
 
 /**
  * Merges(Create/Update) pools.
@@ -8,29 +9,41 @@ import { PairMinimal as PoolMinimal } from '.'
  * @param client
  * @param pools
  */
-export async function mergePools(
-  client: PrismaClient,
-  protocol: string,
-  versions: string[],
-  pools: Prisma.PoolCreateManyInput[],
-  updateApr: boolean = false
-) {
-  const containsProtocolPools = await alreadyContainsProtocol(client, protocol, versions)
-  if (containsProtocolPools) {
-    await upsertPools(client, pools, updateApr)
+export async function mergePools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[], isFirstRun: boolean) {
+  if (!isFirstRun) {
+    await upsertPools(client, pools)
   } else {
     await createPools(client, pools)
   }
 }
 
-async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[], updateApr: boolean) {
+async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
   console.log(`LOAD - Preparing to update ${pools.length} pools`)
-  let upsertManyPools
-  if (!updateApr) {
-    upsertManyPools = pools.map((pool) => {
-      return client.pool.upsert({
+
+  const poolsWithIncentives = await client.pool.findMany({
+    where: {
+      id: {
+        in: pools.map((pool) => pool.id),
+      },
+      incentives: {
+        some: {},
+      },
+    },
+    include: {
+      incentives: true,
+    },
+  })
+
+  const upsertManyPools = pools.map((pool) => {
+    const poolWithIncentives = poolsWithIncentives.find((p) => p.id === pool.id)
+    if (poolWithIncentives) {
+      const totalIncentiveApr = poolWithIncentives.incentives.reduce((total, incentive) => {
+        return total + incentive.apr
+      }, 0)
+      return client.pool.update({
+        select: { id: true },
         where: { id: pool.id },
-        update: {
+        data: {
           reserve0: pool.reserve0,
           reserve1: pool.reserve1,
           totalSupply: pool.totalSupply,
@@ -40,72 +53,35 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
           volumeNative: pool.volumeNative,
           token0Price: pool.token0Price,
           token1Price: pool.token1Price,
+          totalApr: (pool.apr ?? 0) + totalIncentiveApr,
         },
-        create: pool,
       })
-    })
-  } else {
-    const poolsWithIncentives = await client.pool.findMany({
-      where: {
-        id: {
-          in: pools.map((pool) => pool.id),
-        },
-        incentives: {
-          some: {},
-        },
-      },
-      include: {
-        incentives: true,
-      },
-    })
+    }
 
-    upsertManyPools = pools.map((pool) => {
-      const poolWithIncentives = poolsWithIncentives.find((p) => p.id === pool.id)
-      if (poolWithIncentives) {
-        const totalIncentiveApr = poolWithIncentives.incentives.reduce((total, incentive) => {
-          return total + incentive.apr
-        }, 0)
-        return client.pool.update({
-          where: { id: pool.id },
-          data: {
-            reserve0: pool.reserve0,
-            reserve1: pool.reserve1,
-            totalSupply: pool.totalSupply,
-            liquidityUSD: pool.liquidityUSD,
-            liquidityNative: pool.liquidityNative,
-            volumeUSD: pool.volumeUSD,
-            volumeNative: pool.volumeNative,
-            token0Price: pool.token0Price,
-            token1Price: pool.token1Price,
-            totalApr: (pool.apr ?? 0) + totalIncentiveApr,
-          },
-        })
-      }
-
-      return client.pool.upsert({
-        where: { id: pool.id },
-        update: {
-          reserve0: pool.reserve0,
-          reserve1: pool.reserve1,
-          totalSupply: pool.totalSupply,
-          liquidityUSD: pool.liquidityUSD,
-          liquidityNative: pool.liquidityNative,
-          volumeUSD: pool.volumeUSD,
-          volumeNative: pool.volumeNative,
-          token0Price: pool.token0Price,
-          token1Price: pool.token1Price,
-          totalApr: pool.apr,
-        },
-        create: pool,
-      })
+    return client.pool.upsert({
+      select: { id: true },
+      where: { id: pool.id },
+      update: {
+        reserve0: pool.reserve0,
+        reserve1: pool.reserve1,
+        totalSupply: pool.totalSupply,
+        liquidityUSD: pool.liquidityUSD,
+        liquidityNative: pool.liquidityNative,
+        volumeUSD: pool.volumeUSD,
+        volumeNative: pool.volumeNative,
+        token0Price: pool.token0Price,
+        token1Price: pool.token1Price,
+        totalApr: pool.apr,
+      },
+      create: pool,
     })
-  }
+  })
 
   const startTime = performance.now()
   const updatedPools = await Promise.all(upsertManyPools)
   const endTime = performance.now()
 
-  console.log(`LOAD - Updated ${upsertManyPools.length} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
+  console.log(`LOAD - Updated ${updatedPools.length} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
 }
 
 async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
@@ -120,20 +96,6 @@ async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
 
   const endTime = performance.now()
   console.log(`LOAD - Created ${count} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
-}
-
-async function alreadyContainsProtocol(client: PrismaClient, protocol: string, versions: string[]) {
-  const count = await client.pool.count({
-    where: {
-      AND: {
-        protocol,
-        version: {
-          in: versions,
-        },
-      },
-    },
-  })
-  return count > 0
 }
 
 export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
@@ -181,6 +143,7 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
 export async function updatePoolsWithVolumeAndFee(client: PrismaClient, pools: PoolMinimal[]) {
   const poolsToUpdate = pools.map((pool) => {
     return client.pool.update({
+      select: { id: true },
       where: {
         id: pool.id,
       },

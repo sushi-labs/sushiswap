@@ -30,14 +30,13 @@ async function main() {
 
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
-    const filteredTokens = await filterTokensToCreate(client, batch)
-    await createTokens(client, filteredTokens)
+    await createTokens(client, batch)
   }
 
   for (let i = 0; i < pools.length; i += batchSize) {
     const batch = pools.slice(i, i + batchSize)
     const filteredPools = await filterPools(client, batch)
-    await mergePools(client, PROTOCOL, ['LEGACY', 'TRIDENT'], filteredPools)
+    await mergePools(client, filteredPools, false) // TODO: env bool
   }
   const endTime = performance.now()
 
@@ -55,7 +54,8 @@ async function extract() {
     SUSHISWAP_CHAINS.map((chainId) => {
       return { chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] }
     }),
-    [{ chainId: ChainId.POLYGON, host: GRAPH_HOST[ChainId.POLYGON], name: 'sushi-0m/trident-polygon' }],
+    // [{ chainId: ChainId.POLYGON, host: GRAPH_HOST[ChainId.POLYGON], name: 'sushi-0m/trident-polygon' }], // TODO: do we want the first trident deployment to be included?
+
   ].flat()
 
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))
@@ -144,7 +144,6 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               id: exchange.chainId.toString().concat(':').concat(pair.id),
               address: pair.id,
               name: name,
-              protocol: PROTOCOL,
               version: pair.source,
               type: pair.type,
               chainId: exchange.chainId.toString(),

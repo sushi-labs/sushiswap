@@ -17,9 +17,7 @@ export async function filterPools(
     reserve1: true,
     totalSupply: true,
     liquidityUSD: true,
-    liquidityNative: true,
     volumeUSD: true,
-    volumeNative: true,
     token0Price: true,
     token1Price: true,
     apr: true,
@@ -52,6 +50,7 @@ export async function filterPools(
       pool.token0Price !== poolExists.token0Price ||
       pool.token1Price !== poolExists.token1Price ||
       pool.apr !== poolExists.apr
+      // TODO: totalAPR?
     ) {
       poolsToUpdate++
       return true

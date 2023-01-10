@@ -1,19 +1,17 @@
 import 'dotenv/config'
 import './lib/wagmi'
 
-import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-
 import { Prisma, PrismaClient } from '@prisma/client'
-import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
-
-import { ChainId, chainName } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
+import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
+
 import { mergeIncentives } from './etl/incentive/load'
 import { filterIncentives } from './etl/incentive/transform'
-import { createTokens } from './etl/token/load'
-import { filterTokensToCreate } from './etl/token/transform'
-import { ChefReturn, Farm } from './lib/types'
 import { updatePoolsWithIncentivesTotalApr } from './etl/pool/load'
+import { createTokens } from './etl/token/load'
+import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
+import { ChefReturn } from './lib/types'
 
 const client = new PrismaClient()
 
@@ -122,11 +120,9 @@ async function transform(data: ChefReturn[]): Promise<{
     })
     .flat()
 
-  const filteredTokens = await filterTokensToCreate(client, tokens)
-  console.log(`TEST, token needed: ${filteredTokens.length}`)
   const { incentivesToCreate, incentivesToUpdate } = await filterIncentives(client, incentives)
 
-  return { incentivesToCreate, incentivesToUpdate, tokens: filteredTokens }
+  return { incentivesToCreate, incentivesToUpdate, tokens }
 }
 
 main()

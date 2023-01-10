@@ -1,7 +1,7 @@
 export * from './load';
 export * from './transform';
 
-export interface PairMinimal {
+export interface PoolMinimal {
     id: string
     volume1d: number
     volume1w: number
