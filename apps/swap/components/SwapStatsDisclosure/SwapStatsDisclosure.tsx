@@ -5,20 +5,18 @@ import { Percent } from '@sushiswap/math'
 import { classNames, Dialog, Tooltip, Typography } from '@sushiswap/ui'
 import React, { FC, useMemo, useState } from 'react'
 
-import { Rate, Route, useTrade } from '../../components'
+import { Rate } from '../Rate'
 import { warningSeverity } from '../../lib/functions'
-import { useSettings } from '../../lib/state/storage'
+import { useTrade2 } from '../TradeProvider2'
+import numeral from 'numeral'
 
 export const SwapStatsDisclosure: FC = () => {
-  const { trade } = useTrade()
+  const { data: trade } = useTrade2()
   const [showRoute, setShowRoute] = useState(false)
-
-  const [{ slippageTolerance }] = useSettings()
-  const priceImpactSeverity = useMemo(() => warningSeverity(trade?.priceImpact), [trade?.priceImpact])
-
-  const slippagePercent = useMemo(() => {
-    return new Percent(Math.floor(slippageTolerance * 100), 10_000)
-  }, [slippageTolerance])
+  const priceImpactSeverity = useMemo(
+    () => warningSeverity(trade?.priceImpact ? new Percent(Math.floor(trade?.priceImpact * 100), 10_000) : undefined),
+    [trade]
+  )
 
   const stats = (
     <>
@@ -33,15 +31,14 @@ export const SwapStatsDisclosure: FC = () => {
           'text-right truncate'
         )}
       >
-        {trade?.priceImpact?.multiply(-1).toFixed(2)}%
+        {numeral(trade?.priceImpact ?? 0).format('0.00%')}
       </Typography>
       <div className="col-span-2 border-t border-slate-200/5 w-full py-0.5" />
       <Typography variant="sm" className="text-slate-400">
         Min. Received
       </Typography>
       <Typography variant="sm" weight={500} className="text-right truncate text-slate-400">
-        {trade?.minimumAmountOut(slippagePercent)?.toSignificant(6)}{' '}
-        {trade?.minimumAmountOut(slippagePercent)?.currency.symbol}
+        {trade?.minAmountOut?.toSignificant(6)} {trade?.minAmountOut?.currency.symbol}
       </Typography>
       <Typography variant="sm" className="text-slate-400">
         Optimized Route
@@ -58,7 +55,7 @@ export const SwapStatsDisclosure: FC = () => {
         <Dialog.Content className="!pb-4">
           <Dialog.Header border={false} title="Optimized Route" onClose={() => setShowRoute(false)} />
           <div className="max-h-[400px] overflow-y-auto scroll rounded-xl bg-black/[0.24] p-2 border border-slate-200/10">
-            <Route />
+            {/*<Route />*/}
           </div>
         </Dialog.Content>
       </Dialog>
@@ -82,7 +79,7 @@ export const SwapStatsDisclosure: FC = () => {
           {({ open }) => (
             <>
               <div className="flex justify-between items-center bg-white bg-opacity-[0.04] hover:bg-opacity-[0.08] rounded-2xl px-4 mb-4 py-2.5 gap-2">
-                <Rate price={trade?.executionPrice}>
+                <Rate price={trade?.swapPrice}>
                   {({ content, usdPrice, toggleInvert }) => (
                     <div
                       className="text-sm text-slate-300 hover:text-slate-50 cursor-pointer flex items-center h-full gap-1 font-semibold tracking-tight h-[36px] flex items-center truncate"

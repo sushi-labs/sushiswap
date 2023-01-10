@@ -2,6 +2,9 @@ import { ChainId } from '@sushiswap/chain'
 
 export const DEFAULT_CHAIN_ID = ChainId.ETHEREUM
 
+export const ROUTE_AGGREGATOR_ENABLED_NETWORKS = [ChainId.ETHEREUM, ChainId.POLYGON] as const
+export type EnabledChainIds = (typeof ROUTE_AGGREGATOR_ENABLED_NETWORKS)[number]
+
 export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.OPTIMISM,
   ChainId.POLYGON,

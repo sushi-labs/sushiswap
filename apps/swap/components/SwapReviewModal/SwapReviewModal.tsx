@@ -1,91 +1,55 @@
-import { Signature } from '@ethersproject/bytes'
-import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
+import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
 import { Button, Dots } from '@sushiswap/ui'
-import { getTridentRouterContractConfig } from '@sushiswap/wagmi'
 import { Approve2 } from '@sushiswap/wagmi/systems/Approve2'
 import { ApprovalType, ApproveDefinition } from '@sushiswap/wagmi/systems/Approve2/types'
-import { useRouters } from '../../lib/hooks/useRouters'
-import { useNotifications, useSettings } from '../../lib/state/storage'
+import { useNotifications } from '../../lib/state/storage'
 import React, { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { Address, useAccount } from 'wagmi'
-
-import { TradeExecuteProvider } from '../TradeExecuteProvider'
-import { useTrade } from '../TradeProvider'
+import { useAccount } from 'wagmi'
 import { SwapReviewModalBase } from './SwapReviewModalBase'
+import { useTrade2 } from '../TradeProvider2'
+import { TradeExecuteProvider2 } from '../TradeExecuteProvider2'
+import { EnabledChainIds } from '../../config'
 
 interface SwapReviewModalLegacy {
-  chainId: number | undefined
+  chainId: EnabledChainIds
   children({ setOpen }: { setOpen(open: boolean): void }): ReactNode
   onSuccess(): void
 }
 
 export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, children, onSuccess }) => {
-  const { trade } = useTrade()
+  const { data: trade } = useTrade2()
   const { address: account } = useAccount()
   const [, { createNotification }] = useNotifications(account)
   const [open, setOpen] = useState(false)
-  const [sushiSwapRouter, tridentRouter, sushiSwapKlimaRouter] = useRouters(chainId)
-  const [{ carbonOffset }] = useSettings()
-  const [signature, setSignature] = useState<Signature>()
-
-  const [input0, input1] = useMemo(
-    () => [trade?.inputAmount, trade?.outputAmount],
-    [trade?.inputAmount, trade?.outputAmount]
-  )
-
-  const approveTokenTo = useMemo(() => {
-    if (trade?.isV1()) {
-      return chainId === ChainId.POLYGON && carbonOffset
-        ? (sushiSwapKlimaRouter?.address as Address)
-        : (sushiSwapRouter?.address as Address)
-    } else if (trade?.isV2()) {
-      return chainId && chainId in BENTOBOX_ADDRESS ? BENTOBOX_ADDRESS[chainId] : undefined
-    }
-  }, [trade, carbonOffset, sushiSwapKlimaRouter?.address, sushiSwapRouter?.address, chainId])
-
+  const [input0, input1] = useMemo(() => [trade?.amountIn, trade?.amountOut], [trade?.amountIn, trade?.amountOut])
   const onSwapSuccess = useCallback(() => {
-    setSignature(undefined)
     setOpen(false)
-
     onSuccess()
   }, [onSuccess])
 
   const definition = useMemo(() => {
-    const definition: ApproveDefinition = []
-    if (trade?.isV2()) {
-      definition.push({
-        type: ApprovalType.Bentobox,
-        masterContract: getTridentRouterContractConfig(chainId).address,
+    const definition: ApproveDefinition = [
+      {
+        type: ApprovalType.Token,
+        amount: input0,
+        address: ROUTE_PROCESSOR_ADDRESS[chainId],
         buttonProps: {
           className: 'whitespace-nowrap',
           size: 'md',
-          id: 'swap-review-approve-bentobox-button',
+          id: 'swap-review-approve-token-button',
         },
-        onSignature: setSignature,
-      })
-    }
-
-    definition.push({
-      type: ApprovalType.Token,
-      amount: input0,
-      address: approveTokenTo,
-      buttonProps: {
-        className: 'whitespace-nowrap',
-        size: 'md',
-        id: 'swap-review-approve-token-button',
       },
-    })
+    ]
 
     return definition
-  }, [approveTokenTo, chainId, input0, trade])
+  }, [chainId, input0])
 
   return (
     <>
       {children({ setOpen })}
       <SwapReviewModalBase chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
         <Approve2.Root chainId={chainId} onSuccess={createNotification} definition={definition}>
-          <TradeExecuteProvider chainId={chainId} approved={true} signature={signature} onSuccess={onSwapSuccess}>
+          <TradeExecuteProvider2 chainId={chainId} approved={true} onSuccess={onSwapSuccess}>
             {({ isWritePending, execute }) => {
               console.log('sendTransaction function to exec', {
                 sendTrasaction: execute,
@@ -102,7 +66,7 @@ export const SwapReviewModalLegacy: FC<SwapReviewModalLegacy> = ({ chainId, chil
                 </Button>
               )
             }}
-          </TradeExecuteProvider>
+          </TradeExecuteProvider2>
         </Approve2.Root>
       </SwapReviewModalBase>
     </>

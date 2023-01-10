@@ -19,6 +19,7 @@ import { Header } from '../components'
 import { Updaters as TokenListsUpdaters } from '../lib/state/TokenListsUpdaters'
 import { store } from '../store'
 import SEO from '../next-seo.config.mjs'
+import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
 
 declare global {
   interface Window {
@@ -69,17 +70,19 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       />
       <WagmiConfig client={client}>
         <Provider store={store}>
-          <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <Header />
-              <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
-              <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
-              <App.Footer />
-              <ToastContainer className="mt-[50px]" />
-            </App.Shell>
-            <div className="z-[-1] bg-gradient-radial fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
-          </ThemeProvider>
+          <PersistQueryClientProvider>
+            <ThemeProvider>
+              <App.Shell>
+                <DefaultSeo {...SEO} />
+                <Header />
+                <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
+                <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
+                <App.Footer />
+                <ToastContainer className="mt-[50px]" />
+              </App.Shell>
+              <div className="z-[-1] bg-gradient-radial fixed inset-0 bg-scroll bg-clip-border transform pointer-events-none" />
+            </ThemeProvider>
+          </PersistQueryClientProvider>
         </Provider>
       </WagmiConfig>
       <Analytics />

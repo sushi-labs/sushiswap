@@ -1318,6 +1318,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/tines': workspace:*
@@ -1326,6 +1327,8 @@ importers:
       '@sushiswap/ui': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi': workspace:*
+      '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-persist-client': 4.20.4
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/react': ^13.3.0
       '@testing-library/user-event': ^14.4.3
@@ -1376,6 +1379,7 @@ importers:
       '@sushiswap/gas': link:../../packages/gas
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
+      '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/tines': link:../../packages/tines
@@ -1383,6 +1387,8 @@ importers:
       '@sushiswap/ui': link:../../packages/ui
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi': link:../../packages/wagmi
+      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       '@uniswap/v2-core': 1.0.1
       '@vercel/analytics': 0.1.5_react@18.2.0
       date-fns: 2.29.3

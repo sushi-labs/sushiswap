@@ -5,6 +5,7 @@ import { CurrencyInputProps } from '@sushiswap/wagmi/components/Web3Input/Curren
 import React, { FC, useMemo } from 'react'
 
 import { useTrade } from './TradeProvider'
+import { useTrade2 } from './TradeProvider2'
 
 interface CurrencyInput extends CurrencyInputProps {
   id: string
@@ -31,31 +32,29 @@ export const CurrencyInput: FC<CurrencyInput> = ({
   loading = false,
   isWrap = false,
 }) => {
-  const { trade } = useTrade()
+  const { data: trade } = useTrade2()
   const { data: prices } = usePrices({ chainId })
 
   // If output field and (un)wrapping, set to _value
-  let value = inputType === tradeType ? _value : trade ? trade?.outputAmount?.toExact() : ''
+  let value = inputType === tradeType ? _value : trade ? trade?.amountOut?.toExact() : ''
   value = inputType === TradeType.EXACT_OUTPUT && isWrap ? _value : value
 
   // Usd pct change
-  const srcTokenPrice = trade?.inputAmount.currency ? prices?.[trade.inputAmount.currency.wrapped.address] : undefined
-  const dstTokenPrice = trade?.outputAmount.currency ? prices?.[trade.outputAmount.currency.wrapped.address] : undefined
+  const srcTokenPrice = trade?.amountIn?.currency ? prices?.[trade.amountIn.currency.wrapped.address] : undefined
+  const dstTokenPrice = trade?.amountOut?.currency ? prices?.[trade.amountOut.currency.wrapped.address] : undefined
   const usdPctChange = useMemo(() => {
-    const inputUSD =
-      trade?.inputAmount && srcTokenPrice ? trade.inputAmount.multiply(srcTokenPrice.asFraction) : undefined
-    const outputUSD =
-      trade?.outputAmount && dstTokenPrice ? trade.outputAmount.multiply(dstTokenPrice.asFraction) : undefined
+    const inputUSD = trade?.amountIn && srcTokenPrice ? trade.amountIn.multiply(srcTokenPrice.asFraction) : undefined
+    const outputUSD = trade?.amountOut && dstTokenPrice ? trade.amountOut.multiply(dstTokenPrice.asFraction) : undefined
     return inputUSD && outputUSD && inputUSD?.greaterThan(ZERO)
       ? ((Number(outputUSD?.toExact()) - Number(inputUSD?.toExact())) / Number(inputUSD?.toExact())) * 100
       : undefined
-  }, [dstTokenPrice, srcTokenPrice, trade?.inputAmount, trade?.outputAmount])
+  }, [dstTokenPrice, srcTokenPrice, trade?.amountIn, trade?.amountOut])
 
   return (
     <Web3Input.Currency
       id={id}
       className={className}
-      value={value}
+      value={value ?? ''}
       onChange={onChange}
       currency={currency}
       onSelect={onSelect}

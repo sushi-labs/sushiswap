@@ -19,9 +19,9 @@ export const useTradeQuery = (
           `${
             process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
           }?chainId=${chainId}&fromTokenId=${
-            fromToken.isNative ? nativeCurrencyIds[chainId] : fromToken.wrapped.address
+            fromToken?.isNative ? nativeCurrencyIds[chainId] : fromToken?.wrapped.address
           }&toTokenId=${
-            toToken.isNative ? nativeCurrencyIds[chainId] : toToken.wrapped.address
+            toToken?.isNative ? nativeCurrencyIds[chainId] : toToken?.wrapped.address
           }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}`
         )
       ).json()
@@ -38,7 +38,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
-      if (!data || !amount) {
+      if (!data || !amount || !fromToken || !toToken) {
         return {
           swapPrice: undefined,
           priceImpact: undefined,

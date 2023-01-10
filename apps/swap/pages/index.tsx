@@ -22,6 +22,7 @@ import {
   useTrade,
   WrapReviewModal,
 } from '../components'
+import { TradeProvider2, useTrade2 } from '../components/TradeProvider2'
 import { warningSeverity } from '../lib/functions'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
@@ -111,7 +112,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
     ? activeChainId
     : !connecting && notConnected
     ? defaultChainId
-    : undefined
+    : defaultChainId
 
   const previousChain = usePrevious(chain)
 
@@ -226,9 +227,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
       tokenMap={tokenMap}
       tokens={checkIfImportedTokens}
     >
-      <TradeProvider
+      <TradeProvider2
         chainId={chainId}
-        tradeType={tradeType}
         amountSpecified={tradeType === TradeType.EXACT_INPUT ? parsedInput0 : parsedInput1}
         mainCurrency={token0}
         otherCurrency={token1}
@@ -355,7 +355,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
             <Route />
           </Container> */}
         </Layout>
-      </TradeProvider>
+      </TradeProvider2>
     </TokenListImportChecker>
   )
 }
@@ -363,14 +363,12 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 const SwapButton: FC<{
   setOpen(open: boolean): void
 }> = ({ setOpen }) => {
-  const { isLoading: isLoadingTrade, trade, route } = useTrade()
-  const [{ expertMode, slippageTolerance }] = useSettings()
-  const swapSlippage = useMemo(
-    () => (slippageTolerance ? new Percent(slippageTolerance * 100, 10_000) : SWAP_DEFAULT_SLIPPAGE),
-    [slippageTolerance]
+  const { isLoading: isLoadingTrade, data: trade } = useTrade2()
+  const [{ expertMode }] = useSettings()
+  const priceImpactSeverity = useMemo(
+    () => warningSeverity(trade?.priceImpact ? new Percent(Math.floor(trade?.priceImpact * 100), 10_000) : undefined),
+    [trade]
   )
-
-  const priceImpactSeverity = useMemo(() => warningSeverity(trade?.priceImpact), [trade])
   const priceImpactTooHigh = priceImpactSeverity > 3 && !expertMode
 
   const onClick = useCallback(() => {
@@ -379,7 +377,7 @@ const SwapButton: FC<{
 
   return (
     <Checker.Custom
-      showGuardIfTrue={!route}
+      showGuardIfTrue={Boolean(!isLoadingTrade && !trade?.writeArgs && trade?.amountIn?.greaterThan(ZERO))}
       guard={
         <Button fullWidth disabled size="md">
           No trade found
@@ -392,11 +390,11 @@ const SwapButton: FC<{
         onClick={onClick}
         disabled={
           priceImpactTooHigh ||
-          trade?.minimumAmountOut(swapSlippage)?.equalTo(ZERO) ||
+          trade?.minAmountOut?.equalTo(ZERO) ||
           Boolean(!trade && priceImpactSeverity > 2 && !expertMode)
         }
         size="md"
-        color={priceImpactTooHigh || priceImpactSeverity > 2 ? 'red' : 'blue'}
+        color={trade?.priceImpact && (priceImpactTooHigh || priceImpactSeverity > 2) ? 'red' : 'blue'}
         {...(Boolean(!trade && priceImpactSeverity > 2 && !expertMode) && {
           title: 'Enable expert mode to swap with high price impact',
         })}

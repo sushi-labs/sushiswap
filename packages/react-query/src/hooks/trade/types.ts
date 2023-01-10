@@ -5,8 +5,8 @@ import z from 'zod'
 
 export interface UseTradeParams {
   chainId: ChainId
-  fromToken: Type
-  toToken: Type
+  fromToken: Type | undefined
+  toToken: Type | undefined
   amount: Amount<Type> | undefined
   gasPrice?: number
   slippagePercentage: string
