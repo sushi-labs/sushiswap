@@ -8,7 +8,8 @@
     "rootDir": ".",
     "moduleResolution": "node16",
     "target": "ESNext",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true
   },
   "ts-node": {
     "swc": true,
