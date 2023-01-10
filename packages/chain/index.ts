@@ -1,29 +1,6 @@
-import raw from './chains.json'
+import raw from './chains'
 
-const CHAINS = raw.concat({
-  name: 'Boba Avax',
-  chain: 'Boba Avax',
-  rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
-  faucets: [],
-  nativeCurrency: {
-    name: 'Boba Token',
-    symbol: 'BOBA',
-    decimals: 18,
-  },
-  infoURL: 'https://boba.network',
-  shortName: 'bobaavax',
-  chainId: 43288,
-  networkId: 43288,
-  explorers: [
-    {
-      name: 'Boba Avax Explorer',
-      url: 'https://blockexplorer.avax.boba.network',
-      standard: 'none',
-    },
-  ],
-})
-
-export interface Chain {
+interface IChain {
   name: string
   chain: string
   icon?: string
@@ -41,6 +18,8 @@ export interface Chain {
   parent?: Parent
   network?: Network
 }
+
+export interface Chain extends IChain {}
 
 export interface Ens {
   registry: string
@@ -162,6 +141,32 @@ export enum ChainKey {
   BOBA_AVAX = 'boba-avax',
   BTTC = 'bttc',
 }
+
+const CHAINS = [
+  ...raw,
+  {
+    name: 'Boba Avax',
+    chain: 'Boba Avax',
+    rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Boba Token',
+      symbol: 'BOBA',
+      decimals: 18,
+    },
+    infoURL: 'https://boba.network',
+    shortName: 'bobaavax',
+    chainId: 43288,
+    networkId: 43288,
+    explorers: [
+      {
+        name: 'Boba Avax Explorer',
+        url: 'https://blockexplorer.avax.boba.network',
+        standard: Standard.None,
+      },
+    ],
+  },
+] as IChain[]
 
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
 
