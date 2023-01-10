@@ -31,8 +31,8 @@ export enum ApprovalState {
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useERC20ApproveCallback(
   watch: boolean,
-  amountToApprove?: Amount<Currency>,
-  spender?: string,
+  amountToApprove: Amount<Currency> | undefined,
+  spender: string | undefined,
   onSuccess?: (data: NotificationData) => void
 ): [ApprovalState, () => void] {
   const { address } = useAccount()

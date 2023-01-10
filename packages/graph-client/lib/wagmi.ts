@@ -2,9 +2,9 @@ import { ChainId } from '@sushiswap/chain'
 import { allChains, allProviders } from '@sushiswap/wagmi-config'
 import { Address, configureChains, createClient, erc20ABI, readContracts } from '@wagmi/core'
 
-const { provider, webSocketProvider } = configureChains(allChains, allProviders)
+const { provider } = configureChains(allChains, allProviders)
 
-createClient({ provider, webSocketProvider })
+createClient({ provider })
 
 export async function fetchBalances(
   args: { token: string; user: string; chainId: ChainId }[]

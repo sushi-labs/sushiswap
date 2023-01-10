@@ -7,6 +7,7 @@ import DialogActions, { DialogActionProps } from './DialogActions'
 import DialogContent, { DialogContentProps } from './DialogContent'
 import DialogDescription, { DialogDescriptionProps } from './DialogDescription'
 import DialogHeader, { DialogHeaderProps } from './DialogHeader'
+import { syncScrollLockSafeArea } from '../../lib/syncScrollLockSafeArea'
 
 export type DialogRootProps = ExtractProps<typeof HeadlessDialog> & {
   afterLeave?(): void
@@ -38,6 +39,8 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
       }
     }
   }, [isMd, open])
+
+  useEffect(syncScrollLockSafeArea, [open])
 
   return (
     <Transition show={open} as={Fragment} afterLeave={afterLeave} unmount={unmount}>

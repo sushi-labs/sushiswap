@@ -1,10 +1,18 @@
 'use client'
 
 import { ChainId } from '@sushiswap/chain'
-import { Native, SUSHI, Type } from '@sushiswap/currency'
+import {
+  Amount,
+  Native,
+  SUSHI,
+  tryParseAmount,
+  Type,
+  isShortCurrencyName,
+  currencyFromShortCurrencyName,
+} from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 interface SwapState {
   review: boolean
@@ -14,7 +22,7 @@ interface SwapState {
   network0: ChainId
   network1: ChainId
   value: string
-  otherValue: string
+  valueAsAmount: Amount<Type> | undefined
   appType: AppType
 }
 
@@ -89,11 +97,15 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
         appType: action.appType,
         network1,
         token0: Native.onChain(state.network0),
-        token1: SUSHI[network1],
+        token1: SUSHI[network1 as keyof typeof SUSHI],
       }
     }
     case 'setValue':
-      return { ...state, value: action.value }
+      return {
+        ...state,
+        value: action.value,
+        valueAsAmount: tryParseAmount(action.value, state.token0),
+      }
     case 'switchTokens':
       return {
         ...state,
@@ -101,26 +113,48 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
         token1: state.token0,
         network0: state.network1,
         network1: state.network0,
+        valueAsAmount: tryParseAmount(state.value, state.token1),
       }
   }
 }
 
 interface SwapProviderProps {
   children: ReactNode
+  params: {
+    fromChainId: string
+    toChainId: string
+    fromCurrencyId: string
+    toCurrencyId: string
+    amount: string
+    recipient: string
+  }
 }
 
-export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
+export const SwapProvider: FC<SwapProviderProps> = ({
+  children,
+  params: { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient },
+}) => {
   const { address } = useAccount()
+  const { chain } = useNetwork()
   const [state, dispatch] = useReducer(reducer, {
     review: false,
-    recipient: undefined,
-    appType: AppType.Swap,
-    token0: Native.onChain(ChainId.ETHEREUM),
-    token1: SUSHI[ChainId.ETHEREUM],
-    network0: ChainId.ETHEREUM,
-    network1: ChainId.ETHEREUM,
-    value: '',
-    otherValue: '',
+    recipient: recipient ? recipient : address ? address : undefined,
+    appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
+    token0: isShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
+      ? currencyFromShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
+      : Native.onChain(ChainId.ETHEREUM),
+    token1: isShortCurrencyName(parseInt(toChainId), toCurrencyId)
+      ? currencyFromShortCurrencyName(parseInt(toChainId), toCurrencyId)
+      : SUSHI[ChainId.ETHEREUM],
+    network0: fromChainId ? parseInt(fromChainId) : ChainId.ETHEREUM,
+    network1: toChainId ? parseInt(toChainId) : ChainId.ETHEREUM,
+    value: amount ? amount : '',
+    valueAsAmount: tryParseAmount(
+      amount,
+      isShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
+        ? currencyFromShortCurrencyName(parseInt(fromChainId), fromCurrencyId)
+        : Native.onChain(ChainId.ETHEREUM)
+    ),
   })
 
   const api = useMemo(() => {
@@ -146,6 +180,13 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setReview,
     }
   }, [])
+
+  // Set network0 to connected network if no chainId queryParam is present
+  // useLayoutEffect(() => {
+  //   if (chain?.id && !fromChainId) {
+  //     api.setNetwork0(chain?.id)
+  //   }
+  // }, [api, chain?.id, fromChainId])
 
   return (
     <APIContext.Provider value={api}>

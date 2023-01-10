@@ -30,6 +30,7 @@ export function List<TData>({ className, rowHeight, rowData, rowRenderer: RowCom
           itemCount={rowData.length}
           itemSize={rowHeight || 48}
           className={className}
+          style={{ overflow: 'overlay' }}
         >
           {Row}
         </FixedSizeList>

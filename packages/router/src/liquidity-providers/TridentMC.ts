@@ -1,5 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, Token } from '@sushiswap/currency'
+import { Token } from '@sushiswap/currency'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 
@@ -228,7 +229,7 @@ export class TridentProviderMC extends LiquidityProviderMC {
   fetchedTokens: Set<string> = new Set()
   lastFetchedTotals: Map<string, Rebase> = new Map()
   poolCodes: PoolCode[] = []
-  blockListener?: () => void | undefined
+  blockListener: any
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,

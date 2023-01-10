@@ -7,6 +7,7 @@
 @tailwind utilities;
 
 @import './variables.css';
+@import "./components/skeleton/Skeleton.css";
 
 *,
 *:before,
@@ -19,7 +20,6 @@ html {
   box-sizing: border-box;
   touch-action: manipulation;
   background-color: var(--background-color) !important;
-  overflow-y: scroll;
 }
 
 body {

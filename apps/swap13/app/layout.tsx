@@ -4,18 +4,15 @@ import RootLayout from '@sushiswap/ui13/components/RootLayout'
 import React from 'react'
 
 import { Header } from '../ui/Header'
-import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
-import { WagmiProvider } from '../ui/WagmiProvider'
+import { Providers } from './providers'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <RootLayout>
-      <WagmiProvider>
-        <PersistQueryClientProvider>
-          <Header />
-          {children}
-        </PersistQueryClientProvider>
-      </WagmiProvider>
+      <Providers>
+        <Header />
+        {children}
+      </Providers>
     </RootLayout>
   )
 }

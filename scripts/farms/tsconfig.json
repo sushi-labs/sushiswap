@@ -1,15 +1,18 @@
 {
-  "extends": "@sushiswap/typescript-config/node16.json",
-  "include": [".graphclient", "src"],
-  "exclude": ["node_modules", "dist"],
+  "extends": "@sushiswap/typescript-config/esm.json",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", ".graphclient"],
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
     "rootDir": ".",
-    "resolveJsonModule": true
+    "moduleResolution": "node16",
+    "target": "ESNext",
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true
   },
-  "resolveJsonModule": true,
   "ts-node": {
-    "swc": true
+    "swc": true,
+    "esm": true
   },
 }

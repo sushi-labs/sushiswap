@@ -44,9 +44,10 @@ export class DataFetcher {
     this.stopDataFetching()
     this.poolCodes = new Map()
 
-    this.providers = [
-      new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited),
-    ]
+    this.providers = []
+    this.providers.push(
+      new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+    )
     if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
       this.providers.push(
         new SushiProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
