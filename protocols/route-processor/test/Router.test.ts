@@ -2,7 +2,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { BENTOBOX_ADDRESS } from '@sushiswap/address'
-import { ChainId } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, SUSHI, Token, Type, USDC, USDT, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { DataFetcher, PoolFilter, Router } from '@sushiswap/router'
 import { BridgeBento, getBigNumber, MultiRoute, StableSwapRPool } from '@sushiswap/tines'
@@ -35,21 +35,22 @@ interface TestEnvironment {
 }
 
 async function getTestEnvironment(): Promise<TestEnvironment> {
-  console.log('Prepare Environment:')
+  //console.log('Prepare Environment:')
 
-  console.log('    Create DataFetcher ...')
+  //console.log('    Create DataFetcher ...')
   const provider = ethers.provider
   const chainId = network.config.chainId as ChainId
   const dataFetcher = new DataFetcher(provider, chainId)
   dataFetcher.startDataFetching()
 
-  console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
+  //console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
   const routeProcessor = await RouteProcessor.deploy(BENTOBOX_ADDRESS[chainId], WNATIVE_ADDRESS[chainId])
   await routeProcessor.deployed()
-  console.log('    Block Number:', provider.blockNumber)
+  //console.log('    Block Number:', provider.blockNumber)
 
-  console.log('    User creation ...')
+  console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
+  //console.log('    User creation ...')
   const [Alice] = await ethers.getSigners()
 
   return {
@@ -69,15 +70,15 @@ async function makeSwap(
   toToken: Type,
   poolFilter?: PoolFilter
 ): Promise<[BigNumber, number] | undefined> {
-  console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
+  //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
 
   if (fromToken instanceof Token) {
-    console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
+    //console.log(`Approve user's ${fromToken.symbol} to the route processor ...`)
     const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
     await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
   }
 
-  console.log('Create Route ...')
+  //console.log('Create Route ...')
   env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const waiter = new Waiter()
   const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, undefined, poolFilter)
@@ -90,11 +91,11 @@ async function makeSwap(
   await waiter.wait()
   router.stopRouting()
 
-  console.log('Create route processor code ...')
+  //console.log('Create route processor code ...')
   const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address)
   if (rpParams === undefined) return
 
-  console.log('Call route processor (may take long time for the first launch)...')
+  //console.log('Call route processor (may take long time for the first launch)...')
   const route = router.getBestRoute() as MultiRoute
   let balanceOutBNBefore: BigNumber
   let toTokenContract: Contract | undefined = undefined
@@ -129,7 +130,7 @@ async function makeSwap(
   // const trace = await network.provider.send('debug_traceTransaction', [receipt.transactionHash])
   // printGasUsage(trace)
 
-  console.log("Fetching user's output balance ...")
+  //console.log("Fetching user's output balance ...")
   let balanceOutBN: BigNumber
   if (toTokenContract) {
     balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
@@ -137,11 +138,15 @@ async function makeSwap(
     balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
     balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
   }
-  console.log(`    expected amountOut: ${route.amountOutBN.toString()}`)
-  console.log(`    real amountOut:     ${balanceOutBN.toString()}`)
   const slippage = parseInt(balanceOutBN.sub(route.amountOutBN).mul(10_000).div(route.amountOutBN).toString())
-  console.log(`    slippage: ${slippage / 100}%`)
-  console.log(`    gas use: ${receipt.gasUsed.toString()}`)
+
+  if (slippage !== 0) {
+    console.log(`expected amountOut: ${route.amountOutBN.toString()}`)
+    console.log(`real amountOut:     ${balanceOutBN.toString()}`)
+    console.log(`slippage: ${slippage / 100}%`)
+  }
+  console.log(`gas use: ${receipt.gasUsed.toString()}`)
+  expect(slippage).equal(0)
 
   return [balanceOutBN, receipt.blockNumber]
 }
@@ -164,7 +169,7 @@ async function updMakeSwap(
   if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
 
   console.log('')
-  console.log('Wait data update for min block', waitBlock)
+  //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
   const res = await makeSwap(env, fromToken, amountIn, toToken, poolFilter)
   expect(res).not.undefined
@@ -195,7 +200,7 @@ describe('End-to-end Router test', async function () {
     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
-  it('StabePool Native => USDC => USDT => USDC (Polygon only)', async function () {
+  it('Native => USDC => [StablePool Only] => USDT  (Polygon only)', async function () {
     if (chainId == ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
