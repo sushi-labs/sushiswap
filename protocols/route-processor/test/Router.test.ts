@@ -3,7 +3,7 @@ import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { Native, SUSHI, Token, Type, USDC, USDT, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { DAI, Native, SUSHI, Token, Type, USDC, USDT, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { DataFetcher, PoolFilter, Router } from '@sushiswap/router'
 import { BridgeBento, getBigNumber, MultiRoute, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
@@ -200,7 +200,7 @@ describe('End-to-end Router test', async function () {
     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
-  it('Native => USDC => [StablePool Only] => USDT  (Polygon only)', async function () {
+  it('StablePool Native => USDC => USDT => DAI => USDC  (Polygon only)', async function () {
     if (chainId == ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
@@ -208,6 +208,20 @@ describe('End-to-end Router test', async function () {
         env,
         USDC[chainId],
         USDT[chainId],
+        intermidiateResult,
+        (pool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
+      )
+      intermidiateResult = await updMakeSwap(
+        env,
+        USDT[chainId],
+        DAI[chainId],
+        intermidiateResult,
+        (pool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
+      )
+      intermidiateResult = await updMakeSwap(
+        env,
+        DAI[chainId],
+        USDC[chainId],
         intermidiateResult,
         (pool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
       )
