@@ -1,0 +1,48 @@
+sources:
+  - name: Trident
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:sushi-qa/trident-optimism}
+    transforms:
+      - autoPagination:
+          validateSchema: true
+  - name: Exchange
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:sushi-graph/sushiswap-ethereum}
+    transforms:
+      - autoPagination:
+          validateSchema: true
+      - filterSchema:
+          mode: wrap
+          filters:
+            - Type.!{Factory}
+  - name: MasterChef
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/sushiswap/masterchef-v2-ethereum
+    transforms:
+      - prefix:
+          value: MasterChef_
+          includeRootOperations: true
+          includeTypes: true
+  - name: MiniChef
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:jiro-ono/minichef-staging-updates}
+    transforms:
+      - prefix:
+          value: MiniChef_
+          includeRootOperations: true
+          includeTypes: true
+  - name: Blocks
+    handler:
+      graphql:
+        endpoint: https://{context.subgraphHost:api.thegraph.com/subgraphs/name}/{context.subgraphName:blocklytics/ethereum-blocks}
+        retry: 3
+documents:
+  - ./query.graphql
+
+codegen:
+  contextType: 'MeshContext & { name: string; host: string; path: string; }'
+
