@@ -4,7 +4,6 @@ import React from 'react'
 import { SwapProvider } from '../ui/trade/TradeProvider'
 import { TradeReviewDialog } from '../ui/trade/TradeReviewDialog'
 import { TradeStats } from '../ui/trade/TradeStats'
-import { TradeRoute } from '../ui/trade/TradeRoute'
 import { SwapButton } from '../ui/widget/SwapButton'
 import { Widget } from '../ui/widget/Widget'
 

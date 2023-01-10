@@ -13,7 +13,7 @@ const hydrate = (data: number) => {
 
 export const usePrice = ({ chainId, address }: UsePrice) => {
   return useQuery({
-    queryKey: [`token-price.sushi.com/v1/${chainId}/${address}`],
+    queryKey: [`https://token-price.sushi.com/v1/${chainId}/${address}`],
     queryFn: async () =>
       fetch(`https://token-price.sushi.com/v1/${chainId}/${address}`).then((response) => response.json()),
     staleTime: 20000,

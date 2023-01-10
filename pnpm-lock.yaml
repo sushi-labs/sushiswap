@@ -1422,13 +1422,7 @@ importers:
   apps/swap13:
     specifiers:
       '@ethersproject/abi': ^5.7.0
-      '@ethersproject/address': ^5.7.0
-      '@ethersproject/bignumber': ^5.7.0
-      '@ethersproject/bytes': ^5.7.0
       '@ethersproject/constants': ^5.7.0
-      '@ethersproject/contracts': ^5.7.0
-      '@ethersproject/providers': ^5.7.0
-      '@ethersproject/solidity': ^5.7.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': ^2.0.0
       '@playwright/test': 1.28.1
@@ -1444,14 +1438,13 @@ importers:
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
-      '@sushiswap/tines': workspace:*
-      '@sushiswap/token-lists': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui13': workspace:*
       '@sushiswap/validate': workspace:*
       '@sushiswap/wagmi13': workspace:*
       '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-devtools': 4.22.0
       '@tanstack/react-query-persist-client': 4.20.4
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/react': ^13.3.0
@@ -1461,8 +1454,6 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       '@types/workbox-sw': ^4.3.2
-      '@uniswap/token-lists': 1.0.0-beta.30
-      '@uniswap/v2-core': ^1.0.1
       '@vercel/analytics': 0.1.5
       autoprefixer: ^10.4.0
       concurrently: 7.6.0
@@ -1471,12 +1462,10 @@ importers:
       ethers: ^5.7.0
       next: 13.1.1
       next-seo: 5.15.0
-      next-sitemap: 3.1.43
       numeral: ^2.0.6
       postcss: ^8.4.0
       react: ^18.2.0
       react-dom: ^18.2.0
-      react-redux: ^8.0.1
       tailwindcss: 3.2.4
       typescript: 4.9.4
       wagmi: 0.9.1
@@ -1484,13 +1473,7 @@ importers:
       zod: 3.20.2
     dependencies:
       '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
       '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@ethersproject/solidity': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/address': link:../../packages/address
@@ -1501,26 +1484,21 @@ importers:
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/react-query': link:../../packages/react-query
-      '@sushiswap/tines': link:../../packages/tines
-      '@sushiswap/token-lists': link:../../packages/token-lists
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui13': link:../../packages/ui13
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi13': link:../../packages/wagmi13
       '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.22.0_fu3ixcwltlssi3ozitelgaebme
       '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
-      '@uniswap/token-lists': 1.0.0-beta.30
-      '@uniswap/v2-core': 1.0.1
       '@vercel/analytics': 0.1.5_react@18.2.0
       date-fns: 2.29.3
       ethers: 5.7.2
       next: 13.1.1_biqbaboplfbrettd7655fr4n2y
       next-seo: 5.15.0_q76c2b4vyoegvsbrcwkfvimnai
-      next-sitemap: 3.1.43_next@13.1.1
       numeral: 2.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
       wagmi: 0.9.1_5fkdkfy2bkgsnhvxgn477z7iae
       wait-on: 6.0.1
       zod: 3.20.2
@@ -10968,6 +10946,21 @@ packages:
     resolution: {integrity: sha512-4e4wOmqAYjLS1RQ7gRBLCk3koCjbOfCMvbxS3CPCAN5+FLBemLAvoYvFJ/i/7DPsIsltGwsnd7YAFFGMzdSx7A==}
     peerDependencies:
       '@tanstack/react-query': 4.20.4
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.7.2
+      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      superjson: 1.12.1
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-query-devtools/4.22.0_fu3ixcwltlssi3ozitelgaebme:
+    resolution: {integrity: sha512-YeYFBnfqvb+ZlA0IiJqiHNNSzepNhI1p2o9i8NlhQli9+Zrn230M47OBaBUs8qr3DD1dC2zGB1Dis50Ktz8gAA==}
+    peerDependencies:
+      '@tanstack/react-query': 4.22.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:

@@ -15,12 +15,6 @@ type Data = Array<{
   decimals: number
 }>
 
-// const BLACKLIST: string[] = ['0x0000000000000000000000000000000000000000', '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000']}
-
-const BLACKLIST: Record<number, string[]> = {
-  [ChainId.OPTIMISM]: ['0x0000000000000000000000000000000000000000', '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000'],
-}
-
 export const useTokens = ({ chainId }: UseTokensParams) => {
   return useQuery({
     queryKey: ['tokens', { chainId }],
@@ -29,15 +23,13 @@ export const useTokens = ({ chainId }: UseTokensParams) => {
       const data: Data = await res.json()
       return data.reduce<Record<string, Token>>((acc, { id, name, symbol, decimals }) => {
         const [chainId, address] = id.split(':')
-        if (!BLACKLIST[+chainId]?.includes(address)) {
-          acc[getAddress(address)] = new Token({
-            chainId,
-            name,
-            decimals,
-            symbol,
-            address,
-          })
-        }
+        acc[getAddress(address)] = new Token({
+          chainId,
+          name,
+          decimals,
+          symbol,
+          address,
+        })
         return acc
       }, {})
     },

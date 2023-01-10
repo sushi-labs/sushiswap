@@ -33,3 +33,5 @@ export const AMM_ENABLED_NETWORKS = [
 ] as const
 
 export const SUPPORTED_CHAIN_IDS = Array.from(new Set([...AMM_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))
+
+export type SupportedChainId = typeof SUPPORTED_CHAIN_IDS[number]
