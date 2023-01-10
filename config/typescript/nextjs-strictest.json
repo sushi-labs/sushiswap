@@ -1,17 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig.json",
-  "display": "Node 16 + ESM + Strictest",
+  "display": "Next.js Strictest",
   "compilerOptions": {
-    "lib": [
-      "es2021"
-    ],
-    "module": "es2022",
-    "target": "es2021",
-    "strict": true,
-    "esModuleInterop": true,
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "strict": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
     "exactOptionalPropertyTypes": true,
@@ -23,6 +18,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "importsNotUsedAsValues": "error",
-    "checkJs": true
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
   }
 }

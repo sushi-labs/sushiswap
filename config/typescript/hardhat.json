@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
+  "$schema": "https://json.schemastore.org/tsconfig.json",
   "display": "Hardhat",
   "extends": "./node16.json",
   "include": ["deploy", "scripts", "test", "typechain", "hardhat.config.ts"],
