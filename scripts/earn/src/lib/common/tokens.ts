@@ -26,10 +26,9 @@ const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Prom
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
   const sdk = getBuiltGraphSDK({
-    host: SUBGRAPH_HOST[chainId],
+    path: SUBGRAPH_HOST[chainId],
     name: subgraphName,
   })
-
   // waiting for new subgraph to sync
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },

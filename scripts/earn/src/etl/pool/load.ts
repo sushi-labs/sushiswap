@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { performance } from 'perf_hooks'
 
-import { PoolMinimal } from '.'
+import { PoolMinimal } from './index.js'
 
 /**
  * Merges(Create/Update) pools.
@@ -122,6 +122,7 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
     const isIncentivized = pool.incentives.some((incentive) => incentive.rewardPerDay > 0)
 
     return client.pool.update({
+      select: { id: true },
       where: {
         id: pool.id,
       },

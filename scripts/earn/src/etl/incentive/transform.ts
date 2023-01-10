@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-import { id } from 'date-fns/locale'
+import { ChainId } from '@sushiswap/chain'
 
 /**
  * Filters token incentives to only include the ones that are new or have changed.
@@ -28,34 +28,33 @@ export async function filterIncentives(
   })
 
   const poolsFound = await client.pool.findMany({
-    where: { address: { in: incentives.map((incentive) => incentive.poolAddress) } },
-    select: { address: true },
+    where: { id: { in: incentives.map((incentive) => incentive.poolId) } },
+    select: { id: true },
   })
-  const foundPools = poolsFound.map((pool) => pool.address)
+  const foundPools = poolsFound.map((pool) => pool.id)
 
   const rewardTokensFound = await client.token.findMany({
-    where: { id: { in: incentives.map((incentive) => incentive.chainId.concat(':').concat(incentive.rewardTokenId)) } },
-    select: { address: true },
+    where: { id: { in: incentives.map((incentive) => incentive.rewardTokenId) } },
+    select: { id: true },
   })
-  const foundRewardTokens = rewardTokensFound.map((token) => token.address)
+  const foundRewardTokens = rewardTokensFound.map((token) => token.id)
 
   let missingTokens = 0
+  const missingPoolIds: Record<string, string[]> = {}
   let missingPools = 0
   const incentivesToCreate = incentives.filter((incentive) => {
     const incentiveExists = incentiveFound.find((i) => i.id === incentive.id)
     if (!foundRewardTokens.includes(incentive.rewardTokenId)) {
-      // console.log(
-      //   `SKIP: incentive with id ${incentive.id} missing token: ${incentive.poolAddress} ${incentive.rewardTokenId}`
-      // )
       missingTokens += 1
       return false
     }
     if (!incentiveExists) {
-      if (!foundPools.includes(incentive.poolAddress)) {
-        console.log(
-          `SKIP: incentive with id ${incentive.id} missing pool: ${incentive.chainId} ${incentive.poolAddress}`
-        )
+      if (!foundPools.includes(incentive.poolId)) {
         missingPools += 1
+        if (!missingPoolIds[incentive.chainId]) {
+          missingPoolIds[incentive.chainId] = []
+        }
+        missingPoolIds[incentive.chainId].push(incentive.poolId)
         return false
       }
 
@@ -66,6 +65,11 @@ export async function filterIncentives(
   })
   if (missingPools) console.log(`Missing pools, skipping incentives: ${missingPools}`)
   if (missingTokens) console.log(`Missing tokens, skipping incentives: ${missingTokens}`)
+  if (missingPools > 0) {
+    Object.entries(missingPoolIds).forEach(([chainId, poolIds]) => {
+      console.log(`Missing pools on chain ${chainId}, count: ${poolIds.length}`)
+    })
+  }
 
   const incentivesToUpdate = incentives.filter((incentive) => {
     const incentiveExists = incentiveFound.find((i) => i.id === incentive.id)

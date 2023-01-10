@@ -1,21 +1,18 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { getBuiltGraphSDK, PairsQuery } from '../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
-import { mergePools } from './etl/pool/load'
-import { filterPools } from './etl/pool/transform'
-import { createTokens } from './etl/token/load'
-
-
+import { getBuiltGraphSDK, PairsQuery } from '../.graphclient/index.js'
+import { EXCHANGE_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config.js'
+import { mergePools } from './etl/pool/index.js'
+import { filterPools } from './etl/pool/index.js'
+import { createTokens } from './etl/token/load.js'
 
 const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
 if (FIRST_TIME_SEED) {
   console.log('FIRST_TIME_SEED is true')
 }
-
 
 const client = new PrismaClient()
 
@@ -52,17 +49,19 @@ async function main() {
 
 async function extract() {
   const result: { chainId: ChainId; data: PairsQuery[] }[] = []
-
   const subgraphs = [
     TRIDENT_CHAINS.map((chainId) => {
-      const _chainId = chainId as typeof TRIDENT_ENABLED_NETWORKS[number]
-      return { chainId, host: GRAPH_HOST[chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] }
+      const _chainId = chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
+      return { chainId, host: SUBGRAPH_HOST[_chainId], name: TRIDENT_SUBGRAPH_NAME[_chainId] }
     }),
     SUSHISWAP_CHAINS.map((chainId) => {
-      return { chainId, host: GRAPH_HOST[chainId], name: EXCHANGE_SUBGRAPH_NAME[chainId] }
+      return {
+        chainId,
+        host: SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST],
+        name: EXCHANGE_SUBGRAPH_NAME[chainId],
+      }
     }),
     // [{ chainId: ChainId.POLYGON, host: GRAPH_HOST[ChainId.POLYGON], name: 'sushi-0m/trident-polygon' }], // TODO: do we want the first trident deployment to be included?
-
   ].flat()
 
   const chains = Array.from(new Set(subgraphs.map((subgraph) => subgraph.chainId.toString())))

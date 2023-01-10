@@ -26,8 +26,12 @@ async function updateIncentives(client: PrismaClient, incentives: Prisma.Incenti
     return
   }
   console.log(`LOAD - Preparing to update ${incentives.length} incentives`)
+
   const incentivesToUpdate = incentives.map((incentive) => {
     return client.incentive.update({
+      select: {
+        id: true,
+      },
       where: {
         id: incentive.id,
       },

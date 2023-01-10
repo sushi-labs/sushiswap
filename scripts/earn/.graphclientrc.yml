@@ -2,14 +2,15 @@ sources:
   - name: Trident
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:sushi-qa/trident-optimism}
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-v2/trident-optimism}
     transforms:
       - autoPagination:
           validateSchema: true
+    retry: 3
   - name: Exchange
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:sushi-graph/sushiswap-ethereum}
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-v2/sushiswap-ethereum}
     transforms:
       - autoPagination:
           validateSchema: true
@@ -17,6 +18,7 @@ sources:
           mode: wrap
           filters:
             - Type.!{Factory}
+    retry: 3
   - name: MasterChef
     handler:
       graphql:
@@ -78,6 +80,12 @@ additionalTypeDefs: |
       chainIds: [Int!]!
     ): [Block!]!
   }
+# Had to disable global transforms since we have a jsonSchema handler in here now...
+transforms:
+  - autoPagination:
+      validateSchema: false
+  - autoTypeMerging: true
+  - addSourceName: true
 
 additionalResolvers:
   - ./resolvers/index.js

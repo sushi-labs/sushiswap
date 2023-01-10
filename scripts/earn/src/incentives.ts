@@ -1,17 +1,17 @@
 import 'dotenv/config'
-import './lib/wagmi'
+import './lib/wagmi.js'
 
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { mergeIncentives } from './etl/incentive/load'
-import { filterIncentives } from './etl/incentive/transform'
-import { updatePoolsWithIncentivesTotalApr } from './etl/pool/load'
-import { createTokens } from './etl/token/load'
-import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
-import { ChefReturn } from './lib/types'
+import { filterIncentives } from './etl/incentive/index.js'
+import { mergeIncentives } from './etl/incentive/load.js'
+import { updatePoolsWithIncentivesTotalApr } from './etl/pool/index.js'
+import { createTokens } from './etl/token/load.js'
+import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib/index.js'
+import { ChefReturn } from './lib/types.js'
 
 const client = new PrismaClient()
 
@@ -108,7 +108,7 @@ async function transform(data: ChefReturn[]): Promise<{
                 chainId: chainId.toString(),
                 type: farm.chefType,
                 apr: isNaN(incentive.apr) || incentive.apr === Infinity ? 0 : incentive.apr,
-                rewardTokenId: incentive.rewardToken.address.toLowerCase(),
+                rewardTokenId: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
                 rewardPerDay: incentive.rewardPerDay,
                 rewarderAddress: incentive.rewarder.address.toLowerCase(),
                 poolId: chainId.toString().concat(':').concat(poolAddress.toLowerCase()),

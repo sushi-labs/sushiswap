@@ -1,17 +1,17 @@
 import { PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import { TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import { SUBGRAPH_HOST, TRIDENT_ENABLED_NETWORKS, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { performance } from 'perf_hooks'
 
-import { Block, getBuiltGraphSDK, Pair } from '../.graphclient'
-import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config'
-import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool'
+import { Block, getBuiltGraphSDK, Pair } from '../.graphclient/index.js'
+import { EXCHANGE_SUBGRAPH_NAME, SUSHISWAP_CHAINS, TRIDENT_CHAINS } from './config.js'
+import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool/index.js'
 
 const client = new PrismaClient()
 
 async function main() {
   const startTime = performance.now()
-  console.log('EXTRACT: Extracting pool data')
+  console.log('EXTRACT: Extracting volume data')
 
   // EXTRACT
   const { pairs, pairs1d, pairs1w } = await extract()
@@ -42,22 +42,26 @@ async function extract() {
     graphClientSdk.OneWeekBlocks({ chainIds: SUSHISWAP_CHAINS }),
   ])
 
-  const pairs = await extractPairs()
-  const pairs1d = await extractPairs(oneDayBlocks)
-  const pairs1w = await extractPairs(oneWeekBlocks)
+  const [pairs, pairs1d, pairs1w] = await Promise.all([
+    extractPairs(),
+    extractPairs(oneDayBlocks),
+    extractPairs(oneWeekBlocks),
+  ])
   return { pairs, pairs1d, pairs1w }
 }
 
 async function extractPairs(blocks?: Pick<Block, 'number' | 'id' | 'timestamp' | 'chainId'>[]) {
   const legacyRequests = SUSHISWAP_CHAINS.map((chainId) => {
     const blockNumber = blocks ? Number(blocks.find((block) => block.chainId === chainId)?.number) : undefined
-    const requests = createQuery(chainId, GRAPH_HOST[chainId], EXCHANGE_SUBGRAPH_NAME[chainId], blockNumber)
+    const host = SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST]
+    const requests = createQuery(chainId, host, EXCHANGE_SUBGRAPH_NAME[chainId], blockNumber)
     return { chainId, requests }
   })
   const tridentRequests = TRIDENT_CHAINS.map((chainId) => {
     const _chainId = chainId as (typeof TRIDENT_ENABLED_NETWORKS)[number]
+    const host = SUBGRAPH_HOST[Number(chainId) as keyof typeof SUBGRAPH_HOST]
     const blockNumber = blocks ? Number(blocks.find((block) => block.chainId === chainId)?.number) : undefined
-    const requests = createQuery(chainId, GRAPH_HOST[chainId], TRIDENT_SUBGRAPH_NAME[_chainId], blockNumber)
+    const requests = createQuery(chainId, host, TRIDENT_SUBGRAPH_NAME[_chainId], blockNumber)
     return { chainId, requests }
   })
   // OLD TRIDENT POLYGON
