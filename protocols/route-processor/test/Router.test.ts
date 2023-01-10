@@ -5,7 +5,8 @@ import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { DAI, Native, SUSHI, Token, Type, USDC, USDT, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { DataFetcher, PoolFilter, Router } from '@sushiswap/router'
-import { BridgeBento, getBigNumber, MultiRoute, StableSwapRPool } from '@sushiswap/tines'
+import { LiquidityProviders } from '@sushiswap/router/dist/liquidity-providers/LiquidityProviderMC'
+import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
@@ -68,6 +69,7 @@ async function makeSwap(
   fromToken: Type,
   amountIn: BigNumber,
   toToken: Type,
+  providers?: LiquidityProviders[],
   poolFilter?: PoolFilter
 ): Promise<[BigNumber, number] | undefined> {
   //console.log(`Make swap ${fromToken.symbol} -> ${toToken.symbol} amount: ${amountIn.toString()}`)
@@ -81,7 +83,7 @@ async function makeSwap(
   //console.log('Create Route ...')
   env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const waiter = new Waiter()
-  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, undefined, poolFilter)
+  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9, providers, poolFilter)
   router.startRouting(() => {
     //console.log('Known Pools:', dataFetcher.poolCodes.reduce((a, b) => ))
     const printed = router.getCurrentRouteHumanString()
@@ -163,6 +165,7 @@ async function updMakeSwap(
   fromToken: Type,
   toToken: Type,
   lastCallResult: BigNumber | [BigNumber | undefined, number],
+  providers?: LiquidityProviders[],
   poolFilter?: PoolFilter
 ): Promise<[BigNumber | undefined, number]> {
   const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
@@ -171,7 +174,7 @@ async function updMakeSwap(
   console.log('')
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
-  const res = await makeSwap(env, fromToken, amountIn, toToken, poolFilter)
+  const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter)
   expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
@@ -200,31 +203,26 @@ describe('End-to-end Router test', async function () {
     intermidiateResult = await updMakeSwap(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 
-  it('StablePool Native => USDC => USDT => DAI => USDC  (Polygon only)', async function () {
+  it('Trident Native => SUSHI => Native (Polygon only)', async function () {
+    if (chainId == ChainId.POLYGON) {
+      intermidiateResult[0] = getBigNumber(10_000 * 1e18)
+      intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult, [
+        LiquidityProviders.Trident,
+      ])
+      intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult, [
+        LiquidityProviders.Trident,
+      ])
+    }
+  })
+
+  it('StablePool Native => USDC => USDT => DAI => USDC (Polygon only)', async function () {
+    const filter = (pool: RPool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
     if (chainId == ChainId.POLYGON) {
       intermidiateResult[0] = getBigNumber(10_000 * 1e18)
       intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), USDC[chainId], intermidiateResult)
-      intermidiateResult = await updMakeSwap(
-        env,
-        USDC[chainId],
-        USDT[chainId],
-        intermidiateResult,
-        (pool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
-      )
-      intermidiateResult = await updMakeSwap(
-        env,
-        USDT[chainId],
-        DAI[chainId],
-        intermidiateResult,
-        (pool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
-      )
-      intermidiateResult = await updMakeSwap(
-        env,
-        DAI[chainId],
-        USDC[chainId],
-        intermidiateResult,
-        (pool) => pool instanceof StableSwapRPool || pool instanceof BridgeBento
-      )
+      intermidiateResult = await updMakeSwap(env, USDC[chainId], USDT[chainId], intermidiateResult, undefined, filter)
+      intermidiateResult = await updMakeSwap(env, USDT[chainId], DAI[chainId], intermidiateResult, undefined, filter)
+      intermidiateResult = await updMakeSwap(env, DAI[chainId], USDC[chainId], intermidiateResult, undefined, filter)
     }
   })
 })

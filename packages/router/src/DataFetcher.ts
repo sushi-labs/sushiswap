@@ -33,6 +33,7 @@ export class DataFetcher {
 
   _providerIsIncluded(lp: LiquidityProviders, liquidity?: LiquidityProviders[]) {
     if (!liquidity) return true
+    if (lp == LiquidityProviders.NativeWrap) return true
     return liquidity.some((l) => l == lp)
   }
 
