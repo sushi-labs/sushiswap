@@ -8,7 +8,14 @@ import { EXCHANGE_SUBGRAPH_NAME, GRAPH_HOST, SUSHISWAP_CHAINS, TRIDENT_CHAINS } 
 import { mergePools } from './etl/pool/load'
 import { filterPools } from './etl/pool/transform'
 import { createTokens } from './etl/token/load'
-import { filterTokensToCreate } from './etl/token/transform'
+
+
+
+const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
+if (FIRST_TIME_SEED) {
+  console.log('FIRST_TIME_SEED is true')
+}
+
 
 const client = new PrismaClient()
 
@@ -36,7 +43,7 @@ async function main() {
   for (let i = 0; i < pools.length; i += batchSize) {
     const batch = pools.slice(i, i + batchSize)
     const filteredPools = await filterPools(client, batch)
-    await mergePools(client, filteredPools, false) // TODO: env bool
+    await mergePools(client, filteredPools, FIRST_TIME_SEED)
   }
   const endTime = performance.now()
 
