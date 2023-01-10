@@ -3,16 +3,18 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { useDebounce } from '@sushiswap/hooks'
 
 export const SwapCurrencyInput: FC = () => {
   const { token0, value, network0 } = useSwapState()
   const [localValue, setLocalValue] = useState(value)
   const { setToken0, setValue } = useSwapActions()
+  const debouncedValue = useDebounce(localValue, 250)
 
   // To avoid slow input
   useEffect(() => {
-    setValue(localValue)
-  }, [setValue, localValue])
+    setValue(debouncedValue)
+  }, [setValue, debouncedValue])
 
   return (
     <Web3Input.Currency
