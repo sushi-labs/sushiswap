@@ -45,7 +45,7 @@ interface SwapState {
   network0: ChainId
   network1: ChainId
   value: string
-  valueAsAmount: Amount<Type> | undefined
+  amount: Amount<Type> | undefined
   appType: AppType
 }
 
@@ -127,7 +127,7 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
       return {
         ...state,
         value: action.value,
-        valueAsAmount: tryParseAmount(action.value, state.token0),
+        amount: tryParseAmount(action.value, state.token0),
       }
     case 'switchTokens':
       return {
@@ -136,7 +136,7 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
         token1: state.token0,
         network0: state.network1,
         network1: state.network0,
-        valueAsAmount: tryParseAmount(state.value, state.token1),
+        amount: tryParseAmount(state.value, state.token1),
       }
   }
 }
@@ -172,7 +172,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
     network0: fromChainId,
     network1: toChainId,
     value: amount ? amount.toString() : '',
-    valueAsAmount: tryParseAmount(
+    amount: tryParseAmount(
       amount ? amount.toString() : undefined,
       isShortCurrencyName(fromChainId, fromCurrencyId)
         ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
@@ -205,7 +205,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
   }, [])
 
   // Set network0 to connected network if no chainId queryParam is present
-  // useLayoutEffect(() => {
+  // useEffect(() => {
   //   if (chain?.id && (!params?.fromChainId || !!params?.toChainId)) {
   //     router.push(`/swap13/${chain.id}/${chain.id}`)
   //   }

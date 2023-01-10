@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
-import { useClearNotifications, useNotifications } from '@sushiswap/react-query/src/hooks/notifications'
+import { useClearNotifications, useNotifications } from '@sushiswap/react-query/hooks/notifications'
 import { Button } from '@sushiswap/ui13/components/button'
 import { List } from '@sushiswap/ui13/components/list/List'
 import React, { Dispatch, FC, SetStateAction } from 'react'

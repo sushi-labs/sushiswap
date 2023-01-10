@@ -9,12 +9,7 @@ const nextConfig = {
   eslint: {
     dirs: ['pages', 'components', 'lib', 'app', 'ui'],
   },
-  transpilePackages: [
-    '@sushiswap/redux-token-lists',
-    '@sushiswap/redux-localstorage',
-    '@sushiswap/ui13',
-    '@sushiswap/wagmi13',
-  ],
+  transpilePackages: ['@sushiswap/ui13', '@sushiswap/wagmi13'],
   experimental: {
     appDir: true,
     esmExternals: 'loose',
@@ -26,7 +21,7 @@ const nextConfig = {
         destination: '/swap13',
         permanent: true,
         basePath: false,
-      }
+      },
     ]
   },
 }

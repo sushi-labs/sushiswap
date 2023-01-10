@@ -22,7 +22,6 @@ export const useCreateNotification = ({ account }: { account: `0x${string}` | un
           else {
             state[timestamp] = [notification]
           }
-
           return state
         }
       })

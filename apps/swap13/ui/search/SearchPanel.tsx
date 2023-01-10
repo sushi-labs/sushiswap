@@ -5,7 +5,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { useSearchContext } from './SearchProvider'
 import { List } from '@sushiswap/ui13/components/list/List'
-import { useTokenList } from '@sushiswap/react-query/src/hooks/tokenlist/useTokenList'
+import { useTokenList } from '@sushiswap/react-query/hooks/tokenlist/useTokenList'
 import { TokenWithLogoURIType, usePrice } from '@sushiswap/react-query'
 import { Badge } from '@sushiswap/ui13/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'

@@ -8,13 +8,39 @@
     "react",
     "query"
   ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/abi"
+  },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
   "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": [
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*/index.ts"
+    ]
+  },
+  "files": [
+    "src"
+  ],
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*",
+        "src/*/index"
+      ]
+    }
+  },
   "scripts": {
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "lint": "TIMING=1 eslint ./**/*.ts* --fix",
+    "lint": "TIMING=1 eslint \"**/*.{ts,tsx,js,jsx}\" --fix",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
