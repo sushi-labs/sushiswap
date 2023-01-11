@@ -18,11 +18,9 @@ contract RouteProcessor {
   using InputStream for uint256;
 
   IBentoBoxMinimal public immutable bentoBox;
-  IWETH public immutable wNATIVE;
 
-  constructor(address _bentoBox, address _wNATIVE) {
+  constructor(address _bentoBox) {
     bentoBox = IBentoBoxMinimal(_bentoBox);
-    wNATIVE = IWETH(_wNATIVE);
   }
 
   /// @notice For native unwrapping
