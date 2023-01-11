@@ -15,26 +15,33 @@ import { ChefReturn } from './lib/types.js'
 
 const client = new PrismaClient()
 
-async function main() {
-  console.log(`Preparing to load farms`)
-  const startTime = performance.now()
+export async function execute() {
+  try {
+    console.log(`Preparing to load farms/incentives`)
+    const startTime = performance.now()
 
-  // TODO: Consider if we are going to keep the current farm script running for the single pages, if we are
-  // we might as well use the graph client to fetch the farms here.
-  // EXTRACT
-  const farms = await extract()
-  console.log(`EXTRACT - Extracted farms from ${farms.length} chains.`)
+    // EXTRACT
+    const farms = await extract()
+    console.log(`EXTRACT - Extracted farms from ${farms.length} chains.`)
 
-  // TRANSFORM
-  const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(farms)
+    // TRANSFORM
+    const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(farms)
 
-  // // LOAD
-  await createTokens(client, tokens)
-  await mergeIncentives(client, incentivesToCreate, incentivesToUpdate)
-  await updatePoolsWithIncentivesTotalApr(client)
+    // // LOAD
+    await createTokens(client, tokens)
+    await mergeIncentives(client, incentivesToCreate, incentivesToUpdate)
+    await updatePoolsWithIncentivesTotalApr(client)
 
-  const endTime = performance.now()
-  console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+    const endTime = performance.now()
+    console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+    process.exit(1)
+  } finally {
+    await client.$disconnect()
+    process.exit(0)
+  }
 }
 
 async function extract() {
@@ -117,14 +124,3 @@ async function transform(data: ChefReturn[]): Promise<{
 
   return { incentivesToCreate, incentivesToUpdate, tokens }
 }
-
-main()
-  .then(async () => {
-    await client.$disconnect()
-    process.exit(0)
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await client.$disconnect()
-    process.exit(1)
-  })

@@ -9,30 +9,39 @@ import { PoolMinimal, updatePoolsWithVolumeAndFee } from './etl/pool/index.js'
 
 const client = new PrismaClient()
 
-async function main() {
-  const startTime = performance.now()
-  console.log('EXTRACT: Extracting volume data')
+export async function execute() {
+  try {
+    const startTime = performance.now()
+    console.log('EXTRACT: Extracting volume data')
 
-  // EXTRACT
-  const { pairs, pairs1d, pairs1w } = await extract()
-  console.log(
-    `EXTRACT: extracted 
+    // EXTRACT
+    const { pairs, pairs1d, pairs1w } = await extract()
+    console.log(
+      `EXTRACT: extracted 
     pairs(${pairs.map((p) => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)}) 
     pairs1d(${pairs1d.map((p) => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)})
     pairs1w(${pairs1w.map((p) => p.responses?.length ?? 0).reduce((total, p) => total + p, 0)}) `
-  )
+    )
 
-  // TRANSFORM
-  const transformed = transform(pairs, pairs1d, pairs1w)
+    // TRANSFORM
+    const transformed = transform(pairs, pairs1d, pairs1w)
 
-  // LOAD
-  const batchSize = 500
-  for (let i = 0; i < transformed.length; i += batchSize) {
-    const batch = transformed.slice(i, i + batchSize)
-    await updatePoolsWithVolumeAndFee(client, batch)
+    // LOAD
+    const batchSize = 500
+    for (let i = 0; i < transformed.length; i += batchSize) {
+      const batch = transformed.slice(i, i + batchSize)
+      await updatePoolsWithVolumeAndFee(client, batch)
+    }
+    const endTime = performance.now()
+    console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+    process.exit(1)
+  } finally {
+    await client.$disconnect()
+    process.exit(0)
   }
-  const endTime = performance.now()
-  console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
 
 async function extract() {
@@ -190,14 +199,3 @@ export function transformPair(
     fees1w,
   }
 }
-
-main()
-  .then(async () => {
-    await client.$disconnect()
-    process.exit(0)
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await client.$disconnect()
-    process.exit(1)
-  })

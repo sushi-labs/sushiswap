@@ -1,4 +1,9 @@
 import express from 'express'
+
+import { execute as incentives } from './incentives.js'
+import { execute as pools } from './pools.js'
+import { execute as volume } from './volume.js'
+
 const app = express()
 
 app.get('/', async (req, res) => {
@@ -6,15 +11,15 @@ app.get('/', async (req, res) => {
   try {
     switch (target) {
       case 'pools':
-        await import('./pools.js')
+        await pools()
         res.sendStatus(200)
         break
       case 'incentives':
-        await import('./incentives.js')
+        await incentives()
         res.sendStatus(200)
         break
       case 'volume':
-        await import('./volume.js')
+        await volume()
         res.sendStatus(200)
         break
       default:

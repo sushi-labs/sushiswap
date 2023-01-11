@@ -18,33 +18,42 @@ const client = new PrismaClient()
 
 const PROTOCOL = 'SushiSwap'
 
-async function main() {
-  const startTime = performance.now()
-  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
+export async function execute() {
+  try {
+    const startTime = performance.now()
+    console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
 
-  // EXTRACT
-  const exchanges = await extract()
-  console.log(`EXTRACT - Pairs extracted from ${exchanges.length} different subgraphs`)
+    // EXTRACT
+    const exchanges = await extract()
+    console.log(`EXTRACT - Pairs extracted from ${exchanges.length} different subgraphs`)
 
-  // TRANSFORM
-  const { tokens, pools } = await transform(exchanges)
+    // TRANSFORM
+    const { tokens, pools } = await transform(exchanges)
 
-  // LOAD
-  const batchSize = 500
+    // LOAD
+    const batchSize = 500
 
-  for (let i = 0; i < tokens.length; i += batchSize) {
-    const batch = tokens.slice(i, i + batchSize)
-    await createTokens(client, batch)
+    for (let i = 0; i < tokens.length; i += batchSize) {
+      const batch = tokens.slice(i, i + batchSize)
+      await createTokens(client, batch)
+    }
+
+    for (let i = 0; i < pools.length; i += batchSize) {
+      const batch = pools.slice(i, i + batchSize)
+      const filteredPools = await filterPools(client, batch)
+      await mergePools(client, filteredPools, FIRST_TIME_SEED)
+    }
+    const endTime = performance.now()
+
+    console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+    process.exit(1)
+  } finally {
+    await client.$disconnect()
+    process.exit(0)
   }
-
-  for (let i = 0; i < pools.length; i += batchSize) {
-    const batch = pools.slice(i, i + batchSize)
-    const filteredPools = await filterPools(client, batch)
-    await mergePools(client, filteredPools, FIRST_TIME_SEED)
-  }
-  const endTime = performance.now()
-
-  console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
 }
 
 async function extract() {
@@ -178,14 +187,3 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
 
   return { pools: poolsTransformed, tokens }
 }
-
-main()
-  .then(async () => {
-    await client.$disconnect()
-    process.exit(0)
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await client.$disconnect()
-    process.exit(1)
-  })
