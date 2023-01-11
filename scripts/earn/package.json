@@ -1,30 +1,27 @@
 {
-  "name": "sushi",
+  "name": "earn-script",
   "version": "0.0.0",
   "private": true,
   "description": "Prisma",
   "keywords": [
-    "sushi",
+    "earn",
     "script"
   ],
   "homepage": "https://www.sushi.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/sushiswap/sushiswap.git",
-    "directory": "scripts/sushi"
+    "directory": "scripts/earn"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "source": "src/index.ts",
-  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "type": "module",
   "scripts": {
-    "start": "ts-node --swc src/run.ts",
-    "server": "ts-node --swc src/server.ts",
+    "incentives": "ts-node --swc src/incentives.ts",
+    "pools": "ts-node --swc src/pools.ts",
+    "volume": "ts-node --swc src/volume.ts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "prisma-generate": "prisma generate",
