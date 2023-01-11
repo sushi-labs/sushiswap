@@ -68,7 +68,7 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-start gap-2">
           <span className="font-medium text-gray-900 dark:text-slate-100 mt-px">Expected output</span>
           <div className="flex flex-col justify-end">
-            <span className="text-xl font-semibold text-gray-900 dark:text-slate-100">
+            <span className="text-xl text-right font-semibold text-gray-900 dark:text-slate-100">
               {isLoading ? (
                 <Skeleton.Text fontSize="text-xl" className="w-[140px]" />
               ) : (
