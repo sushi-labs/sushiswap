@@ -1,7 +1,7 @@
+import { getAddress } from '@ethersproject/address'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { useQuery } from '@tanstack/react-query'
-import { getAddress } from '@ethersproject/address'
 
 interface UseTokensParams {
   chainId: ChainId

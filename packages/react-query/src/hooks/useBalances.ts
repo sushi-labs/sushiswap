@@ -1,8 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
-import { Amount, Token } from '@sushiswap/currency'
-import { useCallback } from 'react'
-import { useTokens } from './tokens'
 import { getAddress } from '@ethersproject/address'
+import { Amount, Token } from '@sushiswap/currency'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback } from 'react'
+
+import { useTokens } from './tokens'
 
 type UseBalancesReturn = Record<string, Amount<Token>>
 type UseBalancesQuerySelect = (data: Record<string, string>) => UseBalancesReturn

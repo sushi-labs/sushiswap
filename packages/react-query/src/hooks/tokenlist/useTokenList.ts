@@ -1,8 +1,9 @@
+import { getAddress } from '@ethersproject/address'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { tokenListValidator } from './validator'
+
 import { TokenWithLogoURIType, UseTokenListQuerySelect } from './types'
-import { getAddress } from '@ethersproject/address'
+import { tokenListValidator } from './validator'
 
 export const useTokenListQuery = (select: UseTokenListQuerySelect) =>
   useQuery({

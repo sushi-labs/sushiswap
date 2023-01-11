@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import { Fraction } from '@sushiswap/math'
 import { parseUnits } from '@ethersproject/units'
+import { Fraction } from '@sushiswap/math'
+import { useQuery } from '@tanstack/react-query'
 
 interface UsePrice {
   chainId: number | undefined

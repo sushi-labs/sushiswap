@@ -1,11 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
-import { Amount, Native, nativeCurrencyIds, Price } from '@sushiswap/currency'
-import { UseTradeParams, UseTradeQuerySelect } from './types'
-import { Percent, ZERO } from '@sushiswap/math'
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { tradeValidator } from './validator'
+import { Amount, Native, nativeCurrencyIds, Price } from '@sushiswap/currency'
+import { Percent, ZERO } from '@sushiswap/math'
+import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
+
 import { usePrice } from '../prices'
+import { UseTradeParams, UseTradeQuerySelect } from './types'
+import { tradeValidator } from './validator'
 
 export const useTradeQuery = (
   { chainId, fromToken, toToken, amount, gasPrice = 50, blockNumber, recipient }: UseTradeParams,

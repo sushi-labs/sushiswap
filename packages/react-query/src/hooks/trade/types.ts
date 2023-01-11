@@ -1,7 +1,8 @@
-import { Amount, Price, Type } from '@sushiswap/currency'
 import { ChainId } from '@sushiswap/chain'
-import { tradeValidator } from './validator'
+import { Amount, Price, Type } from '@sushiswap/currency'
 import z from 'zod'
+
+import { tradeValidator } from './validator'
 
 export interface UseTradeParams {
   chainId: ChainId
