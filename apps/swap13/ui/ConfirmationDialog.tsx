@@ -43,7 +43,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     abi: ROUTE_PROCESSOR_ABI,
     functionName: 'processRoute',
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs),
+    enabled: Boolean(trade?.writeArgs) && open,
     overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
   })
 
@@ -90,7 +90,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   return (
     <>
       {children({ onClick, isWritePending, isConfirming: dialogState === ConfirmationDialogState.Pending })}
-      <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
+      <Dialog open={open} unmount={true} onClose={() => setOpen(false)}>
         <Dialog.Content>
           <div className="flex flex-col gap-5 items-center justify-center">
             {[ConfirmationDialogState.Failed, ConfirmationDialogState.Success].includes(dialogState) ? (

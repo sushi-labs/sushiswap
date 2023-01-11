@@ -26,7 +26,7 @@ export const TradeReviewDialog: FC = () => {
   const onClose = useCallback(() => setReview(false), [setReview])
 
   return (
-    <Dialog open={review} onClose={onClose} variant="opaque">
+    <Dialog open={review} unmount={true} onClose={onClose} variant="opaque">
       <div className="max-w-[504px] mx-auto">
         <button onClick={onClose} className="-ml-2 p-2">
           <ArrowLeftIcon strokeWidth={3} width={20} height={20} />

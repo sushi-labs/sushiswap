@@ -8,11 +8,10 @@ import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { FixedButtonContainer } from '../FixedButtonContainer'
 import { useTrade } from '../../lib/useTrade'
-import { Dots } from '@sushiswap/ui13/components/Dots'
 
 export const SwapButton: FC = () => {
   const { amount, network0 } = useSwapState()
-  const { data: trade } = useTrade()
+  const { isFetching } = useTrade()
   const { setReview } = useSwapActions()
 
   return (
@@ -31,8 +30,8 @@ export const SwapButton: FC = () => {
                 amount={amount}
                 contract={ROUTE_PROCESSOR_ADDRESS[ChainId.POLYGON]}
               >
-                <Button disabled={amount && !trade} fullWidth size="xl" onClick={() => setReview(true)}>
-                  {amount && !trade ? <Dots>Calculating Output</Dots> : 'Review Swap'}
+                <Button disabled={isFetching} fullWidth size="xl" onClick={() => setReview(true)}>
+                  Swap
                 </Button>
               </Checker.ApproveERC20>
             </Checker.Amounts>

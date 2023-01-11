@@ -28,6 +28,7 @@ export const useTradeQuery = (
       return tradeValidator.parse(res)
     },
     keepPreviousData: !!amount,
+    cacheTime: 0,
     select,
     enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice && blockNumber),
   })

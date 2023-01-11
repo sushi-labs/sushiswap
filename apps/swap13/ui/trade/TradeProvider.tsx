@@ -11,10 +11,11 @@ import {
   currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import React, { FC, ReactNode, useMemo, useReducer } from 'react'
+import { useAccount } from 'wagmi'
 import { z } from 'zod'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
+import { createContext, useContext } from 'use-context-selector'
 
 const schema = z.object({
   fromChainId: z.coerce
@@ -34,8 +35,6 @@ const schema = z.object({
   amount: z.optional(z.coerce.bigint()),
   recipient: z.optional(z.string()),
 })
-
-type Params = z.infer<typeof schema>
 
 interface SwapState {
   review: boolean
@@ -61,8 +60,8 @@ type SwapApi = {
   switchTokens(): void
 }
 
-const DataContext = createContext<SwapState>({} as SwapState)
-const APIContext = createContext<SwapApi>({} as SwapApi)
+export const SwapStateContext = createContext<SwapState>({} as SwapState)
+export const SwapActionsContext = createContext<SwapApi>({} as SwapApi)
 
 type Actions =
   | { type: 'setNetwork0'; chainId: ChainId }
@@ -143,21 +142,12 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
 
 interface SwapProviderProps {
   children: ReactNode
-  params: {
-    fromChainId: string
-    toChainId: string
-    fromCurrencyId: string
-    toCurrencyId: string
-    amount: string
-    recipient: string
-  }
 }
 
-export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
-  const router = useRouter()
-  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = schema.parse(params)
+export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
-  const { chain } = useNetwork()
+  const { query } = useRouter()
+  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = schema.parse(query)
 
   const [state, dispatch] = useReducer(reducer, {
     review: false,
@@ -204,26 +194,19 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children, params }) => {
     }
   }, [])
 
-  // Set network0 to connected network if no chainId queryParam is present
-  // useEffect(() => {
-  //   if (chain?.id && (!params?.fromChainId || !!params?.toChainId)) {
-  //     router.push(`/swap13/${chain.id}/${chain.id}`)
-  //   }
-  // }, [router, chain?.id, params])
-
   return (
-    <APIContext.Provider value={api}>
-      <DataContext.Provider
+    <SwapActionsContext.Provider value={api}>
+      <SwapStateContext.Provider
         value={useMemo(() => ({ ...state, recipient: state.recipient ?? address }), [address, state])}
       >
         {children}
-      </DataContext.Provider>
-    </APIContext.Provider>
+      </SwapStateContext.Provider>
+    </SwapActionsContext.Provider>
   )
 }
 
 export const useSwapState = () => {
-  const context = useContext(DataContext)
+  const context = useContext(SwapStateContext)
   if (!context) {
     throw new Error('Hook can only be used inside State Context')
   }
@@ -232,7 +215,7 @@ export const useSwapState = () => {
 }
 
 export const useSwapActions = () => {
-  const context = useContext(APIContext)
+  const context = useContext(SwapActionsContext)
   if (!context) {
     throw new Error('Hook can only be used inside State Actions Context')
   }
