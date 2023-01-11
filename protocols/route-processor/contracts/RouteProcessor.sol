@@ -59,7 +59,7 @@ contract RouteProcessor {
         else if (commandCode == 3)
           amountInAcc += distributeERC20Amounts(stream, tokenIn); // initial distribution
         else if (commandCode == 5)
-          amountInAcc += wrapAndDistributeERC20Amounts(stream, tokenIn); // wrap natives and initial distribution        
+          amountInAcc += wrapAndDistributeERC20Amounts(stream); // wrap natives and initial distribution        
         else if (commandCode == 6) unwrapNative(to, stream);
         else revert('Unknown command code');
       } else if (commandCode < 24) {
@@ -170,10 +170,10 @@ contract RouteProcessor {
 
   /// @notice Wraps all native inputs and distributes wrapped ERC20 tokens from RouteProcessor to addresses
   /// @notice Expected to be called for initial liquidity transfer from the user to pools, so we know exact amounts
-  /// @param stream [ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
-  /// @param token Wrapper token (WETH, WMATIC, ...)
+  /// @param stream [WrapToken, ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
   /// @return amountTotal Total amount distributed
-  function wrapAndDistributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
+  function wrapAndDistributeERC20Amounts(uint256 stream) private returns (uint256 amountTotal) {
+    address token = stream.readAddress();
     IWETH(token).deposit{value: msg.value}();
     uint8 num = stream.readUint8();
     amountTotal = 0;

@@ -15,7 +15,7 @@ export class NativeWrapBridgePoolCode extends PoolCode {
   getSwapCodeForRouteProcessor(leg: RouteLeg): string {
     if (leg.tokenFrom.tokenId == this.pool.token0.tokenId) {
       // wrap - deposit. not used normally
-      const code = new HEXer().uint8(5).uint8(0).toString() // wrapAndDistributeERC20Amounts;
+      const code = new HEXer().uint8(5).address(this.pool.address).uint8(0).toString() // wrapAndDistributeERC20Amounts;
       return code
     } else {
       // unwrap - withdraw

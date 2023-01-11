@@ -71,6 +71,7 @@ export class TinesToRouteProcessor {
   getRPCodeForsimpleWrapRoute(route: MultiRoute, toAddress: string): string {
     const hex = new HEXer()
       .uint8(5) // wrapAndDistributeERC20Amounts
+      .address(route.legs[0].poolAddress)
       .uint8(1)
       .address(toAddress)
       .uint(route.amountInBN)
@@ -119,14 +120,13 @@ export class TinesToRouteProcessor {
       return [l, startPoint == PoolCode.RouteProcessorAddress ? this.routeProcessorAddress : startPoint]
     })
 
-    const command =
-      getTokenType(fromToken) == TokenType.BENTO
-        ? 24 // distributeBentoShares
-        : route.fromToken.address == ''
-        ? 5 // wrapAndDistributeERC20Amounts
-        : 3 // distributeERC20Amounts
+    const hex = new HEXer()
+    if (getTokenType(fromToken) == TokenType.BENTO) hex.uint8(24) // distributeBentoShares
+    else if (route.fromToken.address == '')
+      hex.uint8(5).address(route.legs[0].poolAddress) // wrapAndDistributeERC20Amounts
+    else hex.uint8(3) // distributeERC20Amounts
 
-    const hex = new HEXer().uint8(command).uint8(legsAddr.length)
+    hex.uint8(legsAddr.length)
 
     let inputAmountPrevious: BigNumber = BigNumber.from(0)
     const lastLeg = last(legsAddr)[0]
@@ -139,7 +139,6 @@ export class TinesToRouteProcessor {
       exactAmount.set(leg.poolAddress, amount)
     })
     const code = hex.toString()
-    console.assert(code.length == (2 + legsAddr.length * 52) * 2, 'codeDistributeInitial unexpected code length')
     return [code, exactAmount]
   }
 

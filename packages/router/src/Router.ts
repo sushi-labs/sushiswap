@@ -149,7 +149,7 @@ export class Router {
     RPAddr: string,
     maxPriceImpact = 0.005
   ): RPParams {
-    const tokenIn = fromToken instanceof Token ? fromToken.address : route.legs[0].poolAddress
+    const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - maxPriceImpact) * 1_000_000)).div(1_000_000)
 
