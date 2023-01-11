@@ -58,7 +58,7 @@ export const Button: ButtonComponent = React.forwardRef(
           BUTTON_CLASSES[BUTTON_STYLES[variant][color]],
           BUTTON_CLASSES[BUTTON_SIZES[size]],
           className,
-          disabled ? BUTTON_CLASSES['btn-disabled'] : ''
+          disabled || loading ? BUTTON_CLASSES['btn-disabled'] : ''
         )}
         {...rest}
       >

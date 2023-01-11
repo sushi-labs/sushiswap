@@ -23,7 +23,7 @@ export const PricePanel: FC<PricePanel> = ({ loading, currency, value, usdPctCha
 
   if (loading || isLoading)
     return (
-      <div className="h-[36px] w-[60px] flex items-center">
+      <div className="h-[36px] w-1/5 flex items-center">
         <Skeleton.Box className="h-[24px] w-full" />
       </div>
     )

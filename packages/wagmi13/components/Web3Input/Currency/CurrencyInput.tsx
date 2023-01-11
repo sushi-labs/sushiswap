@@ -68,7 +68,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   return (
     <div
       className={classNames(
-        fetching && type === 'OUTPUT' && !loading ? 'shimmer-fast' : '',
+        fetching && type === 'OUTPUT' ? 'shimmer-fast' : '',
         'space-y-1 overflow-hidden',
         insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
         className

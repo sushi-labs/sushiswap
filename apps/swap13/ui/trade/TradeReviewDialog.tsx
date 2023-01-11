@@ -16,29 +16,38 @@ import { Button } from '@sushiswap/ui13/components/button'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { Dots } from '@sushiswap/ui13/components/Dots'
 import { FixedButtonContainer } from '../FixedButtonContainer'
+import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 
 export const TradeReviewDialog: FC = () => {
-  const { review, token0, token1, recipient, network0, value } = useSwapState()
+  const { review, token0, token1, recipient, network0, amount } = useSwapState()
   const { setReview } = useSwapActions()
   const { data: slippageTolerance } = useSlippageTolerance()
-  const { data: trade } = useTrade()
+  const { data: trade, isFetching } = useTrade()
 
   const onClose = useCallback(() => setReview(false), [setReview])
 
   return (
     <Dialog open={review} unmount={true} onClose={onClose} variant="opaque">
       <div className="max-w-[504px] mx-auto">
-        <button onClick={onClose} className="-ml-2 p-2">
-          <ArrowLeftIcon strokeWidth={3} width={20} height={20} />
+        <button onClick={onClose} className="pl-0 p-3">
+          <ArrowLeftIcon strokeWidth={3} width={24} height={24} />
         </button>
-        <div className="flex justify-between gap-4 items-start">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-semibold dark:text-slate-50">
-              Receive {trade?.amountOut?.toSignificant(6)} {token1.symbol}
-            </h1>
-            <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-              Sell {value} {token0.symbol}
-            </h1>
+        <div className="flex justify-between gap-4 items-start py-2">
+          <div className="flex flex-col flex-grow gap-1">
+            {isFetching ? (
+              <Skeleton.Text fontSize="text-3xl" className="w-2/3" />
+            ) : (
+              <h1 className="text-3xl font-semibold dark:text-slate-50">
+                Receive {trade?.amountOut?.toSignificant(6)} {token1.symbol}
+              </h1>
+            )}
+            {isFetching ? (
+              <Skeleton.Text fontSize="text-lg" className="w-1/4" />
+            ) : (
+              <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
+                Sell {amount?.toSignificant(6)} {token0.symbol}
+              </h1>
+            )}
           </div>
           <div className="min-w-[56px] min-h-[56px]">
             <Currency.Icon currency={token1} width={56} height={56} />
@@ -48,7 +57,6 @@ export const TradeReviewDialog: FC = () => {
           <List>
             <List.Control>
               <List.KeyValue title="Network">{chainName[network0]}</List.KeyValue>
-              <List.KeyValue title="Network fee">~${trade?.gasSpent ?? '0.00'}</List.KeyValue>
               <List.KeyValue
                 title="Price impact"
                 subtitle="The impact your trade has on the market price of this pool."
@@ -59,12 +67,23 @@ export const TradeReviewDialog: FC = () => {
                 title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}
                 subtitle="The minimum amount you are guaranteed to receive."
               >
-                {trade?.minAmountOut?.toSignificant(6)} {token1.symbol}
+                {isFetching ? (
+                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
+                ) : (
+                  `${trade?.minAmountOut?.toSignificant(6)} ${token1.symbol}`
+                )}
+              </List.KeyValue>
+              <List.KeyValue title="Network fee">
+                {isFetching ? (
+                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
+                ) : (
+                  `~$${trade?.gasSpent ?? '0.00'}`
+                )}
               </List.KeyValue>
             </List.Control>
           </List>
           {recipient && (
-            <List className="!pt-0">
+            <List className="!pt-2">
               <List.Control>
                 <List.KeyValue title="Recipient">
                   <a
@@ -84,7 +103,7 @@ export const TradeReviewDialog: FC = () => {
       <FixedButtonContainer>
         <ConfirmationDialog>
           {({ onClick, isWritePending, isLoading, isConfirming }) => (
-            <Button fullWidth size="xl" loading={isLoading} onClick={onClick} disabled={isWritePending}>
+            <Button fullWidth size="xl" loading={isLoading} onClick={onClick} disabled={isWritePending || isFetching}>
               {isConfirming ? (
                 <Dots>Confirming transaction</Dots>
               ) : isWritePending ? (
