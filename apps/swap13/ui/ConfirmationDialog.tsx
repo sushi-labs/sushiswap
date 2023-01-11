@@ -18,7 +18,15 @@ import { useTrade } from '../lib/useTrade'
 import { BigNumber } from 'ethers'
 
 interface ConfirmationDialogProps {
-  children({ onClick, isWritePending }: { onClick(): void; isWritePending: boolean; isConfirming: boolean }): ReactNode
+  children({
+    onClick,
+    isWritePending,
+  }: {
+    onClick(): void
+    isWritePending: boolean
+    isLoading: boolean
+    isConfirming: boolean
+  }): ReactNode
 }
 
 enum ConfirmationDialogState {
@@ -43,7 +51,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     abi: ROUTE_PROCESSOR_ABI,
     functionName: 'processRoute',
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs) && open,
+    enabled: Boolean(trade?.writeArgs),
     overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
   })
 
@@ -89,7 +97,12 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   return (
     <>
-      {children({ onClick, isWritePending, isConfirming: dialogState === ConfirmationDialogState.Pending })}
+      {children({
+        onClick,
+        isWritePending,
+        isLoading: !writeAsync,
+        isConfirming: dialogState === ConfirmationDialogState.Pending,
+      })}
       <Dialog open={open} unmount={true} onClose={() => setOpen(false)}>
         <Dialog.Content>
           <div className="flex flex-col gap-5 items-center justify-center">

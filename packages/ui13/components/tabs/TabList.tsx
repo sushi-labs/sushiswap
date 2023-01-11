@@ -1,6 +1,6 @@
 import { Tab as HeadlessTab } from '@headlessui/react'
 import classNames from 'classnames'
-import { Children, FC, useLayoutEffect, useRef, useState } from 'react'
+import { Children, FC, useEffect, useRef, useState } from 'react'
 
 import { ExtractProps } from '../../types'
 
@@ -13,7 +13,7 @@ export const TabList: FC<TabListProps> = ({ className, children, islandClassName
   const ref = useRef<HTMLDivElement>()
   const tabs = Children.count(children)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       setWidth(ref.current.clientWidth)
     }

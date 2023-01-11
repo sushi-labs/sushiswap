@@ -83,8 +83,8 @@ export const TradeReviewDialog: FC = () => {
       </div>
       <FixedButtonContainer>
         <ConfirmationDialog>
-          {({ onClick, isWritePending, isConfirming }) => (
-            <Button fullWidth size="xl" onClick={onClick} disabled={isWritePending}>
+          {({ onClick, isWritePending, isLoading, isConfirming }) => (
+            <Button fullWidth size="xl" loading={isLoading} onClick={onClick} disabled={isWritePending}>
               {isConfirming ? (
                 <Dots>Confirming transaction</Dots>
               ) : isWritePending ? (
