@@ -182,6 +182,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
 main()
   .then(async () => {
     await client.$disconnect()
+    process.exit(0)
   })
   .catch(async (e) => {
     console.error(e)

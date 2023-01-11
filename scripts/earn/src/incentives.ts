@@ -121,6 +121,7 @@ async function transform(data: ChefReturn[]): Promise<{
 main()
   .then(async () => {
     await client.$disconnect()
+    process.exit(0)
   })
   .catch(async (e) => {
     console.error(e)

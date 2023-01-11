@@ -194,6 +194,7 @@ export function transformPair(
 main()
   .then(async () => {
     await client.$disconnect()
+    process.exit(0)
   })
   .catch(async (e) => {
     console.error(e)

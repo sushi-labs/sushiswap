@@ -1,9 +1,6 @@
 # NOTE: this Dockerfile is placed in the package, but it needs to run from the root of the monorepo
 FROM node:16-alpine
 
-ARG SCRIPT_PATH="./"
-ENV SCRIPT_PATH ${SCRIPT_PATH}
-
 # Install git and pnpm
 RUN apk add --no-cache git libc6-compat
 RUN npm install -g pnpm
@@ -21,4 +18,4 @@ WORKDIR /workdir/scripts/earn
 RUN pnpm prisma generate
 
 EXPOSE 8080/tcp
-CMD pnpm ts-node --swc --esm "./$SCRIPT_PATH"
+CMD pnpm exec turbo run server --only --filter=earn-script

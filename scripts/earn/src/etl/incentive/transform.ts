@@ -1,5 +1,4 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-import { ChainId } from '@sushiswap/chain'
 
 /**
  * Filters token incentives to only include the ones that are new or have changed.
