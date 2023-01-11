@@ -20,4 +20,5 @@ RUN rm -rf $(pnpm store path)
 WORKDIR /workdir/scripts/earn
 RUN pnpm prisma generate
 
+EXPOSE 8080/tcp
 CMD pnpm ts-node --swc --esm "./$SCRIPT_PATH"
