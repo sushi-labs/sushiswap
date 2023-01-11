@@ -156,7 +156,7 @@ export class TinesToRouteProcessor {
       return startPoint == PoolCode.RouteProcessorAddress
     }).length
     if (RPStartPointsNum > 1) {
-      throw new Error('More than one RouteProcessor for a token is not supported')
+      throw new Error('More than one input token is not supported by RouteProcessor')
     }
 
     const command =
@@ -170,18 +170,23 @@ export class TinesToRouteProcessor {
       .uint8(legs.length - RPStartPointsNum)
 
     let unmovedPart = 0
+    let unmovedCounter = 0
     legs.forEach((l) => {
       const pc = this.getPoolCode(l)
       const startPoint = pc.getStartPoint(l, route)
       if (startPoint == PoolCode.RouteProcessorAddress) {
         unmovedPart += l.swapPortion
+        ++unmovedCounter
       } else {
         const amount = l.swapPortion * (1 - unmovedPart)
         hex.address(startPoint).share16(amount)
       }
     })
     const code = hex.toString()
-    console.assert(code.length == (22 + legs.length * 22) * 2, 'codeDistributeTokenShares unexpected code length')
+    console.assert(
+      code.length == (22 + (legs.length - unmovedCounter) * 22) * 2,
+      'codeDistributeTokenShares unexpected code length'
+    )
     return code
   }
 
