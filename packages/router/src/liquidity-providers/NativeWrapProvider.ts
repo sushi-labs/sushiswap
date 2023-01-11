@@ -37,7 +37,7 @@ export class NativeWrapProvider extends LiquidityProviderMC {
       50_000
     )
     this.poolCodes = [new NativeWrapBridgePoolCode(bridge)]
-    this.stateId = 1
+    this.stateId = 0
     this.lastUpdateBlock = -1
   }
 
