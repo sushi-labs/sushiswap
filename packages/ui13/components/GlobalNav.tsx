@@ -6,6 +6,7 @@ import React, { FC, Fragment, ReactElement, ReactNode, useState } from 'react'
 
 import { APP_TYPE_LINKS, HEADER_HEIGHT } from '../constants'
 import { AppType } from '../types'
+import { AppearOnMount } from './animation'
 import { Button } from './button'
 import { SushiIcon } from './icons'
 

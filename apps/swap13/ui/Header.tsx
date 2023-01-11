@@ -8,18 +8,26 @@ import React, { FC } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
 import { Search } from './search/SearchProvider'
+import { AppearOnMount } from '@sushiswap/ui13/components/animation'
+import { useAutoConnect } from '@sushiswap/wagmi13'
 
 export const Header: FC = () => {
+  const { isAutoConnecting } = useAutoConnect()
+
   return (
     <Search>
       <GlobalNav
         appType={AppType.Swap}
         rightElement={
-          <>
-            <Search.Button />
-            <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} />
-            <UserProfile networks={SUPPORTED_CHAIN_IDS} />
-          </>
+          isAutoConnecting ? (
+            <></>
+          ) : (
+            <AppearOnMount className="flex gap-2">
+              <Search.Button />
+              <HeaderNetworkSelector networks={SUPPORTED_CHAIN_IDS} />
+              <UserProfile networks={SUPPORTED_CHAIN_IDS} />
+            </AppearOnMount>
+          )
         }
       >
         <NavLink title="Tokens" href="https://sushi.com/analytics" />

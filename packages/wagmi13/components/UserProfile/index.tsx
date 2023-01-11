@@ -11,7 +11,6 @@ import Image from 'next/legacy/image'
 import React, { FC, useState } from 'react'
 import { useAccount, useEnsAvatar, useNetwork } from 'wagmi'
 
-import { useAutoConnect } from '../../hooks'
 import { ConnectView } from './ConnectView'
 import { DefaultView } from './DefaultView'
 import { TransactionsView } from './TransactionsView'
@@ -27,8 +26,6 @@ interface ProfileProps {
 }
 
 export const UserProfile: FC<ProfileProps> = () => {
-  useAutoConnect()
-
   const { isSm } = useBreakpoint('sm')
   const [view, setView] = useState<ProfileView>(ProfileView.Default)
   const { chain } = useNetwork()
