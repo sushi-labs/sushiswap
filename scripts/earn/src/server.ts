@@ -27,10 +27,14 @@ app.get('/', async (req, res) => {
         break
       default:
         res.sendStatus(400).send('Not a valid target')
-        break
+        break;
     }
   } catch (err) {
     res.status(500).send(err)
+    process.exit(1)
+  }
+  finally {
+    process.exit(0)
   }
 })
 

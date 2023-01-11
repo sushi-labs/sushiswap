@@ -52,7 +52,6 @@ export async function execute() {
     process.exit(1)
   } finally {
     await client.$disconnect()
-    process.exit(0)
   }
 }
 
