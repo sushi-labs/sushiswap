@@ -23,27 +23,10 @@ async function main() {
   // we might as well use the graph client to fetch the farms here.
   // EXTRACT
   const farms = await extract()
-  console.log(`EXTRACT - Extracted ${farms.length} farms`)
+  console.log(`EXTRACT - Extracted farms from ${farms.length} chains.`)
 
   // TRANSFORM
   const { incentivesToCreate, incentivesToUpdate, tokens } = await transform(farms)
-
-  const poolsFound = [
-    incentivesToCreate
-      .map((incentive) => incentive.poolId)
-      .concat(incentivesToUpdate.map((incentive) => incentive.poolId)),
-  ].flat()
-  const result = await client.pool.findMany({
-    where: {
-      id: {
-        in: poolsFound,
-      },
-    },
-    select: {
-      id: true,
-    },
-  })
-  console.log(`f ${poolsFound.length} r ${result.length}`)
 
   // // LOAD
   await createTokens(client, tokens)
@@ -69,14 +52,24 @@ async function extract() {
   ]
 
   const totalFarms = combined.reduce((acc, { farms }) => acc + (farms ? Object.keys(farms).length : 0), 0)
+  let totalIncentives = 0
   for (const combination of combined) {
     if (combination.farms) {
-      console.log(`Chain ID: ${combination.chainId}. Farms: ${Object.keys(combination.farms).length}`)
+      const incentiveCount = Object.entries(combination.farms).reduce(
+        (acc, [, farm]) => acc + farm.incentives.length,
+        0
+      )
+      totalIncentives += incentiveCount
+      console.log(
+        `Chain ID: ${combination.chainId}. Farms: ${
+          Object.keys(combination.farms).length
+        }, incentives: ${incentiveCount}`
+      )
     } else {
       console.log(`Chain ID: ${combination.chainId}. Error.`)
     }
   }
-  console.log(`Total farms: ${totalFarms}`)
+  console.log(`Total farms: ${totalFarms}, total incentives: ${totalIncentives}`)
   return combined
 }
 

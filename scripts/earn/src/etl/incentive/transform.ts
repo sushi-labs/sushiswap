@@ -57,10 +57,7 @@ export async function filterIncentives(
         missingPoolIds[incentive.chainId].push(incentive.poolId)
         return false
       }
-
-      return true
     }
-
     return false
   })
   if (missingPools) console.log(`Missing pools, skipping incentives: ${missingPools}`)
@@ -70,7 +67,7 @@ export async function filterIncentives(
       console.log(`Missing pools on chain ${chainId}, count: ${poolIds.length}`)
     })
   }
-
+  let incentivesAlreadyUpToDate = 0
   const incentivesToUpdate = incentives.filter((incentive) => {
     const incentiveExists = incentiveFound.find((i) => i.id === incentive.id)
     if (!incentiveExists) {
@@ -78,11 +75,17 @@ export async function filterIncentives(
     }
     if (incentive.apr != incentiveExists.apr || incentive.rewardPerDay != incentiveExists.rewardPerDay) {
       return true
+    } else {
+      incentivesAlreadyUpToDate++
     }
     return false
   })
   console.log(
-    `TRANSFORM - Filtering incentives, ${incentivesToCreate.length} incentives should be created and ${incentivesToUpdate.length} incentives should be updated.`
+    `TRANSFORM - Filtering incentives\n
+    ${incentivesToCreate.length} incentives should be created\n
+    ${incentivesAlreadyUpToDate} incentives are already up to date\n
+    ${incentivesToUpdate.length} incentives should be updated.`
   )
+
   return { incentivesToCreate, incentivesToUpdate }
 }
