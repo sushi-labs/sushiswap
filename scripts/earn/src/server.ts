@@ -1,3 +1,4 @@
+import timeout from 'connect-timeout'
 import express from 'express'
 
 import { execute as incentives } from './incentives.js'
@@ -5,6 +6,8 @@ import { execute as pools } from './pools.js'
 import { execute as volume } from './volume.js'
 
 const app = express()
+
+app.use(timeout('600s'))
 
 app.get('/', async (req, res) => {
   const target = (req.query.target as string).toLowerCase()
