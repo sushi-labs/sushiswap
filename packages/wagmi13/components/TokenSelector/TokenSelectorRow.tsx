@@ -4,6 +4,8 @@ import { Fraction, ZERO } from '@sushiswap/math'
 import { classNames } from '@sushiswap/ui13'
 import { Icon } from '@sushiswap/ui13/components/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
+import { Badge } from '@sushiswap/ui13/components/Badge'
+import { CheckCircleIcon, CheckIcon } from '@heroicons/react/20/solid'
 
 export interface TokenSelectorRow {
   id: string
@@ -14,6 +16,7 @@ export interface TokenSelectorRow {
   onSelect(currency: Type): void
   balance?: Amount<Type> | undefined
   price?: Fraction
+  selected: boolean
 }
 
 export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelectorRow({
@@ -24,6 +27,7 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
   style,
   className,
   onSelect,
+  selected,
 }) {
   const onClick = useCallback(() => {
     onSelect(currency)
@@ -33,40 +37,62 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
     console.log(price)
   }
   return (
-    <div
-      testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
-      onClick={onClick}
-      className={classNames(
-        className,
-        `group flex items-center w-full hover:bg-black/[0.06] hover:dark:bg-white/[0.06] rounded-lg px-2 h-[48px] token-${currency?.symbol}`
-      )}
-      style={style}
-    >
-      <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
-        <div className="flex flex-row items-center flex-grow gap-2">
-          <div className="w-7 h-7">
-            <Icon disableLink currency={currency} width={28} height={28} />
-          </div>
-          <div className="flex flex-col items-start">
-            <span className="text-xs font-medium text-gray-700 group-hover:text-gray-900 dark:text-slate-200 group-hover:dark:text-slate-50">
-              {currency.symbol}
-            </span>
-            <span className="text-[10px] text-gray-600 dark:text-slate-500 group-hover:dark:text-blue-100">
-              {currency.name}
-            </span>
-          </div>
-        </div>
-
-        {balance?.greaterThan(ZERO) && (
-          <div className="flex flex-col">
-            <span className="text-xs font-medium text-right text-gray-700 dark:text-slate-200">
-              {balance?.toSignificant(6)}
-            </span>
-            <span className="text-[10px] text-right text-gray-500 dark:text-slate-400">
-              {price ? `$${balance?.multiply(price).toFixed(2)}` : '-'}
-            </span>
-          </div>
+    <div className="py-0.5 h-[64px]" style={style}>
+      <div
+        testdata-id={`${id}-row-${currency.isNative ? AddressZero : currency.wrapped.address.toLowerCase()}`}
+        onClick={onClick}
+        className={classNames(
+          className,
+          selected ? 'bg-blue/[0.12]' : '',
+          `group flex items-center w-full hover:bg-blue/[0.12] h-full rounded-lg px-3 token-${currency?.symbol}`
         )}
+      >
+        <div className="flex items-center justify-between flex-grow gap-2 rounded cursor-pointer">
+          <div className="flex flex-row items-center flex-grow gap-4">
+            {selected ? (
+              <Badge
+                position="bottom-right"
+                badgeContent={
+                  <div className="bg-white dark:bg-slate-800 rounded-full">
+                    <CheckCircleIcon width={20} height={20} className="text-blue rounded-full" />
+                  </div>
+                }
+              >
+                <div className="w-10 h-10">
+                  <Icon disableLink currency={currency} width={40} height={40} />
+                </div>
+              </Badge>
+            ) : (
+              <div className="w-10 h-10">
+                <Icon disableLink currency={currency} width={40} height={40} />
+              </div>
+            )}
+            <div className="flex flex-col items-start">
+              <span className="font-semibold text-gray-900 group-hover:text-gray-900 dark:text-slate-50 group-hover:dark:text-white">
+                {currency.symbol}
+              </span>
+              <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:dark:text-blue-100">
+                {currency.name}
+              </span>
+            </div>
+          </div>
+
+          {balance?.greaterThan(ZERO) && (
+            <div className="flex flex-col">
+              <span
+                className={classNames(
+                  selected ? 'font-semibold' : 'font-medium',
+                  'text-right text-gray-900 dark:text-slate-50'
+                )}
+              >
+                {balance?.toSignificant(6)}
+              </span>
+              <span className="text-sm font-medium text-right text-gray-500 dark:text-slate-400">
+                {price ? `$${balance?.multiply(price).toFixed(2)}` : '-'}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

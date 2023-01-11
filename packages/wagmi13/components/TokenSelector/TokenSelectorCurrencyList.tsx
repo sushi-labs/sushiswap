@@ -14,6 +14,7 @@ interface TokenSelectorCurrencyListProps {
   currencies: Type[]
   chainId: ChainId
   onSelect(currency: Type): void
+  selected: Type | undefined
 }
 
 export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = memo(function TokenSelectorCurrencyList({
@@ -21,6 +22,7 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
   onSelect,
   currencies,
   chainId,
+  selected,
 }) {
   const { address } = useAccount()
   const { data: pricesMap } = usePrices({ chainId })
@@ -36,8 +38,12 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
       balance: balancesMap?.[currency.isNative ? AddressZero : currency.address],
       price: pricesMap?.[currency.isNative ? AddressZero : currency.address],
       onSelect: () => onSelect(currency),
+      selected: selected
+        ? (currency.isNative === true && selected.isNative === true) ||
+          (selected.isToken && currency.isToken && currency.wrapped.address === selected.wrapped.address)
+        : false,
     }))
-  }, [address, balancesMap, currencies, id, onSelect, pricesMap])
+  }, [address, balancesMap, currencies, id, onSelect, pricesMap, selected])
 
-  return <Currency.List className="scroll" rowRenderer={TokenSelectorRow} rowData={rowData} />
+  return <Currency.List className="scroll" rowHeight={64} rowRenderer={TokenSelectorRow} rowData={rowData} />
 })

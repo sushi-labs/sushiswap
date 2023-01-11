@@ -18,7 +18,6 @@ import { useAccount } from 'wagmi'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
 import { Button } from '@sushiswap/ui13/components/button'
 import { Currency } from '@sushiswap/ui13/components/currency'
-import { useEffectDebugger } from '@sushiswap/hooks'
 
 interface TokenSelectorProps {
   id: string
@@ -70,27 +69,29 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
         >
           {({ currencies, query, onInput, searching, queryToken }) => (
             <Dialog open={open} onClose={handleClose}>
-              <Dialog.Content className="flex flex-col gap-3 !pb-0 min-h-[60vh]">
+              <Dialog.Content className="flex flex-col gap-3 !pb-1 min-h-[60vh] px-4 !rounded-[24px]">
                 <SlideIn>
-                  <div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-lg font-semibold dark:text-slate-50 text-gray-900">Tokens</span>
+                    <TokenSelectorCustomTokensOverlay />
+                  </div>
+                  <div className="flex gap-2">
                     <Search id={id} input={Input.Address} value={query} loading={searching} onChange={onInput} />
                   </div>
 
                   {/*TODO RAMIN COMMON BASES*/}
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       // @ts-ignore
                       startIcon={<Currency.Icon currency={SUSHI[chainId]} width={16} height={16} />}
-                      size="xs"
-                      color="blue"
+                      color="default"
                       variant="outlined"
                     >
                       SUSHI
                     </Button>
                     <Button
                       startIcon={<Currency.Icon currency={Native.onChain(chainId)} width={16} height={16} />}
-                      size="xs"
-                      color="blue"
+                      color="default"
                       variant="outlined"
                     >
                       ETH
@@ -100,8 +101,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                       <Button
                         // @ts-ignore
                         startIcon={<Currency.Icon currency={USDC[chainId]} width={16} height={16} />}
-                        size="xs"
-                        color="blue"
+                        color="default"
                         variant="outlined"
                       >
                         USDC
@@ -112,8 +112,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                       <Button
                         // @ts-ignore
                         startIcon={<Currency.Icon currency={USDT[chainId]} width={16} height={16} />}
-                        size="xs"
-                        color="blue"
+                        color="default"
                         variant="outlined"
                       >
                         USDT
@@ -127,7 +126,13 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                         onImport={() => queryToken[0] && handleImport(queryToken[0])}
                       />
                     )}
-                    <TokenSelectorCurrencyList onSelect={_onSelect} id={id} currencies={currencies} chainId={chainId} />
+                    <TokenSelectorCurrencyList
+                      selected={selected}
+                      onSelect={_onSelect}
+                      id={id}
+                      currencies={currencies}
+                      chainId={chainId}
+                    />
                   </List.Control>
                   {currencies.length === 0 && !queryToken && chainId && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -139,7 +144,6 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                       </div>
                     </div>
                   )}
-                  <TokenSelectorCustomTokensOverlay />
                 </SlideIn>
               </Dialog.Content>
             </Dialog>
