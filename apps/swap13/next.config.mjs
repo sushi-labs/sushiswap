@@ -18,6 +18,12 @@ const nextConfig = {
         permanent: true,
         basePath: false,
       },
+      {
+        source: '/swap13',
+        destination: '/swap13/137/137/MATIC/SUSHI',
+        permanent: true,
+        basePath: false,
+      },
     ]
   },
 }

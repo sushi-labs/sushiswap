@@ -142,16 +142,22 @@ const reducer = (state: SwapState, action: Actions): SwapState => {
 
 interface SwapProviderProps {
   children: ReactNode
+  // initialState: {
+  //   fromChainId: number
+  //   toChainId: number
+  //   fromCurrencyId: string
+  //   toCurrencyId: string
+  // }
 }
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query } = useRouter()
-  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount, recipient } = schema.parse(query)
-
+  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount } = schema.parse(query)
   const [state, dispatch] = useReducer(reducer, {
     review: false,
-    recipient: recipient ? recipient : address ? address : undefined,
+    // TODO: no recipient
+    recipient: address ? address : undefined,
     appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
     token0: isShortCurrencyName(fromChainId, fromCurrencyId)
       ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
