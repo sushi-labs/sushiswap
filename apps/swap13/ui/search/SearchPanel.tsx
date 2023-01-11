@@ -68,7 +68,6 @@ export const SearchPanel: FC = () => {
 
 const Row: FC<{ currency: TokenWithLogoURIType }> = ({ currency }) => {
   const { data: price, isLoading } = usePrice({ address: currency.address, chainId: currency.chainId })
-  const change = 0.08
 
   if (isLoading) return <RowSkeleton />
 
@@ -107,11 +106,11 @@ const Row: FC<{ currency: TokenWithLogoURIType }> = ({ currency }) => {
           <span className="font-medium text-gray-900 dark:text-slate-100 text-right">${price?.toFixed(2)}</span>
           <span
             className={classNames(
-              change > 0 ? 'text-green' : 'text-red',
+              // change > 0 ? 'text-green' : 'text-red',
               'font-medium text-sm text-gray-500 dark:text-slate-400 text-right'
             )}
           >
-            {change}%
+            {/*{change}%*/}{' '}
           </span>
         </div>
       )}
