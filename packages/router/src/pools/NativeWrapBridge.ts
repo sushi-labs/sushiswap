@@ -19,7 +19,7 @@ export class NativeWrapBridgePoolCode extends PoolCode {
       return code
     } else {
       // unwrap - withdraw
-      const code = new HEXer().uint8(6).toString() // unwrapNative(address receiver)
+      const code = new HEXer().uint8(6).address(this.pool.address).toString() // unwrapNative(address receiver, unwrap token)
       return code
     }
   }
