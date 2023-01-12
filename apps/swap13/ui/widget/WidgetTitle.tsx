@@ -14,6 +14,10 @@ import { SUPPORTED_CHAIN_IDS } from '../../config'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
+import { useBreakpoint } from '@sushiswap/ui13/lib/useBreakpoint'
+import { MinusCircleIcon, MinusIcon, PlusCircleIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { Badge } from '@sushiswap/ui13/components/Badge'
+import { Currency } from '@sushiswap/ui13/components/currency'
 
 export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)
@@ -21,6 +25,7 @@ export const WidgetTitle = () => {
   const { setNetwork1, setNetwork0 } = useSwapActions()
   const { data: prices0 } = usePrice({ chainId: network0, address: token0?.wrapped.address })
   const { data: prices1 } = usePrice({ chainId: network1, address: token1?.wrapped.address })
+  const { isSm } = useBreakpoint('sm')
 
   const [inputUSD, outputUSD, price] = useMemo(() => {
     if (!prices0 || !prices1) {
@@ -64,20 +69,21 @@ export const WidgetTitle = () => {
   )
 
   return (
-    <div className="flex flex-col gap-2 mb-4 sm:mt-10">
+    <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
       {appType === AppType.Swap ? (
         <>
-          <h1 className="text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200 sm:leading-[44px]">
-            Sell {token0.symbol}
+          <h1 className="flex items-center gap-2 text-2xl sm:text-4xl font-medium text-gray-900 dark:text-slate-50 leading-[36px] sm:leading-[44px]">
+            Sell <span className="font-semibold">{token0.symbol}</span>
           </h1>
-          <h1 className="text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200 sm:leading-[44px]">
-            Receive {token1.symbol}
+          <h1 className="flex items-center gap-2 text-2xl sm:text-4xl font-medium text-gray-900 dark:text-slate-50 leading-[36px] sm:leading-[44px]">
+            {' '}
+            Receive <span className="font-semibold">{token1.symbol}</span>
           </h1>
         </>
       ) : (
         <>
-          <h1 className="flex items-center gap-3 text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200">
-            Sell {token0.symbol} on{' '}
+          <h1 className="flex items-center gap-2 text-2xl sm:text-4xl font-medium text-gray-900 dark:text-slate-50 max-h-[36px] sm:max-h-[44px]">
+            Sell <span className="font-semibold">{token0.symbol}</span> on
             <NetworkSelector
               networks={SUPPORTED_CHAIN_IDS}
               variant="dialog"
@@ -85,15 +91,21 @@ export const WidgetTitle = () => {
               onSelect={handleSelect0}
             >
               <Tooltip description={chainName[network0]} transitionDelay={300}>
-                <Popover.Button as={Button} variant="outlined" color="default" size="lg" className="!px-3">
+                <Popover.Button
+                  as={Button}
+                  variant={isSm ? 'outlined' : 'empty'}
+                  color="blue"
+                  size="lg"
+                  className="!px-3"
+                >
                   <NetworkIcon chainId={network0} width={32} height={32} />
                   <ChevronDownIcon width={36} height={36} />
                 </Popover.Button>
               </Tooltip>
             </NetworkSelector>
           </h1>
-          <h1 className="flex items-center gap-3 text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200">
-            Receive {token1.symbol} on{' '}
+          <h1 className="flex items-center gap-2 text-2xl sm:text-4xl font-medium text-gray-900 dark:text-slate-50 max-h-[36px] sm:max-h-[44px]">
+            Receive <span className="font-semibold">{token1.symbol}</span> on
             <NetworkSelector
               variant="dialog"
               networks={SUPPORTED_CHAIN_IDS}
@@ -101,7 +113,13 @@ export const WidgetTitle = () => {
               onSelect={handleSelect1}
             >
               <Tooltip description={chainName[network1]} transitionDelay={300}>
-                <Popover.Button as={Button} variant="outlined" color="default" size="lg" className="!px-3">
+                <Popover.Button
+                  as={Button}
+                  variant={isSm ? 'outlined' : 'empty'}
+                  color="blue"
+                  size="lg"
+                  className="!px-3"
+                >
                   <NetworkIcon chainId={network1} width={32} height={32} />
                   <ChevronDownIcon width={36} height={36} />
                 </Popover.Button>

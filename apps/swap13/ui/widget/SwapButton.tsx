@@ -10,8 +10,8 @@ import { FixedButtonContainer } from '../FixedButtonContainer'
 import { useTrade } from '../../lib/useTrade'
 
 export const SwapButton: FC = () => {
-  const { amount, network0 } = useSwapState()
-  const { isFetching } = useTrade()
+  const { amount, network0, value } = useSwapState()
+  const { isFetching, isLoading } = useTrade()
   const { setReview } = useSwapActions()
 
   return (
@@ -30,7 +30,12 @@ export const SwapButton: FC = () => {
                 amount={amount}
                 contract={ROUTE_PROCESSOR_ADDRESS[ChainId.POLYGON]}
               >
-                <Button disabled={isFetching} fullWidth size="xl" onClick={() => setReview(true)}>
+                <Button
+                  disabled={Boolean(isLoading && +value > 0) || isFetching}
+                  fullWidth
+                  size="xl"
+                  onClick={() => setReview(true)}
+                >
                   Swap
                 </Button>
               </Checker.ApproveERC20>

@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowLeftIcon } from '@heroicons/react/24/outline'
+import { ArrowLeftIcon, PlusCircleIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { Chain, chainName } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
@@ -18,6 +18,7 @@ import { Dots } from '@sushiswap/ui13/components/Dots'
 import { FixedButtonContainer } from '../FixedButtonContainer'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { Drawer } from '@sushiswap/ui13/components/drawer'
+import { Badge } from '@sushiswap/ui13/components/Badge'
 
 export const TradeReviewDialog: FC = () => {
   const { review, token0, token1, recipient, network0, amount, value } = useSwapState()
@@ -51,7 +52,23 @@ export const TradeReviewDialog: FC = () => {
             )}
           </div>
           <div className="min-w-[56px] min-h-[56px]">
-            <Currency.Icon currency={token1} width={56} height={56} />
+            <div className="pr-1">
+              <Badge
+                position="bottom-right"
+                badgeContent={
+                  <div className="bg-gray-100 rounded-full border-2 border-gray-100">
+                    <PlusIcon
+                      strokeWidth={2}
+                      width={24}
+                      height={24}
+                      className="bg-blue text-white rounded-full p-0.5"
+                    />
+                  </div>
+                }
+              >
+                <Currency.Icon currency={token1} width={56} height={56} />
+              </Badge>
+            </div>
           </div>
         </div>
         <div className="flex flex-col gap-3">

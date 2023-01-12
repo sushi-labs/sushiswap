@@ -29,6 +29,7 @@ export const useTradeQuery = (
 
       return tradeValidator.parse(res)
     },
+    refetchOnWindowFocus: false,
     keepPreviousData: !!amount,
     cacheTime: 0,
     select,
