@@ -2359,7 +2359,7 @@ importers:
       '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
       '@graphprotocol/client-auto-pagination': 1.1.12_graphql@16.6.0
       '@graphprotocol/client-auto-type-merging': 1.0.19_graphql@16.6.0
-      '@graphprotocol/client-cli': 2.2.16_cnwy7duuu7tgtox4og47astedi
+      '@graphprotocol/client-cli': 2.2.16_z7vu46o7byc5f3cqdrbgjnllvu
       '@graphql-mesh/cache-redis': 0.11.4_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.3.0_graphql@16.6.0
       '@graphql-mesh/graphql': 0.33.7_yj7ds5aogkvyuxyljhbabepxei
@@ -2376,10 +2376,10 @@ importers:
       '@graphql-mesh/transform-rename': 0.14.5_graphql@16.6.0
       '@graphql-mesh/transform-type-merging': 0.5.4_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
-      '@graphql-tools/merge': 8.3.14_graphql@16.6.0
+      '@graphql-tools/merge': 8.3.15_graphql@16.6.0
       '@sushiswap/chain': link:../chain
       '@sushiswap/validate': link:../validate
-      '@whatwg-node/fetch': 0.6.1
+      '@whatwg-node/fetch': 0.6.2
       date-fns: 2.29.3
       ethers: 5.7.2
       graphql: 16.6.0
@@ -3496,6 +3496,7 @@ importers:
       '@types/chai': ^4.3.0
       '@types/mocha': ^9.0.0
       '@types/node': ^17.0.0
+      '@types/seedrandom': ^3.0.1
       chai: ^4.3.0
       cross-env: ^7.0.0
       dotenv: ^10.0.0
@@ -3545,6 +3546,7 @@ importers:
       '@types/chai': 4.3.4
       '@types/mocha': 9.1.1
       '@types/node': 17.0.45
+      '@types/seedrandom': 3.0.3
       chai: 4.3.7
       cross-env: 7.0.3
       dotenv: 10.0.0
@@ -3737,7 +3739,7 @@ importers:
       '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
       '@graphprotocol/client-auto-pagination': 1.1.12_graphql@16.6.0
       '@graphprotocol/client-auto-type-merging': 1.0.19_graphql@16.6.0
-      '@graphprotocol/client-cli': 2.2.16_jwbbcwxk4egcivqxkahxp3mlie
+      '@graphprotocol/client-cli': 2.2.16_qrxxmdvlyy7j5yi5kca3rpzuwm
       '@graphql-mesh/cache-localforage': 0.7.4_graphql@16.6.0
       '@graphql-mesh/cross-helpers': 0.3.0_graphql@16.6.0
       '@graphql-mesh/graphql': 0.33.7_graphql@16.6.0
@@ -3754,7 +3756,7 @@ importers:
       '@graphql-mesh/transform-rename': 0.14.5_graphql@16.6.0
       '@graphql-mesh/transform-type-merging': 0.5.4_graphql@16.6.0
       '@graphql-mesh/utils': 0.43.4_graphql@16.6.0
-      '@graphql-tools/merge': 8.3.14_graphql@16.6.0
+      '@graphql-tools/merge': 8.3.15_graphql@16.6.0
       '@prisma/client': 4.8.0_prisma@4.8.0
       '@sushiswap/eslint-config': link:../../config/eslint
       '@sushiswap/jest-config': link:../../config/jest
@@ -3763,7 +3765,7 @@ importers:
       '@swc/core': 1.3.24
       '@swc/helpers': 0.4.14
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': 0.6.1
+      '@whatwg-node/fetch': 0.6.2
       date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.31.0
@@ -3862,7 +3864,7 @@ importers:
       '@swc/core': 1.3.24
       '@swc/helpers': 0.4.14
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': 0.6.1
+      '@whatwg-node/fetch': 0.6.2
       date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.29.0
@@ -4048,7 +4050,7 @@ importers:
       '@swc/helpers': 0.4.14
       '@types/express': 4.17.15
       '@wagmi/core': 0.8.1_c4tpmuajjwy7vjodfmym27ncri
-      '@whatwg-node/fetch': 0.6.1
+      '@whatwg-node/fetch': 0.6.2
       date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.30.0
@@ -6365,41 +6367,6 @@ packages:
       graphql: 16.6.0
       tslib: 2.4.1
 
-  /@graphprotocol/client-cli/2.2.16_cnwy7duuu7tgtox4og47astedi:
-    resolution: {integrity: sha512-KlA9t3y6CC5gieMH0UbdfmSHdSOxs9E0S9iUwbWF+MtBK2vZ92cAhy7wMFWDzPK8MfKyvI7/doYWAKGBoX5YhA==}
-    hasBin: true
-    peerDependencies:
-      graphql: ^15.2.0 || ^16.0.0
-    dependencies:
-      '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.12_graphql@16.6.0
-      '@graphprotocol/client-auto-type-merging': 1.0.19_graphql@16.6.0
-      '@graphprotocol/client-block-tracking': 1.0.10_graphql@16.6.0
-      '@graphprotocol/client-polling-live': 1.0.2_hn5mz7upwllqxwj6zfs7cwbylq
-      '@graphql-mesh/cli': 0.82.3_yj7ds5aogkvyuxyljhbabepxei
-      '@graphql-mesh/graphql': 0.33.3_yj7ds5aogkvyuxyljhbabepxei
-      graphql: 16.6.0
-      tslib: 2.4.1
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@envelop/core'
-      - '@graphql-mesh/types'
-      - '@graphql-tools/delegate'
-      - '@graphql-tools/merge'
-      - '@graphql-tools/utils'
-      - '@graphql-tools/wrap'
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - graphql-tag
-      - react-native
-      - react-native-windows
-      - supports-color
-      - utf-8-validate
-    dev: false
-
   /@graphprotocol/client-cli/2.2.16_j6g4ge4gtnf4g64ywvpaqp6rfm:
     resolution: {integrity: sha512-KlA9t3y6CC5gieMH0UbdfmSHdSOxs9E0S9iUwbWF+MtBK2vZ92cAhy7wMFWDzPK8MfKyvI7/doYWAKGBoX5YhA==}
     hasBin: true
@@ -6470,41 +6437,6 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@graphprotocol/client-cli/2.2.16_jwbbcwxk4egcivqxkahxp3mlie:
-    resolution: {integrity: sha512-KlA9t3y6CC5gieMH0UbdfmSHdSOxs9E0S9iUwbWF+MtBK2vZ92cAhy7wMFWDzPK8MfKyvI7/doYWAKGBoX5YhA==}
-    hasBin: true
-    peerDependencies:
-      graphql: ^15.2.0 || ^16.0.0
-    dependencies:
-      '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
-      '@graphprotocol/client-auto-pagination': 1.1.12_graphql@16.6.0
-      '@graphprotocol/client-auto-type-merging': 1.0.19_graphql@16.6.0
-      '@graphprotocol/client-block-tracking': 1.0.10_graphql@16.6.0
-      '@graphprotocol/client-polling-live': 1.0.2_hn5mz7upwllqxwj6zfs7cwbylq
-      '@graphql-mesh/cli': 0.82.3_j6g4ge4gtnf4g64ywvpaqp6rfm
-      '@graphql-mesh/graphql': 0.33.3_graphql@16.6.0
-      graphql: 16.6.0
-      tslib: 2.4.1
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@envelop/core'
-      - '@graphql-mesh/types'
-      - '@graphql-tools/delegate'
-      - '@graphql-tools/merge'
-      - '@graphql-tools/utils'
-      - '@graphql-tools/wrap'
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - bufferutil
-      - encoding
-      - graphql-tag
-      - react-native
-      - react-native-windows
-      - supports-color
-      - utf-8-validate
-    dev: true
-
   /@graphprotocol/client-cli/2.2.16_onug3sa4ph53e46o3zvxbixsym:
     resolution: {integrity: sha512-KlA9t3y6CC5gieMH0UbdfmSHdSOxs9E0S9iUwbWF+MtBK2vZ92cAhy7wMFWDzPK8MfKyvI7/doYWAKGBoX5YhA==}
     hasBin: true
@@ -6540,6 +6472,76 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@graphprotocol/client-cli/2.2.16_qrxxmdvlyy7j5yi5kca3rpzuwm:
+    resolution: {integrity: sha512-KlA9t3y6CC5gieMH0UbdfmSHdSOxs9E0S9iUwbWF+MtBK2vZ92cAhy7wMFWDzPK8MfKyvI7/doYWAKGBoX5YhA==}
+    hasBin: true
+    peerDependencies:
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.12_graphql@16.6.0
+      '@graphprotocol/client-auto-type-merging': 1.0.19_graphql@16.6.0
+      '@graphprotocol/client-block-tracking': 1.0.10_graphql@16.6.0
+      '@graphprotocol/client-polling-live': 1.0.2_ncswkfu6kpcjs5s4zro6rh6uxm
+      '@graphql-mesh/cli': 0.82.3_j6g4ge4gtnf4g64ywvpaqp6rfm
+      '@graphql-mesh/graphql': 0.33.3_graphql@16.6.0
+      graphql: 16.6.0
+      tslib: 2.4.1
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@envelop/core'
+      - '@graphql-mesh/types'
+      - '@graphql-tools/delegate'
+      - '@graphql-tools/merge'
+      - '@graphql-tools/utils'
+      - '@graphql-tools/wrap'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - encoding
+      - graphql-tag
+      - react-native
+      - react-native-windows
+      - supports-color
+      - utf-8-validate
+    dev: true
+
+  /@graphprotocol/client-cli/2.2.16_z7vu46o7byc5f3cqdrbgjnllvu:
+    resolution: {integrity: sha512-KlA9t3y6CC5gieMH0UbdfmSHdSOxs9E0S9iUwbWF+MtBK2vZ92cAhy7wMFWDzPK8MfKyvI7/doYWAKGBoX5YhA==}
+    hasBin: true
+    peerDependencies:
+      graphql: ^15.2.0 || ^16.0.0
+    dependencies:
+      '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
+      '@graphprotocol/client-auto-pagination': 1.1.12_graphql@16.6.0
+      '@graphprotocol/client-auto-type-merging': 1.0.19_graphql@16.6.0
+      '@graphprotocol/client-block-tracking': 1.0.10_graphql@16.6.0
+      '@graphprotocol/client-polling-live': 1.0.2_ncswkfu6kpcjs5s4zro6rh6uxm
+      '@graphql-mesh/cli': 0.82.3_yj7ds5aogkvyuxyljhbabepxei
+      '@graphql-mesh/graphql': 0.33.3_yj7ds5aogkvyuxyljhbabepxei
+      graphql: 16.6.0
+      tslib: 2.4.1
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@envelop/core'
+      - '@graphql-mesh/types'
+      - '@graphql-tools/delegate'
+      - '@graphql-tools/merge'
+      - '@graphql-tools/utils'
+      - '@graphql-tools/wrap'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - encoding
+      - graphql-tag
+      - react-native
+      - react-native-windows
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   /@graphprotocol/client-polling-live/1.0.2_graphql@16.6.0:
     resolution: {integrity: sha512-+LOXoT/zv6HkSpwKgl4LHxziR66qYGnQYfXnRdp+acRzD4/to6uA6A+vHd5hlhNrc3O+hjj5Y+TPy7mRqoIvKw==}
     peerDependencies:
@@ -6552,14 +6554,14 @@ packages:
       tslib: 2.4.1
     dev: true
 
-  /@graphprotocol/client-polling-live/1.0.2_hn5mz7upwllqxwj6zfs7cwbylq:
+  /@graphprotocol/client-polling-live/1.0.2_ncswkfu6kpcjs5s4zro6rh6uxm:
     resolution: {integrity: sha512-+LOXoT/zv6HkSpwKgl4LHxziR66qYGnQYfXnRdp+acRzD4/to6uA6A+vHd5hlhNrc3O+hjj5Y+TPy7mRqoIvKw==}
     peerDependencies:
       '@envelop/core': ^2.4.2 || ^3.0.0
       '@graphql-tools/merge': ^8.3.14
       graphql: ^15.2.0 || ^16.0.0
     dependencies:
-      '@graphql-tools/merge': 8.3.14_graphql@16.6.0
+      '@graphql-tools/merge': 8.3.15_graphql@16.6.0
       '@repeaterjs/repeater': 3.0.4
       graphql: 16.6.0
       tslib: 2.4.1
@@ -8204,6 +8206,15 @@ packages:
       graphql: 16.6.0
       tslib: 2.4.1
 
+  /@graphql-tools/merge/8.3.15_graphql@16.6.0:
+    resolution: {integrity: sha512-hYYOlsqkUlL6oOo7zzuk6hIv7xQzy+x21sgK84d5FWaiWYkLYh9As8myuDd9SD5xovWWQ9m/iRhIOVDEMSyEKA==}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      '@graphql-tools/utils': 9.1.4_graphql@16.6.0
+      graphql: 16.6.0
+      tslib: 2.4.1
+
   /@graphql-tools/mock/8.7.14_graphql@16.6.0:
     resolution: {integrity: sha512-kIYirhGqhhSI6p/5qj95U8Lngm4mml5B3Z/r7ShI4+/EACyOOV+wUlql45+Y21b9NRUxJbsNHpztGxzgCSyviQ==}
     peerDependencies:
@@ -8515,6 +8526,14 @@ packages:
 
   /@graphql-tools/utils/9.1.3_graphql@16.6.0:
     resolution: {integrity: sha512-bbJyKhs6awp1/OmP+WKA1GOyu9UbgZGkhIj5srmiMGLHohEOKMjW784Sk0BZil1w2x95UPu0WHw6/d/HVCACCg==}
+    peerDependencies:
+      graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+    dependencies:
+      graphql: 16.6.0
+      tslib: 2.4.1
+
+  /@graphql-tools/utils/9.1.4_graphql@16.6.0:
+    resolution: {integrity: sha512-hgIeLt95h9nQgQuzbbdhuZmh+8WV7RZ/6GbTj6t3IU4Zd2zs9yYJ2jgW/krO587GMOY8zCwrjNOMzD40u3l7Vg==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
     dependencies:
@@ -11088,7 +11107,7 @@ packages:
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.2.4_postcss@8.4.20
+      tailwindcss: 3.2.4
     dev: false
 
   /@tanstack/match-sorter-utils/8.7.2:
@@ -13373,8 +13392,8 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@whatwg-node/fetch/0.6.1:
-    resolution: {integrity: sha512-sG39WLvcJxGZ+gDstnLSXR2IcnuvIOB51KxCFo0mEhFW0q2u8fZgolr0HPkL+zXwOJsnmT+9V3IRcqLnTXdqVQ==}
+  /@whatwg-node/fetch/0.6.2:
+    resolution: {integrity: sha512-fCUycF1W+bI6XzwJFnbdDuxIldfKM3w8+AzVCLGlucm0D+AQ8ZMm2j84hdcIhfV6ZdE4Y1HFVrHosAxdDZ+nPw==}
     dependencies:
       '@peculiar/webcrypto': 1.4.1
       abort-controller: 3.0.0
@@ -14170,7 +14189,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
     dev: false
@@ -14178,7 +14197,7 @@ packages:
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -20537,7 +20556,7 @@ packages:
       '@envelop/validation-cache': 5.0.5_a6sekiasy2tqr6d5gj7n2wtjli
       '@graphql-tools/executor': 0.0.11_graphql@16.6.0
       '@graphql-tools/schema': 9.0.12_graphql@16.6.0
-      '@graphql-tools/utils': 9.1.3_graphql@16.6.0
+      '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@graphql-yoga/subscription': 3.0.0
       '@whatwg-node/fetch': 0.5.4
       '@whatwg-node/server': 0.5.1
@@ -20559,7 +20578,7 @@ packages:
       '@envelop/validation-cache': 5.0.5_a6sekiasy2tqr6d5gj7n2wtjli
       '@graphql-tools/executor': 0.0.11_graphql@16.6.0
       '@graphql-tools/schema': 9.0.12_graphql@16.6.0
-      '@graphql-tools/utils': 9.1.3_graphql@16.6.0
+      '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@graphql-yoga/subscription': 3.0.0
       '@whatwg-node/fetch': 0.5.4
       '@whatwg-node/server': 0.5.1_@types+node@16.18.11
@@ -20842,7 +20861,7 @@ packages:
       solc: 0.7.3_debug@4.3.4
       source-map-support: 0.5.21
       stacktrace-parser: 0.1.10
-      ts-node: 10.9.1_q7u3722li5p3s3hvjnne4zfcwq
+      ts-node: 10.9.1_zpb5kzpnyozdjq4cwaojlul57u
       tsort: 0.0.1
       typescript: 4.9.4
       undici: 5.14.0
@@ -22600,7 +22619,7 @@ packages:
       pretty-format: 29.3.1
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1_zpb5kzpnyozdjq4cwaojlul57u
+      ts-node: 10.9.1_q7u3722li5p3s3hvjnne4zfcwq
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -26313,6 +26332,7 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.1
+    dev: true
 
   /postcss-js/4.0.0:
     resolution: {integrity: sha512-77QESFBwgX4irogGVPgQ5s07vLvFqWr228qZY+w6lW599cRlK/HmnlivnnVUxkjHnCu4J16PDMHcH+e+2HbvTQ==}
@@ -26340,6 +26360,7 @@ packages:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.4.20
+    dev: true
 
   /postcss-load-config/3.1.4:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -26388,6 +26409,7 @@ packages:
       lilconfig: 2.0.6
       postcss: 8.4.20
       yaml: 1.10.2
+    dev: true
 
   /postcss-load-config/3.1.4_ts-node@10.9.1:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -26432,6 +26454,7 @@ packages:
     dependencies:
       postcss: 8.4.20
       postcss-selector-parser: 6.0.11
+    dev: true
 
   /postcss-selector-parser/6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
@@ -26564,7 +26587,6 @@ packages:
       prettier: 2.8.1
       semver: 7.3.8
       solidity-comments-extractor: 0.0.7
-    dev: false
     optional: true
 
   /prettier-plugin-solidity/1.1.1_prettier@2.8.2:
@@ -26587,7 +26609,6 @@ packages:
       prettier: '>=2.2.0'
     dependencies:
       prettier: 2.8.1
-    dev: false
     optional: true
 
   /prettier-plugin-tailwindcss/0.2.1_prettier@2.8.2:
@@ -28537,7 +28558,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -29277,8 +29298,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29304,14 +29323,13 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
 
   /tailwindcss/3.2.4_postcss@8.4.19:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29337,6 +29355,7 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
     dev: true
 
@@ -29344,8 +29363,6 @@ packages:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -29371,7 +29388,9 @@ packages:
       quick-lru: 5.1.1
       resolve: 1.22.1
     transitivePeerDependencies:
+      - postcss
       - ts-node
+    dev: true
 
   /tapable/2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
@@ -29905,7 +29924,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.3.1_@types+node@17.0.30
+      jest: 29.3.1_@types+node@16.18.11
       jest-util: 29.3.1
       json5: 2.2.2
       lodash.memoize: 4.1.2

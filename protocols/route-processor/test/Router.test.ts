@@ -1,13 +1,40 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { DAI, Native, SUSHI, Token, Type, USDC, USDT, WNATIVE } from '@sushiswap/currency'
+import {
+  DAI,
+  DAI_ADDRESS,
+  FRAX,
+  FRAX_ADDRESS,
+  FXS,
+  FXS_ADDRESS,
+  Native,
+  SUSHI,
+  SUSHI_ADDRESS,
+  Token,
+  Type,
+  USDC,
+  USDC_ADDRESS,
+  USDT,
+  USDT_ADDRESS,
+  WNATIVE,
+} from '@sushiswap/currency'
 import { BentoBox, DataFetcher, PoolFilter, Router } from '@sushiswap/router'
 import { LiquidityProviders } from '@sushiswap/router/dist/liquidity-providers/LiquidityProviderMC'
 import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
 import { ethers, network } from 'hardhat'
+import seedrandom from 'seedrandom'
+
+function getRandomExp(rnd: () => number, min: number, max: number) {
+  const minL = Math.log(min)
+  const maxL = Math.log(max)
+  const v = rnd() * (maxL - minL) + minL
+  const res = Math.exp(v)
+  console.assert(res <= max && res >= min, 'Random value is out of the range')
+  return res
+}
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
 
@@ -184,10 +211,28 @@ describe('End-to-end Router test', async function () {
   let env: TestEnvironment
   let chainId: ChainId
   let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
+  let testTokensSet: (Type | undefined)[]
 
   before(async () => {
     env = await getTestEnvironment()
     chainId = env.chainId
+
+    type SUSHI_CHAINS = keyof typeof SUSHI_ADDRESS
+    type USDC_CHAINS = keyof typeof USDC_ADDRESS
+    type USDT_CHAINS = keyof typeof USDT_ADDRESS
+    type DAI_CHAINS = keyof typeof DAI_ADDRESS
+    type FRAX_CHAINS = keyof typeof FRAX_ADDRESS
+    type FXS_CHAINS = keyof typeof FXS_ADDRESS
+    testTokensSet = [
+      Native.onChain(chainId),
+      WNATIVE[chainId],
+      SUSHI[chainId as SUSHI_CHAINS],
+      USDC[chainId as USDC_CHAINS],
+      USDT[chainId as USDT_CHAINS],
+      DAI[chainId as DAI_CHAINS],
+      FRAX[chainId as FRAX_CHAINS],
+      FXS[chainId as FXS_CHAINS],
+    ]
   })
 
   it('Native => SUSHI => Native', async function () {
@@ -222,6 +267,37 @@ describe('End-to-end Router test', async function () {
       intermidiateResult = await updMakeSwap(env, USDC[chainId], USDT[chainId], intermidiateResult, undefined, filter)
       intermidiateResult = await updMakeSwap(env, USDT[chainId], DAI[chainId], intermidiateResult, undefined, filter)
       intermidiateResult = await updMakeSwap(env, DAI[chainId], USDC[chainId], intermidiateResult, undefined, filter)
+    }
+  })
+
+  function getNextToken(rnd: () => number, previousTokenIndex: number): number {
+    for (;;) {
+      const next = Math.floor(rnd() * testTokensSet.length)
+      if (next == previousTokenIndex) continue
+      if (testTokensSet[next] === undefined) continue
+      return next
+    }
+  }
+
+  it.only('Random swap test', async function () {
+    const testSeed = '4' // Change it to change random generator values
+    const rnd: () => number = seedrandom(testSeed) // random [0, 1)
+    let routeCounter = 0
+    for (let i = 0; i < 10; ++i) {
+      let currentToken = 0
+      intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
+      for (;;) {
+        const nextToken = getNextToken(rnd, currentToken)
+        console.log('Round # ', i + 1, ' Total Route # ', ++routeCounter)
+        intermidiateResult = await updMakeSwap(
+          env,
+          testTokensSet[currentToken] as Type,
+          testTokensSet[nextToken] as Type,
+          intermidiateResult
+        )
+        currentToken = nextToken
+        if (currentToken == 0) break
+      }
     }
   })
 })
