@@ -17,9 +17,10 @@ import { ConfirmationDialog } from '../ConfirmationDialog'
 import { Dots } from '@sushiswap/ui13/components/Dots'
 import { FixedButtonContainer } from '../FixedButtonContainer'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
+import { Drawer } from '@sushiswap/ui13/components/drawer'
 
 export const TradeReviewDialog: FC = () => {
-  const { review, token0, token1, recipient, network0, amount } = useSwapState()
+  const { review, token0, token1, recipient, network0, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
   const { data: slippageTolerance } = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade()
@@ -61,7 +62,11 @@ export const TradeReviewDialog: FC = () => {
                 title="Price impact"
                 subtitle="The impact your trade has on the market price of this pool."
               >
-                {numeral(trade?.priceImpact ?? 0).format('0.00%')}
+                {isFetching ? (
+                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/5" />
+                ) : (
+                  numeral(trade?.priceImpact ?? 0).format('0.00%')
+                )}
               </List.KeyValue>
               <List.KeyValue
                 title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}
@@ -78,6 +83,15 @@ export const TradeReviewDialog: FC = () => {
                   <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
                 ) : (
                   `~$${trade?.gasSpent ?? '0.00'}`
+                )}
+              </List.KeyValue>
+              <List.KeyValue title="Route">
+                {isFetching ? (
+                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
+                ) : (
+                  <Drawer.Button>
+                    <button className="text-blue">View route</button>
+                  </Drawer.Button>
                 )}
               </List.KeyValue>
             </List.Control>
@@ -103,7 +117,12 @@ export const TradeReviewDialog: FC = () => {
       <FixedButtonContainer>
         <ConfirmationDialog>
           {({ onClick, isWritePending, isLoading, isConfirming }) => (
-            <Button fullWidth size="xl" loading={isLoading} onClick={onClick} disabled={isWritePending || isFetching}>
+            <Button
+              size="xl"
+              loading={isLoading}
+              onClick={onClick}
+              disabled={isWritePending || Boolean(isLoading && +value > 0) || isFetching}
+            >
               {isConfirming ? (
                 <Dots>Confirming transaction</Dots>
               ) : isWritePending ? (

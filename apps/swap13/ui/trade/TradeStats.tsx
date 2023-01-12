@@ -8,16 +8,17 @@ import React, { FC } from 'react'
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import { TradeRoute } from './TradeRoute'
+import { Drawer } from '@sushiswap/ui13/components/drawer'
 
 export const TradeStats: FC = () => {
   const { value, token1, recipient } = useSwapState()
   const { data: slippageTolerance } = useSlippageTolerance()
-  const { isLoading, data: trade } = useTrade()
+  const { isLoading, isFetching, data: trade } = useTrade()
+  const loading = Boolean(isLoading && +value > 0) || isFetching
 
   return (
     <Transition
-      show={!!value}
+      show={+value > 0}
       enter="transition duration-300 ease-out"
       enterFrom="transform translate-y-[16px] opacity-0"
       enterTo="transform translate-y-0 opacity-100"
@@ -45,7 +46,7 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">Minimum received</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {isLoading ? (
+            {loading ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : (
               `${trade?.minAmountOut?.toSignificant(6) ?? '0.00'} ${token1.symbol}`
@@ -55,13 +56,19 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {isLoading ? <Skeleton.Text fontSize="text-sm" className="w-[40px]" /> : `~$${trade?.gasSpent ?? '0.00'}`}
+            {loading ? <Skeleton.Text fontSize="text-sm" className="w-[40px]" /> : `~$${trade?.gasSpent ?? '0.00'}`}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {isLoading ? <Skeleton.Text fontSize="text-sm" className="w-[80px]" /> : <TradeRoute />}
+            {loading ? (
+              <Skeleton.Text fontSize="text-sm" className="w-[80px]" />
+            ) : (
+              <Drawer.Button>
+                <button className="text-sm text-blue font-semibold">View Route</button>
+              </Drawer.Button>
+            )}
           </span>
         </div>
         <div className="h-[2px] bg-gray-200 dark:bg-slate-800 w-full my-3" />
@@ -69,7 +76,7 @@ export const TradeStats: FC = () => {
           <span className="font-medium text-gray-900 dark:text-slate-100 mt-px">Expected output</span>
           <div className="flex flex-col justify-end">
             <span className="text-xl text-right font-semibold text-gray-900 dark:text-slate-100">
-              {isLoading ? (
+              {loading ? (
                 <Skeleton.Text fontSize="text-xl" className="w-[140px]" />
               ) : (
                 `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${token1.symbol}`

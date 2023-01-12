@@ -22,7 +22,7 @@ export const SwapCurrencyOutput: FC = () => {
       value={trade?.amountOut?.toExact() ?? ''}
       currency={token1}
       usdPctChange={usdPctChange}
-      loading={Boolean(isLoading && value) || isFetching}
+      loading={Boolean(isLoading && +value > 0) || isFetching}
       disableMaxButton
     />
   )

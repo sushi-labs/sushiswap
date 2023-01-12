@@ -8,6 +8,8 @@ import { TradeReviewDialog } from '../../../../../ui/trade/TradeReviewDialog'
 import { TradeStats } from '../../../../../ui/trade/TradeStats'
 import { SwapButton } from '../../../../../ui/widget/SwapButton'
 import { Widget } from '../../../../../ui/widget/Widget'
+import { TradeRoute } from '../../../../../ui/trade/TradeRoute'
+import { Drawer } from '@sushiswap/ui13/components/drawer'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   // const { fromChainId, toChainId, fromCurrencyId, toCurrencyId } = params
@@ -39,10 +41,13 @@ const Page: FC = ({ initialState }: InferGetStaticPropsType<typeof getStaticProp
   return (
     <Container maxWidth={520} className="space-y-8 p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
       <SwapProvider>
-        <Widget />
-        <TradeStats />
-        <TradeReviewDialog />
-        <SwapButton />
+        <Drawer.Root>
+          <Widget />
+          <TradeStats />
+          <TradeReviewDialog />
+          <SwapButton />
+          <TradeRoute />
+        </Drawer.Root>
       </SwapProvider>
 
       {/*spacer for fixed positioned swap button */}
