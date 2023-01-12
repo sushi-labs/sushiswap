@@ -67,10 +67,10 @@ export const WidgetTitle = () => {
     <div className="flex flex-col gap-2 mb-4 sm:mt-10">
       {appType === AppType.Swap ? (
         <>
-          <h1 className="text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
+          <h1 className="text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200 sm:leading-[44px]">
             Sell {token0.symbol}
           </h1>
-          <h1 className="text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
+          <h1 className="text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200 sm:leading-[44px]">
             Receive {token1.symbol}
           </h1>
         </>
