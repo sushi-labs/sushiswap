@@ -1,5 +1,16 @@
 import prisma from '@sushiswap/earn-database'
 
+import type { PoolType } from '.'
+
+export type PoolApiArgs = {
+  chainIds: number[] | undefined
+  poolTypes: PoolType[] | undefined
+  isIncentivized: boolean | undefined
+  cursor: string | undefined
+  orderBy: string
+  orderDir: 'asc' | 'desc'
+}
+
 export async function getPool(chainId: number, address: string) {
   const id = `${chainId}:${address.toLowerCase()}`
   const pool = await prisma.pool.findFirstOrThrow({
@@ -17,26 +28,47 @@ export async function getPool(chainId: number, address: string) {
 }
 
 export async function getPools(args: PoolApiArgs): Promise<any[]> {
-  const where = {
-    chainId: {},
-  }
-  if (args.chains) {
-    where.chainId = {
-      in: args.chains,
+  const orderBy = { [args.orderBy]: args.orderDir }
+
+  let where = {}
+  let skip = 0
+  let cursor = {}
+
+  if (args.chainIds) {
+    where = {
+      chainId: { in: args.chainIds.map((c) => c.toString()) },
     }
   }
 
+  if (args.poolTypes) {
+    where = {
+      type: { in: args.poolTypes },
+      ...where,
+    }
+  }
+
+  if (args.isIncentivized) {
+    where = {
+      isIncentivized: args.isIncentivized,
+      ...where,
+    }
+  }
+
+  if (args.cursor) {
+    skip = 1
+    cursor = {
+      cursor: { id: args.cursor },
+    }
+  }
+
+  console.log({ where })
   const pools = await prisma.pool.findMany({
     take: 20,
-    // cursor: args.cursor,
-    // skip: args.cursor ? 1 : undefined,
-    // include: {
-    //   token0: true,
-    //   token1: true,
-    //   incentives: true,
-    // },
+    skip,
+    ...cursor,
+    where,
+    orderBy,
     select: {
-      // TODO: fix package, this should be possible?
       id: true,
       address: true,
       name: true,
@@ -78,6 +110,8 @@ export async function getPools(args: PoolApiArgs): Promise<any[]> {
           id: true,
           chainId: true,
           type: true,
+          apr: true,
+          rewardPerDay: true,
           rewardToken: {
             select: {
               id: true,
@@ -93,12 +127,4 @@ export async function getPools(args: PoolApiArgs): Promise<any[]> {
   })
   await prisma.$disconnect()
   return pools ? pools : []
-}
-
-export type PoolApiArgs = {
-  chains?: string[]
-  poolTypes?: string[]
-  farmsOnly?: boolean
-  cursor?: string
-  sort?: { [key: string]: 'asc' | 'desc' }
 }
