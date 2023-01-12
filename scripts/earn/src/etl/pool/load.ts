@@ -53,6 +53,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
           volumeNative: pool.volumeNative,
           token0Price: pool.token0Price,
           token1Price: pool.token1Price,
+          apr: (pool.apr ?? 0),
           totalApr: (pool.apr ?? 0) + totalIncentiveApr,
         },
       })
