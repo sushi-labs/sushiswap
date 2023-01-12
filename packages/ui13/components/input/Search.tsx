@@ -1,6 +1,6 @@
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import React, { FC, ReactElement } from 'react'
+import React, { FC, forwardRef, ReactElement } from 'react'
 
 import { classNames } from '../../index'
 import { Loader } from '../Loader'
@@ -15,7 +15,10 @@ interface Search {
   onChange(val: string): void
 }
 
-export const Search: FC<Search> = ({ className, id, loading, input: Input, value, onChange }) => {
+export const Search: FC<Search> = forwardRef<HTMLInputElement, Search>(function Search(
+  { className, id, loading, input: Input, value, onChange },
+  ref
+) {
   return (
     <div
       className={classNames(
@@ -26,6 +29,7 @@ export const Search: FC<Search> = ({ className, id, loading, input: Input, value
       <MagnifyingGlassIcon strokeWidth={2} width={24} height={24} className="text-gray-500 dark:text-slate-500" />
       {Input ? (
         <Input
+          ref={ref}
           id={`${id}-address-input`}
           testdata-id={`${id}-address-input`}
           variant="unstyled"
@@ -67,4 +71,4 @@ export const Search: FC<Search> = ({ className, id, loading, input: Input, value
       )}
     </div>
   )
-}
+})

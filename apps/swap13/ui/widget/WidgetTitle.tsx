@@ -64,19 +64,19 @@ export const WidgetTitle = () => {
   )
 
   return (
-    <div className="flex flex-col gap-2 mb-4">
+    <div className="flex flex-col gap-2 mb-4 sm:mt-10">
       {appType === AppType.Swap ? (
         <>
-          <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
+          <h1 className="text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
             Sell {token0.symbol}
           </h1>
-          <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
+          <h1 className="text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
             Receive {token1.symbol}
           </h1>
         </>
       ) : (
         <>
-          <h1 className="flex items-center gap-3 text-4xl font-semibold text-gray-900 dark:text-slate-200">
+          <h1 className="flex items-center gap-3 text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200">
             Sell {token0.symbol} on{' '}
             <NetworkSelector
               networks={SUPPORTED_CHAIN_IDS}
@@ -92,7 +92,7 @@ export const WidgetTitle = () => {
               </Tooltip>
             </NetworkSelector>
           </h1>
-          <h1 className="flex items-center gap-3 text-4xl font-semibold text-gray-900 dark:text-slate-200">
+          <h1 className="flex items-center gap-3 text-2xl sm:text-4xl font-semibold text-gray-900 dark:text-slate-200">
             Receive {token1.symbol} on{' '}
             <NetworkSelector
               variant="dialog"
