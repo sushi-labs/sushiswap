@@ -7,10 +7,10 @@ import { usePctChange } from '../../lib/usePctChange'
 import { useTrade } from '../../lib/useTrade'
 
 export const SwapCurrencyOutput: FC = () => {
-  const { token1, network1 } = useSwapState()
+  const { token1, network1, value } = useSwapState()
   const { setToken1 } = useSwapActions()
   const usdPctChange = usePctChange()
-  const { isFetching, data: trade } = useTrade()
+  const { isLoading, isFetching, data: trade } = useTrade()
 
   return (
     <Web3Input.Currency
@@ -22,7 +22,7 @@ export const SwapCurrencyOutput: FC = () => {
       value={trade?.amountOut?.toExact() ?? ''}
       currency={token1}
       usdPctChange={usdPctChange}
-      loading={isFetching}
+      loading={Boolean(isLoading && value) || isFetching}
       disableMaxButton
     />
   )

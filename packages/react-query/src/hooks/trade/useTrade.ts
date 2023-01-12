@@ -26,6 +26,7 @@ export const useTradeQuery = (
           }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}`
         )
       ).json()
+
       return tradeValidator.parse(res)
     },
     keepPreviousData: !!amount,
