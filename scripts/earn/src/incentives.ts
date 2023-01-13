@@ -37,7 +37,6 @@ export async function execute() {
   } catch (e) {
     console.error(e)
     await client.$disconnect()
-    process.exit(1)
   } finally {
     await client.$disconnect()
   }

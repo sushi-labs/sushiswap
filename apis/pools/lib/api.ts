@@ -4,8 +4,9 @@ import type { PoolType } from '.'
 
 export type PoolApiArgs = {
   chainIds: number[] | undefined
-  poolTypes: PoolType[] | undefined
+  poolType: PoolType | undefined
   isIncentivized: boolean | undefined
+  isWhitelisted: boolean | undefined
   cursor: string | undefined
   orderBy: string
   orderDir: 'asc' | 'desc'
@@ -37,13 +38,13 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
 
   if (args.chainIds) {
     where = {
-      chainId: { in: args.chainIds.map((c) => c.toString()) },
+      chainId: { in: args.chainIds },
     }
   }
 
-  if (args.poolTypes) {
+  if (args.poolType) {
     where = {
-      type: { in: args.poolTypes },
+      type: args.poolType,
       ...where,
     }
   }
@@ -62,6 +63,17 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
     }
   }
 
+  if (args.isWhitelisted) {
+    where = {
+      token0: {
+        status: 'APPROVED',
+      },
+      token1: {
+        status: 'APPROVED',
+      },
+      ...where,
+    }
+  }
   console.log({ where })
   const pools = await prisma.sushiPool.findMany({
     take: 20,
