@@ -11,11 +11,11 @@ import {
   currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { FC, ReactNode, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { createContext, useContext } from 'use-context-selector'
+import { useToken } from '@sushiswap/react-query'
 
 const schema = z.object({
   fromChainId: z.coerce
@@ -36,17 +36,22 @@ const schema = z.object({
   recipient: z.optional(z.string()),
 })
 
-interface SwapState {
+interface InternalSwapState {
   review: boolean
   recipient: string | undefined
+  value: string
+}
+
+interface SwapState {
   token0: Type
   token1: Type
   network0: ChainId
   network1: ChainId
-  value: string
   amount: Amount<Type> | undefined
   appType: AppType
 }
+
+type State = InternalSwapState & SwapState
 
 type SwapApi = {
   setReview(value: boolean): void
@@ -60,130 +65,164 @@ type SwapApi = {
   switchTokens(): void
 }
 
-export const SwapStateContext = createContext<SwapState>({} as SwapState)
+export const SwapStateContext = createContext<State>({} as State)
 export const SwapActionsContext = createContext<SwapApi>({} as SwapApi)
 
 type Actions =
-  | { type: 'setNetwork0'; chainId: ChainId }
-  | { type: 'setNetwork1'; chainId: ChainId }
-  | { type: 'setToken0'; currency: Type }
-  | { type: 'setToken1'; currency: Type }
-  | { type: 'setAppType'; appType: AppType }
   | { type: 'setValue'; value: string }
-  | { type: 'switchTokens' }
   | { type: 'setRecipient'; recipient: string }
   | { type: 'setReview'; value: boolean }
 
-const reducer = (state: SwapState, action: Actions): SwapState => {
+const reducer = (state: InternalSwapState, action: Actions): InternalSwapState => {
   switch (action.type) {
     case 'setReview':
       return { ...state, review: action.value }
     case 'setRecipient':
       return { ...state, recipient: action.recipient }
-    case 'setNetwork0':
-      return {
-        ...state,
-        network0: action.chainId,
-        token0: Native.onChain(action.chainId),
-      }
-    case 'setNetwork1':
-      return {
-        ...state,
-        network1: action.chainId,
-        token1: Native.onChain(action.chainId),
-      }
-    case 'setToken0':
-      return {
-        ...state,
-        token0: action.currency,
-        // if token1 is set to whatever token token0 is about to be set too, set token1 to token0
-        token1: state.token1.wrapped.address === action.currency.wrapped.address ? state.token0 : state.token1,
-      }
-    case 'setToken1':
-      return {
-        ...state,
-        // if token0 is set to whatever token token1 is about to be set too, set token0 to token1
-        token0: state.token0.wrapped.address === action.currency.wrapped.address ? state.token1 : state.token0,
-        token1: action.currency,
-      }
-    case 'setAppType': {
-      const network1 =
-        action.appType === AppType.Swap
-          ? state.network0
-          : state.network0 === state.network1
-          ? ChainId.ARBITRUM
-          : state.network1
-
-      return {
-        ...state,
-        appType: action.appType,
-        network1,
-        token0: Native.onChain(state.network0),
-        token1: SUSHI[network1 as keyof typeof SUSHI],
-      }
-    }
     case 'setValue':
       return {
         ...state,
         value: action.value,
-        amount: tryParseAmount(action.value, state.token0),
-      }
-    case 'switchTokens':
-      return {
-        ...state,
-        token0: state.token1,
-        token1: state.token0,
-        network0: state.network1,
-        network1: state.network0,
-        amount: tryParseAmount(state.value, state.token1),
       }
   }
 }
 
 interface SwapProviderProps {
   children: ReactNode
-  // initialState: {
-  //   fromChainId: number
-  //   toChainId: number
-  //   fromCurrencyId: string
-  //   toCurrencyId: string
-  // }
 }
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
-  const { query } = useRouter()
-  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount } = schema.parse(query)
-  const [state, dispatch] = useReducer(reducer, {
+  const { query, push } = useRouter()
+  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount: _amount } = schema.parse(query)
+  const { data: tokenFrom } = useToken({ chainId: fromChainId, address: fromCurrencyId })
+  const { data: tokenTo } = useToken({ chainId: toChainId, address: toCurrencyId })
+
+  const [internalState, dispatch] = useReducer(reducer, {
     review: false,
     // TODO: no recipient
     recipient: address ? address : undefined,
-    appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
-    token0: isShortCurrencyName(fromChainId, fromCurrencyId)
-      ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
-      : Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM),
-    token1: isShortCurrencyName(toChainId, toCurrencyId)
-      ? currencyFromShortCurrencyName(toChainId, toCurrencyId)
-      : SUSHI[toChainId && toChainId in SUSHI ? (toChainId as keyof typeof SUSHI) : ChainId.ETHEREUM],
-    network0: fromChainId,
-    network1: toChainId,
-    value: amount ? amount.toString() : '',
-    amount: tryParseAmount(
-      amount ? amount.toString() : undefined,
-      isShortCurrencyName(fromChainId, fromCurrencyId)
-        ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
-        : Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
-    ),
+    value: _amount ? _amount.toString() : '',
   })
 
+  const state = useMemo(() => {
+    const token0 = isShortCurrencyName(fromChainId, fromCurrencyId)
+      ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
+      : tokenFrom
+      ? tokenFrom
+      : Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
+    const token1 = isShortCurrencyName(toChainId, toCurrencyId)
+      ? currencyFromShortCurrencyName(toChainId, toCurrencyId)
+      : tokenTo
+      ? tokenTo
+      : SUSHI[toChainId && toChainId in SUSHI ? (toChainId as keyof typeof SUSHI) : ChainId.ETHEREUM]
+
+    return {
+      ...internalState,
+      appType: fromChainId === toChainId ? AppType.Swap : AppType.xSwap,
+      token0,
+      token1,
+      network0: fromChainId,
+      network1: toChainId,
+      amount: tryParseAmount(internalState.value ? internalState.value.toString() : undefined, token0),
+    }
+  }, [fromChainId, fromCurrencyId, internalState, toChainId, toCurrencyId, tokenFrom, tokenTo])
+
   const api = useMemo(() => {
-    const setNetwork0 = (chainId: ChainId) => dispatch({ type: 'setNetwork0', chainId })
-    const setNetwork1 = (chainId: ChainId) => dispatch({ type: 'setNetwork1', chainId })
-    const setToken0 = (currency: Type) => dispatch({ type: 'setToken0', currency })
-    const setToken1 = (currency: Type) => dispatch({ type: 'setToken1', currency })
-    const setAppType = (appType: AppType) => dispatch({ type: 'setAppType', appType })
+    const setNetwork0 = (chainId: ChainId) =>
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromCurrencyId: Native.onChain(chainId).symbol,
+            toCurrencyId: 'SUSHI',
+            fromChainId: chainId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    const setNetwork1 = (chainId: ChainId) =>
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromCurrencyId: Native.onChain(chainId).symbol,
+            toCurrencyId: 'SUSHI',
+            toChainId: chainId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    const setToken0 = (currency: Type) => {
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromCurrencyId: currency.isNative ? currency.symbol : currency.wrapped.address,
+            toCurrencyId: query.fromCurrencyId === query.toCurrencyId ? query.fromCurrencyId : query.toCurrencyId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
+    const setToken1 = (currency: Type) => {
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromCurrencyId: query.fromCurrencyId === query.toCurrencyId ? query.toCurrencyId : query.fromCurrencyId,
+            toCurrencyId: currency.isNative ? currency.symbol : currency.wrapped.address,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
+    const switchTokens = () =>
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromChainId: query.toChainId,
+            toChainId: query.fromChainId,
+            fromCurrencyId: query.toCurrencyId,
+            toCurrencyId: query.fromCurrencyId,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+
+    const setAppType = (appType: AppType) => {
+      const network1 =
+        appType === AppType.Swap
+          ? query.fromChainId
+          : query.fromChainId === query.toChainId
+          ? ChainId.ARBITRUM
+          : query.toChainId
+
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            toChainId: network1,
+            toCurrencyId: 'SUSHI',
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
-    const switchTokens = () => dispatch({ type: 'switchTokens' })
     const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
     const setReview = (value: boolean) => dispatch({ type: 'setReview', value })
 
@@ -198,7 +237,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setRecipient,
       setReview,
     }
-  }, [])
+  }, [push, query])
 
   return (
     <SwapActionsContext.Provider value={api}>

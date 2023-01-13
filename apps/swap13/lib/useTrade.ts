@@ -1,5 +1,5 @@
 import { useSlippageTolerance, useTrade as _useTrade } from '@sushiswap/react-query'
-import { useBlockNumber, useFeeData } from 'wagmi'
+import { useFeeData } from 'wagmi'
 import { useSwapState } from '../ui/trade/TradeProvider'
 
 export const useTrade = () => {
@@ -7,7 +7,6 @@ export const useTrade = () => {
 
   const { data: slippageTolerance } = useSlippageTolerance()
   const { data: feeData } = useFeeData()
-  const { data: blockNumber } = useBlockNumber({ chainId: network0, watch: true })
 
   return _useTrade({
     chainId: network0,
@@ -16,7 +15,6 @@ export const useTrade = () => {
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
     gasPrice: feeData?.gasPrice?.toNumber(),
-    blockNumber,
     recipient,
   })
 }

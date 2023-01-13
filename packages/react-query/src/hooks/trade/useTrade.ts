@@ -9,32 +9,34 @@ import { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator } from './validator'
 
 export const useTradeQuery = (
-  { chainId, fromToken, toToken, amount, gasPrice = 50, blockNumber, recipient }: UseTradeParams,
+  { chainId, fromToken, toToken, amount, gasPrice = 50, recipient }: UseTradeParams,
   select: UseTradeQuerySelect
-) =>
-  useQuery({
-    queryKey: ['getTrade', { chainId, fromToken, toToken, amount, gasPrice, blockNumber, recipient }],
-    queryFn: async () => {
-      const res = await (
-        await fetch(
-          `${
-            process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
-          }?chainId=${chainId}&fromTokenId=${
-            fromToken.isNative ? nativeCurrencyIds[chainId] : fromToken.wrapped.address
-          }&toTokenId=${
-            toToken.isNative ? nativeCurrencyIds[chainId] : toToken.wrapped.address
-          }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}`
-        )
-      ).json()
+) => {
+    return useQuery({
+        queryKey: ['getTrade', {chainId, fromToken, toToken, amount, gasPrice, recipient}],
+        queryFn: async () => {
+            const res = await (
+                await fetch(
+                    `${
+                        process.env.NEXT_PUBLIC_SWAP_API_V0_BASE_URL || 'https://swap.sushi.com/v0'
+                    }?chainId=${chainId}&fromTokenId=${
+                        fromToken.isNative ? nativeCurrencyIds[chainId] : fromToken.wrapped.address
+                    }&toTokenId=${
+                        toToken.isNative ? nativeCurrencyIds[chainId] : toToken.wrapped.address
+                    }&amount=${amount?.quotient.toString()}&gasPrice=${gasPrice}${recipient ? `&to=${recipient}` : ''}`
+                )
+            ).json()
 
-      return tradeValidator.parse(res)
-    },
-    refetchOnWindowFocus: false,
-    keepPreviousData: !!amount,
-    cacheTime: 0,
-    select,
-    enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice && blockNumber),
-  })
+            return tradeValidator.parse(res)
+        },
+        refetchOnWindowFocus: true,
+        refetchInterval: 10000,
+        keepPreviousData: !!amount,
+        cacheTime: 0,
+        select,
+        enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice),
+    })
+}
 
 export const useTrade = (variables: UseTradeParams) => {
   const { chainId, fromToken, toToken, amount, slippagePercentage } = variables
