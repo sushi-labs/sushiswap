@@ -7,7 +7,7 @@ import { BigNumber, Contract, ethers } from 'ethers'
 
 import type { Limited } from '../Limited'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
-import { BentoConstantProductPoolCode } from '../pools/BentoconstantProductPool'
+import { BentoPoolCode } from '../pools/BentoPool'
 import type { PoolCode } from '../pools/PoolCode'
 import { LiquidityProvider } from './LiquidityProvider'
 
@@ -92,7 +92,7 @@ export class TridentProvider extends LiquidityProvider {
         res0,
         res1
       )
-      const poolCode = new BentoConstantProductPoolCode(pool, this.getPoolProviderName())
+      const poolCode = new BentoPoolCode(pool, this.getPoolProviderName())
       pools.push(poolCode)
       this.poolCodes.push(poolCode)
     }
