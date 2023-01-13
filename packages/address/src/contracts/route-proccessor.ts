@@ -6,6 +6,6 @@ import { ChainId } from '@sushiswap/chain'
 // export type TridentExportContracts = RouteProcessorExport['contracts']
 
 export const ROUTE_PROCESSOR_ADDRESS = {
-  [ChainId.ETHEREUM]: '0xf267704dD1393c26B39A6D41F49Bea233B34F722',
-  [ChainId.POLYGON]: '0xf267704dD1393c26B39A6D41F49Bea233B34F722',
+  [ChainId.ETHEREUM]: '0x49C6FDCb3D5b2CecD8baff66c8e94b9B261ad925',
+  [ChainId.POLYGON]: '0x4d838fAE6De55Ed70D4dAF981cFd647a27603f0e',
 } as const

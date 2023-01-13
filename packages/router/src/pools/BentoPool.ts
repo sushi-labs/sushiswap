@@ -1,12 +1,18 @@
-import type { ConstantProductRPool, MultiRoute, RouteLeg } from '@sushiswap/tines'
+import { ConstantProductRPool, MultiRoute, RouteLeg, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { ethers } from 'ethers'
 
 import { HEXer } from '../HEXer'
 import { PoolCode } from './PoolCode'
 
-export class BentoConstantProductPoolCode extends PoolCode {
-  constructor(pool: ConstantProductRPool, providerName: string) {
-    super(pool, `${providerName} ${pool.fee * 100}%`)
+function getPoolTypeTicker(pool: RPool): string {
+  if (pool instanceof ConstantProductRPool) return 'CP'
+  if (pool instanceof StableSwapRPool) return 'Stable'
+  return ''
+}
+
+export class BentoPoolCode extends PoolCode {
+  constructor(pool: RPool, providerName: string) {
+    super(pool, `${providerName} ${getPoolTypeTicker(pool)} ${pool.fee * 100}%`)
   }
 
   getSwapCodeForRouteProcessor(leg: RouteLeg, _route: MultiRoute, to: string): string {

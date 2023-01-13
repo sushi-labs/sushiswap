@@ -1,3 +1,4 @@
+import { Rebase } from '@sushiswap/tines'
 import { ContractCallContext, Multicall } from 'ethereum-multicall'
 import { BigNumber, ethers } from 'ethers'
 
@@ -117,5 +118,12 @@ export function convertToBigNumberPair(arr: any[]): ([BigNumber, BigNumber] | un
   return arr.map((a) => {
     if (a === undefined) return undefined
     return [BigNumber.from(a[0].hex), BigNumber.from(a[1].hex)]
+  })
+}
+
+export function convertToRebase(arr: any[]): (Rebase | undefined)[] {
+  return arr.map((a) => {
+    if (a === undefined) return undefined
+    return { elastic: BigNumber.from(a[0].hex), base: BigNumber.from(a[1].hex) }
   })
 }
