@@ -56,6 +56,7 @@ export async function filterIncentives(
         missingPoolIds[incentive.chainId].push(incentive.poolId)
         return false
       }
+      return true
     }
     return false
   })
