@@ -49,7 +49,6 @@ export interface HeaderProps extends React.HTMLProps<HTMLElement> {
 export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, rightElement }) => {
   const [open, setOpen] = useState(false)
   const scrollY = useScrollPosition()
-  const { isLg } = useBreakpoint('lg')
 
   const showBackground = scrollY > HEADER_HEIGHT - 10
 
@@ -57,11 +56,10 @@ export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, right
     <header
       style={{ height: HEADER_HEIGHT }}
       className={classNames(
-        showBackground && isLg
-          ? 'bg-gray-200/70 dark:bg-slate-900 dark:border-slate-200/5 border-gray-300/70 backdrop-blur-md backdrop-saturate-[3]'
-          : 'border-transparent',
-        !showBackground && isLg ? '' : '!border-gray-300/70 dark:!border-slate-200/5 !bg-gray-100 dark:!bg-slate-900',
-        'sticky flex items-center top-0 z-[1070] border-b transition-all',
+        showBackground
+          ? 'lg:bg-gray-200/70 lg:dark:bg-slate-900 lg:dark:border-slate-200/5 lg:border-gray-300/70 lg:backdrop-blur-md lg:backdrop-saturate-[3]'
+          : 'lg:border-transparent',
+        'border-gray-300/70 dark:border-slate-200/5 bg-gray-100 dark:bg-slate-900 sticky flex items-center top-0 z-[1070] border-b transition-all',
         className
       )}
     >
