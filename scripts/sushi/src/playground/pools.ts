@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client'
-import { Native, USDC_ADDRESS } from '@sushiswap/currency'
-
 import { ChainId } from '@sushiswap/chain'
+import { Native } from '@sushiswap/currency'
 import { performance } from 'perf_hooks'
 
 const prisma = new PrismaClient()
@@ -16,10 +15,10 @@ async function main() {
 
   const startTimePools = performance.now()
   const pools = await Promise.all([
-    getPools(chainId, 'QuickSwap', 'V2', address ),//minimumLiquidity),
-    getPools(chainId, 'SushiSwap', 'LEGACY', address ),//minimumLiquidity),
-    getPools(chainId, 'SushiSwap', 'TRIDENT', address ),//minimumLiquidity),
-    getPools(chainId, 'UniSwap', 'V2', address )//minimumLiquidity),
+    getPools(chainId, 'QuickSwap', 'V2', address), //minimumLiquidity),
+    getPools(chainId, 'SushiSwap', 'LEGACY', address), //minimumLiquidity),
+    getPools(chainId, 'SushiSwap', 'TRIDENT', address), //minimumLiquidity),
+    getPools(chainId, 'UniSwap', 'V2', address), //minimumLiquidity),
   ])
   const endTimePools = performance.now()
   console.log(`*** POOL REQUESTS completed after ${((endTimePools - startTimePools) / 1000).toFixed(1)} seconds. `)
@@ -53,7 +52,7 @@ async function getPools(
   chainId: ChainId,
   protocol: string,
   version: string,
-  address: string,
+  address: string
   // minimumLiquidity: number
 ) {
   const startTime = performance.now()
@@ -89,7 +88,7 @@ async function getPools(
         where: {
           protocol,
           version,
-          // liquidityUSD: { gt: minimumLiquidity }, 
+          // liquidityUSD: { gt: minimumLiquidity },
           OR: [
             {
               token1: {
@@ -210,7 +209,7 @@ export async function getBase(
   protocol: string,
   version: string,
   excludeTokens: string[],
-  size: number = 100
+  size = 100
 ) {
   const startTime = performance.now()
   const result = await prisma.pool.findMany({
@@ -232,7 +231,7 @@ export async function getBase(
           },
           status: 'APPROVED',
         },
-      } 
+      },
     },
     select: {
       address: true,

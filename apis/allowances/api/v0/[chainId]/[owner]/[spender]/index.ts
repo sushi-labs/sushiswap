@@ -1,10 +1,11 @@
-import { allChains } from '../../../../../chains'
-import { allProviders } from '../../../../../providers'
-import { Address, erc20ABI, readContracts, configureChains, createClient } from '@wagmi/core'
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { Address, configureChains, createClient,erc20ABI, readContracts } from '@wagmi/core'
+import zip from 'lodash.zip'
 import fetch from 'node-fetch'
 import { z } from 'zod'
-import zip from 'lodash.zip'
+
+import { allChains } from '../../../../../chains'
+import { allProviders } from '../../../../../providers'
 
 const { provider } = configureChains(allChains, allProviders)
 createClient({

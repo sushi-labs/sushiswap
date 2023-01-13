@@ -1,6 +1,6 @@
 import raw from './chains'
 
-interface IChain {
+export interface Chain {
   name: string
   chain: string
   icon?: string
@@ -18,8 +18,6 @@ interface IChain {
   parent?: Parent
   network?: Network
 }
-
-export interface Chain extends IChain {}
 
 export interface Ens {
   registry: string
@@ -166,7 +164,7 @@ const CHAINS = [
       },
     ],
   },
-] as IChain[]
+] as const
 
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
 
@@ -182,7 +180,7 @@ export class Chain implements Chain {
   public static fromChainId(chainId: number) {
     return chains[chainId]
   }
-  constructor(data: typeof CHAINS[number]) {
+  constructor(data: (typeof CHAINS)[number]) {
     Object.assign(this, data)
   }
   getTxUrl(txHash: string): string {
@@ -241,7 +239,7 @@ export const chainName = Object.fromEntries(CHAINS.map((data): [number, string] 
 export const chains = Object.fromEntries(CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
 
 // L2 Chains array
-const L2_CHAINS = CHAINS.filter((data) => data.parent?.type === Type.L2)
+const L2_CHAINS = CHAINS.filter((data) => 'parent' in data && data.parent.type === Type.L2)
 
 // Chain Id => Chain mapping
 export const chainsL2 = Object.fromEntries(L2_CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
