@@ -16,7 +16,7 @@
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
-    "@sushiswap/earn-database": "workspace:*",
+    "@sushiswap/database": "workspace:*",
     "@vercel/node": "2.8.2",
     "zod": "3.20.2"
   },

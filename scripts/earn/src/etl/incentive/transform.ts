@@ -26,7 +26,7 @@ export async function filterIncentives(
     select: incentiveSelect,
   })
 
-  const poolsFound = await client.pool.findMany({
+  const poolsFound = await client.sushiPool.findMany({
     where: { id: { in: incentives.map((incentive) => incentive.poolId) } },
     select: { id: true },
   })

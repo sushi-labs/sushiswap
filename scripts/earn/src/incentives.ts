@@ -96,7 +96,7 @@ async function transform(data: ChefReturn[]): Promise<{
                 Prisma.validator<Prisma.TokenCreateManyInput>()({
                   id: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
                   address: incentive.rewardToken.address.toLowerCase(),
-                  chainId: chainId.toString(),
+                  chainId: chainId,
                   name: incentive.rewardToken.name,
                   symbol: incentive.rewardToken.symbol,
                   decimals: incentive.rewardToken.decimals,
@@ -104,7 +104,7 @@ async function transform(data: ChefReturn[]): Promise<{
               )
               return Prisma.validator<Prisma.IncentiveCreateManyInput>()({
                 id: poolAddress.concat(':').concat(incentive.rewarder.address),
-                chainId: chainId.toString(),
+                chainId: chainId,
                 type: farm.chefType,
                 apr: isNaN(incentive.apr) || incentive.apr === Infinity ? 0 : incentive.apr,
                 rewardTokenId: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),

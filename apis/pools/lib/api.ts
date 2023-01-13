@@ -1,4 +1,4 @@
-import prisma from '@sushiswap/earn-database'
+import prisma from '@sushiswap/database'
 
 import type { PoolType } from '.'
 
@@ -11,9 +11,9 @@ export type PoolApiArgs = {
   orderDir: 'asc' | 'desc'
 }
 
-export async function getPool(chainId: number, address: string) {
+export async function getPool(chainId: number, address: string): Promise<any> {
   const id = `${chainId}:${address.toLowerCase()}`
-  const pool = await prisma.pool.findFirstOrThrow({
+  const pool = await prisma.sushiPool.findFirstOrThrow({
     include: {
       token0: true,
       token1: true,
@@ -23,11 +23,12 @@ export async function getPool(chainId: number, address: string) {
       id,
     },
   })
+
   await prisma.$disconnect()
   return pool
 }
 
-export async function getPools(args: PoolApiArgs): Promise<any[]> {
+export async function getPools(args: PoolApiArgs): Promise<any> {
   const orderBy = { [args.orderBy]: args.orderDir }
 
   let where = {}
@@ -62,7 +63,7 @@ export async function getPools(args: PoolApiArgs): Promise<any[]> {
   }
 
   console.log({ where })
-  const pools = await prisma.pool.findMany({
+  const pools = await prisma.sushiPool.findMany({
     take: 20,
     skip,
     ...cursor,

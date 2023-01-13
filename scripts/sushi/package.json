@@ -19,8 +19,7 @@
     "server": "ts-node --swc src/server.ts",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "prisma-generate": "prisma generate",
-    "generate": "graphclient build --fileType js --throwOnInvalidConfig",
+    "generate": "graphclient build --fileType js --throwOnInvalidConfig && prisma generate",
     "lint": "TIMING=1 eslint src --fix",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"

@@ -172,7 +172,7 @@ importers:
 
   apis/pools:
     specifiers:
-      '@sushiswap/earn-database': workspace:*
+      '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -184,7 +184,7 @@ importers:
       vercel: 28.10.1
       zod: 3.20.2
     dependencies:
-      '@sushiswap/earn-database': link:../../packages/earn-database
+      '@sushiswap/database': link:../../packages/database
       '@vercel/node': 2.8.2
       zod: 3.20.2
     devDependencies:
@@ -2247,7 +2247,7 @@ importers:
 
   packages/database:
     specifiers:
-      '@prisma/client': 4.8.0
+      '@prisma/client': 4.8.1
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
@@ -2263,7 +2263,7 @@ importers:
       tsup: 6.5.0
       typescript: 4.9.4
     dependencies:
-      '@prisma/client': 4.8.0_prisma@4.8.0
+      '@prisma/client': 4.8.1_prisma@4.8.0
       ioredis: 5.2.4
       prisma-redis-middleware: 4.4.0
     devDependencies:
@@ -2272,41 +2272,6 @@ importers:
       '@sushiswap/prettier-config': link:../../config/prettier
       '@sushiswap/typescript-config': link:../../config/typescript
       '@types/jest': 29.2.4
-      '@types/node': 18.11.18
-      dotenv: 16.0.3
-      eslint: 8.29.0
-      jest: 29.3.1_@types+node@18.11.18
-      prisma: 4.8.0
-      tsup: 6.5.0_typescript@4.9.4
-      typescript: 4.9.4
-
-  packages/earn-database:
-    specifiers:
-      '@prisma/client': 4.8.0
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@types/jest': ^29.2.0
-      '@types/node': ^18.0.0
-      dotenv: 16.0.3
-      eslint: 8.29.0
-      ioredis: 5.2.4
-      jest: ^29.3.0
-      prisma: 4.8.0
-      prisma-redis-middleware: 4.4.0
-      tsup: 6.5.0
-      typescript: 4.9.4
-    dependencies:
-      '@prisma/client': 4.8.0_prisma@4.8.0
-      ioredis: 5.2.4
-      prisma-redis-middleware: 4.4.0
-    devDependencies:
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@types/jest': 29.2.5
       '@types/node': 18.11.18
       dotenv: 16.0.3
       eslint: 8.29.0
@@ -3756,6 +3721,7 @@ importers:
       '@sushiswap/chain': workspace:*
       '@sushiswap/core': ^2.0.0-canary.1
       '@sushiswap/currency': workspace:*
+      '@sushiswap/database': workspace:*
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/graph-config': workspace:*
       '@sushiswap/jest-config': workspace:*
@@ -3788,6 +3754,7 @@ importers:
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/core': 2.0.0-canary.1
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/database': link:../../packages/database
       '@sushiswap/graph-config': link:../../config/graph
       '@sushiswap/validate': link:../../packages/validate
       '@sushiswap/wagmi-config': link:../../config/wagmi
@@ -10361,6 +10328,21 @@ packages:
     dependencies:
       '@prisma/engines-version': 4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe
       prisma: 4.8.0
+    dev: true
+
+  /@prisma/client/4.8.1_prisma@4.8.0:
+    resolution: {integrity: sha512-d4xhZhETmeXK/yZ7K0KcVOzEfI5YKGGEr4F5SBV04/MU4ncN/HcE28sy3e4Yt8UFW0ZuImKFQJE+9rWt9WbGSQ==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe
+      prisma: 4.8.0
+    dev: false
 
   /@prisma/engines-version/4.8.0-61.d6e67a83f971b175a593ccc12e15c4a757f93ffe:
     resolution: {integrity: sha512-MHSOSexomRMom8QN4t7bu87wPPD+pa+hW9+71JnVcF3DqyyO/ycCLhRL1we3EojRpZxKvuyGho2REQsMCvxcJw==}

@@ -41,7 +41,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@prisma/client": "4.8.0",
+    "@prisma/client": "4.8.1",
     "ioredis": "5.2.4",
     "prisma-redis-middleware": "4.4.0"
   },

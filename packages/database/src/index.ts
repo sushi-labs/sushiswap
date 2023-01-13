@@ -46,3 +46,4 @@ const cacheMiddleware = createPrismaRedisCache({
 prisma.$use(cacheMiddleware)
 
 export default prisma as PrismaClient
+export { Prisma } from '@prisma/client'
