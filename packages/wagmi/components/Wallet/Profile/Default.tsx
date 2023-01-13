@@ -10,6 +10,7 @@ import { useBalance, useDisconnect, useEnsAvatar } from 'wagmi'
 
 import { usePrices } from '../../../hooks'
 import { ProfileView } from './Profile'
+import { Onramper } from '../../Onramper'
 
 interface DefaultProps {
   chainId: ChainId
@@ -56,13 +57,13 @@ export const Default: FC<DefaultProps> = ({ chainId, address, setView }) => {
             {shortenAddress(address)}
           </Typography>
           <div className="flex gap-3">
-            <BuyCrypto address={address}>
-              {(buyUrl) => (
-                <IconButton as="a" target="_blank" href={buyUrl} className="p-0.5" description="Buy Crypto">
+            <Onramper>
+              {({ setOpen }) => (
+                <IconButton onClick={() => setOpen(true)} className="p-0.5" description="Buy Crypto">
                   <CreditCardIcon width={18} height={18} />
                 </IconButton>
               )}
-            </BuyCrypto>
+            </Onramper>
             <CopyHelper toCopy={address} hideIcon>
               {(isCopied) => (
                 <IconButton className="p-0.5" description={isCopied ? 'Copied!' : 'Copy'}>

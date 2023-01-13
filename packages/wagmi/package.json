@@ -29,6 +29,7 @@
     "@gnosis.pm/safe-apps-wagmi": "1.2.0",
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.6",
+    "@onramper/widget": "^2.2.33",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/address": "workspace:*",
     "@sushiswap/amm": "workspace:*",

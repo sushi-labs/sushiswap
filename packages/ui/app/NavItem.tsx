@@ -29,7 +29,7 @@ export const NavItem: FC<NavItemProps> = ({ href, label, external }) => {
 
   return (
     <Link.Internal href={href} className="decoration-transparent" passHref>
-      <a>
+      <a className="flex items-center">
         <span
           className={classNames(
             href.includes(basePath) ? 'text-slate-200' : 'text-slate-400',
