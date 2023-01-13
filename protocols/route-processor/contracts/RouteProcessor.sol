@@ -18,11 +18,9 @@ contract RouteProcessor {
   using InputStream for uint256;
 
   IBentoBoxMinimal public immutable bentoBox;
-  IWETH public immutable wNATIVE;
 
-  constructor(address _bentoBox, address _wNATIVE) {
+  constructor(address _bentoBox) {
     bentoBox = IBentoBoxMinimal(_bentoBox);
-    wNATIVE = IWETH(_wNATIVE);
   }
 
   /// @notice For native unwrapping
@@ -59,8 +57,8 @@ contract RouteProcessor {
         else if (commandCode == 3)
           amountInAcc += distributeERC20Amounts(stream, tokenIn); // initial distribution
         else if (commandCode == 5)
-          amountInAcc += wrapAndDistributeERC20Amounts(stream, tokenIn); // wrap natives and initial distribution        
-        else if (commandCode == 6) unwrapNative(to);
+          amountInAcc += wrapAndDistributeERC20Amounts(stream); // wrap natives and initial distribution        
+        else if (commandCode == 6) unwrapNative(to, stream);
         else revert('Unknown command code');
       } else if (commandCode < 24) {
         if (commandCode == 20) bentoDepositAmountFromBento(stream, tokenIn);
@@ -170,11 +168,11 @@ contract RouteProcessor {
 
   /// @notice Wraps all native inputs and distributes wrapped ERC20 tokens from RouteProcessor to addresses
   /// @notice Expected to be called for initial liquidity transfer from the user to pools, so we know exact amounts
-  /// @param stream [ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
-  /// @param token Token to distribute
+  /// @param stream [WrapToken, ArrayLength, ...[To, Amount][]]. An array of destinations and token amounts
   /// @return amountTotal Total amount distributed
-  function wrapAndDistributeERC20Amounts(uint256 stream, address token) private returns (uint256 amountTotal) {
-    wNATIVE.deposit{value: msg.value}();
+  function wrapAndDistributeERC20Amounts(uint256 stream) private returns (uint256 amountTotal) {
+    address token = stream.readAddress();
+    IWETH(token).deposit{value: msg.value}();
     uint8 num = stream.readUint8();
     amountTotal = 0;
     for (uint256 i = 0; i < num; ++i) {
@@ -183,6 +181,7 @@ contract RouteProcessor {
       amountTotal += amount;
       IERC20(token).safeTransfer(to, amount);
     }
+    require(msg.value == amountTotal, "RouteProcessor: invalid input amount");
   }
 
   /// @notice Distributes input BentoBox tokens from msg.sender to addresses. Tokens should be approved
@@ -247,8 +246,10 @@ contract RouteProcessor {
 
   /// @notice Unwraps the Native Token
   /// @param receiver Destination of the unwrapped token
-  function unwrapNative(address receiver) private {
-    wNATIVE.withdraw(IERC20(address(wNATIVE)).balanceOf(address(this))
+  /// @param stream [Token]. Token to unwrap native
+  function unwrapNative(address receiver, uint256 stream) private {
+    address token = stream.readAddress();
+    IWETH(token).withdraw( IERC20(token).balanceOf(address(this))
       - 1);     // slot undrain protection
     payable(receiver).transfer(address(this).balance);
   }

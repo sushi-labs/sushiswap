@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { ChainId } from '@sushiswap/chain'
-import { Native, WNATIVE } from '@sushiswap/currency'
+import { Native, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { BridgeUnlimited, RToken } from '@sushiswap/tines'
 import type { ethers } from 'ethers'
 
@@ -12,8 +12,6 @@ import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
 
 export class NativeWrapProvider extends LiquidityProviderMC {
   poolCodes: PoolCode[]
-
-  static NativeWrapPoolAddress = 'Native Wrapper Bridge'
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
@@ -29,15 +27,9 @@ export class NativeWrapProvider extends LiquidityProviderMC {
       symbol: native.symbol,
       chainId: chainId,
     }
-    const bridge = new BridgeUnlimited(
-      NativeWrapProvider.NativeWrapPoolAddress,
-      nativeRToken,
-      WNATIVE[chainId] as RToken,
-      0,
-      50_000
-    )
+    const bridge = new BridgeUnlimited(WNATIVE_ADDRESS[chainId], nativeRToken, WNATIVE[chainId] as RToken, 0, 50_000)
     this.poolCodes = [new NativeWrapBridgePoolCode(bridge)]
-    this.stateId = 1
+    this.stateId = 0
     this.lastUpdateBlock = -1
   }
 

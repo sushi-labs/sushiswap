@@ -22,6 +22,10 @@
     "./liquidity-providers/Trident": {
       "types": "./dist/liquidity-providers/Trident.d.ts",
       "default": "./dist/liquidity-providers/Trident.js"
+    },
+    "./dist/liquidity-providers/LiquidityProviderMC": {
+      "types": "./dist/liquidity-providers/LiquidityProviderMC.d.ts",
+      "default": "./dist/liquidity-providers/LiquidityProviderMC.js"
     }
   },
   "main": "dist/index.js",
