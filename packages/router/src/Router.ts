@@ -1,4 +1,4 @@
-import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { Token, Type, WNATIVE } from '@sushiswap/currency'
 import {
   findMultiRouteExactIn,
   getBigNumber,

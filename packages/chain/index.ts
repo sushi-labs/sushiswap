@@ -1,27 +1,4 @@
-import raw from './chains.json'
-
-const CHAINS = raw.concat({
-  name: 'Boba Avax',
-  chain: 'Boba Avax',
-  rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
-  faucets: [],
-  nativeCurrency: {
-    name: 'Boba Token',
-    symbol: 'BOBA',
-    decimals: 18,
-  },
-  infoURL: 'https://boba.network',
-  shortName: 'bobaavax',
-  chainId: 43288,
-  networkId: 43288,
-  explorers: [
-    {
-      name: 'Boba Avax Explorer',
-      url: 'https://blockexplorer.avax.boba.network',
-      standard: 'none',
-    },
-  ],
-})
+import raw from './chains'
 
 export interface Chain {
   name: string
@@ -163,6 +140,32 @@ export enum ChainKey {
   BTTC = 'bttc',
 }
 
+const CHAINS = [
+  ...raw,
+  {
+    name: 'Boba Avax',
+    chain: 'Boba Avax',
+    rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Boba Token',
+      symbol: 'BOBA',
+      decimals: 18,
+    },
+    infoURL: 'https://boba.network',
+    shortName: 'bobaavax',
+    chainId: 43288,
+    networkId: 43288,
+    explorers: [
+      {
+        name: 'Boba Avax Explorer',
+        url: 'https://blockexplorer.avax.boba.network',
+        standard: Standard.None,
+      },
+    ],
+  },
+] as const
+
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
 
 export class Chain implements Chain {
@@ -177,7 +180,7 @@ export class Chain implements Chain {
   public static fromChainId(chainId: number) {
     return chains[chainId]
   }
-  constructor(data: typeof CHAINS[number]) {
+  constructor(data: (typeof CHAINS)[number]) {
     Object.assign(this, data)
   }
   getTxUrl(txHash: string): string {
@@ -236,7 +239,7 @@ export const chainName = Object.fromEntries(CHAINS.map((data): [number, string] 
 export const chains = Object.fromEntries(CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
 
 // L2 Chains array
-const L2_CHAINS = CHAINS.filter((data) => data.parent?.type === Type.L2)
+const L2_CHAINS = CHAINS.filter((data) => 'parent' in data && data.parent.type === Type.L2)
 
 // Chain Id => Chain mapping
 export const chainsL2 = Object.fromEntries(L2_CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))

@@ -1,9 +1,9 @@
 import { chains } from '@sushiswap/chain'
 import invariant from 'tiny-invariant'
 
+import { WNATIVE } from './constants/tokens'
 import { Currency } from './Currency'
 import { Token } from './Token'
-import { WNATIVE } from './constants/tokens'
 import { Type } from './Type'
 
 export class Native extends Currency {

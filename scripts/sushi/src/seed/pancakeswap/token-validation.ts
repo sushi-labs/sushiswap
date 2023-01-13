@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import fetch from 'isomorphic-unfetch'
 import { performance } from 'perf_hooks'
+
 import { TokenResponse, transform } from '../../etl/token/token-validation.js'
 
 const client = new PrismaClient()

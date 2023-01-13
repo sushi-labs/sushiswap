@@ -25,7 +25,6 @@ export const usePrices = ({
     () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
     { staleTime: 20000, enabled: Boolean(chainId), ...options }
   )
-
   return useMemo(() => {
     return {
       isError,
