@@ -73,7 +73,7 @@
   },
   "packageManager": "pnpm@7.9.5",
   "engines": {
-    "node": ">=18.x",
+    "node": ">=16.x",
     "pnpm": ">=7.x"
   },
   "nextBundleAnalysis": {

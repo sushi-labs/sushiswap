@@ -29,8 +29,8 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@ethersproject/address": "^5.7.0",
-    "@ethersproject/bignumber": "^5.7.0",
+    "@ethersproject/address": "5.7.0",
+    "@ethersproject/bignumber": "5.7.0",
     "@prisma/client": "4.8.1",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/chain": "workspace:*",

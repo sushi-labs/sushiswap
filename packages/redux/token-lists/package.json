@@ -18,10 +18,10 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
-    "@ethersproject/address": "^5.7.0",
-    "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/address": "5.7.0",
+    "@ethersproject/contracts": "5.7.0",
     "@ethersproject/hash": "^5.7.0",
-    "@ethersproject/providers": "^5.7.0",
+    "@ethersproject/providers": "5.7.2",
     "ajv": "^6.12.3",
     "cids": "^1.1.9",
     "fast-json-stable-stringify": "^2.1.0",
@@ -38,7 +38,7 @@
     "@sushiswap/prettier-config": "workspace:*",
     "@sushiswap/token-lists": "workspace:*",
     "@sushiswap/typescript-config": "workspace:*",
-    "@types/node": "^17.0.30",
+    "@types/node": "18.11.18",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@uniswap/token-lists": "^1.0.0-beta.29",

@@ -32,10 +32,10 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@ethersproject/abi": "^5.7.0",
-    "@ethersproject/address": "^5.7.0",
-    "@ethersproject/bignumber": "^5.7.0",
-    "@ethersproject/solidity": "^5.7.0",
+    "@ethersproject/abi": "5.7.0",
+    "@ethersproject/address": "5.7.0",
+    "@ethersproject/bignumber": "5.7.0",
+    "@ethersproject/solidity": "5.7.0",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
