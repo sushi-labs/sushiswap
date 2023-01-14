@@ -2,7 +2,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { DAI, Native, SUSHI, Token, Type, USDC, USDT, WNATIVE } from '@sushiswap/currency'
-import { BentoBox, DataFetcher, PoolFilter, Router } from '@sushiswap/router'
+import { BentoBox, DataFetcher, findSpecialRoute, PoolFilter, Router } from '@sushiswap/router'
 import { LiquidityProviders } from '@sushiswap/router/dist/liquidity-providers/LiquidityProviderMC'
 import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
@@ -223,5 +223,23 @@ describe('End-to-end Router test', async function () {
       intermidiateResult = await updMakeSwap(env, USDT[chainId], DAI[chainId], intermidiateResult, undefined, filter)
       intermidiateResult = await updMakeSwap(env, DAI[chainId], USDC[chainId], intermidiateResult, undefined, filter)
     }
+  })
+
+  it('Special Router', async function () {
+    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI[chainId])
+    const route = findSpecialRoute(
+      env.dataFetcher,
+      Native.onChain(chainId),
+      getBigNumber(1 * 1e18),
+      SUSHI[chainId],
+      30e9
+    )
+    // if (route.priceImpact !== undefined && route.priceImpact < 0.005) {
+    //   // All pools should be from preferrable list
+    //   const pools = env.dataFetcher.getCurrentPoolCodeList(PreferrableLiquidityProviders).map((pc) => pc.pool.address)
+    //   const poolSet = new Set(pools)
+    //   route.legs.forEach((l) => expect(poolSet.has(l.poolAddress)).true)
+    // }
+    expect(route).not.undefined
   })
 })

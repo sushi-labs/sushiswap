@@ -6,7 +6,10 @@ import { DataFetcher } from './DataFetcher'
 import { LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
 import { Router } from './Router'
 
-const PreferrableLiquidityProviders: LiquidityProviders[] = [LiquidityProviders.Sushiswap, LiquidityProviders.Trident]
+export const PreferrableLiquidityProviders: LiquidityProviders[] = [
+  LiquidityProviders.Sushiswap,
+  LiquidityProviders.Trident,
+]
 
 // Makes the route using only Preferrable liquidity providers.
 // If the result price impact % is more than maxPriceImpact, then remakes the route using all possible liquidity
