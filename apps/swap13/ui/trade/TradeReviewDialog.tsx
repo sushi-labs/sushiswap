@@ -43,13 +43,9 @@ export const TradeReviewDialog: FC = () => {
                 Receive {trade?.amountOut?.toSignificant(6)} {token1.symbol}
               </h1>
             )}
-            {isFetching ? (
-              <Skeleton.Text fontSize="text-lg" className="w-1/4" />
-            ) : (
-              <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-                Sell {amount?.toSignificant(6)} {token0.symbol}
-              </h1>
-            )}
+            <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
+              Sell {amount?.toSignificant(6)} {token0.symbol}
+            </h1>
           </div>
           <div className="min-w-[56px] min-h-[56px]">
             <div className="pr-1">

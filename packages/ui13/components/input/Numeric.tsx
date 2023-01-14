@@ -7,11 +7,13 @@ import { escapeRegExp, inputRegex } from './utils'
 const defaultClassName = 'w-0 p-0 text-2xl bg-transparent'
 
 export type NumericProps = Omit<React.HTMLProps<HTMLInputElement>, 'onChange' | 'as'> & {
+  value: string
   onUserInput?: (input: string) => void
   error?: boolean
   fontSize?: string
   align?: 'right' | 'left'
   variant?: 'default' | 'unstyled'
+  maxDecimals?: number
 }
 
 export const Input = forwardRef<HTMLInputElement, NumericProps>(
@@ -29,6 +31,7 @@ export const Input = forwardRef<HTMLInputElement, NumericProps>(
       minLength = 1,
       maxLength = 79,
       variant = 'default',
+      maxDecimals = 18,
       error,
       ...rest
     },
@@ -37,7 +40,14 @@ export const Input = forwardRef<HTMLInputElement, NumericProps>(
     const enforcer = (nextUserInput: string) => {
       if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
         if (onUserInput) {
-          onUserInput(nextUserInput)
+          if (maxDecimals && nextUserInput?.includes('.')) {
+            const [, decimals] = nextUserInput.split('.')
+            if (decimals.length <= maxDecimals) {
+              onUserInput(nextUserInput)
+            }
+          } else {
+            onUserInput(nextUserInput)
+          }
         }
       }
     }

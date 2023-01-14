@@ -50,7 +50,7 @@ export const FormInputNumeric: FC<FormInputProps> = ({
           </div>
           <div className="pt-0.5">
             <Input.Numeric
-              value={value}
+              value={value?.toString()}
               onUserInput={onChange}
               name="slippageTolerance"
               variant="unstyled"

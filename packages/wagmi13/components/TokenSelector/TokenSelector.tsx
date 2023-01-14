@@ -69,7 +69,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
         >
           {({ currencies, query, onInput, searching, queryToken }) => (
             <Dialog open={open} onClose={handleClose}>
-              <Dialog.Content className="flex flex-col gap-3 !pb-1 h-[75vh] sm:min-h-[60vh] px-4 sm:!rounded-[24px]">
+              <Dialog.Content className="flex flex-col gap-3 !pb-1 min-h-[75vh] sm:min-h-[60vh] px-4 sm:!rounded-[24px]">
                 <SlideIn>
                   <div className="flex justify-between py-2">
                     <span className="text-lg font-semibold dark:text-slate-50 text-gray-900">Tokens</span>

@@ -6,7 +6,7 @@ import { classNames } from '@sushiswap/ui13'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui13/components/input'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import { FC, useCallback, useMemo, useRef } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useBalance } from '../../../hooks/useBalance'
@@ -65,6 +65,18 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
   const insufficientBalance = address && type === 'INPUT' && balance && _value && balance[fundSource].lessThan(_value)
 
+  // If currency changes, trim input to decimals
+  useEffect(() => {
+    if (currency && onChange && value && value.includes('.')) {
+      const [, decimals] = value.split('.')
+      if (decimals.length > currency.decimals) {
+        onChange((+value).toFixed(currency.decimals))
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currency])
+
   return (
     <div
       className={classNames(
@@ -90,6 +102,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             className={classNames(DEFAULT_INPUT_UNSTYLED, 'without-ring !text-3xl py-1')}
             value={value}
             readOnly={disabled}
+            maxDecimals={currency?.decimals}
           />
         )}
         {onSelect && (

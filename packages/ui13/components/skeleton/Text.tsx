@@ -47,7 +47,7 @@ export const Text: FC<TextProps> = ({ align = 'left', className, fontSize = 'tex
       <div
         className={classNames(
           className,
-          'flex w-full h-full bg-gray-200 dark:bg-slate-700 rounded-md overflow-hidden shimmer'
+          'flex w-full h-full bg-gray-200 dark:bg-slate-700 rounded-md overflow-hidden shimmer-fast'
         )}
       />
     </div>

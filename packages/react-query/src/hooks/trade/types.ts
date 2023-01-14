@@ -11,7 +11,6 @@ export interface UseTradeParams {
   amount: Amount<Type> | undefined
   gasPrice?: number
   slippagePercentage: string
-  blockNumber: number | undefined
   recipient: string | undefined
 }
 
