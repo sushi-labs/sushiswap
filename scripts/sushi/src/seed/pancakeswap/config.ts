@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+
 import { GRAPH_HOST_ENDPOINT } from '../../config.js'
 
 export const GRAPH_HOST: Record<number | string, string> = {

@@ -1,8 +1,10 @@
+import '../lib/wagmi.js'
+
 import { Prisma, PrismaClient, Token as PrismaToken } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
+
 import { PoolType, ProtocolVersion } from '../config.js'
-import '../lib/wagmi.js'
 
 const prisma = new PrismaClient()
 
@@ -125,7 +127,7 @@ async function getPoolsByPagination(
 }
 
 function transform(pools: Pool[]) {
-  let poolsToUpdate: PoolWithLiquidity[] = []
+  const poolsToUpdate: PoolWithLiquidity[] = []
   for (const pool of pools) {
     const pt0 = pool.token0
     const pt1 = pool.token1

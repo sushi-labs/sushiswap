@@ -1,12 +1,12 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
-import { createTokens } from '../../../etl/token/load.js'
-import { getBuiltGraphSDK, PCSPairsQuery } from '../../../../.graphclient/index.js'
-import { GRAPH_HOST, PANCAKESWAP_SUBGRAPH_NAME, PANCAKESWAP_V2_SUPPORTED_CHAINS } from '../config.js'
 
+import { getBuiltGraphSDK, PCSPairsQuery } from '../../../../.graphclient/index.js'
 import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
 import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
+import { createTokens } from '../../../etl/token/load.js'
+import { GRAPH_HOST, PANCAKESWAP_SUBGRAPH_NAME, PANCAKESWAP_V2_SUPPORTED_CHAINS } from '../config.js'
 
 const client = new PrismaClient()
 
@@ -51,7 +51,7 @@ async function start() {
     }
     console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${PANCAKESWAP_SUBGRAPH_NAME[chainId]}`)
     let pairCount = 0
-    let cursor: string = '0xad275c9330db6e5c5edfea53297ad513c136211c'
+    let cursor = '0xad275c9330db6e5c5edfea53297ad513c136211c'
 
     do {
       const startTime = performance.now()
