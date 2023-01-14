@@ -37,9 +37,7 @@ jobs:
         TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
         # RPC
-        NEXT_PUBLIC_INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
         NEXT_PUBLIC_ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
-        INFURA_ID: ${{ secrets.NEXT_PUBLIC_INFURA_ID }}
         ALCHEMY_ID: ${{ secrets.NEXT_PUBLIC_ALCHEMY_ID }}
       steps:
         - name: Check out

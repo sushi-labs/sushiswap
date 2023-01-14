@@ -28,6 +28,7 @@
     "@sushiswap/tokens-api",
     "@sushiswap/swap-api",
     "@sushiswap/quote-api",
+    "@sushiswap/pools-api",
     "@sushiswap/token-list-api",
     "@sushiswap/token-price-api",
     "farms-script",
