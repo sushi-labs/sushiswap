@@ -28,7 +28,7 @@
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.0",
     "@hookform/resolvers": "^2.8.10",
-    "@reduxjs/toolkit": "^1.8.1",
+    "@reduxjs/toolkit": "1.9.1",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/address": "workspace:*",
     "@sushiswap/bentobox": "workspace:*",

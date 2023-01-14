@@ -24,7 +24,7 @@
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bytes": "5.7.0",
     "@ethersproject/constants": "5.7.0",
-    "@ethersproject/logger": "^5.7.0",
+    "@ethersproject/logger": "5.7.0",
     "@ethersproject/providers": "5.7.2",
     "@gnosis.pm/safe-apps-provider": "^0.14.0",
     "@gnosis.pm/safe-apps-sdk": "^7.8.0",

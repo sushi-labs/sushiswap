@@ -17,7 +17,7 @@
     "@ethersproject/bytes": "5.7.0",
     "@ethersproject/constants": "5.7.0",
     "@ethersproject/contracts": "5.7.0",
-    "@ethersproject/experimental": "^5.7.0",
+    "@ethersproject/experimental": "5.7.0",
     "@ethersproject/providers": "5.7.2",
     "@ethersproject/strings": "^5.7.0",
     "@headlessui/react": "^1.7.3",

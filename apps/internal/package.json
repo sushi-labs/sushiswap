@@ -24,7 +24,7 @@
     "@sushiswap/redux-token-lists": "workspace:*",
     "@sushiswap/ui": "workspace:*",
     "@tanstack/react-table": "^8.5.13",
-    "fast-json-stable-stringify": "^2.1.0",
+    "fast-json-stable-stringify": "2.1.0",
     "graphql": "16.6.0",
     "next": "13.1.1",
     "octokit": "^2.0.4",
