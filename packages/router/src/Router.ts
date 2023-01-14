@@ -217,7 +217,7 @@ export class Router {
     }
   }
 
-  static checkBestRoute(
+  static findBestRoute(
     dataFetcher: DataFetcher,
     fromToken: Type,
     amountIn: BigNumber,

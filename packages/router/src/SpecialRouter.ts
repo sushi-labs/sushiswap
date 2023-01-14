@@ -18,7 +18,7 @@ export function findSpecialRoute(
   gasPrice: number,
   maxPriceImpact = 0.5 // 0.5%
 ) {
-  const routePreferrable = Router.checkBestRoute(
+  const routePreferrable = Router.findBestRoute(
     dataFetcher,
     fromToken,
     amountIn,
@@ -34,6 +34,6 @@ export function findSpecialRoute(
     return routePreferrable
   }
 
-  const routeAll = Router.checkBestRoute(dataFetcher, fromToken, amountIn, toToken, gasPrice)
+  const routeAll = Router.findBestRoute(dataFetcher, fromToken, amountIn, toToken, gasPrice)
   return routeAll
 }
