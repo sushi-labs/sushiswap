@@ -16,12 +16,10 @@ if (FIRST_TIME_SEED) {
 
 const client = new PrismaClient()
 
-const PROTOCOL = 'SushiSwap'
-
 export async function execute() {
   try {
     const startTime = performance.now()
-    console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
+    console.log(`Preparing to load pools/tokens`)
 
     // EXTRACT
     const exchanges = await extract()
@@ -49,7 +47,6 @@ export async function execute() {
   } catch (e) {
     console.error(e)
     await client.$disconnect()
-    process.exit(1)
   } finally {
     await client.$disconnect()
   }
@@ -114,7 +111,7 @@ async function extract() {
 }
 
 async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined)[] }[]): Promise<{
-  pools: Prisma.PoolCreateManyInput[]
+  pools: Prisma.SushiPoolCreateManyInput[]
   tokens: Prisma.TokenCreateManyInput[]
 }> {
   const yesterday = new Date(Date.now() - 86400000)
@@ -130,7 +127,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat(':').concat(pair.token0.id),
                 address: pair.token0.id,
-                chainId: exchange.chainId.toString(),
+                chainId: exchange.chainId,
                 name: pair.token0.name,
                 symbol: pair.token0.symbol,
                 decimals: Number(pair.token0.decimals),
@@ -140,7 +137,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               Prisma.validator<Prisma.TokenCreateManyInput>()({
                 id: exchange.chainId.toString().concat(':').concat(pair.token1.id),
                 address: pair.token1.id,
-                chainId: exchange.chainId.toString(),
+                chainId: exchange.chainId,
                 name: pair.token1.name,
                 symbol: pair.token1.symbol,
                 decimals: Number(pair.token1.decimals),
@@ -154,17 +151,17 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               .slice(0, 15)
               .concat('-')
               .concat(pair.token1.symbol.replace(regex, '').slice(0, 15))
-            return Prisma.validator<Prisma.PoolCreateManyInput>()({
+            return Prisma.validator<Prisma.SushiPoolCreateManyInput>()({
               id: exchange.chainId.toString().concat(':').concat(pair.id),
               address: pair.id,
               name: name,
               version: pair.source,
               type: pair.type,
-              chainId: exchange.chainId.toString(),
+              chainId: exchange.chainId,
               swapFee: Number(pair.swapFee) / 10000,
               twapEnabled: pair.twapEnabled,
-              token0Id: pair.token0.id,
-              token1Id: pair.token1.id,
+              token0Id: exchange.chainId.toString().concat(':').concat(pair.token0.id.toLowerCase()),
+              token1Id: exchange.chainId.toString().concat(':').concat(pair.token1.id.toLowerCase()),
               reserve0: pair.reserve0,
               reserve1: pair.reserve1,
               totalSupply: pair.liquidity,

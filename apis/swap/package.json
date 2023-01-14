@@ -25,7 +25,7 @@
     "lint": "TIMING=1 eslint --fix ."
   },
   "dependencies": {
-    "@ethersproject/solidity": "^5.7.0",
+    "@ethersproject/solidity": "5.7.0",
     "@sushiswap/amm": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
@@ -34,7 +34,7 @@
     "@sushiswap/tines": "workspace:*",
     "@vercel/node": "2.8.2",
     "ethereum-multicall": "2.15.0",
-    "ethers": "^5.7.0",
+    "ethers": "5.7.2",
     "node-fetch": "2.x",
     "zod": "3.20.2"
   },

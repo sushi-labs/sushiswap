@@ -17,31 +17,16 @@ export const SUSHISWAP_CHAINS = [
   ChainId.BOBA,
 ]
 
-export const TRIDENT_CHAINS = [ChainId.POLYGON, ChainId.OPTIMISM, ChainId.METIS, ChainId.KAVA]
-
-
-export const SUSHI_SUPPORTED_CHAINS = Array.from(new Set([...SUSHISWAP_CHAINS, ...TRIDENT_CHAINS]))
-
-// const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
-
-// export const GRAPH_HOST: Record<number | string, string> = {
-//   [ChainId.OPTIMISM]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.ETHEREUM]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.AVALANCHE]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.ARBITRUM]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.BSC]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.CELO]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.FANTOM]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.FUSE]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.GNOSIS]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.MOONBEAM]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.MOONRIVER]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.POLYGON]: GRAPH_HOST_ENDPOINT,
-//   [ChainId.KAVA]: 'pvt.graph.kava.io',
-//   [ChainId.METIS]: 'andromeda.thegraph.metis.io',
-//   [ChainId.ARBITRUM_NOVA]: 'subgraphs.sushi.com',
-//   [ChainId.BOBA]: GRAPH_HOST_ENDPOINT,
-// }
+export const TRIDENT_CHAINS = [
+  ChainId.POLYGON,
+  ChainId.OPTIMISM,
+  ChainId.METIS,
+  ChainId.KAVA,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.BSC,
+  ChainId.BTTC,
+]
 
 export const EXCHANGE_SUBGRAPH_NAME: Record<number | string, string> = {
   [ChainId.ETHEREUM]: 'sushi-v2/sushiswap-ethereum',

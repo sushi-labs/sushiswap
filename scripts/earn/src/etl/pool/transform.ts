@@ -8,9 +8,9 @@ import { Prisma, PrismaClient } from '@prisma/client'
  */
 export async function filterPools(
   client: PrismaClient,
-  pools: Prisma.PoolCreateManyInput[]
-): Promise<Prisma.PoolCreateManyInput[]> {
-  const poolSelect = Prisma.validator<Prisma.PoolSelect>()({
+  pools: Prisma.SushiPoolCreateManyInput[]
+): Promise<Prisma.SushiPoolCreateManyInput[]> {
+  const poolSelect = Prisma.validator<Prisma.SushiPoolSelect>()({
     id: true,
     address: true,
     reserve0: true,
@@ -26,9 +26,9 @@ export async function filterPools(
 
   let poolsToCreate = 0
   let poolsToUpdate = 0
-  const poolsToUpsert: Prisma.PoolCreateManyInput[] = []
+  const poolsToUpsert: Prisma.SushiPoolCreateManyInput[] = []
 
-  const poolsFound = await client.pool.findMany({
+  const poolsFound = await client.sushiPool.findMany({
     where: {
       address: { in: pools.map((pool) => pool.address) },
     },
