@@ -61,10 +61,10 @@
     "@types/react-dom": "^18.0.0",
     "@wagmi/core": "0.8.1",
     "eslint": "8.29.0",
-    "ethers": "^5.7.0",
+    "ethers": "5.7.2",
     "next": "13.1.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "tsup": "6.5.0",
     "typechain": "^8.0.0",
     "typescript": "4.9.4",
@@ -72,9 +72,9 @@
   },
   "peerDependencies": {
     "@wagmi/core": "0.8.1",
-    "ethers": "^5.7.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "ethers": "5.7.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "wagmi": "0.9.1"
   },
   "optionalDependencies": {

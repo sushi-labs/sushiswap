@@ -19,7 +19,6 @@
   "files": [
     "dist/**"
   ],
-  
   "scripts": {
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
