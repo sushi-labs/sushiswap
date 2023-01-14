@@ -74,7 +74,7 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
       ...where,
     }
   }
-  console.log({ where })
+
   const pools = await prisma.sushiPool.findMany({
     take: 20,
     skip,
