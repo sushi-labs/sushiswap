@@ -279,11 +279,11 @@ describe('End-to-end Router test', async function () {
     }
   }
 
-  it.only('Random swap test', async function () {
-    const testSeed = '4' // Change it to change random generator values
+  it.skip('Random swap test', async function () {
+    const testSeed = '10' // Change it to change random generator values
     const rnd: () => number = seedrandom(testSeed) // random [0, 1)
     let routeCounter = 0
-    for (let i = 0; i < 10; ++i) {
+    for (let i = 0; i < 100; ++i) {
       let currentToken = 0
       intermidiateResult[0] = getBigNumber(getRandomExp(rnd, 1e15, 1e24))
       for (;;) {
