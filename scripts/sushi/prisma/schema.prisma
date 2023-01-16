@@ -136,6 +136,7 @@ model Incentive {
   rewardTokenId   String
   pool            SushiPool   @relation(fields: [poolId], references: [id])
   poolId          String
+  pid             Int
 
   @@index(fields: [id])
   @@index(fields: [poolId])

@@ -110,6 +110,7 @@ async function transform(data: ChefReturn[]): Promise<{
                 rewardPerDay: incentive.rewardPerDay,
                 rewarderAddress: incentive.rewarder.address.toLowerCase(),
                 poolId: chainId.toString().concat(':').concat(poolAddress.toLowerCase()),
+                pid: farm.id,
               })
             })
             .flat()
