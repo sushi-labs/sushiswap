@@ -425,6 +425,13 @@ export const WNATIVE = {
     symbol: 'WBOBA',
     name: 'Wrapped Boba',
   }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: WNATIVE_ADDRESS[ChainId.BOBA_BNB],
+    decimals: 18,
+    symbol: 'WBOBA',
+    name: 'Wrapped Boba',
+  }),
   [ChainId.BTTC]: new Token({
     chainId: ChainId.BTTC,
     address: WNATIVE_ADDRESS[ChainId.BTTC],
@@ -468,6 +475,13 @@ export const USDC: Record<keyof typeof USDC_ADDRESS, Token> = {
     symbol: 'USDC',
     name: 'USD Coin',
   }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: USDC_ADDRESS[ChainId.BOBA_BNB],
+    decimals: 18,
+    symbol: 'USDC',
+    name: 'USD Coin',
+  }),
 } as const
 
 export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
@@ -489,6 +503,13 @@ export const USDT: Record<keyof typeof USDT_ADDRESS, Token> = {
   [ChainId.BSC_TESTNET]: new Token({
     chainId: ChainId.BSC_TESTNET,
     address: USDT_ADDRESS[ChainId.BSC_TESTNET],
+    decimals: 18,
+    symbol: 'USDT',
+    name: 'Tether USD',
+  }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: USDT_ADDRESS[ChainId.BOBA_BNB],
     decimals: 18,
     symbol: 'USDT',
     name: 'Tether USD',

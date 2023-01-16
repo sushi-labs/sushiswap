@@ -97,6 +97,7 @@ export enum ChainId {
   METIS = 1088,
   BOBA = 288,
   BOBA_AVAX = 43288,
+  BOBA_BNB = 56288,
   BTTC = 199,
 }
 
@@ -137,6 +138,7 @@ export enum ChainKey {
   METIS = 'metis',
   BOBA = 'boba',
   BOBA_AVAX = 'boba-avax',
+  BOBA_BNB = 'boba-bnb',
   BTTC = 'bttc',
 }
 
@@ -160,6 +162,28 @@ const CHAINS = [
       {
         name: 'Boba Avax Explorer',
         url: 'https://blockexplorer.avax.boba.network',
+        standard: Standard.None,
+      },
+    ],
+  },
+  {
+    name: 'Boba BNB',
+    chain: 'Boba BNB',
+    rpc: ['https://bnb.boba.network', 'wss://wss.bnb.boba.network', 'https://replica.bnb.boba.network'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Boba Token',
+      symbol: 'BOBA',
+      decimals: 18,
+    },
+    infoURL: 'https://boba.network',
+    shortName: 'bobabnb',
+    chainId: 56288,
+    networkId: 56288,
+    explorers: [
+      {
+        name: 'Boba BNB Explorer',
+        url: 'https://blockexplorer.bnb.boba.network',
         standard: Standard.None,
       },
     ],

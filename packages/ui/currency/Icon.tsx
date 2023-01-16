@@ -13,6 +13,7 @@ const BLOCKCHAIN: Record<number, string> = {
   [ChainId.ARBITRUM]: 'arbitrum',
   [ChainId.AVALANCHE]: 'avalanche',
   [ChainId.BOBA_AVAX]: 'boba-avax',
+  [ChainId.BOBA_BNB]: 'boba-bnb',
   [ChainId.BOBA]: 'boba',
   [ChainId.BSC]: 'bsc',
   [ChainId.CELO]: 'celo',
@@ -89,6 +90,7 @@ const LOGO: Record<number, string> = {
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
   [ChainId.BOBA_AVAX]: BobaLogo,
+  [ChainId.BOBA_BNB]: BobaLogo,
   [ChainId.BTTC]: BttcLogo,
 }
 
