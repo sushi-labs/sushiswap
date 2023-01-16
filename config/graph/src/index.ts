@@ -98,6 +98,8 @@ export const SUBGRAPH_HOST = {
   [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
+  [ChainId.BOBA_AVAX]: 'subgraphs.sushi.com/subgraphs/name',
+  [ChainId.BOBA_BNB]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.BTTC]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',

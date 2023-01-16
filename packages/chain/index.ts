@@ -97,8 +97,8 @@ export enum ChainId {
   METIS = 1088,
   BOBA = 288,
   BOBA_AVAX = 43288,
-  BTTC = 199,
   BOBA_BNB = 56288,
+  BTTC = 199,
 }
 
 export enum ChainKey {
@@ -138,8 +138,8 @@ export enum ChainKey {
   METIS = 'metis',
   BOBA = 'boba',
   BOBA_AVAX = 'boba-avax',
-  BTTC = 'bttc',
   BOBA_BNB = 'boba-bnb',
+  BTTC = 'bttc',
 }
 
 const CHAINS = [
@@ -184,7 +184,7 @@ const CHAINS = [
       {
         name: 'Boba BNB Explorer',
         url: 'https://blockexplorer.bnb.boba.network',
-        standard: 'none',
+        standard: Standard.None,
       },
     ],
   },
