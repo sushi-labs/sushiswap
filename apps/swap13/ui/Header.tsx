@@ -17,7 +17,6 @@ export const Header: FC = () => {
   return (
     <Search>
       <GlobalNav
-        appType={AppType.Swap}
         rightElement={
           isAutoConnecting ? (
             <></>
