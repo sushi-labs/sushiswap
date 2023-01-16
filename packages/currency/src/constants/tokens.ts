@@ -425,6 +425,13 @@ export const WNATIVE = {
     symbol: 'WBOBA',
     name: 'Wrapped Boba',
   }),
+  [ChainId.BOBA_BNB]: new Token({
+    chainId: ChainId.BOBA_BNB,
+    address: WNATIVE_ADDRESS[ChainId.BOBA_BNB],
+    decimals: 18,
+    symbol: 'WBOBA',
+    name: 'Wrapped Boba',
+  }),
   [ChainId.BTTC]: new Token({
     chainId: ChainId.BTTC,
     address: WNATIVE_ADDRESS[ChainId.BTTC],
