@@ -16,15 +16,16 @@ import { useAccount } from 'wagmi'
 import { SendTransactionResult } from 'wagmi/actions'
 
 import { approveBentoBoxAction, batchAction, streamCreationAction } from '../../../lib'
-import { useNotifications } from '../../../lib/state/storage'
 import { ZFundSourceToFundSource, ZTokenToToken } from '../../../lib/zod'
 import { CreateStreamFormSchemaType } from './schema'
+import { useCreateNotification } from '@sushiswap/react-query'
+import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
 
 export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   const { address } = useAccount()
   const contract = useFuroStreamRouterContract(chainId)
-  const [, { createNotification }] = useNotifications(address)
   const [signature, setSignature] = useState<Signature>()
+  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const {
     watch,
@@ -51,7 +52,7 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
 
       const ts = new Date().getTime()
 
-      createNotification({
+      const notificationData: NotificationData = {
         type: 'createStream',
         chainId: chainId,
         txHash: data.hash,
@@ -63,9 +64,11 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
         },
         timestamp: ts,
         groupTimestamp: ts,
-      })
+      }
+
+      storeNotification(createToast(notificationData))
     },
-    [_amount, chainId, createNotification]
+    [_amount, chainId, storeNotification]
   )
 
   const prepare = useCallback(
@@ -147,7 +150,7 @@ export const ExecuteSection: FC<{ chainId: ChainId }> = ({ chainId }) => {
   return (
     <Form.Buttons className="flex flex-col items-end gap-3">
       <Approve
-        onSuccess={createNotification}
+        onSuccess={(data) => storeNotification(createToast(data))}
         className="!items-end"
         components={
           <Approve.Components>

@@ -46,10 +46,10 @@ export interface NotificationData {
     | 'createMultipleVesting'
   chainId: ChainId
   summary: {
-    pending: ReactNode | Array<ReactNode>
-    completed: ReactNode | Array<ReactNode>
-    failed: ReactNode | Array<ReactNode>
-    info?: ReactNode | Array<ReactNode>
+    pending: string
+    completed: string
+    failed: string
+    info?: string
   }
   href?: string
   txHash: `0x${string}`

@@ -1,11 +1,11 @@
 import { Disclosure } from '@headlessui/react'
-import { NotificationData } from '@sushiswap/ui13/components/toast'
+import { NotificationStoredData } from '@sushiswap/ui13/components/toast'
 import { FC } from 'react'
 
 import { Notification } from './Notification'
 
 interface NotificationGroupProps {
-  notifications: NotificationData[]
+  notifications: NotificationStoredData[]
 }
 
 export const NotificationGroup: FC<NotificationGroupProps> = ({ notifications }) => {

@@ -1,4 +1,5 @@
 import '@sushiswap/ui/index.css'
+import '@sushiswap/ui13/index.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
@@ -18,6 +19,7 @@ import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
 import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import SEO from '../next-seo.config.mjs'
 import store from '../store'
+import { PersistQueryClientProvider } from '../components/PersistQueryClientProvider'
 
 declare global {
   interface Window {
@@ -67,19 +69,21 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
         }}
       />
       <WagmiConfig client={client}>
-        <ReduxProvider store={store}>
-          <ThemeProvider>
-            <App.Shell>
-              <DefaultSeo {...SEO} />
-              <Header />
-              <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
-              <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />
-              <Component {...pageProps} />
-              <App.Footer />
-            </App.Shell>
-            <ToastContainer className="mt-[50px]" />
-          </ThemeProvider>
-        </ReduxProvider>
+        <PersistQueryClientProvider>
+          <ReduxProvider store={store}>
+            <ThemeProvider>
+              <App.Shell>
+                <DefaultSeo {...SEO} />
+                <Header />
+                <MulticallUpdaters chainIds={SUPPORTED_CHAINS} />
+                <TokenListUpdaters chainIds={SUPPORTED_CHAINS} />
+                <Component {...pageProps} />
+                <App.Footer />
+              </App.Shell>
+              <ToastContainer className="mt-[50px]" />
+            </ThemeProvider>
+          </ReduxProvider>
+        </PersistQueryClientProvider>
       </WagmiConfig>
       <Analytics />
     </>
