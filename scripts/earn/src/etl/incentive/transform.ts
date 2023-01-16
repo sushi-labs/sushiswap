@@ -16,7 +16,7 @@ export async function filterIncentives(
   const incentiveSelect = Prisma.validator<Prisma.IncentiveSelect>()({
     id: true,
     apr: true,
-    rewardPerDay: true,
+    rewardPerDay: true
   })
 
   const incentiveFound = await client.incentive.findMany({
