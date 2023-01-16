@@ -1,4 +1,4 @@
-query Tokens($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter, $block: Block_height) {
+query Tokens($first: Int = 1000, $skip: Int, $where: TokenPrice_filter, $block: Block_height) {
   tokenPrices(first: $first, skip: $skip, where: $where, block: $block) {
     id
     token {
@@ -9,24 +9,6 @@ query Tokens($first: Int = 5000, $skip: Int = 0, $where: TokenPrice_filter, $blo
 
   bundle(id: 1, block: $block) {
     nativePrice
-  }
-
-  _meta {
-    block {
-      number
-    }
-  }
-}
-
-query PolygonTokens($first: Int = 5000, $skip: Int = 0, $where: Polygon_Token_filter, $block: Polygon_Block_height) {
-  Polygon_tokens(first: $first, skip: $skip, where: $where) {
-    id
-    liquidity
-    derivedETH
-  }
-
-  Polygon_bundle(id: 1, block: $block) {
-    ethPrice
   }
 
   _meta {

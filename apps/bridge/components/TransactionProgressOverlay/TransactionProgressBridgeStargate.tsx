@@ -2,7 +2,7 @@ import { createClient } from '@layerzerolabs/scan-client'
 import chains from '@sushiswap/chain'
 import { STARGATE_CHAIN_ID, STARGATE_TOKEN } from '@sushiswap/stargate'
 import { Link, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import { Currency } from '@sushiswap/ui'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { formatBytes32String } from 'ethers/lib/utils'
 import { FC, ReactNode, useEffect, useState } from 'react'
@@ -46,11 +46,10 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
     ...getSushiXSwapContractConfig(dstAmountOut?.currency.chainId),
     chainId: dstAmountOut?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
-    listener: (event) => {
-      const [context, success, { transactionHash }] = event
+    listener: (context, success, { transactionHash }) => {
       if (context === formatBytes32String(id)) {
         setDstTxState({
-          txHash: transactionHash,
+          txHash: transactionHash as `0x${string}`,
           isSuccess: !success,
         })
       }
@@ -75,7 +74,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
           createInfoNotification({
             type: 'stargate',
             chainId: srcChainId,
-            txHash: '',
+            txHash: '0x',
             href: lzLink,
             summary: {
               pending: '',
@@ -126,7 +125,7 @@ export const TransactionProgressBridgeStargate: FC<TransactionProgressBridgeStar
         }
         subheader={
           <TransactionProgressStep.SubHeader
-            icon={<Icon currency={STARGATE_TOKEN} width={16} height={16} />}
+            icon={<Currency.Icon currency={STARGATE_TOKEN} width={16} height={16} />}
             caption={
               <Typography variant="xs">
                 Powered by{' '}

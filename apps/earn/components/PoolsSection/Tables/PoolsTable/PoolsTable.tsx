@@ -1,9 +1,10 @@
 import { ChainId } from '@sushiswap/chain'
-import { Pair } from '@sushiswap/graph-client'
-import { GenericTable, Table, useBreakpoint } from '@sushiswap/ui'
+import { Pair, PairType, QuerypairsArgs } from '@sushiswap/graph-client'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { GenericTable, Table } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
-import stringify from 'fast-json-stable-stringify'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import stringify from 'fast-json-stable-stringify'
 import useSWR from 'swr'
 
 import { usePoolFilters } from '../../../PoolsFiltersProvider'
@@ -45,12 +46,12 @@ const fetcher = ({
     _url.searchParams.set('networks', stringify(args.selectedNetworks))
   }
 
-  const where = {}
+  const where: QuerypairsArgs['where'] = {}
   if (args.query) where['name_contains_nocase'] = args.query
-  if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes
+  if (args.selectedPoolTypes) where['type_in'] = args.selectedPoolTypes as PairType[]
 
   if (Object.keys(where).length > 0) {
-    _url.searchParams.set('where', JSON.stringify(where))
+    _url.searchParams.set('where', stringify(where))
   }
 
   if (args.farmsOnly) {
@@ -76,11 +77,21 @@ export const PoolsTable: FC = () => {
   })
 
   const args = useMemo(
-    () => ({ sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery }),
+    () => ({
+      sorting,
+      pagination,
+      selectedNetworks,
+      selectedPoolTypes,
+      farmsOnly,
+      query,
+      extraQuery,
+    }),
     [sorting, pagination, selectedNetworks, selectedPoolTypes, farmsOnly, query, extraQuery]
   )
 
   const { data: pools, isValidating } = useSWR<Pair[]>({ url: '/earn/api/pools', args }, fetcher)
+
+  // console.log({ pools })
 
   const { data: poolCount } = useSWR<number>(
     `/earn/api/pools/count${selectedNetworks ? `?networks=${stringify(selectedNetworks)}` : ''}`,
@@ -105,11 +116,22 @@ export const PoolsTable: FC = () => {
 
   useEffect(() => {
     if (isSm && !isMd) {
-      setColumnVisibility({ volume: false, network: false, rewards: false, fees: false })
+      setColumnVisibility({
+        volume: false,
+        network: false,
+        rewards: false,
+        fees: false,
+      })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ volume: false, network: false, rewards: false, liquidityUSD: false, fees: false })
+      setColumnVisibility({
+        volume: false,
+        network: false,
+        rewards: false,
+        liquidityUSD: false,
+        fees: false,
+      })
     }
   }, [isMd, isSm])
 

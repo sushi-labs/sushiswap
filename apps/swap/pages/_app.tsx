@@ -2,9 +2,8 @@ import '@sushiswap/ui/index.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-// import { Updaters as MulticallUpdaters } from 'lib/state/MulticallUpdaters'
-import { Updaters as TokenListsUpdaters } from 'lib/state/TokenListsUpdaters'
+import { Analytics } from '@vercel/analytics/react'
+
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -12,13 +11,14 @@ import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import React, { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
-import { store } from 'store'
+
 import { WagmiConfig } from 'wagmi'
 
+import { SUPPORTED_CHAIN_IDS } from '../config'
 import { Header } from '../components'
+import { Updaters as TokenListsUpdaters } from '../lib/state/TokenListsUpdaters'
+import { store } from '../store'
 import SEO from '../next-seo.config.mjs'
-
-export { reportWebVitals } from 'next-axiom'
 
 declare global {
   interface Window {
@@ -29,7 +29,7 @@ declare global {
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
   useEffect(() => {
-    const handler = (page) => {
+    const handler = (page: any) => {
       window.dataLayer.push({
         event: 'pageview',
         page,
@@ -42,7 +42,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       router.events.off('hashChangeComplete', handler)
     }
   }, [router.events])
-
   return (
     <>
       <Head>
@@ -74,7 +73,6 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
             <App.Shell>
               <DefaultSeo {...SEO} />
               <Header />
-              {/* <MulticallUpdaters chainIds={SUPPORTED_CHAIN_IDS} /> */}
               <TokenListsUpdaters chainIds={SUPPORTED_CHAIN_IDS} />
               <Component {...pageProps} chainIds={SUPPORTED_CHAIN_IDS} />
               <App.Footer />
@@ -84,6 +82,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           </ThemeProvider>
         </Provider>
       </WagmiConfig>
+      <Analytics />
     </>
   )
 }

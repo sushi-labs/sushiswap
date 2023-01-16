@@ -1,5 +1,5 @@
 {
   "exclude": ["node_modules"],
-  "extends": "@sushiswap/typescript-config/node16.json",
+  "extends": "@sushiswap/typescript-config/node18.json",
   "include": ["."]
 }

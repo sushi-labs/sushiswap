@@ -12,7 +12,7 @@ export const NotificationGroup: FC<NotificationGroupProps> = ({ notifications })
     <Disclosure>
       {({ open }) => {
         return (
-          <div className="relative bg-white bg-opacity-[0.06] rounded-xl">
+          <div className="relative">
             {notifications.length > 1 && open && (
               <div className="absolute left-[33px] top-7 bottom-7 w-0.5 bg-gradient-to-b from-slate-700 to-blue" />
             )}

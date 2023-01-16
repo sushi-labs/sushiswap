@@ -35,7 +35,7 @@ export type StorageHooks = {
 export function createStorage(options?: StorageOptions): {
   reducerPath: string
   reducer: Reducer<StorageState>
-  actions: CaseReducerActions<SliceCaseReducers<any>>
+  actions: CaseReducerActions<SliceCaseReducers<StorageState>, string>
   hooks: StorageHooks
   middleware: Record<string, Middleware>
 } {

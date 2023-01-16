@@ -11,10 +11,18 @@ import { Type } from './Type'
 export class Token extends Currency {
   public readonly isNative = false as const
   public readonly isToken = true as const
+
+  // TODO:
+  // /**
+  //  * The concatination of chainId and contract address on the chain on which this token lives
+  //  */
+  // public readonly id: string
+
   /**
    * The contract address on the chain on which this token lives
    */
   public readonly address: string
+
   /**
    * The rebase
    */
@@ -23,6 +31,8 @@ export class Token extends Currency {
     elastic: JSBI
   }
   public constructor({
+    // TODO:
+    // id,
     chainId,
     address,
     decimals,

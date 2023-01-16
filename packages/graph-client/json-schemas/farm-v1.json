@@ -1,0 +1,104 @@
+{
+  "definitions": {
+    "ChefType": {
+      "type": "string",
+      "title": "ChefType",
+      "enum": ["MasterChefV1", "MasterChefV2", "MiniChef"]
+    },
+    "PoolType": {
+      "type": "string",
+      "title": "PoolType",
+      "enum": ["Legacy", "Trident", "Kashi", "Unknown"]
+    },
+    "RewarderType": {
+      "type": "string",
+      "title": "RewarderType",
+      "enum": ["Primary", "Secondary"]
+    },
+    "Rewarder": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "type": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/RewarderType"
+          }
+        }
+      }
+    },
+    "RewardToken": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "decimals": {
+          "type": "number"
+        },
+        "symbol": {
+          "type": "string"
+        }
+      }
+    },
+    "Incentive": {
+      "type": "object",
+      "properties": {
+        "apr": {
+          "type": ["number", null]
+        },
+        "rewardPerDay": {
+          "type": "number"
+        },
+        "rewardToken": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/RewardToken"
+          }
+        },
+        "rewarder": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/Rewarder"
+          }
+        }
+      }
+    },
+    "Farm": {
+      "type": "object",
+      "title": "Farm",
+      "description": "Farm Object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "chainId": {
+          "type": "number"
+        },
+        "chefType": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/ChefType"
+          }
+        },
+        "pool": {
+          "type": "string"
+        },
+        "poolType": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/PoolType"
+          }
+        },
+        "incentives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Incentive"
+          }
+        }
+      }
+    }
+  }
+}

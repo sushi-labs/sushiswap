@@ -2,17 +2,34 @@ import { Signature } from '@ethersproject/bytes'
 import { AddressZero } from '@ethersproject/constants'
 import { Disclosure, Transition } from '@headlessui/react'
 import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
-import chains, { Chain, ChainId } from '@sushiswap/chain'
-import { Amount, Currency, Native, Price, tryParseAmount } from '@sushiswap/currency'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { TradeType } from '@sushiswap/amm'
+import chains, { ChainId } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
+import { Amount, Native, Price, tryParseAmount, Type } from '@sushiswap/currency'
 import { FundSource, useIsMounted } from '@sushiswap/hooks'
 import { JSBI, Percent, ZERO } from '@sushiswap/math'
-import { isStargateBridgeToken, STARGATE_BRIDGE_TOKENS, STARGATE_CONFIRMATION_SECONDS } from '@sushiswap/stargate'
-import { App, Button, classNames, Dialog, Dots, Loader, NetworkIcon, SlideIn, Tooltip, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import {
+  isStargateBridgeToken,
+  STARGATE_BRIDGE_TOKENS,
+  STARGATE_CONFIRMATION_SECONDS,
+  StargateChainId,
+} from '@sushiswap/stargate'
+import {
+  App,
+  Button,
+  classNames,
+  Currency,
+  Dialog,
+  Dots,
+  Loader,
+  NetworkIcon,
+  SlideIn,
+  Tooltip,
+  Typography,
+} from '@sushiswap/ui'
 import {
   Approve,
-  BENTOBOX_ADDRESS,
   getSushiXSwapContractConfig,
   useBalance,
   useBentoBoxTotal,
@@ -122,8 +139,8 @@ export default function Swap({
       <Widget
         theme={theme}
         initialState={{
-          srcChainId: Number(srcChainId),
-          dstChainId: Number(dstChainId),
+          srcChainId: Number(srcChainId) as StargateChainId,
+          dstChainId: Number(dstChainId) as StargateChainId,
           srcToken: srcToken in srcTokens ? srcTokens[srcToken] : Native.onChain(srcChainId),
           dstToken: dstToken in dstTokens ? dstTokens[dstToken] : Native.onChain(dstChainId),
           srcTypedAmount,
@@ -140,11 +157,11 @@ interface Swap {
   maxWidth?: number | string
   theme?: Theme
   initialState: {
-    srcChainId: number
-    dstChainId: number
+    srcChainId: StargateChainId
+    dstChainId: StargateChainId
     srcTypedAmount: string
-    srcToken: Currency
-    dstToken: Currency
+    srcToken: Type
+    dstToken: Type
   }
   caption?: boolean
   // swapCache: SwapCache
@@ -177,10 +194,10 @@ const Widget: FC<Swap> = ({
     [slippageTolerance]
   )
 
-  const [srcChainId, setSrcChainId] = useState<number>(initialState.srcChainId)
-  const [dstChainId, setDstChainId] = useState<number>(initialState.dstChainId)
-  const [srcToken, setSrcToken] = useState<Currency>(initialState.srcToken)
-  const [dstToken, setDstToken] = useState<Currency>(initialState.dstToken)
+  const [srcChainId, setSrcChainId] = useState<StargateChainId>(initialState.srcChainId)
+  const [dstChainId, setDstChainId] = useState<StargateChainId>(initialState.dstChainId)
+  const [srcToken, setSrcToken] = useState<Type>(initialState.srcToken)
+  const [dstToken, setDstToken] = useState<Type>(initialState.dstToken)
   const [srcCustomTokenMap, { addCustomToken: onAddSrcCustomToken, removeCustomToken: onRemoveSrcCustomToken }] =
     useCustomTokens(srcChainId)
   const [dstCustomTokenMap, { addCustomToken: onAddDstCustomToken, removeCustomToken: onRemoveDstCustomToken }] =
@@ -205,7 +222,7 @@ const Widget: FC<Swap> = ({
 
   const feeRef = useRef<Amount<Native>>()
   const [nanoId] = useState(nanoid())
-  const [srcTxHash, setSrcTxHash] = useState<string>()
+  const [srcTxHash, setSrcTxHash] = useState<`0x${string}`>()
 
   const [srcTypedAmount, setSrcTypedAmount] = useState<string>(initialState.srcTypedAmount)
   const [dstTypedAmount, setDstTypedAmount] = useState<string>('')
@@ -246,13 +263,13 @@ const Widget: FC<Swap> = ({
   useEffect(() => {
     // Escape hatch if already synced (could probably pull something like this out to generic...)
 
-    console.debug([
-      srcChainId === Number(router.query.srcChainId),
-      dstChainId === Number(router.query.dstChainId),
-      srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
-      dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
-      srcTypedAmount === router.query.srcTypedAmount,
-    ])
+    // console.debug([
+    //   srcChainId === Number(router.query.srcChainId),
+    //   dstChainId === Number(router.query.dstChainId),
+    //   srcToken.symbol === router.query.srcToken || srcToken.wrapped.address === router.query.srcToken,
+    //   dstToken.symbol === router.query.dstToken || dstToken.wrapped.address === router.query.dstToken,
+    //   srcTypedAmount === router.query.srcTypedAmount,
+    // ])
 
     if (
       srcChainId === Number(router.query.srcChainId) &&
@@ -286,12 +303,12 @@ const Widget: FC<Swap> = ({
   const contractWithProvider = useSushiXSwapContractWithProvider(srcChainId)
 
   // Parse the srcTypedAmount into a srcAmount
-  const srcAmount = useMemo<Amount<Currency> | undefined>(() => {
+  const srcAmount = useMemo<Amount<Type> | undefined>(() => {
     return tryParseAmount(srcTypedAmount, srcToken)
   }, [srcToken, srcTypedAmount])
 
   // Parse the dstTypedAmount into a dstAmount
-  const dstAmount = useMemo<Amount<Currency> | undefined>(() => {
+  const dstAmount = useMemo<Amount<Type> | undefined>(() => {
     return tryParseAmount(dstTypedAmount, dstToken)
   }, [dstToken, dstTypedAmount])
 
@@ -524,15 +541,15 @@ const Widget: FC<Swap> = ({
       .cook(dstTrade ? dstTrade.route.gasSpent + 1000000 : undefined)
       .then((res) => {
         if (res) {
-          setSrcTxHash(res.hash)
+          setSrcTxHash(res.hash as `0x${string}`)
         }
         console.debug('then cooked', res)
+        setSignature(undefined)
       })
       .catch((err) => {
         console.error('catch err', err)
       })
       .finally(() => {
-        setSignature(undefined)
         setIsWritePending(false)
       })
   }, [
@@ -602,7 +619,11 @@ const Widget: FC<Swap> = ({
     currency: Native.onChain(srcChainId),
   })
 
-  const { data: srcBalance } = useBalance({ chainId: srcChainId, account: address, currency: srcToken })
+  const { data: srcBalance } = useBalance({
+    chainId: srcChainId,
+    account: address,
+    currency: srcToken,
+  })
 
   const { data: srcPrices } = usePrices({ chainId: srcChainId })
   const { data: dstPrices } = usePrices({ chainId: dstChainId })
@@ -829,12 +850,12 @@ const Widget: FC<Swap> = ({
     bridgeFee,
   ])
 
-  const onSrcNetworkSelect = useCallback((chainId: number) => {
+  const onSrcNetworkSelect = useCallback((chainId: StargateChainId) => {
     setSrcChainId(chainId)
     setSrcToken(Native.onChain(chainId))
   }, [])
 
-  const onDstNetworkSelect = useCallback((chainId: number) => {
+  const onDstNetworkSelect = useCallback((chainId: StargateChainId) => {
     setDstChainId(chainId)
     setDstToken(Native.onChain(chainId))
   }, [])
@@ -1054,7 +1075,7 @@ const Widget: FC<Swap> = ({
                 </Wallet.Button>
               ) : isMounted && chain && chain.id !== srcChainId ? (
                 <Button size="md" fullWidth onClick={() => switchNetwork && switchNetwork(srcChainId)}>
-                  Switch to {Chain.from(srcChainId).name}
+                  Switch to {chainName[srcChainId]}
                 </Button>
               ) : showWrap ? (
                 <Button size="md" fullWidth>
@@ -1137,7 +1158,7 @@ const Widget: FC<Swap> = ({
                                       <div className="flex items-center justify-end gap-2 text-right">
                                         {srcAmount && (
                                           <div className="w-5 h-5">
-                                            <Icon currency={srcAmount.currency} width={20} height={20} />
+                                            <Currency.Icon currency={srcAmount.currency} width={20} height={20} />
                                           </div>
                                         )}
                                         <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -1181,7 +1202,7 @@ const Widget: FC<Swap> = ({
                                       <div className="flex items-center justify-end gap-2 text-right">
                                         {dstAmountOut && (
                                           <div className="w-5 h-5">
-                                            <Icon currency={dstAmountOut.currency} width={20} height={20} />
+                                            <Currency.Icon currency={dstAmountOut.currency} width={20} height={20} />
                                           </div>
                                         )}
                                         <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -1272,7 +1293,7 @@ const Widget: FC<Swap> = ({
                                       size="md"
                                       className="whitespace-nowrap"
                                       fullWidth
-                                      address={getSushiXSwapContractConfig(srcChainId).addressOrName}
+                                      address={getSushiXSwapContractConfig(srcChainId).address}
                                       onSignature={setSignature}
                                     />
                                     <Approve.Token

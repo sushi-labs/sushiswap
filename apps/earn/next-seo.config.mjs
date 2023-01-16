@@ -1,6 +1,6 @@
 // @ts-check
 /** @type {import('next-seo').DefaultSeoProps} */
-export default {
+const config = {
   titleTemplate: '%s | Sushi',
   title: 'Earn',
   defaultTitle: 'Earn',
@@ -34,3 +34,4 @@ export default {
     site_name: 'Sushi',
   },
 }
+export default config

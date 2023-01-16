@@ -5,7 +5,7 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { ZERO } from '@sushiswap/math'
 import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo, useState } from 'react'
 
@@ -20,7 +20,6 @@ interface RemoveSectionUnstakeWidget {
   reserve1: Amount<Type>
   liquidityToken: Token
   children: ReactNode
-  error?: string
 }
 
 export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
@@ -31,7 +30,6 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
   reserve1,
   reserve0,
   children,
-  error,
 }) => {
   const [hover, setHover] = useState(false)
   const totalSupply = useTotalSupply(liquidityToken)
@@ -48,7 +46,10 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
     balance: amount,
   })
 
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: underlying,
+  })
 
   return (
     <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
@@ -168,11 +169,6 @@ export const RemoveSectionUnstakeWidget: FC<RemoveSectionUnstakeWidget> = ({
                         </Transition>
                       </div>
                       {children}
-                      {error && (
-                        <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
-                          {error}
-                        </Typography>
-                      )}
                     </div>
                   </Disclosure.Panel>
                 </Transition>

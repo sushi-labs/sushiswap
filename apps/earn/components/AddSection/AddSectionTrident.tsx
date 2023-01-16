@@ -18,7 +18,10 @@ import { AddSectionWidget } from './AddSectionWidget'
 export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   const isMounted = useIsMounted()
   const { token0, token1 } = useTokensFromPair(pair)
-  const [{ input0, input1 }, setTypedAmounts] = useState<{ input0: string; input1: string }>({ input0: '', input1: '' })
+  const [{ input0, input1 }, setTypedAmounts] = useState<{
+    input0: string
+    input1: string
+  }>({ input0: '', input1: '' })
 
   const [constantProductPoolState, constantProductPool] = useConstantProductPool(
     pair.chainId,
@@ -40,7 +43,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   }, [input0, input1, token0, token1])
 
   const onChangeToken0TypedAmount = useCallback(
-    (value) => {
+    (value: string) => {
       if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,
@@ -58,7 +61,7 @@ export const AddSectionTrident: FC<{ pair: Pair }> = ({ pair }) => {
   )
 
   const onChangeToken1TypedAmount = useCallback(
-    (value) => {
+    (value: string) => {
       if (poolState === ConstantProductPoolState.NOT_EXISTS || poolState === StablePoolState.NOT_EXISTS) {
         setTypedAmounts((prev) => ({
           ...prev,

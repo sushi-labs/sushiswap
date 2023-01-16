@@ -1,13 +1,15 @@
 import 'dotenv/config'
-import './lib/wagmi'
+import './lib/wagmi.js'
 
 import { ChainId } from '@sushiswap/chain'
 import { MINICHEF_SUBGRAPH_NAME } from '@sushiswap/graph-config'
 import { getUnixTime } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
-import { getMasterChefV1, getMasterChefV2, getMinichef } from './lib'
-import { redis } from './lib'
+import { getMasterChefV1 } from './lib/chefs/masterChefV1/index.js'
+import { getMasterChefV2 } from './lib/chefs/masterChefV2/index.js'
+import { getMinichef } from './lib/chefs/minichef/index.js'
+import { redis } from './lib/redis.js'
 
 export async function execute() {
   console.log(`Updating farms`)
@@ -27,10 +29,22 @@ export async function execute() {
     ...minichefs,
   ]
 
+  const totalFarms = combined.reduce((acc, { farms }) => acc + (farms ? Object.keys(farms).length : 0), 0)
+  for (const combination of combined) {
+    if (combination.farms) {
+      console.log(`Chain ID: ${combination.chainId}. Farms: ${Object.keys(combination.farms).length}`)
+    } else {
+      console.log(`Chain ID: ${combination.chainId}. Error.`)
+    }
+  }
+  console.log(`Total farms: ${totalFarms}`)
+
   await redis.hset(
     'farms',
     Object.fromEntries(
-      combined.map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
+      combined
+        .filter(({ farms }) => farms !== null)
+        .map(({ chainId, farms }) => [chainId, stringify({ chainId, farms, updatedAtTimestamp: timestamp })])
     )
   )
   console.log(`Finished updating farms`)

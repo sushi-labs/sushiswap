@@ -2,13 +2,13 @@ import { ChevronRightIcon } from '@heroicons/react/solid'
 import { Chip, classNames, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
 import { FC } from 'react'
+import { Article } from 'types'
 
-import { ArticleEntity } from '../../.mesh'
 import { isMediaVideo } from '../../lib/media'
 import { Image } from '../Image'
 
 interface Card {
-  article: ArticleEntity
+  article: Article
 }
 
 export const Card: FC<Card> = ({ article }) => {

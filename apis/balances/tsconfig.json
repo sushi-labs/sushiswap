@@ -1,0 +1,9 @@
+{
+  "extends": "@sushiswap/typescript-config/node18-strictest.combined.json",
+  "include": ["."],
+  "exclude": ["node_modules", ".vercel"],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+  }
+}

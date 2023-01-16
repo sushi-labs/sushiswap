@@ -1,0 +1,73 @@
+{
+  "name": "@sushiswap/wagmi-config",
+  "version": "0.1.0",
+  "description": "Sushi Wagmi Config",
+  "keywords": [
+    "sushi",
+    "wagmi",
+    "config"
+  ],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/config/wagmi"
+  },
+  "license": "MIT",
+  "author": "LufyCZ <me@lufy.cz>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./chains": {
+      "types": "./dist/chains.d.ts",
+      "default": "./dist/chains.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "default": "./dist/config.js"
+    },
+    "./providers": {
+      "types": "./dist/providers.d.ts",
+      "default": "./dist/providers.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts src/chains.ts src/cofig.ts src/providers.ts --format esm --dts --external @wagmi/core",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+  },
+  "jest": {
+    "preset": "@sushiswap/jest-config/node"
+  },
+  "dependencies": {
+    "@sushiswap/abi": "workspace:*",
+    "@sushiswap/bentobox": "workspace:*",
+    "@sushiswap/chain": "workspace:*"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@wagmi/core": "0.8.1",
+    "tsup": "6.5.0",
+    "typescript": "4.9.4"
+  },
+  "peerDependencies": {
+    "@wagmi/core": "*"
+  },
+  "peerDependenciesMeta": {
+    "@wagmi/core": {
+      "optional": false
+    }
+  }
+}

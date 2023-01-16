@@ -4,7 +4,7 @@ export interface CheckboxProps {
   set?: (value: boolean) => void
 }
 
-function Checkbox({
+export function Checkbox({
   set,
   className = '',
   checked,

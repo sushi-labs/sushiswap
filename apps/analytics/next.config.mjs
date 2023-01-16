@@ -1,29 +1,10 @@
-// import nextPwa from 'next-pwa'
-import { withAxiom } from 'next-axiom'
-import transpileModules from 'next-transpile-modules'
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
-// const withPwa = nextPwa({
-//   dest: 'public',
-// })
-
-const withTranspileModules = transpileModules([
-  '@sushiswap/redux-localstorage',
-  '@sushiswap/wagmi',
-  '@sushiswap/ui',
-  '@sushiswap/graph-client',
-])
-
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...defaultNextConfig,
   basePath: '/analytics',
-  reactStrictMode: true,
-  swcMinify: false,
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
-  productionBrowserSourceMaps: true,
+  transpilePackages: ['@sushiswap/redux-localstorage', '@sushiswap/wagmi', '@sushiswap/ui'],
   async redirects() {
     return [
       {
@@ -32,21 +13,8 @@ const nextConfig = {
         permanent: true,
         basePath: false,
       },
-      {
-        source: '/analytics',
-        has: [
-          {
-            type: 'host',
-            value: 'analytics((-)+(arbitrum|avalanche|bsc|celo|ftm|fuse|harmony|moonriver|polygon|xdai))?.sushi.com',
-          },
-        ],
-        destination: 'https://www.sushi.com/analytics',
-        permanent: true,
-        basePath: false,
-      },
     ]
   },
 }
 
-// export default withAxiom(withPwa(withTranspileModules(nextConfig)))
-export default withAxiom(withTranspileModules(nextConfig))
+export default nextConfig

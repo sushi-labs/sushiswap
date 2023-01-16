@@ -1,9 +1,15 @@
-import { ChainId } from '@sushiswap/chain'
-import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
+import {
+  SUBGRAPH_HOST,
+  SUSHISWAP_SUBGRAPH_NAME,
+  SushiSwapChainId,
+  TRIDENT_SUBGRAPH_NAME,
+  TridentChainId,
+} from '@sushiswap/graph-config'
+import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { BigNumber } from 'ethers'
-import { Farm } from 'src/types'
 
-import { divBigNumberToNumber } from './utils'
+import type { Farm } from '../../types.js'
+import { divBigNumberToNumber } from './utils.js'
 
 interface Pair {
   id: string
@@ -12,11 +18,14 @@ interface Pair {
   type: Farm['poolType']
 }
 
-async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]> {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient')
+async function getExchangePairs(ids: string[], chainId: SushiSwapChainId): Promise<Pair[]> {
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({
+    host: SUBGRAPH_HOST[chainId],
+    name: subgraphName,
+  })
 
   const { pairs, bundle } = await sdk.Pairs({
     first: ids.length,
@@ -35,13 +44,21 @@ async function getExchangePairs(ids: string[], chainId: ChainId): Promise<Pair[]
   })
 }
 
-async function getTridentPairs(ids: string[], chainId: ChainId): Promise<Pair[]> {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient')
+async function getTridentPairs(
+  ids: string[],
+  chainId: keyof typeof SUBGRAPH_HOST & keyof typeof TRIDENT_SUBGRAPH_NAME
+): Promise<Pair[]> {
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({
+    host: SUBGRAPH_HOST[chainId],
+    name: subgraphName,
+  })
 
-  const { pairs, bundle } = await sdk.Pairs({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
+  const { pairs, bundle } = await sdk.Pairs({
+    where: { id_in: ids.map((id) => id.toLowerCase()) },
+  })
 
   return pairs.map((pair) => {
     return {
@@ -57,6 +74,11 @@ async function getTridentPairs(ids: string[], chainId: ChainId): Promise<Pair[]>
 //   const { getBuiltGraphSDK } = await import('../../.graphclient')
 // }
 
-export async function getPairs(ids: string[], chainId: ChainId) {
-  return (await Promise.all([getExchangePairs(ids, chainId), getTridentPairs(ids, chainId)])).flat()
+export async function getPairs(ids: string[], chainId: SushiSwapChainId | TridentChainId) {
+  return (
+    await Promise.all([
+      isSushiSwapChain(chainId) ? getExchangePairs(ids, chainId) : [],
+      isTridentChain(chainId) ? getTridentPairs(ids, chainId) : [],
+    ])
+  ).flat()
 }

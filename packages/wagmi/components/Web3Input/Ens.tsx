@@ -1,18 +1,9 @@
-import {
-  Chip,
-  classNames,
-  DEFAULT_INPUT_CLASSNAME,
-  DEFAULT_INPUT_UNSTYLED,
-  ERROR_INPUT_CLASSNAME,
-  Input,
-  Loader,
-} from '@sushiswap/ui'
-import { AddressProps } from '@sushiswap/ui/input/Address'
+import { AddressProps, Chip, classNames, DEFAULT_INPUT_UNSTYLED, Input, Loader } from '@sushiswap/ui'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Account } from '../Account'
 
-export interface EnsInputProps extends Omit<AddressProps, 'ref'> {
+export interface EnsInputProps extends AddressProps {
   inputClassName?: string
 }
 
@@ -49,10 +40,8 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInputProps>(
           <div
             className={classNames(
               className,
-              DEFAULT_INPUT_CLASSNAME,
-              rest.error ? ERROR_INPUT_CLASSNAME : '',
               isLoading || isFetching ? 'pr-4' : '',
-              'relative flex flex-col justify-center'
+              'without-ring relative flex flex-col justify-center'
             )}
           >
             <Input.Address
@@ -65,14 +54,14 @@ export const EnsInput = forwardRef<HTMLInputElement, EnsInputProps>(
               {...rest}
             />
             {showEns && typedRef.current && typedRef.current.length > 0 && !(isLoading || isFetching) && (
-              <div className="absolute top-1 bottom-0 flex items-start right-1">
-                <div className="rounded-2xl overflow-hidden bg-slate-800 shadow-md">
+              <div className="absolute bottom-0 flex items-start top-1 right-1">
+                <div className="overflow-hidden shadow-md rounded-2xl bg-slate-800">
                   <Chip label={typedRef.current} color="green" />
                 </div>
               </div>
             )}
             {(isLoading || isFetching) && (
-              <div className="absolute right-3 flex items-center justify-center top-0 bottom-0">
+              <div className="absolute top-0 bottom-0 flex items-center justify-center right-3">
                 <Loader width={16} />
               </div>
             )}

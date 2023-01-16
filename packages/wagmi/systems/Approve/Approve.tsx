@@ -24,7 +24,13 @@ export interface State {
 }
 
 export type ApprovalAction =
-  | { type: 'update'; payload: { state: [ApprovalState, ReactElement | undefined, boolean]; index: number } }
+  | {
+      type: 'update'
+      payload: {
+        state: [ApprovalState, ReactElement | undefined, boolean]
+        index: number
+      }
+    }
   | { type: 'remove'; payload: { index: number } }
 
 const reducer = (state: State, action: ApprovalAction) => {
@@ -71,7 +77,8 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
       components,
       components.props,
       Children.map(components.props.children, (component, index) => {
-        if (isValidElement<TokenApproveButton | BentoApproveButton>(component)) {
+        const valid = isValidElement<TokenApproveButton | BentoApproveButton>(component)
+        if (valid) {
           return cloneElement(component, {
             dispatch,
             index,
@@ -80,6 +87,8 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
             onSuccess,
           })
         }
+
+        return null
       })
     )
   }, [components, initialized, onSuccess, state.isApproved])
@@ -90,7 +99,10 @@ const Controller: FC<Props> = ({ className, components, render, onSuccess }) => 
       return state.approvals[index]?.[1]
     }
 
-    return render({ approved: state.isApproved && initialized, isUnknown: state.isUnknown && initialized })
+    return render({
+      approved: state.isApproved && initialized,
+      isUnknown: state.isUnknown && initialized,
+    })
   }, [initialized, render, state.approvals, state.isApproved, state.isUnknown])
 
   // Only render renderProp since we can't get approval states on the server anyway

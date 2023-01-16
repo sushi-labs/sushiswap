@@ -2,8 +2,7 @@ import '@sushiswap/ui/index.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
-import { Header } from 'components'
-import { SUPPORTED_CHAINS } from 'config'
+import { Analytics } from '@vercel/analytics/react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -13,6 +12,8 @@ import { FC, useEffect } from 'react'
 import { Provider as ReduxProvider } from 'react-redux'
 import { WagmiConfig } from 'wagmi'
 
+import { Header } from '../components'
+import { SUPPORTED_CHAINS } from '../config'
 import { Updaters as MulticallUpdaters } from '../lib/state/MulticallUpdaters'
 import { Updaters as TokenListUpdaters } from '../lib/state/TokenListsUpdaters'
 import SEO from '../next-seo.config.mjs'
@@ -27,7 +28,7 @@ declare global {
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
   useEffect(() => {
-    const handler = (page) => {
+    const handler = (page: any) => {
       window.dataLayer.push({
         event: 'pageview',
         page,
@@ -80,6 +81,7 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
           </ThemeProvider>
         </ReduxProvider>
       </WagmiConfig>
+      <Analytics />
     </>
   )
 }

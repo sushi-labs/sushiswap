@@ -2,8 +2,8 @@
 /** @type {import('next-seo').DefaultSeoProps} */
 export default {
   titleTemplate: '%s | Sushi',
-  title: 'SushiSwap',
-  defaultTitle: 'SushiXSwap',
+  title: 'xSwap',
+  defaultTitle: 'xSwap',
   description: 'Easiest way to trade your tokens across 7 networks.',
   //   canonical: 'https://www.sushi.com/pool',
   //   mobileAlternate: {
@@ -19,7 +19,7 @@ export default {
   openGraph: {
     url: 'https://www.sushi.com/xswap',
     type: 'website',
-    title: 'SushiXSwap',
+    title: 'xSwap',
     description: 'Easiest way to trade your tokens across 7 networks.',
     images: [
       {

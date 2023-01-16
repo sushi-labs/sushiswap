@@ -1,10 +1,9 @@
 import { FC } from 'react'
 import ReactMarkdown from 'react-markdown'
-
-import { ComponentSharedRichText } from '../.mesh'
+import { RichTextBlock as RichTextType } from 'types'
 
 interface RichText {
-  block: ComponentSharedRichText
+  block: RichTextType
 }
 
 export const RichTextBlock: FC<RichText> = ({ block }) => {

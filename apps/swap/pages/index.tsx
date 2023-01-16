@@ -4,18 +4,24 @@ import { ChainId } from '@sushiswap/chain'
 import { Native, SUSHI, Token, tryParseAmount, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
 import { FundSource, useIsMounted, usePrevious } from '@sushiswap/hooks'
 import { Percent, ZERO } from '@sushiswap/math'
-import { App, Button, classNames, Container, Dots, Link, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { App, Button, classNames, Container, Link, Typography } from '@sushiswap/ui'
+import { Widget } from '@sushiswap/ui'
 import { Checker, TokenListImportChecker, useWalletState, WrapType } from '@sushiswap/wagmi'
-import { CurrencyInput } from 'components/CurrencyInput'
 import { isAddress } from 'ethers/lib/utils'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useConnect, useNetwork } from 'wagmi'
-
-import { Layout, SettingsOverlay, SwapReviewModalLegacy, TradeProvider, useTrade, WrapReviewModal } from '../components'
-import { SwapStatsDisclosure } from '../components/SwapStatsDisclosure'
+import { Address, useConnect, useNetwork } from 'wagmi'
+import {
+  CurrencyInput,
+  SwapStatsDisclosure,
+  Layout,
+  SettingsOverlay,
+  SwapReviewModalLegacy,
+  TradeProvider,
+  useTrade,
+  WrapReviewModal,
+} from '../components'
 import { warningSeverity } from '../lib/functions'
 import { useCustomTokens, useSettings } from '../lib/state/storage'
 import { useTokens } from '../lib/state/token-lists'
@@ -65,23 +71,27 @@ const DEAFAULT_TOKEN_1 = {
     symbol: 'AVAX',
     name: 'Avax',
   }),
-}
+} as const
 
 const getDefaultToken1 = (chainId: number) => {
   if (chainId in DEAFAULT_TOKEN_1) {
-    return DEAFAULT_TOKEN_1[chainId]
+    return DEAFAULT_TOKEN_1[chainId as keyof typeof DEAFAULT_TOKEN_1]
   }
-  if (chainId in WETH9 && chainId in WNATIVE && WNATIVE[chainId] !== WETH9[chainId]) {
-    return WETH9[chainId]
+  if (
+    chainId in WETH9 &&
+    chainId in WNATIVE &&
+    WNATIVE[chainId as keyof typeof WNATIVE] !== WETH9[chainId as keyof typeof WETH9]
+  ) {
+    return WETH9[chainId as keyof typeof WETH9]
   }
   if (chainId in WBTC) {
-    return WBTC[chainId]
+    return WBTC[chainId as keyof typeof WBTC]
   }
   if (chainId in USDC) {
-    return USDC[chainId]
+    return USDC[chainId as keyof typeof USDC]
   }
   if (chainId in USDT) {
-    return USDT[chainId]
+    return USDT[chainId as keyof typeof USDT]
   }
 }
 
@@ -118,8 +128,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
           pathname: router.pathname,
           query: router.query,
         },
-        undefined,
-        { shallow: true }
+        undefined
       )
     }
   }, [router, chain, previousChain])
@@ -196,11 +205,17 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
   }, [])
 
   const checkIfImportedTokens = useMemo(() => {
-    const tokens: { address: string; chainId: number }[] = []
+    const tokens: { address: Address; chainId: number }[] = []
     if (initialState.token0 && isAddress(initialState.token0))
-      tokens.push({ address: initialState.token0, chainId: Number(initialState.chainId) })
+      tokens.push({
+        address: initialState.token0,
+        chainId: Number(initialState.chainId),
+      })
     if (initialState.token1 && isAddress(initialState.token1))
-      tokens.push({ address: initialState.token1, chainId: Number(initialState.chainId) })
+      tokens.push({
+        address: initialState.token1,
+        chainId: Number(initialState.chainId),
+      })
     return tokens
   }, [initialState.chainId, initialState.token0, initialState.token1])
 
@@ -231,6 +246,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                 </div>
               </div>
               <CurrencyInput
+                id={'swap-input-currency0'}
                 className="p-3"
                 value={input0}
                 onChange={onInput0}
@@ -258,6 +274,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
               </div>
               <div className="bg-slate-800">
                 <CurrencyInput
+                  id={'swap-output-currency1'}
                   disabled={true}
                   className="p-3"
                   value={isWrap ? input0 : input1}
@@ -287,6 +304,7 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                       <Checker.Network fullWidth size="md" chainId={chainId}>
                         {isWrap ? (
                           <WrapReviewModal
+                            id="swap-wrap-review-modal"
                             chainId={chainId}
                             input0={parsedInput0}
                             input1={parsedInput1}
@@ -294,7 +312,13 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                           >
                             {({ isWritePending, setOpen }) => {
                               return (
-                                <Button disabled={isWritePending} fullWidth size="md" onClick={() => setOpen(true)}>
+                                <Button
+                                  testdata-id={'open-wrap-review-modal-button'}
+                                  disabled={isWritePending}
+                                  fullWidth
+                                  size="md"
+                                  onClick={() => setOpen(true)}
+                                >
                                   {wrap ? 'Wrap' : 'Unwrap'}
                                 </Button>
                               )
@@ -302,8 +326,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
                           </WrapReviewModal>
                         ) : (
                           <SwapReviewModalLegacy chainId={chainId} onSuccess={onSuccess}>
-                            {({ isWritePending, setOpen }) => {
-                              return <SwapButton isWritePending={isWritePending} setOpen={setOpen} />
+                            {({ setOpen }) => {
+                              return <SwapButton setOpen={setOpen} />
                             }}
                           </SwapReviewModalLegacy>
                         )}
@@ -337,9 +361,8 @@ function Swap(initialState: InferGetServerSidePropsType<typeof getServerSideProp
 }
 
 const SwapButton: FC<{
-  isWritePending: boolean
   setOpen(open: boolean): void
-}> = ({ isWritePending, setOpen }) => {
+}> = ({ setOpen }) => {
   const { isLoading: isLoadingTrade, trade, route } = useTrade()
   const [{ expertMode, slippageTolerance }] = useSettings()
   const swapSlippage = useMemo(
@@ -364,10 +387,10 @@ const SwapButton: FC<{
       }
     >
       <Button
+        testdata-id="swap-button"
         fullWidth
         onClick={onClick}
         disabled={
-          isWritePending ||
           priceImpactTooHigh ||
           trade?.minimumAmountOut(swapSlippage)?.equalTo(ZERO) ||
           Boolean(!trade && priceImpactSeverity > 2 && !expertMode)
@@ -378,17 +401,13 @@ const SwapButton: FC<{
           title: 'Enable expert mode to swap with high price impact',
         })}
       >
-        {isLoadingTrade ? (
-          'Finding Best Price'
-        ) : isWritePending ? (
-          <Dots>Confirm transaction</Dots>
-        ) : priceImpactTooHigh ? (
-          'High Price Impact'
-        ) : trade && priceImpactSeverity > 2 ? (
-          'Swap Anyway'
-        ) : (
-          'Swap'
-        )}
+        {isLoadingTrade
+          ? 'Finding Best Price'
+          : priceImpactTooHigh
+          ? 'High Price Impact'
+          : trade && priceImpactSeverity > 2
+          ? 'Swap Anyway'
+          : 'Swap'}
       </Button>
     </Checker.Custom>
   )

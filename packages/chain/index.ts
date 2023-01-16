@@ -1,50 +1,4 @@
-import json from './chains.json'
-
-const CHAINS = json
-  .concat({
-    name: 'Boba Avax',
-    chain: 'Boba Avax',
-    rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
-    faucets: [],
-    nativeCurrency: {
-      name: 'Boba Token',
-      symbol: 'BOBA',
-      decimals: 18,
-    },
-    infoURL: 'https://boba.network',
-    shortName: 'bobaavax',
-    chainId: 43288,
-    networkId: 43288,
-    explorers: [
-      {
-        name: 'Boba Avax Explorer',
-        url: 'https://blockexplorer.avax.boba.network',
-        standard: 'none',
-      },
-    ],
-  })
-  .concat({
-    name: 'Boba BNB',
-    chain: 'Boba BNB',
-    rpc: ['https://bnb.boba.network', 'wss://wss.bnb.boba.network', 'https://replica.bnb.boba.network'],
-    faucets: [],
-    nativeCurrency: {
-      name: 'Boba Token',
-      symbol: 'BOBA',
-      decimals: 18,
-    },
-    infoURL: 'https://boba.network',
-    shortName: 'bobabnb',
-    chainId: 56288,
-    networkId: 56288,
-    explorers: [
-      {
-        name: 'Boba BNB Explorer',
-        url: 'https://blockexplorer.bnb.boba.network',
-        standard: 'none',
-      },
-    ],
-  }) as Chain[]
+import raw from './chains'
 
 export interface Chain {
   name: string
@@ -188,6 +142,54 @@ export enum ChainKey {
   BOBA_BNB = 'boba-bnb',
 }
 
+const CHAINS = [
+  ...raw,
+  {
+    name: 'Boba Avax',
+    chain: 'Boba Avax',
+    rpc: ['https://avax.boba.network', 'wss://wss.avax.boba.network', 'https://replica.avax.boba.network'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Boba Token',
+      symbol: 'BOBA',
+      decimals: 18,
+    },
+    infoURL: 'https://boba.network',
+    shortName: 'bobaavax',
+    chainId: 43288,
+    networkId: 43288,
+    explorers: [
+      {
+        name: 'Boba Avax Explorer',
+        url: 'https://blockexplorer.avax.boba.network',
+        standard: Standard.None,
+      },
+    ],
+  },
+  {
+    name: 'Boba BNB',
+    chain: 'Boba BNB',
+    rpc: ['https://bnb.boba.network', 'wss://wss.bnb.boba.network', 'https://replica.bnb.boba.network'],
+    faucets: [],
+    nativeCurrency: {
+      name: 'Boba Token',
+      symbol: 'BOBA',
+      decimals: 18,
+    },
+    infoURL: 'https://boba.network',
+    shortName: 'bobabnb',
+    chainId: 56288,
+    networkId: 56288,
+    explorers: [
+      {
+        name: 'Boba BNB Explorer',
+        url: 'https://blockexplorer.bnb.boba.network',
+        standard: 'none',
+      },
+    ],
+  },
+] as const
+
 const EIP3091_OVERRIDE = [ChainId.OPTIMISM, ChainId.BOBA]
 
 export class Chain implements Chain {
@@ -195,12 +197,14 @@ export class Chain implements Chain {
     return chains[chainId]
   }
   public static fromShortName(shortName: string) {
-    return chains[chainShortName[shortName]]
+    const _shortName = chainShortName[shortName]
+    if (!_shortName) throw new Error(`Unknown chain short name: ${shortName}`)
+    return chains[_shortName]
   }
   public static fromChainId(chainId: number) {
     return chains[chainId]
   }
-  constructor(data: Chain) {
+  constructor(data: (typeof CHAINS)[number]) {
     Object.assign(this, data)
   }
   getTxUrl(txHash: string): string {
@@ -256,15 +260,12 @@ export const chainShortName = Object.fromEntries(CHAINS.map((data): [number, str
 export const chainName = Object.fromEntries(CHAINS.map((data): [number, string] => [data.chainId, data.name]))
 
 // Chain Id => Chain mapping
-export const chains = Object.fromEntries(
-  CHAINS.map((data): [number, Chain] => [data.chainId, new Chain(data) as Chain])
-)
+export const chains = Object.fromEntries(CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
 
-export const chainsL2 = Object.fromEntries(
-  CHAINS.filter((data) => data.parent?.type === Type.L2).map((data): [number, Chain] => [
-    data.chainId,
-    new Chain(data) as Chain,
-  ])
-)
+// L2 Chains array
+const L2_CHAINS = CHAINS.filter((data) => 'parent' in data && data.parent.type === Type.L2)
+
+// Chain Id => Chain mapping
+export const chainsL2 = Object.fromEntries(L2_CHAINS.map((data): [ChainId, Chain] => [data.chainId, new Chain(data)]))
 
 export default chains

@@ -1,10 +1,11 @@
 import { useMulticallContract } from '@sushiswap/wagmi'
+import { SupportedChainId } from 'config'
 import { useBlockNumber } from 'wagmi'
 
 import { multicall } from './multicall'
 
 interface Props {
-  chainId: number
+  chainId: SupportedChainId
   isDebug?: boolean
 }
 

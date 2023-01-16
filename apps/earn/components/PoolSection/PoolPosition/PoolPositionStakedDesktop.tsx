@@ -1,13 +1,13 @@
 import { formatUSD } from '@sushiswap/format'
+import { Pair } from '@sushiswap/graph-client'
 import { Currency, Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
 import { useTokensFromPair } from '../../../lib/hooks'
-import { PairWithAlias } from '../../../types'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 
 interface PoolPositionStakedDesktopProps {
-  pair: PairWithAlias
+  pair: Pair
 }
 
 export const PoolPositionStakedDesktop: FC<PoolPositionStakedDesktopProps> = ({ pair }) => {

@@ -1,3 +1,3 @@
 export * from './CreateMultipleForm'
-export * from './ImportZone'
-export * from './TableSection'
+export * from './ExecuteMultipleSection'
+export * from './ImportZoneSection'

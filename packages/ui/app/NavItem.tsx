@@ -17,8 +17,8 @@ export const NavItem: FC<NavItemProps> = ({ href, label, external }) => {
       <Link.External href={href} className="decoration-transparent">
         <span
           className={classNames(
-            href.includes(basePath) ? 'text-slate-50' : 'text-slate-300',
-            'text-sm font-semibold text-slate-400 hover:text-slate-50 cursor-pointer'
+            href.includes(basePath) ? 'text-slate-200' : 'text-slate-400',
+            'text-sm font-semibold hover:text-white cursor-pointer'
           )}
         >
           {label}
@@ -32,8 +32,8 @@ export const NavItem: FC<NavItemProps> = ({ href, label, external }) => {
       <a>
         <span
           className={classNames(
-            href.includes(basePath) ? 'text-slate-50' : 'text-slate-300',
-            'text-sm font-semibold text-slate-400 hover:text-slate-50 cursor-pointer'
+            href.includes(basePath) ? 'text-slate-200' : 'text-slate-400',
+            'text-sm font-semibold hover:text-white cursor-pointer'
           )}
         >
           {label}

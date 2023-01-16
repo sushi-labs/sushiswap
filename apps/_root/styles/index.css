@@ -1,5 +1,5 @@
 html {
-  background-color: #161522;
+  background-color: black !important;
   /* color: white; */
 }
 
@@ -16,7 +16,6 @@ input:focus {
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
-

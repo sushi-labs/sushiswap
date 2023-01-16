@@ -4,8 +4,9 @@ import { shortenAddress } from '@sushiswap/format'
 import { useInterval } from '@sushiswap/hooks'
 import { Button, NotepadIcon, Tooltip, Typography } from '@sushiswap/ui'
 import { format } from 'date-fns'
-import { FuroStatus, Stream, Vesting } from 'lib'
 import { FC, useState } from 'react'
+
+import { FuroStatus, Stream, Vesting } from '../lib'
 
 interface StreamTimerState {
   days: string
@@ -79,7 +80,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
             </div>
             <a
               target="_blank"
-              href={Chain.from(stream.remainingAmount.currency.chainId).getTxUrl(stream.txHash)}
+              href={Chain.from(stream.remainingAmount.currency.chainId)?.getTxUrl(stream.txHash)}
               rel="noreferrer"
               className="-mt-1 -mr-1 p-1 hover:bg-[rgba(255,255,255,0.12)] rounded-full text-slate-400 hover:text-slate-300"
             >
@@ -143,7 +144,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   Streamed
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-blue-300">
-                  {stream?.streamedPercentage?.toSignificant(4)}% of total
+                  {stream?.streamedPercentage?.toPercentageString(2)} of total
                 </Typography>
                 <Typography variant="h3" className="flex items-center mt-3 text-blue-200 truncate" weight={500}>
                   {stream?.streamedAmount?.toSignificant(6)}
@@ -159,7 +160,7 @@ export const StreamDetailsPopover: FC<Props> = ({ stream }) => {
                   Withdrawn
                 </Typography>
                 <Typography variant="xs" weight={500} className="text-pink-300">
-                  {stream?.withdrawnPercentage.toSignificant(4)}% of total
+                  {stream?.withdrawnPercentage.toPercentageString(2)} of total
                 </Typography>
                 <Typography variant="h3" className="flex items-center mt-3 text-pink-200 truncate" weight={500}>
                   {stream?.withdrawnAmount.toSignificant(6)}

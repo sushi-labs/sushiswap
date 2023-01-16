@@ -5,14 +5,6 @@ import { parseUnits } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
-// type UsePrices = ({
-//   chainId,
-//   options,
-// }: {
-//   chainId?: ChainId
-//   options?: UseQueryOptions<string, unknown, Record<string, number> | undefined, string[]>
-// }) => Pick<ReturnType<typeof useQuery>, 'isLoading' | 'isError'> & { data: Record<string, Fraction> | undefined }
-
 export const usePrices = ({
   chainId,
   options,
@@ -33,7 +25,6 @@ export const usePrices = ({
     () => fetch(`https://token-price.sushi.com/v0/${chainId}`).then((response) => response.json()),
     { staleTime: 20000, enabled: Boolean(chainId), ...options }
   )
-
   return useMemo(() => {
     return {
       isError,

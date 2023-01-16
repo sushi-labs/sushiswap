@@ -58,7 +58,11 @@ export const TransactionProgressSource: FC<TransactionProgressSource> = ({ child
           />
         }
       />
-      {children({ isPrevError: isError, isPrevLoading: isLoading, isPrevSuccess: isSuccess })}
+      {children({
+        isPrevError: isError,
+        isPrevLoading: isLoading,
+        isPrevSuccess: isSuccess,
+      })}
     </>
   )
 }

@@ -18,7 +18,10 @@ export function GenericTable<T>({ table, columns, getLink }: GenericTable<T>) {
                 <Table.th
                   key={header.id}
                   colSpan={header.colSpan}
-                  style={{ maxWidth: header.column.getSize(), width: header.column.getSize() }}
+                  style={{
+                    maxWidth: header.column.getSize(),
+                    width: header.column.getSize(),
+                  }}
                 >
                   <div
                     {...{
@@ -42,7 +45,13 @@ export function GenericTable<T>({ table, columns, getLink }: GenericTable<T>) {
               <Table.tr key={row.id} className="cursor-pointer">
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <Table.td key={cell.id} style={{ maxWidth: columns[0].size, width: columns[0].size }}>
+                    <Table.td
+                      key={cell.id}
+                      style={{
+                        maxWidth: columns[0].size,
+                        width: columns[0].size,
+                      }}
+                    >
                       {getLink ? (
                         <a href={getLink(row.original)} target="_blank" rel="noreferrer">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

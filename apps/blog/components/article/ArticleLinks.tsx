@@ -1,11 +1,10 @@
 import { LinkIcon, MailIcon } from '@heroicons/react/outline'
 import { TwitterIcon } from '@sushiswap/ui'
 import { FC } from 'react'
-
-import { ArticleEntity } from '../../.mesh'
+import { Article } from 'types'
 
 interface ArticleLinks {
-  article?: ArticleEntity
+  article?: Article
 }
 
 export const ArticleLinks: FC<ArticleLinks> = ({ article }) => {

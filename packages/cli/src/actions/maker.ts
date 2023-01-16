@@ -134,8 +134,11 @@ function printMakerTable(
         } as const
       })
       .sort((a, b) => (a.lpUsdValue > b.lpUsdValue ? -1 : 1))
-      .map((row) => ({ pair: row.pair, pairId: row.pairId, lpUsdValue: numeral(row.lpUsdValue).format('$0.00a') })) ??
-    []
+      .map((row) => ({
+        pair: row.pair,
+        pairId: row.pairId,
+        lpUsdValue: numeral(row.lpUsdValue).format('$0.00a'),
+      })) ?? []
 
   const table = new Table({ head: columns, style: { compact: true } })
 

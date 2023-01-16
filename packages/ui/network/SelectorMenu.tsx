@@ -1,4 +1,4 @@
-import { CheckIcon } from '@heroicons/react/solid'
+import { CheckIcon, XCircleIcon } from '@heroicons/react/solid'
 import chains, { ChainId } from '@sushiswap/chain'
 import { FC } from 'react'
 
@@ -21,8 +21,22 @@ export const SelectorMenu: FC<SelectorMenuProps> = ({ networks, selectedNetworks
       onChange={(values: ChainId[]) => onChange(values.length === 0 ? networks : values)}
       button={
         <Select.Button className="ring-offset-slate-900 !bg-slate-700">
-          <Typography variant="sm" weight={600} className="text-slate-200">
-            Networks
+          <Typography variant="sm" weight={600} className="flex gap-2 items-center text-slate-200">
+            {value.length === 0 ? (
+              <>
+                <CheckIcon width={20} height={20} className="text-green" /> All Networks
+              </>
+            ) : (
+              <>
+                <XCircleIcon
+                  onClick={() => onChange(networks)}
+                  width={20}
+                  height={20}
+                  className="hover:text-slate-400 text-slate-500"
+                />{' '}
+                {value.length} Selected
+              </>
+            )}
           </Typography>
         </Select.Button>
       }

@@ -1,27 +1,31 @@
 import { Breadcrumb, BreadcrumbLink, ProgressBar, ProgressColor } from '@sushiswap/ui'
 import { getFuroVestingContractConfig, useWalletState } from '@sushiswap/wagmi'
-import {
-  BackgroundVector,
-  CancelModal,
-  HistoryPopover,
-  Layout,
-  Overlay,
-  ProgressBarCard,
-  StreamDetailsPopover,
-  TransferModal,
-} from 'components'
-import { createScheduleRepresentation, NextPaymentTimer, SchedulePopover, WithdrawModal } from 'components/vesting'
-import { getRebase, getVesting, getVestingTransactions, Vesting } from 'lib'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 import { NextSeo } from 'next-seo'
 import { FC, useMemo, useState } from 'react'
 import useSWR, { SWRConfig } from 'swr'
-import { useConnect } from 'wagmi'
+import { useConnect, useNetwork } from 'wagmi'
 
+import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '../../.graphclient'
+import {
+  BackgroundVector,
+  CancelModal,
+  HistoryPopover,
+  Layout,
+  ProgressBarCard,
+  StreamDetailsPopover,
+  TransferModal,
+} from '../../components'
+import {
+  createScheduleRepresentation,
+  NextPaymentTimer,
+  SchedulePopover,
+  WithdrawModal,
+} from '../../components/vesting'
 import VestingChart2 from '../../components/vesting/VestingChart2'
+import { getRebase, getVesting, getVestingTransactions, Vesting } from '../../lib'
 import { ChartHover } from '../../types'
-import type { Rebase, Transaction as TransactionDTO, Vesting as VestingDTO } from '.graphclient'
 
 interface Props {
   fallback?: {
@@ -30,11 +34,17 @@ interface Props {
   }
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ query: { chainId, id } }) => {
-  const vesting = (await getVesting(chainId as string, id as string)) as VestingDTO
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  if (!query?.chainId) throw new Error('No chainId provided')
+  if (!query?.id) throw new Error('No id provided')
+
+  const chainId = query.chainId as string
+  const id = query.id as string
+
+  const vesting = (await getVesting(chainId, id)) as VestingDTO
   const [transactions, rebases] = await Promise.all([
-    getVestingTransactions(chainId as string, id as string),
-    getRebase(chainId as string, vesting.token.id),
+    getVestingTransactions(chainId, id),
+    getRebase(chainId, vesting.token.id),
   ])
   return {
     props: {
@@ -63,6 +73,7 @@ const LINKS = (id: string): BreadcrumbLink[] => [
 ]
 
 const _VestingPage: FC = () => {
+  const { chain } = useNetwork()
   const router = useRouter()
   const chainId = Number(router.query.chainId as string)
   const id = Number(router.query.id as string)
@@ -103,8 +114,6 @@ const _VestingPage: FC = () => {
   //   vesting.balance = balance
   // }
 
-  if (connecting || reconnecting) return <Overlay />
-
   return (
     <>
       <NextSeo title={`Vesting #${id}`} />
@@ -125,7 +134,7 @@ const _VestingPage: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Unlocked"
-                value={`${vesting?.streamedPercentage?.toSignificant(4)}%`}
+                value={`${vesting?.streamedPercentage?.toPercentageString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.STREAMED)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
@@ -138,7 +147,7 @@ const _VestingPage: FC = () => {
               <ProgressBarCard
                 aria-hidden="true"
                 label="Withdrawn"
-                value={`${vesting?.withdrawnPercentage?.toSignificant(4)}%`}
+                value={`${vesting?.withdrawnPercentage?.toPercentageString(2)}`}
                 onMouseEnter={() => setHover(ChartHover.WITHDRAW)}
                 onMouseLeave={() => setHover(ChartHover.NONE)}
               >
@@ -159,21 +168,25 @@ const _VestingPage: FC = () => {
             <SchedulePopover vesting={vesting} schedule={schedule} />
           </div>
           <div className="flex flex-col gap-2">
-            <WithdrawModal vesting={vesting} />
-            <div className="flex gap-2">
-              <TransferModal
-                stream={vesting}
-                abi={getFuroVestingContractConfig(chainId)?.contractInterface}
-                address={getFuroVestingContractConfig(chainId)?.addressOrName}
-              />
-              <CancelModal
-                title="Cancel Vesting"
-                stream={vesting}
-                abi={getFuroVestingContractConfig(chainId)?.contractInterface}
-                address={getFuroVestingContractConfig(chainId)?.addressOrName}
-                fn="stopVesting"
-              />
-            </div>
+            <WithdrawModal vesting={vesting} chainId={chainId} />
+            {chain?.id === chainId && (
+              <div className="flex gap-2">
+                <TransferModal
+                  stream={vesting}
+                  abi={getFuroVestingContractConfig(chainId)?.abi}
+                  address={getFuroVestingContractConfig(chainId)?.address}
+                  chainId={chainId}
+                />
+                <CancelModal
+                  title="Cancel Vesting"
+                  stream={vesting}
+                  abi={getFuroVestingContractConfig(chainId)?.abi}
+                  address={getFuroVestingContractConfig(chainId)?.address}
+                  fn="stopVesting"
+                  chainId={chainId}
+                />
+              </div>
+            )}
           </div>
         </div>
       </Layout>

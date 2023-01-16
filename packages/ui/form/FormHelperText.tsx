@@ -11,7 +11,7 @@ export const FormHelperText: FC<FormHelperText> = ({ message, isError = false })
   if (!message) return null
 
   return (
-    <Typography variant="xs" className={isError ? 'text-red' : 'text-slate-500'}>
+    <Typography variant="xs" role="alert" className={isError ? 'text-red' : 'text-slate-500'}>
       {message}
     </Typography>
   )

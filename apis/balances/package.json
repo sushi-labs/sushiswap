@@ -1,0 +1,41 @@
+{
+  "name": "@sushiswap/balances-api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Balances API",
+  "keywords": [
+    "sushi",
+    "balances",
+    "api"
+  ],
+  "license": "MIT",
+  "author": "Matthew Lilley <hello@matthewLilley.com>",
+  "scripts": {
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
+    "lint": "TIMING=1 eslint --fix ."
+  },
+  "dependencies": {
+    "@sushiswap/chain": "workspace:*",
+    "@vercel/node": "2.8.2",
+    "@wagmi/core": "0.8.10-cjs",
+    "lodash.zip": "4.2.0",
+    "node-fetch": "2.6.6",
+    "zod": "3.20.2"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/lodash.zip": "4.2.7",
+    "@types/node": "^18.0.0",
+    "@types/node-fetch": "2.6.2",
+    "eslint": "8.29.0",
+    "typescript": "4.9.4",
+    "vercel": "28.10.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

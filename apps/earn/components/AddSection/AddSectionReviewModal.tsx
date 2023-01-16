@@ -1,8 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
-import { Dialog, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import { Currency, Dialog, Typography } from '@sushiswap/ui'
 import { FC, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues } from '../../lib/hooks'
@@ -15,7 +14,6 @@ interface AddSectionReviewModal {
   open: boolean
   setOpen(open: boolean): void
   children: ReactNode
-  error?: string
 }
 
 export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
@@ -25,9 +23,11 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   open,
   setOpen,
   children,
-  error,
 }) => {
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: [input0, input1] })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: [input0, input1],
+  })
 
   const price = useMemo(() => {
     if (!input0 || !input1) return undefined
@@ -48,7 +48,7 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
                 <div className="flex items-center justify-end gap-2 text-right">
                   {input0 && (
                     <div className="w-5 h-5">
-                      <Icon currency={input0.currency} width={20} height={20} />
+                      <Currency.Icon currency={input0.currency} width={20} height={20} />
                     </div>
                   )}
                   <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -75,7 +75,7 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
                 <div className="flex items-center justify-end gap-2 text-right">
                   {input1 && (
                     <div className="w-5 h-5">
-                      <Icon currency={input1.currency} width={20} height={20} />
+                      <Currency.Icon currency={input1.currency} width={20} height={20} />
                     </div>
                   )}
                   <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -105,11 +105,6 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
           </Rate>
         </div>
         {children}
-        {error && (
-          <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
-            {error}
-          </Typography>
-        )}
       </Dialog.Content>
     </Dialog>
   )

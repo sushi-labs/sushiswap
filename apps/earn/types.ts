@@ -7,13 +7,3 @@ export interface PairWithFarmRewards extends Pair {
   farmId: number | undefined
   chefType: Chef | undefined
 }
-
-export interface PairWithAlias extends Pair {
-  dayChangeData: {
-    id: string
-    date: number
-    volumeUSD: number
-    liquidityUSD: number
-    transactionCount: number
-  }[]
-}

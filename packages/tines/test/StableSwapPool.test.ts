@@ -290,7 +290,10 @@ describe('StableSwap test', () => {
           12,
           18,
           { elastic: getBigNumber(1.05 * 1e18), base: getBigNumber(i * 1e17) },
-          { elastic: getBigNumber(1.15 * 1e18), base: getBigNumber((100 - i) * 1e17) }
+          {
+            elastic: getBigNumber(1.15 * 1e18),
+            base: getBigNumber((100 - i) * 1e17),
+          }
         )
         checkPoolPriceCalculation(pool)
       }

@@ -17,8 +17,24 @@ query CrossChainBentoBoxKpis($chainIds: [BigInt!]!) {
   }
 }
 
-query CrossChainStrategyKpis($chainIds: [BigInt!]!) {
-  crossChainStrategyKpis(first: 1000, chainIds: $chainIds) {
+query CrossChainStrategyKpis(
+  $skip: Int = 0
+  $first: Int = 100
+  $where: StrategyKpi_filter
+  $orderBy: StrategyKpi_orderBy = apr
+  $orderDirection: OrderDirection = desc
+  $block: Block_height
+  $chainIds: [Int!]!
+) {
+  crossChainStrategyKpis(
+    skip: $skip
+    first: $first
+    where: $where
+    orderBy: $orderBy
+    # orderDirection: $orderDirection
+    block: $block
+    chainIds: $chainIds
+  ) {
     id
     chainId
     harvestCount
@@ -49,30 +65,30 @@ query PendingSubgraphIndexingStatus($subgraphName: String!) {
 }
 
 fragment Subgraph on SubgraphIndexingStatus {
-    subgraph
-    entityCount
-    fatalError {
-      message
+  subgraph
+  entityCount
+  fatalError {
+    message
+  }
+  nonFatalErrors {
+    message
+  }
+  chains {
+    chainHeadBlock {
+      number
     }
-    nonFatalErrors {
-      message
+    earliestBlock {
+      number
     }
-    chains {
-      chainHeadBlock {
-        number
-      }
-      earliestBlock {
-        number
-      }
-      latestBlock {
-        number
-      }
+    latestBlock {
+      number
     }
-    health
+  }
+  health
 }
 
-query Subgraphs($subgraphNames: [String!]!, $type: SubgraphType!) {
-  subgraphs(subgraphNames: $subgraphNames, type: $type) {
+query Subgraphs($subgraphs: [SubgraphWithNode!]!, $type: SubgraphType!) {
+  subgraphs(subgraphs: $subgraphs, type: $type) {
     subgraphName
     subgraphId
     type

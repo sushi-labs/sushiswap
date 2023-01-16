@@ -12,11 +12,10 @@ const alwaysTrue = () => true
  * @param search the search query to apply to the token
  */
 export function createTokenFilterFunction<T extends Token>(search: string): (tokens: T) => boolean {
-  const validAddress = isAddress(search)
+  const isValidAddress = isAddress(search)
 
-  if (validAddress) {
-    const lower = search.toLowerCase()
-    return (t: T) => ('isToken' in t ? search === t.address : lower === t.address.toLowerCase())
+  if (isValidAddress) {
+    return (t: T) => search.toLowerCase() === t.address.toLowerCase()
   }
 
   const lowerSearchParts = search

@@ -1,6 +1,6 @@
 import { Interface } from '@ethersproject/abi'
-import { Amount, Token, Type as Currency } from '@sushiswap/currency'
 import { StablePool } from '@sushiswap/amm'
+import { Amount, Token, Type as Currency } from '@sushiswap/currency'
 import { useBentoBoxTotals } from '@sushiswap/wagmi'
 import STABLE_POOL_ABI from 'abis/stable-pool.json'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from 'lib/state/multicall'
@@ -49,7 +49,9 @@ export function useStablePools(
 
   const tokensUnique = useMemo(
     () =>
-      Array.from(new Set(pairsUnique.reduce((previousValue, currentValue) => [...previousValue, ...currentValue], []))),
+      Array.from(
+        new Set(pairsUnique.reduce<Token[]>((previousValue, currentValue) => [...previousValue, ...currentValue], []))
+      ),
     [pairsUnique]
   )
 

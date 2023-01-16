@@ -1,5 +1,6 @@
 import { UserWithFarm } from '@sushiswap/graph-client'
-import { GenericTable, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { GenericTable } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
 import React, { FC, useCallback, useEffect, useState } from 'react'
@@ -29,6 +30,8 @@ export const PositionsTable: FC = () => {
     (url) => fetch(url).then((response) => response.json())
   )
 
+  // console.log({userWithFarms})
+
   const table = useReactTable<UserWithFarm>({
     data: userWithFarms || [],
     state: {
@@ -47,7 +50,12 @@ export const PositionsTable: FC = () => {
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ volume: false, network: false, apr: false, liquidityUSD: false })
+      setColumnVisibility({
+        volume: false,
+        network: false,
+        apr: false,
+        liquidityUSD: false,
+      })
     }
   }, [isMd, isSm])
 

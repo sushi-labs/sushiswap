@@ -1,0 +1,41 @@
+fragment UserFields on User {
+  id
+}
+
+query CrossChainUserWithFarms($id: ID!, $chainIds: [Int!]!, $block: Block_height) {
+  crossChainUserWithFarms(id: $id, chainIds: $chainIds, block: $block) {
+    id
+    chainId
+    valueUSD
+    pair {
+      ...PairFields
+      feeApr
+      incentiveApr
+      farm {
+        ...FarmFields
+      }
+    }
+  }
+}
+
+# query UserWithLiquidityPositions(
+#   $id: ID!
+#   $chainIds: [Int!]!
+# ) {
+#   userWithLiquidityPositions(
+#     id: $id
+#     chainIds: $chainIds
+#   ) {
+#     id
+#     positions {
+#       chainId
+#       valueUSD
+#       pair {
+#       ...PairFields
+#         farm {
+#           ...FarmFields
+#         }
+#       }
+#     }
+#   }
+# }

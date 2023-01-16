@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { multicall } from 'lib/state/multicall'
-import { tokenLists } from 'lib/state/token-lists'
 
+import { multicall } from './lib/state/multicall'
 import { storage, storageMiddleware } from './lib/state/storage'
+import { tokenLists } from './lib/state/token-lists'
 
 export const store: ReturnType<typeof configureStore> = configureStore({
   // @ts-ignore

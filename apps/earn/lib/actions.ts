@@ -1,8 +1,8 @@
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { Signature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
-import { Type } from '@sushiswap/currency'
 import { Fee } from '@sushiswap/amm'
+import { Type } from '@sushiswap/currency'
 
 interface Batch {
   contract: Contract

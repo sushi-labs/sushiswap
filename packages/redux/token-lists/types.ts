@@ -55,6 +55,8 @@ export type DisablePayload = string
 
 export type AcceptPayload = string
 
-export type TokenMap = Readonly<{ [tokenAddress: string]: { token: WrappedTokenInfo; list?: TokenList } }>
+export type TokenMap = Readonly<{
+  [tokenAddress: string]: { token: WrappedTokenInfo; list?: TokenList }
+}>
 
 export type ChainTokenMap = Readonly<{ [chainId: number]: TokenMap }>

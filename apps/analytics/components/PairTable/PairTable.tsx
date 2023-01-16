@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Pair } from '@sushiswap/graph-client'
-import { Table, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { Table } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
 import React, { FC, useEffect, useMemo, useState } from 'react'
@@ -126,13 +127,25 @@ export const PairTable: FC = () => {
 
   useEffect(() => {
     if (isSm && !isMd && !isLg) {
-      setColumnVisibility({ fees24h: false, volume24h: false, fees7d: false, network: false })
+      setColumnVisibility({
+        fees24h: false,
+        volume24h: false,
+        fees7d: false,
+        network: false,
+      })
     } else if (isSm && isMd && !isLg) {
       setColumnVisibility({ fees24h: false, volume24h: false, network: false })
     } else if (isSm) {
       setColumnVisibility({})
     } else {
-      setColumnVisibility({ fees24h: false, volume24h: false, network: false, fees7d: false, tvl: false, apr: false })
+      setColumnVisibility({
+        fees24h: false,
+        volume24h: false,
+        network: false,
+        fees7d: false,
+        tvl: false,
+        apr: false,
+      })
     }
   }, [isLg, isMd, isSm])
 

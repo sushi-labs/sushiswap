@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "title": "Prices",
+  "description": "Prices Object",
+  "patternProperties": {
+    "^0x": { "type": "number" }
+  }
+}

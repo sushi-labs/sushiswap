@@ -11,7 +11,13 @@ export enum GasPrice {
   LOW = 'Low',
 }
 
-export type TokenAsObject = { address: string; chainId: ChainId; symbol?: string; name?: string; decimals: number }
+export type TokenAsObject = {
+  address: string
+  chainId: ChainId
+  symbol?: string
+  name?: string
+  decimals: number
+}
 
 export type StorageState = {
   carbonOffset: boolean

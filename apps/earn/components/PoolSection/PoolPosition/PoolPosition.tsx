@@ -1,15 +1,16 @@
 import { formatUSD } from '@sushiswap/format'
-import { Typography, useBreakpoint } from '@sushiswap/ui'
+import { Pair } from '@sushiswap/graph-client'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { Typography } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { PairWithAlias } from '../../../types'
 import { usePoolPosition } from '../../PoolPositionProvider'
 import { usePoolPositionStaked } from '../../PoolPositionStakedProvider'
 import { PoolPositionDesktop } from './PoolPositionDesktop'
 import { PoolPositionStakedDesktop } from './PoolPositionStakedDesktop'
 
 interface PoolPositionProps {
-  pair: PairWithAlias
+  pair: Pair
 }
 
 export const PoolPosition: FC<PoolPositionProps> = ({ pair }) => {

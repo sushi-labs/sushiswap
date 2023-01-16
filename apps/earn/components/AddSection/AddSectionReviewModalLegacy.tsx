@@ -1,17 +1,21 @@
+import { TransactionRequest } from '@ethersproject/providers'
+import { calculateSlippageAmount } from '@sushiswap/amm'
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Type } from '@sushiswap/currency'
-import { calculateSlippageAmount } from '@sushiswap/amm'
+import { calculateGasMargin } from '@sushiswap/gas'
 import { Percent } from '@sushiswap/math'
 import { Button, Dots } from '@sushiswap/ui'
 import {
   Approve,
-  calculateGasMargin,
   getSushiSwapRouterContractConfig,
   PairState,
+  useSendTransaction,
   useSushiSwapRouterContract,
 } from '@sushiswap/wagmi'
-import { FC, ReactNode, useCallback, useMemo, useState } from 'react'
-import { ProviderRpcError, useAccount, useDeprecatedSendTransaction, useNetwork, UserRejectedRequestError } from 'wagmi'
+import { BigNumber, BigNumberish } from 'ethers'
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { Address, useAccount, useNetwork } from 'wagmi'
+import { SendTransactionResult } from 'wagmi/actions'
 
 import { useTransactionDeadline } from '../../lib/hooks'
 import { useNotifications, useSettings } from '../../lib/state/storage'
@@ -44,12 +48,28 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
   const [, { createNotification }] = useNotifications(address)
   const contract = useSushiSwapRouterContract(chainId)
   const [{ slippageTolerance }] = useSettings()
-  const { sendTransactionAsync, isLoading: isWritePending } = useDeprecatedSendTransaction({
-    chainId,
-    onSuccess: () => setOpen(false),
-  })
 
-  const [error, setError] = useState<string>()
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined) => {
+      if (!data || !token0 || !token1) return
+
+      const ts = new Date().getTime()
+      createNotification({
+        type: 'mint',
+        chainId,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
+          completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
+          failed: 'Something went wrong when adding liquidity',
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      })
+    },
+    [chainId, createNotification, token0, token1]
+  )
 
   const slippagePercent = useMemo(() => {
     return new Percent(Math.floor(slippageTolerance * 100), 10_000)
@@ -70,105 +90,84 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
     ]
   }, [poolState, input0, input1, slippagePercent])
 
-  const execute = useCallback(async () => {
-    if (!token0 || !token1 || !chain?.id || !contract || !input0 || !input1 || !address || !minAmount0 || !minAmount1)
-      return
-    const withNative = token0.isNative || token1.isNative
+  const prepare = useCallback(
+    async (setRequest: Dispatch<SetStateAction<(TransactionRequest & { to: string }) | undefined>>) => {
+      try {
+        if (
+          !token0 ||
+          !token1 ||
+          !chain?.id ||
+          !contract ||
+          !input0 ||
+          !input1 ||
+          !address ||
+          !minAmount0 ||
+          !minAmount1 ||
+          !deadline
+        )
+          return
+        const withNative = token0.isNative || token1.isNative
 
-    try {
-      let data
-      if (withNative) {
-        const value = (token1.isNative ? input1 : input0).quotient.toString()
-        const args = [
-          (token1.isNative ? token0 : token1).wrapped.address,
-          (token1.isNative ? input0 : input1).quotient.toString(),
-          (token1.isNative ? minAmount0 : minAmount1).quotient.toString(),
-          (token1.isNative ? minAmount1 : minAmount0).quotient.toString(),
-          address,
-          deadline.toHexString(),
-        ]
+        if (withNative) {
+          const value = BigNumber.from((token1.isNative ? input1 : input0).quotient.toString())
+          const args = [
+            (token1.isNative ? token0 : token1).wrapped.address as Address,
+            BigNumber.from((token1.isNative ? input0 : input1).quotient.toString()),
+            BigNumber.from((token1.isNative ? minAmount0 : minAmount1).quotient.toString()),
+            BigNumber.from((token1.isNative ? minAmount1 : minAmount0).quotient.toString()),
+            address,
+            BigNumber.from(deadline.toHexString()),
+          ] as const
 
-        const gasLimit = await contract.estimateGas.addLiquidityETH(...args, { value })
-        data = await sendTransactionAsync({
-          request: {
+          const gasLimit = await contract.estimateGas.addLiquidityETH(...args, {
+            value,
+          })
+          setRequest({
             from: address,
             to: contract.address,
             data: contract.interface.encodeFunctionData('addLiquidityETH', args),
             value,
             gasLimit: calculateGasMargin(gasLimit),
-          },
-        })
-      } else {
-        const args = [
-          token0.wrapped.address,
-          token1.wrapped.address,
-          input0.quotient.toString(),
-          input1.quotient.toString(),
-          minAmount0.quotient.toString(),
-          minAmount1.quotient.toString(),
-          address,
-          deadline.toHexString(),
-        ]
+          })
+        } else {
+          const args = [
+            token0.wrapped.address as Address,
+            token1.wrapped.address as Address,
+            BigNumber.from(input0.quotient.toString()),
+            BigNumber.from(input1.quotient.toString()),
+            BigNumber.from(minAmount0.quotient.toString()),
+            BigNumber.from(minAmount1.quotient.toString()),
+            address,
+            BigNumber.from(deadline.toHexString()),
+          ] as const
 
-        const gasLimit = await contract.estimateGas.addLiquidity(...args, {})
-        data = await sendTransactionAsync({
-          request: {
+          const gasLimit = await contract.estimateGas.addLiquidity(...args, {})
+          setRequest({
             from: address,
             to: contract.address,
             data: contract.interface.encodeFunctionData('addLiquidity', args),
             gasLimit: calculateGasMargin(gasLimit),
-          },
-        })
+          })
+        }
+      } catch (e: unknown) {
+        //
       }
+    },
+    [token0, token1, chain?.id, contract, input0, input1, address, minAmount0, minAmount1, deadline]
+  )
 
-      const ts = new Date().getTime()
-      createNotification({
-        type: 'mint',
-        chainId: chain.id,
-        txHash: data.hash,
-        promise: data.wait(),
-        summary: {
-          pending: `Adding liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-          completed: `Successfully added liquidity to the ${token0.symbol}/${token1.symbol} pair`,
-          failed: 'Something went wrong when adding liquidity',
-        },
-        timestamp: ts,
-        groupTimestamp: ts,
-      })
-    } catch (e: unknown) {
-      if (e instanceof UserRejectedRequestError) return
-      if (e instanceof ProviderRpcError) {
-        setError(e.message)
-      }
-      console.error(e)
-    }
-  }, [
-    token0,
-    token1,
-    chain?.id,
-    contract,
-    input0,
-    input1,
-    address,
-    minAmount0,
-    minAmount1,
-    createNotification,
-    deadline,
-    sendTransactionAsync,
-  ])
+  const { sendTransaction, isLoading: isWritePending } = useSendTransaction({
+    chainId,
+    prepare,
+    onSettled,
+    onSuccess: () => setOpen(false),
+  })
 
   return useMemo(
     () => (
       <>
         {children({ isWritePending, setOpen })}
-        <AddSectionReviewModal
-          chainId={chainId}
-          input0={input0}
-          input1={input1}
-          open={open}
-          setOpen={setOpen}
-          error={error}
-        >
+        <AddSectionReviewModal chainId={chainId} input0={input0} input1={input1} open={open} setOpen={setOpen}>
           <Approve
             onSuccess={createNotification}
             className="flex-grow !justify-end"
@@ -179,20 +178,20 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input0}
-                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(chainId).address as Address}
                 />
                 <Approve.Token
                   size="md"
                   className="whitespace-nowrap"
                   fullWidth
                   amount={input1}
-                  address={getSushiSwapRouterContractConfig(chainId).addressOrName}
+                  address={getSushiSwapRouterContractConfig(chainId).address as Address}
                 />
               </Approve.Components>
             }
             render={({ approved }) => {
               return (
-                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={execute}>
+                <Button size="md" disabled={!approved || isWritePending} fullWidth onClick={() => sendTransaction?.()}>
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Add'}
                 </Button>
               )
@@ -201,6 +200,6 @@ export const AddSectionReviewModalLegacy: FC<AddSectionReviewModalLegacyProps> =
         </AddSectionReviewModal>
       </>
     ),
-    [chainId, children, createNotification, error, execute, input0, input1, isWritePending, open]
+    [chainId, children, createNotification, input0, input1, isWritePending, open, sendTransaction]
   )
 }

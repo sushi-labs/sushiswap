@@ -1,14 +1,14 @@
 import { getAddress } from '@ethersproject/address'
+import { Pair } from '@sushiswap/graph-client'
 import { FundSource } from '@sushiswap/hooks'
 import { ZERO } from '@sushiswap/math'
 import { Button, Link } from '@sushiswap/ui'
 import { FC } from 'react'
 
-import { PairWithAlias } from '../../types'
 import { usePoolPosition } from '../PoolPositionProvider'
 import { usePoolPositionStaked } from '../PoolPositionStakedProvider'
 interface PoolButtonsProps {
-  pair: PairWithAlias
+  pair: Pair
 }
 
 export const PoolButtons: FC<PoolButtonsProps> = ({ pair }) => {

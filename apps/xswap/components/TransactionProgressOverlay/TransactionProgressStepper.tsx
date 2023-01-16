@@ -1,8 +1,7 @@
 import chain, { chains } from '@sushiswap/chain'
 import { Amount, Token, Type } from '@sushiswap/currency'
 import { STARGATE_TOKEN } from '@sushiswap/stargate'
-import { Link, NetworkIcon, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import { Currency, Link, NetworkIcon, Typography } from '@sushiswap/ui'
 import { getSushiXSwapContractConfig } from '@sushiswap/wagmi'
 import { formatBytes32String } from 'ethers/lib/utils'
 import { FC, useEffect, useState } from 'react'
@@ -16,7 +15,7 @@ interface TransactionProgressStepper {
   outputAmount?: Amount<Type>
   srcBridgeToken: Token
   dstBridgeToken: Token
-  srcTxHash: string
+  srcTxHash: `0x${string}`
   crossChain: boolean
 }
 
@@ -42,8 +41,7 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
     ...getSushiXSwapContractConfig(outputAmount?.currency.chainId),
     chainId: outputAmount?.currency.chainId,
     eventName: 'StargateSushiXSwapDst',
-    listener: (event) => {
-      const [context, success, { transactionHash }] = event
+    listener: (context, success, { transactionHash }) => {
       // console.log(event, formatBytes32String(id), context === formatBytes32String(id))
       if (context === formatBytes32String(id)) {
         setDstTxState({
@@ -137,7 +135,7 @@ export const TransactionProgressStepper: FC<TransactionProgressStepper> = ({
         }
         subheader={
           <TransactionProgressStep.SubHeader
-            icon={<Icon currency={STARGATE_TOKEN} width={16} height={16} />}
+            icon={<Currency.Icon currency={STARGATE_TOKEN} width={16} height={16} />}
             caption={
               <Typography variant="xs">
                 Powered by{' '}

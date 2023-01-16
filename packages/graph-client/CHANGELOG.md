@@ -1,5 +1,16 @@
 # @sushiswap/graph-client
 
+## 0.2.3
+
+### Patch Changes
+
+- 06a133ae: @sushiswap/graph-client rewrite
+
+  @sushiswap/cli revenue action
+
+- Updated dependencies [06a133ae]
+  - @sushiswap/graph-config@0.1.1
+
 ## 0.2.2
 
 ### Patch Changes

@@ -3,18 +3,17 @@ import '../index.css'
 
 import { Cloudinary } from '@cloudinary/url-gen'
 import { App, ThemeProvider } from '@sushiswap/ui'
+import { Analytics } from '@vercel/analytics/react'
 import type { AppContext, AppProps } from 'next/app'
 import { default as NextApp } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
+import { DefaultSeo } from 'next-seo'
 import { useEffect } from 'react'
 
-import { DefaultSeo, Header } from '../components'
-import { getGlobalSEO } from '../lib/api'
-import { Global } from '.mesh'
-
-export { reportWebVitals } from 'next-axiom'
+import { Header } from '../components'
+import SEO from '../next-seo.config'
 
 export const cld = new Cloudinary({
   cloud: {
@@ -28,10 +27,10 @@ declare global {
   }
 }
 
-const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter()
   useEffect(() => {
-    const handler = (page) => {
+    const handler = (page: any) => {
       window.dataLayer.push({
         event: 'pageview',
         page,
@@ -71,12 +70,13 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
       />
       <ThemeProvider>
         <App.Shell>
-          <DefaultSeo seo={seo} />
+          <DefaultSeo {...SEO} />
           <Header />
-          <Component {...pageProps} seo={seo} />
+          <Component {...pageProps} />
           <App.Footer />
         </App.Shell>
       </ThemeProvider>
+      <Analytics />
     </>
   )
 }
@@ -86,14 +86,11 @@ const MyApp = ({ Component, seo, pageProps }: AppProps & { seo: Global }) => {
 // Hopefully we can replace this with getStaticProps once this issue is fixed:
 // https://github.com/vercel/next.js/discussions/10949
 MyApp.getInitialProps = async (ctx: AppContext) => {
-  const [appProps, globalSEO] = await Promise.all([
-    // Calls page's `getInitialProps` and fills `appProps.pageProps`
-    NextApp.getInitialProps(ctx),
-    // Fetch global site settings from Strapi
-    getGlobalSEO(),
-  ])
+  // Calls page's `getInitialProps` and fills `appProps.pageProps`
+  const appProps = await NextApp.getInitialProps(ctx)
+
   // Pass the data to our page via props
-  return { ...appProps, seo: globalSEO.global?.data.attributes }
+  return { ...appProps }
 }
 
 export default MyApp

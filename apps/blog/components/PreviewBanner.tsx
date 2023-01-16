@@ -20,7 +20,7 @@ export const PreviewBanner: FC<PreviewBanner> = ({ show }) => {
             You are viewing an unpublished article
           </Typography>
         </div>
-        <Link passHref={true} href="/api/exit-preview">
+        <Link passHref={true} href="/api/exit-preview" legacyBehavior>
           <Button as="a" color="blue" size="sm" className="px-6">
             Exit Preview Mode
           </Button>

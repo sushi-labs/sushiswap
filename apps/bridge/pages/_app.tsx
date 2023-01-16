@@ -2,8 +2,8 @@ import '@sushiswap/ui/index.css'
 
 import { App, ThemeProvider, ToastContainer } from '@sushiswap/ui'
 import { client } from '@sushiswap/wagmi'
-import { Header } from 'components'
-import { SUPPORTED_CHAIN_IDS } from 'config'
+import { Header } from '../components'
+import { SUPPORTED_CHAIN_IDS } from '../config'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -11,12 +11,10 @@ import Script from 'next/script'
 import { DefaultSeo } from 'next-seo'
 import { FC, useEffect } from 'react'
 import { Provider } from 'react-redux'
-import { store } from 'store'
+import { store } from '../store'
 import { WagmiConfig } from 'wagmi'
 
 import SEO from '../next-seo.config.mjs'
-
-export { reportWebVitals } from 'next-axiom'
 
 declare global {
   interface Window {
@@ -27,7 +25,7 @@ declare global {
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
   useEffect(() => {
-    const handler = (page) => {
+    const handler = (page: any) => {
       window.dataLayer.push({
         event: 'pageview',
         page,

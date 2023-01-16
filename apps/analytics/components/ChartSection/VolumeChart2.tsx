@@ -36,7 +36,7 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
   }, [chartPeriod, x, y])
 
   // Transient update for performance
-  const onMouseOver = useCallback(({ name, value }) => {
+  const onMouseOver = useCallback(({ name, value }: { name: number; value: number }) => {
     const valueNodes = document.getElementsByClassName('hoveredItemValueVolume')
     const nameNodes = document.getElementsByClassName('hoveredItemNameVolume')
 
@@ -50,13 +50,15 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
         trigger: 'axis',
         extraCssText: 'z-index: 1000',
         responsive: true,
+        // @ts-ignore
         backgroundColor: tailwind.theme.colors.slate['700'],
         textStyle: {
+          // @ts-ignore
           color: tailwind.theme.colors.slate['50'],
           fontSize: 12,
           fontWeight: 600,
         },
-        formatter: (params) => {
+        formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
           const date = new Date(Number(params[0].name * 1000))
@@ -85,6 +87,7 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
       },
       visualMap: {
         show: false,
+        // @ts-ignore
         color: [tailwind.theme.colors.blue['500']],
       },
       xAxis: [
@@ -118,10 +121,11 @@ export const VolumeChart: FC<{ x: number[]; y: number[] }> = ({ x, y }) => {
             },
           },
           areaStyle: {
+            // @ts-ignore
             color: tailwind.theme.colors.blue['500'],
           },
           animationEasing: 'elasticOut',
-          animationDelayUpdate: function (idx) {
+          animationDelayUpdate: function (idx: number) {
             return idx * 2
           },
           data: yData,

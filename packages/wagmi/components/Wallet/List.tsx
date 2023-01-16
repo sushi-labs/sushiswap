@@ -2,7 +2,9 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { FC, ReactNode } from 'react'
 import { useAccount, useConnect } from 'wagmi'
 
-export type RenderProps = ReturnType<typeof useConnect> & { isMounted: boolean }
+export type RenderProps = ReturnType<typeof useConnect> & {
+  isMounted: boolean
+}
 
 export interface List {
   children?: ReactNode | ReactNode[] | ((x: RenderProps) => ReactNode | ReactNode[])

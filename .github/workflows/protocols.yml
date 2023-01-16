@@ -1,0 +1,59 @@
+name: Sushi - protocols
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - ".github/workflows/protocols.yml"
+      - "protocols/**"
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - ".github/workflows/protocols.yml"
+      - "protocols/**"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  CI: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+  ALCHEMY_POLYGON_API_KEY: ${{ secrets.ALCHEMY_POLYGON_API_KEY }}
+
+jobs:
+  ci:
+      name: Continuous integration
+      timeout-minutes: 15
+      runs-on: ubuntu-latest
+      env:
+        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+ 
+      steps:
+        - name: Check out
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 2
+ 
+        - uses: pnpm/action-setup@v2
+          with:
+            version: 7.9.5
+ 
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: 16
+            cache: 'pnpm'
+ 
+        - name: Install dependencies
+          run: pnpm install
+
+        - name: Lint protocols
+          run: pnpm lint-protocols
+
+        - name: Build protocols
+          run: pnpm build-protocols
+
+        - name: Test protocols
+          run: pnpm test-protocols

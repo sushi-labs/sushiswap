@@ -16,7 +16,7 @@ const TransactionProgressStepHeader: FC<TransactionProgressStepHeader> = ({ chil
 type TransactionProgressStepSubHeader = { icon: ReactNode; caption: ReactNode }
 const TransactionProgressStepSubHeader: FC<TransactionProgressStepSubHeader> = ({ icon, caption }) => {
   return (
-    <Typography variant="xs" className="flex gap-2 text-slate-500 items-center">
+    <Typography variant="xs" className="flex items-center gap-2 text-slate-500">
       {icon}
       {caption}
     </Typography>
@@ -48,7 +48,7 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
   return (
     <div className={classNames('grid grid-cols-[60px_320px] mx-auto')}>
       <div className="flex flex-col items-center">
-        <div className="w-6 h-6 flex justify-center items-center">
+        <div className="flex items-center justify-center w-6 h-6">
           {status === 'pending' && <Loader width={21} height={21} />}
           {status === 'success' && <CheckCircleIcon className="text-slate-400" width={24} height={24} />}
           {status === 'skipped' && (
@@ -97,14 +97,14 @@ export const TransactionProgressStep: TransactionProgressStepType<TransactionPro
         )}
       >
         {link ? (
-          <Link href={link} passHref={true}>
+          <Link href={link} passHref={true} legacyBehavior>
             <a target="_blank" className={classNames('text-slate-200', 'flex items-center gap-1 hover:text-slate-50')}>
               {header}
               <ExternalLinkIcon width={16} className="text-inherit" />
             </a>
           </Link>
         ) : comingSoon ? (
-          <div className="text-slate-200 flex items-center gap-1 hover:text-slate-50">
+          <div className="flex items-center gap-1 text-slate-200 hover:text-slate-50">
             {header}{' '}
             <Tooltip
               button={<ExternalLinkIcon width={16} className="text-inherit opacity-40" />}

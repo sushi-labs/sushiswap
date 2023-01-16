@@ -1,22 +1,20 @@
-import transpileModules from 'next-transpile-modules'
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
-const withTranspileModules = transpileModules([
-  '@sushiswap/redux-token-lists',
-  '@sushiswap/ui',
-  '@sushiswap/graph-client',
-])
-
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...defaultNextConfig,
   basePath: '/internal',
-  reactStrictMode: true,
-  swcMinify: false,
-  productionBrowserSourceMaps: true,
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
+  transpilePackages: ['@sushiswap/redux-token-lists', '@sushiswap/ui'],
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/internal',
+        permanent: true,
+        basePath: false,
+      },
+    ]
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default nextConfig

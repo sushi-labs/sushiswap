@@ -1,9 +1,10 @@
 import { chainShortNameToChainId } from '@sushiswap/chain'
 import {
+  Bundle,
   getBuiltGraphSDK,
   Pagination,
-  QuerycrossChainPairsArgs,
-  QuerycrossChainTokensArgs,
+  QuerypairsWithFarmsArgs,
+  QuerytokensByChainIdsArgs,
 } from '@sushiswap/graph-client'
 
 import { SUPPORTED_CHAIN_IDS } from '../config'
@@ -11,11 +12,11 @@ import { SUPPORTED_CHAIN_IDS } from '../config'
 const sdk = getBuiltGraphSDK()
 
 export const getBundles = async () => {
-  const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
+  const { bundles } = await sdk.Bundles({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
-  return bundles.reduce((acc, cur) => {
+  return bundles.reduce<Record<number, Pick<Bundle, 'id' | 'chainId' | 'nativePrice'>>>((acc, cur) => {
     acc[cur.chainId] = cur
     return acc
   }, {})
@@ -26,7 +27,7 @@ export type GetPoolCountQuery = Partial<{
 }>
 
 export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+  const { factories } = await sdk.Factories({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
@@ -40,7 +41,7 @@ export const getPoolCount = async (query?: GetPoolCountQuery) => {
   }, 0)
 }
 
-export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
+export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
   pagination: string
@@ -61,7 +62,7 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
 
-    const { crossChainPairs } = await sdk.CrossChainPairs({
+    const { pairs } = await sdk.PairsWithFarms({
       first,
       skip,
       pagination,
@@ -71,14 +72,14 @@ export const getPools = async (query?: GetPoolsQuery) => {
       chainIds,
     })
 
-    return crossChainPairs
-  } catch (error) {
+    return pairs
+  } catch (error: any) {
     console.log(error)
     throw new Error(error)
   }
 }
 
-export type GetTokensQuery = Omit<QuerycrossChainTokensArgs, 'where' | 'pagination'> & {
+export type GetTokensQuery = Omit<QuerytokensByChainIdsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
   pagination: string
@@ -98,7 +99,7 @@ export const getTokens = async (query?: GetTokensQuery) => {
     const orderBy = query?.orderBy || 'liquidityUSD'
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-    const { crossChainTokens } = await sdk.CrossChainTokens({
+    const { tokens } = await sdk.TokensByChainIds({
       first,
       skip,
       pagination,
@@ -107,8 +108,8 @@ export const getTokens = async (query?: GetTokensQuery) => {
       orderDirection,
       chainIds,
     })
-    return crossChainTokens
-  } catch (error) {
+    return tokens
+  } catch (error: any) {
     console.log(error)
     throw new Error(error)
   }
@@ -129,7 +130,7 @@ export type GetTokenCountQuery = Partial<{
 }>
 
 export const getTokenCount = async (query?: GetTokenCountQuery) => {
-  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
+  const { factories } = await sdk.Factories({
     chainIds: SUPPORTED_CHAIN_IDS,
   })
 
@@ -154,16 +155,16 @@ export const getStats = async () => {
   return stats
 }
 
-export const getCharts = async (query: { networks: string }) => {
+export const getCharts = async (query?: { networks: string }) => {
   const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-  const { crossChainFactoryDaySnapshots } = await sdk.CrossChainFactoryDaySnapshots({
+  const { factoryDaySnapshots } = await sdk.FactoryDaySnapshots({
     chainIds: chainIds,
     first: 1000,
   })
 
   const dateSnapshotMap = new Map()
 
-  for (const snapshot of crossChainFactoryDaySnapshots) {
+  for (const snapshot of factoryDaySnapshots) {
     const value = dateSnapshotMap.get(snapshot.date)
     dateSnapshotMap.set(
       snapshot.date,

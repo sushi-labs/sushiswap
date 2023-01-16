@@ -1,7 +1,7 @@
-import { getStream } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import type { Stream } from '.graphclient'
+import type { Stream } from '../../../../../.graphclient'
+import { getStream } from '../../../../../lib'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, id } = req.query

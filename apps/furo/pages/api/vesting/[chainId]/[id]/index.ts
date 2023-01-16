@@ -1,10 +1,9 @@
-import { getVesting } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import type { Stream } from '.graphclient'
+import { getVesting } from '../../../../../lib'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { chainId, id } = req.query
-  const stream = (await getVesting(chainId as string, id as string)) as Stream
+  const stream = await getVesting(chainId as string, id as string)
   res.status(200).send(stream)
 }

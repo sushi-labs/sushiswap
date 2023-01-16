@@ -1,6 +1,6 @@
 import { Signature } from '@ethersproject/bytes'
-import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Token, tryParseAmount, Type as Currency, Type } from '@sushiswap/currency'
+import { StargateChainId } from '@sushiswap/stargate'
 import { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
 import { SendTransactionResult } from 'wagmi/actions'
 
@@ -13,8 +13,8 @@ interface _BridgeStateProviderProps {
 
 export type BridgeState = {
   id: string
-  srcChainId: ChainId
-  dstChainId: ChainId
+  srcChainId: StargateChainId
+  dstChainId: StargateChainId
   srcToken: Type | undefined
   dstToken: Type | undefined
   srcTypedAmount: string
@@ -34,8 +34,8 @@ interface BridgeStateDerived {
 }
 
 type API = {
-  setSrcChainId(chainId: ChainId): void
-  setDstChainId(chainId: ChainId): void
+  setSrcChainId(chainId: StargateChainId): void
+  setDstChainId(chainId: StargateChainId): void
   setSrcToken(currency: Type): void
   setDstToken(currency: Type): void
   setSrcTypedAmount(srcTypedAmount: string): void
@@ -51,8 +51,8 @@ const DerivedDataContext = createContext<BridgeStateDerived>({} as BridgeStateDe
 const APIContext = createContext<API>({} as API)
 
 type Actions =
-  | { type: 'setSrcChainId'; chainId: ChainId }
-  | { type: 'setDstChainId'; chainId: ChainId }
+  | { type: 'setSrcChainId'; chainId: StargateChainId }
+  | { type: 'setDstChainId'; chainId: StargateChainId }
   | { type: 'setSrcToken'; currency: Type }
   | { type: 'setDstToken'; currency: Type }
   | { type: 'setSrcTypedAmount'; srcTypedAmount: string }
@@ -65,11 +65,26 @@ type Actions =
 const reducer = (state: BridgeState, action: Actions): BridgeState => {
   switch (action.type) {
     case 'setSrcChainId':
-      return { ...state, srcChainId: action.chainId, srcToken: undefined, srcTypedAmount: '', amount: undefined }
+      return {
+        ...state,
+        srcChainId: action.chainId,
+        srcToken: undefined,
+        srcTypedAmount: '',
+        amount: undefined,
+      }
     case 'setDstChainId':
-      return { ...state, dstChainId: action.chainId, dstToken: undefined, dstTypedAmount: '' }
+      return {
+        ...state,
+        dstChainId: action.chainId,
+        dstToken: undefined,
+        dstTypedAmount: '',
+      }
     case 'setSrcToken':
-      return { ...state, srcToken: action.currency, amount: tryParseAmount(state.srcTypedAmount, action.currency) }
+      return {
+        ...state,
+        srcToken: action.currency,
+        amount: tryParseAmount(state.srcTypedAmount, action.currency),
+      }
     case 'setDstToken':
       return { ...state, dstToken: action.currency }
     case 'setSrcTypedAmount':
@@ -117,8 +132,8 @@ export const BridgeStateProvider: FC<_BridgeStateProviderProps> = ({ initialStat
   const bridgeOutput = useBridgeOutput(state)
 
   const api = useMemo(() => {
-    const setSrcChainId = (chainId: ChainId) => dispatch({ type: 'setSrcChainId', chainId })
-    const setDstChainId = (chainId: ChainId) => dispatch({ type: 'setDstChainId', chainId })
+    const setSrcChainId = (chainId: StargateChainId) => dispatch({ type: 'setSrcChainId', chainId })
+    const setDstChainId = (chainId: StargateChainId) => dispatch({ type: 'setDstChainId', chainId })
     const setSrcToken = (currency: Currency) => dispatch({ type: 'setSrcToken', currency })
     const setDstToken = (currency: Currency) => dispatch({ type: 'setDstToken', currency })
     const setSrcTypedAmount = (srcTypedAmount: string) => dispatch({ type: 'setSrcTypedAmount', srcTypedAmount })

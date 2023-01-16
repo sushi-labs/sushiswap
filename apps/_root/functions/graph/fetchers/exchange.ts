@@ -4,7 +4,7 @@ import request from 'graphql-request'
 import { pager } from '../pager'
 import { bundleQuery, factoryQuery, tokenPricesQuery } from '../queries/exchange'
 
-export async function getNativePrice(chainId: number) {
+export async function getNativePrice(chainId: keyof typeof SUBGRAPH_HOST & keyof typeof EXCHANGE_SUBGRAPH_NAME) {
   try {
     const { bundle } = await request(
       `https://${SUBGRAPH_HOST[chainId]}/${EXCHANGE_SUBGRAPH_NAME[chainId]}`,
@@ -17,7 +17,10 @@ export async function getNativePrice(chainId: number) {
   }
 }
 
-export async function getTokenPrices(tokens: string[], chainId: number) {
+export async function getTokenPrices(
+  tokens: string[],
+  chainId: keyof typeof SUBGRAPH_HOST & keyof typeof EXCHANGE_SUBGRAPH_NAME
+) {
   try {
     const { tokens: tokenPrices } = await pager(
       `https://${SUBGRAPH_HOST[chainId]}/${EXCHANGE_SUBGRAPH_NAME[chainId]}`,
@@ -33,7 +36,7 @@ export async function getTokenPrices(tokens: string[], chainId: number) {
   }
 }
 
-async function getFactory(chainId: number) {
+async function getFactory(chainId: keyof typeof SUBGRAPH_HOST & keyof typeof EXCHANGE_SUBGRAPH_NAME) {
   try {
     const { factories } = await request(
       `https://${SUBGRAPH_HOST[chainId]}/${EXCHANGE_SUBGRAPH_NAME[chainId]}`,
@@ -59,7 +62,9 @@ async function getFactory(chainId: number) {
 
 export async function getLegacyExchangeData() {
   const factoryQueries: ReturnType<typeof getFactory>[] = []
-  for (const chainId of Object.keys(EXCHANGE_SUBGRAPH_NAME) as unknown as number[]) {
+  const chainIds = Object.keys(EXCHANGE_SUBGRAPH_NAME).map(Number) as (keyof typeof SUBGRAPH_HOST &
+    keyof typeof EXCHANGE_SUBGRAPH_NAME)[]
+  for (const chainId of chainIds) {
     factoryQueries.push(getFactory(chainId))
   }
 

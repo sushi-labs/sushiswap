@@ -1,12 +1,13 @@
-import { AppearOnMount, Typography, useBreakpoint } from '@sushiswap/ui'
+import { Pair } from '@sushiswap/graph-client'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { AppearOnMount, Typography } from '@sushiswap/ui'
 import { FC, Fragment, useState } from 'react'
 
-import { PairWithAlias } from '../../../types'
 import { PoolActionBarPositionDialog } from './PoolActionBarPositionDialog'
 import { PoolActionBarPositionRewards } from './PoolActionBarPositionRewards'
 
 interface PoolActionBarProps {
-  pair: PairWithAlias
+  pair: Pair
 }
 
 export const PoolActionBar: FC<PoolActionBarProps> = ({ pair }) => {

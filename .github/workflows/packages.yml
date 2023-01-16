@@ -1,0 +1,58 @@
+name: Sushi - packages
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - ".github/workflows/packages.yml"
+      - "packages/**"
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - ".github/workflows/packages.yml"
+      - "packages/**"
+      
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  CI: true
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+jobs:
+  ci:
+      name: Continuous integration
+      timeout-minutes: 15
+      runs-on: ubuntu-latest
+      env:
+        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+ 
+      steps:
+        - name: Check out
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 2
+ 
+        - uses: pnpm/action-setup@v2
+          with:
+            version: 7.9.5
+ 
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: 16
+            cache: 'pnpm'
+ 
+        - name: Install dependencies
+          run: pnpm install
+
+        - name: Lint packages
+          run: pnpm lint-packages
+
+        - name: Build packages
+          run: pnpm build-packages
+
+        - name: Test packages
+          run: pnpm test-packages

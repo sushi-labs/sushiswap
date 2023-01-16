@@ -1,6 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/graph-client'
-import { Table, useBreakpoint } from '@sushiswap/ui'
+import { useBreakpoint } from '@sushiswap/hooks'
+import { Table } from '@sushiswap/ui'
 import { getCoreRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from '@tanstack/react-table'
 import stringify from 'fast-json-stable-stringify'
 import React, { FC, useEffect, useMemo, useState } from 'react'

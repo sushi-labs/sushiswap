@@ -2,9 +2,14 @@ import { ChainId } from '@sushiswap/chain'
 import { Amount, Token } from '@sushiswap/currency'
 import { JSBI } from '@sushiswap/math'
 
+import {
+  type Rebase,
+  type Stream as StreamDTO,
+  type User as UserDTO,
+  type Vesting as VestingDTO,
+} from '../.graphclient'
 import { FuroStatus, FuroType } from './enums'
 import { toToken } from './mapper'
-import { type Rebase, type Stream as StreamDTO, type User as UserDTO, type Vesting as VestingDTO } from '.graphclient'
 
 export abstract class Furo {
   public _balance: Amount<Token>
@@ -16,6 +21,7 @@ export abstract class Furo {
   public readonly status: FuroStatus
   public readonly remainingShares: Amount<Token>
   public readonly _remainingAmount: Amount<Token>
+  public readonly initialShares: Amount<Token>
   public readonly inititalAmount: Amount<Token>
   public readonly startTime: Date
   public readonly endTime: Date
@@ -33,10 +39,10 @@ export abstract class Furo {
     }
     this.id = furo.id
     this.chainId = chainId
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.type = furo.__typename
     this.token = toToken(furo.token, chainId)
+    this.initialShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialShares))
     this.inititalAmount = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.initialAmount))
     this.remainingShares = Amount.fromRawAmount(this.token, JSBI.BigInt(furo.remainingShares))
     this._remainingAmount = Amount.fromShare(this.token, JSBI.BigInt(furo.remainingShares), this.rebase)

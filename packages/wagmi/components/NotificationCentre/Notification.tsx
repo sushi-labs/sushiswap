@@ -2,6 +2,7 @@ import { Disclosure } from '@headlessui/react'
 import {
   ArrowRightIcon,
   CashIcon,
+  CheckIcon,
   ChevronDownIcon,
   DownloadIcon,
   FireIcon,
@@ -37,25 +38,25 @@ export const STARGATE_TOKEN = new Token({
   name: 'StargateToken',
 })
 
-export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: boolean }> = ({
-  data,
-  showExtra = false,
-  hideStatus = false,
-}) => {
+export const Notification: FC<{
+  data: string
+  showExtra?: boolean
+  hideStatus?: boolean
+}> = ({ data, showExtra = false, hideStatus = false }) => {
   const notification: NotificationData = JSON.parse(data)
   const { status } = useWaitForTransaction({
     chainId: notification.chainId,
-    hash: notification.txHash,
+    hash: notification.txHash as `0x${string}`,
   })
 
   if (!status)
     return (
-      <div className="flex items-center gap-5 px-4 pr-8 bg-white bg-opacity-[0.06] rounded-2xl min-h-[82px] w-full">
+      <div className="flex items-center gap-5 px-4 pr-8 rounded-2xl min-h-[82px] w-full">
         <div>
           <div className="rounded-full bg-slate-600 h-9 w-9" />
         </div>
         <div className="flex flex-col w-full gap-2">
-          <div className="flex flex-col gap-1 w-full">
+          <div className="flex flex-col w-full gap-1">
             <div className="bg-slate-500 w-full h-[12px] animate-pulse rounded-full" />
             <div className="bg-slate-500 w-[60px] h-[12px] animate-pulse rounded-full" />
           </div>
@@ -122,6 +123,36 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
               {(status === 'success' || notification.summary.info) && notification.type === 'enterBar' && (
                 <DownloadIcon width={20} height={20} />
               )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'transferStream' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'transferVesting' && (
+                <ArrowRightIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createMultipleStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createMultipleVesting' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'cancelStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createVesting' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'createStream' && (
+                <CheckIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'updateStream' && (
+                <DownloadIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'withdrawStream' && (
+                <UploadIcon width={20} height={20} />
+              )}
+              {(status === 'success' || notification.summary.info) && notification.type === 'withdrawVesting' && (
+                <UploadIcon width={20} height={20} />
+              )}
               {(status === 'success' || notification.summary.info) && notification.type === 'leaveBar' && (
                 <UploadIcon width={20} height={20} />
               )}
@@ -132,7 +163,7 @@ export const Notification: FC<{ data: string; showExtra?: boolean; hideStatus?: 
           </Badge>
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
-              <Typography as="span" variant="sm" weight={500} className="items-center text-slate-50 whitespace-normal">
+              <Typography as="span" variant="sm" weight={500} className="items-center whitespace-normal text-slate-50">
                 {notification.summary.info ? (
                   notification.summary.info
                 ) : ['loading'].includes(status) ? (

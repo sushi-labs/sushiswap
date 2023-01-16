@@ -1,0 +1,187 @@
+query Pairs($first: Int = 1000, $skip: Int = 0, $where: Pair_filter, $block: Block_height) {
+  pairs(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    token0 {
+      id
+      name
+      symbol
+      decimals
+    }
+    token1 {
+      id
+      name
+      symbol
+      decimals
+    }
+    name
+    type
+    source
+    swapFee
+    twapEnabled
+    reserve0
+    reserve1
+    liquidity
+    token0Price
+    token1Price
+    liquidityUSD
+    liquidityNative
+    apr
+    aprUpdatedAtTimestamp
+    volumeUSD
+    volumeNative
+    createdAtTimestamp
+    createdAtBlock
+  }
+
+  bundle(id: 1, block: $block) {
+    nativePrice
+  }
+}
+
+query PairsVolumeFee(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: Pair_filter
+  $block: Block_height
+  $orderBy: Pair_orderBy = volumeUSD
+  $orderDirection: OrderDirection = desc
+) {
+  pairs(first: $first, skip: $skip, where: $where, block: $block, orderBy: $orderBy, orderDirection: $orderDirection) {
+    id
+    volumeUSD
+    feesUSD
+  }
+}
+
+query Tokens($first: Int = 1000, $skip: Int = 0, $where: Token_filter, $block: Block_height) {
+  tokens(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    symbol
+    name
+    decimals
+    liquidity
+
+    price {
+      derivedNative
+    }
+  }
+
+  bundle(id: 1, block: $block) {
+    nativePrice
+  }
+}
+
+query MasterChefV2Rewarders(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: MasterChef_MasterChefV2Rewarder_filter
+  $block: MasterChef_Block_height
+) {
+  rewarders: MasterChef_masterChefV2Rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    rewardToken
+    rewardPerSecond
+  }
+}
+
+query MiniChefRewarders(
+  $first: Int = 1000
+  $skip: Int = 0
+  $where: MiniChef_Rewarder_filter
+  $block: MiniChef_Block_height
+) {
+  rewarders: MiniChef_rewarders(first: $first, skip: $skip, where: $where, block: $block) {
+    id
+    rewardToken
+    rewardPerSecond
+  }
+}
+
+query LatestBlock {
+  blocks(first: 1, orderBy: number, orderDirection: desc) {
+    id
+    number
+    timestamp
+  }
+}
+
+query Block($id: ID!) {
+  block(id: $id) {
+    id
+    number
+    timestamp
+  }
+}
+
+query Blocks(
+  $first: Int = 1
+  $skip: Int = 0
+  $where: Block_filter
+  $orderBy: Block_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+) {
+  blocks(first: $first, skip: $skip, where: $where, orderBy: $orderBy, orderDirection: $orderDirection) {
+    id
+    number
+    timestamp
+  }
+}
+
+query BlocksByChainIds(
+  $first: Int
+  $skip: Int
+  $where: Block_filter
+  $orderBy: Block_orderBy = timestamp
+  $orderDirection: OrderDirection = desc
+  $chainIds: [Int!]!
+) {
+  blocks: blocksByChainIds(
+    first: $first
+    skip: $skip
+    where: $where
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    chainIds: $chainIds
+  ) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query OneDayBlocks($chainIds: [Int!]!) {
+  oneDayBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query TwoDayBlocks($chainIds: [Int!]!) {
+  twoDayBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query OneWeekBlocks($chainIds: [Int!]!) {
+  oneWeekBlocks(chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}
+
+query CustomBlocks($timestamp: Int!, $chainIds: [Int!]!) {
+  customBlocks(timestamp: $timestamp, chainIds: $chainIds) {
+    id
+    chainId
+    number
+    timestamp
+  }
+}

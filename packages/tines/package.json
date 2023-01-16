@@ -7,16 +7,17 @@
   },
   "license": "UNLICENSED",
   "author": "Ilya Lyalin",
+  "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
-  "sideEffects": false,
   "files": [
     "dist/**"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
+    "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
     "lint": "TIMING=1 eslint src --fix",
@@ -28,7 +29,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
-    "@ethersproject/bignumber": "^5.7.0",
+    "@ethersproject/bignumber": "5.7.0",
     "@sushiswap/currency": "workspace:*"
   },
   "devDependencies": {
@@ -38,10 +39,10 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/node": "^17.0.35",
     "@types/seedrandom": "^3.0.1",
-    "eslint": "^8.20.0",
+    "eslint": "8.29.0",
     "seedrandom": "^3.0.5",
-    "tsup": "^6.2.0",
-    "typescript": "4.8.2"
+    "tsup": "6.5.0",
+    "typescript": "4.9.4"
   },
   "publishConfig": {
     "access": "public"

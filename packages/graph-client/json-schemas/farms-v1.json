@@ -1,0 +1,8 @@
+{
+  "type": "array",
+  "title": "Farms",
+  "description": "Farms Array",
+  "items": {
+    "$ref": "farm-v1.json#/definitions/Farm"
+  }
+}

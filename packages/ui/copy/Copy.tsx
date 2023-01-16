@@ -3,28 +3,29 @@ import { useCopyClipboard } from '@sushiswap/hooks'
 import classNames from 'classnames'
 import React, { FC } from 'react'
 
-interface CopyHelperProps {
+export interface CopyHelperProps {
   className?: string
   toCopy: string
-  children?: React.ReactNode
+  children?: React.ReactNode | ((isCopied: boolean) => React.ReactNode)
+  hideIcon?: boolean
 }
 
-const CopyHelper: FC<CopyHelperProps> = ({ className, toCopy, children }) => {
+export const CopyHelper: FC<CopyHelperProps> = ({ className, toCopy, hideIcon = false, children }) => {
   const [isCopied, setCopied] = useCopyClipboard()
 
   return (
     <div className={classNames(className)} onClick={() => setCopied(toCopy)}>
       {isCopied && (
         <div className="flex items-center gap-1 cursor-pointer">
-          {children}
-          <CheckIcon width={16} height={16} />
+          {typeof children === 'function' ? children(isCopied) : children}
+          {!hideIcon && <CheckIcon width={16} height={16} />}
         </div>
       )}
 
       {!isCopied && (
         <div className="flex items-center gap-1 cursor-pointer">
-          {children}
-          <DocumentDuplicateIcon width={16} height={16} />
+          {typeof children === 'function' ? children(isCopied) : children}
+          {!hideIcon && <DocumentDuplicateIcon width={16} height={16} />}
         </div>
       )}
     </div>

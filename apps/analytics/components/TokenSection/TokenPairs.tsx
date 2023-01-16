@@ -70,7 +70,7 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                   button={
                     <Table.tr>
                       <Table.td>
-                        <Link.External href={`/pool/${pair.id}`} className="!no-underline">
+                        <Link.External href={`/earn/${pair.id}`} className="!no-underline">
                           <div className="flex items-center">
                             <Currency.IconList iconWidth={24} iconHeight={24}>
                               <Currency.Icon currency={token0} />
@@ -88,23 +88,24 @@ export const TokenPairs: FC<TokenPairs> = ({ token }) => {
                         </Link.External>
                       </Table.td>
                       <Table.td>
-                        <Link.External href={`/pool/${pair.id}`} className="!no-underline">
+                        <Link.External href={`/earn/${pair.id}`} className="!no-underline">
                           <Typography weight={600} variant="sm" className="text-slate-100">
                             {liquidityUSD.includes('NaN') ? '$0.00' : liquidityUSD}
                           </Typography>
                         </Link.External>
                       </Table.td>
                       <Table.td>
-                        <Link.External href={`/pool/${pair.id}`} className="!no-underline">
+                        <Link.External href={`/earn/${pair.id}`} className="!no-underline">
                           <Typography weight={600} variant="sm" className="text-slate-100">
                             {volume1w.includes('NaN') ? '$0.00' : volume1w}
                           </Typography>
                         </Link.External>
                       </Table.td>
                       <Table.td>
-                        <Link.External href={`/pool/${pair.id}`} className="!no-underline">
+                        <Link.External href={`/earn/${pair.id}`} className="!no-underline">
                           <Typography weight={600} variant="sm" className="text-slate-100">
-                            {formatPercent(pair.apr)} {pair.farm && <FarmRewardsAvailableTooltip />}
+                            {formatPercent(pair.apr)}{' '}
+                            {!!pair.farm && pair.incentiveApr > 0 && <FarmRewardsAvailableTooltip />}
                           </Typography>
                         </Link.External>
                       </Table.td>

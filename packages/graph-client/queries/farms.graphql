@@ -1,0 +1,32 @@
+fragment FarmFields on Farm {
+  id
+  chainId
+  pool
+  chefType
+  poolType
+  incentives {
+    apr
+    rewarderAddress
+    rewarderType
+    rewardPerDay
+    rewardToken {
+      address
+      decimals
+      symbol
+    }
+    rewarder {
+      address
+      type
+    }
+  }
+}
+
+query FarmsV0 {
+  farms: farmsv0
+}
+
+query FarmsV1 {
+  farms: farmsv1 {
+    ...FarmFields
+  }
+}

@@ -5,7 +5,7 @@ import { Amount, Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { formatUSD } from '@sushiswap/format'
 import { FundSource } from '@sushiswap/hooks'
 import { Button, classNames, Currency, DEFAULT_INPUT_UNSTYLED, Input, Typography } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import { useTotalSupply } from '@sushiswap/wagmi'
 import { FC, Fragment, ReactNode, useMemo } from 'react'
 
@@ -21,7 +21,6 @@ interface AddSectionStakeWidgetProps {
   reserve1: Amount<Type>
   liquidityToken: Token
   children: ReactNode
-  error?: string
 }
 
 export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
@@ -33,7 +32,6 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
   reserve1,
   reserve0,
   children,
-  error,
 }) => {
   const { balance } = usePoolPosition()
   const totalSupply = useTotalSupply(liquidityToken)
@@ -49,7 +47,10 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
     balance: amount,
   })
 
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: underlying })
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: underlying,
+  })
 
   return useMemo(
     () => (
@@ -159,11 +160,6 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
                         </Transition>
                       </div>
                       {children}
-                      {error && (
-                        <Typography variant="xs" className="text-center text-red mt-4" weight={500}>
-                          {error}
-                        </Typography>
-                      )}
                     </div>
                   </Disclosure.Panel>
                 </Transition>
@@ -173,6 +169,6 @@ export const AddSectionStakeWidget: FC<AddSectionStakeWidgetProps> = ({
         </Widget.Content>
       </Widget>
     ),
-    [balance, children, error, reserve0.currency, reserve1.currency, setValue, title, value, value0, value1]
+    [balance, children, reserve0.currency, reserve1.currency, setValue, title, value, value0, value1]
   )
 }

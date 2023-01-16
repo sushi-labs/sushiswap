@@ -4,28 +4,27 @@ import { Token } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Chip, classNames, Menu, Switch, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
-import { toToken } from 'lib'
-import { useStreamBalances } from 'lib/hooks'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
-import { Streams, Vestings } from 'types'
 import { useAccount } from 'wagmi'
 
-import { FuroTable, FuroTableType } from './FuroTable'
-import { Rebase } from '.graphclient'
+import { Rebase } from '../.graphclient'
+import { toToken, useStreamBalances } from '../lib'
+import { Streams, Vestings } from '../types'
+import { FuroTableType, StreamTable } from './Table'
 
 const fetcher = (params: any) =>
   fetch(params)
     .then((res) => res.json())
     .catch((e) => console.log(stringify(e)))
 
-export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boolean }> = ({
-  chainId,
-  address,
-  showOutgoing,
-}) => {
+export const Dashboard: FC<{
+  chainId: number
+  address: string
+  showOutgoing: boolean
+}> = ({ chainId, address, showOutgoing }) => {
   const isMounted = useIsMounted()
   const router = useRouter()
   const { address: account, isConnected } = useAccount()
@@ -120,10 +119,10 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
                 }
               >
                 <Menu.Items unmount={false} className="!min-w-0">
-                  <Link passHref={true} href="/stream/create">
+                  <Link passHref={true} href="/stream/create" legacyBehavior>
                     <Menu.Item as="a">Stream</Menu.Item>
                   </Link>
-                  <Link passHref={true} href="/vesting/create">
+                  <Link passHref={true} href="/vesting/create" legacyBehavior>
                     <Menu.Item as="a">Vesting</Menu.Item>
                   </Link>
                 </Menu.Items>
@@ -133,7 +132,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
         </div>
       </div>
       <Tab.Group as="div" className="space-y-6" defaultIndex={showOutgoing ? 1 : 0}>
-        <div className="flex justify-between px-2">
+        <div className="flex flex-wrap justify-between px-2 gap-y-4">
           <Tab.List className="flex gap-10">
             <Tab
               as={Typography}
@@ -183,7 +182,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
         </div>
         <Tab.Panels>
           <Tab.Panel>
-            <FuroTable
+            <StreamTable
               chainId={chainId}
               balances={balancesData}
               globalFilter={showActiveIncoming}
@@ -201,7 +200,7 @@ export const Dashboard: FC<{ chainId: number; address: string; showOutgoing: boo
             />
           </Tab.Panel>
           <Tab.Panel>
-            <FuroTable
+            <StreamTable
               chainId={chainId}
               balances={balancesData}
               globalFilter={showActiveIncoming}

@@ -2,9 +2,15 @@ import classNames from 'classnames'
 
 import { Address } from './Address'
 import { Counter } from './Counter'
+import { DatePicker } from './DatePicker'
 import { DatetimeLocal } from './DatetimeLocal'
 import { Input as Numeric } from './Numeric'
 import { Input as Percent } from './Percent'
+
+export type { AddressProps } from './Address'
+export type { CounterProps } from './Counter'
+export type { DatetimeLocalProps } from './DatetimeLocal'
+export type { NumericProps } from './Numeric'
 
 // Base classes
 export const DEFAULT_INPUT_FONT = 'text-left text-base md:text-sm placeholder:font-normal font-medium'
@@ -39,4 +45,11 @@ export const DEFAULT_INPUT_CLASSNAME = classNames(
   DEFAULT_INPUT_PADDING
 )
 
-export const Input = { Address, DatetimeLocal, Counter, Numeric, Percent }
+export const Input = {
+  Address,
+  DatetimeLocal,
+  DatePicker,
+  Counter,
+  Numeric,
+  Percent,
+}

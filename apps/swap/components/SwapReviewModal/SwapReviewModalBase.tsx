@@ -1,7 +1,8 @@
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import { Amount, Price, Type } from '@sushiswap/currency'
+import { ZERO } from '@sushiswap/math'
 import { Dialog, Typography } from '@sushiswap/ui'
-import { Icon } from '@sushiswap/ui/currency/Icon'
+import { Currency } from '@sushiswap/ui'
 import { FC, ReactNode, useMemo } from 'react'
 
 import { useTokenAmountDollarValues } from '../../lib/hooks'
@@ -13,23 +14,18 @@ interface SwapReviewModalBase {
   input1: Amount<Type> | undefined
   open: boolean
   setOpen(open: boolean): void
-  error?: string
   children: ReactNode
 }
 
-export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({
-  chainId,
-  children,
-  input0,
-  input1,
-  open,
-  setOpen,
-  error,
-}) => {
-  const [value0, value1] = useTokenAmountDollarValues({ chainId, amounts: [input0, input1] })
+export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({ chainId, children, input0, input1, open, setOpen }) => {
+  const [value0, value1] = useTokenAmountDollarValues({
+    chainId,
+    amounts: [input0, input1],
+  })
 
   const price = useMemo(() => {
     if (!input0 || !input1) return undefined
+    if (!input1.greaterThan(ZERO)) return undefined
     return new Price({ baseAmount: input0, quoteAmount: input1 })
   }, [input0, input1])
 
@@ -47,7 +43,7 @@ export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({
                 <div className="flex items-center justify-end gap-2 text-right">
                   {input0 && (
                     <div className="w-5 h-5">
-                      <Icon currency={input0.currency} width={20} height={20} />
+                      <Currency.Icon currency={input0.currency} width={20} height={20} />
                     </div>
                   )}
                   <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -74,7 +70,7 @@ export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({
                 <div className="flex items-center justify-end gap-2 text-right">
                   {input1 && (
                     <div className="w-5 h-5">
-                      <Icon currency={input1.currency} width={20} height={20} />
+                      <Currency.Icon currency={input1.currency} width={20} height={20} />
                     </div>
                   )}
                   <Typography variant="h3" weight={500} className="text-right text-slate-50">
@@ -104,11 +100,6 @@ export const SwapReviewModalBase: FC<SwapReviewModalBase> = ({
           </Rate>
         </div>
         {children}
-        {error && (
-          <Typography variant="xs" className="mt-4 text-center text-red" weight={500}>
-            {error}
-          </Typography>
-        )}
       </Dialog.Content>
     </Dialog>
   )

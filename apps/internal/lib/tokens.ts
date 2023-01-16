@@ -13,12 +13,12 @@ export async function getTokens({ chainIds, filter }: { chainIds: ChainId[]; fil
   const defaultTokenList = await getDefaultTokenList()
 
   const tokens = await sdk
-    .CrossChainTokens({
-      chainIds: chainIds,
+    .TokensByChainIds({
+      chainIds,
       orderBy: 'liquidityUSD',
       where: { symbol_contains_nocase: filter },
     })
-    .then(({ crossChainTokens: tokens }) =>
+    .then(({ tokens }) =>
       tokens.map((token) => ({
         ...token,
         listEntry:
@@ -80,7 +80,7 @@ export async function getTokenLogos(octokitKey: string): Promise<TokenLogo[]> {
   })
 
   return octokit.request('GET /repos/sushiswap/list/contents/logos/token-logos/token').then(({ data }) =>
-    data.map((entry) => ({
+    data.map((entry: any) => ({
       name: entry.name.split('.jpg')[0],
       url: `https://raw.githubusercontent.com/sushiswap/list/master/logos/token-logos/token/${entry.name}`,
     }))

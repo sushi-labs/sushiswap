@@ -1,5 +1,4 @@
-import { chainShortNameToChainId } from '@sushiswap/chain'
-import { getBuiltGraphSDK, Pagination, QuerycrossChainPairsArgs } from '@sushiswap/graph-client'
+import { Bundle, getBuiltGraphSDK, Pagination, QuerypairsWithFarmsArgs } from '@sushiswap/graph-client'
 import { getUnixTime, startOfHour, startOfMinute, startOfSecond, subDays, subYears } from 'date-fns'
 import stringify from 'fast-json-stable-stringify'
 
@@ -12,29 +11,37 @@ export type GetPoolCountQuery = Partial<{
 }>
 
 export const getPoolCount = async (query?: GetPoolCountQuery) => {
-  const { crossChainFactories: factories } = await sdk.CrossChainFactories({
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
-  const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
-  return factories.reduce((previousValue, currentValue) => {
-    if (chainIds.includes(currentValue.chainId)) {
-      previousValue = previousValue + Number(currentValue.pairCount)
-    }
-    return previousValue
-  }, 0)
+  try {
+    const { factories } = await sdk.Factories({
+      chainIds: SUPPORTED_CHAIN_IDS,
+    })
+    const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
+    return factories.reduce((previousValue, currentValue) => {
+      if (chainIds.includes(currentValue.chainId)) {
+        previousValue = previousValue + Number(currentValue.pairCount)
+      }
+      return previousValue
+    }, 0)
+  } catch (error: any) {
+    throw new Error(error)
+  }
 }
 
 export const getBundles = async () => {
-  const { crossChainBundles: bundles } = await sdk.CrossChainBundles({
-    chainIds: SUPPORTED_CHAIN_IDS,
-  })
-  return bundles.reduce((acc, cur) => {
-    acc[cur.chainId] = cur
-    return acc
-  }, {})
+  try {
+    const { bundles } = await sdk.Bundles({
+      chainIds: SUPPORTED_CHAIN_IDS,
+    })
+    return bundles.reduce<Record<number, Pick<Bundle, 'id' | 'chainId' | 'nativePrice'>>>((acc, cur) => {
+      acc[cur.chainId] = cur
+      return acc
+    }, {})
+  } catch (error: any) {
+    throw new Error(error)
+  }
 }
 
-export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination'> & {
+export type GetPoolsQuery = Omit<QuerypairsWithFarmsArgs, 'where' | 'pagination'> & {
   networks: string
   where?: string
   pagination: string
@@ -43,6 +50,7 @@ export type GetPoolsQuery = Omit<QuerycrossChainPairsArgs, 'where' | 'pagination
 
 export const getPools = async (query?: GetPoolsQuery) => {
   try {
+    console.log('get pools')
     const date = startOfSecond(startOfMinute(startOfHour(subDays(Date.now(), 1))))
     const start = getUnixTime(date)
 
@@ -61,7 +69,8 @@ export const getPools = async (query?: GetPoolsQuery) => {
     const orderDirection = query?.orderDirection || 'desc'
     const chainIds = query?.networks ? JSON.parse(query.networks) : SUPPORTED_CHAIN_IDS
     const farmsOnly = query?.farmsOnly === 'true'
-    const { crossChainPairs } = await sdk.CrossChainPairs({
+
+    console.log('before pairs', {
       first,
       skip,
       pagination,
@@ -71,18 +80,28 @@ export const getPools = async (query?: GetPoolsQuery) => {
       chainIds,
       farmsOnly,
     })
-    return crossChainPairs
-  } catch (error) {
-    console.log(error)
+    const { pairs } = await sdk.PairsWithFarms({
+      first,
+      skip,
+      pagination,
+      where,
+      orderBy,
+      orderDirection,
+      chainIds,
+      farmsOnly,
+    })
+    console.log('after pairs', pairs)
+    return pairs
+  } catch (error: any) {
+    console.log('here', error)
     throw new Error(error)
   }
 }
 
 export const getPool = async (id: string) => {
-  const { crossChainPair: pair } = await sdk.CrossChainPair({
-    id: id.includes(':') ? id.split(':')[1] : id,
-    chainId: chainShortNameToChainId[id.split(':')[0]],
-    now: Math.round(new Date().getTime() / 1000),
+  if (!id.includes(':')) throw Error('Invalid pair id')
+  const { pair } = await sdk.PairById({
+    id,
   })
   return pair
 }
@@ -98,8 +117,12 @@ export const getOneYearBlock = async () => {
 }
 
 export const getSushiBar = async () => {
-  const { xsushi } = await sdk.Bar()
-  return xsushi
+  try {
+    const { xsushi } = await sdk.Bar()
+    return xsushi
+  } catch (error: any) {
+    throw new Error(error)
+  }
 }
 
 export type GetUserQuery = {

@@ -18,8 +18,16 @@ function getRandom(rnd: () => number, min: number, max: number) {
 }
 
 const gasPrice = 200
-const token0 = { name: 'Token0', address: 'Token0Address', symbol: 'Token0Symbol' }
-const token1 = { name: 'Token1', address: 'Token1Address', symbol: 'Token0Symbol' }
+const token0 = {
+  name: 'Token0',
+  address: 'Token0Address',
+  symbol: 'Token0Symbol',
+}
+const token1 = {
+  name: 'Token1',
+  address: 'Token1Address',
+  symbol: 'Token0Symbol',
+}
 function getPool(reserve: number, price: number, fee: number) {
   return new ConstantProductRPool(
     'poolAddress',

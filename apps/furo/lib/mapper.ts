@@ -2,7 +2,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
 import { Native, Token } from '@sushiswap/currency'
 
-import { Token as TokenDTO } from '.graphclient'
+import { Token as TokenDTO } from '../.graphclient'
 
 export function toToken(token: TokenDTO, chainId: ChainId): Token {
   if (token.id === AddressZero) {

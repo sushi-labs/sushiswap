@@ -1,17 +1,10 @@
-import transpileModules from 'next-transpile-modules'
-
-const withTranspileModules = transpileModules(['@sushiswap/chain', '@sushiswap/wagmi', '@sushiswap/ui'])
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...defaultNextConfig,
   basePath: '/partner',
-  reactStrictMode: true,
-  swcMinify: false,
-  productionBrowserSourceMaps: true,
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
+  transpilePackages: ['@sushiswap/wagmi', '@sushiswap/ui'],
   async redirects() {
     return [
       {
@@ -29,7 +22,10 @@ const nextConfig = {
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
           { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+          },
           {
             key: 'Access-Control-Allow-Headers',
             value:
@@ -41,4 +37,4 @@ const nextConfig = {
   },
 }
 
-export default withTranspileModules(nextConfig)
+export default nextConfig

@@ -4,15 +4,15 @@ import { shortenAddress } from '@sushiswap/format'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, Typography } from '@sushiswap/ui'
 import { Account, Wallet } from '@sushiswap/wagmi'
-import { BackgroundVector, Layout } from 'components'
-import { SUPPORTED_CHAINS } from 'config'
-import { FuroStatus, FuroType, Stream } from 'lib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 
+import { BackgroundVector, Layout } from '../components'
 import { BalanceChart } from '../components/stream'
+import { SUPPORTED_CHAINS } from '../config'
+import { FuroStatus, FuroType, Stream } from '../lib'
 import { ChartHover } from '../types'
 
 const now = new Date().getTime()
@@ -124,7 +124,7 @@ export default function Index() {
             ) : (
               <>
                 <div>
-                  <Link passHref={true} href="/stream/create">
+                  <Link passHref={true} href="/stream/create" legacyBehavior>
                     <Button
                       color="blue"
                       variant="filled"
@@ -136,7 +136,7 @@ export default function Index() {
                   </Link>
                 </div>
                 <div className="z-10 flex items-center bg-slate-800 rounded-2xl">
-                  <Link passHref={true} href="/dashboard">
+                  <Link passHref={true} href="/dashboard" legacyBehavior>
                     <Button
                       fullWidth
                       color="gray"

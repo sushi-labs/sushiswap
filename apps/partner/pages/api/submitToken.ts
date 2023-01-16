@@ -1,11 +1,12 @@
 import { ChainId, ChainKey } from '@sushiswap/chain'
 import { formatUSD } from '@sushiswap/format'
-import { CHAIN_NAME } from '@sushiswap/graph-config'
+import { CHAIN_NAME, SushiSwapChainId, TridentChainId } from '@sushiswap/graph-config'
 import Cors from 'cors'
 import { ethers } from 'ethers'
 import stringify from 'fast-json-stable-stringify'
 import { getOctokit, getTokenKPI, Token } from 'lib'
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 interface Body {
   tokenAddress: string
   tokenData: Token
@@ -32,13 +33,33 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
   })
 }
 
+// TODO: Zod validation
+// import { z } from "zod";
+// const schema = z.object({
+//     tokenAddress: ,
+//     tokenData: ,
+//     tokenIcon: ,
+//     chainId: ,
+//     listType: ,
+// })
+
 // TODO: Clean up by extracting octokit calls
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, cors)
 
+  if (!process.env.LIST_PR_WEBHOOK_URL) throw new Error('LIST_PR_WEBHOOK_URL undefined')
+  if (!process.env.OCTOKIT_KEY) throw new Error('OCTOKIT_KEY undefined')
+
   const { tokenAddress, tokenData, tokenIcon, chainId, listType } = req.body as Body
 
-  if (!tokenData?.decimals || !tokenData.name || !tokenData.symbol || !tokenIcon || !listType || !chainId) {
+  if (
+    tokenData?.decimals === undefined ||
+    !tokenData.name ||
+    !tokenData.symbol ||
+    !tokenIcon ||
+    !listType ||
+    !chainId
+  ) {
     res.status(500).json({ error: 'Invalid data submitted.' })
     return
   }
@@ -66,21 +87,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const branches: string[] = []
 
     for (let i = 1; ; i++) {
-      const { data } = await octokit.request('GET /repos/{owner}/{repo}/branches', {
+      const { data }: { data: { name: string }[] } = await octokit.request('GET /repos/{owner}/{repo}/branches', {
         owner,
         repo: 'list',
         per_page: 100,
         page: i,
       })
 
-      const newBranches = data.reduce((acc, e) => [...acc, e.name], [] as string[])
+      const newBranches = data.reduce((acc: string[], e: { name: string }) => [...acc, e.name], [] as string[])
 
       branches.push(...newBranches)
 
       if (newBranches.length < 100) break
     }
 
-    const createBranchName = (name: string, depth = 0) => {
+    const createBranchName = (name: string, depth = 0): string => {
       if (!branches.includes(name)) return name
       else if (!branches.includes(`${name}-${depth}`)) return `${name}-${depth}`
       else return createBranchName(name, ++depth)
@@ -97,7 +118,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sha: latestIconsSha,
   })
 
-  const imagePath = `logos/token-logos/network/${ChainKey[ChainId[chainId]].toLowerCase()}/${checksummedAddress}.jpg`
+  const imagePath = `logos/token-logos/network/${ChainKey[
+    ChainId[chainId] as keyof typeof ChainKey
+  ].toLowerCase()}/${checksummedAddress}.jpg`
 
   try {
     // Figure out if image already exists, overwrite if it does
@@ -131,7 +154,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[ChainId[chainId]].toLowerCase()}.json`
+  const listPath = `lists/token-lists/${listType}/tokens/${ChainKey[
+    ChainId[chainId] as keyof typeof ChainKey
+  ].toLowerCase()}.json`
 
   // Get current token list to append to
   let currentListData: { sha: string; content: any } | undefined
@@ -147,7 +172,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     //
   }
 
-  let currentList = currentListData ? JSON.parse(Buffer.from(currentListData?.content, 'base64').toString('ascii')) : []
+  let currentList: any[] = currentListData
+    ? JSON.parse(Buffer.from(currentListData?.content, 'base64').toString('ascii'))
+    : []
 
   // Remove from current list if exists to overwrite later
   currentList = currentList.filter((entry) => entry.address !== checksummedAddress)
@@ -176,7 +203,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sha: currentListData?.sha,
   })
 
-  const exchangeData = await getTokenKPI(tokenAddress, chainId)
+  const exchangeData = await getTokenKPI(tokenAddress, chainId as SushiSwapChainId | TridentChainId)
 
   // Open List PR
   const {
@@ -192,8 +219,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       Symbol: ${tokenData.symbol}
       Decimals: ${tokenData.decimals}
       List: ${listType}
-      Volume: ${formatUSD(exchangeData?.volumeUSD)}
-      Liquidity: ${formatUSD(exchangeData?.liquidityUSD)}
+      Volume: ${formatUSD(exchangeData?.volumeUSD ?? 0)}
+      Liquidity: ${formatUSD(exchangeData?.liquidityUSD ?? 0)}
       CoinGecko: ${await getCoinGecko(chainId, checksummedAddress)}
       Image: https://github.com/${owner}/list/tree/${branch}/${imagePath}
       ![${displayName}](https://raw.githubusercontent.com/${owner}/list/${branch}/${imagePath})

@@ -5,7 +5,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Type } from '@sushiswap/currency'
 import { useIsMounted } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui'
-import { Widget } from '@sushiswap/ui/widget'
+import { Widget } from '@sushiswap/ui'
 import { Web3Input } from '@sushiswap/wagmi'
 import { FC, ReactNode } from 'react'
 

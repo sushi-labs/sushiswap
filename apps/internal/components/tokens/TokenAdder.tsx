@@ -3,7 +3,7 @@ import { Token as TokenEntity } from '@sushiswap/currency'
 import { CheckIcon, Currency, Loader, Menu, Typography } from '@sushiswap/ui'
 import stringify from 'fast-json-stable-stringify'
 import { Token, TokenLogo } from 'lib'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
@@ -36,6 +36,7 @@ export const TokenAdder: FC<TokenAdder> = ({ token, hasIcon }) => {
       event.stopPropagation()
       setAddState('submitting')
       try {
+        if (!selectedLogoURI) throw new Error('No logo URI')
         const logo = await fetch(selectedLogoURI)
           .then((response) => response.blob())
           .then((blob) => {

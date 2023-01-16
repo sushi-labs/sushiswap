@@ -1,7 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-#pnpm sort
-#pnpm format
-#pnpm lint
-#pnpm test
+# Maybe ensure lock file?
+
+pnpm run check
+
+# Lint and commit?
+
+# npm test

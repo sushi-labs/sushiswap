@@ -1,4 +1,6 @@
 import { ChainId } from '@sushiswap/chain'
+import { Typography } from '@sushiswap/ui'
+import { Layout } from 'components'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import { getBuiltGraphSDK } from '.graphclient'
@@ -32,12 +34,12 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 
 export default function IndexPage({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <div className="grid grid-cols-6 gap-4 p-8">
-      {data.map((kpi) => (
-        <pre key={kpi.chainId} className="p-4 bg-slate-700 rounded-3xl">
-          {JSON.stringify(kpi, null, 2)}
-        </pre>
-      ))}
-    </div>
+    <Layout>
+      <div className="max-w-md space-y-4">
+        <Typography variant="hero" weight={600} className="text-slate-50">
+          Dashboard
+        </Typography>
+      </div>
+    </Layout>
   )
 }

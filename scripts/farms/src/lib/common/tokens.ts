@@ -1,9 +1,16 @@
-import { ChainId } from '@sushiswap/chain'
-import { ERC20 } from '@sushiswap/core'
-import { SUBGRAPH_HOST, SUSHISWAP_SUBGRAPH_NAME, TRIDENT_SUBGRAPH_NAME } from '@sushiswap/graph-config'
-import { erc20ABI, readContracts, ReadContractsConfig } from '@wagmi/core'
+import type { ChainId } from '@sushiswap/chain'
+import {
+  SUBGRAPH_HOST,
+  SUSHISWAP_SUBGRAPH_NAME,
+  SushiSwapChainId,
+  TRIDENT_SUBGRAPH_NAME,
+  TridentChainId,
+} from '@sushiswap/graph-config'
+import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
+import { erc20ABI, readContracts } from '@wagmi/core'
+import type { BigNumber } from 'ethers'
 
-import { divBigNumberToNumber } from './utils'
+import { divBigNumberToNumber } from './utils.js'
 
 interface Token {
   id: string
@@ -13,14 +20,19 @@ interface Token {
   derivedUSD: number
 }
 
-const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token[]> => {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient')
+const getExchangeTokens = async (ids: string[], chainId: SushiSwapChainId): Promise<Token[]> => {
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = SUSHISWAP_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({
+    host: SUBGRAPH_HOST[chainId],
+    name: subgraphName,
+  })
 
   // waiting for new subgraph to sync
-  const { tokens, bundle } = await sdk.Tokens({ where: { id_in: ids.map((id) => id.toLowerCase()) } })
+  const { tokens, bundle } = await sdk.Tokens({
+    where: { id_in: ids.map((id) => id.toLowerCase()) },
+  })
 
   return tokens.map((token) => ({
     id: token.id,
@@ -31,11 +43,14 @@ const getExchangeTokens = async (ids: string[], chainId: ChainId): Promise<Token
   }))
 }
 
-const getTridentTokens = async (ids: string[], chainId: ChainId): Promise<Token[]> => {
-  const { getBuiltGraphSDK } = await import('../../../.graphclient')
+const getTridentTokens = async (ids: string[], chainId: TridentChainId): Promise<Token[]> => {
+  const { getBuiltGraphSDK } = await import('../../../.graphclient/index.js')
   const subgraphName = TRIDENT_SUBGRAPH_NAME[chainId]
   if (!subgraphName) return []
-  const sdk = getBuiltGraphSDK({ host: SUBGRAPH_HOST[chainId], name: subgraphName })
+  const sdk = getBuiltGraphSDK({
+    host: SUBGRAPH_HOST[chainId],
+    name: subgraphName,
+  })
 
   const { tokens, bundle } = await sdk.Tokens({
     where: { id_in: ids.map((id) => id.toLowerCase()) },
@@ -50,10 +65,10 @@ const getTridentTokens = async (ids: string[], chainId: ChainId): Promise<Token[
   }))
 }
 
-export const getTokens = async (ids: string[], chainId: ChainId) => {
+export const getTokens = async (ids: string[], chainId: SushiSwapChainId | TridentChainId) => {
   const [exchangeTokens, tridentTokens] = await Promise.all([
-    getExchangeTokens(ids, chainId),
-    getTridentTokens(ids, chainId),
+    isSushiSwapChain(chainId) ? getExchangeTokens(ids, chainId) : [],
+    isTridentChain(chainId) ? getTridentTokens(ids, chainId) : [],
   ])
 
   const betterTokens = ids
@@ -69,28 +84,37 @@ export const getTokens = async (ids: string[], chainId: ChainId) => {
   return betterTokens
 }
 
-export async function getTokenBalancesOf(tokens: string[], address: string, chainId: ChainId) {
-  const balanceOfCalls: ReadContractsConfig['contracts'] = tokens.map((token) => ({
-    addressOrName: token,
-    args: [address],
-    chainId: chainId,
-    contractInterface: erc20ABI,
-    functionName: 'balanceOf',
-  }))
+export async function getTokenBalancesOf(_tokens: string[], address: string, chainId: ChainId) {
+  // not fully erc20, farm not active
+  const tokens = _tokens.filter(token => token !== "0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9")
 
-  const decimalCalls: ReadContractsConfig['contracts'] = tokens.map((token) => ({
-    addressOrName: token,
-    chainId: chainId,
-    contractInterface: erc20ABI,
-    functionName: 'decimals',
-  }))
+  const balanceOfCalls = tokens.map(
+    (token) =>
+      ({
+        address: token,
+        args: [address as `0x${string}`],
+        chainId: chainId,
+        abi: erc20ABI,
+        functionName: 'balanceOf',
+      } as const)
+  )
+
+  const decimalCalls = tokens.map(
+    (token) =>
+      ({
+        address: token,
+        chainId: chainId,
+        abi: erc20ABI,
+        functionName: 'decimals',
+      } as const)
+  )
 
   const result = await readContracts({
     allowFailure: true,
     contracts: [...balanceOfCalls, ...decimalCalls],
   })
 
-  const balancesOf = result.splice(0, balanceOfCalls.length) as unknown as Awaited<ReturnType<ERC20['balanceOf']>>[]
+  const balancesOf = result.splice(0, balanceOfCalls.length) as unknown as BigNumber[]
   const decimals = result.splice(0, decimalCalls.length) as unknown as number[]
 
   return tokens.map((token, i) => ({

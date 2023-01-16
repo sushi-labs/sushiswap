@@ -33,7 +33,10 @@ export async function bar(args: Arguments) {
     },
   ] = await Promise.all([
     sdk.CustomBlocks({ timestamp: oneMonthAgo, chainIds: [ChainId.ETHEREUM] }),
-    sdk.CustomBlocks({ timestamp: threeMonthAgo, chainIds: [ChainId.ETHEREUM] }),
+    sdk.CustomBlocks({
+      timestamp: threeMonthAgo,
+      chainIds: [ChainId.ETHEREUM],
+    }),
     sdk.CustomBlocks({ timestamp: sixMonthAgo, chainIds: [ChainId.ETHEREUM] }),
     sdk.CustomBlocks({ timestamp: oneYearAgo, chainIds: [ChainId.ETHEREUM] }),
   ])

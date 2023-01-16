@@ -3,6 +3,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Transition } from '@headlessui/react'
 import { Badge, BentoboxIcon, Button, classNames, IconButton, Tooltip, Typography } from '@sushiswap/ui'
 import { FC, memo, useEffect } from 'react'
+import { Address, useNetwork } from 'wagmi'
 
 import { ApprovalState, useBentoBoxApproveCallback } from '../../hooks'
 import { DefaultButton } from './DefaultButton'
@@ -15,11 +16,12 @@ interface RenderPropPayload extends ApprovalButtonRenderProp {
 export interface BentoApproveButton extends ApproveButton<RenderPropPayload> {
   onSignature(sig?: Signature): void
   watch?: boolean
-  address?: string
+  address?: Address
 }
 
 export const BentoApproveButton: FC<BentoApproveButton> = memo(
   ({
+    id,
     watch = true,
     address: masterContract,
     render,
@@ -34,16 +36,22 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
     enabled = true,
     ...props
   }) => {
+    const { chain } = useNetwork()
     const [approvalState, signature, onApprove] = useBentoBoxApproveCallback({
+      chainId: chain?.id,
       watch,
       masterContract,
       onSignature,
       onSuccess,
+      enabled,
     })
 
     useEffect(() => {
       if (!enabled && dispatch && index !== undefined) {
-        dispatch({ type: 'update', payload: { state: [ApprovalState.APPROVED, undefined, true], index } })
+        dispatch({
+          type: 'update',
+          payload: { state: [ApprovalState.APPROVED, undefined, true], index },
+        })
       }
     }, [dispatch, enabled, index])
 
@@ -53,7 +61,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
         if (!dispatch || index === undefined) return
         dispatch({ type: 'remove', payload: { index } })
       }
-    }, [])
+    }, [dispatch, index])
 
     useEffect(() => {
       if (!dispatch || index === undefined || !enabled) return
@@ -64,6 +72,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           state: [
             approvalState,
             <Button
+              testdata-id={`${id}-button`}
               {...props}
               type="button"
               key={1}
@@ -78,7 +87,7 @@ export const BentoApproveButton: FC<BentoApproveButton> = memo(
           index,
         },
       })
-    }, [approvalState, disabled, dispatch, enabled, index, onApprove, props, signature])
+    }, [id, approvalState, disabled, dispatch, enabled, index, onApprove, props, signature])
 
     if (render) return render({ approvalState, signature, onApprove })
     if (hideIcon) return <></>

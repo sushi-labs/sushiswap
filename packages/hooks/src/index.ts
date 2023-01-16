@@ -1,3 +1,4 @@
+export { useBreakpoint } from './useBreakpoint'
 export { useCopyClipboard } from './useCopyClipboard'
 export { useDebounce } from './useDebounce'
 export * from './useEffectDebugger'

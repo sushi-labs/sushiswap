@@ -8,7 +8,7 @@ import { useFormContext } from 'react-hook-form'
 export const UploadImageField: FC = () => {
   const { register, setValue } = useFormContext<FormType>()
 
-  const onDrop = useCallback<DropzoneOptions['onDrop']>(
+  const onDrop = useCallback<NonNullable<DropzoneOptions['onDrop']>>(
     (acceptedFiles) => {
       setValue('logoFile', acceptedFiles[0])
     },

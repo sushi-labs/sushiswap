@@ -1,8 +1,9 @@
 packages:
-  - "apis/*"
-  - "apps/*"
-  - "examples/*"
-  - "packages/**"
-  - "protocols/**"
-  - "subgraphs/*"
-  - "scripts/*"
+  - 'apis/*'
+  - 'apps/*'
+  - 'config/*'
+  - 'examples/*'
+  - 'packages/**'
+  - 'protocols/*'
+  - 'subgraphs/*'
+  - 'scripts/*'

@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { chainsL2 } from '@sushiswap/chain'
 import { useCurrentBlockTimestamp } from '@sushiswap/wagmi'
 import { useMemo } from 'react'
@@ -5,7 +6,7 @@ import { useMemo } from 'react'
 import { L2_DEADLINE_FROM_NOW } from '../constants'
 import { useSettings } from '../state/storage'
 
-export const useTransactionDeadline = (chainId: number) => {
+export const useTransactionDeadline = (chainId: number): BigNumber | undefined => {
   const { data: blockTimestamp } = useCurrentBlockTimestamp(chainId)
   const [{ transactionDeadline: ttl }] = useSettings()
   return useMemo(() => {

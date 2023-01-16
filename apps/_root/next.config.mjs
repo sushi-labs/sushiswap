@@ -1,13 +1,4 @@
-import transpileModules from 'next-transpile-modules'
-import { withAxiom } from 'next-axiom'
-
-const withTranspileModules = transpileModules([
-  '@sushiswap/redux-token-lists',
-  '@sushiswap/redux-localstorage',
-  '@sushiswap/chain',
-  '@sushiswap/wagmi',
-  '@sushiswap/ui',
-])
+import defaultNextConfig from '@sushiswap/nextjs-config'
 
 const {
   ROOT_URL,
@@ -21,18 +12,13 @@ const {
   PARTNER_URL,
   SWAP_URL,
   XSWAP_URL,
+  ACADEMY_URL,
 } = process.env
 
-// @ts-check
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: false,
-  images: {
-    loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/sushi-cdn/image/fetch/',
-  },
-  productionBrowserSourceMaps: true,
+  ...defaultNextConfig,
+  transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
   async redirects() {
     return [
       {
@@ -67,6 +53,14 @@ const nextConfig = {
       {
         source: '/:path*',
         destination: `/:path*`,
+      },
+      {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
       },
       {
         source: '/analytics',
@@ -105,6 +99,14 @@ const nextConfig = {
         destination: `${SWAP_URL}/swap`,
       },
       {
+        source: '/academy',
+        destination: `${ACADEMY_URL}/academy`,
+      },
+      {
+        source: '/academy/:path*',
+        destination: `${ACADEMY_URL}/academy/:path*`,
+      },
+      {
         source: '/swap/:path*',
         destination: `${SWAP_URL}/swap/:path*`,
       },
@@ -115,14 +117,6 @@ const nextConfig = {
       {
         source: '/xswap/:path*',
         destination: `${XSWAP_URL}/xswap/:path*`,
-      },
-      {
-        source: '/invest',
-        destination: `${EARN_URL}/earn`,
-      },
-      {
-        source: '/invest/:path*',
-        destination: `${EARN_URL}/earn/:path*`,
       },
       {
         source: '/earn',
@@ -136,4 +130,4 @@ const nextConfig = {
   },
 }
 
-export default withAxiom(withTranspileModules(nextConfig))
+export default nextConfig

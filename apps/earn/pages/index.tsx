@@ -1,30 +1,19 @@
 import { PlusIcon } from '@heroicons/react/solid'
-import { Button, Link, OnsenIcon } from '@sushiswap/ui'
-import { SUPPORTED_CHAIN_IDS } from 'config'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { Button, Link, OnsenIcon, Typography } from '@sushiswap/ui'
+import { SUPPORTED_CHAIN_IDS } from '../config'
+import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { FC, useMemo } from 'react'
 import { SWRConfig, unstable_serialize } from 'swr'
 
 import { Layout, PoolsFiltersProvider, PoolsSection, SushiBarSection } from '../components'
-import { getBundles, getPoolCount, getPools, GetPoolsQuery, getSushiBar } from '../lib/api'
+import { getBundles, getPoolCount, getPools, getSushiBar } from '../lib/api'
 import { AVAILABLE_POOL_TYPE_MAP } from '../lib/constants'
 
-export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=3600')
-
-  const [pairs, bundles, poolCount, bar] = await Promise.all([
-    getPools(query as unknown as GetPoolsQuery),
-    getBundles(),
-    getPoolCount(),
-    getSushiBar(),
-  ])
-
-  const selectedNetworks = query && typeof query.networks === 'string' ? query.networks.split(',') : SUPPORTED_CHAIN_IDS
-  const selectedPoolTypes = Object.keys(AVAILABLE_POOL_TYPE_MAP)
-
+export const getStaticProps: GetStaticProps = async (context) => {
+  const [pairs, bundles, poolCount, bar] = await Promise.all([getPools(), getBundles(), getPoolCount(), getSushiBar()])
   return {
     props: {
-      selectedNetworks,
+      selectedNetworks: SUPPORTED_CHAIN_IDS,
       fallback: {
         [unstable_serialize({
           url: '/earn/api/pools',
@@ -35,8 +24,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
                 desc: true,
               },
             ],
-            selectedNetworks,
-            selectedPoolTypes,
+            selectedNetworks: SUPPORTED_CHAIN_IDS,
+            selectedPoolTypes: Object.keys(AVAILABLE_POOL_TYPE_MAP),
             farmsOnly: false,
             pagination: {
               pageIndex: 0,
@@ -50,12 +39,16 @@ export const getServerSideProps: GetServerSideProps = async ({ query, res }) => 
         [`/earn/api/pools/count`]: poolCount,
         [`/earn/api/bar`]: bar,
       },
+      revalidate: 60,
     },
   }
 }
 
-const Pools: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fallback, selectedNetworks }) => {
-  const parsedSelectedNetworks = useMemo(() => selectedNetworks.map(Number), [selectedNetworks])
+const Pools: FC<InferGetStaticPropsType<typeof getStaticProps>> = ({ fallback, selectedNetworks }) => {
+  const parsedSelectedNetworks = useMemo(
+    () => selectedNetworks.map(Number) as typeof SUPPORTED_CHAIN_IDS,
+    [selectedNetworks]
+  )
   return (
     <SWRConfig value={{ fallback }}>
       <_Pools selectedNetworks={parsedSelectedNetworks} />
@@ -63,13 +56,15 @@ const Pools: FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ fal
   )
 }
 
-const _Pools = ({ selectedNetworks }) => {
+const _Pools = ({ selectedNetworks }: { selectedNetworks: typeof SUPPORTED_CHAIN_IDS }) => {
   return (
     <Layout>
       <div className="flex flex-col gap-10 md:gap-16">
         <section className="flex flex-col gap-6 lg:flex-row">
           <div className="max-w-md space-y-4">
-            <h2 className="text-2xl font-semibold text-slate-50">Earn</h2>
+            <Typography variant="hero" weight={600} className="text-slate-50">
+              Earn
+            </Typography>
             <p className="text-slate-300">Earn fees by providing liquidity and staking SUSHI into xSUSHI.</p>
           </div>
           <div className="flex justify-end flex-grow not-prose">

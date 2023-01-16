@@ -4,9 +4,9 @@ import { curveStepAfter } from '@visx/curve'
 // @ts-ignore
 import { ParentSize } from '@visx/responsive'
 import { AnimatedAxis, AnimatedGrid, AnimatedLineSeries, buildChartTheme, Tooltip, XYChart } from '@visx/xychart'
-import { Vesting } from 'lib'
 import React, { FC, useEffect, useState } from 'react'
 
+import { Vesting } from '../../lib'
 import { Schedule } from './createScheduleRepresentation'
 
 interface Props {
@@ -69,7 +69,10 @@ export const VestingChart: FC<Props> = ({ vesting, schedule }) => {
                 type: 'time',
                 domain: [vesting?.startTime, vesting?.endTime],
               }}
-              yScale={{ type: 'linear', domain: [0, Number(vesting?.remainingAmount.toExact())] }}
+              yScale={{
+                type: 'linear',
+                domain: [0, Number(vesting?.remainingAmount.toExact())],
+              }}
               theme={customTheme}
             >
               <AnimatedAxis
