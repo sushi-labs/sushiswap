@@ -17,13 +17,12 @@ import { Token } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui13'
 import { Badge } from '@sushiswap/ui13/components/Badge'
 import { Currency as UICurrency } from '@sushiswap/ui13/components/currency'
-import { Dots } from '@sushiswap/ui13/components/Dots'
 import { ExternalLink } from '@sushiswap/ui13/components/ExternalLink'
 import { IconButton } from '@sushiswap/ui13/components/IconButton'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import { Loader } from '@sushiswap/ui13/components/Loader'
 import { TimeAgo } from '@sushiswap/ui13/components/TimeAgo'
-import { NotificationData } from '@sushiswap/ui13/components/toast'
+import { NotificationStoredData } from '@sushiswap/ui13/components/toast'
 import React, { FC } from 'react'
 import { useWaitForTransaction } from 'wagmi'
 
@@ -36,7 +35,7 @@ export const STARGATE_TOKEN = new Token({
 })
 
 export const Notification: FC<{
-  data: NotificationData
+  data: NotificationStoredData
   showExtra?: boolean
   hideStatus?: boolean
 }> = ({ data: notification, showExtra = false, hideStatus = false }) => {
@@ -62,7 +61,7 @@ export const Notification: FC<{
     )
 
   return (
-    <div className="relative hover:opacity-80">
+    <div className="relative hover:bg-black/[0.02] active:bg-black/[0.03] hover:dark:bg-white/[0.02] active:dark:bg-white/[0.03]">
       {showExtra && (
         <Disclosure.Button className="absolute right-3 top-0 bottom-0 z-[100]">
           {({ open }) => (
@@ -89,7 +88,7 @@ export const Notification: FC<{
           )}
         >
           <Badge badgeContent={<NetworkIcon chainId={notification.chainId} width={18} height={18} />}>
-            <div className="p-2 bg-slate-600 rounded-full h-[36px] w-[36px] flex justify-center items-center">
+            <div className="p-2 bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-slate-200 rounded-full h-[36px] w-[36px] flex justify-center items-center">
               {!hideStatus &&
                 (status === 'loading' ? (
                   <Loader size={18} />
@@ -98,80 +97,50 @@ export const Notification: FC<{
                 ) : (
                   <></>
                 ))}
-              {(status === 'success' || notification.summary.info) && notification.type === 'send' && (
-                <ArrowRightIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'stargate' && (
+              {status === 'success' && notification.type === 'send' && <ArrowRightIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'stargate' && (
                 <UICurrency.Icon currency={STARGATE_TOKEN} width={20} height={20} />
               )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'swap' && (
-                <ArrowsUpDownIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'approval' && (
-                <LockOpenIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'mint' && (
-                <PlusIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'burn' && (
-                <FireIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'enterBar' && (
-                <ArrowDownTrayIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'transferStream' && (
+              {status === 'success' && notification.type === 'swap' && <ArrowsUpDownIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'approval' && <LockOpenIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'mint' && <PlusIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'burn' && <FireIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'enterBar' && <ArrowDownTrayIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'transferStream' && (
                 <ArrowRightIcon width={20} height={20} />
               )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'transferVesting' && (
+              {status === 'success' && notification.type === 'transferVesting' && (
                 <ArrowRightIcon width={20} height={20} />
               )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'createMultipleStream' && (
+              {status === 'success' && notification.type === 'createMultipleStream' && (
                 <CheckIcon width={20} height={20} />
               )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'createMultipleVesting' && (
+              {status === 'success' && notification.type === 'createMultipleVesting' && (
                 <CheckIcon width={20} height={20} />
               )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'cancelStream' && (
-                <CheckIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'createVesting' && (
-                <CheckIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'createStream' && (
-                <CheckIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'updateStream' && (
+              {status === 'success' && notification.type === 'cancelStream' && <CheckIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'createVesting' && <CheckIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'createStream' && <CheckIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'updateStream' && (
                 <ArrowDownTrayIcon width={20} height={20} />
               )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'withdrawStream' && (
+              {status === 'success' && notification.type === 'withdrawStream' && (
                 <ArrowUpTrayIcon width={20} height={20} />
               )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'withdrawVesting' && (
+              {status === 'success' && notification.type === 'withdrawVesting' && (
                 <ArrowUpTrayIcon width={20} height={20} />
               )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'leaveBar' && (
-                <ArrowUpTrayIcon width={20} height={20} />
-              )}
-              {(status === 'success' || notification.summary.info) && notification.type === 'claimRewards' && (
-                <BanknotesIcon width={20} height={20} />
-              )}
+              {status === 'success' && notification.type === 'leaveBar' && <ArrowUpTrayIcon width={20} height={20} />}
+              {status === 'success' && notification.type === 'claimRewards' && <BanknotesIcon width={20} height={20} />}
             </div>
           </Badge>
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium items-center whitespace-normal text-slate-50">
-                {notification.summary.info ? (
-                  notification.summary.info
-                ) : ['loading'].includes(status) ? (
-                  <Dots>{notification.summary.pending}</Dots>
-                ) : status === 'error' ? (
-                  notification.summary.failed
-                ) : (
-                  notification.summary.completed
-                )}
+              <span className="text-sm font-medium items-center whitespace-normal text-gray-900 dark:text-slate-50">
+                {notification.summary}
               </span>
             </div>
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-gray-600 dark:text-slate-500">
               <TimeAgo date={new Date(notification.timestamp)} />
             </span>
           </div>

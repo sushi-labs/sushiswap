@@ -986,12 +986,18 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/react-query': workspace:*
       '@sushiswap/redux-localstorage': workspace:*
       '@sushiswap/redux-token-lists': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui': workspace:*
+      '@sushiswap/ui13': workspace:*
       '@sushiswap/wagmi': workspace:*
       '@sushiswap/wagmi-config': workspace:*
+      '@sushiswap/wagmi13': workspace:*
+      '@tanstack/react-query': 4.20.4
+      '@tanstack/react-query-devtools': 4.22.0
+      '@tanstack/react-query-persist-client': 4.20.4
       '@tanstack/react-table': 8.5.0
       '@types/lodash.clonedeep': ^4.5.7
       '@types/node': 17.0.30
@@ -1065,10 +1071,16 @@ importers:
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/log': link:../../packages/log
       '@sushiswap/math': link:../../packages/math
+      '@sushiswap/react-query': link:../../packages/react-query
       '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
       '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
       '@sushiswap/ui': link:../../packages/ui
+      '@sushiswap/ui13': link:../../packages/ui13
       '@sushiswap/wagmi': link:../../packages/wagmi
+      '@sushiswap/wagmi13': link:../../packages/wagmi13
+      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.22.0_fu3ixcwltlssi3ozitelgaebme
+      '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       '@tanstack/react-table': 8.5.0_biqbaboplfbrettd7655fr4n2y
       '@uniswap/redux-multicall': 1.1.8_h42dxqlbhai3nbvwo53ks2s3ie
       '@uniswap/token-lists': 1.0.0-beta.31
@@ -2566,6 +2578,7 @@ importers:
       '@types/react-dom': ^18.0.0
       eslint: 8.29.0
       idb-keyval: 6.2.0
+      nanoid: 4.0.0
       react: 18.2.0
       react-dom: 18.2.0
       tsup: 6.5.0
@@ -2583,6 +2596,7 @@ importers:
       '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme
       '@tanstack/react-query-persist-client': 4.20.4_l2azqzttlggxzjcfejyd3icfe4
       idb-keyval: 6.2.0
+      nanoid: 4.0.0
       zod: 3.20.2
     devDependencies:
       '@sushiswap/eslint-config': link:../../config/eslint

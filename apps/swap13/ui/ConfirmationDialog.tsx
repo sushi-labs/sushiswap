@@ -10,12 +10,15 @@ import { Loader } from '@sushiswap/ui13/components/Loader'
 import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
-import { useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
+import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import ROUTE_PROCESSOR_ABI from '../abis/route-processor.json'
 import { useTrade } from '../lib/useTrade'
 import { BigNumber } from 'ethers'
+import { SendTransactionResult } from 'wagmi/actions'
+import { useCreateNotification } from '@sushiswap/react-query'
+import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
 
 interface ConfirmationDialogProps {
   children({
@@ -38,9 +41,11 @@ enum ConfirmationDialogState {
 }
 
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
+  const { address } = useAccount()
   const { setReview } = useSwapActions()
-  const { token0, token1, review } = useSwapState()
+  const { token0, token1, review, network0 } = useSwapState()
   const { data: trade } = useTrade()
+  const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const [open, setOpen] = useState(false)
   const [dialogState, setDialogState] = useState<ConfirmationDialogState>(ConfirmationDialogState.Undefined)
@@ -55,14 +60,45 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
   })
 
+  const onSettled = useCallback(
+    (data: SendTransactionResult | undefined) => {
+      if (!trade || !network0 || !data) return
+
+      const ts = new Date().getTime()
+      const notificationData: NotificationData = {
+        type: 'swap',
+        chainId: network0,
+        txHash: data.hash,
+        promise: data.wait(),
+        summary: {
+          pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${
+            trade.amountIn?.currency.symbol
+          } for ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
+          completed: `Swap ${trade.amountIn?.toSignificant(6)} ${
+            trade.amountIn?.currency.symbol
+          } for ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
+          failed: `Something went wrong when trying to swap ${trade.amountIn?.currency.symbol} for ${trade.amountOut?.currency.symbol}`,
+        },
+        timestamp: ts,
+        groupTimestamp: ts,
+      }
+
+      storeNotification(createToast(notificationData))
+    },
+    [storeNotification, network0, trade]
+  )
+
   const { writeAsync, isLoading: isWritePending } = useContractWrite({
     ...config,
     onSuccess: (data) => {
+      setReview(false)
+
       data
         .wait()
         .then(() => setDialogState(ConfirmationDialogState.Success))
         .catch(() => setDialogState(ConfirmationDialogState.Failed))
     },
+    onSettled,
   })
 
   const onComplete = useCallback(() => {

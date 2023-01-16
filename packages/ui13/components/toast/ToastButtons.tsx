@@ -13,7 +13,7 @@ export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
         <a
           href={href}
           target="_blank"
-          className="text-xs font-semibold py-3 text-blue text-center hover:bg-slate-700/20 cursor-pointer border-t border-slate-200/5"
+          className="text-xs font-semibold py-3 text-blue text-center hover:dark:bg-slate-700/20 cursor-pointer border-t dark:border-slate-200/5"
           rel="noreferrer"
         >
           View Detail
@@ -21,7 +21,7 @@ export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
       )}
       <button
         onClick={onDismiss}
-        className="text-xs font-semibold py-3 text-blue text-center hover:bg-slate-700/20 cursor-pointer border-t border-slate-200/5"
+        className="text-xs font-semibold py-3 text-blue text-center hover:dark:bg-slate-700/20 cursor-pointer border-t dark:border-slate-200/5"
       >
         Dismiss
       </button>

@@ -41,12 +41,11 @@ const ITEMS = [
 ]
 
 export interface HeaderProps extends React.HTMLProps<HTMLElement> {
-  appType: AppType
   children?: ReactElement<NavLinkProps> | Array<ReactElement<NavLinkProps>>
   rightElement?: ReactNode
 }
 
-export const GlobalNav: FC<HeaderProps> = ({ appType, className, children, rightElement }) => {
+export const GlobalNav: FC<HeaderProps> = ({ className, children, rightElement }) => {
   const [open, setOpen] = useState(false)
   const scrollY = useScrollPosition()
 
