@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import './env'
 
 import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
@@ -127,7 +128,7 @@ const start = async () => {
       137
     )
     dataFetcher.startDataFetching()
-    await server.listen({ host: '0.0.0.0', port: process.env['PORT'] ? Number(process.env['PORT']) : 3000 })
+    await server.listen({ host: process.env['HOST'], port: process.env['PORT'] })
   } catch (err) {
     server.log.error(err)
     dataFetcher.stopDataFetching()
