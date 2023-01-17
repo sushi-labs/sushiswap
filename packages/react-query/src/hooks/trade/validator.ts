@@ -12,7 +12,7 @@ const tokenValidator = z.object({
 })
 
 export const tradeValidator = z.object({
-  // getCurrentRouteHumanString: z.string(),
+  getCurrentRouteHumanString: z.string(),
   // getCurrentRouteHumanArray: z.array(z.string()),
   getBestRoute: z.object({
     status: z.string(),

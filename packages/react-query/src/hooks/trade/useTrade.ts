@@ -54,6 +54,7 @@ export const useTrade = (variables: UseTradeParams) => {
           gasSpent: undefined,
           writeArgs: undefined,
           route: [],
+          currentRouteHumanString: '',
         }
       }
 
@@ -76,6 +77,7 @@ export const useTrade = (variables: UseTradeParams) => {
               .toSignificant(4)
           : undefined,
         route: [],
+        currentRouteHumanString: data?.getCurrentRouteHumanString,
         writeArgs: data?.getCurrentRouteRPParams
           ? [
               data.getCurrentRouteRPParams.tokenIn,

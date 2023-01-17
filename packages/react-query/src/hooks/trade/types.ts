@@ -23,6 +23,7 @@ export interface UseTradeReturn {
   gasSpent: string | undefined
   writeArgs: [string, { type: string; hex: string }, string, { type: string; hex: string }, string, string] | undefined
   route: string[]
+  currentRouteHumanString: string
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
