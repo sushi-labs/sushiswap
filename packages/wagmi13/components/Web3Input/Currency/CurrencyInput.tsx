@@ -5,7 +5,7 @@ import { classNames } from '@sushiswap/ui13'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui13/components/input'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
@@ -47,6 +47,9 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   fetching,
   currencyLoading,
 }) => {
+  const [init, setInit] = useState(false)
+  const [initLoading, setInitLoading] = useState(true)
+
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
   const focusInput = useCallback(() => {
@@ -80,6 +83,15 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency])
 
+  // Make sure all loaders resolve at the same time on initialization
+  useEffect(() => {
+    if (!init) {
+      if (!(loading || isBalanceLoading || isPriceLoading || currencyLoading)) {
+        setInitLoading(false)
+      }
+    }
+  }, [currencyLoading, init, isBalanceLoading, isPriceLoading, loading])
+
   const isLoading = loading || isBalanceLoading || isPriceLoading || currencyLoading
 
   return (
@@ -92,15 +104,15 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       )}
       onClick={focusInput}
     >
-      <div className="relative flex items-center gap-1">
-        {currencyLoading ? (
-          <div className="flex gap-4 items-center justify-center flex-grow h-[44px]">
-            <Skeleton.Box className="w-3/4 h-[32px] rounded-lg" />
-            <Skeleton.Box className="w-1/4 h-[32px] rounded-lg" />
+      <div className="relative flex items-center gap-4">
+        {initLoading ? (
+          <div className="flex gap-4 items-center justify-between flex-grow h-[44px]">
+            <Skeleton.Box className="w-full h-[32px] rounded-lg" />
+            <Skeleton.Box className="w-1/2 h-[32px] rounded-lg" />
           </div>
         ) : isLoading ? (
-          <div className="flex flex-col gap-1 justify-center flex-grow h-[44px]">
-            <Skeleton.Box className="w-2/4 h-[32px] rounded-lg" />
+          <div className="flex gap-1 items-center justify-between flex-grow h-[44px]">
+            <Skeleton.Box className="w-full h-[32px] rounded-lg" />
           </div>
         ) : (
           <Input.Numeric
@@ -115,7 +127,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             maxDecimals={currency?.decimals}
           />
         )}
-        {onSelect && !currencyLoading && (
+        {onSelect && !initLoading && (
           <TokenSelector id={`${id}-token-selector`} selected={currency} chainId={chainId} onSelect={onSelect}>
             {({ setOpen }) => (
               <button
@@ -150,13 +162,13 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           currency={currency}
           usdPctChange={usdPctChange}
           error={insufficientBalance ? 'Exceeds Balance' : undefined}
-          loading={isLoading}
+          loading={isLoading || initLoading}
           price={price}
         />
         <div className="h-6">
           <BalancePanel
             id={id}
-            loading={isLoading}
+            loading={isLoading || initLoading}
             chainId={chainId}
             account={address}
             onChange={onChange}

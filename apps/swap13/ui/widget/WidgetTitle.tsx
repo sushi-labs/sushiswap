@@ -21,8 +21,14 @@ export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)
   const { appType, network0, network1, token1, token0, tokensLoading } = useSwapState()
   const { setNetwork1, setNetwork0 } = useSwapActions()
-  const { data: prices0 } = usePrice({ chainId: network0, address: token0?.wrapped.address })
-  const { data: prices1 } = usePrice({ chainId: network1, address: token1?.wrapped.address })
+  const { data: prices0, isLoading: isPrice0Loading } = usePrice({
+    chainId: network0,
+    address: token0?.wrapped.address,
+  })
+  const { data: prices1, isLoading: isPrice1Loading } = usePrice({
+    chainId: network1,
+    address: token1?.wrapped.address,
+  })
   const { isSm } = useBreakpoint('sm')
 
   const [inputUSD, outputUSD, price] = useMemo(() => {
@@ -131,7 +137,7 @@ export const WidgetTitle = () => {
           </h1>
         </>
       )}
-      {tokensLoading ? (
+      {tokensLoading || isPrice0Loading || isPrice1Loading ? (
         <Skeleton.Text fontSize="text-sm" className="w-2/4" />
       ) : (
         <button
