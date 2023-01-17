@@ -1,7 +1,24 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
 import { ChainId, chainName } from '@sushiswap/chain'
-import { DAI, Native, SUSHI, Token, Type, USDC, USDT, WNATIVE } from '@sushiswap/currency'
+import {
+  DAI,
+  DAI_ADDRESS,
+  FRAX,
+  FRAX_ADDRESS,
+  FXS,
+  FXS_ADDRESS,
+  Native,
+  SUSHI,
+  SUSHI_ADDRESS,
+  Token,
+  Type,
+  USDC,
+  USDC_ADDRESS,
+  USDT,
+  USDT_ADDRESS,
+  WNATIVE,
+} from '@sushiswap/currency'
 import { BentoBox, DataFetcher, findSpecialRoute, PoolFilter, Router } from '@sushiswap/router'
 import { LiquidityProviders } from '@sushiswap/router/dist/liquidity-providers/LiquidityProviderMC'
 import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
@@ -195,6 +212,7 @@ describe('End-to-end Router test', async function () {
   let chainId: ChainId
   let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
   let testTokensSet: (Type | undefined)[]
+  let SUSHI_LOCAL: Token
 
   before(async () => {
     env = await getTestEnvironment()
@@ -206,6 +224,7 @@ describe('End-to-end Router test', async function () {
     type DAI_CHAINS = keyof typeof DAI_ADDRESS
     type FRAX_CHAINS = keyof typeof FRAX_ADDRESS
     type FXS_CHAINS = keyof typeof FXS_ADDRESS
+    SUSHI_LOCAL = SUSHI[chainId as SUSHI_CHAINS]
     testTokensSet = [
       Native.onChain(chainId),
       WNATIVE[chainId],
@@ -220,8 +239,8 @@ describe('End-to-end Router test', async function () {
 
   it('Native => SUSHI => Native', async function () {
     intermidiateResult[0] = getBigNumber(1000000 * 1e18)
-    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI[chainId], intermidiateResult)
-    intermidiateResult = await updMakeSwap(env, SUSHI[chainId], Native.onChain(chainId), intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+    intermidiateResult = await updMakeSwap(env, SUSHI_LOCAL, Native.onChain(chainId), intermidiateResult)
   })
 
   it('Native => WrappedNative => Native', async function () {
@@ -285,14 +304,8 @@ describe('End-to-end Router test', async function () {
   })
 
   it('Special Router', async function () {
-    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI[chainId])
-    const route = findSpecialRoute(
-      env.dataFetcher,
-      Native.onChain(chainId),
-      getBigNumber(1 * 1e18),
-      SUSHI[chainId],
-      30e9
-    )
+    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
+    const route = findSpecialRoute(env.dataFetcher, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI_LOCAL, 30e9)
     // if (route.priceImpact !== undefined && route.priceImpact < 0.005) {
     //   // All pools should be from preferrable list
     //   const pools = env.dataFetcher.getCurrentPoolCodeList(PreferrableLiquidityProviders).map((pc) => pc.pool.address)
