@@ -21,7 +21,8 @@ export function findSpecialRoute(
   gasPrice: number,
   maxPriceImpact = 1 // 1%
 ) {
-  const routePreferrable = Router.findBestRoute(
+  // Find preferrable route
+  const preferrableRoute = Router.findBestRoute(
     dataFetcher,
     fromToken,
     amountIn,
@@ -29,14 +30,14 @@ export function findSpecialRoute(
     gasPrice,
     PreferrableLiquidityProviders
   )
+  // If the route is successful and the price impact is less than maxPriceImpact, then return the route
   if (
-    routePreferrable.status === RouteStatus.Success &&
-    routePreferrable.priceImpact !== undefined &&
-    routePreferrable.priceImpact < maxPriceImpact / 100
+    preferrableRoute.status === RouteStatus.Success &&
+    preferrableRoute.priceImpact !== undefined &&
+    preferrableRoute.priceImpact < maxPriceImpact / 100
   ) {
-    return routePreferrable
+    return preferrableRoute
   }
-
-  const routeAll = Router.findBestRoute(dataFetcher, fromToken, amountIn, toToken, gasPrice)
-  return routeAll
+  // Otherwise, find the route using all possible liquidity providers
+  return Router.findBestRoute(dataFetcher, fromToken, amountIn, toToken, gasPrice)
 }
