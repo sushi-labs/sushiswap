@@ -3,11 +3,10 @@
 import { ArrowDownIcon } from '@heroicons/react/24/outline'
 import React, { FC } from 'react'
 
-import { useSwapActions } from '../TradeProvider'
+import { useSwapActions } from '../trade/TradeProvider'
 
 export const SwitchTokensButton: FC = () => {
   const { switchTokens } = useSwapActions()
-
   return (
     <div className="left-0 right-0 mt-[-9px] mb-[-9px] flex items-center justify-center">
       <button

@@ -4,21 +4,18 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { Chain, chainName } from '@sushiswap/chain'
 import { shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
-import Container from '@sushiswap/ui13/components/Container'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { List } from '@sushiswap/ui13/components/list/List'
 import React, { FC, useCallback } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
-import { useTrade } from '../lib/useTrade'
+import { useTrade } from '../../lib/useTrade'
 import numeral from 'numeral'
 import { Button } from '@sushiswap/ui13/components/button'
-import { ConfirmationDialog } from './ConfirmationDialog'
+import { ConfirmationDialog } from '../ConfirmationDialog'
 import { Dots } from '@sushiswap/ui13/components/Dots'
-import { FixedButtonContainer } from './FixedButtonContainer'
-import { CheckMarkIcon } from '@sushiswap/ui13/components/icons/CheckmarkIcon'
-import { FailedMarkIcon } from '@sushiswap/ui13/components/icons/FailedMarkIcon'
+import { FixedButtonContainer } from '../FixedButtonContainer'
 
 export const TradeReviewDialog: FC = () => {
   const { review, token0, token1, recipient, network0, value } = useSwapState()
@@ -30,7 +27,7 @@ export const TradeReviewDialog: FC = () => {
 
   return (
     <Dialog open={review} onClose={onClose} variant="opaque">
-      <Container maxWidth={520} className="mx-auto flex flex-col mt-4 gap-4 sm:p-4">
+      <div className="max-w-[504px] mx-auto">
         <button onClick={onClose} className="-ml-2 p-2">
           <ArrowLeftIcon strokeWidth={3} width={20} height={20} />
         </button>
@@ -52,9 +49,6 @@ export const TradeReviewDialog: FC = () => {
             <List.Control>
               <List.KeyValue title="Network">{chainName[network0]}</List.KeyValue>
               <List.KeyValue title="Network fee">~${trade?.gasSpent ?? '0.00'}</List.KeyValue>
-              <List.KeyValue title="Route">
-                <button className="text-blue">View route</button>
-              </List.KeyValue>
               <List.KeyValue
                 title="Price impact"
                 subtitle="The impact your trade has on the market price of this pool."
@@ -86,7 +80,7 @@ export const TradeReviewDialog: FC = () => {
             </List>
           )}
         </div>
-      </Container>
+      </div>
       <FixedButtonContainer>
         <ConfirmationDialog>
           {({ onClick, isWritePending, isConfirming }) => (

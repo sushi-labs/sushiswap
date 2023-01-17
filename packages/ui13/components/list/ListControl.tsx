@@ -8,6 +8,6 @@ export interface ListControlProps {
 
 export const ListControl: FC<ListControlProps> = ({ children, className }) => {
   return (
-    <div className={classNames('bg-white dark:bg-slate-800 rounded-xl overflow-hidden', className)}>{children}</div>
+    <div className={classNames('p-1 bg-white dark:bg-slate-800 rounded-xl overflow-hidden', className)}>{children}</div>
   )
 }

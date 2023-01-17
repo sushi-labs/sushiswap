@@ -1,3 +1,6 @@
+import 'dotenv/config'
+
+import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
 import {
   currencyFromShortCurrencyName,
@@ -8,16 +11,18 @@ import {
   Token,
 } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { BigNumber, providers } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
-import { RequestInfo, RequestInit } from 'node-fetch'
+import fastify from 'fastify'
+import fetch from 'node-fetch'
 import { z } from 'zod'
 
-const fetch = (url: RequestInfo, init?: RequestInit) =>
-  import('node-fetch').then(({ default: fetch }) => fetch(url, init))
+const server = fastify({ logger: true })
+server.register(cors)
 
-const schema = z.object({
+let dataFetcher: DataFetcher
+
+const querySchema = z.object({
   chainId: z.coerce
     .number()
     .int()
@@ -30,6 +35,29 @@ const schema = z.object({
   amount: z.coerce.bigint(),
   to: z.optional(z.string()),
 })
+
+const tokenSchema = z.object({
+  address: z.coerce.string(),
+  symbol: z.string(),
+  name: z.string(),
+  decimals: z.coerce.number().int().gte(0),
+})
+
+const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
+
+class Waiter {
+  resolved = false
+
+  async wait() {
+    while (!this.resolved) {
+      await delay(500)
+    }
+  }
+
+  resolve() {
+    this.resolved = true
+  }
+}
 
 export function getRouteProcessorAddressForChainId(chainId: ChainId) {
   switch (chainId) {
@@ -61,34 +89,9 @@ export function getAlchemyNetowrkForChainId(chainId: ChainId) {
   }
 }
 
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-class Waiter {
-  resolved = false
-
-  async wait() {
-    while (!this.resolved) {
-      await delay(500)
-    }
-  }
-
-  resolve() {
-    this.resolved = true
-  }
-}
-
-const tokenSchema = z.object({
-  address: z.coerce.string(),
-  symbol: z.string(),
-  name: z.string(),
-  decimals: z.coerce.number().int().gte(0),
-})
-
-const handler = async (request: VercelRequest, response: VercelResponse) => {
-  // Serve from cache, but update it, if requested after 1 second.
-  // response.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
-
-  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = schema.parse(request.query)
+// Declare a route
+server.get('/v0', async (request) => {
+  const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = querySchema.parse(request.query)
 
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
 
@@ -118,30 +121,22 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
           ),
         })
 
-  const dataFetcher = new DataFetcher(
-    new providers.AlchemyProvider(getAlchemyNetowrkForChainId(chainId), process.env['ALCHEMY_API_KEY']),
-    chainId
-  )
-  dataFetcher.startDataFetching()
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
+
   const waiter = new Waiter()
   const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
 
-  router.startRouting((p) => {
-    const printed = router.getCurrentRouteHumanString()
-    console.log(printed)
+  router.startRouting(() => {
     waiter.resolve()
   })
 
   await waiter.wait()
+
   router.stopRouting()
-  dataFetcher.stopDataFetching()
 
   const bestRoute = router.getBestRoute()
 
-  return response.status(200).json({
-    getCurrentRouteHumanArray: router.getCurrentRouteHumanArray(),
-    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
+  return {
     getBestRoute: {
       status: bestRoute?.status,
       fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
@@ -156,11 +151,28 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       totalAmountOut: bestRoute?.totalAmountOut,
       totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
       gasSpent: bestRoute?.gasSpent,
+      legs: bestRoute?.legs,
     },
     getCurrentRouteRPParams: to
       ? router.getCurrentRouteRPParams(to, getRouteProcessorAddressForChainId(chainId))
       : undefined,
-  })
+  }
+})
+
+// Run the server!
+const start = async () => {
+  try {
+    dataFetcher = new DataFetcher(
+      new providers.AlchemyProvider(getAlchemyNetowrkForChainId(137), process.env['ALCHEMY_API_KEY']),
+      137
+    )
+    dataFetcher.startDataFetching()
+    await server.listen({ host: '0.0.0.0', port: process.env['PORT'] ? Number(process.env['PORT']) : 3000 })
+  } catch (err) {
+    server.log.error(err)
+    dataFetcher.stopDataFetching()
+    process.exit(1)
+  }
 }
 
-export default handler
+start()

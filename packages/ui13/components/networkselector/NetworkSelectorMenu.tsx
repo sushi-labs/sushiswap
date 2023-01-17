@@ -1,5 +1,3 @@
-'use client'
-
 import { Popover, Transition } from '@headlessui/react'
 import chains from '@sushiswap/chain'
 import classNames from 'classnames'

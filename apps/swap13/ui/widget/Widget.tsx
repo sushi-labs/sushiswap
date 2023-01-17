@@ -2,7 +2,7 @@
 
 import { Widget as UIWidget } from '@sushiswap/ui13/components/widget'
 import React, { FC } from 'react'
-import { SettingsModule, SettingsOverlay2 } from 'ui/SettingsOverlay2'
+import { SettingsModule, SettingsOverlay } from 'ui/settings'
 import { SwitchAppType } from './SwitchAppType'
 import { SwitchTokensButton } from './SwitchTokensButton'
 import { WidgetTitle } from './WidgetTitle'
@@ -15,7 +15,7 @@ export const Widget: FC = () => {
       <WidgetTitle />
       <div className="flex justify-between items-center">
         <SwitchAppType />
-        <SettingsOverlay2
+        <SettingsOverlay
           modules={[SettingsModule.SlippageTolerance, SettingsModule.ExpertMode, SettingsModule.CarbonOffset]}
         />
       </div>
