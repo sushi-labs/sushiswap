@@ -221,13 +221,14 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       )
     }
     const setToken0 = (currency: Type) => {
+      const _fromCurrencyId = currency.isNative ? currency.symbol : currency.wrapped.address
       void push(
         {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
           query: {
             ...query,
-            fromCurrencyId: currency.isNative ? currency.symbol : currency.wrapped.address,
-            toCurrencyId: query.fromCurrencyId === query.toCurrencyId ? query.fromCurrencyId : query.toCurrencyId,
+            fromCurrencyId: _fromCurrencyId,
+            toCurrencyId: _fromCurrencyId === query.toCurrencyId ? query.fromCurrencyId : query.toCurrencyId,
           },
         },
         undefined,
@@ -235,13 +236,14 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       )
     }
     const setToken1 = (currency: Type) => {
+      const _toCurrencyId = currency.isNative ? currency.symbol : currency.wrapped.address
       void push(
         {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
           query: {
             ...query,
-            fromCurrencyId: query.fromCurrencyId === query.toCurrencyId ? query.toCurrencyId : query.fromCurrencyId,
-            toCurrencyId: currency.isNative ? currency.symbol : currency.wrapped.address,
+            fromCurrencyId: query.fromCurrencyId === _toCurrencyId ? query.toCurrencyId : query.fromCurrencyId,
+            toCurrencyId: _toCurrencyId,
           },
         },
         undefined,
