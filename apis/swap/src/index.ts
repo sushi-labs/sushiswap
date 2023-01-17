@@ -43,22 +43,6 @@ const tokenSchema = z.object({
   decimals: z.coerce.number().int().gte(0),
 })
 
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-class Waiter {
-  resolved = false
-
-  async wait() {
-    while (!this.resolved) {
-      await delay(500)
-    }
-  }
-
-  resolve() {
-    this.resolved = true
-  }
-}
-
 export function getRouteProcessorAddressForChainId(chainId: ChainId) {
   switch (chainId) {
     case ChainId.ETHEREUM:
@@ -123,14 +107,12 @@ server.get('/v0', async (request) => {
 
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
-  const waiter = new Waiter()
   const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
-
-  router.startRouting(() => {
-    waiter.resolve()
+  await new Promise<void>((resolve) => {
+    router.startRouting(() => {
+      resolve()
+    })
   })
-
-  await waiter.wait()
 
   router.stopRouting()
 
