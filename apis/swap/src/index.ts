@@ -1,15 +1,21 @@
 import 'dotenv/config'
 
-import fastify from 'fastify'
-import { BigNumber, providers } from 'ethers'
-
-import { ChainId } from "@sushiswap/chain"
-import { DataFetcher, Router } from "@sushiswap/router"
-import { z } from 'zod'
-import { currencyFromShortCurrencyName, isShortCurrencyName, isShortCurrencyNameSupported, Native, nativeCurrencyIds, Token } from '@sushiswap/currency'
-import fetch from 'node-fetch'
-import { getAddress } from 'ethers/lib/utils'
 import cors from '@fastify/cors'
+import { ChainId } from '@sushiswap/chain'
+import {
+  currencyFromShortCurrencyName,
+  isShortCurrencyName,
+  isShortCurrencyNameSupported,
+  Native,
+  nativeCurrencyIds,
+  Token,
+} from '@sushiswap/currency'
+import { DataFetcher, Router } from '@sushiswap/router'
+import { BigNumber, providers } from 'ethers'
+import { getAddress } from 'ethers/lib/utils'
+import fastify from 'fastify'
+import fetch from 'node-fetch'
+import { z } from 'zod'
 
 const server = fastify({ logger: true })
 server.register(cors)
@@ -85,7 +91,6 @@ export function getAlchemyNetowrkForChainId(chainId: ChainId) {
 
 // Declare a route
 server.get('/v0', async (request) => {
-
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = querySchema.parse(request.query)
 
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
@@ -116,15 +121,12 @@ server.get('/v0', async (request) => {
           ),
         })
 
-
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
   const waiter = new Waiter()
   const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
 
-  router.startRouting((p) => {
-    const printed = router.getCurrentRouteHumanString()
-    console.log(printed)
+  router.startRouting(() => {
     waiter.resolve()
   })
 
@@ -135,8 +137,6 @@ server.get('/v0', async (request) => {
   const bestRoute = router.getBestRoute()
 
   return {
-    getCurrentRouteHumanArray: router.getCurrentRouteHumanArray(),
-    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
     getBestRoute: {
       status: bestRoute?.status,
       fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
@@ -151,6 +151,7 @@ server.get('/v0', async (request) => {
       totalAmountOut: bestRoute?.totalAmountOut,
       totalAmountOutBN: bestRoute?.totalAmountOutBN.toString(),
       gasSpent: bestRoute?.gasSpent,
+      legs: bestRoute?.legs,
     },
     getCurrentRouteRPParams: to
       ? router.getCurrentRouteRPParams(to, getRouteProcessorAddressForChainId(chainId))
@@ -166,7 +167,7 @@ const start = async () => {
       137
     )
     dataFetcher.startDataFetching()
-    await server.listen({ host: "0.0.0.0", port: process.env['PORT'] ? Number(process.env['PORT']) : 3000 })
+    await server.listen({ host: '0.0.0.0', port: process.env['PORT'] ? Number(process.env['PORT']) : 3000 })
   } catch (err) {
     server.log.error(err)
     dataFetcher.stopDataFetching()
