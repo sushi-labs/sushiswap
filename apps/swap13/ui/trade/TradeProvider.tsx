@@ -15,9 +15,10 @@ import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } 
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
-import { useToken } from '@sushiswap/react-query'
+import { useCustomTokens, useToken } from '@sushiswap/react-query'
+import { getAddress, isAddress } from 'ethers/lib/utils'
 
-const schema = z.object({
+export const queryParamsSchema = z.object({
   fromChainId: z.coerce
     .number()
     .int()
@@ -49,6 +50,9 @@ interface SwapState {
   network1: ChainId
   amount: Amount<Type> | undefined
   appType: AppType
+  token0NotInList: boolean
+  token1NotInList: boolean
+  tokensLoading: boolean
 }
 
 type State = InternalSwapState & SwapState
@@ -94,10 +98,19 @@ interface SwapProviderProps {
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const { address } = useAccount()
   const { query, push } = useRouter()
-  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount: _amount } = schema.parse(query)
-  const { data: tokenFrom } = useToken({ chainId: fromChainId, address: fromCurrencyId })
-  const { data: tokenTo } = useToken({ chainId: toChainId, address: toCurrencyId })
+  const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount: _amount } = queryParamsSchema.parse(query)
+  const { data: customTokens, isLoading: customTokensLoading } = useCustomTokens()
+  const { data: tokenFrom, isLoading: isTokenFromLoading } = useToken({
+    chainId: fromChainId,
+    address: fromCurrencyId,
+  })
 
+  const { data: tokenTo, isLoading: isTokenToLoading } = useToken({
+    chainId: toChainId,
+    address: toCurrencyId,
+  })
+
+  // console.log(isAddress(fromCurrencyId), !tokenFrom, isTokenFromFetchedAfterMount)
   const [internalState, dispatch] = useReducer(reducer, {
     review: false,
     // TODO: no recipient
@@ -108,11 +121,15 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
   const state = useMemo(() => {
     const token0 = isShortCurrencyName(fromChainId, fromCurrencyId)
       ? currencyFromShortCurrencyName(fromChainId, fromCurrencyId)
+      : customTokens && isAddress(fromCurrencyId) && customTokens[`${toChainId}:${getAddress(fromCurrencyId)}`]
+      ? customTokens[`${toChainId}:${getAddress(fromCurrencyId)}`]
       : tokenFrom
       ? tokenFrom
       : Native.onChain(fromChainId ? fromChainId : ChainId.ETHEREUM)
     const token1 = isShortCurrencyName(toChainId, toCurrencyId)
       ? currencyFromShortCurrencyName(toChainId, toCurrencyId)
+      : customTokens && isAddress(toCurrencyId) && customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
+      ? customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]
       : tokenTo
       ? tokenTo
       : SUSHI[toChainId && toChainId in SUSHI ? (toChainId as keyof typeof SUSHI) : ChainId.ETHEREUM]
@@ -125,8 +142,38 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       network0: fromChainId,
       network1: toChainId,
       amount: tryParseAmount(internalState.value ? internalState.value.toString() : undefined, token0),
+      token0NotInList:
+        (isAddress(fromCurrencyId) &&
+          !tokenFrom &&
+          isTokenFromLoading &&
+          customTokens &&
+          !customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) ||
+        false,
+      token1NotInList:
+        (isAddress(toCurrencyId) &&
+          !tokenTo &&
+          isTokenToLoading &&
+          customTokens &&
+          !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) ||
+        false,
+      tokensLoading:
+        customTokensLoading ||
+        (isAddress(fromCurrencyId) && isTokenFromLoading) ||
+        (isAddress(toCurrencyId) && isTokenToLoading),
     }
-  }, [fromChainId, fromCurrencyId, internalState, toChainId, toCurrencyId, tokenFrom, tokenTo])
+  }, [
+    customTokens,
+    customTokensLoading,
+    fromChainId,
+    fromCurrencyId,
+    internalState,
+    isTokenFromLoading,
+    isTokenToLoading,
+    toChainId,
+    toCurrencyId,
+    tokenFrom,
+    tokenTo,
+  ])
 
   const api = useMemo(() => {
     const setNetwork0 = (chainId: ChainId) =>

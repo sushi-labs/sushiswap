@@ -18,8 +18,9 @@ interface RenderProps {
 interface Props {
   chainId?: ChainId
   tokenMap: Record<string, Token> | undefined
+  customTokenMap: Record<string, Token> | undefined
   pricesMap?: Record<string, Fraction>
-  balancesMap?: Record<string, Amount<Token>>
+  balancesMap?: Record<string, Amount<Type>>
   children(props: RenderProps): JSX.Element
   includeNative?: boolean
 }
@@ -28,11 +29,13 @@ export const TokenSelectorListFilterByQuery: FC<Props> = ({
   children,
   chainId,
   tokenMap,
+  customTokenMap,
   balancesMap,
   pricesMap,
   includeNative = true,
 }) => {
   const tokenMapValues = useMemo(() => (tokenMap ? Object.values(tokenMap) : []), [tokenMap])
+  const customTokenMapValues = useMemo(() => (customTokenMap ? Object.values(customTokenMap) : []), [customTokenMap])
   const [query, setQuery] = useState<string>('')
   const debouncedQuery = useDebounce(query, 400)
   const _includeNative =
@@ -60,7 +63,7 @@ export const TokenSelectorListFilterByQuery: FC<Props> = ({
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery)
 
   const filteredSortedTokensWithNative = useMemo(() => {
-    if (_includeNative) return [Native.onChain(chainId), ...filteredSortedTokens]
+    if (_includeNative) return [Native.onChain(chainId), ...customTokenMapValues, ...filteredSortedTokens]
     return filteredSortedTokens
   }, [_includeNative, chainId, filteredSortedTokens])
 

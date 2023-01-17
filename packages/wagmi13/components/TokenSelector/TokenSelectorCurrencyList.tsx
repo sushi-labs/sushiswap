@@ -1,13 +1,13 @@
 import { AddressZero } from '@ethersproject/constants'
 import { ChainId } from '@sushiswap/chain'
-import { Type } from '@sushiswap/currency'
+import { Native, Type } from '@sushiswap/currency'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import React, { FC, memo, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 import { usePrices } from '../../hooks'
 import { TokenSelectorRow } from './TokenSelectorRow'
-import { useBalances } from '@sushiswap/react-query'
+import { NativeAddress, useBalances } from '@sushiswap/react-query'
 
 interface TokenSelectorCurrencyListProps {
   id: string
@@ -35,8 +35,8 @@ export const TokenSelectorCurrencyList: FC<TokenSelectorCurrencyListProps> = mem
       id: id,
       account: address,
       currency,
-      balance: balancesMap?.[currency.isNative ? AddressZero : currency.address],
-      price: pricesMap?.[currency.isNative ? AddressZero : currency.address],
+      balance: balancesMap?.[currency.isNative ? NativeAddress : currency.address],
+      price: pricesMap?.[currency.isNative ? Native.onChain(currency.chainId).wrapped.address : currency.address],
       onSelect: () => onSelect(currency),
       selected: selected
         ? (currency.isNative === true && selected.isNative === true) ||

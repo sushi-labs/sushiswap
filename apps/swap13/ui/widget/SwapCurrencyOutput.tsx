@@ -7,7 +7,7 @@ import { usePctChange } from '../../lib/usePctChange'
 import { useTrade } from '../../lib/useTrade'
 
 export const SwapCurrencyOutput: FC = () => {
-  const { token1, network1, value } = useSwapState()
+  const { token1, network1, value, tokensLoading } = useSwapState()
   const { setToken1 } = useSwapActions()
   const usdPctChange = usePctChange()
   const { isLoading, isFetching, data: trade } = useTrade()
@@ -24,6 +24,7 @@ export const SwapCurrencyOutput: FC = () => {
       usdPctChange={usdPctChange}
       loading={Boolean(isLoading && +value > 0) || isFetching}
       disableMaxButton
+      currencyLoading={tokensLoading}
     />
   )
 }

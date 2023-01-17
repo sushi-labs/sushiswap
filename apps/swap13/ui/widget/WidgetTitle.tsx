@@ -15,13 +15,11 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
 import { useBreakpoint } from '@sushiswap/ui13/lib/useBreakpoint'
-import { MinusCircleIcon, MinusIcon, PlusCircleIcon, PlusIcon } from '@heroicons/react/24/outline'
-import { Badge } from '@sushiswap/ui13/components/Badge'
-import { Currency } from '@sushiswap/ui13/components/currency'
+import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 
 export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)
-  const { appType, network0, network1, token1, token0 } = useSwapState()
+  const { appType, network0, network1, token1, token0, tokensLoading } = useSwapState()
   const { setNetwork1, setNetwork0 } = useSwapActions()
   const { data: prices0 } = usePrice({ chainId: network0, address: token0?.wrapped.address })
   const { data: prices1 } = usePrice({ chainId: network1, address: token1?.wrapped.address })
@@ -70,7 +68,12 @@ export const WidgetTitle = () => {
 
   return (
     <div className="flex flex-col gap-2 mb-4 sm:mt-10 mt-2">
-      {appType === AppType.Swap ? (
+      {tokensLoading ? (
+        <>
+          <Skeleton.Text fontSize="text-2xl" className="w-1/3" />
+          <Skeleton.Text fontSize="text-2xl" className="w-2/4" />
+        </>
+      ) : appType === AppType.Swap ? (
         <>
           <h1 className="flex items-center gap-2 text-2xl sm:text-4xl font-medium text-gray-900 dark:text-slate-50 leading-[36px] sm:leading-[44px]">
             Sell <span className="font-semibold">{token0.symbol}</span>
@@ -128,18 +131,22 @@ export const WidgetTitle = () => {
           </h1>
         </>
       )}
-      <button
-        onClick={() => setInvert((invert) => !invert)}
-        className="text-sm flex items-center gap-1 font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
-      >
-        <ArrowTrendingUpIcon width={16} height={16} />
-        <span className="flex items-baseline gap-1">
-          1 {invert ? token0.symbol : token1.symbol}{' '}
-          <span className="font-normal text-xs">(${invert ? inputUSD : outputUSD})</span> = {price}{' '}
-          {invert ? token1.symbol : token0.symbol}{' '}
-          <span className="font-normal text-xs">(${invert ? outputUSD : inputUSD})</span>
-        </span>
-      </button>
+      {tokensLoading ? (
+        <Skeleton.Text fontSize="text-sm" className="w-2/4" />
+      ) : (
+        <button
+          onClick={() => setInvert((invert) => !invert)}
+          className="text-sm flex items-center gap-1 font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
+        >
+          <ArrowTrendingUpIcon width={16} height={16} />
+          <span className="flex items-baseline gap-1">
+            1 {invert ? token0.symbol : token1.symbol}{' '}
+            <span className="font-normal text-xs">(${invert ? inputUSD : outputUSD})</span> = {price}{' '}
+            {invert ? token1.symbol : token0.symbol}{' '}
+            <span className="font-normal text-xs">(${invert ? outputUSD : inputUSD})</span>
+          </span>
+        </button>
+      )}
     </div>
   )
 }

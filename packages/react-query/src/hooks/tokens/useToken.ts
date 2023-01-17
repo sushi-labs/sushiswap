@@ -38,9 +38,17 @@ export const useToken = ({ chainId, address }: UseTokenParams) => {
     return useQuery({
         queryKey: ['token', { chainId, address }],
         queryFn: async () =>
-            fetch(`https://tokens.sushi.com/v0/${chainId}/${address}`).then((response) => response.json()),
+            fetch(`https://tokens.sushi.com/v0/${chainId}/${address}`).then((response) => {
+                if (response.status === 200) {
+                    return response.json()
+                }
+
+                throw Error(`https://tokens.sushi.com/v0/${chainId}/${address}: Token not found`)
+            }),
         enabled: Boolean(chainId && address && isAddress(address)),
         select,
-        keepPreviousData: true
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+        retry: false,
     })
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import { GlobalNav, NavLink } from '@sushiswap/ui13/components/GlobalNav'
-import { AppType } from '@sushiswap/ui13/types'
 import { HeaderNetworkSelector } from '@sushiswap/wagmi13/components/HeaderNetworkSelector'
 import { UserProfile } from '@sushiswap/wagmi13/components/UserProfile'
 import React, { FC } from 'react'

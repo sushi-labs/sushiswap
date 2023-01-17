@@ -1,7 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
 import { tryParseAmount, Type } from '@sushiswap/currency'
-import { FundSource } from '@sushiswap/hooks'
 import { classNames } from '@sushiswap/ui13'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui13/components/input'
@@ -9,10 +8,11 @@ import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useBalance } from '../../../hooks/useBalance'
 import { TokenSelector } from '../../TokenSelector/TokenSelector'
 import { BalancePanel } from './BalancePanel'
 import { PricePanel } from './PricePanel'
+import { NativeAddress, useBalances, usePrice } from '@sushiswap/react-query'
+import { useNativeBalance } from '../../../hooks'
 
 export interface CurrencyInputProps {
   id?: string
@@ -25,10 +25,10 @@ export interface CurrencyInputProps {
   className?: string
   loading?: boolean
   usdPctChange?: number
-  fundSource?: FundSource
   disableMaxButton?: boolean
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
+  currencyLoading?: boolean
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -42,28 +42,31 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   className,
   loading,
   usdPctChange,
-  fundSource = FundSource.WALLET,
   disableMaxButton = false,
   type,
   fetching,
+  currencyLoading,
 }) => {
   const { address } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
-
   const focusInput = useCallback(() => {
     if (disabled) return
     inputRef.current?.focus()
   }, [disabled])
 
-  const { data: balance, isLoading } = useBalance({
-    chainId,
-    currency,
-    account: address,
-    enabled: Boolean(currency) && Boolean(address),
+  const { data: _balance, isLoading: isBalanceLoading } = useBalances({ chainId, account: address })
+  const { data: price, isLoading: isPriceLoading } = usePrice({
+    chainId: currency?.chainId,
+    address: currency?.wrapped.address,
   })
 
   const _value = useMemo(() => tryParseAmount(value, currency), [value, currency])
-  const insufficientBalance = address && type === 'INPUT' && balance && _value && balance[fundSource].lessThan(_value)
+  const balance = currency
+    ? currency.isNative
+      ? _balance?.[NativeAddress]
+      : _balance?.[currency.wrapped.address]
+    : undefined
+  const insufficientBalance = address && type === 'INPUT' && balance && _value && balance.lessThan(_value)
 
   // If currency changes, trim input to decimals
   useEffect(() => {
@@ -77,6 +80,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency])
 
+  const isLoading = loading || isBalanceLoading || isPriceLoading || currencyLoading
+
   return (
     <div
       className={classNames(
@@ -88,7 +93,12 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
       onClick={focusInput}
     >
       <div className="relative flex items-center gap-1">
-        {loading ? (
+        {currencyLoading ? (
+          <div className="flex gap-4 items-center justify-center flex-grow h-[44px]">
+            <Skeleton.Box className="w-3/4 h-[32px] rounded-lg" />
+            <Skeleton.Box className="w-1/4 h-[32px] rounded-lg" />
+          </div>
+        ) : isLoading ? (
           <div className="flex flex-col gap-1 justify-center flex-grow h-[44px]">
             <Skeleton.Box className="w-2/4 h-[32px] rounded-lg" />
           </div>
@@ -105,7 +115,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             maxDecimals={currency?.decimals}
           />
         )}
-        {onSelect && (
+        {onSelect && !currencyLoading && (
           <TokenSelector id={`${id}-token-selector`} selected={currency} chainId={chainId} onSelect={onSelect}>
             {({ setOpen }) => (
               <button
@@ -140,7 +150,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           currency={currency}
           usdPctChange={usdPctChange}
           error={insufficientBalance ? 'Exceeds Balance' : undefined}
-          loading={loading}
+          loading={isLoading}
+          price={price}
         />
         <div className="h-6">
           <BalancePanel
@@ -150,7 +161,6 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             account={address}
             onChange={onChange}
             currency={currency}
-            fundSource={fundSource}
             disableMaxButton={disableMaxButton}
             balance={balance}
           />

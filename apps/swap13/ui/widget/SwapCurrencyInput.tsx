@@ -6,7 +6,7 @@ import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { useDebounce } from '@sushiswap/hooks'
 
 export const SwapCurrencyInput: FC = () => {
-  const { token0, value, network0 } = useSwapState()
+  const { token0, value, network0, tokensLoading } = useSwapState()
   const [localValue, setLocalValue] = useState(value)
   const { setToken0, setValue } = useSwapActions()
   const debouncedValue = useDebounce(localValue, 250)
@@ -25,6 +25,7 @@ export const SwapCurrencyInput: FC = () => {
       value={localValue}
       onChange={setLocalValue}
       currency={token0}
+      currencyLoading={tokensLoading}
     />
   )
 }
