@@ -137,6 +137,7 @@ server.get('/v0', async (request) => {
   const bestRoute = router.getBestRoute()
 
   return {
+    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
     getBestRoute: {
       status: bestRoute?.status,
       fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
