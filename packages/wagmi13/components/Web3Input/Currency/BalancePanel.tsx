@@ -7,13 +7,10 @@ import { FC, memo, useCallback } from 'react'
 import { CurrencyInputProps } from './CurrencyInput'
 import { JSBI } from '@sushiswap/math'
 
-type BalancePanel = Pick<
-  CurrencyInputProps,
-  'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'fundSource' | 'loading'
-> & {
+type BalancePanel = Pick<CurrencyInputProps, 'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'> & {
   id?: string
   account: string | undefined
-  balance: Record<FundSource, Amount<Type>> | undefined
+  balance: Amount<Type> | undefined
 }
 
 const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .01 ETH
@@ -23,29 +20,25 @@ export const BalancePanel: FC<BalancePanel> = memo(function BalancePanel({
   balance,
   onChange,
   disableMaxButton,
-  fundSource = FundSource.WALLET,
   loading,
 }) {
-  const [big, portion] = (balance ? `${balance?.[fundSource]?.toSignificant(6)}` : '0.00').split('.')
+  const [big, portion] = (balance ? `${balance?.toSignificant(6)}` : '0.00').split('.')
 
   const onClick = useCallback(() => {
-    if (onChange && balance?.[fundSource]?.greaterThan(0)) {
-      if (balance?.[fundSource].currency.isNative && balance?.[fundSource].greaterThan(MIN_NATIVE_CURRENCY_FOR_GAS)) {
-        const hundred = Amount.fromRawAmount(
-          Native.onChain(balance[fundSource].currency.chainId),
-          MIN_NATIVE_CURRENCY_FOR_GAS
-        )
-        onChange(balance[fundSource].subtract(hundred).toFixed())
+    if (onChange && balance?.greaterThan(0)) {
+      if (balance.currency.isNative && balance.greaterThan(MIN_NATIVE_CURRENCY_FOR_GAS)) {
+        const hundred = Amount.fromRawAmount(Native.onChain(balance.currency.chainId), MIN_NATIVE_CURRENCY_FOR_GAS)
+        onChange(balance.subtract(hundred).toFixed())
       } else {
-        onChange(balance?.[fundSource]?.greaterThan(0) ? balance[fundSource].toFixed() : '')
+        onChange(balance?.greaterThan(0) ? balance.toFixed() : '')
       }
     }
-  }, [balance, fundSource, onChange])
+  }, [balance, onChange])
 
   if (loading) {
     return (
-      <div className="h-[24px] w-[60px] flex items-center">
-        <Skeleton.Box className="bg-white/[0.06] h-[12px] w-full" />
+      <div className="h-[36px] w-[60px] flex items-center">
+        <Skeleton.Text fontSize="text-lg" className="w-full" />
       </div>
     )
   }

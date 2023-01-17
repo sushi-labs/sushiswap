@@ -1,6 +1,6 @@
 import { ChainId, chainName } from '@sushiswap/chain'
 import { Native, SUSHI, Token, Type, USDC, USDT } from '@sushiswap/currency'
-import { useAddCustomToken, useBalances } from '@sushiswap/react-query'
+import { useAddCustomToken, useBalances, useCustomTokens } from '@sushiswap/react-query'
 import { useTokens } from '@sushiswap/react-query'
 import { SlideIn } from '@sushiswap/ui13/components/animation'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
@@ -36,6 +36,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
     const handleClose = useCallback(() => setOpen(false), [])
 
     const { data: tokenMap } = useTokens({ chainId })
+    const { data: customTokenMap } = useCustomTokens()
     const { data: pricesMap } = usePrices({ chainId })
     const { data: balancesMap } = useBalances({ chainId, account: address })
 
@@ -63,6 +64,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
         {children({ open, setOpen })}
         <TokenSelectorListFilterByQuery
           tokenMap={tokenMap}
+          customTokenMap={customTokenMap}
           pricesMap={pricesMap}
           balancesMap={balancesMap}
           chainId={chainId}

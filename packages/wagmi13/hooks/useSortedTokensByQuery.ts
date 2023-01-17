@@ -52,7 +52,7 @@ export const balanceComparator = (balanceA?: Amount<Type>, balanceB?: Amount<Typ
 }
 
 export const tokenComparator = (
-  balancesMap: Record<string, Amount<Token>> | undefined,
+  balancesMap: Record<string, Amount<Type>> | undefined,
   pricesMap: Record<string, Fraction> | undefined
 ) => {
   return (tokenA: Token, tokenB: Token): number => {

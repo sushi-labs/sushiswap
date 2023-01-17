@@ -5,7 +5,7 @@ import { classNames } from '@sushiswap/ui13'
 import { Icon } from '@sushiswap/ui13/components/currency/Icon'
 import React, { CSSProperties, FC, memo, useCallback } from 'react'
 import { Badge } from '@sushiswap/ui13/components/Badge'
-import { CheckCircleIcon, CheckIcon } from '@heroicons/react/20/solid'
+import { CheckCircleIcon } from '@heroicons/react/20/solid'
 
 export interface TokenSelectorRow {
   id: string
@@ -33,9 +33,6 @@ export const TokenSelectorRow: FC<TokenSelectorRow> = memo(function TokenSelecto
     onSelect(currency)
   }, [currency, onSelect])
 
-  if (balance?.greaterThan(ZERO)) {
-    console.log(price)
-  }
   return (
     <div className="py-0.5 h-[64px]" style={style}>
       <div

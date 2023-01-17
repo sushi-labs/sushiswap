@@ -10,9 +10,10 @@ import { SwapButton } from '../../../../../ui/widget/SwapButton'
 import { Widget } from '../../../../../ui/widget/Widget'
 import { TradeRoute } from '../../../../../ui/trade/TradeRoute'
 import { Drawer } from '@sushiswap/ui13/components/drawer'
+import { NetworkCheck } from '../../../../../ui/NetworkCheck'
+import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  // const { fromChainId, toChainId, fromCurrencyId, toCurrencyId } = params
   return {
     props: {
       initialState: {
@@ -29,24 +30,25 @@ export async function getStaticPaths() {
   // We can do some pretty cool optimizations here by generating the combinations
   // of potential swap parameters
 
-  // for now we'll just use blocking mode so that params are available immediately
+  // for now, we'll just use blocking mode so that params are available immediately
   return {
     paths: [],
     fallback: 'blocking',
   }
 }
 
-const Page: FC = ({ initialState }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  console.log({ initialState })
+const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Container maxWidth={520} className="space-y-8 p-4 mx-auto mt-16 mb-[86px] flex flex-col gap-4">
       <SwapProvider>
         <Drawer.Root>
+          <NetworkCheck />
           <Widget />
           <TradeStats />
           <TradeReviewDialog />
           <SwapButton />
           <TradeRoute />
+          <TokenNotFoundDialog />
         </Drawer.Root>
       </SwapProvider>
 

@@ -25,7 +25,7 @@ const STYLES = {
   'text-base': 'h-[22px]',
   'text-lg': 'h-[28px]',
   'text-xl': 'h-[28px]',
-  'text-2xl': 'h-7',
+  'text-2xl': 'h-[44px]',
   'text-3xl': 'h-[36px]',
   'text-4xl': 'h-8',
   'text-5xl': 'h-[34px]',
@@ -33,6 +33,22 @@ const STYLES = {
   'text-7xl': 'h-[38px]',
   'text-8xl': 'h-10',
   'text-9x;': 'h-[42px]',
+}
+
+const PADDING = {
+  'text-xs': 'py-[3px]',
+  'text-sm': 'py-[3px]',
+  'text-base': 'py-[3px]',
+  'text-lg': 'py-[3px]',
+  'text-xl': 'py-[3px]',
+  'text-2xl': 'py-[6px]',
+  'text-3xl': 'py-[3px]',
+  'text-4xl': 'py-[3px]',
+  'text-5xl': 'py-[3px]',
+  'text-6xl': 'py-[3px]',
+  'text-7xl': 'py-[3px]',
+  'text-8xl': 'py-[3px]',
+  'text-9x;': 'py-[3px]',
 }
 
 const ALIGN = {
@@ -43,7 +59,7 @@ const ALIGN = {
 
 export const Text: FC<TextProps> = ({ align = 'left', className, fontSize = 'text-base', ...props }) => {
   return (
-    <div {...props} className={classNames(ALIGN[align], STYLES[fontSize], 'flex w-full py-[3px]')}>
+    <div {...props} className={classNames(ALIGN[align], STYLES[fontSize], PADDING[fontSize], 'flex w-full')}>
       <div
         className={classNames(
           className,
