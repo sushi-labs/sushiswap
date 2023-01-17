@@ -43,6 +43,20 @@ const tokenSchema = z.object({
   decimals: z.coerce.number().int().gte(0),
 })
 
+async function getToken(chainId: ChainId, tokenId: string) {
+  const isShortNameSupported = isShortCurrencyNameSupported(chainId)
+  const tokenIdIsShortName = isShortCurrencyName(chainId, tokenId)
+
+  return isShortNameSupported && tokenIdIsShortName
+    ? currencyFromShortCurrencyName(chainId, tokenId)
+    : new Token({
+        chainId,
+        ...tokenSchema.parse(
+          await (await fetch(`https://tokens.sushi.com/v0/${chainId}/${getAddress(tokenId)}`)).json()
+        ),
+      })
+}
+
 export function getRouteProcessorAddressForChainId(chainId: ChainId) {
   switch (chainId) {
     case ChainId.ETHEREUM:
@@ -79,31 +93,8 @@ server.get('/v0', async (request) => {
 
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
 
-  const isShortNameSupported = isShortCurrencyNameSupported(chainId)
-  const fromTokenIdIsShortName = isShortCurrencyName(chainId, fromTokenId)
-  const toTokenIdIsShortName = isShortCurrencyName(chainId, toTokenId)
-
   // Limited to predefined short names and tokens from our db for now
-  const fromToken =
-    isShortNameSupported && fromTokenIdIsShortName
-      ? currencyFromShortCurrencyName(chainId, fromTokenId)
-      : new Token({
-          chainId,
-          ...tokenSchema.parse(
-            await (await fetch(`https://tokens.sushi.com/v0/${chainId}/${getAddress(fromTokenId)}`)).json()
-          ),
-        })
-
-  // Limited to predefined short names and tokens from our db for now
-  const toToken =
-    isShortNameSupported && toTokenIdIsShortName
-      ? currencyFromShortCurrencyName(chainId, toTokenId)
-      : new Token({
-          chainId,
-          ...tokenSchema.parse(
-            await (await fetch(`https://tokens.sushi.com/v0/${chainId}/${getAddress(toTokenId)}`)).json()
-          ),
-        })
+  const [fromToken, toToken] = await Promise.all([getToken(chainId, fromTokenId), getToken(chainId, toTokenId)])
 
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
