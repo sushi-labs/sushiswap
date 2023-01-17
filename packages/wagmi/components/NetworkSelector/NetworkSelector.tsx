@@ -68,7 +68,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
               )}
             >
               <NetworkIcon chainId={chainId} width={20} height={20} />
-              <div className="hidden sm:block">{chainName[chainId].split(' ')[0]}</div>
+              <div className="hidden sm:block">{chainName?.[chainId]?.split(' ')[0]}</div>
               <ChevronDownIcon
                 width={20}
                 height={20}

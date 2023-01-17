@@ -1,4 +1,4 @@
-import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { Token, Type, WNATIVE } from '@sushiswap/currency'
 import {
   findMultiRouteExactIn,
   getBigNumber,
@@ -149,7 +149,7 @@ export class Router {
     RPAddr: string,
     maxPriceImpact = 0.005
   ): RPParams {
-    const tokenIn = fromToken instanceof Token ? fromToken.address : WNATIVE_ADDRESS[fromToken.chainId]
+    const tokenIn = fromToken instanceof Token ? fromToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const tokenOut = toToken instanceof Token ? toToken.address : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const amountOutMin = route.amountOutBN.mul(getBigNumber((1 - maxPriceImpact) * 1_000_000)).div(1_000_000)
 

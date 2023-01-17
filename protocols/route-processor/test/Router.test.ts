@@ -45,10 +45,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
   //console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(
-    BentoBox[chainId] || '0x0000000000000000000000000000000000000000',
-    WNATIVE[chainId].address
-  )
+  const routeProcessor = await RouteProcessor.deploy(BentoBox[chainId] || '0x0000000000000000000000000000000000000000')
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
 
