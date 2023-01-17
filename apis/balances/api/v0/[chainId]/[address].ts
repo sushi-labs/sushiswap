@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { Address, configureChains, createClient, erc20ABI, readContracts } from '@wagmi/core'
+import { Address, configureChains, createClient, erc20ABI, fetchBalance, readContracts } from '@wagmi/core'
 import zip from 'lodash.zip'
 import fetch from 'node-fetch'
 import { z } from 'zod'
@@ -34,6 +34,11 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   const data = await res.json()
   const tokens = tokensSchema.parse(data)
 
+  const balance = await fetchBalance({
+    chainId,
+    address: address as Address,
+  })
+
   const balances = await readContracts({
     allowFailure: true,
     contracts: tokens.map(
@@ -49,13 +54,12 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
   })
 
   const zipped = zip(tokens, balances)
-  return response
-    .status(200)
-    .json(
-      Object.fromEntries(
-        zipped.filter(([, balance]) => !balance?.isZero()).map(([token, balance]) => [token, balance?.toString()])
-      )
-    )
+  return response.status(200).json({
+    '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': balance?.toString(),
+    ...Object.fromEntries(
+      zipped.filter(([, balance]) => !balance?.isZero()).map(([token, balance]) => [token, balance?.toString()])
+    ),
+  })
 }
 
 export default handler
