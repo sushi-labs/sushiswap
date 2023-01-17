@@ -18,7 +18,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     const token = await getToken(chainId, address)
     return response.status(200).json(token)
   } catch (error) {
-    return response.status(404)
+    console.log(error)
+    return response.status(404).send()
   }
 }
 
