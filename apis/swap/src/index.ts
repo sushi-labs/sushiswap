@@ -70,14 +70,13 @@ server.get('/v0', async (request) => {
 
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
-  const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
-  await new Promise<void>((resolve) => {
-    router.startRouting(() => {
-      resolve()
-    })
-  })
-
-  router.stopRouting()
+  // const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
+  // await new Promise<void>((resolve) => {
+  //   router.startRouting(() => {
+  //     resolve()
+  //   })
+  // })
+  // router.stopRouting()
 
   // const bestRoute = router.getBestRoute()
 
@@ -90,7 +89,7 @@ server.get('/v0', async (request) => {
   )
 
   return {
-    getCurrentRouteHumanString: router.routeToHumanString(bestRoute, fromToken, toToken),
+    getCurrentRouteHumanString: Router.routeToHumanString(dataFetcher, bestRoute, fromToken, toToken),
     getBestRoute: {
       status: bestRoute?.status,
       fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
@@ -108,7 +107,14 @@ server.get('/v0', async (request) => {
       legs: bestRoute?.legs,
     },
     getCurrentRouteRPParams: to
-      ? router.getRPParams(bestRoute, fromToken, toToken, to, getRouteProcessorAddressForChainId(chainId))
+      ? Router.routeProcessorParams(
+          dataFetcher,
+          bestRoute,
+          fromToken,
+          toToken,
+          to,
+          getRouteProcessorAddressForChainId(chainId)
+        )
       : undefined,
   }
 })
