@@ -1,7 +1,7 @@
 import z from 'zod'
 
 const tokenValidator = z.object({
-  chainId: z.number(),
+  chainId: z.coerce.number(),
   decimals: z.number().optional(),
   symbol: z.string(),
   name: z.string(),
