@@ -65,7 +65,8 @@
     },
     "start": {
       "dependsOn": ["^build", "^db:generate", "generate"],
-      "cache": false
+      "cache": false,
+      "persistent": true
     },
     "generate": {
       "outputs": [".graphclient/**/*", ".mesh/**/*", "typechain/**/*", "artifacts/**/*", "cache/**/*"]
@@ -116,14 +117,16 @@
     },
     "dev": {
       "dependsOn": ["^build", "^db:generate", "generate"],
-      "cache": false
+      "cache": false,
+      "persistent": true
     },
     "validate": {
       "cache": false
     },
     "anvil": {
       "cache": false,
-      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"]
+      "env": ["ANVIL_BLOCK_NUMBER", "ANVIL_FORK_URL"],
+      "persistent": true
     },
     "export": {
       "dependsOn": ["build"],
@@ -132,9 +135,11 @@
     },
     "node": {
       "dependsOn": ["^build"],
-      "outputs": ["deployments/**/*"]
+      "outputs": ["deployments/**/*"],
+      "persistent": true
     },
     "server": {
+      "persistent": true,
       "dependsOn": ["^build"]
     },
     "//#generate": {
