@@ -89,6 +89,9 @@ export const TradeStats: FC = () => {
             )}
           </div>
         </div>
+        <pre className="whitespace-pre-wrap mt-3 p-3 dark:bg-slate-800 bg-white rounded-xl">
+          {trade?.currentRouteHumanString}
+        </pre>
       </div>
     </Transition>
   )

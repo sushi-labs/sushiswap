@@ -1,7 +1,7 @@
 import z from 'zod'
 
 const tokenValidator = z.object({
-  chainId: z.number(),
+  chainId: z.coerce.number(),
   decimals: z.number().optional(),
   symbol: z.string(),
   name: z.string(),
@@ -13,7 +13,7 @@ const tokenValidator = z.object({
 
 export const tradeValidator = z.object({
   getCurrentRouteHumanString: z.string(),
-  getCurrentRouteHumanArray: z.array(z.string()),
+  // getCurrentRouteHumanArray: z.array(z.string()),
   getBestRoute: z.object({
     status: z.string(),
     fromToken: tokenValidator,
@@ -29,7 +29,7 @@ export const tradeValidator = z.object({
       .array(
         z.object({
           poolAddress: z.string(),
-          poolType: z.enum(['Classic']),
+          poolType: z.enum(['Classic', 'Stable', 'Unknown']),
           poolFee: z.number(),
           tokenFrom: tokenValidator,
           tokenTo: tokenValidator,
