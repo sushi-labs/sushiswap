@@ -10,7 +10,7 @@ import {
   nativeCurrencyIds,
   Token,
 } from '@sushiswap/currency'
-import { DataFetcher, Router } from '@sushiswap/router'
+import { DataFetcher, findSpecialRoute, Router } from '@sushiswap/router'
 import { BigNumber, providers } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
 import fastify from 'fastify'
@@ -123,21 +123,29 @@ server.get('/v0', async (request) => {
 
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
 
-  const waiter = new Waiter()
+  // const waiter = new Waiter()
   const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
 
-  router.startRouting(() => {
-    waiter.resolve()
-  })
+  // router.startRouting(() => {
+  //   waiter.resolve()
+  // })
 
-  await waiter.wait()
+  // await waiter.wait()
 
-  router.stopRouting()
+  // router.stopRouting()
 
-  const bestRoute = router.getBestRoute()
+  // const bestRoute = router.getBestRoute()
+
+  const bestRoute = findSpecialRoute(
+    dataFetcher,
+    fromToken,
+    BigNumber.from(amount.toString()),
+    toToken,
+    gasPrice ?? 30e9
+  )
 
   return {
-    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
+    getCurrentRouteHumanString: router.routeToHumanString(bestRoute, fromToken, toToken),
     getBestRoute: {
       status: bestRoute?.status,
       fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
@@ -155,7 +163,7 @@ server.get('/v0', async (request) => {
       legs: bestRoute?.legs,
     },
     getCurrentRouteRPParams: to
-      ? router.getCurrentRouteRPParams(to, getRouteProcessorAddressForChainId(chainId))
+      ? router.getRPParams(bestRoute, fromToken, toToken, to, getRouteProcessorAddressForChainId(chainId))
       : undefined,
   }
 })
