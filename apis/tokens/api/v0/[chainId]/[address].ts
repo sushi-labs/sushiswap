@@ -14,8 +14,12 @@ const schema = z.object({
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   const { chainId, address } = schema.parse(request.query)
-  const token = await getToken(chainId, address)
-  return response.status(200).json(token)
+  try {
+    const token = await getToken(chainId, address)
+    return response.status(200).json(token)
+  } catch (error) {
+    return response.status(404)
+  }
 }
 
 export default handler
