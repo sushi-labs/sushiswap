@@ -1,5 +1,3 @@
-'use client'
-
 import { Disclosure } from '@headlessui/react'
 import {
   ArrowDownTrayIcon,

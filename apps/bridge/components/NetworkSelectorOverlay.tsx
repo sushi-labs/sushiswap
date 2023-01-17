@@ -1,5 +1,5 @@
 import { CheckIcon } from '@heroicons/react/outline'
-import chains, { ChainId } from '@sushiswap/chain'
+import chains, { ChainId, chainName } from '@sushiswap/chain'
 import { classNames, Dialog, NetworkIcon, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from '../config'
 import React, { FC, useCallback } from 'react'
@@ -52,7 +52,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                 <NetworkIcon type="naked" chainId={chainId} width={24} height={24} />
               </div>
             )}
-            {chains[chainId].name}
+            {chainName[chainId]}
           </Typography>
         ))}
       </Dialog.Content>

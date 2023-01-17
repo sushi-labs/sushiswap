@@ -1,5 +1,3 @@
-'use client'
-
 import classNames from 'classnames'
 import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'

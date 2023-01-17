@@ -1,11 +1,12 @@
+import '../lib/wagmi.js'
+
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
+import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json' assert { type: 'json' }
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
-import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json' assert { type: 'json' }
 import { PoolType, ProtocolVersion } from '../config.js'
-import '../lib/wagmi.js'
 
 const prisma = new PrismaClient()
 if (process.env.CHAIN_ID === undefined) {

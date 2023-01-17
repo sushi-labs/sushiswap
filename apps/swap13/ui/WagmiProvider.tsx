@@ -1,5 +1,3 @@
-'use client'
-
 import { client } from '@sushiswap/wagmi13'
 import { FC, ReactNode } from 'react'
 import { WagmiConfig } from 'wagmi'

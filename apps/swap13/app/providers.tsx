@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
 import { WagmiProvider } from '../ui/WagmiProvider'
 

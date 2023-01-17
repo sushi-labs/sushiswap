@@ -1,5 +1,5 @@
 import { CheckIcon } from '@heroicons/react/outline'
-import chains, { ChainId } from '@sushiswap/chain'
+import { ChainId, chainName } from '@sushiswap/chain'
 import { useIsSmScreen } from '@sushiswap/hooks'
 import { classNames, NetworkIcon, Overlay, SlideIn, Typography } from '@sushiswap/ui'
 import { SUPPORTED_CHAIN_IDS } from 'config'
@@ -59,7 +59,7 @@ export const NetworkSelectorOverlay: FC<NetworkSelectorOverlay> = ({
                   <NetworkIcon type="naked" chainId={chainId} width={24} height={24} />
                 </div>
               )}
-              {chains[chainId].name}
+              {chainName[chainId]}
             </Typography>
           ))}
         </Overlay.Content>

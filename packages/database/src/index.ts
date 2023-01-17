@@ -29,7 +29,7 @@ if (process.env['NODE_ENV'] === 'production') {
 const redis = new Redis(process.env['REDIS_URL'])
 
 const cacheMiddleware = createPrismaRedisCache({
-  models: [{ model: 'Token', cacheTime: 900 }],
+  models: [{ model: 'Token', cacheTime: 900 }, { model: 'Incentive', cacheTime: 180 }],
   storage: {
     type: 'redis',
     options: { client: redis, invalidation: { referencesTTL: 900 } },
@@ -46,3 +46,5 @@ const cacheMiddleware = createPrismaRedisCache({
 prisma.$use(cacheMiddleware)
 
 export default prisma as PrismaClient
+
+export * from '@prisma/client'

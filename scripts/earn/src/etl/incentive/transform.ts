@@ -16,7 +16,7 @@ export async function filterIncentives(
   const incentiveSelect = Prisma.validator<Prisma.IncentiveSelect>()({
     id: true,
     apr: true,
-    rewardPerDay: true,
+    rewardPerDay: true
   })
 
   const incentiveFound = await client.incentive.findMany({
@@ -26,7 +26,7 @@ export async function filterIncentives(
     select: incentiveSelect,
   })
 
-  const poolsFound = await client.pool.findMany({
+  const poolsFound = await client.sushiPool.findMany({
     where: { id: { in: incentives.map((incentive) => incentive.poolId) } },
     select: { id: true },
   })
@@ -56,6 +56,7 @@ export async function filterIncentives(
         missingPoolIds[incentive.chainId].push(incentive.poolId)
         return false
       }
+      return true
     }
     return false
   })

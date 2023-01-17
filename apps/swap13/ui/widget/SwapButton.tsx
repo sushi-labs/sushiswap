@@ -2,7 +2,7 @@
 
 import { Button } from '@sushiswap/ui13/components/button'
 import React, { FC } from 'react'
-import { useSwapActions, useSwapState } from '../TradeProvider'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ApprovalState, ApproveTokenController, Checker } from '@sushiswap/wagmi13'
 import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'

@@ -1,0 +1,33 @@
+{
+  "name": "@sushiswap/incentives-api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Sushi Incentives API",
+  "keywords": [
+    "sushi",
+    "incentives",
+    "api"
+  ],
+  "license": "MIT",
+  "author": "Ola Stenberg <hello@olastenberg.com>",
+  "scripts": {
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf .vercel",
+    "lint": "TIMING=1 eslint --fix ."
+  },
+  "dependencies": {
+    "@sushiswap/database": "workspace:*",
+    "@vercel/node": "2.8.2",
+    "zod": "3.20.2"
+  },
+  "devDependencies": {
+    "@sushiswap/eslint-config": "workspace:*",
+    "@sushiswap/jest-config": "workspace:*",
+    "@sushiswap/prettier-config": "workspace:*",
+    "@sushiswap/typescript-config": "workspace:*",
+    "@types/node": "^18.0.0",
+    "eslint": "8.29.0",
+    "typescript": "4.9.4",
+    "vercel": "28.10.1"
+  }
+}

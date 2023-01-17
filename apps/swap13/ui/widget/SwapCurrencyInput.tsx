@@ -1,6 +1,8 @@
+'use client'
+
 import React, { FC, useEffect, useState } from 'react'
 import { Web3Input } from '@sushiswap/wagmi13/components/Web3Input'
-import { useSwapActions, useSwapState } from '../TradeProvider'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 
 export const SwapCurrencyInput: FC = () => {
   const { token0, value, network0 } = useSwapState()

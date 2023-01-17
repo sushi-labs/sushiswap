@@ -2,7 +2,7 @@
 
 import { Popover } from '@headlessui/react'
 import { ArrowTrendingUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
-import chains, { chainName } from '@sushiswap/chain'
+import { chainName } from '@sushiswap/chain'
 import { Button } from '@sushiswap/ui13/components/button'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import { NetworkSelector, NetworkSelectorOnSelectCallback } from '@sushiswap/ui13/components/networkselector'
@@ -11,29 +11,24 @@ import { AppType } from '@sushiswap/ui13/types'
 import React, { useCallback, useMemo, useState } from 'react'
 
 import { SUPPORTED_CHAIN_IDS } from '../../config'
-import { useSwapActions, useSwapState } from '../TradeProvider'
-import { usePrices } from '@sushiswap/react-query'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
-import { formatNumber, formatUSD } from '@sushiswap/format'
 
 export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)
   const { appType, network0, network1, token1, token0 } = useSwapState()
   const { setNetwork1, setNetwork0 } = useSwapActions()
-  const { data: prices0 } = usePrices({ chainId: network0 })
-  const { data: prices1 } = usePrices({ chainId: network1 })
+  const { data: prices0 } = usePrice({ chainId: network0, address: token0?.wrapped.address })
+  const { data: prices1 } = usePrice({ chainId: network1, address: token1?.wrapped.address })
 
   const [inputUSD, outputUSD, price] = useMemo(() => {
     if (!prices0 || !prices1) {
       return ['0.00', '0.00', '0.00']
     }
 
-    const token0Price = prices0[token0.wrapped.address]
-      ? tryParseAmount('1', token0)?.multiply(prices0[token0.wrapped.address])
-      : undefined
-    const token1Price = prices1[token1.wrapped.address]
-      ? tryParseAmount('1', token1)?.multiply(prices1[token1.wrapped.address])
-      : undefined
+    const token0Price = prices0 ? tryParseAmount('1', token0)?.multiply(prices0) : undefined
+    const token1Price = prices1 ? tryParseAmount('1', token1)?.multiply(prices1) : undefined
     const dummy0 = new Token({ address: token0.wrapped.address, chainId: 1, decimals: token0.decimals })
     const dummy1 = new Token({ address: token1.wrapped.address, chainId: 1, decimals: token1.decimals })
 
@@ -71,7 +66,14 @@ export const WidgetTitle = () => {
   return (
     <div className="flex flex-col gap-2 mb-4">
       {appType === AppType.Swap ? (
-        <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200">Buy {token1.symbol}</h1>
+        <>
+          <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
+            Sell {token0.symbol}
+          </h1>
+          <h1 className="text-4xl font-semibold text-gray-900 dark:text-slate-200 leading-[44px]">
+            Receive {token1.symbol}
+          </h1>
+        </>
       ) : (
         <>
           <h1 className="flex items-center gap-3 text-4xl font-semibold text-gray-900 dark:text-slate-200">
@@ -83,7 +85,7 @@ export const WidgetTitle = () => {
               onSelect={handleSelect0}
             >
               <Tooltip description={chainName[network0]} transitionDelay={300}>
-                <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!px-3">
+                <Popover.Button as={Button} variant="outlined" color="default" size="lg" className="!px-3">
                   <NetworkIcon chainId={network0} width={32} height={32} />
                   <ChevronDownIcon width={36} height={36} />
                 </Popover.Button>
@@ -99,7 +101,7 @@ export const WidgetTitle = () => {
               onSelect={handleSelect1}
             >
               <Tooltip description={chainName[network1]} transitionDelay={300}>
-                <Popover.Button as={Button} variant="outlined" color="default" size="xl" className="!px-3">
+                <Popover.Button as={Button} variant="outlined" color="default" size="lg" className="!px-3">
                   <NetworkIcon chainId={network1} width={32} height={32} />
                   <ChevronDownIcon width={36} height={36} />
                 </Popover.Button>

@@ -1,5 +1,3 @@
-'use client'
-
 import { persister, queryClient } from '@sushiswap/react-query'
 import { PersistQueryClientProvider as _PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { FC, ReactNode } from 'react'

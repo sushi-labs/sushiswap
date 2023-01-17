@@ -1,5 +1,3 @@
-'use client'
-
 import { Disclosure } from '@headlessui/react'
 import { NotificationData } from '@sushiswap/ui13/components/toast'
 import { FC } from 'react'

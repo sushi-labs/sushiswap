@@ -6,5 +6,8 @@
     "outDir": "./dist",
     "rootDir": ".",
     "resolveJsonModule": true
+  },
+  "ts-node": {
+    "swc": true
   }
 }

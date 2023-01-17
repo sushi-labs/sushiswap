@@ -1,12 +1,10 @@
-'use client'
-
 import { CreditCardIcon } from '@heroicons/react/20/solid'
 import { Amount, Native, Type } from '@sushiswap/currency'
 import { FundSource } from '@sushiswap/hooks'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import React, { FC, useCallback } from 'react'
+import { FC, useCallback } from 'react'
 
-import { CurrencyInputProps } from './index'
+import { CurrencyInputProps } from './CurrencyInput'
 import { JSBI } from '@sushiswap/math'
 
 type BalancePanel = Pick<

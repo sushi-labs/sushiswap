@@ -1,5 +1,3 @@
-'use client'
-
 import { Popover } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { ChainId, chains } from '@sushiswap/chain'
