@@ -2,20 +2,13 @@ import 'dotenv/config'
 
 import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
-import {
-  currencyFromShortCurrencyName,
-  isShortCurrencyName,
-  isShortCurrencyNameSupported,
-  Native,
-  nativeCurrencyIds,
-  Token,
-} from '@sushiswap/currency'
+import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import { DataFetcher, Router } from '@sushiswap/router'
 import { BigNumber, providers } from 'ethers'
-import { getAddress } from 'ethers/lib/utils'
 import fastify from 'fastify'
-import fetch from 'node-fetch'
 import { z } from 'zod'
+
+import { getToken } from './tokens'
 
 const server = fastify({ logger: true })
 server.register(cors)
@@ -35,27 +28,6 @@ const querySchema = z.object({
   amount: z.coerce.bigint(),
   to: z.optional(z.string()),
 })
-
-const tokenSchema = z.object({
-  address: z.coerce.string(),
-  symbol: z.string(),
-  name: z.string(),
-  decimals: z.coerce.number().int().gte(0),
-})
-
-async function getToken(chainId: ChainId, tokenId: string) {
-  const isShortNameSupported = isShortCurrencyNameSupported(chainId)
-  const tokenIdIsShortName = isShortCurrencyName(chainId, tokenId)
-
-  return isShortNameSupported && tokenIdIsShortName
-    ? currencyFromShortCurrencyName(chainId, tokenId)
-    : new Token({
-        chainId,
-        ...tokenSchema.parse(
-          await (await fetch(`https://tokens.sushi.com/v0/${chainId}/${getAddress(tokenId)}`)).json()
-        ),
-      })
-}
 
 export function getRouteProcessorAddressForChainId(chainId: ChainId) {
   switch (chainId) {
