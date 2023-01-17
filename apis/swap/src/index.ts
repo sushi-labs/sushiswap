@@ -3,7 +3,7 @@ import 'dotenv/config'
 import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
-import { DataFetcher, Router } from '@sushiswap/router'
+import { DataFetcher, findSpecialRoute, Router } from '@sushiswap/router'
 import { BigNumber, providers } from 'ethers'
 import fastify from 'fastify'
 import { z } from 'zod'
@@ -79,10 +79,18 @@ server.get('/v0', async (request) => {
 
   router.stopRouting()
 
-  const bestRoute = router.getBestRoute()
+  // const bestRoute = router.getBestRoute()
+
+  const bestRoute = findSpecialRoute(
+    dataFetcher,
+    fromToken,
+    BigNumber.from(amount.toString()),
+    toToken,
+    gasPrice ?? 30e9
+  )
 
   return {
-    getCurrentRouteHumanString: router.getCurrentRouteHumanString(),
+    getCurrentRouteHumanString: router.routeToHumanString(bestRoute, fromToken, toToken),
     getBestRoute: {
       status: bestRoute?.status,
       fromToken: bestRoute?.fromToken?.address === '' ? Native.onChain(chainId) : bestRoute?.fromToken,
@@ -100,7 +108,7 @@ server.get('/v0', async (request) => {
       legs: bestRoute?.legs,
     },
     getCurrentRouteRPParams: to
-      ? router.getCurrentRouteRPParams(to, getRouteProcessorAddressForChainId(chainId))
+      ? router.getRPParams(bestRoute, fromToken, toToken, to, getRouteProcessorAddressForChainId(chainId))
       : undefined,
   }
 })

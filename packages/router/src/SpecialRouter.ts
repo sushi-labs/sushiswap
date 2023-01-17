@@ -19,7 +19,7 @@ export function findSpecialRoute(
   amountIn: BigNumber,
   toToken: Type,
   gasPrice: number,
-  maxPriceImpact = 0.5 // 0.5%
+  maxPriceImpact = 1 // 1%
 ) {
   const routePreferrable = Router.findBestRoute(
     dataFetcher,

@@ -216,7 +216,7 @@ export class Router {
       ]
     }
   }
-
+  
   static findBestRoute(
     dataFetcher: DataFetcher,
     fromToken: Type,
