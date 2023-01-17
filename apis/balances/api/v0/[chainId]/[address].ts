@@ -55,7 +55,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
 
   const zipped = zip(tokens, balances)
   return response.status(200).json({
-    '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': balance?.toString(),
+    '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee': balance.value.toString(),
     ...Object.fromEntries(
       zipped.filter(([, balance]) => !balance?.isZero()).map(([token, balance]) => [token, balance?.toString()])
     ),
