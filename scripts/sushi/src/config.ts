@@ -1,4 +1,3 @@
-import { ChainId } from '@sushiswap/chain'
 
 export enum ProtocolVersion {
   V2 = 'V2',

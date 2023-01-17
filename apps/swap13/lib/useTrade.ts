@@ -1,9 +1,10 @@
 import { useSlippageTolerance, useTrade as _useTrade } from '@sushiswap/react-query'
 import { useBlockNumber, useFeeData } from 'wagmi'
-import { useSwapState } from '../ui/TradeProvider'
+import { useSwapState } from '../ui/trade/TradeProvider'
 
 export const useTrade = () => {
   const { token0, token1, network0, valueAsAmount, recipient } = useSwapState()
+
   const { data: slippageTolerance } = useSlippageTolerance()
   const { data: feeData } = useFeeData()
   const { data: blockNumber } = useBlockNumber({ chainId: network0, watch: true })

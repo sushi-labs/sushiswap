@@ -9,7 +9,7 @@ import { PoolMinimal } from './index.js'
  * @param client
  * @param pools
  */
-export async function mergePools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[], isFirstRun: boolean) {
+export async function mergePools(client: PrismaClient, pools: Prisma.SushiPoolCreateManyInput[], isFirstRun: boolean) {
   if (!isFirstRun) {
     await upsertPools(client, pools)
   } else {
@@ -17,10 +17,10 @@ export async function mergePools(client: PrismaClient, pools: Prisma.PoolCreateM
   }
 }
 
-async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
+async function upsertPools(client: PrismaClient, pools: Prisma.SushiPoolCreateManyInput[]) {
   console.log(`LOAD - Preparing to update ${pools.length} pools`)
 
-  const poolsWithIncentives = await client.pool.findMany({
+  const poolsWithIncentives = await client.sushiPool.findMany({
     where: {
       id: {
         in: pools.map((pool) => pool.id),
@@ -40,7 +40,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
       const totalIncentiveApr = poolWithIncentives.incentives.reduce((total, incentive) => {
         return total + incentive.apr
       }, 0)
-      return client.pool.update({
+      return client.sushiPool.update({
         select: { id: true },
         where: { id: pool.id },
         data: {
@@ -59,7 +59,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
       })
     }
 
-    return client.pool.upsert({
+    return client.sushiPool.upsert({
       select: { id: true },
       where: { id: pool.id },
       update: {
@@ -72,6 +72,7 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
         volumeNative: pool.volumeNative,
         token0Price: pool.token0Price,
         token1Price: pool.token1Price,
+        apr: pool.apr,
         totalApr: pool.apr,
       },
       create: pool,
@@ -85,10 +86,10 @@ async function upsertPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
   console.log(`LOAD - Updated ${updatedPools.length} pools. (${((endTime - startTime) / 1000).toFixed(1)}s) `)
 }
 
-async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInput[]) {
+async function createPools(client: PrismaClient, pools: Prisma.SushiPoolCreateManyInput[]) {
   let count = 0
   const startTime = performance.now()
-  const created = await client.pool.createMany({
+  const created = await client.sushiPool.createMany({
     data: pools,
     skipDuplicates: true,
   })
@@ -100,7 +101,7 @@ async function createPools(client: PrismaClient, pools: Prisma.PoolCreateManyInp
 }
 
 export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
-  const poolsWithIncentives = await client.pool.findMany({
+  const poolsWithIncentives = await client.sushiPool.findMany({
     where: {
       incentives: {
         some: {},
@@ -122,7 +123,7 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
     const totalApr = bestIncentiveApr + (pool.apr ?? 0)
     const isIncentivized = pool.incentives.some((incentive) => incentive.rewardPerDay > 0)
 
-    return client.pool.update({
+    return client.sushiPool.update({
       select: { id: true },
       where: {
         id: pool.id,
@@ -144,7 +145,7 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
 
 export async function updatePoolsWithVolumeAndFee(client: PrismaClient, pools: PoolMinimal[]) {
   const poolsToUpdate = pools.map((pool) => {
-    return client.pool.update({
+    return client.sushiPool.update({
       select: { id: true },
       where: {
         id: pool.id,

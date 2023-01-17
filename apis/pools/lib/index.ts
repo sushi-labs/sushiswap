@@ -1,0 +1,5 @@
+
+export enum PoolType {
+    CONSTANT_PRODUCT_POOL = 'CONSTANT_PRODUCT_POOL',
+    STABLE_POOL = 'STABLE_POOL',
+  }

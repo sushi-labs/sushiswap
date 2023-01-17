@@ -4,9 +4,11 @@ import { Children, FC, useLayoutEffect, useRef, useState } from 'react'
 
 import { ExtractProps } from '../../types'
 
-export type TabListProps = ExtractProps<typeof HeadlessTab.List>
+export type TabListProps = ExtractProps<typeof HeadlessTab.List> & {
+  islandClassName?: string
+}
 
-export const TabList: FC<TabListProps> = ({ className, children, ...props }) => {
+export const TabList: FC<TabListProps> = ({ className, children, islandClassName, ...props }) => {
   const [width, setWidth] = useState<number>()
   const ref = useRef<HTMLDivElement>()
   const tabs = Children.count(children)
@@ -31,7 +33,10 @@ export const TabList: FC<TabListProps> = ({ className, children, ...props }) => 
           {children}
           {tabs && width && (
             <span
-              className="z-[0] rounded-lg transition-all bg-white dark:!bg-slate-700 absolute pointer-events-none top-0 bottom-0"
+              className={classNames(
+                islandClassName,
+                'z-[0] rounded-lg transition-all bg-white dark:!bg-slate-700 absolute pointer-events-none top-0 bottom-0'
+              )}
               style={{ transform: `translateX(${(width / tabs) * selectedIndex}px)`, width: width / tabs }}
             />
           )}

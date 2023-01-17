@@ -26,35 +26,7 @@ const nextConfig = {
         destination: '/swap13',
         permanent: true,
         basePath: false,
-      },
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'query',
-            key: 'srcChainId',
-          },
-          {
-            type: 'query',
-            key: 'srcToken',
-          },
-          {
-            type: 'query',
-            key: 'srcTypedAmount',
-          },
-          {
-            type: 'query',
-            key: 'dstToken',
-          },
-          {
-            type: 'query',
-            key: 'dstChainId',
-          },
-        ],
-        basePath: false,
-        permanent: false,
-        destination: '/xswap',
-      },
+      }
     ]
   },
 }

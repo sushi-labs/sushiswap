@@ -1,4 +1,4 @@
-import { Token, Type, WNATIVE, WNATIVE_ADDRESS } from '@sushiswap/currency'
+import { Token, Type, WNATIVE } from '@sushiswap/currency'
 import {
   findMultiRouteExactIn,
   getBigNumber,
@@ -215,6 +215,34 @@ export class Router {
         `Price Impact: ${(Number(this.currentBestRoute.priceImpact) * 100).toFixed(2)}%`,
       ]
     }
+  }
+
+  static findBestRoute(
+    dataFetcher: DataFetcher,
+    fromToken: Type,
+    amountIn: BigNumber,
+    toToken: Type,
+    gasPrice: number,
+    providers?: LiquidityProviders[], // all providers if undefined
+    poolFilter?: PoolFilter
+  ): MultiRoute {
+    const networks: NetworkInfo[] = [
+      {
+        chainId: dataFetcher.chainId,
+        baseToken: WNATIVE[dataFetcher.chainId] as RToken,
+        gasPrice: gasPrice as number,
+      },
+      {
+        chainId: getBentoChainId(dataFetcher.chainId),
+        baseToken: convertTokenToBento(WNATIVE[dataFetcher.chainId]),
+        gasPrice: gasPrice as number,
+      },
+    ]
+
+    let pools = dataFetcher.getCurrentPoolCodeList(providers).map((pc) => pc.pool)
+    if (poolFilter) pools = pools.filter(poolFilter)
+
+    return findMultiRouteExactIn(TokenToRToken(fromToken), TokenToRToken(toToken), amountIn, pools, networks, gasPrice)
   }
 }
 

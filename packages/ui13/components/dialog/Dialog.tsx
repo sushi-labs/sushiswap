@@ -79,20 +79,35 @@ const DialogRoot: FC<DialogRootProps> = ({ open, onClose, children, afterLeave, 
           </>
         )}
         {variant === 'opaque' && (
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-            unmount={unmount}
-          >
-            <HeadlessDialog.Panel className="fixed inset-0 dark:bg-slate-900 bg-gray-100 p-4">
-              {children}
-            </HeadlessDialog.Panel>
-          </Transition.Child>
+          <>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+              unmount={unmount}
+            >
+              <div className="fixed inset-0 dark:bg-slate-900 bg-gray-100" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 z-10 overflow-y-auto flex justify-center p-4">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+                unmount={unmount}
+              >
+                <HeadlessDialog.Panel className="w-full h-full max-w-xl px-1">{children}</HeadlessDialog.Panel>
+              </Transition.Child>
+            </div>
+          </>
         )}
       </HeadlessDialog>
     </Transition>

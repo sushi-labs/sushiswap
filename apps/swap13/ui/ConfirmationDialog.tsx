@@ -9,7 +9,7 @@ import { FailedMarkIcon } from '@sushiswap/ui13/components/icons/FailedMarkIcon'
 import { Loader } from '@sushiswap/ui13/components/Loader'
 import { FC, ReactNode, useCallback, useState } from 'react'
 
-import { useSwapActions, useSwapState } from './TradeProvider'
+import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
@@ -90,7 +90,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   return (
     <>
       {children({ onClick, isWritePending, isConfirming: dialogState === ConfirmationDialogState.Pending })}
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog open={open} unmount={false} onClose={() => setOpen(false)}>
         <Dialog.Content>
           <div className="flex flex-col gap-5 items-center justify-center">
             {[ConfirmationDialogState.Failed, ConfirmationDialogState.Success].includes(dialogState) ? (

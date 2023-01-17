@@ -7,9 +7,8 @@ import { execute as volume } from './volume.js'
 
 const app = express()
 
-app.use(timeout('600s'))
-
 app.get('/', async (req, res) => {
+  req.setTimeout(600000)
   const target = (req.query.target as string).toLowerCase()
   try {
     switch (target) {
@@ -36,6 +35,6 @@ app.get('/', async (req, res) => {
   finally {
     process.exit(0)
   }
-})
+}, timeout('600s'))
 
 app.listen(8080)

@@ -48,11 +48,11 @@ export const ListItem: ListItemComponent = ({
           style={{ minWidth: iconProps?.width ?? 18, minHeight: iconProps?.height ?? 18, paddingTop: subtitle ? 1 : 0 }}
         >
           {React.createElement(Icon, {
-            ...iconProps,
             width: 18,
             height: 18,
             strokeWidth: 2,
-            className: classNames(iconProps?.className, 'text-blue-500'),
+            ...iconProps,
+            className: classNames(iconProps?.className, 'text-blue-500 rounded-full'),
           })}
         </div>
       )}
