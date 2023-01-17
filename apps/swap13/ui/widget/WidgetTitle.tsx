@@ -16,6 +16,7 @@ import { usePrice } from '@sushiswap/react-query'
 import { Amount, Price, Token, tryParseAmount } from '@sushiswap/currency'
 import { useBreakpoint } from '@sushiswap/ui13/lib/useBreakpoint'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
+import { ZERO } from '@sushiswap/math'
 
 export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)
@@ -42,7 +43,7 @@ export const WidgetTitle = () => {
     const dummy1 = new Token({ address: token1.wrapped.address, chainId: 1, decimals: token1.decimals })
 
     let price
-    if (token0Price && token1Price) {
+    if (token0Price && token1Price && token0Price.greaterThan(ZERO) && token1Price.greaterThan(ZERO)) {
       price = new Price({
         baseAmount: Amount.fromRawAmount(dummy0, token0Price.quotient.toString()),
         quoteAmount: Amount.fromRawAmount(dummy1, token1Price.quotient.toString()),

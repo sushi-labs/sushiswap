@@ -11,12 +11,13 @@ import {
   currencyFromShortCurrencyName,
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
-import React, { createContext, FC, ReactNode, useContext, useMemo, useReducer } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
 import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { useCustomTokens, useToken } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
+// import { watchNetwork } from '@wagmi/core'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -67,6 +68,7 @@ type SwapApi = {
   setToken1(currency: Type): void
   setValue(value: string): void
   switchTokens(): void
+  setTokens(currency0: Type, currency1: Type): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
@@ -145,14 +147,14 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       token0NotInList:
         (isAddress(fromCurrencyId) &&
           !tokenFrom &&
-          isTokenFromLoading &&
+          !isTokenFromLoading &&
           customTokens &&
           !customTokens[`${fromChainId}:${getAddress(fromCurrencyId)}`]) ||
         false,
       token1NotInList:
         (isAddress(toCurrencyId) &&
           !tokenTo &&
-          isTokenToLoading &&
+          !isTokenToLoading &&
           customTokens &&
           !customTokens[`${toChainId}:${getAddress(toCurrencyId)}`]) ||
         false,
@@ -204,6 +206,20 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         undefined,
         { shallow: true }
       )
+    const setTokens = (currency0: Type, currency1: Type) => {
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            fromCurrencyId: currency0.isNative ? currency0.symbol : currency0.wrapped.address,
+            toCurrencyId: currency1.isNative ? currency1.symbol : currency1.wrapped.address,
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
     const setToken0 = (currency: Type) => {
       void push(
         {
@@ -283,8 +299,14 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       switchTokens,
       setRecipient,
       setReview,
+      setTokens,
     }
   }, [push, query])
+
+  // useEffect(() => {
+  //   const unwatch = watchNetwork(({ chain }) => (chain ? api.setNetwork0(chain.id) : undefined))
+  //   return () => unwatch()
+  // }, [api])
 
   return (
     <SwapActionsContext.Provider value={api}>

@@ -110,7 +110,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             <Skeleton.Box className="w-full h-[32px] rounded-lg" />
             <Skeleton.Box className="w-1/2 h-[32px] rounded-lg" />
           </div>
-        ) : isLoading ? (
+        ) : loading ? (
           <div className="flex gap-1 items-center justify-between flex-grow h-[44px]">
             <Skeleton.Box className="w-full h-[32px] rounded-lg" />
           </div>
