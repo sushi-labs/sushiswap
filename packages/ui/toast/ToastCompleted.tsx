@@ -1,4 +1,4 @@
-import { CheckCircleIcon } from '@heroicons/react/outline'
+import { CheckCircleIcon } from '@heroicons/react/24/outline'
 import { Chain } from '@sushiswap/chain'
 import { FC } from 'react'
 
@@ -10,15 +10,11 @@ interface ToastCompleted extends Omit<NotificationData, 'promise'> {
   onDismiss(): void
 }
 
-export const ToastCompleted: FC<ToastCompleted> = ({ href, chainId, txHash, onDismiss, summary }) => {
+export const ToastCompleted: FC<ToastCompleted> = ({ type, href, chainId, txHash, onDismiss, summary }) => {
   const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? ''
   return (
     <>
-      <ToastContent
-        icon={<CheckCircleIcon width={18} height={18} className="text-green" />}
-        title="Transaction Completed"
-        summary={summary.completed}
-      />
+      <ToastContent href={txUrl} summary={summary.completed} />
       <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
   )
