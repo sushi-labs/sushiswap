@@ -1308,135 +1308,6 @@ importers:
   apps/swap:
     specifiers:
       '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/experimental': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': ^1.7.3
-      '@heroicons/react': ^1.0.0
-      '@playwright/test': 1.28.1
-      '@reduxjs/toolkit': 1.9.1
-      '@sushiswap/abi': workspace:*
-      '@sushiswap/address': workspace:*
-      '@sushiswap/amm': workspace:*
-      '@sushiswap/bentobox': workspace:*
-      '@sushiswap/chain': workspace:*
-      '@sushiswap/currency': workspace:*
-      '@sushiswap/eslint-config': workspace:*
-      '@sushiswap/gas': workspace:*
-      '@sushiswap/hooks': workspace:*
-      '@sushiswap/jest-config': workspace:*
-      '@sushiswap/math': workspace:*
-      '@sushiswap/nextjs-config': workspace:*
-      '@sushiswap/prettier-config': workspace:*
-      '@sushiswap/redux-localstorage': workspace:*
-      '@sushiswap/redux-token-lists': workspace:*
-      '@sushiswap/tines': workspace:*
-      '@sushiswap/token-lists': workspace:*
-      '@sushiswap/typescript-config': workspace:*
-      '@sushiswap/ui': workspace:*
-      '@sushiswap/validate': workspace:*
-      '@sushiswap/wagmi': workspace:*
-      '@testing-library/jest-dom': 5.16.5
-      '@testing-library/react': 13.4.0
-      '@testing-library/user-event': 14.4.3
-      '@types/node': 18.11.18
-      '@types/numeral': 2.0.2
-      '@types/react': ^18.0.0
-      '@types/react-dom': ^18.0.0
-      '@types/workbox-sw': ^4.3.2
-      '@uniswap/v2-core': 1.0.1
-      '@vercel/analytics': 0.1.5
-      autoprefixer: 10.4.13
-      concurrently: 7.6.0
-      date-fns: 2.29.3
-      dotenv-cli: 6.0.0
-      eslint: 8.29.0
-      ethers: 5.7.2
-      next: 13.1.1
-      next-seo: 5.15.0
-      next-sitemap: 3.1.43
-      numeral: 2.0.6
-      postcss: 8.4.21
-      react: 18.2.0
-      react-dom: 18.2.0
-      react-redux: 8.0.5
-      tailwindcss: 3.2.4
-      typescript: 4.9.4
-      wagmi: 0.9.1
-      wait-on: 6.0.1
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/experimental': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@ethersproject/solidity': 5.7.0
-      '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
-      '@heroicons/react': 1.0.6_react@18.2.0
-      '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
-      '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/address': link:../../packages/address
-      '@sushiswap/amm': link:../../packages/amm
-      '@sushiswap/bentobox': link:../../protocols/bentobox
-      '@sushiswap/chain': link:../../packages/chain
-      '@sushiswap/currency': link:../../packages/currency
-      '@sushiswap/gas': link:../../packages/gas
-      '@sushiswap/hooks': link:../../packages/hooks
-      '@sushiswap/math': link:../../packages/math
-      '@sushiswap/redux-localstorage': link:../../packages/redux/localstorage
-      '@sushiswap/redux-token-lists': link:../../packages/redux/token-lists
-      '@sushiswap/tines': link:../../packages/tines
-      '@sushiswap/token-lists': link:../../packages/token-lists
-      '@sushiswap/ui': link:../../packages/ui
-      '@sushiswap/validate': link:../../packages/validate
-      '@sushiswap/wagmi': link:../../packages/wagmi
-      '@uniswap/v2-core': 1.0.1
-      '@vercel/analytics': 0.1.5_react@18.2.0
-      date-fns: 2.29.3
-      ethers: 5.7.2
-      next: 13.1.1_biqbaboplfbrettd7655fr4n2y
-      next-seo: 5.15.0_q76c2b4vyoegvsbrcwkfvimnai
-      next-sitemap: 3.1.43_next@13.1.1
-      numeral: 2.0.6
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-redux: 8.0.5_ie75ejlwqy5zh3tldgt7pftwcu
-      wagmi: 0.9.1_5fkdkfy2bkgsnhvxgn477z7iae
-      wait-on: 6.0.1
-    devDependencies:
-      '@playwright/test': 1.28.1
-      '@sushiswap/eslint-config': link:../../config/eslint
-      '@sushiswap/jest-config': link:../../config/jest
-      '@sushiswap/nextjs-config': link:../../config/nextjs
-      '@sushiswap/prettier-config': link:../../config/prettier
-      '@sushiswap/typescript-config': link:../../config/typescript
-      '@testing-library/jest-dom': 5.16.5
-      '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
-      '@testing-library/user-event': 14.4.3
-      '@types/node': 18.11.18
-      '@types/numeral': 2.0.2
-      '@types/react': 18.0.26
-      '@types/react-dom': 18.0.10
-      '@types/workbox-sw': 4.3.2
-      autoprefixer: 10.4.13_postcss@8.4.21
-      concurrently: 7.6.0
-      dotenv-cli: 6.0.0
-      eslint: 8.29.0
-      postcss: 8.4.21
-      tailwindcss: 3.2.4_postcss@8.4.21
-      typescript: 4.9.4
-
-  apps/swap13:
-    specifiers:
-      '@ethersproject/abi': 5.7.0
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': ^1.7.3
       '@heroicons/react': 2.0.13
@@ -8156,16 +8027,6 @@ packages:
       '@repeaterjs/repeater': 3.0.4
       tslib: 2.4.1
 
-  /@hapi/hoek/9.3.0:
-    resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
-    dev: false
-
-  /@hapi/topo/5.1.0:
-    resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
-    dependencies:
-      '@hapi/hoek': 9.3.0
-    dev: false
-
   /@headlessui/react/1.7.7_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-BqDOd/tB9u2tA0T3Z0fn18ktw+KbVwMnkxxsGPIH2hzssrQhKB5n/6StZOyvLYP/FsYtvuXfi9I0YowKPv2c1w==}
     engines: {node: '>=10'}
@@ -10166,20 +10027,6 @@ packages:
       string.prototype.codepointat: 0.2.1
     dev: false
 
-  /@sideway/address/4.1.4:
-    resolution: {integrity: sha512-7vwq+rOHVWjyXxVlR76Agnvhy8I9rpzjosTESvmhNeXOXdZZB15Fl+TI9x1SiHZH5Jv2wTGduSxFDIaq0m3DUw==}
-    dependencies:
-      '@hapi/hoek': 9.3.0
-    dev: false
-
-  /@sideway/formula/3.0.1:
-    resolution: {integrity: sha512-/poHZJJVjx3L+zVD6g9KgHfYnb443oi7wLu/XKojDviHy6HOEOA6z1Trk5aR1dGcmPenJEgb2sK2I80LeS3MIg==}
-    dev: false
-
-  /@sideway/pinpoint/2.0.0:
-    resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
-    dev: false
-
   /@sinclair/typebox/0.24.51:
     resolution: {integrity: sha512-1P1OROm/rdubP5aFDSZQILU0vrLCJ4fvHt6EoqHEM+2D/G5MK3bIaymUKLit8Js9gbns5UyJnkP/TZROLw4tUA==}
 
@@ -11454,88 +11301,6 @@ packages:
     dependencies:
       '@types/bn.js': 5.1.1
       '@types/underscore': 1.11.4
-
-  /@types/workbox-background-sync/4.3.2:
-    resolution: {integrity: sha512-WAp8TxDW8QAs6A2ns2NQlti5MVov/P0bN0TEUPYjhzVqzQa5VQSVSCUA03MLJFkb+kdqvqhcOwWlcbuIgepSsQ==}
-    dependencies:
-      '@types/workbox-core': 4.3.1
-    dev: true
-
-  /@types/workbox-broadcast-update/4.3.1:
-    resolution: {integrity: sha512-JAwv2fHu9pTMvu1wKSR5sanTAR6ne8jXBE/MYo4bDs7ipVqM9OZ+M9RO3aXtNXI7oh+8uWgPxHam/7OGZF8d4Q==}
-    dependencies:
-      '@types/workbox-core': 4.3.1
-    dev: true
-
-  /@types/workbox-cacheable-response/4.3.1:
-    resolution: {integrity: sha512-gXOrC5bBwjDu2R6mDFoY0HYhH6+IuaU00SvDDhSOAZSOjPwn8DLPZAQC58xZFLG+ShsvbQw/cT84uZouAdHz9A==}
-    dependencies:
-      '@types/workbox-core': 4.3.1
-    dev: true
-
-  /@types/workbox-core/4.3.1:
-    resolution: {integrity: sha512-KTXHNijPQ+LpEdS+MvSdFn+YBzdfoNzgWjkTy68WrByVrsVU0wzE9536fCBIZrbruaEUcmf50vY94crpF3Vong==}
-    dev: true
-
-  /@types/workbox-expiration/4.3.1:
-    resolution: {integrity: sha512-sIcKaG5KVN4OvvvdTk57Mdi49QwXPPMYv6ztc/0nGNvdczHUY5w/b4MZbR11ouEbc5PPKCMAawdu9KreMVmZ4g==}
-    dependencies:
-      '@types/workbox-core': 4.3.1
-    dev: true
-
-  /@types/workbox-google-analytics/4.3.1:
-    resolution: {integrity: sha512-qDPehZ8ewDbs0VBCbeAozvktz8pBNcF+NYIWrOzq9EwmpifvUoWpKU/iPTIZI7hph/74ROnFFS5clbmtIMfz7Q==}
-    dev: true
-
-  /@types/workbox-navigation-preload/4.3.0:
-    resolution: {integrity: sha512-yv4iMch2cM1rW2GTFjtEHAmUJfYtWnHENdR9TrjziO47czDSulLU/UzflmS/L9alQNP7GyHpegDWBJwtKad/Mg==}
-    dev: true
-
-  /@types/workbox-precaching/4.3.1:
-    resolution: {integrity: sha512-FDpEzz2iiArZkIhOANoU8WbL3EdvnzA+DZmtDLLgysRJB/iHPHhvzjyveRwfVQh7QOk3O+c5hINlnldVMEPb1g==}
-    dependencies:
-      '@types/workbox-core': 4.3.1
-    dev: true
-
-  /@types/workbox-range-requests/4.3.0:
-    resolution: {integrity: sha512-IlZcWZtGlpT4OhEdCdWeMkHHOO5yVwDqmuJq1WtgtjyIwm/mwwVPYGLVeVOE62m8sQ2L9Ziqfem2h9UmabBDmg==}
-    dependencies:
-      '@types/workbox-core': 4.3.1
-    dev: true
-
-  /@types/workbox-routing/4.3.1:
-    resolution: {integrity: sha512-2TYTiMcF6lMdMU36zUZPyQurpM8xso3Ad6XnFDdlSZowukoFy6pwZV+oT27z/jU1eaa+QgtPkdYFrS5KsJDMOQ==}
-    dev: true
-
-  /@types/workbox-strategies/4.3.1:
-    resolution: {integrity: sha512-jD3LwQpxIzaOThzj9OroMT8Ci9XAmAB5apSAv91WfYQ9jbRB0/+gsxuhLy+BQMERziU8w0hK24SOA/YZr0jhyw==}
-    dependencies:
-      '@types/workbox-core': 4.3.1
-      '@types/workbox-routing': 4.3.1
-    dev: true
-
-  /@types/workbox-streams/4.3.0:
-    resolution: {integrity: sha512-PYI7eAOQ9Dj/cu/WcROOfSsn29pC9gjCudK+hQBSWgAaxfHBmNFQGh7EvtZ3BzOJhjj3O0pEV5l6aA55oBRxBQ==}
-    dependencies:
-      '@types/workbox-routing': 4.3.1
-    dev: true
-
-  /@types/workbox-sw/4.3.2:
-    resolution: {integrity: sha512-qWsvcrjgV49TL4Fs9Ou2HuxvENLOxmuUUx76Gwg/rWpJdzKfcRlnHnT9MwzmeylERsPs+1IcwzWxjav5/PxwcQ==}
-    dependencies:
-      '@types/workbox-background-sync': 4.3.2
-      '@types/workbox-broadcast-update': 4.3.1
-      '@types/workbox-cacheable-response': 4.3.1
-      '@types/workbox-core': 4.3.1
-      '@types/workbox-expiration': 4.3.1
-      '@types/workbox-google-analytics': 4.3.1
-      '@types/workbox-navigation-preload': 4.3.0
-      '@types/workbox-precaching': 4.3.1
-      '@types/workbox-range-requests': 4.3.0
-      '@types/workbox-routing': 4.3.1
-      '@types/workbox-strategies': 4.3.1
-      '@types/workbox-streams': 4.3.0
-    dev: true
 
   /@types/ws/7.4.7:
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
@@ -13722,14 +13487,6 @@ packages:
       follow-redirects: 1.15.2_debug@4.3.4
     transitivePeerDependencies:
       - debug
-
-  /axios/0.25.0:
-    resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
-    dependencies:
-      follow-redirects: 1.15.2
-    transitivePeerDependencies:
-      - debug
-    dev: false
 
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
@@ -22840,16 +22597,6 @@ packages:
       - ts-node
     dev: true
 
-  /joi/17.7.0:
-    resolution: {integrity: sha512-1/ugc8djfn93rTE3WRKdCzGGt/EtiYKxITMO4Wiv6q5JL1gl9ePt4kBsl1S499nbosspfctIQTpYIhSmHA3WAg==}
-    dependencies:
-      '@hapi/hoek': 9.3.0
-      '@hapi/topo': 5.1.0
-      '@sideway/address': 4.1.4
-      '@sideway/formula': 3.0.1
-      '@sideway/pinpoint': 2.0.0
-    dev: false
-
   /joycon/3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
@@ -27456,6 +27203,7 @@ packages:
     resolution: {integrity: sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==}
     dependencies:
       tslib: 2.4.1
+    dev: true
 
   /sade/1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
@@ -30488,20 +30236,6 @@ packages:
       - supports-color
       - typescript
       - utf-8-validate
-    dev: false
-
-  /wait-on/6.0.1:
-    resolution: {integrity: sha512-zht+KASY3usTY5u2LgaNqn/Cd8MukxLGjdcZxT2ns5QzDmTFc4XoWBgC+C/na+sMRZTuVygQoMYwdcVjHnYIVw==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-    dependencies:
-      axios: 0.25.0
-      joi: 17.7.0
-      lodash: 4.17.21
-      minimist: 1.2.7
-      rxjs: 7.8.0
-    transitivePeerDependencies:
-      - debug
     dev: false
 
   /walker/1.0.8:
