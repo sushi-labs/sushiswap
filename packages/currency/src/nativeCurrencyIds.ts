@@ -36,6 +36,6 @@ export const nativeCurrencyIds = {
   [ChainId.BOBA]: 'ETH',
   [ChainId.BOBA]: 'ETH',
   [ChainId.BOBA_AVAX]: 'BOBA',
-  // [ChainId.BOBA_BNB]: 'BOBA',
+  [ChainId.BOBA_BNB]: 'BOBA',
   [ChainId.BTTC]: 'BTT',
 } as const

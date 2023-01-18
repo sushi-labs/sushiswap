@@ -17,11 +17,11 @@ const schema = z.object({
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
   const { chainId, address, currency } = schema.parse(request.query)
-  const threeDaysAgo = sub(new Date(), {days: 3})
+  const threeDaysAgo = sub(new Date(), { days: 3 })
   const dateThreshold = roundToNearestMinutes(threeDaysAgo, { nearestTo: 10 })
 
   const token = await getPrice(chainId, address, dateThreshold, currency)
-  if (token === undefined) return response.status(404).json({})
+  if (token === undefined) return response.status(404).send(0)
 
   return response.status(200).json(token)
 }

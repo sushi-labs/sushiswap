@@ -95,10 +95,10 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
       apr: true,
       totalApr: true,
       isIncentivized: true,
-      volume1d: true,
       fees1d: true,
-      volume1w: true,
       fees1w: true,
+      volume1d: true,
+      volume1w: true,
       isBlacklisted: true,
       token0: {
         select: {
@@ -121,6 +121,7 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
       incentives: {
         select: {
           id: true,
+          pid: true,
           chainId: true,
           type: true,
           apr: true,

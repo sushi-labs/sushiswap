@@ -3,6 +3,10 @@ import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 import type { ethers } from 'ethers'
 
 import { Limited } from './Limited'
+import { ApeSwapProviderMC } from './liquidity-providers/ApeSwapMC'
+import { DfynProviderMC } from './liquidity-providers/DfynMC'
+import { ElkProviderMC } from './liquidity-providers/ElkMC'
+import { JetSwapProviderMC } from './liquidity-providers/JetSwapMC'
 import { LiquidityProviderMC, LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { QuickSwapProviderMC } from './liquidity-providers/QuickSwapMC'
@@ -59,6 +63,20 @@ export class DataFetcher {
     if (this._providerIsIncluded(LiquidityProviders.Quickswap, providers))
       this.providers.push(
         new QuickSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
+    if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers))
+      this.providers.push(
+        new ApeSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
+    if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers))
+      this.providers.push(
+        new DfynProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
+    if (this._providerIsIncluded(LiquidityProviders.Elk, providers))
+      this.providers.push(new ElkProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
+    if (this._providerIsIncluded(LiquidityProviders.JetSwp, providers))
+      this.providers.push(
+        new JetSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
     if (this._providerIsIncluded(LiquidityProviders.Trident, providers))
       this.providers.push(
