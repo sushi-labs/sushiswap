@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { FC } from 'react'
+import { Button } from '../button'
 
 interface ToastButtons {
   href?: string
@@ -7,24 +8,19 @@ interface ToastButtons {
 }
 
 export const ToastButtons: FC<ToastButtons> = ({ href, onDismiss }) => {
+  return <></>
+
   return (
-    <div className={classNames(href ? 'grid-cols-2' : 'grid-cols-auto', 'grid divide-x divide-slate-200/5')}>
-      {href && (
-        <a
-          href={href}
-          target="_blank"
-          className="text-xs font-semibold py-3 text-blue text-center hover:dark:bg-slate-700/20 cursor-pointer border-t dark:border-slate-200/5"
-          rel="noreferrer"
-        >
-          View Detail
-        </a>
-      )}
-      <button
-        onClick={onDismiss}
-        className="text-xs font-semibold py-3 text-blue text-center hover:dark:bg-slate-700/20 cursor-pointer border-t dark:border-slate-200/5"
-      >
+    <div className={classNames(href ? 'grid-cols-2' : 'grid-cols-auto', 'grid gap-4 p-4 pt-0')}>
+      <Button size="sm" onClick={onDismiss} variant="outlined" color="blue">
         Dismiss
-      </button>
+      </Button>
+
+      {href && (
+        <Button size="sm" as="a" href={href} target="_blank" rel="noreferrer" variant="outlined" color="blue">
+          Transaction
+        </Button>
+      )}
     </div>
   )
 }

@@ -73,7 +73,7 @@ export const createInlineToast = (props: NotificationData) => {
 }
 
 export const createToast = (props: NotificationData): NotificationData => {
-  const onDismiss = () => toast.dismiss(props.txHash)
+  const onDismiss = () => {}
 
   // Spawn new toasts based on promise result
   props.promise
@@ -113,7 +113,7 @@ export const createErrorToast = (message: string | undefined, code: boolean) => 
   const toastId = `failed:${nanoid()}`
   toast(
     <>
-      <ToastContent title="Error Occurred" summary={message} code={code} />
+      <ToastContent summary={message} code={code} />
       <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
     </>,
     {

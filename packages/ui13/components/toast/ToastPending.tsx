@@ -5,20 +5,17 @@ import { Loader } from '../Loader'
 import { NotificationData } from './Toast'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
+import { Dots } from '../Dots'
 
 interface ToastPending extends Omit<NotificationData, 'promise'> {
   onDismiss(): void
 }
 
-export const ToastPending: FC<ToastPending> = ({ href, chainId, txHash, onDismiss, summary }) => {
+export const ToastPending: FC<ToastPending> = ({ type, href, chainId, txHash, onDismiss, summary }) => {
   const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? ''
   return (
     <>
-      <ToastContent
-        icon={<Loader width={18} height={18} className="text-blue" />}
-        title="Transaction Pending"
-        summary={summary.pending}
-      />
+      <ToastContent href={txUrl} summary={<Dots>{summary.pending}</Dots>} />
       <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
   )

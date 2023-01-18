@@ -1,4 +1,3 @@
-import { XCircleIcon } from '@heroicons/react/24/outline'
 import { Chain } from '@sushiswap/chain'
 import { FC } from 'react'
 
@@ -10,15 +9,11 @@ interface ToastFailed extends Omit<NotificationData, 'promise'> {
   onDismiss(): void
 }
 
-export const ToastFailed: FC<ToastFailed> = ({ href, chainId, txHash, onDismiss, summary }) => {
+export const ToastFailed: FC<ToastFailed> = ({ href, type, chainId, txHash, onDismiss, summary }) => {
   const txUrl = href ? href : Chain.from(chainId)?.getTxUrl(txHash) ?? ''
   return (
     <>
-      <ToastContent
-        icon={<XCircleIcon width={18} height={18} className="text-red" />}
-        title="Transaction Failed"
-        summary={summary.failed}
-      />
+      <ToastContent href={txUrl} summary={summary.failed} />
       <ToastButtons href={txUrl} onDismiss={onDismiss} />
     </>
   )
