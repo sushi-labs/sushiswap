@@ -18,6 +18,7 @@ import { useAccount } from 'wagmi'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
 import { Button } from '@sushiswap/ui13/components/button'
 import { Currency } from '@sushiswap/ui13/components/currency'
+import { COMMON_BASES } from '@sushiswap/router-config'
 
 interface TokenSelectorProps {
   id: string
@@ -74,51 +75,21 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                   <Search id={id} input={Input.Address} value={query} loading={searching} onChange={onInput} />
                 </div>
 
-                {/*TODO RAMIN COMMON BASES*/}
-                <div className="flex gap-2">
-                  <Button
-                    // @ts-ignore
-                    startIcon={<Currency.Icon currency={SUSHI[chainId]} width={16} height={16} />}
-                    size="xs"
-                    color="blue"
-                    variant="outlined"
-                  >
-                    SUSHI
-                  </Button>
-                  <Button
-                    startIcon={<Currency.Icon currency={Native.onChain(chainId)} width={16} height={16} />}
-                    size="xs"
-                    color="blue"
-                    variant="outlined"
-                  >
-                    ETH
-                  </Button>
-                  {/*// @ts-ignore*/}
-                  {USDC[chainId] && (
+                <div className="flex flex-wrap gap-2">
+                  {COMMON_BASES[chainId].map((base) => (
                     <Button
-                      // @ts-ignore
-                      startIcon={<Currency.Icon currency={USDC[chainId]} width={16} height={16} />}
+                      startIcon={<Currency.Icon currency={base} width={16} height={16} />}
                       size="xs"
                       color="blue"
                       variant="outlined"
+                      key={base.address}
                     >
-                      USDC
+                      {base.symbol}
                     </Button>
-                  )}
-                  {/*// @ts-ignore*/}
-                  {USDT[chainId] && (
-                    <Button
-                      // @ts-ignore
-                      startIcon={<Currency.Icon currency={USDT[chainId]} width={16} height={16} />}
-                      size="xs"
-                      color="blue"
-                      variant="outlined"
-                    >
-                      USDT
-                    </Button>
-                  )}
+                  ))}
                 </div>
-                <List.Control className="p-1 flex flex-col flex-grow gap-3">
+
+                <List.Control className="flex flex-col flex-grow gap-3 p-1">
                   {queryToken[0] && (
                     <TokenSelectorImportRow
                       currencies={queryToken}
@@ -130,8 +101,8 @@ export const TokenSelector: FC<TokenSelectorProps> = ({ id, selected, onSelect, 
                 {currencies.length === 0 && !queryToken && chainId && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="flex flex-col items-center justify-center gap-1">
-                      <span className="text-xs flex italic text-slate-500">No tokens found on</span>
-                      <span className="text-xs font-medium flex gap-1 italic text-slate-500">
+                      <span className="flex text-xs italic text-slate-500">No tokens found on</span>
+                      <span className="flex gap-1 text-xs italic font-medium text-slate-500">
                         <NetworkIcon width={14} height={14} chainId={chainId} /> {chainName[chainId]}
                       </span>
                     </div>

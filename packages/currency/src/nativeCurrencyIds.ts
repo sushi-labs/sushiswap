@@ -32,7 +32,7 @@ export const nativeCurrencyIds = {
   [ChainId.MOONBEAM]: 'GLMR',
   [ChainId.OPTIMISM]: 'ETH',
   [ChainId.KAVA]: 'KAVA',
-  [ChainId.METIS]: 'KAVA',
+  [ChainId.METIS]: 'METIS',
   [ChainId.BOBA]: 'ETH',
   [ChainId.BOBA]: 'ETH',
   [ChainId.BOBA_AVAX]: 'BOBA',
