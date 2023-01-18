@@ -130,13 +130,14 @@ model Incentive {
   chainId         Int
   type            String
   apr             Float
-  rewarderAddress String
   rewardPerDay    Float
   rewardToken     Token  @relation(fields: [rewardTokenId], references: [id])
   rewardTokenId   String
   pool            SushiPool   @relation(fields: [poolId], references: [id])
   poolId          String
   pid             Int
+  rewarderAddress String
+  rewarderType    String
 
   @@index(fields: [id])
   @@index(fields: [poolId])

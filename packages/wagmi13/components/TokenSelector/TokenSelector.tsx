@@ -18,6 +18,7 @@ import { useAccount } from 'wagmi'
 import { TokenSelectorCustomTokensOverlay } from './TokenSelectorCustomTokensOverlay'
 import { Button } from '@sushiswap/ui13/components/button'
 import { Currency } from '@sushiswap/ui13/components/currency'
+import { COMMON_BASES } from '@sushiswap/router-config'
 
 interface TokenSelectorProps {
   id: string
@@ -81,45 +82,17 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                     <Search id={id} input={Input.Address} value={query} loading={searching} onChange={onInput} />
                   </div>
 
-                  {/*TODO RAMIN COMMON BASES*/}
                   <div className="flex flex-wrap gap-2">
-                    <Button
-                      // @ts-ignore
-                      startIcon={<Currency.Icon currency={SUSHI[chainId]} width={16} height={16} />}
-                      color="default"
-                      variant="outlined"
-                    >
-                      SUSHI
-                    </Button>
-                    <Button
-                      startIcon={<Currency.Icon currency={Native.onChain(chainId)} width={16} height={16} />}
-                      color="default"
-                      variant="outlined"
-                    >
-                      ETH
-                    </Button>
-                    {/*// @ts-ignore*/}
-                    {USDC[chainId] && (
+                    {COMMON_BASES[chainId].map((base) => (
                       <Button
-                        // @ts-ignore
-                        startIcon={<Currency.Icon currency={USDC[chainId]} width={16} height={16} />}
+                        startIcon={<Currency.Icon currency={base} width={16} height={16} />}
                         color="default"
                         variant="outlined"
+                        key={base.address}
                       >
-                        USDC
+                        {base.symbol}
                       </Button>
-                    )}
-                    {/*// @ts-ignore*/}
-                    {USDT[chainId] && (
-                      <Button
-                        // @ts-ignore
-                        startIcon={<Currency.Icon currency={USDT[chainId]} width={16} height={16} />}
-                        color="default"
-                        variant="outlined"
-                      >
-                        USDT
-                      </Button>
-                    )}
+                    ))}
                   </div>
                   <List.Control className="p-1 flex flex-col flex-grow gap-3">
                     {queryToken[0] && (

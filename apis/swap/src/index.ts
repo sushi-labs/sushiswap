@@ -7,9 +7,9 @@ import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import { DataFetcher, findSpecialRoute, Router } from '@sushiswap/router'
 import { BigNumber, providers } from 'ethers'
 import fastify from 'fastify'
+import { performance } from 'perf_hooks'
 import { z } from 'zod'
 
-import { performance } from 'perf_hooks'
 import { getToken } from './tokens'
 
 const server = fastify({ logger: true })
@@ -68,16 +68,18 @@ server.get('/v0', async (request) => {
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
 
   // Limited to predefined short names and tokens from our db for now
-  
+
   const tokenStartTime = performance.now()
   const [fromToken, toToken] = await Promise.all([getToken(chainId, fromTokenId), getToken(chainId, toTokenId)])
   const tokenEndTime = performance.now()
-  console.log(`tokens (${((tokenEndTime - tokenStartTime)).toFixed(0)} ms) `)
+  console.log(`tokens (${(tokenEndTime - tokenStartTime).toFixed(0)} ms) `)
 
   const dataFetcherStartTime = performance.now()
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const dataFetcherEndTime = performance.now()
-  console.log(`dataFetcher.fetchPoolsForToken(fromToken, toToken) (${((dataFetcherEndTime - dataFetcherStartTime)).toFixed(0)} ms) `)
+  console.log(
+    `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(0)} ms) `
+  )
 
   // const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
   // await new Promise<void>((resolve) => {
@@ -98,7 +100,7 @@ server.get('/v0', async (request) => {
     gasPrice ?? 30e9
   )
   const routeEndTime = performance.now()
-  console.log(`findSpecialRoute(..) (${((routeEndTime - routeStartTime)).toFixed(0)} ms) `)
+  console.log(`findSpecialRoute(..) (${(routeEndTime - routeStartTime).toFixed(0)} ms) `)
 
   return {
     getCurrentRouteHumanString: Router.routeToHumanString(dataFetcher, bestRoute, fromToken, toToken),

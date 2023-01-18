@@ -14,11 +14,11 @@ export const SwitchAppType: FC = () => {
       <Button size="sm" variant="outlined" color="default">
         Swap
       </Button>
-      <Tooltip description="Coming Soon™">
+      {/* <Tooltip description="Coming Soon™">
         <Button className="pointer-events-none" size="sm" variant="empty" color="default">
           Limit
         </Button>
-      </Tooltip>
+      </Tooltip> */}
     </div>
   )
 }

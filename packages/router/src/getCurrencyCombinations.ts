@@ -1,34 +1,7 @@
 import { ChainId } from '@sushiswap/chain'
-import { DAI, FRAX, MIM, Token, Type, USDC, USDT, WBTC, WETH9, WNATIVE } from '@sushiswap/currency'
-import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from '@sushiswap/router-config'
+import { Token, Type } from '@sushiswap/currency'
+import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, COMMON_BASES, CUSTOM_BASES } from '@sushiswap/router-config'
 import flatMap from 'lodash.flatmap'
-
-export const COMMON_BASES = {
-  [ChainId.AVALANCHE]: [
-    WNATIVE[ChainId.AVALANCHE],
-    WETH9[ChainId.FANTOM],
-    USDC[ChainId.AVALANCHE],
-    USDT[ChainId.AVALANCHE],
-    DAI[ChainId.AVALANCHE],
-    MIM[ChainId.AVALANCHE],
-    FRAX[ChainId.AVALANCHE],
-  ],
-  [ChainId.ARBITRUM_NOVA]: [
-    WNATIVE[ChainId.ARBITRUM_NOVA],
-    WBTC[ChainId.ARBITRUM_NOVA],
-    USDC[ChainId.ARBITRUM_NOVA],
-    USDT[ChainId.ARBITRUM_NOVA],
-    DAI[ChainId.ARBITRUM_NOVA],
-  ],
-  [ChainId.BOBA]: [
-    WNATIVE[ChainId.BOBA],
-    USDC[ChainId.BOBA],
-    USDT[ChainId.BOBA],
-    DAI[ChainId.BOBA],
-    FRAX[ChainId.BOBA],
-    WBTC[ChainId.BOBA],
-  ],
-} as const
 
 export function getCurrencyCombinations(chainId: ChainId, currencyA: Type, currencyB: Type) {
   const [tokenA, tokenB] = chainId ? [currencyA?.wrapped, currencyB?.wrapped] : [undefined, undefined]
