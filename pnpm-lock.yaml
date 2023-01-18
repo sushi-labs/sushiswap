@@ -1312,6 +1312,7 @@ importers:
       '@headlessui/react': ^1.7.3
       '@heroicons/react': 2.0.13
       '@playwright/test': 1.28.1
+      '@sushiswap/abi': workspace:*
       '@sushiswap/address': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
@@ -1360,6 +1361,7 @@ importers:
       '@ethersproject/constants': 5.7.0
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
+      '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/address': link:../../packages/address
       '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/chain': link:../../packages/chain
@@ -2411,6 +2413,7 @@ importers:
   packages/react-query:
     specifiers:
       '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
       '@ethersproject/units': ^5.7.0
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
@@ -2420,6 +2423,7 @@ importers:
       '@sushiswap/math': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query-config': workspace:*
+      '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui13': workspace:*
       '@tanstack/react-query': 4.20.4
@@ -2437,11 +2441,13 @@ importers:
       zod: 3.20.2
     dependencies:
       '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
       '@ethersproject/units': 5.7.0
       '@sushiswap/amm': link:../amm
       '@sushiswap/chain': link:../chain
       '@sushiswap/currency': link:../currency
       '@sushiswap/math': link:../math
+      '@sushiswap/types': link:../types
       '@sushiswap/ui13': link:../ui13
       '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.20.4_fu3ixcwltlssi3ozitelgaebme

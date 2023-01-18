@@ -13,7 +13,7 @@ import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
 import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
-import ROUTE_PROCESSOR_ABI from '../abis/route-processor.json'
+import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
 import { BigNumber } from 'ethers'
 import { SendTransactionResult } from 'wagmi/actions'
@@ -57,7 +57,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { config } = usePrepareContractWrite({
     chainId: ChainId.POLYGON,
     address: ROUTE_PROCESSOR_ADDRESS[ChainId.POLYGON],
-    abi: ROUTE_PROCESSOR_ABI,
+    abi: routeProcessorAbi,
     functionName: 'processRoute',
     args: trade?.writeArgs,
     enabled: Boolean(trade?.writeArgs),

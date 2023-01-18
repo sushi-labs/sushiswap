@@ -1,6 +1,8 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { calculateSlippageAmount } from '@sushiswap/amm'
-import { Amount, Native, nativeCurrencyIds, Price } from '@sushiswap/currency'
+import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
 import { Percent, ZERO } from '@sushiswap/math'
+import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
@@ -40,7 +42,7 @@ export const useTradeQuery = (
 
 export const useTrade = (variables: UseTradeParams) => {
   const { chainId, fromToken, toToken, amount, slippagePercentage } = variables
-  const { data: price } = usePrice({ chainId, address: Native.onChain(chainId).wrapped.address })
+  const { data: price } = usePrice({ chainId, address: WNATIVE_ADDRESS[chainId] })
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
@@ -80,12 +82,12 @@ export const useTrade = (variables: UseTradeParams) => {
         currentRouteHumanString: data?.getCurrentRouteHumanString,
         writeArgs: data?.getCurrentRouteRPParams
           ? [
-              data.getCurrentRouteRPParams.tokenIn,
-              data.getCurrentRouteRPParams.amountIn,
-              data.getCurrentRouteRPParams.tokenOut,
-              data.getCurrentRouteRPParams.amountOutMin,
-              data.getCurrentRouteRPParams.to,
-              data.getCurrentRouteRPParams.routeCode,
+              data.getCurrentRouteRPParams.tokenIn as HexString,
+              BigNumber.from(data.getCurrentRouteRPParams.amountIn),
+              data.getCurrentRouteRPParams.tokenOut as HexString,
+              BigNumber.from(data.getCurrentRouteRPParams.amountOutMin),
+              data.getCurrentRouteRPParams.to as HexString,
+              data.getCurrentRouteRPParams.routeCode as HexString,
             ]
           : undefined,
       }

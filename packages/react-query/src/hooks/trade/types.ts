@@ -1,5 +1,7 @@
+import { BigNumber } from "@ethersproject/bignumber"
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
+import { HexString } from '@sushiswap/types'
 import z from 'zod'
 
 import { tradeValidator } from './validator'
@@ -21,7 +23,7 @@ export interface UseTradeReturn {
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
-  writeArgs: [string, { type: string; hex: string }, string, { type: string; hex: string }, string, string] | undefined
+  writeArgs: [HexString, BigNumber, HexString, BigNumber, HexString, HexString] | undefined
   route: string[]
   currentRouteHumanString: string
 }
