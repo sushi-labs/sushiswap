@@ -17,7 +17,7 @@ import ROUTE_PROCESSOR_ABI from '../abis/route-processor.json'
 import { useTrade } from '../lib/useTrade'
 import { BigNumber } from 'ethers'
 import { SendTransactionResult } from 'wagmi/actions'
-import { useCreateNotification } from '@sushiswap/react-query'
+import { useBalances, useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
 import { AppType } from '@sushiswap/ui13/types'
 import { Native } from '@sushiswap/currency'
@@ -47,6 +47,8 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
   const { setReview } = useSwapActions()
   const { appType, token0, token1, review, network0 } = useSwapState()
   const { data: trade } = useTrade()
+  const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
+  const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
   const { mutate: storeNotification } = useCreateNotification({ account: address })
 
   const [open, setOpen] = useState(false)
@@ -110,6 +112,10 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         .wait()
         .then(() => setDialogState(ConfirmationDialogState.Success))
         .catch(() => setDialogState(ConfirmationDialogState.Failed))
+        .finally(() => {
+          void refetchNetwork0Balances()
+          void refetchNetwork1Balances()
+        })
     },
     onSettled,
   })
