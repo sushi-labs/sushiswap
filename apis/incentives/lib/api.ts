@@ -10,6 +10,8 @@ export async function getIncentivesByChainId(chainId: number) {
       apr: true,
       rewardPerDay: true,
       poolId: true,
+      rewarderAddress: true,
+      rewarderType: true,
       rewardToken: {
         select: {
           id: true,
@@ -36,6 +38,8 @@ export async function getIncentives() {
       apr: true,
       rewardPerDay: true,
       poolId: true,
+      rewarderAddress: true,
+      rewarderType: true,
       rewardToken: {
         select: {
           id: true,
@@ -62,6 +66,8 @@ export async function getIncentivesByPoolId(chainId: number, address: string) {
       apr: true,
       rewardPerDay: true,
       poolId: true,
+      rewarderAddress: true,
+      rewarderType: true,
       rewardToken: {
         select: {
           id: true,
