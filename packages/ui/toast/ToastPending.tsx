@@ -1,11 +1,10 @@
 import { Chain } from '@sushiswap/chain'
 import { FC } from 'react'
 
-import { Loader } from '../Loader'
 import { NotificationData } from './Toast'
 import { ToastButtons } from './ToastButtons'
 import { ToastContent } from './ToastContent'
-import { Dots } from '../Dots'
+import { Dots } from '../dots'
 
 interface ToastPending extends Omit<NotificationData, 'promise'> {
   onDismiss(): void
