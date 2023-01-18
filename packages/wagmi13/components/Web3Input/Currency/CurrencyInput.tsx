@@ -47,10 +47,8 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   fetching,
   currencyLoading,
 }) => {
-  const [init, setInit] = useState(false)
-  const [initLoading, setInitLoading] = useState(true)
-
-  const { address } = useAccount()
+  const [init, setInit] = useState(true)
+  const { address, status } = useAccount()
   const inputRef = useRef<HTMLInputElement>(null)
   const focusInput = useCallback(() => {
     if (disabled) return
@@ -83,36 +81,41 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency])
 
-  // Make sure all loaders resolve at the same time on initialization
   useEffect(() => {
-    if (!init) {
-      if (!(loading || isBalanceLoading || isPriceLoading || currencyLoading)) {
-        setInitLoading(false)
-      }
+    if (status !== 'disconnected' && !loading && !isBalanceLoading && !isPriceLoading && !currencyLoading) {
+      setInit(false)
     }
-  }, [currencyLoading, init, isBalanceLoading, isPriceLoading, loading])
 
-  const isLoading = loading || isBalanceLoading || isPriceLoading || currencyLoading
+    if (status === 'disconnected' && !loading && !currencyLoading) {
+      setInit(false)
+    }
+  }, [currencyLoading, isBalanceLoading, isPriceLoading, loading, status])
+
+  const walletLoading = ['connecting'].includes(status)
+  const isLoading =
+    !init && status === 'connected'
+      ? walletLoading || loading || isBalanceLoading || isPriceLoading || currencyLoading
+      : loading || currencyLoading
 
   return (
     <div
       className={classNames(
         fetching && type === 'OUTPUT' ? 'shimmer-fast' : '',
-        'space-y-1 overflow-hidden',
         insufficientBalance ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
+        'space-y-1 overflow-hidden',
         className
       )}
       onClick={focusInput}
     >
       <div className="relative flex items-center gap-4">
-        {initLoading ? (
+        {init ? (
           <div className="flex gap-4 items-center justify-between flex-grow h-[44px]">
             <Skeleton.Box className="w-full h-[32px] rounded-lg" />
             <Skeleton.Box className="w-1/2 h-[32px] rounded-lg" />
           </div>
-        ) : loading ? (
+        ) : isLoading ? (
           <div className="flex gap-1 items-center justify-between flex-grow h-[44px]">
-            <Skeleton.Box className="w-full h-[32px] rounded-lg" />
+            <Skeleton.Box className="w-1/2 h-[32px] rounded-lg" />
           </div>
         ) : (
           <Input.Numeric
@@ -127,7 +130,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             maxDecimals={currency?.decimals}
           />
         )}
-        {onSelect && !initLoading && (
+        {onSelect && !init && (
           <TokenSelector id={`${id}-token-selector`} selected={currency} chainId={chainId} onSelect={onSelect}>
             {({ setOpen }) => (
               <button
@@ -162,13 +165,13 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           currency={currency}
           usdPctChange={usdPctChange}
           error={insufficientBalance ? 'Exceeds Balance' : undefined}
-          loading={isLoading || initLoading}
+          loading={isLoading || init}
           price={price}
         />
         <div className="h-6">
           <BalancePanel
             id={id}
-            loading={isLoading || initLoading}
+            loading={isLoading || init}
             chainId={chainId}
             account={address}
             onChange={onChange}
