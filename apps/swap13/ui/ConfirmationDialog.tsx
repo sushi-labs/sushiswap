@@ -113,7 +113,9 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         .then(() => setDialogState(ConfirmationDialogState.Success))
         .catch(() => setDialogState(ConfirmationDialogState.Failed))
         .finally(() => {
-          void Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
+          Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()]).then(() => {
+            Promise.all([refetchNetwork0Balances(), refetchNetwork1Balances()])
+          })
         })
     },
     onSettled,
