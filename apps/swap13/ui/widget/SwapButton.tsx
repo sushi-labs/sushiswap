@@ -8,11 +8,18 @@ import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { FixedButtonContainer } from '../FixedButtonContainer'
 import { useTrade } from '../../lib/useTrade'
+import { Native } from '@sushiswap/currency'
+import { AppType } from '@sushiswap/ui13/types'
 
 export const SwapButton: FC = () => {
-  const { amount, network0, value } = useSwapState()
+  const { appType, amount, network0, value, token0, token1 } = useSwapState()
   const { isFetching, isLoading } = useTrade()
   const { setReview } = useSwapActions()
+
+  const isWrap =
+    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+  const isUnwrap =
+    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
 
   return (
     <ApproveTokenController amount={amount} contract={ROUTE_PROCESSOR_ADDRESS[ChainId.POLYGON]}>
@@ -36,7 +43,7 @@ export const SwapButton: FC = () => {
                   size="xl"
                   onClick={() => setReview(true)}
                 >
-                  Swap
+                  {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'}
                 </Button>
               </Checker.ApproveERC20>
             </Checker.Amounts>

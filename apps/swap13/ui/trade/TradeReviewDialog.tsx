@@ -19,14 +19,21 @@ import { FixedButtonContainer } from '../FixedButtonContainer'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { Drawer } from '@sushiswap/ui13/components/drawer'
 import { Badge } from '@sushiswap/ui13/components/Badge'
+import { AppType } from '@sushiswap/ui13/types'
+import { Native } from '@sushiswap/currency'
 
 export const TradeReviewDialog: FC = () => {
-  const { review, token0, token1, recipient, network0, amount, value } = useSwapState()
+  const { appType, review, token0, token1, recipient, network0, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
   const { data: slippageTolerance } = useSlippageTolerance()
   const { data: trade, isFetching } = useTrade()
 
   const onClose = useCallback(() => setReview(false), [setReview])
+  const isWrap =
+    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+  const isUnwrap =
+    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+  const isSwap = !isWrap && !isUnwrap
 
   return (
     <Dialog open={review} unmount={false} onClose={onClose} variant="opaque">
@@ -44,7 +51,7 @@ export const TradeReviewDialog: FC = () => {
               </h1>
             )}
             <h1 className="text-lg font-medium text-gray-900 dark:text-slate-300">
-              Sell {amount?.toSignificant(6)} {token0.symbol}
+              {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'} {amount?.toSignificant(6)} {token0.symbol}
             </h1>
           </div>
           <div className="min-w-[56px] min-h-[56px]">
@@ -71,26 +78,30 @@ export const TradeReviewDialog: FC = () => {
           <List>
             <List.Control>
               <List.KeyValue title="Network">{chainName[network0]}</List.KeyValue>
-              <List.KeyValue
-                title="Price impact"
-                subtitle="The impact your trade has on the market price of this pool."
-              >
-                {isFetching ? (
-                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/5" />
-                ) : (
-                  numeral(trade?.priceImpact ?? 0).format('0.00%')
-                )}
-              </List.KeyValue>
-              <List.KeyValue
-                title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}
-                subtitle="The minimum amount you are guaranteed to receive."
-              >
-                {isFetching ? (
-                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
-                ) : (
-                  `${trade?.minAmountOut?.toSignificant(6)} ${token1.symbol}`
-                )}
-              </List.KeyValue>
+              {isSwap && (
+                <List.KeyValue
+                  title="Price impact"
+                  subtitle="The impact your trade has on the market price of this pool."
+                >
+                  {isFetching ? (
+                    <Skeleton.Text align="right" fontSize="text-sm" className="w-1/5" />
+                  ) : (
+                    numeral(trade?.priceImpact ?? 0).format('0.00%')
+                  )}
+                </List.KeyValue>
+              )}
+              {isSwap && (
+                <List.KeyValue
+                  title={`Min. received after slippage (${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%)`}
+                  subtitle="The minimum amount you are guaranteed to receive."
+                >
+                  {isFetching ? (
+                    <Skeleton.Text align="right" fontSize="text-sm" className="w-1/2" />
+                  ) : (
+                    `${trade?.minAmountOut?.toSignificant(6)} ${token1.symbol}`
+                  )}
+                </List.KeyValue>
+              )}
               <List.KeyValue title="Network fee">
                 {isFetching ? (
                   <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
@@ -98,15 +109,17 @@ export const TradeReviewDialog: FC = () => {
                   `~$${trade?.gasSpent ?? '0.00'}`
                 )}
               </List.KeyValue>
-              <List.KeyValue title="Route">
-                {isFetching ? (
-                  <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
-                ) : (
-                  <Drawer.Button>
-                    <button className="text-blue">View route</button>
-                  </Drawer.Button>
-                )}
-              </List.KeyValue>
+              {isSwap && (
+                <List.KeyValue title="Route">
+                  {isFetching ? (
+                    <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
+                  ) : (
+                    <Drawer.Button>
+                      <button className="text-blue">View route</button>
+                    </Drawer.Button>
+                  )}
+                </List.KeyValue>
+              )}
             </List.Control>
           </List>
           {recipient && (
@@ -140,6 +153,10 @@ export const TradeReviewDialog: FC = () => {
                 <Dots>Confirming transaction</Dots>
               ) : isWritePending ? (
                 <Dots>Confirm Swap</Dots>
+              ) : isWrap ? (
+                'Wrap'
+              ) : isUnwrap ? (
+                'Unwrap'
               ) : (
                 `Swap ${token0.symbol} for ${token1.symbol}`
               )}

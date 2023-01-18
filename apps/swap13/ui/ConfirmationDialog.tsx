@@ -19,6 +19,8 @@ import { BigNumber } from 'ethers'
 import { SendTransactionResult } from 'wagmi/actions'
 import { useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
+import { AppType } from '@sushiswap/ui13/types'
+import { Native } from '@sushiswap/currency'
 
 interface ConfirmationDialogProps {
   children({
@@ -43,7 +45,7 @@ enum ConfirmationDialogState {
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { setReview } = useSwapActions()
-  const { token0, token1, review, network0 } = useSwapState()
+  const { appType, token0, token1, review, network0 } = useSwapState()
   const { data: trade } = useTrade()
   const { mutate: storeNotification } = useCreateNotification({ account: address })
 
@@ -60,6 +62,11 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
   })
 
+  const isWrap =
+    appType === AppType.Swap && token0.isNative && token1.wrapped.address === Native.onChain(network0).wrapped.address
+  const isUnwrap =
+    appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
+
   const onSettled = useCallback(
     (data: SendTransactionResult | undefined) => {
       if (!trade || !network0 || !data) return
@@ -71,13 +78,19 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
         txHash: data.hash,
         promise: data.wait(),
         summary: {
-          pending: `Swapping ${trade.amountIn?.toSignificant(6)} ${
+          pending: `${isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'} ${trade.amountIn?.toSignificant(6)} ${
             trade.amountIn?.currency.symbol
-          } for ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
-          completed: `Swap ${trade.amountIn?.toSignificant(6)} ${
+          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.toSignificant(6)} ${
+            trade.amountOut?.currency.symbol
+          }`,
+          completed: `${isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'} ${trade.amountIn?.toSignificant(6)} ${
             trade.amountIn?.currency.symbol
-          } for ${trade.amountOut?.toSignificant(6)} ${trade.amountOut?.currency.symbol}`,
-          failed: `Something went wrong when trying to swap ${trade.amountIn?.currency.symbol} for ${trade.amountOut?.currency.symbol}`,
+          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.toSignificant(6)} ${
+            trade.amountOut?.currency.symbol
+          }`,
+          failed: `Something went wrong when trying to ${isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'}} ${
+            trade.amountIn?.currency.symbol
+          } ${isWrap ? 'to' : isUnwrap ? 'to' : 'for'} ${trade.amountOut?.currency.symbol}`,
         },
         timestamp: ts,
         groupTimestamp: ts,
@@ -85,7 +98,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
       storeNotification(createToast(notificationData))
     },
-    [storeNotification, network0, trade]
+    [trade, network0, isWrap, isUnwrap, storeNotification]
   )
 
   const { writeAsync, isLoading: isWritePending } = useContractWrite({
@@ -171,13 +184,13 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
                 </h1>
               ) : dialogState === ConfirmationDialogState.Success ? (
                 <h1 className="flex flex-wrap justify-center gap-1 font-semibold text-lg items-center">
-                  You bought
-                  <span className="text-blue px-0.5">
-                    {trade?.amountOut?.toSignificant(6)} {token1.symbol}
-                  </span>{' '}
-                  with{' '}
+                  You {isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'}
                   <span className="text-red px-0.5">
-                    {trade?.amountIn?.toSignificant(6)} {token0.symbol}.
+                    {trade?.amountIn?.toSignificant(6)} {token1.symbol}
+                  </span>{' '}
+                  {isWrap ? 'to' : isUnwrap ? 'to' : 'for'}{' '}
+                  <span className="text-blue px-0.5">
+                    {trade?.amountOut?.toSignificant(6)} {token0.symbol}.
                   </span>
                 </h1>
               ) : (
