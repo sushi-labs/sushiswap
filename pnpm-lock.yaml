@@ -2377,7 +2377,7 @@ importers:
       '@graphql-mesh/plugin-mock': 0.1.5_graphql@16.6.0
       '@graphql-mesh/runtime': 0.46.5_graphql@16.6.0
       '@graphql-mesh/store': 0.9.5_graphql@16.6.0
-      '@graphql-mesh/transform-filter-schema': 0.15.7_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.15.8_graphql@16.6.0
       '@graphql-mesh/transform-prefix': 0.12.6_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.5_graphql@16.6.0
       '@graphql-mesh/transform-rename': 0.14.6_graphql@16.6.0
@@ -3776,7 +3776,7 @@ importers:
       '@graphql-mesh/plugin-mock': 0.1.5_graphql@16.6.0
       '@graphql-mesh/runtime': 0.46.5_graphql@16.6.0
       '@graphql-mesh/store': 0.9.5_graphql@16.6.0
-      '@graphql-mesh/transform-filter-schema': 0.15.7_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.15.8_graphql@16.6.0
       '@graphql-mesh/transform-prefix': 0.12.6_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.5_graphql@16.6.0
       '@graphql-mesh/transform-rename': 0.14.6_graphql@16.6.0
@@ -3880,7 +3880,7 @@ importers:
       '@graphql-mesh/plugin-mock': 0.1.5_graphql@16.6.0
       '@graphql-mesh/runtime': 0.46.5_graphql@16.6.0
       '@graphql-mesh/store': 0.9.5_graphql@16.6.0
-      '@graphql-mesh/transform-filter-schema': 0.15.7_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.15.8_graphql@16.6.0
       '@graphql-mesh/transform-prefix': 0.12.6_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.5_graphql@16.6.0
       '@graphql-mesh/transform-rename': 0.14.6_graphql@16.6.0
@@ -3939,7 +3939,7 @@ importers:
       '@graphprotocol/client-add-source-name': 1.0.14_graphql@16.6.0
       '@graphprotocol/client-auto-pagination': 1.1.12_graphql@16.6.0
       '@graphprotocol/client-cli': 2.2.16_erstqrng57z6woex75r4i3v24q
-      '@graphql-mesh/transform-filter-schema': 0.15.7_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.15.8_graphql@16.6.0
       '@graphql-mesh/transform-prefix': 0.12.6_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.5_graphql@16.6.0
       '@graphql-mesh/transform-rename': 0.14.6_graphql@16.6.0
@@ -4033,7 +4033,7 @@ importers:
       '@graphql-mesh/plugin-mock': 0.1.5_graphql@16.6.0
       '@graphql-mesh/runtime': 0.46.5_graphql@16.6.0
       '@graphql-mesh/store': 0.9.5_graphql@16.6.0
-      '@graphql-mesh/transform-filter-schema': 0.15.7_graphql@16.6.0
+      '@graphql-mesh/transform-filter-schema': 0.15.8_graphql@16.6.0
       '@graphql-mesh/transform-prefix': 0.12.6_graphql@16.6.0
       '@graphql-mesh/transform-prune': 0.1.5_graphql@16.6.0
       '@graphql-mesh/transform-rename': 0.14.6_graphql@16.6.0
@@ -7034,8 +7034,8 @@ packages:
       lodash.get: 4.4.2
       tslib: 2.4.1
 
-  /@graphql-mesh/transform-filter-schema/0.15.7_graphql@16.6.0:
-    resolution: {integrity: sha512-8Y2uhMpAKFL8a4tSP3UQmOtKnMTAV4oL+YDCXMwDz7bFKr9/xztNjG9yozV6SO7Tsd1bLKrv1q06MzQg5eUqLw==}
+  /@graphql-mesh/transform-filter-schema/0.15.8_graphql@16.6.0:
+    resolution: {integrity: sha512-p1C5o8AYjN1KdHS91MnNEj2IcuBxDvGu6mXAExKg9WUEcEv492kD+VqMTKgvJ6oylND6ASuHuHZiX1YZVDxQ3g==}
     peerDependencies:
       graphql: '*'
     dependencies:
@@ -7045,7 +7045,7 @@ packages:
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@graphql-tools/wrap': 9.3.1_graphql@16.6.0
       graphql: 16.6.0
-      minimatch: 5.1.4
+      minimatch: 5.1.6
       tslib: 2.4.1
     transitivePeerDependencies:
       - react-native
@@ -24294,8 +24294,8 @@ packages:
     dependencies:
       brace-expansion: 2.0.1
 
-  /minimatch/5.1.4:
-    resolution: {integrity: sha512-U0iNYXt9wALljzfnGkhFSy5sAC6/SCR3JrHrlsdJz4kF8MvhTRQNiC59iUi1iqsitV7abrNAJWElVL9pdnoUgw==}
+  /minimatch/5.1.6:
+    resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1

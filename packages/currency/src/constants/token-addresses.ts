@@ -67,6 +67,7 @@ export const WBTC_ADDRESS = {
   [ChainId.BOBA]: '0xdc0486f8bf31DF57a952bcd3c1d3e166e3d9eC8b',
   [ChainId.KAVA]: '0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b',
   [ChainId.METIS]: '0xa5B55ab1dAF0F8e1EFc0eB1931a957fd89B918f4',
+  [ChainId.FUSE]: '0x33284f95ccb7B948d9D352e1439561CF83d8d00d',
 } as const
 
 export const UNI_ADDRESS = {
