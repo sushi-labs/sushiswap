@@ -411,7 +411,6 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   [ChainId.ARBITRUM]: [
     WNATIVE[ChainId.ARBITRUM],
     WBTC[ChainId.ARBITRUM],
-    WETH9[ChainId.ARBITRUM],
     USDC[ChainId.ARBITRUM],
     USDT[ChainId.ARBITRUM],
     DAI[ChainId.ARBITRUM],
@@ -477,7 +476,6 @@ export const COMMON_BASES: { readonly [chainId in ChainId]: Token[] } = {
   [ChainId.OPTIMISM]: [
     WNATIVE[ChainId.OPTIMISM],
     WBTC[ChainId.OPTIMISM],
-    WETH9[ChainId.OPTIMISM],
     USDC[ChainId.OPTIMISM],
     USDT[ChainId.OPTIMISM],
     DAI[ChainId.OPTIMISM],

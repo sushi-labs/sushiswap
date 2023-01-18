@@ -44,6 +44,7 @@
     "@sushiswap/math": "workspace:*",
     "@sushiswap/react-query": "workspace:*",
     "@sushiswap/router": "workspace:*",
+    "@sushiswap/router-config": "workspace:*",
     "@sushiswap/sushiswap": "workspace:*",
     "@sushiswap/sushixswap": "workspace:*",
     "@sushiswap/tines": "workspace:*",

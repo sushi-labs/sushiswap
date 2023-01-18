@@ -3242,6 +3242,7 @@ importers:
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
       '@sushiswap/router': workspace:*
+      '@sushiswap/router-config': workspace:*
       '@sushiswap/sushiswap': workspace:*
       '@sushiswap/sushixswap': workspace:*
       '@sushiswap/tines': workspace:*
@@ -3289,6 +3290,7 @@ importers:
       '@sushiswap/math': link:../math
       '@sushiswap/react-query': link:../react-query
       '@sushiswap/router': link:../router
+      '@sushiswap/router-config': link:../../config/router
       '@sushiswap/sushiswap': link:../../protocols/sushiswap
       '@sushiswap/sushixswap': link:../../protocols/sushixswap
       '@sushiswap/tines': link:../tines
