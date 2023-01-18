@@ -6,6 +6,7 @@ import { Limited } from './Limited'
 import { ApeSwapProviderMC } from './liquidity-providers/ApeSwapMC'
 import { DfynProviderMC } from './liquidity-providers/DfynMC'
 import { ElkProviderMC } from './liquidity-providers/ElkMC'
+import { JetSwapProviderMC } from './liquidity-providers/JetSwapMC'
 import { LiquidityProviderMC, LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { QuickSwapProviderMC } from './liquidity-providers/QuickSwapMC'
@@ -73,6 +74,10 @@ export class DataFetcher {
       )
     if (this._providerIsIncluded(LiquidityProviders.Elk, providers))
       this.providers.push(new ElkProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
+    if (this._providerIsIncluded(LiquidityProviders.JetSwp, providers))
+      this.providers.push(
+        new JetSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+      )
     if (this._providerIsIncluded(LiquidityProviders.Trident, providers))
       this.providers.push(
         new TridentProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
