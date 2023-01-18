@@ -20,7 +20,7 @@ import { ZERO } from '@sushiswap/math'
 
 export const WidgetTitle = () => {
   const [invert, setInvert] = useState(false)
-  const { appType, network0, network1, token1, token0, tokensLoading } = useSwapState()
+  const { network0, network1, token1, token0, tokensLoading } = useSwapState()
   const { setNetwork1, setNetwork0 } = useSwapActions()
   const { data: prices0, isLoading: isPrice0Loading } = usePrice({
     chainId: network0,
@@ -79,16 +79,6 @@ export const WidgetTitle = () => {
         <>
           <Skeleton.Text fontSize="text-2xl" className="w-1/3" />
           <Skeleton.Text fontSize="text-2xl" className="w-2/4" />
-        </>
-      ) : appType === AppType.Swap ? (
-        <>
-          <h1 className="flex items-center gap-2 text-2xl sm:text-4xl font-medium text-gray-900 dark:text-slate-50 leading-[36px] sm:leading-[44px]">
-            Sell <span className="font-semibold">{token0.symbol}</span>
-          </h1>
-          <h1 className="flex items-center gap-2 text-2xl sm:text-4xl font-medium text-gray-900 dark:text-slate-50 leading-[36px] sm:leading-[44px]">
-            {' '}
-            Receive <span className="font-semibold">{token1.symbol}</span>
-          </h1>
         </>
       ) : (
         <>
