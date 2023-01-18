@@ -11,7 +11,6 @@ export const ToastContainer: FC<ToastContainer> = ({ className }) => {
   return (
     <ToastifyContainer
       newestOnTop
-      autoClose={false}
       bodyClassName={() =>
         'mx-4 flex flex-col ring-1 ring-black/10 bg-white dark:bg-slate-800 shadow-lg shadow-black/30 mt-4 md:mt-2 rounded-xl overflow-hidden'
       }

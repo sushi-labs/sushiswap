@@ -73,7 +73,7 @@ export const createInlineToast = (props: NotificationData) => {
 }
 
 export const createToast = (props: NotificationData): NotificationData => {
-  const onDismiss = () => {}
+  const onDismiss = () => toast.dismiss(props.txHash)
 
   // Spawn new toasts based on promise result
   props.promise
