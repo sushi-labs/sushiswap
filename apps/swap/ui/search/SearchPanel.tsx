@@ -73,7 +73,7 @@ const Row: FC<{ currency: TokenWithLogoURIType }> = ({ currency }) => {
 
   return (
     <a
-      href={`/swap13/${currency.chainId}/${currency.chainId}/ETH/${currency.address.toLowerCase()}`}
+      href={`/swap/${currency.chainId}/${currency.chainId}/ETH/${currency.address.toLowerCase()}`}
       role="button"
       className="cursor-pointer flex justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
     >
