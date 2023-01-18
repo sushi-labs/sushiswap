@@ -11,7 +11,7 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.BSC,
 ] as const
 
-export type TridentChainId = typeof TRIDENT_ENABLED_NETWORKS[number]
+export type TridentChainId = (typeof TRIDENT_ENABLED_NETWORKS)[number]
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
@@ -28,12 +28,14 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.HARMONY,
   ChainId.ARBITRUM_NOVA,
   ChainId.BOBA,
+  ChainId.BOBA_AVAX,
+  ChainId.BOBA_BNB,
   // ChainId.PALM,
   // ChainId.HECO,
   // ChainId.OKEX
 ] as const
 
-export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
+export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(new Set([...SUSHISWAP_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))
 
@@ -73,6 +75,7 @@ export const CHAIN_NAME: Record<number, string> = {
   [ChainId.BOBA]: 'Boba',
   [ChainId.ARBITRUM_NOVA]: 'Arbitrum Nova',
   [ChainId.BOBA_AVAX]: 'Boba Avax',
+  [ChainId.BOBA_BNB]: 'Boba BNB',
   [ChainId.BTTC]: 'BitTorrent',
 } as const
 
@@ -95,10 +98,14 @@ export const SUBGRAPH_HOST = {
   [ChainId.OPTIMISM]: 'api.thegraph.com/subgraphs/name',
   [ChainId.POLYGON]: GRAPH_HOST,
   [ChainId.BOBA]: GRAPH_HOST,
+  [ChainId.BOBA_AVAX]: 'subgraphs.sushi.com/subgraphs/name',
+  [ChainId.BOBA_BNB]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.BTTC]: 'subgraphs.sushi.com/subgraphs/name',
   [ChainId.OKEX]: '',
   [ChainId.HECO]: '',
   [ChainId.KOVAN]: '',
+  [ChainId.BOBA_AVAX]: 'subgraphs.sushi.com/subgraphs/name',
+  [ChainId.BOBA_BNB]: 'subgraphs.sushi.com/subgraphs/name',
 } as const
 
 export const BENTOBOX_SUBGRAPH_NAME = {
@@ -141,6 +148,8 @@ export const BLOCKS_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.METIS]: 'sushiswap/blocks-metis',
   [ChainId.ARBITRUM_NOVA]: 'sushiswap/blocks-arbitrum-nova',
   [ChainId.BOBA]: 'sushiswap/blocks-boba',
+  [ChainId.BOBA_AVAX]: 'sushiswap/blocks-boba-avax',
+  [ChainId.BOBA_BNB]: 'sushiswap/blocks-boba-bnb',
   [ChainId.BTTC]: 'sushiswap/blocks-bttc',
 } as const
 
@@ -160,6 +169,8 @@ export const EXCHANGE_SUBGRAPH_NAME: Record<number, string> = {
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.POLYGON]: 'sushiswap/exchange-polygon',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
+  [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
+  [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
 } as const
 
 export const SUSHISWAP_SUBGRAPH_NAME = {
@@ -177,6 +188,8 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
   [ChainId.ARBITRUM_NOVA]: 'sushi-0m/sushiswap-arbitrum-nova',
   [ChainId.BOBA]: 'sushi-0m/sushiswap-boba',
   [ChainId.POLYGON]: 'subgraph-qa/sushiswap-polygon',
+  [ChainId.BOBA_AVAX]: 'sushi-0m/sushiswap-boba-avax',
+  [ChainId.BOBA_BNB]: 'sushi-0m/sushiswap-boba-bnb',
 } as const
 
 export const TRIDENT_SUBGRAPH_NAME = {

@@ -10,7 +10,7 @@
   ],
   "rewrites": [
     { "source": "/v0", "destination": "/api/v0" },
-    { "source": "/v0/singlechain", "destination": "/api/v0/singlechain" },
-    { "source": "/v0/multichain", "destination": "/api/v0/multichain" }
+    { "source": "/v0/:chainId", "destination": "/api/v0/:chainId" },
+    { "source": "/v0/:chainId/:address", "destination": "/api/v0/:chainId/:address" }
   ]
 }
