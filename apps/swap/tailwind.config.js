@@ -1,13 +1,16 @@
+// @ts-check
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  presets: [require('@sushiswap/ui/tailwind')],
+const tailwindConfig = {
+  presets: [require('@sushiswap/ui13/tailwind')],
   content: [
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-    '../../packages/wagmi/{components,systems}/**/*.{js,ts,jsx,tsx}',
-    '../../packages/ui/{,!(node_modules)/**/}*.{js,ts,jsx,tsx}',
+    './app/**/*.{js,ts,jsx,tsx}',
+    './ui/**/*.{js,ts,jsx,tsx}',
+    '../../packages/wagmi13/{components,systems}/**/*.{js,ts,jsx,tsx}',
+    '../../packages/ui13/{,!(node_modules)/**/}*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {},
   },
 }
+
+module.exports = tailwindConfig
