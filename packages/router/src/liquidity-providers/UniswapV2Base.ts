@@ -42,6 +42,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener?: () => void
+  fee = 0.003
   abstract factory: { [chainId: number]: string }
   abstract initCodeHash: { [chainId: number]: string }
   constructor(
@@ -93,7 +94,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       const res = reserves[i]
       if (res !== undefined) {
         const toks = poolAddr.get(addr) as [Token, Token]
-        const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, 0.003, res[0], res[1])
+        const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.poolCodes.push(pc)
         ++this.stateId
