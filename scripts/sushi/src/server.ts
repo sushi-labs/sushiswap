@@ -54,7 +54,7 @@ app.get(
 
     const result = protocolSchema.safeParse(req.query)
     if (!result.success) {
-      return res.status(400).json(result.error.format())
+      return res.status(400).send(result.error.format())
     }
 
     const { protocol: name, version, poolType } = result.data

@@ -15,12 +15,16 @@ if (!process.env.GC_SERVICE_NAME) {
   throw new Error('GC_SERVICE_NAME is not set')
 }
 
+if (!process.env.GC_SERVICE_ACCOUNT_EMAIL) {
+  throw new Error('GC_SERVICE_ACCOUNT_EMAIL is not set')
+}
+
 const serviceClient = new run.v2.ServicesClient()
 const schedulerClient = new scheduler.CloudSchedulerClient()
 
-const GC_PROJECT_NAME = process.env.GC_PROJECT_NAME
 const GC_PROJECT_ID = process.env.GC_PROJECT_ID
 const GC_SERVICE_NAME = process.env.GC_SERVICE_NAME
+const GC_SERVICE_ACCOUNT_EMAIL = process.env.GC_SERVICE_ACCOUNT_EMAIL
 const LOCATION_ID = 'us-east4'
 
 async function main() {
@@ -31,15 +35,53 @@ async function main() {
   }
   const baseUrl = service[0].uri
 
-  const additionalUrl = '/liquidity?chainId=10&version=V2&type=CONSTANT_PRODUCT_POOL'
-  const name = 'test'
-  await createJob(name, baseUrl, additionalUrl)
+  const additionalUrl = '/liquidity?chainId=10&version=V2&poolType=CONSTANT_PRODUCT_POOL'
+  const name = 'test2'
+  const existingJobs = await getExistingJobs()
+  console.log(`Found a total of ${existingJobs.length} existing jobs`)
+  console.log(existingJobs.map((job) => job.name).join(','))
+
+  const existingJobNames = existingJobs.map((job) => job.name)
+  const jobRequests = [createJobRequest(name, baseUrl, additionalUrl)]
+
+  const createRequests = jobRequests.filter((request) => !existingJobNames.includes(request.job.name))
+  const updateRequests: {
+    parent: string
+    job: scheduler.protos.google.cloud.scheduler.v1.IJob
+  }[] = []
+  let upToDateCount = 0
+  existingJobs.forEach((job) => {
+    jobRequests.forEach((request) => {
+      if (job.name === request.job.name) {
+        if (job.httpTarget?.oidcToken?.audience !== request.job.httpTarget?.oidcToken?.audience) {
+          updateRequests.push(request)
+        } else {
+          upToDateCount++
+        }
+        return
+      }
+    })
+  })
+
+  console.log(
+    `SUMMARY: ${createRequests.length} job needs to be created, ${updateRequests.length} jobs needs to be updated and ${upToDateCount} jobs are up to date.`
+  )
+
+  if (createRequests.length > 0 || updateRequests.length > 0) {
+    const [jobsCreated, jobsUpdated] = await Promise.all([
+      createRequests.map((request) => schedulerClient.createJob(request)),
+      updateRequests.map((request) => schedulerClient.updateJob(request)),
+    ])
+    console.log(`Created ${jobsCreated.length} jobs and updated ${jobsUpdated.length} jobs`)
+  } else {
+    console.log('Not creating or updating any jobs')
+  }
 }
 
-async function createJob(name: string, url: string, additionalUrl: string) {
+function createJobRequest(name: string, url: string, additionalUrl: string) {
   const schedulerPath = `projects/${GC_PROJECT_ID}/locations/${LOCATION_ID}`
   const job: scheduler.protos.google.cloud.scheduler.v1.IJob = {
-    name,
+    name: schedulerPath + '/jobs/' + name,
     httpTarget: {
       uri: url + additionalUrl,
       httpMethod: 'GET',
@@ -47,7 +89,7 @@ async function createJob(name: string, url: string, additionalUrl: string) {
         'User-Agent': 'Google-Cloud-Scheduler',
       },
       oidcToken: {
-        serviceAccountEmail: `${GC_PROJECT_NAME}@${GC_PROJECT_ID}.iam.gserviceaccount.com`,
+        serviceAccountEmail: GC_SERVICE_ACCOUNT_EMAIL,
         audience: url,
       },
     },
@@ -59,20 +101,22 @@ async function createJob(name: string, url: string, additionalUrl: string) {
     job: job,
   }
 
-  // Use the client to send the job creation request.
-  const [response] = await schedulerClient.createJob(request)
-  console.log({ response })
-  console.log(`Created job: ${response.name}`)
+  return request
 }
 
-main()
-  .then(async () => {
-    await serviceClient.close()
-    await schedulerClient.close()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await serviceClient.close()
-    await schedulerClient.close()
-    process.exit(1)
-  })
+async function getExistingJobs() {
+  const schedulerPath = `projects/${GC_PROJECT_ID}/locations/${LOCATION_ID}`
+  const request = {
+    parent: schedulerPath,
+  }
+
+  const [response] = await schedulerClient.listJobs(request)
+  return response
+}
+
+main().catch(async (e) => {
+  console.error(e)
+  await serviceClient.close()
+  await schedulerClient.close()
+  process.exit(1)
+})
