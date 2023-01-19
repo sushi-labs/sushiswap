@@ -51,7 +51,6 @@ const config: HardhatUserConfig = {
   networks: {
     localhost: {},
     hardhat: {
-      // ethereum
       forking: {
         enabled: true,
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -62,6 +61,7 @@ const config: HardhatUserConfig = {
       },
       chainId: 1,
     },
+    ...defaultConfig.networks,
     // hardhat: {
     //   // polygon
     //   forking: {
@@ -74,21 +74,21 @@ const config: HardhatUserConfig = {
     //   },
     //   chainId: 137,
     // },
-    ethereum: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-      accounts,
-      chainId: 1,
-      hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-      chainId: 3,
-    },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-      accounts,
-    },
+    // ethereum: {
+    //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+    //   accounts,
+    //   chainId: 1,
+    //   hardfork: process.env.CODE_COVERAGE ? 'berlin' : 'london',
+    // },
+    // ropsten: {
+    //   url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   accounts,
+    //   chainId: 3,
+    // },
+    // goerli: {
+    //   url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+    //   accounts,
+    // },
   },
   solidity: {
     compilers: [
@@ -97,7 +97,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 999999,
+            runs: 10000000,
           },
         },
       },
@@ -106,7 +106,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 999999,
+            runs: 10000000,
           },
         },
       },
