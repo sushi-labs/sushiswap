@@ -9,7 +9,7 @@ import { SushiProvider } from './liquidity-providers/Sushi'
 
 const chainDataProvider = new providers.JsonRpcProvider('https://api.securerpc.com/v1', 'homestead')
 const DATA_FETCHER = new DataFetcher(chainDataProvider, ChainId.ETHEREUM)
-const DEFAULT_PROVIDERS = [LiquidityProviders.Sushiswap]
+const DEFAULT_PROVIDERS = [LiquidityProviders.SushiSwap]
 beforeAll(() => {
   expect(DATA_FETCHER).toBeInstanceOf(DataFetcher)
   DATA_FETCHER.startDataFetching(DEFAULT_PROVIDERS)

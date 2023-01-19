@@ -7,7 +7,7 @@ import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { Router } from './Router'
 
 export const PreferrableLiquidityProviders: LiquidityProviders[] = [
-  LiquidityProviders.Sushiswap,
+  LiquidityProviders.SushiSwap,
   LiquidityProviders.Trident,
 ]
 

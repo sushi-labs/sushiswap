@@ -7,14 +7,14 @@ import type { MultiCallProvider } from '../MulticallProvider'
 import type { PoolCode } from '../pools/PoolCode'
 
 export enum LiquidityProviders {
-  Sushiswap = 'Sushiswap',
+  SushiSwap = 'SushiSwap',
   UniswapV2 = 'UniswapV2',
   Trident = 'Trident',
-  Quickswap = 'Quickswap',
+  QuickSwap = 'QuickSwap',
   ApeSwap = 'ApeSwap',
   Dfyn = 'Dfyn',
   Elk = 'Elk',
-  JetSwp = 'JetSwap',
+  JetSwap = 'JetSwap',
   NativeWrap = 'NativeWrap',
 }
 

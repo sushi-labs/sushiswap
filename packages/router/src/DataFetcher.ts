@@ -52,13 +52,13 @@ export class DataFetcher {
       new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited),
     ]
 
-    if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
+    if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers))
       this.providers.push(new SushiProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers))
       this.providers.push(
         new UniswapV2Provider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
-    if (this._providerIsIncluded(LiquidityProviders.Quickswap, providers))
+    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers))
       this.providers.push(
         new QuickSwapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
@@ -70,7 +70,7 @@ export class DataFetcher {
       this.providers.push(new DfynProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
     if (this._providerIsIncluded(LiquidityProviders.Elk, providers))
       this.providers.push(new ElkProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
-    if (this._providerIsIncluded(LiquidityProviders.JetSwp, providers))
+    if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers))
       this.providers.push(
         new JetSwapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )

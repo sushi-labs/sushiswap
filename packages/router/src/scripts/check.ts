@@ -138,9 +138,9 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
       throw new Error('Unsupported network: ' + chainId)
   }
   switch (lp) {
-    case LiquidityProviders.Sushiswap:
+    case LiquidityProviders.SushiSwap:
       return prefix + 'SUSHISWAP'
-    case LiquidityProviders.Quickswap:
+    case LiquidityProviders.QuickSwap:
       return prefix + 'QUICKSWAP'
     case LiquidityProviders.Trident:
       return prefix + 'TRIDENT'
