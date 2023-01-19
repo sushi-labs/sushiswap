@@ -12,6 +12,7 @@ export interface UseTradeParams {
   gasPrice?: number
   slippagePercentage: string
   recipient: string | undefined
+  enabled: boolean
 }
 
 export interface UseTradeReturn {

@@ -45,7 +45,7 @@ enum ConfirmationDialogState {
 export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) => {
   const { address } = useAccount()
   const { setReview } = useSwapActions()
-  const { appType, token0, token1, review, network0 } = useSwapState()
+  const { appType, network0, network1, token0, token1, review } = useSwapState()
   const { data: trade } = useTrade()
   const { refetch: refetchNetwork0Balances } = useBalances({ account: address, chainId: network0 })
   const { refetch: refetchNetwork1Balances } = useBalances({ account: address, chainId: network0 })
@@ -60,7 +60,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
     abi: ROUTE_PROCESSOR_ABI,
     functionName: 'processRoute',
     args: trade?.writeArgs,
-    enabled: Boolean(trade?.writeArgs),
+    enabled: Boolean(trade?.writeArgs) && network0 === network1,
     overrides: token0.isNative && trade?.writeArgs?.[1] ? { value: BigNumber.from(trade?.writeArgs?.[1]) } : undefined,
   })
 

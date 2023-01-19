@@ -9,7 +9,7 @@ import { UseTradeParams, UseTradeQuerySelect } from './types'
 import { tradeValidator } from './validator'
 
 export const useTradeQuery = (
-  { chainId, fromToken, toToken, amount, gasPrice = 50, recipient }: UseTradeParams,
+  { chainId, fromToken, toToken, amount, gasPrice = 50, recipient, enabled }: UseTradeParams,
   select: UseTradeQuerySelect
 ) => {
     return useQuery({
@@ -34,7 +34,7 @@ export const useTradeQuery = (
         keepPreviousData: !!amount,
         cacheTime: 0,
         select,
-        enabled: Boolean(chainId && fromToken && toToken && amount && gasPrice),
+        enabled: enabled && Boolean(chainId && fromToken && toToken && amount && gasPrice),
     })
 }
 
