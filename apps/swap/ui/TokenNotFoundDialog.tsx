@@ -1,10 +1,10 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { useToken } from 'wagmi'
 import { queryParamsSchema, useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useRouter } from 'next/router'
 import { isAddress } from 'ethers/lib/utils'
-import { currencyFromShortCurrencyName, Native, SUSHI, Token } from '@sushiswap/currency'
+import { currencyFromShortCurrencyName, Native, Token } from '@sushiswap/currency'
 import { List } from '@sushiswap/ui13/components/list/List'
 import { Button } from '@sushiswap/ui13/components/button'
 import { Chain } from '@sushiswap/chain'
@@ -123,7 +123,7 @@ export const TokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {token0NotInList && token0 && (
+          {token0 && (
             <List>
               <List.Label>Token {token0 && token1 ? '1' : ''}</List.Label>
               <List.Control>
@@ -142,7 +142,7 @@ export const TokenNotFoundDialog = () => {
               </List.Control>
             </List>
           )}
-          {token1NotInList && token1 && (
+          {token1 && (
             <List>
               <List.Label>Token {token0 && token1 ? '2' : ''}</List.Label>
               <List.Control>
