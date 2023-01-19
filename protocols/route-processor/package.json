@@ -43,6 +43,7 @@
     "@sushiswap/address": "workspace:*",
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/amm": "workspace:*",
+    "@sushiswap/bentobox": "workspace:*",
     "@sushiswap/chain": "workspace:*",
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",

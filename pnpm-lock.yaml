@@ -3386,6 +3386,7 @@ importers:
       '@sushiswap/abi': workspace:*
       '@sushiswap/address': workspace:*
       '@sushiswap/amm': workspace:*
+      '@sushiswap/bentobox': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
       '@sushiswap/eslint-config': workspace:*
@@ -3437,6 +3438,7 @@ importers:
       '@sushiswap/abi': link:../../packages/abi
       '@sushiswap/address': link:../../packages/address
       '@sushiswap/amm': link:../../packages/amm
+      '@sushiswap/bentobox': link:../bentobox
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
       '@sushiswap/eslint-config': link:../../config/eslint
