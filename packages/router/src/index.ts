@@ -1,5 +1,6 @@
 export * from './DataFetcher'
 export * from './getCurrencyCombinations'
 export * from './HEXer'
+export * from './liquidity-providers'
 export * from './Router'
 export * from './SpecialRouter'

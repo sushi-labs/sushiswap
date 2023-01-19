@@ -20,8 +20,7 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import { DataFetcher, findSpecialRoute, PoolFilter, Router } from '@sushiswap/router'
-import { LiquidityProviders } from '@sushiswap/router/dist/liquidity-providers/LiquidityProviderMC'
+import { DataFetcher, findSpecialRoute, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
 import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'

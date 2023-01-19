@@ -5,17 +5,17 @@ import { HEXer } from '../HEXer'
 import { PoolCode } from './PoolCode'
 
 export class BentoBridgePoolCode extends PoolCode {
-  BentoBoxAddress: string
+  bentoBoxAddress: string
 
-  constructor(pool: BridgeBento, _providerName: string, BentoBoxAddress: string) {
+  constructor(pool: BridgeBento, _providerName: string, bentoBoxAddress: string) {
     super(pool, `BentoBridge`)
-    this.BentoBoxAddress = BentoBoxAddress
+    this.bentoBoxAddress = bentoBoxAddress
   }
 
   override getStartPoint(leg: RouteLeg): string {
     if (leg.tokenFrom.chainId == this.pool.token0.chainId) {
       // bento deposit
-      return this.BentoBoxAddress
+      return this.bentoBoxAddress
     } else {
       return 'RouteProcessor'
     }

@@ -25,6 +25,6 @@ export class UniswapV2Provider extends UniswapV2BaseProvider {
     return LiquidityProviders.UniswapV2
   }
   getPoolProviderName(): string {
-    return 'Uniswap V2'
+    return 'UniswapV2'
   }
 }
