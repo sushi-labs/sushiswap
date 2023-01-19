@@ -500,6 +500,33 @@ export const otherChains: Chain[] = [
     },
   },
   {
+    id: ChainId.BOBA_BNB,
+    name: 'Boba BNB',
+    network: 'boba-bnb',
+    nativeCurrency: { name: 'Boba', symbol: 'BOBA', decimals: 18 },
+    rpcUrls: {
+      default: {
+        http: ['https://bnb.boba.network'],
+      },
+    },
+    blockExplorers: {
+      etherscan: {
+        name: 'Boba BNB Mainnet Explorer',
+        url: 'https://blockexplorer.bnb.boba.network/',
+      },
+      default: {
+        name: 'Boba BNB Mainnet Explorer',
+        url: 'https://blockexplorer.bnb.boba.network/',
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0x67dA5f2FfaDDfF067AB9d5F025F8810634d84287',
+        blockCreated: 18871,
+      },
+    },
+  },
+  {
     id: ChainId.BTTC,
     name: 'BitTorrent Chain',
     network: 'btt',
