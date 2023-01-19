@@ -10,14 +10,16 @@ import type { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-const DFYN_FACTORY: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B',
+const APESWAP_FACTORY: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0xCf083Be4164828f00cAE704EC15a36D711491284',
+  [ChainId.BSC]: '0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6',
 }
 
-const DFYN_INIT_CODE_HASH: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0xf187ed688403aa4f7acfada758d8d53698753b998a3071b06f1b777f4330eaf3',
+const APESWAP_INIT_CODE_HASH: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x511f0f358fe530cda0859ec20becf391718fdf5a329be02f4c95361f3d6a42d8',
+  [ChainId.BSC]: '0xf4ccce374816856d11f00e4069e7cada164065686fbef53c6167a63ec2fd8c5b ',
 }
 
 const getReservesABI = [
@@ -46,7 +48,7 @@ const getReservesABI = [
   },
 ]
 
-export class DfynProviderMC extends LiquidityProviderMC {
+export class ApeSwapProvider extends LiquidityProvider {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener: any
@@ -61,15 +63,15 @@ export class DfynProviderMC extends LiquidityProviderMC {
   }
 
   getType(): LiquidityProviders {
-    return LiquidityProviders.Dfyn
+    return LiquidityProviders.ApeSwap
   }
 
   getPoolProviderName(): string {
-    return 'Dfyn'
+    return 'ApeSwap'
   }
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (DFYN_FACTORY[this.chainId] === undefined) {
+    if (APESWAP_FACTORY[this.chainId] === undefined) {
       // No sushiswap for this network
       this.lastUpdateBlock = -1
       return
@@ -148,9 +150,9 @@ export class DfynProviderMC extends LiquidityProviderMC {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      DFYN_FACTORY[this.chainId],
+      APESWAP_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      DFYN_INIT_CODE_HASH[this.chainId]
+      APESWAP_INIT_CODE_HASH[this.chainId]
     )
   }
 

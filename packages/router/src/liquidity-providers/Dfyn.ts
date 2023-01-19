@@ -10,15 +10,15 @@ import type { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-const UNISWAP_V2_FACTORY = {
-  [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
-} as const
+const DFYN_FACTORY: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B',
+}
 
-const UNISWAP_INIT_CODE_HASH = {
-  [ChainId.ETHEREUM]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
-} as const
+const DFYN_INIT_CODE_HASH: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0xf187ed688403aa4f7acfada758d8d53698753b998a3071b06f1b777f4330eaf3',
+}
 
 const getReservesABI = [
   {
@@ -46,7 +46,7 @@ const getReservesABI = [
   },
 ]
 
-export class UniSwapV2ProviderMC extends LiquidityProviderMC {
+export class DfynProvider extends LiquidityProvider {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener: any
@@ -61,15 +61,15 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
   }
 
   getType(): LiquidityProviders {
-    return LiquidityProviders.UniswapV2
+    return LiquidityProviders.Dfyn
   }
 
   getPoolProviderName(): string {
-    return 'Uniswap'
+    return 'Dfyn'
   }
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (!(this.chainId in UNISWAP_V2_FACTORY)) {
+    if (DFYN_FACTORY[this.chainId] === undefined) {
       // No sushiswap for this network
       this.lastUpdateBlock = -1
       return
@@ -148,9 +148,9 @@ export class UniSwapV2ProviderMC extends LiquidityProviderMC {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      UNISWAP_V2_FACTORY[this.chainId as keyof typeof UNISWAP_V2_FACTORY],
+      DFYN_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      UNISWAP_INIT_CODE_HASH[this.chainId as keyof typeof UNISWAP_INIT_CODE_HASH]
+      DFYN_INIT_CODE_HASH[this.chainId]
     )
   }
 

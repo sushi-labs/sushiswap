@@ -1,6 +1,5 @@
 import { keccak256, pack } from '@ethersproject/solidity'
-import { FACTORY_ADDRESS, INIT_CODE_HASH } from '@sushiswap/amm'
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
@@ -11,7 +10,15 @@ import type { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
+
+const JETSWAP_FACTORY: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x668ad0ed2622C62E24f0d5ab6B6Ac1b9D2cD4AC7',
+}
+
+const JETSWAP_INIT_CODE_HASH: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x505c843b83f01afef714149e8b174427d552e1aca4834b4f9b4b525f426ff3c6',
+}
 
 const getReservesABI = [
   {
@@ -39,7 +46,7 @@ const getReservesABI = [
   },
 ]
 
-export class SushiProviderMC extends LiquidityProviderMC {
+export class JetSwapProvider extends LiquidityProvider {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener: any
@@ -54,16 +61,15 @@ export class SushiProviderMC extends LiquidityProviderMC {
   }
 
   getType(): LiquidityProviders {
-    return LiquidityProviders.Sushiswap
+    return LiquidityProviders.Elk
   }
 
   getPoolProviderName(): string {
-    return 'Sushiswap'
+    return 'JetSwap'
   }
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (FACTORY_ADDRESS[this.chainId] === undefined) {
-      // No sushiswap for this network
+    if (JETSWAP_FACTORY[this.chainId] === undefined) {
       this.lastUpdateBlock = -1
       return
     }
@@ -141,9 +147,9 @@ export class SushiProviderMC extends LiquidityProviderMC {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      FACTORY_ADDRESS[this.chainId],
+      JETSWAP_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      INIT_CODE_HASH[this.chainId]
+      JETSWAP_INIT_CODE_HASH[this.chainId]
     )
   }
 

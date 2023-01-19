@@ -3,7 +3,7 @@ import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
 import { DataFetcher } from './DataFetcher'
-import { LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
+import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { Router } from './Router'
 
 export const PreferrableLiquidityProviders: LiquidityProviders[] = [

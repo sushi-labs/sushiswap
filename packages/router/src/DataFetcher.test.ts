@@ -3,9 +3,9 @@ import { Native, USDC } from '@sushiswap/currency'
 import { providers } from 'ethers'
 
 import { DataFetcher } from './DataFetcher'
-import { LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
+import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
-import { SushiProviderMC } from './liquidity-providers/SushiMC'
+import { SushiProvider } from './liquidity-providers/Sushi'
 
 const chainDataProvider = new providers.JsonRpcProvider('https://api.securerpc.com/v1', 'homestead')
 const DATA_FETCHER = new DataFetcher(chainDataProvider, ChainId.ETHEREUM)
@@ -24,7 +24,7 @@ describe('DataFetcher', () => {
     const providers = DATA_FETCHER.providers
     expect(providers.length).toBe(2)
     expect(providers[0]).toBeInstanceOf(NativeWrapProvider)
-    expect(providers[1]).toBeInstanceOf(SushiProviderMC)
+    expect(providers[1]).toBeInstanceOf(SushiProvider)
   })
 
   it('should have the default state', async () => {

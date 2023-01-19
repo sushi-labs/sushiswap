@@ -3,16 +3,16 @@ import { Native, Token, Type, WNATIVE } from '@sushiswap/currency'
 import type { ethers } from 'ethers'
 
 import { Limited } from './Limited'
-import { ApeSwapProviderMC } from './liquidity-providers/ApeSwapMC'
-import { DfynProviderMC } from './liquidity-providers/DfynMC'
-import { ElkProviderMC } from './liquidity-providers/ElkMC'
-import { JetSwapProviderMC } from './liquidity-providers/JetSwapMC'
-import { LiquidityProviderMC, LiquidityProviders } from './liquidity-providers/LiquidityProviderMC'
+import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
+import { DfynProvider } from './liquidity-providers/Dfyn'
+import { ElkProvider } from './liquidity-providers/Elk'
+import { JetSwapProvider } from './liquidity-providers/JetSwap'
+import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
-import { QuickSwapProviderMC } from './liquidity-providers/QuickSwapMC'
-import { SushiProviderMC } from './liquidity-providers/SushiMC'
-import { TridentProviderMC } from './liquidity-providers/TridentMC'
-import { UniSwapV2ProviderMC } from './liquidity-providers/UniswapV2MC'
+import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
+import { SushiProvider } from './liquidity-providers/Sushi'
+import { TridentProvider } from './liquidity-providers/Trident'
+import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { MultiCallProvider } from './MulticallProvider'
 import type { PoolCode } from './pools/PoolCode'
 
@@ -23,7 +23,7 @@ export class DataFetcher {
   chainDataProvider: ethers.providers.BaseProvider
   multiCallProvider: MultiCallProvider
   limited = new Limited(10, 1000)
-  providers: LiquidityProviderMC[] = []
+  providers: LiquidityProvider[] = []
   lastProviderStates: Map<LiquidityProviders, number> = new Map()
   // Provider to poolAddress to PoolCode
   poolCodes: Map<LiquidityProviders, Map<string, PoolCode>> = new Map()
@@ -48,39 +48,35 @@ export class DataFetcher {
     this.stopDataFetching()
     this.poolCodes = new Map()
 
-    this.providers = []
-    this.providers.push(
-      new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-    )
+    this.providers = [
+      new NativeWrapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited),
+    ]
+
     if (this._providerIsIncluded(LiquidityProviders.Sushiswap, providers))
-      this.providers.push(
-        new SushiProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-      )
+      this.providers.push(new SushiProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers))
       this.providers.push(
-        new UniSwapV2ProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+        new UniswapV2Provider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
     if (this._providerIsIncluded(LiquidityProviders.Quickswap, providers))
       this.providers.push(
-        new QuickSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+        new QuickSwapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
     if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers))
       this.providers.push(
-        new ApeSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+        new ApeSwapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
     if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers))
-      this.providers.push(
-        new DfynProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
-      )
+      this.providers.push(new DfynProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
     if (this._providerIsIncluded(LiquidityProviders.Elk, providers))
-      this.providers.push(new ElkProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
+      this.providers.push(new ElkProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited))
     if (this._providerIsIncluded(LiquidityProviders.JetSwp, providers))
       this.providers.push(
-        new JetSwapProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+        new JetSwapProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
     if (this._providerIsIncluded(LiquidityProviders.Trident, providers))
       this.providers.push(
-        new TridentProviderMC(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
+        new TridentProvider(this.chainDataProvider, this.multiCallProvider, this.chainId, this.limited)
       )
 
     this.providers.forEach((p) => p.startFetchPoolsData())

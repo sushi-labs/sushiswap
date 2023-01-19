@@ -6,7 +6,7 @@ import { BigNumber, ethers } from 'ethers'
 import https from 'https'
 
 import { DataFetcher } from '../DataFetcher'
-import { LiquidityProviders } from '../liquidity-providers/LiquidityProviderMC'
+import { LiquidityProviders } from '../liquidity-providers/LiquidityProvider'
 import { Router } from '../Router'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))

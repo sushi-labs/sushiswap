@@ -10,17 +10,9 @@ import type { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
+import { LiquidityProvider } from './LiquidityProvider'
 
-const ELK_FACTORY: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0xE3BD06c7ac7E1CeB17BdD2E5BA83E40D1515AF2a',
-}
-
-const ELK_INIT_CODE_HASH: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
-}
-
-const getReservesABI = [
+const getReservesAbi = [
   {
     inputs: [],
     name: 'getReserves',
@@ -46,11 +38,12 @@ const getReservesABI = [
   },
 ]
 
-export class ElkProviderMC extends LiquidityProviderMC {
+export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
-  blockListener: any
-
+  blockListener?: () => void
+  abstract factory: { [chainId: number]: string }
+  abstract initCodeHash: { [chainId: number]: string }
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
     multiCallProvider: MultiCallProvider,
@@ -59,17 +52,9 @@ export class ElkProviderMC extends LiquidityProviderMC {
   ) {
     super(chainDataProvider, multiCallProvider, chainId, l)
   }
-
-  getType(): LiquidityProviders {
-    return LiquidityProviders.Elk
-  }
-
-  getPoolProviderName(): string {
-    return 'Elk'
-  }
-
   async getPools(tokens: Token[]): Promise<void> {
-    if (ELK_FACTORY[this.chainId] === undefined) {
+    if (!(this.chainId in this.factory)) {
+      // No sushiswap for this network
       this.lastUpdateBlock = -1
       return
     }
@@ -101,7 +86,7 @@ export class ElkProviderMC extends LiquidityProviderMC {
 
     const addrs = Array.from(poolAddr.keys())
     const reserves = convertToBigNumberPair(
-      await this.multiCallProvider.multiContractCall(addrs, getReservesABI, 'getReserves', [])
+      await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
     )
 
     addrs.forEach((addr, i) => {
@@ -118,7 +103,6 @@ export class ElkProviderMC extends LiquidityProviderMC {
     // if it is the first obtained pool list
     if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
-
   // TODO: remove too often updates if the network generates too many blocks
   async updatePoolsData() {
     if (this.poolCodes.length == 0) return
@@ -128,7 +112,7 @@ export class ElkProviderMC extends LiquidityProviderMC {
     const addrs = this.poolCodes.map((p) => p.pool.address)
 
     const reserves = convertToBigNumberPair(
-      await this.multiCallProvider.multiContractCall(addrs, getReservesABI, 'getReserves', [])
+      await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
     )
 
     addrs.forEach((addr, i) => {
@@ -144,15 +128,13 @@ export class ElkProviderMC extends LiquidityProviderMC {
 
     this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
   }
-
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      ELK_FACTORY[this.chainId],
+      this.factory[this.chainId as keyof typeof this.factory],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      ELK_INIT_CODE_HASH[this.chainId]
+      this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]
     )
   }
-
   _getProspectiveTokens(t0: Token, t1: Token) {
     const set = new Set<Token>([
       t0,
@@ -163,7 +145,6 @@ export class ElkProviderMC extends LiquidityProviderMC {
     ])
     return Array.from(set)
   }
-
   startFetchPoolsData() {
     this.stopFetchPoolsData()
     this.poolCodes = []

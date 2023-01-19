@@ -3384,6 +3384,7 @@ importers:
       '@nomiclabs/hardhat-waffle': 2.0.3
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': workspace:*
+      '@sushiswap/address': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
@@ -3434,6 +3435,7 @@ importers:
       '@nomiclabs/hardhat-waffle': 2.0.3_wbuyzbpylyffimtnvu4mpyxac4
       '@openzeppelin/contracts': 4.8.0
       '@sushiswap/abi': link:../../packages/abi
+      '@sushiswap/address': link:../../packages/address
       '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency

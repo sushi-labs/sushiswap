@@ -35,7 +35,7 @@ export class BentoBridgePoolCode extends PoolCode {
           console.assert(code.length == 53 * 2, 'BentoBridge deposit unexpected code length')
           return code
         } else {
-          throw new Error("Bento deposit from input token can't work without exact  amount")
+          throw new Error("Bento deposit from input token can't work without exact amount")
         }
       } else {
         // deposit in the middle of a route
@@ -60,7 +60,7 @@ export class BentoBridgePoolCode extends PoolCode {
           console.assert(code.length == 53 * 2, 'BentoBridge withdraw unexpected code length')
           return code
         } else {
-          throw new Error("Bento withdraw from input token can't work without exact  amount")
+          throw new Error("Bento withdraw from input token can't work without exact amount")
         }
       } else {
         // withdraw in the middle of a route

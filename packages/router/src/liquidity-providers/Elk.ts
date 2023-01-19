@@ -10,14 +10,14 @@ import type { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-const JETSWAP_FACTORY: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x668ad0ed2622C62E24f0d5ab6B6Ac1b9D2cD4AC7',
+const ELK_FACTORY: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0xE3BD06c7ac7E1CeB17BdD2E5BA83E40D1515AF2a',
 }
 
-const JETSWAP_INIT_CODE_HASH: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x505c843b83f01afef714149e8b174427d552e1aca4834b4f9b4b525f426ff3c6',
+const ELK_INIT_CODE_HASH: Record<string | number, string> = {
+  [ChainId.POLYGON]: '0x84845e7ccb283dec564acfcd3d9287a491dec6d675705545a2ab8be22ad78f31',
 }
 
 const getReservesABI = [
@@ -46,7 +46,7 @@ const getReservesABI = [
   },
 ]
 
-export class JetSwapProviderMC extends LiquidityProviderMC {
+export class ElkProvider extends LiquidityProvider {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener: any
@@ -65,11 +65,11 @@ export class JetSwapProviderMC extends LiquidityProviderMC {
   }
 
   getPoolProviderName(): string {
-    return 'JetSwap'
+    return 'Elk'
   }
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (JETSWAP_FACTORY[this.chainId] === undefined) {
+    if (ELK_FACTORY[this.chainId] === undefined) {
       this.lastUpdateBlock = -1
       return
     }
@@ -147,9 +147,9 @@ export class JetSwapProviderMC extends LiquidityProviderMC {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      JETSWAP_FACTORY[this.chainId],
+      ELK_FACTORY[this.chainId],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      JETSWAP_INIT_CODE_HASH[this.chainId]
+      ELK_INIT_CODE_HASH[this.chainId]
     )
   }
 

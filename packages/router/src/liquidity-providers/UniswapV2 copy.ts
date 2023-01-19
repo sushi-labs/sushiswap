@@ -10,15 +10,15 @@ import type { Limited } from '../Limited'
 import { convertToBigNumberPair, MultiCallProvider } from '../MulticallProvider'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-const QUICKSWAP_FACTORY: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
-}
+const UNISWAP_V2_FACTORY = {
+  [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
+} as const
 
-const QUICKSWAP_INIT_CODE_HASH: Record<string | number, string> = {
-  [ChainId.POLYGON]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
-}
+const UNISWAP_INIT_CODE_HASH = {
+  [ChainId.ETHEREUM]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+} as const
 
 const getReservesABI = [
   {
@@ -46,10 +46,18 @@ const getReservesABI = [
   },
 ]
 
-export class QuickSwapProviderMC extends LiquidityProviderMC {
+export class UniSwapV2Provider extends LiquidityProvider {
   fetchedPools: Map<string, number> = new Map()
   poolCodes: PoolCode[] = []
   blockListener: any
+
+  // factory = {
+  //   [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
+  // } as const
+
+  // initCodeHash = {
+  //   [ChainId.ETHEREUM]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+  // } as const
 
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
@@ -61,15 +69,15 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
   }
 
   getType(): LiquidityProviders {
-    return LiquidityProviders.Quickswap
+    return LiquidityProviders.UniswapV2
   }
 
   getPoolProviderName(): string {
-    return 'Quickswap'
+    return 'Uniswap V2'
   }
 
   async getPools(tokens: Token[]): Promise<void> {
-    if (QUICKSWAP_FACTORY[this.chainId] === undefined) {
+    if (!(this.chainId in UNISWAP_V2_FACTORY)) {
       // No sushiswap for this network
       this.lastUpdateBlock = -1
       return
@@ -148,9 +156,9 @@ export class QuickSwapProviderMC extends LiquidityProviderMC {
 
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
-      QUICKSWAP_FACTORY[this.chainId],
+      UNISWAP_V2_FACTORY[this.chainId as keyof typeof UNISWAP_V2_FACTORY],
       keccak256(['bytes'], [pack(['address', 'address'], [t1.address, t2.address])]),
-      QUICKSWAP_INIT_CODE_HASH[this.chainId]
+      UNISWAP_INIT_CODE_HASH[this.chainId as keyof typeof UNISWAP_INIT_CODE_HASH]
     )
   }
 
