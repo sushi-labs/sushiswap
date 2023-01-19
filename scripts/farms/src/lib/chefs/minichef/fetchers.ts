@@ -143,7 +143,13 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           [ChainId.GNOSIS]: ['0xb291149e478dbdd2cd2528ad4088ee5c8376df1e'],
         }
 
-        if (blacklist[chainId]?.includes(rewarder.id)) throw new Error()
+        if (blacklist[chainId]?.includes(rewarder.id)) {
+          return {
+            id: rewarder.id,
+            rewardToken: rewarder.rewardToken,
+            rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
+          }
+        }
 
         const poolLength = await getPoolLength(chainId)
 
@@ -177,12 +183,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
           rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
         }
       } catch (error) {
-        // console.log('error', error)
-        return {
-          id: rewarder.id,
-          rewardToken: rewarder.rewardToken,
-          rewardPerSecond: BigNumber.from(rewarder.rewardPerSecond),
-        }
+        console.log('error', ChainId[chainId], rewarder.id, error)
       }
     })
   )
