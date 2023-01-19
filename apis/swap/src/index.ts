@@ -4,6 +4,7 @@ import './env'
 import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
+import routeProcessorExports from '@sushiswap/route-processor/exports'
 import { DataFetcher, findSpecialRoute, Router } from '@sushiswap/router'
 import { BigNumber, providers } from 'ethers'
 import fastify from 'fastify'
@@ -31,17 +32,6 @@ const querySchema = z.object({
   to: z.optional(z.string()),
 })
 
-export function getRouteProcessorAddressForChainId(chainId: ChainId) {
-  switch (chainId) {
-    // case ChainId.ETHEREUM:
-    //   return ''
-    case ChainId.POLYGON:
-      return '0x4d838fAE6De55Ed70D4dAF981cFd647a27603f0e'
-    default:
-      throw new Error(`Unsupported route processor network for ${chainId}`)
-  }
-}
-
 export function getAlchemyNetowrkForChainId(chainId: ChainId) {
   switch (chainId) {
     case ChainId.ETHEREUM:
@@ -59,6 +49,14 @@ export function getAlchemyNetowrkForChainId(chainId: ChainId) {
     default:
       throw new Error(`Unsupported eth alchemy network for ${chainId}`)
   }
+}
+
+export function getRouteProcessorAddressForChainId(chainId: ChainId) {
+  if (!(chainId in routeProcessorExports)) {
+    throw new Error(`Unsupported route processor network for ${chainId}`)
+  }
+  return routeProcessorExports[chainId.toString() as keyof Omit<typeof routeProcessorExports, '31337'>][0].contracts
+    .RouteProcessor.address
 }
 
 // Declare a route

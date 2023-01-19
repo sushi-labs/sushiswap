@@ -4,12 +4,12 @@ import { Button } from '@sushiswap/ui13/components/button'
 import React, { FC } from 'react'
 import { useSwapActions, useSwapState } from '../trade/TradeProvider'
 import { ApprovalState, ApproveTokenController, Checker } from '@sushiswap/wagmi13'
-import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
 import { ChainId } from '@sushiswap/chain'
 import { FixedButtonContainer } from '../FixedButtonContainer'
 import { useTrade } from '../../lib/useTrade'
 import { Native } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
+import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
 
 export const SwapButton: FC = () => {
   const { appType, amount, network0, value, token0, token1 } = useSwapState()
@@ -22,7 +22,7 @@ export const SwapButton: FC = () => {
     appType === AppType.Swap && token1.isNative && token0.wrapped.address === Native.onChain(network0).wrapped.address
 
   return (
-    <ApproveTokenController amount={amount} contract={ROUTE_PROCESSOR_ADDRESS[ChainId.POLYGON]}>
+    <ApproveTokenController amount={amount} contract={getRouteProcessorAddressForChainId(ChainId.POLYGON)}>
       {({ approvalState }) => (
         <FixedButtonContainer>
           {approvalState === ApprovalState.NOT_APPROVED && (
@@ -35,7 +35,7 @@ export const SwapButton: FC = () => {
                 fullWidth
                 size="xl"
                 amount={amount}
-                contract={ROUTE_PROCESSOR_ADDRESS[ChainId.POLYGON]}
+                contract={getRouteProcessorAddressForChainId(ChainId.POLYGON)}
               >
                 <Button
                   disabled={Boolean(isLoading && +value > 0) || isFetching}

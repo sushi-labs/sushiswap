@@ -11,7 +11,7 @@ import { FC, ReactNode, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './trade/TradeProvider'
 import { useAccount, useContractWrite, usePrepareContractWrite, UserRejectedRequestError } from 'wagmi'
-import { ROUTE_PROCESSOR_ADDRESS } from '@sushiswap/address'
+
 import { ChainId } from '@sushiswap/chain'
 import { routeProcessorAbi } from '@sushiswap/abi'
 import { useTrade } from '../lib/useTrade'
@@ -21,6 +21,7 @@ import { useBalances, useCreateNotification } from '@sushiswap/react-query'
 import { createToast, NotificationData } from '@sushiswap/ui13/components/toast'
 import { AppType } from '@sushiswap/ui13/types'
 import { Native } from '@sushiswap/currency'
+import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
 
 interface ConfirmationDialogProps {
   children({
@@ -56,7 +57,7 @@ export const ConfirmationDialog: FC<ConfirmationDialogProps> = ({ children }) =>
 
   const { config } = usePrepareContractWrite({
     chainId: ChainId.POLYGON,
-    address: ROUTE_PROCESSOR_ADDRESS[ChainId.POLYGON],
+    address: getRouteProcessorAddressForChainId(ChainId.POLYGON),
     abi: routeProcessorAbi,
     functionName: 'processRoute',
     args: trade?.writeArgs,

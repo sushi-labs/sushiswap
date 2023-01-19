@@ -232,6 +232,7 @@ importers:
       '@sushiswap/eslint-config': workspace:*
       '@sushiswap/jest-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
+      '@sushiswap/route-processor': workspace:*
       '@sushiswap/router': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@swc/core': 1.3.26
@@ -251,6 +252,7 @@ importers:
       '@fastify/cors': 8.2.0
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
+      '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/router': link:../../packages/router
       ethers: 5.7.2
       fastify: 4.11.0
@@ -1313,7 +1315,6 @@ importers:
       '@heroicons/react': 2.0.13
       '@playwright/test': 1.28.1
       '@sushiswap/abi': workspace:*
-      '@sushiswap/address': workspace:*
       '@sushiswap/amm': workspace:*
       '@sushiswap/chain': workspace:*
       '@sushiswap/currency': workspace:*
@@ -1325,6 +1326,7 @@ importers:
       '@sushiswap/nextjs-config': workspace:*
       '@sushiswap/prettier-config': workspace:*
       '@sushiswap/react-query': workspace:*
+      '@sushiswap/route-processor': workspace:*
       '@sushiswap/types': workspace:*
       '@sushiswap/typescript-config': workspace:*
       '@sushiswap/ui13': workspace:*
@@ -1362,7 +1364,6 @@ importers:
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
       '@sushiswap/abi': link:../../packages/abi
-      '@sushiswap/address': link:../../packages/address
       '@sushiswap/amm': link:../../packages/amm
       '@sushiswap/chain': link:../../packages/chain
       '@sushiswap/currency': link:../../packages/currency
@@ -1370,6 +1371,7 @@ importers:
       '@sushiswap/hooks': link:../../packages/hooks
       '@sushiswap/math': link:../../packages/math
       '@sushiswap/react-query': link:../../packages/react-query
+      '@sushiswap/route-processor': link:../../protocols/route-processor
       '@sushiswap/types': link:../../packages/types
       '@sushiswap/ui13': link:../../packages/ui13
       '@sushiswap/validate': link:../../packages/validate
