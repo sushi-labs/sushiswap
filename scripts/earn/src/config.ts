@@ -61,6 +61,7 @@ export const MINICHEF_ADDRESS: Record<number | string, string> = {
   [ChainId.KAVA]: '0xf731202A3cf7EfA9368C2d7bD613926f7A144dB5',
   [ChainId.METIS]: '0x1334c8e873E1cae8467156e2A81d1C8b566B2da1',
   [ChainId.BOBA]: '0x75f52766A6a23F736edEfCD69dfBE6153a48c3F3',
+  [ChainId.ARBITRUM_NOVA]: '0xC09756432dAD2FF50B2D40618f7B04546DD20043',
 }
 
 export const MASTERCHEF_ADDRESS: Record<number | string, string> = {

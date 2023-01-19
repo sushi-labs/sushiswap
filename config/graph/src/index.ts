@@ -11,7 +11,7 @@ export const TRIDENT_ENABLED_NETWORKS = [
   ChainId.BSC,
 ] as const
 
-export type TridentChainId = (typeof TRIDENT_ENABLED_NETWORKS)[number]
+export type TridentChainId = typeof TRIDENT_ENABLED_NETWORKS[number]
 
 export const SUSHISWAP_ENABLED_NETWORKS = [
   ChainId.ARBITRUM,
@@ -35,7 +35,7 @@ export const SUSHISWAP_ENABLED_NETWORKS = [
   // ChainId.OKEX
 ] as const
 
-export type SushiSwapChainId = (typeof SUSHISWAP_ENABLED_NETWORKS)[number]
+export type SushiSwapChainId = typeof SUSHISWAP_ENABLED_NETWORKS[number]
 
 export const SWAP_ENABLED_NETWORKS = Array.from(new Set([...SUSHISWAP_ENABLED_NETWORKS, ...TRIDENT_ENABLED_NETWORKS]))
 
@@ -227,6 +227,7 @@ export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.KAVA]: 'sushiswap/kava-minichef', //block subgraph not synced yet
   [ChainId.METIS]: 'sushiswap/metis-minichef',
   [ChainId.BOBA]: 'sushiswap/minichef-boba',
+  [ChainId.ARBITRUM_NOVA]: 'sushiswap/arbitrum-nova-minichef',
 } as const
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const
