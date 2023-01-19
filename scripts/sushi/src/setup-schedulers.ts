@@ -7,7 +7,6 @@ import { USDC_ADDRESS } from '@sushiswap/currency'
 
 import { PoolType, Price, PROTOCOL_JOBS, ProtocolName, ProtocolVersion, TRACKED_CHAIN_IDS } from './config.js'
 
-
 if (!process.env.GC_PROJECT_ID) {
   throw new Error('GC_PROJECT_ID is not set')
 }
@@ -67,7 +66,8 @@ async function main() {
       if (job.name === request.job.name) {
         if (
           job.httpTarget?.oidcToken?.audience !== request.job.httpTarget?.oidcToken?.audience ||
-          job.schedule !== request.job.schedule
+          job.schedule !== request.job.schedule ||
+          job.httpTarget?.uri !== request.job.httpTarget?.uri
         ) {
           updateRequests.push(request)
         } else {
@@ -78,20 +78,19 @@ async function main() {
     })
   })
 
- 
   console.log(
     `SUMMARY: ${createRequests.length} job needs to be created, ${updateRequests.length} jobs needs to be updated and ${upToDateCount} jobs are up to date.`
   )
 
-    if (createRequests.length > 0 || updateRequests.length > 0) {
-      const [jobsCreated, jobsUpdated] = await Promise.all([
-        createRequests.map((request) => schedulerClient.createJob(request)),
-        updateRequests.map((request) => schedulerClient.updateJob(request)),
-      ])
-      console.log(`Created ${jobsCreated.length} jobs and updated ${jobsUpdated.length} jobs`)
-    } else {
-      console.log('Not creating or updating any jobs')
-    }
+  if (createRequests.length > 0 || updateRequests.length > 0) {
+    const [jobsCreated, jobsUpdated] = await Promise.all([
+      createRequests.map((request) => schedulerClient.createJob(request)),
+      updateRequests.map((request) => schedulerClient.updateJob(request)),
+    ])
+    console.log(`Created ${jobsCreated.length} jobs and updated ${jobsUpdated.length} jobs`)
+  } else {
+    console.log('Not creating or updating any jobs')
+  }
 }
 
 function createProtocolJobRequest(
@@ -102,13 +101,8 @@ function createProtocolJobRequest(
 ) {
   const jobName = `PROTOCOL-${protocol}${version ? '-'.concat(version) : ''}${poolType ? '-'.concat(poolType) : ''}`
   const urlPath = `/protocol?name=${protocol}`
-  if (version) {
-    urlPath.concat(`&version=${version}`)
-  }
-  if (poolType) {
-    urlPath.concat(`&poolType=${poolType}`)
-  }
-
+    .concat(version ? `&version=${version}` : '')
+    .concat(poolType ? `&poolType=${poolType}` : '')
   return createJobRequest(jobName, baseUrl, urlPath, '*/10 * * * *')
 }
 
