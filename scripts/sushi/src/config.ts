@@ -11,7 +11,6 @@ export enum ProtocolName {
   UNISWAP = 'UniSwap',
   PANCAKESWAP = 'PancakeSwap',
   QUICKSWAP = 'QuickSwap',
-  SWAPFISH = 'SwapFish',
   TRADERJOE = 'TraderJoe',
   SPOOKYSWAP = 'SpookySwap',
   UBESWAP = 'UbeSwap',

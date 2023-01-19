@@ -2,7 +2,20 @@ import timeout from 'connect-timeout'
 import express from 'express'
 import { z } from 'zod'
 
-import { PoolType, Price,ProtocolName, ProtocolVersion } from './config.js'
+import { PoolType, Price, ProtocolName, ProtocolVersion } from './config.js'
+import { honeySwapV2 } from './seed/honeyswap/v2/seed.js'
+import { liquidity } from './seed/liquidity.js'
+import { netSwapV2 } from './seed/netswap/v2/seed.js'
+import { pancakeSwapV2 } from './seed/pancakeswap/v2/seed.js'
+import { prices } from './seed/price.js'
+import { quickswapV2 } from './seed/quickswap/v2/seed.js'
+import { reserves } from './seed/reserves.js'
+import { spookySwapV2 } from './seed/spookyswap/v2/seed.js'
+import { sushiSwap } from './seed/sushiswap/seed.js'
+import { traderJoeV2 } from './seed/trader-joe/v2/seed.js'
+import { ubeSwapV2 } from './seed/ubeswap/v2/seed.js'
+import { uniswapV2 } from './seed/uniswap/v2/seed.js'
+import { whitelistPools } from './seed/whitelist-pool.js'
 
 const app = express()
 
@@ -18,8 +31,8 @@ const commonSchema = z.object({
     .int()
     .gte(0)
     .lte(2 ** 256),
-  version: z.nativeEnum(ProtocolVersion).optional(),
-  poolType: z.nativeEnum(PoolType).optional(),
+  version: z.nativeEnum(ProtocolVersion),
+  poolType: z.nativeEnum(PoolType),
 })
 
 const priceSchema = z.object({
@@ -30,8 +43,8 @@ const priceSchema = z.object({
     .lte(2 ** 256),
   base: z.string(),
   price: z.nativeEnum(Price),
-  version: z.nativeEnum(ProtocolVersion).optional(),
-  poolType: z.nativeEnum(PoolType).optional(),
+  version: z.nativeEnum(ProtocolVersion),
+  poolType: z.nativeEnum(PoolType),
 })
 
 app.get(
@@ -47,41 +60,68 @@ app.get(
     const { protocol: name, version, poolType } = result.data
     try {
       if (name === ProtocolName.SUSHISWAP) {
-        // await sushiswap()
+        await sushiSwap() // Includes legacy, trident and stable pools
+        res.sendStatus(200)
       } else if (name === ProtocolName.UNISWAP) {
         if (version === ProtocolVersion.V2) {
-          // await uniswapV2()
+          await uniswapV2()
           res.sendStatus(200)
-        } else if (version === ProtocolVersion.V3) {
-          // await uniswapV3()
-          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
         }
       } else if (name === ProtocolName.PANCAKESWAP) {
-        // await pancakeswap()
-        res.sendStatus(200)
+        if (version === ProtocolVersion.V2) {
+          await pancakeSwapV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
       } else if (name === ProtocolName.QUICKSWAP) {
-        // await quickswap()
-        res.sendStatus(200)
-      } else if (name === ProtocolName.SWAPFISH) {
-        // await swapfish()
-        res.sendStatus(501).send('Disabled, dynamic fee?')
+        if (version === ProtocolVersion.V2) {
+          await quickswapV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
       } else if (name === ProtocolName.TRADERJOE) {
-        // await traderjoe()
-        res.sendStatus(200)
+        if (version === ProtocolVersion.V2) {
+          await traderJoeV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
       } else if (name === ProtocolName.SPOOKYSWAP) {
-        // await spookySwap()
-        res.sendStatus(200)
+        if (version === ProtocolVersion.V2) {
+          await spookySwapV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
       } else if (name === ProtocolName.UBESWAP) {
-        // await ubeSwap()
-        res.sendStatus(200)
+        if (version === ProtocolVersion.V2) {
+          await ubeSwapV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
       } else if (name === ProtocolName.HONEYSWAP) {
-        // await honeySwap()
-        res.sendStatus(200)
+        if (version === ProtocolVersion.V2) {
+          await honeySwapV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
       } else if (name === ProtocolName.NETSWAP) {
-        // await netSwap()
-        res.sendStatus(200)
+        if (version === ProtocolVersion.V2) {
+          await netSwapV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
       } else {
-        res.sendStatus(400).send('Could not find protocol')
+        res
+          .sendStatus(400)
+          .send('Could not find protocol. valid protocols are: ' + Object.values(ProtocolName).join(','))
       }
     } catch (err) {
       res.status(500).send(err)
@@ -102,10 +142,9 @@ app.get(
     if (!result.success) {
       return res.status(400).json(result.error.format())
     }
-
     const { chainId, version, poolType } = result.data
     try {
-      // await liquidity(chainId, version, poolType)
+      await liquidity(chainId, version, poolType)
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
@@ -116,7 +155,6 @@ app.get(
   },
   timeout('300s')
 )
-
 
 app.get(
   '/reserves',
@@ -130,7 +168,7 @@ app.get(
 
     const { chainId, version, poolType } = result.data
     try {
-      // await reserves(chainId, version, poolType)
+      await reserves(chainId, version, poolType)
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
@@ -141,8 +179,6 @@ app.get(
   },
   timeout('300s')
 )
-
-
 
 app.get(
   '/whitelist-pools',
@@ -150,7 +186,7 @@ app.get(
     req.setTimeout(300000)
 
     try {
-      // await whitelistPools()
+      await whitelistPools()
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
@@ -161,8 +197,6 @@ app.get(
   },
   timeout('300s')
 )
-
-
 
 app.get(
   '/price',
@@ -176,7 +210,7 @@ app.get(
 
     const { chainId, version, poolType, base, price } = result.data
     try {
-      // await prices(chainId, version, poolType, base, price)
+      await prices(chainId, version, poolType, base, price)
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
@@ -187,6 +221,5 @@ app.get(
   },
   timeout('300s')
 )
-
 
 app.listen(8080)
