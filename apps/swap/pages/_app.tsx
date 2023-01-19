@@ -8,6 +8,7 @@ import { PersistQueryClientProvider } from '../ui/PersistQueryClientProvider'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import { ToastContainer } from '@sushiswap/ui13/components/toast'
+import { SwapProvider } from 'ui/trade/TradeProvider'
 
 const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
@@ -22,8 +23,10 @@ const MyApp: FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <WagmiProvider>
         <PersistQueryClientProvider>
-          <Header />
-          <Component {...pageProps} />
+          <SwapProvider>
+            <Header />
+            <Component {...pageProps} />
+          </SwapProvider>
           <ToastContainer />
         </PersistQueryClientProvider>
       </WagmiProvider>

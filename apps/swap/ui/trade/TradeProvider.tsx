@@ -226,6 +226,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
           query: {
             ...query,
+            fromChainId: currency.chainId,
             fromCurrencyId: _fromCurrencyId,
             toCurrencyId: _fromCurrencyId === query.toCurrencyId ? query.fromCurrencyId : query.toCurrencyId,
           },
@@ -241,6 +242,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
           pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
           query: {
             ...query,
+            toChainId: currency.chainId,
             fromCurrencyId: query.fromCurrencyId === _toCurrencyId ? query.toCurrencyId : query.fromCurrencyId,
             toCurrencyId: _toCurrencyId,
           },
