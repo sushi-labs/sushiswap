@@ -10261,7 +10261,7 @@ packages:
     resolution: {integrity: sha512-6YFT4EKgm0XgfwCBsKx5HrDtRI6EvhZHipjBKegdTV0b2zKuXnmdyZ+RwPCr0mCKq2pKB0qIiqCxfbgXYDlLCQ==}
     dev: false
 
-  /@sushiswap/default-token-list/39.5.0:
+  /@sushiswap/default-token-list/39.6.0:
     resolution: {integrity: sha512-JMmPUoz0fdGlx3g3SzN7nsvKacMcGhIgQXanzJZRyGEKkAvS36NTfyJZMsEbcTl15D9RRqFn7k2pIbQQcawnnA==}
     dev: false
 
