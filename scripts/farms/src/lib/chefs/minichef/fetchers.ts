@@ -118,6 +118,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
   return Promise.all(
     rewarders.map(async (rewarder) => {
       try {
+        // single-rewarders, no need to fetch anything for those, can just return
         const blacklist: Record<number, string[]> = {
           [ChainId.POLYGON]: [
             '0xb52b4b6779553a89e7f5f6f1d463595d88e88822',
@@ -137,6 +138,7 @@ export async function getRewarderInfos(chainId: SushiSwapChainId | TridentChainI
             '0x1a9c20e2b0ac11ebecbdca626bba566c4ce8e606',
             '0xae961a7d116bfd9b2534ad27fe4d178ed188c87a',
             '0x3c61b93b64f59b5091a11a071083598ee8b5cb64',
+            '0x1a140bed2ec8ce72ee3723d18fd5d50851e455fd',
           ],
           [ChainId.GNOSIS]: ['0xb291149e478dbdd2cd2528ad4088ee5c8376df1e'],
         }

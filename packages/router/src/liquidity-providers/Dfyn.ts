@@ -6,12 +6,12 @@ import { MultiCallProvider } from '../MulticallProvider'
 import { LiquidityProviders } from './LiquidityProvider'
 import { UniswapV2BaseProvider } from './UniswapV2Base'
 
-export class UniswapV2Provider extends UniswapV2BaseProvider {
+export class DfynProvider extends UniswapV2BaseProvider {
   factory = {
-    [ChainId.ETHEREUM]: '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f',
+    [ChainId.POLYGON]: '0xE7Fb3e833eFE5F9c441105EB65Ef8b261266423B',
   } as const
   initCodeHash = {
-    [ChainId.ETHEREUM]: '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f',
+    [ChainId.POLYGON]: '0xf187ed688403aa4f7acfada758d8d53698753b998a3071b06f1b777f4330eaf3',
   } as const
   constructor(
     chainDataProvider: ethers.providers.BaseProvider,
@@ -22,9 +22,9 @@ export class UniswapV2Provider extends UniswapV2BaseProvider {
     super(chainDataProvider, multiCallProvider, chainId, l)
   }
   getType(): LiquidityProviders {
-    return LiquidityProviders.UniswapV2
+    return LiquidityProviders.Dfyn
   }
   getPoolProviderName(): string {
-    return 'UniswapV2'
+    return 'Dfyn'
   }
 }

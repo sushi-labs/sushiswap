@@ -1,5 +1,6 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
+import { BENTOBOX_ADDRESS } from '@sushiswap/address'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
   DAI,
@@ -19,8 +20,7 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import { BentoBox, DataFetcher, findSpecialRoute, PoolFilter, Router } from '@sushiswap/router'
-import { LiquidityProviders } from '@sushiswap/router/dist/liquidity-providers/LiquidityProviderMC'
+import { DataFetcher, findSpecialRoute, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
 import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
@@ -72,7 +72,7 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
   //console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
-  const routeProcessor = await RouteProcessor.deploy(BentoBox[chainId] || '0x0000000000000000000000000000000000000000')
+  const routeProcessor = await RouteProcessor.deploy(BENTOBOX_ADDRESS[chainId])
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
 
