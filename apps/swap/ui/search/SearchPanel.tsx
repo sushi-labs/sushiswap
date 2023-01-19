@@ -1,17 +1,19 @@
-import { Chain } from '@sushiswap/chain'
 import { useDebounce } from '@sushiswap/hooks'
 import { Search } from '@sushiswap/ui13/components/input/Search'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { useSearchContext } from './SearchProvider'
 import { List } from '@sushiswap/ui13/components/list/List'
-import { useTokenList } from '@sushiswap/react-query/hooks/tokenlist/useTokenList'
-import { TokenWithLogoURIType, usePrice } from '@sushiswap/react-query'
+import { usePrice, useTokenList } from '@sushiswap/react-query'
 import { Badge } from '@sushiswap/ui13/components/Badge'
 import { NetworkIcon } from '@sushiswap/ui13/components/icons'
 import { classNames } from '@sushiswap/ui13'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
+import { useSwapActions, useSwapState } from '../trade/TradeProvider'
+import { Token } from '@sushiswap/currency'
+import { Chain } from '@sushiswap/chain'
+import { Currency } from '@sushiswap/ui13/components/currency'
 
 const POPULAR_TOKENS = [
   '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
@@ -21,6 +23,7 @@ const POPULAR_TOKENS = [
 ]
 
 export const SearchPanel: FC = () => {
+  const { network1 } = useSwapState()
   const [query, setQuery] = useState<string>()
   const debouncedQuery = useDebounce(query, 500)
   const filter = useMemo(() => (debouncedQuery ? [debouncedQuery] : 'showNone'), [debouncedQuery])
@@ -39,12 +42,32 @@ export const SearchPanel: FC = () => {
         <div className="scroll relative">
           {query && query.length > 2 && (
             <List className="pt-6">
-              <List.Label className="text-sm">Search results</List.Label>
+              <List.Label className="text-sm">{Chain.from(network1).name}</List.Label>
               <List.Control className="scroll max-h-[368px]">
                 {isLoading ? (
                   <RowSkeleton />
                 ) : tokenList && Object.keys(tokenList).length > 0 ? (
-                  Object.values(tokenList).map((el, i) => <Row currency={el} key={`example-${i}-${el.address}`} />)
+                  Object.values(tokenList)
+                    .filter((el) => el.chainId === network1)
+                    .map((el, i) => <Row currency={el} key={`example-${i}-${el.address}`} />)
+                ) : (
+                  <div className="h-[60px] flex items-center justify-center text-xs font-semibold text-gray-400 dark:text-slate-500">
+                    No results found
+                  </div>
+                )}
+              </List.Control>
+            </List>
+          )}
+          {query && query.length > 2 && (
+            <List className="pt-6">
+              <List.Label className="text-sm">Other networks</List.Label>
+              <List.Control className="scroll max-h-[368px]">
+                {isLoading ? (
+                  <RowSkeleton />
+                ) : tokenList && Object.keys(tokenList).length > 0 ? (
+                  Object.values(tokenList)
+                    .filter((el) => el.chainId !== network1)
+                    .map((el, i) => <Row currency={el} key={`example-${i}-${el.address}`} />)
                 ) : (
                   <div className="h-[60px] flex items-center justify-center text-xs font-semibold text-gray-400 dark:text-slate-500">
                     No results found
@@ -66,16 +89,22 @@ export const SearchPanel: FC = () => {
   )
 }
 
-const Row: FC<{ currency: TokenWithLogoURIType }> = ({ currency }) => {
+const Row: FC<{ currency: Token }> = ({ currency }) => {
+  const { setToken1 } = useSwapActions()
+  const { setOpen } = useSearchContext()
   const { data: price, isLoading } = usePrice({ address: currency.address, chainId: currency.chainId })
+
+  const handleClick = useCallback(() => {
+    setToken1(currency)
+    setOpen(false)
+  }, [currency, setOpen, setToken1])
 
   if (isLoading) return <RowSkeleton />
 
   return (
-    <a
-      href={`/swap/${currency.chainId}/${currency.chainId}/ETH/${currency.address.toLowerCase()}`}
-      role="button"
-      className="cursor-pointer flex justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
+    <button
+      onClick={handleClick}
+      className="w-full cursor-pointer flex justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
     >
       <div className="flex items-center gap-5">
         <div className="w-9 h-9">
@@ -83,15 +112,7 @@ const Row: FC<{ currency: TokenWithLogoURIType }> = ({ currency }) => {
             position="bottom-right"
             badgeContent={<NetworkIcon chainId={currency.chainId} width={20} height={20} />}
           >
-            <img
-              placeholder="blur"
-              key={currency.logoURI}
-              src={currency.logoURI}
-              width={36}
-              height={36}
-              alt={currency.name}
-              className="rounded-full"
-            />
+            <Currency.Icon currency={currency} width={36} height={36} />
           </Badge>
         </div>
         <div className="flex flex-col">
@@ -114,7 +135,7 @@ const Row: FC<{ currency: TokenWithLogoURIType }> = ({ currency }) => {
           </span>
         </div>
       )}
-    </a>
+    </button>
   )
 }
 

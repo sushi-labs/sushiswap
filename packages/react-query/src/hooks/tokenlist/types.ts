@@ -1,7 +1,7 @@
+import {Token} from "@sushiswap/currency";
 import z from 'zod'
 
-import { tokenListValidator, tokenValidator } from './validator'
+import { tokenListValidator } from './validator'
 
-export type UseTokenListQuerySelect = (data: TokenListType) => Record<string, TokenWithLogoURIType>
+export type UseTokenListQuerySelect = (data: TokenListType) => Record<string, Token>
 export type TokenListType = z.infer<typeof tokenListValidator>
-export type TokenWithLogoURIType = z.infer<typeof tokenValidator>

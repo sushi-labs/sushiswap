@@ -75,7 +75,7 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
               <Dialog.Content className="flex flex-col gap-3 !pb-1 min-h-[75vh] sm:min-h-[60vh] px-4 sm:!rounded-[24px]">
                 <SlideIn>
                   <div className="flex justify-between py-2">
-                    <span className="text-lg font-semibold dark:text-slate-50 text-gray-900">Tokens</span>
+                    <span className="text-lg font-semibold text-gray-900 dark:text-slate-50">Tokens</span>
                     <TokenSelectorCustomTokensOverlay />
                   </div>
                   <div className="flex gap-2">
@@ -85,16 +85,18 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                   <div className="flex flex-wrap gap-2">
                     {COMMON_BASES[chainId].map((base) => (
                       <Button
-                        startIcon={<Currency.Icon currency={base} width={16} height={16} />}
+                        startIcon={<Currency.Icon currency={base} width={16} height={16} disableLink={true} />}
                         color="default"
                         variant="outlined"
                         key={base.address}
+                        onClick={() => _onSelect(base)}
                       >
                         {base.symbol}
                       </Button>
                     ))}
                   </div>
-                  <List.Control className="p-1 flex flex-col flex-grow gap-3">
+
+                  <List.Control className="flex flex-col flex-grow gap-3 p-1">
                     {queryToken[0] && (
                       <TokenSelectorImportRow
                         currencies={queryToken}
@@ -112,8 +114,8 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
                   {currencies.length === 0 && !queryToken && chainId && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div className="flex flex-col items-center justify-center gap-1">
-                        <span className="text-xs flex italic text-slate-500">No tokens found on</span>
-                        <span className="text-xs font-medium flex gap-1 italic text-slate-500">
+                        <span className="flex text-xs italic text-slate-500">No tokens found on</span>
+                        <span className="flex gap-1 text-xs italic font-medium text-slate-500">
                           <NetworkIcon width={14} height={14} chainId={chainId} /> {chainName[chainId]}
                         </span>
                       </div>
