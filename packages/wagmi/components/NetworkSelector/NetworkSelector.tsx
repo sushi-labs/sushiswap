@@ -46,7 +46,7 @@ export const NetworkSelector: FC<NetworkSelectorNewProps> = ({ supportedNetworks
               <div className="flex items-center gap-2">
                 <NetworkIcon type="naked" chainId={el} width={22} height={22} />
                 <Typography variant="sm" weight={500} className="text-slate-50">
-                  {chainName[el]}
+                  {chainName[el]?.replace('Mainnet Shard 0', '')?.replace('Mainnet', '')?.trim()}
                 </Typography>
               </div>
               {chain?.id === el && <div className="w-2 h-2 mr-1 rounded-full bg-green" />}
