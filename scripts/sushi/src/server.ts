@@ -20,7 +20,7 @@ import { whitelistPools } from './seed/whitelist-pool.js'
 const app = express()
 
 const protocolSchema = z.object({
-  protocol: z.nativeEnum(ProtocolName),
+  name: z.nativeEnum(ProtocolName),
   version: z.nativeEnum(ProtocolVersion).optional(),
   poolType: z.nativeEnum(PoolType).optional(),
 })
@@ -57,7 +57,7 @@ app.get(
       return res.status(400).send(result.error.format())
     }
 
-    const { protocol: name, version, poolType } = result.data
+    const { name, version, poolType } = result.data
     try {
       if (name === ProtocolName.SUSHISWAP) {
         await sushiSwap() // Includes legacy, trident and stable pools

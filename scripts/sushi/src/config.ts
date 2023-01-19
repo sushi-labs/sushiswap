@@ -1,3 +1,4 @@
+import { ChainId } from '@sushiswap/chain'
 
 export enum ProtocolVersion {
   V2 = 'V2',
@@ -29,6 +30,44 @@ export enum Price {
   NATIVE = 'NATIVE',
 }
 
+export const TRACKED_CHAIN_IDS = [
+  ChainId.ETHEREUM,
+  ChainId.ARBITRUM,
+  ChainId.AVALANCHE,
+  ChainId.MOONRIVER,
+  ChainId.GNOSIS,
+  ChainId.FANTOM,
+  ChainId.BSC,
+  ChainId.CELO,
+  ChainId.FUSE,
+  ChainId.MOONBEAM,
+  ChainId.ARBITRUM_NOVA,
+  ChainId.HARMONY,
+  ChainId.POLYGON,
+  ChainId.BOBA,
+  ChainId.OPTIMISM,
+  ChainId.METIS,
+  ChainId.KAVA,
+  ChainId.BTTC,
+]
+
+export const PROTOCOL_JOBS: ProtocolJob[] = [
+  { protocol: ProtocolName.SUSHISWAP },
+  { protocol: ProtocolName.UNISWAP, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.PANCAKESWAP, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.QUICKSWAP, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.TRADERJOE, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.SPOOKYSWAP, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.UBESWAP, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.HONEYSWAP, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.NETSWAP, version: ProtocolVersion.V2 },
+]
+
+interface ProtocolJob {
+  protocol: ProtocolName
+  version?: ProtocolVersion
+  poolType?: PoolType
+}
+
 export const GRAPH_HOST_ENDPOINT = 'api.thegraph.com'
 export const SUSHI_HOST_ENDPOINT = 'subgraphs.sushi.com'
-

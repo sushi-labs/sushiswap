@@ -2,10 +2,11 @@ import 'dotenv/config'
 
 import run from '@google-cloud/run'
 import scheduler from '@google-cloud/scheduler'
+import { ChainId, chainShortName } from '@sushiswap/chain'
+import { USDC_ADDRESS } from '@sushiswap/currency'
 
-if (!process.env.GC_PROJECT_NAME) {
-  throw new Error('GC_PROJECT_NAME is not set')
-}
+import { PoolType, Price, PROTOCOL_JOBS, ProtocolName, ProtocolVersion, TRACKED_CHAIN_IDS } from './config.js'
+
 
 if (!process.env.GC_PROJECT_ID) {
   throw new Error('GC_PROJECT_ID is not set')
@@ -35,14 +36,27 @@ async function main() {
   }
   const baseUrl = service[0].uri
 
-  const additionalUrl = '/liquidity?chainId=10&version=V2&poolType=CONSTANT_PRODUCT_POOL'
-  const name = 'test2'
   const existingJobs = await getExistingJobs()
   console.log(`Found a total of ${existingJobs.length} existing jobs`)
-  console.log(existingJobs.map((job) => job.name).join(','))
-
   const existingJobNames = existingJobs.map((job) => job.name)
-  const jobRequests = [createJobRequest(name, baseUrl, additionalUrl)]
+
+//   const protocolRequests = [PROTOCOL_JOBS[0]].map((job) =>
+  const protocolRequests = PROTOCOL_JOBS.map((job) =>
+    createProtocolJobRequest(job.protocol, job.version, job.poolType, baseUrl)
+  )
+
+  const chainRequests = TRACKED_CHAIN_IDS.map((chainId) => {
+    // const chainRequests = [TRACKED_CHAIN_IDS[0]].map((chainId) => {
+    return [
+      createReserveJobRequest(chainId, baseUrl),
+      createPriceJobRequest(chainId, baseUrl),
+      createLiquidityJobRequest(chainId, baseUrl),
+    ]
+  }).flat()
+
+  const whitelistPoolRequest = createWhitelistPoolsRequest(baseUrl)
+
+  const jobRequests = [...protocolRequests, ...chainRequests, whitelistPoolRequest]
 
   const createRequests = jobRequests.filter((request) => !existingJobNames.includes(request.job.name))
   const updateRequests: {
@@ -53,7 +67,10 @@ async function main() {
   existingJobs.forEach((job) => {
     jobRequests.forEach((request) => {
       if (job.name === request.job.name) {
-        if (job.httpTarget?.oidcToken?.audience !== request.job.httpTarget?.oidcToken?.audience) {
+        if (
+          job.httpTarget?.oidcToken?.audience !== request.job.httpTarget?.oidcToken?.audience ||
+          job.schedule !== request.job.schedule
+        ) {
           updateRequests.push(request)
         } else {
           upToDateCount++
@@ -63,22 +80,66 @@ async function main() {
     })
   })
 
+ 
   console.log(
     `SUMMARY: ${createRequests.length} job needs to be created, ${updateRequests.length} jobs needs to be updated and ${upToDateCount} jobs are up to date.`
   )
 
-  if (createRequests.length > 0 || updateRequests.length > 0) {
-    const [jobsCreated, jobsUpdated] = await Promise.all([
-      createRequests.map((request) => schedulerClient.createJob(request)),
-      updateRequests.map((request) => schedulerClient.updateJob(request)),
-    ])
-    console.log(`Created ${jobsCreated.length} jobs and updated ${jobsUpdated.length} jobs`)
-  } else {
-    console.log('Not creating or updating any jobs')
-  }
+    if (createRequests.length > 0 || updateRequests.length > 0) {
+      const [jobsCreated, jobsUpdated] = await Promise.all([
+        createRequests.map((request) => schedulerClient.createJob(request)),
+        updateRequests.map((request) => schedulerClient.updateJob(request)),
+      ])
+      console.log(`Created ${jobsCreated.length} jobs and updated ${jobsUpdated.length} jobs`)
+    } else {
+      console.log('Not creating or updating any jobs')
+    }
 }
 
-function createJobRequest(name: string, url: string, additionalUrl: string) {
+function createProtocolJobRequest(
+  protocol: ProtocolName,
+  version: ProtocolVersion | undefined,
+  poolType: PoolType | undefined,
+  baseUrl: string
+) {
+  const jobName = `PROTOCOL-${protocol}${version ? '-'.concat(version) : ''}${poolType ? '-'.concat(poolType) : ''}`
+  const urlPath = `/protocol?name=${protocol}`
+  if (version) {
+    urlPath.concat(`&version=${version}`)
+  }
+  if (poolType) {
+    urlPath.concat(`&poolType=${poolType}`)
+  }
+
+  return createJobRequest(jobName, baseUrl, urlPath, '*/10 * * * *')
+}
+
+function createReserveJobRequest(chainId: ChainId, baseUrl: string) {
+  const urlPath = `/reserves?chainId=${chainId}&version=${ProtocolVersion.V2}&poolType=${PoolType.CONSTANT_PRODUCT_POOL}`
+  return createJobRequest(`RESERVES-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '10,25,40,55 * * * *')
+}
+
+function createLiquidityJobRequest(chainId: ChainId, baseUrl: string) {
+  const urlPath = `/liquidity?chainId=${chainId}&version=${ProtocolVersion.V2}&poolType=${PoolType.CONSTANT_PRODUCT_POOL}`
+  return createJobRequest(`LIQUIDITY-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '32,02 * * * *')
+}
+
+function createPriceJobRequest(chainId: ChainId, baseUrl: string) {
+  const usdcAddress =
+    chainId !== ChainId.BTTC
+      ? USDC_ADDRESS[chainId as keyof typeof USDC_ADDRESS]
+      : '0xae17940943ba9440540940db0f1877f101d39e8b' // USDC_E on BTTC
+
+  const urlPath = `/price?chainId=${chainId}&version=${ProtocolVersion.V2}&poolType=${PoolType.CONSTANT_PRODUCT_POOL}&base=${usdcAddress}&price=${Price.USD}`
+  return createJobRequest(`PRICES-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '13,28,43,58 * * * *')
+}
+
+function createWhitelistPoolsRequest(baseUrl: string) {
+  const urlPath = `/whitelist-pools`
+  return createJobRequest(`WHITELIST-POOLS`, baseUrl, urlPath, '18,48 * * * *')
+}
+
+function createJobRequest(name: string, url: string, additionalUrl: string, schedule: string) {
   const schedulerPath = `projects/${GC_PROJECT_ID}/locations/${LOCATION_ID}`
   const job: scheduler.protos.google.cloud.scheduler.v1.IJob = {
     name: schedulerPath + '/jobs/' + name,
@@ -93,7 +154,7 @@ function createJobRequest(name: string, url: string, additionalUrl: string) {
         audience: url,
       },
     },
-    schedule: '1 * * * *',
+    schedule,
     timeZone: 'Europe/London',
   }
   const request = {
