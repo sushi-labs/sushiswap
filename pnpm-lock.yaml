@@ -3839,7 +3839,7 @@ importers:
     specifiers:
       '@ethersproject/address': 5.7.0
       '@ethersproject/bignumber': 5.7.0
-      '@google-cloud/run': ^0.3.0
+      '@google-cloud/run': 0.3.0
       '@google-cloud/scheduler': ^3.1.0
       '@graphprotocol/client-add-source-name': latest
       '@graphprotocol/client-auto-pagination': latest
@@ -26084,7 +26084,7 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.0.6
-      ts-node: 10.9.1_rmzwhy4t3g2w4jfehjrsbeodby
+      ts-node: 10.9.1_zpb5kzpnyozdjq4cwaojlul57u
       yaml: 1.10.2
     dev: true
 
@@ -26254,7 +26254,6 @@ packages:
       prettier: 2.8.1
       semver: 7.3.8
       solidity-comments-extractor: 0.0.7
-    dev: false
     optional: true
 
   /prettier-plugin-solidity/1.1.1_prettier@2.8.2:
@@ -26277,7 +26276,6 @@ packages:
       prettier: '>=2.2.0'
     dependencies:
       prettier: 2.8.1
-    dev: false
     optional: true
 
   /prettier-plugin-tailwindcss/0.2.1_prettier@2.8.2:
