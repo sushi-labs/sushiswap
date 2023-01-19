@@ -6,7 +6,7 @@ import { BigNumber, ethers } from 'ethers'
 import https from 'https'
 
 import { DataFetcher } from '../DataFetcher'
-import { LiquidityProviders } from '../liquidity-providers/LiquidityProviderMC'
+import { LiquidityProviders } from '../liquidity-providers/LiquidityProvider'
 import { Router } from '../Router'
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms))
@@ -138,9 +138,9 @@ function getProtocol(lp: LiquidityProviders, chainId: ChainId) {
       throw new Error('Unsupported network: ' + chainId)
   }
   switch (lp) {
-    case LiquidityProviders.Sushiswap:
+    case LiquidityProviders.SushiSwap:
       return prefix + 'SUSHISWAP'
-    case LiquidityProviders.Quickswap:
+    case LiquidityProviders.QuickSwap:
       return prefix + 'QUICKSWAP'
     case LiquidityProviders.Trident:
       return prefix + 'TRIDENT'

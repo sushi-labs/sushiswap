@@ -3,28 +3,67 @@ import type { Token } from '@sushiswap/currency'
 import type { ethers } from 'ethers'
 
 import type { Limited } from '../Limited'
+import type { MultiCallProvider } from '../MulticallProvider'
 import type { PoolCode } from '../pools/PoolCode'
+
+export enum LiquidityProviders {
+  SushiSwap = 'SushiSwap',
+  UniswapV2 = 'UniswapV2',
+  Trident = 'Trident',
+  QuickSwap = 'QuickSwap',
+  ApeSwap = 'ApeSwap',
+  Dfyn = 'Dfyn',
+  Elk = 'Elk',
+  JetSwap = 'JetSwap',
+  NativeWrap = 'NativeWrap',
+}
 
 export abstract class LiquidityProvider {
   limited: Limited
   chainDataProvider: ethers.providers.BaseProvider
+  multiCallProvider: MultiCallProvider
   chainId: ChainId
+  stateId = 0
+  lastUpdateBlock = 0
 
-  constructor(chainDataProvider: ethers.providers.BaseProvider, chainId: ChainId, l: Limited) {
+  constructor(
+    chainDataProvider: ethers.providers.BaseProvider,
+    multiCallProvider: MultiCallProvider,
+    chainId: ChainId,
+    l: Limited
+  ) {
     this.limited = l
     this.chainDataProvider = chainDataProvider
+    this.multiCallProvider = multiCallProvider
     this.chainId = chainId
   }
 
-  abstract getPoolProviderName(): string
-  abstract getPools(t0: Token, t1: Token): Promise<PoolCode[]>
+  abstract getType(): LiquidityProviders
 
-  startGetherData(t0: Token, t1: Token) {}
-  poolListWereUpdated(): boolean {
-    return false
+  // The name of liquidity provider to be used for pool naming. For example, 'Sushiswap'
+  abstract getPoolProviderName(): string
+
+  // To start ferch pools data. Can fetch data for the most used or big pools even before
+  // to/from tokens are known
+  abstract startFetchPoolsData(): void
+
+  // start fetching pools data for tokens t0, t1, if it is not fetched before
+  // call if for to and from tokens
+  abstract fetchPoolsForToken(t0: Token, t1: Token): void
+
+  // Returns current pools data
+  abstract getCurrentPoolList(): PoolCode[]
+
+  // If pools data were changed then stateId should be increased
+  getCurrentPoolStateId() {
+    return this.stateId
   }
-  getCurrentPoolList(): PoolCode[] {
-    return []
+
+  // Stops all network activity
+  abstract stopFetchPoolsData(): void
+
+  // returns the last processed block number
+  getLastUpdateBlock(): number {
+    return this.lastUpdateBlock
   }
-  stopGetherData() {}
 }

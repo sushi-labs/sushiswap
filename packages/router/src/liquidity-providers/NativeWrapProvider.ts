@@ -8,9 +8,9 @@ import type { Limited } from '../Limited'
 import type { MultiCallProvider } from '../MulticallProvider'
 import { NativeWrapBridgePoolCode } from '../pools/NativeWrapBridge'
 import type { PoolCode } from '../pools/PoolCode'
-import { LiquidityProviderMC, LiquidityProviders } from './LiquidityProviderMC'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-export class NativeWrapProvider extends LiquidityProviderMC {
+export class NativeWrapProvider extends LiquidityProvider {
   poolCodes: PoolCode[]
 
   constructor(
