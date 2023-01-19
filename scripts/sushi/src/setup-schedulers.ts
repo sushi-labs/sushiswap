@@ -40,13 +40,11 @@ async function main() {
   console.log(`Found a total of ${existingJobs.length} existing jobs`)
   const existingJobNames = existingJobs.map((job) => job.name)
 
-//   const protocolRequests = [PROTOCOL_JOBS[0]].map((job) =>
   const protocolRequests = PROTOCOL_JOBS.map((job) =>
     createProtocolJobRequest(job.protocol, job.version, job.poolType, baseUrl)
   )
 
   const chainRequests = TRACKED_CHAIN_IDS.map((chainId) => {
-    // const chainRequests = [TRACKED_CHAIN_IDS[0]].map((chainId) => {
     return [
       createReserveJobRequest(chainId, baseUrl),
       createPriceJobRequest(chainId, baseUrl),

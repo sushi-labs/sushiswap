@@ -47,6 +47,10 @@ const priceSchema = z.object({
   poolType: z.nativeEnum(PoolType),
 })
 
+app.get('/', (req, res) => {
+  res.sendStatus(200)
+})
+
 app.get(
   '/protocol',
   async (req, res) => {
@@ -125,10 +129,7 @@ app.get(
       }
     } catch (err) {
       res.status(500).send(err)
-      process.exit(1)
-    } finally {
-      process.exit(0)
-    }
+    } 
   },
   timeout('600s')
 )
@@ -148,10 +149,7 @@ app.get(
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
-      process.exit(1)
-    } finally {
-      process.exit(0)
-    }
+    } 
   },
   timeout('300s')
 )
@@ -172,10 +170,7 @@ app.get(
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
-      process.exit(1)
-    } finally {
-      process.exit(0)
-    }
+    } 
   },
   timeout('300s')
 )
@@ -190,10 +185,7 @@ app.get(
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
-      process.exit(1)
-    } finally {
-      process.exit(0)
-    }
+    } 
   },
   timeout('300s')
 )
@@ -214,10 +206,7 @@ app.get(
       res.sendStatus(200)
     } catch (err) {
       res.status(500).send(err)
-      process.exit(1)
-    } finally {
-      process.exit(0)
-    }
+    } 
   },
   timeout('300s')
 )
