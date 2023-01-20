@@ -1,4 +1,5 @@
 import { ChainId } from '@sushiswap/chain'
+import { C } from 'node_modules/@wagmi/core/dist/base-a82112a9.js'
 
 export enum ProtocolVersion {
   V2 = 'V2',
@@ -44,11 +45,13 @@ export const TRACKED_CHAIN_IDS = [
   ChainId.ARBITRUM_NOVA,
   ChainId.HARMONY,
   ChainId.POLYGON,
-  ChainId.BOBA,
   ChainId.OPTIMISM,
   ChainId.METIS,
   ChainId.KAVA,
   ChainId.BTTC,
+  ChainId.BOBA,
+  ChainId.BOBA_AVAX,
+  ChainId.BOBA_BNB,
 ]
 
 export const PROTOCOL_JOBS: ProtocolJob[] = [
