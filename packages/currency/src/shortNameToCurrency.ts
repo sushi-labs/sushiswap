@@ -38,11 +38,26 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     MAI: MAI[ChainId.POLYGON],
     UNI: UNI[ChainId.POLYGON],
   },
+  [ChainId.ARBITRUM]: {
+    NATIVE: Native.onChain(ChainId.ARBITRUM),
+    WNATIVE: WNATIVE[ChainId.ARBITRUM],
+    ETH: Native.onChain(ChainId.ARBITRUM),
+    WETH: WNATIVE[ChainId.ARBITRUM],
+    WBTC: WBTC[ChainId.ARBITRUM],
+    USDC: USDC[ChainId.ARBITRUM],
+    USDT: USDT[ChainId.ARBITRUM],
+    DAI: DAI[ChainId.ARBITRUM],
+    FRAX: FRAX[ChainId.ARBITRUM],
+    MIM: MIM[ChainId.ARBITRUM],
+    SUSHI: SUSHI[ChainId.ARBITRUM],
+    MAI: MAI[ChainId.ARBITRUM],
+    UNI: UNI[ChainId.ARBITRUM],
+  },
 } as const
 
 export type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
 
-export type ShortCurrencyName = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY[ShortCurrencyNameChainId]
+export type ShortCurrencyName = keyof (typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY)[ShortCurrencyNameChainId]
 
 export const isShortCurrencyNameSupported = (chainId: ChainId): chainId is ShortCurrencyNameChainId =>
   chainId in CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
