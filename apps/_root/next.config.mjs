@@ -19,6 +19,9 @@ const {
 const nextConfig = {
   ...defaultNextConfig,
   transpilePackages: ['@sushiswap/ui', '@sushiswap/wagmi'],
+  experimental: {
+    appDir: true,
+  },
   async redirects() {
     return [
       {
