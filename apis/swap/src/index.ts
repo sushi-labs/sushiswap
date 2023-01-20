@@ -16,7 +16,7 @@ import { getToken } from './tokens'
 const server = fastify({ logger: true })
 server.register(cors)
 
-let dataFetcher: DataFetcher
+const dataFetcherMap = new Map<ChainId, DataFetcher>()
 
 const querySchema = z.object({
   chainId: z.coerce
@@ -62,33 +62,21 @@ export function getRouteProcessorAddressForChainId(chainId: ChainId) {
 // Declare a route
 server.get('/v0', async (request) => {
   const { chainId, fromTokenId, toTokenId, amount, gasPrice, to } = querySchema.parse(request.query)
-
   // console.log({ chainId, fromTokenId, toTokenId, amount, gasPrice, to })
-
-  // Limited to predefined short names and tokens from our db for now
-
   const tokenStartTime = performance.now()
   const [fromToken, toToken] = await Promise.all([getToken(chainId, fromTokenId), getToken(chainId, toTokenId)])
   const tokenEndTime = performance.now()
   console.log(`tokens (${(tokenEndTime - tokenStartTime).toFixed(0)} ms) `)
-
+  const dataFetcher = dataFetcherMap.get(chainId)
+  if (!dataFetcher) {
+    throw new Error(`Unsupported chainId ${chainId}`)
+  }
   const dataFetcherStartTime = performance.now()
   dataFetcher.fetchPoolsForToken(fromToken, toToken)
   const dataFetcherEndTime = performance.now()
   console.log(
     `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(0)} ms) `
   )
-
-  // const router = new Router(dataFetcher, fromToken, BigNumber.from(amount.toString()), toToken, gasPrice ?? 30e9)
-  // await new Promise<void>((resolve) => {
-  //   router.startRouting(() => {
-  //     resolve()
-  //   })
-  // })
-  // router.stopRouting()
-
-  // const bestRoute = router.getBestRoute()
-
   const routeStartTime = performance.now()
   const bestRoute = findSpecialRoute(
     dataFetcher,
@@ -99,7 +87,6 @@ server.get('/v0', async (request) => {
   )
   const routeEndTime = performance.now()
   console.log(`findSpecialRoute(..) (${(routeEndTime - routeStartTime).toFixed(0)} ms) `)
-
   return {
     getCurrentRouteHumanString: Router.routeToHumanString(dataFetcher, bestRoute, fromToken, toToken),
     getBestRoute: {
@@ -134,15 +121,36 @@ server.get('/v0', async (request) => {
 // Run the server!
 const start = async () => {
   try {
-    dataFetcher = new DataFetcher(
-      new providers.AlchemyProvider(getAlchemyNetowrkForChainId(137), process.env['ALCHEMY_API_KEY']),
-      137
+    dataFetcherMap.set(
+      ChainId.ETHEREUM,
+      new DataFetcher(
+        new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ETHEREUM), process.env['ALCHEMY_API_KEY']),
+        ChainId.ETHEREUM
+      )
     )
-    dataFetcher.startDataFetching()
+    dataFetcherMap.set(
+      ChainId.POLYGON,
+      new DataFetcher(
+        new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.POLYGON), process.env['ALCHEMY_API_KEY']),
+        ChainId.FANTOM
+      )
+    )
+    dataFetcherMap.set(
+      ChainId.ARBITRUM,
+      new DataFetcher(
+        new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ARBITRUM), process.env['ALCHEMY_API_KEY']),
+        ChainId.ARBITRUM
+      )
+    )
+    for (const dataFetcher of dataFetcherMap.values()) {
+      dataFetcher.startDataFetching()
+    }
     await server.listen({ host: process.env['HOST'], port: process.env['PORT'] })
   } catch (err) {
     server.log.error(err)
-    dataFetcher.stopDataFetching()
+    for (const dataFetcher of dataFetcherMap.values()) {
+      dataFetcher.startDataFetching()
+    }
     process.exit(1)
   }
 }
