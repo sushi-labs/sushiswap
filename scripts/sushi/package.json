@@ -21,7 +21,7 @@
     "generate": "graphclient build --fileType js --throwOnInvalidConfig && prisma generate",
     "lint": "TIMING=1 eslint src --fix",
     "server": "ts-node --swc src/server.ts",
-    "start": "ts-node --swc src/run.ts",
+    "start": "ts-node --swc src/server.ts",
     "setup": "ts-node src/setup-schedulers.ts",
     "test": "jest --passWithNoTests",
     "validate": "graphclient validate"
