@@ -23,6 +23,7 @@ import {
   NFTX_ADDRESS,
   OHM_ADDRESS,
   PRIMATE_ADDRESS,
+  QUICK_ADDRESS,
   renBTC_ADDRESS,
   rETH2_ADDRESS,
   sETH2_ADDRESS,
@@ -569,3 +570,12 @@ export const KLIMA = addressMapToTokenMap(
   },
   KLIMA_ADDRESS
 ) as Record<keyof typeof KLIMA_ADDRESS, Token>
+
+export const QUICK = addressMapToTokenMap(
+  {
+    decimals: 18,
+    symbol: 'QUICK',
+    name: 'Quickswap',
+  },
+  QUICK_ADDRESS
+) as Record<keyof typeof QUICK_ADDRESS, Token>
