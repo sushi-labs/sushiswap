@@ -19,7 +19,7 @@ export enum ProtocolName {
   NETSWAP = 'NetSwap',
   APESWAP = 'ApeSwap',
   JETSWAP = 'JetSwap',
-  DFYN = 'DFYN',
+  DFYN = 'Dfyn',
   ELK = 'Elk',
 }
 
