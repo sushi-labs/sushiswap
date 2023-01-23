@@ -58,6 +58,7 @@ interface TestEnvironment {
   provider: any
   rp: Contract
   user: SignerWithAddress
+  user2: SignerWithAddress
   dataFetcher: DataFetcher
 }
 
@@ -78,13 +79,14 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
   console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
   //console.log('    User creation ...')
-  const [Alice] = await ethers.getSigners()
+  const [Alice, Bob] = await ethers.getSigners()
 
   return {
     chainId,
     provider,
     rp: routeProcessor,
     user: Alice,
+    user2: Bob,
     dataFetcher,
   }
 }
@@ -306,12 +308,52 @@ describe('End-to-end Router test', async function () {
   it('Special Router', async function () {
     env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
     const route = findSpecialRoute(env.dataFetcher, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI_LOCAL, 30e9)
-    // if (route.priceImpact !== undefined && route.priceImpact < 0.005) {
-    //   // All pools should be from preferrable list
-    //   const pools = env.dataFetcher.getCurrentPoolCodeList(PreferrableLiquidityProviders).map((pc) => pc.pool.address)
-    //   const poolSet = new Set(pools)
-    //   route.legs.forEach((l) => expect(poolSet.has(l.poolAddress)).true)
-    // }
     expect(route).not.undefined
+  })
+
+  it.only('Transfer value and route native -> Sushi', async function () {
+    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
+    const route = Router.findBestRoute(
+      env.dataFetcher,
+      Native.onChain(chainId),
+      getBigNumber(1 * 1e18),
+      SUSHI_LOCAL,
+      30e9
+    )
+    const rpParams = Router.routeProcessorParams(
+      env.dataFetcher,
+      route,
+      Native.onChain(chainId),
+      SUSHI_LOCAL,
+      env.user.address,
+      env.rp.address
+    )
+    expect(rpParams.value).not.equal(undefined)
+    expect(rpParams.value?.isZero()).equal(false)
+
+    const toTokenContract = await new ethers.Contract(SUSHI_LOCAL.address, weth9Abi, env.user)
+    const balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+    const balanceUser2Before = await env.user2.getBalance()
+
+    const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(chainId).decimals))
+    const tx = await env.rp.transferValueAndprocessRoute(
+      env.user2,
+      transferValue,
+      rpParams.tokenIn,
+      rpParams.amountIn,
+      rpParams.tokenOut,
+      rpParams.amountOutMin,
+      rpParams.to,
+      rpParams.routeCode,
+      { value: rpParams.value?.add(transferValue) }
+    )
+    await tx.wait()
+
+    const balanceOutBNAfter = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+    expect(balanceOutBNAfter.ge(balanceOutBNBefore.add(rpParams.amountOutMin))).equal(true)
+
+    const balanceUser2After = await env.user2.getBalance()
+    const transferredValue = balanceUser2After.sub(balanceUser2Before)
+    expect(transferredValue.eq(transferValue)).equal(true)
   })
 })
