@@ -5,14 +5,17 @@ import React, { FC } from 'react'
 import { SettingsModule, SettingsOverlay } from 'ui/settings'
 import { SwitchAppType } from './SwitchAppType'
 import { SwitchTokensButton } from './SwitchTokensButton'
-import { WidgetTitle } from './WidgetTitle'
 import { SwapCurrencyInput } from './SwapCurrencyInput'
 import { SwapCurrencyOutput } from './SwapCurrencyOutput'
+import { WidgetTitleV2 } from './WidgetTitleV2'
+import { CrossChainBanner } from './CrossChainBanner'
+import { ChainSelectors } from './ChainSelectors'
 
 export const Widget: FC = () => {
   return (
     <div className="flex flex-col gap-4">
-      <WidgetTitle />
+      <CrossChainBanner />
+      <WidgetTitleV2 />
       <div className="flex justify-between items-center">
         <SwitchAppType />
         <SettingsOverlay
@@ -20,6 +23,7 @@ export const Widget: FC = () => {
         />
       </div>
       <UIWidget.Content>
+        <ChainSelectors />
         <SwapCurrencyInput />
         <SwitchTokensButton />
         <SwapCurrencyOutput />

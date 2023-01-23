@@ -68,6 +68,7 @@ type SwapApi = {
   setValue(value: string): void
   switchTokens(): void
   setTokens(currency0: Type, currency1: Type): void
+  setAppType(appType: AppType): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
@@ -266,6 +267,27 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         undefined,
         { shallow: true }
       )
+    const setAppType = (appType: AppType) => {
+      const network1 =
+        appType === AppType.Swap
+          ? query.fromChainId
+          : query.fromChainId === query.toChainId
+          ? ChainId.ARBITRUM
+          : query.toChainId
+
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            toChainId: network1,
+            toCurrencyId: 'SUSHI',
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
 
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
     const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
@@ -281,6 +303,7 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setRecipient,
       setReview,
       setTokens,
+      setAppType,
     }
   }, [push, query])
 
