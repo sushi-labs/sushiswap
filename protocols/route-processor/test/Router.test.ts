@@ -202,13 +202,73 @@ async function updMakeSwap(
   console.log('')
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
-  const pl = env.dataFetcher.getCurrentPoolCodeList()
-  console.log(pl.length)
 
   const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter)
   expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
+}
+
+async function checkTransferAndRoute(
+  env: TestEnvironment,
+  fromToken: Type,
+  toToken: Type,
+  lastCallResult: BigNumber | [BigNumber | undefined, number]
+): Promise<[BigNumber | undefined, number]> {
+  const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
+  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  await dataUpdated(env, waitBlock)
+
+  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const waiter = new Waiter()
+  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
+  router.startRouting(() => {
+    waiter.resolve()
+  })
+  await waiter.wait()
+  router.stopRouting()
+
+  const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
+  const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
+  rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
+
+  const balanceUser2Before = await env.user2.getBalance()
+
+  let balanceOutBNBefore: BigNumber
+  let toTokenContract: Contract | undefined = undefined
+  if (toToken instanceof Token) {
+    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
+    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+  } else {
+    balanceOutBNBefore = await env.user.getBalance()
+  }
+  const tx = await env.rp.transferValueAndprocessRoute(
+    env.user2.address,
+    transferValue,
+    rpParams.tokenIn,
+    rpParams.amountIn,
+    rpParams.tokenOut,
+    rpParams.amountOutMin,
+    rpParams.to,
+    rpParams.routeCode,
+    { value: rpParams.value }
+  )
+  const receipt = await tx.wait()
+
+  let balanceOutBN: BigNumber
+  if (toTokenContract) {
+    balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+  } else {
+    balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
+    balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
+  }
+  expect(balanceOutBN.gte(balanceOutBNBefore.add(rpParams.amountOutMin))).equal(true)
+
+  const balanceUser2After = await env.user2.getBalance()
+  const transferredValue = balanceUser2After.sub(balanceUser2Before)
+  expect(transferredValue.eq(transferValue)).equal(true)
+
+  return [balanceOutBN, receipt.blockNumber]
 }
 
 // skipped because took too long time. Unskip to check the RP
@@ -314,44 +374,8 @@ describe('End-to-end Router test', async function () {
     expect(route).not.undefined
   })
 
-  it.only('Transfer value and route native -> Sushi', async function () {
-    env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
-    await dataUpdated(env, intermidiateResult[1])
-    const waiter = new Waiter()
-    const router = new Router(env.dataFetcher, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI_LOCAL, 30e9)
-    router.startRouting(() => {
-      waiter.resolve()
-    })
-    await waiter.wait()
-    router.stopRouting()
-
-    const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
-    expect(rpParams.value !== undefined).equal(true)
-    expect(rpParams.value?.isZero()).equal(false)
-
-    const toTokenContract = await new ethers.Contract(SUSHI_LOCAL.address, weth9Abi, env.user)
-    const balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
-    const balanceUser2Before = await env.user2.getBalance()
-
-    const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(chainId).decimals))
-    const tx = await env.rp.transferValueAndprocessRoute(
-      env.user2.address,
-      transferValue,
-      rpParams.tokenIn,
-      rpParams.amountIn,
-      rpParams.tokenOut,
-      rpParams.amountOutMin,
-      rpParams.to,
-      rpParams.routeCode,
-      { value: rpParams.value?.add(transferValue) }
-    )
-    await tx.wait()
-
-    const balanceOutBNAfter = (await toTokenContract.connect(env.user).balanceOf(env.user.address)) as BigNumber
-    expect(balanceOutBNAfter.gte(balanceOutBNBefore.add(rpParams.amountOutMin))).equal(true)
-
-    const balanceUser2After = await env.user2.getBalance()
-    const transferredValue = balanceUser2After.sub(balanceUser2Before)
-    expect(transferredValue.eq(transferValue)).equal(true)
+  it('Transfer value and route native -> Sushi', async function () {
+    intermidiateResult[0] = getBigNumber(1e18)
+    intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
   })
 })
