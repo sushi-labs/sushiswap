@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { getIncentives, getIncentivesByPoolIds } from '../../lib/api'
 
 const schema = z.object({
-  pools: z
+  poolIds: z
     .string()
     .optional()
     .transform((pools) => pools?.split(',')),
@@ -18,8 +18,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
 
   let incentives
 
-  if (result.data.pools) {
-    incentives = await getIncentivesByPoolIds(result.data.pools)
+  if (result.data.poolIds) {
+    incentives = await getIncentivesByPoolIds(result.data.poolIds)
   } else {
     incentives = await getIncentives()
   }
