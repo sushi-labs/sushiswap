@@ -15,8 +15,30 @@ const accounts = {
 task(TASK_EXPORT, async (args, hre, runSuper) => {
   await runSuper()
 
-  const exports = readFileSync('./exports.json', { encoding: 'utf-8' })
-  writeFileSync('./exports.ts', `export default ${exports} as const`)
+  const _exports = readFileSync('./exports.json', { encoding: 'utf-8' })
+
+  const parsed = JSON.parse(_exports)
+
+  delete parsed['31337']
+
+  writeFileSync(
+    './exports.ts',
+    `
+export const routeProcessorExports = ${JSON.stringify(parsed)} as const
+export type RouteProcessorExports = typeof routeProcessorExports
+export type RouteProcessorExport = RouteProcessorExports[keyof typeof routeProcessorExports][number]
+export type RouteProcessorChainId = RouteProcessorExport['chainId']
+export type RouteProcessorContracts = RouteProcessorExport['contracts']
+export type RouteProcessorContractName = keyof RouteProcessorContracts
+export type RouteProcessorContract = RouteProcessorContracts[RouteProcessorContractName]
+export const routeProcessorAddress = Object.fromEntries(
+  Object.entries(routeProcessorExports).map(([chainId, data]) => [parseInt(chainId), data[0].contracts.RouteProcessor.address])
+) as {
+  [chainId in RouteProcessorChainId]: RouteProcessorExports[chainId][number]['contracts']['RouteProcessor']['address']
+}
+export default ${JSON.stringify(parsed)} as const
+  `
+  )
 })
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
