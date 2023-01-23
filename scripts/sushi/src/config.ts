@@ -1,5 +1,4 @@
 import { ChainId } from '@sushiswap/chain'
-import { C } from 'node_modules/@wagmi/core/dist/base-a82112a9.js'
 
 export enum ProtocolVersion {
   V2 = 'V2',
@@ -21,6 +20,7 @@ export enum ProtocolName {
   APESWAP = 'ApeSwap',
   JETSWAP = 'JetSwap',
   DFYN = 'DFYN',
+  ELK = 'Elk',
 }
 
 export enum PoolType {
@@ -70,6 +70,7 @@ export const PROTOCOL_JOBS: ProtocolJob[] = [
   { protocol: ProtocolName.APESWAP, version: ProtocolVersion.V2 },
   { protocol: ProtocolName.JETSWAP, version: ProtocolVersion.V2 },
   { protocol: ProtocolName.DFYN, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.ELK, version: ProtocolVersion.V2 },
 ]
 
 interface ProtocolJob {
