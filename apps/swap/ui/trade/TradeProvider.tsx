@@ -12,12 +12,12 @@ import {
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { useCustomTokens, useToken } from '@sushiswap/react-query'
 import { getAddress, isAddress } from 'ethers/lib/utils'
-// import { watchNetwork } from '@wagmi/core'
+import { watchNetwork } from 'wagmi/actions'
 
 export const queryParamsSchema = z.object({
   fromChainId: z.coerce
@@ -68,6 +68,7 @@ type SwapApi = {
   setValue(value: string): void
   switchTokens(): void
   setTokens(currency0: Type, currency1: Type): void
+  setAppType(appType: AppType): void
 }
 
 export const SwapStateContext = createContext<State>({} as State)
@@ -97,7 +98,7 @@ interface SwapProviderProps {
 }
 
 export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const { query, push } = useRouter()
   const { fromChainId, toChainId, fromCurrencyId, toCurrencyId, amount: _amount } = queryParamsSchema.parse(query)
   const { data: customTokens, isLoading: customTokensLoading } = useCustomTokens()
@@ -266,6 +267,27 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
         undefined,
         { shallow: true }
       )
+    const setAppType = (appType: AppType) => {
+      const network1 =
+        appType === AppType.Swap
+          ? query.fromChainId
+          : query.fromChainId === query.toChainId
+          ? ChainId.ARBITRUM
+          : query.toChainId
+
+      void push(
+        {
+          pathname: '/[fromChainId]/[toChainId]/[fromCurrencyId]/[toCurrencyId]',
+          query: {
+            ...query,
+            toChainId: network1,
+            toCurrencyId: 'SUSHI',
+          },
+        },
+        undefined,
+        { shallow: true }
+      )
+    }
 
     const setValue = (value: string) => dispatch({ type: 'setValue', value })
     const setRecipient = (recipient: string) => dispatch({ type: 'setRecipient', recipient })
@@ -281,13 +303,20 @@ export const SwapProvider: FC<SwapProviderProps> = ({ children }) => {
       setRecipient,
       setReview,
       setTokens,
+      setAppType,
     }
   }, [push, query])
 
-  // useEffect(() => {
-  //   const unwatch = watchNetwork(({ chain }) => (chain ? api.setNetwork0(chain.id) : undefined))
-  //   return () => unwatch()
-  // }, [api])
+  useEffect(() => {
+    if (isConnected) {
+      const unwatch = watchNetwork(({ chain }) => {
+        if (chain) {
+          api.setNetwork0(chain.id)
+        }
+      })
+      return () => unwatch()
+    }
+  }, [isConnected, api])
 
   return (
     <SwapActionsContext.Provider value={api}>
