@@ -42,8 +42,8 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({ modules }) => {
           )}
           <List className="!pt-0">
             <List.Control>
-              {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
               {modules.includes(SettingsModule.ExpertMode) && <ExpertMode />}
+              {modules.includes(SettingsModule.CarbonOffset) && <CarbonOffset />}
             </List.Control>
           </List>
         </Dialog.Content>

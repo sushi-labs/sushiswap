@@ -18,9 +18,7 @@ export const Widget: FC = () => {
       <WidgetTitleV2 />
       <div className="flex justify-between items-center">
         <SwitchAppType />
-        <SettingsOverlay
-          modules={[SettingsModule.SlippageTolerance, SettingsModule.ExpertMode, SettingsModule.CarbonOffset]}
-        />
+        <SettingsOverlay modules={[SettingsModule.SlippageTolerance, SettingsModule.ExpertMode]} />
       </div>
       <UIWidget.Content>
         <ChainSelectors />
