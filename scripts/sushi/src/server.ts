@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import { PoolType, Price, ProtocolName, ProtocolVersion } from './config.js'
 import { apeSwapV2 } from './seed/apeswap/v2/seed.js'
-import { dfynV2 } from './seed/DFYN/v2/seed.js'
+import { dfynV2 } from './seed/Dfyn/v2/seed.js'
 import { elkV2 } from './seed/Elk/v2/seed.js'
 import { honeySwapV2 } from './seed/honeyswap/v2/seed.js'
 import { jetSwapV2 } from './seed/jetswap/v2/seed.js'
