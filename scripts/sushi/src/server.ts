@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { PoolType, Price, ProtocolName, ProtocolVersion } from './config.js'
 import { apeSwapV2 } from './seed/apeswap/v2/seed.js'
 import { honeySwapV2 } from './seed/honeyswap/v2/seed.js'
+import { jetSwapV2 } from './seed/jetswap/v2/seed.js'
 import { liquidity } from './seed/liquidity.js'
 import { netSwapV2 } from './seed/netswap/v2/seed.js'
 import { pancakeSwapV2 } from './seed/pancakeswap/v2/seed.js'
@@ -127,6 +128,14 @@ app.get(
       else if (name === ProtocolName.APESWAP) {
         if (version === ProtocolVersion.V2) {
           await apeSwapV2()
+          res.sendStatus(200)
+        } else {
+          res.sendStatus(400).send('Not a valid version')
+        }
+      }
+      else if (name === ProtocolName.JETSWAP) {
+        if (version === ProtocolVersion.V2) {
+          await jetSwapV2()
           res.sendStatus(200)
         } else {
           res.sendStatus(400).send('Not a valid version')
