@@ -18,6 +18,7 @@ export enum ProtocolName {
   UBESWAP = 'UbeSwap',
   HONEYSWAP = 'HoneySwap',
   NETSWAP = 'NetSwap',
+  APESWAP = 'ApeSwap',
 }
 
 export enum PoolType {
@@ -64,6 +65,7 @@ export const PROTOCOL_JOBS: ProtocolJob[] = [
   { protocol: ProtocolName.UBESWAP, version: ProtocolVersion.V2 },
   { protocol: ProtocolName.HONEYSWAP, version: ProtocolVersion.V2 },
   { protocol: ProtocolName.NETSWAP, version: ProtocolVersion.V2 },
+  { protocol: ProtocolName.APESWAP, version: ProtocolVersion.V2 },
 ]
 
 interface ProtocolJob {
