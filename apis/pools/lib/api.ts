@@ -5,17 +5,22 @@ import prisma from '@sushiswap/database'
 
 import type { PoolType } from '.'
 
-export type PoolApiArgs = {
-  chainIds: number[] | undefined
-  poolTypes: PoolType[] | undefined
-  isIncentivized: boolean | undefined
-  isWhitelisted: boolean | undefined
-  cursor: string | undefined
+type PartialWithUndefined<T extends object> = Partial<{
+  [K in keyof T]: T[K] | undefined
+}>
+
+export type PoolApiArgs = PartialWithUndefined<{
+  chainIds: number[]
+  poolTypes: PoolType[]
+  isIncentivized: boolean
+  isWhitelisted: boolean
+  cursor: string
   orderBy: string
   orderDir: 'asc' | 'desc'
-}
+  count: boolean
+}>
 
-export async function getPool(chainId: number, address: string): Promise<any> {
+export async function getPool(chainId: number, address: string) {
   const id = `${chainId}:${address.toLowerCase()}`
   const pool = await prisma.sushiPool.findFirstOrThrow({
     include: {
@@ -34,12 +39,8 @@ export async function getPool(chainId: number, address: string): Promise<any> {
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
-export async function getPools(args: PoolApiArgs) {
-  const orderBy = { [args.orderBy]: args.orderDir }
-
+function parseWhere(args: PoolApiArgs) {
   let where: PrismaArgs['where'] = {}
-  let skip: PrismaArgs['skip'] = 0
-  let cursor: { cursor: PrismaArgs['cursor'] } | object = {}
 
   if (args.chainIds) {
     where = {
@@ -61,11 +62,6 @@ export async function getPools(args: PoolApiArgs) {
     }
   }
 
-  if (args.cursor) {
-    skip = 1
-    cursor = { cursor: { id: args.cursor } }
-  }
-
   if (args.isWhitelisted) {
     where = {
       token0: {
@@ -76,6 +72,21 @@ export async function getPools(args: PoolApiArgs) {
       },
       ...where,
     }
+  }
+
+  return where
+}
+
+export async function getPools(args: PoolApiArgs) {
+  const orderBy: PrismaArgs['orderBy'] = args.orderBy ? { [args.orderBy]: args.orderDir } : { ['liquidityUSD']: 'desc' }
+  const where: PrismaArgs['where'] = parseWhere(args)
+
+  let skip: PrismaArgs['skip'] = 0
+  let cursor: { cursor: PrismaArgs['cursor'] } | object = {}
+
+  if (args.cursor) {
+    skip = 1
+    cursor = { cursor: { id: args.cursor } }
   }
 
   const pools = await prisma.sushiPool.findMany({
@@ -144,6 +155,18 @@ export async function getPools(args: PoolApiArgs) {
       },
     },
   })
+
   await prisma.$disconnect()
   return pools ? pools : []
+}
+
+export async function getPoolCount(args: PoolApiArgs) {
+  const where: PrismaArgs['where'] = parseWhere(args)
+
+  const count = await prisma.sushiPool.count({
+    where,
+  })
+
+  await prisma.$disconnect()
+  return count ? count : null
 }
