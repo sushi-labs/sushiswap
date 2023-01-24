@@ -4,7 +4,7 @@ import type { PoolType } from '.'
 
 export type PoolApiArgs = {
   chainIds: number[] | undefined
-  poolType: PoolType | undefined
+  poolTypes: PoolType[] | undefined
   isIncentivized: boolean | undefined
   isWhitelisted: boolean | undefined
   cursor: string | undefined
@@ -29,12 +29,14 @@ export async function getPool(chainId: number, address: string): Promise<any> {
   return pool
 }
 
+type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
+
 export async function getPools(args: PoolApiArgs): Promise<any> {
   const orderBy = { [args.orderBy]: args.orderDir }
 
-  let where = {}
-  let skip = 0
-  let cursor = {}
+  let where: PrismaArgs['where'] = {}
+  let skip: PrismaArgs['skip'] = 0
+  let cursor: { cursor: PrismaArgs['cursor'] } | object = {}
 
   if (args.chainIds) {
     where = {
@@ -42,9 +44,9 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
     }
   }
 
-  if (args.poolType) {
+  if (args.poolTypes) {
     where = {
-      type: args.poolType,
+      type: { in: args.poolTypes },
       ...where,
     }
   }
@@ -58,9 +60,7 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
 
   if (args.cursor) {
     skip = 1
-    cursor = {
-      cursor: { id: args.cursor },
-    }
+    cursor = { cursor: { id: args.cursor } }
   }
 
   if (args.isWhitelisted) {
@@ -125,6 +125,8 @@ export async function getPools(args: PoolApiArgs): Promise<any> {
           chainId: true,
           type: true,
           apr: true,
+          rewarderAddress: true,
+          rewarderType: true,
           rewardPerDay: true,
           rewardToken: {
             select: {
