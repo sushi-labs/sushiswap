@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import { PoolType } from '../../lib'
+import type { PoolType } from '../../lib'
 import { getPools } from '../../lib/api'
 
 const schema = z.object({
@@ -34,7 +34,7 @@ const schema = z.object({
     })
     .optional(),
   poolTypes: z
-    .nativeEnum(PoolType)
+    .string()
     .optional()
     .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
   cursor: z.string().optional(),
