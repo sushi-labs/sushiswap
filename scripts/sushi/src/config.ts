@@ -9,7 +9,7 @@ export enum ProtocolVersion {
 
 export enum ProtocolName {
   SUSHISWAP = 'SushiSwap',
-  UNISWAP = 'UniSwap',
+  UNISWAP = 'Uniswap',
   PANCAKESWAP = 'PancakeSwap',
   QUICKSWAP = 'QuickSwap',
   TRADERJOE = 'TraderJoe',
