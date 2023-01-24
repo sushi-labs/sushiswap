@@ -11,8 +11,32 @@ import path from 'path'
 task(TASK_EXPORT, async (args, hre, runSuper) => {
   await runSuper()
 
-  const exports = readFileSync('./exports.json', { encoding: 'utf-8' })
-  writeFileSync('./exports.ts', `export default ${exports} as const`)
+  const _exports = readFileSync('./exports.json', { encoding: 'utf-8' })
+
+  const parsed = JSON.parse(_exports)
+
+  delete parsed['31337']
+
+  writeFileSync(
+    './exports.ts',
+    `
+export const bentoBoxExports = ${JSON.stringify(parsed)} as const
+export type BentoBoxExports = typeof bentoBoxExports
+export type BentoBoxExport = BentoBoxExports[keyof typeof bentoBoxExports][number]
+export type BentoBoxChainId = BentoBoxExport['chainId']
+export type BentoBoxContracts = BentoBoxExport['contracts']
+export type BentoBoxContractName = keyof BentoBoxContracts
+export type BentoBoxContract = BentoBoxContracts[BentoBoxContractName]
+export const bentoBoxAddress = Object.fromEntries(
+  Object.entries(bentoBoxExports)
+    .filter(([chainId]) => chainId === '31337')
+    .map(([chainId, data]) => [parseInt(chainId), data[0].contracts.BentoBoxV1.address])
+) as {
+  [chainId in BentoBoxChainId]: BentoBoxExports[chainId][number]['contracts'][BentoBoxContractName]['address']
+}
+export default ${JSON.stringify(parsed)} as const
+  `
+  )
 })
 
 subtask(TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD, async ({ solcVersion }: { solcVersion: string }, hre, runSuper) => {
