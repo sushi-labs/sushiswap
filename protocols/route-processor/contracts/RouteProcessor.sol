@@ -39,7 +39,7 @@ contract RouteProcessor {
     uint256 amountOutMin,
     address to,
     bytes memory route
-  ) external payable returns (uint256 amountOut) {
+  ) public payable returns (uint256 amountOut) {
     require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
 
     uint256 amountInAcc = 0;
@@ -80,6 +80,29 @@ contract RouteProcessor {
     require(balanceFinal >= balanceInitial + amountOutMin, 'Minimal ouput balance violation');
 
     amountOut = balanceFinal - balanceInitial;
+  }
+
+  /// @notice Transfers some value to <transferValueTo> and then processes the route
+  /// @param transferValueTo Address where the value should be transferred
+  /// @param amountValueTransfer How much value to transfer
+  /// @param tokenIn Address of the input token
+  /// @param amountIn Amount of the input token
+  /// @param tokenOut Address of the output token
+  /// @param amountOutMin Minimum amount of the output token
+  /// @return amountOut Actual amount of the output token
+  function transferValueAndprocessRoute(
+    address payable transferValueTo,
+    uint256 amountValueTransfer,
+    address tokenIn,
+    uint256 amountIn,
+    address tokenOut,
+    uint256 amountOutMin,
+    address to,
+    bytes memory route
+  ) external payable returns (uint256 amountOut) {
+    require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
+    transferValueTo.transfer(amountValueTransfer);
+    return processRoute(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
   }
 
   /// @notice Transfers input tokens sent to BentoBox to a pool
@@ -172,7 +195,7 @@ contract RouteProcessor {
   /// @return amountTotal Total amount distributed
   function wrapAndDistributeERC20Amounts(uint256 stream) private returns (uint256 amountTotal) {
     address token = stream.readAddress();
-    IWETH(token).deposit{value: msg.value}();
+    IWETH(token).deposit{value: address(this).balance}();
     uint8 num = stream.readUint8();
     amountTotal = 0;
     for (uint256 i = 0; i < num; ++i) {
@@ -181,7 +204,7 @@ contract RouteProcessor {
       amountTotal += amount;
       IERC20(token).safeTransfer(to, amount);
     }
-    require(msg.value == amountTotal, "RouteProcessor: invalid input amount");
+    require(address(this).balance == 0, "RouteProcessor: invalid input amount");
   }
 
   /// @notice Distributes input BentoBox tokens from msg.sender to addresses. Tokens should be approved
