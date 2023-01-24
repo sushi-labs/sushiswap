@@ -41,7 +41,7 @@ export const SwapButton: FC = () => {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="dark:text-slate-200 absolute flex flex-col gap-3 bottom-7 bg-white dark:bg-slate-800 rounded-lg shadow-md px-4 py-3 text-xs mt-0.5">
+                <Popover.Panel className="border border-gray-300 dark:border-slate-700 dark:text-slate-200 absolute flex flex-col gap-3 bottom-7 bg-white dark:bg-slate-800 rounded-lg shadow-md px-4 py-3 text-xs mt-0.5">
                   <span className="text-gray-500 dark:text-slate-400">Token Approval</span>
                   We need your approval to execute this transaction on your behalf; you will only have to approve the{' '}
                   {amount?.currency.symbol} contract once.

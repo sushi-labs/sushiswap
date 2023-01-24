@@ -26,10 +26,11 @@ interface TokenSelectorProps {
   chainId: ChainId
   onSelect(currency: Type): void
   children({ open, setOpen }: { open: boolean; setOpen: Dispatch<SetStateAction<boolean>> }): ReactNode
+  currencies?: Record<string, Token>
 }
 
 export const TokenSelector: FC<TokenSelectorProps> = memo(
-  function TokenSelector({ id, selected, onSelect, chainId, children }) {
+  function TokenSelector({ id, selected, onSelect, chainId, children, currencies }) {
     const { address } = useAccount()
     const { mutate: onAddCustomToken } = useAddCustomToken()
 
@@ -64,8 +65,8 @@ export const TokenSelector: FC<TokenSelectorProps> = memo(
       <>
         {children({ open, setOpen })}
         <TokenSelectorListFilterByQuery
-          tokenMap={tokenMap}
-          customTokenMap={customTokenMap}
+          tokenMap={currencies ? currencies : tokenMap}
+          customTokenMap={currencies ? {} : customTokenMap}
           pricesMap={pricesMap}
           balancesMap={balancesMap}
           chainId={chainId}

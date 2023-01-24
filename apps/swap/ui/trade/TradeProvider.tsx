@@ -12,7 +12,7 @@ import {
 } from '@sushiswap/currency'
 import { AppType } from '@sushiswap/ui13/types'
 import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useReducer } from 'react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
 import { useCustomTokens, useToken } from '@sushiswap/react-query'

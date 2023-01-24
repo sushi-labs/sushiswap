@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import { ChainId } from '@sushiswap/chain'
-import { tryParseAmount, Type } from '@sushiswap/currency'
+import { Token, tryParseAmount, Type } from '@sushiswap/currency'
 import { classNames } from '@sushiswap/ui13'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { DEFAULT_INPUT_UNSTYLED, Input } from '@sushiswap/ui13/components/input'
@@ -29,6 +29,7 @@ export interface CurrencyInputProps {
   type: 'INPUT' | 'OUTPUT'
   fetching?: boolean
   currencyLoading?: boolean
+  currencies?: Record<string, Token>
 }
 
 export const CurrencyInput: FC<CurrencyInputProps> = ({
@@ -46,6 +47,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   type,
   fetching,
   currencyLoading,
+  currencies,
 }) => {
   const [init, setInit] = useState(true)
   const { address, status } = useAccount()
@@ -131,7 +133,13 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
           />
         )}
         {onSelect && !init && (
-          <TokenSelector id={`${id}-token-selector`} selected={currency} chainId={chainId} onSelect={onSelect}>
+          <TokenSelector
+            id={`${id}-token-selector`}
+            currencies={currencies}
+            selected={currency}
+            chainId={chainId}
+            onSelect={onSelect}
+          >
             {({ setOpen }) => (
               <button
                 id={`${id}-button`}

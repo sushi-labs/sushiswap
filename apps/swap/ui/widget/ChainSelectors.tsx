@@ -31,19 +31,22 @@ export const ChainSelectors: FC = () => {
 
   return (
     <Collapsible open={appType === AppType.xSwap}>
-      <div className="flex gap-2 mb-4 border-t-2 border-gray-200 dark:border-slate-800 py-4">
+      <div className="flex gap-2 mb-4 border-gray-200 dark:border-slate-800 pb-4">
         <div className="w-[calc(50%-20px)]">
           <NetworkSelector networks={SUPPORTED_CHAIN_IDS} variant="dialog" selected={network0} onSelect={handleSelect0}>
             <Popover.Button
               as="button"
-              className="transition-[background] hover:bg-gray-200 hover:dark:bg-slate-700 pl-2 pr-4 font-medium flex flex-col bg-white dark:bg-slate-800 rounded-xl py-1.5 w-full"
+              className="transition-[background] hover:bg-gray-200 hover:dark:bg-slate-700 pl-2 pr-3 font-medium flex flex-col bg-white dark:bg-slate-800 rounded-xl py-1.5 w-full"
             >
               <span className="flex gap-1 items-center font-medium px-1 text-xs text-gray-500 dark:text-slate-400 pt-0.5">
-                From <ChevronDownIcon width={12} height={12} strokeWidth={3} />
+                From
               </span>
-              <div className="flex gap-1 items-center">
-                <NetworkIcon type="naked" chainId={network0} width={32} height={32} />
-                {Chain.from(network0).name}
+              <div className="flex items-center w-full justify-between">
+                <div className="flex gap-1 items-center">
+                  <NetworkIcon type="naked" chainId={network0} width={32} height={32} />
+                  {Chain.from(network0).name}
+                </div>
+                <ChevronDownIcon width={16} height={16} strokeWidth={3} />
               </div>
             </Popover.Button>
           </NetworkSelector>
@@ -65,14 +68,17 @@ export const ChainSelectors: FC = () => {
           <NetworkSelector networks={SUPPORTED_CHAIN_IDS} variant="dialog" selected={network1} onSelect={handleSelect1}>
             <Popover.Button
               as="button"
-              className="transition-[background] hover:bg-gray-200 hover:dark:bg-slate-700 pl-2 pr-4 font-medium flex flex-col bg-white dark:bg-slate-800 rounded-xl py-1.5 w-full"
+              className="transition-[background] hover:bg-gray-200 hover:dark:bg-slate-700 pl-2 pr-3 font-medium flex flex-col bg-white dark:bg-slate-800 rounded-xl py-1.5 w-full"
             >
               <span className="flex gap-1 items-center font-medium px-1 text-xs text-gray-500 dark:text-slate-400 pt-0.5">
-                Destination <ChevronDownIcon width={12} height={12} strokeWidth={3} />
+                To
               </span>
-              <div className="flex gap-1 items-center">
-                <NetworkIcon type="naked" chainId={network1} width={32} height={32} />
-                {Chain.from(network1).name}
+              <div className="flex items-center w-full justify-between">
+                <div className="flex gap-1 items-center">
+                  <NetworkIcon type="naked" chainId={network1} width={32} height={32} />
+                  {Chain.from(network1).name}
+                </div>
+                <ChevronDownIcon width={16} height={16} strokeWidth={3} />
               </div>
             </Popover.Button>
           </NetworkSelector>

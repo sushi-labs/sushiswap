@@ -1,5 +1,6 @@
 import { FC, ReactNode, useCallback } from 'react'
 import { useSwapState } from './trade/TradeProvider'
+import { AppType } from '@sushiswap/ui13/types'
 
 interface ConfirmationDialogCrossChainProps {
   children({
@@ -14,8 +15,8 @@ interface ConfirmationDialogCrossChainProps {
 }
 
 export const ConfirmationDialogCrossChain: FC<ConfirmationDialogCrossChainProps> = ({ children }) => {
-  const { network0, network1 } = useSwapState()
-  const enabled = network0 !== network1
+  const { appType } = useSwapState()
+  const enabled = appType === AppType.xSwap
   const onClick = useCallback(() => {}, [])
   const isWritePending = false
   const isLoading = false
