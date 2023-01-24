@@ -1,3 +1,6 @@
+// eslint-disable-next-line
+import type * as _ from '@prisma/client/runtime'
+
 import prisma from '@sushiswap/database'
 
 import type { PoolType } from '.'
@@ -31,7 +34,7 @@ export async function getPool(chainId: number, address: string): Promise<any> {
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
-export async function getPools(args: PoolApiArgs): Promise<any> {
+export async function getPools(args: PoolApiArgs) {
   const orderBy = { [args.orderBy]: args.orderDir }
 
   let where: PrismaArgs['where'] = {}
