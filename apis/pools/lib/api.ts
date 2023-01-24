@@ -31,12 +31,12 @@ export async function getPool(chainId: number, address: string): Promise<any> {
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
-export async function getPools(args: PoolApiArgs) {
+export async function getPools(args: PoolApiArgs): Promise<any> {
   const orderBy = { [args.orderBy]: args.orderDir }
 
   let where: PrismaArgs['where'] = {}
   let skip: PrismaArgs['skip'] = 0
-  let cursor: PrismaArgs['cursor'] = {}
+  let cursor: { cursor: PrismaArgs['cursor'] } | object = {}
 
   if (args.chainIds) {
     where = {
@@ -60,7 +60,7 @@ export async function getPools(args: PoolApiArgs) {
 
   if (args.cursor) {
     skip = 1
-    cursor = { id: args.cursor }
+    cursor = { cursor: { id: args.cursor } }
   }
 
   if (args.isWhitelisted) {
