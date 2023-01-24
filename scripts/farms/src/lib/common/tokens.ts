@@ -1,4 +1,4 @@
-import type { ChainId } from '@sushiswap/chain'
+import { ChainId } from '@sushiswap/chain'
 import {
   SUBGRAPH_HOST,
   SUSHISWAP_SUBGRAPH_NAME,
@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/graph-config'
 import { isSushiSwapChain, isTridentChain } from '@sushiswap/validate'
 import { erc20ABI, readContracts } from '@wagmi/core'
-import type { BigNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 
 import { divBigNumberToNumber } from './utils.js'
 
@@ -86,7 +86,7 @@ export const getTokens = async (ids: string[], chainId: SushiSwapChainId | Tride
 
 export async function getTokenBalancesOf(_tokens: string[], address: string, chainId: ChainId) {
   // not fully erc20, farm not active
-  const tokens = _tokens.filter(token => token !== "0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9")
+  const tokens = _tokens.filter((token) => token !== '0x0c810E08fF76E2D0beB51B10b4614b8f2b4438F9')
 
   const balanceOfCalls = tokens.map(
     (token) =>
@@ -119,6 +119,7 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
 
   return tokens.map((token, i) => ({
     token,
-    balance: divBigNumberToNumber(balancesOf[i], decimals[i]),
+    // so that we don't need to seed new pairs
+    balance: balancesOf[i].eq(0) ? BigNumber.from(1) : divBigNumberToNumber(balancesOf[i], decimals[i]),
   }))
 }
