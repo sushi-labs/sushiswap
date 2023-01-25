@@ -30,10 +30,6 @@ app.get('/', async (req, res) => {
     }
   } catch (err) {
     res.status(500).send(err)
-    process.exit(1)
-  }
-  finally {
-    process.exit(0)
   }
 }, timeout('600s'))
 

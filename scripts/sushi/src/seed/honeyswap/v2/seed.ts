@@ -16,19 +16,21 @@ const CONSTANT_PRODUCT_POOL = PoolType.CONSTANT_PRODUCT_POOL
 const SWAP_FEE = 0.0025
 const TWAP_ENABLED = true
 
-const FIRST_TIME_SEED = process.env.FIRST_TIME_SEED === 'true'
-if (FIRST_TIME_SEED) {
-  console.log('FIRST_TIME_SEED is true')
-}
+export async function honeySwapV2() {
+  try {
+    const startTime = performance.now()
+    console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
 
-async function main() {
-  const startTime = performance.now()
-  console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
+    await start()
 
-  await start()
-
-  const endTime = performance.now()
-  console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+    const endTime = performance.now()
+    console.log(`COMPLETE - Script ran for ${((endTime - startTime) / 1000).toFixed(1)} seconds. `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
 async function start() {
@@ -40,10 +42,10 @@ async function start() {
 
   let totalPairCount = 0
   for (const chainId of HONEYSWAP_V2_SUPPORTED_CHAINS) {
-    let latestPoolTimestamp: string | null = null
-    if (!FIRST_TIME_SEED) {
-      latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
-    }
+    // Continue from the latest pool creation timestamp,
+    // if null, then it's the first time seeding and we grab everything
+    const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
+
     const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: HONEYSWAP_V2_SUBGRAPH_NAME[chainId] })
     if (!HONEYSWAP_V2_SUBGRAPH_NAME[chainId]) {
       console.log(`Subgraph not found: ${chainId} ${HONEYSWAP_V2_SUBGRAPH_NAME[chainId]}, Skipping`)
@@ -165,13 +167,3 @@ function transform(
 
   return { pools: poolsTransformed, tokens }
 }
-
-main()
-  .then(async () => {
-    await client.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await client.$disconnect()
-    process.exit(1)
-  })

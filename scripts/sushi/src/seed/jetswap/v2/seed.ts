@@ -2,21 +2,21 @@ import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId, chainName } from '@sushiswap/chain'
 import { performance } from 'perf_hooks'
 
-import { getBuiltGraphSDK, TraderJoePairsQuery } from '../../../../.graphclient/index.js'
+import { getBuiltGraphSDK, V2PairsQuery } from '../../../../.graphclient/index.js'
 import { PoolType, ProtocolName, ProtocolVersion } from '../../../config.js'
 import { createPools, getLatestPoolTimestamp } from '../../../etl/pool/load.js'
 import { createTokens } from '../../../etl/token/load.js'
-import { GRAPH_HOST, SPOOKYSWAP_V2_SUBGRAPH_NAME, SPOOKYSWAP_V2_SUPPORTED_CHAINS } from '../config.js'
+import { GRAPH_HOST, JETSWAP_V2_SUBGRAPH_NAME, JETSWAP_V2_SUPPORTED_CHAINS } from '../config.js'
 
 const client = new PrismaClient()
 
-const PROTOCOL = ProtocolName.SPOOKYSWAP
+const PROTOCOL = ProtocolName.JETSWAP
 const VERSION = ProtocolVersion.V2
 const CONSTANT_PRODUCT_POOL = PoolType.CONSTANT_PRODUCT_POOL
-const SWAP_FEE = 0.002
+const SWAP_FEE = 0.003
 const TWAP_ENABLED = true
 
-export async function spookySwapV2() {
+export async function jetSwapV2() {
   try {
     const startTime = performance.now()
     console.log(`Preparing to load pools/tokens, protocol: ${PROTOCOL}`)
@@ -35,23 +35,23 @@ export async function spookySwapV2() {
 
 async function start() {
   console.log(
-    `Fetching pools from ${PROTOCOL} ${VERSION}, chains: ${SPOOKYSWAP_V2_SUPPORTED_CHAINS.map(
+    `Fetching pools from ${PROTOCOL} ${VERSION}, chains: ${JETSWAP_V2_SUPPORTED_CHAINS.map(
       (chainId) => chainName[chainId]
     ).join(', ')}`
   )
 
   let totalPairCount = 0
-  for (const chainId of SPOOKYSWAP_V2_SUPPORTED_CHAINS) {
+  for (const chainId of JETSWAP_V2_SUPPORTED_CHAINS) {
     // Continue from the latest pool creation timestamp,
     // if null, then it's the first time seeding and we grab everything
     const latestPoolTimestamp = await getLatestPoolTimestamp(client, chainId, PROTOCOL, [VERSION])
 
-    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: SPOOKYSWAP_V2_SUBGRAPH_NAME[chainId] })
-    if (!SPOOKYSWAP_V2_SUBGRAPH_NAME[chainId]) {
-      console.log(`Subgraph not found: ${chainId} ${SPOOKYSWAP_V2_SUBGRAPH_NAME[chainId]}, Skipping`)
+    const sdk = getBuiltGraphSDK({ chainId, host: GRAPH_HOST[chainId], name: JETSWAP_V2_SUBGRAPH_NAME[chainId] })
+    if (!JETSWAP_V2_SUBGRAPH_NAME[chainId]) {
+      console.log(`Subgraph not found: ${chainId} ${JETSWAP_V2_SUBGRAPH_NAME[chainId]}, Skipping`)
       continue
     }
-    console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${SPOOKYSWAP_V2_SUBGRAPH_NAME[chainId]}`)
+    console.log(`Loading data from chain: ${chainName[chainId]}(${chainId}), ${JETSWAP_V2_SUBGRAPH_NAME[chainId]}`)
     let pairCount = 0
     let cursor = ''
 
@@ -60,12 +60,14 @@ async function start() {
       let where = {}
       if (latestPoolTimestamp) {
         where =
-          cursor !== '' ? { id_gt: cursor, timestamp_gt: latestPoolTimestamp } : { timestamp_gt: latestPoolTimestamp }
+          cursor !== ''
+            ? { id_gt: cursor, createdAtTimestamp_gt: latestPoolTimestamp }
+            : { createdAtTimestamp_gt: latestPoolTimestamp }
       } else {
         where = cursor !== '' ? { id_gt: cursor } : {}
       }
       const request = await sdk
-        .TraderJoePairs({
+        .V2Pairs({
           first: 1000,
           where,
         })
@@ -74,7 +76,7 @@ async function start() {
           return undefined
         })
         .catch(() => undefined)
-      const currentResultCount = request?.TJ_pairs.length ?? 0
+      const currentResultCount = request?.V2_pairs.length ?? 0
       const endTime = performance.now()
 
       pairCount += currentResultCount
@@ -93,12 +95,12 @@ async function start() {
         await Promise.all([createTokens(client, tokens), createPools(client, pools)])
       }
 
-      const newCursor = request?.TJ_pairs[request.TJ_pairs.length - 1]?.id ?? ''
+      const newCursor = request?.V2_pairs[request.V2_pairs.length - 1]?.id ?? ''
       cursor = newCursor
     } while (cursor !== '')
     totalPairCount += pairCount
     console.log(
-      `Finished loading pairs from ${GRAPH_HOST[chainId]}/${SPOOKYSWAP_V2_SUBGRAPH_NAME[chainId]}, ${pairCount} pairs`
+      `Finished loading pairs from ${GRAPH_HOST[chainId]}/${JETSWAP_V2_SUBGRAPH_NAME[chainId]}, ${pairCount} pairs`
     )
   }
   console.log(`Finished loading pairs for ${PROTOCOL} from all subgraphs, ${totalPairCount} pairs`)
@@ -106,14 +108,14 @@ async function start() {
 
 function transform(
   chainId: ChainId,
-  data: TraderJoePairsQuery
+  data: V2PairsQuery
 ): {
   pools: Prisma.PoolCreateManyInput[]
   tokens: Prisma.TokenCreateManyInput[]
 } {
   const tokens: Prisma.TokenCreateManyInput[] = []
   const uniqueTokens: Set<string> = new Set()
-  const poolsTransformed = data.TJ_pairs.map((pair) => {
+  const poolsTransformed = data.V2_pairs.map((pair) => {
     if (!uniqueTokens.has(pair.token0.id)) {
       uniqueTokens.add(pair.token0.id)
       tokens.push(

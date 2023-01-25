@@ -1,19 +1,26 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { performance } from 'perf_hooks'
 
-const prisma = new PrismaClient()
+const client = new PrismaClient()
 
-async function main() {
-  const startTime = performance.now()
+export async function whitelistPools() {
+  try {
+    const startTime = performance.now()
 
-  await start()
+    await start()
 
-  const endTime = performance.now()
-  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+    const endTime = performance.now()
+    console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
 async function start() {
-  const approvedTokensResult = await prisma.token.findMany({
+  const approvedTokensResult = await client.token.findMany({
     select: {
       id: true,
     },
@@ -60,7 +67,7 @@ async function start() {
   for (let i = 0; i < poolsToUpdate.length; i += updatePoolsBatchSize) {
     const batch = poolsToUpdate.slice(i, i + updatePoolsBatchSize)
     const batchToUpdate = batch.map((id) =>
-      prisma.pool.update({
+      client.pool.update({
         where: {
           id,
         },
@@ -83,7 +90,7 @@ async function getPoolsAddresses(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ) {
-  const approvedTokens = await prisma.pool.findMany({
+  const approvedTokens = await client.pool.findMany({
     take,
     skip,
     cursor,
@@ -99,13 +106,3 @@ async function getPoolsAddresses(
 
   return approvedTokens
 }
-
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
