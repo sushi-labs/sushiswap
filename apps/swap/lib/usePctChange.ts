@@ -11,10 +11,12 @@ export const usePctChange = () => {
   const { data: trade } = useTrade()
 
   return useMemo(() => {
+    if (!trade?.priceImpact) return undefined
+
     const inputUSD = amount && price0 ? amount.multiply(price0.asFraction) : undefined
     const outputUSD = trade?.amountOut && price1 ? trade.amountOut.multiply(price1.asFraction) : undefined
     return inputUSD && outputUSD && inputUSD?.greaterThan(ZERO)
       ? ((Number(outputUSD?.toExact()) - Number(inputUSD?.toExact())) / Number(inputUSD?.toExact())) * 100
       : undefined
-  }, [price0, price1, trade?.amountOut, amount])
+  }, [trade?.priceImpact, trade?.amountOut, amount, price0, price1])
 }

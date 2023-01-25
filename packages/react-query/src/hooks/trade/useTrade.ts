@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { calculateSlippageAmount } from '@sushiswap/amm'
 import { Amount, Native, nativeCurrencyIds, Price, WNATIVE_ADDRESS } from '@sushiswap/currency'
-import { Percent, ZERO } from '@sushiswap/math'
+import {JSBI, Percent, ZERO} from '@sushiswap/math'
 import { HexString } from '@sushiswap/types'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
@@ -65,7 +65,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
       return {
         swapPrice: amountOut.greaterThan(ZERO) ? new Price({ baseAmount: amount, quoteAmount: amountOut }) : undefined,
-        priceImpact: data.getBestRoute.priceImpact,
+        priceImpact: new Percent(JSBI.BigInt(Math.round(data.getBestRoute.priceImpact * 10000)), JSBI.BigInt(10000)),
         amountIn,
         amountOut,
         minAmountOut: Amount.fromRawAmount(

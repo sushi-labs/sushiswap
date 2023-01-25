@@ -21,6 +21,8 @@ import { Drawer } from '@sushiswap/ui13/components/drawer'
 import { Badge } from '@sushiswap/ui13/components/Badge'
 import { AppType } from '@sushiswap/ui13/types'
 import { Native } from '@sushiswap/currency'
+import { classNames } from '@sushiswap/ui13'
+import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 
 export const TradeReviewDialogSameChain: FC = () => {
   const { appType, review, token0, token1, recipient, network0, amount, value } = useSwapState()
@@ -84,11 +86,18 @@ export const TradeReviewDialogSameChain: FC = () => {
                   title="Price impact"
                   subtitle="The impact your trade has on the market price of this pool."
                 >
-                  {isFetching ? (
-                    <Skeleton.Text align="right" fontSize="text-sm" className="w-1/5" />
-                  ) : (
-                    numeral(trade?.priceImpact ?? 0).format('0.00%')
-                  )}
+                  <span
+                    className={classNames(
+                      warningSeverityClassName(warningSeverity(trade?.priceImpact)),
+                      'text-gray-700 text-right dark:text-slate-400'
+                    )}
+                  >
+                    {isFetching ? (
+                      <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
+                    ) : (
+                      `${trade?.priceImpact?.toFixed(2) ?? 'N/A'}`
+                    )}
+                  </span>
                 </List.KeyValue>
               )}
               {isSwap && (

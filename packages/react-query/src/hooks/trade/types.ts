@@ -1,6 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber"
 import { ChainId } from '@sushiswap/chain'
 import { Amount, Price, Type } from '@sushiswap/currency'
+import {Percent} from "@sushiswap/math";
 import { HexString } from '@sushiswap/types'
 import z from 'zod'
 
@@ -19,7 +20,7 @@ export interface UseTradeParams {
 
 export interface UseTradeReturn {
   swapPrice: Price<Type, Type> | undefined
-  priceImpact: number | undefined
+  priceImpact: Percent | undefined
   amountIn: Amount<Type> | undefined
   amountOut: Amount<Type> | undefined
   minAmountOut: Amount<Type> | undefined
