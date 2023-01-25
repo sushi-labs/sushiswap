@@ -5,8 +5,9 @@ import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import { routeProcessorExports } from '@sushiswap/route-processor/exports'
-import { DataFetcher, findSpecialRoute, Router } from '@sushiswap/router'
-import { BigNumber, providers } from 'ethers'
+import { findSpecialRoute, Router } from '@sushiswap/router'
+import { DataFetcher } from '@sushiswap/router/dist/wagmi/DataFetcher'
+import { BigNumber } from 'ethers'
 import fastify from 'fastify'
 import { performance } from 'perf_hooks'
 import { z } from 'zod'
@@ -124,21 +125,21 @@ const start = async () => {
     dataFetcherMap.set(
       ChainId.ETHEREUM,
       new DataFetcher(
-        new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ETHEREUM), process.env['ALCHEMY_API_KEY']),
+        // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ETHEREUM), process.env['ALCHEMY_API_KEY']),
         ChainId.ETHEREUM
       )
     )
     dataFetcherMap.set(
       ChainId.POLYGON,
       new DataFetcher(
-        new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.POLYGON), process.env['ALCHEMY_API_KEY']),
+        // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.POLYGON), process.env['ALCHEMY_API_KEY']),
         ChainId.POLYGON
       )
     )
     dataFetcherMap.set(
       ChainId.ARBITRUM,
       new DataFetcher(
-        new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ARBITRUM), process.env['ALCHEMY_API_KEY']),
+        // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ARBITRUM), process.env['ALCHEMY_API_KEY']),
         ChainId.ARBITRUM
       )
     )

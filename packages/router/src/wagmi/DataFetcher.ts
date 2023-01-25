@@ -4,9 +4,15 @@ import { configureChains, createClient } from '@wagmi/core'
 
 import type { PoolCode } from '../pools/PoolCode'
 import { allChains } from './chains'
+import { ApeSwapProvider } from './liquidity-providers/ApeSwap'
+import { DfynProvider } from './liquidity-providers/Dfyn'
+import { ElkProvider } from './liquidity-providers/Elk'
+import { JetSwapProvider } from './liquidity-providers/JetSwap'
 import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
+import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
+import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { allProviders } from './providers'
 
 const { provider } = configureChains(allChains, allProviders)
@@ -45,8 +51,27 @@ export class DataFetcher {
 
     this.providers = [new NativeWrapProvider(this.chainId)]
 
-    if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers))
+    if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
       this.providers.push(new SushiProvider(this.chainId))
+    }
+    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
+      this.providers.push(new UniswapV2Provider(this.chainId))
+    }
+    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
+      this.providers.push(new QuickSwapProvider(this.chainId))
+    }
+    if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
+      this.providers.push(new ApeSwapProvider(this.chainId))
+    }
+    if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
+      this.providers.push(new DfynProvider(this.chainId))
+    }
+    if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
+      this.providers.push(new ElkProvider(this.chainId))
+    }
+    if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
+      this.providers.push(new JetSwapProvider(this.chainId))
+    }
 
     this.providers.forEach((p) => p.startFetchPoolsData())
   }
