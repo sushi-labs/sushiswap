@@ -7,9 +7,10 @@ import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
 import { Address, fetchBlockNumber, readContracts, watchBlockNumber } from '@wagmi/core'
 import { getCreate2Address } from 'ethers/lib/utils'
 
+import { getPoolsByTokenIds, getTopPools } from '../../lib/api'
 import { ConstantProductPoolCode } from '../../pools/ConstantProductPool'
 import type { PoolCode } from '../../pools/PoolCode'
-import { LiquidityProvider } from './LiquidityProvider'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 // const getReservesAbi = [
 //   {
@@ -57,36 +58,63 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     }
 
     // tokens deduplication
-    const tokenMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
-    const tokensDedup = Array.from(tokenMap.values())
-    // tokens sorting
-    const tok0: [string, Token][] = tokensDedup.map((t) => [
-      t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
-      t,
-    ])
-    tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
+    // const tokenMap = new Map<string, Token>()
+    // tokens.forEach((t) => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
+    // const tokensDedup = Array.from(tokenMap.values())
+    // // tokens sorting
+    // const tok0: [string, Token][] = tokensDedup.map((t) => [
+    //   t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
+    //   t,
+    // ])
+    // tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
 
-    const poolAddr: Map<string, [Token, Token]> = new Map()
-    for (let i = 0; i < tokens.length; ++i) {
-      const t0 = tokens[i]
-      for (let j = i + 1; j < tokens.length; ++j) {
-        const t1 = tokens[j]
+    // const poolAddr: Map<string, [Token, Token]> = new Map()
+    // for (let i = 0; i < tokens.length; ++i) {
+    //   const t0 = tokens[i]
+    //   for (let j = i + 1; j < tokens.length; ++j) {
+    //     const t1 = tokens[j]
 
-        const addr = this._getPoolAddress(t0, t1)
-        if (this.fetchedPools.get(addr) === undefined) {
-          poolAddr.set(addr, [t0, t1])
-          this.fetchedPools.set(addr, 1)
-        }
-      }
-    }
+    //     const addr = this._getPoolAddress(t0, t1)
+    //     if (this.fetchedPools.get(addr) === undefined) {
+    //       poolAddr.set(addr, [t0, t1])
+    //       this.fetchedPools.set(addr, 1)
+    //     }
+    //   }
+    // }
 
-    const addrs = Array.from(poolAddr.keys())
+    // const addrs = Array.from(poolAddr.keys())
     // const reserves = convertToBigNumberPair(
     //   await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
     // )
+    const type = this.getType()
 
-    console.log({ addrs, poolAddr })
+    const result = await Promise.all([
+      getTopPools(
+        this.chainId,
+        type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
+        type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+        'CONSTANT_PRODUCT_POOL'
+      ),
+      getPoolsByTokenIds(
+        this.chainId,
+        type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
+        type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+        'CONSTANT_PRODUCT_POOL',
+        tokens[0].address,
+        tokens[1].address
+      ),
+    ])
+    console.log(`${type}, topPools: ${result[0].size}, poolsByTokenIds: ${result[1].size}`)
+    const poolAddr = new Map([...Array.from(result[0].entries()), ...Array.from(result[1].entries())])
+
+    const addrs = Array.from(poolAddr.keys())
+
+    if (addrs.length === 0) {
+      console.warn('No pools found addrs len 0')
+      return
+    } else {
+      console.log("Pools found", addrs.length)
+    }
 
     const reserves = await readContracts({
       allowFailure: true,
@@ -100,7 +128,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     addrs.forEach((addr, i) => {
       const res = reserves[i]
-      if (res !== null) {
+      if (res != null) {
         const toks = poolAddr.get(addr) as [Token, Token]
         const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
@@ -185,7 +213,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     )
   }
   fetchPoolsForToken(t0: Token, t1: Token): void {
-    this.getPools(this._getProspectiveTokens(t0, t1))
+    // this.getPools(this._getProspectiveTokens(t0, t1))
+    this.getPools([t0, t1])
   }
   getCurrentPoolList(): PoolCode[] {
     return this.poolCodes

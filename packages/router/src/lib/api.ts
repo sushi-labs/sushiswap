@@ -18,7 +18,7 @@ export async function getPoolsByTokenIds(
   poolType: string,
   token0Address: string,
   token1Address: string,
-  size = 10
+  size = 25
 ) {
   const token0Id = chainId.toString().concat(':').concat(token0Address.toLowerCase())
   const token1Id = chainId.toString().concat(':').concat(token1Address.toLowerCase())
@@ -150,13 +150,14 @@ export async function getPoolsByTokenIds(
     // TODO: Ideally this should be handled in the query, quick workaround for now
     const token0Pools = [result[0].pools0, result[0].pools1].flat()
     const filteredToken0Pools = token0Pools
-      .sort((a, b) => (a.liquidityUSD < b.liquidityUSD ? 1 : -1))
+      .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
       .slice(0, token0Pools.length > size ? size : token0Pools.length)
 
     const token1Pools = [result[1].pools0, result[1].pools1].flat()
     const filteredToken1Pools = token1Pools
-      .sort((a, b) => (a.liquidityUSD < b.liquidityUSD ? 1 : -1))
-      .slice(0, token0Pools.length > size ? size : token0Pools.length)
+      .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
+      .slice(0, token1Pools.length > size ? size : token1Pools.length)
+
 
     const poolMap: Map<string, [Token, Token]> = new Map()
     for (const pool of [filteredToken0Pools, filteredToken1Pools].flat()) {
