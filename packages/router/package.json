@@ -58,6 +58,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/tines": "workspace:*",
+    "@wagmi/core": "0.8.10-cjs",
     "ethereum-multicall": "2.15.0",
     "ethers": "5.7.2",
     "lodash.flatmap": "^4.5.0",

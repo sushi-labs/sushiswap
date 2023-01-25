@@ -132,7 +132,7 @@ const start = async () => {
       ChainId.POLYGON,
       new DataFetcher(
         new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.POLYGON), process.env['ALCHEMY_API_KEY']),
-        ChainId.FANTOM
+        ChainId.POLYGON
       )
     )
     dataFetcherMap.set(
