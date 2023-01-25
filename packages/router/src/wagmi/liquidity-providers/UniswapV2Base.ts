@@ -86,8 +86,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     //   await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
     // )
 
-    console.log({ addrs, poolAddr })
-
     const reserves = await readContracts({
       allowFailure: true,
       contracts: addrs.map((addr) => ({
@@ -100,7 +98,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     addrs.forEach((addr, i) => {
       const res = reserves[i]
-      if (res !== null) {
+      if (res !== null && res !== undefined) {
         const toks = poolAddr.get(addr) as [Token, Token]
         const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
@@ -137,7 +135,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     addrs.forEach((addr, i) => {
       const res = reserves[i]
-      if (res !== null) {
+      if (res !== null && res !== undefined) {
         const pool = poolAddr.get(addr) as RPool
         if (!res[0].eq(pool.reserve0) || !res[1].eq(pool.reserve1)) {
           pool.updateReserves(res[0], res[1])
@@ -170,7 +168,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.poolCodes = []
     this.fetchedPools.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
-
     // this.blockListener = () => {
     //   this.updatePoolsData()
     // }

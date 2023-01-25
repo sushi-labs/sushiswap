@@ -136,13 +136,13 @@ const start = async () => {
         ChainId.POLYGON
       )
     )
-    dataFetcherMap.set(
-      ChainId.ARBITRUM,
-      new DataFetcher(
-        // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ARBITRUM), process.env['ALCHEMY_API_KEY']),
-        ChainId.ARBITRUM
-      )
-    )
+    // dataFetcherMap.set(
+    //   ChainId.ARBITRUM,
+    //   new DataFetcher(
+    //     // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ARBITRUM), process.env['ALCHEMY_API_KEY']),
+    //     ChainId.ARBITRUM
+    //   )
+    // )
     for (const dataFetcher of dataFetcherMap.values()) {
       dataFetcher.startDataFetching()
     }
