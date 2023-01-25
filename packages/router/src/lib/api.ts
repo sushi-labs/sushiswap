@@ -18,7 +18,7 @@ export async function getPoolsByTokenIds(
   poolType: string,
   token0Address: string,
   token1Address: string,
-  size = 25
+  size = 35
 ) {
   const token0Id = chainId.toString().concat(':').concat(token0Address.toLowerCase())
   const token1Id = chainId.toString().concat(':').concat(token1Address.toLowerCase())
@@ -195,7 +195,7 @@ export async function getPoolsByTokenIds(
  * @param size
  * @returns
  */
-export async function getTopPools(chainId: number, protocol: string, version: string, poolType: string, size = 50) {
+export async function getTopPools(chainId: number, protocol: string, version: string, poolType: string, size = 25) {
   try {
     const result = await prisma.pool.findMany({
       include: {

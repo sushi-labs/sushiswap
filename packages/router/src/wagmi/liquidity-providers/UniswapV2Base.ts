@@ -112,8 +112,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     if (addrs.length === 0) {
       console.warn('No pools found addrs len 0')
       return
-    } else {
-      console.log("Pools found", addrs.length)
     }
 
     const reserves = await readContracts({
@@ -134,6 +132,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.poolCodes.push(pc)
         ++this.stateId
+      } else {
+        console.error("shouldn't happen, res null")
       }
     })
 
