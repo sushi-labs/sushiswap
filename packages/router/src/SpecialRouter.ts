@@ -2,9 +2,9 @@ import { Type } from '@sushiswap/currency'
 import { RouteStatus } from '@sushiswap/tines'
 import { BigNumber } from 'ethers'
 
-import { DataFetcher } from './DataFetcher'
-import { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
 import { Router } from './Router'
+import { DataFetcher } from './wagmi/DataFetcher'
+import { LiquidityProviders } from './wagmi/liquidity-providers/LiquidityProvider'
 
 export const PreferrableLiquidityProviders: LiquidityProviders[] = [
   LiquidityProviders.SushiSwap,

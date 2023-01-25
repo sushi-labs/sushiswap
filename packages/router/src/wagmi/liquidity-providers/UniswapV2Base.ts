@@ -4,7 +4,7 @@ import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
 import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
-import { Address, readContracts, watchBlockNumber } from '@wagmi/core'
+import { Address, fetchBlockNumber, readContracts, watchBlockNumber } from '@wagmi/core'
 import { getCreate2Address } from 'ethers/lib/utils'
 
 import { ConstantProductPoolCode } from '../../pools/ConstantProductPool'
@@ -86,7 +86,10 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     //   await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
     // )
 
+    console.log({ addrs, poolAddr })
+
     const reserves = await readContracts({
+      allowFailure: true,
       contracts: addrs.map((addr) => ({
         address: addr as Address,
         chainId: this.chainId,
@@ -97,7 +100,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     addrs.forEach((addr, i) => {
       const res = reserves[i]
-      if (res !== undefined) {
+      if (res !== null) {
         const toks = poolAddr.get(addr) as [Token, Token]
         const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
@@ -108,9 +111,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     // if it is the first obtained pool list
     // if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
+
+    if (this.lastUpdateBlock === 0) this.lastUpdateBlock = await fetchBlockNumber()
   }
   // TODO: remove too often updates if the network generates too many blocks
-  async updatePoolsData() {
+  async updatePoolsData(blockNumber: number) {
     if (this.poolCodes.length == 0) return
 
     const poolAddr = new Map<string, RPool>()
@@ -121,6 +126,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     //   await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
     // )
     const reserves = await readContracts({
+      allowFailure: true,
       contracts: addrs.map((addr) => ({
         address: addr as Address,
         chainId: this.chainId,
@@ -131,7 +137,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
     addrs.forEach((addr, i) => {
       const res = reserves[i]
-      if (res !== undefined) {
+      if (res !== null) {
         const pool = poolAddr.get(addr) as RPool
         if (!res[0].eq(pool.reserve0) || !res[1].eq(pool.reserve1)) {
           pool.updateReserves(res[0], res[1])
@@ -140,7 +146,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       }
     })
 
-    // this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
+    this.lastUpdateBlock = blockNumber
   }
   _getPoolAddress(t1: Token, t2: Token): string {
     return getCreate2Address(
@@ -164,6 +170,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.poolCodes = []
     this.fetchedPools.clear()
     this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
+
     // this.blockListener = () => {
     //   this.updatePoolsData()
     // }
@@ -172,7 +179,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       {
         listen: true,
       },
-      (blockNumber) => (this.lastUpdateBlock = blockNumber)
+      (blockNumber) => {
+        this.updatePoolsData(blockNumber)
+      }
     )
   }
   fetchPoolsForToken(t0: Token, t1: Token): void {
