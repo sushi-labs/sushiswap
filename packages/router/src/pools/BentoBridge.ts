@@ -5,17 +5,17 @@ import { HEXer } from '../HEXer'
 import { PoolCode } from './PoolCode'
 
 export class BentoBridgePoolCode extends PoolCode {
-  BentoBoxAddress: string
+  bentoBoxAddress: string
 
-  constructor(pool: BridgeBento, _providerName: string, BentoBoxAddress: string) {
+  constructor(pool: BridgeBento, _providerName: string, bentoBoxAddress: string) {
     super(pool, `BentoBridge`)
-    this.BentoBoxAddress = BentoBoxAddress
+    this.bentoBoxAddress = bentoBoxAddress
   }
 
   override getStartPoint(leg: RouteLeg): string {
     if (leg.tokenFrom.chainId == this.pool.token0.chainId) {
       // bento deposit
-      return this.BentoBoxAddress
+      return this.bentoBoxAddress
     } else {
       return 'RouteProcessor'
     }
@@ -35,7 +35,7 @@ export class BentoBridgePoolCode extends PoolCode {
           console.assert(code.length == 53 * 2, 'BentoBridge deposit unexpected code length')
           return code
         } else {
-          throw new Error("Bento deposit from input token can't work without exact  amount")
+          throw new Error("Bento deposit from input token can't work without exact amount")
         }
       } else {
         // deposit in the middle of a route
@@ -60,7 +60,7 @@ export class BentoBridgePoolCode extends PoolCode {
           console.assert(code.length == 53 * 2, 'BentoBridge withdraw unexpected code length')
           return code
         } else {
-          throw new Error("Bento withdraw from input token can't work without exact  amount")
+          throw new Error("Bento withdraw from input token can't work without exact amount")
         }
       } else {
         // withdraw in the middle of a route

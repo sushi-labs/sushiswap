@@ -83,3 +83,31 @@ export async function getIncentivesByPoolId(chainId: number, address: string) {
   await prisma.$disconnect()
   return incentives ? incentives : []
 }
+
+export async function getIncentivesByPoolIds(poolIds: string[]) {
+  const incentives = await prisma.incentive.findMany({
+    select: {
+      id: true,
+      chainId: true,
+      pid: true,
+      type: true,
+      apr: true,
+      rewardPerDay: true,
+      poolId: true,
+      rewarderAddress: true,
+      rewarderType: true,
+      rewardToken: {
+        select: {
+          id: true,
+          address: true,
+          name: true,
+          symbol: true,
+          decimals: true,
+        },
+      },
+    },
+    where: { poolId: { in: poolIds } },
+  })
+  await prisma.$disconnect()
+  return incentives ? incentives : []
+}

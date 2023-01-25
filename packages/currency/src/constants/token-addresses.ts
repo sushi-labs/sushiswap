@@ -226,6 +226,7 @@ export const SUSHI_ADDRESS = {
   [ChainId.KAVA]: '0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D',
   [ChainId.METIS]: '0x17Ee7E4dA37B01FC1bcc908fA63DF343F23B4B7C',
   [ChainId.BOBA]: '0x5fFccc55C0d2fd6D3AC32C26C020B3267e933F1b',
+  [ChainId.ARBITRUM_NOVA]: '0xfe60A48a0bCf4636aFEcC9642a145D2F241A7011',
 } as const
 
 export const XSUSHI_ADDRESS = {
@@ -358,4 +359,8 @@ export const BCT_ADDRESS = {
 
 export const KLIMA_ADDRESS = {
   [ChainId.POLYGON]: '0x4e78011Ce80ee02d2c3e649Fb657E45898257815',
+} as const
+
+export const QUICK_ADDRESS = {
+  [ChainId.POLYGON]: '0x831753dd7087cac61ab5644b308642cc1c33dc13',
 } as const

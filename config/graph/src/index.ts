@@ -193,7 +193,7 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
 } as const
 
 export const TRIDENT_SUBGRAPH_NAME = {
-  [ChainId.POLYGON]: 'sushi-qa/trident-polygon',
+  [ChainId.POLYGON]: 'sushi-v2/trident-polygon',
   [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
   [ChainId.KAVA]: 'sushi-qa/trident-kava',
   [ChainId.METIS]: 'sushi-qa/trident-metis',
@@ -227,6 +227,7 @@ export const MINICHEF_SUBGRAPH_NAME = {
   [ChainId.KAVA]: 'sushiswap/kava-minichef', //block subgraph not synced yet
   [ChainId.METIS]: 'sushiswap/metis-minichef',
   [ChainId.BOBA]: 'sushiswap/minichef-boba',
+  [ChainId.ARBITRUM_NOVA]: 'sushiswap/minichef-arbitrum-nova',
 } as const
 
 export const MASTERCHEF_V1_SUBGRAPH_NAME = 'jiro-ono/masterchef-staging' as const

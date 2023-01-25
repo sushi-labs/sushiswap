@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 import { PoolType } from '../../lib'
 import { getPools } from '../../lib/api'
+
 const schema = z.object({
   chainIds: z
     .string()
@@ -32,7 +33,10 @@ const schema = z.object({
       }
     })
     .optional(),
-  poolType: z.nativeEnum(PoolType).optional(),
+  poolTypes: z
+    .nativeEnum(PoolType)
+    .optional()
+    .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),
   orderDir: z.enum(['asc', 'desc']).default('desc'),
@@ -43,9 +47,9 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
   if (!result.success) {
     return response.status(400).json(result.error.format())
   }
-  
-  const { chainIds, isIncentivized, isWhitelisted, poolType, cursor, orderBy, orderDir } = result.data
-  const pools = await getPools({ chainIds, isIncentivized, isWhitelisted, poolType, cursor, orderBy, orderDir })
+
+  const { chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir } = result.data
+  const pools = await getPools({ chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir })
   return response.status(200).json(pools)
 }
 
