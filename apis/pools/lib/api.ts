@@ -26,7 +26,27 @@ export async function getPool(chainId: number, address: string) {
     include: {
       token0: true,
       token1: true,
-      incentives: true,
+      incentives: {
+        select: {
+          id: true,
+          pid: true,
+          chainId: true,
+          type: true,
+          apr: true,
+          rewarderAddress: true,
+          rewarderType: true,
+          rewardPerDay: true,
+          rewardToken: {
+            select: {
+              id: true,
+              address: true,
+              name: true,
+              symbol: true,
+              decimals: true,
+            },
+          },
+        },
+      },
     },
     where: {
       id,
