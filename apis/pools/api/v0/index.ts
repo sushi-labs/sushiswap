@@ -5,6 +5,7 @@ import type { PoolType } from '../../lib'
 import { getPools } from '../../lib/api'
 
 const schema = z.object({
+  ids: z.string().transform((ids) => ids?.split(',').map((id) => id.toLowerCase())),
   chainIds: z
     .string()
     .transform((val) => val.split(',').map((v) => parseInt(v)))
@@ -48,8 +49,8 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     return response.status(400).json(result.error.format())
   }
 
-  const { chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir } = result.data
-  const pools = await getPools({ chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir })
+  const { ids, chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir } = result.data
+  const pools = await getPools({ ids, chainIds, isIncentivized, isWhitelisted, poolTypes, cursor, orderBy, orderDir })
   return response.status(200).json(pools)
 }
 

@@ -10,6 +10,7 @@ type PartialWithUndefined<T extends object> = Partial<{
 }>
 
 export type PoolApiArgs = PartialWithUndefined<{
+  ids: string[]
   chainIds: number[]
   poolTypes: PoolType[]
   isIncentivized: boolean
@@ -61,6 +62,14 @@ type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
 function parseWhere(args: PoolApiArgs) {
   let where: PrismaArgs['where'] = {}
+
+  if (args.ids) {
+    where = {
+      id: {
+        in: args.ids,
+      },
+    }
+  }
 
   if (args.chainIds) {
     where = {
