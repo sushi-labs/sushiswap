@@ -21,6 +21,7 @@ export async function filterPools(
     token0Price: true,
     token1Price: true,
     feeApr: true,
+    incentiveApr: true,
     totalApr: true,
   })
 
@@ -49,10 +50,10 @@ export async function filterPools(
       Number(pool.volumeUSD).toFixed(2) !== poolExists.volumeUSD.toFixed(2).toString() ||
       pool.token0Price !== poolExists.token0Price ||
       pool.token1Price !== poolExists.token1Price ||
-      pool.feeApr !== poolExists.feeApr
-      // TODO: totalAPR?
+      pool.feeApr !== poolExists.feeApr 
     ) {
       poolsToUpdate++
+      pool.totalApr = Number(pool.feeApr ?? 0) + Number(poolExists.incentiveApr ?? 0)
       return true
     }
     return false

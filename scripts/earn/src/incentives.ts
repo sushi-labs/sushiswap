@@ -71,7 +71,7 @@ async function extract() {
         }, incentives: ${incentiveCount}`
       )
     } else {
-      console.log(`Chain ID: ${combination.chainId}. Error.`)
+      console.error(`Chain ID: ${combination.chainId}. Error.`)
     }
   }
   console.log(`Total farms: ${totalFarms}, total incentives: ${totalIncentives}`)
@@ -104,7 +104,6 @@ async function transform(data: ChefReturn[]): Promise<{
               return Prisma.validator<Prisma.IncentiveCreateManyInput>()({
                 id: poolAddress.concat(':').concat(incentive.rewarder.address),
                 chainId: chainId,
-                type: farm.chefType,
                 chefType: farm.chefType,
                 apr: isNaN(incentive.apr) || incentive.apr === Infinity ? 0 : incentive.apr,
                 rewardTokenId: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
