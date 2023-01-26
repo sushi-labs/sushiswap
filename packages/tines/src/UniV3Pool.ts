@@ -69,7 +69,6 @@ function getSqrtRatioAtTick(tick: number): BigNumber {
 const two96 = Math.pow(2, 96)
 
 export class UniV3Pool extends RPool {
-  tickSpacing: number
   liquidity: BigNumber
   sqrtPriceX96: BigNumber
   nearestTick: number
@@ -80,7 +79,6 @@ export class UniV3Pool extends RPool {
     token0: RToken,
     token1: RToken,
     fee: number,
-    tickSpacing: number,
     reserve0: BigNumber,
     reserve1: BigNumber,
     liquidity: BigNumber,
@@ -89,7 +87,6 @@ export class UniV3Pool extends RPool {
     ticks: CLTick[]
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
-    this.tickSpacing = tickSpacing
     this.liquidity = liquidity
     this.sqrtPriceX96 = sqrtPriceX96
     this.nearestTick = nearestTick
@@ -117,7 +114,7 @@ export class UniV3Pool extends RPool {
 
       let nextTickPrice, priceDiff
       if (startFlag) {
-        // Increasing precision at first step only - otherwise its too low
+        // Increasing precision at first step only - otherwise its too slow
         const nextTickPriceBN = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
         nextTickPrice = parseInt(nextTickPriceBN.toString()) / two96
         priceDiff = parseInt(currentPriceBN.sub(nextTickPriceBN).toString()) / two96
