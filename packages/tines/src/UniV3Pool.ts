@@ -117,7 +117,7 @@ export class UniV3Pool extends RPool {
 
       let nextTickPrice, priceDiff
       if (startFlag) {
-        // Increasing precision at first step only - otherwise its too slow
+        // Increasing precision at first step only - otherwise its too low
         const nextTickPriceBN = getSqrtRatioAtTick(this.ticks[nextTickToCross].index)
         nextTickPrice = parseInt(nextTickPriceBN.toString()) / two96
         priceDiff = parseInt(currentPriceBN.sub(nextTickPriceBN).toString()) / two96
@@ -144,11 +144,7 @@ export class UniV3Pool extends RPool {
           //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           input -= maxDx
-          if ((this.ticks[nextTickToCross].index / this.tickSpacing) % 2 === 0) {
-            currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
-          } else {
-            currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
-          }
+          currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross--
         }
       } else {
@@ -162,11 +158,7 @@ export class UniV3Pool extends RPool {
           //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           input -= maxDy
-          if ((this.ticks[nextTickToCross].index / this.tickSpacing) % 2 === 0) {
-            currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
-          } else {
-            currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
-          }
+          currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross++
         }
       }
@@ -219,11 +211,7 @@ export class UniV3Pool extends RPool {
           //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           outBeforeFee -= maxDy
-          if ((this.ticks[nextTickToCross].index / this.tickSpacing) % 2 === 0) {
-            currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
-          } else {
-            currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
-          }
+          currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross--
         }
       } else {
@@ -238,11 +226,7 @@ export class UniV3Pool extends RPool {
           //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           outBeforeFee -= maxDx
-          if ((this.ticks[nextTickToCross].index / this.tickSpacing) % 2 === 0) {
-            currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
-          } else {
-            currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
-          }
+          currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross++
         }
       }
