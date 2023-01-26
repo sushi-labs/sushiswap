@@ -9,6 +9,8 @@ import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { Drawer } from '@sushiswap/ui13/components/drawer'
+import { classNames } from '@sushiswap/ui13'
+import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
 
 export const TradeStats: FC = () => {
   const { value, token1, recipient } = useSwapState()
@@ -27,20 +29,29 @@ export const TradeStats: FC = () => {
       leaveTo="transform translate-y-[16px] opacity-0"
     >
       <div className="w-full px-3 flex flex-col gap-1">
-        {/* <div className="flex justify-between items-center gap-2">
-          <span className="text-sm text-gray-700 dark:text-slate-400">Price Impact</span>
-          <span className="text-sm font-semibold text-green text-right">
-            {isLoading ? (
-              <Skeleton.Box className="h-4 py-0.5 w-[60px] rounded-md" />
-            ) : (
-              `${numeral(trade?.priceImpact ?? 0).format('0.00%')}`
-            )}
-          </span>
-        </div> */}
         <div className="flex justify-between items-center gap-2">
           <span className="text-sm text-gray-700 dark:text-slate-400">Slippage tolerance</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%
+            {isLoading ? (
+              <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : (
+              `${slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance}%`
+            )}
+          </span>
+        </div>
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-slate-400">Price Impact</span>
+          <span
+            className={classNames(
+              warningSeverityClassName(warningSeverity(trade?.priceImpact)),
+              'text-sm font-semibold text-gray-700 text-right dark:text-slate-400'
+            )}
+          >
+            {isLoading ? (
+              <Skeleton.Box className="h-4 py-0.5 w-[120px] rounded-md" />
+            ) : (
+              `${trade?.priceImpact?.toFixed(2) ?? 'N/A'}`
+            )}
           </span>
         </div>
         <div className="flex justify-between items-center gap-2">
@@ -56,14 +67,14 @@ export const TradeStats: FC = () => {
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Network fee</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-            {loading ? <Skeleton.Text fontSize="text-sm" className="w-[40px]" /> : `~$${trade?.gasSpent ?? '0.00'}`}
+            {loading ? <Skeleton.Text fontSize="text-sm" className="w-[120px]" /> : `~$${trade?.gasSpent ?? '0.00'}`}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-700 dark:text-slate-400">Route</span>
           <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
             {loading ? (
-              <Skeleton.Text fontSize="text-sm" className="w-[80px]" />
+              <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : (
               <Drawer.Button>
                 <button className="text-sm text-blue font-semibold">View Route</button>
@@ -77,7 +88,7 @@ export const TradeStats: FC = () => {
           <div className="flex flex-col justify-end">
             <span className="text-xl text-right font-semibold text-gray-900 dark:text-slate-100">
               {loading ? (
-                <Skeleton.Text fontSize="text-xl" className="w-[140px]" />
+                <Skeleton.Text fontSize="text-xl" className="w-[120px]" />
               ) : (
                 `${trade?.amountOut?.toSignificant(6) ?? '0.00'} ${token1.symbol}`
               )}

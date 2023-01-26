@@ -12,10 +12,13 @@ import { AppType } from '@sushiswap/ui13/types'
 import { getRouteProcessorAddressForChainId } from 'lib/getRouteProcessorAddressForChainId'
 import { Popover, Transition } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
+import { useExpertMode } from '@sushiswap/react-query'
+import { warningSeverity } from '../../lib/warningSeverity'
 
 export const SwapButton: FC = () => {
   const { appType, amount, network0, value, token0, token1 } = useSwapState()
-  const { isFetching, isLoading } = useTrade()
+  const { data: expertMode } = useExpertMode()
+  const { isFetching, isLoading, data: trade } = useTrade()
   const { setReview } = useSwapActions()
 
   const isWrap =
@@ -67,12 +70,23 @@ export const SwapButton: FC = () => {
                 contract={getRouteProcessorAddressForChainId(ChainId.POLYGON)}
               >
                 <Button
-                  disabled={Boolean(isLoading && +value > 0) || isFetching}
+                  disabled={
+                    Boolean(isLoading && +value > 0) ||
+                    isFetching ||
+                    (!expertMode && warningSeverity(trade?.priceImpact) >= 3)
+                  }
+                  color={!expertMode && warningSeverity(trade?.priceImpact) >= 3 ? 'red' : 'blue'}
                   fullWidth
                   size="xl"
                   onClick={() => setReview(true)}
                 >
-                  {isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'}
+                  {!expertMode && warningSeverity(trade?.priceImpact) >= 3
+                    ? 'Price impact too high'
+                    : isWrap
+                    ? 'Wrap'
+                    : isUnwrap
+                    ? 'Unwrap'
+                    : 'Swap'}
                 </Button>
               </Checker.ApproveERC20>
             </Checker.Amounts>
