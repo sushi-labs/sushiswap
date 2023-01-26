@@ -14,20 +14,6 @@
   },
   "license": "MIT",
   "author": "Matthew Lilley <hello@matthewLilley.com>",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./liquidity-providers/Trident": {
-      "types": "./dist/liquidity-providers/Trident.d.ts",
-      "default": "./dist/liquidity-providers/Trident.js"
-    },
-    "./dist/liquidity-providers/LiquidityProviderMC": {
-      "types": "./dist/liquidity-providers/LiquidityProviderMC.d.ts",
-      "default": "./dist/liquidity-providers/LiquidityProviderMC.js"
-    }
-  },
   "main": "dist/index.js",
   "source": "src/index.ts",
   "typings": "dist/index.d.ts",
@@ -58,6 +44,7 @@
     "@sushiswap/currency": "workspace:*",
     "@sushiswap/math": "workspace:*",
     "@sushiswap/tines": "workspace:*",
+    "@wagmi/core": "0.8.10-cjs",
     "ethereum-multicall": "2.15.0",
     "ethers": "5.7.2",
     "lodash.flatmap": "^4.5.0",
