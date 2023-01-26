@@ -31,7 +31,7 @@ export async function getPool(chainId: number, address: string) {
           id: true,
           pid: true,
           chainId: true,
-          type: true,
+          chefType: true,
           apr: true,
           rewarderAddress: true,
           rewarderType: true,
