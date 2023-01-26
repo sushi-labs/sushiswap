@@ -198,7 +198,7 @@ export const TRIDENT_SUBGRAPH_NAME = {
   [ChainId.KAVA]: 'sushi-qa/trident-kava',
   [ChainId.METIS]: 'sushi-qa/trident-metis',
   [ChainId.BTTC]: 'sushi-qa/trident-bttc',
-  [ChainId.ARBITRUM]: 'sushi-qa/trident-arbitrum',
+  [ChainId.ARBITRUM]: 'sushi-v2/trident-arbitrum',
   [ChainId.BSC]: 'sushi-qa/trident-bsc',
   [ChainId.AVALANCHE]: 'sushi-qa/trident-avalanche',
 } as const

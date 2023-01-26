@@ -53,8 +53,8 @@ async function upsertPools(client: PrismaClient, pools: Prisma.SushiPoolCreateMa
           volumeNative: pool.volumeNative,
           token0Price: pool.token0Price,
           token1Price: pool.token1Price,
-          apr: (pool.apr ?? 0),
-          totalApr: (pool.apr ?? 0) + totalIncentiveApr,
+          feeApr: (pool.feeApr ?? 0),
+          totalApr: (pool.feeApr ?? 0) + totalIncentiveApr,
         },
       })
     }
@@ -72,8 +72,8 @@ async function upsertPools(client: PrismaClient, pools: Prisma.SushiPoolCreateMa
         volumeNative: pool.volumeNative,
         token0Price: pool.token0Price,
         token1Price: pool.token1Price,
-        apr: pool.apr,
-        totalApr: pool.apr,
+        feeApr: pool.feeApr,
+        totalApr: pool.feeApr,
       },
       create: pool,
     })
@@ -116,11 +116,11 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
     },
   })
   const poolsToUpdate = poolsWithIncentives.map((pool) => {
-    const bestIncentiveApr = pool.incentives.reduce((totalIncentiveApr, incentive) => {
+    const incentiveApr = pool.incentives.reduce((totalIncentiveApr, incentive) => {
       return totalIncentiveApr + incentive.apr
     }, 0)
 
-    const totalApr = bestIncentiveApr + (pool.apr ?? 0)
+    const totalApr = incentiveApr + (pool.feeApr ?? 0)
     const isIncentivized = pool.incentives.some((incentive) => incentive.rewardPerDay > 0)
 
     return client.sushiPool.update({
@@ -130,6 +130,7 @@ export async function updatePoolsWithIncentivesTotalApr(client: PrismaClient) {
       },
       data: {
         totalApr,
+        incentiveApr,
         isIncentivized,
       },
     })

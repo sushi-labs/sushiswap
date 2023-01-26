@@ -19,6 +19,14 @@ contract RouteProcessor {
 
   IBentoBoxMinimal public immutable bentoBox;
 
+  uint private unlocked = 1;
+  modifier lock() {
+      require(unlocked == 1, 'RouteProcessor is locked');
+      unlocked = 2;
+      _;
+      unlocked = 1;
+  }
+
   constructor(address _bentoBox) {
     bentoBox = IBentoBoxMinimal(_bentoBox);
   }
@@ -26,7 +34,7 @@ contract RouteProcessor {
   /// @notice For native unwrapping
   receive() external payable {}
 
-  /// @notice Processes the route generated off-chain
+  /// @notice Processes the route generated off-chain. Has a lock
   /// @param tokenIn Address of the input token
   /// @param amountIn Amount of the input token
   /// @param tokenOut Address of the output token
@@ -39,9 +47,46 @@ contract RouteProcessor {
     uint256 amountOutMin,
     address to,
     bytes memory route
-  ) public payable returns (uint256 amountOut) {
-    require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
+  ) external payable lock returns (uint256 amountOut) {
+    return processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
+  }
 
+  /// @notice Transfers some value to <transferValueTo> and then processes the route
+  /// @param transferValueTo Address where the value should be transferred
+  /// @param amountValueTransfer How much value to transfer
+  /// @param tokenIn Address of the input token
+  /// @param amountIn Amount of the input token
+  /// @param tokenOut Address of the output token
+  /// @param amountOutMin Minimum amount of the output token
+  /// @return amountOut Actual amount of the output token
+  function transferValueAndprocessRoute(
+    address payable transferValueTo,
+    uint256 amountValueTransfer,
+    address tokenIn,
+    uint256 amountIn,
+    address tokenOut,
+    uint256 amountOutMin,
+    address to,
+    bytes memory route
+  ) external payable lock returns (uint256 amountOut) {
+    transferValueTo.transfer(amountValueTransfer);
+    return processRouteInternal(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
+  }
+
+  /// @notice Processes the route generated off-chain
+  /// @param tokenIn Address of the input token
+  /// @param amountIn Amount of the input token
+  /// @param tokenOut Address of the output token
+  /// @param amountOutMin Minimum amount of the output token
+  /// @return amountOut Actual amount of the output token
+  function processRouteInternal(
+    address tokenIn,
+    uint256 amountIn,
+    address tokenOut,
+    uint256 amountOutMin,
+    address to,
+    bytes memory route
+  ) private returns (uint256 amountOut) {
     uint256 amountInAcc = 0;
     uint256 balanceInitial = tokenOut == NATIVE_ADDRESS ? 
       address(to).balance : IERC20(tokenOut).balanceOf(to);
@@ -80,29 +125,6 @@ contract RouteProcessor {
     require(balanceFinal >= balanceInitial + amountOutMin, 'Minimal ouput balance violation');
 
     amountOut = balanceFinal - balanceInitial;
-  }
-
-  /// @notice Transfers some value to <transferValueTo> and then processes the route
-  /// @param transferValueTo Address where the value should be transferred
-  /// @param amountValueTransfer How much value to transfer
-  /// @param tokenIn Address of the input token
-  /// @param amountIn Amount of the input token
-  /// @param tokenOut Address of the output token
-  /// @param amountOutMin Minimum amount of the output token
-  /// @return amountOut Actual amount of the output token
-  function transferValueAndprocessRoute(
-    address payable transferValueTo,
-    uint256 amountValueTransfer,
-    address tokenIn,
-    uint256 amountIn,
-    address tokenOut,
-    uint256 amountOutMin,
-    address to,
-    bytes memory route
-  ) external payable returns (uint256 amountOut) {
-    require(tx.origin == msg.sender, 'Call from not EOA'); // Prevents reentrance
-    transferValueTo.transfer(amountValueTransfer);
-    return processRoute(tokenIn, amountIn, tokenOut, amountOutMin, to, route);
   }
 
   /// @notice Transfers input tokens sent to BentoBox to a pool

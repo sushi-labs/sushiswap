@@ -90,7 +90,7 @@ async function extract() {
           where,
         })
         .catch((e: string) => {
-          console.log({ e })
+          console.error({ e })
           return undefined
         })
         .catch(() => undefined)
@@ -144,7 +144,7 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               })
             )
             const isAprValid = Number(pair.aprUpdatedAtTimestamp) > unix24hAgo
-            const apr = isAprValid ? Number(pair.apr) : 0
+            const feeApr = isAprValid ? Number(pair.apr) : 0
             const regex = /([^\w ]|_|-)/g
             const name = pair.token0.symbol
               .replace(regex, '')
@@ -165,14 +165,14 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               reserve0: pair.reserve0,
               reserve1: pair.reserve1,
               totalSupply: pair.liquidity,
-              apr,
+              feeApr,
               liquidityUSD: pair.liquidityUSD,
               liquidityNative: pair.liquidityNative,
               volumeUSD: pair.volumeUSD,
               volumeNative: pair.volumeNative,
               token0Price: pair.token0Price,
               token1Price: pair.token1Price,
-              totalApr: apr,
+              totalApr: feeApr,
               createdAtBlockNumber: BigInt(pair.createdAtBlock),
             })
           })

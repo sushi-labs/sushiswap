@@ -132,3 +132,21 @@ query TraderJoePairs($first: Int = 1000, $skip: Int = 0, $where: TJ_Pair_filter,
     liquidityUSD: reserveUSD
   }
 }
+
+query MessariPairs($first: Int = 1000, $skip: Int = 0, $where: MESSARI_LiquidityPool_filter, $block: MESSARI_Block_height) {
+  MESSARI_liquidityPools(
+    first: $first
+    skip: $skip
+    where: $where
+    block: $block
+  ) {
+    id
+    inputTokens {
+      id
+      name
+      symbol
+      decimals
+    }
+    liquidityUSD: totalValueLockedUSD
+  }
+}

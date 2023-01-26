@@ -120,6 +120,6 @@ export async function getTokenBalancesOf(_tokens: string[], address: string, cha
   return tokens.map((token, i) => ({
     token,
     // so that we don't need to seed new pairs
-    balance: balancesOf[i].eq(0) ? BigNumber.from(1) : divBigNumberToNumber(balancesOf[i], decimals[i]),
+    balance: balancesOf[i]?.eq(0) ? 1 : divBigNumberToNumber(balancesOf[i], decimals[i]),
   }))
 }
