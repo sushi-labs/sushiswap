@@ -96,6 +96,7 @@ export async function getPools(args: PoolApiArgs) {
       liquidityUSD: true,
       volumeUSD: true,
       feeApr: true,
+      incentiveApr: true,
       totalApr: true,
       isIncentivized: true,
       fees1d: true,

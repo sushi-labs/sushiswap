@@ -96,11 +96,11 @@ export function createQuery(chainId: ChainId, host: string, subgraphName: string
   const sdk = getBuiltGraphSDK({ chainId, host, name: subgraphName })
   return blockNumber
     ? sdk.PairsVolumeFee({ block: { number: blockNumber }, where: { volumeUSD_gt: 0 } }).catch((e) => {
-        console.log(`Error: ${chainId} host: ${host}, subgraph: ${subgraphName}, MESSAGE: ${e.message}`)
+        console.error(`Error: ${chainId} host: ${host}, subgraph: ${subgraphName}, MESSAGE: ${e.message}`)
         return undefined
       })
     : sdk.PairsVolumeFee({ where: { volumeUSD_gt: 0 } }).catch((e) => {
-        console.log(`Error: ${chainId} host: ${host}, subgraph: ${subgraphName}, MESSAGE: ${e.message}`)
+        console.error(`Error: ${chainId} host: ${host}, subgraph: ${subgraphName}, MESSAGE: ${e.message}`)
         return undefined
       })
 }

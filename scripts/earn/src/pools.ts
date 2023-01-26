@@ -90,7 +90,7 @@ async function extract() {
           where,
         })
         .catch((e: string) => {
-          console.log({ e })
+          console.error({ e })
           return undefined
         })
         .catch(() => undefined)
@@ -165,7 +165,6 @@ async function transform(data: { chainId: ChainId; data: (PairsQuery | undefined
               reserve0: pair.reserve0,
               reserve1: pair.reserve1,
               totalSupply: pair.liquidity,
-              apr: feeApr,
               feeApr,
               liquidityUSD: pair.liquidityUSD,
               liquidityNative: pair.liquidityNative,
