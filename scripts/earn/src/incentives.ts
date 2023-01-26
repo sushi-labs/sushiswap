@@ -105,6 +105,7 @@ async function transform(data: ChefReturn[]): Promise<{
                 id: poolAddress.concat(':').concat(incentive.rewarder.address),
                 chainId: chainId,
                 type: farm.chefType,
+                chefType: farm.chefType,
                 apr: isNaN(incentive.apr) || incentive.apr === Infinity ? 0 : incentive.apr,
                 rewardTokenId: chainId.toString().concat(':').concat(incentive.rewardToken.address.toLowerCase()),
                 rewardPerDay: incentive.rewardPerDay,

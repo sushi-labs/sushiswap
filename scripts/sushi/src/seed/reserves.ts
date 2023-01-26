@@ -8,46 +8,35 @@ import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolVersion } from '../config.js'
 
-const prisma = new PrismaClient()
-if (process.env.CHAIN_ID === undefined) {
-  throw new Error('CHAIN_ID env var not set')
-}
+const client = new PrismaClient()
 
-if (process.env.VERSION === undefined || process.env.TYPE === undefined) {
-  throw new Error('VERSION, and TYPE env vars must be set, e.g. VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL.')
-}
+const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
-const CHAIN_ID = Number(process.env.CHAIN_ID) as ChainId
-const TYPE = process.env.TYPE
+export async function reserves(chainId: ChainId, version: ProtocolVersion, type: PoolType) {
+  try {
+    if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(version)) {
+      throw new Error(
+        `Protocol version (${version}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
+      )
+    }
+    if (type !== PoolType.CONSTANT_PRODUCT_POOL) {
+      throw new Error(`Pool type ${type} not supported, supported types: ${PoolType.CONSTANT_PRODUCT_POOL}`)
+    }
 
-if (TYPE !== PoolType.CONSTANT_PRODUCT_POOL) {
-  throw new Error(
-    `Pool type not supported, ${TYPE}. Current implementation only supports ${PoolType.CONSTANT_PRODUCT_POOL}`
-  )
-}
+    const startTime = performance.now()
+    console.log(`CHAIN_ID: ${chainId}, VERSIONS: ${CURRENT_SUPPORTED_VERSIONS}, TYPE: ${type}`)
+    const pools = await getPools(chainId, CURRENT_SUPPORTED_VERSIONS, type)
+    const poolsWithReserve = await getReserves(chainId, pools)
+    await updatePoolsWithReserve(chainId, poolsWithReserve)
 
-const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2,
-  ProtocolVersion.LEGACY,
-  ProtocolVersion.TRIDENT]
-  
-if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(process.env.VERSION as ProtocolVersion)) {
-  throw new Error(
-    `Protocol version (${process.env.VERSION}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
-  )
-}
-
-const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
-
-async function main() {
-  const startTime = performance.now()
-  
-  console.log(`CHAIN_ID: ${CHAIN_ID}, VERSIONS: ${VERSIONS}, TYPE: ${TYPE}`)
-  const pools = await getPools(CHAIN_ID, VERSIONS, TYPE)
-  const poolsWithReserve = await getReserves(CHAIN_ID, pools)
-  await updatePoolsWithReserve(CHAIN_ID, poolsWithReserve)
-  
-  const endTime = performance.now()
-  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+    const endTime = performance.now()
+    console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
 async function getPools(chainId: ChainId, versions: string[], type: string) {
@@ -92,8 +81,7 @@ async function getPoolsAddresses(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<{ id: string; address: string }[]> {
-
-  return prisma.pool.findMany({
+  return client.pool.findMany({
     take,
     skip,
     cursor,
@@ -185,7 +173,7 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
     const batch = pools.slice(i, i + batchSize)
     const requests = batch.map((pool) => {
       const id = chainId.toString().concat(':').concat(pool.address.toLowerCase())
-      return prisma.pool.update({
+      return client.pool.update({
         select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
         where: { id },
         data: {
@@ -213,13 +201,3 @@ interface PoolWithReserve {
   reserve0: string
   reserve1: string
 }
-
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })

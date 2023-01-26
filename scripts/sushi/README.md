@@ -1,37 +1,39 @@
 # Sushi seed scripts
 
-
 ## Usage
 
-### Seed
-First time seed, set `FIRST_TIME_SEED` to true, otherwise it will only fetch new pools
-```
-FIRST_TIME_SEED=true pnpm ts-node --esm --swc ./src/seed/sushiswap/seed.ts
+build and run from repo root dir
+
+```sh
+pnpm exec turbo run build --filter=sushi
+pnpm exec turbo run start --only --filter=sushi
 ```
 
+There are currently 5 different seed scripts:
 
-### Reserves
-NOTE: the current impl. only supports constant product pool
-```
-CHAIN_ID=1 VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL pnpm ts-node --esm --swc ./src/seed/reserves.ts 
+- `Protocol` - Pool and token discovery.
+- `Reserves` - does web3 calls to fetch reserves for whitelisted pools.
+- `Price` - Fetches all the whitelisted pools, uses tines for price discovery.
+- `liquidity` - Updates liquidityUSD on pools where they contain at least one approved token which has been priced.
+- `Whitelist Pools` - Looks through all the pools if they contains two approved tokens and flag the pools as whitelisted.
+
+Start a script by hitting an endpoint, see [server.ts](src/server.ts)
+Example: `https://localhost:8080/protocol?name=SushiSwap`
+
+## CI/CD
+
+### Deployment
+
+Update or add cronjobs, see [setup-schedulers.ts](src/setup-schedulers.ts) and [.env.example]
+
+```sh
+pnpm run setup
 ```
 
+## Add a new Protocol
 
-### Update token prices
-NOTE: the current impl. only supports constant product pool
-```
-CHAIN_ID=1 VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL BASE=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48 PRICE=USD pnpm ts-node --esm --swc ./src/seed/price.ts
-```
-
-
-### Update liquidity
-```
-CHAIN_ID=1 VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL pnpm ts-node --esm --swc ./src/seed/liquidity.ts
-```
-
-
-### Whitelist pools
-This needs to run frequently, it runs through every pool and checks if they contain two approved tokens and sets `isWhitelisted` attribute to `true`
-```
-pnpm ts-node --esm --swc ./src/playground/update-swap-fee.ts
-```
+- Create a seed script
+- add the protocol to the [config](src/config.ts)
+  - create a new `ProtocolName` and add it to `PROTOCOL_JOBS` (This will create the cronjob next time the `setup` command is run)
+- Update the `/protocol` endpoint
+- Build and deploy, then run `pnpm run setup` for the cronjob to appear
