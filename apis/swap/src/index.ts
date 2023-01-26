@@ -79,7 +79,16 @@ server.get('/v0', async (request) => {
     `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(0)} ms) `
   )
   const routeStartTime = performance.now()
-  const bestRoute = findSpecialRoute(
+  // const bestRoute = findSpecialRoute(
+  //   dataFetcher,
+  //   fromToken,
+  //   BigNumber.from(amount.toString()),
+  //   toToken,
+  //   gasPrice ?? 30e9
+  // )
+  
+  const bestRoute = Router.findBestRoute(
+    
     dataFetcher,
     fromToken,
     BigNumber.from(amount.toString()),

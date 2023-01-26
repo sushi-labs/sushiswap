@@ -18,7 +18,7 @@ export async function getPoolsByTokenIds(
   poolType: string,
   token0Address: string,
   token1Address: string,
-  size = 35
+  size = 50
 ) {
   const token0Id = chainId.toString().concat(':').concat(token0Address.toLowerCase())
   const token1Id = chainId.toString().concat(':').concat(token1Address.toLowerCase())
@@ -146,18 +146,33 @@ export async function getPoolsByTokenIds(
       }),
     ])
     await prisma.$disconnect()
-
+    let token0Share = 0
+    let token1Share = 0
     // TODO: Ideally this should be handled in the query, quick workaround for now
     const token0Pools = [result[0].pools0, result[0].pools1].flat()
+    const token1Pools = [result[1].pools0, result[1].pools1].flat()
+    if (token0Pools.length >= size / 2 && token1Pools.length >= size / 2) {
+      token0Share = size / 2
+      token1Share = size / 2
+    } else if (token0Pools.length >= size / 2 && token1Pools.length < size / 2) {
+      token1Share = token1Pools.length
+      token0Share = size - token1Pools.length
+    } else if (token1Pools.length >= size / 2 && token0Pools.length < size / 2) {
+      token0Share = token0Pools.length
+      token1Share = size - token0Pools.length
+    } else {
+      token0Share = token0Pools.length
+      token1Share = token1Pools.length
+    }
+    console.log(`getPoolsByTokenIds(), ${protocol}, ${result[0].symbol} share: ${token0Share}, ${result[1].symbol} share: ${token1Share}`)
+
     const filteredToken0Pools = token0Pools
       .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
-      .slice(0, token0Pools.length > size ? size : token0Pools.length)
+      .slice(0, token0Share)
 
-    const token1Pools = [result[1].pools0, result[1].pools1].flat()
     const filteredToken1Pools = token1Pools
       .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
-      .slice(0, token1Pools.length > size ? size : token1Pools.length)
-
+      .slice(0, token1Share)
 
     const poolMap: Map<string, [Token, Token]> = new Map()
     for (const pool of [filteredToken0Pools, filteredToken1Pools].flat()) {
