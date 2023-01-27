@@ -8,79 +8,58 @@ import { performance } from 'perf_hooks'
 
 import { PoolType, Price, ProtocolVersion } from '../config.js'
 
-const prisma = new PrismaClient()
-
-if (process.env.CHAIN_ID === undefined) {
-  throw new Error('CHAIN_ID env var not set')
-}
-
-if (
-  process.env.VERSION === undefined ||
-  process.env.TYPE === undefined ||
-  process.env.BASE === undefined ||
-  process.env.PRICE === undefined
-) {
-  throw new Error(
-    'VERSION, TYPE, BASE and PRICE env vars must be set, e.g. CHAIN_ID=137 VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL BASE=0x2791bca1f2de4661ed88a30c99a7a9449aa84174 PRICE=USD'
-  )
-}
-if (!isAddress(process.env.BASE)) {
-  throw new Error(`${process.env.BASE} is not a valid address`)
-}
-const BASE = process.env.BASE.toLowerCase()
-const CHAIN_ID = Number(process.env.CHAIN_ID) as ChainId
-const TYPE = process.env.TYPE
-
-if (TYPE !== PoolType.CONSTANT_PRODUCT_POOL) {
-  throw new Error(
-    `Pool type not supported, ${TYPE}. Current implementation only supports ${PoolType.CONSTANT_PRODUCT_POOL}`
-  )
-}
+const client = new PrismaClient()
 
 const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
-if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(process.env.VERSION as ProtocolVersion)) {
-  throw new Error(
-    `Protocol version (${process.env.VERSION}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(
-      ','
-    )}`
-  )
-}
+export async function prices(
+  chainId: ChainId,
+  version: ProtocolVersion,
+  type: PoolType,
+  base: string,
+  price: Price,
+  minimumLiquidity = 500000000
+) {
+  try {
+    if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(version)) {
+      throw new Error(
+        `Protocol version (${version}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
+      )
+    }
+    if (type !== PoolType.CONSTANT_PRODUCT_POOL) {
+      throw new Error(`Pool type ${type} not supported, supported types: ${PoolType.CONSTANT_PRODUCT_POOL}`)
+    }
 
-if (!Object.values(Price).includes(process.env.PRICE as Price)) {
-  throw new Error(
-    `Price (${process.env.PRICE}) not supported, supported price types: ${Object.values(Price).join(',')}`
-  )
-}
+    if (!Object.values(Price).includes(price)) {
+      throw new Error(`Price (${price}) not supported, supported price types: ${Object.values(Price).join(',')}`)
+    }
+    if (!isAddress(base)) {
+      throw new Error(`${base} is not a valid address`)
+    }
 
+    const startTime = performance.now()
 
-const PRICE = process.env.PRICE as Price
-const MINIMUM_LIQUIDITY = process.env.MINIMUM_LIQUIDITY ? Number(process.env.MINIMUM_LIQUIDITY) : 500000000 // Defaults to 500 USD when base is usdc, only base being used atm
+    console.log(`Arguments: CHAIN_ID: ${chainId}, VERSION: ${version}, TYPE: ${type}, BASE: ${base}, PRICE: ${price}`)
 
+    const baseToken = await getBaseToken(chainId, base)
+    const pools = await getPools(chainId)
 
-const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
+    const { constantProductPools, tokens } = transform(pools)
+    const tokensToUpdate = calculatePrices(constantProductPools, minimumLiquidity, baseToken, tokens)
+    await updateTokenPrices(price, tokensToUpdate)
 
-async function main() {
-  const startTime = performance.now()
-
-  console.log(
-    `Arguments: CHAIN_ID: ${CHAIN_ID}, VERSION: ${process.env.VERSION}, TYPE: ${TYPE}, BASE: ${process.env.BASE}, PRICE: ${process.env.PRICE}`
-  )
-
-  const baseToken = await getBaseToken(CHAIN_ID, BASE)
-  const pools = await getPools(CHAIN_ID)
-
-
-  const { constantProductPools, tokens } = transform(pools)
-  const tokensToUpdate = calculatePrices(constantProductPools, baseToken, tokens)
-  await updateTokenPrices(tokensToUpdate)
-
-  const endTime = performance.now()
-  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+    const endTime = performance.now()
+    console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
 async function getBaseToken(chainId: ChainId, address: string) {
-  const baseToken = await prisma.token.findFirst({
+  const baseToken = await client.token.findFirst({
     select: {
       address: true,
       name: true,
@@ -135,7 +114,7 @@ async function getPoolsByPagination(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<Pool[]> {
-  return prisma.pool.findMany({
+  return client.pool.findMany({
     take,
     skip,
     cursor,
@@ -154,7 +133,7 @@ async function getPoolsByPagination(
       chainId,
       type: PoolType.CONSTANT_PRODUCT_POOL,
       version: {
-        in: VERSIONS,
+        in: CURRENT_SUPPORTED_VERSIONS,
       },
     },
   })
@@ -164,7 +143,6 @@ function transform(pools: Pool[]) {
   const tokens: Map<string, Token> = new Map()
   const constantProductPools: ConstantProductRPool[] = []
   pools.forEach((pool) => {
-
     const token0 = {
       address: pool.token0.address,
       name: pool.token0.name,
@@ -177,7 +155,7 @@ function transform(pools: Pool[]) {
     }
     if (!tokens.has(token0.address)) tokens.set(token0.address, pool.token0)
     if (!tokens.has(token1.address)) tokens.set(token1.address, pool.token1)
-    
+
     constantProductPools.push(
       new ConstantProductRPool(
         pool.address,
@@ -194,11 +172,12 @@ function transform(pools: Pool[]) {
 
 function calculatePrices(
   constantProductPools: ConstantProductRPool[],
+  minimumLiquidity: number | undefined,
   baseToken: { symbol: string; address: string; name: string; decimals: number },
   tokens: Map<string, Token>
 ) {
   const startTime = performance.now()
-  const results = calcTokenPrices(constantProductPools, baseToken, MINIMUM_LIQUIDITY)
+  const results = calcTokenPrices(constantProductPools, baseToken, minimumLiquidity)
   const endTime = performance.now()
   console.log(`calcTokenPrices() found ${results.size} prices (${((endTime - startTime) / 1000).toFixed(1)}s). `)
 
@@ -206,7 +185,7 @@ function calculatePrices(
 
   for (const [rToken, value] of results.entries()) {
     const token = tokens.get(rToken.address)
-    if (!token){
+    if (!token) {
       console.log(`Token not found: ${rToken.symbol}~${rToken.address}~${value}`)
       continue
     }
@@ -223,7 +202,7 @@ function calculatePrices(
   return tokensWithPrices
 }
 
-async function updateTokenPrices(tokens: { id: string; price: number }[]) {
+async function updateTokenPrices(price: Price, tokens: { id: string; price: number }[]) {
   const startTime = performance.now()
   const batchSize = 250
   let updatedCount = 0
@@ -231,8 +210,8 @@ async function updateTokenPrices(tokens: { id: string; price: number }[]) {
   for (let i = 0; i < tokens.length; i += batchSize) {
     const batch = tokens.slice(i, i + batchSize)
     const requests = batch.map((token) => {
-      const data = PRICE === Price.USD ? { derivedUSD: token.price } : { derivedETH: token.price }
-      return prisma.token.update({
+      const data = price === Price.USD ? { derivedUSD: token.price } : { derivedETH: token.price }
+      return client.token.update({
         select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
         where: { id: token.id },
         data,
@@ -256,12 +235,3 @@ interface Pool {
   reserve0: string
   reserve1: string
 }
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })

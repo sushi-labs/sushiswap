@@ -20,7 +20,7 @@ import {
   USDT_ADDRESS,
   WNATIVE,
 } from '@sushiswap/currency'
-import { DataFetcher, findSpecialRoute, LiquidityProviders, PoolFilter, Router } from '@sushiswap/router'
+import { DataFetcher, findSpecialRoute, LiquidityProviders, PoolFilter, Router, RPParams } from '@sushiswap/router'
 import { BridgeBento, getBigNumber, MultiRoute, RPool, StableSwapRPool } from '@sushiswap/tines'
 import { expect } from 'chai'
 import { BigNumber, Contract } from 'ethers'
@@ -58,6 +58,7 @@ interface TestEnvironment {
   provider: any
   rp: Contract
   user: SignerWithAddress
+  user2: SignerWithAddress
   dataFetcher: DataFetcher
 }
 
@@ -78,13 +79,14 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
 
   console.log(`Network: ${chainName[chainId]}, Forked Block: ${provider.blockNumber}`)
   //console.log('    User creation ...')
-  const [Alice] = await ethers.getSigners()
+  const [Alice, Bob] = await ethers.getSigners()
 
   return {
     chainId,
     provider,
     rp: routeProcessor,
     user: Alice,
+    user2: Bob,
     dataFetcher,
   }
 }
@@ -200,10 +202,81 @@ async function updMakeSwap(
   console.log('')
   //console.log('Wait data update for min block', waitBlock)
   await dataUpdated(env, waitBlock)
+
   const res = await makeSwap(env, fromToken, amountIn, toToken, providers, poolFilter)
   expect(res).not.undefined
   if (res === undefined) return [undefined, waitBlock]
   else return res
+}
+
+async function checkTransferAndRoute(
+  env: TestEnvironment,
+  fromToken: Type,
+  toToken: Type,
+  lastCallResult: BigNumber | [BigNumber | undefined, number]
+): Promise<[BigNumber | undefined, number]> {
+  const [amountIn, waitBlock] = lastCallResult instanceof BigNumber ? [lastCallResult, 1] : lastCallResult
+  if (amountIn === undefined) return [undefined, waitBlock] // previous swap failed
+  await dataUpdated(env, waitBlock)
+
+  if (fromToken instanceof Token) {
+    const WrappedBaseTokenContract = await new ethers.Contract(fromToken.address, erc20Abi, env.user)
+    await WrappedBaseTokenContract.connect(env.user).approve(env.rp.address, amountIn)
+  }
+
+  env.dataFetcher.fetchPoolsForToken(fromToken, toToken)
+  const waiter = new Waiter()
+  const router = new Router(env.dataFetcher, fromToken, amountIn, toToken, 30e9)
+  router.startRouting(() => {
+    // const printed = router.getCurrentRouteHumanString()
+    // console.log(printed)
+    waiter.resolve()
+  })
+  await waiter.wait()
+  router.stopRouting()
+
+  const rpParams = router.getCurrentRouteRPParams(env.user.address, env.rp.address) as RPParams
+  const transferValue = getBigNumber(0.02 * Math.pow(10, Native.onChain(env.chainId).decimals))
+  rpParams.value = (rpParams.value || BigNumber.from(0)).add(transferValue)
+
+  const balanceUser2Before = await env.user2.getBalance()
+
+  let balanceOutBNBefore: BigNumber
+  let toTokenContract: Contract | undefined = undefined
+  if (toToken instanceof Token) {
+    toTokenContract = await new ethers.Contract(toToken.address, weth9Abi, env.user)
+    balanceOutBNBefore = await toTokenContract.connect(env.user).balanceOf(env.user.address)
+  } else {
+    balanceOutBNBefore = await env.user.getBalance()
+  }
+  const tx = await env.rp.transferValueAndprocessRoute(
+    env.user2.address,
+    transferValue,
+    rpParams.tokenIn,
+    rpParams.amountIn,
+    rpParams.tokenOut,
+    rpParams.amountOutMin,
+    rpParams.to,
+    rpParams.routeCode,
+    { value: rpParams.value }
+  )
+  const receipt = await tx.wait()
+
+  let balanceOutBN: BigNumber
+  if (toTokenContract) {
+    balanceOutBN = (await toTokenContract.connect(env.user).balanceOf(env.user.address)).sub(balanceOutBNBefore)
+  } else {
+    balanceOutBN = (await env.user.getBalance()).sub(balanceOutBNBefore)
+    balanceOutBN = balanceOutBN.add(receipt.effectiveGasPrice.mul(receipt.gasUsed))
+    balanceOutBN = balanceOutBN.add(transferValue)
+  }
+  expect(balanceOutBN.gte(rpParams.amountOutMin)).equal(true)
+
+  const balanceUser2After = await env.user2.getBalance()
+  const transferredValue = balanceUser2After.sub(balanceUser2Before)
+  expect(transferredValue.eq(transferValue)).equal(true)
+
+  return [balanceOutBN, receipt.blockNumber]
 }
 
 // skipped because took too long time. Unskip to check the RP
@@ -213,6 +286,7 @@ describe('End-to-end Router test', async function () {
   let intermidiateResult: [BigNumber | undefined, number] = [undefined, 1]
   let testTokensSet: (Type | undefined)[]
   let SUSHI_LOCAL: Token
+  let USDC_LOCAL: Token
 
   before(async () => {
     env = await getTestEnvironment()
@@ -225,6 +299,7 @@ describe('End-to-end Router test', async function () {
     type FRAX_CHAINS = keyof typeof FRAX_ADDRESS
     type FXS_CHAINS = keyof typeof FXS_ADDRESS
     SUSHI_LOCAL = SUSHI[chainId as SUSHI_CHAINS]
+    USDC_LOCAL = USDC[chainId as USDC_CHAINS]
     testTokensSet = [
       Native.onChain(chainId),
       WNATIVE[chainId],
@@ -306,12 +381,21 @@ describe('End-to-end Router test', async function () {
   it('Special Router', async function () {
     env.dataFetcher.fetchPoolsForToken(Native.onChain(chainId), SUSHI_LOCAL)
     const route = findSpecialRoute(env.dataFetcher, Native.onChain(chainId), getBigNumber(1 * 1e18), SUSHI_LOCAL, 30e9)
-    // if (route.priceImpact !== undefined && route.priceImpact < 0.005) {
-    //   // All pools should be from preferrable list
-    //   const pools = env.dataFetcher.getCurrentPoolCodeList(PreferrableLiquidityProviders).map((pc) => pc.pool.address)
-    //   const poolSet = new Set(pools)
-    //   route.legs.forEach((l) => expect(poolSet.has(l.poolAddress)).true)
-    // }
     expect(route).not.undefined
+  })
+
+  it('Transfer value and route 1', async function () {
+    intermidiateResult[0] = getBigNumber(1e18)
+    intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), SUSHI_LOCAL, intermidiateResult)
+    intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, USDC_LOCAL, intermidiateResult)
+    intermidiateResult = await checkTransferAndRoute(env, USDC_LOCAL, Native.onChain(chainId), intermidiateResult)
+  })
+
+  it('Transfer value and route 2', async function () {
+    intermidiateResult[0] = getBigNumber(1e18)
+    intermidiateResult = await checkTransferAndRoute(env, Native.onChain(chainId), WNATIVE[chainId], intermidiateResult)
+    intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], SUSHI_LOCAL, intermidiateResult)
+    intermidiateResult = await checkTransferAndRoute(env, SUSHI_LOCAL, WNATIVE[chainId], intermidiateResult)
+    intermidiateResult = await checkTransferAndRoute(env, WNATIVE[chainId], Native.onChain(chainId), intermidiateResult)
   })
 })

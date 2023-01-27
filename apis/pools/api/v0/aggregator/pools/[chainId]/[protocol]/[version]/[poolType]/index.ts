@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
 import { PoolType } from '../../../../../../../../lib'
-import { getPoolsByTokenIds } from '../../../../../../../../lib/api'
+import { getAggregatorPoolsByTokenIds } from '../../../../../../../../lib/api'
 
 const schema = z.object({
   chainId: z.coerce
@@ -30,7 +30,7 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     return response.status(400).send('token0 and token1 must be different')
   }
 
-  const pools = await getPoolsByTokenIds(
+  const pools = await getAggregatorPoolsByTokenIds(
     chainId,
     protocol,
     version,

@@ -360,3 +360,7 @@ export const BCT_ADDRESS = {
 export const KLIMA_ADDRESS = {
   [ChainId.POLYGON]: '0x4e78011Ce80ee02d2c3e649Fb657E45898257815',
 } as const
+
+export const QUICK_ADDRESS = {
+  [ChainId.POLYGON]: '0x831753dd7087cac61ab5644b308642cc1c33dc13',
+} as const

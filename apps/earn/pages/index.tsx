@@ -82,7 +82,7 @@ const _Pools = ({ selectedNetworks }: { selectedNetworks: typeof SUPPORTED_CHAIN
             </div>
           </div>
         </section>
-        <SushiBarSection />
+        {/* <SushiBarSection /> */}
         <PoolsFiltersProvider selectedNetworks={selectedNetworks}>
           <PoolsSection />
         </PoolsFiltersProvider>

@@ -1,24 +1,52 @@
+// eslint-disable-next-line
+import type * as _ from '@prisma/client/runtime'
+
 import prisma from '@sushiswap/database'
 
 import type { PoolType } from '.'
 
-export type PoolApiArgs = {
-  chainIds: number[] | undefined
-  poolType: PoolType | undefined
-  isIncentivized: boolean | undefined
-  isWhitelisted: boolean | undefined
-  cursor: string | undefined
+type PartialWithUndefined<T extends object> = Partial<{
+  [K in keyof T]: T[K] | undefined
+}>
+
+export type PoolApiArgs = PartialWithUndefined<{
+  chainIds: number[]
+  poolTypes: PoolType[]
+  isIncentivized: boolean
+  isWhitelisted: boolean
+  cursor: string
   orderBy: string
   orderDir: 'asc' | 'desc'
-}
+  count: boolean
+}>
 
-export async function getEarnPool(chainId: number, address: string): Promise<any> {
+export async function getEarnPool(chainId: number, address: string) {
   const id = `${chainId}:${address.toLowerCase()}`
   const pool = await prisma.sushiPool.findFirstOrThrow({
     include: {
       token0: true,
       token1: true,
-      incentives: true,
+      incentives: {
+        select: {
+          id: true,
+          pid: true,
+          chainId: true,
+          chefType: true,
+          apr: true,
+          rewarderAddress: true,
+          rewarderType: true,
+          rewardPerDay: true,
+          rewardToken: {
+            select: {
+              id: true,
+              address: true,
+              name: true,
+              symbol: true,
+              decimals: true,
+            },
+          },
+        },
+      },
     },
     where: {
       id,
@@ -29,12 +57,10 @@ export async function getEarnPool(chainId: number, address: string): Promise<any
   return pool
 }
 
-export async function getEarnPools(args: PoolApiArgs): Promise<any> {
-  const orderBy = { [args.orderBy]: args.orderDir }
+type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
-  let where = {}
-  let skip = 0
-  let cursor = {}
+function parseWhere(args: PoolApiArgs) {
+  let where: PrismaArgs['where'] = {}
 
   if (args.chainIds) {
     where = {
@@ -42,9 +68,9 @@ export async function getEarnPools(args: PoolApiArgs): Promise<any> {
     }
   }
 
-  if (args.poolType) {
+  if (args.poolTypes) {
     where = {
-      type: args.poolType,
+      type: { in: args.poolTypes },
       ...where,
     }
   }
@@ -53,13 +79,6 @@ export async function getEarnPools(args: PoolApiArgs): Promise<any> {
     where = {
       isIncentivized: args.isIncentivized,
       ...where,
-    }
-  }
-
-  if (args.cursor) {
-    skip = 1
-    cursor = {
-      cursor: { id: args.cursor },
     }
   }
 
@@ -73,6 +92,21 @@ export async function getEarnPools(args: PoolApiArgs): Promise<any> {
       },
       ...where,
     }
+  }
+
+  return where
+}
+
+export async function getEarnPools(args: PoolApiArgs) {
+  const orderBy: PrismaArgs['orderBy'] = args.orderBy ? { [args.orderBy]: args.orderDir } : { ['liquidityUSD']: 'desc' }
+  const where: PrismaArgs['where'] = parseWhere(args)
+
+  let skip: PrismaArgs['skip'] = 0
+  let cursor: { cursor: PrismaArgs['cursor'] } | object = {}
+
+  if (args.cursor) {
+    skip = 1
+    cursor = { cursor: { id: args.cursor } }
   }
 
   const pools = await prisma.sushiPool.findMany({
@@ -126,6 +160,8 @@ export async function getEarnPools(args: PoolApiArgs): Promise<any> {
           chainId: true,
           chefType: true,
           apr: true,
+          rewarderAddress: true,
+          rewarderType: true,
           rewardPerDay: true,
           rewardToken: {
             select: {
@@ -140,6 +176,7 @@ export async function getEarnPools(args: PoolApiArgs): Promise<any> {
       },
     },
   })
+
   await prisma.$disconnect()
   return pools ? pools : []
 }
@@ -192,7 +229,18 @@ export async function getAggregatorTopPools(
   return pools ? pools : []
 }
 
-export async function getPoolsByTokenIds(
+export async function getEarnPoolCount(args: PoolApiArgs) {
+  const where: PrismaArgs['where'] = parseWhere(args)
+
+  const count = await prisma.sushiPool.count({
+    where,
+  })
+
+  await prisma.$disconnect()
+  return count ? count : null
+}
+
+export async function getAggregatorPoolsByTokenIds(
   chainId: number,
   protocol: string,
   version: string,
@@ -201,7 +249,7 @@ export async function getPoolsByTokenIds(
   token1: string,
   size: number,
   excludeTopPoolsSize: number
-): Promise<any> {
+) {
   const token0Id = chainId.toString().concat(':').concat(token0.toLowerCase())
   const token1Id = chainId.toString().concat(':').concat(token1.toLowerCase())
   const select = {
@@ -356,7 +404,7 @@ export async function getPoolsByTokenIds(
   ])
 
   await prisma.$disconnect()
-  
+
   let token0PoolSize = 0
   let token1PoolSize = 0
   const token0Pools = [result[0].pools0, result[0].pools1].flat()

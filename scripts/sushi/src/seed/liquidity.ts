@@ -6,47 +6,36 @@ import { performance } from 'perf_hooks'
 
 import { PoolType, ProtocolVersion } from '../config.js'
 
-const prisma = new PrismaClient()
+const client = new PrismaClient()
 
-if (process.env.CHAIN_ID === undefined) {
-  throw new Error('CHAIN_ID env var not set')
-}
+const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
 
-if (process.env.VERSION === undefined || process.env.TYPE === undefined) {
-  throw new Error('VERSION, and TYPE env vars must be set, e.g. VERSION=V2 TYPE=CONSTANT_PRODUCT_POOL.')
-}
+export async function liquidity(chainId: ChainId, version: ProtocolVersion, type: PoolType) {
+  try {
+    if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(version)) {
+      throw new Error(
+        `Protocol version (${version}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
+      )
+    }
+    if (type !== PoolType.CONSTANT_PRODUCT_POOL) {
+      throw new Error(`Pool type ${type} not supported, supported types: ${PoolType.CONSTANT_PRODUCT_POOL}`)
+    }
 
-const CHAIN_ID = Number(process.env.CHAIN_ID) as ChainId
-const TYPE = process.env.TYPE
+    const startTime = performance.now()
+    console.log(`CHAIN_ID: ${chainId}, VERSIONS: ${CURRENT_SUPPORTED_VERSIONS}, TYPE: ${type}`)
 
-if (TYPE !== PoolType.CONSTANT_PRODUCT_POOL) {
-  throw new Error(
-    `Pool type not supported, ${TYPE}. Current implementation only supports ${PoolType.CONSTANT_PRODUCT_POOL}`
-  )
-}
+    const pools = await getPools(chainId)
+    const poolsToUpdate = transform(pools)
+    await updatePools(poolsToUpdate)
 
-const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2,
-  ProtocolVersion.LEGACY,
-  ProtocolVersion.TRIDENT]
-  
-if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(process.env.VERSION as ProtocolVersion)) {
-  throw new Error(
-    `Protocol version (${process.env.VERSION}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
-  )
-}
-
-const VERSIONS = ['V2', 'LEGACY', 'TRIDENT']
-
-async function main() {
-  const startTime = performance.now()
-  console.log(`CHAIN_ID: ${CHAIN_ID}, VERSIONS: ${VERSIONS}, TYPE: ${TYPE}`)
-
-  const pools = await getPools(CHAIN_ID)
-  const poolsToUpdate = transform(pools)
-  await updatePools(poolsToUpdate)
-
-  const endTime = performance.now()
-  console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+    const endTime = performance.now()
+    console.log(`COMPLETED (${((endTime - startTime) / 1000).toFixed(1)}s). `)
+  } catch (e) {
+    console.error(e)
+    await client.$disconnect()
+  } finally {
+    await client.$disconnect()
+  }
 }
 
 async function getPools(chainId: ChainId) {
@@ -74,7 +63,6 @@ async function getPools(chainId: ChainId) {
     )
   } while (cursor != null)
 
-
   const endTime = performance.now()
 
   console.log(`Fetched ${results.length} pools (${((endTime - startTime) / 1000).toFixed(1)}s). `)
@@ -87,8 +75,7 @@ async function getPoolsByPagination(
   skip?: number,
   cursor?: Prisma.PoolWhereUniqueInput
 ): Promise<Pool[]> {
-
-  return prisma.pool.findMany({
+  return client.pool.findMany({
     take,
     skip,
     cursor,
@@ -105,7 +92,10 @@ async function getPoolsByPagination(
     },
     where: {
       chainId,
-      type: 'CONSTANT_PRODUCT_POOL',
+      type: PoolType.CONSTANT_PRODUCT_POOL,
+      version: {
+        in: CURRENT_SUPPORTED_VERSIONS,
+      },
       reserve0: {
         not: '0',
       },
@@ -165,7 +155,7 @@ async function updatePools(pools: PoolWithLiquidity[]) {
   for (let i = 0; i < pools.length; i += batchSize) {
     const batch = pools.slice(i, i + batchSize)
     const requests = batch.map((pool) => {
-      return prisma.pool.update({
+      return client.pool.update({
         select: { id: true }, // select only the `id` field, otherwise it returns everything and we don't use the data after updating.
         where: { id: pool.id },
         data: {
@@ -182,28 +172,18 @@ async function updatePools(pools: PoolWithLiquidity[]) {
 }
 
 interface Pool {
-  id: string;
-  chainId: number;
-  address: string;
-  token0: PrismaToken;
-  token1: PrismaToken;
-  swapFee: number;
-  type: string;
-  reserve0: string;
-  reserve1: string;
+  id: string
+  chainId: number
+  address: string
+  token0: PrismaToken
+  token1: PrismaToken
+  swapFee: number
+  type: string
+  reserve0: string
+  reserve1: string
 }
 
 interface PoolWithLiquidity {
   id: string
   liquidityUSD: string
 }
-
-main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
