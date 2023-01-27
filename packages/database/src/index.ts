@@ -35,12 +35,12 @@ const cacheMiddleware = createPrismaRedisCache({
     options: { client: redis, invalidation: { referencesTTL: 900 } },
   },
   cacheTime: 900,
-  onHit: (key: string) => {
-    console.log('Hit: ✅', key)
-  },
-  onMiss: (key: string) => {
-    console.log('Miss: ❌', key)
-  },
+  // onHit: (key: string) => {
+  //   console.log('Hit: ✅', key)
+  // },
+  // onMiss: (key: string) => {
+  //   console.log('Miss: ❌', key)
+  // },
 })
 
 prisma.$use(cacheMiddleware)

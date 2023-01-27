@@ -8,9 +8,10 @@ import { Address, fetchBlockNumber, readContracts, watchBlockNumber, watchContra
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
 
+import { getPoolsByTokenIds, getTopPools } from '../../lib/api'
 import { ConstantProductPoolCode } from '../../pools/ConstantProductPool'
 import type { PoolCode } from '../../pools/PoolCode'
-import { LiquidityProvider } from './LiquidityProvider'
+import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
 // const getReservesAbi = [
 //   {
@@ -65,7 +66,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   blockListener?: () => void
   unwatchBlockNumber?: () => void
   unwatchMulticall?: () => void
-  unwatchSyncEvents?: (() => void)[]
+  unwatchSyncEvents: Map<string, () => void> = new Map()
   fee = 0.003
   isInitialized = false
   abstract factory: { [chainId: number]: string }
@@ -74,102 +75,28 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     super(chainId)
   }
 
-
-
   // TODO: remove too often updates if the network generates too many blocks
   async initialize(blockNumber: number) {
-    if (this.poolCodes.length == 0) return
-    console.debug(`Init protocol: ${this.getType()}, poolCount: ${this.poolCodes.length}`)
+    // if (this.poolCodes.length == 0) return
+    const type = this.getType()
 
-    const poolAddr = new Map<string, RPool>()
-    this.poolCodes.forEach((p) => poolAddr.set(p.pool.address, p.pool))
-    const addrs = this.poolCodes.map((p) => p.pool.address)
-
-    // const reserves = convertToBigNumberPair(
-    //   await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
-    // )
-    const reserves = await readContracts({
-      allowFailure: true,
-      contracts: addrs.map((addr) => ({
-        address: addr as Address,
-        chainId: this.chainId,
-        abi: getReservesAbi,
-        functionName: 'getReserves',
-      })),
-    })
-
-    addrs.forEach((addr, i) => {
-      const res = reserves[i]
-      if (res !== null && res !== undefined) {
-        const pool = poolAddr.get(addr) as RPool
-        if (!res[0].eq(pool.reserve0) || !res[1].eq(pool.reserve1)) {
-          pool.updateReserves(res[0], res[1])
-          ++this.stateId
-        }
-      }
-    })
-
-    this.unwatchSyncEvents = this.poolCodes.map((p) =>
-      watchContractEvent(
-        {
-          address: p.pool.address as Address,
-          abi: syncAbi,
-          eventName: 'Sync',
-          chainId: this.chainId,
-        },
-        (reserve0, reserve1) => {
-          const res0 = BigNumber.from(reserve0)
-          const res1 = BigNumber.from(reserve1)
-          // console.debug(
-          //   `${this.lastUpdateBlock} - Reserve updated for ${p.poolName} ${p.pool.token0.symbol}/${p.pool.token1.symbol}, from ${p.pool.reserve0}/${p.pool.reserve1} to ${res0}/${res1}`
-          // )
-          console.debug(
-            `${this.lastUpdateBlock} - Reserve updated for ${p.poolName} ${p.pool.token0.symbol}/${p.pool.token1.symbol}.`
-          )
-          p.pool.updateReserves(res0, res1)
-        }
-      )
+    const topPools = await getTopPools(
+      this.chainId,
+      type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
+      type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+      'CONSTANT_PRODUCT_POOL'
     )
-    this.isInitialized = true
-    this.lastUpdateBlock = blockNumber
-  }
-
-  async getPools(tokens: Token[]): Promise<void> {
-    if (!(this.chainId in this.factory)) {
-      // No sushiswap for this network
-      this.lastUpdateBlock = -1
+    if (topPools.size > 0) {
+      console.debug(`${this.chainId}~${this.lastUpdateBlock} - INIT: ${this.getType()}, top pools found: ${topPools.size}`)
+    } else {
+      console.debug(`${this.chainId}~${this.lastUpdateBlock} - INIT: ${this.getType()}, NO pools found.`)
+      this.isInitialized = true
       return
     }
+    // TODO: move this to an API, if it returns 0, use currency combination as fallback?
 
-    // tokens deduplication
-    const tokenMap = new Map<string, Token>()
-    tokens.forEach((t) => tokenMap.set(t.address.toLocaleLowerCase().substring(2).padStart(40, '0'), t))
-    const tokensDedup = Array.from(tokenMap.values())
-    // tokens sorting
-    const tok0: [string, Token][] = tokensDedup.map((t) => [
-      t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
-      t,
-    ])
-    tokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([_, t]) => t)
-
-    const poolAddr: Map<string, [Token, Token]> = new Map()
-    for (let i = 0; i < tokens.length; ++i) {
-      const t0 = tokens[i]
-      for (let j = i + 1; j < tokens.length; ++j) {
-        const t1 = tokens[j]
-
-        const addr = this._getPoolAddress(t0, t1)
-        if (this.fetchedPools.get(addr) === undefined) {
-          poolAddr.set(addr, [t0, t1])
-          this.fetchedPools.set(addr, 1)
-        }
-      }
-    }
-
+    const poolAddr = topPools
     const addrs = Array.from(poolAddr.keys())
-    // const reserves = convertToBigNumberPair(
-    //   await this.multiCallProvider.multiContractCall(addrs, getReservesAbi, 'getReserves', [])
-    // )
 
     const reserves = await readContracts({
       allowFailure: true,
@@ -189,6 +116,96 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.poolCodes.push(pc)
         ++this.stateId
+      } else {
+        console.error("initialize() - Failed to fetch reserves for pool: " + addr + "")
+      }
+    })
+
+    this.poolCodes.forEach((p) => {
+      if (this.unwatchSyncEvents.has(p.pool.address)) return
+      this.unwatchSyncEvents.set(
+        p.pool.address,
+        watchContractEvent(
+          {
+            address: p.pool.address as Address,
+            abi: syncAbi,
+            eventName: 'Sync',
+            chainId: this.chainId,
+          },
+          (reserve0, reserve1) => {
+            const res0 = BigNumber.from(reserve0)
+            const res1 = BigNumber.from(reserve1)
+            console.debug(
+              `${this.chainId}~${this.lastUpdateBlock} - SYNC ${p.poolName}, ${p.pool.token0.symbol}/${p.pool.token1.symbol}.`
+            )
+            p.pool.updateReserves(res0, res1)
+          }
+        )
+      )
+    })
+
+    this.isInitialized = true
+    this.lastUpdateBlock = blockNumber
+  }
+
+  async getPools(tokens: Token[]): Promise<void> {
+    if (!(this.chainId in this.factory)) {
+      // No sushiswap for this network
+      this.lastUpdateBlock = -1
+      return
+    }
+
+    const type = this.getType()
+
+    const poolsOnDemand = await getPoolsByTokenIds(
+      this.chainId,
+      type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
+      type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
+      'CONSTANT_PRODUCT_POOL',
+      tokens[0].address,
+      tokens[1].address
+    )
+
+    const poolAddr = new Map<string, [Token, Token]>()
+
+    // ignore fetching reserves for the ones that are already in memory
+    poolsOnDemand.forEach((value, key) => {
+      if (!this.poolCodes.some((p) => p.pool.address === key)) {
+        poolAddr.set(key, value)
+      }
+    })
+
+    if (poolAddr.size === 0) {
+      console.debug(`${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()}, Retrieved ${poolsOnDemand.size} pools, but none new`)
+      return
+    } else {
+      console.debug(
+        `${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()}, Begin fetching reserves for ${poolAddr.size}/${poolsOnDemand.size} pools`
+      )
+    }
+
+    const addrs = Array.from(poolAddr.keys())
+
+    const reserves = await readContracts({
+      allowFailure: true,
+      contracts: addrs.map((addr) => ({
+        address: addr as Address,
+        chainId: this.chainId,
+        abi: getReservesAbi,
+        functionName: 'getReserves',
+      })),
+    })
+
+    addrs.forEach((addr, i) => {
+      const res = reserves[i]
+      if (res !== null && res !== undefined) {
+        const toks = poolAddr.get(addr) as [Token, Token]
+        const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
+        const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
+        this.poolCodes.push(pc)
+        ++this.stateId
+      } else {
+        console.error("getPools() - Failed to fetch reserves for pool: " + addr + "")
       }
     })
 
@@ -220,36 +237,14 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.stopFetchPoolsData()
     this.poolCodes = []
     this.fetchedPools.clear()
-    this.getPools(BASES_TO_CHECK_TRADES_AGAINST[this.chainId]) // starting the process
-    // async, otherwise we wont have the pools ready and they are needed for the event reader
 
-    // setup contract read events for all pools
-    // this.unwatchSyncEvents = this.poolCodes.map((p) =>
-    //   watchContractEvent(
-    //     {
-    //       address: p.pool.address as Address,
-    //       abi: syncAbi,
-    //       eventName: 'Sync',
-    //       chainId: this.chainId,
-    //     },
-    //     (reserve0, reserve1) => {
-    //       console.log("reserve updated ",p.poolName, reserve0, reserve1)
-    //       p.pool.updateReserves(BigNumber.from(reserve0), BigNumber.from(reserve1))
-    //     }
-    //   )
-    // )
-
-    // this.blockListener = () => {
-    //   this.updatePoolsData()
-    // }
-    // this.chainDataProvider.on('block', this.blockListener)
     this.unwatchBlockNumber = watchBlockNumber(
       {
         listen: true,
       },
       (blockNumber) => {
         this.lastUpdateBlock = blockNumber
-        if (!this.isInitialized && this.poolCodes.length > 0) {
+        if (!this.isInitialized) {
           this.initialize(blockNumber)
         }
       }
@@ -257,7 +252,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   fetchPoolsForToken(t0: Token, t1: Token): void {
-    this.getPools(this._getProspectiveTokens(t0, t1))
+    // this.getPools(this._getProspectiveTokens(t0, t1))
+    this.getPools([t0, t1])
   }
 
   getCurrentPoolList(): PoolCode[] {

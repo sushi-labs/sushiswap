@@ -8,14 +8,15 @@ export const useTrade = () => {
 
   const { data: slippageTolerance } = useSlippageTolerance()
   const { data: feeData } = useFeeData()
-
+  const gasPrice = 211042625260 // TODO: REMOVE, temp
   const sameChainTrade = _useTrade({
     chainId: network0,
     fromToken: token0,
     toToken: token1,
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice?.toNumber(),
+    // gasPrice: feeData?.gasPrice?.toNumber(),
+    gasPrice,
     recipient,
     enabled: network0 === network1,
   })
@@ -26,7 +27,8 @@ export const useTrade = () => {
     toToken: token1,
     amount: amount,
     slippagePercentage: slippageTolerance === 'AUTO' ? '0.5' : slippageTolerance,
-    gasPrice: feeData?.gasPrice?.toNumber(),
+    // gasPrice: feeData?.gasPrice?.toNumber(),
+    gasPrice,
     recipient,
     enabled: network0 !== network1,
   })

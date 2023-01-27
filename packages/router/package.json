@@ -52,6 +52,7 @@
     "tiny-warning": "^1.0.3"
   },
   "devDependencies": {
+    "@sushiswap/database": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -62,5 +63,13 @@
     "eslint": "8.29.0",
     "tsup": "6.5.0",
     "typescript": "4.9.4"
+  },
+  "peerDependencies": {
+    "@sushiswap/database": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@sushiswap/database": {
+      "optional": true
+    }
   }
 }

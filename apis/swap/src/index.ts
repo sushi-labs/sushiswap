@@ -56,6 +56,8 @@ export function getRouteProcessorAddressForChainId(chainId: ChainId) {
   if (!(chainId in routeProcessorExports)) {
     throw new Error(`Unsupported route processor network for ${chainId}`)
   }
+
+
   return routeProcessorExports[chainId.toString() as keyof Omit<typeof routeProcessorExports, '31337'>][0].contracts
     .RouteProcessor.address
 }
@@ -79,7 +81,16 @@ server.get('/v0', async (request) => {
     `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(0)} ms) `
   )
   const routeStartTime = performance.now()
-  const bestRoute = findSpecialRoute(
+  // const bestRoute = findSpecialRoute(
+  //   dataFetcher,
+  //   fromToken,
+  //   BigNumber.from(amount.toString()),
+  //   toToken,
+  //   gasPrice ?? 30e9
+  // )
+  
+  const bestRoute = Router.findBestRoute(
+    
     dataFetcher,
     fromToken,
     BigNumber.from(amount.toString()),
@@ -150,7 +161,7 @@ const start = async () => {
   } catch (err) {
     server.log.error(err)
     for (const dataFetcher of dataFetcherMap.values()) {
-      dataFetcher.startDataFetching()
+      dataFetcher.stopDataFetching()
     }
     process.exit(1)
   }
