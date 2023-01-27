@@ -133,6 +133,7 @@ export async function getPools(args: PoolApiArgs) {
       type: true,
       swapFee: true,
       twapEnabled: true,
+      totalSupply: true,
       liquidityUSD: true,
       volumeUSD: true,
       feeApr: true,
