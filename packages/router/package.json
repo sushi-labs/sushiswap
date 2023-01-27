@@ -33,6 +33,7 @@
     "preset": "@sushiswap/jest-config/node"
   },
   "dependencies": {
+    "node-fetch": "2.6.6",
     "@ethersproject/abi": "5.7.0",
     "@ethersproject/address": "5.7.0",
     "@ethersproject/bignumber": "5.7.0",
@@ -52,7 +53,6 @@
     "tiny-warning": "^1.0.3"
   },
   "devDependencies": {
-    "@sushiswap/database": "workspace:*",
     "@sushiswap/eslint-config": "workspace:*",
     "@sushiswap/jest-config": "workspace:*",
     "@sushiswap/prettier-config": "workspace:*",
@@ -60,16 +60,9 @@
     "@sushiswap/typescript-config": "workspace:*",
     "@types/lodash.flatmap": "^4.5.7",
     "@types/node": "^17.0.33",
+    "@types/node-fetch": "2.6.2",
     "eslint": "8.29.0",
     "tsup": "6.5.0",
     "typescript": "4.9.4"
-  },
-  "peerDependencies": {
-    "@sushiswap/database": "workspace:*"
-  },
-  "peerDependenciesMeta": {
-    "@sushiswap/database": {
-      "optional": true
-    }
   }
 }

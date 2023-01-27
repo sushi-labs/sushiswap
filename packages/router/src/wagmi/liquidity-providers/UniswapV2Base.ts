@@ -74,6 +74,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   constructor(chainId: ChainId) {
     super(chainId)
   }
+  readonly TOP_POOL_SIZE = 150
+  readonly ON_DEMAND_POOL_SIZE = 50
 
   // TODO: remove too often updates if the network generates too many blocks
   async initialize(blockNumber: number) {
@@ -84,16 +86,18 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.chainId,
       type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
       type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
-      'CONSTANT_PRODUCT_POOL'
+      'CONSTANT_PRODUCT_POOL',
+      this.TOP_POOL_SIZE
     )
     if (topPools.size > 0) {
-      console.debug(`${this.chainId}~${this.lastUpdateBlock} - INIT: ${this.getType()}, top pools found: ${topPools.size}`)
+      console.debug(
+        `${this.chainId}~${this.lastUpdateBlock} - INIT: ${this.getType()}, top pools found: ${topPools.size}`
+      )
     } else {
       console.debug(`${this.chainId}~${this.lastUpdateBlock} - INIT: ${this.getType()}, NO pools found.`)
       this.isInitialized = true
       return
     }
-    // TODO: move this to an API, if it returns 0, use currency combination as fallback?
 
     const poolAddr = topPools
     const addrs = Array.from(poolAddr.keys())
@@ -117,7 +121,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.poolCodes.push(pc)
         ++this.stateId
       } else {
-        console.error("initialize() - Failed to fetch reserves for pool: " + addr + "")
+        console.error('initialize() - Failed to fetch reserves for pool: ' + addr + '')
       }
     })
 
@@ -154,6 +158,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.lastUpdateBlock = -1
       return
     }
+    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.poolCodes.length)
 
     const type = this.getType()
 
@@ -163,12 +168,17 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
       'CONSTANT_PRODUCT_POOL',
       tokens[0].address,
-      tokens[1].address
+      tokens[1].address,
+      this.TOP_POOL_SIZE,
+      this.ON_DEMAND_POOL_SIZE
     )
 
     const poolAddr = new Map<string, [Token, Token]>()
 
+    // TODO:
     // ignore fetching reserves for the ones that are already in memory
+    // they shouldn't be in memory in the first place, the api should exclude them.
+    // VERIFY before removing check below
     poolsOnDemand.forEach((value, key) => {
       if (!this.poolCodes.some((p) => p.pool.address === key)) {
         poolAddr.set(key, value)
@@ -176,11 +186,15 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     })
 
     if (poolAddr.size === 0) {
-      console.debug(`${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()}, Retrieved ${poolsOnDemand.size} pools, but none new`)
+      console.debug(
+        `${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()}` +
+          `Retrieved ${poolsOnDemand.size} pools, but all pools are already cached in memory.`
+      )
       return
     } else {
       console.debug(
-        `${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()}, Begin fetching reserves for ${poolAddr.size}/${poolsOnDemand.size} pools`
+        `${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()},` +
+          `Begin fetching reserves for ${poolAddr.size}/${poolsOnDemand.size} pools`
       )
     }
 
@@ -205,7 +219,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.poolCodes.push(pc)
         ++this.stateId
       } else {
-        console.error("getPools() - Failed to fetch reserves for pool: " + addr + "")
+        console.error('getPools() - Failed to fetch reserves for pool: ' + addr + '')
       }
     })
 

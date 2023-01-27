@@ -409,12 +409,12 @@ export async function getAggregatorPoolsByTokenIds(
   let token1PoolSize = 0
   const token0Pools = [result[0].pools0, result[0].pools1].flat()
   const token1Pools = [result[1].pools0, result[1].pools1].flat()
-  console.log(`Flattened pools, recieved: t0: ${token0Pools.length}, t1: ${token1Pools.length}`)
+  // console.log(`Flattened pools, recieved: t0: ${token0Pools.length}, t1: ${token1Pools.length}`)
 
   const topPoolIds = result[2].map((p) => p.id)
   const filteredToken0Pools = token0Pools.filter((p) => !topPoolIds.includes(p.id))
   const filteredToken1Pools = token1Pools.filter((p) => !topPoolIds.includes(p.id))
-  console.log(`After excluding top pools: t0: ${filteredToken0Pools.length}, t1: ${filteredToken1Pools.length}`)
+  // console.log(`After excluding top pools: t0: ${filteredToken0Pools.length}, t1: ${filteredToken1Pools.length}`)
 
   if (filteredToken0Pools.length >= size / 2 && filteredToken1Pools.length >= size / 2) {
     token0PoolSize = size / 2
@@ -436,6 +436,7 @@ export async function getAggregatorPoolsByTokenIds(
   const pools1 = filteredToken1Pools
     .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
     .slice(0, token1PoolSize)
+    console.log(`${chainId}~${protocol}: t0: ${pools0.length}, t1: ${pools1.length}`)
 
   const pools = [...pools0, ...pools1].flat()
 
