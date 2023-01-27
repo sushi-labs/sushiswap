@@ -150,7 +150,7 @@ const start = async () => {
   } catch (err) {
     server.log.error(err)
     for (const dataFetcher of dataFetcherMap.values()) {
-      dataFetcher.startDataFetching()
+      dataFetcher.stopDataFetching()
     }
     process.exit(1)
   }
