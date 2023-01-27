@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
 import { PoolType } from '../../lib'
-import { getPools } from '../../lib/api'
+import { getEarnPools } from '../../lib/api'
 const schema = z.object({
   chainIds: z
     .string()
@@ -43,9 +43,9 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
   if (!result.success) {
     return response.status(400).json(result.error.format())
   }
-  
+
   const { chainIds, isIncentivized, isWhitelisted, poolType, cursor, orderBy, orderDir } = result.data
-  const pools = await getPools({ chainIds, isIncentivized, isWhitelisted, poolType, cursor, orderBy, orderDir })
+  const pools = await getEarnPools({ chainIds, isIncentivized, isWhitelisted, poolType, cursor, orderBy, orderDir })
   return response.status(200).json(pools)
 }
 
