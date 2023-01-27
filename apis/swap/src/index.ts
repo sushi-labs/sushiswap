@@ -122,13 +122,13 @@ server.get('/v0', async (request) => {
 // Run the server!
 const start = async () => {
   try {
-    dataFetcherMap.set(
-      ChainId.ETHEREUM,
-      new DataFetcher(
-        // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ETHEREUM), process.env['ALCHEMY_API_KEY']),
-        ChainId.ETHEREUM
-      )
-    )
+    // dataFetcherMap.set(
+    //   ChainId.ETHEREUM,
+    //   new DataFetcher(
+    //     // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ETHEREUM), process.env['ALCHEMY_API_KEY']),
+    //     ChainId.ETHEREUM
+    //   )
+    // )
     dataFetcherMap.set(
       ChainId.POLYGON,
       new DataFetcher(
