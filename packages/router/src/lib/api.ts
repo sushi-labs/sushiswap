@@ -17,16 +17,6 @@ interface PoolResponse {
   }
 }
 
-/**
- * Get all pools including the tokens provided, where the other token in the pair is approved.
- * @param chainId
- * @param protocol
- * @param version
- * @param poolType
- * @param token0Address
- * @param token1Address
- * @returns
- */
 export async function getPoolsByTokenIds(
   chainId: number,
   protocol: string,
@@ -35,11 +25,12 @@ export async function getPoolsByTokenIds(
   token0Address: string,
   token1Address: string,
   excludeTopPoolsSize: number,
+  topPoolMinLiquidity: number,
   size: number
 ) {
   try {
     const pools = await fetch(
-      `http://localhost:3000/api/v0/aggregator/pools/${chainId}/${protocol}/${version}/${poolType}?token0=${token0Address}&token1=${token1Address}&size=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}`
+      `http://localhost:3000/api/v0/aggregator/pools/${chainId}/${protocol}/${version}/${poolType}?token0=${token0Address}&token1=${token1Address}&size=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
     ).then((data) => data.json() as Promise<PoolResponse[]>)
 
     const poolMap: Map<string, [Token, Token]> = new Map()
@@ -68,19 +59,17 @@ export async function getPoolsByTokenIds(
   }
 }
 
-/**
- * Get top pools
- * @param chainId
- * @param protocol
- * @param version
- * @param poolType
- * @param size
- * @returns
- */
-export async function getTopPools(chainId: number, protocol: string, version: string, poolType: string, size: number) {
+export async function getTopPools(
+  chainId: number,
+  protocol: string,
+  version: string,
+  poolType: string,
+  size: number,
+  minLiquidity: number
+) {
   try {
     const pools = await fetch(
-      `http://localhost:3000/api/v0/aggregator/top-pools/${chainId}/${protocol}/${version}/${poolType}?size=${size}`
+      `http://localhost:3000/api/v0/aggregator/top-pools/${chainId}/${protocol}/${version}/${poolType}?size=${size}&minLiquidity=${minLiquidity}`
     ).then((data) => data.json() as Promise<PoolResponse[]>)
     const poolMap: Map<string, [Token, Token]> = new Map()
 

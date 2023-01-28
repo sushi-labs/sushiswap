@@ -57,10 +57,11 @@ export async function getEarnPool(chainId: number, address: string) {
   return pool
 }
 
-type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
+type EarnArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
+type AggregatorArgs = NonNullable<Parameters<typeof prisma.pool.findMany>['0']>
 
 function parseWhere(args: PoolApiArgs) {
-  let where: PrismaArgs['where'] = {}
+  let where: EarnArgs['where'] = {}
 
   if (args.chainIds) {
     where = {
@@ -98,11 +99,11 @@ function parseWhere(args: PoolApiArgs) {
 }
 
 export async function getEarnPools(args: PoolApiArgs) {
-  const orderBy: PrismaArgs['orderBy'] = args.orderBy ? { [args.orderBy]: args.orderDir } : { ['liquidityUSD']: 'desc' }
-  const where: PrismaArgs['where'] = parseWhere(args)
+  const orderBy: EarnArgs['orderBy'] = args.orderBy ? { [args.orderBy]: args.orderDir } : { ['liquidityUSD']: 'desc' }
+  const where: EarnArgs['where'] = parseWhere(args)
 
-  let skip: PrismaArgs['skip'] = 0
-  let cursor: { cursor: PrismaArgs['cursor'] } | object = {}
+  let skip: EarnArgs['skip'] = 0
+  let cursor: { cursor: EarnArgs['cursor'] } | object = {}
 
   if (args.cursor) {
     skip = 1
@@ -186,18 +187,26 @@ export async function getAggregatorTopPools(
   protocol: string,
   version: string,
   poolType: PoolType,
-  size: number
+  size: number,
+  minLiquidity?: number
 ) {
-  const pools = await prisma.pool.findMany({
-    where: {
-      AND: {
-        chainId,
-        isWhitelisted: true,
-        protocol,
-        version,
-        type: poolType,
+  let where: AggregatorArgs['where'] = {
+    chainId,
+    isWhitelisted: true,
+    protocol,
+    version,
+    type: poolType,
+  }
+  if (minLiquidity) {
+    where = {
+      liquidityUSD: {
+        gte: minLiquidity,
       },
-    },
+      ...where,
+    }
+  }
+  const pools = await prisma.pool.findMany({
+    where,
     take: size,
     orderBy: {
       liquidityUSD: 'desc',
@@ -230,7 +239,7 @@ export async function getAggregatorTopPools(
 }
 
 export async function getEarnPoolCount(args: PoolApiArgs) {
-  const where: PrismaArgs['where'] = parseWhere(args)
+  const where: EarnArgs['where'] = parseWhere(args)
 
   const count = await prisma.sushiPool.count({
     where,
@@ -248,10 +257,28 @@ export async function getAggregatorPoolsByTokenIds(
   token0: string,
   token1: string,
   size: number,
-  excludeTopPoolsSize: number
+  excludeTopPoolsSize: number,
+  topPoolMinLiquidity?: number,
 ) {
   const token0Id = chainId.toString().concat(':').concat(token0.toLowerCase())
   const token1Id = chainId.toString().concat(':').concat(token1.toLowerCase())
+
+  let topPoolWhere: AggregatorArgs['where'] = {
+    chainId,
+    isWhitelisted: true,
+    protocol,
+    version,
+    type: poolType,
+  }
+  if (topPoolMinLiquidity) {
+    topPoolWhere = {
+      liquidityUSD: {
+        gte: topPoolMinLiquidity,
+      },
+      ...topPoolWhere,
+    }
+  }
+
   const select = {
     id: true,
     address: true,
@@ -384,15 +411,7 @@ export async function getAggregatorPoolsByTokenIds(
       },
     }),
     prisma.pool.findMany({
-      where: {
-        AND: {
-          chainId,
-          isWhitelisted: true,
-          protocol,
-          version,
-          type: poolType,
-        },
-      },
+      where: topPoolWhere,
       take: excludeTopPoolsSize,
       orderBy: {
         liquidityUSD: 'desc',
@@ -436,7 +455,7 @@ export async function getAggregatorPoolsByTokenIds(
   const pools1 = filteredToken1Pools
     .sort((a, b) => Number(b.liquidityUSD) - Number(a.liquidityUSD))
     .slice(0, token1PoolSize)
-    console.log(`${chainId}~${protocol}: t0: ${pools0.length}, t1: ${pools1.length}`)
+  // console.log(`${chainId}~${protocol}: t0: ${pools0.length}, t1: ${pools1.length}`)
 
   const pools = [...pools0, ...pools1].flat()
 

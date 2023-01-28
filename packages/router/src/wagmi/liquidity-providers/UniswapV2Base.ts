@@ -60,9 +60,14 @@ const syncAbi = [
   },
 ]
 
+interface PoolInfo {
+  poolCode: PoolCode
+  fetchType: 'INITIAL' | 'ON_DEMAND'
+  updatedAtBlock: number
+}
+
 export abstract class UniswapV2BaseProvider extends LiquidityProvider {
-  fetchedPools: Map<string, number> = new Map()
-  poolCodes: PoolCode[] = []
+  pools: PoolInfo[] = []
   blockListener?: () => void
   unwatchBlockNumber?: () => void
   unwatchMulticall?: () => void
@@ -75,6 +80,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     super(chainId)
   }
   readonly TOP_POOL_SIZE = 150
+  readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
   readonly ON_DEMAND_POOL_SIZE = 50
 
   // TODO: remove too often updates if the network generates too many blocks
@@ -87,7 +93,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
       type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
       'CONSTANT_PRODUCT_POOL',
-      this.TOP_POOL_SIZE
+      this.TOP_POOL_SIZE,
+      this.TOP_POOL_LIQUIDITY_THRESHOLD
     )
     if (topPools.size > 0) {
       console.debug(
@@ -118,20 +125,21 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         const toks = poolAddr.get(addr) as [Token, Token]
         const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-        this.poolCodes.push(pc)
+        this.pools.push({ poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
         ++this.stateId
       } else {
         console.error('initialize() - Failed to fetch reserves for pool: ' + addr + '')
       }
     })
 
-    this.poolCodes.forEach((p) => {
-      if (this.unwatchSyncEvents.has(p.pool.address)) return
+    this.pools.forEach((p) => {
+      const pool = p.poolCode.pool
+      if (this.unwatchSyncEvents.has(pool.address)) return
       this.unwatchSyncEvents.set(
-        p.pool.address,
+        pool.address,
         watchContractEvent(
           {
-            address: p.pool.address as Address,
+            address: pool.address as Address,
             abi: syncAbi,
             eventName: 'Sync',
             chainId: this.chainId,
@@ -140,9 +148,10 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
             const res0 = BigNumber.from(reserve0)
             const res1 = BigNumber.from(reserve1)
             console.debug(
-              `${this.chainId}~${this.lastUpdateBlock} - SYNC ${p.poolName}, ${p.pool.token0.symbol}/${p.pool.token1.symbol}.`
+              `${this.chainId}~${this.lastUpdateBlock} - SYNC ${p.poolCode.poolName}, ${pool.token0.symbol}/${pool.token1.symbol}.`
             )
-            p.pool.updateReserves(res0, res1)
+            pool.updateReserves(res0, res1)
+            p.updatedAtBlock = blockNumber
           }
         )
       )
@@ -158,7 +167,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.lastUpdateBlock = -1
       return
     }
-    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.poolCodes.length)
+    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.pools.length)
 
     const type = this.getType()
 
@@ -170,33 +179,16 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       tokens[0].address,
       tokens[1].address,
       this.TOP_POOL_SIZE,
+      this.TOP_POOL_LIQUIDITY_THRESHOLD,
       this.ON_DEMAND_POOL_SIZE
     )
 
     const poolAddr = new Map<string, [Token, Token]>()
 
-    // TODO:
-    // ignore fetching reserves for the ones that are already in memory
-    // they shouldn't be in memory in the first place, the api should exclude them.
-    // VERIFY before removing check below
-    poolsOnDemand.forEach((value, key) => {
-      if (!this.poolCodes.some((p) => p.pool.address === key)) {
-        poolAddr.set(key, value)
-      }
-    })
-
-    if (poolAddr.size === 0) {
-      console.debug(
-        `${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()}` +
-          `Retrieved ${poolsOnDemand.size} pools, but all pools are already cached in memory.`
-      )
-      return
-    } else {
-      console.debug(
-        `${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()},` +
-          `Begin fetching reserves for ${poolAddr.size}/${poolsOnDemand.size} pools`
-      )
-    }
+    console.debug(
+      `${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()},` +
+        `Begin fetching reserves for ${poolAddr.size}/${poolsOnDemand.size} pools`
+    )
 
     const addrs = Array.from(poolAddr.keys())
 
@@ -216,7 +208,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         const toks = poolAddr.get(addr) as [Token, Token]
         const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-        this.poolCodes.push(pc)
+        this.pools.push({ poolCode: pc, fetchType: 'ON_DEMAND', updatedAtBlock: this.lastUpdateBlock })
         ++this.stateId
       } else {
         console.error('getPools() - Failed to fetch reserves for pool: ' + addr + '')
@@ -249,8 +241,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   startFetchPoolsData() {
     this.stopFetchPoolsData()
-    this.poolCodes = []
-    this.fetchedPools.clear()
+    this.pools = []
 
     this.unwatchBlockNumber = watchBlockNumber(
       {
@@ -258,6 +249,21 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       },
       (blockNumber) => {
         this.lastUpdateBlock = blockNumber
+
+        const blockThreshold = this.lastUpdateBlock - 25
+        const before = this.pools.length
+        this.pools = this.pools.filter(
+          (p) => (p.updatedAtBlock >= blockThreshold && p.fetchType === 'ON_DEMAND') || p.fetchType === 'INITIAL'
+        )
+        
+        if (before !== this.pools.length) {
+          console.debug(
+            `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} Stale pools removed: ${
+              before - this.pools.length
+            }`
+          )
+        }
+
         if (!this.isInitialized) {
           this.initialize(blockNumber)
         }
@@ -271,7 +277,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
 
   getCurrentPoolList(): PoolCode[] {
-    return this.poolCodes
+    return this.pools.map((p) => p.poolCode)
   }
 
   stopFetchPoolsData() {

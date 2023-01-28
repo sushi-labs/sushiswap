@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { PoolType } from '../../../../../../../../lib'
 import { getAggregatorTopPools } from '../../../../../../../../lib/api'
 
-
 // import { PoolType } from '../../lib'
 // import { getEarnPools } from '../../lib/api'
 const schema = z.object({
@@ -17,6 +16,7 @@ const schema = z.object({
   version: z.string(),
   poolType: z.nativeEnum(PoolType),
   size: z.coerce.number().int().gte(0).lte(1000),
+  minLiquidity: z.coerce.number().int().optional(),
 })
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
@@ -25,9 +25,9 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     return response.status(400).json(result.error.format())
   }
 
-  const { chainId, protocol, version, poolType, size } = result.data
-  
-  const pools = await getAggregatorTopPools(chainId, protocol, version, poolType, size)
+  const { chainId, protocol, version, poolType, size, minLiquidity } = result.data
+
+  const pools = await getAggregatorTopPools(chainId, protocol, version, poolType, size, minLiquidity)
   return response.status(200).json(pools)
 }
 
