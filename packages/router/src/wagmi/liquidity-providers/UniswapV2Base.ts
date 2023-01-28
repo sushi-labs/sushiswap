@@ -129,8 +129,6 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         )
       )
     })
-
-    this.isInitialized = true
     this.lastUpdateBlock = blockNumber
   }
 
