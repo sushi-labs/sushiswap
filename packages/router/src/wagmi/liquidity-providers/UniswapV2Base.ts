@@ -251,7 +251,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   stopFetchPoolsData() {
     if (this.unwatchBlockNumber) this.unwatchBlockNumber()
     if (this.unwatchMulticall) this.unwatchMulticall()
-    if (this.unwatchMulticall) this.unwatchSyncEvents?.forEach((unwatch) => unwatch())
+    if (this.unwatchSyncEvents.size > 0) this.unwatchSyncEvents?.forEach((unwatch) => unwatch())
     // if (this.blockListener) this.chainDataProvider.off('block', this.blockListener)
     this.blockListener = undefined
   }
