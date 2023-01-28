@@ -8,7 +8,7 @@ export const useTrade = () => {
 
   const { data: slippageTolerance } = useSlippageTolerance()
   const { data: feeData } = useFeeData()
-  const gasPrice = 211042625260 // TODO: REMOVE, temp
+  const gasPrice = 177646622352 // TODO: REMOVE, temp
   const sameChainTrade = _useTrade({
     chainId: network0,
     fromToken: token0,

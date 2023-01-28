@@ -3,7 +3,7 @@ import { getReservesAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST } from '@sushiswap/router-config'
-import { ConstantProductRPool, RPool, RToken } from '@sushiswap/tines'
+import { ConstantProductRPool, RToken } from '@sushiswap/tines'
 import { Address, fetchBlockNumber, readContracts, watchBlockNumber, watchContractEvent } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 import { getCreate2Address } from 'ethers/lib/utils'
@@ -13,31 +13,7 @@ import { ConstantProductPoolCode } from '../../pools/ConstantProductPool'
 import type { PoolCode } from '../../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-// const getReservesAbi = [
-//   {
-//     inputs: [],
-//     name: 'getReserves',
-//     outputs: [
-//       {
-//         internalType: 'uint112',
-//         name: '_reserve0',
-//         type: 'uint112',
-//       },
-//       {
-//         internalType: 'uint112',
-//         name: '_reserve1',
-//         type: 'uint112',
-//       },
-//       {
-//         internalType: 'uint32',
-//         name: '_blockTimestampLast',
-//         type: 'uint32',
-//       },
-//     ],
-//     stateMutability: 'view',
-//     type: 'function',
-//   },
-// ]
+
 const syncAbi = [
   {
     anonymous: false,
@@ -79,13 +55,12 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   constructor(chainId: ChainId) {
     super(chainId)
   }
-  readonly TOP_POOL_SIZE = 150
+  readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
-  readonly ON_DEMAND_POOL_SIZE = 50
+  readonly ON_DEMAND_POOL_SIZE = 25
 
-  // TODO: remove too often updates if the network generates too many blocks
   async initialize(blockNumber: number) {
-    // if (this.poolCodes.length == 0) return
+    this.isInitialized = true
     const type = this.getType()
 
     const topPools = await getTopPools(
@@ -98,20 +73,18 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     )
     if (topPools.size > 0) {
       console.debug(
-        `${this.chainId}~${this.lastUpdateBlock} - INIT: ${this.getType()}, top pools found: ${topPools.size}`
+        `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT: top pools found: ${topPools.size}`
       )
     } else {
-      console.debug(`${this.chainId}~${this.lastUpdateBlock} - INIT: ${this.getType()}, NO pools found.`)
-      this.isInitialized = true
+      console.debug(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - INIT: NO pools found.`)
       return
     }
 
-    const poolAddr = topPools
-    const addrs = Array.from(poolAddr.keys())
+    const poolAddresses = Array.from(topPools.keys())
 
     const reserves = await readContracts({
       allowFailure: true,
-      contracts: addrs.map((addr) => ({
+      contracts: poolAddresses.map((addr) => ({
         address: addr as Address,
         chainId: this.chainId,
         abi: getReservesAbi,
@@ -119,16 +92,16 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       })),
     })
 
-    addrs.forEach((addr, i) => {
+    poolAddresses.forEach((addr, i) => {
       const res = reserves[i]
       if (res !== null && res !== undefined) {
-        const toks = poolAddr.get(addr) as [Token, Token]
+        const toks = topPools.get(addr) as [Token, Token]
         const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.pools.push({ poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
         ++this.stateId
       } else {
-        console.error('initialize() - Failed to fetch reserves for pool: ' + addr + '')
+        console.error(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${addr}`)
       }
     })
 
@@ -161,7 +134,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.lastUpdateBlock = blockNumber
   }
 
-  async getPools(tokens: Token[]): Promise<void> {
+  async getPools(t0: Token, t1: Token): Promise<void> {
     if (!(this.chainId in this.factory)) {
       // No sushiswap for this network
       this.lastUpdateBlock = -1
@@ -176,25 +149,22 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       type === LiquidityProviders.UniswapV2 ? 'Uniswap' : type,
       type === LiquidityProviders.SushiSwap ? 'LEGACY' : 'V2',
       'CONSTANT_PRODUCT_POOL',
-      tokens[0].address,
-      tokens[1].address,
+      t0.address,
+      t1.address,
       this.TOP_POOL_SIZE,
       this.TOP_POOL_LIQUIDITY_THRESHOLD,
       this.ON_DEMAND_POOL_SIZE
     )
 
-    const poolAddr = new Map<string, [Token, Token]>()
-
     console.debug(
-      `${this.chainId}~${this.lastUpdateBlock} - ON DEMAND: ${this.getType()},` +
-        `Begin fetching reserves for ${poolAddr.size}/${poolsOnDemand.size} pools`
+      `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`
     )
 
-    const addrs = Array.from(poolAddr.keys())
+    const poolAddresses = Array.from(poolsOnDemand.keys())
 
     const reserves = await readContracts({
       allowFailure: true,
-      contracts: addrs.map((addr) => ({
+      contracts: poolAddresses.map((addr) => ({
         address: addr as Address,
         chainId: this.chainId,
         abi: getReservesAbi,
@@ -202,21 +172,18 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       })),
     })
 
-    addrs.forEach((addr, i) => {
+    poolAddresses.forEach((addr, i) => {
       const res = reserves[i]
       if (res !== null && res !== undefined) {
-        const toks = poolAddr.get(addr) as [Token, Token]
+        const toks = poolsOnDemand.get(addr) as [Token, Token]
         const rPool = new ConstantProductRPool(addr, toks[0] as RToken, toks[1] as RToken, this.fee, res[0], res[1])
         const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
         this.pools.push({ poolCode: pc, fetchType: 'ON_DEMAND', updatedAtBlock: this.lastUpdateBlock })
         ++this.stateId
       } else {
-        console.error('getPools() - Failed to fetch reserves for pool: ' + addr + '')
+        console.error(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ERROR ON DEMAND, Failed to fetch reserves for pool: ${addr}`)
       }
     })
-
-    // if it is the first obtained pool list
-    // if (this.lastUpdateBlock == 0) this.lastUpdateBlock = this.multiCallProvider.lastCallBlockNumber
 
     if (this.lastUpdateBlock === 0) this.lastUpdateBlock = await fetchBlockNumber()
   }
@@ -228,6 +195,8 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       this.initCodeHash[this.chainId as keyof typeof this.initCodeHash]
     )
   }
+
+  // TODO: Decide if this is worth keeping as fallback in case fetching top pools fails? only used on initial load.
   _getProspectiveTokens(t0: Token, t1: Token) {
     const set = new Set<Token>([
       t0,
@@ -243,26 +212,14 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     this.stopFetchPoolsData()
     this.pools = []
 
+    // TODO: this could be reused per chain basis, no reason to recreate it. Datafetcher could pass this in
     this.unwatchBlockNumber = watchBlockNumber(
       {
         listen: true,
       },
       (blockNumber) => {
         this.lastUpdateBlock = blockNumber
-
-        const blockThreshold = this.lastUpdateBlock - 25
-        const before = this.pools.length
-        this.pools = this.pools.filter(
-          (p) => (p.updatedAtBlock >= blockThreshold && p.fetchType === 'ON_DEMAND') || p.fetchType === 'INITIAL'
-        )
-        
-        if (before !== this.pools.length) {
-          console.debug(
-            `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} Stale pools removed: ${
-              before - this.pools.length
-            }`
-          )
-        }
+        this.removeStalePools(blockNumber)
 
         if (!this.isInitialized) {
           this.initialize(blockNumber)
@@ -271,9 +228,22 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     )
   }
 
+  private removeStalePools(blockNumber: number) {
+    const before = this.pools.length
+    // TODO: move this to a per-chain config? 
+    const blockThreshold = blockNumber - 100
+    this.pools = this.pools.filter(
+      (p) => (p.updatedAtBlock < blockThreshold && p.fetchType === 'ON_DEMAND') || p.fetchType === 'INITIAL'
+    )
+    if (before !== this.pools.length) {
+      console.debug(
+        `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} Stale pools removed: ${before - this.pools.length}`
+      )
+    }
+  }
+
   fetchPoolsForToken(t0: Token, t1: Token): void {
-    // this.getPools(this._getProspectiveTokens(t0, t1))
-    this.getPools([t0, t1])
+    this.getPools(t0, t1)
   }
 
   getCurrentPoolList(): PoolCode[] {
