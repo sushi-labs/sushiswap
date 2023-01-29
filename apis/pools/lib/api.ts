@@ -3,23 +3,8 @@ import type * as _ from '@prisma/client/runtime'
 
 import prisma from '@sushiswap/database'
 
-import type { PoolType } from '.'
-
-type PartialWithUndefined<T extends object> = Partial<{
-  [K in keyof T]: T[K] | undefined
-}>
-
-export type PoolApiArgs = PartialWithUndefined<{
-  ids: string[]
-  chainIds: number[]
-  poolTypes: PoolType[]
-  isIncentivized: boolean
-  isWhitelisted: boolean
-  cursor: string
-  orderBy: string
-  orderDir: 'asc' | 'desc'
-  count: boolean
-}>
+import type { PoolsApiSchema } from '../api/v0/'
+import type { PoolsCountApiSchema } from '../api/v0/count'
 
 export async function getPool(chainId: number, address: string) {
   const id = `${chainId}:${address.toLowerCase()}`
@@ -60,10 +45,10 @@ export async function getPool(chainId: number, address: string) {
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
-function parseWhere(args: PoolApiArgs) {
+function parseWhere(args: PoolsApiSchema | PoolsCountApiSchema) {
   let where: PrismaArgs['where'] = {}
 
-  if (args.ids) {
+  if ('ids' in args && args.ids !== undefined) {
     where = {
       id: {
         in: args.ids,
@@ -71,27 +56,27 @@ function parseWhere(args: PoolApiArgs) {
     }
   }
 
-  if (args.chainIds) {
+  if ('chainIds' in args && args.chainIds !== undefined) {
     where = {
       chainId: { in: args.chainIds },
     }
   }
 
-  if (args.poolTypes) {
+  if ('poolTypes' in args && args.poolTypes !== undefined) {
     where = {
       type: { in: args.poolTypes },
       ...where,
     }
   }
 
-  if (args.isIncentivized) {
+  if ('isIncentivized' in args && args.isIncentivized !== undefined) {
     where = {
       isIncentivized: args.isIncentivized,
       ...where,
     }
   }
 
-  if (args.isWhitelisted) {
+  if ('isWhitelisted' in args && args.isWhitelisted !== undefined) {
     where = {
       token0: {
         status: 'APPROVED',
@@ -106,8 +91,9 @@ function parseWhere(args: PoolApiArgs) {
   return where
 }
 
-export async function getPools(args: PoolApiArgs) {
-  const orderBy: PrismaArgs['orderBy'] = args.orderBy ? { [args.orderBy]: args.orderDir } : { ['liquidityUSD']: 'desc' }
+export async function getPools(args: PoolsApiSchema) {
+  const take = args.take
+  const orderBy: PrismaArgs['orderBy'] = { [args.orderBy]: args.orderDir }
   const where: PrismaArgs['where'] = parseWhere(args)
 
   let skip: PrismaArgs['skip'] = 0
@@ -119,7 +105,7 @@ export async function getPools(args: PoolApiArgs) {
   }
 
   const pools = await prisma.sushiPool.findMany({
-    take: 20,
+    take,
     skip,
     ...cursor,
     where,
@@ -191,7 +177,7 @@ export async function getPools(args: PoolApiArgs) {
   return pools ? pools : []
 }
 
-export async function getPoolCount(args: PoolApiArgs) {
+export async function getPoolCount(args: PoolsCountApiSchema) {
   const where: PrismaArgs['where'] = parseWhere(args)
 
   const count = await prisma.sushiPool.count({
