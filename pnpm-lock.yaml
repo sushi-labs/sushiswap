@@ -9474,7 +9474,7 @@ packages:
       chalk: 2.4.2
       debug: 4.3.4
       fs-extra: 7.0.1
-      hardhat: 2.12.4_z6wznmtyb6ovnulj6iujpct7um
+      hardhat: 2.12.4_typescript@4.9.4
       lodash: 4.17.21
       semver: 6.3.0
       table: 6.8.1
@@ -9487,7 +9487,7 @@ packages:
     peerDependencies:
       hardhat: ^2.0.0
     dependencies:
-      hardhat: 2.12.4_z6wznmtyb6ovnulj6iujpct7um
+      hardhat: 2.12.4_typescript@4.9.4
       solhint: 2.3.1
     transitivePeerDependencies:
       - supports-color
@@ -11396,6 +11396,7 @@ packages:
 
   /@types/node/17.0.45:
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
+    dev: true
 
   /@types/node/18.11.12:
     resolution: {integrity: sha512-FgD3NtTAKvyMmD44T07zz2fEf+OKwutgBCEVM8GcvMGVGaDktiLNTDvPwC/LUe3PinMW+X6CuLOF2Ui1mAlSXg==}
@@ -20365,7 +20366,7 @@ packages:
       hardhat: ^2.0.0
     dependencies:
       ethers: 5.7.2
-      hardhat: 2.12.4_z6wznmtyb6ovnulj6iujpct7um
+      hardhat: 2.12.4_typescript@4.9.4
 
   /hardhat-deploy/0.11.22:
     resolution: {integrity: sha512-ZhHVNB7Jo2l8Is+KIAk9F8Q3d7pptyiX+nsNbIFXztCz81kaP+6kxNODRBqRCy7SOD3It4+iKCL6tWsPAA/jVQ==}
@@ -20581,6 +20582,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /has-ansi/2.0.0:
     resolution: {integrity: sha512-C8vBJ8DwUCx19vhm7urhTuUsr4/IyP6l4VzNQDv+ryHQObW3TTTp9yB68WpYgRe2bbaGuZ/se74IqFeVnMnLZg==}
@@ -26383,7 +26385,6 @@ packages:
       prettier: 2.8.1
       semver: 7.3.8
       solidity-comments-extractor: 0.0.7
-    dev: false
     optional: true
 
   /prettier-plugin-solidity/1.1.1_prettier@2.8.2:
@@ -26406,7 +26407,6 @@ packages:
       prettier: '>=2.2.0'
     dependencies:
       prettier: 2.8.1
-    dev: false
     optional: true
 
   /prettier-plugin-tailwindcss/0.2.1_prettier@2.8.2:
@@ -28378,7 +28378,7 @@ packages:
     dependencies:
       command-exists: 1.2.9
       commander: 3.0.2
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       fs-extra: 0.30.0
       js-sha3: 0.8.0
       memorystream: 0.3.1
@@ -29932,6 +29932,7 @@ packages:
       typescript: 4.9.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: true
 
   /ts-node/8.9.1_typescript@4.9.4:
     resolution: {integrity: sha512-yrq6ODsxEFTLz0R3BX2myf0WBCSQh9A+py8PBo1dCzWIOcvisbyH6akNKqDHMgXePF2kir5mm5JXJTH3OUJYOQ==}

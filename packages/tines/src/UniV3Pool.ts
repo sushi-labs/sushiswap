@@ -1,16 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
+import { CL_MAX_TICK, CL_MIN_TICK, CLTick } from './CLPool'
 import { RPool, RToken, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST } from './PrimaryPools'
 
-export const CL_MIN_TICK = -887272
-export const CL_MAX_TICK = -CL_MIN_TICK - 1
 const ZERO = BigNumber.from(0)
-
-export interface CLTick {
-  index: number
-  DLiquidity: BigNumber
-}
-
 const c01 = BigNumber.from('0xfffcb933bd6fad37aa2d162d1a594001')
 const c02 = BigNumber.from('0x100000000000000000000000000000000')
 const c03 = BigNumber.from('0xfff97272373d413259a46990580e213a')
