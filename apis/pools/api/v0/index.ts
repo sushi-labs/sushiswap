@@ -5,7 +5,10 @@ import type { PoolType } from '../../lib'
 import { getPools } from '../../lib/api'
 
 export const schema = z.object({
-  take: z.number().default(20),
+  take: z
+    .string()
+    .default(20)
+    .transform((take) => Number(take)),
   ids: z
     .string()
     .transform((ids) => ids?.split(',').map((id) => id.toLowerCase()))
