@@ -7,7 +7,7 @@ import { getPools } from '../../lib/api'
 export const schema = z.object({
   take: z
     .string()
-    .default(20)
+    .default('20')
     .transform((take) => Number(take)),
   ids: z
     .string()
