@@ -36,25 +36,6 @@ const querySchema = z.object({
   to: z.optional(z.string()),
 })
 
-export function getAlchemyNetowrkForChainId(chainId: ChainId) {
-  switch (chainId) {
-    case ChainId.ETHEREUM:
-      return 'homestead'
-    case ChainId.POLYGON:
-      return 'matic'
-    case ChainId.POLYGON_TESTNET:
-      return 'maticmum'
-    case ChainId.ARBITRUM:
-      return 'arbitrum'
-    case ChainId.OPTIMISM:
-      return 'optimism'
-    case ChainId.GÖRLI:
-      return 'goerli'
-    default:
-      throw new Error(`Unsupported eth alchemy network for ${chainId}`)
-  }
-}
-
 export function getRouteProcessorAddressForChainId(chainId: ChainId) {
   if (!(chainId in routeProcessorExports)) {
     throw new Error(`Unsupported route processor network for ${chainId}`)
@@ -147,7 +128,14 @@ const start = async () => {
         // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.POLYGON), process.env['ALCHEMY_API_KEY']),
         ChainId.POLYGON
       )
-    )
+    ),
+      dataFetcherMap.set(
+        ChainId.FANTOM,
+        new DataFetcher(
+          // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.POLYGON), process.env['ALCHEMY_API_KEY']),
+          ChainId.FANTOM
+        )
+      )
     // dataFetcherMap.set(
     //   ChainId.ARBITRUM,
     //   new DataFetcher(

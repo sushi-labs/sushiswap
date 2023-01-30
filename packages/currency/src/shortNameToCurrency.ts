@@ -53,6 +53,22 @@ const CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY = {
     MAI: MAI[ChainId.ARBITRUM],
     UNI: UNI[ChainId.ARBITRUM],
   },
+  [ChainId.FANTOM]: {
+    NATIVE: Native.onChain(ChainId.FANTOM),
+    WNATIVE: WNATIVE[ChainId.FANTOM],
+    FTM: Native.onChain(ChainId.FANTOM),
+    WFTM: WNATIVE[ChainId.FANTOM],
+    ETH: WETH9[ChainId.FANTOM],
+    WETH: WETH9[ChainId.FANTOM],
+    WBTC: WBTC[ChainId.FANTOM],
+    USDC: USDC[ChainId.FANTOM],
+    USDT: USDT[ChainId.FANTOM],
+    DAI: DAI[ChainId.FANTOM],
+    FRAX: FRAX[ChainId.FANTOM],
+    MIM: MIM[ChainId.FANTOM],
+    SUSHI: SUSHI[ChainId.FANTOM],
+    MAI: MAI[ChainId.FANTOM],
+  },
 } as const
 
 export type ShortCurrencyNameChainId = keyof typeof CHAIN_ID_SHORT_CURRENCY_NAME_TO_CURRENCY
