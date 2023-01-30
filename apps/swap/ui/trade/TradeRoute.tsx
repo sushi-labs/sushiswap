@@ -145,7 +145,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
           className="flex relative justify-between gap-2 items-center overflow-hidden rounded-full p-2 bg-white dark:bg-slate-800"
         >
           <div
-            className="absolute bg-blue/20 dark:bg-blue/60 pointer-events-none inset-0 rounded-full"
+            className="absolute bg-blue/20 dark:bg-slate-700 pointer-events-none inset-0 rounded-full"
             style={{ width: `calc(28px + ${width}px)` }}
           />
           <div className="z-[10] flex items-center gap-1">
