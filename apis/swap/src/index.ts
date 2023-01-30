@@ -4,7 +4,7 @@ import './env'
 import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
-import { routeProcessorExports } from '@sushiswap/route-processor/exports'
+import routeProcessorExports from '@sushiswap/route-processor/exports'
 import {
   // findSpecialRoute,
   Router,
