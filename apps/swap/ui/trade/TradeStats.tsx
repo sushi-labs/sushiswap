@@ -3,16 +3,17 @@
 import { Transition } from '@headlessui/react'
 import { shortenAddress } from '@sushiswap/format'
 import { useSlippageTolerance } from '@sushiswap/react-query'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 
 import { useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
 import { Skeleton } from '@sushiswap/ui13/components/skeleton'
-import { Drawer } from '@sushiswap/ui13/components/drawer'
 import { classNames } from '@sushiswap/ui13'
 import { warningSeverity, warningSeverityClassName } from '../../lib/warningSeverity'
+import { TradeRoute } from './TradeRoute'
 
 export const TradeStats: FC = () => {
+  const [open, setOpen] = useState(false)
   const { value, token1, recipient } = useSwapState()
   const { data: slippageTolerance } = useSlippageTolerance()
   const { isLoading, isFetching, data: trade } = useTrade()
@@ -76,10 +77,11 @@ export const TradeStats: FC = () => {
             {loading ? (
               <Skeleton.Text fontSize="text-sm" className="w-[120px]" />
             ) : (
-              <Drawer.Button>
-                <button className="text-sm text-blue font-semibold">View Route</button>
-              </Drawer.Button>
+              <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
+                View Route
+              </button>
             )}
+            <TradeRoute trade={trade} open={open} setOpen={setOpen} />
           </span>
         </div>
         <div className="h-[2px] bg-gray-200 dark:bg-slate-800 w-full my-3" />

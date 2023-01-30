@@ -46,7 +46,7 @@ export const useTrade = (variables: UseTradeParams) => {
 
   const select: UseTradeQuerySelect = useCallback(
     (data) => {
-      if (!data || !amount) {
+      if (!data || !amount || !data.getBestRoute) {
         return {
           swapPrice: undefined,
           priceImpact: undefined,
@@ -55,7 +55,7 @@ export const useTrade = (variables: UseTradeParams) => {
           minAmountOut: undefined,
           gasSpent: undefined,
           writeArgs: undefined,
-          route: [],
+          route: undefined,
           currentRouteHumanString: '',
         }
       }
@@ -72,13 +72,12 @@ export const useTrade = (variables: UseTradeParams) => {
           toToken,
           calculateSlippageAmount(amountOut, new Percent(Math.floor(+slippagePercentage * 100), 10_000))[0]
         ),
-        // TODO: all prices for just gasSpent? refactor for single price retrieval...
         gasSpent: price
           ? Amount.fromRawAmount(Native.onChain(chainId), data.getBestRoute.gasSpent * 1e9)
               .multiply(price.asFraction)
               .toSignificant(4)
           : undefined,
-        route: [],
+        route: data.getBestRoute,
         currentRouteHumanString: data?.getCurrentRouteHumanString,
         writeArgs: data?.getCurrentRouteRPParams
           ? [

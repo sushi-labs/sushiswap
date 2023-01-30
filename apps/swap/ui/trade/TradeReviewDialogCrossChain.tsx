@@ -7,7 +7,7 @@ import { useSlippageTolerance } from '@sushiswap/react-query'
 import { Currency } from '@sushiswap/ui13/components/currency'
 import { Dialog } from '@sushiswap/ui13/components/dialog'
 import { List } from '@sushiswap/ui13/components/list/List'
-import React, { FC, useCallback } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 
 import { useSwapActions, useSwapState } from './TradeProvider'
 import { useTrade } from '../../lib/useTrade'
@@ -19,8 +19,10 @@ import { Skeleton } from '@sushiswap/ui13/components/skeleton'
 import { Drawer } from '@sushiswap/ui13/components/drawer'
 import { Badge } from '@sushiswap/ui13/components/Badge'
 import { ConfirmationDialogCrossChain } from '../ConfirmationDialogCrossChain'
+import { TradeRoute } from './TradeRoute'
 
 export const TradeReviewDialogCrossChain: FC = () => {
+  const [open, setOpen] = useState(false)
   const { review, token0, token1, recipient, network0, amount, value } = useSwapState()
   const { setReview } = useSwapActions()
   const { data: slippageTolerance } = useSlippageTolerance()
@@ -103,10 +105,11 @@ export const TradeReviewDialogCrossChain: FC = () => {
                 {isFetching ? (
                   <Skeleton.Text align="right" fontSize="text-sm" className="w-1/3" />
                 ) : (
-                  <Drawer.Button>
-                    <button className="text-blue">View route</button>
-                  </Drawer.Button>
+                  <button onClick={() => setOpen(true)} className="text-sm text-blue font-semibold">
+                    View Route
+                  </button>
                 )}
+                <TradeRoute trade={trade} open={open} setOpen={setOpen} />
               </List.KeyValue>
             </List.Control>
           </List>
