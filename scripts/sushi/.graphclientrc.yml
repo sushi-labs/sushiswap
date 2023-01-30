@@ -51,6 +51,16 @@ sources:
           value: TJ_
           includeRootOperations: true
           includeTypes: true
+  - name: Messari
+    handler:
+      graphql:
+        endpoint: https://{context.host:api.thegraph.com}/{context.path:subgraphs/name}/{context.name:messari/apeswap-polygon}
+        retry: 3
+    transforms:
+      - prefix:
+          value: MESSARI_
+          includeRootOperations: true
+          includeTypes: true
 documents:
   - ./query.graphql
 

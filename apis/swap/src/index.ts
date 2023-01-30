@@ -5,7 +5,10 @@ import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import { routeProcessorExports } from '@sushiswap/route-processor/exports'
-import { findSpecialRoute, Router } from '@sushiswap/router'
+import {
+  // findSpecialRoute,
+  Router,
+} from '@sushiswap/router'
 import { DataFetcher } from '@sushiswap/router/dist/wagmi/DataFetcher'
 import { BigNumber } from 'ethers'
 import fastify from 'fastify'
@@ -56,6 +59,7 @@ export function getRouteProcessorAddressForChainId(chainId: ChainId) {
   if (!(chainId in routeProcessorExports)) {
     throw new Error(`Unsupported route processor network for ${chainId}`)
   }
+
   return routeProcessorExports[chainId.toString() as keyof Omit<typeof routeProcessorExports, '31337'>][0].contracts
     .RouteProcessor.address
 }
@@ -79,7 +83,15 @@ server.get('/v0', async (request) => {
     `dataFetcher.fetchPoolsForToken(fromToken, toToken) (${(dataFetcherEndTime - dataFetcherStartTime).toFixed(0)} ms) `
   )
   const routeStartTime = performance.now()
-  const bestRoute = findSpecialRoute(
+  // const bestRoute = findSpecialRoute(
+  //   dataFetcher,
+  //   fromToken,
+  //   BigNumber.from(amount.toString()),
+  //   toToken,
+  //   gasPrice ?? 30e9
+  // )
+
+  const bestRoute = Router.findBestRoute(
     dataFetcher,
     fromToken,
     BigNumber.from(amount.toString()),
@@ -122,13 +134,13 @@ server.get('/v0', async (request) => {
 // Run the server!
 const start = async () => {
   try {
-    dataFetcherMap.set(
-      ChainId.ETHEREUM,
-      new DataFetcher(
-        // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ETHEREUM), process.env['ALCHEMY_API_KEY']),
-        ChainId.ETHEREUM
-      )
-    )
+    // dataFetcherMap.set(
+    //   ChainId.ETHEREUM,
+    //   new DataFetcher(
+    //     // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ETHEREUM), process.env['ALCHEMY_API_KEY']),
+    //     ChainId.ETHEREUM
+    //   )
+    // )
     dataFetcherMap.set(
       ChainId.POLYGON,
       new DataFetcher(

@@ -6,7 +6,7 @@ export async function getIncentivesByChainId(chainId: number) {
       id: true,
       chainId: true,
       pid: true,
-      type: true,
+      chefType: true,
       apr: true,
       rewardPerDay: true,
       poolId: true,
@@ -34,7 +34,7 @@ export async function getIncentives() {
       id: true,
       chainId: true,
       pid: true,
-      type: true,
+      chefType: true,
       apr: true,
       rewardPerDay: true,
       poolId: true,
@@ -62,7 +62,7 @@ export async function getIncentivesByPoolId(chainId: number, address: string) {
       id: true,
       chainId: true,
       pid: true,
-      type: true,
+      chefType: true,
       apr: true,
       rewardPerDay: true,
       poolId: true,
@@ -79,6 +79,34 @@ export async function getIncentivesByPoolId(chainId: number, address: string) {
       },
     },
     where: { poolId },
+  })
+  await prisma.$disconnect()
+  return incentives ? incentives : []
+}
+
+export async function getIncentivesByPoolIds(poolIds: string[]) {
+  const incentives = await prisma.incentive.findMany({
+    select: {
+      id: true,
+      chainId: true,
+      pid: true,
+      chefType: true,
+      apr: true,
+      rewardPerDay: true,
+      poolId: true,
+      rewarderAddress: true,
+      rewarderType: true,
+      rewardToken: {
+        select: {
+          id: true,
+          address: true,
+          name: true,
+          symbol: true,
+          decimals: true,
+        },
+      },
+    },
+    where: { poolId: { in: poolIds } },
   })
   await prisma.$disconnect()
   return incentives ? incentives : []

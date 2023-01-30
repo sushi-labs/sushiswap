@@ -15,6 +15,7 @@ export enum LiquidityProviders {
   NativeWrap = 'NativeWrap',
 }
 
+
 export abstract class LiquidityProvider {
   chainId: ChainId
   stateId = 0

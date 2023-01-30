@@ -2,7 +2,7 @@ sources:
   - name: Trident
     handler:
       graphql:
-        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-qa/trident-polygon}
+        endpoint: https://{context.host:api.thegraph.com/subgraphs/name}/{context.name:sushi-v2/trident-polygon}
     transforms:
       - autoPagination:
           validateSchema: true

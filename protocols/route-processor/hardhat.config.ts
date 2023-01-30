@@ -15,16 +15,16 @@ const accounts = {
 task(TASK_EXPORT, async (args, hre, runSuper) => {
   await runSuper()
 
-  const _exports = readFileSync('./exports.json', { encoding: 'utf-8' })
-
-  const parsed = JSON.parse(_exports)
+  const parsed = JSON.parse(readFileSync('./exports.json', { encoding: 'utf-8' }))
 
   delete parsed['31337']
+
+  const string = JSON.stringify(parsed)
 
   writeFileSync(
     './exports.ts',
     `
-export const routeProcessorExports = ${JSON.stringify(parsed)} as const
+export const routeProcessorExports = ${string} as const
 export type RouteProcessorExports = typeof routeProcessorExports
 export type RouteProcessorExport = RouteProcessorExports[keyof typeof routeProcessorExports][number]
 export type RouteProcessorChainId = RouteProcessorExport['chainId']
@@ -36,7 +36,7 @@ export const routeProcessorAddress = Object.fromEntries(
 ) as {
   [chainId in RouteProcessorChainId]: RouteProcessorExports[chainId][number]['contracts']['RouteProcessor']['address']
 }
-export default ${JSON.stringify(parsed)} as const
+export default routeProcessorExports
   `
   )
 })
@@ -72,30 +72,30 @@ const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
     localhost: {},
-    hardhat: {
-      forking: {
-        enabled: true,
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-        blockNumber: 16240100,
-      },
-      accounts: {
-        accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
-      },
-      chainId: 1,
-    },
     ...defaultConfig.networks,
     // hardhat: {
-    //   // polygon
     //   forking: {
     //     enabled: true,
-    //     url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-    //     blockNumber: 37180000,
+    //     url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+    //     blockNumber: 16240100,
     //   },
     //   accounts: {
-    //     accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+    //     accountsBalance: '10000000000000000000000000', //(10_000_000 ETH).
     //   },
-    //   chainId: 137,
+    //   chainId: 1,
     // },
+    hardhat: {
+      // polygon
+      forking: {
+        enabled: true,
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+        blockNumber: 37180000,
+      },
+      accounts: {
+        accountsBalance: '10000000000000000000000000', //(10_000_000 MATIC).
+      },
+      chainId: 137,
+    },
     // ethereum: {
     //   url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
     //   accounts,

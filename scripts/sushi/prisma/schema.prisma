@@ -102,7 +102,8 @@ model SushiPool {
   volumeNative         Decimal
   token0Price          String
   token1Price          String
-  apr                  Float?
+  feeApr               Float?
+  incentiveApr         Float?
   totalApr             Float?
   isIncentivized       Boolean     @default(false)
   incentives           Incentive[]
@@ -128,7 +129,7 @@ model SushiPool {
 model Incentive {
   id              String @id // poolAddress_rewarderAddress
   chainId         Int
-  type            String
+  chefType        String
   apr             Float
   rewardPerDay    Float
   rewardToken     Token  @relation(fields: [rewardTokenId], references: [id])

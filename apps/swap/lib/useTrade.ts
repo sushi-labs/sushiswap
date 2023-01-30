@@ -8,7 +8,6 @@ export const useTrade = () => {
 
   const { data: slippageTolerance } = useSlippageTolerance()
   const { data: feeData } = useFeeData()
-
   const sameChainTrade = _useTrade({
     chainId: network0,
     fromToken: token0,

@@ -193,12 +193,12 @@ export const SUSHISWAP_SUBGRAPH_NAME = {
 } as const
 
 export const TRIDENT_SUBGRAPH_NAME = {
-  [ChainId.POLYGON]: 'sushi-qa/trident-polygon',
+  [ChainId.POLYGON]: 'sushi-v2/trident-polygon',
   [ChainId.OPTIMISM]: 'sushi-qa/trident-optimism',
   [ChainId.KAVA]: 'sushi-qa/trident-kava',
   [ChainId.METIS]: 'sushi-qa/trident-metis',
   [ChainId.BTTC]: 'sushi-qa/trident-bttc',
-  [ChainId.ARBITRUM]: 'sushi-qa/trident-arbitrum',
+  [ChainId.ARBITRUM]: 'sushi-v2/trident-arbitrum',
   [ChainId.BSC]: 'sushi-qa/trident-bsc',
   [ChainId.AVALANCHE]: 'sushi-qa/trident-avalanche',
 } as const
