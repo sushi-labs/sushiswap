@@ -5,7 +5,10 @@ import cors from '@fastify/cors'
 import { ChainId } from '@sushiswap/chain'
 import { Native, nativeCurrencyIds } from '@sushiswap/currency'
 import { routeProcessorExports } from '@sushiswap/route-processor/exports'
-import { findSpecialRoute, Router } from '@sushiswap/router'
+import {
+  // findSpecialRoute,
+  Router,
+} from '@sushiswap/router'
 import { DataFetcher } from '@sushiswap/router/dist/wagmi/DataFetcher'
 import { BigNumber } from 'ethers'
 import fastify from 'fastify'
@@ -57,7 +60,6 @@ export function getRouteProcessorAddressForChainId(chainId: ChainId) {
     throw new Error(`Unsupported route processor network for ${chainId}`)
   }
 
-
   return routeProcessorExports[chainId.toString() as keyof Omit<typeof routeProcessorExports, '31337'>][0].contracts
     .RouteProcessor.address
 }
@@ -88,9 +90,8 @@ server.get('/v0', async (request) => {
   //   toToken,
   //   gasPrice ?? 30e9
   // )
-  
+
   const bestRoute = Router.findBestRoute(
-    
     dataFetcher,
     fromToken,
     BigNumber.from(amount.toString()),
