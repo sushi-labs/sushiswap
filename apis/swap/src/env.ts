@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const envSchema = z.object({
-  ALCHEMY_API_KEY: z.string(),
+  ALCHEMY_ID: z.string(),
   PORT: z.coerce.number().default(3000),
   HOST: z.string().default('0.0.0.0'),
 })
