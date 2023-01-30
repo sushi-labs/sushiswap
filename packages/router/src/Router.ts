@@ -215,7 +215,24 @@ export class Router {
     let pools = dataFetcher.getCurrentPoolCodeList(providers).map((pc) => pc.pool)
     if (poolFilter) pools = pools.filter(poolFilter)
 
-    return findMultiRouteExactIn(TokenToRToken(fromToken), TokenToRToken(toToken), amountIn, pools, networks, gasPrice)
+    const route = findMultiRouteExactIn(
+      TokenToRToken(fromToken),
+      TokenToRToken(toToken),
+      amountIn,
+      pools,
+      networks,
+      gasPrice
+    )
+
+    const poolCodesMap = dataFetcher.getCurrentPoolCodeMap()
+
+    return {
+      ...route,
+      legs: route.legs.map((l) => ({
+        ...l,
+        poolName: poolCodesMap.get(l.poolAddress)?.poolName ?? 'Unknown Pool',
+      })),
+    }
   }
 
   static routeProcessorParams(

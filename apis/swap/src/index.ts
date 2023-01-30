@@ -118,28 +118,14 @@ const start = async () => {
     // dataFetcherMap.set(
     //   ChainId.ETHEREUM,
     //   new DataFetcher(
-    //     // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ETHEREUM), process.env['ALCHEMY_API_KEY']),
     //     ChainId.ETHEREUM
     //   )
     // )
-    dataFetcherMap.set(
-      ChainId.POLYGON,
-      new DataFetcher(
-        // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.POLYGON), process.env['ALCHEMY_API_KEY']),
-        ChainId.POLYGON
-      )
-    ),
-      dataFetcherMap.set(
-        ChainId.FANTOM,
-        new DataFetcher(
-          // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.POLYGON), process.env['ALCHEMY_API_KEY']),
-          ChainId.FANTOM
-        )
-      )
+    dataFetcherMap.set(ChainId.POLYGON, new DataFetcher(ChainId.POLYGON)),
+      dataFetcherMap.set(ChainId.FANTOM, new DataFetcher(ChainId.FANTOM))
     // dataFetcherMap.set(
     //   ChainId.ARBITRUM,
     //   new DataFetcher(
-    //     // new providers.AlchemyProvider(getAlchemyNetowrkForChainId(ChainId.ARBITRUM), process.env['ALCHEMY_API_KEY']),
     //     ChainId.ARBITRUM
     //   )
     // )
