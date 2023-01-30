@@ -48,7 +48,7 @@ export const TradeRoute: FC<{
 
   const onClose = useCallback(() => {
     setOpen(false)
-  }, [])
+  }, [setOpen])
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -62,7 +62,7 @@ export const TradeRoute: FC<{
               poolType={directPath.poolType}
               poolFee={directPath.poolFee}
               portion={directPath.absolutePortion}
-              title=""
+              title={`${directPath.poolName}`}
             />
           ))}
           {initialPaths?.map((initialPath, i) => (
@@ -73,7 +73,7 @@ export const TradeRoute: FC<{
               poolType={initialPath.poolType}
               poolFee={initialPath.poolFee}
               portion={initialPath.absolutePortion}
-              title=""
+              title={initialPath.poolName}
             />
           ))}
           {percentPaths?.map((percentagePath, i) => (
@@ -84,7 +84,7 @@ export const TradeRoute: FC<{
               poolType={percentagePath.poolType}
               poolFee={percentagePath.poolFee}
               portion={percentagePath.absolutePortion}
-              title=""
+              title={percentagePath.poolName}
             />
           ))}
           {finalPaths?.map((finalPath, i) => (
@@ -95,7 +95,7 @@ export const TradeRoute: FC<{
               poolType={finalPath.poolType}
               poolFee={finalPath.poolFee}
               portion={finalPath.absolutePortion}
-              title=""
+              title={finalPath.poolName}
             />
           ))}
         </div>
@@ -158,7 +158,7 @@ const ComplexRoutePath: FC<ComplexRoutePathProps> = ({ fromToken, toToken, poolT
         </div>
       </div>
       <div className="z-[10] col-span-3 flex justify-center items-center">
-        <span className="text-xs font-semibold text-gray-900 bg-white dark:bg-slate-800 dark:text-slate-400 flex items-center rounded-lg h-8 px-2">
+        <span className="whitespace-nowrap text-xs font-semibold text-gray-900 bg-white dark:bg-slate-800 dark:text-slate-400 flex items-center rounded-lg h-8 px-2">
           {title}
         </span>
       </div>
