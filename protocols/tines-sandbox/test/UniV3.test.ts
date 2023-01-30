@@ -7,6 +7,12 @@ import { ethers } from 'hardhat'
 
 const ZERO = getBigNumber(0)
 
+// Map of fee to tickSpacing
+const feeAmountTickSpacing: number[] = []
+feeAmountTickSpacing[500] = 10 // 0.05%
+feeAmountTickSpacing[3000] = 60 // 0.3%
+feeAmountTickSpacing[10000] = 200 // 1%
+
 interface Environment {
   user: Signer
   tokenFactory: ContractFactory
@@ -77,6 +83,9 @@ export async function getPoolState(pool: Contract) {
 
 const tokenSupply = getBigNumber(Math.pow(2, 255))
 async function createPool(env: Environment, fee: number, price: number, positions: Position[]): Promise<PoolInfo> {
+  const tickSpacing = feeAmountTickSpacing[fee]
+  expect(tickSpacing).not.undefined
+
   const token0Contract = await env.tokenFactory.deploy('Token0', 'Token0', tokenSupply)
   await token0Contract.deployed()
   const token0: RToken = { name: 'Token0', symbol: 'Token0', address: token0Contract.address }
@@ -102,6 +111,8 @@ async function createPool(env: Environment, fee: number, price: number, position
   const ticks: CLTick[] = []
   for (let i = 0; i < positions.length; ++i) {
     const position = positions[i]
+    expect(position.from % tickSpacing).to.equal(0)
+    expect(position.to % tickSpacing).to.equal(0)
     await env.positionManager.mint({
       token0: token0.address,
       token1: token1.address,
