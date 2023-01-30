@@ -3,12 +3,10 @@ import Container from '@sushiswap/ui13/components/Container'
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
 import React, { FC } from 'react'
 
-import { SwapProvider } from '../../../../../ui/trade/TradeProvider'
 import { TradeReviewDialogSameChain } from '../../../../../ui/trade/TradeReviewDialogSameChain'
 import { TradeStats } from '../../../../../ui/trade/TradeStats'
 import { SwapButton } from '../../../../../ui/widget/SwapButton'
 import { Widget } from '../../../../../ui/widget/Widget'
-import { TradeRoute } from '../../../../../ui/trade/TradeRoute'
 import { Drawer } from '@sushiswap/ui13/components/drawer'
 import { NetworkCheck } from '../../../../../ui/NetworkCheck'
 import { TokenNotFoundDialog } from '../../../../../ui/TokenNotFoundDialog'
@@ -46,7 +44,6 @@ const Page: FC = ({}: InferGetStaticPropsType<typeof getStaticProps>) => {
         <TradeStats />
         <TradeReviewDialogSameChain />
         <SwapButton />
-        <TradeRoute />
         <TokenNotFoundDialog />
       </Drawer.Root>
 

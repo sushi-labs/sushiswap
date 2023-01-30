@@ -5,7 +5,7 @@ import {Percent} from "@sushiswap/math";
 import { HexString } from '@sushiswap/types'
 import z from 'zod'
 
-import { tradeValidator } from './validator'
+import {legValidator, tradeValidator} from './validator'
 
 export interface UseTradeParams {
   chainId: ChainId
@@ -26,9 +26,10 @@ export interface UseTradeReturn {
   minAmountOut: Amount<Type> | undefined
   gasSpent: string | undefined
   writeArgs: [HexString, BigNumber, HexString, BigNumber, HexString, HexString] | undefined
-  route: string[]
+  route: TradeType['getBestRoute']
   currentRouteHumanString: string
 }
 
 export type UseTradeQuerySelect = (data: TradeType) => UseTradeReturn
 export type TradeType = z.infer<typeof tradeValidator>
+export type TradeLegType = z.infer<typeof legValidator>
