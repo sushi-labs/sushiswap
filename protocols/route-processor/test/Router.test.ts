@@ -1,6 +1,6 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { erc20Abi, weth9Abi } from '@sushiswap/abi'
-import { bentoBoxAddress } from '@sushiswap/bentobox/exports'
+import bentoBoxExports from '@sushiswap/bentobox/exports'
 import { ChainId, chainName } from '@sushiswap/chain'
 import {
   DAI,
@@ -69,12 +69,15 @@ async function getTestEnvironment(): Promise<TestEnvironment> {
   const provider = ethers.provider
   const chainId = network.config.chainId as ChainId
   const dataFetcher = new DataFetcher(provider, chainId)
+
+  console.log('THIS', { chainId, bentoBoxExports })
+
   dataFetcher.startDataFetching()
 
   //console.log(`    ChainId=${chainId} RouteProcessor deployment (may take long time for the first launch)...`)
   const RouteProcessor = await ethers.getContractFactory('RouteProcessor')
   const routeProcessor = await RouteProcessor.deploy(
-    bentoBoxAddress[chainId.toString() as keyof typeof bentoBoxAddress]
+    bentoBoxExports[chainId.toString() as keyof typeof bentoBoxExports][0]?.contracts?.BentoBoxV1.address
   )
   await routeProcessor.deployed()
   //console.log('    Block Number:', provider.blockNumber)
