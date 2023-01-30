@@ -31,7 +31,7 @@ export async function getPoolsByTokenIds(
 ) {
   try {
     const pools = await fetch(
-      `http://localhost:3000/api/v0/aggregator/pools/${chainId}/${protocol}/${version}/${poolType}?token0=${token0Address}&token1=${token1Address}&size=${size}&minimumLiquidity=${minimumLiquidity}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
+      `https://pools-git-feature-swap.sushi.com/api/v0/aggregator/pools/${chainId}/${protocol}/${version}/${poolType}?token0=${token0Address}&token1=${token1Address}&size=${size}&minimumLiquidity=${minimumLiquidity}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
     ).then((data) => data.json() as Promise<PoolResponse[]>)
 
     const poolMap: Map<string, [Token, Token]> = new Map()
@@ -70,7 +70,7 @@ export async function getTopPools(
 ) {
   try {
     const pools = await fetch(
-      `http://localhost:3000/api/v0/aggregator/top-pools/${chainId}/${protocol}/${version}/${poolType}?size=${size}&minLiquidity=${minLiquidity}`
+      `https://pools-git-feature-swap.sushi.com/api/v0/aggregator/top-pools/${chainId}/${protocol}/${version}/${poolType}?size=${size}&minLiquidity=${minLiquidity}`
     ).then((data) => data.json() as Promise<PoolResponse[]>)
     const poolMap: Map<string, [Token, Token]> = new Map()
 
