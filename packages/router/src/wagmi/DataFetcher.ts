@@ -15,7 +15,7 @@ import { SushiProvider } from './liquidity-providers/Sushi'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import { allProviders } from './providers'
 
-const { provider } = configureChains(allChains, allProviders)
+const { provider } = configureChains(allChains, allProviders, { pollingInterval: 10000 })
 
 createClient({
   autoConnect: true,
