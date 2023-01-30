@@ -1,4 +1,5 @@
 import { getBigNumber, RPool, RToken, UniV3Pool } from '@sushiswap/tines'
+import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { ethers } from 'hardhat'
@@ -29,6 +30,10 @@ async function createEnv(): Promise<Environment> {
   const UniV3FactoryFactory = await ethers.getContractFactory('UniswapV3Factory')
   const UniV3Factory = await UniV3FactoryFactory.deploy()
   await UniV3Factory.deployed()
+
+  const WETH9Factory = await ethers.getContractFactory(WETH9.abi, WETH9.bytecode)
+  const WETH9Contract = await WETH9Factory.deploy()
+  await WETH9Contract.deployed()
 
   return {
     user,

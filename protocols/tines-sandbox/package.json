@@ -49,6 +49,7 @@
     "@types/mocha": "^9.0.0",
     "@types/node": "^17.0.0",
     "@types/seedrandom": "^3.0.1",
+    "canonical-weth": "1.4.0",
     "chai": "^4.3.0",
     "cross-env": "^7.0.0",
     "dotenv": "16.0.3",

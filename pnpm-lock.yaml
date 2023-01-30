@@ -3596,6 +3596,7 @@ importers:
       '@types/mocha': ^9.0.0
       '@types/node': ^17.0.0
       '@types/seedrandom': ^3.0.1
+      canonical-weth: 1.4.0
       chai: ^4.3.0
       cross-env: ^7.0.0
       dotenv: 16.0.3
@@ -3637,6 +3638,7 @@ importers:
       '@types/mocha': 9.1.1
       '@types/node': 17.0.45
       '@types/seedrandom': 3.0.3
+      canonical-weth: 1.4.0
       chai: 4.3.7
       cross-env: 7.0.3
       dotenv: 16.0.3
@@ -15125,6 +15127,10 @@ packages:
 
   /caniuse-lite/1.0.30001441:
     resolution: {integrity: sha512-OyxRR4Vof59I3yGWXws6i908EtGbMzVUi3ganaZQHmydk1iwDhRnvaPG2WaR0KcqrDFKrxVZHULT396LEPhXfg==}
+
+  /canonical-weth/1.4.0:
+    resolution: {integrity: sha512-9rkLfAFndWALLhxd5lpyTX4RkV36WmVBZ92NYtYr1kWdAUmclRp7I5KkK4wvogzDcCI++yw53TLwx/GCPcocMg==}
+    dev: true
 
   /capital-case/1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
