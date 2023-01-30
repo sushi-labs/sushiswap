@@ -16,7 +16,6 @@ const schema = z.object({
   token0: z.string(),
   token1: z.string(),
   size: z.coerce.number().int().gte(0).lte(1000),
-  minimumLiquidity: z.coerce.number().int(),
   excludeTopPoolsSize: z.coerce.number().int().gte(0).lte(1000),
   topPoolMinLiquidity: z.coerce.number().int().optional(),
 })
@@ -35,7 +34,6 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     token0,
     token1,
     size,
-    minimumLiquidity,
     excludeTopPoolsSize,
     topPoolMinLiquidity,
   } = result.data
@@ -51,7 +49,6 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     token0,
     token1,
     size,
-    minimumLiquidity,
     excludeTopPoolsSize,
     topPoolMinLiquidity
   )

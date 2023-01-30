@@ -57,9 +57,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
   }
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 5000
-
   readonly ON_DEMAND_POOL_SIZE = 20
-  readonly ON_DEMAND_LIQUIDITY_THRESHOLD = 1000
 
   async initialize(blockNumber: number) {
     this.isInitialized = true
@@ -153,8 +151,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
       t1.address,
       this.TOP_POOL_SIZE,
       this.TOP_POOL_LIQUIDITY_THRESHOLD,
-      this.ON_DEMAND_POOL_SIZE,
-      this.ON_DEMAND_LIQUIDITY_THRESHOLD
+      this.ON_DEMAND_POOL_SIZE
     )
 
     console.debug(
