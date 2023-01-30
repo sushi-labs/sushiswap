@@ -161,7 +161,7 @@ function transform(
       twapEnabled: TWAP_ENABLED,
       token0Id: chainId.toString().concat(':').concat(pair.inputTokens[0].id),
       token1Id: chainId.toString().concat(':').concat(pair.inputTokens[1].id),
-      liquidityUSD: pair.liquidityUSD,
+      liquidityUSD: 0,
     })
   })
 
