@@ -59,16 +59,16 @@ async function createEnv(): Promise<Environment> {
   )
   const positionManager = await NonfungiblePositionManagerContract.deployed()
 
-  // const TestRouterFactory = await ethers.getContractFactory('TestRouter')
-  // const testRouter = await TestRouterFactory.deploy()
-  // await testRouter.deployed()
+  const TestRouterFactory = await ethers.getContractFactory('TestRouter')
+  const testRouter = await TestRouterFactory.deploy()
+  await testRouter.deployed()
 
   return {
     user,
     tokenFactory,
     UniV3Factory,
     positionManager,
-    testRouter: undefined,
+    testRouter,
   }
 }
 
@@ -109,18 +109,21 @@ async function createPool(env: Environment, fee: number, price: number, position
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
 
-  const token0Contract = await env.tokenFactory.deploy('Token0', 'Token0', tokenSupply)
-  await token0Contract.deployed()
-  const token0: RToken = { name: 'Token0', symbol: 'Token0', address: token0Contract.address }
+  const _token0Contract = await env.tokenFactory.deploy('Token0', 'Token0', tokenSupply)
+  //await _token0Contract.deployed()
+  const _token1Contract = await env.tokenFactory.deploy('Token1', 'Token1', tokenSupply)
+  //await _token1Contract.deployed()
+  const token0Contract = _token0Contract < _token1Contract ? _token0Contract : _token1Contract
+  const token1Contract = _token0Contract < _token1Contract ? _token1Contract : _token0Contract
 
-  const token1Contract = await env.tokenFactory.deploy('Token1', 'Token1', tokenSupply)
-  await token1Contract.deployed()
+  const token0: RToken = { name: 'Token0', symbol: 'Token0', address: token0Contract.address }
   const token1: RToken = { name: 'Token1', symbol: 'Token1', address: token1Contract.address }
 
-  await (await token0Contract.approve(env.positionManager.address, tokenSupply)).wait()
-  await (await token1Contract.approve(env.positionManager.address, tokenSupply)).wait()
-  // await token0Contract.approve(env.testRouter.address, tokenSupply)
-  // await token1Contract.approve(env.testRouter.address, tokenSupply)
+  await token0Contract.approve(env.positionManager.address, tokenSupply)
+  await token1Contract.approve(env.positionManager.address, tokenSupply)
+  await token0Contract.approve(env.testRouter.address, tokenSupply)
+  await token1Contract.approve(env.testRouter.address, tokenSupply)
+
   await env.positionManager.createAndInitializePoolIfNecessary(
     token0Contract.address,
     token1Contract.address,
@@ -193,16 +196,18 @@ async function checkSwap(env: Environment, pool: PoolInfo, amount: number, direc
   const [inToken, outToken] = direction
     ? [pool.token0Contract, pool.token1Contract]
     : [pool.token1Contract, pool.token0Contract]
-  const inBalanceBefore = await inToken.balanceOf(env.user)
-  const outBalanceBefore = await outToken.balanceOf(env.user)
+  const inBalanceBefore = await inToken.balanceOf(env.user.getAddress())
+  const outBalanceBefore = await outToken.balanceOf(env.user.getAddress())
   await env.testRouter.swap(pool.contract.address, direction, getBigNumber(amount))
-  const inBalanceAfter = await inToken.balanceOf(env.user)
-  const outBalanceAfter = await outToken.balanceOf(env.user)
+  const inBalanceAfter = await inToken.balanceOf(env.user.getAddress())
+  const outBalanceAfter = await outToken.balanceOf(env.user.getAddress())
 
   const amountIn = inBalanceBefore.sub(inBalanceAfter)
   expect(closeValues(amount, amountIn, 1e-12)).true
 
   const amountOut = outBalanceAfter.sub(outBalanceBefore)
+  const amounOutTines = pool.tinesPool.calcOutByIn(amount, direction)
+  expect(closeValues(amountOut, amounOutTines.out, 1e-9)).true
 }
 
 describe('Uni V3', () => {
@@ -224,6 +229,6 @@ describe('Uni V3', () => {
 
   it('One position', async () => {
     const pool = await createPool(env, 3000, 1, [{ from: -1200, to: 1200, val: 1e18 }])
-    //await checkSwap(env, pool, 1e12, true)
+    await checkSwap(env, pool, 1e12, true)
   })
 })
