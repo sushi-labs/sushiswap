@@ -49,6 +49,7 @@
     "@types/mocha": "^9.0.0",
     "@types/node": "^17.0.0",
     "@types/seedrandom": "^3.0.1",
+    "@uniswap/v3-core": "1.0.1",
     "@uniswap/v3-periphery": "1.4.3",
     "canonical-weth": "1.4.0",
     "chai": "^4.3.0",

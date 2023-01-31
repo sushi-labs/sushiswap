@@ -85,6 +85,7 @@ const tokenSupply = getBigNumber(Math.pow(2, 255))
 const IncreaseLiquidityEventId = utils.id('IncreaseLiquidity(uint256,uint128,uint256,uint256)')
 
 async function createPool(env: Environment, fee: number, price: number, positions: Position[]): Promise<PoolInfo> {
+  const priceX96 = getBigNumber(price * Math.pow(2, 96))
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
 
@@ -99,7 +100,6 @@ async function createPool(env: Environment, fee: number, price: number, position
   await token0Contract.approve(env.positionManager.address, tokenSupply)
   await token1Contract.approve(env.positionManager.address, tokenSupply)
 
-  const priceX96 = getBigNumber(price * Math.pow(2, 96))
   await env.positionManager.createAndInitializePoolIfNecessary(
     token0Contract.address,
     token1Contract.address,
@@ -110,7 +110,7 @@ async function createPool(env: Environment, fee: number, price: number, position
   const poolF = await ethers.getContractFactory('UniswapV3Pool')
   const pool = poolF.attach(poolAddress)
 
-  const ticks: CLTick[] = []
+  const tickMap = new Map<number, BigNumber>()
   for (let i = 0; i < positions.length; ++i) {
     const position = positions[i]
     expect(position.from % tickSpacing).to.equal(0)
@@ -133,11 +133,31 @@ async function createPool(env: Environment, fee: number, price: number, position
     const log = result.logs.find((l: { topics: string[] }) => l.topics[0] == IncreaseLiquidityEventId)
     expect(log).not.undefined
     const liquidity = BigNumber.from(log.data.substring(0, 66))
-    ticks.push({ index: positions[i].from, DLiquidity: liquidity })
-    ticks.push({ index: positions[i].to, DLiquidity: ZERO.sub(liquidity) })
+
+    let tickLiquidity = tickMap.get(position.from)
+    tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity.add(liquidity)
+    tickMap.set(position.from, tickLiquidity)
+
+    tickLiquidity = tickMap.get(position.to) || ZERO
+    tickLiquidity = tickLiquidity.sub(liquidity)
+    tickMap.set(position.to, tickLiquidity)
   }
 
-  const tinesPool = new UniV3Pool('pool address', token0, token1, fee / 1e6, ZERO, ZERO, ZERO, priceX96, 0, ticks)
+  const ticks: CLTick[] = Array.from(tickMap.entries()).map(([index, DLiquidity]) => ({ index, DLiquidity }))
+  const slot = await pool.slot0()
+  const nearestTick = slot[1]
+  const tinesPool = new UniV3Pool(
+    pool.address,
+    token0,
+    token1,
+    fee / 1e6,
+    await token0Contract.balanceOf(pool.address),
+    await token1Contract.balanceOf(pool.address),
+    await pool.liquidity(),
+    priceX96,
+    nearestTick,
+    ticks
+  )
 
   return {
     contract: pool,
@@ -146,6 +166,8 @@ async function createPool(env: Environment, fee: number, price: number, position
     token1Contract,
   }
 }
+
+async function checkSwap(pool: PoolInfo, amount: number, direction: boolean) {}
 
 describe('Uni V3', () => {
   let env: Environment
