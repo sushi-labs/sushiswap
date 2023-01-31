@@ -52,25 +52,39 @@ export class DataFetcher {
     this.providers = [new NativeWrapProvider(this.chainId)]
 
     if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
-      this.providers.push(new SushiProvider(this.chainId))
+      if (SushiProvider.isDeployedOnChain(this.chainId)) {
+        this.providers.push(new SushiProvider(this.chainId))
+      }
     }
     if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
-      this.providers.push(new UniswapV2Provider(this.chainId))
+      if (UniswapV2Provider.isDeployedOnChain(this.chainId)) {
+        this.providers.push(new UniswapV2Provider(this.chainId))
+      }
     }
     if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
-      this.providers.push(new QuickSwapProvider(this.chainId))
+      if (QuickSwapProvider.isDeployedOnChain(this.chainId)) {
+        this.providers.push(new QuickSwapProvider(this.chainId))
+      }
     }
     if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
-      this.providers.push(new ApeSwapProvider(this.chainId))
+      if (ApeSwapProvider.isDeployedOnChain(this.chainId)) {
+        this.providers.push(new ApeSwapProvider(this.chainId))
+      }
     }
     if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
-      this.providers.push(new DfynProvider(this.chainId))
+      if (DfynProvider.isDeployedOnChain(this.chainId)) {
+        this.providers.push(new DfynProvider(this.chainId))
+      }
     }
     if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
-      this.providers.push(new ElkProvider(this.chainId))
+      if (ElkProvider.isDeployedOnChain(this.chainId)) {
+        this.providers.push(new ElkProvider(this.chainId))
+      }
     }
     if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
-      this.providers.push(new JetSwapProvider(this.chainId))
+      if (JetSwapProvider.isDeployedOnChain(this.chainId)) {
+        this.providers.push(new JetSwapProvider(this.chainId))
+      }
     }
 
     this.providers.forEach((p) => p.startFetchPoolsData())

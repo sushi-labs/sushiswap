@@ -15,12 +15,11 @@ export enum LiquidityProviders {
   NativeWrap = 'NativeWrap',
 }
 
-
 export abstract class LiquidityProvider {
   chainId: ChainId
   stateId = 0
   lastUpdateBlock = 0
-
+  static factory: Record<number, string> = {}
   constructor(chainId: ChainId) {
     this.chainId = chainId
   }
@@ -52,5 +51,9 @@ export abstract class LiquidityProvider {
   // returns the last processed block number
   getLastUpdateBlock(): number {
     return this.lastUpdateBlock
+  }
+
+  static isDeployedOnChain(chainId: ChainId): boolean {
+    return this.factory[chainId] !== undefined
   }
 }
