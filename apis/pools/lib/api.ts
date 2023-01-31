@@ -40,7 +40,7 @@ export async function getPool(chainId: number, address: string) {
   })
 
   await prisma.$disconnect()
-  return pool
+  return pool as unknown as DecimalToString<typeof pool>
 }
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
