@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import Redis from 'ioredis'
 import { createPrismaRedisCache } from 'prisma-redis-middleware'
 
@@ -29,7 +29,10 @@ if (process.env['NODE_ENV'] === 'production') {
 const redis = new Redis(process.env['REDIS_URL'])
 
 const cacheMiddleware = createPrismaRedisCache({
-  models: [{ model: 'Token', cacheTime: 900 }, { model: 'Incentive', cacheTime: 180 }],
+  models: [
+    { model: 'Token', cacheTime: 900 },
+    { model: 'Incentive', cacheTime: 180 },
+  ],
   storage: {
     type: 'redis',
     options: { client: redis, invalidation: { referencesTTL: 900 } },
@@ -48,3 +51,15 @@ prisma.$use(cacheMiddleware)
 export default prisma as PrismaClient
 
 export * from '@prisma/client'
+
+/** Deep-replaces the Prisma.Decimal type with string, which prisma actually returns.
+ * 
+  Will add 'string' for null-only types, don't think we should ever come across those though.
+*/
+export type DecimalToString<T> = {
+  [P in keyof T]: T[P] extends Prisma.Decimal | null
+    ? Exclude<T[P], Prisma.Decimal> | string
+    : T[P] extends object
+    ? DecimalToString<T[P]>
+    : T[P]
+}

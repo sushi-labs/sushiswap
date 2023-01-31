@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import type * as _ from '@prisma/client/runtime'
 
-import prisma from '@sushiswap/database'
+import prisma, { DecimalToString } from '@sushiswap/database'
 
 import type { PoolsApiSchema } from '../api/v0/'
 import type { PoolsCountApiSchema } from '../api/v0/count'
@@ -174,7 +174,7 @@ export async function getPools(args: PoolsApiSchema) {
   })
 
   await prisma.$disconnect()
-  return pools ? pools : []
+  return pools ? (pools as unknown as DecimalToString<typeof pools>) : []
 }
 
 export async function getPoolCount(args: PoolsCountApiSchema) {
