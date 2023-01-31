@@ -2,7 +2,7 @@ import { CLTick, getBigNumber, RPool, RToken, UniV3Pool } from '@sushiswap/tines
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
-import { Contract, ContractFactory, Signer } from 'ethers'
+import { BigNumber, Contract, ContractFactory, Signer, utils } from 'ethers'
 import { ethers } from 'hardhat'
 
 const ZERO = getBigNumber(0)
@@ -82,6 +82,8 @@ export async function getPoolState(pool: Contract) {
 }
 
 const tokenSupply = getBigNumber(Math.pow(2, 255))
+const IncreaseLiquidityEventId = utils.id('IncreaseLiquidity(uint256,uint128,uint256,uint256)')
+
 async function createPool(env: Environment, fee: number, price: number, positions: Position[]): Promise<PoolInfo> {
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
@@ -113,7 +115,7 @@ async function createPool(env: Environment, fee: number, price: number, position
     const position = positions[i]
     expect(position.from % tickSpacing).to.equal(0)
     expect(position.to % tickSpacing).to.equal(0)
-    await env.positionManager.mint({
+    const rct = await env.positionManager.mint({
       token0: token0.address,
       token1: token1.address,
       fee: getBigNumber(fee),
@@ -126,8 +128,13 @@ async function createPool(env: Environment, fee: number, price: number, position
       recipient: env.user.getAddress(),
       deadline: getBigNumber(1e14),
     })
-    // ticks.push({ index: positions[i].from, DLiquidity: r.liquidity })
-    // ticks.push({ index: positions[i].to, DLiquidity: ZERO.sub(r.liquidity) })
+    const result = await rct.wait()
+
+    const log = result.logs.find((l: { topics: string[] }) => l.topics[0] == IncreaseLiquidityEventId)
+    expect(log).not.undefined
+    const liquidity = BigNumber.from(log.data.substring(0, 66))
+    ticks.push({ index: positions[i].from, DLiquidity: liquidity })
+    ticks.push({ index: positions[i].to, DLiquidity: ZERO.sub(liquidity) })
   }
 
   const tinesPool = new UniV3Pool('pool address', token0, token1, fee / 1e6, ZERO, ZERO, ZERO, priceX96, 0, ticks)
