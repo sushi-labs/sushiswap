@@ -13,11 +13,26 @@ feeAmountTickSpacing[500] = 10 // 0.05%
 feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
 
+function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, logInfoIfFalse = ''): boolean {
+  const a: number = typeof _a == 'number' ? _a : parseInt(_a.toString())
+  const b: number = typeof _b == 'number' ? _b : parseInt(_b.toString())
+  if (accuracy === 0) return a === b
+  if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
+  if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
+  const res = Math.abs(a / b - 1) < accuracy
+  if (!res) {
+    console.log('Expected close: ', a, b, accuracy, logInfoIfFalse)
+    // debugger
+  }
+  return res
+}
+
 interface Environment {
   user: Signer
   tokenFactory: ContractFactory
   UniV3Factory: Contract
   positionManager: Contract
+  testRouter: Contract
 }
 
 async function createEnv(): Promise<Environment> {
@@ -42,13 +57,18 @@ async function createEnv(): Promise<Environment> {
     WETH9Contract.address,
     '0x0000000000000000000000000000000000000000'
   )
-  await NonfungiblePositionManagerContract.deployed()
+  const positionManager = await NonfungiblePositionManagerContract.deployed()
+
+  // const TestRouterFactory = await ethers.getContractFactory('TestRouter')
+  // const testRouter = await TestRouterFactory.deploy()
+  // await testRouter.deployed()
 
   return {
     user,
     tokenFactory,
     UniV3Factory,
-    positionManager: NonfungiblePositionManagerContract,
+    positionManager,
+    testRouter: undefined,
   }
 }
 
@@ -97,15 +117,17 @@ async function createPool(env: Environment, fee: number, price: number, position
   await token1Contract.deployed()
   const token1: RToken = { name: 'Token1', symbol: 'Token1', address: token1Contract.address }
 
-  await token0Contract.approve(env.positionManager.address, tokenSupply)
-  await token1Contract.approve(env.positionManager.address, tokenSupply)
-
+  await (await token0Contract.approve(env.positionManager.address, tokenSupply)).wait()
+  await (await token1Contract.approve(env.positionManager.address, tokenSupply)).wait()
+  // await token0Contract.approve(env.testRouter.address, tokenSupply)
+  // await token1Contract.approve(env.testRouter.address, tokenSupply)
   await env.positionManager.createAndInitializePoolIfNecessary(
     token0Contract.address,
     token1Contract.address,
     getBigNumber(fee),
     priceX96
   )
+
   const poolAddress = await env.UniV3Factory.getPool(token0Contract.address, token1Contract.address, fee)
   const poolF = await ethers.getContractFactory('UniswapV3Pool')
   const pool = poolF.attach(poolAddress)
@@ -167,7 +189,21 @@ async function createPool(env: Environment, fee: number, price: number, position
   }
 }
 
-async function checkSwap(pool: PoolInfo, amount: number, direction: boolean) {}
+async function checkSwap(env: Environment, pool: PoolInfo, amount: number, direction: boolean) {
+  const [inToken, outToken] = direction
+    ? [pool.token0Contract, pool.token1Contract]
+    : [pool.token1Contract, pool.token0Contract]
+  const inBalanceBefore = await inToken.balanceOf(env.user)
+  const outBalanceBefore = await outToken.balanceOf(env.user)
+  await env.testRouter.swap(pool.contract.address, direction, getBigNumber(amount))
+  const inBalanceAfter = await inToken.balanceOf(env.user)
+  const outBalanceAfter = await outToken.balanceOf(env.user)
+
+  const amountIn = inBalanceBefore.sub(inBalanceAfter)
+  expect(closeValues(amount, amountIn, 1e-12)).true
+
+  const amountOut = outBalanceAfter.sub(outBalanceBefore)
+}
 
 describe('Uni V3', () => {
   let env: Environment
@@ -187,6 +223,7 @@ describe('Uni V3', () => {
   })
 
   it('One position', async () => {
-    await createPool(env, 3000, 1, [{ from: -1200, to: 1200, val: 1e18 }])
+    const pool = await createPool(env, 3000, 1, [{ from: -1200, to: 1200, val: 1e18 }])
+    //await checkSwap(env, pool, 1e12, true)
   })
 })
