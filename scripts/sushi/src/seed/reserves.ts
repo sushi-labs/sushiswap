@@ -2,7 +2,6 @@ import '../lib/wagmi.js'
 
 import { Prisma, PrismaClient } from '@prisma/client'
 import { ChainId } from '@sushiswap/chain'
-import IUniswapV2PairArtifact from '@uniswap/v2-core/build/IUniswapV2Pair.json' assert { type: 'json' }
 import { readContracts } from '@wagmi/core'
 import { performance } from 'perf_hooks'
 
@@ -180,7 +179,6 @@ async function getReserves(
         ...prev,
         {
           address: pool.address,
-          type: pool.type,
           reserve0: reserves[i][0].toString() as string,
           reserve1: reserves[i][1].toString() as string,
         },
@@ -248,7 +246,6 @@ async function updatePoolsWithReserve(chainId: ChainId, pools: PoolWithReserve[]
 
 interface PoolWithReserve {
   address: string
-  type: string,
   reserve0: string
   reserve1: string
 }
