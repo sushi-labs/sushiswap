@@ -107,12 +107,12 @@ function createProtocolJobRequest(
 }
 
 function createReserveJobRequest(chainId: ChainId, baseUrl: string) {
-  const urlPath = `/reserves?chainId=${chainId}&version=${ProtocolVersion.V2}&poolType=${PoolType.CONSTANT_PRODUCT_POOL}`
+  const urlPath = `/reserves?chainId=${chainId}`
   return createJobRequest(`RESERVES-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '10,25,40,55 * * * *')
 }
 
 function createLiquidityJobRequest(chainId: ChainId, baseUrl: string) {
-  const urlPath = `/liquidity?chainId=${chainId}&version=${ProtocolVersion.V2}&poolType=${PoolType.CONSTANT_PRODUCT_POOL}`
+  const urlPath = `/liquidity?chainId=${chainId}`
   return createJobRequest(`LIQUIDITY-${chainShortName[chainId]}-${chainId}`, baseUrl, urlPath, '32,02 * * * *')
 }
 
