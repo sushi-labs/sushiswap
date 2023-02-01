@@ -3,8 +3,8 @@ import type * as _ from '@prisma/client/runtime'
 
 import prisma, { DecimalToString } from '@sushiswap/database'
 
-import type { PoolsApiSchema } from '../api/v0/'
-import type { PoolsCountApiSchema } from '../api/v0/count'
+import type { PoolsApiSchemaOutput } from '../api/v0/'
+import type { PoolsCountApiSchemaOutput } from '../api/v0/count'
 
 export async function getPool(chainId: number, address: string) {
   const id = `${chainId}:${address.toLowerCase()}`
@@ -45,7 +45,7 @@ export async function getPool(chainId: number, address: string) {
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
 
-function parseWhere(args: PoolsApiSchema | PoolsCountApiSchema) {
+function parseWhere(args: PoolsApiSchemaOutput | PoolsCountApiSchemaOutput) {
   let where: PrismaArgs['where'] = {}
 
   if ('ids' in args && args.ids !== undefined) {
@@ -91,7 +91,7 @@ function parseWhere(args: PoolsApiSchema | PoolsCountApiSchema) {
   return where
 }
 
-export async function getPools(args: PoolsApiSchema) {
+export async function getPools(args: PoolsApiSchemaOutput) {
   const take = args.take
   const orderBy: PrismaArgs['orderBy'] = { [args.orderBy]: args.orderDir }
   const where: PrismaArgs['where'] = parseWhere(args)
@@ -177,7 +177,7 @@ export async function getPools(args: PoolsApiSchema) {
   return pools ? (pools as unknown as DecimalToString<typeof pools>) : []
 }
 
-export async function getPoolCount(args: PoolsCountApiSchema) {
+export async function getPoolCount(args: PoolsCountApiSchemaOutput) {
   const where: PrismaArgs['where'] = parseWhere(args)
 
   const count = await prisma.sushiPool.count({

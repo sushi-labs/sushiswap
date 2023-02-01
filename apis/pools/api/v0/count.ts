@@ -39,7 +39,8 @@ const schema = z.object({
     .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
 })
 
-export type PoolsCountApiSchema = typeof schema._type
+export type PoolsCountApiSchema = typeof schema._input
+export type PoolsCountApiSchemaOutput = typeof schema._output
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
   const result = schema.safeParse(_request.query)

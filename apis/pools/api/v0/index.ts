@@ -43,14 +43,15 @@ export const schema = z.object({
     .optional(),
   poolTypes: z
     .string()
-    .optional()
-    .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
+    .transform((poolTypes) => poolTypes?.split(',') as PoolType[])
+    .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),
   orderDir: z.enum(['asc', 'desc']).default('desc'),
 })
 
-export type PoolsApiSchema = typeof schema._type
+export type PoolsApiSchema = typeof schema._input
+export type PoolsApiSchemaOutput = typeof schema._output
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
   const result = schema.safeParse(_request.query)
