@@ -109,7 +109,7 @@ function isLess(a: Contract, b: Contract): boolean {
 
 const tokenSupply = getBigNumber(Math.pow(2, 255))
 async function createPool(env: Environment, fee: number, price: number, positions: Position[]): Promise<PoolInfo> {
-  const priceX96 = getBigNumber(price * Math.pow(2, 96))
+  const sqrtPriceX96 = getBigNumber(Math.sqrt(price) * Math.pow(2, 96))
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
 
@@ -129,7 +129,7 @@ async function createPool(env: Environment, fee: number, price: number, position
     token0Contract.address,
     token1Contract.address,
     getBigNumber(fee),
-    priceX96
+    sqrtPriceX96
   )
 
   const poolAddress = await env.UniV3Factory.getPool(token0Contract.address, token1Contract.address, fee)
@@ -163,7 +163,7 @@ async function createPool(env: Environment, fee: number, price: number, position
     await token0Contract.balanceOf(pool.address),
     await token1Contract.balanceOf(pool.address),
     await pool.liquidity(),
-    priceX96,
+    sqrtPriceX96,
     ticks
   )
 
@@ -214,8 +214,8 @@ describe('Uni V3', () => {
     expect(res2.out).to.equal(0)
   })
 
-  it('One position', async () => {
-    const pool = await createPool(env, 3000, 1, [{ from: -1200, to: 1200, val: 1e18 }])
+  it('One position before tick', async () => {
+    const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
     await checkSwap(env, pool, 1e16, true)
   })
 })
