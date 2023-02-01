@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { z } from 'zod'
 
-import { PoolType } from '../../../../../../../../lib'
-import { getAggregatorPoolsByTokenIds } from '../../../../../../../../lib/api'
+import type { PoolType } from '../../../../../../../lib'
+import { getAggregatorPoolsByTokenIds } from '../../../../../../../lib/api'
 
 const schema = z.object({
   chainId: z.coerce
@@ -12,7 +12,9 @@ const schema = z.object({
     .lte(2 ** 256),
   protocol: z.string(),
   version: z.string(),
-  poolType: z.nativeEnum(PoolType),
+  poolTypes: z
+    .string()
+    .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
   token0: z.string(),
   token1: z.string(),
   size: z.coerce.number().int().gte(0).lte(1000),
@@ -30,7 +32,7 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     chainId,
     protocol,
     version,
-    poolType,
+    poolTypes,
     token0,
     token1,
     size,
@@ -45,7 +47,7 @@ const handler = async (_request: VercelRequest, response: VercelResponse) => {
     chainId,
     protocol,
     version,
-    poolType,
+    poolTypes,
     token0,
     token1,
     size,

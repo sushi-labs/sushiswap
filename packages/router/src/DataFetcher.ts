@@ -11,6 +11,7 @@ import { LiquidityProvider, LiquidityProviders } from './liquidity-providers/Liq
 import { NativeWrapProvider } from './liquidity-providers/NativeWrapProvider'
 import { QuickSwapProvider } from './liquidity-providers/QuickSwap'
 import { SushiProvider } from './liquidity-providers/Sushi'
+import { TridentProvider } from './liquidity-providers/Trident'
 import { UniswapV2Provider } from './liquidity-providers/UniswapV2'
 import type { PoolCode } from './pools/PoolCode'
 import { allProviders } from './providers'
@@ -52,57 +53,66 @@ export class DataFetcher {
 
     this.providers = [new NativeWrapProvider(this.chainId)]
 
-    if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
+    // if (this._providerIsIncluded(LiquidityProviders.SushiSwap, providers)) {
+    //   try {
+    //     const provider = new SushiProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     console.warn(e.message)
+    //   }
+    // }
+    // if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
+    //   try {
+    //     const provider = new UniswapV2Provider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     console.warn(e.message)
+    //   }
+    // }
+    // if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
+    //   try {
+    //     const provider = new QuickSwapProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     console.warn(e.message)
+    //   }
+    // }
+    // if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
+    //   try {
+    //     const provider = new ApeSwapProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     console.warn(e.message)
+    //   }
+    // }
+    // if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
+    //   try {
+    //     const provider = new DfynProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     console.warn(e.message)
+    //   }
+    // }
+    // if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
+    //   try {
+    //     const provider = new ElkProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     console.warn(e.message)
+    //   }
+    // }
+    // if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
+    //   try {
+    //     const provider = new JetSwapProvider(this.chainId)
+    //     this.providers.push(provider)
+    //   } catch (e: any) {
+    //     console.warn(e.message)
+    //   }
+    // }
+    
+    if (this._providerIsIncluded(LiquidityProviders.Trident, providers)) {
       try {
-        const provider = new SushiProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.UniswapV2, providers)) {
-      try {
-        const provider = new UniswapV2Provider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.QuickSwap, providers)) {
-      try {
-        const provider = new QuickSwapProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.ApeSwap, providers)) {
-      try {
-        const provider = new ApeSwapProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.Dfyn, providers)) {
-      try {
-        const provider = new DfynProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.Elk, providers)) {
-      try {
-        const provider = new ElkProvider(this.chainId)
-        this.providers.push(provider)
-      } catch (e: any) {
-        console.warn(e.message)
-      }
-    }
-    if (this._providerIsIncluded(LiquidityProviders.JetSwap, providers)) {
-      try {
-        const provider = new JetSwapProvider(this.chainId)
+        const provider = new TridentProvider(this.chainId)
         this.providers.push(provider)
       } catch (e: any) {
         console.warn(e.message)

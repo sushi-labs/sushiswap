@@ -186,7 +186,7 @@ export async function getAggregatorTopPools(
   chainId: number,
   protocol: string,
   version: string,
-  poolType: PoolType,
+  poolTypes: PoolType[],
   size: number,
   minLiquidity?: number
 ) {
@@ -195,7 +195,7 @@ export async function getAggregatorTopPools(
     isWhitelisted: true,
     protocol,
     version,
-    type: poolType,
+    type: { in: poolTypes },
   }
   if (minLiquidity) {
     where = {
@@ -213,6 +213,9 @@ export async function getAggregatorTopPools(
     },
     select: {
       address: true,
+      twapEnabled: true,
+      swapFee: true,
+      type: true,
       token0: {
         select: {
           id: true,
@@ -253,7 +256,7 @@ export async function getAggregatorPoolsByTokenIds(
   chainId: number,
   protocol: string,
   version: string,
-  poolType: PoolType,
+  poolTypes: PoolType[],
   token0: string,
   token1: string,
   size: number,
@@ -268,7 +271,7 @@ export async function getAggregatorPoolsByTokenIds(
     isWhitelisted: true,
     protocol,
     version,
-    type: poolType,
+    type: { in: poolTypes },
   }
   if (topPoolMinLiquidity) {
     topPoolWhere = {
@@ -283,6 +286,9 @@ export async function getAggregatorPoolsByTokenIds(
     id: true,
     address: true,
     liquidityUSD: true,
+    twapEnabled: true,
+    swapFee: true,
+    type: true,
     token0: {
       select: {
         id: true,
@@ -310,7 +316,7 @@ export async function getAggregatorPoolsByTokenIds(
             chainId,
             protocol,
             version,
-            type: poolType,
+            type: { in: poolTypes },
             OR: [
               {
                 token0Id: token0Id,
@@ -333,7 +339,7 @@ export async function getAggregatorPoolsByTokenIds(
             chainId,
             protocol,
             version,
-            type: poolType,
+            type: { in: poolTypes },
             OR: [
               {
                 token0Id: token0Id,
@@ -364,7 +370,7 @@ export async function getAggregatorPoolsByTokenIds(
             chainId,
             protocol,
             version,
-            type: poolType,
+            type: { in: poolTypes },
             OR: [
               {
                 token0Id: token1Id,
@@ -387,7 +393,7 @@ export async function getAggregatorPoolsByTokenIds(
             chainId,
             protocol,
             version,
-            type: poolType,
+            type: { in: poolTypes },
             OR: [
               {
                 token0Id: token1Id,

@@ -1,27 +1,20 @@
 import { Token } from '@sushiswap/currency'
 import fetch from 'node-fetch'
 
-interface PoolResponse {
+export interface PoolResponse {
   address: string
-  token0: {
-    address: string
-    decimals: number
-    symbol: string
-    name: string
-  }
-  token1: {
-    address: string
-    decimals: number
-    symbol: string
-    name: string
-  }
+  type: string,
+  swapFee: number
+  twapEnabled: boolean
+  token0: Token
+  token1: Token
 }
 
 export async function getPoolsByTokenIds(
   chainId: number,
   protocol: string,
   version: string,
-  poolType: string,
+  poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
   token0Address: string,
   token1Address: string,
   excludeTopPoolsSize: number,
@@ -30,10 +23,12 @@ export async function getPoolsByTokenIds(
 ) {
   try {
     const pools = await fetch(
-      `https://pools-git-feature-swap.sushi.com/api/v0/aggregator/pools/${chainId}/${protocol}/${version}/${poolType}?token0=${token0Address}&token1=${token1Address}&size=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
-    ).then((data) => data.json() as Promise<PoolResponse[]>)
+     // `https://pools-git-feature-swap.sushi.com/api/v0/aggregator/pools/${chainId}/${protocol}/${version}?poolTypes=${poolTypes.join(',')}&token0=${token0Address}&token1=${token1Address}&size=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
+      `http://localhost:3000/api/v0/aggregator/pools/${chainId}/${protocol}/${version}?poolTypes=${poolTypes.join(',')}&token0=${token0Address}&token1=${token1Address}&size=${size}&excludeTopPoolsSize=${excludeTopPoolsSize}&topPoolMinLiquidity=${topPoolMinLiquidity}`
+  
+      ).then((data) => data.json())
 
-    const poolMap: Map<string, [Token, Token]> = new Map()
+    const poolMap: Map<string, PoolResponse> = new Map()
     for (const pool of pools) {
       const token0 = new Token({
         chainId,
@@ -49,13 +44,20 @@ export async function getPoolsByTokenIds(
         symbol: pool.token1.symbol,
         name: pool.token1.name,
       })
-      poolMap.set(pool.address, [token0, token1])
+      poolMap.set(pool.address, {
+        address: pool.address,
+        swapFee: pool.swapFee,
+        twapEnabled: pool.twapEnabled,
+        type: pool.type,
+        token0,
+        token1,
+      })
     }
 
     return poolMap
   } catch (error) {
     console.error(error)
-    return new Map<string, [Token, Token]>()
+    return new Map<string, PoolResponse>()
   }
 }
 
@@ -63,15 +65,16 @@ export async function getTopPools(
   chainId: number,
   protocol: string,
   version: string,
-  poolType: string,
+  poolTypes: ('CONSTANT_PRODUCT_POOL' | 'CONCENTRATED_LIQUIDITY_POOL' | 'STABLE_POOL')[],
   size: number,
   minLiquidity: number
 ) {
   try {
     const pools = await fetch(
-      `https://pools-git-feature-swap.sushi.com/api/v0/aggregator/top-pools/${chainId}/${protocol}/${version}/${poolType}?size=${size}&minLiquidity=${minLiquidity}`
-    ).then((data) => data.json() as Promise<PoolResponse[]>)
-    const poolMap: Map<string, [Token, Token]> = new Map()
+      // `https://pools-git-feature-swap.sushi.com/api/v0/aggregator/top-pools/${chainId}/${protocol}/${version}?poolTypes=${poolTypes.join(',')}&size=${size}&minLiquidity=${minLiquidity}`
+      `http://localhost:3000/api/v0/aggregator/top-pools/${chainId}/${protocol}/${version}?poolTypes=${poolTypes.join(',')}&size=${size}&minLiquidity=${minLiquidity}`
+      ).then((data) => data.json())
+    const poolMap: Map<string, PoolResponse> = new Map()
 
     for (const pool of pools) {
       const token0 = new Token({
@@ -88,12 +91,19 @@ export async function getTopPools(
         symbol: pool.token1.symbol,
         name: pool.token1.name,
       })
-      poolMap.set(pool.address, [token0, token1])
+      poolMap.set(pool.address, {
+        address: pool.address,
+        swapFee: pool.swapFee,
+        twapEnabled: pool.twapEnabled,
+        type: pool.type,
+        token0,
+        token1,
+      })
     }
 
     return poolMap
   } catch (error) {
     console.error(error)
-    return new Map<string, [Token, Token]>()
+    return new Map<string, PoolResponse>()
   }
 }
