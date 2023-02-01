@@ -155,8 +155,6 @@ async function createPool(env: Environment, fee: number, price: number, position
   }
 
   const ticks: CLTick[] = Array.from(tickMap.entries()).map(([index, DLiquidity]) => ({ index, DLiquidity }))
-  const slot = await pool.slot0()
-  const nearestTick = slot[1]
   const tinesPool = new UniV3Pool(
     pool.address,
     token0,
@@ -166,7 +164,6 @@ async function createPool(env: Environment, fee: number, price: number, position
     await token1Contract.balanceOf(pool.address),
     await pool.liquidity(),
     priceX96,
-    nearestTick,
     ticks
   )
 
@@ -197,7 +194,7 @@ async function checkSwap(env: Environment, pool: PoolInfo, amount: number, direc
 
   const amountOut = outBalanceAfter.sub(outBalanceBefore)
   const amounOutTines = pool.tinesPool.calcOutByIn(amount, direction)
-  expect(closeValues(amountOut, amounOutTines.out, 1e-9)).true
+  expect(closeValues(amountOut, amounOutTines.out, 1e-12)).true
 }
 
 describe('Uni V3', () => {

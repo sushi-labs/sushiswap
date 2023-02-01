@@ -76,13 +76,11 @@ export class UniV3Pool extends RPool {
     reserve1: BigNumber,
     liquidity: BigNumber,
     sqrtPriceX96: BigNumber,
-    nearestTick: number,
     ticks: CLTick[]
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
     this.liquidity = liquidity
     this.sqrtPriceX96 = sqrtPriceX96
-    this.nearestTick = nearestTick
     this.ticks = ticks
     if (this.ticks.length === 0) {
       this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
@@ -90,6 +88,22 @@ export class UniV3Pool extends RPool {
     }
     if (this.ticks[0].index > CL_MIN_TICK) this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
     if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK) this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
+    this.nearestTick = this._findTickForPrice(sqrtPriceX96)
+  }
+
+  _findTickForPrice(priceBN: BigNumber) {
+    const price = parseInt(priceBN.toString()) / two96
+    const index = Math.floor(Math.log(price) / Math.log(1.0001))
+    let a = 0
+    let b = this.ticks.length
+    while (b - a > 1) {
+      const c = Math.floor((a + b) / 2)
+      const ind = this.ticks[c].index
+      if (ind == index) return c
+      if (ind < index) a = c
+      else b = c
+    }
+    return a
   }
 
   calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
@@ -98,7 +112,7 @@ export class UniV3Pool extends RPool {
     let currentPrice = parseInt(currentPriceBN.toString()) / two96
     let currentLiquidityBN = this.liquidity
     let outAmount = 0
-    let input = amountIn
+    let input = amountIn * (1 - this.fee)
 
     let startFlag = true
     while (input > 0) {
@@ -117,15 +131,11 @@ export class UniV3Pool extends RPool {
         priceDiff = currentPrice - nextTickPrice
       }
 
-      // console.log('L, P, tick, nextP', currentLiquidity,
-      //     currentPrice, this.ticks[nextTickToCross].index, nextTickPrice);
       let output = 0
       const currentLiquidity = parseInt(currentLiquidityBN.toString())
 
       if (direction) {
         const maxDx = (currentLiquidity * priceDiff) / currentPrice / nextTickPrice
-        //console.log('input, maxDx', input, maxDx);
-
         if (input <= maxDx) {
           output = (currentLiquidity * currentPrice * input) / (input + currentLiquidity / currentPrice)
           input = 0
@@ -153,7 +163,7 @@ export class UniV3Pool extends RPool {
         }
       }
 
-      outAmount += output * (1 - this.fee)
+      outAmount += output
       //console.log('out', outAmount);
     }
 
@@ -168,7 +178,7 @@ export class UniV3Pool extends RPool {
     let currentPrice = parseInt(currentPriceBN.toString()) / two96
     let currentLiquidityBN = this.liquidity
     let input = 0
-    let outBeforeFee = amountOut / (1 - this.fee)
+    let outBeforeFee = amountOut
 
     let startFlag = true
     while (outBeforeFee > 0) {
@@ -222,7 +232,7 @@ export class UniV3Pool extends RPool {
       }
     }
 
-    return { inp: input, gasSpent: this.swapGasCost }
+    return { inp: input / (1 - this.fee), gasSpent: this.swapGasCost }
   }
 
   calcCurrentPriceWithoutFee(direction: boolean): number {

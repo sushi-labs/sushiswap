@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity = 0.7.6;
 
-import "hardhat/console.sol";
-
 /// @title The interface for the Uniswap V3 Factory
 /// @notice The Uniswap V3 Factory facilitates creation of Uniswap V3 pools and control over the protocol fees
 interface IUniswapV3Factory {
@@ -2835,7 +2833,7 @@ library SwapMath {
         uint24 feePips
     )
         internal
-        //pure
+        pure
         returns (
             uint160 sqrtRatioNextX96,
             uint256 amountIn,
@@ -2851,7 +2849,6 @@ library SwapMath {
             amountIn = zeroForOne
                 ? SqrtPriceMath.getAmount0Delta(sqrtRatioTargetX96, sqrtRatioCurrentX96, liquidity, true)
                 : SqrtPriceMath.getAmount1Delta(sqrtRatioCurrentX96, sqrtRatioTargetX96, liquidity, true);
-            //console.log(sqrtRatioTargetX96, sqrtRatioCurrentX96, liquidity, amountIn);
             if (amountRemainingLessFee >= amountIn) sqrtRatioNextX96 = sqrtRatioTargetX96;
             else
                 sqrtRatioNextX96 = SqrtPriceMath.getNextSqrtPriceFromInput(
