@@ -5,9 +5,10 @@ import prisma, { DecimalToString } from '@sushiswap/database'
 
 import type { PoolsApiSchema } from '../api/v0/'
 import type { PoolCountApiSchema } from '../api/v0/count'
+import type { PoolApiSchema } from '../api/v0/[chainId]/[address]'
 
-export async function getPool(chainId: number, address: string) {
-  const id = `${chainId}:${address.toLowerCase()}`
+export async function getPool(args: (typeof PoolApiSchema)['_output']) {
+  const id = `${args.chainId}:${args.address.toLowerCase()}`
   const pool = await prisma.sushiPool.findFirstOrThrow({
     include: {
       token0: true,

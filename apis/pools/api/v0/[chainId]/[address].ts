@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { getPool } from '../../../lib/api'
 
-const schema = z.object({
+export const PoolApiSchema = z.object({
   chainId: z.coerce
     .number()
     .int()
@@ -13,13 +13,13 @@ const schema = z.object({
 })
 
 const handler = async (request: VercelRequest, response: VercelResponse) => {
-  const result = schema.safeParse(request.query)
+  const result = PoolApiSchema.safeParse(request.query)
   if (!result.success) {
     return response.status(400).json(result.error.format())
   }
   const { chainId, address } = result.data
 
-  const pool = await getPool(chainId, address)
+  const pool = await getPool({ chainId, address })
   return response.status(200).json(pool)
 }
 
