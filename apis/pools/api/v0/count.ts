@@ -4,7 +4,7 @@ import { z } from 'zod'
 import type { PoolType } from '../../lib'
 import { getPoolCount } from '../../lib/api'
 
-const schema = z.object({
+export const PoolsCountApiSchema = z.object({
   chainIds: z
     .string()
     .transform((val) => val.split(',').map((v) => parseInt(v)))
@@ -39,11 +39,8 @@ const schema = z.object({
     .transform((poolTypes) => poolTypes?.split(',') as PoolType[]),
 })
 
-export type PoolsCountApiSchema = typeof schema._input
-export type PoolsCountApiSchemaOutput = typeof schema._output
-
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
-  const result = schema.safeParse(_request.query)
+  const result = PoolsCountApiSchema.safeParse(_request.query)
   if (!result.success) {
     return response.status(400).json(result.error.format())
   }

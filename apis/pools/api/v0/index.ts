@@ -4,7 +4,7 @@ import { z } from 'zod'
 import type { PoolType } from '../../lib'
 import { getPools } from '../../lib/api'
 
-export const schema = z.object({
+export const PoolsApiSchema = z.object({
   take: z
     .string()
     .default('20')
@@ -47,14 +47,11 @@ export const schema = z.object({
     .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),
-  orderDir: z.enum(['asc', 'desc']).default('desc'),
+  orderDir: z.enum(['asc', 'desc']).default('desc').optional(),
 })
 
-export type PoolsApiSchema = typeof schema._input
-export type PoolsApiSchemaOutput = typeof schema._output
-
 const handler = async (_request: VercelRequest, response: VercelResponse) => {
-  const result = schema.safeParse(_request.query)
+  const result = PoolsApiSchema.safeParse(_request.query)
   if (!result.success) {
     return response.status(400).json(result.error.format())
   }
