@@ -3,6 +3,7 @@ import type * as _ from '@prisma/client/runtime'
 
 import prisma, { DecimalToString } from '@sushiswap/database'
 
+import type { ChefType, PoolType, PoolVersion, RewarderType } from '.'
 import type { PoolsApiSchema } from '../api/v0/'
 import type { PoolCountApiSchema } from '../api/v0/count'
 import type { PoolApiSchema } from '../api/v0/[chainId]/[address]'
@@ -78,8 +79,21 @@ export async function getPool(args: (typeof PoolApiSchema)['_output']) {
     },
   })
 
+  type Pool = DecimalToString<
+    typeof pool & {
+      type: PoolType
+      version: PoolVersion
+      incentives: Array<
+        (typeof pool)['incentives'][0] & {
+          chefType: ChefType
+          rewarderType: RewarderType
+        }
+      >
+    }
+  >
+
   await prisma.$disconnect()
-  return pool as unknown as DecimalToString<typeof pool>
+  return pool as unknown as Pool
 }
 
 type PrismaArgs = NonNullable<Parameters<typeof prisma.sushiPool.findMany>['0']>
@@ -152,8 +166,22 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
     select: poolSelect,
   })
 
+  // TODO: Get rid of manual enums when the DB is migrated
+  type Pool = DecimalToString<
+    (typeof pools)[0] & {
+      type: PoolType
+      version: PoolVersion
+      incentives: Array<
+        (typeof pools)[0]['incentives'][0] & {
+          chefType: ChefType
+          rewarderType: RewarderType
+        }
+      >
+    }
+  >
+
   await prisma.$disconnect()
-  return pools ? (pools as unknown as DecimalToString<typeof pools>) : []
+  return pools ? (pools as unknown as Pool[]) : []
 }
 
 export async function getPoolCount(args: typeof PoolCountApiSchema._output) {
