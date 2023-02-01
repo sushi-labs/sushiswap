@@ -17,7 +17,9 @@ const config: HardhatUserConfig = {
   ...defaultConfig,
   defaultNetwork: 'hardhat',
   networks: {
-    hardhat: {},
+    hardhat: {
+      allowUnlimitedContractSize: true,
+    },
   },
   solidity: {
     compilers: [

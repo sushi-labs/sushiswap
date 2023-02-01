@@ -101,26 +101,27 @@ export async function getPoolState(pool: Contract) {
   return PoolState
 }
 
-const tokenSupply = getBigNumber(Math.pow(2, 255))
-const IncreaseLiquidityEventId = utils.id('IncreaseLiquidity(uint256,uint128,uint256,uint256)')
+function isLess(a: Contract, b: Contract): boolean {
+  const addrA = a.address.toLowerCase().substring(2).padStart(40, '0')
+  const addrB = b.address.toLowerCase().substring(2).padStart(40, '0')
+  return addrA < addrB
+}
 
+const tokenSupply = getBigNumber(Math.pow(2, 255))
 async function createPool(env: Environment, fee: number, price: number, positions: Position[]): Promise<PoolInfo> {
   const priceX96 = getBigNumber(price * Math.pow(2, 96))
   const tickSpacing = feeAmountTickSpacing[fee]
   expect(tickSpacing).not.undefined
 
   const _token0Contract = await env.tokenFactory.deploy('Token0', 'Token0', tokenSupply)
-  //await _token0Contract.deployed()
   const _token1Contract = await env.tokenFactory.deploy('Token1', 'Token1', tokenSupply)
-  //await _token1Contract.deployed()
-  const token0Contract = _token0Contract < _token1Contract ? _token0Contract : _token1Contract
-  const token1Contract = _token0Contract < _token1Contract ? _token1Contract : _token0Contract
+  const [token0Contract, token1Contract] = isLess(_token0Contract, _token1Contract)
+    ? [_token0Contract, _token1Contract]
+    : [_token1Contract, _token0Contract]
 
   const token0: RToken = { name: 'Token0', symbol: 'Token0', address: token0Contract.address }
   const token1: RToken = { name: 'Token1', symbol: 'Token1', address: token1Contract.address }
 
-  await token0Contract.approve(env.positionManager.address, tokenSupply)
-  await token1Contract.approve(env.positionManager.address, tokenSupply)
   await token0Contract.approve(env.testRouter.address, tokenSupply)
   await token1Contract.approve(env.testRouter.address, tokenSupply)
 
@@ -140,24 +141,9 @@ async function createPool(env: Environment, fee: number, price: number, position
     const position = positions[i]
     expect(position.from % tickSpacing).to.equal(0)
     expect(position.to % tickSpacing).to.equal(0)
-    const rct = await env.positionManager.mint({
-      token0: token0.address,
-      token1: token1.address,
-      fee: getBigNumber(fee),
-      tickLower: getBigNumber(position.from),
-      tickUpper: getBigNumber(position.to),
-      amount0Desired: getBigNumber(position.val),
-      amount1Desired: getBigNumber(position.val),
-      amount0Min: ZERO,
-      amount1Min: ZERO,
-      recipient: env.user.getAddress(),
-      deadline: getBigNumber(1e14),
-    })
-    const result = await rct.wait()
 
-    const log = result.logs.find((l: { topics: string[] }) => l.topics[0] == IncreaseLiquidityEventId)
-    expect(log).not.undefined
-    const liquidity = BigNumber.from(log.data.substring(0, 66))
+    const liquidity = getBigNumber(position.val)
+    await env.testRouter.mint(poolAddress, position.from, position.to, liquidity)
 
     let tickLiquidity = tickMap.get(position.from)
     tickLiquidity = tickLiquidity === undefined ? liquidity : tickLiquidity.add(liquidity)
@@ -198,9 +184,13 @@ async function checkSwap(env: Environment, pool: PoolInfo, amount: number, direc
     : [pool.token1Contract, pool.token0Contract]
   const inBalanceBefore = await inToken.balanceOf(env.user.getAddress())
   const outBalanceBefore = await outToken.balanceOf(env.user.getAddress())
+  const tickBefore = (await pool.contract.slot0())[1]
   await env.testRouter.swap(pool.contract.address, direction, getBigNumber(amount))
+  const tickAfter = (await pool.contract.slot0())[1]
   const inBalanceAfter = await inToken.balanceOf(env.user.getAddress())
   const outBalanceAfter = await outToken.balanceOf(env.user.getAddress())
+
+  //console.log(tickBefore, '->', tickAfter)
 
   const amountIn = inBalanceBefore.sub(inBalanceAfter)
   expect(closeValues(amount, amountIn, 1e-12)).true
@@ -229,6 +219,6 @@ describe('Uni V3', () => {
 
   it('One position', async () => {
     const pool = await createPool(env, 3000, 1, [{ from: -1200, to: 1200, val: 1e18 }])
-    await checkSwap(env, pool, 1e12, true)
+    await checkSwap(env, pool, 1e16, true)
   })
 })
