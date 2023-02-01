@@ -8,21 +8,13 @@ import { PoolType, ProtocolVersion } from '../config.js'
 
 const client = new PrismaClient()
 
-const CURRENT_SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
+const SUPPORTED_VERSIONS = [ProtocolVersion.V2, ProtocolVersion.LEGACY, ProtocolVersion.TRIDENT]
+const SUPPORTED_TYPES = [PoolType.CONSTANT_PRODUCT_POOL, PoolType.STABLE_POOL]
 
-export async function liquidity(chainId: ChainId, version: ProtocolVersion, type: PoolType) {
+export async function liquidity(chainId: ChainId) {
   try {
-    if (!Object.values(CURRENT_SUPPORTED_VERSIONS).includes(version)) {
-      throw new Error(
-        `Protocol version (${version}) not supported, supported versions: ${CURRENT_SUPPORTED_VERSIONS.join(',')}`
-      )
-    }
-    if (type !== PoolType.CONSTANT_PRODUCT_POOL) {
-      throw new Error(`Pool type ${type} not supported, supported types: ${PoolType.CONSTANT_PRODUCT_POOL}`)
-    }
-
     const startTime = performance.now()
-    console.log(`CHAIN_ID: ${chainId}, VERSIONS: ${CURRENT_SUPPORTED_VERSIONS}, TYPE: ${type}`)
+    console.log(`LIQUIDITY - CHAIN_ID: ${chainId}, VERSIONS: ${SUPPORTED_VERSIONS}, TYPE: ${SUPPORTED_TYPES}`)
 
     const pools = await getPools(chainId)
     const poolsToUpdate = transform(pools)
@@ -92,15 +84,17 @@ async function getPoolsByPagination(
     },
     where: {
       chainId,
-      type: PoolType.CONSTANT_PRODUCT_POOL,
+      type: {
+        in: SUPPORTED_TYPES,
+      },
       version: {
-        in: CURRENT_SUPPORTED_VERSIONS,
+        in: SUPPORTED_VERSIONS,
       },
       reserve0: {
-        not: '0',
+        notIn: ['0', '1'],
       },
       reserve1: {
-        not: '0',
+        notIn: ['0', '1'],
       },
       token0: {
         derivedUSD: {
