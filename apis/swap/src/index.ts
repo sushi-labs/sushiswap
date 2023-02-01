@@ -9,7 +9,7 @@ import {
   // findSpecialRoute,
   Router,
 } from '@sushiswap/router'
-import { DataFetcher } from '@sushiswap/router/dist/wagmi/DataFetcher'
+import { DataFetcher } from '@sushiswap/router/dist/DataFetcher'
 import { BigNumber } from 'ethers'
 import fastify from 'fastify'
 import { performance } from 'perf_hooks'

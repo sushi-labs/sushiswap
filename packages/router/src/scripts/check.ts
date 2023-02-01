@@ -80,7 +80,7 @@ async function quote2(
 interface Environment {
   chainId: ChainId
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  provider: any
+  // provider: any
   dataFetcher: DataFetcher
 }
 
@@ -95,13 +95,13 @@ function getEnvironment(chainId: ChainId): Environment {
       break
     default:
   }
-  const provider = new ethers.providers.AlchemyProvider(network, process.env.ALCHEMY_API_KEY)
-  const dataFetcher = new DataFetcher(provider, chainId)
+  // const provider = new ethers.providers.AlchemyProvider(network, process.env.ALCHEMY_API_KEY)
+  const dataFetcher = new DataFetcher(chainId)
   dataFetcher.startDataFetching()
 
   return {
     chainId,
-    provider,
+    // provider,
     dataFetcher,
   }
 }
