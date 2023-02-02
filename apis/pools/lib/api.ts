@@ -31,6 +31,7 @@ export async function getPool(chainId: number, address: string) {
           id: true,
           pid: true,
           chainId: true,
+          // @ts-ignore
           type: true,
           apr: true,
           rewarderAddress: true,
