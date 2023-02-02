@@ -2,7 +2,7 @@ import { CLTick, getBigNumber, RPool, RToken, UniV3Pool } from '@sushiswap/tines
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
-import { BigNumber, Contract, ContractFactory, Signer, utils } from 'ethers'
+import { BigNumber, BigNumberish, Contract, ContractFactory, Signer, utils } from 'ethers'
 import { ethers } from 'hardhat'
 
 const ZERO = getBigNumber(0)
@@ -180,31 +180,33 @@ async function createPool(env: Environment, fee: number, price: number, position
   }
 }
 
-async function checkSwap(env: Environment, pool: PoolInfo, amount: number, direction: boolean) {
+async function checkSwap(env: Environment, pool: PoolInfo, amount: number | BigNumberish, direction: boolean) {
+  const amountBN: BigNumber = typeof amount == 'number' ? getBigNumber(amount) : BigNumber.from(amount)
+  const amountN: number = typeof amount == 'number' ? amount : parseInt(amount.toString())
   const [inToken, outToken] = direction
     ? [pool.token0Contract, pool.token1Contract]
     : [pool.token1Contract, pool.token0Contract]
   const inBalanceBefore = await inToken.balanceOf(env.user.getAddress())
   const outBalanceBefore = await outToken.balanceOf(env.user.getAddress())
   const tickBefore = (await pool.contract.slot0())[1]
-  await env.testRouter.swap(pool.contract.address, direction, getBigNumber(amount))
+  await env.testRouter.swap(pool.contract.address, direction, amountBN)
   const tickAfter = (await pool.contract.slot0())[1]
   const inBalanceAfter = await inToken.balanceOf(env.user.getAddress())
   const outBalanceAfter = await outToken.balanceOf(env.user.getAddress())
 
   //console.log(tickBefore, '->', tickAfter)
 
-  const amountIn = inBalanceBefore.sub(inBalanceAfter)
-  if (closeValues(amountIn, amount, 1e-12)) {
+  const amountIn: BigNumber = inBalanceBefore.sub(inBalanceAfter)
+  if (amountIn.eq(amountBN)) {
     // all input value were swapped to output
     const amountOut = outBalanceAfter.sub(outBalanceBefore)
-    const amounOutTines = pool.tinesPool.calcOutByIn(amount, direction)
+    const amounOutTines = pool.tinesPool.calcOutByIn(amountN, direction)
     expectCloseValues(amountOut, amounOutTines.out, 1e-12)
   } else {
     // out of liquidity
-    expect(parseInt(amountIn.toString())).to.be.lessThan(amount * (1 + 1e-12))
+    expect(amountIn.lt(amountBN)).true
     expectToTrow(async () => {
-      pool.tinesPool.calcOutByIn(amount, direction)
+      pool.tinesPool.calcOutByIn(amountN, direction)
     })
   }
 }
@@ -231,17 +233,30 @@ describe('Uni V3', () => {
     await checkSwap(env, pool, 100, false)
   })
 
-  it('One position without tick crossing', async () => {
-    const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
-    await checkSwap(env, pool, 1e16, true)
-    const pool2 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
-    await checkSwap(env, pool2, 1e16, false)
-  })
+  describe('One position', () => {
+    it('No tick crossing', async () => {
+      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool, 1e16, true)
+      const pool2 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool2, 1e16, false)
+    })
 
-  it('One position with tick crossing', async () => {
-    const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
-    await checkSwap(env, pool, 1e18, true)
-    const pool2 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
-    await checkSwap(env, pool2, 1e20, false)
+    it('Tick crossing', async () => {
+      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool, 1e18, true)
+      const pool2 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool2, 1e20, false)
+    })
+
+    it('Swap exact to tick', async () => {
+      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool, '616469173272709204', true) // before tick
+      const pool2 = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool2, '616469173272709205', true) // after tick
+      const pool3 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool3, '460875064077414607', false) // before tick
+      const pool4 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool4, '460875064077414607', false) // after tick
+    })
   })
 })

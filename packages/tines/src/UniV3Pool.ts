@@ -151,7 +151,7 @@ export class UniV3Pool extends RPool {
         }
       } else {
         const maxDy = currentLiquidity * -priceDiff
-        //console.log('input, maxDy', input, maxDy);
+        //console.log('input, maxDy', input, maxDy)
         if (input <= maxDy) {
           output = input / currentPrice / (currentPrice + input / currentLiquidity)
           input = 0
