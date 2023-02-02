@@ -14,6 +14,7 @@ import { BigNumber } from 'ethers'
 
 import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
 import { convertToBigNumber, convertToRebase } from '../MulticallProvider'
+import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
 import type { PoolCode } from '../pools/PoolCode'
@@ -103,6 +104,13 @@ const syncAbi = [
 function closeValues(a: number, b: number, precision: number) {
   if (a == 0 || b == 0) return Math.abs(a - b) < precision
   return Math.abs(a / b - 1) < precision
+}
+
+export function convertToNumbers(arr: BigNumber[]): (number | undefined)[] {
+  return arr.map((a) => {
+    if (a === undefined) return undefined
+    return parseInt(a._hex, 16)
+  })
 }
 
 export function getBentoChainId(chainId: string | number | undefined): string {
@@ -272,8 +280,35 @@ export class TridentProvider extends LiquidityProvider {
             console.debug(
               `${this.chainId}~${this.lastUpdateBlock} - SYNC ${p.poolCode.poolName}, ${pool.token0.symbol}/${pool.token1.symbol}.`
             )
-            pool.updateReserves(res0, res1)
-            p.updatedAtBlock = blockNumber
+            if (pool instanceof StableSwapRPool) {
+              console.log(`BEFORE Stable pool sync, ${pool.address} ${pool.reserve0.toString()} ${pool.reserve1.toString()}`)
+              const total0 = this.lastFetchedTotals.get(pool.token0.address)
+              if (total0) {
+                const current = pool.getTotal0()
+                if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
+                  pool.updateTotal0(total0)
+                  ++this.stateId
+                }
+              }
+              const total1 = this.lastFetchedTotals.get(pool.token1.address)
+              if (total1) {
+                const current = pool.getTotal1()
+                if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
+                  pool.updateTotal1(total1)
+                  ++this.stateId
+                }
+              }
+              pool.updateReserves(
+                toShareBN(pool.reserve0, pool.getTotal0()),
+                toShareBN(pool.reserve1, pool.getTotal1())
+              )
+              
+              console.log(`AFTER Stable pool sync, ${pool.address} ${pool.reserve0.toString()} ${pool.reserve1.toString()}`)
+              p.updatedAtBlock = blockNumber
+            } else {
+              pool.updateReserves(res0, res1)
+              p.updatedAtBlock = blockNumber
+            }
           }
         )
       )
@@ -298,17 +333,21 @@ export class TridentProvider extends LiquidityProvider {
               elastic: newElastic,
             })
             console.debug(
-              `${this.chainId}~${
-                this.lastUpdateBlock
-              } - REBASE DEPOSIT ${tokenAddress}, new elastic: ${this.lastFetchedTotals
-                .get(tokenAddress)
-                ?.elastic.toString()}, new base: ${this.lastFetchedTotals.get(tokenAddress)?.base.toString()}.`
+              `${this.chainId}~${this.lastUpdateBlock} - REBASE DEPOSIT ${tokenAddress}, new elastic: ${newElastic}, new base: ${newBase}.`
             )
-          } else {
-            console.debug(`${this.chainId}~${this.lastUpdateBlock} - REBASE DEPOSIT Unknown error.`)
+
+            const bridge = this.pools.find(
+              (p) =>
+                p.poolCode.pool.token0.address.toLowerCase() === tokenAddress &&
+                p.poolCode.pool instanceof BridgeBento &&
+                p.fetchType === 'INITIAL'
+            )
+            if (bridge) {
+              bridge.poolCode.pool.updateReserves(newElastic, newBase)
+              console.debug('UPDATED BRIDGE')
+            }
+            this.updateStablePoolsTotals()
           }
-        } else {
-          console.debug(`${this.chainId}~${this.lastUpdateBlock} - IGNORE REBASE DEPOSIT ${tokenAddress}, not tracked.`)
         }
       }
     )
@@ -331,52 +370,85 @@ export class TridentProvider extends LiquidityProvider {
               elastic: newElastic,
             })
             console.debug(
-              `${this.chainId}~${
-                this.lastUpdateBlock
-              } - REBASE WITHDRAW ${tokenAddress}, new elastic: ${this.lastFetchedTotals
-                .get(tokenAddress)
-                ?.elastic.toString()}, new base: ${this.lastFetchedTotals.get(tokenAddress)?.base.toString()}.`
+              `${this.chainId}~${this.lastUpdateBlock} - REBASE WITHDRAW ${tokenAddress}, new elastic: ${newElastic}, new base: ${newBase}.`
             )
-          } else {
-            console.debug(`${this.chainId}~${this.lastUpdateBlock} - REBASE WITHDRAW Unknown error.`)
+
+            const bridge = this.pools.find(
+              (p) =>
+                p.poolCode.pool.token0.address === tokenAddress &&
+                p.poolCode.pool instanceof BridgeBento &&
+                p.fetchType === 'INITIAL'
+            )
+            if (bridge) {
+              bridge.poolCode.pool.updateReserves(newElastic, newBase)
+              console.debug('UPDATED BRIDGE')
+            }
+            this.updateStablePoolsTotals()
           }
-        } else {
-          console.debug(
-            `${this.chainId}~${this.lastUpdateBlock} - IGNORE REBASE WITHDRAW ${tokenAddress}, not tracked.`
-          )
         }
       }
     )
 
-    //
-    // const pool = p.poolCode.pool
-    const bridges: BridgeBento[] = this.pools
-    .map((pi) => pi.poolCode.pool)
-    .filter((p) => p instanceof BridgeBento) as BridgeBento[]
+    const bridges = this.pools
+      .filter((p) => p.poolCode.pool instanceof BridgeBento && p.fetchType === 'INITIAL')
+      .map((pi) => pi.poolCode.pool) as BridgeBento[]
 
     this.unwatchBalanceReads = watchReadContracts(
       {
-        contracts: tokensSorted.map((token) => ({
-          args: [BentoBoxAddr as Address],
-          address: token.address as Address,
-          chainId: this.chainId,
-          abi: balanceOfAbi,
-          functionName: 'balanceOf',
-        } as const)),
+        contracts: bridges.map(
+          (bridge) =>
+            ({
+              args: [BentoBoxAddr as Address],
+              address: bridge.token0.address as Address,
+              chainId: this.chainId,
+              abi: balanceOfAbi,
+              functionName: 'balanceOf',
+            } as const)
+        ),
+        listenToBlock: true,
       },
       (result) => {
-        // TODO: 
-        // const eee = result.map((r, i) => (
-        //   {[tokensSorted[i].address]: r}
-        // ))
-
-        // bridges.forEach(p => p.freeLiquidity = result)
+        const balances = convertToNumbers(result)
+        for (let i = 0; i < balances.length; i++) {
+          const balance = balances[i]
+          if (balance === undefined) continue
+          const freeLiquidity = bridges[i].freeLiquidity || 0
+          if (!closeValues(freeLiquidity, balance, 1e-6)) {
+            bridges[i].freeLiquidity = balance
+            this.stateId++
+          }
+        }
       }
     )
 
     console.debug(
       `${this.chainId}~${this.lastUpdateBlock}${this.getType()} - INIT, WATCHING ${this.pools.length} POOLS`
     )
+  }
+
+  updateStablePoolsTotals(): void {
+    const pools = this.pools
+      .map((pi) => pi.poolCode.pool)
+      .filter((p) => p instanceof StableSwapRPool) as StableSwapRPool[]
+    pools.forEach((pool, i) => {
+      const total0 = this.lastFetchedTotals.get(pool.token0.address)
+      if (total0) {
+        const current = pool.getTotal0()
+        if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
+          pool.updateTotal0(total0)
+          ++this.stateId
+        }
+      }
+      const total1 = this.lastFetchedTotals.get(pool.token1.address)
+      if (total1) {
+        const current = pool.getTotal1()
+        if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
+          pool.updateTotal1(total1)
+          ++this.stateId
+        }
+      }
+    })
+    console.log(pools.map((p) => `${p.address} ${p.token0.symbol}/${p.token1.symbol}: ${p.getReserve0().toString()} ${p.getReserve1().toString()}`).join('\n'))
   }
 
   async getPools(t0: Token, t1: Token): Promise<void> {
@@ -424,7 +496,6 @@ export class TridentProvider extends LiquidityProvider {
           ++this.stateId
         } else if (pool.type === 'STABLE_POOL') {
           const tokens = [pool.token0, pool.token1]
-          console.log('tokens', [tokens[0].address, tokens[1].address])
           const totals0 = this.lastFetchedTotals.get(tokens[0].address)
           const totals1 = this.lastFetchedTotals.get(tokens[1].address)
           if (totals0 && totals1) {
@@ -498,26 +569,28 @@ export class TridentProvider extends LiquidityProvider {
 
     const [totals0, balances] = await Promise.all([totalsPromise, balancesPromise])
     const totals = totals0.map((t) => ({ elastic: t.elastic, base: t.base }))
-    // TODO: BALANCE?
-    // const poolCodes: PoolCode[] = []
+
     tokens.forEach((t, i) => {
       const total = totals[i]
       const balance = balances[i]
       if (total !== undefined && balance !== undefined) {
-        // const pool = new BridgeBento(
-        //   `Bento bridge for ${t.symbol}`,
-        //   t as RToken,
-        //   convertTokenToBento(t),
-        //   total.elastic,
-        //   total.base,
-        //   balance
-        // )
-        // poolCodes.push(new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBoxAddr))
+        const pool = new BridgeBento(
+          `Bento bridge for ${t.symbol}`,
+          t as RToken,
+          convertTokenToBento(t),
+          total.elastic,
+          total.base,
+          balance
+        )
+
+        this.pools.push({
+          poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBoxAddr),
+          fetchType: 'INITIAL',
+          updatedAtBlock: this.lastUpdateBlock,
+        })
         this.lastFetchedTotals.set(t.address.toLowerCase(), total)
       }
     })
-
-    // return poolCodes
   }
 
   startFetchPoolsData() {
