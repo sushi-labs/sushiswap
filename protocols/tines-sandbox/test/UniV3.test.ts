@@ -193,30 +193,27 @@ async function checkSwap(env: Environment, pool: PoolInfo, amount: number | BigN
   const tickAfter = (await pool.contract.slot0())[1]
   const inBalanceAfter = await inToken.balanceOf(env.user.getAddress())
   const outBalanceAfter = await outToken.balanceOf(env.user.getAddress())
-
   //console.log(tickBefore, '->', tickAfter)
 
+  const amountOut = outBalanceAfter.sub(outBalanceBefore)
   const amountIn: BigNumber = inBalanceBefore.sub(inBalanceAfter)
   if (amountIn.eq(amountBN)) {
     // all input value were swapped to output
-    const amountOut = outBalanceAfter.sub(outBalanceBefore)
     const amounOutTines = pool.tinesPool.calcOutByIn(amountN, direction)
     expectCloseValues(amountOut, amounOutTines.out, 1e-12)
   } else {
     // out of liquidity
     expect(amountIn.lt(amountBN)).true
-    expectToTrow(async () => {
-      pool.tinesPool.calcOutByIn(amountN, direction)
-    })
-  }
-}
-
-async function expectToTrow(call: () => Promise<void>) {
-  try {
-    await call()
-    expect(1).to.equal(0) // should not be here - must throw an OutOfLiquidity exception
-  } catch (e) {
-    expect(e).not.to.undefined
+    let errorThrown = false
+    let amounOutTines = 0
+    try {
+      amounOutTines = pool.tinesPool.calcOutByIn(amountN, direction).out
+    } catch (e) {
+      errorThrown = true
+    }
+    if (!errorThrown) {
+      expectCloseValues(amountOut, amounOutTines, 1e-12)
+    }
   }
 }
 
