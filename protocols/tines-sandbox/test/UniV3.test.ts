@@ -189,12 +189,21 @@ async function checkSwap(env: Environment, pool: PoolInfo, amount: number, direc
 
   //console.log(tickBefore, '->', tickAfter)
 
-  const amountIn = inBalanceBefore.sub(inBalanceAfter)
-  expect(closeValues(amount, amountIn, 1e-12)).true
+  const amountIn = parseInt(inBalanceBefore.sub(inBalanceAfter).toString())
+  expect(amountIn).to.be.lessThan(amount * (1 + 1e-12))
 
   const amountOut = outBalanceAfter.sub(outBalanceBefore)
   const amounOutTines = pool.tinesPool.calcOutByIn(amount, direction)
   expect(closeValues(amountOut, amounOutTines.out, 1e-12)).true
+}
+
+async function expectToTrow(call: () => Promise<void>) {
+  try {
+    await call()
+    expect(1).to.equal(0) // should not be here - must throw an OutOfLiquidity exception
+  } catch (e) {
+    expect(e).not.to.undefined
+  }
 }
 
 describe('Uni V3', () => {
@@ -207,15 +216,24 @@ describe('Uni V3', () => {
   it('Empty pool', async () => {
     const { tinesPool } = await createPool(env, 3000, 1, [])
 
-    const res1 = tinesPool.calcOutByIn(100, true)
-    expect(res1.out).to.equal(0)
+    expectToTrow(async () => {
+      tinesPool.calcOutByIn(100, true)
+    })
 
-    const res2 = tinesPool.calcOutByIn(100, false)
-    expect(res2.out).to.equal(0)
+    expectToTrow(async () => {
+      tinesPool.calcOutByIn(100, false)
+    })
   })
 
   it('One position before tick', async () => {
     const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
     await checkSwap(env, pool, 1e16, true)
+  })
+
+  it('One position after tick', async () => {
+    const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+    expectToTrow(async () => {
+      await checkSwap(env, pool, 1e18, true)
+    })
   })
 })

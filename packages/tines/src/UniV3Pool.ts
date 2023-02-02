@@ -116,8 +116,10 @@ export class UniV3Pool extends RPool {
 
     let startFlag = true
     while (input > 0) {
-      if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length)
-        return { out: outAmount, gasSpent: this.swapGasCost }
+      if (nextTickToCross < 0 || nextTickToCross >= this.ticks.length) {
+        throw 'UniV3 OutOfLiquidity'
+        //return { out: outAmount, gasSpent: this.swapGasCost }
+      }
 
       let nextTickPrice, priceDiff
       if (startFlag) {
@@ -144,7 +146,7 @@ export class UniV3Pool extends RPool {
           //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           input -= maxDx
-          currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
+          currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross--
         }
       } else {
@@ -158,13 +160,13 @@ export class UniV3Pool extends RPool {
           //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           input -= maxDy
-          currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
+          currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross++
         }
       }
 
       outAmount += output
-      //console.log('out', outAmount);
+      //console.log('out', outAmount)
     }
 
     // TODO: to add minimal limit check!
@@ -211,7 +213,7 @@ export class UniV3Pool extends RPool {
           //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           outBeforeFee -= maxDy
-          currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
+          currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross--
         }
       } else {
@@ -226,7 +228,7 @@ export class UniV3Pool extends RPool {
           //currentPriceBN = nextTickPriceBN
           currentPrice = nextTickPrice
           outBeforeFee -= maxDx
-          currentLiquidityBN = currentLiquidityBN.sub(this.ticks[nextTickToCross].DLiquidity)
+          currentLiquidityBN = currentLiquidityBN.add(this.ticks[nextTickToCross].DLiquidity)
           nextTickToCross++
         }
       }
