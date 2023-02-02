@@ -234,10 +234,14 @@ describe('Uni V3', () => {
   it('One position without tick crossing', async () => {
     const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
     await checkSwap(env, pool, 1e16, true)
+    const pool2 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+    await checkSwap(env, pool2, 1e16, false)
   })
 
   it('One position with tick crossing', async () => {
     const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
     await checkSwap(env, pool, 1e18, true)
+    const pool2 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
+    await checkSwap(env, pool2, 1e20, false)
   })
 })
