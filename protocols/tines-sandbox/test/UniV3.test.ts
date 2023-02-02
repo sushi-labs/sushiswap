@@ -13,16 +13,21 @@ feeAmountTickSpacing[500] = 10 // 0.05%
 feeAmountTickSpacing[3000] = 60 // 0.3%
 feeAmountTickSpacing[10000] = 200 // 1%
 
-function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, logInfoIfFalse = ''): boolean {
+function closeValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number): boolean {
   const a: number = typeof _a == 'number' ? _a : parseInt(_a.toString())
   const b: number = typeof _b == 'number' ? _b : parseInt(_b.toString())
   if (accuracy === 0) return a === b
   if (Math.abs(a) < 1 / accuracy) return Math.abs(a - b) <= 10
   if (Math.abs(b) < 1 / accuracy) return Math.abs(a - b) <= 10
-  const res = Math.abs(a / b - 1) < accuracy
+  return Math.abs(a / b - 1) < accuracy
+}
+
+function expectCloseValues(_a: number | BigNumber, _b: number | BigNumber, accuracy: number, logInfoIfFalse = '') {
+  const res = closeValues(_a, _b, accuracy)
   if (!res) {
-    console.log('Expected close: ', a, b, accuracy, logInfoIfFalse)
+    console.log(`Expected close: ${_a}, ${_b}, ${accuracy} ${logInfoIfFalse}`)
     // debugger
+    expect(res).true
   }
   return res
 }
@@ -189,12 +194,19 @@ async function checkSwap(env: Environment, pool: PoolInfo, amount: number, direc
 
   //console.log(tickBefore, '->', tickAfter)
 
-  const amountIn = parseInt(inBalanceBefore.sub(inBalanceAfter).toString())
-  expect(amountIn).to.be.lessThan(amount * (1 + 1e-12))
-
-  const amountOut = outBalanceAfter.sub(outBalanceBefore)
-  const amounOutTines = pool.tinesPool.calcOutByIn(amount, direction)
-  expect(closeValues(amountOut, amounOutTines.out, 1e-12)).true
+  const amountIn = inBalanceBefore.sub(inBalanceAfter)
+  if (closeValues(amountIn, amount, 1e-12)) {
+    // all input value were swapped to output
+    const amountOut = outBalanceAfter.sub(outBalanceBefore)
+    const amounOutTines = pool.tinesPool.calcOutByIn(amount, direction)
+    expectCloseValues(amountOut, amounOutTines.out, 1e-12)
+  } else {
+    // out of liquidity
+    expect(parseInt(amountIn.toString())).to.be.lessThan(amount * (1 + 1e-12))
+    expectToTrow(async () => {
+      pool.tinesPool.calcOutByIn(amount, direction)
+    })
+  }
 }
 
 async function expectToTrow(call: () => Promise<void>) {
@@ -214,26 +226,18 @@ describe('Uni V3', () => {
   })
 
   it('Empty pool', async () => {
-    const { tinesPool } = await createPool(env, 3000, 1, [])
-
-    expectToTrow(async () => {
-      tinesPool.calcOutByIn(100, true)
-    })
-
-    expectToTrow(async () => {
-      tinesPool.calcOutByIn(100, false)
-    })
+    const pool = await createPool(env, 3000, 1, [])
+    await checkSwap(env, pool, 100, true)
+    await checkSwap(env, pool, 100, false)
   })
 
-  it('One position before tick', async () => {
+  it('One position without tick crossing', async () => {
     const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
     await checkSwap(env, pool, 1e16, true)
   })
 
-  it('One position after tick', async () => {
+  it('One position with tick crossing', async () => {
     const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
-    expectToTrow(async () => {
-      await checkSwap(env, pool, 1e18, true)
-    })
+    await checkSwap(env, pool, 1e18, true)
   })
 })
