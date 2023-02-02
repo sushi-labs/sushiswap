@@ -60,7 +60,7 @@ export async function getPool(args: typeof PoolApiSchema._output) {
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
   // Need to specify take and orderBy to make TS happy
-  const [pool] = [await getPools({ ids: [id], take: 1, orderBy: 'liquidityUSD' })]
+  const [pool] = await getPools({ ids: [id], take: 1, orderBy: 'liquidityUSD' })
 
   await prisma.$disconnect()
   return pool
