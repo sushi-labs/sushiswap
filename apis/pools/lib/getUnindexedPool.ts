@@ -1,5 +1,5 @@
 import { constantProductPoolAbi, uniswapV2PairAbi } from '@sushiswap/abi'
-import { allChains, allProviders } from '@sushiswap/wagmi-config'
+import { allChains, allProviders } from '@sushiswap/wagmi-config-esm'
 import { Address, configureChains, createClient, fetchToken, FetchTokenResult, readContracts } from '@wagmi/core'
 
 import type { getPool } from './api.js'
@@ -22,7 +22,6 @@ interface Pool {
   totalSupply: string
   swapFee: number
   twapEnabled: boolean
-  type: PoolType
   version: PoolVersion
 }
 
@@ -41,7 +40,6 @@ async function getV2Pool({ chainId, address }: GetPoolArgs): Promise<Pool> {
     totalSupply: totalSupply.toString(),
     swapFee: 0.003,
     twapEnabled: true,
-    type: PoolType.CONSTANT_PRODUCT_POOL,
     version: PoolVersion.LEGACY,
   }
 }
@@ -64,7 +62,6 @@ async function getTridentPool({ chainId, address }: GetPoolArgs): Promise<Pool> 
     // 30 => 0.003%
     swapFee: swapFee.toNumber() / 10000,
     twapEnabled: true,
-    type: PoolType.CONCENTRATED_LIQUIDITY_POOL,
     version: PoolVersion.TRIDENT,
   }
 }
@@ -75,13 +72,18 @@ export async function getUnindexedPool(poolId: string): ReturnType<typeof getPoo
 
   const { name: lpTokenName } = await fetchToken({ address: address as Address, chainId })
 
-  let poolFetcher
+  let poolFetcher, poolType
   switch (lpTokenName) {
     case 'Sushi Stable LP Token':
+      poolType = PoolType.STABLE_POOL
+      poolFetcher = getTridentPool
+      break
     case 'Sushi Constant Product LP Token':
+      poolType = PoolType.CONSTANT_PRODUCT_POOL
       poolFetcher = getTridentPool
       break
     case 'SushiSwap LP Token':
+      poolType = PoolType.CONSTANT_PRODUCT_POOL
       poolFetcher = getV2Pool
       break
     default:
@@ -92,7 +94,7 @@ export async function getUnindexedPool(poolId: string): ReturnType<typeof getPoo
 
   const tokens = await Promise.all(pool.tokens.map((token) => fetchToken({ address: token, chainId })))
 
-  const poolName = tokens.reduce((acc, cur) => `${acc}-${cur.symbol}`, '')
+  const poolName = tokens.map(({ symbol }) => symbol).join('-')
 
   // TODO: Convert to support token array when the db supports it
   const [token0, token1] = tokens as [FetchTokenResult, FetchTokenResult]
@@ -128,6 +130,7 @@ export async function getUnindexedPool(poolId: string): ReturnType<typeof getPoo
     isIncentivized: false,
     isBlacklisted: false,
     incentives: [],
+    type: poolType,
     ...pool,
   } as Awaited<ReturnType<typeof getPool>>
 }

@@ -62,8 +62,8 @@ function parseWhere(args: typeof PoolsApiSchema._output | typeof PoolCountApiSch
 export async function getPool(args: typeof PoolApiSchema._output) {
   const id = `${args.chainId}:${args.address.toLowerCase()}`
 
-  // Need to specify take and orderBy to make TS happy
-  const [pool] = await getPools({ ids: [id], take: 1, orderBy: 'liquidityUSD' })
+  // Need to specify take, orderBy and orderDir to make TS happy
+  const [pool] = await getPools({ ids: [id], take: 1, orderBy: 'liquidityUSD', orderDir: 'desc' })
 
   if (!pool) throw new Error('Pool not found.')
 
@@ -167,12 +167,18 @@ export async function getPools(args: typeof PoolsApiSchema._output) {
     }
   >
 
-  if (args.ids) {
-    console.log(await getUnindexedPool(args.ids[0]!))
+  const poolsRetyped = pools as unknown as Pool[]
+
+  if (args.ids && args.ids.length > poolsRetyped.length) {
+    const fetchedPoolIds = poolsRetyped.map((pool) => pool.id)
+    const unfetchedPoolIds = args.ids.filter((id) => !fetchedPoolIds.includes(id))
+
+    const unindexedPools = await Promise.all(unfetchedPoolIds.map((id) => getUnindexedPool(id)))
+    poolsRetyped.push(...unindexedPools)
   }
 
   await prisma.$disconnect()
-  return pools ? (pools as unknown as Pool[]) : []
+  return poolsRetyped ? poolsRetyped : []
 }
 
 export async function getPoolCount(args: typeof PoolCountApiSchema._output) {

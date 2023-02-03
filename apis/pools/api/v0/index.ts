@@ -47,7 +47,7 @@ export const PoolsApiSchema = z.object({
     .optional(),
   cursor: z.string().optional(),
   orderBy: z.string().default('liquidityUSD'),
-  orderDir: z.enum(['asc', 'desc']).default('desc').optional(),
+  orderDir: z.enum(['asc', 'desc']).default('desc'),
 })
 
 const handler = async (_request: VercelRequest, response: VercelResponse) => {

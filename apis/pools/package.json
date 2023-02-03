@@ -19,7 +19,7 @@
   "dependencies": {
     "@sushiswap/abi": "workspace:*",
     "@sushiswap/database": "workspace:*",
-    "@sushiswap/wagmi-config": "workspace:*",
+    "@sushiswap/wagmi-config-esm": "workspace:*",
     "@vercel/node": "2.8.2",
     "@wagmi/core": "0.8.1",
     "zod": "3.20.2"
