@@ -1,19 +1,15 @@
-import { balanceOfAbi, bentoBoxV1Abi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
+import { balanceOfAbi, getReservesAbi, getStableReservesAbi, totalsAbi } from '@sushiswap/abi'
 import { ChainId } from '@sushiswap/chain'
 import { Token } from '@sushiswap/currency'
 import { BridgeBento, ConstantProductRPool, Rebase, RToken, StableSwapRPool, toShareBN } from '@sushiswap/tines'
 import {
   Address,
-  fetchBlockNumber,
   readContracts,
   watchBlockNumber,
-  watchContractEvent,
-  watchReadContracts,
 } from '@wagmi/core'
 import { BigNumber } from 'ethers'
 
 import { getPoolsByTokenIds, getTopPools, PoolResponse } from '../lib/api'
-import { convertToBigNumber, convertToRebase } from '../MulticallProvider'
 import { BentoBridgePoolCode } from '../pools/BentoBridge'
 import { BentoPoolCode } from '../pools/BentoPool'
 import { ConstantProductPoolCode } from '../pools/ConstantProductPool'
@@ -134,20 +130,12 @@ interface PoolInfo {
 
 export class TridentProvider extends LiquidityProvider {
   isInitialized = false
-  pools: PoolInfo[] = []
+  cPPools: Map<string, PoolInfo> = new Map()
+  stablePools: Map<string, PoolInfo> = new Map()
+  bridges: Map<string, PoolInfo> = new Map()
 
   blockListener?: () => void
   unwatchBlockNumber?: () => void
-  unwatchSyncEvents: Map<string, () => void> = new Map()
-  unwatchBalanceReads?: () => void
-  unwatchDepositEvent?: () => void
-  unwatchWithdrawEvent?: () => void
-
-  fetchedPairsCP: Set<string> = new Set()
-  fetchedPairsStable: Set<string> = new Set()
-  fetchedTokens: Set<string> = new Set()
-  lastFetchedTotals: Map<string, Rebase> = new Map()
-  poolCodes: PoolCode[] = []
 
   readonly TOP_POOL_SIZE = 155
   readonly TOP_POOL_LIQUIDITY_THRESHOLD = 1000
@@ -189,8 +177,24 @@ export class TridentProvider extends LiquidityProvider {
       return
     }
 
+    await this.initPools(Array.from(topPools.values()), 'INITIAL')
+
+    console.debug(
+      `${this.chainId}~${this.lastUpdateBlock}${this.getType()} - INIT, WATCHING ${
+        this.getCurrentPoolList().length
+      } POOLS`
+    )
+    // for (const pool of this.getCurrentPoolList()) {
+    //   console.log(`${pool.poolName} ${pool.pool.address} ${pool.pool.token0.symbol}/${pool.pool.token1.symbol} ${pool.pool.reserve0} ${pool.pool.reserve1}`)
+    // }
+  }
+
+  async initPools(pools: PoolResponse[], fetchType: 'INITIAL' | 'ON_DEMAND'): Promise<void> {
+    const cppPools = pools.filter((p) => p.type === 'CONSTANT_PRODUCT_POOL')
+    const stablePools = pools.filter((p) => p.type === 'STABLE_POOL')
+
     const tokenMap = new Map<string, Token>()
-    topPools.forEach((pool) => {
+    pools.forEach((pool) => {
       tokenMap.set(pool.token0.address, pool.token0)
       tokenMap.set(pool.token1.address, pool.token1)
     })
@@ -200,238 +204,224 @@ export class TridentProvider extends LiquidityProvider {
       t.address.toLocaleLowerCase().substring(2).padStart(40, '0'),
       t,
     ])
-    const tokensSorted = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
+    const sortedTokens = tok0.sort((a, b) => (b[0] > a[0] ? -1 : 1)).map(([, t]) => t)
 
-    const pools = Array.from(topPools.values())
-
-    const readReserves = readContracts({
+    const cppReservePromise = readContracts({
       allowFailure: true,
-      contracts: pools.map(
-        (pool) =>
+      contracts: cppPools.map((p) => ({
+        address: p.address as Address,
+        chainId: this.chainId,
+        abi: getReservesAbi,
+        functionName: 'getReserves',
+      })),
+    })
+
+    const stableReservePromise = readContracts({
+      allowFailure: true,
+      contracts: stablePools.map((p) => ({
+        address: p.address as Address,
+        chainId: this.chainId,
+        abi: getStableReservesAbi,
+        functionName: 'getReserves',
+      })),
+    })
+
+    const totalsPromise = readContracts({
+      allowFailure: true,
+      contracts: sortedTokens.map(
+        (t) =>
           ({
-            address: pool.address as Address,
+            args: [t.address as Address],
+            address: BentoBox[this.chainId] as Address,
             chainId: this.chainId,
-            abi: pool.type === 'CONSTANT_PRODUCT_POOL' ? getReservesAbi : getStableReservesAbi,
-            functionName: 'getReserves',
+            abi: totalsAbi,
+            functionName: 'totals',
           } as const)
       ),
     })
 
-    const [reserves] = await Promise.all([readReserves, this.getAllBridges(tokensSorted)])
-
-    pools.forEach((pool, i) => {
-      const res = reserves[i]
-      if (res !== null && res !== undefined) {
-        if (pool.type === 'CONSTANT_PRODUCT_POOL') {
-          const tokens = [convertTokenToBento(pool.token0), convertTokenToBento(pool.token1)]
-          const rPool = new ConstantProductRPool(pool.address, tokens[0], tokens[1], pool.swapFee, res[0], res[1])
-          const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-          this.pools.push({ poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
-          ++this.stateId
-        } else if (pool.type === 'STABLE_POOL') {
-          const tokens = [pool.token0, pool.token1]
-          const totals0 = this.lastFetchedTotals.get(tokens[0].address.toLowerCase())
-          const totals1 = this.lastFetchedTotals.get(tokens[1].address.toLowerCase())
-
-          if (totals0 && totals1) {
-            const stablePool = new StableSwapRPool(
-              pool.address,
-              convertTokenToBento(tokens[0]),
-              convertTokenToBento(tokens[1]),
-              pool.swapFee,
-              toShareBN(res[0], totals0),
-              toShareBN(res[1], totals1),
-              tokens[0].decimals,
-              tokens[1].decimals,
-              totals0,
-              totals1
-            )
-            this.pools.push({
-              poolCode: new BentoPoolCode(stablePool, this.getPoolProviderName()),
-              fetchType: 'INITIAL',
-              updatedAtBlock: blockNumber,
-            })
-          }
-        }
-      } else {
-        console.error(
-          `${this.chainId}~${
-            this.lastUpdateBlock
-          }~${this.getType()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${pool.address}`
-        )
-      }
-    })
-
-    this.pools.forEach((p) => {
-      const pool = p.poolCode.pool
-      if (this.unwatchSyncEvents.has(pool.address)) return
-      this.unwatchSyncEvents.set(
-        pool.address,
-        watchContractEvent(
-          {
-            address: pool.address as Address,
-            abi: syncAbi,
-            eventName: 'Sync',
+    const balancesPromise = readContracts({
+      allowFailure: true,
+      contracts: sortedTokens.map(
+        (t) =>
+          ({
+            args: [BentoBox[this.chainId] as Address],
+            address: t.address as Address,
             chainId: this.chainId,
-          },
-          (reserve0, reserve1) => {
-            const res0 = BigNumber.from(reserve0)
-            const res1 = BigNumber.from(reserve1)
-            console.debug(
-              `${this.chainId}~${this.lastUpdateBlock} - SYNC ${p.poolCode.poolName}, ${pool.token0.symbol}/${pool.token1.symbol}.`
-            )
-            if (pool instanceof StableSwapRPool) {
-              console.log(`BEFORE Stable pool sync, ${pool.address} ${pool.reserve0.toString()} ${pool.reserve1.toString()}`)
-              const total0 = this.lastFetchedTotals.get(pool.token0.address)
-              if (total0) {
-                const current = pool.getTotal0()
-                if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
-                  pool.updateTotal0(total0)
-                  ++this.stateId
-                }
-              }
-              const total1 = this.lastFetchedTotals.get(pool.token1.address)
-              if (total1) {
-                const current = pool.getTotal1()
-                if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
-                  pool.updateTotal1(total1)
-                  ++this.stateId
-                }
-              }
-              pool.updateReserves(
-                toShareBN(pool.reserve0, pool.getTotal0()),
-                toShareBN(pool.reserve1, pool.getTotal1())
-              )
-              
-              console.log(`AFTER Stable pool sync, ${pool.address} ${pool.reserve0.toString()} ${pool.reserve1.toString()}`)
-              p.updatedAtBlock = blockNumber
-            } else {
-              pool.updateReserves(res0, res1)
-              p.updatedAtBlock = blockNumber
-            }
-          }
-        )
-      )
+            abi: balanceOfAbi,
+            functionName: 'balanceOf',
+          } as const)
+      ),
     })
 
-    const BentoBoxAddr = BentoBox[this.chainId]
-    this.unwatchDepositEvent = watchContractEvent(
-      {
-        address: BentoBoxAddr as Address,
-        abi: bentoBoxV1Abi,
-        eventName: 'LogDeposit',
-        chainId: this.chainId,
-      },
-      (token, from, to, amount, share) => {
-        const tokenAddress = token.toLowerCase()
-        if (this.lastFetchedTotals.has(tokenAddress)) {
-          const newBase = this.lastFetchedTotals.get(tokenAddress)?.base.add(share)
-          const newElastic = this.lastFetchedTotals.get(tokenAddress)?.elastic.add(amount)
-          if (newBase && newElastic) {
-            this.lastFetchedTotals.set(tokenAddress, {
-              base: newBase,
-              elastic: newElastic,
-            })
-            console.debug(
-              `${this.chainId}~${this.lastUpdateBlock} - REBASE DEPOSIT ${tokenAddress}, new elastic: ${newElastic}, new base: ${newBase}.`
-            )
+    const [cppReserves, stableReserves, totals, balances] = await Promise.all([
+      cppReservePromise,
+      stableReservePromise,
+      totalsPromise,
+      balancesPromise,
+    ])
+    // console.log(`${cppReserves.length} ${stableReserves.length} ${totals.length} ${balances.length}`)
 
-            const bridge = this.pools.find(
-              (p) =>
-                p.poolCode.pool.token0.address.toLowerCase() === tokenAddress &&
-                p.poolCode.pool instanceof BridgeBento &&
-                p.fetchType === 'INITIAL'
-            )
-            if (bridge) {
-              bridge.poolCode.pool.updateReserves(newElastic, newBase)
-              console.debug('UPDATED BRIDGE')
-            }
-            this.updateStablePoolsTotals()
-          }
-        }
-      }
-    )
+    cppPools.forEach((pr, i) => {
+      const res = cppReserves[i]
+      if (res === undefined || res === null) return
+      const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
+      const rPool = new ConstantProductRPool(pr.address, tokens[0], tokens[1], pr.swapFee, res[0], res[1])
+      const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
+      this.cPPools.set(pr.address, { poolCode: pc, fetchType, updatedAtBlock: this.lastUpdateBlock })
+      ++this.stateId
+    })
 
-    this.unwatchWithdrawEvent = watchContractEvent(
-      {
-        address: BentoBoxAddr as Address,
-        abi: bentoBoxV1Abi,
-        eventName: 'LogWithdraw',
-        chainId: this.chainId,
-      },
-      (token, from, to, amount, share) => {
-        const tokenAddress = token.toLowerCase()
-        if (this.lastFetchedTotals.has(tokenAddress)) {
-          const newBase = this.lastFetchedTotals.get(tokenAddress)?.base.sub(share)
-          const newElastic = this.lastFetchedTotals.get(tokenAddress)?.elastic.sub(amount)
-          if (newBase && newElastic) {
-            this.lastFetchedTotals.set(tokenAddress, {
-              base: newBase,
-              elastic: newElastic,
-            })
-            console.debug(
-              `${this.chainId}~${this.lastUpdateBlock} - REBASE WITHDRAW ${tokenAddress}, new elastic: ${newElastic}, new base: ${newBase}.`
-            )
+    const rebases: Map<string, Rebase> = new Map()
 
-            const bridge = this.pools.find(
-              (p) =>
-                p.poolCode.pool.token0.address === tokenAddress &&
-                p.poolCode.pool instanceof BridgeBento &&
-                p.fetchType === 'INITIAL'
-            )
-            if (bridge) {
-              bridge.poolCode.pool.updateReserves(newElastic, newBase)
-              console.debug('UPDATED BRIDGE')
-            }
-            this.updateStablePoolsTotals()
-          }
-        }
-      }
-    )
+    sortedTokens.forEach((t, i) => {
+      const total = totals[i]
+      const balance = balances[i]
+      if (total === undefined || total === null || balance === undefined || balance === null) return
+      const pool = new BridgeBento(
+        `Bento bridge for ${t.symbol}`,
+        t as RToken,
+        convertTokenToBento(t),
+        total.elastic,
+        total.base,
+        balance
+      )
+      this.bridges.set(t.address, {
+        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBox[this.chainId]),
+        fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
+        updatedAtBlock: this.lastUpdateBlock,
+      })
+      rebases.set(t.address, total)
+    })
 
-    const bridges = this.pools
-      .filter((p) => p.poolCode.pool instanceof BridgeBento && p.fetchType === 'INITIAL')
-      .map((pi) => pi.poolCode.pool) as BridgeBento[]
+    stablePools.forEach((pr, i) => {
+      const res = stableReserves[i]
+      const totals0 = rebases.get(pr.token0.address)
+      const totals1 = rebases.get(pr.token1.address)
+      if (res === undefined || res === null || totals0 === undefined || totals1 === undefined) return
 
-    this.unwatchBalanceReads = watchReadContracts(
-      {
-        contracts: bridges.map(
-          (bridge) =>
-            ({
-              args: [BentoBoxAddr as Address],
-              address: bridge.token0.address as Address,
-              chainId: this.chainId,
-              abi: balanceOfAbi,
-              functionName: 'balanceOf',
-            } as const)
-        ),
-        listenToBlock: true,
-      },
-      (result) => {
-        const balances = convertToNumbers(result)
-        for (let i = 0; i < balances.length; i++) {
-          const balance = balances[i]
-          if (balance === undefined) continue
-          const freeLiquidity = bridges[i].freeLiquidity || 0
-          if (!closeValues(freeLiquidity, balance, 1e-6)) {
-            bridges[i].freeLiquidity = balance
-            this.stateId++
-          }
-        }
-      }
-    )
-
-    console.debug(
-      `${this.chainId}~${this.lastUpdateBlock}${this.getType()} - INIT, WATCHING ${this.pools.length} POOLS`
-    )
+      const stablePool = new StableSwapRPool(
+        pr.address,
+        convertTokenToBento(pr.token0),
+        convertTokenToBento(pr.token1),
+        pr.swapFee,
+        toShareBN(res[0], totals0),
+        toShareBN(res[1], totals1),
+        pr.token0.decimals,
+        pr.token1.decimals,
+        totals0,
+        totals1
+      )
+      this.stablePools.set(pr.address, {
+        poolCode: new BentoPoolCode(stablePool, this.getPoolProviderName()),
+        fetchType,
+        updatedAtBlock: this.lastUpdateBlock,
+      })
+      ++this.stateId
+    })
   }
 
-  updateStablePoolsTotals(): void {
-    const pools = this.pools
-      .map((pi) => pi.poolCode.pool)
-      .filter((p) => p instanceof StableSwapRPool) as StableSwapRPool[]
-    pools.forEach((pool, i) => {
-      const total0 = this.lastFetchedTotals.get(pool.token0.address)
+  async updatePools(type: 'ALL' | 'INITIAL'): Promise<void> {
+    this.removeStalePools()
+    let cppPools = Array.from(this.cPPools.values())
+    let stablePools = Array.from(this.stablePools.values())
+    let bridges = Array.from(this.bridges.values())
+
+    if (type === 'INITIAL') {
+      cppPools = cppPools.filter((p) => p.fetchType === 'INITIAL')
+      stablePools = stablePools.filter((p) => p.fetchType === 'INITIAL')
+      bridges = bridges.filter((p) => p.fetchType === 'INITIAL')
+    }
+
+    const cppReservePromise = readContracts({
+      allowFailure: true,
+      contracts: cppPools.map((p) => ({
+        address: p.poolCode.pool.address as Address,
+        chainId: this.chainId,
+        abi: getReservesAbi,
+        functionName: 'getReserves',
+      })),
+    })
+
+    const stableReservePromise = readContracts({
+      allowFailure: true,
+      contracts: stablePools.map((p) => ({
+        address: p.poolCode.pool.address as Address,
+        chainId: this.chainId,
+        abi: getStableReservesAbi,
+        functionName: 'getReserves',
+      })),
+    })
+
+    const totalsPromise = readContracts({
+      allowFailure: true,
+      contracts: bridges.map(
+        (b) =>
+          ({
+            args: [b.poolCode.pool.token0.address as Address],
+            address: BentoBox[this.chainId] as Address,
+            chainId: this.chainId,
+            abi: totalsAbi,
+            functionName: 'totals',
+          } as const)
+      ),
+    })
+
+    const balancesPromise = readContracts({
+      allowFailure: true,
+      contracts: bridges.map(
+        (b) =>
+          ({
+            args: [BentoBox[this.chainId] as Address],
+            address: b.poolCode.pool.token0.address as Address,
+            chainId: this.chainId,
+            abi: balanceOfAbi,
+            functionName: 'balanceOf',
+          } as const)
+      ),
+    })
+
+    const [cppReserves, stableReserves, totals, balances] = await Promise.all([
+      cppReservePromise,
+      stableReservePromise,
+      totalsPromise,
+      balancesPromise,
+    ])
+    // console.log(`${cppReserves.length} ${stableReserves.length} ${totals.length} ${balances.length}`)
+
+    cppPools.forEach((pi, i) => {
+      const res = cppReserves[i]
+      if (res === undefined || res === null) return
+      pi.poolCode.pool.updateReserves(res[0], res[1])
+      this.cPPools.set(pi.poolCode.pool.address, {
+        poolCode: pi.poolCode,
+        fetchType: pi.fetchType,
+        updatedAtBlock: this.lastUpdateBlock,
+      })
+      ++this.stateId
+    })
+
+    const rebases: Map<string, Rebase> = new Map()
+
+    bridges.forEach((b, i) => {
+      const pool = b.poolCode.pool as BridgeBento
+      const t = pool.token0
+      const total = totals[i]
+      const balance = balances[i]
+      if (total === undefined || total === null || balance === undefined || balance === null) return
+      pool.updateReserves(total.elastic, total.base)
+
+      this.bridges.set(t.address, {
+        poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBox[this.chainId]),
+        fetchType: 'INITIAL', // Better to always keep bridges as INITIAL, can't be ON_DEMAND because those will eventually removed.
+        updatedAtBlock: this.lastUpdateBlock,
+      })
+      rebases.set(t.address, total)
+    })
+
+    stablePools.forEach((pi, i) => {
+      const pool = pi.poolCode.pool as StableSwapRPool
+      const total0 = rebases.get(pool.token0.address)
       if (total0) {
         const current = pool.getTotal0()
         if (!total0.elastic.eq(current.elastic) || !total0.base.eq(current.base)) {
@@ -439,7 +429,7 @@ export class TridentProvider extends LiquidityProvider {
           ++this.stateId
         }
       }
-      const total1 = this.lastFetchedTotals.get(pool.token1.address)
+      const total1 = rebases.get(pool.token1.address)
       if (total1) {
         const current = pool.getTotal1()
         if (!total1.elastic.eq(current.elastic) || !total1.base.eq(current.base)) {
@@ -447,13 +437,24 @@ export class TridentProvider extends LiquidityProvider {
           ++this.stateId
         }
       }
+
+      const res = stableReserves[i]
+      if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
+        pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
+        this.stablePools.set(pool.address, {
+          poolCode: new BentoPoolCode(pool, this.getPoolProviderName()),
+          fetchType: pi.fetchType,
+          updatedAtBlock: this.lastUpdateBlock,
+        })
+        ++this.stateId
+      }
     })
-    console.log(pools.map((p) => `${p.address} ${p.token0.symbol}/${p.token1.symbol}: ${p.getReserve0().toString()} ${p.getReserve1().toString()}`).join('\n'))
+
+    console.log('updated pools', this.stateId)
   }
 
   async getPools(t0: Token, t1: Token): Promise<void> {
-    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.pools.length)
-
+    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.getCurrentPoolList().length)
     const poolsOnDemand = await getPoolsByTokenIds(
       this.chainId,
       'SushiSwap',
@@ -465,137 +466,22 @@ export class TridentProvider extends LiquidityProvider {
       this.TOP_POOL_LIQUIDITY_THRESHOLD,
       this.ON_DEMAND_POOL_SIZE
     )
-
     console.debug(
       `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${
         poolsOnDemand.size
       } pools`
     )
-
     const pools = Array.from(poolsOnDemand.values())
-
-    const reserves = await readContracts({
-      allowFailure: true,
-      contracts: pools.map((pool) => ({
-        address: pool.address as Address,
-        chainId: this.chainId,
-        abi: pool.type === 'CONSTANT_PRODUCT_POOL' ? getReservesAbi : getStableReservesAbi,
-        functionName: 'getReserves',
-      })),
-    })
-    const blockNumber = this.lastUpdateBlock
-    pools.forEach((pool, i) => {
-      const res = reserves[i]
-
-      if (res !== null && res !== undefined) {
-        if (pool.type === 'CONSTANT_PRODUCT_POOL') {
-          const tokens = [convertTokenToBento(pool.token0), convertTokenToBento(pool.token1)]
-          const rPool = new ConstantProductRPool(pool.address, tokens[0], tokens[1], pool.swapFee, res[0], res[1])
-          const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
-          this.pools.push({ poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
-          ++this.stateId
-        } else if (pool.type === 'STABLE_POOL') {
-          const tokens = [pool.token0, pool.token1]
-          const totals0 = this.lastFetchedTotals.get(tokens[0].address)
-          const totals1 = this.lastFetchedTotals.get(tokens[1].address)
-          if (totals0 && totals1) {
-            const stablePool = new StableSwapRPool(
-              pool.address,
-              convertTokenToBento(tokens[0]),
-              convertTokenToBento(tokens[1]),
-              pool.swapFee,
-              toShareBN(res[0], totals0),
-              toShareBN(res[1], totals1),
-              tokens[0].decimals,
-              tokens[1].decimals,
-              totals0,
-              totals1
-            )
-            this.pools.push({
-              poolCode: new BentoPoolCode(stablePool, this.getPoolProviderName()),
-              fetchType: 'INITIAL',
-              updatedAtBlock: blockNumber,
-            })
-            ++this.stateId
-          }
-        }
-      } else {
-        console.error(
-          `${this.chainId}~${blockNumber}~${this.getType()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${
-            pool.address
-          }`
-        )
-      }
-    })
-  }
-
-  async getAllBridges(tokensSorted: Token[]) {
-    const tokens: Token[] = []
-    tokensSorted.forEach((t) => {
-      if (this.fetchedTokens.has(t.address.toLowerCase())) return
-      tokens.push(t)
-      this.fetchedTokens.add(t.address.toLowerCase())
-    })
-
-    const BentoBoxAddr = BentoBox[this.chainId]
-
-    const totalsPromise = readContracts({
-      allowFailure: true,
-      contracts: tokens.map(
-        (t) =>
-          ({
-            args: [t.address as Address],
-            address: BentoBoxAddr as Address,
-            chainId: this.chainId,
-            abi: totalsAbi,
-            functionName: 'totals',
-          } as const)
-      ),
-    })
-
-    const balancesPromise = readContracts({
-      allowFailure: true,
-      contracts: tokens.map(
-        (t) =>
-          ({
-            args: [BentoBoxAddr as Address],
-            address: t.address as Address,
-            chainId: this.chainId,
-            abi: balanceOfAbi,
-            functionName: 'balanceOf',
-          } as const)
-      ),
-    })
-
-    const [totals0, balances] = await Promise.all([totalsPromise, balancesPromise])
-    const totals = totals0.map((t) => ({ elastic: t.elastic, base: t.base }))
-
-    tokens.forEach((t, i) => {
-      const total = totals[i]
-      const balance = balances[i]
-      if (total !== undefined && balance !== undefined) {
-        const pool = new BridgeBento(
-          `Bento bridge for ${t.symbol}`,
-          t as RToken,
-          convertTokenToBento(t),
-          total.elastic,
-          total.base,
-          balance
-        )
-
-        this.pools.push({
-          poolCode: new BentoBridgePoolCode(pool, this.getPoolProviderName(), BentoBoxAddr),
-          fetchType: 'INITIAL',
-          updatedAtBlock: this.lastUpdateBlock,
-        })
-        this.lastFetchedTotals.set(t.address.toLowerCase(), total)
-      }
-    })
+    // updatePools()
+    await this.initPools(pools, 'ON_DEMAND')
+    await this.updatePools('ALL')
   }
 
   startFetchPoolsData() {
     this.stopFetchPoolsData()
-    this.pools = []
+    this.cPPools = new Map()
+    this.stablePools = new Map()
+    this.bridges = new Map()
 
     this.unwatchBlockNumber = watchBlockNumber(
       {
@@ -603,26 +489,50 @@ export class TridentProvider extends LiquidityProvider {
       },
       (blockNumber) => {
         this.lastUpdateBlock = blockNumber
-        this.removeStalePools(blockNumber)
-
+        // this.removeStalePools(blockNumber)
         if (!this.isInitialized) {
           this.initialize(blockNumber)
+        } else {
+          this.updatePools('INITIAL')
         }
+
+        // for (const p of this.getCurrentPoolList()) {
+        //   console.log(`${p.poolName} ${p.pool.address} ${p.pool.reserve0} ${p.pool.reserve1}`)
+        // }
       }
     )
   }
 
-  private removeStalePools(blockNumber: number) {
-    const before = this.pools.length
+  private removeStalePools() {
     // TODO: move this to a per-chain config?
-    const blockThreshold = blockNumber - 100
-    this.pools = this.pools.filter(
-      (p) => (p.updatedAtBlock < blockThreshold && p.fetchType === 'ON_DEMAND') || p.fetchType === 'INITIAL'
-    )
-    if (before !== this.pools.length) {
-      console.debug(
-        `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} Stale pools removed: ${before - this.pools.length}`
-      )
+
+    const blockThreshold = this.lastUpdateBlock - 100
+
+    for (const [k, v] of this.cPPools) {
+      if (v.updatedAtBlock > blockThreshold && v.fetchType === 'ON_DEMAND') {
+        console.log(
+          `Removing stale pool ${v.poolCode.pool.address} ${v.poolCode.pool.token0.symbol}/${v.poolCode.pool.token1.symbol}`
+        )
+        this.cPPools.delete(k)
+      }
+    }
+
+    for (const [k, v] of this.stablePools) {
+      if (v.updatedAtBlock > blockThreshold && v.fetchType === 'ON_DEMAND') {
+        console.log(
+          `Removing stale pool ${v.poolCode.pool.address} ${v.poolCode.pool.token0.symbol}/${v.poolCode.pool.token1.symbol}`
+        )
+        this.stablePools.delete(k)
+      }
+    }
+
+    for (const [k, v] of this.bridges) {
+      if (v.updatedAtBlock > blockThreshold && v.fetchType === 'ON_DEMAND') {
+        console.log(
+          `Removing stale pool ${v.poolCode.pool.address} ${v.poolCode.pool.token0.symbol}/${v.poolCode.pool.token1.symbol}`
+        )
+        this.bridges.delete(k)
+      }
     }
   }
 
@@ -631,15 +541,11 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   getCurrentPoolList(): PoolCode[] {
-    return this.pools.map((p) => p.poolCode)
+    return [...this.cPPools.values(), ...this.stablePools.values(), ...this.bridges.values()].map((p) => p.poolCode)
   }
 
   stopFetchPoolsData() {
     if (this.unwatchBlockNumber) this.unwatchBlockNumber()
-    if (this.unwatchSyncEvents.size > 0) this.unwatchSyncEvents?.forEach((unwatch) => unwatch())
-    if (this.unwatchBalanceReads) this.unwatchBalanceReads()
-    if (this.unwatchDepositEvent) this.unwatchDepositEvent()
-    if (this.unwatchWithdrawEvent) this.unwatchWithdrawEvent()
     this.blockListener = undefined
   }
 }
