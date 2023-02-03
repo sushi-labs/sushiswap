@@ -2249,7 +2249,7 @@ importers:
       '@graphql-tools/merge': 8.3.17_graphql@16.6.0
       '@sushiswap/chain': link:../chain
       '@sushiswap/validate': link:../validate
-      '@whatwg-node/fetch': 0.6.5_@types+node@16.18.11
+      '@whatwg-node/fetch': 0.6.6_@types+node@16.18.11
       date-fns: 2.29.3
       ethers: 5.7.2
       graphql: 16.6.0
@@ -3651,7 +3651,7 @@ importers:
       '@swc/helpers': 0.4.14
       '@types/connect-timeout': 0.0.36
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': 0.6.5
+      '@whatwg-node/fetch': 0.6.6
       date-fns: 2.29.3
       dotenv: 16.0.3
       eslint: 8.29.0
@@ -3752,7 +3752,7 @@ importers:
       '@swc/core': 1.3.26
       '@swc/helpers': 0.4.14
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': 0.6.5
+      '@whatwg-node/fetch': 0.6.6
       dotenv: 16.0.3
       ioredis: 5.2.4
       jest: 29.3.1_ts-node@10.9.1
@@ -3920,7 +3920,7 @@ importers:
       '@swc/helpers': 0.4.14
       '@types/connect-timeout': 0.0.36
       '@types/express': 4.17.15
-      '@whatwg-node/fetch': 0.6.5
+      '@whatwg-node/fetch': 0.6.6
       dotenv: 16.0.3
       eslint: 8.29.0
       graphql: 16.6.0
@@ -6892,7 +6892,7 @@ packages:
       '@graphql-tools/delegate': 9.0.23_graphql@16.6.0
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@graphql-tools/wrap': 9.3.2_graphql@16.6.0
-      '@whatwg-node/fetch': 0.6.5
+      '@whatwg-node/fetch': 0.6.6
       graphql: 16.6.0
       tslib: 2.5.0
     transitivePeerDependencies:
@@ -6917,7 +6917,7 @@ packages:
       '@graphql-tools/delegate': 9.0.23_graphql@16.6.0
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@graphql-tools/wrap': 9.3.2_graphql@16.6.0
-      '@whatwg-node/fetch': 0.6.5_@types+node@16.18.11
+      '@whatwg-node/fetch': 0.6.6_@types+node@16.18.11
       graphql: 16.6.0
       tslib: 2.5.0
     transitivePeerDependencies:
@@ -7953,7 +7953,7 @@ packages:
       '@graphql-tools/utils': 9.1.4
       '@graphql-tools/wrap': 9.3.2
       '@types/ws': 8.5.3
-      '@whatwg-node/fetch': 0.6.5_@types+node@18.11.18
+      '@whatwg-node/fetch': 0.6.6_@types+node@18.11.18
       isomorphic-ws: 5.0.0_ws@8.12.0
       tslib: 2.5.0
       value-or-promise: 1.0.12
@@ -7978,7 +7978,7 @@ packages:
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@graphql-tools/wrap': 9.3.2_graphql@16.6.0
       '@types/ws': 8.5.3
-      '@whatwg-node/fetch': 0.6.5
+      '@whatwg-node/fetch': 0.6.6
       graphql: 16.6.0
       isomorphic-ws: 5.0.0_ws@8.12.0
       tslib: 2.5.0
@@ -8004,7 +8004,7 @@ packages:
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@graphql-tools/wrap': 9.3.2_graphql@16.6.0
       '@types/ws': 8.5.3
-      '@whatwg-node/fetch': 0.6.5_@types+node@16.18.11
+      '@whatwg-node/fetch': 0.6.6_@types+node@16.18.11
       graphql: 16.6.0
       isomorphic-ws: 5.0.0_ws@8.12.0
       tslib: 2.5.0
@@ -9526,7 +9526,7 @@ packages:
       '@graphql-mesh/utils': 0.43.6_graphql@16.6.0
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@whatwg-node/fetch': 0.6.5
+      '@whatwg-node/fetch': 0.6.6
       ajv: 8.12.0
       ajv-formats: 2.1.1
       graphql: 16.6.0
@@ -9556,7 +9556,7 @@ packages:
       '@graphql-mesh/utils': 0.43.6_graphql@16.6.0
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@whatwg-node/fetch': 0.6.5_@types+node@16.18.11
+      '@whatwg-node/fetch': 0.6.6_@types+node@16.18.11
       ajv: 8.12.0
       ajv-formats: 2.1.1
       graphql: 16.6.0
@@ -12940,11 +12940,11 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@whatwg-node/fetch/0.6.5:
-    resolution: {integrity: sha512-3XQ78RAMX8Az0LlUqMoGM3jbT+FE0S+IKr4yiTiqzQ5S/pNxD52K/kFLcLQiEbL+3rkk/glCHqjxF1QI5155Ig==}
+  /@whatwg-node/fetch/0.6.6:
+    resolution: {integrity: sha512-8kB/Pp0knQVjbm3O15h1ATKOZ7n8GXMow3z8ptVTaRmiOMnCnA9bn7gKTLWFBdD84zzWFzPp6C9pB3vsndJKlQ==}
     dependencies:
       '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.0.1
+      '@whatwg-node/node-fetch': 0.0.2
       busboy: 1.6.0
       urlpattern-polyfill: 6.0.2
       web-streams-polyfill: 3.2.1
@@ -12952,11 +12952,11 @@ packages:
       - '@types/node'
     dev: true
 
-  /@whatwg-node/fetch/0.6.5_@types+node@16.18.11:
-    resolution: {integrity: sha512-3XQ78RAMX8Az0LlUqMoGM3jbT+FE0S+IKr4yiTiqzQ5S/pNxD52K/kFLcLQiEbL+3rkk/glCHqjxF1QI5155Ig==}
+  /@whatwg-node/fetch/0.6.6_@types+node@16.18.11:
+    resolution: {integrity: sha512-8kB/Pp0knQVjbm3O15h1ATKOZ7n8GXMow3z8ptVTaRmiOMnCnA9bn7gKTLWFBdD84zzWFzPp6C9pB3vsndJKlQ==}
     dependencies:
       '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.0.1_@types+node@16.18.11
+      '@whatwg-node/node-fetch': 0.0.2_@types+node@16.18.11
       busboy: 1.6.0
       urlpattern-polyfill: 6.0.2
       web-streams-polyfill: 3.2.1
@@ -12964,11 +12964,11 @@ packages:
       - '@types/node'
     dev: false
 
-  /@whatwg-node/fetch/0.6.5_@types+node@18.11.18:
-    resolution: {integrity: sha512-3XQ78RAMX8Az0LlUqMoGM3jbT+FE0S+IKr4yiTiqzQ5S/pNxD52K/kFLcLQiEbL+3rkk/glCHqjxF1QI5155Ig==}
+  /@whatwg-node/fetch/0.6.6_@types+node@18.11.18:
+    resolution: {integrity: sha512-8kB/Pp0knQVjbm3O15h1ATKOZ7n8GXMow3z8ptVTaRmiOMnCnA9bn7gKTLWFBdD84zzWFzPp6C9pB3vsndJKlQ==}
     dependencies:
       '@peculiar/webcrypto': 1.4.1
-      '@whatwg-node/node-fetch': 0.0.1_@types+node@18.11.18
+      '@whatwg-node/node-fetch': 0.0.2_@types+node@18.11.18
       busboy: 1.6.0
       urlpattern-polyfill: 6.0.2
       web-streams-polyfill: 3.2.1
@@ -12976,8 +12976,8 @@ packages:
       - '@types/node'
     dev: true
 
-  /@whatwg-node/node-fetch/0.0.1:
-    resolution: {integrity: sha512-dMbh604yf2jl37IzvYGA6z3heQg3dMzlqoNsiNToe46SVmKusfJXGf4KYIuiJTzh9mEEu/uVF//QakUfsLJpwA==}
+  /@whatwg-node/node-fetch/0.0.2:
+    resolution: {integrity: sha512-Xs3kunumaSWTHDjKJATP9r2AhwhwPh8miQQHi3aI64MwBSrFsolBUUyCkOJe2geDuHggoNycfnU85HP528odWg==}
     peerDependencies:
       '@types/node': ^18.0.6
     dependencies:
@@ -12986,8 +12986,8 @@ packages:
       tslib: 2.5.0
     dev: true
 
-  /@whatwg-node/node-fetch/0.0.1_@types+node@16.18.11:
-    resolution: {integrity: sha512-dMbh604yf2jl37IzvYGA6z3heQg3dMzlqoNsiNToe46SVmKusfJXGf4KYIuiJTzh9mEEu/uVF//QakUfsLJpwA==}
+  /@whatwg-node/node-fetch/0.0.2_@types+node@16.18.11:
+    resolution: {integrity: sha512-Xs3kunumaSWTHDjKJATP9r2AhwhwPh8miQQHi3aI64MwBSrFsolBUUyCkOJe2geDuHggoNycfnU85HP528odWg==}
     peerDependencies:
       '@types/node': ^18.0.6
     dependencies:
@@ -12997,8 +12997,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@whatwg-node/node-fetch/0.0.1_@types+node@18.11.18:
-    resolution: {integrity: sha512-dMbh604yf2jl37IzvYGA6z3heQg3dMzlqoNsiNToe46SVmKusfJXGf4KYIuiJTzh9mEEu/uVF//QakUfsLJpwA==}
+  /@whatwg-node/node-fetch/0.0.2_@types+node@18.11.18:
+    resolution: {integrity: sha512-Xs3kunumaSWTHDjKJATP9r2AhwhwPh8miQQHi3aI64MwBSrFsolBUUyCkOJe2geDuHggoNycfnU85HP528odWg==}
     peerDependencies:
       '@types/node': ^18.0.6
     dependencies:
@@ -22613,7 +22613,7 @@ packages:
       '@graphql-mesh/utils': 0.43.6_graphql@16.6.0
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@whatwg-node/fetch': 0.6.5
+      '@whatwg-node/fetch': 0.6.6
       json-pointer: 0.6.2
       to-json-schema: 0.2.5
       tslib: 2.5.0
@@ -22633,7 +22633,7 @@ packages:
       '@graphql-mesh/utils': 0.43.6_graphql@16.6.0
       '@graphql-tools/utils': 9.1.4_graphql@16.6.0
       '@json-schema-tools/meta-schema': 1.7.0
-      '@whatwg-node/fetch': 0.6.5_@types+node@16.18.11
+      '@whatwg-node/fetch': 0.6.6_@types+node@16.18.11
       json-pointer: 0.6.2
       to-json-schema: 0.2.5
       tslib: 2.5.0

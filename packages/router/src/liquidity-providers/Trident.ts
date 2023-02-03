@@ -267,7 +267,7 @@ export class TridentProvider extends LiquidityProvider {
       if (res === undefined || res === null) return
       const tokens = [convertTokenToBento(pr.token0), convertTokenToBento(pr.token1)]
       const rPool = new ConstantProductRPool(pr.address, tokens[0], tokens[1], pr.swapFee, res[0], res[1])
-      const pc = new ConstantProductPoolCode(rPool, this.getPoolProviderName())
+      const pc = new BentoPoolCode(rPool, this.getPoolProviderName())
       this.cPPools.set(pr.address, { poolCode: pc, fetchType, updatedAtBlock: this.lastUpdateBlock })
       ++this.stateId
     })
@@ -322,7 +322,7 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   async updatePools(type: 'ALL' | 'INITIAL'): Promise<void> {
-    this.removeStalePools()
+    // this.removeStalePools()
     let cppPools = Array.from(this.cPPools.values())
     let stablePools = Array.from(this.stablePools.values())
     let bridges = Array.from(this.bridges.values())
@@ -442,7 +442,7 @@ export class TridentProvider extends LiquidityProvider {
       if (res !== undefined && (!pool.reserve0.eq(res[0]) || !pool.reserve1.eq(res[1]))) {
         pool.updateReserves(toShareBN(res[0], pool.getTotal0()), toShareBN(res[1], pool.getTotal1()))
         this.stablePools.set(pool.address, {
-          poolCode: new BentoPoolCode(pool, this.getPoolProviderName()),
+          poolCode: pi.poolCode,
           fetchType: pi.fetchType,
           updatedAtBlock: this.lastUpdateBlock,
         })
@@ -454,27 +454,27 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   async getPools(t0: Token, t1: Token): Promise<void> {
-    console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.getCurrentPoolList().length)
-    const poolsOnDemand = await getPoolsByTokenIds(
-      this.chainId,
-      'SushiSwap',
-      'TRIDENT',
-      ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
-      t0.address,
-      t1.address,
-      this.TOP_POOL_SIZE,
-      this.TOP_POOL_LIQUIDITY_THRESHOLD,
-      this.ON_DEMAND_POOL_SIZE
-    )
-    console.debug(
-      `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${
-        poolsOnDemand.size
-      } pools`
-    )
-    const pools = Array.from(poolsOnDemand.values())
+    // console.debug(`****** ${this.getType()} POOLS IN MEMORY:`, this.getCurrentPoolList().length)
+    // const poolsOnDemand = await getPoolsByTokenIds(
+    //   this.chainId,
+    //   'SushiSwap',
+    //   'TRIDENT',
+    //   ['CONSTANT_PRODUCT_POOL', 'STABLE_POOL'],
+    //   t0.address,
+    //   t1.address,
+    //   this.TOP_POOL_SIZE,
+    //   this.TOP_POOL_LIQUIDITY_THRESHOLD,
+    //   this.ON_DEMAND_POOL_SIZE
+    // )
+    // console.debug(
+    //   `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${
+    //     poolsOnDemand.size
+    //   } pools`
+    // )
+    // const pools = Array.from(poolsOnDemand.values())
     // updatePools()
-    await this.initPools(pools, 'ON_DEMAND')
-    await this.updatePools('ALL')
+    // this.initPools(pools, 'ON_DEMAND')
+    // this.updatePools('ALL')
   }
 
   startFetchPoolsData() {
@@ -493,7 +493,7 @@ export class TridentProvider extends LiquidityProvider {
         if (!this.isInitialized) {
           this.initialize(blockNumber)
         } else {
-          this.updatePools('INITIAL')
+          // this.updatePools('INITIAL')
         }
 
         // for (const p of this.getCurrentPoolList()) {
@@ -541,7 +541,11 @@ export class TridentProvider extends LiquidityProvider {
   }
 
   getCurrentPoolList(): PoolCode[] {
-    return [...this.cPPools.values(), ...this.stablePools.values(), ...this.bridges.values()].map((p) => p.poolCode)
+    return [
+      ...this.cPPools.values(), 
+      ...this.stablePools.values(),
+       ...this.bridges.values()
+      ].map((p) => p.poolCode)
   }
 
   stopFetchPoolsData() {

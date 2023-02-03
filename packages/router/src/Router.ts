@@ -12,6 +12,7 @@ import { BigNumber } from 'ethers'
 
 import type { DataFetcher } from './DataFetcher'
 import type { LiquidityProviders } from './liquidity-providers/LiquidityProvider'
+import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
 // import { convertTokenToBento, getBentoChainId } from './liquidity-providers/Trident'
 import { getRouteProcessorCode } from './TinesToRouteProcessor'
 
@@ -106,11 +107,11 @@ export class Router {
           baseToken: WNATIVE[this.dataFetcher.chainId] as RToken,
           gasPrice: this.gasPrice as number,
         },
-        // {
-        //   chainId: getBentoChainId(this.dataFetcher.chainId),
-        //   baseToken: convertTokenToBento(WNATIVE[this.dataFetcher.chainId]),
-        //   gasPrice: this.gasPrice as number,
-        // },
+        {
+          chainId: getBentoChainId(this.dataFetcher.chainId),
+          baseToken: convertTokenToBento(WNATIVE[this.dataFetcher.chainId]),
+          gasPrice: this.gasPrice as number,
+        },
       ]
 
       let pools = this.dataFetcher.getCurrentPoolCodeList(this.providers).map((pc) => pc.pool)
@@ -205,11 +206,11 @@ export class Router {
         baseToken: WNATIVE[dataFetcher.chainId] as RToken,
         gasPrice: gasPrice as number,
       },
-      // {
-      //   chainId: getBentoChainId(dataFetcher.chainId),
-      //   baseToken: convertTokenToBento(WNATIVE[dataFetcher.chainId]),
-      //   gasPrice: gasPrice as number,
-      // },
+      {
+        chainId: getBentoChainId(dataFetcher.chainId),
+        baseToken: convertTokenToBento(WNATIVE[dataFetcher.chainId]),
+        gasPrice: gasPrice as number,
+      },
     ]
 
     let pools = dataFetcher.getCurrentPoolCodeList(providers).map((pc) => pc.pool)
