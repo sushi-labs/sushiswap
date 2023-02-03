@@ -257,7 +257,6 @@ export async function getAggregatorPoolsByTokenIds(
   token0: string,
   token1: string,
   size: number,
-  minLiquidity: number,
   excludeTopPoolsSize: number,
   topPoolMinLiquidity?: number,
 ) {
@@ -308,9 +307,6 @@ export async function getAggregatorPoolsByTokenIds(
       include: {
         pools0: {
           where: {
-            liquidityUSD: {
-              gte: minLiquidity,
-            },
             chainId,
             protocol,
             version,
@@ -334,9 +330,6 @@ export async function getAggregatorPoolsByTokenIds(
         },
         pools1: {
           where: {
-            liquidityUSD: {
-              gte: minLiquidity,
-            },
             chainId,
             protocol,
             version,
@@ -368,9 +361,6 @@ export async function getAggregatorPoolsByTokenIds(
       include: {
         pools0: {
           where: {
-            liquidityUSD: {
-              gte: minLiquidity,
-            },
             chainId,
             protocol,
             version,
@@ -394,9 +384,6 @@ export async function getAggregatorPoolsByTokenIds(
         },
         pools1: {
           where: {
-            liquidityUSD: {
-              gte: minLiquidity,
-            },
             chainId,
             protocol,
             version,
