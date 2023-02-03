@@ -121,8 +121,8 @@ const start = async () => {
     //     ChainId.ETHEREUM
     //   )
     // )
-    dataFetcherMap.set(ChainId.POLYGON, new DataFetcher(ChainId.POLYGON)),
-      dataFetcherMap.set(ChainId.FANTOM, new DataFetcher(ChainId.FANTOM))
+    dataFetcherMap.set(ChainId.POLYGON, new DataFetcher(ChainId.POLYGON))
+    dataFetcherMap.set(ChainId.FANTOM, new DataFetcher(ChainId.FANTOM))
     // dataFetcherMap.set(
     //   ChainId.ARBITRUM,
     //   new DataFetcher(

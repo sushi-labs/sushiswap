@@ -13,7 +13,6 @@ import { ConstantProductPoolCode } from '../../pools/ConstantProductPool'
 import type { PoolCode } from '../../pools/PoolCode'
 import { LiquidityProvider, LiquidityProviders } from './LiquidityProvider'
 
-
 const syncAbi = [
   {
     anonymous: false,
@@ -34,7 +33,7 @@ const syncAbi = [
     name: 'Sync',
     type: 'event',
   },
-]
+] as const
 
 interface PoolInfo {
   poolCode: PoolCode
@@ -101,7 +100,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.pools.push({ poolCode: pc, fetchType: 'INITIAL', updatedAtBlock: blockNumber })
         ++this.stateId
       } else {
-        console.error(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${addr}`)
+        console.error(
+          `${this.chainId}~${
+            this.lastUpdateBlock
+          }~${this.getType()} - ERROR INIT SYNC, Failed to fetch reserves for pool: ${addr}`
+        )
       }
     })
 
@@ -155,7 +158,9 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
     )
 
     console.debug(
-      `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${poolsOnDemand.size} pools`
+      `${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ON DEMAND: Begin fetching reserves for ${
+        poolsOnDemand.size
+      } pools`
     )
 
     const poolAddresses = Array.from(poolsOnDemand.keys())
@@ -179,7 +184,11 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
         this.pools.push({ poolCode: pc, fetchType: 'ON_DEMAND', updatedAtBlock: this.lastUpdateBlock })
         ++this.stateId
       } else {
-        console.error(`${this.chainId}~${this.lastUpdateBlock}~${this.getType()} - ERROR ON DEMAND, Failed to fetch reserves for pool: ${addr}`)
+        console.error(
+          `${this.chainId}~${
+            this.lastUpdateBlock
+          }~${this.getType()} - ERROR ON DEMAND, Failed to fetch reserves for pool: ${addr}`
+        )
       }
     })
 
@@ -228,7 +237,7 @@ export abstract class UniswapV2BaseProvider extends LiquidityProvider {
 
   private removeStalePools(blockNumber: number) {
     const before = this.pools.length
-    // TODO: move this to a per-chain config? 
+    // TODO: move this to a per-chain config?
     const blockThreshold = blockNumber - 100
     this.pools = this.pools.filter(
       (p) => (p.updatedAtBlock < blockThreshold && p.fetchType === 'ON_DEMAND') || p.fetchType === 'INITIAL'
