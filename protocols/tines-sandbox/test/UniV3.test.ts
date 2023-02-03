@@ -1,9 +1,10 @@
-import { CLTick, getBigNumber, RPool, RToken, UniV3Pool } from '@sushiswap/tines'
+import { CL_MAX_TICK, CL_MIN_TICK, CLTick, getBigNumber, RToken, UniV3Pool } from '@sushiswap/tines'
 import NonfungiblePositionManager from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json'
 import WETH9 from 'canonical-weth/build/contracts/WETH9.json'
 import { expect } from 'chai'
-import { BigNumber, BigNumberish, Contract, ContractFactory, Signer, utils } from 'ethers'
+import { BigNumber, BigNumberish, Contract, ContractFactory, Signer } from 'ethers'
 import { ethers } from 'hardhat'
+import seedrandom from 'seedrandom'
 
 const ZERO = getBigNumber(0)
 
@@ -85,7 +86,7 @@ interface Position {
 
 interface PoolInfo {
   contract: Contract
-  tinesPool: RPool
+  tinesPool: UniV3Pool
   token0Contract: Contract
   token1Contract: Contract
 }
@@ -180,7 +181,25 @@ async function createPool(env: Environment, fee: number, price: number, position
   }
 }
 
-async function checkSwap(env: Environment, pool: PoolInfo, amount: number | BigNumberish, direction: boolean) {
+async function checkSwap(
+  env: Environment,
+  pool: PoolInfo,
+  amount: number | BigNumberish,
+  direction: boolean,
+  updateTinesPool = false,
+  printTick = false
+) {
+  if (updateTinesPool) {
+    // update tines pool data
+    pool.tinesPool.updateReserves(
+      await pool.token0Contract.balanceOf(pool.contract.address),
+      await pool.token1Contract.balanceOf(pool.contract.address)
+    )
+    const slot = await pool.contract.slot0()
+    pool.tinesPool.updatePrice(slot[0])
+    pool.tinesPool.updateLiquidity(await pool.contract.liquidity())
+  }
+
   const amountBN: BigNumber = typeof amount == 'number' ? getBigNumber(amount) : BigNumber.from(amount)
   const amountN: number = typeof amount == 'number' ? amount : parseInt(amount.toString())
   const [inToken, outToken] = direction
@@ -193,7 +212,7 @@ async function checkSwap(env: Environment, pool: PoolInfo, amount: number | BigN
   const tickAfter = (await pool.contract.slot0())[1]
   const inBalanceAfter = await inToken.balanceOf(env.user.getAddress())
   const outBalanceAfter = await outToken.balanceOf(env.user.getAddress())
-  //console.log(tickBefore, '->', tickAfter)
+  if (printTick) console.log(tickBefore, '->', tickAfter)
 
   const amountOut = outBalanceAfter.sub(outBalanceBefore)
   const amountIn: BigNumber = inBalanceBefore.sub(inBalanceAfter)
@@ -214,6 +233,39 @@ async function checkSwap(env: Environment, pool: PoolInfo, amount: number | BigN
     if (!errorThrown) {
       expectCloseValues(amountOut, amounOutTines, 1e-12)
     }
+  }
+}
+
+const minPrice = Math.pow(1.0001, CL_MIN_TICK)
+const maxPrice = Math.pow(1.0001, CL_MAX_TICK)
+async function getRandomSwapParams(rnd: () => number, pool: PoolInfo): Promise<[number, boolean]> {
+  const slot = await pool.contract.slot0()
+  const sqrtPrice = parseInt(slot[0].toString()) / Math.pow(2, 96)
+  const price = sqrtPrice * sqrtPrice // res1/res0
+
+  let direction = true
+  if (price < minPrice * 10) direction = false
+  else if (price > maxPrice / 10) direction = true
+  else direction = rnd() > 0.5
+
+  const res0BN = await pool.token0Contract.balanceOf(pool.contract.address)
+  const res0 = parseInt(res0BN.toString())
+  const res1BN = await pool.token1Contract.balanceOf(pool.contract.address)
+  const res1 = parseInt(res1BN.toString())
+
+  const maxRes = direction ? res1 / price : res0 * price
+  const amount = Math.round(rnd() * maxRes) + 1000
+
+  //console.log(res0, res1, price, maxRes, amount, direction)
+
+  return [amount, direction]
+}
+
+async function monkeyTest(env: Environment, pool: PoolInfo, seed: string, iterations: number, printTick = false) {
+  const rnd: () => number = seedrandom(seed) // random [0, 1)
+  for (let i = 0; i < iterations; ++i) {
+    const [amount, direction] = await getRandomSwapParams(rnd, pool)
+    await checkSwap(env, pool, amount, direction, true, printTick)
   }
 }
 
@@ -254,6 +306,31 @@ describe('Uni V3', () => {
       await checkSwap(env, pool3, '460875064077414607', false) // before tick
       const pool4 = await createPool(env, 3000, 4, [{ from: -1200, to: 18000, val: 1e18 }])
       await checkSwap(env, pool4, '460875064077414607', false) // after tick
+    })
+
+    it('From 0 zone to not 0 zone', async () => {
+      const pool = await createPool(env, 3000, 50, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool, 1e17, true)
+      const pool2 = await createPool(env, 3000, 0.1, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool2, 1e17, false)
+    })
+
+    it('From 0 zone through ticks to 0 zone', async () => {
+      const pool = await createPool(env, 3000, 50, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool, 1e18, true)
+      const pool2 = await createPool(env, 3000, 0.1, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool2, 1e19, false)
+    })
+
+    it('Special case 1', async () => {
+      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      await checkSwap(env, pool, 1e18, true)
+      await checkSwap(env, pool, 1, false, true)
+    })
+
+    it.only('Monkey test', async () => {
+      const pool = await createPool(env, 3000, 5, [{ from: -1200, to: 18000, val: 1e18 }])
+      await monkeyTest(env, pool, 'test1', 1000, true)
     })
   })
 })

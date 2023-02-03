@@ -80,7 +80,6 @@ export class UniV3Pool extends RPool {
   ) {
     super(address, token0, token1, fee, reserve0, reserve1, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST)
     this.liquidity = liquidity
-    this.sqrtPriceX96 = sqrtPriceX96
     this.ticks = ticks
     if (this.ticks.length === 0) {
       this.ticks.push({ index: CL_MIN_TICK, DLiquidity: ZERO })
@@ -88,11 +87,21 @@ export class UniV3Pool extends RPool {
     }
     if (this.ticks[0].index > CL_MIN_TICK) this.ticks.unshift({ index: CL_MIN_TICK, DLiquidity: ZERO })
     if (this.ticks[this.ticks.length - 1].index < CL_MAX_TICK) this.ticks.push({ index: CL_MAX_TICK, DLiquidity: ZERO })
+    this.sqrtPriceX96 = sqrtPriceX96
     this.nearestTick = this._findTickForPrice(sqrtPriceX96)
   }
 
-  _findTickForPrice(sqrtPriceBN: BigNumber) {
-    const sqrtPrice = parseInt(sqrtPriceBN.toString()) / two96
+  updatePrice(sqrtPriceX96: BigNumber) {
+    this.sqrtPriceX96 = sqrtPriceX96
+    this.nearestTick = this._findTickForPrice(sqrtPriceX96)
+  }
+
+  updateLiquidity(liquidity: BigNumber) {
+    this.liquidity = liquidity
+  }
+
+  _findTickForPrice(sqrtPriceX96: BigNumber) {
+    const sqrtPrice = parseInt(sqrtPriceX96.toString()) / two96
     const index = Math.floor(Math.log(sqrtPrice) / Math.log(1.0001))
     let a = 0
     let b = this.ticks.length
