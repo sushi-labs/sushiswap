@@ -1,0 +1,11 @@
+{
+  "extends": "@sushiswap/typescript-config/node18-strictest-esm.combined.json",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "module": "ESNext",
+    "resolveJsonModule": true
+  }
+}
