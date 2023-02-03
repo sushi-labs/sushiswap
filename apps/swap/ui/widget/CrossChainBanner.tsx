@@ -25,7 +25,7 @@ export const CrossChainBanner: FC = () => {
     <div className="bg-white dark:bg-slate-900 rounded-xl mb-4">
       <div
         className={classNames(
-          'flex flex-col bg-gradient-to-r from-blue/[0.15] to-pink/[0.15] saturate-[2] dark:saturate-[1] px-4 py-3 rounded-xl'
+          ' flex flex-col bg-gradient-to-r from-blue/[0.15] to-pink/[0.15] hover:from-blue/20 hover:to-pink/20 saturate-[2] dark:saturate-[1] px-4 py-3 rounded-xl'
         )}
       >
         <div className="flex gap-3 items-center">
